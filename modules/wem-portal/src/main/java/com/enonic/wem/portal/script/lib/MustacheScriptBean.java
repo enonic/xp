@@ -1,11 +1,12 @@
 package com.enonic.wem.portal.script.lib;
 
-import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
-import java.nio.file.Path;
+import java.net.URL;
 import java.util.Map;
 
+import com.google.common.base.Charsets;
 import com.samskivert.mustache.Mustache;
 
 public final class MustacheScriptBean
@@ -21,8 +22,9 @@ public final class MustacheScriptBean
         throws Exception
     {
         final ContextScriptBean service = ContextScriptBean.get();
-        final Path path = service.resolveFile( name );
-        return render( new FileReader( path.toFile() ), map );
+        final URL path = service.resolveFile( name );
+
+        return render( new InputStreamReader( path.openStream(), Charsets.UTF_8 ), map );
     }
 
     public String renderText( final String text, final Map<String, Object> map )

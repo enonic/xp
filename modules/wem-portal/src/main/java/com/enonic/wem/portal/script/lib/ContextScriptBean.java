@@ -1,7 +1,6 @@
 package com.enonic.wem.portal.script.lib;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.net.URL;
 
 import javax.inject.Inject;
 
@@ -44,19 +43,15 @@ public final class ContextScriptBean
         this.jsContext = jsContext;
     }
 
-    public Path getModulePath()
-    {
-        return this.pathResolver.resolveModulePath( this.module );
-    }
-
-    public Path resolveFile( final String name )
+    public URL resolveFile( final String name )
     {
         final ModuleResourceKey key = ModuleResourceKey.from( this.module, name );
-        final Path path = this.pathResolver.resolveResourcePath( key );
+        final URL resourceUrl = key.toUrl();
 
-        if ( Files.isRegularFile( path ) )
+        final boolean isFile = !resourceUrl.getPath().endsWith( "/" );
+        if ( isFile )
         {
-            return path;
+            return resourceUrl;
         }
 
         throw ScriptHelper.error( "Failed find file [{0}] from module.", key.toString() );

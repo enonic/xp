@@ -1,11 +1,13 @@
 package com.enonic.wem.portal.exception.renderer;
 
 import java.io.IOException;
+import java.net.URL;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
-import com.google.common.io.Files;
+import com.google.common.io.Resources;
 
 import com.enonic.wem.portal.script.SourceException;
 
@@ -53,7 +55,12 @@ final class SourceInfo
     private List<String> getAllLines()
         throws IOException
     {
-        return Files.readLines( this.error.getPath().toFile(), Charsets.UTF_8 );
+        final URL path = this.error.getPath();
+        if ( path == null )
+        {
+            return Collections.emptyList();
+        }
+        return Resources.readLines( path, Charsets.UTF_8 );
     }
 
     private List<String> sliceLines( final List<String> all )

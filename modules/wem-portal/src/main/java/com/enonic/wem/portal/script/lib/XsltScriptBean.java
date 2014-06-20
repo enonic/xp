@@ -1,8 +1,8 @@
 package com.enonic.wem.portal.script.lib;
 
 import java.io.StringReader;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -17,6 +17,7 @@ import org.mozilla.javascript.xmlimpl.XMLLibImpl;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.content.page.AbstractRegions;
@@ -75,19 +76,19 @@ public final class XsltScriptBean
         return new DOMSource( doc );
     }
 
-    private Source toSource( final Path path )
+    private Source toSource( final URL url )
     {
-        return new StreamSource( path.toFile() );
+        return new StreamSource( url.toString() );
     }
 
     private String doRender( final String name, final Object inputDoc, final Map<String, Object> params )
         throws Exception
     {
         final ContextScriptBean service = ContextScriptBean.get();
-        final Path path = service.resolveFile( name );
+        final URL resourceUrl = service.resolveFile( name );
 
         final XsltProcessorSpec spec = new XsltProcessorSpec();
-        spec.xsl( toSource( path ) );
+        spec.xsl( toSource( resourceUrl ) );
         spec.source( toSource( inputDoc ) );
         spec.parameters( convertParams( params ) );
 
@@ -127,10 +128,17 @@ public final class XsltScriptBean
         error.message( e.getMessage() );
         error.lineNumber( locator.getLineNumber() );
 
-        final String path = locator.getSystemId().substring( "file:".length() );
-        final Path pathObject = Paths.get( path );
-        error.path( pathObject );
-        error.resource( findResourceKey( pathObject ) );
+        final URL url;
+        try
+        {
+            url = new URL( locator.getSystemId() );
+            error.path( url );
+            error.resource( ModuleResourceKey.from( url ) );
+        }
+        catch ( MalformedURLException mue )
+        {
+            throw Throwables.propagate( mue );
+        }
 
         return error.build();
     }
@@ -146,17 +154,6 @@ public final class XsltScriptBean
         }
 
         return null;
-    }
-
-    private ModuleResourceKey findResourceKey( final Path path )
-    {
-        final ContextScriptBean service = ContextScriptBean.get();
-
-        final Path filePath = path.toAbsolutePath();
-        final Path modulePath = service.getModulePath().toAbsolutePath();
-
-        final String name = filePath.toString().substring( modulePath.toString().length() + 1 );
-        return ModuleResourceKey.from( service.getModule(), name );
     }
 
     private Document createContextDoc()

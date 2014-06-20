@@ -1,6 +1,6 @@
 package com.enonic.wem.portal.script;
 
-import java.nio.file.Path;
+import java.net.URL;
 import java.text.MessageFormat;
 import java.util.List;
 
@@ -16,7 +16,7 @@ public final class SourceException
 
     private final ModuleResourceKey resource;
 
-    private final Path path;
+    private final URL path;
 
     private final int lineNumber;
 
@@ -47,7 +47,7 @@ public final class SourceException
         return this.resource;
     }
 
-    public Path getPath()
+    public URL getPath()
     {
         return this.path;
     }
@@ -88,7 +88,7 @@ public final class SourceException
 
         private Throwable cause;
 
-        private Path path;
+        private URL path;
 
         private ModuleResourceKey resource;
 
@@ -114,7 +114,7 @@ public final class SourceException
             return this;
         }
 
-        public Builder path( final Path path )
+        public Builder path( final URL path )
         {
             this.path = path;
             return this;

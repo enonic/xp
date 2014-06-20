@@ -119,7 +119,7 @@ public final class ScriptRunnerImpl
         builder.cause( cause );
         builder.lineNumber( cause.lineNumber() );
         builder.resource( source.getResource() );
-        builder.path( source.getPath() );
+        builder.path( source.getResource().toUrl() );
         builder.message( cause.details() );
 
         for ( final ScriptStackElement elem : cause.getScriptStack() )

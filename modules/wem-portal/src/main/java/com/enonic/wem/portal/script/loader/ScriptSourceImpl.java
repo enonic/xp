@@ -1,11 +1,11 @@
 package com.enonic.wem.portal.script.loader;
 
 import java.io.IOException;
-import java.nio.file.Path;
+import java.net.URL;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Throwables;
-import com.google.common.io.Files;
+import com.google.common.io.Resources;
 
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleResourceKey;
@@ -13,14 +13,14 @@ import com.enonic.wem.api.module.ModuleResourceKey;
 public class ScriptSourceImpl
     implements ScriptSource
 {
-    private final Path path;
+    private final URL url;
 
     private final ModuleResourceKey key;
 
-    public ScriptSourceImpl( final ModuleResourceKey key, final Path path )
+    public ScriptSourceImpl( final ModuleResourceKey key )
     {
-        this.path = path;
         this.key = key;
+        this.url = key.toUrl();
     }
 
     @Override
@@ -30,17 +30,11 @@ public class ScriptSourceImpl
     }
 
     @Override
-    public Path getPath()
-    {
-        return this.path;
-    }
-
-    @Override
     public String getScriptAsString()
     {
         try
         {
-            return Files.toString( this.path.toFile(), Charsets.UTF_8 );
+            return Resources.toString( this.url, Charsets.UTF_8 );
         }
         catch ( final IOException e )
         {
@@ -51,7 +45,14 @@ public class ScriptSourceImpl
     @Override
     public long getTimestamp()
     {
-        return this.path.toFile().lastModified();
+        try
+        {
+            return this.url.openConnection().getLastModified();
+        }
+        catch ( IOException e )
+        {
+            return 0;
+        }
     }
 
     @Override

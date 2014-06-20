@@ -68,7 +68,7 @@ public class DefaultExceptionMapperTest
 
         final SourceException exception = SourceException.newBuilder().
             lineNumber( 1 ).
-            path( file.toPath() ).
+            path( file.toURL() ).
             resource( ModuleResourceKey.from( "mymodule-1.0.0:source.js" ) ).
             build();
 
