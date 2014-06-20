@@ -46,7 +46,11 @@ public class WorkspaceDiffServiceImplTest
     public void workspaceDifferences()
         throws Exception
     {
-        final CompareWorkspacesQuery sourceTargetQuery = new CompareWorkspacesQuery( SOURCE, TARGET );
+        final CompareWorkspacesQuery sourceTargetQuery = CompareWorkspacesQuery.
+            create().
+            source( SOURCE ).
+            target( TARGET ).
+            build();
 
         final EntityId ID_1 = EntityId.from( "1" );
         final EntityId ID_2 = EntityId.from( "2" );

@@ -4,7 +4,6 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
@@ -24,6 +23,7 @@ import com.enonic.wem.api.content.site.SiteService;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.SiteTemplateNotFoundException;
 import com.enonic.wem.api.content.site.SiteTemplateService;
+import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
@@ -80,19 +80,19 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResource>
         this.resource.controllerFactory = jsControllerFactory;
     }
 
-    protected final void setupContentAndSite()
+    protected final void setupContentAndSite( final Context context )
         throws Exception
     {
-        when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ), ContentConstants.DEFAULT_CONTEXT ) ).
+        when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ), context ) ).
             thenReturn( createPage( "id", "site/somepath/content", "ctype", true ) );
 
         when( this.siteService.getNearestSite( isA( ContentId.class ) ) ).thenReturn( createSite( "id", "site", "contenttypename" ) );
     }
 
-    protected final void setupNonPageContent()
+    protected final void setupNonPageContent( final Context context )
         throws Exception
     {
-        when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ), ContentConstants.DEFAULT_CONTEXT ) ).
+        when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ), context ) ).
             thenReturn( createPage( "id", "site/somepath/content", "ctype", false ) );
 
         when( this.siteService.getNearestSite( isA( ContentId.class ) ) ).thenReturn( createSite( "id", "site", "contenttypename" ) );
