@@ -2,36 +2,7 @@ module api.app.browse.treegrid {
 
     import Action = api.ui.Action;
     import Grid = api.ui.grid.Grid;
-    import Item = api.item.Item;
-
-    export class BaseTreeGridAction extends Action {
-
-        constructor(label: string, shortcut?: string) {
-            super(label, shortcut);
-        }
-    }
-
-    export class SelectAllAction extends BaseTreeGridAction {
-
-        constructor(grid: Grid<Item>) {
-            super("Select All");
-            this.setEnabled(true);
-            this.onExecuted(() => {
-                grid.selectAll();
-            });
-        }
-    }
-
-    export class ClearSelectionAction extends BaseTreeGridAction {
-
-        constructor(grid: Grid<Item>) {
-            super("Clear Selection");
-            this.setEnabled(true);
-            this.onExecuted(() => {
-                grid.clearSelection();
-            });
-        }
-    }
+    import Node = api.node.Node;
 
     export class TreeGridActions {
 
@@ -42,7 +13,7 @@ module api.app.browse.treegrid {
 
         private static INSTANCE: TreeGridActions;
 
-        static init(grid: Grid<Item>): TreeGridActions {
+        static init(grid: Grid<Node>): TreeGridActions {
             new TreeGridActions(grid);
             return TreeGridActions.INSTANCE;
         }
@@ -51,7 +22,7 @@ module api.app.browse.treegrid {
             return TreeGridActions.INSTANCE;
         }
 
-        constructor(grid: Grid<Item>) {
+        constructor(grid: Grid<Node>) {
             this.SELECT_ALL = new SelectAllAction(grid);
             this.CLEAR_SELECTION = new ClearSelectionAction(grid);
             this.allActions.push(this.SELECT_ALL, this.CLEAR_SELECTION);
