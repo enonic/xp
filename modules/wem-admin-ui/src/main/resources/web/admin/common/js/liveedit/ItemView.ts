@@ -117,48 +117,95 @@ module api.liveedit {
 
             this.setElementDimensions(this.getDimensionsFromElement());
 
-            this.onMouseEnter((event: MouseEvent) => {
-                if (this.mouseOver) {
-                    return;
-                }
-                this.mouseOver = true;
-
-                var parentsStack = [];
-                for (var parent = this.parentItemView; parent; parent = parent.parentItemView) {
-                    parentsStack.push(parent);
-                    if (parent.mouseOver) {
-                        break;
-                    }
-                }
-
-                parentsStack.reverse().forEach((view: ItemView) => {
-                    if (view.mouseOver) {
-                        view.notifyMouseOutView();
-                    } else {
-                        view.mouseOver = true;
-                        view.notifyMouseOverView();
-                        view.notifyMouseOutView();
-                    }
-                });
-
-                this.notifyMouseOverView();
-            });
-
-            this.onMouseLeave((event: MouseEvent) => {
-                this.mouseOver = false;
-                this.notifyMouseOutView();
-                if (this.parentItemView) {
-                    this.parentItemView.notifyMouseOverView();
-                }
-            });
-
-            this.onClicked(this.handleClickEvent.bind(this));
-            this.onContextMenu(this.handleClickEvent.bind(this));
-            this.onTouchStart(this.handleClickEvent.bind(this));
+            this.onMouseEnter(this.handleMouseEnter.bind(this));
+            this.onMouseLeave(this.handleMouseLeave.bind(this));
+            this.onClicked(this.handleClick.bind(this));
+            this.onContextMenu(this.handleClick.bind(this));
+            this.onTouchStart(this.handleClick.bind(this));
 
         }
 
-        private handleClickEvent(event: MouseEvent) {
+        /**
+         * Process 'mouseenter' event to track when mouse moves between ItemView's.
+         * ItemView notifies that mouse is over it if mouse moves from parent or child ItemView to this one.
+         *
+         * Method manages two cases:
+         * 1. 'mouseenter' was triggered on parent ItemView and then it is triggered on its child ItemView.
+         *    - parent has 'mouseOver' state set to 'true';
+         *    - the ItemView calls parent.notifyMouseOut(), parent is still in 'mouseOver' state;
+         *    - the ItemView receive 'mouseOver' state;
+         *    - the ItemView notifies about mouseOver event;
+         * 2. 'mouseenter' was triggered on child ItemView before it has been triggered on parent ItemView.
+         *    (This occurs when child ItemView is adjacent to its parent's edge.)
+         *    - direct parent hasn't received 'mouseOver' state yet;
+         *    - look up for the first parent ItemView with 'mouseOver' state, it is ItemView the mouse came from;
+         *    - the parent with 'mouseOver' state calls notifyMouseOut();
+         *    - go to the previous parent, give it 'mouseOver' state, call notifyMouseOver() and notifyMouseOut() events,
+         *      repeat until current ItemView reached;
+         *    - set 'mouseOver' state to this ItemView;
+         *    - notify about mouseOver event for this ItemView;
+         *
+         * @param event browser MouseEvent
+         */
+        private handleMouseEnter(event: MouseEvent) {
+            // If ItemView has 'mouseOver' state before it has received 'mouseenter' event,
+            // then 'mouseenter' event has already occurred on child ItemView
+            // and child has already called notifyMouseOver and notifyMouseOut for this ItemView.
+            // No need to process this event.
+            if (this.mouseOver) {
+                return;
+            }
+
+            // Look up for the parent ItemView with 'mouseOver' state.
+            // It is direct parent for case 1 or some parent up to the PageView for case 2.
+            // Parents are stored to the stack to manage their state and triger events for them further.
+            var parentsStack = [];
+            for (var parent = this.parentItemView; parent; parent = parent.parentItemView) {
+                parentsStack.push(parent);
+                if (parent.mouseOver) {
+                    break;
+                }
+            }
+
+            // Stack of parents elements contains single parent element for case 1 or
+            // all parents with state 'mouseOver' set to 'false' and first one with 'mouseOver' state.
+            // If parent has 'mouseOver' state, notify that mouse is moved out this parent.
+            // If parent isn't in 'mouseOver' state, turn it on and notify the parent was entered and left.
+            parentsStack.reverse().forEach((view: ItemView) => {
+                if (view.mouseOver) {
+                    view.notifyMouseOutView();
+                } else {
+                    view.mouseOver = true;
+                    view.notifyMouseOverView();
+                    view.notifyMouseOutView();
+                }
+            });
+
+            // Turn on 'mouseOver' state for this element and notify it entered.
+            this.mouseOver = true;
+            this.notifyMouseOverView();
+        }
+
+        /**
+         * Process 'mouseleave' event to track when mouse moves between ItemView's.
+         * ItemView notifies that mouse left it when mouse moves to its parent or child ItemView.
+         *
+         * 'mouseleave' event is always triggered on child element before it has been triggered on parent.
+         *
+         * @param event browser MouseEvent
+         */
+        private handleMouseLeave(event: MouseEvent) {
+            // Turn of 'mouseOver' state and notify ItemVeiw was left.
+            this.mouseOver = false;
+            this.notifyMouseOutView();
+
+            // Notify parent ItemView is entered.
+            if (this.parentItemView) {
+                this.parentItemView.notifyMouseOverView();
+            }
+        }
+
+        private handleClick(event: MouseEvent) {
             event.stopPropagation();
             event.preventDefault();
 
