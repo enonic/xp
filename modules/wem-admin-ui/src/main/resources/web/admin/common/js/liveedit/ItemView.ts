@@ -61,6 +61,8 @@ module api.liveedit {
 
         private tooltipViewer: api.ui.Viewer<any>;
 
+        private mouseOver: boolean;
+
         private mouseOverViewListeners: {(): void} [];
 
         private mouseOutViewListeners: {(): void} [];
@@ -88,6 +90,8 @@ module api.liveedit {
                 props = newElementBuilder;
             }
             super(props);
+
+            this.mouseOver = false;
             this.mouseOverViewListeners = [];
             this.mouseOutViewListeners = [];
 
@@ -114,13 +118,34 @@ module api.liveedit {
             this.setElementDimensions(this.getDimensionsFromElement());
 
             this.onMouseEnter((event: MouseEvent) => {
-                if (this.parentItemView) {
-                    this.parentItemView.notifyMouseOutView();
+                if (this.mouseOver) {
+                    return;
                 }
+                this.mouseOver = true;
+
+                var parentsStack = [];
+                for (var parent = this.parentItemView; parent; parent = parent.parentItemView) {
+                    parentsStack.push(parent);
+                    if (parent.mouseOver) {
+                        break;
+                    }
+                }
+
+                parentsStack.reverse().forEach((view: ItemView) => {
+                    if (view.mouseOver) {
+                        view.notifyMouseOutView();
+                    } else {
+                        view.mouseOver = true;
+                        view.notifyMouseOverView();
+                        view.notifyMouseOutView();
+                    }
+                });
+
                 this.notifyMouseOverView();
             });
 
             this.onMouseLeave((event: MouseEvent) => {
+                this.mouseOver = false;
                 this.notifyMouseOutView();
                 if (this.parentItemView) {
                     this.parentItemView.notifyMouseOverView();
@@ -293,7 +318,6 @@ module api.liveedit {
         }
 
         private notifyMouseOverView() {
-            console.log('mouseenter ', this.getItemId().toNumber());
             this.mouseOverViewListeners.forEach((listener: () => void) => listener());
         }
 
@@ -306,7 +330,6 @@ module api.liveedit {
         }
 
         private notifyMouseOutView() {
-            console.log('mouseleave ', this.getItemId().toNumber());
             this.mouseOutViewListeners.forEach((listener: () => void) => listener());
         }
     }
