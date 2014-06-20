@@ -2,6 +2,7 @@ package com.enonic.wem.core.resource;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.net.URL;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -13,6 +14,7 @@ import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
 
 import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.module.ModuleResourceUrlResolver;
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceNotFoundException;
 import com.enonic.wem.core.config.SystemConfig;
@@ -49,6 +51,15 @@ public class ResourceServiceImplTest
         writeFile( modulesDir, "mymodule-1.0.0/a/c.txt", "a/c.txt" );
         writeFile( modulesDir, "mymodule-1.0.0/a/c/d.txt", "a/c/d.txt" );
         writeFile( modulesDir, "othermodule-1.0.0/a.txt", "a.txt" );
+
+        new ModuleResourceUrlResolver()
+        {
+            protected URL doResolve( final ModuleResourceKey key )
+                throws Exception
+            {
+                return new URL( "file:" + modulesDir.getPath() + "/" + key.getModule().toString() + key.getPath() );
+            }
+        };
     }
 
     @Test
@@ -56,7 +67,6 @@ public class ResourceServiceImplTest
         throws Exception
     {
         final ModuleResourceKey key = ModuleResourceKey.from( "mymodule-1.0.0:/a/b.txt" );
-        assertTrue( this.resourceService.hasResource( key ) );
 
         final Resource resource = this.resourceService.getResource( key );
         assertNotNull( resource );
@@ -71,12 +81,7 @@ public class ResourceServiceImplTest
     @Test(expected = ResourceNotFoundException.class)
     public void testGetResource_notFound()
     {
-        final ModuleResourceKey key1 = ModuleResourceKey.from( "mymodule-1.0.0:/a" );
-        assertFalse( this.resourceService.hasResource( key1 ) );
-
-        final ModuleResourceKey key2 = ModuleResourceKey.from( "mymodule-1.0.0:/not/exists.txt" );
-        assertFalse( this.resourceService.hasResource( key2 ) );
-
-        this.resourceService.getResource( key2 );
+        final ModuleResourceKey key = ModuleResourceKey.from( "mymodule-1.0.0:/not/exists.txt" );
+        this.resourceService.getResource( key );
     }
 }

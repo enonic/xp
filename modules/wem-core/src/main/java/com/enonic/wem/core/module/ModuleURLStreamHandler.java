@@ -35,13 +35,13 @@ public final class ModuleURLStreamHandler
         }
 
         final ModuleResourceKey key = ModuleResourceKey.from( path );
-        final Bundle bundle = findBudle( key.getModule() );
+        final Bundle bundle = findBundle( key.getModule() );
 
         return bundle.getResource( key.getPath() ).openConnection();
     }
 
     // TODO: Need to cache this in some way. Use a modulekeyresolver?
-    private Bundle findBudle( final ModuleKey key )
+    private Bundle findBundle( final ModuleKey key )
         throws IOException
     {
         for ( final Bundle bundle : this.bundleContext.getBundles() )

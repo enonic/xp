@@ -12,7 +12,6 @@ import org.thymeleaf.templateresolver.TemplateResolver;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.core.module.ModuleResourcePathResolver;
 import com.enonic.wem.portal.view.RenderViewSpec;
 import com.enonic.wem.portal.view.ViewProcessor;
 
@@ -22,7 +21,7 @@ public final class ThymeleafViewProcessor
     private final TemplateEngine engine;
 
     @Inject
-    public ThymeleafViewProcessor( final ModuleResourcePathResolver resolver )
+    public ThymeleafViewProcessor()
     {
         this.engine = new TemplateEngine();
 
@@ -34,7 +33,7 @@ public final class ThymeleafViewProcessor
 
         final TemplateResolver templateResolver = new TemplateResolver();
         templateResolver.setCacheable( false );
-        templateResolver.setResourceResolver( new ThymeleafResourceResolver( resolver ) );
+        templateResolver.setResourceResolver( new ThymeleafResourceResolver() );
         this.engine.setTemplateResolver( templateResolver );
 
         this.engine.initialize();

@@ -1,10 +1,8 @@
 package com.enonic.wem.api.module;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Throwables;
 import com.google.common.io.Files;
 
 import com.enonic.wem.api.resource.ResourceReference;
@@ -12,6 +10,8 @@ import com.enonic.wem.api.resource.ResourceReference;
 public final class ModuleResourceKey
     implements ResourceReference
 {
+    private final static String URL_PROTOCOL_PREFIX = "module";
+
     private final String uri;
 
     private final ModuleKey module;
@@ -61,18 +61,6 @@ public final class ModuleResourceKey
         }
 
         return null;
-    }
-
-    public URL toUrl()
-    {
-        try
-        {
-            return new URL( "module:" + getUri() );
-        }
-        catch ( MalformedURLException e )
-        {
-            throw Throwables.propagate( e );
-        }
     }
 
     public boolean isRoot()
@@ -128,7 +116,7 @@ public final class ModuleResourceKey
 
     public static ModuleResourceKey from( final URL url )
     {
-        Preconditions.checkArgument( "module".equals( url.getProtocol() ), "Invalid module resource key URL." );
+        Preconditions.checkArgument( URL_PROTOCOL_PREFIX.equals( url.getProtocol() ), "Invalid module resource key URL." );
         return ModuleResourceKey.from( url.getPath() );
     }
 }

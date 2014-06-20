@@ -9,11 +9,6 @@ import com.enonic.wem.api.resource.ResourceService;
 public abstract class AbstractResourceService
     implements ResourceService
 {
-    @Override
-    public final boolean hasResource( final ModuleResourceKey key )
-    {
-        return resolve( key ) != null;
-    }
 
     @Override
     public final Resource getResource( final ModuleResourceKey key )
@@ -26,12 +21,6 @@ public abstract class AbstractResourceService
         }
 
         throw new ResourceNotFoundException( key );
-    }
-
-    @Override
-    public final boolean hasResource( final ResourceReference ref )
-    {
-        return resolve( ref ) != null;
     }
 
     @Override

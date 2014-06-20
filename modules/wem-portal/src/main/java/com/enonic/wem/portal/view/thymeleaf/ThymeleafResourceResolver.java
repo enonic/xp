@@ -1,24 +1,19 @@
 package com.enonic.wem.portal.view.thymeleaf;
 
-import java.io.FileInputStream;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.net.URL;
 
 import org.thymeleaf.TemplateProcessingParameters;
 import org.thymeleaf.resourceresolver.IResourceResolver;
 
 import com.enonic.wem.api.module.ModuleResourceKey;
-import com.enonic.wem.core.module.ModuleResourcePathResolver;
+import com.enonic.wem.api.module.ModuleResourceUrlResolver;
 
 final class ThymeleafResourceResolver
     implements IResourceResolver
 {
-    private final ModuleResourcePathResolver pathResolver;
-
-    public ThymeleafResourceResolver( final ModuleResourcePathResolver pathResolver )
+    public ThymeleafResourceResolver()
     {
-        this.pathResolver = pathResolver;
     }
 
     @Override
@@ -31,16 +26,11 @@ final class ThymeleafResourceResolver
     public InputStream getResourceAsStream( final TemplateProcessingParameters params, final String resourceName )
     {
         final ModuleResourceKey key = ModuleResourceKey.from( resourceName );
-        final Path path = this.pathResolver.resolveResourcePath( key );
-
-        if ( !Files.isRegularFile( path ) )
-        {
-            return null;
-        }
+        final URL resourceUrl = ModuleResourceUrlResolver.resolve( key);
 
         try
         {
-            return new FileInputStream( path.toFile() );
+            return resourceUrl.openStream();
         }
         catch ( final Exception e )
         {

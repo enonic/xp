@@ -8,6 +8,7 @@ import org.mozilla.javascript.Context;
 
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.module.ModuleResourceUrlResolver;
 import com.enonic.wem.core.module.ModuleResourcePathResolver;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.script.helper.ScriptHelper;
@@ -46,7 +47,7 @@ public final class ContextScriptBean
     public URL resolveFile( final String name )
     {
         final ModuleResourceKey key = ModuleResourceKey.from( this.module, name );
-        final URL resourceUrl = key.toUrl();
+        final URL resourceUrl = ModuleResourceUrlResolver.resolve( key);
 
         final boolean isFile = !resourceUrl.getPath().endsWith( "/" );
         if ( isFile )
