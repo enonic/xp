@@ -13,7 +13,7 @@ module api.app.browse.treegrid {
 
         private static INSTANCE: TreeGridActions;
 
-        static init(grid: Grid<Node>): TreeGridActions {
+        static init(grid: Grid<TreeNode<Node>>): TreeGridActions {
             new TreeGridActions(grid);
             return TreeGridActions.INSTANCE;
         }
@@ -22,7 +22,7 @@ module api.app.browse.treegrid {
             return TreeGridActions.INSTANCE;
         }
 
-        constructor(grid: Grid<Node>) {
+        constructor(grid: Grid<TreeNode<Node>>) {
             this.SELECT_ALL = new SelectAllAction(grid);
             this.CLEAR_SELECTION = new ClearSelectionAction(grid);
             this.allActions.push(this.SELECT_ALL, this.CLEAR_SELECTION);

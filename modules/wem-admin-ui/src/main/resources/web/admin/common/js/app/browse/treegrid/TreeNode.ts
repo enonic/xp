@@ -2,6 +2,8 @@ module api.app.browse.treegrid {
 
     export class TreeNode<NODE extends api.node.Node> {
 
+        private id: string;
+
         private data: NODE;
 
         private expanded: boolean;
@@ -13,11 +15,16 @@ module api.app.browse.treegrid {
         private children: TreeNode<NODE>[];
 
         constructor(data?: NODE, parent?: TreeNode<NODE>, expanded: boolean = false, selected: boolean = false) {
+            this.id = data ? data.getId() : "";
             this.data = data;
             this.parent = parent;
             this.children = [];
             this.expanded = expanded;
             this.selected = selected;
+        }
+
+        getId():string {
+            return this.id;
         }
 
         isExpanded(): boolean {
@@ -91,19 +98,24 @@ module api.app.browse.treegrid {
 
         /*
          Transforms tree into the list of nodes with current node as root.
+         @empty    - determines to get nodes with empty data.
          @expanded - determines to display only reachable nodes.
          @selected - determines to display only seleted nodes.
          */
-        treeToList(expanded: boolean = true, selected: boolean = false): TreeNode<NODE>[] {
+        treeToList(empty: boolean = false,
+                   expanded: boolean = true,
+                   selected: boolean = false): TreeNode<NODE>[] {
             var list: TreeNode<NODE>[] = [];
 
             if (this.selected === true || selected === false) {
-                list.push(this);
+                if (this.getData() || empty === true) {
+                    list.push(this);
+                }
             }
 
             if (this.expanded === true || expanded === false) {
                 this.children.forEach((child) => {
-                    list = list.concat(child.treeToList(expanded, selected));
+                    list = list.concat(child.treeToList(empty, expanded, selected));
                 });
             }
 
@@ -113,8 +125,10 @@ module api.app.browse.treegrid {
         /*
          Maps Node's list to Item's list.
          */
-        treeToItemList(expanded: boolean = true, selected: boolean = false): NODE[] {
-            var list: NODE[] = this.treeToList(expanded, selected)
+        treeToItemList(empty: boolean = false,
+                       expanded: boolean = true,
+                       selected: boolean = false): NODE[] {
+            var list: NODE[] = this.treeToList(empty, expanded, selected)
                 .map((node) => {
                     return node.getData();
                 })

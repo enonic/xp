@@ -25,9 +25,9 @@ module api.app.browse.treegrid {
 
         private gridOptions:GridOptions;
 
-        private grid: Grid<NODE>;
+        private grid: Grid<TreeNode<NODE>>;
 
-        private gridData: DataView<NODE>;
+        private gridData: DataView<TreeNode<NODE>>;
 
         private root: TreeNode<NODE>;
 
@@ -45,21 +45,24 @@ module api.app.browse.treegrid {
             this.root = new TreeNode<NODE>();
             this.root.setExpanded(true);
 
-            this.gridData = new DataView<NODE>();
-            this.gridData.setFilter((item: NODE, root: TreeNode<NODE>) => {
-                var node = root.findNode(item);
-
-                return node ? node.isVisible() : false;
+            this.gridData = new DataView<TreeNode<NODE>>();
+            this.gridData.setFilter((node: TreeNode<NODE>) => {
+                return node.isVisible();
             });
 
             /*
-            Note: SlickGrid recompile filter method,
-            so all non-global variables will become undefined.
-            To pass a parameter, we need to use setFilterArgs() method.
+             Note: We are using a proxy class to handle items/nodes and
+             track the selection, expansion, etc.
+             To have access to the complex properties, that are not in the root
+             of the object, like `node.data.id`, we need to specify a custom
+             column value extractor.
              */
-            this.gridData.setFilterArgs(this.root);
+            function nodeExtractor(node, column) {
+                return node["data"][column.field];
+            }
 
             this.gridOptions = <GridOptions>{
+                dataItemColumnValueExtractor: nodeExtractor,
                 editable: false,
                 enableAsyncPostRender: true,
                 enableCellNavigation: true,
@@ -71,7 +74,7 @@ module api.app.browse.treegrid {
                 autoHeight: true
             };
 
-            this.grid = new Grid<NODE>(this.gridData, this.columns, this.gridOptions);
+            this.grid = new Grid<TreeNode<NODE>>(this.gridData, this.columns, this.gridOptions);
 
             // Custom row selection required for valid behaviour
             this.grid.setSelectionModel(new Slick.RowSelectionModel({selectActiveRow: false}));
@@ -86,13 +89,13 @@ module api.app.browse.treegrid {
                     var elem = new ElementHelper(event.target);
                     if (elem.hasClass("expand")) {
                         elem.removeClass("expand").addClass("collapse");
-                        var item = this.gridData.getItem(data.row);
-                        this.expandData(item);
+                        var node = this.gridData.getItem(data.row);
+                        this.expandNode(node);
                     } else if (elem.hasClass("collapse")) {
                         this.active = false;
                         elem.removeClass("collapse").addClass("expand");
-                        var item = this.gridData.getItem(data.row);
-                        this.collapseData(item);
+                        var node = this.gridData.getItem(data.row);
+                        this.collapseNode(node);
                     } else {
                         this.active = true;
                         this.grid.selectRow(data.row);
@@ -115,18 +118,17 @@ module api.app.browse.treegrid {
                 new KeyBinding('left', () => {
                     var selected = this.grid.getSelectedRows();
                     if (selected.length === 1) {
-                        var item = this.gridData.getItem(selected[0]);
-                        var node = item ? this.root.findNode(item) : undefined;
+                        var node = this.gridData.getItem(selected[0]);
                         if (node && this.active) {
                             if (node.isExpanded()) {
                                 this.active = false;
-                                this.collapseData(item);
+                                this.collapseNode(node);
                             } else if (node.getParent() !== this.root) {
+                                node = node.getParent();
                                 this.active = false;
-                                item = node.getParent().getData();
-                                var row = this.gridData.getRowById(item.getId());
+                                var row = this.gridData.getRowById(node.getId());
                                 this.grid.selectRow(row);
-                                this.collapseData(item);
+                                this.collapseNode(node);
                             }
                         }
                     }
@@ -134,13 +136,12 @@ module api.app.browse.treegrid {
                 new KeyBinding('right', () => {
                     var selected = this.grid.getSelectedRows();
                     if (selected.length === 1) {
-                        var item = this.gridData.getItem(selected[0]);
-                        var node = item ? this.root.findNode(item) : undefined;
-                        if (node && item.hasChildren()
+                        var node = this.gridData.getItem(selected[0]);
+                        if (node && node.getData().hasChildren()
                             && !node.isExpanded() &&  this.active) {
 
                             this.active = false;
-                            this.expandData(item);
+                            this.expandNode(node);
                         }
                     }
                 })
@@ -170,7 +171,7 @@ module api.app.browse.treegrid {
 
             this.appendChild(this.grid);
 
-            this.expandData();
+            this.expandNode();
 
             this.onShown(() => {
                 this.grid.resizeCanvas();
@@ -185,7 +186,7 @@ module api.app.browse.treegrid {
             });
         }
 
-        getGrid(): Grid<NODE> {
+        getGrid(): Grid<TreeNode<NODE>> {
             return this.grid;
         }
 
@@ -208,21 +209,18 @@ module api.app.browse.treegrid {
             return deferred.promise;
         }
 
-        setColumns(columns: GridColumn<NODE>[]) {
+        setColumns(columns: GridColumn<TreeNode<NODE>>[]) {
             if (columns.length > 0) {
                 var formatter = columns[0].formatter;
-                var toggleFormatter = (row: number, cell: number, value: any, columnDef: any, item: NODE) => {
-                    var node = this.root.findNode(item);
-
+                var toggleFormatter = (row: number, cell: number, value: any, columnDef: any, node: TreeNode<NODE>) => {
                     var toggleSpan = new api.dom.SpanEl("toggle icon icon-xsmall");
-                    if (item.hasChildren()) {
+                    if (node.getData().hasChildren()) {
                         var toggleClass = node.isExpanded() ? "collapse" : "expand";
                         toggleSpan.addClass(toggleClass);
                     }
-
                     toggleSpan.getEl().setMarginLeft(16 * (node.calcLevel() - 1) + "px");
 
-                    return toggleSpan.toString() + formatter(row, cell, value, columnDef, item);
+                    return toggleSpan.toString() + formatter(row, cell, value, columnDef, node.getData());
                 };
 
                 columns[0].formatter = toggleFormatter;
@@ -233,31 +231,33 @@ module api.app.browse.treegrid {
             this.grid.setColumns(this.columns);
         }
 
-        private initData(nodeDatas: NODE[]) {
-            this.gridData.setItems(nodeDatas, "id");
+        private initData(nodes: TreeNode<NODE>[]) {
+            this.gridData.setItems(nodes, "id");
         }
 
-        private expandData(nodeData?: NODE) {
-            var node: TreeNode<NODE> = nodeData ? this.root.findNode(nodeData) : this.root,
-                rootItemList: NODE[],
-                nodeItemList: NODE[];
+        private expandNode(node?: TreeNode<NODE>) {
+            node = node || this.root;
+
+            var parent = node.getData(),
+                rootList: TreeNode<NODE>[],
+                nodeList: TreeNode<NODE>[];
 
             if (node) {
                 node.setExpanded(true);
 
                 if (node.hasChildren()) {
-                    nodeItemList = node.treeToItemList();
-                    rootItemList = this.root.treeToItemList();
-                    this.initData(rootItemList);
-                    this.updateExpanded(node, nodeItemList, rootItemList);
+                    rootList = this.root.treeToList();
+                    nodeList = node.treeToList();
+                    this.initData(rootList);
+                    this.updateExpanded(node, nodeList, rootList);
                 } else {
-                    this.fetchChildren(nodeData)
+                    this.fetchChildren(parent)
                         .then((items: NODE[]) => {
                             node.setChildrenFromItems(items);
-                            nodeItemList = node.treeToItemList();
-                            rootItemList = this.root.treeToItemList();
-                            this.initData(rootItemList);
-                            this.updateExpanded(node, nodeItemList, rootItemList);
+                            rootList = this.root.treeToList();
+                            nodeList = node.treeToList();
+                            this.initData(rootList);
+                            this.updateExpanded(node, nodeList, rootList);
                         }).catch((reason: any) => {
                             api.DefaultErrorHandler.handle(reason);
                         }).finally(() => {
@@ -266,18 +266,20 @@ module api.app.browse.treegrid {
             }
         }
 
-        private updateExpanded(node: TreeNode<NODE>, nodeItemList: NODE[], rootItemList: NODE[]) {
-            var nodeRow = node.getData() ? this.gridData.getRowById(node.getData().getId()) : -1,
+        private updateExpanded(node: TreeNode<NODE>,
+                               nodeList: TreeNode<NODE>[],
+                               rootList: TreeNode<NODE>[]) {
+            var nodeRow = node.getData() ? this.gridData.getRowById(node.getId()) : -1,
                 expandedRows = [],
                 animatedRows = [];
 
-            nodeItemList.forEach((elem, index) => {
+            nodeList.forEach((elem, index) => {
                 if (index > 0) {
                     expandedRows.push(this.gridData.getRowById(elem.getId()));
                 }
             });
 
-            rootItemList.forEach((elem) => {
+            rootList.forEach((elem) => {
                 var row = this.gridData.getRowById(elem.getId());
                 if (row > nodeRow && expandedRows.indexOf(row) < 0) {
                     animatedRows.push(row);
@@ -293,20 +295,18 @@ module api.app.browse.treegrid {
             }, 350);
         }
 
-        private collapseData(nodeData: NODE) {
-            var node = this.root.findNode(nodeData),
+        private collapseNode(node: TreeNode<NODE>) {
+            var nodeRow = this.gridData.getRowById(node.getId()),
                 animatedRows = [],
                 collapsedRows = [];
 
-            var nodeRow = this.gridData.getRowById(node.getData().getId());
-
-            node.treeToItemList().forEach((elem, index) => {
+            node.treeToList().forEach((elem, index) => {
                 if (index > 0) {
                     collapsedRows.push(this.gridData.getRowById(elem.getId()));
                 }
             });
 
-            this.root.treeToItemList().forEach((elem) => {
+            this.root.treeToList().forEach((elem) => {
                 var row = this.gridData.getRowById(elem.getId());
                 if (row > nodeRow && collapsedRows.indexOf(row) < 0) {
                     animatedRows.push(row);

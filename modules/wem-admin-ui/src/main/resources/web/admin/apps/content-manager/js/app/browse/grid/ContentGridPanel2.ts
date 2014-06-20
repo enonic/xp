@@ -5,45 +5,45 @@ module app.browse.grid {
     import ContentSummary = api.content.ContentSummary;
     import ContentSummaryViewer = api.content.ContentSummaryViewer;
 
+    import TreeGrid = api.app.browse.treegrid.TreeGrid;
+    import DateTimeFormatter = api.app.browse.treegrid.DateTimeFormatter;
 
-    export class ContentGridPanel2 extends api.app.browse.treegrid.TreeGrid<ContentSummary> {
+
+    export class ContentGridPanel2 extends TreeGrid<ContentSummary> {
 
         constructor() {
             super({showToolbar: true}, "content-grid");
 
-            var nameFormatter = (row:number, cell:number, value:any, columnDef:any, item:ContentSummary) => {
+            var nameFormatter = (row: number, cell: number, value: any, columnDef: any, item: ContentSummary) => {
                 var contentSummaryViewer = new ContentSummaryViewer();
                 contentSummaryViewer.setObject(item);
                 return contentSummaryViewer.toString();
             };
 
-            var column1 = <GridColumn<ContentSummary>> {
+            // GridColumn<TreeNode<ContentSummary>> is a valid type
+            var column1 = <GridColumn<any>> {
                 name: "Name",
                 id: "displayName",
                 field: "displayName",
                 formatter: nameFormatter
             };
-            var column2 = <GridColumn<ContentSummary>> {
+            var column2 = <GridColumn<any>> {
                 name: "ModifiedTime",
                 id: "modifiedTime",
                 field: "modifiedTime",
                 cssClass: "modified",
                 minWidth: 150,
                 maxWidth: 170,
-                formatter: api.app.browse.grid2.DateTimeFormatter.format
+                formatter: DateTimeFormatter.format
             };
 
             this.setColumns([column1, column2]);
 
             this.getGrid().subscribeOnDblClick((event, data) => {
                 if (this.isActive()) {
-                    new EditContentEvent([this.getGrid().getDataView().getItem(data.row)]).fire();
+                    new EditContentEvent([this.getGrid().getDataView().getItem(data.row).getData()]).fire();
                 }
             });
-        }
-
-        hasChildren(data: ContentSummary): boolean {
-            return data.hasChildren();
         }
 
         fetchChildren(parent?: ContentSummary): Q.Promise<ContentSummary[]> {

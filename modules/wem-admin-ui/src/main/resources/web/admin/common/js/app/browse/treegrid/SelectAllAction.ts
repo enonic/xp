@@ -6,7 +6,7 @@ module api.app.browse.treegrid {
 
     export class SelectAllAction extends Action {
 
-        constructor(grid: Grid<Node>) {
+        constructor(grid: Grid<TreeNode<Node>>) {
             super("Select All");
             this.setEnabled(true);
             this.onExecuted(() => {
