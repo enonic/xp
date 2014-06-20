@@ -132,7 +132,7 @@ module api.app.browse.treegrid {
                     if (selected.length === 1) {
                         var item = this.gridData.getItem(selected[0]);
                         var node = item ? this.root.findNode(item) : undefined;
-                        if (node && this.hasChildren(item)
+                        if (node && item.hasChildren()
                             && !node.isExpanded() &&  this.active) {
 
                             this.active = false;
@@ -190,14 +190,6 @@ module api.app.browse.treegrid {
         }
 
         /*
-        Must be overridden in most cases.
-        Various items may have different determination of 'child'
-         */
-        hasChildren(data: NODE): boolean {
-            return false;
-        }
-
-        /*
          Must be overridden in most cases.
          Various items may have different requests
          */
@@ -215,7 +207,7 @@ module api.app.browse.treegrid {
                     var node = this.root.findNode(item);
 
                     var toggleSpan = new api.dom.SpanEl("toggle icon icon-xsmall");
-                    if (this.hasChildren(item)) {
+                    if (item.hasChildren()) {
                         var toggleClass = node.isExpanded() ? "collapse" : "expand";
                         toggleSpan.addClass(toggleClass);
                     }
