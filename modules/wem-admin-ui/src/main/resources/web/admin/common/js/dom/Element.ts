@@ -780,6 +780,63 @@ module api.dom {
             this.getEl().removeEventListener("scroll", listener);
         }
 
+        onDrag(listener: (event: Event) => void) {
+            this.getEl().addEventListener("drag", listener);
+        }
+
+        unDrag(listener: (event: Event) => void) {
+            this.getEl().removeEventListener("drag", listener);
+        }
+
+        onDragStart(listener: (event: Event) => void) {
+            this.getEl().addEventListener("dragstart", listener);
+        }
+
+        unDragStart(listener: (event: Event) => void) {
+            this.getEl().removeEventListener("dragstart", listener);
+        }
+
+        onDragEnter(listener: (event: Event) => void) {
+            this.getEl().addEventListener("dragenter", listener);
+        }
+
+        unDragEnter(listener: (event: Event) => void) {
+            this.getEl().removeEventListener("dragenter", listener);
+        }
+
+        onDragOver(listener: (event: Event) => void) {
+            this.getEl().addEventListener("dragover", listener);
+        }
+
+        unDragOver(listener: (event: Event) => void) {
+            this.getEl().removeEventListener("dragover", listener);
+        }
+
+        onDragLeave(listener: (event: Event) => void) {
+            this.getEl().addEventListener("dragleave", listener);
+        }
+
+        unDragLeave(listener: (event: Event) => void) {
+            this.getEl().removeEventListener("dragleave", listener);
+        }
+
+        onDrop(listener: (event: Event) => void) {
+            this.getEl().addEventListener("drop", listener);
+        }
+
+        unDrop(listener: (event: Event) => void) {
+            this.getEl().removeEventListener("drop", listener);
+        }
+
+        onDragEnd(listener: (event: Event) => void) {
+            this.getEl().addEventListener("dragend", listener);
+        }
+
+        unDragEnd(listener: (event: Event) => void) {
+            this.getEl().removeEventListener("dragend", listener);
+        }
+
+
         static fromHtmlElement(element: HTMLElement, loadExistingChildren: boolean = false, parent?: Element): Element {
             return new Element(new ElementFromHelperBuilder().
                 setHelper(new ElementHelper(element)).
