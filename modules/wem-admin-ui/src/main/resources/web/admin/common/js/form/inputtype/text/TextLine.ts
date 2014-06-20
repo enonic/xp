@@ -57,5 +57,5 @@ module api.form.inputtype.text {
         }
     }
 
-    api.form.inputtype.InputTypeManager.register("TextLine", TextLine);
+    api.form.inputtype.InputTypeManager.register(new api.Class("TextLine", TextLine));
 }

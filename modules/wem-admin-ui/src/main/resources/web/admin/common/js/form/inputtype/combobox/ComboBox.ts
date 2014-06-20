@@ -248,5 +248,5 @@ module api.form.inputtype.combobox {
 
     }
 
-    api.form.inputtype.InputTypeManager.register("ComboBox", ComboBox);
+    api.form.inputtype.InputTypeManager.register(new api.Class("ComboBox", ComboBox));
 }

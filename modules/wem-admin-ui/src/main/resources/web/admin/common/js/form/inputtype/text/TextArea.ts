@@ -51,5 +51,5 @@ module api.form.inputtype.text {
         }
     }
 
-    api.form.inputtype.InputTypeManager.register("TextArea", TextArea);
+    api.form.inputtype.InputTypeManager.register(new api.Class("TextArea", TextArea));
 }

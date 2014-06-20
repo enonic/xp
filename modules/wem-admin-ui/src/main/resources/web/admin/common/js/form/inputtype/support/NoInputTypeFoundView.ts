@@ -52,5 +52,5 @@ module api.form.inputtype.support {
         }
     }
 
-    api.form.inputtype.InputTypeManager.register("NoInputTypeFound", NoInputTypeFoundView);
+    api.form.inputtype.InputTypeManager.register(new api.Class("NoInputTypeFound", NoInputTypeFoundView));
 }

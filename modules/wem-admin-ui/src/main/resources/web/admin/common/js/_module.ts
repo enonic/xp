@@ -20,6 +20,7 @@
 
 ///<reference path='Equitable.ts' />
 ///<reference path='Cloneable.ts' />
+///<reference path='Class.ts' />
 ///<reference path='ObjectHelper.ts' />
 ///<reference path='Name.ts' />
 ///<reference path='Exception.ts' />

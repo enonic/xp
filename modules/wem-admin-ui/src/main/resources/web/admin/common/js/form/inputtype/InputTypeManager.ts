@@ -5,24 +5,24 @@ module api.form.inputtype {
      */
     export class InputTypeManager {
 
-        private static inputTypes:{ [index: string]: Function; } = {};
+        private static inputTypes: { [index: string]: api.Class; } = {};
 
-        static isRegistered(inputTypeName:string):boolean {
-            return InputTypeManager.inputTypes[inputTypeName] != undefined;
+        static isRegistered(inputTypeClassName: string): boolean {
+            return InputTypeManager.inputTypes[inputTypeClassName] != undefined;
         }
 
-        static register(inputTypeName:string, inputTypeClass:Function) {
+        static register(inputTypeClass: api.Class) {
 
-            if (!InputTypeManager.isRegistered(inputTypeName)) {
-                InputTypeManager.inputTypes[inputTypeName] = inputTypeClass;
+            if (!InputTypeManager.isRegistered(inputTypeClass.getName())) {
+                InputTypeManager.inputTypes[inputTypeClass.getName()] = inputTypeClass;
                 //console.log('Registered input type [' + inputTypeName + "]");
             }
             else {
-                throw new Error('Input type [' + inputTypeName + '] is already registered, unregister it first.');
+                throw new Error('Input type [' + inputTypeClass.getName() + '] is already registered, unregister it first.');
             }
         }
 
-        static unregister(inputTypeName:string) {
+        static unregister(inputTypeName: string) {
 
             if (InputTypeManager.isRegistered(inputTypeName)) {
                 InputTypeManager.inputTypes[inputTypeName] = undefined;
@@ -33,15 +33,14 @@ module api.form.inputtype {
             }
         }
 
-        static createView(inputTypeName:string, config?:InputTypeViewConfig<any>):InputTypeView {
+        static createView(inputTypeClassName: string, config?: InputTypeViewConfig<any>): InputTypeView {
 
-            if (InputTypeManager.isRegistered(inputTypeName)) {
-                var inputType = Object.create(InputTypeManager.inputTypes[inputTypeName].prototype);
-                inputType.constructor.call(inputType, config);
-                return inputType;
+            if (InputTypeManager.isRegistered(inputTypeClassName)) {
+                var inputTypeClass = InputTypeManager.inputTypes[inputTypeClassName];
+                return inputTypeClass.newInstance(config);
             }
             else {
-                throw new Error("Input type [" + inputTypeName + "] need to be registered first.");
+                throw new Error("Input type [" + inputTypeClassName + "] need to be registered first.");
             }
         }
     }

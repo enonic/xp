@@ -264,5 +264,5 @@ module api.content.inputtype.relationship {
 
     }
 
-    api.form.inputtype.InputTypeManager.register("Relationship", Relationship);
+    api.form.inputtype.InputTypeManager.register(new api.Class("Relationship", Relationship));
 }
