@@ -201,7 +201,7 @@ module api.app.browse.treegrid {
          Must be overridden in most cases.
          Various items may have different requests
          */
-        listRequest(data?: NODE): Q.Promise<NODE[]> {
+        fetchChildren(parent?: NODE): Q.Promise<NODE[]> {
             var deferred = Q.defer<NODE[]>();
             // Empty logic
             deferred.resolve(null);
@@ -251,7 +251,7 @@ module api.app.browse.treegrid {
                     this.initData(rootItemList);
                     this.updateExpanded(node, nodeItemList, rootItemList);
                 } else {
-                    this.listRequest(nodeData)
+                    this.fetchChildren(nodeData)
                         .then((items: NODE[]) => {
                             node.setChildrenFromItems(items);
                             nodeItemList = node.treeToItemList();

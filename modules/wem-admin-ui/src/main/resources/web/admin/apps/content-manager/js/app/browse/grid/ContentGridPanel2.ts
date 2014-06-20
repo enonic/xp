@@ -46,10 +46,9 @@ module app.browse.grid {
             return data.hasChildren();
         }
 
-        listRequest(item?:ContentSummary):Q.Promise<ContentSummary[]> {
-            var id = item ? item.getId() : "";
-
-            return new api.content.ListContentByIdRequest(id).sendAndParse();
+        fetchChildren(parent?: ContentSummary): Q.Promise<ContentSummary[]> {
+            var parentContentId = parent ? parent.getId() : "";
+            return new api.content.ListContentByIdRequest(parentContentId).sendAndParse();
         }
     }
 }
