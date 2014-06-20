@@ -1,5 +1,7 @@
 module api.liveedit {
 
+    import PageComponent = api.content.page.PageComponent;
+
     export interface ElementDimensions {
         top: number;
         left: number;
@@ -316,6 +318,22 @@ module api.liveedit {
         toItemViewArray(): ItemView[] {
 
             return [this];
+        }
+
+        toString(): string {
+
+            var s = "id = " + this.getItemId() + ", type = '" + this.type.getShortName() + "'";
+            if (api.ObjectHelper.iFrameSafeInstanceOf(this, PageComponentView)) {
+                var pageComponentView = <PageComponentView<PageComponent>>this;
+                if (pageComponentView.hasComponentPath()) {
+                    s += ", pageComponentPath = '" + pageComponentView.getComponentPath().toString() + "'";
+                }
+            }
+            else if (api.ObjectHelper.iFrameSafeInstanceOf(this, RegionView)) {
+                var regionView = <RegionView>this;
+                s += ", regionPath = '" + regionView.getRegionPath().toString() + "'";
+            }
+            return s;
         }
 
         private getDimensionsFromElement(): ElementDimensions {
