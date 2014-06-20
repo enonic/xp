@@ -1,7 +1,9 @@
 .tree-grid {
   position: static;
   height: 100%;
-  padding-top: 30px;
+  &:not(.no-toolbar) {
+    padding-top: 30px;
+  }
 
   .toolbar {
     position: absolute;

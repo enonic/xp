@@ -319,7 +319,6 @@ module app.wizard {
             this.previewAction.setVisible(false);
             this.contextWindowToggler.setVisible(false);
             this.cycleViewModeButton.setVisible(false);
-            //this.publishAction.setEnabled(true);
 
             new IsRenderableRequest(content.getContentId()).sendAndParse().
                 then((renderable: boolean): void => {

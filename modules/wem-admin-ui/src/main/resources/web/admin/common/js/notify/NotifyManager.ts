@@ -28,6 +28,11 @@ module api.notify {
             return this.notify(feedback);
         }
 
+        showSuccess(message: string, autoHide: boolean = true): string {
+            var feedback = Message.newSuccess(message, autoHide);
+            return this.notify(feedback);
+        }
+
         showError(message: string, autoHide: boolean = true): string {
             var error = Message.newError(message, autoHide);
             return this.notify(error)

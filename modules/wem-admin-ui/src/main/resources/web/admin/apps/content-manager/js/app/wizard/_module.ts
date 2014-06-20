@@ -8,3 +8,4 @@
 ///<reference path='ContentWizardPanelParams.ts' />
 ///<reference path='ContentWizardEvents.ts' />
 ///<reference path='PublishContentDialog.ts' />
+///<reference path='CompareContentGrid.ts' />

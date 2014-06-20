@@ -3,7 +3,7 @@ module app.wizard {
 
         private publishAction:PublishAction;
 
-        private itemList:PublishDialogItemList = new PublishDialogItemList();
+        private grid:CompareContentGrid;
         private content:api.content.Content;
         private compareResult:api.content.CompareContentResult;
 
@@ -12,8 +12,6 @@ module app.wizard {
                 title: new api.ui.dialog.ModalDialogHeader("Publish Wizard")
             });
             this.getEl().addClass("publish-content-dialog");
-
-            this.appendChildToContentPanel(this.itemList);
 
             this.publishAction = new PublishAction();
 
@@ -27,7 +25,7 @@ module app.wizard {
 
             this.publishAction.onExecuted(() => {
                 new api.content.PublishContentRequest(this.content.getId()).sendAndParse().done((content:api.content.Content) => {
-                    api.notify.showFeedback('Content [' + content.getDisplayName() + '] published!');
+                    api.notify.showSuccess('Content [' + content.getDisplayName() + '] published!');
                     this.close();
                 });
 
@@ -35,19 +33,14 @@ module app.wizard {
 
             OpenPublishDialogEvent.on((event) => {
                 this.content = event.getContent();
-                new api.content.CompareContentRequest(this.content.getContentId()).sendAndParse().done((result) => {
-                    console.log("compareContentRequest", arguments);
-                    this.compareResult = result;
-                    this.open();
-                });
-
+                this.grid = new CompareContentGrid(event.getContent());
+                this.open();
             });
+
         }
 
         open() {
-            var publishItem = new PublishDialogItemComponent(this.content, this.compareResult);
-            this.itemList.clear();
-            this.itemList.appendChild(publishItem);
+            this.appendChildToContentPanel(this.grid);
             super.open();
         }
 
@@ -57,38 +50,9 @@ module app.wizard {
         }
 
         close() {
+            this.removeChildFromContentPanel(this.grid);
             super.close();
             this.remove();
-        }
-    }
-
-    class PublishDialogItemList extends api.dom.DivEl {
-        constructor() {
-            super();
-            this.getEl().addClass("item-list");
-        }
-
-        clear() {
-            this.removeChildren();
-        }
-    }
-
-
-    class PublishDialogItemComponent extends api.dom.DivEl {
-        constructor(content: api.content.Content, compareResult: api.content.CompareContentResult) {
-            super();
-            this.getEl().addClass("item");
-
-            var icon = new api.dom.ImgEl(content.getIconUrl());
-            this.appendChild(icon);
-
-            var displayName = new api.dom.H4El();
-            displayName.getEl().setInnerHtml(content.getDisplayName());
-            this.appendChild(displayName);
-
-            var compareResultEl = new api.dom.DivEl("staus");
-            compareResultEl.getEl().setInnerHtml(""+api.content.CompareStatus[compareResult.compareStatus]);
-            this.appendChild(compareResultEl);
         }
     }
 

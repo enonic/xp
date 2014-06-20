@@ -15,6 +15,10 @@ module api.app.browse.treegrid {
     import ContentSummary = api.content.ContentSummary;
     import ContentSummaryViewer = api.content.ContentSummaryViewer;
 
+    export interface TreeGridParams {
+        showToolbar?:boolean;
+    }
+
     export class TreeGrid<NODE extends api.node.Node> extends api.ui.Panel {
 
         private columns: GridColumn<NODE>[] = [];
@@ -33,7 +37,7 @@ module api.app.browse.treegrid {
 
         private active:boolean;
 
-        constructor(classes:string = "") {
+        constructor(params:TreeGridParams, classes:string = "") {
 
             super("tree-grid " + classes.trim());
 
@@ -156,9 +160,13 @@ module api.app.browse.treegrid {
 
             var actions = TreeGridActions.init(this.grid);
 
-            this.toolbar = new TreeGridToolbar(actions);
+            if (params.showToolbar) {
+                this.toolbar = new TreeGridToolbar(actions);
+                this.appendChild(this.toolbar);
+            } else {
+                this.addClass("no-toolbar");
+            }
 
-            this.appendChild(this.toolbar);
 
             this.appendChild(this.grid);
 

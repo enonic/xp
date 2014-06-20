@@ -9,7 +9,7 @@ module app.browse.grid {
     export class ContentGridPanel2 extends api.app.browse.treegrid.TreeGrid<ContentSummary> {
 
         constructor() {
-            super("content-grid");
+            super({showToolbar: true}, "content-grid");
 
             var nameFormatter = (row:number, cell:number, value:any, columnDef:any, item:ContentSummary) => {
                 var contentSummaryViewer = new ContentSummaryViewer();
