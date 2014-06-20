@@ -268,23 +268,23 @@ module api.app.browse.treegrid {
 
         private updateExpanded(node: TreeNode<NODE>, nodeItemList: NODE[], rootItemList: NODE[]) {
             var nodeRow = node.getData() ? this.gridData.getRowById(node.getData().getId()) : -1,
-                expanded = [],
-                animated = [];
+                expandedRows = [],
+                animatedRows = [];
 
             nodeItemList.forEach((elem, index) => {
                 if (index > 0) {
-                    expanded.push(this.gridData.getRowById(elem.getId()));
+                    expandedRows.push(this.gridData.getRowById(elem.getId()));
                 }
             });
 
             rootItemList.forEach((elem) => {
                 var row = this.gridData.getRowById(elem.getId());
-                if (row > nodeRow && expanded.indexOf(row) < 0) {
-                    animated.push(row);
+                if (row > nodeRow && expandedRows.indexOf(row) < 0) {
+                    animatedRows.push(row);
                 }
             });
 
-            this.animateExpand(expanded, animated);
+            this.animateExpand(expandedRows, animatedRows);
 
             setTimeout(() => {
                 this.resetZIndexes();
@@ -295,28 +295,28 @@ module api.app.browse.treegrid {
 
         private collapseData(nodeData: NODE) {
             var node = this.root.findNode(nodeData),
-                animated = [],
-                collapsed = [];
+                animatedRows = [],
+                collapsedRows = [];
 
             var nodeRow = this.gridData.getRowById(node.getData().getId());
 
             node.treeToItemList().forEach((elem, index) => {
                 if (index > 0) {
-                    collapsed.push(this.gridData.getRowById(elem.getId()));
+                    collapsedRows.push(this.gridData.getRowById(elem.getId()));
                 }
             });
 
             this.root.treeToItemList().forEach((elem) => {
                 var row = this.gridData.getRowById(elem.getId());
-                if (row > nodeRow && collapsed.indexOf(row) < 0) {
-                    animated.push(row);
+                if (row > nodeRow && collapsedRows.indexOf(row) < 0) {
+                    animatedRows.push(row);
                 }
             });
 
             node.setExpanded(false);
 
             // Rows can have different order in HTML and Items array
-            this.animateCollapse(collapsed, animated);
+            this.animateCollapse(collapsedRows, animatedRows);
 
             // Update data after animation
             setTimeout(() => {
@@ -327,7 +327,7 @@ module api.app.browse.treegrid {
             }, 350);
         }
 
-        private animateCollapse(collapsed:number[], animated:number[]) {
+        private animateCollapse(collapsedRows: number[], animatedRows: number[]) {
             // update canvas content
             this.canvasElement = Element.fromHtmlElement(this.canvasElement.getHTMLElement(), true);
 
@@ -338,19 +338,19 @@ module api.app.browse.treegrid {
                 return left > right ? 1 : (left < right) ? -1 : 0;
             });
 
-            collapsed.forEach((row) => {
+            collapsedRows.forEach((row) => {
                 var elem = children[row].getEl();
                 elem.setZindex(-1);
-                elem.setMarginTop(-45 * collapsed.length + "px");
+                elem.setMarginTop(-45 * collapsedRows.length + "px");
             });
 
-            animated.forEach((row) => {
+            animatedRows.forEach((row) => {
                 var elem = children[row].getEl();
-                elem.setMarginTop(-45 * collapsed.length + "px");
+                elem.setMarginTop(-45 * collapsedRows.length + "px");
             });
         }
 
-        private animateExpand(expanded:number[], animated:number[]) {
+        private animateExpand(expandedRows: number[], animated: number[]) {
             // update canvas content
             this.canvasElement = Element.fromHtmlElement(this.canvasElement.getHTMLElement(), true);
 
@@ -362,21 +362,21 @@ module api.app.browse.treegrid {
 
             this.getEl().addClass("quick");
 
-            expanded.forEach((row) => {
+            expandedRows.forEach((row) => {
                 var elem = children[row].getEl();
                 elem.setZindex(-1);
-                elem.setMarginTop(-45 * expanded.length + "px");
+                elem.setMarginTop(-45 * expandedRows.length + "px");
             });
 
             animated.forEach((row) => {
                 var elem = children[row].getEl();
-                elem.setMarginTop(-45 * expanded.length + "px");
+                elem.setMarginTop(-45 * expandedRows.length + "px");
             });
 
             setTimeout(() => {
                 this.getEl().removeClass("quick");
 
-                expanded.forEach((row) => {
+                expandedRows.forEach((row) => {
                     var elem = children[row].getEl();
                     elem.setZindex(-1);
                     elem.setMarginTop(0 + "px");
