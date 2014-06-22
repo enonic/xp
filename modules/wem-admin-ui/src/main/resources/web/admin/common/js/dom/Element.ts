@@ -264,6 +264,22 @@ module api.dom {
             return this.el;
         }
 
+        traverse(handler: (el: Element) => void) {
+            this.getChildren().forEach((el: Element)=> {
+                handler(el);
+                el.traverse(handler);
+            });
+        }
+
+        setDraggable(value: boolean) {
+            if (value) {
+                this.getEl().setAttribute("draggable", "true");
+            }
+            else {
+                this.getEl().setAttribute("draggable", "false");
+            }
+        }
+
         giveFocus(): boolean {
             if (!this.isVisible()) {
                 return false;
