@@ -66,6 +66,48 @@ module api.liveedit {
             this.parsePageComponentViews();
 
             this.refreshEmpty();
+
+            // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
+            //this.onDragOver(this.handleDragOver.bind(this));
+            //this.onDragEnter(this.handleDragEnter.bind(this));
+            //this.onDragLeave(this.handleDragLeave.bind(this));
+            //this.onDrop(this.handleDrop.bind(this));
+        }
+
+        // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
+        private handleDragEnter(event: DragEvent) {
+            if (event.target === this.getHTMLElement()) {
+                console.log("ItemView.handleDragEnter", event, this.getHTMLElement());
+            }
+        }
+
+        // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
+        private handleDragLeave(event: DragEvent) {
+            if (event.target === this.getHTMLElement()) {
+                console.log("ItemView.handleDragLeave", event, this.getHTMLElement());
+            }
+        }
+
+        // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
+        private handleDragOver(event: DragEvent) {
+            //var itemId = ItemView.parseItemId(<HTMLElement>event.target);
+            if (event.target === this.getHTMLElement()) {
+                console.log("RegionView[" + this.toString() + "].handleDragOver: ", event.target, event.target);
+                event.preventDefault();
+            }
+        }
+
+        // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
+        private handleDrop(event: DragEvent) {
+            if (event.target === this.getHTMLElement()) {
+                //var itemId = ItemView.parseItemId(<HTMLElement>event.target);
+                console.log("RegionView[" + this.toString() + "].handleDrop: ", event.target, this.getHTMLElement());
+
+                event.preventDefault();
+
+                var data = event.dataTransfer.getData("Text");
+                //event.target.appendChild(document.getElementById(data));
+            }
         }
 
         getParentItemView(): ItemView {
@@ -77,9 +119,11 @@ module api.liveedit {
             if (region) {
                 this.setTooltipObject(region);
 
-                var components = region.getComponents();
-                this.getPageComponentViews().forEach((view: PageComponentView<PageComponent>, index: number) => {
-                    var pageComponent = components[index];
+                var pageComponents = region.getComponents();
+                var pageComponentViews = this.getPageComponentViews();
+
+                pageComponentViews.forEach((view: PageComponentView<PageComponent>, index: number) => {
+                    var pageComponent = pageComponents[index];
                     view.setPageComponent(pageComponent);
                 });
             }
