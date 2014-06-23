@@ -12,7 +12,7 @@ import org.junit.rules.TemporaryFolder;
 
 import static org.junit.Assert.*;
 
-public class HomeResolverTest
+public class HomeResolverImplTest
     implements HomeConstants
 {
     @Rule
@@ -97,7 +97,7 @@ public class HomeResolverTest
             env.put( HOME_DIR_ENV, envValue );
         }
 
-        final HomeResolver resolver = new HomeResolver();
+        final HomeResolverImpl resolver = new HomeResolverImpl();
         resolver.addSystemProperties( props );
         resolver.addEnvironmentVariables( env );
         return resolver.resolve();
