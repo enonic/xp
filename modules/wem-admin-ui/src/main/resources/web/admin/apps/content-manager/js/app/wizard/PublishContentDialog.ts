@@ -2,6 +2,7 @@ module app.wizard {
     export class PublishContentDialog extends api.ui.dialog.ModalDialog {
 
         private publishAction:PublishAction;
+        private scheduleAction:ScheduleAction;
 
         private grid:CompareContentGrid;
         private content:api.content.Content;
@@ -14,8 +15,10 @@ module app.wizard {
             this.getEl().addClass("publish-content-dialog");
 
             this.publishAction = new PublishAction();
+            this.scheduleAction = new ScheduleAction();
 
             this.addAction(this.publishAction);
+            this.addAction(this.scheduleAction);
 
             this.setCancelAction(new api.ui.Action("Cancel", "esc"));
 
@@ -76,6 +79,12 @@ module app.wizard {
 
             }
             this.setLabel(PublishAction.BASE_STRING + " (" + amount +")")
+        }
+    }
+
+    export class ScheduleAction extends api.ui.Action {
+        constructor() {
+            super("Schedule");
         }
     }
 }
