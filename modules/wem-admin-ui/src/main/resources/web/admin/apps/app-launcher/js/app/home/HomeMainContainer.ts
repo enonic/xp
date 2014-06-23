@@ -29,8 +29,7 @@ module app.home {
             this.logoutButton.setClass("button logout-button");
 
             this.logoutButton.onClicked((event) => {
-                api.util.CookieHelper.removeCookie('dummy.userIsLoggedIn');
-                this.centerPanel.showLoginPanel();
+                new LogOutEvent().fire();
             });
 
             this.setBackgroundImgUrl(this.backgroundImgUrl);
@@ -54,6 +53,13 @@ module app.home {
             this.centerPanel.addToLoginPanel(this.linksContainer);
 
             this.appendChild(this.centerPanel);
+
+            LogOutEvent.on(() => {
+                api.util.CookieHelper.removeCookie('dummy.userIsLoggedIn');
+                this.centerPanel.showLoginPanel();
+                this.setBackgroundImgUrl(this.backgroundImgUrl);
+                this.returnButton.hide();
+            });
 
         }
 

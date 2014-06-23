@@ -62,6 +62,12 @@ module app.launcher {
                 this.homeMainContainer.hide();
                 hasher.setHash(this.currentApplicationHash);
             });
+
+            app.home.LogOutEvent.on(() => {
+                Applications.getAllApps().forEach((app: api.app.Application) => {
+                    app.getAppFrame().remove();
+                });
+            });
         }
 
         loadApplication(application: api.app.Application) {
