@@ -161,6 +161,10 @@
       <id>enonic.repo</id>
       <url>http://repo.enonic.com/maven</url>
     </repository>
+    <repository>
+      <id>restlet.repo</id>
+      <url>http://maven.restlet.org</url>
+    </repository>
   </repositories>
 
 </project>

@@ -62,6 +62,16 @@
       <artifactId>jersey-servlet</artifactId>
       <version>1.17.1</version>
     </dependency>
+    <dependency>
+      <groupId>org.restlet.jee</groupId>
+      <artifactId>org.restlet</artifactId>
+      <version>2.3-M2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.restlet.jee</groupId>
+      <artifactId>org.restlet.ext.servlet</artifactId>
+      <version>2.3-M2</version>
+    </dependency>
   </dependencies>
 
   <build>
