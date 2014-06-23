@@ -10,7 +10,7 @@ public class ContentCompareResultJson
 
     public ContentCompareResultJson( final ContentCompareResult contentCompareResult )
     {
-        this.compareStatus = contentCompareResult.getCompareStatus().getState().name();
+        this.compareStatus = contentCompareResult.getCompareStatus().getStatus().name();
         this.id = contentCompareResult.getContentId().toString();
     }
 

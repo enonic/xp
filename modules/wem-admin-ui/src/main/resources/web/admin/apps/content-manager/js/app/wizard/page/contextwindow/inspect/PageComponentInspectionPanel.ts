@@ -29,12 +29,9 @@ module app.wizard.page.contextwindow.inspect {
 
             this.appendChild(this.namesAndIcon);
 
-            var nameHeader = new api.dom.H6El();
-            nameHeader.setText("Name:");
-            nameHeader.addClass("component-name-header");
-            this.appendChild(nameHeader);
-
             this.nameInput = new api.ui.TextInput('component-name').setValue('');
+            var nameLabel = new api.dom.LabelEl("Name", this.nameInput, "component-name-header");
+            this.appendChild(nameLabel);
 
             this.appendChild(this.nameInput);
 

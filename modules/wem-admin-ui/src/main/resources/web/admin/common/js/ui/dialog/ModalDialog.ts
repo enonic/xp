@@ -53,6 +53,10 @@ module api.ui.dialog {
             this.contentPanel.appendChild(child);
         }
 
+        removeChildFromContentPanel(child: api.dom.Element) {
+            this.contentPanel.removeChild(child);
+        }
+
         addAction(action: api.ui.Action, useDefault?: boolean, prepend?: boolean) {
             this.actions.push(action);
             this.buttonRow.addAction(action, useDefault, prepend);

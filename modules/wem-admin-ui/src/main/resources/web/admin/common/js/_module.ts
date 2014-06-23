@@ -20,10 +20,12 @@
 
 ///<reference path='Equitable.ts' />
 ///<reference path='Cloneable.ts' />
+///<reference path='Class.ts' />
 ///<reference path='ObjectHelper.ts' />
 ///<reference path='Name.ts' />
 ///<reference path='Exception.ts' />
 ///<reference path='DefaultErrorHandler.ts' />
+///<reference path='PropertyChangedEvent.ts' />
 
 ///<reference path='util/_module.ts' />
 ///<reference path='util/loader/event/_module.ts' />

@@ -1,5 +1,6 @@
 package com.enonic.wem.admin.rest.exception;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
@@ -22,6 +23,11 @@ public final class DefaultExceptionMapper
     @Override
     public Response toResponse( final Throwable cause )
     {
+        if ( cause instanceof WebApplicationException )
+        {
+            return ( (WebApplicationException) cause ).getResponse();
+        }
+
         LOG.warn( cause.getMessage(), cause );
         return Response.status( Response.Status.INTERNAL_SERVER_ERROR ).type( MediaType.APPLICATION_JSON_TYPE ).entity(
             new ErrorJson( cause.getMessage() ) ).build();

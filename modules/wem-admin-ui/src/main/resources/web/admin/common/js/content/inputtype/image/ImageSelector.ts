@@ -79,7 +79,7 @@ module api.content.inputtype.image {
                 this.createImageContent(event.getUploadedItem());
             });
 
-            ResponsiveManager.onAvailableSizeChanged(this, () => {
+            ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.ResponsiveItem) => {
                 this.availableSizeChanged();
             });
 
@@ -427,6 +427,6 @@ module api.content.inputtype.image {
         }
     }
 
-    api.form.inputtype.InputTypeManager.register("ImageSelector", ImageSelector);
+    api.form.inputtype.InputTypeManager.register(new api.Class("ImageSelector", ImageSelector));
 
 }

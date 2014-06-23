@@ -16,12 +16,12 @@ module api.ui {
             this.options = options;
             if (options) {
                 if (options.draggable) {
-                    this.setDraggable();
+                    this.setJQueryDraggable();
                 }
             }
         }
 
-        private setDraggable() {
+        private setJQueryDraggable() {
             this.draggable = true;
             if (this.draggable) {
                 wemjq(this.getHTMLElement()).draggable(this.options.draggableOptions);

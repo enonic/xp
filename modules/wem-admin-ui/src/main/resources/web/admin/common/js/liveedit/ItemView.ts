@@ -1,5 +1,7 @@
 module api.liveedit {
 
+    import PageComponent = api.content.page.PageComponent;
+
     export interface ElementDimensions {
         top: number;
         left: number;
@@ -61,6 +63,12 @@ module api.liveedit {
 
         private tooltipViewer: api.ui.Viewer<any>;
 
+        private mouseOver: boolean;
+
+        private mouseOverViewListeners: {(): void} [];
+
+        private mouseOutViewListeners: {(): void} [];
+
         constructor(builder: ItemViewBuilder) {
             api.util.assertNotNull(builder.type, "type cannot be null");
 
@@ -85,6 +93,10 @@ module api.liveedit {
             }
             super(props);
 
+            this.mouseOver = false;
+            this.mouseOverViewListeners = [];
+            this.mouseOutViewListeners = [];
+
             this.setItemId(builder.itemViewIdProducer.next());
 
             if (!builder.element) {
@@ -106,6 +118,100 @@ module api.liveedit {
             }
 
             this.setElementDimensions(this.getDimensionsFromElement());
+
+            this.onMouseEnter(this.handleMouseEnter.bind(this));
+            this.onMouseLeave(this.handleMouseLeave.bind(this));
+            this.onClicked(this.handleClick.bind(this));
+            this.onContextMenu(this.handleClick.bind(this));
+            this.onTouchStart(this.handleClick.bind(this));
+
+        }
+
+        /**
+         * Process 'mouseenter' event to track when mouse moves between ItemView's.
+         * ItemView notifies that mouse is over it if mouse moves from parent or child ItemView to this one.
+         *
+         * Method manages two cases:
+         * 1. 'mouseenter' was triggered on parent ItemView and then it is triggered on its child ItemView.
+         *    - parent has 'mouseOver' state set to 'true';
+         *    - the ItemView calls parent.notifyMouseOut(), parent is still in 'mouseOver' state;
+         *    - the ItemView receive 'mouseOver' state;
+         *    - the ItemView notifies about mouseOver event;
+         * 2. 'mouseenter' was triggered on child ItemView before it has been triggered on parent ItemView.
+         *    (This occurs when child ItemView is adjacent to its parent's edge.)
+         *    - direct parent hasn't received 'mouseOver' state yet;
+         *    - look up for the first parent ItemView with 'mouseOver' state, it is ItemView the mouse came from;
+         *    - the parent with 'mouseOver' state calls notifyMouseOut();
+         *    - go to the previous parent, give it 'mouseOver' state, call notifyMouseOver() and notifyMouseOut() events,
+         *      repeat until current ItemView reached;
+         *    - set 'mouseOver' state to this ItemView;
+         *    - notify about mouseOver event for this ItemView;
+         *
+         * @param event browser MouseEvent
+         */
+        private handleMouseEnter(event: MouseEvent) {
+            // If ItemView has 'mouseOver' state before it has received 'mouseenter' event,
+            // then 'mouseenter' event has already occurred on child ItemView
+            // and child has already called notifyMouseOver and notifyMouseOut for this ItemView.
+            // No need to process this event.
+            if (this.mouseOver) {
+                return;
+            }
+
+            // Look up for the parent ItemView with 'mouseOver' state.
+            // It is direct parent for case 1 or some parent up to the PageView for case 2.
+            // Parents are stored to the stack to manage their state and triger events for them further.
+            var parentsStack = [];
+            for (var parent = this.parentItemView; parent; parent = parent.parentItemView) {
+                parentsStack.push(parent);
+                if (parent.mouseOver) {
+                    break;
+                }
+            }
+
+            // Stack of parents elements contains single parent element for case 1 or
+            // all parents with state 'mouseOver' set to 'false' and first one with 'mouseOver' state.
+            // If parent has 'mouseOver' state, notify that mouse is moved out this parent.
+            // If parent isn't in 'mouseOver' state, turn it on and notify the parent was entered and left.
+            parentsStack.reverse().forEach((view: ItemView) => {
+                if (view.mouseOver) {
+                    view.notifyMouseOutView();
+                } else {
+                    view.mouseOver = true;
+                    view.notifyMouseOverView();
+                    view.notifyMouseOutView();
+                }
+            });
+
+            // Turn on 'mouseOver' state for this element and notify it entered.
+            this.mouseOver = true;
+            this.notifyMouseOverView();
+        }
+
+        /**
+         * Process 'mouseleave' event to track when mouse moves between ItemView's.
+         * ItemView notifies that mouse left it when mouse moves to its parent or child ItemView.
+         *
+         * 'mouseleave' event is always triggered on child element before it has been triggered on parent.
+         *
+         * @param event browser MouseEvent
+         */
+        private handleMouseLeave(event: MouseEvent) {
+            // Turn of 'mouseOver' state and notify ItemVeiw was left.
+            this.mouseOver = false;
+            this.notifyMouseOutView();
+
+            // Notify parent ItemView is entered.
+            if (this.parentItemView) {
+                this.parentItemView.notifyMouseOverView();
+            }
+        }
+
+        private handleClick(event: MouseEvent) {
+            event.stopPropagation();
+            event.preventDefault();
+
+            this.select(!this.isEmpty() ? { x: event.pageX, y: event.pageY } : null);
         }
 
         getItemViewIdProducer(): ItemViewIdProducer {
@@ -214,6 +320,22 @@ module api.liveedit {
             return [this];
         }
 
+        toString(): string {
+
+            var s = "id = " + this.getItemId() + ", type = '" + this.type.getShortName() + "'";
+            if (api.ObjectHelper.iFrameSafeInstanceOf(this, PageComponentView)) {
+                var pageComponentView = <PageComponentView<PageComponent>>this;
+                if (pageComponentView.hasComponentPath()) {
+                    s += ", pageComponentPath = '" + pageComponentView.getComponentPath().toString() + "'";
+                }
+            }
+            else if (api.ObjectHelper.iFrameSafeInstanceOf(this, RegionView)) {
+                var regionView = <RegionView>this;
+                s += ", regionPath = '" + regionView.getRegionPath().toString() + "'";
+            }
+            return s;
+        }
+
         private getDimensionsFromElement(): ElementDimensions {
             var cmp: JQuery = this.getElement();
             var offset = cmp.offset();
@@ -250,6 +372,30 @@ module api.liveedit {
                 previous = previous.getPrevious();
             }
             return previous;
+        }
+
+        onMouseOverView(listener: () => void) {
+            this.mouseOverViewListeners.push(listener);
+        }
+
+        unMouseOverView(listener: () => void) {
+            this.mouseOverViewListeners = this.mouseOverViewListeners.filter((current) => (current != listener));
+        }
+
+        private notifyMouseOverView() {
+            this.mouseOverViewListeners.forEach((listener: () => void) => listener());
+        }
+
+        onMouseOutView(listener: () => void) {
+            this.mouseOutViewListeners.push(listener);
+        }
+
+        unMouseOutView(listener: () => void) {
+            this.mouseOutViewListeners = this.mouseOutViewListeners.filter((current) => (current != listener));
+        }
+
+        private notifyMouseOutView() {
+            this.mouseOutViewListeners.forEach((listener: () => void) => listener());
         }
     }
 }

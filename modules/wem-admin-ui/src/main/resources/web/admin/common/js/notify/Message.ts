@@ -4,7 +4,8 @@ module api.notify {
         INFO,
         ERROR,
         WARNING,
-        ACTION
+        ACTION,
+        SUCCESS
     }
 
     export class Action {
@@ -56,6 +57,10 @@ module api.notify {
 
         addAction(name: string, handler: () => void) {
             this.actions.push(new Action(name, handler));
+        }
+
+        static newSuccess(text: string, autoHide: boolean = true): Message {
+            return new Message(Type.SUCCESS, text, autoHide);
         }
 
         static newInfo(text: string, autoHide: boolean = true): Message {

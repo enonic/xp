@@ -2,29 +2,16 @@ module api.ui {
 
     export class ResponsiveItem {
 
-        // Global responsive item properties
-        private static sizeRanges = [
-            ResponsiveRanges._0_240,    // none (necessary for valid check)
-            ResponsiveRanges._240_360,     // mobile vertical
-            ResponsiveRanges._360_540,    // mobile horizontal
-            ResponsiveRanges._540_720,    // Phablet
-            ResponsiveRanges._720_960,    // Tablet vertical
-            ResponsiveRanges._960_1200,    // Tablet horizontal
-            ResponsiveRanges._1200_1380,    // 13"
-            ResponsiveRanges._1380_1620,    // 15"
-            ResponsiveRanges._1620_1920,    // TV
-            ResponsiveRanges._1920_UP // Monitor
-        ];
-
         private element: api.dom.Element;
 
-        private rangeSize: ResponsiveRange;     // Current layoutRange with class
+        private rangeSize: ResponsiveRange; // Current layoutRange with class
 
-        private rangeValue: number;             // Range (width) value of the previous state
+        private rangeValue: number;         // Range (width) value of the previous state
 
-        private handle: Function;               // Additional handler on update
+        private handle: Function;           // Additional handler on update
 
-        constructor(element: api.dom.Element, handler: Function = (() => {})) {
+        constructor(element: api.dom.Element,
+                    handler: (item: ResponsiveItem) => void = ((item: ResponsiveItem) => {})) {
             this.element = element;
             this.rangeValue = this.element.getEl().getWidthWithBorder();
             this.handle = handler;
@@ -32,9 +19,10 @@ module api.ui {
         }
 
         private fitToRange() {
-            for (var i = 0; i < ResponsiveItem.sizeRanges.length; i++) {
-                if (ResponsiveItem.sizeRanges[i].isFit(this.rangeValue)) {
-                    this.rangeSize = ResponsiveItem.sizeRanges[i];
+            for (var key in ResponsiveRanges) {
+                var range = ResponsiveRanges[key];
+                if (range && (range instanceof ResponsiveRange) && range.isFit(this.rangeValue)) {
+                    this.rangeSize = range;
                     break;
                 }
             }
@@ -57,10 +45,10 @@ module api.ui {
                 this.fitToRange(); // update rangeSize
                 this.element.getEl().addClass(this.rangeSize.getRangeClass());
             }
-            this.handle();         // Additional handler
+            this.handle(this);     // Additional handler
         }
 
-        setHandler(handler: Function = (() => {})) {
+        setHandler(handler: (item: ResponsiveItem) => void = ((item: ResponsiveItem) => {})) {
             this.handle = handler;
         }
 
@@ -70,6 +58,18 @@ module api.ui {
 
         getRangeSize():ResponsiveRange {
             return this.rangeSize;
+        }
+
+        isInRange(range: ResponsiveRange): boolean {
+            return range.isFit(this.rangeValue);
+        }
+
+        isInRangeOrSmaller(range: ResponsiveRange): boolean {
+            return range.isFitOrSmaller(this.rangeValue);
+        }
+
+        isInRangeOrBigger(range: ResponsiveRange): boolean {
+            return range.isFitOrBigger(this.rangeValue);
         }
     }
 }

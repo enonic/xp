@@ -1,5 +1,6 @@
 module api.content {
 
+
     export class CompareContentResult {
 
         compareStatus: api.content.CompareStatus;
@@ -14,7 +15,9 @@ module api.content {
 
         static fromJson(json: CompareContentResultJson): CompareContentResult {
 
-            return new CompareContentResult(json.id, CompareStatus.fromJson(json.compareStatus));
+            var status: CompareStatus = <CompareStatus>CompareStatus[json.compareStatus];
+
+            return new CompareContentResult(json.id, status);
         }
     }
 }

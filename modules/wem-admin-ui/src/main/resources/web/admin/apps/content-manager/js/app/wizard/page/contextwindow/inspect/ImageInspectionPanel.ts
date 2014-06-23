@@ -46,17 +46,14 @@ module app.wizard.page.contextwindow.inspect {
             });
             this.imageDescriptors = {};
 
-            var descriptorHeader = new api.dom.H6El();
-            descriptorHeader.setText("Descriptor:");
-            descriptorHeader.addClass("descriptor-header");
-            this.appendChild(descriptorHeader);
-
-
             var imageDescriptorsRequest = new GetImageDescriptorsByModulesRequest(config.siteTemplate.getModules());
             var imageDescriptorLoader = new ImageDescriptorLoader(imageDescriptorsRequest);
             this.descriptorSelector = new ImageDescriptorDropdown("imageDescriptor", <ImageDescriptorDropdownConfig>{
                 loader: imageDescriptorLoader
             });
+
+            var descriptorLabel = new api.dom.LabelEl("Descriptor", this.descriptorSelector, "descriptor-header");
+            this.appendChild(descriptorLabel);
 
             var descriptorsLoadedHandler = (event: LoadedDataEvent<ImageDescriptor>) => {
 

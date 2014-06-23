@@ -105,5 +105,5 @@ module api.content.inputtype.imageupload {
         }
     }
 
-    api.form.inputtype.InputTypeManager.register("Image", Image);
+    api.form.inputtype.InputTypeManager.register(new api.Class("Image", Image));
 }

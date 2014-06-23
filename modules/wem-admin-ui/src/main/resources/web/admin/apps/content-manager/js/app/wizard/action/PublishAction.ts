@@ -14,9 +14,18 @@ module app.wizard.action {
                 this.setEnabled(false);
 
                 wizard.updatePersistedItem().
-                    catch((reason: any) => api.DefaultErrorHandler.handle(reason)).
+                    catch((reason: any) => {
+                        console.log("CATCHING!!");
+                        api.DefaultErrorHandler.handle(reason)
+                    }).
                     finally(() => this.setEnabled(true)).
-                    done();
+                    done((content) => {
+                        //Using arguments since adding content:api.content.Content gives compiler error. wtf?
+                        console.log("updating persisted item", arguments);
+                        if (content) {
+                            new OpenPublishDialogEvent(content).fire();
+                        }
+                    });
             });
         }
     }

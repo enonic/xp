@@ -8,16 +8,9 @@ declare var wemjq: JQueryStatic;
 new LiveEdit.LiveEditPage();
 
 wemjq(window).load(() => {
-    new LiveEdit.component.mouseevent.Page();
-    new LiveEdit.component.mouseevent.Region();
-    new LiveEdit.component.mouseevent.Layout();
-    new LiveEdit.component.mouseevent.Part();
-    new LiveEdit.component.mouseevent.Image();
     new LiveEdit.component.mouseevent.Text();
-    new LiveEdit.component.mouseevent.Content();
 
     new LiveEdit.ui.contextmenu.ContextMenu();
-    new LiveEdit.ui.Shader();
     new LiveEdit.ui.Editor();
 
     LiveEdit.component.dragdropsort.DragDropSort.init();

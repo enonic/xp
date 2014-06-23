@@ -42,16 +42,14 @@ module app.wizard.page.contextwindow.inspect {
 
             this.layoutDescriptors = {};
 
-            var descriptorHeader = new api.dom.H6El();
-            descriptorHeader.setText("Descriptor:");
-            descriptorHeader.addClass("descriptor-header");
-            this.appendChild(descriptorHeader);
-
             var getLayoutDescriptorsRequest = new GetLayoutDescriptorsByModulesRequest(config.siteTemplate.getModules());
             var layoutDescriptorLoader = new LayoutDescriptorLoader(getLayoutDescriptorsRequest);
             this.descriptorSelector = new LayoutDescriptorDropdown("layoutDescriptor", <LayoutDescriptorDropdownConfig>{
                 loader: layoutDescriptorLoader
             });
+
+            var descriptorLabel = new api.dom.LabelEl("Descriptor", this.descriptorSelector, "descriptor-header");
+            this.appendChild(descriptorLabel);
 
             var descriptorsLoadedHandler = (event: LoadedDataEvent<LayoutDescriptor>) => {
 

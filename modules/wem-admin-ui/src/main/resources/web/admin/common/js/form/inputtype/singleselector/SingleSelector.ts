@@ -182,5 +182,5 @@ module api.form.inputtype.singleselector {
         }
     }
 
-    api.form.inputtype.InputTypeManager.register("SingleSelector", SingleSelector);
+    api.form.inputtype.InputTypeManager.register(new api.Class("SingleSelector", SingleSelector));
 }

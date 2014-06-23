@@ -264,6 +264,22 @@ module api.dom {
             return this.el;
         }
 
+        traverse(handler: (el: Element) => void) {
+            this.getChildren().forEach((el: Element)=> {
+                handler(el);
+                el.traverse(handler);
+            });
+        }
+
+        setDraggable(value: boolean) {
+            if (value) {
+                this.getEl().setAttribute("draggable", "true");
+            }
+            else {
+                this.getEl().setAttribute("draggable", "false");
+            }
+        }
+
         giveFocus(): boolean {
             if (!this.isVisible()) {
                 return false;
@@ -482,33 +498,49 @@ module api.dom {
         }
 
         onMouseEnter(handler: (e: MouseEvent)=>any) {
-            this.mouseEnterLeave('mouseenter', handler);
+            if (typeof this.getHTMLElement().onmouseenter != "undefined") {
+                this.getEl().addEventListener('mouseenter', handler);
+            } else {
+                this.getEl().addEventListener('mouseover', (e: MouseEvent) => {
+                    // execute handler only if mouse came from outside
+                    if (!this.getEl().contains(<HTMLElement> (e.relatedTarget || e.fromElement))) {
+                        handler(e);
+                    }
+                });
+            }
         }
 
         onMouseLeave(handler: (e: MouseEvent)=>any) {
-            this.mouseEnterLeave('mouseleave', handler);
+            if (typeof this.getHTMLElement().onmouseleave != "undefined") {
+                this.getEl().addEventListener('mouseleave', handler);
+            } else {
+                this.getEl().addEventListener('mouseout', (e: MouseEvent) => {
+                    // execute handler only if mouse moves outside
+                    if (!this.getEl().contains(<HTMLElement> (e.relatedTarget || e.toElement))) {
+                        handler(e);
+                    }
+                });
+            }
+        }
+
+        onMouseOver(listener: (e: MouseEvent)=>any) {
+            this.getEl().addEventListener('mouseover', listener);
+        }
+
+        unMouseOver(listener: (event: MouseEvent) => void) {
+            this.getEl().removeEventListener("mouseover", listener);
+        }
+
+        onMouseOut(listener: (e: MouseEvent)=>any) {
+            this.getEl().addEventListener('mouseout', listener);
+        }
+
+        unMouseOut(listener: (event: MouseEvent) => void) {
+            this.getEl().removeEventListener("mouseout", listener);
         }
 
         setBackgroundImgUrl(backgroundImgUrl: string) {
             this.getHTMLElement().style.backgroundImage = "url('" + backgroundImgUrl + "')";
-        }
-
-        private mouseEnterLeave(type: string, handler: (e: MouseEvent)=>any) {
-            var mouseEnter = type === 'mouseenter',
-                containerEl = this.getEl(),
-                ie = mouseEnter ? 'fromElement' : 'toElement',
-                mouseEventHandler = (e: any) => { //Had use any since window.event isn't of type MouseEvent and caused compiler to bug
-                    e = e || window.event;
-                    var target: HTMLElement = <HTMLElement> (e.target || e.srcElement),
-                        related: HTMLElement = <HTMLElement> (e.relatedTarget || e[ie]);
-                    if ((this.getHTMLElement() === target || containerEl.contains(target)) && !containerEl.contains(related)) {
-                        handler(e);
-                    }
-                };
-            type = mouseEnter ? 'mouseover' : 'mouseout';
-
-            containerEl.addEventListener(type, mouseEventHandler);
-            return mouseEventHandler;
         }
 
         contains(element: Element) {
@@ -708,6 +740,14 @@ module api.dom {
             this.getEl().removeEventListener("mousemove", listener);
         }
 
+        onTouchStart(listener: (event: MouseEvent) => void) {
+            this.getEl().addEventListener("touchstart", listener);
+        }
+
+        unTouchStart(listener: (event: MouseEvent) => void) {
+            this.getEl().removeEventListener("touchstart", listener);
+        }
+
         onKeyUp(listener: (event: KeyboardEvent) => void) {
             this.getEl().addEventListener("keyup", listener);
         }
@@ -755,6 +795,63 @@ module api.dom {
         unScroll(listener: (event: Event) => void) {
             this.getEl().removeEventListener("scroll", listener);
         }
+
+        onDrag(listener: (event: Event) => void) {
+            this.getEl().addEventListener("drag", listener);
+        }
+
+        unDrag(listener: (event: Event) => void) {
+            this.getEl().removeEventListener("drag", listener);
+        }
+
+        onDragStart(listener: (event: Event) => void) {
+            this.getEl().addEventListener("dragstart", listener);
+        }
+
+        unDragStart(listener: (event: Event) => void) {
+            this.getEl().removeEventListener("dragstart", listener);
+        }
+
+        onDragEnter(listener: (event: Event) => void) {
+            this.getEl().addEventListener("dragenter", listener);
+        }
+
+        unDragEnter(listener: (event: Event) => void) {
+            this.getEl().removeEventListener("dragenter", listener);
+        }
+
+        onDragOver(listener: (event: Event) => void) {
+            this.getEl().addEventListener("dragover", listener);
+        }
+
+        unDragOver(listener: (event: Event) => void) {
+            this.getEl().removeEventListener("dragover", listener);
+        }
+
+        onDragLeave(listener: (event: Event) => void) {
+            this.getEl().addEventListener("dragleave", listener);
+        }
+
+        unDragLeave(listener: (event: Event) => void) {
+            this.getEl().removeEventListener("dragleave", listener);
+        }
+
+        onDrop(listener: (event: Event) => void) {
+            this.getEl().addEventListener("drop", listener);
+        }
+
+        unDrop(listener: (event: Event) => void) {
+            this.getEl().removeEventListener("drop", listener);
+        }
+
+        onDragEnd(listener: (event: Event) => void) {
+            this.getEl().addEventListener("dragend", listener);
+        }
+
+        unDragEnd(listener: (event: Event) => void) {
+            this.getEl().removeEventListener("dragend", listener);
+        }
+
 
         static fromHtmlElement(element: HTMLElement, loadExistingChildren: boolean = false, parent?: Element): Element {
             return new Element(new ElementFromHelperBuilder().

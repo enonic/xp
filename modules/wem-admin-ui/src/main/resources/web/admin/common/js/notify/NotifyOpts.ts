@@ -55,6 +55,9 @@ module api.notify {
             else if (message.getType() == Type.ACTION) {
                 opts.type = 'action';
             }
+            else if (message.getType() == Type.SUCCESS) {
+                opts.type = 'success';
+            }
 
             opts.createHtmlMessage(message);
             opts.addListeners(message);

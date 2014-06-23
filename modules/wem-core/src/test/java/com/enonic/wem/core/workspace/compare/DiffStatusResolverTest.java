@@ -27,7 +27,7 @@ public class DiffStatusResolverTest
 
         final CompareStatus compareStatus = DiffStatusResolver.resolve( new DiffStatusParams( source, target ) );
 
-        assertEquals( CompareStatus.State.NEW, compareStatus.getState() );
+        assertEquals( CompareStatus.Status.NEW, compareStatus.getStatus() );
     }
 
     @Test
@@ -47,7 +47,7 @@ public class DiffStatusResolverTest
 
         final CompareStatus compareStatus = DiffStatusResolver.resolve( new DiffStatusParams( source, target ) );
 
-        assertEquals( CompareStatus.State.DELETED, compareStatus.getState() );
+        assertEquals( CompareStatus.Status.DELETED, compareStatus.getStatus() );
     }
 
     @Test
@@ -72,7 +72,7 @@ public class DiffStatusResolverTest
 
         final CompareStatus compareStatus = DiffStatusResolver.resolve( new DiffStatusParams( source, target ) );
 
-        assertEquals( CompareStatus.State.EQUAL, compareStatus.getState() );
+        assertEquals( CompareStatus.Status.EQUAL, compareStatus.getStatus() );
     }
 
 
@@ -96,7 +96,7 @@ public class DiffStatusResolverTest
 
         final CompareStatus compareStatus = DiffStatusResolver.resolve( new DiffStatusParams( source, target ) );
 
-        assertEquals( CompareStatus.State.CONFLICT, compareStatus.getState() );
+        assertEquals( CompareStatus.Status.CONFLICT, compareStatus.getStatus() );
     }
 
     @Test
@@ -119,7 +119,7 @@ public class DiffStatusResolverTest
 
         final CompareStatus compareStatus = DiffStatusResolver.resolve( new DiffStatusParams( source, target ) );
 
-        assertEquals( CompareStatus.State.NEWER, compareStatus.getState() );
+        assertEquals( CompareStatus.Status.NEWER, compareStatus.getStatus() );
     }
 
 
@@ -143,7 +143,7 @@ public class DiffStatusResolverTest
 
         final CompareStatus compareStatus = DiffStatusResolver.resolve( new DiffStatusParams( source, target ) );
 
-        assertEquals( CompareStatus.State.OLDER, compareStatus.getState() );
+        assertEquals( CompareStatus.Status.OLDER, compareStatus.getStatus() );
     }
 
 }

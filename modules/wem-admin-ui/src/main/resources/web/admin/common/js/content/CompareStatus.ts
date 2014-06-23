@@ -1,6 +1,6 @@
 module api.content {
 
-    export enum Status {
+    export enum CompareStatus {
         NEW,
         NEWER,
         OLDER,
@@ -9,19 +9,19 @@ module api.content {
         EQUAL
     }
 
-    export class CompareStatus {
-
-        status: Status;
-
-        constructor(status: Status) {
-            this.status = status;
-        }
-
-        static fromJson(json: CompareStatusJson): CompareStatus {
-
-            var status: Status = <Status>Status[json.status];
-
-            return new CompareStatus(status);
-        }
-    }
+//    export class CompareStatus {
+//
+//        status: Status;
+//
+//        constructor(status: Status) {
+//            this.status = status;
+//        }
+//
+//        static fromJson(json: CompareStatusJson): CompareStatus {
+//
+//            var status: Status = <Status>Status[json.status];
+//
+//            return new CompareStatus(status);
+//        }
+//    }
 }

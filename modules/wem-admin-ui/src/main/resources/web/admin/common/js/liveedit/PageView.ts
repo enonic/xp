@@ -46,6 +46,10 @@ module api.liveedit {
 
         private viewsById: {[s:number] : ItemView;} = {};
 
+        private mouseEnterViewListeners: {(view: ItemView): void} [] = [];
+
+        private mouseLeaveViewListeners: {(view: ItemView): void} [] = [];
+
         constructor(builder: PageViewBuilder) {
             super(new ItemViewBuilder().
                 setItemViewIdProducer(builder.itemViewProducer).
@@ -204,6 +208,10 @@ module api.liveedit {
 
             console.debug("PageView.registerItemView: " + view.getItemId().toNumber() + " : " + view.getType().getShortName() + " : " +
                           extra);
+
+            view.onMouseOverView(() => this.notifyMouseEnterView(view));
+            view.onMouseOutView(() => this.notifyMouseLeaveView(view));
+
             this.viewsById[view.getItemId().toNumber()] = view;
         }
 
@@ -239,5 +247,30 @@ module api.liveedit {
                 }
             });
         }
+
+        onMouseEnterView(listener: (view: ItemView) => void) {
+            this.mouseEnterViewListeners.push(listener);
+        }
+
+        unMouseEnterView(listener: (view: ItemView) => void) {
+            this.mouseEnterViewListeners = this.mouseEnterViewListeners.filter((current) => (current != listener));
+        }
+
+        private notifyMouseEnterView(view: ItemView) {
+            this.mouseEnterViewListeners.forEach((listener: (view: ItemView) => void) => listener(view));
+        }
+
+        onMouseLeaveView(listener: (view: ItemView) => void) {
+            this.mouseLeaveViewListeners.push(listener);
+        }
+
+        unMouseLeaveView(listener: (view: ItemView) => void) {
+            this.mouseLeaveViewListeners = this.mouseLeaveViewListeners.filter((current) => (current != listener));
+        }
+
+        private notifyMouseLeaveView(view: ItemView) {
+            this.mouseLeaveViewListeners.forEach((listener: (view: ItemView) => void) => listener(view));
+        }
+
     }
 }
