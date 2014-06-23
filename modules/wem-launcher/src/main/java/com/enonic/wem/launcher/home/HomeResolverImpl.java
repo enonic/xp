@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import com.enonic.wem.launcher.LauncherException;
+
 public final class HomeResolverImpl
     implements HomeConstants, HomeResolver
 {
@@ -48,9 +50,8 @@ public final class HomeResolverImpl
             return path;
         }
 
-        throw new IllegalArgumentException(
-            String.format( "Home directory is not set. Please set either [%s] system property or [%s] environment variable.", HOME_DIR_PROP,
-                           HOME_DIR_ENV ) );
+        throw new LauncherException( "Home directory is not set. Please set either [%s] system property or [%s] environment variable.",
+                                     HOME_DIR_PROP, HOME_DIR_ENV );
     }
 
     private File validatePath( final String path )
@@ -58,7 +59,7 @@ public final class HomeResolverImpl
         final File dir = new File( path ).getAbsoluteFile();
         if ( !dir.exists() || !dir.isDirectory() )
         {
-            throw new IllegalArgumentException( String.format( "Invalid home directory. [%s] is not a directory.", dir.toString() ) );
+            throw new LauncherException( "Invalid home directory. [%s] is not a directory.", dir.toString() );
         }
 
         return dir;
@@ -66,6 +67,6 @@ public final class HomeResolverImpl
 
     private boolean isNullOrEmpty( final String str )
     {
-        return ( str == null ) || ( str.length() == 0 );
+        return ( str == null ) || str.isEmpty();
     }
 }

@@ -10,6 +10,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import com.enonic.wem.launcher.LauncherException;
+
 import static org.junit.Assert.*;
 
 public class HomeResolverImplTest
@@ -33,20 +35,20 @@ public class HomeResolverImplTest
         this.missingHomeDir = new File( this.folder.getRoot(), "missing-home" );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = LauncherException.class)
     public void testNotSet()
     {
         resolve( null, null );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = LauncherException.class)
     public void testInvalidHomeDir()
     {
         assertTrue( this.invalidHomeDir.exists() );
         resolve( this.invalidHomeDir.getAbsolutePath(), null );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = LauncherException.class)
     public void testMissingHomeDir()
     {
         assertFalse( this.missingHomeDir.exists() );
