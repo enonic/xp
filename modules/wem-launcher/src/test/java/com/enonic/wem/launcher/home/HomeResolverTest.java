@@ -1,9 +1,6 @@
 package com.enonic.wem.launcher.home;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -11,11 +8,13 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import com.enonic.wem.launcher.LauncherException;
+import com.enonic.wem.launcher.SharedConstants;
+import com.enonic.wem.launcher.util.SystemProperties;
 
 import static org.junit.Assert.*;
 
-public class HomeResolverImplTest
-    implements HomeConstants
+public class HomeResolverTest
+    implements SharedConstants
 {
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
@@ -60,8 +59,9 @@ public class HomeResolverImplTest
     {
         assertTrue( this.validHomeDir.exists() );
 
-        final HomeDir homeDir = resolve( this.validHomeDir.getAbsolutePath(), null );
+        final HomeDir homeDir = resolve( null, this.validHomeDir.getAbsolutePath() );
         assertNotNull( homeDir );
+        assertEquals( this.validHomeDir.getAbsoluteFile().toString(), homeDir.toString() );
 
         final File homeDirFile = homeDir.toFile();
         assertNotNull( homeDirFile );
@@ -77,6 +77,7 @@ public class HomeResolverImplTest
 
         final HomeDir homeDir = resolve( null, this.validHomeDir.getAbsolutePath() );
         assertNotNull( homeDir );
+        assertEquals( this.validHomeDir.getAbsoluteFile().toString(), homeDir.toString() );
 
         final File homeDirFile = homeDir.toFile();
         assertNotNull( homeDirFile );
@@ -87,21 +88,20 @@ public class HomeResolverImplTest
 
     private HomeDir resolve( final String propValue, final String envValue )
     {
-        final Properties props = new Properties();
+        final SystemProperties props = new SystemProperties();
+
         if ( propValue != null )
         {
-            props.put( HOME_DIR_PROP, propValue );
+            props.put( HOME_PROP, propValue );
         }
 
-        final Map<String, String> env = new HashMap<>();
         if ( envValue != null )
         {
-            env.put( HOME_DIR_ENV, envValue );
+            props.putEnv( HOME_ENV, envValue );
         }
 
-        final HomeResolverImpl resolver = new HomeResolverImpl();
-        resolver.addSystemProperties( props );
-        resolver.addEnvironmentVariables( env );
+        final HomeResolver resolver = new HomeResolver( props );
         return resolver.resolve();
     }
 }
+
