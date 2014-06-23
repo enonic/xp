@@ -28,6 +28,10 @@ module app.wizard {
             };
 
             this.setColumns([column1]);
+
+            this.onLoaded(() => {
+               this.selectAll();
+            });
         }
 
         hasChildren(data: ContentSummary): boolean {
@@ -35,7 +39,6 @@ module app.wizard {
         }
 
         fetchChildren(parent?: ContentSummary): Q.Promise<ContentSummary[]> {
-            console.log(this.content, this);
             var deferred = Q.defer<ContentSummary[]>();
 
             deferred.resolve([this.content]);

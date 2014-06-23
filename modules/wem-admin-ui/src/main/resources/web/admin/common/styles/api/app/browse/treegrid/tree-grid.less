@@ -53,6 +53,10 @@
 
   .slick-row {
     transition: margin ease-in 0.3s;
+
+    .active {
+
+    }
   }
 
   .grid {
@@ -75,7 +79,8 @@
 
       // fixes
       &:last-child {
-        margin-left: -18px; // invalid 'right' value calc for certain width
+        // Commented out because it broke selectbox somewhere, why is it even here?
+        //margin-left: -18px; // invalid 'right' value calc for certain width
       }
       height: 45px;      // firefox ignores SlickGrid.rowHeight
     }
