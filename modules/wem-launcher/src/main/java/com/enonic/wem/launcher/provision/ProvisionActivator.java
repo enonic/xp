@@ -13,6 +13,7 @@ import org.osgi.framework.wiring.BundleRevision;
 
 import com.google.common.base.Splitter;
 
+import com.enonic.wem.launcher.LauncherException;
 import com.enonic.wem.launcher.SharedConstants;
 
 public final class ProvisionActivator
@@ -57,15 +58,6 @@ public final class ProvisionActivator
         {
             installBundle( entry.getKey().trim(), entry.getValue().trim() );
         }
-
-        /*
-for ( final Bundle bundle : this.context.getBundles() )
-{
-if ( ( bundle.getBundleId() > 0 ) && !isFragmentBundle( bundle ) )
-{
-bundle.start();
-}
-}*/
     }
 
     private void installBundle( final String uri, final String startLevel )
@@ -80,7 +72,7 @@ bundle.start();
         final String resolved = this.resolver.resolve( uri );
         if ( resolved == null )
         {
-            throw new IllegalArgumentException( String.format( "Failed to find bundle [%s] in any of the repositories.", uri ) );
+            throw new LauncherException( "Failed to find bundle [%s] in any of the repositories.", uri );
         }
 
         final Bundle bundle = this.context.installBundle( resolved );
