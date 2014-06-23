@@ -23,8 +23,6 @@ import static org.mockito.Mockito.when;
 public class DeleteNodeByPathCommandTest
 {
 
-    public static final Workspace TEST_WORKSPACE = new Workspace( "stage" );
-
     private NodeDao nodeDao;
 
     private ElasticsearchIndexService indexService;
@@ -60,7 +58,7 @@ public class DeleteNodeByPathCommandTest
 
         setupMocks( nodeToDelete, childNode );
 
-        final DeleteNodeByPathCommand deleteNode = DeleteNodeByPathCommand.create( new Context( TEST_WORKSPACE ) ).
+        final DeleteNodeByPathCommand deleteNode = DeleteNodeByPathCommand.create( new Context( Workspace.from( "test" ) ) ).
             nodePath( nodeToDelete.path() ).
             nodeDao( this.nodeDao ).
             indexService( this.indexService ).
@@ -68,26 +66,26 @@ public class DeleteNodeByPathCommandTest
 
         deleteNode.execute();
 
-        verify( nodeDao ).deleteById( nodeToDelete.id(), TEST_WORKSPACE );
-        verify( indexService ).delete( nodeToDelete.id(), TEST_WORKSPACE );
-        verify( indexService ).delete( childNode.id(), TEST_WORKSPACE);
+        verify( nodeDao ).deleteById( nodeToDelete.id(), Workspace.from( "test" ) );
+        verify( indexService ).delete( nodeToDelete.id(), Workspace.from( "test" ) );
+        verify( indexService ).delete( childNode.id(), Workspace.from( "test" ) );
     }
 
     private void setupMocks( final Node nodeToDelete, final Node childNode )
     {
-        when( this.nodeDao.getByPath( nodeToDelete.path(), TEST_WORKSPACE ) ).
+        when( this.nodeDao.getByPath( nodeToDelete.path(), Workspace.from( "test" ) ) ).
             thenReturn( nodeToDelete );
 
-        when( this.nodeDao.getByParent( nodeToDelete.path(), TEST_WORKSPACE ) ).
+        when( this.nodeDao.getByParent( nodeToDelete.path(), Workspace.from( "test" ) ) ).
             thenReturn( Nodes.from( childNode ) );
 
-        when( this.nodeDao.getByParent( childNode.path(), TEST_WORKSPACE ) ).
+        when( this.nodeDao.getByParent( childNode.path(), Workspace.from( "test" ) ) ).
             thenReturn( Nodes.empty() );
 
-        when( this.nodeDao.deleteById( nodeToDelete.id(), TEST_WORKSPACE ) ).
+        when( this.nodeDao.deleteById( nodeToDelete.id(), Workspace.from( "test" ) ) ).
             thenReturn( nodeToDelete );
 
-        when( this.nodeDao.deleteById( childNode.id(), TEST_WORKSPACE ) ).
+        when( this.nodeDao.deleteById( childNode.id(), Workspace.from( "test" ) ) ).
             thenReturn( nodeToDelete );
     }
 }

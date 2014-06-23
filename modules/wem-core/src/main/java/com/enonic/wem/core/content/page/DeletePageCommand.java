@@ -28,7 +28,7 @@ final class DeletePageCommand
                 }
             } );
 
-        return this.contentService.update( params, ContentConstants.DEFAULT_CONTEXT);
+        return this.contentService.update( params, ContentConstants.CONTEXT_STAGE );
     }
 
     public DeletePageCommand contentId( ContentId contentId )

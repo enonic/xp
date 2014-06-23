@@ -11,6 +11,8 @@ public final class PortalUrlScriptBean
 
     private String mode;
 
+    private String workspace;
+
     private String baseUrl;
 
     private String contentPath;
@@ -32,6 +34,7 @@ public final class PortalUrlScriptBean
     {
         return PortalUrlBuilder.createUrl( this.baseUrl ).
             mode( this.mode ).
+            workspace( this.workspace ).
             resourcePath( path );
     }
 
@@ -39,6 +42,7 @@ public final class PortalUrlScriptBean
     {
         return PortalUrlBuilder.createUrl( this.baseUrl ).
             mode( this.mode ).
+            workspace( this.workspace ).
             contentPath( contentPath ).
             resourceType( PUBLIC_RESOURCE_TYPE ).
             module( this.module ).
@@ -49,6 +53,7 @@ public final class PortalUrlScriptBean
     {
         return PortalImageUrlBuilder.createImageUrl( this.baseUrl ).
             mode( this.mode ).
+            workspace( this.workspace ).
             contentPath( contentPath ).
             resourcePath( name );
     }
@@ -57,6 +62,7 @@ public final class PortalUrlScriptBean
     {
         return PortalImageByIdUrlBuilder.createImageUrl( this.baseUrl ).
             mode( this.mode ).
+            workspace( this.workspace ).
             contentPath( contentPath ).
             imageContent( contentId );
     }
@@ -65,6 +71,7 @@ public final class PortalUrlScriptBean
     {
         return PortalUrlBuilder.createUrl( this.baseUrl ).
             mode( this.mode ).
+            workspace( this.workspace ).
             contentPath( contentPath ).
             resourceType( SERVICE_RESOURCE_TYPE ).
             resourcePath( name );
@@ -83,5 +90,10 @@ public final class PortalUrlScriptBean
     public void setModule( final String module )
     {
         this.module = module;
+    }
+
+    public void setWorkspace( final String workspace )
+    {
+        this.workspace = workspace;
     }
 }

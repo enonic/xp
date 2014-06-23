@@ -1,4 +1,3 @@
-
 package com.enonic.wem.admin.rest.resource.content;
 
 import java.util.ArrayList;
@@ -39,6 +38,7 @@ import com.enonic.wem.api.content.CompareContentParams;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentAlreadyExistException;
 import com.enonic.wem.api.content.ContentCompareResult;
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.ContentNotFoundException;
@@ -58,7 +58,6 @@ import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.api.content.query.ContentQueryResult;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.DataJson;
-import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.exception.ConflictException;
 
 import static com.enonic.wem.api.content.Content.editContent;
@@ -76,11 +75,7 @@ public class ContentResource
 
     private ContentService contentService;
 
-    public static final Workspace STAGE_WORKSPACE = new Workspace( "stage" );
-
-    public static final Workspace PROD_WORKSPACE = new Workspace( "prod" );
-
-    static final Context STAGE_CONTEXT = new Context( STAGE_WORKSPACE );
+    static final Context STAGE_CONTEXT = new Context( ContentConstants.WORKSPACE_STAGE );
 
     @GET
     public ContentIdJson getById( @QueryParam("id") final String idParam,
@@ -285,7 +280,7 @@ public class ContentResource
     public ContentCompareResultJson compare( @QueryParam("id") final String idParam )
     {
         final ContentCompareResult compareResult =
-            contentService.compare( new CompareContentParams( ContentId.from( idParam ), PROD_WORKSPACE ), STAGE_CONTEXT );
+            contentService.compare( new CompareContentParams( ContentId.from( idParam ), ContentConstants.WORKSPACE_PROD ), STAGE_CONTEXT );
 
         return new ContentCompareResultJson( compareResult );
     }
@@ -295,7 +290,7 @@ public class ContentResource
     public ContentJson publish( final PublishContentJson params )
     {
         final Content publishedContent =
-            contentService.push( new PushContentParams( PROD_WORKSPACE, params.getContentId() ), STAGE_CONTEXT );
+            contentService.push( new PushContentParams( ContentConstants.WORKSPACE_PROD, params.getContentId() ), STAGE_CONTEXT );
 
         return new ContentJson( publishedContent );
     }

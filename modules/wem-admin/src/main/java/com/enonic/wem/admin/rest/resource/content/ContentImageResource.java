@@ -18,6 +18,7 @@ import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.attachment.Attachment;
@@ -30,7 +31,6 @@ import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.content.thumb.Thumbnail;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
@@ -62,11 +62,7 @@ public class ContentImageResource
     @Inject
     private SiteTemplateService siteTemplateService;
 
-    public static final Workspace STAGE_WORKSPACE = new Workspace( "stage" );
-
-    public static final Workspace PROD_WORKSPACE = new Workspace( "prod" );
-
-    static final Context STAGE_CONTEXT = new Context( STAGE_WORKSPACE );
+    static final Context STAGE_CONTEXT = new Context( ContentConstants.WORKSPACE_STAGE );
 
     @GET
     @Path("{contentId}")

@@ -36,7 +36,7 @@ final class CreatePageCommand
                 }
             } );
 
-        return this.contentService.update( params, ContentConstants.DEFAULT_CONTEXT);
+        return this.contentService.update( params, ContentConstants.CONTEXT_STAGE );
     }
 
     public CreatePageCommand params( final CreatePageParams params )

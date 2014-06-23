@@ -11,7 +11,6 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
-import com.enonic.wem.admin.rest.resource.content.ContentResource;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
@@ -27,6 +26,7 @@ import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
@@ -36,6 +36,8 @@ public class SiteResourceTest
     private SiteService siteService;
 
     private final String currentTime = "2013-08-23T12:55:09.162Z";
+
+    private final static Workspace WORKSPACE = Workspace.from( "workspace" );
 
     @Before
     public void setup()
@@ -56,7 +58,7 @@ public class SiteResourceTest
         Content content = createSiteContent( "content-id", "content-name", "content-type" );
 
         Mockito.when( this.siteService.create( Mockito.isA( CreateSiteParams.class ), Mockito.isA( Context.class ) ) ).thenThrow(
-            new ContentNotFoundException( content.getId(), ContentResource.STAGE_WORKSPACE ) );
+            new ContentNotFoundException( content.getId(), WORKSPACE ) );
 
         resource().path( "content/site/create" ).
             entity( readFromFile( "create_site_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
@@ -86,7 +88,7 @@ public class SiteResourceTest
         Content content = createSiteContent( "content-id", "content-name", "content-type" );
 
         Mockito.when( this.siteService.update( Mockito.isA( UpdateSiteParams.class ), Mockito.isA( Context.class ) ) ).thenThrow(
-            new ContentNotFoundException( content.getId(), ContentResource.STAGE_WORKSPACE ) );
+            new ContentNotFoundException( content.getId(), WORKSPACE ) );
 
         String jsonString = resource().path( "content/site/update" ).
             entity( readFromFile( "update_site_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
@@ -118,7 +120,7 @@ public class SiteResourceTest
         Content content = createContent( "content-id", "content-name", "content-type" );
 
         Mockito.when( this.siteService.delete( Mockito.isA( ContentId.class ), Mockito.isA( Context.class ) ) ).thenThrow(
-            new ContentNotFoundException( content.getId(), ContentResource.STAGE_WORKSPACE ) );
+            new ContentNotFoundException( content.getId(), WORKSPACE ) );
 
         resource().path( "content/site/delete" ).
             entity( readFromFile( "delete_site_params.json" ), MediaType.APPLICATION_JSON_TYPE ).

@@ -7,7 +7,6 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
-import com.enonic.wem.admin.rest.resource.content.ContentResource;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
@@ -21,6 +20,7 @@ import com.enonic.wem.api.content.page.UpdatePageParams;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
 import static com.enonic.wem.api.content.page.PageRegions.newPageRegions;
@@ -69,7 +69,7 @@ public class PageResourceTest
         Content content = createPage( "content-id", "content-name", "content-type" );
 
         Mockito.when( this.pageService.update( Mockito.isA( UpdatePageParams.class ) ) ).thenThrow(
-            new ContentNotFoundException( content.getId(), ContentResource.STAGE_WORKSPACE ) );
+            new ContentNotFoundException( content.getId(), Workspace.from( "workspace" ) ) );
 
         String jsonString = resource().path( "content/page/update" ).
             entity( readFromFile( "update_page_params.json" ), MediaType.APPLICATION_JSON_TYPE ).

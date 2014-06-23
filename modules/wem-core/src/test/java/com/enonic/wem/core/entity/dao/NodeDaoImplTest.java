@@ -25,7 +25,7 @@ public class NodeDaoImplTest
 
     private final BlobService blobService = Mockito.mock( BlobService.class );
 
-    private final Workspace prod = new Workspace( "prod" );
+    private final Workspace WORKSPACE = Workspace.from( "test" );
 
     @Before
     public void setUp()
@@ -48,8 +48,8 @@ public class NodeDaoImplTest
         Mockito.when( blobService.get( blobKey ) ).
             thenReturn( new MemoryBlobRecord( blobKey, serializedNode.getBytes() ) );
 
-        final PushNodeArguments pushNodeArguments = new PushNodeArguments( prod, EntityId.from( "1" ) );
-        nodeDao.push( pushNodeArguments, prod );
+        final PushNodeArguments pushNodeArguments = new PushNodeArguments( WORKSPACE, EntityId.from( "1" ) );
+        nodeDao.push( pushNodeArguments, WORKSPACE );
     }
 
 

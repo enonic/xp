@@ -10,7 +10,6 @@ import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
@@ -22,11 +21,7 @@ import com.enonic.wem.core.support.BaseInitializer;
 public class ContentInitializer
     extends BaseInitializer
 {
-
-    public static final Workspace STAGE_WORKSPACE = new Workspace( "stage" );
-
-    static final Context STAGE_CONTEXT = new Context( STAGE_WORKSPACE );
-
+    static final Context STAGE_CONTEXT = new Context( ContentConstants.WORKSPACE_STAGE );
 
     public static final String IMAGE_ARCHIVE_PATH_ELEMENT = "imagearchive";
 

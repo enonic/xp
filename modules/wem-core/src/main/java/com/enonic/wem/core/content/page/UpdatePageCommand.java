@@ -20,11 +20,11 @@ final class UpdatePageCommand
 
     public Content execute()
     {
-        final Content content = this.contentService.getById( this.params.getContent(), ContentConstants.DEFAULT_CONTEXT );
+        final Content content = this.contentService.getById( this.params.getContent(), ContentConstants.CONTEXT_STAGE );
 
         if ( content == null )
         {
-            throw new ContentNotFoundException( this.params.getContent(), ContentConstants.DEFAULT_CONTEXT.getWorkspace() );
+            throw new ContentNotFoundException( this.params.getContent(), ContentConstants.CONTEXT_STAGE.getWorkspace() );
         }
         if ( content.getPage() == null )
         {
@@ -48,10 +48,10 @@ final class UpdatePageCommand
                     }
                 } );
 
-            this.contentService.update( params, ContentConstants.DEFAULT_CONTEXT );
+            this.contentService.update( params, ContentConstants.CONTEXT_STAGE );
         }
 
-        return this.contentService.getById( this.params.getContent(), ContentConstants.DEFAULT_CONTEXT );
+        return this.contentService.getById( this.params.getContent(), ContentConstants.CONTEXT_STAGE );
     }
 
     public UpdatePageCommand params( final UpdatePageParams params )

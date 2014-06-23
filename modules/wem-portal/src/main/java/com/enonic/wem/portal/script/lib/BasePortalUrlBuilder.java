@@ -22,6 +22,8 @@ abstract class BasePortalUrlBuilder<T extends BasePortalUrlBuilder>
 
     private static final String DEFAULT_MODE = "live";
 
+    private static final String DEFAULT_WORKSPACE = "stage";
+
     private static final String PUBLIC_RESOURCE = "public";
 
     private final String baseUrl;
@@ -36,6 +38,8 @@ abstract class BasePortalUrlBuilder<T extends BasePortalUrlBuilder>
 
     private String module;
 
+    private String workspace;
+
     private final Map<String, String> params;
 
     protected BasePortalUrlBuilder( final String baseUrl )
@@ -46,12 +50,19 @@ abstract class BasePortalUrlBuilder<T extends BasePortalUrlBuilder>
         this.resourceType = "";
         this.mode = DEFAULT_MODE;
         this.module = "";
+        this.workspace = "";
         this.params = Maps.newLinkedHashMap();
     }
 
     public T mode( final String mode )
     {
         this.mode = mode == null ? DEFAULT_MODE : mode;
+        return typecastToUrlBuilder( this );
+    }
+
+    public T workspace( final String workspace )
+    {
+        this.workspace = workspace == null ? DEFAULT_WORKSPACE : workspace;
         return typecastToUrlBuilder( this );
     }
 
@@ -129,9 +140,17 @@ abstract class BasePortalUrlBuilder<T extends BasePortalUrlBuilder>
 
     private String buildUrl()
     {
-        final StringBuilder str = new StringBuilder( this.baseUrl ).append( "/" ).append( PORTAL ).
-            append( "/" ).append( this.mode ).append( "/" );
+        final StringBuilder str = new StringBuilder( this.baseUrl ).
+            append( "/" ).
+            append( PORTAL ).
+            append( "/" ).
+            append( this.mode ).
+            append( "/" ).
+            append( this.workspace ).
+            append( "/" );
+
         append( str, contentPath );
+
         if ( !resourceType.isEmpty() )
         {
             append( str, "/_/" + resourceType );

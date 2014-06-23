@@ -11,6 +11,7 @@ import com.google.common.io.ByteStreams;
 
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobService;
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.CreateContentParams;
@@ -18,7 +19,6 @@ import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.core.content.ContentInitializer;
 import com.enonic.wem.core.support.BaseInitializer;
@@ -30,10 +30,7 @@ public class DemoImagesInitializer
     extends BaseInitializer
 {
 
-    public static final Workspace STAGE_WORKSPACE = new Workspace( "stage" );
-
-    static final Context STAGE_CONTEXT = new Context( STAGE_WORKSPACE );
-
+    static final Context STAGE_CONTEXT = new Context( ContentConstants.WORKSPACE_STAGE );
 
     private static final String[] FOLDER_IMAGES_POP =
         {"Pop_01.jpg", "Pop_02.jpg", "Pop_03.jpg", "Pop_04.jpg", "Pop_05.jpg", "Pop_06.jpg", "Pop_07.jpg", "Pop_08.jpg", "Pop-Black.jpg",

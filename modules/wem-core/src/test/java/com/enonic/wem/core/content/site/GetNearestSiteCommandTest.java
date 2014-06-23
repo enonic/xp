@@ -19,7 +19,7 @@ public class GetNearestSiteCommandTest
 {
     private ContentService contentService;
 
-    private final Context testContext = new Context( new Workspace( "test" ) );
+    private final Context testContext = new Context( Workspace.from( "test" ) );
 
     @Before
     public void setUp()

@@ -2,14 +2,18 @@ package com.enonic.wem.api.entity;
 
 public class Workspace
 {
-
     public static final String SEPARATOR = "-";
 
     public static final String PREFIX = "workspace";
 
     private final String name;
 
-    public Workspace( final String name )
+    public static Workspace from( final String name )
+    {
+        return new Workspace( name );
+    }
+
+    private Workspace( final String name )
     {
         this.name = name;
     }

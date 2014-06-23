@@ -33,7 +33,7 @@ public class WorkspaceDocumentId
     {
         this.value = value;
         this.entityId = EntityId.from( entityIdAsString );
-        this.workspace = new Workspace( workspaceName );
+        this.workspace = Workspace.from( workspaceName );
     }
 
     public static WorkspaceDocumentId from( final String value )

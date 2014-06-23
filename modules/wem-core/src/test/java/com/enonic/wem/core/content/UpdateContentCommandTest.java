@@ -53,7 +53,7 @@ public class UpdateContentCommandTest
 
     private final ContentNodeTranslator translator = Mockito.mock( ContentNodeTranslator.class );
 
-    private final Context TEST_CONTEXT = new Context( new Workspace( "test" ) );
+    private final Context TEST_CONTEXT = new Context( Workspace.from( "test" ) );
 
 
     //@Ignore // Rewriting content stuff to node
