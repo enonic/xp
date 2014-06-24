@@ -31,7 +31,7 @@ import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.xml.XmlSerializers;
-import com.enonic.wem.portal.base.BaseHandlerTest;
+import com.enonic.wem.portal.base.BaseResourceTest;
 import com.enonic.wem.portal.controller.JsController;
 import com.enonic.wem.portal.controller.JsControllerFactory;
 
@@ -42,8 +42,8 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.when;
 
-public abstract class RenderBaseHandlerTest<T extends RenderBaseHandler>
-    extends BaseHandlerTest<T>
+public abstract class RenderBaseResourceTest<T extends RenderBaseResource>
+    extends BaseResourceTest<T>
 {
     protected ContentService contentService;
 
@@ -57,7 +57,8 @@ public abstract class RenderBaseHandlerTest<T extends RenderBaseHandler>
 
     protected JsController jsController;
 
-    protected void setup()
+    @Override
+    protected void configure()
         throws Exception
     {
         this.contentService = Mockito.mock( ContentService.class );
@@ -205,4 +206,3 @@ public abstract class RenderBaseHandlerTest<T extends RenderBaseHandler>
             build();
     }
 }
-

@@ -1,109 +1,37 @@
 package com.enonic.wem.portal;
 
-import java.io.IOException;
-import java.util.Map;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-import com.google.inject.Singleton;
-import com.sun.jersey.api.core.DefaultResourceConfig;
-import com.sun.jersey.api.core.ResourceConfig;
-import com.sun.jersey.spi.container.WebApplication;
-import com.sun.jersey.spi.container.servlet.ServletContainer;
-import com.sun.jersey.spi.container.servlet.WebConfig;
-
-import com.enonic.wem.core.web.servlet.ServletRequestHolder;
-import com.enonic.wem.portal.content.ComponentHandler;
-import com.enonic.wem.portal.content.ContentHandler;
-import com.enonic.wem.portal.exception.DefaultExceptionMapper;
-import com.enonic.wem.portal.underscore.ImageByIdHandler;
-import com.enonic.wem.portal.underscore.ImageByNameHandler;
-import com.enonic.wem.portal.underscore.PublicHandler;
-import com.enonic.wem.portal.underscore.ServiceHandler;
+import org.restlet.Component;
+import org.restlet.Request;
+import org.restlet.Response;
+import org.restlet.ext.servlet.ServerServlet;
 
 @Singleton
 public final class PortalServlet
-    extends HttpServlet
+    extends ServerServlet
 {
-    private final class Container
-        extends ServletContainer
-    {
-        @Override
-        protected ResourceConfig getDefaultResourceConfig( final Map<String, Object> props, final WebConfig wc )
-            throws ServletException
-        {
-            PortalServlet.this.config.getProperties().putAll( props );
-            return PortalServlet.this.config;
-        }
-
-        @Override
-        protected void initiate( final ResourceConfig rc, final WebApplication wa )
-        {
-            PortalServlet.this.configure();
-            wa.initiate( rc );
-        }
-    }
-
-    private final DefaultResourceConfig config;
-
     @Inject
-    protected Injector injector;
-
-    private final Container container;
-
-    public PortalServlet()
-    {
-        this.config = new DefaultResourceConfig();
-        this.container = new Container();
-    }
+    protected PortalApplication portalApplication;
 
     @Override
-    public void init( final ServletConfig config )
-        throws ServletException
+    protected Component createComponent()
     {
-        this.container.init( config );
-    }
+        final String contextPath = getServletContext().getContextPath();
+        final String attachPath = contextPath + ( contextPath.endsWith( "/" ) ? "portal" : "/portal" );
 
-    @Override
-    protected void service( final HttpServletRequest req, final HttpServletResponse resp )
-        throws ServletException, IOException
-    {
-        try
+        final Component component = new Component()
         {
-            ServletRequestHolder.setRequest( req );
-            this.container.service( req, resp );
-        }
-        finally
-        {
-            ServletRequestHolder.setRequest( null );
-        }
-    }
+            @Override
+            public void handle( final Request request, final Response response )
+            {
+                request.getAttributes().put( "__contextPath", contextPath );
+                super.handle( request, response );
+            }
+        };
 
-    @Override
-    public void destroy()
-    {
-        this.container.destroy();
-    }
-
-    private void addSingleton( final Class<?> type )
-    {
-        this.config.getSingletons().add( this.injector.getInstance( type ) );
-    }
-
-    private void configure()
-    {
-        addSingleton( ImageByIdHandler.class );
-        addSingleton( ImageByNameHandler.class );
-        addSingleton( PublicHandler.class );
-        addSingleton( ServiceHandler.class );
-        addSingleton( ContentHandler.class );
-        addSingleton( ComponentHandler.class );
-        addSingleton( DefaultExceptionMapper.class );
+        component.getDefaultHost().attach( attachPath, this.portalApplication );
+        return component;
     }
 }

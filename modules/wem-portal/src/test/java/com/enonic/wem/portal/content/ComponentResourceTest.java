@@ -1,13 +1,12 @@
 package com.enonic.wem.portal.content;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+import org.restlet.Request;
+import org.restlet.Response;
+import org.restlet.data.Method;
 
-import com.sun.jersey.api.client.ClientResponse;
-
-import com.enonic.wem.api.content.site.SiteTemplateNotFoundException;
 import com.enonic.wem.api.rendering.Renderable;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.rendering.RenderResult;
@@ -19,29 +18,24 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class ComponentHandlerTest
-    extends RenderBaseHandlerTest<ComponentHandler>
+public class ComponentResourceTest
+    extends RenderBaseResourceTest<ComponentResource>
 {
     private Renderer<Renderable> renderer;
 
     @Override
-    protected ComponentHandler createResource()
-    {
-        return new ComponentHandler();
-    }
-
-    @Before
     @SuppressWarnings("unchecked")
-    public void setup()
+    protected void configure()
         throws Exception
     {
+        this.resource = new ComponentResource();
         final RendererFactory rendererFactory = Mockito.mock( RendererFactory.class );
         this.resource.rendererFactory = rendererFactory;
         this.renderer = Mockito.mock( Renderer.class );
 
         when( rendererFactory.getRenderer( any( Renderable.class ) ) ).thenReturn( this.renderer );
 
-        super.setup();
+        super.configure();
         mockCurrentContextHttpRequest();
     }
 
@@ -58,24 +52,29 @@ public class ComponentHandlerTest
             build();
         when( this.renderer.render( any(), any() ) ).thenReturn( result );
 
-        final ClientResponse response = executeGet( "/live/site/somepath/content/_/component/main-region/0" );
+        final Request request = new Request( Method.GET, "/live/site/somepath/content/_/component/main-region/0" );
+        final Response response = executeRequest( request );
 
         final ArgumentCaptor<JsContext> jsContext = ArgumentCaptor.forClass( JsContext.class );
         final ArgumentCaptor<Renderable> renderable = ArgumentCaptor.forClass( Renderable.class );
         verify( this.renderer ).render( renderable.capture(), jsContext.capture() );
 
-        assertEquals( 200, response.getStatus() );
-        assertEquals( "text/plain", response.getType().toString() );
-        assertEquals( "component rendered", response.getEntity( String.class ) );
+        assertEquals( 200, response.getStatus().getCode() );
+        assertEquals( "text/plain", response.getEntity().getMediaType().toString() );
+        assertEquals( "site/somepath/content", this.resource.contentPath );
+        assertEquals( "component rendered", response.getEntityAsText() );
     }
 
-    @Test(expected = SiteTemplateNotFoundException.class)
+    @Test
     public void getComponentPageNotFound()
         throws Exception
     {
         setupNonPageContent();
 
-        executeGet( "/live/site/somepath/content/_/component/main-region/0" );
+        final Request request = new Request( Method.GET, "/live/site/somepath/content/_/component/main-region/0" );
+        final Response response = executeRequest( request );
+
+        assertEquals( 404, response.getStatus().getCode() );
     }
 
     @Test
@@ -85,7 +84,9 @@ public class ComponentHandlerTest
         setupContentAndSite();
         setupTemplates();
 
-        final ClientResponse response = executeGet( "/live/site/somepath/content/_/component/main-region/666" );
-        assertEquals( 404, response.getStatus() );
+        final Request request = new Request( Method.GET, "/live/site/somepath/content/_/component/main-region/666" );
+        final Response response = executeRequest( request );
+
+        assertEquals( 404, response.getStatus().getCode() );
     }
 }

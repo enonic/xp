@@ -23,7 +23,7 @@ module api.app.browse.treegrid {
 
         private columns: GridColumn<NODE>[] = [];
 
-        private gridOptions:GridOptions;
+        private gridOptions: GridOptions;
 
         private grid: Grid<TreeNode<NODE>>;
 
@@ -31,11 +31,15 @@ module api.app.browse.treegrid {
 
         private root: TreeNode<NODE>;
 
-        private toolbar:TreeGridToolbar;
+        private toolbar: TreeGridToolbar;
 
-        private canvasElement:api.dom.Element;
+        private canvasElement: api.dom.Element;
 
-        private active:boolean;
+        private active: boolean;
+
+        private loadedListeners: Function[] = [];
+
+        private rowSelectionChangeListeners: Function[] = [];
 
         constructor(params:TreeGridParams, classes:string = "") {
 
@@ -79,9 +83,9 @@ module api.app.browse.treegrid {
             // Custom row selection required for valid behaviour
             this.grid.setSelectionModel(new Slick.RowSelectionModel({selectActiveRow: false}));
 
-           this.onClicked(() => {
-               this.grid.focus();
-           });
+            this.onClicked(() => {
+                this.grid.focus();
+            });
 
             this.grid.subscribeOnClick((event, data) => {
                 if (this.active) {
@@ -159,7 +163,7 @@ module api.app.browse.treegrid {
                 }
             }
 
-            var actions = TreeGridActions.init(this.grid);
+            var actions = new TreeGridActions(this.grid);
 
             if (params.showToolbar) {
                 this.toolbar = new TreeGridToolbar(actions);
@@ -184,17 +188,21 @@ module api.app.browse.treegrid {
             this.onRemoved(() => {
                 KeyBindings.get().unbindKeys(keyBindings);
             });
+
+            this.grid.subscribeOnSelectedRowsChanged((e, rows) => {
+                this.notifyRowSelectionChanged(e, rows.rows);
+            });
         }
 
         getGrid(): Grid<TreeNode<NODE>> {
             return this.grid;
         }
 
-        isActive():boolean {
+        isActive(): boolean {
             return this.active;
         }
 
-        setActive(active:boolean = true) {
+        setActive(active: boolean = true) {
             this.active = active;
         }
 
@@ -231,6 +239,10 @@ module api.app.browse.treegrid {
             this.grid.setColumns(this.columns);
         }
 
+        selectAll() {
+            this.grid.selectAll();
+        }
+        
         private initData(nodes: TreeNode<NODE>[]) {
             this.gridData.setItems(nodes, "id");
         }
@@ -261,7 +273,7 @@ module api.app.browse.treegrid {
                         }).catch((reason: any) => {
                             api.DefaultErrorHandler.handle(reason);
                         }).finally(() => {
-                        }).done();
+                        }).done(() => this.notifyLoaded());
                 }
             }
         }
@@ -387,6 +399,49 @@ module api.app.browse.treegrid {
                     elem.setMarginTop(0 + "px");
                 });
             }, 10);
+        }
+
+        private notifyLoaded(): void {
+            for (var i in this.loadedListeners) {
+                this.loadedListeners[i](this);
+            }
+        }
+
+        onLoaded(listener: () => void) {
+            this.loadedListeners.push(listener);
+            return this;
+        }
+
+        unLoaded(listener: () => void) {
+            this.loadedListeners = this.loadedListeners.filter((curr) => {
+                return curr != listener;
+            });
+            return this;
+        }
+
+        private notifyRowSelectionChanged(event:any, rows:number[]): void {
+            var selectedRows:NODE[] = [];
+            if (rows) {
+                rows.forEach((rowIndex) => {
+                    selectedRows.push(this.gridData.getItem(rowIndex).getData());
+                });
+            }
+            for (var i in this.rowSelectionChangeListeners) {
+                this.rowSelectionChangeListeners[i](selectedRows);
+            }
+        }
+
+
+        onRowSelectionChanged(listener: (selectedRows:NODE[]) => void) {
+            this.rowSelectionChangeListeners.push(listener);
+            return this;
+        }
+
+        unRowSelectionChanged(listener: (selectedRows:NODE[]) => void) {
+            this.rowSelectionChangeListeners = this.rowSelectionChangeListeners.filter((curr) => {
+                return curr != listener;
+            });
+            return this;
         }
 
         private resetZIndexes() {

@@ -1,16 +1,9 @@
 package com.enonic.wem.portal.content;
 
 import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Request;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
-import com.sun.jersey.api.core.InjectParam;
+import org.restlet.representation.Representation;
+import org.restlet.resource.ResourceException;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.page.ComponentPath;
@@ -18,7 +11,6 @@ import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplate;
-import com.enonic.wem.api.rendering.RenderingMode;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.controller.JsHttpRequest;
 import com.enonic.wem.portal.rendering.RenderResult;
@@ -26,48 +18,20 @@ import com.enonic.wem.portal.rendering.Renderer;
 import com.enonic.wem.portal.rendering.RendererFactory;
 import com.enonic.wem.portal.script.lib.PortalUrlScriptBean;
 
-@Path("{mode}/{content:.+}/_/component/{component:.+}")
-public final class ComponentHandler
-    extends RenderBaseHandler
+public final class ComponentResource
+    extends RenderBaseResource
 {
-    public final static class Params
-    {
-        @PathParam("mode")
-        public String mode;
-
-        @PathParam("content")
-        public String content;
-
-        @PathParam("component")
-        public String component;
-
-        @Context
-        public Request request;
-
-        @Context
-        public UriInfo uriInfo;
-    }
-
     @Inject
     protected RendererFactory rendererFactory;
 
-    @GET
-    public Response handleGet( @InjectParam final Params params )
+    @Override
+    protected Representation doHandle()
+        throws ResourceException
     {
-        return doHandle( params );
-    }
+        final String componentSelector = getAttribute( "component" );
+        final ComponentPath componentPath = ComponentPath.from( componentSelector );
 
-    @POST
-    public Response handlePost( @InjectParam final Params params )
-    {
-        return doHandle( params );
-    }
-
-    private Response doHandle( final Params params )
-    {
-        final RenderingMode mode = parseMode( params.mode );
-        final ComponentPath componentPath = ComponentPath.from( params.component );
-        final Content content = getContent( mode, params.content );
+        final Content content = getContent( this.contentPath );
 
         final Content siteContent = getSite( content );
         final PageTemplate pageTemplate;
@@ -76,6 +40,11 @@ public final class ComponentHandler
         if ( !content.isPage() )
         {
             pageTemplate = getDefaultPageTemplate( content.getType(), siteContent.getSite() );
+            if ( pageTemplate == null )
+            {
+                throw notFound( "Page not found." );
+            }
+
             pageRegions = pageTemplate.getRegions();
         }
         else
@@ -88,18 +57,18 @@ public final class ComponentHandler
         final PageComponent component = pageRegions.getComponent( componentPath );
         if ( component == null )
         {
-            throw notFound();
+            throw notFound( "Pate component for [%s] not found", componentPath );
         }
 
         final Renderer<PageComponent> renderer = this.rendererFactory.getRenderer( component );
 
-        final JsContext context = createContext( params, content, component, siteContent, pageTemplate );
+        final JsContext context = createContext( content, component, siteContent, pageTemplate );
         final RenderResult result = renderer.render( component, context );
 
-        return toResponse( result );
+        return toRepresentation( result );
     }
 
-    private JsContext createContext( final Params params, final Content content, final PageComponent component, final Content siteContent,
+    private JsContext createContext( final Content content, final PageComponent component, final Content siteContent,
                                      final PageTemplate pageTemplate )
     {
         final JsContext context = new JsContext();
@@ -108,9 +77,9 @@ public final class ComponentHandler
         context.setComponent( component );
 
         final JsHttpRequest jsRequest = new JsHttpRequest();
-        jsRequest.setMode( params.mode );
-        jsRequest.setMethod( params.request.getMethod() );
-        jsRequest.addParams( params.uriInfo.getQueryParameters() );
+        jsRequest.setMode( this.mode );
+        jsRequest.setMethod( getRequest().getMethod().toString() );
+        jsRequest.addParams( getParams() );
         context.setRequest( jsRequest );
 
         final PortalUrlScriptBean portalUrlScriptBean = new PortalUrlScriptBean();

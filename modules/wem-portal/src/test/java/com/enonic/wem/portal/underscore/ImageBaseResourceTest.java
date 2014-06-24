@@ -22,10 +22,10 @@ import com.enonic.wem.core.blobstore.memory.MemoryBlobRecord;
 import com.enonic.wem.core.image.filter.BuilderContext;
 import com.enonic.wem.core.image.filter.ImageFilter;
 import com.enonic.wem.core.image.filter.ImageFilterBuilder;
-import com.enonic.wem.portal.base.BaseHandlerTest;
+import com.enonic.wem.portal.base.ModuleBaseResourceTest;
 
-public abstract class ImageBaseHandlerTest<T extends ImageBaseHandler>
-    extends BaseHandlerTest<T>
+public abstract class ImageBaseResourceTest<T extends ImageBaseResource>
+    extends ModuleBaseResourceTest<T>
 {
     private ImageFilterBuilder imageFilterBuilder;
 
@@ -35,9 +35,12 @@ public abstract class ImageBaseHandlerTest<T extends ImageBaseHandler>
 
     protected ContentService contentService;
 
-    protected void setup()
+    @Override
+    protected void configure()
         throws Exception
     {
+        super.configure();
+
         this.imageFilterBuilder = Mockito.mock( ImageFilterBuilder.class );
         this.resource.imageFilterBuilder = imageFilterBuilder;
 
@@ -96,4 +99,3 @@ public abstract class ImageBaseHandlerTest<T extends ImageBaseHandler>
             build();
     }
 }
-

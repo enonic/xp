@@ -141,6 +141,11 @@ module api.ui.dialog {
             } else {
             this.appendChild(button);
             }
+
+            action.onPropertyChanged(() => {
+               button.setLabel(action.getLabel());
+               button.setEnabled(action.isEnabled());
+            });
             return button;
         }
 

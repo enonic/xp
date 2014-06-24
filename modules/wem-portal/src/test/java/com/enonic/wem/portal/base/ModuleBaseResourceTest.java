@@ -15,8 +15,8 @@ import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.core.module.ModuleKeyResolverService;
 import com.enonic.wem.core.module.ModuleResourcePathResolver;
 
-public abstract class ModuleBaseHandlerTest<T extends ModuleBaseHandler>
-    extends BaseHandlerTest<T>
+public abstract class ModuleBaseResourceTest<T extends ModuleBaseResource>
+    extends BaseResourceTest<T>
 {
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
@@ -25,7 +25,8 @@ public abstract class ModuleBaseHandlerTest<T extends ModuleBaseHandler>
 
     protected ModuleResourcePathResolver modulePathResolver;
 
-    protected void setup()
+    @Override
+    protected void configure()
         throws Exception
     {
         this.tmpDir = this.temporaryFolder.getRoot().toPath();

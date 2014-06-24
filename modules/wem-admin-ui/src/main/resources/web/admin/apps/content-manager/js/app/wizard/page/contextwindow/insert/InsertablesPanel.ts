@@ -15,6 +15,8 @@ module app.wizard.page.contextwindow.insert {
 
         private hideContextWindowRequestListeners: {(): void;}[] = [];
 
+        private draggable: any;
+
         constructor(config: ComponentTypesPanelConfig) {
             super("insertables-panel");
             this.liveEditPage = config.liveEditPage;
@@ -31,32 +33,12 @@ module app.wizard.page.contextwindow.insert {
 
             this.onRendered((event) => {
                 this.initComponentDraggables();
-            })
+            });
+
+            this.onShown(this.updateDraggables.bind(this));
         }
 
         initComponentDraggables() {
-            var components = wemjq('[data-context-window-draggable="true"]');
-
-            components.draggable({
-                zIndex: 400000,
-                cursorAt: {left: -10, top: -15},
-                appendTo: 'body',
-                cursor: 'move',
-                revert: 'true',
-                distance: 10,
-                addClasses: false,
-                helper: () => {
-                    return wemjq('<div id="live-edit-drag-helper" class="live-edit-font-icon-drop-not-allowed" style="width: 48px; height: 48px; position: absolute; z-index: 400000;" data-live-edit-drop-allowed="false"></div>');
-                },
-                scope: 'component',
-                start: (event: Event, ui: JQueryUI.DroppableEventUIParam) => {
-                    this.onStartDrag(event, ui);
-                },
-                stop: () => {
-
-                }
-            });
-
             wemjq(this.liveEditPage.getIFrame().getHTMLElement()).droppable({
                 tolerance: 'pointer',
                 addClasses: false,
@@ -69,6 +51,29 @@ module app.wizard.page.contextwindow.insert {
 
             this.liveEditPage.onSortableStop(() => {
                 this.simulateMouseUpForDraggable();
+            });
+        }
+
+        private updateDraggables() {
+            var components = wemjq('[data-context-window-draggable="true"]:not(.ui-draggable)');
+
+            components.draggable({
+                zIndex: 400000,
+                cursorAt: {left: -10, top: -15},
+                appendTo: 'body',
+                cursor: 'move',
+                revert: 'true',
+                distance: 10,
+                helper: () => {
+                    return wemjq('<div id="live-edit-drag-helper" class="live-edit-font-icon-drop-not-allowed" style="width: 48px; height: 48px; position: absolute; z-index: 400000;" data-live-edit-drop-allowed="false"></div>');
+                },
+                scope: 'component',
+                start: (event: Event, ui: JQueryUI.DroppableEventUIParam) => {
+                    this.onStartDrag(event, ui);
+                },
+                stop: () => {
+
+                }
             });
         }
 
