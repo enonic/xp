@@ -57,4 +57,14 @@ public final class ModuleResource
             this.moduleService.getModule( key ).getBundle().stop();
         }
     }
+
+    @POST
+    public void update( final ModuleListParams params )
+        throws Exception
+    {
+        for ( final ModuleKey key : params.getModuleKeys() )
+        {
+            this.moduleService.getModule( key ).getBundle().update();
+        }
+    }
 }
