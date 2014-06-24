@@ -76,6 +76,12 @@ final class ModuleImpl
     }
 
     @Override
+    public Bundle getBundle()
+    {
+        return this.bundle;
+    }
+
+    @Override
     public URL getResource( final String path )
     {
         return this.bundle.getResource( path );

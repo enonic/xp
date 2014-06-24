@@ -2,18 +2,21 @@ package com.enonic.wem.admin.rest.resource.module;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import com.enonic.wem.admin.json.module.ModuleJson;
 import com.enonic.wem.admin.rest.resource.module.json.ListModuleJson;
+import com.enonic.wem.admin.rest.resource.module.json.ModuleListParams;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.module.Modules;
 
-@javax.ws.rs.Path("module")
+@Path("module")
 @Produces(MediaType.APPLICATION_JSON)
 public final class ModuleResource
 {
@@ -21,7 +24,7 @@ public final class ModuleResource
     protected ModuleService moduleService;
 
     @GET
-    @javax.ws.rs.Path("list")
+    @Path("list")
     public ListModuleJson list()
     {
         final Modules modules = this.moduleService.getAllModules();
@@ -33,5 +36,15 @@ public final class ModuleResource
     {
         final Module module = this.moduleService.getModule( ModuleKey.from( moduleKey ) );
         return new ModuleJson( module );
+    }
+
+    @POST
+    public void start( final ModuleListParams params )
+        throws Exception
+    {
+        for ( final ModuleKey key : params.getModuleKeys() )
+        {
+            this.moduleService.getModule( key ).getBundle().start();
+        }
     }
 }

@@ -51,6 +51,10 @@
       <artifactId>jparsec</artifactId>
       <version>2.1</version>
     </dependency>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.core</artifactId>
+    </dependency>
   </dependencies>
 
   <build>

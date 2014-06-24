@@ -3,6 +3,8 @@ package com.enonic.wem.api.module;
 import java.net.URL;
 import java.util.Set;
 
+import org.osgi.framework.Bundle;
+
 import com.enonic.wem.api.Identity;
 import com.enonic.wem.api.form.Form;
 
@@ -28,4 +30,6 @@ public interface Module
     public URL getResource( String path );
 
     public Set<String> getResourcePaths();
+
+    public Bundle getBundle();
 }
