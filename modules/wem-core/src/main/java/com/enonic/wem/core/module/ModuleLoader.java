@@ -76,8 +76,7 @@ public final class ModuleLoader
                 addBundle( bundle );
                 break;
 
-            case BundleEvent.STOPPED:
-            case BundleEvent.UNINSTALLED:
+            default:
                 removeBundle( bundle );
                 break;
         }
@@ -85,7 +84,7 @@ public final class ModuleLoader
 
     private void addBundle( final Bundle bundle )
     {
-        if ( this.bundles.contains( bundle ) )
+        if ( this.bundles.contains( bundle ) || ( bundle.getState() == Bundle.ACTIVE ) )
         {
             return;
         }
