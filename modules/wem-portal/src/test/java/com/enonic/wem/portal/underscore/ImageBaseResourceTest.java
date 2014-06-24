@@ -56,14 +56,14 @@ public abstract class ImageBaseResourceTest<T extends ImageBaseResource>
         this.resource.contentService = contentService;
     }
 
-    protected final void setupContent()
-        throws Exception
+    protected final void setupContent( final Context context )
+    throws Exception
     {
         final ContentPath contentPath = ContentPath.from( "path/to/content" );
         final Content content = createContent( "content-id", contentPath, "image" );
-        Mockito.when( this.contentService.getById( Mockito.eq( content.getId() ), Mockito.anyObject() ) ).
+        Mockito.when( this.contentService.getById( Mockito.eq( content.getId() ), Mockito.eq( context ) ) ).
             thenReturn( content );
-        Mockito.when( this.contentService.getByPath( Mockito.eq( content.getPath() ), Mockito.anyObject() ) ).
+        Mockito.when( this.contentService.getByPath( Mockito.eq( content.getPath() ), Mockito.eq( context ) ) ).
             thenReturn( content );
 
         final BlobKey blobKey = new BlobKey( "<blobkey-1>" );
@@ -77,7 +77,7 @@ public abstract class ImageBaseResourceTest<T extends ImageBaseResource>
         final byte[] imageData = ByteStreams.toByteArray( getClass().getResourceAsStream( "enonic-logo.png" ) );
         Mockito.when( this.attachmentService.get( Mockito.isA( GetAttachmentParameters.class ) ) ).
             thenReturn( attachment );
-        Mockito.when( this.attachmentService.getAll( Mockito.isA( ContentId.class ), Mockito.isA( Context.class ) ) ).
+        Mockito.when( this.attachmentService.getAll( Mockito.isA( ContentId.class ), Mockito.eq( context ) ) ).
             thenReturn( Attachments.from( attachment ) );
 
         final Blob blob = new MemoryBlobRecord( blobKey, imageData );

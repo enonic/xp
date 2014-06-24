@@ -1,5 +1,7 @@
 package com.enonic.wem.api.entity;
 
+import com.google.common.base.Strings;
+
 public class Workspace
 {
     public static final String SEPARATOR = "-";
@@ -10,6 +12,11 @@ public class Workspace
 
     public static Workspace from( final String name )
     {
+        if ( Strings.isNullOrEmpty( name ) )
+        {
+            return null;
+        }
+
         return new Workspace( name );
     }
 
