@@ -71,7 +71,7 @@
               thymeleaf,
               javassist,
               ognl,
-              jersey-*;scope=compile
+              *.restlet*;scope=compile
             </Embed-Dependency>
             <Bundle-Activator>
               com.enonic.wem.portal.Activator
