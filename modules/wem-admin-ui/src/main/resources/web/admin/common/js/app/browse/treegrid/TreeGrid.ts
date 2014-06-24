@@ -69,7 +69,7 @@ module api.app.browse.treegrid {
                 dataItemColumnValueExtractor: nodeExtractor,
                 editable: false,
                 enableAsyncPostRender: true,
-                enableCellNavigation: true,
+                enableCellNavigation: false, // necessary to turn off library key handling
                 enableColumnReorder: false,
                 forceFitColumns: true,
                 hideColumnHeaders: true,
@@ -150,7 +150,6 @@ module api.app.browse.treegrid {
                     }
                 })
             ];
-            KeyBindings.get().bindKeys(keyBindings);
 
             this.canvasElement = Element.fromHtmlElement(this.grid.getHTMLElement(), true);
             for (var i = 0, gridChildren = this.canvasElement.getChildren(); i < gridChildren.length; i++) {
@@ -179,6 +178,7 @@ module api.app.browse.treegrid {
 
             this.onShown(() => {
                 this.grid.resizeCanvas();
+                KeyBindings.get().bindKeys(keyBindings);
             });
 
             this.onRendered(() => {
