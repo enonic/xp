@@ -8,6 +8,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.osgi.framework.BundleContext;
+
 import com.enonic.wem.admin.json.module.ModuleJson;
 import com.enonic.wem.admin.rest.resource.module.json.ListModuleJson;
 import com.enonic.wem.admin.rest.resource.module.json.ModuleListParams;
@@ -22,6 +24,9 @@ public final class ModuleResource
 {
     @Inject
     protected ModuleService moduleService;
+
+    @Inject
+    protected BundleContext bundleContext;
 
     @GET
     @Path("list")
@@ -66,5 +71,12 @@ public final class ModuleResource
         {
             this.moduleService.getModule( key ).getBundle().update();
         }
+    }
+
+    @POST
+    public void install( final String url )
+        throws Exception
+    {
+        this.bundleContext.installBundle( url );
     }
 }
