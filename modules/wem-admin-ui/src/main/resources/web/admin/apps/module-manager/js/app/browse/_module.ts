@@ -1,3 +1,10 @@
+///<reference path='ModuleTreeGrid.ts'/>
+///<reference path='InstallModuleAction.ts' />
+///<reference path='RefreshModulesAction.ts' />
+///<reference path='StartModuleAction.ts' />
+///<reference path='StopModuleAction.ts' />
+///<reference path='UninstallModuleAction.ts' />
+///<reference path='UpdateModuleAction.ts' />
 ///<reference path='ModuleBrowseActions.ts' />
 ///<reference path='ModuleBrowseEvents.ts' />
 ///<reference path='ModuleBrowsePanel.ts' />

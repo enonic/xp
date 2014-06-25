@@ -32,7 +32,6 @@ function startApplication() {
 
 module components {
     export var detailPanel:app.browse.ModuleBrowseItemPanel;
-    export var gridPanel:app.browse.ModuleTreeGridPanel;
 }
 
 function route(path:api.rest.Path) {

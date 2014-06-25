@@ -1,20 +1,21 @@
 module app.browse {
 
+    import ModuleTreeGrid = app.browse.ModuleTreeGrid;
+    import ModuleSummary = api.module.ModuleSummary;
+
     export class ModuleBrowsePanel extends api.app.browse.BrowsePanel<api.module.ModuleSummary> {
 
         private browseActions: app.browse.ModuleBrowseActions;
 
-        private moduleTreeGridPanel: ModuleTreeGridPanel;
+        private moduleTreeGridPanel: ModuleTreeGrid;
 
         private toolbar: ModuleBrowseToolbar;
 
         constructor() {
             var treeGridContextMenu = new app.browse.ModuleTreeGridContextMenu();
-            this.moduleTreeGridPanel = components.gridPanel = new ModuleTreeGridPanel({
-                contextMenu: treeGridContextMenu
-            });
+            this.moduleTreeGridPanel = new ModuleTreeGrid(); // TODO add contextMenu
 
-            this.browseActions = ModuleBrowseActions.init();
+            this.browseActions = ModuleBrowseActions.init(this.moduleTreeGridPanel);
             treeGridContextMenu.setActions(this.browseActions);
 
             this.toolbar = new ModuleBrowseToolbar(this.browseActions);
@@ -22,18 +23,18 @@ module app.browse {
 
             super({
                 browseToolbar: this.toolbar,
-                treeGridPanel: this.moduleTreeGridPanel,
+                treeGridPanel2: this.moduleTreeGridPanel,
                 browseItemPanel: browseItemPanel,
                 filterPanel: undefined
             });
 
             api.module.ModuleDeletedEvent.on((event: api.module.ModuleDeletedEvent) => {
                 var moduleKey = event.getModuleKey();
-                this.moduleTreeGridPanel.removeItem(moduleKey.toString());
+//                this.moduleTreeGridPanel.removeItem(moduleKey.toString());
             });
 
-            this.moduleTreeGridPanel.onTreeGridSelectionChanged((event: api.app.browse.grid.TreeGridSelectionChangedEvent) => {
-                this.browseActions.updateActionsEnabledState(<any[]>event.getSelectedModels());
+            this.moduleTreeGridPanel.onRowSelectionChanged((selectedRows: ModuleSummary[]) => {
+                this.browseActions.updateActionsEnabledState(<any[]>selectedRows);
             });
         }
 

@@ -18,5 +18,6 @@ module api.module.json{
 
         vendorUrl:string;
 
+        state: string;
     }
 }

@@ -1,6 +1,6 @@
 module api.module {
 
-    export class ModuleSummary extends api.item.BaseItem {
+    export class ModuleSummary extends api.item.BaseItem implements api.node.Node {
 
         private moduleKey: ModuleKey;
 
@@ -12,6 +12,10 @@ module api.module {
 
         private url: string;
 
+        private state: string;
+
+        private version: string;
+
         constructor(builder: ModuleSummaryBuilder) {
             super(builder);
             this.moduleKey = builder.moduleKey;
@@ -19,6 +23,8 @@ module api.module {
             this.vendorName = builder.vendorName;
             this.vendorUrl = builder.vendorUrl;
             this.url = builder.url;
+            this.state = builder.state;
+            this.version = builder.moduleKey.getVersion();
         }
 
         getDisplayName(): string {
@@ -30,7 +36,7 @@ module api.module {
         }
 
         getVersion(): string {
-            return this.moduleKey.getVersion();
+            return this.version;
         }
 
         getName(): string {
@@ -47,6 +53,14 @@ module api.module {
 
         getUrl(): string {
             return this.url;
+        }
+
+        getState(): string {
+            return this.state;
+        }
+
+        hasChildren(): boolean {
+            return false;
         }
 
         static fromExtModel(model: Ext_data_Model): ModuleSummary {
@@ -78,6 +92,8 @@ module api.module {
 
         url: string;
 
+        state: string;
+
         fromJson(json: api.module.json.ModuleSummaryJson): ModuleSummaryBuilder {
 
             super.fromBaseItemJson(json, 'key');
@@ -87,6 +103,7 @@ module api.module {
             this.vendorName = json.vendorName;
             this.vendorUrl = json.vendorUrl;
             this.url = json.url;
+            this.state = json.state;
             return this;
         }
 

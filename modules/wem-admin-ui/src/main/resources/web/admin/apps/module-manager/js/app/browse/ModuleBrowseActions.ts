@@ -1,35 +1,20 @@
 module app.browse {
 
-    export class BaseModuleBrowseAction extends api.ui.Action {
-
-        constructor(label: string, shortcut?: string) {
-            super(label, shortcut);
-        }
-
-    }
-
-    export class DeleteModuleAction extends BaseModuleBrowseAction {
-
-        constructor() {
-            super("Delete");
-            this.setEnabled(false);
-            this.onExecuted(() => {
-                var moduleModel: api.module.ModuleSummary = api.module.ModuleSummary.fromExtModel(components.gridPanel.getSelection()[0]);
-                new DeleteModulePromptEvent(moduleModel).fire();
-            });
-        }
-    }
-
     export class ModuleBrowseActions {
 
-        public DELETE_MODULE: api.ui.Action;
+        public INSTALL_MODULE: api.ui.Action;
+        public UNINSTALL_MODULE: api.ui.Action;
+        public START_MODULE: api.ui.Action;
+        public STOP_MODULE: api.ui.Action;
+        public UPDATE_MODULE: api.ui.Action;
+        public REFRESH_MODULES: api.ui.Action;
 
         private allActions: api.ui.Action[] = [];
 
         private static INSTANCE: ModuleBrowseActions;
 
-        static init(): ModuleBrowseActions {
-            new ModuleBrowseActions();
+        static init(ModuleTreeGrid: ModuleTreeGrid): ModuleBrowseActions {
+            new ModuleBrowseActions(ModuleTreeGrid);
             return ModuleBrowseActions.INSTANCE;
         }
 
@@ -37,11 +22,17 @@ module app.browse {
             return ModuleBrowseActions.INSTANCE;
         }
 
-        constructor() {
+        constructor(ModuleTreeGrid: ModuleTreeGrid) {
 
-            this.DELETE_MODULE = new DeleteModuleAction();
+            this.INSTALL_MODULE = new InstallModuleAction(ModuleTreeGrid);
+            this.UNINSTALL_MODULE = new UninstallModuleAction(ModuleTreeGrid);
+            this.START_MODULE = new StartModuleAction(ModuleTreeGrid);
+            this.STOP_MODULE = new StopModuleAction(ModuleTreeGrid);
+            this.UPDATE_MODULE = new UpdateModuleAction(ModuleTreeGrid);
+            this.REFRESH_MODULES = new RefreshModulesAction(ModuleTreeGrid);
 
-            this.allActions.push(this.DELETE_MODULE);
+            this.allActions.push(this.INSTALL_MODULE, this.UNINSTALL_MODULE, this.START_MODULE, this.STOP_MODULE, this.UPDATE_MODULE,
+                this.REFRESH_MODULES);
 
             ModuleBrowseActions.INSTANCE = this;
         }
@@ -52,7 +43,13 @@ module app.browse {
 
         updateActionsEnabledState(modules: any[]) {
             var modulesSelected = modules.length;
-            this.DELETE_MODULE.setEnabled(modulesSelected > 0);
+            var anySelected = modulesSelected > 0;
+            this.INSTALL_MODULE.setEnabled(true);
+            this.UNINSTALL_MODULE.setEnabled(anySelected);
+            this.START_MODULE.setEnabled(anySelected);
+            this.STOP_MODULE.setEnabled(anySelected);
+            this.UPDATE_MODULE.setEnabled(anySelected);
+            this.REFRESH_MODULES.setEnabled(true);
         }
 
     }

@@ -7,7 +7,10 @@ module app.browse {
         }
 
         setActions(actions:ModuleBrowseActions) {
-            this.addAction(actions.DELETE_MODULE);
+            super.addAction(actions.START_MODULE);
+            super.addAction(actions.STOP_MODULE);
+            super.addAction(actions.UPDATE_MODULE);
+            super.addAction(actions.UNINSTALL_MODULE);
         }
     }
 }

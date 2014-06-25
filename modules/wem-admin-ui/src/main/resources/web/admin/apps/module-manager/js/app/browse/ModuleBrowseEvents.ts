@@ -28,4 +28,14 @@ module app.browse {
         }
     }
 
+    export class StartModuleEvent extends BaseModuleModelEvent {
+
+        constructor(moduleModel:api.module.ModuleSummary) {
+            super('startModule', [moduleModel]);
+        }
+
+        static on(handler:(event:StartModuleEvent) => void) {
+            api.event.onEvent('startModule', handler);
+        }
+    }
 }
