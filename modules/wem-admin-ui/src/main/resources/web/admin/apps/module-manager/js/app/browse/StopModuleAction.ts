@@ -4,12 +4,13 @@ module app.browse {
 
     export class StopModuleAction extends api.ui.Action {
 
-        constructor(ModuleTreeGrid: ModuleTreeGrid) {
+        constructor(moduleTreeGrid: ModuleTreeGrid) {
             super("Stop");
             this.setEnabled(false);
             this.onExecuted(() => {
-                var modules: ModuleSummary[] = ModuleTreeGrid.getSelectedDataNodes();
+                var modules: ModuleSummary[] = moduleTreeGrid.getSelectedDataNodes();
                 console.log('stop', modules);
+                new StopModuleEvent(modules).fire();
             });
         }
     }

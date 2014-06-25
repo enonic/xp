@@ -30,7 +30,6 @@ module app.browse {
                 name: "ModifiedTime",
                 id: "modifiedTime",
                 field: "modifiedTime",
-                cssClass: "modified",
                 formatter: DateTimeFormatter.format,
                 width: 150,
                 minWidth: 150

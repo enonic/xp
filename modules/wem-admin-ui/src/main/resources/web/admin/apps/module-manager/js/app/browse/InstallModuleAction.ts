@@ -4,7 +4,7 @@ module app.browse {
 
     export class InstallModuleAction extends api.ui.Action {
 
-        constructor(ModuleTreeGrid: ModuleTreeGrid) {
+        constructor(moduleTreeGrid: ModuleTreeGrid) {
             super("Install");
             this.setEnabled(true);
             this.onExecuted(() => {

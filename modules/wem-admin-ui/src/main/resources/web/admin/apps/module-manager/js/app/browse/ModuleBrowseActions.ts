@@ -13,8 +13,8 @@ module app.browse {
 
         private static INSTANCE: ModuleBrowseActions;
 
-        static init(ModuleTreeGrid: ModuleTreeGrid): ModuleBrowseActions {
-            new ModuleBrowseActions(ModuleTreeGrid);
+        static init(moduleTreeGrid: ModuleTreeGrid): ModuleBrowseActions {
+            new ModuleBrowseActions(moduleTreeGrid);
             return ModuleBrowseActions.INSTANCE;
         }
 
@@ -22,14 +22,14 @@ module app.browse {
             return ModuleBrowseActions.INSTANCE;
         }
 
-        constructor(ModuleTreeGrid: ModuleTreeGrid) {
+        constructor(moduleTreeGrid: ModuleTreeGrid) {
 
-            this.INSTALL_MODULE = new InstallModuleAction(ModuleTreeGrid);
-            this.UNINSTALL_MODULE = new UninstallModuleAction(ModuleTreeGrid);
-            this.START_MODULE = new StartModuleAction(ModuleTreeGrid);
-            this.STOP_MODULE = new StopModuleAction(ModuleTreeGrid);
-            this.UPDATE_MODULE = new UpdateModuleAction(ModuleTreeGrid);
-            this.REFRESH_MODULES = new RefreshModulesAction(ModuleTreeGrid);
+            this.INSTALL_MODULE = new InstallModuleAction(moduleTreeGrid);
+            this.UNINSTALL_MODULE = new UninstallModuleAction(moduleTreeGrid);
+            this.START_MODULE = new StartModuleAction(moduleTreeGrid);
+            this.STOP_MODULE = new StopModuleAction(moduleTreeGrid);
+            this.UPDATE_MODULE = new UpdateModuleAction(moduleTreeGrid);
+            this.REFRESH_MODULES = new RefreshModulesAction(moduleTreeGrid);
 
             this.allActions.push(this.INSTALL_MODULE, this.UNINSTALL_MODULE, this.START_MODULE, this.STOP_MODULE, this.UPDATE_MODULE,
                 this.REFRESH_MODULES);
@@ -41,14 +41,26 @@ module app.browse {
             return this.allActions;
         }
 
-        updateActionsEnabledState(modules: any[]) {
-            var modulesSelected = modules.length;
+        updateActionsEnabledState(selectedModules: ModuleSummary[]) {
+            console.log("updateActionsEnabledState", selectedModules);
+            var modulesSelected = selectedModules.length;
             var anySelected = modulesSelected > 0;
+            var anyStarted = false;
+            var anyStopped = false;
+            selectedModules.forEach((mod: ModuleSummary) => {
+                var state = mod.getState();
+                if (state === 'started') {
+                    anyStarted = true;
+                } else if (state === 'stopped') {
+                    anyStopped = true;
+                }
+            });
+
             this.INSTALL_MODULE.setEnabled(true);
-            this.UNINSTALL_MODULE.setEnabled(anySelected);
-            this.START_MODULE.setEnabled(anySelected);
-            this.STOP_MODULE.setEnabled(anySelected);
-            this.UPDATE_MODULE.setEnabled(anySelected);
+            this.UNINSTALL_MODULE.setEnabled(anyStopped);
+            this.START_MODULE.setEnabled(anyStopped);
+            this.STOP_MODULE.setEnabled(anyStarted);
+            this.UPDATE_MODULE.setEnabled(anyStarted);
             this.REFRESH_MODULES.setEnabled(true);
         }
 

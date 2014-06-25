@@ -13,3 +13,7 @@
 ///<reference path='ModuleLoaderListener.ts' />
 ///<reference path='ModuleSummaryViewer.ts' />
 ///<reference path='ModuleComboBox.ts' />
+///<reference path='StopModuleRequest.ts' />
+///<reference path='StartModuleRequest.ts' />
+///<reference path='UninstallModuleRequest.ts' />
+///<reference path='UpdateModuleRequest.ts' />

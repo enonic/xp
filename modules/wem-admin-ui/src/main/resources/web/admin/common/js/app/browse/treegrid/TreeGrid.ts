@@ -255,7 +255,15 @@ module api.app.browse.treegrid {
             });
             return dataNodes;
         }
-        
+
+        reload(parent?: NODE): void {
+            this.fetchChildren(parent).then((items: NODE[]) => {
+                var node = new TreeNode<NODE>();
+                node.setChildrenFromItems(items);
+                this.initData(node.treeToList());
+            })
+        }
+
         private initData(nodes: TreeNode<NODE>[]) {
             this.gridData.setItems(nodes, "id");
         }

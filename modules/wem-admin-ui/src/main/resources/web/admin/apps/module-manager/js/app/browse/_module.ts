@@ -6,6 +6,10 @@
 ///<reference path='UninstallModuleAction.ts' />
 ///<reference path='UpdateModuleAction.ts' />
 ///<reference path='ModuleBrowseActions.ts' />
+///<reference path='StopModuleEvent.ts' />
+///<reference path='StartModuleEvent.ts' />
+///<reference path='UpdateModuleEvent.ts' />
+///<reference path='UninstallModuleEvent.ts' />
 ///<reference path='ModuleBrowseEvents.ts' />
 ///<reference path='ModuleBrowsePanel.ts' />
 ///<reference path='ModuleBrowseToolbar.ts' />

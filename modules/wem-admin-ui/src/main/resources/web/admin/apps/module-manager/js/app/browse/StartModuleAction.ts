@@ -4,12 +4,13 @@ module app.browse {
 
     export class StartModuleAction extends api.ui.Action {
 
-        constructor(ModuleTreeGrid: ModuleTreeGrid) {
+        constructor(moduleTreeGrid: ModuleTreeGrid) {
             super("Start");
             this.setEnabled(false);
             this.onExecuted(() => {
-                var modules: ModuleSummary[] = ModuleTreeGrid.getSelectedDataNodes();
+                var modules: ModuleSummary[] = moduleTreeGrid.getSelectedDataNodes();
                 console.log('start', modules);
+                new StartModuleEvent(modules).fire();
             });
         }
     }
