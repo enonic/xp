@@ -94,6 +94,7 @@ module app.launcher {
             var appFrame: api.dom.IFrameEl = application.getAppFrame();
             if (application.isLoaded()) {
                 appFrame.show();
+                appFrame.giveFocus();
             }
             else {
                 this.adminApplicationFrames.appendChild(appFrame);
