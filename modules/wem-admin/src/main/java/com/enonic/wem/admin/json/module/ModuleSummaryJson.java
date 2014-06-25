@@ -1,5 +1,9 @@
 package com.enonic.wem.admin.json.module;
 
+import java.time.Instant;
+
+import org.osgi.framework.Bundle;
+
 import com.enonic.wem.admin.json.ItemJson;
 import com.enonic.wem.api.module.Module;
 
@@ -8,15 +12,9 @@ public class ModuleSummaryJson
 {
     final Module module;
 
-    private final boolean editable;
-
-    private final boolean deletable;
-
     public ModuleSummaryJson( final Module module )
     {
         this.module = module;
-        this.editable = true;
-        this.deletable = true;
     }
 
     public String getKey()
@@ -54,16 +52,25 @@ public class ModuleSummaryJson
         return module.getVendorUrl();
     }
 
+    public Instant getModifiedTime()
+    {
+        return Instant.ofEpochMilli( module.getBundle().getLastModified() );
+    }
+
+    public boolean isStarted()
+    {
+        return this.module.getBundle().getState() == Bundle.ACTIVE;
+    }
+
     @Override
     public boolean getDeletable()
     {
-        return deletable;
+        return false;
     }
 
     @Override
     public boolean getEditable()
     {
-        return editable;
+        return false;
     }
-
 }

@@ -43,7 +43,7 @@ public final class ModuleResource
         return new ModuleJson( module );
     }
 
-    @POST
+    // @POST
     public void start( final ModuleListParams params )
         throws Exception
     {
@@ -53,7 +53,7 @@ public final class ModuleResource
         }
     }
 
-    @POST
+    // @POST
     public void stop( final ModuleListParams params )
         throws Exception
     {
@@ -63,7 +63,7 @@ public final class ModuleResource
         }
     }
 
-    @POST
+    // @POST
     public void update( final ModuleListParams params )
         throws Exception
     {
@@ -73,7 +73,7 @@ public final class ModuleResource
         }
     }
 
-    @POST
+    // @POST
     public void install( final String url )
         throws Exception
     {

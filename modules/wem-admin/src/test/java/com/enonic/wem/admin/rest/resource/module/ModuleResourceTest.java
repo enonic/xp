@@ -3,12 +3,14 @@ package com.enonic.wem.admin.rest.resource.module;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.osgi.framework.Bundle;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.form.Form;
@@ -17,6 +19,7 @@ import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleService;
+import com.enonic.wem.api.module.Modules;
 import com.enonic.wem.core.module.ModuleBuilder;
 
 public class ModuleResourceTest
@@ -51,6 +54,19 @@ public class ModuleResourceTest
     }
 
     @Test
+    public void get_module_list()
+        throws Exception
+    {
+        final Module module = createModule();
+        Mockito.when( this.moduleService.getAllModules() ).thenReturn( Modules.from( module ) );
+
+        String response = resource().
+            path( "module/list" ).
+            get( String.class );
+        assertJson( "get_module_list_success.json", response );
+    }
+
+    @Test
     public void get_module_by_key()
         throws Exception
     {
@@ -70,6 +86,10 @@ public class ModuleResourceTest
             addFormItem( Input.newInput().name( "some-name" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
 
+        final Bundle bundle = Mockito.mock( Bundle.class );
+        Mockito.when( bundle.getState() ).thenReturn( Bundle.ACTIVE );
+        Mockito.when( bundle.getLastModified() ).thenReturn( Instant.parse( "2012-01-01T00:00:00.00Z" ).toEpochMilli() );
+
         return new ModuleBuilder().
             moduleKey( ModuleKey.from( "testmodule-1.0.0" ) ).
             displayName( "module display name" ).
@@ -77,6 +97,7 @@ public class ModuleResourceTest
             vendorName( "Enonic" ).
             vendorUrl( "https://www.enonic.com" ).
             config( config ).
+            bundle( bundle ).
             build();
     }
 
