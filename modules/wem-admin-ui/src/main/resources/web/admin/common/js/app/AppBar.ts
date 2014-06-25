@@ -43,9 +43,6 @@ module api.app {
 
             this.userButton.onClicked((event: MouseEvent) => this.userInfoPopup.toggle());
 
-            var appManager: api.app.AppManager = api.app.AppManager.instance();
-            this.launcherButton.onClicked((event: MouseEvent) => appManager.showLauncher());
-
             this.setBackgroundImgUrl(api.util.getRestUri('ui/background.jpg'));
 
             api.dom.Window.get().onResized((event: UIEvent) => this.layoutChildren(), this);
@@ -56,7 +53,11 @@ module api.app {
             });
             this.tabMenu.onNavigationItemRemoved((event: api.ui.NavigatorEvent)=> {
                 this.updateAppOpenTabs();
-            })
+            });
+
+            api.ui.KeyBindings.get().bindKey(new api.ui.KeyBinding("esc", () => {
+                this.showAppLauncherAction.execute();
+            }));
         }
 
         getTabMenu(): AppBarTabMenu {

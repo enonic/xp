@@ -18,8 +18,12 @@ module app.home {
 
         private returnButton:api.dom.DivEl;
 
+        private returnAction:api.ui.Action;
+
         constructor(builder: HomeMainContainerBuilder) {
             super('home-main-container');
+
+            this.getEl().setAttribute("tabindex", "100"); //Need tabindex to be able to focus element
 
             this.appSelector = builder.appSelector;
             this.loginForm = builder.loginForm;
@@ -39,7 +43,7 @@ module app.home {
             this.returnButton = new api.dom.DivEl('return-button');
             this.returnButton.hide();
             this.returnButton.onClicked(() => {
-                new ReturnToAppEvent().fire();
+                this.returnAction.execute()
             });
 
             this.centerPanel = new CenterPanel();
@@ -63,8 +67,8 @@ module app.home {
 
         }
 
-        giveFocus(): boolean {
-            return this.appSelector.giveFocus();
+        setReturnAction(action:api.ui.Action) {
+            this.returnAction = action;
         }
 
         showLogin() {

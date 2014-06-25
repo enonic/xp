@@ -4,8 +4,9 @@ module app.launcher {
         private app: api.app.Application;
         private countContainer: api.dom.DivEl;
 
-        constructor(application: api.app.Application) {
+        constructor(application: api.app.Application, index:number) {
             super('app-tile');
+            this.getEl().setAttribute("tabindex", (index+1)+"");
             this.app = application;
             if (this.app.useFullSizeIcon()) {
                 this.addClass("fullsize");
