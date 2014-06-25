@@ -68,7 +68,9 @@ public final class ModuleResource
         }
     }
 
-    // @POST
+    @POST
+    @Path("update")
+    @Consumes(MediaType.APPLICATION_JSON)
     public void update( final ModuleListParams params )
         throws Exception
     {
@@ -78,7 +80,9 @@ public final class ModuleResource
         }
     }
 
-    // @POST
+    @POST
+    @Path("uninstall")
+    @Consumes(MediaType.APPLICATION_JSON)
     public void uninstall( final ModuleListParams params )
         throws Exception
     {

@@ -112,6 +112,36 @@ public class ModuleResourceTest
         Mockito.verify( module.getBundle() ).stop();
     }
 
+    @Test
+    public void update_module()
+        throws Exception
+    {
+        final Module module = createModule();
+        Mockito.when( this.moduleService.getModule( Mockito.isA( ModuleKey.class ) ) ).thenReturn( module );
+
+        resource().
+            path( "module/update" ).
+            type( MediaType.APPLICATION_JSON_TYPE ).
+            post( "{\"key\":[\"testmodule-1.0.0\"]}" );
+
+        Mockito.verify( module.getBundle() ).update();
+    }
+
+    @Test
+    public void uninstall_module()
+        throws Exception
+    {
+        final Module module = createModule();
+        Mockito.when( this.moduleService.getModule( Mockito.isA( ModuleKey.class ) ) ).thenReturn( module );
+
+        resource().
+            path( "module/uninstall" ).
+            type( MediaType.APPLICATION_JSON_TYPE ).
+            post( "{\"key\":[\"testmodule-1.0.0\"]}" );
+
+        Mockito.verify( module.getBundle() ).uninstall();
+    }
+
     private Module createModule()
     {
         final Form config = Form.newForm().
