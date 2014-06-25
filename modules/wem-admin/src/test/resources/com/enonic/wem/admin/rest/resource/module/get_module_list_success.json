@@ -7,7 +7,7 @@
             "key": "testmodule-1.0.0",
             "modifiedTime": "2012-01-01T00:00:00Z",
             "name": "testmodule",
-            "started": true,
+            "state": "started",
             "url": "http://enonic.net",
             "vendorName": "Enonic",
             "vendorUrl": "https://www.enonic.com",

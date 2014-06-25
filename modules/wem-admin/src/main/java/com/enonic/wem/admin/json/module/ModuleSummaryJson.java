@@ -57,9 +57,9 @@ public class ModuleSummaryJson
         return Instant.ofEpochMilli( module.getBundle().getLastModified() );
     }
 
-    public boolean isStarted()
+    public String getState()
     {
-        return this.module.getBundle().getState() == Bundle.ACTIVE;
+        return ( this.module.getBundle().getState() == Bundle.ACTIVE ) ? "started" : "stopped";
     }
 
     @Override
