@@ -160,11 +160,6 @@ module api.liveedit {
             return this.parentRegionView;
         }
 
-        select(clickPosition?: Position) {
-            super.select(clickPosition);
-            new PageComponentSelectEvent(this).fire();
-        }
-
         setMoving(value: boolean) {
             this.moving = value;
         }
