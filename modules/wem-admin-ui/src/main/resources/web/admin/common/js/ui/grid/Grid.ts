@@ -160,6 +160,15 @@ module api.ui.grid {
             return this.slickGrid.getSelectedRows();
         }
 
+        getSelectedRowItems(): T[] {
+            var rowItems: T[] = [];
+            var rows = this.getSelectedRows();
+            rows.forEach((rowIndex: number) => {
+                rowItems.push(this.dataView.getItem(rowIndex));
+            });
+            return rowItems;
+        }
+
         setSelectedRows(rows:number[]) {
             this.slickGrid.setSelectedRows(rows);
         }

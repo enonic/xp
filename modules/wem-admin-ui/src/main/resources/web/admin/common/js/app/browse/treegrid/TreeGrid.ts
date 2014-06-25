@@ -142,7 +142,7 @@ module api.app.browse.treegrid {
                     if (selected.length === 1) {
                         var node = this.gridData.getItem(selected[0]);
                         if (node && node.getData().hasChildren()
-                            && !node.isExpanded() &&  this.active) {
+                                && !node.isExpanded() &&  this.active) {
 
                             this.active = false;
                             this.expandNode(node);
@@ -242,7 +242,20 @@ module api.app.browse.treegrid {
         selectAll() {
             this.grid.selectAll();
         }
-        
+
+        getSelectedTreeNodes() : TreeNode<NODE>[] {
+            return this.grid.getSelectedRowItems();
+        }
+
+        getSelectedDataNodes() : NODE[] {
+            var dataNodes: NODE[] = [];
+            var treeNodes = this.grid.getSelectedRowItems();
+            treeNodes.forEach((treeNode: TreeNode<NODE>) => {
+                dataNodes.push(treeNode.getData());
+            });
+            return dataNodes;
+        }
+
         private initData(nodes: TreeNode<NODE>[]) {
             this.gridData.setItems(nodes, "id");
         }
