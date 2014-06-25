@@ -16,8 +16,8 @@ module LiveEdit {
     import ItemViewId = api.liveedit.ItemViewId;
     import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
     import TextComponentView = api.liveedit.text.TextComponentView;
-    import SortableStartEvent = api.liveedit.SortableStartEvent;
-    import SortableStopEvent = api.liveedit.SortableStopEvent;
+    import DraggingPageComponentViewStartedEvent = api.liveedit.DraggingPageComponentViewStartedEvent;
+    import DraggingPageComponentViewCompletedEvent = api.liveedit.DraggingPageComponentViewCompletedEvent;
     import PageComponentAddedEvent = api.liveedit.PageComponentAddedEvent;
     import PageComponentDuplicateEvent = api.liveedit.PageComponentDuplicateEvent;
     import ItemViewDeselectEvent = api.liveedit.ItemViewDeselectEvent;
@@ -138,12 +138,12 @@ module LiveEdit {
                 this.highlighter.highlightItemView(event.getComponentView());
                 this.shader.shadeItemView(event.getComponentView());
             });
-            SortableStartEvent.on(() => {
+            DraggingPageComponentViewStartedEvent.on(() => {
                 this.highlighter.hide();
                 this.shader.hide();
                 this.cursor.hide();
             });
-            SortableStopEvent.on(() => {
+            DraggingPageComponentViewCompletedEvent.on(() => {
                 this.cursor.reset();
             });
             PageComponentRemoveEvent.on(() => {

@@ -49,7 +49,8 @@ module app.wizard.page.contextwindow.insert {
                 }
             });
 
-            this.liveEditPage.onSortableStop(() => {
+            this.liveEditPage.onDraggingPageComponentViewCompleted(() => {
+                console.log("InsertablesPanel.onDraggingPageComponentViewCompleted simulate mouse up for draggable");
                 this.simulateMouseUpForDraggable();
             });
         }

@@ -60,8 +60,8 @@ module app.wizard.page {
     import PartComponentView = api.liveedit.part.PartComponentView;
     import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
     import TextComponentView = api.liveedit.text.TextComponentView;
-    import SortableStartEvent = api.liveedit.SortableStartEvent;
-    import SortableStopEvent = api.liveedit.SortableStopEvent;
+    import DraggingPageComponentViewStartedEvent = api.liveedit.DraggingPageComponentViewStartedEvent;
+    import DraggingPageComponentViewCompletedEvent = api.liveedit.DraggingPageComponentViewCompletedEvent;
     import PageSelectEvent = api.liveedit.PageSelectEvent;
     import RegionSelectEvent = api.liveedit.RegionSelectEvent;
     import ImageComponentSetImageEvent = api.liveedit.image.ImageComponentSetImageEvent;
@@ -503,12 +503,12 @@ module app.wizard.page {
                     done();
             });
 
-            this.liveEditPage.onSortableStart((event: SortableStartEvent) => {
+            this.liveEditPage.onDraggingPageComponentViewStartedEvent((event: DraggingPageComponentViewStartedEvent) => {
 
                 this.contextWindow.hide();
             });
 
-            this.liveEditPage.onSortableStop((event: SortableStopEvent) => {
+            this.liveEditPage.onDraggingPageComponentViewCompleted((event: DraggingPageComponentViewCompletedEvent) => {
 
                 var pageComponentView = event.getPageComponentView();
                 if (!pageComponentView.isEmpty()) {

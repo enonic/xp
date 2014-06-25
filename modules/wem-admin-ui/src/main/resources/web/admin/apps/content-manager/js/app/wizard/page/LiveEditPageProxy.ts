@@ -15,8 +15,8 @@ module app.wizard.page {
     import ImageOpenUploadDialogEvent = api.liveedit.ImageOpenUploadDialogEvent;
     import ImageUploadedEvent = api.liveedit.ImageUploadedEvent;
     import ImageComponentSetImageEvent = api.liveedit.image.ImageComponentSetImageEvent;
-    import SortableStartEvent = api.liveedit.SortableStartEvent;
-    import SortableStopEvent = api.liveedit.SortableStopEvent;
+    import DraggingPageComponentViewStartedEvent = api.liveedit.DraggingPageComponentViewStartedEvent;
+    import DraggingPageComponentViewCompletedEvent = api.liveedit.DraggingPageComponentViewCompletedEvent;
     import PageSelectEvent = api.liveedit.PageSelectEvent;
     import RegionSelectEvent = api.liveedit.RegionSelectEvent;
     import PageComponentSelectEvent = api.liveedit.PageComponentSelectEvent;
@@ -65,9 +65,9 @@ module app.wizard.page {
 
         private loadedListeners: {(): void;}[] = [];
 
-        private sortableStartListeners: {(event: SortableStartEvent): void;}[] = [];
+        private draggingPageComponentViewStartedListeners: {(event: DraggingPageComponentViewStartedEvent): void;}[] = [];
 
-        private sortableStopListeners: {(event: SortableStopEvent): void;}[] = [];
+        private draggingPageComponentViewCompletedListeners: {(event: DraggingPageComponentViewCompletedEvent): void;}[] = [];
 
         private pageSelectedListeners: {(event: PageSelectEvent): void;}[] = [];
 
@@ -251,9 +251,9 @@ module app.wizard.page {
                 uploadDialog.open();
             }, this.liveEditWindow);
 
-            SortableStartEvent.on(this.notifySortableStart.bind(this), this.liveEditWindow);
+            DraggingPageComponentViewStartedEvent.on(this.notifyDraggingPageComponentViewStarted.bind(this), this.liveEditWindow);
 
-            SortableStopEvent.on(this.notifySortableStop.bind(this), this.liveEditWindow);
+            DraggingPageComponentViewCompletedEvent.on(this.notifyDraggingPageComponentViewCompleted.bind(this), this.liveEditWindow);
 
             PageSelectEvent.on(this.notifyPageSelected.bind(this), this.liveEditWindow);
 
@@ -300,28 +300,30 @@ module app.wizard.page {
             });
         }
 
-        onSortableStart(listener: (event: SortableStartEvent) => void) {
-            this.sortableStartListeners.push(listener);
+        onDraggingPageComponentViewStartedEvent(listener: (event: DraggingPageComponentViewStartedEvent) => void) {
+            this.draggingPageComponentViewStartedListeners.push(listener);
         }
 
-        unSortableStart(listener: (event: SortableStartEvent) => void) {
-            this.sortableStartListeners = this.sortableStartListeners.filter((curr) => (curr != listener));
+        unDraggingPageComponentViewStartedEvent(listener: (event: DraggingPageComponentViewStartedEvent) => void) {
+            this.draggingPageComponentViewStartedListeners =
+            this.draggingPageComponentViewStartedListeners.filter((curr) => (curr != listener));
         }
 
-        private notifySortableStart(event: SortableStartEvent) {
-            this.sortableStartListeners.forEach((listener) => listener(event));
+        private notifyDraggingPageComponentViewStarted(event: DraggingPageComponentViewStartedEvent) {
+            this.draggingPageComponentViewStartedListeners.forEach((listener) => listener(event));
         }
 
-        onSortableStop(listener: {(event: SortableStopEvent): void;}) {
-            this.sortableStopListeners.push(listener);
+        onDraggingPageComponentViewCompleted(listener: {(event: DraggingPageComponentViewCompletedEvent): void;}) {
+            this.draggingPageComponentViewCompletedListeners.push(listener);
         }
 
-        unSortableStop(listener: {(event: SortableStopEvent): void;}) {
-            this.sortableStopListeners = this.sortableStopListeners.filter((curr) => (curr != listener));
+        unDraggingPageComponentViewCompleted(listener: {(event: DraggingPageComponentViewCompletedEvent): void;}) {
+            this.draggingPageComponentViewCompletedListeners =
+            this.draggingPageComponentViewCompletedListeners.filter((curr) => (curr != listener));
         }
 
-        private notifySortableStop(event: SortableStopEvent) {
-            this.sortableStopListeners.forEach((listener) => listener(event));
+        private notifyDraggingPageComponentViewCompleted(event: DraggingPageComponentViewCompletedEvent) {
+            this.draggingPageComponentViewCompletedListeners.forEach((listener) => listener(event));
         }
 
         onPageSelected(listener: (event: PageSelectEvent) => void) {

@@ -18,8 +18,8 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     import RegionItemType = api.liveedit.RegionItemType;
     import TextItemType = api.liveedit.text.TextItemType;
     import LayoutItemType = api.liveedit.layout.LayoutItemType;
-    import SortableStartEvent = api.liveedit.SortableStartEvent;
-    import SortableStopEvent = api.liveedit.SortableStopEvent;
+    import DraggingPageComponentViewStartedEvent = api.liveedit.DraggingPageComponentViewStartedEvent;
+    import DraggingPageComponentViewCompletedEvent = api.liveedit.DraggingPageComponentViewCompletedEvent;
     import ItemViewDeselectEvent = api.liveedit.ItemViewDeselectEvent;
     import CreateItemViewConfig = api.liveedit.CreateItemViewConfig;
 
@@ -130,7 +130,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
         refreshSortable();
 
-        new SortableStartEvent().fire();
+        new DraggingPageComponentViewStartedEvent().fire();
     }
 
     function handleDragOver(event: JQueryEventObject, ui: JQueryUI.SortableUIParams): void {
@@ -244,7 +244,6 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             console.debug("DragDropSort.handleSortUpdate: skipping handling since RegionView from ui.placeholder.parent not found");
             return;
         }
-        console.log("  droppedInRegionView: " + droppedInRegionView.toString());
 
         var liveEditPage = LiveEdit.LiveEditPage.get();
         var droppedPageComponentView = getPageComponentView(ui.item);
@@ -292,10 +291,10 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             ui.item.remove();
         }
 
-        new SortableStopEvent(pageComponentView).fire();
-
         pageComponentView.getElement().removeData('live-edit-selected-on-drag-start');
         pageComponentView.select();
+
+        new DraggingPageComponentViewCompletedEvent(pageComponentView).fire();
     }
 
     // When sortable receives a new item
