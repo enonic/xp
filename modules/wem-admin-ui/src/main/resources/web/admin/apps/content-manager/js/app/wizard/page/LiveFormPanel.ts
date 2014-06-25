@@ -511,10 +511,8 @@ module app.wizard.page {
             this.liveEditPage.onSortableStop((event: SortableStopEvent) => {
 
                 var pageComponentView = event.getPageComponentView();
-
                 if (!pageComponentView.isEmpty()) {
                     this.contextWindow.show();
-                    pageComponentView.select();
                     this.inspectPageComponent(pageComponentView);
                 }
             });

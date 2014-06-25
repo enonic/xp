@@ -295,6 +295,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         new SortableStopEvent(pageComponentView).fire();
 
         pageComponentView.getElement().removeData('live-edit-selected-on-drag-start');
+        pageComponentView.select();
     }
 
     // When sortable receives a new item
