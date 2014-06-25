@@ -13,6 +13,7 @@ import org.osgi.framework.BundleContext;
 
 import com.enonic.wem.admin.json.module.ModuleJson;
 import com.enonic.wem.admin.rest.resource.module.json.ListModuleJson;
+import com.enonic.wem.admin.rest.resource.module.json.ModuleInstallParams;
 import com.enonic.wem.admin.rest.resource.module.json.ModuleListParams;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
@@ -92,10 +93,12 @@ public final class ModuleResource
         }
     }
 
-    // @POST
-    public void install( final String url )
+    @POST
+    @Path("install")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void install( final ModuleInstallParams params )
         throws Exception
     {
-        this.bundleContext.installBundle( url );
+        this.bundleContext.installBundle( params.getUrl() );
     }
 }

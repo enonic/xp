@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.form.Form;
@@ -30,6 +31,8 @@ public class ModuleResourceTest
     private ModuleService moduleService;
 
     private Path tempDir;
+
+    private BundleContext bundleContext;
 
     @Before
     public void setup()
@@ -142,6 +145,18 @@ public class ModuleResourceTest
         Mockito.verify( module.getBundle() ).uninstall();
     }
 
+    @Test
+    public void install_module()
+        throws Exception
+    {
+        resource().
+            path( "module/install" ).
+            type( MediaType.APPLICATION_JSON_TYPE ).
+            post( "{\"url\":\"http://some.host/some.path\"}" );
+
+        Mockito.verify( this.bundleContext ).installBundle( "http://some.host/some.path" );
+    }
+
     private Module createModule()
     {
         final Form config = Form.newForm().
@@ -166,10 +181,12 @@ public class ModuleResourceTest
     @Override
     protected Object getResourceInstance()
     {
-        moduleService = Mockito.mock( ModuleService.class );
+        this.moduleService = Mockito.mock( ModuleService.class );
+        this.bundleContext = Mockito.mock( BundleContext.class );
 
         final ModuleResource resource = new ModuleResource();
-        resource.moduleService = moduleService;
+        resource.moduleService = this.moduleService;
+        resource.bundleContext = this.bundleContext;
 
         return resource;
     }
