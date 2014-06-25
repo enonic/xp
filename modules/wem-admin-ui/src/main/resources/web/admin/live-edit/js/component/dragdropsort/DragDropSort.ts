@@ -105,7 +105,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
             var draggingOverRegionView: RegionView = getRegionView(ui.placeholder.parent());
             if (!draggingOverRegionView) {
-                console.debug("DragDropSort.handleSortStart: skipping handling since RegionView from ui.placeholder.parent() not found");
+                console.debug("DragDropSort.handleSortStart: skipping handling since RegionView from ui.placeholder.parent() was not found");
                 return;
             }
             else {
@@ -139,13 +139,13 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
         var draggingOverRegionView: RegionView = getRegionView(ui.placeholder.parent());
         if (!draggingOverRegionView) {
-            console.debug("DragDropSort.handleDragOver: skipping handling since RegionView from ui.placeholder.parent not found");
+            console.debug("DragDropSort.handleDragOver: skipping handling since RegionView from ui.placeholder.parent() was not found");
             return;
         }
 
         var draggedPageComponentView = getPageComponentView(ui.item);
         if (!draggedPageComponentView) {
-            console.debug("DragDropSort.handleDragOver: skipping handling since PageComponentView from ui.item not found");
+            console.debug("DragDropSort.handleDragOver: skipping handling since PageComponentView from ui.item was not found");
             return
         }
 
@@ -177,7 +177,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         // Ignore the out event if the dragged item is no longer moving (i.e. have been dropped)
         var draggedPageComponentView = getPageComponentView(ui.item);
         if (!draggedPageComponentView) {
-            console.debug("DragDropSort.handleDragOut: skipping handling since PageComponentView was not from ui.item", ui.item);
+            console.debug("DragDropSort.handleDragOut: skipping handling since PageComponentView was not found from ui.item", ui.item);
             return;
         }
 
@@ -241,14 +241,14 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
         var droppedInRegionView: RegionView = getRegionView(ui.item.parent());
         if (!droppedInRegionView) {
-            console.debug("DragDropSort.handleSortUpdate: skipping handling since RegionView from ui.placeholder.parent not found");
+            console.debug("DragDropSort.handleSortUpdate: skipping handling since RegionView from ui.placeholder.parent() was not found");
             return;
         }
 
         var liveEditPage = LiveEdit.LiveEditPage.get();
         var droppedPageComponentView = getPageComponentView(ui.item);
         if (!droppedPageComponentView) {
-            console.warn("DragDropSort.handleSortUpdate:  PageComponentView from ui.item not found");
+            console.warn("DragDropSort.handleSortUpdate:  skipping handling since PageComponentView from ui.item was not found");
             return;
         }
 
@@ -266,7 +266,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
             var regionView = liveEditPage.getRegionViewByElement(regionHTMLElement);
 
-            liveEditPage.movePageComponent(droppedPageComponentView, regionView, precedingComponentView);
+            droppedPageComponentView.moveToRegion(regionView, precedingComponentView);
             simulateMouseUpForDraggable();
         }
     }

@@ -196,20 +196,6 @@ module LiveEdit {
             pageComponentView.select();
         }
 
-        movePageComponent(pageComponentView: PageComponentView<PageComponent>, regionView: RegionView,
-                          precedingComponentView: PageComponentView<PageComponent>) {
-
-            if (pageComponentView.getParentElement().getHTMLElement() == pageComponentView.getHTMLElement().parentElement) {
-
-                console.log("LiveEditPage.movePageComponent parents are the same");
-            }
-            else {
-                console.log("LiveEditPage.movePageComponent parents are NOT the same");
-            }
-
-            pageComponentView.moveToRegion(regionView, precedingComponentView);
-        }
-
         duplicatePageComponent(pageComponentView: PageComponentView<PageComponent>) {
 
             var origin = pageComponentView.getPageComponent();
