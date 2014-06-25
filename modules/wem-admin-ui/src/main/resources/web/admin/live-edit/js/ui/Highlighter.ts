@@ -23,17 +23,13 @@ module LiveEdit.ui {
         highlightItemView(itemView: ItemView): void {
 
             if (!itemView) {
-                if (this.isVisible()) {
-                    this.hide();
-                }
+                this.hide();
                 return;
             }
 
             this.resizeToComponent(itemView);
 
-            if (!this.isVisible()) {
-                this.show();
-            }
+            this.show();
         }
 
         private resizeToComponent(itemView: ItemView): void {

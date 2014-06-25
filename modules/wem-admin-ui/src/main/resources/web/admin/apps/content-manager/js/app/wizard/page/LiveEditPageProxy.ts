@@ -96,7 +96,7 @@ module app.wizard.page {
 
         constructor(config: LiveEditPageProxyConfig) {
 
-            this.baseUrl = api.util.getUri("portal/edit/");
+            this.baseUrl = api.util.getUri("portal/edit/stage/");
             this.liveFormPanel = config.liveFormPanel;
             this.siteTemplate = config.siteTemplate;
 
@@ -216,7 +216,8 @@ module app.wizard.page {
             wemjq.ajax({
                 url: api.rendering.UriHelper.getComponentUri(content.getContentId().toString(),
                     pageComponentView.getComponentPath().toString(),
-                    RenderingMode.EDIT),
+                    RenderingMode.EDIT,
+                    api.content.Workspace.STAGE),
                 type: 'GET',
                 success: (htmlAsString: string) => {
 

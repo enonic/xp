@@ -6,8 +6,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
 import org.elasticsearch.common.joda.time.DateTimeUtils;
-import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -31,16 +29,11 @@ import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeService;
 import com.enonic.wem.api.entity.UpdateNodeParams;
 import com.enonic.wem.api.entity.Workspace;
-import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
-import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.wem.core.entity.dao.NodeNotFoundException;
 
 import static com.enonic.wem.api.content.Content.editContent;
 import static com.enonic.wem.api.content.Content.newContent;
-import static com.enonic.wem.api.schema.content.ContentType.newContentType;
-import static org.junit.Assert.*;
 
 public class UpdateContentCommandTest
 {
@@ -60,6 +53,8 @@ public class UpdateContentCommandTest
 
     private final ContentNodeTranslator translator = Mockito.mock( ContentNodeTranslator.class );
 
+    private final Context TEST_CONTEXT = new Context( Workspace.from( "test" ) );
+
 
     //@Ignore // Rewriting content stuff to node
     @Test(expected = ContentNotFoundException.class)
@@ -75,9 +70,11 @@ public class UpdateContentCommandTest
         final ContentData unchangedContentData = new ContentData();
         unchangedContentData.add( Property.newString( "myData", "aaa" ) );
 
+        final ContentId contentId = ContentId.from( "mycontent" );
+
         UpdateContentParams params = new UpdateContentParams().
             modifier( AccountKey.superUser() ).
-            contentId( ContentId.from( "mycontent" ) ).
+            contentId( contentId ).
             editor( new ContentEditor()
             {
                 @Override
@@ -93,10 +90,10 @@ public class UpdateContentCommandTest
             nodeService( this.nodeService ).
             blobService( this.blobService ).
             translator( this.translator ).
-            context( new Context( new Workspace( "test" ) ) ).
+            context( TEST_CONTEXT ).
             build();
 
-        Mockito.when( attachmentService.getAll( Mockito.isA( ContentId.class ) ) ).thenReturn( Attachments.empty() );
+        Mockito.when( attachmentService.getAll( contentId, TEST_CONTEXT ) ).thenReturn( Attachments.empty() );
 
         Mockito.when( nodeService.getById( Mockito.isA( EntityId.class ), Mockito.isA( Context.class ) ) ).thenThrow(
             new NodeNotFoundException( "Node not found" ) );
@@ -139,11 +136,11 @@ public class UpdateContentCommandTest
             nodeService( this.nodeService ).
             blobService( this.blobService ).
             translator( this.translator ).
-            context( new Context( new Workspace( "test" ) ) ).
+            context( TEST_CONTEXT ).
             build();
 
         final Node mockNode = Node.newNode().build();
-        Mockito.when( nodeService.getById( Mockito.isA( EntityId.class ), Mockito.isA( Context.class ) ) ).
+        Mockito.when( nodeService.getById( EntityId.from( existingContent.getId() ), TEST_CONTEXT ) ).
             thenReturn( mockNode );
         Mockito.when( translator.fromNode( mockNode ) ).thenReturn( existingContent );
 
@@ -152,7 +149,6 @@ public class UpdateContentCommandTest
 
         // verify
         Mockito.verify( nodeService, Mockito.never() ).update( Mockito.isA( UpdateNodeParams.class ), Mockito.isA( Context.class ) );
-
     }
 
     private Content createContent( final ContentData contentData )

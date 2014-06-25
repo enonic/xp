@@ -78,6 +78,7 @@ public final class ComponentResource
 
         final JsHttpRequest jsRequest = new JsHttpRequest();
         jsRequest.setMode( this.mode );
+        jsRequest.setWorkspace( this.workspace );
         jsRequest.setMethod( getRequest().getMethod().toString() );
         jsRequest.addParams( getParams() );
         context.setRequest( jsRequest );

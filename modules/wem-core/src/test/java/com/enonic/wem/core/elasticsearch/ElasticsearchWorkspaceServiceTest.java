@@ -61,7 +61,7 @@ public class ElasticsearchWorkspaceServiceTest
 
         final WorkspaceDocument workspaceDocument = WorkspaceDocument.create().
             blobKey( new BlobKey( "a" ) ).
-            workspace( new Workspace( "test" ) ).
+            workspace( Workspace.from( "test" ) ).
             parentPath( node.parent() ).
             path( node.path() ).
             id( node.id() ).
@@ -87,7 +87,7 @@ public class ElasticsearchWorkspaceServiceTest
 
         final WorkspaceDocument workspaceDocument = WorkspaceDocument.create().
             blobKey( new BlobKey( "a" ) ).
-            workspace( new Workspace( "test" ) ).
+            workspace( Workspace.from( "test" ) ).
             parentPath( node.parent() ).
             path( node.path() ).
             id( node.id() ).
@@ -119,7 +119,7 @@ public class ElasticsearchWorkspaceServiceTest
 
         final WorkspaceDocument workspaceDocument = WorkspaceDocument.create().
             blobKey( new BlobKey( "b" ) ).
-            workspace( new Workspace( "test" ) ).
+            workspace( Workspace.from( "test" ) ).
             parentPath( node.parent() ).
             path( node.path() ).
             id( node.id() ).
@@ -144,7 +144,7 @@ public class ElasticsearchWorkspaceServiceTest
     @Test
     public void delete()
     {
-        final WorkspaceDeleteQuery deleteQuery = new WorkspaceDeleteQuery( new Workspace( "test" ), EntityId.from( "1" ) );
+        final WorkspaceDeleteQuery deleteQuery = new WorkspaceDeleteQuery( Workspace.from( "test" ), EntityId.from( "1" ) );
         wsStore.delete( deleteQuery );
     }
 
@@ -164,7 +164,7 @@ public class ElasticsearchWorkspaceServiceTest
         Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( QueryBuilder.class ) ) ).
             thenReturn( searchResult );
 
-        final WorkspaceIdQuery idQuery = new WorkspaceIdQuery( new Workspace( "test" ), EntityId.from( "1" ) );
+        final WorkspaceIdQuery idQuery = new WorkspaceIdQuery( Workspace.from( "test" ), EntityId.from( "1" ) );
 
         final BlobKey blobKey = wsStore.getById( idQuery );
 
@@ -184,7 +184,7 @@ public class ElasticsearchWorkspaceServiceTest
         Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( QueryBuilder.class ) ) ).
             thenReturn( emptySearchResult );
 
-        final WorkspaceIdQuery idQuery = new WorkspaceIdQuery( new Workspace( "test" ), EntityId.from( "1" ) );
+        final WorkspaceIdQuery idQuery = new WorkspaceIdQuery( Workspace.from( "test" ), EntityId.from( "1" ) );
 
         final BlobKey byId = wsStore.getById( idQuery );
 
@@ -206,7 +206,7 @@ public class ElasticsearchWorkspaceServiceTest
         Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( QueryBuilder.class ) ) ).
             thenReturn( searchResultMissingField );
 
-        final WorkspaceIdQuery idQuery = new WorkspaceIdQuery( new Workspace( "test" ), EntityId.from( "1" ) );
+        final WorkspaceIdQuery idQuery = new WorkspaceIdQuery( Workspace.from( "test" ), EntityId.from( "1" ) );
 
         wsStore.getById( idQuery );
     }
@@ -236,7 +236,7 @@ public class ElasticsearchWorkspaceServiceTest
         Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( QueryBuilder.class ) ) ).
             thenReturn( searchResult );
 
-        final WorkspaceIdsQuery idQuery = new WorkspaceIdsQuery( new Workspace( "test" ), EntityIds.from( "1", "2", "3" ) );
+        final WorkspaceIdsQuery idQuery = new WorkspaceIdsQuery( Workspace.from( "test" ), EntityIds.from( "1", "2", "3" ) );
 
         final BlobKeys blobKeys = wsStore.getByIds( idQuery );
 
@@ -270,7 +270,7 @@ public class ElasticsearchWorkspaceServiceTest
         Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( QueryBuilder.class ) ) ).
             thenReturn( searchResult );
 
-        final WorkspaceIdsQuery idQuery = new WorkspaceIdsQuery( new Workspace( "test" ), EntityIds.from( "1", "2", "3" ) );
+        final WorkspaceIdsQuery idQuery = new WorkspaceIdsQuery( Workspace.from( "test" ), EntityIds.from( "1", "2", "3" ) );
 
         final BlobKeys byIds = wsStore.getByIds( idQuery );
 
@@ -289,7 +289,7 @@ public class ElasticsearchWorkspaceServiceTest
         Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( QueryBuilder.class ) ) ).
             thenReturn( searchResult );
 
-        final WorkspaceIdsQuery idQuery = new WorkspaceIdsQuery( new Workspace( "test" ), EntityIds.from( "1", "2", "3" ) );
+        final WorkspaceIdsQuery idQuery = new WorkspaceIdsQuery( Workspace.from( "test" ), EntityIds.from( "1", "2", "3" ) );
 
         final BlobKeys result = wsStore.getByIds( idQuery );
 
@@ -312,7 +312,7 @@ public class ElasticsearchWorkspaceServiceTest
         Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( QueryBuilder.class ) ) ).
             thenReturn( searchResult );
 
-        final WorkspacePathQuery pathQuery = new WorkspacePathQuery( new Workspace( "test" ), NodePath.newPath( "/test" ).build() );
+        final WorkspacePathQuery pathQuery = new WorkspacePathQuery( Workspace.from( "test" ), NodePath.newPath( "/test" ).build() );
 
         final BlobKey blobKey = wsStore.getByPath( pathQuery );
 
@@ -331,7 +331,7 @@ public class ElasticsearchWorkspaceServiceTest
         Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( QueryBuilder.class ) ) ).
             thenReturn( searchResult );
 
-        final WorkspacePathQuery pathQuery = new WorkspacePathQuery( new Workspace( "test" ), NodePath.newPath( "/test" ).build() );
+        final WorkspacePathQuery pathQuery = new WorkspacePathQuery( Workspace.from( "test" ), NodePath.newPath( "/test" ).build() );
 
         final BlobKey result = wsStore.getByPath( pathQuery );
 
@@ -362,7 +362,7 @@ public class ElasticsearchWorkspaceServiceTest
         Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( QueryBuilder.class ) ) ).
             thenReturn( searchResult );
 
-        final WorkspacePathsQuery pathsQuery = new WorkspacePathsQuery( new Workspace( "test" ),
+        final WorkspacePathsQuery pathsQuery = new WorkspacePathsQuery( Workspace.from( "test" ),
                                                                         NodePaths.from( NodePath.newPath( "/test" ).build(),
                                                                                         NodePath.newPath( "/test2" ).build(),
                                                                                         NodePath.newPath( "/test3" ).build() ) );
@@ -399,7 +399,7 @@ public class ElasticsearchWorkspaceServiceTest
         Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( QueryBuilder.class ) ) ).
             thenReturn( searchResult );
 
-        final WorkspacePathsQuery pathsQuery = new WorkspacePathsQuery( new Workspace( "test" ),
+        final WorkspacePathsQuery pathsQuery = new WorkspacePathsQuery( Workspace.from( "test" ),
                                                                         NodePaths.from( NodePath.newPath( "/test" ).build(),
                                                                                         NodePath.newPath( "/test2" ).build(),
                                                                                         NodePath.newPath( "/test3" ).build() ) );
@@ -434,7 +434,7 @@ public class ElasticsearchWorkspaceServiceTest
         Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( QueryBuilder.class ) ) ).
             thenReturn( searchResult );
 
-        final WorkspaceParentQuery query = new WorkspaceParentQuery( new Workspace( "test" ), NodePath.newPath( "/test" ).build() );
+        final WorkspaceParentQuery query = new WorkspaceParentQuery( Workspace.from( "test" ), NodePath.newPath( "/test" ).build() );
 
         final BlobKeys blobKeys = wsStore.getByParent( query );
 
@@ -460,7 +460,7 @@ public class ElasticsearchWorkspaceServiceTest
         Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( QueryBuilder.class ) ) ).
             thenReturn( emptyResult );
 
-        final WorkspaceParentQuery query = new WorkspaceParentQuery( new Workspace( "test" ), NodePath.newPath( "/test" ).build() );
+        final WorkspaceParentQuery query = new WorkspaceParentQuery( Workspace.from( "test" ), NodePath.newPath( "/test" ).build() );
 
         final BlobKeys blobKeys = wsStore.getByParent( query );
 

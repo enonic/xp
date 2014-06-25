@@ -17,6 +17,7 @@ import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.core.content.ContentInitializer;
@@ -28,6 +29,9 @@ import static com.enonic.wem.api.content.attachment.Attachment.newAttachment;
 public class DemoImagesInitializer
     extends BaseInitializer
 {
+
+    static final Context STAGE_CONTEXT = new Context( ContentConstants.WORKSPACE_STAGE );
+
     private static final String[] FOLDER_IMAGES_POP =
         {"Pop_01.jpg", "Pop_02.jpg", "Pop_03.jpg", "Pop_04.jpg", "Pop_05.jpg", "Pop_06.jpg", "Pop_07.jpg", "Pop_08.jpg", "Pop-Black.jpg",
             "Pop-Green.jpg", "Pop-Silverpink.jpg"};
@@ -103,7 +107,7 @@ public class DemoImagesInitializer
             parent( parent ).
             contentData( dataSet ).
             attachments( attachment );
-        contentService.create( params, ContentConstants.DEFAULT_CONTEXT).getId();
+        contentService.create( params, STAGE_CONTEXT ).getId();
     }
 
     private ContentData createContentData( final String attachmentName )

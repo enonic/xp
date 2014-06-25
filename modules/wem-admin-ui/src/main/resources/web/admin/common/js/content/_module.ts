@@ -38,6 +38,7 @@
 ///<reference path='CompareContentResultJson.ts' />
 ///<reference path='CompareStatus.ts' />
 ///<reference path='CompareStatusJson.ts' />
+///<reference path='Workspace.ts' />
 
 
 

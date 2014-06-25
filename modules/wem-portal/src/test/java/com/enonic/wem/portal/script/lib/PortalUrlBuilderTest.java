@@ -34,9 +34,11 @@ public class PortalUrlBuilderTest
     @Test
     public void createUrlResource()
     {
-        final PortalUrlBuilder urlBuilder = PortalUrlBuilder.createUrl( baseUrl ).resourcePath( "some/path" );
+        final PortalUrlBuilder urlBuilder = PortalUrlBuilder.createUrl( baseUrl ).
+            workspace( "test" ).
+            resourcePath( "some/path" );
 
-        assertEquals( "/portal/live/some/path", urlBuilder.toString() );
+        assertEquals( "/portal/live/test/some/path", urlBuilder.toString() );
     }
 
     @Test
@@ -47,30 +49,49 @@ public class PortalUrlBuilderTest
         params.put( "b", 2 );
         params.put( "c", null );
 
-        final PortalUrlBuilder urlBuilder = PortalUrlBuilder.createUrl( baseUrl ).resourcePath( "some/path" );
-        assertEquals( "/portal/live/some/path", urlBuilder.toString() );
+        final PortalUrlBuilder urlBuilder = PortalUrlBuilder.createUrl( baseUrl ).
+            workspace( "test" ).
+            resourcePath( "some/path" );
+        assertEquals( "/portal/live/test/some/path", urlBuilder.toString() );
 
         urlBuilder.params( params ).param( "d", true );
-        assertEquals( "/portal/live/some/path?a=some+thing&b=2&c=&d=true", urlBuilder.toString() );
+        assertEquals( "/portal/live/test/some/path?a=some+thing&b=2&c=&d=true", urlBuilder.toString() );
     }
 
     @Test
     public void createUrlWithMode()
     {
-        final PortalUrlBuilder urlBuilder = PortalUrlBuilder.createUrl( baseUrl ).contentPath( "some/path" );
-        assertEquals( "/portal/live/some/path", urlBuilder.toString() );
+        final PortalUrlBuilder urlBuilder = PortalUrlBuilder.createUrl( baseUrl ).
+            workspace( "test" ).
+            contentPath( "some/path" );
+        assertEquals( "/portal/live/test/some/path", urlBuilder.toString() );
 
         urlBuilder.mode( "edit" );
-        assertEquals( "/portal/edit/some/path", urlBuilder.toString() );
+        assertEquals( "/portal/edit/test/some/path", urlBuilder.toString() );
     }
+
+    @Test
+    public void createUrlWithWorkspace()
+    {
+        final PortalUrlBuilder urlBuilder = PortalUrlBuilder.createUrl( baseUrl ).
+            workspace( "test" ).
+            contentPath( "some/path" );
+        assertEquals( "/portal/live/test/some/path", urlBuilder.toString() );
+
+        urlBuilder.workspace( "prod" );
+        assertEquals( "/portal/live/prod/some/path", urlBuilder.toString() );
+    }
+
 
     @Test
     public void createUrlWithService()
     {
-        final PortalUrlBuilder urlBuilder =
-            PortalUrlBuilder.createUrl( baseUrl ).contentPath( "some/content/path" ).resourceType( "public" ).resourcePath(
-                "resource/path" );
-        assertEquals( "/portal/live/some/content/path/_/public/resource/path", urlBuilder.toString() );
+        final PortalUrlBuilder urlBuilder = PortalUrlBuilder.createUrl( baseUrl ).
+            contentPath( "some/content/path" ).
+            workspace( "test" ).
+            resourceType( "public" ).
+            resourcePath( "resource/path" );
+        assertEquals( "/portal/live/test/some/content/path/_/public/resource/path", urlBuilder.toString() );
     }
 
     @Test
@@ -82,12 +103,12 @@ public class PortalUrlBuilderTest
         final PortalUrlBuilder urlBuilder = PortalUrlBuilder.createUrl( baseUrl ).
             mode( "edit" ).
             contentPath( "some/content/path" ).
+            workspace( "test" ).
             resourceType( "public" ).
             resourcePath( "resource/path" ).
             param( "one", 1 ).
             params( params );
-        assertEquals( "/portal/edit/some/content/path/_/public/resource/path?one=1&two=2&three=3",
-                      urlBuilder.toString() );
+        assertEquals( "/portal/edit/test/some/content/path/_/public/resource/path?one=1&two=2&three=3", urlBuilder.toString() );
     }
 
     private void setupRequest( final String scheme, final String host, final int port, final String contextPath )

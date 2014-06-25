@@ -10,6 +10,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
+import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.rendering.RenderingMode;
 
 import static org.junit.Assert.*;
@@ -34,6 +35,17 @@ public class JsHttpRequestTest
 
         request.setMode( "edit" );
         assertEquals( RenderingMode.EDIT, request.getMode() );
+    }
+
+    @Test
+    public void setWorkspace()
+        throws Exception
+    {
+        final JsHttpRequest request = new JsHttpRequest();
+        assertEquals( JsHttpRequest.DEFAULT_WORKSPACE, request.getWorkspace() );
+
+        request.setWorkspace( "another" );
+        assertEquals( Workspace.from( "another" ), request.getWorkspace() );
     }
 
     @Test

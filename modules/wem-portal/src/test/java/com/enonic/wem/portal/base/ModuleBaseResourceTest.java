@@ -10,6 +10,7 @@ import org.mockito.Mockito;
 import com.google.common.base.Charsets;
 
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.module.ModuleKeyResolver;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.core.module.ModuleKeyResolverService;
@@ -38,7 +39,8 @@ public abstract class ModuleBaseResourceTest<T extends ModuleBaseResource>
         Mockito.when( this.modulePathResolver.resolveResourcePath( Mockito.isA( ModuleResourceKey.class ) ) ).thenReturn(
             this.tmpDir.resolve( "unknown" ) );
 
-        Mockito.when( this.resource.moduleKeyResolverService.forContent( Mockito.isA( ContentPath.class ) ) ).thenReturn(
+        Mockito.when( this.resource.moduleKeyResolverService.forContent( Mockito.isA( ContentPath.class ),
+                                                                         Mockito.isA( Context.class ) ) ).thenReturn(
             ModuleKeyResolver.empty() );
     }
 

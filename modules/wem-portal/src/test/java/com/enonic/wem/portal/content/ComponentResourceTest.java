@@ -7,6 +7,8 @@ import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.data.Method;
 
+import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.rendering.Renderable;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.rendering.RenderResult;
@@ -43,7 +45,7 @@ public class ComponentResourceTest
     public void getComponentFound()
         throws Exception
     {
-        setupContentAndSite();
+        setupContentAndSite( Context.create( Workspace.from( "test" ) ) );
         setupTemplates();
         final RenderResult result = RenderResult.newRenderResult().
             entity( "component rendered" ).
@@ -52,7 +54,7 @@ public class ComponentResourceTest
             build();
         when( this.renderer.render( any(), any() ) ).thenReturn( result );
 
-        final Request request = new Request( Method.GET, "/live/site/somepath/content/_/component/main-region/0" );
+        final Request request = new Request( Method.GET, "/live/test/site/somepath/content/_/component/main-region/0" );
         final Response response = executeRequest( request );
 
         final ArgumentCaptor<JsContext> jsContext = ArgumentCaptor.forClass( JsContext.class );
@@ -69,9 +71,9 @@ public class ComponentResourceTest
     public void getComponentPageNotFound()
         throws Exception
     {
-        setupNonPageContent();
+        setupNonPageContent( Context.create( Workspace.from( "test" ) ) );
 
-        final Request request = new Request( Method.GET, "/live/site/somepath/content/_/component/main-region/0" );
+        final Request request = new Request( Method.GET, "/live/test/site/somepath/content/_/component/main-region/0" );
         final Response response = executeRequest( request );
 
         assertEquals( 404, response.getStatus().getCode() );
@@ -81,10 +83,10 @@ public class ComponentResourceTest
     public void getComponentNotFound()
         throws Exception
     {
-        setupContentAndSite();
+        setupContentAndSite( Context.create( Workspace.from( "test" ) ) );
         setupTemplates();
 
-        final Request request = new Request( Method.GET, "/live/site/somepath/content/_/component/main-region/666" );
+        final Request request = new Request( Method.GET, "/live/test/site/somepath/content/_/component/main-region/666" );
         final Response response = executeRequest( request );
 
         assertEquals( 404, response.getStatus().getCode() );

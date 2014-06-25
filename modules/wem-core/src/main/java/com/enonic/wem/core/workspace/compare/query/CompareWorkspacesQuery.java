@@ -8,10 +8,15 @@ public class CompareWorkspacesQuery
 
     private final Workspace target;
 
-    public CompareWorkspacesQuery( final Workspace source, final Workspace target )
+    private CompareWorkspacesQuery( Builder builder )
     {
-        this.target = target;
-        this.source = source;
+        source = builder.source;
+        target = builder.target;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
     }
 
     public Workspace getSource()
@@ -22,5 +27,33 @@ public class CompareWorkspacesQuery
     public Workspace getTarget()
     {
         return target;
+    }
+
+    public static final class Builder
+    {
+        private Workspace source;
+
+        private Workspace target;
+
+        private Builder()
+        {
+        }
+
+        public Builder source( Workspace source )
+        {
+            this.source = source;
+            return this;
+        }
+
+        public Builder target( Workspace target )
+        {
+            this.target = target;
+            return this;
+        }
+
+        public CompareWorkspacesQuery build()
+        {
+            return new CompareWorkspacesQuery( this );
+        }
     }
 }

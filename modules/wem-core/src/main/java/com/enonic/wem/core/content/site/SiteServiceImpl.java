@@ -2,12 +2,13 @@ package com.enonic.wem.core.content.site;
 
 import javax.inject.Inject;
 
-import com.enonic.wem.api.content.site.CreateSiteParams;
-import com.enonic.wem.api.content.site.UpdateSiteParams;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentService;
+import com.enonic.wem.api.content.site.CreateSiteParams;
 import com.enonic.wem.api.content.site.SiteService;
+import com.enonic.wem.api.content.site.UpdateSiteParams;
+import com.enonic.wem.api.context.Context;
 
 public final class SiteServiceImpl
     implements SiteService
@@ -16,26 +17,45 @@ public final class SiteServiceImpl
     protected ContentService contentService;
 
     @Override
-    public Content create( final CreateSiteParams params )
+    public Content create( final CreateSiteParams params, final Context context )
     {
-        return new CreateSiteCommand().contentService( this.contentService ).params( params ).execute();
+        return CreateSiteCommand.create().
+            contentService( this.contentService ).
+            params( params ).
+            context( context ).
+            build().
+            execute();
     }
 
     @Override
-    public Content update( final UpdateSiteParams params )
+    public Content update( final UpdateSiteParams params, final Context context )
     {
-        return new UpdateSiteCommand().contentService( this.contentService ).params( params ).execute();
+        return UpdateSiteCommand.create().
+            contentService( this.contentService ).
+            params( params ).
+            context( context ).
+            build().
+            execute();
     }
 
     @Override
-    public Content delete( final ContentId contentId )
+    public Content delete( final ContentId contentId, final Context context )
     {
-        return new DeleteSiteCommand().contentService( this.contentService ).contentId( contentId ).execute();
+        return DeleteSiteCommand.create().
+            contentService( this.contentService ).
+            contentId( contentId ).
+            build().
+            execute();
     }
 
     @Override
-    public Content getNearestSite( final ContentId contentId )
+    public Content getNearestSite( final ContentId contentId, final Context context )
     {
-        return new GetNearestSiteCommand().contentService( this.contentService ).contentId( contentId ).execute();
+        return GetNearestSiteCommand.create().
+            contentService( this.contentService ).
+            contentId( contentId ).
+            context( context ).
+            build().
+            execute();
     }
 }

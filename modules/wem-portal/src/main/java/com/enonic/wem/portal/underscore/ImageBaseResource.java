@@ -18,13 +18,14 @@ import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.AttachmentService;
+import com.enonic.wem.api.content.attachment.GetAttachmentParameters;
+import com.enonic.wem.api.context.Context;
 import com.enonic.wem.core.image.ImageHelper;
 import com.enonic.wem.core.image.filter.BuilderContext;
 import com.enonic.wem.core.image.filter.ImageFilter;
@@ -159,7 +160,7 @@ public abstract class ImageBaseResource
     {
         try
         {
-            return this.attachmentService.getAll( contentId ).first();
+            return this.attachmentService.getAll( contentId, Context.create( this.workspace ) ).first();
         }
         catch ( final ContentNotFoundException e )
         {
@@ -169,7 +170,7 @@ public abstract class ImageBaseResource
 
     protected final Content getContent( final ContentId contentId )
     {
-        final Content content = this.contentService.getById( contentId, ContentConstants.DEFAULT_CONTEXT );
+        final Content content = this.contentService.getById( contentId, Context.create( this.workspace ) );
         if ( content != null )
         {
             return content;
@@ -180,7 +181,7 @@ public abstract class ImageBaseResource
 
     protected final Content getContent( final ContentPath contentPath )
     {
-        final Content content = this.contentService.getByPath( contentPath, ContentConstants.DEFAULT_CONTEXT );
+        final Content content = this.contentService.getByPath( contentPath, Context.create( this.workspace ) );
         if ( content != null )
         {
             return content;
@@ -193,7 +194,11 @@ public abstract class ImageBaseResource
     {
         try
         {
-            return this.attachmentService.get( contentId, attachmentName );
+            return this.attachmentService.get( GetAttachmentParameters.create().
+                context( Context.create( this.workspace ) ).
+                contentId( contentId ).
+                attachmentName( attachmentName ).
+                build() );
         }
         catch ( ContentNotFoundException e )
         {

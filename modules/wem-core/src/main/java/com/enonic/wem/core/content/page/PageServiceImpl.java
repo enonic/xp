@@ -8,6 +8,7 @@ import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.page.CreatePageParams;
 import com.enonic.wem.api.content.page.PageService;
 import com.enonic.wem.api.content.page.UpdatePageParams;
+import com.enonic.wem.api.context.Context;
 
 public final class PageServiceImpl
     implements PageService
@@ -16,20 +17,35 @@ public final class PageServiceImpl
     protected ContentService contentService;
 
     @Override
-    public Content create( final CreatePageParams params )
+    public Content create( final CreatePageParams params, final Context context )
     {
-        return new CreatePageCommand().contentService( this.contentService ).params( params ).execute();
+        return CreatePageCommand.create().
+            contentService( this.contentService ).
+            params( params ).
+            context( context ).
+            build().
+            execute();
     }
 
     @Override
-    public Content update( final UpdatePageParams params )
+    public Content update( final UpdatePageParams params, final Context context )
     {
-        return new UpdatePageCommand().contentService( this.contentService ).params( params ).execute();
+        return UpdatePageCommand.create().
+            contentService( this.contentService ).
+            params( params ).
+            context( context ).
+            build().
+            execute();
     }
 
     @Override
-    public Content delete( final ContentId contentId )
+    public Content delete( final ContentId contentId, final Context context )
     {
-        return new DeletePageCommand().contentService( this.contentService ).contentId( contentId ).execute();
+        return DeletePageCommand.create().
+            contentService( this.contentService ).
+            contentId( contentId ).
+            context( context ).
+            build().
+            execute();
     }
 }

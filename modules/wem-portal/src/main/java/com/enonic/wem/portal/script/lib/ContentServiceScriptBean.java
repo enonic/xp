@@ -17,16 +17,16 @@ public final class ContentServiceScriptBean
 
     public Contents getRootContent()
     {
-        return contentService.getRoots( ContentConstants.DEFAULT_CONTEXT );
+        return contentService.getRoots( ContentConstants.CONTEXT_STAGE );
     }
 
     public Contents getChildContent( final String parentPath )
     {
-        return contentService.getChildren( ContentPath.from( parentPath ), ContentConstants.DEFAULT_CONTEXT );
+        return contentService.getChildren( ContentPath.from( parentPath ), ContentConstants.CONTEXT_STAGE );
     }
 
     public Content getContentById( final String id )
     {
-        return contentService.getById( ContentId.from( id ), ContentConstants.DEFAULT_CONTEXT );
+        return contentService.getById( ContentId.from( id ), ContentConstants.CONTEXT_STAGE );
     }
 }

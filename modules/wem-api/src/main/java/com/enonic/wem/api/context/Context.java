@@ -6,6 +6,11 @@ public class Context
 {
     private final Workspace workspace;
 
+    public static Context create( final Workspace workspace )
+    {
+        return new Context( workspace );
+    }
+
     public Context( final Workspace workspace )
     {
         this.workspace = workspace;

@@ -1,20 +1,37 @@
 package com.enonic.wem.core.content.site;
 
-import com.enonic.wem.api.content.ContentConstants;
-import com.enonic.wem.api.content.site.CreateSiteParams;
+
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.editor.ContentEditor;
+import com.enonic.wem.api.content.site.CreateSiteParams;
 import com.enonic.wem.api.content.site.Site;
+import com.enonic.wem.api.context.Context;
 
 import static com.enonic.wem.api.content.Content.editContent;
 
 final class CreateSiteCommand
 {
-    private CreateSiteParams params;
+    private final CreateSiteParams params;
 
-    private ContentService contentService;
+    private final ContentService contentService;
+
+    private final Context context;
+
+    private CreateSiteCommand( Builder builder )
+    {
+        params = builder.params;
+        contentService = builder.contentService;
+        context = builder.context;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
 
     public Content execute()
     {
@@ -34,18 +51,51 @@ final class CreateSiteCommand
                 }
             } );
 
-        return this.contentService.update( params, ContentConstants.DEFAULT_CONTEXT);
+        return this.contentService.update( params, this.context );
     }
 
-    public CreateSiteCommand params( final CreateSiteParams params )
-    {
-        this.params = params;
-        return this;
-    }
 
-    public CreateSiteCommand contentService( final ContentService contentService )
+    public static final class Builder
     {
-        this.contentService = contentService;
-        return this;
+        private CreateSiteParams params;
+
+        private ContentService contentService;
+
+        private Context context;
+
+        private Builder()
+        {
+        }
+
+        public Builder params( CreateSiteParams params )
+        {
+            this.params = params;
+            return this;
+        }
+
+        public Builder contentService( ContentService contentService )
+        {
+            this.contentService = contentService;
+            return this;
+        }
+
+        public Builder context( Context context )
+        {
+            this.context = context;
+            return this;
+        }
+
+        private void validate()
+        {
+            Preconditions.checkNotNull( context );
+            Preconditions.checkNotNull( contentService );
+            Preconditions.checkNotNull( params );
+        }
+
+        public CreateSiteCommand build()
+        {
+            validate();
+            return new CreateSiteCommand( this );
+        }
     }
 }

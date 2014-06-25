@@ -1,15 +1,26 @@
 package com.enonic.wem.api.entity;
 
+import com.google.common.base.Strings;
+
 public class Workspace
 {
-
     public static final String SEPARATOR = "-";
 
     public static final String PREFIX = "workspace";
 
     private final String name;
 
-    public Workspace( final String name )
+    public static Workspace from( final String name )
+    {
+        if ( Strings.isNullOrEmpty( name ) )
+        {
+            return null;
+        }
+
+        return new Workspace( name );
+    }
+
+    private Workspace( final String name )
     {
         this.name = name;
     }

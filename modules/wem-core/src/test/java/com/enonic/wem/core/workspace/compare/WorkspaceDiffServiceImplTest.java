@@ -30,9 +30,9 @@ public class WorkspaceDiffServiceImplTest
 
     private final WorkspaceCompareServiceImpl diffService = new WorkspaceCompareServiceImpl();
 
-    private final Workspace SOURCE = new Workspace( "source" );
+    private final Workspace WORKSPACE_SOURCE = Workspace.from( "source" );
 
-    private final Workspace TARGET = new Workspace( "target" );
+    private final Workspace WORKSPACE_TARGET = Workspace.from( "target" );
 
     @Before
     public void setUp()
@@ -46,7 +46,11 @@ public class WorkspaceDiffServiceImplTest
     public void workspaceDifferences()
         throws Exception
     {
-        final CompareWorkspacesQuery sourceTargetQuery = new CompareWorkspacesQuery( SOURCE, TARGET );
+        final CompareWorkspacesQuery sourceTargetQuery = CompareWorkspacesQuery.
+            create().
+            source( WORKSPACE_SOURCE ).
+            target( WORKSPACE_TARGET ).
+            build();
 
         final EntityId ID_1 = EntityId.from( "1" );
         final EntityId ID_2 = EntityId.from( "2" );
@@ -66,15 +70,15 @@ public class WorkspaceDiffServiceImplTest
         final BlobKey BK_SOURCE_3 = new BlobKey( "3.1.1" );
         final BlobKey BK_TARGET_3 = new BlobKey( "3.1" );
 
-        Mockito.when( workspaceService.getById( new WorkspaceIdQuery( SOURCE, ID_1 ) ) ).
+        Mockito.when( workspaceService.getById( new WorkspaceIdQuery( WORKSPACE_SOURCE, ID_1 ) ) ).
             thenReturn( BK_SOURCE_1 );
-        Mockito.when( workspaceService.getById( new WorkspaceIdQuery( TARGET, ID_1 ) ) ).
+        Mockito.when( workspaceService.getById( new WorkspaceIdQuery( WORKSPACE_TARGET, ID_1 ) ) ).
             thenReturn( BK_TARGET_1 );
-        Mockito.when( workspaceService.getById( new WorkspaceIdQuery( SOURCE, ID_2 ) ) ).
+        Mockito.when( workspaceService.getById( new WorkspaceIdQuery( WORKSPACE_SOURCE, ID_2 ) ) ).
             thenReturn( BK_SOURCE_2 );
-        Mockito.when( workspaceService.getById( new WorkspaceIdQuery( SOURCE, ID_3 ) ) ).
+        Mockito.when( workspaceService.getById( new WorkspaceIdQuery( WORKSPACE_SOURCE, ID_3 ) ) ).
             thenReturn( BK_SOURCE_3 );
-        Mockito.when( workspaceService.getById( new WorkspaceIdQuery( TARGET, ID_3 ) ) ).
+        Mockito.when( workspaceService.getById( new WorkspaceIdQuery( WORKSPACE_TARGET, ID_3 ) ) ).
             thenReturn( BK_TARGET_3 );
 
         Mockito.when( versionService.getBranch( new VersionBranchQuery( BK_SOURCE_1 ) ) ).
@@ -105,15 +109,15 @@ public class WorkspaceDiffServiceImplTest
         throws Exception
     {
         final EntityId ID_1 = EntityId.from( "1" );
-        final CompareEntityQuery compareEntityQuery = new CompareEntityQuery( ID_1, SOURCE, TARGET );
+        final CompareEntityQuery compareEntityQuery = new CompareEntityQuery( ID_1, WORKSPACE_SOURCE, WORKSPACE_TARGET );
 
         // Different branch in source and target
         final BlobKey BK_SOURCE_1 = new BlobKey( "1.1.4" );
         final BlobKey BK_TARGET_1 = new BlobKey( "1.2.2" );
 
-        Mockito.when( workspaceService.getById( new WorkspaceIdQuery( SOURCE, ID_1 ) ) ).
+        Mockito.when( workspaceService.getById( new WorkspaceIdQuery( WORKSPACE_SOURCE, ID_1 ) ) ).
             thenReturn( BK_SOURCE_1 );
-        Mockito.when( workspaceService.getById( new WorkspaceIdQuery( TARGET, ID_1 ) ) ).
+        Mockito.when( workspaceService.getById( new WorkspaceIdQuery( WORKSPACE_TARGET, ID_1 ) ) ).
             thenReturn( BK_TARGET_1 );
 
         Mockito.when( versionService.getBranch( new VersionBranchQuery( BK_SOURCE_1 ) ) ).

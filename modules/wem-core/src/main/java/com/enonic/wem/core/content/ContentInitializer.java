@@ -21,6 +21,7 @@ import com.enonic.wem.core.support.BaseInitializer;
 public class ContentInitializer
     extends BaseInitializer
 {
+    static final Context STAGE_CONTEXT = new Context( ContentConstants.WORKSPACE_STAGE );
 
     public static final String IMAGE_ARCHIVE_PATH_ELEMENT = "imagearchive";
 
@@ -43,7 +44,7 @@ public class ContentInitializer
     public void initialize()
         throws Exception
     {
-        final Context context = ContentConstants.DEFAULT_CONTEXT;
+        final Context context = STAGE_CONTEXT;
 
         ContentPath imageArchivePath = contentService.create( createFolder().
             name( IMAGE_ARCHIVE_PATH_ELEMENT ).

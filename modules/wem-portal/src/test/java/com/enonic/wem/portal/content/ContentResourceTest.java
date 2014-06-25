@@ -7,6 +7,8 @@ import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.data.Method;
 
+import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.portal.controller.JsContext;
 
 import static org.junit.Assert.*;
@@ -27,10 +29,10 @@ public class ContentResourceTest
     public void getContentFound()
         throws Exception
     {
-        setupContentAndSite();
+        setupContentAndSite( Context.create( Workspace.from( "test" ) ) );
         setupTemplates();
 
-        final Request request = new Request( Method.GET, "/live/site/somepath/content" );
+        final Request request = new Request( Method.GET, "/live/test/site/somepath/content" );
         final Response response = executeRequest( request );
 
         final ArgumentCaptor<JsContext> jsContext = ArgumentCaptor.forClass( JsContext.class );
@@ -48,7 +50,7 @@ public class ContentResourceTest
     {
         Mockito.when( this.contentService.getByPath( Mockito.anyObject(), Mockito.anyObject() ) ).thenReturn( null );
 
-        final Request request = new Request( Method.GET, "/live/site/somepath/content" );
+        final Request request = new Request( Method.GET, "/live/test/site/somepath/content" );
         final Response response = executeRequest( request );
 
         assertEquals( 404, response.getStatus().getCode() );
@@ -58,9 +60,9 @@ public class ContentResourceTest
     public void getContentWithTemplateNotFound()
         throws Exception
     {
-        setupContentAndSite();
+        setupContentAndSite( Context.create( Workspace.from( "test" ) ) );
 
-        final Request request = new Request( Method.GET, "/live/site/somepath/content" );
+        final Request request = new Request( Method.GET, "/live/test/site/somepath/content" );
         final Response response = executeRequest( request );
 
         assertEquals( 404, response.getStatus().getCode() );

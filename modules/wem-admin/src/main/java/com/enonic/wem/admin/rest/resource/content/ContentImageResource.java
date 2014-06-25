@@ -23,11 +23,13 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.AttachmentService;
+import com.enonic.wem.api.content.attachment.GetAttachmentParameters;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.content.thumb.Thumbnail;
+import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -60,6 +62,8 @@ public class ContentImageResource
     @Inject
     private SiteTemplateService siteTemplateService;
 
+    static final Context STAGE_CONTEXT = new Context( ContentConstants.WORKSPACE_STAGE );
+
     @GET
     @Path("{contentId}")
     public Response getContentImage( @PathParam("contentId") final String contentIdAsString,
@@ -77,7 +81,7 @@ public class ContentImageResource
         }
 
         final ContentId contentId = ContentId.from( contentIdAsString );
-        final Content content = contentService.getById( contentId, ContentConstants.DEFAULT_CONTEXT );
+        final Content content = contentService.getById( contentId, STAGE_CONTEXT );
         if ( content == null )
         {
             throw new WebApplicationException( Response.Status.NOT_FOUND );
@@ -105,7 +109,12 @@ public class ContentImageResource
         if ( contentType.isImageMedia() )
         {
             final String attachmentName = getImageAttachmentName( content );
-            final Attachment attachment = attachmentService.get( contentId, attachmentName );
+            final Attachment attachment = attachmentService.get( GetAttachmentParameters.create().
+                contentId( contentId ).
+                attachmentName( attachmentName ).
+                context( STAGE_CONTEXT ).
+                build() );
+
             if ( attachment != null )
             {
                 final Blob blob = blobService.get( attachment.getBlobKey() );

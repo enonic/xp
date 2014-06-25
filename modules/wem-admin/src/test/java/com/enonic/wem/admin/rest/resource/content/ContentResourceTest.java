@@ -18,6 +18,7 @@ import com.sun.jersey.api.client.UniformInterfaceException;
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
@@ -572,7 +573,7 @@ public class ContentResourceTest
     {
         Mockito.when( contentService.delete( Mockito.eq( new DeleteContentParams().contentPath( ContentPath.from( "/one" ) ) ),
                                              Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenThrow(
-            new ContentNotFoundException( ContentPath.from( "one" ), ContentResource.STAGE_WORKSPACE ) );
+            new ContentNotFoundException( ContentPath.from( "one" ), ContentConstants.WORKSPACE_STAGE ) );
 
         Mockito.when( contentService.delete( Mockito.eq( new DeleteContentParams().contentPath( ContentPath.from( "/two" ) ) ),
                                              Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenThrow(
@@ -648,7 +649,7 @@ public class ContentResourceTest
             ContentTypes.from( createContentType( "my-type" ) ) );
 
         Exception e =
-            new com.enonic.wem.api.content.ContentNotFoundException( ContentId.from( "content-id" ), ContentResource.STAGE_WORKSPACE );
+            new com.enonic.wem.api.content.ContentNotFoundException( ContentId.from( "content-id" ), ContentConstants.WORKSPACE_STAGE );
 
         Mockito.when( contentService.update( Mockito.isA( UpdateContentParams.class ), Mockito.isA( Context.class ) ) ).thenThrow( e );
 
@@ -714,7 +715,7 @@ public class ContentResourceTest
         aContentData.setProperty( "mySetWithArray.myArray[1]", Value.newDouble( 1.333 ) );
 
         final PushContentParams pushContentParams =
-            new PushContentParams( ContentResource.PROD_WORKSPACE, ContentId.from( contentIdString ) );
+            new PushContentParams( ContentConstants.WORKSPACE_PROD, ContentId.from( contentIdString ) );
 
         Mockito.when( contentService.push( pushContentParams, ContentResource.STAGE_CONTEXT ) ).
             thenReturn( aContent );
@@ -733,7 +734,7 @@ public class ContentResourceTest
     {
 
         final Exception e =
-            new com.enonic.wem.api.content.ContentNotFoundException( ContentId.from( "content-id" ), ContentResource.STAGE_WORKSPACE );
+            new com.enonic.wem.api.content.ContentNotFoundException( ContentId.from( "content-id" ), ContentConstants.WORKSPACE_STAGE );
 
         Mockito.when( contentService.push( Mockito.isA( PushContentParams.class ), Mockito.isA( Context.class ) ) ).
             thenThrow( e );

@@ -5,8 +5,9 @@ import com.enonic.wem.api.entity.Workspace;
 
 public class ContentConstants
 {
-    // TODO: THIS IS JUST TEMPORARY, THE CONTEXT SHOULD BE CREATED WHERE NEEDED
-    private static final Workspace DEFAULT_WORKSPACE = new Workspace( "stage" );
+    public static final Workspace WORKSPACE_STAGE = Workspace.from( "stage" );
 
-    public static final Context DEFAULT_CONTEXT = new Context( DEFAULT_WORKSPACE );
+    public static final Workspace WORKSPACE_PROD = Workspace.from( "prod" );
+
+    public static final Context CONTEXT_STAGE = new Context( WORKSPACE_STAGE );
 }

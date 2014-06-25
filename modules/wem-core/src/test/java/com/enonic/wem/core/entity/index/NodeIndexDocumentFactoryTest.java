@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
 
 public class NodeIndexDocumentFactoryTest
 {
-    public static final Workspace TEST_WORKSPACE = new Workspace( "Test" );
+    public static final Workspace TEST_WORKSPACE = Workspace.from( "test" );
 
     @Test
     public void validate_given_no_id_then_exception()
@@ -43,7 +43,7 @@ public class NodeIndexDocumentFactoryTest
 
         try
         {
-            NodeIndexDocumentFactory.create( node, new Workspace( "Test" ) );
+            NodeIndexDocumentFactory.create( node, TEST_WORKSPACE );
         }
         catch ( NullPointerException e )
         {

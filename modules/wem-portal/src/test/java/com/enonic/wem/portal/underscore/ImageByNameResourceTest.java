@@ -6,6 +6,9 @@ import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.data.Method;
 
+import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.entity.Workspace;
+
 import static org.junit.Assert.*;
 
 public class ImageByNameResourceTest
@@ -23,9 +26,9 @@ public class ImageByNameResourceTest
     public void getImageFound()
         throws Exception
     {
-        setupContent();
+        setupContent( Context.create( Workspace.from( "test" ) ) );
 
-        final Request request = new Request( Method.GET, "/live/path/to/content/_/image/enonic-logo.png" );
+        final Request request = new Request( Method.GET, "/live/test/path/to/content/_/image/enonic-logo.png" );
         final Response response = executeRequest( request );
 
         assertNull( this.resource.filterParam );
@@ -41,7 +44,7 @@ public class ImageByNameResourceTest
     {
         Mockito.when( this.contentService.getByPath( Mockito.anyObject(), Mockito.anyObject() ) ).thenReturn( null );
 
-        final Request request = new Request( Method.GET, "/live/path/to/content/_/image/enonic-logo.png" );
+        final Request request = new Request( Method.GET, "/live/test/path/to/content/_/image/enonic-logo.png" );
         final Response response = executeRequest( request );
         assertEquals( 404, response.getStatus().getCode() );
     }
@@ -50,10 +53,10 @@ public class ImageByNameResourceTest
     public void getImageWithFilter()
         throws Exception
     {
-        setupContent();
+        setupContent( Context.create( Workspace.from( "test" ) ) );
 
         final Request request =
-            new Request( Method.GET, "/live/path/to/content/_/image/enonic-logo.png?filter=sepia()&quality=75&background=0x0" );
+            new Request( Method.GET, "/live/test/path/to/content/_/image/enonic-logo.png?filter=sepia()&quality=75&background=0x0" );
         final Response response = executeRequest( request );
 
         assertEquals( "sepia()", this.resource.filterParam );

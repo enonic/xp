@@ -34,10 +34,10 @@ public class PortalImageByIdUrlBuilderTest
         final PortalImageByIdUrlBuilder urlBuilder = PortalImageByIdUrlBuilder.createImageUrl( baseUrl ).
             contentPath( "mypage" ).
             imageContent( ContentId.from( "abc" ) ).
+            workspace( "test" ).
             resourcePath( "pop_08.jpg" );
 
-        assertEquals( "/portal/live/mypage/_/image/id/abc",
-                      urlBuilder.toString() );
+        assertEquals( "/portal/live/test/mypage/_/image/id/abc", urlBuilder.toString() );
     }
 
 

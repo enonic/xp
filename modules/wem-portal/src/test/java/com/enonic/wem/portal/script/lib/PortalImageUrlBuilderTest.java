@@ -34,9 +34,10 @@ public class PortalImageUrlBuilderTest
     {
         final PortalImageUrlBuilder urlBuilder = PortalImageUrlBuilder.createImageUrl( baseUrl ).
             contentPath( "bildearkiv/trampoliner/jumping-jack-pop/pop_08.jpg" ).
+            workspace( "stage" ).
             resourcePath( "pop_08.jpg" );
 
-        assertEquals( "/portal/live/bildearkiv/trampoliner/jumping-jack-pop/pop_08.jpg/_/image/pop_08.jpg", urlBuilder.toString() );
+        assertEquals( "/portal/live/stage/bildearkiv/trampoliner/jumping-jack-pop/pop_08.jpg/_/image/pop_08.jpg", urlBuilder.toString() );
     }
 
     @Test
@@ -44,6 +45,7 @@ public class PortalImageUrlBuilderTest
     {
         final PortalImageUrlBuilder urlBuilder = PortalImageUrlBuilder.createImageUrl( baseUrl ).
             contentPath( "bildearkiv/trampoliner/jumping-jack-pop/pop_08.jpg" ).
+            workspace( "stage" ).
             resourcePath( "pop_08.jpg" ).
             filter( "scalemax(120)" ).
             filter( Lists.newArrayList( "rounded(40)" ) ).
@@ -51,7 +53,7 @@ public class PortalImageUrlBuilderTest
             background( "00ff00" ).
             quality( 33 );
 
-        assertEquals( "/portal/live/bildearkiv/trampoliner/jumping-jack-pop/pop_08.jpg/_/image/pop_08.jpg" +
+        assertEquals( "/portal/live/stage/bildearkiv/trampoliner/jumping-jack-pop/pop_08.jpg/_/image/pop_08.jpg" +
                           "?filter=scalemax%28120%29%3Brounded%2840%29%3Bblock%283%2C3%29%3Bsepia%28%29&background=00ff00&quality=33",
                       urlBuilder.toString() );
     }

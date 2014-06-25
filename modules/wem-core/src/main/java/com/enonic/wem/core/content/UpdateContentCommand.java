@@ -26,7 +26,7 @@ import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 
 import static com.enonic.wem.api.content.Content.newContent;
-import static com.enonic.wem.api.content.ContentConstants.DEFAULT_CONTEXT;
+import static com.enonic.wem.api.content.ContentConstants.CONTEXT_STAGE;
 
 final class UpdateContentCommand
     extends AbstractContentCommand
@@ -83,12 +83,12 @@ final class UpdateContentCommand
         }
         else
         {
-            attachments = attachmentService.getAll( this.params.getContentId() );
+            attachments = attachmentService.getAll( this.params.getContentId(), this.context );
         }
 
         final UpdateNodeParams updateNodeParams = translator.toUpdateNodeCommand( editedContent, attachments );
 
-        final Node editedNode = this.nodeService.update( updateNodeParams, DEFAULT_CONTEXT );
+        final Node editedNode = this.nodeService.update( updateNodeParams, CONTEXT_STAGE );
 
         return translator.fromNode( editedNode );
     }

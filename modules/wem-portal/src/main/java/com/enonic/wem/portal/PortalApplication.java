@@ -58,7 +58,7 @@ public final class PortalApplication
         attach( contentRouter, "/{path}", ContentResource.class, "path" );
 
         final Router router = new Router( getContext() );
-        attach( router, "/{mode}", contentRouter );
+        attach( router, "/{mode}/{workspace}", contentRouter );
 
         return router;
     }
