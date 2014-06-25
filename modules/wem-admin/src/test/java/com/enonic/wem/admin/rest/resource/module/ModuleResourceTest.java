@@ -97,6 +97,21 @@ public class ModuleResourceTest
         Mockito.verify( module.getBundle() ).start();
     }
 
+    @Test
+    public void stop_module()
+        throws Exception
+    {
+        final Module module = createModule();
+        Mockito.when( this.moduleService.getModule( Mockito.isA( ModuleKey.class ) ) ).thenReturn( module );
+
+        resource().
+            path( "module/stop" ).
+            type( MediaType.APPLICATION_JSON_TYPE ).
+            post( "{\"key\":[\"testmodule-1.0.0\"]}" );
+
+        Mockito.verify( module.getBundle() ).stop();
+    }
+
     private Module createModule()
     {
         final Form config = Form.newForm().

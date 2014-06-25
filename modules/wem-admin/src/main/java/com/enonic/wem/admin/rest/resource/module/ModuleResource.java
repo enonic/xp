@@ -56,7 +56,9 @@ public final class ModuleResource
         }
     }
 
-    // @POST
+    @POST
+    @Path("stop")
+    @Consumes(MediaType.APPLICATION_JSON)
     public void stop( final ModuleListParams params )
         throws Exception
     {
