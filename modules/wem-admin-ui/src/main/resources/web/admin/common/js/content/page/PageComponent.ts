@@ -4,6 +4,8 @@ module api.content.page {
 
     export class PageComponent implements api.Equitable, api.Cloneable {
 
+        private index: number = -1;
+
         private name: ComponentName;
 
         private parent: Region;
@@ -21,8 +23,16 @@ module api.content.page {
             this.parent = parent;
         }
 
+        setIndex(value: number) {
+            this.index = value;
+        }
+
+        getIndex(): number {
+            return this.index;
+        }
+
         getPath(): ComponentPath {
-            return ComponentPath.fromRegionPathAndComponentIndex(this.parent.getPath(), this.parent.getComponentIndex(this));
+            return ComponentPath.fromRegionPathAndComponentIndex(this.parent.getPath(), this.index);
         }
 
         getName(): ComponentName {
@@ -32,7 +42,9 @@ module api.content.page {
         setName(newValue: ComponentName) {
             var oldValue = this.name;
             this.name = newValue;
-            this.notifyPropertyChanged("name", oldValue, newValue)
+            if (!newValue.equals(oldValue)) {
+                this.notifyPropertyChanged("name", oldValue, newValue);
+            }
         }
 
         reset() {
@@ -47,12 +59,6 @@ module api.content.page {
 
             var region = this.getParent();
             return region.duplicateComponent(this);
-        }
-
-        moveToRegion(otherRegion: Region, precedingComponent: PageComponent) {
-
-            this.removeFromParent();
-            otherRegion.addComponentAfter(this, precedingComponent);
         }
 
         removeFromParent() {

@@ -12,6 +12,10 @@ module api.content.page.region {
             this.name = builder.name;
             this.parent = builder.parent;
             this.pageComponents = builder.pageComponents;
+            this.pageComponents.forEach((pageComponent: PageComponent, index: number) => {
+                pageComponent.setParent(this);
+                pageComponent.setIndex(index);
+            });
         }
 
         getName(): string {
@@ -91,6 +95,7 @@ module api.content.page.region {
         addComponent(pageComponent: PageComponent) {
             this.pageComponents.push(pageComponent);
             pageComponent.setParent(this);
+            pageComponent.setIndex(this.pageComponents.length - 1);
         }
 
         /*
@@ -104,7 +109,7 @@ module api.content.page.region {
 
             var precedingIndex = -1;
             if (precedingComponent != null) {
-                precedingIndex = this.getComponentIndex(precedingComponent);
+                precedingIndex = precedingComponent.getIndex();
                 if (precedingIndex == -1 && this.pageComponents.length > 1) {
                     return -1;
                 }
@@ -117,6 +122,11 @@ module api.content.page.region {
                 index = precedingIndex + 1;
             }
             this.pageComponents.splice(index, 0, component);
+
+            // Update indexes
+            this.pageComponents.forEach((curr: PageComponent, index: number) => {
+                curr.setIndex(index);
+            });
         }
 
         removeComponent(component: api.content.page.PageComponent): api.content.page.PageComponent {
@@ -124,24 +134,18 @@ module api.content.page.region {
                 return null;
             }
 
-            var componentIndex = this.getComponentIndex(component);
+            var componentIndex = component.getIndex();
             if (componentIndex == -1) {
                 throw new Error("PageComponent [" + component.getPath().toString() + "] to remove does not exist in region: " +
                                 this.getPath().toString());
             }
             this.pageComponents.splice(componentIndex, 1);
+
+            // Update indexes
+            this.pageComponents.forEach((curr: PageComponent, index: number) => {
+                curr.setIndex(index);
+            });
             return component;
-        }
-
-        getComponentIndex(component: PageComponent): number {
-
-            for (var i = 0; i < this.pageComponents.length; i++) {
-                var currComponent = this.pageComponents[i];
-                if (currComponent.getName().equals(component.getName())) {
-                    return i;
-                }
-            }
-            return -1;
         }
 
         hasComponentWithName(name: ComponentName) {
@@ -155,7 +159,10 @@ module api.content.page.region {
         }
 
         getComponentByIndex(index: number): api.content.page.PageComponent {
-            return this.pageComponents[index];
+            var pageComponent = this.pageComponents[index];
+            api.util.assertState(pageComponent.getIndex() == index,
+                    "Index of PageComponent is not as expected. Expected [" + index + "], was: " + pageComponent.getIndex());
+            return  pageComponent;
         }
 
         getComponentByName(name: api.content.page.ComponentName): api.content.page.PageComponent {
@@ -170,7 +177,9 @@ module api.content.page.region {
 
         removePageComponents() {
             while (this.pageComponents.length > 0) {
-                this.pageComponents.pop();
+                var pageComponent = this.pageComponents.pop();
+                pageComponent.setParent(null);
+                pageComponent.setIndex(-1);
             }
         }
 

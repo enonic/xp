@@ -36,4 +36,3 @@
 ///<reference path='Position.ts' />
 ///<reference path='ItemViewSelectedEvent.ts' />
 ///<reference path='TextComponentSetTextEvent.ts' />
-///<reference path='RegionEmptyEvent.ts' />

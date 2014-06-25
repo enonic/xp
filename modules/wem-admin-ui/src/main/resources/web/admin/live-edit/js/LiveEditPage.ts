@@ -52,6 +52,9 @@ module LiveEdit {
                 api.liveedit.PageItemType.get().setSiteTemplate(event.getSiteTemplate());
 
                 var body = api.dom.Body.getAndLoadExistingChildren();
+                //body.traverse( (el: api.dom.Element) => {
+                //el.setDraggable(false);
+                //});
 
                 this.pageRegions = event.getPageRegions();
                 this.pageView = new PageView(new PageViewBuilder().
@@ -196,11 +199,15 @@ module LiveEdit {
         movePageComponent(pageComponentView: PageComponentView<PageComponent>, regionView: RegionView,
                           precedingComponentView: PageComponentView<PageComponent>) {
 
-            var precedingComponent: PageComponent = null;
-            if (precedingComponentView) {
-                precedingComponent = precedingComponentView.getPageComponent();
+            if (pageComponentView.getParentElement().getHTMLElement() == pageComponentView.getHTMLElement().parentElement) {
+
+                console.log("LiveEditPage.movePageComponent parents are the same");
             }
-            pageComponentView.getPageComponent().moveToRegion(regionView.getRegion(), precedingComponent);
+            else {
+                console.log("LiveEditPage.movePageComponent parents are NOT the same");
+            }
+
+            pageComponentView.moveToRegion(regionView, precedingComponentView);
         }
 
         duplicatePageComponent(pageComponentView: PageComponentView<PageComponent>) {

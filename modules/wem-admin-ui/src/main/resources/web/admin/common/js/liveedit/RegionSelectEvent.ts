@@ -5,18 +5,11 @@ module api.liveedit {
 
     export class RegionSelectEvent extends api.event.Event2 {
 
-        private regionPath: RegionPath;
-
         private pageItemView: RegionView;
 
-        constructor(regionPath: api.content.page.RegionPath, pageItemView: RegionView) {
+        constructor(pageItemView: RegionView) {
             super();
-            this.regionPath = regionPath;
             this.pageItemView = pageItemView;
-        }
-
-        getPath(): RegionPath {
-            return this.regionPath;
         }
 
         getRegionView(): RegionView {

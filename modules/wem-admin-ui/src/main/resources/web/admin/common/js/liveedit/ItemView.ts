@@ -323,16 +323,6 @@ module api.liveedit {
         toString(): string {
 
             var s = "id = " + this.getItemId() + ", type = '" + this.type.getShortName() + "'";
-            if (api.ObjectHelper.iFrameSafeInstanceOf(this, PageComponentView)) {
-                var pageComponentView = <PageComponentView<PageComponent>>this;
-                if (pageComponentView.hasComponentPath()) {
-                    s += ", pageComponentPath = '" + pageComponentView.getComponentPath().toString() + "'";
-                }
-            }
-            else if (api.ObjectHelper.iFrameSafeInstanceOf(this, RegionView)) {
-                var regionView = <RegionView>this;
-                s += ", regionPath = '" + regionView.getRegionPath().toString() + "'";
-            }
             return s;
         }
 

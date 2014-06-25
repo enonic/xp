@@ -66,6 +66,8 @@ module api.liveedit {
 
         private pageComponent: PAGE_COMPONENT;
 
+        private moving: boolean;
+
         private itemViewAddedListeners: {(event: ItemViewAddedEvent) : void}[];
 
         private itemViewRemovedListeners: {(event: ItemViewRemovedEvent) : void}[];
@@ -74,6 +76,7 @@ module api.liveedit {
 
             this.itemViewAddedListeners = [];
             this.itemViewRemovedListeners = [];
+            this.moving = false;
 
             super(new ItemViewBuilder().
                 setItemViewIdProducer(builder.itemViewProducer
@@ -163,9 +166,26 @@ module api.liveedit {
         }
 
         handleDragStart() {
+            this.moving = true;
+            // TODO: Seems to be unused - try to remove this when LE have become more stable
             if (this.isSelected()) {
                 this.getEl().setData("live-edit-selected-on-sort-start", "true");
             }
+            else {
+                this.getEl().setData("live-edit-selected-on-sort-start", "false");
+            }
+        }
+
+        handleDragStop() {
+            this.moving = false;
+        }
+
+        isMoving(): boolean {
+            return this.moving;
+        }
+
+        createPlaceholderForJQuerySortable(regionView?: RegionView): string {
+            return PageComponentView.createPlaceholderForJQuerySortable(this, regionView);
         }
 
         displayPlaceholder() {
@@ -180,6 +200,40 @@ module api.liveedit {
             super.replaceWith(replacement);
             this.notifyItemViewRemoved(new ItemViewRemovedEvent(this));
             this.notifyItemViewAdded(new ItemViewAddedEvent(replacement));
+        }
+
+        moveToRegion(toRegionView: RegionView, precedingComponentView: PageComponentView<PageComponent>) {
+
+            var precedingComponentIndex: number = -1;
+            var precedingComponent: PageComponent = null;
+            if (precedingComponentView) {
+                precedingComponent = precedingComponentView.getPageComponent();
+                precedingComponentIndex = precedingComponentView.getParentItemView().getPageComponentViewIndex(precedingComponentView);
+            }
+
+            var indexInNewParent = -1;
+            if (precedingComponentIndex >= 0) {
+                indexInNewParent = precedingComponentIndex + 1;
+            }
+
+            var uniqueName = toRegionView.getRegion().ensureUniqueComponentName(this.getPageComponent().getName());
+            this.getPageComponent().setName(uniqueName);
+
+            // Remove...
+            // View
+            this.parentRegionView.unregisterPageComponentView(this);
+            // Data
+            this.pageComponent.removeFromParent();
+            // Element
+            this.unregisterFromParentElement();
+
+            // Add...
+            // Register Element only, since it's already added in DOM.
+            toRegionView.registerChildElement(this);
+            // Data
+            toRegionView.getRegion().addComponentAfter(this.pageComponent, precedingComponent);
+            // View
+            toRegionView.registerPageComponentView(this, indexInNewParent);
         }
 
         addPadding() {
@@ -208,6 +262,28 @@ module api.liveedit {
             this.itemViewRemovedListeners.forEach((listener) => {
                 listener(event);
             });
+        }
+
+        static createPlaceholderForJQuerySortable(pageComponentView?: PageComponentView<PageComponent>, regionView?: RegionView): string {
+
+            var html: string;
+
+            if (pageComponentView) {
+                var typeAndName: string = api.util.capitalize(pageComponentView.getType().getShortName()) + ': ' +
+                                          pageComponentView.getName();
+                var target: string = pageComponentView.getType().getShortName() + ': ' + pageComponentView.getName();
+
+                html = 'Drop component here ';
+                html += '<div style = "font-size: 11px;"> dragged ' + typeAndName + ' </div > ';
+                if (regionView) {
+                    html += '<div style = "font-size: 11px;"> target region: ' + regionView.getRegionName() + ' </div > ';
+                }
+            }
+            else {
+                html = 'Drop component here';
+            }
+
+            return html;
         }
 
         static findParentRegionViewHTMLElement(htmlElement: HTMLElement): HTMLElement {
