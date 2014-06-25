@@ -1,7 +1,9 @@
 package com.enonic.wem.admin.rest.resource.module;
 
 import javax.inject.Inject;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -42,7 +44,9 @@ public final class ModuleResource
         return new ModuleJson( module );
     }
 
-    // @POST
+    @POST
+    @Path("start")
+    @Consumes(MediaType.APPLICATION_JSON)
     public void start( final ModuleListParams params )
         throws Exception
     {

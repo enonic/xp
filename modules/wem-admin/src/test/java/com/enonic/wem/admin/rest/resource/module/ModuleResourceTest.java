@@ -5,6 +5,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
 
+import javax.ws.rs.core.MediaType;
+
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -78,6 +80,21 @@ public class ModuleResourceTest
             queryParam( "moduleKey", "testmodule-1.0.0" ).
             get( String.class );
         assertJson( "get_module_by_key_success.json", response );
+    }
+
+    @Test
+    public void start_module()
+        throws Exception
+    {
+        final Module module = createModule();
+        Mockito.when( this.moduleService.getModule( Mockito.isA( ModuleKey.class ) ) ).thenReturn( module );
+
+        resource().
+            path( "module/start" ).
+            type( MediaType.APPLICATION_JSON_TYPE ).
+            post( "{\"key\":[\"testmodule-1.0.0\"]}" );
+
+        Mockito.verify( module.getBundle() ).start();
     }
 
     private Module createModule()
