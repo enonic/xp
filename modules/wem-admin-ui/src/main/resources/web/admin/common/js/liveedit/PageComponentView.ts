@@ -160,11 +160,6 @@ module api.liveedit {
             return this.parentRegionView;
         }
 
-        select(clickPosition?: Position) {
-            super.select(clickPosition);
-            new PageComponentSelectEvent(this).fire();
-        }
-
         handleDragStart() {
             this.moving = true;
             // TODO: Seems to be unused - try to remove this when LE have become more stable
