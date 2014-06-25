@@ -84,7 +84,7 @@ public final class ModuleLoader
 
     private void addBundle( final Bundle bundle )
     {
-        if ( this.bundles.contains( bundle ) || ( bundle.getState() == Bundle.ACTIVE ) )
+        if ( this.bundles.contains( bundle ) || ( bundle.getState() != Bundle.ACTIVE ) )
         {
             return;
         }
