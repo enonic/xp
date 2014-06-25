@@ -4,7 +4,7 @@ module api.app.browse {
 
         browseToolbar:api.ui.toolbar.Toolbar;
 
-        treeGridPanel:api.app.browse.grid.TreeGridPanel;
+        treeGridPanel?:api.app.browse.grid.TreeGridPanel;
 
         treeGridPanel2?:api.app.browse.treegrid.TreeGrid<api.node.Node>;
 
@@ -19,9 +19,9 @@ module api.app.browse {
 
         private browseToolbar: api.ui.toolbar.Toolbar;
 
-        private treeGridPanel: api.app.browse.grid.TreeGridPanel;
+        private oldTreeGrid: api.app.browse.grid.TreeGridPanel;
 
-        private treeGrid: api.app.browse.treegrid.TreeGrid<api.node.Node>;
+        private newTreeGrid: api.app.browse.treegrid.TreeGrid<api.node.Node>;
 
         private treeSwapperDeckPanel: api.ui.DeckPanel;
 
@@ -41,32 +41,31 @@ module api.app.browse {
             super();
 
             this.browseToolbar = params.browseToolbar;
-            this.treeGridPanel = params.treeGridPanel;
-            this.treeGrid = params.treeGridPanel2;
+            this.oldTreeGrid = params.treeGridPanel;
+            this.newTreeGrid = params.treeGridPanel2;
             this.browseItemPanel = params.browseItemPanel;
             this.filterPanel = params.filterPanel;
 
             this.browseItemPanel.onDeselected((event: ItemDeselectedEvent<M>) => {
-                this.treeGridPanel.deselectItem(event.getBrowseItem().getPath());
+                this.oldTreeGrid.deselectItem(event.getBrowseItem().getPath());
             });
 
             this.gridAndToolbarContainer = new api.ui.Panel();
             this.gridAndToolbarContainer.appendChild(this.browseToolbar);
-            this.gridAndToolbarContainer.appendChild(this.treeGridPanel);
 
-            if (this.treeGrid != null) {
-                this.treeSwapperDeckPanel = new api.ui.DeckPanel();
-                this.treeSwapperDeckPanel.addPanel(this.browseItemPanel);
-                this.treeSwapperDeckPanel.addPanel(this.treeGrid);
-                this.treeSwapperDeckPanel.showPanelByIndex(0);
+            this.treeSwapperDeckPanel = new api.ui.DeckPanel();
+            if (this.oldTreeGrid) {
+                this.treeSwapperDeckPanel.addPanel(this.oldTreeGrid);
+            }
+            if (this.newTreeGrid) {
+                this.treeSwapperDeckPanel.addPanel(this.newTreeGrid);
+            }
+            this.treeSwapperDeckPanel.showPanelByIndex(0);
 
-                this.gridAndDetailSplitPanel = new api.ui.SplitPanelBuilder(this.gridAndToolbarContainer, this.treeSwapperDeckPanel)
-                    .setAlignmentTreshold(BrowsePanel.SPLIT_PANEL_ALIGNMENT_TRESHOLD).build();
-            }
-            else {
-                this.gridAndDetailSplitPanel = new api.ui.SplitPanelBuilder(this.gridAndToolbarContainer, this.browseItemPanel)
-                    .setAlignmentTreshold(BrowsePanel.SPLIT_PANEL_ALIGNMENT_TRESHOLD).build();
-            }
+            this.gridAndToolbarContainer.appendChild(this.treeSwapperDeckPanel);
+
+            this.gridAndDetailSplitPanel = new api.ui.SplitPanelBuilder(this.gridAndToolbarContainer, this.browseItemPanel)
+                .setAlignmentTreshold(BrowsePanel.SPLIT_PANEL_ALIGNMENT_TRESHOLD).build();
 
             if (this.filterPanel) {
                 this.gridAndFilterAndDetailSplitPanel = new api.ui.SplitPanelBuilder(this.filterPanel, this.gridAndDetailSplitPanel)
@@ -75,10 +74,15 @@ module api.app.browse {
                 this.gridAndFilterAndDetailSplitPanel = this.gridAndDetailSplitPanel;
             }
 
-            this.treeGridPanel.onTreeGridSelectionChanged((event: api.app.browse.grid.TreeGridSelectionChangedEvent) => {
-                var browseItems: api.app.browse.BrowseItem<M>[] = this.extModelsToBrowseItems(event.getSelectedModels());
-                this.browseItemPanel.setItems(browseItems);
-            });
+            if (this.oldTreeGrid) {
+                this.oldTreeGrid.onTreeGridSelectionChanged((event: api.app.browse.grid.TreeGridSelectionChangedEvent) => {
+                    var browseItems: api.app.browse.BrowseItem<M>[] = this.extModelsToBrowseItems(event.getSelectedModels());
+                    this.browseItemPanel.setItems(browseItems);
+                });
+            }
+            if( this.newTreeGrid ) {
+                // TODO:
+            }
 
             this.onRendered((event) => {
                 this.appendChild(this.gridAndFilterAndDetailSplitPanel);
@@ -99,7 +103,12 @@ module api.app.browse {
                 if (this.filterPanel) {
                     this.filterPanel.search();
                 } else {
-                    this.treeGridPanel.refresh();
+                    if (this.oldTreeGrid) {
+                        this.oldTreeGrid.refresh();
+                    }
+                    if (this.newTreeGrid) {
+                        // TODO: ? this.treeGrid.refresh();
+                    }
                 }
                 this.refreshNeeded = false;
             }
