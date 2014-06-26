@@ -4,8 +4,8 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-ts');
     grunt.loadNpmTasks('grunt-directives');
     grunt.loadNpmTasks('grunt-contrib-less');
-    grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-clean');
+    grunt.loadNpmTasks("grunt-newer-explicit");
 
     // Load grunt task configuration from grunt/*
     require('load-grunt-config')(grunt);
@@ -13,7 +13,7 @@ module.exports = function (grunt) {
     // Register aliases
     grunt.registerTask('default', 'all');
 
-    grunt.registerTask('all', ['less', 'ts', 'directives']);
+    grunt.registerTask('all', ['less', 'newer', 'directives']);
     grunt.registerTask('all_no_ts', ['less', 'directives']);
 
     grunt.registerTask('common', ['all_no_ts', 'ts:common']);
