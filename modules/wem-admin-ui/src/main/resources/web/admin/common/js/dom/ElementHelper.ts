@@ -140,6 +140,10 @@ module api.dom {
             return this;
         }
 
+        getClass(): string {
+            return this.el.className ;
+        }
+
         hasClass(clsName: string): boolean {
             api.util.assert(!api.util.isStringEmpty(clsName), 'Class name cannot be empty');
             // spaces are not allowed

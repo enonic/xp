@@ -33,7 +33,7 @@ module app.browse {
 
             this.contentFilterPanel = new app.browse.filter.ContentBrowseFilterPanel();
 
-            this.contentTreeGridPanel2 = new app.browse.grid.ContentGridPanel2();
+            this.contentTreeGridPanel2 = new app.browse.grid.ContentGridPanel2Builder().build();
 
             super({
                 browseToolbar: this.toolbar,
