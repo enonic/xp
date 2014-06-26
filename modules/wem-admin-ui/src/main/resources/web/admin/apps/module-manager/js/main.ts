@@ -59,6 +59,11 @@ function registerEvents() {
         });
         new api.module.UninstallModuleRequest(moduleKeys).sendAndParse();
     });
+
+    var installModuleDialog: app.browse.InstallModuleDialog = new app.browse.InstallModuleDialog();
+    app.browse.InstallModuleEvent.on((event: app.browse.UninstallModuleEvent) => {
+        installModuleDialog.open();
+    });
 }
 
 module components {

@@ -9,6 +9,7 @@ module app.browse {
             this.setEnabled(true);
             this.onExecuted(() => {
                 console.log('install');
+                new InstallModuleEvent().fire();
             });
         }
     }

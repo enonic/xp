@@ -260,6 +260,7 @@ module api.app.browse.treegrid {
             this.fetchChildren(parent).then((items: NODE[]) => {
                 var node = new TreeNode<NODE>();
                 node.setChildrenFromItems(items);
+                node.setExpanded(true);
                 this.initData(node.treeToList());
             })
         }
