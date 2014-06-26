@@ -142,7 +142,7 @@ module api.app.browse.treegrid {
                     if (selected.length === 1) {
                         var node = this.gridData.getItem(selected[0]);
                         if (node && node.getData().hasChildren()
-                            && !node.isExpanded() &&  this.active) {
+                                && !node.isExpanded() &&  this.active) {
 
                             this.active = false;
                             this.expandNode(node);

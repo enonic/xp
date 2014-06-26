@@ -16,8 +16,8 @@ module LiveEdit {
     import ItemViewId = api.liveedit.ItemViewId;
     import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
     import TextComponentView = api.liveedit.text.TextComponentView;
-    import SortableStartEvent = api.liveedit.SortableStartEvent;
-    import SortableStopEvent = api.liveedit.SortableStopEvent;
+    import DraggingPageComponentViewStartedEvent = api.liveedit.DraggingPageComponentViewStartedEvent;
+    import DraggingPageComponentViewCompletedEvent = api.liveedit.DraggingPageComponentViewCompletedEvent;
     import PageComponentAddedEvent = api.liveedit.PageComponentAddedEvent;
     import PageComponentDuplicateEvent = api.liveedit.PageComponentDuplicateEvent;
     import ItemViewDeselectEvent = api.liveedit.ItemViewDeselectEvent;
@@ -52,6 +52,9 @@ module LiveEdit {
                 api.liveedit.PageItemType.get().setSiteTemplate(event.getSiteTemplate());
 
                 var body = api.dom.Body.getAndLoadExistingChildren();
+                //body.traverse( (el: api.dom.Element) => {
+                //el.setDraggable(false);
+                //});
 
                 this.pageRegions = event.getPageRegions();
                 this.pageView = new PageView(new PageViewBuilder().
@@ -135,12 +138,12 @@ module LiveEdit {
                 this.highlighter.highlightItemView(event.getComponentView());
                 this.shader.shadeItemView(event.getComponentView());
             });
-            SortableStartEvent.on(() => {
+            DraggingPageComponentViewStartedEvent.on(() => {
                 this.highlighter.hide();
                 this.shader.hide();
                 this.cursor.hide();
             });
-            SortableStopEvent.on(() => {
+            DraggingPageComponentViewCompletedEvent.on(() => {
                 this.cursor.reset();
             });
             PageComponentRemoveEvent.on(() => {
@@ -191,16 +194,6 @@ module LiveEdit {
 
             new PageComponentAddedEvent().setPageComponentView(pageComponentView).fire();
             pageComponentView.select();
-        }
-
-        movePageComponent(pageComponentView: PageComponentView<PageComponent>, regionView: RegionView,
-                          precedingComponentView: PageComponentView<PageComponent>) {
-
-            var precedingComponent: PageComponent = null;
-            if (precedingComponentView) {
-                precedingComponent = precedingComponentView.getPageComponent();
-            }
-            pageComponentView.getPageComponent().moveToRegion(regionView.getRegion(), precedingComponent);
         }
 
         duplicatePageComponent(pageComponentView: PageComponentView<PageComponent>) {

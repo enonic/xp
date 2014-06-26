@@ -2,7 +2,6 @@
 ///<reference path='../../common/js/_all.d.ts' />
 
 ///<reference path='shared/DomHelper.ts' />
-///<reference path='shared/PlaceholderCreator.ts' />
 
 ///<reference path='component/helper/DragHelper.ts' />
 

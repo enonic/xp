@@ -12,7 +12,7 @@ module api.liveedit {
 
         element: api.dom.Element;
 
-        positionIndex: number;
+        positionIndex: number = -1;
 
         /**
          * Optional. The ItemViewIdProducer of parentRegionView will be used if not set.

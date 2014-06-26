@@ -65,7 +65,7 @@ module api.liveedit {
 
             this.parsePageComponentViews();
 
-            this.refreshEmpty();
+            this.refreshPlaceholder();
 
             // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
             //this.onDragOver(this.handleDragOver.bind(this));
@@ -148,7 +148,7 @@ module api.liveedit {
         }
 
         select() {
-            new RegionSelectEvent(this.getRegionPath(), this).fire();
+            new RegionSelectEvent(this).fire();
             super.select();
         }
 
@@ -156,13 +156,15 @@ module api.liveedit {
             return new RegionComponentViewer();
         }
 
-        registerPageComponentView(pageComponentView: PageComponentView<PageComponent>, positionIndex: number) {
-            if (positionIndex) {
-                this.pageComponentViews.splice(positionIndex, 0, pageComponentView);
+        registerPageComponentView(pageComponentView: PageComponentView<PageComponent>, index: number) {
+            if (index >= 0) {
+                this.pageComponentViews.splice(index, 0, pageComponentView);
             }
             else {
                 this.pageComponentViews.push(pageComponentView);
             }
+
+            this.notifyItemViewAdded(new ItemViewAddedEvent(pageComponentView));
 
             pageComponentView.onItemViewAdded((event: ItemViewAddedEvent) => {
                 this.notifyItemViewAdded(event);
@@ -173,13 +175,28 @@ module api.liveedit {
                 if (api.ObjectHelper.iFrameSafeInstanceOf(event.getView(), PageComponentView)) {
 
                     var removedPageComponentView: PageComponentView<PageComponent> = <PageComponentView<PageComponent>>event.getView();
-                    var childIndex = this.pageComponentViews.indexOf(removedPageComponentView);
+                    var childIndex = this.getPageComponentViewIndex(removedPageComponentView);
                     if (childIndex > -1) {
                         this.pageComponentViews.splice(childIndex, 1);
                     }
                 }
                 this.notifyItemViewRemoved(event);
             });
+        }
+
+        unregisterPageComponentView(pageComponentView: PageComponentView<PageComponent>) {
+
+            var indexToRemove = this.getPageComponentViewIndex(pageComponentView);
+            if (indexToRemove >= 0) {
+                this.pageComponentViews.splice(indexToRemove, 1);
+                if (this.pageComponentViews.length == 0) {
+                    this.placeholder.show();
+                }
+                this.notifyItemViewRemovedForAll(pageComponentView.toItemViewArray());
+            }
+            else {
+                throw new Error("Did not find PageComponentView to remove: " + pageComponentView.getItemId().toString());
+            }
         }
 
         addPageComponentView(pageComponentView: PageComponentView<PageComponent>, positionIndex: number) {
@@ -197,32 +214,82 @@ module api.liveedit {
             return this.pageComponentViews;
         }
 
+        getPageComponentViewIndex(view: PageComponentView<PageComponent>): number {
+
+            return this.pageComponentViews.indexOf(view);
+        }
+
         removePageComponentView(pageComponentView: PageComponentView<PageComponent>) {
 
             pageComponentView.remove();
-
-            var indexToRemove = this.pageComponentViews.indexOf(pageComponentView);
-            if (indexToRemove >= 0) {
-                this.pageComponentViews.splice(indexToRemove, 1);
-                if (this.pageComponentViews.length == 0) {
-                    console.log("RegionView[" + this.getItemId().toNumber() +
-                                "].removePageComponentView: region is now empty, showing placeholder");
-                    this.placeholder.show();
-                }
-                this.notifyItemViewRemovedForAll(pageComponentView.toItemViewArray());
-            }
-            else {
-                throw new Error("Did not find PageComponentView to remove: " + pageComponentView.getItemId().toString());
-            }
+            this.unregisterPageComponentView(pageComponentView);
         }
 
-        refreshEmpty() {
-            if (this.pageComponentViews.length == 0) {
+        refreshPlaceholder() {
+
+            if (this.hasPageComponentViewDropZone()) {
+                this.placeholder.hide();
+            }
+            else if (this.pageComponentViews.length == 0) {
                 this.placeholder.show();
             }
             else {
-                this.placeholder.hide();
+                if (this.countNonMovingPageComponentViews() == 0) {
+                    this.placeholder.show();
+                }
+                else {
+                    this.placeholder.hide();
+                }
             }
+        }
+
+        private countNonMovingPageComponentViews(): number {
+            var count = 0;
+            this.pageComponentViews.forEach((view: PageComponentView<PageComponent>)=> {
+                if (!view.isMoving()) {
+                    count++
+                }
+            });
+            return count;
+        }
+
+        private hasPageComponentViewDropZone(): boolean {
+
+            var foundDropZone = false;
+            var child = this.getHTMLElement().firstChild;
+            while (child) {
+
+                if (api.ObjectHelper.iFrameSafeInstanceOf(child, HTMLElement)) {
+                    var childHtmlElement = new api.dom.ElementHelper(<HTMLElement> child);
+                    if (childHtmlElement.hasClass("item-view-drop-zone") ||
+                        childHtmlElement.hasClass("live-edit-drop-target-placeholder")) {
+                        if (childHtmlElement.getDisplay() != "none") {
+                            foundDropZone = true;
+                            break;
+                        }
+                    }
+                }
+
+                child = child.nextSibling;
+            }
+            return foundDropZone;
+        }
+
+        hidePlaceholder() {
+            this.placeholder.hide();
+        }
+
+        createPlaceholderForJQuerySortable(pageComponentView?: PageComponentView<PageComponent>): string {
+            return RegionView.createPlaceholderForJQuerySortable(this, pageComponentView);
+        }
+
+        empty() {
+
+            this.pageComponentViews.forEach((pageComponentView: PageComponentView<PageComponent>) => {
+                pageComponentView.remove();
+            });
+
+            this.region.removePageComponents();
         }
 
         toItemViewArray(): ItemView[] {
@@ -298,6 +365,29 @@ module api.liveedit {
                     this.doParsePageComponentViews(childElement)
                 }
             });
+        }
+
+        private static createPlaceholderForJQuerySortable(regionView: RegionView,
+                                                          pageComponentView?: PageComponentView<PageComponent>): string {
+
+            var html = '<div class="item-view-drop-zone">';
+
+            html += 'Drop component here ';
+
+            if (pageComponentView) {
+                var typeAndName: string = api.util.capitalize(pageComponentView.getType().getShortName()) + ': ' +
+                                          pageComponentView.getName();
+                var target: string = pageComponentView.getType().getShortName() + ': ' + pageComponentView.getName();
+
+                html += '<div style = "font-size: 11px;"> dragged ' + typeAndName + ' </div > ';
+            }
+            if (regionView) {
+                html += '<div style = "font-size: 11px;"> target region: ' + regionView.getRegionName() + ' </div > ';
+            }
+
+            html += '</div>';
+
+            return html;
         }
     }
 }

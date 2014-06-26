@@ -133,7 +133,7 @@ module app.launcher {
 
         private addAppTiles(applications: api.app.Application[], tilesPlaceholder: api.dom.DivEl) {
             applications.forEach((application: api.app.Application, idx: number) => {
-                var appTile = new AppTile(application);
+                var appTile = new AppTile(application, idx);
 
                 appTile.onClicked((event: MouseEvent) => {
                     this.notifyAppSelected(application);

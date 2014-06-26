@@ -21,14 +21,18 @@ module app.launcher {
         constructor(mainContainer: app.home.HomeMainContainer) {
             this.homeMainContainer = mainContainer;
 
+            var returnToAppAction = new api.ui.Action("Return");
+            returnToAppAction.onExecuted(() => {
+                this.returnToApp();
+            });
+
+            this.homeMainContainer.setReturnAction(returnToAppAction);
+
             this.adminApplicationFrames = new api.dom.DivEl("applications-frame");
 
             this.loadMask = new api.ui.LoadMask(this.adminApplicationFrames);
 
             this.appManager = new api.app.AppManager();
-            this.appManager.onShowLauncher(()=> {
-                this.showLauncherScreen();
-            });
             var messageId;
             this.appManager.onConnectionLost(()=> {
                 messageId = api.notify.showError("Lost connection to server - Please wait until connection is restored", false);
@@ -47,20 +51,21 @@ module app.launcher {
             api.dom.Body.get().appendChild(this.adminApplicationFrames);
 
             api.app.ShowAppLauncherEvent.on((event) => {
+                api.ui.KeyBindings.get().shelveBindings();
+
                 this.currentApplication = event.getApplication();
                 this.currentApplicationHash = hasher.getHash();
+                this.homeMainContainer.setBackgroundImgUrl("");
+                this.homeMainContainer.enableReturnButton();
+                this.homeMainContainer.giveFocus();
+
                 Applications.getAllApps().forEach((app: api.app.Application) => {
                     if (app != event.getApplication()) {
                         app.hide();
                     }
                 });
-                this.homeMainContainer.setBackgroundImgUrl("");
-                this.homeMainContainer.enableReturnButton();
-            });
 
-            app.home.ReturnToAppEvent.on(() => {
-                this.homeMainContainer.hide();
-                hasher.setHash(this.currentApplicationHash);
+                this.showLauncherScreen();
             });
 
             app.home.LogOutEvent.on(() => {
@@ -89,11 +94,15 @@ module app.launcher {
             var appFrame: api.dom.IFrameEl = application.getAppFrame();
             if (application.isLoaded()) {
                 appFrame.show();
+                appFrame.giveFocus();
             }
             else {
                 this.adminApplicationFrames.appendChild(appFrame);
                 this.loadMask.show();
-                application.onLoaded(() => this.loadMask.hide());
+                application.onLoaded(() => {
+                    this.loadMask.hide();
+                    appFrame.giveFocus();
+                });
             }
             var type = api.app.AppLauncherEventType.Show;
             appFrame.postMessage(<api.app.AppLauncherEvent>{appLauncherEvent: api.app.AppLauncherEventType[type]});
@@ -103,10 +112,22 @@ module app.launcher {
             if (this.loadMask.isVisible()) {
                 this.loadMask.hide();
             }
-            api.ui.KeyBindings.get().reset();
+
             this.homeMainContainer.show();
             this.homeMainContainer.giveFocus();
+
+            api.ui.KeyBindings.get().bindKey(new api.ui.KeyBinding("esc", () => {
+                this.returnToApp();
+            }));
+
             hasher.setHash(AppRouter.HOME_HASH_ID);
+        }
+
+        private returnToApp() {
+            this.homeMainContainer.hide();
+            api.ui.KeyBindings.get().unshelveBindings();
+            this.currentApplication.getAppFrame().giveFocus();
+            hasher.setHash(this.currentApplicationHash);
         }
 
         setRouter(router: AppRouter) {

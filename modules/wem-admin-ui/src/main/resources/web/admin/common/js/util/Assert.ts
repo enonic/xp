@@ -4,6 +4,10 @@ module api.util {
         console.assert(expression, message);
     }
 
+    export function assertState(expression: boolean, message?: string) {
+        console.assert(expression, "Illegal state: " + message);
+    }
+
     export function assertNotNull(value: Object, message?: string) {
         assert(value != null, message);
     }

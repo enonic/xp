@@ -1,7 +1,7 @@
 module LiveEdit.ui {
 
     import ItemView = api.liveedit.ItemView;
-    import SortableStartEvent = api.liveedit.SortableStartEvent;
+    import DraggingPageComponentViewStartedEvent = api.liveedit.DraggingPageComponentViewStartedEvent;
     import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
 
     export class EditorToolbar extends LiveEdit.ui.Base {
@@ -22,7 +22,7 @@ module LiveEdit.ui {
             wemjq(window).on('editTextComponent.liveEdit', (event: JQueryEventObject, component?) => this.show(component));
             wemjq(window).on('leaveTextComponent.liveEdit', () => this.hide());
             PageComponentRemoveEvent.on(() => this.hide());
-            SortableStartEvent.on(() => this.hide());
+            DraggingPageComponentViewStartedEvent.on(() => this.hide());
         }
 
         private addView(): void {

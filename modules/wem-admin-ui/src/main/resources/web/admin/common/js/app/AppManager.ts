@@ -14,20 +14,12 @@ module api.app {
 
         }
 
-        showLauncher(): void {
-            this.notifyShowLauncher();
-        }
-
         onConnectionLost(listener: ()=>void) {
             this.connectionLostListeners.push(listener);
         }
 
         onConnectionRestored(listener: ()=>void) {
             this.connectionRestoredListeners.push(listener);
-        }
-
-        onShowLauncher(listener: ()=>void) {
-            this.showLauncherListeners.push(listener);
         }
 
         unConnectionLost(listener: ()=>void) {
@@ -42,12 +34,6 @@ module api.app {
             });
         }
 
-        unShowLauncher(listener: ()=>void) {
-            this.showLauncherListeners = this.showLauncherListeners.filter((currentListener: ()=>void) => {
-                return listener != currentListener;
-            });
-        }
-
         notifyConnectionLost() {
             this.connectionLostListeners.forEach((listener: ()=>void) => {
                 listener.call(this);
@@ -56,12 +42,6 @@ module api.app {
 
         notifyConnectionRestored() {
             this.connectionRestoredListeners.forEach((listener: ()=>void) => {
-                listener.call(this);
-            });
-        }
-
-        private notifyShowLauncher() {
-            this.showLauncherListeners.forEach((listener: ()=>void) => {
                 listener.call(this);
             });
         }

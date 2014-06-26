@@ -1,7 +1,7 @@
 module LiveEdit.ui.contextmenu {
 
     import ItemView = api.liveedit.ItemView;
-    import SortableStartEvent = api.liveedit.SortableStartEvent;
+    import DraggingPageComponentViewStartedEvent = api.liveedit.DraggingPageComponentViewStartedEvent;
     import ItemViewDeselectEvent = api.liveedit.ItemViewDeselectEvent;
     import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
     import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
@@ -43,7 +43,7 @@ module LiveEdit.ui.contextmenu {
             ItemViewDeselectEvent.on(() => this.hide());
             PageComponentRemoveEvent.on(() => this.hide());
             wemjq(window).on('editTextComponent.liveEdit', () => this.hide());
-            SortableStartEvent.on(() => this.fadeOutAndHide());
+            DraggingPageComponentViewStartedEvent.on(() => this.fadeOutAndHide());
             wemjq(window).on('resizeBrowserWindow.liveEdit', () => this.handleWindowResize());
         }
 

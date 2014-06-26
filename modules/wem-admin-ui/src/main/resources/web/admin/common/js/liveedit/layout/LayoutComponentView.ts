@@ -120,7 +120,7 @@ module api.liveedit.layout {
         static getParentLayoutComponentView(pageComponentView: PageComponentView<PageComponent>): LayoutComponentView {
 
             var parentRegion = pageComponentView.getParentItemView();
-            var potentialLayoutComponentView = parentRegion.getParentItemView()
+            var potentialLayoutComponentView = parentRegion.getParentItemView();
             if (api.ObjectHelper.iFrameSafeInstanceOf(potentialLayoutComponentView, LayoutComponentView)) {
                 return <LayoutComponentView> potentialLayoutComponentView;
             }

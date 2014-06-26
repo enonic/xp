@@ -338,11 +338,11 @@ module api.dom {
             return this.insertChild(child, 0);
         }
 
-        insertAfterEl(existingEl: Element) {
-            api.util.assertNotNull(existingEl, 'Existing element cannot be null');
-            this.el.insertAfterEl(existingEl.el);
-            var parent = existingEl.parentElement;
-            var index = parent.getChildren().indexOf(existingEl) + 1;
+        insertAfterEl(existing: Element) {
+            api.util.assertNotNull(existing, 'Existing element cannot be null');
+            this.el.insertAfterEl(existing.el);
+            var parent = existing.parentElement;
+            var index = existing.getSiblingIndex() + 1;
             this.insert(this, parent, index);
         }
 
@@ -364,8 +364,7 @@ module api.dom {
             replacement.parentElement = this.parentElement;
 
             // Replace this with replacement in the parent Element's children array
-            var index = this.getSiblingIndex();
-            this.parentElement.children.splice(index, 0, replacement);
+            this.parentElement.registerChildElement(replacement, null, true);
 
             // Run init of replacement if parentElement is rendered
             if (this.parentElement.isRendered()) {
@@ -396,8 +395,8 @@ module api.dom {
         private insert(child: Element, parent: Element, index: number) {
             api.util.assertNotNull(child, 'Child element cannot be null');
             api.util.assertNotNull(parent, 'Parent element cannot be null');
-            child.setParentElement(parent);
-            parent.getChildren().splice(index, 0, child);
+            child.parentElement = parent;
+            parent.registerChildElement(child, index, true);
             if (parent.isRendered()) {
                 child.init();
             }
@@ -411,28 +410,19 @@ module api.dom {
         removeChild(child: Element) {
             api.util.assertNotNull(child, "child cannot be null");
 
-            var index = this.children.indexOf(child);
-            if (index > -1) {
-                this.children.splice(index, 1);
-                child.getEl().remove();
-                child.setParentElement(null);
-                child.notifyRemoved();
-            }
-            else {
-                throw new Error("Child element to remove not found");
-            }
+            this.removeFromChildren(child);
+            child.getEl().remove();
+            child.parentElement = null;
+            child.notifyRemoved();
         }
 
         removeChildren() {
-            // copy children because it can be modified inside the loop
-            var children = this.children.slice(0);
-            // to remove text nodes etc
-            this.el.setInnerHtml('');
-            this.children.length = 0;
-            children.forEach((child: Element) => {
-                child.setParentElement(null);
-                child.notifyRemoved();
+            this.children.forEach((child: Element) => {
+                child.remove();
             });
+
+            // remove text nodes etc
+            this.el.setInnerHtml('');
         }
 
         remove() {
@@ -444,8 +434,44 @@ module api.dom {
             }
         }
 
-        private setParentElement(parent: Element) {
-            this.parentElement = parent;
+        /**
+         * Remove this element from parent element's array of children.
+         * NB: Does not remove this element from parent (DOM).
+         * @param silent whether no
+         */
+        unregisterFromParentElement(silent: boolean = false) {
+            this.parentElement.removeFromChildren(this);
+            this.parentElement = null;
+            if (!silent) {
+                this.notifyRemoved()
+            }
+        }
+
+        private removeFromChildren(child: Element) {
+            var childIndex = this.children.indexOf(child);
+            if (!(childIndex >= 0)) {
+                throw new Error("Child element to remove not found");
+            }
+            this.children.splice(childIndex, 1);
+        }
+
+        /**
+         * Add given element to this element's array of children.
+         * * NB: Does not add given element to this element (DOM).
+         */
+        registerChildElement(child: Element, index?: number, silent: boolean = false) {
+            if (!(child.getHTMLElement().parentElement === this.getHTMLElement())) {
+                throw new Error("Given child must be a child of this Element in DOM before it can be registered");
+            }
+            if (!index) {
+                index = child.el.getSiblingIndex();
+            }
+            this.children.splice(index, 0, child);
+            child.parentElement = this;
+
+            if (!silent) {
+                child.notifyAdded();
+            }
         }
 
         getParentElement(): Element {
@@ -484,13 +510,15 @@ module api.dom {
          * Returns the index of this element among it's siblings. Returns 0 if first or only child.
          */
         getSiblingIndex(): number {
-
-            var i = 0;
-            var prev: HTMLElement = this.getHTMLElement();
-            while ((prev = <HTMLElement>prev.previousElementSibling) != null) {
-                i++;
+            var indexFromDOM = this.el.getSiblingIndex();
+            if (this.parentElement) {
+                var indexFromElement = this.parentElement.children.indexOf(this);
+                api.util.assertState(indexFromElement == indexFromDOM, "index of Element in parentElement.children" +
+                                                                       " [" + indexFromElement + "] does not correspond with" +
+                                                                       " the actual index [" + indexFromDOM +
+                                                                       "] of the HTMLElement in DOM");
             }
-            return i;
+            return indexFromDOM;
         }
 
         toString(): string {

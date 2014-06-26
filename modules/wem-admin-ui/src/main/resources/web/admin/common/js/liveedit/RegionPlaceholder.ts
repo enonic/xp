@@ -13,7 +13,7 @@ module api.liveedit {
             var dragComponentsHereEl = new api.dom.PEl();
             dragComponentsHereEl.setText("Drop components here");
 
-            var componentTypeInfoText: string = regionView.getType().getShortName() + ': ' + regionView.getName();
+            var componentTypeInfoText: string = api.util.capitalize(regionView.getType().getShortName()) + ': ' + regionView.getName();
             var typeInfoEl = new api.dom.PEl();
             typeInfoEl.setText(componentTypeInfoText);
 

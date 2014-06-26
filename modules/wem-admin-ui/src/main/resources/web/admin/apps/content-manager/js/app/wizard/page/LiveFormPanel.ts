@@ -60,8 +60,8 @@ module app.wizard.page {
     import PartComponentView = api.liveedit.part.PartComponentView;
     import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
     import TextComponentView = api.liveedit.text.TextComponentView;
-    import SortableStartEvent = api.liveedit.SortableStartEvent;
-    import SortableStopEvent = api.liveedit.SortableStopEvent;
+    import DraggingPageComponentViewStartedEvent = api.liveedit.DraggingPageComponentViewStartedEvent;
+    import DraggingPageComponentViewCompletedEvent = api.liveedit.DraggingPageComponentViewCompletedEvent;
     import PageSelectEvent = api.liveedit.PageSelectEvent;
     import RegionSelectEvent = api.liveedit.RegionSelectEvent;
     import ImageComponentSetImageEvent = api.liveedit.image.ImageComponentSetImageEvent;
@@ -72,7 +72,6 @@ module app.wizard.page {
     import PageComponentResetEvent = api.liveedit.PageComponentResetEvent;
     import PageComponentSetDescriptorEvent = api.liveedit.PageComponentSetDescriptorEvent;
     import PageComponentDuplicateEvent = api.liveedit.PageComponentDuplicateEvent;
-    import RegionEmptyEvent = api.liveedit.RegionEmptyEvent;
 
     export interface LiveFormPanelConfig {
 
@@ -457,7 +456,7 @@ module app.wizard.page {
 
             this.liveEditPage.onRegionSelected((event: RegionSelectEvent) => {
 
-                this.inspectRegion(event.getPath());
+                this.inspectRegion(event.getRegionView());
             });
 
             this.liveEditPage.onPageComponentSelected((event: PageComponentSelectEvent) => {
@@ -504,18 +503,16 @@ module app.wizard.page {
                     done();
             });
 
-            this.liveEditPage.onSortableStart((event: SortableStartEvent) => {
+            this.liveEditPage.onDraggingPageComponentViewStartedEvent((event: DraggingPageComponentViewStartedEvent) => {
 
                 this.contextWindow.hide();
             });
 
-            this.liveEditPage.onSortableStop((event: SortableStopEvent) => {
+            this.liveEditPage.onDraggingPageComponentViewCompleted((event: DraggingPageComponentViewCompletedEvent) => {
 
                 var pageComponentView = event.getPageComponentView();
-
                 if (!pageComponentView.isEmpty()) {
                     this.contextWindow.show();
-                    pageComponentView.select();
                     this.inspectPageComponent(pageComponentView);
                 }
             });
@@ -567,11 +564,6 @@ module app.wizard.page {
 
                 this.saveAndReloadOnlyPageComponent(event.getDuplicatedPageComponentView());
             });
-
-            this.liveEditPage.onRegionEmpty((event: RegionEmptyEvent) => {
-
-                this.pageRegions.emptyRegion(event.getPath());
-            });
         }
 
         private inspectContent(contentId: api.content.ContentId) {
@@ -584,9 +576,9 @@ module app.wizard.page {
             this.contextWindow.showInspectionPanel(this.pageInspectionPanel);
         }
 
-        private inspectRegion(regionPath: RegionPath) {
+        private inspectRegion(regionView: RegionView) {
 
-            var region = this.pageRegions.getRegionByPath(regionPath);
+            var region = regionView.getRegion();
 
             this.regionInspectionPanel.setRegion(region);
             this.contextWindow.showInspectionPanel(this.regionInspectionPanel);

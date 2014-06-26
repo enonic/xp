@@ -15,9 +15,12 @@ module api.app {
 
         private currentKeyBindings: api.ui.KeyBinding[];
 
+        private appBar:api.app.AppBar;
+
         constructor(config: BrowseBasedAppPanelConfig<M>) {
             super(config.appBar.getTabMenu(), config.browsePanel);
 
+            this.appBar = config.appBar;
             this.browsePanel = config.browsePanel;
             this.appBarTabMenu = config.appBar.getTabMenu();
 
@@ -49,6 +52,10 @@ module api.app {
             return this.appBarTabMenu;
         }
 
+        private askUserForSaveChangesBeforeClosing(wizard: api.app.wizard.WizardPanel<any>) {
+            new api.app.wizard.SaveBeforeCloseDialog(wizard).open();
+        }
+
         addViewPanel(tabMenuItem: AppBarTabMenuItem, viewPanel: api.app.view.ItemViewPanel<M>) {
             super.addNavigablePanel(tabMenuItem, viewPanel, true);
 
@@ -65,7 +72,12 @@ module api.app {
             super.addNavigablePanel(tabMenuItem, wizardPanel, true);
 
             tabMenuItem.onClosed(() => {
-                wizardPanel.close();
+
+                if (wizardPanel.hasUnsavedChanges()) {
+                    this.askUserForSaveChangesBeforeClosing(wizardPanel);
+                } else {
+                    wizardPanel.close();
+                }
             });
 
             wizardPanel.onClosed((event: api.app.wizard.WizardClosedEvent) => {
@@ -82,14 +94,14 @@ module api.app {
         }
 
         private resolveActions(panel: api.ui.Panel): api.ui.Action[] {
+            var actions = [];
+            actions = actions.concat(this.appBar.getActions());
 
             if (panel instanceof api.app.wizard.WizardPanel || panel instanceof api.app.browse.BrowsePanel) {
                 var actionContainer: api.ui.ActionContainer = <any>panel;
-                return actionContainer.getActions();
+                actions = actions.concat(actionContainer.getActions());
             }
-            else {
-                return [];
-            }
+            return actions;
         }
     }
 }

@@ -1,6 +1,6 @@
 module api.app {
 
-    export class AppBar extends api.dom.DivEl {
+    export class AppBar extends api.dom.DivEl implements api.ui.ActionContainer {
 
         private application: Application;
 
@@ -43,9 +43,6 @@ module api.app {
 
             this.userButton.onClicked((event: MouseEvent) => this.userInfoPopup.toggle());
 
-            var appManager: api.app.AppManager = api.app.AppManager.instance();
-            this.launcherButton.onClicked((event: MouseEvent) => appManager.showLauncher());
-
             this.setBackgroundImgUrl(api.util.getRestUri('ui/background.jpg'));
 
             api.dom.Window.get().onResized((event: UIEvent) => this.layoutChildren(), this);
@@ -56,7 +53,12 @@ module api.app {
             });
             this.tabMenu.onNavigationItemRemoved((event: api.ui.NavigatorEvent)=> {
                 this.updateAppOpenTabs();
-            })
+            });
+        }
+
+
+        getActions(): api.ui.Action[] {
+            return [this.showAppLauncherAction];
         }
 
         getTabMenu(): AppBarTabMenu {
@@ -102,14 +104,11 @@ module api.app {
         }
     }
 
-    export class LauncherButton extends api.dom.ButtonEl {
+    export class LauncherButton extends api.ui.ActionButton {
 
         constructor(action: api.ui.Action) {
-            super('launcher-button');
-
-            this.onClicked((event: MouseEvent) => {
-                action.execute();
-            });
+            super(action, true);
+            this.addClass('launcher-button');
         }
 
     }

@@ -15,8 +15,9 @@ module app.wizard.page {
     import ImageOpenUploadDialogEvent = api.liveedit.ImageOpenUploadDialogEvent;
     import ImageUploadedEvent = api.liveedit.ImageUploadedEvent;
     import ImageComponentSetImageEvent = api.liveedit.image.ImageComponentSetImageEvent;
-    import SortableStartEvent = api.liveedit.SortableStartEvent;
-    import SortableStopEvent = api.liveedit.SortableStopEvent;
+    import DraggingPageComponentViewStartedEvent = api.liveedit.DraggingPageComponentViewStartedEvent;
+    import DraggingPageComponentViewCompletedEvent = api.liveedit.DraggingPageComponentViewCompletedEvent;
+    import ItemFromContextWindowDroppedEvent = api.liveedit.ItemFromContextWindowDroppedEvent;
     import PageSelectEvent = api.liveedit.PageSelectEvent;
     import RegionSelectEvent = api.liveedit.RegionSelectEvent;
     import PageComponentSelectEvent = api.liveedit.PageComponentSelectEvent;
@@ -27,7 +28,6 @@ module app.wizard.page {
     import PageComponentDuplicateEvent = api.liveedit.PageComponentDuplicateEvent;
     import PageComponentSetDescriptorEvent = api.liveedit.PageComponentSetDescriptorEvent;
     import PageComponentLoadedEvent = api.liveedit.PageComponentLoadedEvent;
-    import RegionEmptyEvent = api.liveedit.RegionEmptyEvent;
     import RepeatNextItemViewIdProducer = api.liveedit.RepeatNextItemViewIdProducer;
     import CreateItemViewConfig = api.liveedit.CreateItemViewConfig;
     import RegionView = api.liveedit.RegionView;
@@ -66,9 +66,11 @@ module app.wizard.page {
 
         private loadedListeners: {(): void;}[] = [];
 
-        private sortableStartListeners: {(event: SortableStartEvent): void;}[] = [];
+        private draggingPageComponentViewStartedListeners: {(event: DraggingPageComponentViewStartedEvent): void;}[] = [];
 
-        private sortableStopListeners: {(event: SortableStopEvent): void;}[] = [];
+        private draggingPageComponentViewCompletedListeners: {(event: DraggingPageComponentViewCompletedEvent): void;}[] = [];
+
+        private itemFromContextWindowDroppedListeners: {(event: ItemFromContextWindowDroppedEvent): void;}[] = [];
 
         private pageSelectedListeners: {(event: PageSelectEvent): void;}[] = [];
 
@@ -89,8 +91,6 @@ module app.wizard.page {
         private pageComponentResetListeners: {(event: PageComponentResetEvent): void;}[] = [];
 
         private pageComponentDuplicatedListeners: {(event: PageComponentDuplicateEvent): void;}[] = [];
-
-        private regionEmptyListeners: {(event: RegionEmptyEvent): void;}[] = [];
 
         private LIVE_EDIT_ERROR_PAGE_BODY_ID = "wem-error-page";
 
@@ -254,9 +254,11 @@ module app.wizard.page {
                 uploadDialog.open();
             }, this.liveEditWindow);
 
-            SortableStartEvent.on(this.notifySortableStart.bind(this), this.liveEditWindow);
+            DraggingPageComponentViewStartedEvent.on(this.notifyDraggingPageComponentViewStarted.bind(this), this.liveEditWindow);
 
-            SortableStopEvent.on(this.notifySortableStop.bind(this), this.liveEditWindow);
+            DraggingPageComponentViewCompletedEvent.on(this.notifyDraggingPageComponentViewCompleted.bind(this), this.liveEditWindow);
+
+            ItemFromContextWindowDroppedEvent.on(this.notifyItemFromContextWindowDropped.bind(this), this.liveEditWindow);
 
             PageSelectEvent.on(this.notifyPageSelected.bind(this), this.liveEditWindow);
 
@@ -285,8 +287,6 @@ module app.wizard.page {
             }, this.liveEditWindow);
 
             PageComponentSetDescriptorEvent.on(this.notifyPageComponentSetDescriptor.bind(this), this.liveEditWindow);
-
-            RegionEmptyEvent.on(this.notifyRegionEmpty.bind(this), this.liveEditWindow);
         }
 
         onLoaded(listener: {(): void;}) {
@@ -305,28 +305,43 @@ module app.wizard.page {
             });
         }
 
-        onSortableStart(listener: (event: SortableStartEvent) => void) {
-            this.sortableStartListeners.push(listener);
+        onDraggingPageComponentViewStartedEvent(listener: (event: DraggingPageComponentViewStartedEvent) => void) {
+            this.draggingPageComponentViewStartedListeners.push(listener);
         }
 
-        unSortableStart(listener: (event: SortableStartEvent) => void) {
-            this.sortableStartListeners = this.sortableStartListeners.filter((curr) => (curr != listener));
+        unDraggingPageComponentViewStartedEvent(listener: (event: DraggingPageComponentViewStartedEvent) => void) {
+            this.draggingPageComponentViewStartedListeners =
+            this.draggingPageComponentViewStartedListeners.filter((curr) => (curr != listener));
         }
 
-        private notifySortableStart(event: SortableStartEvent) {
-            this.sortableStartListeners.forEach((listener) => listener(event));
+        private notifyDraggingPageComponentViewStarted(event: DraggingPageComponentViewStartedEvent) {
+            this.draggingPageComponentViewStartedListeners.forEach((listener) => listener(event));
         }
 
-        onSortableStop(listener: {(event: SortableStopEvent): void;}) {
-            this.sortableStopListeners.push(listener);
+        onDraggingPageComponentViewCompleted(listener: {(event: DraggingPageComponentViewCompletedEvent): void;}) {
+            this.draggingPageComponentViewCompletedListeners.push(listener);
         }
 
-        unSortableStop(listener: {(event: SortableStopEvent): void;}) {
-            this.sortableStopListeners = this.sortableStopListeners.filter((curr) => (curr != listener));
+        unDraggingPageComponentViewCompleted(listener: {(event: DraggingPageComponentViewCompletedEvent): void;}) {
+            this.draggingPageComponentViewCompletedListeners =
+            this.draggingPageComponentViewCompletedListeners.filter((curr) => (curr != listener));
         }
 
-        private notifySortableStop(event: SortableStopEvent) {
-            this.sortableStopListeners.forEach((listener) => listener(event));
+        private notifyDraggingPageComponentViewCompleted(event: DraggingPageComponentViewCompletedEvent) {
+            this.draggingPageComponentViewCompletedListeners.forEach((listener) => listener(event));
+        }
+
+        onItemFromContextWindowDropped(listener: {(event: ItemFromContextWindowDroppedEvent): void;}) {
+            this.itemFromContextWindowDroppedListeners.push(listener);
+        }
+
+        unItemFromContextWindowDropped(listener: {(event: ItemFromContextWindowDroppedEvent): void;}) {
+            this.itemFromContextWindowDroppedListeners =
+            this.itemFromContextWindowDroppedListeners.filter((curr) => (curr != listener));
+        }
+
+        private notifyItemFromContextWindowDropped(event: ItemFromContextWindowDroppedEvent) {
+            this.itemFromContextWindowDroppedListeners.forEach((listener) => listener(event));
         }
 
         onPageSelected(listener: (event: PageSelectEvent) => void) {
@@ -447,18 +462,6 @@ module app.wizard.page {
 
         private notifyPageComponentDuplicated(event: PageComponentDuplicateEvent) {
             this.pageComponentDuplicatedListeners.forEach((listener) => listener(event));
-        }
-
-        onRegionEmpty(listener: {(event: RegionEmptyEvent): void;}) {
-            this.regionEmptyListeners.push(listener);
-        }
-
-        unRegionEmpty(listener: {(event: RegionEmptyEvent): void;}) {
-            this.regionEmptyListeners = this.regionEmptyListeners.filter((curr) => (curr != listener));
-        }
-
-        private notifyRegionEmpty(event: RegionEmptyEvent) {
-            this.regionEmptyListeners.forEach((listener) => listener(event));
         }
     }
 }

@@ -521,5 +521,18 @@ module api.dom {
             this.el.blur();
         }
 
+        /**
+         * Returns the index of this element among it's siblings. Returns 0 if first or only child.
+         */
+        getSiblingIndex(): number {
+
+            var i = 0;
+            var prev: HTMLElement = this.el;
+            while ((prev = <HTMLElement>prev.previousElementSibling) != null) {
+                i++;
+            }
+            return i;
+        }
+
     }
 }
