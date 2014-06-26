@@ -184,10 +184,6 @@ module api.liveedit {
             return this.moving;
         }
 
-        createPlaceholderForJQuerySortable(regionView?: RegionView): string {
-            return PageComponentView.createPlaceholderForJQuerySortable(this, regionView);
-        }
-
         displayPlaceholder() {
 
         }
@@ -262,28 +258,6 @@ module api.liveedit {
             this.itemViewRemovedListeners.forEach((listener) => {
                 listener(event);
             });
-        }
-
-        static createPlaceholderForJQuerySortable(pageComponentView?: PageComponentView<PageComponent>, regionView?: RegionView): string {
-
-            var html: string;
-
-            if (pageComponentView) {
-                var typeAndName: string = api.util.capitalize(pageComponentView.getType().getShortName()) + ': ' +
-                                          pageComponentView.getName();
-                var target: string = pageComponentView.getType().getShortName() + ': ' + pageComponentView.getName();
-
-                html = 'Drop component here ';
-                html += '<div style = "font-size: 11px;"> dragged ' + typeAndName + ' </div > ';
-                if (regionView) {
-                    html += '<div style = "font-size: 11px;"> target region: ' + regionView.getRegionName() + ' </div > ';
-                }
-            }
-            else {
-                html = 'Drop component here';
-            }
-
-            return html;
         }
 
         static findParentRegionViewHTMLElement(htmlElement: HTMLElement): HTMLElement {

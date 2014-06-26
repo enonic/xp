@@ -11,6 +11,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     import ItemViewId = api.liveedit.ItemViewId;
     import ItemType = api.liveedit.ItemType;
     import ItemView = api.liveedit.ItemView;
+    import PageView = api.liveedit.PageView;
     import RegionView = api.liveedit.RegionView;
     import PageComponentView = api.liveedit.PageComponentView;
     import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
@@ -20,6 +21,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     import LayoutItemType = api.liveedit.layout.LayoutItemType;
     import DraggingPageComponentViewStartedEvent = api.liveedit.DraggingPageComponentViewStartedEvent;
     import DraggingPageComponentViewCompletedEvent = api.liveedit.DraggingPageComponentViewCompletedEvent;
+    import ItemFromContextWindowDroppedEvent = api.liveedit.ItemFromContextWindowDroppedEvent;
     import ItemViewDeselectEvent = api.liveedit.ItemViewDeselectEvent;
     import CreateItemViewConfig = api.liveedit.CreateItemViewConfig;
 
@@ -56,7 +58,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     }
 
     function createJQueryUiSortable(selector): void {
-        //console.log("Creating jQuery sortable on selector: ", selector, this);
+
         wemjq(selector).sortable({
             revert: false,
             connectWith: REGION_SELECTOR, //removing this solves the over event not firing bug, not sure what it might break though. it broke dragging out of layouts, now seems to work.
@@ -108,27 +110,28 @@ module LiveEdit.component.dragdropsort.DragDropSort {
                 console.debug("DragDropSort.handleSortStart: skipping handling since RegionView from ui.placeholder.parent() was not found");
                 return;
             }
-            else {
-                draggingOverRegionView.hidePlaceholder();
-            }
 
-            ui.placeholder.html(PageComponentView.createPlaceholderForJQuerySortable());
+            ui.placeholder.html(draggingOverRegionView.createPlaceholderForJQuerySortable());
+            LiveEdit.component.helper.DragHelper.updateStatusIcon(true);
 
+            // TODO: Not sure what's best, refreshing placeholder for just draggingOverRegionView or all it's children
+            // PageView.refreshRegionViewPlaceholdersOfSelfAndSiblings(draggingOverRegionView);
+            draggingOverRegionView.refreshPlaceholder();
         }
         else {
-
             // Mark dragged PageComponentView as "moving"
             draggedPageComponentView.handleDragStart();
 
             var parentRegionOfDraggedComponent = draggedPageComponentView.getParentItemView();
             parentRegionOfDraggedComponent.hidePlaceholder();
+            LiveEdit.component.helper.DragHelper.updateStatusIcon(true);
 
-            ui.placeholder.html(draggedPageComponentView.createPlaceholderForJQuerySortable());
+            ui.placeholder.html(parentRegionOfDraggedComponent.createPlaceholderForJQuerySortable(draggedPageComponentView));
+
+            refreshSortable();
         }
 
         _isDragging = true;
-
-        refreshSortable();
 
         new DraggingPageComponentViewStartedEvent().fire();
     }
@@ -167,24 +170,12 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             LiveEdit.component.helper.DragHelper.updateStatusIcon(true);
         }
 
-        ui.placeholder.html(draggedPageComponentView.createPlaceholderForJQuerySortable(draggingOverRegionView));
+        ui.placeholder.html(draggingOverRegionView.createPlaceholderForJQuerySortable(draggedPageComponentView));
     }
 
     function handleDragOut(event: JQueryEventObject, ui: JQueryUI.SortableUIParams): void {
 
         console.log("DragDropSort.handleDragOut");
-
-        // Ignore the out event if the dragged item is no longer moving (i.e. have been dropped)
-        var draggedPageComponentView = getPageComponentView(ui.item);
-        if (!draggedPageComponentView) {
-            console.debug("DragDropSort.handleDragOut: skipping handling since PageComponentView was not found from ui.item", ui.item);
-            return;
-        }
-
-        if (!draggedPageComponentView.isMoving()) {
-            console.debug("DragDropSort.handleDragOut: skipping handling since draggedPageComponentView is no longer being dragged");
-            return;
-        }
 
         ui.placeholder.hide();
         LiveEdit.component.helper.DragHelper.updateStatusIcon(false);
@@ -195,9 +186,18 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             parentRegionView = getRegionView(parentAsJQ);
         }
         if (parentRegionView) {
-            parentRegionView.refreshPlaceholder();
+            PageView.refreshRegionViewPlaceholdersOfSelfAndSiblings(parentRegionView);
         }
 
+        // Ignore the out event if the dragged item is no longer moving (i.e. have been dropped)
+        var draggedPageComponentView = getPageComponentView(ui.item);
+        if (!draggedPageComponentView) {
+            return;
+        }
+
+        if (!draggedPageComponentView.isMoving()) {
+            return;
+        }
 
         if (draggedPageComponentView) {
             if (targetIsPlaceholder(wemjq(event.target))) {
@@ -267,7 +267,6 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             var regionView = liveEditPage.getRegionViewByElement(regionHTMLElement);
 
             droppedPageComponentView.moveToRegion(regionView, precedingComponentView);
-            simulateMouseUpForDraggable();
         }
     }
 
@@ -278,6 +277,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         var pageComponentView = getPageComponentView(ui.item);
         if (!pageComponentView) {
             console.debug("DragDropSort.handleSortStop: skipping handling since PageComponentView from ui.item not found");
+            new ItemFromContextWindowDroppedEvent().fire();
             return;
         }
         _isDragging = false;
@@ -323,10 +323,6 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
             liveEditPage.addPageComponentView(newPageComponentView, regionView, pageComponentIndex);
         }
-    }
-
-    function simulateMouseUpForDraggable() {
-        wemjq('[data-context-window-draggable="true"]').simulate('mouseup');
     }
 
     function isItemDraggedFromContextWindow(item: JQuery): boolean {

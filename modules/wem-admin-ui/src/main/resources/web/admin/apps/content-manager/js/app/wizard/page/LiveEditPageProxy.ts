@@ -17,6 +17,7 @@ module app.wizard.page {
     import ImageComponentSetImageEvent = api.liveedit.image.ImageComponentSetImageEvent;
     import DraggingPageComponentViewStartedEvent = api.liveedit.DraggingPageComponentViewStartedEvent;
     import DraggingPageComponentViewCompletedEvent = api.liveedit.DraggingPageComponentViewCompletedEvent;
+    import ItemFromContextWindowDroppedEvent = api.liveedit.ItemFromContextWindowDroppedEvent;
     import PageSelectEvent = api.liveedit.PageSelectEvent;
     import RegionSelectEvent = api.liveedit.RegionSelectEvent;
     import PageComponentSelectEvent = api.liveedit.PageComponentSelectEvent;
@@ -68,6 +69,8 @@ module app.wizard.page {
         private draggingPageComponentViewStartedListeners: {(event: DraggingPageComponentViewStartedEvent): void;}[] = [];
 
         private draggingPageComponentViewCompletedListeners: {(event: DraggingPageComponentViewCompletedEvent): void;}[] = [];
+
+        private itemFromContextWindowDroppedListeners: {(event: ItemFromContextWindowDroppedEvent): void;}[] = [];
 
         private pageSelectedListeners: {(event: PageSelectEvent): void;}[] = [];
 
@@ -255,6 +258,8 @@ module app.wizard.page {
 
             DraggingPageComponentViewCompletedEvent.on(this.notifyDraggingPageComponentViewCompleted.bind(this), this.liveEditWindow);
 
+            ItemFromContextWindowDroppedEvent.on(this.notifyItemFromContextWindowDropped.bind(this), this.liveEditWindow);
+
             PageSelectEvent.on(this.notifyPageSelected.bind(this), this.liveEditWindow);
 
             RegionSelectEvent.on(this.notifyRegionSelected.bind(this), this.liveEditWindow);
@@ -324,6 +329,19 @@ module app.wizard.page {
 
         private notifyDraggingPageComponentViewCompleted(event: DraggingPageComponentViewCompletedEvent) {
             this.draggingPageComponentViewCompletedListeners.forEach((listener) => listener(event));
+        }
+
+        onItemFromContextWindowDropped(listener: {(event: ItemFromContextWindowDroppedEvent): void;}) {
+            this.itemFromContextWindowDroppedListeners.push(listener);
+        }
+
+        unItemFromContextWindowDropped(listener: {(event: ItemFromContextWindowDroppedEvent): void;}) {
+            this.itemFromContextWindowDroppedListeners =
+            this.itemFromContextWindowDroppedListeners.filter((curr) => (curr != listener));
+        }
+
+        private notifyItemFromContextWindowDropped(event: ItemFromContextWindowDroppedEvent) {
+            this.itemFromContextWindowDroppedListeners.forEach((listener) => listener(event));
         }
 
         onPageSelected(listener: (event: PageSelectEvent) => void) {

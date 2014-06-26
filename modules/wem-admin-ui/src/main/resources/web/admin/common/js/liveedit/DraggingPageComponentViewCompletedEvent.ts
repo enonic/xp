@@ -7,12 +7,10 @@ module api.liveedit {
 
         private pageComponentView: PageComponentView<PageComponent>;
 
-        private empty: boolean;
-
         constructor(pageComponentView: PageComponentView<PageComponent>) {
             super();
+            api.util.assertNotNull(pageComponentView, "pageComponentView cannot be null");
             this.pageComponentView = pageComponentView;
-            this.empty = pageComponentView ? pageComponentView.isEmpty() : false;
         }
 
         getPageComponentView(): PageComponentView<PageComponent> {

@@ -49,8 +49,7 @@ module app.wizard.page.contextwindow.insert {
                 }
             });
 
-            this.liveEditPage.onDraggingPageComponentViewCompleted(() => {
-                console.log("InsertablesPanel.onDraggingPageComponentViewCompleted simulate mouse up for draggable");
+            this.liveEditPage.onItemFromContextWindowDropped(() => {
                 this.simulateMouseUpForDraggable();
             });
         }
@@ -91,21 +90,21 @@ module app.wizard.page.contextwindow.insert {
             this.liveEditPage.hideDragMask();
 
             var liveEditJQuery = this.liveEditPage.getLiveEditJQuery();
-            var clonedDragable = liveEditJQuery(ui.draggable.clone());
+            var clonedDraggable = liveEditJQuery(ui.draggable.clone());
 
-            clonedDragable.css({
+            clonedDraggable.css({
                 'position': 'absolute',
                 'z-index': '5100000',
                 'top': '-1000px'
             });
 
-            liveEditJQuery('body').append(clonedDragable);
+            liveEditJQuery('body').append(clonedDraggable);
 
             ui.helper.hide(null);
 
-            this.liveEditPage.createDraggable(clonedDragable);
+            this.liveEditPage.createDraggable(clonedDraggable);
 
-            clonedDragable.simulate('mousedown');
+            clonedDraggable.simulate('mousedown');
 
             this.notifyHideContextWindowRequest();
         }

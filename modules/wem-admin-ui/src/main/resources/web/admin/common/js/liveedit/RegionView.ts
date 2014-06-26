@@ -227,7 +227,10 @@ module api.liveedit {
 
         refreshPlaceholder() {
 
-            if (this.pageComponentViews.length == 0) {
+            if (this.hasPageComponentViewDropZone()) {
+                this.placeholder.hide();
+            }
+            else if (this.pageComponentViews.length == 0) {
                 this.placeholder.show();
             }
             else {
@@ -250,8 +253,34 @@ module api.liveedit {
             return count;
         }
 
+        private hasPageComponentViewDropZone(): boolean {
+
+            var foundDropZone = false;
+            var child = this.getHTMLElement().firstChild;
+            while (child) {
+
+                if (api.ObjectHelper.iFrameSafeInstanceOf(child, HTMLElement)) {
+                    var childHtmlElement = new api.dom.ElementHelper(<HTMLElement> child);
+                    if (childHtmlElement.hasClass("item-view-drop-zone") ||
+                        childHtmlElement.hasClass("live-edit-drop-target-placeholder")) {
+                        if (childHtmlElement.getDisplay() != "none") {
+                            foundDropZone = true;
+                            break;
+                        }
+                    }
+                }
+
+                child = child.nextSibling;
+            }
+            return foundDropZone;
+        }
+
         hidePlaceholder() {
             this.placeholder.hide();
+        }
+
+        createPlaceholderForJQuerySortable(pageComponentView?: PageComponentView<PageComponent>): string {
+            return RegionView.createPlaceholderForJQuerySortable(this, pageComponentView);
         }
 
         empty() {
@@ -336,6 +365,29 @@ module api.liveedit {
                     this.doParsePageComponentViews(childElement)
                 }
             });
+        }
+
+        private static createPlaceholderForJQuerySortable(regionView: RegionView,
+                                                          pageComponentView?: PageComponentView<PageComponent>): string {
+
+            var html = '<div class="item-view-drop-zone">';
+
+            html += 'Drop component here ';
+
+            if (pageComponentView) {
+                var typeAndName: string = api.util.capitalize(pageComponentView.getType().getShortName()) + ': ' +
+                                          pageComponentView.getName();
+                var target: string = pageComponentView.getType().getShortName() + ': ' + pageComponentView.getName();
+
+                html += '<div style = "font-size: 11px;"> dragged ' + typeAndName + ' </div > ';
+            }
+            if (regionView) {
+                html += '<div style = "font-size: 11px;"> target region: ' + regionView.getRegionName() + ' </div > ';
+            }
+
+            html += '</div>';
+
+            return html;
         }
     }
 }

@@ -23,6 +23,7 @@
 ///<reference path='ImageUploadedEvent.ts' />
 ///<reference path='DraggingPageComponentViewStartedEvent.ts' />
 ///<reference path='DraggingPageComponentViewCompletedEvent.ts' />
+///<reference path='ItemFromContextWindowDroppedEvent.ts' />
 ///<reference path='PageSelectEvent.ts' />
 ///<reference path='RegionSelectEvent.ts' />
 ///<reference path='PageComponentSelectEvent.ts' />
