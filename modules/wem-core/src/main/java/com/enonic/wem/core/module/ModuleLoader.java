@@ -72,19 +72,19 @@ public final class ModuleLoader
         final Bundle bundle = event.getBundle();
         switch ( event.getType() )
         {
-            case BundleEvent.STARTED:
-                addBundle( bundle );
+            case BundleEvent.UNINSTALLED:
+                removeBundle( bundle );
                 break;
 
             default:
-                removeBundle( bundle );
+                addBundle( bundle );
                 break;
         }
     }
 
     private void addBundle( final Bundle bundle )
     {
-        if ( this.bundles.contains( bundle ) || ( bundle.getState() != Bundle.ACTIVE ) )
+        if ( this.bundles.contains( bundle ) )
         {
             return;
         }
@@ -110,8 +110,19 @@ public final class ModuleLoader
     {
         if ( this.bundles.remove( bundle ) )
         {
+
+            final ModuleKey moduleKey = getModuleKey( bundle );
+            this.moduleService.uninstallModule( moduleKey );
             LOG.info( "Removed web resource bundle [" + bundle.toString() + "]" );
         }
+    }
+
+    private ModuleKey getModuleKey( final Bundle bundle )
+    {
+        final String name = bundle.getSymbolicName();
+        final Version bundleVersion = bundle.getVersion();
+        final ModuleVersion version = ModuleVersion.from( bundleVersion.getMajor(), bundleVersion.getMinor(), bundleVersion.getMicro() );
+        return ModuleKey.from( ModuleName.from( name ), version );
     }
 
     private void installModule( final Bundle bundle )
@@ -125,10 +136,8 @@ public final class ModuleLoader
         final String bundleDisplayName = headers.get( Constants.BUNDLE_NAME );
         final String name = bundle.getSymbolicName();
         final String displayName = bundleDisplayName != null ? bundleDisplayName : name;
-        final Version bundleVersion = bundle.getVersion();
-        final ModuleVersion version = ModuleVersion.from( bundleVersion.getMajor(), bundleVersion.getMinor(), bundleVersion.getMicro() );
 
-        moduleBuilder.moduleKey( ModuleKey.from( ModuleName.from( name ), version ) );
+        moduleBuilder.moduleKey( getModuleKey( bundle ) );
         moduleBuilder.displayName( displayName );
         moduleBuilder.bundle( bundle );
 

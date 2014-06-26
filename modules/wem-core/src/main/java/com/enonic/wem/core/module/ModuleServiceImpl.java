@@ -59,4 +59,9 @@ public final class ModuleServiceImpl
     {
         this.modules.put( module.getKey(), module );
     }
+
+    protected void uninstallModule( final ModuleKey moduleKey )
+    {
+        this.modules.remove( moduleKey );
+    }
 }

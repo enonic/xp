@@ -84,12 +84,20 @@ final class ModuleImpl
     @Override
     public URL getResource( final String path )
     {
+        if ( this.bundle.getState() != Bundle.ACTIVE )
+        {
+            return null;
+        }
         return this.bundle.getResource( path );
     }
 
     @Override
     public Set<String> getResourcePaths()
     {
+        if ( this.bundle.getState() != Bundle.ACTIVE )
+        {
+            return Sets.newHashSet();
+        }
         final Set<String> set = Sets.newHashSet();
         findResourcePaths( set, this.bundle, "/" );
         return set;
