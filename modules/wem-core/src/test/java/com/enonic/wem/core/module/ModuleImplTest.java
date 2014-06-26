@@ -107,6 +107,7 @@ public class ModuleImplTest
         }
         final Enumeration<URL> bundleEntries = Collections.enumeration( urlList );
         Mockito.when( bundle.findEntries( isA( String.class ), isA( String.class ), isA( Boolean.class ) ) ).thenReturn( bundleEntries );
+        Mockito.when( bundle.getState() ).thenReturn( Bundle.ACTIVE );
         return bundle;
     }
 }
