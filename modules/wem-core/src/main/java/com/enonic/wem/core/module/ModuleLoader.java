@@ -76,7 +76,8 @@ public final class ModuleLoader
                 removeBundle( bundle );
                 break;
 
-            default:
+            case BundleEvent.INSTALLED:
+            case BundleEvent.UPDATED:
                 addBundle( bundle );
                 break;
         }
@@ -84,11 +85,6 @@ public final class ModuleLoader
 
     private void addBundle( final Bundle bundle )
     {
-        if ( this.bundles.contains( bundle ) )
-        {
-            return;
-        }
-
         if ( bundle.getResource( MODULE_XML ) == null )
         {
             return;
