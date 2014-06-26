@@ -1,6 +1,7 @@
 ///<reference path='ModuleTreeGrid.ts'/>
 ///<reference path='InstallModuleAction.ts' />
 ///<reference path='RefreshModulesAction.ts' />
+///<reference path='RefreshModulesEvent.ts' />
 ///<reference path='StartModuleAction.ts' />
 ///<reference path='StopModuleAction.ts' />
 ///<reference path='UninstallModuleAction.ts' />

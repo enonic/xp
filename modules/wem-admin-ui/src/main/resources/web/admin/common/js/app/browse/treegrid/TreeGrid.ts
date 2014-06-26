@@ -263,6 +263,8 @@ module api.app.browse.treegrid {
                 this.root.setChildrenFromItems(items);
                 this.initData(this.root.treeToList());
                 this.gridData.refresh();
+                this.grid.clearSelection();
+                this.grid.invalidateAllRows();
                 this.grid.render();
             }).done();
         }

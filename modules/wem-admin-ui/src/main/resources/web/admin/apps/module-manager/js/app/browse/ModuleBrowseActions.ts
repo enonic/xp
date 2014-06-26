@@ -29,7 +29,7 @@ module app.browse {
             this.START_MODULE = new StartModuleAction(moduleTreeGrid);
             this.STOP_MODULE = new StopModuleAction(moduleTreeGrid);
             this.UPDATE_MODULE = new UpdateModuleAction(moduleTreeGrid);
-            this.REFRESH_MODULES = new RefreshModulesAction(moduleTreeGrid);
+            this.REFRESH_MODULES = new RefreshModulesAction();
 
             this.allActions.push(this.INSTALL_MODULE, this.UNINSTALL_MODULE, this.START_MODULE, this.STOP_MODULE, this.UPDATE_MODULE,
                 this.REFRESH_MODULES);

@@ -14,8 +14,6 @@ function startApplication() {
 
     appPanel.init();
 
-    registerEvents();
-
     application.setLoaded(true);
 
     window.onmessage = (e:MessageEvent) => {
@@ -26,44 +24,6 @@ function startApplication() {
             }
         }
     }
-}
-
-function registerEvents() {
-    var moduleDeleteDialog:app.remove.ModuleDeleteDialog = new app.remove.ModuleDeleteDialog();
-    app.browse.DeleteModulePromptEvent.on((event:app.browse.DeleteModulePromptEvent) => {
-        moduleDeleteDialog.setModuleToDelete(event.getModule());
-        moduleDeleteDialog.open();
-    });
-
-    app.browse.StopModuleEvent.on((event: app.browse.StopModuleEvent) => {
-        var moduleKeys: string[] = event.getModules().map<string>((mod: ModuleSummary) => {
-            return mod.getModuleKey().toString();
-        });
-        new api.module.StopModuleRequest(moduleKeys).sendAndParse();
-    });
-    app.browse.StartModuleEvent.on((event: app.browse.StartModuleEvent) => {
-        var moduleKeys: string[] = event.getModules().map<string>((mod: ModuleSummary) => {
-            return mod.getModuleKey().toString();
-        });
-        new api.module.StartModuleRequest(moduleKeys).sendAndParse();
-    });
-    app.browse.UpdateModuleEvent.on((event: app.browse.UpdateModuleEvent) => {
-        var moduleKeys: string[] = event.getModules().map<string>((mod: ModuleSummary) => {
-            return mod.getModuleKey().toString();
-        });
-        new api.module.UpdateModuleRequest(moduleKeys).sendAndParse();
-    });
-    app.browse.UninstallModuleEvent.on((event: app.browse.UninstallModuleEvent) => {
-        var moduleKeys: string[] = event.getModules().map<string>((mod: ModuleSummary) => {
-            return mod.getModuleKey().toString();
-        });
-        new api.module.UninstallModuleRequest(moduleKeys).sendAndParse();
-    });
-
-    var installModuleDialog: app.browse.InstallModuleDialog = new app.browse.InstallModuleDialog();
-    app.browse.InstallModuleEvent.on((event: app.browse.UninstallModuleEvent) => {
-        installModuleDialog.open();
-    });
 }
 
 module components {

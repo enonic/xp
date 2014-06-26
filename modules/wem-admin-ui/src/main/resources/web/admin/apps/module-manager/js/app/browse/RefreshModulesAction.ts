@@ -4,11 +4,11 @@ module app.browse {
 
     export class RefreshModulesAction extends api.ui.Action {
 
-        constructor(moduleTreeGrid: ModuleTreeGrid) {
+        constructor() {
             super("Refresh");
             this.setEnabled(true);
             this.onExecuted(() => {
-                moduleTreeGrid.reload();
+                new RefreshModulesEvent().fire();
             });
         }
     }
