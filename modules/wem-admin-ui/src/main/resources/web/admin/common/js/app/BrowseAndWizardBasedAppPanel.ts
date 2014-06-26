@@ -52,6 +52,10 @@ module api.app {
             return this.appBarTabMenu;
         }
 
+        private askUserForSaveChangesBeforeClosing(wizard: api.app.wizard.WizardPanel<any>) {
+            new api.app.wizard.SaveBeforeCloseDialog(wizard).open();
+        }
+
         addViewPanel(tabMenuItem: AppBarTabMenuItem, viewPanel: api.app.view.ItemViewPanel<M>) {
             super.addNavigablePanel(tabMenuItem, viewPanel, true);
 
@@ -68,7 +72,12 @@ module api.app {
             super.addNavigablePanel(tabMenuItem, wizardPanel, true);
 
             tabMenuItem.onClosed(() => {
-                wizardPanel.close();
+
+                if (wizardPanel.hasUnsavedChanges()) {
+                    this.askUserForSaveChangesBeforeClosing(wizardPanel);
+                } else {
+                    wizardPanel.close();
+                }
             });
 
             wizardPanel.onClosed((event: api.app.wizard.WizardClosedEvent) => {
