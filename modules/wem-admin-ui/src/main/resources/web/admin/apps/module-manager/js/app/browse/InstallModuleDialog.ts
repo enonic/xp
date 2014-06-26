@@ -8,7 +8,7 @@ module app.browse {
 
         private installAction: api.ui.Action;
 
-        constructor() {
+        constructor(moduleTreeGrid: ModuleTreeGrid) {
             this.installDialogTitle = new InstallModuleDialogTitle("Install module", "");
 
             super({
@@ -49,6 +49,7 @@ module app.browse {
                 new api.module.InstallModuleRequest(url).sendAndParse()
                     .then(() => {
                         api.notify.showFeedback('Module \'' + url + '\' installed');
+                        moduleTreeGrid.reload();
                     }).catch((reason: any) => {
                         api.DefaultErrorHandler.handle('Error while installing module.');
                     }).done();

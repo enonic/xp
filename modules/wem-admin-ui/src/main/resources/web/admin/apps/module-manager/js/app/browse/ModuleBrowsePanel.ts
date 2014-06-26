@@ -84,7 +84,7 @@ module app.browse {
                     }).done();
             });
 
-            var installModuleDialog: app.browse.InstallModuleDialog = new app.browse.InstallModuleDialog();
+            var installModuleDialog: app.browse.InstallModuleDialog = new app.browse.InstallModuleDialog(this.moduleTreeGridPanel);
             app.browse.InstallModuleEvent.on((event: app.browse.InstallModuleEvent) => {
                 installModuleDialog.open();
             });
