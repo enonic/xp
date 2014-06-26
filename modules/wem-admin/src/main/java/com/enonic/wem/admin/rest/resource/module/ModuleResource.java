@@ -15,6 +15,7 @@ import com.enonic.wem.admin.json.module.ModuleJson;
 import com.enonic.wem.admin.rest.resource.module.json.ListModuleJson;
 import com.enonic.wem.admin.rest.resource.module.json.ModuleInstallParams;
 import com.enonic.wem.admin.rest.resource.module.json.ModuleListParams;
+import com.enonic.wem.admin.rest.resource.module.json.ModuleSuccessJson;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleService;
@@ -48,57 +49,66 @@ public final class ModuleResource
     @POST
     @Path("start")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void start( final ModuleListParams params )
+    public ModuleSuccessJson start( final ModuleListParams params )
         throws Exception
     {
         for ( final ModuleKey key : params.getModuleKeys() )
         {
             this.moduleService.getModule( key ).getBundle().start();
         }
+
+        return new ModuleSuccessJson();
     }
 
     @POST
     @Path("stop")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void stop( final ModuleListParams params )
+    public ModuleSuccessJson stop( final ModuleListParams params )
         throws Exception
     {
         for ( final ModuleKey key : params.getModuleKeys() )
         {
             this.moduleService.getModule( key ).getBundle().stop();
         }
+
+        return new ModuleSuccessJson();
     }
 
     @POST
     @Path("update")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void update( final ModuleListParams params )
+    public ModuleSuccessJson update( final ModuleListParams params )
         throws Exception
     {
         for ( final ModuleKey key : params.getModuleKeys() )
         {
             this.moduleService.getModule( key ).getBundle().update();
         }
+
+        return new ModuleSuccessJson();
     }
 
     @POST
     @Path("uninstall")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void uninstall( final ModuleListParams params )
+    public ModuleSuccessJson uninstall( final ModuleListParams params )
         throws Exception
     {
         for ( final ModuleKey key : params.getModuleKeys() )
         {
             this.moduleService.getModule( key ).getBundle().uninstall();
         }
+
+        return new ModuleSuccessJson();
     }
 
     @POST
     @Path("install")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void install( final ModuleInstallParams params )
+    public ModuleSuccessJson install( final ModuleInstallParams params )
         throws Exception
     {
         this.bundleContext.installBundle( params.getUrl() );
+        return new ModuleSuccessJson();
     }
 }
