@@ -134,6 +134,14 @@ module api.ui.grid {
             this.slickGrid.invalidateRows(rows);
         }
 
+        invalidateAllRows() {
+            var rows = [];
+            for (var i = 0; i < this.slickGrid.getDataLength(); i++) {
+                rows.push(i);
+            }
+            this.slickGrid.invalidateRows(rows);
+        }
+
         syncGridSelection(preserveHidden: boolean) {
             this.dataView.syncGridSelection(this.slickGrid, preserveHidden);
         }

@@ -256,6 +256,19 @@ module api.app.browse.treegrid {
             return dataNodes;
         }
 
+        reload(parent?: NODE): void {
+            this.fetchChildren().then((items: NODE[]) => {
+                this.root = new TreeNode<NODE>();
+                this.root.setExpanded(true);
+                this.root.setChildrenFromItems(items);
+                this.initData(this.root.treeToList());
+                this.gridData.refresh();
+                this.grid.clearSelection();
+                this.grid.invalidateAllRows();
+                this.grid.render();
+            }).done();
+        }
+
         private initData(nodes: TreeNode<NODE>[]) {
             this.gridData.setItems(nodes, "id");
         }
