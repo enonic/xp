@@ -9,37 +9,27 @@ module app.wizard {
     import TreeNode = api.app.browse.treegrid.TreeNode;
     import TreeGridBuilder = api.app.browse.treegrid.TreeGridBuilder;
 
+    export class CompareContentGrid extends api.app.browse.treegrid.TreeGrid<ContentSummary> {
 
-    export class CompareContentGridBuilder extends TreeGridBuilder<ContentSummary> {
+        private content: api.content.Content;
 
-        content: api.content.Content;
+        constructor(content: api.content.Content) {
+            super(new TreeGridBuilder<ContentSummary>().
+                setColumns([
+                    new GridColumnBuilder<ContentSummary>().
+                        setName("Name").
+                        setId("displayName").
+                        setField("displayName").
+                        setFormatter(this.defaultNameFormatter).
+                        build()
+                ]).prependClasses("content-grid")
+            )
 
-        constructor(grid?: CompareContentGrid) {
-            super(grid);
+            this.content = content;
 
-            if (grid) {
-                this.classes = this.classes.split(" ").filter((elem) => {
-                    return elem.length > 0 && elem !== "content-grid";
-                }).join(" ");
-                this.content = grid.getContent();
-            } else {
-                this.columns = this.buildDefaultColumns();
-                this.showToolbar = false;
-            }
-
-            this.classes += " content-grid";
-        }
-
-        buildDefaultColumns(): GridColumn<TreeNode<ContentSummary>>[] {
-            // GridColumn<TreeNode<ContentSummary>> is a valid type
-            var column = new GridColumnBuilder<ContentSummary>().
-                    setName("Name").
-                    setId("displayName").
-                    setField("displayName").
-                    setFormatter(this.defaultNameFormatter).
-                build();
-
-            return [column];
+            this.onLoaded(() => {
+                this.selectAll();
+            });
         }
 
         private defaultNameFormatter(row: number, cell: number, value: any, columnDef: any, item: ContentSummary) {
@@ -48,43 +38,11 @@ module app.wizard {
             return contentSummaryViewer.toString();
         }
 
-        getContent(): api.content.Content {
-            return this.content;
-        }
-
-        setContent(content: api.content.Content) {
-            this.content = content;
-            return this;
-        }
-
-        build(): CompareContentGrid {
-            return new CompareContentGrid(this);
-        }
-    }
-
-    export class CompareContentGrid extends api.app.browse.treegrid.TreeGrid<ContentSummary> {
-
-        private content: api.content.Content;
-
-        constructor(builder: CompareContentGridBuilder) {
-            super(builder);
-
-            this.content = builder.getContent();
-
-            this.onLoaded(() => {
-                this.selectAll();
-            });
-        }
-
         fetchChildren(parent?: ContentSummary): Q.Promise<ContentSummary[]> {
             var deferred = Q.defer<ContentSummary[]>();
 
             deferred.resolve(this.content ? [this.content] : []);
             return deferred.promise;
-        }
-
-        getContent(): api.content.Content {
-            return this.content;
         }
     }
 }

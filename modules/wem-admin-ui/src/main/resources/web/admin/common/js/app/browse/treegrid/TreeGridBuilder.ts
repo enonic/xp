@@ -112,6 +112,11 @@ module api.app.browse.treegrid {
             return this;
         }
 
+        prependClasses(classes: string): TreeGridBuilder<NODE> {
+            this.classes = classes + " " + this.classes;
+            return this;
+        }
+
         /**
         Should be overriden by child class.
          */
