@@ -61,6 +61,8 @@ module api.liveedit {
 
         private tooltip: api.ui.Tooltip;
 
+        private contextMenu: api.ui.menu.ContextMenuWithTitle;
+
         private tooltipViewer: api.ui.Viewer<any>;
 
         private mouseOver: boolean;
@@ -114,8 +116,18 @@ module api.liveedit {
                     setTrigger(api.ui.Tooltip.TRIGGER_NONE).
                     setHideTimeout(0).
                     setContent(this.tooltipViewer);
-
             }
+
+            this.contextMenu = new api.ui.menu.ContextMenuWithTitle();
+            this.contextMenu.setName(this.type.getShortName());
+            this.contextMenu.setIconClass(this.type.getConfig().getIconCls());
+            this.contextMenu.onCloseClicked((event: MouseEvent) => {
+                this.deselect();
+            });
+
+            this.getType().getConfig().getContextMenuConfig().forEach((itemName: string) => {
+                this.contextMenu.addAction(this.createAction(itemName));
+            });
 
             this.setElementDimensions(this.getDimensionsFromElement());
 
@@ -125,6 +137,123 @@ module api.liveedit {
             this.onContextMenu(this.handleClick.bind(this));
             this.onTouchStart(this.handleClick.bind(this));
 
+        }
+
+        private createAction(name: string): api.ui.Action {
+            var handler, displayName;
+            switch (name) {
+            case "parent":
+                displayName = "Parent";
+                handler = () => {
+                    var parentView: ItemView = this.getParentItemView();
+                    if (parentView) {
+                        parentView.select();
+                    }
+                };
+                break;
+            case "insert":
+                displayName = "Insert";
+                handler = () => {
+                    //TODO
+                };
+                break;
+            case "reset":
+                displayName = "Reset";
+                handler = () => {
+                    //TODO
+                };
+                break;
+            case "clear":
+                displayName = "Empty";
+                handler = () => {
+                    if (api.ObjectHelper.iFrameSafeInstanceOf(this, PageComponentView)) {
+                        var selectedPageComponentView = <PageComponentView<PageComponent>> this;
+                        selectedPageComponentView.displayPlaceholder();
+
+                        // update selection
+                        this.select();
+
+                        new PageComponentResetEvent(selectedPageComponentView).fire();
+                    } else {
+                        throw new Error("Emptying [" + api.util.getClassName(this) + "] is not supported");
+                    }
+                };
+                break;
+            case "clearRegion":
+                displayName = "Empty";
+                handler = () => {
+                    if (api.ObjectHelper.iFrameSafeInstanceOf(this, RegionView)) {
+                        var selectedRegionView = <RegionView> this;
+
+                        selectedRegionView.deselect();
+                        selectedRegionView.empty();
+                    } else {
+                        throw new Error("Expected region to empty, got [" + api.util.getClassName(this) + "]");
+                    }
+                };
+                break;
+            case "opencontent":
+                displayName = "Open in new tab";
+                handler = () => {
+                    //TODO
+                };
+                break;
+            case "view":
+                displayName = "View";
+                handler = () => {
+                    //TODO
+                };
+                break;
+            case "edit":
+                displayName = "Edit";
+                handler = () => {
+                    //TODO
+                };
+                break;
+            case "remove":
+                displayName = "Remove";
+                handler = () => {
+                    if (api.ObjectHelper.iFrameSafeInstanceOf(this, PageComponentView)) {
+                        var selectedPageComponent = <PageComponentView<PageComponent>> this;
+
+                        var regionView = selectedPageComponent.getParentItemView();
+                        regionView.removePageComponentView(selectedPageComponent);
+
+                        this.hideContextMenu();
+
+                        new PageComponentRemoveEvent(selectedPageComponent).fire();
+                    } else {
+                        throw new Error("Removing [" + api.util.getClassName(this) + "] is not supported");
+                    }
+                };
+                break;
+            case "duplicate":
+                displayName = "Duplicate";
+                handler = () => {
+                    if (api.ObjectHelper.iFrameSafeInstanceOf(this, PageComponentView)) {
+                        var selectedPageComponentView = <PageComponentView<PageComponent>> this;
+
+                        var origin = selectedPageComponentView.getPageComponent();
+                        var duplicatedPageComponent = origin.duplicateComponent();
+                        var duplicatedView = selectedPageComponentView.duplicate(duplicatedPageComponent);
+
+                        new PageComponentDuplicateEvent(selectedPageComponentView, duplicatedView).fire();
+
+                        duplicatedView.select();
+                    } else {
+                        throw new Error("Duplicating [" + api.util.getClassName(this) + "] is not supported");
+                    }
+                };
+                break;
+            }
+            return new api.ui.Action(displayName).onExecuted(handler);
+        }
+
+        private scrollComponentIntoView(): void {
+            var dimensions = this.getElementDimensions();
+            if (dimensions.top <= window.pageYOffset) {
+                wemjq('html, body').animate({scrollTop: dimensions.top - 10}, 200);
+            }
         }
 
         /**
@@ -211,7 +340,9 @@ module api.liveedit {
             event.stopPropagation();
             event.preventDefault();
 
-            this.select(!this.isEmpty() ? { x: event.pageX, y: event.pageY } : null);
+            if (!this.isSelected()) {
+                this.select(!this.isEmpty() ? { x: event.pageX, y: event.pageY } : null);
+            }
         }
 
         getItemViewIdProducer(): ItemViewIdProducer {
@@ -235,6 +366,27 @@ module api.liveedit {
 
         hideTooltip() {
             this.tooltip.hide();
+        }
+
+        showContextMenu(position?: Position) {
+
+            var dimensions = this.getElementDimensions();
+            var x, y;
+
+            if (position) {
+                // show menu at position
+                x = position.x - this.contextMenu.getEl().getWidth() / 2;
+                y = position.y;
+            } else {
+                // show menu below if empty or on top
+                x = dimensions.left + dimensions.width / 2 - this.contextMenu.getEl().getWidth() / 2;
+                y = dimensions.top + (this.isEmpty() ? dimensions.height : 0);
+            }
+            this.contextMenu.showAt(x, y);
+        }
+
+        hideContextMenu() {
+            this.contextMenu.hide();
         }
 
         private setItemId(value: ItemViewId) {
@@ -285,12 +437,17 @@ module api.liveedit {
 
         select(clickPosition?: Position) {
             this.getEl().setData("live-edit-selected", "true");
+            this.hideTooltip();
+            this.showContextMenu(clickPosition);
+            this.scrollComponentIntoView();
 
             new ItemViewSelectedEvent(this, clickPosition).fire();
         }
 
         deselect() {
             this.getEl().removeAttribute("data-live-edit-selected");
+            this.hideContextMenu();
+
             new ItemViewDeselectEvent(this).fire();
         }
 

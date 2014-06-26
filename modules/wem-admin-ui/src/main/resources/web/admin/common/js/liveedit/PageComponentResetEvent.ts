@@ -4,7 +4,7 @@ module api.liveedit {
     import PageComponentView = api.liveedit.PageComponentView;
     import PageComponent = api.content.page.PageComponent;
 
-    export class PageComponentResetEvent extends Event2 {
+    export class PageComponentResetEvent extends api.event.Event2 {
 
         private pageComponentView: PageComponentView<PageComponent>;
 

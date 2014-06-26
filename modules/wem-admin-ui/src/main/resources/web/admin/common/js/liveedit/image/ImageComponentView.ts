@@ -32,8 +32,8 @@ module api.liveedit.image {
             return <api.dom.ImgEl>this.getChildren().filter((child: api.dom.Element) => (child.getEl().getTagName() == 'IMG'))[0];
         }
 
-        select() {
-            super.select();
+        select(clickPosition?: Position) {
+            super.select(clickPosition);
             if (this.isEmpty()) {
                 this.placeholder.select();
             }

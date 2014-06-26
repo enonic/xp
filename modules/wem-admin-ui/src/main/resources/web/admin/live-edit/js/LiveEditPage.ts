@@ -40,6 +40,8 @@ module LiveEdit {
 
         private cursor: LiveEdit.ui.Cursor;
 
+        private previousSelectedItemView: ItemView;
+
         static get(): LiveEditPage {
             return LiveEditPage.INSTANCE;
         }
@@ -110,7 +112,11 @@ module LiveEdit {
             ItemViewSelectedEvent.on((event: ItemViewSelectedEvent) => {
                 var component = event.getItemView();
 
-                component.hideTooltip();
+                // needed to deselect current component if a component is clicked inside currently selected component bypassing shader
+                if (this.previousSelectedItemView && this.previousSelectedItemView != component) {
+                    this.previousSelectedItemView.deselect();
+                }
+
                 // Highlighter should not be shown when type page is selected
                 if (component.getType().equals(api.liveedit.PageItemType.get())) {
                     this.highlighter.hide();
@@ -129,8 +135,9 @@ module LiveEdit {
                 this.highlighter.highlightItemView(component);
                 this.shader.shadeItemView(component);
                 this.cursor.displayItemViewCursor(component);
+                this.previousSelectedItemView = component;
             });
-            ItemViewDeselectEvent.on(() => {
+            ItemViewDeselectEvent.on((event: ItemViewDeselectEvent) => {
                 this.highlighter.hide();
                 this.shader.hide();
             });
@@ -146,13 +153,14 @@ module LiveEdit {
             DraggingPageComponentViewCompletedEvent.on(() => {
                 this.cursor.reset();
             });
-            PageComponentRemoveEvent.on(() => {
+            PageComponentRemoveEvent.on((event: PageComponentRemoveEvent) => {
                 this.highlighter.hide();
                 this.shader.hide();
             });
             wemjq(window).on('editTextComponent.liveEdit', (event: JQueryEventObject, component: TextComponentView) => {
                 this.highlighter.hide();
                 this.shader.shadeItemView(component);
+                component.hideContextMenu();
             });
             wemjq(window).on('resizeBrowserWindow.liveEdit', () => {
                 var selectedView = this.pageView.getSelectedView();
@@ -163,6 +171,7 @@ module LiveEdit {
                 var selectedView = this.pageView.getSelectedView();
                 if (selectedView) {
                     selectedView.deselect();
+                    this.previousSelectedItemView = undefined;
                 }
             });
         }

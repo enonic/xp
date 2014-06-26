@@ -147,9 +147,9 @@ module api.liveedit {
             return this.getRegionName().toString();
         }
 
-        select() {
+        select(clickPosition?: Position) {
             new RegionSelectEvent(this).fire();
-            super.select();
+            super.select(clickPosition);
         }
 
         getTooltipViewer(): api.ui.Viewer<Region> {

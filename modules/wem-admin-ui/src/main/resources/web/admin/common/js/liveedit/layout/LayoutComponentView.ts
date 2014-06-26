@@ -49,8 +49,8 @@ module api.liveedit.layout {
             return this.regionViews;
         }
 
-        select() {
-            super.select();
+        select(clickPosition?: Position) {
+            super.select(clickPosition);
             if (this.isEmpty()) {
                 this.placeholder.select();
             }
