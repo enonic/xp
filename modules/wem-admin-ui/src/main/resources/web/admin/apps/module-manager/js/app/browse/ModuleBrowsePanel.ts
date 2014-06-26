@@ -41,12 +41,6 @@ module app.browse {
         }
 
         private registerEvents() {
-            var moduleDeleteDialog: app.remove.ModuleDeleteDialog = new app.remove.ModuleDeleteDialog();
-            app.browse.DeleteModulePromptEvent.on((event: app.browse.DeleteModulePromptEvent) => {
-                moduleDeleteDialog.setModuleToDelete(event.getModule());
-                moduleDeleteDialog.open();
-            });
-
             app.browse.StopModuleEvent.on((event: app.browse.StopModuleEvent) => {
                 var moduleKeys: string[] = event.getModules().map<string>((mod: ModuleSummary) => {
                     return mod.getModuleKey().toString();
