@@ -5,7 +5,6 @@
 ///<reference path='Module.ts' />
 ///<reference path='ModuleResourceRequest.ts' />
 ///<reference path='GetModuleRequest.ts' />
-///<reference path='ModuleDeletedEvent.ts' />
 ///<reference path='ListModuleRequest.ts' />
 ///<reference path='ModuleListResult.ts' />
 ///<reference path='ModuleLoader.ts' />

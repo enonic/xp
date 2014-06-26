@@ -28,11 +28,6 @@ module app.browse {
                 filterPanel: undefined
             });
 
-            api.module.ModuleDeletedEvent.on((event: api.module.ModuleDeletedEvent) => {
-                var moduleKey = event.getModuleKey();
-//                this.moduleTreeGridPanel.removeItem(moduleKey.toString());
-            });
-
             this.moduleTreeGridPanel.onRowSelectionChanged((selectedRows: ModuleSummary[]) => {
                 this.browseActions.updateActionsEnabledState(<any[]>selectedRows);
             });
