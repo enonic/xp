@@ -13,7 +13,7 @@ module app.wizard.page.contextwindow.insert {
         private componentDataView: api.ui.grid.DataView<Insertable>;
 
         constructor(dataView: api.ui.grid.DataView<Insertable>, options: InsertablesGridOptions = {}) {
-            super(dataView, this.createColumns(), {hideColumnHeaders: true, rowHeight: 50, height: 400, width: 320});
+            super(dataView, this.createColumns(), this.createOptions());
             this.componentDataView = dataView;
             this.componentGridOptions = options;
 
@@ -24,18 +24,26 @@ module app.wizard.page.contextwindow.insert {
             })
         }
 
+        private createOptions(): api.ui.grid.GridOptions<Insertable> {
+            return new api.ui.grid.GridOptionsBuilder().
+                    setHideColumnHeaders(true).
+                    setRowHeight(50).
+                    setHeight(400).
+                    setWidth(320)
+                .build();
+        }
+
         private createColumns(): api.ui.grid.GridColumn<Insertable>[] {
-            return [
-                {
-                    name: "component",
-                    field: "component",
-                    id: "component",
-                    width: 320,
-                    cssClass: "grid-row",
-                    formatter: (row, cell, value, columnDef, dataContext) => {
+            return [new api.ui.grid.GridColumnBuilder().
+                    setName("component").
+                    setField("component").
+                    setId("component").
+                    setWidth(320).
+                    setCssClass("grid-row").
+                    setFormatter((row, cell, value, columnDef, dataContext) => {
                         return this.buildRow(row, cell, value, columnDef, <Insertable>dataContext).toString();
-                    }
-                }
+                    }).
+                build()
             ];
         }
 

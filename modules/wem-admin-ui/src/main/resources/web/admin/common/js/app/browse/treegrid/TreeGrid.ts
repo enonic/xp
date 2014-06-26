@@ -8,22 +8,16 @@ module api.app.browse.treegrid {
     import Grid = api.ui.grid.Grid;
     import GridOptions = api.ui.grid.GridOptions;
     import GridColumn = api.ui.grid.GridColumn;
+    import GridOptionsBuilder = api.ui.grid.GridOptionsBuilder;
     import DataView = api.ui.grid.DataView;
     import KeyBinding = api.ui.KeyBinding;
     import KeyBindings = api.ui.KeyBindings;
-
-    import ContentSummary = api.content.ContentSummary;
-    import ContentSummaryViewer = api.content.ContentSummaryViewer;
-
-    export interface TreeGridParams {
-        showToolbar?:boolean;
-    }
 
     export class TreeGrid<NODE extends api.node.Node> extends api.ui.Panel {
 
         private columns: GridColumn<NODE>[] = [];
 
-        private gridOptions: GridOptions;
+        private gridOptions: GridOptions<NODE>;
 
         private grid: Grid<TreeNode<NODE>>;
 
@@ -41,9 +35,9 @@ module api.app.browse.treegrid {
 
         private rowSelectionChangeListeners: Function[] = [];
 
-        constructor(params:TreeGridParams, classes:string = "") {
+        constructor(builder: TreeGridBuilder<NODE>) {
 
-            super("tree-grid " + classes.trim());
+            super(builder.getClasses());
 
             // root node with undefined item
             this.root = new TreeNode<NODE>();
@@ -54,29 +48,9 @@ module api.app.browse.treegrid {
                 return node.isVisible();
             });
 
-            /*
-             Note: We are using a proxy class to handle items/nodes and
-             track the selection, expansion, etc.
-             To have access to the complex properties, that are not in the root
-             of the object, like `node.data.id`, we need to specify a custom
-             column value extractor.
-             */
-            function nodeExtractor(node, column) {
-                return node["data"][column.field];
-            }
+            this.columns = this.updateColumnsFormatter(builder.getColumns());
 
-            this.gridOptions = <GridOptions>{
-                dataItemColumnValueExtractor: nodeExtractor,
-                editable: false,
-                enableAsyncPostRender: true,
-                enableCellNavigation: false, // necessary to turn off library key handling
-                enableColumnReorder: false,
-                forceFitColumns: true,
-                hideColumnHeaders: true,
-                checkableRows: true,
-                rowHeight: 45,
-                autoHeight: true
-            };
+            this.gridOptions = builder.getOptions();
 
             this.grid = new Grid<TreeNode<NODE>>(this.gridData, this.columns, this.gridOptions);
 
@@ -164,17 +138,16 @@ module api.app.browse.treegrid {
 
             var actions = new TreeGridActions(this.grid);
 
-            if (params.showToolbar) {
+            if (builder.isShowToolbar()) {
                 this.toolbar = new TreeGridToolbar(actions);
                 this.appendChild(this.toolbar);
             } else {
                 this.addClass("no-toolbar");
             }
 
-
             this.appendChild(this.grid);
 
-            this.expandNode();
+            this.reload();
 
             this.onShown(() => {
                 this.grid.resizeCanvas();
@@ -198,12 +171,24 @@ module api.app.browse.treegrid {
             return this.grid;
         }
 
+        getOptions(): GridOptions<NODE> {
+            return this.gridOptions;
+        }
+
+        getColumns(): GridColumn<TreeNode<NODE>>[] {
+            return this.grid.getColumns();
+        }
+
         isActive(): boolean {
             return this.active;
         }
 
         setActive(active: boolean = true) {
             this.active = active;
+        }
+
+        hasToolbar(): boolean {
+            return !!this.toolbar;
         }
 
         /*
@@ -217,9 +202,9 @@ module api.app.browse.treegrid {
             return deferred.promise;
         }
 
-        setColumns(columns: GridColumn<TreeNode<NODE>>[]) {
+        private updateColumnsFormatter(columns: GridColumn<TreeNode<NODE>>[]) {
             if (columns.length > 0) {
-                var formatter = columns[0].formatter;
+                var formatter = columns[0].getFormatter();
                 var toggleFormatter = (row: number, cell: number, value: any, columnDef: any, node: TreeNode<NODE>) => {
                     var toggleSpan = new api.dom.SpanEl("toggle icon icon-xsmall");
                     if (node.getData().hasChildren()) {
@@ -231,12 +216,10 @@ module api.app.browse.treegrid {
                     return toggleSpan.toString() + formatter(row, cell, value, columnDef, node.getData());
                 };
 
-                columns[0].formatter = toggleFormatter;
+                columns[0].setFormatter(toggleFormatter);
             }
 
-            this.columns = columns;
-
-            this.grid.setColumns(this.columns);
+            return columns;
         }
 
         selectAll() {
@@ -257,16 +240,25 @@ module api.app.browse.treegrid {
         }
 
         reload(parent?: NODE): void {
-            this.fetchChildren().then((items: NODE[]) => {
-                this.root = new TreeNode<NODE>();
-                this.root.setExpanded(true);
-                this.root.setChildrenFromItems(items);
-                this.initData(this.root.treeToList());
-                this.gridData.refresh();
-                this.grid.clearSelection();
-                this.grid.invalidateAllRows();
-                this.grid.render();
-            }).done();
+            this.root = new TreeNode<NODE>();
+
+            this.initData([]);
+
+            this.root.setExpanded(true);
+
+            this.fetchChildren(parent)
+                .then((items: NODE[]) => {
+                    this.root.setChildrenFromItems(items);
+                    this.initData(this.root.treeToList());
+                }).catch((reason: any) => {
+                    api.DefaultErrorHandler.handle(reason);
+                }).finally(() => {
+                    this.resetZIndexes();
+                    this.grid.syncGridSelection(false); // Sync selected rows
+                    this.grid.invalidateAllRows();
+                    this.grid.render();
+                    this.active = true;
+                }).done(() => this.notifyLoaded());
         }
 
         private initData(nodes: TreeNode<NODE>[]) {
@@ -428,9 +420,9 @@ module api.app.browse.treegrid {
         }
 
         private notifyLoaded(): void {
-            for (var i in this.loadedListeners) {
-                this.loadedListeners[i](this);
-            }
+            this.loadedListeners.forEach((listener) => {
+                listener(this);
+            });
         }
 
         onLoaded(listener: () => void) {

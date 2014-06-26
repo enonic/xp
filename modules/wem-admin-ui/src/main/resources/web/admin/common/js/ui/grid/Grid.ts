@@ -1,30 +1,5 @@
 module api.ui.grid {
 
-    export interface GridOptions extends Slick.GridOptions<any> {
-
-        hideColumnHeaders?:boolean;
-
-        width?:number;
-
-        height?:number;
-
-        dataIdProperty?:string;
-
-        autoRenderGridOnDataChanges?:boolean
-
-        checkableRows?:boolean;
-    }
-
-    export interface GridColumn<T extends Slick.SlickData> extends Slick.Column<T> {
-
-    }
-
-    export interface GridOnClickData {
-        row:number;
-        cell:number;
-        grid?:any;
-    }
-
     export class Grid<T extends Slick.SlickData> extends api.dom.DivEl {
 
         private defaultHeight = 400;
@@ -41,15 +16,17 @@ module api.ui.grid {
 
         private checkboxSelectorPlugin;
 
-        constructor(dataView:DataView<T>, columns:GridColumn<T>[], options:GridOptions = {}) {
+        constructor(dataView:DataView<T>, columns:GridColumn<T>[], options?:GridOptions<T>) {
             super("grid");
 
-            if (options.hideColumnHeaders) {
+            options = new GridOptionsBuilder<T>(options).build();
+
+            if (options.isHideColumnHeaders()) {
                 this.addClass("no-header");
             }
 
             this.checkboxSelectorPlugin = null;
-            this.checkableRows = options.checkableRows || false;
+            this.checkableRows = options.isCheckableRows() || false;
             if (this.checkableRows) {
                 this.checkboxSelectorPlugin = new Slick.CheckboxSelectColumn({
                     cssClass: "slick-cell-checkboxsel",
@@ -58,11 +35,11 @@ module api.ui.grid {
                 columns.unshift(this.checkboxSelectorPlugin.getColumnDefinition());
             }
 
-            this.getEl().setHeight((options.height || this.defaultHeight) + "px");
-            this.getEl().setWidth((options.width || this.defaultWidth) + "px");
+            this.getEl().setHeight((options.getHeight() || this.defaultHeight) + "px");
+            this.getEl().setWidth((options.getWidth() || this.defaultWidth) + "px");
             this.dataView = dataView;
             this.slickGrid = new Slick.Grid<T>(this.getHTMLElement(), dataView.slick(), columns, options);
-            if (options.autoRenderGridOnDataChanges || this.defaultAutoRenderGridOnDataChanges) {
+            if (options.isAutoRenderGridOnDataChanges() || this.defaultAutoRenderGridOnDataChanges) {
                 this.autoRenderGridOnDataChanges(this.dataView);
             }
             if (this.checkboxSelectorPlugin != null) {
@@ -78,7 +55,7 @@ module api.ui.grid {
             });
 
             // The only way to dataIdProperty before adding items
-            this.dataView.setItems([], options.dataIdProperty);
+            this.dataView.setItems([], options.getDataIdProperty());
         }
 
         private autoRenderGridOnDataChanges(dataView:DataView<T>) {
@@ -109,12 +86,20 @@ module api.ui.grid {
             this.slickGrid.setColumns(columns);
         }
 
+        getColumns(): GridColumn<T>[] {
+            return <GridColumn<T>[]>this.slickGrid.getColumns();
+        }
+
         setFilter(f:(item:any, args:any) => boolean) {
             this.dataView.setFilter(f);
         }
 
-        setOptions(options:GridOptions) {
+        setOptions(options:GridOptions<T>) {
             this.slickGrid.setOptions(options);
+        }
+
+        getOptions():GridOptions<T> {
+            return <GridOptions<T>>this.slickGrid.getOptions();
         }
 
         render() {
@@ -135,11 +120,7 @@ module api.ui.grid {
         }
 
         invalidateAllRows() {
-            var rows = [];
-            for (var i = 0; i < this.slickGrid.getDataLength(); i++) {
-                rows.push(i);
-            }
-            this.slickGrid.invalidateRows(rows);
+            this.slickGrid.invalidate();
         }
 
         syncGridSelection(preserveHidden: boolean) {
@@ -153,7 +134,7 @@ module api.ui.grid {
         setOnClick(callback:(event, data:GridOnClickData) => void) {
             this.slickGrid.onClick.subscribe((event, data) => {
                 event.stopPropagation();
-                callback(event, data);
+                callback(event, <GridOnClickData>data);
             });
         }
 

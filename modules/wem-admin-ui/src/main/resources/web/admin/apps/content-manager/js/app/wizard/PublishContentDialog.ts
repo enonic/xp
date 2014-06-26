@@ -36,7 +36,9 @@ module app.wizard {
 
             OpenPublishDialogEvent.on((event) => {
                 this.content = event.getContent();
-                this.grid = new CompareContentGrid(event.getContent());
+                this.grid = new CompareContentGridBuilder().
+                        setContent(event.getContent()).
+                    build();
                 this.grid.selectAll();
                 this.grid.onRowSelectionChanged((selectedRows) => {
                     this.publishAction.setToBePublishedAmout(selectedRows.length);
