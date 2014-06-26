@@ -24,7 +24,7 @@ module app.browse {
 
         constructor(moduleTreeGrid: ModuleTreeGrid) {
 
-            this.INSTALL_MODULE = new InstallModuleAction(moduleTreeGrid);
+            this.INSTALL_MODULE = new InstallModuleAction();
             this.UNINSTALL_MODULE = new UninstallModuleAction(moduleTreeGrid);
             this.START_MODULE = new StartModuleAction(moduleTreeGrid);
             this.STOP_MODULE = new StopModuleAction(moduleTreeGrid);
@@ -42,7 +42,6 @@ module app.browse {
         }
 
         updateActionsEnabledState(selectedModules: ModuleSummary[]) {
-            console.log("updateActionsEnabledState", selectedModules);
             var modulesSelected = selectedModules.length;
             var anySelected = modulesSelected > 0;
             var anyStarted = false;

@@ -8,7 +8,6 @@ module app.browse {
             super("Refresh");
             this.setEnabled(true);
             this.onExecuted(() => {
-                console.log('refresh');
                 moduleTreeGrid.reload();
             });
         }

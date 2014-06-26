@@ -9,7 +9,6 @@ module app.browse {
             this.setEnabled(false);
             this.onExecuted(() => {
                 var modules: ModuleSummary[] = moduleTreeGrid.getSelectedDataNodes();
-                console.log('stop', modules);
                 new StopModuleEvent(modules).fire();
             });
         }

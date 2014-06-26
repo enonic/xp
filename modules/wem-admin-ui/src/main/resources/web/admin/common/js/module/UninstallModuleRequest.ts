@@ -1,6 +1,6 @@
 module api.module {
 
-    export class UninstallModuleRequest extends ModuleResourceRequest<api.module.json.ModuleJson> {
+    export class UninstallModuleRequest extends ModuleResourceRequest<api.item.ItemJson> {
 
         private moduleKeys: string[];
 
@@ -20,10 +20,10 @@ module api.module {
             };
         }
 
-        sendAndParse(): Q.Promise<api.module.Module> {
+        sendAndParse(): Q.Promise<void> {
 
-            return this.send().then((response: api.rest.JsonResponse<api.module.json.ModuleJson>) => {
-                return this.fromJsonToModule(response.getResult());
+            return this.send().then((response: api.rest.JsonResponse<api.item.ItemJson>) => {
+
             });
         }
     }
