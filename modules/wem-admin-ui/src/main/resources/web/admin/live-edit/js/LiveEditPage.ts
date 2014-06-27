@@ -89,24 +89,41 @@ module LiveEdit {
 
         private registerGlobalListeners(): void {
 
-            this.pageView.onMouseEnterView((view: ItemView) => {
-                if (this.hasSelectedView() || LiveEdit.component.dragdropsort.DragDropSort.isDragging()) {
-                    return;
+            this.pageView.onItemViewAdded((event: api.liveedit.ItemViewAddedEvent) => {
+                var itemView = event.getView();
+
+                itemView.onMouseOverView(() => {
+                    if (this.hasSelectedView() || LiveEdit.component.dragdropsort.DragDropSort.isDragging()) {
+                        return;
+                    }
+
+                    this.highlighter.highlightItemView(itemView);
+                    this.cursor.displayItemViewCursor(itemView);
+                    itemView.showTooltip();
+                });
+
+                itemView.onMouseOutView(() => {
+                    if (this.hasSelectedView() || LiveEdit.component.dragdropsort.DragDropSort.isDragging()) {
+                        return;
+                    }
+
+                    this.highlighter.hide();
+                    this.cursor.reset();
+                    itemView.hideTooltip();
+                });
+
+                if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, TextComponentView)) {
+                    var textView = <TextComponentView>itemView;
+                    textView.onEdited(() => {
+                        this.highlighter.hide();
+                        textView.hideTooltip();
+                        textView.hideContextMenu();
+                        this.shader.shadeItemView(itemView);
+                        LiveEdit.component.dragdropsort.DragDropSort.cancelDragDrop(
+                            api.liveedit.text.TextItemType.get().getConfig().getCssSelector());
+                    });
                 }
 
-                this.highlighter.highlightItemView(view);
-                this.cursor.displayItemViewCursor(view);
-                view.showTooltip();
-            });
-
-            this.pageView.onMouseLeaveView((view: ItemView) => {
-                if (this.hasSelectedView() || LiveEdit.component.dragdropsort.DragDropSort.isDragging()) {
-                    return;
-                }
-
-                this.highlighter.hide();
-                this.cursor.reset();
-                view.hideTooltip();
             });
 
             ItemViewSelectedEvent.on((event: ItemViewSelectedEvent) => {
@@ -140,6 +157,9 @@ module LiveEdit {
             ItemViewDeselectEvent.on((event: ItemViewDeselectEvent) => {
                 this.highlighter.hide();
                 this.shader.hide();
+                if (api.ObjectHelper.iFrameSafeInstanceOf(event.getItemView(), TextComponentView)) {
+                    LiveEdit.component.dragdropsort.DragDropSort.cancelDragDrop('');
+                }
             });
             PageComponentResetEvent.on((event: PageComponentResetEvent) => {
                 this.highlighter.highlightItemView(event.getComponentView());
@@ -156,11 +176,6 @@ module LiveEdit {
             PageComponentRemoveEvent.on((event: PageComponentRemoveEvent) => {
                 this.highlighter.hide();
                 this.shader.hide();
-            });
-            wemjq(window).on('editTextComponent.liveEdit', (event: JQueryEventObject, component: TextComponentView) => {
-                this.highlighter.hide();
-                this.shader.shadeItemView(component);
-                component.hideContextMenu();
             });
             wemjq(window).on('resizeBrowserWindow.liveEdit', () => {
                 var selectedView = this.pageView.getSelectedView();

@@ -84,6 +84,10 @@ module api.dom {
             return this.el.innerHTML;
         }
 
+        getText(): string {
+            return this.el.innerText || this.el.textContent;
+        }
+
         setAttribute(name: string, value: string): ElementHelper {
             this.el.setAttribute(name, value);
             return this;
