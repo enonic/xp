@@ -56,6 +56,10 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         wemjq(REGION_SELECTOR).sortable('disable');
     }
 
+    export function cancelDragDrop(selector: string) {
+        wemjq(REGION_SELECTOR).sortable('option', 'cancel', selector);
+    }
+
     export function createSortableLayout(component: api.liveedit.ItemView) {
         wemjq(component.getHTMLElement()).find(REGION_SELECTOR).each((index, element) => {
             createJQueryUiSortable(wemjq(element));
@@ -381,19 +385,12 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     }
 
     function registerGlobalListeners(): void {
-        ItemViewDeselectEvent.on(() => {
-            if (LiveEdit.DomHelper.supportsTouch() && !_isDragging) {
-                disableDragDrop();
-            }
-        });
 
-        wemjq(window).on('selectTextComponent.liveEdit', () => {
-            wemjq(REGION_SELECTOR).sortable('option', 'cancel', TextItemType.get().getConfig().getCssSelector());
-        });
-
-        wemjq(window).on('leaveTextComponent.liveEdit', () => {
-            wemjq(REGION_SELECTOR).sortable('option', 'cancel', '');
-        });
+       ItemViewDeselectEvent.on(() => {
+           if (LiveEdit.DomHelper.supportsTouch() && !_isDragging) {
+               disableDragDrop();
+           }
+       });
     }
 
     function isDraggingLayoutOverLayout(regionView: RegionView, draggingItemType: ItemType): boolean {
