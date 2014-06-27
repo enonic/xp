@@ -57,7 +57,7 @@ public class ModuleResourceTest
         final Module module = createModule();
         Mockito.when( this.moduleService.getModule( Mockito.isA( ModuleKey.class ) ) ).thenReturn( module );
 
-        String response = resource().
+        String response = request().
             path( "module" ).
             queryParam( "moduleKey", "testmodule-1.0.0" ).
             get( String.class );

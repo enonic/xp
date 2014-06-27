@@ -69,10 +69,10 @@ public class SchemaResourceTest
         Schemas schemas = createSchemaList();
         Mockito.when( this.schemaService.getTypes( Mockito.isA( SchemaTypesParams.class ) ) ).thenReturn( schemas );
 
-        String json = resource().path( "schema/find" ).queryParam( "search", "" ).get( String.class );
+        String json = request().path( "schema/find" ).queryParam( "search", "" ).get( String.class );
         assertJson( "schema_by_empty_query.json", json );
 
-        json = resource().path( "schema/find" ).queryParam( "search", "mixin" ).get( String.class );
+        json = request().path( "schema/find" ).queryParam( "search", "mixin" ).get( String.class );
         assertJson( "schema_by_query.json", json );
     }
 
@@ -101,8 +101,8 @@ public class SchemaResourceTest
         Schemas schemas = Schemas.from( contentType, mixin );
         Mockito.when( this.schemaService.getTypes( Mockito.isA( SchemaTypesParams.class ) ) ).thenReturn( schemas );
 
-        String json = resource().path( "schema/find" ).queryParam( "search", "" ).queryParam( "types", "mixin" ).queryParam( "types",
-                                                                                                                             "content_type" ).get(
+        String json = request().path( "schema/find" ).queryParam( "search", "" ).queryParam( "types", "mixin" ).queryParam( "types",
+                                                                                                                            "content_type" ).get(
             String.class );
 
         assertJson( "schema_by_types.json", json );
@@ -115,7 +115,7 @@ public class SchemaResourceTest
         Schemas schemas = createSchemaList();
         Mockito.when( this.schemaService.getRoot() ).thenReturn( schemas );
 
-        String json = resource().path( "schema/list" ).get( String.class );
+        String json = request().path( "schema/list" ).get( String.class );
 
         assertJson( "schema_by_root.json", json );
     }
@@ -127,7 +127,7 @@ public class SchemaResourceTest
         Schemas schemas = Schemas.from( createContentType( "contenttype" ) );
         Mockito.when( this.schemaService.getChildren( Mockito.isA( SchemaKey.class ) ) ).thenReturn( schemas );
 
-        String json = resource().path( "schema/list" ).queryParam( "parentKey", "ContentType:parent" ).get( String.class );
+        String json = request().path( "schema/list" ).queryParam( "parentKey", "ContentType:parent" ).get( String.class );
 
         assertJson( "schema_by_parent.json", json );
     }
@@ -138,7 +138,7 @@ public class SchemaResourceTest
     {
         Mockito.when( this.schemaService.getChildren( Mockito.isA( SchemaKey.class ) ) ).thenReturn( Schemas.empty() );
 
-        String json = resource().path( "schema/list" ).queryParam( "parentKey", "ContentType:parent" ).get( String.class );
+        String json = request().path( "schema/list" ).queryParam( "parentKey", "ContentType:parent" ).get( String.class );
         assertEquals( "[]", json );
     }
 

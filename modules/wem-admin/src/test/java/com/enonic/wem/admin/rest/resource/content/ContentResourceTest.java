@@ -8,14 +8,12 @@ import javax.ws.rs.core.MediaType;
 
 import org.elasticsearch.common.joda.time.DateTimeUtils;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.sun.jersey.api.client.UniformInterfaceException;
-
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
+import com.enonic.wem.admin.rest.resource.MockRestResponse;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentConstants;
@@ -73,14 +71,6 @@ public class ContentResourceTest
 
     private final String currentTime = "2013-08-23T12:55:09.162Z";
 
-    @Before
-    public void setup()
-    {
-        mockCurrentContextHttpRequest();
-
-        contentTypeService = Mockito.mock( ContentTypeService.class );
-    }
-
     @After
     public void after()
     {
@@ -90,6 +80,8 @@ public class ContentResourceTest
     @Override
     protected Object getResourceInstance()
     {
+        contentTypeService = Mockito.mock( ContentTypeService.class );
+
         final ContentResource resource = new ContentResource();
 
         contentService = Mockito.mock( ContentService.class );
@@ -115,7 +107,7 @@ public class ContentResourceTest
         Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ), Mockito.isA( Context.class ) ) ).
             thenReturn( aContent );
 
-        String jsonString = resource().
+        String jsonString = request().
             path( "content/bypath" ).
             queryParam( "path", "/my_a_content" ).
             get( String.class );
@@ -138,7 +130,7 @@ public class ContentResourceTest
         Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ), Mockito.isA( Context.class ) ) ).
             thenReturn( aContent );
 
-        String jsonString = resource().path( "content/bypath" ).queryParam( "path", "/my_a_content" ).
+        String jsonString = request().path( "content/bypath" ).queryParam( "path", "/my_a_content" ).
             queryParam( "expand", "summary" ).get( String.class );
 
         assertJson( "get_content_summary.json", jsonString );
@@ -151,15 +143,10 @@ public class ContentResourceTest
         Mockito.when( contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ), Mockito.isA( Context.class ) ) ).
             thenReturn( Contents.empty() );
 
-        try
-        {
-            resource().path( "content/bypath" ).queryParam( "path", "/my_a_content" ).get( String.class );
-        }
-        catch ( UniformInterfaceException e )
-        {
-            assertEquals( e.getResponse().getStatus(), 404 );
-            assertEquals( e.getResponse().getEntity( String.class ), "Content [/my_a_content] was not found" );
-        }
+        final MockRestResponse response = request().path( "content/bypath" ).queryParam( "path", "/my_a_content" ).get();
+
+        assertEquals( response.getStatus(), 404 );
+        assertEquals( response.getAsString(), "Content [/my_a_content] was not found" );
     }
 
     @Test
@@ -177,7 +164,7 @@ public class ContentResourceTest
         Mockito.when( contentService.getByPath( Mockito.eq( ContentPath.from( "/my_a_content" ) ),
                                                 Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn( aContent );
 
-        String jsonString = resource().
+        String jsonString = request().
             path( "content/bypath" ).
             queryParam( "path", "/my_a_content" ).
             queryParam( "expand", "none" ).
@@ -193,15 +180,9 @@ public class ContentResourceTest
         Mockito.when( contentService.getByPath( Mockito.eq( ContentPath.from( "/my_a_content" ) ),
                                                 Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn( null );
 
-        try
-        {
-            resource().path( "content/bypath" ).queryParam( "path", "/my_a_content" ).get( String.class );
-        }
-        catch ( UniformInterfaceException e )
-        {
-            assertEquals( e.getResponse().getStatus(), 404 );
-            assertEquals( e.getResponse().getEntity( String.class ), "Content [/my_a_content] was not found" );
-        }
+        final MockRestResponse response = request().path( "content/bypath" ).queryParam( "path", "/my_a_content" ).get();
+        assertEquals( response.getStatus(), 404 );
+        assertEquals( response.getAsString(), "Content [/my_a_content] was not found" );
     }
 
     @Test
@@ -220,7 +201,7 @@ public class ContentResourceTest
 
         Mockito.when( contentService.getById( ContentId.from( "aaa" ), ContentResource.STAGE_CONTEXT ) ).thenReturn( aContent );
 
-        String jsonString = resource().path( "content" ).queryParam( "id", "aaa" ).get( String.class );
+        String jsonString = request().path( "content" ).queryParam( "id", "aaa" ).get( String.class );
 
         assertJson( "get_content_full.json", jsonString );
     }
@@ -247,7 +228,7 @@ public class ContentResourceTest
 
         Mockito.when( contentService.getById( ContentId.from( "aaa" ), ContentResource.STAGE_CONTEXT ) ).thenReturn( content );
 
-        String jsonString = resource().path( "content" ).queryParam( "id", "aaa" ).get( String.class );
+        String jsonString = request().path( "content" ).queryParam( "id", "aaa" ).get( String.class );
 
         assertJson( "get_content_with_site.json", jsonString );
     }
@@ -290,7 +271,7 @@ public class ContentResourceTest
 
         Mockito.when( contentService.getById( ContentId.from( "aaa" ), ContentResource.STAGE_CONTEXT ) ).thenReturn( content );
 
-        String jsonString = resource().path( "content" ).queryParam( "id", "aaa" ).get( String.class );
+        String jsonString = request().path( "content" ).queryParam( "id", "aaa" ).get( String.class );
 
         assertJson( "get_content_with_page.json", jsonString );
     }
@@ -309,7 +290,7 @@ public class ContentResourceTest
 
         Mockito.when( contentService.getById( ContentId.from( "aaa" ), ContentResource.STAGE_CONTEXT ) ).thenReturn( aContent );
 
-        String jsonString = resource().path( "content" ).queryParam( "id", "aaa" ).
+        String jsonString = request().path( "content" ).queryParam( "id", "aaa" ).
             queryParam( "expand", "summary" ).get( String.class );
 
         assertJson( "get_content_summary.json", jsonString );
@@ -323,15 +304,9 @@ public class ContentResourceTest
             contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ), Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn(
             Contents.empty() );
 
-        try
-        {
-            resource().path( "content" ).queryParam( "id", "aaa" ).get( String.class );
-        }
-        catch ( UniformInterfaceException e )
-        {
-            assertEquals( e.getResponse().getStatus(), 404 );
-            assertEquals( e.getResponse().getEntity( String.class ), "Content [aaa] was not found" );
-        }
+        final MockRestResponse response = request().path( "content" ).queryParam( "id", "aaa" ).get();
+        assertEquals( response.getStatus(), 404 );
+        assertEquals( response.getAsString(), "Content [aaa] was not found" );
     }
 
     @Test
@@ -352,7 +327,7 @@ public class ContentResourceTest
             contentService.getById( Mockito.eq( ContentId.from( "aaa" ) ), Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn(
             aContent );
 
-        String jsonString = resource().path( "content" ).queryParam( "id", "aaa" ).queryParam( "expand", "none" ).get( String.class );
+        String jsonString = request().path( "content" ).queryParam( "id", "aaa" ).queryParam( "expand", "none" ).get( String.class );
 
         assertJson( "get_content_id.json", jsonString );
     }
@@ -365,15 +340,9 @@ public class ContentResourceTest
             contentService.getById( Mockito.eq( ContentId.from( "aaa" ) ), Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn(
             null );
 
-        try
-        {
-            resource().path( "content" ).queryParam( "id", "aaa" ).get( String.class );
-        }
-        catch ( UniformInterfaceException e )
-        {
-            assertEquals( e.getResponse().getStatus(), 404 );
-            assertEquals( e.getResponse().getEntity( String.class ), "Content [aaa] was not found" );
-        }
+        final MockRestResponse response = request().path( "content" ).queryParam( "id", "aaa" ).get();
+        assertEquals( response.getStatus(), 404 );
+        assertEquals( response.getAsString(), "Content [aaa] was not found" );
     }
 
     @Test
@@ -386,7 +355,7 @@ public class ContentResourceTest
             contentService.getChildren( Mockito.isA( ContentPath.class ), Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn(
             Contents.from( aContent, bContent ) );
 
-        String jsonString = resource().path( "content/list/bypath" ).queryParam( "parentPath", "/" ).get( String.class );
+        String jsonString = request().path( "content/list/bypath" ).queryParam( "parentPath", "/" ).get( String.class );
 
         assertJson( "list_content_summary_byPath.json", jsonString );
     }
@@ -401,7 +370,7 @@ public class ContentResourceTest
             contentService.getChildren( Mockito.isA( ContentPath.class ), Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn(
             Contents.from( aContent, bContent ) );
 
-        String jsonString = resource().path( "content/list/bypath" ).queryParam( "parentPath", "/" ).
+        String jsonString = request().path( "content/list/bypath" ).queryParam( "parentPath", "/" ).
             queryParam( "expand", "full" ).get( String.class );
 
         assertJson( "list_content_full_byPath.json", jsonString );
@@ -415,7 +384,7 @@ public class ContentResourceTest
             contentService.getChildren( Mockito.isA( ContentPath.class ), Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn(
             Contents.empty() );
 
-        String jsonString = resource().path( "content/list/bypath" ).queryParam( "parentPath", "/" ).get( String.class );
+        String jsonString = request().path( "content/list/bypath" ).queryParam( "parentPath", "/" ).get( String.class );
 
         assertJson( "list_content_empty_byPath.json", jsonString );
     }
@@ -428,7 +397,7 @@ public class ContentResourceTest
         final Content bContent = createContent( "bbb", "my_b_content", "my_type" );
         Mockito.when( contentService.getRoots( ContentResource.STAGE_CONTEXT ) ).thenReturn( Contents.from( aContent, bContent ) );
 
-        String jsonString = resource().path( "content/list/bypath" ).queryParam( "expand", "none" ).get( String.class );
+        String jsonString = request().path( "content/list/bypath" ).queryParam( "expand", "none" ).get( String.class );
 
         assertJson( "list_content_id_byPath.json", jsonString );
     }
@@ -448,7 +417,7 @@ public class ContentResourceTest
             contentService.getChildren( Mockito.isA( ContentPath.class ), Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn(
             Contents.from( aContent, bContent ) );
 
-        String jsonString = resource().path( "content/list" ).queryParam( "parentId", "ccc" ).get( String.class );
+        String jsonString = request().path( "content/list" ).queryParam( "parentId", "ccc" ).get( String.class );
 
         assertJson( "list_content_summary.json", jsonString );
     }
@@ -468,7 +437,7 @@ public class ContentResourceTest
             contentService.getChildren( Mockito.isA( ContentPath.class ), Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn(
             Contents.from( aContent, bContent ) );
 
-        String jsonString = resource().path( "content/list" ).queryParam( "parentId", "ccc" ).
+        String jsonString = request().path( "content/list" ).queryParam( "parentId", "ccc" ).
             queryParam( "expand", "full" ).get( String.class );
 
         assertJson( "list_content_full.json", jsonString );
@@ -482,7 +451,7 @@ public class ContentResourceTest
             contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ), Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn(
             Contents.empty() );
 
-        String jsonString = resource().path( "content/list" ).queryParam( "parentId", "ccc" ).get( String.class );
+        String jsonString = request().path( "content/list" ).queryParam( "parentId", "ccc" ).get( String.class );
 
         assertJson( "list_content_empty.json", jsonString );
     }
@@ -495,7 +464,7 @@ public class ContentResourceTest
         final Content bContent = createContent( "bbb", "my_b_content", "my_type" );
         Mockito.when( contentService.getRoots( ContentResource.STAGE_CONTEXT ) ).thenReturn( Contents.from( aContent, bContent ) );
 
-        String jsonString = resource().path( "content/list" ).queryParam( "expand", "none" ).get( String.class );
+        String jsonString = request().path( "content/list" ).queryParam( "expand", "none" ).get( String.class );
 
         assertJson( "list_content_id.json", jsonString );
     }
@@ -507,7 +476,7 @@ public class ContentResourceTest
         Mockito.when( contentService.generateContentName( "Some rea11y we!rd name..." ) ).thenReturn( "some-rea11y-werd-name" );
 
         String jsonString =
-            resource().path( "content/generateName" ).queryParam( "displayName", "Some rea11y we!rd name..." ).get( String.class );
+            request().path( "content/generateName" ).queryParam( "displayName", "Some rea11y we!rd name..." ).get( String.class );
 
         assertJson( "generate_content_name.json", jsonString );
     }
@@ -524,7 +493,7 @@ public class ContentResourceTest
         Mockito.when( contentService.validate( Mockito.isA( ValidateContentData.class ), Mockito.isA( Context.class ) ) ).thenReturn(
             DataValidationErrors.empty() );
 
-        String jsonString = resource().path( "content/validate" ).
+        String jsonString = request().path( "content/validate" ).
             entity( readFromFile( "validate_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post( String.class );
 
@@ -543,7 +512,7 @@ public class ContentResourceTest
         Mockito.when( contentService.validate( Mockito.isA( ValidateContentData.class ), Mockito.isA( Context.class ) ) ).thenReturn(
             createDataValidationErrors() );
 
-        String jsonString = resource().path( "content/validate" ).
+        String jsonString = request().path( "content/validate" ).
             entity( readFromFile( "validate_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post( String.class );
 
@@ -560,7 +529,7 @@ public class ContentResourceTest
         Mockito.when( contentService.delete( Mockito.isA( DeleteContentParams.class ), Mockito.isA( Context.class ) ) ).thenReturn(
             new DeleteContentResult( newContent().parentPath( ContentPath.ROOT ).name( "two" ).build() ) );
 
-        String jsonString = resource().path( "content/delete" ).
+        String jsonString = request().path( "content/delete" ).
             entity( readFromFile( "delete_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post( String.class );
 
@@ -579,7 +548,7 @@ public class ContentResourceTest
                                              Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenThrow(
             new UnableToDeleteContentException( ContentPath.from( "two" ), "Some reason" ) );
 
-        String jsonString = resource().path( "content/delete" ).
+        String jsonString = request().path( "content/delete" ).
             entity( readFromFile( "delete_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post( String.class );
 
@@ -598,7 +567,7 @@ public class ContentResourceTest
                                              Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenThrow(
             new UnableToDeleteContentException( ContentPath.from( "two" ), "Some reason" ) );
 
-        String jsonString = resource().path( "content/delete" ).
+        String jsonString = request().path( "content/delete" ).
             entity( readFromFile( "delete_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post( String.class );
 
@@ -616,7 +585,7 @@ public class ContentResourceTest
 
         Mockito.when( contentService.create( Mockito.isA( CreateContentParams.class ), Mockito.isA( Context.class ) ) ).thenThrow( e );
 
-        resource().path( "content/create" ).
+        request().path( "content/create" ).
             entity( readFromFile( "create_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post( String.class );
 
@@ -633,7 +602,7 @@ public class ContentResourceTest
         Mockito.when( contentService.create( Mockito.isA( CreateContentParams.class ), Mockito.isA( Context.class ) ) ).thenReturn(
             content );
 
-        String jsonString = resource().path( "content/create" ).
+        String jsonString = request().path( "content/create" ).
             entity( readFromFile( "create_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post( String.class );
 
@@ -653,7 +622,7 @@ public class ContentResourceTest
 
         Mockito.when( contentService.update( Mockito.isA( UpdateContentParams.class ), Mockito.isA( Context.class ) ) ).thenThrow( e );
 
-        resource().path( "content/update" ).
+        request().path( "content/update" ).
             entity( readFromFile( "update_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post( String.class );
     }
@@ -668,7 +637,7 @@ public class ContentResourceTest
         Content content = createContent( "content-id", "content-name", "content-type" );
         Mockito.when( contentService.update( Mockito.isA( UpdateContentParams.class ), Mockito.isA( Context.class ) ) ).thenReturn(
             content );
-        String jsonString = resource().path( "content/update" ).
+        String jsonString = request().path( "content/update" ).
             entity( readFromFile( "update_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post( String.class );
 
@@ -688,7 +657,7 @@ public class ContentResourceTest
         Content content = createContent( "content-id", "content-name", "content-type" );
         Mockito.when( contentService.update( Mockito.isA( UpdateContentParams.class ), Mockito.isA( Context.class ) ) ).thenReturn(
             content );
-        String jsonString = resource().path( "content/update" ).
+        String jsonString = request().path( "content/update" ).
             entity( readFromFile( "update_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post( String.class );
 
@@ -720,7 +689,7 @@ public class ContentResourceTest
         Mockito.when( contentService.push( pushContentParams, ContentResource.STAGE_CONTEXT ) ).
             thenReturn( aContent );
 
-        String jsonString = resource().path( "content/publish" ).
+        String jsonString = request().path( "content/publish" ).
             entity( readFromFile( "publish_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post( String.class );
 
@@ -739,7 +708,7 @@ public class ContentResourceTest
         Mockito.when( contentService.push( Mockito.isA( PushContentParams.class ), Mockito.isA( Context.class ) ) ).
             thenThrow( e );
 
-        resource().path( "content/publish" ).
+        request().path( "content/publish" ).
             entity( readFromFile( "publish_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post( String.class );
 

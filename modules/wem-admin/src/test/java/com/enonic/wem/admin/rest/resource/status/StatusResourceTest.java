@@ -2,8 +2,8 @@ package com.enonic.wem.admin.rest.resource.status;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.Version;
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
+import com.enonic.wem.api.Version;
 
 public class StatusResourceTest
     extends AbstractResourceTest
@@ -19,7 +19,7 @@ public class StatusResourceTest
         throws Exception
     {
         Version.get().setVersion( "5.0.0" );
-        final String json = resource().path( "/status" ).get( String.class );
+        final String json = request().path( "/status" ).get( String.class );
         assertJson( "status_ok.json", json );
     }
 }

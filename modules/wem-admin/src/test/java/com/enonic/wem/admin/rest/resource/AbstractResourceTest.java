@@ -1,11 +1,14 @@
 package com.enonic.wem.admin.rest.resource;
 
+import java.io.ByteArrayOutputStream;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.MediaType;
 
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.mockito.Mockito;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -38,6 +41,8 @@ public abstract class AbstractResourceTest
     @Override
     protected AppDescriptor configure()
     {
+        mockCurrentContextHttpRequest();
+
         final DefaultResourceConfig config = new DefaultResourceConfig();
         configure( config );
 
@@ -100,32 +105,22 @@ public abstract class AbstractResourceTest
         return mapper.writerWithDefaultPrettyPrinter().writeValueAsString( value );
     }
 
-    public static void assertUnorderedListEquals( Object[] a1, List a2 )
+    protected final void assertUnorderedListEquals( Object[] a1, List a2 )
     {
         assertArrayEquals( a1, a2.toArray() );
     }
 
-    public static void assertListEquals( Object[] a1, List a2 ) {
+    protected final void assertListEquals( Object[] a1, List a2 )
+    {
         assertArrayEquals( a1, a2.toArray() );
     }
 
-    public static void assertUnorderedArrayEquals( Object[] a1, Object[] a2 )
-    {
-        Object[] b1 = a1.clone();
-        Object[] b2 = a2.clone();
-
-        Arrays.sort( b1 );
-        Arrays.sort( b2 );
-
-        assertArrayEquals( b1, b2 );
-    }
-
-    public static void assertArrayEquals( Object[] a1, Object[] a2 )
+    protected final void assertArrayEquals( Object[] a1, Object[] a2 )
     {
         Assert.assertEquals( arrayToString( a1 ), arrayToString( a2 ) );
     }
 
-    public static String arrayToString( Object[] a )
+    protected final String arrayToString( Object[] a )
     {
         final StringBuilder result = new StringBuilder( "[" );
 
@@ -142,4 +137,22 @@ public abstract class AbstractResourceTest
 
         return result.toString();
     }
+
+    protected final byte[] createMultipart( final String name, final String fileName, final byte[] data, final MediaType type )
+        throws Exception
+    {
+        final MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        builder.addBinaryBody( name, data, ContentType.create( type.toString() ), fileName );
+
+        System.out.println( builder.build().getContentType() );
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        builder.build().writeTo( out );
+        return out.toByteArray();
+    }
+
+    protected final RestRequestBuilder request()
+    {
+        return new RestRequestBuilder( resource() );
+    }
 }
+

@@ -57,7 +57,7 @@ public class PageResourceTest
         Mockito.when( this.pageService.update( Mockito.isA( UpdatePageParams.class ), Mockito.isA( Context.class ) ) ).thenReturn(
             content );
 
-        String jsonString = resource().path( "content/page/update" ).
+        String jsonString = request().path( "content/page/update" ).
             entity( readFromFile( "update_page_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post( String.class );
 
@@ -73,7 +73,7 @@ public class PageResourceTest
         Mockito.when( this.pageService.update( Mockito.isA( UpdatePageParams.class ), Mockito.isA( Context.class ) ) ).thenThrow(
             new ContentNotFoundException( content.getId(), Workspace.from( "workspace" ) ) );
 
-        String jsonString = resource().path( "content/page/update" ).
+        String jsonString = request().path( "content/page/update" ).
             entity( readFromFile( "update_page_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post( String.class );
 
@@ -89,7 +89,7 @@ public class PageResourceTest
         Mockito.when( this.pageService.create( Mockito.isA( CreatePageParams.class ), Mockito.isA( Context.class ) ) ).thenReturn(
             content );
 
-        String jsonString = resource().path( "content/page/create" ).
+        String jsonString = request().path( "content/page/create" ).
             entity( readFromFile( "update_page_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post( String.class );
 
