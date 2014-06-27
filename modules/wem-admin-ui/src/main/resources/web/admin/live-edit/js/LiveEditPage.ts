@@ -196,11 +196,6 @@ module LiveEdit {
 
             toRegion.addPageComponentView(pageComponentView, atIndex);
 
-            var closestParentLayoutComponentView = LayoutComponentView.getClosestParentLayoutComponentView(pageComponentView);
-            if (closestParentLayoutComponentView) {
-                closestParentLayoutComponentView.addPadding();
-            }
-
             new PageComponentAddedEvent().setPageComponentView(pageComponentView).fire();
             pageComponentView.select();
         }

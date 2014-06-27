@@ -165,19 +165,8 @@ module api.liveedit {
             new PageComponentSelectEvent(this).fire();
         }
 
-        handleDragStart() {
-            this.moving = true;
-            // TODO: Seems to be unused - try to remove this when LE have become more stable
-            if (this.isSelected()) {
-                this.getEl().setData("live-edit-selected-on-sort-start", "true");
-            }
-            else {
-                this.getEl().setData("live-edit-selected-on-sort-start", "false");
-            }
-        }
-
-        handleDragStop() {
-            this.moving = false;
+        setMoving(value: boolean) {
+            this.moving = value;
         }
 
         isMoving(): boolean {
@@ -215,7 +204,7 @@ module api.liveedit {
             var uniqueName = toRegionView.getRegion().ensureUniqueComponentName(this.getPageComponent().getName());
             this.getPageComponent().setName(uniqueName);
 
-            // Remove...
+            // Unregister from previous region...
             // View
             this.parentRegionView.unregisterPageComponentView(this);
             // Data
@@ -223,21 +212,13 @@ module api.liveedit {
             // Element
             this.unregisterFromParentElement();
 
-            // Add...
+            // Register with new region...
             // Register Element only, since it's already added in DOM.
             toRegionView.registerChildElement(this);
             // Data
             toRegionView.getRegion().addComponentAfter(this.pageComponent, precedingComponent);
             // View
             toRegionView.registerPageComponentView(this, indexInNewParent);
-        }
-
-        addPadding() {
-            this.addClass("live-edit-component-padding");
-        }
-
-        removePadding() {
-            this.removeClass("live-edit-component-padding");
         }
 
         onItemViewAdded(listener: (event: ItemViewAddedEvent) => void) {

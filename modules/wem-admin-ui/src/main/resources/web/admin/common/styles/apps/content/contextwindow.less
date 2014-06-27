@@ -58,12 +58,12 @@
     padding-top: 5px;
 
     img {
-      width:30px;
-      height:30px;
-      float:left;
-      display:block;
-      margin-right:15px;
-      margin-top:3px;
+      width: 30px;
+      height: 30px;
+      float: left;
+      display: block;
+      margin-right: 15px;
+      margin-top: 3px;
     }
 
     &.slick-cell {
@@ -94,9 +94,9 @@
 
     .icon {
       font-size: 30px;
-      float:left;
-      margin-right:15px;
-      margin-top:3px;
+      float: left;
+      margin-right: 15px;
+      margin-top: 3px;
     }
 
     .rotate {
@@ -107,7 +107,7 @@
     }
 
     [data-context-window-draggable="true"] {
-      cursor:move;
+      cursor: move;
     }
 
     &:hover {
@@ -153,23 +153,23 @@
       .form-element-spacing(@form-field-spacing);
     }
 
-//    .icon {
-//      font-size: 48px;
-//    }
+    //    .icon {
+    //      font-size: 48px;
+    //    }
 
     & > .names-and-icon-view {
-      margin-bottom:20px;
+      margin-bottom: 20px;
       .main-name {
-        font-size:18px;
-        line-height:20px;
-        height:24px;
+        font-size: 18px;
+        line-height: 20px;
+        height: 24px;
         color: @admin-dark-gray-font;
       }
     }
 
-    .descriptor-header,.component-name-header {
-      margin-bottom:10px;
-      color:@admin-dark-gray-font;
+    .descriptor-header, .component-name-header {
+      margin-bottom: 10px;
+      color: @admin-dark-gray-font;
     }
 
     input.component-name {
@@ -178,30 +178,30 @@
 
     h3 {
       font-size: 26px;
-      margin-top:5px;
+      margin-top: 5px;
       text-transform: capitalize;
       font-weight: normal;
-      color:@admin-dark-gray-font;
+      color: @admin-dark-gray-font;
     }
 
     .rich-combobox {
-      clear:both;
+      clear: both;
       .selected-options {
-        margin-left:0;
-        width:100%;
+        margin-left: 0;
+        width: 100%;
         .selected-option {
-          padding:0;
+          padding: 0;
 
           .names-and-icon-view {
             .main-name {
-              color:@admin-dark-gray-font;
-              font-weight:normal;
+              color: @admin-dark-gray-font;
+              font-weight: normal;
             }
           }
         }
         .icon {
-          width:32px;
-          height:32px;
+          width: 32px;
+          height: 32px;
         }
       }
     }
@@ -209,16 +209,16 @@
 
   .select-panel {
     .combobox {
-      display:block;
+      display: block;
       .imagePicker();
 
       input {
         height: 37px;
-        width:100%;
+        width: 100%;
         padding: 4px 37px 4px 4px;
         border: 1px solid @admin-medium-gray-border;
         background-color: transparent;
-        margin-bottom:0;
+        margin-bottom: 0;
       }
 
       .slick-cell {
@@ -260,26 +260,26 @@
       .selected-option {
         overflow: hidden;
         height: auto;
-        padding:3px;
-        color:@admin-almost-white;
-        position:relative;
+        padding: 3px;
+        color: @admin-almost-white;
+        position: relative;
 
         img {
           float: left;
-          margin:-3px;
-          margin-right:5px;
-          display:block;
+          margin: -3px;
+          margin-right: 5px;
+          display: block;
         }
         .container {
-          overflow:hidden;
+          overflow: hidden;
           float: left;
         }
         .title {
-          font-size:16px;
+          font-size: 16px;
         }
 
         .subtitle {
-          color:@admin-medium-gray-font;
+          color: @admin-medium-gray-font;
         }
 
         .remove {
@@ -287,21 +287,21 @@
           display: block;
           font-size: 12px;
           cursor: pointer;
-          position:absolute;
-          top:10px;
-          right:0px;
+          position: absolute;
+          top: 10px;
+          right: 0px;
         }
       }
     }
     .recent-panel {
       h3 {
-        font-size:14px !important;
-        margin-left:15px;
+        font-size: 14px !important;
+        margin-left: 15px;
       }
     }
 
     .template-panel {
-      padding:15px;
+      padding: 15px;
     }
   }
 
@@ -342,6 +342,7 @@
 
   background-color: #558e28;
 }
+
 .live-edit-font-icon-drop-not-allowed {
   &:extend(.icon);
   .icon-blocked;
@@ -349,12 +350,7 @@
   background-color: #d90b00;
 }
 
-.live-edit-component-padding {
-  padding-top: 10px !important;
-  padding-bottom: 10px !important;
-}
-
 .imagePicker() {
   margin: 15px;
-  width:auto;
+  width: auto;
 }

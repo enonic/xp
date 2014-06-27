@@ -271,21 +271,5 @@ module api.liveedit {
         private notifyMouseLeaveView(view: ItemView) {
             this.mouseLeaveViewListeners.forEach((listener: (view: ItemView) => void) => listener(view));
         }
-
-        static refreshRegionViewPlaceholdersOfSelfAndSiblings(regionView: RegionView) {
-
-            if (api.ObjectHelper.iFrameSafeInstanceOf(regionView.getParentItemView(), PageView)) {
-                var parentPageView = <PageView>regionView.getParentItemView();
-                parentPageView.getRegions().forEach((regionView: RegionView) => {
-                    regionView.refreshPlaceholder();
-                });
-            }
-            else if (api.ObjectHelper.iFrameSafeInstanceOf(regionView.getParentItemView(), api.liveedit.layout.LayoutComponentView)) {
-                var parentLayoutComponentView = <api.liveedit.layout.LayoutComponentView>regionView.getParentItemView();
-                parentLayoutComponentView.getRegions().forEach((regionView: RegionView) => {
-                    regionView.refreshPlaceholder();
-                });
-            }
-        }
     }
 }

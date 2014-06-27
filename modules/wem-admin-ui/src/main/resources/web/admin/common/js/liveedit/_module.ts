@@ -13,6 +13,7 @@
 ///<reference path='ItemViewAddedEvent.ts' />
 ///<reference path='ItemViewRemovedEvent.ts' />
 ///<reference path='RegionView.ts' />
+///<reference path='RegionViewDropZone.ts' />
 ///<reference path='RegionComponentViewer.ts' />
 ///<reference path='RegionPlaceholder.ts' />
 ///<reference path='PageComponentView.ts' />

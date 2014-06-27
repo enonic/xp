@@ -225,6 +225,10 @@ module api.liveedit {
             this.unregisterPageComponentView(pageComponentView);
         }
 
+        hasParentLayoutComponentView(): boolean {
+            return api.ObjectHelper.iFrameSafeInstanceOf(this.parentView, api.liveedit.layout.LayoutComponentView);
+        }
+
         refreshPlaceholder() {
 
             if (this.hasPageComponentViewDropZone()) {
@@ -243,7 +247,7 @@ module api.liveedit {
             }
         }
 
-        private countNonMovingPageComponentViews(): number {
+        countNonMovingPageComponentViews(): number {
             var count = 0;
             this.pageComponentViews.forEach((view: PageComponentView<PageComponent>)=> {
                 if (!view.isMoving()) {
@@ -273,14 +277,6 @@ module api.liveedit {
                 child = child.nextSibling;
             }
             return foundDropZone;
-        }
-
-        hidePlaceholder() {
-            this.placeholder.hide();
-        }
-
-        createPlaceholderForJQuerySortable(pageComponentView?: PageComponentView<PageComponent>): string {
-            return RegionView.createPlaceholderForJQuerySortable(this, pageComponentView);
         }
 
         empty() {
@@ -365,29 +361,6 @@ module api.liveedit {
                     this.doParsePageComponentViews(childElement)
                 }
             });
-        }
-
-        private static createPlaceholderForJQuerySortable(regionView: RegionView,
-                                                          pageComponentView?: PageComponentView<PageComponent>): string {
-
-            var html = '<div class="item-view-drop-zone">';
-
-            html += 'Drop component here ';
-
-            if (pageComponentView) {
-                var typeAndName: string = api.util.capitalize(pageComponentView.getType().getShortName()) + ': ' +
-                                          pageComponentView.getName();
-                var target: string = pageComponentView.getType().getShortName() + ': ' + pageComponentView.getName();
-
-                html += '<div style = "font-size: 11px;"> dragged ' + typeAndName + ' </div > ';
-            }
-            if (regionView) {
-                html += '<div style = "font-size: 11px;"> target region: ' + regionView.getRegionName() + ' </div > ';
-            }
-
-            html += '</div>';
-
-            return html;
         }
     }
 }
