@@ -1,12 +1,12 @@
 module app.wizard {
     export class PublishContentDialog extends api.ui.dialog.ModalDialog {
 
-        private publishAction:PublishAction;
-        private scheduleAction:ScheduleAction;
+        private publishAction: PublishAction;
+        private scheduleAction: ScheduleAction;
 
-        private grid:CompareContentGrid;
-        private content:api.content.Content;
-        private compareResult:api.content.CompareContentResult;
+        private grid: CompareContentGrid;
+        private content: api.content.Content;
+        private compareResult: api.content.CompareContentResults;
 
         constructor() {
             super({
@@ -27,7 +27,7 @@ module app.wizard {
             });
 
             this.publishAction.onExecuted(() => {
-                new api.content.PublishContentRequest(this.content.getId()).sendAndParse().done((content:api.content.Content) => {
+                new api.content.PublishContentRequest(this.content.getId()).sendAndParse().done((content: api.content.Content) => {
                     api.notify.showSuccess('Content [' + content.getDisplayName() + '] published!');
                     this.close();
                 });

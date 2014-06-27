@@ -9,20 +9,22 @@ module app.wizard {
     import TreeNode = api.app.browse.treegrid.TreeNode;
     import TreeGridBuilder = api.app.browse.treegrid.TreeGridBuilder;
 
-    export class CompareContentGrid extends api.app.browse.treegrid.TreeGrid<ContentSummary> {
+    import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
+
+    export class CompareContentGrid extends api.app.browse.treegrid.TreeGrid<ContentSummaryAndCompareStatus> {
 
         private content: api.content.Content;
 
         constructor(content: api.content.Content) {
-            super(new TreeGridBuilder<ContentSummary>().
-                setColumns([
-                    new GridColumnBuilder<ContentSummary>().
-                        setName("Name").
-                        setId("displayName").
-                        setField("displayName").
-                        setFormatter(this.defaultNameFormatter).
-                        build()
-                ]).prependClasses("content-grid")
+            super(new TreeGridBuilder<ContentSummaryAndCompareStatus>().
+                    setColumns([
+                        new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().
+                            setName("Name").
+                            setId("displayName").
+                            setField("displayName").
+                            setFormatter(this.defaultNameFormatter).
+                            build()
+                    ]).prependClasses("content-grid")
             )
 
             this.content = content;
@@ -32,17 +34,15 @@ module app.wizard {
             });
         }
 
-        private defaultNameFormatter(row: number, cell: number, value: any, columnDef: any, item: ContentSummary) {
+        private defaultNameFormatter(row: number, cell: number, value: any, columnDef: any, item: ContentSummaryAndCompareStatus) {
             var contentSummaryViewer = new ContentSummaryViewer();
-            contentSummaryViewer.setObject(item);
+            contentSummaryViewer.setObject(item.getContentSummary());
             return contentSummaryViewer.toString();
         }
 
-        fetchChildren(parent?: ContentSummary): Q.Promise<ContentSummary[]> {
-            var deferred = Q.defer<ContentSummary[]>();
-
-            deferred.resolve(this.content ? [this.content] : []);
-            return deferred.promise;
+        fetchChildren(parent?: ContentSummaryAndCompareStatus): Q.Promise<ContentSummaryAndCompareStatus[]> {
+            var parentContentId = parent ? parent.getId() : "";
+            return new api.content.ContentSummaryAndCompareStatusFetcher(parentContentId).fetch(parentContentId);
         }
     }
 }

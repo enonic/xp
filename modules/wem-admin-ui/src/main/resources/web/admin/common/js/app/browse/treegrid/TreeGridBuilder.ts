@@ -39,23 +39,33 @@ module api.app.browse.treegrid {
          of the object, like `node.data.id`, we need to specify a custom
          column value extractor.
          */
-        private nodeExtractor(node, column) {
-            return node["data"][column.field];
+        nodeExtractor(node, column) {
+            var names = column.field.split('.');
+            var val = node["data"][names[0]];
+
+            for (var i = 1; i < names.length; i++) {
+                if (val && typeof val == 'object' && names[i] in val) {
+                    val = val[names[i]];
+                } else {
+                    val = '';
+                }
+            }
+            return val;
         }
 
         buildDefaultOptions(): GridOptions<NODE> {
             return new GridOptionsBuilder<NODE>().
-                    setDataItemColumnValueExtractor(this.nodeExtractor).
-                    setEditable(false).
-                    setEnableAsyncPostRender(true).
-                    setAutoRenderGridOnDataChanges(true).
-                    setEnableCellNavigation(false).
-                    setEnableColumnReorder(false).
-                    setForceFitColumns(true).
-                    setHideColumnHeaders(true).
-                    setCheckableRows(true).
-                    setRowHeight(45).
-                    setAutoHeight(true).
+                setDataItemColumnValueExtractor(this.nodeExtractor).
+                setEditable(false).
+                setEnableAsyncPostRender(true).
+                setAutoRenderGridOnDataChanges(true).
+                setEnableCellNavigation(false).
+                setEnableColumnReorder(false).
+                setForceFitColumns(true).
+                setHideColumnHeaders(true).
+                setCheckableRows(true).
+                setRowHeight(45).
+                setAutoHeight(true).
                 build();
         }
 
@@ -118,7 +128,7 @@ module api.app.browse.treegrid {
         }
 
         /**
-        Should be overriden by child class.
+         Should be overriden by child class.
          */
         build(): TreeGrid<NODE> {
             return new TreeGrid<NODE>(this);

@@ -4,11 +4,9 @@ import com.enonic.wem.api.entity.Workspace;
 
 public class CompareContentParams
 {
-
     private final ContentId contentId;
 
     private final Workspace target;
-
 
     public CompareContentParams( final ContentId contentId, final Workspace target )
     {

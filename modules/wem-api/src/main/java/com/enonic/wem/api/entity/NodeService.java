@@ -26,5 +26,7 @@ public interface NodeService
 
     Node deleteByPath( NodePath path, Context context );
 
-    EntityComparison compare(EntityId id, Workspace target, Context context);
+    EntityComparison compare( EntityId id, Workspace target, Context context );
+
+    EntityComparisons compare( final EntityIds ids, final Workspace target, final Context context );
 }

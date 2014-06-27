@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.CreateNodeParams;
 import com.enonic.wem.api.entity.EntityComparison;
+import com.enonic.wem.api.entity.EntityComparisons;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIds;
 import com.enonic.wem.api.entity.Node;
@@ -140,4 +141,16 @@ public class NodeServiceImpl
             build().
             execute();
     }
+
+    @Override
+    public EntityComparisons compare( final EntityIds ids, final Workspace target, final Context context )
+    {
+        return CompareNodesCommand.create( context ).
+            ids( ids ).
+            target( target ).
+            compareService( workspaceCompareService ).
+            build().
+            execute();
+    }
+
 }

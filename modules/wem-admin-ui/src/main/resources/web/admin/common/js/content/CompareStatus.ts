@@ -1,5 +1,14 @@
 module api.content {
 
+
+    /*
+     These statuses should be translated:
+     NEW -> New
+     NEWER -> Modified
+     OLDER, CONFLICT -> Conflict
+     DELETED -> Deleted
+     EQUAL -> Online
+     */
     export enum CompareStatus {
         NEW,
         NEWER,
@@ -8,20 +17,4 @@ module api.content {
         DELETED,
         EQUAL
     }
-
-//    export class CompareStatus {
-//
-//        status: Status;
-//
-//        constructor(status: Status) {
-//            this.status = status;
-//        }
-//
-//        static fromJson(json: CompareStatusJson): CompareStatus {
-//
-//            var status: Status = <Status>Status[json.status];
-//
-//            return new CompareStatus(status);
-//        }
-//    }
 }

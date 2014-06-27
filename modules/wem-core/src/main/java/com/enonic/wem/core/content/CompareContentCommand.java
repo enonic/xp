@@ -1,6 +1,6 @@
 package com.enonic.wem.core.content;
 
-import com.enonic.wem.api.content.ContentCompareResult;
+import com.enonic.wem.api.content.CompareContentResult;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.EntityComparison;
@@ -31,7 +31,7 @@ public class CompareContentCommand
         return new Builder();
     }
 
-    public ContentCompareResult execute()
+    public CompareContentResult execute()
     {
         final EntityId entityId = EntityId.from( contentId.toString() );
 

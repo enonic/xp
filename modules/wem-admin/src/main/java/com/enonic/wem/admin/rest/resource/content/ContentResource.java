@@ -16,7 +16,8 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.admin.json.content.AbstractContentListJson;
-import com.enonic.wem.admin.json.content.ContentCompareResultJson;
+import com.enonic.wem.admin.json.content.CompareContentResultJson;
+import com.enonic.wem.admin.json.content.CompareContentResultsJson;
 import com.enonic.wem.admin.json.content.ContentIdJson;
 import com.enonic.wem.admin.json.content.ContentIdListJson;
 import com.enonic.wem.admin.json.content.ContentJson;
@@ -26,6 +27,7 @@ import com.enonic.wem.admin.json.content.ContentSummaryListJson;
 import com.enonic.wem.admin.json.content.attachment.AttachmentJson;
 import com.enonic.wem.admin.rest.exception.NotFoundWebException;
 import com.enonic.wem.admin.rest.resource.content.json.AbstractContentQueryResultJson;
+import com.enonic.wem.admin.rest.resource.content.json.CompareContentsJson;
 import com.enonic.wem.admin.rest.resource.content.json.ContentNameJson;
 import com.enonic.wem.admin.rest.resource.content.json.ContentQueryJson;
 import com.enonic.wem.admin.rest.resource.content.json.CreateContentJson;
@@ -35,9 +37,11 @@ import com.enonic.wem.admin.rest.resource.content.json.PublishContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.UpdateContentJson;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.content.CompareContentParams;
+import com.enonic.wem.api.content.CompareContentResult;
+import com.enonic.wem.api.content.CompareContentResults;
+import com.enonic.wem.api.content.CompareContentsParams;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentAlreadyExistException;
-import com.enonic.wem.api.content.ContentCompareResult;
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
@@ -221,32 +225,6 @@ public class ContentResource
         return new ContentNameJson( generatedContentName );
     }
 
-    /* TODO: Re-introduce or remove when doing task: CMS-2256 Validate occurrences before save when user clicks Publish
-    @POST
-    @Path("validate")
-    public Result validate( final ValidateContentParams params )
-    {
-        try
-        {
-            final ContentTypeName contentTypeName = ContentTypeName.from( params.getContentTypeName() );
-
-            GetContentTypesParams getContentType =
-                Commands.contentType().get().byNames().contentTypeNames( ContentTypeNames.from( contentTypeName ) );
-            final ContentType contentType = client.execute( getContentType ).first();
-
-            final ContentData contentData = new ContentDataParser( contentType ).parse( params.getContentData() );
-
-            final DataValidationErrors validationErrors =
-                client.execute( Commands.content().validate().contentData( contentData ).contentType( contentTypeName ) );
-
-            return Result.result( new ValidateContentJson( validationErrors ) );
-        }
-        catch ( Exception e )
-        {
-            return Result.exception( e );
-        }
-    }*/
-
     @POST
     @Path("delete")
     public DeleteContentResultJson delete( final DeleteContentJson json )
@@ -275,14 +253,25 @@ public class ContentResource
         return jsonResult;
     }
 
+    @POST
+    @Path("compare")
+    public CompareContentResultsJson compare( final CompareContentsJson params )
+    {
+        final ContentIds contentIds = ContentIds.from( params.getIds() );
+        final CompareContentResults compareResults =
+            contentService.compare( new CompareContentsParams( contentIds, ContentConstants.WORKSPACE_PROD ), STAGE_CONTEXT );
+
+        return new CompareContentResultsJson( compareResults );
+    }
+
     @GET
     @Path("compare")
-    public ContentCompareResultJson compare( @QueryParam("id") final String idParam )
+    public CompareContentResultJson compare( @QueryParam("id") final String idParam )
     {
-        final ContentCompareResult compareResult =
+        final CompareContentResult compareResult =
             contentService.compare( new CompareContentParams( ContentId.from( idParam ), ContentConstants.WORKSPACE_PROD ), STAGE_CONTEXT );
 
-        return new ContentCompareResultJson( compareResult );
+        return new CompareContentResultJson( compareResult );
     }
 
     @POST

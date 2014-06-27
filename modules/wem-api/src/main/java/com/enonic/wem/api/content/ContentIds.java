@@ -34,6 +34,11 @@ public final class ContentIds
         return new ContentIds( parseIds( ids ) );
     }
 
+    public static ContentIds from( final Collection<String> ids )
+    {
+        return new ContentIds( doParseIds( ids ) );
+    }
+
     public static ContentIds from( final Iterable<ContentId> ids )
     {
         return new ContentIds( ImmutableSet.copyOf( ids ) );
@@ -42,6 +47,11 @@ public final class ContentIds
     private static ImmutableSet<ContentId> parseIds( final String... paths )
     {
         final Collection<String> list = Lists.newArrayList( paths );
+        return doParseIds( list );
+    }
+
+    private static ImmutableSet<ContentId> doParseIds( final Collection<String> list )
+    {
         final Collection<ContentId> pathList = Collections2.transform( list, new ParseFunction() );
         return ImmutableSet.copyOf( pathList );
     }

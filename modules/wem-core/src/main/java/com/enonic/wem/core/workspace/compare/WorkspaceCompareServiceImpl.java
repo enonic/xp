@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.entity.CompareStatus;
 import com.enonic.wem.api.entity.EntityComparison;
+import com.enonic.wem.api.entity.EntityComparisons;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIds;
 import com.enonic.wem.api.entity.Workspace;
@@ -12,6 +13,7 @@ import com.enonic.wem.core.version.VersionBranch;
 import com.enonic.wem.core.version.VersionBranchQuery;
 import com.enonic.wem.core.version.VersionService;
 import com.enonic.wem.core.workspace.WorkspaceService;
+import com.enonic.wem.core.workspace.compare.query.CompareEntitiesQuery;
 import com.enonic.wem.core.workspace.compare.query.CompareEntityQuery;
 import com.enonic.wem.core.workspace.compare.query.CompareWorkspacesQuery;
 import com.enonic.wem.core.workspace.query.WorkspaceIdQuery;
@@ -44,10 +46,27 @@ public class WorkspaceCompareServiceImpl
     }
 
     @Override
+    public EntityComparisons compare( final CompareEntitiesQuery query )
+    {
+        final EntityComparisons.Builder builder = EntityComparisons.create();
+
+        final Workspace source = query.getSource();
+        final Workspace target = query.getTarget();
+
+        for ( final EntityId entityId : query.getEntityIds() )
+        {
+            builder.add( doCompareEntity( entityId, source, target ) );
+        }
+
+        return builder.build();
+    }
+
+    @Override
     public EntityComparison compare( final CompareEntityQuery query )
     {
         return doCompareEntity( query.getEntityId(), query.getSource(), query.getTarget() );
     }
+
 
     private EntityComparison doCompareEntity( final EntityId entityId, final Workspace sourceWorkspace, final Workspace targetWorkspace )
     {

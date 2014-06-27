@@ -33,12 +33,13 @@
 ///<reference path='UpdateContentRequest.ts' />
 ///<reference path='PublishContentRequest.ts' />
 ///<reference path='CompareContentRequest.ts' />
-///<reference path='CompareContentResultJson.ts' />
+///<reference path='CompareContentResults.ts' />
 ///<reference path='CompareContentResult.ts' />
-///<reference path='CompareContentResultJson.ts' />
 ///<reference path='CompareStatus.ts' />
 ///<reference path='CompareStatusJson.ts' />
 ///<reference path='Workspace.ts' />
+///<reference path='ContentSummaryAndCompareStatus.ts' />
+///<reference path='ContentSummaryAndCompareStatusFetcher.ts' />
 
 
 

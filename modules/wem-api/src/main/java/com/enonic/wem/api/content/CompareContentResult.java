@@ -2,15 +2,14 @@ package com.enonic.wem.api.content;
 
 import com.enonic.wem.api.entity.CompareStatus;
 
-public class ContentCompareResult
+public class CompareContentResult
 {
-
     private final ContentId contentId;
 
     private final CompareStatus compareStatus;
 
 
-    public ContentCompareResult( final CompareStatus compareStatus, final ContentId contentId )
+    public CompareContentResult( final CompareStatus compareStatus, final ContentId contentId )
     {
         this.compareStatus = compareStatus;
         this.contentId = contentId;
