@@ -189,6 +189,7 @@ module api.liveedit {
 
         moveToRegion(toRegionView: RegionView, precedingComponentView: PageComponentView<PageComponent>) {
 
+            this.moving = false;
             var precedingComponentIndex: number = -1;
             var precedingComponent: PageComponent = null;
             if (precedingComponentView) {
@@ -219,6 +220,7 @@ module api.liveedit {
             toRegionView.getRegion().addComponentAfter(this.pageComponent, precedingComponent);
             // View
             toRegionView.registerPageComponentView(this, indexInNewParent);
+            this.parentRegionView = toRegionView;
         }
 
         onItemViewAdded(listener: (event: ItemViewAddedEvent) => void) {

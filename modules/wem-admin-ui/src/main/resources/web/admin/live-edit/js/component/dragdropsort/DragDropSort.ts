@@ -254,18 +254,13 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             return;
         }
 
-        var droppedInRegionView: RegionView = getRegionView(ui.item.parent());
-        if (!droppedInRegionView) {
-            console.debug("DragDropSort.handleSortUpdate: skipping handling since RegionView from ui.placeholder.parent() was not found");
-            return;
-        }
+        event.stopPropagation();
 
-        var liveEditPage = LiveEdit.LiveEditPage.get();
+        var droppedInRegionView: RegionView = getRegionView(ui.item.parent());
+        api.util.assertState(!!droppedInRegionView, "droppedInRegionView not expected to be null");
+
         var droppedPageComponentView = getPageComponentView(ui.item);
-        if (!droppedPageComponentView) {
-            console.warn("DragDropSort.handleSortUpdate:  skipping handling since PageComponentView from ui.item was not found");
-            return;
-        }
+        api.util.assertState(!!droppedPageComponentView, "droppedPageComponentView not expected to be null");
 
         // Skip moving when PageComponentView is already moved (happens when moving from one sortable/region to another, then one event is fired for each sortable)
         if (!droppedPageComponentView.isMoving()) {
@@ -273,20 +268,12 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         }
 
         if (isDraggingLayoutOverLayout(droppedInRegionView, droppedPageComponentView.getType())) {
-
             return;
         }
 
-        event.stopPropagation();
-
         if (droppedPageComponentView.hasComponentPath()) {
-            droppedPageComponentView.setMoving(false);
             var precedingComponentView = resolvePrecedingComponentView(droppedPageComponentView.getHTMLElement());
-            var regionHTMLElement = PageComponentView.findParentRegionViewHTMLElement(droppedPageComponentView.getHTMLElement());
-
-            var regionView = liveEditPage.getRegionViewByElement(regionHTMLElement);
-
-            droppedPageComponentView.moveToRegion(regionView, precedingComponentView);
+            droppedPageComponentView.moveToRegion(droppedInRegionView, precedingComponentView);
         }
 
         droppedInRegionView.refreshPlaceholder();
