@@ -6,9 +6,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.sun.jersey.api.client.UniformInterfaceException;
-
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
+import com.enonic.wem.admin.rest.resource.MockRestResponse;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.SchemaKey;
@@ -78,18 +77,16 @@ public class SchemaResourceTest
 
     @Test
     public void searchSchemaByWrongType()
+        throws Exception
     {
-        try
-        {
-            resource().path( "schema/find" ).queryParam( "search", "" ).queryParam( "types", "SomeType" ).queryParam( "types",
-                                                                                                                      "AnotherType" ).get(
-                String.class );
-        }
-        catch ( UniformInterfaceException e )
-        {
-            assertEquals( e.getResponse().getStatus(), 406 );
-            assertEquals( e.getResponse().getEntity( String.class ), "Invalid parameter 'types': [SomeType, AnotherType]" );
-        }
+        final MockRestResponse response = request().path( "schema/find" ).
+            queryParam( "search", "" ).
+            queryParam( "types", "SomeType" ).
+            queryParam( "types", "AnotherType" ).
+            get();
+
+        assertEquals( response.getStatus(), 406 );
+        assertEquals( response.getAsString(), "Invalid parameter 'types': [SomeType, AnotherType]" );
     }
 
     @Test

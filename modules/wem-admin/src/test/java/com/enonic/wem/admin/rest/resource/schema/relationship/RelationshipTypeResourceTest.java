@@ -8,11 +8,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.sun.jersey.api.client.UniformInterfaceException;
-
 import junit.framework.Assert;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
+import com.enonic.wem.admin.rest.resource.MockRestResponse;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.blob.BlobService;
@@ -101,17 +100,11 @@ public class RelationshipTypeResourceTest
     public void testRequestGetRelationshipTypeJson_not_found()
         throws Exception
     {
-        try
-        {
-            Mockito.when( relationshipTypeService.getByName( Mockito.any( GetRelationshipTypeParams.class ) ) ).thenReturn( null );
+        Mockito.when( relationshipTypeService.getByName( Mockito.any( GetRelationshipTypeParams.class ) ) ).thenReturn( null );
 
-            resource().path( "schema/relationship" ).queryParam( "name", "relationship_type" ).get( String.class );
-        }
-        catch ( UniformInterfaceException e )
-        {
-            Assert.assertEquals( 404, e.getResponse().getStatus() );
-            Assert.assertEquals( "RelationshipType [relationship_type] was not found.", e.getResponse().getEntity( String.class ) );
-        }
+        final MockRestResponse response = request().path( "schema/relationship" ).queryParam( "name", "relationship_type" ).get();
+        Assert.assertEquals( 404, response.getStatus() );
+        Assert.assertEquals( "RelationshipType [relationship_type] was not found.", response.getAsString() );
     }
 
     @Test

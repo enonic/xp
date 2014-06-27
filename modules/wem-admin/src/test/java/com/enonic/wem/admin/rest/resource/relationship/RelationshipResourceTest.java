@@ -47,7 +47,7 @@ public class RelationshipResourceTest
 
         Mockito.when( this.relationshipService.getAll( isA( ContentId.class ) ) ).thenReturn( relationships );
 
-        String result = resource().path( "relationship" ).queryParam( "fromContent", "111" ).get( String.class );
+        String result = request().path( "relationship" ).queryParam( "fromContent", "111" ).get( String.class );
 
         assertJson( "get_relationship.json", result );
     }
@@ -66,7 +66,7 @@ public class RelationshipResourceTest
 
         Mockito.when( this.relationshipService.getAll( isA( ContentId.class ) ) ).thenReturn( relationships );
 
-        String result = resource().path( "relationship" ).queryParam( "fromContent", "111" ).get( String.class );
+        String result = request().path( "relationship" ).queryParam( "fromContent", "111" ).get( String.class );
 
         assertJson( "get_relationships.json", result );
     }
