@@ -42,20 +42,27 @@ module api.liveedit {
 
         private pageRegions: PageRegions;
 
-        private regionViews: RegionView[] = [];
+        private regionViews: RegionView[];
 
-        private viewsById: {[s:number] : ItemView;} = {};
+        private viewsById: {[s:number] : ItemView;};
 
-        private mouseEnterViewListeners: {(view: ItemView): void} [] = [];
+        private mouseEnterViewListeners: {(view: ItemView): void} [];
 
-        private mouseLeaveViewListeners: {(view: ItemView): void} [] = [];
+        private mouseLeaveViewListeners: {(view: ItemView): void} [];
 
         constructor(builder: PageViewBuilder) {
+
+            this.regionViews = [];
+            this.viewsById = {};
+            this.mouseEnterViewListeners = [];
+            this.mouseLeaveViewListeners = [];
+
             super(new ItemViewBuilder().
                 setItemViewIdProducer(builder.itemViewProducer).
                 setType(PageItemType.get()).
                 setElement(builder.element).
-                setParentElement(builder.element.getParentElement()));
+                setParentElement(builder.element.getParentElement()).
+                setContextMenuActions(this.createPageContextMenuActions()));
             this.setContent(builder.content);
             this.pageRegions = builder.pageRegions;
             this.parseItemViews();
@@ -73,6 +80,14 @@ module api.liveedit {
                     this.unregisterItemView(event.getView());
                 });
             });
+        }
+
+        private createPageContextMenuActions() {
+            var actions: api.ui.Action[] = [];
+            actions.push(new api.ui.Action('Reset').onExecuted(() => {
+                // TODO
+            }));
+            return actions;
         }
 
         getName(): string {

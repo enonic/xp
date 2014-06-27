@@ -33,14 +33,38 @@ module api.liveedit {
         private parentPartComponentView: PartComponentView;
 
         constructor(builder: ContentViewBuilder) {
+
+
             super(new ItemViewBuilder().
                 setItemViewIdProducer(builder.parentPartComponentView.getItemViewIdProducer()).
                 setType(ContentItemType.get()).
                 setElement(builder.element).
                 setParentElement(builder.parentElement).
-                setParentView(builder.parentPartComponentView));
+                setParentView(builder.parentPartComponentView).
+                setContextMenuActions(this.createContentContextMenuActions()));
             this.parentPartComponentView = builder.parentPartComponentView;
         }
+
+        private createContentContextMenuActions(): api.ui.Action[] {
+            var actions: api.ui.Action[] = [];
+            actions.push(new api.ui.Action('Parent').onExecuted(() => {
+                var parentView: ItemView = this.getParentItemView();
+                if (parentView) {
+                    parentView.select();
+                }
+            }));
+            actions.push(new api.ui.Action('Insert').onExecuted(() => {
+                // TODO
+            }));
+            actions.push(new api.ui.Action('View').onExecuted(() => {
+                // TODO
+            }));
+            actions.push(new api.ui.Action('Edit').onExecuted(() => {
+                // TODO
+            }));
+            return actions;
+        }
+
 
         getParentPartComponentView(): PartComponentView {
             return this.parentPartComponentView;
@@ -55,7 +79,7 @@ module api.liveedit {
             return this.parentPartComponentView;
         }
 
-        select(clickPosition?: Position) {
+        select(clickPosition ?: Position) {
             super.select(clickPosition);
         }
     }

@@ -41,21 +41,27 @@ module api.liveedit {
 
         private region: Region;
 
-        private pageComponentViews: PageComponentView<PageComponent>[] = [];
+        private pageComponentViews: PageComponentView<PageComponent>[];
 
         private placeholder: RegionPlaceholder;
 
-        private itemViewAddedListeners: {(event: ItemViewAddedEvent) : void}[] = [];
+        private itemViewAddedListeners: {(event: ItemViewAddedEvent) : void}[];
 
-        private itemViewRemovedListeners: {(event: ItemViewRemovedEvent) : void}[] = [];
+        private itemViewRemovedListeners: {(event: ItemViewRemovedEvent) : void}[];
 
         constructor(builder: RegionViewBuilder) {
+
+            this.pageComponentViews = [];
+            this.itemViewAddedListeners = [];
+            this.itemViewRemovedListeners = [];
+
             super(new ItemViewBuilder().
                 setItemViewIdProducer(builder.parentView.getItemViewIdProducer()).
                 setType(RegionItemType.get()).
                 setElement(builder.element).
                 setParentElement(builder.parentElement).
-                setParentView(builder.parentView));
+                setParentView(builder.parentView).
+                setContextMenuActions(this.createRegionContextMenuActions()));
             this.setRegion(builder.region);
 
             this.parentView = builder.parentView;
@@ -72,6 +78,21 @@ module api.liveedit {
             //this.onDragEnter(this.handleDragEnter.bind(this));
             //this.onDragLeave(this.handleDragLeave.bind(this));
             //this.onDrop(this.handleDrop.bind(this));
+        }
+
+        private createRegionContextMenuActions() {
+            var actions: api.ui.Action[] = [];
+            actions.push(new api.ui.Action('Parent').onExecuted(() => {
+                var parentView: ItemView = this.getParentItemView();
+                if (parentView) {
+                    parentView.select();
+                }
+            }));
+            actions.push(new api.ui.Action('Empty').onExecuted(() => {
+                this.deselect();
+                this.empty();
+            }));
+            return actions;
         }
 
         // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
