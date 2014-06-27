@@ -1,18 +1,30 @@
 module api.content {
 
-    export class CompareContentRequest extends ContentResourceRequest<CompareContentResultJson> {
+    export class CompareContentRequest extends ContentResourceRequest<api.content.json.CompareContentResultsJson> {
 
-        private id: ContentId;
+        private ids: string[];
 
-        constructor(id: ContentId) {
+        constructor(ids: string[]) {
             super();
-            super.setMethod("GET");
-            this.id = id;
+            super.setMethod("POST");
+            this.ids = ids;
+        }
+
+        static fromContentSummaries(contentSummaries: ContentSummary[]): CompareContentRequest {
+
+            var ids: string[] = [];
+
+            contentSummaries.forEach((contentSummary: ContentSummary) => {
+
+                ids.push(contentSummary.getContentId().toString());
+            });
+
+            return new CompareContentRequest(ids);
         }
 
         getParams(): Object {
             return {
-                id: this.id.toString()
+                ids: this.ids
             };
         }
 
@@ -20,14 +32,14 @@ module api.content {
             return api.rest.Path.fromParent(super.getResourcePath(), "compare");
         }
 
-        sendAndParse(): Q.Promise<CompareContentResult> {
-            return this.send().then((response: api.rest.JsonResponse<CompareContentResultJson>) => {
+        sendAndParse(): Q.Promise<CompareContentResults> {
+            return this.send().then((response: api.rest.JsonResponse<api.content.json.CompareContentResultsJson>) => {
                 return this.fromJsonToCompareRequest(response.getResult());
             });
         }
 
-        fromJsonToCompareRequest(json: CompareContentResultJson): CompareContentResult {
-            return CompareContentResult.fromJson(json);
+        fromJsonToCompareRequest(json: api.content.json.CompareContentResultsJson): CompareContentResults {
+            return CompareContentResults.fromJson(json);
         }
     }
 }

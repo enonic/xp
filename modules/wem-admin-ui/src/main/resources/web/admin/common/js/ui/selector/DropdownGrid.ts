@@ -58,24 +58,27 @@ module api.ui.selector {
                 };
 
             var columns: api.ui.grid.GridColumn<Option<OPTION_DISPLAY_VALUE>>[] = [
-                {
-                    id: "option",
-                    name: "Options",
-                    field: "displayValue",
-                    formatter: columnFormatter}
+                new api.ui.grid.GridColumnBuilder().
+                    setId("option").
+                    setName("Options").
+                    setField("displayValue").
+                    setFormatter(columnFormatter).
+                build()
             ];
-            var options: api.ui.grid.GridOptions = {
-                width: this.width,
-                height: this.maxHeight,
-                hideColumnHeaders: true,
-                enableColumnReorder: false,
-                fullWidthRows: true,
-                forceFitColumns: true,
-                rowHeight: this.optionDisplayValueViewer.getPreferredHeight(),
-                checkableRows: this.multipleSelections,
-                multiSelect: this.multipleSelections,
-                dataIdProperty: this.dataIdProperty
-            };
+
+            var options: api.ui.grid.GridOptions<Option<OPTION_DISPLAY_VALUE>> =
+                new api.ui.grid.GridOptionsBuilder().
+                    setWidth(this.width).
+                    setHeight(this.maxHeight).
+                    setHideColumnHeaders(true).
+                    setEnableColumnReorder(false).
+                    setFullWidthRows(true).
+                    setForceFitColumns(true).
+                    setRowHeight(this.optionDisplayValueViewer.getPreferredHeight()).
+                    setCheckableRows(this.multipleSelections).
+                    setMultiSelect(this.multipleSelections).
+                    setDataIdProperty(this.dataIdProperty).
+                build();
 
             this.gridData = new api.ui.grid.DataView<Option<OPTION_DISPLAY_VALUE>>();
             if (this.filter) {
@@ -193,11 +196,10 @@ module api.ui.selector {
             if (rowsHeight < this.maxHeight) {
                 var borderWidth = gridEl.getBorderTopWidth() + gridEl.getBorderBottomWidth();
                 gridEl.setHeightPx(rowsHeight + borderWidth);
-                this.grid.setOptions({autoHeight: true});
-            }
-            else if (gridEl.getHeight() < this.maxHeight) {
+                this.grid.getOptions().setAutoHeight(true);
+            } else if (gridEl.getHeight() < this.maxHeight) {
                 gridEl.setHeightPx(this.maxHeight);
-                this.grid.setOptions({autoHeight: false});
+                this.grid.getOptions().setAutoHeight(false);
             }
 
             this.grid.resizeCanvas();

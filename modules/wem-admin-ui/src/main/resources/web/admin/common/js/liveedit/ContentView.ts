@@ -55,9 +55,8 @@ module api.liveedit {
             return this.parentPartComponentView;
         }
 
-        select() {
-
-            super.select();
+        select(clickPosition?: Position) {
+            super.select(clickPosition);
         }
     }
 }

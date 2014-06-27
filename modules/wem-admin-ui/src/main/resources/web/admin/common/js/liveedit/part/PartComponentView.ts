@@ -39,8 +39,8 @@ module api.liveedit.part {
             return this.contentViews;
         }
 
-        select() {
-            super.select();
+        select(clickPosition?: Position) {
+            super.select(clickPosition);
             if (this.isEmpty()) {
                 this.placeholder.select();
             }

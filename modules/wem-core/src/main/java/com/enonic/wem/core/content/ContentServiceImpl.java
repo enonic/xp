@@ -4,8 +4,10 @@ import javax.inject.Inject;
 
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.CompareContentParams;
+import com.enonic.wem.api.content.CompareContentResult;
+import com.enonic.wem.api.content.CompareContentResults;
+import com.enonic.wem.api.content.CompareContentsParams;
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentCompareResult;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
@@ -219,7 +221,7 @@ public class ContentServiceImpl
     }
 
     @Override
-    public ContentCompareResult compare( final CompareContentParams params, final Context context )
+    public CompareContentResult compare( final CompareContentParams params, final Context context )
     {
         return CompareContentCommand.create().
             nodeService( this.nodeService ).
@@ -229,6 +231,19 @@ public class ContentServiceImpl
             build().
             execute();
     }
+
+    @Override
+    public CompareContentResults compare( final CompareContentsParams params, final Context context )
+    {
+        return CompareContentsCommand.create().
+            nodeService( this.nodeService ).
+            context( context ).
+            contentIds( params.getContentIds() ).
+            target( params.getTarget() ).
+            build().
+            execute();
+    }
+
 
     @Override
     public String generateContentName( final String displayName )

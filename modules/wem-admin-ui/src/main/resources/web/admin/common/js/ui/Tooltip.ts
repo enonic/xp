@@ -217,30 +217,28 @@ module api.ui {
                 el = this.tooltipEl.getEl(),
                 windowEl = <any> api.dom.Window.get().getHTMLElement(),
                 elProps = {
-                    left: el.getMarginLeft() || 0,
-                    top: el.getMarginTop() || 0,
-                    height: el.getHeight(),
-                    width: el.getWidth(),
+                    height: el.getHeightWithMargin(),
+                    width: el.getWidthWithMargin(),
                     // if mode == follow, tooltip is appended to body, so window scroll can affect tooltip
                     scrollLeft: this.mode == Tooltip.MODE_FOLLOW ? windowEl.scrollX : 0,
                     scrollTop: this.mode == Tooltip.MODE_FOLLOW ? windowEl.scrollY : 0
                 };
             switch (this.side) {
             case Tooltip.SIDE_TOP:
-                left = x - elProps.width / 2 + elProps.left + elProps.scrollLeft;
-                top = y - elProps.height + elProps.top + elProps.scrollTop;
+                left = x - elProps.width / 2 + elProps.scrollLeft;
+                top = y - elProps.height + elProps.scrollTop;
                 break;
             case Tooltip.SIDE_BOTTOM:
-                left = x - elProps.width / 2 + elProps.left + elProps.scrollLeft;
-                top = y + elProps.top + elProps.scrollTop;
+                left = x - elProps.width / 2 + elProps.scrollLeft;
+                top = y + elProps.scrollTop;
                 break;
             case Tooltip.SIDE_LEFT:
-                left = x - elProps.width + elProps.left + elProps.scrollLeft;
-                top = y - elProps.height / 2 + elProps.top + elProps.scrollTop;
+                left = x - elProps.width + elProps.scrollLeft;
+                top = y - elProps.height / 2 + elProps.scrollTop;
                 break;
             case Tooltip.SIDE_RIGHT:
-                left = x + elProps.left + elProps.scrollLeft;
-                top = y - elProps.height / 2 + elProps.top + elProps.scrollTop;
+                left = x + elProps.scrollLeft;
+                top = y - elProps.height / 2 + elProps.scrollTop;
                 break;
             }
             this.tooltipEl.getEl().setLeftPx(left);

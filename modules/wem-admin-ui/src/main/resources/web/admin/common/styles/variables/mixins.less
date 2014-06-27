@@ -159,3 +159,59 @@
   -moz-opacity: @value;
   opacity: @value;
 }
+
+.arrow(@color, @height) {
+
+  &:before {
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+    border: @height solid transparent;
+  }
+
+  &.bottom {
+    margin-top: @height;
+
+    &:before {
+      border-bottom-color: @color;
+      top: -2 * @height;
+      left: 50%;
+      margin-left: -@height;
+    }
+  }
+
+  &.left {
+    margin-right: @height;
+
+    &:before {
+      border-left-color: @color;
+      right: -2 * @height;
+      top: 50%;
+      margin-top: -@height;
+    }
+  }
+
+  &.top {
+    margin-bottom: @height;
+
+    &:before {
+      border-top-color: @color;
+      bottom: -2 * @height;
+      left: 50%;
+      margin-left: -@height;
+    }
+  }
+
+  &.right {
+    margin-left: @height;
+
+    &:before {
+      border-right-color: @color;
+      left: -2 * @height;
+      top: 50%;
+      margin-top: -@height;
+    }
+  }
+}

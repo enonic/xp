@@ -10,7 +10,9 @@ module api.util {
     }
 
     export function capitalizeAll(str: string) {
-        return str.replace(/(?:^|\s)\S/g, function(ch) { return ch.toUpperCase(); });
+        return str.replace(/(?:^|\s)\S/g, function (ch) {
+            return ch.toUpperCase();
+        });
     }
 
     export function removeInvalidChars(str: string) {
@@ -70,6 +72,20 @@ module api.util {
             }
         }
         return '';
+    }
+
+    /**
+     * Replaces given tokens in given string.
+     * @param str
+     * @param tokens
+     * @returns {string}
+     */
+    export function replaceTokens(str: string, tokens: Object) {
+
+        var result = str.replace(/%\w+%/g, function (all) {
+            return tokens[all] || all;
+        });
+        return result;
     }
 
 }

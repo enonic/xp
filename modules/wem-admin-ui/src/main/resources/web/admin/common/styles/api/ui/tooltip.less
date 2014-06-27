@@ -1,7 +1,7 @@
 .tooltip {
   position: absolute;
   background: @admin-tooltip-bg;
-  padding: 5px;
+  padding: 5px !important; // to override bootstraps .tooltip.top etc.
   z-index: 2147483647; // max positive int
   font-size: 11px;
   color: @admin-dark-gray;
@@ -33,60 +33,6 @@
     }
   }
 
-  &.bottom {
-    margin-top: 7px;
-    padding: 5px;
-
-    &:before {
-      border-left: 7px solid transparent;
-      border-right: 7px solid transparent;
-      border-bottom: 7px solid @admin-tooltip-bg;
-      top: -7px;
-      left: 50%;
-      margin-left: -7px;
-    }
-  }
-
-  &.left {
-    margin-left: -7px;
-    padding: 5px;
-
-    &:before {
-      border-top: 7px solid transparent;
-      border-bottom: 7px solid transparent;
-      border-left: 7px solid @admin-tooltip-bg;
-      right: -7px;
-      top: 50%;
-      margin-top: -7px;
-    }
-  }
-
-  &.top {
-    margin-top: -7px;
-    padding: 5px;
-
-    &:before {
-      border-left: 7px solid transparent;
-      border-right: 7px solid transparent;
-      border-top: 7px solid @admin-tooltip-bg;
-      bottom: -7px;
-      left: 50%;
-      margin-left: -7px;
-    }
-  }
-
-  &.right {
-    margin-left: 7px;
-    padding: 5px;
-
-    &:before {
-      border-top: 7px solid transparent;
-      border-bottom: 7px solid transparent;
-      border-right: 7px solid @admin-tooltip-bg;
-      left: -7px;
-      top: 50%;
-      margin-top: -7px;
-    }
-  }
+  .arrow(@admin-tooltip-bg, 7px);
 
 }

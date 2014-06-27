@@ -91,9 +91,9 @@ module api.liveedit {
             return null;
         }
 
-        select() {
+        select(clickPosition?: Position) {
             new PageSelectEvent(this).fire();
-            super.select();
+            super.select(clickPosition);
         }
 
         getTooltipViewer(): api.ui.Viewer<api.content.ContentSummary> {

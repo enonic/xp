@@ -1,15 +1,20 @@
 .context-menu {
+  z-index: 2147483647; // max positive int - 1 (tooltip has max)
+  position: absolute;
   border-width: 2px;
   border-style: solid;
   border-color: @admin-medium-gray-border;
   background: @admin-white;
+  list-style: none;
   display: none;
+  margin: 0;
+  padding: 0;
+  min-width: 120px;
 
   li {
     font-family: @admin-font-family;
     background-color: transparent;
     font-size: 14px;
-    width: 120px;
     border-width: 0;
     color: @admin-dark-gray-font;
 
@@ -22,14 +27,9 @@
       color: #fff;
     }
 
-    &:disabled {
+    &:disabled, &.disabled {
       opacity: 0.5;
     }
-
-    &.disabled {
-      opacity: 0.5;
-    }
-
   }
 }
 

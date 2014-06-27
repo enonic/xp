@@ -3,21 +3,29 @@ module app.wizard.page.contextwindow {
     export class EmulatorGrid extends api.ui.grid.Grid<any> {
 
         constructor(dataView:api.ui.grid.DataView<any>) {
-            super(dataView, this.createColumns(), {hideColumnHeaders: true, rowHeight: 50, height: 400, width: 320});
+            super(dataView, this.createColumns(), this.createOptions());
+        }
+
+        private createOptions(): api.ui.grid.GridOptions<any> {
+            return new api.ui.grid.GridOptionsBuilder().
+                    setHideColumnHeaders(true).
+                    setRowHeight(50).
+                    setHeight(400).
+                    setWidth(320)
+                .build();
         }
 
         private createColumns():api.ui.grid.GridColumn<any>[] {
-            return [
-                {
-                    name: "device",
-                    field: "device",
-                    id: "device",
-                    width: 320,
-                    cssClass: "grid-row",
-                    formatter: (row, cell, value, columnDef, dataContext) => {
+            return [new api.ui.grid.GridColumnBuilder().
+                    setName("device").
+                    setField("device").
+                    setId("device").
+                    setWidth(320).
+                    setCssClass("grid-row").
+                    setFormatter((row, cell, value, columnDef, dataContext) => {
                         return this.buildRow(row, cell, value).toString();
-                    }
-                }
+                    }).
+                build()
             ];
         }
 

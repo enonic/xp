@@ -5,7 +5,7 @@ module api.liveedit {
     import PageComponentType = api.content.page.PageComponentType;
     import PageComponent = api.content.page.PageComponent;
 
-    export class PageComponentDuplicateEvent extends Event2 {
+    export class PageComponentDuplicateEvent extends api.event.Event2 {
 
         private originalPageComponentView: PageComponentView<PageComponent>;
 
