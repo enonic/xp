@@ -200,22 +200,6 @@ module LiveEdit {
             pageComponentView.select();
         }
 
-        duplicatePageComponent(pageComponentView: PageComponentView<PageComponent>) {
-
-            var origin = pageComponentView.getPageComponent();
-            var duplicatedPageComponent = origin.duplicateComponent();
-            var duplicatedView = pageComponentView.duplicate(duplicatedPageComponent);
-            new PageComponentDuplicateEvent(pageComponentView, duplicatedView).fire();
-            duplicatedView.select();
-        }
-
-        removePageComponentView(pageComponentView: PageComponentView<PageComponent>) {
-
-            var regionView = pageComponentView.getParentItemView();
-            regionView.removePageComponentView(pageComponentView);
-            new PageComponentRemoveEvent(pageComponentView).fire();
-        }
-
         hasSelectedView(): boolean {
             return this.pageView.hasSelectedView();
         }
