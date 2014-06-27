@@ -8,10 +8,6 @@ declare var wemjq: JQueryStatic;
 new LiveEdit.LiveEditPage();
 
 wemjq(window).load(() => {
-    new LiveEdit.component.mouseevent.Text();
-
-    new LiveEdit.ui.Editor();
-
     LiveEdit.component.dragdropsort.DragDropSort.init();
 
     wemjq(window).resize(() => wemjq(window).trigger('resizeBrowserWindow.liveEdit'));

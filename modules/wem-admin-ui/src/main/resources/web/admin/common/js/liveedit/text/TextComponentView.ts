@@ -16,9 +16,60 @@ module api.liveedit.text {
 
         private textComponent: TextComponent;
 
+        private placeholder: TextPlaceholder;
+
+        private editArea: api.dom.DivEl;
+
+        private editing: boolean = false;
+
+        private editedListener: {(): void}[] = [];
+
         constructor(builder: TextComponentViewBuilder) {
             super(builder);
             this.textComponent = builder.pageComponent;
+            this.placeholder = new TextPlaceholder();
+            this.placeholder.hide();
+            this.appendChild(this.placeholder);
+
+            this.editArea = new api.dom.DivEl('live-edit-edited-area');
+            this.editArea.getEl().setCursor('text');
+            this.editArea.hide();
+            this.appendChild(this.editArea);
+
+            if (api.util.isStringBlank(this.textComponent.getText())) {
+                this.markAsEmpty();
+            } else {
+                this.editArea.getEl().setInnerHtml(this.textComponent.getText());
+                this.editArea.show();
+            }
+
+            this.placeholder.onClicked((event: MouseEvent) => {
+                this.editing = true;
+
+                this.placeholder.hide();
+
+                this.editArea.getEl().setInnerHtml('</br>');
+                this.editArea.show();
+
+                this.removeEmptyMark();
+                super.select();
+
+                api.ui.text.TextEditor.get().showToolbar(this.editArea);
+                this.notifyEdited();
+            });
+
+            this.editArea.onClicked((event: MouseEvent) => {
+                if (this.isSelected()) {
+                    if (!this.editing) {
+                        this.editing = true;
+                        api.ui.text.TextEditor.get().showToolbar(this.editArea);
+                    }
+                    this.notifyEdited();
+                }
+            });
+
+            this.editArea.onKeyDown(this.notifyEdited.bind(this));
+            this.editArea.onKeyUp(this.notifyEdited.bind(this));
         }
 
         duplicate(duplicate: TextComponent): TextComponentView {
@@ -31,12 +82,51 @@ module api.liveedit.text {
             return duplicatedView;
         }
 
+        select(clickPosition?: Position) {
+            super.select(clickPosition);
+
+            if (this.isEmpty()) {
+                this.placeholder.show();
+            }
+
+            this.getEl().setCursor('url(../../admin/live-edit/images/pencil.png) 0 40, text');
+        }
+
+        deselect() {
+            super.deselect();
+            if (!this.isEmpty() && api.util.isStringBlank(this.editArea.getEl().getText())) {
+                this.markAsEmpty();
+            }
+            this.placeholder.hide();
+            if (this.editing) {
+                api.ui.text.TextEditor.get().hideToolbar();
+            }
+            this.editing = false;
+
+            this.getEl().setCursor('');
+        }
+
         public static fromJQuery(element: JQuery): TextComponentView {
             return new TextComponentView(new TextComponentViewBuilder().setElement(api.dom.Element.fromHtmlElement(<HTMLElement>element.get(0))));
         }
 
         getTooltipViewer(): TextComponentViewer {
             return new TextComponentViewer();
+        }
+
+        onEdited(listener: () => void) {
+            if (!this.editedListener) {
+                this.editedListener = [];
+            }
+            this.editedListener.push(listener);
+        }
+
+        unEdited(listener: () => void) {
+            this.editedListener = this.editedListener.filter((current) => (current != listener));
+        }
+
+        private notifyEdited() {
+            this.editedListener.forEach((listener: () => void) => listener());
         }
     }
 }
