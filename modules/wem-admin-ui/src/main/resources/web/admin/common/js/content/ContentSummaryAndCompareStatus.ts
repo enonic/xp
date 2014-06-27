@@ -43,5 +43,9 @@ module api.content {
             return this.content.isEditable();
         }
 
+        getCompareStatus(): string {
+            return this.getCompareStatus();
+        }
+
     }
 }
