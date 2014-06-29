@@ -1,6 +1,12 @@
 package com.enonic.wem.admin.rest.resource;
 
+import java.io.ByteArrayOutputStream;
+
 import javax.ws.rs.core.MediaType;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
@@ -11,7 +17,7 @@ public final class RestRequestBuilder
 
     private byte[] entity;
 
-    private MediaType entityType;
+    private String entityType;
 
     public RestRequestBuilder( final WebResource resource )
     {
@@ -38,7 +44,22 @@ public final class RestRequestBuilder
     public RestRequestBuilder entity( final byte[] data, final MediaType type )
     {
         this.entity = data;
-        this.entityType = type;
+        this.entityType = type.toString();
+        return this;
+    }
+
+    public RestRequestBuilder multipart( final String name, final String fileName, final byte[] data, final MediaType type )
+        throws Exception
+    {
+        final MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        builder.addBinaryBody( name, data, ContentType.create( type.toString() ), fileName );
+        final HttpEntity entity = builder.build();
+
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        entity.writeTo( out );
+
+        this.entity = out.toByteArray();
+        this.entityType = entity.getContentType().getValue();
         return this;
     }
 
@@ -54,34 +75,6 @@ public final class RestRequestBuilder
     {
         final ClientResponse response = this.resource.entity( this.entity, this.entityType ).post( ClientResponse.class );
         return toResponse( response );
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T> T convert( final Class<T> type, final MockRestResponse response )
-    {
-        if ( type == String.class )
-        {
-            return (T) response.getAsString();
-        }
-
-        if ( type == byte[].class )
-        {
-            return (T) response.getData();
-        }
-
-        throw new IllegalArgumentException( "Type [" + type.getName() + "] not supported" );
-    }
-
-    public <T> T get( final Class<T> type )
-        throws Exception
-    {
-        return convert( type, get() );
-    }
-
-    public <T> T post( final Class<T> type )
-        throws Exception
-    {
-        return convert( type, post() );
     }
 
     private MockRestResponse toResponse( final ClientResponse from )

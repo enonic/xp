@@ -3,7 +3,6 @@ package com.enonic.wem.admin.rest.resource.relationship;
 import javax.ws.rs.core.MediaType;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -29,12 +28,6 @@ public class RelationshipResourceTest
 {
     private RelationshipService relationshipService;
 
-    @Before
-    public void setup()
-    {
-        mockCurrentContextHttpRequest();
-    }
-
     @Test
     public void get_from_content_with_one_relationship()
         throws Exception
@@ -47,7 +40,7 @@ public class RelationshipResourceTest
 
         Mockito.when( this.relationshipService.getAll( isA( ContentId.class ) ) ).thenReturn( relationships );
 
-        String result = request().path( "relationship" ).queryParam( "fromContent", "111" ).get( String.class );
+        String result = request().path( "relationship" ).queryParam( "fromContent", "111" ).get().getAsString();
 
         assertJson( "get_relationship.json", result );
     }
@@ -66,7 +59,7 @@ public class RelationshipResourceTest
 
         Mockito.when( this.relationshipService.getAll( isA( ContentId.class ) ) ).thenReturn( relationships );
 
-        String result = request().path( "relationship" ).queryParam( "fromContent", "111" ).get( String.class );
+        String result = request().path( "relationship" ).queryParam( "fromContent", "111" ).get().getAsString();
 
         assertJson( "get_relationships.json", result );
     }
@@ -85,7 +78,7 @@ public class RelationshipResourceTest
         } );
 
         String result = request().path( "relationship/create" ).
-            entity( readFromFile( "create_relationship_params.json" ), MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+            entity( readFromFile( "create_relationship_params.json" ), MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
 
         assertJson( "create_relationship.json", result );
     }
@@ -95,7 +88,7 @@ public class RelationshipResourceTest
         throws Exception
     {
         String result = request().path( "relationship/update" ).entity( readFromFile( "update_relationship_params.json" ),
-                                                                        MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+                                                                        MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
 
         assertJson( "update_relationship.json", result );
     }

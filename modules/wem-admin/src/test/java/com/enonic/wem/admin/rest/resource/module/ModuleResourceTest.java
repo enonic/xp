@@ -1,12 +1,5 @@
 package com.enonic.wem.admin.rest.resource.module;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
-import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -24,32 +17,6 @@ public class ModuleResourceTest
 {
     private ModuleService moduleService;
 
-    private Path tempDir;
-
-    @Before
-    public void setup()
-        throws IOException
-    {
-        mockCurrentContextHttpRequest();
-        tempDir = Files.createTempDirectory( "wemtest" );
-    }
-
-    @After
-    public void after()
-    {
-        try
-        {
-            if ( tempDir != null )
-            {
-                FileUtils.deleteDirectory( tempDir.toFile() );
-            }
-        }
-        catch ( IOException e )
-        {
-            e.printStackTrace();
-        }
-    }
-
     @Test
     public void get_module_by_key()
         throws Exception
@@ -60,7 +27,7 @@ public class ModuleResourceTest
         String response = request().
             path( "module" ).
             queryParam( "moduleKey", "testmodule-1.0.0" ).
-            get( String.class );
+            get().getAsString();
         assertJson( "get_module_by_key_success.json", response );
     }
 
@@ -90,5 +57,4 @@ public class ModuleResourceTest
 
         return resource;
     }
-
 }

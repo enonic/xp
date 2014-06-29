@@ -5,7 +5,6 @@ import java.time.ZoneOffset;
 
 import javax.ws.rs.core.MediaType;
 
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -57,12 +56,6 @@ public class ContentTypeResourceTest
         return resource;
     }
 
-    @Before
-    public void setup()
-    {
-        mockCurrentContextHttpRequest();
-    }
-
     @Test
     public void get_contentType_with_only_one_input()
         throws Exception
@@ -87,7 +80,7 @@ public class ContentTypeResourceTest
 
         // execute
         String jsonString = request().path( "schema/content" ).queryParam( "name", MY_CTY_QUALIFIED_NAME.toString() ).queryParam(
-            "mixinReferencesToFormItems", "false" ).get( String.class );
+            "mixinReferencesToFormItems", "false" ).get().getAsString();
 
         // verify
         assertJson( "ContentTypeResourceTest-get_contentType_with_only_one_input-result.json", jsonString );
@@ -156,7 +149,7 @@ public class ContentTypeResourceTest
 
         // execute
         String jsonString = request().path( "schema/content" ).queryParam( "name", MY_CTY_QUALIFIED_NAME.toString() ).queryParam(
-            "mixinReferencesToFormItems", "false" ).get( String.class );
+            "mixinReferencesToFormItems", "false" ).get().getAsString();
 
         // verify
         assertJson( "ContentTypeResourceTest-get_contentType_with_all_formItem_types-result.json", jsonString );
@@ -184,7 +177,7 @@ public class ContentTypeResourceTest
 
         // execute
         String jsonString =
-            request().path( "schema/content/config" ).queryParam( "name", MY_CTY_QUALIFIED_NAME.toString() ).get( String.class );
+            request().path( "schema/content/config" ).queryParam( "name", MY_CTY_QUALIFIED_NAME.toString() ).get().getAsString();
 
         // verify
         assertJson( "ContentTypeResourceTest-get_contentType_with_format_as_xml-result.json", jsonString );
@@ -216,7 +209,7 @@ public class ContentTypeResourceTest
             queryParam( "names", MY_CTY_QUALIFIED_NAME.toString() ).
             queryParam( "format", "JSON" ).
             queryParam( "mixinReferencesToFormItems", "false" ).
-            get( String.class );
+            get().getAsString();
 
         // verify
         assertJson( "ContentTypeResourceTest-list_one_contentType_with_only_one_input-result.json", jsonString );
@@ -235,7 +228,7 @@ public class ContentTypeResourceTest
         Mockito.when( contentTypeService.create( Mockito.any( CreateContentTypeParams.class ) ) ).thenReturn( createdContentType );
 
         String jsonString = request().path( "schema/content/create" ).entity( readFromFile( "create_content_type.json" ),
-                                                                              MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+                                                                              MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
         assertJson( "create_content_type_result.json", jsonString );
     }
 
@@ -247,7 +240,7 @@ public class ContentTypeResourceTest
         Mockito.when( contentTypeService.getByName( Mockito.any( GetContentTypeParams.class ) ) ).thenReturn(
             ContentType.newContentType().name( "htmlarea" ).build() );
         String resultJson = request().path( "schema/content/create" ).entity( readFromFile( "create_content_type.json" ),
-                                                                              MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+                                                                              MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
         assertJson( "create_existing_content_type_result.json", resultJson );
     }
 
@@ -257,7 +250,7 @@ public class ContentTypeResourceTest
         throws Exception
     {
         String result = request().path( "schema/content/create" ).entity( readFromFile( "broken_xml_content_type.json" ),
-                                                                          MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+                                                                          MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
         assertJson( "create_content_type_with_broken_xml.json", result );
     }
 
@@ -270,7 +263,7 @@ public class ContentTypeResourceTest
         Mockito.when( contentTypeService.create( Mockito.any( CreateContentTypeParams.class ) ) ).thenThrow(
             new RuntimeException( "Content type creation failed" ) );
         String result = request().path( "schema/content/create" ).entity( readFromFile( "create_content_type.json" ),
-                                                                          MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+                                                                          MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
         assertJson( "fail_to_create_new_content_type.json", result );
     }
 
@@ -284,7 +277,7 @@ public class ContentTypeResourceTest
             build();
         Mockito.when( contentTypeService.getByName( Mockito.any( GetContentTypeParams.class ) ) ).thenReturn( contentType );
         String jsonString = request().path( "schema/content/update" ).entity( readFromFile( "update_content_type.json" ),
-                                                                              MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+                                                                              MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
         assertJson( "update_content_type_result.json", jsonString );
     }
 
@@ -294,7 +287,7 @@ public class ContentTypeResourceTest
         throws Exception
     {
         String result = request().path( "schema/content/update" ).entity( readFromFile( "broken_xml_content_type.json" ),
-                                                                          MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+                                                                          MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
         assertJson( "update_content_type_with_broken_xml_config.json", result );
 
     }
@@ -307,7 +300,7 @@ public class ContentTypeResourceTest
         Mockito.when( contentTypeService.update( Mockito.any( UpdateContentTypeParams.class ) ) ).thenThrow(
             new RuntimeException( "Content type update failed" ) );
         String result = request().path( "schema/content/update" ).entity( readFromFile( "update_content_type.json" ),
-                                                                          MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+                                                                          MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
         assertJson( "fail_to_update_content_type.json", result );
     }
 

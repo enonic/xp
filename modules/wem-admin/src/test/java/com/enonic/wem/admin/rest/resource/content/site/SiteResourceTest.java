@@ -55,7 +55,7 @@ public class SiteResourceTest
 
         request().path( "content/site/create" ).
             entity( readFromFile( "create_site_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post( String.class );
+            post().getAsString();
     }
 
     @Test
@@ -69,7 +69,7 @@ public class SiteResourceTest
 
         String jsonString = request().path( "content/site/create" ).
             entity( readFromFile( "create_site_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post( String.class );
+            post().getAsString();
 
         assertJson( "create_site_success.json", jsonString );
     }
@@ -85,7 +85,7 @@ public class SiteResourceTest
 
         String jsonString = request().path( "content/site/update" ).
             entity( readFromFile( "update_site_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post( String.class );
+            post().getAsString();
 
         assertJson( "update_site_failure.json", jsonString );
     }
@@ -101,7 +101,7 @@ public class SiteResourceTest
 
         String jsonString = request().path( "content/site/update" ).
             entity( readFromFile( "update_site_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post( String.class );
+            post().getAsString();
 
         assertJson( "update_site_success.json", jsonString );
     }
@@ -117,7 +117,7 @@ public class SiteResourceTest
 
         request().path( "content/site/delete" ).
             entity( readFromFile( "delete_site_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post( String.class );
+            post().getAsString();
     }
 
     @Test
@@ -130,7 +130,7 @@ public class SiteResourceTest
 
         String jsonString = request().path( "content/site/delete" ).
             entity( readFromFile( "delete_site_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post( String.class );
+            post().getAsString();
 
         assertJson( "delete_site_success.json", jsonString );
     }

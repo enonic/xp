@@ -19,7 +19,7 @@ public class StatusResourceTest
         throws Exception
     {
         Version.get().setVersion( "5.0.0" );
-        final String json = request().path( "/status" ).get( String.class );
+        final String json = request().path( "/status" ).get().getAsString();
         assertJson( "status_ok.json", json );
     }
 }

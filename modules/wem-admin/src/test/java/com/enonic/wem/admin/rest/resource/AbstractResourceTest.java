@@ -1,14 +1,12 @@
 package com.enonic.wem.admin.rest.resource;
 
-import java.io.ByteArrayOutputStream;
 import java.net.URL;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.MediaType;
 
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.junit.After;
+import org.junit.Before;
 import org.mockito.Mockito;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -31,15 +29,33 @@ import com.enonic.wem.core.web.servlet.ServletRequestHolder;
 import static org.junit.Assert.*;
 
 public abstract class AbstractResourceTest
-    extends JerseyTest
 {
-    public AbstractResourceTest()
+    private JerseyTest jerseyTest;
+
+    @Before
+    public final void setUp()
+        throws Exception
     {
-        super( new InMemoryTestContainerFactory() );
+        this.jerseyTest = new JerseyTest( new InMemoryTestContainerFactory() )
+        {
+            @Override
+            protected AppDescriptor configure()
+            {
+                return AbstractResourceTest.this.configure();
+            }
+        };
+
+        this.jerseyTest.setUp();
     }
 
-    @Override
-    protected AppDescriptor configure()
+    @After
+    public final void tearDown()
+        throws Exception
+    {
+        this.jerseyTest.tearDown();
+    }
+
+    private AppDescriptor configure()
     {
         mockCurrentContextHttpRequest();
 
@@ -49,7 +65,7 @@ public abstract class AbstractResourceTest
         return new LowLevelAppDescriptor.Builder( config ).build();
     }
 
-    protected void mockCurrentContextHttpRequest()
+    private void mockCurrentContextHttpRequest()
     {
         final HttpServletRequest req = Mockito.mock( HttpServletRequest.class );
         Mockito.when( req.getScheme() ).thenReturn( "http" );
@@ -138,21 +154,9 @@ public abstract class AbstractResourceTest
         return result.toString();
     }
 
-    protected final byte[] createMultipart( final String name, final String fileName, final byte[] data, final MediaType type )
-        throws Exception
-    {
-        final MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-        builder.addBinaryBody( name, data, ContentType.create( type.toString() ), fileName );
-
-        System.out.println( builder.build().getContentType() );
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        builder.build().writeTo( out );
-        return out.toByteArray();
-    }
-
     protected final RestRequestBuilder request()
     {
-        return new RestRequestBuilder( resource() );
+        return new RestRequestBuilder( this.jerseyTest.resource() );
     }
 }
 

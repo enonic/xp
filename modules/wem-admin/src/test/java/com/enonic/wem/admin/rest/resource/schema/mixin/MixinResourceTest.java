@@ -6,7 +6,6 @@ import java.time.ZoneOffset;
 
 import javax.ws.rs.core.MediaType;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -53,12 +52,6 @@ public class MixinResourceTest
 
     private BlobService blobService;
 
-    @Before
-    public void setup()
-    {
-        mockCurrentContextHttpRequest();
-    }
-
     @Override
     protected Object getResourceInstance()
     {
@@ -84,7 +77,7 @@ public class MixinResourceTest
 
         Mockito.when( mixinService.getByName( Mockito.isA( GetMixinParams.class ) ) ).thenReturn( mixin );
 
-        String response = request().path( "schema/mixin" ).queryParam( "name", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get( String.class );
+        String response = request().path( "schema/mixin" ).queryParam( "name", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get().getAsString();
 
         assertJson( "get_mixin.json", response );
     }
@@ -101,7 +94,7 @@ public class MixinResourceTest
         Mockito.when( mixinService.getByName( Mockito.isA( GetMixinParams.class ) ) ).thenReturn( mixin );
 
         String result =
-            request().path( "schema/mixin/config" ).queryParam( "name", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get( String.class );
+            request().path( "schema/mixin/config" ).queryParam( "name", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get().getAsString();
 
         assertJson( "get_mixin_config.json", result );
     }
@@ -146,7 +139,7 @@ public class MixinResourceTest
 
         Mockito.when( mixinService.getAll() ).thenReturn( Mixins.from( mixin1, mixin2 ) );
 
-        String result = request().path( "schema/mixin/list" ).get( String.class );
+        String result = request().path( "schema/mixin/list" ).get().getAsString();
 
         assertJson( "list_mixins.json", result );
     }
@@ -164,7 +157,7 @@ public class MixinResourceTest
             build() );
 
         String result = request().path( "schema/mixin/create" ).entity( readFromFile( "create_mixin_params.json" ),
-                                                                        MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+                                                                        MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
         assertJson( "create_mixin.json", result );
         verify( mixinService, times( 1 ) ).create( isA( CreateMixinParams.class ) );
     }
@@ -179,7 +172,7 @@ public class MixinResourceTest
             new MixinAlreadyExistException( MixinName.from( "my_set" ) ) );
 
         String result = request().path( "schema/mixin/create" ).entity( readFromFile( "create_mixin_params.json" ),
-                                                                        MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+                                                                        MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
         assertJson( "create_mixin_already_exists.json", result );
     }
 
@@ -199,7 +192,7 @@ public class MixinResourceTest
         Mockito.when( blobService.get( isA( BlobKey.class ) ) ).thenReturn( iconBlob );
 
         String result = request().path( "schema/mixin/create" ).entity( readFromFile( "create_mixin_with_icon_params.json" ),
-                                                                        MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+                                                                        MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
 
         assertJson( "create_mixin.json", result );
         verify( mixinService, times( 1 ) ).create( isA( CreateMixinParams.class ) );
@@ -218,7 +211,7 @@ public class MixinResourceTest
         Mockito.when( blobService.get( isA( BlobKey.class ) ) ).thenReturn( iconBlob );
 
         String result = request().path( "schema/mixin/update" ).entity( readFromFile( "update_mixin_with_icon_params.json" ),
-                                                                        MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+                                                                        MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
         assertJson( "update_mixin.json", result );
         verify( mixinService, times( 1 ) ).update( isA( UpdateMixinParams.class ) );
     }
@@ -230,7 +223,7 @@ public class MixinResourceTest
         Mockito.when( mixinService.update( isA( UpdateMixinParams.class ) ) ).thenThrow(
             new MixinNotFoundException( MixinName.from( "my_set" ) ) );
         String result = request().path( "schema/mixin/update" ).entity( readFromFile( "create_mixin_params.json" ),
-                                                                        MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+                                                                        MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
         assertJson( "update_mixin_not_found.json", result );
     }
 
@@ -242,7 +235,7 @@ public class MixinResourceTest
             new DeleteMixinResult( Mixin.newMixin().name( "existing_mixin" ).build() ) );
 
         String result = request().path( "schema/mixin/delete" ).entity( readFromFile( "delete_single_mixin_params.json" ),
-                                                                        MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+                                                                        MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
         assertJson( "delete_single_mixin.json", result );
     }
 
@@ -261,7 +254,7 @@ public class MixinResourceTest
             new MixinNotFoundException( MixinName.from( "being_used_mixin" ) ) );
 
         String result = request().path( "schema/mixin/delete" ).entity( readFromFile( "delete_multiple_mixins_params.json" ),
-                                                                        MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+                                                                        MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
         assertJson( "delete_multiple_mixins.json", result );
     }
 }

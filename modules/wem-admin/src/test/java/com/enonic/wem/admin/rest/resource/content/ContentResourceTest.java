@@ -110,7 +110,7 @@ public class ContentResourceTest
         String jsonString = request().
             path( "content/bypath" ).
             queryParam( "path", "/my_a_content" ).
-            get( String.class );
+            get().getAsString();
 
         assertJson( "get_content_full.json", jsonString );
     }
@@ -131,7 +131,7 @@ public class ContentResourceTest
             thenReturn( aContent );
 
         String jsonString = request().path( "content/bypath" ).queryParam( "path", "/my_a_content" ).
-            queryParam( "expand", "summary" ).get( String.class );
+            queryParam( "expand", "summary" ).get().getAsString();
 
         assertJson( "get_content_summary.json", jsonString );
     }
@@ -168,7 +168,7 @@ public class ContentResourceTest
             path( "content/bypath" ).
             queryParam( "path", "/my_a_content" ).
             queryParam( "expand", "none" ).
-            get( String.class );
+            get().getAsString();
 
         assertJson( "get_content_id.json", jsonString );
     }
@@ -201,7 +201,7 @@ public class ContentResourceTest
 
         Mockito.when( contentService.getById( ContentId.from( "aaa" ), ContentResource.STAGE_CONTEXT ) ).thenReturn( aContent );
 
-        String jsonString = request().path( "content" ).queryParam( "id", "aaa" ).get( String.class );
+        String jsonString = request().path( "content" ).queryParam( "id", "aaa" ).get().getAsString();
 
         assertJson( "get_content_full.json", jsonString );
     }
@@ -228,7 +228,7 @@ public class ContentResourceTest
 
         Mockito.when( contentService.getById( ContentId.from( "aaa" ), ContentResource.STAGE_CONTEXT ) ).thenReturn( content );
 
-        String jsonString = request().path( "content" ).queryParam( "id", "aaa" ).get( String.class );
+        String jsonString = request().path( "content" ).queryParam( "id", "aaa" ).get().getAsString();
 
         assertJson( "get_content_with_site.json", jsonString );
     }
@@ -271,7 +271,7 @@ public class ContentResourceTest
 
         Mockito.when( contentService.getById( ContentId.from( "aaa" ), ContentResource.STAGE_CONTEXT ) ).thenReturn( content );
 
-        String jsonString = request().path( "content" ).queryParam( "id", "aaa" ).get( String.class );
+        String jsonString = request().path( "content" ).queryParam( "id", "aaa" ).get().getAsString();
 
         assertJson( "get_content_with_page.json", jsonString );
     }
@@ -291,7 +291,7 @@ public class ContentResourceTest
         Mockito.when( contentService.getById( ContentId.from( "aaa" ), ContentResource.STAGE_CONTEXT ) ).thenReturn( aContent );
 
         String jsonString = request().path( "content" ).queryParam( "id", "aaa" ).
-            queryParam( "expand", "summary" ).get( String.class );
+            queryParam( "expand", "summary" ).get().getAsString();
 
         assertJson( "get_content_summary.json", jsonString );
     }
@@ -327,7 +327,7 @@ public class ContentResourceTest
             contentService.getById( Mockito.eq( ContentId.from( "aaa" ) ), Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn(
             aContent );
 
-        String jsonString = request().path( "content" ).queryParam( "id", "aaa" ).queryParam( "expand", "none" ).get( String.class );
+        String jsonString = request().path( "content" ).queryParam( "id", "aaa" ).queryParam( "expand", "none" ).get().getAsString();
 
         assertJson( "get_content_id.json", jsonString );
     }
@@ -355,7 +355,7 @@ public class ContentResourceTest
             contentService.getChildren( Mockito.isA( ContentPath.class ), Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn(
             Contents.from( aContent, bContent ) );
 
-        String jsonString = request().path( "content/list/bypath" ).queryParam( "parentPath", "/" ).get( String.class );
+        String jsonString = request().path( "content/list/bypath" ).queryParam( "parentPath", "/" ).get().getAsString();
 
         assertJson( "list_content_summary_byPath.json", jsonString );
     }
@@ -371,7 +371,7 @@ public class ContentResourceTest
             Contents.from( aContent, bContent ) );
 
         String jsonString = request().path( "content/list/bypath" ).queryParam( "parentPath", "/" ).
-            queryParam( "expand", "full" ).get( String.class );
+            queryParam( "expand", "full" ).get().getAsString();
 
         assertJson( "list_content_full_byPath.json", jsonString );
     }
@@ -384,7 +384,7 @@ public class ContentResourceTest
             contentService.getChildren( Mockito.isA( ContentPath.class ), Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn(
             Contents.empty() );
 
-        String jsonString = request().path( "content/list/bypath" ).queryParam( "parentPath", "/" ).get( String.class );
+        String jsonString = request().path( "content/list/bypath" ).queryParam( "parentPath", "/" ).get().getAsString();
 
         assertJson( "list_content_empty_byPath.json", jsonString );
     }
@@ -397,7 +397,7 @@ public class ContentResourceTest
         final Content bContent = createContent( "bbb", "my_b_content", "my_type" );
         Mockito.when( contentService.getRoots( ContentResource.STAGE_CONTEXT ) ).thenReturn( Contents.from( aContent, bContent ) );
 
-        String jsonString = request().path( "content/list/bypath" ).queryParam( "expand", "none" ).get( String.class );
+        String jsonString = request().path( "content/list/bypath" ).queryParam( "expand", "none" ).get().getAsString();
 
         assertJson( "list_content_id_byPath.json", jsonString );
     }
@@ -417,7 +417,7 @@ public class ContentResourceTest
             contentService.getChildren( Mockito.isA( ContentPath.class ), Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn(
             Contents.from( aContent, bContent ) );
 
-        String jsonString = request().path( "content/list" ).queryParam( "parentId", "ccc" ).get( String.class );
+        String jsonString = request().path( "content/list" ).queryParam( "parentId", "ccc" ).get().getAsString();
 
         assertJson( "list_content_summary.json", jsonString );
     }
@@ -438,7 +438,7 @@ public class ContentResourceTest
             Contents.from( aContent, bContent ) );
 
         String jsonString = request().path( "content/list" ).queryParam( "parentId", "ccc" ).
-            queryParam( "expand", "full" ).get( String.class );
+            queryParam( "expand", "full" ).get().getAsString();
 
         assertJson( "list_content_full.json", jsonString );
     }
@@ -451,7 +451,7 @@ public class ContentResourceTest
             contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ), Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn(
             Contents.empty() );
 
-        String jsonString = request().path( "content/list" ).queryParam( "parentId", "ccc" ).get( String.class );
+        String jsonString = request().path( "content/list" ).queryParam( "parentId", "ccc" ).get().getAsString();
 
         assertJson( "list_content_empty.json", jsonString );
     }
@@ -464,7 +464,7 @@ public class ContentResourceTest
         final Content bContent = createContent( "bbb", "my_b_content", "my_type" );
         Mockito.when( contentService.getRoots( ContentResource.STAGE_CONTEXT ) ).thenReturn( Contents.from( aContent, bContent ) );
 
-        String jsonString = request().path( "content/list" ).queryParam( "expand", "none" ).get( String.class );
+        String jsonString = request().path( "content/list" ).queryParam( "expand", "none" ).get().getAsString();
 
         assertJson( "list_content_id.json", jsonString );
     }
@@ -476,7 +476,7 @@ public class ContentResourceTest
         Mockito.when( contentService.generateContentName( "Some rea11y we!rd name..." ) ).thenReturn( "some-rea11y-werd-name" );
 
         String jsonString =
-            request().path( "content/generateName" ).queryParam( "displayName", "Some rea11y we!rd name..." ).get( String.class );
+            request().path( "content/generateName" ).queryParam( "displayName", "Some rea11y we!rd name..." ).get().getAsString();
 
         assertJson( "generate_content_name.json", jsonString );
     }
@@ -495,7 +495,7 @@ public class ContentResourceTest
 
         String jsonString = request().path( "content/validate" ).
             entity( readFromFile( "validate_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post( String.class );
+            post().getAsString();
 
         assertJson( "validate_content_success.json", jsonString );
     }
@@ -514,7 +514,7 @@ public class ContentResourceTest
 
         String jsonString = request().path( "content/validate" ).
             entity( readFromFile( "validate_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post( String.class );
+            post().getAsString();
 
         assertJson( "validate_content_error.json", jsonString );
     }
@@ -531,7 +531,7 @@ public class ContentResourceTest
 
         String jsonString = request().path( "content/delete" ).
             entity( readFromFile( "delete_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post( String.class );
+            post().getAsString();
 
         assertJson( "delete_content_success.json", jsonString );
     }
@@ -550,7 +550,7 @@ public class ContentResourceTest
 
         String jsonString = request().path( "content/delete" ).
             entity( readFromFile( "delete_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post( String.class );
+            post().getAsString();
 
         assertJson( "delete_content_failure.json", jsonString );
     }
@@ -569,7 +569,7 @@ public class ContentResourceTest
 
         String jsonString = request().path( "content/delete" ).
             entity( readFromFile( "delete_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post( String.class );
+            post().getAsString();
 
         assertJson( "delete_content_both.json", jsonString );
     }
@@ -587,7 +587,7 @@ public class ContentResourceTest
 
         request().path( "content/create" ).
             entity( readFromFile( "create_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post( String.class );
+            post().getAsString();
 
     }
 
@@ -604,7 +604,7 @@ public class ContentResourceTest
 
         String jsonString = request().path( "content/create" ).
             entity( readFromFile( "create_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post( String.class );
+            post().getAsString();
 
         assertJson( "create_content_success.json", jsonString );
     }
@@ -624,7 +624,7 @@ public class ContentResourceTest
 
         request().path( "content/update" ).
             entity( readFromFile( "update_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post( String.class );
+            post().getAsString();
     }
 
     @Test
@@ -639,7 +639,7 @@ public class ContentResourceTest
             content );
         String jsonString = request().path( "content/update" ).
             entity( readFromFile( "update_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post( String.class );
+            post().getAsString();
 
         Mockito.verify( contentService, Mockito.times( 0 ) ).rename( Mockito.isA( RenameContentParams.class ),
                                                                      Mockito.isA( Context.class ) );
@@ -659,7 +659,7 @@ public class ContentResourceTest
             content );
         String jsonString = request().path( "content/update" ).
             entity( readFromFile( "update_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post( String.class );
+            post().getAsString();
 
         Mockito.verify( contentService, Mockito.times( 0 ) ).rename( Mockito.isA( RenameContentParams.class ),
                                                                      Mockito.isA( Context.class ) );
@@ -691,7 +691,7 @@ public class ContentResourceTest
 
         String jsonString = request().path( "content/publish" ).
             entity( readFromFile( "publish_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post( String.class );
+            post().getAsString();
 
         assertJson( "publish_content_success.json", jsonString );
     }
@@ -710,7 +710,7 @@ public class ContentResourceTest
 
         request().path( "content/publish" ).
             entity( readFromFile( "publish_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post( String.class );
+            post().getAsString();
 
     }
 

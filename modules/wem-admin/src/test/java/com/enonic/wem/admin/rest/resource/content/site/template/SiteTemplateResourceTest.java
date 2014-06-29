@@ -15,10 +15,6 @@ import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.core.header.FormDataContentDisposition;
-import com.sun.jersey.multipart.FormDataBodyPart;
-import com.sun.jersey.multipart.FormDataMultiPart;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.Name;
@@ -85,7 +81,7 @@ public class SiteTemplateResourceTest
 
         Mockito.when( this.siteTemplateService.getSiteTemplates() ).thenReturn( siteTemplates );
 
-        String resultJson = request().path( "content/site/template/list" ).get( String.class );
+        String resultJson = request().path( "content/site/template/list" ).get().getAsString();
 
         assertJson( "list_site_template_success.json", resultJson );
     }
@@ -99,7 +95,7 @@ public class SiteTemplateResourceTest
 
         Mockito.when( this.siteTemplateService.getSiteTemplates() ).thenReturn( siteTemplates );
 
-        String resultJson = request().path( "content/site/template/tree" ).get( String.class );
+        String resultJson = request().path( "content/site/template/tree" ).get().getAsString();
 
         assertJson( "tree_site_template_success.json", resultJson );
     }
@@ -114,7 +110,7 @@ public class SiteTemplateResourceTest
 
         String resultJson = request().path( "content/site/template/tree" ).
             queryParam( "parentId", "name-1.0.0" ).
-            get( String.class );
+            get().getAsString();
 
         assertJson( "tree_page_templates_success.json", resultJson );
     }
@@ -124,7 +120,7 @@ public class SiteTemplateResourceTest
         throws Exception
     {
         String response = request().path( "content/site/template/delete" ).entity( readFromFile( "delete_site_template_params.json" ),
-                                                                                   MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+                                                                                   MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
         assertJson( "delete_site_template_success.json", response );
     }
 
@@ -135,7 +131,7 @@ public class SiteTemplateResourceTest
         Mockito.doThrow( new NoSiteTemplateExistsException( SiteTemplateKey.from( "sitetemplate-1.0.0" ) ) ).when(
             this.siteTemplateService ).deleteSiteTemplate( Mockito.isA( SiteTemplateKey.class ) );
         String response = request().path( "content/site/template/delete" ).entity( readFromFile( "delete_site_template_params.json" ),
-                                                                                   MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+                                                                                   MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
         assertJson( "delete_site_template_failure.json", response );
     }
 
@@ -172,7 +168,7 @@ public class SiteTemplateResourceTest
         String response = request().
             path( "content/site/template" ).
             queryParam( "siteTemplateKey", siteTemplate.getKey().toString() ).
-            get( String.class );
+            get().getAsString();
         assertJson( "get_site_template_by_key_success.json", response );
     }
 
@@ -186,19 +182,17 @@ public class SiteTemplateResourceTest
         request().
             path( "content/site/template" ).
             queryParam( "siteTemplateKey", siteTemplate.toString() ).
-            get( String.class );
+            get().getAsString();
     }
 
     @Test(expected = InvalidZipFileException.class)
     public void import_site_template_exception()
         throws Exception
     {
-        final WebResource webResource = resource().path( "content/site/template/import" );
-        final FormDataMultiPart mp = new FormDataMultiPart();
-        final FormDataContentDisposition file = FormDataContentDisposition.name( "file" ).fileName( "template-1.0.0.zip" ).build();
-        mp.bodyPart( new FormDataBodyPart( file, "INVALID_ZIP_CONTENT" ) );
-
-        final String jsonString = webResource.type( MediaType.MULTIPART_FORM_DATA_TYPE ).post( String.class, mp );
+        final String jsonString = request().
+            path( "content/site/template/import" ).
+            multipart( "file", "template-1.0.0.zip", "INVALID_ZIP_CONTENT".getBytes(), MediaType.TEXT_PLAIN_TYPE ).
+            post().getAsString();
 
         assertJson( "import_site_template_exception.json", jsonString );
     }
@@ -256,7 +250,7 @@ public class SiteTemplateResourceTest
 
         String jsonString = request().path( "content/site/template/create" ).
             entity( readFromFile( "create_site_template_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post( String.class );
+            post().getAsString();
 
         assertJson( "create_site_template_success.json", jsonString );
     }
@@ -300,7 +294,7 @@ public class SiteTemplateResourceTest
 
         String jsonString = request().path( "content/site/template/update" ).
             entity( readFromFile( "update_site_template_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post( String.class );
+            post().getAsString();
 
         assertJson( "update_site_template_success.json", jsonString );
     }
@@ -320,14 +314,11 @@ public class SiteTemplateResourceTest
         final SiteTemplateExporter siteTemplateExporter = new SiteTemplateExporter();
         final Path exportedSiteTemplateFile = siteTemplateExporter.exportToZip( siteTemplate, tempDir );
 
-        final WebResource webResource = resource().path( "content/site/template/import" );
-        final FormDataMultiPart mp = new FormDataMultiPart();
-        final FormDataContentDisposition file = FormDataContentDisposition.name( "file" ).fileName( "name-1.0.0.zip" ).build();
         final byte[] fileData = Files.readAllBytes( exportedSiteTemplateFile );
-        final FormDataBodyPart p = new FormDataBodyPart( file, fileData, MediaType.APPLICATION_OCTET_STREAM_TYPE );
-        mp.bodyPart( p );
-
-        final String jsonString = webResource.type( MediaType.MULTIPART_FORM_DATA_TYPE ).post( String.class, mp );
+        final String jsonString = request().
+            path( "content/site/template/import" ).
+            multipart( "file", "name-1.0.0.zip", fileData, MediaType.APPLICATION_OCTET_STREAM_TYPE ).
+            post().getAsString();
 
         assertJson( "import_site_template_success.json", jsonString );
     }
@@ -341,7 +332,7 @@ public class SiteTemplateResourceTest
 
         final byte[] response = request().
             path( "content/site/template/export" ).
-            queryParam( "siteTemplateKey", "name-1.0.0" ).get( byte[].class );
+            queryParam( "siteTemplateKey", "name-1.0.0" ).get().getData();
 
         final SiteTemplateExporter exporter = new SiteTemplateExporter();
         final Path zipFilePath = Files.write( tempDir.resolve( "name-1.0.0.zip" ), response );

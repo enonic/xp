@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 
 import javax.ws.rs.core.MediaType;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -40,12 +39,6 @@ public class RelationshipTypeResourceTest
 
     private BlobService blobService;
 
-    @Before
-    public void setup()
-    {
-        mockCurrentContextHttpRequest();
-    }
-
     @Override
     protected Object getResourceInstance()
     {
@@ -73,7 +66,7 @@ public class RelationshipTypeResourceTest
         final GetRelationshipTypeParams params = new GetRelationshipTypeParams().name( name );
         Mockito.when( relationshipTypeService.getByName( params ) ).thenReturn( relationshipType );
 
-        String response = request().path( "schema/relationship" ).queryParam( "name", "the_relationship_type" ).get( String.class );
+        String response = request().path( "schema/relationship" ).queryParam( "name", "the_relationship_type" ).get().getAsString();
 
         assertJson( "get_relationship_type.json", response );
 
@@ -91,7 +84,7 @@ public class RelationshipTypeResourceTest
         final GetRelationshipTypeParams params = new GetRelationshipTypeParams().name( name );
         Mockito.when( relationshipTypeService.getByName( params ) ).thenReturn( relationshipType );
 
-        String response = request().path( "schema/relationship/config" ).queryParam( "name", "the_relationship_type" ).get( String.class );
+        String response = request().path( "schema/relationship/config" ).queryParam( "name", "the_relationship_type" ).get().getAsString();
 
         assertJson( "get_relationship_type_config.json", response );
     }
@@ -122,7 +115,7 @@ public class RelationshipTypeResourceTest
         final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType1, relationshipType2 );
         Mockito.when( relationshipTypeService.getAll() ).thenReturn( relationshipTypes );
 
-        String response = request().path( "schema/relationship/list" ).get( String.class );
+        String response = request().path( "schema/relationship/list" ).get().getAsString();
 
         assertJson( "get_relationship_type_list.json", response );
     }
@@ -137,7 +130,7 @@ public class RelationshipTypeResourceTest
 
         String result =
             request().path( "schema/relationship/delete" ).entity( readFromFile( "delete_single_relationship_type_params.json" ),
-                                                                   MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+                                                                   MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
 
         assertJson( "delete_single_relationship_type.json", result );
 
@@ -159,7 +152,7 @@ public class RelationshipTypeResourceTest
 
         String result =
             request().path( "schema/relationship/delete" ).entity( readFromFile( "delete_multiple_relationship_type_params.json" ),
-                                                                   MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+                                                                   MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
 
         assertJson( "delete_multiple_relationship_type.json", result );
 
