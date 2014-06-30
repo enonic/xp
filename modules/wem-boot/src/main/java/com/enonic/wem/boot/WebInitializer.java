@@ -5,8 +5,6 @@ import javax.inject.Singleton;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
 
-import org.atmosphere.cpr.AtmosphereServlet;
-
 import com.enonic.wem.admin.app.MainServlet;
 import com.enonic.wem.admin.rest.RestServlet;
 import com.enonic.wem.core.web.servlet.RequestContextListener;
@@ -41,10 +39,5 @@ final class WebInitializer
         final ServletRegistration.Dynamic portalServlet = context.addServlet( "portal", this.portalServlet );
         portalServlet.setLoadOnStartup( 4 );
         portalServlet.addMapping( "/portal/*" );
-
-        final ServletRegistration.Dynamic atmosphereServlet = context.addServlet( "atmosphere", new AtmosphereServlet() );
-        atmosphereServlet.setAsyncSupported( true );
-        atmosphereServlet.setLoadOnStartup( 5 );
-        atmosphereServlet.addMapping( "/admin/event/*" );
     }
 }
