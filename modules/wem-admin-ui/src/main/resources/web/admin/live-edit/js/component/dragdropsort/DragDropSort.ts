@@ -13,6 +13,8 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     import ItemView = api.liveedit.ItemView;
     import PageView = api.liveedit.PageView;
     import RegionView = api.liveedit.RegionView;
+    import RegionViewDropZone = api.liveedit.RegionViewDropZone;
+    import RegionViewDropZoneBuilder = api.liveedit.RegionViewDropZoneBuilder;
     import PageComponentView = api.liveedit.PageComponentView;
     import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
     import PageComponentItemType = api.liveedit.PageComponentItemType;
@@ -37,6 +39,10 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
     var _isDragging: boolean = false;
 
+    var _newItemItemType: api.liveedit.ItemType;
+
+    var _messageCounter: number = 0;
+
     export function init(): void {
         createJQueryUiSortable(REGION_SELECTOR);
         registerGlobalListeners();
@@ -52,7 +58,6 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
     export function createSortableLayout(component: api.liveedit.ItemView) {
         wemjq(component.getHTMLElement()).find(REGION_SELECTOR).each((index, element) => {
-            //console.log("Creating jquerysortable for", element);
             createJQueryUiSortable(wemjq(element));
         });
     }
@@ -61,7 +66,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
         wemjq(selector).sortable({
             revert: false,
-            connectWith: REGION_SELECTOR, //removing this solves the over event not firing bug, not sure what it might break though. it broke dragging out of layouts, now seems to work.
+            connectWith: REGION_SELECTOR,
             items: SORTABLE_ITEMS_SELECTOR,
             distance: 20,
             delay: 50,
@@ -78,12 +83,19 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             change: (event, ui) => handleSortChange(event, ui),
             receive: (event, ui) => handleReceive(event, ui),
             update: (event, ui) => handleSortUpdate(event, ui),
-            stop: (event, ui) => handleSortStop(event, ui)
+            beforeStop: (event, ui) => handleBeforeStop(event, ui),
+            stop: (event, ui) => handleSortStop(event, ui),
+            activate: (event, ui) => handleActivate(event, ui),
+            deactivate: (event, ui) => handleDeactivate(event, ui),
+            remove: (event, ui) => handleRemove(event, ui)
         });
     }
 
     // Used by the Context Window when dragging above the IFrame
     export function createJQueryUiDraggable(contextWindowItem: JQuery): void {
+
+        _newItemItemType = api.liveedit.ItemType.fromHTMLElement(contextWindowItem.get(0));
+
         contextWindowItem.draggable({
             connectToSortable: REGION_SELECTOR,
             addClasses: false,
@@ -97,38 +109,57 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
     function handleSortStart(event: JQueryEventObject, ui: JQueryUI.SortableUIParams): void {
 
-        console.log("DragDropSort.handleSortStart");
+        console.log((_messageCounter++) + " DragDropSort.handleSortStart");
+
+        var draggedPageComponentView = getPageComponentView(ui.item);
+        var draggingOverRegionView: RegionView = getRegionView(ui.placeholder.parent());
+        api.util.assertState(!!draggingOverRegionView, "draggingOverRegionView should not have been null");
 
         updateScrollSensitivity(event.target);
 
-        var draggedPageComponentView = getPageComponentView(ui.item);
-
         if (!draggedPageComponentView) {
+            api.util.assertState(!!_newItemItemType, "_newItemItemType should not have been null");
 
-            var draggingOverRegionView: RegionView = getRegionView(ui.placeholder.parent());
-            if (!draggingOverRegionView) {
-                console.debug("DragDropSort.handleSortStart: skipping handling since RegionView from ui.placeholder.parent() was not found");
-                return;
+            var dropZoneBuilder = new RegionViewDropZoneBuilder().
+                setRegionView(draggingOverRegionView).
+                setItemType(_newItemItemType);
+
+            if (isDraggingLayoutOverLayout(draggingOverRegionView, _newItemItemType)) {
+                LiveEdit.component.helper.DragHelper.updateStatusIcon(false);
+                dropZoneBuilder.setText("Layout within layout not allowed");
+                dropZoneBuilder.setDropAllowed(false);
             }
+            else {
+                LiveEdit.component.helper.DragHelper.updateStatusIcon(true);
+                dropZoneBuilder.setDropAllowed(true);
+            }
+            ui.placeholder.html(dropZoneBuilder.build().toString());
 
-            ui.placeholder.html(draggingOverRegionView.createPlaceholderForJQuerySortable());
-            LiveEdit.component.helper.DragHelper.updateStatusIcon(true);
-
-            // TODO: Not sure what's best, refreshing placeholder for just draggingOverRegionView or all it's children
-            // PageView.refreshRegionViewPlaceholdersOfSelfAndSiblings(draggingOverRegionView);
             draggingOverRegionView.refreshPlaceholder();
         }
         else {
-            // Mark dragged PageComponentView as "moving"
-            draggedPageComponentView.handleDragStart();
+            draggedPageComponentView.hideContextMenu();
+            draggedPageComponentView.setMoving(true);
 
             var parentRegionOfDraggedComponent = draggedPageComponentView.getParentItemView();
-            parentRegionOfDraggedComponent.hidePlaceholder();
-            LiveEdit.component.helper.DragHelper.updateStatusIcon(true);
+            parentRegionOfDraggedComponent.refreshPlaceholder();
 
-            ui.placeholder.html(parentRegionOfDraggedComponent.createPlaceholderForJQuerySortable(draggedPageComponentView));
+            var dropZoneBuilder = new RegionViewDropZoneBuilder().
+                setRegionView(draggingOverRegionView).
+                setPageComponentView(draggedPageComponentView);
 
-            refreshSortable();
+            if (isDraggingLayoutOverLayout(draggingOverRegionView, draggedPageComponentView.getType())) {
+                LiveEdit.component.helper.DragHelper.updateStatusIcon(false);
+                dropZoneBuilder.setText("Layout within layout not allowed");
+                dropZoneBuilder.setDropAllowed(false);
+            }
+            else {
+                LiveEdit.component.helper.DragHelper.updateStatusIcon(true);
+                dropZoneBuilder.setDropAllowed(true);
+            }
+            ui.placeholder.html(dropZoneBuilder.build().toString());
+
+            //refreshSortable(); // TODO: Is it really needed? Trying without
         }
 
         _isDragging = true;
@@ -138,169 +169,120 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
     function handleDragOver(event: JQueryEventObject, ui: JQueryUI.SortableUIParams): void {
 
-        console.log("DragDropSort.handleDragOver");
+        console.log((_messageCounter++) + " DragDropSort.handleDragOver");
 
         var draggingOverRegionView: RegionView = getRegionView(ui.placeholder.parent());
-        if (!draggingOverRegionView) {
-            console.debug("DragDropSort.handleDragOver: skipping handling since RegionView from ui.placeholder.parent() was not found");
-            return;
-        }
+        api.util.assertState(!!draggingOverRegionView, "draggingOverRegionView not expected to be null");
 
         var draggedPageComponentView = getPageComponentView(ui.item);
         if (!draggedPageComponentView) {
-            console.debug("DragDropSort.handleDragOver: skipping handling since PageComponentView from ui.item was not found");
-            return
+            return;
         }
 
-        event.stopPropagation();
+        var dropZoneBuilder = new RegionViewDropZoneBuilder().
+            setRegionView(draggingOverRegionView).
+            setPageComponentView(draggedPageComponentView);
 
-        // Hide placeholder of the Region dragging over
-        draggingOverRegionView.hidePlaceholder();
-
-
-        var isDraggingOverLayoutComponent = api.ObjectHelper.iFrameSafeInstanceOf(draggingOverRegionView.getParentItemView(),
-            LayoutComponentView);
-        var isDraggingLayoutComponent = draggedPageComponentView.getType().equals(LayoutItemType.get());
-
-        if (isDraggingLayoutComponent && isDraggingOverLayoutComponent) {
+        if (isDraggingLayoutOverLayout(draggingOverRegionView, draggedPageComponentView.getType())) {
             LiveEdit.component.helper.DragHelper.updateStatusIcon(false);
-
-            ui.placeholder.hide();
-        } else {
+            dropZoneBuilder.setText("Layout within layout not allowed");
+            dropZoneBuilder.setDropAllowed(false);
+            LiveEdit.component.helper.DragHelper.updateStatusIcon(false);
+        }
+        else {
+            dropZoneBuilder.setDropAllowed(true);
             LiveEdit.component.helper.DragHelper.updateStatusIcon(true);
         }
 
-        ui.placeholder.html(draggingOverRegionView.createPlaceholderForJQuerySortable(draggedPageComponentView));
+        ui.placeholder.html(dropZoneBuilder.build().toString());
+        draggingOverRegionView.refreshPlaceholder();
+
+        // Hinders drag out event being fired on parental regions
+        event.stopPropagation();
     }
 
     function handleDragOut(event: JQueryEventObject, ui: JQueryUI.SortableUIParams): void {
 
-        console.log("DragDropSort.handleDragOut");
+        // NB: Do not update drag helper status icon on drag out event, since it's fired after helper have been moved into another sortable list
+        console.log((_messageCounter++) + " DragDropSort.handleDragOut");
+        if (ui.placeholder.parent().length == 0) {
+            return;
+        }
+
+        var draggedOutOfRegionView: RegionView = getRegionView(ui.placeholder.parent());
+        api.util.assertState(!!draggedOutOfRegionView, "draggedOutOfRegionView not expected to be null");
 
         ui.placeholder.hide();
-        LiveEdit.component.helper.DragHelper.updateStatusIcon(false);
-
-        var parentRegionView: RegionView = null;
-        var parentAsJQ = ui.placeholder.parent();
-        if (parentAsJQ && parentAsJQ.get(0)) {
-            parentRegionView = getRegionView(parentAsJQ);
-        }
-        if (parentRegionView) {
-            PageView.refreshRegionViewPlaceholdersOfSelfAndSiblings(parentRegionView);
-        }
-
-        // Ignore the out event if the dragged item is no longer moving (i.e. have been dropped)
-        var draggedPageComponentView = getPageComponentView(ui.item);
-        if (!draggedPageComponentView) {
-            return;
-        }
-
-        if (!draggedPageComponentView.isMoving()) {
-            return;
-        }
-
-        if (draggedPageComponentView) {
-            if (targetIsPlaceholder(wemjq(event.target))) {
-                removePaddingFromParentLayout(draggedPageComponentView);
-            }
-        }
+        draggedOutOfRegionView.refreshPlaceholder();
     }
 
     function handleSortChange(event: JQueryEventObject, ui: JQueryUI.SortableUIParams): void {
 
-        console.log("DragDropSort.handleSortChange");
+        console.log((_messageCounter++) + " DragDropSort.handleSortChange");
 
         var draggingOverRegionView: RegionView = getRegionView(ui.placeholder.parent());
-        if (!draggingOverRegionView) {
-            console.debug("DragDropSort.handleSortChange: skipping handling since RegionView from ui.placeholder.parent() was not found");
-            return;
-        }
+        api.util.assertState(!!draggingOverRegionView, "draggingOverRegionView not expected to be null");
 
-        var fromRegionView: RegionView = null;
         if (ui.sender) {
-            fromRegionView = getRegionView(ui.sender);
+            var fromRegionView = getRegionView(ui.sender);
+            if (fromRegionView) {
+                fromRegionView.refreshPlaceholder();
+            }
         }
-
-        if (fromRegionView) {
-            fromRegionView.refreshPlaceholder();
+        else {
+            ui.placeholder.show();
         }
+        draggingOverRegionView.refreshPlaceholder();
 
-        addPaddingToParentLayout(draggingOverRegionView);
-        LiveEdit.component.helper.DragHelper.updateStatusIcon(true);
-        ui.placeholder.show(null);
+        var draggedPageComponentView = getPageComponentView(ui.item);
+        if (draggedPageComponentView) {
+            if (isDraggingLayoutOverLayout(draggingOverRegionView, draggedPageComponentView.getType())) {
+                LiveEdit.component.helper.DragHelper.updateStatusIcon(false);
+            }
+            else {
+                LiveEdit.component.helper.DragHelper.updateStatusIcon(true);
+            }
+        }
     }
 
     function handleSortUpdate(event: JQueryEventObject, ui: JQueryUI.SortableUIParams): void {
 
-        console.log("DragDropSort.handleSortUpdate");
+        console.log((_messageCounter++) + " DragDropSort.handleSortUpdate");
 
         if (ui.item.parent().length == 0) {
             console.debug("DragDropSort.handleSortUpdate: skipping handling since ui.item.parent() does not exist");
             return;
         }
 
-        var droppedInRegionView: RegionView = getRegionView(ui.item.parent());
-        if (!droppedInRegionView) {
-            console.debug("DragDropSort.handleSortUpdate: skipping handling since RegionView from ui.placeholder.parent() was not found");
-            return;
-        }
+        event.stopPropagation();
 
-        var liveEditPage = LiveEdit.LiveEditPage.get();
+        var droppedInRegionView: RegionView = getRegionView(ui.item.parent());
+        api.util.assertState(!!droppedInRegionView, "droppedInRegionView not expected to be null");
+
         var droppedPageComponentView = getPageComponentView(ui.item);
-        if (!droppedPageComponentView) {
-            console.warn("DragDropSort.handleSortUpdate:  skipping handling since PageComponentView from ui.item was not found");
-            return;
-        }
+        api.util.assertState(!!droppedPageComponentView, "droppedPageComponentView not expected to be null");
 
         // Skip moving when PageComponentView is already moved (happens when moving from one sortable/region to another, then one event is fired for each sortable)
         if (!droppedPageComponentView.isMoving()) {
             return;
         }
 
-        event.stopPropagation();
-
-        if (droppedPageComponentView.hasComponentPath()) {
-            droppedPageComponentView.handleDragStop();
-            var precedingComponentView = resolvePrecedingComponentView(droppedPageComponentView.getHTMLElement());
-            var regionHTMLElement = PageComponentView.findParentRegionViewHTMLElement(droppedPageComponentView.getHTMLElement());
-
-            var regionView = liveEditPage.getRegionViewByElement(regionHTMLElement);
-
-            droppedPageComponentView.moveToRegion(regionView, precedingComponentView);
-        }
-    }
-
-    function handleSortStop(event: JQueryEventObject, ui: JQueryUI.SortableUIParams): void {
-
-        console.log("DragDropSort.handleSortStop");
-
-        var pageComponentView = getPageComponentView(ui.item);
-        if (!pageComponentView) {
-            console.debug("DragDropSort.handleSortStop: skipping handling since PageComponentView from ui.item not found");
-            new ItemFromContextWindowDroppedEvent().fire();
+        if (isDraggingLayoutOverLayout(droppedInRegionView, droppedPageComponentView.getType())) {
             return;
         }
-        _isDragging = false;
 
-        removePaddingFromParentLayout(pageComponentView);
-
-        // TODO: Is this to try prevent adding layout within layout?
-        var draggedItemIsLayoutComponent = pageComponentView.getType().equals(LayoutItemType.get());
-        var targetComponentIsInLayoutComponent = LayoutComponentView.hasParentLayoutComponentView(pageComponentView);
-        if (draggedItemIsLayoutComponent && targetComponentIsInLayoutComponent) {
-            ui.item.remove();
+        if (droppedPageComponentView.hasComponentPath()) {
+            var precedingComponentView = resolvePrecedingComponentView(droppedPageComponentView.getHTMLElement());
+            droppedPageComponentView.moveToRegion(droppedInRegionView, precedingComponentView);
         }
 
-        pageComponentView.getElement().removeData('live-edit-selected-on-drag-start');
-        pageComponentView.select();
-
-        new DraggingPageComponentViewCompletedEvent(pageComponentView).fire();
+        droppedInRegionView.refreshPlaceholder();
     }
 
     // When sortable receives a new item
     function handleReceive(event: JQueryEventObject, ui: JQueryUI.SortableUIParams): void {
 
-        console.log("DragDropSort.handleReceive");
+        console.log((_messageCounter++) + " DragDropSort.handleReceive");
 
         if (isItemDraggedFromContextWindow(ui.item)) {
             var liveEditPage = LiveEdit.LiveEditPage.get();
@@ -325,6 +307,74 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         }
     }
 
+    function handleActivate(event: JQueryEventObject, ui: JQueryUI.SortableUIParams): void {
+
+        console.log((_messageCounter++) + " DragDropSort.handleActivate");
+
+    }
+
+    function handleDeactivate(event: JQueryEventObject, ui: JQueryUI.SortableUIParams): void {
+
+        console.log((_messageCounter++) + " DragDropSort.handleDeactivate");
+
+    }
+
+    function handleRemove(event: JQueryEventObject, ui: JQueryUI.SortableUIParams): void {
+
+        console.log((_messageCounter++) + " DragDropSort.handleRemove");
+
+    }
+
+    function handleBeforeStop(event: JQueryEventObject, ui: JQueryUI.SortableUIParams): void {
+
+        console.log((_messageCounter++) + " DragDropSort.handleBeforeStop");
+
+        var droppedInRegionView: RegionView = getRegionView(ui.item.parent());
+        if (!droppedInRegionView) {
+            console.debug("DragDropSort.handleBeforeStop: skipping handling since RegionView from ui.placeholder.parent() was not found");
+            return;
+        }
+
+        var draggedPageComponentView = getPageComponentView(ui.item);
+
+        if (!draggedPageComponentView) {
+            if (isDraggingLayoutOverLayout(droppedInRegionView, _newItemItemType)) {
+                ui.item.remove();
+                ui.placeholder.parent().sortable("cancel");
+            }
+        }
+        else {
+            if (isDraggingLayoutOverLayout(droppedInRegionView, draggedPageComponentView.getType())) {
+                ui.item.remove();
+                ui.placeholder.parent().sortable("cancel");
+            }
+        }
+    }
+
+
+    function handleSortStop(event: JQueryEventObject, ui: JQueryUI.SortableUIParams): void {
+
+        console.log((_messageCounter++) + " DragDropSort.handleSortStop");
+
+        _newItemItemType = null;
+        _isDragging = false;
+
+        var pageComponentView = getPageComponentView(ui.item);
+        if (!pageComponentView) {
+            new ItemFromContextWindowDroppedEvent().fire();
+            return;
+        }
+
+        var droppedInRegionView: RegionView = getRegionView(ui.item.parent());
+        if (isDraggingLayoutOverLayout(droppedInRegionView, pageComponentView.getType())) {
+            ui.item.remove();
+        }
+
+        pageComponentView.select();
+
+        new DraggingPageComponentViewCompletedEvent(pageComponentView).fire();
+    }
+
     function isItemDraggedFromContextWindow(item: JQuery): boolean {
         var isDraggedFromContextWindow: boolean = item.data('context-window-draggable');
         return isDraggedFromContextWindow != undefined && isDraggedFromContextWindow == true;
@@ -346,6 +396,10 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         });
     }
 
+    function isDraggingLayoutOverLayout(regionView: RegionView, draggingItemType: ItemType): boolean {
+        return regionView.hasParentLayoutComponentView() && LayoutItemType.get().equals(draggingItemType);
+    }
+
     function createSortableItemsSelector(): string {
 
         var sortableItemsSelector: string[] = [];
@@ -365,20 +419,6 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             <PageComponentView<PageComponent>>LiveEdit.LiveEditPage.get().getByItemId(precedingComponentViewId);
         }
         return preceodingComponentView;
-    }
-
-    function addPaddingToParentLayout(itemView: ItemView) {
-        var closestParentLayoutComponentView = LayoutComponentView.getClosestParentLayoutComponentView(itemView);
-        if (closestParentLayoutComponentView) {
-            closestParentLayoutComponentView.addPadding();
-        }
-    }
-
-    function removePaddingFromParentLayout(itemView: ItemView) {
-        var closestParentLayoutComponentView = LayoutComponentView.getClosestParentLayoutComponentView(itemView);
-        if (closestParentLayoutComponentView) {
-            closestParentLayoutComponentView.removePadding();
-        }
     }
 
     function getPageComponentView(jq: JQuery) {
@@ -404,10 +444,6 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
     function refreshSortable(): void {
         wemjq(REGION_SELECTOR).sortable('refresh');
-    }
-
-    function targetIsPlaceholder(target: JQuery): Boolean {
-        return target.hasClass('live-edit-drop-target-placeholder')
     }
 
 }

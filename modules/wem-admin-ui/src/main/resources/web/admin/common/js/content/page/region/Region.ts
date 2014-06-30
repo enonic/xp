@@ -13,9 +13,19 @@ module api.content.page.region {
             this.parent = builder.parent;
             this.pageComponents = builder.pageComponents;
             this.pageComponents.forEach((pageComponent: PageComponent, index: number) => {
+                this.checkIllegalLayoutComponentWithinLayoutComponent(pageComponent, this.parent);
                 pageComponent.setParent(this);
                 pageComponent.setIndex(index);
             });
+        }
+
+        private checkIllegalLayoutComponentWithinLayoutComponent(pageComponent: PageComponent,
+                                                                 parent: api.content.page.layout.LayoutComponent) {
+            var hasParentLayoutComponent = !parent ? false : true;
+            if (hasParentLayoutComponent && api.ObjectHelper.iFrameSafeInstanceOf(pageComponent, api.content.page.layout.LayoutComponent)) {
+                throw new Error("Not allowed to have a LayoutComponent within a LayoutComponent: " +
+                                pageComponent.getPath().toString());
+            }
         }
 
         getName(): string {
@@ -93,6 +103,7 @@ module api.content.page.region {
         }
 
         addComponent(pageComponent: PageComponent) {
+            this.checkIllegalLayoutComponentWithinLayoutComponent(pageComponent, this.parent);
             this.pageComponents.push(pageComponent);
             pageComponent.setParent(this);
             pageComponent.setIndex(this.pageComponents.length - 1);

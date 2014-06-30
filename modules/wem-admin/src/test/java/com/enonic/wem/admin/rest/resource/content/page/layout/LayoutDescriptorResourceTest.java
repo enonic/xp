@@ -2,7 +2,6 @@ package com.enonic.wem.admin.rest.resource.content.page.layout;
 
 import javax.ws.rs.core.MediaType;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -23,12 +22,6 @@ public class LayoutDescriptorResourceTest
     extends AbstractResourceTest
 {
     private LayoutDescriptorService layoutDescriptorService;
-
-    @Before
-    public void setup()
-    {
-        mockCurrentContextHttpRequest();
-    }
 
     @Override
     protected Object getResourceInstance()
@@ -63,8 +56,8 @@ public class LayoutDescriptorResourceTest
 
         Mockito.when( layoutDescriptorService.getByKey( key ) ).thenReturn( layoutDescriptor );
 
-        String jsonString = resource().path( "content/page/layout/descriptor" ).
-            queryParam( "key", "module-1.0.0:fancy-layout" ).get( String.class );
+        String jsonString = request().path( "content/page/layout/descriptor" ).
+            queryParam( "key", "module-1.0.0:fancy-layout" ).get().getAsString();
 
         assertJson( "get_by_key_success.json", jsonString );
     }
@@ -105,9 +98,9 @@ public class LayoutDescriptorResourceTest
 
         Mockito.when( layoutDescriptorService.getByModules( moduleKeys ) ).thenReturn( layoutDescriptors );
 
-        String jsonString = resource().path( "content/page/layout/descriptor/list/by_modules" ).
+        String jsonString = request().path( "content/page/layout/descriptor/list/by_modules" ).
             entity( readFromFile( "get_by_modules_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post( String.class );
+            post().getAsString();
 
         assertJson( "get_by_modules_success.json", jsonString );
     }

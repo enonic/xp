@@ -26,6 +26,16 @@ module app.browse.grid {
                             build(),
 
                         new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().
+                            setName("CompareStatus").
+                            setId("compareStatus").
+                            setField("compareContentResult.compareStatus").
+                            setFormatter(this.statusFormatter).
+                            setCssClass("status").
+                            setMinWidth(90).
+                            setMaxWidth(100).
+                            build(),
+
+                        new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().
                             setName("ModifiedTime").
                             setId("modifiedTime").
                             setField("content.modifiedTime").
@@ -33,15 +43,7 @@ module app.browse.grid {
                             setMinWidth(150).
                             setMaxWidth(170).
                             setFormatter(DateTimeFormatter.format).
-                            build() /*,
-
-                         new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().
-                         setName("CompareStatus").
-                         setId("compareStatus").
-                         setField("compareContentResult.compareStatus").
-                         setFormatter(this.statusFormatter).
-                         build(),  */
-
+                            build()
                     ]).prependClasses("content-grid")
             );
 
@@ -53,8 +55,7 @@ module app.browse.grid {
         }
 
         private statusFormatter(row: number, cell: number, value: any, columnDef: any, item: ContentSummaryAndCompareStatus) {
-
-            return api.content.CompareStatus[item.getCompareContentResult().compareStatus];
+            return api.content.CompareStatus[value];
         }
 
         private defaultNameFormatter(row: number, cell: number, value: any, columnDef: any, item: ContentSummaryAndCompareStatus) {

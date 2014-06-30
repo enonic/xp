@@ -17,7 +17,7 @@ module api.liveedit.text {
         private textComponent: TextComponent;
 
         constructor(builder: TextComponentViewBuilder) {
-            super(builder);
+            super(builder.setContextMenuActions(this.createTextContextMenuActions()));
             this.textComponent = builder.pageComponent;
         }
 
@@ -37,6 +37,14 @@ module api.liveedit.text {
 
         getTooltipViewer(): TextComponentViewer {
             return new TextComponentViewer();
+        }
+
+        private createTextContextMenuActions(): api.ui.Action[] {
+            var actions: api.ui.Action[] = [];
+            actions.push(new api.ui.Action('Edit').onExecuted(() => {
+                // TODO
+            }));
+            return actions;
         }
     }
 }

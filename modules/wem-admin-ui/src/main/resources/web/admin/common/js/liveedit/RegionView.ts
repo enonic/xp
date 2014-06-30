@@ -41,21 +41,27 @@ module api.liveedit {
 
         private region: Region;
 
-        private pageComponentViews: PageComponentView<PageComponent>[] = [];
+        private pageComponentViews: PageComponentView<PageComponent>[];
 
         private placeholder: RegionPlaceholder;
 
-        private itemViewAddedListeners: {(event: ItemViewAddedEvent) : void}[] = [];
+        private itemViewAddedListeners: {(event: ItemViewAddedEvent) : void}[];
 
-        private itemViewRemovedListeners: {(event: ItemViewRemovedEvent) : void}[] = [];
+        private itemViewRemovedListeners: {(event: ItemViewRemovedEvent) : void}[];
 
         constructor(builder: RegionViewBuilder) {
+
+            this.pageComponentViews = [];
+            this.itemViewAddedListeners = [];
+            this.itemViewRemovedListeners = [];
+
             super(new ItemViewBuilder().
                 setItemViewIdProducer(builder.parentView.getItemViewIdProducer()).
                 setType(RegionItemType.get()).
                 setElement(builder.element).
                 setParentElement(builder.parentElement).
-                setParentView(builder.parentView));
+                setParentView(builder.parentView).
+                setContextMenuActions(this.createRegionContextMenuActions()));
             this.setRegion(builder.region);
 
             this.parentView = builder.parentView;
@@ -72,6 +78,21 @@ module api.liveedit {
             //this.onDragEnter(this.handleDragEnter.bind(this));
             //this.onDragLeave(this.handleDragLeave.bind(this));
             //this.onDrop(this.handleDrop.bind(this));
+        }
+
+        private createRegionContextMenuActions() {
+            var actions: api.ui.Action[] = [];
+            actions.push(new api.ui.Action('Parent').onExecuted(() => {
+                var parentView: ItemView = this.getParentItemView();
+                if (parentView) {
+                    parentView.select();
+                }
+            }));
+            actions.push(new api.ui.Action('Empty').onExecuted(() => {
+                this.deselect();
+                this.empty();
+            }));
+            return actions;
         }
 
         // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
@@ -225,6 +246,10 @@ module api.liveedit {
             this.unregisterPageComponentView(pageComponentView);
         }
 
+        hasParentLayoutComponentView(): boolean {
+            return api.ObjectHelper.iFrameSafeInstanceOf(this.parentView, api.liveedit.layout.LayoutComponentView);
+        }
+
         refreshPlaceholder() {
 
             if (this.hasPageComponentViewDropZone()) {
@@ -243,7 +268,7 @@ module api.liveedit {
             }
         }
 
-        private countNonMovingPageComponentViews(): number {
+        countNonMovingPageComponentViews(): number {
             var count = 0;
             this.pageComponentViews.forEach((view: PageComponentView<PageComponent>)=> {
                 if (!view.isMoving()) {
@@ -273,14 +298,6 @@ module api.liveedit {
                 child = child.nextSibling;
             }
             return foundDropZone;
-        }
-
-        hidePlaceholder() {
-            this.placeholder.hide();
-        }
-
-        createPlaceholderForJQuerySortable(pageComponentView?: PageComponentView<PageComponent>): string {
-            return RegionView.createPlaceholderForJQuerySortable(this, pageComponentView);
         }
 
         empty() {
@@ -365,29 +382,6 @@ module api.liveedit {
                     this.doParsePageComponentViews(childElement)
                 }
             });
-        }
-
-        private static createPlaceholderForJQuerySortable(regionView: RegionView,
-                                                          pageComponentView?: PageComponentView<PageComponent>): string {
-
-            var html = '<div class="item-view-drop-zone">';
-
-            html += 'Drop component here ';
-
-            if (pageComponentView) {
-                var typeAndName: string = api.util.capitalize(pageComponentView.getType().getShortName()) + ': ' +
-                                          pageComponentView.getName();
-                var target: string = pageComponentView.getType().getShortName() + ': ' + pageComponentView.getName();
-
-                html += '<div style = "font-size: 11px;"> dragged ' + typeAndName + ' </div > ';
-            }
-            if (regionView) {
-                html += '<div style = "font-size: 11px;"> target region: ' + regionView.getRegionName() + ' </div > ';
-            }
-
-            html += '</div>';
-
-            return html;
         }
     }
 }

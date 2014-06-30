@@ -1,6 +1,6 @@
 module api.liveedit {
 
-    export class ItemType {
+    export class ItemType implements api.Equitable {
 
         static DATA_ATTRIBUTE = "live-edit-type";
 

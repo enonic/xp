@@ -24,6 +24,11 @@ public class Region
 
         for ( final PageComponent pageComponent : this.pageComponents )
         {
+            boolean layoutComponentWithinLayoutComponent = this.parent != null && pageComponent instanceof LayoutComponent;
+            if ( layoutComponentWithinLayoutComponent )
+            {
+                throw new IllegalArgumentException( "Having a LayoutComponent within a LayoutComponent is not allowed" );
+            }
             pageComponent.setParent( this );
         }
     }
@@ -46,6 +51,14 @@ public class Region
     public void setParent( LayoutComponent parent )
     {
         this.parent = parent;
+        for ( final PageComponent pageComponent : this.pageComponents )
+        {
+            boolean layoutComponentWithinLayoutComponent = this.parent != null && pageComponent instanceof LayoutComponent;
+            if ( layoutComponentWithinLayoutComponent )
+            {
+                throw new IllegalArgumentException( "Having a LayoutComponent within a LayoutComponent is not allowed" );
+            }
+        }
     }
 
     public int getIndex( final PageComponent pageComponent )

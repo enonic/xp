@@ -6,7 +6,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.elasticsearch.common.joda.time.DateTimeUtils;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -39,12 +38,6 @@ public class SiteResourceTest
 
     private final static Workspace WORKSPACE = Workspace.from( "workspace" );
 
-    @Before
-    public void setup()
-    {
-        mockCurrentContextHttpRequest();
-    }
-
     @After
     public void after()
     {
@@ -60,9 +53,9 @@ public class SiteResourceTest
         Mockito.when( this.siteService.create( Mockito.isA( CreateSiteParams.class ), Mockito.isA( Context.class ) ) ).thenThrow(
             new ContentNotFoundException( content.getId(), WORKSPACE ) );
 
-        resource().path( "content/site/create" ).
+        request().path( "content/site/create" ).
             entity( readFromFile( "create_site_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post( String.class );
+            post().getAsString();
     }
 
     @Test
@@ -74,9 +67,9 @@ public class SiteResourceTest
         Mockito.when( this.siteService.create( Mockito.isA( CreateSiteParams.class ), Mockito.isA( Context.class ) ) ).thenReturn(
             content );
 
-        String jsonString = resource().path( "content/site/create" ).
+        String jsonString = request().path( "content/site/create" ).
             entity( readFromFile( "create_site_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post( String.class );
+            post().getAsString();
 
         assertJson( "create_site_success.json", jsonString );
     }
@@ -90,9 +83,9 @@ public class SiteResourceTest
         Mockito.when( this.siteService.update( Mockito.isA( UpdateSiteParams.class ), Mockito.isA( Context.class ) ) ).thenThrow(
             new ContentNotFoundException( content.getId(), WORKSPACE ) );
 
-        String jsonString = resource().path( "content/site/update" ).
+        String jsonString = request().path( "content/site/update" ).
             entity( readFromFile( "update_site_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post( String.class );
+            post().getAsString();
 
         assertJson( "update_site_failure.json", jsonString );
     }
@@ -106,9 +99,9 @@ public class SiteResourceTest
         Mockito.when( this.siteService.update( Mockito.isA( UpdateSiteParams.class ), Mockito.isA( Context.class ) ) ).thenReturn(
             content );
 
-        String jsonString = resource().path( "content/site/update" ).
+        String jsonString = request().path( "content/site/update" ).
             entity( readFromFile( "update_site_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post( String.class );
+            post().getAsString();
 
         assertJson( "update_site_success.json", jsonString );
     }
@@ -122,9 +115,9 @@ public class SiteResourceTest
         Mockito.when( this.siteService.delete( Mockito.isA( ContentId.class ), Mockito.isA( Context.class ) ) ).thenThrow(
             new ContentNotFoundException( content.getId(), WORKSPACE ) );
 
-        resource().path( "content/site/delete" ).
+        request().path( "content/site/delete" ).
             entity( readFromFile( "delete_site_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post( String.class );
+            post().getAsString();
     }
 
     @Test
@@ -135,9 +128,9 @@ public class SiteResourceTest
 
         Mockito.when( this.siteService.delete( Mockito.isA( ContentId.class ), Mockito.isA( Context.class ) ) ).thenReturn( content );
 
-        String jsonString = resource().path( "content/site/delete" ).
+        String jsonString = request().path( "content/site/delete" ).
             entity( readFromFile( "delete_site_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post( String.class );
+            post().getAsString();
 
         assertJson( "delete_site_success.json", jsonString );
     }

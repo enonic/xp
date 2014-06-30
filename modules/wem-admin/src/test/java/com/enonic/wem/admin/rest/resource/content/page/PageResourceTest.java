@@ -2,7 +2,6 @@ package com.enonic.wem.admin.rest.resource.content.page;
 
 import javax.ws.rs.core.MediaType;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -31,12 +30,6 @@ public class PageResourceTest
 {
     private PageService pageService;
 
-    @Before
-    public void setup()
-    {
-        mockCurrentContextHttpRequest();
-    }
-
     @Override
     protected Object getResourceInstance()
     {
@@ -57,9 +50,9 @@ public class PageResourceTest
         Mockito.when( this.pageService.update( Mockito.isA( UpdatePageParams.class ), Mockito.isA( Context.class ) ) ).thenReturn(
             content );
 
-        String jsonString = resource().path( "content/page/update" ).
+        String jsonString = request().path( "content/page/update" ).
             entity( readFromFile( "update_page_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post( String.class );
+            post().getAsString();
 
         assertJson( "update_page_success.json", jsonString );
     }
@@ -73,9 +66,9 @@ public class PageResourceTest
         Mockito.when( this.pageService.update( Mockito.isA( UpdatePageParams.class ), Mockito.isA( Context.class ) ) ).thenThrow(
             new ContentNotFoundException( content.getId(), Workspace.from( "workspace" ) ) );
 
-        String jsonString = resource().path( "content/page/update" ).
+        String jsonString = request().path( "content/page/update" ).
             entity( readFromFile( "update_page_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post( String.class );
+            post().getAsString();
 
         assertJson( "update_page_failure.json", jsonString );
     }
@@ -89,9 +82,9 @@ public class PageResourceTest
         Mockito.when( this.pageService.create( Mockito.isA( CreatePageParams.class ), Mockito.isA( Context.class ) ) ).thenReturn(
             content );
 
-        String jsonString = resource().path( "content/page/create" ).
+        String jsonString = request().path( "content/page/create" ).
             entity( readFromFile( "update_page_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post( String.class );
+            post().getAsString();
 
         assertJson( "update_page_success.json", jsonString );
     }

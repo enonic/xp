@@ -21,6 +21,8 @@ module api.liveedit {
 
         positionIndex: number;
 
+        contextMenuActions: api.ui.Action[];
+
         /**
          * Optional. The ItemViewIdProducer of parentRegionView will be used if not set.
          */
@@ -58,6 +60,11 @@ module api.liveedit {
             this.positionIndex = value;
             return this;
         }
+
+        setContextMenuActions(actions: api.ui.Action[]): PageComponentViewBuilder<PAGE_COMPONENT> {
+            this.contextMenuActions = actions;
+            return this;
+        }
     }
 
     export class PageComponentView<PAGE_COMPONENT extends PageComponent> extends ItemView {
@@ -79,13 +86,15 @@ module api.liveedit {
             this.moving = false;
 
             super(new ItemViewBuilder().
-                setItemViewIdProducer(builder.itemViewProducer
-                    ? builder.itemViewProducer
-                    : builder.parentRegionView.getItemViewIdProducer()).
-                setType(builder.type).
-                setElement(builder.element).
-                setParentView(builder.parentRegionView).
-                setParentElement(builder.parentElement));
+                    setItemViewIdProducer(builder.itemViewProducer
+                        ? builder.itemViewProducer
+                        : builder.parentRegionView.getItemViewIdProducer()).
+                    setType(builder.type).
+                    setElement(builder.element).
+                    setParentView(builder.parentRegionView).
+                    setParentElement(builder.parentElement).
+                    setContextMenuActions(this.createPageComponentContextMenuActions(builder.contextMenuActions))
+            );
 
             this.parentRegionView = builder.parentRegionView;
             this.setPageComponent(builder.pageComponent);
@@ -96,6 +105,36 @@ module api.liveedit {
             //this.onDragStart(this.handleDragStart2.bind(this));
             //this.onDrag(this.handleDrag.bind(this));
             //this.onDragEnd(this.handleDragEnd.bind(this));
+        }
+
+        private createPageComponentContextMenuActions(actions: api.ui.Action[]): api.ui.Action[] {
+            var actions = actions || [];
+            actions.push(new api.ui.Action("Parent").onExecuted(() => {
+                var parentView: ItemView = this.getParentItemView();
+                if (parentView) {
+                    parentView.select();
+                }
+            }));
+            actions.push(new api.ui.Action("Empty").onExecuted(() => {
+                this.displayPlaceholder();
+                this.select();
+
+                new PageComponentResetEvent(this).fire();
+            }));
+            actions.push(new api.ui.Action("Remove").onExecuted(() => {
+                this.deselect();
+                this.getParentItemView().removePageComponentView(this);
+
+                new PageComponentRemoveEvent(this).fire();
+            }));
+            actions.push(new api.ui.Action("Duplicate").onExecuted(() => {
+                var duplicatedPageComponent = <PAGE_COMPONENT> this.getPageComponent().duplicateComponent();
+                var duplicatedView = this.duplicate(duplicatedPageComponent);
+                duplicatedView.select();
+
+                new PageComponentDuplicateEvent(this, duplicatedView).fire();
+            }));
+            return actions;
         }
 
         // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
@@ -160,24 +199,13 @@ module api.liveedit {
             return this.parentRegionView;
         }
 
-        select(clickPosition?: Position) {
+        select(clickPosition ?: Position) {
             super.select(clickPosition);
             new PageComponentSelectEvent(this).fire();
         }
 
-        handleDragStart() {
-            this.moving = true;
-            // TODO: Seems to be unused - try to remove this when LE have become more stable
-            if (this.isSelected()) {
-                this.getEl().setData("live-edit-selected-on-sort-start", "true");
-            }
-            else {
-                this.getEl().setData("live-edit-selected-on-sort-start", "false");
-            }
-        }
-
-        handleDragStop() {
-            this.moving = false;
+        setMoving(value: boolean) {
+            this.moving = value;
         }
 
         isMoving(): boolean {
@@ -200,6 +228,7 @@ module api.liveedit {
 
         moveToRegion(toRegionView: RegionView, precedingComponentView: PageComponentView<PageComponent>) {
 
+            this.moving = false;
             var precedingComponentIndex: number = -1;
             var precedingComponent: PageComponent = null;
             if (precedingComponentView) {
@@ -215,7 +244,7 @@ module api.liveedit {
             var uniqueName = toRegionView.getRegion().ensureUniqueComponentName(this.getPageComponent().getName());
             this.getPageComponent().setName(uniqueName);
 
-            // Remove...
+            // Unregister from previous region...
             // View
             this.parentRegionView.unregisterPageComponentView(this);
             // Data
@@ -223,21 +252,14 @@ module api.liveedit {
             // Element
             this.unregisterFromParentElement();
 
-            // Add...
+            // Register with new region...
             // Register Element only, since it's already added in DOM.
             toRegionView.registerChildElement(this);
             // Data
             toRegionView.getRegion().addComponentAfter(this.pageComponent, precedingComponent);
             // View
             toRegionView.registerPageComponentView(this, indexInNewParent);
-        }
-
-        addPadding() {
-            this.addClass("live-edit-component-padding");
-        }
-
-        removePadding() {
-            this.removeClass("live-edit-component-padding");
+            this.parentRegionView = toRegionView;
         }
 
         onItemViewAdded(listener: (event: ItemViewAddedEvent) => void) {
@@ -260,7 +282,8 @@ module api.liveedit {
             });
         }
 
-        static findParentRegionViewHTMLElement(htmlElement: HTMLElement): HTMLElement {
+        static
+        findParentRegionViewHTMLElement(htmlElement: HTMLElement): HTMLElement {
 
             var parentItemView = ItemView.findParentItemViewAsHTMLElement(htmlElement);
             while (!RegionView.isRegionViewFromHTMLElement(parentItemView)) {
@@ -269,7 +292,8 @@ module api.liveedit {
             return parentItemView;
         }
 
-        static findPrecedingComponentItemViewId(htmlElement: HTMLElement): ItemViewId {
+        static
+        findPrecedingComponentItemViewId(htmlElement: HTMLElement): ItemViewId {
 
             var previousItemView = ItemView.findPreviousItemView(htmlElement);
             if (!previousItemView) {

@@ -1,26 +1,24 @@
 package com.enonic.wem.admin.rest.resource;
 
 import java.net.URL;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.jboss.resteasy.core.Dispatcher;
+import org.jboss.resteasy.mock.MockDispatcherFactory;
+import org.junit.Before;
 import org.mockito.Mockito;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
-import com.sun.jersey.api.core.DefaultResourceConfig;
-import com.sun.jersey.test.framework.AppDescriptor;
-import com.sun.jersey.test.framework.JerseyTest;
-import com.sun.jersey.test.framework.LowLevelAppDescriptor;
-import com.sun.jersey.test.framework.spi.container.inmemory.InMemoryTestContainerFactory;
 
 import junit.framework.Assert;
 
 import com.enonic.wem.admin.json.ObjectMapperHelper;
+import com.enonic.wem.admin.rest.multipart.MultipartFormReader;
 import com.enonic.wem.admin.rest.provider.JsonObjectProvider;
 import com.enonic.wem.admin.rest.provider.JsonSerializableProvider;
 import com.enonic.wem.core.web.servlet.ServletRequestHolder;
@@ -28,36 +26,29 @@ import com.enonic.wem.core.web.servlet.ServletRequestHolder;
 import static org.junit.Assert.*;
 
 public abstract class AbstractResourceTest
-    extends JerseyTest
 {
-    public AbstractResourceTest()
+    private Dispatcher dispatcher;
+
+    @Before
+    public final void setUp()
+        throws Exception
     {
-        super( new InMemoryTestContainerFactory() );
+        this.dispatcher = MockDispatcherFactory.createDispatcher();
+        this.dispatcher.getProviderFactory().register( JsonObjectProvider.class );
+        this.dispatcher.getProviderFactory().register( JsonSerializableProvider.class );
+        this.dispatcher.getProviderFactory().register( MultipartFormReader.class );
+        this.dispatcher.getRegistry().addSingletonResource( getResourceInstance() );
+
+        mockCurrentContextHttpRequest();
     }
 
-    @Override
-    protected AppDescriptor configure()
-    {
-        final DefaultResourceConfig config = new DefaultResourceConfig();
-        configure( config );
-
-        return new LowLevelAppDescriptor.Builder( config ).build();
-    }
-
-    protected void mockCurrentContextHttpRequest()
+    private void mockCurrentContextHttpRequest()
     {
         final HttpServletRequest req = Mockito.mock( HttpServletRequest.class );
         Mockito.when( req.getScheme() ).thenReturn( "http" );
         Mockito.when( req.getServerName() ).thenReturn( "localhost" );
         Mockito.when( req.getLocalPort() ).thenReturn( 80 );
         ServletRequestHolder.setRequest( req );
-    }
-
-    private void configure( final DefaultResourceConfig config )
-    {
-        config.getClasses().add( JsonObjectProvider.class );
-        config.getClasses().add( JsonSerializableProvider.class );
-        config.getSingletons().add( getResourceInstance() );
     }
 
     protected abstract Object getResourceInstance();
@@ -100,32 +91,22 @@ public abstract class AbstractResourceTest
         return mapper.writerWithDefaultPrettyPrinter().writeValueAsString( value );
     }
 
-    public static void assertUnorderedListEquals( Object[] a1, List a2 )
+    protected final void assertUnorderedListEquals( Object[] a1, List a2 )
     {
         assertArrayEquals( a1, a2.toArray() );
     }
 
-    public static void assertListEquals( Object[] a1, List a2 ) {
+    protected final void assertListEquals( Object[] a1, List a2 )
+    {
         assertArrayEquals( a1, a2.toArray() );
     }
 
-    public static void assertUnorderedArrayEquals( Object[] a1, Object[] a2 )
-    {
-        Object[] b1 = a1.clone();
-        Object[] b2 = a2.clone();
-
-        Arrays.sort( b1 );
-        Arrays.sort( b2 );
-
-        assertArrayEquals( b1, b2 );
-    }
-
-    public static void assertArrayEquals( Object[] a1, Object[] a2 )
+    protected final void assertArrayEquals( Object[] a1, Object[] a2 )
     {
         Assert.assertEquals( arrayToString( a1 ), arrayToString( a2 ) );
     }
 
-    public static String arrayToString( Object[] a )
+    protected final String arrayToString( Object[] a )
     {
         final StringBuilder result = new StringBuilder( "[" );
 
@@ -141,5 +122,10 @@ public abstract class AbstractResourceTest
         result.append( "]" );
 
         return result.toString();
+    }
+
+    protected final RestRequestBuilder request()
+    {
+        return new RestRequestBuilder( this.dispatcher );
     }
 }

@@ -1,6 +1,5 @@
 package com.enonic.wem.admin.rest.resource.blob;
 
-import java.io.InputStream;
 import java.time.Instant;
 import java.util.List;
 
@@ -14,11 +13,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.fileupload.FileItem;
+
 import com.google.common.collect.Lists;
-import com.sun.jersey.multipart.FormDataBodyPart;
-import com.sun.jersey.multipart.FormDataMultiPart;
 
 import com.enonic.wem.admin.json.JsonResult;
+import com.enonic.wem.admin.rest.multipart.MultipartForm;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.blob.BlobService;
@@ -32,20 +32,23 @@ public final class BlobResource
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Path("upload")
-    public JsonResult upload( final FormDataMultiPart formDataMultiPart )
+    public JsonResult upload( final MultipartForm form )
         throws Exception
     {
-        final List<UploadItem> items = Lists.newArrayList();
-
-        final List<FormDataBodyPart> fields = formDataMultiPart.getFields( "file" );
-        if ( fields != null )
+        try
         {
-            for ( FormDataBodyPart field : fields )
+            final List<UploadItem> items = Lists.newArrayList();
+            for ( final FileItem file : form )
             {
-                upload( items, field.getValueAs( InputStream.class ), field );
+                upload( items, file );
             }
+
+            return new UploadResult( items );
         }
-        return new UploadResult( items );
+        finally
+        {
+            form.delete();
+        }
     }
 
     @GET
@@ -54,25 +57,21 @@ public final class BlobResource
         throws Exception
     {
         final Blob blob = blobService.get( new BlobKey( id ) );
-        MediaType mediaType;
-        try
-        {
-            mediaType = MediaType.valueOf( "image/png" );
-        }
-        catch ( IllegalArgumentException e )
-        {
-            mediaType = MediaType.WILDCARD_TYPE;
-        }
-        return Response.ok( blob.getStream(), mediaType ).build();
+        return Response.ok( blob.getStream(), "image/png" ).build();
     }
 
-    private void upload( final List<UploadItem> items, final InputStream fileInputStream, final FormDataBodyPart formDataBodyPart )
+    private void upload( final List<UploadItem> items, final FileItem file )
         throws Exception
     {
-        final String name = formDataBodyPart.getContentDisposition().getFileName();
-        final String mediaType = formDataBodyPart.getMediaType().toString();
+        if ( file.isFormField() )
+        {
+            return;
+        }
 
-        final Blob blob = blobService.create( fileInputStream );
+        final String name = file.getName();
+        final String mediaType = file.getContentType();
+
+        final Blob blob = blobService.create( file.getInputStream() );
         final UploadItem item = UploadItem.newUploadItem().
             mimeType( mediaType ).
             size( blob.getLength() ).

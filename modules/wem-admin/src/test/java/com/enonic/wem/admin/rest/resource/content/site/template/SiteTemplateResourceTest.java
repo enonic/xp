@@ -8,22 +8,16 @@ import java.util.List;
 
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.io.FileUtils;
-import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.core.header.FormDataContentDisposition;
-import com.sun.jersey.multipart.FormDataBodyPart;
-import com.sun.jersey.multipart.FormDataMultiPart;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
+import com.enonic.wem.api.Name;
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageTemplate;
@@ -54,6 +48,9 @@ import static org.junit.Assert.*;
 public class SiteTemplateResourceTest
     extends AbstractResourceTest
 {
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
+
     private SiteTemplateService siteTemplateService;
 
     private Path tempDir;
@@ -72,21 +69,7 @@ public class SiteTemplateResourceTest
     public void setup()
         throws IOException
     {
-        mockCurrentContextHttpRequest();
-        tempDir = Files.createTempDirectory( "wemtest" );
-    }
-
-    @After
-    public void after()
-    {
-        try
-        {
-            FileUtils.deleteDirectory( tempDir.toFile() );
-        }
-        catch ( IOException e )
-        {
-            e.printStackTrace();
-        }
+        this.tempDir = Files.createTempDirectory( "wemtest" );
     }
 
     @Test
@@ -98,7 +81,7 @@ public class SiteTemplateResourceTest
 
         Mockito.when( this.siteTemplateService.getSiteTemplates() ).thenReturn( siteTemplates );
 
-        String resultJson = resource().path( "content/site/template/list" ).get( String.class );
+        String resultJson = request().path( "content/site/template/list" ).get().getAsString();
 
         assertJson( "list_site_template_success.json", resultJson );
     }
@@ -112,7 +95,7 @@ public class SiteTemplateResourceTest
 
         Mockito.when( this.siteTemplateService.getSiteTemplates() ).thenReturn( siteTemplates );
 
-        String resultJson = resource().path( "content/site/template/tree" ).get( String.class );
+        String resultJson = request().path( "content/site/template/tree" ).get().getAsString();
 
         assertJson( "tree_site_template_success.json", resultJson );
     }
@@ -125,9 +108,9 @@ public class SiteTemplateResourceTest
         final SiteTemplateKey siteTemplateKey = siteTemplate.getKey();
         Mockito.when( siteTemplateService.getSiteTemplate( Mockito.eq( siteTemplateKey ) ) ).thenReturn( siteTemplate );
 
-        String resultJson = resource().path( "content/site/template/tree" ).
+        String resultJson = request().path( "content/site/template/tree" ).
             queryParam( "parentId", "name-1.0.0" ).
-            get( String.class );
+            get().getAsString();
 
         assertJson( "tree_page_templates_success.json", resultJson );
     }
@@ -136,8 +119,8 @@ public class SiteTemplateResourceTest
     public void testDeleteSiteTemplate()
         throws Exception
     {
-        String response = resource().path( "content/site/template/delete" ).entity( readFromFile( "delete_site_template_params.json" ),
-                                                                                    MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+        String response = request().path( "content/site/template/delete" ).entity( readFromFile( "delete_site_template_params.json" ),
+                                                                                   MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
         assertJson( "delete_site_template_success.json", response );
     }
 
@@ -147,8 +130,8 @@ public class SiteTemplateResourceTest
     {
         Mockito.doThrow( new NoSiteTemplateExistsException( SiteTemplateKey.from( "sitetemplate-1.0.0" ) ) ).when(
             this.siteTemplateService ).deleteSiteTemplate( Mockito.isA( SiteTemplateKey.class ) );
-        String response = resource().path( "content/site/template/delete" ).entity( readFromFile( "delete_site_template_params.json" ),
-                                                                                    MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+        String response = request().path( "content/site/template/delete" ).entity( readFromFile( "delete_site_template_params.json" ),
+                                                                                   MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
         assertJson( "delete_site_template_failure.json", response );
     }
 
@@ -182,10 +165,10 @@ public class SiteTemplateResourceTest
             build();
 
         Mockito.when( siteTemplateService.getSiteTemplate( Mockito.isA( SiteTemplateKey.class ) ) ).thenReturn( siteTemplate );
-        String response = resource().
+        String response = request().
             path( "content/site/template" ).
             queryParam( "siteTemplateKey", siteTemplate.getKey().toString() ).
-            get( String.class );
+            get().getAsString();
         assertJson( "get_site_template_by_key_success.json", response );
     }
 
@@ -196,22 +179,20 @@ public class SiteTemplateResourceTest
         final SiteTemplateKey siteTemplate = SiteTemplateKey.from( "blueman-1.0.0" );
         Mockito.when( siteTemplateService.getSiteTemplate( Mockito.isA( SiteTemplateKey.class ) ) ).thenThrow(
             new SiteTemplateNotFoundException( siteTemplate ) );
-        resource().
+        request().
             path( "content/site/template" ).
             queryParam( "siteTemplateKey", siteTemplate.toString() ).
-            get( String.class );
+            get().getAsString();
     }
 
     @Test(expected = InvalidZipFileException.class)
     public void import_site_template_exception()
         throws Exception
     {
-        final WebResource webResource = resource().path( "content/site/template/import" );
-        final FormDataMultiPart mp = new FormDataMultiPart();
-        final FormDataContentDisposition file = FormDataContentDisposition.name( "file" ).fileName( "template-1.0.0.zip" ).build();
-        mp.bodyPart( new FormDataBodyPart( file, "INVALID_ZIP_CONTENT" ) );
-
-        final String jsonString = webResource.type( MediaType.MULTIPART_FORM_DATA_TYPE ).post( String.class, mp );
+        final String jsonString = request().
+            path( "content/site/template/import" ).
+            multipart( "file", "template-1.0.0.zip", "INVALID_ZIP_CONTENT".getBytes(), MediaType.TEXT_PLAIN_TYPE ).
+            post().getAsString();
 
         assertJson( "import_site_template_exception.json", jsonString );
     }
@@ -245,12 +226,8 @@ public class SiteTemplateResourceTest
             addPageTemplate( pageTemplate ).
             build();
 
-        Mockito.when( this.siteTemplateService.createSiteTemplate( Mockito.isA( CreateSiteTemplateParams.class ) ) ).thenAnswer( new Answer()
-        {
-            @Override
-            public Object answer( final InvocationOnMock invocation )
-                throws Throwable
-            {
+        Mockito.when( this.siteTemplateService.createSiteTemplate( Mockito.isA( CreateSiteTemplateParams.class ) ) ).thenAnswer(
+            invocation -> {
                 final CreateSiteTemplateParams command = (CreateSiteTemplateParams) invocation.getArguments()[0];
                 assertEquals( "Demo site template", command.getDescription() );
                 assertEquals( "Blueman Site Template", command.getDisplayName() );
@@ -264,17 +241,16 @@ public class SiteTemplateResourceTest
                 assertUnorderedListEquals( new String[]{"module1-1.0.0", "module2-1.0.0"}, command.getModules().getList() );
 
                 // ContentTypeFilter
-                final ContentTypeFilter filter = command.getContentTypeFilter();
+                final ContentTypeFilter filter1 = command.getContentTypeFilter();
                 assertListEquals( new String[]{"image", "com.enonic.tweet", "system.folder", "com.enonic.article", "com.enonic.employee"},
-                                  parseContentTypeNames( filter.iterator() ) );
+                                  parseContentTypeNames( filter1.iterator() ) );
 
                 return siteTemplate;
-            }
-        } );
+            } );
 
-        String jsonString = resource().path( "content/site/template/create" ).
+        String jsonString = request().path( "content/site/template/create" ).
             entity( readFromFile( "create_site_template_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post( String.class );
+            post().getAsString();
 
         assertJson( "create_site_template_success.json", jsonString );
     }
@@ -308,36 +284,24 @@ public class SiteTemplateResourceTest
             addPageTemplate( pageTemplate ).
             build();
 
-        Mockito.when( this.siteTemplateService.updateSiteTemplate( Mockito.isA( UpdateSiteTemplateParams.class ) ) ).thenAnswer( new Answer()
-        {
-            @Override
-            public Object answer( final InvocationOnMock invocation )
-                throws Throwable
-            {
+        Mockito.when( this.siteTemplateService.updateSiteTemplate( Mockito.isA( UpdateSiteTemplateParams.class ) ) ).thenAnswer(
+            invocation -> {
                 final UpdateSiteTemplateParams command = (UpdateSiteTemplateParams) invocation.getArguments()[0];
                 assertEquals( SiteTemplateKey.from( "blueman-1.0.0" ), command.getKey() );
 
                 return siteTemplate;
-            }
-        } );
+            } );
 
-        String jsonString = resource().path( "content/site/template/update" ).
+        String jsonString = request().path( "content/site/template/update" ).
             entity( readFromFile( "update_site_template_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post( String.class );
+            post().getAsString();
 
         assertJson( "update_site_template_success.json", jsonString );
     }
 
     private List<String> parseContentTypeNames( Iterator<ContentTypeName> iterator )
     {
-        return Lists.transform( Lists.newArrayList( iterator ), new Function<ContentTypeName, String>()
-        {
-            @Override
-            public String apply( final ContentTypeName name )
-            {
-                return name.toString();
-            }
-        } );
+        return Lists.transform( Lists.newArrayList( iterator ), Name::toString );
     }
 
     @Test
@@ -350,14 +314,11 @@ public class SiteTemplateResourceTest
         final SiteTemplateExporter siteTemplateExporter = new SiteTemplateExporter();
         final Path exportedSiteTemplateFile = siteTemplateExporter.exportToZip( siteTemplate, tempDir );
 
-        final WebResource webResource = resource().path( "content/site/template/import" );
-        final FormDataMultiPart mp = new FormDataMultiPart();
-        final FormDataContentDisposition file = FormDataContentDisposition.name( "file" ).fileName( "name-1.0.0.zip" ).build();
         final byte[] fileData = Files.readAllBytes( exportedSiteTemplateFile );
-        final FormDataBodyPart p = new FormDataBodyPart( file, fileData, MediaType.APPLICATION_OCTET_STREAM_TYPE );
-        mp.bodyPart( p );
-
-        final String jsonString = webResource.type( MediaType.MULTIPART_FORM_DATA_TYPE ).post( String.class, mp );
+        final String jsonString = request().
+            path( "content/site/template/import" ).
+            multipart( "file", "name-1.0.0.zip", fileData, MediaType.APPLICATION_OCTET_STREAM_TYPE ).
+            post().getAsString();
 
         assertJson( "import_site_template_success.json", jsonString );
     }
@@ -369,10 +330,9 @@ public class SiteTemplateResourceTest
         final SiteTemplate siteTemplate = createSiteTemplate();
         Mockito.when( siteTemplateService.getSiteTemplate( Mockito.isA( SiteTemplateKey.class ) ) ).thenReturn( siteTemplate );
 
-        final WebResource webResource = resource().
+        final byte[] response = request().
             path( "content/site/template/export" ).
-            queryParam( "siteTemplateKey", "name-1.0.0" );
-        final byte[] response = webResource.get( byte[].class );
+            queryParam( "siteTemplateKey", "name-1.0.0" ).get().getData();
 
         final SiteTemplateExporter exporter = new SiteTemplateExporter();
         final Path zipFilePath = Files.write( tempDir.resolve( "name-1.0.0.zip" ), response );

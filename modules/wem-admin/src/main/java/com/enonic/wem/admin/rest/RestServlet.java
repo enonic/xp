@@ -1,30 +1,28 @@
 package com.enonic.wem.admin.rest;
 
 import java.io.IOException;
-import java.util.Map;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.ext.Provider;
+
+import org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
-import com.sun.jersey.api.core.DefaultResourceConfig;
-import com.sun.jersey.api.core.ResourceConfig;
-import com.sun.jersey.spi.container.WebApplication;
-import com.sun.jersey.spi.container.servlet.ServletContainer;
-import com.sun.jersey.spi.container.servlet.WebConfig;
 
 import com.enonic.wem.admin.rest.exception.ConflictExceptionMapper;
 import com.enonic.wem.admin.rest.exception.DefaultExceptionMapper;
 import com.enonic.wem.admin.rest.exception.IllegalArgumentExceptionMapper;
 import com.enonic.wem.admin.rest.exception.JsonMappingExceptionMapper;
 import com.enonic.wem.admin.rest.exception.NotFoundExceptionMapper;
+import com.enonic.wem.admin.rest.multipart.MultipartFormReader;
 import com.enonic.wem.admin.rest.provider.JsonObjectProvider;
 import com.enonic.wem.admin.rest.provider.JsonSerializableProvider;
+import com.enonic.wem.admin.rest.provider.RenderedImageProvider;
 import com.enonic.wem.admin.rest.resource.auth.AuthResource;
 import com.enonic.wem.admin.rest.resource.blob.BlobResource;
 import com.enonic.wem.admin.rest.resource.content.ContentAttachmentResource;
@@ -53,45 +51,17 @@ import com.enonic.wem.core.web.servlet.ServletRequestHolder;
 
 @Singleton
 public final class RestServlet
-    extends HttpServlet
+    extends HttpServletDispatcher
 {
-    private final class Container
-        extends ServletContainer
-    {
-        @Override
-        protected ResourceConfig getDefaultResourceConfig( final Map<String, Object> props, final WebConfig wc )
-            throws ServletException
-        {
-            RestServlet.this.config.getProperties().putAll( props );
-            return RestServlet.this.config;
-        }
-
-        @Override
-        protected void initiate( final ResourceConfig rc, final WebApplication wa )
-        {
-            RestServlet.this.configure();
-            wa.initiate( rc );
-        }
-    }
-
-    private final DefaultResourceConfig config;
-
     @Inject
     protected Injector injector;
-
-    private final Container container;
-
-    public RestServlet()
-    {
-        this.config = new DefaultResourceConfig();
-        this.container = new Container();
-    }
 
     @Override
     public void init( final ServletConfig config )
         throws ServletException
     {
-        this.container.init( config );
+        super.init( config );
+        configure();
     }
 
     @Override
@@ -101,7 +71,7 @@ public final class RestServlet
         try
         {
             ServletRequestHolder.setRequest( req );
-            this.container.service( req, resp );
+            super.service( req, resp );
         }
         finally
         {
@@ -109,15 +79,17 @@ public final class RestServlet
         }
     }
 
-    @Override
-    public void destroy()
-    {
-        this.container.destroy();
-    }
-
     private void addSingleton( final Class<?> type )
     {
-        this.config.getSingletons().add( this.injector.getInstance( type ) );
+        final Object instance = this.injector.getInstance( type );
+        if ( type.getAnnotation( Provider.class ) != null )
+        {
+            getDispatcher().getProviderFactory().register( instance );
+        }
+        else
+        {
+            getDispatcher().getRegistry().addSingletonResource( instance );
+        }
     }
 
     private void configure()
@@ -160,5 +132,8 @@ public final class RestServlet
         addSingleton( JsonMappingExceptionMapper.class );
         addSingleton( NotFoundExceptionMapper.class );
         addSingleton( ConflictExceptionMapper.class );
+
+        addSingleton( MultipartFormReader.class );
+        addSingleton( RenderedImageProvider.class );
     }
 }

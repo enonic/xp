@@ -30,33 +30,7 @@ public class ModuleResourceTest
 {
     private ModuleService moduleService;
 
-    private Path tempDir;
-
     private BundleContext bundleContext;
-
-    @Before
-    public void setup()
-        throws IOException
-    {
-        mockCurrentContextHttpRequest();
-        tempDir = Files.createTempDirectory( "wemtest" );
-    }
-
-    @After
-    public void after()
-    {
-        try
-        {
-            if ( tempDir != null )
-            {
-                FileUtils.deleteDirectory( tempDir.toFile() );
-            }
-        }
-        catch ( IOException e )
-        {
-            e.printStackTrace();
-        }
-    }
 
     @Test
     public void get_module_list()
@@ -65,9 +39,9 @@ public class ModuleResourceTest
         final Module module = createModule();
         Mockito.when( this.moduleService.getAllModules() ).thenReturn( Modules.from( module ) );
 
-        String response = resource().
+        String response = request().
             path( "module/list" ).
-            get( String.class );
+            get().getAsString();
         assertJson( "get_module_list_success.json", response );
     }
 
@@ -78,10 +52,10 @@ public class ModuleResourceTest
         final Module module = createModule();
         Mockito.when( this.moduleService.getModule( Mockito.isA( ModuleKey.class ) ) ).thenReturn( module );
 
-        String response = resource().
+        String response = request().
             path( "module" ).
             queryParam( "moduleKey", "testmodule-1.0.0" ).
-            get( String.class );
+            get().getAsString();
         assertJson( "get_module_by_key_success.json", response );
     }
 
@@ -92,10 +66,10 @@ public class ModuleResourceTest
         final Module module = createModule();
         Mockito.when( this.moduleService.getModule( Mockito.isA( ModuleKey.class ) ) ).thenReturn( module );
 
-        resource().
+        request().
             path( "module/start" ).
-            type( MediaType.APPLICATION_JSON_TYPE ).
-            post( "{\"key\":[\"testmodule-1.0.0\"]}" );
+            entity( "{\"key\":[\"testmodule-1.0.0\"]}", MediaType.APPLICATION_JSON_TYPE ).
+            post();
 
         Mockito.verify( module.getBundle() ).start();
     }
@@ -107,10 +81,10 @@ public class ModuleResourceTest
         final Module module = createModule();
         Mockito.when( this.moduleService.getModule( Mockito.isA( ModuleKey.class ) ) ).thenReturn( module );
 
-        resource().
+        request().
             path( "module/stop" ).
-            type( MediaType.APPLICATION_JSON_TYPE ).
-            post( "{\"key\":[\"testmodule-1.0.0\"]}" );
+            entity( "{\"key\":[\"testmodule-1.0.0\"]}", MediaType.APPLICATION_JSON_TYPE ).
+            post();
 
         Mockito.verify( module.getBundle() ).stop();
     }
@@ -122,10 +96,10 @@ public class ModuleResourceTest
         final Module module = createModule();
         Mockito.when( this.moduleService.getModule( Mockito.isA( ModuleKey.class ) ) ).thenReturn( module );
 
-        resource().
+        request().
             path( "module/update" ).
-            type( MediaType.APPLICATION_JSON_TYPE ).
-            post( "{\"key\":[\"testmodule-1.0.0\"]}" );
+            entity( "{\"key\":[\"testmodule-1.0.0\"]}", MediaType.APPLICATION_JSON_TYPE ).
+            post();
 
         Mockito.verify( module.getBundle() ).update();
     }
@@ -137,10 +111,10 @@ public class ModuleResourceTest
         final Module module = createModule();
         Mockito.when( this.moduleService.getModule( Mockito.isA( ModuleKey.class ) ) ).thenReturn( module );
 
-        resource().
+        request().
             path( "module/uninstall" ).
-            type( MediaType.APPLICATION_JSON_TYPE ).
-            post( "{\"key\":[\"testmodule-1.0.0\"]}" );
+            entity( "{\"key\":[\"testmodule-1.0.0\"]}", MediaType.APPLICATION_JSON_TYPE ).
+            post();
 
         Mockito.verify( module.getBundle() ).uninstall();
     }
@@ -149,10 +123,10 @@ public class ModuleResourceTest
     public void install_module()
         throws Exception
     {
-        resource().
+        request().
             path( "module/install" ).
-            type( MediaType.APPLICATION_JSON_TYPE ).
-            post( "{\"url\":\"http://some.host/some.path\"}" );
+            entity( "{\"url\":\"http://some.host/some.path\"}", MediaType.APPLICATION_JSON_TYPE ).
+            post();
 
         Mockito.verify( this.bundleContext ).installBundle( "http://some.host/some.path" );
     }
@@ -190,5 +164,4 @@ public class ModuleResourceTest
 
         return resource;
     }
-
 }

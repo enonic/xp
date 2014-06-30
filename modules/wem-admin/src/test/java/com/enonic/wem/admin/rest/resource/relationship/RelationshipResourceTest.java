@@ -3,13 +3,11 @@ package com.enonic.wem.admin.rest.resource.relationship;
 import javax.ws.rs.core.MediaType;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.sun.jersey.api.client.UniformInterfaceException;
-
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
+import com.enonic.wem.admin.rest.resource.MockRestResponse;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.relationship.CreateRelationshipParams;
 import com.enonic.wem.api.relationship.RelationshipId;
@@ -30,12 +28,6 @@ public class RelationshipResourceTest
 {
     private RelationshipService relationshipService;
 
-    @Before
-    public void setup()
-    {
-        mockCurrentContextHttpRequest();
-    }
-
     @Test
     public void get_from_content_with_one_relationship()
         throws Exception
@@ -48,7 +40,7 @@ public class RelationshipResourceTest
 
         Mockito.when( this.relationshipService.getAll( isA( ContentId.class ) ) ).thenReturn( relationships );
 
-        String result = resource().path( "relationship" ).queryParam( "fromContent", "111" ).get( String.class );
+        String result = request().path( "relationship" ).queryParam( "fromContent", "111" ).get().getAsString();
 
         assertJson( "get_relationship.json", result );
     }
@@ -67,7 +59,7 @@ public class RelationshipResourceTest
 
         Mockito.when( this.relationshipService.getAll( isA( ContentId.class ) ) ).thenReturn( relationships );
 
-        String result = resource().path( "relationship" ).queryParam( "fromContent", "111" ).get( String.class );
+        String result = request().path( "relationship" ).queryParam( "fromContent", "111" ).get().getAsString();
 
         assertJson( "get_relationships.json", result );
     }
@@ -85,8 +77,8 @@ public class RelationshipResourceTest
             }
         } );
 
-        String result = resource().path( "relationship/create" ).
-            entity( readFromFile( "create_relationship_params.json" ), MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+        String result = request().path( "relationship/create" ).
+            entity( readFromFile( "create_relationship_params.json" ), MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
 
         assertJson( "create_relationship.json", result );
     }
@@ -95,8 +87,8 @@ public class RelationshipResourceTest
     public void update_success()
         throws Exception
     {
-        String result = resource().path( "relationship/update" ).entity( readFromFile( "update_relationship_params.json" ),
-                                                                         MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+        String result = request().path( "relationship/update" ).entity( readFromFile( "update_relationship_params.json" ),
+                                                                        MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
 
         assertJson( "update_relationship.json", result );
     }
@@ -116,21 +108,14 @@ public class RelationshipResourceTest
 
         Mockito.doThrow( exception ).when( this.relationshipService ).update( isA( UpdateRelationshipParams.class ) );
 
-        try
-        {
-            resource().path( "relationship/update" ).entity( readFromFile( "update_relationship_params.json" ),
-                                                             MediaType.APPLICATION_JSON_TYPE ).post( String.class );
-            Assert.assertFalse( "Exception should've been thrown by this time", true );
-        }
-        catch ( UniformInterfaceException e )
-        {
-            Assert.assertEquals( 404, e.getResponse().getStatus() );
-            Assert.assertEquals(
-                "Failed to update Relationship [RelationshipKey{fromContent=123, toContent=321, type=like, managingData=null}]:\n" +
-                    "Failure #1: Relationship [RelationshipKey{fromContent=123, toContent=321, type=like, managingData=null}] was not found\n",
-                e.getResponse().getEntity( String.class )
-            );
-        }
+        final MockRestResponse response = request().path( "relationship/update" ).entity( readFromFile( "update_relationship_params.json" ),
+                                                                                          MediaType.APPLICATION_JSON_TYPE ).post();
+
+        Assert.assertEquals( 404, response.getStatus() );
+        Assert.assertEquals(
+            "Failed to update Relationship [RelationshipKey{fromContent=123, toContent=321, type=like, managingData=null}]:\n" +
+                "Failure #1: Relationship [RelationshipKey{fromContent=123, toContent=321, type=like, managingData=null}] was not found\n",
+            response.getAsString() );
     }
 
     @Override

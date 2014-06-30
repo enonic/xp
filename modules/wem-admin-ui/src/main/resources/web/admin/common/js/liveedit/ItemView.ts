@@ -21,6 +21,8 @@ module api.liveedit {
 
         parentView: ItemView;
 
+        contextMenuActions: api.ui.Action[];
+
         setItemViewIdProducer(value: ItemViewIdProducer): ItemViewBuilder {
             this.itemViewIdProducer = value;
             return this;
@@ -45,6 +47,11 @@ module api.liveedit {
             this.parentElement = value;
             return this;
         }
+
+        setContextMenuActions(actions: api.ui.Action[]): ItemViewBuilder {
+            this.contextMenuActions = actions;
+            return this;
+        }
     }
 
     export class ItemView extends api.dom.Element {
@@ -61,7 +68,7 @@ module api.liveedit {
 
         private tooltip: api.ui.Tooltip;
 
-        private contextMenu: api.ui.menu.ContextMenuWithTitle;
+        private contextMenu: api.liveedit.ItemViewContextMenu;
 
         private tooltipViewer: api.ui.Viewer<any>;
 
@@ -118,16 +125,7 @@ module api.liveedit {
                     setContent(this.tooltipViewer);
             }
 
-            this.contextMenu = new api.ui.menu.ContextMenuWithTitle();
-            this.contextMenu.setName(this.type.getShortName());
-            this.contextMenu.setIconClass(this.type.getConfig().getIconCls());
-            this.contextMenu.onCloseClicked((event: MouseEvent) => {
-                this.deselect();
-            });
-
-            this.getType().getConfig().getContextMenuConfig().forEach((itemName: string) => {
-                this.contextMenu.addAction(this.createAction(itemName));
-            });
+            this.contextMenu = new api.liveedit.ItemViewContextMenu(this, builder.contextMenuActions);
 
             this.setElementDimensions(this.getDimensionsFromElement());
 
@@ -342,6 +340,9 @@ module api.liveedit {
 
             if (!this.isSelected()) {
                 this.select(!this.isEmpty() ? { x: event.pageX, y: event.pageY } : null);
+            } else {
+                // just reposition the context menu
+                this.showContextMenu({ x: event.pageX, y: event.pageY });
             }
         }
 
