@@ -71,7 +71,8 @@
             <Embed-Dependency>
               jackson-jaxrs-*,
               commons-fileupload,
-              jersey-*;scope=compile
+              resteasy-jaxrs,
+              jaxrs-api;scope=compile
             </Embed-Dependency>
             <Bundle-Activator>
               com.enonic.wem.admin.Activator

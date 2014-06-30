@@ -62,7 +62,8 @@ public final class Activator
 
         // Export services
         service( MainServlet.class ).attribute( "alias", "/*" ).exportAs( Servlet.class );
-        service( RestServlet.class ).attribute( "alias", "/admin/rest/*" ).exportAs( Servlet.class );
+        service( RestServlet.class ).attribute( "alias", "/admin/rest/*" ).
+            attribute( "init.resteasy.servlet.mapping.prefix", "/admin/rest" ).exportAs( Servlet.class );
     }
 
     @Override
