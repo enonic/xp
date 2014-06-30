@@ -54,16 +54,7 @@ public final class BlobResource
         throws Exception
     {
         final Blob blob = blobService.get( new BlobKey( id ) );
-        MediaType mediaType;
-        try
-        {
-            mediaType = MediaType.valueOf( "image/png" );
-        }
-        catch ( IllegalArgumentException e )
-        {
-            mediaType = MediaType.WILDCARD_TYPE;
-        }
-        return Response.ok( blob.getStream(), mediaType ).build();
+        return Response.ok( blob.getStream(), "image/png" ).build();
     }
 
     private void upload( final List<UploadItem> items, final InputStream fileInputStream, final FormDataBodyPart formDataBodyPart )
