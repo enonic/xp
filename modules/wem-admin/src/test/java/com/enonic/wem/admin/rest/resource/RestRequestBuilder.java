@@ -1,38 +1,58 @@
 package com.enonic.wem.admin.rest.resource;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.net.URLEncoder;
 
 import javax.ws.rs.core.MediaType;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
-
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
+import org.jboss.resteasy.core.Dispatcher;
+import org.jboss.resteasy.mock.MockHttpRequest;
+import org.jboss.resteasy.mock.MockHttpResponse;
+import org.jboss.resteasy.spi.UnhandledException;
 
 public final class RestRequestBuilder
 {
-    private WebResource resource;
+    private final Dispatcher dispatcher;
+
+    private final StringBuilder uri;
+
+    private int numParams = 0;
 
     private byte[] entity;
 
     private String entityType;
 
-    public RestRequestBuilder( final WebResource resource )
+    public RestRequestBuilder( final Dispatcher dispatcher )
     {
-        this.resource = resource;
+        this.dispatcher = dispatcher;
+        this.uri = new StringBuilder();
     }
 
     public RestRequestBuilder path( final String path )
     {
-        this.resource = this.resource.path( path );
+        this.uri.append( path );
         return this;
     }
 
-    public RestRequestBuilder queryParam( final String name, final String key )
+    public RestRequestBuilder queryParam( final String name, final String value )
+        throws Exception
     {
-        this.resource = this.resource.queryParam( name, key );
+        final String str = name + "=" + URLEncoder.encode( value, "UTF-8" );
+        if ( this.numParams == 0 )
+        {
+            this.uri.append( "?" );
+        }
+        else
+        {
+            this.uri.append( "&" );
+        }
+
+        this.uri.append( str );
+        this.numParams++;
         return this;
     }
 
@@ -66,22 +86,47 @@ public final class RestRequestBuilder
     public MockRestResponse get()
         throws Exception
     {
-        final ClientResponse response = this.resource.get( ClientResponse.class );
-        return toResponse( response );
+        final MockHttpRequest request = MockHttpRequest.get( this.uri.toString() );
+        return execute( request );
     }
 
     public MockRestResponse post()
         throws Exception
     {
-        final ClientResponse response = this.resource.entity( this.entity, this.entityType ).post( ClientResponse.class );
-        return toResponse( response );
+        final MockHttpRequest request = MockHttpRequest.post( this.uri.toString() );
+        request.setInputStream( new ByteArrayInputStream( this.entity ) );
+        request.header( "Content-Type", this.entityType );
+        return execute( request );
     }
 
-    private MockRestResponse toResponse( final ClientResponse from )
+    private MockRestResponse execute( final MockHttpRequest request )
+        throws Exception
+    {
+        try
+        {
+            final MockHttpResponse response = new MockHttpResponse();
+            this.dispatcher.invoke( request, response );
+            return toResponse( response );
+        }
+        catch ( final UnhandledException e )
+        {
+            final Throwable cause = e.getCause();
+            if ( cause instanceof Exception )
+            {
+                throw (Exception) cause;
+            }
+            else
+            {
+                throw e;
+            }
+        }
+    }
+
+    private MockRestResponse toResponse( final MockHttpResponse from )
     {
         final MockRestResponse to = new MockRestResponse();
         to.setStatus( from.getStatus() );
-        to.setData( from.getEntity( byte[].class ) );
+        to.setData( from.getOutput() );
         return to;
     }
 }

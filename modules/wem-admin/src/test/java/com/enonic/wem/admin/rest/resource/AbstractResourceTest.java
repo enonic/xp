@@ -5,7 +5,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.junit.After;
+import org.jboss.resteasy.core.Dispatcher;
+import org.jboss.resteasy.mock.MockDispatcherFactory;
 import org.junit.Before;
 import org.mockito.Mockito;
 
@@ -13,11 +14,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
-import com.sun.jersey.api.core.DefaultResourceConfig;
-import com.sun.jersey.test.framework.AppDescriptor;
-import com.sun.jersey.test.framework.JerseyTest;
-import com.sun.jersey.test.framework.LowLevelAppDescriptor;
-import com.sun.jersey.test.framework.spi.container.inmemory.InMemoryTestContainerFactory;
 
 import junit.framework.Assert;
 
@@ -31,39 +27,19 @@ import static org.junit.Assert.*;
 
 public abstract class AbstractResourceTest
 {
-    private JerseyTest jerseyTest;
+    private Dispatcher dispatcher;
 
     @Before
     public final void setUp()
         throws Exception
     {
-        this.jerseyTest = new JerseyTest( new InMemoryTestContainerFactory() )
-        {
-            @Override
-            protected AppDescriptor configure()
-            {
-                return AbstractResourceTest.this.configure();
-            }
-        };
+        this.dispatcher = MockDispatcherFactory.createDispatcher();
+        this.dispatcher.getProviderFactory().register( JsonObjectProvider.class );
+        this.dispatcher.getProviderFactory().register( JsonSerializableProvider.class );
+        this.dispatcher.getProviderFactory().register( MultipartFormReader.class );
+        this.dispatcher.getRegistry().addSingletonResource( getResourceInstance() );
 
-        this.jerseyTest.setUp();
-    }
-
-    @After
-    public final void tearDown()
-        throws Exception
-    {
-        this.jerseyTest.tearDown();
-    }
-
-    private AppDescriptor configure()
-    {
         mockCurrentContextHttpRequest();
-
-        final DefaultResourceConfig config = new DefaultResourceConfig();
-        configure( config );
-
-        return new LowLevelAppDescriptor.Builder( config ).build();
     }
 
     private void mockCurrentContextHttpRequest()
@@ -73,14 +49,6 @@ public abstract class AbstractResourceTest
         Mockito.when( req.getServerName() ).thenReturn( "localhost" );
         Mockito.when( req.getLocalPort() ).thenReturn( 80 );
         ServletRequestHolder.setRequest( req );
-    }
-
-    private void configure( final DefaultResourceConfig config )
-    {
-        config.getClasses().add( JsonObjectProvider.class );
-        config.getClasses().add( JsonSerializableProvider.class );
-        config.getClasses().add( MultipartFormReader.class );
-        config.getSingletons().add( getResourceInstance() );
     }
 
     protected abstract Object getResourceInstance();
@@ -158,7 +126,6 @@ public abstract class AbstractResourceTest
 
     protected final RestRequestBuilder request()
     {
-        return new RestRequestBuilder( this.jerseyTest.resource() );
+        return new RestRequestBuilder( this.dispatcher );
     }
 }
-
