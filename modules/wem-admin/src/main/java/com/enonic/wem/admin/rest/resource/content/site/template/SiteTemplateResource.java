@@ -1,7 +1,6 @@
 package com.enonic.wem.admin.rest.resource.content.site.template;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -15,14 +14,14 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.FileUtils;
 
 import com.google.common.base.Strings;
-import com.sun.jersey.core.header.FormDataContentDisposition;
-import com.sun.jersey.multipart.FormDataParam;
 
 import com.enonic.wem.admin.json.content.site.SiteTemplateJson;
 import com.enonic.wem.admin.json.content.site.SiteTemplateSummaryJson;
+import com.enonic.wem.admin.rest.multipart.MultipartForm;
 import com.enonic.wem.admin.rest.resource.content.site.template.json.CreateSiteTemplateJson;
 import com.enonic.wem.admin.rest.resource.content.site.template.json.DeleteSiteTemplateJson;
 import com.enonic.wem.admin.rest.resource.content.site.template.json.ListSiteTemplateJson;
@@ -117,18 +116,20 @@ public final class SiteTemplateResource
     @POST
     @javax.ws.rs.Path("import")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public SiteTemplateSummaryJson importSiteTemplate( @FormDataParam("file") InputStream uploadedInputStream,
-                                                       @FormDataParam("file") FormDataContentDisposition formDataContentDisposition )
+    public SiteTemplateSummaryJson importSiteTemplate( final MultipartForm form )
         throws IOException
     {
-
         Path tempDirectory = null;
+        final FileItem file = form.get( "file" );
+
         try
         {
             tempDirectory = Files.createTempDirectory( "modules" );
-            final String fileName = formDataContentDisposition.getFileName();
+
+            final String fileName = file.getName();
             final Path tempZipFile = tempDirectory.resolve( fileName );
-            Files.copy( uploadedInputStream, tempZipFile );
+            Files.copy( file.getInputStream(), tempZipFile );
+
             final SiteTemplateExporter siteTemplateImporter = new SiteTemplateExporter();
             final SiteTemplate importedSiteTemplate;
 
@@ -141,6 +142,8 @@ public final class SiteTemplateResource
         }
         finally
         {
+            form.delete();
+
             if ( tempDirectory != null )
             {
                 FileUtils.deleteDirectory( tempDirectory.toFile() );
