@@ -127,8 +127,6 @@ module api.liveedit {
 
             this.contextMenu = new api.liveedit.ItemViewContextMenu(this, builder.contextMenuActions);
 
-            this.setElementDimensions(this.getDimensionsFromElement());
-
             this.onMouseEnter(this.handleMouseEnter.bind(this));
             this.onMouseLeave(this.handleMouseLeave.bind(this));
             this.onClicked(this.handleClick.bind(this));
@@ -465,12 +463,22 @@ module api.liveedit {
         }
 
         setElementDimensions(dimensions: ElementDimensions): void {
-            this.elementDimensions = dimensions;
+            this.getEl().setOffset({
+                top: dimensions.top,
+                left: dimensions.left
+            }).setWidthPx(dimensions.width).setHeightPx(dimensions.height);
         }
 
         getElementDimensions(): ElementDimensions {
-            // We need to dynamically get the dimension as it can change on eg. browser window resize.
-            return this.getDimensionsFromElement();
+            var el = this.getEl(),
+                offset = el.getOffset();
+
+            return {
+                top: offset.top,
+                left: offset.left,
+                width: el.getWidthWithBorder(),
+                height: el.getHeightWithBorder()
+            };
         }
 
         toItemViewArray(): ItemView[] {
@@ -482,22 +490,6 @@ module api.liveedit {
 
             var s = "id = " + this.getItemId() + ", type = '" + this.type.getShortName() + "'";
             return s;
-        }
-
-        private getDimensionsFromElement(): ElementDimensions {
-            var cmp: JQuery = this.getElement();
-            var offset = cmp.offset();
-            var top = offset.top;
-            var left = offset.left;
-            var width = cmp.outerWidth();
-            var height = cmp.outerHeight();
-
-            return {
-                top: top,
-                left: left,
-                width: width,
-                height: height
-            };
         }
 
         static findParentItemViewAsHTMLElement(htmlElement: HTMLElement): HTMLElement {
