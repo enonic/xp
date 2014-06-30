@@ -152,9 +152,15 @@ module api.ui {
 
         setValue(value: string) {
             this.value = value;
+            var src: string;
+            if (value && (value.indexOf('/') == -1)) {
+                src = api.util.getAdminUri(value ? 'rest/blob/' + value : 'common/images/x-user-photo.png');
+            } else {
+                src = value;
+            }
 
-            if (this.value != null) {
-                this.image.getEl().setSrc(this.value);
+            if (src != null) {
+                this.image.getEl().setSrc(src);
             }
         }
 
