@@ -7,7 +7,7 @@
         "createdTime": "2013-08-23T12:55:09.162Z",
         "creator": null,
         "deletable": true,
-        "description" : "CT description",
+        "description": "CT description",
         "displayName": null,
         "editable": true,
         "final": false,
@@ -25,7 +25,7 @@
         "allowedToTypes": [ ],
         "createdTime": "2013-08-23T12:55:09.162Z",
         "deletable": true,
-        "description" : "RT description",
+        "description": "RT description",
         "displayName": null,
         "editable": true,
         "fromSemantic": null,
@@ -41,7 +41,7 @@
         "createdTime": "2013-08-23T12:55:09.162Z",
         "creator": null,
         "deletable": true,
-        "description" : "M description",
+        "description": "M description",
         "displayName": "mixin",
         "editable": true,
         "hasChildren": false,
@@ -49,21 +49,21 @@
         "items": [
             {
                 "Input": {
-                    "name": "mixin",
-                    "label": null,
+                    "config": { },
                     "customText": null,
                     "helpText": null,
-                    "validationRegexp": null,
                     "immutable": false,
                     "indexed": false,
                     "inputType": {
                         "name": "TextArea"
                     },
+                    "label": null,
+                    "name": "mixin",
                     "occurrences": {
-                        "minimum": 0,
-                        "maximum": 1
+                        "maximum": 1,
+                        "minimum": 0
                     },
-                    "config": { }
+                    "validationRegexp": null
                 }
             }
         ],

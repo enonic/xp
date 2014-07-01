@@ -14,101 +14,101 @@
         "formItems": [
             {
                 "Input": {
-                    "name": "myTextLine",
-                    "label": "My text line",
+                    "config": { },
                     "customText": null,
                     "helpText": null,
-                    "validationRegexp": null,
                     "immutable": false,
                     "indexed": false,
                     "inputType": {
                         "name": "TextLine"
                     },
+                    "label": "My text line",
+                    "name": "myTextLine",
                     "occurrences": {
-                        "minimum": 1,
-                        "maximum": 1
+                        "maximum": 1,
+                        "minimum": 1
                     },
-                    "config": { }
+                    "validationRegexp": null
                 }
             },
             {
                 "Input": {
-                    "name": "myCustomInput",
-                    "label": "My custom input",
+                    "config": { },
                     "customText": null,
                     "helpText": null,
-                    "validationRegexp": null,
                     "immutable": false,
                     "indexed": false,
                     "inputType": {
                         "name": "custom:DummyCustomInputType"
                     },
+                    "label": "My custom input",
+                    "name": "myCustomInput",
                     "occurrences": {
-                        "minimum": 0,
-                        "maximum": 1
+                        "maximum": 1,
+                        "minimum": 0
                     },
-                    "config": { }
+                    "validationRegexp": null
                 }
             },
             {
                 "FieldSet": {
-                    "name": "myFieldSet",
-                    "label": "My field set",
                     "items": [
                         {
                             "Input": {
-                                "name": "myTextLine",
-                                "label": "My text line",
+                                "config": { },
                                 "customText": null,
                                 "helpText": null,
-                                "validationRegexp": null,
                                 "immutable": false,
                                 "indexed": false,
                                 "inputType": {
                                     "name": "TextLine"
                                 },
+                                "label": "My text line",
+                                "name": "myTextLine",
                                 "occurrences": {
-                                    "minimum": 0,
-                                    "maximum": 1
+                                    "maximum": 1,
+                                    "minimum": 0
                                 },
-                                "config": { }
+                                "validationRegexp": null
                             }
                         }
-                    ]
+                    ],
+                    "label": "My field set",
+                    "name": "myFieldSet"
                 }
             },
             {
                 "FormItemSet": {
-                    "name": "myFormItemSet",
-                    "label": "My form item set",
                     "customText": null,
                     "helpText": null,
                     "immutable": false,
-                    "occurrences": {
-                        "minimum": 0,
-                        "maximum": 1
-                    },
                     "items": [
                         {
                             "Input": {
-                                "name": "myTextLine",
-                                "label": "My text line",
+                                "config": { },
                                 "customText": null,
                                 "helpText": null,
-                                "validationRegexp": null,
                                 "immutable": false,
                                 "indexed": false,
                                 "inputType": {
                                     "name": "TextLine"
                                 },
+                                "label": "My text line",
+                                "name": "myTextLine",
                                 "occurrences": {
-                                    "minimum": 0,
-                                    "maximum": 1
+                                    "maximum": 1,
+                                    "minimum": 0
                                 },
-                                "config": { }
+                                "validationRegexp": null
                             }
                         }
-                    ]
+                    ],
+                    "label": "My form item set",
+                    "name": "myFormItemSet",
+                    "occurrences": {
+                        "maximum": 1,
+                        "minimum": 0
+                    }
                 }
             },
             {

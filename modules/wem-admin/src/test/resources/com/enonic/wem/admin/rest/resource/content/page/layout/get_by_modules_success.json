@@ -1,67 +1,80 @@
 {
-  "descriptors" : [ {
-    "config" : {
-      "formItems" : [ {
-        "Input" : {
-          "name" : "columns",
-          "label" : null,
-          "customText" : null,
-          "helpText" : null,
-          "validationRegexp" : null,
-          "immutable" : false,
-          "indexed" : false,
-          "inputType" : {
-            "name" : "DecimalNumber"
-          },
-          "occurrences" : {
-            "minimum" : 0,
-            "maximum" : 1
-          },
-          "config" : { }
+    "descriptors": [
+        {
+            "config": {
+                "formItems": [
+                    {
+                        "Input": {
+                            "config": { },
+                            "customText": null,
+                            "helpText": null,
+                            "immutable": false,
+                            "indexed": false,
+                            "inputType": {
+                                "name": "DecimalNumber"
+                            },
+                            "label": null,
+                            "name": "columns",
+                            "occurrences": {
+                                "maximum": 1,
+                                "minimum": 0
+                            },
+                            "validationRegexp": null
+                        }
+                    }
+                ]
+            },
+            "deletable": false,
+            "displayName": "Fancy layout",
+            "editable": false,
+            "key": "module-1.0.0:fancy-layout",
+            "name": "fancy-layout",
+            "regions": [
+                {
+                    "name": "left"
+                },
+                {
+                    "name": "right"
+                }
+            ]
+        },
+        {
+            "config": {
+                "formItems": [
+                    {
+                        "Input": {
+                            "config": { },
+                            "customText": null,
+                            "helpText": null,
+                            "immutable": false,
+                            "indexed": false,
+                            "inputType": {
+                                "name": "DecimalNumber"
+                            },
+                            "label": null,
+                            "name": "columns",
+                            "occurrences": {
+                                "maximum": 1,
+                                "minimum": 0
+                            },
+                            "validationRegexp": null
+                        }
+                    }
+                ]
+            },
+            "deletable": false,
+            "displayName": "Putty layout",
+            "editable": false,
+            "key": "module-1.0.0:putty-layout",
+            "name": "putty-layout",
+            "regions": [
+                {
+                    "name": "top"
+                },
+                {
+                    "name": "bottom"
+                }
+            ]
         }
-      } ]
-    },
-    "deletable" : false,
-    "displayName" : "Fancy layout",
-    "editable" : false,
-    "key" : "module-1.0.0:fancy-layout",
-    "name" : "fancy-layout",
-    "regions" : [ {
-      "name" : "left"
-    }, {
-      "name" : "right"
-    } ]
-  }, {
-    "config" : {
-      "formItems" : [ {
-        "Input" : {
-          "name" : "columns",
-          "label" : null,
-          "customText" : null,
-          "helpText" : null,
-          "validationRegexp" : null,
-          "immutable" : false,
-          "indexed" : false,
-          "inputType" : {
-            "name" : "DecimalNumber"
-          },
-          "occurrences" : {
-            "minimum" : 0,
-            "maximum" : 1
-          },
-          "config" : { }
-        }
-      } ]
-    },
-    "deletable" : false,
-    "displayName" : "Putty layout",
-    "editable" : false,
-    "key" : "module-1.0.0:putty-layout",
-    "name" : "putty-layout",
-    "regions" : [ {
-      "name" : "top"
-    }, {
-      "name" : "bottom"
-    } ]
-  } ]
+    ]
 }
