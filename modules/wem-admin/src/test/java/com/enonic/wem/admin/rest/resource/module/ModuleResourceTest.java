@@ -1,15 +1,9 @@
 package com.enonic.wem.admin.rest.resource.module;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.Instant;
 
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
