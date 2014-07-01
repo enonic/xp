@@ -1,8 +1,7 @@
-module api.app.browse.treegrid {
+module api.ui.treegrid {
 
     import Action = api.ui.Action;
     import Grid = api.ui.grid.Grid;
-    import Node = api.node.Node;
 
     export class TreeGridActions {
 
@@ -11,7 +10,7 @@ module api.app.browse.treegrid {
 
         private allActions: api.ui.Action[] = [];
 
-        constructor(grid: Grid<TreeNode<Node>>) {
+        constructor(grid: Grid<TreeNode<TreeItem>>) {
             this.SELECT_ALL = new SelectAllAction(grid);
             this.CLEAR_SELECTION = new ClearSelectionAction(grid);
             this.allActions.push(this.SELECT_ALL, this.CLEAR_SELECTION);

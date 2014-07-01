@@ -1,4 +1,5 @@
 ///<reference path='TreeGrid.ts' />
+///<reference path='TreeItem.ts' />
 ///<reference path='TreeNode.ts' />
 ///<reference path='TreeGridToolbar.ts' />
 ///<reference path='SelectAllAction.ts' />

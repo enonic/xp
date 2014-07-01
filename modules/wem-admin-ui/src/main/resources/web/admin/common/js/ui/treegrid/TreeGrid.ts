@@ -1,4 +1,4 @@
-module api.app.browse.treegrid {
+module api.ui.treegrid {
 
     import Item = api.item.Item;
 
@@ -13,7 +13,7 @@ module api.app.browse.treegrid {
     import KeyBinding = api.ui.KeyBinding;
     import KeyBindings = api.ui.KeyBindings;
 
-    export class TreeGrid<NODE extends api.node.Node> extends api.ui.Panel {
+    export class TreeGrid<NODE extends TreeItem> extends api.ui.Panel {
 
         private columns: GridColumn<NODE>[] = [];
 
@@ -115,7 +115,7 @@ module api.app.browse.treegrid {
                     var selected = this.grid.getSelectedRows();
                     if (selected.length === 1) {
                         var node = this.gridData.getItem(selected[0]);
-                        if (node && node.getData().hasChildren()
+                        if (node && this.hasChildren(node.getData())
                                 && !node.isExpanded() &&  this.active) {
 
                             this.active = false;
@@ -193,6 +193,13 @@ module api.app.browse.treegrid {
 
         /*
          Must be overridden in most cases.
+         */
+        hasChildren(item: NODE): boolean {
+            return false;
+        }
+
+        /*
+         Must be overridden in most cases.
          Various items may have different requests
          */
         fetchChildren(parent?: NODE): Q.Promise<NODE[]> {
@@ -207,7 +214,7 @@ module api.app.browse.treegrid {
                 var formatter = columns[0].getFormatter();
                 var toggleFormatter = (row: number, cell: number, value: any, columnDef: any, node: TreeNode<NODE>) => {
                     var toggleSpan = new api.dom.SpanEl("toggle icon icon-xsmall");
-                    if (node.getData().hasChildren()) {
+                    if (this.hasChildren(node.getData())) {
                         var toggleClass = node.isExpanded() ? "collapse" : "expand";
                         toggleSpan.addClass(toggleClass);
                     }

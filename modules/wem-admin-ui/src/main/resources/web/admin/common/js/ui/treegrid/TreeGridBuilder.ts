@@ -1,4 +1,4 @@
-module api.app.browse.treegrid {
+module api.ui.treegrid {
 
     import GridColumn = api.ui.grid.GridColumn;
     import GridColumnBuilder = api.ui.grid.GridColumnBuilder;
@@ -6,7 +6,7 @@ module api.app.browse.treegrid {
     import GridOptionsBuilder = api.ui.grid.GridOptionsBuilder;
 
 
-    export class TreeGridBuilder<NODE extends api.node.Node> {
+    export class TreeGridBuilder<NODE extends TreeItem> {
 
         showToolbar: boolean = true;
 
