@@ -32,21 +32,21 @@
         "items": [
             {
                 "Input": {
-                    "name": "mixin",
-                    "label": null,
+                    "config": { },
                     "customText": null,
                     "helpText": null,
-                    "validationRegexp": null,
                     "immutable": false,
                     "indexed": false,
                     "inputType": {
                         "name": "TextArea"
                     },
+                    "label": null,
+                    "name": "mixin",
                     "occurrences": {
-                        "minimum": 0,
-                        "maximum": 1
+                        "maximum": 1,
+                        "minimum": 0
                     },
-                    "config": { }
+                    "validationRegexp": null
                 }
             }
         ],

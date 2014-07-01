@@ -30,7 +30,6 @@
     "site": {
         "moduleConfigs": [
             {
-                "moduleKey": "mymodule-1.0.0",
                 "config": [
                     {
                         "Property": {
@@ -39,7 +38,8 @@
                             "value": "1"
                         }
                     }
-                ]
+                ],
+                "moduleKey": "mymodule-1.0.0"
             }
         ],
         "templateName": "mysitetemplate-1.0.0"

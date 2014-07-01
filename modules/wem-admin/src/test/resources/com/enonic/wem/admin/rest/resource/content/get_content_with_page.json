@@ -37,12 +37,9 @@
         ],
         "regions": [
             {
-                "name": "my-region",
                 "components": [
                     {
                         "PartComponent": {
-                            "name": "my-component",
-                            "descriptor": "mainmodule-1.0.0:partTemplateName",
                             "config": [
                                 {
                                     "Property": {
@@ -51,10 +48,13 @@
                                         "value": "value"
                                     }
                                 }
-                            ]
+                            ],
+                            "descriptor": "mainmodule-1.0.0:partTemplateName",
+                            "name": "my-component"
                         }
                     }
-                ]
+                ],
+                "name": "my-region"
             }
         ],
         "template": "mymodule|mypagetemplate"

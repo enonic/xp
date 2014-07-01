@@ -1,32 +1,34 @@
 {
-  "config" : {
-    "formItems" : [ {
-      "Input" : {
-        "name" : "some-name",
-        "label" : null,
-        "customText" : null,
-        "helpText" : null,
-        "validationRegexp" : null,
-        "immutable" : false,
-        "indexed" : false,
-        "inputType" : {
-          "name" : "TextLine"
-        },
-        "occurrences" : {
-          "minimum" : 0,
-          "maximum" : 1
-        },
-        "config" : { }
-      }
-    } ]
-  },
-  "deletable" : true,
-  "displayName" : "module display name",
-  "editable" : true,
-  "key" : "testmodule-1.0.0",
-  "name" : "testmodule",
-  "url" : "http://enonic.net",
-  "vendorName" : "Enonic",
-  "vendorUrl" : "https://www.enonic.com",
-  "version" : "1.0.0"
+    "config": {
+        "formItems": [
+            {
+                "Input": {
+                    "config": { },
+                    "customText": null,
+                    "helpText": null,
+                    "immutable": false,
+                    "indexed": false,
+                    "inputType": {
+                        "name": "TextLine"
+                    },
+                    "label": null,
+                    "name": "some-name",
+                    "occurrences": {
+                        "maximum": 1,
+                        "minimum": 0
+                    },
+                    "validationRegexp": null
+                }
+            }
+        ]
+    },
+    "deletable": true,
+    "displayName": "module display name",
+    "editable": true,
+    "key": "testmodule-1.0.0",
+    "name": "testmodule",
+    "url": "http://enonic.net",
+    "vendorName": "Enonic",
+    "vendorUrl": "https://www.enonic.com",
+    "version": "1.0.0"
 }

@@ -5,7 +5,7 @@
         "createdTime": null,
         "creator": null,
         "deletable": true,
-        "description" : null,
+        "description": null,
         "displayName": null,
         "editable": true,
         "hasChildren": false,
@@ -13,21 +13,21 @@
         "items": [
             {
                 "Input": {
-                    "name": "some_input",
-                    "label": null,
+                    "config": { },
                     "customText": null,
                     "helpText": null,
-                    "validationRegexp": null,
                     "immutable": false,
                     "indexed": false,
                     "inputType": {
                         "name": "TextLine"
                     },
+                    "label": null,
+                    "name": "some_input",
                     "occurrences": {
-                        "minimum": 0,
-                        "maximum": 1
+                        "maximum": 1,
+                        "minimum": 0
                     },
-                    "config": { }
+                    "validationRegexp": null
                 }
             }
         ],

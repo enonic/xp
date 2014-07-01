@@ -22,7 +22,6 @@
     "site": {
         "moduleConfigs": [
             {
-                "moduleKey": "module-1.0.0",
                 "config": [
                     {
                         "Property": {
@@ -31,11 +30,11 @@
                             "value": "value1"
                         }
                     }
-                ]
+                ],
+                "moduleKey": "module-1.0.0"
             }
         ],
         "templateName": "template-1.0.0"
     },
     "type": "content-type"
 }
-
