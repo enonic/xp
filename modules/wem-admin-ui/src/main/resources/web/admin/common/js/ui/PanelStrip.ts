@@ -18,12 +18,20 @@ module api.ui {
             } else {
                 this.scrollable = this;
             }
+
+            this.onShown(() => {
+                this.updateLastPanelHeight();
+            })
         }
 
         addPanel(panel: Panel): number {
             panel.setDoOffset(false);
             this.appendChild(panel);
-            return this.panels.push(panel) - 1;
+            var index = this.panels.push(panel) - 1;
+            if (this.isVisible()) {
+                this.updateLastPanelHeight();
+            }
+            return index;
         }
 
         getPanels(): api.ui.Panel[] {
@@ -34,6 +42,23 @@ module api.ui {
             return this.scrollable;
         }
 
+        private updateLastPanelHeight() {
+            if (this.getSize() > 1) {
+                // restore the one before last panel's height if needed
+                var beforeLastEl = this.getPanel(this.getSize() - 2).getEl();
+                var originalHeight = beforeLastEl.getData("originalHeight");
+                if (originalHeight) {
+                    beforeLastEl.setHeight(originalHeight);
+                }
+            }
+            // set the last panel height equal to that of the scrollable
+            var lastEl = this.getPanel(this.getSize() - 1).getEl();
+            if (!lastEl.getData("originalHeight")) {
+                lastEl.setData("originalHeight", lastEl.getHTMLElement().style.height || "auto");
+            }
+            lastEl.setHeightPx(this.scrollable.getEl().getHeight());
+            console.log("Updated last panel height");
+        }
 
         removePanel(panelToRemove: Panel, checkCanRemovePanel: boolean = true): number {
 
@@ -46,10 +71,14 @@ module api.ui {
 
             if (this.isEmpty()) {
                 this.panelShown = null;
-            }
-            else if (panelToRemove == this.getPanelShown()) {
+            } else if (panelToRemove == this.getPanelShown()) {
                 // show either panel that has the same index now or the last panel
                 this.showPanelByIndex(Math.min(index, this.getSize() - 1));
+            }
+
+            if (this.isVisible() && index == this.getSize() && !this.isEmpty()) {
+                // update if last panel was removed and there are still left
+                this.updateLastPanelHeight();
             }
 
             return index;
