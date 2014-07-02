@@ -117,7 +117,7 @@ public final class ModuleLoader
     {
         final String name = bundle.getSymbolicName();
         final Version bundleVersion = bundle.getVersion();
-        final ModuleVersion version = ModuleVersion.from( bundleVersion.getMajor(), bundleVersion.getMinor(), bundleVersion.getMicro() );
+        final ModuleVersion version = ModuleVersion.from( bundleVersion.toString() );
         return ModuleKey.from( ModuleName.from( name ), version );
     }
 
