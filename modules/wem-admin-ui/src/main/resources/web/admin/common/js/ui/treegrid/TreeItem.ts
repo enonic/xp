@@ -4,5 +4,7 @@ module api.ui.treegrid {
 
         getId(): string;
 
+        hasChildren(): boolean;
+
     }
 }

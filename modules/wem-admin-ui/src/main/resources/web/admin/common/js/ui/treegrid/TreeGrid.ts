@@ -115,7 +115,7 @@ module api.ui.treegrid {
                     var selected = this.grid.getSelectedRows();
                     if (selected.length === 1) {
                         var node = this.gridData.getItem(selected[0]);
-                        if (node && this.hasChildren(node.getData())
+                        if (node && node.getData().hasChildren()
                                 && !node.isExpanded() &&  this.active) {
 
                             this.active = false;
@@ -193,13 +193,6 @@ module api.ui.treegrid {
 
         /*
          Must be overridden in most cases.
-         */
-        hasChildren(item: NODE): boolean {
-            return false;
-        }
-
-        /*
-         Must be overridden in most cases.
          Various items may have different requests
          */
         fetchChildren(parent?: NODE): Q.Promise<NODE[]> {
@@ -214,7 +207,7 @@ module api.ui.treegrid {
                 var formatter = columns[0].getFormatter();
                 var toggleFormatter = (row: number, cell: number, value: any, columnDef: any, node: TreeNode<NODE>) => {
                     var toggleSpan = new api.dom.SpanEl("toggle icon icon-xsmall");
-                    if (this.hasChildren(node.getData())) {
+                    if (node.getData().hasChildren()) {
                         var toggleClass = node.isExpanded() ? "collapse" : "expand";
                         toggleSpan.addClass(toggleClass);
                     }

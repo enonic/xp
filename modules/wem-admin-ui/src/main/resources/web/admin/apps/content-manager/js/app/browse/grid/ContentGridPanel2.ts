@@ -64,10 +64,6 @@ module app.browse.grid {
             return contentSummaryViewer.toString();
         }
 
-        hasChildren(item: api.content.ContentSummaryAndCompareStatus): boolean {
-            return item.hasChildren();
-        }
-
         fetchChildren(parent?: api.content.ContentSummaryAndCompareStatus): Q.Promise<api.content.ContentSummaryAndCompareStatus[]> {
             var parentContentId = parent ? parent.getId() : "";
             return new api.content.ContentSummaryAndCompareStatusFetcher(parentContentId).fetch(parentContentId);

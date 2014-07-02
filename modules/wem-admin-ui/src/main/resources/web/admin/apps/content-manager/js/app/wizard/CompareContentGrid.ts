@@ -41,10 +41,6 @@ module app.wizard {
             return contentSummaryViewer.toString();
         }
 
-        hasChildren(item: api.content.ContentSummaryAndCompareStatus): boolean {
-            return item.hasChildren();
-        }
-
         fetchChildren(parent?: ContentSummaryAndCompareStatus): Q.Promise<ContentSummaryAndCompareStatus[]> {
             var parentContentId = parent ? parent.getId() : "";
             return new api.content.ContentSummaryAndCompareStatusFetcher(parentContentId).fetch(parentContentId);

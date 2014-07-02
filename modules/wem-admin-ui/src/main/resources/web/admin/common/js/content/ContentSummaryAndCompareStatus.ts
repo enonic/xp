@@ -1,6 +1,6 @@
 module api.content {
 
-    export class ContentSummaryAndCompareStatus implements api.node.Node {
+    export class ContentSummaryAndCompareStatus implements api.node.Node, api.ui.treegrid.TreeItem {
 
         private content: ContentSummary;
 
