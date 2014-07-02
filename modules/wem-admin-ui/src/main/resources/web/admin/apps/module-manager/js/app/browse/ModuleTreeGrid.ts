@@ -5,10 +5,10 @@ module app.browse {
 
     import ModuleSummary = api.module.ModuleSummary;
     import ModuleSummaryViewer = api.module.ModuleSummaryViewer;
-    import TreeGrid = api.app.browse.treegrid.TreeGrid;
-    import TreeNode = api.app.browse.treegrid.TreeNode;
-    import TreeGridBuilder = api.app.browse.treegrid.TreeGridBuilder;
-    import DateTimeFormatter = api.app.browse.treegrid.DateTimeFormatter;
+    import TreeGrid = api.ui.treegrid.TreeGrid;
+    import TreeNode = api.ui.treegrid.TreeNode;
+    import TreeGridBuilder = api.ui.treegrid.TreeGridBuilder;
+    import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
 
 
     export class ModuleTreeGrid extends TreeGrid<ModuleSummary> {

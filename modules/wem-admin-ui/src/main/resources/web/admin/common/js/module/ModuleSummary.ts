@@ -1,6 +1,6 @@
 module api.module {
 
-    export class ModuleSummary extends api.item.BaseItem implements api.node.Node {
+    export class ModuleSummary extends api.item.BaseItem implements api.ui.treegrid.TreeItem {
 
         private moduleKey: ModuleKey;
 
