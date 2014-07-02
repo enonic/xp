@@ -1,4 +1,4 @@
-module api.app.browse.treegrid {
+module api.ui.treegrid {
 
     import Item = api.item.Item;
 
@@ -13,7 +13,7 @@ module api.app.browse.treegrid {
     import KeyBinding = api.ui.KeyBinding;
     import KeyBindings = api.ui.KeyBindings;
 
-    export class TreeGrid<NODE extends api.node.Node> extends api.ui.Panel {
+    export class TreeGrid<NODE extends TreeItem> extends api.ui.Panel {
 
         private columns: GridColumn<NODE>[] = [];
 

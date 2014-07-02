@@ -1,4 +1,4 @@
-module api.app.browse.treegrid {
+module api.ui.treegrid {
 
     export class DateTimeFormatter {
 

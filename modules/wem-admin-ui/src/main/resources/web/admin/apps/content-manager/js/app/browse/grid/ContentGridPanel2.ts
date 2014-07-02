@@ -6,10 +6,10 @@ module app.browse.grid {
     import ContentSummary = api.content.ContentSummary;
     import ContentSummaryViewer = api.content.ContentSummaryViewer;
 
-    import TreeGrid = api.app.browse.treegrid.TreeGrid;
-    import TreeNode = api.app.browse.treegrid.TreeNode;
-    import TreeGridBuilder = api.app.browse.treegrid.TreeGridBuilder;
-    import DateTimeFormatter = api.app.browse.treegrid.DateTimeFormatter;
+    import TreeGrid = api.ui.treegrid.TreeGrid;
+    import TreeNode = api.ui.treegrid.TreeNode;
+    import TreeGridBuilder = api.ui.treegrid.TreeGridBuilder;
+    import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
 
     import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 

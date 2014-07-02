@@ -6,12 +6,13 @@ module app.wizard {
     import ContentSummary = api.content.ContentSummary;
     import ContentSummaryViewer = api.content.ContentSummaryViewer;
 
-    import TreeNode = api.app.browse.treegrid.TreeNode;
-    import TreeGridBuilder = api.app.browse.treegrid.TreeGridBuilder;
+    import TreeGrid = api.ui.treegrid.TreeGrid;
+    import TreeNode = api.ui.treegrid.TreeNode;
+    import TreeGridBuilder = api.ui.treegrid.TreeGridBuilder;
 
     import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 
-    export class CompareContentGrid extends api.app.browse.treegrid.TreeGrid<ContentSummaryAndCompareStatus> {
+    export class CompareContentGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
 
         private content: api.content.Content;
 
@@ -25,7 +26,7 @@ module app.wizard {
                             setFormatter(this.defaultNameFormatter).
                             build()
                     ]).prependClasses("content-grid")
-            )
+            );
 
             this.content = content;
 

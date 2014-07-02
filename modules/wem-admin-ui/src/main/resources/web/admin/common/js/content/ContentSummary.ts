@@ -1,6 +1,6 @@
 module api.content {
 
-    export class ContentSummary extends ContentIdBaseItem implements api.node.Node, api.Equitable {
+    export class ContentSummary extends ContentIdBaseItem {
 
         private id: string;
 
