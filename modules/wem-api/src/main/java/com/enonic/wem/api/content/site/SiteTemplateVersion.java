@@ -6,11 +6,6 @@ public final class SiteTemplateVersion
     extends BaseVersion
     implements Comparable<SiteTemplateVersion>
 {
-    private SiteTemplateVersion( final int major, final int minor, final int revision )
-    {
-        super( major, minor, revision );
-    }
-
     public SiteTemplateVersion( final String version )
     {
         super( version );
@@ -25,10 +20,5 @@ public final class SiteTemplateVersion
     public static SiteTemplateVersion from( final String version )
     {
         return new SiteTemplateVersion( version );
-    }
-
-    public static SiteTemplateVersion from( final int major, final int minor, final int revision )
-    {
-        return new SiteTemplateVersion( major, minor, revision );
     }
 }
