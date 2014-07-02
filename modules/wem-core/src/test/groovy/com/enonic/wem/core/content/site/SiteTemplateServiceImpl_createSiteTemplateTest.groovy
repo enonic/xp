@@ -23,7 +23,7 @@ class SiteTemplateServiceImpl_createSiteTemplateTest
         def filter = newContentFilter().defaultDeny().allowContentType( ContentTypeName.from( "page" ) ).build();
         def createSiteTemplateParam = new CreateSiteTemplateParams().
             name( "intranet" ).
-            version( SiteTemplateVersion.from( 1, 2, 0 ) ).
+            version( SiteTemplateVersion.from( "1.2.0" ) ).
             displayName( "Intranet template" ).
             vendor( vendor ).
             url( "http://www.enonic.com" ).
@@ -59,7 +59,7 @@ class SiteTemplateServiceImpl_createSiteTemplateTest
 
         def createSiteTemplateParam = new CreateSiteTemplateParams().
             name( "intranet" ).
-            version( SiteTemplateVersion.from( 1, 2, 0 ) ).
+            version( SiteTemplateVersion.from( "1.2.0" ) ).
             displayName( "Intranet template" ).
             vendor( vendor ).
             url( "http://www.enonic.com" ).

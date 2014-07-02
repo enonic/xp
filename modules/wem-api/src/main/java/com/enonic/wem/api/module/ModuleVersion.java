@@ -6,11 +6,6 @@ public final class ModuleVersion
     extends BaseVersion
     implements Comparable<ModuleVersion>
 {
-    private ModuleVersion( final int major, final int minor, final int revision )
-    {
-        super( major, minor, revision );
-    }
-
     public ModuleVersion( final String version )
     {
         super( version );
@@ -25,10 +20,5 @@ public final class ModuleVersion
     public static ModuleVersion from( final String version )
     {
         return new ModuleVersion( version );
-    }
-
-    public static ModuleVersion from( final int major, final int minor, final int revision )
-    {
-        return new ModuleVersion( major, minor, revision );
     }
 }

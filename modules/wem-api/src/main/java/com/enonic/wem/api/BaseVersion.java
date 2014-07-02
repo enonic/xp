@@ -7,23 +7,17 @@ import com.google.common.base.Preconditions;
 
 public abstract class BaseVersion
 {
-    private final static Pattern VERSION_PATTERN = Pattern.compile( "^(\\d+)\\.(\\d+)\\.(\\d+)$" );
+    private final static Pattern VERSION_PATTERN = Pattern.compile( "^(\\d+)\\.(\\d+)\\.(\\d+)(\\.([^\\s]+))?$" );
 
     private final int major;
 
     private final int minor;
 
-    private final int revision;
+    private final int micro;
+
+    private final String qualifier;
 
     private final String refString;
-
-    protected BaseVersion( final int major, final int minor, final int revision )
-    {
-        this.major = major;
-        this.minor = minor;
-        this.revision = revision;
-        this.refString = major + "." + minor + "." + revision;
-    }
 
     protected BaseVersion( final String version )
     {
@@ -34,29 +28,39 @@ public abstract class BaseVersion
             throw new IllegalArgumentException( "Invalid version: [" + version + "]" );
         }
 
-        final int major = Integer.parseInt( matcher.group( 1 ).toUpperCase() );
-        final int minor = Integer.parseInt( matcher.group( 2 ).toUpperCase() );
-        final int revision = Integer.parseInt( matcher.group( 3 ).toUpperCase() );
+        this.major = Integer.parseInt( matcher.group( 1 ) );
+        this.minor = Integer.parseInt( matcher.group( 2 ) );
+        this.micro = Integer.parseInt( matcher.group( 3 ) );
+        this.qualifier = matcher.group( 5 );
 
-        this.major = major;
-        this.minor = minor;
-        this.revision = revision;
-        this.refString = major + "." + minor + "." + revision;
+        if ( this.qualifier == null )
+        {
+            this.refString = this.major + "." + this.minor + "." + this.micro;
+        }
+        else
+        {
+            this.refString = this.major + "." + this.minor + "." + this.micro + "." + this.qualifier;
+        }
     }
 
     public int getMajor()
     {
-        return major;
+        return this.major;
     }
 
     public int getMinor()
     {
-        return minor;
+        return this.minor;
     }
 
-    public int getRevision()
+    public int getMicro()
     {
-        return revision;
+        return this.micro;
+    }
+
+    public String getQualifier()
+    {
+        return this.qualifier;
     }
 
     @Override
@@ -103,12 +107,11 @@ public abstract class BaseVersion
         {
             return result;
         }
-        result = revision - other.revision;
+        result = micro - other.micro;
         if ( result != 0 )
         {
             return result;
         }
         return 0;
     }
-
 }
