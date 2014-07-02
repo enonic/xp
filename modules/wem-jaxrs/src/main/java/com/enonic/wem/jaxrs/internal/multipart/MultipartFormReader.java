@@ -22,7 +22,7 @@ import com.enonic.wem.jaxrs.multipart.MultipartForm;
 
 @Provider
 @Consumes(MediaType.MULTIPART_FORM_DATA)
-public final class MultipartFormReader
+final class MultipartFormReader
     implements MessageBodyReader<MultipartForm>
 {
     private final FileUpload fileUpload;

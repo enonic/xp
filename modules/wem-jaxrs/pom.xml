@@ -45,6 +45,7 @@
               javax.ws.rs.*
             </_exportcontents>
             <Import-Package>
+              !javax.portlet.*,
               !org.apache.*,
               !org.junit.*,
               !Acme.*,
@@ -52,7 +53,8 @@
             </Import-Package>
             <Embed-Dependency>
               jaxrs-api,
-              resteasy-jaxrs
+              resteasy-jaxrs,
+              commons-fileupload
             </Embed-Dependency>
           </instructions>
         </configuration>

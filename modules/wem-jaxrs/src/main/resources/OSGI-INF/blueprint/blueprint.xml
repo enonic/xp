@@ -14,4 +14,8 @@
     <argument index="1" ref="jaxRsServlet"/>
   </bean>
 
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.jaxrs.internal.multipart.MultipartContributor"/>
+  </service>
+
 </blueprint>
