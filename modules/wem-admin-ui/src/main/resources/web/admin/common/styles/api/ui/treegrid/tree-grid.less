@@ -65,7 +65,7 @@
     overflow-y: auto !important;
 
     .grid-canvas {
-      width: 100% !important;
+//      width: 100% !important;
     }
 
     .selected {
@@ -74,14 +74,9 @@
     }
 
     .slick-cell {
-      .default-slick-cell-styling(4px 8px);
+      .default-slick-cell-styling(4px 8px 4px 2px);
       cursor: pointer;
 
-      // fixes
-      &:last-child {
-        // Commented out because it broke selectbox somewhere, why is it even here?
-        //margin-left: -18px; // invalid 'right' value calc for certain width
-      }
       height: 45px;      // firefox ignores SlickGrid.rowHeight
     }
 
@@ -106,6 +101,7 @@
 
       .slick-cell-checkboxsel {
         min-width: 45px;
+        padding-left: 8px;
 
         label {
           display: inline-block;
@@ -177,12 +173,26 @@
           }
 
         }
+        &.site .names-and-icon-view .wrapper:before {
+          position: absolute;
+          content: "S";
+          top: 2px;
+          left: 21px;
+          padding: 2px 6px;
+          line-height: 16px;
+          border-radius: 10px;
+          background: @admin-blue;
+          color: @admin-white;
+          font-size: 14px;
+          z-index: 1;
+        }
       }
 
       .modified, .status {
         line-height: 37px;
         text-align: right;
         padding-right: 25px;
+        font-size: 0.9em;
       }
 
     }

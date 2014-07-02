@@ -1,4 +1,4 @@
-module api.app.browse.treegrid {
+module api.ui.treegrid {
 
     export class TreeGridToolbar extends api.ui.toolbar.Toolbar {
 

@@ -1,6 +1,6 @@
 module api.schema {
 
-    export class Schema extends api.item.BaseItem implements api.Equitable, api.node.Node {
+    export class Schema extends api.item.BaseItem {
 
         private key: string;
 

@@ -1,6 +1,6 @@
 module api.content {
 
-    export class ContentSummaryAndCompareStatus implements api.node.Node {
+    export class ContentSummaryAndCompareStatus implements api.ui.treegrid.TreeItem {
 
         private content: ContentSummary;
 
@@ -19,33 +19,16 @@ module api.content {
             return this.compareContentResult;
         }
 
-        hasChildren(): boolean {
-            return this.content.hasChildren();
+        getCompareStatus(): string {
+            return this.getCompareStatus();
         }
 
         getId(): string {
             return this.content.getId();
         }
 
-        getCreatedTime(): Date {
-            return this.content.getCreatedTime();
+        hasChildren(): boolean {
+            return this.content.hasChildren();
         }
-
-        getModifiedTime(): Date {
-            return this.content.getModifiedTime();
-        }
-
-        isDeletable(): boolean {
-            return this.content.isDeletable();
-        }
-
-        isEditable(): boolean {
-            return this.content.isEditable();
-        }
-
-        getCompareStatus(): string {
-            return this.getCompareStatus();
-        }
-
     }
 }

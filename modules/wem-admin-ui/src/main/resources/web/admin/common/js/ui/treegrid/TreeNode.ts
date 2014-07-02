@@ -1,6 +1,6 @@
-module api.app.browse.treegrid {
+module api.ui.treegrid {
 
-    export class TreeNode<NODE extends api.node.Node> {
+    export class TreeNode<NODE extends TreeItem> {
 
         private id: string;
 
