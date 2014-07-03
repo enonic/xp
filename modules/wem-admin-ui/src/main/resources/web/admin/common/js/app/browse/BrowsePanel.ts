@@ -31,7 +31,7 @@ module api.app.browse {
 
         private filterPanel: api.app.browse.filter.BrowseFilterPanel;
 
-        private gridAndFilterAndDetailSplitPanel;
+        private gridAndFilterAndDetailSplitPanel:api.ui.SplitPanel;
 
         private gridAndToolbarContainer: api.ui.Panel;
 
@@ -69,7 +69,7 @@ module api.app.browse {
 
             if (this.filterPanel) {
                 this.gridAndFilterAndDetailSplitPanel = new api.ui.SplitPanelBuilder(this.filterPanel, this.gridAndDetailSplitPanel)
-                    .fixFirstPanelSize("200px").setAlignment(api.ui.SplitPanelAlignment.VERTICAL).build();
+                    .setFirstPanelSize(200, api.ui.SplitPanelUnit.PIXEL).setAlignment(api.ui.SplitPanelAlignment.VERTICAL).build();
             } else {
                 this.gridAndFilterAndDetailSplitPanel = this.gridAndDetailSplitPanel;
             }
@@ -86,6 +86,24 @@ module api.app.browse {
 
             this.onRendered((event) => {
                 this.appendChild(this.gridAndFilterAndDetailSplitPanel);
+            });
+
+            api.ui.ResponsiveManager.onAvailableSizeChanged(this, (item:api.ui.ResponsiveItem) => {
+                if (item.isInRangeOrSmaller(api.ui.ResponsiveRanges._360_540)) {
+                    if (this.filterPanel && !this.gridAndFilterAndDetailSplitPanel.isPanelHidden(1)) {
+                        this.gridAndFilterAndDetailSplitPanel.hidePanel(1);
+                    }
+                    if (!this.gridAndDetailSplitPanel.isPanelHidden(2)) {
+                        this.gridAndDetailSplitPanel.hidePanel(2);
+                    }
+                } else if (item.isInRangeOrBigger(api.ui.ResponsiveRanges._540_720)) {
+                    if (this.filterPanel && this.gridAndFilterAndDetailSplitPanel.isPanelHidden(1)) {
+                        this.gridAndFilterAndDetailSplitPanel.showPanel(1);
+                    }
+                    if (this.gridAndDetailSplitPanel.isPanelHidden(2)) {
+                        this.gridAndDetailSplitPanel.showPanel(2);
+                    }
+                }
             });
         }
 

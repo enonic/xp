@@ -79,7 +79,7 @@ module api.app.wizard {
             this.appendChild(this.mainToolbar);
             if (params.split && params.livePanel) {
                 this.splitPanel = new api.ui.SplitPanelBuilder(this.formPanel, params.livePanel)
-                    .setFirstPanelMinSize(280)
+                    .setFirstPanelMinSize(280, api.ui.SplitPanelUnit.PIXEL)
                     .setAlignment(api.ui.SplitPanelAlignment.VERTICAL)
                     .build();
                 this.updateSplitPanel();
@@ -380,7 +380,7 @@ module api.app.wizard {
 
         private updateSplitPanel() {
             if (wemjq(window).width() > this.splitPanelThreshold) {
-                this.splitPanel.setFirstPanelSize("38%");
+                this.splitPanel.setFirstPanelSize(38, api.ui.SplitPanelUnit.PERCENT);
             }
             this.splitPanel.distribute();
         }

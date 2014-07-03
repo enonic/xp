@@ -81,7 +81,7 @@ module app.browse {
 
             this.onShown((event) => {
                 app.Router.setHash("browse");
-            })
+            });
         }
 
         getActions(): api.ui.Action[] {
