@@ -3,19 +3,26 @@
             xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
             elementFormDefault="qualified" jaxb:version="2.1">
 
-  <xsd:complexType name="input">
-    <xsd:all>
-      <xsd:element name="label" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="immutable" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="indexed" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="custom-text" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="help-text" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="validation-regexp" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="occurrences" type="occurrence" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="config" type="inputConfig" minOccurs="0" maxOccurs="1"/>
-    </xsd:all>
+  <xsd:complexType name="formItem" abstract="true">
     <xsd:attribute name="name" type="xsd:string" use="required"/>
-    <xsd:attribute name="type" type="xsd:string" use="required"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="input">
+    <xsd:complexContent>
+      <xsd:extension base="formItem">
+        <xsd:all>
+          <xsd:element name="label" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+          <xsd:element name="immutable" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
+          <xsd:element name="indexed" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
+          <xsd:element name="custom-text" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+          <xsd:element name="help-text" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+          <xsd:element name="validation-regexp" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+          <xsd:element name="occurrences" type="occurrence" minOccurs="0" maxOccurs="1"/>
+          <xsd:element name="config" type="xsd:anyType" minOccurs="0" maxOccurs="1"/>
+        </xsd:all>
+        <xsd:attribute name="type" type="xsd:string" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
   </xsd:complexType>
 
   <xsd:complexType name="occurrence">
@@ -23,52 +30,40 @@
     <xsd:attribute name="maximum" type="xsd:integer" use="required"/>
   </xsd:complexType>
 
-  <xsd:complexType name="inputConfig">
-    <xsd:all>
-      <xsd:element name="options" type="options" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="relationship-type" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="selector-type" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-    </xsd:all>
-  </xsd:complexType>
-
-  <xsd:complexType name="option">
-    <xsd:all>
-      <xsd:element name="label" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="value" type="xsd:string" minOccurs="1" maxOccurs="1"/>
-    </xsd:all>
-  </xsd:complexType>
-
-  <xsd:complexType name="options">
-    <xsd:sequence>
-      <xsd:element name="option" type="option" minOccurs="1" maxOccurs="unbounded"/>
-    </xsd:sequence>
-  </xsd:complexType>
-
   <xsd:complexType name="mixinReference">
-    <xsd:all>
-      <xsd:element name="reference" type="xsd:string" minOccurs="1" maxOccurs="1"/>
-    </xsd:all>
-    <xsd:attribute name="name" type="xsd:string" use="required"/>
+    <xsd:complexContent>
+      <xsd:extension base="formItem">
+        <xsd:all>
+          <xsd:element name="reference" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+        </xsd:all>
+      </xsd:extension>
+    </xsd:complexContent>
   </xsd:complexType>
 
   <xsd:complexType name="fieldSet">
-    <xsd:all>
-      <xsd:element name="label" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="items" type="formItems" minOccurs="0" maxOccurs="1"/>
-    </xsd:all>
-    <xsd:attribute name="name" type="xsd:string" use="required"/>
+    <xsd:complexContent>
+      <xsd:extension base="formItem">
+        <xsd:all>
+          <xsd:element name="label" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+          <xsd:element name="items" type="formItems" minOccurs="0" maxOccurs="1"/>
+        </xsd:all>
+      </xsd:extension>
+    </xsd:complexContent>
   </xsd:complexType>
 
   <xsd:complexType name="formItemSet">
-    <xsd:all>
-      <xsd:element name="label" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="immutable" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="custom-text" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="help-text" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="occurrences" type="occurrence" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="items" type="formItems" minOccurs="0" maxOccurs="1"/>
-    </xsd:all>
-    <xsd:attribute name="name" type="xsd:string" use="required"/>
+    <xsd:complexContent>
+      <xsd:extension base="formItem">
+        <xsd:all>
+          <xsd:element name="label" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+          <xsd:element name="immutable" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
+          <xsd:element name="custom-text" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+          <xsd:element name="help-text" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+          <xsd:element name="occurrences" type="occurrence" minOccurs="0" maxOccurs="1"/>
+          <xsd:element name="items" type="formItems" minOccurs="0" maxOccurs="1"/>
+        </xsd:all>
+      </xsd:extension>
+    </xsd:complexContent>
   </xsd:complexType>
 
   <xsd:complexType name="formItems">
@@ -90,5 +85,7 @@
       <xsd:extension base="formItems"/>
     </xsd:complexContent>
   </xsd:complexType>
+
+  <xsd:element name="form" type="form"/>
 
 </xsd:schema>

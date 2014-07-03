@@ -41,7 +41,7 @@ public final class ModuleLoader
 
     private final ModuleServiceImpl moduleService;
 
-    private final ModuleXmlSerializer xmlSerializer;
+    private final ModuleXmlBuilder xmlSerializer;
 
     @Inject
     public ModuleLoader( final BundleContext context, final ModuleService moduleService )
@@ -49,7 +49,7 @@ public final class ModuleLoader
         this.bundles = Lists.newCopyOnWriteArrayList();
         this.context = context;
         this.moduleService = (ModuleServiceImpl) moduleService;
-        this.xmlSerializer = new ModuleXmlSerializer();
+        this.xmlSerializer = new ModuleXmlBuilder();
     }
 
     public void start()

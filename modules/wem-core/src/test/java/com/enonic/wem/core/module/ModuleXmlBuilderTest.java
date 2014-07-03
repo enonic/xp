@@ -1,6 +1,5 @@
 package com.enonic.wem.core.module;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.form.Form;
@@ -8,46 +7,41 @@ import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.support.SerializingTestHelper;
 import com.enonic.wem.api.support.serializer.XmlParsingException;
-import com.enonic.wem.core.AbstractSerializerTest;
 
 import static org.junit.Assert.*;
 
-public class ModuleXmlSerializerTest
-    extends AbstractSerializerTest
+public class ModuleXmlBuilderTest
 {
+    private final SerializingTestHelper serializingTestHelper;
 
-    private ModuleXmlSerializer moduleSerializer;
+    private final ModuleXmlBuilder xmlBuilder;
 
-    @Before
-    public void setUp()
+    public ModuleXmlBuilderTest()
     {
-        moduleSerializer = new ModuleXmlSerializer();
+        this.serializingTestHelper = new SerializingTestHelper( this, true );
+        this.xmlBuilder = new ModuleXmlBuilder();
     }
 
+    private String loadTestXml( final String fileName )
+    {
+        return this.serializingTestHelper.loadTextXml( fileName );
+    }
 
     @Test
     public void testModuleXmlDeserialization()
     {
-
-        String xml = loadTestXml( "serialized-module.xml" );
-        ModuleBuilder module = new ModuleBuilder().moduleKey( ModuleKey.from( "mymodule-1.0.0" ) );
-        moduleSerializer.toModule( xml, module );
+        final String xml = loadTestXml( "serialized-module.xml" );
+        final ModuleBuilder module = new ModuleBuilder().moduleKey( ModuleKey.from( "mymodule-1.0.0" ) );
+        this.xmlBuilder.toModule( xml, module );
         assertEquals( createModule().toString(), module.build().toString() );
-    }
-
-    @Test
-    public void testXmlModuleSerialization()
-    {
-        final Module module = createModule();
-        final String serializedModule = moduleSerializer.toString( module );
-        assertEquals( loadTestXml( "serialized-module.xml" ), serializedModule );
     }
 
     @Test(expected = XmlParsingException.class)
     public void testBadXmlModuleSerialization()
     {
-        moduleSerializer.toModule( "<module><display-name/>", new ModuleBuilder() );
+        this.xmlBuilder.toModule( "<module><display-name/>", new ModuleBuilder() );
     }
 
     private Module createModule()

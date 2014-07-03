@@ -9,6 +9,7 @@
         <jaxb:package name="com.enonic.wem.api.xml.model"/>
         <jaxb:nameXmlTransform>
           <jaxb:typeName prefix="Xml"/>
+          <jaxb:elementName prefix="Xml" suffix="Elem"/>
         </jaxb:nameXmlTransform>
       </jaxb:schemaBindings>
     </xsd:appinfo>

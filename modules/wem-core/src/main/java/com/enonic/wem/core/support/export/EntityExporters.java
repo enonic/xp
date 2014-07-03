@@ -5,10 +5,8 @@ import java.util.Map;
 
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.site.SiteTemplate;
-import com.enonic.wem.api.module.Module;
 import com.enonic.wem.core.content.page.PageTemplateExporter;
 import com.enonic.wem.core.content.site.SiteTemplateExporter;
-import com.enonic.wem.core.module.ModuleExporter;
 
 public class EntityExporters
 {
@@ -43,7 +41,6 @@ public class EntityExporters
 
     static
     {
-        registerExporter( Module.class, new ModuleExporter() );
         registerExporter( SiteTemplate.class, new SiteTemplateExporter() );
         registerExporter( PageTemplate.class, new PageTemplateExporter() );
     }
