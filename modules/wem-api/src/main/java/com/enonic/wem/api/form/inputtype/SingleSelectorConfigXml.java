@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+@Deprecated
 @XmlRootElement(name = "config")
 public class SingleSelectorConfigXml
     extends ConfigXml<SingleSelectorConfig, SingleSelectorConfig.Builder>

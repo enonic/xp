@@ -5,6 +5,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import com.enonic.wem.api.xml.XmlObject;
 
+@Deprecated
 @XmlRootElement(name = "occurrences")
 public final class OccurrencesXml
     implements XmlObject<Occurrences, Occurrences.Builder>

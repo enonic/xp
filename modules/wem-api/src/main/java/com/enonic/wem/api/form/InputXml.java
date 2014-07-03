@@ -20,6 +20,7 @@ import com.enonic.wem.api.form.inputtype.SingleSelectorConfigXml;
 import com.enonic.wem.api.xml.XmlObject;
 import com.enonic.wem.api.xml.XmlSerializers;
 
+@Deprecated
 @XmlRootElement(name = "input")
 public final class InputXml
     implements XmlObject<Input, Input.Builder>, FormItemXml

@@ -4,6 +4,7 @@ import org.w3c.dom.Element;
 
 import com.enonic.wem.api.xml.XmlObject;
 
+@Deprecated
 public class ConfigXml<I extends InputTypeConfig, O>
     implements XmlObject<I, O>
 {

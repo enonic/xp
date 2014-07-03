@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import com.enonic.wem.api.xml.XmlObject;
 
+@Deprecated
 @XmlRootElement(name = "field-set")
 public final class FieldSetXml
     implements XmlObject<FieldSet, FieldSet.Builder>, FormItemXml

@@ -6,6 +6,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import com.enonic.wem.api.xml.XmlObject;
 
+@Deprecated
 @XmlRootElement(name = "mixin-reference")
 public final class MixinReferenceXml
     implements XmlObject<MixinReference, MixinReference.Builder>, FormItemXml

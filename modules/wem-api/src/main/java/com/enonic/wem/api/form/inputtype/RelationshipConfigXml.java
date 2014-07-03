@@ -5,6 +5,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 
+@Deprecated
 @XmlRootElement(name = "config")
 public class RelationshipConfigXml
     extends ConfigXml<RelationshipConfig, RelationshipConfig.Builder>
