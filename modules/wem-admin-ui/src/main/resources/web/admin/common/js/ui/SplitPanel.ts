@@ -34,7 +34,7 @@ module api.ui {
 
         private splitterThickness: number = 5;
 
-        private firstPanelIsDecidingPanel: boolean = false;
+        private firstPanelIsDecidingPanel: boolean = true;
 
         constructor(firstPanel: api.ui.Panel, secondPanel: api.ui.Panel) {
             this.firstPanel = firstPanel;
@@ -349,7 +349,13 @@ module api.ui {
             else {
                 this.firstPanel.getEl().setWidth(this.getPanelSizeString(1)).setHeight(null);
                 this.secondPanel.getEl().setWidth(this.getPanelSizeString(2)).setHeight(null);
-                this.splitter.getEl().setLeft("calc(" + this.firstPanelSize + this.getUnitString(1) + " - " + this.splitterThickness / 2 + "px)");
+                console.log(this.firstPanelSize, this.firstPanel.getEl().getWidth());
+                if (this.firstPanelUnit == SplitPanelUnit.PERCENT) {
+                    var positionInPercentage = (this.firstPanelSize != -1) ? this.firstPanelSize : 100 - this.secondPanelSize;
+                    this.splitter.getEl().setLeft("calc(" + positionInPercentage + "% - " + (this.splitterThickness/2) + "px)");
+                } else {
+                    this.splitter.getEl().setLeft("calc(" + (this.firstPanel.getEl().getWidth()) + "px)");
+                }
             }
 
             ResponsiveManager.fireResizeEvent();
