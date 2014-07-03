@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module>
   <display-name>module display name</display-name>
-  <info>module-info</info>
   <url>http://enonic.net</url>
   <vendor>
     <name>Enonic</name>
     <url>https://www.enonic.com</url>
   </vendor>
-  <dependencies system-min-version="5.0.0" system-max-version="6.0.0">
-  </dependencies>
-  <form name="config">
+  <config>
     <input type="TextLine" name="some-name">
       <label/>
       <immutable>false</immutable>
@@ -18,7 +15,5 @@
       <help-text/>
       <occurrences minimum="0" maximum="1"/>
     </input>
-  </form>
+  </config>
 </module>
-
-

@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import com.enonic.wem.api.xml.XmlObject;
 
+@Deprecated
 @XmlRootElement(name = "form")
 public class FormXml
     implements XmlObject<Form, Form.Builder>
@@ -33,5 +34,4 @@ public class FormXml
             output.addFormItem( formItem );
         }
     }
-
 }

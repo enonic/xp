@@ -22,7 +22,7 @@ final class ModuleXmlBuilder
         final XmlVendor vendor = xml.getVendor();
         if ( vendor != null )
         {
-            builder.url( vendor.getUrl() );
+            builder.vendorUrl( vendor.getUrl() );
             builder.vendorName( vendor.getName() );
         }
 

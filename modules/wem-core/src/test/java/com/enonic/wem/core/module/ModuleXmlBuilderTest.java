@@ -8,7 +8,7 @@ import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.support.SerializingTestHelper;
-import com.enonic.wem.api.support.serializer.XmlParsingException;
+import com.enonic.wem.api.xml.XmlException;
 
 import static org.junit.Assert.*;
 
@@ -38,7 +38,7 @@ public class ModuleXmlBuilderTest
         assertEquals( createModule().toString(), module.build().toString() );
     }
 
-    @Test(expected = XmlParsingException.class)
+    @Test(expected = XmlException.class)
     public void testBadXmlModuleSerialization()
     {
         this.xmlBuilder.toModule( "<module><display-name/>", new ModuleBuilder() );
