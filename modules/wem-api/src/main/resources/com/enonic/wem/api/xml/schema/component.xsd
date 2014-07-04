@@ -3,10 +3,17 @@
             xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
             elementFormDefault="qualified" jaxb:version="2.1">
 
+  <xsd:include schemaLocation="form.xsd"/>
+
   <xsd:complexType name="partDescriptor">
   </xsd:complexType>
 
   <xsd:complexType name="pageDescriptor">
+    <xsd:all>
+      <xsd:element name="display-name" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="config" type="form" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="regions" type="regionDescriptors" minOccurs="0" maxOccurs="1"/>
+    </xsd:all>
   </xsd:complexType>
 
   <xsd:complexType name="imageDescriptor">
@@ -26,5 +33,20 @@
 
   <!-- Part component element -->
   <xsd:element name="layout-component" type="layoutDescriptor"/>
+
+  <xsd:complexType name="regionDescriptors">
+    <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+      <xsd:annotation>
+        <xsd:appinfo>
+          <jaxb:property name="List"/>
+        </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:element name="region" type="regionDescriptor"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="regionDescriptor">
+    <xsd:attribute name="name" type="xsd:string" use="required"/>
+  </xsd:complexType>
 
 </xsd:schema>
