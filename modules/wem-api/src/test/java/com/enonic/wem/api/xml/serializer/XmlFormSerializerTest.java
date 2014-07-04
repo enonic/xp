@@ -17,7 +17,7 @@ import com.enonic.wem.api.form.inputtype.RelationshipConfig;
 import com.enonic.wem.api.form.inputtype.SingleSelectorConfig;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
-import com.enonic.wem.api.xml.mapper.XmlMappers;
+import com.enonic.wem.api.xml.mapper.XmlFormMapper;
 import com.enonic.wem.api.xml.model.XmlForm;
 
 import static com.enonic.wem.api.form.FieldSet.newFieldSet;
@@ -252,13 +252,13 @@ public class XmlFormSerializerTest
 
     private String toXml( final Form form )
     {
-        final XmlForm xmlObject = XmlMappers.form().toXml( form );
+        final XmlForm xmlObject = XmlFormMapper.toXml( form );
         return XmlSerializers2.form().serialize( xmlObject );
     }
 
     private Form toForm( final String xml )
     {
         final XmlForm xmlObject = XmlSerializers2.form().parse( xml );
-        return XmlMappers.form().fromXml( xmlObject );
+        return XmlFormMapper.fromXml( xmlObject );
     }
 }

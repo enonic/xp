@@ -3,4 +3,11 @@
             xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
             elementFormDefault="qualified" jaxb:version="2.1">
 
+  <xsd:complexType name="vendor">
+    <xsd:all>
+      <xsd:element name="name" type="xsd:string"/>
+      <xsd:element name="url" type="xsd:string"/>
+    </xsd:all>
+  </xsd:complexType>
+
 </xsd:schema>

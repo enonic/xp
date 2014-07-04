@@ -1,6 +1,6 @@
 package com.enonic.wem.core.module;
 
-import com.enonic.wem.api.xml.mapper.XmlMappers;
+import com.enonic.wem.api.xml.mapper.XmlFormMapper;
 import com.enonic.wem.api.xml.model.XmlForm;
 import com.enonic.wem.api.xml.model.XmlModule;
 import com.enonic.wem.api.xml.model.XmlVendor;
@@ -29,7 +29,7 @@ final class ModuleXmlBuilder
         final XmlForm config = xml.getConfig();
         if ( config != null )
         {
-            builder.config( XmlMappers.form().fromXml( config ) );
+            builder.config( XmlFormMapper.fromXml( config ) );
         }
     }
 }

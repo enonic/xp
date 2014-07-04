@@ -18,5 +18,6 @@
   <xsd:include schemaLocation="common.xsd"/>
   <xsd:include schemaLocation="form.xsd"/>
   <xsd:include schemaLocation="module.xsd"/>
+  <xsd:include schemaLocation="schema.xsd"/>
 
 </xsd:schema>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+            elementFormDefault="qualified" jaxb:version="2.1">
+
+  <xsd:include schemaLocation="form.xsd"/>
+
+  <xsd:complexType name="mixin">
+    <xsd:all>
+      <xsd:element name="display-name" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="description" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="items" type="formItems" minOccurs="0" maxOccurs="1"/>
+    </xsd:all>
+  </xsd:complexType>
+
+  <!-- Mixin type element -->
+  <xsd:element name="mixin" type="mixin"/>
+
+  <!-- Content type element -->
+  <xsd:element name="type"/>
+
+  <!-- Relationship type element -->
+  <xsd:element name="relationship-type"/>
+
+</xsd:schema>

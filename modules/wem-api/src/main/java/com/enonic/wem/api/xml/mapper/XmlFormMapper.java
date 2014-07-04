@@ -30,26 +30,28 @@ import com.enonic.wem.api.xml.model.XmlInput;
 import com.enonic.wem.api.xml.model.XmlMixinReference;
 import com.enonic.wem.api.xml.model.XmlOccurrence;
 
-final class XmlFormMapper
-    implements XmlMapper<Form, XmlForm>
+public final class XmlFormMapper
 {
-    @Override
-    public Form fromXml( final XmlForm xml )
-    {
-        final Form.Builder result = Form.newForm();
-        result.addFormItems( fromItemsXml( xml ) );
-        return result.build();
-    }
-
-    @Override
-    public XmlForm toXml( final Form object )
+    public static XmlForm toXml( final Form object )
     {
         final XmlForm result = new XmlForm();
         result.getItems().addAll( toItemsXml( object.getFormItems() ).getItems() );
         return result;
     }
 
-    private List<FormItem> fromItemsXml( final XmlFormItems xml )
+    public static Form fromXml( final XmlForm xml )
+    {
+        final Form.Builder builder = Form.newForm();
+        fromXml( xml, builder );
+        return builder.build();
+    }
+
+    public static void fromXml( final XmlForm xml, final Form.Builder builder )
+    {
+        builder.addFormItems( fromItemsXml( xml ) );
+    }
+
+    public static List<FormItem> fromItemsXml( final XmlFormItems xml )
     {
         final List<FormItem> result = Lists.newArrayList();
         for ( final XmlFormItem item : xml.getItems() )
@@ -61,7 +63,7 @@ final class XmlFormMapper
         return result;
     }
 
-    private FormItem fromItemXml( final XmlFormItem xml )
+    private static FormItem fromItemXml( final XmlFormItem xml )
     {
         if ( xml instanceof XmlInput )
         {
@@ -86,7 +88,7 @@ final class XmlFormMapper
         throw new XmlException( "Unknown item type [{0}]", xml.getClass() );
     }
 
-    private Input fromItemXml( final XmlInput xml )
+    private static Input fromItemXml( final XmlInput xml )
     {
         final InputType type = InputTypes.parse( xml.getType() );
 
@@ -105,7 +107,7 @@ final class XmlFormMapper
         return builder.build();
     }
 
-    private FormItemSet fromItemXml( final XmlFormItemSet xml )
+    private static FormItemSet fromItemXml( final XmlFormItemSet xml )
     {
         final FormItemSet.Builder builder = FormItemSet.newFormItemSet();
         builder.name( xml.getName() );
@@ -118,7 +120,7 @@ final class XmlFormMapper
         return builder.build();
     }
 
-    private MixinReference fromItemXml( final XmlMixinReference xml )
+    private static MixinReference fromItemXml( final XmlMixinReference xml )
     {
         final MixinReference.Builder builder = MixinReference.newMixinReference();
         builder.name( xml.getName() );
@@ -126,7 +128,7 @@ final class XmlFormMapper
         return builder.build();
     }
 
-    private FieldSet fromItemXml( final XmlFieldSet xml )
+    private static FieldSet fromItemXml( final XmlFieldSet xml )
     {
         final FieldSet.Builder builder = FieldSet.newFieldSet();
         builder.name( xml.getName() );
@@ -135,7 +137,7 @@ final class XmlFormMapper
         return builder.build();
     }
 
-    private Occurrences fromOccurenceXml( final XmlOccurrence xml )
+    private static Occurrences fromOccurenceXml( final XmlOccurrence xml )
     {
         final Occurrences.Builder builder = Occurrences.newOccurrences();
         builder.minimum( xml.getMinimum().intValue() );
@@ -143,7 +145,7 @@ final class XmlFormMapper
         return builder.build();
     }
 
-    private InputTypeConfig fromConfigXml( final InputType type, final Object value )
+    private static InputTypeConfig fromConfigXml( final InputType type, final Object value )
     {
         if ( !( value instanceof Element ) )
         {
@@ -154,7 +156,7 @@ final class XmlFormMapper
         return type.getInputTypeConfigXmlSerializer().parseConfig( XmlDomHelper.toJdomElement( element ) );
     }
 
-    private XmlFormItems toItemsXml( final FormItems object )
+    public static XmlFormItems toItemsXml( final FormItems object )
     {
         final XmlFormItems result = new XmlFormItems();
         for ( final FormItem item : object )
@@ -166,7 +168,7 @@ final class XmlFormMapper
         return result;
     }
 
-    private XmlFormItem toItemXml( final FormItem object )
+    private static XmlFormItem toItemXml( final FormItem object )
     {
         if ( object instanceof Input )
         {
@@ -191,7 +193,7 @@ final class XmlFormMapper
         throw new XmlException( "Unknown item type [{0}]", object.getClass() );
     }
 
-    private XmlInput toItemXml( final Input object )
+    private static XmlInput toItemXml( final Input object )
     {
         final InputType type = object.getInputType();
 
@@ -211,7 +213,7 @@ final class XmlFormMapper
         return result;
     }
 
-    private XmlFormItemSet toItemXml( final FormItemSet object )
+    private static XmlFormItemSet toItemXml( final FormItemSet object )
     {
         final XmlFormItemSet result = new XmlFormItemSet();
         result.setName( object.getName() );
@@ -224,7 +226,7 @@ final class XmlFormMapper
         return result;
     }
 
-    private XmlMixinReference toItemXml( final MixinReference object )
+    private static XmlMixinReference toItemXml( final MixinReference object )
     {
         final XmlMixinReference result = new XmlMixinReference();
         result.setName( object.getName() );
@@ -232,7 +234,7 @@ final class XmlFormMapper
         return result;
     }
 
-    private XmlFieldSet toItemXml( final FieldSet object )
+    private static XmlFieldSet toItemXml( final FieldSet object )
     {
         final XmlFieldSet result = new XmlFieldSet();
         result.setName( object.getName() );
@@ -241,7 +243,7 @@ final class XmlFormMapper
         return result;
     }
 
-    private XmlOccurrence toOccurenceXml( final Occurrences object )
+    private static XmlOccurrence toOccurenceXml( final Occurrences object )
     {
         final XmlOccurrence result = new XmlOccurrence();
         result.setMinimum( BigInteger.valueOf( object.getMinimum() ) );
@@ -250,7 +252,7 @@ final class XmlFormMapper
     }
 
     @SuppressWarnings("unchecked")
-    private Object toConfigXml( final InputType type, final InputTypeConfig value )
+    private static Object toConfigXml( final InputType type, final InputTypeConfig value )
     {
         if ( value == null )
         {
