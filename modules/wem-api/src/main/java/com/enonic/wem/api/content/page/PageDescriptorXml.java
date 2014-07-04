@@ -14,6 +14,7 @@ import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormXml;
 import com.enonic.wem.api.xml.XmlObject;
 
+// TODO: Probably a wrong name for the class. Should be PageComponentXml.
 @XmlRootElement(name = "page-component")
 public final class PageDescriptorXml
     implements XmlObject<PageDescriptor, PageDescriptor.Builder>

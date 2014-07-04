@@ -13,13 +13,19 @@
     </xsd:all>
   </xsd:complexType>
 
+  <xsd:complexType name="contentType">
+  </xsd:complexType>
+
+  <xsd:complexType name="relationshipType">
+  </xsd:complexType>
+
   <!-- Mixin type element -->
   <xsd:element name="mixin" type="mixin"/>
 
   <!-- Content type element -->
-  <xsd:element name="type"/>
+  <xsd:element name="type" type="contentType"/>
 
   <!-- Relationship type element -->
-  <xsd:element name="relationship-type"/>
+  <xsd:element name="relationship-type" type="relationshipType"/>
 
 </xsd:schema>

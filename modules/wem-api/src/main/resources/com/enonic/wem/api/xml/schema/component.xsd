@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+            elementFormDefault="qualified" jaxb:version="2.1">
+
+  <xsd:complexType name="partComponent">
+  </xsd:complexType>
+
+  <xsd:complexType name="pageComponent">
+  </xsd:complexType>
+
+  <xsd:complexType name="imageComponent">
+  </xsd:complexType>
+
+  <xsd:complexType name="layoutComponent">
+  </xsd:complexType>
+
+  <!-- Part component element -->
+  <xsd:element name="part-component" type="partComponent"/>
+
+  <!-- Part component element -->
+  <xsd:element name="page-component" type="pageComponent"/>
+
+  <!-- Part component element -->
+  <xsd:element name="image-component" type="imageComponent"/>
+
+  <!-- Part component element -->
+  <xsd:element name="layout-component" type="layoutComponent"/>
+
+</xsd:schema>
