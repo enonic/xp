@@ -3,28 +3,28 @@
             xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
             elementFormDefault="qualified" jaxb:version="2.1">
 
-  <xsd:complexType name="partComponent">
+  <xsd:complexType name="partDescriptor">
   </xsd:complexType>
 
-  <xsd:complexType name="pageComponent">
+  <xsd:complexType name="pageDescriptor">
   </xsd:complexType>
 
-  <xsd:complexType name="imageComponent">
+  <xsd:complexType name="imageDescriptor">
   </xsd:complexType>
 
-  <xsd:complexType name="layoutComponent">
+  <xsd:complexType name="layoutDescriptor">
   </xsd:complexType>
 
   <!-- Part component element -->
-  <xsd:element name="part-component" type="partComponent"/>
+  <xsd:element name="part-component" type="partDescriptor"/>
 
   <!-- Part component element -->
-  <xsd:element name="page-component" type="pageComponent"/>
+  <xsd:element name="page-component" type="pageDescriptor"/>
 
   <!-- Part component element -->
-  <xsd:element name="image-component" type="imageComponent"/>
+  <xsd:element name="image-component" type="imageDescriptor"/>
 
   <!-- Part component element -->
-  <xsd:element name="layout-component" type="layoutComponent"/>
+  <xsd:element name="layout-component" type="layoutDescriptor"/>
 
 </xsd:schema>

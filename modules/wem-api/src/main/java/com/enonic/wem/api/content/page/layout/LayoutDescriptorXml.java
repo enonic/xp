@@ -12,7 +12,7 @@ import com.enonic.wem.api.content.page.region.RegionDescriptor;
 import com.enonic.wem.api.content.page.region.RegionDescriptorXml;
 import com.enonic.wem.api.content.page.region.RegionDescriptors;
 
-// TODO: Probably a wrong name for the class. Should be LayoutComponentXml.
+// This is actually a LayoutComponentDescriptor
 @XmlRootElement(name = "layout-component")
 public final class LayoutDescriptorXml
     extends DescriptorXml<LayoutDescriptor, LayoutDescriptor.Builder>
