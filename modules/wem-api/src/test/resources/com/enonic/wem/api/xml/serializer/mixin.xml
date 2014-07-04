@@ -1,14 +1,16 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <mixin>
   <display-name>display name</display-name>
   <description>description</description>
   <items>
     <form-item-set name="mySet">
+      <immutable>false</immutable>
+      <occurrences minimum="0" maximum="1"/>
       <items>
         <field-set name="myFieldSet">
           <label>My field set</label>
           <items>
-            <input name="myTextLine" type="TextLine">
+            <input type="TextLine" name="myTextLine">
               <immutable>false</immutable>
               <indexed>false</indexed>
               <occurrences minimum="0" maximum="1"/>
@@ -16,8 +18,6 @@
           </items>
         </field-set>
       </items>
-      <immutable>false</immutable>
-      <occurrences minimum="0" maximum="1"/>
     </form-item-set>
   </items>
 </mixin>

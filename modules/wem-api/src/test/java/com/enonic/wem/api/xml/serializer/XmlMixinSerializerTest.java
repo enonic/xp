@@ -18,6 +18,7 @@ import static junit.framework.Assert.assertEquals;
 public class XmlMixinSerializerTest
     extends BaseXmlSerializer2Test
 {
+    @Test
     public void testTo()
         throws Exception
     {
