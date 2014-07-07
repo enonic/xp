@@ -1,15 +1,13 @@
 .context-menu {
   z-index: 2147483647; // max positive int - 1 (tooltip has max)
   position: absolute;
-  border-width: 2px;
-  border-style: solid;
-  border-color: @admin-medium-gray-border;
   background: @admin-white;
   list-style: none;
   display: none;
   margin: 0;
-  padding: 0;
+  padding: 4px;
   min-width: 120px;
+  .box-shadow(0 1px 5px rgba(0, 0, 0, 0.7));
 
   li {
     font-family: @admin-font-family;
@@ -23,8 +21,7 @@
 
     &:hover:not(.context-menu-item-disabled) {
       cursor: pointer;
-      background-color: @admin-blue;
-      color: #fff;
+      background-color: @admin-light-gray-bg;
     }
 
     &:disabled, &.disabled {

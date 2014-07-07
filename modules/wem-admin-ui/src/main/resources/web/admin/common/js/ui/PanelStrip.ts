@@ -57,7 +57,6 @@ module api.ui {
                 lastEl.setData("originalHeight", lastEl.getHTMLElement().style.height || "auto");
             }
             lastEl.setHeightPx(this.scrollable.getEl().getHeight());
-            console.log("Updated last panel height");
         }
 
         removePanel(panelToRemove: Panel, checkCanRemovePanel: boolean = true): number {

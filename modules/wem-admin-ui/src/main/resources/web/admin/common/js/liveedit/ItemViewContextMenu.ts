@@ -7,7 +7,6 @@ module api.liveedit {
         private itemView: ItemView;
 
         private names: api.app.NamesAndIconView;
-        private closeBtn: api.ui.Button;
         private menu: api.ui.menu.ContextMenu;
 
         constructor(itemView: ItemView, actions: api.ui.Action[]) {
@@ -15,17 +14,7 @@ module api.liveedit {
 
             this.itemView = itemView;
 
-            this.closeBtn = new api.ui.Button();
-            this.closeBtn.addClass('close icon-close'); //live-edit-font-icon-close
-            this.closeBtn.onClicked((event: MouseEvent) => {
-                this.hide();
-                itemView.deselect();
-                event.preventDefault();
-                event.stopPropagation();
-            });
-            this.appendChild(this.closeBtn);
-
-            this.names = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
+            this.names = new api.app.NamesAndIconViewBuilder().build();
             this.names.setMainName(itemView.getType().getShortName());
             this.names.setIconClass(itemView.getType().getConfig().getIconCls());
             this.appendChild(this.names);
