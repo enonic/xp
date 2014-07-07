@@ -206,7 +206,7 @@ module api.ui.treegrid {
             if (columns.length > 0) {
                 var formatter = columns[0].getFormatter();
                 var toggleFormatter = (row: number, cell: number, value: any, columnDef: any, node: TreeNode<NODE>) => {
-                    var toggleSpan = new api.dom.SpanEl("toggle icon icon-xsmall");
+                    var toggleSpan = new api.dom.SpanEl("toggle icon");
                     if (node.getData().hasChildren()) {
                         var toggleClass = node.isExpanded() ? "collapse" : "expand";
                         toggleSpan.addClass(toggleClass);

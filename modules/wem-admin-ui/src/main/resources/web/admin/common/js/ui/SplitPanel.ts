@@ -349,7 +349,6 @@ module api.ui {
             else {
                 this.firstPanel.getEl().setWidth(this.getPanelSizeString(1)).setHeight(null);
                 this.secondPanel.getEl().setWidth(this.getPanelSizeString(2)).setHeight(null);
-                console.log(this.firstPanelSize, this.firstPanel.getEl().getWidth());
                 if (this.firstPanelUnit == SplitPanelUnit.PERCENT) {
                     var positionInPercentage = (this.firstPanelSize != -1) ? this.firstPanelSize : 100 - this.secondPanelSize;
                     this.splitter.getEl().setLeft("calc(" + positionInPercentage + "% - " + (this.splitterThickness/2) + "px)");

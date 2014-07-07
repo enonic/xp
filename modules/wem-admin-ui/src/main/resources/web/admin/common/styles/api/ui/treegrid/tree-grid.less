@@ -109,6 +109,7 @@
           height: 100%;
           vertical-align:middle;
           background: url("../images/admin-unchecked.gif") center no-repeat;
+          cursor: pointer;
         }
 
         input[type="checkbox"] {
@@ -140,17 +141,21 @@
           position: relative;
           display: block;
           top: 50%;
-          margin: -5px 0 0;
+          margin: -10px 0 0;
+          font-size: 20px;
         }
       }
 
       .toggle.expand {
-        .icon-arrow-right2();
+        .icon-arrow-right3();
       }
 
       .toggle.collapse {
-        .icon-arrow-down();
+        .icon-arrow-right3();
+        &:before {
 
+          .rotate(45deg);
+        }
       }
 
       .viewer {
