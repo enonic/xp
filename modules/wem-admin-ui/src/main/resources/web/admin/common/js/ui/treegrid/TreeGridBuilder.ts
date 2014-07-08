@@ -19,9 +19,7 @@ module api.ui.treegrid {
         constructor(grid?: TreeGrid<NODE>) {
             if (grid) {
                 this.showToolbar = grid.hasToolbar();
-                this.classes = grid.getEl().getClass().split(" ").filter((elem) => {
-                    return elem.length > 0 && elem !== "tree-grid" && elem !== "no-toolbar";
-                }).join(" ");
+                this.classes = grid.getEl().getClass();
                 this.copyOptions(grid.getOptions())
                     .copyColumns(grid.getColumns());
             } else {
