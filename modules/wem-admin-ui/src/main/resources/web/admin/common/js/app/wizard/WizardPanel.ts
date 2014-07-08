@@ -167,6 +167,7 @@ module api.app.wizard {
             var wizardHeaderHeight = this.header.getEl().getHeightWithMargin() + this.header.getEl().getOffsetTopRelativeToParent();
             if (scrollTop > wizardHeaderHeight) {
                 this.mainToolbar.removeClass("scrolling");
+                this.stepNavigatorAndToolbarContainer.getEl().setWidth(this.formPanel.getEl().getWidth() + "px");
                 this.stepNavigatorAndToolbarContainer.addClass("scroll-stick");
             } else if (scrollTop < wizardHeaderHeight) {
                 this.mainToolbar.addClass("scrolling");
