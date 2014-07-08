@@ -10,17 +10,17 @@ import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeyResolver;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.module.ModuleNotFoundException;
+import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.core.module.ModuleKeyResolverService;
-import com.enonic.wem.core.module.ModuleResourcePathResolver;
 
 public abstract class ModuleBaseResource
     extends BaseResource
 {
     @Inject
-    protected ModuleResourcePathResolver modulePathResolver;
+    protected ModuleKeyResolverService moduleKeyResolverService;
 
     @Inject
-    protected ModuleKeyResolverService moduleKeyResolverService;
+    protected ModuleService moduleService;
 
     protected String contentPath;
 

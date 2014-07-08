@@ -1,16 +1,18 @@
 package com.enonic.wem.portal.underscore;
 
-import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 
 import org.restlet.data.MediaType;
-import org.restlet.representation.FileRepresentation;
+import org.restlet.representation.InputRepresentation;
 import org.restlet.representation.Representation;
 import org.restlet.resource.ResourceException;
 
+import com.google.common.base.Throwables;
 import com.google.common.io.Files;
 
+import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.portal.base.ModuleBaseResource;
 
 public final class PublicResource
@@ -23,16 +25,23 @@ public final class PublicResource
         final ModuleKey moduleKey = resolveModule();
         final String resourceName = getAttribute( "resource" );
 
-        final ModuleResourceKey moduleResource = ModuleResourceKey.from( moduleKey, "public/" + resourceName );
-        final File fileResource = this.modulePathResolver.resolveResourcePath( moduleResource ).toFile();
-        if ( !fileResource.isFile() )
+        final Module module = moduleService.getModule( moduleKey );
+        final URL resourceUrl = ( module == null ) ? null : module.getResource( "public/" + resourceName );
+        if ( resourceUrl == null )
         {
             throw notFound( "File [%s] not found in module [%s]", resourceName, moduleKey.toString() );
         }
 
-        final String ext = Files.getFileExtension( fileResource.getName() );
+        final String ext = Files.getFileExtension( resourceName );
         final MediaType mediaType = getApplication().getMetadataService().getMediaType( ext );
 
-        return new FileRepresentation( fileResource, mediaType );
+        try
+        {
+            return new InputRepresentation( resourceUrl.openStream(), mediaType );
+        }
+        catch ( IOException e )
+        {
+            throw Throwables.propagate( e );
+        }
     }
 }
