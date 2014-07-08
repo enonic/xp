@@ -7,6 +7,9 @@ import org.restlet.Component;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.ext.servlet.ServerServlet;
+import org.restlet.ext.servlet.ServletUtils;
+
+import com.enonic.wem.core.web.servlet.ServletRequestHolder;
 
 @Singleton
 public final class PortalServlet
@@ -27,7 +30,16 @@ public final class PortalServlet
             public void handle( final Request request, final Response response )
             {
                 request.getAttributes().put( "__contextPath", contextPath );
-                super.handle( request, response );
+                try
+                {
+                    ServletRequestHolder.setRequest( ServletUtils.getRequest( request ) );
+                    super.handle( request, response );
+                }
+                finally
+                {
+                    ServletRequestHolder.setRequest( null );
+                }
+
             }
         };
 
