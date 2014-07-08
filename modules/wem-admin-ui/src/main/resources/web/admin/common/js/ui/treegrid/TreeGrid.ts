@@ -141,6 +141,8 @@ module api.ui.treegrid {
             if (builder.isShowToolbar()) {
                 this.toolbar = new TreeGridToolbar(actions);
                 this.appendChild(this.toolbar);
+                // make sure it won't left from the cloned grid
+                this.removeClass("no-toolbar");
             } else {
                 this.addClass("no-toolbar");
             }
