@@ -46,16 +46,16 @@ module api.liveedit {
 
         private viewsById: {[s:number] : ItemView;};
 
-        private mouseEnterViewListeners: {(view: ItemView): void} [];
+        private itemViewAddedListeners: {(event: ItemViewAddedEvent) : void}[];
 
-        private mouseLeaveViewListeners: {(view: ItemView): void} [];
+        private itemViewRemovedListeners: {(event: ItemViewRemovedEvent) : void}[];
 
         constructor(builder: PageViewBuilder) {
 
             this.regionViews = [];
             this.viewsById = {};
-            this.mouseEnterViewListeners = [];
-            this.mouseLeaveViewListeners = [];
+            this.itemViewAddedListeners = [];
+            this.itemViewRemovedListeners = [];
 
             super(new ItemViewBuilder().
                 setItemViewIdProducer(builder.itemViewProducer).
@@ -224,15 +224,16 @@ module api.liveedit {
             console.debug("PageView.registerItemView: " + view.getItemId().toNumber() + " : " + view.getType().getShortName() + " : " +
                           extra);
 
-            view.onMouseOverView(() => this.notifyMouseEnterView(view));
-            view.onMouseOutView(() => this.notifyMouseLeaveView(view));
-
             this.viewsById[view.getItemId().toNumber()] = view;
+
+            this.notifyItemViewAdded(new ItemViewAddedEvent(view));
         }
 
         private unregisterItemView(view: ItemView) {
             console.debug("PageView.unregisterItemView: " + view.getItemId().toNumber());
             delete this.viewsById[view.getItemId().toNumber()];
+
+            this.notifyItemViewRemoved(new ItemViewRemovedEvent(view));
         }
 
         private parseItemViews() {
@@ -263,28 +264,28 @@ module api.liveedit {
             });
         }
 
-        onMouseEnterView(listener: (view: ItemView) => void) {
-            this.mouseEnterViewListeners.push(listener);
+        onItemViewAdded(listener: (event: ItemViewAddedEvent) => void) {
+            this.itemViewAddedListeners.push(listener);
         }
 
-        unMouseEnterView(listener: (view: ItemView) => void) {
-            this.mouseEnterViewListeners = this.mouseEnterViewListeners.filter((current) => (current != listener));
+        unItemViewAdded(listener: (event: ItemViewAddedEvent) => void) {
+            this.itemViewAddedListeners = this.itemViewAddedListeners.filter((current) => (current != listener));
         }
 
-        private notifyMouseEnterView(view: ItemView) {
-            this.mouseEnterViewListeners.forEach((listener: (view: ItemView) => void) => listener(view));
+        private notifyItemViewAdded(event: ItemViewAddedEvent) {
+            this.itemViewAddedListeners.forEach((listener) => listener(event));
         }
 
-        onMouseLeaveView(listener: (view: ItemView) => void) {
-            this.mouseLeaveViewListeners.push(listener);
+        onItemViewRemoved(listener: (event: ItemViewRemovedEvent) => void) {
+            this.itemViewRemovedListeners.push(listener);
         }
 
-        unMouseLeaveView(listener: (view: ItemView) => void) {
-            this.mouseLeaveViewListeners = this.mouseLeaveViewListeners.filter((current) => (current != listener));
+        unItemViewRemoved(listener: (event: ItemViewRemovedEvent) => void) {
+            this.itemViewRemovedListeners = this.itemViewRemovedListeners.filter((current) => (current != listener));
         }
 
-        private notifyMouseLeaveView(view: ItemView) {
-            this.mouseLeaveViewListeners.forEach((listener: (view: ItemView) => void) => listener(view));
+        private notifyItemViewRemoved(event: ItemViewRemovedEvent) {
+            this.itemViewRemovedListeners.forEach((listener) => listener(event));
         }
     }
 }
