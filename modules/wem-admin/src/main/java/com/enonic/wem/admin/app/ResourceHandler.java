@@ -10,6 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.io.ByteStreams;
+import com.google.common.net.MediaType;
+
+import com.enonic.wem.api.util.MediaTypes;
 
 final class ResourceHandler
 {
@@ -42,7 +45,17 @@ final class ResourceHandler
     private void serveResource( final HttpServletResponse res, final String path, final InputStream in )
         throws IOException
     {
-        res.setContentType( this.servletContext.getMimeType( path ) );
+        String mimeType = this.servletContext.getMimeType( path );
+        // TODO .json was not resolved correctly from servletContext, maybe should be configured somewhere instead of using MediaTypes?
+        if ( mimeType == null )
+        {
+            final MediaType mediaType = MediaTypes.instance().fromFile( path );
+            if ( mediaType != null )
+            {
+                mimeType = mediaType.toString();
+            }
+        }
+        res.setContentType( mimeType );
         ByteStreams.copy( in, res.getOutputStream() );
     }
 
