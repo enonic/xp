@@ -680,6 +680,7 @@ module api.dom {
             })
         }
 
+        // TODO: check where it is used and replace by ResponsiveManager
         onResized(listener: (event: ElementResizedEvent) => void) {
             this.resizedListeners.push(listener);
 

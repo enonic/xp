@@ -19,12 +19,8 @@ module api.util {
         return str.replace(/\s/g, "");
     }
 
-    export function isStringEmpty(str: string) {
-        if (!str) {
-            return true;
-        }
-
-        return str.length == 0;
+    export function isStringEmpty(str: string): boolean {
+        return !str;
     }
 
     export function isStringBlank(str: string) {

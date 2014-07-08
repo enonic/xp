@@ -18,6 +18,10 @@ module api.dom {
             return this.el;
         }
 
+        getScrollTop(): number {
+            return wemjq(this.el).scrollTop();
+        }
+
         onResized(listener: (event: UIEvent) => void, element?: api.dom.Element) {
             this.el.addEventListener("resize", listener);
 
@@ -30,6 +34,17 @@ module api.dom {
             this.el.removeEventListener("resize", listener);
         }
 
+        onScroll(listener: (event: UIEvent) => void, element?: api.dom.Element) {
+            this.el.addEventListener('scroll', listener);
+
+            if (element) {
+                element.onRemoved(() => this.unScroll(listener));
+            }
+        }
+
+        unScroll(listener: (event: UIEvent) => void) {
+            this.el.removeEventListener('scroll', listener);
+        }
     }
 
 }
