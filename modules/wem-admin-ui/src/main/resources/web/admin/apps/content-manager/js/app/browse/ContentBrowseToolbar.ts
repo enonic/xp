@@ -5,6 +5,7 @@ module app.browse {
         constructor(actions: ContentBrowseActions) {
             super();
 
+            this.addAction(actions.TOGGLE_SEARCH_PANEL);
             this.addAction(actions.SHOW_NEW_CONTENT_DIALOG_ACTION);
             this.addAction(actions.EDIT_CONTENT);
             this.addAction(actions.OPEN_CONTENT);

@@ -82,6 +82,19 @@ module app.browse {
             this.onShown((event) => {
                 app.Router.setHash("browse");
             });
+
+            ToggleSearchPanelEvent.on(() => {
+                console.log("Toggling searchpanel event");
+                this.toggleFilterPanel();
+            });
+
+            api.ui.ResponsiveManager.onAvailableSizeChanged(this, (item:api.ui.ResponsiveItem) => {
+                if (item.isInRangeOrSmaller(api.ui.ResponsiveRanges._360_540)) {
+                    this.browseActions.TOGGLE_SEARCH_PANEL.setVisible(true);
+                } else if (item.isInRangeOrBigger(api.ui.ResponsiveRanges._540_720)) {
+                    this.browseActions.TOGGLE_SEARCH_PANEL.setVisible(false);
+                }
+            });
         }
 
         getActions(): api.ui.Action[] {

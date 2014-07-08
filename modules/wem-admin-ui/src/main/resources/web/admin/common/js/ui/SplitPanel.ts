@@ -404,12 +404,13 @@ module api.ui {
                 this.secondPanelSize = this.hiddenPanelPreviousSize;
                 this.secondPanel.show();
             }
-            this.splitter.show();
+
             this.hiddenPanel = -1;
             this.distribute();
         }
 
         hidePanel(panelNumber:number) {
+            console.log("hiding panel");
             api.util.assert((panelNumber == 1 || panelNumber == 2), "Panel number must be 1 or 2");
             if (this.isPanelHidden(panelNumber)) return;
 

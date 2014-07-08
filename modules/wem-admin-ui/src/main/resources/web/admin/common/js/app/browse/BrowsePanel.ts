@@ -31,11 +31,13 @@ module api.app.browse {
 
         private filterPanel: api.app.browse.filter.BrowseFilterPanel;
 
-        private gridAndFilterAndDetailSplitPanel:api.ui.SplitPanel;
+        private filterAndGridAndDetailSplitPanel:api.ui.SplitPanel;
 
         private gridAndToolbarContainer: api.ui.Panel;
 
         private refreshNeeded: boolean = false;
+
+        private filterPanelForcedShown: boolean = false;
 
         constructor(params: BrowsePanelParams<M>) {
             super();
@@ -68,10 +70,10 @@ module api.app.browse {
                 .setAlignmentTreshold(BrowsePanel.SPLIT_PANEL_ALIGNMENT_TRESHOLD).build();
 
             if (this.filterPanel) {
-                this.gridAndFilterAndDetailSplitPanel = new api.ui.SplitPanelBuilder(this.filterPanel, this.gridAndDetailSplitPanel)
+                this.filterAndGridAndDetailSplitPanel = new api.ui.SplitPanelBuilder(this.filterPanel, this.gridAndDetailSplitPanel)
                     .setFirstPanelSize(200, api.ui.SplitPanelUnit.PIXEL).setAlignment(api.ui.SplitPanelAlignment.VERTICAL).build();
             } else {
-                this.gridAndFilterAndDetailSplitPanel = this.gridAndDetailSplitPanel;
+                this.filterAndGridAndDetailSplitPanel = this.gridAndDetailSplitPanel;
             }
 
             if (this.oldTreeGrid) {
@@ -85,20 +87,20 @@ module api.app.browse {
             }
 
             this.onRendered((event) => {
-                this.appendChild(this.gridAndFilterAndDetailSplitPanel);
+                this.appendChild(this.filterAndGridAndDetailSplitPanel);
             });
 
             api.ui.ResponsiveManager.onAvailableSizeChanged(this, (item:api.ui.ResponsiveItem) => {
                 if (item.isInRangeOrSmaller(api.ui.ResponsiveRanges._360_540)) {
-                    if (this.filterPanel && !this.gridAndFilterAndDetailSplitPanel.isPanelHidden(1)) {
-                        this.gridAndFilterAndDetailSplitPanel.hidePanel(1);
+                    if (this.filterPanel && !this.filterAndGridAndDetailSplitPanel.isPanelHidden(1) && !this.filterPanelForcedShown) {
+                        this.filterAndGridAndDetailSplitPanel.hidePanel(1);
                     }
                     if (!this.gridAndDetailSplitPanel.isPanelHidden(2)) {
                         this.gridAndDetailSplitPanel.hidePanel(2);
                     }
                 } else if (item.isInRangeOrBigger(api.ui.ResponsiveRanges._540_720)) {
-                    if (this.filterPanel && this.gridAndFilterAndDetailSplitPanel.isPanelHidden(1)) {
-                        this.gridAndFilterAndDetailSplitPanel.showPanel(1);
+                    if (this.filterPanel && this.filterAndGridAndDetailSplitPanel.isPanelHidden(1)) {
+                        this.filterAndGridAndDetailSplitPanel.showPanel(1);
                     }
                     if (this.gridAndDetailSplitPanel.isPanelHidden(2)) {
                         this.gridAndDetailSplitPanel.showPanel(2);
@@ -138,6 +140,11 @@ module api.app.browse {
 
         setRefreshNeeded(refreshNeeded: boolean) {
             this.refreshNeeded = refreshNeeded;
+        }
+
+        toggleFilterPanel() {
+            this.filterPanelForcedShown = !this.filterPanelForcedShown;
+            !this.filterAndGridAndDetailSplitPanel.isPanelHidden(1) ? this.filterAndGridAndDetailSplitPanel.hidePanel(1) : this.filterAndGridAndDetailSplitPanel.showPanel(1);
         }
 
         toggleShowingNewGrid() {

@@ -119,6 +119,17 @@ module app.browse {
         }
     }
 
+    export class ToggleSearchPanelAction extends api.ui.Action {
+        constructor() {
+            super("");
+            this.onExecuted(() => {
+                new ToggleSearchPanelEvent().fire();
+            });
+            this.setIconClass("icon-search3");
+        }
+
+    }
+
     export class ContentBrowseActions {
 
         public SHOW_NEW_CONTENT_DIALOG_ACTION: api.ui.Action;
@@ -130,6 +141,7 @@ module app.browse {
         public SHOW_PREVIEW: api.ui.Action;
         public SHOW_DETAILS: api.ui.Action;
         public SHOW_NEW_CONTENT_GRID: api.ui.Action;
+        public TOGGLE_SEARCH_PANEL: api.ui.Action;
 
         private allActions: api.ui.Action[] = [];
 
@@ -155,10 +167,11 @@ module app.browse {
             this.SHOW_PREVIEW = new ShowPreviewAction(treeGridPanel);
             this.SHOW_DETAILS = new ShowDetailsAction(treeGridPanel);
             this.SHOW_NEW_CONTENT_GRID = new ShowNewGridAction();
+            this.TOGGLE_SEARCH_PANEL = new ToggleSearchPanelAction();
 
             this.allActions.push(this.SHOW_NEW_CONTENT_DIALOG_ACTION, this.OPEN_CONTENT, this.EDIT_CONTENT, this.DELETE_CONTENT,
                 this.DUPLICATE_CONTENT, this.MOVE_CONTENT, this.SHOW_PREVIEW, this.SHOW_DETAILS,
-                this.SHOW_NEW_CONTENT_GRID);
+                this.SHOW_NEW_CONTENT_GRID, this.TOGGLE_SEARCH_PANEL);
 
             ContentBrowseActions.INSTANCE = this;
         }
@@ -168,6 +181,7 @@ module app.browse {
         }
 
         updateActionsEnabledState(models: api.content.ContentSummary[]) {
+            this.TOGGLE_SEARCH_PANEL.setVisible(false);
 
             if (models.length <= 0) {
                 this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(true);
