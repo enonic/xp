@@ -8,7 +8,6 @@ module api.app{
 
         constructor() {
             super();
-            this.getEl().addClass("appbar-tabmenu-button");
 
             this.tabCountEl = new AppBarTabCount();
             this.prependChild(this.tabCountEl);
@@ -33,8 +32,7 @@ module api.app{
     export class AppBarTabCount extends api.dom.SpanEl {
 
         constructor() {
-            super();
-            this.getEl().addClass("tabcount");
+            super("tab-count");
         }
 
         setCount(value:number) {

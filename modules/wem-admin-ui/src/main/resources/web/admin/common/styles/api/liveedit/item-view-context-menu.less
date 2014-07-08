@@ -1,34 +1,39 @@
 .item-view-context-menu {
   z-index: 2147483646; // max positive int - 1 (tooltip has max)
   position: absolute;
-  border-width: 2px;
-  border-style: solid;
-  border-color: @admin-medium-gray-border;
   background: @admin-white;
   display: none;
   min-width: 160px;
+  padding: 4px;
+  .box-shadow(0 1px 5px rgba(0, 0, 0, 0.7));
+  .arrow(#fff, 7px);
 
   .names-and-icon-view {
-    padding: 5px 0 5px 5px;
+    padding: 8px 5px;
+    margin-bottom: 4px;
+    background-color: @admin-blue;
 
     .wrapper {
-      width: 16px;
-      height: 16px;
-      line-height: 14px;
+      width: 20px;
+      height: 20px;
+      line-height: 20px;
 
       .icon {
-        color: @admin-dark-gray-font;
-        font-size: 16px;
-        line-height: 14px;
+        color: #fff;
+        font-size: 20px;
+        line-height: 20px;
+        vertical-align: top;
       }
     }
 
     .names-view {
-      margin: 0 24px;
+      margin: 0;
 
       .main-name {
-        color: @admin-dark-gray-font;
+        color: #fff;
         font-family: @admin-font-family;
+        height: 20px;
+        line-height: 20px;
       }
       .sub-name {
         display: none;
@@ -36,27 +41,12 @@
     }
   }
 
-  .button.close {
-    .button(@admin-light-gray-font, transparent, @admin-dark-gray-font);
-
-    float: right;
-    padding: 5px;
-    font-size: 16px;
-    line-height: 14px;
-
-    span {
-      display: none;
-    }
-  }
-
   .context-menu {
     display: block;
     position: static;
-    border: 0 none;
+    padding: 0;
+    .box-shadow(none);
   }
-
-  .arrow(@admin-medium-gray-border, 7px);
-
 }
 
 

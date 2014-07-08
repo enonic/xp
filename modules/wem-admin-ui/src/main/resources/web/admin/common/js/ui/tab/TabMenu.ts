@@ -30,7 +30,7 @@ module api.ui.tab {
             this.tabMenuButton.onClicked((event: MouseEvent) => this.toggleMenu());
             this.appendChild(this.tabMenuButton);
 
-            this.menuEl = this.createMenu();
+            this.menuEl = new api.dom.UlEl();
             this.appendChild(this.menuEl);
 
             api.dom.Body.get().onClicked((event: MouseEvent) => this.hideMenuOnOutsideClick(event));
@@ -51,14 +51,6 @@ module api.ui.tab {
 
         getMenuEl(): api.dom.UlEl {
             return this.menuEl;
-        }
-
-        createMenu(): api.dom.UlEl {
-            var ulEl = new api.dom.UlEl();
-            ulEl.getEl().setZindex(19001);
-            ulEl.getEl().setPosition("absolute");
-            ulEl.hide();
-            return ulEl;
         }
 
         private toggleMenu() {

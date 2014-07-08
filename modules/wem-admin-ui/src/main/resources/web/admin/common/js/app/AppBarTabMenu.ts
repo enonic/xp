@@ -7,18 +7,12 @@ module api.app {
         private buttonLabelChanged: {():void}[] = [];
 
         constructor() {
-            super("appbar-tabmenu");
+            super("appbar-tab-menu");
         }
 
         createTabMenuButton():AppBarTabMenuButton {
             this.appBarTabMenuButton = new AppBarTabMenuButton();
             return this.appBarTabMenuButton;
-        }
-
-        createMenu(): api.dom.UlEl {
-            var menu = super.createMenu();
-            menu.getEl().setPosition('fixed');
-            return menu;
         }
 
         setButtonLabel(value: string) {
@@ -77,13 +71,10 @@ module api.app {
          * Aligns tab items list to the center of the tab menu button
          */
         updateMenuPosition() {
-            var fullWidth = api.dom.Body.get().getEl().getWidth();
-            var tabEl = this.getEl();
-            var menuEl = this.getMenuEl().getEl();
+            var containerWidth = this.getEl().getWidth();
+            var menuWidth = this.getMenuEl().getEl().getWidth();
 
-            var tabCenterOffsetRight = fullWidth - tabEl.getOffsetLeft() - tabEl.getWidthWithMargin() / 2;
-            menuEl.setRight(Math.max(tabCenterOffsetRight - menuEl.getWidthWithBorder() / 2, 0)  + 'px');
-            menuEl.setWidth('auto').setWidth(fullWidth < menuEl.getWidthWithBorder() ? fullWidth + 'px' : 'auto');
+            this.getMenuEl().getEl().setMarginLeft((containerWidth - menuWidth) / 2 + 'px');
         }
 
         onButtonLabelChanged(listener: () => void) {
