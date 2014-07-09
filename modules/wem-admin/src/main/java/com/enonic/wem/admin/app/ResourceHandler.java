@@ -16,6 +16,9 @@ import com.enonic.wem.api.util.MediaTypes;
 
 final class ResourceHandler
 {
+
+    private static final String INDEX_HTML = "index.html";
+
     private final ServletContext servletContext;
 
     private final ResourceLocator resourceLocator;
@@ -45,7 +48,7 @@ final class ResourceHandler
     private void serveResource( final HttpServletResponse res, final String path, final InputStream in )
         throws IOException
     {
-        String mimeType = this.servletContext.getMimeType( path );
+        String mimeType = "/".equals( path ) ? this.servletContext.getMimeType( INDEX_HTML ) : this.servletContext.getMimeType( path );
         // TODO .json was not resolved correctly from servletContext, maybe should be configured somewhere instead of using MediaTypes?
         if ( mimeType == null )
         {
@@ -64,7 +67,7 @@ final class ResourceHandler
     {
         if ( path.endsWith( "/" ) )
         {
-            return findResource( path + "index.html" );
+            return findResource( path + INDEX_HTML );
         }
 
         final InputStream in = this.servletContext.getResourceAsStream( path );
