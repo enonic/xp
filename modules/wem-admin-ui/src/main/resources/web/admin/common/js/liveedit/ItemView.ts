@@ -339,8 +339,7 @@ module api.liveedit {
             if (!this.isSelected()) {
                 this.select(!this.isEmpty() ? { x: event.pageX, y: event.pageY } : null);
             } else {
-                // just reposition the context menu
-                this.showContextMenu({ x: event.pageX, y: event.pageY });
+                this.deselect();
             }
         }
 

@@ -410,6 +410,8 @@ module api.ui.selector.combobox {
             });
 
             this.dropdownHandle.onClicked((event: MouseEvent) => {
+                event.preventDefault();
+                event.stopPropagation();
 
                 this.comboBoxDropdown.navigateToFirstRowIfNotActive();
 
@@ -446,6 +448,8 @@ module api.ui.selector.combobox {
             });
 
             this.input.onDblClicked((event: MouseEvent) => {
+                event.preventDefault();
+                event.stopPropagation();
 
                 if (!this.isDropdownShown()) {
                     this.showDropdown();
