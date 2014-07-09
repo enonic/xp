@@ -192,7 +192,7 @@ module api.liveedit {
 
         getName(): string {
 
-            return this.pageComponent.getName() ? this.pageComponent.getName().toString() : null;
+            return this.pageComponent && this.pageComponent.getName() ? this.pageComponent.getName().toString() : null;
         }
 
         getParentItemView(): RegionView {

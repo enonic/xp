@@ -14,8 +14,9 @@ module api.liveedit {
 
             this.itemView = itemView;
 
+
             this.names = new api.app.NamesAndIconViewBuilder().build();
-            this.names.setMainName(itemView.getType().getShortName());
+            this.names.setMainName(this.getMainName());
             this.names.setIconClass(itemView.getType().getConfig().getIconCls());
             this.appendChild(this.names);
 
@@ -26,7 +27,12 @@ module api.liveedit {
         }
 
         showAt(x: number, y: number) {
+            this.names.setMainName(this.getMainName());
             this.menu.showAt.call(this, x, y);
+        }
+
+        private getMainName():string {
+            return (this.itemView instanceof PageComponentView) ? this.itemView.getName() : this.itemView.getType().getShortName();
         }
     }
 
