@@ -182,6 +182,8 @@ module app.wizard {
                     if (this.liveFormPanel) {
                         this.liveFormPanel.loadPageIfNotLoaded();
                     }
+                    //Set split panel default
+                    this.contentWizardActions.getShowSplitEditAction().execute();
                 });
 
                 ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.ResponsiveItem) => {
