@@ -345,10 +345,11 @@ module api.ui {
             if (this.isHorizontal()) {
                 this.firstPanel.getEl().setHeight(this.getPanelSizeString(1)).setWidth(null);
                 this.secondPanel.getEl().setHeight(this.getPanelSizeString(2)).setWidth(null);
-            }
-            else {
+                ResponsiveManager.fireResizeEvent();
+            } else {
                 this.firstPanel.getEl().setWidth(this.getPanelSizeString(1)).setHeight(null);
                 this.secondPanel.getEl().setWidth(this.getPanelSizeString(2)).setHeight(null);
+                ResponsiveManager.fireResizeEvent();
                 if (this.firstPanelUnit == SplitPanelUnit.PERCENT) {
                     var positionInPercentage = (this.firstPanelSize != -1) ? this.firstPanelSize : 100 - this.secondPanelSize;
                     this.splitter.getEl().setLeft("calc(" + positionInPercentage + "% - " + (this.splitterThickness/2) + "px)");
@@ -356,8 +357,6 @@ module api.ui {
                     this.splitter.getEl().setLeft(this.getPanelSizeString(1));
                 }
             }
-
-            ResponsiveManager.fireResizeEvent();
         }
 
         isHorizontal() {
