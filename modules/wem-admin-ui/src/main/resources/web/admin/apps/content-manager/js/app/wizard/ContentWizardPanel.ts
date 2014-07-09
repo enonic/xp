@@ -45,7 +45,7 @@ module app.wizard {
 
         private contentWizardHeader: WizardHeaderWithDisplayNameAndName;
 
-        private siteWizardStepForm: site.SiteWizardStepForm;
+        private siteTemplateWizardStepForm: site.SiteTemplateWizardStepForm;
 
         private contentWizardStepForm: ContentWizardStepForm;
 
@@ -133,13 +133,12 @@ module app.wizard {
             this.createSite = params.createSite;
             this.siteTemplate = params.siteTemplate;
             if (this.createSite || params.persistedContent != null && params.persistedContent.isSite()) {
-                this.siteWizardStepForm = new app.wizard.site.SiteWizardStepForm(this.siteTemplate, this.contentType);
-                this.contentWizardStepForm = null;
+                this.siteTemplateWizardStepForm = new app.wizard.site.SiteTemplateWizardStepForm(this.siteTemplate);
+                this.formIcon.addClass("site");
+            } else {
+                this.siteTemplateWizardStepForm = null;
             }
-            else {
-                this.siteWizardStepForm = null;
-                this.contentWizardStepForm = new ContentWizardStepForm(this.publishAction);
-            }
+            this.contentWizardStepForm = new ContentWizardStepForm(this.publishAction);
 
             if ((this.siteContent || this.createSite) && params.defaultModels.hasPageTemplate()) {
 
@@ -150,10 +149,6 @@ module app.wizard {
                     defaultModels: params.defaultModels
                 });
 
-            }
-
-            if (this.siteWizardStepForm) {
-                this.formIcon.addClass("site");
             }
 
             if (this.contentType.hasContentDisplayNameScript()) {
@@ -216,7 +211,7 @@ module app.wizard {
             var displayNameEmpty = api.util.isStringEmpty(this.getPersistedItem().getDisplayName());
             var editWithEmptyDisplayName = !this.isRenderingNew() && displayNameEmpty && !this.contentType.hasContentDisplayNameScript();
 
-            if (newWithoutDisplayCameScript || editWithEmptyDisplayName || !this.contentWizardStepForm ) {
+            if (newWithoutDisplayCameScript || editWithEmptyDisplayName) {
                 this.contentWizardHeader.giveFocus();
             } else {
                 if (!this.contentWizardStepForm.giveFocus()) {
@@ -231,12 +226,10 @@ module app.wizard {
 
             var steps: WizardStep[] = [];
 
-            if (this.contentWizardStepForm != null) {
-                steps.push(new WizardStep(this.contentType.getDisplayName(), this.contentWizardStepForm));
-            }
+            steps.push(new WizardStep(this.contentType.getDisplayName(), this.contentWizardStepForm));
 
-            if (this.siteWizardStepForm != null) {
-                steps.push(new WizardStep("Site", this.siteWizardStepForm));
+            if (this.siteTemplateWizardStepForm != null) {
+                steps.push(new WizardStep("Site Template", this.siteTemplateWizardStepForm));
             }
 
             steps.push(new WizardStep("Meta", new WizardStepForm()));
@@ -264,9 +257,7 @@ module app.wizard {
         postRenderNew(): Q.Promise<void> {
             var deferred = Q.defer<void>();
 
-            if (this.contentWizardStepForm) {
-                this.enableDisplayNameScriptExecution(this.contentWizardStepForm.getFormView());
-            }
+            this.enableDisplayNameScriptExecution(this.contentWizardStepForm.getFormView());
             this.contentWizardHeader.initNames(this.getPersistedItem().getDisplayName(), this.getPersistedItem().getName().toString(),
                 true);
 
@@ -352,12 +343,10 @@ module app.wizard {
                         setShowEmptyFormItemSetOccurrences(this.isPersisted()).
                         build();
 
-                    if (this.contentWizardStepForm) {
-                        this.contentWizardStepForm.renderExisting(formContext, contentData, content.getForm());
+                    this.contentWizardStepForm.renderExisting(formContext, contentData, content.getForm());
 
-                        // Must pass FormView from contentWizardStepForm displayNameScriptExecutor, since a new is created for each call to renderExisting
-                        this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
-                    }
+                    // Must pass FormView from contentWizardStepForm displayNameScriptExecutor, since a new is created for each call to renderExisting
+                    this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
 
                     return this.doRenderExistingSite(content, formContext);
 
@@ -375,9 +364,7 @@ module app.wizard {
 
             this.contentWizardHeader.initNames(existing.getDisplayName(), existing.getName().toString(),
                 false);
-            if (this.contentWizardStepForm) {
-                this.enableDisplayNameScriptExecution(this.contentWizardStepForm.getFormView());
-            }
+            this.enableDisplayNameScriptExecution(this.contentWizardStepForm.getFormView());
 
             deferred.resolve(null);
             return deferred.promise;
@@ -385,8 +372,8 @@ module app.wizard {
 
         private doRenderExistingSite(content: Content, formContext: FormContext): Q.Promise<void> {
 
-            if (this.siteWizardStepForm != null && content.getSite()) {
-                return this.siteWizardStepForm.renderExisting(formContext, content.getSite());
+            if (this.siteTemplateWizardStepForm != null && content.getSite()) {
+                return this.siteTemplateWizardStepForm.renderExisting(formContext, content.getSite());
             }
             else {
                 var deferred = Q.defer<void>();
@@ -582,12 +569,12 @@ module app.wizard {
 
         private assembleViewedSite(): Site {
 
-            if (!this.siteWizardStepForm) {
+            if (!this.siteTemplateWizardStepForm) {
                 return null;
             }
             var viewedSiteBuilder = new SiteBuilder();
-            viewedSiteBuilder.setTemplateKey(this.siteWizardStepForm.getTemplateKey());
-            viewedSiteBuilder.setModuleConfigs(this.siteWizardStepForm.getModuleConfigs());
+            viewedSiteBuilder.setTemplateKey(this.siteTemplateWizardStepForm.getTemplateKey());
+            viewedSiteBuilder.setModuleConfigs(this.siteTemplateWizardStepForm.getModuleConfigs());
             return viewedSiteBuilder.build();
         }
 

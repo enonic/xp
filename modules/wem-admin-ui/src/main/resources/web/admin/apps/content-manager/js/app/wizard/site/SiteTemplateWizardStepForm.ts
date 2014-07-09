@@ -1,11 +1,10 @@
 module app.wizard.site {
 
     import SiteTemplate = api.content.site.template.SiteTemplate;
-    import ContentType = api.schema.content.ContentType;
     import Site = api.content.site.Site;
     import Module = api.module.Module;
 
-    export class SiteWizardStepForm extends api.app.wizard.WizardStepForm {
+    export class SiteTemplateWizardStepForm extends api.app.wizard.WizardStepForm {
 
         private formContext: api.form.FormContext;
 
@@ -19,11 +18,11 @@ module app.wizard.site {
 
         private moduleViews: ModuleView[] = [];
 
-        constructor(siteTemplate: SiteTemplate, contentType: ContentType) {
+        constructor(siteTemplate: SiteTemplate) {
             super("site-wizard-step-form");
 
             this.siteTemplate = siteTemplate;
-            this.siteTemplateView = new SiteTemplateView(contentType);
+            this.siteTemplateView = new SiteTemplateView();
             this.appendChild(this.siteTemplateView);
             this.moduleViewsContainer = new api.dom.DivEl();
             this.appendChild(this.moduleViewsContainer);
