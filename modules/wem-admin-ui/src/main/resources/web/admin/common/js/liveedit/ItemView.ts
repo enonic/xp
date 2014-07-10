@@ -113,7 +113,6 @@ module api.liveedit {
             }
 
             this.loadMask = new api.ui.LoadMask(this);
-            this.appendChild(this.loadMask);
 
             this.tooltipViewer = this.getTooltipViewer();
             if (this.tooltipViewer) {
@@ -454,6 +453,7 @@ module api.liveedit {
         }
 
         showLoadingSpinner() {
+            this.appendChild(this.loadMask);
             this.loadMask.show();
         }
 
