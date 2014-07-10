@@ -90,6 +90,12 @@ module app.wizard.page.contextwindow.inspect {
             this.appendChild(this.descriptorSelector);
         }
 
+        setComponent(component: ImageComponent) {
+            super.setComponent(component);
+
+            this.setMainName(component.getName().toString());
+        }
+
         onImageDescriptorChanged(listener: {(event: ImageDescriptorChangedEvent): void;}) {
             this.imageDescriptorChangedListeners.push(listener);
         }
