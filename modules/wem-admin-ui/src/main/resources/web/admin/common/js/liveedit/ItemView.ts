@@ -324,6 +324,7 @@ module api.liveedit {
             // Turn of 'mouseOver' state and notify ItemVeiw was left.
             this.mouseOver = false;
             this.notifyMouseOutView();
+            this.tooltip.hide();
 
             // Notify parent ItemView is entered.
             if (this.parentItemView) {
@@ -361,8 +362,11 @@ module api.liveedit {
             this.tooltip.show();
         }
 
-        hideTooltip() {
+        hideTooltip(hideParentTooltip:boolean = true) {
             this.tooltip.hide();
+            if (hideParentTooltip && this.parentItemView) {
+                this.parentItemView.hideTooltip();
+            }
         }
 
         showContextMenu(position?: Position) {
@@ -433,6 +437,7 @@ module api.liveedit {
         }
 
         select(clickPosition?: Position) {
+            console.log("SELECTING", this);
             this.getEl().setData("live-edit-selected", "true");
             this.hideTooltip();
             this.showContextMenu(clickPosition);
