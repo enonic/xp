@@ -45,7 +45,7 @@ module api.content.page.region {
         }
 
         ensureUniqueComponentName(wantedName: ComponentName): ComponentName {
-
+            wantedName = wantedName.removeCountPostfix();
             var numberOfDuplicates = this.countNumberOfDuplicates(wantedName);
             if (numberOfDuplicates == 0) {
                 return wantedName;
