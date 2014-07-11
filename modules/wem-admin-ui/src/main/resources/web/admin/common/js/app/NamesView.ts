@@ -6,9 +6,13 @@ module api.app {
 
         private subNameEl: api.dom.PEl;
 
-        constructor()
+        private addTitleAttribute: boolean;
+
+        constructor(addTitleAttribute: boolean = true)
         {
             super("names-view");
+
+            this.addTitleAttribute = addTitleAttribute
 
             this.mainNameEl = new api.dom.H6El("main-name");
             this.appendChild(this.mainNameEl);
@@ -20,14 +24,18 @@ module api.app {
         setMainName(value: string): NamesView
         {
             this.mainNameEl.setText(value);
-            this.mainNameEl.getEl().setAttribute("title", value);
+            if (this.addTitleAttribute) {
+                this.mainNameEl.getEl().setAttribute("title", value);
+            }
             return this;
         }
 
         setSubName(value: string): NamesView
         {
             this.subNameEl.setText(value);
-            this.subNameEl.getEl().setAttribute("title", value);
+            if (this.addTitleAttribute) {
+                this.subNameEl.getEl().setAttribute("title", value);
+            }
             return this;
         }
     }

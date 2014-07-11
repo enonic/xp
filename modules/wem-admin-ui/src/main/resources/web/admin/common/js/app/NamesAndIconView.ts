@@ -4,8 +4,15 @@ module api.app {
 
         size: NamesAndIconViewSize;
 
+        addTitleAttribute: boolean = true;
+
         public setSize(size: NamesAndIconViewSize): NamesAndIconViewBuilder {
             this.size = size;
+            return this;
+        }
+
+        public setAddTitleAttribute(addTitleAttribute: boolean): NamesAndIconViewBuilder {
+            this.addTitleAttribute = addTitleAttribute;
             return this;
         }
 
@@ -44,7 +51,7 @@ module api.app {
             this.wrapperDivEl.appendChild(this.iconDivEl);
             this.iconDivEl.hide();
 
-            this.namesView = new api.app.NamesView();
+            this.namesView = new api.app.NamesView(builder.addTitleAttribute);
             this.appendChild(this.namesView);
 
             this.iconLabelEl = new api.dom.SpanEl("icon-label");

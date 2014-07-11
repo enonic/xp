@@ -15,7 +15,7 @@ module api.liveedit {
             this.itemView = itemView;
 
 
-            this.names = new api.app.NamesAndIconViewBuilder().build();
+            this.names = new api.app.NamesAndIconViewBuilder().setAddTitleAttribute(false).build();
             this.names.setMainName(this.getMainName());
             this.names.setIconClass(itemView.getType().getConfig().getIconCls());
             this.appendChild(this.names);
