@@ -4,6 +4,7 @@ import com.enonic.wem.api.xml.model.XmlForm;
 import com.enonic.wem.api.xml.model.XmlMixin;
 import com.enonic.wem.api.xml.model.XmlModule;
 import com.enonic.wem.api.xml.model.XmlPageDescriptor;
+import com.enonic.wem.api.xml.model.XmlPartDescriptor;
 
 public final class XmlSerializers2
 {
@@ -14,6 +15,8 @@ public final class XmlSerializers2
     private final static XmlMixinSerializer MIXIN = new XmlMixinSerializer();
 
     private final static XmlPageDescriptorSerializer PAGE_DESCRIPTOR = new XmlPageDescriptorSerializer();
+
+    private final static XmlPartDescriptorSerializer PART_DESCRIPTOR = new XmlPartDescriptorSerializer();
 
     public static XmlSerializer2<XmlForm> form()
     {
@@ -33,5 +36,10 @@ public final class XmlSerializers2
     public static XmlSerializer2<XmlPageDescriptor> pageDescriptor()
     {
         return PAGE_DESCRIPTOR;
+    }
+
+    public static XmlSerializer2<XmlPartDescriptor> partDescriptor()
+    {
+        return PART_DESCRIPTOR;
     }
 }

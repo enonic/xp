@@ -9,12 +9,12 @@ import com.enonic.wem.api.xml.model.XmlRegionDescriptors;
 
 public class XmlPageDescriptorMapper
 {
+
     public static XmlPageDescriptor toXml( final PageDescriptor object )
     {
         final XmlPageDescriptor result = new XmlPageDescriptor();
         result.setDisplayName( object.getDisplayName() );
         result.setConfig( XmlFormMapper.toXml( object.getConfig() ) );
-
         result.setRegions( toXml( object.getRegions() ) );
         return result;
     }
