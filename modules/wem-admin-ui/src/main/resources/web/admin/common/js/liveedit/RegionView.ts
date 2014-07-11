@@ -155,17 +155,15 @@ module api.liveedit {
         }
 
         getRegionName(): string {
-            return this.getRegionPath().getRegionName();
+            return this.getRegionPath() ? this.getRegionPath().getRegionName() : null;
         }
 
         getRegionPath(): RegionPath {
-
-            return this.region.getPath();
+            return this.region ? this.region.getPath() : null;
         }
 
         getName(): string {
-
-            return this.getRegionName().toString();
+            return this.getRegionName() ? this.getRegionName().toString() : "[No Name]";
         }
 
         select(clickPosition?: Position) {

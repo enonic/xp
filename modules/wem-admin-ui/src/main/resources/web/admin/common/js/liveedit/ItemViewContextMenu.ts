@@ -32,7 +32,7 @@ module api.liveedit {
         }
 
         private getMainName():string {
-            return (this.itemView instanceof PageComponentView) ? this.itemView.getName() : this.itemView.getType().getShortName();
+            return (this.itemView instanceof PageComponentView || this.itemView instanceof RegionView) ? this.itemView.getName() : this.itemView.getType().getShortName();
         }
     }
 
