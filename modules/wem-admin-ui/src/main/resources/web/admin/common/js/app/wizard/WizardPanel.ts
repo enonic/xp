@@ -151,8 +151,8 @@ module api.app.wizard {
             });
 
             api.dom.Window.get().onResized((event: UIEvent) => {
-
-                if (!event.srcElement.nodeName) {
+                var target = <HTMLElement> event.target;
+                if (target && !target.nodeName) {
                     this.updateStickyToolbar();
                 }
             }, this);

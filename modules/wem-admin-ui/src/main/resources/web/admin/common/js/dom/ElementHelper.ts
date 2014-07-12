@@ -10,6 +10,7 @@ module api.dom {
         }
 
         constructor(element: HTMLElement) {
+            api.util.assertNotNull(element, 'Element cannot be null');
             this.el = element;
         }
 
@@ -128,7 +129,7 @@ module api.dom {
             // spaces are not allowed
             var classList: string[] = clsName.split(" ");
             classList.forEach((classItem: string) => {
-                if (!this.hasClass(classItem)) {
+                if (this.el.classList && !this.hasClass(classItem)) {
                     this.el.classList.add(classItem);
                 }
             });
@@ -150,7 +151,7 @@ module api.dom {
             var classList: string[] = clsName.split(" ");
             for (var i = 0; i < classList.length; i++) {
                 var classItem = classList[i];
-                if (!this.el.classList.contains(classItem)) {
+                if (!this.el.classList || !this.el.classList.contains(classItem)) {
                     return false;
                 }
             }
@@ -162,7 +163,9 @@ module api.dom {
             // spaces are not allowed
             var classList: string[] = clsName.split(" ");
             classList.forEach((classItem: string) => {
-                this.el.classList.remove(classItem);
+                if (this.el.classList) {
+                    this.el.classList.remove(classItem);
+                }
             });
             return this;
         }

@@ -64,8 +64,6 @@ module api.liveedit {
 
         private loadMask: api.ui.LoadMask;
 
-        private elementDimensions: ElementDimensions;
-
         private tooltip: api.ui.Tooltip;
 
         private contextMenu: api.liveedit.ItemViewContextMenu;
@@ -78,9 +76,12 @@ module api.liveedit {
 
         private mouseOutViewListeners: {(): void} [];
 
+        private debug: boolean;
+
         constructor(builder: ItemViewBuilder) {
             api.util.assertNotNull(builder.type, "type cannot be null");
 
+            this.debug = false;
             this.type = builder.type;
             this.parentItemView = builder.parentView;
             this.itemViewIdProducer = builder.itemViewIdProducer;
@@ -134,116 +135,6 @@ module api.liveedit {
 
         }
 
-        private createAction(name: string): api.ui.Action {
-            var handler, displayName;
-            switch (name) {
-            case "parent":
-                displayName = "Parent";
-                handler = () => {
-                    var parentView: ItemView = this.getParentItemView();
-                    if (parentView) {
-                        parentView.select();
-                    }
-                };
-                break;
-            case "insert":
-                displayName = "Insert";
-                handler = () => {
-                    //TODO
-                };
-                break;
-            case "reset":
-                displayName = "Reset";
-                handler = () => {
-                    //TODO
-                };
-                break;
-            case "clear":
-                displayName = "Empty";
-                handler = () => {
-                    if (api.ObjectHelper.iFrameSafeInstanceOf(this, PageComponentView)) {
-                        var selectedPageComponentView = <PageComponentView<PageComponent>> this;
-                        selectedPageComponentView.displayPlaceholder();
-
-                        // update selection
-                        this.select();
-
-                        new PageComponentResetEvent(selectedPageComponentView).fire();
-                    } else {
-                        throw new Error("Emptying [" + api.util.getClassName(this) + "] is not supported");
-                    }
-                };
-                break;
-            case "clearRegion":
-                displayName = "Empty";
-                handler = () => {
-                    if (api.ObjectHelper.iFrameSafeInstanceOf(this, RegionView)) {
-                        var selectedRegionView = <RegionView> this;
-
-                        selectedRegionView.deselect();
-                        selectedRegionView.empty();
-                    } else {
-                        throw new Error("Expected region to empty, got [" + api.util.getClassName(this) + "]");
-                    }
-                };
-                break;
-            case "opencontent":
-                displayName = "Open in new tab";
-                handler = () => {
-                    //TODO
-                };
-                break;
-            case "view":
-                displayName = "View";
-                handler = () => {
-                    //TODO
-                };
-                break;
-            case "edit":
-                displayName = "Edit";
-                handler = () => {
-                    //TODO
-                };
-                break;
-            case "remove":
-                displayName = "Remove";
-                handler = () => {
-                    if (api.ObjectHelper.iFrameSafeInstanceOf(this, PageComponentView)) {
-                        var selectedPageComponent = <PageComponentView<PageComponent>> this;
-
-                        var regionView = selectedPageComponent.getParentItemView();
-                        regionView.removePageComponentView(selectedPageComponent);
-
-                        this.hideContextMenu();
-
-                        new PageComponentRemoveEvent(selectedPageComponent).fire();
-                    } else {
-                        throw new Error("Removing [" + api.util.getClassName(this) + "] is not supported");
-                    }
-                };
-                break;
-            case "duplicate":
-                displayName = "Duplicate";
-                handler = () => {
-                    if (api.ObjectHelper.iFrameSafeInstanceOf(this, PageComponentView)) {
-                        var selectedPageComponentView = <PageComponentView<PageComponent>> this;
-
-                        var origin = selectedPageComponentView.getPageComponent();
-                        var duplicatedPageComponent = origin.duplicateComponent();
-                        var duplicatedView = selectedPageComponentView.duplicate(duplicatedPageComponent);
-
-                        new PageComponentDuplicateEvent(selectedPageComponentView, duplicatedView).fire();
-
-                        duplicatedView.select();
-                    } else {
-                        throw new Error("Duplicating [" + api.util.getClassName(this) + "] is not supported");
-                    }
-                };
-                break;
-            }
-            return new api.ui.Action(displayName).onExecuted(handler);
-        }
-
         private scrollComponentIntoView(): void {
             var dimensions = this.getElementDimensions();
             if (dimensions.top <= window.pageYOffset) {
@@ -278,7 +169,12 @@ module api.liveedit {
             // then 'mouseenter' event has already occurred on child ItemView
             // and child has already called notifyMouseOver and notifyMouseOut for this ItemView.
             // No need to process this event.
+
+            var className = api.util.getClassName(this);
+            if (this.debug) { console.info("mouse enter start --> ", className); }
+
             if (this.mouseOver) {
+                if (this.debug) { console.log('   mouseOver = true, returning', className); }
                 return;
             }
 
@@ -298,10 +194,13 @@ module api.liveedit {
             // If parent has 'mouseOver' state, notify that mouse is moved out this parent.
             // If parent isn't in 'mouseOver' state, turn it on and notify the parent was entered and left.
             parentsStack.reverse().forEach((view: ItemView) => {
+                var viewName = api.util.getClassName(view);
                 if (view.mouseOver) {
+                    if (this.debug) { console.log('   notifying parent mouse out', viewName); }
                     view.notifyMouseOutView();
                 } else {
                     view.mouseOver = true;
+                    if (this.debug) { console.log('   setting parent mouseOver = true', viewName); }
                     view.notifyMouseOverView();
                     view.notifyMouseOutView();
                 }
@@ -309,7 +208,10 @@ module api.liveedit {
 
             // Turn on 'mouseOver' state for this element and notify it entered.
             this.mouseOver = true;
+            if (this.debug) { console.log('   notifying target mouse over', className); }
             this.notifyMouseOverView();
+
+            if (this.debug) { console.info("mouse enter end --> ", className); }
         }
 
         /**
@@ -321,15 +223,23 @@ module api.liveedit {
          * @param event browser MouseEvent
          */
         private handleMouseLeave(event: MouseEvent) {
-            // Turn of 'mouseOver' state and notify ItemVeiw was left.
+
+            var className = api.util.getClassName(this);
+            if (this.debug) { console.info("mouse leave start <-- ", className); }
+
+            // Turn off 'mouseOver' state and notify ItemVeiw was left.
             this.mouseOver = false;
+            console.log('   notifying target mouse out', className);
             this.notifyMouseOutView();
             this.tooltip.hide();
 
             // Notify parent ItemView is entered.
             if (this.parentItemView) {
+                if (this.debug) { console.log('   notifying parent mouse over', api.util.getClassName(this.parentItemView)); }
                 this.parentItemView.notifyMouseOverView();
             }
+
+            if (this.debug) { console.info("mouse leave end <-- ", className); }
         }
 
         private handleClick(event: MouseEvent) {
@@ -362,7 +272,7 @@ module api.liveedit {
             this.tooltip.show();
         }
 
-        hideTooltip(hideParentTooltip:boolean = true) {
+        hideTooltip(hideParentTooltip: boolean = true) {
             this.tooltip.hide();
             if (hideParentTooltip && this.parentItemView) {
                 this.parentItemView.hideTooltip();
@@ -527,6 +437,7 @@ module api.liveedit {
         }
 
         private notifyMouseOverView() {
+            console.log("       notify mouse over", api.util.getClassName(this));
             this.mouseOverViewListeners.forEach((listener: () => void) => listener());
         }
 
@@ -539,6 +450,7 @@ module api.liveedit {
         }
 
         private notifyMouseOutView() {
+            console.log("       notify mouse out", api.util.getClassName(this));
             this.mouseOutViewListeners.forEach((listener: () => void) => listener());
         }
     }
