@@ -5,6 +5,7 @@
   z-index: 2147483647; // max positive int
   font-size: 11px;
   color: @admin-dark-gray;
+  pointer-events: none; // to fight tooltip hijacking mouse over when lagging behind mouse
   .opacity(1);
 
   &:before {
