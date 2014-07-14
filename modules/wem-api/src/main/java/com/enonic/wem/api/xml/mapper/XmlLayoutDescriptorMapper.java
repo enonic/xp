@@ -1,21 +1,21 @@
 package com.enonic.wem.api.xml.mapper;
 
-import com.enonic.wem.api.content.page.PageDescriptor;
-import com.enonic.wem.api.xml.model.XmlPageDescriptor;
+import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
+import com.enonic.wem.api.xml.model.XmlLayoutDescriptor;
 
-public class XmlPageDescriptorMapper
+public class XmlLayoutDescriptorMapper
 {
 
-    public static XmlPageDescriptor toXml( final PageDescriptor object )
+    public static XmlLayoutDescriptor toXml( final LayoutDescriptor object )
     {
-        final XmlPageDescriptor result = new XmlPageDescriptor();
+        final XmlLayoutDescriptor result = new XmlLayoutDescriptor();
         result.setDisplayName( object.getDisplayName() );
         result.setConfig( XmlFormMapper.toXml( object.getConfig() ) );
         result.setRegions( XmlRegionDescriptorMapper.toXml( object.getRegions() ) );
         return result;
     }
 
-    public static void fromXml( final XmlPageDescriptor xml, final PageDescriptor.Builder builder )
+    public static void fromXml( final XmlLayoutDescriptor xml, final LayoutDescriptor.Builder builder )
     {
         builder.displayName( xml.getDisplayName() );
         builder.config( XmlFormMapper.fromXml( xml.getConfig() ) );
