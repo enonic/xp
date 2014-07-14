@@ -69,7 +69,7 @@ public class UpdateContentTypeCommandTest
             newContentType().
             displayName( displayName1 ).
             name( contentType1Name ).
-            builtIn( true ).
+            setBuiltIn().
             description( description1 );
         final ContentType ct1 = ctb1.build();
 
@@ -144,7 +144,7 @@ public class UpdateContentTypeCommandTest
             newContentType().
             displayName( displayName1 ).
             name( contentType1Name ).
-            builtIn( true ).
+            setBuiltIn().
             description( description1 );
         final ContentType ct1 = ctb1.build();
 

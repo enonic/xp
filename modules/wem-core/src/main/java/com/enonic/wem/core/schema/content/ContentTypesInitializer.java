@@ -37,7 +37,8 @@ public class ContentTypesInitializer
 
     static final ContentType PAGE = createSystemType( ContentTypeName.page() ).setFinal( true ).setAbstract( false ).build();
 
-    static final ContentType SITE = createSystemType( ContentTypeName.site() ).description( "Root content for sites" ).setFinal( true ).setAbstract( false ).build();
+    static final ContentType SITE =
+        createSystemType( ContentTypeName.site() ).description( "Root content for sites" ).setFinal( true ).setAbstract( false ).build();
 
     static final ContentType SHORTCUT = createSystemType( ContentTypeName.shortcut() ).
         setFinal( true ).setAbstract( false ).build();
@@ -181,7 +182,7 @@ public class ContentTypesInitializer
         return newContentType().
             name( contentTypeName ).
             displayName( displayName ).
-            builtIn( true );
+            setBuiltIn();
     }
 
     private static Form createMediaImageForm()

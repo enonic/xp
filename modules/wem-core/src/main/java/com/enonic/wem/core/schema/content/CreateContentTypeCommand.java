@@ -39,7 +39,7 @@ final class CreateContentTypeCommand
             allowChildContent( params.getAllowChildContent() ).
             contentDisplayNameScript( params.getContentDisplayNameScript() ).
             form( params.getForm().copy() ).
-            builtIn( params.isBuiltIn() ).
+            setBuiltIn( params.isBuiltIn() ).
             setAbstract( params.isAbstract() ).
             setFinal( params.isFinal() ).
             displayName( params.getDisplayName() ).

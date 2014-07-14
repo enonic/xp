@@ -232,9 +232,9 @@ public final class ContentType
             return this;
         }
 
-        public Builder setFinal( final boolean aFinal )
+        public Builder setFinal( final boolean value )
         {
-            isFinal = aFinal;
+            isFinal = value;
             return this;
         }
 
@@ -250,9 +250,15 @@ public final class ContentType
             return this;
         }
 
-        public Builder builtIn( final boolean builtIn )
+        public Builder setBuiltIn( final boolean builtIn )
         {
             isBuiltIn = builtIn;
+            return this;
+        }
+
+        public Builder setBuiltIn()
+        {
+            isBuiltIn = true;
             return this;
         }
 

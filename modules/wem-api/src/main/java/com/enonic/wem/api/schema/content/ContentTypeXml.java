@@ -71,7 +71,7 @@ public class ContentTypeXml
             superType( superTypeString != null ? ContentTypeName.from( superTypeString ) : null ).
             setAbstract( isAbstract ).
             setFinal( isFinal ).
-            builtIn( isBuiltIn ).
+            setBuiltIn( isBuiltIn ).
             allowChildContent( StringUtils.isBlank( allowChildContent ) || Boolean.parseBoolean( allowChildContent ) ).
             form( form.build() );
     }

@@ -31,7 +31,7 @@ public class SchemaServiceImpl_getRootTest
         // setup
         final ContentType unstructuredContentType = newContentType().
             name( ContentTypeName.structured() ).
-            builtIn( true ).
+            setBuiltIn().
             displayName( "Unstructured" ).
             setFinal( false ).
             setAbstract( false ).

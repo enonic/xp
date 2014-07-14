@@ -14,6 +14,17 @@
   </xsd:complexType>
 
   <xsd:complexType name="contentType">
+    <xsd:all>
+      <xsd:element name="display-name" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="description" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="content-display-name-script" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="super-type" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="is-abstract" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="is-final" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="is-built-in" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="allow-child-content" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="form" type="formItems" minOccurs="0" maxOccurs="1"/>
+    </xsd:all>
   </xsd:complexType>
 
   <xsd:complexType name="relationshipType">
@@ -23,7 +34,7 @@
   <xsd:element name="mixin" type="mixin"/>
 
   <!-- Content type element -->
-  <xsd:element name="type" type="contentType"/>
+  <xsd:element name="content-type" type="contentType"/>
 
   <!-- Relationship type element -->
   <xsd:element name="relationship-type" type="relationshipType"/>

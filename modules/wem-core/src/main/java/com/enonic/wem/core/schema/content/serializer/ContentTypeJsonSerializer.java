@@ -95,7 +95,7 @@ public class ContentTypeJsonSerializer
         builder.superType( superType );
         builder.setAbstract( JsonSerializerUtil.getBooleanValue( "isAbstract", contentTypeNode ) );
         builder.setFinal( JsonSerializerUtil.getBooleanValue( "isFinal", contentTypeNode ) );
-        builder.builtIn( JsonSerializerUtil.getBooleanValue( "isBuiltIn", contentTypeNode, false ) );
+        builder.setBuiltIn( JsonSerializerUtil.getBooleanValue( "isBuiltIn", contentTypeNode, false ) );
         builder.allowChildContent( JsonSerializerUtil.getBooleanValue( "allowChildContent", contentTypeNode, true ) );
         if ( includeCreatedTime )
         {

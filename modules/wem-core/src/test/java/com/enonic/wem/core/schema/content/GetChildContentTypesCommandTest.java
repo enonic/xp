@@ -40,7 +40,7 @@ public class GetChildContentTypesCommandTest
             name( "my_content_type1" ).
             displayName( ContentTypeName.unstructured().toString() ).
             superType( null ).
-            builtIn( true ).
+            setBuiltIn().
             build();
 
         final ContentType contentType2 = ContentType.
@@ -68,7 +68,7 @@ public class GetChildContentTypesCommandTest
             newContentType().
             name( ContentTypeName.folder().toString() ).
             displayName( "Folder root content type" ).
-            builtIn( true ).
+            setBuiltIn().
             build();
 
         final ContentTypes allContentTypes = ContentTypes.from( contentType1, contentType2, contentType3, contentType4, contentType5 );

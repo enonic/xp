@@ -40,7 +40,7 @@ public class GetRootContentTypesCommandTest
             name( "my_content_type1" ).
             displayName( "Display Name 1" ).
             superType( null ).
-            builtIn( true ).
+            setBuiltIn().
             build();
 
         final ContentType contentType2 = ContentType.

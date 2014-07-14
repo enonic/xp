@@ -22,7 +22,7 @@ public class SchemaServiceImpl_getChildrenTest
         // setup
         final ContentType unstructuredContentType = newContentType().
             name( ContentTypeName.structured() ).
-            builtIn( true ).
+            setBuiltIn().
             displayName( "Unstructured" ).
             setFinal( false ).
             setAbstract( false ).
