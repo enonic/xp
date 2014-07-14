@@ -229,7 +229,7 @@ module api.liveedit {
 
             // Turn off 'mouseOver' state and notify ItemVeiw was left.
             this.mouseOver = false;
-            console.log('   notifying target mouse out', className);
+            if (this.debug) { console.log('   notifying target mouse out', className); }
             this.notifyMouseOutView();
             this.tooltip.hide();
 
@@ -437,7 +437,7 @@ module api.liveedit {
         }
 
         private notifyMouseOverView() {
-            console.log("       notify mouse over", api.util.getClassName(this));
+            if (this.debug) { console.log("       notify mouse over", api.util.getClassName(this)); }
             this.mouseOverViewListeners.forEach((listener: () => void) => listener());
         }
 
@@ -450,7 +450,7 @@ module api.liveedit {
         }
 
         private notifyMouseOutView() {
-            console.log("       notify mouse out", api.util.getClassName(this));
+            if (this.debug) { console.log("       notify mouse out", api.util.getClassName(this)); }
             this.mouseOutViewListeners.forEach((listener: () => void) => listener());
         }
     }
