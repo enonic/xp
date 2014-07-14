@@ -186,6 +186,10 @@ module api.content.page.region {
             return found;
         }
 
+        updateParent(value: api.content.page.layout.LayoutComponent) {
+            this.parent = value;
+        }
+
         removePageComponents() {
             while (this.pageComponents.length > 0) {
                 var pageComponent = this.pageComponents.pop();
@@ -243,7 +247,7 @@ module api.content.page.region {
         constructor(source?: Region) {
             if (source) {
                 this.name = source.getName();
-                this.parent = source.getParent();
+                this.parent = source.getParent(); //TODO; Should clone have same parent at all times?
                 source.getComponents().forEach((component: api.content.page.PageComponent) => {
                     this.pageComponents.push(component.clone());
                 });

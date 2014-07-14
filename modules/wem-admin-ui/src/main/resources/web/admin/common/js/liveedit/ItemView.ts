@@ -347,7 +347,6 @@ module api.liveedit {
         }
 
         select(clickPosition?: Position) {
-            console.log("SELECTING", this);
             this.getEl().setData("live-edit-selected", "true");
             this.hideTooltip();
             this.showContextMenu(clickPosition);

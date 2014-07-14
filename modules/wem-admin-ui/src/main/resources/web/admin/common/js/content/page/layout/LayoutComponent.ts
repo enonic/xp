@@ -56,7 +56,11 @@ module api.content.page.layout {
         }
 
         clone(): LayoutComponent {
-            return new LayoutComponentBuilder(this).build();
+            var layoutComponent = new LayoutComponentBuilder(this).build();
+            layoutComponent.getLayoutRegions().getRegions().forEach((region:Region) => {
+               region.updateParent(layoutComponent);
+            });
+            return layoutComponent;
         }
     }
 
