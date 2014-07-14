@@ -15,7 +15,7 @@ module api.ui.treegrid {
         private children: TreeNode<NODE>[];
 
         constructor(data?: NODE, parent?: TreeNode<NODE>, expanded: boolean = false, selected: boolean = false) {
-            this.id = data ? data.getId() : "";
+            this.id = Math.random().toString(36).substring(2);
             this.data = data;
             this.parent = parent;
             this.children = [];
@@ -23,7 +23,7 @@ module api.ui.treegrid {
             this.selected = selected;
         }
 
-        getId():string {
+        getId(): string {
             return this.id;
         }
 

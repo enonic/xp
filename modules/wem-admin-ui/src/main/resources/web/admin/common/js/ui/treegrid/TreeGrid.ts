@@ -25,6 +25,8 @@ module api.ui.treegrid {
 
         private root: TreeNode<NODE>;
 
+        private stash: TreeNode<NODE>;
+
         private toolbar: TreeGridToolbar;
 
         private canvasElement: api.dom.Element;
@@ -204,6 +206,39 @@ module api.ui.treegrid {
             return deferred.promise;
         }
 
+        filter(items:NODE[]) {
+            if (!this.stash) {
+                this.stash = this.root;
+            }
+
+            this.root = new TreeNode<NODE>();
+
+            this.initData([]);
+
+            this.root.setExpanded(true);
+
+            this.active = false;
+            this.root.setChildrenFromItems(items);
+            this.initData(this.root.treeToList());
+            this.resetAndRender();
+            this.active = true;
+        }
+
+        resetFilter() {
+            this.active = false;
+
+            if (!this.stash) {
+                this.reload();
+            } else {
+                this.root = this.stash;
+                this.initData(this.root.treeToList());
+                this.resetAndRender();
+                this.active = true;
+            }
+
+            this.stash = null;
+        }
+
         private updateColumnsFormatter(columns: GridColumn<TreeNode<NODE>>[]) {
             if (columns.length > 0) {
                 var formatter = columns[0].getFormatter();
@@ -255,10 +290,7 @@ module api.ui.treegrid {
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 }).finally(() => {
-                    this.resetZIndexes();
-                    this.grid.syncGridSelection(false); // Sync selected rows
-                    this.grid.invalidateAllRows();
-                    this.grid.render();
+                    this.resetAndRender();
                     this.active = true;
                 }).done(() => this.notifyLoaded());
         }
@@ -421,7 +453,7 @@ module api.ui.treegrid {
             }, 10);
         }
 
-        private notifyLoaded(): void {
+        notifyLoaded(): void {
             this.loadedListeners.forEach((listener) => {
                 listener(this);
             });
@@ -469,6 +501,13 @@ module api.ui.treegrid {
             this.canvasElement.getChildren().forEach((child) => {
                 child.getEl().setZindex(1);
             });
+        }
+
+        private resetAndRender() {
+            this.resetZIndexes();
+            this.grid.syncGridSelection(false);
+            this.grid.invalidateAllRows();
+            this.grid.render();
         }
     }
 }
