@@ -18,6 +18,8 @@ module app.browse.grid {
     import ContentBrowseSearchEvent = app.browse.filter.ContentBrowseSearchEvent;
     import ContentBrowseResetEvent = app.browse.filter.ContentBrowseResetEvent;
 
+    import CompareStatus = api.content.CompareStatus;
+
     export class ContentGridPanel2 extends TreeGrid<ContentSummaryAndCompareStatus> {
 
         constructor() {
@@ -77,7 +79,33 @@ module app.browse.grid {
         }
 
         private statusFormatter(row: number, cell: number, value: any, columnDef: any, item: ContentSummaryAndCompareStatus) {
-            return api.content.CompareStatus[value];
+
+            var compareLabel: string = api.content.CompareStatus[value];
+
+            var compareStatus: CompareStatus = CompareStatus[compareLabel];
+
+            switch (compareStatus) {
+            case CompareStatus.NEW:
+                return "New";
+                break;
+            case CompareStatus.NEWER:
+                return "Modified";
+                break;
+            case CompareStatus.OLDER:
+                return "Conflict";
+                break;
+            case CompareStatus.CONFLICT:
+                return "Conflict";
+                break;
+            case CompareStatus.DELETED:
+                return "Deleted";
+                break;
+            case CompareStatus.EQUAL:
+                return "Online";
+                break;
+            default:
+                return "Unknown"
+            }
         }
 
         private defaultNameFormatter(row: number, cell: number, value: any, columnDef: any, item: ContentSummaryAndCompareStatus) {
