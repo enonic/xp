@@ -33,9 +33,8 @@ module app.wizard.page {
 
             var pageComponent = this.pageComponentView.getPageComponent();
 
-            var componentName = new ComponentName(api.util.removeInvalidChars(api.util.capitalizeAll(name)));
-            var newComponentName = pageComponent.ensureUniqueComponentName(componentName);
-            pageComponent.setName(newComponentName);
+            var componentName = new ComponentName(name);
+            pageComponent.setName(componentName);
         }
     }
 }

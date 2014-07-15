@@ -46,7 +46,7 @@ module app.wizard.page {
             new PageComponentNameChanger().
                 setPageRegions(this.pageRegions).
                 setComponentView(this.pageComponentView).
-                changeTo(this.descriptor.getName().toString());
+                changeTo(this.descriptor.getDisplayName());
 
             var newPath = pageComponent.getPath();
             api.util.assertNotNull(newPath, "Did not expect new path for PageComponent to be null");

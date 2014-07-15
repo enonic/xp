@@ -65,10 +65,6 @@ module api.content.page {
             this.parent.removeComponent(this);
         }
 
-        ensureUniqueComponentName(wantedName: ComponentName): ComponentName {
-            return this.parent.ensureUniqueComponentName(wantedName);
-        }
-
         onPropertyChanged(listener: (event: api.PropertyChangedEvent)=>void) {
             this.propertyChangedListeners.push(listener);
         }

@@ -191,7 +191,6 @@ module api.liveedit {
         }
 
         getName(): string {
-
             return this.pageComponent && this.pageComponent.getName() ? this.pageComponent.getName().toString() : null;
         }
 
@@ -241,8 +240,7 @@ module api.liveedit {
                 indexInNewParent = precedingComponentIndex + 1;
             }
 
-            var uniqueName = toRegionView.getRegion().ensureUniqueComponentName(this.getPageComponent().getName());
-            this.getPageComponent().setName(uniqueName);
+            this.getPageComponent().setName(this.getPageComponent().getName());
 
             // Unregister from previous region...
             // View

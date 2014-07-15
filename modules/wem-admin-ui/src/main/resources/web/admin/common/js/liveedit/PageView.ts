@@ -91,10 +91,7 @@ module api.liveedit {
         }
 
         getName(): string {
-            if (this.content) {
-                return this.content.getDisplayName();
-            }
-            return "[No name]";
+            return this.content ? this.content.getDisplayName() : "[No name]";
         }
 
         private setContent(content: Content) {
