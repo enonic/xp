@@ -45,9 +45,7 @@ module api.ui.selector.combobox {
 
         private preservedInputValueChangedEvent: api.ui.ValueChangedEvent;
 
-        private multipleSelections: boolean = false;
-
-        private selectedOptionsCtrl: SelectedOptionsCtrl<OPTION_DISPLAY_VALUE>;
+        private selectedOptionsView: SelectedOptionsView<OPTION_DISPLAY_VALUE>;
 
         private comboBoxDropdown: ComboBoxDropdown<OPTION_DISPLAY_VALUE>;
 
@@ -74,9 +72,8 @@ module api.ui.selector.combobox {
                 this.setNextInputFocusWhenMaxReached = config.setNextInputFocusWhenMaxReached;
             }
             if (config.selectedOptionsView != null) {
-                this.selectedOptionsCtrl = new SelectedOptionsCtrl(config.selectedOptionsView,
-                        config.maximumOccurrences != null ? config.maximumOccurrences : 0);
-                this.multipleSelections = true;
+                this.selectedOptionsView = config.selectedOptionsView;
+                this.selectedOptionsView.setMaximumOccurrences(config.maximumOccurrences != null ? config.maximumOccurrences : 0);
             }
             if (config.iconUrl) {
                 this.icon = new api.dom.ImgEl(config.iconUrl, "input-icon");
@@ -93,7 +90,7 @@ module api.ui.selector.combobox {
             this.dropdownHandle = new DropdownHandle();
             this.appendChild(this.dropdownHandle);
 
-            if (this.multipleSelections && (config.maximumOccurrences != 1)) {
+            if (this.selectedOptionsView && (config.maximumOccurrences != 1)) {
                 this.applySelectionsButton = new Button("Apply");
                 this.applySelectionsButton.addClass('small apply-button');
                 this.applySelectionsButton.hide();
@@ -106,7 +103,7 @@ module api.ui.selector.combobox {
                 optionDisplayValueViewer: config.optionDisplayValueViewer,
                 filter: config.filter,
                 dataIdProperty: config.dataIdProperty,
-                multipleSelections: (this.multipleSelections && (config.maximumOccurrences != 1))
+                multipleSelections: (this.selectedOptionsView && (config.maximumOccurrences != 1))
             });
 
             this.appendChild(this.comboBoxDropdown.getEmptyDropdown());
@@ -137,7 +134,7 @@ module api.ui.selector.combobox {
         showDropdown() {
 
             this.doUpdateDropdownTopPositionAndWidth();
-            this.comboBoxDropdown.showDropdown(this.selectedOptionsCtrl.getOptions());
+            this.comboBoxDropdown.showDropdown(this.getSelectedOptions());
             this.dropdownHandle.down();
 
             this.comboBoxDropdown.renderDropdownGrid();
@@ -218,7 +215,7 @@ module api.ui.selector.combobox {
             var optionsMap = this.getDisplayedOptions().map((x) => {
                 return x.value;
             }).join();
-            var selectedOptions: Option<OPTION_DISPLAY_VALUE>[] = this.selectedOptionsCtrl.getOptions();
+            var selectedOptions: Option<OPTION_DISPLAY_VALUE>[] = this.getSelectedOptions();
             var filteredOption = [],
                 gridOptions = [];
             for (var k in selectedOptions) {
@@ -249,19 +246,12 @@ module api.ui.selector.combobox {
 
         selectOption(option: Option<OPTION_DISPLAY_VALUE>, silent: boolean = false) {
 
-            // already exists
-            for (var k in this.selectedOptionsCtrl.getOptions()) {
-                if (this.selectedOptionsCtrl.getOptions()[k].value === option.value) {
-                    return;
-                }
-            }
-
-            var added = this.selectedOptionsCtrl.addOption(option);
+            var added = this.selectedOptionsView.addOption(option);
             if (!added) {
                 return;
             }
 
-            this.comboBoxDropdown.markSelections(this.selectedOptionsCtrl.getOptions());
+            this.comboBoxDropdown.markSelections(this.getSelectedOptions());
             this.hideDropdown();
             this.addClass("followed-by-options");
 
@@ -283,9 +273,9 @@ module api.ui.selector.combobox {
         removeSelectedOption(optionToRemove: Option<OPTION_DISPLAY_VALUE>, silent: boolean = false) {
             api.util.assertNotNull(optionToRemove, "optionToRemove cannot be null");
 
-            this.selectedOptionsCtrl.removeOption(optionToRemove, silent);
+            this.selectedOptionsView.removeOption(optionToRemove, silent);
 
-            this.comboBoxDropdown.markSelections(this.selectedOptionsCtrl.getOptions());
+            this.comboBoxDropdown.markSelections(this.getSelectedOptions());
 
             this.input.openForTypingAndFocus();
 
@@ -293,16 +283,14 @@ module api.ui.selector.combobox {
         }
 
         clearSelection(ignoreEmpty: boolean = false) {
-            var optionsMap = this.getDisplayedOptions().map((x) => {
-                return x.value;
-            }).join();
+            var optionsMap = this.getDisplayedOptions().map((x) => x.value).join();
 
-            var selectedOptions: Option<OPTION_DISPLAY_VALUE>[] = this.selectedOptionsCtrl.getOptions();
+            var selectedOptions: Option<OPTION_DISPLAY_VALUE>[] = this.getSelectedOptions();
             selectedOptions.forEach((option: Option<OPTION_DISPLAY_VALUE>) => {
                 // removing selection only from filtered options
                 var filteredOption = optionsMap.search(option.value) >= 0 ? option : undefined;
                 if (filteredOption) {
-                    this.selectedOptionsCtrl.removeOption(option, true);
+                    this.selectedOptionsView.removeOption(option, true);
                 }
             });
 
@@ -314,8 +302,8 @@ module api.ui.selector.combobox {
         }
 
         getSelectedOptions(): Option<OPTION_DISPLAY_VALUE>[] {
-            if (this.multipleSelections) {
-                return this.selectedOptionsCtrl.getOptions();
+            if (this.selectedOptionsView) {
+                return this.selectedOptionsView.getOptions();
             }
             else {
                 throw new Error("Not supported yet");
@@ -336,12 +324,8 @@ module api.ui.selector.combobox {
         }
 
         getValue(): string {
-            if (this.multipleSelections) {
-                var values = [];
-                this.selectedOptionsCtrl.getOptions().forEach((item: Option<OPTION_DISPLAY_VALUE>) => {
-                    values.push(item.value);
-                });
-                return values.join(';');
+            if (this.selectedOptionsView) {
+                return this.getSelectedOptions().map((item: Option<OPTION_DISPLAY_VALUE>) => item.value).join(';');
             }
             else {
                 throw new Error("Not supported yet");
@@ -349,8 +333,8 @@ module api.ui.selector.combobox {
         }
 
         countSelectedOptions(): number {
-            if (this.multipleSelections) {
-                return this.selectedOptionsCtrl.count();
+            if (this.selectedOptionsView) {
+                return this.selectedOptionsView.count();
             }
             else {
                 throw new Error("Not supported yet");
@@ -359,27 +343,22 @@ module api.ui.selector.combobox {
 
         // Checks added occurrences
         maximumOccurrencesReached(): boolean {
-            api.util.assert(this.multipleSelections,
+            api.util.assert(this.selectedOptionsView != null,
                 "No point of calling maximumOccurrencesReached when no multiple selections are enabled");
 
-            return this.selectedOptionsCtrl.maximumOccurrencesReached();
+            return this.selectedOptionsView.maximumOccurrencesReached();
         }
 
         // Checks selected and added occurrences (with filtering)
         maximumSelectionsReached(): boolean {
-            if (this.selectedOptionsCtrl && this.selectedOptionsCtrl.getMaximumOccurrences() !== 0) {
+            if (this.selectedOptionsView && this.selectedOptionsView.getMaximumOccurrences() !== 0) {
 
                 var totalSelected: number = this.comboBoxDropdown.getSelectedOptionCount();
-                var optionsMap = this.getDisplayedOptions().map((x) => {
-                    return x.value;
-                }).join();
-                var selectedOptions: Option<OPTION_DISPLAY_VALUE>[] = this.selectedOptionsCtrl.getOptions();
-                for (var k in selectedOptions) {
-                    if (optionsMap.search(selectedOptions[k].value) < 0) {
-                        totalSelected++;
-                    }
-                }
-                return this.selectedOptionsCtrl.getMaximumOccurrences() <= totalSelected;
+                var optionsMap = this.getDisplayedOptions().map((x) => x.value).join();
+                totalSelected += this.getSelectedOptions().
+                    filter((option: Option<OPTION_DISPLAY_VALUE>) => (optionsMap.search(option.value) < 0)).length;
+
+                return this.selectedOptionsView.getMaximumOccurrences() <= totalSelected;
             } else {
                 return false;
             }
@@ -459,11 +438,10 @@ module api.ui.selector.combobox {
 
             this.onKeyDown(this.handleKeyDown.bind(this));
 
-            if (this.multipleSelections) {
-                this.selectedOptionsCtrl.onSelectedOptionRemoved(
-                    (removedOption: SelectedOption<OPTION_DISPLAY_VALUE>) => {
-                        this.handleSelectedOptionRemoved(removedOption);
-                    });
+            if (this.selectedOptionsView) {
+                this.selectedOptionsView.onSelectedOptionRemoved((removedOption: SelectedOption<OPTION_DISPLAY_VALUE>) => {
+                    this.handleSelectedOptionRemoved(removedOption);
+                });
             }
         }
 
@@ -568,7 +546,7 @@ module api.ui.selector.combobox {
         }
 
         private handleSelectedOptionRemoved(removedSelectedOption: SelectedOption<OPTION_DISPLAY_VALUE>) {
-            this.comboBoxDropdown.markSelections(this.selectedOptionsCtrl.getOptions());
+            this.comboBoxDropdown.markSelections(this.getSelectedOptions());
             this.input.openForTypingAndFocus();
 
             this.dropdownHandle.setEnabled(true);
@@ -660,11 +638,11 @@ module api.ui.selector.combobox {
         }
 
         onSelectedOptionRemoved(listener: {(removed: SelectedOption<OPTION_DISPLAY_VALUE>): void;}) {
-            this.selectedOptionsCtrl.onSelectedOptionRemoved(listener);
+            this.selectedOptionsView.onSelectedOptionRemoved(listener);
         }
 
         unSelectedOptionRemoved(listener: {(removed: SelectedOption<OPTION_DISPLAY_VALUE>): void;}) {
-            this.selectedOptionsCtrl.unSelectedOptionRemoved(listener);
+            this.selectedOptionsView.unSelectedOptionRemoved(listener);
         }
 
         onFocus(listener: (event: FocusEvent) => void) {

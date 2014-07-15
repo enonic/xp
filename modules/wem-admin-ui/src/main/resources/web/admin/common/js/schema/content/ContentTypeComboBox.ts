@@ -16,11 +16,10 @@ module api.schema.content {
 
     export class ContentTypeSelectedOptionsView extends api.ui.selector.combobox.SelectedOptionsView<ContentTypeSummary> {
 
-        createSelectedOption(option: api.ui.selector.Option<ContentTypeSummary>,
-                             index: number): api.ui.selector.combobox.SelectedOption<ContentTypeSummary> {
+        createSelectedOption(option: api.ui.selector.Option<ContentTypeSummary>): api.ui.selector.combobox.SelectedOption<ContentTypeSummary> {
 
             var optionView = new ContentTypeSelectedOptionView(option);
-            return new api.ui.selector.combobox.SelectedOption<ContentTypeSummary>(optionView, option, index);
+            return new api.ui.selector.combobox.SelectedOption<ContentTypeSummary>(optionView, this.count());
         }
     }
 

@@ -1,13 +1,16 @@
 module api.content {
 
-    export class ContentComboBox extends api.ui.selector.combobox.RichComboBox<api.content.ContentSummary> {
+    import SelectedOption = api.ui.selector.combobox.SelectedOption;
+    import ContentSummary = api.content.ContentSummary;
+
+    export class ContentComboBox extends api.ui.selector.combobox.RichComboBox<ContentSummary> {
 
         constructor(builder: ContentComboBoxBuilder) {
 
             var loader = builder.loader ? builder.loader : new ContentSummaryLoader();
             loader.setAllowedContentTypes(builder.allowedContentTypes);
 
-            var richComboBoxBuilder: api.ui.selector.combobox.RichComboBoxBuilder<api.content.ContentSummary> = new api.ui.selector.combobox.RichComboBoxBuilder<api.content.ContentSummary>();
+            var richComboBoxBuilder: api.ui.selector.combobox.RichComboBoxBuilder<ContentSummary> = new api.ui.selector.combobox.RichComboBoxBuilder<ContentSummary>();
             richComboBoxBuilder
                 .setComboBoxName(builder.name ? builder.name : 'contentSelector')
                 .setLoader(loader)
@@ -20,31 +23,30 @@ module api.content {
         }
     }
 
-    export class ContentSelectedOptionsView extends api.ui.selector.combobox.SelectedOptionsView<api.content.ContentSummary> {
+    export class ContentSelectedOptionsView extends api.ui.selector.combobox.SelectedOptionsView<ContentSummary> {
 
-        createSelectedOption(option: api.ui.selector.Option<api.content.ContentSummary>,
-                             index: number): api.ui.selector.combobox.SelectedOption<api.content.ContentSummary> {
+        createSelectedOption(option: api.ui.selector.Option<ContentSummary>): SelectedOption<ContentSummary> {
             var optionView = new ContentSelectedOptionView(option);
-            return new api.ui.selector.combobox.SelectedOption<api.content.ContentSummary>(optionView, option, index);
+            return new SelectedOption<ContentSummary>(optionView, this.count());
         }
     }
 
-    export class ContentSelectedOptionView extends api.ui.selector.combobox.RichSelectedOptionView<api.content.ContentSummary> {
+    export class ContentSelectedOptionView extends api.ui.selector.combobox.RichSelectedOptionView<ContentSummary> {
 
 
-        constructor(option: api.ui.selector.Option<api.content.ContentSummary>) {
+        constructor(option: api.ui.selector.Option<ContentSummary>) {
             super(option);
         }
 
-        resolveIconUrl(content: api.content.ContentSummary): string {
+        resolveIconUrl(content: ContentSummary): string {
             return content.getIconUrl();
         }
 
-        resolveTitle(content: api.content.ContentSummary): string {
+        resolveTitle(content: ContentSummary): string {
             return content.getDisplayName().toString();
         }
 
-        resolveSubTitle(content: api.content.ContentSummary): string {
+        resolveSubTitle(content: ContentSummary): string {
             return content.getPath().toString();
         }
 

@@ -4,12 +4,21 @@ module api.ui.selector.combobox {
 
         private option: api.ui.selector.Option<T>;
 
-        private selectedOptionToBeRemovedListeners: {(toBeRemoved: SelectedOptionView<T>): void;}[] = [];
+        private optionValue: api.dom.DivEl;
+
+        private selectedOptionToBeRemovedListeners: {(): void;}[] = [];
 
         constructor(option: api.ui.selector.Option<T>) {
             super("selected-option");
             this.option = option;
             this.layout();
+        }
+
+        setOption(option: api.ui.selector.Option<T>) {
+            this.option = option;
+            if (this.optionValue) {
+                this.optionValue.getEl().setInnerHtml(this.option.displayValue.toString());
+            }
         }
 
         getOption(): api.ui.selector.Option<T> {
@@ -35,15 +44,15 @@ module api.ui.selector.combobox {
 
         notifySelectedOptionRemoveRequested() {
             this.selectedOptionToBeRemovedListeners.forEach((listener) => {
-                listener(this);
+                listener();
             });
         }
 
-        onSelectedOptionRemoveRequest(listener: {(toBeRemoved: SelectedOptionView<T>): void;}) {
+        onSelectedOptionRemoveRequest(listener: {(): void;}) {
             this.selectedOptionToBeRemovedListeners.push(listener);
         }
 
-        unSelectedOptionRemoveRequest(listener: {(toBeRemoved: SelectedOptionView<T>): void;}) {
+        unSelectedOptionRemoveRequest(listener: {(): void;}) {
             this.selectedOptionToBeRemovedListeners = this.selectedOptionToBeRemovedListeners.filter(function (curr) {
                 return curr != listener;
             });

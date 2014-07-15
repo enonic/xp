@@ -50,8 +50,8 @@ module api.content.page.part {
 
     export class PartDescriptorSelectedOptionsView extends SelectedOptionsView<PartDescriptor> {
 
-        createSelectedOption(option: Option<PartDescriptor>, index: number): SelectedOption<PartDescriptor> {
-            return new SelectedOption<PartDescriptor>(new PartDescriptorSelectedOptionView(option), option, index);
+        createSelectedOption(option: Option<PartDescriptor>): SelectedOption<PartDescriptor> {
+            return new SelectedOption<PartDescriptor>(new PartDescriptorSelectedOptionView(option), this.count());
         }
     }
 

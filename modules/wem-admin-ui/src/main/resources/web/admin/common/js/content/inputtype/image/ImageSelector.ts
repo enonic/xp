@@ -6,6 +6,8 @@ module api.content.inputtype.image {
     import ResponsiveManager = api.ui.ResponsiveManager;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
     import LoadingDataEvent = api.util.loader.event.LoadingDataEvent;
+    import SelectedOption = api.ui.selector.combobox.SelectedOption;
+    import Option = api.ui.selector.Option;
 
     export interface ImageSelectorConfig {
         relationshipType: string
@@ -17,7 +19,7 @@ module api.content.inputtype.image {
 
         private input: api.form.Input;
 
-        private comboBox: ComboBox<ContentSummary>;
+        private comboBox: ComboBox<ImageSelectorDisplayValue>;
 
         private uploadButton: api.ui.Button;
 
@@ -27,7 +29,7 @@ module api.content.inputtype.image {
 
         private contentRequestsAllowed: boolean;
 
-        private uploadDialog: UploadDialog;
+        private uploadDialog: ImageSelectorUploadDialog;
 
         private editContentRequestListeners: {(content: ContentSummary): void }[] = [];
 
@@ -58,6 +60,7 @@ module api.content.inputtype.image {
                 this.comboBox.setOptions(options);
             });
 
+
             // requests aren't allowed until allowed contentTypes are specified
             this.contentRequestsAllowed = false;
 
@@ -74,7 +77,19 @@ module api.content.inputtype.image {
                     this.loadOptions("");
                 });
 
-            this.uploadDialog = new UploadDialog();
+            this.uploadDialog = new ImageSelectorUploadDialog();
+            this.uploadDialog.onUploadStarted((event: api.ui.ImageUploadStartedEvent) => {
+                this.uploadDialog.close();
+
+                event.getUploadedItems().forEach((uploadItem: api.ui.UploadItem) => {
+                    var value = ImageSelectorDisplayValue.fromUploadItem(uploadItem);
+                    var option = <api.ui.selector.Option<ImageSelectorDisplayValue>>{
+                        value: value.getId(),
+                        displayValue: value
+                    };
+                    this.comboBox.selectOption(option);
+                });
+            });
             this.uploadDialog.onImageUploaded((event: api.ui.ImageUploadedEvent) => {
                 this.createImageContent(event.getUploadedItem());
             });
@@ -114,7 +129,7 @@ module api.content.inputtype.image {
             this.comboBox.onShown((event: api.dom.ElementShownEvent) => {
                 // shown on occurences between min and max
                 this.uploadButton.show();
-            })
+            });
 
             this.uploadButton = new api.ui.Button();
             comboboxWrapper.appendChild(this.uploadButton);
@@ -140,9 +155,9 @@ module api.content.inputtype.image {
                 then((contents: ContentSummary[]) => {
 
                     contents.forEach((content: ContentSummary) => {
-                        this.comboBox.selectOption(<api.ui.selector.Option<ContentSummary>>{
+                        this.comboBox.selectOption(<Option<ImageSelectorDisplayValue>>{
                             value: content.getId(),
-                            displayValue: content
+                            displayValue: ImageSelectorDisplayValue.fromContentSummary(content)
                         });
                     });
 
@@ -196,6 +211,173 @@ module api.content.inputtype.image {
 
             this.previousValidationRecording = recording;
             return recording;
+        }
+
+        giveFocus(): boolean {
+            if (this.comboBox.maximumOccurrencesReached()) {
+                return false;
+            }
+            return this.comboBox.giveFocus();
+        }
+
+        createAndAddOccurrence() {
+            throw new Error("ImageSelector manages occurrences self");
+        }
+
+        isManagingAdd(): boolean {
+            return true;
+        }
+
+        private createComboBox(input: api.form.Input): ComboBox<ImageSelectorDisplayValue> {
+
+            this.selectedOptionsView = new SelectedOptionsView();
+            this.selectedOptionsView.onEditSelectedOptions((options: SelectedOption<ImageSelectorDisplayValue>[]) => {
+                options.forEach((option: SelectedOption<ImageSelectorDisplayValue>) => {
+                    this.notifyEditContentRequested(option.getOption().displayValue.getContentSummary());
+                });
+            });
+
+            this.selectedOptionsView.onRemoveSelectedOptions((options: SelectedOption<ImageSelectorDisplayValue>[]) => {
+                options.forEach((option: SelectedOption<ImageSelectorDisplayValue>) => {
+                    this.comboBox.removeSelectedOption(option.getOption());
+                });
+                this.validate(false);
+            });
+
+            this.selectedOptionsView.onValueChanged((event: api.form.inputtype.ValueChangedEvent) => {
+                this.notifyValueChanged(event);
+            });
+
+            var comboBoxConfig = <ComboBoxConfig<ImageSelectorDisplayValue>> {
+                hideComboBoxWhenMaxReached: true,
+                optionDisplayValueViewer: new ImageSelectorViewer(),
+                selectedOptionsView: this.selectedOptionsView,
+                maximumOccurrences: input.getOccurrences().getMaximum(),
+                delayedInputValueChangedHandling: 500
+            };
+
+            var comboBox = new ComboBox<ImageSelectorDisplayValue>(input.getName(), comboBoxConfig);
+
+            this.loadOptions("");
+
+            comboBox.onSelectedOptionRemoved((removed: SelectedOption<ImageSelectorDisplayValue>) => {
+                this.notifyValueRemoved(removed.getIndex());
+                this.validate(false);
+            });
+
+            comboBox.onOptionFilterInputValueChanged((event: api.ui.selector.OptionFilterInputValueChangedEvent<ImageSelectorDisplayValue>) => {
+                this.loadOptions(event.getNewValue());
+            });
+
+            comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<ImageSelectorDisplayValue>) => {
+                if (!this.layoutInProgress) {
+                    var contentId = event.getOption().displayValue.getContentId();
+                    if (!contentId) {
+                        return;
+                    }
+                    var value = new api.data.Value(contentId, api.data.ValueTypes.CONTENT_ID);
+                    this.notifyValueAdded(value);
+                }
+                this.validate(false);
+            });
+
+            return comboBox;
+        }
+
+        private loadOptions(searchString: string) {
+            if (!this.contentRequestsAllowed || !this.comboBox) {
+                return;
+            }
+
+            this.contentSummaryLoader.search(searchString);
+        }
+
+        private createOptions(contents: ContentSummary[]): Option<ImageSelectorDisplayValue>[] {
+            return contents.map((content: ContentSummary) => {
+                return {
+                    value: content.getId(),
+                    displayValue: ImageSelectorDisplayValue.fromContentSummary(content)
+                };
+            });
+        }
+
+        private createImageContent(uploadItem: api.ui.UploadItem) {
+
+            new api.schema.content.GetContentTypeByNameRequest(new api.schema.content.ContentTypeName("image")).
+                sendAndParse().
+                then((contentType: api.schema.content.ContentType) => {
+
+                    var attachmentName = new api.content.attachment.AttachmentName(uploadItem.getName());
+
+                    var attachment = new api.content.attachment.AttachmentBuilder().
+                        setBlobKey(uploadItem.getBlobKey()).
+                        setAttachmentName(attachmentName).
+                        setMimeType(uploadItem.getMimeType()).
+                        setSize(uploadItem.getSize()).
+                        build();
+
+                    var contentData = new api.content.image.ImageContentDataFactory().
+                        setImage(attachmentName).
+                        setMimeType(uploadItem.getMimeType()).
+                        create();
+
+                    var createContentRequest = new api.content.CreateContentRequest().
+                        setDraft(false).
+                        setParent(this.config.contentPath).
+                        setName(api.content.ContentName.fromString(api.content.ContentName.ensureValidContentName(attachmentName.toString()))).
+                        setContentType(contentType.getContentTypeName()).
+                        setDisplayName(attachmentName.toString()).
+                        setForm(contentType.getForm()).
+                        setContentData(contentData).
+                        addAttachment(attachment);
+
+                    return createContentRequest.sendAndParse();
+
+                }).then((createdContent: api.content.Content) => {
+
+                    var value = ImageSelectorDisplayValue.fromContentSummary(createdContent, uploadItem);
+                    this.comboBox.selectOption({
+                        value: value.getId(),
+                        displayValue: value
+                    });
+
+                }).catch((reason: any) => {
+
+                    api.DefaultErrorHandler.handle(reason);
+
+                }).done();
+        }
+
+        onFocus(listener: (event: FocusEvent) => void) {
+            this.comboBox.onFocus(listener);
+        }
+
+        unFocus(listener: (event: FocusEvent) => void) {
+            this.comboBox.unFocus(listener);
+        }
+
+        onBlur(listener: (event: FocusEvent) => void) {
+            this.comboBox.onBlur(listener);
+        }
+
+        unBlur(listener: (event: FocusEvent) => void) {
+            this.comboBox.unBlur(listener);
+        }
+
+        onEditContentRequest(listener: (content: ContentSummary) => void) {
+            this.editContentRequestListeners.push(listener);
+        }
+
+        unEditContentRequest(listener: (content: ContentSummary) => void) {
+            this.editContentRequestListeners = this.editContentRequestListeners.filter(function (curr) {
+                return curr != listener;
+            });
+        }
+
+        private notifyEditContentRequested(content: ContentSummary) {
+            this.editContentRequestListeners.forEach((listener) => {
+                listener(content);
+            });
         }
 
         onValueAdded(listener: (event: api.form.inputtype.ValueAddedEvent) => void) {
@@ -262,168 +444,6 @@ module api.content.inputtype.image {
             this.inputValidityChangedListeners.forEach((listener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) => {
                 listener(event);
             });
-        }
-
-        giveFocus(): boolean {
-            if (this.comboBox.maximumOccurrencesReached()) {
-                return false;
-            }
-            return this.comboBox.giveFocus();
-        }
-
-        createAndAddOccurrence() {
-            throw new Error("ImageSelector manages occurrences self");
-        }
-
-        isManagingAdd(): boolean {
-            return true;
-        }
-
-        onEditContentRequest(listener: (content: ContentSummary) => void) {
-            this.editContentRequestListeners.push(listener);
-        }
-
-        unEditContentRequest(listener: (content: ContentSummary) => void) {
-            this.editContentRequestListeners = this.editContentRequestListeners.filter(function (curr) {
-                return curr != listener;
-            });
-        }
-
-        private notifyEditContentRequested(content: ContentSummary) {
-            this.editContentRequestListeners.forEach((listener) => {
-                listener(content);
-            });
-        }
-
-        private createComboBox(input: api.form.Input): ComboBox<ContentSummary> {
-
-            this.selectedOptionsView = new SelectedOptionsView();
-            this.selectedOptionsView.onEditSelectedOptions((options: api.ui.selector.combobox.SelectedOption<ContentSummary>[]) => {
-                options.forEach((option: api.ui.selector.combobox.SelectedOption<ContentSummary>) => {
-                    this.notifyEditContentRequested(option.getOption().displayValue);
-                });
-            });
-
-            this.selectedOptionsView.onRemoveSelectedOptions((options: api.ui.selector.combobox.SelectedOption<ContentSummary>[]) => {
-                options.forEach((option: api.ui.selector.combobox.SelectedOption<ContentSummary>) => {
-                    this.comboBox.removeSelectedOption(option.getOption());
-                });
-                this.validate(false);
-            });
-
-            this.selectedOptionsView.onValueChanged((event: api.form.inputtype.ValueChangedEvent) => {
-                this.notifyValueChanged(event);
-            });
-
-            var comboBoxConfig = <ComboBoxConfig<ContentSummary>> {
-                hideComboBoxWhenMaxReached: true,
-                optionDisplayValueViewer: new ContentSummaryViewer(),
-                selectedOptionsView: this.selectedOptionsView,
-                maximumOccurrences: input.getOccurrences().getMaximum(),
-                delayedInputValueChangedHandling: 500
-            };
-
-            var comboBox = new ComboBox<ContentSummary>(input.getName(), comboBoxConfig);
-
-            this.loadOptions("");
-
-            comboBox.onSelectedOptionRemoved((removed: api.ui.selector.combobox.SelectedOption<ContentSummary>) => {
-                this.notifyValueRemoved(removed.getIndex());
-                this.validate(false);
-            });
-
-            comboBox.onOptionFilterInputValueChanged((event: api.ui.selector.OptionFilterInputValueChangedEvent<ContentSummary>) => {
-                this.loadOptions(event.getNewValue());
-            });
-
-            comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<ContentSummary>) => {
-                if (!this.layoutInProgress) {
-                    var value = new api.data.Value(event.getOption().displayValue.getContentId(), api.data.ValueTypes.CONTENT_ID);
-                    this.notifyValueAdded(value);
-                }
-                this.validate(false);
-            });
-
-            return comboBox;
-        }
-
-        private loadOptions(searchString: string) {
-            if (!this.contentRequestsAllowed || !this.comboBox) {
-                return;
-            }
-
-            this.contentSummaryLoader.search(searchString);
-        }
-
-        private createOptions(contents: ContentSummary[]): api.ui.selector.Option<ContentSummary>[] {
-            return contents.map((content: ContentSummary) => {
-                return {
-                    value: content.getId(),
-                    displayValue: content
-                };
-            });
-        }
-
-        private createImageContent(uploadItem: api.ui.UploadItem) {
-
-            new api.schema.content.GetContentTypeByNameRequest(new api.schema.content.ContentTypeName("image")).
-                sendAndParse().
-                then((contentType: api.schema.content.ContentType) => {
-
-                    var attachmentName = new api.content.attachment.AttachmentName(uploadItem.getName());
-
-                    var attachment = new api.content.attachment.AttachmentBuilder().
-                        setBlobKey(uploadItem.getBlobKey()).
-                        setAttachmentName(attachmentName).
-                        setMimeType(uploadItem.getMimeType()).
-                        setSize(uploadItem.getSize()).
-                        build();
-
-                    var contentData = new api.content.image.ImageContentDataFactory().
-                        setImage(attachmentName).
-                        setMimeType(uploadItem.getMimeType()).
-                        create();
-
-                    var createContentRequest = new api.content.CreateContentRequest().
-                        setDraft(false).
-                        setParent(this.config.contentPath).
-                        setName(api.content.ContentName.fromString(api.content.ContentName.ensureValidContentName(attachmentName.toString()))).
-                        setContentType(contentType.getContentTypeName()).
-                        setDisplayName(attachmentName.toString()).
-                        setForm(contentType.getForm()).
-                        setContentData(contentData).
-                        addAttachment(attachment);
-
-                    return createContentRequest.sendAndParse();
-
-                }).then((createdContent: api.content.Content) => {
-
-                    this.comboBox.selectOption({
-                        value: createdContent.getId(),
-                        displayValue: createdContent
-                    });
-
-                }).catch((reason: any) => {
-
-                    api.DefaultErrorHandler.handle(reason);
-
-                }).done();
-        }
-
-        onFocus(listener: (event: FocusEvent) => void) {
-            this.comboBox.onFocus(listener);
-        }
-
-        unFocus(listener: (event: FocusEvent) => void) {
-            this.comboBox.unFocus(listener);
-        }
-
-        onBlur(listener: (event: FocusEvent) => void) {
-            this.comboBox.onBlur(listener);
-        }
-
-        unBlur(listener: (event: FocusEvent) => void) {
-            this.comboBox.unBlur(listener);
         }
     }
 

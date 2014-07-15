@@ -2,7 +2,7 @@ module api.content.inputtype.image {
 
     export class ImageSelectorDialog extends api.dom.DivEl {
 
-        private content: api.content.ContentSummary;
+        private content: ImageSelectorDisplayValue;
 
         private nameEl: api.dom.H1El;
 
@@ -19,15 +19,14 @@ module api.content.inputtype.image {
 
         }
 
-        setContent(value: api.content.ContentSummary) {
+        setContent(value: ImageSelectorDisplayValue) {
             this.content = value;
             this.refreshUI();
         }
 
         private refreshUI() {
-            var path: string = this.content.getPath().toString();
-            this.nameEl.getEl().setInnerHtml(this.content.getName().toString());
-            this.pathEl.getEl().setInnerHtml(path);
+            this.nameEl.getEl().setInnerHtml(this.content.getLabel());
+            this.pathEl.getEl().setInnerHtml(this.content.getPath());
         }
 
     }

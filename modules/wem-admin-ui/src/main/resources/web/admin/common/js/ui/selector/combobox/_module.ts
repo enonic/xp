@@ -4,7 +4,5 @@
 ///<reference path='SelectedOptionView.ts' />
 ///<reference path='SelectedOptionsView.ts' />
 ///<reference path='SelectedOption.ts' />
-///<reference path='SelectedOptions.ts' />
-///<reference path='SelectedOptionsCtrl.ts' />
 ///<reference path='RichComboBox.ts' />
 ///<reference path='RichSelectedOptionView.ts' />

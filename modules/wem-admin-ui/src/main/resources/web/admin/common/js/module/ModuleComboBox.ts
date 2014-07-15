@@ -17,9 +17,9 @@ module api.module {
 
     export class ModuleSelectedOptionsView extends api.ui.selector.combobox.SelectedOptionsView<api.module.ModuleSummary> {
 
-        createSelectedOption(option:api.ui.selector.Option<api.module.ModuleSummary>, index:number):api.ui.selector.combobox.SelectedOption<api.module.ModuleSummary> {
+        createSelectedOption(option:api.ui.selector.Option<api.module.ModuleSummary>):api.ui.selector.combobox.SelectedOption<api.module.ModuleSummary> {
             var optionView = new ModuleSelectedOptionView( option );
-            return new api.ui.selector.combobox.SelectedOption<api.module.ModuleSummary>( optionView, option, index);
+            return new api.ui.selector.combobox.SelectedOption<api.module.ModuleSummary>( optionView, this.count() );
         }
     }
 

@@ -13,10 +13,8 @@ module api.content.page {
 
     export class PageTemplateSelectedOptionsView extends api.ui.selector.combobox.SelectedOptionsView<PageTemplateSummary> {
 
-        createSelectedOption(option: api.ui.selector.Option<PageTemplateSummary>,
-                             index: number): api.ui.selector.combobox.SelectedOption<PageTemplateSummary> {
-            return new api.ui.selector.combobox.SelectedOption<PageTemplateSummary>(new PageTemplateSelectedOptionView(option), option,
-                index);
+        createSelectedOption(option: api.ui.selector.Option<PageTemplateSummary>): api.ui.selector.combobox.SelectedOption<PageTemplateSummary> {
+            return new api.ui.selector.combobox.SelectedOption<PageTemplateSummary>(new PageTemplateSelectedOptionView(option), this.count());
         }
     }
 

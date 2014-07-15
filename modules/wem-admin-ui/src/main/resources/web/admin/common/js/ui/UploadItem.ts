@@ -2,6 +2,8 @@ module api.ui {
 
     export class UploadItem {
 
+        private id: string;
+
         private blobKey: api.blob.BlobKey;
 
         private name: string;
@@ -11,10 +13,15 @@ module api.ui {
         private size: number;
 
         constructor(builder: UploadItemBuilder) {
+            this.id = builder.id;
             this.blobKey = builder.blobKey;
             this.name = builder.name;
             this.mimeType = builder.mimeType;
             this.size = builder.size;
+        }
+
+        getId(): string {
+            return this.id;
         }
 
         getBlobKey(): api.blob.BlobKey {
@@ -37,6 +44,8 @@ module api.ui {
 
     export class UploadItemBuilder {
 
+        id: string;
+
         blobKey: api.blob.BlobKey;
 
         name: string;
@@ -45,27 +54,32 @@ module api.ui {
 
         size: number;
 
-        public setId(value: api.blob.BlobKey): UploadItemBuilder {
+        setId(value: string): UploadItemBuilder {
+            this.id = value;
+            return this;
+        }
+
+        setBlobKey(value: api.blob.BlobKey): UploadItemBuilder {
             this.blobKey = value;
             return this;
         }
 
-        public setName(value: string): UploadItemBuilder {
+        setName(value: string): UploadItemBuilder {
             this.name = value;
             return this;
         }
 
-        public setMimeType(value: string): UploadItemBuilder {
+        setMimeType(value: string): UploadItemBuilder {
             this.mimeType = value;
             return this;
         }
 
-        public setSize(value: number): UploadItemBuilder {
+        setSize(value: number): UploadItemBuilder {
             this.size = value;
             return this;
         }
 
-        public build(): UploadItem {
+        build(): UploadItem {
             return new UploadItem(this);
         }
     }

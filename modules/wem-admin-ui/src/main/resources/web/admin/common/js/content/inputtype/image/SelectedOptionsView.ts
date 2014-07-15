@@ -1,26 +1,27 @@
 module api.content.inputtype.image {
 
+    import Option = api.ui.selector.Option;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
     import ContentSummary = api.content.ContentSummary;
     import Value = api.data.Value;
     import ValueChangedEvent = api.form.inputtype.ValueChangedEvent;
     import LoadMask = api.ui.LoadMask;
 
-    export class SelectedOptionsView extends api.ui.selector.combobox.SelectedOptionsView<ContentSummary> {
+    export class SelectedOptionsView extends api.ui.selector.combobox.SelectedOptionsView<ImageSelectorDisplayValue> {
 
         private numberOfOptionsPerRow: number = 3;
 
-        private activeOption: SelectedOption<ContentSummary>;
+        private activeOption: SelectedOption<ImageSelectorDisplayValue>;
 
-        private selection: SelectedOption<ContentSummary>[] = [];
+        private selection: SelectedOption<ImageSelectorDisplayValue>[] = [];
 
         private toolbar: SelectionToolbar;
 
         private dialog: ImageSelectorDialog;
 
-        private editSelectedOptionsListeners: {(option: SelectedOption<ContentSummary>[]): void}[] = [];
+        private editSelectedOptionsListeners: {(option: SelectedOption<ImageSelectorDisplayValue>[]): void}[] = [];
 
-        private removeSelectedOptionsListeners: {(option: SelectedOption<ContentSummary>[]): void}[] = [];
+        private removeSelectedOptionsListeners: {(option: SelectedOption<ImageSelectorDisplayValue>[]): void}[] = [];
 
         private valueChangedListeners: {(event: ValueChangedEvent) : void}[] = [];
 
@@ -63,47 +64,34 @@ module api.content.inputtype.image {
             });
         }
 
-        private notifyRemoveSelectedOptions(option: SelectedOption<ContentSummary>[]) {
-            this.removeSelectedOptionsListeners.forEach((listener) => {
-                listener(option);
-            });
+        createSelectedOption(option: Option<ImageSelectorDisplayValue>): SelectedOption<ImageSelectorDisplayValue> {
+
+            return new SelectedOption<ImageSelectorDisplayValue>(new SelectedOptionView(option), this.count());
         }
 
-        onRemoveSelectedOptions(listener: (option: SelectedOption<ContentSummary>[]) => void) {
-            this.removeSelectedOptionsListeners.push(listener);
-        }
-
-        unRemoveSelectedOptions(listener: (option: SelectedOption<ContentSummary>[]) => void) {
-            this.removeSelectedOptionsListeners = this.removeSelectedOptionsListeners.filter(function (curr) {
-                return curr != listener;
-            });
-        }
-
-        private notifyEditSelectedOptions(option: SelectedOption<ContentSummary>[]) {
-            this.editSelectedOptionsListeners.forEach((listener) => {
-                listener(option);
-            });
-        }
-
-        onEditSelectedOptions(listener: (option: SelectedOption<ContentSummary>[]) => void) {
-            this.editSelectedOptionsListeners.push(listener);
-        }
-
-        unEditSelectedOptions(listener: (option: SelectedOption<ContentSummary>[]) => void) {
-            this.editSelectedOptionsListeners = this.editSelectedOptionsListeners.filter(function (curr) {
-                return curr != listener;
-            });
-        }
-
-        createSelectedOption(option: api.ui.selector.Option<ContentSummary>, index: number): SelectedOption<ContentSummary> {
-
-            return new SelectedOption<ContentSummary>(new SelectedOptionView(option), option, index);
-        }
-
-        addOptionView(option: SelectedOption<ContentSummary>) {
+        addOption(option: Option<ImageSelectorDisplayValue>): boolean {
 
             this.dialog.remove();
-            var optionView: SelectedOptionView = <SelectedOptionView>option.getOptionView();
+
+            var selectedOption = this.getByOption(option);
+            if (!selectedOption && !this.maximumOccurrencesReached()) {
+                this.addNewOption(option);
+                return true;
+            } else if (selectedOption) {
+                var displayValue = selectedOption.getOption().displayValue;
+                if (displayValue.getContentSummary() == null && option.displayValue.getContentSummary() != null) {
+                    this.updateUplodedOption(option);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        addNewOption(option: Option<ImageSelectorDisplayValue>) {
+            var selecteOption: SelectedOption<ImageSelectorDisplayValue> = this.createSelectedOption(option);
+            this.getSelecteOptions().push(selecteOption);
+
+            var optionView: SelectedOptionView = <SelectedOptionView>selecteOption.getOptionView();
 
             var loadMask: LoadMask = new LoadMask(optionView);
             optionView.appendChild(loadMask);
@@ -119,7 +107,7 @@ module api.content.inputtype.image {
                     this.hideImageSelectorDialog();
                     optionView.getCheckbox().giveBlur();
                 } else {
-                    this.showImageSelectorDialog(option);
+                    this.showImageSelectorDialog(selecteOption);
                     optionView.getCheckbox().giveFocus();
                 }
             });
@@ -134,22 +122,22 @@ module api.content.inputtype.image {
                     break;
                 case 8: // Backspace
                     checkbox.setChecked(false);
-                    this.removeOptionViewAndRefocus(option);
+                    this.removeOptionViewAndRefocus(selecteOption);
                     event.preventDefault();
                     break;
                 case 46: // Delete
                     checkbox.setChecked(false);
-                    this.removeOptionViewAndRefocus(option);
+                    this.removeOptionViewAndRefocus(selecteOption);
                     break;
                 case 13: // Enter
-                    this.notifyEditSelectedOptions([option]);
+                    this.notifyEditSelectedOptions([selecteOption]);
                     break;
                 }
                 event.stopPropagation();
             });
 
             optionView.getCheckbox().onFocus((event: FocusEvent) => {
-                this.showImageSelectorDialog(option);
+                this.showImageSelectorDialog(selecteOption);
             });
 
             optionView.getCheckbox().onBlur((event: FocusEvent) => {
@@ -163,9 +151,9 @@ module api.content.inputtype.image {
 
             optionView.onChecked((view: SelectedOptionView, checked: boolean) => {
                 if (checked) {
-                    this.selection.push(option);
+                    this.selection.push(selecteOption);
                 } else {
-                    var index = this.selection.indexOf(option);
+                    var index = this.selection.indexOf(selecteOption);
                     if (index > -1) {
                         this.selection.splice(index, 1);
                     }
@@ -186,23 +174,34 @@ module api.content.inputtype.image {
             optionView.insertBeforeEl(this.toolbar);
         }
 
-        private removeOptionViewAndRefocus(option: SelectedOption<ContentSummary>) {
+        updateUplodedOption(option: Option<ImageSelectorDisplayValue>) {
+            var selectedOption = this.getByOption(option);
+            var content = option.displayValue.getContentSummary();
+
+            var newOption = <Option<ImageSelectorDisplayValue>>{
+                value: content.getId(),
+                displayValue: ImageSelectorDisplayValue.fromContentSummary(content)
+            };
+
+            selectedOption.getOptionView().setOption(newOption);
+        }
+
+        private removeOptionViewAndRefocus(option: SelectedOption<ImageSelectorDisplayValue>) {
             var index = this.isLast(option.getIndex()) ?
                 (this.isFirst(option.getIndex()) ? -1 : option.getIndex() - 1) :
                 option.getIndex();
 
-            this.removeOptionView(option);
             this.notifyRemoveSelectedOptions([option]);
             this.hideImageSelectorDialog();
 
             if (index > -1) {
-                (<SelectedOptionView>this.getSelectedOptionViews()[index]).getCheckbox().giveFocus();
+                (<SelectedOptionView>this.getOptionViews()[index]).getCheckbox().giveFocus();
             }
         }
 
-        private showImageSelectorDialog(option: SelectedOption<ContentSummary>) {
+        private showImageSelectorDialog(option: SelectedOption<ImageSelectorDisplayValue>) {
 
-            var selectedOptionViews = this.getSelectedOptionViews();
+            var selectedOptionViews = this.getOptionViews();
             for (var i = 0; i < selectedOptionViews.length; i++) {
                 var view = <SelectedOptionView>selectedOptionViews[i];
                 var passedSelectedOption = i >= option.getIndex();
@@ -228,7 +227,7 @@ module api.content.inputtype.image {
 
         updateLayout() {
             var optionHeight = this.calculateOptionHeight();
-            this.getSelectedOptionViews().forEach((optionView: SelectedOptionView) => {
+            this.getOptionViews().forEach((optionView: SelectedOptionView) => {
                 this.updateOptionViewLayout(optionView, optionHeight);
             });
             if (this.dialog.isVisible()) {
@@ -295,7 +294,7 @@ module api.content.inputtype.image {
         }
 
         private isLast(index: number): boolean {
-            return index == this.getSelectedOptionViews().length - 1;
+            return index == this.getOptionViews().length - 1;
         }
 
         private handleDnDStart(event: Event, ui: JQueryUI.SortableUIParams): void {
@@ -317,7 +316,7 @@ module api.content.inputtype.image {
 
         private handleMovedOccurrence(fromIndex: number, toIndex: number) {
 
-            this.getSelectedOptions().moveOccurrence(fromIndex, toIndex);
+            this.moveOccurrence(fromIndex, toIndex);
 
             this.getValues().forEach((value: Value, index: number) => {
                 if (Math.min(fromIndex, toIndex) <= index && index <= Math.max(fromIndex, toIndex)) {
@@ -327,8 +326,40 @@ module api.content.inputtype.image {
         }
 
         getValues(): Value[] {
-            return this.getSelectedOptions().getOptions().map((option: api.ui.selector.Option<ContentSummary>) => {
+            return this.getOptions().map((option: Option<ImageSelectorDisplayValue>) => {
                 return new Value(option.value, api.data.ValueTypes.CONTENT_ID);
+            });
+        }
+
+        private notifyRemoveSelectedOptions(option: SelectedOption<ImageSelectorDisplayValue>[]) {
+            this.removeSelectedOptionsListeners.forEach((listener) => {
+                listener(option);
+            });
+        }
+
+        onRemoveSelectedOptions(listener: (option: SelectedOption<ImageSelectorDisplayValue>[]) => void) {
+            this.removeSelectedOptionsListeners.push(listener);
+        }
+
+        unRemoveSelectedOptions(listener: (option: SelectedOption<ImageSelectorDisplayValue>[]) => void) {
+            this.removeSelectedOptionsListeners = this.removeSelectedOptionsListeners.filter(function (curr) {
+                return curr != listener;
+            });
+        }
+
+        private notifyEditSelectedOptions(option: SelectedOption<ImageSelectorDisplayValue>[]) {
+            this.editSelectedOptionsListeners.forEach((listener) => {
+                listener(option);
+            });
+        }
+
+        onEditSelectedOptions(listener: (option: SelectedOption<ImageSelectorDisplayValue>[]) => void) {
+            this.editSelectedOptionsListeners.push(listener);
+        }
+
+        unEditSelectedOptions(listener: (option: SelectedOption<ImageSelectorDisplayValue>[]) => void) {
+            this.editSelectedOptionsListeners = this.editSelectedOptionsListeners.filter(function (curr) {
+                return curr != listener;
             });
         }
 
