@@ -19,7 +19,7 @@ public class XmlMixinSerializerTest
     extends BaseXmlSerializer2Test
 {
     @Test
-    public void testTo()
+    public void test_to_xml()
         throws Exception
     {
         final FormItemSet set = newFormItemSet().name( "mySet" ).build();
@@ -41,7 +41,7 @@ public class XmlMixinSerializerTest
     }
 
     @Test
-    public void testFrom()
+    public void test_from_xml()
         throws Exception
     {
         final String xml = readFromFile( "mixin.xml" );

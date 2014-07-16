@@ -17,7 +17,7 @@ public class XmlImageDescriptorSerializerTest
     extends BaseXmlSerializer2Test
 {
     @Test
-    public void testFrom()
+    public void test_to_xml()
         throws Exception
     {
         Form configForm = Form.newForm().
@@ -38,7 +38,7 @@ public class XmlImageDescriptorSerializerTest
     }
 
     @Test
-    public void testTo()
+    public void test_from_xml()
         throws Exception
     {
         final String xml = readFromFile( "image-descriptor.xml" );

@@ -39,7 +39,7 @@ public class XmlFormSerializerTest
     extends BaseXmlSerializer2Test
 {
     @Test
-    public void testFrom()
+    public void test_to_xml()
         throws Exception
     {
         final Input myTextLine = newInput().
@@ -104,7 +104,7 @@ public class XmlFormSerializerTest
     }
 
     @Test
-    public void from_all_Input_types()
+    public void from_all_Input_types_to_xml()
         throws Exception
     {
         final Form form = createFormWithAllInputTypes();
@@ -117,7 +117,7 @@ public class XmlFormSerializerTest
     }
 
     @Test
-    public void from_all_FormItem_types()
+    public void from_all_FormItem_types_to_xml()
         throws Exception
     {
         final Form form = createFormWithAllFormItemTypes();
@@ -130,7 +130,7 @@ public class XmlFormSerializerTest
     }
 
     @Test
-    public void testTo()
+    public void test_to_input()
         throws Exception
     {
         final String xml = readFromFile( "form.xml" );
@@ -154,7 +154,7 @@ public class XmlFormSerializerTest
     }
 
     @Test
-    public void to_all_Input_types()
+    public void test_to_form_with_all_input_types()
         throws Exception
     {
         final String xml = readFromFile( "form-with-all-input-types.xml" );
@@ -170,7 +170,7 @@ public class XmlFormSerializerTest
     }
 
     @Test
-    public void toForm_all_FormItem_types()
+    public void test_to_form_with_all_FormItem_types()
         throws Exception
     {
         final String xml = readFromFile( "form-with-all-form-item-types.xml" );
