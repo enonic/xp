@@ -23,6 +23,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     import LayoutItemType = api.liveedit.layout.LayoutItemType;
     import DraggingPageComponentViewStartedEvent = api.liveedit.DraggingPageComponentViewStartedEvent;
     import DraggingPageComponentViewCompletedEvent = api.liveedit.DraggingPageComponentViewCompletedEvent;
+    import DraggingPageComponentViewCanceledEvent = api.liveedit.DraggingPageComponentViewCanceledEvent;
     import ItemFromContextWindowDroppedEvent = api.liveedit.ItemFromContextWindowDroppedEvent;
     import ItemViewDeselectEvent = api.liveedit.ItemViewDeselectEvent;
     import CreateItemViewConfig = api.liveedit.CreateItemViewConfig;
@@ -83,7 +84,6 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             change: (event, ui) => handleSortChange(event, ui),
             receive: (event, ui) => handleReceive(event, ui),
             update: (event, ui) => handleSortUpdate(event, ui),
-            beforeStop: (event, ui) => handleBeforeStop(event, ui),
             stop: (event, ui) => handleSortStop(event, ui),
             activate: (event, ui) => handleActivate(event, ui),
             deactivate: (event, ui) => handleDeactivate(event, ui),
@@ -260,14 +260,23 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         api.util.assertState(!!droppedInRegionView, "droppedInRegionView not expected to be null");
 
         var droppedPageComponentView = getPageComponentView(ui.item);
-        api.util.assertState(!!droppedPageComponentView, "droppedPageComponentView not expected to be null");
+
+        if (!droppedPageComponentView) {
+            if (isDraggingLayoutOverLayout(droppedInRegionView, _newItemItemType)) {
+                ui.item.remove();
+                new DraggingPageComponentViewCanceledEvent(droppedPageComponentView).fire();
+                return;
+            }
+        } else {
+            if (isDraggingLayoutOverLayout(droppedInRegionView,  droppedPageComponentView.getType())) {
+                ui.item.remove();
+                new DraggingPageComponentViewCanceledEvent(droppedPageComponentView).fire();
+                return;
+            }
+        }
 
         // Skip moving when PageComponentView is already moved (happens when moving from one sortable/region to another, then one event is fired for each sortable)
         if (!droppedPageComponentView.isMoving()) {
-            return;
-        }
-
-        if (isDraggingLayoutOverLayout(droppedInRegionView, droppedPageComponentView.getType())) {
             return;
         }
 
@@ -290,8 +299,13 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             var droppedElement = wemjq(event.target).children(CONTEXT_WINDOW_DRAG_SOURCE_SELECTOR);
             var regionHTMLElement = PageComponentView.findParentRegionViewHTMLElement(droppedElement.get(0));
             var regionView = liveEditPage.getRegionViewByElement(regionHTMLElement);
-
             var itemType: PageComponentItemType = <PageComponentItemType>ItemType.byShortName(droppedElement.data('live-edit-type'));
+
+            if (isDraggingLayoutOverLayout(regionView, itemType)) {
+                regionView.refreshPlaceholder();
+                return;
+            }
+
             var precedingComponentView = resolvePrecedingComponentView(droppedElement.get(0));
             var newPageComponent = liveEditPage.createComponent(regionView.getRegion(), itemType.toPageComponentType(),
                 precedingComponentView);
@@ -324,33 +338,6 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         console.log((_messageCounter++) + " DragDropSort.handleRemove");
 
     }
-
-    function handleBeforeStop(event: JQueryEventObject, ui: JQueryUI.SortableUIParams): void {
-
-        console.log((_messageCounter++) + " DragDropSort.handleBeforeStop");
-
-        var droppedInRegionView: RegionView = getRegionView(ui.item.parent());
-        if (!droppedInRegionView) {
-            console.debug("DragDropSort.handleBeforeStop: skipping handling since RegionView from ui.placeholder.parent() was not found");
-            return;
-        }
-
-        var draggedPageComponentView = getPageComponentView(ui.item);
-
-        if (!draggedPageComponentView) {
-            if (isDraggingLayoutOverLayout(droppedInRegionView, _newItemItemType)) {
-                ui.item.remove();
-                ui.placeholder.parent().sortable("cancel");
-            }
-        }
-        else {
-            if (isDraggingLayoutOverLayout(droppedInRegionView, draggedPageComponentView.getType())) {
-                ui.item.remove();
-                ui.placeholder.parent().sortable("cancel");
-            }
-        }
-    }
-
 
     function handleSortStop(event: JQueryEventObject, ui: JQueryUI.SortableUIParams): void {
 

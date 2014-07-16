@@ -62,6 +62,7 @@ module app.wizard.page {
     import TextComponentView = api.liveedit.text.TextComponentView;
     import DraggingPageComponentViewStartedEvent = api.liveedit.DraggingPageComponentViewStartedEvent;
     import DraggingPageComponentViewCompletedEvent = api.liveedit.DraggingPageComponentViewCompletedEvent;
+    import DraggingPageComponentViewCanceledEvent = api.liveedit.DraggingPageComponentViewCanceledEvent;
     import PageSelectEvent = api.liveedit.PageSelectEvent;
     import RegionSelectEvent = api.liveedit.RegionSelectEvent;
     import ImageComponentSetImageEvent = api.liveedit.image.ImageComponentSetImageEvent;
@@ -515,6 +516,10 @@ module app.wizard.page {
                     this.contextWindow.show();
                     this.inspectPageComponent(pageComponentView);
                 }
+            });
+
+            this.liveEditPage.onDraggingPageComponentViewCanceled((event: DraggingPageComponentViewCanceledEvent) => {
+                this.contextWindow.show();
             });
 
             this.liveEditPage.onPageComponentAdded((event: PageComponentAddedEvent) => {
