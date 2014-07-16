@@ -1,7 +1,7 @@
 @import "../variables";
 
 /* Remove the outline added by browser */
-.live-edit-edited-text {
+.live-edit-edited-area {
     outline-color: transparent;
     outline-style: none;
 }
@@ -13,6 +13,8 @@
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
     cursor: default;
     padding: 5px;
+
+    .arrow(@baseColor, 10px);
 }
 
 .live-edit-editor-button {
