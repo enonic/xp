@@ -92,7 +92,7 @@ module app.browse.grid {
                 return "Modified";
                 break;
             case CompareStatus.OLDER:
-                return "Conflict";
+                return "Behind";
                 break;
             case CompareStatus.CONFLICT:
                 return "Conflict";
