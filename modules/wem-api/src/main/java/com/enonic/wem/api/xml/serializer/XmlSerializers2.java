@@ -2,6 +2,7 @@ package com.enonic.wem.api.xml.serializer;
 
 import com.enonic.wem.api.xml.model.XmlContentType;
 import com.enonic.wem.api.xml.model.XmlForm;
+import com.enonic.wem.api.xml.model.XmlImageDescriptor;
 import com.enonic.wem.api.xml.model.XmlLayoutDescriptor;
 import com.enonic.wem.api.xml.model.XmlMixin;
 import com.enonic.wem.api.xml.model.XmlModule;
@@ -23,6 +24,8 @@ public final class XmlSerializers2
     private final static XmlContentTypeSerializer CONTENT_TYPE = new XmlContentTypeSerializer();
 
     private final static XmlLayoutDescriptorSerializer LAYOUT_DESCRIPTOR = new XmlLayoutDescriptorSerializer();
+
+    private final static XmlImageDescriptorSerializer IMAGE_DESCRIPTOR = new XmlImageDescriptorSerializer();
 
     public static XmlSerializer2<XmlForm> form()
     {
@@ -57,5 +60,10 @@ public final class XmlSerializers2
     public static XmlSerializer2<XmlLayoutDescriptor> layoutDescriptor()
     {
         return LAYOUT_DESCRIPTOR;
+    }
+
+    public static XmlSerializer2<XmlImageDescriptor> imageDescriptor()
+    {
+        return IMAGE_DESCRIPTOR;
     }
 }
