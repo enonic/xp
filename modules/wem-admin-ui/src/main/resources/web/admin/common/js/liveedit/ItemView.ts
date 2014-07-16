@@ -242,7 +242,7 @@ module api.liveedit {
             if (this.debug) { console.info("mouse leave end <-- ", className); }
         }
 
-        private handleClick(event: MouseEvent) {
+        handleClick(event: MouseEvent) {
             event.stopPropagation();
             event.preventDefault();
 

@@ -16,7 +16,7 @@ module api.liveedit.text {
 
         private textComponent: TextComponent;
 
-        private placeholder: TextPlaceholder;
+        private placeholder: api.dom.DivEl;
 
         private editArea: api.dom.DivEl;
 
@@ -29,7 +29,9 @@ module api.liveedit.text {
 
             super(builder.setContextMenuActions(this.createTextContextMenuActions()));
             this.textComponent = builder.pageComponent;
-            this.placeholder = new TextPlaceholder();
+
+            this.placeholder = new api.dom.DivEl('text-placeholder');
+            this.placeholder.getEl().setInnerHtml('Click to edit');
             this.placeholder.hide();
             this.appendChild(this.placeholder);
 
@@ -45,31 +47,6 @@ module api.liveedit.text {
                 this.editArea.show();
             }
 
-            this.placeholder.onClicked((event: MouseEvent) => {
-                this.editing = true;
-
-                this.placeholder.hide();
-
-                this.editArea.getEl().setInnerHtml('</br>');
-                this.editArea.show();
-
-                this.removeEmptyMark();
-                super.select();
-
-                api.ui.text.TextEditor.get().showToolbar(this.editArea);
-                this.notifyEdited();
-            });
-
-            this.editArea.onClicked((event: MouseEvent) => {
-                if (this.isSelected()) {
-                    if (!this.editing) {
-                        this.editing = true;
-                        api.ui.text.TextEditor.get().showToolbar(this.editArea);
-                    }
-                    this.notifyEdited();
-                }
-            });
-
             this.editArea.onKeyDown(this.notifyEdited.bind(this));
             this.editArea.onKeyUp(this.notifyEdited.bind(this));
         }
@@ -84,6 +61,17 @@ module api.liveedit.text {
             return duplicatedView;
         }
 
+        handleClick(event: MouseEvent) {
+            event.stopPropagation();
+            event.preventDefault();
+
+            if (!this.isSelected()) {
+                this.select(!this.isEmpty() ? { x: event.pageX, y: event.pageY } : null);
+            } else if (!this.editing) {
+                this.showEditor();
+            }
+        }
+
         select(clickPosition?: Position) {
             super.select(clickPosition);
 
@@ -91,21 +79,38 @@ module api.liveedit.text {
                 this.placeholder.show();
             }
 
-            this.getEl().setCursor('url(../../admin/live-edit/images/pencil.png) 0 40, text');
+            this.getEl().setCursor('url(' + api.util.getAdminUri('live-edit/images/pencil.png') + ') 0 40, text');
         }
 
         deselect() {
             super.deselect();
-            if (!this.isEmpty() && api.util.isStringBlank(this.editArea.getEl().getText())) {
+
+            if (this.isEmpty()) {
+                this.placeholder.hide();
+            } else if (api.util.isStringBlank(this.editArea.getEl().getText())) {
                 this.markAsEmpty();
             }
-            this.placeholder.hide();
+
             if (this.editing) {
                 api.ui.text.TextEditor.get().hideToolbar();
+                this.editing = false;
             }
-            this.editing = false;
 
             this.getEl().setCursor('');
+        }
+
+        showEditor() {
+            if (this.isEmpty()) {
+                this.removeEmptyMark();
+                this.placeholder.hide();
+                this.editArea.getEl().setInnerHtml('</br>');
+                this.editArea.show();
+            }
+
+            this.editing = true;
+            api.ui.text.TextEditor.get().showToolbar(this.editArea);
+
+            this.notifyEdited();
         }
 
         public static fromJQuery(element: JQuery): TextComponentView {
@@ -134,7 +139,9 @@ module api.liveedit.text {
         private createTextContextMenuActions(): api.ui.Action[] {
             var actions: api.ui.Action[] = [];
             actions.push(new api.ui.Action('Edit').onExecuted(() => {
-                // TODO
+                if (!this.editing) {
+                    this.showEditor();
+                }
             }));
             return actions;
         }
