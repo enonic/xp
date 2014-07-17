@@ -39,8 +39,7 @@ module api.app.browse.grid {
         private treeGridStoreLoadedListeners: {():void}[] = [];
 
         constructor(params: TreeGridPanelParams) {
-            super("grid-container");
-            this.setScrollY();
+            super("grid-container scroll-y");
 
             this.gridStore = params.gridStore;
             this.treeStore = params.treeStore;

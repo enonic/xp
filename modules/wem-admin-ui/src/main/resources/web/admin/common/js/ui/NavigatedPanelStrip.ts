@@ -51,11 +51,9 @@ module api.ui {
             }
             var totalHeight = this.getScrollable().getEl().getHeight(),
                 panelEl = this.getPanel(this.focusIndex).getEl(),
-                panelTop = panelEl.getOffsetToParent().top,
+                panelTop = panelEl.getOffsetToParent().top - this.getScrollOffset(),
                 panelBottom = panelTop + panelEl.getHeight();
-
-            return (panelTop <= 0 && panelBottom > 0) ||
-                   (panelTop <= totalHeight && panelBottom > totalHeight);
+            return panelEl.isVisible() && (( panelTop <= 0 && panelBottom > 0) || (panelTop <= totalHeight && panelBottom > totalHeight));
         }
 
         private getScrolledPanelIndex(scrollTop: number): number {
@@ -70,11 +68,12 @@ module api.ui {
              }*/
             for (var i = 0; i < this.getSize(); i++) {
                 panelEl = this.getPanel(i).getEl();
-                panelTop = scrollTop + panelEl.getOffsetToParent().top;
-                panelBottom = panelTop + panelEl.getHeight();
-
-                if (scrollTop >= panelTop && scrollTop < panelBottom) {
-                    return i;
+                if (panelEl.isVisible()) {
+                    panelTop = scrollTop + panelEl.getOffsetToParent().top - this.getScrollOffset();
+                    panelBottom = panelTop + panelEl.getHeight();
+                    if (scrollTop >= panelTop && scrollTop < panelBottom) {
+                        return i;
+                    }
                 }
             }
             return -1;

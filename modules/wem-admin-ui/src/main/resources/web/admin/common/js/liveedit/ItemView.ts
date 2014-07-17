@@ -235,7 +235,7 @@ module api.liveedit {
 
             // Notify parent ItemView is entered.
             if (this.parentItemView) {
-                if (this.debug) { console.log('   notifying parent mouse over', api.util.getClassName(this.parentItemView)); }
+                if (this.debug) { console.log('   notifying parent mouse over', className); }
                 this.parentItemView.notifyMouseOverView();
             }
 

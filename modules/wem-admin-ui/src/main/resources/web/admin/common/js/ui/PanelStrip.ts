@@ -6,6 +6,8 @@ module api.ui {
 
         private scrollable: api.dom.DivEl;
 
+        private offset: number = 0;
+
         private panelShown: Panel = null;
 
         private panelShownListeners: {(event: PanelShownEvent):void}[] = [];
@@ -40,6 +42,15 @@ module api.ui {
 
         getScrollable(): api.dom.DivEl {
             return this.scrollable;
+        }
+
+        setScrollOffset(offset: number): PanelStrip {
+            this.offset = offset;
+            return this;
+        }
+
+        getScrollOffset(): number {
+            return this.offset;
         }
 
         private updateLastPanelHeight() {
@@ -135,7 +146,8 @@ module api.ui {
             }
 
             wemjq(this.scrollable.getHTMLElement()).animate({
-                scrollTop: index == 0 ? 0 : this.scrollable.getHTMLElement().scrollTop + panelToShow.getEl().getOffsetToParent().top
+                scrollTop: index == 0 ? 0 : this.scrollable.getHTMLElement().scrollTop - this.offset +
+                                            panelToShow.getEl().getOffsetToParent().top
             }, {
                 duration: 500,
                 complete: () => {

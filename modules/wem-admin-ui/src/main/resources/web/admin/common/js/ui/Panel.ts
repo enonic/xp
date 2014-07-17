@@ -2,31 +2,25 @@ module api.ui {
 
     export class Panel extends api.dom.DivEl {
 
-        private doOffset:boolean;
+        private doOffset: boolean;
 
-        constructor(className?:string) {
+        constructor(className?: string) {
             super("panel" + (className ? " " + className : ""));
             this.doOffset = true;
 
             this.onShown((event) => {
-                if(this.doOffset) {
-                    this.calculateOffset();
-                }
-            });
-
-            this.onRendered((event) => {
-                if(this.doOffset) {
+                if (this.doOffset) {
                     this.calculateOffset();
                 }
             });
         }
 
-        setDoOffset(value:boolean) {
+        setDoOffset(value: boolean) {
             this.doOffset = value;
-        }
 
-        setScrollY() {
-            this.addClass("scroll-y");
+            if (value && this.isRendered()) {
+                this.calculateOffset();
+            }
         }
 
         private calculateOffset() {
