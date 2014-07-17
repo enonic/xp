@@ -103,13 +103,13 @@ module api.app.wizard {
 
                     responseObj = Ext.decode(response.response);
                     if (responseObj.items && responseObj.items.length > 0) {
-                        var file = responseObj.items[0];
+                        var uploadedFile = responseObj.items[0];
 
                         var uploadItem: api.ui.UploadItem = new api.ui.UploadItemBuilder().
-                            setId(file.id).
-                            setName(file.name).
-                            setMimeType(file.mimeType).
-                            setSize(file.size).
+                            setBlobKey(new api.blob.BlobKey(uploadedFile.id)).
+                            setName(uploadedFile.name).
+                            setMimeType(uploadedFile.mimeType).
+                            setSize(uploadedFile.size).
                             build();
                         this.notifyUploadFinished(uploadItem);
                     }

@@ -257,20 +257,24 @@ module api.ui {
                 //console.log('uploader file uploaded', up, file, response);
 
                 if (response && response.status === 200) {
-                    var responseObj: any = Ext.decode(response.response);
+                    try {
+                        var responseObj: any = JSON.parse(response.response);
 
-                    if (responseObj.items && responseObj.items.length > 0) {
-                        file = responseObj.items[0];
+                        if (responseObj.items && responseObj.items.length > 0) {
+                            var uploadedFile = responseObj.items[0];
 
-                        this.setValue(file.id);
+                            this.setValue(file.id);
 
-                        var uploadItem: UploadItem = new UploadItemBuilder().
-                            setId(file.id).
-                            setName(file.name).
-                            setMimeType(file.mimeType).
-                            setSize(file.size).
-                            build();
-                        this.notifyImageUploaded(uploadItem);
+                            var uploadItem: UploadItem = new UploadItemBuilder().
+                                setBlobKey(new api.blob.BlobKey(uploadedFile.id)).
+                                setName(uploadedFile.name).
+                                setMimeType(uploadedFile.mimeType).
+                                setSize(uploadedFile.size).
+                                build();
+                            this.notifyImageUploaded(uploadItem);
+                        }
+                    } catch (e) {
+                        console.warn("Failed to parse the response", response, e);
                     }
                 }
 

@@ -51,3 +51,4 @@
 ///<reference path='ImageUploader.ts' />
 ///<reference path='NavigatorEvent.ts' />
 ///<reference path='ImageUploadedEvent.ts' />
+///<reference path='ImageUploadStartedEvent.ts' />

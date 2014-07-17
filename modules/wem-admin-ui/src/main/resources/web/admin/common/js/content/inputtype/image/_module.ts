@@ -6,4 +6,6 @@
 ///<reference path='UploadDialog.ts' />
 ///<reference path='SelectionToolbar.ts' />
 ///<reference path='FocusChangedEvent.ts' />
-
+///<reference path='ImageSelectorUploadDialog.ts' />
+///<reference path='ImageSelectorDisplayValue.ts' />
+///<reference path='ImageSelectorViewer.ts' />

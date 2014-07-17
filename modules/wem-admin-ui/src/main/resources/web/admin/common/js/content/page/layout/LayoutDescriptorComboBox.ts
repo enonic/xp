@@ -50,8 +50,8 @@ module api.content.page.layout {
 
     export class LayoutDescriptorSelectedOptionsView extends SelectedOptionsView<LayoutDescriptor> {
 
-        createSelectedOption(option: Option<LayoutDescriptor>, index: number): SelectedOption<LayoutDescriptor> {
-            return new SelectedOption<LayoutDescriptor>(new LayoutDescriptorSelectedOptionView(option), option, index);
+        createSelectedOption(option: Option<LayoutDescriptor>): SelectedOption<LayoutDescriptor> {
+            return new SelectedOption<LayoutDescriptor>(new LayoutDescriptorSelectedOptionView(option), this.count());
         }
     }
 
