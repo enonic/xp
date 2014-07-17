@@ -47,6 +47,10 @@ module api.content {
             return this.elements.length > 1;
         }
 
+        getRelativePath(): string {
+            return (this.elements[this.elements.length - 1] || "");
+        }
+
         getParentPath(): ContentPath {
 
             if (this.elements.length < 1) {

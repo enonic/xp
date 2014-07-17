@@ -30,11 +30,11 @@ module api.app {
             return this;
         }
 
-        setSubName(value: string): NamesView
+        setSubName(value: string, title?: string): NamesView
         {
             this.subNameEl.setText(value);
             if (this.addTitleAttribute) {
-                this.subNameEl.getEl().setAttribute("title", value);
+                this.subNameEl.getEl().setAttribute("title", title || value);
             }
             return this;
         }
