@@ -42,8 +42,7 @@ module api.ui.treegrid {
             super(builder.getClasses());
 
             // root node with undefined item
-            this.root = new TreeNode<NODE>();
-            this.root.setExpanded(true);
+            this.root = new TreeNodeBuilder<NODE>().setExpanded(true).build();
 
             this.gridData = new DataView<TreeNode<NODE>>();
             this.gridData.setFilter((node: TreeNode<NODE>) => {
@@ -211,7 +210,7 @@ module api.ui.treegrid {
                 this.stash = this.root;
             }
 
-            this.root = new TreeNode<NODE>();
+            this.root = new TreeNodeBuilder<NODE>().build();
 
             this.initData([]);
 
@@ -277,7 +276,7 @@ module api.ui.treegrid {
         }
 
         reload(parent?: NODE): void {
-            this.root = new TreeNode<NODE>();
+            this.root = new TreeNodeBuilder<NODE>().build();
 
             this.initData([]);
 
@@ -450,7 +449,8 @@ module api.ui.treegrid {
                     var elem = children[row].getEl();
                     elem.setMarginTop(0 + "px");
                 });
-            }, 10);
+            }, 30);
+
         }
 
         notifyLoaded(): void {

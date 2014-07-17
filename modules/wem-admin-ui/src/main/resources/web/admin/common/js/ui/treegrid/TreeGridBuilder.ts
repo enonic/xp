@@ -8,13 +8,13 @@ module api.ui.treegrid {
 
     export class TreeGridBuilder<NODE extends TreeItem> {
 
-        showToolbar: boolean = true;
+        private showToolbar: boolean = true;
 
-        options: GridOptions<NODE>;
+        private options: GridOptions<NODE>;
 
-        columns: GridColumn<TreeNode<NODE>>[] = [];
+        private columns: GridColumn<TreeNode<NODE>>[] = [];
 
-        classes: string = "";
+        private classes: string = "";
 
         constructor(grid?: TreeGrid<NODE>) {
             if (grid) {
