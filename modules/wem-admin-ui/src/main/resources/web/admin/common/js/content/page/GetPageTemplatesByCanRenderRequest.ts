@@ -6,11 +6,11 @@ module api.content.page {
 
         private contentTypeName: api.schema.content.ContentTypeName;
 
-        constructor(siteTemplateKey:api.content.site.template.SiteTemplateKey, contentName:api.schema.content.ContentTypeName) {
+        constructor(siteTemplateKey:api.content.site.template.SiteTemplateKey, contentTypeName:api.schema.content.ContentTypeName) {
             super();
             this.setMethod("GET");
             this.siteTemplateKey = siteTemplateKey;
-            this.contentTypeName = contentName;
+            this.contentTypeName = contentTypeName;
         }
 
         getParams():Object {

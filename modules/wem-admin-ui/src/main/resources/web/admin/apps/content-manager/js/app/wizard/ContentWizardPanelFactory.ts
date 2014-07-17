@@ -198,12 +198,12 @@ module app.wizard {
                 setDefaultModels(this.defaultModels);
 
             if (this.createSite) {
-                wizardParams.setCreateSite(this.siteTemplate);
+                if (this.siteTemplate) {
+                    wizardParams.setCreateSite(this.siteTemplate);
+                } else {
+                    wizardParams.setCreateSiteWithoutTemplate();
+                }
             }
-            else {
-                wizardParams.setSiteTemplate(this.siteTemplate);
-            }
-
 
             new app.wizard.ContentWizardPanel(wizardParams, (wizard: ContentWizardPanel) => {
                 deferred.resolve(wizard);

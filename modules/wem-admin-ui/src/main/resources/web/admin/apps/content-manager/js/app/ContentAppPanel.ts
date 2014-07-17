@@ -67,8 +67,9 @@ module app {
                     setParentContent(parentContent).
                     setContentTypeName(contentTypeSummary.getContentTypeName());
 
-                if (newContentEvent.getSiteTemplate() != null) {
-                    contentWizardPanelFactory.setCreateSite(newContentEvent.getSiteTemplate().getKey());
+                var siteTemplate = newContentEvent.getSiteTemplate();
+                if (newContentEvent.getContentType().isSite()) {
+                    contentWizardPanelFactory.setCreateSite(siteTemplate && siteTemplate.getKey());
                 }
 
                 contentWizardPanelFactory.createForNew().then((wizard: app.wizard.ContentWizardPanel) => {

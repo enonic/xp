@@ -3,6 +3,10 @@ module app.wizard.site {
     import SiteTemplate = api.content.site.template.SiteTemplate;
     import Site = api.content.site.Site;
     import Module = api.module.Module;
+    import SiteTemplateComboBox = api.content.site.template.SiteTemplateComboBox;
+    import RootDataSet = api.data.RootDataSet;
+    import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
+    import SelectedOption = api.ui.selector.combobox.SelectedOption;
 
     export class SiteTemplateWizardStepForm extends api.app.wizard.WizardStepForm {
 
@@ -12,35 +16,87 @@ module app.wizard.site {
 
         private siteTemplate: SiteTemplate;
 
-        private siteTemplateView: SiteTemplateView;
+        private siteTemplateComboBox: SiteTemplateComboBox;
 
         private moduleViewsContainer: api.dom.DivEl;
 
         private moduleViews: ModuleView[] = [];
 
+        private siteTemplateChangedListeners: {(event: SiteTemplateChangedEvent) : void}[] = [];
+
         constructor(siteTemplate: SiteTemplate) {
             super("site-wizard-step-form");
 
             this.siteTemplate = siteTemplate;
-            this.siteTemplateView = new SiteTemplateView();
-            this.appendChild(this.siteTemplateView);
+            this.siteTemplateComboBox = new SiteTemplateComboBox();
+            this.siteTemplateComboBox.addClass('site-template-combo');
+            if (siteTemplate) {
+                this.siteTemplateComboBox.select(siteTemplate);
+            }
+            this.siteTemplateComboBox.onOptionSelected((event: OptionSelectedEvent<SiteTemplate>) => this.handleSiteTemplateComboBoxOptionSelected(event));
+            this.siteTemplateComboBox.onSelectedOptionRemoved((removed: SelectedOption<SiteTemplate>) => this.handleSelectedOptionRemoved());
+            this.appendChild(this.siteTemplateComboBox);
+
             this.moduleViewsContainer = new api.dom.DivEl();
             this.appendChild(this.moduleViewsContainer);
         }
 
-        public renderExisting(context: api.form.FormContext, site: Site): Q.Promise<void> {
+        private handleSiteTemplateComboBoxOptionSelected(event: OptionSelectedEvent<SiteTemplate>): void {
+            this.siteTemplate = event.getOption().displayValue;
+            var moduleConfigs: api.content.site.ModuleConfig[] = [];
+            this.siteTemplate.getModules().forEach((moduleKey: api.module.ModuleKey) => {
+                var moduleConfig = new api.content.site.ModuleConfigBuilder().
+                    setModuleKey(moduleKey).
+                    setConfig(new RootDataSet()).
+                    build();
+                moduleConfigs.push(moduleConfig);
+            });
+            this.doRenderExisting(moduleConfigs).then(() => {
+                this.notifySiteTemplateChanged(this.siteTemplate);
+            });
+        }
 
-            this.formContext = context;
+        private handleSelectedOptionRemoved(): void {
+            this.siteTemplate = null;
+            this.removeExistingModuleViews();
+            this.notifySiteTemplateChanged(null);
+        }
 
+        onSiteTemplateChanged(listener: (event: SiteTemplateChangedEvent) => void) {
+            this.siteTemplateChangedListeners.push(listener);
+        }
+
+        unSiteTemplateChanged(listener: (event: SiteTemplateChangedEvent) => void) {
+            this.siteTemplateChangedListeners = this.siteTemplateChangedListeners.filter((curr) => {
+                return curr !== listener;
+            })
+        }
+
+        private notifySiteTemplateChanged(siteTemplate: SiteTemplate) {
+            var shownEvent = new SiteTemplateChangedEvent(siteTemplate);
+            this.siteTemplateChangedListeners.forEach((listener) => {
+                listener(shownEvent);
+            });
+        }
+
+        private setModuleConfigs(moduleConfigs: api.content.site.ModuleConfig[]): void {
             this.moduleConfigsByKey = [];
-            var moduleConfigs: api.content.site.ModuleConfig[] = site.getModuleConfigs();
             for (var i = 0; i < moduleConfigs.length; i++) {
                 this.moduleConfigsByKey[moduleConfigs[i].getModuleKey().toString()] = moduleConfigs[i];
             }
+        }
 
-            this.siteTemplateView.setValue(this.siteTemplate);
+        public renderExisting(context: api.form.FormContext, site: Site): Q.Promise<void> {
+            this.setFormContext(context);
+            return this.doRenderExisting(site.getModuleConfigs());
+        }
 
-            return this.loadModules(site).
+        private doRenderExisting(moduleConfigs: api.content.site.ModuleConfig[]): Q.Promise<void> {
+            this.setModuleConfigs(moduleConfigs);
+
+            this.siteTemplateComboBox.select(this.siteTemplate);
+
+            return this.loadModules(moduleConfigs).
                 then((modules: Module[]): void => {
 
                     this.layoutModules(modules);
@@ -48,7 +104,7 @@ module app.wizard.site {
         }
 
         public getTemplateKey(): api.content.site.template.SiteTemplateKey {
-            return this.siteTemplate.getKey();
+            return this.siteTemplate && this.siteTemplate.getKey();
         }
 
         public getModuleConfigs(): api.content.site.ModuleConfig[] {
@@ -60,30 +116,33 @@ module app.wizard.site {
             return moduleConfigs;
         }
 
-        private loadModules(site: Site): Q.Promise<Module[]> {
+        public setFormContext(formContext: api.form.FormContext) {
+            this.formContext = formContext;
+        }
 
-            var moduleRequestPromises = site.getModuleConfigs().map((moduleConfig: api.content.site.ModuleConfig) => {
+        private loadModules(moduleConfigs: api.content.site.ModuleConfig[]): Q.Promise<Module[]> {
+
+            var moduleRequestPromises = moduleConfigs.map((moduleConfig: api.content.site.ModuleConfig) => {
                 return new api.module.GetModuleRequest(moduleConfig.getModuleKey()).sendAndParse();
             });
 
             return Q.allSettled(moduleRequestPromises).then((results: Q.PromiseState<Module>[])=> {
                 return results.filter((result: Q.PromiseState<Module>) => (result.state == "fulfilled")).
-                    map((result:Q.PromiseState<Module>) => result.value);
+                    map((result: Q.PromiseState<Module>) => result.value);
             });
         }
 
         private layoutModules(modules: Module[]) {
 
             this.removeExistingModuleViews();
-            this.moduleViewsContainer.removeChildren();
 
             modules.forEach((theModule: Module) => {
                 if (theModule.getForm().getFormItems().length == 0) {
                     return;
                 }
 
-                var moduleView = new ModuleView(this.formContext, theModule,
-                    this.moduleConfigsByKey[theModule.getModuleKey().toString()]);
+                var moduleConfig: api.content.site.ModuleConfig = this.moduleConfigsByKey[theModule.getModuleKey().toString()];
+                var moduleView = new ModuleView(this.formContext, theModule, moduleConfig);
 
                 moduleView.onFocus((event: FocusEvent) => {
                     this.notifyFocused(event);
@@ -102,6 +161,7 @@ module app.wizard.site {
                 moduleView.remove();
             });
             this.moduleViews = [];
+            this.moduleViewsContainer.removeChildren();
         }
 
     }

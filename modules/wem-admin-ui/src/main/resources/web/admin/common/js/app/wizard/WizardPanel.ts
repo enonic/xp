@@ -78,19 +78,11 @@ module api.app.wizard {
 
             this.appendChild(this.mainToolbar);
             if (params.split && params.livePanel) {
-                this.splitPanel = new api.ui.SplitPanelBuilder(this.formPanel, params.livePanel)
-                    .setFirstPanelMinSize(280, api.ui.SplitPanelUnit.PIXEL)
-                    .setAlignment(api.ui.SplitPanelAlignment.VERTICAL)
-                    .build();
-                this.updateSplitPanel();
-                this.splitPanel.onResized((event: api.dom.ElementResizedEvent) => {
-                    this.updateStickyToolbar();
-                });
+                this.splitPanel = this.createSplitPanel(this.formPanel, params.livePanel);
                 this.appendChild(this.splitPanel);
             } else {
                 this.appendChild(this.formPanel);
             }
-
 
             var aboveStepPanels = new api.dom.DivEl();
             aboveStepPanels.appendChild(params.formIcon);
@@ -379,11 +371,31 @@ module api.app.wizard {
             return this.splitPanel;
         }
 
-        private updateSplitPanel() {
-            if (wemjq(window).width() > this.splitPanelThreshold) {
-                this.splitPanel.setFirstPanelSize(38, api.ui.SplitPanelUnit.PERCENT);
+        public setLivePanel(livePanel:api.ui.Panel) {
+            if (this.splitPanel) {
+                this.removeChild(this.splitPanel);
             }
-            this.splitPanel.distribute();
+            this.splitPanel = this.createSplitPanel(this.formPanel, livePanel);
+            this.appendChild(this.splitPanel);
+        }
+
+        private createSplitPanel(firstPanel: api.ui.Panel, secondPanel: api.ui.Panel): api.ui.SplitPanel {
+            var splitPanel = new api.ui.SplitPanelBuilder(firstPanel, secondPanel)
+                .setFirstPanelMinSize(280, api.ui.SplitPanelUnit.PIXEL)
+                .setAlignment(api.ui.SplitPanelAlignment.VERTICAL)
+                .build();
+            this.updateSplitPanel(splitPanel);
+            splitPanel.onResized((event: api.dom.ElementResizedEvent) => {
+                this.updateStickyToolbar();
+            });
+            return splitPanel;
+        }
+
+        private updateSplitPanel(splitPanel: api.ui.SplitPanel) {
+            if (wemjq(window).width() > this.splitPanelThreshold) {
+                splitPanel.setFirstPanelSize(38, api.ui.SplitPanelUnit.PERCENT);
+            }
+            splitPanel.distribute();
         }
 
         private notifyClosed() {

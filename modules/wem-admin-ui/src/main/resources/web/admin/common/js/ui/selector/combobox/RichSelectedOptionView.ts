@@ -4,8 +4,11 @@ module api.ui.selector.combobox {
 
         private optionDisplayValue: T;
 
-        constructor(option: api.ui.selector.Option<T>) {
+        private size: api.app.NamesAndIconViewSize;
+
+        constructor(option: api.ui.selector.Option<T>, size: api.app.NamesAndIconViewSize = api.app.NamesAndIconViewSize.small) {
             this.optionDisplayValue = option.displayValue;
+            this.size = size;
             super(option);
         }
 
@@ -22,7 +25,7 @@ module api.ui.selector.combobox {
         }
 
         layout() {
-            var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
+            var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(this.size).build();
             namesAndIconView
                 .setIconUrl(this.resolveIconUrl(this.optionDisplayValue) + '?crop=false')
                 .setMainName(this.resolveTitle(this.optionDisplayValue))

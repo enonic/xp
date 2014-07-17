@@ -55,6 +55,10 @@ module api.schema {
             return this.kind;
         }
 
+        isSite(): boolean {
+            return this.name === 'site';
+        }
+
         equals(o: api.Equitable): boolean {
 
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, Schema)) {

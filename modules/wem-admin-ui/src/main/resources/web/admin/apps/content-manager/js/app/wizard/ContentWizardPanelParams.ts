@@ -59,5 +59,11 @@ module app.wizard {
             return this;
         }
 
+        setCreateSiteWithoutTemplate(): ContentWizardPanelParams {
+            this.siteTemplate = null;
+            this.createSite = true;
+            return this;
+        }
+
     }
 }

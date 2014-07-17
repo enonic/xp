@@ -2,7 +2,7 @@ module api.content.site.template {
 
     import PageTemplateKey = api.content.page.PageTemplateKey;
 
-    export class SiteTemplateSummary extends api.item.BaseItem implements api.Equitable {
+    export class SiteTemplateSummary extends api.item.BaseItem implements api.Equitable, api.ui.treegrid.TreeItem {
 
         private name: string;
 
@@ -76,6 +76,10 @@ module api.content.site.template {
 
         getIconUrl(): string {
             return this.iconUrl;
+        }
+
+        hasChildren(): boolean {
+            return false;
         }
 
         equals(o: api.Equitable): boolean {
@@ -193,7 +197,7 @@ module api.content.site.template {
 
         fromSiteTemplateSummaryJson(json: api.content.site.template.SiteTemplateSummaryJson): SiteTemplateSummaryBuilder {
 
-            super.fromBaseItemJson(json);
+            super.fromBaseItemJson(json, 'key');
 
             this.name = json.name;
             this.displayName = json.name;

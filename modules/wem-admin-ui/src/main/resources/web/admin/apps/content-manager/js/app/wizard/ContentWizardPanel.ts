@@ -31,7 +31,11 @@ module app.wizard {
     import WizardStep = api.app.wizard.WizardStep;
     import WizardStepForm = api.app.wizard.WizardStepForm;
     import UploadFinishedEvent = api.app.wizard.UploadFinishedEvent;
-
+    import ContentTypeName = api.schema.content.ContentTypeName;
+    import DefaultModels = app.wizard.page.DefaultModels;
+    import DefaultModelsFactoryConfig = app.wizard.page.DefaultModelsFactoryConfig;
+    import DefaultModelsFactory = app.wizard.page.DefaultModelsFactory;
+    import SiteTemplateChangedEvent = app.wizard.site.SiteTemplateChangedEvent;
 
     export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
@@ -65,6 +69,8 @@ module app.wizard {
 
         private siteTemplate: SiteTemplate;
 
+        private formContext: api.form.FormContext;
+
         private previewAction: api.ui.Action;
 
         private publishAction: api.ui.Action;
@@ -73,7 +79,7 @@ module app.wizard {
 
         private cycleViewModeButton: api.ui.CycleButton;
 
-        private contentWizardActions:app.wizard.action.ContentWizardActions;
+        private contentWizardActions: app.wizard.action.ContentWizardActions;
 
         /**
          * Whether constructor is being currently executed or not.
@@ -132,15 +138,17 @@ module app.wizard {
 
             this.createSite = params.createSite;
             this.siteTemplate = params.siteTemplate;
-            if (this.createSite || params.persistedContent != null && params.persistedContent.isSite()) {
-                this.siteTemplateWizardStepForm = new app.wizard.site.SiteTemplateWizardStepForm(this.siteTemplate);
+            if (this.createSite || (params.persistedContent && params.persistedContent.isSite())) {
                 this.formIcon.addClass("site");
+                this.siteTemplateWizardStepForm = new app.wizard.site.SiteTemplateWizardStepForm(this.siteTemplate);
+                this.siteTemplateWizardStepForm.onSiteTemplateChanged((event: SiteTemplateChangedEvent) => this.handleSiteTemplateChanged(event));
+
             } else {
                 this.siteTemplateWizardStepForm = null;
             }
             this.contentWizardStepForm = new ContentWizardStepForm(this.publishAction);
 
-            if ((this.siteContent || this.createSite) && params.defaultModels.hasPageTemplate()) {
+            if ((this.siteContent || this.createSite) && (params.defaultModels && params.defaultModels.hasPageTemplate())) {
 
                 this.liveFormPanel = new page.LiveFormPanel(<page.LiveFormPanelConfig> {
                     contentWizardPanel: this,
@@ -338,19 +346,22 @@ module app.wizard {
                         addAll(attachmentsArray).
                         build();
 
-                    var formContext = new api.form.FormContextBuilder().
+                    this.formContext = new api.form.FormContextBuilder().
                         setParentContent(this.parentContent).
                         setPersistedContent(content).
                         setAttachments(attachments).
                         setShowEmptyFormItemSetOccurrences(this.isPersisted()).
                         build();
 
-                    this.contentWizardStepForm.renderExisting(formContext, contentData, content.getForm());
+                    this.contentWizardStepForm.renderExisting(this.formContext, contentData, content.getForm());
 
                     // Must pass FormView from contentWizardStepForm displayNameScriptExecutor, since a new is created for each call to renderExisting
                     this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
 
-                    return this.doRenderExistingSite(content, formContext);
+                    if (this.siteTemplateWizardStepForm) {
+                        this.siteTemplateWizardStepForm.setFormContext(this.formContext);
+                    }
+                    return this.doRenderExistingSite(content, this.formContext);
 
                 }).then(() => {
 
@@ -358,7 +369,7 @@ module app.wizard {
                         return this.doRenderExistingPage(content);
                     }
 
-                });;
+                });
         }
 
         postRenderExisting(existing: Content): Q.Promise<void> {
@@ -385,11 +396,6 @@ module app.wizard {
         }
 
         private doRenderExistingPage(content: Content): Q.Promise<void> {
-
-            return this.layout(content);
-        }
-
-        private layout(content: Content): Q.Promise<void> {
 
             var page: Page = content.getPage();
 
@@ -447,8 +453,7 @@ module app.wizard {
         }
 
         private produceCreateSiteRequest(content: Content): CreateSiteRequest {
-
-            if (!this.createSite) {
+            if (!this.createSite || !this.siteTemplate) {
                 return null;
             }
 
@@ -471,9 +476,14 @@ module app.wizard {
 
             var persistedContent = this.getPersistedItem();
             var viewedContent = this.assembleViewedContent(new ContentBuilder(persistedContent)).build();
+            var isNewSite = !persistedContent.isSite() && viewedContent.isSite();
 
-            return new UpdatePersistedContentRoutine(this, persistedContent, viewedContent).
-                setUpdateContentRequestProducer(this.produceUpdateContentRequest).
+            var updatePersistedContentRoutine = new UpdatePersistedContentRoutine(this, persistedContent, viewedContent).
+                setUpdateContentRequestProducer(this.produceUpdateContentRequest);
+            if (isNewSite) {
+                updatePersistedContentRoutine.setCreateSiteRequestProducer(this.produceCreateSiteRequest);
+            }
+            return updatePersistedContentRoutine.
                 execute().
                 then((content: Content) => {
 
@@ -485,7 +495,6 @@ module app.wizard {
         }
 
         private produceUpdateContentRequest(persistedContent: Content, viewedContent: Content): UpdateContentRequest {
-
             var persistedContent = this.getPersistedItem();
 
             var updateContentRequest = new UpdateContentRequest(this.getPersistedItem().getId()).
@@ -574,8 +583,12 @@ module app.wizard {
             if (!this.siteTemplateWizardStepForm) {
                 return null;
             }
+            var siteTemplateKey = this.siteTemplateWizardStepForm.getTemplateKey();
+            if (!siteTemplateKey) {
+                return null;
+            }
             var viewedSiteBuilder = new SiteBuilder();
-            viewedSiteBuilder.setTemplateKey(this.siteTemplateWizardStepForm.getTemplateKey());
+            viewedSiteBuilder.setTemplateKey(siteTemplateKey);
             viewedSiteBuilder.setModuleConfigs(this.siteTemplateWizardStepForm.getModuleConfigs());
             return viewedSiteBuilder.build();
         }
@@ -613,6 +626,70 @@ module app.wizard {
 
         private isSplitView():boolean {
             return this.getSplitPanel().hasClass("toggle-split");
+        }
+
+        private handleSiteTemplateChanged(siteTemplateChanged: SiteTemplateChangedEvent) {
+            var siteTemplate = siteTemplateChanged.getSiteTemplate();
+
+            if (!this.siteTemplate && siteTemplate) {
+                var contentTypeName = this.contentType.getContentTypeName();
+                this.loadDefaultModels(siteTemplate, contentTypeName).then((defaultModels) => {
+                    this.liveFormPanel = new page.LiveFormPanel(<page.LiveFormPanelConfig> {
+                        contentWizardPanel: this,
+                        siteTemplate: siteTemplate,
+                        contentType: contentTypeName,
+                        defaultModels: defaultModels
+                    });
+                    this.liveFormPanel.hide();
+                    super.setLivePanel(this.liveFormPanel);
+
+                    this.doRenderExistingPage(this.getPersistedItem()).then((content)=> {
+                        this.doHandleSiteTemplateChanged(siteTemplate);
+                    });
+                });
+
+            } else {
+                this.doHandleSiteTemplateChanged(siteTemplate);
+            }
+        }
+
+        private doHandleSiteTemplateChanged(siteTemplate: SiteTemplate) {
+            this.siteTemplate = siteTemplate;
+            if (siteTemplate) {
+                this.constructing = true;
+                this.saveChanges().then((content) => {
+                    this.constructing = false;
+                    this.siteTemplateWizardStepForm.renderExisting(this.formContext, super.getPersistedItem().getSite());
+
+                    // site template selected, show and enable Live Edit
+                    this.cycleViewModeButton.show();
+                    this.cycleViewModeButton.setCurrentAction(this.showSplitEditAction);
+                    if (this.liveFormPanel) {
+                        this.liveFormPanel.show();
+                    }
+                });
+            } else {
+                // no site template selected, hide Live Edit
+                this.cycleViewModeButton.setCurrentAction(this.contentWizardActions.getShowFormAction());
+                this.cycleViewModeButton.hide();
+
+                this.liveFormPanel.remove();
+                this.liveFormPanel = null;
+            }
+        }
+
+        private loadDefaultModels(siteTemplate: SiteTemplate, contentType: ContentTypeName): Q.Promise<DefaultModels> {
+
+            if (siteTemplate) {
+                return DefaultModelsFactory.create(<DefaultModelsFactoryConfig>{
+                    siteTemplateKey: siteTemplate.getKey(),
+                    contentType: contentType,
+                    modules: siteTemplate.getModules()
+                });
+            }
+            else {
+                return Q<DefaultModels>(null);
+            }
         }
     }
 

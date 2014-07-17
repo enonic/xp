@@ -20,6 +20,8 @@ module app.wizard {
 
         private updateContentRequestProducer: {(content: Content, viewedContent: Content) : api.content.UpdateContentRequest; };
 
+        private createSiteRequestProducer: {(content: api.content.Content) : api.content.site.CreateSiteRequest; };
+
         private doneHandledContent = false;
 
         private doneHandledSite = false;
@@ -35,6 +37,11 @@ module app.wizard {
         public setUpdateContentRequestProducer(producer: {(content: Content,
                                                            viewedContent: Content) : api.content.UpdateContentRequest; }): UpdatePersistedContentRoutine {
             this.updateContentRequestProducer = producer;
+            return this;
+        }
+
+        public setCreateSiteRequestProducer(producer: {(content: api.content.Content) : api.content.site.CreateSiteRequest; }): UpdatePersistedContentRoutine {
+            this.createSiteRequestProducer = producer;
             return this;
         }
 
@@ -59,13 +66,23 @@ module app.wizard {
             }
             else if (!this.doneHandledSite) {
 
-                return this.doHandleUpdateSite(context).
-                    then(()=> {
+                if (this.isNewSite()) {
+                    return this.doHandleCreateSite(context).
+                        then(()=> {
 
-                        this.doneHandledSite = true;
-                        return this.doExecuteNext(context);
+                            this.doneHandledSite = true;
+                            return this.doExecuteNext(context);
 
-                    });
+                        });
+                } else {
+                    return this.doHandleUpdateSite(context).
+                        then(()=> {
+
+                            this.doneHandledSite = true;
+                            return this.doExecuteNext(context);
+
+                        });
+                }
             }
             else if (!this.doneHandledPage) {
 
@@ -111,6 +128,29 @@ module app.wizard {
                 deferred.resolve(null);
                 return deferred.promise;
             }
+        }
+
+        private doHandleCreateSite(context: PersistedNewContentRoutineContext): Q.Promise<void> {
+
+            var createSiteRequest = this.createSiteRequestProducer.call(this.getThisOfProducer(), context.content);
+            if (createSiteRequest != null) {
+                return createSiteRequest.
+                    sendAndParse().
+                    then((content: api.content.Content):void => {
+
+                        context.content = content;
+
+                    });
+            }
+            else {
+                var deferred = Q.defer<void>();
+                deferred.resolve(null)
+                return deferred.promise;
+            }
+        }
+
+        private isNewSite(): boolean {
+            return !!this.createSiteRequestProducer;
         }
 
         private produceUpdateSiteRequest(persistedContent: Content, viewedContent: Content): UpdateSiteRequest {

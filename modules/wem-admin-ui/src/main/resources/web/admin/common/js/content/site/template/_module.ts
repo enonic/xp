@@ -18,3 +18,7 @@
 
 ///<reference path='SiteTemplateDeletedEvent.ts' />
 ///<reference path='SiteTemplateImportedEvent.ts' />
+
+///<reference path='SiteTemplateLoader.ts' />
+///<reference path='SiteTemplateComboBox.ts' />
+///<reference path='SiteTemplateSummaryViewer.ts' />
