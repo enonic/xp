@@ -20,9 +20,9 @@ module api.content.site.template {
 
     export class SiteTemplateSelectedOptionsView extends api.ui.selector.combobox.SelectedOptionsView<SiteTemplateSummary> {
 
-        createSelectedOption(option:api.ui.selector.Option<SiteTemplateSummary>, index:number):api.ui.selector.combobox.SelectedOption<SiteTemplateSummary> {
+        createSelectedOption(option:api.ui.selector.Option<SiteTemplateSummary>):api.ui.selector.combobox.SelectedOption<SiteTemplateSummary> {
             var optionView = new SiteTemplateSelectedOptionView( option );
-            return new api.ui.selector.combobox.SelectedOption<SiteTemplateSummary>( optionView, option, index);
+            return new api.ui.selector.combobox.SelectedOption<SiteTemplateSummary>( optionView, this.count());
         }
     }
 
