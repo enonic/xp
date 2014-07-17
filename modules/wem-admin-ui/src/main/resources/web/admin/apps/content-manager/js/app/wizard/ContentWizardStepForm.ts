@@ -29,6 +29,9 @@ module app.wizard {
             this.form = form;
             this.contentData = contentData;
             this.layout(form, contentData);
+            if (form.getFormItems().length === 0) {
+                this.hide();
+            }
         }
 
         private layout(form: Form, contentData: ContentData) {
