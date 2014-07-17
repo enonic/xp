@@ -242,7 +242,7 @@ module api.liveedit {
             if (this.debug) { console.info("mouse leave end <-- ", className); }
         }
 
-        private handleClick(event: MouseEvent) {
+        handleClick(event: MouseEvent) {
             event.stopPropagation();
             event.preventDefault();
 
@@ -333,9 +333,13 @@ module api.liveedit {
         }
 
         markAsEmpty() {
-
             this.getEl().setData('live-edit-empty-component', 'true');
             this.addClass("live-edit-empty-component");
+        }
+
+        removeEmptyMark() {
+            this.getEl().removeAttribute('data-live-edit-empty-component');
+            this.removeClass('live-edit-empty-component');
         }
 
         isEmpty(): boolean {

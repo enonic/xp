@@ -28,7 +28,6 @@
 ///<reference path='ItemFromContextWindowDroppedEvent.ts' />
 ///<reference path='PageSelectEvent.ts' />
 ///<reference path='RegionSelectEvent.ts' />
-///<reference path='PageComponentSelectEvent.ts' />
 ///<reference path='ItemViewDeselectEvent.ts' />
 ///<reference path='PageComponentAddedEvent.ts' />
 ///<reference path='PageComponentRemoveEvent.ts' />

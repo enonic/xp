@@ -66,7 +66,7 @@ module app.wizard.page {
     import PageSelectEvent = api.liveedit.PageSelectEvent;
     import RegionSelectEvent = api.liveedit.RegionSelectEvent;
     import ImageComponentSetImageEvent = api.liveedit.image.ImageComponentSetImageEvent;
-    import PageComponentSelectEvent = api.liveedit.PageComponentSelectEvent;
+    import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
     import ItemViewDeselectEvent = api.liveedit.ItemViewDeselectEvent;
     import PageComponentAddedEvent = api.liveedit.PageComponentAddedEvent;
     import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
@@ -460,15 +460,20 @@ module app.wizard.page {
                 this.inspectRegion(event.getRegionView());
             });
 
-            this.liveEditPage.onPageComponentSelected((event: PageComponentSelectEvent) => {
+            this.liveEditPage.onPageComponentSelected((event: ItemViewSelectedEvent) => {
 
-                if (event.getPageComponentView().isEmpty()) {
+                var itemView = event.getItemView();
+
+                if (itemView.isEmpty()) {
                     this.contextWindow.hide();
                 }
                 else {
                     this.contextWindow.show();
                 }
-                this.inspectPageComponent(event.getPageComponentView());
+
+                if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, PageComponentView)) {
+                    this.inspectPageComponent(<PageComponentView<PageComponent>>itemView);
+                }
             });
 
             this.liveEditPage.onDeselect((event: ItemViewDeselectEvent) => {

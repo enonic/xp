@@ -16,9 +16,39 @@ module api.liveedit.text {
 
         private textComponent: TextComponent;
 
+        private placeholder: api.dom.DivEl;
+
+        private editArea: api.dom.DivEl;
+
+        private editing: boolean;
+
+        private editedListener: {(): void}[];
+
         constructor(builder: TextComponentViewBuilder) {
+            this.editedListener = [];
+
             super(builder.setContextMenuActions(this.createTextContextMenuActions()));
             this.textComponent = builder.pageComponent;
+
+            this.placeholder = new api.dom.DivEl('text-placeholder');
+            this.placeholder.getEl().setInnerHtml('Click to edit');
+            this.placeholder.hide();
+            this.appendChild(this.placeholder);
+
+            this.editArea = new api.dom.DivEl('live-edit-edited-area');
+            this.editArea.getEl().setCursor('text');
+            this.editArea.hide();
+            this.appendChild(this.editArea);
+
+            if (api.util.isStringBlank(this.textComponent.getText())) {
+                this.markAsEmpty();
+            } else {
+                this.editArea.getEl().setInnerHtml(this.textComponent.getText());
+                this.editArea.show();
+            }
+
+            this.editArea.onKeyDown(this.notifyEdited.bind(this));
+            this.editArea.onKeyUp(this.notifyEdited.bind(this));
         }
 
         duplicate(duplicate: TextComponent): TextComponentView {
@@ -31,6 +61,58 @@ module api.liveedit.text {
             return duplicatedView;
         }
 
+        handleClick(event: MouseEvent) {
+            event.stopPropagation();
+            event.preventDefault();
+
+            if (!this.isSelected()) {
+                this.select(!this.isEmpty() ? { x: event.pageX, y: event.pageY } : null);
+            } else if (!this.editing) {
+                this.showEditor();
+            }
+        }
+
+        select(clickPosition?: Position) {
+            super.select(clickPosition);
+
+            if (this.isEmpty()) {
+                this.placeholder.show();
+            }
+
+            this.getEl().setCursor('url(' + api.util.getAdminUri('live-edit/images/pencil.png') + ') 0 40, text');
+        }
+
+        deselect() {
+            super.deselect();
+
+            if (this.isEmpty()) {
+                this.placeholder.hide();
+            } else if (api.util.isStringBlank(this.editArea.getEl().getText())) {
+                this.markAsEmpty();
+            }
+
+            if (this.editing) {
+                api.ui.text.TextEditor.get().hideToolbar();
+                this.editing = false;
+            }
+
+            this.getEl().setCursor('');
+        }
+
+        showEditor() {
+            if (this.isEmpty()) {
+                this.removeEmptyMark();
+                this.placeholder.hide();
+                this.editArea.getEl().setInnerHtml('</br>');
+                this.editArea.show();
+            }
+
+            this.editing = true;
+            api.ui.text.TextEditor.get().showToolbar(this.editArea);
+
+            this.notifyEdited();
+        }
+
         public static fromJQuery(element: JQuery): TextComponentView {
             return new TextComponentView(new TextComponentViewBuilder().setElement(api.dom.Element.fromHtmlElement(<HTMLElement>element.get(0))));
         }
@@ -39,10 +121,27 @@ module api.liveedit.text {
             return new TextComponentViewer();
         }
 
+        onEdited(listener: () => void) {
+            if (!this.editedListener) {
+                this.editedListener = [];
+            }
+            this.editedListener.push(listener);
+        }
+
+        unEdited(listener: () => void) {
+            this.editedListener = this.editedListener.filter((current) => (current != listener));
+        }
+
+        private notifyEdited() {
+            this.editedListener.forEach((listener: () => void) => listener());
+        }
+
         private createTextContextMenuActions(): api.ui.Action[] {
             var actions: api.ui.Action[] = [];
             actions.push(new api.ui.Action('Edit').onExecuted(() => {
-                // TODO
+                if (!this.editing) {
+                    this.showEditor();
+                }
             }));
             return actions;
         }
