@@ -9,8 +9,7 @@ import com.enonic.wem.api.entity.EntityComparisons;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIds;
 import com.enonic.wem.api.entity.Workspace;
-import com.enonic.wem.core.version.VersionBranch;
-import com.enonic.wem.core.version.VersionBranchQuery;
+import com.enonic.wem.core.version.VersionEntry;
 import com.enonic.wem.core.version.VersionService;
 import com.enonic.wem.core.workspace.WorkspaceService;
 import com.enonic.wem.core.workspace.compare.query.CompareEntitiesQuery;
@@ -70,30 +69,25 @@ public class WorkspaceCompareServiceImpl
 
     private EntityComparison doCompareEntity( final EntityId entityId, final Workspace sourceWorkspace, final Workspace targetWorkspace )
     {
-        final BlobKey sourceVersion = workspaceService.getById( new WorkspaceIdQuery( sourceWorkspace, entityId ) );
-        final BlobKey targetVersion = workspaceService.getById( new WorkspaceIdQuery( targetWorkspace, entityId ) );
+        final BlobKey sourceBlobKey = workspaceService.getById( new WorkspaceIdQuery( sourceWorkspace, entityId ) );
+        final BlobKey targetBlobKey = workspaceService.getById( new WorkspaceIdQuery( targetWorkspace, entityId ) );
 
-        final VersionBranch sourceBranch = getBranch( sourceVersion );
-        final VersionBranch targetBranch = getBranch( targetVersion );
+        final VersionEntry sourceVersion = getVersion( sourceBlobKey );
+        final VersionEntry targetVersion = getVersion( targetBlobKey );
 
-        final CompareStatus compareStatus = DiffStatusResolver.resolve( new DiffStatusParams( sourceBranch, targetBranch ) );
+        final CompareStatus compareStatus = DiffStatusResolver.resolve( new DiffStatusParams( sourceVersion, targetVersion ) );
 
         return new EntityComparison( entityId, compareStatus );
     }
 
-    private VersionBranch getBranch( final BlobKey version )
+    private VersionEntry getVersion( final BlobKey blobKey )
     {
-        final VersionBranch branch;
+        if ( blobKey == null )
+        {
+            return null;
+        }
 
-        if ( version != null )
-        {
-            branch = versionService.getBranch( new VersionBranchQuery( version ) );
-        }
-        else
-        {
-            branch = VersionBranch.create().build();
-        }
-        return branch;
+        return versionService.getVersion( blobKey );
     }
 
     @Inject

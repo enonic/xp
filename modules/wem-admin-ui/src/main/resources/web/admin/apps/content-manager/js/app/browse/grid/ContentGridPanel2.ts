@@ -94,8 +94,8 @@ module app.browse.grid {
             case CompareStatus.OLDER:
                 return "Behind";
                 break;
-            case CompareStatus.CONFLICT:
-                return "Conflict";
+            case CompareStatus.UNKNOWN:
+                return "Unknown";
                 break;
             case CompareStatus.DELETED:
                 return "Deleted";

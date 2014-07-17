@@ -1,13 +1,11 @@
 package com.enonic.wem.core.elasticsearch;
 
-import java.util.Set;
+import java.time.Instant;
 
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.Requests;
 import org.elasticsearch.index.query.TermQueryBuilder;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
 import com.enonic.wem.api.blob.BlobKey;
@@ -16,15 +14,12 @@ import com.enonic.wem.core.elasticsearch.result.SearchResultEntry;
 import com.enonic.wem.core.elasticsearch.result.SearchResultField;
 import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexType;
-import com.enonic.wem.core.version.VersionBranch;
-import com.enonic.wem.core.version.VersionBranchQuery;
 import com.enonic.wem.core.version.VersionDocument;
 import com.enonic.wem.core.version.VersionEntry;
-import com.enonic.wem.core.version.VersionNotFoundException;
 import com.enonic.wem.core.version.VersionService;
 
 import static com.enonic.wem.core.elasticsearch.VersionXContentBuilderFactory.BLOBKEY_FIELD_NAME;
-import static com.enonic.wem.core.elasticsearch.VersionXContentBuilderFactory.PARENT_ID_FIELD_NAME;
+import static com.enonic.wem.core.elasticsearch.VersionXContentBuilderFactory.TIMESTAMP_ID_FIELD_NAME;
 
 public class ElasticsearchVersionService
     implements VersionService
@@ -49,17 +44,13 @@ public class ElasticsearchVersionService
     }
 
     @Override
-    public VersionBranch getBranch( final VersionBranchQuery query )
+    public VersionEntry getVersion( final BlobKey blobKey )
     {
-        return VersionBranch.create().set( doGetEntries( query.getBlobKey() ) ).build();
-    }
 
-    private Set<VersionEntry> doGetEntries( final BlobKey blobKey )
-    {
         final TermQueryBuilder blobKeyQuery = new TermQueryBuilder( BLOBKEY_FIELD_NAME, blobKey.toString() );
 
         final QueryMetaData queryMetaData = QueryMetaData.create( VERSION_INDEX ).
-            addFields( PARENT_ID_FIELD_NAME ).
+            addFields( TIMESTAMP_ID_FIELD_NAME ).
             size( 1 ).
             from( 0 ).
             indexType( IndexType.NODE ).
@@ -67,30 +58,16 @@ public class ElasticsearchVersionService
 
         final SearchResult searchResult = elasticsearchDao.get( queryMetaData, blobKeyQuery );
 
-        if ( searchResult.getResults().getSize() == 0 )
+        if ( searchResult.isEmpty() )
         {
-            throw new VersionNotFoundException( "Could not find version with blobKey: " + blobKey );
+            throw new RuntimeException( "Did not find version entry with blobKey: " + blobKey );
         }
 
-        return createVersionEntriesFromSearchResult( blobKey, searchResult );
-    }
+        final SearchResultEntry firstHit = searchResult.getResults().getFirstHit();
 
-    private Set<VersionEntry> createVersionEntriesFromSearchResult( final BlobKey blobKey, final SearchResult searchResult )
-    {
-        final Set<VersionEntry> versionEntries = Sets.newLinkedHashSet();
+        final String longValue = getStringValue( firstHit, TIMESTAMP_ID_FIELD_NAME, true );
 
-        final SearchResultEntry hit = searchResult.getResults().getFirstHit();
-
-        final String parentKey = getStringValue( hit, PARENT_ID_FIELD_NAME, false );
-
-        versionEntries.add( new VersionEntry( blobKey, Strings.isNullOrEmpty( parentKey ) ? null : new BlobKey( parentKey ) ) );
-
-        if ( !Strings.isNullOrEmpty( parentKey ) )
-        {
-            versionEntries.addAll( doGetEntries( new BlobKey( parentKey ) ) );
-        }
-
-        return versionEntries;
+        return new VersionEntry( blobKey, Instant.parse( longValue ) );
     }
 
     private String getStringValue( final SearchResultEntry hit, final String fieldName, final boolean required )

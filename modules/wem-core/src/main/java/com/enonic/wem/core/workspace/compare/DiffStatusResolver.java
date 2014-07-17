@@ -1,45 +1,41 @@
 package com.enonic.wem.core.workspace.compare;
 
 import com.enonic.wem.api.entity.CompareStatus;
-import com.enonic.wem.core.version.VersionBranch;
 import com.enonic.wem.core.version.VersionEntry;
 
 class DiffStatusResolver
 {
     public static CompareStatus resolve( final DiffStatusParams diffStatusParams )
     {
-        final VersionBranch targetBranch = diffStatusParams.getTarget();
-        final VersionBranch sourceBranch = diffStatusParams.getSource();
+        final VersionEntry targetBranch = diffStatusParams.getTarget();
+        final VersionEntry sourceBranch = diffStatusParams.getSource();
 
-        if ( targetBranch.isEmpty() )
+        if ( targetBranch == null )
         {
             return new CompareStatus( CompareStatus.Status.NEW );
         }
 
-        if ( sourceBranch.isEmpty() )
+        if ( sourceBranch == null )
         {
             return new CompareStatus( CompareStatus.Status.DELETED );
         }
 
-        final VersionEntry currentInSource = sourceBranch.getFirst();
-        final VersionEntry currentInTarget = targetBranch.getFirst();
-
-        if ( currentInSource.equals( currentInTarget ) )
+        if ( targetBranch.equals( sourceBranch ) )
         {
             return new CompareStatus( CompareStatus.Status.EQUAL );
         }
 
-        if ( sourceBranch.has( currentInTarget ) )
+        if ( sourceBranch.getTimestamp().isAfter( targetBranch.getTimestamp() ) )
         {
             return new CompareStatus( CompareStatus.Status.NEWER );
         }
 
-        if ( targetBranch.has( currentInSource ) )
+        if ( sourceBranch.getTimestamp().isBefore( targetBranch.getTimestamp() ) )
         {
             return new CompareStatus( CompareStatus.Status.OLDER );
         }
 
-        return new CompareStatus( CompareStatus.Status.CONFLICT );
+        throw new RuntimeException( "Not able to resolve compare status" );
     }
 
 }

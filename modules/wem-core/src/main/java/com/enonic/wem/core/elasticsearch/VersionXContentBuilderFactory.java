@@ -16,8 +16,6 @@ public class VersionXContentBuilderFactory
 
     public static final String TIMESTAMP_ID_FIELD_NAME = "timestamp";
 
-    public static final String PARENT_ID_FIELD_NAME = "parent";
-
     static XContentBuilder create( final VersionDocument versionDocument )
     {
         try
@@ -26,12 +24,6 @@ public class VersionXContentBuilderFactory
 
             addField( builder, BLOBKEY_FIELD_NAME, versionDocument.getBlobKey().toString() );
             addField( builder, ENTITY_ID_FIELD_NAME, versionDocument.getEntityId().toString() );
-
-            if ( versionDocument.getParent() != null )
-            {
-                addField( builder, PARENT_ID_FIELD_NAME, versionDocument.getParent().toString() );
-            }
-
             addField( builder, TIMESTAMP_ID_FIELD_NAME, Instant.now() );
 
             endBuilder( builder );

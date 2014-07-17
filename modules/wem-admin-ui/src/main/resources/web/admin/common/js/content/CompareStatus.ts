@@ -4,7 +4,7 @@ module api.content {
         NEW,
         NEWER,
         OLDER,
-        CONFLICT,
+        UNKNOWN,
         DELETED,
         EQUAL
     }

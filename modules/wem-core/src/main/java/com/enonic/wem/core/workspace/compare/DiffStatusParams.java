@@ -1,25 +1,25 @@
 package com.enonic.wem.core.workspace.compare;
 
-import com.enonic.wem.core.version.VersionBranch;
+import com.enonic.wem.core.version.VersionEntry;
 
 class DiffStatusParams
 {
-    private final VersionBranch source;
+    private final VersionEntry source;
 
-    private final VersionBranch target;
+    private final VersionEntry target;
 
-    public DiffStatusParams( final VersionBranch source, final VersionBranch target )
+    public DiffStatusParams( final VersionEntry source, final VersionEntry target )
     {
         this.source = source;
         this.target = target;
     }
 
-    public VersionBranch getSource()
+    public VersionEntry getSource()
     {
         return source;
     }
 
-    public VersionBranch getTarget()
+    public VersionEntry getTarget()
     {
         return target;
     }

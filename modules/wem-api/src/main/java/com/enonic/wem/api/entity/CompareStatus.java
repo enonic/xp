@@ -7,7 +7,7 @@ public class CompareStatus
         NEW,
         NEWER,
         OLDER,
-        CONFLICT,
+        UNKNOWN,
         DELETED,
         EQUAL
     }
