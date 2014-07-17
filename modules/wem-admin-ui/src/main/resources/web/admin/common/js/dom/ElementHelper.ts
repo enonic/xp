@@ -142,7 +142,7 @@ module api.dom {
         }
 
         getClass(): string {
-            return this.el.className ;
+            return this.el.className;
         }
 
         hasClass(clsName: string): boolean {
@@ -539,6 +539,10 @@ module api.dom {
                 i++;
             }
             return i;
+        }
+
+        isVisible(): boolean {
+            return wemjq(this.el).is(':visible');
         }
 
     }

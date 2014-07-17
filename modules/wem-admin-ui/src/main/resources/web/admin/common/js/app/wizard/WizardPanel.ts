@@ -62,6 +62,8 @@ module api.app.wizard {
 
         private splitPanelThreshold: number = 960;
 
+        private stepNavigatorPlaceholder: api.dom.DivEl;
+
         constructor(params: WizardPanelParams, callback: Function) {
             super("wizard-panel");
 
@@ -98,6 +100,15 @@ module api.app.wizard {
             aboveStepPanels.appendChild(this.stepNavigatorAndToolbarContainer);
 
             this.stepPanels = new WizardStepsPanel(this.stepNavigator, this.formPanel);
+            this.stepNavigatorAndToolbarContainer.onShown((event: api.dom.ElementShownEvent) => {
+                // set scroll offset equal to the height of the step navigator to switch steps at the bottom of it when sticky
+                this.stepPanels.setScrollOffset(event.getElement().getEl().getHeight());
+            });
+            api.ui.ResponsiveManager.onAvailableSizeChanged(this.stepNavigatorAndToolbarContainer, (item: api.ui.ResponsiveItem) => {
+                // update offset if step navigator is resized
+                this.updateStickyToolbar();
+                this.stepPanels.setScrollOffset(item.getElement().getEl().getHeight());
+            });
             this.formPanel.appendChild(aboveStepPanels).appendChild(this.stepPanels);
 
             this.setSteps(params.steps);
@@ -155,21 +166,28 @@ module api.app.wizard {
         }
 
         updateStickyToolbar() {
-            var scrollTop = wemjq('.form-panel').scrollTop();
+            var scrollTop = this.formPanel.getHTMLElement().scrollTop;
             var wizardHeaderHeight = this.header.getEl().getHeightWithMargin() + this.header.getEl().getOffsetTopRelativeToParent();
             if (scrollTop > wizardHeaderHeight) {
-                this.mainToolbar.removeClass("scrolling");
-                this.stepNavigatorAndToolbarContainer.getEl().setWidth(this.formPanel.getEl().getWidth() + "px");
-                this.stepNavigatorAndToolbarContainer.addClass("scroll-stick");
+                this.mainToolbar.removeClass("scroll-shadow");
+                var stepNavigatorEl = this.stepNavigatorAndToolbarContainer.getEl().addClass("scroll-stick");
+                if (!this.stepNavigatorPlaceholder) {
+                    this.stepNavigatorPlaceholder = new api.dom.DivEl('toolbar-placeholder');
+                    this.stepNavigatorPlaceholder.insertAfterEl(this.stepNavigatorAndToolbarContainer);
+                    this.stepNavigatorPlaceholder.getEl().setWidthPx(stepNavigatorEl.getWidth()).setHeightPx(stepNavigatorEl.getHeight());
+                }
             } else if (scrollTop < wizardHeaderHeight) {
-                this.mainToolbar.addClass("scrolling");
+                this.mainToolbar.addClass("scroll-shadow");
                 this.stepNavigatorAndToolbarContainer.removeClass("scroll-stick");
-                // do render to account for sticky toolbar
-                this.formPanel.render();
+                if (this.stepNavigatorPlaceholder) {
+                    this.stepNavigatorPlaceholder.remove();
+                    this.stepNavigatorPlaceholder = undefined;
+                }
             }
             if (scrollTop == 0) {
-                this.mainToolbar.removeClass("scrolling");
+                this.mainToolbar.removeClass("scroll-shadow");
             }
+            this.stepNavigatorAndToolbarContainer.getEl().setWidthPx(this.formPanel.getEl().getWidth());
         }
 
         giveInitialFocus() {
@@ -371,7 +389,7 @@ module api.app.wizard {
             return this.splitPanel;
         }
 
-        public setLivePanel(livePanel:api.ui.Panel) {
+        public setLivePanel(livePanel: api.ui.Panel) {
             if (this.splitPanel) {
                 this.removeChild(this.splitPanel);
             }

@@ -224,7 +224,7 @@ module api.dom {
         }
 
         isVisible() {
-            return wemjq(this.el.getHTMLElement()).is(':visible');
+            return this.el.isVisible();
         }
 
         setClass(className: string): Element {
