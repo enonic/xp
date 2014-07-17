@@ -65,9 +65,9 @@ module api.app {
             return this;
         }
 
-        setSubName(value: string): NamesAndIconView
+        setSubName(value: string, title?: string): NamesAndIconView
         {
-            this.namesView.setSubName(value);
+            this.namesView.setSubName(value, title);
             return this;
         }
 

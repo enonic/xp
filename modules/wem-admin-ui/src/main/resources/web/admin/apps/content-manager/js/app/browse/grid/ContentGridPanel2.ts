@@ -28,8 +28,8 @@ module app.browse.grid {
                         new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().
                             setName("Name").
                             setId("displayName").
-                            setField("content.displayName").
-                            setFormatter(this.defaultNameFormatter).
+                            setField("contentSummary.displayName").
+                            setFormatter(this.nameFormatter).
                             build(),
 
                         new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().
@@ -45,7 +45,7 @@ module app.browse.grid {
                         new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().
                             setName("ModifiedTime").
                             setId("modifiedTime").
-                            setField("content.modifiedTime").
+                            setField("contentSummary.modifiedTime").
                             setCssClass("modified").
                             setMinWidth(150).
                             setMaxWidth(170).
@@ -78,7 +78,7 @@ module app.browse.grid {
             });
         }
 
-        private statusFormatter(row: number, cell: number, value: any, columnDef: any, item: ContentSummaryAndCompareStatus) {
+        private statusFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
 
             var compareLabel: string = api.content.CompareStatus[value];
 
@@ -108,9 +108,9 @@ module app.browse.grid {
             }
         }
 
-        private defaultNameFormatter(row: number, cell: number, value: any, columnDef: any, item: ContentSummaryAndCompareStatus) {
+        private nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
             var contentSummaryViewer = new ContentSummaryViewer();
-            contentSummaryViewer.setObject(item.getContentSummary());
+            contentSummaryViewer.setObject(node.getData().getContentSummary(), node.calcLevel() > 1);
             return contentSummaryViewer.toString();
         }
 

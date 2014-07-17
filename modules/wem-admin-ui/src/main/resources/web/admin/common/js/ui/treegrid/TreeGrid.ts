@@ -249,7 +249,7 @@ module api.ui.treegrid {
                     }
                     toggleSpan.getEl().setMarginLeft(16 * (node.calcLevel() - 1) + "px");
 
-                    return toggleSpan.toString() + formatter(row, cell, value, columnDef, node.getData());
+                    return toggleSpan.toString() + formatter(row, cell, value, columnDef, node);
                 };
 
                 columns[0].setFormatter(toggleFormatter);

@@ -10,10 +10,11 @@ module api.content {
             this.appendChild(this.namesAndIconView);
         }
 
-        setObject(content: ContentSummary) {
+        setObject(content: ContentSummary, relativePath: boolean = false) {
             super.setObject(content);
+            var subName = relativePath ? content.getPath().getRelativePath() : content.getPath().toString();
             this.namesAndIconView.setMainName(content.getDisplayName()).
-                setSubName(content.getPath().toString()).
+                setSubName(subName, content.getPath().toString()).
                 setIconUrl(content.getIconUrl() + '?crop=false');
             if (content.isSite()) {
                 this.addClass("site");
