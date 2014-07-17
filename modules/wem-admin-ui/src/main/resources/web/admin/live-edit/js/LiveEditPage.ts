@@ -81,6 +81,10 @@ module LiveEdit {
 
                 this.cursor = new LiveEdit.ui.Cursor();
 
+                this.pageView.toItemViewArray().forEach((itemView: ItemView) => {
+                    this.setItemViewListeners(itemView);
+                });
+
                 this.registerGlobalListeners();
             });
 
@@ -90,40 +94,7 @@ module LiveEdit {
         private registerGlobalListeners(): void {
 
             this.pageView.onItemViewAdded((event: api.liveedit.ItemViewAddedEvent) => {
-                var itemView = event.getView();
-
-                itemView.onMouseOverView(() => {
-                    if (this.hasSelectedView() || LiveEdit.component.dragdropsort.DragDropSort.isDragging()) {
-                        return;
-                    }
-
-                    this.highlighter.highlightItemView(itemView);
-                    this.cursor.displayItemViewCursor(itemView);
-                    itemView.showTooltip();
-                });
-
-                itemView.onMouseOutView(() => {
-                    if (this.hasSelectedView() || LiveEdit.component.dragdropsort.DragDropSort.isDragging()) {
-                        return;
-                    }
-
-                    this.highlighter.hide();
-                    this.cursor.reset();
-                    itemView.hideTooltip();
-                });
-
-                if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, TextComponentView)) {
-                    var textView = <TextComponentView>itemView;
-                    textView.onEdited(() => {
-                        this.highlighter.hide();
-                        textView.hideTooltip();
-                        textView.hideContextMenu();
-                        this.shader.shadeItemView(itemView);
-                        LiveEdit.component.dragdropsort.DragDropSort.cancelDragDrop(
-                            api.liveedit.text.TextItemType.get().getConfig().getCssSelector());
-                    });
-                }
-
+                this.setItemViewListeners(event.getView());
             });
 
             ItemViewSelectedEvent.on((event: ItemViewSelectedEvent) => {
@@ -189,6 +160,40 @@ module LiveEdit {
                     this.previousSelectedItemView = undefined;
                 }
             });
+        }
+
+        setItemViewListeners(itemView: ItemView) {
+            itemView.onMouseOverView(() => {
+                if (this.hasSelectedView() || LiveEdit.component.dragdropsort.DragDropSort.isDragging()) {
+                    return;
+                }
+
+                this.highlighter.highlightItemView(itemView);
+                this.cursor.displayItemViewCursor(itemView);
+                itemView.showTooltip();
+            });
+
+            itemView.onMouseOutView(() => {
+                if (this.hasSelectedView() || LiveEdit.component.dragdropsort.DragDropSort.isDragging()) {
+                    return;
+                }
+
+                this.highlighter.hide();
+                this.cursor.reset();
+                itemView.hideTooltip();
+            });
+
+            if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, TextComponentView)) {
+                var textView = <TextComponentView>itemView;
+                textView.onEdited(() => {
+                    this.highlighter.hide();
+                    textView.hideTooltip();
+                    textView.hideContextMenu();
+                    this.shader.shadeItemView(itemView);
+                    LiveEdit.component.dragdropsort.DragDropSort.cancelDragDrop(
+                        api.liveedit.text.TextItemType.get().getConfig().getCssSelector());
+                });
+            }
         }
 
         getByItemId(id: ItemViewId) {
