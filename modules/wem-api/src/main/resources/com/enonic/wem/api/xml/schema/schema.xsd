@@ -28,6 +28,13 @@
   </xsd:complexType>
 
   <xsd:complexType name="relationshipType">
+    <xsd:all>
+      <xsd:element name="description" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="from-semantic" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="to-semantic" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="allowed-from-types" type="allowedTypesDescriptor" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="allowed-to-types" type="allowedTypesDescriptor" minOccurs="0" maxOccurs="1"/>
+    </xsd:all>
   </xsd:complexType>
 
   <!-- Mixin type element -->
@@ -38,5 +45,16 @@
 
   <!-- Relationship type element -->
   <xsd:element name="relationship-type" type="relationshipType"/>
+
+  <xsd:complexType name="allowedTypesDescriptor">
+    <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+      <xsd:annotation>
+        <xsd:appinfo>
+          <jaxb:property name="List"/>
+        </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:element name="content-type" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
 
 </xsd:schema>

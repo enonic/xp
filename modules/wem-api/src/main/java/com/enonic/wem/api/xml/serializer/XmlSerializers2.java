@@ -8,6 +8,7 @@ import com.enonic.wem.api.xml.model.XmlMixin;
 import com.enonic.wem.api.xml.model.XmlModule;
 import com.enonic.wem.api.xml.model.XmlPageDescriptor;
 import com.enonic.wem.api.xml.model.XmlPartDescriptor;
+import com.enonic.wem.api.xml.model.XmlRelationshipType;
 
 public final class XmlSerializers2
 {
@@ -22,6 +23,8 @@ public final class XmlSerializers2
     private final static XmlPartDescriptorSerializer PART_DESCRIPTOR = new XmlPartDescriptorSerializer();
 
     private final static XmlContentTypeSerializer CONTENT_TYPE = new XmlContentTypeSerializer();
+
+    private final static XmlRelationshipTypeSerializer RELATIONSHIP_TYPE = new XmlRelationshipTypeSerializer();
 
     private final static XmlLayoutDescriptorSerializer LAYOUT_DESCRIPTOR = new XmlLayoutDescriptorSerializer();
 
@@ -55,6 +58,11 @@ public final class XmlSerializers2
     public static XmlSerializer2<XmlContentType> contentType()
     {
         return CONTENT_TYPE;
+    }
+
+    public static XmlSerializer2<XmlRelationshipType> relationshipType()
+    {
+        return RELATIONSHIP_TYPE;
     }
 
     public static XmlSerializer2<XmlLayoutDescriptor> layoutDescriptor()
