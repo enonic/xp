@@ -9,20 +9,24 @@ module app.wizard.action {
 
             this.onExecuted(() => {
 
-                wizard.setPersistAsDraft(false);
+                if (wizard.contentCanBePublished()) {
+                    wizard.setPersistAsDraft(false);
 
-                this.setEnabled(false);
+                    this.setEnabled(false);
 
-                wizard.updatePersistedItem().
-                    catch((reason: any) => {
-                        api.DefaultErrorHandler.handle(reason)
-                    }).
-                    finally(() => this.setEnabled(true)).
-                    done((content) => {
-                        if (content) {
-                            new OpenPublishDialogEvent(content).fire();
-                        }
-                    });
+                    wizard.updatePersistedItem().
+                        catch((reason: any) => {
+                            api.DefaultErrorHandler.handle(reason)
+                        }).
+                        finally(() => this.setEnabled(true)).
+                        done((content) => {
+                            if (content) {
+                                new OpenPublishDialogEvent(content).fire();
+                            }
+                        });
+                } else {
+                    api.notify.showWarning('The content cannot be published yet. One or more form values are not valid.');
+                }
             });
         }
     }

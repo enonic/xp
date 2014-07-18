@@ -29,7 +29,6 @@ module app.wizard {
     import WizardHeaderWithDisplayNameAndName = api.app.wizard.WizardHeaderWithDisplayNameAndName;
     import WizardHeaderWithDisplayNameAndNameBuilder = api.app.wizard.WizardHeaderWithDisplayNameAndNameBuilder;
     import WizardStep = api.app.wizard.WizardStep;
-    import WizardStepForm = api.app.wizard.WizardStepForm;
     import UploadFinishedEvent = api.app.wizard.UploadFinishedEvent;
     import ContentTypeName = api.schema.content.ContentTypeName;
     import DefaultModels = app.wizard.page.DefaultModels;
@@ -81,6 +80,10 @@ module app.wizard {
 
         private contentWizardActions: app.wizard.action.ContentWizardActions;
 
+        private isSiteTemplateFormValid: boolean;
+
+        private isContentFormValid: boolean;
+
         /**
          * Whether constructor is being currently executed or not.
          */
@@ -89,6 +92,8 @@ module app.wizard {
         constructor(params: ContentWizardPanelParams, callback: (wizard: ContentWizardPanel) => void) {
 
             this.constructing = true;
+            this.isSiteTemplateFormValid = false;
+            this.isContentFormValid = false;
 
             this.persistAsDraft = true;
             this.parentContent = params.parentContent;
@@ -142,11 +147,20 @@ module app.wizard {
                 this.formIcon.addClass("site");
                 this.siteTemplateWizardStepForm = new app.wizard.site.SiteTemplateWizardStepForm(this.siteTemplate);
                 this.siteTemplateWizardStepForm.onSiteTemplateChanged((event: SiteTemplateChangedEvent) => this.handleSiteTemplateChanged(event));
+                this.siteTemplateWizardStepForm.onValidityChanged(
+                    (event: WizardStepValidityChangedEvent) =>
+                        this.isSiteTemplateFormValid = event.isValid()
+                );
 
             } else {
                 this.siteTemplateWizardStepForm = null;
+                this.isSiteTemplateFormValid = true;
             }
-            this.contentWizardStepForm = new ContentWizardStepForm(this.publishAction);
+            this.contentWizardStepForm = new ContentWizardStepForm();
+            this.contentWizardStepForm.onValidityChanged(
+                (event: WizardStepValidityChangedEvent) =>
+                    this.isContentFormValid = event.isValid()
+            );
 
             if ((this.siteContent || this.createSite) && (params.defaultModels && params.defaultModels.hasPageTemplate())) {
 
@@ -242,9 +256,9 @@ module app.wizard {
                 steps.push(new WizardStep("Site Template", this.siteTemplateWizardStepForm));
             }
 
-            steps.push(new WizardStep("Meta", new WizardStepForm()));
-            steps.push(new WizardStep("Security", new WizardStepForm()));
-            steps.push(new WizardStep("Summary", new WizardStepForm()));
+            steps.push(new WizardStep("Meta", new BaseContentWizardStepForm()));
+            steps.push(new WizardStep("Security", new BaseContentWizardStepForm()));
+            steps.push(new WizardStep("Summary", new BaseContentWizardStepForm()));
 
             return steps;
         }
@@ -690,6 +704,10 @@ module app.wizard {
             else {
                 return Q<DefaultModels>(null);
             }
+        }
+
+        public contentCanBePublished(): boolean {
+            return this.isContentFormValid && this.isSiteTemplateFormValid;
         }
     }
 

@@ -7,8 +7,9 @@ module app.wizard.site {
     import RootDataSet = api.data.RootDataSet;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
+    import WizardStepValidityChangedEvent = app.wizard.WizardStepValidityChangedEvent;
 
-    export class SiteTemplateWizardStepForm extends api.app.wizard.WizardStepForm {
+    export class SiteTemplateWizardStepForm extends BaseContentWizardStepForm {
 
         private formContext: api.form.FormContext;
 
@@ -149,6 +150,9 @@ module app.wizard.site {
                 });
                 moduleView.onBlur((event: FocusEvent) => {
                     this.notifyBlurred(event);
+                });
+                moduleView.onValidityChanged((event: api.form.FormValidityChangedEvent) => {
+                    this.notifyValidityChanged(new WizardStepValidityChangedEvent(event.isValid()));
                 });
 
                 this.moduleViewsContainer.appendChild(moduleView);

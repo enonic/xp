@@ -1,3 +1,5 @@
+///<reference path='BaseContentWizardStepForm.ts' />
+///<reference path='WizardStepValidityChangedEvent.ts' />
 ///<reference path='ContentWizardStepForm.ts' />
 ///<reference path='ContentWizardToolbar.ts' />
 ///<reference path='DisplayNameScriptExecutor.ts' />

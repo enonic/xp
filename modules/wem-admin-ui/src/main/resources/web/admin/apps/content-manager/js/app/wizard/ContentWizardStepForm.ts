@@ -6,7 +6,7 @@ module app.wizard {
     import FormView = api.form.FormView;
     import ContentData = api.content.ContentData;
 
-    export class ContentWizardStepForm extends api.app.wizard.WizardStepForm {
+    export class ContentWizardStepForm extends BaseContentWizardStepForm {
 
         private formContext: FormContext;
 
@@ -16,11 +16,8 @@ module app.wizard {
 
         private contentData: ContentData;
 
-        private publishAction: api.ui.Action;
-
-        constructor(publishAction: api.ui.Action) {
+        constructor() {
             super();
-            this.publishAction = publishAction;
         }
 
         renderExisting(formContext: FormContext, contentData: ContentData, form: Form) {
@@ -50,10 +47,10 @@ module app.wizard {
 
             this.appendChild(this.formView);
 
-            this.publishAction.setEnabled(this.formView.isValid());
             this.formView.onValidityChanged((event: api.form.FormValidityChangedEvent) => {
-                this.publishAction.setEnabled(event.isValid());
+                this.notifyValidityChanged(new WizardStepValidityChangedEvent(event.isValid()));
             });
+            this.notifyValidityChanged(new WizardStepValidityChangedEvent(this.formView.isValid()));
         }
 
         getForm(): Form {

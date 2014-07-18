@@ -1,5 +1,7 @@
 module app.wizard.site {
 
+    import FormValidityChangedEvent = api.form.FormValidityChangedEvent;
+
     export class ModuleView extends api.dom.DivEl {
 
         private siteModule: api.module.Module;
@@ -44,6 +46,15 @@ module app.wizard.site {
         unBlur(listener: (event: FocusEvent) => void) {
             this.formView.unBlur(listener);
         }
+
+        onValidityChanged(listener: (event: FormValidityChangedEvent)=>void) {
+            this.formView.onValidityChanged(listener);
+        }
+
+        unValidityChanged(listener: (event: FormValidityChangedEvent)=>void) {
+            this.unValidityChanged(listener);
+        }
+
     }
 
 }
