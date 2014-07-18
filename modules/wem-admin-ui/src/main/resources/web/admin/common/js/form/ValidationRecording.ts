@@ -30,7 +30,7 @@ module api.form {
             });
 
             recording.breaksMaximumOccurrencesArray.forEach((path: ValidationRecordingPath)=> {
-                this.breaksMinimumOccurrences(path);
+                this.breaksMaximumOccurrences(path);
             });
         }
 

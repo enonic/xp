@@ -48,6 +48,7 @@ module app.wizard.site {
         }
 
         onValidityChanged(listener: (event: FormValidityChangedEvent)=>void) {
+            this.formView.validate();
             this.formView.onValidityChanged(listener);
         }
 

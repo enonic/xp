@@ -23,6 +23,10 @@ module app.wizard.site {
 
         private moduleViews: ModuleView[] = [];
 
+        private moduleViewsValid: {[moduleKey: string]: boolean} = {};
+
+        private previousValidation: boolean = false;
+
         private siteTemplateChangedListeners: {(event: SiteTemplateChangedEvent) : void}[] = [];
 
         constructor(siteTemplate: SiteTemplate) {
@@ -152,12 +156,25 @@ module app.wizard.site {
                     this.notifyBlurred(event);
                 });
                 moduleView.onValidityChanged((event: api.form.FormValidityChangedEvent) => {
-                    this.notifyValidityChanged(new WizardStepValidityChangedEvent(event.isValid()));
+                    var moduleKey = moduleView.getModuleConfig().getModuleKey().toString();
+                    this.moduleViewsValid[moduleKey] = event.isValid();
+                    var allModuleFormsValid = this.areAllModuleFormsValid();
+                    if (this.previousValidation !== allModuleFormsValid) {
+                        this.notifyValidityChanged(new WizardStepValidityChangedEvent(allModuleFormsValid));
+                    }
+                    this.previousValidation = allModuleFormsValid;
                 });
 
                 this.moduleViewsContainer.appendChild(moduleView);
                 this.moduleViews.push(moduleView);
+                var moduleKey = moduleView.getModuleConfig().getModuleKey().toString();
+                this.moduleViewsValid[moduleKey] = false;
             });
+            this.previousValidation = this.areAllModuleFormsValid();
+        }
+
+        private areAllModuleFormsValid(): boolean {
+            return this.moduleViews.every((mod: ModuleView) => this.moduleViewsValid[mod.getModuleConfig().getModuleKey().toString()]);
         }
 
         private removeExistingModuleViews() {
@@ -165,6 +182,7 @@ module app.wizard.site {
                 moduleView.remove();
             });
             this.moduleViews = [];
+            this.moduleViewsValid = {};
             this.moduleViewsContainer.removeChildren();
         }
 
