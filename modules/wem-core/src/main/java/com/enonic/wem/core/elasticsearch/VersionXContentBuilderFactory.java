@@ -5,7 +5,7 @@ import java.time.Instant;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 
 import com.enonic.wem.core.index.IndexException;
-import com.enonic.wem.core.version.VersionDocument;
+import com.enonic.wem.core.version.EntityVersionDocument;
 
 public class VersionXContentBuilderFactory
     extends AbstractXContentBuilderFactor
@@ -16,14 +16,14 @@ public class VersionXContentBuilderFactory
 
     public static final String TIMESTAMP_ID_FIELD_NAME = "timestamp";
 
-    static XContentBuilder create( final VersionDocument versionDocument )
+    static XContentBuilder create( final EntityVersionDocument entityVersionDocument )
     {
         try
         {
             final XContentBuilder builder = startBuilder();
 
-            addField( builder, BLOBKEY_FIELD_NAME, versionDocument.getBlobKey().toString() );
-            addField( builder, ENTITY_ID_FIELD_NAME, versionDocument.getEntityId().toString() );
+            addField( builder, BLOBKEY_FIELD_NAME, entityVersionDocument.getBlobKey().toString() );
+            addField( builder, ENTITY_ID_FIELD_NAME, entityVersionDocument.getEntityId().toString() );
             addField( builder, TIMESTAMP_ID_FIELD_NAME, Instant.now() );
 
             endBuilder( builder );

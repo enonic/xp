@@ -1,17 +1,17 @@
-package com.enonic.wem.core.version;
+package com.enonic.wem.api.entity;
 
 import java.time.Instant;
 
 import com.enonic.wem.api.blob.BlobKey;
 
-public class VersionEntry
-    implements Comparable<VersionEntry>
+public class EntityVersion
+    implements Comparable<EntityVersion>
 {
     private final BlobKey blobKey;
 
     private final Instant timestamp;
 
-    public VersionEntry( final BlobKey blobKey, final Instant timestamp )
+    public EntityVersion( final BlobKey blobKey, final Instant timestamp )
     {
         this.blobKey = blobKey;
         this.timestamp = timestamp;
@@ -27,13 +27,11 @@ public class VersionEntry
         return timestamp;
     }
 
-    @Override
-    public int compareTo( final VersionEntry o )
-    {
-        // compareTo should return < 0 if this is supposed to be
-        // less than other, > 0 if this is supposed to be greater than
-        // other and 0 if they are supposed to be equal
 
+    // Insert with newest first
+    @Override
+    public int compareTo( final EntityVersion o )
+    {
         if ( this.timestamp == o.timestamp )
         {
             return 0;
@@ -41,10 +39,10 @@ public class VersionEntry
 
         if ( this.timestamp.isBefore( o.timestamp ) )
         {
-            return -1;
+            return 1;
         }
 
-        return 1;
+        return -1;
     }
 
 
@@ -55,12 +53,12 @@ public class VersionEntry
         {
             return true;
         }
-        if ( !( o instanceof VersionEntry ) )
+        if ( !( o instanceof EntityVersion ) )
         {
             return false;
         }
 
-        final VersionEntry that = (VersionEntry) o;
+        final EntityVersion that = (EntityVersion) o;
 
         if ( blobKey != null ? !blobKey.equals( that.blobKey ) : that.blobKey != null )
         {

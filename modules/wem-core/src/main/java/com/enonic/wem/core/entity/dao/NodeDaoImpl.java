@@ -22,7 +22,7 @@ import com.enonic.wem.api.entity.NodePaths;
 import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.core.entity.json.NodeJsonSerializer;
-import com.enonic.wem.core.version.VersionDocument;
+import com.enonic.wem.core.version.EntityVersionDocument;
 import com.enonic.wem.core.version.VersionService;
 import com.enonic.wem.core.workspace.WorkspaceDocument;
 import com.enonic.wem.core.workspace.WorkspaceService;
@@ -57,10 +57,9 @@ public class NodeDaoImpl
             workspace( workspace ).
             build() );
 
-        versionService.store( VersionDocument.create().
+        versionService.store( EntityVersionDocument.create().
             entityId( newNode.id() ).
             blobKey( blob.getKey() ).
-            parent( null ).
             build() );
 
         return newNode;
@@ -104,10 +103,9 @@ public class NodeDaoImpl
             workspace( workspace ).
             build() );
 
-        versionService.store( VersionDocument.create().
+        versionService.store( EntityVersionDocument.create().
             entityId( updatedNode.id() ).
             blobKey( newBlob.getKey() ).
-            parent( currentBlobKey ).
             build() );
 
         return updatedNode;
@@ -172,10 +170,9 @@ public class NodeDaoImpl
             blobKey( newBlob.getKey() ).
             build() );
 
-        versionService.store( VersionDocument.create().
+        versionService.store( EntityVersionDocument.create().
             entityId( movedNode.id() ).
             blobKey( newBlob.getKey() ).
-            parent( currentBlobKey ).
             build() );
 
         return true;
@@ -285,6 +282,14 @@ public class NodeDaoImpl
         return node;
     }
 
+    @Override
+    public Node getByBlobKey( final BlobKey blobKey )
+    {
+        final Blob blob = blobService.get( blobKey );
+
+        return getNodeFromBlob( blob );
+    }
+
     private void doDeleteNodeWithChildren( final Node nodeToDelete, final Workspace workspace )
     {
         final Nodes children = this.getByParent( nodeToDelete.path(), workspace );
@@ -314,7 +319,7 @@ public class NodeDaoImpl
 
     private Nodes getNodesFromBlobKeys( final BlobKeys blobKeys )
     {
-        final Nodes.Builder nodesBuilder = Nodes.newNodes();
+        final Nodes.Builder nodesBuilder = Nodes.create();
 
         for ( final BlobKey blobKey : blobKeys )
         {

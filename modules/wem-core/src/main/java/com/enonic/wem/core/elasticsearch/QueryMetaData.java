@@ -3,6 +3,8 @@ package com.enonic.wem.core.elasticsearch;
 import java.util.Arrays;
 import java.util.Set;
 
+import org.elasticsearch.search.sort.SortBuilder;
+
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
@@ -21,6 +23,8 @@ public class QueryMetaData
 
     private final ImmutableSet<String> fields;
 
+    private final ImmutableSet<SortBuilder> sortBuilders;
+
     private QueryMetaData( final Builder builder )
     {
         this.index = builder.index;
@@ -28,6 +32,7 @@ public class QueryMetaData
         this.fields = ImmutableSet.copyOf( builder.fields );
         this.from = builder.from;
         this.size = builder.size;
+        this.sortBuilders = ImmutableSet.copyOf( builder.sortBuilders );
     }
 
     public String getIndex()
@@ -48,6 +53,11 @@ public class QueryMetaData
     public int getSize()
     {
         return size;
+    }
+
+    public ImmutableSet<SortBuilder> getSortBuilders()
+    {
+        return sortBuilders;
     }
 
     public boolean hasFields()
@@ -78,6 +88,8 @@ public class QueryMetaData
 
         private Set<String> fields = Sets.newHashSet();
 
+        private final Set<SortBuilder> sortBuilders = Sets.newHashSet();
+
         public Builder( final Index index )
         {
             this.index = index;
@@ -98,6 +110,12 @@ public class QueryMetaData
         public Builder size( final int size )
         {
             this.size = size;
+            return this;
+        }
+
+        public Builder addSort( final SortBuilder sortBuilder )
+        {
+            this.sortBuilders.add( sortBuilder );
             return this;
         }
 

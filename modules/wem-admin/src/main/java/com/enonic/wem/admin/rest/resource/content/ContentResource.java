@@ -1,6 +1,8 @@
 package com.enonic.wem.admin.rest.resource.content;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -70,8 +72,6 @@ import static com.enonic.wem.api.content.Content.editContent;
 @Produces(MediaType.APPLICATION_JSON)
 public class ContentResource
 {
-    static final Context STAGE_CONTEXT = new Context( ContentConstants.WORKSPACE_STAGE );
-
     private final String EXPAND_FULL = "full";
 
     private final String EXPAND_SUMMARY = "summary";
@@ -79,6 +79,8 @@ public class ContentResource
     private final String EXPAND_NONE = "none";
 
     private ContentService contentService;
+
+    static final Context STAGE_CONTEXT = new Context( ContentConstants.WORKSPACE_STAGE );
 
     @GET
     public ContentIdJson getById( @QueryParam("id") final String idParam,
@@ -266,6 +268,21 @@ public class ContentResource
             contentService.compare( new CompareContentsParams( contentIds, ContentConstants.WORKSPACE_PROD ), STAGE_CONTEXT );
 
         return new CompareContentResultsJson( compareResults );
+    }
+
+    @POST
+    @Path("getVersions")
+    public GetContentVersionsResultJson getVersions( final GetContentVersionsJson params )
+    {
+        final ContentId contentId = ContentId.from( params.getContentId() );
+
+        final ContentVersions contentVersions = contentService.getVersions( GetContentVersionsParams.create().
+            contentId( contentId ).
+            from( params.getFrom() != null ? params.getFrom() : 0 ).
+            size( params.getSize() != null ? params.getSize() : 10 ).
+            build(), STAGE_CONTEXT );
+
+        return new GetContentVersionsResultJson( contentVersions );
     }
 
     @GET

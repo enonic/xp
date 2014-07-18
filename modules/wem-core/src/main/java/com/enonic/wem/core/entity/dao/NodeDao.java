@@ -1,5 +1,6 @@
 package com.enonic.wem.core.entity.dao;
 
+import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIds;
 import com.enonic.wem.api.entity.Node;
@@ -29,5 +30,7 @@ public interface NodeDao
     public Nodes getByParent( NodePath parent, Workspace workspace );
 
     public Node deleteById( EntityId entityId, Workspace workspace );
+
+    public Node getByBlobKey( BlobKey blobKey );
 
 }
