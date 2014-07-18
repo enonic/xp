@@ -30,7 +30,7 @@ module api.content.site.template {
 
 
         constructor(option:api.ui.selector.Option<SiteTemplateSummary>) {
-            super(option, api.app.NamesAndIconViewSize.medium);
+            super(option, api.app.NamesAndIconViewSize.small);
         }
 
         resolveIconUrl(siteTemplate:SiteTemplateSummary):string
