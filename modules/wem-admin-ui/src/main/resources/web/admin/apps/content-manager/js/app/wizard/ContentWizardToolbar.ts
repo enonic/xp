@@ -51,7 +51,6 @@ module app.wizard {
             super("");
             this.addClass("icon-menu6 icon-large toggler");
             this.setActive(true);
-            this.setEnabled(false);
             this.onClicked((event: MouseEvent) => {
                 new ToggleContextWindowEvent().fire();
             });
@@ -63,6 +62,11 @@ module app.wizard {
             ShowLiveEditEvent.on(() => {
                 this.setEnabled(true);
             });
+
+            ShowSplitEditEvent.on(() => {
+                this.setEnabled(true);
+            });
+
 
             ShowContentFormEvent.on(() => {
                 this.setEnabled(false);
