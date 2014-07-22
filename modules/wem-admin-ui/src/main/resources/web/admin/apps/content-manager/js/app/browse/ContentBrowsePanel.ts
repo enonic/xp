@@ -1,6 +1,12 @@
 module app.browse {
 
-    export class ContentBrowsePanel extends api.app.browse.BrowsePanel<api.content.ContentSummary> {
+    import TreeNode = api.ui.treegrid.TreeNode;
+    import BrowseItem = api.app.browse.BrowseItem;
+    import ContentSummary = api.content.ContentSummary;
+    import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
+
+    // TODO: ContentSummary must be replaced with an ContentSummaryAndCompareStatus after old grid is removed
+    export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummary> {
 
         private browseActions: app.browse.ContentBrowseActions;
 
@@ -104,26 +110,50 @@ module app.browse {
             return actions;
         }
 
-        extModelsToContentSummaries(models: Ext_data_Model[]): api.content.ContentSummary[] {
+        extModelsToContentSummaries(models: Ext_data_Model[]): ContentSummary[] {
 
-            var summaries: api.content.ContentSummary[] = [];
+            var summaries: ContentSummary[] = [];
             for (var i = 0; i < models.length; i++) {
-                summaries.push(api.content.ContentSummary.fromJson(<api.content.json.ContentSummaryJson>models[i].data))
+                summaries.push(ContentSummary.fromJson(<api.content.json.ContentSummaryJson>models[i].data))
             }
             return summaries;
         }
 
-        extModelsToBrowseItems(models: Ext_data_Model[]): api.app.browse.BrowseItem<api.content.ContentSummary>[] {
+        extModelsToBrowseItems(models: Ext_data_Model[]): BrowseItem<ContentSummary>[] {
 
-            var browseItems: api.app.browse.BrowseItem<api.content.ContentSummary>[] = [];
+            var browseItems: BrowseItem<ContentSummary>[] = [];
             models.forEach((model: Ext_data_Model) => {
-                var content = api.content.ContentSummary.fromJson(<api.content.json.ContentSummaryJson>model.data);
-                var item = new api.app.browse.BrowseItem<api.content.ContentSummary>(content).
+                var content = ContentSummary.fromJson(<api.content.json.ContentSummaryJson>model.data);
+                var item = new BrowseItem<ContentSummary>(content).
                     setDisplayName(model.data['displayName']).
                     setPath(model.data['path']).
                     setIconUrl(model.data['iconUrl']);
                 browseItems.push(item);
             });
+            return browseItems;
+        }
+
+        // TODO: ContentSummary must be replaced with an ContentSummaryAndCompareStatus after old grid is removed
+        treeNodesToBrowseItems(nodes: TreeNode<ContentSummaryAndCompareStatus>[]): BrowseItem<ContentSummary>[] {
+            var browseItems: BrowseItem<ContentSummary>[] = [];
+
+            // do not proceed duplicated content. still, it can be selected
+            nodes.forEach((node: TreeNode<ContentSummaryAndCompareStatus>, index: number) => {
+                for (var i = 0; i <= index; i++) {
+                    if (nodes[i].getData().getId() === node.getData().getId()) {
+                        break;
+                    }
+                }
+                if (i === index) {
+                    var content = node.getData().getContentSummary();
+                    var item = new BrowseItem<ContentSummary>(content).
+                        setDisplayName(content.getDisplayName()).
+                        setPath(content.getPath().toString()).
+                        setIconUrl(content.getIconUrl());
+                    browseItems.push(item);
+                }
+            });
+
             return browseItems;
         }
     }

@@ -1,7 +1,7 @@
 module app.browse {
 
-    import ModuleTreeGrid = app.browse.ModuleTreeGrid;
     import ModuleSummary = api.module.ModuleSummary;
+    import TreeNode = api.ui.treegrid.TreeNode;
 
     export class ModuleBrowsePanel extends api.app.browse.BrowsePanel<api.module.ModuleSummary> {
 
@@ -28,8 +28,8 @@ module app.browse {
                 filterPanel: undefined
             });
 
-            this.moduleTreeGridPanel.onRowSelectionChanged((selectedRows: ModuleSummary[]) => {
-                this.browseActions.updateActionsEnabledState(<any[]>selectedRows);
+            this.moduleTreeGridPanel.onRowSelectionChanged((selectedRows: TreeNode<ModuleSummary>[]) => {
+                this.browseActions.updateActionsEnabledState(<any[]>selectedRows.map((elem) => { return elem.getData(); }));
             });
 
             this.registerEvents();

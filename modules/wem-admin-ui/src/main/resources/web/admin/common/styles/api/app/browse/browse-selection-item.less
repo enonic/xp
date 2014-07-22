@@ -1,6 +1,6 @@
 .browse-selection-item {
   display: inline-block;
-  padding: 10px;
+  padding: 10px 10px 10px 5px;
   margin: 10px 10px 0 10px;
   background-color: @admin-light-gray-bg;
   overflow: hidden;
@@ -22,10 +22,20 @@
   }
 
   .remove {
+    height: 32px;
+    margin: 0 5px 0 0;
     float: left;
     font-size: 20px;
     cursor: pointer;
     clear: right;
     font-weight: bold;
+    .icon-close2();
+    &:before {
+      position: relative;
+      display: block;
+      top: 50%;
+      margin: -10px 0 0;
+      font-size: 20px;
+    }
   }
 }

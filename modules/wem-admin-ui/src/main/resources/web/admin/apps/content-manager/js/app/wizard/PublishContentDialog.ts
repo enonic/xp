@@ -1,4 +1,8 @@
 module app.wizard {
+
+    import TreeNode = api.ui.treegrid.TreeNode;
+    import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
+
     export class PublishContentDialog extends api.ui.dialog.ModalDialog {
 
         private publishAction: PublishAction;
@@ -38,7 +42,7 @@ module app.wizard {
                 this.content = event.getContent();
                 this.grid = new CompareContentGrid(event.getContent());
                 this.grid.selectAll();
-                this.grid.onRowSelectionChanged((selectedRows) => {
+                this.grid.onRowSelectionChanged((selectedRows:TreeNode<ContentSummaryAndCompareStatus>[]) => {
                     this.publishAction.setToBePublishedAmout(selectedRows.length);
                 });
                 this.open();

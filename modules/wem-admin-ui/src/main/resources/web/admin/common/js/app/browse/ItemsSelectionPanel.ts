@@ -111,8 +111,7 @@ module api.app.browse {
         }
 
         private addRemoveButton(callback?: () => void) {
-            var removeEl = new api.dom.DivEl("remove");
-            removeEl.getEl().setInnerHtml("&times;")
+            var removeEl = new api.dom.DivEl("icon remove");
             removeEl.onClicked((event: MouseEvent) => {
                 if (callback) {
                     callback();
