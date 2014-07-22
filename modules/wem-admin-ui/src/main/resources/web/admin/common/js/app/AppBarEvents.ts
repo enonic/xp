@@ -2,31 +2,31 @@ module api.app {
 
     export class ShowAppLauncherEvent extends api.event.Event2 {
 
-        private application:api.app.Application;
+        private application: api.app.Application;
 
         constructor(application: api.app.Application) {
             super();
             this.application = application;
         }
 
-        getApplication():api.app.Application {
+        getApplication(): api.app.Application {
             return this.application;
         }
 
-        static on(handler:(event:ShowAppLauncherEvent) => void) {
+        static on(handler: (event: ShowAppLauncherEvent) => void) {
             api.event.Event2.bind(api.util.getFullName(this), handler);
         }
 
     }
 
-    export class ShowAppBrowsePanelEvent extends api.event.Event {
+    export class ShowBrowsePanelEvent extends api.event.Event {
 
         constructor() {
-            super('showAppBrowsePanel');
+            super('showBrowsePanel');
         }
 
-        static on(handler:(event:ShowAppBrowsePanelEvent) => void) {
-            api.event.onEvent('showAppBrowsePanel', handler);
+        static on(handler: (event: ShowBrowsePanelEvent) => void) {
+            api.event.onEvent('showBrowsePanel', handler);
         }
 
     }

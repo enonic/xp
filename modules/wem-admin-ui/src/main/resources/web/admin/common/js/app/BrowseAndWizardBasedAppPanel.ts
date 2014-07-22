@@ -4,32 +4,26 @@ module api.app {
 
         appBar:api.app.AppBar;
 
-        browsePanel:api.app.browse.BrowsePanel<M>;
     }
 
-    export class BrowseAndWizardBasedAppPanel<M> extends api.app.AppPanel {
-
-        private browsePanel: api.app.browse.BrowsePanel<M>;
+    export class BrowseAndWizardBasedAppPanel<M> extends api.app.AppPanel<M> {
 
         private appBarTabMenu: api.app.AppBarTabMenu;
 
         private currentKeyBindings: api.ui.KeyBinding[];
 
-        private appBar:api.app.AppBar;
+        private appBar: api.app.AppBar;
 
         constructor(config: BrowseBasedAppPanelConfig<M>) {
-            super(config.appBar.getTabMenu(), config.browsePanel);
+            super(config.appBar.getTabMenu());
 
             this.appBar = config.appBar;
-            this.browsePanel = config.browsePanel;
+
             this.appBarTabMenu = config.appBar.getTabMenu();
 
-            this.currentKeyBindings = api.ui.Action.getKeyBindings(this.resolveActions(this.browsePanel));
-            this.activateCurrentKeyBindings();
-
             this.onPanelShown((event: api.ui.PanelShownEvent) => {
-                if (event.getPanel() === this.browsePanel) {
-                    this.browsePanel.refreshFilterAndGrid();
+                if (event.getPanel() === this.getBrowsePanel()) {
+                    this.getBrowsePanel().refreshFilterAndGrid();
                 }
 
                 var previousActions = this.resolveActions(event.getPreviousPanel());
@@ -39,6 +33,13 @@ module api.app {
                 this.currentKeyBindings = api.ui.Action.getKeyBindings(nextActions);
                 api.ui.KeyBindings.get().bindKeys(this.currentKeyBindings);
             });
+        }
+
+        addBrowsePanel(browsePanel: api.app.browse.BrowsePanel<M>) {
+            super.addBrowsePanel(browsePanel);
+
+            this.currentKeyBindings = api.ui.Action.getKeyBindings(this.resolveActions(browsePanel));
+            this.activateCurrentKeyBindings();
         }
 
         activateCurrentKeyBindings() {

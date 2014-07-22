@@ -1,6 +1,6 @@
 module app.view {
 
-    export class EditContentAction extends api.ui.Action {
+    export class EditAction extends api.ui.Action {
 
         constructor(panel: api.app.view.ItemViewPanel<api.content.ContentSummary>) {
             super("Edit");
@@ -10,7 +10,7 @@ module app.view {
         }
     }
 
-    export class DeleteContentAction extends api.ui.Action {
+    export class DeleteAction extends api.ui.Action {
 
         constructor(itemViewPanel: api.app.view.ItemViewPanel<api.content.ContentSummary>) {
             super("Delete", "mod+del");
@@ -42,13 +42,13 @@ module app.view {
 
     }
 
-    export class CloseContentAction extends api.ui.Action {
+    export class CloseAction extends api.ui.Action {
 
-        constructor(panel: api.ui.Panel, checkCanRemovePanel: boolean = true) {
+        constructor(itemViewPanel: api.app.view.ItemViewPanel<api.content.ContentSummary>, checkCanRemovePanel: boolean = true) {
             super("Close", "mod+f4");
 
             this.onExecuted(() => {
-                new app.browse.CloseContentEvent(panel, checkCanRemovePanel).fire();
+                itemViewPanel.close(checkCanRemovePanel);
             });
         }
     }

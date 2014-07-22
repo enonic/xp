@@ -1,4 +1,4 @@
-declare var Ext:Ext_Packages;
+declare var Ext: Ext_Packages;
 declare var Admin;
 declare var CONFIG;
 
@@ -8,9 +8,9 @@ module components {
 }
 
 function startApplication() {
-    var application:api.app.Application = api.app.Application.getApplication();
+    var application: api.app.Application = api.app.Application.getApplication();
     var appBar = new api.app.AppBar(application);
-    var appPanel = new app.TemplateAppPanel(appBar);
+    var appPanel = new app.TemplateAppPanel(appBar, application.getPath());
 
     api.dom.Body.get().appendChild(appBar);
     api.dom.Body.get().appendChild(appPanel);
@@ -25,10 +25,10 @@ function startApplication() {
 
     application.setLoaded(true);
 
-    window.onmessage = (e:MessageEvent) => {
-        if( e.data.appLauncherEvent ) {
-            var eventType:api.app.AppLauncherEventType = api.app.AppLauncherEventType[<string>e.data.appLauncherEvent];
-            if( eventType ==  api.app.AppLauncherEventType.Show ) {
+    window.onmessage = (e: MessageEvent) => {
+        if (e.data.appLauncherEvent) {
+            var eventType: api.app.AppLauncherEventType = api.app.AppLauncherEventType[<string>e.data.appLauncherEvent];
+            if (eventType == api.app.AppLauncherEventType.Show) {
                 appPanel.activateCurrentKeyBindings();
             }
         }

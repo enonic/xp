@@ -11,7 +11,5 @@ module api.app.view {
         getView(): ItemViewPanel<M> {
             return this.view;
         }
-
-
     }
 }

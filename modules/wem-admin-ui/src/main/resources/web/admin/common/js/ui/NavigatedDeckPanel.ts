@@ -22,9 +22,9 @@ module api.ui {
 
         addNavigablePanel(item: NavigationItem, panel: Panel, select?: boolean) {
             this.navigator.addNavigationItem(item);
-            var index = super.addPanel(panel);
+            var index = this.addPanel(panel);
             if (select) {
-                this.selectPanel(item);
+                this.selectPanelByIndex(index);
             }
             return index;
         }
@@ -39,12 +39,13 @@ module api.ui {
         }
 
         removeNavigablePanel(panel: Panel, checkCanRemovePanel: boolean = true): number {
-            var removedPanelIndex = super.removePanel(panel, checkCanRemovePanel);
-            if (removedPanelIndex > -1) {
-                var navigationItem: api.ui.NavigationItem = this.navigator.getNavigationItem(removedPanelIndex);
+            var index = this.getPanelIndex(panel);
+            if (index > -1) {
+                var navigationItem: api.ui.NavigationItem = this.navigator.getNavigationItem(index);
                 this.navigator.removeNavigationItem(navigationItem);
+                this.removePanel(panel, checkCanRemovePanel);
             }
-            return removedPanelIndex;
+            return index;
         }
     }
 }

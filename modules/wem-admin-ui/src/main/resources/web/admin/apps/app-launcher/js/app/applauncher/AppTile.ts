@@ -4,11 +4,11 @@ module app.launcher {
         private app: api.app.Application;
         private countContainer: api.dom.DivEl;
 
-        constructor(application: api.app.Application, index:number) {
+        constructor(application: api.app.Application, index: number) {
             super('app-tile');
-            this.getEl().setAttribute("tabindex", (index+1)+"");
+            this.getEl().setAttribute("tabindex", (index + 1) + "");
             this.app = application;
-            if (this.app.useFullSizeIcon()) {
+            if (this.app.isFullSizeIcon()) {
                 this.addClass("fullsize");
             }
 
@@ -17,7 +17,7 @@ module app.launcher {
 
             var imgContainer = new api.dom.DivEl('icon-container');
 
-            if (this.app.useFullSizeIcon()) {
+            if (this.app.isFullSizeIcon()) {
                 var img = new api.dom.ImgEl(application.getIconUrl());
                 imgContainer.appendChild(img);
             } else {

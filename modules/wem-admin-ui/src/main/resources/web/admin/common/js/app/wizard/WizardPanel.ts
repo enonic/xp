@@ -349,19 +349,12 @@ module api.app.wizard {
         }
 
         close(checkCanClose: boolean = false) {
-
-            if (checkCanClose) {
-                if (this.canClose()) {
-                    this.closing();
-                }
-            }
-            else {
-                this.closing();
+            if (!checkCanClose || this.canClose()) {
+                this.notifyClosed();
             }
         }
 
         canClose(): boolean {
-
             if (this.hasUnsavedChanges()) {
                 this.askUserForSaveChangesBeforeClosing();
                 return false;
@@ -369,10 +362,6 @@ module api.app.wizard {
             else {
                 return true;
             }
-        }
-
-        closing() {
-            this.notifyClosed();
         }
 
         onClosed(listener: (event: WizardClosedEvent)=>void) {
@@ -418,7 +407,7 @@ module api.app.wizard {
 
         private notifyClosed() {
             this.closedListeners.forEach((listener: (event: WizardClosedEvent)=>void) => {
-                listener.call(this, new WizardClosedEvent(this));
+                listener(new WizardClosedEvent(this));
             });
         }
     }

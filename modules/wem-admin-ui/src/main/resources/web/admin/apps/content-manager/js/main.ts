@@ -10,10 +10,10 @@ module components {
 }
 
 function startApplication() {
-    var application:api.app.Application = api.app.Application.getApplication();
+    var application: api.app.Application = api.app.Application.getApplication();
 
     var appBar = new api.app.AppBar(application);
-    var appPanel = new app.ContentAppPanel(appBar);
+    var appPanel = new app.ContentAppPanel(appBar, application.getPath());
 
     api.dom.Body.get().appendChild(appBar);
     api.dom.Body.get().appendChild(appPanel);
@@ -54,33 +54,5 @@ function startApplication() {
                 appPanel.activateCurrentKeyBindings();
             }
         }
-    }
-}
-
-function route(path: api.rest.Path) {
-    var action = path.getElement(0);
-
-    switch (action) {
-    case 'edit':
-        var id = path.getElement(1);
-        if (id) {
-            var getContentByIdPromise = new api.content.GetContentByIdRequest(new api.content.ContentId(id)).sendAndParse().
-                done((content: api.content.Content) => {
-                    new app.browse.EditContentEvent([content]).fire();
-                });
-        }
-        break;
-    case 'view' :
-        var id = path.getElement(1);
-        if (id) {
-            var getContentByIdPromise = new api.content.GetContentByIdRequest(new api.content.ContentId(id)).sendAndParse().
-                done((content: api.content.Content) => {
-                    new app.browse.ViewContentEvent([content]).fire();
-                });
-        }
-        break;
-    default:
-        new api.app.ShowAppBrowsePanelEvent().fire();
-        break;
     }
 }

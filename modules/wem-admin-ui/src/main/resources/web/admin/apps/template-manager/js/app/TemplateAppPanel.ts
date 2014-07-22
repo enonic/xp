@@ -2,17 +2,38 @@ module app {
 
     export class TemplateAppPanel extends api.app.BrowseAndWizardBasedAppPanel<app.browse.TemplateBrowseItem> {
 
-        constructor(appBar: api.app.AppBar) {
-
-            var browsePanel = new app.browse.TemplateBrowsePanel();
+        constructor(appBar: api.app.AppBar, path?: api.rest.Path) {
 
             super({
-                appBar: appBar,
-                browsePanel: browsePanel
+                appBar: appBar
             });
 
             this.handleGlobalEvents();
 
+            this.route(path);
+
+        }
+
+        private route(path: api.rest.Path) {
+            var action = path.getElement(0);
+
+            switch (action) {
+            case 'edit':
+                var id = path.getElement(1);
+                if (id) {
+                    //TODO
+                }
+                break;
+            case 'view' :
+                var id = path.getElement(1);
+                if (id) {
+                    //TODO
+                }
+                break;
+            default:
+                new api.app.ShowBrowsePanelEvent().fire();
+                break;
+            }
         }
 
         private handleGlobalEvents() {
@@ -45,35 +66,58 @@ module app {
                 var template: app.browse.TemplateSummary = event.getTemplate();
 
                 var exportTemplate = new api.content.site.template.ExportSiteTemplateRequest(template.getSiteTemplateKey());
-                var templateExportUrl = exportTemplate.getRequestPath().toString() + '?siteTemplateKey=' + template.getSiteTemplateKey().toString();
+                var templateExportUrl = exportTemplate.getRequestPath().toString() + '?siteTemplateKey=' +
+                                        template.getSiteTemplateKey().toString();
 
                 window.location.href = templateExportUrl;
             });
 
             app.browse.event.NewTemplateEvent.on((event: app.browse.event.NewTemplateEvent) => {
-                var tabId = api.app.AppBarTabId.forNew('new-site-template-wizard');
-                var tabMenuItem = new api.app.AppBarTabMenuItem("[New Site Template]", tabId);
-                var wizard = new app.wizard.SiteTemplateWizardPanel(tabId);
-                this.addWizardPanel(tabMenuItem, wizard);
+                this.handleNew(event);
             });
 
             app.browse.event.EditTemplateEvent.on((event: app.browse.event.EditTemplateEvent) => {
-                event.getTemplates().forEach((template: app.browse.TemplateSummary) => {
+                this.handleEdit(event);
+            });
 
-                    if (!template.isSiteTemplate()) {
-                        return;
-                    }
-                    new api.content.site.template.GetSiteTemplateRequest(template.getSiteTemplateKey()).sendAndParse().
-                        done((siteTemplate: api.content.site.template.SiteTemplate)=> {
+            api.app.ShowBrowsePanelEvent.on((event: api.app.ShowBrowsePanelEvent) => {
+                this.handleBrowse(event);
+            })
+        }
 
-                            var tabId = api.app.AppBarTabId.forEdit(template.getId());
-                            var tabMenuItem = new api.app.AppBarTabMenuItem("Edit Site Template", tabId);
-                            var wizard = new app.wizard.SiteTemplateWizardPanel(tabId, siteTemplate);
-                            this.addWizardPanel(tabMenuItem, wizard);
-                        });
+        private handleBrowse(event: api.app.ShowBrowsePanelEvent) {
+            var browsePanel: api.app.browse.BrowsePanel<app.browse.TemplateBrowseItem> = this.getBrowsePanel();
+            if (!browsePanel) {
+                this.addBrowsePanel(new app.browse.TemplateBrowsePanel());
+            } else {
+                this.showPanel(browsePanel);
+            }
+        }
 
-                });
+        private handleNew(event: app.browse.event.NewTemplateEvent) {
+            var tabId = api.app.AppBarTabId.forNew('new-site-template-wizard');
+            var tabMenuItem = new api.app.AppBarTabMenuItem("[New Site Template]", tabId);
+            var wizard = new app.wizard.SiteTemplateWizardPanel(tabId);
+            this.addWizardPanel(tabMenuItem, wizard);
+        }
+
+        private handleEdit(event) {
+            event.getTemplates().forEach((template: app.browse.TemplateSummary) => {
+
+                if (!template.isSiteTemplate()) {
+                    return;
+                }
+                new api.content.site.template.GetSiteTemplateRequest(template.getSiteTemplateKey()).sendAndParse().
+                    done((siteTemplate: api.content.site.template.SiteTemplate)=> {
+
+                        var tabId = api.app.AppBarTabId.forEdit(template.getId());
+                        var tabMenuItem = new api.app.AppBarTabMenuItem("Edit Site Template", tabId);
+                        var wizard = new app.wizard.SiteTemplateWizardPanel(tabId, siteTemplate);
+                        this.addWizardPanel(tabMenuItem, wizard);
+                    });
+
             });
         }
+
     }
 }

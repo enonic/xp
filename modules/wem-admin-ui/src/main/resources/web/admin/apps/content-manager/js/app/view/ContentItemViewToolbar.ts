@@ -4,8 +4,6 @@ module app.view {
         editAction: api.ui.Action;
         deleteAction: api.ui.Action;
         closeAction: api.ui.Action;
-        showPreviewAction: api.ui.Action;
-        showDetailsAction: api.ui.Action;
     }
 
     export class ContentItemViewToolbar extends api.ui.toolbar.Toolbar {

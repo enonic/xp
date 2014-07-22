@@ -1,16 +1,16 @@
 module api.app {
 
     export class Application {
-        private id:string;
-        private name:string;
-        private shortName:string;
-        private description:string;
-        private iconUrl:string;
-        private fullSizeIcon:boolean;
-        private openTabs:number;
-        private appFrame:api.dom.IFrameEl;
-        private loaded:boolean;
-
+        private id: string;
+        private name: string;
+        private shortName: string;
+        private description: string;
+        private iconUrl: string;
+        private fullSizeIcon: boolean;
+        private openTabs: number;
+        private appFrame: api.dom.IFrameEl;
+        private loaded: boolean;
+        private path: api.rest.Path;
         private loadedListeners: {(): void}[] = [];
 
         constructor(id: string, name: string, shortName: string, icon: string, description?: string, appFrame: api.dom.IFrameEl = null,
@@ -32,15 +32,15 @@ module api.app {
             return window.frameElement ? new api.dom.ElementHelper(<HTMLElement>window.frameElement).getAttribute("data-wem-app-id") : null;
         }
 
-        isLoaded():boolean {
+        isLoaded(): boolean {
             return this.loaded && !!this.appFrame && !!this.appFrame.getParentElement();
         }
 
-        getId():string {
+        getId(): string {
             return this.id;
         }
 
-        getName():string {
+        getName(): string {
             return this.name;
         }
 
@@ -48,23 +48,23 @@ module api.app {
             return this.shortName;
         }
 
-        getDescription():string {
+        getDescription(): string {
             return this.description;
         }
 
-        getIconUrl():string {
+        getIconUrl(): string {
             return this.iconUrl;
         }
 
-        getAppUrl():string {
+        getAppUrl(): string {
             return api.util.getUri('admin?app=' + this.id);
         }
 
-        getOpenTabs():number {
+        getOpenTabs(): number {
             return this.openTabs;
         }
 
-        getAppFrame():api.dom.IFrameEl {
+        getAppFrame(): api.dom.IFrameEl {
             if (!this.appFrame) {
                 this.appFrame = new api.dom.IFrameEl();
                 this.appFrame.getEl().setHeight('100%').setWidth('100%').getHTMLElement().style.border = '0';
@@ -78,7 +78,7 @@ module api.app {
             return this.getAppFrame().getHTMLElement()["contentWindow"];
         }
 
-        useFullSizeIcon():boolean {
+        isFullSizeIcon(): boolean {
             return this.fullSizeIcon;
         }
 
@@ -88,17 +88,29 @@ module api.app {
             }
         }
 
-        setOpenTabs(value:number):void {
+        setOpenTabs(value: number): Application {
             this.openTabs = value;
+            return this;
         }
 
-        setLoaded(value:boolean) {
+        setLoaded(value: boolean): Application {
             this.loaded = value;
             this.notifyLoaded();
+            return this;
         }
 
-        setFullSizeIcon(value:boolean) {
+        setFullSizeIcon(value: boolean): Application {
             this.fullSizeIcon = value;
+            return this;
+        }
+
+        setPath(path: api.rest.Path): Application {
+            this.path = path;
+            return this;
+        }
+
+        getPath(): api.rest.Path {
+            return this.path;
         }
 
         onLoaded(listener: () => void) {

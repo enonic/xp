@@ -18,7 +18,7 @@ module api.app {
             super('Browse');
 
             this.onExecuted(() => {
-                new ShowAppBrowsePanelEvent().fire();
+                new ShowBrowsePanelEvent().fire();
             });
         }
     }

@@ -1,10 +1,5 @@
 module app.view {
 
-    export interface ContentItemViewPanelParams {
-        showPreviewAction:api.ui.Action;
-        showDetailsAction:api.ui.Action;
-    }
-
     export class ContentItemViewPanel extends api.app.view.ItemViewPanel<api.content.ContentSummary> {
 
         private statisticsPanel: api.app.view.ItemStatisticsPanel<api.content.ContentSummary>;
@@ -25,20 +20,18 @@ module app.view {
 
         private closeAction: api.ui.Action;
 
-        constructor(params: ContentItemViewPanelParams) {
+        constructor() {
 
             this.deckPanel = new api.ui.DeckPanel();
 
-            this.editAction = new EditContentAction(this);
-            this.deleteAction = new DeleteContentAction(this);
-            this.closeAction = new CloseContentAction(this, true);
+            this.editAction = new EditAction(this);
+            this.deleteAction = new DeleteAction(this);
+            this.closeAction = new CloseAction(this, true);
 
             var toolbar = new ContentItemViewToolbar({
                 editAction: this.editAction,
                 deleteAction: this.deleteAction,
-                closeAction: this.closeAction,
-                showPreviewAction: params.showPreviewAction,
-                showDetailsAction: params.showDetailsAction
+                closeAction: this.closeAction
             });
 
             super(toolbar, this.deckPanel);
@@ -58,6 +51,12 @@ module app.view {
             app.browse.ShowDetailsEvent.on((event) => {
                 this.showPreview(false);
             });
+
+            this.onShown((event: api.dom.ElementShownEvent) => {
+                if (this.getItem()) {
+                    app.Router.setHash("view/" + this.getItem().getModel().getId());
+                }
+            })
         }
 
         setItem(item: api.app.view.ViewItem<api.content.ContentSummary>) {
