@@ -10,6 +10,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -53,11 +54,11 @@ public final class BlobResource
 
     @GET
     @Path("{id}")
-    public Response getUploadedContent( @PathParam("id") final String id )
+    public Response getUploadedContent( @PathParam("id") final String id, @QueryParam("mimeType") String mimeType )
         throws Exception
     {
         final Blob blob = blobService.get( new BlobKey( id ) );
-        return Response.ok( blob.getStream(), "image/png" ).build();
+        return Response.ok( blob.getStream(), mimeType ).build();
     }
 
     private void upload( final List<UploadItem> items, final FileItem file )
