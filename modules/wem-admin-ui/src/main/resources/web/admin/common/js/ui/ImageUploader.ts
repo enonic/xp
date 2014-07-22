@@ -154,7 +154,7 @@ module api.ui {
             this.value = value;
             var src: string;
             if (value && (value.indexOf('/') == -1)) {
-                src = api.util.getAdminUri(value ? 'rest/blob/' + value : 'common/images/x-user-photo.png');
+                src = api.util.getRestUri(value ? 'blob/' + value + '?mimeType=image/png' : 'common/images/x-user-photo.png');
             } else {
                 src = value;
             }
