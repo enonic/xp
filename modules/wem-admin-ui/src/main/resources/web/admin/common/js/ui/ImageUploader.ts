@@ -263,7 +263,7 @@ module api.ui {
                         if (responseObj.items && responseObj.items.length > 0) {
                             var uploadedFile = responseObj.items[0];
 
-                            this.setValue(file.id);
+                            this.setValue(uploadedFile.id);
 
                             var uploadItem: UploadItem = new UploadItemBuilder().
                                 setBlobKey(new api.blob.BlobKey(uploadedFile.id)).
