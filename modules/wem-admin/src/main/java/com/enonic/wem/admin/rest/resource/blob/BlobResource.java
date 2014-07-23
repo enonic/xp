@@ -11,6 +11,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -23,6 +24,8 @@ import com.enonic.wem.admin.rest.multipart.MultipartForm;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.blob.BlobService;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 @Path("blob")
 @Produces(MediaType.APPLICATION_JSON)
@@ -57,6 +60,10 @@ public final class BlobResource
     public Response getUploadedContent( @PathParam("id") final String id, @QueryParam("mimeType") String mimeType )
         throws Exception
     {
+        if ( isNullOrEmpty( mimeType ) )
+        {
+            throw new WebApplicationException( Response.Status.BAD_REQUEST );
+        }
         final Blob blob = blobService.get( new BlobKey( id ) );
         return Response.ok( blob.getStream(), mimeType ).build();
     }
