@@ -110,7 +110,8 @@ module app.wizard {
             this.formIcon.onUploadFinished((event: UploadFinishedEvent) => {
 
                 this.iconUploadItem = event.getUploadItem();
-                this.formIcon.setSrc(api.util.getRestUri('blob/' + this.iconUploadItem.getBlobKey()));
+                this.formIcon.setSrc(api.util.getRestUri('blob/' + this.iconUploadItem.getBlobKey() + '?' +
+                                                         event.getUploadItem().getMimeType()));
             });
 
             this.contentWizardActions = new app.wizard.action.ContentWizardActions(this);

@@ -41,7 +41,8 @@ module app.wizard {
                 this.relationshipTypeIcon = new api.icon.IconBuilder().
                     setBlobKey(event.getUploadItem().getBlobKey()).setMimeType(event.getUploadItem().getMimeType()).build();
 
-                this.formIcon.setSrc(api.util.getRestUri('blob/' + this.relationshipTypeIcon.getBlobKey()));
+                this.formIcon.setSrc(api.util.getRestUri('blob/' + this.relationshipTypeIcon.getBlobKey() + '?' +
+                                                         event.getUploadItem().getMimeType()));
             });
 
             var actions = new RelationshipTypeWizardActions(this);

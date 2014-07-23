@@ -26,7 +26,8 @@ module app.wizard {
             this.formIcon.onUploadFinished((event: api.app.wizard.UploadFinishedEvent) => {
 
                 this.iconUploadId = event.getUploadItem().getName();
-                this.formIcon.setSrc(api.util.getRestUri('upload/' + event.getUploadItem().getName()));
+                this.formIcon.setSrc(api.util.getRestUri('upload/' + event.getUploadItem().getName() + '?' +
+                                                         event.getUploadItem().getMimeType()));
             });
 
             var mainToolbar = new SiteTemplateWizardToolbar({
