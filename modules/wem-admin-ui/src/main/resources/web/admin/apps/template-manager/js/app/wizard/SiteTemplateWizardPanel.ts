@@ -100,7 +100,7 @@ module app.wizard {
                 //TODO
 
             }
-            return undefined;
+            return deferred.promise
         }
     }
 }
