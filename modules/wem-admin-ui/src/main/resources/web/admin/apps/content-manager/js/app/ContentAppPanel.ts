@@ -4,17 +4,58 @@ module app {
 
         private mask: api.ui.LoadMask;
 
-        constructor(appBar: api.app.AppBar) {
-
-            var browsePanel = new app.browse.ContentBrowsePanel();
+        constructor(appBar: api.app.AppBar, path?: api.rest.Path) {
 
             super({
-                appBar: appBar,
-                browsePanel: browsePanel
+                appBar: appBar
             });
 
             this.mask = new api.ui.LoadMask(this);
 
+            this.handleGlobalEvents();
+
+            this.route(path);
+        }
+
+        addWizardPanel(tabMenuItem: api.app.AppBarTabMenuItem, wizardPanel: api.app.wizard.WizardPanel<api.content.Content>) {
+            super.addWizardPanel(tabMenuItem, wizardPanel);
+
+            wizardPanel.getHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {
+                if (event.getPropertyName() == "displayName") {
+                    tabMenuItem.setLabel(<string>event.getNewValue());
+                }
+            });
+        }
+
+        private route(path: api.rest.Path) {
+            var action = path.getElement(0);
+
+            switch (action) {
+            case 'edit':
+                var id = path.getElement(1);
+                if (id) {
+                    new api.content.GetContentByIdRequest(new api.content.ContentId(id)).sendAndParse().
+                        done((content: api.content.Content) => {
+                            new app.browse.EditContentEvent([content]).fire();
+                        });
+                }
+                break;
+            case 'view' :
+                var id = path.getElement(1);
+                if (id) {
+                    new api.content.GetContentByIdRequest(new api.content.ContentId(id)).sendAndParse().
+                        done((content: api.content.Content) => {
+                            new app.browse.ViewContentEvent([content]).fire();
+                        });
+                }
+                break;
+            default:
+                new api.app.ShowBrowsePanelEvent().fire();
+                break;
+            }
+        }
+
+        private handleGlobalEvents() {
             app.create.NewContentEvent.on((event) => {
                 this.handleNew(event);
             });
@@ -27,24 +68,19 @@ module app {
                 this.handleEdit(event);
             });
 
-            api.app.ShowAppBrowsePanelEvent.on((event) => {
-                this.showHomePanel();
-                this.getAppBarTabMenu().deselectNavigationItem();
-            });
-
-            app.browse.CloseContentEvent.on((event) => {
-                this.removeNavigablePanel(event.getPanel(), event.isCheckCanRemovePanel());
+            api.app.ShowBrowsePanelEvent.on((event) => {
+                this.handleBrowse(event);
             });
         }
 
-        addWizardPanel(tabMenuItem: api.app.AppBarTabMenuItem, wizardPanel: api.app.wizard.WizardPanel<api.content.Content>) {
-            super.addWizardPanel(tabMenuItem, wizardPanel);
-
-            wizardPanel.getHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {
-                if (event.getPropertyName() == "displayName") {
-                    tabMenuItem.setLabel(<string>event.getNewValue());
-                }
-            });
+        private handleBrowse(event: api.app.ShowBrowsePanelEvent) {
+            this.getAppBarTabMenu().deselectNavigationItem();
+            var browsePanel: api.app.browse.BrowsePanel<api.content.ContentSummary> = this.getBrowsePanel();
+            if (!browsePanel) {
+                this.addBrowsePanel(new app.browse.ContentBrowsePanel());
+            } else {
+                this.showPanel(browsePanel);
+            }
         }
 
         private handleNew(newContentEvent: app.create.NewContentEvent) {
@@ -95,10 +131,7 @@ module app {
                 } else {
                     var tabId = api.app.AppBarTabId.forView(content.getId());
                     tabMenuItem = new api.app.AppBarTabMenuItem(content.getDisplayName(), tabId);
-                    var contentItemViewPanel = new app.view.ContentItemViewPanel({
-                        showPreviewAction: app.browse.ContentBrowseActions.get().SHOW_PREVIEW,
-                        showDetailsAction: app.browse.ContentBrowseActions.get().SHOW_DETAILS
-                    });
+                    var contentItemViewPanel = new app.view.ContentItemViewPanel();
 
                     var contentItem = new api.app.view.ViewItem(content)
                         .setDisplayName(content.getDisplayName())

@@ -12,20 +12,20 @@ module api.app {
         }
     }
 
-    export class ShowAppBrowsePanelAction extends api.ui.Action {
+    export class ShowBrowsePanelAction extends api.ui.Action {
 
         constructor() {
             super('Browse');
 
             this.onExecuted(() => {
-                new ShowAppBrowsePanelEvent().fire();
+                new ShowBrowsePanelEvent().fire();
             });
         }
     }
 
     export class AppBarActions {
 
-        public static SHOW_APP_BROWSE_PANEL: api.ui.Action = new ShowAppBrowsePanelAction();
+        public static SHOW_BROWSE_PANEL: api.ui.Action = new ShowBrowsePanelAction();
     }
 
 }

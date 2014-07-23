@@ -30,7 +30,7 @@ module api.app {
             this.launcherButton = new LauncherButton(this.showAppLauncherAction);
             this.appendChild(this.launcherButton);
 
-            this.homeButton = new HomeButton(this.application.getName(), AppBarActions.SHOW_APP_BROWSE_PANEL);
+            this.homeButton = new HomeButton(this.application.getName(), AppBarActions.SHOW_BROWSE_PANEL);
             this.appendChild(this.homeButton);
 
             this.userButton = new UserButton();

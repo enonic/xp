@@ -2,25 +2,53 @@ module app {
 
     export class ModuleAppPanel extends api.app.BrowseAndWizardBasedAppPanel<api.module.ModuleSummary> {
 
-        constructor(appBar:api.app.AppBar) {
-            var browsePanel = new app.browse.ModuleBrowsePanel();
+        constructor(appBar: api.app.AppBar, path?: api.rest.Path) {
 
             super({
-                appBar: appBar,
-                browsePanel: browsePanel
+                appBar: appBar
             });
 
             this.handleGlobalEvents();
+
+            this.route(path)
+        }
+
+        private route(path: api.rest.Path) {
+            var action = path.getElement(0);
+
+            switch (action) {
+            case 'edit':
+                var id = path.getElement(1);
+                if (id) {
+                    //TODO
+                }
+                break;
+            case 'view' :
+                var id = path.getElement(1);
+                if (id) {
+                    //TODO
+                }
+                break;
+            default:
+                new api.app.ShowBrowsePanelEvent().fire();
+                break;
+            }
         }
 
         private handleGlobalEvents() {
 
-            api.app.ShowAppBrowsePanelEvent.on((event) => {
-                this.showHomePanel();
-                this.getAppBarTabMenu().deselectNavigationItem();
+            api.app.ShowBrowsePanelEvent.on((event) => {
+                this.handleBrowse(event);
             });
-
         }
 
+        private handleBrowse(event: api.app.ShowBrowsePanelEvent) {
+            var browsePanel: api.app.browse.BrowsePanel<api.module.ModuleSummary> = this.getBrowsePanel();
+            if (!browsePanel) {
+                this.addBrowsePanel(new app.browse.ModuleBrowsePanel());
+            } else {
+                this.showPanel(browsePanel);
+            }
+        }
     }
 }

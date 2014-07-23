@@ -27,19 +27,15 @@ module api.app.view {
         }
 
         close(checkCanClose: boolean = false) {
-            if (checkCanClose && !this.canClose()) {
-                return;
+            if (!checkCanClose || this.canClose()) {
+                this.notifyClosed();
             }
-            this.closing();
         }
 
         canClose(): boolean {
             return true;
         }
 
-        closing() {
-            this.notifyClosedListeners();
-        }
 
         onClosed(listener: (event: ItemViewClosedEvent<M>)=>void) {
             this.closedListeners.push(listener);
@@ -51,7 +47,7 @@ module api.app.view {
             })
         }
 
-        private notifyClosedListeners() {
+        private notifyClosed() {
             this.closedListeners.forEach((listener: (event: ItemViewClosedEvent<M>)=>void) => {
                 listener.call(this, new ItemViewClosedEvent(this));
             });
