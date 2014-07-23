@@ -74,6 +74,7 @@ module app {
         }
 
         private handleBrowse(event: api.app.ShowBrowsePanelEvent) {
+            this.getAppBarTabMenu().deselectNavigationItem();
             var browsePanel: api.app.browse.BrowsePanel<api.content.ContentSummary> = this.getBrowsePanel();
             if (!browsePanel) {
                 this.addBrowsePanel(new app.browse.ContentBrowsePanel());
