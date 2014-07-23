@@ -185,7 +185,6 @@ module api.ui.tab {
         deselectNavigationItem() {
             var selectedTab = this.getSelectedNavigationItem();
             this.selectedTab = -1;
-            this.setButtonLabel("[Select]");
             this.updateActiveTab(this.selectedTab);
 
             this.notifyTabDeselectedListeners(selectedTab);
