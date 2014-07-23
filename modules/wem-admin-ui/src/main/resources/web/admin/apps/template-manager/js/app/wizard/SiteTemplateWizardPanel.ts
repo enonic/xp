@@ -38,14 +38,11 @@ module app.wizard {
                 closeAction: actions.getCloseAction()
             });
 
-            var stepToolbar = new api.ui.toolbar.Toolbar();
-            stepToolbar.addAction(actions.getSaveAction());
             super({
                 tabId: tabId,
                 persistedItem: siteTemplate,
                 formIcon: this.formIcon,
                 mainToolbar: mainToolbar,
-                stepToolbar: stepToolbar,
                 header: this.wizardHeader,
                 actions: actions,
                 steps: this.createSteps()

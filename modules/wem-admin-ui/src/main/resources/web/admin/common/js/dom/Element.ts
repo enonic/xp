@@ -396,7 +396,7 @@ module api.dom {
             wrapperElement.appendChild(this);
             // add wrapper to parent in the same position of the current element
             parent.el.appendChild(wrapperElement.getEl().getHTMLElement());
-            parent.insert(wrapperElement, this, childPos);
+            parent.insert(this, wrapperElement, childPos);
         }
 
         private insert(child: Element, parent: Element, index: number) {
