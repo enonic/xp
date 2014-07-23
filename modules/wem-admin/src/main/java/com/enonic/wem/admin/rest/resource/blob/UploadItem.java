@@ -12,14 +12,11 @@ final class UploadItem
 
     private final String mimeType;
 
-    private final long uploadTime;
-
     public UploadItem( final Builder builder )
     {
         this.name = builder.name;
         this.size = builder.size;
         this.mimeType = builder.mimeType;
-        this.uploadTime = builder.uploadTime;
         this.blobKey = builder.blobKey;
     }
 
@@ -43,11 +40,6 @@ final class UploadItem
         return this.mimeType;
     }
 
-    public long getUploadTime()
-    {
-        return this.uploadTime;
-    }
-
     public static Builder newUploadItem()
     {
         return new Builder();
@@ -60,8 +52,6 @@ final class UploadItem
         private long size;
 
         private String mimeType;
-
-        private long uploadTime;
 
         private BlobKey blobKey;
 
@@ -80,12 +70,6 @@ final class UploadItem
         public Builder mimeType( final String mimeType )
         {
             this.mimeType = mimeType;
-            return this;
-        }
-
-        public Builder uploadTime( final long uploadTime )
-        {
-            this.uploadTime = uploadTime;
             return this;
         }
 

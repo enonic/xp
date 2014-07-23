@@ -33,7 +33,6 @@ final class UploadResult
         json.put( "id", item.getBlobKey().toString() );
         json.put( "name", item.getName() );
         json.put( "mimeType", item.getMimeType() );
-        json.put( "uploadTime", item.getUploadTime() );
         json.put( "size", item.getSize() );
         return json;
     }

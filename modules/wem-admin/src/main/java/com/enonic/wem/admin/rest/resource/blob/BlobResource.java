@@ -84,7 +84,6 @@ public final class BlobResource
             mimeType( mediaType ).
             size( blob.getLength() ).
             name( name ).
-            uploadTime( Instant.now().toEpochMilli() ).
             blobKey( blob.getKey() ).
             build();
 
