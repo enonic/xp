@@ -80,14 +80,16 @@ module api.ui.selector.combobox {
         }
 
         getByView(view:SelectedOptionView<T>): SelectedOption<T> {
-            return this.list.filter((selectedOption: SelectedOption<T>) => {
-                return selectedOption.getOptionView() == view;
-            })[0];
+            return this.getById(view.getOption().value);
         }
 
         getByOption(option:api.ui.selector.Option<T>):SelectedOption<T> {
+            return this.getById(option.value);
+        }
+
+        getById(id: string): SelectedOption<T> {
             return this.list.filter((selectedOption: SelectedOption<T>) => {
-                return selectedOption.getOption().value == option.value;
+                return selectedOption.getOption().value == id;
             })[0];
         }
 

@@ -2,6 +2,7 @@ module api.content.inputtype.image {
 
     import ImageUploadedEvent = api.ui.ImageUploadedEvent;
     import ImageUploadStartedEvent = api.ui.ImageUploadStartedEvent;
+    import ImageUploadProgressEvent = api.ui.ImageUploadProgressEvent;
 
     export class ImageSelectorUploadDialog extends api.ui.dialog.ModalDialog {
 
@@ -14,6 +15,8 @@ module api.content.inputtype.image {
         private imageUploadedListeners: {(event: ImageUploadedEvent):void }[] = [];
 
         private imageUploadStartedListeners: { (event: ImageUploadStartedEvent):void }[] = [];
+
+        private imageUploadProgressListeners: {(event: ImageUploadProgressEvent): void}[] = [];
 
         constructor() {
             super({
@@ -80,6 +83,12 @@ module api.content.inputtype.image {
                     });
                     this.notifyUploadStarted(uploadItems);
                 }
+            });
+
+            uploader.bind('UploadProgress', (up, file) => {
+                var uploadItem = new api.ui.UploadItemBuilder().setId(file.id).setName(file.name).setSize(file.size).
+                    setProgress(file.percent).build();
+                this.notifyUploadProgress(uploadItem);
             });
 
             uploader.bind('FileUploaded', (up, file, response) => {
@@ -152,6 +161,19 @@ module api.content.inputtype.image {
         private notifyImageUploaded(uploadItem: api.ui.UploadItem) {
             var event = new ImageUploadedEvent(uploadItem);
             this.imageUploadedListeners.forEach((listener: (event: ImageUploadedEvent)=>void) => listener(event));
+        }
+
+        onUploadProgress(listener: (event: ImageUploadProgressEvent) => void) {
+            this.imageUploadProgressListeners.push(listener);
+        }
+
+        unUploadProgress(listener: (event: ImageUploadProgressEvent) => void) {
+            this.imageUploadProgressListeners = this.imageUploadProgressListeners.filter((current) => (current != listener));
+        }
+
+        private notifyUploadProgress(uploadItem: api.ui.UploadItem) {
+            var event = new ImageUploadProgressEvent(uploadItem);
+            this.imageUploadProgressListeners.forEach((listener: (event: ImageUploadProgressEvent) => void) => listener(event));
         }
     }
 

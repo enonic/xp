@@ -4,20 +4,20 @@ module api.ui.selector.combobox {
 
         private option: api.ui.selector.Option<T>;
 
-        private optionValue: api.dom.DivEl;
+        private optionValueEl: api.dom.DivEl;
 
         private selectedOptionToBeRemovedListeners: {(): void;}[] = [];
 
         constructor(option: api.ui.selector.Option<T>) {
             super("selected-option");
-            this.option = option;
             this.layout();
+            this.setOption(option);
         }
 
         setOption(option: api.ui.selector.Option<T>) {
             this.option = option;
-            if (this.optionValue) {
-                this.optionValue.getEl().setInnerHtml(this.option.displayValue.toString());
+            if (this.optionValueEl) {
+                this.optionValueEl.getEl().setInnerHtml(this.option.displayValue.toString());
             }
         }
 
@@ -27,8 +27,7 @@ module api.ui.selector.combobox {
 
         layout() {
             var removeButtonEl = new api.dom.AEl("remove");
-            var optionValueEl = new api.dom.DivEl('option-value');
-            optionValueEl.getEl().setInnerHtml(this.option.displayValue.toString());
+            this.optionValueEl = new api.dom.DivEl('option-value');
 
             removeButtonEl.onClicked((event: Event) => {
                 this.notifySelectedOptionRemoveRequested();
@@ -39,7 +38,7 @@ module api.ui.selector.combobox {
             });
 
             this.appendChild(removeButtonEl);
-            this.appendChild(optionValueEl);
+            this.appendChild(this.optionValueEl);
         }
 
         notifySelectedOptionRemoveRequested() {

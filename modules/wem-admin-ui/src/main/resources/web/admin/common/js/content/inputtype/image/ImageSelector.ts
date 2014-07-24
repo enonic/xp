@@ -90,6 +90,10 @@ module api.content.inputtype.image {
                     this.comboBox.selectOption(option);
                 });
             });
+            this.uploadDialog.onUploadProgress((event: api.ui.ImageUploadProgressEvent) => {
+                var selectedOption = this.selectedOptionsView.getById(event.getUploadItem().getId());
+                (<SelectedOptionView>selectedOption.getOptionView()).setProgress(event.getUploadItem().getProgress());
+            });
             this.uploadDialog.onImageUploaded((event: api.ui.ImageUploadedEvent) => {
                 this.createImageContent(event.getUploadedItem());
             });

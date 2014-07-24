@@ -88,26 +88,18 @@ module api.content.inputtype.image {
         }
 
         addNewOption(option: Option<ImageSelectorDisplayValue>) {
-            var selecteOption: SelectedOption<ImageSelectorDisplayValue> = this.createSelectedOption(option);
-            this.getSelecteOptions().push(selecteOption);
+            var selectedOption: SelectedOption<ImageSelectorDisplayValue> = this.createSelectedOption(option);
+            this.getSelecteOptions().push(selectedOption);
 
-            var optionView: SelectedOptionView = <SelectedOptionView>selecteOption.getOptionView();
-
-            var loadMask: LoadMask = new LoadMask(optionView);
-            optionView.appendChild(loadMask);
-            optionView.getCheckbox().hide();
-            optionView.getIcon().getEl().setVisibility('hidden');
-            optionView.onShown(() => {
-                this.updateOptionViewLayout(optionView, this.calculateOptionHeight());
-                loadMask.show();
-            });
+            var optionView: SelectedOptionView = <SelectedOptionView>selectedOption.getOptionView();
+            optionView.updateProportions(this.calculateOptionHeight());
 
             optionView.onClicked((event: MouseEvent) => {
                 if (this.dialog.isVisible()) {
                     this.hideImageSelectorDialog();
                     optionView.getCheckbox().giveBlur();
                 } else {
-                    this.showImageSelectorDialog(selecteOption);
+                    this.showImageSelectorDialog(selectedOption);
                     optionView.getCheckbox().giveFocus();
                 }
             });
@@ -122,38 +114,28 @@ module api.content.inputtype.image {
                     break;
                 case 8: // Backspace
                     checkbox.setChecked(false);
-                    this.removeOptionViewAndRefocus(selecteOption);
+                    this.removeOptionViewAndRefocus(selectedOption);
                     event.preventDefault();
                     break;
                 case 46: // Delete
                     checkbox.setChecked(false);
-                    this.removeOptionViewAndRefocus(selecteOption);
+                    this.removeOptionViewAndRefocus(selectedOption);
                     break;
                 case 13: // Enter
-                    this.notifyEditSelectedOptions([selecteOption]);
+                    this.notifyEditSelectedOptions([selectedOption]);
                     break;
                 }
                 event.stopPropagation();
             });
 
-            optionView.getCheckbox().onFocus((event: FocusEvent) => {
-                this.showImageSelectorDialog(selecteOption);
-            });
-
-            optionView.getCheckbox().onBlur((event: FocusEvent) => {
-                this.hideImageSelectorDialog();
-            });
-
-            optionView.getCheckbox().onClicked((event: MouseEvent) => {
-                optionView.getCheckbox().setChecked(!optionView.getCheckbox().isChecked());
-                event.preventDefault();
-            });
+            optionView.getCheckbox().onFocus((event: FocusEvent) => this.showImageSelectorDialog(selectedOption));
+            optionView.getCheckbox().onBlur((event: FocusEvent) => this.hideImageSelectorDialog());
 
             optionView.onChecked((view: SelectedOptionView, checked: boolean) => {
                 if (checked) {
-                    this.selection.push(selecteOption);
+                    this.selection.push(selectedOption);
                 } else {
-                    var index = this.selection.indexOf(selecteOption);
+                    var index = this.selection.indexOf(selectedOption);
                     if (index > -1) {
                         this.selection.splice(index, 1);
                     }
@@ -163,12 +145,8 @@ module api.content.inputtype.image {
             });
 
             optionView.getIcon().onLoaded((event: UIEvent) => {
-                this.updateOptionViewLayout(optionView, this.calculateOptionHeight());
+                optionView.updateProportions(this.calculateOptionHeight());
                 wemjq(this.getHTMLElement()).sortable("refresh");
-
-                loadMask.remove();
-                optionView.getIcon().getEl().setVisibility('visible');
-                optionView.getCheckbox().show();
             });
 
             optionView.insertBeforeEl(this.toolbar);
@@ -228,18 +206,10 @@ module api.content.inputtype.image {
         updateLayout() {
             var optionHeight = this.calculateOptionHeight();
             this.getOptionViews().forEach((optionView: SelectedOptionView) => {
-                this.updateOptionViewLayout(optionView, optionHeight);
+                optionView.updateProportions(optionHeight);
             });
             if (this.dialog.isVisible()) {
                 this.updateDialogLayout(optionHeight);
-            }
-        }
-
-        private updateOptionViewLayout(optionView: SelectedOptionView, optionHeight: number) {
-            optionView.getEl().setHeightPx(optionHeight);
-            var iconHeight = optionView.getIcon().getEl().getHeightWithBorder();
-            if (iconHeight < optionHeight && iconHeight !== 0) {
-                optionView.getIcon().getEl().setMarginTop((optionHeight - iconHeight) / 2 + 'px');
             }
         }
 

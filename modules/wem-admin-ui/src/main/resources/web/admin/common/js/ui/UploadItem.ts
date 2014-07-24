@@ -12,12 +12,15 @@ module api.ui {
 
         private size: number;
 
+        private progress: number;
+
         constructor(builder: UploadItemBuilder) {
             this.id = builder.id;
             this.blobKey = builder.blobKey;
             this.name = builder.name;
             this.mimeType = builder.mimeType;
             this.size = builder.size;
+            this.progress = builder.progress;
         }
 
         getId(): string {
@@ -40,6 +43,10 @@ module api.ui {
             return this.size;
         }
 
+        getProgress(): number {
+            return this.progress;
+        }
+
     }
 
     export class UploadItemBuilder {
@@ -53,6 +60,8 @@ module api.ui {
         mimeType: string;
 
         size: number;
+
+        progress: number;
 
         setId(value: string): UploadItemBuilder {
             this.id = value;
@@ -76,6 +85,11 @@ module api.ui {
 
         setSize(value: number): UploadItemBuilder {
             this.size = value;
+            return this;
+        }
+
+        setProgress(value: number): UploadItemBuilder {
+            this.progress = value;
             return this;
         }
 
