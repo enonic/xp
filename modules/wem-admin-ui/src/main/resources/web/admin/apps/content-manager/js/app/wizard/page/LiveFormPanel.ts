@@ -471,7 +471,6 @@ module app.wizard.page {
                     this.contextWindow.show();
                 }
 
-
                 if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, PageComponentView)) {
                     this.inspectPageComponent(<PageComponentView<PageComponent>>itemView);
                 }
