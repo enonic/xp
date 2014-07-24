@@ -216,7 +216,6 @@ public class ContentTypeResourceTest
     }
 
     @Test
-    @Ignore
     public void test_create_new_content_type()
         throws Exception
     {
@@ -255,13 +254,12 @@ public class ContentTypeResourceTest
     }
 
     @Test
-    @Ignore
     public void test_fail_to_create_new_content_type()
         throws Exception
     {
         Mockito.when( contentTypeService.getByNames( Mockito.any( GetContentTypesParams.class ) ) ).thenReturn( ContentTypes.empty() );
         Mockito.when( contentTypeService.create( Mockito.any( CreateContentTypeParams.class ) ) ).thenThrow(
-            new RuntimeException( "Content type creation failed" ) );
+            new RuntimeException( "name cannot be null" ) );
         String result = request().path( "schema/content/create" ).entity( readFromFile( "create_content_type.json" ),
                                                                           MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
         assertJson( "fail_to_create_new_content_type.json", result );
@@ -293,7 +291,6 @@ public class ContentTypeResourceTest
     }
 
     @Test
-    @Ignore
     public void test_fail_to_update_content_type()
         throws Exception
     {
