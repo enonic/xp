@@ -23,14 +23,8 @@ module api.app {
             return this.browsePanel;
         }
 
-        removePanelByIndex(index: number): api.ui.Panel {
-            var panel = super.removePanelByIndex(index);
-            this.checkBrowsePanelNeedsToBeShown(index, panel);
-            return panel;
-        }
-
-        removePanel(panel: api.ui.Panel): number {
-            var index = super.removePanel(panel);
+        removeNavigablePanel(panel: api.ui.Panel, checkCanRemovePanel: boolean = true): number {
+            var index = super.removeNavigablePanel(panel, checkCanRemovePanel);
             this.checkBrowsePanelNeedsToBeShown(index, panel);
             return index;
         }
