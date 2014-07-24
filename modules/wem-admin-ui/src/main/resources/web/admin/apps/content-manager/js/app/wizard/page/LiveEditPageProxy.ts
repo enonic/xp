@@ -247,10 +247,10 @@ module app.wizard.page {
 
         public listenToPage() {
 
-            ImageOpenUploadDialogEvent.on(() => {
+            ImageOpenUploadDialogEvent.on((openDialogEvent: ImageOpenUploadDialogEvent) => {
                 var uploadDialog = new UploadDialog();
                 uploadDialog.onImageUploaded((event: api.ui.ImageUploadedEvent) => {
-                    new ImageUploadedEvent(event.getUploadedItem()).fire(this.liveEditWindow);
+                    new ImageUploadedEvent(event.getUploadedItem(), openDialogEvent.getTargetImagePlaceholder()).fire(this.liveEditWindow);
                     uploadDialog.close();
                     uploadDialog.remove();
                 });
