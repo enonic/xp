@@ -464,12 +464,13 @@ module app.wizard.page {
 
                 var itemView = event.getItemView();
 
-                if (itemView.isEmpty()) {
+                if (itemView.isEmpty() || api.ObjectHelper.iFrameSafeInstanceOf(itemView, TextComponentView)) {
                     this.contextWindow.hide();
                 }
                 else {
                     this.contextWindow.show();
                 }
+
 
                 if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, PageComponentView)) {
                     this.inspectPageComponent(<PageComponentView<PageComponent>>itemView);
