@@ -472,10 +472,10 @@ module api.ui.treegrid {
         }
 
         private notifyRowSelectionChanged(event:any, rows:number[]): void {
-            var selectedRows:NODE[] = [];
+            var selectedRows:TreeNode<NODE>[] = [];
             if (rows) {
                 rows.forEach((rowIndex) => {
-                    selectedRows.push(this.gridData.getItem(rowIndex).getData());
+                    selectedRows.push(this.gridData.getItem(rowIndex));
                 });
             }
             for (var i in this.rowSelectionChangeListeners) {
@@ -483,13 +483,12 @@ module api.ui.treegrid {
             }
         }
 
-
-        onRowSelectionChanged(listener: (selectedRows:NODE[]) => void) {
+        onRowSelectionChanged(listener: (selectedRows:TreeNode<NODE>[]) => void) {
             this.rowSelectionChangeListeners.push(listener);
             return this;
         }
 
-        unRowSelectionChanged(listener: (selectedRows:NODE[]) => void) {
+        unRowSelectionChanged(listener: (selectedRows:TreeNode<NODE>[]) => void) {
             this.rowSelectionChangeListeners = this.rowSelectionChangeListeners.filter((curr) => {
                 return curr != listener;
             });

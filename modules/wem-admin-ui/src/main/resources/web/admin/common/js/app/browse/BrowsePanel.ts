@@ -82,8 +82,11 @@ module api.app.browse {
                     this.browseItemPanel.setItems(browseItems);
                 });
             }
-            if( this.newTreeGrid ) {
-                // TODO:
+            if(this.newTreeGrid) {
+                this.newTreeGrid.onRowSelectionChanged((nodes: api.ui.treegrid.TreeNode<api.ui.treegrid.TreeItem>[]) => {
+                    var browseItems: api.app.browse.BrowseItem<M>[] = this.treeNodesToBrowseItems(nodes);
+                    this.browseItemPanel.setItems(browseItems);
+                });
             }
 
             this.onRendered((event) => {
@@ -114,6 +117,11 @@ module api.app.browse {
         }
 
         extModelsToBrowseItems(models: Ext_data_Model[]): BrowseItem<M>[] {
+            throw Error("To be implemented by inheritor");
+        }
+
+        // TODO: ContentSummary must be replaced with an ContentSummaryAndCompareStatus after old grid is removed
+        treeNodesToBrowseItems(nodes: api.ui.treegrid.TreeNode<api.ui.treegrid.TreeItem>[]): BrowseItem<M>[] {
             throw Error("To be implemented by inheritor");
         }
 
