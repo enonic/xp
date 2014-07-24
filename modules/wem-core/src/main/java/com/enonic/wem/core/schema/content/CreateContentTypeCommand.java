@@ -35,6 +35,7 @@ final class CreateContentTypeCommand
 
         final ContentType contentType = newContentType().
             name( params.getName() ).
+            description( params.getDescription() ).
             superType( params.getSuperType() ).
             allowChildContent( params.getAllowChildContent() ).
             contentDisplayNameScript( params.getContentDisplayNameScript() ).
