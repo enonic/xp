@@ -1,6 +1,8 @@
 module app.browse {
+    
+    import Action = api.ui.Action;
 
-    export class BaseContentBrowseAction extends api.ui.Action {
+    export class BaseContentBrowseAction extends Action {
 
         constructor(label: string, shortcut?: string) {
             super(label, shortcut);
@@ -108,7 +110,7 @@ module app.browse {
         }
     }
 
-    export class ShowNewGridAction extends api.ui.Action {
+    export class ShowNewGridAction extends Action {
 
         constructor() {
             super("NG", "mod+i");
@@ -119,7 +121,7 @@ module app.browse {
         }
     }
 
-    export class ToggleSearchPanelAction extends api.ui.Action {
+    export class ToggleSearchPanelAction extends Action {
         constructor() {
             super("");
             this.onExecuted(() => {
@@ -132,18 +134,18 @@ module app.browse {
 
     export class ContentBrowseActions {
 
-        public SHOW_NEW_CONTENT_DIALOG_ACTION: api.ui.Action;
-        public OPEN_CONTENT: api.ui.Action;
-        public EDIT_CONTENT: api.ui.Action;
-        public DELETE_CONTENT: api.ui.Action;
-        public DUPLICATE_CONTENT: api.ui.Action;
-        public MOVE_CONTENT: api.ui.Action;
-        public SHOW_PREVIEW: api.ui.Action;
-        public SHOW_DETAILS: api.ui.Action;
-        public SHOW_NEW_CONTENT_GRID: api.ui.Action;
-        public TOGGLE_SEARCH_PANEL: api.ui.Action;
+        public SHOW_NEW_CONTENT_DIALOG_ACTION: Action;
+        public OPEN_CONTENT: Action;
+        public EDIT_CONTENT: Action;
+        public DELETE_CONTENT: Action;
+        public DUPLICATE_CONTENT: Action;
+        public MOVE_CONTENT: Action;
+        public SHOW_PREVIEW: Action;
+        public SHOW_DETAILS: Action;
+        public SHOW_NEW_CONTENT_GRID: Action;
+        public TOGGLE_SEARCH_PANEL: Action;
 
-        private allActions: api.ui.Action[] = [];
+        private allActions: Action[] = [];
 
         private static INSTANCE: ContentBrowseActions;
 
@@ -176,7 +178,7 @@ module app.browse {
             ContentBrowseActions.INSTANCE = this;
         }
 
-        getAllActions(): api.ui.Action[] {
+        getAllActions(): Action[] {
             return this.allActions;
         }
 

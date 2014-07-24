@@ -7,6 +7,7 @@ module app.browse.grid {
     import TreeNode = api.ui.treegrid.TreeNode;
     import TreeGridBuilder = api.ui.treegrid.TreeGridBuilder;
     import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
+    import TreeGridContextMenu = api.ui.treegrid.TreeGridContextMenu;
 
     import ContentSummary = api.content.ContentSummary;
     import ContentSummaryViewer = api.content.ContentSummaryViewer;
@@ -17,6 +18,8 @@ module app.browse.grid {
 
     import ContentBrowseSearchEvent = app.browse.filter.ContentBrowseSearchEvent;
     import ContentBrowseResetEvent = app.browse.filter.ContentBrowseResetEvent;
+
+    import ContentGridPanel2Actions = app.browse.grid.actions.ContentGridPanel2Actions;
 
     import CompareStatus = api.content.CompareStatus;
 
@@ -51,8 +54,14 @@ module app.browse.grid {
                             setMaxWidth(170).
                             setFormatter(DateTimeFormatter.format).
                             build()
-                    ]).prependClasses("content-grid")
+                    ]).setShowContextMenu(new TreeGridContextMenu(new ContentGridPanel2Actions(this))
+                    ).prependClasses("content-grid")
             );
+
+            this.onRowSelectionChanged((selectedRows:TreeNode<ContentSummaryAndCompareStatus>[]) => {
+                var contentSummaries: ContentSummary[] = selectedRows.map((elem) => { return elem.getData().getContentSummary(); });
+                (<ContentGridPanel2Actions>this.getContextMenu().getActions()).updateActionsEnabledState(contentSummaries);
+            });
 
             this.getGrid().subscribeOnDblClick((event, data) => {
                 if (this.isActive()) {

@@ -4,6 +4,8 @@ module api.app.browse {
 
         private model:M;
 
+        private id:string;
+
         private displayName:string;
 
         private path:string;
@@ -12,6 +14,11 @@ module api.app.browse {
 
         constructor(model:M) {
             this.model = model;
+        }
+
+        setId(value:string):api.app.browse.BrowseItem<M> {
+            this.id = value;
+            return this;
         }
 
         setDisplayName(value:string):api.app.browse.BrowseItem<M> {
@@ -31,6 +38,10 @@ module api.app.browse {
 
         getModel():M {
             return this.model;
+        }
+
+        getId():string {
+            return this.id;
         }
 
         getDisplayName():string {

@@ -13,6 +13,9 @@ module api.ui.treegrid {
     import KeyBinding = api.ui.KeyBinding;
     import KeyBindings = api.ui.KeyBindings;
 
+    import TreeGridActions = api.ui.treegrid.actions.TreeGridActions;
+    import TreeGridToolbarActions = api.ui.treegrid.actions.TreeGridToolbarActions;
+
     export class TreeGrid<NODE extends TreeItem> extends api.ui.Panel {
 
         private columns: GridColumn<NODE>[] = [];
@@ -29,11 +32,17 @@ module api.ui.treegrid {
 
         private toolbar: TreeGridToolbar;
 
+        private contextMenu: TreeGridContextMenu;
+
         private canvasElement: api.dom.Element;
 
         private active: boolean;
 
+        private actions: TreeGridToolbarActions;
+
         private loadedListeners: Function[] = [];
+
+        private contextMenuListeners: Function[] = [];
 
         private rowSelectionChangeListeners: Function[] = [];
 
@@ -58,9 +67,27 @@ module api.ui.treegrid {
             // Custom row selection required for valid behaviour
             this.grid.setSelectionModel(new Slick.RowSelectionModel({selectActiveRow: false}));
 
+            this.actions = new TreeGridToolbarActions(this.grid);
+
             this.onClicked(() => {
                 this.grid.focus();
             });
+
+            if (builder.getContextMenu()) {
+                this.contextMenu = builder.getContextMenu();
+                this.grid.subscribeOnContextMenu((event) => {
+                    event.preventDefault();
+                    this.active = false;
+                    var cell = this.grid.getCellFromEvent(event);
+                    this.grid.selectRow(cell.row);
+                    var showContextMenuEvent = new TreeGridShowContextMenuEvent(event.pageX, event.pageY);
+                    this.contextMenuListeners.forEach((listener) => {
+                        listener(showContextMenuEvent);
+                    });
+                    this.contextMenu.showAt(event.pageX, event.pageY);
+                    this.active = true;
+                });
+            }
 
             this.grid.subscribeOnClick((event, data) => {
                 if (this.active) {
@@ -80,6 +107,7 @@ module api.ui.treegrid {
                         this.grid.selectRow(data.row);
                     }
                 }
+                this.contextMenu.hide();
                 event.stopPropagation();
             });
 
@@ -137,10 +165,8 @@ module api.ui.treegrid {
                 }
             }
 
-            var actions = new TreeGridActions(this.grid);
-
             if (builder.isShowToolbar()) {
-                this.toolbar = new TreeGridToolbar(actions);
+                this.toolbar = new TreeGridToolbar(this.actions);
                 this.appendChild(this.toolbar);
                 // make sure it won't left from the cloned grid
                 this.removeClass("no-toolbar");
@@ -180,6 +206,10 @@ module api.ui.treegrid {
 
         getColumns(): GridColumn<TreeNode<NODE>>[] {
             return this.grid.getColumns();
+        }
+
+        getContextMenu(): TreeGridContextMenu {
+            return this.contextMenu;
         }
 
         isActive(): boolean {
@@ -260,6 +290,20 @@ module api.ui.treegrid {
 
         selectAll() {
             this.grid.selectAll();
+        }
+
+        deselectItem(id:string) {
+            var oldSelected = this.grid.getSelectedRows(),
+                newSelected = [];
+            for (var i = 0; i < oldSelected.length; i++) {
+                if (id !== this.gridData.getItem(oldSelected[i]).getData().getId()) {
+                    newSelected.push(oldSelected[i]);
+                }
+            }
+
+            if (oldSelected.length !== newSelected.length) {
+                this.grid.setSelectedRows(newSelected);
+            }
         }
 
         getSelectedTreeNodes() : TreeNode<NODE>[] {
@@ -490,6 +534,18 @@ module api.ui.treegrid {
 
         unRowSelectionChanged(listener: (selectedRows:TreeNode<NODE>[]) => void) {
             this.rowSelectionChangeListeners = this.rowSelectionChangeListeners.filter((curr) => {
+                return curr != listener;
+            });
+            return this;
+        }
+
+        onShowContextMenu(listener: () => void) {
+            this.contextMenuListeners.push(listener);
+            return this;
+        }
+
+        unShowContextMenu(listener: () => void) {
+            this.contextMenuListeners = this.contextMenuListeners.filter((curr) => {
                 return curr != listener;
             });
             return this;

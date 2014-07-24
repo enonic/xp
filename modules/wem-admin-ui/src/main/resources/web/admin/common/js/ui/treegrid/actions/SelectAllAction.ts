@@ -1,15 +1,15 @@
-module api.ui.treegrid {
+module api.ui.treegrid.actions {
 
     import Action = api.ui.Action;
     import Grid = api.ui.grid.Grid;
 
-    export class ClearSelectionAction extends Action {
+    export class SelectAllAction extends Action {
 
         constructor(grid: Grid<TreeNode<TreeItem>>) {
-            super("Clear Selection");
+            super("Select All");
             this.setEnabled(true);
             this.onExecuted(() => {
-                grid.clearSelection();
+                grid.selectAll();
             });
         }
     }

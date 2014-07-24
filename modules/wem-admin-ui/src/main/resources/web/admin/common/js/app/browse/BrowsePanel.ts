@@ -50,6 +50,7 @@ module api.app.browse {
 
             this.browseItemPanel.onDeselected((event: ItemDeselectedEvent<M>) => {
                 this.oldTreeGrid.deselectItem(event.getBrowseItem().getPath());
+                this.newTreeGrid.deselectItem(event.getBrowseItem().getId());
             });
 
             this.gridAndToolbarContainer = new api.ui.Panel();
@@ -82,7 +83,7 @@ module api.app.browse {
                     this.browseItemPanel.setItems(browseItems);
                 });
             }
-            if(this.newTreeGrid) {
+            if (this.newTreeGrid) {
                 this.newTreeGrid.onRowSelectionChanged((nodes: api.ui.treegrid.TreeNode<api.ui.treegrid.TreeItem>[]) => {
                     var browseItems: api.app.browse.BrowseItem<M>[] = this.treeNodesToBrowseItems(nodes);
                     this.browseItemPanel.setItems(browseItems);
@@ -135,7 +136,7 @@ module api.app.browse {
                         this.oldTreeGrid.refresh();
                     }
                     if (this.newTreeGrid) {
-                        // TODO: ? this.treeGrid.refresh();
+                        this.newTreeGrid.reload();
                     }
                 }
                 this.refreshNeeded = false;
@@ -158,8 +159,7 @@ module api.app.browse {
         toggleShowingNewGrid() {
             if (this.treeSwapperDeckPanel.getPanelShownIndex() == 0) {
                 this.treeSwapperDeckPanel.showPanelByIndex(1);
-            }
-            else {
+            } else {
                 this.treeSwapperDeckPanel.showPanelByIndex(0);
             }
         }
