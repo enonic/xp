@@ -5,7 +5,7 @@ module api.content.inputtype.image {
     import ContentSummary = api.content.ContentSummary;
     import Value = api.data.Value;
     import ValueChangedEvent = api.form.inputtype.ValueChangedEvent;
-    import LoadMask = api.ui.LoadMask;
+    import LoadMask = api.ui.mask.LoadMask;
 
     export class SelectedOptionsView extends api.ui.selector.combobox.SelectedOptionsView<ImageSelectorDisplayValue> {
 
@@ -166,8 +166,8 @@ module api.content.inputtype.image {
 
         private removeOptionViewAndRefocus(option: SelectedOption<ImageSelectorDisplayValue>) {
             var index = this.isLast(option.getIndex()) ?
-                (this.isFirst(option.getIndex()) ? -1 : option.getIndex() - 1) :
-                option.getIndex();
+                        (this.isFirst(option.getIndex()) ? -1 : option.getIndex() - 1) :
+                        option.getIndex();
 
             this.notifyRemoveSelectedOptions([option]);
             this.hideImageSelectorDialog();

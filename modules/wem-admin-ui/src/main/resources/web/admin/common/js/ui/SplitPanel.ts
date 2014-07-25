@@ -22,13 +22,13 @@ module api.ui {
 
         private firstPanelMinSize: number = 0;
 
-        private firstPanelUnit:SplitPanelUnit = SplitPanelUnit.PERCENT;
+        private firstPanelUnit: SplitPanelUnit = SplitPanelUnit.PERCENT;
 
         private secondPanelSize: number = 50;
 
         private secondPanelMinSize: number = 0;
 
-        private secondPanelUnit:SplitPanelUnit = SplitPanelUnit.PERCENT;
+        private secondPanelUnit: SplitPanelUnit = SplitPanelUnit.PERCENT;
 
         private alignment: SplitPanelAlignment = SplitPanelAlignment.HORIZONTAL;
 
@@ -47,27 +47,27 @@ module api.ui {
             return new SplitPanel(this);
         }
 
-        setFirstPanelSize(size: number, unit:SplitPanelUnit): SplitPanelBuilder {
+        setFirstPanelSize(size: number, unit: SplitPanelUnit): SplitPanelBuilder {
             this.firstPanelSize = size;
             this.firstPanelUnit = unit;
             this.firstPanelIsDecidingPanel = true;
             return this;
         }
 
-        setFirstPanelMinSize(size: number, unit:SplitPanelUnit): SplitPanelBuilder {
+        setFirstPanelMinSize(size: number, unit: SplitPanelUnit): SplitPanelBuilder {
             this.firstPanelMinSize = size;
             this.firstPanelUnit = unit;
             this.firstPanelIsDecidingPanel = false;
             return this;
         }
 
-        setSecondPanelSize(size: number, unit:SplitPanelUnit): SplitPanelBuilder {
+        setSecondPanelSize(size: number, unit: SplitPanelUnit): SplitPanelBuilder {
             this.secondPanelSize = size;
             this.secondPanelUnit = unit;
             return this;
         }
 
-        setSecondPanelMinSize(size: number, unit:SplitPanelUnit): SplitPanelBuilder {
+        setSecondPanelMinSize(size: number, unit: SplitPanelUnit): SplitPanelBuilder {
             this.secondPanelMinSize = size;
             this.secondPanelUnit = unit;
             return this;
@@ -124,15 +124,15 @@ module api.ui {
             return this.splitterThickness;
         }
 
-        getFirstPanelUnit():SplitPanelUnit {
+        getFirstPanelUnit(): SplitPanelUnit {
             return this.firstPanelUnit
         }
 
-        getSecondPanelUnit():SplitPanelUnit {
+        getSecondPanelUnit(): SplitPanelUnit {
             return this.secondPanelUnit;
         }
 
-        isFirstPanelDecidingPanel():boolean {
+        isFirstPanelDecidingPanel(): boolean {
             return this.firstPanelIsDecidingPanel;
         }
     }
@@ -147,13 +147,13 @@ module api.ui {
 
         private firstPanelMinSize: number;
 
-        private firstPanelUnit:SplitPanelUnit;
+        private firstPanelUnit: SplitPanelUnit;
 
         private secondPanelSize: number = -1; // -1 means the rest of the page
 
         private secondPanelMinSize: number;
 
-        private secondPanelUnit:SplitPanelUnit;
+        private secondPanelUnit: SplitPanelUnit;
 
         private splitterThickness: number;
 
@@ -169,7 +169,7 @@ module api.ui {
 
         private dragListener: (e: MouseEvent) => void;
 
-        private mask: api.ui.DragMask;
+        private mask: api.ui.mask.DragMask;
 
         private splitterPosition: number;
 
@@ -204,7 +204,7 @@ module api.ui {
             this.appendChild(this.secondPanel);
 
             this.ghostDragger = new api.dom.DivEl("ghost-dragger");
-            this.mask = new api.ui.DragMask(this);
+            this.mask = new api.ui.mask.DragMask(this);
             this.appendChild(this.mask);
 
             var initialPos = 0;
@@ -281,7 +281,8 @@ module api.ui {
             this.unMouseMove(this.dragListener);
 
             var splitPanelEl = this.getEl();
-            var dragOffset = this.isHorizontal() ? this.splitterPosition - splitPanelEl.getOffsetTop() : this.splitterPosition - splitPanelEl.getOffsetLeft();
+            var dragOffset = this.isHorizontal() ? this.splitterPosition - splitPanelEl.getOffsetTop() : this.splitterPosition -
+                                                                                                         splitPanelEl.getOffsetLeft();
             var splitPanelSize = this.isHorizontal() ? splitPanelEl.getHeightWithBorder() : splitPanelEl.getWidthWithBorder();
 
             if (this.firstPanelUnit == SplitPanelUnit.PERCENT) {
@@ -327,7 +328,7 @@ module api.ui {
             this.distribute();
         }
 
-        setFirstPanelSize(size: number, unit?:SplitPanelUnit) {
+        setFirstPanelSize(size: number, unit?: SplitPanelUnit) {
             this.firstPanelSize = size;
             this.secondPanelSize = -1;
             if (unit) {
@@ -335,7 +336,7 @@ module api.ui {
             }
         }
 
-        setSecondPanelSize(size: number, unit?:SplitPanelUnit) {
+        setSecondPanelSize(size: number, unit?: SplitPanelUnit) {
             this.secondPanelSize = size;
             this.firstPanelSize = -1;
             if (unit) {
@@ -354,7 +355,7 @@ module api.ui {
                 ResponsiveManager.fireResizeEvent();
                 if (this.firstPanelUnit == SplitPanelUnit.PERCENT) {
                     var positionInPercentage = (this.firstPanelSize != -1) ? this.firstPanelSize : 100 - this.secondPanelSize;
-                    this.splitter.getEl().setLeft("calc(" + positionInPercentage + "% - " + (this.splitterThickness/2) + "px)");
+                    this.splitter.getEl().setLeft("calc(" + positionInPercentage + "% - " + (this.splitterThickness / 2) + "px)");
                 } else {
                     this.splitter.getEl().setLeft(this.getPanelSizeString(1));
                 }
@@ -365,34 +366,36 @@ module api.ui {
             return this.alignment == SplitPanelAlignment.HORIZONTAL;
         }
 
-        getPanelSizeString(panelNumber:number):string {
+        getPanelSizeString(panelNumber: number): string {
             api.util.assert((panelNumber == 1 || panelNumber == 2), "Panel number must be 1 or 2");
 
             var size = (panelNumber == 1) ? this.firstPanelSize : this.secondPanelSize;
-            var otherPanelSize = (panelNumber == 1) ?  this.secondPanelSize : this.firstPanelSize;
+            var otherPanelSize = (panelNumber == 1) ? this.secondPanelSize : this.firstPanelSize;
             var unit = (panelNumber == 1) ? this.firstPanelUnit : this.secondPanelUnit;
-            var otherPanelUnit = (panelNumber == 1) ?  this.secondPanelUnit : this.firstPanelUnit;
+            var otherPanelUnit = (panelNumber == 1) ? this.secondPanelUnit : this.firstPanelUnit;
 
             var result;
             if (size != -1) { // This panel is the deciding panel
                 if (unit == SplitPanelUnit.PIXEL) {
-                    result =  size - (this.splitterThickness/2) + "px";
+                    result = size - (this.splitterThickness / 2) + "px";
                 } else {
-                    result = "calc(" + size + "%" + " - " + (this.splitterThickness/2) + "px)";
+                    result = "calc(" + size + "%" + " - " + (this.splitterThickness / 2) + "px)";
                 }
             } else { // Other panel is the deciding panel
                 if (otherPanelUnit == SplitPanelUnit.PIXEL) {
-                    result = "calc(100% - " + (otherPanelSize + (this.splitterThickness/2)) + "px)";
+                    result = "calc(100% - " + (otherPanelSize + (this.splitterThickness / 2)) + "px)";
                 } else {
-                    result = "calc(" + (100-otherPanelSize) + "%" + " - " + (this.splitterThickness/2) + "px)";
+                    result = "calc(" + (100 - otherPanelSize) + "%" + " - " + (this.splitterThickness / 2) + "px)";
                 }
             }
             return result;
         }
 
-        showPanel(panelNumber:number) {
+        showPanel(panelNumber: number) {
             api.util.assert((panelNumber == 1 || panelNumber == 2), "Panel number must be 1 or 2");
-            if (!this.isPanelHidden(panelNumber)) return;
+            if (!this.isPanelHidden(panelNumber)) {
+                return;
+            }
 
             this.splitterThickness = this.previousSplitterThickness;
             this.splitter.show();
@@ -409,10 +412,12 @@ module api.ui {
             this.distribute();
         }
 
-        hidePanel(panelNumber:number) {
+        hidePanel(panelNumber: number) {
             console.log("hiding panel");
             api.util.assert((panelNumber == 1 || panelNumber == 2), "Panel number must be 1 or 2");
-            if (this.isPanelHidden(panelNumber)) return;
+            if (this.isPanelHidden(panelNumber)) {
+                return;
+            }
 
             this.previousSplitterThickness = this.splitterThickness;
             this.splitterThickness = 0;
@@ -431,11 +436,11 @@ module api.ui {
             this.distribute();
         }
 
-        isPanelHidden(panelNumber:number) {
+        isPanelHidden(panelNumber: number) {
             return this.hiddenPanel == panelNumber;
         }
 
-        private getUnitString(panelNumber:number):string {
+        private getUnitString(panelNumber: number): string {
             api.util.assert((panelNumber == 1 || panelNumber == 2), "Panel number must be 1 or 2");
 
             var unit = (panelNumber == 1) ? this.firstPanelUnit : this.secondPanelUnit;

@@ -1,4 +1,4 @@
-module api.ui {
+module api.ui.mask {
 
     export class Mask extends api.dom.DivEl {
 

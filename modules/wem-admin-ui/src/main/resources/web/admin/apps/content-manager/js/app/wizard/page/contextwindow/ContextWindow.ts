@@ -46,7 +46,7 @@ module app.wizard.page.contextwindow {
 
         private ghostDragger: api.dom.DivEl;
 
-        private mask: api.ui.DragMask;
+        private mask: api.ui.mask.DragMask;
 
         private actualWidth: number;
 
@@ -116,7 +116,7 @@ module app.wizard.page.contextwindow {
             var splitterPosition = 0;
             var parent = this.getParentElement();
             this.actualWidth = this.getEl().getWidth();
-            this.mask = new api.ui.DragMask(parent);
+            this.mask = new api.ui.mask.DragMask(parent);
 
             var dragListener = (e: MouseEvent) => {
                 if (this.splitterWithinBoundaries(initialPos - e.clientX)) {

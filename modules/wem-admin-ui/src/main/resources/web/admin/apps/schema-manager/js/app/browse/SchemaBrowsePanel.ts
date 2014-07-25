@@ -6,7 +6,7 @@ module app.browse {
 
         private toolbar: SchemaBrowseToolbar;
 
-        private schemaTreeGridPanelMask: api.ui.LoadMask;
+        private schemaTreeGridPanelMask: api.ui.mask.LoadMask;
 
         constructor() {
             var treeGridContextMenu = new app.browse.SchemaTreeGridContextMenu();
@@ -14,7 +14,7 @@ module app.browse {
                 contextMenu: treeGridContextMenu
             });
 
-            this.schemaTreeGridPanelMask = new api.ui.LoadMask(treeGridPanel);
+            this.schemaTreeGridPanelMask = new api.ui.mask.LoadMask(treeGridPanel);
             treeGridPanel.onRendered((event: api.dom.ElementRenderedEvent) => {
                 this.schemaTreeGridPanelMask.show();
             })

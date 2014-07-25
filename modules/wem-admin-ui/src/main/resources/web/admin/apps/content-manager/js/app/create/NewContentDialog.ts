@@ -14,8 +14,8 @@ module app.create {
         private recentList: RecentItemsList;
         private contentList: NewContentDialogList;
 
-        private contentListMask: api.ui.LoadMask;
-        private recentListMask: api.ui.LoadMask;
+        private contentListMask: api.ui.mask.LoadMask;
+        private recentListMask: api.ui.mask.LoadMask;
 
         private input: api.ui.TextInput;
         private facetContainer: api.dom.DivEl;
@@ -66,8 +66,8 @@ module app.create {
 
             api.dom.Body.get().appendChild(this);
 
-            this.contentListMask = new api.ui.LoadMask(this.contentList);
-            this.recentListMask = new api.ui.LoadMask(this.recentList);
+            this.contentListMask = new api.ui.mask.LoadMask(this.contentList);
+            this.recentListMask = new api.ui.mask.LoadMask(this.recentList);
 
             this.listItems = [];
 

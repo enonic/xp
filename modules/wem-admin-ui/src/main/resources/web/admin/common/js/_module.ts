@@ -57,6 +57,7 @@
 ///<reference path='ui/menu/_module.ts' />
 ///<reference path='ui/tab/_module.ts' />
 ///<reference path='ui/toolbar/_module.ts' />
+///<reference path='ui/mask/_module.ts' />
 
 ///<reference path='ui/selector/_module.ts' />
 ///<reference path='ui/selector/list/_module.ts' />

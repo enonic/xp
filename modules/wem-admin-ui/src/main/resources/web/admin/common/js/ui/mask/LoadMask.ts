@@ -1,4 +1,4 @@
-module api.ui {
+module api.ui.mask {
 
     /**
      * Object to mask an Element with a splash

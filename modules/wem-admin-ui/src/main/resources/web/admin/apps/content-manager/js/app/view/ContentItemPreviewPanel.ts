@@ -9,11 +9,11 @@ module app.view {
 
         private image: api.dom.ImgEl;
 
-        private mask: api.ui.LoadMask;
+        private mask: api.ui.mask.LoadMask;
 
         constructor() {
             super("item-preview-panel");
-            this.mask = new api.ui.LoadMask(this);
+            this.mask = new api.ui.mask.LoadMask(this);
             this.frame = new api.dom.IFrameEl();
             this.frame.onLoaded((event: UIEvent) => this.mask.hide());
             this.appendChild(this.frame);

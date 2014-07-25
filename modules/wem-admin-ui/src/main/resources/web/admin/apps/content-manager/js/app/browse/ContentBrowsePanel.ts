@@ -17,7 +17,7 @@ module app.browse {
 
         private contentTreeGridPanel: app.browse.ContentTreeGridPanel;
 
-        private contentTreeGridPanelMask: api.ui.LoadMask;
+        private contentTreeGridPanelMask: api.ui.mask.LoadMask;
 
         private contentTreeGridPanel2: app.browse.grid.ContentGridPanel2;
 
@@ -31,7 +31,7 @@ module app.browse {
                 contextMenu: treeGridContextMenu
             });
 
-            this.contentTreeGridPanelMask = new api.ui.LoadMask(this.contentTreeGridPanel);
+            this.contentTreeGridPanelMask = new api.ui.mask.LoadMask(this.contentTreeGridPanel);
 
             this.browseActions = ContentBrowseActions.init(this.contentTreeGridPanel);
             treeGridContextMenu.setActions(this.browseActions);

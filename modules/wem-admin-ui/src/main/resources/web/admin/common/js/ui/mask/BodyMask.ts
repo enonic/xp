@@ -1,4 +1,4 @@
-module api.ui {
+module api.ui.mask {
 
     /**
      * A statically accessible object for masking the whole body.
