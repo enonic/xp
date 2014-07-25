@@ -104,7 +104,7 @@ module api.app {
         }
     }
 
-    export class LauncherButton extends api.ui.ActionButton {
+    export class LauncherButton extends api.ui.button.ActionButton {
 
         constructor(action: api.ui.Action) {
             super(action, true);

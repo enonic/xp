@@ -44,6 +44,7 @@
 ///<reference path='rest/_module.ts' />
 
 ///<reference path='ui/_module.ts' />
+///<reference path='ui/button/_module.ts' />
 ///<reference path='ui/dialog/_module.ts' />
 ///<reference path='ui/form/_module.ts' />
 ///<reference path='ui/grid/_module.ts' />

@@ -27,7 +27,7 @@ module api.form {
 
         private bottomButtonRow: api.dom.DivEl;
 
-        private addButton: api.ui.Button;
+        private addButton: api.ui.button.Button;
 
         private previousValidityRecording: ValidationRecording;
 
@@ -130,7 +130,7 @@ module api.form {
                     }
                 });
 
-                this.addButton = new api.ui.Button("Add");
+                this.addButton = new api.ui.button.Button("Add");
                 this.addButton.addClass("small");
                 this.addButton.onClicked((event: MouseEvent) => {
                     inputTypeViewNotManagingAdd.createAndAddOccurrence();

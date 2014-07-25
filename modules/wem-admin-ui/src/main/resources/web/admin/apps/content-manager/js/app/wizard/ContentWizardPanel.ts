@@ -76,7 +76,7 @@ module app.wizard {
 
         private contextWindowToggler: ContextWindowToggler;
 
-        private cycleViewModeButton: api.ui.CycleButton;
+        private cycleViewModeButton: api.ui.button.CycleButton;
 
         private contentWizardActions: app.wizard.action.ContentWizardActions;
 

@@ -26,9 +26,6 @@
 ///<reference path='BodyMask.ts' />
 ///<reference path='Tooltip.ts' />
 ///<reference path='ProgressBar.ts' />
-///<reference path='Button.ts' />
-///<reference path='ActionButton.ts' />
-///<reference path='CloseButton.ts' />
 ///<reference path='ToggleSlide.ts' />
 ///<reference path='NavigationItem.ts' />
 ///<reference path='Navigator.ts' />
@@ -42,7 +39,6 @@
 ///<reference path='TextInput.ts' />
 ///<reference path='AutosizeTextInput.ts' />
 ///<reference path='Checkbox.ts' />
-///<reference path='CycleButton.ts' />
 
 ///<reference path='PasswordInput.ts' />
 ///<reference path='TextArea.ts' />

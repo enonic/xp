@@ -1,5 +1,8 @@
 module api.ui {
 
+    import Button = api.ui.button.Button;
+    import CloseButton = api.ui.button.CloseButton;
+
     export interface ImageUploaderConfig {
         multiSelection?: boolean;
         buttonsVisible?: boolean;
@@ -19,10 +22,10 @@ module api.ui {
         private input: api.ui.TextInput;
         private dropzone: api.dom.DivEl;
         private progress: api.ui.ProgressBar;
-        private cancelBtn: api.ui.Button;
+        private cancelBtn: Button;
         private image: api.dom.ImgEl;
         private imageBox: api.dom.DivEl;
-        private closeBtn: api.ui.Button;
+        private closeBtn: CloseButton;
 
         private multiSelection: boolean;
         private buttonsVisible: boolean;
@@ -75,7 +78,7 @@ module api.ui {
             this.imageBox.appendChild(this.image);
             this.appendChild(this.imageBox);
 
-            this.cancelBtn = new api.ui.Button("Cancel");
+            this.cancelBtn = new Button("Cancel");
             this.cancelBtn.setVisible(this.buttonsVisible);
             this.cancelBtn.onClicked((event: MouseEvent) => {
                 this.stop();
@@ -83,7 +86,7 @@ module api.ui {
             });
             this.appendChild(this.cancelBtn);
 
-            this.closeBtn = new api.ui.CloseButton();
+            this.closeBtn = new CloseButton();
             this.closeBtn.setVisible(this.buttonsVisible);
             this.closeBtn.onClicked((event: MouseEvent) => {
                 this.reset();
@@ -106,17 +109,17 @@ module api.ui {
 
             //Image toolbar stub buttons
             //TODO: should be replaced with working buttons later
-            var btn1 = new api.ui.Button();
+            var btn1 = new Button();
             btn1.addClass("tool-button icon-crop2 icon-large");
-            var btn2 = new api.ui.Button();
+            var btn2 = new Button();
             btn2.addClass("tool-button icon-rotate icon-large");
-            var btn3 = new api.ui.Button();
+            var btn3 = new Button();
             btn3.addClass("tool-button icon-rotate2 icon-large");
-            var btn4 = new api.ui.Button();
+            var btn4 = new Button();
             btn4.addClass("tool-button icon-flip icon-large");
-            var btn5 = new api.ui.Button();
+            var btn5 = new Button();
             btn5.addClass("tool-button icon-flip2 icon-large");
-            var btn6 = new api.ui.Button();
+            var btn6 = new Button();
             btn6.addClass("tool-button icon-palette icon-large");
 
             this.imageBox.appendChild(btn1).appendChild(btn2).appendChild(btn3).appendChild(btn4).appendChild(btn5).appendChild(btn6);

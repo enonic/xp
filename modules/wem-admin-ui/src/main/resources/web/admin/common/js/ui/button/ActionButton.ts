@@ -1,6 +1,6 @@
-module api.ui {
+module api.ui.button {
 
-    export class ActionButton extends api.ui.Button {
+    export class ActionButton extends api.ui.button.Button {
 
         private action: Action;
         private tooltip: Tooltip;

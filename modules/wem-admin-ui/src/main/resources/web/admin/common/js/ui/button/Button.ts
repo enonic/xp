@@ -1,4 +1,4 @@
-module api.ui {
+module api.ui.button {
 
     export class Button extends api.dom.ButtonEl {
 

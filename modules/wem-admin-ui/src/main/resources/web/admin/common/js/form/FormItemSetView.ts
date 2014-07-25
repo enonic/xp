@@ -23,7 +23,7 @@ module api.form {
 
         private bottomButtonRow: api.dom.DivEl;
 
-        private addButton: api.ui.Button;
+        private addButton: api.ui.button.Button;
 
         private collapseButton: api.dom.AEl;
 
@@ -111,7 +111,7 @@ module api.form {
             this.bottomButtonRow = new api.dom.DivEl("bottom-button-row");
             this.appendChild(this.bottomButtonRow);
 
-            this.addButton = new api.ui.Button("Add " + this.formItemSet.getLabel());
+            this.addButton = new api.ui.button.Button("Add " + this.formItemSet.getLabel());
             this.addButton.addClass("small");
             this.addButton.onClicked((event: MouseEvent) => {
                 this.formItemSetOccurrences.createAndAddOccurrence();

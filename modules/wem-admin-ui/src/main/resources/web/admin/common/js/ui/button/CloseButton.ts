@@ -1,6 +1,6 @@
-module api.ui {
+module api.ui.button {
 
-    export class CloseButton extends api.ui.Button {
+    export class CloseButton extends api.ui.button.Button {
 
         constructor() {
             super();

@@ -5,7 +5,7 @@ module app.login {
         private userStoresDropdown: api.ui.Dropdown;
         private userIdInput: api.ui.TextInput;
         private passwordInput: api.ui.PasswordInput;
-        private loginButton: api.ui.Button;
+        private loginButton: api.ui.button.Button;
 
         private authenticator: Authenticator;
         private userStores: {[userStoreId: string]: UserStore;};
@@ -31,7 +31,7 @@ module app.login {
                 this.onInputTyped(event);
             });
 
-            this.loginButton = new api.ui.Button(_i18n('Sign in'));
+            this.loginButton = new api.ui.button.Button(_i18n('Sign in'));
             this.loginButton.addClass('login-button').addClass('disabled');
             this.loginButton.onClicked((event: MouseEvent) => {
                 this.loginButtonClick();

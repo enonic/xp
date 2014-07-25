@@ -6,6 +6,7 @@ module api.ui.selector.combobox {
     import DropdownHandle = api.ui.selector.DropdownHandle;
     import Viewer = api.ui.Viewer;
     import DelayedFunctionCall = api.util.DelayedFunctionCall;
+    import Button = api.ui.button.Button;
 
     export interface ComboBoxConfig<T> {
 
@@ -35,7 +36,7 @@ module api.ui.selector.combobox {
 
         private dropdownHandle: DropdownHandle;
 
-        private applySelectionsButton: api.ui.Button;
+        private applySelectionsButton: Button;
 
         private input: ComboBoxOptionFilterInput;
 

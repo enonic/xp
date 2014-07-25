@@ -22,13 +22,13 @@ module api.ui.toolbar {
 
         addAction(action: api.ui.Action) {
             this.actions.push(action);
-            this.addElement(new api.ui.ActionButton(action));
+            this.addElement(new api.ui.button.ActionButton(action));
         }
 
         addActions(actions: api.ui.Action[]) {
             this.actions = this.actions.concat(actions);
             actions.forEach((action) => {
-                this.addElement(new api.ui.ActionButton(action));
+                this.addElement(new api.ui.button.ActionButton(action));
             });
         }
 
