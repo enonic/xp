@@ -1,4 +1,4 @@
-module api.ui {
+module api.ui.text {
 
     export class AutosizeTextInput extends TextInput {
 

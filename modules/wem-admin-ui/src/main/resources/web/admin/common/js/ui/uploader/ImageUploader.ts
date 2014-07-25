@@ -19,7 +19,7 @@ module api.ui.uploader {
         private uploadUrl: string;
         private uploader;
 
-        private input: api.ui.TextInput;
+        private input: api.ui.text.TextInput;
         private dropzone: api.dom.DivEl;
         private progress: api.ui.ProgressBar;
         private cancelBtn: Button;
@@ -50,7 +50,7 @@ module api.ui.uploader {
             this.browseEnabled = (config.browseEnabled == undefined) ? true : config.browseEnabled;
 
             if (config.textInput) {
-                this.input = api.ui.TextInput.middle();
+                this.input = api.ui.text.TextInput.middle();
                 this.input.setPlaceholder("Paste URL to image here");
                 this.appendChild(this.input);
             }

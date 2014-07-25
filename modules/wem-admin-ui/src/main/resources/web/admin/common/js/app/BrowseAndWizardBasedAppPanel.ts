@@ -21,7 +21,7 @@ module api.app {
 
             this.appBarTabMenu = config.appBar.getTabMenu();
 
-            this.onPanelShown((event: api.ui.PanelShownEvent) => {
+            this.onPanelShown((event: api.ui.panel.PanelShownEvent) => {
                 if (event.getPanel() === this.getBrowsePanel()) {
                     this.getBrowsePanel().refreshFilterAndGrid();
                 }

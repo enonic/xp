@@ -1,19 +1,19 @@
-module api.ui {
+module api.ui.text {
 
     export class PasswordInput extends api.dom.InputEl {
 
-        constructor(className?:string) {
+        constructor(className?: string) {
             super(className);
 
             this.getEl().setAttribute('type', 'password');
         }
 
-        setPlaceholder(value:string):PasswordInput {
+        setPlaceholder(value: string): PasswordInput {
             this.getEl().setAttribute('placeholder', value);
             return this;
         }
 
-        getPlaceholder():string {
+        getPlaceholder(): string {
             return this.getEl().getAttribute('placeholder');
         }
     }

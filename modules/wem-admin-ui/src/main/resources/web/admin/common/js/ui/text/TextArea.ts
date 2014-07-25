@@ -1,4 +1,4 @@
-module api.ui {
+module api.ui.text {
 
     export class TextArea extends api.dom.FormInputEl {
 

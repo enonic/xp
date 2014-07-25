@@ -1,4 +1,4 @@
-module api.ui {
+module api.ui.text {
 
     export class CodeAreaBuilder {
 
@@ -30,7 +30,7 @@ module api.ui {
 
     export class CodeArea extends api.ui.form.CompositeFormInputEl {
 
-        private textArea: api.ui.TextArea;
+        private textArea: api.ui.text.TextArea;
 
         private options: CodeMirrorOptions;
 

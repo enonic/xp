@@ -16,7 +16,7 @@ module api.form.inputtype.support {
 
         createInputOccurrenceElement(index: number, property: api.data.Property): api.dom.Element {
 
-            var inputEl = api.ui.TextInput.middle();
+            var inputEl = api.ui.text.TextInput.middle();
             inputEl.setName(this.getInput().getName());
             if (property != null) {
                 inputEl.setValue(property.getString());
@@ -25,7 +25,7 @@ module api.form.inputtype.support {
         }
 
         onOccurrenceValueChanged(element: api.dom.Element, listener: (event: api.form.inputtype.support.ValueChangedEvent) => void) {
-            var inputEl = <api.ui.TextInput>element;
+            var inputEl = <api.ui.text.TextInput>element;
             inputEl.onValueChanged((event: api.ui.ValueChangedEvent) => {
                 listener(new api.form.inputtype.support.ValueChangedEvent(this.newValue(event.getNewValue())));
             });
@@ -36,7 +36,7 @@ module api.form.inputtype.support {
         }
 
         getValue(occurrence: api.dom.Element): api.data.Value {
-            var inputEl = <api.ui.TextInput>occurrence;
+            var inputEl = <api.ui.text.TextInput>occurrence;
             return this.newValue(inputEl.getValue());
         }
 

@@ -2,12 +2,12 @@ module api.app.wizard {
 
     export class WizardHeaderWithName extends WizardHeader {
 
-        private nameEl: api.ui.TextInput;
+        private nameEl: api.ui.text.TextInput;
 
         constructor() {
             super();
 
-            this.nameEl = api.ui.AutosizeTextInput.large().setName('name').setForbiddenCharsRe(/[^a-z0-9\-]+/ig);
+            this.nameEl = api.ui.text.AutosizeTextInput.large().setName('name').setForbiddenCharsRe(/[^a-z0-9\-]+/ig);
             this.nameEl.onValueChanged((event: api.ui.ValueChangedEvent) => {
                 this.notifyPropertyChanged("name", event.getOldValue(), event.getNewValue());
             });

@@ -1,6 +1,4 @@
-module api.ui {
-
-    import Panel = api.ui.panel.Panel;
+module api.ui.panel {
 
     export class PanelShownEvent {
 

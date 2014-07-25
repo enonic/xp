@@ -21,13 +21,13 @@ module api.app.wizard {
 
         private forbiddenChars: RegExp = /[^a-z0-9\-]+/ig;
 
-        private displayNameEl: api.ui.TextInput;
+        private displayNameEl: api.ui.text.TextInput;
 
         private displayNameProgrammaticallySet: boolean;
 
         private pathEl: api.dom.SpanEl;
 
-        private nameEl: api.ui.TextInput;
+        private nameEl: api.ui.text.TextInput;
 
         private autoGenerateName: boolean = false;
 
@@ -36,7 +36,7 @@ module api.app.wizard {
             this.displayNameGenerator = builder.displayNameGenerator;
             this.displayNameProgrammaticallySet = this.displayNameGenerator != null;
 
-            this.displayNameEl = api.ui.AutosizeTextInput.large().setName('displayName');
+            this.displayNameEl = api.ui.text.AutosizeTextInput.large().setName('displayName');
             this.displayNameEl.setPlaceholder("Display Name");
             this.displayNameEl.onValueChanged((event: api.ui.ValueChangedEvent) => {
                 this.notifyPropertyChanged("displayName", event.getOldValue(), event.getNewValue());
@@ -47,7 +47,7 @@ module api.app.wizard {
             this.pathEl.hide();
             this.appendChild(this.pathEl);
 
-            this.nameEl = api.ui.AutosizeTextInput.middle().setName('name').setForbiddenCharsRe(this.forbiddenChars);
+            this.nameEl = api.ui.text.AutosizeTextInput.middle().setName('name').setForbiddenCharsRe(this.forbiddenChars);
             this.nameEl.setPlaceholder("name");
             this.nameEl.onValueChanged((event: api.ui.ValueChangedEvent) => {
                 this.notifyPropertyChanged("name", event.getOldValue(), event.getNewValue());

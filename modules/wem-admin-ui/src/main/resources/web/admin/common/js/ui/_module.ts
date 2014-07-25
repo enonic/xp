@@ -9,7 +9,6 @@
 ///<reference path='ActionContainer.ts' />
 ///<reference path='Closeable.ts' />
 ///<reference path='Viewer.ts' />
-///<reference path='PanelShownEvent.ts' />
 ///<reference path='Tooltip.ts' />
 ///<reference path='ProgressBar.ts' />
 ///<reference path='ToggleSlide.ts' />
@@ -21,10 +20,4 @@
 ///<reference path='DockedWindow.ts' />
 ///<reference path='Dropdown.ts' />
 ///<reference path='RadioGroup.ts' />
-///<reference path='TextInput.ts' />
-///<reference path='AutosizeTextInput.ts' />
 ///<reference path='Checkbox.ts' />
-
-///<reference path='PasswordInput.ts' />
-///<reference path='TextArea.ts' />
-///<reference path='CodeArea.ts' />

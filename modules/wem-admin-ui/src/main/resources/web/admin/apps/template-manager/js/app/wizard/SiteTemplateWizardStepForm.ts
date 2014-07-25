@@ -2,12 +2,12 @@ module app.wizard {
 
     export class SiteTemplateWizardStepForm extends api.app.wizard.WizardStepForm {
 
-        private descriptionField: api.ui.TextInput;
+        private descriptionField: api.ui.text.TextInput;
         private moduleComboBox: api.module.ModuleComboBox;
 
         constructor() {
             super();
-            this.descriptionField = api.ui.TextInput.middle().setName("description");
+            this.descriptionField = api.ui.text.TextInput.middle().setName("description");
             this.moduleComboBox = new api.module.ModuleComboBox();
         }
 

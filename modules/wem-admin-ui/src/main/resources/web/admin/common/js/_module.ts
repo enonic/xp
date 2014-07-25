@@ -51,6 +51,7 @@
 
 ///<reference path='ui/_module.ts' />
 ///<reference path='ui/button/_module.ts' />
+///<reference path='ui/text/_module.ts' />
 ///<reference path='ui/uploader/_module.ts' />
 ///<reference path='ui/panel/_module.ts' />
 ///<reference path='ui/dialog/_module.ts' />
@@ -65,7 +66,6 @@
 ///<reference path='ui/selector/list/_module.ts' />
 ///<reference path='ui/selector/combobox/_module.ts' />
 ///<reference path='ui/selector/dropdown/_module.ts' />
-///<reference path='ui/text/_module.ts' />
 ///<reference path='ui/treegrid/actions/_module.ts' />
 ///<reference path='ui/treegrid/_module.ts' />
 

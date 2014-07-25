@@ -1,6 +1,6 @@
 module api.ui.selector {
 
-    export class OptionFilterInput extends api.ui.TextInput {
+    export class OptionFilterInput extends api.ui.text.TextInput {
 
         constructor() {
             super("option-filter-input");
