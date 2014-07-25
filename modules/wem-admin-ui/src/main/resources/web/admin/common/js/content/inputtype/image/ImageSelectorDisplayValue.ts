@@ -2,22 +2,22 @@ module api.content.inputtype.image {
 
     export class ImageSelectorDisplayValue {
 
-        private uploadItem: api.ui.UploadItem;
+        private uploadItem: api.ui.uploader.UploadItem;
 
         private content: api.content.ContentSummary;
 
         constructor() {
         }
 
-        static fromUploadItem(item: api.ui.UploadItem): ImageSelectorDisplayValue {
+        static fromUploadItem(item: api.ui.uploader.UploadItem): ImageSelectorDisplayValue {
             return new ImageSelectorDisplayValue().setUploadItem(item);
         }
 
-        static fromContentSummary(content: api.content.ContentSummary, item?: api.ui.UploadItem) {
+        static fromContentSummary(content: api.content.ContentSummary, item?: api.ui.uploader.UploadItem) {
             return new ImageSelectorDisplayValue().setContentSummary(content).setUploadItem(item);
         }
 
-        private setUploadItem(item: api.ui.UploadItem): ImageSelectorDisplayValue {
+        private setUploadItem(item: api.ui.uploader.UploadItem): ImageSelectorDisplayValue {
             this.uploadItem = item;
             return this;
         }
@@ -27,7 +27,7 @@ module api.content.inputtype.image {
             return this;
         }
 
-        getUploadItem(): api.ui.UploadItem {
+        getUploadItem(): api.ui.uploader.UploadItem {
             return this.uploadItem;
         }
 

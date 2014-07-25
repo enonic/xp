@@ -5,7 +5,7 @@ module app.wizard.page.contextwindow.insert {
         liveEditPage: app.wizard.page.LiveEditPageProxy;
     }
 
-    export class InsertablesPanel extends api.ui.Panel {
+    export class InsertablesPanel extends api.ui.panel.Panel {
 
         private liveEditPage: app.wizard.page.LiveEditPageProxy;
 

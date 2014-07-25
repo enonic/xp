@@ -19,14 +19,14 @@ module api.app.wizard {
 
         actions:WizardActions<any>;
 
-        livePanel?:api.ui.Panel;
+        livePanel?:api.ui.panel.Panel;
 
         steps:api.app.wizard.WizardStep[];
 
         split?:boolean;
     }
 
-    export class WizardPanel<EQUITABLE extends api.Equitable> extends api.ui.Panel implements api.ui.Closeable, api.ui.ActionContainer {
+    export class WizardPanel<EQUITABLE extends api.Equitable> extends api.ui.panel.Panel implements api.ui.Closeable, api.ui.ActionContainer {
 
         private tabId: api.app.AppBarTabId;
 
@@ -53,7 +53,7 @@ module api.app.wizard {
 
         private closedListeners: {(event: WizardClosedEvent):void}[] = [];
 
-        private formPanel: api.ui.Panel;
+        private formPanel: api.ui.panel.Panel;
 
         private lastFocusedElement: JQuery;
 
@@ -61,7 +61,7 @@ module api.app.wizard {
 
         private persisted: boolean;
 
-        private splitPanel: api.ui.SplitPanel;
+        private splitPanel: api.ui.panel.SplitPanel;
 
         private splitPanelThreshold: number = 960;
 
@@ -78,7 +78,7 @@ module api.app.wizard {
             this.stepToolbar = params.stepToolbar;
             this.actions = params.actions;
 
-            this.formPanel = new api.ui.Panel("form-panel");
+            this.formPanel = new api.ui.panel.Panel("form-panel");
             this.formPanel.onScroll(() => this.updateStickyToolbar());
 
             this.appendChild(this.mainToolbar);
@@ -377,11 +377,11 @@ module api.app.wizard {
             });
         }
 
-        getSplitPanel(): api.ui.SplitPanel {
+        getSplitPanel(): api.ui.panel.SplitPanel {
             return this.splitPanel;
         }
 
-        public setLivePanel(livePanel: api.ui.Panel) {
+        public setLivePanel(livePanel: api.ui.panel.Panel) {
             if (this.splitPanel) {
                 this.removeChild(this.splitPanel);
             }
@@ -389,10 +389,10 @@ module api.app.wizard {
             this.appendChild(this.splitPanel);
         }
 
-        private createSplitPanel(firstPanel: api.ui.Panel, secondPanel: api.ui.Panel): api.ui.SplitPanel {
-            var splitPanel = new api.ui.SplitPanelBuilder(firstPanel, secondPanel)
-                .setFirstPanelMinSize(280, api.ui.SplitPanelUnit.PIXEL)
-                .setAlignment(api.ui.SplitPanelAlignment.VERTICAL)
+        private createSplitPanel(firstPanel: api.ui.panel.Panel, secondPanel: api.ui.panel.Panel): api.ui.panel.SplitPanel {
+            var splitPanel = new api.ui.panel.SplitPanelBuilder(firstPanel, secondPanel)
+                .setFirstPanelMinSize(280, api.ui.panel.SplitPanelUnit.PIXEL)
+                .setAlignment(api.ui.panel.SplitPanelAlignment.VERTICAL)
                 .build();
             this.updateSplitPanel(splitPanel);
             splitPanel.onResized((event: api.dom.ElementResizedEvent) => {
@@ -401,9 +401,9 @@ module api.app.wizard {
             return splitPanel;
         }
 
-        private updateSplitPanel(splitPanel: api.ui.SplitPanel) {
+        private updateSplitPanel(splitPanel: api.ui.panel.SplitPanel) {
             if (wemjq(window).width() > this.splitPanelThreshold) {
-                splitPanel.setFirstPanelSize(38, api.ui.SplitPanelUnit.PERCENT);
+                splitPanel.setFirstPanelSize(38, api.ui.panel.SplitPanelUnit.PERCENT);
             }
             splitPanel.distribute();
         }

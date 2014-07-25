@@ -1,4 +1,4 @@
-module api.ui {
+module api.ui.panel {
 
     import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 
@@ -14,9 +14,9 @@ module api.ui {
 
     export class SplitPanelBuilder {
 
-        private firstPanel: api.ui.Panel;
+        private firstPanel: Panel;
 
-        private secondPanel: api.ui.Panel;
+        private secondPanel: Panel;
 
         private firstPanelSize: number = 50;
 
@@ -38,7 +38,7 @@ module api.ui {
 
         private firstPanelIsDecidingPanel: boolean = true;
 
-        constructor(firstPanel: api.ui.Panel, secondPanel: api.ui.Panel) {
+        constructor(firstPanel: Panel, secondPanel: Panel) {
             this.firstPanel = firstPanel;
             this.secondPanel = secondPanel;
         }
@@ -88,7 +88,7 @@ module api.ui {
             return this;
         }
 
-        getFirstPanel(): api.ui.Panel {
+        getFirstPanel(): Panel {
             return this.firstPanel;
         }
 
@@ -96,7 +96,7 @@ module api.ui {
             return this.firstPanelMinSize;
         }
 
-        getSecondPanel(): api.ui.Panel {
+        getSecondPanel(): Panel {
             return this.secondPanel;
         }
 
@@ -137,11 +137,11 @@ module api.ui {
         }
     }
 
-    export class SplitPanel extends api.ui.Panel {
+    export class SplitPanel extends Panel {
 
-        private firstPanel: api.ui.Panel;
+        private firstPanel: Panel;
 
-        private secondPanel: api.ui.Panel;
+        private secondPanel: Panel;
 
         private firstPanelSize: number = -1; // -1 means the rest of the page
 
@@ -306,9 +306,9 @@ module api.ui {
         private updateAlignment() {
             var splitPanelWidth = this.getEl().getWidthWithMargin();
             if (splitPanelWidth > this.alignmentTreshold && this.isHorizontal()) {
-                this.alignment = api.ui.SplitPanelAlignment.VERTICAL;
+                this.alignment = SplitPanelAlignment.VERTICAL;
             } else if (splitPanelWidth < this.alignmentTreshold && !this.isHorizontal()) {
-                this.alignment = api.ui.SplitPanelAlignment.HORIZONTAL;
+                this.alignment = SplitPanelAlignment.HORIZONTAL;
             }
 
 

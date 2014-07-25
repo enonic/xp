@@ -1,4 +1,4 @@
-module api.ui {
+module api.ui.panel {
 
     export class PanelStrip extends Panel {
 
@@ -36,7 +36,7 @@ module api.ui {
             return index;
         }
 
-        getPanels(): api.ui.Panel[] {
+        getPanels(): Panel[] {
             return this.panels;
         }
 
@@ -121,7 +121,7 @@ module api.ui {
             return this.getPanelIndex(this.panelShown);
         }
 
-        getPanelIndex<T extends api.ui.Panel>(panel: T): number {
+        getPanelIndex<T extends Panel>(panel: T): number {
             var size = this.getSize();
             for (var i = 0; i < size; i++) {
                 if (this.panels[i] === panel) {

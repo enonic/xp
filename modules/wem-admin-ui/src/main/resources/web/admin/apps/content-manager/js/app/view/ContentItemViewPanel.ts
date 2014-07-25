@@ -12,7 +12,7 @@ module app.view {
 
         private previewPanelIndex: number;
 
-        private deckPanel: api.ui.DeckPanel;
+        private deckPanel: api.ui.panel.DeckPanel;
 
         private editAction: api.ui.Action;
 
@@ -22,7 +22,7 @@ module app.view {
 
         constructor() {
 
-            this.deckPanel = new api.ui.DeckPanel();
+            this.deckPanel = new api.ui.panel.DeckPanel();
 
             this.editAction = new EditAction(this);
             this.deleteAction = new DeleteAction(this);

@@ -1,4 +1,4 @@
-module api.ui {
+module api.ui.panel {
 
     /**
      * A DeckPanel with NavigationItem-s.

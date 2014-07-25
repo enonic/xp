@@ -1,6 +1,6 @@
 module app.wizard.page.contextwindow.inspect {
 
-    export class NoSelectionInspectionPanel extends api.ui.Panel {
+    export class NoSelectionInspectionPanel extends api.ui.panel.Panel {
 
         private header: api.app.NamesView;
 

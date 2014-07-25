@@ -1,5 +1,7 @@
 module api.ui {
 
+    import Panel = api.ui.panel.Panel;
+
     export class PanelShownEvent {
 
         private panel: Panel;

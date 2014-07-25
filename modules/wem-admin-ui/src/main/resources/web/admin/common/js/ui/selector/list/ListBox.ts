@@ -1,6 +1,6 @@
 module api.ui.selector.list {
 
-    export class ListBox<T> extends api.ui.Panel {
+    export class ListBox<T> extends api.ui.panel.Panel {
 
         private ul: api.dom.UlEl;
 

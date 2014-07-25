@@ -1,6 +1,6 @@
 module api.app {
 
-    export class AppPanel<M> extends api.ui.NavigatedDeckPanel {
+    export class AppPanel<M> extends api.ui.panel.NavigatedDeckPanel {
 
         private browsePanel: api.app.browse.BrowsePanel<M>;
 
@@ -23,13 +23,13 @@ module api.app {
             return this.browsePanel;
         }
 
-        removeNavigablePanel(panel: api.ui.Panel, checkCanRemovePanel: boolean = true): number {
+        removeNavigablePanel(panel: api.ui.panel.Panel, checkCanRemovePanel: boolean = true): number {
             var index = super.removeNavigablePanel(panel, checkCanRemovePanel);
             this.checkBrowsePanelNeedsToBeShown(index, panel);
             return index;
         }
 
-        private checkBrowsePanelNeedsToBeShown(index: number, panel: api.ui.Panel) {
+        private checkBrowsePanelNeedsToBeShown(index: number, panel: api.ui.panel.Panel) {
             if (panel == this.browsePanel && index > -1) {
                 this.browsePanel = undefined;
             } else if (this.getSize() == 0) {

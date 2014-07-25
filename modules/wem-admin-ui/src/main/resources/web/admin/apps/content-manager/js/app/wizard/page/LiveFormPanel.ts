@@ -85,7 +85,7 @@ module app.wizard.page {
         defaultModels: DefaultModels;
     }
 
-    export class LiveFormPanel extends api.ui.Panel {
+    export class LiveFormPanel extends api.ui.panel.Panel {
 
         private siteTemplate: SiteTemplate;
 
@@ -101,7 +101,7 @@ module app.wizard.page {
         private pageLoading: boolean;
 
         private pageSkipReload: boolean;
-        private frameContainer: api.ui.Panel;
+        private frameContainer: api.ui.panel.Panel;
 
         private contextWindow: ContextWindow;
         private emulatorPanel: EmulatorPanel;
@@ -193,7 +193,7 @@ module app.wizard.page {
                 liveEditPage: this.liveEditPage
             });
 
-            this.frameContainer = new api.ui.Panel("frame-container");
+            this.frameContainer = new api.ui.panel.Panel("frame-container");
             this.appendChild(this.frameContainer);
             this.frameContainer.appendChild(this.liveEditPage.getIFrame());
 
@@ -426,7 +426,7 @@ module app.wizard.page {
             }
         }
 
-        public getFrameContainer(): api.ui.Panel {
+        public getFrameContainer(): api.ui.panel.Panel {
             return this.frameContainer;
         }
 

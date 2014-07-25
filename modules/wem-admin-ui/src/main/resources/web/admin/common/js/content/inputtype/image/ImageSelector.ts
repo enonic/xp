@@ -79,10 +79,10 @@ module api.content.inputtype.image {
                 });
 
             this.uploadDialog = new ImageSelectorUploadDialog();
-            this.uploadDialog.onUploadStarted((event: api.ui.ImageUploadStartedEvent) => {
+            this.uploadDialog.onUploadStarted((event: api.ui.uploader.ImageUploadStartedEvent) => {
                 this.uploadDialog.close();
 
-                event.getUploadedItems().forEach((uploadItem: api.ui.UploadItem) => {
+                event.getUploadedItems().forEach((uploadItem: api.ui.uploader.UploadItem) => {
                     var value = ImageSelectorDisplayValue.fromUploadItem(uploadItem);
                     var option = <api.ui.selector.Option<ImageSelectorDisplayValue>>{
                         value: value.getId(),
@@ -91,11 +91,11 @@ module api.content.inputtype.image {
                     this.comboBox.selectOption(option);
                 });
             });
-            this.uploadDialog.onUploadProgress((event: api.ui.ImageUploadProgressEvent) => {
+            this.uploadDialog.onUploadProgress((event: api.ui.uploader.ImageUploadProgressEvent) => {
                 var selectedOption = this.selectedOptionsView.getById(event.getUploadItem().getId());
                 (<SelectedOptionView>selectedOption.getOptionView()).setProgress(event.getUploadItem().getProgress());
             });
-            this.uploadDialog.onImageUploaded((event: api.ui.ImageUploadedEvent) => {
+            this.uploadDialog.onImageUploaded((event: api.ui.uploader.ImageUploadedEvent) => {
                 this.createImageContent(event.getUploadedItem());
             });
 
@@ -306,7 +306,7 @@ module api.content.inputtype.image {
             });
         }
 
-        private createImageContent(uploadItem: api.ui.UploadItem) {
+        private createImageContent(uploadItem: api.ui.uploader.UploadItem) {
 
             new api.schema.content.GetContentTypeByNameRequest(new api.schema.content.ContentTypeName("image")).
                 sendAndParse().

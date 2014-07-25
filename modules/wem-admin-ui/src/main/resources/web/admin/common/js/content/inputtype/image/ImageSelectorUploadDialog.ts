@@ -1,8 +1,8 @@
 module api.content.inputtype.image {
 
-    import ImageUploadedEvent = api.ui.ImageUploadedEvent;
-    import ImageUploadStartedEvent = api.ui.ImageUploadStartedEvent;
-    import ImageUploadProgressEvent = api.ui.ImageUploadProgressEvent;
+    import ImageUploadedEvent = api.ui.uploader.ImageUploadedEvent;
+    import ImageUploadStartedEvent = api.ui.uploader.ImageUploadStartedEvent;
+    import ImageUploadProgressEvent = api.ui.uploader.ImageUploadProgressEvent;
 
     export class ImageSelectorUploadDialog extends api.ui.dialog.ModalDialog {
 
@@ -79,14 +79,14 @@ module api.content.inputtype.image {
                     up.start();
 
                     var uploadItems = up.files.map((file: any) => {
-                         return new api.ui.UploadItemBuilder().setId(file.id).setName(file.name).setSize(file.size).build();
+                        return new api.ui.uploader.UploadItemBuilder().setId(file.id).setName(file.name).setSize(file.size).build();
                     });
                     this.notifyUploadStarted(uploadItems);
                 }
             });
 
             uploader.bind('UploadProgress', (up, file) => {
-                var uploadItem = new api.ui.UploadItemBuilder().setId(file.id).setName(file.name).setSize(file.size).
+                var uploadItem = new api.ui.uploader.UploadItemBuilder().setId(file.id).setName(file.name).setSize(file.size).
                     setProgress(file.percent).build();
                 this.notifyUploadProgress(uploadItem);
             });
@@ -99,7 +99,7 @@ module api.content.inputtype.image {
                         if (responseObj.items && responseObj.items.length > 0) {
                             var uploadedFile = responseObj.items[0];
 
-                            var uploadItem: api.ui.UploadItem = new api.ui.UploadItemBuilder().
+                            var uploadItem: api.ui.uploader.UploadItem = new api.ui.uploader.UploadItemBuilder().
                                 setId(file.id).
                                 setBlobKey(new api.blob.BlobKey(uploadedFile.id)).
                                 setName(uploadedFile.name).
@@ -143,7 +143,7 @@ module api.content.inputtype.image {
             this.imageUploadStartedListeners = this.imageUploadStartedListeners.filter((current) => (current != listener));
         }
 
-        private notifyUploadStarted(uploadItems: api.ui.UploadItem[]) {
+        private notifyUploadStarted(uploadItems: api.ui.uploader.UploadItem[]) {
             var event = new ImageUploadStartedEvent(uploadItems);
             this.imageUploadStartedListeners.forEach((listener: (event: ImageUploadStartedEvent) => void) => listener(event));
         }
@@ -158,7 +158,7 @@ module api.content.inputtype.image {
             });
         }
 
-        private notifyImageUploaded(uploadItem: api.ui.UploadItem) {
+        private notifyImageUploaded(uploadItem: api.ui.uploader.UploadItem) {
             var event = new ImageUploadedEvent(uploadItem);
             this.imageUploadedListeners.forEach((listener: (event: ImageUploadedEvent)=>void) => listener(event));
         }
@@ -171,7 +171,7 @@ module api.content.inputtype.image {
             this.imageUploadProgressListeners = this.imageUploadProgressListeners.filter((current) => (current != listener));
         }
 
-        private notifyUploadProgress(uploadItem: api.ui.UploadItem) {
+        private notifyUploadProgress(uploadItem: api.ui.uploader.UploadItem) {
             var event = new ImageUploadProgressEvent(uploadItem);
             this.imageUploadProgressListeners.forEach((listener: (event: ImageUploadProgressEvent) => void) => listener(event));
         }

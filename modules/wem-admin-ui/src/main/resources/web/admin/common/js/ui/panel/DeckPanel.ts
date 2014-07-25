@@ -1,4 +1,4 @@
-module api.ui {
+module api.ui.panel {
 
     /**
      * A panel having multiple child panels, but showing only one at a time - like a deck of cards.
@@ -28,7 +28,7 @@ module api.ui {
          * @param panel
          * @returns {number} The index for the added Panel.
          */
-        addPanel<T extends api.ui.Panel>(panel: T): number {
+        addPanel<T extends api.ui.panel.Panel>(panel: T): number {
             panel.hide();
             panel.setDoOffset(false);
             this.appendChild(panel);
@@ -51,7 +51,7 @@ module api.ui {
             return this.getPanelIndex(this.panelShown);
         }
 
-        getPanelIndex<T extends api.ui.Panel>(panel: T): number {
+        getPanelIndex<T extends api.ui.panel.Panel>(panel: T): number {
             var size = this.getSize();
             for (var i = 0; i < size; i++) {
                 if (this.panels[i] === panel) {

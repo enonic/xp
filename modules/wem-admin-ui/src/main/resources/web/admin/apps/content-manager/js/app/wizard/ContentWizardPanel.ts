@@ -53,7 +53,7 @@ module app.wizard {
 
         private contentWizardStepForm: ContentWizardStepForm;
 
-        private iconUploadItem: api.ui.UploadItem;
+        private iconUploadItem: api.ui.uploader.UploadItem;
 
         private displayNameScriptExecutor: DisplayNameScriptExecutor;
 
@@ -640,7 +640,7 @@ module app.wizard {
             ResponsiveManager.fireResizeEvent();
         }
 
-        private isSplitView():boolean {
+        private isSplitView(): boolean {
             return this.getSplitPanel().hasClass("toggle-split");
         }
 

@@ -23,7 +23,7 @@ module app.wizard.page.contextwindow.inspect {
         layoutInspectionPanel: LayoutInspectionPanel;
     }
 
-    export class InspectionPanel extends api.ui.DeckPanel {
+    export class InspectionPanel extends api.ui.panel.DeckPanel {
 
         private noSelectionPanel: NoSelectionInspectionPanel;
         private imageInspectionPanel: ImageInspectionPanel;
@@ -55,7 +55,7 @@ module app.wizard.page.contextwindow.inspect {
             this.showPanel(this.pageInspectionPanel);
         }
 
-        public showInspectionPanel(panel: api.ui.Panel) {
+        public showInspectionPanel(panel: api.ui.panel.Panel) {
             this.showPanelByIndex(this.getPanelIndex(panel));
         }
 

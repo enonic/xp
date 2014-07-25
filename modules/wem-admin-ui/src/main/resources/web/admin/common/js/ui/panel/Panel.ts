@@ -1,4 +1,4 @@
-module api.ui {
+module api.ui.panel {
 
     export class Panel extends api.dom.DivEl {
 

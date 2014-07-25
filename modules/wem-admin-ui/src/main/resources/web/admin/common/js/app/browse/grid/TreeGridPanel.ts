@@ -15,7 +15,7 @@ module api.app.browse.grid {
         contextMenu:api.ui.menu.ContextMenu;
     }
 
-    export class TreeGridPanel extends api.ui.Panel {
+    export class TreeGridPanel extends api.ui.panel.Panel {
 
         static GRID = "grid";
         static TREE = "tree";

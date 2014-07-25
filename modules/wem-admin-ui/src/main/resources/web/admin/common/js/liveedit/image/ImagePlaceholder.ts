@@ -66,7 +66,7 @@ module api.liveedit.image {
         }
 
 
-        private createImageContent(uploadItem: api.ui.UploadItem) {
+        private createImageContent(uploadItem: api.ui.uploader.UploadItem) {
 
             this.imageComponentView.showLoadingSpinner();
 

@@ -1,6 +1,6 @@
 module api.app.view {
 
-    export class ItemStatisticsPanel<M> extends api.ui.Panel {
+    export class ItemStatisticsPanel<M> extends api.ui.panel.Panel {
 
         private browseItem: ViewItem<M>;
 
@@ -8,7 +8,7 @@ module api.app.view {
 
         private tabMenu: api.ui.tab.TabMenu;
 
-        private deckPanel: api.ui.NavigatedDeckPanel;
+        private deckPanel: api.ui.panel.NavigatedDeckPanel;
 
         constructor() {
             super();
@@ -21,7 +21,7 @@ module api.app.view {
             this.header = new ItemStatisticsHeader<M>();
             this.appendChild(this.header);
 
-            this.deckPanel = new api.ui.NavigatedDeckPanel(this.tabMenu);
+            this.deckPanel = new api.ui.panel.NavigatedDeckPanel(this.tabMenu);
             this.deckPanel.setDoOffset(false);
             this.appendChild(this.deckPanel);
         }
@@ -38,7 +38,7 @@ module api.app.view {
             return this.tabMenu;
         }
 
-        getDeckPanel(): api.ui.NavigatedDeckPanel {
+        getDeckPanel(): api.ui.panel.NavigatedDeckPanel {
             return this.deckPanel;
         }
 
@@ -47,7 +47,7 @@ module api.app.view {
             this.header.setItem(item);
         }
 
-        addNavigablePanel(tab: api.ui.tab.TabMenuItem, panel: api.ui.Panel) {
+        addNavigablePanel(tab: api.ui.tab.TabMenuItem, panel: api.ui.panel.Panel) {
             this.tabMenu.show();
             this.deckPanel.addNavigablePanel(tab, panel);
         }

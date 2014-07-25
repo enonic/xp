@@ -5,7 +5,7 @@ module api.liveedit {
     import ItemView = api.liveedit.ItemView;
     import DescriptorBasedPageComponent = api.content.page.DescriptorBasedPageComponent;
 
-    export class PageComponentSetDescriptorEvent extends Event2 {
+    export class PageComponentSetDescriptorEvent extends api.event.Event2 {
 
         private descriptor: Descriptor;
 

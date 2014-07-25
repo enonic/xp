@@ -15,10 +15,10 @@ module app.view {
             this.analyticsPanel = new ContentItemAnalyticsPanel();
             this.addNavigablePanel(new api.ui.tab.TabMenuItem("Google Analytics"), this.analyticsPanel);
 
-            this.addNavigablePanel(new api.ui.tab.TabMenuItem("Details"), new api.ui.Panel());
-            this.addNavigablePanel(new api.ui.tab.TabMenuItem("Relationships"), new api.ui.Panel());
-            this.addNavigablePanel(new api.ui.tab.TabMenuItem("Version History"), new api.ui.Panel());
-            this.addNavigablePanel(new api.ui.tab.TabMenuItem("SEO"), new api.ui.Panel());
+            this.addNavigablePanel(new api.ui.tab.TabMenuItem("Details"), new api.ui.panel.Panel());
+            this.addNavigablePanel(new api.ui.tab.TabMenuItem("Relationships"), new api.ui.panel.Panel());
+            this.addNavigablePanel(new api.ui.tab.TabMenuItem("Version History"), new api.ui.panel.Panel());
+            this.addNavigablePanel(new api.ui.tab.TabMenuItem("SEO"), new api.ui.panel.Panel());
 
             this.getTabMenu().onNavigationItemSelected((event: api.ui.NavigatorEvent) => {
                 this.onTabSelected(event.getItem());

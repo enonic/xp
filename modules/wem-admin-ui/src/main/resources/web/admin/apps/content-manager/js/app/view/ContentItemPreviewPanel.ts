@@ -3,7 +3,7 @@ module app.view {
     import IsRenderableRequest = api.content.page.IsRenderableRequest;
     import RenderingMode = api.rendering.RenderingMode;
 
-    export class ContentItemPreviewPanel extends api.ui.Panel {
+    export class ContentItemPreviewPanel extends api.ui.panel.Panel {
 
         private frame: api.dom.IFrameEl;
 

@@ -1,4 +1,4 @@
-module api.ui {
+module api.ui.uploader {
 
     export class UploadItem {
 

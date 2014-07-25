@@ -1,7 +1,7 @@
 module api.ui {
     export class DockedWindow extends api.dom.DivEl {
 
-        private deck: api.ui.NavigatedDeckPanel;
+        private deck: api.ui.panel.NavigatedDeckPanel;
         private navigator: api.ui.tab.TabBar;
         private items: any[] = [];
 
@@ -10,13 +10,13 @@ module api.ui {
             super("docked-window");
 
             this.navigator = new api.ui.tab.TabBar();
-            this.deck = new api.ui.NavigatedDeckPanel(this.navigator);
+            this.deck = new api.ui.panel.NavigatedDeckPanel(this.navigator);
 
             this.appendChild(this.navigator);
             this.appendChild(this.deck);
         }
 
-        addItem<T extends api.ui.Panel>(label: string, panel: T, hidden?: boolean): number {
+        addItem<T extends api.ui.panel.Panel>(label: string, panel: T, hidden?: boolean): number {
             var item = new api.ui.tab.TabBarItem(label);
             this.addItemArray(item);
 
@@ -25,7 +25,7 @@ module api.ui {
             return this.deck.getPanelIndex(panel);
         }
 
-        selectPanel<T extends api.ui.Panel>(panel: T) {
+        selectPanel<T extends api.ui.panel.Panel>(panel: T) {
             this.deck.selectPanelByIndex(this.deck.getPanelIndex(panel));
         }
 
@@ -33,7 +33,7 @@ module api.ui {
             return this.navigator;
         }
 
-        getDeck(): api.ui.DeckPanel {
+        getDeck(): api.ui.panel.DeckPanel {
             return this.deck;
         }
 

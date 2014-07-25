@@ -1,7 +1,7 @@
 module api.ui {
     export class NavigableFloatingWindow extends FloatingWindow {
 
-        private deck: api.ui.NavigatedDeckPanel;
+        private deck: api.ui.panel.NavigatedDeckPanel;
         private navigator: api.ui.tab.TabBar;
         private items: any[] = [];
 
@@ -10,13 +10,13 @@ module api.ui {
             super(wemjq.extend({draggable: true, draggableOptions: { handle: ".tab-menu"} }, options));
 
             this.navigator = new api.ui.tab.TabBar();
-            this.deck = new api.ui.NavigatedDeckPanel(this.navigator);
+            this.deck = new api.ui.panel.NavigatedDeckPanel(this.navigator);
 
             this.appendChild(this.navigator);
             this.appendChild(this.deck);
         }
 
-        addItem<T extends api.ui.Panel>(label: string, panel: T, hidden?: boolean): number {
+        addItem<T extends api.ui.panel.Panel>(label: string, panel: T, hidden?: boolean): number {
 
 
             var item = new api.ui.tab.TabBarItem(label);
@@ -27,7 +27,7 @@ module api.ui {
             return this.deck.getPanelIndex(panel);
         }
 
-        selectPanel<T extends api.ui.Panel>(panel: T) {
+        selectPanel<T extends api.ui.panel.Panel>(panel: T) {
             this.deck.selectPanelByIndex(this.deck.getPanelIndex(panel));
         }
 
@@ -35,7 +35,7 @@ module api.ui {
             return this.navigator;
         }
 
-        getDeck(): api.ui.DeckPanel {
+        getDeck(): api.ui.panel.DeckPanel {
             return this.deck;
         }
 

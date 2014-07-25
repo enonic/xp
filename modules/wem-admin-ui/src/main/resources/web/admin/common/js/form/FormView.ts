@@ -1,6 +1,6 @@
 module api.form {
 
-    export class FormView extends api.ui.Panel {
+    export class FormView extends api.ui.panel.Panel {
 
         private context: FormContext;
 
