@@ -1,4 +1,4 @@
-module api.ui {
+module api.ui.responsive {
 
     export class ResponsiveItem {
 
@@ -10,8 +10,8 @@ module api.ui {
 
         private handle: Function;           // Additional handler on update
 
-        constructor(element: api.dom.Element,
-                    handler: (item: ResponsiveItem) => void = ((item: ResponsiveItem) => {})) {
+        constructor(element: api.dom.Element, handler: (item: ResponsiveItem) => void = ((item: ResponsiveItem) => {
+        })) {
             this.element = element;
             this.rangeValue = this.element.getEl().getWidthWithBorder();
             this.handle = handler;
@@ -33,10 +33,10 @@ module api.ui {
         }
 
         /*
-        When used with responsive layout, make sure to call this method:
-        on global Window resize, on special events (stop dragging) and on shown
-        (for the first time initialization).
-        */
+         When used with responsive layout, make sure to call this method:
+         on global Window resize, on special events (stop dragging) and on shown
+         (for the first time initialization).
+         */
         update() {
             var newRangeValue = this.element.getEl().getWidthWithBorder();
             if (newRangeValue !== this.rangeValue) {
@@ -48,15 +48,16 @@ module api.ui {
             this.handle(this);     // Additional handler
         }
 
-        setHandler(handler: (item: ResponsiveItem) => void = ((item: ResponsiveItem) => {})) {
+        setHandler(handler: (item: ResponsiveItem) => void = ((item: ResponsiveItem) => {
+        })) {
             this.handle = handler;
         }
 
-        getRangeValue():number {
+        getRangeValue(): number {
             return this.rangeValue;
         }
 
-        getRangeSize():ResponsiveRange {
+        getRangeSize(): ResponsiveRange {
             return this.rangeSize;
         }
 

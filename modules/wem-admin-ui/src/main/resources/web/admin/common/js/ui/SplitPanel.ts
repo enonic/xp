@@ -1,5 +1,7 @@
 module api.ui {
 
+    import ResponsiveManager = api.ui.responsive.ResponsiveManager;
+
     export enum SplitPanelAlignment {
         HORIZONTAL,
         VERTICAL

@@ -1,5 +1,9 @@
 module api.app.browse {
 
+    import ResponsiveManager = api.ui.responsive.ResponsiveManager;
+    import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
+    import ResponsiveItem = api.ui.responsive.ResponsiveItem;
+
     export interface BrowsePanelParams<M> {
 
         browseToolbar:api.ui.toolbar.Toolbar;
@@ -31,7 +35,7 @@ module api.app.browse {
 
         private filterPanel: api.app.browse.filter.BrowseFilterPanel;
 
-        private filterAndGridAndDetailSplitPanel:api.ui.SplitPanel;
+        private filterAndGridAndDetailSplitPanel: api.ui.SplitPanel;
 
         private gridAndToolbarContainer: api.ui.Panel;
 
@@ -94,15 +98,15 @@ module api.app.browse {
                 this.appendChild(this.filterAndGridAndDetailSplitPanel);
             });
 
-            api.ui.ResponsiveManager.onAvailableSizeChanged(this, (item:api.ui.ResponsiveItem) => {
-                if (item.isInRangeOrSmaller(api.ui.ResponsiveRanges._360_540)) {
+            ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
+                if (item.isInRangeOrSmaller(ResponsiveRanges._360_540)) {
                     if (this.filterPanel && !this.filterAndGridAndDetailSplitPanel.isPanelHidden(1) && !this.filterPanelForcedShown) {
                         this.filterAndGridAndDetailSplitPanel.hidePanel(1);
                     }
                     if (!this.gridAndDetailSplitPanel.isPanelHidden(2)) {
                         this.gridAndDetailSplitPanel.hidePanel(2);
                     }
-                } else if (item.isInRangeOrBigger(api.ui.ResponsiveRanges._540_720)) {
+                } else if (item.isInRangeOrBigger(ResponsiveRanges._540_720)) {
                     if (this.filterPanel && this.filterAndGridAndDetailSplitPanel.isPanelHidden(1)) {
                         this.filterAndGridAndDetailSplitPanel.showPanel(1);
                     }
@@ -153,7 +157,9 @@ module api.app.browse {
 
         toggleFilterPanel() {
             this.filterPanelForcedShown = !this.filterPanelForcedShown;
-            !this.filterAndGridAndDetailSplitPanel.isPanelHidden(1) ? this.filterAndGridAndDetailSplitPanel.hidePanel(1) : this.filterAndGridAndDetailSplitPanel.showPanel(1);
+            !this.filterAndGridAndDetailSplitPanel.isPanelHidden(1)
+                ? this.filterAndGridAndDetailSplitPanel.hidePanel(1)
+                : this.filterAndGridAndDetailSplitPanel.showPanel(1);
         }
 
         toggleShowingNewGrid() {

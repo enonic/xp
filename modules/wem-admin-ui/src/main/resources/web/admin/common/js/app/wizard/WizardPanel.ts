@@ -1,5 +1,8 @@
 module api.app.wizard {
 
+    import ResponsiveManager = api.ui.responsive.ResponsiveManager;
+    import ResponsiveItem = api.ui.responsive.ResponsiveItem;
+
     export interface WizardPanelParams {
 
         tabId:api.app.AppBarTabId;
@@ -104,7 +107,7 @@ module api.app.wizard {
                 // set scroll offset equal to the height of the step navigator to switch steps at the bottom of it when sticky
                 this.stepPanels.setScrollOffset(event.getElement().getEl().getHeight());
             });
-            api.ui.ResponsiveManager.onAvailableSizeChanged(this.stepNavigatorAndToolbarContainer, (item: api.ui.ResponsiveItem) => {
+            ResponsiveManager.onAvailableSizeChanged(this.stepNavigatorAndToolbarContainer, (item: ResponsiveItem) => {
                 // update offset if step navigator is resized
                 this.updateStickyToolbar();
                 this.stepPanels.setScrollOffset(item.getElement().getEl().getHeight());

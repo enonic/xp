@@ -10,7 +10,7 @@ module app.wizard.page.contextwindow {
     import Region = api.content.page.region.Region;
     import ImageComponent = api.content.page.image.ImageComponent;
     import ImageComponentBuilder = api.content.page.image.ImageComponentBuilder;
-    import ResponsiveManager = api.ui.ResponsiveManager;
+    import ResponsiveManager = api.ui.responsive.ResponsiveManager;
     import BaseInspectionPanel = app.wizard.page.contextwindow.inspect.BaseInspectionPanel;
     import InspectionPanel = app.wizard.page.contextwindow.inspect.InspectionPanel;
     import InsertablesPanel = app.wizard.page.contextwindow.insert.InsertablesPanel;
@@ -82,10 +82,10 @@ module app.wizard.page.contextwindow {
                 this.updateFrameSize();
             });
 
-            ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.ResponsiveItem) => {
+            ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
                 this.updateFrameSize();
             });
-            ResponsiveManager.onAvailableSizeChanged(this.liveFormPanel, (item: api.ui.ResponsiveItem) => {
+            ResponsiveManager.onAvailableSizeChanged(this.liveFormPanel, (item: api.ui.responsive.ResponsiveItem) => {
                 this.updateFrameSize();
             });
 

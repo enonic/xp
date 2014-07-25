@@ -1,4 +1,4 @@
-module api.ui {
+module api.ui.responsive {
 
     export class ResponsiveRange {
 
@@ -6,7 +6,7 @@ module api.ui {
         private maxRange: number;
         private rangeClass: string;
 
-        constructor(minRange:number, maxRange?:number, rangeClass?:string) {
+        constructor(minRange: number, maxRange?: number, rangeClass?: string) {
             this.minRange = minRange;
             this.maxRange = maxRange || 0;
             this.rangeClass = rangeClass || ("_" + minRange + "-" + maxRange);
@@ -24,15 +24,15 @@ module api.ui {
             return this.rangeClass;
         }
 
-        isFit(size:number): boolean {
+        isFit(size: number): boolean {
             return (this.minRange <= size) && (size <= this.maxRange);
         }
 
-        isFitOrSmaller(size:number): boolean {
+        isFitOrSmaller(size: number): boolean {
             return size <= this.maxRange;
         }
 
-        isFitOrBigger(size:number): boolean {
+        isFitOrBigger(size: number): boolean {
             return size > this.minRange;
         }
     }

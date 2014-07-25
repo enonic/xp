@@ -3,7 +3,8 @@ module api.content.inputtype.image {
     import ContentSummary = api.content.ContentSummary;
     import ComboBoxConfig = api.ui.selector.combobox.ComboBoxConfig;
     import ComboBox = api.ui.selector.combobox.ComboBox;
-    import ResponsiveManager = api.ui.ResponsiveManager;
+    import ResponsiveManager = api.ui.responsive.ResponsiveManager;
+    import ResponsiveItem = api.ui.responsive.ResponsiveItem;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
     import LoadingDataEvent = api.util.loader.event.LoadingDataEvent;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
@@ -98,7 +99,7 @@ module api.content.inputtype.image {
                 this.createImageContent(event.getUploadedItem());
             });
 
-            ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.ResponsiveItem) => {
+            ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
                 this.availableSizeChanged();
             });
 

@@ -1,4 +1,4 @@
-module api.ui {
+module api.ui.responsive {
 
     export class ResponsiveListener {
 

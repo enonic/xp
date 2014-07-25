@@ -17,11 +17,6 @@
 ///<reference path='BodyMask.ts' />
 ///<reference path='LoadMask.ts' />
 ///<reference path='DragMask.ts' />
-///<reference path='ResponsiveRange.ts' />
-///<reference path='ResponsiveRanges.ts' />
-///<reference path='ResponsiveItem.ts' />
-///<reference path='ResponsiveListener.ts' />
-///<reference path='ResponsiveManager.ts' />
 ///<reference path='SplitPanel.ts' />
 ///<reference path='BodyMask.ts' />
 ///<reference path='Tooltip.ts' />

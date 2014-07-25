@@ -23,8 +23,9 @@ module app.wizard {
     import IsRenderableRequest = api.content.page.IsRenderableRequest;
 
     import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
-    import ResponsiveManager = api.ui.ResponsiveManager;
-    import ResponsiveRanges = api.ui.ResponsiveRanges;
+    import ResponsiveManager = api.ui.responsive.ResponsiveManager;
+    import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
+    import ResponsiveItem = api.ui.responsive.ResponsiveItem;
     import FormIcon = api.app.wizard.FormIcon;
     import WizardHeaderWithDisplayNameAndName = api.app.wizard.WizardHeaderWithDisplayNameAndName;
     import WizardHeaderWithDisplayNameAndNameBuilder = api.app.wizard.WizardHeaderWithDisplayNameAndNameBuilder;
@@ -209,7 +210,7 @@ module app.wizard {
                     this.contentWizardActions.getShowSplitEditAction().execute();
                 });
 
-                ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.ResponsiveItem) => {
+                ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
                     this.updateStickyToolbar();
                     if (item.isInRangeOrSmaller(ResponsiveRanges._720_960)) {
                         this.cycleViewModeButton.disableAction(this.contentWizardActions.getShowSplitEditAction());
