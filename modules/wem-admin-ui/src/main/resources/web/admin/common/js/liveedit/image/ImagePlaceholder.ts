@@ -20,7 +20,11 @@ module api.liveedit.image {
                 e.stopPropagation();
             });
 
-            var imageUploadHandler = (event: ImageUploadedEvent) => this.createImageContent(event.getUploadedItem());
+            var imageUploadHandler = (event: ImageUploadedEvent) => {
+                if (event.getTargetImagePlaceholder() === this) {
+                    this.createImageContent(event.getUploadedItem());
+                }
+            };
             ImageUploadedEvent.on(imageUploadHandler);
             this.onRemoved((event: api.dom.ElementRemovedEvent) => ImageUploadedEvent.un(imageUploadHandler));
 
@@ -31,7 +35,7 @@ module api.liveedit.image {
                 event.preventDefault();
                 event.stopPropagation();
 
-                new ImageOpenUploadDialogEvent().fire();
+                new ImageOpenUploadDialogEvent(this).fire();
             });
             this.uploadButton.hide();
 
