@@ -148,6 +148,9 @@ module app.wizard.site {
 
                 var moduleConfig: api.content.site.ModuleConfig = this.moduleConfigsByKey[theModule.getModuleKey().toString()];
                 var moduleView = new ModuleView(this.formContext, theModule, moduleConfig);
+                moduleView.onEditContentRequest((content: api.content.ContentSummary) => {
+                    new app.browse.EditContentEvent([content]).fire();
+                });
 
                 moduleView.onFocus((event: FocusEvent) => {
                     this.notifyFocused(event);

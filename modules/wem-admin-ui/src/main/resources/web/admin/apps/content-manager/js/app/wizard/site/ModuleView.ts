@@ -56,6 +56,14 @@ module app.wizard.site {
             this.unValidityChanged(listener);
         }
 
+        onEditContentRequest(listener: (content: api.content.ContentSummary) => void) {
+            this.formView.onEditContentRequest(listener);
+        }
+
+        unEditContentRequest(listener: (content: api.content.ContentSummary) => void) {
+            this.formView.unEditContentRequest(listener);
+        }
+
     }
 
 }
