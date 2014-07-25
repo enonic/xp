@@ -2,9 +2,8 @@
 ///<reference path='TreeItem.ts' />
 ///<reference path='TreeNode.ts' />
 ///<reference path='TreeGridToolbar.ts' />
-///<reference path='SelectAllAction.ts' />
-///<reference path='ClearSelectionAction.ts' />
-///<reference path='TreeGridActions.ts' />
 ///<reference path='DateTimeFormatter.ts' />
 ///<reference path='TreeGridBuilder.ts' />
 ///<reference path='TreeNodeBuilder.ts' />
+///<reference path='TreeGridContextMenu.ts' />
+///<reference path='TreeGridShowContextMenuEvent.ts' />

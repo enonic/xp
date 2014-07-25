@@ -162,7 +162,7 @@ module api.ui.grid {
             this.slickGrid.setSelectedRows(rows);
         }
 
-        selectRow(row) {
+        selectRow(row:number) {
             // Prevent unnecessary render on the same row
             if (this.getSelectedRows().length > 1
                 || (this.getSelectedRows().length < 2 && this.getSelectedRows().indexOf(row) < 0)) {
@@ -190,6 +190,10 @@ module api.ui.grid {
             if (this.slickGrid.getActiveCell()) {
                 this.slickGrid.resetActiveCell();
             }
+        }
+
+        getCellFromEvent(e: Slick.Event<T>): Slick.Cell {
+            return this.slickGrid.getCellFromEvent(e);
         }
 
         moveSelectedUp() {
@@ -259,6 +263,10 @@ module api.ui.grid {
 
         subscribeOnDblClick(callback:(e, args) => void) {
             this.slickGrid.onDblClick.subscribe(callback);
+        }
+
+        subscribeOnContextMenu(callback:(e, args) => void) {
+            this.slickGrid.onContextMenu.subscribe(callback);
         }
     }
 }

@@ -25,6 +25,13 @@ module api.ui.menu {
             return this;
         }
 
+        addActions(actions: api.ui.Action[]): ContextMenu {
+            actions.forEach((action) => {
+                this.addAction(action);
+            });
+            return this;
+        }
+
         setHideOnItemClick(hide: boolean): ContextMenu {
             this.hideOnItemClick = hide;
             return this;

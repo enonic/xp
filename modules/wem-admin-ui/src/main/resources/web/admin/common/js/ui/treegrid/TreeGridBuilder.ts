@@ -4,11 +4,13 @@ module api.ui.treegrid {
     import GridColumnBuilder = api.ui.grid.GridColumnBuilder;
     import GridOptions = api.ui.grid.GridOptions;
     import GridOptionsBuilder = api.ui.grid.GridOptionsBuilder;
-
+    import ContextMenu = api.ui.menu.ContextMenu;
 
     export class TreeGridBuilder<NODE extends TreeItem> {
 
         private showToolbar: boolean = true;
+
+        private contextMenu: TreeGridContextMenu;
 
         private options: GridOptions<NODE>;
 
@@ -19,6 +21,7 @@ module api.ui.treegrid {
         constructor(grid?: TreeGrid<NODE>) {
             if (grid) {
                 this.showToolbar = grid.hasToolbar();
+                this.contextMenu = grid.getContextMenu();
                 this.classes = grid.getEl().getClass();
                 this.copyOptions(grid.getOptions())
                     .copyColumns(grid.getColumns());
@@ -88,6 +91,10 @@ module api.ui.treegrid {
             return this.showToolbar;
         }
 
+        getContextMenu(): TreeGridContextMenu {
+            return this.contextMenu;
+        }
+
         getOptions(): GridOptions<NODE> {
             return this.options;
         }
@@ -102,6 +109,11 @@ module api.ui.treegrid {
 
         setShowToolbar(showToolbar: boolean): TreeGridBuilder<NODE> {
             this.showToolbar = showToolbar;
+            return this;
+        }
+
+        setShowContextMenu(contextMenu: TreeGridContextMenu): TreeGridBuilder<NODE> {
+            this.contextMenu = contextMenu;
             return this;
         }
 
