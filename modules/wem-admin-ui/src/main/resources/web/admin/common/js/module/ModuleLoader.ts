@@ -8,7 +8,7 @@ module api.module {
         private preservedSearchString: string;
 
         constructor(delay: number = 500) {
-            super(new ListModuleRequest());
+            super(new ListModulesRequest());
         }
 
         search(searchString: string) {
@@ -22,7 +22,7 @@ module api.module {
         }
 
         load() {
-            this.loading(true)
+            this.loading(true);
             this.notifyLoadingData();
 
             this.sendRequest()

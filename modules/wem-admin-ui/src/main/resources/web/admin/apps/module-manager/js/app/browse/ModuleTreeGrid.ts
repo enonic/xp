@@ -53,7 +53,7 @@ module app.browse {
         }
 
         fetchChildren(parent?: ModuleSummary): Q.Promise<ModuleSummary[]> {
-            return new api.module.ListModuleRequest().sendAndParse();
+            return new api.module.ListModulesRequest().sendAndParse();
         }
 
         private defaultNameFormatter(row: number, cell: number, value: any, columnDef: any, item: ModuleSummary) {
