@@ -35,9 +35,9 @@ module app.wizard {
             });
         }
 
-        private defaultNameFormatter(row: number, cell: number, value: any, columnDef: any, item: ContentSummaryAndCompareStatus) {
+        private defaultNameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
             var contentSummaryViewer = new ContentSummaryViewer();
-            contentSummaryViewer.setObject(item.getContentSummary());
+            contentSummaryViewer.setObject(node.getData().getContentSummary());
             return contentSummaryViewer.toString();
         }
 

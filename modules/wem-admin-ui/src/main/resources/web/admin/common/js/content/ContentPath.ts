@@ -47,7 +47,7 @@ module api.content {
             return this.elements.length > 1;
         }
 
-        getRelativePath(): string {
+        getLastElement(): string {
             return (this.elements[this.elements.length - 1] || "");
         }
 

@@ -12,7 +12,7 @@ module api.content {
 
         setObject(content: ContentSummary, relativePath: boolean = false) {
             super.setObject(content);
-            var subName = relativePath ? content.getPath().getRelativePath() : content.getPath().toString();
+            var subName = relativePath ? content.getPath().getLastElement() : content.getPath().toString();
             this.namesAndIconView.setMainName(content.getDisplayName()).
                 setSubName(subName, content.getPath().toString()).
                 setIconUrl(content.getIconUrl() + '?crop=false');

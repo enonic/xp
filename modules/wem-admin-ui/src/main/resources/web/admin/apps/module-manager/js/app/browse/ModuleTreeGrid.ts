@@ -25,27 +25,31 @@ module app.browse {
                             build(),
 
                         new GridColumnBuilder<TreeNode<ModuleSummary>>().
-                            setName("ModifiedTime").
-                            setId("modifiedTime").
-                            setField("modifiedTime").
-                            setWidth(150).
-                            setMinWidth(150).
-                            setFormatter(DateTimeFormatter.format).
-                            build() ,
-
-                        new GridColumnBuilder<TreeNode<ModuleSummary>>().
                             setName("Version").
                             setId("version").
                             setField("version").
-                            setMaxWidth(70).
+                            setCssClass("version").
                             setMinWidth(50).
-                            build() ,
+                            setMaxWidth(70).
+                            build(),
 
                         new GridColumnBuilder<TreeNode<ModuleSummary>>().
                             setName("State").
                             setId("state").
                             setField("state").
+                            setCssClass("state").
                             setMinWidth(80).
+                            setMaxWidth(100).
+                            build(),
+
+                        new GridColumnBuilder<TreeNode<ModuleSummary>>().
+                            setName("ModifiedTime").
+                            setId("modifiedTime").
+                            setField("modifiedTime").
+                            setCssClass("modified").
+                            setMinWidth(150).
+                            setMaxWidth(170).
+                            setFormatter(DateTimeFormatter.format).
                             build()
 
                     ]).prependClasses("module-grid")
@@ -53,6 +57,7 @@ module app.browse {
         }
 
         fetchChildren(parent?: ModuleSummary): Q.Promise<ModuleSummary[]> {
+            api.util.assertNull(parent, "Parent element is not a root");
             return new api.module.ListModulesRequest().sendAndParse();
         }
 
