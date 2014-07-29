@@ -9,7 +9,7 @@ module app.browse {
     import TreeNode = api.ui.treegrid.TreeNode;
     import TreeGridBuilder = api.ui.treegrid.TreeGridBuilder;
     import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
-
+    import TreeItem = api.ui.treegrid.TreeItem;
 
     export class ModuleTreeGrid extends TreeGrid<ModuleSummary> {
 
@@ -56,9 +56,10 @@ module app.browse {
             return new api.module.ListModulesRequest().sendAndParse();
         }
 
-        private defaultNameFormatter(row: number, cell: number, value: any, columnDef: any, item: ModuleSummary) {
+        private defaultNameFormatter(row: number, cell: number, value: any, columnDef: any, item: TreeNode<ModuleSummary>) {
             var viewer = new ModuleSummaryViewer();
-            viewer.setObject(item);
+            var moduleSummary: ModuleSummary = item.getData();
+            viewer.setObject(moduleSummary);
             return viewer.toString();
         }
     }
