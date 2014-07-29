@@ -2,6 +2,7 @@ package com.enonic.wem.api.support;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableList;
 
@@ -48,6 +49,11 @@ public abstract class AbstractImmutableEntityList<T>
     public final List<T> getList()
     {
         return this.list;
+    }
+
+    public final Stream<T> stream()
+    {
+        return this.list.stream();
     }
 
     public final boolean contains( T o )

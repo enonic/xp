@@ -4,6 +4,8 @@ module api.content.site.template {
 
         key:string;
 
+        parentKey:string;
+
         name:string;
 
         displayName:string;

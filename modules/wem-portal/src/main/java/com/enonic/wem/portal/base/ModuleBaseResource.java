@@ -14,7 +14,7 @@ import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.core.module.ModuleKeyResolverService;
 
 public abstract class ModuleBaseResource
-    extends BaseResource
+    extends WorkspaceBaseResource
 {
     @Inject
     protected ModuleKeyResolverService moduleKeyResolverService;

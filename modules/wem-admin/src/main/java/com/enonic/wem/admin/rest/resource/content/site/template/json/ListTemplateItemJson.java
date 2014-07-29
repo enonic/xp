@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplates;
 import com.enonic.wem.api.content.site.SiteTemplate;
+import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.SiteTemplates;
 
 public final class ListTemplateItemJson
@@ -23,12 +24,12 @@ public final class ListTemplateItemJson
         this.list = builder.build();
     }
 
-    public ListTemplateItemJson( final PageTemplates pageTemplates )
+    public ListTemplateItemJson( final SiteTemplateKey siteTemplateKey, final PageTemplates pageTemplates )
     {
         ImmutableList.Builder<TemplateItemJson> builder = ImmutableList.builder();
         for ( PageTemplate pageTemplate : pageTemplates )
         {
-            builder.add( new TemplateItemJson( pageTemplate ) );
+            builder.add( new TemplateItemJson( siteTemplateKey, pageTemplate ) );
         }
         this.list = builder.build();
     }

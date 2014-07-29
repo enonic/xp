@@ -14,52 +14,15 @@ import org.restlet.resource.ResourceException;
 import org.restlet.resource.ServerResource;
 import org.restlet.util.Series;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
-import com.enonic.wem.api.entity.Workspace;
-import com.enonic.wem.api.rendering.RenderingMode;
 import com.enonic.wem.portal.rendering.RenderResult;
 import com.enonic.wem.portal.restlet.RestletUtils;
 
 public abstract class BaseResource
     extends ServerResource
 {
-    protected RenderingMode mode;
-
-    protected Workspace workspace;
-
-    @Override
-    protected void doInit()
-        throws ResourceException
-    {
-        final String modeStr = getAttribute( "mode" );
-        this.mode = RenderingMode.from( modeStr );
-        if ( this.mode == null )
-        {
-            throw illegalMode( modeStr );
-        }
-
-        final String workspaceStr = getAttribute( "workspace" );
-        this.workspace = Workspace.from( workspaceStr );
-        if ( this.workspace == null )
-        {
-            throw invalidWorkspace( workspaceStr );
-        }
-
-    }
-
-    private ResourceException invalidWorkspace( final String workspace )
-    {
-        return notFound( "Illegal workspace [%s]", workspace );
-    }
-
-    private ResourceException illegalMode( final String mode )
-    {
-        final String validModes = Joiner.on( "," ).join( RenderingMode.values() ).toLowerCase();
-        return notFound( "Illegal mode [%s]. Should be one of [%s].", mode, validModes );
-    }
 
     protected final ResourceException notFound( final String message, final Object... args )
     {

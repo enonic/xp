@@ -98,6 +98,8 @@ module app.browse {
             this.type = TemplateType[json.templateType.toUpperCase()];
             if (this.type === TemplateType.SITE) {
                 this.siteTemplateKey = api.content.site.template.SiteTemplateKey.fromString(this.key);
+            } else if (json.parentKey) {
+                this.siteTemplateKey = api.content.site.template.SiteTemplateKey.fromString(json.parentKey);
             }
             this.iconUrl = json.iconUrl;
             return this;

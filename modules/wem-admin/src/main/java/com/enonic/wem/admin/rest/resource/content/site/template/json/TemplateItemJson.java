@@ -4,6 +4,7 @@ import com.enonic.wem.admin.json.ItemJson;
 import com.enonic.wem.admin.rest.resource.content.site.template.SiteTemplateIconUrlResolver;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.site.SiteTemplate;
+import com.enonic.wem.api.content.site.SiteTemplateKey;
 
 
 @SuppressWarnings("UnusedDeclaration")
@@ -20,6 +21,8 @@ public final class TemplateItemJson
 
     private final String key;
 
+    private final String parentKey;
+
     private final boolean hasChildren;
 
     private final boolean isSiteTemplate;
@@ -33,18 +36,20 @@ public final class TemplateItemJson
         this.name = siteTemplate.getName().toString();
         this.displayName = siteTemplate.getDisplayName();
         this.key = siteTemplate.getKey().toString();
+        this.parentKey = null;
         this.hasChildren = siteTemplate.getPageTemplates().isNotEmpty();
         this.isSiteTemplate = true;
         this.iconUrl = SiteTemplateIconUrlResolver.resolve( siteTemplate );
     }
 
-    public TemplateItemJson( final PageTemplate pageTemplate )
+    public TemplateItemJson( final SiteTemplateKey siteTemplateKey, final PageTemplate pageTemplate )
     {
         this.editable = false;
         this.deletable = false;
         this.name = pageTemplate.getName().toString();
         this.displayName = pageTemplate.getDisplayName();
         this.key = pageTemplate.getKey().toString();
+        this.parentKey = siteTemplateKey.toString();
         this.hasChildren = false;
         this.isSiteTemplate = false;
         this.iconUrl = "";
@@ -53,6 +58,11 @@ public final class TemplateItemJson
     public String getKey()
     {
         return this.key;
+    }
+
+    public String getParentKey()
+    {
+        return parentKey;
     }
 
     public String getDisplayName()
