@@ -34,4 +34,32 @@ module api.util {
         return path.charAt(0) == '/' ? path.substring(1) : path;
     }
 
+    export function getUrlLocation(url: string): string {
+        return url.split(/\?|&/i)[0];
+    }
+
+    export function decodeUrlParams(url: string): {[key: string]: string
+    } {
+        var array = url.split(/\?|&/i);
+        var params: {[name: string]: string} = {};
+        var param;
+        if (array.length > 1) {
+            for (var i = 1; i < array.length; i++) {
+                param = array[i].split('=');
+                params[param[0]] = param.length > 1 ? param[1] : undefined;
+            }
+        }
+        return params;
+    }
+
+    export function encodeUrlParams(params: {[key: string]: string}): string {
+        var url = "";
+        for (var key in params) {
+            if (params.hasOwnProperty(key) && params[key] != undefined) {
+                url += "&" + key + "=" + params[key];
+            }
+        }
+        return url.length > 0 ? ("?" + url.substr(1)) : url;
+    }
+
 }
