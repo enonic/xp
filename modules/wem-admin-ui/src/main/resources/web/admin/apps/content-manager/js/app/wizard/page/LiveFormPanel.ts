@@ -418,8 +418,8 @@ module app.wizard.page {
                 done();
         }
 
-        updateFrameContainerSize(contextWindowPinned: boolean, contextWindowWidth?: number) {
-            if (contextWindowPinned && contextWindowWidth) {
+        updateFrameContainerSize(contextWindowShown: boolean, contextWindowWidth?: number) {
+            if (contextWindowShown && contextWindowWidth) {
                 this.frameContainer.getEl().setWidth("calc(100% - " + (contextWindowWidth - 1) + "px)");
             } else {
                 this.frameContainer.getEl().setWidth("100%");
