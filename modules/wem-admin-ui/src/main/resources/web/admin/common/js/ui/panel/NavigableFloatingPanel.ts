@@ -1,22 +1,27 @@
-module api.ui {
-    export class DockedWindow extends api.dom.DivEl {
+module api.ui.panel {
 
-        private deck: api.ui.panel.NavigatedDeckPanel;
-        private navigator: api.ui.tab.TabBar;
+    import TabBar = api.ui.tab.TabBar;
+
+    export class NavigableFloatingPanel extends FloatingPanel {
+
+        private deck: NavigatedDeckPanel;
+        private navigator: TabBar;
         private items: any[] = [];
 
 
-        constructor() {
-            super("docked-window");
+        constructor(options: FloatingPanelOptions = {}) {
+            super(wemjq.extend({draggable: true, draggableOptions: { handle: ".tab-menu"} }, options));
 
-            this.navigator = new api.ui.tab.TabBar();
-            this.deck = new api.ui.panel.NavigatedDeckPanel(this.navigator);
+            this.navigator = new TabBar();
+            this.deck = new NavigatedDeckPanel(this.navigator);
 
             this.appendChild(this.navigator);
             this.appendChild(this.deck);
         }
 
-        addItem<T extends api.ui.panel.Panel>(label: string, panel: T, hidden?: boolean): number {
+        addItem<T extends Panel>(label: string, panel: T, hidden?: boolean): number {
+
+
             var item = new api.ui.tab.TabBarItem(label);
             this.addItemArray(item);
 
@@ -29,11 +34,11 @@ module api.ui {
             this.deck.selectPanelByIndex(this.deck.getPanelIndex(panel));
         }
 
-        getNavigator(): api.ui.tab.TabBar {
+        getNavigator(): TabBar {
             return this.navigator;
         }
 
-        getDeck(): api.ui.panel.DeckPanel {
+        getDeck(): DeckPanel {
             return this.deck;
         }
 

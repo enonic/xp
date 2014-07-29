@@ -15,9 +15,6 @@
 ///<reference path='NavigationItem.ts' />
 ///<reference path='NavigatorEvent.ts' />
 ///<reference path='Navigator.ts' />
-///<reference path='FloatingWindow.ts' />
-///<reference path='NavigableFloatingWindow.ts' />
-///<reference path='DockedWindow.ts' />
 ///<reference path='Dropdown.ts' />
 ///<reference path='RadioGroup.ts' />
 ///<reference path='Checkbox.ts' />

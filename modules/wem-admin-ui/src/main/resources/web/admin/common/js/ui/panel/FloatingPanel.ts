@@ -1,18 +1,18 @@
-module api.ui {
+module api.ui.panel {
 
-    export interface FloatingWindowOptions {
+    export interface FloatingPanelOptions {
         draggable?:boolean;
         resizeable?:boolean
         draggableOptions?:JQueryUI.DraggableOptions;
     }
 
-    export class FloatingWindow extends api.dom.DivEl {
-        private draggable:boolean;
-        private resizable:boolean;
-        private options:FloatingWindowOptions;
+    export class FloatingPanel extends Panel {
+        private draggable: boolean;
+        private resizable: boolean;
+        private options: FloatingPanelOptions;
 
-        constructor(options:FloatingWindowOptions) {
-            super("floating-window");
+        constructor(options: FloatingPanelOptions) {
+            super("floating-panel");
             this.options = options;
             if (options) {
                 if (options.draggable) {

@@ -52,13 +52,13 @@
 ///<reference path='ui/_module.ts' />
 ///<reference path='ui/button/_module.ts' />
 ///<reference path='ui/text/_module.ts' />
+///<reference path='ui/tab/_module.ts' />
 ///<reference path='ui/uploader/_module.ts' />
 ///<reference path='ui/panel/_module.ts' />
 ///<reference path='ui/dialog/_module.ts' />
 ///<reference path='ui/form/_module.ts' />
 ///<reference path='ui/grid/_module.ts' />
 ///<reference path='ui/menu/_module.ts' />
-///<reference path='ui/tab/_module.ts' />
 ///<reference path='ui/toolbar/_module.ts' />
 ///<reference path='ui/mask/_module.ts' />
 

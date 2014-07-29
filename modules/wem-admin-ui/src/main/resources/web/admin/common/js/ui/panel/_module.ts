@@ -5,3 +5,6 @@
 ///<reference path='SplitPanel.ts' />
 ///<reference path='NavigatedDeckPanel.ts' />
 ///<reference path='NavigatedPanelStrip.ts' />
+///<reference path='DockedPanel.ts' />
+///<reference path='FloatingPanel.ts' />
+///<reference path='NavigableFloatingPanel.ts' />

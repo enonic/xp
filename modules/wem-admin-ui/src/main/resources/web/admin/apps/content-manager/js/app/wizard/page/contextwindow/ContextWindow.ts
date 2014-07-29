@@ -28,7 +28,7 @@ module app.wizard.page.contextwindow {
         insertablesPanel:InsertablesPanel;
     }
 
-    export class ContextWindow extends api.ui.DockedWindow {
+    export class ContextWindow extends api.ui.panel.DockedPanel {
 
         private insertablesPanel: InsertablesPanel;
 
