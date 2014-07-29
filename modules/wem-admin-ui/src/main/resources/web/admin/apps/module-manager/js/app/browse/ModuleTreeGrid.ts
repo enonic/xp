@@ -56,10 +56,9 @@ module app.browse {
             return new api.module.ListModulesRequest().sendAndParse();
         }
 
-        private defaultNameFormatter(row: number, cell: number, value: any, columnDef: any, item: TreeNode<ModuleSummary>) {
+        private defaultNameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ModuleSummary>) {
             var viewer = new ModuleSummaryViewer();
-            var moduleSummary: ModuleSummary = item.getData();
-            viewer.setObject(moduleSummary);
+            viewer.setObject(node.getData());
             return viewer.toString();
         }
     }
