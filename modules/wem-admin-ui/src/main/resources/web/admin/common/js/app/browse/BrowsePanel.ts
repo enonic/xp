@@ -49,8 +49,12 @@ module api.app.browse {
             this.filterPanel = params.filterPanel;
 
             this.browseItemPanel.onDeselected((event: ItemDeselectedEvent<M>) => {
-                this.oldTreeGrid.deselectItem(event.getBrowseItem().getPath());
-                this.newTreeGrid.deselectItem(event.getBrowseItem().getId());
+                if (this.oldTreeGrid) {
+                    this.oldTreeGrid.deselectItem(event.getBrowseItem().getPath());
+                }
+                if (this.newTreeGrid) {
+                    this.newTreeGrid.deselectItem(event.getBrowseItem().getId());
+                }
             });
 
             this.gridAndToolbarContainer = new api.ui.Panel();

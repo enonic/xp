@@ -1,6 +1,6 @@
 module app.view {
 
-    export class TemplateItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<app.browse.TemplateSummary> {
+    export class TemplateItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.content.TemplateSummary> {
 
         private previewPanel: TemplateItemPreviewPanel;
 
@@ -19,7 +19,7 @@ module app.view {
             this.onShown(firstShowListener);
         }
 
-        setItem(item: api.app.view.ViewItem<app.browse.TemplateSummary>) {
+        setItem(item: api.app.view.ViewItem<api.content.TemplateSummary>) {
             super.setItem(item);
             this.previewPanel.setItem(item);
         }

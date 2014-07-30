@@ -1,4 +1,4 @@
-module app.browse {
+module api.content {
 
     import PageTemplateKey = api.content.page.PageTemplateKey;
 
@@ -7,7 +7,7 @@ module app.browse {
         SITE
     }
 
-    export class TemplateSummary extends api.item.BaseItem {
+    export class TemplateSummary extends api.item.BaseItem implements api.ui.treegrid.TreeItem {
 
         private name: string;
 
@@ -57,6 +57,10 @@ module app.browse {
 
         getIconUrl(): string {
             return this.iconUrl;
+        }
+
+        public hasChildren(): boolean {
+            return this.isSiteTemplate();
         }
 
         static fromJson(json: api.content.site.template.TemplateSummaryJson): TemplateSummary {

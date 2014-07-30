@@ -1,24 +1,20 @@
 module app.browse.action {
-    export class TemplateBrowseActions {
 
-        public IMPORT_TEMPLATE:api.ui.Action;
+    import TemplateType = api.content.TemplateType;
+    import TemplateSummary = api.content.TemplateSummary;
+    import TreeGridActions = api.ui.treegrid.actions.TreeGridActions;
+
+    export class TemplateBrowseActions implements TreeGridActions {
+
+        public IMPORT_TEMPLATE: api.ui.Action;
         public NEW_TEMPLATE: api.ui.Action;
-        public EDIT_TEMPLATE: api.ui.Action;
+        public EDIT_TEMPLATE: EditTemplateAction;
         public OPEN_TEMPLATE: api.ui.Action;
-        public DELETE_TEMPLATE: api.ui.Action;
+        public DELETE_TEMPLATE: DeleteTemplateAction;
         public DUPLICATE_TEMPLATE: api.ui.Action;
-        public EXPORT_TEMPLATE: api.ui.Action;
+        public EXPORT_TEMPLATE: ExportTemplateAction;
 
         private allActions: api.ui.Action[] = [];
-
-        private static INSTANCE: TemplateBrowseActions;
-
-        static get(): TemplateBrowseActions {
-            if (!TemplateBrowseActions.INSTANCE) {
-                TemplateBrowseActions.INSTANCE = new TemplateBrowseActions();
-            }
-            return TemplateBrowseActions.INSTANCE;
-        }
 
         constructor() {
             this.IMPORT_TEMPLATE = new ImportTemplateAction();
@@ -33,17 +29,26 @@ module app.browse.action {
                 this.DELETE_TEMPLATE, this.DUPLICATE_TEMPLATE, this.EXPORT_TEMPLATE);
         }
 
-        updateActionsEnabledState(templates: any[]) {
+        updateActionsEnabledState(templates: TemplateSummary[]) {
             var modulesSelected = templates.length;
-            var siteTemplateSelected: boolean = templates.some(function (templateRecord){
-                var type: TemplateType = TemplateType[<string>templateRecord.get('templateType')];
-                return type === TemplateType.SITE;
+            var siteTemplateSelected: boolean = templates.some(function (templateSummary) {
+                return templateSummary.isSiteTemplate();
             });
             this.DELETE_TEMPLATE.setEnabled(siteTemplateSelected);
             this.EDIT_TEMPLATE.setEnabled(siteTemplateSelected);
             this.OPEN_TEMPLATE.setEnabled(siteTemplateSelected);
             this.DUPLICATE_TEMPLATE.setEnabled(siteTemplateSelected);
             this.EXPORT_TEMPLATE.setEnabled((modulesSelected === 1) && siteTemplateSelected);
+        }
+
+        getAllActions(): api.ui.Action[] {
+            return this.allActions;
+        }
+
+        setTemplateTreeGrid(templateTreeGrid: app.browse.TemplateTreeGrid) {
+            this.EDIT_TEMPLATE.setTemplateTreeGrid(templateTreeGrid);
+            this.DELETE_TEMPLATE.setTemplateTreeGrid(templateTreeGrid);
+            this.EXPORT_TEMPLATE.setTemplateTreeGrid(templateTreeGrid);
         }
 
     }

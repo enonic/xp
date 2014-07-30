@@ -2,14 +2,24 @@ module app.browse.action {
 
     export class DeleteTemplateAction extends api.ui.Action {
 
+        private templateTreeGrid: app.browse.TemplateTreeGrid;
+
         constructor() {
             super("Delete");
+            this.templateTreeGrid = null;
             this.setEnabled(false);
             this.onExecuted(() => {
-                var selection = components.gridPanel.getSelection()[0];
-                var template = app.browse.TemplateSummary.fromExtModel(selection);
-                new app.browse.event.DeleteTemplatePromptEvent(template).fire();
+                if (this.templateTreeGrid) {
+                    var templates = this.templateTreeGrid.getSelectedDataNodes();
+                    var template = templates.length > 0? templates[0] : null;
+                    new app.browse.event.DeleteTemplatePromptEvent(template).fire();
+                }
             });
         }
+
+        setTemplateTreeGrid(templateTreeGrid: app.browse.TemplateTreeGrid) {
+            this.templateTreeGrid = templateTreeGrid;
+        }
+
     }
 }
