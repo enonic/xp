@@ -52,7 +52,7 @@ module api.util {
         return params;
     }
 
-    export function encodeUrlParams(params: {[key: string]: string}): string {
+    export function encodeUrlParams(params: Object): string {
         var url = "";
         for (var key in params) {
             if (params.hasOwnProperty(key) && params[key] != undefined) {
