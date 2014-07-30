@@ -1,15 +1,5 @@
 module app.view {
 
-    export class EditAction extends api.ui.Action {
-
-        constructor(panel: api.app.view.ItemViewPanel<api.content.ContentSummary>) {
-            super("Edit");
-            this.onExecuted(() => {
-                new app.browse.EditContentEvent([panel.getItem().getModel()]).fire();
-            });
-        }
-    }
-
     export class DeleteAction extends api.ui.Action {
 
         constructor(itemViewPanel: api.app.view.ItemViewPanel<api.content.ContentSummary>) {
@@ -40,16 +30,5 @@ module app.view {
             });
         }
 
-    }
-
-    export class CloseAction extends api.ui.Action {
-
-        constructor(itemViewPanel: api.app.view.ItemViewPanel<api.content.ContentSummary>, checkCanRemovePanel: boolean = true) {
-            super("Close", "mod+f4");
-
-            this.onExecuted(() => {
-                itemViewPanel.close(checkCanRemovePanel);
-            });
-        }
     }
 }
