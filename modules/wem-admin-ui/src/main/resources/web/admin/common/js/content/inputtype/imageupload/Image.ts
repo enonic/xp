@@ -4,7 +4,7 @@ module api.content.inputtype.imageupload {
 
     export class Image extends api.form.inputtype.support.BaseInputTypeView<any> {
 
-        private imageUploadersByIndex: {[i:number] : api.ui.ImageUploader;} = {};
+        private imageUploadersByIndex: {[i:number] : api.ui.uploader.ImageUploader;} = {};
 
         private attachmentName: string;
 
@@ -30,14 +30,14 @@ module api.content.inputtype.imageupload {
 
             var inputName = this.getInput().getName() + "-" + index;
 
-            var imageUploaderConfig = <api.ui.ImageUploaderConfig> {
+            var imageUploaderConfig = <api.ui.uploader.ImageUploaderConfig> {
                 showImageAfterUpload: true,
                 maximumOccurrences: 1
             };
             var uploadUrl = api.util.getRestUri("blob/upload");
-            var imageUploader: api.ui.ImageUploader = new api.ui.ImageUploader(inputName, uploadUrl, imageUploaderConfig);
+            var imageUploader: api.ui.uploader.ImageUploader = new api.ui.uploader.ImageUploader(inputName, uploadUrl, imageUploaderConfig);
 
-            imageUploader.onImageUploaded((event: api.ui.ImageUploadedEvent) => {
+            imageUploader.onImageUploaded((event: api.ui.uploader.ImageUploadedEvent) => {
                 this.attachment = this.uploadItemToAttachment(event.getUploadedItem());
                 this.attachmentName = event.getUploadedItem().getName();
             });
@@ -82,8 +82,8 @@ module api.content.inputtype.imageupload {
 
         onOccurrenceValueChanged(element: api.dom.Element, listener: (event: api.form.inputtype.support.ValueChangedEvent) => void) {
 
-            var imageUploader = <api.ui.ImageUploader>element;
-            imageUploader.onImageUploaded((event: api.ui.ImageUploadedEvent) => {
+            var imageUploader = <api.ui.uploader.ImageUploader>element;
+            imageUploader.onImageUploaded((event: api.ui.uploader.ImageUploadedEvent) => {
 
                 var attachmentName = event.getUploadedItem().getName();
                 var value = new api.data.Value(attachmentName, api.data.ValueTypes.STRING);
@@ -95,7 +95,7 @@ module api.content.inputtype.imageupload {
             });
         }
 
-        private uploadItemToAttachment(uploadItem: api.ui.UploadItem): api.content.attachment.Attachment {
+        private uploadItemToAttachment(uploadItem: api.ui.uploader.UploadItem): api.content.attachment.Attachment {
             return new api.content.attachment.AttachmentBuilder().
                 setBlobKey(uploadItem.getBlobKey()).
                 setAttachmentName(new api.content.attachment.AttachmentName(uploadItem.getName())).

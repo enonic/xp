@@ -51,7 +51,7 @@ module app.view {
 
     export class CloseSchemaAction extends api.ui.Action {
 
-        constructor(panel: api.ui.Panel, checkCanRemovePanel: boolean = true) {
+        constructor(panel: api.ui.panel.Panel, checkCanRemovePanel: boolean = true) {
             super("Close");
 
             this.onExecuted(() => {

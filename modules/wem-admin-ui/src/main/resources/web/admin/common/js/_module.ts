@@ -43,32 +43,36 @@
 
 ///<reference path='rest/_module.ts' />
 
+///<reference path='blob/_module.ts' />
+
+///<reference path='icon/_module.ts' />
+
+///<reference path='ui/responsive/_module.ts' />
+
 ///<reference path='ui/_module.ts' />
+///<reference path='ui/button/_module.ts' />
+///<reference path='ui/text/_module.ts' />
+///<reference path='ui/tab/_module.ts' />
+///<reference path='ui/uploader/_module.ts' />
+///<reference path='ui/panel/_module.ts' />
 ///<reference path='ui/dialog/_module.ts' />
 ///<reference path='ui/form/_module.ts' />
 ///<reference path='ui/grid/_module.ts' />
 ///<reference path='ui/menu/_module.ts' />
-///<reference path='ui/tab/_module.ts' />
 ///<reference path='ui/toolbar/_module.ts' />
+///<reference path='ui/mask/_module.ts' />
 
 ///<reference path='ui/selector/_module.ts' />
 ///<reference path='ui/selector/list/_module.ts' />
 ///<reference path='ui/selector/combobox/_module.ts' />
 ///<reference path='ui/selector/dropdown/_module.ts' />
-///<reference path='ui/text/_module.ts' />
 ///<reference path='ui/treegrid/actions/_module.ts' />
 ///<reference path='ui/treegrid/_module.ts' />
-
-
-///<reference path='blob/_module.ts' />
-///<reference path='icon/_module.ts' />
-
 
 ///<reference path='data/json/_module.ts' />
 ///<reference path='data/_module.ts' />
 
 ///<reference path='form/json/_module.ts' />
-
 ///<reference path='form/_module.ts' />
 ///<reference path='form/inputtype/_module.ts' />
 ///<reference path='form/inputtype/support/_module.ts' />
@@ -112,7 +116,6 @@
 ///<reference path='content/inputtype/relationship/_module.ts' />
 ///<reference path='content/inputtype/image/_module.ts' />
 
-
 ///<reference path='aggregation/_module.ts' />
 
 ///<reference path='rendering/_module.ts' />
@@ -121,7 +124,6 @@
 ///<reference path='app/browse/_module.ts' />
 ///<reference path='app/browse/filter/_module.ts' />
 ///<reference path='app/browse/grid/_module.ts' />
-
 ///<reference path='app/delete/_module.ts' />
 ///<reference path='app/view/_module.ts' />
 ///<reference path='app/wizard/_module.ts' />

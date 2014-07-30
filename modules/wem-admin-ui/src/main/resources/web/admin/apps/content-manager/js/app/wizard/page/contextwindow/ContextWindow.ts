@@ -10,7 +10,8 @@ module app.wizard.page.contextwindow {
     import Region = api.content.page.region.Region;
     import ImageComponent = api.content.page.image.ImageComponent;
     import ImageComponentBuilder = api.content.page.image.ImageComponentBuilder;
-    import ResponsiveManager = api.ui.ResponsiveManager;
+    import ResponsiveManager = api.ui.responsive.ResponsiveManager;
+    import ResponsiveItem = api.ui.responsive.ResponsiveItem;
     import BaseInspectionPanel = app.wizard.page.contextwindow.inspect.BaseInspectionPanel;
     import InspectionPanel = app.wizard.page.contextwindow.inspect.InspectionPanel;
     import InsertablesPanel = app.wizard.page.contextwindow.insert.InsertablesPanel;
@@ -28,7 +29,7 @@ module app.wizard.page.contextwindow {
         insertablesPanel:InsertablesPanel;
     }
 
-    export class ContextWindow extends api.ui.DockedWindow {
+    export class ContextWindow extends api.ui.panel.DockedPanel {
 
         private insertablesPanel: InsertablesPanel;
 
@@ -48,7 +49,7 @@ module app.wizard.page.contextwindow {
 
         private ghostDragger: api.dom.DivEl;
 
-        private mask: api.ui.DragMask;
+        private mask: api.ui.mask.DragMask;
 
         private actualWidth: number;
 
@@ -85,10 +86,10 @@ module app.wizard.page.contextwindow {
                 }
             });
 
-            ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.ResponsiveItem) => {
+            ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
                 this.updateFrameSize();
             });
-            ResponsiveManager.onAvailableSizeChanged(this.liveFormPanel, (item: api.ui.ResponsiveItem) => {
+            ResponsiveManager.onAvailableSizeChanged(this.liveFormPanel, (item: ResponsiveItem) => {
                 this.updateFrameSize();
             });
 
@@ -112,7 +113,7 @@ module app.wizard.page.contextwindow {
             var splitterPosition = 0;
             var parent = this.getParentElement();
             this.actualWidth = this.getEl().getWidth();
-            this.mask = new api.ui.DragMask(parent);
+            this.mask = new api.ui.mask.DragMask(parent);
 
             var dragListener = (e: MouseEvent) => {
                 if (this.splitterWithinBoundaries(initialPos - e.clientX)) {

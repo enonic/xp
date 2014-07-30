@@ -1,6 +1,6 @@
 module app.view {
 
-    export class ContentItemAnalyticsPanel extends api.ui.Panel {
+    export class ContentItemAnalyticsPanel extends api.ui.panel.Panel {
 
         private frame: api.dom.IFrameEl;
 

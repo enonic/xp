@@ -16,7 +16,7 @@ module api.ui.treegrid {
     import TreeGridActions = api.ui.treegrid.actions.TreeGridActions;
     import TreeGridToolbarActions = api.ui.treegrid.actions.TreeGridToolbarActions;
 
-    export class TreeGrid<NODE extends TreeItem> extends api.ui.Panel {
+    export class TreeGrid<NODE extends TreeItem> extends api.ui.panel.Panel {
 
         private columns: GridColumn<NODE>[] = [];
 
@@ -145,7 +145,7 @@ module api.ui.treegrid {
                     if (selected.length === 1) {
                         var node = this.gridData.getItem(selected[0]);
                         if (node && node.getData().hasChildren()
-                                && !node.isExpanded() &&  this.active) {
+                                && !node.isExpanded() && this.active) {
 
                             this.active = false;
                             this.expandNode(node);
@@ -235,7 +235,7 @@ module api.ui.treegrid {
             return deferred.promise;
         }
 
-        filter(items:NODE[]) {
+        filter(items: NODE[]) {
             if (!this.stash) {
                 this.stash = this.root;
             }
@@ -292,7 +292,7 @@ module api.ui.treegrid {
             this.grid.selectAll();
         }
 
-        deselectItem(id:string) {
+        deselectItem(id: string) {
             var oldSelected = this.grid.getSelectedRows(),
                 newSelected = [];
             for (var i = 0; i < oldSelected.length; i++) {
@@ -306,11 +306,11 @@ module api.ui.treegrid {
             }
         }
 
-        getSelectedTreeNodes() : TreeNode<NODE>[] {
+        getSelectedTreeNodes(): TreeNode<NODE>[] {
             return this.grid.getSelectedRowItems();
         }
 
-        getSelectedDataNodes() : NODE[] {
+        getSelectedDataNodes(): NODE[] {
             var dataNodes: NODE[] = [];
             var treeNodes = this.grid.getSelectedRowItems();
             treeNodes.forEach((treeNode: TreeNode<NODE>) => {
@@ -373,9 +373,7 @@ module api.ui.treegrid {
             }
         }
 
-        private updateExpanded(node: TreeNode<NODE>,
-                               nodeList: TreeNode<NODE>[],
-                               rootList: TreeNode<NODE>[]) {
+        private updateExpanded(node: TreeNode<NODE>, nodeList: TreeNode<NODE>[], rootList: TreeNode<NODE>[]) {
             var nodeRow = node.getData() ? this.gridData.getRowById(node.getId()) : -1,
                 expandedRows = [],
                 animatedRows = [];
@@ -515,8 +513,8 @@ module api.ui.treegrid {
             return this;
         }
 
-        private notifyRowSelectionChanged(event:any, rows:number[]): void {
-            var selectedRows:TreeNode<NODE>[] = [];
+        private notifyRowSelectionChanged(event: any, rows: number[]): void {
+            var selectedRows: TreeNode<NODE>[] = [];
             if (rows) {
                 rows.forEach((rowIndex) => {
                     selectedRows.push(this.gridData.getItem(rowIndex));
@@ -527,12 +525,12 @@ module api.ui.treegrid {
             }
         }
 
-        onRowSelectionChanged(listener: (selectedRows:TreeNode<NODE>[]) => void) {
+        onRowSelectionChanged(listener: (selectedRows: TreeNode<NODE>[]) => void) {
             this.rowSelectionChangeListeners.push(listener);
             return this;
         }
 
-        unRowSelectionChanged(listener: (selectedRows:TreeNode<NODE>[]) => void) {
+        unRowSelectionChanged(listener: (selectedRows: TreeNode<NODE>[]) => void) {
             this.rowSelectionChangeListeners = this.rowSelectionChangeListeners.filter((curr) => {
                 return curr != listener;
             });

@@ -62,7 +62,7 @@ module api.liveedit {
 
         private parentItemView: ItemView;
 
-        private loadMask: api.ui.LoadMask;
+        private loadMask: api.ui.mask.LoadMask;
 
         private tooltip: api.ui.Tooltip;
 
@@ -113,7 +113,7 @@ module api.liveedit {
                 this.getEl().setData(ItemType.DATA_ATTRIBUTE, builder.type.getShortName());
             }
 
-            this.loadMask = new api.ui.LoadMask(this);
+            this.loadMask = new api.ui.mask.LoadMask(this);
 
             this.tooltipViewer = this.getTooltipViewer();
             if (this.tooltipViewer) {

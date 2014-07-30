@@ -1,6 +1,6 @@
 module api.ui.form {
 
-    export class Form extends api.ui.Panel {
+    export class Form extends api.ui.panel.Panel {
 
         private formEl: api.dom.FormEl;
 
@@ -21,7 +21,7 @@ module api.ui.form {
         }
 
         validate(markInvalid?: boolean): ValidationResult {
-            var validationResult:ValidationResult = new ValidationResult();
+            var validationResult: ValidationResult = new ValidationResult();
             this.fieldsets.forEach((fieldset: api.ui.form.Fieldset) => {
                 fieldset.validate(validationResult, markInvalid);
             });

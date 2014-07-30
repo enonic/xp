@@ -14,11 +14,11 @@ module app.home {
 
         private backgroundImgUrl: string;
 
-        private logoutButton:api.ui.Button;
+        private logoutButton: api.ui.button.Button;
 
-        private returnButton:api.dom.DivEl;
+        private returnButton: api.dom.DivEl;
 
-        private returnAction:api.ui.Action;
+        private returnAction: api.ui.Action;
 
         constructor(builder: HomeMainContainerBuilder) {
             super('home-main-container');
@@ -29,7 +29,7 @@ module app.home {
             this.loginForm = builder.loginForm;
             this.linksContainer = builder.linksContainer;
             this.backgroundImgUrl = builder.backgroundImgUrl;
-            this.logoutButton = new api.ui.Button(_i18n('Sign out'));
+            this.logoutButton = new api.ui.button.Button(_i18n('Sign out'));
             this.logoutButton.setClass("button logout-button");
 
             this.logoutButton.onClicked((event) => {
@@ -67,7 +67,7 @@ module app.home {
 
         }
 
-        setReturnAction(action:api.ui.Action) {
+        setReturnAction(action: api.ui.Action) {
             this.returnAction = action;
         }
 

@@ -80,7 +80,7 @@ module api.ui.dialog {
 
         close() {
 
-            api.ui.BodyMask.get().hide();
+            api.ui.mask.BodyMask.get().hide();
 
             this.hide();
 
@@ -89,7 +89,7 @@ module api.ui.dialog {
 
         open() {
 
-            api.ui.BodyMask.get().show();
+            api.ui.mask.BodyMask.get().show();
 
             api.ui.KeyBindings.get().shelveBindings();
 

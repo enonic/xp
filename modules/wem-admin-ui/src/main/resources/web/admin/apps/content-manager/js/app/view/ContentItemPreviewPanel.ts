@@ -3,17 +3,17 @@ module app.view {
     import IsRenderableRequest = api.content.page.IsRenderableRequest;
     import RenderingMode = api.rendering.RenderingMode;
 
-    export class ContentItemPreviewPanel extends api.ui.Panel {
+    export class ContentItemPreviewPanel extends api.ui.panel.Panel {
 
         private frame: api.dom.IFrameEl;
 
         private image: api.dom.ImgEl;
 
-        private mask: api.ui.LoadMask;
+        private mask: api.ui.mask.LoadMask;
 
         constructor() {
             super("item-preview-panel");
-            this.mask = new api.ui.LoadMask(this);
+            this.mask = new api.ui.mask.LoadMask(this);
             this.frame = new api.dom.IFrameEl();
             this.frame.onLoaded((event: UIEvent) => this.mask.hide());
             this.appendChild(this.frame);

@@ -18,7 +18,7 @@ module app.wizard.page.contextwindow.inspect {
 
         private component: COMPONENT;
 
-        private nameInput: api.ui.TextInput;
+        private nameInput: api.ui.text.TextInput;
 
         constructor(config: PageComponentInspectionPanelConfig) {
             super();
@@ -29,7 +29,7 @@ module app.wizard.page.contextwindow.inspect {
 
             this.appendChild(this.namesAndIcon);
 
-            this.nameInput = new api.ui.TextInput('component-name').setValue('');
+            this.nameInput = new api.ui.text.TextInput('component-name').setValue('');
             var nameLabel = new api.dom.LabelEl("Name", this.nameInput, "component-name-header");
             this.appendChild(nameLabel);
 

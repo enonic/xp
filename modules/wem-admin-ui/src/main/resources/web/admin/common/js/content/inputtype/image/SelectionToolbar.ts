@@ -1,10 +1,12 @@
 module api.content.inputtype.image {
 
+    import Button = api.ui.button.Button;
+
     export class SelectionToolbar extends api.dom.DivEl {
 
-        private editButton: api.ui.Button;
+        private editButton: Button;
 
-        private removeButton: api.ui.Button;
+        private removeButton: Button;
 
         private selectionCount: number;
 
@@ -15,14 +17,14 @@ module api.content.inputtype.image {
         constructor() {
             super("selection-toolbar");
 
-            this.editButton = new api.ui.Button("Edit");
+            this.editButton = new Button("Edit");
             this.editButton.addClass("large");
             this.editButton.onClicked((event: MouseEvent) => {
                 this.notifyEditClicked();
             });
             this.appendChild(this.editButton);
 
-            this.removeButton = new api.ui.Button("Remove");
+            this.removeButton = new Button("Remove");
             this.removeButton.addClass("large red");
             this.removeButton.onClicked((event: MouseEvent) => {
                 this.notifyRemoveClicked();

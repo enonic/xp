@@ -3,7 +3,7 @@ module api.liveedit {
     import Event2 = api.event.Event2;
     import ImagePlaceholder = api.liveedit.image.ImagePlaceholder;
 
-    export class ImageOpenUploadDialogEvent extends Event2 {
+    export class ImageOpenUploadDialogEvent extends api.event.Event2 {
 
         private targetImagePlaceholder: ImagePlaceholder;
 

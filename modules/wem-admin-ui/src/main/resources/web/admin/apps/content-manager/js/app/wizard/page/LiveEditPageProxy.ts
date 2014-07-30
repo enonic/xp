@@ -53,13 +53,13 @@ module app.wizard.page {
 
         private liveEditIFrame: api.dom.IFrameEl;
 
-        private loadMask: api.ui.LoadMask;
+        private loadMask: api.ui.mask.LoadMask;
 
         private liveEditWindow: any;
 
         private liveEditJQuery: JQueryStatic;
 
-        private dragMask: api.ui.DragMask;
+        private dragMask: api.ui.mask.DragMask;
 
         private iFrameLoadDeffered: Q.Deferred<void>;
 
@@ -106,8 +106,8 @@ module app.wizard.page {
             this.liveEditIFrame = new api.dom.IFrameEl("live-edit-frame");
             this.iFrameLoadDeffered = Q.defer<void>();
             this.liveEditIFrame.onLoaded(() => this.handleIFrameLoadedEvent());
-            this.loadMask = new api.ui.LoadMask(this.liveEditIFrame);
-            this.dragMask = new api.ui.DragMask(this.liveEditIFrame);
+            this.loadMask = new api.ui.mask.LoadMask(this.liveEditIFrame);
+            this.dragMask = new api.ui.mask.DragMask(this.liveEditIFrame);
 
             ShowContentFormEvent.on(() => {
                 if (this.loadMask.isVisible()) {
@@ -148,7 +148,7 @@ module app.wizard.page {
             return this.liveEditIFrame;
         }
 
-        public getLoadMask(): api.ui.LoadMask {
+        public getLoadMask(): api.ui.mask.LoadMask {
             return this.loadMask;
         }
 
@@ -249,7 +249,7 @@ module app.wizard.page {
 
             ImageOpenUploadDialogEvent.on((openDialogEvent: ImageOpenUploadDialogEvent) => {
                 var uploadDialog = new UploadDialog();
-                uploadDialog.onImageUploaded((event: api.ui.ImageUploadedEvent) => {
+                uploadDialog.onImageUploaded((event: api.ui.uploader.ImageUploadedEvent) => {
                     new ImageUploadedEvent(event.getUploadedItem(), openDialogEvent.getTargetImagePlaceholder()).fire(this.liveEditWindow);
                     uploadDialog.close();
                     uploadDialog.remove();

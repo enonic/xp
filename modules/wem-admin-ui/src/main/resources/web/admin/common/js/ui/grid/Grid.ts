@@ -1,5 +1,8 @@
 module api.ui.grid {
 
+    import ResponsiveManager = api.ui.responsive.ResponsiveManager;
+    import ResponsiveItem = api.ui.responsive.ResponsiveItem;
+
     export class Grid<T extends Slick.SlickData> extends api.dom.DivEl {
 
         private defaultHeight = 400;
@@ -46,7 +49,7 @@ module api.ui.grid {
                 this.slickGrid.registerPlugin(this.checkboxSelectorPlugin);
             }
 
-            ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.ResponsiveItem) => {
+            ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
                 this.resizeCanvas();
             });
 

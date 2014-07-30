@@ -1,5 +1,7 @@
 module app.wizard {
 
+    import CycleButton = api.ui.button.CycleButton;
+
     export interface ContentWizardToolbarParams {
         saveAction:api.ui.Action;
         duplicateAction:api.ui.Action;
@@ -15,7 +17,7 @@ module app.wizard {
     export class ContentWizardToolbar extends api.ui.toolbar.Toolbar {
 
         private contextWindowToggler: ContextWindowToggler;
-        private cycleViewModeButton: api.ui.CycleButton;
+        private cycleViewModeButton: CycleButton;
 
         constructor(params: ContentWizardToolbarParams) {
             super();
@@ -27,7 +29,7 @@ module app.wizard {
             super.addAction(params.closeAction);
             super.addGreedySpacer();
 
-            this.cycleViewModeButton = new api.ui.CycleButton(params.showSplitEditAction, params.showFormAction, params.showLiveEditAction);
+            this.cycleViewModeButton = new CycleButton(params.showSplitEditAction, params.showFormAction, params.showLiveEditAction);
 
             super.addElement(this.cycleViewModeButton);
             this.contextWindowToggler = new ContextWindowToggler();
@@ -35,7 +37,7 @@ module app.wizard {
 
         }
 
-        getCycleViewModeButton():api.ui.CycleButton {
+        getCycleViewModeButton(): CycleButton {
             return this.cycleViewModeButton;
         }
 
@@ -45,7 +47,7 @@ module app.wizard {
 
     }
 
-    export class ContextWindowToggler extends api.ui.Button {
+    export class ContextWindowToggler extends api.ui.button.Button {
 
         constructor() {
             super("");

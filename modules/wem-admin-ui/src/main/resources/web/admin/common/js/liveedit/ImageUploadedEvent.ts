@@ -3,19 +3,19 @@ module api.liveedit {
     import Event2 = api.event.Event2;
     import ImagePlaceholder = api.liveedit.image.ImagePlaceholder;
 
-    export class ImageUploadedEvent extends Event2 {
+    export class ImageUploadedEvent extends api.event.Event2 {
 
-        private uploadedItem: api.ui.UploadItem;
+        private uploadedItem: api.ui.uploader.UploadItem;
 
         private targetImagePlaceholder: ImagePlaceholder;
 
-        constructor(uploadedItem: api.ui.UploadItem, target: ImagePlaceholder) {
+        constructor(uploadedItem: api.ui.uploader.UploadItem, target: ImagePlaceholder) {
             super();
             this.uploadedItem = uploadedItem;
             this.targetImagePlaceholder = target;
         }
 
-        getUploadedItem(): api.ui.UploadItem {
+        getUploadedItem(): api.ui.uploader.UploadItem {
             return this.uploadedItem;
         }
 

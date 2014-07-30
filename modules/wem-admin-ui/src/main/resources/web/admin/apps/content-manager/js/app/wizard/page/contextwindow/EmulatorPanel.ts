@@ -5,7 +5,7 @@ module app.wizard.page.contextwindow {
         liveEditPage: app.wizard.page.LiveEditPageProxy;
     }
 
-    export class EmulatorPanel extends api.ui.Panel {
+    export class EmulatorPanel extends api.ui.panel.Panel {
 
         private dataView: api.ui.grid.DataView<any>;
         private grid: EmulatorGrid;

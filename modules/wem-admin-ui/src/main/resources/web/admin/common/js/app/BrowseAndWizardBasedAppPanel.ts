@@ -21,7 +21,7 @@ module api.app {
 
             this.appBarTabMenu = config.appBar.getTabMenu();
 
-            this.onPanelShown((event: api.ui.PanelShownEvent) => {
+            this.onPanelShown((event: api.ui.panel.PanelShownEvent) => {
                 if (event.getPanel() === this.getBrowsePanel()) {
                     this.getBrowsePanel().refreshFilterAndGrid();
                 }
@@ -86,7 +86,7 @@ module api.app {
             });
         }
 
-        canRemovePanel(panel: api.ui.Panel): boolean {
+        canRemovePanel(panel: api.ui.panel.Panel): boolean {
             if (panel instanceof api.app.wizard.WizardPanel) {
                 var wizardPanel: api.app.wizard.WizardPanel<any> = <api.app.wizard.WizardPanel<any>>panel;
                 return wizardPanel.canClose();
@@ -94,7 +94,7 @@ module api.app {
             return true;
         }
 
-        private resolveActions(panel: api.ui.Panel): api.ui.Action[] {
+        private resolveActions(panel: api.ui.panel.Panel): api.ui.Action[] {
             var actions = [];
             actions = actions.concat(this.appBar.getActions());
 

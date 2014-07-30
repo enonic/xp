@@ -3,7 +3,8 @@ module api.content.inputtype.image {
     import ContentSummary = api.content.ContentSummary;
     import ComboBoxConfig = api.ui.selector.combobox.ComboBoxConfig;
     import ComboBox = api.ui.selector.combobox.ComboBox;
-    import ResponsiveManager = api.ui.ResponsiveManager;
+    import ResponsiveManager = api.ui.responsive.ResponsiveManager;
+    import ResponsiveItem = api.ui.responsive.ResponsiveItem;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
     import LoadingDataEvent = api.util.loader.event.LoadingDataEvent;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
@@ -21,7 +22,7 @@ module api.content.inputtype.image {
 
         private comboBox: ComboBox<ImageSelectorDisplayValue>;
 
-        private uploadButton: api.ui.Button;
+        private uploadButton: api.ui.button.Button;
 
         private selectedOptionsView: SelectedOptionsView;
 
@@ -78,10 +79,10 @@ module api.content.inputtype.image {
                 });
 
             this.uploadDialog = new ImageSelectorUploadDialog();
-            this.uploadDialog.onUploadStarted((event: api.ui.ImageUploadStartedEvent) => {
+            this.uploadDialog.onUploadStarted((event: api.ui.uploader.ImageUploadStartedEvent) => {
                 this.uploadDialog.close();
 
-                event.getUploadedItems().forEach((uploadItem: api.ui.UploadItem) => {
+                event.getUploadedItems().forEach((uploadItem: api.ui.uploader.UploadItem) => {
                     var value = ImageSelectorDisplayValue.fromUploadItem(uploadItem);
                     var option = <api.ui.selector.Option<ImageSelectorDisplayValue>>{
                         value: value.getId(),
@@ -90,15 +91,15 @@ module api.content.inputtype.image {
                     this.comboBox.selectOption(option);
                 });
             });
-            this.uploadDialog.onUploadProgress((event: api.ui.ImageUploadProgressEvent) => {
+            this.uploadDialog.onUploadProgress((event: api.ui.uploader.ImageUploadProgressEvent) => {
                 var selectedOption = this.selectedOptionsView.getById(event.getUploadItem().getId());
                 (<SelectedOptionView>selectedOption.getOptionView()).setProgress(event.getUploadItem().getProgress());
             });
-            this.uploadDialog.onImageUploaded((event: api.ui.ImageUploadedEvent) => {
+            this.uploadDialog.onImageUploaded((event: api.ui.uploader.ImageUploadedEvent) => {
                 this.createImageContent(event.getUploadedItem());
             });
 
-            ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.ResponsiveItem) => {
+            ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
                 this.availableSizeChanged();
             });
 
@@ -135,7 +136,7 @@ module api.content.inputtype.image {
                 this.uploadButton.show();
             });
 
-            this.uploadButton = new api.ui.Button();
+            this.uploadButton = new api.ui.button.Button();
             comboboxWrapper.appendChild(this.uploadButton);
             this.uploadButton.addClass("upload-button");
             this.uploadButton.onClicked((event: MouseEvent) => {
@@ -305,7 +306,7 @@ module api.content.inputtype.image {
             });
         }
 
-        private createImageContent(uploadItem: api.ui.UploadItem) {
+        private createImageContent(uploadItem: api.ui.uploader.UploadItem) {
 
             new api.schema.content.GetContentTypeByNameRequest(new api.schema.content.ContentTypeName("image")).
                 sendAndParse().

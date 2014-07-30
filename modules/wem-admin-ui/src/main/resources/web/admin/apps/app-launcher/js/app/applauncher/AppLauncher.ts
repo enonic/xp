@@ -12,7 +12,7 @@ module app.launcher {
 
         private router: AppRouter;
 
-        private loadMask: api.ui.LoadMask;
+        private loadMask: api.ui.mask.LoadMask;
 
         private currentApplication: api.app.Application;
 
@@ -30,7 +30,7 @@ module app.launcher {
 
             this.adminApplicationFrames = new api.dom.DivEl("applications-frame");
 
-            this.loadMask = new api.ui.LoadMask(this.adminApplicationFrames);
+            this.loadMask = new api.ui.mask.LoadMask(this.adminApplicationFrames);
 
             this.appManager = new api.app.AppManager();
             var messageId;

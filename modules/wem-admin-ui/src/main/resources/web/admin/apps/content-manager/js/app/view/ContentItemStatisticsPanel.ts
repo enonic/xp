@@ -1,5 +1,7 @@
 module app.view {
 
+    import Panel = api.ui.panel.Panel;
+
     export class ContentItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.content.ContentSummary> {
 
         private previewPanel: ContentItemPreviewPanel;
@@ -15,10 +17,10 @@ module app.view {
             this.analyticsPanel = new ContentItemAnalyticsPanel();
             this.addNavigablePanel(new api.ui.tab.TabMenuItem("Google Analytics"), this.analyticsPanel);
 
-            this.addNavigablePanel(new api.ui.tab.TabMenuItem("Details"), new api.ui.Panel());
-            this.addNavigablePanel(new api.ui.tab.TabMenuItem("Relationships"), new api.ui.Panel());
-            this.addNavigablePanel(new api.ui.tab.TabMenuItem("Version History"), new api.ui.Panel());
-            this.addNavigablePanel(new api.ui.tab.TabMenuItem("SEO"), new api.ui.Panel());
+            this.addNavigablePanel(new api.ui.tab.TabMenuItem("Details"), new Panel());
+            this.addNavigablePanel(new api.ui.tab.TabMenuItem("Relationships"), new Panel());
+            this.addNavigablePanel(new api.ui.tab.TabMenuItem("Version History"), new Panel());
+            this.addNavigablePanel(new api.ui.tab.TabMenuItem("SEO"), new Panel());
 
             this.getTabMenu().onNavigationItemSelected((event: api.ui.NavigatorEvent) => {
                 this.onTabSelected(event.getItem());

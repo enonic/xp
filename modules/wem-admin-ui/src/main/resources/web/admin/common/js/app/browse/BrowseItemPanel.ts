@@ -1,6 +1,6 @@
 module api.app.browse {
 
-    export class BrowseItemPanel<M> extends api.ui.DeckPanel {
+    export class BrowseItemPanel<M> extends api.ui.panel.DeckPanel {
 
         private itemStatisticsPanel: api.app.view.ItemStatisticsPanel<M>;
 

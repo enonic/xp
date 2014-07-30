@@ -4,7 +4,7 @@ module app.browse {
 
         private installDialogTitle: InstallModuleDialogTitle;
 
-        private input: api.ui.TextInput;
+        private input: api.ui.text.TextInput;
 
         private installAction: api.ui.Action;
 
@@ -20,7 +20,7 @@ module app.browse {
             var container = new api.dom.DivEl();
             this.appendChildToContentPanel(container);
 
-            this.input = api.ui.TextInput.large("url-input").setPlaceholder("Module URL");
+            this.input = api.ui.text.TextInput.large("url-input").setPlaceholder("Module URL");
             var title = new api.dom.H6El();
             title.setText("Enter the URL of the module to be installed.");
             container.appendChild(title);

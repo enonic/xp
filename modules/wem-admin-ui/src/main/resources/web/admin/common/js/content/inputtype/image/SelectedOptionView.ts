@@ -1,6 +1,6 @@
 module api.content.inputtype.image {
 
-    import LoadMask = api.ui.LoadMask;
+    import LoadMask = api.ui.mask.LoadMask;
 
     export class SelectedOptionView extends api.ui.selector.combobox.SelectedOptionView<ImageSelectorDisplayValue> {
 

@@ -4,6 +4,9 @@ module app.browse {
     import BrowseItem = api.app.browse.BrowseItem;
     import ContentSummary = api.content.ContentSummary;
     import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
+    import ResponsiveManager = api.ui.responsive.ResponsiveManager;
+    import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
+    import ResponsiveItem = api.ui.responsive.ResponsiveItem;
 
     // TODO: ContentSummary must be replaced with an ContentSummaryAndCompareStatus after old grid is removed
     export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummary> {
@@ -14,7 +17,7 @@ module app.browse {
 
         private contentTreeGridPanel: app.browse.ContentTreeGridPanel;
 
-        private contentTreeGridPanelMask: api.ui.LoadMask;
+        private contentTreeGridPanelMask: api.ui.mask.LoadMask;
 
         private contentTreeGridPanel2: app.browse.grid.ContentGridPanel2;
 
@@ -28,7 +31,7 @@ module app.browse {
                 contextMenu: treeGridContextMenu
             });
 
-            this.contentTreeGridPanelMask = new api.ui.LoadMask(this.contentTreeGridPanel);
+            this.contentTreeGridPanelMask = new api.ui.mask.LoadMask(this.contentTreeGridPanel);
 
             this.browseActions = ContentBrowseActions.init(this.contentTreeGridPanel);
             treeGridContextMenu.setActions(this.browseActions);
@@ -94,10 +97,10 @@ module app.browse {
                 this.toggleFilterPanel();
             });
 
-            api.ui.ResponsiveManager.onAvailableSizeChanged(this, (item:api.ui.ResponsiveItem) => {
-                if (item.isInRangeOrSmaller(api.ui.ResponsiveRanges._360_540)) {
+            ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
+                if (item.isInRangeOrSmaller(ResponsiveRanges._360_540)) {
                     this.browseActions.TOGGLE_SEARCH_PANEL.setVisible(true);
-                } else if (item.isInRangeOrBigger(api.ui.ResponsiveRanges._540_720)) {
+                } else if (item.isInRangeOrBigger(ResponsiveRanges._540_720)) {
                     this.browseActions.TOGGLE_SEARCH_PANEL.setVisible(false);
                 }
             });

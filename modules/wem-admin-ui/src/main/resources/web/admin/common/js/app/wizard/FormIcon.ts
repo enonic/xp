@@ -105,7 +105,7 @@ module api.app.wizard {
                     if (responseObj.items && responseObj.items.length > 0) {
                         var uploadedFile = responseObj.items[0];
 
-                        var uploadItem: api.ui.UploadItem = new api.ui.UploadItemBuilder().
+                        var uploadItem: api.ui.uploader.UploadItem = new api.ui.uploader.UploadItemBuilder().
                             setBlobKey(new api.blob.BlobKey(uploadedFile.id)).
                             setName(uploadedFile.name).
                             setMimeType(uploadedFile.mimeType).
@@ -158,7 +158,7 @@ module api.app.wizard {
             });
         }
 
-        private notifyUploadFinished(uploadItem: api.ui.UploadItem) {
+        private notifyUploadFinished(uploadItem: api.ui.uploader.UploadItem) {
             this.uploadFinishedListeners.forEach((listener: (event: UploadFinishedEvent)=>void) => {
                 listener.call(this, new UploadFinishedEvent(uploadItem));
             });

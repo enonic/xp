@@ -8,7 +8,7 @@ module app.wizard {
             var fieldset = new api.ui.form.Fieldset("Config");
             this.add(fieldset);
 
-            var xmlTextArea: api.ui.CodeArea = new api.ui.CodeAreaBuilder().
+            var xmlTextArea: api.ui.text.CodeArea = new api.ui.text.CodeAreaBuilder().
                 setName("xml").
                 setMode("xml").
                 setLineNumbers(true).
@@ -18,6 +18,5 @@ module app.wizard {
         }
 
     }
-
 
 }

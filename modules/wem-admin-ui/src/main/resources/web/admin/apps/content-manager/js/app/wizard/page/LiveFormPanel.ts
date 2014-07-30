@@ -74,6 +74,8 @@ module app.wizard.page {
     import PageComponentSetDescriptorEvent = api.liveedit.PageComponentSetDescriptorEvent;
     import PageComponentDuplicateEvent = api.liveedit.PageComponentDuplicateEvent;
 
+    import Panel = api.ui.panel.Panel;
+
     export interface LiveFormPanelConfig {
 
         siteTemplate:SiteTemplate;
@@ -85,7 +87,7 @@ module app.wizard.page {
         defaultModels: DefaultModels;
     }
 
-    export class LiveFormPanel extends api.ui.Panel {
+    export class LiveFormPanel extends api.ui.panel.Panel {
 
         private siteTemplate: SiteTemplate;
 
@@ -101,7 +103,7 @@ module app.wizard.page {
         private pageLoading: boolean;
 
         private pageSkipReload: boolean;
-        private frameContainer: api.ui.Panel;
+        private frameContainer: Panel;
 
         private contextWindow: ContextWindow;
         private emulatorPanel: EmulatorPanel;
@@ -193,7 +195,7 @@ module app.wizard.page {
                 liveEditPage: this.liveEditPage
             });
 
-            this.frameContainer = new api.ui.Panel("frame-container");
+            this.frameContainer = new Panel("frame-container");
             this.appendChild(this.frameContainer);
             this.frameContainer.appendChild(this.liveEditPage.getIFrame());
 
@@ -426,7 +428,7 @@ module app.wizard.page {
             }
         }
 
-        public getFrameContainer(): api.ui.Panel {
+        public getFrameContainer(): Panel {
             return this.frameContainer;
         }
 

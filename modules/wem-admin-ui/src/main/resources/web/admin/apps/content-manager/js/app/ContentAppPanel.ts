@@ -2,7 +2,7 @@ module app {
 
     export class ContentAppPanel extends api.app.BrowseAndWizardBasedAppPanel<api.content.ContentSummary> {
 
-        private mask: api.ui.LoadMask;
+        private mask: api.ui.mask.LoadMask;
 
         constructor(appBar: api.app.AppBar, path?: api.rest.Path) {
 
@@ -10,7 +10,7 @@ module app {
                 appBar: appBar
             });
 
-            this.mask = new api.ui.LoadMask(this);
+            this.mask = new api.ui.mask.LoadMask(this);
 
             this.handleGlobalEvents();
 

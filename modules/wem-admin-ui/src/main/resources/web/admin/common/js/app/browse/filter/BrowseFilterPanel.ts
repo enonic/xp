@@ -1,6 +1,6 @@
 module api.app.browse.filter {
 
-    export class BrowseFilterPanel extends api.ui.Panel {
+    export class BrowseFilterPanel extends api.ui.panel.Panel {
 
         private searchListeners: {(event: SearchEvent):void}[] = [];
 

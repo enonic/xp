@@ -2,9 +2,9 @@ module api.content.inputtype.image {
 
     export class UploadDialog extends api.ui.dialog.ModalDialog {
 
-        private uploader: api.ui.ImageUploader;
+        private uploader: api.ui.uploader.ImageUploader;
 
-        private imageUploadedListeners: {(event: api.ui.ImageUploadedEvent):void}[] = [];
+        private imageUploadedListeners: {(event: api.ui.uploader.ImageUploadedEvent):void}[] = [];
 
         constructor() {
             super({
@@ -22,8 +22,9 @@ module api.content.inputtype.image {
                 buttonsVisible: false,
                 showImageAfterUpload: false
             };
-            this.uploader = new api.ui.ImageUploader("image-selector-upload-dialog", api.util.getRestUri("blob/upload"), uploaderConfig);
-            this.uploader.onImageUploaded((event: api.ui.ImageUploadedEvent) => {
+            this.uploader =
+            new api.ui.uploader.ImageUploader("image-selector-upload-dialog", api.util.getRestUri("blob/upload"), uploaderConfig);
+            this.uploader.onImageUploaded((event: api.ui.uploader.ImageUploadedEvent) => {
                 this.notifyImageUploaded(event.getUploadedItem());
             });
             this.uploader.onImageUploadComplete(() => {
@@ -51,20 +52,20 @@ module api.content.inputtype.image {
             super.open();
         }
 
-        onImageUploaded(listener: (event: api.ui.ImageUploadedEvent)=>void) {
+        onImageUploaded(listener: (event: api.ui.uploader.ImageUploadedEvent)=>void) {
             this.imageUploadedListeners.push(listener);
         }
 
-        unImageUploaded(listener: (event: api.ui.ImageUploadedEvent)=>void) {
+        unImageUploaded(listener: (event: api.ui.uploader.ImageUploadedEvent)=>void) {
             this.imageUploadedListeners =
-            this.imageUploadedListeners.filter((currentListener: (event: api.ui.ImageUploadedEvent)=>void) => {
+            this.imageUploadedListeners.filter((currentListener: (event: api.ui.uploader.ImageUploadedEvent)=>void) => {
                 return listener != currentListener;
             })
         }
 
-        private notifyImageUploaded(uploadItem: api.ui.UploadItem) {
-            this.imageUploadedListeners.forEach((listener: (event: api.ui.ImageUploadedEvent)=>void) => {
-                listener.call(this, new api.ui.ImageUploadedEvent(uploadItem));
+        private notifyImageUploaded(uploadItem: api.ui.uploader.UploadItem) {
+            this.imageUploadedListeners.forEach((listener: (event: api.ui.uploader.ImageUploadedEvent)=>void) => {
+                listener.call(this, new api.ui.uploader.ImageUploadedEvent(uploadItem));
             });
         }
 
