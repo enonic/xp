@@ -40,7 +40,9 @@ module app.wizard.page.contextwindow {
 
         private liveFormPanel: LiveFormPanel;
 
-        private pinned: boolean;
+        private fixed: boolean;
+
+        private visible: boolean;
 
         private splitter: api.dom.DivEl;
 
@@ -57,7 +59,7 @@ module app.wizard.page.contextwindow {
         constructor(config: ContextWindowConfig) {
             super();
 
-            this.pinned = true;
+            this.fixed = false;
             this.liveEditPage = config.liveEditPage;
             this.liveFormPanel = config.liveFormPanel;
             this.inspectionPanel = config.inspectionPanel;
@@ -73,13 +75,14 @@ module app.wizard.page.contextwindow {
                 this.hide();
             });
 
-            app.wizard.ToggleContextWindowEvent.on(() => {
-                if (!this.isEnabled()) {
-                    this.enable();
-                } else {
-                    this.disable();
+            app.wizard.ToggleContextWindowEvent.on((event: app.wizard.ToggleContextWindowEvent) => {
+                this.fixed = event.isFixed();
+
+                if (this.fixed) {
+                    this.slideIn();
+                } else if (this.visible) {
+                    this.slideOut();
                 }
-                this.updateFrameSize();
             });
 
             ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
@@ -94,21 +97,14 @@ module app.wizard.page.contextwindow {
             this.addItem("Settings", this.inspectionPanel);
             this.addItem("Emulator", this.emulatorPanel);
 
-            this.onShown(() => {
-                if (this.pinned) {
-                    this.updateFrameSize();
-                }
-            });
+            this.onShown(() => new app.wizard.ToggleContextWindowEvent(this.isPinned()).fire());
 
-            this.onRendered(() => {
-                this.initializeResizable();
-            });
+            this.onRendered(() => this.initializeResizable());
 
             this.onRemoved((event) => {
                 ResponsiveManager.unAvailableSizeChanged(this);
                 ResponsiveManager.unAvailableSizeChanged(this.liveFormPanel);
             });
-
         }
 
         private initializeResizable() {
@@ -137,8 +133,6 @@ module app.wizard.page.contextwindow {
                 this.stopDrag(dragListener);
                 ResponsiveManager.fireResizeEvent();
             });
-
-
         }
 
         private splitterWithinBoundaries(offset: number) {
@@ -160,26 +154,30 @@ module app.wizard.page.contextwindow {
             this.removeChild(this.ghostDragger);
         }
 
-        disable() {
-            this.getEl().addClass("hidden");
-            this.getEl().setRight(-this.getEl().getWidthWithBorder() + "px");
+        slideOut() {
+            if (!this.fixed && this.visible) {
+                this.getEl().addClass("hidden");
+                this.getEl().setRight(-this.getEl().getWidthWithBorder() + "px");
+                this.visible = false;
+                this.updateFrameSize();
+            }
         }
 
-        enable() {
-            this.getEl().removeClass("hidden");
-            this.getEl().setRight("0px");
+        slideIn() {
+            if (!this.visible) {
+                this.getEl().removeClass("hidden");
+                this.getEl().setRight("0px");
+                this.visible = true;
+                this.updateFrameSize();
+            }
         }
 
         hide() {
-            if (!this.pinned) {
-                super.hide();
-            }
+            this.slideOut();
         }
 
         show() {
-            if (!this.pinned) {
-                super.show();
-            }
+            this.slideIn();
         }
 
         public showInspectionPanel(panel: BaseInspectionPanel) {
@@ -192,30 +190,17 @@ module app.wizard.page.contextwindow {
             this.selectPanel(this.insertablesPanel);
         }
 
-        setPinned(value: boolean) {
-            this.pinned = value;
-            this.updateFrameSize();
-            !value ? this.addClass("unpinned") : this.removeClass("unpinned");
-        }
-
-        isPinned(): boolean {
-            return this.pinned;
-        }
-
-        private isEnabled() {
-            return !this.hasClass("hidden");
-
-        }
-
         private updateFrameSize() {
-            this.liveFormPanel.updateFrameContainerSize((this.pinned && this.isEnabled()), this.actualWidth || this.getEl().getWidth());
+            var contextWindowWidth = this.actualWidth || this.getEl().getWidth();
+            this.liveFormPanel.updateFrameContainerSize(this.isPinned() && this.visible, contextWindowWidth);
 
-            var liveFormPanelWidth = this.liveFormPanel.getEl().getWidth(),
-                pinningRequired: boolean = liveFormPanelWidth > 1380 && (liveFormPanelWidth - this.actualWidth) > 960;
+            !this.isPinned() ? this.addClass("unpinned") : this.removeClass("unpinned");
+        }
 
-            if (pinningRequired != this.isPinned()) {
-                this.setPinned(pinningRequired);
-            }
+        private isPinned(): boolean {
+            var contextWindowWidth = this.actualWidth || this.getEl().getWidth();
+            var liveFormPanelWidth = this.liveFormPanel.getEl().getWidth();
+            return (liveFormPanelWidth > 1380) && ((liveFormPanelWidth - contextWindowWidth) > 960);
         }
     }
 }

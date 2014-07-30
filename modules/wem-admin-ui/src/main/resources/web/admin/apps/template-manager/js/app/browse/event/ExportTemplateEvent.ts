@@ -1,7 +1,7 @@
 module app.browse.event {
     export class ExportTemplateEvent extends BaseTemplateModelEvent {
 
-        constructor(siteTemplate: app.browse.TemplateSummary) {
+        constructor(siteTemplate: api.content.TemplateSummary) {
             super('exportTemplate', [siteTemplate]);
         }
 
@@ -9,7 +9,7 @@ module app.browse.event {
             api.event.onEvent('exportTemplate', handler);
         }
 
-        getTemplate(): app.browse.TemplateSummary {
+        getTemplate(): api.content.TemplateSummary {
             return this.getTemplates()[0];
         }
     }

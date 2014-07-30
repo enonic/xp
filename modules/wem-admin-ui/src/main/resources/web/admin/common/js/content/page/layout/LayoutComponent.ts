@@ -10,6 +10,9 @@ module api.content.page.layout {
             super(builder);
             if (builder.regions) {
                 this.regions = builder.regions;
+                this.regions.getRegions().forEach((region:Region) => {
+                    region.setParent(this);
+                });
             } else {
                 this.regions = new api.content.page.layout.LayoutRegionsBuilder().build();
             }
@@ -56,11 +59,7 @@ module api.content.page.layout {
         }
 
         clone(): LayoutComponent {
-            var layoutComponent = new LayoutComponentBuilder(this).build();
-            layoutComponent.getLayoutRegions().getRegions().forEach((region:Region) => {
-               region.updateParent(layoutComponent);
-            });
-            return layoutComponent;
+            return new LayoutComponentBuilder(this).build();
         }
     }
 

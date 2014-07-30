@@ -418,8 +418,8 @@ module app.wizard.page {
                 done();
         }
 
-        updateFrameContainerSize(contextWindowPinned: boolean, contextWindowWidth?: number) {
-            if (contextWindowPinned && contextWindowWidth) {
+        updateFrameContainerSize(contextWindowShown: boolean, contextWindowWidth?: number) {
+            if (contextWindowShown && contextWindowWidth) {
                 this.frameContainer.getEl().setWidth("calc(100% - " + (contextWindowWidth - 1) + "px)");
             } else {
                 this.frameContainer.getEl().setWidth("100%");
@@ -464,7 +464,7 @@ module app.wizard.page {
 
                 var itemView = event.getItemView();
 
-                if (itemView.isEmpty()) {
+                if (itemView.isEmpty() || api.ObjectHelper.iFrameSafeInstanceOf(itemView, TextComponentView)) {
                     this.contextWindow.hide();
                 }
                 else {

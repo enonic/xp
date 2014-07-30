@@ -8,6 +8,11 @@
 ///<reference path='UpdatePersistedContentRoutine.ts' />
 ///<reference path='ContentWizardPanelFactory.ts' />
 ///<reference path='ContentWizardPanelParams.ts' />
-///<reference path='ContentWizardEvents.ts' />
+///<reference path='ShowContentFormEvent.ts' />
+///<reference path='ShowLiveEditEvent.ts' />
+///<reference path='ShowSplitEditEvent.ts' />
+///<reference path='ToggleContextWindowEvent.ts' />
+///<reference path='OpenPublishDialogEvent.ts' />
+///<reference path='PublishContentEvent.ts' />
 ///<reference path='PublishContentDialog.ts' />
 ///<reference path='CompareContentGrid.ts' />

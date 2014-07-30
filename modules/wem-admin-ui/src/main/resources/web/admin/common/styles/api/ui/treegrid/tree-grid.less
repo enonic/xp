@@ -76,7 +76,7 @@
     .slick-cell {
       .default-slick-cell-styling(4px 8px 4px 2px);
       cursor: pointer;
-
+      line-height: 37px;
       height: 45px;      // firefox ignores SlickGrid.rowHeight
     }
 
@@ -102,6 +102,7 @@
       .slick-cell-checkboxsel {
         min-width: 45px;
         padding-left: 8px;
+        line-height: normal;
 
         label {
           display: inline-block;
@@ -192,14 +193,6 @@
           z-index: 1;
         }
       }
-
-      .modified, .status {
-        line-height: 37px;
-        text-align: right;
-        padding-right: 25px;
-        font-size: 0.9em;
-      }
-
     }
   }
 }

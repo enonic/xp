@@ -4,7 +4,6 @@ declare var CONFIG;
 
 module components {
     export var detailPanel: app.browse.TemplateBrowseItemPanel;
-    export var gridPanel: app.browse.TemplateTreeGridPanel;
 }
 
 function startApplication() {

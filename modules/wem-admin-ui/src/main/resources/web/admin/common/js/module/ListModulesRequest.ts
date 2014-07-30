@@ -1,6 +1,6 @@
 module api.module {
 
-    export class ListModuleRequest extends ModuleResourceRequest<ModuleListResult> {
+    export class ListModulesRequest extends ModuleResourceRequest<ModuleListResult> {
 
         constructor()
         {

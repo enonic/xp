@@ -15,6 +15,7 @@ import org.restlet.routing.Variable;
 
 import com.enonic.wem.portal.content.ComponentResource;
 import com.enonic.wem.portal.content.ContentResource;
+import com.enonic.wem.portal.content.PageTemplateResource;
 import com.enonic.wem.portal.exception.PortalStatusService;
 import com.enonic.wem.portal.restlet.FinderFactory;
 import com.enonic.wem.portal.underscore.ImageByIdResource;
@@ -58,6 +59,7 @@ public final class PortalApplication
         attach( contentRouter, "/{path}", ContentResource.class, "path" );
 
         final Router router = new Router( getContext() );
+        attach( router, "/theme/{siteTemplateKey}/{pageTemplateKey}", PageTemplateResource.class, "siteTemplateKey", "pageTemplateKey" );
         attach( router, "/{mode}/{workspace}", contentRouter );
 
         return router;

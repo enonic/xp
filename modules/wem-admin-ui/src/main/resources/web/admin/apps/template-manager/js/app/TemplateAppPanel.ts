@@ -2,12 +2,18 @@ module app {
 
     export class TemplateAppPanel extends api.app.BrowseAndWizardBasedAppPanel<app.browse.TemplateBrowseItem> {
 
+        private browseActions: app.browse.action.TemplateBrowseActions;
+
+        private templateTreeGrid: app.browse.TemplateTreeGrid;
+
         constructor(appBar: api.app.AppBar, path?: api.rest.Path) {
 
             super({
                 appBar: appBar
             });
 
+            this.browseActions = new app.browse.action.TemplateBrowseActions();
+            this.templateTreeGrid = new app.browse.TemplateTreeGrid(this.browseActions);
             this.handleGlobalEvents();
 
             this.route(path);
@@ -63,7 +69,7 @@ module app {
             });
 
             app.browse.event.ExportTemplateEvent.on((event: app.browse.event.ExportTemplateEvent) => {
-                var template: app.browse.TemplateSummary = event.getTemplate();
+                var template: api.content.TemplateSummary = event.getTemplate();
 
                 var exportTemplate = new api.content.site.template.ExportSiteTemplateRequest(template.getSiteTemplateKey());
                 var templateExportUrl = exportTemplate.getRequestPath().toString() + '?siteTemplateKey=' +
@@ -88,7 +94,7 @@ module app {
         private handleBrowse(event: api.app.ShowBrowsePanelEvent) {
             var browsePanel: api.app.browse.BrowsePanel<app.browse.TemplateBrowseItem> = this.getBrowsePanel();
             if (!browsePanel) {
-                this.addBrowsePanel(new app.browse.TemplateBrowsePanel());
+                this.addBrowsePanel(new app.browse.TemplateBrowsePanel(this.browseActions, this.templateTreeGrid));
             } else {
                 this.showPanel(browsePanel);
             }
@@ -102,7 +108,7 @@ module app {
         }
 
         private handleEdit(event) {
-            event.getTemplates().forEach((template: app.browse.TemplateSummary) => {
+            event.getTemplates().forEach((template: api.content.TemplateSummary) => {
 
                 if (!template.isSiteTemplate()) {
                     return;

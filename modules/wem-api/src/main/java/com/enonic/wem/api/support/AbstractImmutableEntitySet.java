@@ -2,6 +2,7 @@ package com.enonic.wem.api.support;
 
 import java.util.Iterator;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -38,6 +39,11 @@ public abstract class AbstractImmutableEntitySet<T>
     public final Set<T> getSet()
     {
         return this.set;
+    }
+
+    public final Stream<T> stream()
+    {
+        return this.set.stream();
     }
 
     public final boolean contains( T o )

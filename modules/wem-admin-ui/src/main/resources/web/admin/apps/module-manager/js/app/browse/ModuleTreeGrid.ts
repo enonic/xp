@@ -9,7 +9,7 @@ module app.browse {
     import TreeNode = api.ui.treegrid.TreeNode;
     import TreeGridBuilder = api.ui.treegrid.TreeGridBuilder;
     import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
-
+    import TreeItem = api.ui.treegrid.TreeItem;
 
     export class ModuleTreeGrid extends TreeGrid<ModuleSummary> {
 
@@ -25,27 +25,31 @@ module app.browse {
                             build(),
 
                         new GridColumnBuilder<TreeNode<ModuleSummary>>().
-                            setName("ModifiedTime").
-                            setId("modifiedTime").
-                            setField("modifiedTime").
-                            setWidth(150).
-                            setMinWidth(150).
-                            setFormatter(DateTimeFormatter.format).
-                            build() ,
-
-                        new GridColumnBuilder<TreeNode<ModuleSummary>>().
                             setName("Version").
                             setId("version").
                             setField("version").
-                            setMaxWidth(70).
+                            setCssClass("version").
                             setMinWidth(50).
-                            build() ,
+                            setMaxWidth(70).
+                            build(),
 
                         new GridColumnBuilder<TreeNode<ModuleSummary>>().
                             setName("State").
                             setId("state").
                             setField("state").
+                            setCssClass("state").
                             setMinWidth(80).
+                            setMaxWidth(100).
+                            build(),
+
+                        new GridColumnBuilder<TreeNode<ModuleSummary>>().
+                            setName("ModifiedTime").
+                            setId("modifiedTime").
+                            setField("modifiedTime").
+                            setCssClass("modified").
+                            setMinWidth(150).
+                            setMaxWidth(170).
+                            setFormatter(DateTimeFormatter.format).
                             build()
 
                     ]).prependClasses("module-grid")
@@ -53,12 +57,13 @@ module app.browse {
         }
 
         fetchChildren(parent?: ModuleSummary): Q.Promise<ModuleSummary[]> {
-            return new api.module.ListModuleRequest().sendAndParse();
+            api.util.assertNull(parent, "Parent element is not a root");
+            return new api.module.ListModulesRequest().sendAndParse();
         }
 
-        private defaultNameFormatter(row: number, cell: number, value: any, columnDef: any, item: ModuleSummary) {
+        private defaultNameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ModuleSummary>) {
             var viewer = new ModuleSummaryViewer();
-            viewer.setObject(item);
+            viewer.setObject(node.getData());
             return viewer.toString();
         }
     }

@@ -6,5 +6,8 @@ module app.browse {
             super();
         }
 
+        createItemStatisticsPanel(): app.view.TemplateItemStatisticsPanel {
+            return new app.view.TemplateItemStatisticsPanel();
+        }
     }
 }

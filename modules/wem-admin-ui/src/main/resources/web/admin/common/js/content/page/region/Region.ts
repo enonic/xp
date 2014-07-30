@@ -32,6 +32,10 @@ module api.content.page.region {
             return this.name;
         }
 
+        setParent(value: api.content.page.layout.LayoutComponent) {
+            this.parent = value;
+        }
+
         getParent(): api.content.page.layout.LayoutComponent {
             return this.parent;
         }
@@ -121,10 +125,6 @@ module api.content.page.region {
             api.util.assertState(pageComponent.getIndex() == index,
                     "Index of PageComponent is not as expected. Expected [" + index + "], was: " + pageComponent.getIndex());
             return  pageComponent;
-        }
-
-        updateParent(value: api.content.page.layout.LayoutComponent) {
-            this.parent = value;
         }
 
         removePageComponents() {

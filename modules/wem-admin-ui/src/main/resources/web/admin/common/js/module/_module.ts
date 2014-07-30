@@ -5,7 +5,7 @@
 ///<reference path='Module.ts' />
 ///<reference path='ModuleResourceRequest.ts' />
 ///<reference path='GetModuleRequest.ts' />
-///<reference path='ListModuleRequest.ts' />
+///<reference path='ListModulesRequest.ts' />
 ///<reference path='ModuleListResult.ts' />
 ///<reference path='ModuleLoader.ts' />
 ///<reference path='ModuleLoaderListener.ts' />

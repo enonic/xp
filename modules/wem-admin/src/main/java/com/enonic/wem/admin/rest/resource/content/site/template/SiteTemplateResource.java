@@ -65,7 +65,7 @@ public final class SiteTemplateResource
         {
             final SiteTemplateKey siteTemplateKey = SiteTemplateKey.from( parentIdParam );
             final SiteTemplate siteTemplate = siteTemplateService.getSiteTemplate( siteTemplateKey );
-            return new ListTemplateItemJson( siteTemplate.getPageTemplates() );
+            return new ListTemplateItemJson( siteTemplateKey, siteTemplate.getPageTemplates() );
         }
     }
 

@@ -8,6 +8,7 @@
             "iconUrl" : "",
             "key": "module|my-other-page",
             "name": "my-other-page",
+            "parentKey" : "name-1.0.0",
             "templateType": "PAGE"
         },
         {
@@ -18,6 +19,7 @@
             "iconUrl" : "",
             "key": "module|my-page",
             "name": "my-page",
+            "parentKey" : "name-1.0.0",
             "templateType": "PAGE"
         }
     ],

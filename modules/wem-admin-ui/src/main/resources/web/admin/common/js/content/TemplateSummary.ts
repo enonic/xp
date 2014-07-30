@@ -1,4 +1,4 @@
-module app.browse {
+module api.content {
 
     import PageTemplateKey = api.content.page.PageTemplateKey;
 
@@ -7,7 +7,7 @@ module app.browse {
         SITE
     }
 
-    export class TemplateSummary extends api.item.BaseItem {
+    export class TemplateSummary extends api.item.BaseItem implements api.ui.treegrid.TreeItem {
 
         private name: string;
 
@@ -59,6 +59,10 @@ module app.browse {
             return this.iconUrl;
         }
 
+        public hasChildren(): boolean {
+            return this.isSiteTemplate();
+        }
+
         static fromJson(json: api.content.site.template.TemplateSummaryJson): TemplateSummary {
             return new TemplateSummaryBuilder().fromTemplateSummaryJson(json).build();
         }
@@ -98,6 +102,8 @@ module app.browse {
             this.type = TemplateType[json.templateType.toUpperCase()];
             if (this.type === TemplateType.SITE) {
                 this.siteTemplateKey = api.content.site.template.SiteTemplateKey.fromString(this.key);
+            } else if (json.parentKey) {
+                this.siteTemplateKey = api.content.site.template.SiteTemplateKey.fromString(json.parentKey);
             }
             this.iconUrl = json.iconUrl;
             return this;
