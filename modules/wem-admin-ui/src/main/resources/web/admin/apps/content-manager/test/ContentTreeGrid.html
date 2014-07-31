@@ -24,7 +24,7 @@
             var panelB = new api.ui.Panel();
             var splitpanel = new api.ui.SplitPanel(panelA, panelB);
 
-            var contentGrid = new app.browse.grid.ContentGridPanel2();
+            var contentGrid = new app.browse.ContentTreeGrid();
             panelB.appendChild(contentGrid);
 
             document.body.appendChild(splitpanel.getHTMLElement());

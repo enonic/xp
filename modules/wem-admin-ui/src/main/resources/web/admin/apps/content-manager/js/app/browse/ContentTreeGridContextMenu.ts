@@ -1,12 +1,14 @@
 module app.browse {
 
+    import ContentTreeGridActions = app.browse.action.ContentTreeGridActions;
+
     export class ContentTreeGridContextMenu extends api.ui.menu.ContextMenu {
 
         constructor() {
             super();
         }
 
-        setActions(actions:ContentBrowseActions) {
+        setActions(actions:ContentTreeGridActions) {
             this.addAction(actions.SHOW_NEW_CONTENT_DIALOG_ACTION);
             this.addAction(actions.EDIT_CONTENT);
             this.addAction(actions.OPEN_CONTENT);

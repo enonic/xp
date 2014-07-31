@@ -1,14 +1,13 @@
-module app.browse.grid.actions {
+module app.browse.action {
 
     import Action = api.ui.Action;
 
     export class ShowDetailsAction extends Action {
 
-        constructor(grid: ContentGridPanel2) {
+        constructor(grid: ContentTreeGrid) {
             super("DETAILS");
             this.setEnabled(false);
             this.onExecuted(() => {
-                // TODO: Replace ContentSummary with ContentSummaryAndCompareStatus in future
                 var contentSummaries: api.content.ContentSummary[]
                     = grid.getSelectedDataNodes().map((elem) => { return elem.getContentSummary(); });
                 new ShowDetailsEvent(contentSummaries).fire();

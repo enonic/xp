@@ -1,9 +1,9 @@
-module app.browse.grid.actions {
+module app.browse.action {
 
     import Action = api.ui.Action;
     import TreeGridActions = api.ui.treegrid.actions.TreeGridActions;
 
-    export class ContentGridPanel2Actions implements TreeGridActions {
+    export class ContentTreeGridActions implements TreeGridActions {
 
         public SHOW_NEW_CONTENT_DIALOG_ACTION: Action;
         public OPEN_CONTENT: Action;
@@ -17,7 +17,7 @@ module app.browse.grid.actions {
 
         private actions: api.ui.Action[] = [];
 
-        constructor(grid: ContentGridPanel2) {
+        constructor(grid: ContentTreeGrid) {
             this.SHOW_PREVIEW = new ShowPreviewAction(grid);
             this.SHOW_DETAILS = new ShowDetailsAction(grid);
             this.TOGGLE_SEARCH_PANEL = new ToggleSearchPanelAction();

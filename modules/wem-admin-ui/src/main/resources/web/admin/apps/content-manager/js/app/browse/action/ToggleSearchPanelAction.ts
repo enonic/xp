@@ -1,8 +1,9 @@
-module app.browse {
-    
+module app.browse.action {
+
     import Action = api.ui.Action;
 
     export class ToggleSearchPanelAction extends Action {
+
         constructor() {
             super("");
             this.onExecuted(() => {
@@ -10,6 +11,5 @@ module app.browse {
             });
             this.setIconClass("icon-search3");
         }
-
     }
 }

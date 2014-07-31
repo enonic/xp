@@ -263,6 +263,7 @@ module api.ui.treegrid {
                 this.initData(this.root.treeToList());
                 this.resetAndRender();
                 this.active = true;
+                this.notifyLoaded();
             }
 
             this.stash = null;
@@ -292,7 +293,11 @@ module api.ui.treegrid {
             this.grid.selectAll();
         }
 
-        deselectItem(id: string) {
+        deselectAll() {
+            this.grid.clearSelection();
+        }
+
+        deselectItem(id:string) {
             var oldSelected = this.grid.getSelectedRows(),
                 newSelected = [];
             for (var i = 0; i < oldSelected.length; i++) {
@@ -319,6 +324,7 @@ module api.ui.treegrid {
             return dataNodes;
         }
 
+        // Hard reset
         reload(parent?: NODE): void {
             this.root = new TreeNodeBuilder<NODE>().build();
 
@@ -336,6 +342,11 @@ module api.ui.treegrid {
                     this.resetAndRender();
                     this.active = true;
                 }).done(() => this.notifyLoaded());
+        }
+
+        // Soft reset, that saves node status
+        refresh(): void {
+
         }
 
         private initData(nodes: TreeNode<NODE>[]) {

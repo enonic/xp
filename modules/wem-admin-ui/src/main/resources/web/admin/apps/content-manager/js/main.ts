@@ -5,7 +5,7 @@ declare var CONFIG;
 module components {
     export var browseToolbar: app.browse.ContentBrowseToolbar;
     export var contextMenu: app.browse.ContentTreeGridContextMenu;
-    export var gridPanel: app.browse.ContentTreeGridPanel;
+    export var gridPanel: app.browse.ContentTreeGrid;
     export var detailPanel: app.browse.ContentBrowseItemPanel;
 }
 

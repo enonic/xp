@@ -8,52 +8,43 @@ module app.browse {
     import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
 
-    // TODO: ContentSummary must be replaced with an ContentSummaryAndCompareStatus after old grid is removed
     export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummary> {
 
-        private browseActions: app.browse.ContentBrowseActions;
+        private browseActions: app.browse.action.ContentTreeGridActions;
 
         private toolbar: ContentBrowseToolbar;
 
-        private contentTreeGridPanel: app.browse.ContentTreeGridPanel;
-
         private contentTreeGridPanelMask: api.ui.mask.LoadMask;
 
-        private contentTreeGridPanel2: app.browse.grid.ContentGridPanel2;
+        private contentTreeGridPanel2: app.browse.ContentTreeGrid;
 
         private contentFilterPanel: app.browse.filter.ContentBrowseFilterPanel;
 
         private contentBrowseItemPanel: ContentBrowseItemPanel;
 
         constructor() {
-            var treeGridContextMenu = new ContentTreeGridContextMenu();
-            this.contentTreeGridPanel = new app.browse.ContentTreeGridPanel({
-                contextMenu: treeGridContextMenu
-            });
+            this.contentTreeGridPanel2 = new app.browse.ContentTreeGrid();
 
-            this.contentTreeGridPanelMask = new api.ui.mask.LoadMask(this.contentTreeGridPanel);
-
-            this.browseActions = ContentBrowseActions.init(this.contentTreeGridPanel);
-            treeGridContextMenu.setActions(this.browseActions);
-
-            this.toolbar = new ContentBrowseToolbar(this.browseActions);
-            this.contentBrowseItemPanel =
-            components.detailPanel = new ContentBrowseItemPanel();
+            this.contentBrowseItemPanel = components.detailPanel = new ContentBrowseItemPanel();
 
             this.contentFilterPanel = new app.browse.filter.ContentBrowseFilterPanel();
 
-            this.contentTreeGridPanel2 = new app.browse.grid.ContentGridPanel2();
+            this.browseActions = <app.browse.action.ContentTreeGridActions>this.contentTreeGridPanel2.getContextMenu().getActions();
+
+            this.toolbar = new ContentBrowseToolbar(this.browseActions);
+
+            this.contentTreeGridPanelMask = new api.ui.mask.LoadMask(this.contentTreeGridPanel2);
 
             super({
                 browseToolbar: this.toolbar,
-                treeGridPanel: this.contentTreeGridPanel,
                 treeGridPanel2: this.contentTreeGridPanel2,
                 browseItemPanel: this.contentBrowseItemPanel,
-                filterPanel: this.contentFilterPanel});
+                filterPanel: this.contentFilterPanel
+            });
 
             api.content.ContentDeletedEvent.on((event) => {
                 this.contentFilterPanel.search();
-                this.contentTreeGridPanel.deselectAll();
+                this.contentTreeGridPanel2.deselectAll();
             });
 
             api.content.ContentCreatedEvent.on((event) => {
@@ -67,25 +58,12 @@ module app.browse {
             var showMask = () => {
                 this.contentTreeGridPanelMask.show();
             };
+            this.contentTreeGridPanelMask.show();
             this.contentFilterPanel.onSearch(showMask);
             this.contentFilterPanel.onReset(showMask);
-            this.contentTreeGridPanel.onRendered(showMask);
-            this.contentTreeGridPanel.onTreeGridStoreLoaded(() => {
+            this.contentTreeGridPanel2.onRendered(showMask);
+            this.contentTreeGridPanel2.onLoaded(() => {
                 this.contentTreeGridPanelMask.hide();
-            });
-
-            this.contentTreeGridPanel.onTreeGridSelectionChanged((event: api.app.browse.grid.TreeGridSelectionChangedEvent) => {
-                var contentSummaries = this.extModelsToContentSummaries(event.getSelectedModels());
-                this.browseActions.updateActionsEnabledState(contentSummaries);
-            });
-
-            this.contentTreeGridPanel.onTreeGridItemDoubleClicked((event: api.app.browse.grid.TreeGridItemDoubleClickedEvent) => {
-                var contentSummaries = this.extModelsToContentSummaries([event.getClickedModel()]);
-                new app.browse.EditContentEvent(contentSummaries).fire();
-            });
-
-            ShowNewContentGridEvent.on(() => {
-                super.toggleShowingNewGrid();
             });
 
             this.onShown((event) => {
@@ -106,37 +84,6 @@ module app.browse {
             });
         }
 
-        getActions(): api.ui.Action[] {
-            var actions = super.getActions();
-            // TODO: Ensures shortcut for showing new experimental content grid without having the action in the toolbar
-            actions.push(app.browse.ContentBrowseActions.get().SHOW_NEW_CONTENT_GRID);
-            return actions;
-        }
-
-        extModelsToContentSummaries(models: Ext_data_Model[]): ContentSummary[] {
-
-            var summaries: ContentSummary[] = [];
-            for (var i = 0; i < models.length; i++) {
-                summaries.push(ContentSummary.fromJson(<api.content.json.ContentSummaryJson>models[i].data))
-            }
-            return summaries;
-        }
-
-        extModelsToBrowseItems(models: Ext_data_Model[]): BrowseItem<ContentSummary>[] {
-
-            var browseItems: BrowseItem<ContentSummary>[] = [];
-            models.forEach((model: Ext_data_Model) => {
-                var content = ContentSummary.fromJson(<api.content.json.ContentSummaryJson>model.data);
-                var item = new BrowseItem<ContentSummary>(content).
-                    setDisplayName(model.data['displayName']).
-                    setPath(model.data['path']).
-                    setIconUrl(model.data['iconUrl']);
-                browseItems.push(item);
-            });
-            return browseItems;
-        }
-
-        // TODO: ContentSummary must be replaced with an ContentSummaryAndCompareStatus after old grid is removed
         treeNodesToBrowseItems(nodes: TreeNode<ContentSummaryAndCompareStatus>[]): BrowseItem<ContentSummary>[] {
             var browseItems: BrowseItem<ContentSummary>[] = [];
 
