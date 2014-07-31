@@ -70,6 +70,12 @@ module api.liveedit.layout {
             return this.isEmpty() || !this.layoutComponent.getDescriptor();
         }
 
+        showLoadingPlaceholder() {
+            this.displayPlaceholder();
+            this.select();
+            this.placeholder.deselect();
+        }
+
         displayPlaceholder() {
             super.markAsEmpty();
 
@@ -84,7 +90,6 @@ module api.liveedit.layout {
                 setParentElement(this.getParentElement()).
                 setPageComponent(duplicate));
             duplicatedView.insertAfterEl(this);
-            duplicatedView.displayPlaceholder();
             return duplicatedView;
         }
 

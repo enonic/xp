@@ -130,7 +130,7 @@ module api.liveedit {
             actions.push(new api.ui.Action("Duplicate").onExecuted(() => {
                 var duplicatedPageComponent = <PAGE_COMPONENT> this.getPageComponent().duplicateComponent();
                 var duplicatedView = this.duplicate(duplicatedPageComponent);
-                duplicatedView.select();
+                duplicatedView.showLoadingPlaceholder();
 
                 new PageComponentDuplicateEvent(this, duplicatedView).fire();
             }));
@@ -204,6 +204,10 @@ module api.liveedit {
 
         isMoving(): boolean {
             return this.moving;
+        }
+
+        showLoadingPlaceholder() {
+
         }
 
         displayPlaceholder() {
