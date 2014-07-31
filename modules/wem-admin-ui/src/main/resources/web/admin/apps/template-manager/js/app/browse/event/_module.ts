@@ -1,4 +1,3 @@
-///<reference path='BaseTemplateModelEvent.ts' />
 ///<reference path='DeleteTemplatePromptEvent.ts' />
 ///<reference path='ExportTemplateEvent.ts' />
 ///<reference path='ImportTemplateEvent.ts' />

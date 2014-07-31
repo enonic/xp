@@ -117,7 +117,7 @@ module app {
                     done((siteTemplate: api.content.site.template.SiteTemplate)=> {
 
                         var tabId = api.app.AppBarTabId.forEdit(template.getId());
-                        var tabMenuItem = new api.app.AppBarTabMenuItem("Edit Site Template", tabId);
+                        var tabMenuItem = new api.app.AppBarTabMenuItem(siteTemplate.getDisplayName(), tabId);
                         var wizard = new app.wizard.SiteTemplateWizardPanel(tabId, siteTemplate);
                         this.addWizardPanel(tabMenuItem, wizard);
                     });
