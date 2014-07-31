@@ -1,21 +1,27 @@
 module app.create {
 
-    export class NewSchemaEvent extends api.event.Event {
+    import Event2 = api.event.Event2;
+
+    export class NewSchemaEvent extends Event2 {
 
         private schemaType:api.schema.SchemaKind;
 
         constructor(schemaType?:api.schema.SchemaKind) {
-            super('newSchema');
+            super();
 
             this.schemaType = schemaType;
         }
 
-        static on(handler:(event:NewSchemaEvent) => void) {
-            api.event.onEvent('newSchema', handler);
-        }
-
         getSchemaKind():api.schema.SchemaKind {
             return this.schemaType;
+        }
+
+        static on(handler: (event: NewSchemaEvent) => void, contextWindow: Window = window) {
+            Event2.bind(api.util.getFullName(this), handler, contextWindow);
+        }
+
+        static un(handler?: (event: NewSchemaEvent) => void, contextWindow: Window = window) {
+            Event2.unbind(api.util.getFullName(this), handler, contextWindow);
         }
     }
 

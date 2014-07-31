@@ -1,92 +1,95 @@
 module app.browse {
 
-    export class BaseSchemaModelEvent extends api.event.Event {
-        private model: api.schema.Schema[];
+    import Event2 = api.event.Event2;
+    import Schema = api.schema.Schema;
 
-        constructor(name: string, model: api.schema.Schema[]) {
+    export class BaseSchemaModelEvent extends Event2 {
+        private model: Schema[];
+
+        constructor(model: Schema[]) {
             this.model = model;
-            super(name);
+            super();
         }
 
-        getSchemas(): api.schema.Schema[] {
+        getSchemas(): Schema[] {
             return this.model;
         }
     }
 
-    export class ShowNewSchemaDialogEvent extends api.event.Event {
+    export class ShowNewSchemaDialogEvent extends Event2 {
 
-        constructor() {
-            super('showNewSchemaDialog');
+        static on(handler: (event: ShowNewSchemaDialogEvent) => void, contextWindow: Window = window) {
+            Event2.bind(api.util.getFullName(this), handler, contextWindow);
         }
 
-        static on(handler: (event: ShowNewSchemaDialogEvent) => void) {
-            api.event.onEvent('showNewSchemaDialog', handler);
+        static un(handler?: (event: ShowNewSchemaDialogEvent) => void, contextWindow: Window = window) {
+            Event2.unbind(api.util.getFullName(this), handler, contextWindow);
         }
     }
 
     export class EditSchemaEvent extends BaseSchemaModelEvent {
 
-        constructor(model: api.schema.Schema[]) {
-            super('editSchema', model);
+        static on(handler: (event: EditSchemaEvent) => void, contextWindow: Window = window) {
+            Event2.bind(api.util.getFullName(this), handler, contextWindow);
         }
 
-        static on(handler: (event: EditSchemaEvent) => void) {
-            api.event.onEvent('editSchema', handler);
+        static un(handler?: (event: EditSchemaEvent) => void, contextWindow: Window = window) {
+            Event2.unbind(api.util.getFullName(this), handler, contextWindow);
         }
     }
 
     export class OpenSchemaEvent extends BaseSchemaModelEvent {
 
-        constructor(model: api.schema.Schema[]) {
-            super('openSchema', model);
+        static on(handler: (event: OpenSchemaEvent) => void, contextWindow: Window = window) {
+            Event2.bind(api.util.getFullName(this), handler, contextWindow);
         }
 
-        static on(handler: (event: OpenSchemaEvent) => void) {
-            api.event.onEvent('openSchema', handler);
+        static un(handler?: (event: OpenSchemaEvent) => void, contextWindow: Window = window) {
+            Event2.unbind(api.util.getFullName(this), handler, contextWindow);
         }
     }
 
     export class DeleteSchemaPromptEvent extends BaseSchemaModelEvent {
 
-        constructor(model: api.schema.Schema[]) {
-            super('deleteSchema', model);
+        static on(handler: (event: DeleteSchemaPromptEvent) => void, contextWindow: Window = window) {
+            Event2.bind(api.util.getFullName(this), handler, contextWindow);
         }
 
-        static on(handler: (event: DeleteSchemaPromptEvent) => void) {
-            api.event.onEvent('deleteSchema', handler);
+        static un(handler?: (event: DeleteSchemaPromptEvent) => void, contextWindow: Window = window) {
+            Event2.unbind(api.util.getFullName(this), handler, contextWindow);
         }
     }
 
     export class ReindexSchemaEvent extends BaseSchemaModelEvent {
 
-        constructor(model: api.schema.Schema[]) {
-            super('reindexSchema', model);
+        static on(handler: (event: ReindexSchemaEvent) => void, contextWindow: Window = window) {
+            Event2.bind(api.util.getFullName(this), handler, contextWindow);
         }
 
-        static on(handler: (event: ReindexSchemaEvent) => void) {
-            api.event.onEvent('reindexSchema', handler);
+        static un(handler?: (event: ReindexSchemaEvent) => void, contextWindow: Window = window) {
+            Event2.unbind(api.util.getFullName(this), handler, contextWindow);
         }
     }
 
     export class ExportSchemaEvent extends BaseSchemaModelEvent {
 
-        constructor(model: api.schema.Schema[]) {
-            super('exportSchema', model);
+        static on(handler: (event: ExportSchemaEvent) => void, contextWindow: Window = window) {
+            Event2.bind(api.util.getFullName(this), handler, contextWindow);
         }
 
-        static on(handler: (event: ExportSchemaEvent) => void) {
-            api.event.onEvent('exportSchema', handler);
+        static un(handler?: (event: ExportSchemaEvent) => void, contextWindow: Window = window) {
+            Event2.unbind(api.util.getFullName(this), handler, contextWindow);
         }
     }
 
-    export class CloseSchemaEvent extends api.event.Event {
+    export class CloseSchemaEvent extends Event2 {
 
         private panel: api.ui.panel.Panel;
 
         private checkCanRemovePanel: boolean;
 
         constructor(panel: api.ui.panel.Panel, checkCanRemovePanel: boolean = true) {
-            super('closeSchema');
+            super();
             this.panel = panel;
             this.checkCanRemovePanel = checkCanRemovePanel;
         }
@@ -99,8 +102,12 @@ module app.browse {
             return this.checkCanRemovePanel;
         }
 
-        static on(handler: (event: CloseSchemaEvent) => void) {
-            api.event.onEvent('closeSchema', handler);
+        static on(handler: (event: CloseSchemaEvent) => void, contextWindow: Window = window) {
+            Event2.bind(api.util.getFullName(this), handler, contextWindow);
+        }
+
+        static un(handler?: (event: CloseSchemaEvent) => void, contextWindow: Window = window) {
+            Event2.unbind(api.util.getFullName(this), handler, contextWindow);
         }
     }
 }
