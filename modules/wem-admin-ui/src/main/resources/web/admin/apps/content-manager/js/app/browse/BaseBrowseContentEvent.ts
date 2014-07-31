@@ -1,12 +1,12 @@
 module app.browse {
 
-    export class BaseContentModelEvent extends api.event.Event {
+    export class BaseContentModelEvent extends api.event.Event2 {
 
         private model:api.content.ContentSummary[];
 
-        constructor(name:string, model:api.content.ContentSummary[]) {
+        constructor(model:api.content.ContentSummary[]) {
             this.model = model;
-            super(name);
+            super();
         }
 
         getModels():api.content.ContentSummary[] {

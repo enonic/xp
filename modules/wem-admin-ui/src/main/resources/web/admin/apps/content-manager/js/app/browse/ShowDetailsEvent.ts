@@ -2,13 +2,12 @@ module app.browse {
 
     export class ShowDetailsEvent extends BaseContentModelEvent {
 
-        constructor(model:api.content.ContentSummary[]) {
-            super('showDetails', model);
+        static on(handler: (event: ShowDetailsEvent) => void) {
+            api.event.Event2.bind(api.util.getFullName(this), handler);
         }
 
-        static on(handler:(event:ShowDetailsEvent) => void) {
-            api.event.onEvent('ShowDetails', handler);
+        static un(handler?: (event: ShowDetailsEvent) => void) {
+            api.event.Event2.unbind(api.util.getFullName(this), handler);
         }
-
     }
 }
