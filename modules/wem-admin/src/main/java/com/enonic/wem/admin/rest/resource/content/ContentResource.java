@@ -1,8 +1,6 @@
 package com.enonic.wem.admin.rest.resource.content;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -232,9 +230,14 @@ public class ContentResource
     {
         final ContentPaths contentsToDelete = ContentPaths.from( json.getContentPaths() );
 
+        //sort contents by nesting order to avoid removing parent content before child.
+        List<ContentPath> contentsToDeleteList = new ArrayList(contentsToDelete.getSet());
+        Collections.sort(contentsToDeleteList, ( ContentPath contentPath1, ContentPath contentPath2 ) ->
+                ( contentPath2.elementCount() - contentPath1.elementCount() ));
+
         final DeleteContentResultJson jsonResult = new DeleteContentResultJson();
 
-        for ( final ContentPath contentToDelete : contentsToDelete )
+        for ( final ContentPath contentToDelete : contentsToDeleteList )
         {
             final DeleteContentParams deleteContent = new DeleteContentParams();
             deleteContent.deleter( AccountKey.anonymous() );
