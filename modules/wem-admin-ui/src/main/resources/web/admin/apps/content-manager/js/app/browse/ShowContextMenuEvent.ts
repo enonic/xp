@@ -1,6 +1,6 @@
 module app.browse {
 
-    export class ShowContextMenuEvent extends api.event.Event {
+    export class ShowContextMenuEvent extends api.event.Event2 {
 
         private x:number;
 
@@ -9,7 +9,7 @@ module app.browse {
         constructor(x:number, y:number) {
             this.x = x;
             this.y = y;
-            super('showContextMenu');
+            super();
         }
 
         getX() {
@@ -20,8 +20,12 @@ module app.browse {
             return this.y;
         }
 
-        static on(handler:(event:ShowContextMenuEvent) => void) {
-            api.event.onEvent('showContextMenu', handler);
+        static on(handler: (event: ShowContextMenuEvent) => void) {
+            api.event.Event2.bind(api.util.getFullName(this), handler);
+        }
+
+        static un(handler?: (event: ShowContextMenuEvent) => void) {
+            api.event.Event2.unbind(api.util.getFullName(this), handler);
         }
     }
 }

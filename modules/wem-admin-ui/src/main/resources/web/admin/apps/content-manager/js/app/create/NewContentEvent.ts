@@ -1,6 +1,6 @@
 module app.create {
 
-    export class NewContentEvent extends api.event.Event {
+    export class NewContentEvent extends api.event.Event2 {
 
         private contentType:api.schema.content.ContentTypeSummary;
 
@@ -9,7 +9,7 @@ module app.create {
         private siteTemplate:api.content.site.template.SiteTemplateSummary;
 
         constructor(contentType:api.schema.content.ContentTypeSummary, parentContent:api.content.Content, siteTemplate?:api.content.site.template.SiteTemplateSummary) {
-            super('newContent');
+            super();
             this.contentType = contentType;
             this.parentContent = parentContent;
             this.siteTemplate = siteTemplate;
@@ -27,8 +27,12 @@ module app.create {
             return this.siteTemplate;
         }
 
-        static on(handler:(event:NewContentEvent) => void) {
-            api.event.onEvent('newContent', handler);
+        static on(handler: (event: NewContentEvent) => void) {
+            api.event.Event2.bind(api.util.getFullName(this), handler);
+        }
+
+        static un(handler?: (event: NewContentEvent) => void) {
+            api.event.Event2.unbind(api.util.getFullName(this), handler);
         }
     }
 

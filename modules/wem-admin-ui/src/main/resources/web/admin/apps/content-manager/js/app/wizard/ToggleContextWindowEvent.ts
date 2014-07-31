@@ -1,11 +1,11 @@
 module app.wizard {
 
-    export class ToggleContextWindowEvent extends api.event.Event {
+    export class ToggleContextWindowEvent extends api.event.Event2 {
 
         private fixed: boolean;
 
         constructor(fixed: boolean) {
-            super('toggleContextWindow');
+            super();
             this.fixed = fixed;
         }
 
@@ -13,8 +13,12 @@ module app.wizard {
             return this.fixed;
         }
 
-        static on(handler:(event:ToggleContextWindowEvent) => void) {
-            api.event.onEvent('toggleContextWindow', handler);
+        static on(handler: (event: ToggleContextWindowEvent) => void) {
+            api.event.Event2.bind(api.util.getFullName(this), handler);
+        }
+
+        static un(handler?: (event: ToggleContextWindowEvent) => void) {
+            api.event.Event2.unbind(api.util.getFullName(this), handler);
         }
     }
 }

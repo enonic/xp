@@ -2,14 +2,13 @@ module app.browse {
 
     export class MoveContentEvent extends BaseContentModelEvent {
 
-        constructor(model:api.content.ContentSummary[]) {
-            super('moveContent', model);
+        static on(handler: (event: MoveContentEvent) => void) {
+            api.event.Event2.bind(api.util.getFullName(this), handler);
         }
 
-        static on(handler:(event:MoveContentEvent) => void) {
-            api.event.onEvent('moveContent', handler);
+        static un(handler?: (event: MoveContentEvent) => void) {
+            api.event.Event2.unbind(api.util.getFullName(this), handler);
         }
-
     }
 
 }

@@ -1,15 +1,16 @@
 module app.browse {
 
+    import Event2 = api.event.Event2;
     import Panel = api.ui.panel.Panel;
 
-    export class CloseContentEvent extends api.event.Event {
+    export class CloseContentEvent extends Event2 {
 
         private panel: Panel;
 
         private checkCanRemovePanel: boolean;
 
         constructor(panel: Panel, checkCanRemovePanel: boolean = true) {
-            super('closeContentEvent');
+            super();
             this.panel = panel;
             this.checkCanRemovePanel = checkCanRemovePanel;
         }
@@ -23,7 +24,11 @@ module app.browse {
         }
 
         static on(handler: (event: CloseContentEvent) => void) {
-            api.event.onEvent('closeContentEvent', handler);
+            Event2.bind(api.util.getFullName(this), handler);
+        }
+
+        static un(handler?: (event: CloseContentEvent) => void) {
+            Event2.unbind(api.util.getFullName(this), handler);
         }
     }
 

@@ -1,13 +1,13 @@
 module app.browse.filter {
 
-    export class ContentBrowseResetEvent extends api.event.Event {
+    export class ContentBrowseResetEvent extends api.event.Event2 {
 
-        constructor() {
-            super('contentBrowseResetEvent');
+        static on(handler: (event: ContentBrowseResetEvent) => void) {
+            api.event.Event2.bind(api.util.getFullName(this), handler);
         }
 
-        static on(handler:(event:ContentBrowseResetEvent) => void) {
-            api.event.onEvent('contentBrowseResetEvent', handler);
+        static un(handler?: (event: ContentBrowseResetEvent) => void) {
+            api.event.Event2.unbind(api.util.getFullName(this), handler);
         }
     }
 

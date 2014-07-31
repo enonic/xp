@@ -1,12 +1,13 @@
 module app.browse {
 
     export class EditContentEvent extends BaseContentModelEvent {
-        constructor(model:api.content.ContentSummary[]) {
-            super('editContent', model);
+
+        static on(handler: (event: EditContentEvent) => void) {
+            api.event.Event2.bind(api.util.getFullName(this), handler);
         }
 
-        static on(handler:(event:EditContentEvent) => void) {
-            api.event.onEvent('editContent', handler);
+        static un(handler?: (event: EditContentEvent) => void) {
+            api.event.Event2.unbind(api.util.getFullName(this), handler);
         }
     }
 }
