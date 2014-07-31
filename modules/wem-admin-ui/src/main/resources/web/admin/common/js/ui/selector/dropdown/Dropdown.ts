@@ -31,8 +31,6 @@ module api.ui.selector.dropdown {
 
         private optionDisplayValueViewer: Viewer<OPTION_DISPLAY_VALUE>;
 
-        private selectedOption: Option<OPTION_DISPLAY_VALUE>;
-
         private selectedOptionView: SelectedOptionView<OPTION_DISPLAY_VALUE>;
 
         private optionSelectedListeners: {(event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>):void}[] = [];
@@ -242,14 +240,15 @@ module api.ui.selector.dropdown {
         }
 
         getSelectedOption(): Option<OPTION_DISPLAY_VALUE> {
-            return this.selectedOption;
+            return this.selectedOptionView.getOption();
         }
 
         getValue(): string {
-            if (!this.selectedOption) {
+            var selectedOption = this.getSelectedOption();
+            if (!selectedOption) {
                 return null;
             }
-            return this.selectedOption.value;
+            return selectedOption.value;
         }
 
         setInputIconUrl(iconUrl: string) {

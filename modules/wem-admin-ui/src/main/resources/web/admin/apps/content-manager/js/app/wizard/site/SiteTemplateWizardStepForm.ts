@@ -3,7 +3,11 @@ module app.wizard.site {
     import SiteTemplate = api.content.site.template.SiteTemplate;
     import Site = api.content.site.Site;
     import Module = api.module.Module;
-    import SiteTemplateComboBox = api.content.site.template.SiteTemplateComboBox;
+    import Dropdown = api.ui.selector.dropdown.Dropdown;
+    import DropdownConfig = api.ui.selector.dropdown.DropdownConfig;
+    import Option = api.ui.selector.Option;
+    import SiteTemplateSummary = api.content.site.template.SiteTemplateSummary;
+    import GetAllSiteTemplatesRequest = api.content.site.template.GetAllSiteTemplatesRequest;
     import RootDataSet = api.data.RootDataSet;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
@@ -17,7 +21,7 @@ module app.wizard.site {
 
         private siteTemplate: SiteTemplate;
 
-        private siteTemplateComboBox: SiteTemplateComboBox;
+        private siteTemplateDropdown: Dropdown<SiteTemplateSummary>;
 
         private moduleViewsContainer: api.dom.DivEl;
 
@@ -33,20 +37,48 @@ module app.wizard.site {
             super("site-wizard-step-form");
 
             this.siteTemplate = siteTemplate;
-            this.siteTemplateComboBox = new SiteTemplateComboBox();
-            this.siteTemplateComboBox.addClass('site-template-combo');
-            if (siteTemplate) {
-                this.siteTemplateComboBox.select(siteTemplate);
-            }
-            this.siteTemplateComboBox.onOptionSelected((event: OptionSelectedEvent<SiteTemplate>) => this.handleSiteTemplateComboBoxOptionSelected(event));
-            this.siteTemplateComboBox.onSelectedOptionRemoved((removed: SelectedOption<SiteTemplate>) => this.handleSelectedOptionRemoved());
-            this.appendChild(this.siteTemplateComboBox);
+
+            this.siteTemplateDropdown = new Dropdown<SiteTemplateSummary>('siteTemplate', <DropdownConfig<SiteTemplateSummary>>{
+                optionDisplayValueViewer: new api.content.site.template.SiteTemplateSummaryViewer()
+            });
+            this.siteTemplateDropdown.addClass('site-template-combo');
+            this.siteTemplateDropdown.onOptionSelected((event: OptionSelectedEvent<SiteTemplate>) => this.handleSiteTemplateComboBoxOptionSelected(event));
+
+            var fieldSet = new api.ui.form.Fieldset();
+            fieldSet.addClass('site-template-field');
+            fieldSet.add(new api.ui.form.FormItemBuilder(this.siteTemplateDropdown).setLabel('Site Template').build());
+            this.appendChild(fieldSet);
+            this.loadSiteTemplateDropdown();
 
             this.moduleViewsContainer = new api.dom.DivEl();
             this.appendChild(this.moduleViewsContainer);
         }
 
+        private loadSiteTemplateDropdown() {
+            new GetAllSiteTemplatesRequest().sendAndParse()
+                .done((siteTemplates: SiteTemplateSummary[]) => {
+                    var selecteSiteTemplateKey = this.siteTemplate ? this.siteTemplate.getKey().toString() : '';
+                    var selectedSiteOption: Option<SiteTemplateSummary> = null;
+                    siteTemplates.forEach((siteTemplate: SiteTemplateSummary) => {
+                        var option = {
+                            value: siteTemplate.getKey().toString(),
+                            displayValue: siteTemplate
+                        };
+                        this.siteTemplateDropdown.addOption(option);
+                        if (option.value === selecteSiteTemplateKey) {
+                            selectedSiteOption = option;
+                        }
+                    });
+
+                    if (selectedSiteOption) {
+                        this.siteTemplateDropdown.selectOption(selectedSiteOption);
+                    }
+                });
+        }
+
         private handleSiteTemplateComboBoxOptionSelected(event: OptionSelectedEvent<SiteTemplate>): void {
+            this.removeExistingModuleViews();
+
             this.siteTemplate = event.getOption().displayValue;
             var moduleConfigs: api.content.site.ModuleConfig[] = [];
             this.siteTemplate.getModules().forEach((moduleKey: api.module.ModuleKey) => {
@@ -59,12 +91,6 @@ module app.wizard.site {
             this.doRenderExisting(moduleConfigs).then(() => {
                 this.notifySiteTemplateChanged(this.siteTemplate);
             });
-        }
-
-        private handleSelectedOptionRemoved(): void {
-            this.siteTemplate = null;
-            this.removeExistingModuleViews();
-            this.notifySiteTemplateChanged(null);
         }
 
         onSiteTemplateChanged(listener: (event: SiteTemplateChangedEvent) => void) {
@@ -99,7 +125,11 @@ module app.wizard.site {
         private doRenderExisting(moduleConfigs: api.content.site.ModuleConfig[]): Q.Promise<void> {
             this.setModuleConfigs(moduleConfigs);
 
-            this.siteTemplateComboBox.select(this.siteTemplate);
+            var option = this.siteTemplateDropdown.getOptionByValue(this.siteTemplate.getKey().toString());
+            var selectedOption = this.siteTemplateDropdown.getSelectedOption();
+            if (!selectedOption || (selectedOption.value !== option.value)) {
+                this.siteTemplateDropdown.selectOption(option, true);
+            }
 
             return this.loadModules(moduleConfigs).
                 then((modules: Module[]): void => {
