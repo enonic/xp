@@ -1,24 +1,26 @@
 module app.wizard {
 
-    export class MixinCreatedEvent extends api.event.Event {
+    import Event2 = api.event.Event2;
 
-        constructor() {
-            super('mixinCreated');
+    export class MixinCreatedEvent extends Event2 {
+
+        static on(handler: (event: MixinCreatedEvent) => void, contextWindow: Window = window) {
+            Event2.bind(api.util.getFullName(this), handler, contextWindow);
         }
 
-        static on(handler:(event:app.wizard.MixinCreatedEvent) => void) {
-            api.event.onEvent('mixinCreated', handler);
+        static un(handler?: (event: MixinCreatedEvent) => void, contextWindow: Window = window) {
+            Event2.unbind(api.util.getFullName(this), handler, contextWindow);
         }
     }
 
-    export class MixinUpdatedEvent extends api.event.Event {
+    export class MixinUpdatedEvent extends Event2 {
 
-        constructor() {
-            super('mixinUpdated');
+        static on(handler: (event: MixinUpdatedEvent) => void, contextWindow: Window = window) {
+            Event2.bind(api.util.getFullName(this), handler, contextWindow);
         }
 
-        static on(handler:(event:app.wizard.MixinUpdatedEvent) => void) {
-            api.event.onEvent('mixinUpdated', handler);
+        static un(handler?: (event: MixinUpdatedEvent) => void, contextWindow: Window = window) {
+            Event2.unbind(api.util.getFullName(this), handler, contextWindow);
         }
     }
 
