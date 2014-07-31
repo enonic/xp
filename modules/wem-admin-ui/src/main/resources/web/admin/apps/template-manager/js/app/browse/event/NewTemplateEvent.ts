@@ -1,19 +1,19 @@
 module app.browse.event {
 
-    import Event2 = api.event.Event2;
+    import Event = api.event.Event;
 
-    export class NewTemplateEvent extends Event2 {
+    export class NewTemplateEvent extends Event {
 
         constructor() {
             super('newTemplate');
         }
 
         static on(handler: (event: NewTemplateEvent) => void, contextWindow: Window = window) {
-            Event2.bind("newTemplate", handler, contextWindow);
+            Event.bind("newTemplate", handler, contextWindow);
         }
 
         static un(handler: (event: NewTemplateEvent) => void, contextWindow: Window = window) {
-            Event2.unbind("newTemplate", handler, contextWindow);
+            Event.unbind("newTemplate", handler, contextWindow);
         }
     }
 }

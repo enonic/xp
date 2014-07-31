@@ -1,6 +1,6 @@
 module app.create {
 
-    export class NewContentEvent extends api.event.Event2 {
+    export class NewContentEvent extends api.event.Event {
 
         private contentType:api.schema.content.ContentTypeSummary;
 
@@ -28,11 +28,11 @@ module app.create {
         }
 
         static on(handler: (event: NewContentEvent) => void) {
-            api.event.Event2.bind(api.util.getFullName(this), handler);
+            api.event.Event.bind(api.util.getFullName(this), handler);
         }
 
         static un(handler?: (event: NewContentEvent) => void) {
-            api.event.Event2.unbind(api.util.getFullName(this), handler);
+            api.event.Event.unbind(api.util.getFullName(this), handler);
         }
     }
 

@@ -4,7 +4,7 @@ module api.liveedit {
     import PageRegions = api.content.page.PageRegions;
     import SiteTemplate = api.content.site.template.SiteTemplate;
 
-    export class InitializeLiveEditEvent extends api.event.Event2 {
+    export class InitializeLiveEditEvent extends api.event.Event {
 
         private content: Content;
 
@@ -32,11 +32,11 @@ module api.liveedit {
         }
 
         static on(handler: (event: InitializeLiveEditEvent) => void, contextWindow: Window = window) {
-            api.event.Event2.bind(api.util.getFullName(this), handler, contextWindow);
+            api.event.Event.bind(api.util.getFullName(this), handler, contextWindow);
         }
 
         static un(handler?: (event: InitializeLiveEditEvent) => void, contextWindow: Window = window) {
-            api.event.Event2.unbind(api.util.getFullName(this), handler, contextWindow);
+            api.event.Event.unbind(api.util.getFullName(this), handler, contextWindow);
         }
     }
 }

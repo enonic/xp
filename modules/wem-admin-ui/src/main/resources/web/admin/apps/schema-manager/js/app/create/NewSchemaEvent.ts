@@ -1,8 +1,8 @@
 module app.create {
 
-    import Event2 = api.event.Event2;
+    import Event = api.event.Event;
 
-    export class NewSchemaEvent extends Event2 {
+    export class NewSchemaEvent extends Event {
 
         private schemaType:api.schema.SchemaKind;
 
@@ -17,11 +17,11 @@ module app.create {
         }
 
         static on(handler: (event: NewSchemaEvent) => void, contextWindow: Window = window) {
-            Event2.bind(api.util.getFullName(this), handler, contextWindow);
+            Event.bind(api.util.getFullName(this), handler, contextWindow);
         }
 
         static un(handler?: (event: NewSchemaEvent) => void, contextWindow: Window = window) {
-            Event2.unbind(api.util.getFullName(this), handler, contextWindow);
+            Event.unbind(api.util.getFullName(this), handler, contextWindow);
         }
     }
 

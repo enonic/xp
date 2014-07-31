@@ -1,9 +1,9 @@
 module app.browse {
 
-    import Event2 = api.event.Event2;
+    import Event = api.event.Event;
     import Panel = api.ui.panel.Panel;
 
-    export class CloseContentEvent extends Event2 {
+    export class CloseContentEvent extends Event {
 
         private panel: Panel;
 
@@ -24,11 +24,11 @@ module app.browse {
         }
 
         static on(handler: (event: CloseContentEvent) => void) {
-            Event2.bind(api.util.getFullName(this), handler);
+            Event.bind(api.util.getFullName(this), handler);
         }
 
         static un(handler?: (event: CloseContentEvent) => void) {
-            Event2.unbind(api.util.getFullName(this), handler);
+            Event.unbind(api.util.getFullName(this), handler);
         }
     }
 

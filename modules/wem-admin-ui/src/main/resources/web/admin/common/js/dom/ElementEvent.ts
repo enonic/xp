@@ -1,6 +1,6 @@
 module api.dom {
 
-    export class ElementEvent extends api.event.Event2 {
+    export class ElementEvent extends api.event.Event {
 
         private element: Element;
         private target: Element;

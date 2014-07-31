@@ -1,6 +1,6 @@
 module app.browse {
 
-    export class BaseContentModelEvent extends api.event.Event2 {
+    export class BaseContentModelEvent extends api.event.Event {
 
         private model:api.content.ContentSummary[];
 

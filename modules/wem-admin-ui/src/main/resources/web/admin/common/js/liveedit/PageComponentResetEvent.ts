@@ -1,10 +1,10 @@
 module api.liveedit {
 
-    import Event2 = api.event.Event2;
+    import Event = api.event.Event;
     import PageComponentView = api.liveedit.PageComponentView;
     import PageComponent = api.content.page.PageComponent;
 
-    export class PageComponentResetEvent extends api.event.Event2 {
+    export class PageComponentResetEvent extends api.event.Event {
 
         private pageComponentView: PageComponentView<PageComponent>;
 
@@ -18,11 +18,11 @@ module api.liveedit {
         }
 
         static on(handler: (event: PageComponentResetEvent) => void, contextWindow: Window = window) {
-            Event2.bind(api.util.getFullName(this), handler, contextWindow);
+            Event.bind(api.util.getFullName(this), handler, contextWindow);
         }
 
         static un(handler?: (event: PageComponentResetEvent) => void, contextWindow: Window = window) {
-            Event2.unbind(api.util.getFullName(this), handler, contextWindow);
+            Event.unbind(api.util.getFullName(this), handler, contextWindow);
         }
     }
 }

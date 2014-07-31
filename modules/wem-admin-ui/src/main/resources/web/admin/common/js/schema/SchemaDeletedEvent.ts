@@ -1,6 +1,6 @@
 module api.schema {
 
-    export class SchemaDeletedEvent extends api.event.Event2 {
+    export class SchemaDeletedEvent extends api.event.Event {
 
         private schemas:api.schema.Schema[];
 
@@ -14,11 +14,11 @@ module api.schema {
         }
 
         static on(handler: (event: SchemaDeletedEvent) => void) {
-            api.event.Event2.bind(api.util.getFullName(this), handler);
+            api.event.Event.bind(api.util.getFullName(this), handler);
         }
 
         static un(handler?: (event: SchemaDeletedEvent) => void) {
-            api.event.Event2.unbind(api.util.getFullName(this), handler);
+            api.event.Event.unbind(api.util.getFullName(this), handler);
         }
     }
 }

@@ -1,9 +1,9 @@
 module api.liveedit.image {
 
-    import Event2 = api.event.Event2;
+    import Event = api.event.Event;
     import ContentId = api.content.ContentId;
 
-    export class ImageComponentSetImageEvent extends Event2 {
+    export class ImageComponentSetImageEvent extends Event {
 
         private id: ContentId;
 
@@ -50,11 +50,11 @@ module api.liveedit.image {
         }
 
         static on(handler: (event: ImageComponentSetImageEvent) => void, contextWindow: Window = window) {
-            Event2.bind(api.util.getFullName(this), handler, contextWindow);
+            Event.bind(api.util.getFullName(this), handler, contextWindow);
         }
 
         static un(handler: (event: ImageComponentSetImageEvent) => void, contextWindow: Window = window) {
-            Event2.unbind(api.util.getFullName(this), handler, contextWindow);
+            Event.unbind(api.util.getFullName(this), handler, contextWindow);
         }
     }
 }

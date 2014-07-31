@@ -1,9 +1,9 @@
 module api.liveedit {
 
-    import Event2 = api.event.Event2;
+    import Event = api.event.Event;
     import ImagePlaceholder = api.liveedit.image.ImagePlaceholder;
 
-    export class ImageUploadedEvent extends api.event.Event2 {
+    export class ImageUploadedEvent extends api.event.Event {
 
         private uploadedItem: api.ui.uploader.UploadItem;
 
@@ -24,11 +24,11 @@ module api.liveedit {
         }
 
         static on(handler: (event: ImageUploadedEvent) => void, contextWindow: Window = window) {
-            Event2.bind(api.util.getFullName(this), handler, contextWindow);
+            Event.bind(api.util.getFullName(this), handler, contextWindow);
         }
 
         static un(handler: (event: ImageUploadedEvent) => void, contextWindow: Window = window) {
-            Event2.unbind(api.util.getFullName(this), handler, contextWindow);
+            Event.unbind(api.util.getFullName(this), handler, contextWindow);
         }
     }
 }

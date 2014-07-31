@@ -4,7 +4,7 @@ module api.liveedit {
     import RegionPath = api.content.page.RegionPath;
     import PageComponent = api.content.page.PageComponent;
 
-    export class PageComponentAddedEvent extends api.event.Event2 {
+    export class PageComponentAddedEvent extends api.event.Event {
 
         private pageComponentView: PageComponentView<PageComponent>;
 
@@ -18,11 +18,11 @@ module api.liveedit {
         }
 
         static on(handler: (event: PageComponentAddedEvent) => void, contextWindow: Window = window) {
-            api.event.Event2.bind(api.util.getFullName(this), handler, contextWindow);
+            api.event.Event.bind(api.util.getFullName(this), handler, contextWindow);
         }
 
         static un(handler?: (event: PageComponentAddedEvent) => void, contextWindow: Window = window) {
-            api.event.Event2.unbind(api.util.getFullName(this), handler, contextWindow);
+            api.event.Event.unbind(api.util.getFullName(this), handler, contextWindow);
         }
     }
 }
