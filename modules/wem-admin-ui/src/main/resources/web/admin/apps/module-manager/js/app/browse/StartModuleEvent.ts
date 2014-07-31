@@ -1,21 +1,26 @@
 module app.browse {
 
     import ModuleSummary = api.module.ModuleSummary;
+    import Event2 = api.event.Event2;
 
-    export class StartModuleEvent extends api.event.Event {
-        private modules: api.module.ModuleSummary[];
+    export class StartModuleEvent extends Event2 {
+        private modules: ModuleSummary[];
 
         constructor(modules: ModuleSummary[]) {
             this.modules = modules;
-            super('startModule');
+            super();
         }
 
-        getModules(): api.module.ModuleSummary[] {
+        getModules(): ModuleSummary[] {
             return this.modules;
         }
 
         static on(handler: (event: StartModuleEvent) => void) {
-            api.event.onEvent('startModule', handler);
+            Event2.bind(api.util.getFullName(this), handler);
+        }
+
+        static un(handler?: (event: StartModuleEvent) => void) {
+            Event2.unbind(api.util.getFullName(this), handler);
         }
     }
 }

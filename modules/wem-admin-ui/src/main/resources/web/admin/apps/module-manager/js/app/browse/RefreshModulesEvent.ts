@@ -1,13 +1,15 @@
 module app.browse {
 
-    export class RefreshModulesEvent extends api.event.Event {
+    import Event2 = api.event.Event2;
 
-        constructor() {
-            super('refreshModules');
-        }
+    export class RefreshModulesEvent extends Event2 {
 
         static on(handler: (event: RefreshModulesEvent) => void) {
-            api.event.onEvent('refreshModules', handler);
+            Event2.bind(api.util.getFullName(this), handler);
+        }
+
+        static un(handler?: (event: RefreshModulesEvent) => void) {
+            Event2.unbind(api.util.getFullName(this), handler);
         }
     }
 }
