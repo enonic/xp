@@ -31,7 +31,7 @@ module app.wizard {
             this.formIcon.onUploadFinished((event: api.app.wizard.UploadFinishedEvent) => {
                 this.mixinIcon = new api.icon.IconBuilder().
                     setBlobKey(event.getUploadItem().getBlobKey()).setMimeType(event.getUploadItem().getMimeType()).build();
-                this.formIcon.setSrc(api.util.getRestUri('blob/' + this.mixinIcon.getBlobKey() + '?' +
+                this.formIcon.setSrc(api.util.getRestUri('blob/' + this.mixinIcon.getBlobKey() + '?mimeType=' +
                                                          event.getUploadItem().getMimeType()));
             });
             var actions = new MixinWizardActions(this);

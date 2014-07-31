@@ -80,6 +80,10 @@ module api.content.inputtype.image {
 
             this.onShown(() => {
                 if (this.getOption().displayValue.getContentSummary()) {
+                    if (this.icon.isLoaded()) {
+                        // refresh image in case it was changed by external wizard
+                        this.icon.refresh();
+                    }
                     this.showSpinner();
                 }
             });

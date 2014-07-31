@@ -163,7 +163,7 @@ module api.ui.uploader {
             }
 
             if (src != null) {
-                this.image.getEl().setSrc(src);
+                this.image.setSrc(src);
             }
         }
 

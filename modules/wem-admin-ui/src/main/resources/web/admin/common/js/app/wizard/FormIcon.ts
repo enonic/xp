@@ -47,7 +47,7 @@ module api.app.wizard {
         }
 
         setSrc(src: string) {
-            this.img.getEl().setSrc(src);
+            this.img.setSrc(src);
         }
 
         private initUploader(elId: string) {

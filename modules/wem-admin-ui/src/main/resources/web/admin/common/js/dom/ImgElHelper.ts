@@ -21,5 +21,9 @@ module api.dom {
             this.imgEl.src = value;
             return this;
         }
+
+        getSrc(): string {
+            return this.imgEl.src;
+        }
     }
 }

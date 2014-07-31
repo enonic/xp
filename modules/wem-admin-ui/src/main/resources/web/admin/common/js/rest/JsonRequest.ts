@@ -63,8 +63,8 @@ module api.rest {
         }
 
         private prepareGETRequest(request: XMLHttpRequest) {
-            var paramString = JsonRequest.serializeParams(this.params);
-            request.open(this.method, api.util.getUri(this.path.toString()) + "?" + paramString, true);
+            var paramString = api.util.encodeUrlParams(this.params);
+            request.open(this.method, api.util.getUri(this.path.toString()) + paramString, true);
             request.setRequestHeader("Accept", "application/json");
             return request;
         }
@@ -73,19 +73,6 @@ module api.rest {
             request.open(this.method, api.util.getUri(this.path.toString()), true);
             request.setRequestHeader("Accept", "application/json");
             request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-        }
-
-        private static serializeParams(params: Object): string {
-            var str = "";
-            for (var key in params) {
-                if (params.hasOwnProperty(key)) {
-                    if (str.length > 0) {
-                        str += "&";
-                    }
-                    str += key + "=" + params[key];
-                }
-            }
-            return str;
         }
     }
 }
