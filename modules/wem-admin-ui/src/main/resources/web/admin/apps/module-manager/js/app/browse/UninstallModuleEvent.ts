@@ -1,21 +1,26 @@
 module app.browse {
 
     import ModuleSummary = api.module.ModuleSummary;
+    import Event2 = api.event.Event2;
 
-    export class UninstallModuleEvent extends api.event.Event {
-        private modules: api.module.ModuleSummary[];
+    export class UninstallModuleEvent extends Event2 {
+        private modules: ModuleSummary[];
 
         constructor(modules: ModuleSummary[]) {
             this.modules = modules;
-            super('uninstallModule');
+            super();
         }
 
-        getModules(): api.module.ModuleSummary[] {
+        getModules(): ModuleSummary[] {
             return this.modules;
         }
 
         static on(handler: (event: UninstallModuleEvent) => void) {
-            api.event.onEvent('uninstallModule', handler);
+            Event2.bind(api.util.getFullName(this), handler);
+        }
+
+        static un(handler?: (event: UninstallModuleEvent) => void) {
+            Event2.unbind(api.util.getFullName(this), handler);
         }
     }
 }
