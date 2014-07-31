@@ -103,37 +103,6 @@ module api.liveedit.layout {
             return array;
         }
 
-        static getClosestParentLayoutComponentView(itemView: ItemView): LayoutComponentView {
-
-            var parent = itemView.getParentItemView();
-            while (!api.ObjectHelper.iFrameSafeInstanceOf(parent, LayoutComponentView)) {
-                parent = parent.getParentItemView();
-                if (parent == null) {
-                    break;
-                }
-            }
-            if (!parent) {
-                return null;
-            }
-            return <LayoutComponentView>parent;
-        }
-
-        static getParentLayoutComponentView(pageComponentView: PageComponentView<PageComponent>): LayoutComponentView {
-
-            var parentRegion = pageComponentView.getParentItemView();
-            var potentialLayoutComponentView = parentRegion.getParentItemView();
-            if (api.ObjectHelper.iFrameSafeInstanceOf(potentialLayoutComponentView, LayoutComponentView)) {
-                return <LayoutComponentView> potentialLayoutComponentView;
-            }
-            else {
-                return null;
-            }
-        }
-
-        static hasParentLayoutComponentView(pageComponentView: PageComponentView<PageComponent>): boolean {
-            return !LayoutComponentView.getParentLayoutComponentView(pageComponentView) ? false : true;
-        }
-
         private parseRegions() {
 
             return this.doParseRegions();
