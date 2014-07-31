@@ -1,11 +1,11 @@
 module api.content.site.template {
 
-    export class SiteTemplateDeletedEvent extends api.event.Event {
+    export class SiteTemplateDeletedEvent extends api.event.Event2 {
 
         private siteTemplateKey: SiteTemplateKey;
 
         constructor(siteTemplateKey: SiteTemplateKey) {
-            super('SiteTemplateDeletedEvent');
+            super();
             this.siteTemplateKey = siteTemplateKey;
         }
 
@@ -14,8 +14,11 @@ module api.content.site.template {
         }
 
         static on(handler: (event: SiteTemplateDeletedEvent) => void) {
-            api.event.onEvent('SiteTemplateDeletedEvent', handler);
+            api.event.Event2.bind(api.util.getFullName(this), handler);
         }
 
+        static un(handler?: (event: SiteTemplateDeletedEvent) => void) {
+            api.event.Event2.unbind(api.util.getFullName(this), handler);
+        }
     }
 }

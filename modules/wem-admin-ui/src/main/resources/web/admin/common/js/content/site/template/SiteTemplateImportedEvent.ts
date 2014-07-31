@@ -1,15 +1,14 @@
 module api.content.site.template {
 
-    export class SiteTemplateImportedEvent extends api.event.Event {
+    export class SiteTemplateImportedEvent extends api.event.Event2 {
 
-        constructor() {
-            super("SiteTemplateImportedEvent");
+        static on(handler: (event: SiteTemplateImportedEvent) => void) {
+            api.event.Event2.bind(api.util.getFullName(this), handler);
         }
 
-        static on( handler: () => void ) {
-            api.event.onEvent( "SiteTemplateImportedEvent", handler );
+        static un(handler?: (event: SiteTemplateImportedEvent) => void) {
+            api.event.Event2.unbind(api.util.getFullName(this), handler);
         }
-
     }
 
 }

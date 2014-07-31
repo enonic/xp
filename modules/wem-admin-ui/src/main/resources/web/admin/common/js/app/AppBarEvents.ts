@@ -19,16 +19,15 @@ module api.app {
 
     }
 
-    export class ShowBrowsePanelEvent extends api.event.Event {
-
-        constructor() {
-            super('showBrowsePanel');
-        }
+    export class ShowBrowsePanelEvent extends api.event.Event2 {
 
         static on(handler: (event: ShowBrowsePanelEvent) => void) {
-            api.event.onEvent('showBrowsePanel', handler);
+            api.event.Event2.bind(api.util.getFullName(this), handler);
         }
 
+        static un(handler?: (event: ShowBrowsePanelEvent) => void) {
+            api.event.Event2.unbind(api.util.getFullName(this), handler);
+        }
     }
 
 }

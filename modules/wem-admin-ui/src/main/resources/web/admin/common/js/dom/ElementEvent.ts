@@ -1,6 +1,6 @@
 module api.dom {
 
-    export class ElementEvent extends api.event.Event {
+    export class ElementEvent extends api.event.Event2 {
 
         private element: Element;
         private target: Element;
@@ -18,7 +18,6 @@ module api.dom {
         getTarget(): Element {
             return this.target;
         }
-
     }
 
 }
