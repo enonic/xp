@@ -228,6 +228,17 @@ module api.ui.treegrid {
          Must be overridden in most cases.
          Various items may have different requests
          */
+        fetch(elem: NODE): Q.Promise<NODE> {
+            var deferred = Q.defer<NODE>();
+            // Empty logic
+            deferred.resolve(null);
+            return deferred.promise;
+        }
+
+        /*
+         Must be overridden in most cases.
+         Various items may have different requests
+         */
         fetchChildren(parent?: NODE): Q.Promise<NODE[]> {
             var deferred = Q.defer<NODE[]>();
             // Empty logic
@@ -347,6 +358,33 @@ module api.ui.treegrid {
         // Soft reset, that saves node status
         refresh(): void {
 
+        }
+
+        deleteNodes(data: NODE[]): void {
+            var root = this.stash || this.root;
+            var updated:TreeNode<NODE>[] = [];
+            data.forEach((elem: NODE) => {
+                var node = root.findNode(elem);
+                if (node && node.getParent()) {
+                    updated.push(node.getParent());
+                    node.getParent().removeChild(node);
+                    updated.filter((el) => {
+                        return el.getData().getId() !== node.getId();
+                    });
+                }
+            });
+            var promises = updated.map((el) => {
+                return this.fetch(el.getData());
+            });
+            Q.all(promises).then((results:NODE[]) => {
+                results.forEach((result:NODE, index:number) => {
+                    updated[index].setData(result);
+                });
+            }).catch((reason: any) => {
+                api.DefaultErrorHandler.handle(reason);
+            }).finally(() => {
+                this.active = true;
+            }).done(() => this.notifyLoaded());
         }
 
         private initData(nodes: TreeNode<NODE>[]) {

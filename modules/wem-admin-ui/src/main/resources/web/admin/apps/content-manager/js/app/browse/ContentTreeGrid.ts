@@ -125,7 +125,12 @@ module app.browse {
 
         fetchChildren(parent?: ContentSummaryAndCompareStatus): Q.Promise<ContentSummaryAndCompareStatus[]> {
             var parentContentId = parent ? parent.getId() : "";
-            return new ContentSummaryAndCompareStatusFetcher(parentContentId).fetch(parentContentId);
+            return ContentSummaryAndCompareStatusFetcher.fetchChildren(parentContentId);
+        }
+
+        fetch(elem: ContentSummaryAndCompareStatus): Q.Promise<ContentSummaryAndCompareStatus> {
+            var contentId = elem.getId();
+            return ContentSummaryAndCompareStatusFetcher.fetch(contentId);
         }
 
     }
