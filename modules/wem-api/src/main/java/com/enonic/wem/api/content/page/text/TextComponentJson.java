@@ -31,4 +31,9 @@ public class TextComponentJson
 
         this.text = getComponent();
     }
+
+    public String getText()
+    {
+        return this.text.getText();
+    }
 }
