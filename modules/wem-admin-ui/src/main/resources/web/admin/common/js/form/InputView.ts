@@ -110,7 +110,9 @@ module api.form {
 
                 var dataId = new DataId(this.input.getName(), event.getArrayIndex());
                 var property: Property = this.parentDataSet.getPropertyFromDataId(dataId);
-                property.setValue(event.getNewValue());
+                if (property != null) {
+                    property.setValue(event.getNewValue());
+                }
             });
 
             this.appendChild(this.inputTypeView.getElement());

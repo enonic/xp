@@ -96,7 +96,7 @@ module api.content.inputtype.imageupload {
                 listener(valueChangedEvent);
             });
             imageUploader.onImageReset(() => {
-                var value = new api.data.Value(null, api.data.ValueTypes.STRING);
+                var value = new api.data.Value("", api.data.ValueTypes.STRING);
                 var valueChangedEvent = new api.form.inputtype.support.ValueChangedEvent(value);
                 listener(valueChangedEvent);
             })
