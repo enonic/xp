@@ -18,8 +18,13 @@
   <xsd:include schemaLocation="common.xsd"/>
   <xsd:include schemaLocation="form.xsd"/>
   <xsd:include schemaLocation="module.xsd"/>
-  <xsd:include schemaLocation="schema.xsd"/>
   <xsd:include schemaLocation="template.xsd"/>
-  <xsd:include schemaLocation="component.xsd"/>
+  <xsd:include schemaLocation="content-type.xsd"/>
+  <xsd:include schemaLocation="mixin.xsd"/>
+  <xsd:include schemaLocation="relationship-type.xsd"/>
+  <xsd:include schemaLocation="layout-component.xsd"/>
+  <xsd:include schemaLocation="image-component.xsd"/>
+  <xsd:include schemaLocation="part-component.xsd"/>
+  <xsd:include schemaLocation="page-component.xsd"/>
 
 </xsd:schema>
