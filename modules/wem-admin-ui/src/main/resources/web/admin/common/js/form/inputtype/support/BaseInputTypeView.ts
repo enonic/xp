@@ -272,7 +272,7 @@ module api.form.inputtype.support {
             });
         }
 
-        private notifyValueRemoved(event: api.form.inputtype.ValueRemovedEvent) {
+        notifyValueRemoved(event: api.form.inputtype.ValueRemovedEvent) {
             this.valueRemovedListeners.forEach((listener: (event: api.form.inputtype.ValueRemovedEvent)=>void) => {
                 listener(event);
             });

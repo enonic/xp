@@ -38,13 +38,19 @@ module api.content.inputtype.imageupload {
             var imageUploader: api.ui.uploader.ImageUploader = new api.ui.uploader.ImageUploader(inputName, uploadUrl, imageUploaderConfig);
 
             imageUploader.onImageUploaded((event: api.ui.uploader.ImageUploadedEvent) => {
-                this.attachment = this.uploadItemToAttachment(event.getUploadedItem());
-                this.attachmentName = event.getUploadedItem().getName();
+                if (this.attachmentName == null) {
+                    this.attachmentName = event.getUploadedItem().getName();
+                    this.attachment = this.uploadItemToAttachment(event.getUploadedItem());
+
+                    var value = new api.data.Value(this.attachmentName, api.data.ValueTypes.STRING);
+                    this.notifyValueAdded(new api.form.inputtype.ValueAddedEvent(value));
+                }
             });
 
             imageUploader.onImageReset(() => {
                 this.attachment = null;
                 this.attachmentName = null;
+                this.notifyValueRemoved(new api.form.inputtype.ValueRemovedEvent(index));
             });
 
             if (property != null) {
@@ -84,15 +90,16 @@ module api.content.inputtype.imageupload {
 
             var imageUploader = <api.ui.uploader.ImageUploader>element;
             imageUploader.onImageUploaded((event: api.ui.uploader.ImageUploadedEvent) => {
-
                 var attachmentName = event.getUploadedItem().getName();
                 var value = new api.data.Value(attachmentName, api.data.ValueTypes.STRING);
-
-                this.notifyValueAdded(new api.form.inputtype.ValueAddedEvent(value));
-
                 var valueChangedEvent = new api.form.inputtype.support.ValueChangedEvent(value);
                 listener(valueChangedEvent);
             });
+            imageUploader.onImageReset(() => {
+                var value = new api.data.Value("", api.data.ValueTypes.STRING);
+                var valueChangedEvent = new api.form.inputtype.support.ValueChangedEvent(value);
+                listener(valueChangedEvent);
+            })
         }
 
         private uploadItemToAttachment(uploadItem: api.ui.uploader.UploadItem): api.content.attachment.Attachment {
