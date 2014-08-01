@@ -71,6 +71,28 @@ module app {
             api.app.ShowBrowsePanelEvent.on((event) => {
                 this.handleBrowse(event);
             });
+
+            api.content.ContentCreatedEvent.on((event) => {
+                this.handleCreated(event);
+            });
+
+            api.content.ContentUpdatedEvent.on((event) => {
+                this.handleUpdated(event);
+            });
+        }
+
+        private handleCreated(event: api.content.ContentCreatedEvent) {
+
+            var wizard = event.getWizard(),
+                tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(wizard.getTabId());
+            // update tab id so that new wizard for the same content type can be created
+            var newTabId = api.app.AppBarTabId.forEdit(event.getContent().getId());
+            tabMenuItem.setTabId(newTabId);
+            wizard.setTabId(newTabId);
+        }
+
+        private handleUpdated(event: api.content.ContentUpdatedEvent) {
+            // do something when content is updated
         }
 
         private handleBrowse(event: api.app.ShowBrowsePanelEvent) {

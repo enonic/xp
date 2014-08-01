@@ -1,13 +1,13 @@
-module api.app{
+module api.app {
 
     export class AppBarTabMenuItem extends api.ui.tab.TabMenuItem {
 
-        private tabId:AppBarTabId;
+        private tabId: AppBarTabId;
 
-        private editing:boolean;
+        private editing: boolean;
 
-        constructor(label:string, tabId:AppBarTabId, editing?:boolean) {
-            super(label, {removable:true});
+        constructor(label: string, tabId: AppBarTabId, editing?: boolean) {
+            super(label, {removable: true});
             this.editing = editing;
             this.tabId = tabId;
 
@@ -17,12 +17,16 @@ module api.app{
             }
         }
 
-        isEditing():boolean {
+        isEditing(): boolean {
             return this.editing;
         }
 
-        getTabId():AppBarTabId {
+        getTabId(): AppBarTabId {
             return this.tabId;
+        }
+
+        setTabId(tabId: AppBarTabId) {
+            this.tabId = tabId;
         }
     }
 }
