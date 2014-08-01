@@ -42,19 +42,22 @@ module app.wizard.site {
                 optionDisplayValueViewer: new api.content.site.template.SiteTemplateSummaryViewer()
             });
             this.siteTemplateDropdown.addClass('site-template-combo');
-            this.siteTemplateDropdown.onOptionSelected((event: OptionSelectedEvent<SiteTemplate>) => this.handleSiteTemplateComboBoxOptionSelected(event));
 
             var fieldSet = new api.ui.form.Fieldset();
             fieldSet.addClass('site-template-field');
             fieldSet.add(new api.ui.form.FormItemBuilder(this.siteTemplateDropdown).setLabel('Site Template').build());
             this.appendChild(fieldSet);
-            this.loadSiteTemplateDropdown();
+            this.loadSiteTemplateDropdown().then(()=> {
+                this.siteTemplateDropdown.onOptionSelected((event: OptionSelectedEvent<SiteTemplate>) => this.handleSiteTemplateComboBoxOptionSelected(event));
+            });
 
             this.moduleViewsContainer = new api.dom.DivEl();
             this.appendChild(this.moduleViewsContainer);
         }
 
-        private loadSiteTemplateDropdown() {
+        private loadSiteTemplateDropdown(): Q.Promise<void> {
+            var deferred = Q.defer<void>();
+
             new GetAllSiteTemplatesRequest().sendAndParse()
                 .done((siteTemplates: SiteTemplateSummary[]) => {
                     var selecteSiteTemplateKey = this.siteTemplate ? this.siteTemplate.getKey().toString() : '';
@@ -73,7 +76,11 @@ module app.wizard.site {
                     if (selectedSiteOption) {
                         this.siteTemplateDropdown.selectOption(selectedSiteOption);
                     }
+
+                    deferred.resolve(null);
                 });
+
+            return deferred.promise;
         }
 
         private handleSiteTemplateComboBoxOptionSelected(event: OptionSelectedEvent<SiteTemplate>): void {
