@@ -1,8 +1,8 @@
 module app.browse.event {
 
-    import Event2 = api.event.Event2;
+    import Event = api.event.Event;
 
-    export class DeleteTemplatePromptEvent extends Event2 {
+    export class DeleteTemplatePromptEvent extends Event {
 
         private template: api.content.TemplateSummary;
 
@@ -16,11 +16,11 @@ module app.browse.event {
         }
 
         static on(handler: (event: DeleteTemplatePromptEvent) => void, contextWindow: Window = window) {
-            Event2.bind("deleteSiteTemplatePrompt", handler, contextWindow);
+            Event.bind("deleteSiteTemplatePrompt", handler, contextWindow);
         }
 
         static un(handler: (event: DeleteTemplatePromptEvent) => void, contextWindow: Window = window) {
-            Event2.unbind("deleteSiteTemplatePrompt", handler, contextWindow);
+            Event.unbind("deleteSiteTemplatePrompt", handler, contextWindow);
         }
     }
 

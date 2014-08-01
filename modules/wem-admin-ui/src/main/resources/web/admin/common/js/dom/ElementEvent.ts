@@ -18,7 +18,6 @@ module api.dom {
         getTarget(): Element {
             return this.target;
         }
-
     }
 
 }

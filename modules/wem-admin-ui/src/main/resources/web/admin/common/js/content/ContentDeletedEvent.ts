@@ -5,7 +5,7 @@ module api.content {
         private contents:ContentSummary[];
 
         constructor( contents:ContentSummary[] ) {
-            super( "ContentDeletedEvent" );
+            super();
             this.contents = contents;
         }
 
@@ -13,9 +13,12 @@ module api.content {
             return this.contents;
         }
 
-        static on( handler:( event:ContentDeletedEvent ) => void ) {
-            api.event.onEvent( 'ContentDeletedEvent', handler );
+        static on(handler: (event: ContentDeletedEvent) => void) {
+            api.event.Event.bind(api.util.getFullName(this), handler);
         }
 
+        static un(handler?: (event: ContentDeletedEvent) => void) {
+            api.event.Event.unbind(api.util.getFullName(this), handler);
+        }
     }
 }

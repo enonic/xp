@@ -1,11 +1,11 @@
 module api.liveedit {
 
-    import Event2 = api.event.Event2;
+    import Event = api.event.Event;
     import RegionPath = api.content.page.RegionPath;
     import PageComponentType = api.content.page.PageComponentType;
     import PageComponent = api.content.page.PageComponent;
 
-    export class PageComponentDuplicateEvent extends api.event.Event2 {
+    export class PageComponentDuplicateEvent extends api.event.Event {
 
         private originalPageComponentView: PageComponentView<PageComponent>;
 
@@ -27,11 +27,11 @@ module api.liveedit {
         }
 
         static on(handler: (event: PageComponentDuplicateEvent) => void, contextWindow: Window = window) {
-            Event2.bind(api.util.getFullName(this), handler, contextWindow);
+            Event.bind(api.util.getFullName(this), handler, contextWindow);
         }
 
         static un(handler?: (event: PageComponentDuplicateEvent) => void, contextWindow: Window = window) {
-            Event2.unbind(api.util.getFullName(this), handler, contextWindow);
+            Event.unbind(api.util.getFullName(this), handler, contextWindow);
         }
     }
 }

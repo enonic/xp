@@ -1,8 +1,8 @@
 module app.browse.event {
 
-    import Event2 = api.event.Event2;
+    import Event = api.event.Event;
 
-    export class EditTemplateEvent extends Event2 {
+    export class EditTemplateEvent extends Event {
 
         private templates: api.content.TemplateSummary[];
 
@@ -16,11 +16,11 @@ module app.browse.event {
         }
 
         static on(handler: (event: EditTemplateEvent) => void, contextWindow: Window = window) {
-            Event2.bind("editTemplate", handler, contextWindow);
+            Event.bind("editTemplate", handler, contextWindow);
         }
 
         static un(handler: (event: EditTemplateEvent) => void, contextWindow: Window = window) {
-            Event2.unbind("editTemplate", handler, contextWindow);
+            Event.unbind("editTemplate", handler, contextWindow);
         }
     }
 }

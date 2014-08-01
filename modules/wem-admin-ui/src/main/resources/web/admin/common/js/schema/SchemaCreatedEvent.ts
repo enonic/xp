@@ -5,7 +5,7 @@ module api.schema {
         private schema:api.schema.Schema;
 
         constructor( schema:api.schema.Schema ) {
-            super( 'SchemaCreatedEvent' );
+            super();
             this.schema = schema;
         }
 
@@ -13,8 +13,12 @@ module api.schema {
             return this.schema;
         }
 
-        static on( handler:( event:SchemaCreatedEvent ) => void ) {
-            api.event.onEvent( 'SchemaCreatedEvent', handler );
+        static on(handler: (event: SchemaCreatedEvent) => void) {
+            api.event.Event.bind(api.util.getFullName(this), handler);
+        }
+
+        static un(handler?: (event: SchemaCreatedEvent) => void) {
+            api.event.Event.unbind(api.util.getFullName(this), handler);
         }
     }
 
