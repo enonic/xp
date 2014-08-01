@@ -1,8 +1,8 @@
 module app.browse.event {
 
-    import Event2 = api.event.Event2;
+    import Event = api.event.Event;
 
-    export class ExportTemplateEvent extends Event2 {
+    export class ExportTemplateEvent extends Event {
 
         private siteTemplate: api.content.TemplateSummary;
 
@@ -16,11 +16,11 @@ module app.browse.event {
         }
 
         static on(handler: (event: ExportTemplateEvent) => void, contextWindow: Window = window) {
-            Event2.bind("exportTemplate", handler, contextWindow);
+            Event.bind("exportTemplate", handler, contextWindow);
         }
 
         static un(handler: (event: ExportTemplateEvent) => void, contextWindow: Window = window) {
-            Event2.unbind("exportTemplate", handler, contextWindow);
+            Event.unbind("exportTemplate", handler, contextWindow);
         }
     }
 }

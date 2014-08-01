@@ -1,9 +1,9 @@
 module app.browse {
 
     import ModuleSummary = api.module.ModuleSummary;
-    import Event2 = api.event.Event2;
+    import Event = api.event.Event;
 
-    export class UninstallModuleEvent extends Event2 {
+    export class UninstallModuleEvent extends Event {
         private modules: ModuleSummary[];
 
         constructor(modules: ModuleSummary[]) {
@@ -16,11 +16,11 @@ module app.browse {
         }
 
         static on(handler: (event: UninstallModuleEvent) => void) {
-            Event2.bind(api.util.getFullName(this), handler);
+            Event.bind(api.util.getFullName(this), handler);
         }
 
         static un(handler?: (event: UninstallModuleEvent) => void) {
-            Event2.unbind(api.util.getFullName(this), handler);
+            Event.unbind(api.util.getFullName(this), handler);
         }
     }
 }

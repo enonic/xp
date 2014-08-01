@@ -1,6 +1,6 @@
 module api.liveedit {
 
-    export class TextComponentSetTextEvent extends api.event.Event2 {
+    export class TextComponentSetTextEvent extends api.event.Event {
 
         private text: string;
 
@@ -14,11 +14,11 @@ module api.liveedit {
         }
 
         static on(handler: (event: TextComponentSetTextEvent) => void, contextWindow: Window = window) {
-            api.event.Event2.bind(api.util.getFullName(this), handler, contextWindow);
+            api.event.Event.bind(api.util.getFullName(this), handler, contextWindow);
         }
 
         static un(handler: (event: TextComponentSetTextEvent) => void, contextWindow: Window = window) {
-            api.event.Event2.unbind(api.util.getFullName(this), handler, contextWindow);
+            api.event.Event.unbind(api.util.getFullName(this), handler, contextWindow);
         }
     }
 }

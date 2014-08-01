@@ -1,9 +1,9 @@
 module api.liveedit {
 
-    import Event2 = api.event.Event2;
+    import Event = api.event.Event;
     import PageComponent = api.content.page.PageComponent;
 
-    export class DraggingPageComponentViewCompletedEvent extends Event2 {
+    export class DraggingPageComponentViewCompletedEvent extends Event {
 
         private pageComponentView: PageComponentView<PageComponent>;
 
@@ -18,11 +18,11 @@ module api.liveedit {
         }
 
         static on(handler: (event: DraggingPageComponentViewCompletedEvent) => void, contextWindow: Window = window) {
-            Event2.bind(api.util.getFullName(this), handler, contextWindow);
+            Event.bind(api.util.getFullName(this), handler, contextWindow);
         }
 
         static un(handler: (event: DraggingPageComponentViewCompletedEvent) => void, contextWindow: Window = window) {
-            Event2.unbind(api.util.getFullName(this), handler, contextWindow);
+            Event.unbind(api.util.getFullName(this), handler, contextWindow);
         }
     }
 }

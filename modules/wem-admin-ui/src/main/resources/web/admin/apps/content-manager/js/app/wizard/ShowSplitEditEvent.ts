@@ -1,13 +1,13 @@
 module app.wizard {
 
-    export class ShowSplitEditEvent extends api.event.Event2 {
+    export class ShowSplitEditEvent extends api.event.Event {
 
         static on(handler: (event: ShowSplitEditEvent) => void) {
-            api.event.Event2.bind(api.util.getFullName(this), handler);
+            api.event.Event.bind(api.util.getFullName(this), handler);
         }
 
         static un(handler?: (event: ShowSplitEditEvent) => void) {
-            api.event.Event2.unbind(api.util.getFullName(this), handler);
+            api.event.Event.unbind(api.util.getFullName(this), handler);
         }
     }
 }

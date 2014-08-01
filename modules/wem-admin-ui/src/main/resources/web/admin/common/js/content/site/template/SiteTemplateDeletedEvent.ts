@@ -5,7 +5,7 @@ module api.content.site.template {
         private siteTemplateKey: SiteTemplateKey;
 
         constructor(siteTemplateKey: SiteTemplateKey) {
-            super('SiteTemplateDeletedEvent');
+            super();
             this.siteTemplateKey = siteTemplateKey;
         }
 
@@ -14,8 +14,11 @@ module api.content.site.template {
         }
 
         static on(handler: (event: SiteTemplateDeletedEvent) => void) {
-            api.event.onEvent('SiteTemplateDeletedEvent', handler);
+            api.event.Event.bind(api.util.getFullName(this), handler);
         }
 
+        static un(handler?: (event: SiteTemplateDeletedEvent) => void) {
+            api.event.Event.unbind(api.util.getFullName(this), handler);
+        }
     }
 }

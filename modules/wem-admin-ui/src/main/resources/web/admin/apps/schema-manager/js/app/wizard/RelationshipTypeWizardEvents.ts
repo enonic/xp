@@ -1,26 +1,26 @@
 module app.wizard {
 
-    import Event2 = api.event.Event2;
+    import Event = api.event.Event;
 
-    export class RelationshipTypeCreatedEvent extends Event2 {
+    export class RelationshipTypeCreatedEvent extends Event {
 
         static on(handler: (event: RelationshipTypeCreatedEvent) => void) {
-            Event2.bind(api.util.getFullName(this), handler);
+            Event.bind(api.util.getFullName(this), handler);
         }
 
         static un(handler?: (event: RelationshipTypeCreatedEvent) => void) {
-            Event2.unbind(api.util.getFullName(this), handler);
+            Event.unbind(api.util.getFullName(this), handler);
         }
     }
 
-    export class RelationshipTypeUpdatedEvent extends Event2 {
+    export class RelationshipTypeUpdatedEvent extends Event {
 
         static on(handler: (event: RelationshipTypeUpdatedEvent) => void) {
-            Event2.bind(api.util.getFullName(this), handler);
+            Event.bind(api.util.getFullName(this), handler);
         }
 
         static un(handler?: (event: RelationshipTypeUpdatedEvent) => void) {
-            Event2.unbind(api.util.getFullName(this), handler);
+            Event.unbind(api.util.getFullName(this), handler);
         }
     }
 

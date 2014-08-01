@@ -5,7 +5,7 @@ module api.content {
         private model:api.content.ContentSummary;
 
         constructor( model:api.content.ContentSummary ) {
-            super( 'ContentUpdatedEvent' );
+            super();
             this.model = model;
         }
 
@@ -13,8 +13,12 @@ module api.content {
             return this.model;
         }
 
-        static on( handler:( event:api.content.ContentUpdatedEvent ) => void ) {
-            api.event.onEvent( 'ContentUpdatedEvent', handler );
+        static on(handler: (event: ContentUpdatedEvent) => void) {
+            api.event.Event.bind(api.util.getFullName(this), handler);
+        }
+
+        static un(handler?: (event: ContentUpdatedEvent) => void) {
+            api.event.Event.unbind(api.util.getFullName(this), handler);
         }
     }
 
