@@ -93,7 +93,7 @@ module api.liveedit.text {
             }
 
             if (this.editing) {
-                api.ui.text.TextEditor.get().hideToolbar();
+                api.ui.text.TextEditorToolbar.get().hideToolbar();
                 var text = this.editArea.getEl().getInnerHtml();
                 this.textComponent.setText(text);
                 this.editing = false;
@@ -111,7 +111,7 @@ module api.liveedit.text {
             }
 
             this.editing = true;
-            api.ui.text.TextEditor.get().showToolbar(this.editArea);
+            api.ui.text.TextEditorToolbar.get().showToolbar(this.editArea);
 
             this.notifyEdited();
         }

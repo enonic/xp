@@ -1,8 +1,8 @@
 module api.ui.text {
 
-    export class TextEditor extends api.dom.DivEl {
+    export class TextEditorToolbar extends api.dom.DivEl {
 
-        private static instance: TextEditor = null;
+        private static instance: TextEditorToolbar = null;
 
         private static COMMANDS: string[] = [
             "paste", "insertUnorderedList", "insertOrderedList", "link", "cut", "strikeThrough", "bold", "underline", "italic",
@@ -11,21 +11,20 @@ module api.ui.text {
 
         private editArea: api.dom.Element;
 
-        static get(): TextEditor {
+        static get(): TextEditorToolbar {
             if (!this.instance) {
-                this.instance = new TextEditor();
+                this.instance = new TextEditorToolbar();
             }
             return this.instance;
         }
 
         constructor() {
-            super("live-edit-editor-toolbar");
-            this.addClass("live-edit-arrow-bottom");
+            super("text-editor-toolbar");
             this.getEl().setDisplay('none');
 
-            TextEditor.COMMANDS.forEach((name: string, index: number) => {
-                var button = new api.dom.ButtonEl("live-edit-editor-button");
-                button.getEl().setAttribute("live-edit-data-tag", name);
+            TextEditorToolbar.COMMANDS.forEach((name: string, index: number) => {
+                var button = new api.dom.ButtonEl("text-editor-button");
+                button.getEl().setAttribute("data-text-editor-tag", name);
                 this.appendChild(button);
             });
 
@@ -33,7 +32,7 @@ module api.ui.text {
 
             this.onClicked((event: MouseEvent) => {
                 event.stopPropagation();
-                var tag = event.target["getAttribute"]('live-edit-data-tag');
+                var tag = event.target["getAttribute"]('data-text-editor-tag');
                 if (tag) {
                     document.execCommand(tag, false, null);
                 }
