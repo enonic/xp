@@ -15,6 +15,9 @@ module api.content.page {
             else if (json.LayoutComponent) {
                 return new layout.LayoutComponentBuilder().fromJson(<layout.LayoutComponentJson>json.LayoutComponent, region);
             }
+            else if (json.TextComponent) {
+                return new text.TextComponentBuilder().fromJson(<text.TextComponentJson>json.TextComponent, region).build();
+            }
             else {
                 throw new Error("Not a component that can be placed in a Region: " + json);
             }
