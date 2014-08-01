@@ -94,6 +94,8 @@ module api.liveedit.text {
 
             if (this.editing) {
                 api.ui.text.TextEditor.get().hideToolbar();
+                var text = this.editArea.getEl().getInnerHtml();
+                this.textComponent.setText(text);
                 this.editing = false;
             }
 
@@ -112,10 +114,6 @@ module api.liveedit.text {
             api.ui.text.TextEditor.get().showToolbar(this.editArea);
 
             this.notifyEdited();
-        }
-
-        public static fromJQuery(element: JQuery): TextComponentView {
-            return new TextComponentView(new TextComponentViewBuilder().setElement(api.dom.Element.fromHtmlElement(<HTMLElement>element.get(0))));
         }
 
         getTooltipViewer(): TextComponentViewer {
