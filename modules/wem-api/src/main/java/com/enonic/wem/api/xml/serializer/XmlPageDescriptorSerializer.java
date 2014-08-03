@@ -3,7 +3,7 @@ package com.enonic.wem.api.xml.serializer;
 import com.enonic.wem.api.xml.model.ObjectFactory;
 import com.enonic.wem.api.xml.model.XmlPageDescriptor;
 
-public class XmlPageDescriptorSerializer
+final class XmlPageDescriptorSerializer
     extends XmlSerializer2<XmlPageDescriptor>
 {
 

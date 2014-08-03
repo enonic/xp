@@ -3,7 +3,7 @@ package com.enonic.wem.api.xml.serializer;
 import com.enonic.wem.api.xml.model.ObjectFactory;
 import com.enonic.wem.api.xml.model.XmlContentType;
 
-public class XmlContentTypeSerializer
+final class XmlContentTypeSerializer
     extends XmlSerializer2<XmlContentType>
 {
 

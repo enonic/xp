@@ -3,7 +3,7 @@ package com.enonic.wem.api.xml.serializer;
 import com.enonic.wem.api.xml.model.ObjectFactory;
 import com.enonic.wem.api.xml.model.XmlRelationshipType;
 
-public class XmlRelationshipTypeSerializer
+final class XmlRelationshipTypeSerializer
     extends XmlSerializer2<XmlRelationshipType>
 {
 

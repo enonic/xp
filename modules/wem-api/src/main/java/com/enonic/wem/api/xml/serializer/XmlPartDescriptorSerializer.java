@@ -3,7 +3,7 @@ package com.enonic.wem.api.xml.serializer;
 import com.enonic.wem.api.xml.model.ObjectFactory;
 import com.enonic.wem.api.xml.model.XmlPartDescriptor;
 
-public class XmlPartDescriptorSerializer
+final class XmlPartDescriptorSerializer
     extends XmlSerializer2<XmlPartDescriptor>
 {
 

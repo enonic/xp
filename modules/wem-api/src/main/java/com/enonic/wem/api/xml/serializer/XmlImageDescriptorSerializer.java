@@ -3,7 +3,7 @@ package com.enonic.wem.api.xml.serializer;
 import com.enonic.wem.api.xml.model.ObjectFactory;
 import com.enonic.wem.api.xml.model.XmlImageDescriptor;
 
-public class XmlImageDescriptorSerializer
+final class XmlImageDescriptorSerializer
     extends XmlSerializer2<XmlImageDescriptor>
 {
 
