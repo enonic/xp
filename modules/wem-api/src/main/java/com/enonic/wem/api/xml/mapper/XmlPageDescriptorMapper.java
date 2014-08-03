@@ -3,7 +3,7 @@ package com.enonic.wem.api.xml.mapper;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.xml.model.XmlPageDescriptor;
 
-public class XmlPageDescriptorMapper
+public final class XmlPageDescriptorMapper
 {
 
     public static XmlPageDescriptor toXml( final PageDescriptor object )

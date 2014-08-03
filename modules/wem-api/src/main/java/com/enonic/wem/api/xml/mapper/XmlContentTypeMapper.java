@@ -4,7 +4,7 @@ import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.xml.model.XmlContentType;
 
-public class XmlContentTypeMapper
+public final class XmlContentTypeMapper
 {
 
     public static XmlContentType toXml( final ContentType object )

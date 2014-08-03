@@ -3,7 +3,7 @@ package com.enonic.wem.api.xml.mapper;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
 import com.enonic.wem.api.xml.model.XmlLayoutDescriptor;
 
-public class XmlLayoutDescriptorMapper
+public final class XmlLayoutDescriptorMapper
 {
 
     public static XmlLayoutDescriptor toXml( final LayoutDescriptor object )

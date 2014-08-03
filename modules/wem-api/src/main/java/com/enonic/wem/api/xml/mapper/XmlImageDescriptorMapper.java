@@ -3,7 +3,7 @@ package com.enonic.wem.api.xml.mapper;
 import com.enonic.wem.api.content.page.image.ImageDescriptor;
 import com.enonic.wem.api.xml.model.XmlImageDescriptor;
 
-public class XmlImageDescriptorMapper
+public final class XmlImageDescriptorMapper
 {
 
     public static XmlImageDescriptor toXml( final ImageDescriptor object )

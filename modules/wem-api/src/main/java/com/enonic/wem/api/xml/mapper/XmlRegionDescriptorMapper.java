@@ -5,7 +5,7 @@ import com.enonic.wem.api.content.page.region.RegionDescriptors;
 import com.enonic.wem.api.xml.model.XmlRegionDescriptor;
 import com.enonic.wem.api.xml.model.XmlRegionDescriptors;
 
-public class XmlRegionDescriptorMapper
+public final class XmlRegionDescriptorMapper
 {
     protected static RegionDescriptors fromXml( final XmlRegionDescriptors regions )
     {

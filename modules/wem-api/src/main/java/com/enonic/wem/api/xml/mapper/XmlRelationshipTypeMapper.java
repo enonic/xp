@@ -6,7 +6,7 @@ import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.xml.model.XmlAllowedTypesDescriptor;
 import com.enonic.wem.api.xml.model.XmlRelationshipType;
 
-public class XmlRelationshipTypeMapper
+public final class XmlRelationshipTypeMapper
 {
     public static XmlRelationshipType toXml( final RelationshipType object )
     {

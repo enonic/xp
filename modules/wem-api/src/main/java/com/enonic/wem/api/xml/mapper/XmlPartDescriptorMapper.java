@@ -4,7 +4,7 @@ package com.enonic.wem.api.xml.mapper;
 import com.enonic.wem.api.content.page.part.PartDescriptor;
 import com.enonic.wem.api.xml.model.XmlPartDescriptor;
 
-public class XmlPartDescriptorMapper
+public final class XmlPartDescriptorMapper
 {
 
     public static XmlPartDescriptor toXml( final PartDescriptor object )
