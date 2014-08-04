@@ -252,15 +252,12 @@ module api.liveedit {
 
             if (this.hasPageComponentViewDropZone()) {
                 this.placeholder.hide();
-            }
-            else if (this.pageComponentViews.length == 0) {
+            } else if (this.pageComponentViews.length == 0) {
                 this.placeholder.show();
-            }
-            else {
+            } else {
                 if (this.countNonMovingPageComponentViews() == 0) {
                     this.placeholder.show();
-                }
-                else {
+                } else {
                     this.placeholder.hide();
                 }
             }
@@ -299,12 +296,13 @@ module api.liveedit {
         }
 
         empty() {
-
             this.pageComponentViews.forEach((pageComponentView: PageComponentView<PageComponent>) => {
-                pageComponentView.remove();
+                this.removePageComponentView(pageComponentView);
             });
 
             this.region.removePageComponents();
+
+            this.refreshPlaceholder();
         }
 
         toItemViewArray(): ItemView[] {

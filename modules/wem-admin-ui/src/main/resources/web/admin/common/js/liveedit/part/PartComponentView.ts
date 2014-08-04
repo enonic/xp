@@ -67,7 +67,7 @@ module api.liveedit.part {
         }
 
         displayPlaceholder() {
-            super.markAsEmpty();
+            this.markAsEmpty();
 
             this.removeChildren();
             this.appendChild(this.placeholder);
