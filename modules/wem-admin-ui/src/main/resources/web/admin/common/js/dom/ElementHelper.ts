@@ -196,7 +196,7 @@ module api.dom {
         }
 
         insertChild(child: Node, index: number): ElementHelper {
-            if (index == this.el.children.length - 1) {
+            if (index > this.el.children.length - 1) {
                 this.el.appendChild(child);
             } else {
                 this.el.insertBefore(child, this.el.children.item(index));
