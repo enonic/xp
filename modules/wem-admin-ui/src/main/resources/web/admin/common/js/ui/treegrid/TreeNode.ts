@@ -33,6 +33,13 @@ module api.ui.treegrid {
             return this.id;
         }
 
+        regenerateIds(): void {
+            this.id = Math.random().toString(36).substring(2);
+            this.children.forEach((elem) => {
+                elem.regenerateIds();
+            });
+        }
+
         isExpanded(): boolean {
             return this.expanded;
         }

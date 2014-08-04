@@ -268,7 +268,7 @@ module api.ui.treegrid {
             this.active = false;
 
             if (!this.stash) {
-                this.reload();
+                this.refresh();
             } else {
                 this.root = this.stash;
                 this.initData(this.root.treeToList());
@@ -337,6 +337,7 @@ module api.ui.treegrid {
 
         // Hard reset
         reload(parent?: NODE): void {
+            console.log("reload");
             this.root = new TreeNodeBuilder<NODE>().build();
 
             this.initData([]);
@@ -357,7 +358,19 @@ module api.ui.treegrid {
 
         // Soft reset, that saves node status
         refresh(): void {
+            var root = this.stash || this.root;
 
+            this.active = false;
+
+            root.regenerateIds();
+
+            root.setExpanded(true);
+            this.initData(root.treeToList());
+            this.resetAndRender();
+
+            this.active = true;
+
+            this.notifyLoaded();
         }
 
         deleteNodes(data: NODE[]): void {

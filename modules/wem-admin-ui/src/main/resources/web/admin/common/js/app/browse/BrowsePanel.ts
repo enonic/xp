@@ -145,6 +145,7 @@ module api.app.browse {
                         this.oldTreeGrid.refresh();
                     }
                     if (this.newTreeGrid) {
+                        // replace with refresh on future
                         this.newTreeGrid.reload();
                     }
                 }
