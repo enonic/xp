@@ -47,7 +47,9 @@ module api.ui.text {
 
         showToolbar(editEl: api.dom.Element) {
             this.editArea = editEl;
+            this.editArea.addClass('text-editor-edited-area');
             this.editArea.getEl().setAttribute('contenteditable', 'true');
+            this.editArea.getEl().setCursor('text');
             this.editArea.giveFocus();
 
             this.updatePosition();
@@ -56,7 +58,9 @@ module api.ui.text {
         }
 
         hideToolbar() {
+            this.editArea.removeClass('text-editor-edited-area');
             this.editArea.getEl().removeAttribute('contenteditable');
+            this.editArea.getEl().setCursor('');
             this.editArea = null;
             this.hide();
         }
