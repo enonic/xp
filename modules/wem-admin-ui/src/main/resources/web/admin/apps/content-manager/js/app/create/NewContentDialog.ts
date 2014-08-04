@@ -24,6 +24,7 @@ module app.create {
         private allFacet: api.dom.SpanEl;
 
         private listItems: NewContentDialogListItem[];
+        private checkReloadListItems: boolean;
 
         constructor() {
             this.contentDialogTitle = new NewContentDialogTitle("What do you want to create?", "");
@@ -70,6 +71,7 @@ module app.create {
             this.recentListMask = new api.ui.mask.LoadMask(this.recentList);
 
             this.listItems = [];
+            this.checkReloadListItems = true;
 
             this.input.onValueChanged((event: api.ui.ValueChangedEvent) => {
                 this.filterList();
@@ -161,7 +163,7 @@ module app.create {
             }
             this.input.giveFocus();
 
-            if (this.listItems.length == 0) {
+            if (this.checkReloadListItems) {
                 this.loadContentTypes();
             } else {
                 this.recentList.setItems(this.listItems);
