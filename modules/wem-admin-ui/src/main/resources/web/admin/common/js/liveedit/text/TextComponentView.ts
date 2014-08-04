@@ -18,8 +18,6 @@ module api.liveedit.text {
 
         private placeholder: api.dom.DivEl;
 
-        private editArea: api.dom.DivEl;
-
         private editing: boolean;
 
         private editedListener: {(): void}[];
@@ -32,32 +30,30 @@ module api.liveedit.text {
 
             this.placeholder = new api.dom.DivEl('text-placeholder');
             this.placeholder.getEl().setInnerHtml('Click to edit');
-            this.placeholder.hide();
             if (this.conditionedForEmpty()) {
-                this.displayPlaceholder();
+                this.markAsEmpty();
+                this.addPlaceholder();
             }
 
-            this.editArea = new api.dom.DivEl('live-edit-edited-area');
-            this.editArea.getEl().setCursor('text');
-            this.editArea.hide();
-            this.appendChild(this.editArea);
-
-            if (api.util.isStringBlank(this.textComponent.getText())) {
-                //this.markAsEmpty();
-            } else {
-                //this.editArea.getEl().setInnerHtml(this.textComponent.getText());
-                //this.editArea.show();
-            }
-
-            this.editArea.onKeyDown(this.notifyEdited.bind(this));
-            this.editArea.onKeyUp(this.notifyEdited.bind(this));
+            this.onKeyDown(() => {
+                if (this.editing) {
+                    this.notifyEdited();
+                }
+            });
+            this.onKeyUp(() => {
+                if (this.editing) {
+                    this.notifyEdited();
+                }
+            });
         }
 
-        displayPlaceholder() {
-            super.markAsEmpty();
-
+        addPlaceholder() {
             this.removeChildren();
             this.appendChild(this.placeholder);
+        }
+
+        removePlaceholder() {
+            this.placeholder.remove();
         }
 
         duplicate(duplicate: TextComponent): TextComponentView {
@@ -86,24 +82,26 @@ module api.liveedit.text {
             super.select(clickPosition);
 
             if (this.isEmpty()) {
-                this.placeholder.show();
+                this.addPlaceholder();
+                this.getEl().setCursor('url(' + api.util.getAdminUri('live-edit/images/pencil.png') + ') 0 40, text');
+            } else {
+                this.hideContextMenu();
+                this.showEditor();
             }
-
-            this.getEl().setCursor('url(' + api.util.getAdminUri('live-edit/images/pencil.png') + ') 0 40, text');
         }
 
         deselect() {
             super.deselect();
 
             if (this.isEmpty()) {
-                this.placeholder.hide();
-            } else if (api.util.isStringBlank(this.editArea.getEl().getText())) {
+                this.removePlaceholder();
+            } else if (api.util.isStringBlank(this.getEl().getText())) {
                 this.markAsEmpty();
             }
 
             if (this.editing) {
                 api.ui.text.TextEditorToolbar.get().hideToolbar();
-                var text = this.editArea.getEl().getInnerHtml();
+                var text = this.getEl().getInnerHtml();
                 this.textComponent.setText(text);
                 this.editing = false;
             }
@@ -113,7 +111,7 @@ module api.liveedit.text {
 
         conditionedForEmpty(): boolean {
             if (!this.textComponent) {
-                return super.isEmpty();
+                return this.isEmpty();
             }
             return this.isEmpty() || !this.textComponent.getText();
         }
@@ -121,14 +119,12 @@ module api.liveedit.text {
         showEditor() {
             if (this.isEmpty()) {
                 this.removeEmptyMark();
-                this.placeholder.hide();
-                this.editArea.getEl().setInnerHtml('</br>');
+                this.removePlaceholder();
+                this.getEl().setInnerHtml('</br>');
             }
 
-            this.editArea.show();
-
             this.editing = true;
-            api.ui.text.TextEditorToolbar.get().showToolbar(this.editArea);
+            api.ui.text.TextEditorToolbar.get().showToolbar(this);
 
             this.notifyEdited();
         }
