@@ -1,18 +1,13 @@
 package com.enonic.wem.api.xml;
 
-import com.enonic.wem.api.content.page.PageDescriptorXml;
 import com.enonic.wem.api.content.page.PageTemplateXml;
 import com.enonic.wem.api.content.page.image.ImageComponentXml;
-import com.enonic.wem.api.content.page.image.ImageDescriptorXml;
 import com.enonic.wem.api.content.page.layout.LayoutComponentXml;
-import com.enonic.wem.api.content.page.layout.LayoutDescriptorXml;
 import com.enonic.wem.api.content.page.part.PartComponentXml;
-import com.enonic.wem.api.content.page.part.PartDescriptorXml;
 import com.enonic.wem.api.content.site.SiteTemplateXml;
 import com.enonic.wem.api.form.FormXml;
 import com.enonic.wem.api.form.MixinReferenceXml;
 import com.enonic.wem.api.schema.content.ContentTypeXml;
-import com.enonic.wem.api.schema.mixin.MixinXml;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeXml;
 
 public final class XmlSerializers
@@ -47,26 +42,6 @@ public final class XmlSerializers
         return create( PageTemplateXml.class );
     }
 
-    public static XmlSerializer<PageDescriptorXml> pageDescriptor()
-    {
-        return create( PageDescriptorXml.class );
-    }
-
-    public static XmlSerializer<PartDescriptorXml> partDescriptor()
-    {
-        return create( PartDescriptorXml.class );
-    }
-
-    public static XmlSerializer<LayoutDescriptorXml> layoutDescriptor()
-    {
-        return create( LayoutDescriptorXml.class );
-    }
-
-    public static XmlSerializer<ImageDescriptorXml> imageDescriptor()
-    {
-        return create( ImageDescriptorXml.class );
-    }
-
     public static XmlSerializer<PartComponentXml> partComponent()
     {
         return create( PartComponentXml.class );
@@ -80,11 +55,6 @@ public final class XmlSerializers
     public static XmlSerializer<ImageComponentXml> imageComponent()
     {
         return create( ImageComponentXml.class );
-    }
-
-    public static XmlSerializer<MixinXml> mixin()
-    {
-        return create( MixinXml.class );
     }
 
     public static XmlSerializer<ContentTypeXml> contentType()

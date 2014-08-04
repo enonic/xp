@@ -5,7 +5,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
@@ -13,12 +12,14 @@ import com.enonic.wem.api.content.page.part.PartDescriptor;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.content.page.part.PartDescriptors;
 import com.enonic.wem.api.module.Module;
+import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.module.Modules;
-import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceService;
-import com.enonic.wem.api.xml.XmlSerializers;
+import com.enonic.wem.api.xml.mapper.XmlPartDescriptorMapper;
+import com.enonic.wem.api.xml.model.XmlPartDescriptor;
+import com.enonic.wem.api.xml.serializer.XmlSerializers2;
 
 abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescriptorCommand>
 {
@@ -35,9 +36,11 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
 
         final String descriptorXml = resource.readAsString();
         final PartDescriptor.Builder builder = PartDescriptor.newPartDescriptor();
-        XmlSerializers.partDescriptor().parse( descriptorXml ).to( builder );
-        builder.name( key.getName() ).key( key );
 
+        final XmlPartDescriptor xmlObject = XmlSerializers2.partDescriptor().parse( descriptorXml );
+        XmlPartDescriptorMapper.fromXml( xmlObject, builder );
+
+        builder.name( key.getName() ).key( key );
         return builder.build();
     }
 
@@ -47,18 +50,14 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
         for ( final Module module : modules )
         {
             final Set<String> resources = module.getResourcePaths();
-            final Collection<String> componentNames = Collections2.transform( resources, new Function<String, String>()
-            {
-                public String apply( final String input )
+            final Collection<String> componentNames = Collections2.transform( resources, input -> {
+                final Matcher matcher = PATTERN.matcher( input );
+                if ( matcher.matches() )
                 {
-                    final Matcher matcher = PATTERN.matcher( input );
-                    if ( matcher.matches() )
-                    {
-                        return matcher.group( 1 );
-                    }
-
-                    return null;
+                    return matcher.group( 1 );
                 }
+
+                return null;
             } );
 
             for ( final String componentName : componentNames )

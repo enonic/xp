@@ -42,7 +42,12 @@ public final class XmlFormMapper
     public static Form fromXml( final XmlForm xml )
     {
         final Form.Builder builder = Form.newForm();
-        fromXml( xml, builder );
+
+        if ( xml != null )
+        {
+            fromXml( xml, builder );
+        }
+
         return builder.build();
     }
 

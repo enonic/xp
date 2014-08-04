@@ -5,7 +5,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
@@ -13,12 +12,14 @@ import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptors;
 import com.enonic.wem.api.module.Module;
+import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.module.Modules;
-import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceService;
-import com.enonic.wem.api.xml.XmlSerializers;
+import com.enonic.wem.api.xml.mapper.XmlLayoutDescriptorMapper;
+import com.enonic.wem.api.xml.model.XmlLayoutDescriptor;
+import com.enonic.wem.api.xml.serializer.XmlSerializers2;
 
 abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDescriptorCommand>
 {
@@ -35,9 +36,11 @@ abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDes
 
         final String descriptorXml = resource.readAsString();
         final LayoutDescriptor.Builder builder = LayoutDescriptor.newLayoutDescriptor();
-        XmlSerializers.layoutDescriptor().parse( descriptorXml ).to( builder );
-        builder.name( key.getName() ).key( key );
 
+        final XmlLayoutDescriptor xmlObject = XmlSerializers2.layoutDescriptor().parse( descriptorXml );
+        XmlLayoutDescriptorMapper.fromXml( xmlObject, builder );
+
+        builder.name( key.getName() ).key( key );
         return builder.build();
     }
 
@@ -47,18 +50,14 @@ abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDes
         for ( final Module module : modules )
         {
             final Set<String> resources = module.getResourcePaths();
-            final Collection<String> componentNames = Collections2.transform( resources, new Function<String, String>()
-            {
-                public String apply( final String input )
+            final Collection<String> componentNames = Collections2.transform( resources, input -> {
+                final Matcher matcher = PATTERN.matcher( input );
+                if ( matcher.matches() )
                 {
-                    final Matcher matcher = PATTERN.matcher( input );
-                    if ( matcher.matches() )
-                    {
-                        return matcher.group( 1 );
-                    }
-
-                    return null;
+                    return matcher.group( 1 );
                 }
+
+                return null;
             } );
 
             for ( final String componentName : componentNames )

@@ -30,7 +30,9 @@ import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
-import com.enonic.wem.api.xml.XmlSerializers;
+import com.enonic.wem.api.xml.mapper.XmlPageDescriptorMapper;
+import com.enonic.wem.api.xml.model.XmlPageDescriptor;
+import com.enonic.wem.api.xml.serializer.XmlSerializers2;
 import com.enonic.wem.portal.base.BaseResourceTest;
 import com.enonic.wem.portal.controller.JsController;
 import com.enonic.wem.portal.controller.JsControllerFactory;
@@ -195,12 +197,12 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResource>
         final String xml = "<?xml version=\"1.0\"?>\n" +
             "<page-component>\n" +
             "  <display-name>Landing page</display-name>\n" +
-            "  <controller>mainmodule-1.0.0:/controller/landing-page.js</controller>\n" +
             "  <config/>\n" +
             "</page-component>";
         final PageDescriptor.Builder builder = PageDescriptor.newPageDescriptor();
 
-        XmlSerializers.pageDescriptor().parse( xml ).to( builder );
+        final XmlPageDescriptor xmlObject = XmlSerializers2.pageDescriptor().parse( xml );
+        XmlPageDescriptorMapper.fromXml( xmlObject, builder );
 
         return builder.
             key( key ).

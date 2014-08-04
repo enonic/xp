@@ -5,15 +5,20 @@ import com.enonic.wem.api.content.page.region.RegionDescriptors;
 import com.enonic.wem.api.xml.model.XmlRegionDescriptor;
 import com.enonic.wem.api.xml.model.XmlRegionDescriptors;
 
-public final class XmlRegionDescriptorMapper
+final class XmlRegionDescriptorMapper
 {
     protected static RegionDescriptors fromXml( final XmlRegionDescriptors regions )
     {
         final RegionDescriptors.Builder builder = RegionDescriptors.newRegionDescriptors();
-        for ( XmlRegionDescriptor descriptor : regions.getList() )
+
+        if ( regions != null )
         {
-            builder.add( fromXml( descriptor ) );
+            for ( final XmlRegionDescriptor descriptor : regions.getList() )
+            {
+                builder.add( fromXml( descriptor ) );
+            }
         }
+
         return builder.build();
     }
 
