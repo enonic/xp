@@ -48,8 +48,12 @@ module app.wizard {
 //                    this.publishAction.setToBePublishedAmout(selectedRows.length);
 //                });
                 this.publishList.clear();
-                this.publishList.appendChild(new PublishDialogItemComponent(this.content));
-                this.open();
+                var req = api.content.CompareContentRequest.fromContentSummaries([this.content]);
+                var res = req.sendAndParse();
+                res.done((results:api.content.CompareContentResults) => {
+                    this.publishList.appendChild(new PublishDialogItemComponent(this.content, results.get(this.content.getContentId().toString()).getCompareStatus()));
+                   this.open();
+                });
             });
 
         }
@@ -108,7 +112,7 @@ module app.wizard {
     }
 
     class PublishDialogItemComponent extends api.dom.DivEl {
-        constructor(content: api.content.Content) {
+        constructor(content: api.content.Content, compareStatus: api.content.CompareStatus) {
             super();
             this.getEl().addClass("item");
 
@@ -117,6 +121,11 @@ module app.wizard {
 
             var displayName = new api.dom.H4El();
             displayName.getEl().setInnerHtml(content.getDisplayName());
+
+            var compareStatusEl = new api.dom.SpanEl();
+            compareStatusEl.getEl().setInnerHtml(api.content.CompareStatus[compareStatus]+"");
+            displayName.appendChild(compareStatusEl);
+
             this.appendChild(displayName);
         }
     }
