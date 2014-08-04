@@ -268,7 +268,8 @@ module api.ui.treegrid {
             this.active = false;
 
             if (!this.stash) {
-                this.refresh();
+                // replace with refresh in future
+                this.reload();
             } else {
                 this.root = this.stash;
                 this.initData(this.root.treeToList());
