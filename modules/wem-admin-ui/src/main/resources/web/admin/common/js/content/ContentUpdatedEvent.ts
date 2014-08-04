@@ -2,15 +2,21 @@ module api.content {
 
     export class ContentUpdatedEvent extends api.event.Event {
 
-        private model:api.content.ContentSummary;
+        private content: api.content.Content;
+        private wizard: api.app.wizard.WizardPanel<Content>;
 
-        constructor( model:api.content.ContentSummary ) {
+        constructor(content: api.content.Content, wizard: api.app.wizard.WizardPanel<Content>) {
             super();
-            this.model = model;
+            this.content = content;
+            this.wizard = wizard;
         }
 
-        public getModel():api.content.ContentSummary {
-            return this.model;
+        public getContent(): api.content.Content {
+            return this.content;
+        }
+
+        public getWizard(): api.app.wizard.WizardPanel<Content> {
+            return this.wizard;
         }
 
         static on(handler: (event: ContentUpdatedEvent) => void) {
@@ -21,5 +27,4 @@ module api.content {
             api.event.Event.unbind(api.util.getFullName(this), handler);
         }
     }
-
 }
