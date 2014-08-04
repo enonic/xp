@@ -3,14 +3,11 @@
             xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
             elementFormDefault="qualified" jaxb:version="2.1">
 
-  <xsd:complexType name="siteTemplate">
-  </xsd:complexType>
+  <xsd:include schemaLocation="common.xsd"/>
 
   <xsd:complexType name="pageTemplate">
   </xsd:complexType>
 
-  <!-- Site template element -->
-  <xsd:element name="site-template" type="siteTemplate"/>
 
   <!-- Page template element -->
   <xsd:element name="page-template" type="pageTemplate"/>
