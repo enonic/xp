@@ -8,6 +8,7 @@ module app.view {
         private frame: api.dom.IFrameEl;
 
         private image: api.dom.ImgEl;
+        private item: api.app.view.ViewItem<api.content.ContentSummary>;
 
         private mask: api.ui.mask.LoadMask;
 
@@ -32,6 +33,11 @@ module app.view {
                     this.centerImage(imgEl.getWidth(), imgEl.getHeight(), event.getNewWidth(), event.getNewHeight());
                 }
             });
+            this.onShown((event) => {
+                if (this.item && this.hasClass("image-preview")) {
+                    this.addImageSizeToUrl(this.item);
+                }
+            });
         }
 
         private centerImage(imgWidth, imgHeight, myWidth, myHeight) {
@@ -41,17 +47,23 @@ module app.view {
                 imgMarginTop = (myHeight - imgHeight) / 2;
             }
             this.image.getEl().setMarginTop(imgMarginTop + "px");
+
+        }
+
+        public addImageSizeToUrl(item: api.app.view.ViewItem<api.content.ContentSummary>) {
+            var imgSize = Math.max(this.getEl().getWidth(), this.getEl().getHeight());
+            var imgSrc = api.util.getRestUri("content/image/") + item.getModel().getContentId();
+            this.image.setSrc(imgSrc + '?thumbnail=false&size=' + imgSize);
         }
 
         public setItem(item: api.app.view.ViewItem<api.content.ContentSummary>) {
-
             this.mask.show();
-
+            this.item = item;
             if (item.getModel().getType().toString() == "image") {
                 this.getEl().removeClass("no-preview page-preview").addClass("image-preview");
-                var imgSize = Math.max(this.getEl().getWidth(), this.getEl().getHeight());
-                var imgSrc = api.util.getRestUri("content/image/") + item.getModel().getContentId();
-                this.image.setSrc(imgSrc + '?thumbnail=false&size=' + imgSize);
+                if (this.isVisible()) {
+                    this.addImageSizeToUrl(item);
+                }
             } else {
                 new IsRenderableRequest(item.getModel().getContentId()).sendAndParse()
                     .done((renderable: boolean) => {
