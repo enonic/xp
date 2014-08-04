@@ -26,14 +26,16 @@ module api.liveedit.text {
 
         constructor(builder: TextComponentViewBuilder) {
             this.editedListener = [];
-
+            this.editing = false;
             super(builder.setContextMenuActions(this.createTextContextMenuActions()));
             this.textComponent = builder.pageComponent;
 
             this.placeholder = new api.dom.DivEl('text-placeholder');
             this.placeholder.getEl().setInnerHtml('Click to edit');
             this.placeholder.hide();
-            this.appendChild(this.placeholder);
+            if (this.conditionedForEmpty()) {
+                this.displayPlaceholder();
+            }
 
             this.editArea = new api.dom.DivEl('live-edit-edited-area');
             this.editArea.getEl().setCursor('text');
@@ -41,14 +43,21 @@ module api.liveedit.text {
             this.appendChild(this.editArea);
 
             if (api.util.isStringBlank(this.textComponent.getText())) {
-                this.markAsEmpty();
+                //this.markAsEmpty();
             } else {
-                this.editArea.getEl().setInnerHtml(this.textComponent.getText());
-                this.editArea.show();
+                //this.editArea.getEl().setInnerHtml(this.textComponent.getText());
+                //this.editArea.show();
             }
 
             this.editArea.onKeyDown(this.notifyEdited.bind(this));
             this.editArea.onKeyUp(this.notifyEdited.bind(this));
+        }
+
+        displayPlaceholder() {
+            super.markAsEmpty();
+
+            this.removeChildren();
+            this.appendChild(this.placeholder);
         }
 
         duplicate(duplicate: TextComponent): TextComponentView {
@@ -102,13 +111,21 @@ module api.liveedit.text {
             this.getEl().setCursor('');
         }
 
+        conditionedForEmpty(): boolean {
+            if (!this.textComponent) {
+                return super.isEmpty();
+            }
+            return this.isEmpty() || !this.textComponent.getText();
+        }
+
         showEditor() {
             if (this.isEmpty()) {
                 this.removeEmptyMark();
                 this.placeholder.hide();
                 this.editArea.getEl().setInnerHtml('</br>');
-                this.editArea.show();
             }
+
+            this.editArea.show();
 
             this.editing = true;
             api.ui.text.TextEditorToolbar.get().showToolbar(this.editArea);
