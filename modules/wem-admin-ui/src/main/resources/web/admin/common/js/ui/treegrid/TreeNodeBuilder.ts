@@ -1,6 +1,6 @@
 module api.ui.treegrid {
 
-    export class TreeNodeBuilder<NODE extends TreeItem> {
+    export class TreeNodeBuilder<NODE> {
 
         private data: NODE;
 

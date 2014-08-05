@@ -9,7 +9,6 @@ module app.browse {
     import TreeNode = api.ui.treegrid.TreeNode;
     import TreeGridBuilder = api.ui.treegrid.TreeGridBuilder;
     import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
-    import TreeItem = api.ui.treegrid.TreeItem;
     import TreeGridContextMenu = api.ui.treegrid.TreeGridContextMenu;
     import TemplateBrowseActions = app.browse.action.TemplateBrowseActions;
 
@@ -22,7 +21,7 @@ module app.browse {
                             setName("Name").
                             setId("displayName").
                             setField("displayName").
-                            setFormatter(this.defaultNameFormatter).
+                            setFormatter(this.nameFormatter).
                             setMinWidth(250).
                             build(),
 
@@ -53,10 +52,14 @@ module app.browse {
             return new api.content.site.template.TemplateTreeRequest(parentId).sendAndParse();
         }
 
-        private defaultNameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<TemplateSummary>) {
+        private nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<TemplateSummary>) {
             var viewer = new TemplateSummaryViewer();
             viewer.setObject(node.getData());
             return viewer.toString();
+        }
+
+        hasChildren(elem: TemplateSummary): boolean {
+            return elem.hasChildren();
         }
     }
 }

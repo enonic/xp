@@ -23,7 +23,7 @@ module app.wizard {
                             setName("Name").
                             setId("displayName").
                             setField("displayName").
-                            setFormatter(this.defaultNameFormatter).
+                            setFormatter(this.nameFormatter).
                             build()
                     ]).prependClasses("content-grid")
             );
@@ -35,7 +35,7 @@ module app.wizard {
             });
         }
 
-        private defaultNameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
+        private nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
             var contentSummaryViewer = new ContentSummaryViewer();
             contentSummaryViewer.setObject(node.getData().getContentSummary());
             return contentSummaryViewer.toString();
@@ -44,6 +44,10 @@ module app.wizard {
         fetchChildren(parent?: ContentSummaryAndCompareStatus): Q.Promise<ContentSummaryAndCompareStatus[]> {
             var parentContentId = parent ? parent.getId() : "";
             return api.content.ContentSummaryAndCompareStatusFetcher.fetchChildren(parentContentId);
+        }
+
+        hasChildren(elem: ContentSummaryAndCompareStatus): boolean {
+            return elem.hasChildren();
         }
     }
 }

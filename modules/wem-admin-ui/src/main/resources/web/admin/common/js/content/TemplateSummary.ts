@@ -7,7 +7,7 @@ module api.content {
         SITE
     }
 
-    export class TemplateSummary extends api.item.BaseItem implements api.ui.treegrid.TreeItem {
+    export class TemplateSummary extends api.item.BaseItem {
 
         private name: string;
 

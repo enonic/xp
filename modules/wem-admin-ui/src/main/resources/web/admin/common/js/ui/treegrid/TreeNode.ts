@@ -1,6 +1,6 @@
 module api.ui.treegrid {
 
-    export class TreeNode<NODE extends TreeItem> {
+    export class TreeNode<NODE> {
 
         private id: string;
 
@@ -31,6 +31,10 @@ module api.ui.treegrid {
 
         getId(): string {
             return this.id;
+        }
+
+        getDataId(): string {
+            return (this.data && this.data["getId"] instanceof Function) ? this.data["getId"]() : this.id;
         }
 
         regenerateIds(): void {
@@ -171,7 +175,7 @@ module api.ui.treegrid {
 
         findNode(data: NODE): TreeNode<NODE> {
 
-            if (this.data && this.data.getId() === data.getId()) {
+            if (data["getId"] instanceof Function && this.data && this.getDataId() === data["getId"]()) {
                 return this;
             }
 
@@ -203,7 +207,7 @@ module api.ui.treegrid {
                 var relatives = this.getRoot().getChildren();
                 // check if duplicate is already in root
                 for (var i = 0; i < relatives.length; i++) {
-                    if (relatives[i].getData() && relatives[i].getData().getId() === this.getData().getId()) {
+                    if (relatives[i].getData() && relatives[i].getDataId() === this.getDataId()) {
                         duplicated = true;
                         break;
                     }

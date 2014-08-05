@@ -5,7 +5,7 @@ module api.ui.treegrid.actions {
 
     export class ClearSelectionAction extends Action {
 
-        constructor(grid: Grid<TreeNode<TreeItem>>) {
+        constructor(grid: Grid<TreeNode<Object>>) {
             super("Clear Selection");
             this.setEnabled(true);
             this.onExecuted(() => {
