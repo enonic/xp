@@ -41,8 +41,6 @@ module app.wizard.page.contextwindow {
 
         private liveFormPanel: LiveFormPanel;
 
-        private fixed: boolean;
-
         private visible: boolean;
 
         private splitter: api.dom.DivEl;
@@ -60,7 +58,6 @@ module app.wizard.page.contextwindow {
         constructor(config: ContextWindowConfig) {
             super();
 
-            this.fixed = false;
             this.liveEditPage = config.liveEditPage;
             this.liveFormPanel = config.liveFormPanel;
             this.inspectionPanel = config.inspectionPanel;
@@ -77,12 +74,18 @@ module app.wizard.page.contextwindow {
             });
 
             app.wizard.ToggleContextWindowEvent.on((event: app.wizard.ToggleContextWindowEvent) => {
-                this.fixed = event.isFixed();
+                var active = event.getToggler().isActive();
 
-                if (this.fixed) {
+                if (active && !this.visible) {
                     this.slideIn();
-                } else if (this.visible) {
+                } else if (active && this.visible) {
+                    event.getToggler().setActive(false);
                     this.slideOut();
+                } else if (!active && this.visible) {
+                    this.slideOut();
+                } else { // !active && !this.visible
+                    this.slideIn();
+                    event.getToggler().setActive(true);
                 }
             });
 
@@ -98,7 +101,7 @@ module app.wizard.page.contextwindow {
             this.addItem("Settings", this.inspectionPanel);
             this.addItem("Emulator", this.emulatorPanel);
 
-            this.onShown(() => new app.wizard.ToggleContextWindowEvent(this.isPinned()).fire());
+            this.onShown(() => this.slideOut());
 
             this.onRendered(() => this.initializeResizable());
 
@@ -156,29 +159,29 @@ module app.wizard.page.contextwindow {
         }
 
         slideOut() {
-            if (!this.fixed && this.visible) {
-                this.getEl().addClass("hidden");
-                this.getEl().setRight(-this.getEl().getWidthWithBorder() + "px");
-                this.visible = false;
-                this.updateFrameSize();
-            }
+            this.getEl().addClass("hidden");
+            this.getEl().setRight(-this.getEl().getWidthWithBorder() + "px");
+            this.visible = false;
+            this.updateFrameSize();
         }
 
         slideIn() {
-            if (!this.visible) {
-                this.getEl().removeClass("hidden");
-                this.getEl().setRight("0px");
-                this.visible = true;
-                this.updateFrameSize();
-            }
+            this.getEl().removeClass("hidden");
+            this.getEl().setRight("0px");
+            this.visible = true;
+            this.updateFrameSize();
         }
 
         hide() {
-            this.slideOut();
+            if (this.visible) {
+                this.slideOut();
+            }
         }
 
         show() {
-            this.slideIn();
+            if (!this.visible) {
+                this.slideIn();
+            }
         }
 
         public showInspectionPanel(panel: BaseInspectionPanel) {

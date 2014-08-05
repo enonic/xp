@@ -205,7 +205,6 @@ module app.wizard.page {
                 this.notifyLoaded();
             } else if (liveEditWindow.document.body.id == this.LIVE_EDIT_ERROR_PAGE_BODY_ID) {
                 this.loadMask.hide();
-                new ToggleContextWindowEvent(false).fire();
             }
 
             this.iFrameLoadDeffered.resolve(null);
