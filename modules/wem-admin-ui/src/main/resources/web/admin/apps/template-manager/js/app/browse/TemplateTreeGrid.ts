@@ -4,7 +4,7 @@ module app.browse {
     import GridColumnBuilder = api.ui.grid.GridColumnBuilder;
 
     import TemplateSummary = api.content.TemplateSummary;
-    import TemplateSummaryViewer = api.content.TemplateSummaryViewer;
+    import TemplateSummaryViewer = app.browse.TemplateSummaryViewer;
     import TreeGrid = api.ui.treegrid.TreeGrid;
     import TreeNode = api.ui.treegrid.TreeNode;
     import TreeGridBuilder = api.ui.treegrid.TreeGridBuilder;

@@ -1,22 +1,25 @@
-[
-    {
-        "schemaKind": "ContentType",
-        "abstract": false,
-        "allowChildContent": true,
-        "contentDisplayNameScript": null,
-        "createdTime": "2013-08-23T12:55:09.162Z",
-        "creator": null,
-        "deletable": true,
-        "description": "CT description",
-        "displayName": null,
-        "editable": true,
-        "final": false,
-        "hasChildren": false,
-        "iconUrl": "/admin/rest/schema/image/ContentType:contenttype",
-        "key": "ContentType:contenttype",
-        "modifiedTime": "2013-08-23T12:55:09.162Z",
-        "modifier": null,
-        "name": "contenttype",
-        "superType": "unstructured"
-    }
-]
+{
+    "schemas": [
+        {
+            "schemaKind": "ContentType",
+            "abstract": false,
+            "allowChildContent": true,
+            "contentDisplayNameScript": null,
+            "createdTime": "2013-08-23T12:55:09.162Z",
+            "creator": null,
+            "deletable": true,
+            "description": "CT description",
+            "displayName": null,
+            "editable": true,
+            "final": false,
+            "hasChildren": false,
+            "iconUrl": "/admin/rest/schema/image/ContentType:contenttype",
+            "key": "ContentType:contenttype",
+            "modifiedTime": "2013-08-23T12:55:09.162Z",
+            "modifier": null,
+            "name": "contenttype",
+            "superType": "unstructured"
+        }
+    ],
+    "total": 1
+}

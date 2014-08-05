@@ -1,4 +1,6 @@
-module api.content {
+module app.browse {
+
+    import TemplateSummary = api.content.TemplateSummary;
 
     export class TemplateSummaryViewer extends api.ui.Viewer<TemplateSummary> {
 

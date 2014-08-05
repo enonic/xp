@@ -9,7 +9,6 @@ module app {
 
 module components {
     export var detailPanel: app.browse.SchemaBrowseItemPanel;
-    export var gridPanel: app.browse.SchemaTreeGridPanel;
     export var newSchemaDialog: app.create.NewSchemaDialog;
     export var schemaDeleteDialog: app.remove.SchemaDeleteDialog;
 }
