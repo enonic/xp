@@ -9,7 +9,6 @@ module app.browse {
     import TreeNode = api.ui.treegrid.TreeNode;
     import TreeGridBuilder = api.ui.treegrid.TreeGridBuilder;
     import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
-    import TreeItem = api.ui.treegrid.TreeItem;
     import TreeGridContextMenu = api.ui.treegrid.TreeGridContextMenu;
     import SchemaBrowseActions = app.browse.SchemaBrowseActions;
 
