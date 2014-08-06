@@ -9,7 +9,7 @@ module api.ui.text {
             "superscript", "subscript", "justifyLeft", "justifyCenter", "justifyRight", "justifyFull"
         ];
 
-        private editArea: api.dom.Element;
+        private editArea: TextEditorEditableArea;
 
         static get(): TextEditorToolbar {
             if (!this.instance) {
@@ -35,6 +35,7 @@ module api.ui.text {
                 var tag = event.target["getAttribute"]('data-text-editor-tag');
                 if (tag) {
                     document.execCommand(tag, false, null);
+                    this.editArea.processChanges();
                 }
             });
 
@@ -45,12 +46,11 @@ module api.ui.text {
             });
         }
 
-        showToolbar(editEl: api.dom.Element) {
+        showToolbar(editEl: TextEditorEditableArea) {
             this.editArea = editEl;
-            this.editArea.addClass('text-editor-edited-area');
-            this.editArea.getEl().setAttribute('contenteditable', 'true');
-            this.editArea.getEl().setCursor('text');
-            this.editArea.giveFocus();
+            var editableElement = this.editArea.getElement();
+            editableElement.addClass('text-editor-editable-area').giveFocus();
+            editableElement.getEl().setAttribute('contenteditable', 'true').setCursor('text');
 
             this.updatePosition();
             this.show();
@@ -58,9 +58,9 @@ module api.ui.text {
         }
 
         hideToolbar() {
-            this.editArea.removeClass('text-editor-edited-area');
-            this.editArea.getEl().removeAttribute('contenteditable');
-            this.editArea.getEl().setCursor('');
+            var editableElement = this.editArea.getElement();
+            editableElement.removeClass('text-editor-editable-area');
+            editableElement.getEl().removeAttribute('contenteditable').setCursor('');
             this.editArea = null;
             this.hide();
         }
@@ -80,7 +80,7 @@ module api.ui.text {
 
             var defaultPosition = this.getPositionRelativeToComponentTop();
 
-            var stick = api.dom.Window.get().getScrollTop() >= this.editArea.getEl().getOffsetTop() - 60;
+            var stick = api.dom.Window.get().getScrollTop() >= this.editArea.getElement().getEl().getOffsetTop() - 60;
 
             var el = this.getEl();
 
@@ -100,7 +100,7 @@ module api.ui.text {
         }
 
         private getPositionRelativeToComponentTop(): any {
-            var dimensions = this.getDimensions(this.editArea),
+            var dimensions = this.getDimensions(this.editArea.getElement()),
                 leftPos = dimensions.left + (dimensions.width / 2 - this.getEl().getWidthWithBorder() / 2),
                 topPos = dimensions.top - this.getEl().getHeightWithBorder() - 25;
 
