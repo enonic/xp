@@ -59,6 +59,11 @@ module app.browse {
                     return elem.getData();
                 }));
             });
+
+            // TODO double click event from old grid
+//            this.onTreeGridItemDoubleClicked((event: api.app.browse.grid.TreeGridItemDoubleClickedEvent) => {
+//                new app.browse.EditSchemaEvent([<any>event.getClickedModel()]).fire();
+//            });
         }
 
         treeNodesToBrowseItems(nodes: TreeNode<Schema>[]): BrowseItem<Schema>[] {

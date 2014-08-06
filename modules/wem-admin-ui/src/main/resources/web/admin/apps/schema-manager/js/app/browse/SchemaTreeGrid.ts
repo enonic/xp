@@ -42,6 +42,7 @@ module app.browse {
                             setId("modifiedTime").
                             setField("modifiedTime").
                             setFormatter(DateTimeFormatter.format).
+                            setMaxWidth(270).
                             build()
                     ]).
                     prependClasses("schema-grid").
