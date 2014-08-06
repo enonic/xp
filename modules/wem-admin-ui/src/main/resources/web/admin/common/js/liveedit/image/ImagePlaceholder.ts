@@ -16,7 +16,6 @@ module api.liveedit.image {
             super();
             this.imageComponentView = imageComponentView;
             wemjq(this.getHTMLElement()).on('click', 'input', (e) => {
-                wemjq(e.currentTarget).focus();
                 e.stopPropagation();
             });
 
