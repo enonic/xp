@@ -1,4 +1,4 @@
-module app.browse.grid {
+module app.browse {
 
     import GridColumn = api.ui.grid.GridColumn;
     import GridColumnBuilder = api.ui.grid.GridColumnBuilder;
@@ -19,11 +19,11 @@ module app.browse.grid {
     import ContentBrowseSearchEvent = app.browse.filter.ContentBrowseSearchEvent;
     import ContentBrowseResetEvent = app.browse.filter.ContentBrowseResetEvent;
 
-    import ContentGridPanel2Actions = app.browse.grid.actions.ContentGridPanel2Actions;
+    import ContentTreeGridActions = app.browse.action.ContentTreeGridActions;
 
     import CompareStatus = api.content.CompareStatus;
 
-    export class ContentGridPanel2 extends TreeGrid<ContentSummaryAndCompareStatus> {
+    export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
 
         constructor() {
             super(new TreeGridBuilder<ContentSummaryAndCompareStatus>().
@@ -54,13 +54,13 @@ module app.browse.grid {
                             setMaxWidth(170).
                             setFormatter(DateTimeFormatter.format).
                             build()
-                    ]).setShowContextMenu(new TreeGridContextMenu(new ContentGridPanel2Actions(this))
+                    ]).setShowContextMenu(new TreeGridContextMenu(new ContentTreeGridActions(this))
                     ).prependClasses("content-grid")
             );
 
             this.onRowSelectionChanged((selectedRows:TreeNode<ContentSummaryAndCompareStatus>[]) => {
                 var contentSummaries: ContentSummary[] = selectedRows.map((elem) => { return elem.getData().getContentSummary(); });
-                (<ContentGridPanel2Actions>this.getContextMenu().getActions()).updateActionsEnabledState(contentSummaries);
+                (<ContentTreeGridActions>this.getContextMenu().getActions()).updateActionsEnabledState(contentSummaries);
             });
 
             this.getGrid().subscribeOnDblClick((event, data) => {
@@ -125,7 +125,12 @@ module app.browse.grid {
 
         fetchChildren(parent?: ContentSummaryAndCompareStatus): Q.Promise<ContentSummaryAndCompareStatus[]> {
             var parentContentId = parent ? parent.getId() : "";
-            return new ContentSummaryAndCompareStatusFetcher(parentContentId).fetch(parentContentId);
+            return ContentSummaryAndCompareStatusFetcher.fetchChildren(parentContentId);
+        }
+
+        fetch(elem: ContentSummaryAndCompareStatus): Q.Promise<ContentSummaryAndCompareStatus> {
+            var contentId = elem.getId();
+            return ContentSummaryAndCompareStatusFetcher.fetch(contentId);
         }
 
     }

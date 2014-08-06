@@ -2,26 +2,26 @@ module api.content {
 
     export class ContentSummaryAndCompareStatusFetcher {
 
-        private parentId: string;
-
-        constructor(parentId: string) {
-            this.parentId = parentId;
-        }
-
-        getParams(): Object {
-            return {
-                parentId: this.parentId
-            };
-        }
-
-
-        fetch(parentContentId: string): Q.Promise<ContentSummaryAndCompareStatus[]> {
+        static fetchChildren(parentContentId: string): Q.Promise<ContentSummaryAndCompareStatus[]> {
 
             var deferred = Q.defer<ContentSummaryAndCompareStatus[]>();
 
             new ListContentByIdRequest(parentContentId).sendAndParse().then((contentSummaries: ContentSummary[])=> {
                 CompareContentRequest.fromContentSummaries(contentSummaries).sendAndParse().then((compareResults: CompareContentResults) => {
                     deferred.resolve(ContentSummaryAndCompareStatusFetcher.updateCompareStatus(contentSummaries, compareResults));
+                });
+            });
+
+            return deferred.promise;
+        }
+
+        static fetch(contentId: string): Q.Promise<ContentSummaryAndCompareStatus> {
+
+            var deferred = Q.defer<ContentSummaryAndCompareStatus>();
+
+            new GetContentByIdRequest(new ContentId(contentId)).sendAndParse().then((content: Content)=> {
+                CompareContentRequest.fromContentSummaries([content]).sendAndParse().then((compareResults: CompareContentResults) => {
+                    deferred.resolve(ContentSummaryAndCompareStatusFetcher.updateCompareStatus([content], compareResults)[0]);
                 });
             });
 

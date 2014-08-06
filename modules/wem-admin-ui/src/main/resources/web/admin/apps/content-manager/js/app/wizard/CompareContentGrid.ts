@@ -43,7 +43,7 @@ module app.wizard {
 
         fetchChildren(parent?: ContentSummaryAndCompareStatus): Q.Promise<ContentSummaryAndCompareStatus[]> {
             var parentContentId = parent ? parent.getId() : "";
-            return new api.content.ContentSummaryAndCompareStatusFetcher(parentContentId).fetch(parentContentId);
+            return api.content.ContentSummaryAndCompareStatusFetcher.fetchChildren(parentContentId);
         }
     }
 }

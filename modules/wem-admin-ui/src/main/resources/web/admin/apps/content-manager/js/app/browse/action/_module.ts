@@ -7,4 +7,4 @@
 ///<reference path='ShowPreviewAction.ts' />
 ///<reference path='ShowDetailsAction.ts' />
 ///<reference path='ToggleSearchPanelAction.ts' />
-///<reference path='ContentGridPanel2Actions.ts' />
+///<reference path='ContentTreeGridActions.ts' />

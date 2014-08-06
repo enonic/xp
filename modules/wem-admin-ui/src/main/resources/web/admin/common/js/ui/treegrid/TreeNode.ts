@@ -33,6 +33,13 @@ module api.ui.treegrid {
             return this.id;
         }
 
+        regenerateIds(): void {
+            this.id = Math.random().toString(36).substring(2);
+            this.children.forEach((elem) => {
+                elem.regenerateIds();
+            });
+        }
+
         isExpanded(): boolean {
             return this.expanded;
         }
@@ -160,6 +167,22 @@ module api.ui.treegrid {
             }
 
             return list;
+        }
+
+        findNode(data: NODE): TreeNode<NODE> {
+
+            if (this.data && this.data.getId() === data.getId()) {
+                return this;
+            }
+
+            for (var i = 0; i < this.children.length; i++) {
+                var child: TreeNode<NODE> = this.children[i].findNode(data);
+                if (child) {
+                    return child;
+                }
+            }
+
+            return null;
         }
 
         calcLevel(): number {
