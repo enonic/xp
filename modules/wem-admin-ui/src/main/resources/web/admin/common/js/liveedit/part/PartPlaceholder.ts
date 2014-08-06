@@ -18,7 +18,6 @@ module api.liveedit.part {
             super();
 
             wemjq(this.getHTMLElement()).on('click', 'input', (e) => {
-                wemjq(e.currentTarget).focus();
                 e.stopPropagation();
             });
             var request = new GetPartDescriptorsByModulesRequest(PageItemType.get().getSiteTemplate().getModules());
