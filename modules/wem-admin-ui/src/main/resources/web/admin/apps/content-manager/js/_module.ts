@@ -18,6 +18,5 @@
 ///<reference path='app/wizard/WizardStepValidityChangedEvent.ts' />
 ///<reference path='app/wizard/site/_module.ts' />
 ///<reference path='app/wizard/_module.ts' />
-///<reference path='lib/_module.ts' />
 
 ///<reference path='main.ts' />
