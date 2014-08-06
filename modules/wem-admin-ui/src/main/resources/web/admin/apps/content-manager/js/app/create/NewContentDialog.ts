@@ -18,10 +18,7 @@ module app.create {
         private recentListMask: api.ui.mask.LoadMask;
 
         private input: api.ui.text.TextInput;
-        private facetContainer: api.dom.DivEl;
-        private contentFacet: api.dom.SpanEl;
-        private sitesFacet: api.dom.SpanEl;
-        private allFacet: api.dom.SpanEl;
+        private facetContainer: NewContentDialogFacets;
 
         private listItems: NewContentDialogListItem[];
 
@@ -40,14 +37,7 @@ module app.create {
             this.input = api.ui.text.TextInput.large("list-filter").setPlaceholder("Search");
             leftColumn.appendChild(this.input);
 
-            this.facetContainer = new api.dom.DivEl('content-type-facet');
-            this.allFacet = new api.dom.SpanEl('all-facet').setHtml("All (0)");
-            this.contentFacet = new api.dom.SpanEl('content-facet').setHtml("Content (0)");
-            this.sitesFacet = new api.dom.SpanEl('sites-facet').setHtml("Sites (0)");
-
-            this.facetContainer.appendChild(this.allFacet);
-            this.facetContainer.appendChild(this.contentFacet);
-            this.facetContainer.appendChild(this.sitesFacet);
+            this.facetContainer = new NewContentDialogFacets();
             leftColumn.appendChild(this.facetContainer);
 
             this.contentList = new app.create.NewContentDialogList();
@@ -80,29 +70,7 @@ module app.create {
                 }
             });
 
-            this.allFacet.onClicked((event: MouseEvent) => {
-                this.facetContainer.getChildren().forEach((child: api.dom.Element) => {
-                    child.removeClass('active');
-                });
-                this.allFacet.addClass('active');
-                this.filterList();
-            });
-
-            this.contentFacet.onClicked((event: MouseEvent) => {
-                this.facetContainer.getChildren().forEach((child: api.dom.Element) => {
-                    child.removeClass('active');
-                });
-                this.contentFacet.addClass('active');
-                this.filterList();
-            });
-
-            this.sitesFacet.onClicked((event: MouseEvent) => {
-                this.facetContainer.getChildren().forEach((child: api.dom.Element) => {
-                    child.removeClass('active');
-                });
-                this.sitesFacet.addClass('active');
-                this.filterList();
-            });
+            this.facetContainer.onValueChanged((event: api.ui.ValueChangedEvent) => this.filterList());
 
             this.contentList.onSelected((event: app.create.NewContentDialogItemSelectedEvent) => {
                 this.closeAndFireEventFromContentType(event.getItem());
@@ -122,14 +90,14 @@ module app.create {
 
         private filterList() {
             var inputValue = this.input.getValue();
-            var contentOnly = this.contentFacet.hasClass('active');
-            var sitesOnly = this.sitesFacet.hasClass('active');
-            var all = this.allFacet.hasClass('active');
+            var activeFacet = this.facetContainer.getActiveFacet();
+            var contentOnly = activeFacet == NewContentDialogFacets.CONTENT;
+            var sitesOnly = activeFacet == NewContentDialogFacets.SITES;
+            var all = activeFacet == NewContentDialogFacets.ALL;
 
             var filteredItems = this.listItems.filter((item: NewContentDialogListItem) => {
                 return (!inputValue || (item.getDisplayName().indexOf(inputValue) != -1) || (item.getName().indexOf(inputValue) != -1))
-                    && ((!contentOnly && !sitesOnly) || (contentOnly && !item.isSiteTemplate()) || (sitesOnly && item.isSiteTemplate()) ||
-                        all);
+                    && (all || (contentOnly && !item.isSiteTemplate()) || (sitesOnly && item.isSiteTemplate()));
             });
 
             this.contentList.setItems(filteredItems);
@@ -141,9 +109,7 @@ module app.create {
                     item.isSiteTemplate() ? siteTemplatesCount++ : contentTypesCount++;
                 }
             });
-            this.contentFacet.setHtml("Content (" + contentTypesCount + ")");
-            this.sitesFacet.setHtml("Sites (" + siteTemplatesCount + ")");
-            this.allFacet.setHtml("All (" + (siteTemplatesCount + contentTypesCount) + ")");
+            this.facetContainer.updateLabels(contentTypesCount, siteTemplatesCount);
         }
 
         setParentContent(value: api.content.Content) {
@@ -178,16 +144,13 @@ module app.create {
             Q.all([contentTypesRequest.sendAndParse(), siteTemplatesRequest.sendAndParse()])
                 .spread((contentTypes: ContentTypeSummary[], siteTemplates: SiteTemplateSummary[]) => {
 
-                    this.allFacet.setHtml("All (" + (siteTemplates.length + +contentTypes.length) + ")");
-                    this.contentFacet.setHtml("Content (" + contentTypes.length + ")");
-                    this.sitesFacet.setHtml("Sites (" + siteTemplates.length + ")");
+                    this.facetContainer.updateLabels(contentTypes.length, siteTemplates.length);
                     this.listItems = this.createListItems(contentTypes, siteTemplates);
                     this.contentList.setItems(this.listItems);
                     this.recentList.setItems(this.listItems);
 
-                    this.allFacet.addClass('active');
-
-                    if (this.input.getValue()) {
+                    var activeFacet = this.facetContainer.getActiveFacet();
+                    if (this.input.getValue() || activeFacet != NewContentDialogFacets.ALL) {
                         this.filterList();
                     }
 
