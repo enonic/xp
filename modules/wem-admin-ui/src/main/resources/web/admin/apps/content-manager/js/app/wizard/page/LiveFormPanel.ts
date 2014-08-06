@@ -99,7 +99,6 @@ module app.wizard.page {
         private pageConfig: RootDataSet;
         private pageDescriptor: PageDescriptor;
 
-        private pageNeedsReload: boolean;
         private pageLoading: boolean;
 
         private pageSkipReload: boolean;
@@ -126,7 +125,6 @@ module app.wizard.page {
             this.siteTemplate = config.siteTemplate;
             this.defaultModels = config.defaultModels;
 
-            this.pageNeedsReload = true;
             this.pageLoading = false;
             this.pageSkipReload = false;
 
@@ -263,33 +261,6 @@ module app.wizard.page {
             super.remove();
         }
 
-        loadPageIfNotLoaded(): Q.Promise<void> {
-
-            console.log("LiveFormPanel.loadPageIfNotLoaded() this.needsReload = " + this.pageNeedsReload);
-            if (this.pageNeedsReload && !this.pageLoading) {
-
-                this.pageLoading = true;
-                return this.liveEditPage.load(this.content).then(()=> {
-
-                    this.pageLoading = false;
-                    this.pageNeedsReload = false;
-
-                    return this.loadPageDescriptor();
-
-                }).then((): void => {
-
-                    this.contextWindow.showInspectionPanel(this.pageInspectionPanel);
-                    this.pageInspectionPanel.setPage(this.content, this.pageTemplate, this.pageDescriptor, this.pageConfig);
-
-                });
-            }
-            else {
-                var deferred = Q.defer<void>();
-                deferred.resolve(null);
-                return deferred.promise;
-            }
-        }
-
         setPage(content: Content, pageTemplate: PageTemplate): Q.Promise<void> {
 
             api.util.assertNotNull(content, "Expected content not be null");
@@ -310,30 +281,41 @@ module app.wizard.page {
                 }
             }
 
-            if (!this.isVisible()) {
-                this.pageNeedsReload = true;
-                var deferred = Q.defer<void>();
-                deferred.resolve(null);
-                return deferred.promise;
-            }
-            else if (this.pageSkipReload == true) {
-                var deferred = Q.defer<void>();
-                deferred.resolve(null);
-                return deferred.promise;
-            }
-            else {
-                return this.liveEditPage.load(this.content).then(() => this.loadPageDescriptor());
-            }
+            return this.loadPage();
         }
 
-        /**
-         * Called by ContentWizardPanel when content is saved.
-         */
-        contentSaved(): Q.Promise<void> {
+        private loadPage(): Q.Promise<void> {
 
-            if (!this.pageSkipReload) {
-                // Reload page to show changes
-                return this.liveEditPage.load(this.content).then(() => this.loadPageDescriptor());
+            if (this.pageSkipReload == true) {
+                var deferred = Q.defer<void>();
+                deferred.resolve(null);
+                return deferred.promise;
+
+            } else if (!this.isVisible()) {
+                var shownListener = (event: api.dom.ElementShownEvent) => {
+                    this.loadPage();
+                    this.unShown(shownListener);
+                };
+                this.onShown(shownListener);
+                var deferred = Q.defer<void>();
+                deferred.resolve(null);
+                return deferred.promise;
+
+            } else if (!this.pageLoading) {
+                this.pageLoading = true;
+                return this.liveEditPage.load(this.content).then(()=> {
+
+                    this.pageLoading = false;
+
+                    return this.loadPageDescriptor();
+
+                }).then((): void => {
+
+                    this.contextWindow.showInspectionPanel(this.pageInspectionPanel);
+                    this.pageInspectionPanel.setPage(this.content, this.pageTemplate, this.pageDescriptor, this.pageConfig);
+
+                });
+
             } else {
                 var deferred = Q.defer<void>();
                 deferred.resolve(null);
