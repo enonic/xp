@@ -317,7 +317,7 @@ module api.ui.treegrid {
             this.grid.clearSelection();
         }
 
-        deselectItem(id:string) {
+        deselectItem(id: string) {
             var oldSelected = this.grid.getSelectedRows(),
                 newSelected = [];
             for (var i = 0; i < oldSelected.length; i++) {
@@ -383,7 +383,7 @@ module api.ui.treegrid {
 
         deleteNodes(data: NODE[]): void {
             var root = this.stash || this.root;
-            var updated:TreeNode<NODE>[] = [];
+            var updated: TreeNode<NODE>[] = [];
             data.forEach((elem: NODE) => {
                 var node = root.findNode(elem);
                 if (node && node.getParent()) {
@@ -397,8 +397,8 @@ module api.ui.treegrid {
             var promises = updated.map((el) => {
                 return this.fetch(el.getData());
             });
-            Q.all(promises).then((results:NODE[]) => {
-                results.forEach((result:NODE, index:number) => {
+            Q.all(promises).then((results: NODE[]) => {
+                results.forEach((result: NODE, index: number) => {
                     updated[index].setData(result);
                 });
             }).catch((reason: any) => {

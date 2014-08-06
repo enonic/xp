@@ -153,9 +153,7 @@ module api.ui.treegrid {
          @expanded - determines to display only reachable nodes.
          @selected - determines to display only seleted nodes.
          */
-        treeToList(empty: boolean = false,
-                   expanded: boolean = true,
-                   selected: boolean = false): TreeNode<NODE>[] {
+        treeToList(empty: boolean = false, expanded: boolean = true, selected: boolean = false): TreeNode<NODE>[] {
             var list: TreeNode<NODE>[] = [];
 
             if (this.selected === true || selected === false) {

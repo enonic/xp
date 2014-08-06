@@ -169,10 +169,14 @@ module api.liveedit {
             // No need to process this event.
 
             var className = api.util.getClassName(this);
-            if (this.debug) { console.info("mouse enter start --> ", className); }
+            if (this.debug) {
+                console.info("mouse enter start --> ", className);
+            }
 
             if (this.mouseOver) {
-                if (this.debug) { console.log('   mouseOver = true, returning', className); }
+                if (this.debug) {
+                    console.log('   mouseOver = true, returning', className);
+                }
                 return;
             }
 
@@ -194,11 +198,15 @@ module api.liveedit {
             parentsStack.reverse().forEach((view: ItemView) => {
                 var viewName = api.util.getClassName(view);
                 if (view.mouseOver) {
-                    if (this.debug) { console.log('   notifying parent mouse out', viewName); }
+                    if (this.debug) {
+                        console.log('   notifying parent mouse out', viewName);
+                    }
                     view.notifyMouseOutView();
                 } else {
                     view.mouseOver = true;
-                    if (this.debug) { console.log('   setting parent mouseOver = true', viewName); }
+                    if (this.debug) {
+                        console.log('   setting parent mouseOver = true', viewName);
+                    }
                     view.notifyMouseOverView();
                     view.notifyMouseOutView();
                 }
@@ -206,10 +214,14 @@ module api.liveedit {
 
             // Turn on 'mouseOver' state for this element and notify it entered.
             this.mouseOver = true;
-            if (this.debug) { console.log('   notifying target mouse over', className); }
+            if (this.debug) {
+                console.log('   notifying target mouse over', className);
+            }
             this.notifyMouseOverView();
 
-            if (this.debug) { console.info("mouse enter end --> ", className); }
+            if (this.debug) {
+                console.info("mouse enter end --> ", className);
+            }
         }
 
         /**
@@ -223,21 +235,29 @@ module api.liveedit {
         private handleMouseLeave(event: MouseEvent) {
 
             var className = api.util.getClassName(this);
-            if (this.debug) { console.info("mouse leave start <-- ", className); }
+            if (this.debug) {
+                console.info("mouse leave start <-- ", className);
+            }
 
             // Turn off 'mouseOver' state and notify ItemVeiw was left.
             this.mouseOver = false;
-            if (this.debug) { console.log('   notifying target mouse out', className); }
+            if (this.debug) {
+                console.log('   notifying target mouse out', className);
+            }
             this.notifyMouseOutView();
             this.tooltip.hide();
 
             // Notify parent ItemView is entered.
             if (this.parentItemView) {
-                if (this.debug) { console.log('   notifying parent mouse over', className); }
+                if (this.debug) {
+                    console.log('   notifying parent mouse over', className);
+                }
                 this.parentItemView.notifyMouseOverView();
             }
 
-            if (this.debug) { console.info("mouse leave end <-- ", className); }
+            if (this.debug) {
+                console.info("mouse leave end <-- ", className);
+            }
         }
 
         handleClick(event: MouseEvent) {
@@ -434,7 +454,9 @@ module api.liveedit {
         }
 
         private notifyMouseOverView() {
-            if (this.debug) { console.log("       notify mouse over", api.util.getClassName(this)); }
+            if (this.debug) {
+                console.log("       notify mouse over", api.util.getClassName(this));
+            }
             this.mouseOverViewListeners.forEach((listener: () => void) => listener());
         }
 
@@ -447,7 +469,9 @@ module api.liveedit {
         }
 
         private notifyMouseOutView() {
-            if (this.debug) { console.log("       notify mouse out", api.util.getClassName(this)); }
+            if (this.debug) {
+                console.log("       notify mouse out", api.util.getClassName(this));
+            }
             this.mouseOutViewListeners.forEach((listener: () => void) => listener());
         }
     }

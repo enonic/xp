@@ -14,7 +14,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.admin.json.schema.SchemaJson;

@@ -29,7 +29,9 @@ module app.browse {
             });
 
             this.moduleTreeGridPanel.onRowSelectionChanged((selectedRows: TreeNode<ModuleSummary>[]) => {
-                this.browseActions.updateActionsEnabledState(<any[]>selectedRows.map((elem) => { return elem.getData(); }));
+                this.browseActions.updateActionsEnabledState(<any[]>selectedRows.map((elem) => {
+                    return elem.getData();
+                }));
             });
 
             this.registerEvents();

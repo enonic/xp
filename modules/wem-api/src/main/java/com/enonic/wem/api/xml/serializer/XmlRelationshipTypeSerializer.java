@@ -7,7 +7,7 @@ final class XmlRelationshipTypeSerializer
     extends XmlSerializer2<XmlRelationshipType>
 {
 
-    public XmlRelationshipTypeSerializer(  )
+    public XmlRelationshipTypeSerializer()
     {
         super( XmlRelationshipType.class );
     }

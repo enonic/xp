@@ -8,7 +8,7 @@ module app.browse {
             super();
         }
 
-        setActions(actions:ContentTreeGridActions) {
+        setActions(actions: ContentTreeGridActions) {
             this.addAction(actions.SHOW_NEW_CONTENT_DIALOG_ACTION);
             this.addAction(actions.EDIT_CONTENT);
             this.addAction(actions.OPEN_CONTENT);

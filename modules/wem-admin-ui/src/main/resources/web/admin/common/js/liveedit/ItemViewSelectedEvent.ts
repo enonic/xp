@@ -6,7 +6,7 @@ module api.liveedit {
 
         private position: Position;
 
-        constructor(itemView: ItemView, position:Position) {
+        constructor(itemView: ItemView, position: Position) {
             super();
             this.pageItemView = itemView;
             this.position = position;

@@ -4,15 +4,15 @@ module app.create {
 
     export class NewSchemaEvent extends Event {
 
-        private schemaType:api.schema.SchemaKind;
+        private schemaType: api.schema.SchemaKind;
 
-        constructor(schemaType?:api.schema.SchemaKind) {
+        constructor(schemaType?: api.schema.SchemaKind) {
             super();
 
             this.schemaType = schemaType;
         }
 
-        getSchemaKind():api.schema.SchemaKind {
+        getSchemaKind(): api.schema.SchemaKind {
             return this.schemaType;
         }
 

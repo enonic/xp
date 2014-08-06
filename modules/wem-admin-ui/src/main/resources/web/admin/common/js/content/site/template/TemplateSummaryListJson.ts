@@ -2,8 +2,8 @@ module api.content.site.template {
 
     export class TemplateSummaryListJson {
 
-        total:number;
+        total: number;
 
-        templates:api.content.site.template.TemplateSummaryJson[];
+        templates: api.content.site.template.TemplateSummaryJson[];
     }
 }

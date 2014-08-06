@@ -10,7 +10,7 @@ module api.content.page.layout {
             super(builder);
             if (builder.regions) {
                 this.regions = builder.regions;
-                this.regions.getRegions().forEach((region:Region) => {
+                this.regions.getRegions().forEach((region: Region) => {
                     region.setParent(this);
                 });
             } else {

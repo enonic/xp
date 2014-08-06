@@ -63,7 +63,7 @@ module app.wizard {
         renderNew(): Q.Promise<void> {
 
             return super.renderNew().
-                then(():void => {
+                then((): void => {
 
                     this.siteTemplateStep.renderNew();
 

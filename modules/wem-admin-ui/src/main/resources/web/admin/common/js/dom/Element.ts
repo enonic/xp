@@ -17,9 +17,9 @@ module api.dom {
             // Ensure class has only one entry
             if (name) {
                 name = name.trim().split(/\s+/)
-                           .filter((elem, index, arr) => {
-                               return arr.indexOf(elem) === index;
-                            }).join(" ");
+                    .filter((elem, index, arr) => {
+                        return arr.indexOf(elem) === index;
+                    }).join(" ");
             }
             this.className = name;
             return this;

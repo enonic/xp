@@ -2,14 +2,14 @@ module api.schema {
 
     export class SchemaDeletedEvent extends api.event.Event {
 
-        private schemas:api.schema.Schema[];
+        private schemas: api.schema.Schema[];
 
-        constructor(schemas:api.schema.Schema[]) {
+        constructor(schemas: api.schema.Schema[]) {
             super();
             this.schemas = schemas;
         }
 
-        public getSchemas():api.schema.Schema[] {
+        public getSchemas(): api.schema.Schema[] {
             return this.schemas;
         }
 
