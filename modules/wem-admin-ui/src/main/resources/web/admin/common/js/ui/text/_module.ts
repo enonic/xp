@@ -1,4 +1,5 @@
 ///<reference path='TextEditorToolbar.ts' />
+///<reference path='TextEditorEditableArea.ts' />
 ///<reference path='TextInput.ts' />
 ///<reference path='AutosizeTextInput.ts' />
 ///<reference path='PasswordInput.ts' />

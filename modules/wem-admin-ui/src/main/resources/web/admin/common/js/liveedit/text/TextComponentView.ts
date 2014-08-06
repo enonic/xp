@@ -12,8 +12,7 @@ module api.liveedit.text {
         }
     }
 
-    export class TextComponentView extends PageComponentView<TextComponent> {
-
+    export class TextComponentView extends PageComponentView<TextComponent> implements api.ui.text.TextEditorEditableArea {
         private textComponent: TextComponent;
 
         private placeholder: api.dom.DivEl;
@@ -34,6 +33,15 @@ module api.liveedit.text {
 
             this.onKeyDown(this.handleKeyboard.bind(this));
             this.onKeyUp(this.handleKeyboard.bind(this));
+        }
+
+        getElement(): api.dom.Element {
+            return this;
+        }
+
+        processChanges() {
+            this.textComponent.setText(this.getEl().getInnerHtml());
+            new TextComponentEditedEvent(this).fire();
         }
 
         addPlaceholder() {
@@ -69,8 +77,7 @@ module api.liveedit.text {
 
         handleKeyboard() {
             if (this.editing) {
-                this.textComponent.setText(this.getEl().getInnerHtml());
-                new TextComponentEditedEvent(this).fire();
+                this.processChanges();
             }
         }
 
@@ -79,11 +86,9 @@ module api.liveedit.text {
 
             if (this.isEmpty()) {
                 this.addPlaceholder();
-                this.getEl().setCursor('url(' + api.util.getAdminUri('live-edit/images/pencil.png') + ') 0 40, text');
-            } else {
-                this.hideContextMenu();
-                this.showEditor();
             }
+
+            this.getEl().setCursor('url(' + api.util.getAdminUri('live-edit/images/pencil.png') + ') 0 40, text');
         }
 
         deselect() {

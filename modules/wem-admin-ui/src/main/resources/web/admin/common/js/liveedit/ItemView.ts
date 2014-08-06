@@ -318,10 +318,6 @@ module api.liveedit {
             return ItemViewId.fromString(attribute);
         }
 
-        getElement(): JQuery {
-            return wemjq(this.getHTMLElement());
-        }
-
         getType(): ItemType {
             return this.type;
         }
