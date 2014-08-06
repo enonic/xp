@@ -29,8 +29,6 @@
 
 ///<reference path='i18n/_module.ts' />
 
-///<reference path='model/_module.ts' />
-
 ///<reference path='event/_module.ts' />
 
 ///<reference path='dom/_module.ts' />
