@@ -14,8 +14,11 @@ module api.liveedit.part {
 
         private comboBox: PartDescriptorComboBox;
 
+        private partComponentView: PartComponentView;
+
         constructor(partView: PartComponentView) {
             super();
+            this.partComponentView = partView;
 
             wemjq(this.getHTMLElement()).on('click', 'input', (e) => {
                 wemjq(e.currentTarget).focus();
@@ -29,6 +32,7 @@ module api.liveedit.part {
             this.appendChild(this.comboBox);
 
             this.comboBox.onOptionSelected((event: OptionSelectedEvent<PartDescriptor>) => {
+                this.partComponentView.showLoadingSpinner();
                 var descriptor: Descriptor = event.getOption().displayValue;
                 new PageComponentSetDescriptorEvent(descriptor, partView).fire();
             });

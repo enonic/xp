@@ -8,8 +8,11 @@ module api.liveedit.layout {
 
         private comboBox: api.content.page.layout.LayoutDescriptorComboBox;
 
+        private layoutComponentView: LayoutComponentView;
+
         constructor(layoutView: LayoutComponentView) {
             super();
+            this.layoutComponentView = layoutView;
 
             wemjq(this.getHTMLElement()).on('click', 'input', (e) => {
                 wemjq(e.currentTarget).focus();
@@ -23,6 +26,7 @@ module api.liveedit.layout {
             this.appendChild(this.comboBox);
 
             this.comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.page.layout.LayoutDescriptor>) => {
+                this.layoutComponentView.showLoadingSpinner();
                 var descriptor: api.content.page.Descriptor = event.getOption().displayValue;
                 new PageComponentSetDescriptorEvent(descriptor, layoutView).fire();
             });
