@@ -203,9 +203,6 @@ module app.wizard {
                     } else {
                         app.Router.setHash("new/" + this.contentType.getName());
                     }
-                    if (this.liveFormPanel) {
-                        this.liveFormPanel.loadPageIfNotLoaded();
-                    }
                     //Set split panel default
                     this.contentWizardActions.getShowSplitEditAction().execute();
                 });
@@ -515,7 +512,7 @@ module app.wizard {
                         api.notify.showFeedback('Content was updated!');
                     }
 
-                    return Q(this.liveFormPanel ? this.liveFormPanel.contentSaved() : null).then(() => content);
+                    return content;
                 });
         }
 
