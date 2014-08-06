@@ -10,7 +10,7 @@ module api.app.browse {
 
         treeGridPanel?:api.app.browse.grid.TreeGridPanel;
 
-        treeGridPanel2?:api.ui.treegrid.TreeGrid<api.ui.treegrid.TreeItem>;
+        treeGridPanel2?:api.ui.treegrid.TreeGrid<Object>;
 
         browseItemPanel:BrowseItemPanel<M>;
 
@@ -25,7 +25,7 @@ module api.app.browse {
 
         private oldTreeGrid: api.app.browse.grid.TreeGridPanel;
 
-        private newTreeGrid: api.ui.treegrid.TreeGrid<api.ui.treegrid.TreeItem>;
+        private newTreeGrid: api.ui.treegrid.TreeGrid<Object>;
 
         private treeSwapperDeckPanel: api.ui.panel.DeckPanel;
 
@@ -93,7 +93,7 @@ module api.app.browse {
                 });
             }
             if (this.newTreeGrid) {
-                this.newTreeGrid.onRowSelectionChanged((nodes: api.ui.treegrid.TreeNode<api.ui.treegrid.TreeItem>[]) => {
+                this.newTreeGrid.onRowSelectionChanged((nodes: api.ui.treegrid.TreeNode<Object>[]) => {
                     var browseItems: api.app.browse.BrowseItem<M>[] = this.treeNodesToBrowseItems(nodes);
                     this.browseItemPanel.setItems(browseItems);
                 });
@@ -131,7 +131,7 @@ module api.app.browse {
         }
 
         // TODO: ContentSummary must be replaced with an ContentSummaryAndCompareStatus after old grid is removed
-        treeNodesToBrowseItems(nodes: api.ui.treegrid.TreeNode<api.ui.treegrid.TreeItem>[]): BrowseItem<M>[] {
+        treeNodesToBrowseItems(nodes: api.ui.treegrid.TreeNode<Object>[]): BrowseItem<M>[] {
             throw Error("To be implemented by inheritor");
         }
 

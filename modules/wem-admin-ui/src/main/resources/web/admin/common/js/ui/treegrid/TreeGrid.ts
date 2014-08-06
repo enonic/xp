@@ -16,7 +16,7 @@ module api.ui.treegrid {
     import TreeGridActions = api.ui.treegrid.actions.TreeGridActions;
     import TreeGridToolbarActions = api.ui.treegrid.actions.TreeGridToolbarActions;
 
-    export class TreeGrid<NODE extends TreeItem> extends api.ui.panel.Panel {
+    export class TreeGrid<NODE> extends api.ui.panel.Panel {
 
         private columns: GridColumn<NODE>[] = [];
 
@@ -144,7 +144,7 @@ module api.ui.treegrid {
                     var selected = this.grid.getSelectedRows();
                     if (selected.length === 1) {
                         var node = this.gridData.getItem(selected[0]);
-                        if (node && node.getData().hasChildren()
+                        if (node && this.hasChildren(node.getData())
                                 && !node.isExpanded() && this.active) {
 
                             this.active = false;
@@ -228,6 +228,14 @@ module api.ui.treegrid {
          Must be overridden in most cases.
          Various items may have different requests
          */
+        hasChildren(elem: NODE): boolean {
+            return false;
+        }
+
+        /*
+         Must be overridden in most cases.
+         Various items may have different requests
+         */
         fetch(elem: NODE): Q.Promise<NODE> {
             var deferred = Q.defer<NODE>();
             // Empty logic
@@ -286,7 +294,7 @@ module api.ui.treegrid {
                 var formatter = columns[0].getFormatter();
                 var toggleFormatter = (row: number, cell: number, value: any, columnDef: any, node: TreeNode<NODE>) => {
                     var toggleSpan = new api.dom.SpanEl("toggle icon");
-                    if (node.getData().hasChildren()) {
+                    if (this.hasChildren(node.getData())) {
                         var toggleClass = node.isExpanded() ? "collapse" : "expand";
                         toggleSpan.addClass(toggleClass);
                     }
@@ -313,7 +321,7 @@ module api.ui.treegrid {
             var oldSelected = this.grid.getSelectedRows(),
                 newSelected = [];
             for (var i = 0; i < oldSelected.length; i++) {
-                if (id !== this.gridData.getItem(oldSelected[i]).getData().getId()) {
+                if (id !== this.gridData.getItem(oldSelected[i]).getDataId()) {
                     newSelected.push(oldSelected[i]);
                 }
             }
@@ -338,7 +346,6 @@ module api.ui.treegrid {
 
         // Hard reset
         reload(parent?: NODE): void {
-            console.log("reload");
             this.root = new TreeNodeBuilder<NODE>().build();
 
             this.initData([]);
@@ -383,7 +390,7 @@ module api.ui.treegrid {
                     updated.push(node.getParent());
                     node.getParent().removeChild(node);
                     updated.filter((el) => {
-                        return el.getData().getId() !== node.getId();
+                        return el.getDataId() !== node.getId();
                     });
                 }
             });

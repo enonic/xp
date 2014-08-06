@@ -9,7 +9,6 @@ module app.browse {
     import TreeNode = api.ui.treegrid.TreeNode;
     import TreeGridBuilder = api.ui.treegrid.TreeGridBuilder;
     import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
-    import TreeItem = api.ui.treegrid.TreeItem;
 
     export class ModuleTreeGrid extends TreeGrid<ModuleSummary> {
 
@@ -20,7 +19,7 @@ module app.browse {
                             setName("Name").
                             setId("displayName").
                             setField("displayName").
-                            setFormatter(this.defaultNameFormatter).
+                            setFormatter(this.nameFormatter).
                             setMinWidth(250).
                             build(),
 
@@ -61,10 +60,14 @@ module app.browse {
             return new api.module.ListModulesRequest().sendAndParse();
         }
 
-        private defaultNameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ModuleSummary>) {
+        private nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ModuleSummary>) {
             var viewer = new ModuleSummaryViewer();
             viewer.setObject(node.getData());
             return viewer.toString();
+        }
+
+        hasChildren(elem: ModuleSummary): boolean {
+            return elem.hasChildren();
         }
     }
 }

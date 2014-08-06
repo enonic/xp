@@ -6,7 +6,7 @@ module api.ui.treegrid {
     import GridOptionsBuilder = api.ui.grid.GridOptionsBuilder;
     import ContextMenu = api.ui.menu.ContextMenu;
 
-    export class TreeGridBuilder<NODE extends TreeItem> {
+    export class TreeGridBuilder<NODE> {
 
         private showToolbar: boolean = true;
 

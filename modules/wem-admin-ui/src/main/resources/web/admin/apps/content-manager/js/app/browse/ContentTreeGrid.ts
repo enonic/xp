@@ -133,5 +133,9 @@ module app.browse {
             return ContentSummaryAndCompareStatusFetcher.fetch(contentId);
         }
 
+        hasChildren(elem: ContentSummaryAndCompareStatus): boolean {
+            return elem.hasChildren();
+        }
+
     }
 }
