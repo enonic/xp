@@ -14,12 +14,11 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.google.common.base.Function;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Ordering;
 
 import com.enonic.wem.admin.json.schema.SchemaJson;
+import com.enonic.wem.admin.rest.resource.schema.json.ListSchemaJson;
 import com.enonic.wem.api.schema.Schema;
 import com.enonic.wem.api.schema.SchemaKey;
 import com.enonic.wem.api.schema.SchemaKind;
@@ -27,7 +26,10 @@ import com.enonic.wem.api.schema.SchemaService;
 import com.enonic.wem.api.schema.SchemaTypesParams;
 import com.enonic.wem.api.schema.Schemas;
 
+import static com.google.common.base.Strings.nullToEmpty;
 import static java.lang.String.CASE_INSENSITIVE_ORDER;
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toList;
 
 @Path("schema")
 @Produces(MediaType.APPLICATION_JSON)
@@ -38,7 +40,7 @@ public final class SchemaResource
 
     @GET
     @Path("list")
-    public List<SchemaJson> list( @QueryParam("parentKey") final String parentName )
+    public ListSchemaJson list( @QueryParam("parentKey") final String parentName )
     {
         final Schemas schemas;
         if ( StringUtils.isEmpty( parentName ) )
@@ -50,21 +52,10 @@ public final class SchemaResource
             schemas = this.schemaService.getChildren( SchemaKey.from( parentName ) );
         }
 
-        final List<Schema> sortedSchemas = Ordering.from( CASE_INSENSITIVE_ORDER ).onResultOf( new Function<Schema, String>()
-        {
-            @Override
-            public String apply( final Schema schema )
-            {
-                return Strings.nullToEmpty( schema.getDisplayName() );
-            }
-        } ).sortedCopy( schemas.getList() );
-
-        final List<SchemaJson> schemaJsonResult = new ArrayList<>();
-        for ( Schema schema : sortedSchemas )
-        {
-            schemaJsonResult.add( SchemaJson.from( schema ) );
-        }
-        return schemaJsonResult;
+        final List<Schema> sortedSchemas = schemas.stream().
+            sorted( comparing( ( schema ) -> nullToEmpty( schema.getDisplayName() ), CASE_INSENSITIVE_ORDER ) ).
+            collect( toList() );
+        return new ListSchemaJson( sortedSchemas );
     }
 
     @GET
@@ -128,7 +119,7 @@ public final class SchemaResource
     private boolean matchesSearchFilter( final Schema schema, final String searchString )
     {
         final String schemaName = schema.getName().toString().toLowerCase();
-        final String displayName = Strings.nullToEmpty( schema.getDisplayName() ).toLowerCase();
+        final String displayName = nullToEmpty( schema.getDisplayName() ).toLowerCase();
         final String searchText = searchString.toLowerCase();
         return searchText.isEmpty() || schemaName.contains( searchText ) || displayName.contains( searchText );
     }

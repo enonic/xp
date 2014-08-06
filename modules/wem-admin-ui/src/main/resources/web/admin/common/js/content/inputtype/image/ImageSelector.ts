@@ -22,7 +22,7 @@ module api.content.inputtype.image {
 
         private comboBox: ComboBox<ImageSelectorDisplayValue>;
 
-        private uploadButton: api.ui.button.Button;
+        private uploadButton: api.dom.DivEl;
 
         private selectedOptionsView: SelectedOptionsView;
 
@@ -136,7 +136,7 @@ module api.content.inputtype.image {
                 this.uploadButton.show();
             });
 
-            this.uploadButton = new api.ui.button.Button();
+            this.uploadButton = new api.dom.DivEl();
             comboboxWrapper.appendChild(this.uploadButton);
             this.uploadButton.addClass("upload-button");
             this.uploadButton.onClicked((event: MouseEvent) => {

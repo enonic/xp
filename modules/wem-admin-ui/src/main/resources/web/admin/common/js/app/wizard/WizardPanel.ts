@@ -59,8 +59,6 @@ module api.app.wizard {
 
         private stepNavigatorAndToolbarContainer: api.dom.DivEl;
 
-        private persisted: boolean;
-
         private splitPanel: api.ui.panel.SplitPanel;
 
         private splitPanelThreshold: number = 960;
@@ -72,7 +70,6 @@ module api.app.wizard {
 
             this.tabId = params.tabId;
             this.persistedItem = params.persistedItem;
-            this.persisted = params.persistedItem == null;
             this.header = params.header;
             this.mainToolbar = params.mainToolbar;
             this.stepToolbar = params.stepToolbar;
@@ -109,35 +106,28 @@ module api.app.wizard {
             });
             ResponsiveManager.onAvailableSizeChanged(this.stepNavigatorAndToolbarContainer, (item: ResponsiveItem) => {
                 // update offset if step navigator is resized
-                this.updateStickyToolbar();
-                this.stepPanels.setScrollOffset(item.getElement().getEl().getHeight());
+                if (this.isVisible()) {
+                    this.updateStickyToolbar();
+                    this.stepPanels.setScrollOffset(item.getElement().getEl().getHeight());
+                }
             });
             this.formPanel.appendChild(aboveStepPanels).appendChild(this.stepPanels);
 
             this.setSteps(params.steps);
 
             if (this.persistedItem != null) {
-
                 this.setPersistedItem(this.persistedItem).
-                    then(() => {
-                        return this.postRenderExisting(this.persistedItem);
-                    }).catch((reason: any) => {
-                        api.DefaultErrorHandler.handle(reason);
-                    }).finally(() => {
-                        callback();
-                    }).done();
-            }
-            else {
+                    then(() => this.postRenderExisting(this.persistedItem)).
+                    catch((reason: any) => api.DefaultErrorHandler.handle(reason)).
+                    finally(() => callback()).
+                    done();
+            } else {
                 this.preRenderNew().
-                    then(() => {
-                        return this.renderNew();
-                    }).then(() => {
-                        return this.postRenderNew();
-                    }).catch((reason: any) => {
-                        api.DefaultErrorHandler.handle(reason);
-                    }).finally(()=> {
-                        callback();
-                    }).done();
+                    then(() => this.renderNew()).
+                    then(() => this.postRenderNew()).
+                    catch((reason: any) => api.DefaultErrorHandler.handle(reason)).
+                    finally(()=> callback()).
+                    done();
             }
 
             this.onRendered((event: api.dom.ElementRenderedEvent) => {
@@ -155,17 +145,6 @@ module api.app.wizard {
                     this.lastFocusedElement.focus();
                 }
             });
-
-            api.dom.Window.get().onResized((event: UIEvent) => {
-                var target = <HTMLElement> event.target;
-                if (target && !target.nodeName) {
-                    this.updateStickyToolbar();
-                }
-            }, this);
-        }
-
-        isPersisted(): boolean {
-            return this.persisted;
         }
 
         updateStickyToolbar() {
@@ -208,6 +187,10 @@ module api.app.wizard {
 
         getTabId(): api.app.AppBarTabId {
             return this.tabId;
+        }
+
+        setTabId(tabId: api.app.AppBarTabId) {
+            this.tabId = tabId;
         }
 
         getHeader(): WizardHeader {
@@ -304,29 +287,20 @@ module api.app.wizard {
         saveChanges(): Q.Promise<EQUITABLE> {
 
             if (this.isItemPersisted()) {
-                this.persisted = false;
-                return this.updatePersistedItem().
-                    then((persisted: EQUITABLE) => {
+                return this.updatePersistedItem().then((persistedItem: EQUITABLE) => {
 
-                        this.isChanged = false;
-                        return this.setPersistedItem(persisted).
-                            then(() => persisted);
+                    this.isChanged = false;
+                    return this.setPersistedItem(persistedItem).
+                        then(() => persistedItem);
+                });
+            } else {
+                return this.persistNewItem().then((persistedItem: EQUITABLE) => {
 
-                    });
-            }
-            else {
-                return this.persistNewItem().
-                    then((persistedItem: EQUITABLE)=> {
-
-                        this.isChanged = false;
-                        return this.postPersistNewItem(persistedItem).
-                            then(()=> {
-
-                                return this.setPersistedItem(persistedItem);
-
-                            }).then(() => persistedItem);
-
-                    });
+                    this.isChanged = false;
+                    return this.postPersistNewItem(persistedItem).
+                        then(() => this.setPersistedItem(persistedItem)).
+                        then(() => persistedItem);
+                });
             }
         }
 
@@ -395,9 +369,6 @@ module api.app.wizard {
                 .setAlignment(api.ui.panel.SplitPanelAlignment.VERTICAL)
                 .build();
             this.updateSplitPanel(splitPanel);
-            splitPanel.onResized((event: api.dom.ElementResizedEvent) => {
-                this.updateStickyToolbar();
-            });
             return splitPanel;
         }
 

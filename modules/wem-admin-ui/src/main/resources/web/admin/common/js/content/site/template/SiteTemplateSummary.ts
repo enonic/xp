@@ -2,7 +2,7 @@ module api.content.site.template {
 
     import PageTemplateKey = api.content.page.PageTemplateKey;
 
-    export class SiteTemplateSummary extends api.item.BaseItem implements api.Equitable, api.ui.treegrid.TreeItem {
+    export class SiteTemplateSummary extends api.item.BaseItem implements api.Equitable{
 
         private name: string;
 

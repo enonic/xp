@@ -24,6 +24,8 @@ module LiveEdit {
     import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
     import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
     import PageComponentResetEvent = api.liveedit.PageComponentResetEvent;
+    import TextComponentStartEditingEvent = api.liveedit.text.TextComponentStartEditingEvent;
+    import TextComponentEditedEvent = api.liveedit.text.TextComponentEditedEvent;
     import ItemViewIdProducer = api.liveedit.ItemViewIdProducer;
 
     export class LiveEditPage {
@@ -160,6 +162,16 @@ module LiveEdit {
                     this.previousSelectedItemView = undefined;
                 }
             });
+
+            TextComponentStartEditingEvent.on((event: TextComponentStartEditingEvent) => {
+                this.highlighter.hide();
+                LiveEdit.component.dragdropsort.DragDropSort.cancelDragDrop(
+                    api.liveedit.text.TextItemType.get().getConfig().getCssSelector());
+            });
+
+            TextComponentEditedEvent.on((event: TextComponentEditedEvent) => {
+                this.shader.shadeItemView(event.getView());
+            });
         }
 
         setItemViewListeners(itemView: ItemView) {
@@ -182,18 +194,6 @@ module LiveEdit {
                 this.cursor.reset();
                 itemView.hideTooltip();
             });
-
-            if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, TextComponentView)) {
-                var textView = <TextComponentView>itemView;
-                textView.onEdited(() => {
-                    this.highlighter.hide();
-                    textView.hideTooltip();
-                    textView.hideContextMenu();
-                    this.shader.shadeItemView(itemView);
-                    LiveEdit.component.dragdropsort.DragDropSort.cancelDragDrop(
-                        api.liveedit.text.TextItemType.get().getConfig().getCssSelector());
-                });
-            }
         }
 
         getByItemId(id: ItemViewId) {

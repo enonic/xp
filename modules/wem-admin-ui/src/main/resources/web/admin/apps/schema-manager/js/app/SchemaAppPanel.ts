@@ -2,12 +2,18 @@ module app {
 
     export class SchemaAppPanel extends api.app.BrowseAndWizardBasedAppPanel<api.schema.Schema> {
 
+        private browseActions: app.browse.SchemaBrowseActions;
+
+        private schemaTreeGrid: app.browse.SchemaTreeGrid;
+
         constructor(appBar: api.app.AppBar, path?: api.rest.Path) {
 
             super({
                 appBar: appBar
             });
 
+            this.browseActions = new app.browse.SchemaBrowseActions();
+            this.schemaTreeGrid = new app.browse.SchemaTreeGrid(this.browseActions);
             this.handleGlobalEvents();
 
             this.route(path);
@@ -93,7 +99,7 @@ module app {
         private handleBrowse(event: api.app.ShowBrowsePanelEvent) {
             var browsePanel: api.app.browse.BrowsePanel<api.schema.Schema> = this.getBrowsePanel();
             if (!browsePanel) {
-                this.addBrowsePanel(new app.browse.SchemaBrowsePanel());
+                this.addBrowsePanel(new app.browse.SchemaBrowsePanel(this.browseActions, this.schemaTreeGrid));
             } else {
                 this.showPanel(browsePanel);
             }

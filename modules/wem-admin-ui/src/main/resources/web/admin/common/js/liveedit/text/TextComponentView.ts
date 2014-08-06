@@ -12,18 +12,14 @@ module api.liveedit.text {
         }
     }
 
-    export class TextComponentView extends PageComponentView<TextComponent> {
-
+    export class TextComponentView extends PageComponentView<TextComponent> implements api.ui.text.TextEditorEditableArea {
         private textComponent: TextComponent;
 
         private placeholder: api.dom.DivEl;
 
         private editing: boolean;
 
-        private editedListener: {(): void}[];
-
         constructor(builder: TextComponentViewBuilder) {
-            this.editedListener = [];
             this.editing = false;
             super(builder.setContextMenuActions(this.createTextContextMenuActions()));
             this.textComponent = builder.pageComponent;
@@ -35,16 +31,17 @@ module api.liveedit.text {
                 this.addPlaceholder();
             }
 
-            this.onKeyDown(() => {
-                if (this.editing) {
-                    this.notifyEdited();
-                }
-            });
-            this.onKeyUp(() => {
-                if (this.editing) {
-                    this.notifyEdited();
-                }
-            });
+            this.onKeyDown(this.handleKeyboard.bind(this));
+            this.onKeyUp(this.handleKeyboard.bind(this));
+        }
+
+        getElement(): api.dom.Element {
+            return this;
+        }
+
+        processChanges() {
+            this.textComponent.setText(this.getEl().getInnerHtml());
+            new TextComponentEditedEvent(this).fire();
         }
 
         addPlaceholder() {
@@ -78,16 +75,20 @@ module api.liveedit.text {
             }
         }
 
+        handleKeyboard() {
+            if (this.editing) {
+                this.processChanges();
+            }
+        }
+
         select(clickPosition?: Position) {
             super.select(clickPosition);
 
             if (this.isEmpty()) {
                 this.addPlaceholder();
-                this.getEl().setCursor('url(' + api.util.getAdminUri('live-edit/images/pencil.png') + ') 0 40, text');
-            } else {
-                this.hideContextMenu();
-                this.showEditor();
             }
+
+            this.getEl().setCursor('url(' + api.util.getAdminUri('live-edit/images/pencil.png') + ') 0 40, text');
         }
 
         deselect() {
@@ -101,8 +102,6 @@ module api.liveedit.text {
 
             if (this.editing) {
                 api.ui.text.TextEditorToolbar.get().hideToolbar();
-                var text = this.getEl().getInnerHtml();
-                this.textComponent.setText(text);
                 this.editing = false;
             }
 
@@ -126,26 +125,13 @@ module api.liveedit.text {
             this.editing = true;
             api.ui.text.TextEditorToolbar.get().showToolbar(this);
 
-            this.notifyEdited();
+            this.hideTooltip();
+            this.hideContextMenu();
+            new TextComponentStartEditingEvent(this).fire();
         }
 
         getTooltipViewer(): TextComponentViewer {
             return new TextComponentViewer();
-        }
-
-        onEdited(listener: () => void) {
-            if (!this.editedListener) {
-                this.editedListener = [];
-            }
-            this.editedListener.push(listener);
-        }
-
-        unEdited(listener: () => void) {
-            this.editedListener = this.editedListener.filter((current) => (current != listener));
-        }
-
-        private notifyEdited() {
-            this.editedListener.forEach((listener: () => void) => listener());
         }
 
         private createTextContextMenuActions(): api.ui.Action[] {

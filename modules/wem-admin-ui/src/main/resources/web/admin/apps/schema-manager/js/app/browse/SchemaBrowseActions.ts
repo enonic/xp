@@ -5,14 +5,6 @@ module app.browse {
         constructor(label: string, shortcut?: string) {
             super(label, shortcut);
         }
-
-        extModelsToSchemas(models: Ext_data_Model[]) {
-            var schemas: api.schema.Schema[] = [];
-            models.forEach((model: Ext_data_Model) => {
-                schemas.push(api.schema.Schema.fromExtModel(model));
-            });
-            return schemas;
-        }
     }
 
     export class NewSchemaAction extends api.ui.Action {
@@ -27,92 +19,124 @@ module app.browse {
 
     export class EditSchemaAction extends BaseSchemaBrowseAction {
 
-        constructor(treeGridPanel: api.app.browse.grid.TreeGridPanel) {
+        private schemaTreeGrid: app.browse.SchemaTreeGrid;
+
+        constructor() {
             super("Edit");
+            this.schemaTreeGrid = null;
             this.setEnabled(false);
             this.onExecuted(() => {
-                new EditSchemaEvent(this.extModelsToSchemas(treeGridPanel.getSelection())).fire();
+                if (this.schemaTreeGrid) {
+                    new EditSchemaEvent(this.schemaTreeGrid.getSelectedDataNodes()).fire();
+                }
             });
+        }
+
+        setSchemaTreeGrid(schemaTreeGrid: app.browse.SchemaTreeGrid) {
+            this.schemaTreeGrid = schemaTreeGrid;
         }
     }
 
     export class OpenSchemaAction extends BaseSchemaBrowseAction {
 
-        constructor(treeGridPanel: api.app.browse.grid.TreeGridPanel) {
+        private schemaTreeGrid: app.browse.SchemaTreeGrid;
+
+        constructor() {
             super("Open");
+            this.schemaTreeGrid = null;
             this.setEnabled(false);
             this.onExecuted(() => {
-                new OpenSchemaEvent(this.extModelsToSchemas(treeGridPanel.getSelection())).fire();
+                if (this.schemaTreeGrid) {
+                    new OpenSchemaEvent(this.schemaTreeGrid.getSelectedDataNodes()).fire();
+                }
             });
+        }
+
+        setSchemaTreeGrid(schemaTreeGrid: app.browse.SchemaTreeGrid) {
+            this.schemaTreeGrid = schemaTreeGrid;
         }
     }
 
     export class DeleteSchemaAction extends BaseSchemaBrowseAction {
 
-        constructor(treeGridPanel: api.app.browse.grid.TreeGridPanel) {
+        private schemaTreeGrid: app.browse.SchemaTreeGrid;
+
+        constructor() {
             super("Delete", "mod+del");
+            this.schemaTreeGrid = null;
             this.setEnabled(false);
             this.onExecuted(() => {
-                new DeleteSchemaPromptEvent(this.extModelsToSchemas(treeGridPanel.getSelection())).fire();
+                if (this.schemaTreeGrid) {
+                    new DeleteSchemaPromptEvent(this.schemaTreeGrid.getSelectedDataNodes()).fire();
+                }
             });
+        }
+
+        setSchemaTreeGrid(schemaTreeGrid: app.browse.SchemaTreeGrid) {
+            this.schemaTreeGrid = schemaTreeGrid;
         }
     }
 
     export class ReindexSchemaAction extends BaseSchemaBrowseAction {
 
-        constructor(treeGridPanel: api.app.browse.grid.TreeGridPanel) {
+        private schemaTreeGrid: app.browse.SchemaTreeGrid;
+
+        constructor() {
             super("Re-index");
+            this.schemaTreeGrid = null;
             this.onExecuted(() => {
-                new ReindexSchemaEvent(this.extModelsToSchemas(treeGridPanel.getSelection())).fire();
+                if (this.schemaTreeGrid) {
+                    new ReindexSchemaEvent(this.schemaTreeGrid.getSelectedDataNodes()).fire();
+                }
             });
+        }
+
+        setSchemaTreeGrid(schemaTreeGrid: app.browse.SchemaTreeGrid) {
+            this.schemaTreeGrid = schemaTreeGrid;
         }
     }
 
     export class ExportSchemaAction extends BaseSchemaBrowseAction {
 
-        constructor(treeGridPanel: api.app.browse.grid.TreeGridPanel) {
+        private schemaTreeGrid: app.browse.SchemaTreeGrid;
+
+        constructor() {
             super("Export");
+            this.schemaTreeGrid = null;
             this.onExecuted(() => {
-                new ExportSchemaEvent(this.extModelsToSchemas(treeGridPanel.getSelection())).fire();
+                if (this.schemaTreeGrid) {
+                    new ExportSchemaEvent(this.schemaTreeGrid.getSelectedDataNodes()).fire();
+                }
             });
+        }
+
+        setSchemaTreeGrid(schemaTreeGrid: app.browse.SchemaTreeGrid) {
+            this.schemaTreeGrid = schemaTreeGrid;
         }
     }
 
     export class SchemaBrowseActions {
 
         public NEW_SCHEMA: api.ui.Action;
-        public EDIT_SCHEMA: api.ui.Action;
-        public OPEN_SCHEMA: api.ui.Action;
-        public DELETE_SCHEMA: api.ui.Action;
-        public REINDEX_SCHEMA: api.ui.Action;
-        public EXPORT_SCHEMA: api.ui.Action;
+        public EDIT_SCHEMA: EditSchemaAction;
+        public OPEN_SCHEMA: OpenSchemaAction;
+        public DELETE_SCHEMA: DeleteSchemaAction;
+        public REINDEX_SCHEMA: ReindexSchemaAction;
+        public EXPORT_SCHEMA: ExportSchemaAction;
 
         private allActions: api.ui.Action[] = [];
 
-        private static INSTANCE: SchemaBrowseActions;
-
-        static init(treeGridPanel: api.app.browse.grid.TreeGridPanel): SchemaBrowseActions {
-            new SchemaBrowseActions(treeGridPanel);
-            return SchemaBrowseActions.INSTANCE;
-        }
-
-        static get(): SchemaBrowseActions {
-            return SchemaBrowseActions.INSTANCE;
-        }
-
-        constructor(treeGridPanel: api.app.browse.grid.TreeGridPanel) {
+        constructor() {
 
             this.NEW_SCHEMA = new NewSchemaAction();
-            this.EDIT_SCHEMA = new EditSchemaAction(treeGridPanel);
-            this.OPEN_SCHEMA = new OpenSchemaAction(treeGridPanel);
-            this.DELETE_SCHEMA = new DeleteSchemaAction(treeGridPanel);
-            this.REINDEX_SCHEMA = new ReindexSchemaAction(treeGridPanel);
-            this.EXPORT_SCHEMA = new ExportSchemaAction(treeGridPanel);
+            this.EDIT_SCHEMA = new EditSchemaAction();
+            this.OPEN_SCHEMA = new OpenSchemaAction();
+            this.DELETE_SCHEMA = new DeleteSchemaAction();
+            this.REINDEX_SCHEMA = new ReindexSchemaAction();
+            this.EXPORT_SCHEMA = new ExportSchemaAction();
 
             this.allActions.push(this.NEW_SCHEMA, this.EDIT_SCHEMA, this.OPEN_SCHEMA, this.DELETE_SCHEMA, this.REINDEX_SCHEMA,
                 this.EXPORT_SCHEMA);
-
-            SchemaBrowseActions.INSTANCE = this;
         }
 
         getAllActions(): api.ui.Action[] {
@@ -136,6 +160,14 @@ module app.browse {
                 this.REINDEX_SCHEMA.setEnabled(true);
                 this.EXPORT_SCHEMA.setEnabled(true);
             }
+        }
+
+        setSchemaTreeGrid(templateTreeGrid: app.browse.SchemaTreeGrid) {
+            this.EDIT_SCHEMA.setSchemaTreeGrid(templateTreeGrid);
+            this.OPEN_SCHEMA.setSchemaTreeGrid(templateTreeGrid);
+            this.DELETE_SCHEMA.setSchemaTreeGrid(templateTreeGrid);
+            this.REINDEX_SCHEMA.setSchemaTreeGrid(templateTreeGrid);
+            this.EXPORT_SCHEMA.setSchemaTreeGrid(templateTreeGrid);
         }
 
     }

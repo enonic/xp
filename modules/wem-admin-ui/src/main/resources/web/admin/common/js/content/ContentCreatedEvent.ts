@@ -2,15 +2,21 @@ module api.content {
 
     export class ContentCreatedEvent extends api.event.Event {
 
-        private content:api.content.Content;
+        private content: api.content.Content;
+        private wizard: api.app.wizard.WizardPanel<Content>;
 
-        constructor(content:api.content.Content ) {
+        constructor(content: api.content.Content, wizard: api.app.wizard.WizardPanel<Content>) {
             super();
             this.content = content;
+            this.wizard = wizard;
         }
 
-        public getContent():api.content.Content {
+        public getContent(): api.content.Content {
             return this.content;
+        }
+
+        public getWizard(): api.app.wizard.WizardPanel<Content> {
+            return this.wizard;
         }
 
         static on(handler: (event: ContentCreatedEvent) => void) {

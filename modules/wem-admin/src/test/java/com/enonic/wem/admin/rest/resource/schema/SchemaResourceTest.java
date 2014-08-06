@@ -132,7 +132,7 @@ public class SchemaResourceTest
         Mockito.when( this.schemaService.getChildren( Mockito.isA( SchemaKey.class ) ) ).thenReturn( Schemas.empty() );
 
         String json = request().path( "schema/list" ).queryParam( "parentKey", "ContentType:parent" ).get().getAsString();
-        assertEquals( "[]", json );
+        assertEquals( "{\"schemas\":[],\"total\":0}", json );
     }
 
     @Override

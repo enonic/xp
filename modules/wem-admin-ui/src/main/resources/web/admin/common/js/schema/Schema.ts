@@ -117,6 +117,9 @@ module api.schema {
             return schema;
         }
 
+        static fromJson(json: api.schema.SchemaJson): Schema {
+            return new SchemaBuilder().fromSchemaJson(json).build();
+        }
     }
 
     export class SchemaBuilder extends api.item.BaseItemBuilder {

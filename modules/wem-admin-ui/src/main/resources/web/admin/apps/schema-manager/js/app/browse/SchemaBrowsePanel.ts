@@ -1,6 +1,12 @@
 module app.browse {
 
+    import Schema = api.schema.Schema;
+    import TreeNode = api.ui.treegrid.TreeNode;
+    import BrowseItem = api.app.browse.BrowseItem;
+
     export class SchemaBrowsePanel extends api.app.browse.BrowsePanel<api.schema.Schema> {
+
+        private schemaTreeGrid: SchemaTreeGrid;
 
         private browseActions: app.browse.SchemaBrowseActions;
 
@@ -8,21 +14,19 @@ module app.browse {
 
         private schemaTreeGridPanelMask: api.ui.mask.LoadMask;
 
-        constructor() {
+        constructor(browseActions: SchemaBrowseActions, schemaTreeGrid: SchemaTreeGrid) {
             var treeGridContextMenu = new app.browse.SchemaTreeGridContextMenu();
-            var treeGridPanel = components.gridPanel = new SchemaTreeGridPanel({
-                contextMenu: treeGridContextMenu
+
+            this.schemaTreeGrid = schemaTreeGrid;
+            this.schemaTreeGridPanelMask = new api.ui.mask.LoadMask(schemaTreeGrid);
+            schemaTreeGrid.onRendered((event: api.dom.ElementRenderedEvent) => {
+                this.schemaTreeGridPanelMask.show();
+            });
+            schemaTreeGrid.onLoaded(() => {
+                this.schemaTreeGridPanelMask.hide();
             });
 
-            this.schemaTreeGridPanelMask = new api.ui.mask.LoadMask(treeGridPanel);
-            treeGridPanel.onRendered((event: api.dom.ElementRenderedEvent) => {
-                this.schemaTreeGridPanelMask.show();
-            })
-            treeGridPanel.onTreeGridStoreLoaded(() => {
-                this.schemaTreeGridPanelMask.hide();
-            })
-
-            this.browseActions = SchemaBrowseActions.init(treeGridPanel);
+            this.browseActions = browseActions;
             treeGridContextMenu.setActions(this.browseActions);
 
             this.toolbar = new SchemaBrowseToolbar(this.browseActions);
@@ -31,18 +35,13 @@ module app.browse {
 
             super({
                 browseToolbar: this.toolbar,
-                treeGridPanel: treeGridPanel,
+                treeGridPanel2: schemaTreeGrid,
                 browseItemPanel: browseItemPanel
             });
 
             api.schema.SchemaDeletedEvent.on((event) => {
-                var schemas: api.schema.Schema[] = event.getSchemas();
-                console.log('On schema deleted', event.getSchemas());
-                for (var i = 0; i < schemas.length; i++) {
-                    var schema: api.schema.Schema = schemas[i];
-                    // make up schema key
-                    treeGridPanel.removeItem(schema.getSchemaKind().toString() + ":" + schema.getName());
-                }
+                this.schemaTreeGrid.reload();
+                // TODO remove deleted item instead of reloading the whole list
             });
 
             api.schema.SchemaCreatedEvent.on((event) => {
@@ -55,28 +54,41 @@ module app.browse {
                 this.setRefreshNeeded(true);
             });
 
-            treeGridPanel.onTreeGridSelectionChanged((event: api.app.browse.grid.TreeGridSelectionChangedEvent) => {
-                this.browseActions.updateActionsEnabledState(<any[]>event.getSelectedModels());
+            schemaTreeGrid.onRowSelectionChanged((selectedRows: TreeNode<Schema>[]) => {
+                this.browseActions.updateActionsEnabledState(<Schema[]>selectedRows.map((elem) => {
+                    return elem.getData();
+                }));
             });
+
+            // TODO double click event from old grid
+//            this.onTreeGridItemDoubleClicked((event: api.app.browse.grid.TreeGridItemDoubleClickedEvent) => {
+//                new app.browse.EditSchemaEvent([<any>event.getClickedModel()]).fire();
+//            });
         }
 
-        extModelsToBrowseItems(models: Ext_data_Model[]): api.app.browse.BrowseItem<api.schema.Schema>[] {
+        treeNodesToBrowseItems(nodes: TreeNode<Schema>[]): BrowseItem<Schema>[] {
+            var browseItems: BrowseItem<Schema>[] = [];
 
-            var browseItems: api.app.browse.BrowseItem<api.schema.Schema>[] = [];
-
-            models.forEach((model: Ext_data_Model, index: number) => {
-
-                var schema: api.schema.Schema = api.schema.Schema.fromExtModel(model);
-
-                var item = new api.app.browse.BrowseItem<api.schema.Schema>(schema).
-                    setDisplayName(model.data['displayName']).
-                    setPath(model.data['name']).
-                    setIconUrl(model.data['iconUrl']);
-
-                browseItems.push(item);
+            nodes.forEach((node: TreeNode<Schema>, index: number) => {
+                for (var i = 0; i <= index; i++) {
+                    if (nodes[i].getData().getId() === node.getData().getId()) {
+                        break;
+                    }
+                }
+                if (i === index) {
+                    var schema = node.getData();
+                    var item = new BrowseItem<Schema>(schema).
+                        setId(schema.getId()).
+                        setDisplayName(schema.getDisplayName()).
+                        setPath(schema.getKey()).
+                        setIconUrl(schema.getIconUrl());
+                    browseItems.push(item);
+                }
             });
+
             return browseItems;
         }
+
     }
 
 }

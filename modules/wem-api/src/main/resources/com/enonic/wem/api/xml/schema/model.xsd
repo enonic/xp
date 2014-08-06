@@ -18,6 +18,7 @@
   <xsd:include schemaLocation="common.xsd"/>
   <xsd:include schemaLocation="form.xsd"/>
   <xsd:include schemaLocation="module.xsd"/>
+  <xsd:include schemaLocation="site-template.xsd"/>
   <xsd:include schemaLocation="template.xsd"/>
   <xsd:include schemaLocation="content-type.xsd"/>
   <xsd:include schemaLocation="mixin.xsd"/>

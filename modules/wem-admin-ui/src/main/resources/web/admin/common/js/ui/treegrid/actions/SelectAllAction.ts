@@ -5,7 +5,7 @@ module api.ui.treegrid.actions {
 
     export class SelectAllAction extends Action {
 
-        constructor(grid: Grid<TreeNode<TreeItem>>) {
+        constructor(grid: Grid<TreeNode<Object>>) {
             super("Select All");
             this.setEnabled(true);
             this.onExecuted(() => {

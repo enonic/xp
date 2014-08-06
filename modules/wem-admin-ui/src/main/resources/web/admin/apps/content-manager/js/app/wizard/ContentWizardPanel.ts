@@ -211,14 +211,16 @@ module app.wizard {
                 });
 
                 ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
-                    this.updateStickyToolbar();
-                    if (item.isInRangeOrSmaller(ResponsiveRanges._720_960)) {
-                        this.cycleViewModeButton.disableAction(this.contentWizardActions.getShowSplitEditAction());
-                        if (this.isSplitView()) {
-                            this.cycleViewModeButton.setCurrentAction(this.contentWizardActions.getShowFormAction());
+                    if (this.isVisible()) {
+                        this.updateStickyToolbar();
+                        if (item.isInRangeOrSmaller(ResponsiveRanges._720_960)) {
+                            this.cycleViewModeButton.disableAction(this.contentWizardActions.getShowSplitEditAction());
+                            if (this.isSplitView()) {
+                                this.cycleViewModeButton.setCurrentAction(this.contentWizardActions.getShowFormAction());
+                            }
+                        } else if (item.isInRangeOrBigger(ResponsiveRanges._960_1200)) {
+                            this.cycleViewModeButton.enableAction(this.contentWizardActions.getShowSplitEditAction());
                         }
-                    } else if (item.isInRangeOrBigger(ResponsiveRanges._960_1200)) {
-                        this.cycleViewModeButton.enableAction(this.contentWizardActions.getShowSplitEditAction());
                     }
                 });
 
@@ -366,7 +368,7 @@ module app.wizard {
                         setParentContent(this.parentContent).
                         setPersistedContent(content).
                         setAttachments(attachments).
-                        setShowEmptyFormItemSetOccurrences(this.isPersisted()).
+                        setShowEmptyFormItemSetOccurrences(this.isItemPersisted()).
                         build();
 
                     this.contentWizardStepForm.renderExisting(this.formContext, contentData, content.getForm());
@@ -503,8 +505,15 @@ module app.wizard {
                 execute().
                 then((content: Content) => {
 
-                    new api.content.ContentUpdatedEvent(content).fire();
-                    api.notify.showFeedback('Content was updated!');
+                    if (this.isRenderingNew()) {
+
+                        new api.content.ContentCreatedEvent(content, this).fire();
+                        api.notify.showFeedback('Content was created!');
+                    } else {
+
+                        new api.content.ContentUpdatedEvent(content, this).fire();
+                        api.notify.showFeedback('Content was updated!');
+                    }
 
                     return Q(this.liveFormPanel ? this.liveFormPanel.contentSaved() : null).then(() => content);
                 });

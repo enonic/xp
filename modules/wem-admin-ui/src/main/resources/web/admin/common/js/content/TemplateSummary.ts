@@ -7,7 +7,7 @@ module api.content {
         SITE
     }
 
-    export class TemplateSummary extends api.item.BaseItem implements api.ui.treegrid.TreeItem {
+    export class TemplateSummary extends api.item.BaseItem {
 
         private name: string;
 
@@ -65,18 +65,6 @@ module api.content {
 
         static fromJson(json: api.content.site.template.TemplateSummaryJson): TemplateSummary {
             return new TemplateSummaryBuilder().fromTemplateSummaryJson(json).build();
-        }
-
-        static fromExtModel(model: Ext_data_Model): TemplateSummary {
-            return TemplateSummary.fromJson(<api.content.site.template.TemplateSummaryJson>model.raw);
-        }
-
-        static fromExtModelArray(modelArray: Ext_data_Model[]): TemplateSummary[] {
-            var array: TemplateSummary[] = [];
-            modelArray.forEach((model: Ext_data_Model) => {
-                array.push(TemplateSummary.fromExtModel(model));
-            });
-            return array;
         }
     }
 

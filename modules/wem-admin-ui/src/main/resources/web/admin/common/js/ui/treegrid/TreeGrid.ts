@@ -16,7 +16,7 @@ module api.ui.treegrid {
     import TreeGridActions = api.ui.treegrid.actions.TreeGridActions;
     import TreeGridToolbarActions = api.ui.treegrid.actions.TreeGridToolbarActions;
 
-    export class TreeGrid<NODE extends TreeItem> extends api.ui.panel.Panel {
+    export class TreeGrid<NODE> extends api.ui.panel.Panel {
 
         private columns: GridColumn<NODE>[] = [];
 
@@ -144,7 +144,7 @@ module api.ui.treegrid {
                     var selected = this.grid.getSelectedRows();
                     if (selected.length === 1) {
                         var node = this.gridData.getItem(selected[0]);
-                        if (node && node.getData().hasChildren()
+                        if (node && this.hasChildren(node.getData())
                                 && !node.isExpanded() && this.active) {
 
                             this.active = false;
@@ -228,6 +228,25 @@ module api.ui.treegrid {
          Must be overridden in most cases.
          Various items may have different requests
          */
+        hasChildren(elem: NODE): boolean {
+            return false;
+        }
+
+        /*
+         Must be overridden in most cases.
+         Various items may have different requests
+         */
+        fetch(elem: NODE): Q.Promise<NODE> {
+            var deferred = Q.defer<NODE>();
+            // Empty logic
+            deferred.resolve(null);
+            return deferred.promise;
+        }
+
+        /*
+         Must be overridden in most cases.
+         Various items may have different requests
+         */
         fetchChildren(parent?: NODE): Q.Promise<NODE[]> {
             var deferred = Q.defer<NODE[]>();
             // Empty logic
@@ -257,12 +276,14 @@ module api.ui.treegrid {
             this.active = false;
 
             if (!this.stash) {
+                // replace with refresh in future
                 this.reload();
             } else {
                 this.root = this.stash;
                 this.initData(this.root.treeToList());
                 this.resetAndRender();
                 this.active = true;
+                this.notifyLoaded();
             }
 
             this.stash = null;
@@ -273,7 +294,7 @@ module api.ui.treegrid {
                 var formatter = columns[0].getFormatter();
                 var toggleFormatter = (row: number, cell: number, value: any, columnDef: any, node: TreeNode<NODE>) => {
                     var toggleSpan = new api.dom.SpanEl("toggle icon");
-                    if (node.getData().hasChildren()) {
+                    if (this.hasChildren(node.getData())) {
                         var toggleClass = node.isExpanded() ? "collapse" : "expand";
                         toggleSpan.addClass(toggleClass);
                     }
@@ -292,11 +313,15 @@ module api.ui.treegrid {
             this.grid.selectAll();
         }
 
-        deselectItem(id: string) {
+        deselectAll() {
+            this.grid.clearSelection();
+        }
+
+        deselectItem(id:string) {
             var oldSelected = this.grid.getSelectedRows(),
                 newSelected = [];
             for (var i = 0; i < oldSelected.length; i++) {
-                if (id !== this.gridData.getItem(oldSelected[i]).getData().getId()) {
+                if (id !== this.gridData.getItem(oldSelected[i]).getDataId()) {
                     newSelected.push(oldSelected[i]);
                 }
             }
@@ -319,6 +344,7 @@ module api.ui.treegrid {
             return dataNodes;
         }
 
+        // Hard reset
         reload(parent?: NODE): void {
             this.root = new TreeNodeBuilder<NODE>().build();
 
@@ -336,6 +362,50 @@ module api.ui.treegrid {
                     this.resetAndRender();
                     this.active = true;
                 }).done(() => this.notifyLoaded());
+        }
+
+        // Soft reset, that saves node status
+        refresh(): void {
+            var root = this.stash || this.root;
+
+            this.active = false;
+
+            root.regenerateIds();
+
+            root.setExpanded(true);
+            this.initData(root.treeToList());
+            this.resetAndRender();
+
+            this.active = true;
+
+            this.notifyLoaded();
+        }
+
+        deleteNodes(data: NODE[]): void {
+            var root = this.stash || this.root;
+            var updated:TreeNode<NODE>[] = [];
+            data.forEach((elem: NODE) => {
+                var node = root.findNode(elem);
+                if (node && node.getParent()) {
+                    updated.push(node.getParent());
+                    node.getParent().removeChild(node);
+                    updated.filter((el) => {
+                        return el.getDataId() !== node.getId();
+                    });
+                }
+            });
+            var promises = updated.map((el) => {
+                return this.fetch(el.getData());
+            });
+            Q.all(promises).then((results:NODE[]) => {
+                results.forEach((result:NODE, index:number) => {
+                    updated[index].setData(result);
+                });
+            }).catch((reason: any) => {
+                api.DefaultErrorHandler.handle(reason);
+            }).finally(() => {
+                this.active = true;
+            }).done(() => this.notifyLoaded());
         }
 
         private initData(nodes: TreeNode<NODE>[]) {

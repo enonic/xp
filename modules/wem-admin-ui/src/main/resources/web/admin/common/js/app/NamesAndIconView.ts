@@ -44,7 +44,7 @@ module api.app {
             this.wrapperDivEl = new api.dom.DivEl("wrapper");
             this.appendChild(this.wrapperDivEl);
 
-            this.iconImageEl = new api.dom.ImgEl(null,"icon");
+            this.iconImageEl = new api.dom.ImgEl(null, "icon");
             this.wrapperDivEl.appendChild(this.iconImageEl);
 
             this.iconDivEl = new api.dom.DivEl("icon");
@@ -59,14 +59,12 @@ module api.app {
             this.appendChild(this.iconLabelEl);
         }
 
-        setMainName(value: string): NamesAndIconView
-        {
+        setMainName(value: string): NamesAndIconView {
             this.namesView.setMainName(value);
             return this;
         }
 
-        setSubName(value: string, title?: string): NamesAndIconView
-        {
+        setSubName(value: string, title?: string): NamesAndIconView {
             this.namesView.setSubName(value, title);
             return this;
         }
@@ -78,15 +76,14 @@ module api.app {
             return this;
         }
 
-        setIconUrl(value: string): NamesAndIconView
-        {
+        setIconUrl(value: string): NamesAndIconView {
             this.iconImageEl.setSrc(value);
             this.iconDivEl.hide();
             this.iconImageEl.show();
             return this;
         }
 
-        setDisplayIconLabel(display:boolean): NamesAndIconView {
+        setDisplayIconLabel(display: boolean): NamesAndIconView {
             if (display) {
                 this.iconLabelEl.show();
             } else {
@@ -95,5 +92,20 @@ module api.app {
 
             return this;
         }
+
+        /**
+         * protected, to be used by inheritors
+         */
+        getIconImageEl(): api.dom.ImgEl {
+            return this.iconImageEl;
+        }
+
+        /**
+         * protected, to be used by inheritors
+         */
+        getWrapperDivEl(): api.dom.DivEl {
+            return this.wrapperDivEl;
+        }
+
     }
 }
