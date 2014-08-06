@@ -2,15 +2,15 @@ module app.wizard {
 
     export class ToggleContextWindowEvent extends api.event.Event {
 
-        private fixed: boolean;
+        private toggler: ContextWindowToggler;
 
-        constructor(fixed: boolean) {
+        constructor(toggler: ContextWindowToggler) {
             super();
-            this.fixed = fixed;
+            this.toggler = toggler;
         }
 
-        isFixed(): boolean {
-            return this.fixed;
+        getToggler(): ContextWindowToggler {
+            return this.toggler;
         }
 
         static on(handler: (event: ToggleContextWindowEvent) => void) {
