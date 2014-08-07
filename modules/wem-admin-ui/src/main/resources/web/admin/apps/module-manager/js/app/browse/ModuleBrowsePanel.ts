@@ -2,6 +2,7 @@ module app.browse {
 
     import ModuleSummary = api.module.ModuleSummary;
     import TreeNode = api.ui.treegrid.TreeNode;
+    import BrowseItem = api.app.browse.BrowseItem;
 
     export class ModuleBrowsePanel extends api.app.browse.BrowsePanel<api.module.ModuleSummary> {
 
@@ -35,6 +36,28 @@ module app.browse {
             });
 
             this.registerEvents();
+        }
+
+        treeNodesToBrowseItems(nodes: TreeNode<ModuleSummary>[]): api.app.browse.BrowseItem<ModuleSummary>[] {
+            var browseItems: BrowseItem<ModuleSummary>[] = [];
+
+            // do not proceed duplicated content. still, it can be selected
+            nodes.forEach((node: TreeNode<ModuleSummary>, index: number) => {
+                for (var i = 0; i <= index; i++) {
+                    if (nodes[i].getData().getId() === node.getData().getId()) {
+                        break;
+                    }
+                }
+                if (i === index) {
+                    var moduleEl = node.getData();
+                    var item = new BrowseItem<ModuleSummary>(moduleEl).
+                        setId(moduleEl.getId()).
+                        setDisplayName(moduleEl.getDisplayName()).
+                        setPath(moduleEl.getName());
+                    browseItems.push(item);
+                }
+            });
+            return browseItems;
         }
 
         private registerEvents() {

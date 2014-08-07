@@ -107,7 +107,9 @@ module api.ui.treegrid {
                         this.grid.selectRow(data.row);
                     }
                 }
-                this.contextMenu.hide();
+                if (this.contextMenu) {
+                    this.contextMenu.hide();
+                }
                 event.stopPropagation();
             });
 
