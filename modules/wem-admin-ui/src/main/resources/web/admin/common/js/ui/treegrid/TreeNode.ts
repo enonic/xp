@@ -110,10 +110,10 @@ module api.ui.treegrid {
             return this.children.length > 0;
         }
 
-        setChildrenFromItems(children: NODE[]) {
+        setChildrenFromData(dataList: NODE[]) {
             this.children = [];
 
-            children.forEach((child) => {
+            dataList.forEach((child) => {
                 this.children.push(new TreeNodeBuilder<NODE>().setData(child).setParent(this).build());
             });
         }

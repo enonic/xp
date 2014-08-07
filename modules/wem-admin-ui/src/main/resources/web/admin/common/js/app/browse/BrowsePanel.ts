@@ -23,7 +23,6 @@ module api.app.browse {
 
         private newTreeGrid: api.ui.treegrid.TreeGrid<Object>;
 
-
         private browseItemPanel: BrowseItemPanel<M>;
 
         private gridAndDetailSplitPanel: api.ui.panel.SplitPanel;
@@ -47,7 +46,7 @@ module api.app.browse {
             this.filterPanel = params.filterPanel;
 
             this.browseItemPanel.onDeselected((event: ItemDeselectedEvent<M>) => {
-                this.newTreeGrid.deselectItem(event.getBrowseItem().getId());
+                this.newTreeGrid.deselectNode(event.getBrowseItem().getId());
             });
 
             this.gridAndToolbarContainer = new api.ui.panel.Panel();
@@ -103,7 +102,7 @@ module api.app.browse {
 
         // TODO: ContentSummary must be replaced with an ContentSummaryAndCompareStatus after old grid is removed
         treeNodesToBrowseItems(nodes: api.ui.treegrid.TreeNode<Object>[]): BrowseItem<M>[] {
-            throw Error("To be implemented by inheritor");
+            return [];
         }
 
         refreshFilterAndGrid() {

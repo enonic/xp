@@ -57,15 +57,15 @@ module app.browse {
 
         }
 
-        fetchChildren(parent?: Schema): Q.Promise<Schema[]> {
-            var parentId = parent ? parent.getKey() : '';
-            return new api.schema.SchemaTreeRequest(parentId).sendAndParse();
-        }
-
         private defaultNameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<Schema>) {
             var viewer = new SchemaViewer();
             viewer.setObject(node.getData());
             return viewer.toString();
+        }
+
+        fetchChildren(parentData?: Schema): Q.Promise<Schema[]> {
+            var parentId = parentData ? parentData.getKey() : '';
+            return new api.schema.SchemaTreeRequest(parentId).sendAndParse();
         }
     }
 }
