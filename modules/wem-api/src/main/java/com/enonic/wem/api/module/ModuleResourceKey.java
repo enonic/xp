@@ -5,10 +5,7 @@ import java.net.URL;
 import com.google.common.base.Preconditions;
 import com.google.common.io.Files;
 
-import com.enonic.wem.api.resource.ResourceReference;
-
 public final class ModuleResourceKey
-    implements ResourceReference
 {
     private final static String URL_PROTOCOL_PREFIX = "module";
 
@@ -25,7 +22,6 @@ public final class ModuleResourceKey
         this.uri = this.module.toString() + ":" + this.path;
     }
 
-    @Override
     public String getUri()
     {
         return this.uri;

@@ -6,7 +6,4 @@ public interface ResourceService
 {
     public Resource getResource( ModuleResourceKey key )
         throws ResourceNotFoundException;
-
-    public Resource getResource( ResourceReference ref )
-        throws ResourceNotFoundException;
 }

@@ -9,7 +9,7 @@ import com.google.common.io.Resources;
 
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleResourceKey;
-import com.enonic.wem.api.module.ModuleResourceUrlResolver;
+import com.enonic.wem.api.resource.ResourceUrlResolver;
 
 public class ScriptSourceImpl
     implements ScriptSource
@@ -21,7 +21,7 @@ public class ScriptSourceImpl
     public ScriptSourceImpl( final ModuleResourceKey key )
     {
         this.key = key;
-        this.url = ModuleResourceUrlResolver.resolve( key);
+        this.url = ResourceUrlResolver.resolve( key );
     }
 
     @Override

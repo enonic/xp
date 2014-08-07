@@ -1,19 +1,21 @@
-package com.enonic.wem.api.module;
+package com.enonic.wem.api.resource;
 
 import java.net.URL;
 
 import com.google.common.base.Throwables;
 
-public class ModuleResourceUrlResolver
+import com.enonic.wem.api.module.ModuleResourceKey;
+
+public class ResourceUrlResolver
 {
-    private static ModuleResourceUrlResolver CURRENT;
+    private static ResourceUrlResolver CURRENT;
 
     static
     {
-        new ModuleResourceUrlResolver();
+        new ResourceUrlResolver();
     }
 
-    public ModuleResourceUrlResolver()
+    public ResourceUrlResolver()
     {
         CURRENT = this;
     }

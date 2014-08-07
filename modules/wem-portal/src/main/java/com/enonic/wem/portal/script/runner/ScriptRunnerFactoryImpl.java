@@ -3,7 +3,6 @@ package com.enonic.wem.portal.script.runner;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.enonic.wem.core.module.ModuleResourcePathResolver;
 import com.enonic.wem.portal.script.compiler.ScriptCompiler;
 import com.enonic.wem.portal.script.lib.ContextScriptBean;
 import com.enonic.wem.portal.script.lib.SystemScriptBean;
@@ -20,9 +19,6 @@ public class ScriptRunnerFactoryImpl
 
     @Inject
     protected SystemScriptBean systemScriptBean;
-
-    @Inject
-    protected ModuleResourcePathResolver moduleResourcePathResolver;
 
     @Inject
     protected Provider<ContextScriptBean> contextServiceBeans;

@@ -2,10 +2,10 @@ package com.enonic.wem.core.content.page
 
 import com.enonic.wem.api.content.page.PageDescriptorKey
 import com.enonic.wem.api.module.ModuleResourceKey
-import com.enonic.wem.api.module.ModuleResourceUrlResolver
+import com.enonic.wem.api.resource.ResourceUrlResolver
 
 abstract class AbstractPageDescriptorServiceTest
-        extends AbstractDescriptorServiceTest
+    extends AbstractDescriptorServiceTest
 {
     def PageDescriptorServiceImpl service
 
@@ -15,9 +15,9 @@ abstract class AbstractPageDescriptorServiceTest
         this.service.resourceService = this.resourceService;
 
         def modDir = super.modulesDir;
-        new ModuleResourceUrlResolver() {
+        new ResourceUrlResolver() {
             protected URL doResolve( final ModuleResourceKey key )
-                    throws Exception
+                throws Exception
             {
                 return new URL( "file:" + modDir.getPath() + "/" + key.getModule().toString() + key.getPath() );
             }

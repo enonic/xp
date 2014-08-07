@@ -30,7 +30,6 @@ import com.enonic.wem.core.initializer.StartupInitializer;
 import com.enonic.wem.core.lifecycle.LifecycleService;
 import com.enonic.wem.core.module.ModuleKeyResolverService;
 import com.enonic.wem.core.module.ModuleLoader;
-import com.enonic.wem.core.module.ModuleResourcePathResolver;
 import com.enonic.wem.core.module.ModuleURLStreamHandler;
 import com.enonic.wem.guice.GuiceActivator;
 
@@ -53,7 +52,6 @@ public final class Activator
         install( new CoreModule() );
 
         // Export needed services
-        service( ModuleResourcePathResolver.class ).export();
         service( PageComponentService.class ).export();
         service( ImageDescriptorService.class ).export();
         service( LayoutDescriptorService.class ).export();

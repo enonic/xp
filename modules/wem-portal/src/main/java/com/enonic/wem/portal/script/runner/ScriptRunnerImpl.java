@@ -10,7 +10,7 @@ import org.mozilla.javascript.Scriptable;
 
 import com.google.common.collect.Maps;
 
-import com.enonic.wem.api.module.ModuleResourceUrlResolver;
+import com.enonic.wem.api.resource.ResourceUrlResolver;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.script.SourceException;
 import com.enonic.wem.portal.script.compiler.ScriptCompiler;
@@ -120,7 +120,7 @@ public final class ScriptRunnerImpl
         builder.cause( cause );
         builder.lineNumber( cause.lineNumber() );
         builder.resource( source.getResource() );
-        builder.path( ModuleResourceUrlResolver.resolve( source.getResource()) );
+        builder.path( ResourceUrlResolver.resolve( source.getResource() ) );
         builder.message( cause.details() );
 
         for ( final ScriptStackElement elem : cause.getScriptStack() )

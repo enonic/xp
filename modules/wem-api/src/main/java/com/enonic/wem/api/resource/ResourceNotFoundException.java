@@ -1,20 +1,21 @@
 package com.enonic.wem.api.resource;
 
 import com.enonic.wem.api.exception.NotFoundException;
+import com.enonic.wem.api.module.ModuleResourceKey;
 
 public final class ResourceNotFoundException
     extends NotFoundException
 {
-    private final ResourceReference ref;
+    private final ModuleResourceKey resource;
 
-    public ResourceNotFoundException( final ResourceReference ref )
+    public ResourceNotFoundException( final ModuleResourceKey resource )
     {
-        super( "Resource [{0}] was not found", ref.getUri() );
-        this.ref = ref;
+        super( "Resource [{0}] was not found", resource.getUri() );
+        this.resource = resource;
     }
 
-    public ResourceReference getResource()
+    public ModuleResourceKey getResource()
     {
-        return this.ref;
+        return this.resource;
     }
 }
