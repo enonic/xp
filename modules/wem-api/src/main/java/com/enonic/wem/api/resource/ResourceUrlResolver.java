@@ -18,13 +18,13 @@ public class ResourceUrlResolver
         CURRENT = this;
     }
 
-    protected URL doResolve( final ModuleResourceKey key )
+    protected URL doResolve( final ResourceKey key )
         throws Exception
     {
         return new URL( "module:" + key.toString() );
     }
 
-    public static URL resolve( final ModuleResourceKey key )
+    public static URL resolve( final ResourceKey key )
     {
         try
         {

@@ -7,7 +7,7 @@ import java.net.URL;
 import com.google.common.base.Throwables;
 import com.google.common.io.Resources;
 
-import com.enonic.wem.api.resource.ModuleResourceKey;
+import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceNotFoundException;
 import com.enonic.wem.api.resource.ResourceService;
@@ -17,7 +17,7 @@ public final class ResourceServiceImpl
     implements ResourceService
 {
     @Override
-    public final Resource getResource( final ModuleResourceKey key )
+    public final Resource getResource( final ResourceKey key )
         throws ResourceNotFoundException
     {
         final Resource resource = resolve( key );
@@ -29,7 +29,7 @@ public final class ResourceServiceImpl
         throw new ResourceNotFoundException( key );
     }
 
-    private Resource resolve( final ModuleResourceKey key )
+    private Resource resolve( final ResourceKey key )
     {
         final URL resourceUrl = ResourceUrlResolver.resolve( key );
         if ( !isResource( resourceUrl ) )

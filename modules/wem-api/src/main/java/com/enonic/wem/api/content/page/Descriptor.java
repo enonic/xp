@@ -3,7 +3,7 @@ package com.enonic.wem.api.content.page;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.form.Form;
-import com.enonic.wem.api.resource.ModuleResourceKey;
+import com.enonic.wem.api.resource.ResourceKey;
 
 public abstract class Descriptor<KEY extends DescriptorKey>
 {
@@ -47,9 +47,9 @@ public abstract class Descriptor<KEY extends DescriptorKey>
         return config;
     }
 
-    public ModuleResourceKey getComponentPath()
+    public ResourceKey getComponentPath()
     {
-        return ModuleResourceKey.from( key.getModuleKey(), "component/" + key.getName().toString() );
+        return ResourceKey.from( key.getModuleKey(), "component/" + key.getName().toString() );
     }
 
     public abstract static class BaseDescriptorBuilder<T extends Descriptor.BaseDescriptorBuilder, KEY>

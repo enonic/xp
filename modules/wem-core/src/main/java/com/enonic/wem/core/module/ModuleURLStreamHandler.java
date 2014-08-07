@@ -15,7 +15,7 @@ import org.osgi.service.url.AbstractURLStreamHandlerService;
 import com.google.common.base.Strings;
 
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.resource.ModuleResourceKey;
+import com.enonic.wem.api.resource.ResourceKey;
 
 @Singleton
 public final class ModuleURLStreamHandler
@@ -34,7 +34,7 @@ public final class ModuleURLStreamHandler
             throw new MalformedURLException( "Path can not be null or empty." );
         }
 
-        final ModuleResourceKey key = ModuleResourceKey.from( path );
+        final ResourceKey key = ResourceKey.from( path );
         final Bundle bundle = findBundle( key.getModule() );
 
         return bundle.getResource( key.getPath() ).openConnection();

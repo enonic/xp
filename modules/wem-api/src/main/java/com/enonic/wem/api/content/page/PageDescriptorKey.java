@@ -3,7 +3,7 @@ package com.enonic.wem.api.content.page;
 import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.resource.ModuleResourceKey;
+import com.enonic.wem.api.resource.ResourceKey;
 
 public final class PageDescriptorKey
     extends DescriptorKey
@@ -26,8 +26,8 @@ public final class PageDescriptorKey
     }
 
     @Override
-    public ModuleResourceKey toResourceKey()
+    public ResourceKey toResourceKey()
     {
-        return ModuleResourceKey.from( getModuleKey(), "page/" + getName().toString() + "/page.xml" );
+        return ResourceKey.from( getModuleKey(), "page/" + getName().toString() + "/page.xml" );
     }
 }

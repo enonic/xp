@@ -12,7 +12,7 @@ import org.junit.rules.TemporaryFolder;
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
 
-import com.enonic.wem.api.resource.ModuleResourceKey;
+import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceUrlResolver;
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceNotFoundException;
@@ -48,7 +48,7 @@ public class ResourceServiceImplTest
 
         new ResourceUrlResolver()
         {
-            protected URL doResolve( final ModuleResourceKey key )
+            protected URL doResolve( final ResourceKey key )
                 throws Exception
             {
                 return new URL( "file:" + modulesDir.getPath() + "/" + key.getModule().toString() + key.getPath() );
@@ -60,7 +60,7 @@ public class ResourceServiceImplTest
     public void testGetResource()
         throws Exception
     {
-        final ModuleResourceKey key = ModuleResourceKey.from( "mymodule-1.0.0:/a/b.txt" );
+        final ResourceKey key = ResourceKey.from( "mymodule-1.0.0:/a/b.txt" );
 
         final Resource resource = this.resourceService.getResource( key );
         assertNotNull( resource );
@@ -75,7 +75,7 @@ public class ResourceServiceImplTest
     @Test(expected = ResourceNotFoundException.class)
     public void testGetResource_notFound()
     {
-        final ModuleResourceKey key = ModuleResourceKey.from( "mymodule-1.0.0:/not/exists.txt" );
+        final ResourceKey key = ResourceKey.from( "mymodule-1.0.0:/not/exists.txt" );
         this.resourceService.getResource( key );
     }
 }

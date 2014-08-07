@@ -7,7 +7,7 @@ import com.google.common.io.Files;
 
 import com.enonic.wem.api.module.ModuleKey;
 
-public final class ModuleResourceKey
+public final class ResourceKey
 {
     private final static String URL_PROTOCOL_PREFIX = "module";
 
@@ -17,7 +17,7 @@ public final class ModuleResourceKey
 
     private final String path;
 
-    private ModuleResourceKey( final ModuleKey module, final String path )
+    private ResourceKey( final ModuleKey module, final String path )
     {
         this.module = module;
         this.path = normalizePath( path );
@@ -66,9 +66,9 @@ public final class ModuleResourceKey
         return this.path.equals( "/" );
     }
 
-    public ModuleResourceKey resolve( final String relPath )
+    public ResourceKey resolve( final String relPath )
     {
-        return new ModuleResourceKey( this.module, this.path + "/" + relPath );
+        return new ResourceKey( this.module, this.path + "/" + relPath );
     }
 
     @Override
@@ -80,7 +80,7 @@ public final class ModuleResourceKey
     @Override
     public boolean equals( final Object o )
     {
-        return ( o instanceof ModuleResourceKey ) && ( this.uri.equals( ( (ModuleResourceKey) o ).uri ) );
+        return ( o instanceof ResourceKey ) && ( this.uri.equals( ( (ResourceKey) o ).uri ) );
     }
 
     @Override
@@ -94,7 +94,7 @@ public final class ModuleResourceKey
         return Files.simplifyPath( "/" + path );
     }
 
-    public static ModuleResourceKey from( final String uri )
+    public static ResourceKey from( final String uri )
     {
         Preconditions.checkNotNull( uri );
 
@@ -104,17 +104,17 @@ public final class ModuleResourceKey
         return from( ModuleKey.from( uri.substring( 0, pos ) ), uri.substring( pos + 1 ) );
     }
 
-    public static ModuleResourceKey from( final ModuleKey module, final String path )
+    public static ResourceKey from( final ModuleKey module, final String path )
     {
         Preconditions.checkNotNull( module );
         Preconditions.checkNotNull( path );
 
-        return new ModuleResourceKey( module, path );
+        return new ResourceKey( module, path );
     }
 
-    public static ModuleResourceKey from( final URL url )
+    public static ResourceKey from( final URL url )
     {
         Preconditions.checkArgument( URL_PROTOCOL_PREFIX.equals( url.getProtocol() ), "Invalid module resource key URL." );
-        return ModuleResourceKey.from( url.getPath() );
+        return ResourceKey.from( url.getPath() );
     }
 }

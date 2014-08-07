@@ -5,7 +5,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.page.region.RegionDescriptors;
 import com.enonic.wem.api.form.Form;
-import com.enonic.wem.api.resource.ModuleResourceKey;
+import com.enonic.wem.api.resource.ResourceKey;
 
 public final class PageDescriptor
 {
@@ -38,9 +38,9 @@ public final class PageDescriptor
         return this.key.getName();
     }
 
-    public ModuleResourceKey getResourceKey()
+    public ResourceKey getResourceKey()
     {
-        return ModuleResourceKey.from( key.getModuleKey(), "page/" + key.getName().toString() );
+        return ResourceKey.from( key.getModuleKey(), "page/" + key.getName().toString() );
     }
 
     public String getDisplayName()

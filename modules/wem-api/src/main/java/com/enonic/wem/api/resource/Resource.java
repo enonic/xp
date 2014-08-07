@@ -6,7 +6,7 @@ import com.google.common.io.ByteSource;
 
 public interface Resource
 {
-    public ModuleResourceKey getKey();
+    public ResourceKey getKey();
 
     public long getSize();
 

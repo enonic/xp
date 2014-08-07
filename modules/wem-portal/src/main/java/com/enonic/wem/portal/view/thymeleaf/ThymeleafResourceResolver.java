@@ -6,7 +6,7 @@ import java.net.URL;
 import org.thymeleaf.TemplateProcessingParameters;
 import org.thymeleaf.resourceresolver.IResourceResolver;
 
-import com.enonic.wem.api.resource.ModuleResourceKey;
+import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceUrlResolver;
 
 final class ThymeleafResourceResolver
@@ -25,7 +25,7 @@ final class ThymeleafResourceResolver
     @Override
     public InputStream getResourceAsStream( final TemplateProcessingParameters params, final String resourceName )
     {
-        final ModuleResourceKey key = ModuleResourceKey.from( resourceName );
+        final ResourceKey key = ResourceKey.from( resourceName );
         final URL resourceUrl = ResourceUrlResolver.resolve( key );
 
         try

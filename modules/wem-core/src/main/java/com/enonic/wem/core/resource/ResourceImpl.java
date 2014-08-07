@@ -7,25 +7,25 @@ import com.google.common.base.Charsets;
 import com.google.common.base.Throwables;
 import com.google.common.io.ByteSource;
 
-import com.enonic.wem.api.resource.ModuleResourceKey;
+import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.Resource;
 
 public final class ResourceImpl
     implements Resource
 {
-    private final ModuleResourceKey key;
+    private final ResourceKey key;
 
     private ByteSource byteSource;
 
     private long timestamp;
 
-    public ResourceImpl( final ModuleResourceKey key )
+    public ResourceImpl( final ResourceKey key )
     {
         this.key = key;
     }
 
     @Override
-    public ModuleResourceKey getKey()
+    public ResourceKey getKey()
     {
         return this.key;
     }

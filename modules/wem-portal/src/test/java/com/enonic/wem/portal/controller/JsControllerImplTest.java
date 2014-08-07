@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.resource.ModuleResourceKey;
+import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.portal.postprocess.PostProcessor;
 import com.enonic.wem.portal.script.loader.ScriptLoader;
 import com.enonic.wem.portal.script.loader.ScriptSource;
@@ -24,7 +24,7 @@ public class JsControllerImplTest
 
     private JsHttpRequest request;
 
-    private ModuleResourceKey scriptDir;
+    private ResourceKey scriptDir;
 
     private ScriptLoader scriptLoader;
 
@@ -43,7 +43,7 @@ public class JsControllerImplTest
         this.controller.postProcessor( this.postProcessor );
         this.controller.context( this.context );
 
-        this.scriptDir = ModuleResourceKey.from( "mymodule-1.0.0:/service/test" );
+        this.scriptDir = ResourceKey.from( "mymodule-1.0.0:/service/test" );
         this.controller.scriptDir( this.scriptDir );
 
         this.request = new JsHttpRequest();
@@ -59,7 +59,7 @@ public class JsControllerImplTest
         this.request.setMethod( "GET" );
 
         final ScriptSource script = Mockito.mock( ScriptSource.class );
-        final ModuleResourceKey scriptKey = this.scriptDir.resolve( "get.js" );
+        final ResourceKey scriptKey = this.scriptDir.resolve( "get.js" );
         Mockito.when( this.scriptLoader.load( scriptKey ) ).thenReturn( script );
 
         this.controller.execute();
@@ -76,7 +76,7 @@ public class JsControllerImplTest
         this.response.setPostProcess( true );
 
         final ScriptSource script = Mockito.mock( ScriptSource.class );
-        final ModuleResourceKey scriptKey = this.scriptDir.resolve( "get.js" );
+        final ResourceKey scriptKey = this.scriptDir.resolve( "get.js" );
         Mockito.when( this.scriptLoader.load( scriptKey ) ).thenReturn( script );
 
         this.controller.execute();

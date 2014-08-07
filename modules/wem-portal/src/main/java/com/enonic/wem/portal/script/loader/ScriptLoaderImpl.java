@@ -1,6 +1,6 @@
 package com.enonic.wem.portal.script.loader;
 
-import com.enonic.wem.api.resource.ModuleResourceKey;
+import com.enonic.wem.api.resource.ResourceKey;
 
 public final class ScriptLoaderImpl
     implements ScriptLoader
@@ -8,11 +8,11 @@ public final class ScriptLoaderImpl
     @Override
     public ScriptSource load( final String name )
     {
-        return load( ModuleResourceKey.from( name ) );
+        return load( ResourceKey.from( name ) );
     }
 
     @Override
-    public ScriptSource load( final ModuleResourceKey key )
+    public ScriptSource load( final ResourceKey key )
     {
         return new ScriptSourceImpl( key );
     }
