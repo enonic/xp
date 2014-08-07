@@ -11,6 +11,8 @@ module app.browse {
         private moduleTreeGridPanel: ModuleTreeGrid;
 
         private toolbar: ModuleBrowseToolbar;
+        
+        private moduleIconUrl: string;
 
         constructor() {
             var treeGridContextMenu = new app.browse.ModuleTreeGridContextMenu();
@@ -35,6 +37,8 @@ module app.browse {
                 }));
             });
 
+            this.moduleIconUrl = api.util.getAdminUri('common/images/icons/icoMoon/128x128/puzzle.png');
+
             this.registerEvents();
         }
 
@@ -53,7 +57,8 @@ module app.browse {
                     var item = new BrowseItem<ModuleSummary>(moduleEl).
                         setId(moduleEl.getId()).
                         setDisplayName(moduleEl.getDisplayName()).
-                        setPath(moduleEl.getName());
+                        setPath(moduleEl.getName()).
+                        setIconUrl(this.moduleIconUrl);
                     browseItems.push(item);
                 }
             });
