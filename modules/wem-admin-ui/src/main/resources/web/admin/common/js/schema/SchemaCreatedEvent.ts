@@ -2,14 +2,14 @@ module api.schema {
 
     export class SchemaCreatedEvent extends api.event.Event {
 
-        private schema:api.schema.Schema;
+        private schema: api.schema.Schema;
 
-        constructor( schema:api.schema.Schema ) {
+        constructor(schema: api.schema.Schema) {
             super();
             this.schema = schema;
         }
 
-        public getSchema():Schema {
+        public getSchema(): Schema {
             return this.schema;
         }
 

@@ -4,7 +4,7 @@ module app.wizard {
 
         private toggler: ContextWindowToggler;
 
-        constructor(toggler: ContextWindowToggler) {
+        constructor(toggler: ContextWindowToggler) {
             super();
             this.toggler = toggler;
         }

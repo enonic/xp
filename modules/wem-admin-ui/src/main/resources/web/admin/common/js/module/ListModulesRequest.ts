@@ -2,17 +2,16 @@ module api.module {
 
     export class ListModulesRequest extends ModuleResourceRequest<ModuleListResult> {
 
-        constructor()
-        {
+        constructor() {
             super();
             super.setMethod("GET");
         }
 
-        getParams():Object {
+        getParams(): Object {
             return {};
         }
 
-        getRequestPath():api.rest.Path {
+        getRequestPath(): api.rest.Path {
             return api.rest.Path.fromParent(super.getResourcePath(), "list");
         }
 

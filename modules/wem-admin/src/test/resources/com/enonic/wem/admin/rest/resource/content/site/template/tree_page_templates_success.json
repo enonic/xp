@@ -5,10 +5,10 @@
             "displayName": "Another page template",
             "editable": false,
             "hasChildren": false,
-            "iconUrl" : "",
+            "iconUrl": "",
             "key": "module|my-other-page",
             "name": "my-other-page",
-            "parentKey" : "name-1.0.0",
+            "parentKey": "name-1.0.0",
             "templateType": "PAGE"
         },
         {
@@ -16,10 +16,10 @@
             "displayName": "Main page template",
             "editable": false,
             "hasChildren": false,
-            "iconUrl" : "",
+            "iconUrl": "",
             "key": "module|my-page",
             "name": "my-page",
-            "parentKey" : "name-1.0.0",
+            "parentKey": "name-1.0.0",
             "templateType": "PAGE"
         }
     ],

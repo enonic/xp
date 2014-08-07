@@ -2,7 +2,7 @@ module api.ui.selector.combobox {
 
     export class SelectedOptionsView<T> extends api.dom.DivEl {
 
-        private list:SelectedOption<T>[] = [];
+        private list: SelectedOption<T>[] = [];
 
         private maximumOccurrences: number;
 
@@ -20,7 +20,7 @@ module api.ui.selector.combobox {
             return this.maximumOccurrences;
         }
 
-        createSelectedOption(option:api.ui.selector.Option<T>):SelectedOption<T> {
+        createSelectedOption(option: api.ui.selector.Option<T>): SelectedOption<T> {
             return new SelectedOption<T>(new SelectedOptionView(option), this.count());
         }
 
@@ -50,7 +50,7 @@ module api.ui.selector.combobox {
 
             selectedOption.getOptionView().remove();
 
-            this.list = this.list.filter( (option:SelectedOption<T>) => {
+            this.list = this.list.filter((option: SelectedOption<T>) => {
                 return option.getOption().value != selectedOption.getOption().value;
             });
 
@@ -63,27 +63,27 @@ module api.ui.selector.combobox {
             }
         }
 
-        count():number {
+        count(): number {
             return this.list.length;
         }
 
-        getOptions():api.ui.selector.Option<T>[] {
-            return this.list.map( (selectedOption:SelectedOption<T>) => selectedOption.getOption() );
+        getOptions(): api.ui.selector.Option<T>[] {
+            return this.list.map((selectedOption: SelectedOption<T>) => selectedOption.getOption());
         }
 
         getSelecteOptions(): SelectedOption<T>[] {
             return this.list;
         }
 
-        getOptionViews():SelectedOptionView<T>[] {
-            return this.list.map( (selectedOption:SelectedOption<T>) => selectedOption.getOptionView() );
+        getOptionViews(): SelectedOptionView<T>[] {
+            return this.list.map((selectedOption: SelectedOption<T>) => selectedOption.getOptionView());
         }
 
-        getByView(view:SelectedOptionView<T>): SelectedOption<T> {
+        getByView(view: SelectedOptionView<T>): SelectedOption<T> {
             return this.getById(view.getOption().value);
         }
 
-        getByOption(option:api.ui.selector.Option<T>):SelectedOption<T> {
+        getByOption(option: api.ui.selector.Option<T>): SelectedOption<T> {
             return this.getById(option.value);
         }
 

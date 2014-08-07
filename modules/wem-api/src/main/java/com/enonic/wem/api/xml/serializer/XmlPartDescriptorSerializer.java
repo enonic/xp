@@ -7,7 +7,7 @@ final class XmlPartDescriptorSerializer
     extends XmlSerializer2<XmlPartDescriptor>
 {
 
-    public XmlPartDescriptorSerializer(  )
+    public XmlPartDescriptorSerializer()
     {
         super( XmlPartDescriptor.class );
     }

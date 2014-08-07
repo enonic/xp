@@ -2,50 +2,66 @@ package com.enonic.wem.api.content.versioning;
 
 import java.time.Instant;
 
-import com.google.common.base.Objects;
-import com.google.common.base.Preconditions;
-
 import com.enonic.wem.api.account.UserKey;
-import com.enonic.wem.api.content.ContentId;
 
-public final class ContentVersion
+public class ContentVersion
+    implements Comparable<ContentVersion>
 {
-    private final ContentId contentId;
+    private final UserKey modifier;
 
-    private final Instant created;
+    private final String displayName;
 
-    private final UserKey creator;
+    private final Instant modified;
 
-    private final ContentVersionId versionId;
+    private final String comment;
 
-    //private Set<ContentVersionLabel> labels;
-
-    private ContentVersion( final Builder builder )
+    private ContentVersion( Builder builder )
     {
-        this.contentId = builder.contentId;
-        this.created = builder.created;
-        this.creator = builder.creator;
-        this.versionId = builder.versionId;
+        modifier = builder.modifier;
+        displayName = builder.displayName;
+        modified = builder.modified;
+        comment = builder.comment;
     }
 
-    public ContentId getContentId()
+    public UserKey getModifier()
     {
-        return contentId;
+        return modifier;
     }
 
-    public Instant getCreated()
+    public String getDisplayName()
     {
-        return created;
+        return displayName;
     }
 
-    public UserKey getCreator()
+    public Instant getModified()
     {
-        return creator;
+        return modified;
     }
 
-    public ContentVersionId getVersionId()
+    public String getComment()
     {
-        return versionId;
+        return comment;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    @Override
+    public int compareTo( final ContentVersion o )
+    {
+        if ( this.modified == o.modified )
+        {
+            return 0;
+        }
+
+        if ( this.modified.isBefore( o.modified ) )
+        {
+            return 1;
+        }
+
+        return -1;
     }
 
     @Override
@@ -55,100 +71,83 @@ public final class ContentVersion
         {
             return true;
         }
-
         if ( !( o instanceof ContentVersion ) )
         {
             return false;
         }
 
         final ContentVersion that = (ContentVersion) o;
-        return Objects.equal( this.contentId, that.contentId ) && Objects.equal( this.versionId, that.versionId ) &&
-            Objects.equal( this.creator, that.creator ) && Objects.equal( this.created, that.created );
+
+        if ( comment != null ? !comment.equals( that.comment ) : that.comment != null )
+        {
+            return false;
+        }
+        if ( displayName != null ? !displayName.equals( that.displayName ) : that.displayName != null )
+        {
+            return false;
+        }
+        if ( modified != null ? !modified.equals( that.modified ) : that.modified != null )
+        {
+            return false;
+        }
+        if ( modifier != null ? !modifier.equals( that.modifier ) : that.modifier != null )
+        {
+            return false;
+        }
+
+        return true;
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.contentId, this.created, this.creator, this.versionId );
+        int result = modifier != null ? modifier.hashCode() : 0;
+        result = 31 * result + ( displayName != null ? displayName.hashCode() : 0 );
+        result = 31 * result + ( modified != null ? modified.hashCode() : 0 );
+        result = 31 * result + ( comment != null ? comment.hashCode() : 0 );
+        return result;
     }
 
-    @Override
-    public String toString()
+    public static final class Builder
     {
-        final Objects.ToStringHelper s = Objects.toStringHelper( this );
-        s.add( "contentId", contentId );
-        s.add( "versionId", versionId );
-        s.add( "created", created );
-        s.add( "creator", creator );
-        return s.toString();
-    }
+        private UserKey modifier;
 
-    public static Builder newContentVersion()
-    {
-        return new Builder();
-    }
+        private String displayName;
 
-    public static Builder newContentVersion( final ContentVersion contentVersion )
-    {
-        return new Builder( contentVersion );
-    }
+        private Instant modified;
 
-    public static class Builder
-    {
-        private ContentId contentId;
+        private String comment;
 
-        private Instant created;
-
-        private UserKey creator;
-
-        private ContentVersionId versionId;
-
-        public Builder()
+        private Builder()
         {
-            this.versionId = null;
-            this.contentId = null;
-            this.created = null;
-            this.creator = null;
         }
 
-        public Builder( final ContentVersion contentVersion )
+        public Builder modifier( UserKey modifier )
         {
-            this.versionId = contentVersion.versionId;
-            this.contentId = contentVersion.contentId;
-            this.created = contentVersion.created;
-            this.creator = contentVersion.creator;
-        }
-
-        public Builder contentId( final ContentId contentId )
-        {
-            this.contentId = contentId;
+            this.modifier = modifier;
             return this;
         }
 
-        public Builder createdTime( final Instant created )
+        public Builder displayName( String displayName )
         {
-            this.created = created;
+            this.displayName = displayName;
             return this;
         }
 
-        public Builder creator( final UserKey creator )
+        public Builder modified( Instant modified )
         {
-            this.creator = creator;
+            this.modified = modified;
             return this;
         }
 
-        public Builder versionId( final ContentVersionId versionId )
+        public Builder comment( String comment )
         {
-            this.versionId = versionId;
+            this.comment = comment;
             return this;
         }
 
         public ContentVersion build()
         {
-            Preconditions.checkNotNull( versionId, "versionId is mandatory for ContentVersion" );
-            Preconditions.checkNotNull( contentId, "contentId is mandatory for ContentVersion" );
-            Preconditions.checkNotNull( created, "created time is mandatory for ContentVersion" );
-            Preconditions.checkNotNull( creator, "creator user is mandatory for ContentVersion" );
             return new ContentVersion( this );
         }
     }

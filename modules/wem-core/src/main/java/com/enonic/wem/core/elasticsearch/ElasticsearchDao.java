@@ -21,6 +21,9 @@ import org.elasticsearch.client.Requests;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.sort.SortBuilder;
+
+import com.google.common.collect.ImmutableSet;
 
 import com.enonic.wem.core.elasticsearch.result.SearchResult;
 import com.enonic.wem.core.elasticsearch.result.SearchResultFactory;
@@ -131,6 +134,15 @@ public class ElasticsearchDao
             setQuery( queryBuilder ).
             setFrom( queryMetaData.getFrom() ).
             setSize( queryMetaData.getSize() );
+
+        final ImmutableSet<SortBuilder> sortBuilders = queryMetaData.getSortBuilders();
+        if ( !sortBuilders.isEmpty() )
+        {
+            for ( final SortBuilder sortBuilder : sortBuilders )
+            {
+                searchRequestBuilder.addSort( sortBuilder );
+            }
+        }
 
         if ( queryMetaData.hasFields() )
         {

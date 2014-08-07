@@ -39,7 +39,7 @@ module api.form.inputtype.text {
 
         valueBreaksRequiredContract(value: api.data.Value): boolean {
 
-            if( value == null ) {
+            if (value == null) {
                 return true;
             }
 

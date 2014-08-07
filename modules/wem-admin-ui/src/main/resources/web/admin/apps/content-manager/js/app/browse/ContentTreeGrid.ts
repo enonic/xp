@@ -55,11 +55,13 @@ module app.browse {
                             setFormatter(DateTimeFormatter.format).
                             build()
                     ]).setShowContextMenu(new TreeGridContextMenu(new ContentTreeGridActions(this))
-                    ).prependClasses("content-grid")
+                ).prependClasses("content-grid")
             );
 
-            this.onRowSelectionChanged((selectedRows:TreeNode<ContentSummaryAndCompareStatus>[]) => {
-                var contentSummaries: ContentSummary[] = selectedRows.map((elem) => { return elem.getData().getContentSummary(); });
+            this.onRowSelectionChanged((selectedRows: TreeNode<ContentSummaryAndCompareStatus>[]) => {
+                var contentSummaries: ContentSummary[] = selectedRows.map((elem) => {
+                    return elem.getData().getContentSummary();
+                });
                 (<ContentTreeGridActions>this.getContextMenu().getActions()).updateActionsEnabledState(contentSummaries);
             });
 

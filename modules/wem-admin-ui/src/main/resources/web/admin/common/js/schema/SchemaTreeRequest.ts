@@ -45,12 +45,12 @@ module api.schema {
             var kind = SchemaKind.fromString(schemaJson.schemaKind);
 
             switch (kind) {
-                case SchemaKind.MIXIN:
-                    return api.schema.mixin.Mixin.fromJson(<api.schema.mixin.json.MixinJson> schemaJson);
-                case SchemaKind.CONTENT_TYPE:
-                    return api.schema.content.ContentTypeSummary.fromJson(<api.schema.content.json.ContentTypeJson> schemaJson);
-                case SchemaKind.RELATIONSHIP_TYPE:
-                    return api.schema.relationshiptype.RelationshipType.fromJson(<api.schema.relationshiptype.json.RelationshipTypeJson> schemaJson);
+            case SchemaKind.MIXIN:
+                return api.schema.mixin.Mixin.fromJson(<api.schema.mixin.json.MixinJson> schemaJson);
+            case SchemaKind.CONTENT_TYPE:
+                return api.schema.content.ContentTypeSummary.fromJson(<api.schema.content.json.ContentTypeJson> schemaJson);
+            case SchemaKind.RELATIONSHIP_TYPE:
+                return api.schema.relationshiptype.RelationshipType.fromJson(<api.schema.relationshiptype.json.RelationshipTypeJson> schemaJson);
             }
 
         }

@@ -19,6 +19,7 @@ public class CompareContentResultsJson
         }
     }
 
+    @SuppressWarnings( "UnusedDeclaration" )
     public Set<CompareContentResultJson> getCompareContentResults()
     {
         return compareContentResults;

@@ -5,25 +5,17 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.entity.EntityId;
 
-public class VersionDocument
+public class EntityVersionDocument
 {
     private final BlobKey blobKey;
 
     private final EntityId entityId;
 
-    private final BlobKey parent;
 
-    private VersionDocument( final Builder builder )
+    private EntityVersionDocument( final Builder builder )
     {
         this.blobKey = builder.blobKey;
         this.entityId = builder.entityId;
-        this.parent = builder.parent;
-
-    }
-
-    public BlobKey getParent()
-    {
-        return parent;
     }
 
     public BlobKey getId()
@@ -49,12 +41,9 @@ public class VersionDocument
 
     public static class Builder
     {
-
         private BlobKey blobKey;
 
         private EntityId entityId;
-
-        private BlobKey parent;
 
         private Builder()
         {
@@ -72,16 +61,10 @@ public class VersionDocument
             return this;
         }
 
-        public Builder parent( final BlobKey parent )
-        {
-            this.parent = parent;
-            return this;
-        }
-
-        public VersionDocument build()
+        public EntityVersionDocument build()
         {
             validate();
-            return new VersionDocument( this );
+            return new EntityVersionDocument( this );
         }
 
         private void validate()
