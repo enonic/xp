@@ -155,20 +155,6 @@ module api.content.site.template {
             });
             return array;
         }
-
-        static fromExtModel(model: Ext_data_Model): SiteTemplateSummary {
-            return new SiteTemplateSummaryBuilder().
-                fromSiteTemplateSummaryJson(<api.content.site.template.SiteTemplateSummaryJson>model.raw).
-                build();
-        }
-
-        static fromExtModelArray(modelArray: Ext_data_Model[]): SiteTemplateSummary[] {
-            var array: SiteTemplateSummary[] = [];
-            modelArray.forEach((model: Ext_data_Model) => {
-                array.push(SiteTemplateSummary.fromExtModel(model));
-            });
-            return array;
-        }
     }
 
     export class SiteTemplateSummaryBuilder extends api.item.BaseItemBuilder {

@@ -1,6 +1,3 @@
-// require ExtJs as long as it is used for implementation
-///<reference path='lib/ExtJs.d.ts' />
-
 ///<reference path='lib/Mousetrap.d.ts' />
 ///<reference path='lib/jquery.d.ts' />
 ///<reference path='lib/jquery.resize.d.ts' />

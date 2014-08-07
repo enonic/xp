@@ -1,4 +1,3 @@
-declare var Ext: Ext_Packages;
 declare var Admin;
 declare var CONFIG;
 

@@ -94,29 +94,6 @@ module api.schema {
             return true;
         }
 
-        static fromExtModel(model: Ext_data_Model): Schema {
-            var schema: api.schema.Schema;
-            var schemaKind = SchemaKind.fromString((<any>model.raw).schemaKind);
-
-            if (schemaKind == SchemaKind.CONTENT_TYPE) {
-                schema = new api.schema.content.ContentTypeSummaryBuilder().
-                    fromContentTypeSummaryJson(<api.schema.content.json.ContentTypeSummaryJson>model.raw).
-                    build();
-            }
-            else if (schemaKind == SchemaKind.RELATIONSHIP_TYPE) {
-                schema =
-                api.schema.relationshiptype.RelationshipType.fromJson(<api.schema.relationshiptype.json.RelationshipTypeJson>model.raw);
-            }
-            else if (schemaKind == SchemaKind.MIXIN) {
-                schema = api.schema.mixin.Mixin.fromJson(<api.schema.mixin.json.MixinJson>model.raw);
-            }
-            else {
-                console.log("Unknown Ext.data_Model for Schema: ", model);
-                throw new Error("Unknown Schema kind: " + schemaKind);
-            }
-            return schema;
-        }
-
         static fromJson(json: api.schema.SchemaJson): Schema {
             return new SchemaBuilder().fromSchemaJson(json).build();
         }

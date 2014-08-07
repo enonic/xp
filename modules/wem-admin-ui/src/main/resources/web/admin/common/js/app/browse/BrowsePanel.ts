@@ -101,10 +101,6 @@ module api.app.browse {
             return this.browseToolbar.getActions();
         }
 
-        extModelsToBrowseItems(models: Ext_data_Model[]): BrowseItem<M>[] {
-            throw Error("To be implemented by inheritor");
-        }
-
         // TODO: ContentSummary must be replaced with an ContentSummaryAndCompareStatus after old grid is removed
         treeNodesToBrowseItems(nodes: api.ui.treegrid.TreeNode<Object>[]): BrowseItem<M>[] {
             throw Error("To be implemented by inheritor");
