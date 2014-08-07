@@ -4,8 +4,6 @@ import java.net.URL;
 
 import com.google.common.base.Throwables;
 
-import com.enonic.wem.api.module.ModuleResourceKey;
-
 public class ResourceUrlResolver
 {
     private static ResourceUrlResolver CURRENT;

@@ -1,6 +1,6 @@
 package com.enonic.wem.portal.controller;
 
-import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.resource.ModuleResourceKey;
 import com.enonic.wem.portal.postprocess.PostProcessor;
 import com.enonic.wem.portal.script.loader.ScriptSource;
 import com.enonic.wem.portal.script.runner.ScriptRunner;

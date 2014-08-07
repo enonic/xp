@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.resource.ModuleResourceKey;
 import com.enonic.wem.portal.postprocess.PostProcessor;
 import com.enonic.wem.portal.script.loader.ScriptLoader;
 import com.enonic.wem.portal.script.loader.ScriptSource;

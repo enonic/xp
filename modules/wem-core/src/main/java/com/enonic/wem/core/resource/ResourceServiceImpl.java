@@ -7,7 +7,7 @@ import java.net.URL;
 import com.google.common.base.Throwables;
 import com.google.common.io.Resources;
 
-import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.resource.ModuleResourceKey;
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceNotFoundException;
 import com.enonic.wem.api.resource.ResourceService;
@@ -67,11 +67,5 @@ public final class ResourceServiceImpl
         {
             throw Throwables.propagate( e );
         }
-    }
-
-    @Override
-    public URL resolveUrl( final ModuleResourceKey key )
-    {
-        return null;
     }
 }

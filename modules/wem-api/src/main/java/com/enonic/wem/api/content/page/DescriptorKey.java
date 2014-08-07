@@ -3,7 +3,7 @@ package com.enonic.wem.api.content.page;
 import java.util.Objects;
 
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.resource.ModuleResourceKey;
 
 public abstract class DescriptorKey
 {

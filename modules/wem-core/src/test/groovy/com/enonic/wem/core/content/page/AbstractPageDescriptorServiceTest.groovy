@@ -1,7 +1,7 @@
 package com.enonic.wem.core.content.page
 
 import com.enonic.wem.api.content.page.PageDescriptorKey
-import com.enonic.wem.api.module.ModuleResourceKey
+import com.enonic.wem.api.resource.ModuleResourceKey
 import com.enonic.wem.api.resource.ResourceUrlResolver
 
 abstract class AbstractPageDescriptorServiceTest

@@ -6,7 +6,7 @@ import org.restlet.representation.Representation;
 import org.restlet.resource.ResourceException;
 
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.resource.ModuleResourceKey;
 import com.enonic.wem.portal.base.ModuleBaseResource;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.controller.JsController;

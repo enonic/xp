@@ -7,7 +7,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.resource.ModuleResourceKey;
 
 public final class ImageDescriptorKey
     extends DescriptorKey

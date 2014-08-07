@@ -18,7 +18,7 @@ import org.restlet.representation.Representation;
 
 import com.google.common.base.Charsets;
 
-import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.resource.ModuleResourceKey;
 import com.enonic.wem.core.entity.dao.NodeNotFoundException;
 import com.enonic.wem.portal.script.SourceException;
 

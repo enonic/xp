@@ -5,7 +5,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.page.region.RegionDescriptors;
 import com.enonic.wem.api.form.Form;
-import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.resource.ModuleResourceKey;
 
 public final class PageDescriptor
 {

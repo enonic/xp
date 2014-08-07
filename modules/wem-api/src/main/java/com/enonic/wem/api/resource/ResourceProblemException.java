@@ -7,7 +7,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.exception.BaseException;
-import com.enonic.wem.api.module.ModuleResourceKey;
 
 public final class ResourceProblemException
     extends BaseException

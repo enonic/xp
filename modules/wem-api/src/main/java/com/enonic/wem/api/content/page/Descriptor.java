@@ -3,7 +3,7 @@ package com.enonic.wem.api.content.page;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.form.Form;
-import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.resource.ModuleResourceKey;
 
 public abstract class Descriptor<KEY extends DescriptorKey>
 {

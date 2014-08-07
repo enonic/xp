@@ -1,9 +1,11 @@
-package com.enonic.wem.api.module;
+package com.enonic.wem.api.resource;
 
 import java.net.URL;
 
 import com.google.common.base.Preconditions;
 import com.google.common.io.Files;
+
+import com.enonic.wem.api.module.ModuleKey;
 
 public final class ModuleResourceKey
 {

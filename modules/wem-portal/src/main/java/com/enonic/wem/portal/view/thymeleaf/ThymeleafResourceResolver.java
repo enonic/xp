@@ -6,7 +6,7 @@ import java.net.URL;
 import org.thymeleaf.TemplateProcessingParameters;
 import org.thymeleaf.resourceresolver.IResourceResolver;
 
-import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.resource.ModuleResourceKey;
 import com.enonic.wem.api.resource.ResourceUrlResolver;
 
 final class ThymeleafResourceResolver

@@ -1,7 +1,6 @@
 package com.enonic.wem.api.resource
 
 import com.enonic.wem.api.module.ModuleKey
-import com.enonic.wem.api.module.ModuleResourceKey
 import spock.lang.Specification
 import spock.lang.Unroll
 

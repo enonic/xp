@@ -5,7 +5,7 @@ import java.net.URL;
 import org.mozilla.javascript.Context;
 
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.resource.ModuleResourceKey;
 import com.enonic.wem.api.resource.ResourceUrlResolver;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.script.helper.ScriptHelper;

@@ -2,8 +2,6 @@ package com.enonic.wem.api.resource;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.module.ModuleResourceKey;
-
 import static org.junit.Assert.*;
 
 public class ResourceProblemExceptionTest

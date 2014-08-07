@@ -8,16 +8,14 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.mockito.Mockito;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
 
-import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.resource.ModuleResourceKey;
 import com.enonic.wem.api.resource.ResourceUrlResolver;
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceNotFoundException;
-import com.enonic.wem.core.config.SystemConfig;
 
 import static org.junit.Assert.*;
 

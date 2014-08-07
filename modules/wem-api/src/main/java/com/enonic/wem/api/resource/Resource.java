@@ -4,8 +4,6 @@ import java.util.List;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.wem.api.module.ModuleResourceKey;
-
 public interface Resource
 {
     public ModuleResourceKey getKey();

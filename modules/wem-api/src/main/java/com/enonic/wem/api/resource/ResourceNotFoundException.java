@@ -1,7 +1,6 @@
 package com.enonic.wem.api.resource;
 
 import com.enonic.wem.api.exception.NotFoundException;
-import com.enonic.wem.api.module.ModuleResourceKey;
 
 public final class ResourceNotFoundException
     extends NotFoundException

@@ -4,7 +4,7 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
-import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.resource.ModuleResourceKey;
 
 public final class RenderViewSpec
 {

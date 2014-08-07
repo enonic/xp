@@ -15,7 +15,7 @@ import org.osgi.service.url.AbstractURLStreamHandlerService;
 import com.google.common.base.Strings;
 
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.resource.ModuleResourceKey;
 
 @Singleton
 public final class ModuleURLStreamHandler

@@ -4,7 +4,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.resource.ModuleResourceKey;
 import com.enonic.wem.portal.view.RenderViewSpec;
 import com.enonic.wem.portal.view.ViewService;
 

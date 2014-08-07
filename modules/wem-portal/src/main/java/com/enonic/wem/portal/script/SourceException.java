@@ -7,7 +7,7 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.resource.ModuleResourceKey;
 
 public final class SourceException
     extends RuntimeException

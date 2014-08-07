@@ -8,7 +8,7 @@ import com.google.common.base.Throwables;
 import com.google.common.io.Resources;
 
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.resource.ModuleResourceKey;
 import com.enonic.wem.api.resource.ResourceUrlResolver;
 
 public class ScriptSourceImpl

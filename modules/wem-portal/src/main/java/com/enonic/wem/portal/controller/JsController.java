@@ -1,6 +1,6 @@
 package com.enonic.wem.portal.controller;
 
-import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.resource.ModuleResourceKey;
 
 public interface JsController
 {

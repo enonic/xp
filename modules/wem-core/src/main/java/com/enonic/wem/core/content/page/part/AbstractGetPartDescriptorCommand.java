@@ -12,7 +12,7 @@ import com.enonic.wem.api.content.page.part.PartDescriptor;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.content.page.part.PartDescriptors;
 import com.enonic.wem.api.module.Module;
-import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.resource.ModuleResourceKey;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.module.Modules;
 import com.enonic.wem.api.resource.Resource;

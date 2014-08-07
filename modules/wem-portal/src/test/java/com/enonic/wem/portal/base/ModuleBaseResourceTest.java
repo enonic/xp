@@ -15,7 +15,7 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKeyResolver;
-import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.resource.ModuleResourceKey;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.core.module.ModuleKeyResolverService;
 

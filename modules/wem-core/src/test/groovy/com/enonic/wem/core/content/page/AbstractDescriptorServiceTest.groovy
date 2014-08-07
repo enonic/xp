@@ -1,6 +1,7 @@
 package com.enonic.wem.core.content.page
 
 import com.enonic.wem.api.module.*
+import com.enonic.wem.api.resource.ModuleResourceKey
 import com.enonic.wem.api.resource.ResourceService
 import com.enonic.wem.core.module.ModuleBuilder
 import com.enonic.wem.core.resource.ResourceServiceImpl
