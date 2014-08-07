@@ -71,7 +71,6 @@ public final class ScriptRunnerImpl
         try
         {
             initializeScope();
-            installRequire();
             setObjectsToScope();
 
             final Script script = this.compiler.compile( context, this.source );
@@ -94,15 +93,6 @@ public final class ScriptRunnerImpl
         {
             this.scope.put( entry.getKey(), this.scope, Context.javaToJS( entry.getValue(), this.scope ) );
         }
-    }
-
-    private void installRequire()
-    {
-        final RequireFunction function = new RequireFunction();
-        function.setScriptCompiler( this.compiler );
-        function.setScriptLoader( this.scriptLoader );
-        function.setSource( this.source );
-        function.install( this.scope );
     }
 
     private void initializeScope()
@@ -129,20 +119,5 @@ public final class ScriptRunnerImpl
         }
 
         return builder.build();
-    }
-
-    public void setScriptLoader( final ScriptLoader scriptLoader )
-    {
-        this.scriptLoader = scriptLoader;
-    }
-
-    public void setCompiler( final ScriptCompiler compiler )
-    {
-        this.compiler = compiler;
-    }
-
-    public void setContextServiceBean( final ContextScriptBean contextServiceBean )
-    {
-        this.contextServiceBean = contextServiceBean;
     }
 }

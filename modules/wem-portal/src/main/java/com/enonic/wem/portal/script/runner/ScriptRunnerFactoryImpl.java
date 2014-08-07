@@ -8,7 +8,7 @@ import com.enonic.wem.portal.script.lib.ContextScriptBean;
 import com.enonic.wem.portal.script.lib.SystemScriptBean;
 import com.enonic.wem.portal.script.loader.ScriptLoader;
 
-public class ScriptRunnerFactoryImpl
+public final class ScriptRunnerFactoryImpl
     implements ScriptRunnerFactory
 {
     @Inject
@@ -32,15 +32,5 @@ public class ScriptRunnerFactoryImpl
         runner.contextServiceBean = this.contextServiceBeans.get();
         runner.property( "system", this.systemScriptBean );
         return runner;
-    }
-
-    public void setSystemScriptBean( final SystemScriptBean systemScriptBean )
-    {
-        this.systemScriptBean = systemScriptBean;
-    }
-
-    public void setContextServiceBeans( final Provider<ContextScriptBean> contextServiceBeans )
-    {
-        this.contextServiceBeans = contextServiceBeans;
     }
 }
