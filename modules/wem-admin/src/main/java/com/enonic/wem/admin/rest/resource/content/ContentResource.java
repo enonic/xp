@@ -70,6 +70,8 @@ import static com.enonic.wem.api.content.Content.editContent;
 @Produces(MediaType.APPLICATION_JSON)
 public class ContentResource
 {
+    static final Context STAGE_CONTEXT = new Context( ContentConstants.WORKSPACE_STAGE );
+
     private final String EXPAND_FULL = "full";
 
     private final String EXPAND_SUMMARY = "summary";
@@ -77,8 +79,6 @@ public class ContentResource
     private final String EXPAND_NONE = "none";
 
     private ContentService contentService;
-
-    static final Context STAGE_CONTEXT = new Context( ContentConstants.WORKSPACE_STAGE );
 
     @GET
     public ContentIdJson getById( @QueryParam("id") final String idParam,
@@ -148,7 +148,7 @@ public class ContentResource
 
             if ( parentContents.isNotEmpty() )
             {
-                contents = contentService.getChildren( parentContents.first().getPath(), STAGE_CONTEXT );
+                contents = contentService.getByParent( parentContents.first().getPath(), STAGE_CONTEXT );
             }
             else
             {
@@ -182,7 +182,7 @@ public class ContentResource
         }
         else
         {
-            contents = contentService.getChildren( ContentPath.from( parentPathParam ), STAGE_CONTEXT );
+            contents = contentService.getByParent( ContentPath.from( parentPathParam ), STAGE_CONTEXT );
         }
 
         if ( EXPAND_NONE.equalsIgnoreCase( expandParam ) )

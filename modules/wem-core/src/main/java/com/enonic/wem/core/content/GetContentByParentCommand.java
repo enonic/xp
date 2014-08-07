@@ -2,26 +2,30 @@ package com.enonic.wem.core.content;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.Nodes;
 
 
-final class GetChildContentCommand
+final class GetContentByParentCommand
     extends AbstractContentCommand
 {
     private final ContentPath parentPath;
 
     private final boolean populateChildIds;
 
-    private GetChildContentCommand( final Builder builder )
+    private GetContentByParentCommand( final Builder builder )
     {
         super( builder );
 
         this.parentPath = builder.parentPath;
         this.populateChildIds = builder.populateChildIds;
+    }
+
+    public static Builder create( final ContentPath contentPath )
+    {
+        return new Builder( contentPath );
     }
 
     Contents execute()
@@ -47,11 +51,6 @@ final class GetChildContentCommand
         {
             return contents;
         }
-    }
-
-    public static Builder create( final ContentPath contentPath )
-    {
-        return new Builder( contentPath );
     }
 
     public static class Builder
@@ -83,10 +82,10 @@ final class GetChildContentCommand
             Preconditions.checkNotNull( parentPath );
         }
 
-        public GetChildContentCommand build()
+        public GetContentByParentCommand build()
         {
             validate();
-            return new GetChildContentCommand( this );
+            return new GetContentByParentCommand( this );
         }
     }
 

@@ -22,7 +22,7 @@ public final class ContentServiceScriptBean
 
     public Contents getChildContent( final String parentPath )
     {
-        return contentService.getChildren( ContentPath.from( parentPath ), ContentConstants.CONTEXT_STAGE );
+        return contentService.getByParent( ContentPath.from( parentPath ), ContentConstants.CONTEXT_STAGE );
     }
 
     public Content getContentById( final String id )
