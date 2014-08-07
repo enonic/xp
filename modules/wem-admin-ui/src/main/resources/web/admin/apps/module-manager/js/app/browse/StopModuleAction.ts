@@ -8,7 +8,7 @@ module app.browse {
             super("Stop");
             this.setEnabled(false);
             this.onExecuted(() => {
-                var modules: ModuleSummary[] = moduleTreeGrid.getSelectedDataNodes();
+                var modules: ModuleSummary[] = moduleTreeGrid.getSelectedDataList();
                 new StopModuleEvent(modules).fire();
             });
         }

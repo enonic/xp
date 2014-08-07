@@ -16,6 +16,13 @@ module api.ui.treegrid {
     import TreeGridActions = api.ui.treegrid.actions.TreeGridActions;
     import TreeGridToolbarActions = api.ui.treegrid.actions.TreeGridToolbarActions;
 
+    /*
+     * There are several methods that should be overridden:
+     * 1. hasChildren(data: NODE)  -- Should be implemented if a grid has a tree structure and supports expand/collapse.
+     * 2. fetch(data?: NODE) -- Should fetch full data with a valid hasChildren() value;
+     * 3. fetchChildren(parentData?: NODE) -- Should fetch children of a parent data;
+     * 4. fetchRoot() -- Fetches root nodes. by default return fetchChildren() with an empty parameter.
+     */
     export class TreeGrid<NODE> extends api.ui.panel.Panel {
 
         private columns: GridColumn<NODE>[] = [];
@@ -65,7 +72,9 @@ module api.ui.treegrid {
             this.grid = new Grid<TreeNode<NODE>>(this.gridData, this.columns, this.gridOptions);
 
             // Custom row selection required for valid behaviour
-            this.grid.setSelectionModel(new Slick.RowSelectionModel({selectActiveRow: false}));
+            this.grid.setSelectionModel(new Slick.RowSelectionModel({
+                selectActiveRow: false
+            }));
 
             this.actions = new TreeGridToolbarActions(this.grid);
 
@@ -107,7 +116,9 @@ module api.ui.treegrid {
                         this.grid.selectRow(data.row);
                     }
                 }
-                this.contextMenu.hide();
+                if (this.contextMenu) {
+                    this.contextMenu.hide();
+                }
                 event.stopPropagation();
             });
 
@@ -191,8 +202,8 @@ module api.ui.treegrid {
                 KeyBindings.get().unbindKeys(keyBindings);
             });
 
-            this.grid.subscribeOnSelectedRowsChanged((e, rows) => {
-                this.notifyRowSelectionChanged(e, rows.rows);
+            this.grid.subscribeOnSelectedRowsChanged((event, rows) => {
+                this.notifyRowSelectionChanged(event, rows.rows);
             });
         }
 
@@ -224,37 +235,52 @@ module api.ui.treegrid {
             return !!this.toolbar;
         }
 
-        /*
-         Must be overridden in most cases.
-         Various items may have different requests
+        /**
+         * Used to determine if a data have child nodes.
+         * Must be overridden for the  grids with a tree structure.
          */
-        hasChildren(elem: NODE): boolean {
+        hasChildren(data: NODE): boolean {
             return false;
         }
 
-        /*
-         Must be overridden in most cases.
-         Various items may have different requests
+        /**
+         * Fetches a single element.
+         * Can be used to update/add a single node without
+         * retrieving a a full data, or for the purpose of the
+         * infinite scroll.
          */
-        fetch(elem: NODE): Q.Promise<NODE> {
+        fetch(data: NODE): Q.Promise<NODE> {
             var deferred = Q.defer<NODE>();
             // Empty logic
             deferred.resolve(null);
             return deferred.promise;
         }
 
-        /*
-         Must be overridden in most cases.
-         Various items may have different requests
+        /**
+         * Used as a default root fetcher.
+         * Must be overridden to use predefined root nodes.
          */
-        fetchChildren(parent?: NODE): Q.Promise<NODE[]> {
+        fetchChildren(parentData?: NODE): Q.Promise<NODE[]> {
             var deferred = Q.defer<NODE[]>();
             // Empty logic
             deferred.resolve(null);
             return deferred.promise;
         }
 
-        filter(items: NODE[]) {
+        /**
+         * Used as a default root fetcher.
+         * Can be overridden to use predefined root nodes.
+         * By default, return empty fetchChildren request.
+         */
+        fetchRoot(): Q.Promise<NODE[]> {
+            return this.fetchChildren();
+        }
+
+        private fetchData(parentData?: NODE): Q.Promise<NODE[]> {
+            return parentData ? this.fetchChildren(parentData) : this.fetchRoot();
+        }
+
+        filter(dataList: NODE[]) {
             if (!this.stash) {
                 this.stash = this.root;
             }
@@ -266,7 +292,7 @@ module api.ui.treegrid {
             this.root.setExpanded(true);
 
             this.active = false;
-            this.root.setChildrenFromItems(items);
+            this.root.setChildrenFromData(dataList);
             this.initData(this.root.treeToList());
             this.resetAndRender();
             this.active = true;
@@ -317,11 +343,11 @@ module api.ui.treegrid {
             this.grid.clearSelection();
         }
 
-        deselectItem(id: string) {
+        deselectNode(dataId: string) {
             var oldSelected = this.grid.getSelectedRows(),
                 newSelected = [];
             for (var i = 0; i < oldSelected.length; i++) {
-                if (id !== this.gridData.getItem(oldSelected[i]).getDataId()) {
+                if (dataId !== this.gridData.getItem(oldSelected[i]).getDataId()) {
                     newSelected.push(oldSelected[i]);
                 }
             }
@@ -331,30 +357,30 @@ module api.ui.treegrid {
             }
         }
 
-        getSelectedTreeNodes(): TreeNode<NODE>[] {
+        getSelectedNodes(): TreeNode<NODE>[] {
             return this.grid.getSelectedRowItems();
         }
 
-        getSelectedDataNodes(): NODE[] {
-            var dataNodes: NODE[] = [];
+        getSelectedDataList(): NODE[] {
+            var dataList: NODE[] = [];
             var treeNodes = this.grid.getSelectedRowItems();
             treeNodes.forEach((treeNode: TreeNode<NODE>) => {
-                dataNodes.push(treeNode.getData());
+                dataList.push(treeNode.getData());
             });
-            return dataNodes;
+            return dataList;
         }
 
         // Hard reset
-        reload(parent?: NODE): void {
+        reload(parentData?: NODE): void {
             this.root = new TreeNodeBuilder<NODE>().build();
 
             this.initData([]);
 
             this.root.setExpanded(true);
 
-            this.fetchChildren(parent)
-                .then((items: NODE[]) => {
-                    this.root.setChildrenFromItems(items);
+            this.fetchData(parentData)
+                .then((dataList: NODE[]) => {
+                    this.root.setChildrenFromData(dataList);
                     this.initData(this.root.treeToList());
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
@@ -381,10 +407,10 @@ module api.ui.treegrid {
             this.notifyLoaded();
         }
 
-        deleteNodes(data: NODE[]): void {
+        deleteNodes(dataList: NODE[]): void {
             var root = this.stash || this.root;
             var updated: TreeNode<NODE>[] = [];
-            data.forEach((elem: NODE) => {
+            dataList.forEach((elem: NODE) => {
                 var node = root.findNode(elem);
                 if (node && node.getParent()) {
                     updated.push(node.getParent());
@@ -428,9 +454,9 @@ module api.ui.treegrid {
                     this.initData(rootList);
                     this.updateExpanded(node, nodeList, rootList);
                 } else {
-                    this.fetchChildren(parent)
-                        .then((items: NODE[]) => {
-                            node.setChildrenFromItems(items);
+                    this.fetchData(parent)
+                        .then((dataList: NODE[]) => {
+                            node.setChildrenFromData(dataList);
                             rootList = this.root.treeToList();
                             nodeList = node.treeToList();
                             this.initData(rootList);
