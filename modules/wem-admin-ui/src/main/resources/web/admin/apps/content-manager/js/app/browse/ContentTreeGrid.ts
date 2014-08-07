@@ -125,18 +125,18 @@ module app.browse {
             return contentSummaryViewer.toString();
         }
 
-        fetchChildren(parent?: ContentSummaryAndCompareStatus): Q.Promise<ContentSummaryAndCompareStatus[]> {
-            var parentContentId = parent ? parent.getId() : "";
-            return ContentSummaryAndCompareStatusFetcher.fetchChildren(parentContentId);
-        }
-
-        fetch(elem: ContentSummaryAndCompareStatus): Q.Promise<ContentSummaryAndCompareStatus> {
-            var contentId = elem.getId();
+        fetch(data: ContentSummaryAndCompareStatus): Q.Promise<ContentSummaryAndCompareStatus> {
+            var contentId = data.getId();
             return ContentSummaryAndCompareStatusFetcher.fetch(contentId);
         }
 
-        hasChildren(elem: ContentSummaryAndCompareStatus): boolean {
-            return elem.hasChildren();
+        fetchChildren(parentData?: ContentSummaryAndCompareStatus): Q.Promise<ContentSummaryAndCompareStatus[]> {
+            var parentContentId = parentData ? parentData.getId() : "";
+            return ContentSummaryAndCompareStatusFetcher.fetchChildren(parentContentId);
+        }
+
+        hasChildren(data: ContentSummaryAndCompareStatus): boolean {
+            return data.hasChildren();
         }
 
     }

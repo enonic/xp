@@ -47,11 +47,6 @@ module app.browse {
             browseActions.setTemplateTreeGrid(this);
         }
 
-        fetchChildren(parent?: TemplateSummary): Q.Promise<TemplateSummary[]> {
-            var parentId = parent ? parent.getKey() : '';
-            return new api.content.site.template.TemplateTreeRequest(parentId).sendAndParse();
-        }
-
         private nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<TemplateSummary>) {
             var viewer = new TemplateSummaryViewer();
             viewer.setObject(node.getData());
@@ -60,6 +55,11 @@ module app.browse {
 
         hasChildren(elem: TemplateSummary): boolean {
             return elem.hasChildren();
+        }
+
+        fetchChildren(parentData?: TemplateSummary): Q.Promise<TemplateSummary[]> {
+            var parentId = parentData ? parentData.getKey() : '';
+            return new api.content.site.template.TemplateTreeRequest(parentId).sendAndParse();
         }
     }
 }

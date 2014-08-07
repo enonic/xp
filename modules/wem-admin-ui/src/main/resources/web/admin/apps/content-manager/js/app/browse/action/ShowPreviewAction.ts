@@ -9,7 +9,7 @@ module app.browse.action {
             this.setEnabled(false);
             this.onExecuted(() => {
                 var contentSummaries: api.content.ContentSummary[]
-                    = grid.getSelectedDataNodes().map((elem) => {
+                    = grid.getSelectedDataList().map((elem) => {
                     return elem.getContentSummary();
                 });
                 new ShowPreviewEvent(contentSummaries).fire();
