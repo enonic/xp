@@ -6,9 +6,9 @@ import org.mozilla.javascript.Context;
 
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.wem.api.resource.ResourceNotFoundException;
 import com.enonic.wem.api.resource.ResourceUrlResolver;
 import com.enonic.wem.portal.controller.JsContext;
-import com.enonic.wem.portal.script.helper.ScriptHelper;
 
 public final class ContextScriptBean
 {
@@ -43,13 +43,25 @@ public final class ContextScriptBean
         final ResourceKey key = ResourceKey.from( this.module, name );
         final URL resourceUrl = ResourceUrlResolver.resolve( key );
 
-        final boolean isFile = !resourceUrl.getPath().endsWith( "/" );
-        if ( isFile )
+        if ( exists( resourceUrl ) )
         {
             return resourceUrl;
         }
 
-        throw ScriptHelper.error( "Failed find file [{0}] from module.", key.toString() );
+        throw new ResourceNotFoundException( key );
+    }
+
+    private boolean exists( final URL url )
+    {
+        try
+        {
+            url.openStream();
+            return true;
+        }
+        catch ( final Exception e )
+        {
+            return false;
+        }
     }
 
     public void install( final Context context )
