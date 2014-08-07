@@ -21,11 +21,10 @@ public class XmlSiteTemplateSerializerTest
     public void test_to_xml()
         throws Exception
     {
-        final ContentTypeFilter contentTypeFilter =
-            newContentFilter().defaultDeny().
-                allowContentTypes( ContentTypeNames.from( "com.enonic.tweet", "system.folder" ) ).
-                denyContentType( "com.enonic.tweet.internal" ).
-                build();
+        final ContentTypeFilter contentTypeFilter = newContentFilter().defaultDeny().
+            allowContentTypes( ContentTypeNames.from( "com.enonic.tweet", "system.folder" ) ).
+            denyContentType( "com.enonic.tweet.internal" ).
+            build();
 
         final SiteTemplate siteTemplate = SiteTemplate.newSiteTemplate().
             key( SiteTemplateKey.from( "Intranet-1.0.0" ) ).

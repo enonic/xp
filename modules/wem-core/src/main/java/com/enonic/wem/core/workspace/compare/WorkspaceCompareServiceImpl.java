@@ -8,8 +8,8 @@ import com.enonic.wem.api.entity.EntityComparison;
 import com.enonic.wem.api.entity.EntityComparisons;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIds;
+import com.enonic.wem.api.entity.EntityVersion;
 import com.enonic.wem.api.entity.Workspace;
-import com.enonic.wem.core.version.VersionEntry;
 import com.enonic.wem.core.version.VersionService;
 import com.enonic.wem.core.workspace.WorkspaceService;
 import com.enonic.wem.core.workspace.compare.query.CompareEntitiesQuery;
@@ -72,15 +72,15 @@ public class WorkspaceCompareServiceImpl
         final BlobKey sourceBlobKey = workspaceService.getById( new WorkspaceIdQuery( sourceWorkspace, entityId ) );
         final BlobKey targetBlobKey = workspaceService.getById( new WorkspaceIdQuery( targetWorkspace, entityId ) );
 
-        final VersionEntry sourceVersion = getVersion( sourceBlobKey );
-        final VersionEntry targetVersion = getVersion( targetBlobKey );
+        final EntityVersion sourceVersion = getVersion( sourceBlobKey );
+        final EntityVersion targetVersion = getVersion( targetBlobKey );
 
         final CompareStatus compareStatus = DiffStatusResolver.resolve( new DiffStatusParams( sourceVersion, targetVersion ) );
 
         return new EntityComparison( entityId, compareStatus );
     }
 
-    private VersionEntry getVersion( final BlobKey blobKey )
+    private EntityVersion getVersion( final BlobKey blobKey )
     {
         if ( blobKey == null )
         {

@@ -2,7 +2,7 @@ module api.content.site.template {
 
     import PageTemplateKey = api.content.page.PageTemplateKey;
 
-    export class SiteTemplateSummary extends api.item.BaseItem implements api.Equitable{
+    export class SiteTemplateSummary extends api.item.BaseItem implements api.Equitable {
 
         private name: string;
 
@@ -152,20 +152,6 @@ module api.content.site.template {
                 array.push(new SiteTemplateSummaryBuilder().
                     fromSiteTemplateSummaryJson(json).
                     build());
-            });
-            return array;
-        }
-
-        static fromExtModel(model: Ext_data_Model): SiteTemplateSummary {
-            return new SiteTemplateSummaryBuilder().
-                fromSiteTemplateSummaryJson(<api.content.site.template.SiteTemplateSummaryJson>model.raw).
-                build();
-        }
-
-        static fromExtModelArray(modelArray: Ext_data_Model[]): SiteTemplateSummary[] {
-            var array: SiteTemplateSummary[] = [];
-            modelArray.forEach((model: Ext_data_Model) => {
-                array.push(SiteTemplateSummary.fromExtModel(model));
             });
             return array;
         }

@@ -1,4 +1,3 @@
-// @include ext/ext-all.js
 // @include plupload/js/plupload.full.js
 // @include jquery-2.0.2.js
 // @include jquery-ui-1.10.3.custom.min.js

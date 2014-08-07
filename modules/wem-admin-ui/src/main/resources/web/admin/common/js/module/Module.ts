@@ -42,10 +42,6 @@ module api.module {
             return this.contentTypeDependencies;
         }
 
-        static fromExtModel(model:Ext_data_Model):Module {
-            return Module.fromJson(<api.module.json.ModuleJson>model.raw);
-        }
-
         static fromJson(json: api.module.json.ModuleJson): Module {
             return new ModuleBuilder().fromJson(json).build();
         }

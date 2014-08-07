@@ -6,7 +6,7 @@ import org.restlet.representation.Representation;
 import org.restlet.resource.ResourceException;
 
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.portal.base.ModuleBaseResource;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.controller.JsController;
@@ -41,7 +41,7 @@ public final class ServiceResource
         final JsController controller = this.controllerFactory.newController();
 
         final String serviceName = getAttribute( "service" );
-        controller.scriptDir( ModuleResourceKey.from( moduleKey, "service/" + serviceName ) );
+        controller.scriptDir( ResourceKey.from( moduleKey, "service/" + serviceName ) );
         controller.context( context );
         controller.execute();
 

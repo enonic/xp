@@ -28,7 +28,8 @@ module api.content {
             return deferred.promise;
         }
 
-        static updateCompareStatus(contentSummaries: ContentSummary[], compareResults: CompareContentResults): ContentSummaryAndCompareStatus[] {
+        static updateCompareStatus(contentSummaries: ContentSummary[],
+                                   compareResults: CompareContentResults): ContentSummaryAndCompareStatus[] {
             var list: ContentSummaryAndCompareStatus[] = [];
             contentSummaries.forEach((contentSummary: ContentSummary) => {
                 var compareResult: CompareContentResult = compareResults.get(contentSummary.getId());

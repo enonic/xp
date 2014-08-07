@@ -23,6 +23,8 @@ module app.wizard.site {
 
         private siteTemplateDropdown: Dropdown<SiteTemplateSummary>;
 
+        private siteTemplateDropdownLoaded: boolean;
+
         private moduleViewsContainer: api.dom.DivEl;
 
         private moduleViews: ModuleView[] = [];
@@ -59,7 +61,7 @@ module app.wizard.site {
             var deferred = Q.defer<void>();
 
             new GetAllSiteTemplatesRequest().sendAndParse()
-                .done((siteTemplates: SiteTemplateSummary[]) => {
+                .then((siteTemplates: SiteTemplateSummary[]) => {
                     var selecteSiteTemplateKey = this.siteTemplate ? this.siteTemplate.getKey().toString() : '';
                     var selectedSiteOption: Option<SiteTemplateSummary> = null;
                     siteTemplates.forEach((siteTemplate: SiteTemplateSummary) => {
@@ -77,6 +79,7 @@ module app.wizard.site {
                         this.siteTemplateDropdown.selectOption(selectedSiteOption);
                     }
 
+                    this.siteTemplateDropdownLoaded = true;
                     deferred.resolve(null);
                 });
 
@@ -132,15 +135,16 @@ module app.wizard.site {
         private doRenderExisting(moduleConfigs: api.content.site.ModuleConfig[]): Q.Promise<void> {
             this.setModuleConfigs(moduleConfigs);
 
-            var option = this.siteTemplateDropdown.getOptionByValue(this.siteTemplate.getKey().toString());
-            var selectedOption = this.siteTemplateDropdown.getSelectedOption();
-            if (!selectedOption || (selectedOption.value !== option.value)) {
-                this.siteTemplateDropdown.selectOption(option, true);
+            if (this.siteTemplateDropdownLoaded) {
+                var option = this.siteTemplateDropdown.getOptionByValue(this.siteTemplate.getKey().toString());
+                var selectedOption = this.siteTemplateDropdown.getSelectedOption();
+                if (!selectedOption || (selectedOption.value !== option.value)) {
+                    this.siteTemplateDropdown.selectOption(option, true);
+                }
             }
 
             return this.loadModules(moduleConfigs).
                 then((modules: Module[]): void => {
-
                     this.layoutModules(modules);
                 });
         }

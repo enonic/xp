@@ -11,15 +11,15 @@ module api.ui.grid {
 
         private defaultAutoRenderGridOnDataChanges = true;
 
-        private checkableRows:boolean;
+        private checkableRows: boolean;
 
-        private slickGrid:Slick.Grid<T>;
+        private slickGrid: Slick.Grid<T>;
 
-        private dataView:DataView<T>;
+        private dataView: DataView<T>;
 
         private checkboxSelectorPlugin;
 
-        constructor(dataView:DataView<T>, columns:GridColumn<T>[], options?:GridOptions<T>) {
+        constructor(dataView: DataView<T>, columns: GridColumn<T>[], options?: GridOptions<T>) {
             super("grid");
 
             options = new GridOptionsBuilder<T>(options).build();
@@ -61,28 +61,28 @@ module api.ui.grid {
             this.dataView.setItems([], options.getDataIdProperty());
         }
 
-        private autoRenderGridOnDataChanges(dataView:DataView<T>) {
+        private autoRenderGridOnDataChanges(dataView: DataView<T>) {
 
-            dataView.onRowCountChanged((eventData:Slick.EventData, args) => {
+            dataView.onRowCountChanged((eventData: Slick.EventData, args) => {
                 this.updateRowCount();
                 this.render();
             });
 
-            dataView.onRowsChanged((eventData:Slick.EventData, args) => {
+            dataView.onRowsChanged((eventData: Slick.EventData, args) => {
                 this.invalidateRows(args.rows);
                 this.render();
             });
         }
 
-        setSelectionModel(selectionModel:Slick.SelectionModel<T, any>) {
+        setSelectionModel(selectionModel: Slick.SelectionModel<T, any>) {
             this.slickGrid.setSelectionModel(selectionModel);
         }
 
-        getDataView():DataView<T> {
+        getDataView(): DataView<T> {
             return this.dataView;
         }
 
-        setColumns(columns:GridColumn<T>[]) {
+        setColumns(columns: GridColumn<T>[]) {
             if (this.checkboxSelectorPlugin) {
                 columns.unshift(this.checkboxSelectorPlugin.getColumnDefinition());
             }
@@ -93,15 +93,15 @@ module api.ui.grid {
             return <GridColumn<T>[]>this.slickGrid.getColumns();
         }
 
-        setFilter(f:(item:any, args:any) => boolean) {
+        setFilter(f: (item: any, args: any) => boolean) {
             this.dataView.setFilter(f);
         }
 
-        setOptions(options:GridOptions<T>) {
+        setOptions(options: GridOptions<T>) {
             this.slickGrid.setOptions(options);
         }
 
-        getOptions():GridOptions<T> {
+        getOptions(): GridOptions<T> {
             return <GridOptions<T>>this.slickGrid.getOptions();
         }
 
@@ -118,7 +118,7 @@ module api.ui.grid {
             this.slickGrid.updateRowCount();
         }
 
-        invalidateRows(rows:number[]) {
+        invalidateRows(rows: number[]) {
             this.slickGrid.invalidateRows(rows);
         }
 
@@ -134,21 +134,21 @@ module api.ui.grid {
             this.slickGrid.focus();
         }
 
-        setOnClick(callback:(event, data:GridOnClickData) => void) {
+        setOnClick(callback: (event, data: GridOnClickData) => void) {
             this.slickGrid.onClick.subscribe((event, data) => {
                 event.stopPropagation();
                 callback(event, <GridOnClickData>data);
             });
         }
 
-        setOnKeyDown(callback:(event) => void) {
+        setOnKeyDown(callback: (event) => void) {
             this.slickGrid.onKeyDown.subscribe((event) => {
                 event.stopPropagation();
                 callback(event);
             });
         }
 
-        getSelectedRows():number[] {
+        getSelectedRows(): number[] {
             return this.slickGrid.getSelectedRows();
         }
 
@@ -161,11 +161,11 @@ module api.ui.grid {
             return rowItems;
         }
 
-        setSelectedRows(rows:number[]) {
+        setSelectedRows(rows: number[]) {
             this.slickGrid.setSelectedRows(rows);
         }
 
-        selectRow(row:number) {
+        selectRow(row: number) {
             // Prevent unnecessary render on the same row
             if (this.getSelectedRows().length > 1
                 || (this.getSelectedRows().length < 2 && this.getSelectedRows().indexOf(row) < 0)) {
@@ -201,7 +201,7 @@ module api.ui.grid {
 
         moveSelectedUp() {
             if (this.slickGrid.getDataLength() > 0) {
-                var selected:number[] = this.getSelectedRows().sort();
+                var selected: number[] = this.getSelectedRows().sort();
                 var row = selected.length >= 1
                     ? selected[0] - 1
                     : -1;
@@ -221,7 +221,7 @@ module api.ui.grid {
 
         moveSelectedDown() {
             if (this.slickGrid.getDataLength() > 0) {
-                var selected:number[] = this.getSelectedRows().sort();
+                var selected: number[] = this.getSelectedRows().sort();
                 var row = selected.length >= 1
                     ? Math.min(selected[selected.length - 1] + 1, this.slickGrid.getDataLength() - 1)
                     : 0;
@@ -240,35 +240,35 @@ module api.ui.grid {
             this.slickGrid.navigateDown();
         }
 
-        getActiveCell():Slick.Cell {
+        getActiveCell(): Slick.Cell {
             return this.slickGrid.getActiveCell();
         }
 
-        setActiveCell(row:number, cell:number) {
+        setActiveCell(row: number, cell: number) {
             this.slickGrid.setActiveCell(row, cell);
         }
 
-        setCellCssStyles(key:string, hash:Slick.CellCssStylesHash) {
+        setCellCssStyles(key: string, hash: Slick.CellCssStylesHash) {
             this.slickGrid.setCellCssStyles(key, hash);
         }
 
-        getCellCssStyles(key:string):Slick.CellCssStylesHash {
+        getCellCssStyles(key: string): Slick.CellCssStylesHash {
             return this.slickGrid.getCellCssStyles(key);
         }
 
-        subscribeOnSelectedRowsChanged(callback:(e, args) => void) {
+        subscribeOnSelectedRowsChanged(callback: (e, args) => void) {
             this.slickGrid.onSelectedRowsChanged.subscribe(callback);
         }
 
-        subscribeOnClick(callback:(e, args) => void) {
+        subscribeOnClick(callback: (e, args) => void) {
             this.slickGrid.onClick.subscribe(callback);
         }
 
-        subscribeOnDblClick(callback:(e, args) => void) {
+        subscribeOnDblClick(callback: (e, args) => void) {
             this.slickGrid.onDblClick.subscribe(callback);
         }
 
-        subscribeOnContextMenu(callback:(e, args) => void) {
+        subscribeOnContextMenu(callback: (e, args) => void) {
             this.slickGrid.onContextMenu.subscribe(callback);
         }
     }

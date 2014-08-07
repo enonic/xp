@@ -15,7 +15,7 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKeyResolver;
-import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.core.module.ModuleKeyResolverService;
 
@@ -50,7 +50,7 @@ public abstract class ModuleBaseResourceTest<T extends ModuleBaseResource>
         final Path filePath = this.tmpDir.resolve( name );
         Files.write( filePath, content.getBytes( Charsets.UTF_8 ) );
 
-        final ModuleResourceKey moduleResourceKey = ModuleResourceKey.from( key );
+        final ResourceKey moduleResourceKey = ResourceKey.from( key );
         final Module module = Mockito.mock( Module.class );
         final URL resourcePathUrl = filePath.toUri().toURL();
         final String path = StringUtils.removeStart( moduleResourceKey.getPath(), "/" );

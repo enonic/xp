@@ -5,7 +5,7 @@ import org.apache.commons.lang.StringUtils;
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.resource.ResourceKey;
 
 public final class LayoutDescriptorKey
     extends DescriptorKey
@@ -28,8 +28,8 @@ public final class LayoutDescriptorKey
     }
 
     @Override
-    public ModuleResourceKey toResourceKey()
+    public ResourceKey toResourceKey()
     {
-        return ModuleResourceKey.from( getModuleKey(), "component/" + getName().toString() + "/layout.xml" );
+        return ResourceKey.from( getModuleKey(), "component/" + getName().toString() + "/layout.xml" );
     }
 }

@@ -11,7 +11,6 @@ import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.content.thumb.Thumbnail;
-import com.enonic.wem.api.content.versioning.ContentVersionId;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.support.ChangeTraceable;
@@ -53,8 +52,6 @@ public final class Content
 
     private final UserKey modifier;
 
-    private final ContentVersionId versionId;
-
     private final ImmutableList<ContentId> childrenIds;
 
     private final Site site;
@@ -72,10 +69,6 @@ public final class Content
         {
             builder.type = ContentTypeName.unstructured();
         }
-        if ( builder.versionId == null )
-        {
-            builder.versionId = ContentVersionId.initial();
-        }
 
         this.draft = builder.draft;
         this.displayName = builder.displayName;
@@ -91,7 +84,6 @@ public final class Content
         this.creator = builder.creator;
         this.modifier = builder.modifier;
         this.owner = builder.owner;
-        this.versionId = builder.versionId;
         this.childrenIds = builder.childrenIdsBuilder.build();
         this.site = builder.site;
         this.page = builder.page;
@@ -173,11 +165,6 @@ public final class Content
         return id;
     }
 
-    public ContentVersionId getVersionId()
-    {
-        return versionId;
-    }
-
     public boolean hasChildren()
     {
         return !childrenIds.isEmpty();
@@ -213,7 +200,6 @@ public final class Content
         throws IllegalEditException
     {
         IllegalEdit.check( "id", this.getId(), to.getId(), Content.class );
-        IllegalEdit.check( "versionId", this.getVersionId(), to.getVersionId(), Content.class );
         IllegalEdit.check( "path", this.getPath(), to.getPath(), Content.class );
         IllegalEdit.check( "createdTime", this.getCreatedTime(), to.getCreatedTime(), Content.class );
         IllegalEdit.check( "creator", this.getCreator(), to.getCreator(), Content.class );
@@ -229,7 +215,6 @@ public final class Content
         s.add( "id", id );
         s.add( "draft", draft );
         s.add( "path", path );
-        s.add( "version", versionId );
         s.add( "displayName", displayName );
         s.add( "contentType", type );
         s.add( "createdTime", createdTime );
@@ -283,8 +268,6 @@ public final class Content
 
         UserKey modifier;
 
-        ContentVersionId versionId;
-
         ImmutableList.Builder<ContentId> childrenIdsBuilder;
 
         Site site;
@@ -314,7 +297,6 @@ public final class Content
             this.modifiedTime = content.modifiedTime;
             this.creator = content.creator;
             this.modifier = content.modifier;
-            this.versionId = content.versionId;
             this.childrenIdsBuilder = ImmutableList.builder();
             this.childrenIdsBuilder.addAll( content.childrenIds );
             this.site = content.site;
@@ -514,12 +496,6 @@ public final class Content
         public Builder id( final ContentId contentId )
         {
             this.contentId = contentId;
-            return this;
-        }
-
-        public Builder version( final ContentVersionId versionId )
-        {
-            this.versionId = versionId;
             return this;
         }
 

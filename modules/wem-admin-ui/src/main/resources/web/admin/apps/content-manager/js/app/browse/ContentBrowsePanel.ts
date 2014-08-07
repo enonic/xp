@@ -45,12 +45,14 @@ module app.browse {
             api.content.ContentDeletedEvent.on((event) => {
                 this.setRefreshNeeded(true);
                 /*
-                Deleting content won't trigger browsePanel.onShow event,
-                because we are left on the same panel. We need to refresh manually.
+                 Deleting content won't trigger browsePanel.onShow event,
+                 because we are left on the same panel. We need to refresh manually.
                  */
+                /* Experimental. For future use.
                 this.contentTreeGridPanel2.deleteNodes(event.getContents().map((elem) => {
                     return new api.content.ContentSummaryAndCompareStatus(elem, null);
                 }));
+                */
                 this.refreshFilterAndGrid();
             });
 

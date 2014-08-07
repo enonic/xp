@@ -2,11 +2,11 @@ module app.browse {
 
     export class ShowContextMenuEvent extends api.event.Event {
 
-        private x:number;
+        private x: number;
 
-        private y:number;
+        private y: number;
 
-        constructor(x:number, y:number) {
+        constructor(x: number, y: number) {
             this.x = x;
             this.y = y;
             super();

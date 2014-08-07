@@ -37,7 +37,7 @@ module app.create {
             var oldValue = this.getActiveFacet();
 
             if (oldValue != facet) {
-                this.getChildren().forEach((child:api.dom.Element) => child.removeClass('active'));
+                this.getChildren().forEach((child: api.dom.Element) => child.removeClass('active'));
 
                 if (facet == NewContentDialogFacets.ALL) {
                     this.allFacet.addClass('active');

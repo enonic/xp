@@ -53,7 +53,7 @@ public final class Nodes
         }
     }
 
-    public static Builder newNodes()
+    public static Builder create()
     {
         return new Builder();
     }

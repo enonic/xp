@@ -50,9 +50,10 @@ module app.wizard {
                 this.publishList.clear();
                 var req = api.content.CompareContentRequest.fromContentSummaries([this.content]);
                 var res = req.sendAndParse();
-                res.done((results:api.content.CompareContentResults) => {
-                    this.publishList.appendChild(new PublishDialogItemComponent(this.content, results.get(this.content.getContentId().toString()).getCompareStatus()));
-                   this.open();
+                res.done((results: api.content.CompareContentResults) => {
+                    this.publishList.appendChild(new PublishDialogItemComponent(this.content,
+                        results.get(this.content.getContentId().toString()).getCompareStatus()));
+                    this.open();
                 });
             });
 
@@ -77,20 +78,20 @@ module app.wizard {
 
     export class PublishAction extends api.ui.Action {
 
-        private static BASE_STRING:string = "Publish now";
+        private static BASE_STRING: string = "Publish now";
 
         constructor() {
             super(PublishAction.BASE_STRING);
         }
 
-        setToBePublishedAmout(amount:number) {
+        setToBePublishedAmout(amount: number) {
             if (amount < 1) {
                 this.setEnabled(false);
             } else {
                 this.setEnabled(true);
 
             }
-            this.setLabel(PublishAction.BASE_STRING + " (" + amount +")")
+            this.setLabel(PublishAction.BASE_STRING + " (" + amount + ")")
         }
     }
 
@@ -123,7 +124,7 @@ module app.wizard {
             displayName.getEl().setInnerHtml(content.getDisplayName());
 
             var compareStatusEl = new api.dom.SpanEl();
-            compareStatusEl.getEl().setInnerHtml(api.content.CompareStatus[compareStatus]+"");
+            compareStatusEl.getEl().setInnerHtml(api.content.CompareStatus[compareStatus] + "");
             displayName.appendChild(compareStatusEl);
 
             this.appendChild(displayName);

@@ -8,16 +8,14 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.mockito.Mockito;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
 
-import com.enonic.wem.api.module.ModuleResourceKey;
-import com.enonic.wem.api.module.ModuleResourceUrlResolver;
+import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.wem.api.resource.ResourceUrlResolver;
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceNotFoundException;
-import com.enonic.wem.core.config.SystemConfig;
 
 import static org.junit.Assert.*;
 
@@ -41,20 +39,16 @@ public class ResourceServiceImplTest
         throws Exception
     {
         final File modulesDir = this.temporaryFolder.newFolder( "modules" );
-
-        final SystemConfig config = Mockito.mock( SystemConfig.class );
-        Mockito.when( config.getModulesDir() ).thenReturn( modulesDir.toPath() );
-
-        this.resourceService = new ResourceServiceImpl( config );
+        this.resourceService = new ResourceServiceImpl();
 
         writeFile( modulesDir, "mymodule-1.0.0/a/b.txt", "a/b.txt" );
         writeFile( modulesDir, "mymodule-1.0.0/a/c.txt", "a/c.txt" );
         writeFile( modulesDir, "mymodule-1.0.0/a/c/d.txt", "a/c/d.txt" );
         writeFile( modulesDir, "othermodule-1.0.0/a.txt", "a.txt" );
 
-        new ModuleResourceUrlResolver()
+        new ResourceUrlResolver()
         {
-            protected URL doResolve( final ModuleResourceKey key )
+            protected URL doResolve( final ResourceKey key )
                 throws Exception
             {
                 return new URL( "file:" + modulesDir.getPath() + "/" + key.getModule().toString() + key.getPath() );
@@ -66,7 +60,7 @@ public class ResourceServiceImplTest
     public void testGetResource()
         throws Exception
     {
-        final ModuleResourceKey key = ModuleResourceKey.from( "mymodule-1.0.0:/a/b.txt" );
+        final ResourceKey key = ResourceKey.from( "mymodule-1.0.0:/a/b.txt" );
 
         final Resource resource = this.resourceService.getResource( key );
         assertNotNull( resource );
@@ -81,7 +75,7 @@ public class ResourceServiceImplTest
     @Test(expected = ResourceNotFoundException.class)
     public void testGetResource_notFound()
     {
-        final ModuleResourceKey key = ModuleResourceKey.from( "mymodule-1.0.0:/not/exists.txt" );
+        final ResourceKey key = ResourceKey.from( "mymodule-1.0.0:/not/exists.txt" );
         this.resourceService.getResource( key );
     }
 }

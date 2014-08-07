@@ -49,7 +49,6 @@ public final class ValueTypes
         register( HTML_PART );
         register( XML );
         register( LOCAL_DATE );
-        //register( DATE_TIME );
         register( DATE_TIME );
         register( CONTENT_ID );
         register( LONG );

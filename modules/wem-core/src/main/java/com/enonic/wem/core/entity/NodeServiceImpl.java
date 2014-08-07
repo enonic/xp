@@ -2,12 +2,15 @@ package com.enonic.wem.core.entity;
 
 import javax.inject.Inject;
 
+import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.CreateNodeParams;
 import com.enonic.wem.api.entity.EntityComparison;
 import com.enonic.wem.api.entity.EntityComparisons;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIds;
+import com.enonic.wem.api.entity.EntityVersions;
+import com.enonic.wem.api.entity.GetEntityVersionsParams;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.NodePaths;
@@ -18,6 +21,7 @@ import com.enonic.wem.api.entity.UpdateNodeParams;
 import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.core.elasticsearch.ElasticsearchIndexService;
 import com.enonic.wem.core.entity.dao.NodeDao;
+import com.enonic.wem.core.version.VersionService;
 import com.enonic.wem.core.workspace.compare.WorkspaceCompareService;
 
 public class NodeServiceImpl
@@ -31,6 +35,9 @@ public class NodeServiceImpl
 
     @Inject
     private WorkspaceCompareService workspaceCompareService;
+
+    @Inject
+    private VersionService versionService;
 
     @Override
     public Node getById( final EntityId id, final Context context )
@@ -153,4 +160,21 @@ public class NodeServiceImpl
             execute();
     }
 
+    @Override
+    public EntityVersions getVersions( final GetEntityVersionsParams params, final Context context )
+    {
+        return GetEntityVersionsCommand.create( context ).
+            entityId( params.getEntityId() ).
+            from( params.getFrom() ).
+            size( params.getSize() ).
+            versionService( this.versionService ).
+            build().
+            execute();
+    }
+
+    @Override
+    public Node getByBlobKey( final BlobKey blobKey, final Context context )
+    {
+        return nodeDao.getByBlobKey( blobKey );
+    }
 }

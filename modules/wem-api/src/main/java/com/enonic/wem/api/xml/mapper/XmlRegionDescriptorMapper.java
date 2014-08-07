@@ -3,11 +3,11 @@ package com.enonic.wem.api.xml.mapper;
 import com.enonic.wem.api.content.page.region.RegionDescriptor;
 import com.enonic.wem.api.content.page.region.RegionDescriptors;
 import com.enonic.wem.api.xml.model.XmlRegionDescriptor;
-import com.enonic.wem.api.xml.model.XmlRegionDescriptors;
+import com.enonic.wem.api.xml.model.XmlRegionsDescriptor;
 
 final class XmlRegionDescriptorMapper
 {
-    protected static RegionDescriptors fromXml( final XmlRegionDescriptors regions )
+    protected static RegionDescriptors fromXml( final XmlRegionsDescriptor regions )
     {
         final RegionDescriptors.Builder builder = RegionDescriptors.newRegionDescriptors();
 
@@ -29,9 +29,9 @@ final class XmlRegionDescriptorMapper
         return builder.build();
     }
 
-    protected static XmlRegionDescriptors toXml( final RegionDescriptors object )
+    protected static XmlRegionsDescriptor toXml( final RegionDescriptors object )
     {
-        final XmlRegionDescriptors result = new XmlRegionDescriptors();
+        final XmlRegionsDescriptor result = new XmlRegionsDescriptor();
         for ( final RegionDescriptor descriptor : object )
         {
             result.getList().add( toXml( descriptor ) );

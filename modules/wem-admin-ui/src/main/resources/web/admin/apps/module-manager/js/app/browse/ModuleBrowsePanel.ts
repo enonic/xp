@@ -29,7 +29,9 @@ module app.browse {
             });
 
             this.moduleTreeGridPanel.onRowSelectionChanged((selectedRows: TreeNode<ModuleSummary>[]) => {
-                this.browseActions.updateActionsEnabledState(<any[]>selectedRows.map((elem) => { return elem.getData(); }));
+                this.browseActions.updateActionsEnabledState(<any[]>selectedRows.map((elem) => {
+                    return elem.getData();
+                }));
             });
 
             this.registerEvents();
@@ -82,24 +84,6 @@ module app.browse {
                 this.moduleTreeGridPanel.reload();
             });
 
-        }
-
-        extModelsToBrowseItems(models: Ext_data_Model[]): api.app.browse.BrowseItem<api.module.ModuleSummary>[] {
-
-            var browseItems: api.app.browse.BrowseItem<api.module.ModuleSummary>[] = [];
-
-            models.forEach((model: Ext_data_Model, index: number) => {
-
-                var moduleModel: api.module.ModuleSummary = api.module.ModuleSummary.fromExtModel(model);
-
-                var item = new api.app.browse.BrowseItem<api.module.ModuleSummary>(moduleModel).
-                    setDisplayName(moduleModel.getDisplayName()).
-                    setPath(moduleModel.getName()).
-                    setIconUrl(api.util.getAdminUri('common/images/icons/icoMoon/32x32/puzzle.png'));
-
-                browseItems.push(item);
-            });
-            return browseItems;
         }
     }
 

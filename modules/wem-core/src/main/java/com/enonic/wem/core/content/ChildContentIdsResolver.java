@@ -30,9 +30,14 @@ final class ChildContentIdsResolver
         this.translator = builder.translator;
     }
 
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
     Content resolve( final Content content )
     {
-        final Contents children = GetChildContentCommand.create( content.getPath() ).
+        final Contents children = GetContentByParentCommand.create( content.getPath() ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             context( this.context ).
@@ -73,11 +78,6 @@ final class ChildContentIdsResolver
         }
 
         return builder.build();
-    }
-
-    public static Builder create()
-    {
-        return new Builder();
     }
 
     public static class Builder

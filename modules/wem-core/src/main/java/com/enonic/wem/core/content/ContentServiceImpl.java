@@ -17,6 +17,7 @@ import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.DeleteContentParams;
 import com.enonic.wem.api.content.DeleteContentResult;
 import com.enonic.wem.api.content.GetContentByIdsParams;
+import com.enonic.wem.api.content.GetContentVersionsParams;
 import com.enonic.wem.api.content.PushContentParams;
 import com.enonic.wem.api.content.RenameContentParams;
 import com.enonic.wem.api.content.UpdateContentParams;
@@ -24,6 +25,7 @@ import com.enonic.wem.api.content.ValidateContentData;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.query.ContentQuery;
 import com.enonic.wem.api.content.query.ContentQueryResult;
+import com.enonic.wem.api.content.versioning.ContentVersions;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.NodeService;
 import com.enonic.wem.api.schema.content.ContentTypeService;
@@ -117,9 +119,9 @@ public class ContentServiceImpl
     }
 
     @Override
-    public Contents getChildren( final ContentPath parentPath, final Context context )
+    public Contents getByParent( final ContentPath parentPath, final Context context )
     {
-        return GetChildContentCommand.create( parentPath ).
+        return GetContentByParentCommand.create( parentPath ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
@@ -244,6 +246,21 @@ public class ContentServiceImpl
             execute();
     }
 
+    @Override
+    public ContentVersions getVersions( final GetContentVersionsParams params, final Context context )
+    {
+        return GetContentVersionsCommand.create().
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            blobService( this.blobService ).
+            translator( this.contentNodeTranslator ).
+            context( context ).
+            contentId( params.getContentId() ).
+            from( params.getFrom() ).
+            size( params.getSize() ).
+            build().
+            execute();
+    }
 
     @Override
     public String generateContentName( final String displayName )

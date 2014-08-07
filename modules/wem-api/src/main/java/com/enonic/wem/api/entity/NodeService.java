@@ -1,5 +1,6 @@
 package com.enonic.wem.api.entity;
 
+import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.context.Context;
 
 public interface NodeService
@@ -29,4 +30,8 @@ public interface NodeService
     EntityComparison compare( EntityId id, Workspace target, Context context );
 
     EntityComparisons compare( final EntityIds ids, final Workspace target, final Context context );
+
+    EntityVersions getVersions( final GetEntityVersionsParams params, final Context context );
+
+    Node getByBlobKey( BlobKey blobKey, Context context );
 }

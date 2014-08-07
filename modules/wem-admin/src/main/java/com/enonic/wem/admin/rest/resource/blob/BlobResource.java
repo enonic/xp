@@ -1,6 +1,5 @@
 package com.enonic.wem.admin.rest.resource.blob;
 
-import java.time.Instant;
 import java.util.List;
 
 import javax.inject.Inject;

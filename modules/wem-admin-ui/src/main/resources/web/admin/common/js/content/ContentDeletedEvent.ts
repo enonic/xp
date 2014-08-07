@@ -2,14 +2,14 @@ module api.content {
 
     export class ContentDeletedEvent extends api.event.Event {
 
-        private contents:ContentSummary[];
+        private contents: ContentSummary[];
 
-        constructor( contents:ContentSummary[] ) {
+        constructor(contents: ContentSummary[]) {
             super();
             this.contents = contents;
         }
 
-        public getContents():ContentSummary[] {
+        public getContents(): ContentSummary[] {
             return this.contents;
         }
 

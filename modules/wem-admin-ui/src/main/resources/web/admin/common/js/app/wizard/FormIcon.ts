@@ -101,7 +101,7 @@ module api.app.wizard {
                 var responseObj;
                 if (response && response.status === 200) {
 
-                    responseObj = Ext.decode(response.response);
+                    responseObj = JSON.parse(response.response);
                     if (responseObj.items && responseObj.items.length > 0) {
                         var uploadedFile = responseObj.items[0];
 

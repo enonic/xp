@@ -63,10 +63,6 @@ module api.module {
             return false;
         }
 
-        static fromExtModel(model: Ext_data_Model): ModuleSummary {
-            return ModuleSummary.fromJson(<api.module.json.ModuleSummaryJson>model.raw);
-        }
-
         static fromJson(json: api.module.json.ModuleSummaryJson): ModuleSummary {
             return new ModuleSummaryBuilder().fromJson(json).build();
         }

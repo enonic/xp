@@ -1,25 +1,25 @@
 package com.enonic.wem.core.workspace.compare;
 
-import com.enonic.wem.core.version.VersionEntry;
+import com.enonic.wem.api.entity.EntityVersion;
 
 class DiffStatusParams
 {
-    private final VersionEntry source;
+    private final EntityVersion source;
 
-    private final VersionEntry target;
+    private final EntityVersion target;
 
-    public DiffStatusParams( final VersionEntry source, final VersionEntry target )
+    public DiffStatusParams( final EntityVersion source, final EntityVersion target )
     {
         this.source = source;
         this.target = target;
     }
 
-    public VersionEntry getSource()
+    public EntityVersion getSource()
     {
         return source;
     }
 
-    public VersionEntry getTarget()
+    public EntityVersion getTarget()
     {
         return target;
     }

@@ -1,6 +1,8 @@
 package com.enonic.wem.admin.rest.resource.content;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -15,7 +17,6 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.admin.json.content.AbstractContentListJson;
-import com.enonic.wem.admin.json.content.CompareContentResultJson;
 import com.enonic.wem.admin.json.content.CompareContentResultsJson;
 import com.enonic.wem.admin.json.content.ContentIdJson;
 import com.enonic.wem.admin.json.content.ContentIdListJson;
@@ -23,6 +24,7 @@ import com.enonic.wem.admin.json.content.ContentJson;
 import com.enonic.wem.admin.json.content.ContentListJson;
 import com.enonic.wem.admin.json.content.ContentSummaryJson;
 import com.enonic.wem.admin.json.content.ContentSummaryListJson;
+import com.enonic.wem.admin.json.content.GetContentVersionsResultJson;
 import com.enonic.wem.admin.json.content.attachment.AttachmentJson;
 import com.enonic.wem.admin.rest.exception.NotFoundWebException;
 import com.enonic.wem.admin.rest.resource.content.json.AbstractContentQueryResultJson;
@@ -32,11 +34,10 @@ import com.enonic.wem.admin.rest.resource.content.json.ContentQueryJson;
 import com.enonic.wem.admin.rest.resource.content.json.CreateContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.DeleteContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.DeleteContentResultJson;
+import com.enonic.wem.admin.rest.resource.content.json.GetContentVersionsJson;
 import com.enonic.wem.admin.rest.resource.content.json.PublishContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.UpdateContentJson;
 import com.enonic.wem.api.account.AccountKey;
-import com.enonic.wem.api.content.CompareContentParams;
-import com.enonic.wem.api.content.CompareContentResult;
 import com.enonic.wem.api.content.CompareContentResults;
 import com.enonic.wem.api.content.CompareContentsParams;
 import com.enonic.wem.api.content.Content;
@@ -51,6 +52,7 @@ import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.DeleteContentParams;
 import com.enonic.wem.api.content.GetContentByIdsParams;
+import com.enonic.wem.api.content.GetContentVersionsParams;
 import com.enonic.wem.api.content.PushContentParams;
 import com.enonic.wem.api.content.RenameContentParams;
 import com.enonic.wem.api.content.UnableToDeleteContentException;
@@ -59,6 +61,7 @@ import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.api.content.query.ContentQueryResult;
+import com.enonic.wem.api.content.versioning.ContentVersions;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.DataJson;
 import com.enonic.wem.api.exception.ConflictException;
@@ -84,7 +87,6 @@ public class ContentResource
     public ContentIdJson getById( @QueryParam("id") final String idParam,
                                   @QueryParam("expand") @DefaultValue(EXPAND_FULL) final String expandParam )
     {
-
         final ContentId id = ContentId.from( idParam );
         final Content content = contentService.getById( id, STAGE_CONTEXT );
 
@@ -148,7 +150,7 @@ public class ContentResource
 
             if ( parentContents.isNotEmpty() )
             {
-                contents = contentService.getChildren( parentContents.first().getPath(), STAGE_CONTEXT );
+                contents = contentService.getByParent( parentContents.first().getPath(), STAGE_CONTEXT );
             }
             else
             {
@@ -182,7 +184,7 @@ public class ContentResource
         }
         else
         {
-            contents = contentService.getChildren( ContentPath.from( parentPathParam ), STAGE_CONTEXT );
+            contents = contentService.getByParent( ContentPath.from( parentPathParam ), STAGE_CONTEXT );
         }
 
         if ( EXPAND_NONE.equalsIgnoreCase( expandParam ) )
@@ -231,9 +233,9 @@ public class ContentResource
         final ContentPaths contentsToDelete = ContentPaths.from( json.getContentPaths() );
 
         //sort contents by nesting order to avoid removing parent content before child.
-        List<ContentPath> contentsToDeleteList = new ArrayList(contentsToDelete.getSet());
-        Collections.sort(contentsToDeleteList, ( ContentPath contentPath1, ContentPath contentPath2 ) ->
-                ( contentPath2.elementCount() - contentPath1.elementCount() ));
+        List<ContentPath> contentsToDeleteList = new ArrayList( contentsToDelete.getSet() );
+        Collections.sort( contentsToDeleteList, ( ContentPath contentPath1, ContentPath contentPath2 ) -> ( contentPath2.elementCount() -
+            contentPath1.elementCount() ) );
 
         final DeleteContentResultJson jsonResult = new DeleteContentResultJson();
 
@@ -268,14 +270,19 @@ public class ContentResource
         return new CompareContentResultsJson( compareResults );
     }
 
-    @GET
-    @Path("compare")
-    public CompareContentResultJson compare( @QueryParam("id") final String idParam )
+    @POST
+    @Path("getVersions")
+    public GetContentVersionsResultJson getVersions( final GetContentVersionsJson params )
     {
-        final CompareContentResult compareResult =
-            contentService.compare( new CompareContentParams( ContentId.from( idParam ), ContentConstants.WORKSPACE_PROD ), STAGE_CONTEXT );
+        final ContentId contentId = ContentId.from( params.getContentId() );
 
-        return new CompareContentResultJson( compareResult );
+        final ContentVersions contentVersions = contentService.getVersions( GetContentVersionsParams.create().
+            contentId( contentId ).
+            from( params.getFrom() != null ? params.getFrom() : 0 ).
+            size( params.getSize() != null ? params.getSize() : 10 ).
+            build(), STAGE_CONTEXT );
+
+        return new GetContentVersionsResultJson( contentVersions );
     }
 
     @POST

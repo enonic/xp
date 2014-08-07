@@ -30,8 +30,8 @@ module app.browse.action {
             this.MOVE_CONTENT = new MoveContentAction(grid);
 
             this.actions.push(this.SHOW_NEW_CONTENT_DIALOG_ACTION,
-                              this.OPEN_CONTENT, this.EDIT_CONTENT,
-                              this.DELETE_CONTENT, this.DUPLICATE_CONTENT, this.MOVE_CONTENT);
+                this.OPEN_CONTENT, this.EDIT_CONTENT,
+                this.DELETE_CONTENT, this.DUPLICATE_CONTENT, this.MOVE_CONTENT);
 
         }
 
@@ -42,33 +42,33 @@ module app.browse.action {
         updateActionsEnabledState(contentSummaries: api.content.ContentSummary[]) {
             this.TOGGLE_SEARCH_PANEL.setVisible(false);
 
-            switch(contentSummaries.length) {
-                case 0:
-                    this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(true);
-                    this.OPEN_CONTENT.setEnabled(false);
-                    this.EDIT_CONTENT.setEnabled(false);
-                    this.DELETE_CONTENT.setEnabled(false);
-                    this.DUPLICATE_CONTENT.setEnabled(false);
-                    this.MOVE_CONTENT.setEnabled(false);
-                    this.SHOW_PREVIEW.setEnabled(false);
-                    break;
-                case 1:
-                    this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(true);
-                    this.OPEN_CONTENT.setEnabled(true);
-                    this.EDIT_CONTENT.setEnabled(contentSummaries[0].isEditable());
-                    this.DELETE_CONTENT.setEnabled(contentSummaries[0].isDeletable());
-                    this.DUPLICATE_CONTENT.setEnabled(true);
-                    this.MOVE_CONTENT.setEnabled(true);
-                    this.SHOW_PREVIEW.setEnabled(contentSummaries[0].isPage());
-                    break;
-                default:
-                    this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
-                    this.OPEN_CONTENT.setEnabled(true);
-                    this.EDIT_CONTENT.setEnabled(this.anyEditable(contentSummaries));
-                    this.DELETE_CONTENT.setEnabled(this.anyDeletable(contentSummaries));
-                    this.DUPLICATE_CONTENT.setEnabled(true);
-                    this.MOVE_CONTENT.setEnabled(true);
-                    this.SHOW_PREVIEW.setEnabled(false);
+            switch (contentSummaries.length) {
+            case 0:
+                this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(true);
+                this.OPEN_CONTENT.setEnabled(false);
+                this.EDIT_CONTENT.setEnabled(false);
+                this.DELETE_CONTENT.setEnabled(false);
+                this.DUPLICATE_CONTENT.setEnabled(false);
+                this.MOVE_CONTENT.setEnabled(false);
+                this.SHOW_PREVIEW.setEnabled(false);
+                break;
+            case 1:
+                this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(true);
+                this.OPEN_CONTENT.setEnabled(true);
+                this.EDIT_CONTENT.setEnabled(contentSummaries[0].isEditable());
+                this.DELETE_CONTENT.setEnabled(contentSummaries[0].isDeletable());
+                this.DUPLICATE_CONTENT.setEnabled(true);
+                this.MOVE_CONTENT.setEnabled(true);
+                this.SHOW_PREVIEW.setEnabled(contentSummaries[0].isPage());
+                break;
+            default:
+                this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
+                this.OPEN_CONTENT.setEnabled(true);
+                this.EDIT_CONTENT.setEnabled(this.anyEditable(contentSummaries));
+                this.DELETE_CONTENT.setEnabled(this.anyDeletable(contentSummaries));
+                this.DUPLICATE_CONTENT.setEnabled(true);
+                this.MOVE_CONTENT.setEnabled(true);
+                this.SHOW_PREVIEW.setEnabled(false);
             }
         }
 

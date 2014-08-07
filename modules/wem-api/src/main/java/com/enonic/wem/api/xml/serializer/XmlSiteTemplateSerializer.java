@@ -6,7 +6,7 @@ import com.enonic.wem.api.xml.model.XmlSiteTemplate;
 public class XmlSiteTemplateSerializer
     extends XmlSerializer2<XmlSiteTemplate>
 {
-    public XmlSiteTemplateSerializer( )
+    public XmlSiteTemplateSerializer()
     {
         super( XmlSiteTemplate.class );
     }

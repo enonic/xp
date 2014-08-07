@@ -58,7 +58,7 @@ module app.wizard {
 
             try {
                 // hide eval, Function, document, window and other things from the script.
-                result = eval('var eval; var Function; var document; var location; var Ext; ' +
+                result = eval('var eval; var Function; var document; var location; ' +
                               'var window; var parent; var self; var top; ' +
                               script);
             } catch (e) {

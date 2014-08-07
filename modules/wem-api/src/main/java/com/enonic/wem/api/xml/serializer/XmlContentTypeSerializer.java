@@ -9,7 +9,7 @@ final class XmlContentTypeSerializer
 
     public XmlContentTypeSerializer()
     {
-        super( XmlContentType.class);
+        super( XmlContentType.class );
     }
 
     @Override
