@@ -13,12 +13,12 @@ import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
 import com.google.common.io.Resources;
 
-import com.enonic.wem.api.resource.Resource2;
+import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceNotFoundException;
 
-public final class Resource2Impl
-    implements Resource2
+public final class ResourceImpl
+    implements Resource
 {
     private final ResourceKey key;
 
@@ -26,7 +26,7 @@ public final class Resource2Impl
 
     private final ByteSource source;
 
-    public Resource2Impl( final ResourceKey key, final URL url )
+    public ResourceImpl( final ResourceKey key, final URL url )
     {
         this.key = key;
         this.url = url;

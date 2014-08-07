@@ -4,7 +4,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 
-public interface Resource2
+public interface Resource
 {
     public ResourceKey getKey();
 
