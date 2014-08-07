@@ -63,9 +63,9 @@ public class ElasticsearchIndexService
 
     private IndexMappingProvider indexMappingProvider;
 
-    private final TimeValue WAIT_FOR_YELLOW_TIMEOUT = TimeValue.timeValueSeconds( 1 );
+    private final TimeValue WAIT_FOR_YELLOW_TIMEOUT = TimeValue.timeValueSeconds( 5 );
 
-    public static final TimeValue CLUSTER_NOWAIT_TIMEOUT = TimeValue.timeValueSeconds( 1 );
+    public static final TimeValue CLUSTER_NOWAIT_TIMEOUT = TimeValue.timeValueSeconds( 5 );
 
     private IndexSettingsBuilder indexSettingsBuilder;
 

@@ -2,14 +2,13 @@ package com.enonic.wem.core.content;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.versioning.ContentVersion;
 import com.enonic.wem.api.content.versioning.ContentVersions;
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityVersion;
 import com.enonic.wem.api.entity.EntityVersions;
-import com.enonic.wem.api.entity.NodeService;
+import com.enonic.wem.api.entity.GetEntityVersionsParams;
+import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.Nodes;
 
 public class GetContentVersionsCommand
@@ -21,7 +20,7 @@ public class GetContentVersionsCommand
 
     private final int size;
 
-    private GetContentVersionsCommand( Builder builder )
+    private GetContentVersionsCommand( final Builder builder )
     {
         super( builder );
         contentId = builder.contentId;
@@ -37,28 +36,18 @@ public class GetContentVersionsCommand
 
     public ContentVersions execute()
     {
-        final Contents contents = getContentVersions();
-
-        final ContentVersions.Builder versionsBuilder = ContentVersions.create();
-
-        for ( final Content content : contents )
-        {
-            versionsBuilder.add( ContentVersion.create().
-                displayName( content.getDisplayName() ).
-                modified( content.getModifiedTime() ).
-                modifier( content.getModifier() ).
-                comment( "dummyComment" ).
-                build() );
-        }
-
-        return versionsBuilder.build();
+        return doGetContentVersions();
     }
 
-    private Contents getContentVersions()
+    private ContentVersions doGetContentVersions()
     {
         final EntityId entityId = EntityId.from( this.contentId );
 
-        final EntityVersions entityVersions = nodeService.getVersions( entityId, this.context );
+        final EntityVersions entityVersions = nodeService.getVersions( GetEntityVersionsParams.create().
+            entityId( entityId ).
+            from( this.from ).
+            size( this.size ).
+            build(), this.context );
 
         final Nodes.Builder builder = Nodes.create();
 
@@ -67,11 +56,25 @@ public class GetContentVersionsCommand
             builder.add( nodeService.getByBlobKey( entityVersion.getBlobKey(), this.context ) );
         }
 
-        final Nodes build = builder.build();
+        final Nodes nodes = builder.build();
 
-        return translator.fromNodes( build );
+        final ContentVersions.Builder contentVersions = ContentVersions.create().
+            contentId( ContentId.from( entityId ) );
+
+        for ( final Node node : nodes )
+        {
+            final Content content = translator.fromNode( node );
+
+            contentVersions.add( ContentVersion.create().
+                comment( "Dummy comment" ).
+                displayName( content.getDisplayName() ).
+                modified( content.getModifiedTime() ).
+                modifier( content.getModifier() ).
+                build() );
+        }
+
+        return contentVersions.build();
     }
-
 
     public static final class Builder
         extends AbstractContentCommand.Builder<Builder>

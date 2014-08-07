@@ -21,4 +21,28 @@ public class ContentVersionJson
         this.comment = contentVersion.getComment();
         this.modifier = contentVersion.getModifier().getQualifiedName();
     }
+
+    @SuppressWarnings("UnusedDeclaration")
+    public String getModifier()
+    {
+        return modifier;
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    public String getDisplayName()
+    {
+        return displayName;
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    public Instant getModified()
+    {
+        return modified;
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    public String getComment()
+    {
+        return comment;
+    }
 }

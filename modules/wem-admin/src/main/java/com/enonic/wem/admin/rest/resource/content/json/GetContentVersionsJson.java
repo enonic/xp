@@ -1,5 +1,8 @@
 package com.enonic.wem.admin.rest.resource.content.json;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class GetContentVersionsJson
 {
     private Integer from;
@@ -8,7 +11,10 @@ public class GetContentVersionsJson
 
     private final String contentId;
 
-    public GetContentVersionsJson( final Integer from, final Integer size, final String contentId )
+    @JsonCreator
+    public GetContentVersionsJson( @JsonProperty("from") final Integer from, //
+                                   @JsonProperty("size") final Integer size, //
+                                   @JsonProperty("contentId") final String contentId )
     {
         this.from = from;
         this.size = size;

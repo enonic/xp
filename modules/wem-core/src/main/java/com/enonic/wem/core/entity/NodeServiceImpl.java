@@ -10,6 +10,7 @@ import com.enonic.wem.api.entity.EntityComparisons;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIds;
 import com.enonic.wem.api.entity.EntityVersions;
+import com.enonic.wem.api.entity.GetEntityVersionsParams;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.NodePaths;
@@ -160,12 +161,12 @@ public class NodeServiceImpl
     }
 
     @Override
-    public EntityVersions getVersions( final EntityId entityId, final Context context )
+    public EntityVersions getVersions( final GetEntityVersionsParams params, final Context context )
     {
         return GetEntityVersionsCommand.create( context ).
-            entityId( entityId ).
-            from( 0 ).
-            size( 10 ).
+            entityId( params.getEntityId() ).
+            from( params.getFrom() ).
+            size( params.getSize() ).
             versionService( this.versionService ).
             build().
             execute();

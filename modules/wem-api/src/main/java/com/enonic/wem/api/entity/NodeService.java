@@ -31,7 +31,7 @@ public interface NodeService
 
     EntityComparisons compare( final EntityIds ids, final Workspace target, final Context context );
 
-    EntityVersions getVersions( final EntityId entityId, final Context context );
+    EntityVersions getVersions( final GetEntityVersionsParams params, final Context context );
 
     Node getByBlobKey( BlobKey blobKey, Context context );
 }
