@@ -11,8 +11,6 @@ abstract class AbstractPageDescriptorServiceTest
     def setup()
     {
         this.service = new PageDescriptorServiceImpl()
-        this.service.resourceService = this.resourceService;
-
         ResourceUrlTestHelper.mockModuleScheme( super.modulesDir );
     }
 

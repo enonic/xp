@@ -16,7 +16,6 @@ import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.module.Modules;
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.api.resource.ResourceService;
 import com.enonic.wem.api.xml.mapper.XmlImageDescriptorMapper;
 import com.enonic.wem.api.xml.model.XmlImageDescriptor;
 import com.enonic.wem.api.xml.serializer.XmlSerializers2;
@@ -27,12 +26,10 @@ abstract class AbstractGetImageDescriptorCommand<T extends AbstractGetImageDescr
 
     protected ModuleService moduleService;
 
-    protected ResourceService resourceService;
-
     protected final ImageDescriptor getImageDescriptor( final ImageDescriptorKey key )
     {
         final ResourceKey resourceKey = key.toResourceKey();
-        final Resource resource = this.resourceService.getResource( resourceKey );
+        final Resource resource = Resource.from( resourceKey );
 
         final String descriptorXml = resource.readString();
         final ImageDescriptor.Builder builder = ImageDescriptor.newImageDescriptor();
@@ -83,13 +80,6 @@ abstract class AbstractGetImageDescriptorCommand<T extends AbstractGetImageDescr
     public final T moduleService( final ModuleService moduleService )
     {
         this.moduleService = moduleService;
-        return (T) this;
-    }
-
-    @SuppressWarnings("unchecked")
-    public final T resourceService( final ResourceService resourceService )
-    {
-        this.resourceService = resourceService;
         return (T) this;
     }
 }

@@ -8,7 +8,6 @@ import com.enonic.wem.api.content.page.part.PartDescriptorService;
 import com.enonic.wem.api.content.page.part.PartDescriptors;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.ModuleService;
-import com.enonic.wem.api.resource.ResourceService;
 
 public final class PartDescriptorServiceImpl
     implements PartDescriptorService
@@ -17,20 +16,15 @@ public final class PartDescriptorServiceImpl
     protected ModuleService moduleService;
 
     @Inject
-    protected ResourceService resourceService;
-
-    @Inject
     protected PartDescriptorService partDescriptorService;
 
     public PartDescriptor getByKey( final PartDescriptorKey key )
     {
-        return new GetPartDescriptorCommand().moduleService( this.moduleService ).resourceService( this.resourceService ).key(
-            key ).execute();
+        return new GetPartDescriptorCommand().moduleService( this.moduleService ).key( key ).execute();
     }
 
     public PartDescriptors getByModules( final ModuleKeys moduleKeys )
     {
-        return new GetPartDescriptorsByModulesCommand().moduleService( this.moduleService ).resourceService(
-            this.resourceService ).moduleKeys( moduleKeys ).execute();
+        return new GetPartDescriptorsByModulesCommand().moduleService( this.moduleService ).moduleKeys( moduleKeys ).execute();
     }
 }

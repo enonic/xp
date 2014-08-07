@@ -8,7 +8,6 @@ import com.enonic.wem.api.content.page.layout.LayoutDescriptorService;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptors;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.ModuleService;
-import com.enonic.wem.api.resource.ResourceService;
 
 public final class LayoutDescriptorServiceImpl
     implements LayoutDescriptorService
@@ -16,18 +15,13 @@ public final class LayoutDescriptorServiceImpl
     @Inject
     protected ModuleService moduleService;
 
-    @Inject
-    protected ResourceService resourceService;
-
     public LayoutDescriptor getByKey( final LayoutDescriptorKey key )
     {
-        return new GetLayoutDescriptorCommand().key( key ).moduleService( this.moduleService ).resourceService(
-            this.resourceService ).execute();
+        return new GetLayoutDescriptorCommand().key( key ).moduleService( this.moduleService ).execute();
     }
 
     public LayoutDescriptors getByModules( final ModuleKeys moduleKeys )
     {
-        return new GetLayoutDescriptorsByModulesCommand().moduleService( this.moduleService ).resourceService(
-            this.resourceService ).moduleKeys( moduleKeys ).execute();
+        return new GetLayoutDescriptorsByModulesCommand().moduleService( this.moduleService ).moduleKeys( moduleKeys ).execute();
     }
 }

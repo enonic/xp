@@ -15,7 +15,6 @@ import com.enonic.wem.core.initializer.InitializerModule;
 import com.enonic.wem.core.lifecycle.LifecycleModule;
 import com.enonic.wem.core.module.ModuleModule;
 import com.enonic.wem.core.relationship.RelationshipModule;
-import com.enonic.wem.core.resource.ResourceModule;
 import com.enonic.wem.core.schema.SchemaModule;
 import com.enonic.wem.core.version.VersionModule;
 import com.enonic.wem.core.workspace.WorkspaceModule;
@@ -38,7 +37,6 @@ public final class CoreModule
         install( new ElasticsearchModule() );
         install( new IndexModule() );
         install( new ModuleModule() );
-        install( new ResourceModule() );
         install( new LifecycleModule() );
         install( new ImageModule() );
         install( new WorkspaceModule() );
