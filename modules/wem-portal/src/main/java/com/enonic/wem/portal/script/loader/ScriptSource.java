@@ -1,7 +1,7 @@
 package com.enonic.wem.portal.script.loader;
 
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.resource.ResourceKey;
 
 public interface ScriptSource
 {
@@ -13,5 +13,5 @@ public interface ScriptSource
 
     public ModuleKey getModule();
 
-    public ModuleResourceKey getResource();
+    public ResourceKey getResource();
 }

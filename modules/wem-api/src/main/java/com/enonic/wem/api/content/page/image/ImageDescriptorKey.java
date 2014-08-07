@@ -7,7 +7,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.resource.ResourceKey;
 
 public final class ImageDescriptorKey
     extends DescriptorKey
@@ -31,8 +31,8 @@ public final class ImageDescriptorKey
     }
 
     @Override
-    public ModuleResourceKey toResourceKey()
+    public ResourceKey toResourceKey()
     {
-        return ModuleResourceKey.from( getModuleKey(), "component/" + getName().toString() + "/image.xml" );
+        return ResourceKey.from( getModuleKey(), "component/" + getName().toString() + "/image.xml" );
     }
 }

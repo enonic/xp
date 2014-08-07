@@ -24,7 +24,7 @@ import com.enonic.wem.api.content.page.AbstractRegions;
 import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.layout.LayoutRegions;
 import com.enonic.wem.api.content.page.region.Region;
-import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.script.SourceException;
 import com.enonic.wem.portal.xml.DomBuilder;
@@ -133,7 +133,7 @@ public final class XsltScriptBean
         {
             url = new URL( locator.getSystemId() );
             error.path( url );
-            error.resource( ModuleResourceKey.from( url ) );
+            error.resource( ResourceKey.from( url ) );
         }
         catch ( MalformedURLException mue )
         {

@@ -18,7 +18,7 @@ import org.restlet.representation.Representation;
 
 import com.google.common.base.Charsets;
 
-import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.core.entity.dao.NodeNotFoundException;
 import com.enonic.wem.portal.script.SourceException;
 
@@ -93,7 +93,7 @@ public class PortalStatusServiceTest
         final SourceException exception = SourceException.newBuilder().
             lineNumber( 1 ).
             // path( file.toPath() ).
-            resource( ModuleResourceKey.from( "mymodule-1.0.0:source.js" ) ).
+            resource( ResourceKey.from( "mymodule-1.0.0:source.js" ) ).
             build();
         final Status status = new Status( 500, exception );
         final Representation representation = getRepresentation( status );

@@ -7,14 +7,14 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.resource.ResourceKey;
 
 public final class SourceException
     extends RuntimeException
 {
     private final String message;
 
-    private final ModuleResourceKey resource;
+    private final ResourceKey resource;
 
     private final URL path;
 
@@ -42,7 +42,7 @@ public final class SourceException
         return this.message;
     }
 
-    public ModuleResourceKey getResource()
+    public ResourceKey getResource()
     {
         return this.resource;
     }
@@ -90,7 +90,7 @@ public final class SourceException
 
         private URL path;
 
-        private ModuleResourceKey resource;
+        private ResourceKey resource;
 
         private int lineNumber;
 
@@ -120,7 +120,7 @@ public final class SourceException
             return this;
         }
 
-        public Builder resource( final ModuleResourceKey resource )
+        public Builder resource( final ResourceKey resource )
         {
             this.resource = resource;
             return this;

@@ -16,7 +16,6 @@ import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.core.image.filter.ImageFilterBuilder;
 import com.enonic.wem.core.module.ModuleKeyResolverService;
-import com.enonic.wem.core.module.ModuleResourcePathResolver;
 import com.enonic.wem.guice.GuiceActivator;
 
 public final class Activator
@@ -28,7 +27,6 @@ public final class Activator
         install( new PortalModule() );
 
         service( PageComponentService.class ).importSingle();
-        service( ModuleResourcePathResolver.class ).importSingle();
         service( ImageDescriptorService.class ).importSingle();
         service( LayoutDescriptorService.class ).importSingle();
         service( PartDescriptorService.class ).importSingle();

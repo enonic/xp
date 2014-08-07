@@ -1,30 +1,30 @@
-package com.enonic.wem.api.module;
+package com.enonic.wem.api.resource;
 
 import java.net.URL;
 
 import com.google.common.base.Throwables;
 
-public class ModuleResourceUrlResolver
+public class ResourceUrlResolver
 {
-    private static ModuleResourceUrlResolver CURRENT;
+    private static ResourceUrlResolver CURRENT;
 
     static
     {
-        new ModuleResourceUrlResolver();
+        new ResourceUrlResolver();
     }
 
-    public ModuleResourceUrlResolver()
+    public ResourceUrlResolver()
     {
         CURRENT = this;
     }
 
-    protected URL doResolve( final ModuleResourceKey key )
+    protected URL doResolve( final ResourceKey key )
         throws Exception
     {
         return new URL( "module:" + key.toString() );
     }
 
-    public static URL resolve( final ModuleResourceKey key )
+    public static URL resolve( final ResourceKey key )
     {
         try
         {

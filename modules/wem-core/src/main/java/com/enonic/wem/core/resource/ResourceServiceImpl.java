@@ -4,33 +4,36 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import javax.inject.Inject;
-
 import com.google.common.base.Throwables;
 import com.google.common.io.Resources;
 
-import com.enonic.wem.api.module.ModuleResourceKey;
-import com.enonic.wem.api.module.ModuleResourceUrlResolver;
+import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.Resource;
-import com.enonic.wem.api.resource.ResourceReference;
-import com.enonic.wem.core.config.SystemConfig;
+import com.enonic.wem.api.resource.ResourceNotFoundException;
+import com.enonic.wem.api.resource.ResourceService;
+import com.enonic.wem.api.resource.ResourceUrlResolver;
 
 public final class ResourceServiceImpl
-    extends AbstractResourceService
+    implements ResourceService
 {
-    protected final SystemConfig systemConfig;
-
-    @Inject
-    public ResourceServiceImpl( final SystemConfig systemConfig )
+    @Override
+    public final Resource getResource( final ResourceKey key )
+        throws ResourceNotFoundException
     {
-        this.systemConfig = systemConfig;
+        final Resource resource = resolve( key );
+        if ( resource != null )
+        {
+            return resource;
+        }
+
+        throw new ResourceNotFoundException( key );
     }
 
-    @Override
-    protected Resource resolve( final ModuleResourceKey key )
+    private Resource resolve( final ResourceKey key )
     {
-        final URL resourceUrl = ModuleResourceUrlResolver.resolve( key );
-        if (!isResource(resourceUrl)) {
+        final URL resourceUrl = ResourceUrlResolver.resolve( key );
+        if ( !isResource( resourceUrl ) )
+        {
             return null;
         }
 
@@ -64,11 +67,5 @@ public final class ResourceServiceImpl
         {
             throw Throwables.propagate( e );
         }
-    }
-
-    @Override
-    protected Resource resolve( final ResourceReference ref )
-    {
-        return null;
     }
 }

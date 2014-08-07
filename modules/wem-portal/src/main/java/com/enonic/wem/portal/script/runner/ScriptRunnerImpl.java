@@ -10,7 +10,7 @@ import org.mozilla.javascript.Scriptable;
 
 import com.google.common.collect.Maps;
 
-import com.enonic.wem.api.module.ModuleResourceUrlResolver;
+import com.enonic.wem.api.resource.ResourceUrlResolver;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.script.SourceException;
 import com.enonic.wem.portal.script.compiler.ScriptCompiler;
@@ -71,7 +71,6 @@ public final class ScriptRunnerImpl
         try
         {
             initializeScope();
-            installRequire();
             setObjectsToScope();
 
             final Script script = this.compiler.compile( context, this.source );
@@ -96,15 +95,6 @@ public final class ScriptRunnerImpl
         }
     }
 
-    private void installRequire()
-    {
-        final RequireFunction function = new RequireFunction();
-        function.setScriptCompiler( this.compiler );
-        function.setScriptLoader( this.scriptLoader );
-        function.setSource( this.source );
-        function.install( this.scope );
-    }
-
     private void initializeScope()
     {
         final Context context = Context.getCurrentContext();
@@ -120,7 +110,7 @@ public final class ScriptRunnerImpl
         builder.cause( cause );
         builder.lineNumber( cause.lineNumber() );
         builder.resource( source.getResource() );
-        builder.path( ModuleResourceUrlResolver.resolve( source.getResource()) );
+        builder.path( ResourceUrlResolver.resolve( source.getResource() ) );
         builder.message( cause.details() );
 
         for ( final ScriptStackElement elem : cause.getScriptStack() )
@@ -129,20 +119,5 @@ public final class ScriptRunnerImpl
         }
 
         return builder.build();
-    }
-
-    public void setScriptLoader( final ScriptLoader scriptLoader )
-    {
-        this.scriptLoader = scriptLoader;
-    }
-
-    public void setCompiler( final ScriptCompiler compiler )
-    {
-        this.compiler = compiler;
-    }
-
-    public void setContextServiceBean( final ContextScriptBean contextServiceBean )
-    {
-        this.contextServiceBean = contextServiceBean;
     }
 }

@@ -2,8 +2,6 @@ package com.enonic.wem.api.resource;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.module.ModuleResourceKey;
-
 import static org.junit.Assert.*;
 
 public class ResourceProblemExceptionTest
@@ -11,7 +9,7 @@ public class ResourceProblemExceptionTest
     @Test
     public void testSimple()
     {
-        final ModuleResourceKey resource = ModuleResourceKey.from( "mymodule-1.0.0:/test.js" );
+        final ResourceKey resource = ResourceKey.from( "mymodule-1.0.0:/test.js" );
 
         final ResourceProblemException.Builder builder = ResourceProblemException.newBuilder();
         builder.resource( resource );

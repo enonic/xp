@@ -1,12 +1,8 @@
 package com.enonic.wem.core.content.page
 
-import com.enonic.wem.api.module.Module
-import com.enonic.wem.api.module.ModuleKey
-import com.enonic.wem.api.module.ModuleService
-import com.enonic.wem.api.module.Modules
-import com.enonic.wem.api.module.ModuleResourceKey
+import com.enonic.wem.api.module.*
+import com.enonic.wem.api.resource.ResourceKey
 import com.enonic.wem.api.resource.ResourceService
-import com.enonic.wem.core.config.SystemConfig
 import com.enonic.wem.core.module.ModuleBuilder
 import com.enonic.wem.core.resource.ResourceServiceImpl
 import org.junit.Rule
@@ -29,14 +25,11 @@ abstract class AbstractDescriptorServiceTest
     {
         this.modulesDir = this.temporaryFolder.newFolder( "modules" )
 
-        def config = Mock( SystemConfig.class )
-        config.modulesDir >> this.modulesDir.toPath()
-
-        this.resourceService = new ResourceServiceImpl( config )
+        this.resourceService = new ResourceServiceImpl()
         this.moduleService = Mock( ModuleService.class )
     }
 
-    def createFile( final ModuleResourceKey key, final String content )
+    def createFile( final ResourceKey key, final String content )
     {
         def path = key.module.toString() + key.path
         def file = new File( this.modulesDir, path )
