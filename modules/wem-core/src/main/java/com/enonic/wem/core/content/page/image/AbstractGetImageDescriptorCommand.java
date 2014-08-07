@@ -12,10 +12,10 @@ import com.enonic.wem.api.content.page.image.ImageDescriptor;
 import com.enonic.wem.api.content.page.image.ImageDescriptorKey;
 import com.enonic.wem.api.content.page.image.ImageDescriptors;
 import com.enonic.wem.api.module.Module;
-import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.module.Modules;
-import com.enonic.wem.api.resource.Resource;
+import com.enonic.wem.api.resource.Resource2;
+import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceService;
 import com.enonic.wem.api.xml.mapper.XmlImageDescriptorMapper;
 import com.enonic.wem.api.xml.model.XmlImageDescriptor;
@@ -32,9 +32,9 @@ abstract class AbstractGetImageDescriptorCommand<T extends AbstractGetImageDescr
     protected final ImageDescriptor getImageDescriptor( final ImageDescriptorKey key )
     {
         final ResourceKey resourceKey = key.toResourceKey();
-        final Resource resource = this.resourceService.getResource( resourceKey );
+        final Resource2 resource = this.resourceService.getResource2( resourceKey );
 
-        final String descriptorXml = resource.readAsString();
+        final String descriptorXml = resource.readString();
         final ImageDescriptor.Builder builder = ImageDescriptor.newImageDescriptor();
         builder.name( key.getName() ).key( key );
 

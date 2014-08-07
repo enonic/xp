@@ -12,10 +12,9 @@ import org.junit.rules.TemporaryFolder;
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
 
+import com.enonic.wem.api.resource.Resource2;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceUrlResolver;
-import com.enonic.wem.api.resource.Resource;
-import com.enonic.wem.api.resource.ResourceNotFoundException;
 
 import static org.junit.Assert.*;
 
@@ -62,20 +61,27 @@ public class ResourceServiceImplTest
     {
         final ResourceKey key = ResourceKey.from( "mymodule-1.0.0:/a/b.txt" );
 
-        final Resource resource = this.resourceService.getResource( key );
+        final Resource2 resource = this.resourceService.getResource2( key );
         assertNotNull( resource );
         assertEquals( key, resource.getKey() );
         assertEquals( 7, resource.getSize() );
-        assertNotNull( resource.getByteSource() );
-        assertEquals( "a/b.txt", resource.readAsString() );
+        assertNotNull( resource.readBytes() );
+        assertEquals( "a/b.txt", resource.readString() );
         assertEquals( "a/b.txt", resource.readLines().get( 0 ) );
         assertTrue( resource.getTimestamp() > 0 );
+        assertTrue( resource.exists() );
     }
 
-    @Test(expected = ResourceNotFoundException.class)
+    @Test
     public void testGetResource_notFound()
     {
         final ResourceKey key = ResourceKey.from( "mymodule-1.0.0:/not/exists.txt" );
-        this.resourceService.getResource( key );
+
+        final Resource2 resource = this.resourceService.getResource2( key );
+        assertNotNull( resource );
+        assertEquals( key, resource.getKey() );
+        assertEquals( -1, resource.getSize() );
+        assertEquals( -1, resource.getTimestamp() );
+        assertFalse( resource.exists() );
     }
 }

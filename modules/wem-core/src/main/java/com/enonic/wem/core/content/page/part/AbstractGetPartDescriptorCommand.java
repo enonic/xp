@@ -12,10 +12,10 @@ import com.enonic.wem.api.content.page.part.PartDescriptor;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.content.page.part.PartDescriptors;
 import com.enonic.wem.api.module.Module;
-import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.module.Modules;
-import com.enonic.wem.api.resource.Resource;
+import com.enonic.wem.api.resource.Resource2;
+import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceService;
 import com.enonic.wem.api.xml.mapper.XmlPartDescriptorMapper;
 import com.enonic.wem.api.xml.model.XmlPartDescriptor;
@@ -32,9 +32,9 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
     protected final PartDescriptor getDescriptor( final PartDescriptorKey key )
     {
         final ResourceKey resourceKey = key.toResourceKey();
-        final Resource resource = this.resourceService.getResource( resourceKey );
+        final Resource2 resource = this.resourceService.getResource2( resourceKey );
 
-        final String descriptorXml = resource.readAsString();
+        final String descriptorXml = resource.readString();
         final PartDescriptor.Builder builder = PartDescriptor.newPartDescriptor();
 
         final XmlPartDescriptor xmlObject = XmlSerializers2.partDescriptor().parse( descriptorXml );

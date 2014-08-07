@@ -3,8 +3,8 @@ package com.enonic.wem.core.content.page;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageDescriptorNotFoundException;
+import com.enonic.wem.api.resource.Resource2;
 import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceNotFoundException;
 import com.enonic.wem.api.resource.ResourceService;
 import com.enonic.wem.api.xml.mapper.XmlPageDescriptorMapper;
@@ -32,9 +32,9 @@ final class GetPageDescriptorCommand
     private PageDescriptor getDescriptor( final PageDescriptorKey key )
     {
         final ResourceKey resourceKey = key.toResourceKey();
-        final Resource resource = this.resourceService.getResource( resourceKey );
+        final Resource2 resource = this.resourceService.getResource2( resourceKey );
 
-        final String descriptorXml = resource.readAsString();
+        final String descriptorXml = resource.readString();
         final PageDescriptor.Builder builder = PageDescriptor.newPageDescriptor();
 
         final XmlPageDescriptor xmlObject = XmlSerializers2.pageDescriptor().parse( descriptorXml );
