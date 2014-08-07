@@ -17,7 +17,7 @@ public interface ContentService
 
     Contents getRoots( final Context context );
 
-    Contents getChildren( ContentPath parentPath, final Context context );
+    Contents getByParent( ContentPath parentPath, final Context context );
 
     Content create( CreateContentParams params, final Context context );
 

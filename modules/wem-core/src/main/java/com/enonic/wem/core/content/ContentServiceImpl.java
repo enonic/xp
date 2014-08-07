@@ -117,9 +117,9 @@ public class ContentServiceImpl
     }
 
     @Override
-    public Contents getChildren( final ContentPath parentPath, final Context context )
+    public Contents getByParent( final ContentPath parentPath, final Context context )
     {
-        return GetChildContentCommand.create( parentPath ).
+        return GetContentByParentCommand.create( parentPath ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
