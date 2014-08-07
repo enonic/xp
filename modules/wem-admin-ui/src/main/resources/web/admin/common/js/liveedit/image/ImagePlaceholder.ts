@@ -14,9 +14,8 @@ module api.liveedit.image {
 
         constructor(imageComponentView: ImageComponentView) {
             super();
-            this.imageComponentView = imageComponentView;
-            wemjq(this.getHTMLElement()).on('click', 'input', (e) => {
-                e.stopPropagation();
+            this.onClicked((event: MouseEvent) => {
+                event.stopPropagation();
             });
 
             var imageUploadHandler = (event: ImageUploadedEvent) => {

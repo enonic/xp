@@ -11,8 +11,8 @@ module api.liveedit.layout {
         constructor(layoutView: LayoutComponentView) {
             super();
 
-            wemjq(this.getHTMLElement()).on('click', 'input', (e) => {
-                e.stopPropagation();
+            this.onClicked((event: MouseEvent) => {
+                event.stopPropagation();
             });
             var request = new api.content.page.layout.GetLayoutDescriptorsByModulesRequest(PageItemType.get().getSiteTemplate().getModules());
             var loader = new api.content.page.layout.LayoutDescriptorLoader(request);
