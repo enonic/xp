@@ -36,10 +36,14 @@ final class GetSiteTemplatesCommand
         throws IOException
     {
         final File templatesDir = systemConfig.getTemplatesDir().toFile();
-        File[] allTemplateDirs = templatesDir.listFiles( pathname -> Files.isDirectory( pathname.toPath() ) );
+        final File[] allTemplateDirs = templatesDir.listFiles( pathname -> Files.isDirectory( pathname.toPath() ) );
 
-        SiteTemplates.Builder templatesBuilder = new SiteTemplates.Builder();
-        for ( File templateDir : allTemplateDirs )
+        final SiteTemplates.Builder templatesBuilder = new SiteTemplates.Builder();
+        if (allTemplateDirs == null) {
+            return templatesBuilder.build();
+        }
+
+        for ( final File templateDir : allTemplateDirs )
         {
             try
             {
