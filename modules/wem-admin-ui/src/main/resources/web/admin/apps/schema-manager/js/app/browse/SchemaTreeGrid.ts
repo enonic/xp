@@ -48,6 +48,13 @@ module app.browse {
                     setShowContextMenu(new TreeGridContextMenu(browseActions))
             );
             browseActions.setSchemaTreeGrid(this);
+
+            this.getGrid().subscribeOnDblClick((event, data) => {
+                if (this.isActive()) {
+                    new app.browse.EditSchemaEvent([this.getGrid().getDataView().getItem(data.row).getData()]).fire();
+                }
+            });
+
         }
 
         fetchChildren(parent?: Schema): Q.Promise<Schema[]> {
