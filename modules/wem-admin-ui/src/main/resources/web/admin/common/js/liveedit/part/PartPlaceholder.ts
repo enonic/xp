@@ -17,9 +17,8 @@ module api.liveedit.part {
         constructor(partView: PartComponentView) {
             super();
 
-            wemjq(this.getHTMLElement()).on('click', 'input', (e) => {
-                wemjq(e.currentTarget).focus();
-                e.stopPropagation();
+            this.onClicked((event: MouseEvent) => {
+                event.stopPropagation();
             });
             var request = new GetPartDescriptorsByModulesRequest(PageItemType.get().getSiteTemplate().getModules());
             var loader = new PartDescriptorLoader(request);
