@@ -42,8 +42,6 @@ module LiveEdit {
 
         private cursor: LiveEdit.ui.Cursor;
 
-        private previousSelectedItemView: ItemView;
-
         static get(): LiveEditPage {
             return LiveEditPage.INSTANCE;
         }
@@ -102,11 +100,6 @@ module LiveEdit {
             ItemViewSelectedEvent.on((event: ItemViewSelectedEvent) => {
                 var component = event.getItemView();
 
-                // needed to deselect current component if a component is clicked inside currently selected component bypassing shader
-                if (this.previousSelectedItemView && this.previousSelectedItemView != component) {
-                    this.previousSelectedItemView.deselect();
-                }
-
                 // Highlighter should not be shown when type page is selected
                 if (component.getType().equals(api.liveedit.PageItemType.get())) {
                     this.highlighter.hide();
@@ -125,7 +118,6 @@ module LiveEdit {
                 this.highlighter.highlightItemView(component);
                 this.shader.shadeItemView(component);
                 this.cursor.displayItemViewCursor(component);
-                this.previousSelectedItemView = component;
             });
             ItemViewDeselectEvent.on((event: ItemViewDeselectEvent) => {
                 this.highlighter.hide();
@@ -155,13 +147,7 @@ module LiveEdit {
                 this.highlighter.highlightItemView(selectedView);
                 this.shader.shadeItemView(selectedView);
             });
-            LiveEdit.ui.ShaderClickedEvent.on(() => {
-                var selectedView = this.pageView.getSelectedView();
-                if (selectedView) {
-                    selectedView.deselect();
-                    this.previousSelectedItemView = undefined;
-                }
-            });
+            LiveEdit.ui.ShaderClickedEvent.on(() => this.deselectSelectedView());
 
             TextComponentStartEditingEvent.on((event: TextComponentStartEditingEvent) => {
                 this.highlighter.hide();

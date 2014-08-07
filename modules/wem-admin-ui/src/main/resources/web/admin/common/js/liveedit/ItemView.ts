@@ -135,6 +135,12 @@ module api.liveedit {
 
         }
 
+        remove() {
+            this.contextMenu.remove();
+            this.loadMask.remove();
+            super.remove();
+        }
+
         private scrollComponentIntoView(): void {
             var dimensions = this.getElementDimensions();
             wemjq('html, body').animate({scrollTop: dimensions.top - 10}, 200);
@@ -244,10 +250,24 @@ module api.liveedit {
             event.stopPropagation();
             event.preventDefault();
 
+            // we prevented mouse events to bubble up so if parent view is selected
+            // it won't receive mouse event and won't be deselected
+            // therefore we deselect it manually
+            this.deselectParent();
+
             if (!this.isSelected()) {
                 this.select(!this.isEmpty() ? { x: event.pageX, y: event.pageY } : null);
             } else {
                 this.deselect();
+            }
+        }
+
+        deselectParent() {
+            for (var parent = this.parentItemView; parent; parent = parent.parentItemView) {
+                if (parent.isSelected()) {
+                    parent.deselect();
+                    return;
+                }
             }
         }
 
