@@ -16,6 +16,7 @@ import com.enonic.wem.api.content.page.layout.LayoutDescriptorService;
 import com.enonic.wem.api.content.page.part.PartDescriptorService;
 import com.enonic.wem.api.content.site.SiteService;
 import com.enonic.wem.api.content.site.SiteTemplateService;
+import com.enonic.wem.api.event.EventService;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.relationship.RelationshipService;
 import com.enonic.wem.api.schema.SchemaService;
@@ -76,6 +77,7 @@ public final class Activator
         service( ModuleService.class ).export();
         service( StartupInitializer.class ).export();
         service( ModuleURLStreamHandler.class ).attribute( "url.handler.protocol", "module" ).export();
+        service( EventService.class ).export();
     }
 
     @Override

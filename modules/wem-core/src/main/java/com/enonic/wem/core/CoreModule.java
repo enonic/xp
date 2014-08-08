@@ -8,6 +8,7 @@ import com.enonic.wem.core.config.ConfigModule;
 import com.enonic.wem.core.content.ContentModule;
 import com.enonic.wem.core.elasticsearch.ElasticsearchModule;
 import com.enonic.wem.core.entity.EntityModule;
+import com.enonic.wem.core.event.EventModule;
 import com.enonic.wem.core.home.HomeModule;
 import com.enonic.wem.core.image.ImageModule;
 import com.enonic.wem.core.index.IndexModule;
@@ -41,5 +42,6 @@ public final class CoreModule
         install( new ImageModule() );
         install( new WorkspaceModule() );
         install( new VersionModule() );
+        install( new EventModule() );
     }
 }
