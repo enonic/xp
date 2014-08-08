@@ -6,8 +6,6 @@ import org.mozilla.javascript.Script;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
-import com.enonic.wem.portal.script.loader.ScriptSource;
-
 final class ScriptCompiler
 {
     private final Cache<String, Script> cache;

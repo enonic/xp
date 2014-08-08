@@ -10,12 +10,12 @@ import org.mozilla.javascript.Scriptable;
 
 import com.google.common.collect.Maps;
 
+import com.enonic.wem.api.resource.Resource;
+import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceUrlResolver;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.script.SourceException;
 import com.enonic.wem.portal.script.lib.ContextScriptBean;
-import com.enonic.wem.portal.script.loader.ScriptLoader;
-import com.enonic.wem.portal.script.loader.ScriptSource;
 
 final class ScriptRunnerImpl
     implements ScriptRunner
@@ -23,8 +23,6 @@ final class ScriptRunnerImpl
     private Scriptable scope;
 
     protected ScriptCompiler compiler;
-
-    protected ScriptLoader scriptLoader;
 
     private final Map<String, Object> objects;
 
@@ -38,15 +36,9 @@ final class ScriptRunnerImpl
     }
 
     @Override
-    public ScriptLoader getLoader()
+    public ScriptRunner source( final Resource source )
     {
-        return this.scriptLoader;
-    }
-
-    @Override
-    public ScriptRunner source( final ScriptSource source )
-    {
-        this.source = source;
+        this.source = new ScriptSource( source );
         return this;
     }
 
@@ -103,13 +95,13 @@ final class ScriptRunnerImpl
     private SourceException createError( final RhinoException cause )
     {
         final String name = cause.sourceName();
-        final ScriptSource source = this.scriptLoader.load( name );
+        final ResourceKey source = ResourceKey.from( name );
 
         final SourceException.Builder builder = SourceException.newBuilder();
         builder.cause( cause );
         builder.lineNumber( cause.lineNumber() );
-        builder.resource( source.getResource() );
-        builder.path( ResourceUrlResolver.resolve( source.getResource() ) );
+        builder.resource( source );
+        builder.path( ResourceUrlResolver.resolve( source ) );
         builder.message( cause.details() );
 
         for ( final ScriptStackElement elem : cause.getScriptStack() )

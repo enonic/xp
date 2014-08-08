@@ -1,19 +1,29 @@
 package com.enonic.wem.portal.controller;
 
+import java.io.File;
+import java.io.FileOutputStream;
+
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.ByteSource;
+
 import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.wem.api.resource.ResourceUrlTestHelper;
 import com.enonic.wem.portal.postprocess.PostProcessor;
-import com.enonic.wem.portal.script.loader.ScriptLoader;
-import com.enonic.wem.portal.script.loader.ScriptSource;
 import com.enonic.wem.portal.script.runner.ScriptRunner;
 
 import static org.junit.Assert.*;
 
 public class JsControllerImplTest
 {
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+
     private ScriptRunner scriptRunner;
 
     private JsControllerImpl controller;
@@ -24,15 +34,25 @@ public class JsControllerImplTest
 
     private JsHttpRequest request;
 
-    private ResourceKey scriptDir;
-
-    private ScriptLoader scriptLoader;
-
     private JsHttpResponse response;
+
+    private void writeFile( final File dir, final String path, final String value )
+        throws Exception
+    {
+        final File file = new File( dir, path );
+        file.getParentFile().mkdirs();
+        ByteSource.wrap( value.getBytes( Charsets.UTF_8 ) ).copyTo( new FileOutputStream( file ) );
+    }
 
     @Before
     public void setup()
+        throws Exception
     {
+        final File modulesDir = this.temporaryFolder.newFolder( "modules" );
+        ResourceUrlTestHelper.mockModuleScheme( modulesDir );
+
+        writeFile( modulesDir, "mymodule-1.0.0/service/test/get.js", "1+1" );
+
         this.context = new JsContext();
         this.response = this.context.getResponse();
 
@@ -43,29 +63,20 @@ public class JsControllerImplTest
         this.controller.postProcessor( this.postProcessor );
         this.controller.context( this.context );
 
-        this.scriptDir = ResourceKey.from( "mymodule-1.0.0:/service/test" );
-        this.controller.scriptDir( this.scriptDir );
+        final ResourceKey scriptDir = ResourceKey.from( "mymodule-1.0.0:/service/test" );
+        this.controller.scriptDir( scriptDir );
 
         this.request = new JsHttpRequest();
         this.context.setRequest( this.request );
-
-        this.scriptLoader = Mockito.mock( ScriptLoader.class );
-        Mockito.when( this.scriptRunner.getLoader() ).thenReturn( this.scriptLoader );
     }
 
     @Test
     public void testExecute()
     {
         this.request.setMethod( "GET" );
-
-        final ScriptSource script = Mockito.mock( ScriptSource.class );
-        final ResourceKey scriptKey = this.scriptDir.resolve( "get.js" );
-        Mockito.when( this.scriptLoader.load( scriptKey ) ).thenReturn( script );
-
         this.controller.execute();
-        assertEquals( JsHttpResponse.STATUS_OK, this.response.getStatus() );
 
-        Mockito.verify( this.scriptRunner ).source( script );
+        assertEquals( JsHttpResponse.STATUS_OK, this.response.getStatus() );
         Mockito.verify( this.scriptRunner ).execute();
     }
 
@@ -74,15 +85,9 @@ public class JsControllerImplTest
     {
         this.request.setMethod( "GET" );
         this.response.setPostProcess( true );
-
-        final ScriptSource script = Mockito.mock( ScriptSource.class );
-        final ResourceKey scriptKey = this.scriptDir.resolve( "get.js" );
-        Mockito.when( this.scriptLoader.load( scriptKey ) ).thenReturn( script );
-
         this.controller.execute();
-        assertEquals( JsHttpResponse.STATUS_OK, this.response.getStatus() );
 
-        Mockito.verify( this.scriptRunner ).source( script );
+        assertEquals( JsHttpResponse.STATUS_OK, this.response.getStatus() );
         Mockito.verify( this.scriptRunner ).execute();
         Mockito.verify( this.postProcessor ).processResponse( this.context );
     }

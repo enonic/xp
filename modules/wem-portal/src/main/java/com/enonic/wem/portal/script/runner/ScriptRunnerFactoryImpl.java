@@ -5,15 +5,11 @@ import javax.inject.Provider;
 
 import com.enonic.wem.portal.script.lib.ContextScriptBean;
 import com.enonic.wem.portal.script.lib.SystemScriptBean;
-import com.enonic.wem.portal.script.loader.ScriptLoader;
 
 public final class ScriptRunnerFactoryImpl
     implements ScriptRunnerFactory
 {
     private final ScriptCompiler compiler;
-
-    @Inject
-    protected ScriptLoader scriptLoader;
 
     @Inject
     protected SystemScriptBean systemScriptBean;
@@ -30,7 +26,6 @@ public final class ScriptRunnerFactoryImpl
     public ScriptRunner newRunner()
     {
         final ScriptRunnerImpl runner = new ScriptRunnerImpl();
-        runner.scriptLoader = this.scriptLoader;
         runner.compiler = this.compiler;
         runner.contextServiceBean = this.contextServiceBeans.get();
         runner.property( "system", this.systemScriptBean );
