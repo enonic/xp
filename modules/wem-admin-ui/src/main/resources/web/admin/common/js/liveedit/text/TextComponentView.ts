@@ -69,6 +69,7 @@ module api.liveedit.text {
             event.preventDefault();
 
             if (!this.isSelected()) {
+                this.deselectParent();
                 this.select(!this.isEmpty() ? { x: event.pageX, y: event.pageY } : null);
             } else if (!this.editing) {
                 this.showEditor();

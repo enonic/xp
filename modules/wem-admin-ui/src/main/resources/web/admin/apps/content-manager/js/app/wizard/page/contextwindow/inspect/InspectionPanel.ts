@@ -56,7 +56,7 @@ module app.wizard.page.contextwindow.inspect {
         }
 
         public showInspectionPanel(panel: api.ui.panel.Panel) {
-            this.showPanelByIndex(this.getPanelIndex(panel));
+            this.showPanel(panel);
         }
 
         public clearSelection() {
