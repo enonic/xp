@@ -57,6 +57,7 @@
 ///<reference path='ui/selector/list/_module.ts' />
 ///<reference path='ui/selector/combobox/_module.ts' />
 ///<reference path='ui/selector/dropdown/_module.ts' />
+///<reference path='ui/time/_module.ts' />
 ///<reference path='ui/treegrid/actions/_module.ts' />
 ///<reference path='ui/treegrid/_module.ts' />
 

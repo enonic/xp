@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Admin Common Tests</title>
+    <link rel="stylesheet" type="text/css" href="../../../../../../admin/common/styles/_all.css">
+</head>
+<body>
+
+<!-- Configuration -->
+<script type="text/javascript">
+    var CONFIG = {
+        baseUri: '../../../..'
+    };
+</script>
+
+<!-- include source files here... -->
+<script type="text/javascript" src="../../../../../../admin/common/lib/_all.js"></script>
+<script type="text/javascript" src="../../../../../../admin/common/js/_all.js"></script>
+
+<!-- include spec files here... -->
+<script type="text/javascript">
+
+
+    api.dom.Body.get().appendChild(new api.dom.H2El().setText("Calendar"));
+
+    var calendar = new api.ui.time.CalendarBuilder().setYear(2014).setMonthOfYear(0).build();
+    api.dom.Body.get().appendChild(calendar);
+
+</script>
+
+</body>
+</html>
