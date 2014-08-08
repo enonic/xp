@@ -1,7 +1,5 @@
 package com.enonic.wem.portal.script.compiler;
 
-import javax.inject.Inject;
-
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Script;
 
@@ -12,10 +10,9 @@ public final class ScriptCompilerImpl
 {
     private final ScriptCache cache;
 
-    @Inject
-    public ScriptCompilerImpl( final ScriptCache cache )
+    public ScriptCompilerImpl()
     {
-        this.cache = cache;
+        this.cache = new ScriptCache();
     }
 
     @Override

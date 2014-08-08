@@ -6,8 +6,6 @@ import com.google.inject.AbstractModule;
 
 import com.enonic.wem.portal.controller.JsControllerFactory;
 import com.enonic.wem.portal.controller.JsControllerFactoryImpl;
-import com.enonic.wem.portal.script.compiler.ScriptCache;
-import com.enonic.wem.portal.script.compiler.ScriptCacheImpl;
 import com.enonic.wem.portal.script.compiler.ScriptCompiler;
 import com.enonic.wem.portal.script.compiler.ScriptCompilerImpl;
 import com.enonic.wem.portal.script.loader.ScriptLoader;
@@ -21,7 +19,6 @@ public final class ScriptModule
     @Override
     protected void configure()
     {
-        bind( ScriptCache.class ).to( ScriptCacheImpl.class ).in( Singleton.class );
         bind( ScriptLoader.class ).to( ScriptLoaderImpl.class ).in( Singleton.class );
         bind( ScriptCompiler.class ).to( ScriptCompilerImpl.class ).in( Singleton.class );
         bind( ScriptRunnerFactory.class ).to( ScriptRunnerFactoryImpl.class ).in( Singleton.class );
