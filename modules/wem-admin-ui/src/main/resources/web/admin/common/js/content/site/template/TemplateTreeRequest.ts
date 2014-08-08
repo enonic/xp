@@ -2,7 +2,7 @@ module api.content.site.template {
 
     import TemplateSummary = api.content.TemplateSummary;
 
-    export class TemplateTreeRequest extends SiteTemplateResourceRequest<api.content.site.template.SiteTemplateSummaryListJson> {
+    export class TemplateTreeRequest extends SiteTemplateResourceRequest<TemplateSummaryListJson> {
 
         private parentId: string;
 
@@ -24,15 +24,15 @@ module api.content.site.template {
 
         sendAndParse(): Q.Promise<TemplateSummary[]> {
 
-            return this.send().then((response: api.rest.JsonResponse<api.content.site.template.TemplateSummaryListJson>) => {
+            return this.send().then((response: api.rest.JsonResponse<TemplateSummaryListJson>) => {
                 return this.fromJsonArrayToTemplateSummaryArray(response.getResult().templates);
             });
         }
 
-        private fromJsonArrayToTemplateSummaryArray(jsonArray: api.content.site.template.TemplateSummaryJson[]): TemplateSummary[] {
+        private fromJsonArrayToTemplateSummaryArray(jsonArray: TemplateSummaryJson[]): TemplateSummary[] {
 
             var summaryArray: TemplateSummary[] = [];
-            jsonArray.forEach((summaryJson: api.content.site.template.TemplateSummaryJson) => {
+            jsonArray.forEach((summaryJson: TemplateSummaryJson) => {
                 summaryArray.push(TemplateSummary.fromJson(summaryJson));
             });
             return summaryArray;

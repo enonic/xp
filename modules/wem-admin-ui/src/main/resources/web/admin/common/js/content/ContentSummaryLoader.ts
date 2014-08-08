@@ -3,15 +3,15 @@ module api.content {
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
     import LoadingDataEvent = api.util.loader.event.LoadingDataEvent;
 
-    export class ContentSummaryLoader extends api.util.loader.BaseLoader<api.content.json.ContentSummaryJson,api.content.ContentSummary> {
+    export class ContentSummaryLoader extends api.util.loader.BaseLoader<json.ContentQueryResultJson<json.ContentSummaryJson>,ContentSummary> {
 
         private preservedSearchString: string;
 
-        private contentQuery: api.content.query.ContentQuery;
+        private contentQuery: query.ContentQuery;
 
         constructor(delay: number = 500) {
-            this.contentQuery = new api.content.query.ContentQuery();
-            var contentRequest = new api.content.ContentQueryRequest<api.content.json.ContentSummaryJson,api.content.ContentSummary>(this.contentQuery).
+            this.contentQuery = new query.ContentQuery();
+            var contentRequest = new ContentQueryRequest<json.ContentSummaryJson,ContentSummary>(this.contentQuery).
                 setExpand(api.rest.Expand.SUMMARY);
             super(contentRequest);
         }
@@ -44,7 +44,7 @@ module api.content {
             this.loading(true);
             this.notifyLoadingData();
 
-            this.sendRequest().done((contents: api.content.ContentSummary[]) => {
+            this.sendRequest().done((contents: ContentSummary[]) => {
 
                 this.loading(false);
                 this.notifyLoadedData(contents);
@@ -56,9 +56,9 @@ module api.content {
             });
         }
 
-        sendRequest(): Q.Promise<api.content.ContentSummary[]> {
+        sendRequest(): Q.Promise<ContentSummary[]> {
             return this.getRequest().sendAndParse().
-                then((queryResult: api.content.ContentQueryResult<api.content.ContentSummary,api.content.json.ContentSummaryJson>) => {
+                then((queryResult: ContentQueryResult<ContentSummary,json.ContentSummaryJson>) => {
                     return queryResult.getContents();
                 });
         }

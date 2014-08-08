@@ -1,6 +1,6 @@
 module api.content.site.template {
 
-    export class InstallSiteTemplateRequest extends SiteTemplateResourceRequest<api.content.site.template.SiteTemplateSummaryJson> {
+    export class InstallSiteTemplateRequest extends SiteTemplateResourceRequest<SiteTemplateSummaryJson[]> {
 
         private uploader: any;
         private triggerElement: api.dom.Element;
@@ -130,22 +130,41 @@ module api.content.site.template {
 
     }
 
-    export class InstallSiteTemplateResponse extends api.rest.Response {
+    export class InstallSiteTemplateResponse extends api.rest.JsonResponse<SiteTemplateSummaryJson[]> {
+
+        private result: SiteTemplateSummaryJson[] = [];
 
         private templates: SiteTemplateSummary[] = [];
 
-        constructor(templateResponses: api.rest.JsonResponse<api.content.site.template.SiteTemplateSummaryJson>[]) {
-            super();
-            templateResponses.forEach((response: api.rest.JsonResponse<api.content.site.template.SiteTemplateSummaryJson>) => {
-                var responseJson = response.getJson();
+        constructor(responses: api.rest.JsonResponse<api.content.site.template.SiteTemplateSummaryJson>[]) {
+            super(null);
+            responses.forEach((response: api.rest.JsonResponse<api.content.site.template.SiteTemplateSummaryJson>) => {
+                var responseJson = response.getResult();
                 if (responseJson) {
-                    this.templates.push(new SiteTemplateSummary(responseJson));
+                    this.result.push(responseJson);
+                    this.templates.push(new SiteTemplateSummaryBuilder().fromSiteTemplateSummaryJson(responseJson).build());
                 }
             });
         }
 
         getSiteTemplates(): SiteTemplateSummary[] {
             return this.templates;
+        }
+
+        isBlank():boolean {
+            return this.templates.length == 0;
+        }
+
+        getJson():any {
+            return null;
+        }
+
+        hasResult():boolean {
+            return !this.isBlank();
+        }
+
+        getResult():SiteTemplateSummaryJson[] {
+            return this.result;
         }
 
     }
