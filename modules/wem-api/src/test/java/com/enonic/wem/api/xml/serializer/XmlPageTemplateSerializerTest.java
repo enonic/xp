@@ -69,95 +69,95 @@ public class XmlPageTemplateSerializerTest
         assertXml( "page-template.xml", result );
     }
 
-//    @Test
-//    public void test_templates_sort_by_displayName2()
-//        throws Exception
-//    {
-//        // 1
-//        final String xml = readFromFile( "page-template.xml" );
-//        XmlPageTemplate xmlObject = XmlSerializers2.pageTemplate().parse( xml );
-//        PageTemplate.Builder builder = PageTemplate.newPageTemplate();
-//        builder.name( "my-page-template1" );
-//        XmlPageTemplateMapper.fromXml( xmlObject, builder );
-//
-//        builder.displayName( "BBB" );
-//        PageTemplate pageTemplate = builder.build();
-//
-//        final PageTemplates.Builder player = PageTemplates.newPageTemplates();
-//        player.add( pageTemplate );
-//
-//        // 2
-//        builder = PageTemplate.newPageTemplate();
-//        builder.name( "my-page-template2" );
-//        XmlPageTemplateMapper.fromXml( xmlObject, builder );
-//
-//        builder.displayName( "CCC" );
-//        pageTemplate = builder.build();
-//        player.add( pageTemplate );
-//
-//        // 3
-//        builder = PageTemplate.newPageTemplate();
-//        builder.name( "my-page-template3" );
-//        XmlPageTemplateMapper.fromXml( xmlObject, builder );
-//
-//        builder.displayName( "AAA" );
-//        pageTemplate = builder.build();
-//        player.add( pageTemplate );
-//
-//        PageTemplates sorted = player.build();
-//        List<String> result = templatesAsString( sorted.getList() );
-//
-//        assertEquals( "AAA, BBB, CCC", Joiner.on( ", " ).join( result ) );
-//    }
-//
-//    private List<String> templatesAsString( final List<PageTemplate> templateList )
-//    {
-//        return Lists.transform( templateList, PageTemplate::getDisplayName );
-//    }
+    @Test
+    public void test_templates_sort_by_displayName2()
+        throws Exception
+    {
+        // 1
+        final String xml = readFromFile( "page-template.xml" );
+        XmlPageTemplate xmlObject = XmlSerializers2.pageTemplate().parse( xml );
+        PageTemplate.Builder builder = PageTemplate.newPageTemplate();
+        builder.name( "my-page-template1" );
+        XmlPageTemplateMapper.fromXml( xmlObject, builder );
 
-//    @Test
-//    public void test_from_xml()
-//        throws Exception
-//    {
-//        final String xml = readFromFile( "page-template.xml" );
-//        final PageTemplate.Builder builder = PageTemplate.newPageTemplate();
-//        builder.name( "my-page-template" );
-//
-//        XmlPageTemplate xmlObject = XmlSerializers2.pageTemplate().parse( xml );
-//        XmlPageTemplateMapper.fromXml( xmlObject, builder );
-//        PageTemplate pageTemplate = builder.build();
-//
-//        assertEquals( "Main page template", pageTemplate.getDisplayName() );
-//        assertEquals( PageDescriptorKey.from( "mainmodule-1.0.0:landing-page" ), pageTemplate.getDescriptor() );
-//        assertTrue( pageTemplate.getCanRender().contains( ContentTypeName.from( "com.enonic.sometype" ) ) );
-//        assertTrue( pageTemplate.getCanRender().contains( ContentTypeName.from( "some.other.type" ) ) );
-//
-//        // verify: config
-//        RootDataSet config = pageTemplate.getConfig();
-//        assertEquals( 10000L, config.getProperty( "pause" ).getLong().longValue() );
-//        assertEquals( "one", config.getProperty( "thing.first" ).getString() );
-//        assertEquals( "two", config.getProperty( "thing.second" ).getString() );
-//
-//        // verify: regions
-//        PageRegions regions = pageTemplate.getRegions();
-//        Region region = regions.getRegion( "my-region" );
-//        assertNotNull( region );
-//        assertEquals( "my-region", region.getName() );
-//
-//        // verify: components in region
-//        assertEquals( 1, region.numberOfComponents() );
-//
-//        // verify: part component
-//        PageComponent component = region.getComponents().iterator().next();
-//        assertTrue( component instanceof PartComponent );
-//        PartComponent partComponent = (PartComponent) component;
-//        assertEquals( "PartInHeader", partComponent.getName().toString() );
-//        assertEquals( "demo-1.0.0:my-part-template", partComponent.getDescriptor().toString() );
-//
-//        // verify: component config
-//        RootDataSet partComponentConfig = partComponent.getConfig();
-//        assertEquals( new Long( 500 ), partComponentConfig.getProperty( "width" ).getLong() );
-//        assertEquals( "So sweet!", partComponentConfig.getProperty( "caption" ).getString() );
-//    }
-//
+        builder.displayName( "BBB" );
+        PageTemplate pageTemplate = builder.build();
+
+        final PageTemplates.Builder player = PageTemplates.newPageTemplates();
+        player.add( pageTemplate );
+
+        // 2
+        builder = PageTemplate.newPageTemplate();
+        builder.name( "my-page-template2" );
+        XmlPageTemplateMapper.fromXml( xmlObject, builder );
+
+        builder.displayName( "CCC" );
+        pageTemplate = builder.build();
+        player.add( pageTemplate );
+
+        // 3
+        builder = PageTemplate.newPageTemplate();
+        builder.name( "my-page-template3" );
+        XmlPageTemplateMapper.fromXml( xmlObject, builder );
+
+        builder.displayName( "AAA" );
+        pageTemplate = builder.build();
+        player.add( pageTemplate );
+
+        PageTemplates sorted = player.build();
+        List<String> result = templatesAsString( sorted.getList() );
+
+        assertEquals( "AAA, BBB, CCC", Joiner.on( ", " ).join( result ) );
+    }
+
+    private List<String> templatesAsString( final List<PageTemplate> templateList )
+    {
+        return Lists.transform( templateList, PageTemplate::getDisplayName );
+    }
+
+    @Test
+    public void test_from_xml()
+        throws Exception
+    {
+        final String xml = readFromFile( "page-template.xml" );
+        final PageTemplate.Builder builder = PageTemplate.newPageTemplate();
+        builder.name( "my-page-template" );
+
+        XmlPageTemplate xmlObject = XmlSerializers2.pageTemplate().parse( xml );
+        XmlPageTemplateMapper.fromXml( xmlObject, builder );
+        PageTemplate pageTemplate = builder.build();
+
+        assertEquals( "Main page template", pageTemplate.getDisplayName() );
+        assertEquals( PageDescriptorKey.from( "mainmodule-1.0.0:landing-page" ), pageTemplate.getDescriptor() );
+        assertTrue( pageTemplate.getCanRender().contains( ContentTypeName.from( "com.enonic.sometype" ) ) );
+        assertTrue( pageTemplate.getCanRender().contains( ContentTypeName.from( "some.other.type" ) ) );
+
+        // verify: config
+        RootDataSet config = pageTemplate.getConfig();
+        assertEquals( 10000L, config.getProperty( "pause" ).getLong().longValue() );
+        assertEquals( "one", config.getProperty( "thing.first" ).getString() );
+        assertEquals( "two", config.getProperty( "thing.second" ).getString() );
+
+        // verify: regions
+        PageRegions regions = pageTemplate.getRegions();
+        Region region = regions.getRegion( "my-region" );
+        assertNotNull( region );
+        assertEquals( "my-region", region.getName() );
+
+        // verify: components in region
+        assertEquals( 1, region.numberOfComponents() );
+
+        // verify: part component
+        PageComponent component = region.getComponents().iterator().next();
+        assertTrue( component instanceof PartComponent );
+        PartComponent partComponent = (PartComponent) component;
+        assertEquals( "PartInHeader", partComponent.getName().toString() );
+        assertEquals( "demo-1.0.0:my-part-template", partComponent.getDescriptor().toString() );
+
+        // verify: component config
+        RootDataSet partComponentConfig = partComponent.getConfig();
+        assertEquals( new Long( 500 ), partComponentConfig.getProperty( "width" ).getLong() );
+        assertEquals( "So sweet!", partComponentConfig.getProperty( "caption" ).getString() );
+    }
+
 }
