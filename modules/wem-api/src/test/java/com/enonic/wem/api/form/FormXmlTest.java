@@ -232,7 +232,7 @@ public class FormXmlTest
         formBuilder.addFormItem(newInput().name("myTextLine").inputType(InputTypes.TEXT_LINE).build());
         formBuilder.addFormItem(newInput().name("myTextArea").inputType(InputTypes.TEXT_AREA).inputTypeConfig(
                 InputTypes.TEXT_AREA.getDefaultConfig()).build());
-        formBuilder.addFormItem(newInput().name("myWholeNumber").inputType(InputTypes.WHOLE_NUMBER).build());
+        formBuilder.addFormItem( newInput().name( "myLong" ).inputType( InputTypes.LONG ).build() );
         formBuilder.addFormItem(newInput().name("myXml").inputType(InputTypes.XML).build());
         formBuilder.addFormItem(
                 newInput().name("myRelationship").inputType(InputTypes.RELATIONSHIP).inputTypeConfig(relationshipConfig).build());

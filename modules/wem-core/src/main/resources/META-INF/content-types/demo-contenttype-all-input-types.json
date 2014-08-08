@@ -251,8 +251,8 @@
         },
         {
             "Input": {
-                "name": "myWholeNumber",
-                "label": "My WholeNumber",
+                "name": "myLong",
+                "label": "My Long",
                 "immutable": false,
                 "occurrences": {
                     "minimum": 0,
@@ -263,7 +263,7 @@
                 "validationRegexp": null,
                 "helpText": null,
                 "type": {
-                    "name": "WholeNumber"
+                    "name": "Long"
                 }
             }
         },

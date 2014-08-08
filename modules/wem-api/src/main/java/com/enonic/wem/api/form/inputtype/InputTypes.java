@@ -41,7 +41,7 @@ public final class InputTypes
 
     public static final InputType TEXT_AREA = new TextArea();
 
-    public static final InputType WHOLE_NUMBER = new WholeNumber();
+    public static final InputType LONG = new Long();
 
     public static final InputType XML = new Xml();
 
@@ -61,7 +61,7 @@ public final class InputTypes
         add( TAGS ).
         add( TEXT_AREA ).
         add( TEXT_LINE ).
-        add( WHOLE_NUMBER ).
+        add( LONG ).
         add( XML ).
         build();
 
@@ -79,7 +79,7 @@ public final class InputTypes
         registerDefaultInputType( ValueTypes.LOCAL_DATE, DATE );
         registerDefaultInputType( ValueTypes.STRING, TEXT_AREA );
         registerDefaultInputType( ValueTypes.XML, XML );
-        registerDefaultInputType( ValueTypes.LONG, WHOLE_NUMBER );
+        registerDefaultInputType( ValueTypes.LONG, LONG );
         registerDefaultInputType( ValueTypes.DOUBLE, DECIMAL_NUMBER );
     }
 

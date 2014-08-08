@@ -85,8 +85,8 @@
     <indexed>false</indexed>
     <occurrences minimum="0" maximum="1"/>
   </input>
-  <input type="WholeNumber" name="myWholeNumber">
-    <immutable>false</immutable>
+  <input type="Long" name="myLong">
+  <immutable>false</immutable>
     <indexed>false</indexed>
     <occurrences minimum="0" maximum="1"/>
   </input>
