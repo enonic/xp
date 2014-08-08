@@ -16,7 +16,7 @@ module api.schema {
 
         getParams(): Object {
             return {
-                parentId: this.parentId
+                parentKey: this.parentId
             };
         }
 

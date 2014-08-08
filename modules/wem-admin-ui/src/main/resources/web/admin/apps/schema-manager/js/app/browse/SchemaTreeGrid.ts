@@ -67,5 +67,9 @@ module app.browse {
             var parentId = parentData ? parentData.getKey() : '';
             return new api.schema.SchemaTreeRequest(parentId).sendAndParse();
         }
+
+        hasChildren(data: Schema): boolean {
+            return data.hasChildren();
+        }
     }
 }
