@@ -138,6 +138,7 @@ module api.liveedit {
         }
 
         getSelectedView(): ItemView {
+            //console.log("GETTING VIEWS", this.viewsById);
             for (var id in this.viewsById) {
                 if (this.viewsById.hasOwnProperty(id) && this.viewsById[id].isSelected()) {
                     return this.viewsById[id];
@@ -255,6 +256,7 @@ module api.liveedit {
                             setRegion(region).
                             setElement(element));
                         this.addRegion(regionView);
+                        regionView.parsePageComponentViews();
                     }
                     else {
                         this.doParseItemViews(parentElement);

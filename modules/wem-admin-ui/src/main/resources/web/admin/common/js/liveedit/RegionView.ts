@@ -68,9 +68,6 @@ module api.liveedit {
             this.placeholder = new RegionPlaceholder(this);
             this.placeholder.hide();
             this.appendChild(this.placeholder);
-
-            this.parsePageComponentViews();
-
             this.refreshPlaceholder();
 
             // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
@@ -351,9 +348,10 @@ module api.liveedit {
             return type == "region";
         }
 
-        private parsePageComponentViews() {
+        parsePageComponentViews() {
 
             this.doParsePageComponentViews();
+            this.refreshPlaceholder();
         }
 
         private doParsePageComponentViews(parentElement?: api.dom.Element) {
