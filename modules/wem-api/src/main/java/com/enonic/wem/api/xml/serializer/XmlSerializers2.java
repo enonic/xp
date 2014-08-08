@@ -7,6 +7,7 @@ import com.enonic.wem.api.xml.model.XmlLayoutDescriptor;
 import com.enonic.wem.api.xml.model.XmlMixin;
 import com.enonic.wem.api.xml.model.XmlModule;
 import com.enonic.wem.api.xml.model.XmlPageDescriptor;
+import com.enonic.wem.api.xml.model.XmlPageTemplate;
 import com.enonic.wem.api.xml.model.XmlPartDescriptor;
 import com.enonic.wem.api.xml.model.XmlRelationshipType;
 import com.enonic.wem.api.xml.model.XmlSiteTemplate;
@@ -19,19 +20,21 @@ public final class XmlSerializers2
 
     private final static XmlSiteTemplateSerializer SITE_TEMPLATE = new XmlSiteTemplateSerializer();
 
-    private final static XmlMixinSerializer MIXIN = new XmlMixinSerializer();
+    private final static XmlPageTemplateSerializer PAGE_TEMPLATE = new XmlPageTemplateSerializer();
 
     private final static XmlContentTypeSerializer CONTENT_TYPE = new XmlContentTypeSerializer();
 
+    private final static XmlMixinSerializer MIXIN = new XmlMixinSerializer();
+
     private final static XmlRelationshipTypeSerializer RELATIONSHIP_TYPE = new XmlRelationshipTypeSerializer();
-
-    private final static XmlPageDescriptorSerializer PAGE_DESCRIPTOR = new XmlPageDescriptorSerializer();
-
-    private final static XmlPartDescriptorSerializer PART_DESCRIPTOR = new XmlPartDescriptorSerializer();
 
     private final static XmlLayoutDescriptorSerializer LAYOUT_DESCRIPTOR = new XmlLayoutDescriptorSerializer();
 
     private final static XmlImageDescriptorSerializer IMAGE_DESCRIPTOR = new XmlImageDescriptorSerializer();
+
+    private final static XmlPartDescriptorSerializer PART_DESCRIPTOR = new XmlPartDescriptorSerializer();
+
+    private final static XmlPageDescriptorSerializer PAGE_DESCRIPTOR = new XmlPageDescriptorSerializer();
 
     public static XmlSerializer2<XmlForm> form()
     {
@@ -81,5 +84,10 @@ public final class XmlSerializers2
     public static XmlSerializer2<XmlImageDescriptor> imageDescriptor()
     {
         return IMAGE_DESCRIPTOR;
+    }
+
+    public static XmlSerializer2<XmlPageTemplate> pageTemplate()
+    {
+        return PAGE_TEMPLATE;
     }
 }

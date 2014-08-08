@@ -45,4 +45,5 @@ final class XmlRegionDescriptorMapper
         result.setName( object.getName() );
         return result;
     }
+
 }
