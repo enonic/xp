@@ -46,12 +46,6 @@ module api.liveedit.image {
             }
         }
 
-        showLoadingPlaceholder() {
-            this.displayPlaceholder();
-            this.select();
-            this.placeholder.deselect();
-        }
-
         conditionedForEmpty(): boolean {
             if (!this.imageComponent) {
                 return this.isEmpty();

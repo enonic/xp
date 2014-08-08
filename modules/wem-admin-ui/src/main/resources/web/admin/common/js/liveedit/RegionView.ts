@@ -82,6 +82,7 @@ module api.liveedit {
             actions.push(new api.ui.Action('Parent').onExecuted(() => {
                 var parentView: ItemView = this.getParentItemView();
                 if (parentView) {
+                    this.deselect();
                     parentView.select();
                 }
             }));

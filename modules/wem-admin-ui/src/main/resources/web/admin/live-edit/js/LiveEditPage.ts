@@ -19,7 +19,6 @@ module LiveEdit {
     import DraggingPageComponentViewStartedEvent = api.liveedit.DraggingPageComponentViewStartedEvent;
     import DraggingPageComponentViewCompletedEvent = api.liveedit.DraggingPageComponentViewCompletedEvent;
     import PageComponentAddedEvent = api.liveedit.PageComponentAddedEvent;
-    import PageComponentDuplicateEvent = api.liveedit.PageComponentDuplicateEvent;
     import ItemViewDeselectEvent = api.liveedit.ItemViewDeselectEvent;
     import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
     import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;

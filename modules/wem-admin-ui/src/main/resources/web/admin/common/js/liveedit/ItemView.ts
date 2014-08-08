@@ -270,12 +270,12 @@ module api.liveedit {
             event.stopPropagation();
             event.preventDefault();
 
-            // we prevented mouse events to bubble up so if parent view is selected
-            // it won't receive mouse event and won't be deselected
-            // therefore we deselect it manually
-            this.deselectParent();
-
             if (!this.isSelected()) {
+                // we prevented mouse events to bubble up so if parent view is selected
+                // it won't receive mouse event and won't be deselected
+                // therefore we deselect it manually
+                this.deselectParent();
+
                 this.select(!this.isEmpty() ? { x: event.pageX, y: event.pageY } : null);
             } else {
                 this.deselect();

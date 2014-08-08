@@ -70,12 +70,6 @@ module api.liveedit.layout {
             return this.isEmpty() || !this.layoutComponent.getDescriptor();
         }
 
-        showLoadingPlaceholder() {
-            this.displayPlaceholder();
-            this.select();
-            this.placeholder.deselect();
-        }
-
         displayPlaceholder() {
             this.markAsEmpty();
 
