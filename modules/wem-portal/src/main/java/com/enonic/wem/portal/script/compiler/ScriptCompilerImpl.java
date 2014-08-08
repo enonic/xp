@@ -9,7 +9,6 @@ import com.google.common.cache.CacheBuilder;
 import com.enonic.wem.portal.script.loader.ScriptSource;
 
 public final class ScriptCompilerImpl
-    implements ScriptCompiler
 {
     private final Cache<String, Script> cache;
 
@@ -18,7 +17,6 @@ public final class ScriptCompilerImpl
         this.cache = CacheBuilder.newBuilder().maximumSize( 1000 ).build();
     }
 
-    @Override
     public Script compile( final Context context, final ScriptSource source )
     {
         final String key = source.getName() + "_" + source.getTimestamp();

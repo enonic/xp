@@ -13,17 +13,17 @@ import com.google.common.collect.Maps;
 import com.enonic.wem.api.resource.ResourceUrlResolver;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.script.SourceException;
-import com.enonic.wem.portal.script.compiler.ScriptCompiler;
+import com.enonic.wem.portal.script.compiler.ScriptCompilerImpl;
 import com.enonic.wem.portal.script.lib.ContextScriptBean;
 import com.enonic.wem.portal.script.loader.ScriptLoader;
 import com.enonic.wem.portal.script.loader.ScriptSource;
 
-public final class ScriptRunnerImpl
+final class ScriptRunnerImpl
     implements ScriptRunner
 {
     private Scriptable scope;
 
-    protected ScriptCompiler compiler;
+    protected ScriptCompilerImpl compiler;
 
     protected ScriptLoader scriptLoader;
 
