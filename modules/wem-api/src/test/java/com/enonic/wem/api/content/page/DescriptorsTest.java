@@ -22,7 +22,7 @@ public class DescriptorsTest
     public void pageDescriptor()
     {
         Form pageForm = Form.newForm().
-            addFormItem( newInput().name( "pause" ).inputType( InputTypes.DECIMAL_NUMBER ).build() ).
+            addFormItem( newInput().name( "pause" ).inputType( InputTypes.DOUBLE ).build() ).
             // add input of type region
                 build();
 
@@ -41,7 +41,7 @@ public class DescriptorsTest
     public void partDescriptor()
     {
         Form partForm = Form.newForm().
-            addFormItem( newInput().name( "width" ).inputType( InputTypes.DECIMAL_NUMBER ).build() ).
+            addFormItem( newInput().name( "width" ).inputType( InputTypes.DOUBLE ).build() ).
             build();
 
         PartDescriptor partDescriptor = PartDescriptor.newPartDescriptor().
@@ -58,7 +58,7 @@ public class DescriptorsTest
     public void layoutDescriptor()
     {
         Form layoutForm = Form.newForm().
-            addFormItem( newInput().name( "columns" ).inputType( InputTypes.DECIMAL_NUMBER ).build() ).
+            addFormItem( newInput().name( "columns" ).inputType( InputTypes.DOUBLE ).build() ).
             build();
 
         LayoutDescriptor layoutDescriptor = LayoutDescriptor.newLayoutDescriptor().
@@ -76,7 +76,7 @@ public class DescriptorsTest
     public void imageDescriptor()
     {
         Form partForm = Form.newForm().
-            addFormItem( newInput().name( "quality" ).inputType( InputTypes.DECIMAL_NUMBER ).build() ).
+            addFormItem( newInput().name( "quality" ).inputType( InputTypes.DOUBLE ).build() ).
             build();
 
         ImageDescriptor partDescriptor = ImageDescriptor.newImageDescriptor().

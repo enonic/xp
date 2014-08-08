@@ -26,7 +26,7 @@ import static com.enonic.wem.api.form.Input.newInput;
 import static com.enonic.wem.api.form.MixinReference.newMixinReference;
 import static com.enonic.wem.api.form.inputtype.ComboBoxConfig.newComboBoxConfig;
 import static com.enonic.wem.api.form.inputtype.ImageSelectorConfig.newImageSelectorConfig;
-import static com.enonic.wem.api.form.inputtype.InputTypes.DECIMAL_NUMBER;
+import static com.enonic.wem.api.form.inputtype.InputTypes.DOUBLE;
 import static com.enonic.wem.api.form.inputtype.InputTypes.TEXT_LINE;
 import static com.enonic.wem.api.form.inputtype.RelationshipConfig.newRelationshipConfig;
 import static com.enonic.wem.api.form.inputtype.SingleSelectorConfig.newSingleSelectorConfig;
@@ -77,7 +77,7 @@ public class XmlFormSerializerTest
 
         final Input myInput = newInput().
             name( "pause" ).
-            inputType( DECIMAL_NUMBER ).
+            inputType( DOUBLE ).
             label( "Pause parameter" ).
             maximumOccurrences( 3 ).
             minimumOccurrences( 2 ).
@@ -137,7 +137,7 @@ public class XmlFormSerializerTest
         final Form form = toForm( xml );
 
         final Input pause = form.getFormItem( "pause" ).toInput();
-        assertEquals( DECIMAL_NUMBER, pause.getInputType() );
+        assertEquals( DOUBLE, pause.getInputType() );
         assertEquals( "Pause parameter", pause.getLabel() );
         assertEquals( "customText", pause.getCustomText() );
         assertEquals( "helpText", pause.getHelpText() );
@@ -225,7 +225,7 @@ public class XmlFormSerializerTest
 
         formBuilder.addFormItem( newInput().name( "myColor" ).inputType( InputTypes.COLOR ).build() );
         formBuilder.addFormItem( newInput().name( "myDate" ).inputType( InputTypes.DATE ).build() );
-        formBuilder.addFormItem( newInput().name( "myDecimalNumber" ).inputType( InputTypes.DECIMAL_NUMBER ).build() );
+        formBuilder.addFormItem( newInput().name( "myDouble" ).inputType( InputTypes.DOUBLE ).build() );
         formBuilder.addFormItem( newInput().name( "myGeoPoint" ).inputType( InputTypes.GEO_POINT ).build() );
         formBuilder.addFormItem( newInput().name( "myHtmlArea" ).inputType( InputTypes.HTML_AREA ).build() );
         formBuilder.addFormItem( newInput().name( "myMoney" ).inputType( InputTypes.MONEY ).build() );

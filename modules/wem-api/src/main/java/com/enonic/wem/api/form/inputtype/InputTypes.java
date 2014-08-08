@@ -17,7 +17,7 @@ public final class InputTypes
 
     public static final InputType DATE = new Date();
 
-    public static final InputType DECIMAL_NUMBER = new DecimalNumber();
+    public static final InputType DOUBLE = new Double();
 
     public static final InputType GEO_POINT = new GeoPoint();
 
@@ -49,7 +49,7 @@ public final class InputTypes
         add( COLOR ).
         add( COMBO_BOX ).
         add( DATE ).
-        add( DECIMAL_NUMBER ).
+        add( DOUBLE ).
         add( GEO_POINT ).
         add( HTML_AREA ).
         add( IMAGE ).
@@ -80,7 +80,7 @@ public final class InputTypes
         registerDefaultInputType( ValueTypes.STRING, TEXT_AREA );
         registerDefaultInputType( ValueTypes.XML, XML );
         registerDefaultInputType( ValueTypes.LONG, LONG );
-        registerDefaultInputType( ValueTypes.DOUBLE, DECIMAL_NUMBER );
+        registerDefaultInputType( ValueTypes.DOUBLE, DOUBLE );
     }
 
     private static void register( InputType inputType )

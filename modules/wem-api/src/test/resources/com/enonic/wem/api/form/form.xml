@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <form>
-    <input name="pause" type="DecimalNumber">
-        <label>Pause parameter</label>
+  <input name="pause" type="Double">
+  <label>Pause parameter</label>
         <immutable>true</immutable>
         <indexed>true</indexed>
         <custom-text>customText</custom-text>

@@ -46,8 +46,8 @@
         },
         {
             "Input": {
-                "name": "myDecimalNumber",
-                "label": "My DecimalNumber",
+                "name": "myDouble",
+                "label": "My Double",
                 "immutable": false,
                 "occurrences": {
                     "minimum": 0,
@@ -58,7 +58,7 @@
                 "validationRegexp": null,
                 "helpText": null,
                 "type": {
-                    "name": "DecimalNumber"
+                    "name": "Double"
                 }
             }
         },

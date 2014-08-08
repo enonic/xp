@@ -3,8 +3,8 @@
   <display-name>Landing page</display-name>
   <controller>mainmodule-1.0.0:/controller/landing-page.js</controller>
   <config>
-    <input name="pause" type="DecimalNumber">
-      <label>Pause parameter</label>
+    <input name="pause" type="Double">
+    <label>Pause parameter</label>
       <immutable>false</immutable>
       <indexed>false</indexed>
     </input>

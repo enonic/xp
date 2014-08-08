@@ -10,8 +10,8 @@
     <indexed>false</indexed>
     <occurrences minimum="0" maximum="1"/>
   </input>
-  <input type="DecimalNumber" name="myDecimalNumber">
-    <immutable>false</immutable>
+  <input type="Double" name="myDouble">
+  <immutable>false</immutable>
     <indexed>false</indexed>
     <occurrences minimum="0" maximum="1"/>
   </input>
