@@ -3,23 +3,26 @@ package com.enonic.wem.portal.script.compiler;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Script;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+
 import com.enonic.wem.portal.script.loader.ScriptSource;
 
 public final class ScriptCompilerImpl
     implements ScriptCompiler
 {
-    private final ScriptCache cache;
+    private final Cache<String, Script> cache;
 
     public ScriptCompilerImpl()
     {
-        this.cache = new ScriptCache();
+        this.cache = CacheBuilder.newBuilder().maximumSize( 1000 ).build();
     }
 
     @Override
     public Script compile( final Context context, final ScriptSource source )
     {
         final String key = source.getName() + "_" + source.getTimestamp();
-        final Script script = this.cache.get( key );
+        final Script script = this.cache.getIfPresent( key );
         if ( script != null )
         {
             return script;
