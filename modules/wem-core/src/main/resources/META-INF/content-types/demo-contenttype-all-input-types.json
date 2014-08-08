@@ -64,8 +64,8 @@
         },
         {
             "Input": {
-                "name": "myGeoLocation",
-                "label": "My GeoLocation",
+                "name": "myGeoPoint",
+                "label": "My GeoPoint",
                 "immutable": false,
                 "occurrences": {
                     "minimum": 0,
@@ -76,7 +76,7 @@
                 "validationRegexp": null,
                 "helpText": null,
                 "type": {
-                    "name": "GeoLocation"
+                    "name": "GeoPoint"
                 }
             }
         },

@@ -220,7 +220,7 @@ public class FormXmlTest
         formBuilder.addFormItem(newInput().name("myColor").inputType(InputTypes.COLOR).build());
         formBuilder.addFormItem(newInput().name("myDate").inputType(InputTypes.DATE).build());
         formBuilder.addFormItem(newInput().name("myDecimalNumber").inputType(InputTypes.DECIMAL_NUMBER).build());
-        formBuilder.addFormItem(newInput().name("myGeoLocation").inputType(InputTypes.GEO_LOCATION).build());
+        formBuilder.addFormItem( newInput().name( "myGeoPoint" ).inputType( InputTypes.GEO_POINT ).build() );
         formBuilder.addFormItem(newInput().name("myHtmlArea").inputType(InputTypes.HTML_AREA).build());
         formBuilder.addFormItem(newInput().name("myMoney").inputType(InputTypes.MONEY).build());
         formBuilder.addFormItem(newInput().name("myPhone").inputType(InputTypes.PHONE).build());

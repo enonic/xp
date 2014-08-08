@@ -117,7 +117,7 @@ public abstract class AbstractContentTypeSerializerTest
         assertNotNull( actualContentType.form().getFormItem( "myDate" ) );
         assertNotNull( actualContentType.form().getFormItem( "myDecimalNumber" ) );
         assertNotNull( actualContentType.form().getFormItem( "myImage" ) );
-        assertNotNull( actualContentType.form().getFormItem( "myGeoLocation" ) );
+        assertNotNull( actualContentType.form().getFormItem( "myGeoPoint" ) );
         assertNotNull( actualContentType.form().getFormItem( "myHtmlArea" ) );
         assertNotNull( actualContentType.form().getFormItem( "myMoney" ) );
         assertNotNull( actualContentType.form().getFormItem( "myPhone" ) );
@@ -146,7 +146,7 @@ public abstract class AbstractContentTypeSerializerTest
         assertEquals( "myComboBox", actualContentType.form().getFormItem( "myComboBox" ).getPath().toString() );
         assertEquals( "myDate", actualContentType.form().getFormItem( "myDate" ).getPath().toString() );
         assertEquals( "myDecimalNumber", actualContentType.form().getFormItem( "myDecimalNumber" ).getPath().toString() );
-        assertEquals( "myGeoLocation", actualContentType.form().getFormItem( "myGeoLocation" ).getPath().toString() );
+        assertEquals( "myGeoPoint", actualContentType.form().getFormItem( "myGeoPoint" ).getPath().toString() );
         assertEquals( "myHtmlArea", actualContentType.form().getFormItem( "myHtmlArea" ).getPath().toString() );
         assertEquals( "myMoney", actualContentType.form().getFormItem( "myMoney" ).getPath().toString() );
         assertEquals( "myPhone", actualContentType.form().getFormItem( "myPhone" ).getPath().toString() );
@@ -332,7 +332,7 @@ public abstract class AbstractContentTypeSerializerTest
         contentTypeBuilder.addFormItem( newInput().name( "myColor" ).inputType( InputTypes.COLOR ).build() );
         contentTypeBuilder.addFormItem( newInput().name( "myDate" ).inputType( InputTypes.DATE ).build() );
         contentTypeBuilder.addFormItem( newInput().name( "myDecimalNumber" ).inputType( InputTypes.DECIMAL_NUMBER ).build() );
-        contentTypeBuilder.addFormItem( newInput().name( "myGeoLocation" ).inputType( InputTypes.GEO_LOCATION ).build() );
+        contentTypeBuilder.addFormItem( newInput().name( "myGeoPoint" ).inputType( InputTypes.GEO_POINT ).build() );
         contentTypeBuilder.addFormItem( newInput().name( "myHtmlArea" ).inputType( InputTypes.HTML_AREA ).build() );
         contentTypeBuilder.addFormItem( newInput().name( "myMoney" ).inputType( InputTypes.MONEY ).build() );
         contentTypeBuilder.addFormItem( newInput().name( "myPhone" ).inputType( InputTypes.PHONE ).build() );

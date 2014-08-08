@@ -19,7 +19,7 @@ public final class InputTypes
 
     public static final InputType DECIMAL_NUMBER = new DecimalNumber();
 
-    public static final InputType GEO_LOCATION = new GeoLocation();
+    public static final InputType GEO_POINT = new GeoPoint();
 
     public static final InputType HTML_AREA = new HtmlArea();
 
@@ -50,7 +50,7 @@ public final class InputTypes
         add( COMBO_BOX ).
         add( DATE ).
         add( DECIMAL_NUMBER ).
-        add( GEO_LOCATION ).
+        add( GEO_POINT ).
         add( HTML_AREA ).
         add( IMAGE ).
         add( IMAGE_SELECTOR ).
@@ -110,7 +110,7 @@ public final class InputTypes
             }
         }
 
-        return new CustomInputType(simpleClassName);
+        return new CustomInputType( simpleClassName );
     }
 
     public static ImmutableList<InputType> list()

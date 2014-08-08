@@ -15,8 +15,8 @@
         <indexed>false</indexed>
         <occurrences minimum="0" maximum="1"/>
     </input>
-    <input name="myGeoLocation" type="GeoLocation">
-        <immutable>false</immutable>
+  <input name="myGeoPoint" type="GeoPoint">
+  <immutable>false</immutable>
         <indexed>false</indexed>
         <occurrences minimum="0" maximum="1"/>
     </input>
