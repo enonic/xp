@@ -653,51 +653,30 @@ module app.wizard {
         private handleSiteTemplateChanged(siteTemplateChanged: SiteTemplateChangedEvent) {
             var siteTemplate = siteTemplateChanged.getSiteTemplate();
 
-            if (!this.siteTemplate && siteTemplate) {
-                var contentTypeName = this.contentType.getContentTypeName();
-                this.loadDefaultModels(siteTemplate, contentTypeName).then((defaultModels) => {
-                    this.liveFormPanel = new page.LiveFormPanel(<page.LiveFormPanelConfig> {
-                        contentWizardPanel: this,
-                        siteTemplate: siteTemplate,
-                        contentType: contentTypeName,
-                        defaultModels: defaultModels
-                    });
-                    this.liveFormPanel.hide();
-                    super.setLivePanel(this.liveFormPanel);
+            var contentTypeName = this.contentType.getContentTypeName();
+            this.loadDefaultModels(siteTemplate, contentTypeName).then((defaultModels) => {
 
-                    this.doRenderExistingPage(this.getPersistedItem()).then((content)=> {
-                        this.doHandleSiteTemplateChanged(siteTemplate);
-                    });
+                this.liveFormPanel = new page.LiveFormPanel(<page.LiveFormPanelConfig> {
+                    contentWizardPanel: this,
+                    siteTemplate: siteTemplate,
+                    contentType: contentTypeName,
+                    defaultModels: defaultModels
                 });
+                this.liveFormPanel.hide();
+                super.setLivePanel(this.liveFormPanel);
 
-            } else {
-                this.doHandleSiteTemplateChanged(siteTemplate);
-            }
-        }
-
-        private doHandleSiteTemplateChanged(siteTemplate: SiteTemplate) {
-            this.siteTemplate = siteTemplate;
-            if (siteTemplate) {
+                this.siteTemplate = siteTemplate;
                 this.constructing = true;
-                this.saveChanges().then((content) => {
+                return this.saveChanges().then((content) => {
                     this.constructing = false;
-                    this.siteTemplateWizardStepForm.renderExisting(this.formContext, super.getPersistedItem().getSite());
-
-                    // site template selected, show and enable Live Edit
-                    this.cycleViewModeButton.show();
-                    this.cycleViewModeButton.setCurrentAction(this.showSplitEditAction);
                     if (this.liveFormPanel) {
                         this.liveFormPanel.show();
                     }
                 });
-            } else {
-                // no site template selected, hide Live Edit
-                this.cycleViewModeButton.setCurrentAction(this.contentWizardActions.getShowFormAction());
-                this.cycleViewModeButton.hide();
 
-                this.liveFormPanel.remove();
-                this.liveFormPanel = null;
-            }
+            }).catch((reason: any) => {
+                api.DefaultErrorHandler.handle(reason);
+            }).done();
         }
 
         private loadDefaultModels(siteTemplate: SiteTemplate, contentType: ContentTypeName): Q.Promise<DefaultModels> {
