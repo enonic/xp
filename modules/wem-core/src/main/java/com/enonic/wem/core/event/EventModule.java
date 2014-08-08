@@ -4,7 +4,7 @@ import javax.inject.Singleton;
 
 import com.google.inject.AbstractModule;
 
-import com.enonic.wem.api.event.EventService;
+import com.enonic.wem.api.event.EventPublisher;
 
 public final class EventModule
     extends AbstractModule
@@ -12,6 +12,6 @@ public final class EventModule
     @Override
     protected void configure()
     {
-        bind( EventService.class ).to( EventServiceImpl.class ).in( Singleton.class );
+        bind( EventPublisher.class ).to( EventPublisherImpl.class ).in( Singleton.class );
     }
 }

@@ -16,7 +16,8 @@ import com.enonic.wem.api.content.page.layout.LayoutDescriptorService;
 import com.enonic.wem.api.content.page.part.PartDescriptorService;
 import com.enonic.wem.api.content.site.SiteService;
 import com.enonic.wem.api.content.site.SiteTemplateService;
-import com.enonic.wem.api.event.EventService;
+import com.enonic.wem.api.event.EventListener;
+import com.enonic.wem.api.event.EventPublisher;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.relationship.RelationshipService;
 import com.enonic.wem.api.schema.SchemaService;
@@ -52,6 +53,8 @@ public final class Activator
         // Install core module
         install( new CoreModule() );
 
+        service( EventListener.class ).importMultiple();
+
         // Export needed services
         service( PageComponentService.class ).export();
         service( ImageDescriptorService.class ).export();
@@ -77,7 +80,7 @@ public final class Activator
         service( ModuleService.class ).export();
         service( StartupInitializer.class ).export();
         service( ModuleURLStreamHandler.class ).attribute( "url.handler.protocol", "module" ).export();
-        service( EventService.class ).export();
+        service( EventPublisher.class ).export();
     }
 
     @Override
