@@ -1,4 +1,4 @@
-package com.enonic.wem.portal.script.compiler;
+package com.enonic.wem.portal.script.runner;
 
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Script;
@@ -8,11 +8,11 @@ import com.google.common.cache.CacheBuilder;
 
 import com.enonic.wem.portal.script.loader.ScriptSource;
 
-public final class ScriptCompilerImpl
+final class ScriptCompiler
 {
     private final Cache<String, Script> cache;
 
-    public ScriptCompilerImpl()
+    public ScriptCompiler()
     {
         this.cache = CacheBuilder.newBuilder().maximumSize( 1000 ).build();
     }
