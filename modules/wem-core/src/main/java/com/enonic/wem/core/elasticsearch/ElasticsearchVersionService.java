@@ -116,7 +116,7 @@ public class ElasticsearchVersionService
     private QueryMetaData createQueryMetaData( final int from, final int size, final String... fieldNames )
     {
 
-        SortBuilder descendingTimestampSort = new FieldSortBuilder( TIMESTAMP_ID_FIELD_NAME ).order( SortOrder.DESC );
+        final SortBuilder descendingTimestampSort = new FieldSortBuilder( TIMESTAMP_ID_FIELD_NAME ).order( SortOrder.DESC );
 
         return QueryMetaData.create( VERSION_INDEX ).
             addFields( fieldNames ).

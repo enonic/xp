@@ -14,6 +14,9 @@ import org.elasticsearch.index.query.TermsQueryBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsBuilder;
+import org.elasticsearch.search.sort.FieldSortBuilder;
+import org.elasticsearch.search.sort.SortBuilder;
+import org.elasticsearch.search.sort.SortOrder;
 
 import com.google.common.collect.Sets;
 
@@ -54,6 +57,8 @@ public class ElasticsearchWorkspaceService
     private static final boolean DEFAULT_REFRESH = true;
 
     private static final int DEFAULT_UNKNOWN_SIZE = 1000;
+
+    public static final String BUILTIN_TIMESTAMP_FIELD = "_timestamp";
 
     private ElasticsearchDao elasticsearchDao;
 
@@ -106,8 +111,8 @@ public class ElasticsearchWorkspaceService
         if ( field == null || field.getValue() == null )
         {
             throw new ElasticsearchDataException( "Field " + BLOBKEY_FIELD_NAME + " not found on node with id " +
-                                                   entityId +
-                                                   " in workspace " + query.getWorkspace().getName() );
+                                                      entityId +
+                                                      " in workspace " + query.getWorkspace().getName() );
         }
 
         return new BlobKey( field.getValue().toString() );
@@ -194,8 +199,8 @@ public class ElasticsearchWorkspaceService
         if ( value == null )
         {
             throw new ElasticsearchDataException( "Field " + BLOBKEY_FIELD_NAME + " not found on node with path " +
-                                            query.getNodePathAsString() +
-                                            " in workspace " + query.getWorkspace() );
+                                                      query.getNodePathAsString() +
+                                                      " in workspace " + query.getWorkspace() );
         }
 
         return new BlobKey( value.toString() );
@@ -220,11 +225,11 @@ public class ElasticsearchWorkspaceService
     public BlobKeys getByParent( final WorkspaceParentQuery query )
     {
         final TermQueryBuilder parentQuery = new TermQueryBuilder( PARENT_PATH_FIELD_NAME, query.getParentPath() );
-        final BoolQueryBuilder workspacedByParentQuery = joinWithWorkspaceQuery( query.getWorkspace().getName(), parentQuery );
+        final BoolQueryBuilder byParentQuery = joinWithWorkspaceQuery( query.getWorkspace().getName(), parentQuery );
 
         final QueryMetaData queryMetaData = createGetBlobKeyQueryMetaData( DEFAULT_UNKNOWN_SIZE );
 
-        final SearchResult searchResult = elasticsearchDao.get( queryMetaData, workspacedByParentQuery );
+        final SearchResult searchResult = elasticsearchDao.get( queryMetaData, byParentQuery );
 
         if ( searchResult.getResults().getSize() == 0 )
         {
@@ -295,11 +300,15 @@ public class ElasticsearchWorkspaceService
 
     private QueryMetaData createGetBlobKeyQueryMetaData( final int numberOfHits )
     {
+        final SortBuilder fieldSortBuilder = new FieldSortBuilder( BUILTIN_TIMESTAMP_FIELD ).order( SortOrder.DESC );
+
         return QueryMetaData.create( WORKSPACE_INDEX ).
             indexType( IndexType.NODE ).
             from( 0 ).
             size( numberOfHits ).
-            addField( BLOBKEY_FIELD_NAME ).build();
+            addField( BLOBKEY_FIELD_NAME ).
+            addSort( fieldSortBuilder ).
+            build();
     }
 
     private BoolQueryBuilder joinWithWorkspaceQuery( final String workspaceName, final QueryBuilder specificQuery )
