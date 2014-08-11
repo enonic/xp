@@ -38,7 +38,6 @@ wemjq(document).ready(() => {
                 keyCode: event.keyCode,
                 charCode: event.charCode
             });
-            return false;
         }
     });
 });
