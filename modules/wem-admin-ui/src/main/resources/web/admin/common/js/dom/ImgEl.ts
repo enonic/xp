@@ -3,7 +3,10 @@ module api.dom {
     export class ImgEl extends Element {
 
         private loaded: boolean;
-        private disableCache: boolean = true;
+
+        private disableCache: boolean;
+
+        private timestamp: string;
 
         /* 1px x 1px gif with a 1bit palette */
         static PLACEHOLDER = "data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
@@ -13,6 +16,7 @@ module api.dom {
                 setTagName("img").
                 setHelper(ImgHelper.create()).
                 setClassName(className));
+            this.disableCache = true;
             this.getEl().setSrc(src ? src : ImgEl.PLACEHOLDER);
             this.onLoaded((event: UIEvent) => {
                 this.loaded = true;
@@ -28,15 +32,25 @@ module api.dom {
         }
 
         setSrc(source: string) {
-            var src;
             if (this.disableCache) {
                 var params = api.util.decodeUrlParams(source);
-                params['time'] = new Date().getMilliseconds().toString();
-                src = api.util.getUrlLocation(source) + api.util.encodeUrlParams(params);
-            } else {
-                src = source;
+                this.timestamp = new Date().getMilliseconds().toString();
+                params['timestamp'] = this.timestamp;
+                source = api.util.getUrlLocation(source) + api.util.encodeUrlParams(params);
+            } else if (this.timestamp) {
+                var params = api.util.decodeUrlParams(source);
+                params['timestamp'] = this.timestamp;
+                source = api.util.getUrlLocation(source) + api.util.encodeUrlParams(params);
             }
-            this.getEl().setSrc(src);
+            this.getEl().setSrc(source);
+        }
+
+        setTimestamp(timestamp: string) {
+            this.timestamp = timestamp;
+        }
+
+        getTimestamp(): string {
+            return this.timestamp;
         }
 
         getEl(): ImgHelper {

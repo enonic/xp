@@ -6,7 +6,9 @@ module api.content {
 
         constructor() {
             super();
-            this.namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
+            this.namesAndIconView = new api.app.NamesAndIconViewBuilder().
+                                    setSize(api.app.NamesAndIconViewSize.small).
+                                    build();
             this.appendChild(this.namesAndIconView);
         }
 
@@ -19,6 +21,10 @@ module api.content {
             if (content.isSite()) {
                 this.addClass("site");
             }
+        }
+
+        refresh(timestamp?: string) {
+            this.namesAndIconView.refresh(timestamp);
         }
 
         getPreferredHeight(): number {

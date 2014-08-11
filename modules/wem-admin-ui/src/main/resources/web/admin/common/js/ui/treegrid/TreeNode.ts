@@ -10,6 +10,8 @@ module api.ui.treegrid {
 
         private selected: boolean;
 
+        private hash: string;
+
         private pinned: boolean;
 
         private parent: TreeNode<NODE>;
@@ -24,6 +26,7 @@ module api.ui.treegrid {
             this.expanded = builder.isExpanded();
             this.selected = builder.isSelected();
             this.pinned = builder.isPinned();
+            this.hash = Math.random().toString(10).substring(2);
             if (this.pinned) {
                 this.pinToRoot();
             }
@@ -62,6 +65,14 @@ module api.ui.treegrid {
 
         isPinned(): boolean {
             return this.pinned;
+        }
+
+        updateHash() {
+            this.hash = Math.random().toString(10).substring(2);
+        }
+
+        getHash(): string {
+            return this.hash;
         }
 
         getData(): NODE {
