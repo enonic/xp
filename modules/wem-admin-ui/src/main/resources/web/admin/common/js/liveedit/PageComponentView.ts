@@ -132,6 +132,7 @@ module api.liveedit {
                 var duplicatedPageComponent = <PAGE_COMPONENT> this.getPageComponent().duplicateComponent();
                 var duplicatedView = this.duplicate(duplicatedPageComponent);
                 this.deselect();
+                duplicatedView.showLoadingSpinner();
                 duplicatedView.markAsEmpty();
                 duplicatedView.select();
 
