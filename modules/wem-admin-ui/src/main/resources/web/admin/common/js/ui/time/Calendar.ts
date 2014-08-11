@@ -6,7 +6,11 @@ module api.ui.time {
 
         monthOfYear: number;
 
+        selectedDay: number = 0;
+
         startingDayOfWeek: DayOfWeek = DaysOfWeek.MONDAY;
+
+        interactive: boolean = false;
 
         setYear(value: number): CalendarBuilder {
             this.year = value;
@@ -18,8 +22,18 @@ module api.ui.time {
             return this;
         }
 
+        setSelectedDay(value: number): CalendarBuilder {
+            this.selectedDay = value;
+            return this;
+        }
+
         setStartingDayOfWeek(value: DayOfWeek): CalendarBuilder {
             this.startingDayOfWeek = value;
+            return this;
+        }
+
+        setInteractive(value: boolean): CalendarBuilder {
+            this.interactive = value;
             return this;
         }
 
@@ -30,9 +44,13 @@ module api.ui.time {
 
     export class Calendar extends api.dom.DivEl {
 
+        private interactive: boolean;
+
         private year: number;
 
         private monthOfYear: number;
+
+        private selectedDay: number;
 
         private calendarDays: CalendarDay[];
 
@@ -40,12 +58,16 @@ module api.ui.time {
 
         private weeks: CalendarWeek [];
 
+        private selectedDateChangedListeners: {(event: SelectedDateChangedEvent) : void}[] = [];
+
         constructor(builder: CalendarBuilder) {
             super("calendar");
 
             this.year = builder.year;
             this.monthOfYear = builder.monthOfYear;
+            this.selectedDay = builder.selectedDay;
             this.startingDayOfWeek = builder.startingDayOfWeek;
+            this.interactive = builder.interactive;
 
             this.calendarDays = this.resolveDaysInMonth();
             var firstDay = this.resolveFirstDayOfCalendar();
@@ -58,9 +80,11 @@ module api.ui.time {
         private resolveDaysInMonth() {
             var calendarDays: CalendarDay[] = [];
             var daysInMonth = new Date(this.year, this.monthOfYear, 0).getDate();
+            var previousDay: CalendarDay = null;
             for (var i = 1; i <= daysInMonth; i++) {
-                var calendarDay = this.createCalendarDay(i);
+                var calendarDay = this.createCalendarDay(i, previousDay);
                 calendarDays.push(calendarDay);
+                previousDay = calendarDay;
             }
             return calendarDays;
         }
@@ -103,14 +127,64 @@ module api.ui.time {
             return weekBuilder.build();
         }
 
-        private createCalendarDay(dayOfMonth: number): CalendarDay {
+        private createCalendarDay(dayOfMonth: number, previousDay: CalendarDay): CalendarDay {
 
             var date = new Date(this.year, this.monthOfYear, dayOfMonth);
-            return new CalendarDay(date, this.monthOfYear);
+            var calendarDay = new CalendarDayBuilder().
+                setDate(date).
+                setMonth(this.monthOfYear).
+                setPreviousDay(previousDay).
+                build();
+            if (calendarDay.isInMonth()) {
+
+                if (this.interactive) {
+                    calendarDay.onCalendarDayClicked((event: CalendarDayClickedEvent) => {
+                        this.handleCalendarDayClicked(event);
+                    });
+                }
+
+                if (this.selectedDay == date.getDate()) {
+                    calendarDay.setSelectedDay(true);
+                }
+            }
+            return  calendarDay;
+        }
+
+        private handleCalendarDayClicked(event: CalendarDayClickedEvent) {
+
+            this.calendarDays.forEach((calendarDay: CalendarDay) => {
+                if (!event.getCalendarDay().equals(calendarDay)) {
+                    calendarDay.setSelectedDay(false);
+                }
+            });
+            event.getCalendarDay().setSelectedDay(true);
+            this.selectedDay = event.getCalendarDay().getDayOfMonth();
+            this.notifySelectedDateChanged(event.getCalendarDay().getDate());
+        }
+
+        public getSelectedDay(): number {
+            return this.getSelectedDay();
         }
 
         public getCalendarDays(): CalendarDay [] {
             return this.calendarDays;
+        }
+
+        onSelectedDateChanged(listener: (event: SelectedDateChangedEvent) => void) {
+            this.selectedDateChangedListeners.push(listener);
+        }
+
+        unSelectedDateChanged(listener: (event: SelectedDateChangedEvent) => void) {
+            this.selectedDateChangedListeners = this.selectedDateChangedListeners.filter((curr) => {
+                return curr !== listener;
+            })
+        }
+
+        private notifySelectedDateChanged(date: Date) {
+            var event = new SelectedDateChangedEvent(date);
+            this.selectedDateChangedListeners.forEach((listener) => {
+                listener(event);
+            });
         }
     }
 }

@@ -24,8 +24,17 @@
 
     api.dom.Body.get().appendChild(new api.dom.H2El().setText("Calendar: Januar 2014"));
 
-    var calendar = new api.ui.time.CalendarBuilder().setYear(2014).setMonthOfYear(0).build();
+    var calendar = new api.ui.time.CalendarBuilder().
+            setYear(2014).
+            setMonthOfYear(0).
+            setSelectedDay(2).
+            setInteractive(true).
+            build();
     api.dom.Body.get().appendChild(calendar);
+
+    calendar.onSelectedDateChanged(function (event) {
+        console.log(event.getDate());
+    });
 
 </script>
 

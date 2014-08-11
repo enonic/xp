@@ -1,6 +1,41 @@
 module api.ui.time {
 
-    export class CalendarDay extends api.dom.DivEl {
+    export class CalendarDayBuilder {
+
+        date: Date;
+
+        month: number;
+
+        previousDay: CalendarDay;
+
+        nextDay: CalendarDay;
+
+        setDate(value: Date): CalendarDayBuilder {
+            this.date = value;
+            return this;
+        }
+
+        setMonth(value: number): CalendarDayBuilder {
+            this.month = value;
+            return this;
+        }
+
+        setPreviousDay(value: CalendarDay): CalendarDayBuilder {
+            this.previousDay = value;
+            return this;
+        }
+
+        setNextDay(value: CalendarDay): CalendarDayBuilder {
+            this.nextDay = value;
+            return this;
+        }
+
+        build(): CalendarDay {
+            return new CalendarDay(this);
+        }
+    }
+
+    export class CalendarDay extends api.dom.DivEl implements api.Equitable {
 
         private date: Date;
 
@@ -8,13 +43,30 @@ module api.ui.time {
 
         private dayOfWeek: DayOfWeek;
 
-        constructor(date: Date, month: number) {
-            this.date = date;
-            this.month = month;
-            this.dayOfWeek = DaysOfWeek.getByNumberCode(date.getDay());
+        private previousDay: CalendarDay;
+
+        private nextDay: CalendarDay;
+
+        private selectedDay: boolean = false;
+
+        private calendarDayClickedListeners: {(event: CalendarDayClickedEvent) : void}[] = [];
+
+        constructor(builder: CalendarDayBuilder) {
             super("calendar-day");
 
-            this.getEl().setInnerHtml("" + date.getDate());
+            this.date = builder.date;
+            this.month = builder.month;
+            this.previousDay = builder.previousDay;
+            if (this.previousDay) {
+                this.previousDay.nextDay = this;
+            }
+            this.nextDay = builder.nextDay;
+            if (this.nextDay) {
+                this.nextDay.previousDay = this;
+            }
+
+            this.dayOfWeek = DaysOfWeek.getByNumberCode(this.date.getDay());
+            this.getEl().setInnerHtml("" + this.date.getDate());
 
             if (this.isBeforeMonth()) {
                 this.addClass("before-month");
@@ -23,6 +75,36 @@ module api.ui.time {
             if (this.isAfterMonth()) {
                 this.addClass("after-month");
             }
+
+            this.onClicked((event: MouseEvent) => {
+                this.notifyCalendarDayClicked();
+            });
+        }
+
+        getDate(): Date {
+            return this.date;
+        }
+
+        getDayOfMonth(): number {
+            return this.date.getDate();
+        }
+
+        setSelectedDay(value: boolean) {
+            this.selectedDay = value;
+            this.refreshSelectedDay();
+        }
+
+        refreshSelectedDay() {
+            if (this.selectedDay && !this.hasClass("selected-day")) {
+                this.addClass("selected-day");
+            }
+            else if (!this.selectedDay && this.hasClass("selected-day")) {
+                this.removeClass("selected-day");
+            }
+        }
+
+        isInMonth(): boolean {
+            return !this.isBeforeMonth() || !this.isAfterMonth();
         }
 
         isBeforeMonth(): boolean {
@@ -43,13 +125,69 @@ module api.ui.time {
         }
 
         getPrevious(): CalendarDay {
-            var prevDate = new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate() - 1);
-            return new CalendarDay(prevDate, this.month);
+            if (this.previousDay) {
+                return this.previousDay;
+            }
+            else {
+                var prevDate = new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate() - 1);
+                this.previousDay = new CalendarDayBuilder().
+                    setDate(prevDate).
+                    setMonth(this.month).
+                    setNextDay(this).
+                    build();
+                return this.previousDay;
+            }
         }
 
         getNext(): CalendarDay {
-            var nextDate = new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate() + 1);
-            return new CalendarDay(nextDate, this.month);
+            if (this.nextDay) {
+                return this.nextDay;
+            }
+            else {
+                var nextDate = new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate() + 1);
+                this.nextDay = new CalendarDayBuilder().
+                    setDate(nextDate).
+                    setMonth(this.month).
+                    setPreviousDay(this).
+                    build();
+                return this.nextDay;
+            }
+        }
+
+        equals(o: api.Equitable): boolean {
+
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, CalendarDay)) {
+                return false;
+            }
+
+            var other = <CalendarDay>o;
+
+            if (!api.ObjectHelper.dateEquals(this.date, other.date)) {
+                return false;
+            }
+
+            if (!api.ObjectHelper.numberEquals(this.month, other.month)) {
+                return false;
+            }
+
+            return true;
+        }
+
+        onCalendarDayClicked(listener: (event: CalendarDayClickedEvent) => void) {
+            this.calendarDayClickedListeners.push(listener);
+        }
+
+        unCalendarDayClicked(listener: (event: CalendarDayClickedEvent) => void) {
+            this.calendarDayClickedListeners = this.calendarDayClickedListeners.filter((curr) => {
+                return curr !== listener;
+            })
+        }
+
+        private notifyCalendarDayClicked() {
+            var event = new CalendarDayClickedEvent(this);
+            this.calendarDayClickedListeners.forEach((listener) => {
+                listener(event);
+            });
         }
     }
 }
