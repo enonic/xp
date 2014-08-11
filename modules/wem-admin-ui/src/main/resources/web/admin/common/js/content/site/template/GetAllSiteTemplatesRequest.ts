@@ -1,6 +1,6 @@
 module api.content.site.template {
 
-    export class GetAllSiteTemplatesRequest extends SiteTemplateResourceRequest<api.content.site.template.SiteTemplateSummaryListJson> {
+    export class GetAllSiteTemplatesRequest extends SiteTemplateResourceRequest<SiteTemplateSummaryListJson, SiteTemplateSummary[]> {
 
         constructor() {
             super();
@@ -15,9 +15,9 @@ module api.content.site.template {
             return api.rest.Path.fromParent(super.getResourcePath(), "list");
         }
 
-        sendAndParse(): Q.Promise<api.content.site.template.SiteTemplateSummary[]> {
+        sendAndParse(): Q.Promise<SiteTemplateSummary[]> {
 
-            return this.send().then((response: api.rest.JsonResponse<api.content.site.template.SiteTemplateSummaryListJson>) => {
+            return this.send().then((response: api.rest.JsonResponse<SiteTemplateSummaryListJson>) => {
                 return this.fromJsonArrayToSiteTemplateSummaryArray(response.getResult().siteTemplates);
             });
         }

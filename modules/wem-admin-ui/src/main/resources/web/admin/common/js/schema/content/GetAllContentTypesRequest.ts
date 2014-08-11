@@ -1,6 +1,6 @@
 module api.schema.content {
 
-    export class GetAllContentTypesRequest extends ContentTypeResourceRequest<api.schema.content.json.ContentTypeSummaryListJson> {
+    export class GetAllContentTypesRequest extends ContentTypeResourceRequest<json.ContentTypeSummaryListJson, ContentTypeSummary[]> {
 
         private mixinReferencesToFormItems:boolean = true;
 
@@ -24,10 +24,10 @@ module api.schema.content {
             return api.rest.Path.fromParent(super.getResourcePath(), "all");
         }
 
-        sendAndParse(): Q.Promise<api.schema.content.ContentTypeSummary[]> {
+        sendAndParse(): Q.Promise<ContentTypeSummary[]> {
 
-            return this.send().then((response: api.rest.JsonResponse<api.schema.content.json.ContentTypeSummaryListJson>) => {
-                return response.getResult().contentTypes.map((contentTypeJson:api.schema.content.json.ContentTypeSummaryJson) => {
+            return this.send().then((response: api.rest.JsonResponse<json.ContentTypeSummaryListJson>) => {
+                return response.getResult().contentTypes.map((contentTypeJson:json.ContentTypeSummaryJson) => {
                     return this.fromJsonToContentTypeSummary(contentTypeJson);
                 });
             });

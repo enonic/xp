@@ -3,7 +3,7 @@ module api.module {
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
     import LoadingDataEvent = api.util.loader.event.LoadingDataEvent;
 
-    export class ModuleLoader extends api.util.loader.BaseLoader<api.module.ModuleListResult, api.module.ModuleSummary> {
+    export class ModuleLoader extends api.util.loader.BaseLoader<ModuleListResult, ModuleSummary> {
 
         private preservedSearchString: string;
 
@@ -26,7 +26,7 @@ module api.module {
             this.notifyLoadingData();
 
             this.sendRequest()
-                .done((modules: api.module.ModuleSummary[]) => {
+                .done((modules: ModuleSummary[]) => {
 
                     this.loading(false);
                     this.notifyLoadedData(modules);

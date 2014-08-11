@@ -115,18 +115,18 @@ public abstract class AbstractContentTypeSerializerTest
         assertNotNull( actualContentType.form().getFormItem( "myColor" ) );
         assertNotNull( actualContentType.form().getFormItem( "myComboBox" ) );
         assertNotNull( actualContentType.form().getFormItem( "myDate" ) );
-        assertNotNull( actualContentType.form().getFormItem( "myDecimalNumber" ) );
+        assertNotNull( actualContentType.form().getFormItem( "myDouble" ) );
         assertNotNull( actualContentType.form().getFormItem( "myImage" ) );
-        assertNotNull( actualContentType.form().getFormItem( "myGeoLocation" ) );
+        assertNotNull( actualContentType.form().getFormItem( "myGeoPoint" ) );
         assertNotNull( actualContentType.form().getFormItem( "myHtmlArea" ) );
         assertNotNull( actualContentType.form().getFormItem( "myMoney" ) );
         assertNotNull( actualContentType.form().getFormItem( "myPhone" ) );
         assertNotNull( actualContentType.form().getFormItem( "myRelationship" ) );
         assertNotNull( actualContentType.form().getFormItem( "mySingleSelector" ) );
-        assertNotNull( actualContentType.form().getFormItem( "myTags" ) );
+        assertNotNull( actualContentType.form().getFormItem( "myTag" ) );
         assertNotNull( actualContentType.form().getFormItem( "myTextLine" ) );
         assertNotNull( actualContentType.form().getFormItem( "myTextArea" ) );
-        assertNotNull( actualContentType.form().getFormItem( "myWholeNumber" ) );
+        assertNotNull( actualContentType.form().getFormItem( "myLong" ) );
         assertNotNull( actualContentType.form().getFormItem( "myXml" ) );
         assertNotNull( actualContentType.form().getFormItem( "myCustomInput" ) );
     }
@@ -145,16 +145,16 @@ public abstract class AbstractContentTypeSerializerTest
         assertEquals( "myColor", actualContentType.form().getFormItem( "myColor" ).getPath().toString() );
         assertEquals( "myComboBox", actualContentType.form().getFormItem( "myComboBox" ).getPath().toString() );
         assertEquals( "myDate", actualContentType.form().getFormItem( "myDate" ).getPath().toString() );
-        assertEquals( "myDecimalNumber", actualContentType.form().getFormItem( "myDecimalNumber" ).getPath().toString() );
-        assertEquals( "myGeoLocation", actualContentType.form().getFormItem( "myGeoLocation" ).getPath().toString() );
+        assertEquals( "myDouble", actualContentType.form().getFormItem( "myDouble" ).getPath().toString() );
+        assertEquals( "myGeoPoint", actualContentType.form().getFormItem( "myGeoPoint" ).getPath().toString() );
         assertEquals( "myHtmlArea", actualContentType.form().getFormItem( "myHtmlArea" ).getPath().toString() );
         assertEquals( "myMoney", actualContentType.form().getFormItem( "myMoney" ).getPath().toString() );
         assertEquals( "myPhone", actualContentType.form().getFormItem( "myPhone" ).getPath().toString() );
         assertEquals( "mySingleSelector", actualContentType.form().getFormItem( "mySingleSelector" ).getPath().toString() );
-        assertEquals( "myTags", actualContentType.form().getFormItem( "myTags" ).getPath().toString() );
+        assertEquals( "myTag", actualContentType.form().getFormItem( "myTag" ).getPath().toString() );
         assertEquals( "myTextLine", actualContentType.form().getFormItem( "myTextLine" ).getPath().toString() );
         assertEquals( "myTextArea", actualContentType.form().getFormItem( "myTextArea" ).getPath().toString() );
-        assertEquals( "myWholeNumber", actualContentType.form().getFormItem( "myWholeNumber" ).getPath().toString() );
+        assertEquals( "myLong", actualContentType.form().getFormItem( "myLong" ).getPath().toString() );
         assertEquals( "myXml", actualContentType.form().getFormItem( "myXml" ).getPath().toString() );
         assertEquals( "myCustomInput", actualContentType.form().getFormItem( "myCustomInput" ).getPath().toString() );
     }
@@ -331,8 +331,8 @@ public abstract class AbstractContentTypeSerializerTest
 
         contentTypeBuilder.addFormItem( newInput().name( "myColor" ).inputType( InputTypes.COLOR ).build() );
         contentTypeBuilder.addFormItem( newInput().name( "myDate" ).inputType( InputTypes.DATE ).build() );
-        contentTypeBuilder.addFormItem( newInput().name( "myDecimalNumber" ).inputType( InputTypes.DECIMAL_NUMBER ).build() );
-        contentTypeBuilder.addFormItem( newInput().name( "myGeoLocation" ).inputType( InputTypes.GEO_LOCATION ).build() );
+        contentTypeBuilder.addFormItem( newInput().name( "myDouble" ).inputType( InputTypes.DOUBLE ).build() );
+        contentTypeBuilder.addFormItem( newInput().name( "myGeoPoint" ).inputType( InputTypes.GEO_POINT ).build() );
         contentTypeBuilder.addFormItem( newInput().name( "myHtmlArea" ).inputType( InputTypes.HTML_AREA ).build() );
         contentTypeBuilder.addFormItem( newInput().name( "myMoney" ).inputType( InputTypes.MONEY ).build() );
         contentTypeBuilder.addFormItem( newInput().name( "myPhone" ).inputType( InputTypes.PHONE ).build() );
@@ -340,11 +340,11 @@ public abstract class AbstractContentTypeSerializerTest
             newInput().name( "myComboBox" ).inputType( InputTypes.COMBO_BOX ).inputTypeConfig( comboBoxConfig ).build() );
         contentTypeBuilder.addFormItem(
             newInput().name( "mySingleSelector" ).inputType( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
-        contentTypeBuilder.addFormItem( newInput().name( "myTags" ).inputType( InputTypes.TAGS ).build() );
+        contentTypeBuilder.addFormItem( newInput().name( "myTag" ).inputType( InputTypes.TAG ).build() );
         contentTypeBuilder.addFormItem( newInput().name( "myTextLine" ).inputType( InputTypes.TEXT_LINE ).build() );
         contentTypeBuilder.addFormItem( newInput().name( "myTextArea" ).inputType( InputTypes.TEXT_AREA ).inputTypeConfig(
             InputTypes.TEXT_AREA.getDefaultConfig() ).build() );
-        contentTypeBuilder.addFormItem( newInput().name( "myWholeNumber" ).inputType( InputTypes.WHOLE_NUMBER ).build() );
+        contentTypeBuilder.addFormItem( newInput().name( "myLong" ).inputType( InputTypes.LONG ).build() );
         contentTypeBuilder.addFormItem( newInput().name( "myXml" ).inputType( InputTypes.XML ).build() );
         contentTypeBuilder.addFormItem(
             newInput().name( "myRelationship" ).inputType( InputTypes.RELATIONSHIP ).inputTypeConfig( relationshipConfig ).build() );

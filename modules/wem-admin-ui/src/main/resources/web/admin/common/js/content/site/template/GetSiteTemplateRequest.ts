@@ -1,6 +1,6 @@
 module api.content.site.template {
 
-    export class GetSiteTemplateRequest extends SiteTemplateResourceRequest<api.content.site.template.SiteTemplateJson> {
+    export class GetSiteTemplateRequest extends SiteTemplateResourceRequest<SiteTemplateJson, SiteTemplate> {
 
         private key: SiteTemplateKey;
 
@@ -20,9 +20,9 @@ module api.content.site.template {
             return api.rest.Path.fromParent(super.getResourcePath());
         }
 
-        sendAndParse(): Q.Promise<api.content.site.template.SiteTemplate> {
+        sendAndParse(): Q.Promise<SiteTemplate> {
 
-            return this.send().then((response: api.rest.JsonResponse<api.content.site.template.SiteTemplateJson>) => {
+            return this.send().then((response: api.rest.JsonResponse<SiteTemplateJson>) => {
                 return this.fromJsonToSiteTemplate(response.getResult());
             });
         }

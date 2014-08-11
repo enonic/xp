@@ -1,6 +1,6 @@
 module api.schema.content {
 
-    export class GetContentTypeConfigByNameRequest extends ContentTypeResourceRequest<GetContentTypeConfigResult> {
+    export class GetContentTypeConfigByNameRequest extends ContentTypeResourceRequest<GetContentTypeConfigResult, any> {
 
         private name:ContentTypeName;
 

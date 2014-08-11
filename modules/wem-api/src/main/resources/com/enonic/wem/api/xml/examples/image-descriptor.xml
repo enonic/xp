@@ -2,7 +2,7 @@
 <image-component xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schema/model.xsd">
   <display-name>An Image</display-name>
   <config>
-    <input name="width" type="DecimalNumber">
+    <input name="width" type="Double">
       <label>Column width</label>
       <immutable>false</immutable>
       <indexed>false</indexed>

@@ -1,10 +1,12 @@
 package com.enonic.wem.core.content.page
 
-import com.enonic.wem.api.module.*
+import com.enonic.wem.api.module.Module
+import com.enonic.wem.api.module.ModuleKey
+import com.enonic.wem.api.module.ModuleService
+import com.enonic.wem.api.module.Modules
 import com.enonic.wem.api.resource.ResourceKey
-import com.enonic.wem.api.resource.ResourceService
+import com.enonic.wem.api.resource.ResourceUrlTestHelper
 import com.enonic.wem.core.module.ModuleBuilder
-import com.enonic.wem.core.resource.ResourceServiceImpl
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
@@ -17,15 +19,12 @@ abstract class AbstractDescriptorServiceTest
 
     def File modulesDir
 
-    def ResourceService resourceService
-
     def ModuleService moduleService
 
     def setup()
     {
         this.modulesDir = this.temporaryFolder.newFolder( "modules" )
-
-        this.resourceService = new ResourceServiceImpl()
+        ResourceUrlTestHelper.mockModuleScheme( this.modulesDir )
         this.moduleService = Mock( ModuleService.class )
     }
 

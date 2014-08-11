@@ -9,7 +9,7 @@
                     "immutable": false,
                     "indexed": false,
                     "inputType": {
-                        "name": "DecimalNumber"
+                        "name": "Double"
                     },
                     "label": null,
                     "name": "columns",

@@ -252,13 +252,13 @@ public class ContentTest
     @Test
     public void tags()
     {
-        contentType.form().addFormItem( newInput().name( "myTags" ).inputType( InputTypes.TAGS ).build() );
+        contentType.form().addFormItem( newInput().name( "myTag" ).inputType( InputTypes.TAG ).build() );
 
         // TODO: Are'nt tags best stored as an array? A global mixin multiple textline?
         Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
-        content.getContentData().setProperty( "myTags", Value.newString( "A line of text" ) );
+        content.getContentData().setProperty( "myTag", Value.newString( "A line of text" ) );
 
-        assertEquals( "A line of text", content.getContentData().getProperty( "myTags" ).getObject() );
+        assertEquals( "A line of text", content.getContentData().getProperty( "myTag" ).getObject() );
     }
 
     @Test

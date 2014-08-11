@@ -1,8 +1,8 @@
 package com.enonic.wem.portal.controller;
 
+import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.portal.postprocess.PostProcessor;
-import com.enonic.wem.portal.script.loader.ScriptSource;
 import com.enonic.wem.portal.script.runner.ScriptRunner;
 
 final class JsControllerImpl
@@ -42,17 +42,24 @@ final class JsControllerImpl
         return this;
     }
 
-    private ScriptSource findScript( final String method )
+    private Resource findScript( final String method )
     {
         final ResourceKey key = this.scriptDir.resolve( method.toLowerCase() + ".js" );
-        return this.runner.getLoader().load( key );
+        final Resource resource = Resource.from( key );
+
+        if ( resource.exists() )
+        {
+            return resource;
+        }
+
+        return null;
     }
 
     @Override
     public void execute()
     {
         final String method = this.context.getRequest().getMethod();
-        final ScriptSource script = findScript( method );
+        final Resource script = findScript( method );
 
         if ( script == null )
         {
@@ -63,7 +70,7 @@ final class JsControllerImpl
         doExecute( script );
     }
 
-    private void doExecute( final ScriptSource script )
+    private void doExecute( final Resource script )
     {
         this.runner.source( script );
         this.runner.execute();

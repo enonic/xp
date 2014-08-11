@@ -135,6 +135,12 @@ module api.liveedit {
 
         }
 
+        remove() {
+            this.contextMenu.remove();
+            this.loadMask.remove();
+            super.remove();
+        }
+
         private scrollComponentIntoView(): void {
             var dimensions = this.getElementDimensions();
             wemjq('html, body').animate({scrollTop: dimensions.top - 10}, 200);
@@ -265,9 +271,23 @@ module api.liveedit {
             event.preventDefault();
 
             if (!this.isSelected()) {
+                // we prevented mouse events to bubble up so if parent view is selected
+                // it won't receive mouse event and won't be deselected
+                // therefore we deselect it manually
+                this.deselectParent();
+
                 this.select(!this.isEmpty() ? { x: event.pageX, y: event.pageY } : null);
             } else {
                 this.deselect();
+            }
+        }
+
+        deselectParent() {
+            for (var parent = this.parentItemView; parent; parent = parent.parentItemView) {
+                if (parent.isSelected()) {
+                    parent.deselect();
+                    return;
+                }
             }
         }
 
@@ -304,11 +324,11 @@ module api.liveedit {
 
             if (position) {
                 // show menu at position
-                x = position.x - this.contextMenu.getEl().getWidth() / 2;
+                x = position.x;
                 y = position.y;
             } else {
                 // show menu below if empty or on top
-                x = dimensions.left + dimensions.width / 2 - this.contextMenu.getEl().getWidth() / 2;
+                x = dimensions.left + dimensions.width / 2;
                 y = dimensions.top + (this.isEmpty() ? dimensions.height : 0);
             }
             this.contextMenu.showAt(x, y);

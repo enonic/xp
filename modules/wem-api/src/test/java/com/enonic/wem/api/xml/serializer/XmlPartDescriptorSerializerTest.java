@@ -9,7 +9,7 @@ import com.enonic.wem.api.xml.mapper.XmlPartDescriptorMapper;
 import com.enonic.wem.api.xml.model.XmlPartDescriptor;
 
 import static com.enonic.wem.api.form.Input.newInput;
-import static com.enonic.wem.api.form.inputtype.InputTypes.DECIMAL_NUMBER;
+import static com.enonic.wem.api.form.inputtype.InputTypes.DOUBLE;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
@@ -22,7 +22,7 @@ public class XmlPartDescriptorSerializerTest
         throws Exception
     {
         Form configForm = Form.newForm().
-            addFormItem( newInput().name( "width" ).inputType( DECIMAL_NUMBER ).label( "Column width" ).build() ).
+            addFormItem( newInput().name( "width" ).inputType( DOUBLE ).label( "Column width" ).build() ).
             build();
 
         PartDescriptor partDescriptor = PartDescriptor.newPartDescriptor().
@@ -54,7 +54,7 @@ public class XmlPartDescriptorSerializerTest
         assertEquals( "A Part", partDescriptor.getDisplayName() );
         final Form config = partDescriptor.getConfig();
         assertNotNull( config );
-        assertEquals( DECIMAL_NUMBER, config.getFormItem( "width" ).toInput().getInputType() );
+        assertEquals( DOUBLE, config.getFormItem( "width" ).toInput().getInputType() );
         assertEquals( "Column width", config.getFormItem( "width" ).toInput().getLabel() );
     }
 

@@ -26,7 +26,7 @@ import static com.enonic.wem.api.form.Input.newInput;
 import static com.enonic.wem.api.form.MixinReference.newMixinReference;
 import static com.enonic.wem.api.form.inputtype.ComboBoxConfig.newComboBoxConfig;
 import static com.enonic.wem.api.form.inputtype.ImageSelectorConfig.newImageSelectorConfig;
-import static com.enonic.wem.api.form.inputtype.InputTypes.DECIMAL_NUMBER;
+import static com.enonic.wem.api.form.inputtype.InputTypes.DOUBLE;
 import static com.enonic.wem.api.form.inputtype.InputTypes.TEXT_LINE;
 import static com.enonic.wem.api.form.inputtype.RelationshipConfig.newRelationshipConfig;
 import static com.enonic.wem.api.form.inputtype.SingleSelectorConfig.newSingleSelectorConfig;
@@ -77,7 +77,7 @@ public class XmlFormSerializerTest
 
         final Input myInput = newInput().
             name( "pause" ).
-            inputType( DECIMAL_NUMBER ).
+            inputType( DOUBLE ).
             label( "Pause parameter" ).
             maximumOccurrences( 3 ).
             minimumOccurrences( 2 ).
@@ -137,7 +137,7 @@ public class XmlFormSerializerTest
         final Form form = toForm( xml );
 
         final Input pause = form.getFormItem( "pause" ).toInput();
-        assertEquals( DECIMAL_NUMBER, pause.getInputType() );
+        assertEquals( DOUBLE, pause.getInputType() );
         assertEquals( "Pause parameter", pause.getLabel() );
         assertEquals( "customText", pause.getCustomText() );
         assertEquals( "helpText", pause.getHelpText() );
@@ -225,8 +225,8 @@ public class XmlFormSerializerTest
 
         formBuilder.addFormItem( newInput().name( "myColor" ).inputType( InputTypes.COLOR ).build() );
         formBuilder.addFormItem( newInput().name( "myDate" ).inputType( InputTypes.DATE ).build() );
-        formBuilder.addFormItem( newInput().name( "myDecimalNumber" ).inputType( InputTypes.DECIMAL_NUMBER ).build() );
-        formBuilder.addFormItem( newInput().name( "myGeoLocation" ).inputType( InputTypes.GEO_LOCATION ).build() );
+        formBuilder.addFormItem( newInput().name( "myDouble" ).inputType( InputTypes.DOUBLE ).build() );
+        formBuilder.addFormItem( newInput().name( "myGeoPoint" ).inputType( InputTypes.GEO_POINT ).build() );
         formBuilder.addFormItem( newInput().name( "myHtmlArea" ).inputType( InputTypes.HTML_AREA ).build() );
         formBuilder.addFormItem( newInput().name( "myMoney" ).inputType( InputTypes.MONEY ).build() );
         formBuilder.addFormItem( newInput().name( "myPhone" ).inputType( InputTypes.PHONE ).build() );
@@ -234,11 +234,11 @@ public class XmlFormSerializerTest
             newInput().name( "myComboBox" ).inputType( InputTypes.COMBO_BOX ).inputTypeConfig( comboBoxConfig ).build() );
         formBuilder.addFormItem(
             newInput().name( "mySingleSelector" ).inputType( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
-        formBuilder.addFormItem( newInput().name( "myTags" ).inputType( InputTypes.TAGS ).build() );
+        formBuilder.addFormItem( newInput().name( "myTag" ).inputType( InputTypes.TAG ).build() );
         formBuilder.addFormItem( newInput().name( "myTextLine" ).inputType( InputTypes.TEXT_LINE ).build() );
         formBuilder.addFormItem( newInput().name( "myTextArea" ).inputType( InputTypes.TEXT_AREA ).inputTypeConfig(
             InputTypes.TEXT_AREA.getDefaultConfig() ).build() );
-        formBuilder.addFormItem( newInput().name( "myWholeNumber" ).inputType( InputTypes.WHOLE_NUMBER ).build() );
+        formBuilder.addFormItem( newInput().name( "myLong" ).inputType( InputTypes.LONG ).build() );
         formBuilder.addFormItem( newInput().name( "myXml" ).inputType( InputTypes.XML ).build() );
         formBuilder.addFormItem(
             newInput().name( "myRelationship" ).inputType( InputTypes.RELATIONSHIP ).inputTypeConfig( relationshipConfig ).build() );

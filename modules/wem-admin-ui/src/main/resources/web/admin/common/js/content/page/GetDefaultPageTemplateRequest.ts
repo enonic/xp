@@ -1,6 +1,6 @@
 module api.content.page {
 
-    export class GetDefaultPageTemplateRequest extends PageTemplateResourceRequest<api.content.page.PageTemplateJson> {
+    export class GetDefaultPageTemplateRequest extends PageTemplateResourceRequest<PageTemplateJson, PageTemplate> {
 
         private siteTemplateKey: api.content.site.template.SiteTemplateKey;
 
@@ -24,9 +24,9 @@ module api.content.page {
             return api.rest.Path.fromParent(super.getResourcePath(), "default");
         }
 
-        sendAndParse(): Q.Promise<api.content.page.PageTemplate> {
+        sendAndParse(): Q.Promise<PageTemplate> {
 
-            return this.send().then((response: api.rest.JsonResponse<api.content.page.PageTemplateJson>) => {
+            return this.send().then((response: api.rest.JsonResponse<PageTemplateJson>) => {
 
                 if (response.hasResult()) {
                     return this.fromJsonToPageTemplate(response.getResult());

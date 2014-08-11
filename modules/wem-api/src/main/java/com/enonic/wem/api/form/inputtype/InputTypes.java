@@ -17,9 +17,9 @@ public final class InputTypes
 
     public static final InputType DATE = new Date();
 
-    public static final InputType DECIMAL_NUMBER = new DecimalNumber();
+    public static final InputType DOUBLE = new Double();
 
-    public static final InputType GEO_LOCATION = new GeoLocation();
+    public static final InputType GEO_POINT = new GeoPoint();
 
     public static final InputType HTML_AREA = new HtmlArea();
 
@@ -35,13 +35,13 @@ public final class InputTypes
 
     public static final InputType SINGLE_SELECTOR = new SingleSelector();
 
-    public static final InputType TAGS = new Tags();
+    public static final InputType TAG = new Tag();
 
     public static final InputType TEXT_LINE = new TextLine();
 
     public static final InputType TEXT_AREA = new TextArea();
 
-    public static final InputType WHOLE_NUMBER = new WholeNumber();
+    public static final InputType LONG = new Long();
 
     public static final InputType XML = new Xml();
 
@@ -49,8 +49,8 @@ public final class InputTypes
         add( COLOR ).
         add( COMBO_BOX ).
         add( DATE ).
-        add( DECIMAL_NUMBER ).
-        add( GEO_LOCATION ).
+        add( DOUBLE ).
+        add( GEO_POINT ).
         add( HTML_AREA ).
         add( IMAGE ).
         add( IMAGE_SELECTOR ).
@@ -58,10 +58,10 @@ public final class InputTypes
         add( PHONE ).
         add( RELATIONSHIP ).
         add( SINGLE_SELECTOR ).
-        add( TAGS ).
+        add( TAG ).
         add( TEXT_AREA ).
         add( TEXT_LINE ).
-        add( WHOLE_NUMBER ).
+        add( LONG ).
         add( XML ).
         build();
 
@@ -79,8 +79,8 @@ public final class InputTypes
         registerDefaultInputType( ValueTypes.LOCAL_DATE, DATE );
         registerDefaultInputType( ValueTypes.STRING, TEXT_AREA );
         registerDefaultInputType( ValueTypes.XML, XML );
-        registerDefaultInputType( ValueTypes.LONG, WHOLE_NUMBER );
-        registerDefaultInputType( ValueTypes.DOUBLE, DECIMAL_NUMBER );
+        registerDefaultInputType( ValueTypes.LONG, LONG );
+        registerDefaultInputType( ValueTypes.DOUBLE, DOUBLE );
     }
 
     private static void register( InputType inputType )
@@ -110,7 +110,7 @@ public final class InputTypes
             }
         }
 
-        return new CustomInputType(simpleClassName);
+        return new CustomInputType( simpleClassName );
     }
 
     public static ImmutableList<InputType> list()

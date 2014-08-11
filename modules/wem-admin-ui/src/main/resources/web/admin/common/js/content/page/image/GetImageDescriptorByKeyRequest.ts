@@ -1,6 +1,6 @@
 module api.content.page.image {
 
-    export class GetImageDescriptorsByModuleRequest extends ImageDescriptorResourceRequest<ImageDescriptorJson> {
+    export class GetImageDescriptorsByModuleRequest extends ImageDescriptorResourceRequest<ImageDescriptorJson, ImageDescriptor> {
 
         private key: api.module.ModuleResourceKey;
 

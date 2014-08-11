@@ -47,7 +47,7 @@
         },
         {
             "Input": {
-                "name": "myDecimalNumber",
+                "name": "myDouble",
                 "label": null,
                 "immutable": false,
                 "occurrences": {
@@ -59,13 +59,13 @@
                 "validationRegexp": null,
                 "helpText": null,
                 "type": {
-                    "name": "DecimalNumber"
+                    "name": "Double"
                 }
             }
         },
         {
             "Input": {
-                "name": "myGeoLocation",
+                "name": "myGeoPoint",
                 "label": null,
                 "immutable": false,
                 "occurrences": {
@@ -77,7 +77,7 @@
                 "validationRegexp": null,
                 "helpText": null,
                 "type": {
-                    "name": "GeoLocation"
+                    "name": "GeoPoint"
                 }
             }
         },
@@ -198,7 +198,7 @@
         },
         {
             "Input": {
-                "name": "myTags",
+                "name": "myTag",
                 "label": null,
                 "immutable": false,
                 "occurrences": {
@@ -210,7 +210,7 @@
                 "validationRegexp": null,
                 "helpText": null,
                 "type": {
-                    "name": "Tags"
+                    "name": "Tag"
                 }
             }
         },
@@ -252,7 +252,7 @@
         },
         {
             "Input": {
-                "name": "myWholeNumber",
+                "name": "myLong",
                 "label": null,
                 "immutable": false,
                 "occurrences": {
@@ -264,7 +264,7 @@
                 "validationRegexp": null,
                 "helpText": null,
                 "type": {
-                    "name": "WholeNumber"
+                    "name": "Long"
                 }
             }
         },

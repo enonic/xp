@@ -46,8 +46,8 @@
         },
         {
             "Input": {
-                "name": "myDecimalNumber",
-                "label": "My DecimalNumber",
+                "name": "myDouble",
+                "label": "My Double",
                 "immutable": false,
                 "occurrences": {
                     "minimum": 0,
@@ -58,14 +58,14 @@
                 "validationRegexp": null,
                 "helpText": null,
                 "type": {
-                    "name": "DecimalNumber"
+                    "name": "Double"
                 }
             }
         },
         {
             "Input": {
-                "name": "myGeoLocation",
-                "label": "My GeoLocation",
+                "name": "myGeoPoint",
+                "label": "My GeoPoint",
                 "immutable": false,
                 "occurrences": {
                     "minimum": 0,
@@ -76,7 +76,7 @@
                 "validationRegexp": null,
                 "helpText": null,
                 "type": {
-                    "name": "GeoLocation"
+                    "name": "GeoPoint"
                 }
             }
         },
@@ -197,7 +197,7 @@
         },
         {
             "Input": {
-                "name": "myTags",
+                "name": "myTag",
                 "label": "My Tags",
                 "immutable": false,
                 "occurrences": {
@@ -209,7 +209,7 @@
                 "validationRegexp": null,
                 "helpText": null,
                 "type": {
-                    "name": "Tags"
+                    "name": "Tag"
                 }
             }
         },
@@ -251,8 +251,8 @@
         },
         {
             "Input": {
-                "name": "myWholeNumber",
-                "label": "My WholeNumber",
+                "name": "myLong",
+                "label": "My Long",
                 "immutable": false,
                 "occurrences": {
                     "minimum": 0,
@@ -263,7 +263,7 @@
                 "validationRegexp": null,
                 "helpText": null,
                 "type": {
-                    "name": "WholeNumber"
+                    "name": "Long"
                 }
             }
         },

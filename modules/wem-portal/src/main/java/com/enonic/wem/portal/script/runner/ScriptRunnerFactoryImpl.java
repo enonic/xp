@@ -3,19 +3,13 @@ package com.enonic.wem.portal.script.runner;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.enonic.wem.portal.script.compiler.ScriptCompiler;
 import com.enonic.wem.portal.script.lib.ContextScriptBean;
 import com.enonic.wem.portal.script.lib.SystemScriptBean;
-import com.enonic.wem.portal.script.loader.ScriptLoader;
 
 public final class ScriptRunnerFactoryImpl
     implements ScriptRunnerFactory
 {
-    @Inject
-    protected ScriptCompiler compiler;
-
-    @Inject
-    protected ScriptLoader scriptLoader;
+    private final ScriptCompiler compiler;
 
     @Inject
     protected SystemScriptBean systemScriptBean;
@@ -23,11 +17,15 @@ public final class ScriptRunnerFactoryImpl
     @Inject
     protected Provider<ContextScriptBean> contextServiceBeans;
 
+    public ScriptRunnerFactoryImpl()
+    {
+        this.compiler = new ScriptCompiler();
+    }
+
     @Override
     public ScriptRunner newRunner()
     {
         final ScriptRunnerImpl runner = new ScriptRunnerImpl();
-        runner.scriptLoader = this.scriptLoader;
         runner.compiler = this.compiler;
         runner.contextServiceBean = this.contextServiceBeans.get();
         runner.property( "system", this.systemScriptBean );

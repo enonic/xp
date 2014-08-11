@@ -40,7 +40,7 @@ public class LayoutDescriptorResourceTest
     {
         final LayoutDescriptorKey key = LayoutDescriptorKey.from( "module-1.0.0:fancy-layout" );
         final Form layoutForm = Form.newForm().
-            addFormItem( newInput().name( "columns" ).inputType( InputTypes.DECIMAL_NUMBER ).build() ).
+            addFormItem( newInput().name( "columns" ).inputType( InputTypes.DOUBLE ).build() ).
             build();
 
         final LayoutDescriptor layoutDescriptor = LayoutDescriptor.newLayoutDescriptor().
@@ -67,7 +67,7 @@ public class LayoutDescriptorResourceTest
         throws Exception
     {
         final Form layoutForm = Form.newForm().
-            addFormItem( newInput().name( "columns" ).inputType( InputTypes.DECIMAL_NUMBER ).build() ).
+            addFormItem( newInput().name( "columns" ).inputType( InputTypes.DOUBLE ).build() ).
             build();
 
         final LayoutDescriptor layoutDescriptor1 = LayoutDescriptor.newLayoutDescriptor().

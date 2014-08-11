@@ -1,6 +1,6 @@
 module api.content.page {
 
-    export class IsRenderableRequest extends PageTemplateResourceRequest<boolean> {
+    export class IsRenderableRequest extends PageTemplateResourceRequest<boolean, boolean> {
 
         private contentId:api.content.ContentId;
 

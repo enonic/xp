@@ -8,12 +8,12 @@ import com.enonic.wem.api.data.type.ValueTypes;
 
 import static junit.framework.Assert.assertEquals;
 
-public class GeoLocationTest
+public class GeoPointTest
 {
     @Test
     public void newValue()
     {
-        Value value = new GeoLocation().newValue( "59.913869,10.752245" );
+        Value value = new GeoPoint().newValue( "59.913869,10.752245" );
         assertEquals( "59.913869,10.752245", value.asString() );
         assertEquals( ValueTypes.GEO_POINT, value.getType() );
     }

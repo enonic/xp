@@ -27,7 +27,7 @@ module app.browse {
             this.setEnabled(false);
             this.onExecuted(() => {
                 if (this.schemaTreeGrid) {
-                    new EditSchemaEvent(this.schemaTreeGrid.getSelectedDataNodes()).fire();
+                    new EditSchemaEvent(this.schemaTreeGrid.getSelectedDataList()).fire();
                 }
             });
         }
@@ -47,7 +47,7 @@ module app.browse {
             this.setEnabled(false);
             this.onExecuted(() => {
                 if (this.schemaTreeGrid) {
-                    new OpenSchemaEvent(this.schemaTreeGrid.getSelectedDataNodes()).fire();
+                    new OpenSchemaEvent(this.schemaTreeGrid.getSelectedDataList()).fire();
                 }
             });
         }
@@ -67,7 +67,7 @@ module app.browse {
             this.setEnabled(false);
             this.onExecuted(() => {
                 if (this.schemaTreeGrid) {
-                    new DeleteSchemaPromptEvent(this.schemaTreeGrid.getSelectedDataNodes()).fire();
+                    new DeleteSchemaPromptEvent(this.schemaTreeGrid.getSelectedDataList()).fire();
                 }
             });
         }
@@ -86,7 +86,7 @@ module app.browse {
             this.schemaTreeGrid = null;
             this.onExecuted(() => {
                 if (this.schemaTreeGrid) {
-                    new ReindexSchemaEvent(this.schemaTreeGrid.getSelectedDataNodes()).fire();
+                    new ReindexSchemaEvent(this.schemaTreeGrid.getSelectedDataList()).fire();
                 }
             });
         }
@@ -105,7 +105,7 @@ module app.browse {
             this.schemaTreeGrid = null;
             this.onExecuted(() => {
                 if (this.schemaTreeGrid) {
-                    new ExportSchemaEvent(this.schemaTreeGrid.getSelectedDataNodes()).fire();
+                    new ExportSchemaEvent(this.schemaTreeGrid.getSelectedDataList()).fire();
                 }
             });
         }

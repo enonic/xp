@@ -112,6 +112,7 @@ module api.liveedit {
             actions.push(new api.ui.Action("Parent").onExecuted(() => {
                 var parentView: ItemView = this.getParentItemView();
                 if (parentView) {
+                    this.deselect();
                     parentView.select();
                 }
             }));
@@ -130,8 +131,9 @@ module api.liveedit {
             actions.push(new api.ui.Action("Duplicate").onExecuted(() => {
                 var duplicatedPageComponent = <PAGE_COMPONENT> this.getPageComponent().duplicateComponent();
                 var duplicatedView = this.duplicate(duplicatedPageComponent);
-                duplicatedView.showLoadingPlaceholder();
-                duplicatedView.showLoadingSpinner();
+                this.deselect();
+                duplicatedView.markAsEmpty();
+                duplicatedView.select();
 
                 new PageComponentDuplicateEvent(this, duplicatedView).fire();
             }));

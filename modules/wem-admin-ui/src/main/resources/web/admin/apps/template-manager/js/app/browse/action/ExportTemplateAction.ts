@@ -10,7 +10,7 @@ module app.browse.action {
             this.setEnabled(false);
             this.onExecuted(() => {
                 if (this.templateTreeGrid) {
-                    var templates = this.templateTreeGrid.getSelectedDataNodes();
+                    var templates = this.templateTreeGrid.getSelectedDataList();
                     var template = templates.length > 0 ? templates[0] : null;
                     new app.browse.event.ExportTemplateEvent(template).fire();
                 }

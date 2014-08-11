@@ -1,0 +1,28 @@
+.calendar {
+
+  .calendar-week {
+    .calendar-day {
+      display: inline-block;
+      padding: 5px;
+      width: 10px;
+      text-align: right;
+      border: 1px solid white;
+
+      &.before-month {
+        color: #d3d3d3;
+      }
+
+      &.after-month {
+        color: #d3d3d3;
+      }
+
+      &.selected-day {
+        border: 1px solid #000000;
+      }
+      &:hover {
+        background-color: #d3d3d3;
+      }
+    }
+  }
+
+}

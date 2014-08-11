@@ -1,6 +1,6 @@
 module api.content {
 
-    export class PublishContentRequest  extends ContentResourceRequest<any> {
+    export class PublishContentRequest  extends ContentResourceRequest<api.content.json.ContentJson, Content> {
 
         private id: string;
 

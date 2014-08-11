@@ -10,26 +10,23 @@ import org.mozilla.javascript.Scriptable;
 
 import com.google.common.collect.Maps;
 
+import com.enonic.wem.api.resource.Resource;
+import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceUrlResolver;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.script.SourceException;
-import com.enonic.wem.portal.script.compiler.ScriptCompiler;
 import com.enonic.wem.portal.script.lib.ContextScriptBean;
-import com.enonic.wem.portal.script.loader.ScriptLoader;
-import com.enonic.wem.portal.script.loader.ScriptSource;
 
-public final class ScriptRunnerImpl
+final class ScriptRunnerImpl
     implements ScriptRunner
 {
     private Scriptable scope;
 
     protected ScriptCompiler compiler;
 
-    protected ScriptLoader scriptLoader;
-
     private final Map<String, Object> objects;
 
-    private ScriptSource source;
+    private Resource source;
 
     protected ContextScriptBean contextServiceBean;
 
@@ -39,13 +36,7 @@ public final class ScriptRunnerImpl
     }
 
     @Override
-    public ScriptLoader getLoader()
-    {
-        return this.scriptLoader;
-    }
-
-    @Override
-    public ScriptRunner source( final ScriptSource source )
+    public ScriptRunner source( final Resource source )
     {
         this.source = source;
         return this;
@@ -63,8 +54,8 @@ public final class ScriptRunnerImpl
     {
         final Context context = Context.enter();
 
-        this.contextServiceBean.setModule( this.source.getModule() );
-        this.contextServiceBean.install( context );
+        this.contextServiceBean.setModule( this.source.getKey().getModule() );
+        this.contextServiceBean.install();
         final JsContext portalContext = (JsContext) objects.get( "portal" );
         this.contextServiceBean.setJsContext( portalContext );
 
@@ -82,7 +73,7 @@ public final class ScriptRunnerImpl
         }
         finally
         {
-            ContextScriptBean.remove( context );
+            ContextScriptBean.remove();
             Context.exit();
         }
     }
@@ -104,13 +95,13 @@ public final class ScriptRunnerImpl
     private SourceException createError( final RhinoException cause )
     {
         final String name = cause.sourceName();
-        final ScriptSource source = this.scriptLoader.load( name );
+        final ResourceKey source = ResourceKey.from( name );
 
         final SourceException.Builder builder = SourceException.newBuilder();
         builder.cause( cause );
         builder.lineNumber( cause.lineNumber() );
-        builder.resource( source.getResource() );
-        builder.path( ResourceUrlResolver.resolve( source.getResource() ) );
+        builder.resource( source );
+        builder.path( ResourceUrlResolver.resolve( source ) );
         builder.message( cause.details() );
 
         for ( final ScriptStackElement elem : cause.getScriptStack() )

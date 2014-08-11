@@ -17,7 +17,7 @@ import static com.enonic.wem.api.content.page.region.RegionDescriptors.newRegion
 import static com.enonic.wem.api.form.FieldSet.newFieldSet;
 import static com.enonic.wem.api.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.form.Input.newInput;
-import static com.enonic.wem.api.form.inputtype.InputTypes.DECIMAL_NUMBER;
+import static com.enonic.wem.api.form.inputtype.InputTypes.DOUBLE;
 import static com.enonic.wem.api.form.inputtype.InputTypes.TEXT_LINE;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -64,7 +64,7 @@ public class XmlPageDescriptorSerializerTest
             build();
 
         Form pageForm = Form.newForm().
-            addFormItem( newInput().name( "pause" ).inputType( DECIMAL_NUMBER ).label( "Pause parameter" ).build() ).
+            addFormItem( newInput().name( "pause" ).inputType( DOUBLE ).label( "Pause parameter" ).build() ).
             addFormItem( myFormItemSet ).
             build();
 
@@ -102,7 +102,7 @@ public class XmlPageDescriptorSerializerTest
         assertEquals( "Landing page", pageDescriptor.getDisplayName() );
         final Form config = pageDescriptor.getConfig();
         assertNotNull( config );
-        assertEquals( DECIMAL_NUMBER, config.getFormItem( "pause" ).toInput().getInputType() );
+        assertEquals( DOUBLE, config.getFormItem( "pause" ).toInput().getInputType() );
         assertEquals( "Pause parameter", config.getFormItem( "pause" ).toInput().getLabel() );
         assertNotNull( config.getFormItem( "myFormItemSet" ).toFormItemSet() );
         assertEquals( "My form item set", config.getFormItem( "myFormItemSet" ).toFormItemSet().getLabel() );

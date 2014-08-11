@@ -4,12 +4,13 @@ import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.form.BreaksRequiredContractException;
 
-final class GeoLocation
+final class Long
     extends InputType
 {
-    GeoLocation()
+    Long()
     {
     }
 
@@ -27,7 +28,7 @@ final class GeoLocation
     @Override
     public Value newValue( final String value )
     {
-        return Value.newGeoPoint( value );
+        return Value.newLong( ValueTypes.LONG.convert( value ) );
     }
 
     @Override

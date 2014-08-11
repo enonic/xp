@@ -1,6 +1,6 @@
 module api.schema.mixin {
 
-    export class GetMixinConfigByNameRequest extends MixinResourceRequest<GetMixinConfigResult> {
+    export class GetMixinConfigByNameRequest extends MixinResourceRequest<GetMixinConfigResult, any> {
 
         private name:MixinName;
 

@@ -1,6 +1,6 @@
 module api.content.site.template {
 
-    export class DeleteSiteTemplateRequest extends SiteTemplateResourceRequest<SiteTemplateKey> {
+    export class DeleteSiteTemplateRequest extends SiteTemplateResourceRequest<SiteTemplateKey, any> {
 
         private siteTemplateKey: SiteTemplateKey;
 

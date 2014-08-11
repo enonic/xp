@@ -48,17 +48,28 @@ module app.browse {
                     setShowContextMenu(new TreeGridContextMenu(browseActions))
             );
             browseActions.setSchemaTreeGrid(this);
-        }
 
-        fetchChildren(parent?: Schema): Q.Promise<Schema[]> {
-            var parentId = parent ? parent.getKey() : '';
-            return new api.schema.SchemaTreeRequest(parentId).sendAndParse();
+            this.getGrid().subscribeOnDblClick((event, data) => {
+                if (this.isActive()) {
+                    new app.browse.EditSchemaEvent([this.getGrid().getDataView().getItem(data.row).getData()]).fire();
+                }
+            });
+
         }
 
         private defaultNameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<Schema>) {
             var viewer = new SchemaViewer();
             viewer.setObject(node.getData());
             return viewer.toString();
+        }
+
+        fetchChildren(parentData?: Schema): Q.Promise<Schema[]> {
+            var parentId = parentData ? parentData.getKey() : '';
+            return new api.schema.SchemaTreeRequest(parentId).sendAndParse();
+        }
+
+        hasChildren(data: Schema): boolean {
+            return data.hasChildren();
         }
     }
 }

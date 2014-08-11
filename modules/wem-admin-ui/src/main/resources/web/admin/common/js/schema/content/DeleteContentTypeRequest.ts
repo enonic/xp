@@ -1,6 +1,6 @@
 module api.schema.content {
 
-    export class DeleteContentTypeRequest extends ContentTypeResourceRequest<api.schema.SchemaDeleteJson> {
+    export class DeleteContentTypeRequest extends ContentTypeResourceRequest<api.schema.SchemaDeleteJson, api.schema.SchemaDeleteResult> {
 
 
         private names: string[] = [];

@@ -2,7 +2,7 @@
 <page-component xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../schema/model.xsd">
   <display-name>Landing page</display-name>
   <config>
-    <input name="pause" type="DecimalNumber">
+    <input name="pause" type="Double">
       <label>Pause parameter</label>
       <immutable>false</immutable>
       <indexed>false</indexed>

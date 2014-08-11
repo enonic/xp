@@ -1,6 +1,6 @@
 module api.module {
 
-    export class ListModulesRequest extends ModuleResourceRequest<ModuleListResult> {
+    export class ListModulesRequest extends ModuleResourceRequest<ModuleListResult, ModuleSummary[]> {
 
         constructor() {
             super();
@@ -15,7 +15,7 @@ module api.module {
             return api.rest.Path.fromParent(super.getResourcePath(), "list");
         }
 
-        sendAndParse(): Q.Promise<api.module.ModuleSummary[]> {
+        sendAndParse(): Q.Promise<ModuleSummary[]> {
 
             return this.send().then((response: api.rest.JsonResponse<ModuleListResult>) => {
                 return ModuleSummary.fromJsonArray(response.getResult().modules);

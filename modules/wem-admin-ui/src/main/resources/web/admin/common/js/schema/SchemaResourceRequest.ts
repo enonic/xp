@@ -1,6 +1,6 @@
 module api.schema {
 
-    export class SchemaResourceRequest<T> extends api.rest.ResourceRequest<T> {
+    export class SchemaResourceRequest<JSON_TYPE, PARSED_TYPE> extends api.rest.ResourceRequest<JSON_TYPE, PARSED_TYPE> {
 
         private resourcePath: api.rest.Path;
 

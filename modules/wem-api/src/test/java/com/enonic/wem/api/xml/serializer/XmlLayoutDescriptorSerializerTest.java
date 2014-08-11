@@ -11,7 +11,7 @@ import com.enonic.wem.api.xml.model.XmlLayoutDescriptor;
 import static com.enonic.wem.api.content.page.region.RegionDescriptor.newRegionDescriptor;
 import static com.enonic.wem.api.content.page.region.RegionDescriptors.newRegionDescriptors;
 import static com.enonic.wem.api.form.Input.newInput;
-import static com.enonic.wem.api.form.inputtype.InputTypes.DECIMAL_NUMBER;
+import static com.enonic.wem.api.form.inputtype.InputTypes.DOUBLE;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
@@ -24,7 +24,7 @@ public class XmlLayoutDescriptorSerializerTest
         throws Exception
     {
         Form configForm = Form.newForm().
-            addFormItem( newInput().name( "width" ).inputType( DECIMAL_NUMBER ).label( "Column width" ).build() ).
+            addFormItem( newInput().name( "width" ).inputType( DOUBLE ).label( "Column width" ).build() ).
             build();
 
         LayoutDescriptor layoutDescriptor = LayoutDescriptor.newLayoutDescriptor().
@@ -60,7 +60,7 @@ public class XmlLayoutDescriptorSerializerTest
         assertEquals( "A Layout", layoutDescriptor.getDisplayName() );
         final Form config = layoutDescriptor.getConfig();
         assertNotNull( config );
-        assertEquals( DECIMAL_NUMBER, config.getFormItem( "width" ).toInput().getInputType() );
+        assertEquals( DOUBLE, config.getFormItem( "width" ).toInput().getInputType() );
         assertEquals( "Column width", config.getFormItem( "width" ).toInput().getLabel() );
     }
 

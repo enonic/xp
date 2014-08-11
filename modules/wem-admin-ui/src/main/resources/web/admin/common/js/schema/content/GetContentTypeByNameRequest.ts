@@ -1,6 +1,6 @@
 module api.schema.content {
 
-    export class GetContentTypeByNameRequest extends ContentTypeResourceRequest<api.schema.content.json.ContentTypeJson> {
+    export class GetContentTypeByNameRequest extends ContentTypeResourceRequest<json.ContentTypeJson, ContentType> {
 
         private name:ContentTypeName;
 
@@ -28,9 +28,9 @@ module api.schema.content {
             return super.getResourcePath();
         }
 
-        sendAndParse(): Q.Promise<api.schema.content.ContentType> {
+        sendAndParse(): Q.Promise<ContentType> {
 
-            return this.send().then((response: api.rest.JsonResponse<api.schema.content.json.ContentTypeJson>) => {
+            return this.send().then((response: api.rest.JsonResponse<json.ContentTypeJson>) => {
                 return this.fromJsonToContentType(response.getResult());
             });
         }

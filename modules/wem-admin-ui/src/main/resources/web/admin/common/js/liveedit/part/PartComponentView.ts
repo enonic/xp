@@ -60,12 +60,6 @@ module api.liveedit.part {
             return this.isEmpty() || !this.partComponent.getDescriptor();
         }
 
-        showLoadingPlaceholder() {
-            this.displayPlaceholder();
-            this.select();
-            this.placeholder.deselect();
-        }
-
         displayPlaceholder() {
             this.markAsEmpty();
 

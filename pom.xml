@@ -143,6 +143,7 @@
             <Import-Package>*</Import-Package>
             <Embed-Transitive>true</Embed-Transitive>
             <Embed-Directory>META-INF/lib</Embed-Directory>
+            <_nouses>true</_nouses>
           </instructions>
         </configuration>
       </plugin>

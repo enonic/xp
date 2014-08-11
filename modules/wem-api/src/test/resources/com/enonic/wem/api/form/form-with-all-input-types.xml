@@ -1,119 +1,119 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form>
-    <input name="myColor" type="Color">
-        <immutable>false</immutable>
-        <indexed>false</indexed>
-        <occurrences minimum="0" maximum="1"/>
-    </input>
-    <input name="myDate" type="Date">
-        <immutable>false</immutable>
-        <indexed>false</indexed>
-        <occurrences minimum="0" maximum="1"/>
-    </input>
-    <input name="myDecimalNumber" type="DecimalNumber">
-        <immutable>false</immutable>
-        <indexed>false</indexed>
-        <occurrences minimum="0" maximum="1"/>
-    </input>
-    <input name="myGeoLocation" type="GeoLocation">
-        <immutable>false</immutable>
-        <indexed>false</indexed>
-        <occurrences minimum="0" maximum="1"/>
-    </input>
-    <input name="myHtmlArea" type="HtmlArea">
-        <immutable>false</immutable>
-        <indexed>false</indexed>
-        <occurrences minimum="0" maximum="1"/>
-    </input>
-    <input name="myMoney" type="Money">
-        <immutable>false</immutable>
-        <indexed>false</indexed>
-        <occurrences minimum="0" maximum="1"/>
-    </input>
-    <input name="myPhone" type="Phone">
-        <immutable>false</immutable>
-        <indexed>false</indexed>
-        <occurrences minimum="0" maximum="1"/>
-    </input>
-    <input name="myComboBox" type="ComboBox">
-        <immutable>false</immutable>
-        <indexed>false</indexed>
-        <occurrences minimum="0" maximum="1"/>
-        <config>
-            <options>
-                <option>
-                    <label>myOption 1</label>
-                    <value>o1</value>
-                </option>
-                <option>
-                    <label>myOption 2</label>
-                    <value>o2</value>
-                </option>
-            </options>
-        </config>
-    </input>
-    <input name="mySingleSelector" type="SingleSelector">
-        <immutable>false</immutable>
-        <indexed>false</indexed>
-        <occurrences minimum="0" maximum="1"/>
-        <config>
-            <options>
-                <option>
-                    <label>myOption 1</label>
-                    <value>o1</value>
-                </option>
-                <option>
-                    <label>myOption 2</label>
-                    <value>o2</value>
-                </option>
-            </options>
-            <selector-type>DROPDOWN</selector-type>
-        </config>
-    </input>
-    <input name="myTags" type="Tags">
-        <immutable>false</immutable>
-        <indexed>false</indexed>
-        <occurrences minimum="0" maximum="1"/>
-    </input>
-    <input name="myTextLine" type="TextLine">
-        <immutable>false</immutable>
-        <indexed>false</indexed>
-        <occurrences minimum="0" maximum="1"/>
-    </input>
-    <input name="myTextArea" type="TextArea">
-        <immutable>false</immutable>
-        <indexed>false</indexed>
-        <occurrences minimum="0" maximum="1"/>
-    </input>
-    <input name="myWholeNumber" type="WholeNumber">
-        <immutable>false</immutable>
-        <indexed>false</indexed>
-        <occurrences minimum="0" maximum="1"/>
-    </input>
-    <input name="myXml" type="Xml">
-        <immutable>false</immutable>
-        <indexed>false</indexed>
-        <occurrences minimum="0" maximum="1"/>
-    </input>
-    <input name="myRelationship" type="Relationship">
-        <immutable>false</immutable>
-        <indexed>false</indexed>
-        <occurrences minimum="0" maximum="1"/>
-        <config>
-            <relationship-type>like</relationship-type>
-        </config>
-    </input>
-    <input name="myImage" type="ImageSelector">
-        <immutable>false</immutable>
-        <indexed>false</indexed>
-        <occurrences minimum="0" maximum="1"/>
-        <config>
-            <relationship-type>default</relationship-type>
-        </config>
-    </input>
-    <input name="myCustomInput" type="custom:DummyCustomInputType">
-        <immutable>false</immutable>
-        <indexed>false</indexed>
-        <occurrences minimum="0" maximum="1"/>
-    </input>
+  <input name="myColor" type="Color">
+    <immutable>false</immutable>
+    <indexed>false</indexed>
+    <occurrences minimum="0" maximum="1"/>
+  </input>
+  <input name="myDate" type="Date">
+    <immutable>false</immutable>
+    <indexed>false</indexed>
+    <occurrences minimum="0" maximum="1"/>
+  </input>
+  <input name="myDouble" type="Double">
+    <immutable>false</immutable>
+    <indexed>false</indexed>
+    <occurrences minimum="0" maximum="1"/>
+  </input>
+  <input name="myGeoPoint" type="GeoPoint">
+    <immutable>false</immutable>
+    <indexed>false</indexed>
+    <occurrences minimum="0" maximum="1"/>
+  </input>
+  <input name="myHtmlArea" type="HtmlArea">
+    <immutable>false</immutable>
+    <indexed>false</indexed>
+    <occurrences minimum="0" maximum="1"/>
+  </input>
+  <input name="myMoney" type="Money">
+    <immutable>false</immutable>
+    <indexed>false</indexed>
+    <occurrences minimum="0" maximum="1"/>
+  </input>
+  <input name="myPhone" type="Phone">
+    <immutable>false</immutable>
+    <indexed>false</indexed>
+    <occurrences minimum="0" maximum="1"/>
+  </input>
+  <input name="myComboBox" type="ComboBox">
+    <immutable>false</immutable>
+    <indexed>false</indexed>
+    <occurrences minimum="0" maximum="1"/>
+    <config>
+      <options>
+        <option>
+          <label>myOption 1</label>
+          <value>o1</value>
+        </option>
+        <option>
+          <label>myOption 2</label>
+          <value>o2</value>
+        </option>
+      </options>
+    </config>
+  </input>
+  <input name="mySingleSelector" type="SingleSelector">
+    <immutable>false</immutable>
+    <indexed>false</indexed>
+    <occurrences minimum="0" maximum="1"/>
+    <config>
+      <options>
+        <option>
+          <label>myOption 1</label>
+          <value>o1</value>
+        </option>
+        <option>
+          <label>myOption 2</label>
+          <value>o2</value>
+        </option>
+      </options>
+      <selector-type>DROPDOWN</selector-type>
+    </config>
+  </input>
+  <input name="myTag" type="Tag">
+  <immutable>false</immutable>
+    <indexed>false</indexed>
+    <occurrences minimum="0" maximum="1"/>
+  </input>
+  <input name="myTextLine" type="TextLine">
+    <immutable>false</immutable>
+    <indexed>false</indexed>
+    <occurrences minimum="0" maximum="1"/>
+  </input>
+  <input name="myTextArea" type="TextArea">
+    <immutable>false</immutable>
+    <indexed>false</indexed>
+    <occurrences minimum="0" maximum="1"/>
+  </input>
+  <input name="myLong" type="Long">
+    <immutable>false</immutable>
+    <indexed>false</indexed>
+    <occurrences minimum="0" maximum="1"/>
+  </input>
+  <input name="myXml" type="Xml">
+    <immutable>false</immutable>
+    <indexed>false</indexed>
+    <occurrences minimum="0" maximum="1"/>
+  </input>
+  <input name="myRelationship" type="Relationship">
+    <immutable>false</immutable>
+    <indexed>false</indexed>
+    <occurrences minimum="0" maximum="1"/>
+    <config>
+      <relationship-type>like</relationship-type>
+    </config>
+  </input>
+  <input name="myImage" type="ImageSelector">
+    <immutable>false</immutable>
+    <indexed>false</indexed>
+    <occurrences minimum="0" maximum="1"/>
+    <config>
+      <relationship-type>default</relationship-type>
+    </config>
+  </input>
+  <input name="myCustomInput" type="custom:DummyCustomInputType">
+    <immutable>false</immutable>
+    <indexed>false</indexed>
+    <occurrences minimum="0" maximum="1"/>
+  </input>
 </form>

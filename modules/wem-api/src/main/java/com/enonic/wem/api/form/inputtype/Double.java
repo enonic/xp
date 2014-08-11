@@ -7,10 +7,10 @@ import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.form.BreaksRequiredContractException;
 
-final class WholeNumber
+final class Double
     extends InputType
 {
-    WholeNumber()
+    Double()
     {
     }
 
@@ -28,7 +28,7 @@ final class WholeNumber
     @Override
     public Value newValue( final String value )
     {
-        return Value.newLong( ValueTypes.LONG.convert( value ) );
+        return Value.newDouble( ValueTypes.DOUBLE.convert( value ) );
     }
 
     @Override

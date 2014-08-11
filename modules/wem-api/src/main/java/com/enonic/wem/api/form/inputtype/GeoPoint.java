@@ -4,13 +4,12 @@ import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.form.BreaksRequiredContractException;
 
-final class DecimalNumber
+final class GeoPoint
     extends InputType
 {
-    DecimalNumber()
+    GeoPoint()
     {
     }
 
@@ -28,7 +27,7 @@ final class DecimalNumber
     @Override
     public Value newValue( final String value )
     {
-        return Value.newDouble( ValueTypes.DOUBLE.convert( value ) );
+        return Value.newGeoPoint( value );
     }
 
     @Override

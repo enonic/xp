@@ -1,6 +1,6 @@
 module api.content {
 
-    export class GetContentByPathRequest extends ContentResourceRequest<api.content.json.ContentJson> {
+    export class GetContentByPathRequest extends ContentResourceRequest<json.ContentJson, Content> {
 
         private contentPath:ContentPath;
 
@@ -20,9 +20,9 @@ module api.content {
             return api.rest.Path.fromParent(super.getResourcePath(), "bypath");
         }
 
-        sendAndParse(): Q.Promise<api.content.Content> {
+        sendAndParse(): Q.Promise<Content> {
 
-            return this.send().then((response: api.rest.JsonResponse<api.content.json.ContentJson>) => {
+            return this.send().then((response: api.rest.JsonResponse<json.ContentJson>) => {
                 return this.fromJsonToContent(response.getResult());
             });
         }

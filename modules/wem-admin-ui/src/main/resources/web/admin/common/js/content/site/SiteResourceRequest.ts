@@ -1,6 +1,6 @@
 module api.content.site {
 
-    export class SiteResourceRequest<T> extends api.rest.ResourceRequest<T> {
+    export class SiteResourceRequest<JSON_TYPE, PARSED_TYPE> extends api.rest.ResourceRequest<JSON_TYPE, PARSED_TYPE> {
 
         private resourcePath: api.rest.Path;
 

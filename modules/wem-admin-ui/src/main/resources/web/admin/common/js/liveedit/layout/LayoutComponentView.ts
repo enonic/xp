@@ -70,12 +70,6 @@ module api.liveedit.layout {
             return this.isEmpty() || !this.layoutComponent.getDescriptor();
         }
 
-        showLoadingPlaceholder() {
-            this.displayPlaceholder();
-            this.select();
-            this.placeholder.deselect();
-        }
-
         displayPlaceholder() {
             this.markAsEmpty();
 
@@ -130,6 +124,7 @@ module api.liveedit.layout {
                             setRegion(region).
                             setElement(childElement));
                         this.addRegion(regionView);
+                        regionView.parsePageComponentViews();
                     }
                     else {
                         this.doParseRegions(childElement);

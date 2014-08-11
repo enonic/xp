@@ -55,19 +55,14 @@ module app.browse {
             );
         }
 
-        fetchChildren(parent?: ModuleSummary): Q.Promise<ModuleSummary[]> {
-            api.util.assertNull(parent, "Parent element is not a root");
-            return new api.module.ListModulesRequest().sendAndParse();
-        }
-
         private nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ModuleSummary>) {
             var viewer = new ModuleSummaryViewer();
             viewer.setObject(node.getData());
             return viewer.toString();
         }
 
-        hasChildren(elem: ModuleSummary): boolean {
-            return elem.hasChildren();
+        fetchRoot(): Q.Promise<ModuleSummary[]> {
+            return new api.module.ListModulesRequest().sendAndParse();
         }
     }
 }
