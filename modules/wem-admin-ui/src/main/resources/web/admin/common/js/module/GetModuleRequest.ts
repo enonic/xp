@@ -1,10 +1,10 @@
 module api.module {
 
-    export class GetModuleRequest extends ModuleResourceRequest<api.module.json.ModuleJson> {
+    export class GetModuleRequest extends ModuleResourceRequest<json.ModuleJson, Module> {
 
-        private moduleKey:api.module.ModuleKey;
+        private moduleKey:ModuleKey;
 
-        constructor(moduleKey:api.module.ModuleKey) {
+        constructor(moduleKey:ModuleKey) {
             super();
             super.setMethod("GET");
             this.moduleKey = moduleKey;
@@ -20,9 +20,9 @@ module api.module {
             return api.rest.Path.fromParent(super.getResourcePath());
         }
 
-        sendAndParse(): Q.Promise<api.module.Module> {
+        sendAndParse(): Q.Promise<Module> {
 
-            return this.send().then((response: api.rest.JsonResponse<api.module.json.ModuleJson>) => {
+            return this.send().then((response: api.rest.JsonResponse<json.ModuleJson>) => {
                 return this.fromJsonToModule(response.getResult());
             });
         }

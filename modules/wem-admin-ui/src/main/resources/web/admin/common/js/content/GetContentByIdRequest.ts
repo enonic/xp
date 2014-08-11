@@ -1,6 +1,6 @@
 module api.content {
 
-    export class GetContentByIdRequest extends ContentResourceRequest<api.content.json.ContentJson> {
+    export class GetContentByIdRequest extends ContentResourceRequest<json.ContentJson, Content> {
 
         private id:ContentId;
 
@@ -28,9 +28,9 @@ module api.content {
             return super.getResourcePath();
         }
 
-        sendAndParse(): Q.Promise<api.content.Content> {
+        sendAndParse(): Q.Promise<Content> {
 
-            return this.send().then((response: api.rest.JsonResponse<api.content.json.ContentJson>) => {
+            return this.send().then((response: api.rest.JsonResponse<json.ContentJson>) => {
                 return this.fromJsonToContent(response.getResult());
             });
         }

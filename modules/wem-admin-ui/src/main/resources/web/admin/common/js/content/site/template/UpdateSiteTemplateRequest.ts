@@ -1,8 +1,8 @@
 module api.content.site.template {
 
-    export class UpdateSiteTemplateRequest extends SiteTemplateResourceRequest<api.content.site.template.SiteTemplateJson> {
+    export class UpdateSiteTemplateRequest extends SiteTemplateResourceRequest<SiteTemplateJson, SiteTemplate> {
 
-        private siteTemplateKey: api.content.site.template.SiteTemplateKey;
+        private siteTemplateKey: SiteTemplateKey;
         private displayName: string;
         private description: string;
         private url: string;
@@ -15,7 +15,7 @@ module api.content.site.template {
             super.setMethod("POST");
         }
 
-        setSiteTemplateKey(siteTemplateKey: api.content.site.template.SiteTemplateKey): UpdateSiteTemplateRequest {
+        setSiteTemplateKey(siteTemplateKey: SiteTemplateKey): UpdateSiteTemplateRequest {
             this.siteTemplateKey = siteTemplateKey;
             return this;
         }
@@ -66,9 +66,9 @@ module api.content.site.template {
             return api.rest.Path.fromParent(super.getResourcePath(), "update");
         }
 
-        sendAndParse(): Q.Promise<api.content.site.template.SiteTemplate> {
+        sendAndParse(): Q.Promise<SiteTemplate> {
 
-            return this.send().then((response: api.rest.JsonResponse<api.content.site.template.SiteTemplateJson>) => {
+            return this.send().then((response: api.rest.JsonResponse<SiteTemplateJson>) => {
                 return this.fromJsonToSiteTemplate(response.getResult());
             });
         }

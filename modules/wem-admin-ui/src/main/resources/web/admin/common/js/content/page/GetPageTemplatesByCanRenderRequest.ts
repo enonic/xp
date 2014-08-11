@@ -1,6 +1,6 @@
 module api.content.page {
 
-    export class GetPageTemplatesByCanRenderRequest extends PageTemplateResourceRequest<api.content.page.PageTemplateSummaryListJson> {
+    export class GetPageTemplatesByCanRenderRequest extends PageTemplateResourceRequest<PageTemplateSummaryListJson, PageTemplateSummary[]> {
 
         private siteTemplateKey: api.content.site.template.SiteTemplateKey;
 
@@ -24,10 +24,10 @@ module api.content.page {
             return api.rest.Path.fromParent(super.getResourcePath(), "listByCanRender");
         }
 
-        sendAndParse(): Q.Promise<api.content.page.PageTemplateSummary[]> {
+        sendAndParse(): Q.Promise<PageTemplateSummary[]> {
 
-            return this.send().then((response: api.rest.JsonResponse<api.content.page.PageTemplateSummaryListJson>) => {
-                return response.getResult().templates.map((templateJson:api.content.page.PageTemplateSummaryJson) => {
+            return this.send().then((response: api.rest.JsonResponse<PageTemplateSummaryListJson>) => {
+                return response.getResult().templates.map((templateJson:PageTemplateSummaryJson) => {
                     return this.fromJsonToPageTemplateSummary(templateJson);
                 });
             });

@@ -1,6 +1,6 @@
 module api.content.page.image {
 
-    export class ImageDescriptorsResourceRequest extends ImageDescriptorResourceRequest<ImageDescriptorsJson> {
+    export class ImageDescriptorsResourceRequest extends ImageDescriptorResourceRequest<ImageDescriptorsJson, ImageDescriptor[]> {
 
         fromJsonToImageDescriptors(json: ImageDescriptorsJson): ImageDescriptor[] {
 

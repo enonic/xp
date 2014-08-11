@@ -1,6 +1,6 @@
 module api.schema.relationshiptype {
 
-    export class RelationshipTypeResourceRequest<T> extends api.rest.ResourceRequest<T> {
+    export class RelationshipTypeResourceRequest<JSON_TYPE, PARSED_TYPE> extends api.rest.ResourceRequest<JSON_TYPE, PARSED_TYPE> {
 
         private resourceUrl: api.rest.Path;
 
@@ -13,7 +13,7 @@ module api.schema.relationshiptype {
             return this.resourceUrl;
         }
 
-        fromJsonToReleationshipType(json: api.schema.relationshiptype.json.RelationshipTypeJson): api.schema.relationshiptype.RelationshipType {
+        fromJsonToReleationshipType(json: api.schema.relationshiptype.json.RelationshipTypeJson): RelationshipType {
             return RelationshipType.fromJson(json);
         }
     }

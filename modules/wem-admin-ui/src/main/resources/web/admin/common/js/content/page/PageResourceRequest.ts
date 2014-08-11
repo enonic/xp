@@ -1,6 +1,6 @@
 module api.content.page {
 
-    export class PageResourceRequest<T> extends api.rest.ResourceRequest<T> {
+    export class PageResourceRequest<JSON_TYPE, PARSED_TYPE> extends api.rest.ResourceRequest<JSON_TYPE, PARSED_TYPE> {
 
         private resourcePath: api.rest.Path;
 

@@ -1,6 +1,6 @@
 module api.content.page.image {
 
-    export class ImageDescriptorResourceRequest<JSON> extends api.rest.ResourceRequest<JSON> {
+    export class ImageDescriptorResourceRequest<JSON_TYPE, PARSED_TYPE> extends api.rest.ResourceRequest<JSON_TYPE, PARSED_TYPE> {
 
         private resourcePath: api.rest.Path;
 

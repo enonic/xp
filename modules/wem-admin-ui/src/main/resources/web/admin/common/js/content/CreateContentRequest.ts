@@ -1,6 +1,6 @@
 module api.content {
 
-    export class CreateContentRequest extends ContentResourceRequest<api.content.json.ContentJson> {
+    export class CreateContentRequest extends ContentResourceRequest<api.content.json.ContentJson, Content> {
 
         private draft: boolean = false;
 

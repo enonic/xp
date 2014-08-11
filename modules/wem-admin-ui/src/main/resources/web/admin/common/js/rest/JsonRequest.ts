@@ -1,6 +1,6 @@
 module api.rest {
 
-    export class JsonRequest<T> {
+    export class JsonRequest<RAW_JSON_TYPE> {
 
         private path: Path;
 
@@ -8,26 +8,24 @@ module api.rest {
 
         private params: Object;
 
-        private jsonResponse: JsonResponse<T>;
-
-        setPath(value: Path): JsonRequest<T> {
+        setPath(value: Path): JsonRequest<RAW_JSON_TYPE> {
             this.path = value;
             return this;
         }
 
-        setMethod(value: string): JsonRequest<T> {
+        setMethod(value: string): JsonRequest<RAW_JSON_TYPE> {
             this.method = value;
             return this;
         }
 
-        setParams(params: Object): JsonRequest<T> {
+        setParams(params: Object): JsonRequest<RAW_JSON_TYPE> {
             this.params = params;
             return this;
         }
 
-        send(): Q.Promise<Response> {
+        send(): Q.Promise<JsonResponse<RAW_JSON_TYPE>> {
 
-            var deferred = Q.defer<Response>();
+            var deferred = Q.defer<JsonResponse<RAW_JSON_TYPE>>();
 
             var request: XMLHttpRequest = new XMLHttpRequest();
             request.timeout = 10000;
@@ -36,7 +34,7 @@ module api.rest {
                 if (request.readyState == 4) {
 
                     if (request.status >= 200 && request.status < 300) {
-                        deferred.resolve(new JsonResponse(request.response));
+                        deferred.resolve(new JsonResponse<RAW_JSON_TYPE>(request.response));
                     } else {
                         try {
                             var errorJson: any = request.response ? JSON.parse(request.response) : null;

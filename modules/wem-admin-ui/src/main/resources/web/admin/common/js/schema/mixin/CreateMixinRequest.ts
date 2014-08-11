@@ -1,6 +1,6 @@
 module api.schema.mixin {
 
-    export class CreateMixinRequest extends MixinResourceRequest<api.schema.mixin.json.MixinJson> {
+    export class CreateMixinRequest extends MixinResourceRequest<api.schema.mixin.json.MixinJson, Mixin> {
 
         private name:string;
 

@@ -1,6 +1,6 @@
 module api.rest {
 
-    export class ResourceRequest<T> {
+    export class ResourceRequest<RAW_JSON_TYPE, PARSED_TYPE> {
 
         private restPath: Path;
 
@@ -33,11 +33,11 @@ module api.rest {
 
         }
 
-        send(): Q.Promise<Response> {
+        send(): Q.Promise<JsonResponse<RAW_JSON_TYPE>> {
 
             this.validate();
 
-            var jsonRequest = new JsonRequest<T>().
+            var jsonRequest = new JsonRequest<RAW_JSON_TYPE>().
                 setMethod(this.method).
                 setParams(this.getParams()).
                 setPath(this.getRequestPath());
@@ -45,7 +45,7 @@ module api.rest {
             return jsonRequest.send();
         }
 
-        sendAndParse():Q.Promise<any> {
+        sendAndParse():Q.Promise<PARSED_TYPE> {
             throw new Error("sendAndParse method was not implemented");
         }
     }

@@ -1,6 +1,6 @@
 module api.schema.relationshiptype {
 
-    export class UpdateRelationshipTypeRequest extends RelationshipTypeResourceRequest<api.schema.relationshiptype.json.RelationshipTypeJson> {
+    export class UpdateRelationshipTypeRequest extends RelationshipTypeResourceRequest<json.RelationshipTypeJson, RelationshipType> {
 
         private relationshipTypeToUpdate:RelationshipTypeName
 
@@ -35,7 +35,7 @@ module api.schema.relationshiptype {
 
         sendAndParse(): Q.Promise<RelationshipType> {
 
-            return this.send().then((response: api.rest.JsonResponse<api.schema.relationshiptype.json.RelationshipTypeJson>) => {
+            return this.send().then((response: api.rest.JsonResponse<json.RelationshipTypeJson>) => {
                 return this.fromJsonToReleationshipType(response.getResult());
             });
         }

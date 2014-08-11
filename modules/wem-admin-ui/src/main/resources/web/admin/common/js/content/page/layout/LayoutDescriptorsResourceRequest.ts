@@ -1,6 +1,6 @@
 module api.content.page.layout {
 
-    export class LayoutDescriptorsResourceRequest extends LayoutDescriptorResourceRequest<LayoutDescriptorsJson> {
+    export class LayoutDescriptorsResourceRequest extends LayoutDescriptorResourceRequest<LayoutDescriptorsJson, LayoutDescriptor[]> {
 
         fromJsonToLayoutDescriptors(json: LayoutDescriptorsJson): LayoutDescriptor[] {
 

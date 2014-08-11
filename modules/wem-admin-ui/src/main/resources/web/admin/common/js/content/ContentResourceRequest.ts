@@ -1,6 +1,6 @@
 module api.content {
 
-    export class ContentResourceRequest<T> extends api.rest.ResourceRequest<T> {
+    export class ContentResourceRequest<JSON_TYPE, PARSED_TYPE> extends api.rest.ResourceRequest<JSON_TYPE, PARSED_TYPE> {
 
         public static EXPAND_NONE = 'none';
         public static EXPAND_SUMMARY = 'summary';

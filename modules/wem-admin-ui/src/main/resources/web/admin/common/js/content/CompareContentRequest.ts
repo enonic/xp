@@ -1,6 +1,6 @@
 module api.content {
 
-    export class CompareContentRequest extends ContentResourceRequest<api.content.json.CompareContentResultsJson> {
+    export class CompareContentRequest extends ContentResourceRequest<api.content.json.CompareContentResultsJson, CompareContentResults> {
 
         private ids: string[];
 

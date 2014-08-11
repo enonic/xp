@@ -1,6 +1,6 @@
 module api.content {
 
-    export class UpdateContentRequest extends ContentResourceRequest<any> {
+    export class UpdateContentRequest extends ContentResourceRequest<api.content.json.ContentJson, Content> {
 
         private id: string;
 

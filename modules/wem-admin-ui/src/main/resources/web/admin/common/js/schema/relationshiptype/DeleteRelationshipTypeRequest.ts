@@ -1,6 +1,6 @@
 module api.schema.relationshiptype {
 
-    export class DeleteRelationshipTypeRequest extends RelationshipTypeResourceRequest<api.schema.SchemaDeleteJson> {
+    export class DeleteRelationshipTypeRequest extends RelationshipTypeResourceRequest<api.schema.SchemaDeleteJson, api.schema.SchemaDeleteResult> {
 
         private names: string[] = [];
 

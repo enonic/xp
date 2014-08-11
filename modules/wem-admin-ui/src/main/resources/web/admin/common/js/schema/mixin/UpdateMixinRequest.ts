@@ -1,6 +1,6 @@
 module api.schema.mixin {
 
-    export class UpdateMixinRequest extends MixinResourceRequest<api.schema.mixin.json.MixinJson> {
+    export class UpdateMixinRequest extends MixinResourceRequest<api.schema.mixin.json.MixinJson, Mixin> {
 
         private mixinToUpdate:string;
 
