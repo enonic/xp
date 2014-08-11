@@ -14,6 +14,7 @@ module api.liveedit.image {
 
         constructor(imageComponentView: ImageComponentView) {
             super();
+            this.imageComponentView = imageComponentView;
             this.onClicked((event: MouseEvent) => {
                 event.stopPropagation();
             });

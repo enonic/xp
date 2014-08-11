@@ -210,10 +210,6 @@ module api.liveedit {
             return this.moving;
         }
 
-        showLoadingPlaceholder() {
-
-        }
-
         displayPlaceholder() {
 
         }
