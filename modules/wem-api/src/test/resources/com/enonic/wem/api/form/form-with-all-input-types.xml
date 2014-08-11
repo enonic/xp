@@ -70,8 +70,8 @@
       <selector-type>DROPDOWN</selector-type>
     </config>
   </input>
-  <input name="myTags" type="Tags">
-    <immutable>false</immutable>
+  <input name="myTag" type="Tag">
+  <immutable>false</immutable>
     <indexed>false</indexed>
     <occurrences minimum="0" maximum="1"/>
   </input>

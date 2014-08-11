@@ -6,13 +6,10 @@ import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.form.BreaksRequiredContractException;
 
-/**
- * TODO: An array of strings
- */
-final class Tags
+final class Tag
     extends InputType
 {
-    Tags()
+    Tag()
     {
     }
 

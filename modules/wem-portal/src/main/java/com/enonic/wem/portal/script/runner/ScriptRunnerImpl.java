@@ -55,7 +55,7 @@ final class ScriptRunnerImpl
         final Context context = Context.enter();
 
         this.contextServiceBean.setModule( this.source.getKey().getModule() );
-        this.contextServiceBean.install( context );
+        this.contextServiceBean.install();
         final JsContext portalContext = (JsContext) objects.get( "portal" );
         this.contextServiceBean.setJsContext( portalContext );
 
@@ -73,7 +73,7 @@ final class ScriptRunnerImpl
         }
         finally
         {
-            ContextScriptBean.remove( context );
+            ContextScriptBean.remove();
             Context.exit();
         }
     }

@@ -40,12 +40,4 @@ public class MixinTest
             assertEquals( "A Mixin cannot reference other Mixins unless it is of type InputMixin: FormItemSetMixin", e.getMessage() );
         }
     }
-
-    @Test
-    public void tags()
-    {
-        Input input = newInput().name( "tags" ).label( "Tags" ).inputType( InputTypes.TEXT_LINE ).multiple( true ).build();
-        Mixin inputMixin = Mixin.newMixin().name( "tags" ).addFormItem( input ).build();
-    }
-
 }
