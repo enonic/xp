@@ -47,13 +47,25 @@ module api.ui.time {
             this.monthOfYear = builder.monthOfYear;
             this.startingDayOfWeek = builder.startingDayOfWeek;
 
-            this.calendarDays = [];
+            this.calendarDays = this.resolveDaysInMonth();
+            var firstDay = this.resolveFirstDayOfCalendar();
+            this.weeks = this.createCalendarWeeks(firstDay);
+            this.weeks.forEach((week) => {
+                this.appendChild(week);
+            });
+        }
+
+        private resolveDaysInMonth() {
+            var calendarDays: CalendarDay[] = [];
             var daysInMonth = new Date(this.year, this.monthOfYear, 0).getDate();
             for (var i = 1; i <= daysInMonth; i++) {
                 var calendarDay = this.createCalendarDay(i);
-                this.calendarDays.push(calendarDay);
+                calendarDays.push(calendarDay);
             }
+            return calendarDays;
+        }
 
+        private resolveFirstDayOfCalendar() {
             var firstDay: CalendarDay = null;
             if (this.startingDayOfWeek.equals(this.calendarDays[0].getDayOfWeek())) {
                 firstDay = this.calendarDays[0];
@@ -65,16 +77,19 @@ module api.ui.time {
                 }
                 firstDay = previousDay;
             }
-            this.weeks = [];
+            return firstDay;
+        }
+
+        private createCalendarWeeks(firstDay: CalendarDay) {
+            var weeks: CalendarWeek [] = [];
             var currWeek = this.createCalendarWeek(firstDay);
-            this.weeks.push(currWeek);
-            this.appendChild(currWeek);
+            weeks.push(currWeek);
             while (!currWeek.hasLastDayOfMonth(this.monthOfYear)) {
                 var newWeek = this.createCalendarWeek(currWeek.getNextWeeksFirstDay());
-                this.weeks.push(newWeek);
-                this.appendChild(newWeek);
+                weeks.push(newWeek);
                 currWeek = newWeek;
             }
+            return weeks;
         }
 
         private createCalendarWeek(firstDayOfWeek: CalendarDay): CalendarWeek {
