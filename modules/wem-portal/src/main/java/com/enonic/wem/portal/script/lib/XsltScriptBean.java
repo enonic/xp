@@ -9,13 +9,9 @@ import javax.inject.Inject;
 import javax.xml.transform.Source;
 import javax.xml.transform.SourceLocator;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamSource;
 
-import org.mozilla.javascript.xml.XMLObject;
-import org.mozilla.javascript.xmlimpl.XMLLibImpl;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
@@ -28,7 +24,6 @@ import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.script.SourceException;
 import com.enonic.wem.portal.xml.DomBuilder;
-import com.enonic.wem.portal.xml.DomHelper;
 import com.enonic.wem.portal.xslt.XsltProcessor;
 import com.enonic.wem.portal.xslt.XsltProcessorException;
 import com.enonic.wem.portal.xslt.XsltProcessorSpec;
@@ -58,22 +53,8 @@ public final class XsltScriptBean
     private Source toSource( final Object obj )
         throws Exception
     {
-        if ( obj instanceof XMLObject )
-        {
-            return toSource( (XMLObject) obj );
-        }
-
         final String xml = obj.toString();
         return new StreamSource( new StringReader( xml ) );
-    }
-
-    private Source toSource( final XMLObject xml )
-        throws Exception
-    {
-        final Node node = XMLLibImpl.toDomNode( xml );
-        final Document doc = DomHelper.newDocument();
-        doc.appendChild( doc.importNode( node, true ) );
-        return new DOMSource( doc );
     }
 
     private Source toSource( final URL url )
@@ -98,11 +79,6 @@ public final class XsltScriptBean
     private Object convertParam( final Object value )
         throws Exception
     {
-        if ( value instanceof XMLObject )
-        {
-            return toSource( (XMLObject) value );
-        }
-
         return value;
     }
 

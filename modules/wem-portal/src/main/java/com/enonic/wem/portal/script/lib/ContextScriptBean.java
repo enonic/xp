@@ -2,8 +2,6 @@ package com.enonic.wem.portal.script.lib;
 
 import java.net.URL;
 
-import org.mozilla.javascript.Context;
-
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceNotFoundException;
@@ -12,7 +10,7 @@ import com.enonic.wem.portal.controller.JsContext;
 
 public final class ContextScriptBean
 {
-    private final static String NAME = ContextScriptBean.class.getName();
+    private final static ThreadLocal<ContextScriptBean> CURRENT = new ThreadLocal<>();
 
     private ModuleKey module;
 
@@ -64,18 +62,18 @@ public final class ContextScriptBean
         }
     }
 
-    public void install( final Context context )
+    public void install()
     {
-        context.putThreadLocal( NAME, this );
+        CURRENT.set( this );
     }
 
-    public static void remove( final Context context )
+    public static void remove()
     {
-        context.removeThreadLocal( NAME );
+        CURRENT.remove();
     }
 
     public static ContextScriptBean get()
     {
-        return (ContextScriptBean) Context.getCurrentContext().getThreadLocal( NAME );
+        return CURRENT.get();
     }
 }
