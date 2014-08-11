@@ -324,11 +324,11 @@ module api.liveedit {
 
             if (position) {
                 // show menu at position
-                x = position.x - this.contextMenu.getEl().getWidth() / 2;
+                x = position.x;
                 y = position.y;
             } else {
                 // show menu below if empty or on top
-                x = dimensions.left + dimensions.width / 2 - this.contextMenu.getEl().getWidth() / 2;
+                x = dimensions.left + dimensions.width / 2;
                 y = dimensions.top + (this.isEmpty() ? dimensions.height : 0);
             }
             this.contextMenu.showAt(x, y);
