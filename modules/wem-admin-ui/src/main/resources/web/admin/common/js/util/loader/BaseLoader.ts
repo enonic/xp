@@ -7,7 +7,7 @@ module api.util.loader {
 
     export class BaseLoader<JSON, OBJECT> {
 
-        private request: api.rest.ResourceRequest<JSON>;
+        private request: api.rest.ResourceRequest<JSON, OBJECT[]>;
 
         private isLoading: boolean;
 
@@ -19,7 +19,7 @@ module api.util.loader {
 
         private loadingDataListeners: {(event: LoadingDataEvent):void}[] = [];
 
-        constructor(request: api.rest.ResourceRequest<JSON>) {
+        constructor(request: api.rest.ResourceRequest<JSON, OBJECT[]>) {
             this.isLoading = false;
             this.setRequest(request);
         }
@@ -45,11 +45,11 @@ module api.util.loader {
             return this.isLoading;
         }
 
-        setRequest(request: api.rest.ResourceRequest<JSON>) {
+        setRequest(request: api.rest.ResourceRequest<JSON, OBJECT[]>) {
             this.request = request;
         }
 
-        getRequest(): api.rest.ResourceRequest<JSON> {
+        getRequest(): api.rest.ResourceRequest<JSON, OBJECT[]> {
             return this.request;
         }
 

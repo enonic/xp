@@ -1,6 +1,6 @@
 module api.module {
 
-    export class InstallModuleRequest extends ModuleResourceRequest<api.item.ItemJson> {
+    export class InstallModuleRequest extends ModuleResourceRequest<api.item.ItemJson, void> {
 
         private moduleUrl: string;
 

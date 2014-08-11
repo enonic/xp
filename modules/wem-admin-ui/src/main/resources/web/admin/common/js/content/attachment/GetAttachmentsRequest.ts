@@ -1,6 +1,6 @@
 module api.content.attachment {
 
-    export class GetAttachmentsRequest extends AttachmentResourceRequest<api.content.attachment.AttachmentListJson> {
+    export class GetAttachmentsRequest extends AttachmentResourceRequest<AttachmentListJson, Attachment[]> {
 
         private contentId: api.content.ContentId;
 
@@ -21,9 +21,9 @@ module api.content.attachment {
             return api.rest.Path.fromParent(super.getResourcePath(), "all");
         }
 
-        sendAndParse(): Q.Promise<api.content.attachment.Attachment[]> {
+        sendAndParse(): Q.Promise<Attachment[]> {
 
-            return this.send().then((response: api.rest.JsonResponse<api.content.attachment.AttachmentListJson>) => {
+            return this.send().then((response: api.rest.JsonResponse<AttachmentListJson>) => {
                 return this.fromJsonArrayToAttachments(response.getResult().attachments);
             });
         }

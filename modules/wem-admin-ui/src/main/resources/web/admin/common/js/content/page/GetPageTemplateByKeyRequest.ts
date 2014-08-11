@@ -1,12 +1,12 @@
 module api.content.page {
 
-    export class GetPageTemplateByKeyRequest extends PageTemplateResourceRequest<api.content.page.PageTemplateJson> {
+    export class GetPageTemplateByKeyRequest extends PageTemplateResourceRequest<PageTemplateJson, PageTemplate> {
 
         private siteTemplateKey: api.content.site.template.SiteTemplateKey;
 
-        private pageTemplateKey: api.content.page.PageTemplateKey;
+        private pageTemplateKey: PageTemplateKey;
 
-        constructor(pageTemplateKey: api.content.page.PageTemplateKey) {
+        constructor(pageTemplateKey: PageTemplateKey) {
             super();
             super.setMethod("GET");
             this.pageTemplateKey = pageTemplateKey;
@@ -33,9 +33,9 @@ module api.content.page {
             return super.getResourcePath();
         }
 
-        sendAndParse(): Q.Promise<api.content.page.PageTemplate> {
+        sendAndParse(): Q.Promise<PageTemplate> {
 
-            return this.send().then((response: api.rest.JsonResponse<api.content.page.PageTemplateJson>) => {
+            return this.send().then((response: api.rest.JsonResponse<PageTemplateJson>) => {
                 return this.fromJsonToPageTemplate(response.getResult());
             });
         }

@@ -1,6 +1,6 @@
 module api.content.page.part {
 
-    export class PartDescriptorResourceRequest<JSON> extends api.rest.ResourceRequest<JSON> {
+    export class PartDescriptorResourceRequest<JSON_TYPE, PARSED_TYPE> extends api.rest.ResourceRequest<JSON_TYPE, PARSED_TYPE> {
 
         private resourcePath: api.rest.Path;
 

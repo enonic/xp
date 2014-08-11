@@ -1,6 +1,6 @@
 module api.content.page {
 
-    export class GetPageDescriptorByKeyRequest extends PageDescriptorResourceRequest<api.content.page.PageDescriptorJson> {
+    export class GetPageDescriptorByKeyRequest extends PageDescriptorResourceRequest<PageDescriptorJson, PageDescriptor> {
 
         private key: DescriptorKey;
 
@@ -20,9 +20,9 @@ module api.content.page {
             return super.getResourcePath();
         }
 
-        sendAndParse(): Q.Promise<api.content.page.PageDescriptor> {
+        sendAndParse(): Q.Promise<PageDescriptor> {
 
-            return this.send().then((response: api.rest.JsonResponse<api.content.page.PageDescriptorJson>) => {
+            return this.send().then((response: api.rest.JsonResponse<PageDescriptorJson>) => {
                 return this.fromJsonToPageDescriptor(response.getResult());
             });
         }

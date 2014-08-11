@@ -2,7 +2,7 @@ module api.content.site.template {
 
     import TemplateSummary = api.content.TemplateSummary;
 
-    export class TemplateTreeRequest extends SiteTemplateResourceRequest<TemplateSummaryListJson> {
+    export class TemplateTreeRequest extends SiteTemplateResourceRequest<TemplateSummaryListJson, TemplateSummary[]> {
 
         private parentId: string;
 

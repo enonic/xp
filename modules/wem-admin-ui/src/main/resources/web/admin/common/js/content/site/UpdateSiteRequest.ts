@@ -1,6 +1,6 @@
 module api.content.site {
 
-    export class UpdateSiteRequest extends SiteResourceRequest<api.content.json.ContentJson> {
+    export class UpdateSiteRequest extends SiteResourceRequest<api.content.json.ContentJson, api.content.Content> {
 
         private contentId: string;
         private siteTemplateKey: api.content.site.template.SiteTemplateKey;

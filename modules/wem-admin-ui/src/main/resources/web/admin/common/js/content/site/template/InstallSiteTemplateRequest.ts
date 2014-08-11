@@ -1,6 +1,6 @@
 module api.content.site.template {
 
-    export class InstallSiteTemplateRequest extends SiteTemplateResourceRequest<SiteTemplateSummaryJson[]> {
+    export class InstallSiteTemplateRequest extends SiteTemplateResourceRequest<SiteTemplateSummaryJson[], any> {
 
         private uploader: any;
         private triggerElement: api.dom.Element;

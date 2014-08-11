@@ -1,6 +1,6 @@
 module api.content {
 
-    export class ListContentByIdRequest extends ContentResourceRequest<ListContentResult<api.content.json.ContentSummaryJson>> {
+    export class ListContentByIdRequest extends ContentResourceRequest<ListContentResult<api.content.json.ContentSummaryJson>, ContentSummary[]> {
 
         private parentId:string;
 

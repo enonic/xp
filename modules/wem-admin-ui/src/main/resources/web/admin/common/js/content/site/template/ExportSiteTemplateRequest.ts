@@ -1,6 +1,6 @@
 module api.content.site.template {
 
-    export class ExportSiteTemplateRequest extends SiteTemplateResourceRequest<any> {
+    export class ExportSiteTemplateRequest extends SiteTemplateResourceRequest<any, any> {
 
         private siteTemplateKey: api.content.site.template.SiteTemplateKey;
 

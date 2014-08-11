@@ -1,6 +1,6 @@
 module api.schema.content {
 
-    export class ContentTypeResourceRequest<T> extends api.rest.ResourceRequest<T> {
+    export class ContentTypeResourceRequest<JSON_TYPE, PARSED_TYPE> extends api.rest.ResourceRequest<JSON_TYPE, PARSED_TYPE> {
 
         private resourceUrl: api.rest.Path;
 

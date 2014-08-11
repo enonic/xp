@@ -7,12 +7,9 @@ module api.schema.content {
             super(new GetAllContentTypesRequest())
         }
 
-
         filterFn(contentType:ContentTypeSummary) {
             return contentType.getContentTypeName().toString().indexOf(this.getSearchString().toLowerCase()) != -1;
         }
-
-
 
     }
 

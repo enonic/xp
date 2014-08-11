@@ -1,6 +1,6 @@
 module api.module {
 
-    export class ModuleResourceRequest<T> extends api.rest.ResourceRequest<T> {
+    export class ModuleResourceRequest<JSON_TYPE, PARSED_TYPE> extends api.rest.ResourceRequest<JSON_TYPE, PARSED_TYPE> {
 
         private resourcePath: api.rest.Path;
 

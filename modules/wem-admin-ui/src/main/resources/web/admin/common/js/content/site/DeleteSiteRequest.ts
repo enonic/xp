@@ -1,6 +1,6 @@
 module api.content.site {
 
-    export class DeleteSiteRequest extends SiteResourceRequest<api.content.json.ContentJson> {
+    export class DeleteSiteRequest extends SiteResourceRequest<api.content.json.ContentJson, any> {
 
         private contentId: string;
 
