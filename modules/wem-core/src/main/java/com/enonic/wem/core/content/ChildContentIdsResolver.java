@@ -5,9 +5,11 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.Contents;
+import com.enonic.wem.api.content.GetContentByParentParams;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.NodeService;
 import com.enonic.wem.api.schema.content.ContentTypeService;
+import com.enonic.wem.core.index.query.QueryService;
 
 final class ChildContentIdsResolver
 {
@@ -21,6 +23,8 @@ final class ChildContentIdsResolver
 
     private final ContentNodeTranslator translator;
 
+    private final QueryService queryService;
+
     private ChildContentIdsResolver( final Builder builder )
     {
         this.nodeService = builder.nodeService;
@@ -28,6 +32,7 @@ final class ChildContentIdsResolver
         this.blobService = builder.blobService;
         this.context = builder.context;
         this.translator = builder.translator;
+        this.queryService = builder.queryService;
     }
 
     public static Builder create()
@@ -37,13 +42,21 @@ final class ChildContentIdsResolver
 
     Content resolve( final Content content )
     {
-        final Contents children = GetContentByParentCommand.create( content.getPath() ).
+
+        final GetContentByParentParams getContentByParentParams = GetContentByParentParams.create().
+            parentPath( content.getPath() ).
+            from( 0 ).
+            size( 1 ).
+            build();
+
+        final Contents children = GetContentByParentCommand.create( getContentByParentParams ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             context( this.context ).
             blobService( this.blobService ).
             translator( this.translator ).
-            populateChildIds( true ).
+            queryService( this.queryService ).
+            populateChildIds( false ).
             build().
             execute();
 
@@ -70,14 +83,14 @@ final class ChildContentIdsResolver
 
     Contents resolve( final Contents contents )
     {
-        final Contents.Builder builder = new Contents.Builder();
+        final Contents.Builder resolvedContent = new Contents.Builder();
 
         for ( final Content content : contents )
         {
-            builder.add( resolve( content ) );
+            resolvedContent.add( resolve( content ) );
         }
 
-        return builder.build();
+        return resolvedContent.build();
     }
 
     public static class Builder
@@ -92,9 +105,17 @@ final class ChildContentIdsResolver
 
         private ContentNodeTranslator translator;
 
+        private QueryService queryService;
+
         public Builder nodeService( final NodeService nodeService )
         {
             this.nodeService = nodeService;
+            return this;
+        }
+
+        public Builder queryService( final QueryService queryService )
+        {
+            this.queryService = queryService;
             return this;
         }
 
@@ -128,6 +149,7 @@ final class ChildContentIdsResolver
             Preconditions.checkNotNull( blobService );
             Preconditions.checkNotNull( contentTypeService );
             Preconditions.checkNotNull( nodeService );
+            Preconditions.checkNotNull( queryService );
         }
 
         public ChildContentIdsResolver build()

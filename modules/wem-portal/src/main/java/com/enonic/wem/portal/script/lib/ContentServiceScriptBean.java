@@ -9,6 +9,7 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.Contents;
+import com.enonic.wem.api.content.GetContentByParentParams;
 
 public final class ContentServiceScriptBean
 {
@@ -17,12 +18,22 @@ public final class ContentServiceScriptBean
 
     public Contents getRootContent()
     {
-        return contentService.getRoots( ContentConstants.CONTEXT_STAGE );
+        return contentService.getByParent( GetContentByParentParams.create().
+            from( 0 ).
+            size( 500 ).
+            parentPath( null ).
+            build(), ContentConstants.CONTEXT_STAGE );
     }
 
     public Contents getChildContent( final String parentPath )
     {
-        return contentService.getByParent( ContentPath.from( parentPath ), ContentConstants.CONTEXT_STAGE );
+        final GetContentByParentParams params = GetContentByParentParams.create().
+            from( 0 ).
+            size( 500 ).
+            parentPath( ContentPath.from( parentPath ) ).
+            build();
+
+        return contentService.getByParent( params, ContentConstants.CONTEXT_STAGE );
     }
 
     public Content getContentById( final String id )

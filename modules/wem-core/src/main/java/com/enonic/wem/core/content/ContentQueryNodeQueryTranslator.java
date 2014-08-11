@@ -6,7 +6,7 @@ import com.enonic.wem.api.entity.query.NodeQuery;
 public class ContentQueryNodeQueryTranslator
     extends ContentQueryEntityQueryTranslator
 {
-    public NodeQuery translate( final ContentQuery contentQuery )
+    public static NodeQuery translate( final ContentQuery contentQuery )
     {
         final NodeQuery.Builder builder = NodeQuery.newNodeQuery();
 

@@ -6,7 +6,6 @@ import java.util.Set;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.ContentNotFoundException;
@@ -17,6 +16,7 @@ import com.enonic.wem.api.entity.EntityIds;
 import com.enonic.wem.api.entity.NoEntityWithIdFoundException;
 import com.enonic.wem.api.entity.NodeService;
 import com.enonic.wem.api.entity.Nodes;
+import com.enonic.wem.core.index.query.QueryService;
 
 
 final class GetContentByIdsCommand
@@ -26,11 +26,14 @@ final class GetContentByIdsCommand
 
     private final NodeService nodeService;
 
+    private final QueryService queryService;
+
     private GetContentByIdsCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
         this.nodeService = builder.nodeService;
+        this.queryService = builder.queryService;
     }
 
     Contents execute()
@@ -54,6 +57,7 @@ final class GetContentByIdsCommand
             blobService( this.blobService ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
+            queryService( this.queryService ).
             build().
             resolve( contents ) : contents;
     }
@@ -61,7 +65,7 @@ final class GetContentByIdsCommand
     private Contents doExecute()
     {
         final EntityIds entityIds = getAsEntityIds( this.params.getIds() );
-        final Nodes nodes = nodeService.getByIds( entityIds, this.context);
+        final Nodes nodes = nodeService.getByIds( entityIds, this.context );
 
         return translator.fromNodes( nodes );
     }
@@ -93,6 +97,9 @@ final class GetContentByIdsCommand
 
         private NodeService nodeService;
 
+        private QueryService queryService;
+
+
         public Builder( final GetContentByIdsParams params )
         {
             this.params = params;
@@ -104,11 +111,18 @@ final class GetContentByIdsCommand
             return this;
         }
 
+        public Builder queryService( final QueryService queryService )
+        {
+            this.queryService = queryService;
+            return this;
+        }
+
         void validate()
         {
             super.validate();
             Preconditions.checkNotNull( params );
             Preconditions.checkNotNull( nodeService );
+            Preconditions.checkNotNull( queryService );
         }
 
         public GetContentByIdsCommand build()

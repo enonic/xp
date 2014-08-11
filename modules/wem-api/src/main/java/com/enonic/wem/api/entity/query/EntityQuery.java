@@ -2,7 +2,6 @@ package com.enonic.wem.api.entity.query;
 
 import java.util.Set;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
@@ -24,7 +23,7 @@ public class EntityQuery
 
     private final ImmutableSet<AggregationQuery> aggregationQueries;
 
-    private final ImmutableList<OrderExpr> orderBys;
+    private final ImmutableSet<OrderExpr> orderBys;
 
     private final int from;
 
@@ -35,7 +34,7 @@ public class EntityQuery
         this.query = builder.query;
         this.filters = ImmutableSet.copyOf( builder.filters );
         this.queryFilters = ImmutableSet.copyOf( builder.queryFilters );
-        this.orderBys = query != null ? ImmutableList.copyOf( query.getOrderList() ) : ImmutableList.<OrderExpr>of();
+        this.orderBys = query != null ? ImmutableSet.copyOf( query.getOrderSet() ) : ImmutableSet.<OrderExpr>of();
         this.size = builder.size;
         this.from = builder.from;
         this.aggregationQueries = ImmutableSet.copyOf( builder.aggregationQueries );
@@ -64,7 +63,7 @@ public class EntityQuery
         return queryFilters;
     }
 
-    public ImmutableList<OrderExpr> getOrderBys()
+    public ImmutableSet<OrderExpr> getOrderBys()
     {
         return orderBys;
     }

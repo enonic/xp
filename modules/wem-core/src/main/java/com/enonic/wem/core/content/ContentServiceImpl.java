@@ -17,6 +17,7 @@ import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.DeleteContentParams;
 import com.enonic.wem.api.content.DeleteContentResult;
 import com.enonic.wem.api.content.GetContentByIdsParams;
+import com.enonic.wem.api.content.GetContentByParentParams;
 import com.enonic.wem.api.content.GetContentVersionsParams;
 import com.enonic.wem.api.content.PushContentParams;
 import com.enonic.wem.api.content.RenameContentParams;
@@ -74,6 +75,7 @@ public class ContentServiceImpl
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
+            queryService( this.queryService ).
             context( context ).
             build().
             execute();
@@ -106,22 +108,10 @@ public class ContentServiceImpl
     }
 
     @Override
-    public Contents getRoots( final Context context )
+    public Contents getByParent( final GetContentByParentParams params, final Context context )
     {
-        return GetRootContentCommand.create().
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            blobService( this.blobService ).
-            translator( this.contentNodeTranslator ).
-            context( context ).
-            build().
-            execute();
-    }
-
-    @Override
-    public Contents getByParent( final ContentPath parentPath, final Context context )
-    {
-        return GetContentByParentCommand.create( parentPath ).
+        return GetContentByParentCommand.create( params ).
+            queryService( this.queryService ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
@@ -215,10 +205,11 @@ public class ContentServiceImpl
     @Override
     public ContentQueryResult find( final ContentQuery contentQuery, final Context context )
     {
-        return new FindContentCommand().
+        return FindContentCommand.create().
             contentQuery( contentQuery ).
             queryService( this.queryService ).
             context( context ).
+            build().
             execute();
     }
 

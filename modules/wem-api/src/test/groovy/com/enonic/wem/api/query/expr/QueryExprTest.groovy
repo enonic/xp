@@ -1,9 +1,10 @@
 package com.enonic.wem.api.query.expr
 
+import com.google.common.collect.Sets
 import spock.lang.Specification
 
 class QueryExprTest
-        extends Specification
+    extends Specification
 {
     def "test empty query"()
     {
@@ -12,7 +13,7 @@ class QueryExprTest
 
         expect:
         expr.getConstraint() == null
-        expr.getOrderList() == []
+        expr.getOrderSet().isEmpty()
         expr.toString() == ""
     }
 
@@ -20,12 +21,12 @@ class QueryExprTest
     {
         given:
         def constraint = CompareExpr.eq( new FieldExpr( "a" ), ValueExpr.number( 2 ) )
-        def orderList = [new FieldOrderExpr( new FieldExpr( "a" ), OrderExpr.Direction.DESC )]
+        def orderList = Sets.newHashSet( new FieldOrderExpr( new FieldExpr( "a" ), OrderExpr.Direction.DESC ) )
         def expr = new QueryExpr( constraint, orderList )
 
         expect:
         expr.getConstraint() == constraint
-        expr.getOrderList() == orderList
+        expr.getOrderSet() == orderList
         expr.toString() == "a = 2.0 ORDER BY a DESC"
     }
 
@@ -37,19 +38,19 @@ class QueryExprTest
 
         expect:
         expr.getConstraint() == constraint
-        expr.getOrderList() == []
+        expr.getOrderSet().isEmpty()
         expr.toString() == "a = 2.0"
     }
 
     def "test only order in query"()
     {
         given:
-        def orderList = [new FieldOrderExpr( new FieldExpr( "a" ), OrderExpr.Direction.DESC )]
+        def orderList = Sets.newHashSet( new FieldOrderExpr( new FieldExpr( "a" ), OrderExpr.Direction.DESC ) )
         def expr = new QueryExpr( null, orderList )
 
         expect:
         expr.getConstraint() == null
-        expr.getOrderList() == orderList
+        expr.getOrderSet() == orderList
         expr.toString() == "ORDER BY a DESC"
     }
 }
