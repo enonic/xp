@@ -26,7 +26,7 @@ final class ScriptRunnerImpl
 
     private final Map<String, Object> objects;
 
-    private ScriptSource source;
+    private Resource source;
 
     protected ContextScriptBean contextServiceBean;
 
@@ -38,7 +38,7 @@ final class ScriptRunnerImpl
     @Override
     public ScriptRunner source( final Resource source )
     {
-        this.source = new ScriptSource( source );
+        this.source = source;
         return this;
     }
 
@@ -54,7 +54,7 @@ final class ScriptRunnerImpl
     {
         final Context context = Context.enter();
 
-        this.contextServiceBean.setModule( this.source.getModule() );
+        this.contextServiceBean.setModule( this.source.getKey().getModule() );
         this.contextServiceBean.install( context );
         final JsContext portalContext = (JsContext) objects.get( "portal" );
         this.contextServiceBean.setJsContext( portalContext );

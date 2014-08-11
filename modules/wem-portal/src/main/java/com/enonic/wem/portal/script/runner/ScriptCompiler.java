@@ -6,6 +6,8 @@ import org.mozilla.javascript.Script;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
+import com.enonic.wem.api.resource.Resource;
+
 final class ScriptCompiler
 {
     private final Cache<String, Script> cache;
@@ -15,9 +17,9 @@ final class ScriptCompiler
         this.cache = CacheBuilder.newBuilder().maximumSize( 1000 ).build();
     }
 
-    public Script compile( final Context context, final ScriptSource source )
+    public Script compile( final Context context, final Resource source )
     {
-        final String key = source.getName() + "_" + source.getTimestamp();
+        final String key = source.getKey().toString() + "_" + source.getTimestamp();
         final Script script = this.cache.getIfPresent( key );
         if ( script != null )
         {
@@ -29,8 +31,8 @@ final class ScriptCompiler
         return compiled;
     }
 
-    private Script doCompile( final Context context, final ScriptSource source )
+    private Script doCompile( final Context context, final Resource source )
     {
-        return context.compileString( source.getScriptAsString(), source.getName(), 1, null );
+        return context.compileString( source.readString(), source.getKey().toString(), 1, null );
     }
 }
