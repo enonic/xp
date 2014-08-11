@@ -15,17 +15,315 @@
     </xsd:appinfo>
   </xsd:annotation>
 
-  <xsd:include schemaLocation="common.xsd"/>
-  <xsd:include schemaLocation="form.xsd"/>
-  <xsd:include schemaLocation="module.xsd"/>
-  <xsd:include schemaLocation="site-template.xsd"/>
-  <xsd:include schemaLocation="page-template.xsd"/>
-  <xsd:include schemaLocation="content-type.xsd"/>
-  <xsd:include schemaLocation="mixin.xsd"/>
-  <xsd:include schemaLocation="relationship-type.xsd"/>
-  <xsd:include schemaLocation="layout-component.xsd"/>
-  <xsd:include schemaLocation="image-component.xsd"/>
-  <xsd:include schemaLocation="part-component.xsd"/>
-  <xsd:include schemaLocation="page-component.xsd"/>
+  <!-- Form element -->
+  <xsd:element name="form" type="form"/>
+
+  <!-- Module element -->
+  <xsd:element name="module" type="module"/>
+
+  <!-- Site template element -->
+  <xsd:element name="site-template" type="siteTemplate"/>
+
+  <!-- Page template element -->
+  <xsd:element name="page-template" type="pageTemplate"/>
+
+  <!-- Content type element -->
+  <xsd:element name="content-type" type="contentType"/>
+
+  <!-- Mixin type element -->
+  <xsd:element name="mixin" type="mixin"/>
+
+  <!-- Relationship type element -->
+  <xsd:element name="relationship-type" type="relationshipType"/>
+
+  <!-- Layout component element -->
+  <xsd:element name="layout-component" type="layoutDescriptor"/>
+
+  <!-- Image component element -->
+  <xsd:element name="image-component" type="imageDescriptor"/>
+
+  <!-- Part component element -->
+  <xsd:element name="part-component" type="partDescriptor"/>
+
+  <!-- Page component element -->
+  <xsd:element name="page-component" type="pageDescriptor"/>
+
+  <!-- Form schema -->
+  <xsd:complexType name="formItem" abstract="true">
+    <xsd:attribute name="name" type="xsd:string" use="required"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="input">
+    <xsd:complexContent>
+      <xsd:extension base="formItem">
+        <xsd:all>
+          <xsd:element name="label" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+          <xsd:element name="immutable" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
+          <xsd:element name="indexed" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
+          <xsd:element name="custom-text" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+          <xsd:element name="help-text" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+          <xsd:element name="validation-regexp" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+          <xsd:element name="occurrences" type="occurrence" minOccurs="0" maxOccurs="1"/>
+          <xsd:element name="config" type="xsd:anyType" minOccurs="0" maxOccurs="1"/>
+        </xsd:all>
+        <xsd:attribute name="type" type="xsd:string" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="occurrence">
+    <xsd:attribute name="minimum" type="xsd:integer" use="required"/>
+    <xsd:attribute name="maximum" type="xsd:integer" use="required"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="mixinReference">
+    <xsd:complexContent>
+      <xsd:extension base="formItem">
+        <xsd:all>
+          <xsd:element name="reference" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+        </xsd:all>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="fieldSet">
+    <xsd:complexContent>
+      <xsd:extension base="formItem">
+        <xsd:all>
+          <xsd:element name="label" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+          <xsd:element name="items" type="formItems" minOccurs="0" maxOccurs="1"/>
+        </xsd:all>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="formItemSet">
+    <xsd:complexContent>
+      <xsd:extension base="formItem">
+        <xsd:all>
+          <xsd:element name="label" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+          <xsd:element name="immutable" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
+          <xsd:element name="custom-text" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+          <xsd:element name="help-text" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+          <xsd:element name="occurrences" type="occurrence" minOccurs="0" maxOccurs="1"/>
+          <xsd:element name="items" type="formItems" minOccurs="0" maxOccurs="1"/>
+        </xsd:all>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="formItems">
+    <xsd:choice minOccurs="0" maxOccurs="unbounded">
+      <xsd:annotation>
+        <xsd:appinfo>
+          <jaxb:property name="Items"/>
+        </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:element name="input" type="input"/>
+      <xsd:element name="mixin-reference" type="mixinReference"/>
+      <xsd:element name="field-set" type="fieldSet"/>
+      <xsd:element name="form-item-set" type="formItemSet"/>
+    </xsd:choice>
+  </xsd:complexType>
+
+  <xsd:complexType name="form">
+    <xsd:complexContent>
+      <xsd:extension base="formItems"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <!-- Module schema -->
+  <xsd:complexType name="module">
+    <xsd:all>
+      <xsd:element name="name" type="xsd:string"/>
+      <xsd:element name="version" type="xsd:string"/>
+      <xsd:element name="display-name" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="url" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="vendor" type="vendor" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="config" type="form" minOccurs="0" maxOccurs="1"/>
+    </xsd:all>
+  </xsd:complexType>
+
+  <!-- Site template schema -->
+  <xsd:complexType name="siteTemplate">
+    <xsd:all>
+      <xsd:element name="display-name" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="description" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="url" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="vendor" type="vendor" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="modules" type="modules" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="content-filter" type="contentFilter" minOccurs="0" maxOccurs="1"/>
+    </xsd:all>
+  </xsd:complexType>
+  <xsd:complexType name="modules">
+    <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+      <xsd:annotation>
+        <xsd:appinfo>
+          <jaxb:property name="List"/>
+        </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:element name="module" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="contentFilter">
+    <xsd:choice minOccurs="1" maxOccurs="unbounded">
+      <xsd:element name="deny" type="xsd:string"/>
+      <xsd:element name="allow" type="xsd:string"/>
+    </xsd:choice>
+  </xsd:complexType>
+
+  <!-- Page template schema -->
+  <xsd:complexType name="pageTemplate">
+    <xsd:all>
+      <xsd:element name="display-name" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="descriptor" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="config" type="xsd:anyType"  minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="can-render" type="canRenderDescriptor" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="regions" type="pageRegions" minOccurs="0" maxOccurs="1"/>
+    </xsd:all>
+  </xsd:complexType>
+
+  <xsd:complexType name="canRenderDescriptor">
+    <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+      <xsd:annotation>
+        <xsd:appinfo>
+          <jaxb:property name="ContentTypes"/>
+        </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:element name="content-type" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="pageRegions">
+    <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+      <xsd:annotation>
+        <xsd:appinfo>
+          <jaxb:property name="List"/>
+        </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:element name="region" type="pageRegion"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="pageRegion">
+    <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="part-component" type="partComponent"/>
+    </xsd:sequence>
+    <xsd:attribute name="name" type="xsd:string" use="required"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="partComponent">
+    <xsd:all>
+      <xsd:element name="display-name" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="config" type="xsd:anyType" minOccurs="0" maxOccurs="1"/>
+    </xsd:all>
+    <xsd:attribute name="descriptor" type="xsd:string"/>
+    <xsd:attribute name="name" type="xsd:string"/>
+  </xsd:complexType>
+
+
+  <!-- Content Type schema -->
+  <xsd:complexType name="contentType">
+    <xsd:all>
+      <xsd:element name="display-name" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="description" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="content-display-name-script" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="super-type" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="is-abstract" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="is-final" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="is-built-in" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="allow-child-content" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="form" type="formItems" minOccurs="0" maxOccurs="1"/>
+    </xsd:all>
+  </xsd:complexType>
+
+  <!-- Mixin schema -->
+  <xsd:complexType name="mixin">
+    <xsd:all>
+      <xsd:element name="display-name" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="description" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="items" type="formItems" minOccurs="0" maxOccurs="1"/>
+    </xsd:all>
+  </xsd:complexType>
+
+  <!-- Relationship Type schema -->
+  <xsd:complexType name="relationshipType">
+    <xsd:all>
+      <xsd:element name="description" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="from-semantic" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="to-semantic" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="allowed-from-types" type="allowedTypesDescriptor" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="allowed-to-types" type="allowedTypesDescriptor" minOccurs="0" maxOccurs="1"/>
+    </xsd:all>
+  </xsd:complexType>
+
+  <xsd:complexType name="allowedTypesDescriptor">
+    <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+      <xsd:annotation>
+        <xsd:appinfo>
+          <jaxb:property name="List"/>
+        </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:element name="content-type" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <!-- Layout component schema -->
+  <xsd:complexType name="layoutDescriptor">
+    <xsd:all>
+      <xsd:element name="display-name" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="config" type="form" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="regions" type="regionsDescriptor" minOccurs="0" maxOccurs="1"/>
+    </xsd:all>
+  </xsd:complexType>
+
+  <!-- Image component schema -->
+  <xsd:complexType name="imageDescriptor">
+    <xsd:all>
+      <xsd:element name="display-name" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="config" type="form" minOccurs="0" maxOccurs="1"/>
+    </xsd:all>
+  </xsd:complexType>
+
+  <!-- Part component schema -->
+  <xsd:complexType name="partDescriptor">
+    <xsd:all>
+      <xsd:element name="display-name" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="config" type="form" minOccurs="0" maxOccurs="1"/>
+    </xsd:all>
+  </xsd:complexType>
+
+  <!-- Page component schema -->
+  <xsd:complexType name="pageDescriptor">
+    <xsd:all>
+      <xsd:element name="display-name" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="config" type="form" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="regions" type="regionsDescriptor" minOccurs="0" maxOccurs="1"/>
+    </xsd:all>
+  </xsd:complexType>
+
+  <!-- Common schemas -->
+  <xsd:complexType name="vendor">
+    <xsd:all>
+      <xsd:element name="name" type="xsd:string"/>
+      <xsd:element name="url" type="xsd:string"/>
+    </xsd:all>
+  </xsd:complexType>
+
+  <xsd:complexType name="regionsDescriptor">
+    <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+      <xsd:annotation>
+        <xsd:appinfo>
+          <jaxb:property name="List"/>
+        </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:element name="region" type="regionDescriptor"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="regionDescriptor">
+    <xsd:attribute name="name" type="xsd:string" use="required"/>
+  </xsd:complexType>
 
 </xsd:schema>
