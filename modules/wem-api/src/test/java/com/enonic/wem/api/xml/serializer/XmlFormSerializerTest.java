@@ -234,7 +234,7 @@ public class XmlFormSerializerTest
             newInput().name( "myComboBox" ).inputType( InputTypes.COMBO_BOX ).inputTypeConfig( comboBoxConfig ).build() );
         formBuilder.addFormItem(
             newInput().name( "mySingleSelector" ).inputType( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
-        formBuilder.addFormItem( newInput().name( "myTags" ).inputType( InputTypes.TAGS ).build() );
+        formBuilder.addFormItem( newInput().name( "myTag" ).inputType( InputTypes.TAG ).build() );
         formBuilder.addFormItem( newInput().name( "myTextLine" ).inputType( InputTypes.TEXT_LINE ).build() );
         formBuilder.addFormItem( newInput().name( "myTextArea" ).inputType( InputTypes.TEXT_AREA ).inputTypeConfig(
             InputTypes.TEXT_AREA.getDefaultConfig() ).build() );

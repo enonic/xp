@@ -123,7 +123,7 @@ public abstract class AbstractContentTypeSerializerTest
         assertNotNull( actualContentType.form().getFormItem( "myPhone" ) );
         assertNotNull( actualContentType.form().getFormItem( "myRelationship" ) );
         assertNotNull( actualContentType.form().getFormItem( "mySingleSelector" ) );
-        assertNotNull( actualContentType.form().getFormItem( "myTags" ) );
+        assertNotNull( actualContentType.form().getFormItem( "myTag" ) );
         assertNotNull( actualContentType.form().getFormItem( "myTextLine" ) );
         assertNotNull( actualContentType.form().getFormItem( "myTextArea" ) );
         assertNotNull( actualContentType.form().getFormItem( "myLong" ) );
@@ -151,7 +151,7 @@ public abstract class AbstractContentTypeSerializerTest
         assertEquals( "myMoney", actualContentType.form().getFormItem( "myMoney" ).getPath().toString() );
         assertEquals( "myPhone", actualContentType.form().getFormItem( "myPhone" ).getPath().toString() );
         assertEquals( "mySingleSelector", actualContentType.form().getFormItem( "mySingleSelector" ).getPath().toString() );
-        assertEquals( "myTags", actualContentType.form().getFormItem( "myTags" ).getPath().toString() );
+        assertEquals( "myTag", actualContentType.form().getFormItem( "myTag" ).getPath().toString() );
         assertEquals( "myTextLine", actualContentType.form().getFormItem( "myTextLine" ).getPath().toString() );
         assertEquals( "myTextArea", actualContentType.form().getFormItem( "myTextArea" ).getPath().toString() );
         assertEquals( "myLong", actualContentType.form().getFormItem( "myLong" ).getPath().toString() );
@@ -340,7 +340,7 @@ public abstract class AbstractContentTypeSerializerTest
             newInput().name( "myComboBox" ).inputType( InputTypes.COMBO_BOX ).inputTypeConfig( comboBoxConfig ).build() );
         contentTypeBuilder.addFormItem(
             newInput().name( "mySingleSelector" ).inputType( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
-        contentTypeBuilder.addFormItem( newInput().name( "myTags" ).inputType( InputTypes.TAGS ).build() );
+        contentTypeBuilder.addFormItem( newInput().name( "myTag" ).inputType( InputTypes.TAG ).build() );
         contentTypeBuilder.addFormItem( newInput().name( "myTextLine" ).inputType( InputTypes.TEXT_LINE ).build() );
         contentTypeBuilder.addFormItem( newInput().name( "myTextArea" ).inputType( InputTypes.TEXT_AREA ).inputTypeConfig(
             InputTypes.TEXT_AREA.getDefaultConfig() ).build() );

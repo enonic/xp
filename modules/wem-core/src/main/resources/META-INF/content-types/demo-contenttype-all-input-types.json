@@ -197,7 +197,7 @@
         },
         {
             "Input": {
-                "name": "myTags",
+                "name": "myTag",
                 "label": "My Tags",
                 "immutable": false,
                 "occurrences": {
@@ -209,7 +209,7 @@
                 "validationRegexp": null,
                 "helpText": null,
                 "type": {
-                    "name": "Tags"
+                    "name": "Tag"
                 }
             }
         },

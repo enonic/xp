@@ -35,7 +35,7 @@ public final class InputTypes
 
     public static final InputType SINGLE_SELECTOR = new SingleSelector();
 
-    public static final InputType TAGS = new Tags();
+    public static final InputType TAG = new Tag();
 
     public static final InputType TEXT_LINE = new TextLine();
 
@@ -58,7 +58,7 @@ public final class InputTypes
         add( PHONE ).
         add( RELATIONSHIP ).
         add( SINGLE_SELECTOR ).
-        add( TAGS ).
+        add( TAG ).
         add( TEXT_AREA ).
         add( TEXT_LINE ).
         add( LONG ).
