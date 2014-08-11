@@ -18,7 +18,6 @@ import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.portal.controller.JsContext;
-import com.enonic.wem.portal.postprocess.RendererNotFoundException;
 import com.enonic.wem.portal.rendering.RenderException;
 import com.enonic.wem.portal.rendering.RenderResult;
 import com.enonic.wem.portal.rendering.Renderer;
@@ -84,8 +83,9 @@ public final class ComponentInstruction
         final Renderer<PageComponent> renderer = this.rendererFactory.getRenderer( component );
         if ( renderer == null )
         {
-            throw new RendererNotFoundException( component );
+            throw new RenderException( "No Renderer found for: " + component.getClass().getSimpleName() );
         }
+
         final RenderResult result = renderer.render( component, context );
         return result.getAsString();
     }
