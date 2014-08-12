@@ -81,7 +81,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             scrollSensitivity: calculateScrollSensitivity(),
             placeholder: 'live-edit-drop-target-placeholder',
             zIndex: 1001001,
-            helper: (event, helper) => LiveEdit.component.helper.DragHelper.createDragHelperHtml(),
+            helper: (event, helper) => api.ui.DragHelper.getHtml(),
             start: (event, ui) => handleSortStart(event, ui),
             over: (event, ui) => handleDragOver(event, ui),
             out: (event, ui) => handleDragOut(event, ui),
@@ -107,7 +107,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             appendTo: 'body',
             zIndex: 5100000,
             cursorAt: CURSOR_AT,
-            helper: LiveEdit.component.helper.DragHelper.createDragHelperHtml
+            helper: api.ui.DragHelper.getHtml
         });
     }
 
@@ -129,12 +129,12 @@ module LiveEdit.component.dragdropsort.DragDropSort {
                 setItemType(_newItemItemType);
 
             if (isDraggingLayoutOverLayout(draggingOverRegionView, _newItemItemType)) {
-                LiveEdit.component.helper.DragHelper.updateStatusIcon(false);
+                api.ui.DragHelper.setDropAllowed(false);
                 dropZoneBuilder.setText("Layout within layout not allowed");
                 dropZoneBuilder.setDropAllowed(false);
             }
             else {
-                LiveEdit.component.helper.DragHelper.updateStatusIcon(true);
+                api.ui.DragHelper.setDropAllowed(true);
                 dropZoneBuilder.setDropAllowed(true);
             }
             ui.placeholder.html(dropZoneBuilder.build().toString());
@@ -153,12 +153,12 @@ module LiveEdit.component.dragdropsort.DragDropSort {
                 setPageComponentView(draggedPageComponentView);
 
             if (isDraggingLayoutOverLayout(draggingOverRegionView, draggedPageComponentView.getType())) {
-                LiveEdit.component.helper.DragHelper.updateStatusIcon(false);
+                api.ui.DragHelper.setDropAllowed(false);
                 dropZoneBuilder.setText("Layout within layout not allowed");
                 dropZoneBuilder.setDropAllowed(false);
             }
             else {
-                LiveEdit.component.helper.DragHelper.updateStatusIcon(true);
+                api.ui.DragHelper.setDropAllowed(true);
                 dropZoneBuilder.setDropAllowed(true);
             }
             ui.placeholder.html(dropZoneBuilder.build().toString());
@@ -188,14 +188,14 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             setPageComponentView(draggedPageComponentView);
 
         if (isDraggingLayoutOverLayout(draggingOverRegionView, draggedPageComponentView.getType())) {
-            LiveEdit.component.helper.DragHelper.updateStatusIcon(false);
+            api.ui.DragHelper.setDropAllowed(false);
             dropZoneBuilder.setText("Layout within layout not allowed");
             dropZoneBuilder.setDropAllowed(false);
-            LiveEdit.component.helper.DragHelper.updateStatusIcon(false);
+            api.ui.DragHelper.setDropAllowed(false);
         }
         else {
             dropZoneBuilder.setDropAllowed(true);
-            LiveEdit.component.helper.DragHelper.updateStatusIcon(true);
+            api.ui.DragHelper.setDropAllowed(true);
         }
 
         ui.placeholder.html(dropZoneBuilder.build().toString());
@@ -241,10 +241,10 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         var draggedPageComponentView = getPageComponentView(ui.item);
         if (draggedPageComponentView) {
             if (isDraggingLayoutOverLayout(draggingOverRegionView, draggedPageComponentView.getType())) {
-                LiveEdit.component.helper.DragHelper.updateStatusIcon(false);
+                api.ui.DragHelper.setDropAllowed(false);
             }
             else {
-                LiveEdit.component.helper.DragHelper.updateStatusIcon(true);
+                api.ui.DragHelper.setDropAllowed(true);
             }
         }
     }
