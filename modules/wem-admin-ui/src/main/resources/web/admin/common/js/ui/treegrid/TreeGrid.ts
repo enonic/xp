@@ -411,7 +411,7 @@ module api.ui.treegrid {
             var root = this.stash || this.root;
             var node: TreeNode<NODE> = root.findNode(data);
             if (node) {
-                node.updateHash();
+                node.updateTimestamp();
             }
         }
 

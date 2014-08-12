@@ -32,16 +32,14 @@ module api.dom {
         }
 
         setSrc(source: string) {
-            if (this.disableCache) {
+
+            if (this.disableCache || this.timestamp) {
                 var params = api.util.decodeUrlParams(source);
-                this.timestamp = new Date().getMilliseconds().toString();
-                params['timestamp'] = this.timestamp;
-                source = api.util.getUrlLocation(source) + api.util.encodeUrlParams(params);
-            } else if (this.timestamp) {
-                var params = api.util.decodeUrlParams(source);
+                this.timestamp = this.disableCache ? new Date().getMilliseconds().toString() : this.timestamp;
                 params['timestamp'] = this.timestamp;
                 source = api.util.getUrlLocation(source) + api.util.encodeUrlParams(params);
             }
+
             this.getEl().setSrc(source);
         }
 

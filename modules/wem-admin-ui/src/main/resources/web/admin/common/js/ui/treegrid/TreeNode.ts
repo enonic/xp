@@ -10,7 +10,7 @@ module api.ui.treegrid {
 
         private selected: boolean;
 
-        private hash: string;
+        private timestamp: string;
 
         private pinned: boolean;
 
@@ -26,7 +26,7 @@ module api.ui.treegrid {
             this.expanded = builder.isExpanded();
             this.selected = builder.isSelected();
             this.pinned = builder.isPinned();
-            this.hash = Math.random().toString(10).substring(2);
+            this.timestamp = new Date().getMilliseconds().toString();
             if (this.pinned) {
                 this.pinToRoot();
             }
@@ -67,12 +67,12 @@ module api.ui.treegrid {
             return this.pinned;
         }
 
-        updateHash() {
-            this.hash = Math.random().toString(10).substring(2);
+        updateTimestamp() {
+            this.timestamp = new Date().getMilliseconds().toString();
         }
 
-        getHash(): string {
-            return this.hash;
+        getTimestamp(): string {
+            return this.timestamp;
         }
 
         getData(): NODE {
