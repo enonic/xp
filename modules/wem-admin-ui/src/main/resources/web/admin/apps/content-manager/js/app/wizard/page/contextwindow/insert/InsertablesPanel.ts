@@ -58,7 +58,6 @@ module app.wizard.page.contextwindow.insert {
             var components = wemjq('[data-context-window-draggable="true"]:not(.ui-draggable)');
 
             components.draggable({
-                zIndex: 400000,
                 cursorAt: {left: -10, top: -15},
                 appendTo: 'body',
                 cursor: 'move',
@@ -87,7 +86,6 @@ module app.wizard.page.contextwindow.insert {
 
             clonedDraggable.css({
                 'position': 'absolute',
-                'z-index': '5100000',
                 'top': '-1000px'
             });
 
