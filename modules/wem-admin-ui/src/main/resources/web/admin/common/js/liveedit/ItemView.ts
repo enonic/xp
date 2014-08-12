@@ -376,17 +376,15 @@ module api.liveedit {
         }
 
         markAsEmpty() {
-            this.getEl().setData('live-edit-empty-component', 'true');
             this.addClass("live-edit-empty-component");
         }
 
         removeEmptyMark() {
-            this.getEl().removeAttribute('data-live-edit-empty-component');
             this.removeClass('live-edit-empty-component');
         }
 
         isEmpty(): boolean {
-            return this.getEl().hasAttribute('data-live-edit-empty-component');
+            return this.getEl().hasClass('data-live-edit-empty-component');
         }
 
         isSelected(): boolean {
