@@ -1,14 +1,13 @@
 module api.query.expr {
 
     export class NotExpr implements ConstraintExpr {
-        private expr:Expression;
+        private expr: Expression;
 
-        constructor( expr:ConstraintExpr )
-        {
+        constructor(expr: ConstraintExpr) {
             this.expr = expr;
         }
 
-        getExpression():Expression {
+        getExpression(): Expression {
             return this.expr;
         }
 

@@ -2,21 +2,18 @@ module api.query.expr {
 
     export class FieldOrderExpr extends OrderExpr {
 
-        private field:FieldExpr;
+        private field: FieldExpr;
 
-        constructor( field:FieldExpr, direction:OrderDirection )
-        {
-            super( direction );
+        constructor(field: FieldExpr, direction: OrderDirection) {
+            super(direction);
             this.field = field;
         }
 
-        getField():FieldExpr
-        {
+        getField(): FieldExpr {
             return this.field;
         }
 
-        toString()
-        {
+        toString() {
             return this.field.toString() + " " + super.directionAsString();
         }
     }
