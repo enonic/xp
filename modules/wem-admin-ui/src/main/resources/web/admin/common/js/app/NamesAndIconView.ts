@@ -6,17 +6,23 @@ module api.app {
 
         addTitleAttribute: boolean = true;
 
-        public setSize(size: NamesAndIconViewSize): NamesAndIconViewBuilder {
+        disableCache: boolean = false;
+
+        setSize(size: NamesAndIconViewSize): NamesAndIconViewBuilder {
             this.size = size;
             return this;
         }
 
-        public setAddTitleAttribute(addTitleAttribute: boolean): NamesAndIconViewBuilder {
+        setAddTitleAttribute(addTitleAttribute: boolean): NamesAndIconViewBuilder {
             this.addTitleAttribute = addTitleAttribute;
             return this;
         }
 
-        public build(): NamesAndIconView {
+        setCacheDisabled(disabled: boolean) {
+            this.disableCache = disabled;
+        }
+
+        build(): NamesAndIconView {
 
             return new NamesAndIconView(this);
         }
@@ -45,6 +51,7 @@ module api.app {
             this.appendChild(this.wrapperDivEl);
 
             this.iconImageEl = new api.dom.ImgEl(null, "icon");
+            this.iconImageEl.setCacheDisabled(builder.disableCache);
             this.wrapperDivEl.appendChild(this.iconImageEl);
 
             this.iconDivEl = new api.dom.DivEl("icon");
@@ -91,6 +98,20 @@ module api.app {
             }
 
             return this;
+        }
+
+        /**
+         * Refreshes image element.
+         */
+        refresh(timestamp?: string) {
+            if (timestamp) {
+                this.iconImageEl.setTimestamp(timestamp);
+                this.iconImageEl.refresh();
+            } else {
+                this.iconImageEl.setCacheDisabled(true);
+                this.iconImageEl.refresh();
+                this.iconImageEl.setCacheDisabled(false);
+            }
         }
 
         /**

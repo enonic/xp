@@ -257,7 +257,7 @@ module api.ui.treegrid {
         }
 
         /**
-         * Used as a default root fetcher.
+         * Used as a default children fetcher.
          * Must be overridden to use predefined root nodes.
          */
         fetchChildren(parentData?: NODE): Q.Promise<NODE[]> {
@@ -405,6 +405,14 @@ module api.ui.treegrid {
             this.active = true;
 
             this.notifyLoaded();
+        }
+
+        updateNode(data: NODE): void {
+            var root = this.stash || this.root;
+            var node: TreeNode<NODE> = root.findNode(data);
+            if (node) {
+                node.updateTimestamp();
+            }
         }
 
         deleteNodes(dataList: NODE[]): void {

@@ -61,6 +61,7 @@ module app.browse {
             });
 
             api.content.ContentUpdatedEvent.on((event) => {
+                this.contentTreeGridPanel2.updateNode(new api.content.ContentSummaryAndCompareStatus(event.getContent(), null));
                 this.setRefreshNeeded(true);
             });
 

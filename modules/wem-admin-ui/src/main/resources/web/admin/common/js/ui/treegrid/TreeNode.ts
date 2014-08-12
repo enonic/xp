@@ -10,6 +10,8 @@ module api.ui.treegrid {
 
         private selected: boolean;
 
+        private timestamp: string;
+
         private pinned: boolean;
 
         private parent: TreeNode<NODE>;
@@ -24,6 +26,7 @@ module api.ui.treegrid {
             this.expanded = builder.isExpanded();
             this.selected = builder.isSelected();
             this.pinned = builder.isPinned();
+            this.timestamp = new Date().getMilliseconds().toString();
             if (this.pinned) {
                 this.pinToRoot();
             }
@@ -62,6 +65,14 @@ module api.ui.treegrid {
 
         isPinned(): boolean {
             return this.pinned;
+        }
+
+        updateTimestamp() {
+            this.timestamp = new Date().getMilliseconds().toString();
+        }
+
+        getTimestamp(): string {
+            return this.timestamp;
         }
 
         getData(): NODE {
