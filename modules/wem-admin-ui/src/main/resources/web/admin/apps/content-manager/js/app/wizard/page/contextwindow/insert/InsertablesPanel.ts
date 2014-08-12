@@ -64,16 +64,9 @@ module app.wizard.page.contextwindow.insert {
                 cursor: 'move',
                 revert: 'true',
                 distance: 10,
-                helper: () => {
-                    return wemjq('<div id="live-edit-drag-helper" class="live-edit-font-icon-drop-not-allowed" style="width: 48px; height: 48px; position: absolute; z-index: 400000;" data-live-edit-drop-allowed="false"></div>');
-                },
                 scope: 'component',
-                start: (event: Event, ui: JQueryUI.DroppableEventUIParam) => {
-                    this.onStartDrag(event, ui);
-                },
-                stop: () => {
-
-                }
+                helper: () => api.ui.DragHelper.getHtml(),
+                start: (event: Event, ui: JQueryUI.DroppableEventUIParam) => this.handleDragStart(event, ui)
             });
         }
 
@@ -81,7 +74,7 @@ module app.wizard.page.contextwindow.insert {
             wemjq('[data-context-window-draggable="true"]').simulate('mouseup');
         }
 
-        private onStartDrag(event: Event, ui: JQueryUI.DroppableEventUIParam) {
+        private handleDragStart(event: Event, ui: JQueryUI.DroppableEventUIParam) {
             this.liveEditPage.showDragMask();
         }
 

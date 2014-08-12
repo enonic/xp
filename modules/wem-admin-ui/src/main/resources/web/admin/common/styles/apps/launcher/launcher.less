@@ -170,17 +170,13 @@ html, body {
     color: @admin-white;
 
     opacity: 0;
-    transition: all 300ms ease-out;
-    -webkit-transition: all 300ms ease-out;
-
-    transform: scale(.25);
-    -webkit-transform: scale(.25);
+    .transition(all 300ms ease-out);
+    .scale(.25);
 
     &.fade-in-and-scale-up {
       opacity: 1 !important;
 
-      transform: scale(1) !important;
-      -webkit-transform: scale(1) !important;
+      .scale(1) !important;
     }
 
     .search-input-container {
