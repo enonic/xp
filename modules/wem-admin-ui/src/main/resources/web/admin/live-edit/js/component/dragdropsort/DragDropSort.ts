@@ -80,7 +80,6 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             cursorAt: CURSOR_AT,
             scrollSensitivity: calculateScrollSensitivity(),
             placeholder: 'live-edit-drop-target-placeholder',
-            zIndex: 1001001,
             helper: (event, helper) => api.ui.DragHelper.getHtml(),
             start: (event, ui) => handleSortStart(event, ui),
             over: (event, ui) => handleDragOver(event, ui),
@@ -105,7 +104,6 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             addClasses: false,
             cursor: 'move',
             appendTo: 'body',
-            zIndex: 5100000,
             cursorAt: CURSOR_AT,
             helper: api.ui.DragHelper.getHtml
         });
