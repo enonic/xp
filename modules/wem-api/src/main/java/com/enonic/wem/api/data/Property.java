@@ -2,10 +2,10 @@ package com.enonic.wem.api.data;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import com.google.common.base.Preconditions;
@@ -50,6 +50,16 @@ public final class Property
     public static Property newLocalDate( final String name, final Object value )
     {
         return newProperty( name, Value.newLocalDate( value ) );
+    }
+
+    public static Property newLocalDateTime( final String name, final Object value )
+    {
+        return newProperty( name, Value.newLocalDateTime( value ) );
+    }
+
+    public static Property newLocalTime( final String name, final Object value )
+    {
+        return newProperty( name, Value.newLocalTime( value ) );
     }
 
     public static Property newContentId( final String name, final Object value )
@@ -208,6 +218,16 @@ public final class Property
     public LocalDate getLocalDate()
     {
         return value.asLocalDate();
+    }
+
+    public LocalTime getLocalTime()
+    {
+        return value.asLocalTime();
+    }
+
+    public LocalDateTime getLocalDateTime()
+    {
+        return value.asLocalDateTime();
     }
 
     /**

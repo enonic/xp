@@ -2,6 +2,8 @@ package com.enonic.wem.api.data.type;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,6 +25,10 @@ public final class ValueTypes
     public static final ValueType<String> XML = newXml();
 
     public static final ValueType<LocalDate> LOCAL_DATE = newLocalDate();
+
+    public static final ValueType<LocalDateTime> LOCAL_DATE_TIME = newLocalDateTime();
+
+    public static final ValueType<LocalTime> LOCAL_TIME = newLocalTime();
 
     public static final ValueType<Instant> DATE_TIME = newDateTime();
 
@@ -49,6 +55,8 @@ public final class ValueTypes
         register( HTML_PART );
         register( XML );
         register( LOCAL_DATE );
+        register( LOCAL_TIME );
+        register( LOCAL_DATE_TIME );
         register( DATE_TIME );
         register( CONTENT_ID );
         register( LONG );
@@ -115,6 +123,16 @@ public final class ValueTypes
     private static ValueType<LocalDate> newLocalDate()
     {
         return new ValueTypeImpl<>( 5, "LocalDate", JavaTypeConverters.LOCAL_DATE );
+    }
+
+    private static ValueType<LocalDateTime> newLocalDateTime()
+    {
+        return new ValueTypeImpl<>( 13, "LocalDateTime", JavaTypeConverters.LOCAL_DATE_TIME );
+    }
+
+    private static ValueType<LocalTime> newLocalTime()
+    {
+        return new ValueTypeImpl<>( 14, "LocalTime", JavaTypeConverters.LOCAL_TIME );
     }
 
     private static ValueType<Instant> newDateTime()
