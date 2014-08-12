@@ -2,7 +2,6 @@
   position: absolute;
   right: 60px;
   top: 0;
-  z-index: 10000;
   min-width: 85px;
   color:@admin-light-gray-font;
   box-sizing: border-box;
@@ -11,6 +10,7 @@
 
   &.expanded {
     background-color: @admin-light-gray-bg !important;
+    z-index: 10000;
     .box-shadow(0px 0px 10px darken(@admin-input-blue, 10%));
     .action {
       display:block;
