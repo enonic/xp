@@ -178,7 +178,7 @@ public class Content_usageTest
         dataSet.add( Property.newDouble( "myDec", 123.123 ) );
         dataSet.add( Property.newLocalDate( "myDate", LocalDate.of( 2013, 1, 13 ) ) );
         dataSet.add( Property.newLocalTime( "myLocalTime", LocalTime.of( 10, 45, 59 ) ) );
-        dataSet.add( Property.newLocalTime( "myLocalDateTime", LocalDateTime.of( 2014, 8, 12, 10, 45, 59 ) ) );
+        dataSet.add( Property.newLocalDateTime( "myLocalDateTime", LocalDateTime.of( 2014, 8, 12, 10, 45, 59 ) ) );
         dataSet.add( Property.newHtmlPart( "myHtml", "<p>abc</p>" ) );
 
         // exercise & verify
