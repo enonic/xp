@@ -24,7 +24,7 @@ import com.enonic.wem.admin.json.content.ContentJson;
 import com.enonic.wem.admin.json.content.ContentListJson;
 import com.enonic.wem.admin.json.content.ContentSummaryJson;
 import com.enonic.wem.admin.json.content.ContentSummaryListJson;
-import com.enonic.wem.admin.json.content.ContentVersionsJson;
+import com.enonic.wem.admin.json.content.GetContentVersionsResultJson;
 import com.enonic.wem.admin.json.content.attachment.AttachmentJson;
 import com.enonic.wem.admin.rest.exception.NotFoundWebException;
 import com.enonic.wem.admin.rest.resource.content.json.AbstractContentQueryResultJson;
@@ -76,7 +76,9 @@ import static com.enonic.wem.api.content.Content.editContent;
 public class ContentResource
 {
 
-    public static final int DEFAULT_PARENT_QUERY_SIZE = 500;
+    private static final String DEFAULT_FROM_PARAM = "0";
+
+    private static final String DEFAULT_SIZE_PARAM = "500";
 
     public static final String DEFAULT_SORT_FIELD = "modifiedTime";
 
@@ -143,7 +145,9 @@ public class ContentResource
     @GET
     @Path("list")
     public AbstractContentListJson listById( @QueryParam("parentId") final String parentIdParam,
-                                             @QueryParam("expand") @DefaultValue(EXPAND_SUMMARY) final String expandParam )
+                                             @QueryParam("expand") @DefaultValue(EXPAND_SUMMARY) final String expandParam,
+                                             @QueryParam("from") @DefaultValue(DEFAULT_FROM_PARAM) final Integer fromParam,
+                                             @QueryParam("size") @DefaultValue(DEFAULT_SIZE_PARAM) final Integer sizeParam )
     {
         final ContentPath parentContentPath;
 
@@ -158,13 +162,22 @@ public class ContentResource
             parentContentPath = parentContent.getPath();
         }
 
-        return doGetByParentPath( expandParam, parentContentPath );
+        final GetContentByParentParams params = GetContentByParentParams.create().
+            from( fromParam ).
+            size( sizeParam ).
+            parentPath( parentContentPath ).
+            addSort( DEFAULT_SORT_FIELD, Direction.DESC ).
+            build();
+
+        return doGetByParentPath( expandParam, params, parentContentPath );
     }
 
     @GET
     @Path("list/bypath")
     public AbstractContentListJson listByPath( @QueryParam("parentPath") final String parentPathParam,
-                                               @QueryParam("expand") @DefaultValue(EXPAND_SUMMARY) final String expandParam )
+                                               @QueryParam("expand") @DefaultValue(EXPAND_SUMMARY) final String expandParam,
+                                               @QueryParam("from") @DefaultValue(DEFAULT_FROM_PARAM) final Integer fromParam,
+                                               @QueryParam("size") @DefaultValue(DEFAULT_SIZE_PARAM) final Integer sizeParam )
     {
         final ContentPath parentContentPath;
 
@@ -177,17 +190,20 @@ public class ContentResource
             parentContentPath = ContentPath.from( parentPathParam );
         }
 
-        return doGetByParentPath( expandParam, parentContentPath );
-    }
-
-    private AbstractContentListJson doGetByParentPath( final String expandParam, final ContentPath parentContentPath )
-    {
-        final Contents contents = contentService.getByParent( GetContentByParentParams.create().
-            from( 0 ).
-            size( DEFAULT_PARENT_QUERY_SIZE ).
+        final GetContentByParentParams params = GetContentByParentParams.create().
+            from( fromParam ).
+            size( sizeParam ).
             parentPath( parentContentPath ).
             addSort( DEFAULT_SORT_FIELD, Direction.DESC ).
-            build(), STAGE_CONTEXT );
+            build();
+
+        return doGetByParentPath( expandParam, params, parentContentPath );
+    }
+
+    private AbstractContentListJson doGetByParentPath( final String expandParam, final GetContentByParentParams params,
+                                                       final ContentPath parentContentPath )
+    {
+        final Contents contents = contentService.getByParent( params, STAGE_CONTEXT );
 
         if ( EXPAND_NONE.equalsIgnoreCase( expandParam ) )
         {
@@ -274,7 +290,7 @@ public class ContentResource
 
     @POST
     @Path("getVersions")
-    public ContentVersionsJson getVersions( final GetContentVersionsJson params )
+    public GetContentVersionsResultJson getContentVersions( final GetContentVersionsJson params )
     {
         final ContentId contentId = ContentId.from( params.getContentId() );
 
@@ -284,7 +300,7 @@ public class ContentResource
             size( params.getSize() != null ? params.getSize() : 10 ).
             build(), STAGE_CONTEXT );
 
-        return new ContentVersionsJson( contentVersions );
+        return new GetContentVersionsResultJson( contentVersions );
     }
 
     @POST
