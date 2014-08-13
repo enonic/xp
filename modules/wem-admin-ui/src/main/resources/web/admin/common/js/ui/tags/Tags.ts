@@ -156,6 +156,10 @@ module api.ui.tags {
             return match;
         }
 
+        countTags(): number {
+            return this.tags.length;
+        }
+
         getTags(): string[] {
             var tags: string [] = [];
             this.tags.forEach((tag) => {

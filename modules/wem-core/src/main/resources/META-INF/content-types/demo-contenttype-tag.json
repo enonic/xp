@@ -40,6 +40,25 @@
                     "name": "Tag"
                 }
             }
+        },
+        {
+            "Input": {
+                "name": "tag_min_2_max5",
+                "label": "Tag, min 2 max 5 occurrences",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 2,
+                    "maximum": 5
+                },
+                "indexed": true,
+                "customText": "Custom text",
+                "validationRegexp": null,
+                "helpText": "Some help text",
+                "type": {
+                    "name": "Tag"
+                }
+            }
         }
+
     ]
 }
