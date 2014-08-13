@@ -1,6 +1,6 @@
 package com.enonic.wem.admin.event;
 
-public interface WebSocketManager
+public interface WebSocketManager2
 {
 
     void registerSocket( EventWebSocket webSocket );
