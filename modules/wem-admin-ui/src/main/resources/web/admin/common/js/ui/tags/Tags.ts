@@ -84,7 +84,7 @@ module api.ui.tags {
                 this.notifyTagAdded(new TagAddedEvent(tag.getValue()));
                 this.textInput.setValue("");
 
-                if (this.maxTags > 0 && this.tags.length == this.maxTags) {
+                if (this.isMaxTagsReached()) {
                     this.textInput.hide();
                 }
             }
@@ -102,7 +102,7 @@ module api.ui.tags {
 
             var tag = this.doAddTag(value);
             if (tag) {
-                if (this.maxTags > 0 && this.tags.length == this.maxTags) {
+                if (this.isMaxTagsReached()) {
                     this.textInput.hide();
                 }
             }
@@ -129,7 +129,7 @@ module api.ui.tags {
                     var tagToRemove = this.tags[index];
                     tagToRemove.remove();
                     this.tags.splice(index, 1);
-                    if (!this.textInput.isVisible() && this.maxTags > 0 && this.tags.length < this.maxTags) {
+                    if (!this.textInput.isVisible() && !this.isMaxTagsReached()) {
                         this.textInput.setVisible(true);
                     }
                     if (this.tags.length == 0) {
@@ -168,6 +168,13 @@ module api.ui.tags {
             return tags;
         }
 
+        isMaxTagsReached(): boolean {
+            if (this.maxTags == 0) {
+                return false;
+            }
+            return this.countTags() >= this.maxTags;
+        }
+
 
         onTagAdded(listener: (event: TagAddedEvent) => void) {
             this.tagAddedListeners.push(listener);
@@ -189,6 +196,15 @@ module api.ui.tags {
 
         unTagRemoved(listener: (event: TagRemovedEvent) => void) {
             this.tagRemovedListeners.push(listener);
+        }
+
+        giveFocus(): boolean {
+            if (this.isMaxTagsReached()) {
+                return this.tags[0].giveFocus();
+            }
+            else {
+                return this.textInput.giveFocus();
+            }
         }
 
         private notifyTagRemoved(event: TagRemovedEvent) {

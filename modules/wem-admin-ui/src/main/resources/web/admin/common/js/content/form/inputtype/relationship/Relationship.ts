@@ -4,7 +4,7 @@ module api.content.form.inputtype.relationship {
         relationshipType: string
     }
 
-    export class Relationship extends api.dom.DivEl implements api.form.inputtype.InputTypeView {
+    export class Relationship extends api.form.inputtype.support.BaseInputTypeManagingAdd {
 
         private config: api.content.form.inputtype.ContentInputTypeViewContext<RelationshipConfig>;
 
@@ -14,17 +14,9 @@ module api.content.form.inputtype.relationship {
 
         private contentComboBox: api.content.ContentComboBox;
 
-        private inputValidityChangedListeners: {(event: api.form.inputtype.InputValidityChangedEvent) : void}[] = [];
-
         private previousValidationRecording: api.form.inputtype.InputValidationRecording;
 
         private layoutInProgress: boolean;
-
-        private valueAddedListeners: {(event: api.form.inputtype.ValueAddedEvent) : void}[] = [];
-
-        private valueChangedListeners: {(event: api.form.inputtype.ValueChangedEvent) : void}[] = [];
-
-        private valueRemovedListeners: {(event: api.form.inputtype.ValueRemovedEvent) : void}[] = [];
 
         constructor(config?: api.content.form.inputtype.ContentInputTypeViewContext<RelationshipConfig>) {
             super("relationship");
@@ -37,14 +29,6 @@ module api.content.form.inputtype.relationship {
 
         availableSizeChanged() {
             console.log("Relationship.availableSizeChanged(" + this.getEl().getWidth() + "x" + this.getEl().getWidth() + ")");
-        }
-
-        getElement(): api.dom.Element {
-            return this;
-        }
-
-        isManagingAdd(): boolean {
-            return true;
         }
 
         newInitialValue(): api.data.Value {
@@ -135,10 +119,6 @@ module api.content.form.inputtype.relationship {
             return values;
         }
 
-        getAttachments(): api.content.attachment.Attachment[] {
-            return [];
-        }
-
         validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
 
             var recording = new api.form.inputtype.InputValidationRecording();
@@ -161,81 +141,11 @@ module api.content.form.inputtype.relationship {
             return recording;
         }
 
-        onValueAdded(listener: (event: api.form.inputtype.ValueAddedEvent) => void) {
-            this.valueAddedListeners.push(listener);
-        }
-
-        unValueAdded(listener: (event: api.form.inputtype.ValueAddedEvent) => void) {
-            this.valueAddedListeners.filter((currentListener: (event: api.form.inputtype.ValueAddedEvent)=>void) => {
-                return listener == currentListener;
-            });
-        }
-
-        private notifyValueAdded(value: api.data.Value) {
-            var event = new api.form.inputtype.ValueAddedEvent(value);
-            this.valueAddedListeners.forEach((listener: (event: api.form.inputtype.ValueAddedEvent)=>void) => {
-                listener(event);
-            });
-        }
-
-        onValueChanged(listener: (event: api.form.inputtype.ValueChangedEvent) => void) {
-            this.valueChangedListeners.push(listener);
-        }
-
-        unValueChanged(listener: (event: api.form.inputtype.ValueChangedEvent) => void) {
-            this.valueChangedListeners.filter((currentListener: (event: api.form.inputtype.ValueChangedEvent)=>void) => {
-                return listener == currentListener;
-            });
-        }
-
-        private notifyValueChanged(event: api.form.inputtype.ValueChangedEvent) {
-            this.valueChangedListeners.forEach((listener: (event: api.form.inputtype.ValueChangedEvent)=>void) => {
-                listener(event);
-            });
-        }
-
-        onValueRemoved(listener: (event: api.form.inputtype.ValueRemovedEvent) => void) {
-            this.valueRemovedListeners.push(listener);
-        }
-
-        unValueRemoved(listener: (event: api.form.inputtype.ValueRemovedEvent) => void) {
-            this.valueRemovedListeners.filter((currentListener: (event: api.form.inputtype.ValueRemovedEvent)=>void) => {
-                return listener == currentListener;
-            });
-        }
-
-        private notifyValueRemoved(index: number) {
-            var event = new api.form.inputtype.ValueRemovedEvent(index);
-            this.valueRemovedListeners.forEach((listener: (event: api.form.inputtype.ValueRemovedEvent)=>void) => {
-                listener(event);
-            });
-        }
-
-        onValidityChanged(listener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) {
-            this.inputValidityChangedListeners.push(listener);
-        }
-
-        unValidityChanged(listener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) {
-            this.inputValidityChangedListeners.filter((currentListener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) => {
-                return listener == currentListener;
-            });
-        }
-
-        private notifyValidityChanged(event: api.form.inputtype.InputValidityChangedEvent) {
-            this.inputValidityChangedListeners.forEach((listener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) => {
-                listener(event);
-            });
-        }
-
         giveFocus(): boolean {
             if (this.contentComboBox.maximumOccurrencesReached()) {
                 return false;
             }
             return this.contentComboBox.giveFocus();
-        }
-
-        valueBreaksRequiredContract(value: api.data.Value): boolean {
-            return !api.content.ContentId.isValidContentId(value.asString());
         }
 
         onEditContentRequest(listener: (content: api.content.ContentSummary) => void) {

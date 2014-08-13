@@ -14,7 +14,7 @@ module api.content.form.inputtype.image {
         relationshipType: string
     }
 
-    export class ImageSelector extends api.dom.DivEl implements api.form.inputtype.InputTypeView {
+    export class ImageSelector extends api.form.inputtype.support.BaseInputTypeManagingAdd {
 
         private config: api.content.form.inputtype.ContentInputTypeViewContext<ImageSelectorConfig>;
 
@@ -34,17 +34,9 @@ module api.content.form.inputtype.image {
 
         private editContentRequestListeners: {(content: ContentSummary): void }[] = [];
 
-        private inputValidityChangedListeners: {(event: api.form.inputtype.InputValidityChangedEvent) : void}[] = [];
-
         private previousValidationRecording: api.form.inputtype.InputValidationRecording;
 
         private layoutInProgress: boolean;
-
-        private valueAddedListeners: {(event: api.form.inputtype.ValueAddedEvent) : void}[] = [];
-
-        private valueChangedListeners: {(event: api.form.inputtype.ValueChangedEvent) : void}[] = [];
-
-        private valueRemovedListeners: {(event: api.form.inputtype.ValueRemovedEvent) : void}[] = [];
 
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext<ImageSelectorConfig>) {
             super("image-selector");
@@ -188,14 +180,6 @@ module api.content.form.inputtype.image {
             return this.selectedOptionsView.getValues();
         }
 
-        getAttachments(): api.content.attachment.Attachment[] {
-            return [];
-        }
-
-        getElement(): api.dom.Element {
-            return this;
-        }
-
         validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
 
             var recording = new api.form.inputtype.InputValidationRecording();
@@ -223,14 +207,6 @@ module api.content.form.inputtype.image {
                 return false;
             }
             return this.comboBox.giveFocus();
-        }
-
-        createAndAddOccurrence() {
-            throw new Error("ImageSelector manages occurrences self");
-        }
-
-        isManagingAdd(): boolean {
-            return true;
         }
 
         private createComboBox(input: api.form.Input): ComboBox<ImageSelectorDisplayValue> {
@@ -382,72 +358,6 @@ module api.content.form.inputtype.image {
         private notifyEditContentRequested(content: ContentSummary) {
             this.editContentRequestListeners.forEach((listener) => {
                 listener(content);
-            });
-        }
-
-        onValueAdded(listener: (event: api.form.inputtype.ValueAddedEvent) => void) {
-            this.valueAddedListeners.push(listener);
-        }
-
-        unValueAdded(listener: (event: api.form.inputtype.ValueAddedEvent) => void) {
-            this.valueAddedListeners.filter((currentListener: (event: api.form.inputtype.ValueAddedEvent)=>void) => {
-                return listener == currentListener;
-            });
-        }
-
-        private notifyValueAdded(value: api.data.Value) {
-            var event = new api.form.inputtype.ValueAddedEvent(value);
-            this.valueAddedListeners.forEach((listener: (event: api.form.inputtype.ValueAddedEvent)=>void) => {
-                listener(event);
-            });
-        }
-
-        onValueChanged(listener: (event: api.form.inputtype.ValueChangedEvent) => void) {
-            this.valueChangedListeners.push(listener);
-        }
-
-        unValueChanged(listener: (event: api.form.inputtype.ValueChangedEvent) => void) {
-            this.valueChangedListeners.filter((currentListener: (event: api.form.inputtype.ValueChangedEvent)=>void) => {
-                return listener == currentListener;
-            });
-        }
-
-        private notifyValueChanged(event: api.form.inputtype.ValueChangedEvent) {
-            this.valueChangedListeners.forEach((listener: (event: api.form.inputtype.ValueChangedEvent)=>void) => {
-                listener(event);
-            });
-        }
-
-        onValueRemoved(listener: (event: api.form.inputtype.ValueRemovedEvent) => void) {
-            this.valueRemovedListeners.push(listener);
-        }
-
-        unValueRemoved(listener: (event: api.form.inputtype.ValueRemovedEvent) => void) {
-            this.valueRemovedListeners.filter((currentListener: (event: api.form.inputtype.ValueRemovedEvent)=>void) => {
-                return listener == currentListener;
-            });
-        }
-
-        private notifyValueRemoved(index: number) {
-            var event = new api.form.inputtype.ValueRemovedEvent(index);
-            this.valueRemovedListeners.forEach((listener: (event: api.form.inputtype.ValueRemovedEvent)=>void) => {
-                listener(event);
-            });
-        }
-
-        onValidityChanged(listener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) {
-            this.inputValidityChangedListeners.push(listener);
-        }
-
-        unValidityChanged(listener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) {
-            this.inputValidityChangedListeners.filter((currentListener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) => {
-                return listener == currentListener;
-            });
-        }
-
-        private notifyValidityChanged(event: api.form.inputtype.InputValidityChangedEvent) {
-            this.inputValidityChangedListeners.forEach((listener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) => {
-                listener(event);
             });
         }
     }

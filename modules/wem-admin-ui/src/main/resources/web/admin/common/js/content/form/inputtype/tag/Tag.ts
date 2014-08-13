@@ -2,7 +2,7 @@ module api.content.form.inputtype.tag {
 
     import DataPath = api.data.DataPath;
 
-    export class Tag extends api.dom.DivEl implements api.form.inputtype.InputTypeView {
+    export class Tag extends api.form.inputtype.support.BaseInputTypeManagingAdd {
 
         private input: api.form.Input;
 
@@ -11,12 +11,6 @@ module api.content.form.inputtype.tag {
         private tagSuggester: ContentTagSuggester;
 
         private previousValidationRecording: api.form.inputtype.InputValidationRecording;
-
-        private valueAddedListeners: {(event: api.form.inputtype.ValueAddedEvent) : void}[] = [];
-
-        private valueRemovedListeners: {(event: api.form.inputtype.ValueRemovedEvent) : void}[] = [];
-
-        private inputValidityChangedListeners: {(event: api.form.inputtype.InputValidityChangedEvent) : void}[] = [];
 
         constructor(context: api.content.form.inputtype.ContentInputTypeViewContext<any>) {
             super("tag");
@@ -45,14 +39,6 @@ module api.content.form.inputtype.tag {
 
         availableSizeChanged() {
 
-        }
-
-        getElement(): api.dom.Element {
-            return this;
-        }
-
-        isManagingAdd(): boolean {
-            return true;
         }
 
         newInitialValue(): api.data.Value {
@@ -109,67 +95,24 @@ module api.content.form.inputtype.tag {
             return recording;
         }
 
-        onValueAdded(listener: (event: api.form.inputtype.ValueAddedEvent) => void) {
-            this.valueAddedListeners.push(listener);
-        }
-
-        unValueAdded(listener: (event: api.form.inputtype.ValueAddedEvent) => void) {
-            this.valueAddedListeners.filter((currentListener: (event: api.form.inputtype.ValueAddedEvent)=>void) => {
-                return listener == currentListener;
-            });
-        }
-
-        private notifyValueAdded(value: api.data.Value) {
-            var event = new api.form.inputtype.ValueAddedEvent(value);
-            this.valueAddedListeners.forEach((listener: (event: api.form.inputtype.ValueAddedEvent)=>void) => {
-                listener(event);
-            });
-        }
-
-        onValueChanged(listener: (event: api.form.inputtype.ValueChangedEvent) => void) {
-            // A tag value never changes
-        }
-
-        unValueChanged(listener: (event: api.form.inputtype.ValueChangedEvent) => void) {
-            // A tag value never changes
-        }
-
-        onValueRemoved(listener: (event: api.form.inputtype.ValueRemovedEvent) => void) {
-            this.valueRemovedListeners.push(listener);
-        }
-
-        unValueRemoved(listener: (event: api.form.inputtype.ValueRemovedEvent) => void) {
-            this.valueRemovedListeners.filter((currentListener: (event: api.form.inputtype.ValueRemovedEvent)=>void) => {
-                return listener == currentListener;
-            });
-        }
-
-        private notifyValueRemoved(index: number) {
-            var event = new api.form.inputtype.ValueRemovedEvent(index);
-            this.valueRemovedListeners.forEach((listener: (event: api.form.inputtype.ValueRemovedEvent)=>void) => {
-                listener(event);
-            });
-        }
-
-        onValidityChanged(listener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) {
-            this.inputValidityChangedListeners.push(listener);
-        }
-
-        unValidityChanged(listener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) {
-            this.inputValidityChangedListeners.filter((currentListener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) => {
-                return listener == currentListener;
-            });
-        }
-
-        private notifyValidityChanged(event: api.form.inputtype.InputValidityChangedEvent) {
-
-            this.inputValidityChangedListeners.forEach((listener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) => {
-                listener(event);
-            });
-        }
-
         giveFocus(): boolean {
-            return false;
+            return this.tags.giveFocus();
+        }
+
+        onFocus(listener: (event: FocusEvent) => void) {
+            this.tags.onFocus(listener);
+        }
+
+        unFocus(listener: (event: FocusEvent) => void) {
+            this.tags.unFocus(listener);
+        }
+
+        onBlur(listener: (event: FocusEvent) => void) {
+            this.tags.onBlur(listener);
+        }
+
+        unBlur(listener: (event: FocusEvent) => void) {
+            this.tags.unBlur(listener);
         }
 
         onEditContentRequest(listener: (content: api.content.ContentSummary) => void) {
