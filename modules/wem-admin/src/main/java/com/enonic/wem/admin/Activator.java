@@ -5,6 +5,7 @@ import javax.servlet.Servlet;
 
 import com.enonic.wem.admin.app.MainServlet;
 import com.enonic.wem.admin.app.ResourceLocator;
+import com.enonic.wem.admin.event.EventServlet;
 import com.enonic.wem.admin.rest.RestServlet;
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.ContentService;
@@ -64,6 +65,8 @@ public final class Activator
         service( MainServlet.class ).attribute( "alias", "/*" ).exportAs( Servlet.class );
         service( RestServlet.class ).attribute( "alias", "/admin/rest/*" ).
             attribute( "init.resteasy.servlet.mapping.prefix", "/admin/rest" ).exportAs( Servlet.class );
+
+        service( EventServlet.class ).attribute( "alias", "/admin/event/*" ).exportAs( Servlet.class );
     }
 
     @Override
