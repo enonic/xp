@@ -34,11 +34,11 @@ module api.content {
 
         sendAndParse(): Q.Promise<CompareContentResults> {
             return this.send().then((response: api.rest.JsonResponse<api.content.json.CompareContentResultsJson>) => {
-                return this.fromJsonToCompareRequest(response.getResult());
+                return this.fromJsonToCompareResults(response.getResult());
             });
         }
 
-        fromJsonToCompareRequest(json: api.content.json.CompareContentResultsJson): CompareContentResults {
+        fromJsonToCompareResults(json: api.content.json.CompareContentResultsJson): CompareContentResults {
             return CompareContentResults.fromJson(json);
         }
     }

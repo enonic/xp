@@ -24,7 +24,7 @@ import com.enonic.wem.admin.json.content.ContentJson;
 import com.enonic.wem.admin.json.content.ContentListJson;
 import com.enonic.wem.admin.json.content.ContentSummaryJson;
 import com.enonic.wem.admin.json.content.ContentSummaryListJson;
-import com.enonic.wem.admin.json.content.GetContentVersionsResultJson;
+import com.enonic.wem.admin.json.content.ContentVersionsJson;
 import com.enonic.wem.admin.json.content.attachment.AttachmentJson;
 import com.enonic.wem.admin.rest.exception.NotFoundWebException;
 import com.enonic.wem.admin.rest.resource.content.json.AbstractContentQueryResultJson;
@@ -274,7 +274,7 @@ public class ContentResource
 
     @POST
     @Path("getVersions")
-    public GetContentVersionsResultJson getVersions( final GetContentVersionsJson params )
+    public ContentVersionsJson getVersions( final GetContentVersionsJson params )
     {
         final ContentId contentId = ContentId.from( params.getContentId() );
 
@@ -284,7 +284,7 @@ public class ContentResource
             size( params.getSize() != null ? params.getSize() : 10 ).
             build(), STAGE_CONTEXT );
 
-        return new GetContentVersionsResultJson( contentVersions );
+        return new ContentVersionsJson( contentVersions );
     }
 
     @POST

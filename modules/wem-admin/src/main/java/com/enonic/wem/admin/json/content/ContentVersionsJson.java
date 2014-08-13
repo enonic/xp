@@ -7,11 +7,11 @@ import com.google.common.collect.Sets;
 import com.enonic.wem.api.content.versioning.ContentVersion;
 import com.enonic.wem.api.content.versioning.ContentVersions;
 
-public class GetContentVersionsResultJson
+public class ContentVersionsJson
 {
     private Set<ContentVersionJson> contentVersions = Sets.newLinkedHashSet();
 
-    public GetContentVersionsResultJson( final ContentVersions contentVersions )
+    public ContentVersionsJson( final ContentVersions contentVersions )
     {
         for ( final ContentVersion contentVersion : contentVersions )
         {
