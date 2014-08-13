@@ -23,7 +23,7 @@ module api.ui.dialog {
 
             this.config = config;
 
-            this.getEl().setDisplay("none").setZindex(3000001).
+            this.getEl().setDisplay("none").
                 setPosition("fixed").setTop("50%").setLeft("50%");
 
             this.title = this.config.title;

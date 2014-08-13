@@ -1,0 +1,27 @@
+#drag-helper {
+  text-align: center;
+
+  z-index: @z-index-draggable !important;
+
+  &:before {
+    line-height: 48px;
+    font-size: 24px;
+  }
+
+  &.drop-allowed {
+    &:extend(.icon);
+    .icon-checkmark;
+
+    background-color: #558e28;
+    color: white;
+  }
+
+  &.drop-not-allowed {
+    &:extend(.icon);
+    .icon-blocked;
+
+    background-color: #d90b00;
+    color: white;
+  }
+}
+
