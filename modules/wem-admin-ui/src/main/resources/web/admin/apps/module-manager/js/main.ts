@@ -22,7 +22,10 @@ function startApplication() {
                 appPanel.activateCurrentKeyBindings();
             }
         }
-    }
+    };
+
+    var serverEvents = new api.event.ServerEventsConnection();
+    serverEvents.connect();
 }
 
 module components {

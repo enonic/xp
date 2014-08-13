@@ -112,6 +112,12 @@ module app.browse {
                 this.moduleTreeGridPanel.reload();
             });
 
+            api.module.ModuleUpdatedEvent.on((event) => {
+                console.log('Module updated:', event.getModuleKey());
+                // TODO reload just the module updated
+                this.moduleTreeGridPanel.reload();
+            })
+
         }
     }
 
