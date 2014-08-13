@@ -15,7 +15,7 @@ module app.wizard.site {
 
     export class SiteTemplateWizardStepForm extends BaseContentWizardStepForm {
 
-        private formContext: api.form.FormContext;
+        private formContext: api.content.form.ContentFormContext;
 
         private moduleConfigsByKey: api.content.site.ModuleConfig[];
 
@@ -127,7 +127,7 @@ module app.wizard.site {
             }
         }
 
-        public renderExisting(context: api.form.FormContext, site: Site): Q.Promise<void> {
+        public renderExisting(context: api.content.form.ContentFormContext, site: Site): Q.Promise<void> {
             this.setFormContext(context);
             return this.doRenderExisting(site.getModuleConfigs());
         }
@@ -162,7 +162,7 @@ module app.wizard.site {
             return moduleConfigs;
         }
 
-        public setFormContext(formContext: api.form.FormContext) {
+        public setFormContext(formContext: api.content.form.ContentFormContext) {
             this.formContext = formContext;
         }
 

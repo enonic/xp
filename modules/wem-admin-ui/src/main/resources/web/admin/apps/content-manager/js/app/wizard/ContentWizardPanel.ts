@@ -3,6 +3,8 @@ module app.wizard {
     import RootDataSet = api.data.RootDataSet;
     import FormView = api.form.FormView;
     import FormContext = api.form.FormContext;
+    import ContentFormContext = api.content.form.ContentFormContext;
+    import ContentFormContextBuilder = api.content.form.ContentFormContextBuilder;
     import Content = api.content.Content;
     import ContentBuilder = api.content.ContentBuilder;
     import ThumbnailBuilder = api.content.ThumbnailBuilder;
@@ -69,7 +71,7 @@ module app.wizard {
 
         private siteTemplate: SiteTemplate;
 
-        private formContext: api.form.FormContext;
+        private formContext: ContentFormContext;
 
         private previewAction: api.ui.Action;
 
@@ -361,12 +363,12 @@ module app.wizard {
                         addAll(attachmentsArray).
                         build();
 
-                    this.formContext = new api.form.FormContextBuilder().
+                    var formContextBuilder = new ContentFormContextBuilder().
                         setParentContent(this.parentContent).
                         setPersistedContent(content).
-                        setAttachments(attachments).
-                        setShowEmptyFormItemSetOccurrences(this.isItemPersisted()).
-                        build();
+                        setAttachments(attachments);
+                    formContextBuilder.setShowEmptyFormItemSetOccurrences(this.isItemPersisted());
+                    this.formContext = formContextBuilder.build();
 
                     this.contentWizardStepForm.renderExisting(this.formContext, contentData, content.getForm());
 
@@ -398,7 +400,7 @@ module app.wizard {
             return deferred.promise;
         }
 
-        private doRenderExistingSite(content: Content, formContext: FormContext): Q.Promise<void> {
+        private doRenderExistingSite(content: Content, formContext: ContentFormContext): Q.Promise<void> {
 
             if (this.siteTemplateWizardStepForm != null && content.getSite()) {
                 return this.siteTemplateWizardStepForm.renderExisting(formContext, content.getSite());

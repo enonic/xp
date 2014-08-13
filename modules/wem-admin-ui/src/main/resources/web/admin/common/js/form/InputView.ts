@@ -65,19 +65,12 @@ module api.form {
 
             if (inputtype.InputTypeManager.isRegistered(inputType.getName())) {
                 var inputTypeConfig = this.input.getInputTypeConfig();
-                var inputTypeViewConfig = <api.form.inputtype.InputTypeViewConfig<any>> {
-                    contentId: this.getContext().getContentId(),
-                    contentPath: this.getContext().getContentPath(),
-                    parentContentPath: this.getContext().getParentContentPath(),
-                    inputConfig: inputTypeConfig,
-                    attachments: this.getContext().getAttachments()
-                };
-
+                var inputTypeViewConfig = this.getContext().createInputTypeViewConfig(inputTypeConfig, this.getParentDataPath(), this.input);
                 this.inputTypeView = inputtype.InputTypeManager.createView(inputType.getName(), inputTypeViewConfig);
             }
             else {
                 console.log("Input type [" + inputType.getName() + "] needs to be registered first.");
-                this.inputTypeView = inputtype.InputTypeManager.createView("NoInputTypeFound");
+                this.inputTypeView = inputtype.InputTypeManager.createView("NoInputTypeFound", null);
             }
 
             this.inputTypeView.onEditContentRequest((content: api.content.ContentSummary) => {

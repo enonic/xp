@@ -10,7 +10,7 @@ module api.content.inputtype.imageupload {
 
         private attachment: api.content.attachment.Attachment;
 
-        constructor(config: api.form.inputtype.InputTypeViewConfig<any>) {
+        constructor(config: api.content.inputtype.ContentInputTypeViewConfig<any>) {
             super(config, "image");
 
             var attachments: api.content.attachment.Attachment[] = config.attachments.getAttachments();
@@ -20,6 +20,10 @@ module api.content.inputtype.imageupload {
             }
 
             this.attachment = attachments.pop();
+        }
+
+        getConfig(): api.content.inputtype.ContentInputTypeViewConfig<any> {
+            return <api.content.inputtype.ContentInputTypeViewConfig<any>>super.getConfig();
         }
 
         newInitialValue(): api.data.Value {

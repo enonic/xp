@@ -16,7 +16,7 @@ module api.content.inputtype.image {
 
     export class ImageSelector extends api.dom.DivEl implements api.form.inputtype.InputTypeView {
 
-        private config: api.form.inputtype.InputTypeViewConfig<ImageSelectorConfig>;
+        private config: api.content.inputtype.ContentInputTypeViewConfig<ImageSelectorConfig>;
 
         private input: api.form.Input;
 
@@ -46,7 +46,7 @@ module api.content.inputtype.image {
 
         private valueRemovedListeners: {(event: api.form.inputtype.ValueRemovedEvent) : void}[] = [];
 
-        constructor(config: api.form.inputtype.InputTypeViewConfig<ImageSelectorConfig>) {
+        constructor(config: api.content.inputtype.ContentInputTypeViewConfig<ImageSelectorConfig>) {
             super("image-selector");
             this.addClass("input-type-view");
 
