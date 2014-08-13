@@ -2,7 +2,7 @@ declare var plupload;
 
 module api.content.form.inputtype.imageupload {
 
-    export class Image extends api.form.inputtype.support.BaseInputTypeView<any> {
+    export class Image extends api.form.inputtype.support.BaseInputTypeNotManagingAdd<any> {
 
         private imageUploadersByIndex: {[i:number] : api.ui.uploader.ImageUploader;} = {};
 

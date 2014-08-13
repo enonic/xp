@@ -2,7 +2,7 @@ module api.form.inputtype.text {
 
     import support = api.form.inputtype.support;
 
-    export class TextLine extends support.BaseInputTypeView<any> {
+    export class TextLine extends support.BaseInputTypeNotManagingAdd<any> {
 
         constructor(config: api.form.inputtype.InputTypeViewContext<any>) {
             super(config);

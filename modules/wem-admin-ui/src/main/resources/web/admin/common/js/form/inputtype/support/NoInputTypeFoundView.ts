@@ -1,6 +1,6 @@
 module api.form.inputtype.support {
 
-    export class NoInputTypeFoundView extends BaseInputTypeView<any> {
+    export class NoInputTypeFoundView extends BaseInputTypeNotManagingAdd<any> {
 
         constructor(config: api.form.inputtype.InputTypeViewContext<any>) {
             super(config);

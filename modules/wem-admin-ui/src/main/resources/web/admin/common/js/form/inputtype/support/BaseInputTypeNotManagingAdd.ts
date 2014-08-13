@@ -1,6 +1,6 @@
 module api.form.inputtype.support {
 
-    export class BaseInputTypeView<CONFIG> extends api.dom.DivEl implements api.form.inputtype.InputTypeViewNotManagingAdd {
+    export class BaseInputTypeNotManagingAdd<CONFIG> extends api.dom.DivEl implements api.form.inputtype.InputTypeViewNotManagingAdd {
 
         private config: api.form.inputtype.InputTypeViewContext<CONFIG>;
 
