@@ -6,7 +6,7 @@ module api.content.inputtype.relationship {
 
     export class Relationship extends api.dom.DivEl implements api.form.inputtype.InputTypeView {
 
-        private config: api.content.inputtype.ContentInputTypeViewConfig<RelationshipConfig>;
+        private config: api.content.inputtype.ContentInputTypeViewContext<RelationshipConfig>;
 
         private input: api.form.Input;
 
@@ -26,7 +26,7 @@ module api.content.inputtype.relationship {
 
         private valueRemovedListeners: {(event: api.form.inputtype.ValueRemovedEvent) : void}[] = [];
 
-        constructor(config?: api.content.inputtype.ContentInputTypeViewConfig<RelationshipConfig>) {
+        constructor(config?: api.content.inputtype.ContentInputTypeViewContext<RelationshipConfig>) {
             super("relationship");
             this.addClass("input-type-view");
             this.config = config;

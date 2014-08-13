@@ -12,9 +12,9 @@ module api.form {
             return this.showEmptyFormItemSetOccurrences;
         }
 
-        createInputTypeViewConfig(inputTypeConfig: any, parentDataPath: api.data.DataPath,
-                                  input: Input): api.form.inputtype.InputTypeViewConfig<any> {
-            return <api.form.inputtype.InputTypeViewConfig<any>> {
+        createInputTypeViewContext(inputTypeConfig: any, parentDataPath: api.data.DataPath,
+                                  input: Input): api.form.inputtype.InputTypeViewContext<any> {
+            return <api.form.inputtype.InputTypeViewContext<any>> {
                 input: input,
                 inputConfig: inputTypeConfig,
                 parentDataPath: parentDataPath

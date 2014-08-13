@@ -1,6 +1,6 @@
 module api.content.inputtype {
 
-    export interface ContentInputTypeViewConfig<INPUT_CONFIG> extends api.form.inputtype.InputTypeViewConfig<INPUT_CONFIG> {
+    export interface ContentInputTypeViewContext<INPUT_CONFIG> extends api.form.inputtype.InputTypeViewContext<INPUT_CONFIG> {
 
         contentId: api.content.ContentId;
 

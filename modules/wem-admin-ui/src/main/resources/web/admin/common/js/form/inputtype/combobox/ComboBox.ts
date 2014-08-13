@@ -6,7 +6,7 @@ module api.form.inputtype.combobox {
 
     export class ComboBox extends api.dom.DivEl implements api.form.inputtype.InputTypeView {
 
-        private config: api.form.inputtype.InputTypeViewConfig<ComboBoxConfig>;
+        private config: api.form.inputtype.InputTypeViewContext<ComboBoxConfig>;
 
         private comboBoxConfig: ComboBoxConfig;
 
@@ -26,7 +26,7 @@ module api.form.inputtype.combobox {
 
         private valueRemovedListeners: {(event: api.form.inputtype.ValueRemovedEvent) : void}[] = [];
 
-        constructor(config: api.form.inputtype.InputTypeViewConfig<ComboBoxConfig>) {
+        constructor(config: api.form.inputtype.InputTypeViewContext<ComboBoxConfig>) {
             super("combo-box");
             this.addClass("input-type-view");
             this.config = config;

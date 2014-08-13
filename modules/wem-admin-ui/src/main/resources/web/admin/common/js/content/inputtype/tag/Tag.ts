@@ -12,7 +12,7 @@ module api.content.inputtype.tag {
 
         private valueRemovedListeners: {(event: api.form.inputtype.ValueRemovedEvent) : void}[] = [];
 
-        constructor(config: api.content.inputtype.ContentInputTypeViewConfig<any>) {
+        constructor(config: api.content.inputtype.ContentInputTypeViewContext<any>) {
             super("tag");
             this.addClass("input-type-view");
             var dataPath = this.resolveDataPath(config);
@@ -27,7 +27,7 @@ module api.content.inputtype.tag {
             this.appendChild(this.tags);
         }
 
-        private resolveDataPath(config: api.content.inputtype.ContentInputTypeViewConfig<any>): DataPath {
+        private resolveDataPath(config: api.content.inputtype.ContentInputTypeViewContext<any>): DataPath {
             if (config.parentDataPath) {
                 return api.data.DataPath.fromParent(config.parentDataPath, api.data.DataPathElement.fromString(config.input.getName()));
             }

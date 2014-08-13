@@ -1,1 +1,1 @@
-///<reference path='ContentInputTypeViewConfig.ts' />
+///<reference path='ContentInputTypeViewContext.ts' />

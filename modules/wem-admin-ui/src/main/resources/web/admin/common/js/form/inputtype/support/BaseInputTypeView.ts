@@ -2,7 +2,7 @@ module api.form.inputtype.support {
 
     export class BaseInputTypeView<CONFIG> extends api.dom.DivEl implements api.form.inputtype.InputTypeViewNotManagingAdd {
 
-        private config: api.form.inputtype.InputTypeViewConfig<CONFIG>;
+        private config: api.form.inputtype.InputTypeViewContext<CONFIG>;
 
         private input: api.form.Input;
 
@@ -23,7 +23,7 @@ module api.form.inputtype.support {
          */
         private draggingIndex: number;
 
-        constructor(config: api.form.inputtype.InputTypeViewConfig<CONFIG>, className?: string) {
+        constructor(config: api.form.inputtype.InputTypeViewContext<CONFIG>, className?: string) {
             super("input-type-view" + ( className ? " " + className : ""));
             api.util.assertNotNull(config, "config cannt be null");
             this.config = config;
@@ -66,7 +66,7 @@ module api.form.inputtype.support {
 
         }
 
-        public getConfig(): api.form.inputtype.InputTypeViewConfig<CONFIG> {
+        public getConfig(): api.form.inputtype.InputTypeViewContext<CONFIG> {
             return this.config;
         }
 

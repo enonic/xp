@@ -1,6 +1,6 @@
 module api.form.inputtype {
 
-    export interface InputTypeViewConfig<INPUT_CONFIG> {
+    export interface InputTypeViewContext<INPUT_CONFIG> {
 
         input: api.form.Input;
 

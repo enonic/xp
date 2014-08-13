@@ -4,7 +4,7 @@ module api.form.inputtype.text {
 
     export class TextArea extends support.BaseInputTypeView<{}> {
 
-        constructor(config: api.form.inputtype.InputTypeViewConfig<{}>) {
+        constructor(config: api.form.inputtype.InputTypeViewContext<{}>) {
             super(config);
         }
 

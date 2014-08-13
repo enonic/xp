@@ -65,7 +65,7 @@ module api.form {
 
             if (inputtype.InputTypeManager.isRegistered(inputType.getName())) {
                 var inputTypeConfig = this.input.getInputTypeConfig();
-                var inputTypeViewConfig = this.getContext().createInputTypeViewConfig(inputTypeConfig, this.getParentDataPath(), this.input);
+                var inputTypeViewConfig = this.getContext().createInputTypeViewContext(inputTypeConfig, this.getParentDataPath(), this.input);
                 this.inputTypeView = inputtype.InputTypeManager.createView(inputType.getName(), inputTypeViewConfig);
             }
             else {

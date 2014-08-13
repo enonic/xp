@@ -36,9 +36,9 @@ module api.content.form {
             return this.attachments;
         }
 
-        createInputTypeViewConfig(inputTypeConfig: any, parentDataPath: api.data.DataPath,
-                                  input: api.form.Input): api.form.inputtype.InputTypeViewConfig<any> {
-            return <api.content.inputtype.ContentInputTypeViewConfig<any>> {
+        createInputTypeViewContext(inputTypeConfig: any, parentDataPath: api.data.DataPath,
+                                  input: api.form.Input): api.form.inputtype.InputTypeViewContext<any> {
+            return <api.content.inputtype.ContentInputTypeViewContext<any>> {
                 input: input,
                 inputConfig: inputTypeConfig,
                 parentDataPath: parentDataPath,
