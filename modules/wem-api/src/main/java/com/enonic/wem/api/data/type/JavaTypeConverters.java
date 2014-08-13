@@ -3,6 +3,7 @@ package com.enonic.wem.api.data.type;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
@@ -47,6 +48,10 @@ final class JavaTypeConverters
     public final static JavaTypeConverter<Instant> DATE_TIME = newInstant();
 
     public final static JavaTypeConverter<LocalDate> LOCAL_DATE = newLocalDate();
+
+    public final static JavaTypeConverter<LocalDateTime> LOCAL_DATE_TIME = newLocalDateTime();
+
+    public final static JavaTypeConverter<LocalTime> LOCAL_TIME = newLocalTime();
 
     public final static JavaTypeConverter<GeoPoint> GEO_POINT = newGeoPoint();
 
@@ -173,7 +178,14 @@ final class JavaTypeConverters
         if ( value instanceof LocalDate )
         {
             return ( (LocalDate) value ).atStartOfDay().toInstant( ZoneOffset.UTC );
-
+        }
+        if ( value instanceof LocalTime )
+        {
+            return ( (LocalTime) value ).atDate( LocalDate.now() ).toInstant( ZoneOffset.UTC );
+        }
+        if ( value instanceof LocalDateTime )
+        {
+            return ( (LocalDateTime) value ).toInstant( ZoneOffset.UTC );
         }
         if ( value instanceof Instant )
         {
@@ -182,6 +194,65 @@ final class JavaTypeConverters
         else if ( value instanceof String )
         {
             return Instant.parse( (String) value );
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    private static LocalTime convertToLocalTime( final Object value )
+    {
+        if ( value instanceof Instant )
+        {
+            return LocalDateTime.ofInstant( (Instant) value, ZoneOffset.UTC ).toLocalTime();
+        }
+        if ( value instanceof LocalTime )
+        {
+            return (LocalTime) value;
+        }
+        if ( value instanceof LocalDate )
+        {
+            return ( (LocalDate) value ).atStartOfDay().toLocalTime();
+        }
+        if ( value instanceof LocalDateTime )
+        {
+            return LocalTime.of( ( (LocalDateTime) value ).getHour(), ( (LocalDateTime) value ).getMinute(),
+                                 ( (LocalDateTime) value ).getSecond() );
+        }
+        else if ( value instanceof String )
+        {
+            return LocalTime.parse( (String) value, LOCAL_DATE_TIME_FORMATTER );
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    private static LocalDateTime convertToLocalDateTime( final Object value )
+    {
+        if ( value instanceof Instant )
+        {
+            return LocalDateTime.ofInstant( (Instant) value, ZoneOffset.UTC );
+        }
+        if ( value instanceof LocalDate )
+        {
+            return ( (LocalDate) value ).atStartOfDay();
+        }
+        if ( value instanceof LocalDateTime )
+        {
+            return (LocalDateTime) value;
+        }
+        if ( value instanceof LocalTime )
+        {
+            return ( (LocalTime) value ).atDate( LocalDate.now() );
+
+        }
+        else if ( value instanceof String )
+        {
+            return LocalDateTime.parse( (String) value, LOCAL_DATE_TIME_FORMATTER );
+
         }
         else
         {
@@ -275,6 +346,17 @@ final class JavaTypeConverters
     {
         return new JavaTypeConverter<>( LocalDate.class, JavaTypeConverters::convertToLocalDate );
     }
+
+    private static JavaTypeConverter<LocalDateTime> newLocalDateTime()
+    {
+        return new JavaTypeConverter<>( LocalDateTime.class, JavaTypeConverters::convertToLocalDateTime );
+    }
+
+    private static JavaTypeConverter<LocalTime> newLocalTime()
+    {
+        return new JavaTypeConverter<>( LocalTime.class, JavaTypeConverters::convertToLocalTime );
+    }
+
 
     private static JavaTypeConverter<GeoPoint> newGeoPoint()
     {
