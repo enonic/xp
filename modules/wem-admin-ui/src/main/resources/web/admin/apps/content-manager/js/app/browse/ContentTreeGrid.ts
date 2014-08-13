@@ -26,37 +26,58 @@ module app.browse {
     export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
 
         constructor() {
+            var nameColumn = new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().
+                setName("Name").
+                setId("displayName").
+                setField("contentSummary.displayName").
+                setMinWidth(130).
+                setFormatter(this.nameFormatter).
+                build();
+            var compareStatusColumn = new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().
+                setName("CompareStatus").
+                setId("compareStatus").
+                setField("compareContentResult.compareStatus").
+                setFormatter(this.statusFormatter).
+                setCssClass("status").
+                setMinWidth(90).
+                setMaxWidth(100).
+                build();
+            var modifiedTimeColumn = new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().
+                setName("ModifiedTime").
+                setId("modifiedTime").
+                setField("contentSummary.modifiedTime").
+                setCssClass("modified").
+                setMinWidth(150).
+                setMaxWidth(170).
+                setFormatter(DateTimeFormatter.format).
+                build();
+
             super(new TreeGridBuilder<ContentSummaryAndCompareStatus>().
                     setColumns([
-                        new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().
-                            setName("Name").
-                            setId("displayName").
-                            setField("contentSummary.displayName").
-                            setFormatter(this.nameFormatter).
-                            build(),
-
-                        new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().
-                            setName("CompareStatus").
-                            setId("compareStatus").
-                            setField("compareContentResult.compareStatus").
-                            setFormatter(this.statusFormatter).
-                            setCssClass("status").
-                            setMinWidth(90).
-                            setMaxWidth(100).
-                            build(),
-
-                        new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().
-                            setName("ModifiedTime").
-                            setId("modifiedTime").
-                            setField("contentSummary.modifiedTime").
-                            setCssClass("modified").
-                            setMinWidth(150).
-                            setMaxWidth(170).
-                            setFormatter(DateTimeFormatter.format).
-                            build()
+                        nameColumn,
+                        compareStatusColumn,
+                        modifiedTimeColumn
                     ]).setShowContextMenu(new TreeGridContextMenu(new ContentTreeGridActions(this))
                 ).prependClasses("content-grid")
             );
+
+            api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
+                if (item.isInRangeOrSmaller(api.ui.responsive.ResponsiveRanges._240_360)) {
+                    this.getGrid().setColumns([nameColumn, compareStatusColumn]);
+                } else {
+                    this.getGrid().setColumns([nameColumn, compareStatusColumn, modifiedTimeColumn]);
+                }
+
+                if(item.isInRangeOrSmaller(api.ui.responsive.ResponsiveRanges._360_540)) {
+                    modifiedTimeColumn.setMaxWidth(100);
+                    modifiedTimeColumn.setFormatter(DateTimeFormatter.formatNoTimestamp);
+                } else {
+                    modifiedTimeColumn.setMaxWidth(170);
+                    modifiedTimeColumn.setFormatter(DateTimeFormatter.format);
+                }
+
+                this.getGrid().resizeCanvas();
+            });
 
             this.onRowSelectionChanged((selectedRows: TreeNode<ContentSummaryAndCompareStatus>[]) => {
                 var contentSummaries: ContentSummary[] = selectedRows.map((elem) => {

@@ -28,30 +28,32 @@ module app {
         }
 
         private route(path: api.rest.Path) {
-            var action = path.getElement(0);
+            if (path) {
+                var action = path.getElement(0);
 
-            switch (action) {
-            case 'edit':
-                var id = path.getElement(1);
-                if (id) {
-                    new api.content.GetContentByIdRequest(new api.content.ContentId(id)).sendAndParse().
-                        done((content: api.content.Content) => {
-                            new app.browse.EditContentEvent([content]).fire();
-                        });
+                switch (action) {
+                case 'edit':
+                    var id = path.getElement(1);
+                    if (id) {
+                        new api.content.GetContentByIdRequest(new api.content.ContentId(id)).sendAndParse().
+                            done((content: api.content.Content) => {
+                                new app.browse.EditContentEvent([content]).fire();
+                            });
+                    }
+                    break;
+                case 'view' :
+                    var id = path.getElement(1);
+                    if (id) {
+                        new api.content.GetContentByIdRequest(new api.content.ContentId(id)).sendAndParse().
+                            done((content: api.content.Content) => {
+                                new app.browse.ViewContentEvent([content]).fire();
+                            });
+                    }
+                    break;
+                default:
+                    new api.app.ShowBrowsePanelEvent().fire();
+                    break;
                 }
-                break;
-            case 'view' :
-                var id = path.getElement(1);
-                if (id) {
-                    new api.content.GetContentByIdRequest(new api.content.ContentId(id)).sendAndParse().
-                        done((content: api.content.Content) => {
-                            new app.browse.ViewContentEvent([content]).fire();
-                        });
-                }
-                break;
-            default:
-                new api.app.ShowBrowsePanelEvent().fire();
-                break;
             }
         }
 
