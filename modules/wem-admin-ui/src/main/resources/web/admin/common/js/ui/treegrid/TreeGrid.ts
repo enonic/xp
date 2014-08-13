@@ -76,6 +76,17 @@ module api.ui.treegrid {
                 selectActiveRow: false
             }));
 
+            /*
+             * Default checkbox plugin should be unselected, because the
+             * cell navigation is disabled. Enabling it will break the
+             * key custom key navigation. Without it plugin is having
+             * some spacebar handling error, due to active cell can't be set.
+             */
+            var selectorPlugin = this.grid.getCheckboxSelectorPlugin();
+            if (selectorPlugin) {
+                this.grid.unregisterPlugin(this.grid.getCheckboxSelectorPlugin())
+            }
+
             this.actions = new TreeGridToolbarActions(this.grid);
 
             this.onClicked(() => {
@@ -111,6 +122,11 @@ module api.ui.treegrid {
                         elem.removeClass("collapse").addClass("expand");
                         var node = this.gridData.getItem(data.row);
                         this.collapseNode(node);
+                    } else if (data.cell === 0) {
+                        this.active = true;
+                        if (elem.getAttribute("type") === "checkbox") {
+                            this.grid.toggleRow(data.row);
+                        }
                     } else {
                         this.active = true;
                         this.grid.selectRow(data.row);
@@ -162,6 +178,9 @@ module api.ui.treegrid {
                             this.expandNode(node);
                         }
                     }
+                }),
+                new KeyBinding('space', () => {
+                    this.deselectAll();
                 })
             ];
 

@@ -105,6 +105,18 @@ module api.ui.grid {
             return <GridOptions<T>>this.slickGrid.getOptions();
         }
 
+        getCheckboxSelectorPlugin(): Slick.Plugin<T> {
+            return this.checkboxSelectorPlugin;
+        }
+
+        registerPlugin(plugin: Slick.Plugin<T>) {
+            this.slickGrid.unregisterPlugin(plugin);
+        }
+
+        unregisterPlugin(plugin: Slick.Plugin<T>) {
+            this.slickGrid.unregisterPlugin(plugin);
+        }
+
         render() {
             this.slickGrid.render();
             super.render();
@@ -167,10 +179,23 @@ module api.ui.grid {
 
         selectRow(row: number) {
             // Prevent unnecessary render on the same row
-            if (this.getSelectedRows().length > 1
-                || (this.getSelectedRows().length < 2 && this.getSelectedRows().indexOf(row) < 0)) {
+            var rows = this.getSelectedRows();
+            if (rows.length > 1 || (rows.length < 2 && rows.indexOf(row) < 0)) {
                 this.slickGrid.setSelectedRows([row]);
             }
+        }
+
+        toggleRow(row: number) {
+            // Prevent unnecessary render on the same row
+            var rows = this.getSelectedRows(),
+                index = rows.indexOf(row);
+            if (index < 0) {
+                rows.push(row);
+                rows.sort();
+            } else {
+                rows.splice(index, 1);
+            }
+            this.slickGrid.setSelectedRows(rows);
         }
 
         selectAll() {
