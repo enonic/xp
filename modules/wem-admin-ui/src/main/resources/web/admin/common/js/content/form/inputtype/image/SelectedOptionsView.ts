@@ -1,4 +1,4 @@
-module api.content.inputtype.image {
+module api.content.form.inputtype.image {
 
     import Option = api.ui.selector.Option;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;

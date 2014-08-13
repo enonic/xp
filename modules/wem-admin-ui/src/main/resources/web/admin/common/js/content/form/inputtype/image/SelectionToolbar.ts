@@ -1,4 +1,4 @@
-module api.content.inputtype.image {
+module api.content.form.inputtype.image {
 
     import Button = api.ui.button.Button;
 

@@ -1,4 +1,4 @@
-module api.content.inputtype.image {
+module api.content.form.inputtype.image {
 
     import ContentSummary = api.content.ContentSummary;
     import ComboBoxConfig = api.ui.selector.combobox.ComboBoxConfig;
@@ -16,7 +16,7 @@ module api.content.inputtype.image {
 
     export class ImageSelector extends api.dom.DivEl implements api.form.inputtype.InputTypeView {
 
-        private config: api.content.inputtype.ContentInputTypeViewContext<ImageSelectorConfig>;
+        private config: api.content.form.inputtype.ContentInputTypeViewContext<ImageSelectorConfig>;
 
         private input: api.form.Input;
 
@@ -46,7 +46,7 @@ module api.content.inputtype.image {
 
         private valueRemovedListeners: {(event: api.form.inputtype.ValueRemovedEvent) : void}[] = [];
 
-        constructor(config: api.content.inputtype.ContentInputTypeViewContext<ImageSelectorConfig>) {
+        constructor(config: api.content.form.inputtype.ContentInputTypeViewContext<ImageSelectorConfig>) {
             super("image-selector");
             this.addClass("input-type-view");
 

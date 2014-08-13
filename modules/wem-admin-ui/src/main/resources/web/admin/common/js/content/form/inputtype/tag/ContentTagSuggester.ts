@@ -1,4 +1,4 @@
-module api.content.inputtype.tag {
+module api.content.form.inputtype.tag {
 
     import ContentQuery = api.content.query.ContentQuery;
     import ContentQueryRequest = api.content.ContentQueryRequest;

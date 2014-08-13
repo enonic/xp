@@ -1,4 +1,4 @@
-module api.content.inputtype.image {
+module api.content.form.inputtype.image {
 
     import ImageUploadedEvent = api.ui.uploader.ImageUploadedEvent;
     import ImageUploadStartedEvent = api.ui.uploader.ImageUploadStartedEvent;

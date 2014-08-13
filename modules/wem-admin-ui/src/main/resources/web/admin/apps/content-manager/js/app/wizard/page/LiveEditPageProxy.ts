@@ -8,7 +8,7 @@ module app.wizard.page {
     import RegionPath = api.content.page.RegionPath;
     import PageComponent = api.content.page.PageComponent;
     import PageComponentType = api.content.page.PageComponentType;
-    import UploadDialog = api.content.inputtype.image.UploadDialog;
+    import UploadDialog = api.content.form.inputtype.image.UploadDialog;
     import RenderingMode = api.rendering.RenderingMode;
 
     import PageComponentView = api.liveedit.PageComponentView;

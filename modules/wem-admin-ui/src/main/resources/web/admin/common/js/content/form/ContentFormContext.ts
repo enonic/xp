@@ -38,7 +38,7 @@ module api.content.form {
 
         createInputTypeViewContext(inputTypeConfig: any, parentDataPath: api.data.DataPath,
                                   input: api.form.Input): api.form.inputtype.InputTypeViewContext<any> {
-            return <api.content.inputtype.ContentInputTypeViewContext<any>> {
+            return <api.content.form.inputtype.ContentInputTypeViewContext<any>> {
                 input: input,
                 inputConfig: inputTypeConfig,
                 parentDataPath: parentDataPath,
