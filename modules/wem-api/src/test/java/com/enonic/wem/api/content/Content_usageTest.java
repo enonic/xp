@@ -144,7 +144,7 @@ public class Content_usageTest
         contentData.addProperty( "mySet.myDec", Value.newDouble( 123.123 ) );
         contentData.addProperty( "mySet.myDate", Value.newLocalDate( LocalDate.of( 2013, 1, 13 ) ) );
         contentData.addProperty( "mySet.myLocalTime", Value.newLocalTime( LocalTime.of( 10, 45, 59 ) ) );
-        contentData.addProperty( "mySet.myLocalDateTime", Value.newLocalDateTime( LocalDateTime.of( 2014, 8, 12, 10, 45, 59 ) ) );
+        contentData.addProperty( "mySet.myLocalDateTime", Value.newLocalDateTime( LocalDateTime.of( 2015, 8, 12, 10, 45, 59 ) ) );
         contentData.addProperty( "mySet.myHtml", Value.newHtmlPart( "<p>abc</p>" ) );
 
         // verify
