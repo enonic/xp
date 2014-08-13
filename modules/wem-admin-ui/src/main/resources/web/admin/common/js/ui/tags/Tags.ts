@@ -6,6 +6,8 @@ module api.ui.tags {
 
         tags: string[] = [];
 
+        maxTags: number = 0;
+
         setTagSuggester(value: TagSuggester): TagsBuilder {
             this.tagSuggester = value;
             return this;
@@ -13,6 +15,11 @@ module api.ui.tags {
 
         addTag(value: string): TagsBuilder {
             this.tags.push(value);
+            return this;
+        }
+
+        setMaxTags(value: number): TagsBuilder {
+            this.maxTags = value;
             return this;
         }
 
@@ -29,6 +36,10 @@ module api.ui.tags {
 
         private tags: Tag[] = [];
 
+        private lastTag: Tag = null;
+
+        private maxTags: number;
+
         private tagAddedListeners: {(event: TagAddedEvent) : void}[] = [];
 
         private tagRemovedListeners: {(event: TagRemovedEvent) : void}[] = [];
@@ -38,34 +49,20 @@ module api.ui.tags {
             this.tagSuggester = builder.tagSuggester;
 
             builder.tags.forEach((value: string) => {
-                var tag = this.createTag(value);
-                this.tags.push(tag);
-                this.appendChild(tag);
+                this.doAddTag(value);
             });
+            this.maxTags = builder.maxTags;
 
             this.textInput = new api.ui.text.TextInput();
             this.appendChild(this.textInput);
 
-            // TODO: Listen to typing in text input and
-            // make call to tagSuggester (if existing) and display result
-
-            // TODO: When user finish a word (space or enter)
-            //  create and add Tag to this.tags and call notifyTagAdded (NB: hinder adding duplicates )
-            //  also listen to TagRemovedEvent and remove tag from this.tags and DOM and call notifyTagRemoved
-
-        }
-
-        private createTag(value: string): Tag {
-            var tag = new TagBuilder().setValue(value).setRemovable(true).build();
-            tag.onTagRemove((event: TagRemoveEvent) => {
-                var index = this.getIndexOf(event.getValue());
-                if (index >= 0) {
-                    var tagToRemove = this.tags[index];
-                    tagToRemove.remove();
-                    this.notifyTagRemoved(new TagRemovedEvent(event.getValue(), index));
+            this.textInput.onKeyUp((event: KeyboardEvent) => {
+                if (event.keyCode == 32 || event.keyCode == 13) {
+                    this.handleWordCompleted();
                 }
             });
-            return tag;
+            // TODO: Listen to typing in text input and
+            // make call to tagSuggester (if existing) and display result
         }
 
         private getIndexOf(value: string) {
@@ -78,6 +75,21 @@ module api.ui.tags {
             return matchingIndex;
         }
 
+        private handleWordCompleted() {
+            var inputValue = this.textInput.getValue();
+            var word = inputValue.trim();
+
+            var tag = this.doAddTag(word);
+            if (tag) {
+                this.notifyTagAdded(new TagAddedEvent(tag.getValue()));
+                this.textInput.setValue("");
+
+                if (this.maxTags > 0 && this.tags.length == this.maxTags) {
+                    this.textInput.hide();
+                }
+            }
+        }
+
         clearTags() {
 
             this.tags.forEach((tag) => {
@@ -87,10 +99,63 @@ module api.ui.tags {
         }
 
         addTag(value: string) {
+
+            var tag = this.doAddTag(value);
+            if (tag) {
+                if (this.maxTags > 0 && this.tags.length == this.maxTags) {
+                    this.textInput.hide();
+                }
+            }
+        }
+
+        private doAddTag(value: string): Tag {
+            if (this.hasTag(value)) {
+                return null;
+            }
+
             var tag = new TagBuilder().setValue(value).setRemovable(true).build();
             this.tags.push(tag);
-            this.textInput.prependChild(tag);
+            if (this.lastTag) {
+                tag.insertAfterEl(this.lastTag);
+            }
+            else {
+                this.prependChild(tag);
+            }
+            this.lastTag = tag;
+
+            tag.onTagRemove((event: TagRemoveEvent) => {
+                var index = this.getIndexOf(event.getValue());
+                if (index >= 0) {
+                    var tagToRemove = this.tags[index];
+                    tagToRemove.remove();
+                    this.tags.splice(index, 1);
+                    if (!this.textInput.isVisible() && this.maxTags > 0 && this.tags.length < this.maxTags) {
+                        this.textInput.setVisible(true);
+                    }
+                    if (this.tags.length == 0) {
+                        this.lastTag = null;
+                    }
+                    else {
+                        this.lastTag = this.tags[this.tags.length - 1];
+                    }
+                    this.textInput.giveFocus();
+                    this.notifyTagRemoved(new TagRemovedEvent(event.getValue(), index));
+                }
+            });
+
+            return tag;
         }
+
+        hasTag(value: string) {
+            var match = false;
+            this.tags.forEach((tag) => {
+                if (value == tag.getValue()) {
+                    match = true;
+                }
+            });
+            return match;
+        }
+
 
         onTagAdded(listener: (event: TagAddedEvent) => void) {
             this.tagAddedListeners.push(listener);
