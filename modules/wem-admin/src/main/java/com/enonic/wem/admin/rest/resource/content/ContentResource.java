@@ -80,6 +80,10 @@ public class ContentResource
 
     public static final String DEFAULT_SORT_FIELD = "modifiedTime";
 
+    private static final String DEFAULT_FROM_PARAM = "0";
+
+    private static final String DEFAULT_SIZE_PARAM = "-1";
+
     private final String EXPAND_FULL = "full";
 
     private final String EXPAND_SUMMARY = "summary";
@@ -143,7 +147,9 @@ public class ContentResource
     @GET
     @Path("list")
     public AbstractContentListJson listById( @QueryParam("parentId") final String parentIdParam,
-                                             @QueryParam("expand") @DefaultValue(EXPAND_SUMMARY) final String expandParam )
+                                             @QueryParam("expand") @DefaultValue(EXPAND_SUMMARY) final String expandParam,
+                                             @QueryParam("from") @DefaultValue(DEFAULT_FROM_PARAM) final Integer fromParam,
+                                             @QueryParam("size") @DefaultValue(DEFAULT_SIZE_PARAM) final Integer sizeParam )
     {
         final ContentPath parentContentPath;
 
@@ -157,14 +163,23 @@ public class ContentResource
 
             parentContentPath = parentContent.getPath();
         }
+        final GetContentByParentParams getContentByParentParams = GetContentByParentParams.create().
+            from( fromParam ).
+            size( sizeParam > 0 ? sizeParam : DEFAULT_PARENT_QUERY_SIZE ).
+            parentPath( parentContentPath ).
+            addSort( DEFAULT_SORT_FIELD, Direction.DESC ).
+            build();
 
-        return doGetByParentPath( expandParam, parentContentPath );
+        return doGetByParentPathParams( expandParam, getContentByParentParams );
+
     }
 
     @GET
     @Path("list/bypath")
     public AbstractContentListJson listByPath( @QueryParam("parentPath") final String parentPathParam,
-                                               @QueryParam("expand") @DefaultValue(EXPAND_SUMMARY) final String expandParam )
+                                               @QueryParam("expand") @DefaultValue(EXPAND_SUMMARY) final String expandParam,
+                                               @QueryParam("from") @DefaultValue(DEFAULT_FROM_PARAM) final Integer fromParam,
+                                               @QueryParam("size") @DefaultValue(DEFAULT_SIZE_PARAM) final Integer sizeParam )
     {
         final ContentPath parentContentPath;
 
@@ -176,18 +191,32 @@ public class ContentResource
         {
             parentContentPath = ContentPath.from( parentPathParam );
         }
+        final GetContentByParentParams getContentByParentParams = GetContentByParentParams.create().
+            from( fromParam ).
+            size( sizeParam > 0 ? sizeParam : DEFAULT_PARENT_QUERY_SIZE ).
+            parentPath( parentContentPath ).
+            addSort( DEFAULT_SORT_FIELD, Direction.DESC ).
+            build();
 
-        return doGetByParentPath( expandParam, parentContentPath );
+        return doGetByParentPathParams( expandParam, getContentByParentParams );
     }
 
     private AbstractContentListJson doGetByParentPath( final String expandParam, final ContentPath parentContentPath )
     {
-        final Contents contents = contentService.getByParent( GetContentByParentParams.create().
+        final GetContentByParentParams getContentByParentParams = GetContentByParentParams.create().
             from( 0 ).
             size( DEFAULT_PARENT_QUERY_SIZE ).
             parentPath( parentContentPath ).
             addSort( DEFAULT_SORT_FIELD, Direction.DESC ).
-            build(), STAGE_CONTEXT );
+            build();
+
+        return doGetByParentPathParams( expandParam, getContentByParentParams );
+    }
+
+    private AbstractContentListJson doGetByParentPathParams( final String expandParam,
+                                                             final GetContentByParentParams getContentByParentParams )
+    {
+        final Contents contents = contentService.getByParent( getContentByParentParams, STAGE_CONTEXT );
 
         if ( EXPAND_NONE.equalsIgnoreCase( expandParam ) )
         {
