@@ -156,6 +156,14 @@ module api.ui.tags {
             return match;
         }
 
+        getTags(): string[] {
+            var tags: string [] = [];
+            this.tags.forEach((tag) => {
+                tags.push(tag.getValue());
+            });
+            return tags;
+        }
+
 
         onTagAdded(listener: (event: TagAddedEvent) => void) {
             this.tagAddedListeners.push(listener);

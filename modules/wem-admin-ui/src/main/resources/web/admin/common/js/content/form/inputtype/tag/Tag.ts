@@ -69,9 +69,11 @@ module api.content.form.inputtype.tag {
         }
 
         getValues(): api.data.Value[] {
-
-            this.tags
-            return null;
+            var values: api.data.Value[] = [];
+            this.tags.getTags().forEach((tag) => {
+                values.push(new api.data.Value(tag, api.data.ValueTypes.STRING));
+            });
+            return values;
         }
 
         getAttachments(): api.content.attachment.Attachment[] {
