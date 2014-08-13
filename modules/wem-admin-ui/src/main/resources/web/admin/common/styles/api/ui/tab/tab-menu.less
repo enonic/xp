@@ -3,11 +3,12 @@
   font-size: 14px;
   text-align: left;
   margin: 4px;
+  z-index: @z-index-tab-menu;
 
   .tab-menu-button {
     position: absolute;
     overflow: hidden;
-    z-index: 20000;
+    z-index: 2;
     display: block;
     width: 100%;
     line-height: 20px;
@@ -35,7 +36,7 @@
 
   ul {
     display: none;
-    z-index: 19001;
+    z-index: 1;
     position: absolute;
     width: 100%;
     padding: 44px 4px 4px;
