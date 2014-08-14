@@ -72,9 +72,6 @@ public class ContentImageResource
                                      @QueryParam("crop") @DefaultValue("true") final boolean crop )
         throws Exception
     {
-        CacheControl cc = new CacheControl();
-        cc.setMaxAge( 180 );
-
         if ( contentIdAsString == null )
         {
             throw new WebApplicationException( Response.Status.BAD_REQUEST );
@@ -98,7 +95,7 @@ public class ContentImageResource
                 {
                     ImageFilter filter = crop ? ScaleSquareFilter : ScaleMax;
                     final BufferedImage thumbnailImage = helper.getImageFromBlob( blob, size, filter );
-                    return Response.ok( thumbnailImage, contentThumbnail.getMimeType() ).cacheControl( cc ).build();
+                    return Response.ok( thumbnailImage, contentThumbnail.getMimeType() ).build();
                 }
             }
         }
@@ -129,7 +126,7 @@ public class ContentImageResource
                         contentImage = helper.getImageFromBlob( blob, size, ScaleMax );
                     }
                     mimeType = attachment.getMimeType();
-                    return Response.ok( contentImage, mimeType ).cacheControl( cc ).build();
+                    return Response.ok( contentImage, mimeType ).build();
                 }
             }
         }
@@ -143,7 +140,7 @@ public class ContentImageResource
             {
                 contentImage = helper.resizeImage( siteTemplateIcon.asInputStream(), size );
                 mimeType = siteTemplateIcon.getMimeType();
-                return Response.ok( contentImage, mimeType ).cacheControl( cc ).build();
+                return Response.ok( contentImage, mimeType ).build();
             }
         }
 
@@ -156,7 +153,7 @@ public class ContentImageResource
         contentImage = helper.resizeImage( contentTypeIcon.asInputStream(), size );
         mimeType = contentTypeIcon.getMimeType();
 
-        return Response.ok( contentImage, mimeType ).cacheControl( cc ).build();
+        return Response.ok( contentImage, mimeType ).build();
     }
 
     private String getImageAttachmentName( final Content content )
