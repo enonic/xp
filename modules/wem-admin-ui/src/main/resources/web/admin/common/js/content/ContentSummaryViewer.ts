@@ -17,14 +17,10 @@ module api.content {
             var subName = relativePath ? content.getPath().getLastElement() : content.getPath().toString();
             this.namesAndIconView.setMainName(content.getDisplayName()).
                 setSubName(subName, content.getPath().toString()).
-                setIconUrl(content.getIconUrl() + '?crop=false');
+                setIconUrl(content.getIconUrl() + "?crop=false");
             if (content.isSite()) {
                 this.addClass("site");
             }
-        }
-
-        refresh(timestamp?: string) {
-            this.namesAndIconView.refresh(timestamp);
         }
 
         getPreferredHeight(): number {

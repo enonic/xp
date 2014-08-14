@@ -4,10 +4,6 @@ module api.dom {
 
         private loaded: boolean;
 
-        private disableCache: boolean;
-
-        private timestamp: string;
-
         /* 1px x 1px gif with a 1bit palette */
         static PLACEHOLDER = "data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
 
@@ -16,7 +12,6 @@ module api.dom {
                 setTagName("img").
                 setHelper(ImgHelper.create()).
                 setClassName(className));
-            this.disableCache = true;
             this.getEl().setSrc(src ? src : ImgEl.PLACEHOLDER);
             this.onLoaded((event: UIEvent) => {
                 this.loaded = true;
@@ -32,23 +27,7 @@ module api.dom {
         }
 
         setSrc(source: string) {
-
-            if (this.disableCache || this.timestamp) {
-                var params = api.util.decodeUrlParams(source);
-                this.timestamp = this.disableCache ? new Date().getMilliseconds().toString() : this.timestamp;
-                params['timestamp'] = this.timestamp;
-                source = api.util.getUrlLocation(source) + api.util.encodeUrlParams(params);
-            }
-
             this.getEl().setSrc(source);
-        }
-
-        setTimestamp(timestamp: string) {
-            this.timestamp = timestamp;
-        }
-
-        getTimestamp(): string {
-            return this.timestamp;
         }
 
         getEl(): ImgHelper {
@@ -65,14 +44,6 @@ module api.dom {
 
         isLoaded(): boolean {
             return this.loaded;
-        }
-
-        setCacheDisabled(disabled: boolean) {
-            this.disableCache = disabled;
-        }
-
-        isCacheDisabled(): boolean {
-            return this.disableCache;
         }
     }
 }
