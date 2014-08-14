@@ -9,12 +9,15 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.eclipse.jetty.websocket.WebSocket;
 import org.eclipse.jetty.websocket.WebSocketServlet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Singleton
 public final class EventServlet
     extends WebSocketServlet
     implements WebSocketManager
 {
+    private final static Logger LOG = LoggerFactory.getLogger( EventServlet.class );
 
     private final Set<EventWebSocket> sockets = new CopyOnWriteArraySet<>();
 
@@ -47,7 +50,7 @@ public final class EventServlet
             }
             catch ( IOException e )
             {
-                e.printStackTrace();
+                LOG.warn( "Failed to send message via web socket", e );
             }
         }
     }
