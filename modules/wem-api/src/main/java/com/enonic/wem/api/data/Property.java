@@ -13,6 +13,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.data.type.ValueType;
 import com.enonic.wem.api.entity.EntityId;
+import com.enonic.wem.api.util.GeoPoint;
 
 public final class Property
     extends Data<Property>
@@ -213,6 +214,11 @@ public final class Property
     public Double getDouble( final int arrayIndex )
     {
         return getArray().getValue( arrayIndex ).asDouble();
+    }
+
+    public GeoPoint getGeoPoint()
+    {
+        return value.asGeoPoint();
     }
 
     public LocalDate getLocalDate()

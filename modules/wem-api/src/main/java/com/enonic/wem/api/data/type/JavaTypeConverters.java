@@ -28,6 +28,9 @@ final class JavaTypeConverters
             ChronoField.CLOCK_HOUR_OF_DAY, 2 ).appendLiteral( ":" ).appendValue( ChronoField.MINUTE_OF_HOUR, 2 ).appendLiteral(
             ":" ).appendValue( ChronoField.SECOND_OF_MINUTE, 2 ).toFormatter();
 
+    private final static java.time.format.DateTimeFormatter LOCAL_TIME_FORMATTER =
+        new java.time.format.DateTimeFormatterBuilder().appendValue( ChronoField.CLOCK_HOUR_OF_DAY, 2 ).appendLiteral( ":" ).appendValue(
+            ChronoField.MINUTE_OF_HOUR, 2 ).appendLiteral( ":" ).appendValue( ChronoField.SECOND_OF_MINUTE, 2 ).toFormatter();
 
     private final static RootDataSetJsonSerializer DATA_SERIALIZER = new RootDataSetJsonSerializer();
 
@@ -222,7 +225,7 @@ final class JavaTypeConverters
         }
         else if ( value instanceof String )
         {
-            return LocalTime.parse( (String) value, LOCAL_DATE_TIME_FORMATTER );
+            return LocalTime.parse( (String) value, LOCAL_TIME_FORMATTER );
         }
         else
         {
