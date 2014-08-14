@@ -5,7 +5,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.content.query.ContentQuery;
 import com.enonic.wem.api.content.query.ContentQueryResult;
 import com.enonic.wem.api.entity.query.NodeQuery;
-import com.enonic.wem.core.index.query.QueryResult;
+import com.enonic.wem.core.index.query.NodeQueryResult;
 
 final class FindContentCommand
     extends AbstractFindContentCommand
@@ -27,7 +27,7 @@ final class FindContentCommand
     {
         final NodeQuery nodeQuery = ContentQueryNodeQueryTranslator.translate( this.contentQuery );
 
-        final QueryResult queryResult = queryService.find( nodeQuery, context.getWorkspace() );
+        final NodeQueryResult queryResult = queryService.find( nodeQuery, context.getWorkspace() );
 
         return translateToContentQueryResult( queryResult );
     }

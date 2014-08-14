@@ -5,7 +5,7 @@ import java.util.Set;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-public class GetContentByParentParams
+public class FindContentByParentParams
 {
     private final ContentPath parentPath;
 
@@ -17,7 +17,7 @@ public class GetContentByParentParams
 
     private static final Integer DEFAULT_SIZE = 500;
 
-    private GetContentByParentParams( Builder builder )
+    private FindContentByParentParams( Builder builder )
     {
         parentPath = builder.parentPath;
         size = builder.size;
@@ -94,9 +94,9 @@ public class GetContentByParentParams
             return this;
         }
 
-        public GetContentByParentParams build()
+        public FindContentByParentParams build()
         {
-            return new GetContentByParentParams( this );
+            return new FindContentByParentParams( this );
         }
     }
 }

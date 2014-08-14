@@ -52,8 +52,9 @@ import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.DeleteContentParams;
 import com.enonic.wem.api.content.Direction;
+import com.enonic.wem.api.content.FindContentByParentParams;
+import com.enonic.wem.api.content.FindContentByParentResult;
 import com.enonic.wem.api.content.GetContentByIdsParams;
-import com.enonic.wem.api.content.GetContentByParentParams;
 import com.enonic.wem.api.content.GetContentVersionsParams;
 import com.enonic.wem.api.content.PushContentParams;
 import com.enonic.wem.api.content.RenameContentParams;
@@ -162,7 +163,7 @@ public class ContentResource
             parentContentPath = parentContent.getPath();
         }
 
-        final GetContentByParentParams params = GetContentByParentParams.create().
+        final FindContentByParentParams params = FindContentByParentParams.create().
             from( fromParam ).
             size( sizeParam ).
             parentPath( parentContentPath ).
@@ -190,7 +191,7 @@ public class ContentResource
             parentContentPath = ContentPath.from( parentPathParam );
         }
 
-        final GetContentByParentParams params = GetContentByParentParams.create().
+        final FindContentByParentParams params = FindContentByParentParams.create().
             from( fromParam ).
             size( sizeParam ).
             parentPath( parentContentPath ).
@@ -200,22 +201,23 @@ public class ContentResource
         return doGetByParentPath( expandParam, params, parentContentPath );
     }
 
-    private AbstractContentListJson doGetByParentPath( final String expandParam, final GetContentByParentParams params,
+    private AbstractContentListJson doGetByParentPath( final String expandParam, final FindContentByParentParams params,
                                                        final ContentPath parentContentPath )
     {
-        final Contents contents = contentService.getByParent( params, STAGE_CONTEXT );
+
+        final FindContentByParentResult result = contentService.findByParent( params, STAGE_CONTEXT );
 
         if ( EXPAND_NONE.equalsIgnoreCase( expandParam ) )
         {
-            return new ContentIdListJson( contents );
+            return new ContentIdListJson( result.getContents() );
         }
         else if ( EXPAND_FULL.equalsIgnoreCase( expandParam ) )
         {
-            return new ContentListJson( contents );
+            return new ContentListJson( result.getContents() );
         }
         else
         {
-            return new ContentSummaryListJson( contents );
+            return new ContentSummaryListJson( result.getContents() );
         }
     }
 

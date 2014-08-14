@@ -5,7 +5,8 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.Contents;
-import com.enonic.wem.api.content.GetContentByParentParams;
+import com.enonic.wem.api.content.FindContentByParentParams;
+import com.enonic.wem.api.content.FindContentByParentResult;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.NodeService;
 import com.enonic.wem.api.schema.content.ContentTypeService;
@@ -43,13 +44,13 @@ final class ChildContentIdsResolver
     Content resolve( final Content content )
     {
 
-        final GetContentByParentParams getContentByParentParams = GetContentByParentParams.create().
+        final FindContentByParentParams findContentByParentCommand = FindContentByParentParams.create().
             parentPath( content.getPath() ).
             from( 0 ).
             size( 1 ).
             build();
 
-        final Contents children = GetContentByParentCommand.create( getContentByParentParams ).
+        final FindContentByParentResult result = FindContentByParentCommand.create( findContentByParentCommand ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             context( this.context ).
@@ -59,6 +60,8 @@ final class ChildContentIdsResolver
             populateChildIds( false ).
             build().
             execute();
+
+        final Contents children = result.getContents();
 
         if ( children.isNotEmpty() )
         {

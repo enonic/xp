@@ -16,8 +16,9 @@ import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.DeleteContentParams;
 import com.enonic.wem.api.content.DeleteContentResult;
+import com.enonic.wem.api.content.FindContentByParentParams;
+import com.enonic.wem.api.content.FindContentByParentResult;
 import com.enonic.wem.api.content.GetContentByIdsParams;
-import com.enonic.wem.api.content.GetContentByParentParams;
 import com.enonic.wem.api.content.GetContentVersionsParams;
 import com.enonic.wem.api.content.PushContentParams;
 import com.enonic.wem.api.content.RenameContentParams;
@@ -108,9 +109,9 @@ public class ContentServiceImpl
     }
 
     @Override
-    public Contents getByParent( final GetContentByParentParams params, final Context context )
+    public FindContentByParentResult findByParent( final FindContentByParentParams params, final Context context )
     {
-        return GetContentByParentCommand.create( params ).
+        return FindContentByParentCommand.create( params ).
             queryService( this.queryService ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).

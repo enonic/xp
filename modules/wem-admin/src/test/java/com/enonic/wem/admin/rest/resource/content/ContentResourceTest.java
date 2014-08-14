@@ -25,8 +25,9 @@ import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.DeleteContentParams;
 import com.enonic.wem.api.content.DeleteContentResult;
+import com.enonic.wem.api.content.FindContentByParentParams;
+import com.enonic.wem.api.content.FindContentByParentResult;
 import com.enonic.wem.api.content.GetContentByIdsParams;
-import com.enonic.wem.api.content.GetContentByParentParams;
 import com.enonic.wem.api.content.PushContentParams;
 import com.enonic.wem.api.content.RenameContentParams;
 import com.enonic.wem.api.content.UnableToDeleteContentException;
@@ -352,9 +353,13 @@ public class ContentResourceTest
     {
         final Content aContent = createContent( "aaa", "my_a_content", "my_type" );
         final Content bContent = createContent( "bbb", "my_b_content", "my_type" );
-        Mockito.when( contentService.getByParent( Mockito.isA( GetContentByParentParams.class ),
-                                                  Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn(
-            Contents.from( aContent, bContent ) );
+        Mockito.when( contentService.findByParent( Mockito.isA( FindContentByParentParams.class ),
+                                                   Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn(
+            FindContentByParentResult.create().
+                contents( Contents.from( aContent, bContent ) ).
+                hits( 2 ).
+                totalHits( 2 ).
+                build() );
 
         String jsonString = request().path( "content/list/bypath" ).queryParam( "parentPath", "/" ).get().getAsString();
 
@@ -367,9 +372,13 @@ public class ContentResourceTest
     {
         final Content aContent = createContent( "aaa", "my_a_content", "my_type" );
         final Content bContent = createContent( "bbb", "my_b_content", "my_type" );
-        Mockito.when( contentService.getByParent( Mockito.isA( GetContentByParentParams.class ),
-                                                  Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn(
-            Contents.from( aContent, bContent ) );
+        Mockito.when( contentService.findByParent( Mockito.isA( FindContentByParentParams.class ),
+                                                   Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn(
+            FindContentByParentResult.create().
+                contents( Contents.from( aContent, bContent ) ).
+                hits( 2 ).
+                totalHits( 2 ).
+                build() );
 
         String jsonString = request().path( "content/list/bypath" ).queryParam( "parentPath", "/" ).
             queryParam( "expand", "full" ).get().getAsString();
@@ -381,8 +390,13 @@ public class ContentResourceTest
     public void list_content_by_path_not_found()
         throws Exception
     {
-        Mockito.when( contentService.getByParent( Mockito.isA( GetContentByParentParams.class ),
-                                                  Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn( Contents.empty() );
+        Mockito.when( contentService.findByParent( Mockito.isA( FindContentByParentParams.class ),
+                                                   Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn(
+            FindContentByParentResult.create().
+                contents( Contents.empty() ).
+                hits( 0 ).
+                totalHits( 0 ).
+                build() );
 
         String jsonString = request().path( "content/list/bypath" ).queryParam( "parentPath", "/" ).get().getAsString();
 
@@ -395,9 +409,13 @@ public class ContentResourceTest
     {
         final Content aContent = createContent( "aaa", "my_a_content", "my_type" );
         final Content bContent = createContent( "bbb", "my_b_content", "my_type" );
-        Mockito.when( contentService.getByParent( Mockito.isA( GetContentByParentParams.class ),
-                                                  Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn(
-            Contents.from( aContent, bContent ) );
+        Mockito.when( contentService.findByParent( Mockito.isA( FindContentByParentParams.class ),
+                                                   Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn(
+            FindContentByParentResult.create().
+                contents( Contents.from( aContent, bContent ) ).
+                hits( 2 ).
+                totalHits( 2 ).
+                build() );
 
         String jsonString = request().path( "content/list/bypath" ).queryParam( "expand", "none" ).get().getAsString();
 
@@ -414,9 +432,13 @@ public class ContentResourceTest
 
         final Content aContent = createContent( "aaa", "my_a_content", "my_type" );
         final Content bContent = createContent( "bbb", "my_b_content", "my_type" );
-        Mockito.when( contentService.getByParent( Mockito.isA( GetContentByParentParams.class ),
-                                                  Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn(
-            Contents.from( aContent, bContent ) );
+        Mockito.when( contentService.findByParent( Mockito.isA( FindContentByParentParams.class ),
+                                                   Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn(
+            FindContentByParentResult.create().
+                contents( Contents.from( aContent, bContent ) ).
+                hits( 2 ).
+                totalHits( 2 ).
+                build() );
 
         String jsonString = request().path( "content/list" ).queryParam( "parentId", "ccc" ).get().getAsString();
 
@@ -433,9 +455,13 @@ public class ContentResourceTest
 
         final Content aContent = createContent( "aaa", "my_a_content", "my_type" );
         final Content bContent = createContent( "bbb", "my_b_content", "my_type" );
-        Mockito.when( contentService.getByParent( Mockito.isA( GetContentByParentParams.class ),
-                                                  Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn(
-            Contents.from( aContent, bContent ) );
+        Mockito.when( contentService.findByParent( Mockito.isA( FindContentByParentParams.class ),
+                                                   Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn(
+            FindContentByParentResult.create().
+                contents( Contents.from( aContent, bContent ) ).
+                hits( 2 ).
+                totalHits( 2 ).
+                build() );
 
         String jsonString = request().path( "content/list" ).queryParam( "parentId", "ccc" ).
             queryParam( "expand", "full" ).get().getAsString();
@@ -449,9 +475,13 @@ public class ContentResourceTest
     {
         final Content aContent = createContent( "aaa", "my_a_content", "my_type" );
         final Content bContent = createContent( "bbb", "my_b_content", "my_type" );
-        Mockito.when( contentService.getByParent( Mockito.isA( GetContentByParentParams.class ),
-                                                  Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn(
-            Contents.from( aContent, bContent ) );
+        Mockito.when( contentService.findByParent( Mockito.isA( FindContentByParentParams.class ),
+                                                   Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn(
+            FindContentByParentResult.create().
+                contents( Contents.from( aContent, bContent ) ).
+                hits( 2 ).
+                totalHits( 2 ).
+                build() );
 
         String jsonString = request().path( "content/list" ).queryParam( "expand", "none" ).get().getAsString();
 

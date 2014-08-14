@@ -6,10 +6,12 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.aggregation.Aggregations;
+import com.enonic.wem.api.entity.EntityId;
+import com.enonic.wem.api.entity.EntityIds;
 
-public final class QueryResult
+public final class NodeQueryResult
 {
-    protected ImmutableSet<QueryResultEntry> entries;
+    protected ImmutableSet<NodeQueryResultEntry> entries;
 
     protected final long totalHits;
 
@@ -17,14 +19,14 @@ public final class QueryResult
 
     protected final float maxScore;
 
-    public ImmutableSet<QueryResultEntry> getEntries()
+    public ImmutableSet<NodeQueryResultEntry> getEntries()
     {
         return entries;
     }
 
     private final Aggregations aggregations;
 
-    private QueryResult( final Builder builder )
+    private NodeQueryResult( final Builder builder )
     {
         this.entries = ImmutableSet.copyOf( builder.entries );
 
@@ -62,9 +64,21 @@ public final class QueryResult
         return new Builder();
     }
 
+    public EntityIds getEntityIds()
+    {
+        final Set<EntityId> entityIds = Sets.newHashSet();
+
+        for ( final NodeQueryResultEntry nodeQueryResultEntry : entries )
+        {
+            entityIds.add( nodeQueryResultEntry.getId() );
+        }
+
+        return EntityIds.from( entityIds );
+    }
+
     public static final class Builder
     {
-        private Set<QueryResultEntry> entries = Sets.newHashSet();
+        private Set<NodeQueryResultEntry> entries = Sets.newHashSet();
 
         private long totalHits;
 
@@ -92,7 +106,7 @@ public final class QueryResult
             return this;
         }
 
-        public Builder addEntry( final QueryResultEntry entry )
+        public Builder addEntry( final NodeQueryResultEntry entry )
         {
             this.entries.add( entry );
             return this;
@@ -104,9 +118,9 @@ public final class QueryResult
             return this;
         }
 
-        public QueryResult build()
+        public NodeQueryResult build()
         {
-            return new QueryResult( this );
+            return new NodeQueryResult( this );
         }
     }
 

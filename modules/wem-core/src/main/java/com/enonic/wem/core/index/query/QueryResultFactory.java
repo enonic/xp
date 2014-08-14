@@ -6,18 +6,18 @@ import com.enonic.wem.core.elasticsearch.result.SearchResultEntry;
 
 public class QueryResultFactory
 {
-    public QueryResult create( final SearchResult searchResult )
+    public NodeQueryResult create( final SearchResult searchResult )
     {
         final SearchResultEntries results = searchResult.getResults();
 
-        final QueryResult.Builder builder = QueryResult.newQueryResult().
+        final NodeQueryResult.Builder builder = NodeQueryResult.newQueryResult().
             hits( results.getSize() ).
             totalHits( results.getTotalHits() ).
             maxScore( results.getMaxScore() );
 
         for ( final SearchResultEntry result : results )
         {
-            builder.addEntry( new QueryResultEntry( result.getScore(), result.getId() ) );
+            builder.addEntry( new NodeQueryResultEntry( result.getScore(), result.getId() ) );
         }
 
         builder.aggregations( searchResult.getAggregations() );

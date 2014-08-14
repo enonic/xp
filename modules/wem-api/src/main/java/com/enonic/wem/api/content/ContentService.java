@@ -16,7 +16,7 @@ public interface ContentService
 
     Contents getByPaths( ContentPaths paths, final Context context );
 
-    Contents getByParent( GetContentByParentParams params, final Context context );
+    FindContentByParentResult findByParent( FindContentByParentParams params, final Context context );
 
     Content create( CreateContentParams params, final Context context );
 
