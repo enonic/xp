@@ -103,7 +103,6 @@ public class JavaTypeConverterTest
         assertEquals( expected, actual );
     }
 
-
     @Test
     public void convert_from_localdatetime_to_localdatetime()
     {
