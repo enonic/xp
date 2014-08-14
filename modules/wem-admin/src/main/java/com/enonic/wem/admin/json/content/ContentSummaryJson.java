@@ -22,8 +22,7 @@ public class ContentSummaryJson
 
     private final boolean isPage;
 
-
-    public ContentSummaryJson( Content content )
+    public ContentSummaryJson( final Content content )
     {
         super( content.getId() );
         this.content = content;

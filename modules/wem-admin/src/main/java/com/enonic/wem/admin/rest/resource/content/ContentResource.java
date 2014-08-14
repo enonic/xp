@@ -45,6 +45,7 @@ import com.enonic.wem.api.content.ContentAlreadyExistException;
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
+import com.enonic.wem.api.content.ContentListMetaData;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
@@ -204,20 +205,25 @@ public class ContentResource
     private AbstractContentListJson doGetByParentPath( final String expandParam, final FindContentByParentParams params,
                                                        final ContentPath parentContentPath )
     {
-
         final FindContentByParentResult result = contentService.findByParent( params, STAGE_CONTEXT );
+
+        final ContentListMetaData metaData = ContentListMetaData.create().
+            totalHits( result.getTotalHits() ).
+            hits( result.getHits() ).
+            build();
 
         if ( EXPAND_NONE.equalsIgnoreCase( expandParam ) )
         {
-            return new ContentIdListJson( result.getContents() );
+            return new ContentIdListJson( result.getContents(), metaData );
         }
         else if ( EXPAND_FULL.equalsIgnoreCase( expandParam ) )
         {
-            return new ContentListJson( result.getContents() );
+
+            return new ContentListJson( result.getContents(), metaData );
         }
         else
         {
-            return new ContentSummaryListJson( result.getContents() );
+            return new ContentSummaryListJson( result.getContents(), metaData );
         }
     }
 

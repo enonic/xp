@@ -1,19 +1,20 @@
 package com.enonic.wem.admin.json.content;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentListMetaData;
 import com.enonic.wem.api.content.Contents;
 
 public class ContentSummaryListJson
     extends AbstractContentListJson<ContentSummaryJson>
 {
-    public ContentSummaryListJson( final Content content )
+    public ContentSummaryListJson( final Content content, final ContentListMetaData contentListMetaData )
     {
-        super( content );
+        super( content, contentListMetaData );
     }
 
-    public ContentSummaryListJson( final Contents contents )
+    public ContentSummaryListJson( final Contents contents, final ContentListMetaData contentListMetaData )
     {
-        super( contents );
+        super( contents, contentListMetaData );
     }
 
     @Override

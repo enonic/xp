@@ -10,6 +10,7 @@ import com.enonic.wem.api.aggregation.Aggregation;
 import com.enonic.wem.api.aggregation.Aggregations;
 import com.enonic.wem.api.aggregation.BucketAggregation;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentListMetaData;
 import com.enonic.wem.api.content.Contents;
 
 public abstract class AbstractAggregationContentListJson<T extends ContentIdJson>
@@ -18,14 +19,16 @@ public abstract class AbstractAggregationContentListJson<T extends ContentIdJson
     private ImmutableSet<AggregationJson> aggregations;
 
 
-    public AbstractAggregationContentListJson( final Content content, final Aggregations aggregations )
+    public AbstractAggregationContentListJson( final Content content, final ContentListMetaData contentListMetaData,
+                                               final Aggregations aggregations )
     {
-        this( Contents.from( content ), ImmutableSet.copyOf( aggregations.getSet() ) );
+        this( Contents.from( content ), contentListMetaData, ImmutableSet.copyOf( aggregations.getSet() ) );
     }
 
-    public AbstractAggregationContentListJson( final Contents contents, final ImmutableSet<Aggregation> aggregations )
+    public AbstractAggregationContentListJson( final Contents contents, final ContentListMetaData contentListMetaData,
+                                               final ImmutableSet<Aggregation> aggregations )
     {
-        super( contents );
+        super( contents, contentListMetaData );
 
         ImmutableSet.Builder<AggregationJson> builder = ImmutableSet.builder();
 
