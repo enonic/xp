@@ -146,7 +146,7 @@ module api.liveedit {
             super.remove();
         }
 
-        private scrollComponentIntoView(): void {
+        scrollComponentIntoView(): void {
             var dimensions = this.getElementDimensions();
             wemjq('html, body').animate({scrollTop: dimensions.top - 10}, 200);
         }
@@ -397,7 +397,6 @@ module api.liveedit {
             this.getEl().setData("live-edit-selected", "true");
             this.hideTooltip();
             this.showContextMenu(clickPosition);
-            this.scrollComponentIntoView();
 
             new ItemViewSelectedEvent(this, clickPosition).fire();
         }
