@@ -8,24 +8,31 @@ module api.event {
     export class ServerEventsConnection {
 
         private ws: WebSocket;
+        private reconnectInterval: number;
 
-        constructor() {
+        constructor(reconnectIntervalSeconds: number = 10) {
             this.ws = null;
+            this.reconnectInterval = reconnectIntervalSeconds * 1000;
         }
 
         public connect() {
+            if (!WebSocket) {
+                console.warn('WebSockets not supported. Server events disabled.');
+                return;
+            }
             var wsUrl = this.getWebSocketUriPrefix() + api.util.getAdminUri('event');
 
             this.ws = new WebSocket(wsUrl, 'text');
 
             this.ws.addEventListener('close', (ev: CloseEvent) => {
-                console.info('WebSocket connection to server closed', ev);
-                // TODO attempt to reconnect?
+                // attempt to reconnect
+                setTimeout(()=> {
+                    this.connect();
+                }, this.reconnectInterval);
             });
 
             this.ws.addEventListener('error', (ev: ErrorEvent) => {
-                console.error('Unable to connect to server web socket on ' + wsUrl, ev);
-                // TODO attempt to reconnect?
+                // console.log('Unable to connect to server web socket on ' + wsUrl, ev);
             });
 
             this.ws.addEventListener('message', (remoteEvent: any) => {
