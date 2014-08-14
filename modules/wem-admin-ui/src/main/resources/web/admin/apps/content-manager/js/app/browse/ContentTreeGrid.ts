@@ -143,7 +143,6 @@ module app.browse {
         private nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
             var contentSummaryViewer = new ContentSummaryViewer();
             contentSummaryViewer.setObject(node.getData().getContentSummary(), node.calcLevel() > 1);
-            contentSummaryViewer.refresh(node.getTimestamp());
             return contentSummaryViewer.toString();
         }
 

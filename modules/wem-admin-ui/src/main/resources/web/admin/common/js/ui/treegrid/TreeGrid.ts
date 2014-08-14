@@ -428,10 +428,7 @@ module api.ui.treegrid {
 
         updateNode(data: NODE): void {
             var root = this.stash || this.root;
-            var node: TreeNode<NODE> = root.findNode(data);
-            if (node) {
-                node.updateTimestamp();
-            }
+//            var node: TreeNode<NODE> = root.findNode(data);
         }
 
         deleteNodes(dataList: NODE[]): void {
