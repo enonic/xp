@@ -9,10 +9,12 @@ module api.event {
 
         private ws: WebSocket;
         private reconnectInterval: number;
+        private applications: api.app.Application[];
 
-        constructor(reconnectIntervalSeconds: number = 10) {
+        constructor(applications: api.app.Application[], reconnectIntervalSeconds: number = 10) {
             this.ws = null;
             this.reconnectInterval = reconnectIntervalSeconds * 1000;
+            this.applications = applications;
         }
 
         public connect() {
@@ -50,7 +52,12 @@ module api.event {
             }
 
             if (clientEvent) {
-                clientEvent.fire();
+                this.applications.forEach((app: api.app.Application)=> {
+                    var appWindow = app.getWindow();
+                    if (appWindow) {
+                        clientEvent.fire(appWindow);
+                    }
+                });
             }
         }
 

@@ -53,6 +53,9 @@ function startApplication() {
     api.dom.Body.get().appendChild(homeMainContainer);
     var router = new app.launcher.AppRouter(applications, appLauncher);
     appLauncher.setRouter(router);
+
+    var serverEvents = new api.event.ServerEventsConnection(applications);
+    serverEvents.connect();
 }
 
 function getApplication(id: string): api.app.Application {

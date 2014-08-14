@@ -24,8 +24,6 @@ function startApplication() {
         }
     };
 
-    var serverEvents = new api.event.ServerEventsConnection();
-    serverEvents.connect();
 }
 
 module components {
