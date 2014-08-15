@@ -11,10 +11,11 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 
-import com.enonic.wem.admin.json.icon.IconJson;
+import com.enonic.wem.admin.json.icon.ThumbnailJson;
 import com.enonic.wem.admin.json.schema.content.ContentTypeConfigJson;
 import com.enonic.wem.admin.json.schema.content.ContentTypeJson;
 import com.enonic.wem.admin.json.schema.content.ContentTypeSummaryListJson;
+import com.enonic.wem.admin.rest.exception.NotFoundWebException;
 import com.enonic.wem.admin.rest.resource.schema.json.CreateOrUpdateSchemaJsonResult;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteJson;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteParams;
@@ -39,7 +40,6 @@ import com.enonic.wem.api.schema.content.editor.ContentTypeEditor;
 import com.enonic.wem.api.schema.content.validator.ContentTypeValidationResult;
 import com.enonic.wem.api.support.serializer.XmlParsingException;
 import com.enonic.wem.api.xml.XmlSerializers;
-import com.enonic.wem.admin.rest.exception.NotFoundWebException;
 
 @Path("schema/content")
 @Produces("application/json")
@@ -128,7 +128,7 @@ public class ContentTypeResource
         try
         {
             final CreateContentTypeParams createContentType = json.getCreateContentType();
-            final Icon schemaIcon = getSchemaIcon( json.getIconJson() );
+            final Icon schemaIcon = getSchemaIcon( json.getThumbnailJson() );
             if ( schemaIcon != null )
             {
                 createContentType.schemaIcon( schemaIcon );
@@ -215,12 +215,12 @@ public class ContentTypeResource
     }
 
 
-    private Icon getSchemaIcon( final IconJson iconJson )
+    private Icon getSchemaIcon( final ThumbnailJson thumbnailJson )
     {
-        if ( iconJson != null )
+        if ( thumbnailJson != null )
         {
-            final Blob blob = blobService.get( iconJson.getThumbnail().getBlobKey() );
-            return blob == null ? null : Icon.from( blob.getStream(), iconJson.getMimeType() );
+            final Blob blob = blobService.get( thumbnailJson.getThumbnail().getBlobKey() );
+            return blob == null ? null : Icon.from( blob.getStream(), thumbnailJson.getMimeType() );
         }
         return null;
     }

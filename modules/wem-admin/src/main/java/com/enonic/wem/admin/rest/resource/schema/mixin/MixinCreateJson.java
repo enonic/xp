@@ -1,6 +1,6 @@
 package com.enonic.wem.admin.rest.resource.schema.mixin;
 
-import com.enonic.wem.admin.json.icon.IconJson;
+import com.enonic.wem.admin.json.icon.ThumbnailJson;
 import com.enonic.wem.api.schema.mixin.MixinName;
 
 public class MixinCreateJson
@@ -9,7 +9,7 @@ public class MixinCreateJson
 
     private String config;
 
-    private IconJson icon;
+    private ThumbnailJson icon;
 
     public MixinName getName()
     {
@@ -31,12 +31,12 @@ public class MixinCreateJson
         this.config = config;
     }
 
-    public IconJson getIconJson()
+    public ThumbnailJson getThumbnailJson()
     {
         return icon;
     }
 
-    public void setIcon( final IconJson icon )
+    public void setIcon( final ThumbnailJson icon )
     {
         this.icon = icon;
     }

@@ -8,18 +8,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.content.thumb.Thumbnail;
 
-public class IconJson
+public class ThumbnailJson
 {
     private final Thumbnail thumbnail;
 
     @JsonIgnore
-    public IconJson( final Thumbnail thumbnail )
+    public ThumbnailJson( final Thumbnail thumbnail )
     {
         this.thumbnail = thumbnail;
     }
 
     @JsonCreator
-    public IconJson( @JsonProperty("blobKey") final String blobKey, @JsonProperty("mimeType") final String mimeType )
+    public ThumbnailJson( @JsonProperty("blobKey") final String blobKey, @JsonProperty("mimeType") final String mimeType )
     {
         this.thumbnail = Thumbnail.from( new BlobKey( blobKey ), mimeType, 0 );
     }

@@ -11,7 +11,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.enonic.wem.admin.json.icon.IconJson;
+import com.enonic.wem.admin.json.icon.ThumbnailJson;
 import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeConfigJson;
 import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeJson;
 import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeListJson;
@@ -126,7 +126,7 @@ public class RelationshipTypeResource
             XmlSerializers.relationshipType().parse( json.getConfig() ).to( builder );
             final RelationshipType relationshipType = builder.build();
 
-            final Icon schemaIcon = getSchemaIcon( json.getIconJson() );
+            final Icon schemaIcon = getSchemaIcon( json.getThumbnailJson() );
 
             final CreateRelationshipTypeParams createCommand = new CreateRelationshipTypeParams().
                 name( json.getName() ).
@@ -159,7 +159,7 @@ public class RelationshipTypeResource
             XmlSerializers.relationshipType().parse( json.getConfig() ).to( builder );
             final RelationshipType parsed = builder.build();
 
-            final Icon schemaIcon = getSchemaIcon( json.getIconJson() );
+            final Icon schemaIcon = getSchemaIcon( json.getThumbnailJson() );
 
             final RelationshipTypeEditor editor = new RelationshipTypeEditor()
             {
@@ -196,12 +196,12 @@ public class RelationshipTypeResource
         }
     }
 
-    private Icon getSchemaIcon( final IconJson iconJson )
+    private Icon getSchemaIcon( final ThumbnailJson thumbnailJson )
     {
-        if ( iconJson != null )
+        if ( thumbnailJson != null )
         {
-            final Blob blob = blobService.get( iconJson.getThumbnail().getBlobKey() );
-            return blob == null ? null : Icon.from( blob.getStream(), iconJson.getMimeType() );
+            final Blob blob = blobService.get( thumbnailJson.getThumbnail().getBlobKey() );
+            return blob == null ? null : Icon.from( blob.getStream(), thumbnailJson.getMimeType() );
         }
         return null;
     }
