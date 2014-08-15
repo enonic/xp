@@ -123,6 +123,7 @@ module api.liveedit.text {
                 this.getEl().setInnerHtml('</br>');
             }
 
+            this.setCaretOffset();
             this.editing = true;
             api.ui.text.TextEditorToolbar.get().showToolbar(this);
 
@@ -133,6 +134,20 @@ module api.liveedit.text {
 
         getTooltipViewer(): TextComponentViewer {
             return new TextComponentViewer();
+        }
+
+        private setCaretOffset() {
+            var element = this.getHTMLElement();
+            var selection = window.getSelection();
+            var range = document.createRange();
+
+            range.selectNodeContents(element);
+            range.setStart(range.endContainer, range.endOffset);
+            range.setEnd(range.endContainer, range.endOffset);
+            selection.removeAllRanges();
+
+            element.click();
+            selection.addRange(range);
         }
 
         private createTextContextMenuActions(): api.ui.Action[] {
