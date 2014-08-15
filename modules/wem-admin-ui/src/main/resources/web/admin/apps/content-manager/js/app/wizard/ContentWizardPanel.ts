@@ -77,7 +77,7 @@ module app.wizard {
 
         private publishAction: api.ui.Action;
 
-        private contextWindowToggler: ContextWindowToggler;
+        private contextWindowToggler: app.wizard.page.contextwindow.ContextWindowToggler;
 
         private cycleViewModeButton: api.ui.button.CycleButton;
 
@@ -697,6 +697,10 @@ module app.wizard {
 
         public contentCanBePublished(): boolean {
             return this.isContentFormValid && this.isSiteTemplateFormValid;
+        }
+
+        getContextWindowToggler(): app.wizard.page.contextwindow.ContextWindowToggler {
+            return this.contextWindowToggler;
         }
     }
 

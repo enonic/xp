@@ -18,8 +18,6 @@ module app.wizard.page.contextwindow {
 
     export interface ContextWindowConfig {
 
-        liveEditPage: app.wizard.page.LiveEditPageProxy;
-
         liveFormPanel:LiveFormPanel;
 
         inspectionPanel:InspectionPanel;
@@ -37,11 +35,9 @@ module app.wizard.page.contextwindow {
 
         private emulatorPanel: EmulatorPanel;
 
-        private liveEditPage: app.wizard.page.LiveEditPageProxy;
-
         private liveFormPanel: LiveFormPanel;
 
-        private visible: boolean;
+        private shown: boolean;
 
         private splitter: api.dom.DivEl;
 
@@ -58,7 +54,6 @@ module app.wizard.page.contextwindow {
         constructor(config: ContextWindowConfig) {
             super();
 
-            this.liveEditPage = config.liveEditPage;
             this.liveFormPanel = config.liveFormPanel;
             this.inspectionPanel = config.inspectionPanel;
             this.emulatorPanel = config.emulatorPanel;
@@ -73,22 +68,6 @@ module app.wizard.page.contextwindow {
                 this.hide();
             });
 
-            app.wizard.ToggleContextWindowEvent.on((event: app.wizard.ToggleContextWindowEvent) => {
-                var active = event.getToggler().isActive();
-
-                if (active && !this.visible) {
-                    this.slideIn();
-                } else if (active && this.visible) {
-                    event.getToggler().setActive(false);
-                    this.slideOut();
-                } else if (!active && this.visible) {
-                    this.slideOut();
-                } else { // !active && !this.visible
-                    this.slideIn();
-                    event.getToggler().setActive(true);
-                }
-            });
-
             ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
                 this.updateFrameSize();
             });
@@ -100,8 +79,6 @@ module app.wizard.page.contextwindow {
             this.addItem("Insert", this.insertablesPanel);
             this.addItem("Settings", this.inspectionPanel);
             this.addItem("Emulator", this.emulatorPanel);
-
-            this.onShown(() => this.slideOut());
 
             this.onRendered(() => this.initializeResizable());
 
@@ -158,28 +135,32 @@ module app.wizard.page.contextwindow {
             this.removeChild(this.ghostDragger);
         }
 
+        isShown() {
+            return this.shown;
+        }
+
         slideOut() {
             this.getEl().addClass("hidden");
             this.getEl().setRight(-this.getEl().getWidthWithBorder() + "px");
-            this.visible = false;
+            this.shown = false;
             this.updateFrameSize();
         }
 
         slideIn() {
             this.getEl().removeClass("hidden");
             this.getEl().setRight("0px");
-            this.visible = true;
+            this.shown = true;
             this.updateFrameSize();
         }
 
         hide() {
-            if (this.visible) {
+            if (this.shown) {
                 this.slideOut();
             }
         }
 
         show() {
-            if (!this.visible) {
+            if (!this.shown) {
                 this.slideIn();
             }
         }
@@ -196,12 +177,12 @@ module app.wizard.page.contextwindow {
 
         private updateFrameSize() {
             var contextWindowWidth = this.actualWidth || this.getEl().getWidth();
-            this.liveFormPanel.updateFrameContainerSize(this.isPinned() && this.visible, contextWindowWidth);
+            this.liveFormPanel.updateFrameContainerSize(this.isPinned() && this.shown, contextWindowWidth);
 
             !this.isPinned() ? this.addClass("unpinned") : this.removeClass("unpinned");
         }
 
-        private isPinned(): boolean {
+        isPinned(): boolean {
             var contextWindowWidth = this.actualWidth || this.getEl().getWidth();
             var liveFormPanelWidth = this.liveFormPanel.getEl().getWidth();
             return (liveFormPanelWidth > 1380) && ((liveFormPanelWidth - contextWindowWidth) > 960);
