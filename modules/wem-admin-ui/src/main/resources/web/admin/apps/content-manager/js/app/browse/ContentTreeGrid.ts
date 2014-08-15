@@ -25,6 +25,8 @@ module app.browse {
 
     export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
 
+        private maxFetchSize: number;
+
         constructor() {
             var nameColumn = new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().
                 setName("Name").
@@ -60,6 +62,8 @@ module app.browse {
                     ]).setShowContextMenu(new TreeGridContextMenu(new ContentTreeGridActions(this))
                 ).prependClasses("content-grid")
             );
+
+            this.maxFetchSize = 5;
 
             api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
                 if (item.isInRangeOrSmaller(api.ui.responsive.ResponsiveRanges._240_360)) {

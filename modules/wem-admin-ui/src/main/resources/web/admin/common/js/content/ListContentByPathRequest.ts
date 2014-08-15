@@ -10,25 +10,28 @@ module api.content {
 
         private size: number;
 
-        constructor(parentPath:ContentPath) {
+        constructor(parentPath: ContentPath) {
             super();
             super.setMethod("GET");
             this.parentPath = parentPath;
         }
 
-        setExpand(value:api.rest.Expand) {
+        setExpand(value:api.rest.Expand): ListContentByPathRequest<T> {
             this.expand = value;
+            return this;
         }
 
-        setFrom(value: number) {
+        setFrom(value: number): ListContentByPathRequest<T> {
             this.from = value;
+            return this;
         }
 
-        setSize(value: number) {
+        setSize(value: number): ListContentByPathRequest<T> {
             this.size = value;
+            return this;
         }
 
-        getParams():Object {
+        getParams(): Object {
             return {
                 parentPath: this.parentPath.toString(),
                 expand: this.expand,
@@ -37,7 +40,7 @@ module api.content {
             };
         }
 
-        getRequestPath():api.rest.Path {
+        getRequestPath(): api.rest.Path {
             return api.rest.Path.fromParent(super.getResourcePath(), "list", "bypath");
         }
     }

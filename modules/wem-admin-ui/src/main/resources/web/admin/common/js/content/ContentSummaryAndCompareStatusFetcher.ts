@@ -2,11 +2,15 @@ module api.content {
 
     export class ContentSummaryAndCompareStatusFetcher {
 
-        static fetchChildren(parentContentId: string): Q.Promise<ContentSummaryAndCompareStatus[]> {
+        static fetchChildren(parentContentId: string, from: number = 0, size: number = -1): Q.Promise<ContentSummaryAndCompareStatus[]> {
 
             var deferred = Q.defer<ContentSummaryAndCompareStatus[]>();
 
-            new ListContentByIdRequest(parentContentId).sendAndParse().then((response: ContentResponse<ContentSummary>)=> {
+            new ListContentByIdRequest(parentContentId).
+                setFrom(from).
+                setSize(size).
+                sendAndParse().
+            then((response: ContentResponse<ContentSummary>)=> {
                 CompareContentRequest.fromContentSummaries(response.getContents()).sendAndParse().then((compareResults: CompareContentResults) => {
                     deferred.resolve(ContentSummaryAndCompareStatusFetcher.updateCompareStatus(response.getContents(), compareResults));
                 });
