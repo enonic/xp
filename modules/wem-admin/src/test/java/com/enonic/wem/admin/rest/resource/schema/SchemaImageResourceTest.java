@@ -1,6 +1,7 @@
 package com.enonic.wem.admin.rest.resource.schema;
 
 import java.awt.image.BufferedImage;
+import java.time.Instant;
 import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
@@ -66,7 +67,7 @@ public class SchemaImageResourceTest
         throws Exception
     {
         byte[] data = Resources.toByteArray( getClass().getResource( "contenttypeicon.png" ) );
-        Icon schemaIcon = Icon.from( data, "image/png" );
+        Icon schemaIcon = Icon.from( data, "image/png", Instant.now() );
 
         final ContentType contentType = ContentType.newContentType().
             name( "my_content_type" ).
@@ -89,7 +90,7 @@ public class SchemaImageResourceTest
         throws Exception
     {
         byte[] data = Resources.toByteArray( getClass().getResource( "contenttypeicon.png" ) );
-        Icon schemaIcon = Icon.from( data, "image/png" );
+        Icon schemaIcon = Icon.from( data, "image/png", Instant.now() );
 
         final ContentType systemContentType = ContentType.newContentType().
             name( "unstructured" ).
@@ -138,7 +139,7 @@ public class SchemaImageResourceTest
         throws Exception
     {
         byte[] data = Resources.toByteArray( getClass().getResource( "contenttypeicon.png" ) );
-        final Icon icon = Icon.from( data, "image/png" );
+        final Icon icon = Icon.from( data, "image/png", Instant.now() );
 
         Mixin mixin = newMixin().
             name( "postal_code" ).
@@ -180,7 +181,7 @@ public class SchemaImageResourceTest
         throws Exception
     {
         byte[] data = Resources.toByteArray( getClass().getResource( "contenttypeicon.png" ) );
-        final Icon icon = Icon.from( data, "image/png" );
+        final Icon icon = Icon.from( data, "image/png", Instant.now() );
 
         RelationshipType relationshipType = newRelationshipType().
             name( "like" ).

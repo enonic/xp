@@ -12,6 +12,7 @@
         "editable": true,
         "final": false,
         "hasChildren": false,
+        "icon": null,
         "iconUrl": "/admin/rest/schema/image/ContentType:contenttype",
         "key": "ContentType:contenttype",
         "modifiedTime": "2013-08-23T12:55:09.162Z",
@@ -28,6 +29,7 @@
         "displayName": "mixin",
         "editable": true,
         "hasChildren": false,
+        "icon": null,
         "iconUrl": "/admin/rest/schema/image/Mixin:mixin",
         "items": [
             {

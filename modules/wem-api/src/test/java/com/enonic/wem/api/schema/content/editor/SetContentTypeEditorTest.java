@@ -45,7 +45,7 @@ public class SetContentTypeEditorTest
             modifiedTime( TIME2 ).
             addFormItem( newInput().name( "title" ).inputType( InputTypes.TEXT_LINE ).build() ).
             addFormItem( formItemSet ).
-            icon( Icon.from( "ABC".getBytes(), "image/png" ) ).
+            icon( Icon.from( "ABC".getBytes(), "image/png", TIME1 ) ).
             build();
 
         final SetContentTypeEditor.Builder editorBuilder = SetContentTypeEditor.newSetContentTypeEditor();
@@ -53,7 +53,7 @@ public class SetContentTypeEditorTest
         editorBuilder.setAbstract( true );
         editorBuilder.setFinal( false );
         editorBuilder.superType( ContentTypeName.unstructured() );
-        editorBuilder.icon( Icon.from( "ABC".getBytes(), "image/png" ) );
+        editorBuilder.icon( Icon.from( "ABC".getBytes(), "image/png", TIME1 ) );
         editorBuilder.contentDisplayNameScript( "myScript()" );
 
         SetContentTypeEditor editor = editorBuilder.build();
@@ -87,7 +87,7 @@ public class SetContentTypeEditorTest
         editorBuilder.setAbstract( false );
         editorBuilder.setFinal( false );
         editorBuilder.superType( ContentTypeName.structured() );
-        editorBuilder.icon( Icon.from( "ABC".getBytes(), "image/png" ) );
+        editorBuilder.icon( Icon.from( "ABC".getBytes(), "image/png", TIME1 ) );
         editorBuilder.contentDisplayNameScript( "newScript()" );
         final Form form = Form.newForm().addFormItem( formItemSet ).build();
         editorBuilder.form( form );
@@ -102,15 +102,7 @@ public class SetContentTypeEditorTest
         assertEquals( TIME2, result.getModifiedTime() );
         assertEquals( "newScript()", result.getContentDisplayNameScript() );
         assertEquals( ContentTypeName.structured(), result.getSuperType() );
-        assertEquals( Icon.from( "ABC".getBytes(), "image/png" ), result.getIcon() );
+        assertEquals( Icon.from( "ABC".getBytes(), "image/png", TIME1 ), result.getIcon() );
         assertEquals( form.toString(), result.form().toString() );
     }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testSetContentTypeEditor_noFieldsSet()
-        throws Exception
-    {
-        SetContentTypeEditor editor = SetContentTypeEditor.newSetContentTypeEditor().build();
-    }
-
 }

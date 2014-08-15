@@ -7,6 +7,7 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.admin.rest.resource.MockRestResponse;
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.SchemaKey;
@@ -36,8 +37,18 @@ public class SchemaResourceTest
 
     private ContentType createContentType( String name )
     {
-        return ContentType.newContentType().name( name ).createdTime( Instant.parse( currentTime ) ).modifiedTime(
-            Instant.parse( currentTime ) ).description( "CT description" ).build();
+        return this.createContentType( name, null );
+    }
+
+    private ContentType createContentType( String name, Icon icon )
+    {
+        ContentType.Builder builder = ContentType.newContentType().name( name ).createdTime( Instant.parse( currentTime ) ).modifiedTime(
+            Instant.parse( currentTime ) ).description( "CT description" );
+        if ( icon != null )
+        {
+            builder.icon( icon );
+        }
+        return builder.build();
     }
 
     private RelationshipType createRelationshipType( String name )
@@ -117,7 +128,9 @@ public class SchemaResourceTest
     public void listChildSchemas()
         throws Exception
     {
-        Schemas schemas = Schemas.from( createContentType( "contenttype" ) );
+        byte[] iconBytes = new byte[]{111, 122, 123};
+        Schemas schemas = Schemas.from(
+            createContentType( "contenttype", Icon.from( iconBytes, "img/gif", Instant.parse( "2007-12-03T10:15:30.00Z" ) ) ) );
         Mockito.when( this.schemaService.getChildren( Mockito.isA( SchemaKey.class ) ) ).thenReturn( schemas );
 
         String json = request().path( "schema/list" ).queryParam( "parentKey", "ContentType:parent" ).get().getAsString();

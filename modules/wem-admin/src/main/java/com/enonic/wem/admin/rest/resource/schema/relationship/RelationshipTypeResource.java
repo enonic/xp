@@ -1,5 +1,7 @@
 package com.enonic.wem.admin.rest.resource.schema.relationship;
 
+import java.time.Instant;
+
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -201,7 +203,7 @@ public class RelationshipTypeResource
         if ( thumbnailJson != null )
         {
             final Blob blob = blobService.get( thumbnailJson.getThumbnail().getBlobKey() );
-            return blob == null ? null : Icon.from( blob.getStream(), thumbnailJson.getMimeType() );
+            return blob == null ? null : Icon.from( blob.getStream(), thumbnailJson.getMimeType(), Instant.now() );
         }
         return null;
     }

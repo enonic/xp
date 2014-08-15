@@ -5,6 +5,8 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
 
 import org.apache.commons.io.FilenameUtils;
 
@@ -55,8 +57,9 @@ public final class IconDao
                 if ( Files.isRegularFile( iconFile ) )
                 {
                     final String extension = FilenameUtils.getExtension( iconFile.getFileName().toString() );
+                    final FileTime lastModifiedTime = Files.readAttributes( iconFile, BasicFileAttributes.class ).lastModifiedTime();
                     final MediaType mediaType = MediaTypes.instance().fromExt( extension );
-                    return Icon.from( Files.newInputStream( iconFile ), mediaType.toString() );
+                    return Icon.from( Files.newInputStream( iconFile ), mediaType.toString(), lastModifiedTime.toInstant() );
                 }
             }
             return null;

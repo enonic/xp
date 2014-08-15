@@ -4,6 +4,7 @@ package com.enonic.wem.api;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Instant;
 import java.util.Arrays;
 
 import com.google.common.base.Objects;
@@ -16,13 +17,16 @@ public final class Icon
 
     private final String mimeType;
 
-    private Icon( final byte[] iconData, final String mimeType )
+    private final Instant modifiedTime;
+
+    private Icon( final byte[] iconData, final String mimeType, final Instant modifiedTime )
     {
         Preconditions.checkNotNull( mimeType, "mimeType is mandatory for an icon" );
         Preconditions.checkNotNull( iconData, "iconData is mandatory" );
         Preconditions.checkArgument( iconData.length > 0, "iconData cannot be empty" );
         this.iconData = iconData;
         this.mimeType = mimeType;
+        this.modifiedTime = modifiedTime;
     }
 
     public byte[] toByteArray()
@@ -45,6 +49,11 @@ public final class Icon
         return iconData.length;
     }
 
+    public Instant getModifiedTime()
+    {
+        return this.modifiedTime;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -59,13 +68,14 @@ public final class Icon
         }
 
         final Icon that = (Icon) o;
-        return Objects.equal( this.mimeType, that.mimeType ) && Arrays.equals( this.iconData, that.iconData );
+        return Objects.equal( this.mimeType, that.mimeType ) && Objects.equal( this.modifiedTime, that.modifiedTime ) &&
+            Arrays.equals( this.iconData, that.iconData );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( mimeType, Arrays.hashCode( iconData ) );
+        return Objects.hashCode( mimeType, modifiedTime, Arrays.hashCode( iconData ) );
     }
 
     @Override
@@ -75,20 +85,21 @@ public final class Icon
             add( "mimeType", mimeType ).
             add( "iconData", iconData ).
             add( "size", getSize() ).
+            add( "modifiedTime", modifiedTime ).
             toString();
     }
 
-    public static Icon from( final byte[] iconData, final String mimeType )
+    public static Icon from( final byte[] iconData, final String mimeType, final Instant modifiedTime )
     {
-        return new Icon( iconData, mimeType );
+        return new Icon( iconData, mimeType, modifiedTime );
     }
 
-    public static Icon from( final InputStream dataStream, final String mimeType )
+    public static Icon from( final InputStream dataStream, final String mimeType, final Instant modifiedTime )
     {
         Preconditions.checkNotNull( dataStream, "dataStream is mandatory" );
         try (InputStream is = dataStream)
         {
-            return new Icon( ByteStreams.toByteArray( is ), mimeType );
+            return new Icon( ByteStreams.toByteArray( is ), mimeType, modifiedTime );
         }
         catch ( IOException e )
         {

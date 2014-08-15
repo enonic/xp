@@ -8,6 +8,7 @@
         "displayName": "mixin",
         "editable": true,
         "hasChildren": false,
+        "icon": null,
         "iconUrl": "/admin/rest/schema/image/Mixin:mixin",
         "items": [
             {
