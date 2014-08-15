@@ -31,7 +31,7 @@ module api.ui.tags {
 
         private removable: boolean;
 
-        private tagRemoveListeners: {(event: TagRemoveEvent) : void}[] = [];
+        private tagRemoveListeners: {() : void}[] = [];
 
         constructor(builder: TagBuilder) {
             super("tag");
@@ -46,7 +46,7 @@ module api.ui.tags {
                 this.removeButtonEl = new api.dom.AEl("remove-button");
                 this.appendChild(this.removeButtonEl);
                 this.removeButtonEl.onClicked(() => {
-                    this.notifyTagRemoved(new TagRemoveEvent(this.value));
+                    this.notifyTagRemoved();
                 })
             }
 
@@ -58,17 +58,17 @@ module api.ui.tags {
             return this.value;
         }
 
-        onTagRemove(listener: (event: TagRemoveEvent) => void) {
+        onTagRemove(listener: () => void) {
             this.tagRemoveListeners.push(listener);
         }
 
-        unTagRemoved(listener: (event: TagRemoveEvent) => void) {
+        unTagRemoved(listener: () => void) {
             this.tagRemoveListeners.push(listener);
         }
 
-        private notifyTagRemoved(event: TagRemoveEvent) {
-            this.tagRemoveListeners.forEach((listener: (event: TagRemoveEvent)=>void) => {
-                listener(event);
+        private notifyTagRemoved() {
+            this.tagRemoveListeners.forEach((listener: ()=>void) => {
+                listener();
             });
         }
     }
