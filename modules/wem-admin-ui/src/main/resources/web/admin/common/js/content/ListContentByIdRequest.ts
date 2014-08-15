@@ -1,6 +1,6 @@
 module api.content {
 
-    export class ListContentByIdRequest extends ContentResourceRequest<ListContentResult<api.content.json.ContentSummaryJson>, ContentSummary[]> {
+    export class ListContentByIdRequest extends ContentResourceRequest<ListContentResult<api.content.json.ContentSummaryJson>, ContentResponse<ContentSummary>> {
 
         private parentId:string;
 
@@ -41,10 +41,10 @@ module api.content {
             return api.rest.Path.fromParent(super.getResourcePath(), "list");
         }
 
-        sendAndParse(): Q.Promise<ContentSummary[]> {
+        sendAndParse(): Q.Promise<ContentResponse<ContentSummary>> {
 
             return this.send().then((response:api.rest.JsonResponse<ListContentResult<api.content.json.ContentSummaryJson>>) => {
-                return api.content.ContentSummary.fromJsonArray( response.getResult().contents );
+                return new ContentResponse(ContentSummary.fromJsonArray( response.getResult().contents ), response.getResult().metadata);
             });
         }
     }

@@ -2,7 +2,8 @@ module api.content {
 
     export interface ListContentResult<T> {
 
-        contents:T[];
+        contents: T[];
 
+        metadata: ContentMetadata;
     }
 }

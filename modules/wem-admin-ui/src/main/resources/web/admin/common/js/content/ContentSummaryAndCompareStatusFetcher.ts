@@ -6,9 +6,9 @@ module api.content {
 
             var deferred = Q.defer<ContentSummaryAndCompareStatus[]>();
 
-            new ListContentByIdRequest(parentContentId).sendAndParse().then((contentSummaries: ContentSummary[])=> {
-                CompareContentRequest.fromContentSummaries(contentSummaries).sendAndParse().then((compareResults: CompareContentResults) => {
-                    deferred.resolve(ContentSummaryAndCompareStatusFetcher.updateCompareStatus(contentSummaries, compareResults));
+            new ListContentByIdRequest(parentContentId).sendAndParse().then((response: ContentResponse<ContentSummary>)=> {
+                CompareContentRequest.fromContentSummaries(response.getContents()).sendAndParse().then((compareResults: CompareContentResults) => {
+                    deferred.resolve(ContentSummaryAndCompareStatusFetcher.updateCompareStatus(response.getContents(), compareResults));
                 });
             });
 

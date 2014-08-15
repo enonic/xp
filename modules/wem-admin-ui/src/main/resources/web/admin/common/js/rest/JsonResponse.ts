@@ -13,30 +13,29 @@ module api.rest {
             }
         }
 
-        isBlank():boolean {
+        isBlank(): boolean {
             return !this.json;
         }
 
-        getJson():any {
+        getJson(): any {
             return this.json;
         }
 
-        hasResult():boolean {
+        hasResult(): boolean {
             if( this.json == undefined || this.json == null ) {
                 return false;
             }
             return true;
         }
 
-        getResult():RAW_JSON_TYPE {
+        getResult(): RAW_JSON_TYPE {
             if( !this.hasResult() ) {
                 return null;
             }
 
             if( this.json.result ) {
                 return <RAW_JSON_TYPE>this.json.result;
-            }
-            else {
+            } else {
                 return <RAW_JSON_TYPE>this.json;
             }
         }
