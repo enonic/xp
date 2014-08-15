@@ -1,5 +1,7 @@
 package com.enonic.wem.core.event;
 
+import java.util.Collections;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,6 +17,11 @@ public final class EventPublisherImpl
     private final static Logger LOG = LoggerFactory.getLogger( EventPublisherImpl.class );
 
     private Iterable<EventListener> eventListeners;
+
+    public EventPublisherImpl()
+    {
+        this.eventListeners = Collections.emptyList();
+    }
 
     @Override
     public void publish( final Event event )
