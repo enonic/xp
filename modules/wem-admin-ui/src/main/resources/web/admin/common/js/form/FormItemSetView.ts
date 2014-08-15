@@ -120,13 +120,13 @@ module api.form {
 
             });
             this.collapseButton = new api.dom.AEl("collapse-button");
-            this.collapseButton.setText("Collapse");
+            this.collapseButton.setHtml("Collapse");
             this.collapseButton.onClicked((event: MouseEvent) => {
                 if (this.formItemSetOccurrences.isCollapsed()) {
-                    this.collapseButton.setText("Collapse");
+                    this.collapseButton.setHtml("Collapse");
                     this.formItemSetOccurrences.showOccurences(true);
                 } else {
-                    this.collapseButton.setText("Expand");
+                    this.collapseButton.setHtml("Expand");
                     this.formItemSetOccurrences.showOccurences(false);
                 }
 

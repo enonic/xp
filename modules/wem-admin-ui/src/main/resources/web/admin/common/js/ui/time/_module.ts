@@ -5,3 +5,6 @@
 ///<reference path='CalendarWeek.ts' />
 ///<reference path='SelectedDateChangedEvent.ts' />
 ///<reference path='Calendar.ts' />
+///<reference path='DatePicker.ts' />
+///<reference path='MonthOfYear.ts' />
+///<reference path='MonthsOfYear.ts' />

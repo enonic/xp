@@ -1,7 +1,7 @@
 module api.ui.dialog {
 
     export interface ModalDialogConfig {
-        title:api.ui.dialog.ModalDialogHeader;
+        title: api.ui.dialog.ModalDialogHeader;
     }
 
     export class ModalDialog extends api.dom.DivEl {
@@ -22,9 +22,6 @@ module api.ui.dialog {
             super("modal-dialog");
 
             this.config = config;
-
-            this.getEl().setDisplay("none").
-                setPosition("fixed").setTop("50%").setLeft("50%");
 
             this.title = this.config.title;
             this.appendChild(this.title);
@@ -107,12 +104,12 @@ module api.ui.dialog {
             super("dialog-header");
 
             this.titleEl = new api.dom.H2El('title');
-            this.titleEl.setText(title);
+            this.titleEl.setHtml(title);
             this.appendChild(this.titleEl);
         }
 
         setTitle(value: string) {
-            this.titleEl.setText(value);
+            this.titleEl.setHtml(value);
         }
     }
 

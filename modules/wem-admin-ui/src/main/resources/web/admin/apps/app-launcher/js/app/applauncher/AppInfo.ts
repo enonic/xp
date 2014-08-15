@@ -1,8 +1,8 @@
 module app.launcher {
 
     export class AppInfo extends api.dom.DivEl {
-        private appInfoName:api.dom.H3El;
-        private appInfoDescription:api.dom.DivEl;
+        private appInfoName: api.dom.H3El;
+        private appInfoDescription: api.dom.DivEl;
 
         constructor() {
             super('app-info');
@@ -14,13 +14,13 @@ module app.launcher {
             this.appendChild(this.appInfoDescription);
         }
 
-        showAppInfo(application:api.app.Application) {
-            this.appInfoName.setText(application.getName());
+        showAppInfo(application: api.app.Application) {
+            this.appInfoName.setHtml(application.getName());
             this.appInfoDescription.getEl().setInnerHtml(application.getDescription());
         }
 
         hideAppInfo() {
-            this.appInfoName.setText('');
+            this.appInfoName.setHtml('');
             this.appInfoDescription.getEl().setInnerHtml('');
         }
     }

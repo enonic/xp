@@ -6,9 +6,5 @@ module api.dom {
             super(new NewElementBuilder().setTagName("h6").setClassName(className));
         }
 
-        setText(value: string): H6El {
-            this.getEl().setInnerHtml(value);
-            return this;
-        }
     }
 }

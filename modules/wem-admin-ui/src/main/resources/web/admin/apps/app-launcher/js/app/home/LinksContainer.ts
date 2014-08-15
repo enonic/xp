@@ -1,20 +1,20 @@
 module app.home {
 
     export class LinksContainer extends api.dom.DivEl {
-        private links:{text:string; url:string;}[];
+        private links: {text:string; url:string;}[];
 
         constructor() {
             super('links-container');
             this.links = [];
         }
 
-        addLink(linkText:string, linkUrl:string):LinksContainer {
+        addLink(linkText: string, linkUrl: string): LinksContainer {
             if (this.links.length > 0) {
                 this.addSeparator();
             }
 
             var linkEl = new api.dom.AEl();
-            linkEl.setText(linkText);
+            linkEl.setHtml(linkText);
             linkEl.setUrl(linkUrl);
             this.appendChild(linkEl);
 

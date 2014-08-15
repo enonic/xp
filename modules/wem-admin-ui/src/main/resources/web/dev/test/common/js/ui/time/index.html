@@ -21,19 +21,27 @@
 <!-- include spec files here... -->
 <script type="text/javascript">
 
-
-    api.dom.Body.get().appendChild(new api.dom.H2El().setText("Calendar: Januar 2014"));
+    api.dom.Body.get().appendChild(new api.dom.H2El().setHtml("Calendar: 15 January 2014"));
 
     var calendar = new api.ui.time.CalendarBuilder().
             setYear(2014).
-            setMonthOfYear(0).
-            setSelectedDay(2).
+            setMonth(0).
+            setSelectedDate(new Date(2014, 0, 15)).
             setInteractive(true).
             build();
     api.dom.Body.get().appendChild(calendar);
 
     calendar.onSelectedDateChanged(function (event) {
-        console.log(event.getDate());
+        console.log('Calendar', event.getDate());
+    });
+
+    api.dom.Body.get().appendChild(new api.dom.H2El().setHtml("DatePicker"));
+
+    var datePicker = new api.ui.time.DatePickerBuilder().build();
+    api.dom.Body.get().appendChild(datePicker);
+
+    datePicker.onSelectedDateChanged(function (event) {
+        console.log('DatePicker', event.getDate());
     });
 
 </script>

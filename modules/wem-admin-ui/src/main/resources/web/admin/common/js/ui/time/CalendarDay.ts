@@ -35,7 +35,7 @@ module api.ui.time {
         }
     }
 
-    export class CalendarDay extends api.dom.DivEl implements api.Equitable {
+    export class CalendarDay extends api.dom.LiEl implements api.Equitable {
 
         private date: Date;
 
@@ -65,8 +65,12 @@ module api.ui.time {
                 this.nextDay.previousDay = this;
             }
 
+            if (new Date().toDateString() == builder.date.toDateString()) {
+                this.addClass('today');
+            }
+
             this.dayOfWeek = DaysOfWeek.getByNumberCode(this.date.getDay());
-            this.getEl().setInnerHtml("" + this.date.getDate());
+            this.setHtml("" + this.date.getDate());
 
             if (this.isBeforeMonth()) {
                 this.addClass("before-month");

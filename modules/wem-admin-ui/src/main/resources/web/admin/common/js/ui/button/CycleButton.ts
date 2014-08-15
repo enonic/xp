@@ -102,7 +102,7 @@ module api.ui.button {
             return element;
         }
 
-        private setActive(listItem: api.dom.DivEl) {
+        private setActive(listItem: api.dom.Element) {
             this.getChildren().forEach((child) => {
                 child.removeClass("active");
             });
