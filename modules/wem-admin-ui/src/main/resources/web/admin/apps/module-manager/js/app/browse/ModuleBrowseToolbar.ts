@@ -9,7 +9,6 @@ module app.browse {
             super.addAction(actions.START_MODULE);
             super.addAction(actions.STOP_MODULE);
             super.addAction(actions.UPDATE_MODULE);
-            super.addAction(actions.REFRESH_MODULES);
         }
     }
 }
