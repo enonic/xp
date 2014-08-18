@@ -6,7 +6,7 @@ module app.create {
             super();
 
             var title = new api.dom.H4El();
-            title.setText("Recently used");
+            title.setHtml("Recently used");
             this.prependChild(title);
         }
 

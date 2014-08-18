@@ -4,7 +4,7 @@ module app.home {
 
         constructor() {
             super();
-            this.setText("Enonic <span>DXP</span> 5 ee");
+            this.setHtml("Enonic <span>DXP</span> 5 ee");
         }
 
     }

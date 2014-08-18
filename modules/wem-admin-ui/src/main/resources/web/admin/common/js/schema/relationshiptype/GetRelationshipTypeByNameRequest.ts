@@ -1,6 +1,6 @@
 module api.schema.relationshiptype {
 
-    export class GetRelationshipTypeByNameRequest extends RelationshipTypeResourceRequest<json.RelationshipTypeJson> {
+    export class GetRelationshipTypeByNameRequest extends RelationshipTypeResourceRequest<json.RelationshipTypeJson, RelationshipType> {
 
         private name: RelationshipTypeName;
 

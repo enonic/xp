@@ -1,68 +1,64 @@
 package com.enonic.wem.core.content;
 
-import com.google.common.collect.ImmutableSet;
+import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.query.ContentQuery;
 import com.enonic.wem.api.content.query.ContentQueryResult;
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.query.NodeQuery;
-import com.enonic.wem.core.index.query.QueryResult;
-import com.enonic.wem.core.index.query.QueryResultEntry;
-import com.enonic.wem.core.index.query.QueryService;
+import com.enonic.wem.core.index.query.NodeQueryResult;
 
 final class FindContentCommand
+    extends AbstractFindContentCommand
 {
-    private ContentQueryNodeQueryTranslator translator = new ContentQueryNodeQueryTranslator();
-
-    private QueryService queryService;
-
     private ContentQuery contentQuery;
 
-    private Context context;
+    private FindContentCommand( final Builder builder )
+    {
+        super( builder );
+        contentQuery = builder.contentQuery;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
 
     ContentQueryResult execute()
     {
-        final NodeQuery entityQuery = translator.translate( this.contentQuery );
+        final NodeQuery nodeQuery = ContentQueryNodeQueryTranslator.translate( this.contentQuery );
 
-        final QueryResult queryResult = queryService.find( entityQuery, context.getWorkspace() );
+        final NodeQueryResult queryResult = queryService.find( nodeQuery, context.getWorkspace() );
 
-        return translateToContentIndexQueryResult( queryResult );
+        return translateToContentQueryResult( queryResult );
     }
 
-    private ContentQueryResult translateToContentIndexQueryResult( final QueryResult result )
-    {
-        final ContentQueryResult.Builder builder = ContentQueryResult.newResult( result.getTotalHits() );
-        final ImmutableSet<QueryResultEntry> entries = result.getEntries();
 
-        for ( final QueryResultEntry entry : entries )
+    public static final class Builder
+        extends AbstractFindContentCommand.Builder<Builder>
+    {
+        private ContentQuery contentQuery;
+
+        private Builder()
         {
-            builder.addContentHit( ContentId.from( entry.getId() ), entry.getScore() );
         }
 
-        builder.setAggregations( result.getAggregations() );
+        public Builder contentQuery( ContentQuery contentQuery )
+        {
+            this.contentQuery = contentQuery;
+            return this;
+        }
 
-        return builder.build();
+        public FindContentCommand build()
+        {
+            validate();
+            return new FindContentCommand( this );
+        }
+
+        void validate()
+        {
+            super.validate();
+            Preconditions.checkNotNull( contentQuery );
+        }
+
     }
-
-    FindContentCommand queryService( final QueryService queryService )
-    {
-        this.queryService = queryService;
-        return this;
-    }
-
-    FindContentCommand contentQuery( final ContentQuery contentQuery )
-    {
-        this.contentQuery = contentQuery;
-        return this;
-    }
-
-
-    FindContentCommand context( final Context context )
-    {
-        this.context = context;
-        return this;
-    }
-
-
 }

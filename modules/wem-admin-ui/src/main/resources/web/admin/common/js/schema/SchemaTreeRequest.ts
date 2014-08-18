@@ -4,7 +4,7 @@ module api.schema {
     import SchemaJson = api.schema.SchemaJson;
     import SchemaListJson = api.schema.SchemaListJson;
 
-    export class SchemaTreeRequest extends SchemaResourceRequest<SchemaListJson> {
+    export class SchemaTreeRequest extends SchemaResourceRequest<SchemaListJson, Schema[]> {
 
         private parentId: string;
 

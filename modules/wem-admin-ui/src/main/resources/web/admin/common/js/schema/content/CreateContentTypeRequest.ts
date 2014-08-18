@@ -1,6 +1,6 @@
 module api.schema.content {
 
-    export class CreateContentTypeRequest extends ContentTypeResourceRequest<api.schema.content.json.ContentTypeJson> {
+    export class CreateContentTypeRequest extends ContentTypeResourceRequest<api.schema.content.json.ContentTypeJson, ContentType> {
 
         private name: string;
 

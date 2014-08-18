@@ -108,9 +108,10 @@ module app.browse {
                 installModuleDialog.open();
             });
 
-            app.browse.RefreshModulesEvent.on((event: app.browse.RefreshModulesEvent) => {
+            api.module.ModuleUpdatedEvent.on((event: api.module.ModuleUpdatedEvent) => {
+                // TODO reload just the module updated
                 this.moduleTreeGridPanel.reload();
-            });
+            })
 
         }
     }

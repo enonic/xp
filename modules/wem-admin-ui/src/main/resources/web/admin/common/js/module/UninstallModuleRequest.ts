@@ -1,6 +1,6 @@
 module api.module {
 
-    export class UninstallModuleRequest extends ModuleResourceRequest<api.item.ItemJson> {
+    export class UninstallModuleRequest extends ModuleResourceRequest<api.item.ItemJson, void> {
 
         private moduleKeys: string[];
 

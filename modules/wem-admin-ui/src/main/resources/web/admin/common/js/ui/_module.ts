@@ -18,3 +18,4 @@
 ///<reference path='Dropdown.ts' />
 ///<reference path='RadioGroup.ts' />
 ///<reference path='Checkbox.ts' />
+///<reference path='DragHelper.ts' />

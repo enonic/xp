@@ -8,7 +8,7 @@ module api.notify {
             super("notification");
             this.notificationInner = new api.dom.DivEl("notification-inner");
             var notificationRemove = new api.dom.AEl("notification-remove");
-            notificationRemove.setText("X");
+            notificationRemove.setHtml("X");
             notificationRemove.setUrl("#");
             var notificationContent = new api.dom.DivEl("notification-content");
             notificationContent.getEl().setInnerHtml(message);

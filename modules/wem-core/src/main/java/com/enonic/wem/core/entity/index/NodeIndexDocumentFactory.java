@@ -27,11 +27,13 @@ public class NodeIndexDocumentFactory
 
     public static final String ENTITY_KEY = "_entity";
 
-    protected static final IndexDocumentItemPath CREATOR_PROPERTY_PATH = IndexDocumentItemPath.from( "creator" );
+    public static final IndexDocumentItemPath CREATOR_PROPERTY_PATH = IndexDocumentItemPath.from( "creator" );
 
-    protected static final IndexDocumentItemPath MODIFIED_TIME_PROPERTY_PATH = IndexDocumentItemPath.from( "modifiedTime" );
+    public static final String MODIFIED_TIME_KEY = "modifiedTime";
 
-    protected static final IndexDocumentItemPath MODIFIER_PROPERTY_PATH = IndexDocumentItemPath.from( "modifier" );
+    public static final IndexDocumentItemPath MODIFIED_TIME_PROPERTY_PATH = IndexDocumentItemPath.from( MODIFIED_TIME_KEY );
+
+    public static final IndexDocumentItemPath MODIFIER_PROPERTY_PATH = IndexDocumentItemPath.from( "modifier" );
 
     public static final String PARENT_PATH_KEY = "parentpath";
 

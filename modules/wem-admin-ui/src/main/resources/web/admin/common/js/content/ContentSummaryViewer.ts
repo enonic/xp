@@ -6,7 +6,9 @@ module api.content {
 
         constructor() {
             super();
-            this.namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
+            this.namesAndIconView = new api.app.NamesAndIconViewBuilder().
+                                    setSize(api.app.NamesAndIconViewSize.small).
+                                    build();
             this.appendChild(this.namesAndIconView);
         }
 
@@ -15,7 +17,7 @@ module api.content {
             var subName = relativePath ? content.getPath().getLastElement() : content.getPath().toString();
             this.namesAndIconView.setMainName(content.getDisplayName()).
                 setSubName(subName, content.getPath().toString()).
-                setIconUrl(content.getIconUrl() + '?crop=false');
+                setIconUrl(content.getIconUrl() + "?crop=false");
             if (content.isSite()) {
                 this.addClass("site");
             }

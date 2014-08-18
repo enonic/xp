@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.wem.admin.json.icon.IconJson;
+import com.enonic.wem.admin.json.icon.ThumbnailJson;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.CreateContentTypeParams;
@@ -15,11 +15,11 @@ public class ContentTypeCreateJson
 {
     private final CreateContentTypeParams createContentType;
 
-    private final IconJson iconJson;
+    private final ThumbnailJson thumbnailJson;
 
     @JsonCreator
     public ContentTypeCreateJson( @JsonProperty("name") final String nameAsString, @JsonProperty("config") final String config,
-                                  @JsonProperty("icon") final IconJson iconJson )
+                                  @JsonProperty("icon") final ThumbnailJson thumbnailJson )
     {
 
         final ContentTypeName name = ContentTypeName.from( nameAsString );
@@ -28,7 +28,7 @@ public class ContentTypeCreateJson
         XmlSerializers.contentType().parse( config ).to( builder );
         final ContentType contentType = builder.build();
 
-        this.iconJson = iconJson;
+        this.thumbnailJson = thumbnailJson;
 
         createContentType = new CreateContentTypeParams().
             name( name ).
@@ -48,9 +48,9 @@ public class ContentTypeCreateJson
     }
 
     @JsonIgnore
-    public IconJson getIconJson()
+    public ThumbnailJson getThumbnailJson()
     {
-        return this.iconJson;
+        return this.thumbnailJson;
     }
 
 }

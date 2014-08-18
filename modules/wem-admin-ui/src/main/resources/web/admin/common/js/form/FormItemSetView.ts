@@ -56,11 +56,10 @@ module api.form {
                 cursor: 'move',
                 cursorAt: {left: 14, top: 14},
                 distance: 20,
-                zIndex: 10000,
                 tolerance: 'pointer',
                 handle: '.drag-control',
                 placeholder: 'form-item-set-drop-target-placeholder',
-                helper: (event, helper) => this.createDnDHelper(),
+                helper: (event, helper) => api.ui.DragHelper.getHtml(),
                 start: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDStart(event, ui),
                 update: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDUpdate(event, ui)
             });
@@ -121,13 +120,13 @@ module api.form {
 
             });
             this.collapseButton = new api.dom.AEl("collapse-button");
-            this.collapseButton.setText("Collapse");
+            this.collapseButton.setHtml("Collapse");
             this.collapseButton.onClicked((event: MouseEvent) => {
                 if (this.formItemSetOccurrences.isCollapsed()) {
-                    this.collapseButton.setText("Collapse");
+                    this.collapseButton.setHtml("Collapse");
                     this.formItemSetOccurrences.showOccurences(true);
                 } else {
-                    this.collapseButton.setText("Expand");
+                    this.collapseButton.setHtml("Expand");
                     this.formItemSetOccurrences.showOccurences(false);
                 }
 
@@ -298,18 +297,6 @@ module api.form {
                 }
             }
             return focusGiven;
-        }
-
-        private createDnDHelper(): string {
-            var div = new api.dom.DivEl();
-            div.getEl()
-                .setId("drag-helper")
-                .addClass("form-item-set-drop-allowed")
-                .setHeight("48px")
-                .setWidth("48px")
-                .setPosition("absolute")
-                .setZindex(400000);
-            return div.toString();
         }
 
         private handleDnDStart(event: Event, ui: JQueryUI.SortableUIParams): void {

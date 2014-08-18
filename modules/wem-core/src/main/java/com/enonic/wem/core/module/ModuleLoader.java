@@ -21,9 +21,12 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 
+import com.enonic.wem.api.event.EventPublisher;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.module.ModuleService;
+import com.enonic.wem.api.module.ModuleState;
+import com.enonic.wem.api.module.ModuleUpdatedEvent;
 import com.enonic.wem.api.module.ModuleVersion;
 
 @Singleton
@@ -43,13 +46,16 @@ public final class ModuleLoader
 
     private final ModuleXmlBuilder xmlSerializer;
 
+    private final EventPublisher eventPublisher;
+
     @Inject
-    public ModuleLoader( final BundleContext context, final ModuleService moduleService )
+    public ModuleLoader( final BundleContext context, final ModuleService moduleService, final EventPublisher eventPublisher )
     {
         this.bundles = Lists.newCopyOnWriteArrayList();
         this.context = context;
         this.moduleService = (ModuleServiceImpl) moduleService;
         this.xmlSerializer = new ModuleXmlBuilder();
+        this.eventPublisher = eventPublisher;
     }
 
     public void start()
@@ -81,6 +87,10 @@ public final class ModuleLoader
                 addBundle( bundle );
                 break;
         }
+
+        final ModuleKey module = getModuleKey( bundle );
+        final ModuleState state = ModuleState.fromBundleState( bundle );
+        this.eventPublisher.publish( new ModuleUpdatedEvent( module, state ) );
     }
 
     private void addBundle( final Bundle bundle )

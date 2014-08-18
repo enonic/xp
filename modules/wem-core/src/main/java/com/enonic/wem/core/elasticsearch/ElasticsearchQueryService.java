@@ -7,7 +7,7 @@ import com.enonic.wem.api.entity.query.EntityQuery;
 import com.enonic.wem.api.entity.query.NodeQuery;
 import com.enonic.wem.core.elasticsearch.result.SearchResult;
 import com.enonic.wem.core.index.query.EntityQueryTranslator;
-import com.enonic.wem.core.index.query.QueryResult;
+import com.enonic.wem.core.index.query.NodeQueryResult;
 import com.enonic.wem.core.index.query.QueryResultFactory;
 import com.enonic.wem.core.index.query.QueryService;
 
@@ -21,25 +21,25 @@ public class ElasticsearchQueryService
     private EntityQueryTranslator translator = new EntityQueryTranslator();
 
     @Override
-    public QueryResult find( final NodeQuery query, final Workspace workspace )
+    public NodeQueryResult find( final NodeQuery query, final Workspace workspace )
     {
         return doFind( translator.translate( query, workspace ) );
     }
 
     @Override
-    public QueryResult find( final EntityQuery query, final Workspace workspace )
+    public NodeQueryResult find( final EntityQuery query, final Workspace workspace )
     {
         return doFind( translator.translate( query, workspace ) );
     }
 
-    private QueryResult doFind( final ElasticsearchQuery query )
+    private NodeQueryResult doFind( final ElasticsearchQuery query )
     {
         final SearchResult searchResult = elasticsearchDao.search( query );
 
         return translateResult( searchResult );
     }
 
-    private QueryResult translateResult( final SearchResult searchResult )
+    private NodeQueryResult translateResult( final SearchResult searchResult )
     {
         return queryResultFactory.create( searchResult );
     }

@@ -22,7 +22,8 @@ function startApplication() {
                 appPanel.activateCurrentKeyBindings();
             }
         }
-    }
+    };
+
 }
 
 module components {

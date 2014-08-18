@@ -76,6 +76,8 @@ module api.liveedit {
 
         private mouseOutViewListeners: {(): void} [];
 
+        private contextMenuActions: api.ui.Action[];
+
         private debug: boolean;
 
         constructor(builder: ItemViewBuilder) {
@@ -113,7 +115,6 @@ module api.liveedit {
                 this.getEl().setData(ItemType.DATA_ATTRIBUTE, builder.type.getShortName());
             }
 
-            this.loadMask = new api.ui.mask.LoadMask(this);
 
             this.tooltipViewer = this.getTooltipViewer();
             if (this.tooltipViewer) {
@@ -125,7 +126,7 @@ module api.liveedit {
                     setContent(this.tooltipViewer);
             }
 
-            this.contextMenu = new api.liveedit.ItemViewContextMenu(this, builder.contextMenuActions);
+            this.contextMenuActions = builder.contextMenuActions;
 
             this.onMouseEnter(this.handleMouseEnter.bind(this));
             this.onMouseLeave(this.handleMouseLeave.bind(this));
@@ -136,12 +137,16 @@ module api.liveedit {
         }
 
         remove() {
-            this.contextMenu.remove();
-            this.loadMask.remove();
+            if (this.contextMenu) {
+                this.contextMenu.remove();
+            }
+            if (this.loadMask) {
+                this.loadMask.remove();
+            }
             super.remove();
         }
 
-        private scrollComponentIntoView(): void {
+        scrollComponentIntoView(): void {
             var dimensions = this.getElementDimensions();
             wemjq('html, body').animate({scrollTop: dimensions.top - 10}, 200);
         }
@@ -318,24 +323,28 @@ module api.liveedit {
         }
 
         showContextMenu(position?: Position) {
-
+            if (!this.contextMenu) {
+                this.contextMenu = new api.liveedit.ItemViewContextMenu(this, this.contextMenuActions);
+            }
             var dimensions = this.getElementDimensions();
             var x, y;
 
             if (position) {
                 // show menu at position
-                x = position.x - this.contextMenu.getEl().getWidth() / 2;
+                x = position.x;
                 y = position.y;
             } else {
                 // show menu below if empty or on top
-                x = dimensions.left + dimensions.width / 2 - this.contextMenu.getEl().getWidth() / 2;
+                x = dimensions.left + dimensions.width / 2;
                 y = dimensions.top + (this.isEmpty() ? dimensions.height : 0);
             }
             this.contextMenu.showAt(x, y);
         }
 
         hideContextMenu() {
-            this.contextMenu.hide();
+            if (this.contextMenu) {
+                this.contextMenu.hide();
+            }
         }
 
         private setItemId(value: ItemViewId) {
@@ -388,7 +397,6 @@ module api.liveedit {
             this.getEl().setData("live-edit-selected", "true");
             this.hideTooltip();
             this.showContextMenu(clickPosition);
-            this.scrollComponentIntoView();
 
             new ItemViewSelectedEvent(this, clickPosition).fire();
         }
@@ -405,12 +413,17 @@ module api.liveedit {
         }
 
         showLoadingSpinner() {
-            this.appendChild(this.loadMask);
+            if (!this.loadMask) {
+                this.loadMask = new api.ui.mask.LoadMask(this);
+                this.appendChild(this.loadMask);
+            }
             this.loadMask.show();
         }
 
         hideLoadingSpinner() {
-            this.loadMask.hide();
+            if (this.loadMask) {
+                this.loadMask.hide();
+            }
         }
 
         setElementDimensions(dimensions: ElementDimensions): void {

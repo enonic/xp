@@ -1,0 +1,26 @@
+.tags {
+
+  .tag {
+    float: left;
+
+    background-color: #DEE7F8;
+    border: 1px solid #CAD8F3;
+    border-radius: 6px;
+    -webkit-border-radius: 6px;
+
+    padding: .2em 18px .2em .5em;
+    margin: 2px 5px 2px 0;
+
+    .remove-button {
+      &:extend(.icon);
+      .icon-close;
+
+      .order(3);
+
+      width: 0px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+  }
+
+}

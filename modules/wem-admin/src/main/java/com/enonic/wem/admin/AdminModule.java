@@ -6,6 +6,9 @@ import com.google.inject.AbstractModule;
 
 import com.enonic.wem.admin.config.AdminConfig;
 import com.enonic.wem.admin.config.AdminConfigImpl;
+import com.enonic.wem.admin.event.EventListenerImpl;
+import com.enonic.wem.admin.event.EventServlet;
+import com.enonic.wem.admin.event.WebSocketManager;
 import com.enonic.wem.admin.rest.exception.ConflictExceptionMapper;
 import com.enonic.wem.admin.rest.exception.DefaultExceptionMapper;
 import com.enonic.wem.admin.rest.exception.IllegalArgumentExceptionMapper;
@@ -37,6 +40,7 @@ import com.enonic.wem.admin.rest.resource.schema.relationship.RelationshipTypeRe
 import com.enonic.wem.admin.rest.resource.status.StatusResource;
 import com.enonic.wem.admin.rest.resource.tools.ToolsResource;
 import com.enonic.wem.admin.rest.resource.ui.BackgroundImageResource;
+import com.enonic.wem.api.event.EventListener;
 
 public final class AdminModule
     extends AbstractModule
@@ -84,5 +88,8 @@ public final class AdminModule
         bind( JsonMappingExceptionMapper.class ).in( Singleton.class );
         bind( NotFoundExceptionMapper.class ).in( Singleton.class );
         bind( ConflictExceptionMapper.class ).in( Singleton.class );
+
+        bind( WebSocketManager.class ).to( EventServlet.class );
+        bind( EventListener.class ).to( EventListenerImpl.class );
     }
 }

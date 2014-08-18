@@ -1,6 +1,6 @@
 module api.schema.content {
 
-    export class UpdateContentTypeRequest extends ContentTypeResourceRequest<api.schema.content.json.ContentTypeJson> {
+    export class UpdateContentTypeRequest extends ContentTypeResourceRequest<json.ContentTypeJson, ContentType> {
 
         private contentTypeToUpdate:ContentTypeName;
 
@@ -34,7 +34,7 @@ module api.schema.content {
 
         sendAndParse(): Q.Promise<ContentType> {
 
-            return this.send().then((response: api.rest.JsonResponse<api.schema.content.json.ContentTypeJson>) => {
+            return this.send().then((response: api.rest.JsonResponse<json.ContentTypeJson>) => {
                 return this.fromJsonToContentType(response.getResult());
             });
         }

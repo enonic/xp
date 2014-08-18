@@ -1,6 +1,6 @@
 module api.module {
 
-    export class UpdateModuleRequest extends ModuleResourceRequest<api.item.ItemJson> {
+    export class UpdateModuleRequest extends ModuleResourceRequest<api.item.ItemJson, void> {
 
         private moduleKeys: string[];
 

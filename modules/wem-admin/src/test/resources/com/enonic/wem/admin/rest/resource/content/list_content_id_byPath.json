@@ -1,7 +1,14 @@
 {
-  "contents" : [ {
-    "id" : "aaa"
-  }, {
-    "id" : "bbb"
-  } ]
+    "contents": [
+        {
+            "id": "aaa"
+        },
+        {
+            "id": "bbb"
+        }
+    ],
+    "metadata": {
+        "hits": 2,
+        "totalHits": 2
+    }
 }

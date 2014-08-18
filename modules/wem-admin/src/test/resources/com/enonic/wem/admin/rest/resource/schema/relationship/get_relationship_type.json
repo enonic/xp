@@ -9,6 +9,7 @@
     "editable": true,
     "fromSemantic": null,
     "hasChildren": false,
+    "icon": null,
     "iconUrl": "/admin/rest/schema/image/RelationshipType:the_relationship_type",
     "key": "RelationshipType:the_relationship_type",
     "modifiedTime": null,

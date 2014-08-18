@@ -34,6 +34,12 @@ module api.ui.tab {
             this.appendChild(this.menuEl);
 
             api.dom.Body.get().onClicked((event: MouseEvent) => this.hideMenuOnOutsideClick(event));
+
+            this.onClicked((e: MouseEvent) => {
+                // menu itself was clicked so do nothing
+                e.preventDefault();
+                e.stopPropagation();
+            });
         }
 
         createTabMenuButton(): TabMenuButton {
@@ -259,15 +265,10 @@ module api.ui.tab {
         }
 
         private hideMenuOnOutsideClick(evt: Event): void {
-            var id = this.tabMenuButton.getId();
-            var target: any = evt.target;
-            for (var element = target; element; element = element.parentNode) {
-                if (element.id === id) {
-                    return; // menu clicked
-                }
+            if (!this.getEl().contains(<HTMLElement> evt.target)) {
+                // click outside menu
+                this.hideMenu();
             }
-            // click outside menu
-            this.hideMenu();
         }
     }
 }

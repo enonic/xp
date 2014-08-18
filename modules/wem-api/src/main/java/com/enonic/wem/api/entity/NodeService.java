@@ -21,7 +21,7 @@ public interface NodeService
 
     Nodes getByPaths( NodePaths paths, Context context );
 
-    Nodes getByParent( NodePath parent, Context context );
+    FindNodesByParentResult findByParent( FindNodesByParentParams params, Context context );
 
     Node deleteById( EntityId id, Context context );
 

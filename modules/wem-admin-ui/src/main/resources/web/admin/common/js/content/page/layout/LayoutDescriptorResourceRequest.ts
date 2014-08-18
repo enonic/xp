@@ -1,6 +1,6 @@
 module api.content.page.layout {
 
-    export class LayoutDescriptorResourceRequest<JSON> extends api.rest.ResourceRequest<JSON> {
+    export class LayoutDescriptorResourceRequest<JSON_TYPE, PARSED_TYPE> extends api.rest.ResourceRequest<JSON_TYPE, PARSED_TYPE> {
 
         private resourcePath: api.rest.Path;
 

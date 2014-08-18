@@ -6,6 +6,10 @@ module api.ui.treegrid {
             return DateTimeFormatter.createHtml(value);
         }
 
+        static formatNoTimestamp(row:number, cell:number, value:any, columnDef:any, item:any) {
+            return DateTimeFormatter.createHtmlNoTimestamp(value);
+        }
+
         static createHtml(date:Date):string {
 
             var s = "";
@@ -20,6 +24,16 @@ module api.ui.treegrid {
             s += DateTimeFormatter.zeroPad(date.getMinutes(), 2);
             s += ":";
             s += DateTimeFormatter.zeroPad(date.getSeconds(), 2);
+            return s;
+        }
+
+        static createHtmlNoTimestamp(date:Date):string {
+            var s = "";
+            s += DateTimeFormatter.zeroPad(date.getFullYear(), 4);
+            s += "-";
+            s += DateTimeFormatter.zeroPad(date.getMonth() + 1, 2);
+            s += "-";
+            s += DateTimeFormatter.zeroPad(date.getDate(), 2);
             return s;
         }
 

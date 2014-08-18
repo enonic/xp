@@ -17,6 +17,12 @@ module api.ui.menu {
                 api.dom.Body.get().appendChild(this);
                 api.dom.Body.get().onClicked((event: MouseEvent) => this.hideMenuOnOutsideClick(event));
             }
+
+            this.onClicked((e: MouseEvent) => {
+                // menu itself was clicked so do nothing
+                e.preventDefault();
+                e.stopPropagation();
+            });
         }
 
         addAction(action: api.ui.Action): ContextMenu {
@@ -38,10 +44,21 @@ module api.ui.menu {
         }
 
         showAt(x: number, y: number) {
-            this.getEl().
-                setLeft(x + 'px').
-                setTop(y + 'px');
+            // referencing through prototype to be able to call this function with context other than this
+            // i.e this.showAt.call(other, x, y)
+            ContextMenu.prototype.doMoveTo(this, x, y);
             this.show();
+        }
+
+        moveBy(dx: number, dy: number) {
+            var offset = this.getEl().getOffsetToParent();
+            // referencing through prototype to be able to call this function with context other than this
+            // i.e this.moveBy.call(other, x, y)
+            ContextMenu.prototype.doMoveTo(this, offset.left + dx, offset.top + dy);
+        }
+
+        private doMoveTo(menu: ContextMenu, x: number, y: number) {
+            menu.getEl().setLeftPx(x).setTopPx(y);
         }
 
         onItemClicked(listener: (item: MenuItem) => void) {
@@ -75,15 +92,10 @@ module api.ui.menu {
         }
 
         private hideMenuOnOutsideClick(evt: Event): void {
-            var id = this.getId();
-            var target: any = evt.target;
-            for (var element = target; element; element = element.parentNode) {
-                if (element.id === id) {
-                    return; // menu clicked
-                }
+            if (!this.getEl().contains(<HTMLElement> evt.target)) {
+                // click outside menu
+                this.hide();
             }
-            // click outside menu
-            this.hide();
         }
     }
 

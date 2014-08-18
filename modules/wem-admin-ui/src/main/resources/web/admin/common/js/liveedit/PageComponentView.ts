@@ -114,6 +114,7 @@ module api.liveedit {
                 if (parentView) {
                     this.deselect();
                     parentView.select();
+                    parentView.scrollComponentIntoView();
                 }
             }));
             actions.push(new api.ui.Action("Empty").onExecuted(() => {
@@ -134,6 +135,7 @@ module api.liveedit {
                 this.deselect();
                 duplicatedView.markAsEmpty();
                 duplicatedView.select();
+                duplicatedView.showLoadingSpinner();
 
                 new PageComponentDuplicateEvent(this, duplicatedView).fire();
             }));

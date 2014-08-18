@@ -6,5 +6,9 @@
         {
             "id": "bbb"
         }
-    ]
+    ],
+    "metadata": {
+        "hits": 2,
+        "totalHits": 2
+    }
 }

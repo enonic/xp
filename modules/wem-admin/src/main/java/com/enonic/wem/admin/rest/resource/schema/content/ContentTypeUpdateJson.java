@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.wem.admin.json.icon.IconJson;
+import com.enonic.wem.admin.json.icon.ThumbnailJson;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.xml.XmlSerializers;
@@ -19,17 +19,17 @@ public class ContentTypeUpdateJson
 
     private final ContentType contentTypeUpdate;
 
-    private final IconJson iconJson;
+    private final ThumbnailJson thumbnailJson;
 
     @JsonCreator
     public ContentTypeUpdateJson( @JsonProperty("contentTypeToUpdate") final String contentTypeToUpdateAsString,
                                   @JsonProperty("name") final String nameAsString, @JsonProperty("config") final String config,
-                                  @JsonProperty("icon") final IconJson iconJson )
+                                  @JsonProperty("icon") final ThumbnailJson thumbnailJson )
     {
 
         this.contentTypeToUpdate = ContentTypeName.from( contentTypeToUpdateAsString );
         this.name = ContentTypeName.from( nameAsString );
-        this.iconJson = iconJson;
+        this.thumbnailJson = thumbnailJson;
         this.contentTypeUpdate = parse( name, config );
     }
 
@@ -59,8 +59,8 @@ public class ContentTypeUpdateJson
     }
 
     @JsonIgnore
-    public IconJson getIconJson()
+    public ThumbnailJson getIconJson()
     {
-        return this.iconJson;
+        return this.thumbnailJson;
     }
 }

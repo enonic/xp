@@ -1,6 +1,6 @@
 module api.content.attachment {
 
-    export class AttachmentResourceRequest<T> extends api.rest.ResourceRequest<T> {
+    export class AttachmentResourceRequest<JSON_TYPE, PARSED_TYPE> extends api.rest.ResourceRequest<JSON_TYPE, PARSED_TYPE> {
 
         private resourcePath: api.rest.Path;
 

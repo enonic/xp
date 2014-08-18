@@ -6,10 +6,6 @@ module api.dom {
             super(new NewElementBuilder().setTagName("a").setClassName(className));
         }
 
-        public setText(value: string) {
-            this.getEl().setInnerHtml(value);
-        }
-
         public setUrl(value: string) {
             this.getEl().setAttribute('href', value);
         }

@@ -11,7 +11,7 @@ import com.enonic.wem.core.index.IndexConstants;
 
 public class ContentQueryEntityQueryTranslator
 {
-    public EntityQuery translate( final ContentQuery contentQuery )
+    public static EntityQuery translate( final ContentQuery contentQuery )
     {
         final EntityQuery.Builder entityQueryBuilder = EntityQuery.newEntityQuery();
 
@@ -21,7 +21,7 @@ public class ContentQueryEntityQueryTranslator
     }
 
 
-    protected void doTranslateEntityQueryProperties( final ContentQuery contentQuery, final EntityQuery.Builder builder )
+    protected static void doTranslateEntityQueryProperties( final ContentQuery contentQuery, final EntityQuery.Builder builder )
     {
         builder.query( contentQuery.getQueryExpr() ).
             from( contentQuery.getFrom() ).
@@ -44,10 +44,9 @@ public class ContentQueryEntityQueryTranslator
         }
 
         addCollectionFilter( builder );
-
     }
 
-    private void addCollectionFilter( final EntityQuery.Builder entityQueryBuilder )
+    private static void addCollectionFilter( final EntityQuery.Builder entityQueryBuilder )
     {
         entityQueryBuilder.addQueryFilter( Filter.newValueQueryFilter().
             fieldName( IndexConstants.COLLECTION_FIELD ).

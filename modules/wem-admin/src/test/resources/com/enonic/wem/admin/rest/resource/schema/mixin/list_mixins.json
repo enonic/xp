@@ -9,6 +9,7 @@
             "displayName": null,
             "editable": true,
             "hasChildren": false,
+            "icon": null,
             "iconUrl": "/admin/rest/schema/image/Mixin:input_text_1",
             "items": [
                 {
@@ -45,6 +46,7 @@
             "displayName": null,
             "editable": true,
             "hasChildren": false,
+            "icon": null,
             "iconUrl": "/admin/rest/schema/image/Mixin:text_area_1",
             "items": [
                 {

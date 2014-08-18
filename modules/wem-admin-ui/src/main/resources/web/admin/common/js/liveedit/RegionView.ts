@@ -279,7 +279,7 @@ module api.liveedit {
 
                 if (api.ObjectHelper.iFrameSafeInstanceOf(child, HTMLElement)) {
                     var childHtmlElement = new api.dom.ElementHelper(<HTMLElement> child);
-                    if (childHtmlElement.hasClass("item-view-drop-zone") ||
+                    if (childHtmlElement.hasClass("region-view-drop-zone") ||
                         childHtmlElement.hasClass("live-edit-drop-target-placeholder")) {
                         if (childHtmlElement.getDisplay() != "none") {
                             foundDropZone = true;

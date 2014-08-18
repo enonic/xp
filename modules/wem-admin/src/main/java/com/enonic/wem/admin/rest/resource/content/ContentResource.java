@@ -45,12 +45,16 @@ import com.enonic.wem.api.content.ContentAlreadyExistException;
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
+import com.enonic.wem.api.content.ContentListMetaData;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.DeleteContentParams;
+import com.enonic.wem.api.content.Direction;
+import com.enonic.wem.api.content.FindContentByParentParams;
+import com.enonic.wem.api.content.FindContentByParentResult;
 import com.enonic.wem.api.content.GetContentByIdsParams;
 import com.enonic.wem.api.content.GetContentVersionsParams;
 import com.enonic.wem.api.content.PushContentParams;
@@ -73,6 +77,13 @@ import static com.enonic.wem.api.content.Content.editContent;
 @Produces(MediaType.APPLICATION_JSON)
 public class ContentResource
 {
+
+    private static final String DEFAULT_FROM_PARAM = "0";
+
+    private static final String DEFAULT_SIZE_PARAM = "500";
+
+    public static final String DEFAULT_SORT_FIELD = "modifiedTime";
+
     private final String EXPAND_FULL = "full";
 
     private final String EXPAND_SUMMARY = "summary";
@@ -136,68 +147,83 @@ public class ContentResource
     @GET
     @Path("list")
     public AbstractContentListJson listById( @QueryParam("parentId") final String parentIdParam,
-                                             @QueryParam("expand") @DefaultValue(EXPAND_SUMMARY) final String expandParam )
+                                             @QueryParam("expand") @DefaultValue(EXPAND_SUMMARY) final String expandParam,
+                                             @QueryParam("from") @DefaultValue(DEFAULT_FROM_PARAM) final Integer fromParam,
+                                             @QueryParam("size") @DefaultValue(DEFAULT_SIZE_PARAM) final Integer sizeParam )
     {
-        final Contents contents;
+        final ContentPath parentContentPath;
+
         if ( StringUtils.isEmpty( parentIdParam ) )
         {
-            contents = contentService.getRoots( STAGE_CONTEXT );
+            parentContentPath = null;
         }
         else
         {
-            final GetContentByIdsParams params = new GetContentByIdsParams( ContentIds.from( parentIdParam ) );
-            final Contents parentContents = contentService.getByIds( params, STAGE_CONTEXT );
+            final Content parentContent = contentService.getById( ContentId.from( parentIdParam ), STAGE_CONTEXT );
 
-            if ( parentContents.isNotEmpty() )
-            {
-                contents = contentService.getByParent( parentContents.first().getPath(), STAGE_CONTEXT );
-            }
-            else
-            {
-                contents = Contents.empty();
-            }
+            parentContentPath = parentContent.getPath();
         }
 
-        if ( EXPAND_NONE.equalsIgnoreCase( expandParam ) )
-        {
-            return new ContentIdListJson( contents );
-        }
-        else if ( EXPAND_FULL.equalsIgnoreCase( expandParam ) )
-        {
-            return new ContentListJson( contents );
-        }
-        else
-        {
-            return new ContentSummaryListJson( contents );
-        }
+        final FindContentByParentParams params = FindContentByParentParams.create().
+            from( fromParam ).
+            size( sizeParam ).
+            parentPath( parentContentPath ).
+            addSort( DEFAULT_SORT_FIELD, Direction.DESC ).
+            build();
+
+        return doGetByParentPath( expandParam, params, parentContentPath );
     }
 
     @GET
     @Path("list/bypath")
     public AbstractContentListJson listByPath( @QueryParam("parentPath") final String parentPathParam,
-                                               @QueryParam("expand") @DefaultValue(EXPAND_SUMMARY) final String expandParam )
+                                               @QueryParam("expand") @DefaultValue(EXPAND_SUMMARY) final String expandParam,
+                                               @QueryParam("from") @DefaultValue(DEFAULT_FROM_PARAM) final Integer fromParam,
+                                               @QueryParam("size") @DefaultValue(DEFAULT_SIZE_PARAM) final Integer sizeParam )
     {
-        final Contents contents;
+        final ContentPath parentContentPath;
+
         if ( StringUtils.isEmpty( parentPathParam ) )
         {
-            contents = contentService.getRoots( STAGE_CONTEXT );
+            parentContentPath = null;
         }
         else
         {
-            contents = contentService.getByParent( ContentPath.from( parentPathParam ), STAGE_CONTEXT );
+            parentContentPath = ContentPath.from( parentPathParam );
         }
+
+        final FindContentByParentParams params = FindContentByParentParams.create().
+            from( fromParam ).
+            size( sizeParam ).
+            parentPath( parentContentPath ).
+            addSort( DEFAULT_SORT_FIELD, Direction.DESC ).
+            build();
+
+        return doGetByParentPath( expandParam, params, parentContentPath );
+    }
+
+    private AbstractContentListJson doGetByParentPath( final String expandParam, final FindContentByParentParams params,
+                                                       final ContentPath parentContentPath )
+    {
+        final FindContentByParentResult result = contentService.findByParent( params, STAGE_CONTEXT );
+
+        final ContentListMetaData metaData = ContentListMetaData.create().
+            totalHits( result.getTotalHits() ).
+            hits( result.getHits() ).
+            build();
 
         if ( EXPAND_NONE.equalsIgnoreCase( expandParam ) )
         {
-            return new ContentIdListJson( contents );
+            return new ContentIdListJson( result.getContents(), metaData );
         }
         else if ( EXPAND_FULL.equalsIgnoreCase( expandParam ) )
         {
-            return new ContentListJson( contents );
+
+            return new ContentListJson( result.getContents(), metaData );
         }
         else
         {
-            return new ContentSummaryListJson( contents );
+            return new ContentSummaryListJson( result.getContents(), metaData );
         }
     }
 
@@ -272,7 +298,7 @@ public class ContentResource
 
     @POST
     @Path("getVersions")
-    public GetContentVersionsResultJson getVersions( final GetContentVersionsJson params )
+    public GetContentVersionsResultJson getContentVersions( final GetContentVersionsJson params )
     {
         final ContentId contentId = ContentId.from( params.getContentId() );
 

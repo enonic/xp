@@ -41,3 +41,5 @@
 ///<reference path='ContentSummaryAndCompareStatus.ts' />
 ///<reference path='ContentSummaryAndCompareStatusFetcher.ts' />
 ///<reference path='TemplateSummary.ts' />
+///<reference path='ContentVersions.ts' />
+///<reference path='ContentVersion.ts' />

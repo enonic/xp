@@ -10,6 +10,8 @@ import com.enonic.wem.api.entity.EntityComparisons;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIds;
 import com.enonic.wem.api.entity.EntityVersions;
+import com.enonic.wem.api.entity.FindNodesByParentParams;
+import com.enonic.wem.api.entity.FindNodesByParentResult;
 import com.enonic.wem.api.entity.GetEntityVersionsParams;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodePath;
@@ -21,6 +23,7 @@ import com.enonic.wem.api.entity.UpdateNodeParams;
 import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.core.elasticsearch.ElasticsearchIndexService;
 import com.enonic.wem.core.entity.dao.NodeDao;
+import com.enonic.wem.core.index.query.QueryService;
 import com.enonic.wem.core.version.VersionService;
 import com.enonic.wem.core.workspace.compare.WorkspaceCompareService;
 
@@ -38,6 +41,9 @@ public class NodeServiceImpl
 
     @Inject
     private VersionService versionService;
+
+    @Inject
+    private QueryService queryService;
 
     @Override
     public Node getById( final EntityId id, final Context context )
@@ -64,9 +70,15 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Nodes getByParent( final NodePath parent, final Context context )
+    public FindNodesByParentResult findByParent( final FindNodesByParentParams params, final Context context )
     {
-        return nodeDao.getByParent( parent, context.getWorkspace() );
+        return FindNodesByParentCommand.create().
+            params( params ).
+            context( context ).
+            queryService( this.queryService ).
+            nodeDao( this.nodeDao ).
+            build().
+            execute();
     }
 
     @Override

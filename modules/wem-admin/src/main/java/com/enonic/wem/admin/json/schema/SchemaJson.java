@@ -5,6 +5,7 @@ import java.time.Instant;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+import com.enonic.wem.admin.json.IconJson;
 import com.enonic.wem.admin.json.ItemJson;
 import com.enonic.wem.admin.json.schema.content.ContentTypeJson;
 import com.enonic.wem.admin.json.schema.content.ContentTypeSummaryJson;
@@ -38,6 +39,8 @@ public class SchemaJson
 
     private final String iconUrl;
 
+    private final IconJson iconJson;
+
     private final boolean hasChildren;
 
     public static SchemaJson from( final Schema schema )
@@ -65,6 +68,7 @@ public class SchemaJson
         this.createdTime = schema.getCreatedTime();
         this.modifiedTime = schema.getModifiedTime();
         this.iconUrl = SchemaIconUrlResolver.resolve( schema );
+        this.iconJson = schema.getIcon() != null ? new IconJson( schema.getIcon() ) : null;
         this.hasChildren = schema.hasChildren();
     }
 
@@ -101,6 +105,11 @@ public class SchemaJson
     public String getIconUrl()
     {
         return iconUrl;
+    }
+
+    public IconJson getIcon()
+    {
+        return this.iconJson;
     }
 
     public boolean isHasChildren()

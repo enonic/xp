@@ -1,39 +1,54 @@
 package com.enonic.wem.api.query.expr;
 
-import java.util.List;
+import java.util.Set;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 public final class QueryExpr
     implements Expression
 {
     private final ConstraintExpr constraint;
 
-    private final ImmutableList<OrderExpr> orderList;
+    private final ImmutableSet<OrderExpr> orderSet;
 
-    public QueryExpr( final ConstraintExpr constraint, final Iterable<OrderExpr> orderList )
+    public QueryExpr( final ConstraintExpr constraint, final Iterable<OrderExpr> orderSet )
     {
         this.constraint = constraint;
 
-        if ( orderList != null )
+        if ( orderSet != null )
         {
-            this.orderList = ImmutableList.copyOf( orderList );
+            this.orderSet = ImmutableSet.copyOf( orderSet );
         }
         else
         {
-            this.orderList = ImmutableList.of();
+            this.orderSet = ImmutableSet.of();
         }
     }
+
+    public QueryExpr( final Iterable<OrderExpr> orderSet )
+    {
+        this.constraint = null;
+
+        if ( orderSet != null )
+        {
+            this.orderSet = ImmutableSet.copyOf( orderSet );
+        }
+        else
+        {
+            this.orderSet = ImmutableSet.of();
+        }
+    }
+
 
     public ConstraintExpr getConstraint()
     {
         return this.constraint;
     }
 
-    public List<OrderExpr> getOrderList()
+    public Set<OrderExpr> getOrderSet()
     {
-        return this.orderList;
+        return this.orderSet;
     }
 
     @Override
@@ -46,7 +61,7 @@ public final class QueryExpr
             str.append( this.constraint.toString() );
         }
 
-        if ( !this.orderList.isEmpty() )
+        if ( !this.orderSet.isEmpty() )
         {
             if ( str.length() > 0 )
             {
@@ -54,7 +69,7 @@ public final class QueryExpr
             }
 
             str.append( "ORDER BY " );
-            str.append( Joiner.on( ", " ).join( this.orderList ) );
+            str.append( Joiner.on( ", " ).join( this.orderSet ) );
         }
 
         return str.toString();

@@ -2,6 +2,8 @@ package com.enonic.wem.api.data;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Objects;
 
 import com.google.common.base.Preconditions;
@@ -133,6 +135,16 @@ public final class Value
         return ValueTypes.LOCAL_DATE.convert( object );
     }
 
+    public LocalTime asLocalTime()
+    {
+        return ValueTypes.LOCAL_TIME.convert( object );
+    }
+
+    public LocalDateTime asLocalDateTime()
+    {
+        return ValueTypes.LOCAL_DATE_TIME.convert( object );
+    }
+
     /**
      * Attempts to return value as java.time.Instant, using best effort converting if value is not of type java.time.Instant.
      */
@@ -183,6 +195,16 @@ public final class Value
     public static Value newInstant( final Object value )
     {
         return newValue( ValueTypes.DATE_TIME, value );
+    }
+
+    public static Value newLocalTime( final Object value )
+    {
+        return newValue( ValueTypes.LOCAL_TIME, value );
+    }
+
+    public static Value newLocalDateTime( final Object value )
+    {
+        return newValue( ValueTypes.LOCAL_DATE_TIME, value );
     }
 
     public static Value newLocalDate( final Object value )

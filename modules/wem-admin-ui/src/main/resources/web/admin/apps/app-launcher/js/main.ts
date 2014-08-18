@@ -16,7 +16,7 @@ function isUserLoggedIn(): boolean {
 function startApplication() {
     var userLoggedIn = isUserLoggedIn();
 
-    var applications:api.app.Application[] = app.launcher.Applications.getAllApps();
+    var applications: api.app.Application[] = app.launcher.Applications.getAllApps();
     var appSelector = new app.launcher.AppSelector(applications);
     appSelector.onAppSelected((event: app.launcher.AppSelectedEvent) => {
         appLauncher.loadApplication(event.getApplication());
@@ -53,6 +53,8 @@ function startApplication() {
     api.dom.Body.get().appendChild(homeMainContainer);
     var router = new app.launcher.AppRouter(applications, appLauncher);
     appLauncher.setRouter(router);
+
+    new api.app.ServerEventsListener(applications);
 }
 
 function getApplication(id: string): api.app.Application {

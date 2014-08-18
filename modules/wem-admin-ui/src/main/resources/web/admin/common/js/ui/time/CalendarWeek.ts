@@ -14,7 +14,7 @@ module api.ui.time {
         }
     }
 
-    export class CalendarWeek extends api.dom.DivEl {
+    export class CalendarWeek extends api.dom.UlEl {
 
         private calendarDays: CalendarDay[];
 

@@ -6,17 +6,17 @@ module api.app {
 
         addTitleAttribute: boolean = true;
 
-        public setSize(size: NamesAndIconViewSize): NamesAndIconViewBuilder {
+        setSize(size: NamesAndIconViewSize): NamesAndIconViewBuilder {
             this.size = size;
             return this;
         }
 
-        public setAddTitleAttribute(addTitleAttribute: boolean): NamesAndIconViewBuilder {
+        setAddTitleAttribute(addTitleAttribute: boolean): NamesAndIconViewBuilder {
             this.addTitleAttribute = addTitleAttribute;
             return this;
         }
 
-        public build(): NamesAndIconView {
+        build(): NamesAndIconView {
 
             return new NamesAndIconView(this);
         }

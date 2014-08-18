@@ -1,15 +1,13 @@
 module api.query.expr {
 
     export class DynamicConstraintExpr implements ConstraintExpr {
-        private func:FunctionExpr;
+        private func: FunctionExpr;
 
-        constructor( func:FunctionExpr )
-        {
+        constructor(func: FunctionExpr) {
             this.func = func;
         }
 
-        getFunction():FunctionExpr
-        {
+        getFunction(): FunctionExpr {
             return this.func;
         }
 

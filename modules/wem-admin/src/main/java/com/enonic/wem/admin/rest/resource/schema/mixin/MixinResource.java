@@ -1,5 +1,7 @@
 package com.enonic.wem.admin.rest.resource.schema.mixin;
 
+import java.time.Instant;
+
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -11,7 +13,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.enonic.wem.admin.json.icon.IconJson;
+import com.enonic.wem.admin.json.icon.ThumbnailJson;
 import com.enonic.wem.admin.json.schema.mixin.MixinConfigJson;
 import com.enonic.wem.admin.json.schema.mixin.MixinJson;
 import com.enonic.wem.admin.json.schema.mixin.MixinListJson;
@@ -94,7 +96,7 @@ public class MixinResource
         final Mixin mixin = new MixinXmlSerializer().
             overrideName( params.getName().toString() ).
             toMixin( params.getConfig() );
-        final Icon schemaIcon = getSchemaIcon( params.getIconJson() );
+        final Icon schemaIcon = getSchemaIcon( params.getThumbnailJson() );
 
         final CreateMixinParams createParams = new CreateMixinParams().
             name( params.getName().toString() ).
@@ -125,7 +127,7 @@ public class MixinResource
             final Mixin parsed = new MixinXmlSerializer().
                 overrideName( params.getName().toString() ).
                 toMixin( params.getConfig() );
-            final Icon schemaIcon = getSchemaIcon( params.getIconJson() );
+            final Icon schemaIcon = getSchemaIcon( params.getThumbnailJson() );
 
             final MixinEditor editor = new MixinEditor()
             {
@@ -190,12 +192,12 @@ public class MixinResource
         return mixinService.getByName( new GetMixinParams( name ) );
     }
 
-    private Icon getSchemaIcon( final IconJson iconJson )
+    private Icon getSchemaIcon( final ThumbnailJson thumbnailJson )
     {
-        if ( iconJson != null )
+        if ( thumbnailJson != null )
         {
-            final Blob blob = blobService.get( iconJson.getThumbnail().getBlobKey() );
-            return blob == null ? null : Icon.from( blob.getStream(), iconJson.getMimeType() );
+            final Blob blob = blobService.get( thumbnailJson.getThumbnail().getBlobKey() );
+            return blob == null ? null : Icon.from( blob.getStream(), thumbnailJson.getMimeType(), Instant.now() );
         }
         return null;
     }

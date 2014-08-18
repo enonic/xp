@@ -5,10 +5,5 @@ module api.dom {
         constructor(className?: string) {
             super(new NewElementBuilder().setTagName("span").setClassName(className));
         }
-
-        setHtml(html: string): SpanEl {
-            this.getEl().setInnerHtml(html);
-            return this;
-        }
     }
 }

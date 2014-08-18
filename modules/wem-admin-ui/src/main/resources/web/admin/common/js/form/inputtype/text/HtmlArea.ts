@@ -2,9 +2,9 @@ module api.form.inputtype.text {
 
     import support = api.form.inputtype.support;
 
-    export class HtmlArea extends support.BaseInputTypeView<any> {
+    export class HtmlArea extends support.BaseInputTypeNotManagingAdd<any> {
 
-        constructor(config: api.form.inputtype.InputTypeViewConfig<any>) {
+        constructor(config: api.form.inputtype.InputTypeViewContext<any>) {
             super(config);
         }
 

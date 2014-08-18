@@ -3,6 +3,7 @@ package com.enonic.wem.core.support;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.time.Instant;
 
 import org.apache.commons.io.IOUtils;
 
@@ -47,7 +48,7 @@ public abstract class BaseInitializer
             {
                 return null;
             }
-            return Icon.from( stream, "image/png" );
+            return Icon.from( stream, "image/png", Instant.now() );
         }
         catch ( Exception e )
         {

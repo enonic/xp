@@ -1,9 +1,10 @@
 package com.enonic.wem.core.event;
 
+import java.util.Collections;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 
 import com.enonic.wem.api.event.Event;
@@ -15,11 +16,11 @@ public final class EventPublisherImpl
 {
     private final static Logger LOG = LoggerFactory.getLogger( EventPublisherImpl.class );
 
-    private ImmutableList<EventListener> eventListeners;
+    private Iterable<EventListener> eventListeners;
 
     public EventPublisherImpl()
     {
-        this.eventListeners = ImmutableList.of();
+        this.eventListeners = Collections.emptyList();
     }
 
     @Override
@@ -46,6 +47,6 @@ public final class EventPublisherImpl
     @Inject
     public void setEventListeners( final Iterable<EventListener> eventListeners )
     {
-        this.eventListeners = ImmutableList.copyOf( eventListeners );
+        this.eventListeners = eventListeners;
     }
 }

@@ -74,7 +74,7 @@ module api.ui.uploader {
                 } else {
                     this.image.removeClass('selected');
                 }
-            })
+            });
             this.imageBox.appendChild(this.image);
             this.appendChild(this.imageBox);
 

@@ -1,6 +1,6 @@
 module api.content.page.part {
 
-    export class PartDescriptorsResourceRequest extends PartDescriptorResourceRequest<PartDescriptorsJson> {
+    export class PartDescriptorsResourceRequest extends PartDescriptorResourceRequest<PartDescriptorsJson, PartDescriptor[]> {
 
         fromJsonToPartDescriptors(json: PartDescriptorsJson): PartDescriptor[] {
 

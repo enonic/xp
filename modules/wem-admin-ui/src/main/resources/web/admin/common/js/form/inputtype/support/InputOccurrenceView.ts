@@ -14,7 +14,7 @@ module api.form.inputtype.support {
 
         private valueChangedListeners: {(event: api.form.inputtype.ValueChangedEvent) : void}[] = [];
 
-        constructor(inputOccurrence: InputOccurrence, baseInputTypeView: BaseInputTypeView<any>, property: api.data.Property) {
+        constructor(inputOccurrence: InputOccurrence, baseInputTypeView: BaseInputTypeNotManagingAdd<any>, property: api.data.Property) {
             super("input-occurrence-view", inputOccurrence);
 
             var inputElement = baseInputTypeView.createInputOccurrenceElement(inputOccurrence.getIndex(), property);

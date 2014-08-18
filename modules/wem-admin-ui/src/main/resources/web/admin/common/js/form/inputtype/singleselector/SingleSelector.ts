@@ -12,7 +12,7 @@ module api.form.inputtype.singleselector {
         }[]
     }
 
-    export class SingleSelector extends api.form.inputtype.support.BaseInputTypeView<SingleSelectorConfig> {
+    export class SingleSelector extends api.form.inputtype.support.BaseInputTypeNotManagingAdd<SingleSelectorConfig> {
 
         public static TYPE_DROPDOWN: string = "DROPDOWN";
         public static TYPE_RADIO: string = "RADIO";
@@ -20,7 +20,7 @@ module api.form.inputtype.singleselector {
 
         private type: string;
 
-        constructor(config: api.form.inputtype.InputTypeViewConfig<SingleSelectorConfig>) {
+        constructor(config: api.form.inputtype.InputTypeViewContext<SingleSelectorConfig>) {
             super(config, "single-selector");
             this.type = config && config.inputConfig.selectorType && config.inputConfig.selectorType.toUpperCase();
 

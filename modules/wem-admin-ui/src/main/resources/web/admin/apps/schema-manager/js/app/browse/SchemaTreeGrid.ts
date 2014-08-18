@@ -25,23 +25,12 @@ module app.browse {
                             build(),
 
                         new GridColumnBuilder<TreeNode<Schema>>().
-                            setName("Module").
-                            setId("module").
-                            setField("module").
-                            build() ,
-
-                        new GridColumnBuilder<TreeNode<Schema>>().
-                            setName("Type").
-                            setId("type").
-                            setField("type").
-                            build() ,
-
-                        new GridColumnBuilder<TreeNode<Schema>>().
                             setName("Modified").
                             setId("modifiedTime").
                             setField("modifiedTime").
                             setFormatter(DateTimeFormatter.format).
-                            setMaxWidth(270).
+                            setMinWidth(150).
+                            setMaxWidth(170).
                             build()
                     ]).
                     prependClasses("schema-grid").

@@ -48,6 +48,9 @@
             "site": null,
             "type": "my_type"
         }
-    ]
+    ],
+    "metadata": {
+        "hits": 2,
+        "totalHits": 2
+    }
 }
-

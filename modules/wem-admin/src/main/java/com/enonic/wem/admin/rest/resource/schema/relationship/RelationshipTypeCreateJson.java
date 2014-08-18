@@ -1,7 +1,7 @@
 package com.enonic.wem.admin.rest.resource.schema.relationship;
 
 
-import com.enonic.wem.admin.json.icon.IconJson;
+import com.enonic.wem.admin.json.icon.ThumbnailJson;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 
 public class RelationshipTypeCreateJson
@@ -10,16 +10,16 @@ public class RelationshipTypeCreateJson
 
     private String config;
 
-    private IconJson icon;
-
-    public void setName( final String name )
-    {
-        this.name = RelationshipTypeName.from( name );
-    }
+    private ThumbnailJson icon;
 
     public RelationshipTypeName getName()
     {
         return name;
+    }
+
+    public void setName( final String name )
+    {
+        this.name = RelationshipTypeName.from( name );
     }
 
     public String getConfig()
@@ -32,12 +32,12 @@ public class RelationshipTypeCreateJson
         this.config = config;
     }
 
-    public IconJson getIconJson()
+    public ThumbnailJson getThumbnailJson()
     {
         return icon;
     }
 
-    public void setIcon( final IconJson icon )
+    public void setIcon( final ThumbnailJson icon )
     {
         this.icon = icon;
     }

@@ -4,4 +4,6 @@
 ///<reference path='ContentQueryResultJson.ts' />
 ///<reference path='CompareContentResultJson.ts' />
 ///<reference path='CompareContentResultsJson.ts' />
+///<reference path='ContentVersionJson.ts' />
+///<reference path='ContentVersionsJson.ts' />
 

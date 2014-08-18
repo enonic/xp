@@ -1,9 +1,6 @@
 .context-window {
   color: @admin-dark-gray-font;
-  -webkit-transition: all 0.1s ease-in-out;
-  -moz-transition: all 0.1s ease-in-out;
-  -o-transition: all 0.1s ease-in-out;
-  transition: all 0.1s ease-in-out;
+  .transition(all 0.1s ease-in-out);
 
   .splitter {
     position: relative;
@@ -20,7 +17,7 @@
     background-color: @admin-dark-gray;
     opacity: 0.5;
     position: absolute;
-    z-index: 1000;
+    z-index: @z-index-draggable;
     cursor: ew-resize;
     width: 5px;
     .noSelect();
@@ -311,43 +308,6 @@
 
 .drag-mask {
   background-color: transparent;
-}
-
-.live-edit-drag-helper-transition (@property, @duration) {
-  transition: @property @duration;
-  -webkit-transition: @property @duration;
-}
-
-.live-edit-drag-helper-scale (@scale) {
-  transform: @scale;
-  -webkit-transform: @scale;
-}
-
-#live-edit-drag-helper {
-  font-size: 24px;
-  color: #fff;
-
-}
-
-/* Align the font icon */
-#live-edit-drag-helper:before {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-}
-
-.live-edit-font-icon-drop-allowed {
-  &:extend(.icon);
-  .icon-checkmark;
-
-  background-color: #558e28;
-}
-
-.live-edit-font-icon-drop-not-allowed {
-  &:extend(.icon);
-  .icon-blocked;
-
-  background-color: #d90b00;
 }
 
 .imagePicker() {

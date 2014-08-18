@@ -33,11 +33,11 @@ module api.form.inputtype {
             }
         }
 
-        static createView(inputTypeClassName: string, config?: InputTypeViewConfig<any>): InputTypeView {
+        static createView(inputTypeClassName: string, context: InputTypeViewContext<any>): InputTypeView {
 
             if (InputTypeManager.isRegistered(inputTypeClassName)) {
                 var inputTypeClass = InputTypeManager.inputTypes[inputTypeClassName];
-                return inputTypeClass.newInstance(config);
+                return inputTypeClass.newInstance(context);
             }
             else {
                 throw new Error("Input type [" + inputTypeClassName + "] need to be registered first.");
