@@ -49,7 +49,7 @@ public final class ContentIconUrlResolver
             final SiteTemplate siteTemplate = getSiteTemplate( content.getSite().getTemplate() );
             if ( siteTemplate != null && siteTemplate.getIcon() != null )
             {
-                return ServletRequestUrlHelper.createUri( "/admin/rest/sitetemplate/image/" + siteTemplate.getKey() + "?ts=" +
+                return ServletRequestUrlHelper.createUri( "/admin/rest/sitetemplate/icon/" + siteTemplate.getKey() + "?ts=" +
                                                               siteTemplate.getIcon().getModifiedTime().toEpochMilli() );
             }
         }
