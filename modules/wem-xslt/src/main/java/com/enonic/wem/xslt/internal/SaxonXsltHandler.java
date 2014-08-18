@@ -1,4 +1,4 @@
-package com.enonic.wem.portal.xslt.saxon;
+package com.enonic.wem.xslt.internal;
 
 import java.io.StringWriter;
 import java.util.Map;
@@ -9,9 +9,9 @@ import javax.xml.transform.stream.StreamResult;
 
 import com.google.common.io.Closeables;
 
-import com.enonic.wem.portal.xslt.XsltProcessorErrors;
-import com.enonic.wem.portal.xslt.XsltProcessorException;
-import com.enonic.wem.portal.xslt.XsltProcessorSpec;
+import com.enonic.wem.xslt.XsltProcessorErrors;
+import com.enonic.wem.xslt.XsltProcessorException;
+import com.enonic.wem.xslt.XsltProcessorSpec;
 
 final class SaxonXsltHandler
 {

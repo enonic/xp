@@ -11,6 +11,7 @@
     <bundle>mvn:com.enonic.wem/wem-guice/${project.version}</bundle>
     <bundle>mvn:com.enonic.wem/wem-core/${project.version}</bundle>
     <bundle>mvn:com.enonic.wem/wem-script/${project.version}</bundle>
+    <bundle>mvn:com.enonic.wem/wem-xslt/${project.version}</bundle>
     <bundle>mvn:com.enonic.wem/wem-portal/${project.version}</bundle>
     <bundle>mvn:com.enonic.wem/wem-admin/${project.version}</bundle>
     <bundle>mvn:com.enonic.wem/wem-admin-ui/${project.version}</bundle>

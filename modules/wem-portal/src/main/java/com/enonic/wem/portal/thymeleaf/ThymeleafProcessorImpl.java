@@ -1,5 +1,6 @@
-package com.enonic.wem.portal.view.thymeleaf;
+package com.enonic.wem.portal.thymeleaf;
 
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -12,16 +13,15 @@ import org.thymeleaf.templateresolver.TemplateResolver;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.portal.view.RenderViewSpec;
-import com.enonic.wem.portal.view.ViewProcessor;
+import com.enonic.wem.api.resource.ResourceKey;
 
-public final class ThymeleafViewProcessor
-    implements ViewProcessor
+public final class ThymeleafProcessorImpl
+    implements ThymeleafProcessor
 {
     private final TemplateEngine engine;
 
     @Inject
-    public ThymeleafViewProcessor()
+    public ThymeleafProcessorImpl()
     {
         this.engine = new TemplateEngine();
 
@@ -40,16 +40,10 @@ public final class ThymeleafViewProcessor
     }
 
     @Override
-    public String getName()
-    {
-        return "thymeleaf";
-    }
-
-    @Override
-    public String process( final RenderViewSpec spec )
+    public String process( final ResourceKey view, final Map<String, Object> params )
     {
         final Context context = new Context();
-        context.setVariables( spec.getParams() );
-        return this.engine.process( spec.getView().toString(), context );
+        context.setVariables( params );
+        return this.engine.process( view.toString(), context );
     }
 }

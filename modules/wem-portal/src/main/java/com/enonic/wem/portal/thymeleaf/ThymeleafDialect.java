@@ -1,4 +1,4 @@
-package com.enonic.wem.portal.view.thymeleaf;
+package com.enonic.wem.portal.thymeleaf;
 
 import java.util.Set;
 

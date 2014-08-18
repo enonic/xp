@@ -1,4 +1,4 @@
-package com.enonic.wem.portal.xslt;
+package com.enonic.wem.xslt;
 
 public interface XsltProcessor
 {

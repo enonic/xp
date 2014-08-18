@@ -11,9 +11,9 @@
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <artifactId>wem-script</artifactId>
+  <artifactId>wem-xslt</artifactId>
   <packaging>bundle</packaging>
-  <name>Enonic WEM Script</name>
+  <name>Enonic WEM Xslt</name>
 
   <dependencies>
     <dependency>
@@ -22,17 +22,9 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.mozilla</groupId>
-      <artifactId>rhino</artifactId>
-      <version>1.7R4</version>
-    </dependency>
-    <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.compendium</artifactId>
+      <groupId>net.sf.saxon</groupId>
+      <artifactId>Saxon-HE</artifactId>
+      <version>9.5.1-3</version>
     </dependency>
   </dependencies>
 
@@ -44,16 +36,17 @@
         <configuration>
           <instructions>
             <Import-Package>
-              !org.apache.xmlbeans.*,
+              !javax.xml.xquery.*,
+              !org.apache.xml.resolver.*,
               *
             </Import-Package>
             <Export-Package>
-              !com.enonic.wem.script.internal.*,
-              com.enonic.wem.script.*,
+              com.enonic.wem.xslt.*
             </Export-Package>
-            <Embed-Dependency>
-              rhino
-            </Embed-Dependency>
+            <Private-Package>
+              net.sf.saxon.*,
+              com.enonic.wem.xslt.internal.*
+            </Private-Package>
           </instructions>
         </configuration>
       </plugin>

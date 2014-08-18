@@ -1,4 +1,4 @@
-package com.enonic.wem.portal.xslt;
+package com.enonic.wem.xslt;
 
 import java.util.Formatter;
 
