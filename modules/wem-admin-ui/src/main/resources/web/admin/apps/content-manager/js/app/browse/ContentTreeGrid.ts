@@ -93,7 +93,20 @@ module app.browse {
 
             this.getGrid().subscribeOnDblClick((event, data) => {
                 if (this.isActive()) {
-                    new EditContentEvent([this.getGrid().getDataView().getItem(data.row).getData().getContentSummary()]).fire();
+                    var node = this.getGrid().getDataView().getItem(data.row);
+                    if (!node.getData().getContentSummary()) {
+                        this.setActive(false);
+                        this.fetchChildren(node.getParent()).then((dataList: ContentSummaryAndCompareStatus[]) => {
+                            node.getParent().setChildrenFromData(dataList);
+                            this.initData(this.getRoot().treeToList());
+                        }).catch((reason: any) => {
+                            api.DefaultErrorHandler.handle(reason);
+                        }).finally(() => {
+                            this.setActive(true);
+                        }).done(() => this.notifyLoaded());
+                    } else {
+                        new EditContentEvent([node.getData().getContentSummary()]).fire();
+                    }
                 }
             });
 
@@ -155,8 +168,11 @@ module app.browse {
                 contentSummaryViewer.setObject(node.getData().getContentSummary(), node.calcLevel() > 1);
                 return contentSummaryViewer.toString();
             } else {
-                var parent = node.getParent();
-                return (parent.getMaxChildren() - parent.getChildren().length - 1) + " nodes left to load";
+                var content = new api.dom.DivEl("children-to-load"),
+                    parent = node.getParent();
+                content.setHtml((parent.getMaxChildren() - parent.getChildren().length + 1) + " children left to load");
+
+                return content.toString();
             }
 
         }

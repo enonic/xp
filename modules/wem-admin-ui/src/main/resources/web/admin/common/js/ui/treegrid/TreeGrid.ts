@@ -462,7 +462,7 @@ module api.ui.treegrid {
             }).done(() => this.notifyLoaded());
         }
 
-        private initData(nodes: TreeNode<NODE>[]) {
+        initData(nodes: TreeNode<NODE>[]) {
             this.gridData.setItems(nodes, "id");
         }
 

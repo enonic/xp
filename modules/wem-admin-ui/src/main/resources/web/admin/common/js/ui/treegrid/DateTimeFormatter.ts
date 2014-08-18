@@ -24,19 +24,22 @@ module api.ui.treegrid {
                     ":" +
                     DateTimeFormatter.zeroPad(date.getSeconds(), 2);
                 return s;
+            } else {
+                return "";
             }
-
-            return "";
         }
 
         static createHtmlNoTimestamp(date:Date):string {
-            var s = "";
-            s += DateTimeFormatter.zeroPad(date.getFullYear(), 4);
-            s += "-";
-            s += DateTimeFormatter.zeroPad(date.getMonth() + 1, 2);
-            s += "-";
-            s += DateTimeFormatter.zeroPad(date.getDate(), 2);
-            return s;
+            if (!!date) {
+                var s = DateTimeFormatter.zeroPad(date.getFullYear(), 4) +
+                    "-" +
+                    DateTimeFormatter.zeroPad(date.getMonth() + 1, 2) +
+                    "-" +
+                    DateTimeFormatter.zeroPad(date.getDate(), 2);
+                return s;
+            } else {
+                return "";
+            }
         }
 
         private static zeroPad(n:number, width:number) {
