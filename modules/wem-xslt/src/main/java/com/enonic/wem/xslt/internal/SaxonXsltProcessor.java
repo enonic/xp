@@ -1,5 +1,10 @@
 package com.enonic.wem.xslt.internal;
 
+import javax.xml.transform.TransformerFactory;
+
+import net.sf.saxon.Configuration;
+import net.sf.saxon.TransformerFactoryImpl;
+
 import com.enonic.wem.xslt.XsltProcessor;
 import com.enonic.wem.xslt.XsltProcessorException;
 import com.enonic.wem.xslt.XsltProcessorSpec;
@@ -7,7 +12,6 @@ import com.enonic.wem.xslt.XsltProcessorSpec;
 public final class SaxonXsltProcessor
     implements XsltProcessor
 {
-    /*
     private final Configuration configuration;
 
     public SaxonXsltProcessor()
@@ -24,17 +28,13 @@ public final class SaxonXsltProcessor
     {
         return new TransformerFactoryImpl( this.configuration );
     }
-    */
 
     @Override
     public String process( final XsltProcessorSpec spec )
         throws XsltProcessorException
     {
-        /*final TransformerFactory factory = createTransformerFactory();
+        final TransformerFactory factory = createTransformerFactory();
         final SaxonXsltHandler handler = new SaxonXsltHandler( factory, spec );
         return handler.process();
-
-        */
-        return null;
     }
 }
