@@ -1,4 +1,4 @@
-package com.enonic.wem.portal.script.runner;
+package com.enonic.wem.script.internal;
 
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Script;
@@ -9,11 +9,11 @@ import com.google.common.cache.CacheBuilder;
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
 
-final class ScriptCompiler
+final class RhinoScriptCompiler
 {
     private final Cache<String, Script> cache;
 
-    public ScriptCompiler()
+    public RhinoScriptCompiler()
     {
         this.cache = CacheBuilder.newBuilder().maximumSize( 1000 ).build();
     }

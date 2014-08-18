@@ -22,11 +22,11 @@ import com.enonic.wem.api.content.page.layout.LayoutRegions;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.portal.controller.JsContext;
-import com.enonic.wem.portal.script.SourceException;
 import com.enonic.wem.portal.xml.DomBuilder;
 import com.enonic.wem.portal.xslt.XsltProcessor;
 import com.enonic.wem.portal.xslt.XsltProcessorException;
 import com.enonic.wem.portal.xslt.XsltProcessorSpec;
+import com.enonic.wem.script.SourceException;
 
 public final class XsltScriptBean
 {

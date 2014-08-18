@@ -1,4 +1,4 @@
-package com.enonic.wem.portal.script.runner;
+package com.enonic.wem.script.internal;
 
 import java.util.Map;
 
@@ -11,18 +11,22 @@ import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceUrlResolver;
-import com.enonic.wem.portal.script.SourceException;
+import com.enonic.wem.script.ScriptEnvironment;
+import com.enonic.wem.script.ScriptRunner;
+import com.enonic.wem.script.SourceException;
 
-final class ScriptRunnerImpl
+final class RhinoScriptRunner
     implements ScriptRunner
 {
-    protected ScriptCompiler compiler;
+    protected RhinoScriptCompiler compiler;
+
+    protected ScriptEnvironment environment;
 
     private final Map<String, Object> objects;
 
     private ResourceKey source;
 
-    public ScriptRunnerImpl()
+    public RhinoScriptRunner()
     {
         this.objects = Maps.newHashMap();
     }
@@ -69,7 +73,12 @@ final class ScriptRunnerImpl
             scope.put( entry.getKey(), scope, Context.javaToJS( entry.getValue(), scope ) );
         }
 
-        final RequireFunction require = new RequireFunction( scope, this.compiler );
+        for ( final Map.Entry<String, Object> entry : this.environment.getGlobalVariables().entrySet() )
+        {
+            scope.put( entry.getKey(), scope, Context.javaToJS( entry.getValue(), scope ) );
+        }
+
+        final RequireFunction require = new RequireFunction( scope, this.compiler, this.environment );
         require.install( scope );
 
         require.requireMain( context, this.source );

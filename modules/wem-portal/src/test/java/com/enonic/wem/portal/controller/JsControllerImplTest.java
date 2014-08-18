@@ -15,7 +15,7 @@ import com.google.common.io.ByteSource;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceUrlTestHelper;
 import com.enonic.wem.portal.postprocess.PostProcessor;
-import com.enonic.wem.portal.script.runner.ScriptRunner;
+import com.enonic.wem.script.ScriptRunner;
 
 import static org.junit.Assert.*;
 

@@ -20,7 +20,7 @@ import com.google.common.base.Charsets;
 
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.core.entity.dao.NodeNotFoundException;
-import com.enonic.wem.portal.script.SourceException;
+import com.enonic.wem.script.SourceException;
 
 import static org.junit.Assert.*;
 

@@ -53,11 +53,6 @@
       <artifactId>filters</artifactId>
       <version>2.0.235-1</version>
     </dependency>
-    <dependency>
-      <groupId>org.mozilla</groupId>
-      <artifactId>rhino</artifactId>
-      <version>1.7R4</version>
-    </dependency>
   </dependencies>
 
   <build>
@@ -74,8 +69,7 @@
               org.apache.lucene.*;version=4.6.1,
               org.apache.commons.*,
               com.spatial4j.*;version=0.3.0,
-              org.tartarus.snowball.*,
-              org.mozilla.javascript.*
+              org.tartarus.snowball.*
             </_exportcontents>
             <Import-Package>
               *;resolution:=optional
@@ -85,7 +79,6 @@
               jmustache,
               elasticsearch,
               lucene-*,
-              rhino,
               filters,
               asm,
               spatial4j

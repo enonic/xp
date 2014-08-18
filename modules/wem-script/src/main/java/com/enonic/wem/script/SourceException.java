@@ -1,4 +1,4 @@
-package com.enonic.wem.portal.script;
+package com.enonic.wem.script;
 
 import java.net.URL;
 import java.text.MessageFormat;

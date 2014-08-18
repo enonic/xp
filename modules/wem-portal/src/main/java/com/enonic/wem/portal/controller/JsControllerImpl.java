@@ -4,7 +4,7 @@ import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.portal.postprocess.PostProcessor;
 import com.enonic.wem.portal.script.lib.ContextScriptBean;
-import com.enonic.wem.portal.script.runner.ScriptRunner;
+import com.enonic.wem.script.ScriptRunner;
 
 final class JsControllerImpl
     implements JsController

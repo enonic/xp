@@ -1,6 +1,8 @@
 package com.enonic.wem.api.module;
 
 import org.apache.commons.lang.StringUtils;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.Version;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -70,5 +72,13 @@ public final class ModuleKey
         final String name = StringUtils.substringBeforeLast( moduleKey, SEPARATOR );
         final String version = StringUtils.substringAfterLast( moduleKey, SEPARATOR );
         return new ModuleKey( ModuleName.from( name ), ModuleVersion.from( version ) );
+    }
+
+    public static ModuleKey from( final Bundle bundle )
+    {
+        final String name = bundle.getSymbolicName();
+        final Version bundleVersion = bundle.getVersion();
+        final ModuleVersion version = ModuleVersion.from( bundleVersion.toString() );
+        return ModuleKey.from( ModuleName.from( name ), version );
     }
 }

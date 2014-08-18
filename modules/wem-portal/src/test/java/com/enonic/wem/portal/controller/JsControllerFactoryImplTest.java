@@ -4,8 +4,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.portal.postprocess.PostProcessor;
-import com.enonic.wem.portal.script.runner.ScriptRunner;
-import com.enonic.wem.portal.script.runner.ScriptRunnerFactory;
+import com.enonic.wem.script.ScriptRunner;
+import com.enonic.wem.script.ScriptRunnerFactory;
 
 import static org.junit.Assert.*;
 

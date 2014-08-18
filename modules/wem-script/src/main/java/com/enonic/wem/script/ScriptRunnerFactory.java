@@ -1,4 +1,4 @@
-package com.enonic.wem.portal.script.runner;
+package com.enonic.wem.script;
 
 public interface ScriptRunnerFactory
 {

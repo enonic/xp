@@ -25,6 +25,7 @@
     <module>modules/wem-api</module>
     <module>modules/wem-guice</module>
     <module>modules/wem-core</module>
+    <module>modules/wem-script</module>
     <module>modules/wem-admin</module>
     <module>modules/wem-admin-ui</module>
     <module>modules/wem-portal</module>
@@ -93,7 +94,12 @@
       <dependency>
         <groupId>org.osgi</groupId>
         <artifactId>org.osgi.core</artifactId>
-        <version>5.0.0</version>
+        <version>4.2.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.osgi</groupId>
+        <artifactId>org.osgi.compendium</artifactId>
+        <version>4.2.0</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

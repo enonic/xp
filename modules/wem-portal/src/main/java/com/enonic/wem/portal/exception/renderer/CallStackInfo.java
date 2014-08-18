@@ -1,10 +1,11 @@
 package com.enonic.wem.portal.exception.renderer;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.portal.script.SourceException;
+import com.enonic.wem.script.SourceException;
 
 final class CallStackInfo
 {
@@ -18,10 +19,8 @@ final class CallStackInfo
     public List<LineInfo> getLines()
     {
         final List<LineInfo> list = Lists.newArrayList();
-        for ( final String line : this.error.getCallStack() )
-        {
-            list.add( new LineInfo( list.size() + 1, line ) );
-        }
+        list.addAll(
+            this.error.getCallStack().stream().map( line -> new LineInfo( list.size() + 1, line ) ).collect( Collectors.toList() ) );
 
         return list;
     }

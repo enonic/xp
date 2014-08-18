@@ -1,4 +1,4 @@
-package com.enonic.wem.portal.script.runner;
+package com.enonic.wem.script;
 
 import com.enonic.wem.api.resource.ResourceKey;
 

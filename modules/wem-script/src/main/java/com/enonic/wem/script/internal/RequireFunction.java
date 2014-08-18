@@ -1,4 +1,4 @@
-package com.enonic.wem.portal.script.runner;
+package com.enonic.wem.script.internal;
 
 import java.util.Map;
 
@@ -12,6 +12,7 @@ import org.mozilla.javascript.ScriptableObject;
 import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.wem.script.ScriptEnvironment;
 
 final class RequireFunction
     extends BaseFunction
@@ -24,13 +25,16 @@ final class RequireFunction
 
     private final Scriptable nativeScope;
 
-    private final ScriptCompiler compiler;
+    private final RhinoScriptCompiler compiler;
 
-    public RequireFunction( final Scriptable nativeScope, final ScriptCompiler compiler )
+    private final ScriptEnvironment environment;
+
+    public RequireFunction( final Scriptable nativeScope, final RhinoScriptCompiler compiler, final ScriptEnvironment environment )
     {
         this.nativeScope = nativeScope;
         this.compiler = compiler;
         this.exportedInterfaces = Maps.newConcurrentMap();
+        this.environment = environment;
         setPrototype( ScriptableObject.getFunctionPrototype( nativeScope ) );
     }
 
@@ -85,7 +89,7 @@ final class RequireFunction
     {
         final ScriptableObject moduleObject = (ScriptableObject) context.newObject( this.nativeScope );
 
-        final Scriptable executionScope = new RequireModuleScope( this.nativeScope, resource );
+        final Scriptable executionScope = new RequireModuleScope( this.nativeScope, resource, this.environment );
         executionScope.put( EXPORTS_NAME, executionScope, exports );
         moduleObject.put( EXPORTS_NAME, moduleObject, exports );
 
