@@ -4,11 +4,11 @@ module api.ui.time {
 
         year: number;
 
-        monthOfYear: number;
+        month: number;
 
-        selectedDay: number = 0;
+        selectedDate: Date;
 
-        startingDayOfWeek: DayOfWeek = DaysOfWeek.MONDAY;
+        startingDayOfWeek: DayOfWeek;
 
         interactive: boolean = false;
 
@@ -17,13 +17,13 @@ module api.ui.time {
             return this;
         }
 
-        setMonthOfYear(value: number): CalendarBuilder {
-            this.monthOfYear = value;
+        setMonth(value: number): CalendarBuilder {
+            this.month = value;
             return this;
         }
 
-        setSelectedDay(value: number): CalendarBuilder {
-            this.selectedDay = value;
+        setSelectedDate(value: Date): CalendarBuilder {
+            this.selectedDate = value;
             return this;
         }
 
@@ -48,9 +48,9 @@ module api.ui.time {
 
         private year: number;
 
-        private monthOfYear: number;
+        private month: number;
 
-        private selectedDay: number;
+        private selectedDate: Date;
 
         private calendarDays: CalendarDay[];
 
@@ -60,26 +60,66 @@ module api.ui.time {
 
         private selectedDateChangedListeners: {(event: SelectedDateChangedEvent) : void}[] = [];
 
+        private shownMonthChangedListeners: {(month: number, year: number) : void}[] = [];
+
         constructor(builder: CalendarBuilder) {
             super("calendar");
 
-            this.year = builder.year;
-            this.monthOfYear = builder.monthOfYear;
-            this.selectedDay = builder.selectedDay;
-            this.startingDayOfWeek = builder.startingDayOfWeek;
+            var now = new Date();
+            this.year = builder.year || now.getFullYear();
+            this.month = builder.month != undefined ? builder.month : now.getMonth();
+            this.selectedDate = builder.selectedDate;
+            this.startingDayOfWeek = builder.startingDayOfWeek || DaysOfWeek.MONDAY;
             this.interactive = builder.interactive;
 
+            this.renderMonth();
+        }
+
+        public nextMonth() {
+            this.month++;
+            if (this.month > 11) {
+                this.month = 0;
+                this.year++;
+            }
+            this.removeChildren();
+            this.renderMonth();
+        }
+
+        public previousMonth() {
+            this.month--;
+            if (this.month < 0) {
+                this.month = 11;
+                this.year--;
+            }
+            this.removeChildren();
+            this.renderMonth();
+        }
+
+        public nextYear() {
+            this.year++;
+            this.removeChildren();
+            this.renderMonth();
+        }
+
+        public previousYear() {
+            this.year--;
+            this.removeChildren();
+            this.renderMonth();
+        }
+
+        private renderMonth() {
             this.calendarDays = this.resolveDaysInMonth();
             var firstDay = this.resolveFirstDayOfCalendar();
             this.weeks = this.createCalendarWeeks(firstDay);
             this.weeks.forEach((week) => {
                 this.appendChild(week);
             });
+            this.notifyShownMonthChanged(this.month, this.year);
         }
 
         private resolveDaysInMonth() {
             var calendarDays: CalendarDay[] = [];
-            var daysInMonth = new Date(this.year, this.monthOfYear, 0).getDate();
+            var daysInMonth = new Date(this.year, this.month, 0).getDate();
             var previousDay: CalendarDay = null;
             for (var i = 1; i <= daysInMonth; i++) {
                 var calendarDay = this.createCalendarDay(i, previousDay);
@@ -108,7 +148,7 @@ module api.ui.time {
             var weeks: CalendarWeek [] = [];
             var currWeek = this.createCalendarWeek(firstDay);
             weeks.push(currWeek);
-            while (!currWeek.hasLastDayOfMonth(this.monthOfYear)) {
+            while (!currWeek.hasLastDayOfMonth(this.month)) {
                 var newWeek = this.createCalendarWeek(currWeek.getNextWeeksFirstDay());
                 weeks.push(newWeek);
                 currWeek = newWeek;
@@ -129,41 +169,45 @@ module api.ui.time {
 
         private createCalendarDay(dayOfMonth: number, previousDay: CalendarDay): CalendarDay {
 
-            var date = new Date(this.year, this.monthOfYear, dayOfMonth);
+            var date = new Date(this.year, this.month, dayOfMonth);
             var calendarDay = new CalendarDayBuilder().
                 setDate(date).
-                setMonth(this.monthOfYear).
+                setMonth(this.month).
                 setPreviousDay(previousDay).
                 build();
             if (calendarDay.isInMonth()) {
 
                 if (this.interactive) {
-                    calendarDay.onCalendarDayClicked((event: CalendarDayClickedEvent) => {
-                        this.handleCalendarDayClicked(event);
-                    });
+                    calendarDay.onCalendarDayClicked((event: CalendarDayClickedEvent) => this.handleCalendarDayClicked(event));
                 }
 
-                if (this.selectedDay == date.getDate()) {
+                if (this.selectedDate && this.selectedDate.toDateString() == date.toDateString()) {
                     calendarDay.setSelectedDay(true);
                 }
             }
-            return  calendarDay;
+            return calendarDay;
         }
 
         private handleCalendarDayClicked(event: CalendarDayClickedEvent) {
 
             this.calendarDays.forEach((calendarDay: CalendarDay) => {
-                if (!event.getCalendarDay().equals(calendarDay)) {
-                    calendarDay.setSelectedDay(false);
-                }
+                calendarDay.setSelectedDay(event.getCalendarDay().equals(calendarDay));
             });
-            event.getCalendarDay().setSelectedDay(true);
-            this.selectedDay = event.getCalendarDay().getDayOfMonth();
-            this.notifySelectedDateChanged(event.getCalendarDay().getDate());
+
+            this.selectedDate = event.getCalendarDay().getDate();
+            this.notifySelectedDateChanged(this.selectedDate);
         }
 
-        public getSelectedDay(): number {
-            return this.getSelectedDay();
+        public getSelectedDate(): Date {
+            return this.selectedDate;
+        }
+
+        public getMonth(): number {
+            return this.month;
+        }
+
+        public getYear(): number {
+            return this.year;
         }
 
         public getCalendarDays(): CalendarDay [] {
@@ -184,6 +228,22 @@ module api.ui.time {
             var event = new SelectedDateChangedEvent(date);
             this.selectedDateChangedListeners.forEach((listener) => {
                 listener(event);
+            });
+        }
+
+        onShownMonthChanged(listener: (month: number, year: number) => void) {
+            this.shownMonthChangedListeners.push(listener);
+        }
+
+        unShownMonthChanged(listener: (month: number, year: number) => void) {
+            this.shownMonthChangedListeners = this.shownMonthChangedListeners.filter((curr) => {
+                return curr !== listener;
+            })
+        }
+
+        private notifyShownMonthChanged(month: number, year: number) {
+            this.shownMonthChangedListeners.forEach((listener) => {
+                listener(month, year);
             });
         }
     }

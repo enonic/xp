@@ -10,14 +10,15 @@ module app.wizard.site {
 
         private formView: api.form.FormView;
 
-        constructor(context: api.content.form.ContentFormContext, theModule: api.module.Module, moduleConfig?: api.content.site.ModuleConfig) {
+        constructor(context: api.content.form.ContentFormContext, theModule: api.module.Module,
+                    moduleConfig?: api.content.site.ModuleConfig) {
             super("module-view");
             this.siteModule = theModule;
             this.moduleConfig = moduleConfig;
 
             var header = new api.dom.DivEl('header');
             header.appendChild(new api.dom.IEl('icon-large icon-puzzle'));
-            header.appendChild(new api.dom.H6El().setText(theModule.getDisplayName()));
+            header.appendChild(new api.dom.H6El().setHtml(theModule.getDisplayName()));
             this.appendChild(header);
 
             this.formView = new api.form.FormView(context, theModule.getForm(), moduleConfig ? moduleConfig.getConfig() : undefined);

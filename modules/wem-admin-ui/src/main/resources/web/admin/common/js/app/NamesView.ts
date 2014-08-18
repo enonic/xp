@@ -8,8 +8,7 @@ module api.app {
 
         private addTitleAttribute: boolean;
 
-        constructor(addTitleAttribute: boolean = true)
-        {
+        constructor(addTitleAttribute: boolean = true) {
             super("names-view");
 
             this.addTitleAttribute = addTitleAttribute
@@ -21,18 +20,16 @@ module api.app {
             this.appendChild(this.subNameEl);
         }
 
-        setMainName(value: string): NamesView
-        {
-            this.mainNameEl.setText(value);
+        setMainName(value: string): NamesView {
+            this.mainNameEl.setHtml(value);
             if (this.addTitleAttribute) {
                 this.mainNameEl.getEl().setAttribute("title", value);
             }
             return this;
         }
 
-        setSubName(value: string, title?: string): NamesView
-        {
-            this.subNameEl.setText(value);
+        setSubName(value: string, title?: string): NamesView {
+            this.subNameEl.setHtml(value);
             if (this.addTitleAttribute) {
                 this.subNameEl.getEl().setAttribute("title", title || value);
             }

@@ -22,7 +22,7 @@ module app.browse {
 
             this.input = api.ui.text.TextInput.large("url-input").setPlaceholder("Module URL");
             var title = new api.dom.H6El();
-            title.setText("Enter the URL of the module to be installed.");
+            title.setHtml("Enter the URL of the module to be installed.");
             container.appendChild(title);
             container.appendChild(this.input);
 
@@ -79,12 +79,12 @@ module app.browse {
             super(title);
 
             this.pathEl = new api.dom.PEl('path');
-            this.pathEl.setText(path);
+            this.pathEl.setHtml(path);
             this.appendChild(this.pathEl);
         }
 
         setPath(path: string) {
-            this.pathEl.setText(path);
+            this.pathEl.setHtml(path);
         }
     }
 
