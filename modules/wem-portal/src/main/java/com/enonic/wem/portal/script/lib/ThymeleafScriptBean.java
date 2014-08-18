@@ -5,7 +5,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.portal.thymeleaf.ThymeleafProcessor;
+import com.enonic.wem.thymeleaf.ThymeleafProcessor;
 
 public final class ThymeleafScriptBean
 {

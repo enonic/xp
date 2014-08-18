@@ -1,9 +1,7 @@
-package com.enonic.wem.portal.thymeleaf;
+package com.enonic.wem.thymeleaf.internal;
 
 import java.util.Map;
 import java.util.Set;
-
-import javax.inject.Inject;
 
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -14,13 +12,13 @@ import org.thymeleaf.templateresolver.TemplateResolver;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.wem.thymeleaf.ThymeleafProcessor;
 
 public final class ThymeleafProcessorImpl
     implements ThymeleafProcessor
 {
     private final TemplateEngine engine;
 
-    @Inject
     public ThymeleafProcessorImpl()
     {
         this.engine = new TemplateEngine();

@@ -20,6 +20,7 @@ import com.enonic.wem.guice.GuiceActivator;
 import com.enonic.wem.portal.script.PortalScriptContributor;
 import com.enonic.wem.script.ScriptContributor;
 import com.enonic.wem.script.ScriptRunnerFactory;
+import com.enonic.wem.thymeleaf.ThymeleafProcessor;
 import com.enonic.wem.xslt.XsltProcessor;
 
 public final class Activator
@@ -46,6 +47,7 @@ public final class Activator
         service( ModuleService.class ).importSingle();
         service( ScriptRunnerFactory.class ).importSingle();
         service( XsltProcessor.class ).importSingle();
+        service( ThymeleafProcessor.class ).importSingle();
 
         service( PortalServlet.class ).attribute( "alias", "/portal/*" ).exportAs( Servlet.class );
 

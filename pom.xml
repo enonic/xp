@@ -29,6 +29,7 @@
     <module>modules/wem-admin</module>
     <module>modules/wem-admin-ui</module>
     <module>modules/wem-xslt</module>
+    <module>modules/wem-thymeleaf</module>
     <module>modules/wem-portal</module>
     <module>modules/wem-karaf</module>
     <module>modules/wem-launcher</module>

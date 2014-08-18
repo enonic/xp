@@ -1,4 +1,4 @@
-package com.enonic.wem.portal.thymeleaf;
+package com.enonic.wem.thymeleaf;
 
 import java.util.Map;
 

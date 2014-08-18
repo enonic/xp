@@ -33,6 +33,11 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>wem-thymeleaf</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>wem-api</artifactId>
       <version>${project.version}</version>
       <type>test-jar</type>
@@ -42,11 +47,6 @@
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
       <version>2.2.4</version>
-    </dependency>
-    <dependency>
-      <groupId>org.thymeleaf</groupId>
-      <artifactId>thymeleaf</artifactId>
-      <version>2.1.1.RELEASE</version>
     </dependency>
     <dependency>
       <groupId>org.attoparser</groupId>
@@ -79,10 +79,7 @@
             <Embed-Dependency>
               gson,
               attoparser,
-              thymeleaf,
-              javassist,
-              ognl,
-              *.restlet*;scope=compile
+              *.restlet*
             </Embed-Dependency>
             <Bundle-Activator>
               com.enonic.wem.portal.Activator

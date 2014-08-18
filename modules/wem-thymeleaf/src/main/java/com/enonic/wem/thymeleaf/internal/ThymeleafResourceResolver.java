@@ -1,4 +1,4 @@
-package com.enonic.wem.portal.thymeleaf;
+package com.enonic.wem.thymeleaf.internal;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -12,10 +12,6 @@ import com.enonic.wem.api.resource.ResourceUrlResolver;
 final class ThymeleafResourceResolver
     implements IResourceResolver
 {
-    public ThymeleafResourceResolver()
-    {
-    }
-
     @Override
     public String getName()
     {
