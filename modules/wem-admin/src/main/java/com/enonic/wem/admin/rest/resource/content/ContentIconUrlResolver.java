@@ -7,9 +7,16 @@ import com.google.inject.Inject;
 
 import com.enonic.wem.admin.rest.resource.schema.SchemaIconUrlResolver;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentConstants;
+import com.enonic.wem.api.content.attachment.Attachment;
+import com.enonic.wem.api.content.attachment.AttachmentService;
+import com.enonic.wem.api.content.attachment.GetAttachmentParameters;
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.SiteTemplateService;
+import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
@@ -18,18 +25,24 @@ import com.enonic.wem.core.web.servlet.ServletRequestUrlHelper;
 
 public final class ContentIconUrlResolver
 {
+    static final Context STAGE_CONTEXT = new Context( ContentConstants.WORKSPACE_STAGE );
+
     private SiteTemplateService siteTemplateService;
 
     private ContentTypeService contentTypeService;
+
+    private AttachmentService attachmentService;
 
     private HashMap<ContentTypeName, ContentType> contentTypesByName = new HashMap<>();
 
     private HashMap<SiteTemplateKey, SiteTemplate> siteTemplatesByKey = new HashMap<>();
 
-    public ContentIconUrlResolver( final SiteTemplateService siteTemplateService, final ContentTypeService contentTypeService )
+    public ContentIconUrlResolver( final SiteTemplateService siteTemplateService, final ContentTypeService contentTypeService,
+                                   final AttachmentService attachmentService )
     {
         this.siteTemplateService = siteTemplateService;
         this.contentTypeService = contentTypeService;
+        this.attachmentService = attachmentService;
     }
 
     public String resolve( final Content content )
@@ -41,8 +54,22 @@ public final class ContentIconUrlResolver
         }
         else if ( content.getType().isImageMedia() )
         {
-            return ServletRequestUrlHelper.createUri(
-                "/admin/rest/content/icon/" + content.getId() + "?ts=" + content.getModifiedTime().toEpochMilli() );
+            final String attachmentName = getImageAttachmentName( content );
+            final Attachment attachment = attachmentService.get( GetAttachmentParameters.create().
+                contentId( content.getId() ).
+                attachmentName( attachmentName ).
+                context( STAGE_CONTEXT ).
+                build() );
+            if ( attachment != null )
+            {
+                return ServletRequestUrlHelper.createUri(
+                    "/admin/rest/content/icon/" + content.getId() + "?ts=" + content.getModifiedTime().toEpochMilli() );
+            }
+            else
+            {
+                return SchemaIconUrlResolver.resolve(
+                    this.contentTypeService.getByName( GetContentTypeParams.from( ContentTypeName.imageMedia() ) ) );
+            }
         }
         else if ( content.isSite() )
         {
@@ -88,6 +115,14 @@ public final class ContentIconUrlResolver
             siteTemplate = siteTemplateService.getSiteTemplate( key );
         }
         return siteTemplate;
+    }
+
+    private String getImageAttachmentName( final Content content )
+    {
+        final ContentData contentData = content.getContentData();
+
+        final Property imageProperty = contentData.getProperty( "image" );
+        return imageProperty == null ? content.getName().toString() : imageProperty.getString();
     }
 
     @Inject

@@ -62,6 +62,7 @@ import com.enonic.wem.api.content.RenameContentParams;
 import com.enonic.wem.api.content.UnableToDeleteContentException;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.attachment.Attachment;
+import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.api.content.query.ContentQueryResult;
@@ -100,6 +101,8 @@ public class ContentResource
 
     private SiteTemplateService siteTemplateService;
 
+    private AttachmentService attachmentService;
+
     @GET
     public ContentIdJson getById( @QueryParam("id") final String idParam,
                                   @QueryParam("expand") @DefaultValue(EXPAND_FULL) final String expandParam )
@@ -117,11 +120,11 @@ public class ContentResource
         }
         else if ( EXPAND_SUMMARY.equalsIgnoreCase( expandParam ) )
         {
-            return new ContentSummaryJson( content, new ContentIconUrlResolver( siteTemplateService, contentTypeService ) );
+            return new ContentSummaryJson( content, newContentIconUrlResolver() );
         }
         else
         {
-            return new ContentJson( content, new ContentIconUrlResolver( siteTemplateService, contentTypeService ) );
+            return new ContentJson( content, newContentIconUrlResolver() );
         }
     }
 
@@ -142,11 +145,11 @@ public class ContentResource
         }
         else if ( EXPAND_SUMMARY.equalsIgnoreCase( expandParam ) )
         {
-            return new ContentSummaryJson( content, new ContentIconUrlResolver( siteTemplateService, contentTypeService ) );
+            return new ContentSummaryJson( content, newContentIconUrlResolver() );
         }
         else
         {
-            return new ContentJson( content, new ContentIconUrlResolver( siteTemplateService, contentTypeService ) );
+            return new ContentJson( content, newContentIconUrlResolver() );
         }
     }
 
@@ -224,13 +227,11 @@ public class ContentResource
         }
         else if ( EXPAND_FULL.equalsIgnoreCase( expandParam ) )
         {
-            return new ContentListJson( result.getContents(), metaData,
-                                        new ContentIconUrlResolver( siteTemplateService, contentTypeService ) );
+            return new ContentListJson( result.getContents(), metaData, newContentIconUrlResolver() );
         }
         else
         {
-            return new ContentSummaryListJson( result.getContents(), metaData,
-                                               new ContentIconUrlResolver( siteTemplateService, contentTypeService ) );
+            return new ContentSummaryListJson( result.getContents(), metaData, newContentIconUrlResolver() );
         }
     }
 
@@ -246,8 +247,7 @@ public class ContentResource
             setGetChildrenIds( getChildrenIds );
 
         final Contents contents = contentService.getByIds( params, STAGE_CONTEXT );
-        final ContentIconUrlResolver iconUrlResolver =
-            new ContentIconUrlResolver( this.siteTemplateService, this.contentTypeService );
+        final ContentIconUrlResolver iconUrlResolver = newContentIconUrlResolver();
 
         return ContentQueryResultJsonFactory.create( contentQueryResult, contents, contentQueryJson.getExpand(), iconUrlResolver );
     }
@@ -327,7 +327,7 @@ public class ContentResource
         final Content publishedContent =
             contentService.push( new PushContentParams( ContentConstants.WORKSPACE_PROD, params.getContentId() ), STAGE_CONTEXT );
 
-        return new ContentJson( publishedContent, new ContentIconUrlResolver( siteTemplateService, contentTypeService ) );
+        return new ContentJson( publishedContent, newContentIconUrlResolver() );
     }
 
     @POST
@@ -335,7 +335,7 @@ public class ContentResource
     public ContentJson create( final CreateContentJson params )
     {
         final Content persistedContent = contentService.create( params.getCreateContent(), STAGE_CONTEXT );
-        return new ContentJson( persistedContent, new ContentIconUrlResolver( siteTemplateService, contentTypeService ) );
+        return new ContentJson( persistedContent, newContentIconUrlResolver() );
     }
 
     @POST
@@ -369,7 +369,7 @@ public class ContentResource
         final Content updatedContent = contentService.update( updateParams, STAGE_CONTEXT );
         if ( json.getContentName().equals( updatedContent.getName() ) )
         {
-            return new ContentJson( updatedContent, new ContentIconUrlResolver( siteTemplateService, contentTypeService ) );
+            return new ContentJson( updatedContent, newContentIconUrlResolver() );
         }
 
         try
@@ -379,7 +379,7 @@ public class ContentResource
                 newName( json.getContentName() );
 
             final Content renamedContent = contentService.rename( renameParams, STAGE_CONTEXT );
-            return new ContentJson( renamedContent, new ContentIconUrlResolver( siteTemplateService, contentTypeService ) );
+            return new ContentJson( renamedContent, newContentIconUrlResolver() );
         }
         catch ( ContentAlreadyExistException e )
         {
@@ -410,6 +410,11 @@ public class ContentResource
         return attachments;
     }
 
+    private ContentIconUrlResolver newContentIconUrlResolver()
+    {
+        return new ContentIconUrlResolver( this.siteTemplateService, this.contentTypeService, this.attachmentService );
+    }
+
     @Inject
     public void setContentService( final ContentService contentService )
     {
@@ -426,5 +431,11 @@ public class ContentResource
     public void setSiteTemplateService( final SiteTemplateService siteTemplateService )
     {
         this.siteTemplateService = siteTemplateService;
+    }
+
+    @Inject
+    public void setAttachmentService( final AttachmentService attachmentService )
+    {
+        this.attachmentService = attachmentService;
     }
 }

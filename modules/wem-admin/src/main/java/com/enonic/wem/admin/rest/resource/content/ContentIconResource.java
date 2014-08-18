@@ -95,8 +95,6 @@ public class ContentIconResource
             }
         }
 
-
-
         throw new WebApplicationException( Response.Status.NOT_FOUND );
     }
 

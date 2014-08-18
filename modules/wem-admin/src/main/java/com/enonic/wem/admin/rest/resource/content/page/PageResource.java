@@ -14,6 +14,7 @@ import com.enonic.wem.admin.rest.resource.content.ContentIconUrlResolver;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.page.CreatePageParams;
 import com.enonic.wem.api.content.page.PageService;
 import com.enonic.wem.api.content.page.UpdatePageParams;
@@ -25,6 +26,8 @@ import com.enonic.wem.api.schema.content.ContentTypeService;
 @Produces(MediaType.APPLICATION_JSON)
 public final class PageResource
 {
+    private static final Context STAGE_CONTEXT = new Context( ContentConstants.WORKSPACE_STAGE );
+
     @Inject
     protected PageService pageService;
 
@@ -34,7 +37,8 @@ public final class PageResource
     @Inject
     protected SiteTemplateService siteTemplateService;
 
-    private static final Context STAGE_CONTEXT = new Context( ContentConstants.WORKSPACE_STAGE );
+    @Inject
+    protected AttachmentService attachmentService;
 
     @POST
     @Path("create")
@@ -44,7 +48,7 @@ public final class PageResource
         final CreatePageParams command = params.getCreatePage();
         final Content updatedContent = this.pageService.create( command, STAGE_CONTEXT );
 
-        return new ContentJson( updatedContent, new ContentIconUrlResolver( siteTemplateService, contentTypeService ) );
+        return new ContentJson( updatedContent, newContentIconUrlResolver() );
     }
 
     @POST
@@ -55,7 +59,7 @@ public final class PageResource
         final UpdatePageParams command = params.getUpdatePage();
         final Content updatedContent = this.pageService.update( command, STAGE_CONTEXT );
 
-        return new ContentJson( updatedContent, new ContentIconUrlResolver( siteTemplateService, contentTypeService ) );
+        return new ContentJson( updatedContent, newContentIconUrlResolver() );
     }
 
     @GET
@@ -66,6 +70,11 @@ public final class PageResource
         final ContentId contentId = ContentId.from( contentIdAsString );
         final Content updatedContent = this.pageService.delete( contentId, STAGE_CONTEXT );
 
-        return new ContentJson( updatedContent, new ContentIconUrlResolver( siteTemplateService, contentTypeService ) );
+        return new ContentJson( updatedContent, newContentIconUrlResolver() );
+    }
+
+    private ContentIconUrlResolver newContentIconUrlResolver()
+    {
+        return new ContentIconUrlResolver( this.siteTemplateService, this.contentTypeService, this.attachmentService );
     }
 }

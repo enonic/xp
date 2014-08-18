@@ -10,6 +10,11 @@ public class GetContentTypeParams
 
     private boolean notFoundAsException = false;
 
+    public static GetContentTypeParams from( final ContentTypeName contentTypeName )
+    {
+        return new GetContentTypeParams().contentTypeName( contentTypeName );
+    }
+
     public ContentTypeName getContentTypeName()
     {
         return this.contentTypeName;
