@@ -79,10 +79,9 @@ module api.form {
             });
 
             if (this.properties.length == 0) {
-                var initialValue = this.inputTypeView.newInitialValue();
+                var initialValue: api.data.Value = this.inputTypeView.newInitialValue();
                 if (initialValue != null) {
-                    var initialProperty = new api.data.Property(this.input.getName(),
-                        new api.data.Value(initialValue, api.data.ValueTypes.STRING));
+                    var initialProperty = new api.data.Property(this.input.getName(), initialValue);
                     this.properties.push(initialProperty);
                     this.parentDataSet.addData(initialProperty);
                 }
