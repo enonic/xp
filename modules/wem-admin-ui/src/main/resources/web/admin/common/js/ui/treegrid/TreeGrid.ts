@@ -243,7 +243,7 @@ module api.ui.treegrid {
         }
 
         getRoot(): TreeNode<NODE> {
-            return this.stash || this.root;
+            return this.root;
         }
 
         isActive(): boolean {
