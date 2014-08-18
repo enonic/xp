@@ -78,6 +78,8 @@ final class RhinoScriptRunner
             scope.put( entry.getKey(), scope, Context.javaToJS( entry.getValue(), scope ) );
         }
 
+        new ResolveFunction().install( scope );
+
         final RequireFunction require = new RequireFunction( scope, this.compiler, this.environment );
         require.install( scope );
 
