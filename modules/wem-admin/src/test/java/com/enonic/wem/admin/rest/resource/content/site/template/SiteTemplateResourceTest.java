@@ -37,6 +37,7 @@ import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.schema.content.ContentTypeFilter;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
+import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.support.export.InvalidZipFileException;
 import com.enonic.wem.core.content.site.SiteTemplateExporter;
 
@@ -53,6 +54,8 @@ public class SiteTemplateResourceTest
 
     private SiteTemplateService siteTemplateService;
 
+    private ContentTypeService contentTypeService;
+
     private Path tempDir;
 
     @Override
@@ -61,6 +64,9 @@ public class SiteTemplateResourceTest
         siteTemplateService = Mockito.mock( SiteTemplateService.class );
         SiteTemplateResource resource = new SiteTemplateResource();
         resource.setSiteTemplateService( siteTemplateService );
+
+        contentTypeService = Mockito.mock( ContentTypeService.class );
+        resource.setContentTypeService( contentTypeService );
 
         return resource;
     }

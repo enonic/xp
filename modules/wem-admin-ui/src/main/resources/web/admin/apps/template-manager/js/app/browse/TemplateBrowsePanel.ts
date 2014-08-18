@@ -1,8 +1,8 @@
 module app.browse {
 
-    import TemplateType = api.content.TemplateType;
+    import TemplateType = app.browse.TemplateType;
     import TreeNode = api.ui.treegrid.TreeNode;
-    import TemplateSummary = api.content.TemplateSummary;
+    import TemplateSummary = app.browse.TemplateSummary;
     import BrowseItem = api.app.browse.BrowseItem;
 
     export class TemplateBrowsePanel extends api.app.browse.BrowsePanel<app.browse.TemplateBrowseItem> {
@@ -13,13 +13,7 @@ module app.browse {
 
         private templateTreeGrid: TemplateTreeGrid;
 
-        private pageTemplateIconUri: string;
-
-        private siteTemplateIconUri: string;
-
         constructor(browseActions: app.browse.action.TemplateBrowseActions, templateTreeGrid: TemplateTreeGrid) {
-            this.pageTemplateIconUri = api.util.getAdminUri('common/images/icons/icoMoon/32x32/newspaper.png');
-            this.siteTemplateIconUri = api.util.getAdminUri('common/images/icons/icoMoon/32x32/earth.png');
 
             var treeGridContextMenu = new app.browse.TemplateTreeGridContextMenu();
 

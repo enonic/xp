@@ -1,14 +1,26 @@
 module api.content {
 
-    export class ContentIconUrlResolver extends api.icon.IconUrlResolver<ContentIconUrlResolver,ContentSummary> {
+    export class ContentIconUrlResolver extends api.icon.IconUrlResolver {
 
-        public getResourcePath(): api.rest.Path {
-            return api.rest.Path.fromString("content/image");
+        private content: ContentSummary;
+
+        private crop: boolean = true;
+
+        setContent(value: ContentSummary): ContentIconUrlResolver {
+            this.content = value;
+            return this;
         }
 
-        public resolve(icon: api.icon.Icon): string {
+        setCrop(value: boolean): ContentIconUrlResolver {
+            this.crop = value;
+            return this;
+        }
 
-            return this.toRestUrl(this.getResourcePath()) + "/" + icon.getBlobKey() + "?" + this.resolveQueryParams();
+        resolve(): string {
+
+            var url = this.content.getIconUrl();
+            url = this.appendParam("crop", this.crop ? "true" : "false", url);
+            return url;
         }
 
         static default(): string {

@@ -17,7 +17,7 @@
         },
         "hasChildren": false,
         "icon": null,
-        "iconUrl": "/admin/rest/schema/image/ContentType:htmlarea",
+        "iconUrl": "/admin/rest/schema/icon/ContentType:htmlarea",
         "key": "ContentType:htmlarea",
         "modifiedTime": null,
         "modifier": null,

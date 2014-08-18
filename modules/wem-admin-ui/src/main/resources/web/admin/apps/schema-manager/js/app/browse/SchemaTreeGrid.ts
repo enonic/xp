@@ -4,7 +4,6 @@ module app.browse {
     import GridColumnBuilder = api.ui.grid.GridColumnBuilder;
 
     import Schema = api.schema.Schema;
-    import SchemaViewer = app.browse.SchemaViewer;
     import TreeGrid = api.ui.treegrid.TreeGrid;
     import TreeNode = api.ui.treegrid.TreeNode;
     import TreeGridBuilder = api.ui.treegrid.TreeGridBuilder;

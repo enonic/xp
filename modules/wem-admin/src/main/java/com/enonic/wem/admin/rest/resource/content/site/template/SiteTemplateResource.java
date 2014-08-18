@@ -27,6 +27,7 @@ import com.enonic.wem.admin.rest.resource.content.site.template.json.DeleteSiteT
 import com.enonic.wem.admin.rest.resource.content.site.template.json.ListSiteTemplateJson;
 import com.enonic.wem.admin.rest.resource.content.site.template.json.ListTemplateItemJson;
 import com.enonic.wem.admin.rest.resource.content.site.template.json.UpdateSiteTemplateJson;
+import com.enonic.wem.admin.rest.resource.schema.ContentTypeIconResolver;
 import com.enonic.wem.api.content.site.CreateSiteTemplateParams;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
@@ -34,22 +35,25 @@ import com.enonic.wem.api.content.site.SiteTemplateNotFoundException;
 import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.content.site.SiteTemplates;
 import com.enonic.wem.api.content.site.UpdateSiteTemplateParams;
+import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.core.content.site.SiteTemplateExporter;
 
 @javax.ws.rs.Path("content/site/template")
 @Produces(MediaType.APPLICATION_JSON)
 public final class SiteTemplateResource
 {
+    private static final String ZIP_MIME_TYPE = "application/zip";
+
     private SiteTemplateService siteTemplateService;
 
-    private static final String ZIP_MIME_TYPE = "application/zip";
+    private SiteTemplateIconUrlResolver siteTemplateIconUrlResolver;
 
     @GET
     @javax.ws.rs.Path("list")
     public ListSiteTemplateJson listSiteTemplate()
     {
         SiteTemplates siteTemplates = this.siteTemplateService.getSiteTemplates();
-        return new ListSiteTemplateJson( siteTemplates );
+        return new ListSiteTemplateJson( siteTemplates, this.siteTemplateIconUrlResolver );
     }
 
     @GET
@@ -59,7 +63,7 @@ public final class SiteTemplateResource
         if ( Strings.isNullOrEmpty( parentIdParam ) )
         {
             SiteTemplates siteTemplates = this.siteTemplateService.getSiteTemplates();
-            return new ListTemplateItemJson( siteTemplates );
+            return new ListTemplateItemJson( siteTemplates, this.siteTemplateIconUrlResolver );
         }
         else
         {
@@ -90,7 +94,7 @@ public final class SiteTemplateResource
         final CreateSiteTemplateParams command = params.getCommand();
         final SiteTemplate siteTemplate = this.siteTemplateService.createSiteTemplate( command );
 
-        return new SiteTemplateJson( siteTemplate );
+        return new SiteTemplateJson( siteTemplate, this.siteTemplateIconUrlResolver );
     }
 
     @POST
@@ -101,7 +105,7 @@ public final class SiteTemplateResource
         final UpdateSiteTemplateParams command = params.getCommand();
         final SiteTemplate siteTemplate = this.siteTemplateService.updateSiteTemplate( command );
 
-        return new SiteTemplateJson( siteTemplate );
+        return new SiteTemplateJson( siteTemplate, this.siteTemplateIconUrlResolver );
     }
 
     @GET
@@ -110,7 +114,7 @@ public final class SiteTemplateResource
         final SiteTemplateKey siteTemplateKey = SiteTemplateKey.from( siteTemplateKeyParam );
 
         final SiteTemplate siteTemplate = this.siteTemplateService.getSiteTemplate( siteTemplateKey );
-        return new SiteTemplateJson( siteTemplate );
+        return new SiteTemplateJson( siteTemplate, this.siteTemplateIconUrlResolver );
     }
 
     @POST
@@ -138,7 +142,7 @@ public final class SiteTemplateResource
             final CreateSiteTemplateParams createSiteTemplate = CreateSiteTemplateParams.fromSiteTemplate( importedSiteTemplate );
             final SiteTemplate createdSiteTemplate = siteTemplateService.createSiteTemplate( createSiteTemplate );
 
-            return new SiteTemplateSummaryJson( createdSiteTemplate );
+            return new SiteTemplateSummaryJson( createdSiteTemplate, siteTemplateIconUrlResolver );
         }
         finally
         {
@@ -197,5 +201,11 @@ public final class SiteTemplateResource
     public void setSiteTemplateService( final SiteTemplateService siteTemplateService )
     {
         this.siteTemplateService = siteTemplateService;
+    }
+
+    @Inject
+    public void setContentTypeService( final ContentTypeService contentTypeService )
+    {
+        this.siteTemplateIconUrlResolver = new SiteTemplateIconUrlResolver( new ContentTypeIconResolver( contentTypeService ) );
     }
 }

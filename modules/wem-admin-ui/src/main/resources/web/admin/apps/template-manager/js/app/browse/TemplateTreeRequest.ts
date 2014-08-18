@@ -1,8 +1,6 @@
-module api.content.site.template {
+module app.browse {
 
-    import TemplateSummary = api.content.TemplateSummary;
-
-    export class TemplateTreeRequest extends SiteTemplateResourceRequest<TemplateSummaryListJson, TemplateSummary[]> {
+    export class TemplateTreeRequest extends api.content.site.template.SiteTemplateResourceRequest<TemplateSummaryListJson, TemplateSummary[]> {
 
         private parentId: string;
 

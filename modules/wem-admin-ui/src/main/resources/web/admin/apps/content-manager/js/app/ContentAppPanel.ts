@@ -1,5 +1,7 @@
 module app {
 
+    import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
+
     export class ContentAppPanel extends api.app.BrowseAndWizardBasedAppPanel<api.content.ContentSummary> {
 
         private mask: api.ui.mask.LoadMask;
@@ -159,7 +161,7 @@ module app {
                     var contentItem = new api.app.view.ViewItem(content)
                         .setDisplayName(content.getDisplayName())
                         .setPath(content.getPath().toString())
-                        .setIconUrl(content.getIconUrl());
+                        .setIconUrl(new ContentIconUrlResolver().setContent(content).resolve());
 
                     contentItemViewPanel.setItem(contentItem);
 

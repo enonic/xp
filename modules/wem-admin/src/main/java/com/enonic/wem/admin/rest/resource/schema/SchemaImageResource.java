@@ -13,13 +13,12 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.schema.SchemaKey;
-import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.ContentTypeService;
-import com.enonic.wem.api.schema.content.GetContentTypesParams;
 import com.enonic.wem.api.schema.mixin.GetMixinParams;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinName;
@@ -29,7 +28,7 @@ import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeService;
 
-@Path("schema/image")
+@Path("schema/icon")
 @Produces("image/*")
 public final class SchemaImageResource
 {
@@ -39,59 +38,47 @@ public final class SchemaImageResource
 
     private MixinService mixinService;
 
-    private ContentTypeService contentTypeService;
+    private ContentTypeIconResolver contentTypeIconResolver;
 
     private RelationshipTypeService relationshipTypeService;
-
-    @Inject
-    public void setMixinService( final MixinService mixinService )
-    {
-        this.mixinService = mixinService;
-    }
-
-    @Inject
-    public void setRelationshipTypeService( final RelationshipTypeService relationshipTypeService )
-    {
-        this.relationshipTypeService = relationshipTypeService;
-    }
-
-    @Inject
-    public void setContentTypeService( final ContentTypeService contentTypeService )
-    {
-        this.contentTypeService = contentTypeService;
-    }
 
     @GET
     @Path("{schemaKey}")
     public Response getSchemaIcon( @PathParam("schemaKey") final String schemaKeyAsString,
-                                   @QueryParam("size") @DefaultValue("128") final int size )
+                                   @QueryParam("size") @DefaultValue("128") final int size, @QueryParam("hash") final String hash )
         throws Exception
     {
-        final CacheControl cacheControl = new CacheControl();
-        cacheControl.setMaxAge( 3600 );
-
         final SchemaKey schemaKey = SchemaKey.from( schemaKeyAsString );
 
         final Icon icon = resolveSchemaIcon( schemaKey );
 
+        Response.ResponseBuilder responseBuilder;
         if ( icon == null && schemaKey.isMixin() )
         {
             final BufferedImage defaultMixinImage = helper.getDefaultMixinImage( size );
-            return Response.ok( defaultMixinImage, DEFAULT_MIME_TYPE ).cacheControl( cacheControl ).build();
+            responseBuilder = Response.ok( defaultMixinImage, DEFAULT_MIME_TYPE );
         }
         else if ( icon == null && schemaKey.isRelationshipType() )
         {
             final BufferedImage defaultRelationshipTypeImage = helper.getDefaultRelationshipTypeImage( size );
-            return Response.ok( defaultRelationshipTypeImage, DEFAULT_MIME_TYPE ).cacheControl( cacheControl ).build();
+            responseBuilder = Response.ok( defaultRelationshipTypeImage, DEFAULT_MIME_TYPE );
         }
         else if ( icon != null )
         {
-            return Response.ok( helper.resizeImage( icon.asInputStream(), size ), icon.getMimeType() ).cacheControl( cacheControl ).build();
+            responseBuilder = Response.ok( helper.resizeImage( icon.asInputStream(), size ), icon.getMimeType() );
         }
         else
         {
             throw new WebApplicationException( Response.Status.NOT_FOUND );
         }
+
+        if ( StringUtils.isNotEmpty( hash ) )
+        {
+            final CacheControl cacheControl = new CacheControl();
+            cacheControl.setMaxAge( Integer.MAX_VALUE );
+            responseBuilder.cacheControl( cacheControl );
+        }
+        return responseBuilder.build();
     }
 
     private Icon resolveSchemaIcon( final SchemaKey schemaKey )
@@ -116,7 +103,7 @@ public final class SchemaImageResource
 
     public Icon resolveContentTypeImage( final SchemaKey schemaKey )
     {
-        return findContentTypeIcon( ContentTypeName.from( schemaKey.getLocalName() ) );
+        return contentTypeIconResolver.resolve( ContentTypeName.from( schemaKey.getLocalName() ) );
     }
 
     private Icon resolveMixinImage( final SchemaKey schemaKey )
@@ -127,30 +114,6 @@ public final class SchemaImageResource
     private Icon resolveRelationshipTypeImage( final SchemaKey schemaKey )
     {
         return findRelationshipTypeIcon( RelationshipTypeName.from( schemaKey.getLocalName() ) );
-    }
-
-    private Icon findContentTypeIcon( final ContentTypeName contentTypeName )
-    {
-        ContentType contentType = getContentType( contentTypeName );
-        if ( contentType == null )
-        {
-            return null;
-        }
-        else if ( contentType.getIcon() != null )
-        {
-            return contentType.getIcon();
-        }
-
-        do
-        {
-            contentType = getContentType( contentType.getSuperType() );
-            if ( contentType.getIcon() != null )
-            {
-                return contentType.getIcon();
-            }
-        }
-        while ( contentType != null );
-        return null;
     }
 
     private Icon findMixinIcon( final MixinName mixinName )
@@ -166,11 +129,22 @@ public final class SchemaImageResource
         return relationshipType == null ? null : relationshipType.getIcon();
     }
 
-    private ContentType getContentType( final ContentTypeName contentTypeName )
+    @Inject
+    public void setMixinService( final MixinService mixinService )
     {
-        final GetContentTypesParams params = new GetContentTypesParams().contentTypeNames( ContentTypeNames.from( contentTypeName ) );
+        this.mixinService = mixinService;
+    }
 
-        return contentTypeService.getByNames( params ).first();
+    @Inject
+    public void setRelationshipTypeService( final RelationshipTypeService relationshipTypeService )
+    {
+        this.relationshipTypeService = relationshipTypeService;
+    }
+
+    @Inject
+    public void setContentTypeService( final ContentTypeService contentTypeService )
+    {
+        this.contentTypeIconResolver = new ContentTypeIconResolver( contentTypeService );
     }
 
 }

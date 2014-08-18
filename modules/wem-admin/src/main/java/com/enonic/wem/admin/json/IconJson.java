@@ -3,6 +3,8 @@ package com.enonic.wem.admin.json;
 
 import java.time.Instant;
 
+import com.google.common.hash.Hashing;
+
 import com.enonic.wem.api.Icon;
 
 public class IconJson

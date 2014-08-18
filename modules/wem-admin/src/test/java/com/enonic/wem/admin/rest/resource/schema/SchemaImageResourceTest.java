@@ -18,9 +18,9 @@ import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.ContentTypes;
+import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.schema.content.GetContentTypesParams;
 import com.enonic.wem.api.schema.mixin.GetMixinsParams;
 import com.enonic.wem.api.schema.mixin.Mixin;
@@ -78,7 +78,7 @@ public class SchemaImageResourceTest
         setupContentType( contentType );
 
         // exercise
-        final Response response = this.resource.getSchemaIcon( "ContentType:my_content_type", 20 );
+        final Response response = this.resource.getSchemaIcon( "ContentType:my_content_type", 20, null );
         final BufferedImage contentTypeIcon = (BufferedImage) response.getEntity();
 
         // verify
@@ -107,7 +107,7 @@ public class SchemaImageResourceTest
         setupContentType( contentType );
 
         // exercise
-        final Response response = this.resource.getSchemaIcon( "ContentType:my_content_type", 20 );
+        final Response response = this.resource.getSchemaIcon( "ContentType:my_content_type", 20, null );
         final BufferedImage contentTypeIcon = (BufferedImage) response.getEntity();
 
         // verify
@@ -124,7 +124,7 @@ public class SchemaImageResourceTest
         try
         {
             // exercise
-            this.resource.getSchemaIcon( "ContentType:my_content_type", 10 );
+            this.resource.getSchemaIcon( "ContentType:my_content_type", 10, null );
         }
         catch ( WebApplicationException e )
         {
@@ -150,7 +150,7 @@ public class SchemaImageResourceTest
         setupMixin( mixin );
 
         // exercise
-        final Response response = this.resource.getSchemaIcon( "Mixin:postal_code", 20 );
+        final Response response = this.resource.getSchemaIcon( "Mixin:postal_code", 20, null );
         final BufferedImage mixinIcon = (BufferedImage) response.getEntity();
 
         // verify
@@ -169,7 +169,7 @@ public class SchemaImageResourceTest
         setupMixin( mixin );
 
         // exercise
-        final Response response = this.resource.getSchemaIcon( "Mixin:postal_code", 20 );
+        final Response response = this.resource.getSchemaIcon( "Mixin:postal_code", 20, null );
         final BufferedImage mixinIcon = (BufferedImage) response.getEntity();
 
         // verify
@@ -194,7 +194,7 @@ public class SchemaImageResourceTest
         setupRelationshipType( relationshipType );
 
         // exercise
-        final Response response = this.resource.getSchemaIcon( "RelationshipType:like", 20 );
+        final Response response = this.resource.getSchemaIcon( "RelationshipType:like", 20, null );
         final BufferedImage mixinIcon = (BufferedImage) response.getEntity();
 
         // verify
@@ -215,7 +215,7 @@ public class SchemaImageResourceTest
         setupRelationshipType( relationshipType );
 
         // exercise
-        final Response response = this.resource.getSchemaIcon( "RelationshipType:like", 20 );
+        final Response response = this.resource.getSchemaIcon( "RelationshipType:like", 20, null );
         final BufferedImage mixinIcon = (BufferedImage) response.getEntity();
 
         // verify
@@ -226,9 +226,8 @@ public class SchemaImageResourceTest
     {
         final List<ContentType> list = Lists.newArrayList();
         list.add( contentType );
-        final ContentTypes result = ContentTypes.from( list );
-        final GetContentTypesParams params = new GetContentTypesParams().contentTypeNames( ContentTypeNames.from( contentType.getName() ) );
-        Mockito.when( contentTypeService.getByNames( params ) ).thenReturn( result );
+        final GetContentTypeParams params = new GetContentTypeParams().contentTypeName( contentType.getName() );
+        Mockito.when( contentTypeService.getByName( params ) ).thenReturn( contentType );
     }
 
     private void setupMixin( final Mixin mixin )

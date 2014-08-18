@@ -1,4 +1,4 @@
-module api.content.site.template {
+module app.browse {
 
     export interface TemplateSummaryJson extends api.item.ItemJson {
 

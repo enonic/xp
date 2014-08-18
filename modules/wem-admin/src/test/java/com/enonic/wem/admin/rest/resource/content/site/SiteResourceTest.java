@@ -6,10 +6,12 @@ import javax.ws.rs.core.MediaType;
 
 import org.elasticsearch.common.joda.time.DateTimeUtils;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
@@ -20,6 +22,7 @@ import com.enonic.wem.api.content.site.ModuleConfig;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.content.site.SiteService;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
+import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.content.site.UpdateSiteParams;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.Property;
@@ -27,12 +30,19 @@ import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeService;
+import com.enonic.wem.api.schema.content.GetContentTypeParams;
 
 public class SiteResourceTest
     extends AbstractResourceTest
 {
     private SiteService siteService;
+
+    private ContentTypeService contentTypeService;
+
+    private SiteTemplateService siteTemplateService;
 
     private final String currentTime = "2013-08-23T12:55:09.162Z";
 
@@ -138,10 +148,17 @@ public class SiteResourceTest
     @Override
     protected Object getResourceInstance()
     {
-        this.siteService = Mockito.mock( SiteService.class );
+        siteService = Mockito.mock( SiteService.class );
+        contentTypeService = Mockito.mock( ContentTypeService.class );
+        siteTemplateService = Mockito.mock( SiteTemplateService.class );
+
+        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
+            thenReturn( createContentType( "content-type" ) );
 
         final SiteResource resource = new SiteResource();
         resource.siteService = this.siteService;
+        resource.contentTypeService = this.contentTypeService;
+        resource.siteTemplateService = this.siteTemplateService;
 
         return resource;
     }
@@ -193,6 +210,15 @@ public class SiteResourceTest
             modifier( UserKey.superUser() ).
             type( ContentTypeName.from( contentTypeName ) ).
             site( null ).
+            build();
+    }
+
+    private ContentType createContentType( String name )
+    {
+        return ContentType.newContentType().
+            displayName( "My type" ).
+            name( name ).
+            icon( Icon.from( new byte[]{123}, "image/gif", Instant.now() ) ).
             build();
     }
 }

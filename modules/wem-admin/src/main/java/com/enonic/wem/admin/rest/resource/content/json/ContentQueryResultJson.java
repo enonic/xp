@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.admin.json.content.ContentJson;
+import com.enonic.wem.admin.rest.resource.content.ContentIconUrlResolver;
 import com.enonic.wem.api.content.Content;
 
 public class ContentQueryResultJson
@@ -17,19 +18,26 @@ public class ContentQueryResultJson
         this.contents = ImmutableSet.copyOf( builder.contents );
     }
 
-    public static ContentQueryResultJson.Builder newBuilder()
+    public static ContentQueryResultJson.Builder newBuilder( final ContentIconUrlResolver iconUrlResolver )
     {
-        return new Builder();
+        return new Builder( iconUrlResolver );
     }
 
     public static class Builder
         extends AbstractContentQueryResultJson.Builder<Builder>
     {
+        private final ContentIconUrlResolver iconUrlResolver;
+
         private Set<ContentJson> contents = Sets.newLinkedHashSet();
+
+        public Builder( final ContentIconUrlResolver iconUrlResolver )
+        {
+            this.iconUrlResolver = iconUrlResolver;
+        }
 
         public Builder addContent( final Content content )
         {
-            this.contents.add( new ContentJson( content ) );
+            this.contents.add( new ContentJson( content, iconUrlResolver ) );
             return this;
         }
 

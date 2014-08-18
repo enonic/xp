@@ -1,6 +1,7 @@
 module app.wizard {
 
     import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
+    import MixinIconUrlResolver = api.schema.mixin.MixinIconUrlResolver;
 
     export class MixinWizardPanel extends api.app.wizard.WizardPanel<api.schema.mixin.Mixin> {
 
@@ -25,7 +26,7 @@ module app.wizard {
 
             this.constructing = true;
             this.mixinWizardHeader = new api.app.wizard.WizardHeaderWithName();
-            this.formIcon = new api.app.wizard.FormIcon(new api.schema.mixin.MixinIconUrlResolver().resolveDefault(),
+            this.formIcon = new api.app.wizard.FormIcon(MixinIconUrlResolver.default(),
                 "Click to upload icon", api.util.getRestUri("blob/upload"));
 
             this.formIcon.onUploadFinished((event: api.app.wizard.UploadFinishedEvent) => {

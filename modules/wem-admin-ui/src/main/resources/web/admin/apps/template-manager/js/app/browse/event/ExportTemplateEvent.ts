@@ -4,14 +4,14 @@ module app.browse.event {
 
     export class ExportTemplateEvent extends Event {
 
-        private siteTemplate: api.content.TemplateSummary;
+        private siteTemplate: app.browse.TemplateSummary;
 
-        constructor(siteTemplate: api.content.TemplateSummary) {
+        constructor(siteTemplate: app.browse.TemplateSummary) {
             this.siteTemplate = siteTemplate;
             super('exportTemplate');
         }
 
-        getTemplate(): api.content.TemplateSummary {
+        getTemplate(): app.browse.TemplateSummary {
             return this.siteTemplate;
         }
 

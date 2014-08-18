@@ -69,7 +69,7 @@ module app {
             });
 
             app.browse.event.ExportTemplateEvent.on((event: app.browse.event.ExportTemplateEvent) => {
-                var template: api.content.TemplateSummary = event.getTemplate();
+                var template: app.browse.TemplateSummary = event.getTemplate();
 
                 var exportTemplate = new api.content.site.template.ExportSiteTemplateRequest(template.getSiteTemplateKey());
                 var templateExportUrl = exportTemplate.getRequestPath().toString() + '?siteTemplateKey=' +
@@ -108,7 +108,7 @@ module app {
         }
 
         private handleEdit(event) {
-            event.getTemplates().forEach((template: api.content.TemplateSummary) => {
+            event.getTemplates().forEach((template: app.browse.TemplateSummary) => {
 
                 if (!template.isSiteTemplate()) {
                     return;

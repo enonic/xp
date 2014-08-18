@@ -14,7 +14,7 @@ module app.view {
             this.appendChild(this.frame);
         }
 
-        public setItem(item: api.app.view.ViewItem<api.content.TemplateSummary>) {
+        public setItem(item: api.app.view.ViewItem<app.browse.TemplateSummary>) {
 
             var templateSummary = item.getModel();
             if (templateSummary.isPageTemplate()) {

@@ -26,6 +26,7 @@ import com.enonic.wem.admin.rest.provider.RenderedImageProvider;
 import com.enonic.wem.admin.rest.resource.auth.AuthResource;
 import com.enonic.wem.admin.rest.resource.blob.BlobResource;
 import com.enonic.wem.admin.rest.resource.content.ContentAttachmentResource;
+import com.enonic.wem.admin.rest.resource.content.ContentIconResource;
 import com.enonic.wem.admin.rest.resource.content.ContentImageResource;
 import com.enonic.wem.admin.rest.resource.content.ContentResource;
 import com.enonic.wem.admin.rest.resource.content.page.PageDescriptorResource;
@@ -35,7 +36,7 @@ import com.enonic.wem.admin.rest.resource.content.page.image.ImageDescriptorReso
 import com.enonic.wem.admin.rest.resource.content.page.layout.LayoutDescriptorResource;
 import com.enonic.wem.admin.rest.resource.content.page.part.PartDescriptorResource;
 import com.enonic.wem.admin.rest.resource.content.site.SiteResource;
-import com.enonic.wem.admin.rest.resource.content.site.template.SiteTemplateImageResource;
+import com.enonic.wem.admin.rest.resource.content.site.template.SiteTemplateIconResource;
 import com.enonic.wem.admin.rest.resource.content.site.template.SiteTemplateResource;
 import com.enonic.wem.admin.rest.resource.module.ModuleResource;
 import com.enonic.wem.admin.rest.resource.relationship.RelationshipResource;
@@ -99,6 +100,7 @@ public final class RestServlet
 
         addSingleton( BackgroundImageResource.class );
         addSingleton( ContentImageResource.class );
+        addSingleton( ContentIconResource.class );
         addSingleton( ContentAttachmentResource.class );
         addSingleton( BlobResource.class );
         addSingleton( AuthResource.class );
@@ -120,7 +122,7 @@ public final class RestServlet
         addSingleton( ModuleResource.class );
 
         addSingleton( SiteTemplateResource.class );
-        addSingleton( SiteTemplateImageResource.class );
+        addSingleton( SiteTemplateIconResource.class );
         addSingleton( PageTemplateResource.class );
         addSingleton( PageDescriptorResource.class );
         addSingleton( ImageDescriptorResource.class );

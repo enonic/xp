@@ -6,6 +6,7 @@ import com.enonic.wem.admin.json.aggregation.AggregationJson;
 import com.enonic.wem.admin.json.aggregation.BucketAggregationJson;
 import com.enonic.wem.admin.json.content.AbstractContentListJson;
 import com.enonic.wem.admin.json.content.ContentIdJson;
+import com.enonic.wem.admin.rest.resource.content.ContentIconUrlResolver;
 import com.enonic.wem.api.aggregation.Aggregation;
 import com.enonic.wem.api.aggregation.Aggregations;
 import com.enonic.wem.api.aggregation.BucketAggregation;
@@ -20,15 +21,16 @@ public abstract class AbstractAggregationContentListJson<T extends ContentIdJson
 
 
     public AbstractAggregationContentListJson( final Content content, final ContentListMetaData contentListMetaData,
-                                               final Aggregations aggregations )
+                                               final Aggregations aggregations, final ContentIconUrlResolver iconUrlResolver )
     {
-        this( Contents.from( content ), contentListMetaData, ImmutableSet.copyOf( aggregations.getSet() ) );
+        this( Contents.from( content ), contentListMetaData, ImmutableSet.copyOf( aggregations.getSet() ), iconUrlResolver );
     }
 
     public AbstractAggregationContentListJson( final Contents contents, final ContentListMetaData contentListMetaData,
-                                               final ImmutableSet<Aggregation> aggregations )
+                                               final ImmutableSet<Aggregation> aggregations,
+                                               final ContentIconUrlResolver iconUrlResolver )
     {
-        super( contents, contentListMetaData );
+        super( contents, contentListMetaData, iconUrlResolver );
 
         ImmutableSet.Builder<AggregationJson> builder = ImmutableSet.builder();
 

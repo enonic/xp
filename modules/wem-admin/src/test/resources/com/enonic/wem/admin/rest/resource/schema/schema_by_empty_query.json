@@ -13,7 +13,7 @@
         "final": false,
         "hasChildren": false,
         "icon": null,
-        "iconUrl": "/admin/rest/schema/image/ContentType:contenttype",
+        "iconUrl": "/admin/rest/schema/icon/ContentType:contenttype",
         "key": "ContentType:contenttype",
         "modifiedTime": "2013-08-23T12:55:09.162Z",
         "modifier": null,
@@ -30,7 +30,7 @@
         "editable": true,
         "hasChildren": false,
         "icon": null,
-        "iconUrl": "/admin/rest/schema/image/Mixin:mixin",
+        "iconUrl": "/admin/rest/schema/icon/Mixin:mixin",
         "items": [
             {
                 "Input": {
@@ -69,7 +69,7 @@
         "fromSemantic": null,
         "hasChildren": false,
         "icon": null,
-        "iconUrl": "/admin/rest/schema/image/RelationshipType:relationship",
+        "iconUrl": "/admin/rest/schema/icon/RelationshipType:relationship",
         "key": "RelationshipType:relationship",
         "modifiedTime": "2013-08-23T12:55:09.162Z",
         "name": "relationship",

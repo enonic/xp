@@ -10,7 +10,7 @@
         "editable": true,
         "hasChildren": false,
         "icon": null,
-        "iconUrl": "/admin/rest/schema/image/Mixin:some_input",
+        "iconUrl": "/admin/rest/schema/icon/Mixin:some_input",
         "items": [
             {
                 "Input": {

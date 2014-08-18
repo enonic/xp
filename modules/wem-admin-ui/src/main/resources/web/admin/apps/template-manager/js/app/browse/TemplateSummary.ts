@@ -1,4 +1,4 @@
-module api.content {
+module app.browse {
 
     import PageTemplateKey = api.content.page.PageTemplateKey;
 
@@ -63,7 +63,7 @@ module api.content {
             return this.isSiteTemplate();
         }
 
-        static fromJson(json: api.content.site.template.TemplateSummaryJson): TemplateSummary {
+        static fromJson(json: app.browse.TemplateSummaryJson): TemplateSummary {
             return new TemplateSummaryBuilder().fromTemplateSummaryJson(json).build();
         }
     }
@@ -82,7 +82,7 @@ module api.content {
 
         iconUrl: string;
 
-        fromTemplateSummaryJson(json: api.content.site.template.TemplateSummaryJson): TemplateSummaryBuilder {
+        fromTemplateSummaryJson(json: app.browse.TemplateSummaryJson): TemplateSummaryBuilder {
             super.fromBaseItemJson(json, "key");
             this.name = json.name;
             this.displayName = json.name;
