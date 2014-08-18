@@ -28,6 +28,10 @@ module api.ui.tags {
         }
     }
 
+    export class TagSuggestions extends api.dom.UlEl {
+
+    }
+
     export class Tags extends api.dom.UlEl {
 
         private tagSuggester: TagSuggester;
@@ -65,9 +69,13 @@ module api.ui.tags {
                 }
             });
 
+            this.textInput.onValueChanged((event: api.ui.ValueChangedEvent) => {
+                this.tagSuggester.suggest(event.getNewValue()).then((values: string[]) => {
+                    console.log(values);
+                }).done();
+            });
+
             this.onClicked(() => this.textInput.giveFocus());
-            // TODO: Listen to typing in text input and
-            // make call to tagSuggester (if existing) and display result
         }
 
         private handleWordCompleted() {
@@ -86,10 +94,7 @@ module api.ui.tags {
         }
 
         clearTags() {
-
-            this.tags.forEach((tag) => {
-                tag.remove();
-            });
+            this.tags.forEach((tag) => tag.remove());
             this.tags = [];
         }
 
