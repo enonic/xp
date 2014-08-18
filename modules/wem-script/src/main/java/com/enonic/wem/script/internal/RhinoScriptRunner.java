@@ -1,4 +1,4 @@
-package com.enonic.wem.script.internal.rhino;
+package com.enonic.wem.script.internal;
 
 import java.util.Map;
 
@@ -13,7 +13,6 @@ import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceUrlResolver;
 import com.enonic.wem.script.ScriptRunner;
 import com.enonic.wem.script.SourceException;
-import com.enonic.wem.script.internal.ScriptEnvironment;
 
 final class RhinoScriptRunner
     implements ScriptRunner

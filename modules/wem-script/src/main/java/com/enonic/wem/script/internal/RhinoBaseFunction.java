@@ -1,4 +1,4 @@
-package com.enonic.wem.script.internal.rhino;
+package com.enonic.wem.script.internal;
 
 import org.mozilla.javascript.BaseFunction;
 import org.mozilla.javascript.Context;

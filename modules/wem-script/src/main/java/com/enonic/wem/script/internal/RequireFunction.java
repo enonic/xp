@@ -1,4 +1,4 @@
-package com.enonic.wem.script.internal.rhino;
+package com.enonic.wem.script.internal;
 
 import java.util.Map;
 
@@ -11,7 +11,6 @@ import org.mozilla.javascript.ScriptableObject;
 import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.script.internal.ScriptEnvironment;
 
 final class RequireFunction
     extends RhinoBaseFunction

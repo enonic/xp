@@ -1,9 +1,7 @@
-package com.enonic.wem.script.internal.rhino;
+package com.enonic.wem.script.internal;
 
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
-
-import com.enonic.wem.script.internal.ScriptEnvironment;
 
 final class VariableFunction
     extends RhinoBaseFunction

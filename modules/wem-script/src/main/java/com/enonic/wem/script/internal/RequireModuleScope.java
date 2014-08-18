@@ -1,4 +1,4 @@
-package com.enonic.wem.script.internal.rhino;
+package com.enonic.wem.script.internal;
 
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.TopLevel;
