@@ -86,12 +86,11 @@ module api.liveedit {
             if (this.pageComponentView) {
                 var target = api.util.capitalize(this.pageComponentView.getType().getShortName()) + ': ' + this.pageComponentView.getName();
                 innerHtml += '<div style = "font-size: 11px;"> dragging ' + target + ' </div > ';
+                this.getEl().addClass(this.pageComponentView.getType().getShortName().toLowerCase());
             }
             if (this.regionView) {
                 innerHtml += '<div style = "font-size: 11px;"> target region: ' + this.regionView.getRegionPath().toString() + ' </div > ';
             }
-
-            this.getEl().addClass(this.pageComponentView.getType().getShortName().toLowerCase());
             //this.getEl().setInnerHtml(innerHtml);
         }
     }
