@@ -13,6 +13,8 @@ import com.enonic.wem.api.form.Layout;
 import com.enonic.wem.api.form.MixinReference;
 import com.enonic.wem.api.form.inputtype.ComboBoxConfig;
 import com.enonic.wem.api.form.inputtype.ImageSelectorConfig;
+import com.enonic.wem.api.form.inputtype.InputTypeExtensions;
+import com.enonic.wem.api.form.inputtype.InputTypeResolver;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.form.inputtype.RelationshipConfig;
 import com.enonic.wem.api.form.inputtype.SingleSelectorConfig;
@@ -21,8 +23,6 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.core.AbstractSerializerTest;
-import com.enonic.wem.api.form.inputtype.InputTypeExtensions;
-import com.enonic.wem.api.form.inputtype.InputTypeResolver;
 
 import static com.enonic.wem.api.form.FieldSet.newFieldSet;
 import static com.enonic.wem.api.form.FormItemSet.newFormItemSet;
@@ -331,6 +331,7 @@ public abstract class AbstractContentTypeSerializerTest
 
         contentTypeBuilder.addFormItem( newInput().name( "myColor" ).inputType( InputTypes.COLOR ).build() );
         contentTypeBuilder.addFormItem( newInput().name( "myDate" ).inputType( InputTypes.DATE ).build() );
+        contentTypeBuilder.addFormItem( newInput().name( "myBoolean" ).inputType( InputTypes.BOOLEAN ).build() );
         contentTypeBuilder.addFormItem( newInput().name( "myDouble" ).inputType( InputTypes.DOUBLE ).build() );
         contentTypeBuilder.addFormItem( newInput().name( "myGeoPoint" ).inputType( InputTypes.GEO_POINT ).build() );
         contentTypeBuilder.addFormItem( newInput().name( "myHtmlArea" ).inputType( InputTypes.HTML_AREA ).build() );
