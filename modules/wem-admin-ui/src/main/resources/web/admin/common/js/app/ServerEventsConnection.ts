@@ -1,4 +1,4 @@
-module api.event {
+module api.app {
 
     interface ServerEventJson {
         type: string;
@@ -9,12 +9,11 @@ module api.event {
 
         private ws: WebSocket;
         private reconnectInterval: number;
-        private applications: api.app.Application[];
+        private serverEventReceivedListeners: {(event: api.event.Event):void}[] = [];
 
-        constructor(applications: api.app.Application[], reconnectIntervalSeconds: number = 10) {
+        constructor(reconnectIntervalSeconds: number = 10) {
             this.ws = null;
             this.reconnectInterval = reconnectIntervalSeconds * 1000;
-            this.applications = applications;
         }
 
         public connect() {
@@ -45,20 +44,19 @@ module api.event {
         }
 
         private handleServerEvent(serverEventJson: ServerEventJson): void {
-            var eventType = serverEventJson.type;
-            var clientEvent: api.event.Event = null;
-            if (eventType === 'ModuleUpdatedEvent') {
-                clientEvent = api.module.ModuleUpdatedEvent.fromJson(serverEventJson.event);
-            }
+            var clientEvent: api.event.Event = this.translateServerEvent(serverEventJson);
 
             if (clientEvent) {
-                this.applications.forEach((app: api.app.Application)=> {
-                    var appWindow = app.getWindow();
-                    if (appWindow) {
-                        clientEvent.fire(appWindow);
-                    }
-                });
+                this.notifyServerEvent(clientEvent);
             }
+        }
+
+        private translateServerEvent(serverEventJson: ServerEventJson): api.event.Event {
+            var eventType = serverEventJson.type;
+            if (eventType === 'ModuleUpdatedEvent') {
+                return api.module.ModuleUpdatedEvent.fromJson(serverEventJson.event);
+            }
+            return null;
         }
 
         private getWebSocketUriPrefix(): string {
@@ -72,6 +70,22 @@ module api.event {
             return newUri;
         }
 
+        private notifyServerEvent(serverEvent: api.event.Event) {
+            this.serverEventReceivedListeners.forEach((listener: (event: api.event.Event)=>void)=> {
+                listener.call(this, serverEvent);
+            });
+        }
+
+        onServerEvent(listener: (event: api.event.Event) => void) {
+            this.serverEventReceivedListeners.push(listener);
+        }
+
+        unServerEvent(listener: (event: api.event.Event) => void) {
+            this.serverEventReceivedListeners =
+            this.serverEventReceivedListeners.filter((currentListener: (event: api.event.Event)=>void)=> {
+                return currentListener != listener;
+            });
+        }
     }
 
 }

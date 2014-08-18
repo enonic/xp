@@ -6,8 +6,5 @@ module api.dom {
             super(new NewElementBuilder().setTagName("p").setClassName(className));
         }
 
-        setText(value: string) {
-            this.getEl().setInnerHtml(value)
-        }
     }
 }

@@ -3,8 +3,6 @@
 
 ///<reference path='shared/DomHelper.ts' />
 
-///<reference path='component/helper/DragHelper.ts' />
-
 ///<reference path='ui/Base.ts' />
 ///<reference path='ui/BaseComponent.ts' />
 ///<reference path='ui/Shader.ts' />

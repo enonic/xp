@@ -4,7 +4,7 @@ module api.ui.panel {
 
         private panels: Panel[] = [];
 
-        private scrollable: api.dom.DivEl;
+        private scrollable: api.dom.Element;
 
         private offset: number = 0;
 
@@ -40,7 +40,7 @@ module api.ui.panel {
             return this.panels;
         }
 
-        getScrollable(): api.dom.DivEl {
+        getScrollable(): api.dom.Element {
             return this.scrollable;
         }
 

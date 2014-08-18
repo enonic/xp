@@ -58,7 +58,7 @@ module api.liveedit {
         private pageComponentView: PageComponentView<PageComponent>;
 
         constructor(builder: RegionViewDropZoneBuilder) {
-            super("item-view-drop-zone");
+            super("region-view-drop-zone");
             this.itemType = builder.itemType;
             this.dropAllowed = builder.dropAllowed;
             this.text = api.util.replaceTokens(builder.text, {
@@ -91,7 +91,8 @@ module api.liveedit {
                 innerHtml += '<div style = "font-size: 11px;"> target region: ' + this.regionView.getRegionPath().toString() + ' </div > ';
             }
 
-            this.getEl().setInnerHtml(innerHtml);
+            this.getEl().addClass(this.pageComponentView.getType().getShortName().toLowerCase());
+            //this.getEl().setInnerHtml(innerHtml);
         }
     }
 }

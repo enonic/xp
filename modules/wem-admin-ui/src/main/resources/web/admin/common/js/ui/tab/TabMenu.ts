@@ -267,7 +267,7 @@ module api.ui.tab {
         private hideMenuOnOutsideClick(evt: Event): void {
             if (!this.getEl().contains(<HTMLElement> evt.target)) {
                 // click outside menu
-                this.hide();
+                this.hideMenu();
             }
         }
     }

@@ -7,7 +7,6 @@ module app.browse {
         public START_MODULE: api.ui.Action;
         public STOP_MODULE: api.ui.Action;
         public UPDATE_MODULE: api.ui.Action;
-        public REFRESH_MODULES: api.ui.Action;
 
         private allActions: api.ui.Action[] = [];
 
@@ -29,10 +28,8 @@ module app.browse {
             this.START_MODULE = new StartModuleAction(moduleTreeGrid);
             this.STOP_MODULE = new StopModuleAction(moduleTreeGrid);
             this.UPDATE_MODULE = new UpdateModuleAction(moduleTreeGrid);
-            this.REFRESH_MODULES = new RefreshModulesAction();
 
-            this.allActions.push(this.INSTALL_MODULE, this.UNINSTALL_MODULE, this.START_MODULE, this.STOP_MODULE, this.UPDATE_MODULE,
-                this.REFRESH_MODULES);
+            this.allActions.push(this.INSTALL_MODULE, this.UNINSTALL_MODULE, this.START_MODULE, this.STOP_MODULE, this.UPDATE_MODULE);
 
             ModuleBrowseActions.INSTANCE = this;
         }
@@ -60,7 +57,6 @@ module app.browse {
             this.START_MODULE.setEnabled(anyStopped);
             this.STOP_MODULE.setEnabled(anyStarted);
             this.UPDATE_MODULE.setEnabled(anyStarted);
-            this.REFRESH_MODULES.setEnabled(true);
         }
 
     }

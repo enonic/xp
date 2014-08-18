@@ -532,6 +532,11 @@ module api.dom {
             return wemjq('<div>').append(wemjq(this.getHTMLElement()).clone()).html();
         }
 
+        setHtml(value: string): Element {
+            this.getEl().setInnerHtml(value);
+            return this;
+        }
+
         onMouseEnter(handler: (e: MouseEvent)=>any) {
             if (typeof this.getHTMLElement().onmouseenter != "undefined") {
                 this.getEl().addEventListener('mouseenter', handler);

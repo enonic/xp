@@ -211,12 +211,12 @@ module app.create {
             super(title);
 
             this.pathEl = new api.dom.PEl('path');
-            this.pathEl.setText(path);
+            this.pathEl.setHtml(path);
             this.appendChild(this.pathEl);
         }
 
         setPath(path: string) {
-            this.pathEl.setText(path);
+            this.pathEl.setHtml(path);
         }
     }
 
