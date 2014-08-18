@@ -1,6 +1,6 @@
 module api.content {
 
-    export class ContentResponse<T extends ContentSummary> {
+    export class ContentResponse<T> {
 
         private contents: T[];
 

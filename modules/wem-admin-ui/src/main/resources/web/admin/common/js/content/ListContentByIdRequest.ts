@@ -47,7 +47,10 @@ module api.content {
         sendAndParse(): Q.Promise<ContentResponse<ContentSummary>> {
 
             return this.send().then((response:api.rest.JsonResponse<ListContentResult<api.content.json.ContentSummaryJson>>) => {
-                return new ContentResponse(ContentSummary.fromJsonArray( response.getResult().contents ), response.getResult().metadata);
+                return new ContentResponse(
+                    ContentSummary.fromJsonArray(response.getResult().contents),
+                    new ContentMetadata(response.getResult().metadata["hits"], response.getResult().metadata["totalHits"])
+                );
             });
         }
     }

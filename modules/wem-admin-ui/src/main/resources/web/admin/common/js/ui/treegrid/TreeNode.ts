@@ -34,7 +34,10 @@ module api.ui.treegrid {
         }
 
         getDataId(): string {
-            return (this.data && this.data["getId"] instanceof Function) ? this.data["getId"]() : this.id;
+            var id = this.id;
+            id = (this.data && this.data["getId"] instanceof Function) ? this.data["getId"]() : id;
+            id = (this.data && this.data["getKey"] instanceof Function) ? this.data["getKey"]() : id;
+            return id;
         }
 
         regenerateIds(): void {
@@ -172,8 +175,10 @@ module api.ui.treegrid {
         }
 
         findNode(data: NODE): TreeNode<NODE> {
+            var dataId = (data && data["getId"] instanceof Function) ? data["getId"]() : "";
+            dataId = (data && data["getKey"] instanceof Function) ? data["getKey"]() : dataId;
 
-            if (data["getId"] instanceof Function && this.data && this.getDataId() === data["getId"]()) {
+            if (this.data && this.getDataId() === dataId) {
                 return this;
             }
 

@@ -42,6 +42,5 @@ module api.content {
 
             return true;
         }
-
     }
 }

@@ -9,6 +9,7 @@ module app.browse {
     import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
     import TreeGridContextMenu = api.ui.treegrid.TreeGridContextMenu;
 
+    import ContentResponse = api.content.ContentResponse;
     import ContentSummary = api.content.ContentSummary;
     import ContentSummaryViewer = api.content.ContentSummaryViewer;
     import CompareContentRequest = api.content.CompareContentRequest;
@@ -116,6 +117,10 @@ module app.browse {
 
         private statusFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
 
+            if (!node.getData().getContentSummary()) {
+                return "";
+            }
+
             var compareLabel: string = api.content.CompareStatus[value];
 
             var compareStatus: CompareStatus = CompareStatus[compareLabel];
@@ -145,19 +150,48 @@ module app.browse {
         }
 
         private nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
-            var contentSummaryViewer = new ContentSummaryViewer();
-            contentSummaryViewer.setObject(node.getData().getContentSummary(), node.calcLevel() > 1);
-            return contentSummaryViewer.toString();
+            if (!!node.getData().getContentSummary()) {
+                var contentSummaryViewer = new ContentSummaryViewer();
+                contentSummaryViewer.setObject(node.getData().getContentSummary(), node.calcLevel() > 1);
+                return contentSummaryViewer.toString();
+            } else {
+                return "";
+            }
+
         }
 
-        fetch(data: ContentSummaryAndCompareStatus): Q.Promise<ContentSummaryAndCompareStatus> {
-            var contentId = data.getId();
+        fetch(node: TreeNode<ContentSummaryAndCompareStatus>): Q.Promise<ContentSummaryAndCompareStatus> {
+            var contentId = node.getData().getId();
             return ContentSummaryAndCompareStatusFetcher.fetch(contentId);
         }
 
-        fetchChildren(parentData?: ContentSummaryAndCompareStatus): Q.Promise<ContentSummaryAndCompareStatus[]> {
-            var parentContentId = parentData ? parentData.getId() : "";
-            return ContentSummaryAndCompareStatusFetcher.fetchChildren(parentContentId);
+        fetchChildren(parentNode?: TreeNode<ContentSummaryAndCompareStatus>): Q.Promise<ContentSummaryAndCompareStatus[]> {
+            var parentContentId = "";
+            if (parentNode) {
+                parentContentId = parentNode.getData() ? parentNode.getData().getId() : parentContentId;
+            } else {
+                parentNode = this.getRoot();
+            }
+
+            var from = parentNode.getChildren().length;
+            if (from > 0 && !parentNode.getChildren()[from - 1].getData().getContentSummary()) {
+                parentNode.getChildren().pop();
+                from--;
+            }
+            return ContentSummaryAndCompareStatusFetcher.fetchChildren(parentContentId, from, this.maxFetchSize).
+                then((data: ContentResponse<ContentSummaryAndCompareStatus>) => {
+                    var contents = parentNode.getChildren().map((el) => {
+                            return el.getData();
+                        }).slice(0, from).concat(data.getContents());
+
+                    var meta = data.getMetadata();
+
+                    if (from + meta.getHits() < meta.getTotalHits()) {
+                        contents.push(new ContentSummaryAndCompareStatus(null, null));
+                    }
+
+                    return contents;
+                });
         }
 
         hasChildren(data: ContentSummaryAndCompareStatus): boolean {

@@ -145,6 +145,7 @@ module app {
 
             var contents: api.content.ContentSummary[] = event.getModels();
             contents.forEach((content: api.content.ContentSummary) => {
+                if (!content) return;
 
                 var tabMenuItem = this.isContentBeingEditedOrViewed(content);
 
@@ -172,6 +173,7 @@ module app {
 
             var contents: api.content.ContentSummary[] = event.getModels();
             contents.forEach((content: api.content.ContentSummary) => {
+                if (!content) return;
 
                 var tabMenuItem = this.isContentBeingEditedOrViewed(content);
 
@@ -206,6 +208,8 @@ module app {
         }
 
         private isContentBeingEditedOrViewed(content: api.content.ContentSummary): api.app.AppBarTabMenuItem {
+            if (!content) return null;
+
             var tabId = this.getAppBarTabMenu().getNavigationItemById(api.app.AppBarTabId.forEdit(content.getId()));
             if (tabId) {
                 return tabId;
