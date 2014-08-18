@@ -1,6 +1,5 @@
 package com.enonic.wem.api.resource;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -9,11 +8,11 @@ import java.net.URLStreamHandler;
 final class MockUrlStreamHandler
     extends URLStreamHandler
 {
-    private final File dir;
+    private final ResourceUrlRegistry registry;
 
-    public MockUrlStreamHandler( final File dir )
+    public MockUrlStreamHandler( final ResourceUrlRegistry registry )
     {
-        this.dir = dir;
+        this.registry = registry;
     }
 
     @Override
@@ -21,8 +20,13 @@ final class MockUrlStreamHandler
         throws IOException
     {
         final ResourceKey key = ResourceKey.from( url.getPath() );
-        final File moduleDir = new File( this.dir, key.getModule().toString() );
-        final File file = new File( moduleDir, key.getPath() );
-        return file.toURI().toURL().openConnection();
+        final URL newUrl = this.registry.getUrl( key );
+
+        if ( newUrl != null )
+        {
+            return newUrl.openConnection();
+        }
+
+        return null;
     }
 }

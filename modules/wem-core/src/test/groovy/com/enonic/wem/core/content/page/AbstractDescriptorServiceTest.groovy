@@ -5,6 +5,7 @@ import com.enonic.wem.api.module.ModuleKey
 import com.enonic.wem.api.module.ModuleService
 import com.enonic.wem.api.module.Modules
 import com.enonic.wem.api.resource.ResourceKey
+import com.enonic.wem.api.resource.ResourceUrlRegistry
 import com.enonic.wem.api.resource.ResourceUrlTestHelper
 import com.enonic.wem.core.module.ModuleBuilder
 import org.junit.Rule
@@ -21,10 +22,12 @@ abstract class AbstractDescriptorServiceTest
 
     def ModuleService moduleService
 
+    def ResourceUrlRegistry urlRegistry
+
     def setup()
     {
         this.modulesDir = this.temporaryFolder.newFolder( "modules" )
-        ResourceUrlTestHelper.mockModuleScheme( this.modulesDir )
+        this.urlRegistry = ResourceUrlTestHelper.mockModuleScheme()
         this.moduleService = Mock( ModuleService.class )
     }
 
@@ -34,6 +37,8 @@ abstract class AbstractDescriptorServiceTest
         def file = new File( this.modulesDir, path )
         file.parentFile.mkdirs()
         file.write( content )
+
+        this.urlRegistry.register( key.module, new File( this.modulesDir, key.module.toString() ) )
     }
 
     def Module createModule( final String moduleKey )

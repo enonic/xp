@@ -1,6 +1,5 @@
 package com.enonic.wem.api.resource;
 
-import java.io.File;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLStreamHandlerFactory;
@@ -9,9 +8,11 @@ import com.google.common.base.Throwables;
 
 public final class ResourceUrlTestHelper
 {
-    public static void mockModuleScheme( final File dir )
+    public static ResourceUrlRegistry mockModuleScheme()
     {
-        installHandlerFactory( new MockUrlStreamHandlerFactory( dir ) );
+        final MockUrlStreamHandlerFactory handlerFactory = new MockUrlStreamHandlerFactory();
+        installHandlerFactory( handlerFactory );
+        return handlerFactory;
     }
 
     private static void clearHandlerFactory()
