@@ -155,7 +155,8 @@ module app.browse {
                 contentSummaryViewer.setObject(node.getData().getContentSummary(), node.calcLevel() > 1);
                 return contentSummaryViewer.toString();
             } else {
-                return "";
+                var parent = node.getParent();
+                return (parent.getMaxChildren() - parent.getChildren().length - 1) + " nodes left to load";
             }
 
         }
@@ -186,6 +187,7 @@ module app.browse {
 
                     var meta = data.getMetadata();
 
+                    parentNode.setMaxChildren(meta.getTotalHits());
                     if (from + meta.getHits() < meta.getTotalHits()) {
                         contents.push(new ContentSummaryAndCompareStatus(null, null));
                     }

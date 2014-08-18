@@ -12,6 +12,8 @@ module api.ui.treegrid {
 
         private pinned: boolean;
 
+        private maxChildren: number;
+
         private parent: TreeNode<NODE>;
 
         private children: TreeNode<NODE>[];
@@ -21,6 +23,7 @@ module api.ui.treegrid {
             this.data = builder.getData();
             this.parent = builder.getParent();
             this.setChildren(builder.getChildren());
+            this.maxChildren = builder.getMaxChildren();
             this.expanded = builder.isExpanded();
             this.selected = builder.isSelected();
             this.pinned = builder.isPinned();
@@ -65,6 +68,14 @@ module api.ui.treegrid {
 
         isPinned(): boolean {
             return this.pinned;
+        }
+
+        getMaxChildren(): number {
+            return this.maxChildren;
+        }
+
+        setMaxChildren(maxChildren: number) {
+            this.maxChildren = maxChildren;
         }
 
         getData(): NODE {
