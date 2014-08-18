@@ -16,9 +16,23 @@ module app.wizard.site {
             this.siteModule = theModule;
             this.moduleConfig = moduleConfig;
 
+            var namesAndIconView: api.app.NamesAndIconView;
+            namesAndIconView = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().
+                setSize(api.app.NamesAndIconViewSize.large)).
+                setMainName(theModule.getDisplayName()).
+                setSubName(theModule.getName() + "-" + theModule.getVersion()).
+                setIconClass("icon-xlarge icon-puzzle");
+
+            var linkEl = new api.dom.AEl("reset");
+            linkEl.setHtml("reset");
+            linkEl.onClicked((event: MouseEvent) => {
+                this.formView.resetDataSet();
+                return false;
+            });
             var header = new api.dom.DivEl('header');
-            header.appendChild(new api.dom.IEl('icon-large icon-puzzle'));
-            header.appendChild(new api.dom.H6El().setHtml(theModule.getDisplayName()));
+            header.appendChild(namesAndIconView);
+            header.appendChild(linkEl);
+
             this.appendChild(header);
 
             this.formView = new api.form.FormView(context, theModule.getForm(), moduleConfig ? moduleConfig.getConfig() : undefined);

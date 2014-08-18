@@ -245,7 +245,7 @@ module api.data {
             this.dataArray.forEach((data: Data) => {
                 var dataClone = data.clone();
                 clone.dataArray.push(dataClone);
-                clone.dataById[dataClone.getId().toString()] = data;
+                clone.dataById[dataClone.getId().toString()] = dataClone;
             });
 
             return clone;
