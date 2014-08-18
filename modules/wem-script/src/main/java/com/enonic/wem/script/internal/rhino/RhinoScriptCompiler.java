@@ -1,4 +1,4 @@
-package com.enonic.wem.script.internal;
+package com.enonic.wem.script.internal.rhino;
 
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Script;

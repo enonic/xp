@@ -6,5 +6,5 @@ public interface ScriptContributor
 {
     public Map<String, String> getLibraries();
 
-    public Map<String, Object> getGlobalVariables();
+    public Map<String, Object> getVariables();
 }

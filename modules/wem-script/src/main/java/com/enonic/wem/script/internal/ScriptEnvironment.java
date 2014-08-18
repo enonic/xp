@@ -1,6 +1,4 @@
-package com.enonic.wem.script;
-
-import java.util.Map;
+package com.enonic.wem.script.internal;
 
 import com.enonic.wem.api.resource.ResourceKey;
 
@@ -8,5 +6,5 @@ public interface ScriptEnvironment
 {
     public ResourceKey getLibrary( String name );
 
-    public Map<String, Object> getGlobalVariables();
+    public Object getVariable( String name );
 }

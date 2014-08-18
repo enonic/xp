@@ -6,7 +6,7 @@
   </bean>
 
   <service interface="com.enonic.wem.script.ScriptRunnerFactory">
-    <bean class="com.enonic.wem.script.internal.RhinoScriptRunnerFactory">
+    <bean class="com.enonic.wem.script.internal.rhino.RhinoScriptRunnerFactory">
       <property name="environment" ref="environment"/>
     </bean>
   </service>

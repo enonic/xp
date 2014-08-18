@@ -17,8 +17,6 @@ import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.core.image.filter.ImageFilterBuilder;
 import com.enonic.wem.core.module.ModuleKeyResolverService;
 import com.enonic.wem.guice.GuiceActivator;
-import com.enonic.wem.portal.script.PortalScriptContributor;
-import com.enonic.wem.script.ScriptContributor;
 import com.enonic.wem.script.ScriptRunnerFactory;
 import com.enonic.wem.thymeleaf.ThymeleafProcessor;
 import com.enonic.wem.xslt.XsltProcessor;
@@ -50,7 +48,5 @@ public final class Activator
         service( ThymeleafProcessor.class ).importSingle();
 
         service( PortalServlet.class ).attribute( "alias", "/portal/*" ).exportAs( Servlet.class );
-
-        service( PortalScriptContributor.class ).exportAs( ScriptContributor.class );
     }
 }

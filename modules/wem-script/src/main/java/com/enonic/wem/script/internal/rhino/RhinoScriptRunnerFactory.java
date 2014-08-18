@@ -1,6 +1,6 @@
-package com.enonic.wem.script.internal;
+package com.enonic.wem.script.internal.rhino;
 
-import com.enonic.wem.script.ScriptEnvironment;
+import com.enonic.wem.script.internal.ScriptEnvironment;
 import com.enonic.wem.script.ScriptRunner;
 import com.enonic.wem.script.ScriptRunnerFactory;
 

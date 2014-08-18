@@ -12,7 +12,6 @@ import com.google.common.collect.Maps;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.script.ScriptContributor;
-import com.enonic.wem.script.ScriptEnvironment;
 
 public final class ScriptEnvironmentImpl
     implements ScriptEnvironment, ServiceTrackerCustomizer
@@ -58,10 +57,10 @@ public final class ScriptEnvironmentImpl
     }
 
     @Override
-    public Map<String, Object> getGlobalVariables()
+    public Object getVariable( final String name )
     {
         rebuildIfNeeded();
-        return this.variables;
+        return this.variables.get( name );
     }
 
     @Override
@@ -117,7 +116,7 @@ public final class ScriptEnvironmentImpl
 
     private void rebuildStructures( final ModuleKey moduleKey, final ScriptContributor contributor )
     {
-        this.variables.putAll( contributor.getGlobalVariables() );
+        this.variables.putAll( contributor.getVariables() );
 
         for ( final Map.Entry<String, String> library : contributor.getLibraries().entrySet() )
         {

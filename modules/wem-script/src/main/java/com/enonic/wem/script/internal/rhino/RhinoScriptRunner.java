@@ -1,4 +1,4 @@
-package com.enonic.wem.script.internal;
+package com.enonic.wem.script.internal.rhino;
 
 import java.util.Map;
 
@@ -11,9 +11,9 @@ import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceUrlResolver;
-import com.enonic.wem.script.ScriptEnvironment;
 import com.enonic.wem.script.ScriptRunner;
 import com.enonic.wem.script.SourceException;
+import com.enonic.wem.script.internal.ScriptEnvironment;
 
 final class RhinoScriptRunner
     implements ScriptRunner
@@ -73,12 +73,8 @@ final class RhinoScriptRunner
             scope.put( entry.getKey(), scope, Context.javaToJS( entry.getValue(), scope ) );
         }
 
-        for ( final Map.Entry<String, Object> entry : this.environment.getGlobalVariables().entrySet() )
-        {
-            scope.put( entry.getKey(), scope, Context.javaToJS( entry.getValue(), scope ) );
-        }
-
         new ResolveFunction().install( scope );
+        new VariableFunction( this.environment ).install( scope );
 
         final RequireFunction require = new RequireFunction( scope, this.compiler, this.environment );
         require.install( scope );

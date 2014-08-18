@@ -9,12 +9,12 @@ public abstract class ScriptContributorBase
 {
     private final Map<String, String> libraries;
 
-    private final Map<String, Object> globalVariables;
+    private final Map<String, Object> variables;
 
     public ScriptContributorBase()
     {
         this.libraries = Maps.newHashMap();
-        this.globalVariables = Maps.newHashMap();
+        this.variables = Maps.newHashMap();
     }
 
     @Override
@@ -24,9 +24,9 @@ public abstract class ScriptContributorBase
     }
 
     @Override
-    public final Map<String, Object> getGlobalVariables()
+    public final Map<String, Object> getVariables()
     {
-        return this.globalVariables;
+        return this.variables;
     }
 
     protected final void addLibrary( final String name, final String path )
@@ -34,8 +34,8 @@ public abstract class ScriptContributorBase
         this.libraries.put( name, path );
     }
 
-    protected final void addGlobalVariable( final String name, final Object variable )
+    protected final void addVariable( final String name, final Object variable )
     {
-        this.globalVariables.put( name, variable );
+        this.variables.put( name, variable );
     }
 }

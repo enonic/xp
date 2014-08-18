@@ -1,10 +1,10 @@
-package com.enonic.wem.script.internal;
+package com.enonic.wem.script.internal.rhino;
 
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.TopLevel;
 
 import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.script.ScriptEnvironment;
+import com.enonic.wem.script.internal.ScriptEnvironment;
 
 final class RequireModuleScope
     extends TopLevel

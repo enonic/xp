@@ -1,8 +1,7 @@
-package com.enonic.wem.script.internal;
+package com.enonic.wem.script.internal.rhino;
 
 import java.util.Map;
 
-import org.mozilla.javascript.BaseFunction;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Script;
 import org.mozilla.javascript.ScriptRuntime;
@@ -12,13 +11,11 @@ import org.mozilla.javascript.ScriptableObject;
 import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.script.ScriptEnvironment;
+import com.enonic.wem.script.internal.ScriptEnvironment;
 
 final class RequireFunction
-    extends BaseFunction
+    extends RhinoBaseFunction
 {
-    private final static String NAME = "require";
-
     private final static String EXPORTS_NAME = "exports";
 
     private final Map<ResourceKey, Scriptable> exportedInterfaces;
@@ -31,6 +28,7 @@ final class RequireFunction
 
     public RequireFunction( final Scriptable nativeScope, final RhinoScriptCompiler compiler, final ScriptEnvironment environment )
     {
+        super( "require" );
         this.nativeScope = nativeScope;
         this.compiler = compiler;
         this.exportedInterfaces = Maps.newConcurrentMap();
@@ -47,10 +45,7 @@ final class RequireFunction
     @Override
     public Object call( final Context context, final Scriptable scope, final Scriptable thisObj, final Object[] args )
     {
-        if ( ( args == null ) || ( args.length < 1 ) )
-        {
-            throw ScriptRuntime.throwError( context, scope, NAME + "() needs one argument" );
-        }
+        checkArguments( context, scope, args );
 
         final RequireModuleScope moduleScope = (RequireModuleScope) thisObj;
         final String name = (String) Context.jsToJava( args[0], String.class );
@@ -97,11 +92,5 @@ final class RequireFunction
 
         script.exec( context, executionScope );
         return ScriptRuntime.toObject( this.nativeScope, ScriptableObject.getProperty( moduleObject, EXPORTS_NAME ) );
-    }
-
-    public RequireFunction install( final Scriptable scope )
-    {
-        ScriptableObject.putProperty( scope, NAME, this );
-        return this;
     }
 }
