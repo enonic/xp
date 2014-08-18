@@ -4,31 +4,23 @@ import java.util.Map;
 
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.RhinoException;
-import org.mozilla.javascript.Script;
 import org.mozilla.javascript.ScriptStackElement;
-import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.ScriptableObject;
 
 import com.google.common.collect.Maps;
 
-import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceUrlResolver;
-import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.script.SourceException;
-import com.enonic.wem.portal.script.lib.ContextScriptBean;
 
 final class ScriptRunnerImpl
     implements ScriptRunner
 {
-    private Scriptable scope;
-
     protected ScriptCompiler compiler;
 
     private final Map<String, Object> objects;
 
-    private Resource source;
-
-    protected ContextScriptBean contextServiceBean;
+    private ResourceKey source;
 
     public ScriptRunnerImpl()
     {
@@ -36,7 +28,7 @@ final class ScriptRunnerImpl
     }
 
     @Override
-    public ScriptRunner source( final Resource source )
+    public ScriptRunner source( final ResourceKey source )
     {
         this.source = source;
         return this;
@@ -54,18 +46,9 @@ final class ScriptRunnerImpl
     {
         final Context context = Context.enter();
 
-        this.contextServiceBean.setModule( this.source.getKey().getModule() );
-        this.contextServiceBean.install();
-        final JsContext portalContext = (JsContext) objects.get( "portal" );
-        this.contextServiceBean.setJsContext( portalContext );
-
         try
         {
-            initializeScope();
-            setObjectsToScope();
-
-            final Script script = this.compiler.compile( context, this.source );
-            script.exec( context, this.scope );
+            doExecute( context );
         }
         catch ( final RhinoException e )
         {
@@ -73,23 +56,23 @@ final class ScriptRunnerImpl
         }
         finally
         {
-            ContextScriptBean.remove();
             Context.exit();
         }
     }
 
-    private void setObjectsToScope()
+    private void doExecute( final Context context )
     {
+        final ScriptableObject scope = context.initStandardObjects();
+
         for ( final Map.Entry<String, Object> entry : this.objects.entrySet() )
         {
-            this.scope.put( entry.getKey(), this.scope, Context.javaToJS( entry.getValue(), this.scope ) );
+            scope.put( entry.getKey(), scope, Context.javaToJS( entry.getValue(), scope ) );
         }
-    }
 
-    private void initializeScope()
-    {
-        final Context context = Context.getCurrentContext();
-        this.scope = context.initStandardObjects();
+        final RequireFunction require = new RequireFunction( scope, this.compiler );
+        require.install( scope );
+
+        require.requireMain( context, this.source );
     }
 
     private SourceException createError( final RhinoException cause )

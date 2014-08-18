@@ -3,6 +3,8 @@ package com.enonic.wem.portal.controller;
 import javax.inject.Inject;
 
 import com.enonic.wem.portal.postprocess.PostProcessor;
+import com.enonic.wem.portal.script.lib.SystemScriptBean;
+import com.enonic.wem.portal.script.runner.ScriptRunner;
 import com.enonic.wem.portal.script.runner.ScriptRunnerFactory;
 
 public final class JsControllerFactoryImpl
@@ -14,21 +16,17 @@ public final class JsControllerFactoryImpl
     @Inject
     protected PostProcessor postProcessor;
 
+    @Inject
+    protected SystemScriptBean systemScriptBean;
+
     @Override
     public JsController newController()
     {
-        final JsControllerImpl jsController = new JsControllerImpl( this.scriptRunnerFactory.newRunner() );
+        final ScriptRunner runner = this.scriptRunnerFactory.newRunner();
+        runner.property( SystemScriptBean.NAME, this.systemScriptBean );
+
+        final JsControllerImpl jsController = new JsControllerImpl( runner );
         jsController.postProcessor( this.postProcessor );
         return jsController;
-    }
-
-    public void setScriptRunnerFactory( final ScriptRunnerFactory scriptRunnerFactory )
-    {
-        this.scriptRunnerFactory = scriptRunnerFactory;
-    }
-
-    public void setPostProcessor( final PostProcessor postProcessor )
-    {
-        this.postProcessor = postProcessor;
     }
 }
