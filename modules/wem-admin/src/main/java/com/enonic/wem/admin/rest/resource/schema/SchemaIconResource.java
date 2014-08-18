@@ -30,7 +30,7 @@ import com.enonic.wem.api.schema.relationship.RelationshipTypeService;
 
 @Path("schema/icon")
 @Produces("image/*")
-public final class SchemaImageResource
+public final class SchemaIconResource
 {
     private static final String DEFAULT_MIME_TYPE = "image/png";
 

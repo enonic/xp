@@ -36,9 +36,9 @@ import static com.enonic.wem.api.schema.mixin.Mixin.newMixin;
 import static com.enonic.wem.api.schema.relationship.RelationshipType.newRelationshipType;
 import static org.junit.Assert.*;
 
-public class SchemaImageResourceTest
+public class SchemaIconResourceTest
 {
-    private SchemaImageResource resource;
+    private SchemaIconResource resource;
 
     private MixinService mixinService;
 
@@ -50,7 +50,7 @@ public class SchemaImageResourceTest
     public void setUp()
         throws Exception
     {
-        this.resource = new SchemaImageResource();
+        this.resource = new SchemaIconResource();
 
         mixinService = Mockito.mock( MixinService.class );
         this.resource.setMixinService( mixinService );
