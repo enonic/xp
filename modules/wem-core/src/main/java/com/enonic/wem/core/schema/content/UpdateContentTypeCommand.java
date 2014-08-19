@@ -3,6 +3,7 @@ package com.enonic.wem.core.schema.content;
 import com.enonic.wem.api.event.EventPublisher;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeAlreadyExistException;
+import com.enonic.wem.api.schema.content.ContentTypeDeletedEvent;
 import com.enonic.wem.api.schema.content.ContentTypeNotFoundException;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.ContentTypeUpdatedEvent;
@@ -68,11 +69,14 @@ final class UpdateContentTypeCommand
 
                 contentTypeDao.updateContentType( editedContentType );
                 contentTypeDao.deleteContentType( persistedContentType.getName() );
+
+                eventPublisher.publish( new ContentTypeDeletedEvent( persistedContentType.getName() ) );
             }
             else
             {
                 contentTypeDao.updateContentType( editedContentType );
-                eventPublisher.publish( new ContentTypeUpdatedEvent( persistedContentType.getName() ) );
+
+                eventPublisher.publish( new ContentTypeUpdatedEvent( editedContentType.getName(), editedContentType.getModifiedTime() ) );
             }
         }
 
