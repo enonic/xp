@@ -29,6 +29,11 @@ public class SearchResult
         return aggregations;
     }
 
+    public SearchResultEntry getEntry( final String id )
+    {
+        return this.results.get( id );
+    }
+
     public static Builder create()
     {
         return new Builder();

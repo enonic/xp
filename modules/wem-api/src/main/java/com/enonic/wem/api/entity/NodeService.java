@@ -2,6 +2,7 @@ package com.enonic.wem.api.entity;
 
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.entity.query.NodeQuery;
 
 public interface NodeService
 {
@@ -22,6 +23,8 @@ public interface NodeService
     Nodes getByPaths( NodePaths paths, Context context );
 
     FindNodesByParentResult findByParent( FindNodesByParentParams params, Context context );
+
+    FindNodesByQueryResult findByQuery( NodeQuery nodeQuery, Context context );
 
     Node deleteById( EntityId id, Context context );
 

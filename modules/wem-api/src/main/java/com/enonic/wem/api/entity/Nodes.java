@@ -1,46 +1,69 @@
 package com.enonic.wem.api.entity;
 
 import java.util.Collection;
+import java.util.Set;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.support.AbstractImmutableEntityList;
+import com.enonic.wem.api.support.AbstractImmutableEntitySet;
 
 public final class Nodes
-    extends AbstractImmutableEntityList<Node>
+    extends AbstractImmutableEntitySet<Node>
 {
-    private Nodes( final ImmutableList<Node> list )
+    private final ImmutableMap<EntityId, Node> map;
+
+    private Nodes( final Set<Node> set )
     {
-        super( list );
+        super( ImmutableSet.copyOf( set ) );
+        this.map = Maps.uniqueIndex( set, new ToIdFunction() );
+    }
+
+    private final static class ToIdFunction
+        implements Function<Node, EntityId>
+    {
+        @Override
+        public EntityId apply( final Node value )
+        {
+            return value.id();
+        }
+    }
+
+    public Node getNodeById( final EntityId entityId )
+    {
+        return this.map.get( entityId );
     }
 
     public NodePaths getPaths()
     {
-        final Collection<NodePath> paths = Collections2.transform( this.list, new ToKeyFunction() );
+        final Collection<NodePath> paths = Collections2.transform( this.set, new ToKeyFunction() );
         return NodePaths.from( paths );
     }
 
+
     public static Nodes empty()
     {
-        final ImmutableList<Node> list = ImmutableList.of();
-        return new Nodes( list );
+        final ImmutableSet<Node> set = ImmutableSet.of();
+        return new Nodes( set );
     }
 
     public static Nodes from( final Node... nodes )
     {
-        return new Nodes( ImmutableList.copyOf( nodes ) );
+        return new Nodes( ImmutableSet.copyOf( nodes ) );
     }
 
     public static Nodes from( final Iterable<? extends Node> nodes )
     {
-        return new Nodes( ImmutableList.copyOf( nodes ) );
+        return new Nodes( ImmutableSet.copyOf( nodes ) );
     }
 
     public static Nodes from( final Collection<? extends Node> nodes )
     {
-        return new Nodes( ImmutableList.copyOf( nodes ) );
+        return new Nodes( ImmutableSet.copyOf( nodes ) );
     }
 
     private final static class ToKeyFunction
@@ -60,17 +83,17 @@ public final class Nodes
 
     public static class Builder
     {
-        private ImmutableList.Builder<Node> builder = ImmutableList.builder();
+        private Set<Node> nodes = Sets.newLinkedHashSet();
 
         public Builder add( Node node )
         {
-            builder.add( node );
+            nodes.add( node );
             return this;
         }
 
         public Nodes build()
         {
-            return new Nodes( builder.build() );
+            return new Nodes( nodes );
         }
     }
 }
