@@ -1,0 +1,46 @@
+.region-view-drop-zone {
+  //    list-style-type: none; /* The placeholder in jQuery UI has the same tag name as the dragged component */
+  //    clear: both;
+  .live-edit-empty-component();
+  border: 2px dashed #000;
+  //    padding: 28px;
+  //    color: #000;
+  font-size: 20px;
+  text-align: center;
+  //    background-color: #eee;
+  //    margin: 1px 0 10px 0;
+
+  &:before {
+    font-family: 'live-edit-font-icon' !important;
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    font-size: 105px;
+    color: #d3e0f2;
+    position: absolute;
+    left: calc(~"50% - 52px");
+    top: 13px;
+  }
+
+  &.image {
+    &:before {
+      content: "\e005";
+    }
+  }
+  &.part {
+    &:before {
+      content: "\e003";
+    }
+  }
+  &.layout {
+    &:before {
+      content: "\e004";
+    }
+  }
+}
+
+
