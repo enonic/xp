@@ -26,7 +26,7 @@ module app.browse {
 
     export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
 
-        private maxFetchSize: number;
+        static MAX_FETCH_SIZE: number = 5;
 
         constructor() {
             var nameColumn = new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().
@@ -64,8 +64,6 @@ module app.browse {
                 ).prependClasses("content-grid")
             );
 
-            this.maxFetchSize = 5;
-
             api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
                 if (item.isInRangeOrSmaller(api.ui.responsive.ResponsiveRanges._240_360)) {
                     this.getGrid().setColumns([nameColumn, compareStatusColumn]);
@@ -95,7 +93,7 @@ module app.browse {
                 if (this.isActive()) {
                     var node = this.getGrid().getDataView().getItem(data.row);
                     /*
-                     * Empty node double-clicked. Additional %maxFetchSize%
+                     * Empty node double-clicked. Additional %MAX_FETCH_SIZE%
                      * nodes will be loaded and displayed. If the any other
                      * node is clicked, edit event will be triggered by default.
                      */
@@ -205,7 +203,7 @@ module app.browse {
                 from--;
             }
 
-            return ContentSummaryAndCompareStatusFetcher.fetchChildren(parentContentId, from, this.maxFetchSize).
+            return ContentSummaryAndCompareStatusFetcher.fetchChildren(parentContentId, from, ContentTreeGrid.MAX_FETCH_SIZE).
                 then((data: ContentResponse<ContentSummaryAndCompareStatus>) => {
                     var contents = parentNode.getChildren().map((el) => {
                             return el.getData();
