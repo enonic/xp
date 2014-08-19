@@ -1,9 +1,11 @@
 package com.enonic.wem.thymeleaf;
 
+import junit.framework.Assert;
+
 public class JavascriptTestHelper
 {
-    public void println( final String message )
+    public void assertEquals( final Object expeced, final Object actual )
     {
-        System.out.println( message );
+        Assert.assertEquals( expeced, actual );
     }
 }

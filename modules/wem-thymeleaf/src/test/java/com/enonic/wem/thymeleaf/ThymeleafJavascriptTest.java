@@ -2,12 +2,12 @@ package com.enonic.wem.thymeleaf;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceUrlRegistry;
 import com.enonic.wem.api.resource.ResourceUrlTestHelper;
 import com.enonic.wem.script.ScriptRunner;
 import com.enonic.wem.script.internal.RhinoScriptRunnerFactory;
+import com.enonic.wem.thymeleaf.internal.ThymeleafProcessorImpl;
 import com.enonic.wem.thymeleaf.internal.ThymeleafScriptContributor;
 
 public class ThymeleafJavascriptTest
@@ -19,8 +19,11 @@ public class ThymeleafJavascriptTest
         final ResourceUrlRegistry urlRegistry = ResourceUrlTestHelper.mockModuleScheme();
         urlRegistry.modulesClassLoader( getClass().getClassLoader() );
 
+        final ThymeleafScriptContributor contributor = new ThymeleafScriptContributor();
+        contributor.setProcessor( new ThymeleafProcessorImpl() );
+
         final SimpleScriptEnvironment environment = new SimpleScriptEnvironment();
-        environment.addContributor( ModuleKey.from( "library-1.0.0" ), new ThymeleafScriptContributor() );
+        environment.addContributor( "library-1.0.0", contributor );
 
         final RhinoScriptRunnerFactory runnerFactory = new RhinoScriptRunnerFactory();
         runnerFactory.setEnvironment( environment );

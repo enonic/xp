@@ -34,6 +34,11 @@ public final class SimpleScriptEnvironment
         return this.variables.get( name );
     }
 
+    public void addContributor( final String moduleKey, final ScriptContributor contributor )
+    {
+        addContributor( ModuleKey.from( moduleKey ), contributor );
+    }
+
     public void addContributor( final ModuleKey moduleKey, final ScriptContributor contributor )
     {
         this.variables.putAll( contributor.getVariables() );
