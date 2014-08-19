@@ -1,6 +1,7 @@
 package com.enonic.wem.api.schema.relationship;
 
 
+import com.enonic.wem.api.schema.SchemaKey;
 import com.enonic.wem.api.schema.SchemaName;
 
 public final class RelationshipTypeName
@@ -22,5 +23,11 @@ public final class RelationshipTypeName
     public static RelationshipTypeName from( String relationTypeName )
     {
         return new RelationshipTypeName( relationTypeName );
+    }
+
+    @Override
+    public SchemaKey toSchemaKey()
+    {
+        return SchemaKey.from( this );
     }
 }

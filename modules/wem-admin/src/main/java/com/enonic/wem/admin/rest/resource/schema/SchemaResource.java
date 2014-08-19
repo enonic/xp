@@ -24,6 +24,9 @@ import com.enonic.wem.api.schema.SchemaKind;
 import com.enonic.wem.api.schema.SchemaService;
 import com.enonic.wem.api.schema.SchemaTypesParams;
 import com.enonic.wem.api.schema.Schemas;
+import com.enonic.wem.api.schema.content.ContentTypeService;
+import com.enonic.wem.api.schema.mixin.MixinService;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeService;
 
 import static com.google.common.base.Strings.nullToEmpty;
 import static java.lang.String.CASE_INSENSITIVE_ORDER;
@@ -36,6 +39,15 @@ public final class SchemaResource
 {
     @Inject
     protected SchemaService schemaService;
+
+    @Inject
+    protected ContentTypeService contentTypeService;
+
+    @Inject
+    protected MixinService mixinService;
+
+    @Inject
+    protected RelationshipTypeService relationshipTypeService;
 
     @GET
     @Path("list")
@@ -54,7 +66,7 @@ public final class SchemaResource
         final List<Schema> sortedSchemas = schemas.stream().
             sorted( comparing( ( schema ) -> nullToEmpty( schema.getDisplayName() ), CASE_INSENSITIVE_ORDER ) ).
             collect( toList() );
-        return new ListSchemaJson( sortedSchemas );
+        return new ListSchemaJson( sortedSchemas, newSchemaIconUrlResolver() );
     }
 
     @GET
@@ -87,7 +99,7 @@ public final class SchemaResource
         final List<SchemaJson> schemaJsonResult = new ArrayList<>();
         for ( Schema schema : schemas )
         {
-            schemaJsonResult.add( SchemaJson.from( schema ) );
+            schemaJsonResult.add( SchemaJson.from( schema, newSchemaIconUrlResolver() ) );
         }
         return schemaJsonResult;
     }
@@ -126,5 +138,10 @@ public final class SchemaResource
     private boolean matchesModuleFilter( final Schema schema, final Set<String> moduleNamesFilter )
     {
         return true; // moduleNamesFilter.isEmpty() || moduleNamesFilter.contains( schema.getModuleName().toString() );
+    }
+
+    private SchemaIconUrlResolver newSchemaIconUrlResolver()
+    {
+        return new SchemaIconUrlResolver( new SchemaIconResolver( contentTypeService, mixinService, relationshipTypeService ) );
     }
 }

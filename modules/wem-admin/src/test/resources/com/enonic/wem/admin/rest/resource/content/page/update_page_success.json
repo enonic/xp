@@ -7,7 +7,7 @@
     "editable": true,
     "form": null,
     "hasChildren": false,
-    "iconUrl": "/admin/rest/schema/icon/ContentType:my_type?hash=f95b70fdc3088560732a5ac135644506",
+    "iconUrl": "/admin/rest/schema/icon/ContentType:content-type?hash=f95b70fdc3088560732a5ac135644506",
     "id": "content-id",
     "isDraft": false,
     "isPage": true,

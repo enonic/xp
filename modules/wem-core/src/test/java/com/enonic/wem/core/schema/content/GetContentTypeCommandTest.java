@@ -41,7 +41,8 @@ public class GetContentTypeCommandTest
 
         final ContentTypeName contentTypeName = ContentTypeName.from( name );
 
-        final ContentType.Builder contentTypeBuilder = ContentType.newContentType().displayName( displayName ).description( description );
+        final ContentType.Builder contentTypeBuilder =
+            ContentType.newContentType().name( contentTypeName ).displayName( displayName ).description( description );
         Mockito.when( contentTypeDao.getContentType( Mockito.eq( contentTypeName ) ) ).thenReturn( contentTypeBuilder );
 
         final ContentTypes allContentTypes = ContentTypes.from( createContentType( name, displayName, description ) );

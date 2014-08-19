@@ -43,23 +43,7 @@ public class SchemaJson
 
     private final boolean hasChildren;
 
-    public static SchemaJson from( final Schema schema )
-    {
-        if ( schema instanceof Mixin )
-        {
-            return new MixinJson( (Mixin) schema );
-        }
-        else if ( schema instanceof ContentType )
-        {
-            return new ContentTypeSummaryJson( (ContentType) schema );
-        }
-        else
-        {
-            return new RelationshipTypeJson( (RelationshipType) schema );
-        }
-    }
-
-    protected SchemaJson( final Schema schema )
+    protected SchemaJson( final Schema schema, final SchemaIconUrlResolver iconUrlResolver )
     {
         this.key = schema.getSchemaKey() != null ? schema.getSchemaKey().toString() : null;
         this.name = schema.getName() != null ? schema.getName().toString() : null;
@@ -67,9 +51,25 @@ public class SchemaJson
         this.description = schema.getDescription();
         this.createdTime = schema.getCreatedTime();
         this.modifiedTime = schema.getModifiedTime();
-        this.iconUrl = SchemaIconUrlResolver.resolve( schema );
+        this.iconUrl = iconUrlResolver.resolve( schema );
         this.iconJson = schema.getIcon() != null ? new IconJson( schema.getIcon() ) : null;
         this.hasChildren = schema.hasChildren();
+    }
+
+    public static SchemaJson from( final Schema schema, final SchemaIconUrlResolver iconUrlResolver )
+    {
+        if ( schema instanceof Mixin )
+        {
+            return new MixinJson( (Mixin) schema, iconUrlResolver );
+        }
+        else if ( schema instanceof ContentType )
+        {
+            return new ContentTypeSummaryJson( (ContentType) schema, iconUrlResolver );
+        }
+        else
+        {
+            return new RelationshipTypeJson( (RelationshipType) schema, iconUrlResolver );
+        }
     }
 
     public String getKey()

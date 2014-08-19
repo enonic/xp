@@ -23,9 +23,9 @@ import static org.junit.Assert.*;
 public class SchemaResourceTest
     extends AbstractResourceTest
 {
-    private SchemaService schemaService;
-
     private final String currentTime = "2013-08-23T12:55:09.162Z";
+
+    private SchemaService schemaService;
 
     private Mixin createMixin( String displayName )
     {
@@ -42,8 +42,11 @@ public class SchemaResourceTest
 
     private ContentType createContentType( String name, Icon icon )
     {
-        ContentType.Builder builder = ContentType.newContentType().name( name ).createdTime( Instant.parse( currentTime ) ).modifiedTime(
-            Instant.parse( currentTime ) ).description( "CT description" );
+        ContentType.Builder builder = ContentType.newContentType().
+            name( name ).
+            icon( Icon.from( new byte[]{123}, "image/gif", Instant.parse( currentTime ) ) ).
+            createdTime( Instant.parse( currentTime ) ).
+            modifiedTime( Instant.parse( currentTime ) ).description( "CT description" );
         if ( icon != null )
         {
             builder.icon( icon );

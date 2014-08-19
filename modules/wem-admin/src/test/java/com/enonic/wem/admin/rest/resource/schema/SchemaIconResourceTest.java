@@ -19,9 +19,7 @@ import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
-import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
-import com.enonic.wem.api.schema.content.GetContentTypesParams;
 import com.enonic.wem.api.schema.mixin.GetMixinsParams;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinNames;
@@ -118,8 +116,7 @@ public class SchemaIconResourceTest
     public void testContentTypeIcon_notFound()
         throws Exception
     {
-        final ContentTypes emptyContentTypes = ContentTypes.empty();
-        Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn( emptyContentTypes );
+        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( null );
 
         try
         {

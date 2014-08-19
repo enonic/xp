@@ -2,21 +2,19 @@ package com.enonic.wem.admin.rest.resource.content.site.template;
 
 import com.google.common.hash.Hashing;
 
-import com.enonic.wem.admin.rest.resource.schema.ContentTypeIconResolver;
 import com.enonic.wem.admin.rest.resource.schema.SchemaIconUrlResolver;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.content.site.SiteTemplate;
-import com.enonic.wem.api.schema.SchemaKey;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.core.web.servlet.ServletRequestUrlHelper;
 
 public final class SiteTemplateIconUrlResolver
 {
-    private ContentTypeIconResolver contentTypeIconResolver;
+    private SchemaIconUrlResolver schemaIconUrlResolver;
 
-    public SiteTemplateIconUrlResolver( final ContentTypeIconResolver contentTypeIconResolver )
+    public SiteTemplateIconUrlResolver( final SchemaIconUrlResolver schemaIconUrlResolver )
     {
-        this.contentTypeIconResolver = contentTypeIconResolver;
+        this.schemaIconUrlResolver = schemaIconUrlResolver;
     }
 
     public String resolve( final SiteTemplate siteTemplate )
@@ -36,8 +34,7 @@ public final class SiteTemplateIconUrlResolver
         }
         else
         {
-            final Icon contentTypeIcon = this.contentTypeIconResolver.resolve( ContentTypeName.site() );
-            return SchemaIconUrlResolver.resolve( SchemaKey.from( ContentTypeName.site() ), contentTypeIcon );
+            return schemaIconUrlResolver.resolve( ContentTypeName.site() );
         }
     }
 }

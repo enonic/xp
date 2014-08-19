@@ -19,12 +19,8 @@ import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.schema.SchemaKey;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
-import com.enonic.wem.api.schema.mixin.GetMixinParams;
-import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.schema.mixin.MixinService;
-import com.enonic.wem.api.schema.relationship.GetRelationshipTypeParams;
-import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeService;
 
@@ -36,9 +32,9 @@ public final class SchemaIconResource
 
     private static final SchemaImageHelper helper = new SchemaImageHelper();
 
-    private MixinService mixinService;
+    private ContentTypeService contentTypeService;
 
-    private ContentTypeIconResolver contentTypeIconResolver;
+    private MixinService mixinService;
 
     private RelationshipTypeService relationshipTypeService;
 
@@ -57,11 +53,13 @@ public final class SchemaIconResource
         {
             final BufferedImage defaultMixinImage = helper.getDefaultMixinImage( size );
             responseBuilder = Response.ok( defaultMixinImage, DEFAULT_MIME_TYPE );
+            applyMaxAge( Integer.MAX_VALUE, responseBuilder );
         }
         else if ( icon == null && schemaKey.isRelationshipType() )
         {
             final BufferedImage defaultRelationshipTypeImage = helper.getDefaultRelationshipTypeImage( size );
             responseBuilder = Response.ok( defaultRelationshipTypeImage, DEFAULT_MIME_TYPE );
+            applyMaxAge( Integer.MAX_VALUE, responseBuilder );
         }
         else if ( icon != null )
         {
@@ -74,59 +72,37 @@ public final class SchemaIconResource
 
         if ( StringUtils.isNotEmpty( hash ) )
         {
-            final CacheControl cacheControl = new CacheControl();
-            cacheControl.setMaxAge( Integer.MAX_VALUE );
-            responseBuilder.cacheControl( cacheControl );
+            applyMaxAge( Integer.MAX_VALUE, responseBuilder );
         }
         return responseBuilder.build();
     }
 
+    private void applyMaxAge( int maxAge, final Response.ResponseBuilder responseBuilder )
+    {
+        final CacheControl cacheControl = new CacheControl();
+        cacheControl.setMaxAge( maxAge );
+        responseBuilder.cacheControl( cacheControl );
+    }
+
     private Icon resolveSchemaIcon( final SchemaKey schemaKey )
     {
+        final SchemaIconResolver schemaIconResolver = new SchemaIconResolver( contentTypeService, mixinService, relationshipTypeService );
         if ( schemaKey.isContentType() )
         {
-            return resolveContentTypeImage( schemaKey );
+            return schemaIconResolver.resolveFromName( ContentTypeName.from( schemaKey.getLocalName() ) );
         }
         else if ( schemaKey.isMixin() )
         {
-            return resolveMixinImage( schemaKey );
+            return schemaIconResolver.resolveFromName( MixinName.from( schemaKey.getLocalName() ) );
         }
         else if ( schemaKey.isRelationshipType() )
         {
-            return resolveRelationshipTypeImage( schemaKey );
+            return schemaIconResolver.resolveFromName( RelationshipTypeName.from( schemaKey.getLocalName() ) );
         }
         else
         {
-            return null;
+            throw new IllegalArgumentException( "Unknown SchemaKind: " + schemaKey.getType() );
         }
-    }
-
-    public Icon resolveContentTypeImage( final SchemaKey schemaKey )
-    {
-        return contentTypeIconResolver.resolve( ContentTypeName.from( schemaKey.getLocalName() ) );
-    }
-
-    private Icon resolveMixinImage( final SchemaKey schemaKey )
-    {
-        return findMixinIcon( MixinName.from( schemaKey.getLocalName() ) );
-    }
-
-    private Icon resolveRelationshipTypeImage( final SchemaKey schemaKey )
-    {
-        return findRelationshipTypeIcon( RelationshipTypeName.from( schemaKey.getLocalName() ) );
-    }
-
-    private Icon findMixinIcon( final MixinName mixinName )
-    {
-        final Mixin mixin = mixinService.getByName( new GetMixinParams( mixinName ) );
-        return mixin == null ? null : mixin.getIcon();
-    }
-
-    private Icon findRelationshipTypeIcon( final RelationshipTypeName relationshipTypeName )
-    {
-        final GetRelationshipTypeParams params = new GetRelationshipTypeParams().name( relationshipTypeName );
-        final RelationshipType relationshipType = relationshipTypeService.getByName( params );
-        return relationshipType == null ? null : relationshipType.getIcon();
     }
 
     @Inject
@@ -144,7 +120,7 @@ public final class SchemaIconResource
     @Inject
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
-        this.contentTypeIconResolver = new ContentTypeIconResolver( contentTypeService );
+        this.contentTypeService = contentTypeService;
     }
 
 }
