@@ -9,8 +9,17 @@
   text-align: center;
   //    background-color: #eee;
   //    margin: 1px 0 10px 0;
+  span {
+    position: absolute;
+    z-index:10;
+    height:24px;
+    width:216px;
+    top: calc(~"50% - 12px");
+    left: calc(~"50% - 108px");
+    display: block;
+  }
 
-  &:before {
+  &:after {
     font-family: 'live-edit-font-icon' !important;
     speak: none;
     font-style: normal;
@@ -27,17 +36,17 @@
   }
 
   &.image {
-    &:before {
+    &:after {
       content: "\e005";
     }
   }
   &.part {
-    &:before {
+    &:after {
       content: "\e003";
     }
   }
   &.layout {
-    &:before {
+    &:after {
       content: "\e004";
     }
   }

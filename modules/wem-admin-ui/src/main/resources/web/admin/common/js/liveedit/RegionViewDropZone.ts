@@ -74,7 +74,7 @@ module api.liveedit {
                 this.getEl().setPaddingRight("10px");
             }
 
-            var innerHtml = "";
+            var innerHtml = "<span>";
 
             if (this.dropAllowed) {
                 innerHtml += this.text + ' ';
@@ -83,15 +83,18 @@ module api.liveedit {
                 innerHtml += '<span style="color: red">' + this.text + '</span> ';
             }
 
+            this.getEl().addClass(this.itemType.getShortName().toLowerCase());
+
             if (this.pageComponentView) {
                 var target = api.util.capitalize(this.pageComponentView.getType().getShortName()) + ': ' + this.pageComponentView.getName();
-                innerHtml += '<div style = "font-size: 11px;"> dragging ' + target + ' </div > ';
-                this.getEl().addClass(this.pageComponentView.getType().getShortName().toLowerCase());
+                //innerHtml += '<div style = "font-size: 11px;"> dragging ' + target + ' </div > ';
+
             }
             if (this.regionView) {
-                innerHtml += '<div style = "font-size: 11px;"> target region: ' + this.regionView.getRegionPath().toString() + ' </div > ';
+                //innerHtml += '<div style = "font-size: 11px;"> target region: ' + this.regionView.getRegionPath().toString() + ' </div > ';
             }
-            //this.getEl().setInnerHtml(innerHtml);
+            innerHtml += "</span>";
+            this.getEl().setInnerHtml(innerHtml);
         }
     }
 }
