@@ -4,7 +4,7 @@ import java.time.Instant;
 
 import com.enonic.wem.admin.json.ChangeTraceableJson;
 import com.enonic.wem.admin.json.ItemJson;
-import com.enonic.wem.admin.rest.resource.content.ContentImageIconUrlResolver;
+import com.enonic.wem.admin.rest.resource.content.ContentIconUrlResolver;
 import com.enonic.wem.api.content.Content;
 
 @SuppressWarnings("UnusedDeclaration")
@@ -16,17 +16,20 @@ public class ContentSummaryJson
 
     private final String iconUrl;
 
+    private final ContentThumbnailJson thumbnailJson;
+
     private final boolean deletable;
 
     private final boolean isSite;
 
     private final boolean isPage;
 
-    public ContentSummaryJson( final Content content )
+    public ContentSummaryJson( final Content content, final ContentIconUrlResolver iconUrlResolver )
     {
         super( content.getId() );
         this.content = content;
-        this.iconUrl = ContentImageIconUrlResolver.resolve( content );
+        this.iconUrl = iconUrlResolver.resolve( content );
+        this.thumbnailJson = content.hasThumbnail() ? new ContentThumbnailJson( content.getThumbnail() ) : null;
         this.isSite = content.isSite();
         this.isPage = content.isPage();
         this.deletable = !content.hasChildren();
@@ -35,6 +38,11 @@ public class ContentSummaryJson
     public String getIconUrl()
     {
         return iconUrl;
+    }
+
+    public ContentThumbnailJson getThumbnail()
+    {
+        return this.thumbnailJson;
     }
 
     public String getPath()
@@ -100,6 +108,11 @@ public class ContentSummaryJson
     public boolean getIsSite()
     {
         return isSite;
+    }
+
+    public String getSiteTemplateKey()
+    {
+        return content.isSite() ? content.getSite().getTemplate().toString() : null;
     }
 
     public boolean getIsPage()

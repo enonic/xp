@@ -18,6 +18,8 @@ import com.enonic.wem.admin.json.schema.content.ContentTypeConfigJson;
 import com.enonic.wem.admin.json.schema.content.ContentTypeJson;
 import com.enonic.wem.admin.json.schema.content.ContentTypeSummaryListJson;
 import com.enonic.wem.admin.rest.exception.NotFoundWebException;
+import com.enonic.wem.admin.rest.resource.schema.SchemaIconResolver;
+import com.enonic.wem.admin.rest.resource.schema.SchemaIconUrlResolver;
 import com.enonic.wem.admin.rest.resource.schema.json.CreateOrUpdateSchemaJsonResult;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteJson;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteParams;
@@ -34,7 +36,6 @@ import com.enonic.wem.api.schema.content.CreateContentTypeParams;
 import com.enonic.wem.api.schema.content.DeleteContentTypeParams;
 import com.enonic.wem.api.schema.content.GetAllContentTypesParams;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
-import com.enonic.wem.api.schema.content.GetContentTypesParams;
 import com.enonic.wem.api.schema.content.UnableToDeleteContentTypeException;
 import com.enonic.wem.api.schema.content.UpdateContentTypeParams;
 import com.enonic.wem.api.schema.content.ValidateContentTypeParams;
@@ -56,16 +57,15 @@ public class ContentTypeResource
                                 @QueryParam("mixinReferencesToFormItems") final Boolean mixinReferencesToFormItems )
     {
         final ContentTypeName name = ContentTypeName.from( nameAsString );
-        final GetContentTypesParams getContentTypes = new GetContentTypesParams().
-            contentTypeNames( ContentTypeNames.from( name ) ).
+        final GetContentTypeParams getContentTypes = GetContentTypeParams.from( name ).
             mixinReferencesToFormItems( mixinReferencesToFormItems );
 
-        final ContentTypes contentTypes = contentTypeService.getByNames( getContentTypes );
-        if ( contentTypes.isEmpty() )
+        final ContentType contentType = contentTypeService.getByName( getContentTypes );
+        if ( contentType == null )
         {
-            throw new NotFoundWebException( String.format( "ContentTypes [%s] not found", name ) );
+            throw new NotFoundWebException( String.format( "ContentType [%s] not found", name ) );
         }
-        return new ContentTypeJson( contentTypes.first() );
+        return new ContentTypeJson( contentType, newSchemaIconUrlResolver() );
     }
 
     @GET
@@ -73,18 +73,17 @@ public class ContentTypeResource
     public ContentTypeConfigJson getConfig( @QueryParam("name") final String nameAsString )
     {
         final ContentTypeName name = ContentTypeName.from( nameAsString );
-        final GetContentTypesParams getContentTypes = new GetContentTypesParams().
-            contentTypeNames( ContentTypeNames.from( name ) ).
+        final GetContentTypeParams getContentTypes = GetContentTypeParams.from( name ).
             mixinReferencesToFormItems( false );
 
-        final ContentTypes contentTypes = contentTypeService.getByNames( getContentTypes );
+        final ContentType contentType = contentTypeService.getByName( getContentTypes );
 
-        if ( contentTypes.isEmpty() )
+        if ( contentType == null )
         {
-            throw new NotFoundWebException( String.format( "ContentTypes [%s] not found", name ) );
+            throw new NotFoundWebException( String.format( "ContentType [%s] not found", name ) );
         }
 
-        return new ContentTypeConfigJson( contentTypes.first() );
+        return new ContentTypeConfigJson( contentType );
     }
 
     @GET
@@ -94,7 +93,7 @@ public class ContentTypeResource
         final GetAllContentTypesParams getAll = new GetAllContentTypesParams().mixinReferencesToFormItems( mixinReferencesToFormItems );
         final ContentTypes contentTypes = contentTypeService.getAll( getAll );
 
-        return new ContentTypeSummaryListJson( contentTypes );
+        return new ContentTypeSummaryListJson( contentTypes, newSchemaIconUrlResolver() );
     }
 
     @POST
@@ -136,7 +135,7 @@ public class ContentTypeResource
                 createContentType.schemaIcon( schemaIcon );
             }
             final ContentType created = contentTypeService.create( createContentType );
-            return CreateOrUpdateSchemaJsonResult.result( new ContentTypeJson( created ) );
+            return CreateOrUpdateSchemaJsonResult.result( new ContentTypeJson( created, newSchemaIconUrlResolver() ) );
 
         }
         catch ( Exception e )
@@ -186,7 +185,7 @@ public class ContentTypeResource
             final GetContentTypeParams params = new GetContentTypeParams().contentTypeName( json.getName() );
             final ContentType persistedContentType = contentTypeService.getByName( params );
 
-            return CreateOrUpdateSchemaJsonResult.result( new ContentTypeJson( persistedContentType ) );
+            return CreateOrUpdateSchemaJsonResult.result( new ContentTypeJson( persistedContentType, newSchemaIconUrlResolver() ) );
         }
         catch ( Exception e )
         {
@@ -213,7 +212,7 @@ public class ContentTypeResource
         final ValidateContentTypeParams params = new ValidateContentTypeParams().contentType( contentType );
         final ContentTypeValidationResult validationResult = contentTypeService.validate( params );
 
-        return new ValidateContentTypeJson( validationResult, contentType );
+        return new ValidateContentTypeJson( validationResult, contentType, newSchemaIconUrlResolver() );
     }
 
 
@@ -225,6 +224,11 @@ public class ContentTypeResource
             return blob == null ? null : Icon.from( blob.getStream(), thumbnailJson.getMimeType(), Instant.now() );
         }
         return null;
+    }
+
+    private SchemaIconUrlResolver newSchemaIconUrlResolver()
+    {
+        return new SchemaIconUrlResolver( new SchemaIconResolver( contentTypeService ) );
     }
 
     @Inject

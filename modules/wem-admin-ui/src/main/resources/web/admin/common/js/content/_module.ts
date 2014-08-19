@@ -7,6 +7,7 @@
 ///<reference path='ContentSummaryViewer.ts' />
 ///<reference path='ContentSummaryLoader.ts' />
 ///<reference path='ContentIconUrlResolver.ts' />
+///<reference path='ContentImageUrlResolver.ts' />
 ///<reference path='ContentData.ts' />
 ///<reference path='ContentMetadata.ts' />
 ///<reference path='ContentDataFactory.ts' />
@@ -42,6 +43,5 @@
 ///<reference path='Workspace.ts' />
 ///<reference path='ContentSummaryAndCompareStatus.ts' />
 ///<reference path='ContentSummaryAndCompareStatusFetcher.ts' />
-///<reference path='TemplateSummary.ts' />
 ///<reference path='ContentVersions.ts' />
 ///<reference path='ContentVersion.ts' />

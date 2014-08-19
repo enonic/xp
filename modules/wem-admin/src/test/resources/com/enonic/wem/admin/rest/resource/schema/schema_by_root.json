@@ -13,8 +13,12 @@
             "editable": true,
             "final": false,
             "hasChildren": false,
-            "icon": null,
-            "iconUrl": "/admin/rest/schema/image/ContentType:contenttype",
+            "icon": {
+                "mimeType": "image/gif",
+                "modifiedTime": "2013-08-23T12:55:09.162Z",
+                "size": 1
+            },
+            "iconUrl": "/admin/rest/schema/icon/ContentType:contenttype?hash=f95b70fdc3088560732a5ac135644506",
             "key": "ContentType:contenttype",
             "modifiedTime": "2013-08-23T12:55:09.162Z",
             "modifier": null,
@@ -23,8 +27,8 @@
         },
         {
             "schemaKind": "RelationshipType",
-            "allowedFromTypes": [],
-            "allowedToTypes": [],
+            "allowedFromTypes": [ ],
+            "allowedToTypes": [ ],
             "createdTime": "2013-08-23T12:55:09.162Z",
             "deletable": true,
             "description": "RT description",
@@ -33,7 +37,7 @@
             "fromSemantic": null,
             "hasChildren": false,
             "icon": null,
-            "iconUrl": "/admin/rest/schema/image/RelationshipType:relationship",
+            "iconUrl": "/admin/rest/schema/icon/RelationshipType:relationship",
             "key": "RelationshipType:relationship",
             "modifiedTime": "2013-08-23T12:55:09.162Z",
             "name": "relationship",
@@ -49,11 +53,11 @@
             "editable": true,
             "hasChildren": false,
             "icon": null,
-            "iconUrl": "/admin/rest/schema/image/Mixin:mixin",
+            "iconUrl": "/admin/rest/schema/icon/Mixin:mixin",
             "items": [
                 {
                     "Input": {
-                        "config": {},
+                        "config": { },
                         "customText": null,
                         "helpText": null,
                         "immutable": false,

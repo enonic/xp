@@ -17,6 +17,8 @@ import com.enonic.wem.admin.json.icon.ThumbnailJson;
 import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeConfigJson;
 import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeJson;
 import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeListJson;
+import com.enonic.wem.admin.rest.resource.schema.SchemaIconResolver;
+import com.enonic.wem.admin.rest.resource.schema.SchemaIconUrlResolver;
 import com.enonic.wem.admin.rest.resource.schema.json.CreateOrUpdateSchemaJsonResult;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteJson;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteParams;
@@ -56,7 +58,7 @@ public class RelationshipTypeResource
                 entity( message ).type( MediaType.TEXT_PLAIN_TYPE ).build() );
         }
 
-        return new RelationshipTypeJson( relationshipType );
+        return new RelationshipTypeJson( relationshipType, newSchemaIconUrlResolver() );
     }
 
     @GET
@@ -89,7 +91,7 @@ public class RelationshipTypeResource
     {
         final RelationshipTypes relationshipTypes = relationshipTypeService.getAll();
 
-        return new RelationshipTypeListJson( relationshipTypes );
+        return new RelationshipTypeListJson( relationshipTypes, newSchemaIconUrlResolver() );
     }
 
     @POST
@@ -142,7 +144,7 @@ public class RelationshipTypeResource
 
             this.relationshipTypeService.create( createCommand );
 
-            return CreateOrUpdateSchemaJsonResult.result( new RelationshipTypeJson( relationshipType ) );
+            return CreateOrUpdateSchemaJsonResult.result( new RelationshipTypeJson( relationshipType, newSchemaIconUrlResolver() ) );
         }
         catch ( Exception e )
         {
@@ -190,7 +192,7 @@ public class RelationshipTypeResource
 
             relationshipTypeService.update( updateCommand );
 
-            return CreateOrUpdateSchemaJsonResult.result( new RelationshipTypeJson( parsed ) );
+            return CreateOrUpdateSchemaJsonResult.result( new RelationshipTypeJson( parsed, newSchemaIconUrlResolver() ) );
         }
         catch ( Exception e )
         {
@@ -206,6 +208,11 @@ public class RelationshipTypeResource
             return blob == null ? null : Icon.from( blob.getStream(), thumbnailJson.getMimeType(), Instant.now() );
         }
         return null;
+    }
+
+    private SchemaIconUrlResolver newSchemaIconUrlResolver()
+    {
+        return new SchemaIconUrlResolver( new SchemaIconResolver( relationshipTypeService ) );
     }
 
     @Inject

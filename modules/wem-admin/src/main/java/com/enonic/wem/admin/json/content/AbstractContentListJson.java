@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
+import com.enonic.wem.admin.rest.resource.content.ContentIconUrlResolver;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentListMetaData;
 import com.enonic.wem.api.content.Contents;
@@ -12,17 +13,22 @@ import com.enonic.wem.api.content.Contents;
 @SuppressWarnings("UnusedDeclaration")
 public abstract class AbstractContentListJson<T extends ContentIdJson>
 {
-    private ImmutableList<T> contents;
+    protected final ContentIconUrlResolver iconUrlResolver;
 
     private final ContentListMetaDataJson metadata;
 
-    public AbstractContentListJson( final Content content, ContentListMetaData contentListMetaData )
+    private ImmutableList<T> contents;
+
+    public AbstractContentListJson( final Content content, ContentListMetaData contentListMetaData,
+                                    final ContentIconUrlResolver iconUrlResolver )
     {
-        this( Contents.from( content ), contentListMetaData );
+        this( Contents.from( content ), contentListMetaData, iconUrlResolver );
     }
 
-    public AbstractContentListJson( final Contents contents, final ContentListMetaData contentListMetaData )
+    public AbstractContentListJson( final Contents contents, final ContentListMetaData contentListMetaData,
+                                    final ContentIconUrlResolver iconUrlResolver )
     {
+        this.iconUrlResolver = iconUrlResolver;
         this.metadata = new ContentListMetaDataJson( contentListMetaData );
 
         final ImmutableList.Builder<T> builder = ImmutableList.builder();

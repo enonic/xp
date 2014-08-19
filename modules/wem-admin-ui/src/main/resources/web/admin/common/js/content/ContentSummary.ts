@@ -18,11 +18,15 @@ module api.content {
 
         private iconUrl: string;
 
+        private thumbnail: Thumbnail;
+
         private modifier: string;
 
         private owner: string;
 
         private site: boolean;
+
+        private siteTemplateKey: api.content.site.template.SiteTemplateKey;
 
         private page: boolean;
 
@@ -45,9 +49,11 @@ module api.content {
             this.children = builder.children;
             this.type = builder.type;
             this.iconUrl = builder.iconUrl;
+            this.thumbnail = builder.thumbnail;
             this.modifier = builder.modifier;
             this.owner = builder.owner;
             this.site = builder.site;
+            this.siteTemplateKey = builder.siteTemplateKey;
             this.page = builder.page;
             this.draft = builder.draft;
 
@@ -90,6 +96,14 @@ module api.content {
             return this.iconUrl;
         }
 
+        hasThumbnail(): boolean {
+            return !!this.thumbnail;
+        }
+
+        getThumbnail(): Thumbnail {
+            return this.thumbnail;
+        }
+
         getOwner(): string {
             return this.owner;
         }
@@ -100,6 +114,10 @@ module api.content {
 
         isSite(): boolean {
             return this.site;
+        }
+
+        getSiteTemplateKey(): api.content.site.template.SiteTemplateKey {
+            return this.siteTemplateKey;
         }
 
         isPage(): boolean {
@@ -166,6 +184,9 @@ module api.content {
             if (!api.ObjectHelper.stringEquals(this.iconUrl, other.iconUrl)) {
                 return false;
             }
+            if (!api.ObjectHelper.equals(this.thumbnail, other.thumbnail)) {
+                return false;
+            }
             if (!api.ObjectHelper.stringEquals(this.modifier, other.modifier)) {
                 return false;
             }
@@ -173,6 +194,9 @@ module api.content {
                 return false;
             }
             if (!api.ObjectHelper.booleanEquals(this.site, other.site)) {
+                return false;
+            }
+            if (!api.ObjectHelper.equals(this.siteTemplateKey, other.siteTemplateKey)) {
                 return false;
             }
             if (!api.ObjectHelper.booleanEquals(this.page, other.page)) {
@@ -227,11 +251,15 @@ module api.content {
 
         iconUrl: string;
 
+        thumbnail: Thumbnail;
+
         modifier: string;
 
         owner: string;
 
         site: boolean;
+
+        siteTemplateKey: api.content.site.template.SiteTemplateKey;
 
         page: boolean;
 
@@ -256,9 +284,11 @@ module api.content {
                 this.children = source.hasChildren();
                 this.type = source.getType();
                 this.iconUrl = source.getIconUrl();
+                this.thumbnail = source.getThumbnail();
                 this.modifier = source.getModifier();
                 this.owner = source.getOwner();
                 this.site = source.isSite();
+                this.siteTemplateKey = source.getSiteTemplateKey();
                 this.page = source.isPage();
                 this.draft = source.isDraft();
                 this.createdTime = source.getCreatedTime();
@@ -279,9 +309,11 @@ module api.content {
             this.children = json.hasChildren;
             this.type = new api.schema.content.ContentTypeName(json.type);
             this.iconUrl = json.iconUrl;
+            this.thumbnail = json.thumbnail ? new ThumbnailBuilder().fromJson(json.thumbnail).build() : null;
             this.modifier = json.modifier;
             this.owner = json.owner;
             this.site = json.isSite;
+            this.siteTemplateKey = json.siteTemplateKey ? api.content.site.template.SiteTemplateKey.fromString(json.siteTemplateKey) : null;
             this.page = json.isPage;
             this.draft = json.draft;
 

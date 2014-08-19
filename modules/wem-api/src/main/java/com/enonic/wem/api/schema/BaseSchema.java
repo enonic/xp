@@ -89,9 +89,9 @@ public abstract class BaseSchema<T extends SchemaName>
 
     public static class Builder<T extends Builder, SCHEMA_NAME extends SchemaName>
     {
-        private SchemaId id;
+        protected SCHEMA_NAME name;
 
-        private SCHEMA_NAME name;
+        private SchemaId id;
 
         private String displayName;
 

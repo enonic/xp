@@ -7,7 +7,7 @@
     "editable": true,
     "form": null,
     "hasChildren": false,
-    "iconUrl": "/admin/rest/content/image/content-id",
+    "iconUrl": "/admin/rest/schema/icon/ContentType:content-type?hash=f95b70fdc3088560732a5ac135644506",
     "id": "content-id",
     "isDraft": false,
     "isPage": false,
@@ -20,6 +20,7 @@
     "page": null,
     "path": "/content-name",
     "site": null,
+    "siteTemplateKey": null,
+    "thumbnail": null,
     "type": "content-type"
 }
-

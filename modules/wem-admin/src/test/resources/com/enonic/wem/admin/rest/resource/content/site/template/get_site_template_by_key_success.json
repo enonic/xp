@@ -7,7 +7,7 @@
     "description": "Demo site template",
     "displayName": "Blueman Site Template",
     "editable": true,
-    "iconUrl" : "/admin/rest/sitetemplate/image/blueman-1.0.0",
+    "iconUrl": "/admin/rest/sitetemplate/icon/blueman-1.0.0?hash=f95b70fdc3088560732a5ac135644506",
     "key": "blueman-1.0.0",
     "modules": [ "module1-1.0.0", "module2-1.0.0" ],
     "name": "blueman",

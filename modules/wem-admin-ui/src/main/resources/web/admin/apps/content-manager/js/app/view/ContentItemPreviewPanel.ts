@@ -2,6 +2,7 @@ module app.view {
 
     import IsRenderableRequest = api.content.page.IsRenderableRequest;
     import RenderingMode = api.rendering.RenderingMode;
+    import ContentImageUrlResolver = api.content.ContentImageUrlResolver;
 
     export class ContentItemPreviewPanel extends api.ui.panel.Panel {
 
@@ -52,8 +53,10 @@ module app.view {
 
         public addImageSizeToUrl(item: api.app.view.ViewItem<api.content.ContentSummary>) {
             var imgSize = Math.max(this.getEl().getWidth(), this.getEl().getHeight());
-            var imgSrc = api.util.getRestUri("content/image/") + item.getModel().getContentId();
-            this.image.setSrc(imgSrc + '?thumbnail=false&size=' + imgSize);
+            var imgUrl = new ContentImageUrlResolver().
+                setContentId(item.getModel().getContentId()).
+                setSize(imgSize).resolve();
+            this.image.setSrc(imgUrl);
         }
 
         public setItem(item: api.app.view.ViewItem<api.content.ContentSummary>) {

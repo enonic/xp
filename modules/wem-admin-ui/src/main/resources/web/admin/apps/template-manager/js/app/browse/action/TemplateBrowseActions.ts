@@ -1,7 +1,7 @@
 module app.browse.action {
 
-    import TemplateType = api.content.TemplateType;
-    import TemplateSummary = api.content.TemplateSummary;
+    import TemplateType = app.browse.TemplateType;
+    import TemplateSummary = app.browse.TemplateSummary;
     import TreeGridActions = api.ui.treegrid.actions.TreeGridActions;
 
     export class TemplateBrowseActions implements TreeGridActions {

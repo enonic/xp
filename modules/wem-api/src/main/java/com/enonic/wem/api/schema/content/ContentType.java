@@ -15,7 +15,7 @@ import com.enonic.wem.api.support.illegaledit.IllegalEditException;
 
 import static com.enonic.wem.api.form.Form.newForm;
 
-public final class ContentType
+public class ContentType
     extends BaseSchema<ContentTypeName>
     implements Schema, IllegalEditAware<ContentType>
 {
@@ -35,7 +35,7 @@ public final class ContentType
 
     private final boolean hasInheritors;
 
-    private ContentType( final Builder builder )
+    ContentType( final Builder builder )
     {
         super( builder );
 
@@ -56,6 +56,16 @@ public final class ContentType
         this.contentDisplayNameScript = builder.contentDisplayNameScript;
     }
 
+    public static Builder newContentType()
+    {
+        return new Builder();
+    }
+
+    public static Builder newContentType( final ContentType contentType )
+    {
+        return new Builder( contentType );
+    }
+
     @Override
     public SchemaKey getSchemaKey()
     {
@@ -66,7 +76,6 @@ public final class ContentType
     {
         return getName() != null ? SchemaKey.from( getName() ).getType() : null;
     }
-
 
     @Override
     public boolean hasChildren()
@@ -153,16 +162,6 @@ public final class ContentType
         s.add( "icon", getIcon() );
         s.omitNullValues();
         return s.toString();
-    }
-
-    public static Builder newContentType()
-    {
-        return new Builder();
-    }
-
-    public static Builder newContentType( final ContentType contentType )
-    {
-        return new Builder( contentType );
     }
 
     public static class Builder
@@ -294,7 +293,14 @@ public final class ContentType
 
         public ContentType build()
         {
-            return new ContentType( this );
+            if ( this.name.equals( ContentTypeName.imageMedia() ) )
+            {
+                return new ImageContentType( this );
+            }
+            else
+            {
+                return new ContentType( this );
+            }
         }
     }
 }

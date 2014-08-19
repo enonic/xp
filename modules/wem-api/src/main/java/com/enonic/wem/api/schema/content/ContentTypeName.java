@@ -3,6 +3,7 @@ package com.enonic.wem.api.schema.content;
 
 import com.google.common.collect.ComparisonChain;
 
+import com.enonic.wem.api.schema.SchemaKey;
 import com.enonic.wem.api.schema.SchemaName;
 
 public final class ContentTypeName
@@ -50,106 +51,6 @@ public final class ContentTypeName
     private ContentTypeName( final String name )
     {
         super( name );
-    }
-
-    public String getContentTypeName()
-    {
-        return toString();
-    }
-
-    public boolean isUnstructured()
-    {
-        return UNSTRUCTURED.equals( this );
-    }
-
-    public boolean isStructured()
-    {
-        return STRUCTURED.equals( this );
-    }
-
-    public boolean isFolder()
-    {
-        return FOLDER.equals( this );
-    }
-
-    public boolean isPage()
-    {
-        return PAGE.equals( this );
-    }
-
-    public boolean isSite()
-    {
-        return SITE.equals( this );
-    }
-
-    public boolean isShortcut()
-    {
-        return SHORTCUT.equals( this );
-    }
-
-    public boolean isMedia()
-    {
-        return MEDIA.equals( this );
-    }
-
-    public boolean isTextMedia()
-    {
-        return MEDIA_TEXT.equals( this );
-    }
-
-    public boolean isDataMedia()
-    {
-        return MEDIA_DATA.equals( this );
-    }
-
-    public boolean isAudioMedia()
-    {
-        return MEDIA_AUDIO.equals( this );
-    }
-
-    public boolean isVideoMedia()
-    {
-        return MEDIA_VIDEO.equals( this );
-    }
-
-    public boolean isImageMedia()
-    {
-        return MEDIA_IMAGE.equals( this );
-    }
-
-    public boolean isVectorMedia()
-    {
-        return MEDIA_VECTOR.equals( this );
-    }
-
-    public boolean isArchiveMedia()
-    {
-        return MEDIA_ARCHIVE.equals( this );
-    }
-
-    public boolean isDocumentMedia()
-    {
-        return MEDIA_DOCUMENT.equals( this );
-    }
-
-    public boolean isSpreadsheetMedia()
-    {
-        return MEDIA_SPREADSHEET.equals( this );
-    }
-
-    public boolean isPresentationMedia()
-    {
-        return MEDIA_PRESENTATION.equals( this );
-    }
-
-    public boolean isCodeMedia()
-    {
-        return MEDIA_CODE.equals( this );
-    }
-
-    public boolean isExecutableMedia()
-    {
-        return MEDIA_EXECUTABLE.equals( this );
     }
 
     public static ContentTypeName structured()
@@ -252,9 +153,115 @@ public final class ContentTypeName
         return new ContentTypeName( contentTypeName );
     }
 
+    public String getContentTypeName()
+    {
+        return toString();
+    }
+
+    public boolean isUnstructured()
+    {
+        return UNSTRUCTURED.equals( this );
+    }
+
+    public boolean isStructured()
+    {
+        return STRUCTURED.equals( this );
+    }
+
+    public boolean isFolder()
+    {
+        return FOLDER.equals( this );
+    }
+
+    public boolean isPage()
+    {
+        return PAGE.equals( this );
+    }
+
+    public boolean isSite()
+    {
+        return SITE.equals( this );
+    }
+
+    public boolean isShortcut()
+    {
+        return SHORTCUT.equals( this );
+    }
+
+    public boolean isMedia()
+    {
+        return MEDIA.equals( this );
+    }
+
+    public boolean isTextMedia()
+    {
+        return MEDIA_TEXT.equals( this );
+    }
+
+    public boolean isDataMedia()
+    {
+        return MEDIA_DATA.equals( this );
+    }
+
+    public boolean isAudioMedia()
+    {
+        return MEDIA_AUDIO.equals( this );
+    }
+
+    public boolean isVideoMedia()
+    {
+        return MEDIA_VIDEO.equals( this );
+    }
+
+    public boolean isImageMedia()
+    {
+        return MEDIA_IMAGE.equals( this );
+    }
+
+    public boolean isVectorMedia()
+    {
+        return MEDIA_VECTOR.equals( this );
+    }
+
+    public boolean isArchiveMedia()
+    {
+        return MEDIA_ARCHIVE.equals( this );
+    }
+
+    public boolean isDocumentMedia()
+    {
+        return MEDIA_DOCUMENT.equals( this );
+    }
+
+    public boolean isSpreadsheetMedia()
+    {
+        return MEDIA_SPREADSHEET.equals( this );
+    }
+
+    public boolean isPresentationMedia()
+    {
+        return MEDIA_PRESENTATION.equals( this );
+    }
+
+    public boolean isCodeMedia()
+    {
+        return MEDIA_CODE.equals( this );
+    }
+
+    public boolean isExecutableMedia()
+    {
+        return MEDIA_EXECUTABLE.equals( this );
+    }
+
     @Override
     public int compareTo( final ContentTypeName that )
     {
         return ComparisonChain.start().compare( this.getContentTypeName(), that.getContentTypeName() ).result();
+    }
+
+    @Override
+    public SchemaKey toSchemaKey()
+    {
+        return SchemaKey.from( this );
     }
 }

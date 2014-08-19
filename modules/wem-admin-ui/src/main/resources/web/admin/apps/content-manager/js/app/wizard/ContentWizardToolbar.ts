@@ -1,6 +1,7 @@
 module app.wizard {
 
     import CycleButton = api.ui.button.CycleButton;
+    import ContextWindowToggler = app.wizard.page.contextwindow.ContextWindowToggler;
 
     export interface ContentWizardToolbarParams {
         saveAction:api.ui.Action;
@@ -45,29 +46,5 @@ module app.wizard {
             return this.contextWindowToggler;
         }
 
-    }
-
-    export class ContextWindowToggler extends api.ui.button.Button {
-
-        constructor() {
-            super("");
-            this.addClass("icon-menu6 icon-large toggler");
-            this.setActive(false);
-            this.onClicked((event: MouseEvent) => {
-                new ToggleContextWindowEvent(this).fire();
-            });
-
-            ShowLiveEditEvent.on(() => {
-                this.setEnabled(true);
-            });
-
-            ShowSplitEditEvent.on(() => {
-                this.setEnabled(true);
-            });
-
-            ShowContentFormEvent.on(() => {
-                this.setEnabled(false);
-            });
-        }
     }
 }

@@ -1,6 +1,6 @@
 package com.enonic.wem.portal.exception.renderer;
 
-import com.enonic.wem.portal.script.SourceException;
+import com.enonic.wem.script.SourceException;
 
 public final class ExceptionRenderer
 {

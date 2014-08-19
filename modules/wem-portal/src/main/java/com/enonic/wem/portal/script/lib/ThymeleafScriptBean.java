@@ -5,20 +5,17 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.portal.view.RenderViewSpec;
-import com.enonic.wem.portal.view.ViewService;
+import com.enonic.wem.thymeleaf.ThymeleafProcessor;
 
 public final class ThymeleafScriptBean
 {
     @Inject
-    protected ViewService viewService;
+    protected ThymeleafProcessor viewProcessor;
 
     public String render( final String name, final Map<String, Object> params )
     {
         final ContextScriptBean service = ContextScriptBean.get();
-
         final ResourceKey view = ResourceKey.from( service.getModule(), name );
-        final RenderViewSpec spec = new RenderViewSpec().processor( "thymeleaf" ).params( params ).view( view );
-        return this.viewService.renderView( spec );
+        return this.viewProcessor.process( view, params );
     }
 }

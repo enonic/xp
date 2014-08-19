@@ -16,11 +16,15 @@ module api.content.json {
 
         iconUrl:string;
 
+        thumbnail:ThumbnailJson;
+
         modifier:string;
 
         owner:string;
 
         isSite:boolean;
+
+        siteTemplateKey:string;
 
         isPage:boolean;
 

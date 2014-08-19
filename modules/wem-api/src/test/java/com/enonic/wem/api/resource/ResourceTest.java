@@ -31,12 +31,14 @@ public class ResourceTest
         throws Exception
     {
         final File modulesDir = this.temporaryFolder.newFolder( "modules" );
-        ResourceUrlTestHelper.mockModuleScheme( modulesDir );
 
         writeFile( modulesDir, "mymodule-1.0.0/a/b.txt", "a/b.txt" );
         writeFile( modulesDir, "mymodule-1.0.0/a/c.txt", "a/c.txt" );
         writeFile( modulesDir, "mymodule-1.0.0/a/c/d.txt", "a/c/d.txt" );
         writeFile( modulesDir, "othermodule-1.0.0/a.txt", "a.txt" );
+
+        final ResourceUrlRegistry registry = ResourceUrlTestHelper.mockModuleScheme();
+        registry.modulesDir( modulesDir );
     }
 
     @Test

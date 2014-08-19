@@ -5,6 +5,7 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.wem.admin.json.schema.content.ContentTypeJson;
+import com.enonic.wem.admin.rest.resource.schema.SchemaIconUrlResolver;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.validator.ContentTypeValidationError;
 import com.enonic.wem.api.schema.content.validator.ContentTypeValidationResult;
@@ -17,9 +18,10 @@ public class ValidateContentTypeJson
 
     private final ImmutableList<ContentTypeValidationErrorJson> errorItems;
 
-    public ValidateContentTypeJson( final ContentTypeValidationResult contentTypeValidationResult, final ContentType contentType )
+    public ValidateContentTypeJson( final ContentTypeValidationResult contentTypeValidationResult, final ContentType contentType,
+                                    final SchemaIconUrlResolver iconUrlResolver )
     {
-        this.contentType = ( contentType != null ) ? new ContentTypeJson( contentType ) : null;
+        this.contentType = ( contentType != null ) ? new ContentTypeJson( contentType, iconUrlResolver ) : null;
         this.hasErrors = contentTypeValidationResult.hasErrors();
 
         final ImmutableList.Builder<ContentTypeValidationErrorJson> builder = ImmutableList.builder();

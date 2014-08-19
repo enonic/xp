@@ -1,6 +1,7 @@
 module app.wizard {
 
     import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
+    import ContentTypeIconUrlResolver = api.schema.content.ContentTypeIconUrlResolver;
 
     export class ContentTypeWizardPanel extends api.app.wizard.WizardPanel<api.schema.content.ContentType> {
 
@@ -25,7 +26,7 @@ module app.wizard {
                     callback: (wizard: ContentTypeWizardPanel) => void) {
             this.constructing = true;
             this.contentTypeWizardHeader = new api.app.wizard.WizardHeaderWithName();
-            var defaultFormIconUrl = new api.schema.content.ContentTypeIconUrlResolver().resolveDefault();
+            var defaultFormIconUrl = ContentTypeIconUrlResolver.default();
             this.formIcon = new api.app.wizard.FormIcon(defaultFormIconUrl, "Click to upload icon",
                 api.util.getRestUri("blob/upload"));
             this.formIcon.onUploadFinished((event: api.app.wizard.UploadFinishedEvent) => {

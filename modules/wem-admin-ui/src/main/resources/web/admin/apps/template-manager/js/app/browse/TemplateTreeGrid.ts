@@ -3,8 +3,6 @@ module app.browse {
     import GridColumn = api.ui.grid.GridColumn;
     import GridColumnBuilder = api.ui.grid.GridColumnBuilder;
 
-    import TemplateSummary = api.content.TemplateSummary;
-    import TemplateSummaryViewer = app.browse.TemplateSummaryViewer;
     import TreeGrid = api.ui.treegrid.TreeGrid;
     import TreeNode = api.ui.treegrid.TreeNode;
     import TreeGridBuilder = api.ui.treegrid.TreeGridBuilder;
@@ -59,7 +57,7 @@ module app.browse {
 
         fetchChildren(parentNode?: TreeNode<TemplateSummary>): Q.Promise<TemplateSummary[]> {
             var parentId = (!!parentNode && parentNode.getData()) ? parentNode.getData().getKey() : '';
-            return new api.content.site.template.TemplateTreeRequest(parentId).sendAndParse();
+            return new TemplateTreeRequest(parentId).sendAndParse();
         }
     }
 }

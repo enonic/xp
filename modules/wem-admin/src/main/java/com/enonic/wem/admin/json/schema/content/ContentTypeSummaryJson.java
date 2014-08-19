@@ -3,6 +3,7 @@ package com.enonic.wem.admin.json.schema.content;
 import com.enonic.wem.admin.json.ChangeTraceableJson;
 import com.enonic.wem.admin.json.ItemJson;
 import com.enonic.wem.admin.json.schema.SchemaJson;
+import com.enonic.wem.admin.rest.resource.schema.SchemaIconUrlResolver;
 import com.enonic.wem.api.schema.content.ContentType;
 
 @SuppressWarnings("UnusedDeclaration")
@@ -16,9 +17,9 @@ public class ContentTypeSummaryJson
 
     private final boolean deletable;
 
-    public ContentTypeSummaryJson( final ContentType contentType )
+    public ContentTypeSummaryJson( final ContentType contentType, final SchemaIconUrlResolver iconUrlResolver )
     {
-        super( contentType );
+        super( contentType, iconUrlResolver );
         this.contentType = contentType;
         this.editable = !this.contentType.isBuiltIn();
         this.deletable = !this.contentType.isBuiltIn();

@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableList;
 
 import com.enonic.wem.admin.json.ItemJson;
 import com.enonic.wem.admin.json.schema.SchemaJson;
+import com.enonic.wem.admin.rest.resource.schema.SchemaIconUrlResolver;
 import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.form.FormItemJson;
 import com.enonic.wem.api.form.FormItemJsonFactory;
@@ -21,9 +22,9 @@ public class MixinJson
 
     private final boolean deletable;
 
-    public MixinJson( final Mixin mixin )
+    public MixinJson( final Mixin mixin, final SchemaIconUrlResolver iconUrlResolver )
     {
-        super( mixin );
+        super( mixin, iconUrlResolver );
         this.mixin = mixin;
 
         this.editable = true;
