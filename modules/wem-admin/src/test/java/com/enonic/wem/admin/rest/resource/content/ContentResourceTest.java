@@ -14,6 +14,7 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.admin.rest.resource.MockRestResponse;
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentConstants;
@@ -44,6 +45,7 @@ import com.enonic.wem.api.content.site.ModuleConfig;
 import com.enonic.wem.api.content.site.ModuleConfigs;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
+import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
@@ -55,6 +57,7 @@ import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.ContentTypes;
+import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.schema.content.GetContentTypesParams;
 import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
@@ -73,6 +76,8 @@ public class ContentResourceTest
 
     private ContentService contentService;
 
+    private SiteTemplateService siteTemplateService;
+
     @After
     public void after()
     {
@@ -83,11 +88,17 @@ public class ContentResourceTest
     protected Object getResourceInstance()
     {
         contentTypeService = Mockito.mock( ContentTypeService.class );
+        siteTemplateService = Mockito.mock( SiteTemplateService.class );
 
         final ContentResource resource = new ContentResource();
 
         contentService = Mockito.mock( ContentService.class );
         resource.setContentService( contentService );
+        resource.setSiteTemplateService( siteTemplateService );
+        resource.setContentTypeService( contentTypeService );
+
+        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
+            thenReturn( createContentType( "my_type" ) );
 
         return resource;
     }
@@ -766,6 +777,7 @@ public class ContentResourceTest
         return ContentType.newContentType().
             displayName( "My type" ).
             name( name ).
+            icon( Icon.from( new byte[]{123}, "image/gif", Instant.now() ) ).
             build();
     }
 }

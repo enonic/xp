@@ -1,7 +1,6 @@
 package com.enonic.wem.core.content.page
 
 import com.enonic.wem.api.content.page.PageDescriptorKey
-import com.enonic.wem.api.resource.ResourceUrlTestHelper
 
 abstract class AbstractPageDescriptorServiceTest
     extends AbstractDescriptorServiceTest
@@ -11,7 +10,6 @@ abstract class AbstractPageDescriptorServiceTest
     def setup()
     {
         this.service = new PageDescriptorServiceImpl()
-        ResourceUrlTestHelper.mockModuleScheme( super.modulesDir );
     }
 
     def PageDescriptorKey[] createDescriptor( final String... keys )

@@ -28,13 +28,13 @@ public class SiteTemplateSummaryJson
 
     private final String iconUrl;
 
-    public SiteTemplateSummaryJson( final SiteTemplate siteTemplate )
+    public SiteTemplateSummaryJson( final SiteTemplate siteTemplate, final SiteTemplateIconUrlResolver urlResolver )
     {
         this.siteTemplate = siteTemplate;
         this.editable = true;
         this.deletable = true;
         this.contentTypeFilterJson = new ContentTypeFilterJson( siteTemplate.getContentTypeFilter() );
-        this.iconUrl = SiteTemplateIconUrlResolver.resolve( siteTemplate );
+        this.iconUrl = urlResolver.resolve( siteTemplate );
     }
 
     public String getKey()

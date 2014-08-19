@@ -14,17 +14,17 @@ import com.enonic.wem.api.content.query.ContentQueryResult;
 public class ContentQueryResultJsonFactory
 {
     public static AbstractContentQueryResultJson create( final ContentQueryResult contentQueryResult, final Contents contents,
-                                                         final String expand )
+                                                         final String expand, final ContentIconUrlResolver iconUrlResolver )
     {
         final AbstractContentQueryResultJson.Builder builder;
 
         if ( Expand.FULL.matches( expand ) )
         {
-            builder = ContentQueryResultJson.newBuilder();
+            builder = ContentQueryResultJson.newBuilder( iconUrlResolver );
         }
         else if ( Expand.SUMMARY.matches( expand ) )
         {
-            builder = ContentSummaryQueryResultJson.newBuilder();
+            builder = ContentSummaryQueryResultJson.newBuilder( iconUrlResolver );
         }
         else
         {

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
+import com.enonic.wem.admin.rest.resource.schema.SchemaIconUrlResolver;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
 
@@ -11,12 +12,12 @@ public class RelationshipTypeListJson
 {
     private final ImmutableList<RelationshipTypeJson> list;
 
-    public RelationshipTypeListJson( final RelationshipTypes relationshipTypes )
+    public RelationshipTypeListJson( final RelationshipTypes relationshipTypes, final SchemaIconUrlResolver iconUrlResolver )
     {
         final ImmutableList.Builder<RelationshipTypeJson> builder = ImmutableList.builder();
         for ( final RelationshipType type : relationshipTypes.getList() )
         {
-            builder.add( new RelationshipTypeJson( type ) );
+            builder.add( new RelationshipTypeJson( type, iconUrlResolver ) );
         }
 
         this.list = builder.build();

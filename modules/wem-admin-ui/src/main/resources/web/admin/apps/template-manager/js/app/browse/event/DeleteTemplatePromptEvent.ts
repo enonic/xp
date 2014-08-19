@@ -4,14 +4,14 @@ module app.browse.event {
 
     export class DeleteTemplatePromptEvent extends Event {
 
-        private template: api.content.TemplateSummary;
+        private template: app.browse.TemplateSummary;
 
-        constructor(template: api.content.TemplateSummary) {
+        constructor(template: app.browse.TemplateSummary) {
             this.template = template;
             super('deleteSiteTemplatePrompt');
         }
 
-        getTemplate(): api.content.TemplateSummary {
+        getTemplate(): app.browse.TemplateSummary {
             return this.template;
         }
 

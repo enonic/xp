@@ -12,8 +12,12 @@
         "editable": true,
         "final": false,
         "hasChildren": false,
-        "icon": null,
-        "iconUrl": "/admin/rest/schema/image/ContentType:contenttype",
+        "icon": {
+            "mimeType": "image/gif",
+            "modifiedTime": "2013-08-23T12:55:09.162Z",
+            "size": 1
+        },
+        "iconUrl": "/admin/rest/schema/icon/ContentType:contenttype?hash=f95b70fdc3088560732a5ac135644506",
         "key": "ContentType:contenttype",
         "modifiedTime": "2013-08-23T12:55:09.162Z",
         "modifier": null,
@@ -30,7 +34,7 @@
         "editable": true,
         "hasChildren": false,
         "icon": null,
-        "iconUrl": "/admin/rest/schema/image/Mixin:mixin",
+        "iconUrl": "/admin/rest/schema/icon/Mixin:mixin",
         "items": [
             {
                 "Input": {

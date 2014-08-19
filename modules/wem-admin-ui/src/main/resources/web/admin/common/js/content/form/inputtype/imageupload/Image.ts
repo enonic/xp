@@ -59,9 +59,11 @@ module api.content.form.inputtype.imageupload {
 
             if (property != null) {
                 this.attachmentName = property.getString();
-                var imageUrl = api.util.getRestUri("content/image/") + this.getConfig().contentId;
-                imageUrl += "?thumbnail=false&size=494"; // TODO: size is hack
-                imageUploader.setValue(imageUrl);
+
+                // TODO: size is a hack
+                var imgUrl = new ContentImageUrlResolver().setContentId(this.getConfig().contentId).setSize(494).resolve();
+
+                imageUploader.setValue(imgUrl);
             }
             this.imageUploadersByIndex[index] = imageUploader;
             return imageUploader;

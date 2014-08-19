@@ -190,6 +190,11 @@ public final class Content
         return page;
     }
 
+    public boolean hasThumbnail()
+    {
+        return this.thumbnail != null;
+    }
+
     public Thumbnail getThumbnail()
     {
         return thumbnail;

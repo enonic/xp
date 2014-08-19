@@ -9,7 +9,7 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 
-import com.enonic.wem.portal.script.SourceException;
+import com.enonic.wem.script.SourceException;
 
 final class SourceInfo
 {

@@ -1,14 +1,14 @@
 module api.schema {
 
-    export class SchemaIconUrlResolver extends api.icon.IconUrlResolver<SchemaIconUrlResolver,Schema> {
+    export class SchemaIconUrlResolver extends api.icon.IconUrlResolver {
 
-        public getResourcePath(): api.rest.Path {
-            return api.rest.Path.fromString("schema/image" );
+        resolve(schema: Schema) {
+
+            return schema.getIconUrl();
         }
 
-        public resolve(icon: api.icon.Icon): string {
-
-            return this.getResourcePath().toString() + "/" + icon.getBlobKey() + "?" + this.resolveQueryParams();
+        public static getResourcePath(): api.rest.Path {
+            return api.rest.Path.fromString("schema/icon");
         }
     }
 }

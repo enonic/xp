@@ -44,35 +44,31 @@ module api.content.form.inputtype.tag {
         }
 
         suggest(value: string): Q.Promise<string[]> {
-            var deferred = Q.defer<string[]>();
 
-            var suggestions: string[] = [];
+            var fieldName = this.dataPath.getParentPath().asRelative().toString() + this.dataPath.getLastElement().getName();
+
+            var queryExpr = new QueryExpr(new CompareExpr(new FieldExpr(fieldName), CompareOperator.LIKE,
+                [new ValueExpr(new Value(value, ValueTypes.STRING))]));
 
             var query = new ContentQuery();
-            query.setContentTypeNames([this.contentType]);
+            query.setContentTypeNames(this.contentType ? [this.contentType] : []);
             query.setSize(10);
-
-            var queryExpr = new QueryExpr(new CompareExpr(new FieldExpr(this.dataPath.toString()), CompareOperator.LIKE,
-                [new ValueExpr(new Value(value, ValueTypes.STRING))]));
             query.setQueryExpr(queryExpr);
 
             var queryRequest = new ContentQueryRequest(query);
             queryRequest.setExpand(api.rest.Expand.FULL);
-            queryRequest.sendAndParse().
+            return queryRequest.sendAndParse().
                 then((contentQueryResult: ContentQueryResult<api.content.Content,api.content.json.ContentJson>) => {
                     var contents = contentQueryResult.getContents();
-                    contents.forEach((content) => {
+                    return contents.map((content: api.content.Content): string => {
                         var contentData = content.getContentData();
                         var property = contentData.getPropertyFromDataPath(this.dataPath);
-                        suggestions.push(property.getString());
+                        return property.getString();
                     });
-
-                    deferred.resolve(suggestions);
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
-                }).done();
-
-            return deferred.promise;
+                    return [];
+                });
         }
     }
 }

@@ -3,6 +3,8 @@ package com.enonic.wem.api.xml;
 import java.io.StringReader;
 import java.net.URL;
 
+import javax.xml.transform.TransformerFactory;
+
 import org.jdom2.Document;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.Format;
@@ -43,5 +45,11 @@ public abstract class BaseXmlSerializerTest
 
         final XMLOutputter outputter = new XMLOutputter( Format.getPrettyFormat() );
         return outputter.outputString( doc );
+    }
+
+    public static void main(final String... args)
+    {
+        System.out.println(TransformerFactory.newInstance());
+
     }
 }

@@ -28,18 +28,14 @@ public class XmlContentTypeSerializerTest
             newInput().name( "myTextLine" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
         set.add( layout );
 
-        final ContentType.Builder contentTypeBuilder = newContentType().name( "all_schemas" )
-            .addFormItem( set )
-            .displayName( "All the Base Types" )
-            .description( "description" )
-            .contentDisplayNameScript( "$('firstName') + ' ' + $('lastName')" )
-            .superType( ContentTypeName.from( "content" ) )
-            .setAbstract( false )
-            .setFinal( true );
+        final ContentType.Builder contentTypeBuilder =
+            newContentType().name( "all_schemas" ).addFormItem( set ).displayName( "All the Base Types" ).description(
+                "description" ).contentDisplayNameScript( "$('firstName') + ' ' + $('lastName')" ).superType(
+                ContentTypeName.from( "content" ) ).setAbstract( false ).setFinal( true );
 
         final ContentType contentType = contentTypeBuilder.build();
 
-        final XmlContentType xml = XmlContentTypeMapper.toXml(contentType);
+        final XmlContentType xml = XmlContentTypeMapper.toXml( contentType );
         final String result = XmlSerializers2.contentType().serialize( xml );
 
         assertXml( "content-type.xml", result );
@@ -51,18 +47,19 @@ public class XmlContentTypeSerializerTest
     {
         final String xml = readFromFile( "content-type.xml" );
         final ContentType.Builder builder = newContentType();
+        builder.name( "content-type" );
 
         final XmlContentType xmlObject = XmlSerializers2.contentType().parse( xml );
         XmlContentTypeMapper.fromXml( xmlObject, builder );
 
         final ContentType contentType = builder.build();
-        assertEquals(null, contentType.getName());
-        assertEquals("All the Base Types", contentType.getDisplayName());
-        assertEquals("description", contentType.getDescription());
-        assertEquals("$('firstName') + ' ' + $('lastName')", contentType.getContentDisplayNameScript());
-        assertEquals("content", contentType.getSuperType().toString());
-        assertEquals(false, contentType.isAbstract());
-        assertEquals(true, contentType.isFinal());
+        assertEquals( "content-type", contentType.getName().toString() );
+        assertEquals( "All the Base Types", contentType.getDisplayName() );
+        assertEquals( "description", contentType.getDescription() );
+        assertEquals( "$('firstName') + ' ' + $('lastName')", contentType.getContentDisplayNameScript() );
+        assertEquals( "content", contentType.getSuperType().toString() );
+        assertEquals( false, contentType.isAbstract() );
+        assertEquals( true, contentType.isFinal() );
 
     }
 

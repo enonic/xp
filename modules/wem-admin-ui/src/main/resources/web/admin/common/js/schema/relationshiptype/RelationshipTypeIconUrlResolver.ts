@@ -2,8 +2,8 @@ module api.schema.relationshiptype {
 
     export class RelationshipTypeIconUrlResolver extends api.schema.SchemaIconUrlResolver {
 
-        public resolveDefault(): string {
-            return this.toRestUrl(api.rest.Path.fromParent(this.getResourcePath(), "RelationshipType:_"));
+        static default(): string {
+            return api.util.getRestUri(api.rest.Path.fromParent(api.schema.SchemaIconUrlResolver.getResourcePath(), "Mixin:_").toString());
         }
     }
 }

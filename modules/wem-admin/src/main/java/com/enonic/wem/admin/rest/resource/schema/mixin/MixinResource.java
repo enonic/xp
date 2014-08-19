@@ -17,6 +17,8 @@ import com.enonic.wem.admin.json.icon.ThumbnailJson;
 import com.enonic.wem.admin.json.schema.mixin.MixinConfigJson;
 import com.enonic.wem.admin.json.schema.mixin.MixinJson;
 import com.enonic.wem.admin.json.schema.mixin.MixinListJson;
+import com.enonic.wem.admin.rest.resource.schema.SchemaIconResolver;
+import com.enonic.wem.admin.rest.resource.schema.SchemaIconUrlResolver;
 import com.enonic.wem.admin.rest.resource.schema.json.CreateOrUpdateSchemaJsonResult;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteJson;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteParams;
@@ -59,7 +61,7 @@ public class MixinResource
                 entity( message ).type( MediaType.TEXT_PLAIN_TYPE ).build() );
         }
 
-        return new MixinJson( mixin );
+        return new MixinJson( mixin, newSchemaIconUrlResolver() );
     }
 
     @GET
@@ -85,7 +87,7 @@ public class MixinResource
     {
         final Mixins mixins = mixinService.getAll();
 
-        return new MixinListJson( mixins );
+        return new MixinListJson( mixins, new SchemaIconUrlResolver( new SchemaIconResolver( mixinService ) ) );
     }
 
     @POST
@@ -108,7 +110,7 @@ public class MixinResource
         try
         {
             final Mixin createdMixin = mixinService.create( createParams );
-            final MixinJson mixinJson = new MixinJson( createdMixin );
+            final MixinJson mixinJson = new MixinJson( createdMixin, newSchemaIconUrlResolver() );
             return CreateOrUpdateSchemaJsonResult.result( mixinJson );
         }
         catch ( Exception e )
@@ -153,7 +155,7 @@ public class MixinResource
 
             final UpdateMixinResult result = mixinService.update( updateParams );
             final Mixin updatedMixin = result.getPersistedMixin();
-            return CreateOrUpdateSchemaJsonResult.result( new MixinJson( updatedMixin ) );
+            return CreateOrUpdateSchemaJsonResult.result( new MixinJson( updatedMixin, newSchemaIconUrlResolver() ) );
         }
         catch ( Exception e )
         {
@@ -200,6 +202,11 @@ public class MixinResource
             return blob == null ? null : Icon.from( blob.getStream(), thumbnailJson.getMimeType(), Instant.now() );
         }
         return null;
+    }
+
+    private SchemaIconUrlResolver newSchemaIconUrlResolver()
+    {
+        return new SchemaIconUrlResolver( new SchemaIconResolver( mixinService ) );
     }
 
     @Inject

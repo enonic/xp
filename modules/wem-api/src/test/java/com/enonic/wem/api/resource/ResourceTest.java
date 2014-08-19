@@ -11,6 +11,8 @@ import org.junit.rules.TemporaryFolder;
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
 
+import com.enonic.wem.api.module.ModuleKey;
+
 import static org.junit.Assert.*;
 
 public class ResourceTest
@@ -31,12 +33,15 @@ public class ResourceTest
         throws Exception
     {
         final File modulesDir = this.temporaryFolder.newFolder( "modules" );
-        ResourceUrlTestHelper.mockModuleScheme( modulesDir );
 
         writeFile( modulesDir, "mymodule-1.0.0/a/b.txt", "a/b.txt" );
         writeFile( modulesDir, "mymodule-1.0.0/a/c.txt", "a/c.txt" );
         writeFile( modulesDir, "mymodule-1.0.0/a/c/d.txt", "a/c/d.txt" );
         writeFile( modulesDir, "othermodule-1.0.0/a.txt", "a.txt" );
+
+        final ResourceUrlRegistry registry = ResourceUrlTestHelper.mockModuleScheme();
+        registry.register( ModuleKey.from( "mymodule-1.0.0" ), new File( modulesDir, "mymodule-1.0.0" ) );
+        registry.register( ModuleKey.from( "othermodule-1.0.0" ), new File( modulesDir, "othermodule-1.0.0" ) );
     }
 
     @Test

@@ -1,11 +1,14 @@
 package com.enonic.wem.admin.rest.resource.content.page;
 
+import java.time.Instant;
+
 import javax.ws.rs.core.MediaType;
 
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
@@ -16,12 +19,16 @@ import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageService;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.UpdatePageParams;
+import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.entity.Workspace;
+import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeService;
+import com.enonic.wem.api.schema.content.GetContentTypeParams;
 
 import static com.enonic.wem.api.content.page.PageRegions.newPageRegions;
 
@@ -30,13 +37,24 @@ public class PageResourceTest
 {
     private PageService pageService;
 
+    private ContentTypeService contentTypeService;
+
+    private SiteTemplateService siteTemplateService;
+
     @Override
     protected Object getResourceInstance()
     {
+        contentTypeService = Mockito.mock( ContentTypeService.class );
+        siteTemplateService = Mockito.mock( SiteTemplateService.class );
         this.pageService = Mockito.mock( PageService.class );
 
         final PageResource resource = new PageResource();
         resource.pageService = pageService;
+        resource.contentTypeService = contentTypeService;
+        resource.siteTemplateService = siteTemplateService;
+
+        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
+            thenReturn( createContentType( "my_type" ) );
 
         return resource;
     }
@@ -110,6 +128,15 @@ public class PageResourceTest
             modifier( UserKey.superUser() ).
             type( ContentTypeName.from( contentTypeName ) ).
             page( page ).
+            build();
+    }
+
+    private ContentType createContentType( String name )
+    {
+        return ContentType.newContentType().
+            displayName( "My type" ).
+            name( name ).
+            icon( Icon.from( new byte[]{123}, "image/gif", Instant.now() ) ).
             build();
     }
 }

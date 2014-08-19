@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
+import com.enonic.wem.admin.rest.resource.content.site.template.SiteTemplateIconUrlResolver;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplates;
 import com.enonic.wem.api.content.site.SiteTemplate;
@@ -14,12 +15,12 @@ public final class ListTemplateItemJson
 {
     private final List<TemplateItemJson> list;
 
-    public ListTemplateItemJson( SiteTemplates siteTemplates )
+    public ListTemplateItemJson( final SiteTemplates siteTemplates, final SiteTemplateIconUrlResolver iconUrlResolver )
     {
         ImmutableList.Builder<TemplateItemJson> builder = ImmutableList.builder();
         for ( SiteTemplate siteTemplate : siteTemplates )
         {
-            builder.add( new TemplateItemJson( siteTemplate ) );
+            builder.add( new TemplateItemJson( siteTemplate, iconUrlResolver ) );
         }
         this.list = builder.build();
     }

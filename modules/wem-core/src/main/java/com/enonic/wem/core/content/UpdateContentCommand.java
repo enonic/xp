@@ -46,6 +46,11 @@ final class UpdateContentCommand
         this.params = builder.params;
     }
 
+    public static Builder create( final UpdateContentParams params )
+    {
+        return new Builder( params );
+    }
+
     Content execute()
     {
         params.validate();
@@ -68,11 +73,13 @@ final class UpdateContentCommand
         validateEditedContent( contentBeforeChange, editedContent );
 
         editedContent = newContent( editedContent ).modifier( this.params.getModifier() ).build();
-
-        final Thumbnail mediaThumbnail = resolveMediaThumbnail( editedContent );
-        if ( mediaThumbnail != null )
+        if ( !editedContent.hasThumbnail() )
         {
-            editedContent = newContent( editedContent ).thumbnail( mediaThumbnail ).build();
+            final Thumbnail mediaThumbnail = resolveMediaThumbnail( editedContent );
+            if ( mediaThumbnail != null )
+            {
+                editedContent = newContent( editedContent ).thumbnail( mediaThumbnail ).build();
+            }
         }
 
         final Attachments attachments;
@@ -164,17 +171,12 @@ final class UpdateContentCommand
         return contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) );
     }
 
-    public static Builder create( final UpdateContentParams params )
-    {
-        return new Builder( params );
-    }
-
     public static class Builder
         extends AbstractContentCommand.Builder<Builder>
     {
-        private AttachmentService attachmentService;
-
         private final UpdateContentParams params;
+
+        private AttachmentService attachmentService;
 
         public Builder( final UpdateContentParams params )
         {

@@ -3,7 +3,6 @@ package com.enonic.wem.admin.rest.resource.content;
 import java.awt.image.BufferedImage;
 
 import javax.inject.Inject;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -13,8 +12,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Response;
 
-import com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter;
-import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
@@ -25,26 +22,22 @@ import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.attachment.GetAttachmentParameters;
 import com.enonic.wem.api.content.data.ContentData;
-import com.enonic.wem.api.content.site.SiteTemplate;
-import com.enonic.wem.api.content.site.SiteTemplateKey;
-import com.enonic.wem.api.content.site.SiteTemplateService;
-import com.enonic.wem.api.content.thumb.Thumbnail;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.ContentTypeService;
-import com.enonic.wem.api.schema.content.GetContentTypesParams;
+import com.enonic.wem.api.schema.content.GetContentTypeParams;
 
 import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter.ScaleMax;
-import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter.ScaleSquareFilter;
 
 
 @Path("content/image")
 @Produces("image/*")
 public class ContentImageResource
 {
+    static final Context STAGE_CONTEXT = new Context( ContentConstants.WORKSPACE_STAGE );
+
     private static final ContentImageHelper helper = new ContentImageHelper();
 
     @Inject
@@ -59,17 +52,9 @@ public class ContentImageResource
     @Inject
     private ContentService contentService;
 
-    @Inject
-    private SiteTemplateService siteTemplateService;
-
-    static final Context STAGE_CONTEXT = new Context( ContentConstants.WORKSPACE_STAGE );
-
     @GET
     @Path("{contentId}")
-    public Response getContentImage( @PathParam("contentId") final String contentIdAsString,
-                                     @QueryParam("size") @DefaultValue("128") final int size,
-                                     @QueryParam("thumbnail") @DefaultValue("true") final boolean thumbnail,
-                                     @QueryParam("crop") @DefaultValue("true") final boolean crop )
+    public Response getContentImage( @PathParam("contentId") final String contentIdAsString, @QueryParam("size") final int size )
         throws Exception
     {
         if ( contentIdAsString == null )
@@ -84,76 +69,64 @@ public class ContentImageResource
             throw new WebApplicationException( Response.Status.NOT_FOUND );
         }
 
-        if ( thumbnail )
-        {
-            final Thumbnail contentThumbnail = content.getThumbnail();
+        ResolvedImage resolvedImage;
 
-            if ( contentThumbnail != null )
+        if ( content.getType().isImageMedia() )
+        {
+            resolvedImage = resolveResponseFromContentImageAttachment( content, size );
+            if ( resolvedImage.isOK() )
             {
-                final Blob blob = blobService.get( contentThumbnail.getBlobKey() );
-                if ( blob != null )
-                {
-                    ImageFilter filter = crop ? ScaleSquareFilter : ScaleMax;
-                    final BufferedImage thumbnailImage = helper.getImageFromBlob( blob, size, filter );
-                    return Response.ok( thumbnailImage, contentThumbnail.getMimeType() ).build();
-                }
+                final CacheControl cacheControl = new CacheControl();
+                cacheControl.setMaxAge( Integer.MAX_VALUE );
+                return resolvedImage.toResponse( cacheControl );
             }
         }
 
-        final String mimeType;
-        final BufferedImage contentImage;
-        final ContentTypeName contentType = content.getType();
-        if ( contentType.isImageMedia() )
+        resolvedImage = resolveResponseFromContentType( content, size );
+        if ( resolvedImage.isOK() )
         {
-            final String attachmentName = getImageAttachmentName( content );
-            final Attachment attachment = attachmentService.get( GetAttachmentParameters.create().
-                contentId( contentId ).
-                attachmentName( attachmentName ).
-                context( STAGE_CONTEXT ).
-                build() );
-
-            if ( attachment != null )
-            {
-                final Blob blob = blobService.get( attachment.getBlobKey() );
-                if ( blob != null )
-                {
-                    if ( thumbnail )
-                    {
-                        contentImage = helper.getImageFromBlob( blob, size, ScaleSquareFilter );
-                    }
-                    else
-                    {
-                        contentImage = helper.getImageFromBlob( blob, size, ScaleMax );
-                    }
-                    mimeType = attachment.getMimeType();
-                    return Response.ok( contentImage, mimeType ).build();
-                }
-            }
+            return resolvedImage.toResponse();
         }
-
-        if ( contentType.isSite() && content.getSite() != null )
-        {
-            final SiteTemplateKey siteTemplateKey = content.getSite().getTemplate();
-            final SiteTemplate siteTemplate = siteTemplateService.getSiteTemplate( siteTemplateKey );
-            final Icon siteTemplateIcon = siteTemplate != null ? siteTemplate.getIcon() : null;
-            if ( siteTemplateIcon != null )
-            {
-                contentImage = helper.resizeImage( siteTemplateIcon.asInputStream(), size );
-                mimeType = siteTemplateIcon.getMimeType();
-                return Response.ok( contentImage, mimeType ).build();
-            }
-        }
-
-        final Icon contentTypeIcon = findRootContentTypeIcon( contentType );
-        if ( contentTypeIcon == null )
+        else
         {
             throw new WebApplicationException( Response.Status.NOT_FOUND );
         }
+    }
 
-        contentImage = helper.resizeImage( contentTypeIcon.asInputStream(), size );
-        mimeType = contentTypeIcon.getMimeType();
 
-        return Response.ok( contentImage, mimeType ).build();
+    private ResolvedImage resolveResponseFromContentImageAttachment( final Content content, final int size )
+    {
+        final String attachmentName = getImageAttachmentName( content );
+        final Attachment attachment = attachmentService.get( GetAttachmentParameters.create().
+            contentId( content.getId() ).
+            attachmentName( attachmentName ).
+            context( STAGE_CONTEXT ).
+            build() );
+
+        if ( attachment != null )
+        {
+            final Blob blob = blobService.get( attachment.getBlobKey() );
+            if ( blob != null )
+            {
+                final BufferedImage contentImage = helper.getImageFromBlob( blob, size, ScaleMax );
+                return new ResolvedImage( contentImage, attachment.getMimeType() );
+            }
+        }
+        return ResolvedImage.unresolved();
+    }
+
+    private ResolvedImage resolveResponseFromContentType( final Content content, final int size )
+    {
+        final ContentType superContentTypeWithIcon = resolveSuperContentTypeWithIcon( content.getType() );
+        if ( superContentTypeWithIcon == null || superContentTypeWithIcon.getIcon() == null )
+        {
+            return ResolvedImage.unresolved();
+        }
+
+        final BufferedImage contentImage = helper.resizeImage( superContentTypeWithIcon.getIcon().asInputStream(), size );
+        final String mimeType = superContentTypeWithIcon.getIcon().getMimeType();
+
+        return new ResolvedImage( contentImage, mimeType );
     }
 
     private String getImageAttachmentName( final Content content )
@@ -164,14 +137,14 @@ public class ContentImageResource
         return imageProperty == null ? content.getName().toString() : imageProperty.getString();
     }
 
-    private Icon findRootContentTypeIcon( final ContentTypeName contentTypeName )
+    private ContentType resolveSuperContentTypeWithIcon( final ContentTypeName contentTypeName )
     {
         ContentType contentType = getContentType( contentTypeName );
         while ( contentType != null && contentType.getIcon() == null )
         {
             contentType = getContentType( contentType.getSuperType() );
         }
-        return contentType == null ? null : contentType.getIcon();
+        return contentType;
     }
 
     private ContentType getContentType( final ContentTypeName contentTypeName )
@@ -180,9 +153,6 @@ public class ContentImageResource
         {
             return null;
         }
-        final ContentTypeNames contentTypeNames = ContentTypeNames.from( contentTypeName );
-        final GetContentTypesParams params = new GetContentTypesParams().contentTypeNames( contentTypeNames );
-
-        return contentTypeService.getByNames( params ).first();
+        return contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) );
     }
 }
