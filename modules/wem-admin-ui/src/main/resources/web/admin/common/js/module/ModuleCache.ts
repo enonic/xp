@@ -9,6 +9,7 @@ module api.module {
         constructor() {
 
             ModuleUpdatedEvent.on((event: ModuleUpdatedEvent) => {
+                console.log("ModuleCache on ModuleUpdatedEvent, deleting: " + event.getModuleKey().toString());
                 var moduleKey = event.getModuleKey();
                 delete this.objectsTypesByKey[moduleKey.toString()];
             });

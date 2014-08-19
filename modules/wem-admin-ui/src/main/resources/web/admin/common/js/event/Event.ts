@@ -2,14 +2,14 @@ module api.event {
 
     export class Event {
 
-        private name: string;
+        private eventName: string;
 
         constructor(name?: string) {
-            this.name = name || api.util.getFullName(this);
+            this.eventName = name || api.util.getFullName(this);
         }
 
         getName(): string {
-            return this.name;
+            return this.eventName;
         }
 
         fire(contextWindow: Window = window) {

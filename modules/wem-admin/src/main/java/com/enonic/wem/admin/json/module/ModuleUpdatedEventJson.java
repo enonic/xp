@@ -1,15 +1,16 @@
-package com.enonic.wem.admin.event;
+package com.enonic.wem.admin.json.module;
 
+import com.enonic.wem.admin.event.EventJson;
 import com.enonic.wem.api.module.ModuleUpdatedEvent;
 
-final class ModuleUpdatedEventJson
+public final class ModuleUpdatedEventJson
     implements EventJson
 {
     private final String state;
 
     private final String moduleKey;
 
-    ModuleUpdatedEventJson( final ModuleUpdatedEvent event )
+    public ModuleUpdatedEventJson( final ModuleUpdatedEvent event )
     {
         this.state = event.getState().name();
         this.moduleKey = event.getModuleKey().toString();

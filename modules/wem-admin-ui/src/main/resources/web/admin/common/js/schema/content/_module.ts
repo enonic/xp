@@ -15,5 +15,6 @@
 ///<reference path='CreateContentTypeRequest.ts' />
 ///<reference path='UpdateContentTypeRequest.ts' />
 ///<reference path='DeleteContentTypeRequest.ts' />
+///<reference path='ContentTypeUpdatedEvent.ts' />
 ///<reference path='ContentTypeCache.ts' />
 

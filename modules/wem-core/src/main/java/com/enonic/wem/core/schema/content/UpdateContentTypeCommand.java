@@ -1,9 +1,11 @@
 package com.enonic.wem.core.schema.content;
 
+import com.enonic.wem.api.event.EventPublisher;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeAlreadyExistException;
 import com.enonic.wem.api.schema.content.ContentTypeNotFoundException;
 import com.enonic.wem.api.schema.content.ContentTypeService;
+import com.enonic.wem.api.schema.content.ContentTypeUpdatedEvent;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.schema.content.UpdateContentTypeParams;
 import com.enonic.wem.api.schema.content.UpdateContentTypeResult;
@@ -22,6 +24,8 @@ final class UpdateContentTypeCommand
 
     private MixinService mixinService;
 
+    private EventPublisher eventPublisher;
+
     private UpdateContentTypeParams params;
 
     UpdateContentTypeResult execute()
@@ -33,11 +37,11 @@ final class UpdateContentTypeCommand
 
     private UpdateContentTypeResult doExecute()
     {
-        final ContentType persistedContentType = new GetContentTypeCommand()
-            .params( new GetContentTypeParams().contentTypeName( params.getContentTypeName() ) )
-            .contentTypeDao( this.contentTypeDao )
-            .mixinService( this.mixinService )
-            .execute();
+        final ContentType persistedContentType = new GetContentTypeCommand().params( new GetContentTypeParams().
+            contentTypeName( params.getContentTypeName() ) ).
+            contentTypeDao( this.contentTypeDao ).
+            mixinService( this.mixinService ).
+            execute();
 
         if ( persistedContentType == null )
         {
@@ -54,11 +58,9 @@ final class UpdateContentTypeCommand
             if ( !persistedContentType.getName().equals( editedContentType.getName() ) )
             {
                 // renamed
-                final ContentType existing = new GetContentTypeCommand()
-                    .params( new GetContentTypeParams().contentTypeName( editedContentType.getName() ) )
-                    .contentTypeDao( this.contentTypeDao )
-                    .mixinService( this.mixinService )
-                    .execute();
+                final ContentType existing = new GetContentTypeCommand().params(
+                    new GetContentTypeParams().contentTypeName( editedContentType.getName() ) ).contentTypeDao(
+                    this.contentTypeDao ).mixinService( this.mixinService ).execute();
                 if ( existing != null )
                 {
                     throw new ContentTypeAlreadyExistException( editedContentType.getName() );
@@ -70,6 +72,7 @@ final class UpdateContentTypeCommand
             else
             {
                 contentTypeDao.updateContentType( editedContentType );
+                eventPublisher.publish( new ContentTypeUpdatedEvent( persistedContentType.getName() ) );
             }
         }
 
@@ -116,6 +119,12 @@ final class UpdateContentTypeCommand
     UpdateContentTypeCommand mixinService( final MixinService mixinService )
     {
         this.mixinService = mixinService;
+        return this;
+    }
+
+    UpdateContentTypeCommand eventPublisher( final EventPublisher eventPublisher )
+    {
+        this.eventPublisher = eventPublisher;
         return this;
     }
 }
