@@ -12,9 +12,7 @@ import org.mockito.Mockito;
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
 
-import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.api.resource.ResourceUrlRegistry;
 import com.enonic.wem.api.resource.ResourceUrlTestHelper;
 import com.enonic.wem.portal.postprocess.PostProcessor;
 import com.enonic.wem.script.ScriptRunner;
@@ -51,9 +49,7 @@ public class JsControllerImplTest
         throws Exception
     {
         final File modulesDir = this.temporaryFolder.newFolder( "modules" );
-
-        final ResourceUrlRegistry urlRegistry = ResourceUrlTestHelper.mockModuleScheme();
-        urlRegistry.register( ModuleKey.from( "mymodule-1.0.0" ), new File( modulesDir, "mymodule-1.0.0" ) );
+        ResourceUrlTestHelper.mockModuleScheme().modulesDir( modulesDir );
 
         writeFile( modulesDir, "mymodule-1.0.0/service/test/get.js", "1+1" );
 

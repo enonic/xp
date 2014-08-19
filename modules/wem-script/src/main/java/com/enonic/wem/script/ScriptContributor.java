@@ -8,3 +8,4 @@ public interface ScriptContributor
 
     public Map<String, Object> getVariables();
 }
+
