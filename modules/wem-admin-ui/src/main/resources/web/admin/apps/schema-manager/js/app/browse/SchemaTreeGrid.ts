@@ -53,7 +53,7 @@ module app.browse {
         }
 
         fetchChildren(parentNode?: TreeNode<Schema>): Q.Promise<Schema[]> {
-            var parentId = parentNode && parentNode.getData() ? parentNode.getData().getKey() : '';
+            var parentId = (!!parentNode && parentNode.getData()) ? parentNode.getData().getKey() : '';
             return new api.schema.SchemaTreeRequest(parentId).sendAndParse();
         }
 

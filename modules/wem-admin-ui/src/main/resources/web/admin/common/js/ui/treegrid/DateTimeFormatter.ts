@@ -24,9 +24,9 @@ module api.ui.treegrid {
                     ":" +
                     DateTimeFormatter.zeroPad(date.getSeconds(), 2);
                 return s;
-            } else {
-                return "";
             }
+
+            return "";
         }
 
         static createHtmlNoTimestamp(date:Date):string {
@@ -37,9 +37,9 @@ module api.ui.treegrid {
                     "-" +
                     DateTimeFormatter.zeroPad(date.getDate(), 2);
                 return s;
-            } else {
-                return "";
             }
+
+            return "";
         }
 
         private static zeroPad(n:number, width:number) {
@@ -52,6 +52,7 @@ module api.ui.treegrid {
             for( var i = 0; i < neededZeroes; i++ ) {
                 s += "0";
             }
+
             return s + n
         }
     }

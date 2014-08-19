@@ -94,6 +94,11 @@ module app.browse {
             this.getGrid().subscribeOnDblClick((event, data) => {
                 if (this.isActive()) {
                     var node = this.getGrid().getDataView().getItem(data.row);
+                    /*
+                     * Empty node double-clicked. Additional %maxFetchSize%
+                     * nodes will be loaded and displayed. If the any other
+                     * node is clicked, edit event will be triggered by default.
+                     */
                     if (!node.getData().getContentSummary()) {
                         this.setActive(false);
                         this.fetchChildren(node.getParent()).then((dataList: ContentSummaryAndCompareStatus[]) => {
@@ -104,13 +109,15 @@ module app.browse {
                         }).finally(() => {
                             this.setActive(true);
                         }).done(() => this.notifyLoaded());
-                    } else {
+                    } else { // default event
                         new EditContentEvent([node.getData().getContentSummary()]).fire();
                     }
                 }
             });
 
-            // Filter events
+            /*
+             * Filter (search) events.
+             */
             ContentBrowseSearchEvent.on((event) => {
                 var contentSummaries = ContentSummary.fromJsonArray(event.getJsonModels()),
                     compareRequest = CompareContentRequest.fromContentSummaries(contentSummaries);
@@ -163,14 +170,16 @@ module app.browse {
         }
 
         private nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
-            if (!!node.getData().getContentSummary()) {
+            if (!!node.getData().getContentSummary()) {  // default node
+
                 var contentSummaryViewer = new ContentSummaryViewer();
                 contentSummaryViewer.setObject(node.getData().getContentSummary(), node.calcLevel() > 1);
                 return contentSummaryViewer.toString();
-            } else {
+
+            } else { // `load more` node
                 var content = new api.dom.DivEl("children-to-load"),
                     parent = node.getParent();
-                content.setHtml((parent.getMaxChildren() - parent.getChildren().length + 1) + " children left to load");
+                content.setHtml((parent.getMaxChildren() - parent.getChildren().length + 1) + " children left to load. Double-click to load more.");
 
                 return content.toString();
             }
@@ -195,6 +204,7 @@ module app.browse {
                 parentNode.getChildren().pop();
                 from--;
             }
+
             return ContentSummaryAndCompareStatusFetcher.fetchChildren(parentContentId, from, this.maxFetchSize).
                 then((data: ContentResponse<ContentSummaryAndCompareStatus>) => {
                     var contents = parentNode.getChildren().map((el) => {

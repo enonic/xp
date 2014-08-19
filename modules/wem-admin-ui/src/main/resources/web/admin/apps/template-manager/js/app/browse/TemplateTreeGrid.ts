@@ -58,7 +58,7 @@ module app.browse {
         }
 
         fetchChildren(parentNode?: TreeNode<TemplateSummary>): Q.Promise<TemplateSummary[]> {
-            var parentId = parentNode && parentNode.getData() ? parentNode.getData().getKey() : '';
+            var parentId = (!!parentNode && parentNode.getData()) ? parentNode.getData().getKey() : '';
             return new api.content.site.template.TemplateTreeRequest(parentId).sendAndParse();
         }
     }

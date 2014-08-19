@@ -53,13 +53,13 @@ module app.browse.action {
                 this.SHOW_PREVIEW.setEnabled(false);
                 break;
             case 1:
-                this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(!!contentSummaries[0] ? true : false);
-                this.OPEN_CONTENT.setEnabled(!!contentSummaries[0] ? true : false);
-                this.EDIT_CONTENT.setEnabled(!!contentSummaries[0] ? contentSummaries[0].isEditable() : false);
-                this.DELETE_CONTENT.setEnabled(!!contentSummaries[0] ? contentSummaries[0].isDeletable() : false);
-                this.DUPLICATE_CONTENT.setEnabled(!!contentSummaries[0] ? true : false);
-                this.MOVE_CONTENT.setEnabled(!!contentSummaries[0] ? true : false);
-                this.SHOW_PREVIEW.setEnabled(!!contentSummaries[0] ? contentSummaries[0].isPage() : false);
+                this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(!!contentSummaries[0]);
+                this.OPEN_CONTENT.setEnabled(!!contentSummaries[0]);
+                this.EDIT_CONTENT.setEnabled(!contentSummaries[0] ? false : contentSummaries[0].isEditable());
+                this.DELETE_CONTENT.setEnabled(!contentSummaries[0] ? false : contentSummaries[0].isDeletable());
+                this.DUPLICATE_CONTENT.setEnabled(!!contentSummaries[0]);
+                this.MOVE_CONTENT.setEnabled(!!contentSummaries[0]);
+                this.SHOW_PREVIEW.setEnabled(!contentSummaries[0] ? false : contentSummaries[0].isPage());
                 break;
             default:
                 this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
@@ -75,7 +75,7 @@ module app.browse.action {
         private anyEditable(contentSummaries: api.content.ContentSummary[]): boolean {
             for (var i = 0; i < contentSummaries.length; i++) {
                 var content: api.content.ContentSummary = contentSummaries[i];
-                if (content && content.isEditable()) {
+                if (!!content && content.isEditable()) {
                     return true;
                 }
             }
@@ -85,7 +85,7 @@ module app.browse.action {
         private anyDeletable(contentSummaries: api.content.ContentSummary[]): boolean {
             for (var i = 0; i < contentSummaries.length; i++) {
                 var content: api.content.ContentSummary = contentSummaries[i];
-                if (content && content.isDeletable()) {
+                if (!!content && content.isDeletable()) {
                     return true;
                 }
             }
