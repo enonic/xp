@@ -303,10 +303,14 @@ module app.wizard {
 
                 var viewedContent = this.assembleViewedContent(new ContentBuilder(persistedContent)).build();
                 if (viewedContent.equals(persistedContent)) {
-
-                    // Do nothing, since viewed data equals persisted data
-                    deferred.resolve(null);
-                    return deferred.promise;
+                    if (this.liveFormPanel) {
+                        // Refresh live form
+                        return this.doRenderExistingPage(persistedContent);
+                    } else {
+                        // Do nothing, since viewed data equals persisted data
+                        deferred.resolve(null);
+                        return deferred.promise;
+                    }
                 }
                 else {
                     ConfirmationDialog.get().
