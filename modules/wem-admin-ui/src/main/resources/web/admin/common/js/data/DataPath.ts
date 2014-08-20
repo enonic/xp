@@ -14,22 +14,15 @@ module api.data {
 
         static fromString(s: string) {
             var absolute: boolean = s.charAt(0) == DataPath.ELEMENT_DIVIDER;
-            var elements: string[] = s.split(DataPath.ELEMENT_DIVIDER);
-            elements = DataPath.removeEmptyElements(elements);
-            var dataPathElements: DataPathElement[] = [];
-            elements.forEach((s: string) => {
-                dataPathElements.push(DataPathElement.fromString(s));
-            });
+            var dataPathElements = s.split(DataPath.ELEMENT_DIVIDER).
+                filter((element: string) => !!element).                         // filter empty elements
+                map((element: string) => DataPathElement.fromString(element));  // map string to DataPathElement
             return new DataPath(dataPathElements, absolute);
         }
 
         static fromParent(parent: DataPath, ...childElements: DataPathElement[]) {
 
-            var elements: DataPathElement[] = parent.elements.slice(0);
-            childElements.forEach((element: DataPathElement) => {
-                elements.push(element);
-            });
-
+            var elements: DataPathElement[] = parent.elements.slice(0).concat(childElements);
             return new DataPath(elements, parent.isAbsolute());
         }
 
@@ -38,19 +31,9 @@ module api.data {
             return new DataPath([element], true);
         }
 
-        private static removeEmptyElements(elements: string[]): string[] {
-            var filteredElements: string[] = [];
-            elements.forEach((element: string) => {
-                if (element.length > 0) {
-                    filteredElements.push(element);
-                }
-            });
-            return filteredElements;
-        }
+        constructor(elements: DataPathElement[], absolute: boolean = true) {
 
-        constructor(elements: DataPathElement[], absolute?: boolean) {
-
-            this.absolute = absolute == undefined ? true : absolute;
+            this.absolute = absolute;
             elements.forEach((element: DataPathElement, index: number) => {
                 if (element == null) {
                     throw new Error("Path element was null at index: " + index);
@@ -60,18 +43,11 @@ module api.data {
                 }
             });
             this.elements = elements;
-            if (this.elementCount() == 0) {
-                this.refString = this.absolute ? DataPath.ELEMENT_DIVIDER : "";
-            }
-            else {
-                this.refString = (this.absolute ? DataPath.ELEMENT_DIVIDER : "") + this.elements.join(DataPath.ELEMENT_DIVIDER);
-            }
+            this.refString = (this.absolute ? DataPath.ELEMENT_DIVIDER : "") + this.elements.join(DataPath.ELEMENT_DIVIDER);
         }
 
         newWithoutFirstElement(): DataPath {
-            var arr = this.elements;
-            arr.shift();
-            return new DataPath(arr);
+            return new DataPath(this.elements.slice(1));
         }
 
         elementCount(): number {
@@ -103,13 +79,7 @@ module api.data {
             if (this.elements.length < 1) {
                 return null;
             }
-            var parentElemements: DataPathElement[] = [];
-            this.elements.forEach((element: DataPathElement, index: number)=> {
-                if (index < this.elements.length - 1) {
-                    parentElemements.push(element);
-                }
-            });
-            return new DataPath(parentElemements);
+            return new DataPath(this.elements.slice(0,-1));
         }
 
         toString() {
@@ -131,12 +101,8 @@ module api.data {
         asNewWithoutFirstPathElement(): DataPath {
             api.util.assert(this.elementCount() > 1,
                 "Cannot create new path without first path element when path does not contain more than one element");
-            var elements: DataPathElement[] = [];
-            this.elements.forEach((element: DataPathElement, index: number) => {
-                if (index > 0) {
-                    elements.push(new DataPathElement(element.getName(), element.getIndex()));
-                }
-            });
+            var elements: DataPathElement[] = this.elements.slice(1).
+                map((element: DataPathElement) => new DataPathElement(element.getName(), element.getIndex()));
             return new DataPath(elements, this.isAbsolute());
         }
     }

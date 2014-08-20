@@ -28,19 +28,19 @@ module api.ui.tags {
         }
     }
 
-    export class TagSuggestions extends api.dom.UlEl {
-
-    }
-
     export class Tags extends api.dom.UlEl {
 
         private tagSuggester: TagSuggester;
 
         private textInput: api.ui.text.TextInput;
 
+        private tagSuggestions: TagSuggestions;
+
         private tags: Tag[] = [];
 
         private maxTags: number;
+
+        private preservedValue: string;
 
         private tagAddedListeners: {(event: TagAddedEvent) : void}[] = [];
 
@@ -58,6 +58,10 @@ module api.ui.tags {
             this.textInput = new api.ui.text.TextInput();
             this.appendChild(this.textInput);
 
+            this.tagSuggestions = new TagSuggestions();
+            this.tagSuggestions.hide();
+            this.appendChild(this.tagSuggestions);
+
             this.textInput.onKeyDown((event: KeyboardEvent) => {
                 if (event.keyCode == 32 || event.keyCode == 13) {
                     this.handleWordCompleted();
@@ -66,12 +70,42 @@ module api.ui.tags {
                     if (!this.textInput.getValue() && this.countTags() > 0) {
                         this.removeTag(this.tags[this.countTags() - 1]);
                     }
+                } else if (event.keyCode == 38) {
+                    if (this.tagSuggestions.isVisible()) {
+                        var value = this.tagSuggestions.moveUp();
+                        // call ElementHelper.setValue to avoid firing ValueChangedEvent
+                        this.textInput.getEl().setValue(value || this.preservedValue);
+                        event.preventDefault();
+                    }
+                } else if (event.keyCode == 40) {
+                    if (this.tagSuggestions.isVisible()) {
+                        var value = this.tagSuggestions.moveDown();
+                        // call ElementHelper.setValue to avoid firing ValueChangedEvent
+                        this.textInput.getEl().setValue(value || this.preservedValue);
+                        event.preventDefault();
+                    }
                 }
             });
 
             this.textInput.onValueChanged((event: api.ui.ValueChangedEvent) => {
-                this.tagSuggester.suggest(event.getNewValue()).then((values: string[]) => {
-                    console.log(values);
+
+                var searchString = event.getNewValue();
+
+                this.tagSuggester.suggest(searchString).then((values: string[]) => {
+
+                    var existingValues = this.getTags().concat(searchString);
+                    values = values.filter((value: string) => (existingValues.indexOf(value) < 0));
+
+                    if (values.length == 0) {
+                        this.tagSuggestions.hide();
+                    } else {
+                        this.tagSuggestions.setTags(values);
+                        this.tagSuggestions.getEl().
+                            setTopPx(this.textInput.getEl().getOffsetToParent().top + this.textInput.getEl().getHeightWithMargin()).
+                            setLeftPx(this.textInput.getEl().getOffsetToParent().left);
+                        this.tagSuggestions.show();
+                        this.preservedValue = searchString;
+                    }
                 }).done();
             });
 
