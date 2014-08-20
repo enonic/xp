@@ -19,8 +19,6 @@ module api.liveedit.text {
 
         private editing: boolean;
 
-        private oneTimeCaretFlag: boolean;
-
         constructor(builder: TextComponentViewBuilder) {
             this.editing = false;
             super(builder.setContextMenuActions(this.createTextContextMenuActions()));
