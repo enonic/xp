@@ -17,7 +17,7 @@ public final class InputTypes
 
     public static final InputType DATE = new Date();
 
-    public static final InputType BOOLEAN = new Boolean();
+    public static final InputType CHECKBOX = new Checkbox();
 
     public static final InputType DOUBLE = new Double();
 
@@ -51,7 +51,7 @@ public final class InputTypes
         add( COLOR ).
         add( COMBO_BOX ).
         add( DATE ).
-        add( BOOLEAN ).
+        add( CHECKBOX ).
         add( DOUBLE ).
         add( GEO_POINT ).
         add( HTML_AREA ).
@@ -80,7 +80,7 @@ public final class InputTypes
         }
 
         registerDefaultInputType( ValueTypes.LOCAL_DATE, DATE );
-        registerDefaultInputType( ValueTypes.BOOLEAN, BOOLEAN );
+        registerDefaultInputType( ValueTypes.BOOLEAN, CHECKBOX );
         registerDefaultInputType( ValueTypes.STRING, TEXT_AREA );
         registerDefaultInputType( ValueTypes.XML, XML );
         registerDefaultInputType( ValueTypes.LONG, LONG );

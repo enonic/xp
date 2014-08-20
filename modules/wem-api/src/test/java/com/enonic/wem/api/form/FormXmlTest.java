@@ -229,7 +229,7 @@ public class FormXmlTest
 
         formBuilder.addFormItem( newInput().name( "myColor" ).inputType( InputTypes.COLOR ).build() );
         formBuilder.addFormItem( newInput().name( "myDate" ).inputType( InputTypes.DATE ).build() );
-        formBuilder.addFormItem( newInput().name( "myBoolean" ).inputType( InputTypes.BOOLEAN ).build() );
+        formBuilder.addFormItem( newInput().name( "myCheckbox" ).inputType( InputTypes.CHECKBOX ).build() );
         formBuilder.addFormItem( newInput().name( "myDouble" ).inputType( InputTypes.DOUBLE ).build() );
         formBuilder.addFormItem( newInput().name( "myGeoPoint" ).inputType( InputTypes.GEO_POINT ).build() );
         formBuilder.addFormItem( newInput().name( "myHtmlArea" ).inputType( InputTypes.HTML_AREA ).build() );

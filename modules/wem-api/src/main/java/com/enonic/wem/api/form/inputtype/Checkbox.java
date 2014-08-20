@@ -6,10 +6,10 @@ import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.form.BreaksRequiredContractException;
 
-public class Boolean
+public class Checkbox
     extends InputType
 {
-    public Boolean()
+    public Checkbox()
     {
 
     }

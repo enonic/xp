@@ -10,7 +10,7 @@
     <indexed>false</indexed>
     <occurrences minimum="0" maximum="1"/>
   </input>
-  <input name="myBoolean" type="Boolean">
+  <input name="myCheckbox" type="Checkbox">
     <immutable>false</immutable>
     <indexed>false</indexed>
     <occurrences minimum="0" maximum="1"/>

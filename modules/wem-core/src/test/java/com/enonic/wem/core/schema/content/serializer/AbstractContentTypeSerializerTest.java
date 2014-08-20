@@ -331,7 +331,7 @@ public abstract class AbstractContentTypeSerializerTest
 
         contentTypeBuilder.addFormItem( newInput().name( "myColor" ).inputType( InputTypes.COLOR ).build() );
         contentTypeBuilder.addFormItem( newInput().name( "myDate" ).inputType( InputTypes.DATE ).build() );
-        contentTypeBuilder.addFormItem( newInput().name( "myBoolean" ).inputType( InputTypes.BOOLEAN ).build() );
+        contentTypeBuilder.addFormItem( newInput().name( "myCheckbox" ).inputType( InputTypes.CHECKBOX ).build() );
         contentTypeBuilder.addFormItem( newInput().name( "myDouble" ).inputType( InputTypes.DOUBLE ).build() );
         contentTypeBuilder.addFormItem( newInput().name( "myGeoPoint" ).inputType( InputTypes.GEO_POINT ).build() );
         contentTypeBuilder.addFormItem( newInput().name( "myHtmlArea" ).inputType( InputTypes.HTML_AREA ).build() );
