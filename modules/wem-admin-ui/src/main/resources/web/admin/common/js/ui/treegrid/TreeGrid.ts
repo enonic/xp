@@ -242,6 +242,10 @@ module api.ui.treegrid {
             return this.contextMenu;
         }
 
+        getRoot(): TreeNode<NODE> {
+            return this.root;
+        }
+
         isActive(): boolean {
             return this.active;
         }
@@ -268,7 +272,7 @@ module api.ui.treegrid {
          * retrieving a a full data, or for the purpose of the
          * infinite scroll.
          */
-        fetch(data: NODE): wemQ.Promise<NODE> {
+        fetch(node: TreeNode<NODE>): wemQ.Promise<NODE> {
             var deferred = wemQ.defer<NODE>();
             // Empty logic
             deferred.resolve(null);
@@ -279,7 +283,7 @@ module api.ui.treegrid {
          * Used as a default children fetcher.
          * Must be overridden to use predefined root nodes.
          */
-        fetchChildren(parentData?: NODE): wemQ.Promise<NODE[]> {
+        fetchChildren(parentNode?: TreeNode<NODE>): wemQ.Promise<NODE[]> {
             var deferred = wemQ.defer<NODE[]>();
             // Empty logic
             deferred.resolve(null);
@@ -295,8 +299,8 @@ module api.ui.treegrid {
             return this.fetchChildren();
         }
 
-        private fetchData(parentData?: NODE): wemQ.Promise<NODE[]> {
-            return parentData ? this.fetchChildren(parentData) : this.fetchRoot();
+        private fetchData(parentNode?: TreeNode<NODE>): wemQ.Promise<NODE[]> {
+            return parentNode ? this.fetchChildren(parentNode) : this.fetchRoot();
         }
 
         filter(dataList: NODE[]) {
@@ -390,14 +394,14 @@ module api.ui.treegrid {
         }
 
         // Hard reset
-        reload(parentData?: NODE): void {
+        reload(parentNode?: TreeNode<NODE>): void {
             this.root = new TreeNodeBuilder<NODE>().build();
 
             this.initData([]);
 
             this.root.setExpanded(true);
 
-            this.fetchData(parentData)
+            this.fetchData(parentNode)
                 .then((dataList: NODE[]) => {
                     this.root.setChildrenFromData(dataList);
                     this.initData(this.root.treeToList());
@@ -445,7 +449,7 @@ module api.ui.treegrid {
                 }
             });
             var promises = updated.map((el) => {
-                return this.fetch(el.getData());
+                return this.fetch(el);
             });
             wemQ.all(promises).then((results: NODE[]) => {
                 results.forEach((result: NODE, index: number) => {
@@ -458,15 +462,14 @@ module api.ui.treegrid {
             }).done(() => this.notifyLoaded());
         }
 
-        private initData(nodes: TreeNode<NODE>[]) {
+        initData(nodes: TreeNode<NODE>[]) {
             this.gridData.setItems(nodes, "id");
         }
 
         private expandNode(node?: TreeNode<NODE>) {
             node = node || this.root;
 
-            var parent = node.getData(),
-                rootList: TreeNode<NODE>[],
+            var rootList: TreeNode<NODE>[],
                 nodeList: TreeNode<NODE>[];
 
             if (node) {
@@ -478,7 +481,7 @@ module api.ui.treegrid {
                     this.initData(rootList);
                     this.updateExpanded(node, nodeList, rootList);
                 } else {
-                    this.fetchData(parent)
+                    this.fetchData(node)
                         .then((dataList: NODE[]) => {
                             node.setChildrenFromData(dataList);
                             rootList = this.root.treeToList();

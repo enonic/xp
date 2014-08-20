@@ -9,8 +9,10 @@
 ///<reference path='ContentIconUrlResolver.ts' />
 ///<reference path='ContentImageUrlResolver.ts' />
 ///<reference path='ContentData.ts' />
+///<reference path='ContentMetadata.ts' />
 ///<reference path='ContentDataFactory.ts' />
 ///<reference path='Content.ts' />
+///<reference path='ContentResponse.ts' />
 ///<reference path='Thumbnail.ts' />
 ///<reference path='ThumbnailJson.ts' />
 

@@ -70,7 +70,7 @@
 
     .selected {
       background-color: @admin-blue;
-      color: white;
+      color: @admin-white;
     }
 
     .slick-cell {
@@ -93,9 +93,17 @@
         background-color: @admin-almost-white-bg;
       }
 
+      .children-to-load {
+        padding-left: 46px;
+        color: @admin-light-gray-font;
+        font-size: 13px;
+        .ellipsis();
+        .noSelect();
+      }
+
       .selected {
-        h6, p {
-          color: white;
+        h6, p, .children-to-load {
+          color: @admin-white;
         }
       }
 

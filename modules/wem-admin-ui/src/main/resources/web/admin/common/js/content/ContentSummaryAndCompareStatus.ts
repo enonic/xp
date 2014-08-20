@@ -24,11 +24,11 @@ module api.content {
         }
 
         getId(): string {
-            return this.contentSummary.getId();
+            return !!this.contentSummary ? this.contentSummary.getId() : "";
         }
 
         hasChildren(): boolean {
-            return this.contentSummary.hasChildren();
+            return !!this.contentSummary ? this.contentSummary.hasChildren() : false;
         }
     }
 }

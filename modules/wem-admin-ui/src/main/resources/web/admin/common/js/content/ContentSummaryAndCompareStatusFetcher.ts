@@ -2,13 +2,21 @@ module api.content {
 
     export class ContentSummaryAndCompareStatusFetcher {
 
-        static fetchChildren(parentContentId: string): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
+        static fetchChildren(parentContentId: string, from: number = 0, size: number = -1): wemQ.Promise<ContentResponse<ContentSummaryAndCompareStatus>> {
 
-            var deferred = wemQ.defer<ContentSummaryAndCompareStatus[]>();
+            var deferred = wemQ.defer<ContentResponse<ContentSummaryAndCompareStatus>>();
 
-            new ListContentByIdRequest(parentContentId).sendAndParse().then((contentSummaries: ContentSummary[])=> {
-                CompareContentRequest.fromContentSummaries(contentSummaries).sendAndParse().then((compareResults: CompareContentResults) => {
-                    deferred.resolve(ContentSummaryAndCompareStatusFetcher.updateCompareStatus(contentSummaries, compareResults));
+            new ListContentByIdRequest(parentContentId).
+                setFrom(from).
+                setSize(size).
+                sendAndParse().
+            then((response: ContentResponse<ContentSummary>)=> {
+                CompareContentRequest.fromContentSummaries(response.getContents()).sendAndParse().then((compareResults: CompareContentResults) => {
+                    var result = new ContentResponse<ContentSummaryAndCompareStatus>(
+                        ContentSummaryAndCompareStatusFetcher.updateCompareStatus(response.getContents(), compareResults),
+                        response.getMetadata()
+                    );
+                    deferred.resolve(result);
                 });
             });
 

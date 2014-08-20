@@ -9,6 +9,7 @@ module app.browse {
     import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
     import TreeGridContextMenu = api.ui.treegrid.TreeGridContextMenu;
 
+    import ContentResponse = api.content.ContentResponse;
     import ContentSummary = api.content.ContentSummary;
     import ContentSummaryViewer = api.content.ContentSummaryViewer;
     import CompareContentRequest = api.content.CompareContentRequest;
@@ -24,6 +25,8 @@ module app.browse {
     import CompareStatus = api.content.CompareStatus;
 
     export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
+
+        static MAX_FETCH_SIZE: number = 5;
 
         constructor() {
             var nameColumn = new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().
@@ -88,11 +91,31 @@ module app.browse {
 
             this.getGrid().subscribeOnDblClick((event, data) => {
                 if (this.isActive()) {
-                    new EditContentEvent([this.getGrid().getDataView().getItem(data.row).getData().getContentSummary()]).fire();
+                    var node = this.getGrid().getDataView().getItem(data.row);
+                    /*
+                     * Empty node double-clicked. Additional %MAX_FETCH_SIZE%
+                     * nodes will be loaded and displayed. If the any other
+                     * node is clicked, edit event will be triggered by default.
+                     */
+                    if (!node.getData().getContentSummary()) {
+                        this.setActive(false);
+                        this.fetchChildren(node.getParent()).then((dataList: ContentSummaryAndCompareStatus[]) => {
+                            node.getParent().setChildrenFromData(dataList);
+                            this.initData(this.getRoot().treeToList());
+                        }).catch((reason: any) => {
+                            api.DefaultErrorHandler.handle(reason);
+                        }).finally(() => {
+                            this.setActive(true);
+                        }).done(() => this.notifyLoaded());
+                    } else { // default event
+                        new EditContentEvent([node.getData().getContentSummary()]).fire();
+                    }
                 }
             });
 
-            // Filter events
+            /*
+             * Filter (search) events.
+             */
             ContentBrowseSearchEvent.on((event) => {
                 var contentSummaries = ContentSummary.fromJsonArray(event.getJsonModels()),
                     compareRequest = CompareContentRequest.fromContentSummaries(contentSummaries);
@@ -111,6 +134,10 @@ module app.browse {
         }
 
         private statusFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
+
+            if (!node.getData().getContentSummary()) {
+                return "";
+            }
 
             var compareLabel: string = api.content.CompareStatus[value];
 
@@ -141,19 +168,56 @@ module app.browse {
         }
 
         private nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
-            var contentSummaryViewer = new ContentSummaryViewer();
-            contentSummaryViewer.setObject(node.getData().getContentSummary(), node.calcLevel() > 1);
-            return contentSummaryViewer.toString();
+            if (!!node.getData().getContentSummary()) {  // default node
+
+                var contentSummaryViewer = new ContentSummaryViewer();
+                contentSummaryViewer.setObject(node.getData().getContentSummary(), node.calcLevel() > 1);
+                return contentSummaryViewer.toString();
+
+            } else { // `load more` node
+                var content = new api.dom.DivEl("children-to-load"),
+                    parent = node.getParent();
+                content.setHtml((parent.getMaxChildren() - parent.getChildren().length + 1) + " children left to load. Double-click to load more.");
+
+                return content.toString();
+            }
+
         }
 
-        fetch(data: ContentSummaryAndCompareStatus): wemQ.Promise<ContentSummaryAndCompareStatus> {
-            var contentId = data.getId();
+        fetch(node: TreeNode<ContentSummaryAndCompareStatus>): wemQ.Promise<ContentSummaryAndCompareStatus> {
+            var contentId = node.getData().getId();
             return ContentSummaryAndCompareStatusFetcher.fetch(contentId);
         }
 
-        fetchChildren(parentData?: ContentSummaryAndCompareStatus): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
-            var parentContentId = parentData ? parentData.getId() : "";
-            return ContentSummaryAndCompareStatusFetcher.fetchChildren(parentContentId);
+        fetchChildren(parentNode?: TreeNode<ContentSummaryAndCompareStatus>): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
+            var parentContentId = "";
+            if (parentNode) {
+                parentContentId = parentNode.getData() ? parentNode.getData().getId() : parentContentId;
+            } else {
+                parentNode = this.getRoot();
+            }
+
+            var from = parentNode.getChildren().length;
+            if (from > 0 && !parentNode.getChildren()[from - 1].getData().getContentSummary()) {
+                parentNode.getChildren().pop();
+                from--;
+            }
+
+            return ContentSummaryAndCompareStatusFetcher.fetchChildren(parentContentId, from, ContentTreeGrid.MAX_FETCH_SIZE).
+                then((data: ContentResponse<ContentSummaryAndCompareStatus>) => {
+                    var contents = parentNode.getChildren().map((el) => {
+                            return el.getData();
+                        }).slice(0, from).concat(data.getContents());
+
+                    var meta = data.getMetadata();
+
+                    parentNode.setMaxChildren(meta.getTotalHits());
+                    if (from + meta.getHits() < meta.getTotalHits()) {
+                        contents.push(new ContentSummaryAndCompareStatus(null, null));
+                    }
+
+                    return contents;
+                });
         }
 
         hasChildren(data: ContentSummaryAndCompareStatus): boolean {

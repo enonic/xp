@@ -107,12 +107,14 @@ module app.browse {
                 }
                 if (i === index) {
                     var content = node.getData().getContentSummary();
-                    var item = new BrowseItem<ContentSummary>(content).
-                        setId(content.getId()).
-                        setDisplayName(content.getDisplayName()).
-                        setPath(content.getPath().toString()).
-                        setIconUrl(new ContentIconUrlResolver().setContent(content).resolve());
-                    browseItems.push(item);
+                    if (!!content) {
+                        var item = new BrowseItem<ContentSummary>(content).
+                            setId(content.getId()).
+                            setDisplayName(content.getDisplayName()).
+                            setPath(content.getPath().toString()).
+                            setIconUrl(new ContentIconUrlResolver().setContent(content).resolve());
+                        browseItems.push(item);
+                    }
                 }
             });
 

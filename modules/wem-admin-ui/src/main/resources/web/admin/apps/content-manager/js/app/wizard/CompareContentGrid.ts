@@ -3,6 +3,7 @@ module app.wizard {
     import GridColumn = api.ui.grid.GridColumn;
     import GridColumnBuilder = api.ui.grid.GridColumnBuilder;
 
+    import ContentResponse = api.content.ContentResponse;
     import ContentSummary = api.content.ContentSummary;
     import ContentSummaryViewer = api.content.ContentSummaryViewer;
 
@@ -41,9 +42,12 @@ module app.wizard {
             return contentSummaryViewer.toString();
         }
 
-        fetchChildren(parent?: ContentSummaryAndCompareStatus): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
-            var parentContentId = parent ? parent.getId() : "";
-            return api.content.ContentSummaryAndCompareStatusFetcher.fetchChildren(parentContentId);
+        fetchChildren(parentNode?: TreeNode<ContentSummaryAndCompareStatus>): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
+            var parentContentId = parentNode && parentNode.getData() ? parentNode.getData().getId() : "";
+            return api.content.ContentSummaryAndCompareStatusFetcher.fetchChildren(parentContentId).
+                then((data: ContentResponse<ContentSummaryAndCompareStatus>) => {
+                    return data.getContents();
+                });
         }
 
         hasChildren(elem: ContentSummaryAndCompareStatus): boolean {

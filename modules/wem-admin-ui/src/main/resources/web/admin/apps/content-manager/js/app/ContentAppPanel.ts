@@ -117,9 +117,7 @@ module app {
 
             if (tabMenuItem != null) {
                 this.selectPanel(tabMenuItem);
-
-            }
-            else {
+            } else {
                 this.mask.show();
                 tabMenuItem = new api.app.AppBarTabMenuItem("[New " + contentTypeSummary.getDisplayName() + "]", tabId);
 
@@ -147,6 +145,9 @@ module app {
 
             var contents: api.content.ContentSummary[] = event.getModels();
             contents.forEach((content: api.content.ContentSummary) => {
+                if (!content) {
+                    return;
+                }
 
                 var tabMenuItem = this.isContentBeingEditedOrViewed(content);
 
@@ -174,6 +175,9 @@ module app {
 
             var contents: api.content.ContentSummary[] = event.getModels();
             contents.forEach((content: api.content.ContentSummary) => {
+                if (!content) {
+                    return;
+                }
 
                 var tabMenuItem = this.isContentBeingEditedOrViewed(content);
 
@@ -208,17 +212,19 @@ module app {
         }
 
         private isContentBeingEditedOrViewed(content: api.content.ContentSummary): api.app.AppBarTabMenuItem {
-            var tabId = this.getAppBarTabMenu().getNavigationItemById(api.app.AppBarTabId.forEdit(content.getId()));
-            if (tabId) {
-                return tabId;
+            if (!!content) {
+
+                var tabId = this.getAppBarTabMenu().getNavigationItemById(api.app.AppBarTabId.forEdit(content.getId()));
+                if (tabId) {
+                    return tabId;
+                }
+                tabId = this.getAppBarTabMenu().getNavigationItemById(api.app.AppBarTabId.forView(content.getId()));
+                if (tabId) {
+                    return tabId;
+                }
             }
-            tabId = this.getAppBarTabMenu().getNavigationItemById(api.app.AppBarTabId.forView(content.getId()));
-            if (tabId) {
-                return tabId;
-            }
-            else {
-                return null;
-            }
+
+            return null;
         }
     }
 

@@ -1,6 +1,6 @@
 module api.content {
 
-    export class ListContentByIdRequest extends ContentResourceRequest<ListContentResult<api.content.json.ContentSummaryJson>, ContentSummary[]> {
+    export class ListContentByIdRequest extends ContentResourceRequest<ListContentResult<api.content.json.ContentSummaryJson>, ContentResponse<ContentSummary>> {
 
         private parentId:string;
 
@@ -16,19 +16,22 @@ module api.content {
             this.parentId = parentId;
         }
 
-        setExpand(value:api.rest.Expand) {
+        setExpand(value:api.rest.Expand): ListContentByIdRequest {
             this.expand = value;
+            return this;
         }
 
-        setFrom(value: number) {
+        setFrom(value: number): ListContentByIdRequest {
             this.from = value;
+            return this;
         }
 
-        setSize(value: number) {
+        setSize(value: number): ListContentByIdRequest {
             this.size = value;
+            return this;
         }
 
-        getParams():Object {
+        getParams(): Object {
             return {
                 parentId: this.parentId,
                 expand: this.expand,
@@ -37,14 +40,17 @@ module api.content {
             };
         }
 
-        getRequestPath():api.rest.Path {
+        getRequestPath(): api.rest.Path {
             return api.rest.Path.fromParent(super.getResourcePath(), "list");
         }
 
-        sendAndParse(): wemQ.Promise<ContentSummary[]> {
+        sendAndParse(): wemQ.Promise<ContentResponse<ContentSummary>> {
 
             return this.send().then((response:api.rest.JsonResponse<ListContentResult<api.content.json.ContentSummaryJson>>) => {
-                return api.content.ContentSummary.fromJsonArray( response.getResult().contents );
+                return new ContentResponse(
+                    ContentSummary.fromJsonArray(response.getResult().contents),
+                    new ContentMetadata(response.getResult().metadata["hits"], response.getResult().metadata["totalHits"])
+                );
             });
         }
     }
