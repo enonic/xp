@@ -28,7 +28,7 @@ module api.schema.content {
             return api.rest.Path.fromParent(super.getResourcePath(), "create");
         }
 
-        sendAndParse(): Q.Promise<ContentType> {
+        sendAndParse(): wemQ.Promise<ContentType> {
 
             return this.send().then((response: api.rest.JsonResponse<api.schema.content.json.ContentTypeJson>) => {
                 var contentType = this.fromJsonToContentType(response.getResult());

@@ -4,7 +4,7 @@ module api.content.page.layout {
 
     export class DefaultLayoutDescriptorResolver {
 
-        static resolve(moduleKeys: ModuleKey[]) : Q.Promise<LayoutDescriptor> {
+        static resolve(moduleKeys: ModuleKey[]) : wemQ.Promise<LayoutDescriptor> {
 
             return new GetLayoutDescriptorsByModulesRequest(moduleKeys).
                 sendAndParse().then((descriptors: LayoutDescriptor[]) => {

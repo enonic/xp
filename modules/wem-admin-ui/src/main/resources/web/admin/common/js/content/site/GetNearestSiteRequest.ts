@@ -20,7 +20,7 @@ module api.content.site {
             return api.rest.Path.fromParent(super.getResourcePath(), "nearest");
         }
 
-        sendAndParse(): Q.Promise<api.content.Content> {
+        sendAndParse(): wemQ.Promise<api.content.Content> {
 
             return this.send().then((response: api.rest.JsonResponse<api.content.json.ContentJson>) => {
                 return response.isBlank() ? null : this.fromJsonToContent(response.getResult());

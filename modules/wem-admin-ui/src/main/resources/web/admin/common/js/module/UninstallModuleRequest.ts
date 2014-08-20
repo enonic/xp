@@ -20,7 +20,7 @@ module api.module {
             };
         }
 
-        sendAndParse(): Q.Promise<void> {
+        sendAndParse(): wemQ.Promise<void> {
 
             return this.send().then((response: api.rest.JsonResponse<api.item.ItemJson>) => {
 

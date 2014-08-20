@@ -41,7 +41,7 @@ module app.wizard {
             return contentSummaryViewer.toString();
         }
 
-        fetchChildren(parent?: ContentSummaryAndCompareStatus): Q.Promise<ContentSummaryAndCompareStatus[]> {
+        fetchChildren(parent?: ContentSummaryAndCompareStatus): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
             var parentContentId = parent ? parent.getId() : "";
             return api.content.ContentSummaryAndCompareStatusFetcher.fetchChildren(parentContentId);
         }

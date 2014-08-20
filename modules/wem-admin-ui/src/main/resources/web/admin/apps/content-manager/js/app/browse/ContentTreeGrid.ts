@@ -146,12 +146,12 @@ module app.browse {
             return contentSummaryViewer.toString();
         }
 
-        fetch(data: ContentSummaryAndCompareStatus): Q.Promise<ContentSummaryAndCompareStatus> {
+        fetch(data: ContentSummaryAndCompareStatus): wemQ.Promise<ContentSummaryAndCompareStatus> {
             var contentId = data.getId();
             return ContentSummaryAndCompareStatusFetcher.fetch(contentId);
         }
 
-        fetchChildren(parentData?: ContentSummaryAndCompareStatus): Q.Promise<ContentSummaryAndCompareStatus[]> {
+        fetchChildren(parentData?: ContentSummaryAndCompareStatus): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
             var parentContentId = parentData ? parentData.getId() : "";
             return ContentSummaryAndCompareStatusFetcher.fetchChildren(parentContentId);
         }

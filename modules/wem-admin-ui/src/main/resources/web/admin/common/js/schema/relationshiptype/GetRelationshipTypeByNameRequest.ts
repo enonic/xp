@@ -20,7 +20,7 @@ module api.schema.relationshiptype {
             return super.getResourcePath();
         }
 
-        sendAndParse(): Q.Promise<RelationshipType> {
+        sendAndParse(): wemQ.Promise<RelationshipType> {
 
             return this.send().then((response: api.rest.JsonResponse<json.RelationshipTypeJson>) => {
                 return this.fromJsonToReleationshipType(response.getResult());

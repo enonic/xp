@@ -6,4 +6,4 @@ declare var Mousetrap:MousetrapStatic;
 declare var Admin;
 
 
-Q.longStackSupport = true;
+wemQ.longStackSupport = true;

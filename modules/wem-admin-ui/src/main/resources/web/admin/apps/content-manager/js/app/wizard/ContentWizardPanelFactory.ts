@@ -63,7 +63,7 @@ module app.wizard {
             return this;
         }
 
-        createForNew(): Q.Promise<ContentWizardPanel> {
+        createForNew(): wemQ.Promise<ContentWizardPanel> {
 
             this.creatingForNew = true;
 
@@ -100,7 +100,7 @@ module app.wizard {
             });
         }
 
-        createForEdit(): Q.Promise<ContentWizardPanel> {
+        createForEdit(): wemQ.Promise<ContentWizardPanel> {
 
             this.creatingForNew = false;
 
@@ -141,23 +141,23 @@ module app.wizard {
             });
         }
 
-        private loadContentToEdit(): Q.Promise<Content> {
+        private loadContentToEdit(): wemQ.Promise<Content> {
             return new api.content.GetContentByIdRequest(this.contentId).sendAndParse();
         }
 
-        private loadContentType(name: ContentTypeName): Q.Promise<ContentType> {
+        private loadContentType(name: ContentTypeName): wemQ.Promise<ContentType> {
             return new api.schema.content.GetContentTypeByNameRequest(name).sendAndParse();
         }
 
-        private loadSite(contentId: ContentId): Q.Promise<Content> {
+        private loadSite(contentId: ContentId): wemQ.Promise<Content> {
             return contentId ? new api.content.site.GetNearestSiteRequest(contentId).sendAndParse() : Q<Content>(null);
         }
 
-        private loadSiteTemplate(key: SiteTemplateKey): Q.Promise<SiteTemplate> {
+        private loadSiteTemplate(key: SiteTemplateKey): wemQ.Promise<SiteTemplate> {
             return key ? new api.content.site.template.GetSiteTemplateRequest(key).sendAndParse() : Q<SiteTemplate>(null);
         }
 
-        private loadDefaultModels(siteTemplate: SiteTemplate, contentType: ContentTypeName): Q.Promise<DefaultModels> {
+        private loadDefaultModels(siteTemplate: SiteTemplate, contentType: ContentTypeName): wemQ.Promise<DefaultModels> {
 
             if (siteTemplate) {
                 return DefaultModelsFactory.create(<DefaultModelsFactoryConfig>{
@@ -171,7 +171,7 @@ module app.wizard {
             }
         }
 
-        private loadParentContent(): Q.Promise<Content> {
+        private loadParentContent(): wemQ.Promise<Content> {
 
             if (this.parentContent != null) {
                 return Q(this.parentContent);
@@ -186,9 +186,9 @@ module app.wizard {
             return new api.content.GetContentByPathRequest(this.contentToEdit.getPath().getParentPath()).sendAndParse();
         }
 
-        private newContentWizardPanelForNew(): Q.Promise<app.wizard.ContentWizardPanel> {
+        private newContentWizardPanelForNew(): wemQ.Promise<app.wizard.ContentWizardPanel> {
 
-            var deferred = Q.defer<app.wizard.ContentWizardPanel>();
+            var deferred = wemQ.defer<app.wizard.ContentWizardPanel>();
 
             var wizardParams = new app.wizard.ContentWizardPanelParams().
                 setAppBarTabId(this.appBarTabId).
@@ -212,9 +212,9 @@ module app.wizard {
             return deferred.promise;
         }
 
-        private newContentWizardPanelForEdit(): Q.Promise<app.wizard.ContentWizardPanel> {
+        private newContentWizardPanelForEdit(): wemQ.Promise<app.wizard.ContentWizardPanel> {
 
-            var deferred = Q.defer<ContentWizardPanel>();
+            var deferred = wemQ.defer<ContentWizardPanel>();
 
             var wizardParams = new ContentWizardPanelParams().
                 setAppBarTabId(this.appBarTabId).

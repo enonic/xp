@@ -41,7 +41,7 @@ module api.content {
             return api.rest.Path.fromParent(super.getResourcePath(), "list");
         }
 
-        sendAndParse(): Q.Promise<ContentSummary[]> {
+        sendAndParse(): wemQ.Promise<ContentSummary[]> {
 
             return this.send().then((response:api.rest.JsonResponse<ListContentResult<api.content.json.ContentSummaryJson>>) => {
                 return api.content.ContentSummary.fromJsonArray( response.getResult().contents );

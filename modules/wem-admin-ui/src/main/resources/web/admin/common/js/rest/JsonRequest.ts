@@ -23,9 +23,9 @@ module api.rest {
             return this;
         }
 
-        send(): Q.Promise<JsonResponse<RAW_JSON_TYPE>> {
+        send(): wemQ.Promise<JsonResponse<RAW_JSON_TYPE>> {
 
-            var deferred = Q.defer<JsonResponse<RAW_JSON_TYPE>>();
+            var deferred = wemQ.defer<JsonResponse<RAW_JSON_TYPE>>();
 
             var request: XMLHttpRequest = new XMLHttpRequest();
             request.timeout = 10000;

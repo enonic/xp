@@ -24,7 +24,7 @@ module api.schema {
             return api.rest.Path.fromParent(super.getResourcePath(), "list");
         }
 
-        sendAndParse(): Q.Promise<Schema[]> {
+        sendAndParse(): wemQ.Promise<Schema[]> {
 
             return this.send().then((response: api.rest.JsonResponse<SchemaListJson>) => {
                 return this.fromJsonArrayToSchemaArray(response.getResult().schemas);

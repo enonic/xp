@@ -51,7 +51,7 @@ module app.browse {
             return viewer.toString();
         }
 
-        fetchChildren(parentData?: Schema): Q.Promise<Schema[]> {
+        fetchChildren(parentData?: Schema): wemQ.Promise<Schema[]> {
             var parentId = parentData ? parentData.getKey() : '';
             return new api.schema.SchemaTreeRequest(parentId).sendAndParse();
         }

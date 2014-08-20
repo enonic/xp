@@ -32,7 +32,7 @@ module api.content {
             return api.rest.Path.fromParent(super.getResourcePath(), "compare");
         }
 
-        sendAndParse(): Q.Promise<CompareContentResults> {
+        sendAndParse(): wemQ.Promise<CompareContentResults> {
             return this.send().then((response: api.rest.JsonResponse<api.content.json.CompareContentResultsJson>) => {
                 return this.fromJsonToCompareResults(response.getResult());
             });

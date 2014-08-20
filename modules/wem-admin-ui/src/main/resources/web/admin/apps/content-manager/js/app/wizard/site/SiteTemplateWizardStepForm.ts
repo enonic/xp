@@ -57,8 +57,8 @@ module app.wizard.site {
             this.appendChild(this.moduleViewsContainer);
         }
 
-        private loadSiteTemplateDropdown(): Q.Promise<void> {
-            var deferred = Q.defer<void>();
+        private loadSiteTemplateDropdown(): wemQ.Promise<void> {
+            var deferred = wemQ.defer<void>();
 
             new GetAllSiteTemplatesRequest().sendAndParse()
                 .then((siteTemplates: SiteTemplateSummary[]) => {
@@ -127,12 +127,12 @@ module app.wizard.site {
             }
         }
 
-        public renderExisting(context: api.content.form.ContentFormContext, site: Site): Q.Promise<void> {
+        public renderExisting(context: api.content.form.ContentFormContext, site: Site): wemQ.Promise<void> {
             this.setFormContext(context);
             return this.doRenderExisting(site.getModuleConfigs());
         }
 
-        private doRenderExisting(moduleConfigs: api.content.site.ModuleConfig[]): Q.Promise<void> {
+        private doRenderExisting(moduleConfigs: api.content.site.ModuleConfig[]): wemQ.Promise<void> {
             this.setModuleConfigs(moduleConfigs);
 
             if (this.siteTemplateDropdownLoaded) {
@@ -166,15 +166,15 @@ module app.wizard.site {
             this.formContext = formContext;
         }
 
-        private loadModules(moduleConfigs: api.content.site.ModuleConfig[]): Q.Promise<Module[]> {
+        private loadModules(moduleConfigs: api.content.site.ModuleConfig[]): wemQ.Promise<Module[]> {
 
             var moduleRequestPromises = moduleConfigs.map((moduleConfig: api.content.site.ModuleConfig) => {
                 return new api.module.GetModuleRequest(moduleConfig.getModuleKey()).sendAndParse();
             });
 
-            return Q.allSettled(moduleRequestPromises).then((results: Q.PromiseState<Module>[])=> {
-                return results.filter((result: Q.PromiseState<Module>) => (result.state == "fulfilled")).
-                    map((result: Q.PromiseState<Module>) => result.value);
+            return wemQ.allSettled(moduleRequestPromises).then((results: wemQ.PromiseState<Module>[])=> {
+                return results.filter((result: wemQ.PromiseState<Module>) => (result.state == "fulfilled")).
+                    map((result: wemQ.PromiseState<Module>) => result.value);
             });
         }
 

@@ -263,7 +263,7 @@ module app.wizard.page {
             super.remove();
         }
 
-        setPage(content: Content, pageTemplate: PageTemplate): Q.Promise<void> {
+        setPage(content: Content, pageTemplate: PageTemplate): wemQ.Promise<void> {
 
             api.util.assertNotNull(content, "Expected content not be null");
 
@@ -286,10 +286,10 @@ module app.wizard.page {
             return this.loadPage();
         }
 
-        private loadPage(): Q.Promise<void> {
+        private loadPage(): wemQ.Promise<void> {
 
             if (this.pageSkipReload == true) {
-                var deferred = Q.defer<void>();
+                var deferred = wemQ.defer<void>();
                 deferred.resolve(null);
                 return deferred.promise;
 
@@ -299,7 +299,7 @@ module app.wizard.page {
                     this.unShown(shownListener);
                 };
                 this.onShown(shownListener);
-                var deferred = Q.defer<void>();
+                var deferred = wemQ.defer<void>();
                 deferred.resolve(null);
                 return deferred.promise;
 
@@ -319,16 +319,16 @@ module app.wizard.page {
                 });
 
             } else {
-                var deferred = Q.defer<void>();
+                var deferred = wemQ.defer<void>();
                 deferred.resolve(null);
                 return deferred.promise;
             }
         }
 
-        private loadPageDescriptor(): Q.Promise<void> {
+        private loadPageDescriptor(): wemQ.Promise<void> {
 
             if (!this.pageTemplate) {
-                var deferred = Q.defer<void>();
+                var deferred = wemQ.defer<void>();
                 deferred.resolve(null);
                 return deferred.promise;
             }
@@ -360,7 +360,7 @@ module app.wizard.page {
             }
         }
 
-        private initializePageFromDefault(): Q.Promise<void> {
+        private initializePageFromDefault(): wemQ.Promise<void> {
 
             var defaultPageTemplate = this.defaultModels.getPageTemplate();
 

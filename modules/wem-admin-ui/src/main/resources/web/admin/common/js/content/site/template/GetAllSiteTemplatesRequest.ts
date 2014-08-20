@@ -15,7 +15,7 @@ module api.content.site.template {
             return api.rest.Path.fromParent(super.getResourcePath(), "list");
         }
 
-        sendAndParse(): Q.Promise<SiteTemplateSummary[]> {
+        sendAndParse(): wemQ.Promise<SiteTemplateSummary[]> {
 
             return this.send().then((response: api.rest.JsonResponse<SiteTemplateSummaryListJson>) => {
                 return this.fromJsonArrayToSiteTemplateSummaryArray(response.getResult().siteTemplates);

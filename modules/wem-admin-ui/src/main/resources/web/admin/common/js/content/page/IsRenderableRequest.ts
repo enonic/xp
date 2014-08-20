@@ -25,7 +25,7 @@ module api.content.page {
             return api.rest.Path.fromParent(super.getResourcePath(), "isRenderable");
         }
 
-        sendAndParse(): Q.Promise<boolean> {
+        sendAndParse(): wemQ.Promise<boolean> {
 
             return this.send().then((response: api.rest.JsonResponse<boolean>) => {
                 return response.getResult();
