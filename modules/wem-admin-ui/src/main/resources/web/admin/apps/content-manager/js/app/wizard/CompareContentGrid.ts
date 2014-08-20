@@ -25,7 +25,7 @@ module app.wizard {
                             setField("displayName").
                             setFormatter(this.nameFormatter).
                             build()
-                    ]).prependClasses("content-grid")
+                    ]).prependClasses("content-tree-grid")
             );
 
             this.content = content;
