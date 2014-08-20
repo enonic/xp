@@ -1,1 +1,1 @@
-///<reference path='Boolean.ts' />
+///<reference path='Checkbox.ts' />

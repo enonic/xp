@@ -1,14 +1,14 @@
 {
     "name": "boolean",
-    "displayName": "Boolean",
+    "displayName": "Checkbox",
     "superType": "structured",
     "isAbstract": false,
     "isFinal": true,
     "form": [
         {
             "Input": {
-                "name": "boolean_unlimited",
-                "label": "Boolean, unlimited occurrences",
+                "name": "checkbox_unlimited",
+                "label": "Checkbox, unlimited occurrences",
                 "immutable": false,
                 "occurrences": {
                     "minimum": 0,
@@ -19,14 +19,14 @@
                 "validationRegexp": null,
                 "helpText": "Some help text",
                 "type": {
-                    "name": "Boolean"
+                    "name": "Checkbox"
                 }
             }
         },
         {
             "Input": {
-                "name": "boolean_max1",
-                "label": "Boolean, max 1",
+                "name": "checkbox_max1",
+                "label": "Checkbox, max 1",
                 "immutable": false,
                 "occurrences": {
                     "minimum": 0,
@@ -37,14 +37,14 @@
                 "validationRegexp": null,
                 "helpText": "Some help text",
                 "type": {
-                    "name": "Boolean"
+                    "name": "Checkbox"
                 }
             }
         },
         {
             "Input": {
-                "name": "boolean_max5",
-                "label": "Boolean, max 5 occurrences",
+                "name": "checkbox_max5",
+                "label": "Checkbox, max 5 occurrences",
                 "immutable": false,
                 "occurrences": {
                     "minimum": 0,
@@ -55,7 +55,7 @@
                 "validationRegexp": null,
                 "helpText": "Some help text",
                 "type": {
-                    "name": "Boolean"
+                    "name": "Checkbox"
                 }
             }
         }

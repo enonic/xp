@@ -24,6 +24,8 @@ import static com.enonic.wem.api.schema.content.editor.SetContentTypeEditor.newS
 public class ContentTypesInitializer
     extends BaseInitializer
 {
+    public static Form MEDIA_IMAGE_FORM = createMediaImageForm();
+
     static final ContentType STRUCTURED = createSystemType( ContentTypeName.structured() ).
         setFinal( false ).setAbstract( true ).build();
 
@@ -94,9 +96,7 @@ public class ContentTypesInitializer
             "demo-contenttype-mixin-norwegian-counties.json", "demo-contenttype-relation-article.json", "demo-contenttype-layout.json",
             "demo-contenttype-formItemset-min-occurrences.json", "demo-contenttype-singleSelectors.json", "demo-contenttype-comboBox.json",
             "demo-contenttype-all-input-types.json", "demo-contenttype-imageselector.json",
-            "demo-contenttype-several-levels-of-formItemset.json", "demo-contenttype-tag.json", "demo-contenttype-boolean.json"};
-
-    public static Form MEDIA_IMAGE_FORM = createMediaImageForm();
+            "demo-contenttype-several-levels-of-formItemset.json", "demo-contenttype-tag.json", "demo-contenttype-checkbox.json"};
 
     private final ContentTypeJsonSerializer contentTypeJsonSerializer = new ContentTypeJsonSerializer();
 

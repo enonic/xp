@@ -2,7 +2,7 @@ module api.content.form.inputtype.bool {
 
     import support = api.form.inputtype.support;
 
-    export class Boolean extends support.BaseInputTypeNotManagingAdd<any> {
+    export class Checkbox extends support.BaseInputTypeNotManagingAdd<any> {
 
         constructor(config: api.form.inputtype.InputTypeViewContext<any>) {
             super(config);
@@ -57,6 +57,7 @@ module api.content.form.inputtype.bool {
         }
 
     }
-    api.form.inputtype.InputTypeManager.register(new api.Class("Boolean", Boolean));
+
+    api.form.inputtype.InputTypeManager.register(new api.Class("Checkbox", Checkbox));
 
 }
