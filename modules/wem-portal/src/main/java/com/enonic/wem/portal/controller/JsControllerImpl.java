@@ -3,7 +3,8 @@ package com.enonic.wem.portal.controller;
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.portal.postprocess.PostProcessor;
-import com.enonic.wem.portal.script.runner.ScriptRunner;
+import com.enonic.wem.portal.script.lib.ContextScriptBean;
+import com.enonic.wem.script.ScriptRunner;
 
 final class JsControllerImpl
     implements JsController
@@ -42,14 +43,14 @@ final class JsControllerImpl
         return this;
     }
 
-    private Resource findScript( final String method )
+    private ResourceKey findScript( final String method )
     {
         final ResourceKey key = this.scriptDir.resolve( method.toLowerCase() + ".js" );
         final Resource resource = Resource.from( key );
 
         if ( resource.exists() )
         {
-            return resource;
+            return key;
         }
 
         return null;
@@ -59,7 +60,7 @@ final class JsControllerImpl
     public void execute()
     {
         final String method = this.context.getRequest().getMethod();
-        final Resource script = findScript( method );
+        final ResourceKey script = findScript( method );
 
         if ( script == null )
         {
@@ -70,12 +71,24 @@ final class JsControllerImpl
         doExecute( script );
     }
 
-    private void doExecute( final Resource script )
+    private void doExecute( final ResourceKey script )
     {
-        this.runner.source( script );
-        this.runner.execute();
+        final ContextScriptBean scriptBean = new ContextScriptBean();
+        scriptBean.setModule( script.getModule() );
+        scriptBean.setJsContext( this.context );
+        scriptBean.install();
 
-        this.postProcessor.processResponse( this.context );
+        try
+        {
+            this.runner.source( script );
+            this.runner.execute();
+
+            this.postProcessor.processResponse( this.context );
+        }
+        finally
+        {
+            ContextScriptBean.remove();
+        }
     }
 
     private void methodNotAllowed()

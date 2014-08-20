@@ -2,6 +2,7 @@ module app.wizard {
 
     import TreeNode = api.ui.treegrid.TreeNode;
     import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
+    import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
 
     export class PublishContentDialog extends api.ui.dialog.ModalDialog {
 
@@ -113,11 +114,12 @@ module app.wizard {
     }
 
     class PublishDialogItemComponent extends api.dom.DivEl {
+
         constructor(content: api.content.Content, compareStatus: api.content.CompareStatus) {
             super();
             this.getEl().addClass("item");
 
-            var icon = new api.dom.ImgEl(content.getIconUrl());
+            var icon = new api.dom.ImgEl(new ContentIconUrlResolver().setContent(content).resolve());
             this.appendChild(icon);
 
             var displayName = new api.dom.H4El();

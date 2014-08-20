@@ -57,14 +57,20 @@ public class ElasticsearchVersionServiceTest
             thenReturn( SearchResult.create().
                 results( SearchResultEntries.create().
                     add( SearchResultEntry.create().
+                        id( "1" ).
+                        score( 5 ).
                         addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, "a" ) ).
                         addField( TIMESTAMP_ID_FIELD_NAME, new SearchResultField( TIMESTAMP_ID_FIELD_NAME, first ) ).
                         build() ).
                     add( SearchResultEntry.create().
+                        id( "2" ).
+                        score( 4 ).
                         addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, "c" ) ).
                         addField( TIMESTAMP_ID_FIELD_NAME, new SearchResultField( TIMESTAMP_ID_FIELD_NAME, third ) ).
                         build() ).
                     add( SearchResultEntry.create().
+                        id( "3" ).
+                        score( 3 ).
                         addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, "b" ) ).
                         addField( TIMESTAMP_ID_FIELD_NAME, new SearchResultField( TIMESTAMP_ID_FIELD_NAME, second ) ).
                         build() ).

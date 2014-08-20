@@ -17,3 +17,4 @@
 ///<reference path='UninstallModuleRequest.ts' />
 ///<reference path='UpdateModuleRequest.ts' />
 ///<reference path='ModuleUpdatedEvent.ts' />
+///<reference path='ModuleCache.ts' />

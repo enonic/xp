@@ -21,7 +21,7 @@ public class WorkspacePathsQuery
 
     public Set<String> getNodePathsAsStrings()
     {
-        final Set<String> nodePathsAsStrings = Sets.newHashSet();
+        final Set<String> nodePathsAsStrings = Sets.newLinkedHashSet();
 
         for ( final NodePath path : this.nodePaths )
         {

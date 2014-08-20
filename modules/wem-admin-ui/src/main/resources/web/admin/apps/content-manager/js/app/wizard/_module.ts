@@ -11,7 +11,6 @@
 ///<reference path='ShowContentFormEvent.ts' />
 ///<reference path='ShowLiveEditEvent.ts' />
 ///<reference path='ShowSplitEditEvent.ts' />
-///<reference path='ToggleContextWindowEvent.ts' />
 ///<reference path='OpenPublishDialogEvent.ts' />
 ///<reference path='PublishContentEvent.ts' />
 ///<reference path='PublishContentDialog.ts' />

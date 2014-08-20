@@ -6,7 +6,7 @@ module api.liveedit {
         private regionView: RegionView;
 
         constructor(regionView: RegionView) {
-            super("live-edit-empty-region-placeholder");
+            super("region-placeholder");
             this.regionView = regionView;
 
 

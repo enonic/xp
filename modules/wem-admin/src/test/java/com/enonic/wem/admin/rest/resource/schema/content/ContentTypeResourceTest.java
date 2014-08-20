@@ -1,5 +1,6 @@
 package com.enonic.wem.admin.rest.resource.schema.content;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
@@ -12,6 +13,7 @@ import org.mockito.Mockito;
 import com.acme.DummyCustomInputType;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.form.FieldSet;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.Input;
@@ -23,7 +25,6 @@ import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.content.CreateContentTypeParams;
 import com.enonic.wem.api.schema.content.GetAllContentTypesParams;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
-import com.enonic.wem.api.schema.content.GetContentTypesParams;
 import com.enonic.wem.api.schema.content.UpdateContentTypeParams;
 
 import static com.enonic.wem.api.form.FieldSet.newFieldSet;
@@ -37,9 +38,11 @@ import static com.enonic.wem.api.schema.content.ContentType.newContentType;
 public class ContentTypeResourceTest
     extends AbstractResourceTest
 {
-    private ContentTypeService contentTypeService;
+    private static final Instant SOME_DATE = LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC );
 
     private static final ContentTypeName MY_CTY_QUALIFIED_NAME = ContentTypeName.from( "my_cty" );
+
+    private ContentTypeService contentTypeService;
 
     public ContentTypeResourceTest()
     {
@@ -63,10 +66,11 @@ public class ContentTypeResourceTest
         // setup
         final ContentType contentType = newContentType().
             name( MY_CTY_QUALIFIED_NAME ).
-            createdTime( LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC ) ).
+            createdTime( SOME_DATE ).
             superType( ContentTypeName.unstructured() ).
             displayName( "My ContentType" ).
             description( "My description" ).
+            icon( Icon.from( new byte[]{123}, "image/gif", SOME_DATE ) ).
             addFormItem( newInput().
                 name( "myTextLine" ).
                 inputType( TEXT_LINE ).
@@ -75,8 +79,7 @@ public class ContentTypeResourceTest
                 build() ).
             build();
 
-        Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn(
-            ContentTypes.from( contentType ) );
+        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
 
         // execute
         String jsonString = request().path( "schema/content" ).queryParam( "name", MY_CTY_QUALIFIED_NAME.toString() ).queryParam(
@@ -134,8 +137,9 @@ public class ContentTypeResourceTest
             build();
 
         ContentType contentType = newContentType().
-            createdTime( LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC ) ).
+            createdTime( SOME_DATE ).
             name( MY_CTY_QUALIFIED_NAME ).
+            icon( Icon.from( new byte[]{123}, "image/gif", SOME_DATE ) ).
             superType( ContentTypeName.unstructured() ).
             addFormItem( myTextLine ).
             addFormItem( myCustomInput ).
@@ -144,8 +148,7 @@ public class ContentTypeResourceTest
             addFormItem( myMixinReference ).
             build();
 
-        Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn(
-            ContentTypes.from( contentType ) );
+        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
 
         // execute
         String jsonString = request().path( "schema/content" ).queryParam( "name", MY_CTY_QUALIFIED_NAME.toString() ).queryParam(
@@ -161,8 +164,9 @@ public class ContentTypeResourceTest
     {
         // setup
         final ContentType contentType = newContentType().
-            createdTime( LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC ) ).
+            createdTime( SOME_DATE ).
             name( MY_CTY_QUALIFIED_NAME ).
+            icon( Icon.from( new byte[]{123}, "image/gif", SOME_DATE ) ).
             superType( ContentTypeName.unstructured() ).
             addFormItem( newInput().
                 name( "myTextLine" ).
@@ -172,8 +176,7 @@ public class ContentTypeResourceTest
                 build() ).
             build();
 
-        Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn(
-            ContentTypes.from( contentType ) );
+        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
 
         // execute
         String jsonString =
@@ -189,8 +192,9 @@ public class ContentTypeResourceTest
     {
         // setup
         final ContentType contentType = newContentType().
-            createdTime( LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC ) ).
+            createdTime( SOME_DATE ).
             name( MY_CTY_QUALIFIED_NAME ).
+            icon( Icon.from( new byte[]{123}, "image/gif", SOME_DATE ) ).
             superType( ContentTypeName.unstructured() ).
             addFormItem( newInput().
                 name( "myTextLine" ).
@@ -222,6 +226,7 @@ public class ContentTypeResourceTest
         Mockito.when( contentTypeService.getByName( Mockito.any( GetContentTypeParams.class ) ) ).thenReturn( null );
         ContentType createdContentType = ContentType.newContentType().
             name( "htmlarea" ).
+            icon( Icon.from( new byte[]{123}, "image/gif", SOME_DATE ) ).
             superType( ContentTypeName.structured() ).
             build();
         Mockito.when( contentTypeService.create( Mockito.any( CreateContentTypeParams.class ) ) ).thenReturn( createdContentType );
@@ -236,8 +241,10 @@ public class ContentTypeResourceTest
     public void test_create_existing_content_type()
         throws Exception
     {
-        Mockito.when( contentTypeService.getByName( Mockito.any( GetContentTypeParams.class ) ) ).thenReturn(
-            ContentType.newContentType().name( "htmlarea" ).build() );
+        Mockito.when( contentTypeService.getByName( Mockito.any( GetContentTypeParams.class ) ) ).thenReturn( ContentType.newContentType().
+            name( "htmlarea" ).
+            icon( Icon.from( new byte[]{123}, "image/gif", SOME_DATE ) ).
+            build() );
         String resultJson = request().path( "schema/content/create" ).entity( readFromFile( "create_content_type.json" ),
                                                                               MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
         assertJson( "create_existing_content_type_result.json", resultJson );
@@ -257,7 +264,7 @@ public class ContentTypeResourceTest
     public void test_fail_to_create_new_content_type()
         throws Exception
     {
-        Mockito.when( contentTypeService.getByNames( Mockito.any( GetContentTypesParams.class ) ) ).thenReturn( ContentTypes.empty() );
+        Mockito.when( contentTypeService.getByName( Mockito.any( GetContentTypeParams.class ) ) ).thenReturn( null );
         Mockito.when( contentTypeService.create( Mockito.any( CreateContentTypeParams.class ) ) ).thenThrow(
             new RuntimeException( "name cannot be null" ) );
         String result = request().path( "schema/content/create" ).entity( readFromFile( "create_content_type.json" ),
@@ -272,6 +279,7 @@ public class ContentTypeResourceTest
         ContentType contentType = ContentType.newContentType().
             name( "htmlarea" ).
             superType( ContentTypeName.structured() ).
+            icon( Icon.from( new byte[]{123}, "image/gif", SOME_DATE ) ).
             build();
         Mockito.when( contentTypeService.getByName( Mockito.any( GetContentTypeParams.class ) ) ).thenReturn( contentType );
         String jsonString = request().path( "schema/content/update" ).entity( readFromFile( "update_content_type.json" ),

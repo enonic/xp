@@ -29,7 +29,7 @@ public final class TemplateItemJson
 
     private final String iconUrl;
 
-    public TemplateItemJson( final SiteTemplate siteTemplate )
+    public TemplateItemJson( final SiteTemplate siteTemplate, final SiteTemplateIconUrlResolver urlResolver )
     {
         this.editable = true;
         this.deletable = true;
@@ -39,7 +39,7 @@ public final class TemplateItemJson
         this.parentKey = null;
         this.hasChildren = siteTemplate.getPageTemplates().isNotEmpty();
         this.isSiteTemplate = true;
-        this.iconUrl = SiteTemplateIconUrlResolver.resolve( siteTemplate );
+        this.iconUrl = urlResolver.resolve( siteTemplate );
     }
 
     public TemplateItemJson( final SiteTemplateKey siteTemplateKey, final PageTemplate pageTemplate )

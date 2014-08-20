@@ -202,7 +202,6 @@ module app.wizard.page {
 
 
             this.contextWindow = new ContextWindow(<ContextWindowConfig>{
-                liveEditPage: this.liveEditPage,
                 liveFormPanel: this,
                 inspectionPanel: this.inspectionPanel,
                 emulatorPanel: this.emulatorPanel,
@@ -210,6 +209,9 @@ module app.wizard.page {
             });
 
             this.appendChild(this.contextWindow);
+
+            var contextWindowController = new app.wizard.page.contextwindow.ContextWindowController(this.contextWindow,
+                this.contentWizardPanel.getContextWindowToggler());
 
             this.pageInspectionPanel.onPageTemplateChanged((event: app.wizard.page.contextwindow.inspect.PageTemplateChangedEvent) => {
 

@@ -13,7 +13,6 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleListener;
 import org.osgi.framework.Constants;
-import org.osgi.framework.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,11 +22,9 @@ import com.google.common.io.Resources;
 
 import com.enonic.wem.api.event.EventPublisher;
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.module.ModuleState;
 import com.enonic.wem.api.module.ModuleUpdatedEvent;
-import com.enonic.wem.api.module.ModuleVersion;
 
 @Singleton
 public final class ModuleLoader
@@ -88,7 +85,7 @@ public final class ModuleLoader
                 break;
         }
 
-        final ModuleKey module = getModuleKey( bundle );
+        final ModuleKey module = ModuleKey.from( bundle );
         final ModuleState state = ModuleState.fromBundleState( bundle );
         this.eventPublisher.publish( new ModuleUpdatedEvent( module, state ) );
     }
@@ -117,18 +114,10 @@ public final class ModuleLoader
         if ( this.bundles.remove( bundle ) )
         {
 
-            final ModuleKey moduleKey = getModuleKey( bundle );
+            final ModuleKey moduleKey = ModuleKey.from( bundle );
             this.moduleService.uninstallModule( moduleKey );
             LOG.info( "Removed web resource bundle [" + bundle.toString() + "]" );
         }
-    }
-
-    private ModuleKey getModuleKey( final Bundle bundle )
-    {
-        final String name = bundle.getSymbolicName();
-        final Version bundleVersion = bundle.getVersion();
-        final ModuleVersion version = ModuleVersion.from( bundleVersion.toString() );
-        return ModuleKey.from( ModuleName.from( name ), version );
     }
 
     private void installModule( final Bundle bundle )
@@ -143,7 +132,7 @@ public final class ModuleLoader
         final String name = bundle.getSymbolicName();
         final String displayName = bundleDisplayName != null ? bundleDisplayName : name;
 
-        moduleBuilder.moduleKey( getModuleKey( bundle ) );
+        moduleBuilder.moduleKey( ModuleKey.from( bundle ) );
         moduleBuilder.displayName( displayName );
         moduleBuilder.bundle( bundle );
 

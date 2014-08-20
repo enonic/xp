@@ -2,6 +2,7 @@ package com.enonic.wem.core.schema.content;
 
 import javax.inject.Inject;
 
+import com.enonic.wem.api.event.EventPublisher;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.ContentTypes;
@@ -27,6 +28,9 @@ public class ContentTypeServiceImpl
 
     @Inject
     private MixinService mixinService;
+
+    @Inject
+    private EventPublisher eventPublisher;
 
     @Override
     public ContentType getByName( final GetContentTypeParams params )
@@ -94,6 +98,7 @@ public class ContentTypeServiceImpl
             params( params ).
             contentTypeDao( this.contentTypeDao ).
             mixinService( this.mixinService ).
+            eventPublisher( this.eventPublisher ).
             contentTypeService( this ).
             execute();
     }

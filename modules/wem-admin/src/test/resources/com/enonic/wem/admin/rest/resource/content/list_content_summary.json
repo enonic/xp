@@ -7,7 +7,7 @@
             "displayName": "My Content",
             "editable": true,
             "hasChildren": false,
-            "iconUrl": "/admin/rest/content/image/aaa",
+            "iconUrl": "/admin/rest/schema/icon/ContentType:my_type?hash=f95b70fdc3088560732a5ac135644506",
             "id": "aaa",
             "isDraft": false,
             "isPage": false,
@@ -18,6 +18,8 @@
             "name": "my_a_content",
             "owner": "user:myStore:me",
             "path": "/my_a_content",
+            "siteTemplateKey": null,
+            "thumbnail": null,
             "type": "my_type"
         },
         {
@@ -27,7 +29,7 @@
             "displayName": "My Content",
             "editable": true,
             "hasChildren": false,
-            "iconUrl": "/admin/rest/content/image/bbb",
+            "iconUrl": "/admin/rest/schema/icon/ContentType:my_type?hash=f95b70fdc3088560732a5ac135644506",
             "id": "bbb",
             "isDraft": false,
             "isPage": false,
@@ -38,6 +40,8 @@
             "name": "my_b_content",
             "owner": "user:myStore:me",
             "path": "/my_b_content",
+            "siteTemplateKey": null,
+            "thumbnail": null,
             "type": "my_type"
         }
     ],
@@ -46,4 +50,3 @@
         "totalHits": 2
     }
 }
-

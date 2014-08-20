@@ -1,5 +1,7 @@
 module api.content.form.inputtype.image {
 
+    import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
+
     export class ImageSelectorDisplayValue {
 
         private uploadItem: api.ui.uploader.UploadItem;
@@ -44,7 +46,7 @@ module api.content.form.inputtype.image {
         }
 
         getImageUrl(): string {
-            return this.content ? this.content.getIconUrl() : null;
+            return this.content ? new ContentIconUrlResolver().setContent(this.content).resolve() : null;
         }
 
         getLabel(): string {

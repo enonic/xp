@@ -2,7 +2,7 @@ module api.module {
 
     export class Module extends api.module.ModuleSummary {
 
-        private config:api.form.Form;
+        private config: api.form.Form;
 
         private moduleDependencies: api.module.ModuleKey[] = [];
 
@@ -46,9 +46,9 @@ module api.module {
             return new ModuleBuilder().fromJson(json).build();
         }
 
-        static fromJsonArray(jsonArray:api.module.json.ModuleJson[]):Module[] {
-            var array:Module[] = [];
-            jsonArray.forEach((json:api.module.json.ModuleJson) => {
+        static fromJsonArray(jsonArray: api.module.json.ModuleJson[]): Module[] {
+            var array: Module[] = [];
+            jsonArray.forEach((json: api.module.json.ModuleJson) => {
                 array.push(Module.fromJson(json));
             });
             return array;
@@ -59,13 +59,26 @@ module api.module {
 
         config: api.form.Form;
 
-        moduleDependencies: api.module.ModuleKey[] = [];
+        moduleDependencies: api.module.ModuleKey[];
 
-        contentTypeDependencies: api.schema.content.ContentTypeName[] = [];
+        contentTypeDependencies: api.schema.content.ContentTypeName[];
 
         minSystemVersion: string;
 
         maxSystemVersion: string;
+
+        constructor(source?: Module) {
+            this.moduleDependencies = [];
+            this.contentTypeDependencies = [];
+            if (source) {
+                super(source);
+                this.config = source.getForm();
+                this.moduleDependencies = source.getModuleDependencies();
+                this.contentTypeDependencies = source.getContentTypeDependencies();
+                this.minSystemVersion = source.getMinSystemVersion();
+                this.maxSystemVersion = source.getMaxSystemVersion();
+            }
+        }
 
         fromJson(json: api.module.json.ModuleJson): ModuleBuilder {
             super.fromJson(json);
@@ -75,13 +88,13 @@ module api.module {
             this.maxSystemVersion = json.maxSystemVersion;
 
             if (json.moduleDependencies != null) {
-                json.moduleDependencies.forEach((dependency:string) => {
+                json.moduleDependencies.forEach((dependency: string) => {
                     this.moduleDependencies.push(api.module.ModuleKey.fromString(dependency));
                 });
             }
 
             if (json.contentTypeDependencies != null) {
-                json.contentTypeDependencies.forEach((dependency:string) => {
+                json.contentTypeDependencies.forEach((dependency: string) => {
                     this.contentTypeDependencies.push(new api.schema.content.ContentTypeName(dependency));
                 });
             }

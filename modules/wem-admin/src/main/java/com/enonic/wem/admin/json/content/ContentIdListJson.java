@@ -9,12 +9,12 @@ public class ContentIdListJson
 {
     public ContentIdListJson( final Content content, final ContentListMetaData contentListMetaData )
     {
-        super( content, contentListMetaData );
+        super( content, contentListMetaData, null );
     }
 
     public ContentIdListJson( final Contents contents, final ContentListMetaData contentListMetaData )
     {
-        super( contents, contentListMetaData );
+        super( contents, contentListMetaData, null );
     }
 
     @Override

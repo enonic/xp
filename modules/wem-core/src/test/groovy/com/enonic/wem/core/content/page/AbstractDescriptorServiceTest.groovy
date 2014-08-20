@@ -24,7 +24,7 @@ abstract class AbstractDescriptorServiceTest
     def setup()
     {
         this.modulesDir = this.temporaryFolder.newFolder( "modules" )
-        ResourceUrlTestHelper.mockModuleScheme( this.modulesDir )
+        ResourceUrlTestHelper.mockModuleScheme().modulesDir( this.modulesDir )
         this.moduleService = Mock( ModuleService.class )
     }
 

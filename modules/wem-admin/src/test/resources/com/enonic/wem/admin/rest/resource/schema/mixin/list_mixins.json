@@ -10,7 +10,7 @@
             "editable": true,
             "hasChildren": false,
             "icon": null,
-            "iconUrl": "/admin/rest/schema/image/Mixin:input_text_1",
+            "iconUrl": "/admin/rest/schema/icon/Mixin:input_text_1",
             "items": [
                 {
                     "Input": {
@@ -47,7 +47,7 @@
             "editable": true,
             "hasChildren": false,
             "icon": null,
-            "iconUrl": "/admin/rest/schema/image/Mixin:text_area_1",
+            "iconUrl": "/admin/rest/schema/icon/Mixin:text_area_1",
             "items": [
                 {
                     "Input": {

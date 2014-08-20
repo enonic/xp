@@ -7,6 +7,7 @@ module app.browse {
     import ResponsiveManager = api.ui.responsive.ResponsiveManager;
     import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
+    import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
 
     export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummary> {
 
@@ -49,10 +50,10 @@ module app.browse {
                  because we are left on the same panel. We need to refresh manually.
                  */
                 /* Experimental. For future use.
-                this.contentTreeGridPanel2.deleteNodes(event.getContents().map((elem) => {
-                    return new api.content.ContentSummaryAndCompareStatus(elem, null);
-                }));
-                */
+                 this.contentTreeGridPanel2.deleteNodes(event.getContents().map((elem) => {
+                 return new api.content.ContentSummaryAndCompareStatus(elem, null);
+                 }));
+                 */
                 this.refreshFilterAndGrid();
             });
 
@@ -110,7 +111,7 @@ module app.browse {
                         setId(content.getId()).
                         setDisplayName(content.getDisplayName()).
                         setPath(content.getPath().toString()).
-                        setIconUrl(content.getIconUrl());
+                        setIconUrl(new ContentIconUrlResolver().setContent(content).resolve());
                     browseItems.push(item);
                 }
             });

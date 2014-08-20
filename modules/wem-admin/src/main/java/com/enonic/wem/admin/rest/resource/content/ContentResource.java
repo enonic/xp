@@ -50,25 +50,27 @@ import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.ContentService;
-import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.DeleteContentParams;
 import com.enonic.wem.api.content.Direction;
 import com.enonic.wem.api.content.FindContentByParentParams;
 import com.enonic.wem.api.content.FindContentByParentResult;
-import com.enonic.wem.api.content.GetContentByIdsParams;
+import com.enonic.wem.api.content.FindContentByQueryParams;
+import com.enonic.wem.api.content.FindContentByQueryResult;
 import com.enonic.wem.api.content.GetContentVersionsParams;
 import com.enonic.wem.api.content.PushContentParams;
 import com.enonic.wem.api.content.RenameContentParams;
 import com.enonic.wem.api.content.UnableToDeleteContentException;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.attachment.Attachment;
+import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.editor.ContentEditor;
-import com.enonic.wem.api.content.query.ContentQueryResult;
+import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.content.versioning.ContentVersions;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.DataJson;
 import com.enonic.wem.api.exception.ConflictException;
+import com.enonic.wem.api.schema.content.ContentTypeService;
 
 import static com.enonic.wem.api.content.Content.editContent;
 
@@ -78,11 +80,13 @@ import static com.enonic.wem.api.content.Content.editContent;
 public class ContentResource
 {
 
+    public static final String DEFAULT_SORT_FIELD = "modifiedTime";
+
+    static final Context STAGE_CONTEXT = new Context( ContentConstants.WORKSPACE_STAGE );
+
     private static final String DEFAULT_FROM_PARAM = "0";
 
     private static final String DEFAULT_SIZE_PARAM = "500";
-
-    public static final String DEFAULT_SORT_FIELD = "modifiedTime";
 
     private final String EXPAND_FULL = "full";
 
@@ -92,12 +96,17 @@ public class ContentResource
 
     private ContentService contentService;
 
-    static final Context STAGE_CONTEXT = new Context( ContentConstants.WORKSPACE_STAGE );
+    private ContentTypeService contentTypeService;
+
+    private SiteTemplateService siteTemplateService;
+
+    private AttachmentService attachmentService;
 
     @GET
     public ContentIdJson getById( @QueryParam("id") final String idParam,
                                   @QueryParam("expand") @DefaultValue(EXPAND_FULL) final String expandParam )
     {
+
         final ContentId id = ContentId.from( idParam );
         final Content content = contentService.getById( id, STAGE_CONTEXT );
 
@@ -111,11 +120,11 @@ public class ContentResource
         }
         else if ( EXPAND_SUMMARY.equalsIgnoreCase( expandParam ) )
         {
-            return new ContentSummaryJson( content );
+            return new ContentSummaryJson( content, newContentIconUrlResolver() );
         }
         else
         {
-            return new ContentJson( content );
+            return new ContentJson( content, newContentIconUrlResolver() );
         }
     }
 
@@ -136,11 +145,11 @@ public class ContentResource
         }
         else if ( EXPAND_SUMMARY.equalsIgnoreCase( expandParam ) )
         {
-            return new ContentSummaryJson( content );
+            return new ContentSummaryJson( content, newContentIconUrlResolver() );
         }
         else
         {
-            return new ContentJson( content );
+            return new ContentJson( content, newContentIconUrlResolver() );
         }
     }
 
@@ -218,12 +227,11 @@ public class ContentResource
         }
         else if ( EXPAND_FULL.equalsIgnoreCase( expandParam ) )
         {
-
-            return new ContentListJson( result.getContents(), metaData );
+            return new ContentListJson( result.getContents(), metaData, newContentIconUrlResolver() );
         }
         else
         {
-            return new ContentSummaryListJson( result.getContents(), metaData );
+            return new ContentSummaryListJson( result.getContents(), metaData, newContentIconUrlResolver() );
         }
     }
 
@@ -232,15 +240,18 @@ public class ContentResource
     @Consumes(MediaType.APPLICATION_JSON)
     public AbstractContentQueryResultJson query( final ContentQueryJson contentQueryJson )
     {
-        final ContentQueryResult contentQueryResult = contentService.find( contentQueryJson.getContentQuery(), STAGE_CONTEXT );
-
         final boolean getChildrenIds = !Expand.NONE.matches( contentQueryJson.getExpand() );
-        final GetContentByIdsParams params = new GetContentByIdsParams( ContentIds.from( contentQueryResult.getContentIds() ) ).
-            setGetChildrenIds( getChildrenIds );
 
-        final Contents contents = contentService.getByIds( params, STAGE_CONTEXT );
+        final ContentIconUrlResolver iconUrlResolver = newContentIconUrlResolver();
+        final FindContentByQueryResult findResult = contentService.find( FindContentByQueryParams.create().
+            populateChildren( getChildrenIds ).
+            contentQuery( contentQueryJson.getContentQuery() ).
+            build(), STAGE_CONTEXT );
 
-        return ContentQueryResultJsonFactory.create( contentQueryResult, contents, contentQueryJson.getExpand() );
+        final AbstractContentQueryResultJson abstractContentQueryResultJson =
+            FindContentByQuertResultJsonFactory.create( findResult, contentQueryJson.getExpand(), iconUrlResolver );
+
+        return abstractContentQueryResultJson;
     }
 
     @GET
@@ -318,7 +329,7 @@ public class ContentResource
         final Content publishedContent =
             contentService.push( new PushContentParams( ContentConstants.WORKSPACE_PROD, params.getContentId() ), STAGE_CONTEXT );
 
-        return new ContentJson( publishedContent );
+        return new ContentJson( publishedContent, newContentIconUrlResolver() );
     }
 
     @POST
@@ -326,7 +337,8 @@ public class ContentResource
     public ContentJson create( final CreateContentJson params )
     {
         final Content persistedContent = contentService.create( params.getCreateContent(), STAGE_CONTEXT );
-        return new ContentJson( persistedContent );
+
+        return new ContentJson( persistedContent, newContentIconUrlResolver() );
     }
 
     @POST
@@ -360,7 +372,7 @@ public class ContentResource
         final Content updatedContent = contentService.update( updateParams, STAGE_CONTEXT );
         if ( json.getContentName().equals( updatedContent.getName() ) )
         {
-            return new ContentJson( updatedContent );
+            return new ContentJson( updatedContent, newContentIconUrlResolver() );
         }
 
         try
@@ -370,7 +382,8 @@ public class ContentResource
                 newName( json.getContentName() );
 
             final Content renamedContent = contentService.rename( renameParams, STAGE_CONTEXT );
-            return new ContentJson( renamedContent );
+
+            return new ContentJson( renamedContent, newContentIconUrlResolver() );
         }
         catch ( ContentAlreadyExistException e )
         {
@@ -401,9 +414,32 @@ public class ContentResource
         return attachments;
     }
 
+    private ContentIconUrlResolver newContentIconUrlResolver()
+    {
+        return new ContentIconUrlResolver( this.siteTemplateService, this.contentTypeService, this.attachmentService );
+    }
+
     @Inject
     public void setContentService( final ContentService contentService )
     {
         this.contentService = contentService;
+    }
+
+    @Inject
+    public void setContentTypeService( final ContentTypeService contentTypeService )
+    {
+        this.contentTypeService = contentTypeService;
+    }
+
+    @Inject
+    public void setSiteTemplateService( final SiteTemplateService siteTemplateService )
+    {
+        this.siteTemplateService = siteTemplateService;
+    }
+
+    @Inject
+    public void setAttachmentService( final AttachmentService attachmentService )
+    {
+        this.attachmentService = attachmentService;
     }
 }

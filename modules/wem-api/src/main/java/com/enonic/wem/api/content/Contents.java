@@ -1,36 +1,38 @@
 package com.enonic.wem.api.content;
 
 import java.util.Collection;
+import java.util.Set;
 
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.support.AbstractImmutableEntityList;
+import com.enonic.wem.api.support.AbstractImmutableEntitySet;
 
 public final class Contents
-    extends AbstractImmutableEntityList<Content>
+    extends AbstractImmutableEntitySet<Content>
 {
     private final ImmutableMap<ContentId, Content> map;
 
-    private Contents( final ImmutableList<Content> list )
+    private Contents( final Set<Content> set )
     {
-        super( list );
-        this.map = Maps.uniqueIndex( list, new ToIdFunction() );
+        super( ImmutableSet.copyOf( set ) );
+        this.map = Maps.uniqueIndex( set, new ToIdFunction() );
     }
 
     public ContentPaths getPaths()
     {
-        final Collection<ContentPath> paths = Collections2.transform( this.list, new ToPathFunction() );
+        final Collection<ContentPath> paths = Collections2.transform( this.set, new ToPathFunction() );
         return ContentPaths.from( paths );
     }
 
     public ContentIds getIds()
     {
-        final Collection<ContentId> ids = Collections2.transform( this.list, new ToIdFunction() );
+        final Collection<ContentId> ids = Collections2.transform( this.set, new ToIdFunction() );
         return ContentIds.from( ids );
     }
 
@@ -41,23 +43,23 @@ public final class Contents
 
     public static Contents empty()
     {
-        final ImmutableList<Content> list = ImmutableList.of();
-        return new Contents( list );
+        final ImmutableSet<Content> set = ImmutableSet.of();
+        return new Contents( set );
     }
 
     public static Contents from( final Content... contents )
     {
-        return new Contents( ImmutableList.copyOf( contents ) );
+        return new Contents( ImmutableSet.copyOf( contents ) );
     }
 
     public static Contents from( final Iterable<? extends Content> contents )
     {
-        return new Contents( ImmutableList.copyOf( contents ) );
+        return new Contents( ImmutableSet.copyOf( contents ) );
     }
 
     public static Contents from( final Collection<? extends Content> contents )
     {
-        return new Contents( ImmutableList.copyOf( contents ) );
+        return new Contents( ImmutableSet.copyOf( contents ) );
     }
 
     private final static class ToPathFunction
@@ -87,17 +89,17 @@ public final class Contents
 
     public static class Builder
     {
-        private ImmutableList.Builder<Content> builder = ImmutableList.builder();
+        private Set<Content> contents = Sets.newLinkedHashSet();
 
         public Builder add( Content content )
         {
-            builder.add( content );
+            contents.add( content );
             return this;
         }
 
         public Contents build()
         {
-            return new Contents( builder.build() );
+            return new Contents( contents );
         }
     }
 

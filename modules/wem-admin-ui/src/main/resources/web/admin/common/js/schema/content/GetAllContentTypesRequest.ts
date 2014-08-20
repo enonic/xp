@@ -9,11 +9,6 @@ module api.schema.content {
             super.setMethod("GET");
         }
 
-        setMixinReferencesToFormItems(value:boolean):GetAllContentTypesRequest {
-            this.mixinReferencesToFormItems = value;
-            return this;
-        }
-
         getParams():Object {
             return {
                 mixinReferencesToFormItems: this.mixinReferencesToFormItems

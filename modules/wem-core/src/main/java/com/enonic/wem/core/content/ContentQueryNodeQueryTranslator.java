@@ -8,7 +8,7 @@ public class ContentQueryNodeQueryTranslator
 {
     public static NodeQuery translate( final ContentQuery contentQuery )
     {
-        final NodeQuery.Builder builder = NodeQuery.newNodeQuery();
+        final NodeQuery.Builder builder = NodeQuery.create();
 
         doTranslateEntityQueryProperties( contentQuery, builder );
 

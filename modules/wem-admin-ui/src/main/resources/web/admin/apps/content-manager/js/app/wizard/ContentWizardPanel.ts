@@ -13,6 +13,7 @@ module app.wizard {
     import CreateContentRequest = api.content.CreateContentRequest;
     import UpdateContentRequest = api.content.UpdateContentRequest;
     import UpdateAttachments = api.content.UpdateAttachments;
+    import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
     import Page = api.content.page.Page;
     import PageBuilder = api.content.page.PageBuilder;
     import Site = api.content.site.Site;
@@ -77,7 +78,7 @@ module app.wizard {
 
         private publishAction: api.ui.Action;
 
-        private contextWindowToggler: ContextWindowToggler;
+        private contextWindowToggler: app.wizard.page.contextwindow.ContextWindowToggler;
 
         private cycleViewModeButton: api.ui.button.CycleButton;
 
@@ -106,7 +107,7 @@ module app.wizard {
             this.contentWizardHeader = new WizardHeaderWithDisplayNameAndNameBuilder().
                 setDisplayNameGenerator(this.displayNameScriptExecutor).
                 build();
-            var iconUrl = api.content.ContentIconUrlResolver.default();
+            var iconUrl = ContentIconUrlResolver.default();
             this.formIcon = new FormIcon(iconUrl, "Click to upload icon",
                 api.util.getRestUri("blob/upload"));
 
@@ -294,7 +295,7 @@ module app.wizard {
 
         layoutPersistedItem(persistedContent: Content): Q.Promise<void> {
 
-            this.formIcon.setSrc(persistedContent.getIconUrl() + '?crop=false');
+            this.formIcon.setSrc(new ContentIconUrlResolver().setContent(persistedContent).setCrop(false).resolve());
 
             if (!this.constructing) {
 
@@ -697,6 +698,10 @@ module app.wizard {
 
         public contentCanBePublished(): boolean {
             return this.isContentFormValid && this.isSiteTemplateFormValid;
+        }
+
+        getContextWindowToggler(): app.wizard.page.contextwindow.ContextWindowToggler {
+            return this.contextWindowToggler;
         }
     }
 

@@ -56,6 +56,12 @@ module api.app {
             if (eventType === 'ModuleUpdatedEvent') {
                 return api.module.ModuleUpdatedEvent.fromJson(serverEventJson.event);
             }
+            else if (eventType === 'ContentTypeUpdatedEvent') {
+                return api.schema.content.ContentTypeUpdatedEvent.fromJson(serverEventJson.event);
+            }
+            else if (eventType === 'ContentTypeDeletedEvent') {
+                return api.schema.content.ContentTypeDeletedEvent.fromJson(serverEventJson.event);
+            }
             return null;
         }
 

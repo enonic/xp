@@ -12,7 +12,7 @@ import org.restlet.service.StatusService;
 
 import com.enonic.wem.core.entity.dao.NodeNotFoundException;
 import com.enonic.wem.portal.exception.renderer.ExceptionRenderer;
-import com.enonic.wem.portal.script.SourceException;
+import com.enonic.wem.script.SourceException;
 
 @Singleton
 public final class PortalStatusService

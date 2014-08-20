@@ -8,7 +8,7 @@ public class NodeQueryResultEntry
 
     private final EntityId id;
 
-    protected NodeQueryResultEntry( final float score, final String id )
+    public NodeQueryResultEntry( final float score, final String id )
     {
         this.score = score;
         this.id = EntityId.from( id );

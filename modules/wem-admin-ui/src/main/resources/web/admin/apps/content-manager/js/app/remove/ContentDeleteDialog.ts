@@ -1,5 +1,7 @@
 module app.remove {
 
+    import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
+
     export class ContentDeleteDialog extends api.app.remove.DeleteDialog {
 
         private contentToDelete: api.content.ContentSummary[];
@@ -48,7 +50,8 @@ module app.remove {
             var deleteItems: api.app.remove.DeleteItem[] = [];
             for (var i in contentModels) {
                 var content = contentModels[i];
-                var deleteItem = new api.app.remove.DeleteItem(content.getIconUrl(), content.getDisplayName());
+                var deleteItem = new api.app.remove.DeleteItem(new ContentIconUrlResolver().setContent(content).resolve(),
+                    content.getDisplayName());
                 deleteItems.push(deleteItem);
             }
             this.setDeleteItems(deleteItems);

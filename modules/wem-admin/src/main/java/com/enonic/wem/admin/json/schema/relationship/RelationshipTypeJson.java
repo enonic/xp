@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.enonic.wem.admin.json.ItemJson;
 import com.enonic.wem.admin.json.schema.SchemaJson;
+import com.enonic.wem.admin.rest.resource.schema.SchemaIconUrlResolver;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 
@@ -22,9 +23,9 @@ public class RelationshipTypeJson
 
     private final boolean deletable;
 
-    public RelationshipTypeJson( final RelationshipType type )
+    public RelationshipTypeJson( final RelationshipType type, final SchemaIconUrlResolver iconUrlResolver )
     {
-        super( type );
+        super( type, iconUrlResolver );
         this.relationshipType = type;
         this.editable = true;
         this.deletable = true;

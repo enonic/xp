@@ -28,6 +28,10 @@ module api.ui.tags {
         }
     }
 
+    export class TagSuggestions extends api.dom.UlEl {
+
+    }
+
     export class Tags extends api.dom.UlEl {
 
         private tagSuggester: TagSuggester;
@@ -35,8 +39,6 @@ module api.ui.tags {
         private textInput: api.ui.text.TextInput;
 
         private tags: Tag[] = [];
-
-        private lastTag: Tag = null;
 
         private maxTags: number;
 
@@ -56,23 +58,24 @@ module api.ui.tags {
             this.textInput = new api.ui.text.TextInput();
             this.appendChild(this.textInput);
 
-            this.textInput.onKeyUp((event: KeyboardEvent) => {
+            this.textInput.onKeyDown((event: KeyboardEvent) => {
                 if (event.keyCode == 32 || event.keyCode == 13) {
                     this.handleWordCompleted();
+                    event.preventDefault();
+                } else if (event.keyCode == 8) {
+                    if (!this.textInput.getValue() && this.countTags() > 0) {
+                        this.removeTag(this.tags[this.countTags() - 1]);
+                    }
                 }
             });
-            // TODO: Listen to typing in text input and
-            // make call to tagSuggester (if existing) and display result
-        }
 
-        private getIndexOf(value: string) {
-            var matchingIndex = -1;
-            this.tags.forEach((tag, index: number) => {
-                if (tag.getValue() == value) {
-                    matchingIndex = index;
-                }
+            this.textInput.onValueChanged((event: api.ui.ValueChangedEvent) => {
+                this.tagSuggester.suggest(event.getNewValue()).then((values: string[]) => {
+                    console.log(values);
+                }).done();
             });
-            return matchingIndex;
+
+            this.onClicked(() => this.textInput.giveFocus());
         }
 
         private handleWordCompleted() {
@@ -91,10 +94,7 @@ module api.ui.tags {
         }
 
         clearTags() {
-
-            this.tags.forEach((tag) => {
-                tag.remove();
-            });
+            this.tags.forEach((tag) => tag.remove());
             this.tags = [];
         }
 
@@ -109,41 +109,30 @@ module api.ui.tags {
         }
 
         private doAddTag(value: string): Tag {
-            if (this.hasTag(value)) {
+            if (this.hasTag(value) || !value) {
                 return null;
             }
 
             var tag = new TagBuilder().setValue(value).setRemovable(true).build();
             this.tags.push(tag);
-            if (this.lastTag) {
-                tag.insertAfterEl(this.lastTag);
-            }
-            else {
-                this.prependChild(tag);
-            }
-            this.lastTag = tag;
+            tag.insertBeforeEl(this.textInput);
 
-            tag.onTagRemove((event: TagRemoveEvent) => {
-                var index = this.getIndexOf(event.getValue());
-                if (index >= 0) {
-                    var tagToRemove = this.tags[index];
-                    tagToRemove.remove();
-                    this.tags.splice(index, 1);
-                    if (!this.textInput.isVisible() && !this.isMaxTagsReached()) {
-                        this.textInput.setVisible(true);
-                    }
-                    if (this.tags.length == 0) {
-                        this.lastTag = null;
-                    }
-                    else {
-                        this.lastTag = this.tags[this.tags.length - 1];
-                    }
-                    this.textInput.giveFocus();
-                    this.notifyTagRemoved(new TagRemovedEvent(event.getValue(), index));
-                }
-            });
+            tag.onTagRemove(() => this.removeTag(tag));
 
             return tag;
+        }
+
+        private removeTag(tag: Tag) {
+            var index = this.tags.indexOf(tag);
+            if (index >= 0) {
+                tag.remove();
+                this.tags.splice(index, 1);
+                if (!this.textInput.isVisible() && !this.isMaxTagsReached()) {
+                    this.textInput.setVisible(true);
+                }
+                this.textInput.giveFocus();
+                this.notifyTagRemoved(new TagRemovedEvent(tag.getValue(), index));
+            }
         }
 
         hasTag(value: string) {
@@ -161,11 +150,7 @@ module api.ui.tags {
         }
 
         getTags(): string[] {
-            var tags: string [] = [];
-            this.tags.forEach((tag) => {
-                tags.push(tag.getValue());
-            });
-            return tags;
+            return this.tags.map((tag: Tag) => tag.getValue());
         }
 
         isMaxTagsReached(): boolean {

@@ -33,7 +33,7 @@ module app.wizard {
 
             this.constructing = true;
             this.relationShipTypeWizardHeader = new api.app.wizard.WizardHeaderWithName();
-            this.formIcon = new api.app.wizard.FormIcon(new RelationshipTypeIconUrlResolver().resolveDefault(),
+            this.formIcon = new api.app.wizard.FormIcon(RelationshipTypeIconUrlResolver.default(),
                 "Click to upload icon",
                 api.util.getRestUri("blob/upload"));
 
