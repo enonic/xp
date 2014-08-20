@@ -114,15 +114,6 @@ module api.content.form.inputtype.tag {
         unBlur(listener: (event: FocusEvent) => void) {
             this.tags.unBlur(listener);
         }
-
-        onEditContentRequest(listener: (content: api.content.ContentSummary) => void) {
-            // Have to use stub here because it doesn't extend BaseInputTypeView
-        }
-
-        unEditContentRequest(listener: (content: api.content.ContentSummary) => void) {
-            // Have to use stub here because it doesn't extend BaseInputTypeView
-        }
-
     }
 
     api.form.inputtype.InputTypeManager.register(new api.Class("Tag", Tag));
