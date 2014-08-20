@@ -8,19 +8,19 @@ module api.schema.content {
             super();
 
             ContentTypeUpdatedEvent.on((event: ContentTypeUpdatedEvent) => {
-                /*if (event.getContentTypeName()) {
-                 console.log("ContentTypeCache on ContentTypeUpdatedEvent, deleting: " + event.getContentTypeName().toString());
-                 // TODO: Do not delete if cache already contains updated object
-                 var cachedObject = this.getByKey(event.getContentTypeName());
-                 if (cachedObject) {
-                 console.log("cachedObject.getModifiedTime(): " + cachedObject.getModifiedTime());
-                 console.log("event: " + event.getModifiedTime());
-                 }
-                 this.deleteByKey(event.getContentTypeName());
-                 }
-                 else {
-                 console.log(event);
-                 }*/
+                if (event.getContentTypeName()) {
+                    console.log("ContentTypeCache on ContentTypeUpdatedEvent, deleting: " + event.getContentTypeName().toString());
+                    // TODO: Do not delete if cache already contains the updated object
+                    var cachedObject = this.getByKey(event.getContentTypeName());
+                    if (cachedObject) {
+                        console.log("cachedObject.getModifiedTime(): " + cachedObject.getModifiedTime());
+                        console.log("event: " + event.getModifiedTime());
+                    }
+                    this.deleteByKey(event.getContentTypeName());
+                }
+                else {
+                    console.log(event);
+                }
             });
             ContentTypeDeletedEvent.on((event: ContentTypeDeletedEvent) => {
                 console.log("ContentTypeCache on ContentTypeDeletedEvent, deleting: " + event.getContentTypeName().toString());
