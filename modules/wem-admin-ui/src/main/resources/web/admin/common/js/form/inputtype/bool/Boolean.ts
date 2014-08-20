@@ -1,5 +1,7 @@
 module api.content.form.inputtype.bool {
+
     import support = api.form.inputtype.support;
+
     export class Boolean extends support.BaseInputTypeNotManagingAdd<any> {
 
         constructor(config: api.form.inputtype.InputTypeViewContext<any>) {
@@ -15,7 +17,7 @@ module api.content.form.inputtype.bool {
             var inputEl = new api.ui.Checkbox();
 
             if (property != null) {
-                inputEl.setChecked(property.getString() == 'true');
+                inputEl.setChecked(property.getBoolean());
 
             }
             else {

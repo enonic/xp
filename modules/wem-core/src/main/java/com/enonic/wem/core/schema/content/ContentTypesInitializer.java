@@ -24,8 +24,6 @@ import static com.enonic.wem.api.schema.content.editor.SetContentTypeEditor.newS
 public class ContentTypesInitializer
     extends BaseInitializer
 {
-    public static Form MEDIA_IMAGE_FORM = createMediaImageForm();
-
     static final ContentType STRUCTURED = createSystemType( ContentTypeName.structured() ).
         setFinal( false ).setAbstract( true ).build();
 
@@ -96,7 +94,9 @@ public class ContentTypesInitializer
             "demo-contenttype-mixin-norwegian-counties.json", "demo-contenttype-relation-article.json", "demo-contenttype-layout.json",
             "demo-contenttype-formItemset-min-occurrences.json", "demo-contenttype-singleSelectors.json", "demo-contenttype-comboBox.json",
             "demo-contenttype-all-input-types.json", "demo-contenttype-imageselector.json",
-            "demo-contenttype-several-levels-of-formItemset.json", "demo-contenttype-tag.json"};
+            "demo-contenttype-several-levels-of-formItemset.json", "demo-contenttype-tag.json", "demo-contenttype-boolean.json"};
+
+    public static Form MEDIA_IMAGE_FORM = createMediaImageForm();
 
     private final ContentTypeJsonSerializer contentTypeJsonSerializer = new ContentTypeJsonSerializer();
 
@@ -105,6 +105,29 @@ public class ContentTypesInitializer
     protected ContentTypesInitializer()
     {
         super( 10, "content-types" );
+    }
+
+    private static ContentType.Builder createSystemType( final ContentTypeName contentTypeName )
+    {
+        final String displayName = WordUtils.capitalize( contentTypeName.getContentTypeName() );
+        return newContentType().
+            name( contentTypeName ).
+            displayName( displayName ).
+            setBuiltIn();
+    }
+
+    private static Form createMediaImageForm()
+    {
+        return Form.newForm().
+            addFormItem( Input.newInput().name( "image" ).
+                inputType( InputTypes.IMAGE ).build() ).
+            addFormItem( Input.newInput().name( "mimeType" ).
+                inputType( InputTypes.TEXT_LINE ).
+                label( "Mime type" ).
+                occurrences( 1, 1 ).
+                build() ).
+
+            build();
     }
 
     @Override
@@ -174,29 +197,6 @@ public class ContentTypesInitializer
 
             contentTypeService.update( updateParams );
         }
-    }
-
-    private static ContentType.Builder createSystemType( final ContentTypeName contentTypeName )
-    {
-        final String displayName = WordUtils.capitalize( contentTypeName.getContentTypeName() );
-        return newContentType().
-            name( contentTypeName ).
-            displayName( displayName ).
-            setBuiltIn();
-    }
-
-    private static Form createMediaImageForm()
-    {
-        return Form.newForm().
-            addFormItem( Input.newInput().name( "image" ).
-                inputType( InputTypes.IMAGE ).build() ).
-            addFormItem( Input.newInput().name( "mimeType" ).
-                inputType( InputTypes.TEXT_LINE ).
-                label( "Mime type" ).
-                occurrences( 1, 1 ).
-                build() ).
-
-            build();
     }
 
     @Inject
