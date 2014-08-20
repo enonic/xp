@@ -2,18 +2,18 @@ module api.schema.content {
 
     export class ContentTypeUpdatedEvent extends api.event.Event {
 
-        private name: ContentTypeName;
+        private contentTypeName: ContentTypeName;
 
         private modifiedTime: Date;
 
         constructor(name: ContentTypeName, modifiedTime: Date) {
             super();
-            this.name = name;
+            this.contentTypeName = name;
             this.modifiedTime = modifiedTime;
         }
 
         getContentTypeName(): ContentTypeName {
-            return this.name;
+            return this.contentTypeName;
         }
 
         getModifiedTime(): Date {
