@@ -25,7 +25,6 @@ module api.form {
             this.context = context;
             this.form = form;
             this.rootDataSet = rootDataSet;
-
             this.doLayout();
         }
 
