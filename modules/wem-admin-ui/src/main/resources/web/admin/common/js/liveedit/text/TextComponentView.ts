@@ -70,18 +70,11 @@ module api.liveedit.text {
         handleDbClick(event: MouseEvent) {
             event.stopPropagation();
             event.preventDefault();
-
-            if (!this.isSelected()) {
-                this.deselectParent();
-                this.select(!this.isEmpty() ? { x: event.pageX, y: event.pageY } : null);
-            } else if (this.editing) {
-                this.showEditor("full");
+            if (this.editing) {
+                this.showEditor();
+                this.setCaretOffset(true);
             }
         }
-
-        private timer;
-        public newEvent: MouseEvent;
-        public elem: HTMLElement;
 
         handleClick(event: MouseEvent) {
             event.stopPropagation();
@@ -89,33 +82,9 @@ module api.liveedit.text {
             if (!this.isSelected()) {
                 this.deselectParent();
                 this.select(!this.isEmpty() ? { x: event.pageX, y: event.pageY } : null);
+                this.makeEditable();
             } else if (!this.editing) {
-                event.stopPropagation();
-
-                this.showEditor("end");
-                var newEvent: MouseEvent;
-
-                newEvent = <MouseEvent> document.createEvent("MouseEvents");
-
-
-                newEvent.initMouseEvent(event.type, true, event.cancelable, event.view, event.detail, event.screenX, event.screenY,
-                    event.clientX, event.clientY,
-                    event.ctrlKey, event.altKey, event.shiftKey, event.metaKey, event.button, event.relatedTarget);
-
-                 newEvent.currentTarget=this.getHTMLElement();
-                newEvent.srcElement = this.getHTMLElement();
-                 newEvent.offsetX = event.offsetX;
-                 newEvent.offsetY = event.offsetY;
-                 newEvent.toElement = this.getHTMLElement();
-                 newEvent.target=this.getHTMLElement();
-
-
-                var element = this.getHTMLElement();
-                element.focus();
-                this.newEvent = newEvent;
-
-                this.timer = setTimeout(() =>
-                    element.dispatchEvent(this.newEvent), 2000);
+                this.showEditor();
             }
         }
 
@@ -160,14 +129,19 @@ module api.liveedit.text {
             return this.isEmpty() || !this.textComponent.getText();
         }
 
-        showEditor(caretPosition) {
+        makeEditable() {
+            var editableElement = this.getElement();
+            editableElement.addClass('text-editor-editable-area').giveFocus();
+            editableElement.getEl().setAttribute('contenteditable', 'true');
+            new TextComponentStartEditingEvent(this).fire();
+        }
+
+        showEditor() {
             if (this.isEmpty()) {
                 this.removeEmptyMark();
                 this.removePlaceholder();
                 this.getEl().setInnerHtml('</br>');
             }
-
-            this.setCaretOffset(caretPosition);
             this.editing = true;
             api.ui.text.TextEditorToolbar.get().showToolbar(this);
 
@@ -180,44 +154,29 @@ module api.liveedit.text {
             return new TextComponentViewer();
         }
 
-        private setCaretOffset(caretPosition) {
+        private setCaretOffset(isFullSelection: Boolean) {
             var element = this.getHTMLElement();
-            var selection = window.getSelection();
-            var range = document.createRange();
+            if (isFullSelection) {
+                var selection = window.getSelection();
+                var range = document.createRange();
 
-
-            /*    if (this.oneTimeCaretFlag) {
-             this.oneTimeCaretFlag = false;
-                return;
-             }*/
-
-            range.selectNodeContents(element);
-            if (caretPosition == "start") {
-                element.focus();
-                element.click();
-            } else if (caretPosition == "end") {
-
-            } else if (caretPosition == "full") {
+                range.selectNodeContents(element);
                 range.setStart(range.endContainer, range.startOffset);
                 range.setEnd(range.endContainer, range.endOffset);
                 selection.removeAllRanges();
                 selection.addRange(range);
-                //  this.oneTimeCaretFlag = true;
-
+            } else {
+                element.focus();
+                element.click();
             }
-
-            /* element.click();
-             selection.removeAllRanges();
-             selection.addRange(range);
-             this.oneTimeCaretFlag = true;*/
-
         }
 
         private createTextContextMenuActions(): api.ui.Action[] {
             var actions: api.ui.Action[] = [];
             actions.push(new api.ui.Action('Edit').onExecuted(() => {
                 if (!this.editing) {
-                    this.showEditor("start");
+                    this.showEditor();
+                    this.setCaretOffset(false);
                 }
             }));
             return actions;
