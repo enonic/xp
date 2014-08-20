@@ -75,7 +75,6 @@
 ///<reference path='form/inputtype/singleselector/_module.ts' />
 ///<reference path='form/inputtype/text/_module.ts' />
 ///<reference path='form/inputtype/checkbox/_module.ts' />
-///<reference path='form/inputtype/bool/_module.ts' />
 ///<reference path='form/inputtype/long/_module.ts' />
 
 ///<reference path='item/_module.ts' />
