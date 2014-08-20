@@ -110,7 +110,7 @@ public class ElasticsearchDao
     {
         final SearchSourceBuilder searchSource = elasticsearchQuery.toSearchSourceBuilder();
 
-        // System.out.println( searchSource.toString() );
+        //System.out.println( searchSource.toString() );
 
         final SearchRequest searchRequest = Requests.
             searchRequest( elasticsearchQuery.getIndexName() ).

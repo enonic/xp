@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.enonic.wem.api.event.EventPublisher;
 import com.enonic.wem.api.schema.SchemaId;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -32,6 +33,8 @@ public class UpdateContentTypeCommandTest
 
     private ContentTypeService contentTypeService;
 
+    private EventPublisher eventPublisher;
+
     @Before
     public void setUp()
         throws Exception
@@ -39,11 +42,13 @@ public class UpdateContentTypeCommandTest
         this.mixinService = Mockito.mock( MixinService.class );
         this.contentTypeDao = Mockito.mock( ContentTypeDao.class );
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
+        this.eventPublisher = Mockito.mock( EventPublisher.class );
 
         command = new UpdateContentTypeCommand().
             contentTypeDao( this.contentTypeDao ).
             mixinService( this.mixinService ).
-            contentTypeService( this.contentTypeService );
+            contentTypeService( this.contentTypeService ).
+            eventPublisher( this.eventPublisher );
     }
 
     @Test

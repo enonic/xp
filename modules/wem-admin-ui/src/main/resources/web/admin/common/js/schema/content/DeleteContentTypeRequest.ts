@@ -36,6 +36,9 @@ module api.schema.content {
         sendAndParse(): Q.Promise<api.schema.SchemaDeleteResult> {
 
             return this.send().then((response:api.rest.JsonResponse<api.schema.SchemaDeleteJson>) => {
+
+                // TODO: Invalidate ContentTypeCache
+
                 return this.fromJsonToDeleteResult(response.getResult());
             });
         }

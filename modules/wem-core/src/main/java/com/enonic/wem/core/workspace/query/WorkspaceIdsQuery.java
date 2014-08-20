@@ -19,9 +19,14 @@ public class WorkspaceIdsQuery
         this.entityIds = entityIds;
     }
 
+    public EntityIds getEntityIds()
+    {
+        return entityIds;
+    }
+
     public Set<String> getEntityIdsAsStrings()
     {
-        final Set<String> values = Sets.newHashSet();
+        final Set<String> values = Sets.newLinkedHashSet();
 
         for ( final EntityId entityId : this.entityIds )
         {

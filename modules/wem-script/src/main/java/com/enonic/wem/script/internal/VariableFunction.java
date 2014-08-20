@@ -26,6 +26,6 @@ final class VariableFunction
         checkArguments( context, scope, args );
 
         final String name = (String) Context.jsToJava( args[0], String.class );
-        return this.environment.getVariable( name );
+        return Context.javaToJS( this.environment.getVariable( name ), scope );
     }
 }

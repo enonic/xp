@@ -26,7 +26,7 @@ module api.schema.content {
         sendAndParse(): Q.Promise<ContentType> {
 
             var contentTypeCache = ContentTypeCache.get();
-            var contentType = contentTypeCache.getByName(this.name);
+            var contentType = contentTypeCache.getByKey(this.name);
             if (contentType) {
                 return Q(contentType);
             }

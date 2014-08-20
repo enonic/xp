@@ -38,13 +38,6 @@ public abstract class AbstractNodeCommand
         }
 
         @SuppressWarnings("unchecked")
-        public B context( final Context context )
-        {
-            this.context = context;
-            return (B) this;
-        }
-
-        @SuppressWarnings("unchecked")
         public B indexService( final IndexService indexService )
         {
             this.indexService = indexService;

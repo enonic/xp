@@ -90,6 +90,18 @@ module api.module {
 
         state: string;
 
+        constructor(source?: ModuleSummary) {
+            if (source) {
+                super(source);
+                this.moduleKey = source.getModuleKey();
+                this.displayName = source.getDisplayName();
+                this.vendorName = source.getVendorName();
+                this.vendorUrl = source.getVendorUrl();
+                this.url = source.getUrl();
+                this.state = source.getState();
+            }
+        }
+
         fromJson(json: api.module.json.ModuleSummaryJson): ModuleSummaryBuilder {
 
             super.fromBaseItemJson(json, 'key');

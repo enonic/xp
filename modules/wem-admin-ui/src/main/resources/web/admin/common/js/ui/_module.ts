@@ -1,5 +1,3 @@
-///<reference path='InputEvents.ts' />
-///<reference path='InputEvent.ts' />
 ///<reference path='ValueChangedEvent.ts' />
 ///<reference path='KeyBinding.ts'/>
 ///<reference path='KeyBindings.ts'/>

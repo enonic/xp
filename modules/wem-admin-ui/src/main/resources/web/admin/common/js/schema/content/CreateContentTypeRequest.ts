@@ -31,7 +31,9 @@ module api.schema.content {
         sendAndParse(): Q.Promise<ContentType> {
 
             return this.send().then((response: api.rest.JsonResponse<api.schema.content.json.ContentTypeJson>) => {
-                return this.fromJsonToContentType(response.getResult());
+                var contentType = this.fromJsonToContentType(response.getResult());
+                ContentTypeCache.get().put(contentType);
+                return  contentType;
             });
         }
     }
