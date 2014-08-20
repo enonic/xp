@@ -1,11 +1,17 @@
 .content-wizard-panel {
-  .wizard-back-panel .form-icon.site .overlay {
-    background: @admin-blue;
-    color: white;
 
-    &:before {
+  .form-icon.site:before {
+    position: absolute;
       content: "S";
-    }
+    top: 0;
+    right: 0;
+    padding: 2px 6px;
+    line-height: 16px;
+    border-radius: 10px;
+    background: @admin-blue;
+    color: @admin-white;
+    font-size: 14px;
+    z-index: 1;
   }
 
   .wizard-step-deck-panel {

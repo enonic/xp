@@ -2,15 +2,15 @@ module api.schema.content {
 
     export class ContentTypeDeletedEvent extends api.event.Event {
 
-        private name: ContentTypeName;
+        private contentTypeName: ContentTypeName;
 
         constructor(name: ContentTypeName) {
             super();
-            this.name = name;
+            this.contentTypeName = name;
         }
 
         getContentTypeName(): ContentTypeName {
-            return this.name;
+            return this.contentTypeName;
         }
 
         static on(handler: (event: ContentTypeDeletedEvent) => void) {

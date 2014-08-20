@@ -2,18 +2,18 @@ module api.schema.content {
 
     export class ContentTypeUpdatedEvent extends api.event.Event {
 
-        private name: ContentTypeName;
+        private contentTypeName: ContentTypeName;
 
         private modifiedTime: Date;
 
         constructor(name: ContentTypeName, modifiedTime: Date) {
             super();
-            this.name = name;
+            this.contentTypeName = name;
             this.modifiedTime = modifiedTime;
         }
 
         getContentTypeName(): ContentTypeName {
-            return this.name;
+            return this.contentTypeName;
         }
 
         getModifiedTime(): Date {
@@ -30,7 +30,8 @@ module api.schema.content {
 
 
         static fromJson(json: ContentTypeUpdatedEventJson): ContentTypeUpdatedEvent {
-            return new ContentTypeUpdatedEvent(new ContentTypeName(json.name), json.modifiedTime);
+            var modifiedTime = json.modifiedTime ? new Date(Date.parse(json.modifiedTime)) : null;
+            return new ContentTypeUpdatedEvent(new ContentTypeName(json.name), modifiedTime);
         }
     }
 
@@ -38,6 +39,6 @@ module api.schema.content {
 
         name: string;
 
-        modifiedTime: Date;
+        modifiedTime: string;
     }
 }

@@ -58,7 +58,7 @@ module app.browse {
                         compareStatusColumn,
                         modifiedTimeColumn
                     ]).setShowContextMenu(new TreeGridContextMenu(new ContentTreeGridActions(this))
-                ).prependClasses("content-grid")
+                ).prependClasses("content-tree-grid")
             );
 
             api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {

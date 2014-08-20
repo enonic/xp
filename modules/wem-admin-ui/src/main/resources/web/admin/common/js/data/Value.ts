@@ -22,6 +22,11 @@ module api.data {
             return this.type.valueToString(this);
         }
 
+        asBoolean(): boolean {
+
+            return this.type.valueToBoolean(this);
+        }
+
         isRootDataSet(): boolean {
             return ValueTypes.DATA.toString() == this.type.toString();
         }
