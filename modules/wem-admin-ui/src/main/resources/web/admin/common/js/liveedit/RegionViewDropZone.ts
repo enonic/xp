@@ -85,11 +85,6 @@ module api.liveedit {
 
             this.getEl().addClass(this.itemType.getShortName().toLowerCase());
 
-            if (this.pageComponentView) {
-                var target = api.util.capitalize(this.pageComponentView.getType().getShortName()) + ': ' + this.pageComponentView.getName();
-                //innerHtml += '<div style = "font-size: 11px;"> dragging ' + target + ' </div > ';
-
-            }
             innerHtml += "</span>";
             this.getEl().setInnerHtml(innerHtml);
         }
