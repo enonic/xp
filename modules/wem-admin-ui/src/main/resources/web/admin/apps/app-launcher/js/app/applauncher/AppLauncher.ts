@@ -8,8 +8,6 @@ module app.launcher {
 
         private adminApplicationFrames: api.dom.DivEl;
 
-        private lostConnectionDetector: app.launcher.LostConnectionDetector;
-
         private router: AppRouter;
 
         private loadMask: api.ui.mask.LoadMask;
@@ -42,12 +40,6 @@ module app.launcher {
                 api.notify.NotifyManager.get().hide(messageId);
             });
 
-            this.lostConnectionDetector = new app.launcher.LostConnectionDetector();
-            if (CONFIG.baseUri.search('localhost') == -1) {
-                this.lostConnectionDetector.startPolling();
-            } else {
-                console.log("LostConnectionDetector disabled when client runs against localhost");
-            }
             api.dom.Body.get().appendChild(this.adminApplicationFrames);
 
             api.app.ShowAppLauncherEvent.on((event) => {

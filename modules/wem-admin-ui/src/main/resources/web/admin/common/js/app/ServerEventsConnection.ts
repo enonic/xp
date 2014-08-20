@@ -10,8 +10,12 @@ module api.app {
         private ws: WebSocket;
         private reconnectInterval: number;
         private serverEventReceivedListeners: {(event: api.event.Event):void}[] = [];
+        private connectionLostListeners: {():void}[] = [];
+        private connectionRestoredListeners: {():void}[] = [];
+        private connected: boolean = false;
+        private disconnectTimeoutHandle: number;
 
-        constructor(reconnectIntervalSeconds: number = 10) {
+        constructor(reconnectIntervalSeconds: number = 5) {
             this.ws = null;
             this.reconnectInterval = reconnectIntervalSeconds * 1000;
         }
@@ -26,6 +30,13 @@ module api.app {
             this.ws = new WebSocket(wsUrl, 'text');
 
             this.ws.addEventListener('close', (ev: CloseEvent) => {
+                this.disconnectTimeoutHandle = setTimeout(() => {
+                    if (this.connected) {
+                        this.notifyConnectionLost();
+                        this.connected = !this.connected;
+                    }
+                }, this.reconnectInterval + 1000);
+
                 // attempt to reconnect
                 setTimeout(()=> {
                     this.connect();
@@ -33,7 +44,7 @@ module api.app {
             });
 
             this.ws.addEventListener('error', (ev: ErrorEvent) => {
-                // console.log('Unable to connect to server web socket on ' + wsUrl, ev);
+                console.log('Unable to connect to server web socket on ' + wsUrl, ev);
             });
 
             this.ws.addEventListener('message', (remoteEvent: any) => {
@@ -41,6 +52,19 @@ module api.app {
                 console.log('Server event [' + jsonEvent.type + ']', jsonEvent.event);
                 this.handleServerEvent(jsonEvent);
             });
+
+            this.ws.addEventListener('open', (event: Event) => {
+                clearInterval(this.disconnectTimeoutHandle);
+
+                if (!this.connected) {
+                    this.notifyConnectionRestored();
+                    this.connected = !this.connected;
+                }
+            });
+        }
+
+        public isConnected(): boolean {
+            return this.ws.readyState === WebSocket.OPEN;
         }
 
         private handleServerEvent(serverEventJson: ServerEventJson): void {
@@ -92,6 +116,41 @@ module api.app {
                 return currentListener != listener;
             });
         }
+
+        private notifyConnectionLost() {
+            this.connectionLostListeners.forEach((listener: (event)=>void)=> {
+                listener.call(this);
+            });
+        }
+
+        onConnectionLost(listener: () => void) {
+            this.connectionLostListeners.push(listener);
+        }
+
+        unConnectionLost(listener: () => void) {
+            this.connectionLostListeners =
+            this.connectionLostListeners.filter((currentListener: ()=>void)=> {
+                return currentListener != listener;
+            });
+        }
+
+        private notifyConnectionRestored() {
+            this.connectionRestoredListeners.forEach((listener: (event)=>void)=> {
+                listener.call(this);
+            });
+        }
+
+        onConnectionRestored(listener: () => void) {
+            this.connectionRestoredListeners.push(listener);
+        }
+
+        unConnectionRestored(listener: () => void) {
+            this.connectionRestoredListeners =
+            this.connectionRestoredListeners.filter((currentListener: ()=>void)=> {
+                return currentListener != listener;
+            });
+        }
+
     }
 
 }
