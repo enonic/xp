@@ -23,15 +23,8 @@ module app.wizard.site {
                 setSubName(theModule.getName() + "-" + theModule.getVersion()).
                 setIconClass("icon-xlarge icon-puzzle");
 
-            var linkEl = new api.dom.AEl("reset");
-            linkEl.setHtml("reset");
-            linkEl.onClicked((event: MouseEvent) => {
-                this.formView.resetDataSet();
-                return false;
-            });
             var header = new api.dom.DivEl('header');
             header.appendChild(namesAndIconView);
-            header.appendChild(linkEl);
 
             this.appendChild(header);
 

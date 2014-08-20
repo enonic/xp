@@ -227,12 +227,6 @@ module api.form {
             return focusGiven;
         }
 
-        resetDataSet() {
-            this.rootDataSet = this.initialRootDataSet.clone();
-            this.removeChildren();
-            this.doLayout();
-        }
-
         onEditContentRequest(listener: (content: api.content.ContentSummary) => void) {
             this.formItemViews.forEach((formItemView: FormItemView) => {
                 formItemView.onEditContentRequest(listener);
