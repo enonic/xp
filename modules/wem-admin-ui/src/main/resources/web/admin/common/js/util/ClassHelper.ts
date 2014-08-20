@@ -23,11 +23,11 @@ module api.util {
     }
 
     export function getFullName(instance): string {
-        var className = (typeof instance === 'function') ? getFunctionName(instance) : getClassName(instance);
-        return findPath(window, className) || "";
+        var constructor = (typeof instance === 'function') ? instance : instance["constructor"];
+        return findPath(window, constructor) || "";
     }
 
-    function findPath(obj: Object, node: string, nestLevel?: number): string {
+    function findPath(obj: Object, constructor: Function, nestLevel?: number): string {
         var value, path, nestLevel = nestLevel || 1;
         for (var key in obj) {
             if (obj.hasOwnProperty(key)) {
@@ -41,14 +41,13 @@ module api.util {
                     continue;
                 }
                 if (typeof value === 'object') {
-                    path = findPath(value, node, nestLevel + 1);
+                    path = findPath(value, constructor, nestLevel + 1);
                     if (path) {
                         return key + "." + path;
                     }
                 } else if (typeof value === 'function') {
-                    var funcName = getFunctionName(value);
-                    if (funcName == node) {
-                        return funcName;
+                    if (value == constructor) {
+                        return getFunctionName(constructor);
                     }
                 }
             }
