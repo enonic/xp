@@ -79,6 +79,7 @@ module api.liveedit.text {
             }
         }
 
+
         handleClick(event: MouseEvent) {
             event.stopPropagation();
 
@@ -86,9 +87,49 @@ module api.liveedit.text {
                 this.deselectParent();
                 this.select(!this.isEmpty() ? { x: event.pageX, y: event.pageY } : null);
             } else if (!this.editing) {
+
                 this.showEditor("end");
+
+                var newEvent: MouseEvent;
+
+                newEvent = <MouseEvent> document.createEvent("MouseEvents");
+
+
+                newEvent.initMouseEvent(event.type, true, event.cancelable, event.view, event.detail, event.screenX, event.screenY,
+                    event.clientX, event.clientY,
+                    event.ctrlKey, event.altKey, event.shiftKey, event.metaKey, event.button, event.relatedTarget);
+
+                /*
+                 newEvent.currentTarget=this.getHTMLElement();
+                 newEvent.offsetX = event.offsetX;
+                 newEvent.offsetY = event.offsetY;
+                 newEvent.srcElement = this.getHTMLElement();
+                 newEvent.toElement = this.getHTMLElement();
+                 newEvent.target=this.getHTMLElement();
+                 */
+//                var element = this.getHTMLElement();
+//                var selection = window.getSelection();
+
+
+                var bodyEl: HTMLBodyElement = <HTMLBodyElement>document.body;
+                var range: TextRange = <TextRange> bodyEl.createTextRange();
+
+                range.moveToPoint(event.screenX, event.screenY);
+                range.select();
+
+                /* selection.removeAllRanges();
+                 selection.addRange(range);*/
+
+
+                if (newEvent.clientX > 0) {
+                    window.dispatchEvent(newEvent);
+                }
+
+
+
             }
         }
+
 
         handleKeyboard() {
             if (this.editing) {
@@ -155,25 +196,31 @@ module api.liveedit.text {
             var selection = window.getSelection();
             var range = document.createRange();
 
-            element.click();
-            if (this.oneTimeCaretFlag) {
-                this.oneTimeCaretFlag = false;
+
+            /*    if (this.oneTimeCaretFlag) {
+             this.oneTimeCaretFlag = false;
                 return;
-            }
+             }*/
+
             range.selectNodeContents(element);
             if (caretPosition == "start") {
-                range.setStart(range.endContainer, range.startOffset);
-                range.setEnd(range.endContainer, range.startOffset);
+                element.focus();
+                element.click();
             } else if (caretPosition == "end") {
+
             } else if (caretPosition == "full") {
                 range.setStart(range.endContainer, range.startOffset);
                 range.setEnd(range.endContainer, range.endOffset);
+                selection.removeAllRanges();
+                selection.addRange(range);
+                //  this.oneTimeCaretFlag = true;
+
             }
-            selection.removeAllRanges();
 
-            selection.addRange(range);
-
-            this.oneTimeCaretFlag = true;
+            /* element.click();
+             selection.removeAllRanges();
+             selection.addRange(range);
+             this.oneTimeCaretFlag = true;*/
 
         }
 
