@@ -43,7 +43,7 @@ module api.content.form.inputtype.tag {
             this.dataPath = builder.dataPath;
         }
 
-        suggest(value: string): Q.Promise<string[]> {
+        suggest(value: string): wemQ.Promise<string[]> {
 
             var fieldName = this.dataPath.getParentPath().asRelative().toString() + this.dataPath.getLastElement().getName();
 

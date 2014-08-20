@@ -216,9 +216,9 @@ module api.app.wizard {
             });
         }
 
-        preRenderNew(): Q.Promise<void> {
+        preRenderNew(): wemQ.Promise<void> {
             // To be overridden by inheritors - if extra work is needed at end of renderNew
-            var deferred = Q.defer<void>();
+            var deferred = wemQ.defer<void>();
             deferred.resolve(null);
             return deferred.promise;
         }
@@ -227,22 +227,22 @@ module api.app.wizard {
             return this.renderingNew;
         }
 
-        renderNew(): Q.Promise<void> {
-            var deferred = Q.defer<void>();
+        renderNew(): wemQ.Promise<void> {
+            var deferred = wemQ.defer<void>();
             this.renderingNew = true;
             this.actions.enableActionsForNew();
             deferred.resolve(null);
             return deferred.promise;
         }
 
-        postRenderNew(): Q.Promise<void> {
+        postRenderNew(): wemQ.Promise<void> {
             // To be overridden by inheritors - if extra work is needed at end of renderNew
-            var deferred = Q.defer<void>();
+            var deferred = wemQ.defer<void>();
             deferred.resolve(null);
             return deferred.promise;
         }
 
-        private setPersistedItem(persistedItem: EQUITABLE): Q.Promise<void> {
+        private setPersistedItem(persistedItem: EQUITABLE): wemQ.Promise<void> {
 
             this.renderingNew = false;
             this.persistedItem = persistedItem;
@@ -251,16 +251,16 @@ module api.app.wizard {
             return this.layoutPersistedItem(persistedItem);
         }
 
-        layoutPersistedItem(persistedItem: EQUITABLE): Q.Promise<void> {
+        layoutPersistedItem(persistedItem: EQUITABLE): wemQ.Promise<void> {
 
-            var deferred = Q.defer<void>();
+            var deferred = wemQ.defer<void>();
             deferred.resolve(null);
             return deferred.promise;
         }
 
-        postRenderExisting(existing: EQUITABLE): Q.Promise<void> {
+        postRenderExisting(existing: EQUITABLE): wemQ.Promise<void> {
             // To be overridden by inheritors - if extra work is needed at end of setPersistedItem
-            var deferred = Q.defer<void>();
+            var deferred = wemQ.defer<void>();
             deferred.resolve(null);
             return deferred.promise;
         }
@@ -284,7 +284,7 @@ module api.app.wizard {
             new api.app.wizard.SaveBeforeCloseDialog(this).open();
         }
 
-        saveChanges(): Q.Promise<EQUITABLE> {
+        saveChanges(): wemQ.Promise<EQUITABLE> {
 
             if (this.isItemPersisted()) {
                 return this.updatePersistedItem().then((persistedItem: EQUITABLE) => {
@@ -307,13 +307,13 @@ module api.app.wizard {
         /*
          * Override this method in specific wizard to do actual persisting of new item.
          */
-        persistNewItem(): Q.Promise<EQUITABLE> {
+        persistNewItem(): wemQ.Promise<EQUITABLE> {
             throw new Error("Must be overriden by inheritor");
         }
 
-        postPersistNewItem(persistedItem: EQUITABLE): Q.Promise<void> {
+        postPersistNewItem(persistedItem: EQUITABLE): wemQ.Promise<void> {
             // To be overridden by inheritors - if extra work is needed at end of persistNewItem
-            var deferred = Q.defer<void>();
+            var deferred = wemQ.defer<void>();
             deferred.resolve(null);
             return deferred.promise;
         }
@@ -321,7 +321,7 @@ module api.app.wizard {
         /*
          * Override this method in specific wizard to do actual update of item.
          */
-        updatePersistedItem(): Q.Promise<EQUITABLE> {
+        updatePersistedItem(): wemQ.Promise<EQUITABLE> {
             throw new Error("Must be overriden by inheritor");
         }
 

@@ -5,6 +5,6 @@ module api.content.page {
      */
     export interface PageCUDRequest {
 
-        sendAndParse(): Q.Promise<Content>;
+        sendAndParse(): wemQ.Promise<Content>;
     }
 }

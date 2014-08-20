@@ -94,7 +94,7 @@ module api.content.form.inputtype.relationship {
                 });
         }
 
-        private doLoadContent(properties: api.data.Property[]): Q.Promise<api.content.ContentSummary[]> {
+        private doLoadContent(properties: api.data.Property[]): wemQ.Promise<api.content.ContentSummary[]> {
 
             if (!properties) {
                 return Q<api.content.ContentSummary[]>([]);

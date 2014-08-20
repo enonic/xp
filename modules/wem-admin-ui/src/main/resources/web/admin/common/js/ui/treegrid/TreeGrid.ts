@@ -268,8 +268,8 @@ module api.ui.treegrid {
          * retrieving a a full data, or for the purpose of the
          * infinite scroll.
          */
-        fetch(data: NODE): Q.Promise<NODE> {
-            var deferred = Q.defer<NODE>();
+        fetch(data: NODE): wemQ.Promise<NODE> {
+            var deferred = wemQ.defer<NODE>();
             // Empty logic
             deferred.resolve(null);
             return deferred.promise;
@@ -279,8 +279,8 @@ module api.ui.treegrid {
          * Used as a default children fetcher.
          * Must be overridden to use predefined root nodes.
          */
-        fetchChildren(parentData?: NODE): Q.Promise<NODE[]> {
-            var deferred = Q.defer<NODE[]>();
+        fetchChildren(parentData?: NODE): wemQ.Promise<NODE[]> {
+            var deferred = wemQ.defer<NODE[]>();
             // Empty logic
             deferred.resolve(null);
             return deferred.promise;
@@ -291,11 +291,11 @@ module api.ui.treegrid {
          * Can be overridden to use predefined root nodes.
          * By default, return empty fetchChildren request.
          */
-        fetchRoot(): Q.Promise<NODE[]> {
+        fetchRoot(): wemQ.Promise<NODE[]> {
             return this.fetchChildren();
         }
 
-        private fetchData(parentData?: NODE): Q.Promise<NODE[]> {
+        private fetchData(parentData?: NODE): wemQ.Promise<NODE[]> {
             return parentData ? this.fetchChildren(parentData) : this.fetchRoot();
         }
 
@@ -447,7 +447,7 @@ module api.ui.treegrid {
             var promises = updated.map((el) => {
                 return this.fetch(el.getData());
             });
-            Q.all(promises).then((results: NODE[]) => {
+            wemQ.all(promises).then((results: NODE[]) => {
                 results.forEach((result: NODE, index: number) => {
                     updated[index].setData(result);
                 });

@@ -34,7 +34,7 @@ module api.content {
             };
         }
 
-        sendAndParse(): Q.Promise<ContentQueryResult<CONTENT,CONTENT_JSON>> {
+        sendAndParse(): wemQ.Promise<ContentQueryResult<CONTENT,CONTENT_JSON>> {
 
             return this.send().
                 then((response: api.rest.JsonResponse<json.ContentQueryResultJson<CONTENT_JSON>>) => {

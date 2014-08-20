@@ -61,7 +61,7 @@ module app.wizard.page {
 
         private dragMask: api.ui.mask.DragMask;
 
-        private iFrameLoadDeffered: Q.Deferred<void>;
+        private iFrameLoadDeffered: wemQ.Deferred<void>;
 
         private contentLoadedOnPage: Content;
 
@@ -104,7 +104,7 @@ module app.wizard.page {
             this.siteTemplate = config.siteTemplate;
 
             this.liveEditIFrame = new api.dom.IFrameEl("live-edit-frame");
-            this.iFrameLoadDeffered = Q.defer<void>();
+            this.iFrameLoadDeffered = wemQ.defer<void>();
             this.liveEditIFrame.onLoaded(() => this.handleIFrameLoadedEvent());
             this.loadMask = new api.ui.mask.LoadMask(this.liveEditIFrame);
             this.dragMask = new api.ui.mask.DragMask(this.liveEditIFrame);
@@ -174,9 +174,9 @@ module app.wizard.page {
             this.loadMask.remove();
         }
 
-        public load(content: Content): Q.Promise<void> {
+        public load(content: Content): wemQ.Promise<void> {
 
-            this.iFrameLoadDeffered = Q.defer<void>();
+            this.iFrameLoadDeffered = wemQ.defer<void>();
             this.contentLoadedOnPage = content;
 
             this.loadMask.show();

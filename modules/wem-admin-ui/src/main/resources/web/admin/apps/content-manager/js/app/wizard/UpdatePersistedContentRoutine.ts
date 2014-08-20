@@ -45,14 +45,14 @@ module app.wizard {
             return this;
         }
 
-        public execute(): Q.Promise<Content> {
+        public execute(): wemQ.Promise<Content> {
 
             var context = new UpdatePersistedContentRoutineContext();
             context.content = this.persistedContent;
             return this.doExecute(context);
         }
 
-        doExecuteNext(context: UpdatePersistedContentRoutineContext): Q.Promise<Content> {
+        doExecuteNext(context: UpdatePersistedContentRoutineContext): wemQ.Promise<Content> {
 
             if (!this.doneHandledContent) {
 
@@ -100,7 +100,7 @@ module app.wizard {
             }
         }
 
-        private doHandleUpdateContent(context: UpdatePersistedContentRoutineContext): Q.Promise<void> {
+        private doHandleUpdateContent(context: UpdatePersistedContentRoutineContext): wemQ.Promise<void> {
 
             return this.updateContentRequestProducer.call(this.getThisOfProducer(), context.content, this.viewedContent).
                 sendAndParse().
@@ -111,7 +111,7 @@ module app.wizard {
                 });
         }
 
-        private doHandleUpdateSite(context: UpdatePersistedContentRoutineContext): Q.Promise<void> {
+        private doHandleUpdateSite(context: UpdatePersistedContentRoutineContext): wemQ.Promise<void> {
 
             var updateSiteRequest = this.produceUpdateSiteRequest(context.content, this.viewedContent);
             if (updateSiteRequest != null) {
@@ -124,13 +124,13 @@ module app.wizard {
                     });
             }
             else {
-                var deferred = Q.defer<void>();
+                var deferred = wemQ.defer<void>();
                 deferred.resolve(null);
                 return deferred.promise;
             }
         }
 
-        private doHandleCreateSite(context: PersistedNewContentRoutineContext): Q.Promise<void> {
+        private doHandleCreateSite(context: PersistedNewContentRoutineContext): wemQ.Promise<void> {
 
             var createSiteRequest = this.createSiteRequestProducer.call(this.getThisOfProducer(), context.content);
             if (createSiteRequest != null) {
@@ -143,7 +143,7 @@ module app.wizard {
                     });
             }
             else {
-                var deferred = Q.defer<void>();
+                var deferred = wemQ.defer<void>();
                 deferred.resolve(null)
                 return deferred.promise;
             }
@@ -166,7 +166,7 @@ module app.wizard {
                 setModuleConfigs(viewedSite.getModuleConfigs());
         }
 
-        private doHandlePage(context: UpdatePersistedContentRoutineContext): Q.Promise<void> {
+        private doHandlePage(context: UpdatePersistedContentRoutineContext): wemQ.Promise<void> {
 
             var pageCUDRequest = this.producePageCUDRequest(context.content, this.viewedContent);
 
@@ -180,7 +180,7 @@ module app.wizard {
                     });
             }
             else {
-                var deferred = Q.defer<void>();
+                var deferred = wemQ.defer<void>();
                 deferred.resolve(null);
                 return deferred.promise;
             }

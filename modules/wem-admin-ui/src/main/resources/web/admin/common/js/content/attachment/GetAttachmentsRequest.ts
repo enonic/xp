@@ -21,7 +21,7 @@ module api.content.attachment {
             return api.rest.Path.fromParent(super.getResourcePath(), "all");
         }
 
-        sendAndParse(): Q.Promise<Attachment[]> {
+        sendAndParse(): wemQ.Promise<Attachment[]> {
 
             return this.send().then((response: api.rest.JsonResponse<AttachmentListJson>) => {
                 return this.fromJsonArrayToAttachments(response.getResult().attachments);

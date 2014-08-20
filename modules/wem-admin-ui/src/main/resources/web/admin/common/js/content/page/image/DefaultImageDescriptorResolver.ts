@@ -4,7 +4,7 @@ module api.content.page.image {
 
     export class DefaultImageDescriptorResolver {
 
-        static resolve(moduleKeys: ModuleKey[]) : Q.Promise<ImageDescriptor> {
+        static resolve(moduleKeys: ModuleKey[]) : wemQ.Promise<ImageDescriptor> {
 
             return new GetImageDescriptorsByModulesRequest(moduleKeys).
                 sendAndParse().then((descriptors: ImageDescriptor[]) => {

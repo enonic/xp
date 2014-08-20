@@ -20,7 +20,7 @@ module api.content.page {
             return super.getResourcePath();
         }
 
-        sendAndParse(): Q.Promise<PageDescriptor> {
+        sendAndParse(): wemQ.Promise<PageDescriptor> {
 
             return this.send().then((response: api.rest.JsonResponse<PageDescriptorJson>) => {
                 return this.fromJsonToPageDescriptor(response.getResult());

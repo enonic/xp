@@ -65,13 +65,13 @@ module app.wizard {
             });
         }
 
-        layoutPersistedItem(persistedContentType: api.schema.content.ContentType): Q.Promise<void> {
+        layoutPersistedItem(persistedContentType: api.schema.content.ContentType): wemQ.Promise<void> {
 
             this.formIcon.setSrc(persistedContentType.getIconUrl() + '?crop=false');
 
             if (!this.constructing) {
 
-                var deferred = Q.defer<void>();
+                var deferred = wemQ.defer<void>();
 
                 var viewedItemBuilder = new api.schema.content.ContentTypeBuilder(persistedContentType);
                 viewedItemBuilder.setName(this.contentTypeWizardHeader.getName());
@@ -102,7 +102,7 @@ module app.wizard {
             }
         }
 
-        private doLayoutPersistedItem(persistedContentType: api.schema.content.ContentType): Q.Promise<void> {
+        private doLayoutPersistedItem(persistedContentType: api.schema.content.ContentType): wemQ.Promise<void> {
 
             this.contentTypeWizardHeader.setName(persistedContentType.getName());
 
@@ -113,13 +113,13 @@ module app.wizard {
                 });
         }
 
-        saveChanges(): Q.Promise<api.schema.content.ContentType> {
+        saveChanges(): wemQ.Promise<api.schema.content.ContentType> {
             var formData = this.contentTypeForm.getFormData();
             this.persistedConfig = formData.xml;
             return super.saveChanges();
         }
 
-        persistNewItem(): Q.Promise<api.schema.content.ContentType> {
+        persistNewItem(): wemQ.Promise<api.schema.content.ContentType> {
 
             var formData = this.contentTypeForm.getFormData();
             var createContentTypeRequest = new api.schema.content.CreateContentTypeRequest(this.contentTypeWizardHeader.getName(),
@@ -140,7 +140,7 @@ module app.wizard {
                 });
         }
 
-        updatePersistedItem(): Q.Promise<api.schema.content.ContentType> {
+        updatePersistedItem(): wemQ.Promise<api.schema.content.ContentType> {
 
             var formData = this.contentTypeForm.getFormData();
             var newName = new api.schema.content.ContentTypeName(this.contentTypeWizardHeader.getName());

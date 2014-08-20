@@ -61,7 +61,7 @@ module app.browse {
             return viewer.toString();
         }
 
-        fetchRoot(): Q.Promise<ModuleSummary[]> {
+        fetchRoot(): wemQ.Promise<ModuleSummary[]> {
             return new api.module.ListModulesRequest().sendAndParse();
         }
     }

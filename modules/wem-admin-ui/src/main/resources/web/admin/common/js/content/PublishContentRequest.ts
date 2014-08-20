@@ -20,7 +20,7 @@ module api.content {
             return api.rest.Path.fromParent(super.getResourcePath(), "publish");
         }
 
-        sendAndParse(): Q.Promise<Content> {
+        sendAndParse(): wemQ.Promise<Content> {
             return this.send().then((response: api.rest.JsonResponse<api.content.json.ContentJson>) => {
                 return this.fromJsonToContent(response.getResult());
             });

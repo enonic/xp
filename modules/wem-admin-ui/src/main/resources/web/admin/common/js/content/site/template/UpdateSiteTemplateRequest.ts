@@ -66,7 +66,7 @@ module api.content.site.template {
             return api.rest.Path.fromParent(super.getResourcePath(), "update");
         }
 
-        sendAndParse(): Q.Promise<SiteTemplate> {
+        sendAndParse(): wemQ.Promise<SiteTemplate> {
 
             return this.send().then((response: api.rest.JsonResponse<SiteTemplateJson>) => {
                 return this.fromJsonToSiteTemplate(response.getResult());

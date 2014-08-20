@@ -8,7 +8,7 @@ module api.content.site.template {
 
         private multiSelection: boolean = true;
 
-        private deferred: Q.Deferred<InstallSiteTemplateResponse>;
+        private deferred: wemQ.Deferred<InstallSiteTemplateResponse>;
 
         private doneCallback: (value: InstallSiteTemplateResponse) => void;
         private failCallback: (reason: api.rest.RequestError) => void;
@@ -36,8 +36,8 @@ module api.content.site.template {
             return this;
         }
 
-        send(): Q.Promise<InstallSiteTemplateResponse> {
-            this.deferred = Q.defer<InstallSiteTemplateResponse>();
+        send(): wemQ.Promise<InstallSiteTemplateResponse> {
+            this.deferred = wemQ.defer<InstallSiteTemplateResponse>();
             if (this.doneCallback) {
                 this.deferred.promise.then(this.doneCallback);
             }

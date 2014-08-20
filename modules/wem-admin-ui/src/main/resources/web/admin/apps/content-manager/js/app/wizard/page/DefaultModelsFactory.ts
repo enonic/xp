@@ -24,20 +24,20 @@ module app.wizard.page {
 
     export class DefaultModelsFactory {
 
-        static create(config: DefaultModelsFactoryConfig): Q.Promise<DefaultModels> {
+        static create(config: DefaultModelsFactoryConfig): wemQ.Promise<DefaultModels> {
 
             var defaultPageTemplatePromise = new GetDefaultPageTemplateRequest(config.siteTemplateKey, config.contentType).sendAndParse();
             var defaultImageDescriptorPromise = DefaultImageDescriptorResolver.resolve(config.modules);
             var defaultPartDescriptorPromise = DefaultPartDescriptorResolver.resolve(config.modules);
             var defaultLayoutDescriptorPromise = DefaultLayoutDescriptorResolver.resolve(config.modules);
 
-            var allPromises: Q.Promise<any>[] = [
+            var allPromises: wemQ.Promise<any>[] = [
                 defaultPageTemplatePromise,
                 defaultImageDescriptorPromise,
                 defaultPartDescriptorPromise,
                 defaultLayoutDescriptorPromise];
 
-            return Q.all(allPromises).
+            return wemQ.all(allPromises).
                 spread<DefaultModels>((pageTemplate: PageTemplate, imageDescriptor: ImageDescriptor,
                                        partDescriptor: PartDescriptor, layoutDescriptor: LayoutDescriptor) => {
 

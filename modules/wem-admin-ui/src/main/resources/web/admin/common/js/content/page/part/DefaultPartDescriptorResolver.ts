@@ -4,7 +4,7 @@ module api.content.page.part {
 
     export class DefaultPartDescriptorResolver {
 
-        static resolve(moduleKeys: ModuleKey[]) : Q.Promise<PartDescriptor> {
+        static resolve(moduleKeys: ModuleKey[]) : wemQ.Promise<PartDescriptor> {
 
             return new GetPartDescriptorsByModulesRequest(moduleKeys).
                 sendAndParse().then((descriptors: PartDescriptor[]) => {

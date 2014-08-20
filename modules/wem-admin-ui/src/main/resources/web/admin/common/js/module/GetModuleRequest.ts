@@ -20,7 +20,7 @@ module api.module {
             return api.rest.Path.fromParent(super.getResourcePath());
         }
 
-        sendAndParse(): Q.Promise<Module> {
+        sendAndParse(): wemQ.Promise<Module> {
 
             var cache = ModuleCache.get();
             var cachedObject = cache.getByKey(this.moduleKey);

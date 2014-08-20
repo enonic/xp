@@ -24,7 +24,7 @@ module api.content.page {
             return api.rest.Path.fromParent(super.getResourcePath(), "default");
         }
 
-        sendAndParse(): Q.Promise<PageTemplate> {
+        sendAndParse(): wemQ.Promise<PageTemplate> {
 
             return this.send().then((response: api.rest.JsonResponse<PageTemplateJson>) => {
 

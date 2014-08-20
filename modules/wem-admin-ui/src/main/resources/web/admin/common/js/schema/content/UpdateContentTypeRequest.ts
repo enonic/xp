@@ -32,7 +32,7 @@ module api.schema.content {
             return api.rest.Path.fromParent(super.getResourcePath(), "update");
         }
 
-        sendAndParse(): Q.Promise<ContentType> {
+        sendAndParse(): wemQ.Promise<ContentType> {
 
             return this.send().then((response: api.rest.JsonResponse<json.ContentTypeJson>) => {
                 var contentType = this.fromJsonToContentType(response.getResult());

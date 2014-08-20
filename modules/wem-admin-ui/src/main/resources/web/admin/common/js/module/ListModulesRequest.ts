@@ -15,7 +15,7 @@ module api.module {
             return api.rest.Path.fromParent(super.getResourcePath(), "list");
         }
 
-        sendAndParse(): Q.Promise<ModuleSummary[]> {
+        sendAndParse(): wemQ.Promise<ModuleSummary[]> {
 
             return this.send().then((response: api.rest.JsonResponse<ModuleListResult>) => {
                 return ModuleSummary.fromJsonArray(response.getResult().modules);

@@ -20,7 +20,7 @@ module api.content.page.image {
             return super.getResourcePath();
         }
 
-        sendAndParse(): Q.Promise<ImageDescriptor> {
+        sendAndParse(): wemQ.Promise<ImageDescriptor> {
 
             return this.send().then((response: api.rest.JsonResponse<ImageDescriptorJson>) => {
                 return this.fromJsonToImageDescriptor(response.getResult());

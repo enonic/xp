@@ -24,7 +24,7 @@ module api.content.page {
             return api.rest.Path.fromParent(super.getResourcePath(), "listByCanRender");
         }
 
-        sendAndParse(): Q.Promise<PageTemplateSummary[]> {
+        sendAndParse(): wemQ.Promise<PageTemplateSummary[]> {
 
             return this.send().then((response: api.rest.JsonResponse<PageTemplateSummaryListJson>) => {
                 return response.getResult().templates.map((templateJson:PageTemplateSummaryJson) => {

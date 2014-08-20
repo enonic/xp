@@ -20,7 +20,7 @@ module api.content.page {
             return api.rest.Path.fromParent(super.getResourcePath(), "delete");
         }
 
-        sendAndParse(): Q.Promise<api.content.Content> {
+        sendAndParse(): wemQ.Promise<api.content.Content> {
 
             return this.send().then((response: api.rest.JsonResponse<api.content.json.ContentJson>) => {
                 return response.isBlank() ? null : this.fromJsonToContent(response.getResult());

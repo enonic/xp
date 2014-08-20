@@ -33,7 +33,7 @@ module api.content.page {
             return super.getResourcePath();
         }
 
-        sendAndParse(): Q.Promise<PageTemplate> {
+        sendAndParse(): wemQ.Promise<PageTemplate> {
 
             return this.send().then((response: api.rest.JsonResponse<PageTemplateJson>) => {
                 return this.fromJsonToPageTemplate(response.getResult());
