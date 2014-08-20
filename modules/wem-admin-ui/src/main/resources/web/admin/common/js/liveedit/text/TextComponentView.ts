@@ -79,6 +79,9 @@ module api.liveedit.text {
             }
         }
 
+        private timer;
+        public newEvent: MouseEvent;
+        public elem: HTMLElement;
 
         handleClick(event: MouseEvent) {
             event.stopPropagation();
@@ -87,9 +90,9 @@ module api.liveedit.text {
                 this.deselectParent();
                 this.select(!this.isEmpty() ? { x: event.pageX, y: event.pageY } : null);
             } else if (!this.editing) {
+                event.stopPropagation();
 
                 this.showEditor("end");
-
                 var newEvent: MouseEvent;
 
                 newEvent = <MouseEvent> document.createEvent("MouseEvents");
@@ -99,34 +102,20 @@ module api.liveedit.text {
                     event.clientX, event.clientY,
                     event.ctrlKey, event.altKey, event.shiftKey, event.metaKey, event.button, event.relatedTarget);
 
-                /*
                  newEvent.currentTarget=this.getHTMLElement();
+                newEvent.srcElement = this.getHTMLElement();
                  newEvent.offsetX = event.offsetX;
                  newEvent.offsetY = event.offsetY;
-                 newEvent.srcElement = this.getHTMLElement();
                  newEvent.toElement = this.getHTMLElement();
                  newEvent.target=this.getHTMLElement();
-                 */
-//                var element = this.getHTMLElement();
-//                var selection = window.getSelection();
 
 
-                var bodyEl: HTMLBodyElement = <HTMLBodyElement>document.body;
-                var range: TextRange = <TextRange> bodyEl.createTextRange();
+                var element = this.getHTMLElement();
+                element.focus();
+                this.newEvent = newEvent;
 
-                range.moveToPoint(event.screenX, event.screenY);
-                range.select();
-
-                /* selection.removeAllRanges();
-                 selection.addRange(range);*/
-
-
-                if (newEvent.clientX > 0) {
-                    window.dispatchEvent(newEvent);
-                }
-
-
-
+                this.timer = setTimeout(() =>
+                    element.dispatchEvent(this.newEvent), 2000);
             }
         }
 
