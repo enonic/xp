@@ -110,14 +110,6 @@ module api.form.inputtype.combobox {
             }
         }
 
-        onEditContentRequest(listener: (content: api.content.ContentSummary) => void) {
-            // Have to use stub here because it doesn't extend BaseIntputTypeView
-        }
-
-        unEditContentRequest(listener: (content: api.content.ContentSummary) => void) {
-            // Have to use stub here because it doesn't extend BaseIntputTypeView
-        }
-
         private comboboxFilter(item: api.ui.selector.Option<string>, args) {
             return !(args && args.searchString && item.displayValue.toUpperCase().indexOf(args.searchString.toUpperCase()) == -1);
         }

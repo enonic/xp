@@ -148,14 +148,6 @@ module api.content.form.inputtype.relationship {
             return this.contentComboBox.giveFocus();
         }
 
-        onEditContentRequest(listener: (content: api.content.ContentSummary) => void) {
-            // Have to use stub here because it doesn't extend BaseIntputTypeView
-        }
-
-        unEditContentRequest(listener: (content: api.content.ContentSummary) => void) {
-            // Have to use stub here because it doesn't extend BaseIntputTypeView
-        }
-
         onFocus(listener: (event: FocusEvent) => void) {
             this.contentComboBox.onFocus(listener);
         }
