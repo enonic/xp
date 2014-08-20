@@ -8,8 +8,6 @@ module api.form {
 
         private rootDataSet: api.data.RootDataSet;
 
-        private initialRootDataSet: api.data.RootDataSet;
-
         private formItemViews: FormItemView[] = [];
 
         private formValidityChangedListeners: {(event: FormValidityChangedEvent):void}[] = [];
@@ -27,7 +25,6 @@ module api.form {
             this.context = context;
             this.form = form;
             this.rootDataSet = rootDataSet;
-            this.initialRootDataSet = this.rootDataSet.clone();
             this.doLayout();
         }
 
