@@ -65,7 +65,8 @@ module api.form {
 
             if (inputtype.InputTypeManager.isRegistered(inputType.getName())) {
                 var inputTypeConfig = this.input.getInputTypeConfig();
-                var inputTypeViewConfig = this.getContext().createInputTypeViewContext(inputTypeConfig, this.getParentDataPath(), this.input);
+                var inputTypeViewConfig = this.getContext().createInputTypeViewContext(inputTypeConfig, this.getParentDataPath(),
+                    this.input);
                 this.inputTypeView = inputtype.InputTypeManager.createView(inputType.getName(), inputTypeViewConfig);
             }
             else {
@@ -78,9 +79,9 @@ module api.form {
             });
 
             if (this.properties.length == 0) {
-                var initialValue = this.inputTypeView.newInitialValue();
+                var initialValue: api.data.Value = this.inputTypeView.newInitialValue();
                 if (initialValue != null) {
-                    var initialProperty = new api.data.Property(this.input.getName(), new api.data.Value("", api.data.ValueTypes.STRING));
+                    var initialProperty = new api.data.Property(this.input.getName(), initialValue);
                     this.properties.push(initialProperty);
                     this.parentDataSet.addData(initialProperty);
                 }
