@@ -30,7 +30,8 @@ module api.schema.content {
 
 
         static fromJson(json: ContentTypeUpdatedEventJson): ContentTypeUpdatedEvent {
-            return new ContentTypeUpdatedEvent(new ContentTypeName(json.name), json.modifiedTime);
+            var modifiedTime = json.modifiedTime ? new Date(Date.parse(json.modifiedTime)) : null;
+            return new ContentTypeUpdatedEvent(new ContentTypeName(json.name), modifiedTime);
         }
     }
 
@@ -38,6 +39,6 @@ module api.schema.content {
 
         name: string;
 
-        modifiedTime: Date;
+        modifiedTime: string;
     }
 }
