@@ -319,6 +319,7 @@ public class NodeDaoImpl
 
     private Nodes getNodesFromBlobKeys( final BlobKeys blobKeys )
     {
+
         final Nodes.Builder nodesBuilder = Nodes.create();
 
         for ( final BlobKey blobKey : blobKeys )

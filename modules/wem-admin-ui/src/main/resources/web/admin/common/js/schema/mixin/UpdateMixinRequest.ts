@@ -49,7 +49,7 @@ module api.schema.mixin {
         }
 
 
-        sendAndParse(): Q.Promise<Mixin> {
+        sendAndParse(): wemQ.Promise<Mixin> {
 
             return this.send().then((response: api.rest.JsonResponse<api.schema.mixin.json.MixinJson>) => {
                 return this.fromJsonToMixin(response.getResult());

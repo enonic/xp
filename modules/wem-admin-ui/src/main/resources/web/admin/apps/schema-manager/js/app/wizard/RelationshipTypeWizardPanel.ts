@@ -75,13 +75,13 @@ module app.wizard {
             });
         }
 
-        layoutPersistedItem(persistedRelationshipType: RelationshipType): Q.Promise<void> {
+        layoutPersistedItem(persistedRelationshipType: RelationshipType): wemQ.Promise<void> {
 
             this.formIcon.setSrc(persistedRelationshipType.getIconUrl() + '?crop=false');
 
             if (!this.constructing) {
 
-                var deferred = Q.defer<void>();
+                var deferred = wemQ.defer<void>();
 
                 var viewedRelationshipTypeBuilder = new api.schema.relationshiptype.RelationshipTypeBuilder(persistedRelationshipType);
                 viewedRelationshipTypeBuilder.setName(this.relationShipTypeWizardHeader.getName());
@@ -112,7 +112,7 @@ module app.wizard {
             }
         }
 
-        private doLayoutPersistedItem(persistedRelationshipType: RelationshipType): Q.Promise<void> {
+        private doLayoutPersistedItem(persistedRelationshipType: RelationshipType): wemQ.Promise<void> {
 
             this.relationShipTypeWizardHeader.setName(persistedRelationshipType.getName());
 
@@ -124,13 +124,13 @@ module app.wizard {
                 });
         }
 
-        saveChanges(): Q.Promise<RelationshipType> {
+        saveChanges(): wemQ.Promise<RelationshipType> {
             var formData = this.relationshipTypeForm.getFormData();
             this.persistedConfig = formData.xml;
             return super.saveChanges();
         }
 
-        persistNewItem(): Q.Promise<RelationshipType> {
+        persistNewItem(): wemQ.Promise<RelationshipType> {
 
             var formData = this.relationshipTypeForm.getFormData();
             var newName = new RelationshipTypeName(this.relationShipTypeWizardHeader.getName());
@@ -148,7 +148,7 @@ module app.wizard {
                 });
         }
 
-        updatePersistedItem(): Q.Promise<RelationshipType> {
+        updatePersistedItem(): wemQ.Promise<RelationshipType> {
 
             var formData = this.relationshipTypeForm.getFormData();
             var newName = new RelationshipTypeName(this.relationShipTypeWizardHeader.getName());

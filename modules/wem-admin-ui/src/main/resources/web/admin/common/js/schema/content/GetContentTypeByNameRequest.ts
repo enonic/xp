@@ -23,10 +23,10 @@ module api.schema.content {
             return super.getResourcePath();
         }
 
-        sendAndParse(): Q.Promise<ContentType> {
+        sendAndParse(): wemQ.Promise<ContentType> {
 
             var contentTypeCache = ContentTypeCache.get();
-            var contentType = contentTypeCache.getByName(this.name);
+            var contentType = contentTypeCache.getByKey(this.name);
             if (contentType) {
                 return Q(contentType);
             }

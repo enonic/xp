@@ -20,10 +20,10 @@ module api.module {
             return api.rest.Path.fromParent(super.getResourcePath());
         }
 
-        sendAndParse(): Q.Promise<Module> {
+        sendAndParse(): wemQ.Promise<Module> {
 
             var cache = ModuleCache.get();
-            var cachedObject = cache.getByName(this.moduleKey);
+            var cachedObject = cache.getByKey(this.moduleKey);
             if (cachedObject) {
                 return Q(cachedObject);
             }
@@ -31,7 +31,7 @@ module api.module {
                 return this.send().then((response: api.rest.JsonResponse<json.ModuleJson>) => {
                     var moduleObj = this.fromJsonToModule(response.getResult());
                     cache.put(moduleObj);
-                    return moduleObj ;
+                    return moduleObj;
                 });
             }
         }

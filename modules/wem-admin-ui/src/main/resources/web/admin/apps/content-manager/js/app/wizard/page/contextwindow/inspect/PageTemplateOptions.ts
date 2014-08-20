@@ -25,9 +25,9 @@ module app.wizard.page.contextwindow.inspect {
             return this.defaultPageTemplateOption;
         }
 
-        getOptions(): Q.Promise<Option<PageTemplateOption>[]> {
+        getOptions(): wemQ.Promise<Option<PageTemplateOption>[]> {
 
-            var deferred = Q.defer<Option<PageTemplateOption>[]>();
+            var deferred = wemQ.defer<Option<PageTemplateOption>[]>();
 
             var options: Option<PageTemplateOption>[] = [];
             options.push(PageTemplateOptions.defaultPageTemplateOption);

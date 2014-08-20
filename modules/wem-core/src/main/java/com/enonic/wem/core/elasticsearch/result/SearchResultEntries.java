@@ -1,16 +1,18 @@
 package com.enonic.wem.core.elasticsearch.result;
 
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 public class SearchResultEntries
     implements Iterable<SearchResultEntry>
 {
-    public final Set<SearchResultEntry> hits;
+    public final ImmutableMap<String, SearchResultEntry> hits;
 
     public final long totalHits;
 
@@ -18,7 +20,7 @@ public class SearchResultEntries
 
     public SearchResultEntries( final Builder builder )
     {
-        this.hits = ImmutableSet.copyOf( builder.hits );
+        this.hits = ImmutableMap.copyOf( builder.hits );
         this.totalHits = builder.totalHits;
         this.maxScore = builder.maxScore;
     }
@@ -43,19 +45,21 @@ public class SearchResultEntries
         return totalHits;
     }
 
+    public SearchResultEntry get( final String id )
+    {
+        return this.hits.get( id );
+    }
+
     public SearchResultEntry getFirstHit()
     {
-        return hits.iterator().next();
+        return this.hits.values().iterator().next();
     }
 
     public Set<SearchResultField> getFields( final String fieldName )
     {
         final Set<SearchResultField> searchResultFields = Sets.newLinkedHashSet();
 
-        for ( final SearchResultEntry hit : hits )
-        {
-            searchResultFields.add( hit.getField( fieldName ) );
-        }
+        searchResultFields.addAll( hits.values().stream().map( hit -> hit.getField( fieldName ) ).collect( Collectors.toList() ) );
 
         return searchResultFields;
     }
@@ -63,12 +67,12 @@ public class SearchResultEntries
     @Override
     public Iterator<SearchResultEntry> iterator()
     {
-        return hits.iterator();
+        return this.hits.values().iterator();
     }
 
     public static class Builder
     {
-        private Set<SearchResultEntry> hits = Sets.newLinkedHashSet();
+        private Map<String, SearchResultEntry> hits = Maps.newLinkedHashMap();
 
         private long totalHits = 0;
 
@@ -76,7 +80,7 @@ public class SearchResultEntries
 
         public Builder add( final SearchResultEntry entry )
         {
-            hits.add( entry );
+            hits.put( entry.getId(), entry );
             return this;
         }
 

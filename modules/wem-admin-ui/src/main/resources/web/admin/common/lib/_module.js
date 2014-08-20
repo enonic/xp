@@ -21,4 +21,4 @@
 // @include mousetrap.js
 // @include mousetrap-global-bind.min.js
 // @include q.js
-// @include jquery.noconflict.js
+// @include noconflict.js

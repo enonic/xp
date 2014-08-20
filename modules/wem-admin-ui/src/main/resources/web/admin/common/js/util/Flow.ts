@@ -12,11 +12,11 @@ module api.util {
             return this.thisOfProducer;
         }
 
-        public doExecute(context:CONTEXT): Q.Promise<RESULT> {
+        public doExecute(context:CONTEXT): wemQ.Promise<RESULT> {
             return this.doExecuteNext(context);
         }
 
-        doExecuteNext(context:CONTEXT): Q.Promise<RESULT> {
+        doExecuteNext(context:CONTEXT): wemQ.Promise<RESULT> {
             throw new Error("Must be implemented by inheritor");
         }
     }

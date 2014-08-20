@@ -24,7 +24,7 @@ module api.util.loader {
             this.setRequest(request);
         }
 
-        sendRequest(): Q.Promise<OBJECT[]> {
+        sendRequest(): wemQ.Promise<OBJECT[]> {
             return this.request.sendAndParse();
         }
 

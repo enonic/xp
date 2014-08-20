@@ -55,7 +55,7 @@ module app.browse {
             return elem.hasChildren();
         }
 
-        fetchChildren(parentNode?: TreeNode<TemplateSummary>): Q.Promise<TemplateSummary[]> {
+        fetchChildren(parentNode?: TreeNode<TemplateSummary>): wemQ.Promise<TemplateSummary[]> {
             var parentId = (!!parentNode && parentNode.getData()) ? parentNode.getData().getKey() : '';
             return new TemplateTreeRequest(parentId).sendAndParse();
         }

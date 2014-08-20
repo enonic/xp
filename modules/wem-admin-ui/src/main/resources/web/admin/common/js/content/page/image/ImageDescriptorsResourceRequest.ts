@@ -11,7 +11,7 @@ module api.content.page.image {
             return array;
         }
 
-        sendAndParse(): Q.Promise<ImageDescriptor[]> {
+        sendAndParse(): wemQ.Promise<ImageDescriptor[]> {
 
             return this.send().then((response: api.rest.JsonResponse<ImageDescriptorsJson>) => {
                 return this.fromJsonToImageDescriptors(response.getResult());

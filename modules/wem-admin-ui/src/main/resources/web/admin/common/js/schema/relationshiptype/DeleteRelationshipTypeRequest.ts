@@ -32,7 +32,7 @@ module api.schema.relationshiptype {
             return api.rest.Path.fromParent(super.getResourcePath(), "delete");
         }
 
-        sendAndParse(): Q.Promise<api.schema.SchemaDeleteResult> {
+        sendAndParse(): wemQ.Promise<api.schema.SchemaDeleteResult> {
 
             return this.send().then((response:api.rest.JsonResponse<api.schema.SchemaDeleteJson>) => {
                 return this.fromJsonToDeleteResult(response.getResult());

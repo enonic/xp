@@ -60,7 +60,7 @@ module app.wizard {
             return steps;
         }
 
-        renderNew(): Q.Promise<void> {
+        renderNew(): wemQ.Promise<void> {
 
             return super.renderNew().
                 then((): void => {
@@ -70,8 +70,8 @@ module app.wizard {
                 });
         }
 
-        layoutPersistedItem(siteTemplate: api.content.site.template.SiteTemplate): Q.Promise<void> {
-            var deferred = Q.defer<void>();
+        layoutPersistedItem(siteTemplate: api.content.site.template.SiteTemplate): wemQ.Promise<void> {
+            var deferred = wemQ.defer<void>();
 
             this.siteTemplateStep.renderExisting(siteTemplate);
             deferred.resolve(null);
@@ -79,8 +79,8 @@ module app.wizard {
             return deferred.promise;
         }
 
-        persistNewItem(): Q.Promise<api.content.site.template.SiteTemplate> {
-            var deferred = Q.defer<api.content.site.template.SiteTemplate>();
+        persistNewItem(): wemQ.Promise<api.content.site.template.SiteTemplate> {
+            var deferred = wemQ.defer<api.content.site.template.SiteTemplate>();
             var validationResult: api.ui.form.ValidationResult = this.siteTemplateStep.validate(true);
             if (validationResult.isValid()) {
                 var data = this.siteTemplateStep.getFormData();
@@ -91,8 +91,8 @@ module app.wizard {
             return deferred.promise
         }
 
-        updatePersistedItem(): Q.Promise<api.content.site.template.SiteTemplate> {
-            var deferred = Q.defer<api.content.site.template.SiteTemplate>();
+        updatePersistedItem(): wemQ.Promise<api.content.site.template.SiteTemplate> {
+            var deferred = wemQ.defer<api.content.site.template.SiteTemplate>();
             var validationResult: api.ui.form.ValidationResult = this.siteTemplateStep.validate(true);
             if (validationResult.isValid()) {
                 var data = this.siteTemplateStep.getFormData();

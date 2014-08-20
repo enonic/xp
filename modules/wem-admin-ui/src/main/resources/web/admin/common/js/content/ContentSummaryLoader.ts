@@ -52,7 +52,7 @@ module api.content {
             });
         }
 
-        sendRequest(): Q.Promise<ContentSummary[]> {
+        sendRequest(): wemQ.Promise<ContentSummary[]> {
             return this.contentSummaryRequest.sendAndParse();
         }
 
@@ -83,11 +83,11 @@ module api.content {
             return this.request.getParams();
         }
 
-        send(): Q.Promise<api.rest.JsonResponse<json.ContentQueryResultJson<json.ContentSummaryJson>>> {
+        send(): wemQ.Promise<api.rest.JsonResponse<json.ContentQueryResultJson<json.ContentSummaryJson>>> {
             return this.request.send();
         }
 
-        sendAndParse(): Q.Promise<ContentSummary[]> {
+        sendAndParse(): wemQ.Promise<ContentSummary[]> {
 
             return this.request.sendAndParse().
                 then((queryResult: ContentQueryResult<ContentSummary,json.ContentSummaryJson>) => {

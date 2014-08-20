@@ -59,14 +59,14 @@ public final class NodeQueryResult
         return aggregations;
     }
 
-    public static Builder newQueryResult()
+    public static Builder create()
     {
         return new Builder();
     }
 
     public EntityIds getEntityIds()
     {
-        final Set<EntityId> entityIds = Sets.newHashSet();
+        final Set<EntityId> entityIds = Sets.newLinkedHashSet();
 
         for ( final NodeQueryResultEntry nodeQueryResultEntry : entries )
         {
@@ -78,7 +78,7 @@ public final class NodeQueryResult
 
     public static final class Builder
     {
-        private Set<NodeQueryResultEntry> entries = Sets.newHashSet();
+        private Set<NodeQueryResultEntry> entries = Sets.newLinkedHashSet();
 
         private long totalHits;
 

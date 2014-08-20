@@ -16,7 +16,7 @@ public class NodeQuery
         this.path = builder.path;
     }
 
-    public static Builder newNodeQuery()
+    public static Builder create()
     {
         return new Builder();
     }

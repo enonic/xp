@@ -10,7 +10,7 @@ public class QueryResultFactory
     {
         final SearchResultEntries results = searchResult.getResults();
 
-        final NodeQueryResult.Builder builder = NodeQueryResult.newQueryResult().
+        final NodeQueryResult.Builder builder = NodeQueryResult.create().
             hits( results.getSize() ).
             totalHits( results.getTotalHits() ).
             maxScore( results.getMaxScore() );

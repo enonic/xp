@@ -33,9 +33,12 @@ module api.schema.content {
             return api.rest.Path.fromParent(super.getResourcePath(), "delete");
         }
 
-        sendAndParse(): Q.Promise<api.schema.SchemaDeleteResult> {
+        sendAndParse(): wemQ.Promise<api.schema.SchemaDeleteResult> {
 
             return this.send().then((response:api.rest.JsonResponse<api.schema.SchemaDeleteJson>) => {
+
+                // TODO: Invalidate ContentTypeCache
+
                 return this.fromJsonToDeleteResult(response.getResult());
             });
         }

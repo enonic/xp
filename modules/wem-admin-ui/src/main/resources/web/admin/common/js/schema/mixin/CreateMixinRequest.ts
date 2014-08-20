@@ -41,7 +41,7 @@ module api.schema.mixin {
             return api.rest.Path.fromParent( super.getResourcePath(), "create" );
         }
 
-        sendAndParse(): Q.Promise<Mixin> {
+        sendAndParse(): wemQ.Promise<Mixin> {
 
             return this.send().then((response: api.rest.JsonResponse<api.schema.mixin.json.MixinJson>) => {
                 return this.fromJsonToMixin(response.getResult());

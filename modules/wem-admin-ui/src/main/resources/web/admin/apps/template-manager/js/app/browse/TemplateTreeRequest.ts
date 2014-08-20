@@ -20,7 +20,7 @@ module app.browse {
             return api.rest.Path.fromParent(super.getResourcePath(), "tree");
         }
 
-        sendAndParse(): Q.Promise<TemplateSummary[]> {
+        sendAndParse(): wemQ.Promise<TemplateSummary[]> {
 
             return this.send().then((response: api.rest.JsonResponse<TemplateSummaryListJson>) => {
                 return this.fromJsonArrayToTemplateSummaryArray(response.getResult().templates);

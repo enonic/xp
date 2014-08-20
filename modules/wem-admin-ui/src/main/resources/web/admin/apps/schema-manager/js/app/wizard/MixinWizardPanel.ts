@@ -66,13 +66,13 @@ module app.wizard {
             });
         }
 
-        layoutPersistedItem(persistedMixin: api.schema.mixin.Mixin): Q.Promise<void> {
+        layoutPersistedItem(persistedMixin: api.schema.mixin.Mixin): wemQ.Promise<void> {
 
             this.formIcon.setSrc(persistedMixin.getIconUrl() + '?crop=false');
 
             if (!this.constructing) {
 
-                var deferred = Q.defer<void>();
+                var deferred = wemQ.defer<void>();
 
                 var viewedMixinBuilder = new api.schema.mixin.MixinBuilder(persistedMixin);
                 viewedMixinBuilder.setName(this.mixinWizardHeader.getName());
@@ -103,7 +103,7 @@ module app.wizard {
             }
         }
 
-        doLayoutPersistedItem(persistedMixin: api.schema.mixin.Mixin): Q.Promise<void> {
+        doLayoutPersistedItem(persistedMixin: api.schema.mixin.Mixin): wemQ.Promise<void> {
 
             this.mixinWizardHeader.setName(persistedMixin.getName());
 
@@ -118,13 +118,13 @@ module app.wizard {
                 });
         }
 
-        saveChanges(): Q.Promise<api.schema.mixin.Mixin> {
+        saveChanges(): wemQ.Promise<api.schema.mixin.Mixin> {
             var formData = this.mixinForm.getFormData();
             this.persistedConfig = formData.xml;
             return super.saveChanges();
         }
 
-        persistNewItem(): Q.Promise<api.schema.mixin.Mixin> {
+        persistNewItem(): wemQ.Promise<api.schema.mixin.Mixin> {
 
             var formData = this.mixinForm.getFormData();
 
@@ -146,7 +146,7 @@ module app.wizard {
                 });
         }
 
-        updatePersistedItem(): Q.Promise<api.schema.mixin.Mixin> {
+        updatePersistedItem(): wemQ.Promise<api.schema.mixin.Mixin> {
 
             var formData = this.mixinForm.getFormData();
 

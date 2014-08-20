@@ -50,12 +50,12 @@ import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.ContentService;
-import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.DeleteContentParams;
 import com.enonic.wem.api.content.Direction;
 import com.enonic.wem.api.content.FindContentByParentParams;
 import com.enonic.wem.api.content.FindContentByParentResult;
-import com.enonic.wem.api.content.GetContentByIdsParams;
+import com.enonic.wem.api.content.FindContentByQueryParams;
+import com.enonic.wem.api.content.FindContentByQueryResult;
 import com.enonic.wem.api.content.GetContentVersionsParams;
 import com.enonic.wem.api.content.PushContentParams;
 import com.enonic.wem.api.content.RenameContentParams;
@@ -65,7 +65,6 @@ import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.editor.ContentEditor;
-import com.enonic.wem.api.content.query.ContentQueryResult;
 import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.content.versioning.ContentVersions;
 import com.enonic.wem.api.context.Context;
@@ -107,6 +106,7 @@ public class ContentResource
     public ContentIdJson getById( @QueryParam("id") final String idParam,
                                   @QueryParam("expand") @DefaultValue(EXPAND_FULL) final String expandParam )
     {
+
         final ContentId id = ContentId.from( idParam );
         final Content content = contentService.getById( id, STAGE_CONTEXT );
 
@@ -240,16 +240,18 @@ public class ContentResource
     @Consumes(MediaType.APPLICATION_JSON)
     public AbstractContentQueryResultJson query( final ContentQueryJson contentQueryJson )
     {
-        final ContentQueryResult contentQueryResult = contentService.find( contentQueryJson.getContentQuery(), STAGE_CONTEXT );
-
         final boolean getChildrenIds = !Expand.NONE.matches( contentQueryJson.getExpand() );
-        final GetContentByIdsParams params = new GetContentByIdsParams( ContentIds.from( contentQueryResult.getContentIds() ) ).
-            setGetChildrenIds( getChildrenIds );
 
-        final Contents contents = contentService.getByIds( params, STAGE_CONTEXT );
         final ContentIconUrlResolver iconUrlResolver = newContentIconUrlResolver();
+        final FindContentByQueryResult findResult = contentService.find( FindContentByQueryParams.create().
+            populateChildren( getChildrenIds ).
+            contentQuery( contentQueryJson.getContentQuery() ).
+            build(), STAGE_CONTEXT );
 
-        return ContentQueryResultJsonFactory.create( contentQueryResult, contents, contentQueryJson.getExpand(), iconUrlResolver );
+        final AbstractContentQueryResultJson abstractContentQueryResultJson =
+            FindContentByQuertResultJsonFactory.create( findResult, contentQueryJson.getExpand(), iconUrlResolver );
+
+        return abstractContentQueryResultJson;
     }
 
     @GET
@@ -335,6 +337,7 @@ public class ContentResource
     public ContentJson create( final CreateContentJson params )
     {
         final Content persistedContent = contentService.create( params.getCreateContent(), STAGE_CONTEXT );
+
         return new ContentJson( persistedContent, newContentIconUrlResolver() );
     }
 
@@ -379,6 +382,7 @@ public class ContentResource
                 newName( json.getContentName() );
 
             final Content renamedContent = contentService.rename( renameParams, STAGE_CONTEXT );
+
             return new ContentJson( renamedContent, newContentIconUrlResolver() );
         }
         catch ( ContentAlreadyExistException e )

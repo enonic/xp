@@ -2,15 +2,15 @@ module api.schema.content {
 
     export class UpdateContentTypeRequest extends ContentTypeResourceRequest<json.ContentTypeJson, ContentType> {
 
-        private contentTypeToUpdate:ContentTypeName;
+        private contentTypeToUpdate: ContentTypeName;
 
-        private name:ContentTypeName;
+        private name: ContentTypeName;
 
-        private config:string;
+        private config: string;
 
         private icon: api.icon.Icon;
 
-        constructor(contentTypeToUpdate:ContentTypeName, name:ContentTypeName, config:string, icon: api.icon.Icon) {
+        constructor(contentTypeToUpdate: ContentTypeName, name: ContentTypeName, config: string, icon: api.icon.Icon) {
             super();
             super.setMethod('POST');
             this.contentTypeToUpdate = contentTypeToUpdate;
@@ -19,7 +19,7 @@ module api.schema.content {
             this.icon = icon;
         }
 
-        getParams():Object {
+        getParams(): Object {
             return {
                 contentTypeToUpdate: this.contentTypeToUpdate.toString(),
                 name: this.name.toString(),
@@ -28,14 +28,16 @@ module api.schema.content {
             }
         }
 
-        getRequestPath():api.rest.Path {
+        getRequestPath(): api.rest.Path {
             return api.rest.Path.fromParent(super.getResourcePath(), "update");
         }
 
-        sendAndParse(): Q.Promise<ContentType> {
+        sendAndParse(): wemQ.Promise<ContentType> {
 
             return this.send().then((response: api.rest.JsonResponse<json.ContentTypeJson>) => {
-                return this.fromJsonToContentType(response.getResult());
+                var contentType = this.fromJsonToContentType(response.getResult());
+                ContentTypeCache.get().put(contentType);
+                return  contentType;
             });
         }
     }

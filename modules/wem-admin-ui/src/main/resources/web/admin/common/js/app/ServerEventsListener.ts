@@ -9,7 +9,26 @@ module api.app {
             this.applications = applications;
             this.serverEventsConnection = new api.app.ServerEventsConnection();
             this.serverEventsConnection.onServerEvent((event: api.event.Event) => this.onServerEvent(event));
+        }
+
+        start() {
             this.serverEventsConnection.connect();
+        }
+
+        onConnectionLost(listener: () => void) {
+            this.serverEventsConnection.onConnectionLost(listener);
+        }
+
+        unConnectionLost(listener: () => void) {
+            this.serverEventsConnection.unConnectionLost(listener);
+        }
+
+        onConnectionRestored(listener: () => void) {
+            this.serverEventsConnection.onConnectionRestored(listener);
+        }
+
+        unConnectionRestored(listener: () => void) {
+            this.serverEventsConnection.unConnectionRestored(listener);
         }
 
         private onServerEvent(event: api.event.Event) {

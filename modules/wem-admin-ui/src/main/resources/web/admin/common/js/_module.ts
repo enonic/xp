@@ -10,6 +10,7 @@
 ///<reference path='lib/hasher.d.ts' />
 ///<reference path='lib/crossroads.d.ts' />
 ///<reference path='lib/jquery.slimscroll.d.ts' />
+///<reference path='lib/noconflict.d.ts' />
 
 ///<reference path='Equitable.ts' />
 ///<reference path='Cloneable.ts' />
@@ -25,6 +26,8 @@
 ///<reference path='util/loader/_module.ts' />
 
 ///<reference path='i18n/_module.ts' />
+
+///<reference path='cache/_module.ts' />
 
 ///<reference path='event/_module.ts' />
 
@@ -72,6 +75,8 @@
 ///<reference path='form/inputtype/combobox/_module.ts' />
 ///<reference path='form/inputtype/singleselector/_module.ts' />
 ///<reference path='form/inputtype/text/_module.ts' />
+///<reference path='form/inputtype/checkbox/_module.ts' />
+///<reference path='form/inputtype/long/_module.ts' />
 
 ///<reference path='item/_module.ts' />
 

@@ -54,7 +54,15 @@ function startApplication() {
     var router = new app.launcher.AppRouter(applications, appLauncher);
     appLauncher.setRouter(router);
 
-    new api.app.ServerEventsListener(applications);
+    var serverEventsListener = new api.app.ServerEventsListener(applications);
+    var managerInstance = api.app.AppManager.instance();
+    serverEventsListener.onConnectionLost(() => {
+        managerInstance.notifyConnectionLost();
+    });
+    serverEventsListener.onConnectionRestored(() => {
+        managerInstance.notifyConnectionRestored();
+    });
+    serverEventsListener.start();
 }
 
 function getApplication(id: string): api.app.Application {

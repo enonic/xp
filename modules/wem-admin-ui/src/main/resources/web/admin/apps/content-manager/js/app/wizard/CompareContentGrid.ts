@@ -26,7 +26,7 @@ module app.wizard {
                             setField("displayName").
                             setFormatter(this.nameFormatter).
                             build()
-                    ]).prependClasses("content-grid")
+                    ]).prependClasses("content-tree-grid")
             );
 
             this.content = content;
@@ -42,7 +42,7 @@ module app.wizard {
             return contentSummaryViewer.toString();
         }
 
-        fetchChildren(parentNode?: TreeNode<ContentSummaryAndCompareStatus>): Q.Promise<ContentSummaryAndCompareStatus[]> {
+        fetchChildren(parentNode?: TreeNode<ContentSummaryAndCompareStatus>): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
             var parentContentId = parentNode && parentNode.getData() ? parentNode.getData().getId() : "";
             return api.content.ContentSummaryAndCompareStatusFetcher.fetchChildren(parentContentId).
                 then((data: ContentResponse<ContentSummaryAndCompareStatus>) => {

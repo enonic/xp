@@ -18,6 +18,8 @@ import com.enonic.wem.api.content.DeleteContentParams;
 import com.enonic.wem.api.content.DeleteContentResult;
 import com.enonic.wem.api.content.FindContentByParentParams;
 import com.enonic.wem.api.content.FindContentByParentResult;
+import com.enonic.wem.api.content.FindContentByQueryParams;
+import com.enonic.wem.api.content.FindContentByQueryResult;
 import com.enonic.wem.api.content.GetContentByIdsParams;
 import com.enonic.wem.api.content.GetContentVersionsParams;
 import com.enonic.wem.api.content.PushContentParams;
@@ -25,8 +27,6 @@ import com.enonic.wem.api.content.RenameContentParams;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.ValidateContentData;
 import com.enonic.wem.api.content.attachment.AttachmentService;
-import com.enonic.wem.api.content.query.ContentQuery;
-import com.enonic.wem.api.content.query.ContentQueryResult;
 import com.enonic.wem.api.content.versioning.ContentVersions;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.NodeService;
@@ -204,11 +204,15 @@ public class ContentServiceImpl
     }
 
     @Override
-    public ContentQueryResult find( final ContentQuery contentQuery, final Context context )
+    public FindContentByQueryResult find( final FindContentByQueryParams params, final Context context )
     {
-        return FindContentCommand.create().
-            contentQuery( contentQuery ).
+        return FindContentByQueryCommand.create().
+            params( params ).
             queryService( this.queryService ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            blobService( this.blobService ).
+            translator( this.contentNodeTranslator ).
             context( context ).
             build().
             execute();

@@ -165,7 +165,7 @@ module api.content.form.inputtype.image {
                 }).done();
         }
 
-        private doLoadContent(properties: api.data.Property[]): Q.Promise<ContentSummary[]> {
+        private doLoadContent(properties: api.data.Property[]): wemQ.Promise<ContentSummary[]> {
 
             if (!properties) {
                 return Q(<ContentSummary[]> []);

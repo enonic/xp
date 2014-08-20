@@ -19,7 +19,7 @@ module api.schema.content {
             return api.rest.Path.fromParent(super.getResourcePath(), "all");
         }
 
-        sendAndParse(): Q.Promise<ContentTypeSummary[]> {
+        sendAndParse(): wemQ.Promise<ContentTypeSummary[]> {
 
             return this.send().then((response: api.rest.JsonResponse<json.ContentTypeSummaryListJson>) => {
                 return response.getResult().contentTypes.map((contentTypeJson:json.ContentTypeSummaryJson) => {

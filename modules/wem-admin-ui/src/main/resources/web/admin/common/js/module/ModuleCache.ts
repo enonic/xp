@@ -1,27 +1,28 @@
 module api.module {
 
-    export class ModuleCache {
+    export class ModuleCache extends api.cache.Cache<Module, ModuleKey> {
 
         private static instance: ModuleCache;
 
-        private objectsTypesByKey: {[s:string] : Module;} = {};
-
         constructor() {
+            super();
 
             ModuleUpdatedEvent.on((event: ModuleUpdatedEvent) => {
-                var moduleKey = event.getModuleKey();
-                delete this.objectsTypesByKey[moduleKey.toString()];
+                console.log("ModuleCache on ModuleUpdatedEvent, deleting: " + event.getModuleKey().toString());
+                this.deleteByKey(event.getModuleKey());
             });
         }
 
-        public put(object: Module) {
-            console.log("ModuleCache.put: " + object.getModuleKey().toString());
-            this.objectsTypesByKey[object.getModuleKey().toString()] = object;
+        copy(object: Module): Module {
+            return new ModuleBuilder(object).build();
         }
 
-        public getByName(key: ModuleKey): Module {
-            console.log("ModuleCache.getByName: " + key.toString());
-            return this.objectsTypesByKey[key.toString()];
+        getKeyFromObject(object: Module): ModuleKey {
+            return object.getModuleKey();
+        }
+
+        getKeyAsString(key: ModuleKey): string {
+            return key.toString();
         }
 
         static get(): ModuleCache {

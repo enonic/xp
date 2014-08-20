@@ -8,18 +8,23 @@ import com.google.common.base.Throwables;
 import com.google.inject.Inject;
 
 import com.enonic.wem.admin.json.ObjectMapperHelper;
+import com.enonic.wem.admin.json.module.ModuleUpdatedEventJson;
+import com.enonic.wem.admin.json.schema.content.ContentTypeDeletedEventJson;
+import com.enonic.wem.admin.json.schema.content.ContentTypeUpdatedEventJson;
 import com.enonic.wem.api.event.Event;
 import com.enonic.wem.api.event.EventListener;
 import com.enonic.wem.api.module.ModuleUpdatedEvent;
+import com.enonic.wem.api.schema.content.ContentTypeDeletedEvent;
+import com.enonic.wem.api.schema.content.ContentTypeUpdatedEvent;
 
 @Singleton
 public final class EventListenerImpl
     implements EventListener
 {
-    private ObjectMapper objectMapper;
-
     @Inject
     protected WebSocketManager webSocketManager;
+
+    private ObjectMapper objectMapper;
 
     public EventListenerImpl()
     {
@@ -56,6 +61,14 @@ public final class EventListenerImpl
         if ( event instanceof ModuleUpdatedEvent )
         {
             return new ModuleUpdatedEventJson( (ModuleUpdatedEvent) event );
+        }
+        else if ( event instanceof ContentTypeUpdatedEvent )
+        {
+            return new ContentTypeUpdatedEventJson( (ContentTypeUpdatedEvent) event );
+        }
+        else if ( event instanceof ContentTypeDeletedEvent )
+        {
+            return new ContentTypeDeletedEventJson( (ContentTypeDeletedEvent) event );
         }
         return null;
     }

@@ -1,5 +1,7 @@
 package com.enonic.wem.core.elasticsearch;
 
+import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -18,6 +20,7 @@ import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.aggregation.Aggregation;
@@ -28,7 +31,6 @@ import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIds;
 import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.core.elasticsearch.result.SearchResult;
-import com.enonic.wem.core.elasticsearch.result.SearchResultEntries;
 import com.enonic.wem.core.elasticsearch.result.SearchResultEntry;
 import com.enonic.wem.core.elasticsearch.result.SearchResultField;
 import com.enonic.wem.core.index.Index;
@@ -146,6 +148,14 @@ public class ElasticsearchWorkspaceService
         return searchResult.getResults().getFirstHit();
     }
 
+
+    /**
+     * Fetch blobKeys for provided Ids.
+     * The order of the provided Ids are maintained in result.
+     *
+     * @param query
+     * @return
+     */
     @Override
     public BlobKeys getByIds( final WorkspaceIdsQuery query )
     {
@@ -160,7 +170,6 @@ public class ElasticsearchWorkspaceService
 
         final TermsQueryBuilder idsQuery = new TermsQueryBuilder( ENTITY_ID_FIELD_NAME, entityIdsAsStrings );
         final BoolQueryBuilder boolQueryBuilder = joinWithWorkspaceQuery( workspaceName, idsQuery );
-
         final QueryMetaData queryMetaData = createGetBlobKeyQueryMetaData( entityIdsAsStrings.size() );
 
         final SearchResult searchResult = elasticsearchDao.get( queryMetaData, boolQueryBuilder );
@@ -170,12 +179,21 @@ public class ElasticsearchWorkspaceService
             return BlobKeys.empty();
         }
 
-        final SearchResultEntries results = searchResult.getResults();
+        final Map<String, SearchResultField> orderedResultMap =
+            getSearchResultFieldsWithPreservedOrder( workspace, entityIdsAsStrings, searchResult );
 
-        final Set<SearchResultField> fieldValues = results.getFields( BLOBKEY_FIELD_NAME );
+        final BlobKeys blobKeys = fieldValuesToBlobKeys( orderedResultMap.values() );
 
-        return fieldValuesToBlobKeys( fieldValues );
+        return blobKeys;
     }
+
+    private Map<String, SearchResultField> getSearchResultFieldsWithPreservedOrder( final Workspace workspace,
+                                                                                    final Set<String> entityIdsAsStrings,
+                                                                                    final SearchResult searchResult )
+    {
+        return Maps.asMap( entityIdsAsStrings, new EntityIdToSearchResultFieldMapper( searchResult, BLOBKEY_FIELD_NAME, workspace ) );
+    }
+
 
     @Override
     public BlobKey getByPath( final WorkspacePathQuery query )
@@ -211,7 +229,6 @@ public class ElasticsearchWorkspaceService
     {
         final TermsQueryBuilder parentQuery = new TermsQueryBuilder( PATH_FIELD_NAME, query.getNodePathsAsStrings() );
         final BoolQueryBuilder workspacedByPathsQuery = joinWithWorkspaceQuery( query.getWorkspace().getName(), parentQuery );
-
         final QueryMetaData queryMetaData = createGetBlobKeyQueryMetaData( query.getNodePathsAsStrings().size() );
 
         final SearchResult searchResult = elasticsearchDao.get( queryMetaData, workspacedByPathsQuery );
@@ -288,11 +305,17 @@ public class ElasticsearchWorkspaceService
         }
     }
 
-    private BlobKeys fieldValuesToBlobKeys( final Set<SearchResultField> fieldValues )
+    private BlobKeys fieldValuesToBlobKeys( final Collection<SearchResultField> fieldValues )
     {
         final BlobKeys.Builder blobKeysBuilder = BlobKeys.create();
+
         for ( final SearchResultField searchResultField : fieldValues )
         {
+            if ( searchResultField == null )
+            {
+                continue;
+            }
+
             blobKeysBuilder.add( new BlobKey( searchResultField.getValue().toString() ) );
         }
         return blobKeysBuilder.build();
@@ -306,6 +329,7 @@ public class ElasticsearchWorkspaceService
             indexType( IndexType.NODE ).
             from( 0 ).
             size( numberOfHits ).
+            addField( ENTITY_ID_FIELD_NAME ).
             addField( BLOBKEY_FIELD_NAME ).
             addSort( fieldSortBuilder ).
             build();
@@ -320,6 +344,32 @@ public class ElasticsearchWorkspaceService
         boolQueryBuilder.must( workspaceQuery );
 
         return boolQueryBuilder;
+    }
+
+    private final class EntityIdToSearchResultFieldMapper
+        implements com.google.common.base.Function<String, SearchResultField>
+    {
+        private final SearchResult searchResult;
+
+        private final String fieldName;
+
+        private final Workspace workspace;
+
+        private EntityIdToSearchResultFieldMapper( final SearchResult searchResult, final String fieldName, final Workspace workspace )
+        {
+            this.searchResult = searchResult;
+            this.fieldName = fieldName;
+            this.workspace = workspace;
+        }
+
+        @Override
+        public SearchResultField apply( final String entityId )
+        {
+            final WorkspaceDocumentId workspaceDocumentId = new WorkspaceDocumentId( EntityId.from( entityId ), this.workspace );
+
+            final SearchResultEntry entry = this.searchResult.getEntry( workspaceDocumentId.toString() );
+            return entry != null ? entry.getField( fieldName ) : null;
+        }
     }
 
     @Inject

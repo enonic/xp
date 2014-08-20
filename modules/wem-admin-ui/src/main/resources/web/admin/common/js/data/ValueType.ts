@@ -16,6 +16,10 @@ module api.data {
             return <string>value.asObject();
         }
 
+        valueToBoolean(value: Value): boolean {
+            return value.asString() == "true";
+        }
+
         newValue(value: string) {
             return new Value(value, this);
         }

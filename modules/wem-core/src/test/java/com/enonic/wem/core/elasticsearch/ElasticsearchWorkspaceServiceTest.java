@@ -96,6 +96,8 @@ public class ElasticsearchWorkspaceServiceTest
         final SearchResult noChanges = SearchResult.create().
             results( SearchResultEntries.create().
                 add( SearchResultEntry.create().
+                    id( "1" ).
+                    score( 1 ).
                     addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, Arrays.asList( "a" ) ) ).
                     build() ).
                 build() ).
@@ -128,6 +130,8 @@ public class ElasticsearchWorkspaceServiceTest
         final SearchResult noChanges = SearchResult.create().
             results( SearchResultEntries.create().
                 add( SearchResultEntry.create().
+                    id( "1" ).
+                    score( 1 ).
                     addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, Arrays.asList( "a" ) ) ).
                     build() ).
                 build() ).
@@ -219,15 +223,15 @@ public class ElasticsearchWorkspaceServiceTest
         final SearchResult searchResult = SearchResult.create().
             results( SearchResultEntries.create().
                 add( SearchResultEntry.create().
-                    id( "1" ).
+                    id( new WorkspaceDocumentId( EntityId.from( "1" ), Workspace.from( "test" ) ).toString() ).
                     addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, Arrays.asList( "b" ) ) ).
                     build() ).
                 add( SearchResultEntry.create().
-                    id( "2" ).
+                    id( new WorkspaceDocumentId( EntityId.from( "2" ), Workspace.from( "test" ) ).toString() ).
                     addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, Arrays.asList( "a" ) ) ).
                     build() ).
                 add( SearchResultEntry.create().
-                    id( "3" ).
+                    id( new WorkspaceDocumentId( EntityId.from( "3" ), Workspace.from( "test" ) ).toString() ).
                     addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, Arrays.asList( "c" ) ) ).
                     build() ).
                 build() ).
@@ -251,17 +255,56 @@ public class ElasticsearchWorkspaceServiceTest
     }
 
     @Test
+    public void getByIds_preserveSorting()
+        throws Exception
+    {
+        final SearchResult searchResult = SearchResult.create().
+            results( SearchResultEntries.create().
+                add( SearchResultEntry.create().
+                    id( new WorkspaceDocumentId( EntityId.from( "1" ), Workspace.from( "test" ) ).toString() ).
+                    addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, Arrays.asList( "a" ) ) ).
+                    build() ).
+                add( SearchResultEntry.create().
+                    id( new WorkspaceDocumentId( EntityId.from( "2" ), Workspace.from( "test" ) ).toString() ).
+                    addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, Arrays.asList( "b" ) ) ).
+                    build() ).
+                add( SearchResultEntry.create().
+                    id( new WorkspaceDocumentId( EntityId.from( "3" ), Workspace.from( "test" ) ).toString() ).
+                    addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, Arrays.asList( "c" ) ) ).
+                    build() ).
+                build() ).
+            build();
+
+        Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( QueryBuilder.class ) ) ).
+            thenReturn( searchResult );
+
+        final WorkspaceIdsQuery idQuery = new WorkspaceIdsQuery( Workspace.from( "test" ), EntityIds.from( "3", "1", "2" ) );
+
+        final BlobKeys blobKeys = wsStore.getByIds( idQuery );
+
+        assertEquals( 3, Iterators.size( blobKeys.iterator() ) );
+        final Iterator<BlobKey> iterator = blobKeys.iterator();
+        BlobKey next = iterator.next();
+        assertEquals( next, new BlobKey( "c" ) );
+        next = iterator.next();
+        assertEquals( next, new BlobKey( "a" ) );
+        next = iterator.next();
+        assertEquals( next, new BlobKey( "b" ) );
+    }
+
+
+    @Test
     public void getByIds_missing_entry()
         throws Exception
     {
         final SearchResult searchResult = SearchResult.create().
             results( SearchResultEntries.create().
                 add( SearchResultEntry.create().
-                    id( "1" ).
+                    id( new WorkspaceDocumentId( EntityId.from( "1" ), Workspace.from( "test" ) ).toString() ).
                     addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, Arrays.asList( "b" ) ) ).
                     build() ).
                 add( SearchResultEntry.create().
-                    id( "2" ).
+                    id( new WorkspaceDocumentId( EntityId.from( "2" ), Workspace.from( "test" ) ).toString() ).
                     addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, Arrays.asList( "a" ) ) ).
                     build() ).
                 build() ).
@@ -270,7 +313,7 @@ public class ElasticsearchWorkspaceServiceTest
         Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( QueryBuilder.class ) ) ).
             thenReturn( searchResult );
 
-        final WorkspaceIdsQuery idQuery = new WorkspaceIdsQuery( Workspace.from( "test" ), EntityIds.from( "1", "2", "3" ) );
+        final WorkspaceIdsQuery idQuery = new WorkspaceIdsQuery( Workspace.from( "test" ), EntityIds.from( "2", "3", "1", "4" ) );
 
         final BlobKeys byIds = wsStore.getByIds( idQuery );
 
@@ -417,15 +460,15 @@ public class ElasticsearchWorkspaceServiceTest
         final SearchResult searchResult = SearchResult.create().
             results( SearchResultEntries.create().
                 add( SearchResultEntry.create().
-                    id( "1-test" ).
+                    id( new WorkspaceDocumentId( EntityId.from( "1" ), Workspace.from( "test" ) ).toString() ).
                     addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, Arrays.asList( "b" ) ) ).
                     build() ).
                 add( SearchResultEntry.create().
-                    id( "2-test" ).
+                    id( new WorkspaceDocumentId( EntityId.from( "2" ), Workspace.from( "test" ) ).toString() ).
                     addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, Arrays.asList( "a" ) ) ).
                     build() ).
                 add( SearchResultEntry.create().
-                    id( "3-test" ).
+                    id( new WorkspaceDocumentId( EntityId.from( "3" ), Workspace.from( "test" ) ).toString() ).
                     addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, Arrays.asList( "c" ) ) ).
                     build() ).
                 build() ).

@@ -14,6 +14,10 @@ module api.data {
             return this.value.asString();
         }
 
+        getBoolean(): boolean {
+            return this.value.asBoolean();
+        }
+
         setValue(value: Value) {
             api.util.assertNotNull(value, "value of a Property cannot be null");
             this.value = value;

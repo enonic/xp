@@ -8,7 +8,7 @@ module api.content {
             this.ids = ids;
         }
 
-        get(): Q.Promise<api.content.ContentSummary[]> {
+        get(): wemQ.Promise<api.content.ContentSummary[]> {
 
             var allPromises = (this.ids || []).map((contentId: ContentId) => {
 
@@ -17,7 +17,7 @@ module api.content {
                     .sendAndParse();
             });
 
-            return Q.all(allPromises);
+            return wemQ.all(allPromises);
         }
 
     }

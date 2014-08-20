@@ -33,7 +33,7 @@ module api.rest {
 
         }
 
-        send(): Q.Promise<JsonResponse<RAW_JSON_TYPE>> {
+        send(): wemQ.Promise<JsonResponse<RAW_JSON_TYPE>> {
 
             this.validate();
 
@@ -45,7 +45,7 @@ module api.rest {
             return jsonRequest.send();
         }
 
-        sendAndParse():Q.Promise<PARSED_TYPE> {
+        sendAndParse():wemQ.Promise<PARSED_TYPE> {
             throw new Error("sendAndParse method was not implemented");
         }
     }

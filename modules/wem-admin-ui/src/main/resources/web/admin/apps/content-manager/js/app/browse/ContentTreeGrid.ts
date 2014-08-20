@@ -61,7 +61,7 @@ module app.browse {
                         compareStatusColumn,
                         modifiedTimeColumn
                     ]).setShowContextMenu(new TreeGridContextMenu(new ContentTreeGridActions(this))
-                ).prependClasses("content-grid")
+                ).prependClasses("content-tree-grid")
             );
 
             api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
@@ -184,12 +184,12 @@ module app.browse {
 
         }
 
-        fetch(node: TreeNode<ContentSummaryAndCompareStatus>): Q.Promise<ContentSummaryAndCompareStatus> {
+        fetch(node: TreeNode<ContentSummaryAndCompareStatus>): wemQ.Promise<ContentSummaryAndCompareStatus> {
             var contentId = node.getData().getId();
             return ContentSummaryAndCompareStatusFetcher.fetch(contentId);
         }
 
-        fetchChildren(parentNode?: TreeNode<ContentSummaryAndCompareStatus>): Q.Promise<ContentSummaryAndCompareStatus[]> {
+        fetchChildren(parentNode?: TreeNode<ContentSummaryAndCompareStatus>): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
             var parentContentId = "";
             if (parentNode) {
                 parentContentId = parentNode.getData() ? parentNode.getData().getId() : parentContentId;

@@ -94,7 +94,7 @@ module api.content.form.inputtype.relationship {
                 });
         }
 
-        private doLoadContent(properties: api.data.Property[]): Q.Promise<api.content.ContentSummary[]> {
+        private doLoadContent(properties: api.data.Property[]): wemQ.Promise<api.content.ContentSummary[]> {
 
             if (!properties) {
                 return Q<api.content.ContentSummary[]>([]);
@@ -146,14 +146,6 @@ module api.content.form.inputtype.relationship {
                 return false;
             }
             return this.contentComboBox.giveFocus();
-        }
-
-        onEditContentRequest(listener: (content: api.content.ContentSummary) => void) {
-            // Have to use stub here because it doesn't extend BaseIntputTypeView
-        }
-
-        unEditContentRequest(listener: (content: api.content.ContentSummary) => void) {
-            // Have to use stub here because it doesn't extend BaseIntputTypeView
         }
 
         onFocus(listener: (event: FocusEvent) => void) {

@@ -268,8 +268,8 @@ module app.wizard {
         }
 
 
-        preRenderNew(): Q.Promise<void> {
-            var deferred = Q.defer<void>();
+        preRenderNew(): wemQ.Promise<void> {
+            var deferred = wemQ.defer<void>();
 
             // Ensure a nameless and empty content is persisted before rendering new
             this.saveChanges().
@@ -282,8 +282,8 @@ module app.wizard {
             return deferred.promise;
         }
 
-        postRenderNew(): Q.Promise<void> {
-            var deferred = Q.defer<void>();
+        postRenderNew(): wemQ.Promise<void> {
+            var deferred = wemQ.defer<void>();
 
             this.enableDisplayNameScriptExecution(this.contentWizardStepForm.getFormView());
             this.contentWizardHeader.initNames(this.getPersistedItem().getDisplayName(), this.getPersistedItem().getName().toString(),
@@ -293,13 +293,13 @@ module app.wizard {
             return deferred.promise;
         }
 
-        layoutPersistedItem(persistedContent: Content): Q.Promise<void> {
+        layoutPersistedItem(persistedContent: Content): wemQ.Promise<void> {
 
             this.formIcon.setSrc(new ContentIconUrlResolver().setContent(persistedContent).setCrop(false).resolve());
 
             if (!this.constructing) {
 
-                var deferred = Q.defer<void>();
+                var deferred = wemQ.defer<void>();
 
                 var viewedContent = this.assembleViewedContent(new ContentBuilder(persistedContent)).build();
                 if (viewedContent.equals(persistedContent)) {
@@ -329,7 +329,7 @@ module app.wizard {
             }
         }
 
-        private doLayoutPersistedItem(content: Content): Q.Promise<void> {
+        private doLayoutPersistedItem(content: Content): wemQ.Promise<void> {
 
             var contentData = content.getContentData();
 
@@ -390,8 +390,8 @@ module app.wizard {
                 });
         }
 
-        postRenderExisting(existing: Content): Q.Promise<void> {
-            var deferred = Q.defer<void>();
+        postRenderExisting(existing: Content): wemQ.Promise<void> {
+            var deferred = wemQ.defer<void>();
 
             this.contentWizardHeader.initNames(existing.getDisplayName(), existing.getName().toString(),
                 false);
@@ -401,19 +401,19 @@ module app.wizard {
             return deferred.promise;
         }
 
-        private doRenderExistingSite(content: Content, formContext: ContentFormContext): Q.Promise<void> {
+        private doRenderExistingSite(content: Content, formContext: ContentFormContext): wemQ.Promise<void> {
 
             if (this.siteTemplateWizardStepForm != null && content.getSite()) {
                 return this.siteTemplateWizardStepForm.renderExisting(formContext, content.getSite());
             }
             else {
-                var deferred = Q.defer<void>();
+                var deferred = wemQ.defer<void>();
                 deferred.resolve(null);
                 return deferred.promise;
             }
         }
 
-        private doRenderExistingPage(content: Content): Q.Promise<void> {
+        private doRenderExistingPage(content: Content): wemQ.Promise<void> {
 
             var page: Page = content.getPage();
 
@@ -433,7 +433,7 @@ module app.wizard {
             }
         }
 
-        persistNewItem(): Q.Promise<Content> {
+        persistNewItem(): wemQ.Promise<Content> {
 
             return new PersistNewContentRoutine(this).
                 setCreateContentRequestProducer(this.produceCreateContentRequest).
@@ -441,8 +441,8 @@ module app.wizard {
                 execute();
         }
 
-        postPersistNewItem(persistedContent: Content): Q.Promise<void> {
-            var deferred = Q.defer<void>();
+        postPersistNewItem(persistedContent: Content): wemQ.Promise<void> {
+            var deferred = wemQ.defer<void>();
 
             if (persistedContent.isSite()) {
                 this.siteContent = persistedContent;
@@ -490,7 +490,7 @@ module app.wizard {
 
         }
 
-        updatePersistedItem(): Q.Promise<Content> {
+        updatePersistedItem(): wemQ.Promise<Content> {
 
             var persistedContent = this.getPersistedItem();
             var viewedContent = this.assembleViewedContent(new ContentBuilder(persistedContent)).build();
@@ -682,7 +682,7 @@ module app.wizard {
             }).done();
         }
 
-        private loadDefaultModels(siteTemplate: SiteTemplate, contentType: ContentTypeName): Q.Promise<DefaultModels> {
+        private loadDefaultModels(siteTemplate: SiteTemplate, contentType: ContentTypeName): wemQ.Promise<DefaultModels> {
 
             if (siteTemplate) {
                 return DefaultModelsFactory.create(<DefaultModelsFactoryConfig>{

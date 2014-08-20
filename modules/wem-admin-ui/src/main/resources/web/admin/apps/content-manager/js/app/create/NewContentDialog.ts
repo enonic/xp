@@ -143,7 +143,7 @@ module app.create {
             var contentTypesRequest = new GetAllContentTypesRequest();
             var siteTemplatesRequest = new GetAllSiteTemplatesRequest();
 
-            Q.all([contentTypesRequest.sendAndParse(), siteTemplatesRequest.sendAndParse()])
+            wemQ.all([contentTypesRequest.sendAndParse(), siteTemplatesRequest.sendAndParse()])
                 .spread((contentTypes: ContentTypeSummary[], siteTemplates: SiteTemplateSummary[]) => {
 
                     this.facetContainer.updateLabels(contentTypes.length, siteTemplates.length);
