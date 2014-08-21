@@ -286,7 +286,7 @@ module app.wizard.page {
             return this.loadPage();
         }
 
-        private loadPage(): wemQ.Promise<void> {
+        loadPage(): wemQ.Promise<void> {
 
             if (this.pageSkipReload == true) {
                 var deferred = wemQ.defer<void>();
