@@ -98,7 +98,7 @@ module app.wizard.site {
                     build();
                 moduleConfigs.push(moduleConfig);
             });
-            this.doRenderExisting(moduleConfigs).then(() => {
+            this.doLayout(moduleConfigs).then(() => {
                 this.notifySiteTemplateChanged(this.siteTemplate);
             });
         }
@@ -127,12 +127,12 @@ module app.wizard.site {
             }
         }
 
-        public renderExisting(context: api.content.form.ContentFormContext, site: Site): wemQ.Promise<void> {
+        public layout(context: api.content.form.ContentFormContext, site: Site): wemQ.Promise<void> {
             this.setFormContext(context);
-            return this.doRenderExisting(site.getModuleConfigs());
+            return this.doLayout(site.getModuleConfigs());
         }
 
-        private doRenderExisting(moduleConfigs: api.content.site.ModuleConfig[]): wemQ.Promise<void> {
+        private doLayout(moduleConfigs: api.content.site.ModuleConfig[]): wemQ.Promise<void> {
             this.setModuleConfigs(moduleConfigs);
 
             if (this.siteTemplateDropdownLoaded) {

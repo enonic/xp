@@ -373,7 +373,7 @@ module app.wizard {
                     formContextBuilder.setShowEmptyFormItemSetOccurrences(this.isItemPersisted());
                     this.formContext = formContextBuilder.build();
 
-                    this.contentWizardStepForm.renderExisting(this.formContext, contentData, content.getForm());
+                    this.contentWizardStepForm.layout(this.formContext, contentData, content.getForm());
 
                     // Must pass FormView from contentWizardStepForm displayNameScriptExecutor, since a new is created for each call to renderExisting
                     this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
@@ -381,14 +381,13 @@ module app.wizard {
                     if (this.siteTemplateWizardStepForm) {
                         this.siteTemplateWizardStepForm.setFormContext(this.formContext);
                     }
-                    return this.doRenderExistingSite(content, this.formContext);
+                    return this.doLayoutSite(content, this.formContext);
 
                 }).then(() => {
 
                     if (this.liveFormPanel) {
-                        return this.doRenderExistingPage(content);
+                        return this.doLayoutPage(content);
                     }
-
                 });
         }
 
@@ -403,10 +402,10 @@ module app.wizard {
             return deferred.promise;
         }
 
-        private doRenderExistingSite(content: Content, formContext: ContentFormContext): wemQ.Promise<void> {
+        private doLayoutSite(content: Content, formContext: ContentFormContext): wemQ.Promise<void> {
 
             if (this.siteTemplateWizardStepForm != null && content.getSite()) {
-                return this.siteTemplateWizardStepForm.renderExisting(formContext, content.getSite());
+                return this.siteTemplateWizardStepForm.layout(formContext, content.getSite());
             }
             else {
                 var deferred = wemQ.defer<void>();
@@ -415,7 +414,7 @@ module app.wizard {
             }
         }
 
-        private doRenderExistingPage(content: Content): wemQ.Promise<void> {
+        private doLayoutPage(content: Content): wemQ.Promise<void> {
 
             var page: Page = content.getPage();
 

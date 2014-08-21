@@ -116,7 +116,7 @@ module api.app.wizard {
             this.setSteps(params.steps);
 
             if (this.persistedItem != null) {
-                this.setPersistedItem(this.persistedItem).
+                this.startLayoutPersistedItem(this.persistedItem).
                     then(() => this.postRenderExisting(this.persistedItem)).
                     catch((reason: any) => api.DefaultErrorHandler.handle(reason)).
                     finally(() => callback()).
@@ -242,7 +242,7 @@ module api.app.wizard {
             return deferred.promise;
         }
 
-        private setPersistedItem(persistedItem: EQUITABLE): wemQ.Promise<void> {
+        private startLayoutPersistedItem(persistedItem: EQUITABLE): wemQ.Promise<void> {
 
             this.renderingNew = false;
             this.persistedItem = persistedItem;
@@ -259,7 +259,7 @@ module api.app.wizard {
         }
 
         postRenderExisting(existing: EQUITABLE): wemQ.Promise<void> {
-            // To be overridden by inheritors - if extra work is needed at end of setPersistedItem
+            // To be overridden by inheritors - if extra work is needed at end of startLayoutPersistedItem
             var deferred = wemQ.defer<void>();
             deferred.resolve(null);
             return deferred.promise;
@@ -290,7 +290,7 @@ module api.app.wizard {
                 return this.updatePersistedItem().then((persistedItem: EQUITABLE) => {
 
                     this.isChanged = false;
-                    return this.setPersistedItem(persistedItem).
+                    return this.startLayoutPersistedItem(persistedItem).
                         then(() => persistedItem);
                 });
             } else {
@@ -298,7 +298,7 @@ module api.app.wizard {
 
                     this.isChanged = false;
                     return this.postPersistNewItem(persistedItem).
-                        then(() => this.setPersistedItem(persistedItem)).
+                        then(() => this.startLayoutPersistedItem(persistedItem)).
                         then(() => persistedItem);
                 });
             }

@@ -20,18 +20,18 @@ module app.wizard {
             super();
         }
 
-        renderExisting(formContext: FormContext, contentData: ContentData, form: Form) {
+        layout(formContext: FormContext, contentData: ContentData, form: Form) {
 
             this.formContext = formContext;
             this.form = form;
             this.contentData = contentData;
-            this.layout(form, contentData);
+            this.doLayout(form, contentData);
             if (form.getFormItems().length === 0) {
                 this.hide();
             }
         }
 
-        private layout(form: Form, contentData: ContentData) {
+        private doLayout(form: Form, contentData: ContentData) {
 
             this.formView = new FormView(this.formContext, form, contentData);
             this.formView.setDoOffset(false);
