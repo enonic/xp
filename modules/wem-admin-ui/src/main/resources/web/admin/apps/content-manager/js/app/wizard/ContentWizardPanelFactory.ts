@@ -205,7 +205,7 @@ module app.wizard {
                 }
             }
             else if (this.siteTemplate) {
-                wizardParams.setCreateSite(this.siteTemplate);
+                wizardParams.setSiteTemplate(this.siteTemplate);
             }
 
             new app.wizard.ContentWizardPanel(wizardParams, (wizard: ContentWizardPanel) => {
