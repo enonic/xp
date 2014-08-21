@@ -33,6 +33,7 @@ module api.liveedit.text {
 
             this.onKeyDown(this.handleKeyboard.bind(this));
             this.onKeyUp(this.handleKeyboard.bind(this));
+            this.onDblClicked(this.handleDbClick.bind(this));
         }
 
         getElement(): api.dom.Element {
@@ -64,17 +65,27 @@ module api.liveedit.text {
             return duplicatedView;
         }
 
-        handleClick(event: MouseEvent) {
+        handleDbClick(event: MouseEvent) {
             event.stopPropagation();
             event.preventDefault();
+            if (this.editing) {
+                this.showEditor();
+                this.setCaretOffset(true);
+            }
+        }
+
+        handleClick(event: MouseEvent) {
+            event.stopPropagation();
 
             if (!this.isSelected()) {
                 this.deselectParent();
                 this.select(!this.isEmpty() ? { x: event.pageX, y: event.pageY } : null);
+                this.makeEditable();
             } else if (!this.editing) {
                 this.showEditor();
             }
         }
+
 
         handleKeyboard() {
             if (this.editing) {
@@ -116,14 +127,19 @@ module api.liveedit.text {
             return this.isEmpty() || !this.textComponent.getText();
         }
 
+        makeEditable() {
+            var editableElement = this.getElement();
+            editableElement.addClass('text-editor-editable-area').giveFocus();
+            editableElement.getEl().setAttribute('contenteditable', 'true');
+            new TextComponentStartEditingEvent(this).fire();
+        }
+
         showEditor() {
             if (this.isEmpty()) {
                 this.removeEmptyMark();
                 this.removePlaceholder();
                 this.getEl().setInnerHtml('</br>');
             }
-
-            this.setCaretOffset();
             this.editing = true;
             api.ui.text.TextEditorToolbar.get().showToolbar(this);
 
@@ -136,18 +152,21 @@ module api.liveedit.text {
             return new TextComponentViewer();
         }
 
-        private setCaretOffset() {
+        private setCaretOffset(isFullSelection: Boolean) {
             var element = this.getHTMLElement();
-            var selection = window.getSelection();
-            var range = document.createRange();
+            if (isFullSelection) {
+                var selection = window.getSelection();
+                var range = document.createRange();
 
-            range.selectNodeContents(element);
-            range.setStart(range.endContainer, range.endOffset);
-            range.setEnd(range.endContainer, range.endOffset);
-            selection.removeAllRanges();
-
-            element.click();
-            selection.addRange(range);
+                range.selectNodeContents(element);
+                range.setStart(range.endContainer, range.startOffset);
+                range.setEnd(range.endContainer, range.endOffset);
+                selection.removeAllRanges();
+                selection.addRange(range);
+            } else {
+                element.focus();
+                element.click();
+            }
         }
 
         private createTextContextMenuActions(): api.ui.Action[] {
@@ -155,6 +174,7 @@ module api.liveedit.text {
             actions.push(new api.ui.Action('Edit').onExecuted(() => {
                 if (!this.editing) {
                     this.showEditor();
+                    this.setCaretOffset(false);
                 }
             }));
             return actions;
