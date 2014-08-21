@@ -1,17 +1,25 @@
 module api.liveedit.text {
+
     import PageComponentView = api.liveedit.PageComponentView;
     import RegionView = api.liveedit.RegionView;
     import TextComponent = api.content.page.text.TextComponent;
+
+
     export class TextComponentViewBuilder extends PageComponentViewBuilder<TextComponent> {
         constructor() {
             super();
             this.setType(TextItemType.get());
         }
     }
+
     export class TextComponentView extends PageComponentView<TextComponent> implements api.ui.text.TextEditorEditableArea {
+
         private textComponent: TextComponent;
+
         private placeholder: api.dom.DivEl;
+
         private editing: boolean;
+
         constructor(builder: TextComponentViewBuilder) {
             this.editing = false;
             super(builder.setContextMenuActions(this.createTextContextMenuActions()));
@@ -26,20 +34,25 @@ module api.liveedit.text {
             this.onKeyUp(this.handleKeyboard.bind(this));
             this.onDblClicked(this.handleDbClick.bind(this));
         }
+
         getElement(): api.dom.Element {
             return this;
         }
+
         processChanges() {
             this.textComponent.setText(this.getEl().getInnerHtml());
             new TextComponentEditedEvent(this).fire();
         }
+
         addPlaceholder() {
             this.removeChildren();
             this.appendChild(this.placeholder);
         }
+
         removePlaceholder() {
             this.placeholder.remove();
         }
+
         duplicate(duplicate: TextComponent): TextComponentView {
             var duplicatedView = new TextComponentView(new TextComponentViewBuilder().
                 setParentRegionView(this.getParentItemView()).
@@ -49,6 +62,7 @@ module api.liveedit.text {
             duplicatedView.displayPlaceholder();
             return duplicatedView;
         }
+
         handleDbClick(event: MouseEvent) {
             event.stopPropagation();
             event.preventDefault();
@@ -57,6 +71,7 @@ module api.liveedit.text {
                 this.setCaretOffset(true);
             }
         }
+
         handleClick(event: MouseEvent) {
             event.stopPropagation();
             if (!this.isSelected()) {
@@ -67,11 +82,13 @@ module api.liveedit.text {
                 this.showEditor();
             }
         }
+
         handleKeyboard() {
             if (this.editing) {
                 this.processChanges();
             }
         }
+
         select(clickPosition?: Position) {
             super.select(clickPosition);
             if (this.isEmpty()) {
@@ -79,6 +96,7 @@ module api.liveedit.text {
             }
             this.getEl().setCursor('url(' + api.util.getAdminUri('live-edit/images/pencil.png') + ') 0 40, text');
         }
+
         deselect() {
             super.deselect();
             if (this.isEmpty()) {
@@ -86,24 +104,29 @@ module api.liveedit.text {
             } else if (api.util.isStringBlank(this.getEl().getText())) {
                 this.markAsEmpty();
             }
+
             if (this.editing) {
                 api.ui.text.TextEditorToolbar.get().hideToolbar();
                 this.editing = false;
             }
+
             this.getEl().setCursor('');
         }
+
         conditionedForEmpty(): boolean {
             if (!this.textComponent) {
                 return this.isEmpty();
             }
             return this.isEmpty() || !this.textComponent.getText();
         }
+
         makeEditable() {
             var editableElement = this.getElement();
             editableElement.addClass('text-editor-editable-area').giveFocus();
             editableElement.getEl().setAttribute('contenteditable', 'true');
             new TextComponentStartEditingEvent(this).fire();
         }
+
         showEditor() {
             if (this.isEmpty()) {
                 this.removeEmptyMark();
@@ -116,9 +139,11 @@ module api.liveedit.text {
             this.hideContextMenu();
             new TextComponentStartEditingEvent(this).fire();
         }
+
         getTooltipViewer(): TextComponentViewer {
             return new TextComponentViewer();
         }
+
         private setCaretOffset(isFullSelection: Boolean) {
             var element = this.getHTMLElement();
             if (isFullSelection) {
@@ -134,6 +159,7 @@ module api.liveedit.text {
                 element.click();
             }
         }
+
         private createTextContextMenuActions(): api.ui.Action[] {
             var actions: api.ui.Action[] = [];
             actions.push(new api.ui.Action('Edit').onExecuted(() => {
