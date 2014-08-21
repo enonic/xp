@@ -204,6 +204,9 @@ module app.wizard {
                     wizardParams.setCreateSiteWithoutTemplate();
                 }
             }
+            else if (this.siteTemplate) {
+                wizardParams.setCreateSite(this.siteTemplate);
+            }
 
             new app.wizard.ContentWizardPanel(wizardParams, (wizard: ContentWizardPanel) => {
                 deferred.resolve(wizard);
