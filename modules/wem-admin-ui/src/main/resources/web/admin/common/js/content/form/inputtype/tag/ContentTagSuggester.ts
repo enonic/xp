@@ -13,14 +13,7 @@ module api.content.form.inputtype.tag {
 
     export class ContentTagSuggesterBuilder {
 
-        contentType: api.schema.content.ContentTypeName;
-
         dataPath: DataPath;
-
-        setContentType(value: api.schema.content.ContentTypeName): ContentTagSuggesterBuilder {
-            this.contentType = value;
-            return this;
-        }
 
         setDataPath(value: DataPath): ContentTagSuggesterBuilder {
             this.dataPath = value;
@@ -34,12 +27,9 @@ module api.content.form.inputtype.tag {
 
     export class ContentTagSuggester implements api.ui.tags.TagSuggester {
 
-        private contentType: api.schema.content.ContentTypeName;
-
         private dataPath: DataPath;
 
         constructor(builder: ContentTagSuggesterBuilder) {
-            this.contentType = builder.contentType;
             this.dataPath = builder.dataPath;
         }
 
@@ -51,7 +41,6 @@ module api.content.form.inputtype.tag {
                 [new ValueExpr(new Value(value, ValueTypes.STRING))]));
 
             var query = new ContentQuery();
-            query.setContentTypeNames(this.contentType ? [this.contentType] : []);
             query.setSize(10);
             query.setQueryExpr(queryExpr);
 
