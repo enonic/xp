@@ -7,7 +7,7 @@ module api.content.form.inputtype.long {
         }
 
         newInitialValue(): api.data.Value {
-            return new api.data.Value("0", api.data.ValueTypes.STRING);
+            return new api.data.Value("", api.data.ValueTypes.STRING);
         }
 
         createInputOccurrenceElement(index: number, property: api.data.Property): api.dom.Element {
