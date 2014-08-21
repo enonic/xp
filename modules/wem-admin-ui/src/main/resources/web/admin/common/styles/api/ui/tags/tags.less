@@ -1,5 +1,5 @@
 .tags {
-
+  position: relative;
   border: 1px solid #cccccc;
   cursor: text;
 
@@ -49,12 +49,23 @@
     }
   }
 
-  .suggestions {
+  ul.suggestions {
     position: absolute;
     top: 48px;
     left: 2px;
     z-index: 1;
     background: white;
-    border: 1px solid grey;
+    margin-left: -1px;
+    .input-border();
+    .box-shadow(2px 2px 2px @admin-medium-gray-border);
+
+    li {
+      padding: 3px;
+      font-size: 15px;
+    }
+
+    li.selected {
+      background-color: @admin-light-gray-bg;
+    }
   }
 }

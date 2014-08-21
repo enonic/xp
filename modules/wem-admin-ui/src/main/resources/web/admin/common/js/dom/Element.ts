@@ -424,7 +424,9 @@ module api.dom {
         }
 
         removeChildren() {
-            this.children.forEach((child: Element) => {
+            // iterate through copy of children array
+            // because original array is changed when any child is deleted
+            this.children.slice(0).forEach((child: Element) => {
                 child.remove();
             });
 
