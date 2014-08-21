@@ -1,11 +1,14 @@
 module api.util {
 
     export function assert(expression: boolean, message?: string) {
-        console.assert(expression, message);
+        if (!expression) {
+            console.error(message);
+            throw (message || "");
+        }
     }
 
     export function assertState(expression: boolean, message?: string) {
-        console.assert(expression, "Illegal state: " + message);
+        assert(expression, "Illegal state: " + message);
     }
 
     export function assertNotNull(value: Object, message?: string) {
