@@ -425,12 +425,12 @@ module app.wizard {
                     sendAndParse().
                     then((pageTemplate: PageTemplate) => {
 
-                        return this.liveFormPanel.setPage(content, pageTemplate);
+                        return this.liveFormPanel.layout(content, pageTemplate);
 
                     });
             }
             else {
-                return this.liveFormPanel.setPage(content, null);
+                return this.liveFormPanel.layout(content, null);
             }
         }
 

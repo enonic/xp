@@ -263,7 +263,7 @@ module app.wizard.page {
             super.remove();
         }
 
-        setPage(content: Content, pageTemplate: PageTemplate): wemQ.Promise<void> {
+        layout(content: Content, pageTemplate: PageTemplate): wemQ.Promise<void> {
 
             api.util.assertNotNull(content, "Expected content not be null");
 
