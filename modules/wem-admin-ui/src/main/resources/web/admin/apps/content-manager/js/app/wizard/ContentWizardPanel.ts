@@ -235,9 +235,9 @@ module app.wizard {
         }
 
         giveInitialFocus() {
-            var newWithoutDisplayCameScript = this.isRenderingNew() && !this.contentType.hasContentDisplayNameScript();
+            var newWithoutDisplayCameScript = this.isLayingOutNew() && !this.contentType.hasContentDisplayNameScript();
             var displayNameEmpty = api.util.isStringEmpty(this.getPersistedItem().getDisplayName());
-            var editWithEmptyDisplayName = !this.isRenderingNew() && displayNameEmpty && !this.contentType.hasContentDisplayNameScript();
+            var editWithEmptyDisplayName = !this.isLayingOutNew() && displayNameEmpty && !this.contentType.hasContentDisplayNameScript();
 
             if (newWithoutDisplayCameScript || editWithEmptyDisplayName) {
                 this.contentWizardHeader.giveFocus();
@@ -268,7 +268,7 @@ module app.wizard {
         }
 
 
-        preRenderNew(): wemQ.Promise<void> {
+        preLayingOutNew(): wemQ.Promise<void> {
             var deferred = wemQ.defer<void>();
 
             // Ensure a nameless and empty content is persisted before rendering new
@@ -282,7 +282,7 @@ module app.wizard {
             return deferred.promise;
         }
 
-        postRenderNew(): wemQ.Promise<void> {
+        postLayingOutNew(): wemQ.Promise<void> {
             var deferred = wemQ.defer<void>();
 
             this.enableDisplayNameScriptExecution(this.contentWizardStepForm.getFormView());
@@ -391,7 +391,7 @@ module app.wizard {
                 });
         }
 
-        postRenderExisting(existing: Content): wemQ.Promise<void> {
+        postLayingOutPersisted(existing: Content): wemQ.Promise<void> {
             var deferred = wemQ.defer<void>();
 
             this.contentWizardHeader.initNames(existing.getDisplayName(), existing.getName().toString(),
@@ -506,7 +506,7 @@ module app.wizard {
                 execute().
                 then((content: Content) => {
 
-                    if (this.isRenderingNew()) {
+                    if (this.isLayingOutNew()) {
 
                         new api.content.ContentCreatedEvent(content, this).fire();
                         api.notify.showFeedback('Content was created!');

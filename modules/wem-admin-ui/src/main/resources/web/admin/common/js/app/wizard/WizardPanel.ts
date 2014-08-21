@@ -47,7 +47,7 @@ module api.app.wizard {
         // TODO: @alb - Value is set to 'changed' by default to see SaveChangesBeforeCloseDialog behavior.
         private isChanged: boolean = true;
 
-        private renderingNew: boolean;
+        private layingOutNew: boolean;
 
         private firstShow: boolean;
 
@@ -117,14 +117,14 @@ module api.app.wizard {
 
             if (this.persistedItem != null) {
                 this.startLayoutPersistedItem(this.persistedItem).
-                    then(() => this.postRenderExisting(this.persistedItem)).
+                    then(() => this.postLayingOutPersisted(this.persistedItem)).
                     catch((reason: any) => api.DefaultErrorHandler.handle(reason)).
                     finally(() => callback()).
                     done();
             } else {
-                this.preRenderNew().
-                    then(() => this.renderNew()).
-                    then(() => this.postRenderNew()).
+                this.preLayingOutNew().
+                    then(() => this.layoutNew()).
+                    then(() => this.postLayingOutNew()).
                     catch((reason: any) => api.DefaultErrorHandler.handle(reason)).
                     finally(()=> callback()).
                     done();
@@ -216,27 +216,27 @@ module api.app.wizard {
             });
         }
 
-        preRenderNew(): wemQ.Promise<void> {
-            // To be overridden by inheritors - if extra work is needed at end of renderNew
+        preLayingOutNew(): wemQ.Promise<void> {
+            // To be overridden by inheritors - if extra work is needed at end of layoutNew
             var deferred = wemQ.defer<void>();
             deferred.resolve(null);
             return deferred.promise;
         }
 
-        isRenderingNew(): boolean {
-            return this.renderingNew;
+        isLayingOutNew(): boolean {
+            return this.layingOutNew;
         }
 
-        renderNew(): wemQ.Promise<void> {
+        layoutNew(): wemQ.Promise<void> {
             var deferred = wemQ.defer<void>();
-            this.renderingNew = true;
+            this.layingOutNew = true;
             this.actions.enableActionsForNew();
             deferred.resolve(null);
             return deferred.promise;
         }
 
-        postRenderNew(): wemQ.Promise<void> {
-            // To be overridden by inheritors - if extra work is needed at end of renderNew
+        postLayingOutNew(): wemQ.Promise<void> {
+            // To be overridden by inheritors - if extra work is needed at end of layoutNew
             var deferred = wemQ.defer<void>();
             deferred.resolve(null);
             return deferred.promise;
@@ -244,7 +244,7 @@ module api.app.wizard {
 
         private startLayoutPersistedItem(persistedItem: EQUITABLE): wemQ.Promise<void> {
 
-            this.renderingNew = false;
+            this.layingOutNew = false;
             this.persistedItem = persistedItem;
             this.actions.enableActionsForExisting(persistedItem);
 
@@ -258,7 +258,7 @@ module api.app.wizard {
             return deferred.promise;
         }
 
-        postRenderExisting(existing: EQUITABLE): wemQ.Promise<void> {
+        postLayingOutPersisted(existing: EQUITABLE): wemQ.Promise<void> {
             // To be overridden by inheritors - if extra work is needed at end of startLayoutPersistedItem
             var deferred = wemQ.defer<void>();
             deferred.resolve(null);

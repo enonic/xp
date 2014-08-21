@@ -60,9 +60,9 @@ module app.wizard {
             return steps;
         }
 
-        renderNew(): wemQ.Promise<void> {
+        layoutNew(): wemQ.Promise<void> {
 
-            return super.renderNew().
+            return super.layoutNew().
                 then((): void => {
 
                     this.siteTemplateStep.renderNew();
