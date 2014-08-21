@@ -4,8 +4,8 @@ module api.liveedit.text {
     import RegionView = api.liveedit.RegionView;
     import TextComponent = api.content.page.text.TextComponent;
 
-    export class TextComponentViewBuilder extends PageComponentViewBuilder<TextComponent> {
 
+    export class TextComponentViewBuilder extends PageComponentViewBuilder<TextComponent> {
         constructor() {
             super();
             this.setType(TextItemType.get());
@@ -13,6 +13,7 @@ module api.liveedit.text {
     }
 
     export class TextComponentView extends PageComponentView<TextComponent> implements api.ui.text.TextEditorEditableArea {
+
         private textComponent: TextComponent;
 
         private placeholder: api.dom.DivEl;
@@ -23,16 +24,15 @@ module api.liveedit.text {
             this.editing = false;
             super(builder.setContextMenuActions(this.createTextContextMenuActions()));
             this.textComponent = builder.pageComponent;
-
             this.placeholder = new api.dom.DivEl('text-placeholder');
             this.placeholder.getEl().setInnerHtml('Click to edit');
             if (this.conditionedForEmpty()) {
                 this.markAsEmpty();
                 this.addPlaceholder();
             }
-
             this.onKeyDown(this.handleKeyboard.bind(this));
             this.onKeyUp(this.handleKeyboard.bind(this));
+            this.onDblClicked(this.handleDbClick.bind(this));
         }
 
         getElement(): api.dom.Element {
@@ -54,7 +54,6 @@ module api.liveedit.text {
         }
 
         duplicate(duplicate: TextComponent): TextComponentView {
-
             var duplicatedView = new TextComponentView(new TextComponentViewBuilder().
                 setParentRegionView(this.getParentItemView()).
                 setParentElement(this.getParentElement()).
@@ -64,13 +63,21 @@ module api.liveedit.text {
             return duplicatedView;
         }
 
-        handleClick(event: MouseEvent) {
+        handleDbClick(event: MouseEvent) {
             event.stopPropagation();
             event.preventDefault();
+            if (this.editing) {
+                this.showEditor();
+                this.setCaretOffset(true);
+            }
+        }
 
+        handleClick(event: MouseEvent) {
+            event.stopPropagation();
             if (!this.isSelected()) {
                 this.deselectParent();
                 this.select(!this.isEmpty() ? { x: event.pageX, y: event.pageY } : null);
+                this.makeEditable();
             } else if (!this.editing) {
                 this.showEditor();
             }
@@ -84,17 +91,14 @@ module api.liveedit.text {
 
         select(clickPosition?: Position) {
             super.select(clickPosition);
-
             if (this.isEmpty()) {
                 this.addPlaceholder();
             }
-
             this.getEl().setCursor('url(' + api.util.getAdminUri('live-edit/images/pencil.png') + ') 0 40, text');
         }
 
         deselect() {
             super.deselect();
-
             if (this.isEmpty()) {
                 this.removePlaceholder();
             } else if (api.util.isStringBlank(this.getEl().getText())) {
@@ -116,17 +120,21 @@ module api.liveedit.text {
             return this.isEmpty() || !this.textComponent.getText();
         }
 
+        makeEditable() {
+            var editableElement = this.getElement();
+            editableElement.addClass('text-editor-editable-area').giveFocus();
+            editableElement.getEl().setAttribute('contenteditable', 'true');
+            new TextComponentStartEditingEvent(this).fire();
+        }
+
         showEditor() {
             if (this.isEmpty()) {
                 this.removeEmptyMark();
                 this.removePlaceholder();
                 this.getEl().setInnerHtml('</br>');
             }
-
-            this.setCaretOffset();
             this.editing = true;
             api.ui.text.TextEditorToolbar.get().showToolbar(this);
-
             this.hideTooltip();
             this.hideContextMenu();
             new TextComponentStartEditingEvent(this).fire();
@@ -136,18 +144,20 @@ module api.liveedit.text {
             return new TextComponentViewer();
         }
 
-        private setCaretOffset() {
+        private setCaretOffset(isFullSelection: Boolean) {
             var element = this.getHTMLElement();
-            var selection = window.getSelection();
-            var range = document.createRange();
-
-            range.selectNodeContents(element);
-            range.setStart(range.endContainer, range.endOffset);
-            range.setEnd(range.endContainer, range.endOffset);
-            selection.removeAllRanges();
-
-            element.click();
-            selection.addRange(range);
+            if (isFullSelection) {
+                var selection = window.getSelection();
+                var range = document.createRange();
+                range.selectNodeContents(element);
+                range.setStart(range.endContainer, range.startOffset);
+                range.setEnd(range.endContainer, range.endOffset);
+                selection.removeAllRanges();
+                selection.addRange(range);
+            } else {
+                element.focus();
+                element.click();
+            }
         }
 
         private createTextContextMenuActions(): api.ui.Action[] {
@@ -155,6 +165,7 @@ module api.liveedit.text {
             actions.push(new api.ui.Action('Edit').onExecuted(() => {
                 if (!this.editing) {
                     this.showEditor();
+                    this.setCaretOffset(false);
                 }
             }));
             return actions;
