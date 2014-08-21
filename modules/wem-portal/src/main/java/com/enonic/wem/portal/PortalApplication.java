@@ -13,15 +13,15 @@ import org.restlet.routing.Router;
 import org.restlet.routing.TemplateRoute;
 import org.restlet.routing.Variable;
 
-import com.enonic.wem.portal.content.ComponentResource;
-import com.enonic.wem.portal.content.ContentResource;
-import com.enonic.wem.portal.content.PageTemplateResource;
-import com.enonic.wem.portal.exception.PortalStatusService;
-import com.enonic.wem.portal.restlet.FinderFactory;
-import com.enonic.wem.portal.underscore.ImageByIdResource;
-import com.enonic.wem.portal.underscore.ImageByNameResource;
-import com.enonic.wem.portal.underscore.PublicResource;
-import com.enonic.wem.portal.underscore.ServiceResource;
+import com.enonic.wem.portal.internal.content.ComponentResource;
+import com.enonic.wem.portal.internal.content.ContentResource;
+import com.enonic.wem.portal.internal.content.PageTemplateResource;
+import com.enonic.wem.portal.internal.exception.PortalStatusService;
+import com.enonic.wem.portal.internal.restlet.FinderFactory;
+import com.enonic.wem.portal.internal.underscore.ImageByIdResource;
+import com.enonic.wem.portal.internal.underscore.ImageByNameResource;
+import com.enonic.wem.portal.internal.underscore.PublicResource;
+import com.enonic.wem.portal.internal.underscore.ServiceResource;
 
 @Singleton
 public final class PortalApplication

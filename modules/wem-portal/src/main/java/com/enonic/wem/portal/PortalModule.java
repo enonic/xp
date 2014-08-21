@@ -2,10 +2,10 @@ package com.enonic.wem.portal;
 
 import com.google.inject.AbstractModule;
 
-import com.enonic.wem.portal.postprocess.PostProcessModule;
-import com.enonic.wem.portal.rendering.RenderingModule;
-import com.enonic.wem.portal.restlet.RestletModule;
-import com.enonic.wem.portal.script.ScriptModule;
+import com.enonic.wem.portal.internal.postprocess.PostProcessModule;
+import com.enonic.wem.portal.internal.rendering.RenderingModule;
+import com.enonic.wem.portal.internal.restlet.RestletModule;
+import com.enonic.wem.portal.internal.script.ScriptModule;
 
 public final class PortalModule
     extends AbstractModule
