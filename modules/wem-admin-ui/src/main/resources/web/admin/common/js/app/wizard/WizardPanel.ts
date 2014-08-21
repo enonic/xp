@@ -117,14 +117,14 @@ module api.app.wizard {
 
             if (this.persistedItem != null) {
                 this.startLayoutPersistedItem(this.persistedItem).
-                    then(() => this.postLayingOutPersisted(this.persistedItem)).
+                    then(() => this.postLayoutPersisted(this.persistedItem)).
                     catch((reason: any) => api.DefaultErrorHandler.handle(reason)).
                     finally(() => callback()).
                     done();
             } else {
-                this.preLayingOutNew().
+                this.preLayoutNew().
                     then(() => this.layoutNew()).
-                    then(() => this.postLayingOutNew()).
+                    then(() => this.postLayoutNew()).
                     catch((reason: any) => api.DefaultErrorHandler.handle(reason)).
                     finally(()=> callback()).
                     done();
@@ -216,7 +216,7 @@ module api.app.wizard {
             });
         }
 
-        preLayingOutNew(): wemQ.Promise<void> {
+        preLayoutNew(): wemQ.Promise<void> {
             // To be overridden by inheritors - if extra work is needed at end of layoutNew
             var deferred = wemQ.defer<void>();
             deferred.resolve(null);
@@ -235,7 +235,7 @@ module api.app.wizard {
             return deferred.promise;
         }
 
-        postLayingOutNew(): wemQ.Promise<void> {
+        postLayoutNew(): wemQ.Promise<void> {
             // To be overridden by inheritors - if extra work is needed at end of layoutNew
             var deferred = wemQ.defer<void>();
             deferred.resolve(null);
@@ -258,7 +258,7 @@ module api.app.wizard {
             return deferred.promise;
         }
 
-        postLayingOutPersisted(existing: EQUITABLE): wemQ.Promise<void> {
+        postLayoutPersisted(existing: EQUITABLE): wemQ.Promise<void> {
             // To be overridden by inheritors - if extra work is needed at end of startLayoutPersistedItem
             var deferred = wemQ.defer<void>();
             deferred.resolve(null);

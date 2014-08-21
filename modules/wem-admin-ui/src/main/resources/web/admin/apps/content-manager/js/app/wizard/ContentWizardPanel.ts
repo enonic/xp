@@ -268,7 +268,7 @@ module app.wizard {
         }
 
 
-        preLayingOutNew(): wemQ.Promise<void> {
+        preLayoutNew(): wemQ.Promise<void> {
             var deferred = wemQ.defer<void>();
 
             // Ensure a nameless and empty content is persisted before rendering new
@@ -282,7 +282,7 @@ module app.wizard {
             return deferred.promise;
         }
 
-        postLayingOutNew(): wemQ.Promise<void> {
+        postLayoutNew(): wemQ.Promise<void> {
             var deferred = wemQ.defer<void>();
 
             this.enableDisplayNameScriptExecution(this.contentWizardStepForm.getFormView());
@@ -391,7 +391,7 @@ module app.wizard {
                 });
         }
 
-        postLayingOutPersisted(existing: Content): wemQ.Promise<void> {
+        postLayoutPersisted(existing: Content): wemQ.Promise<void> {
             var deferred = wemQ.defer<void>();
 
             this.contentWizardHeader.initNames(existing.getDisplayName(), existing.getName().toString(),
