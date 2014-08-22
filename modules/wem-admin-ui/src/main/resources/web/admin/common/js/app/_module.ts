@@ -7,7 +7,6 @@
 ///<reference path='AppBarTabId' />
 ///<reference path='AppBar.ts' />
 ///<reference path='UserInfoPopup.ts' />
-///<reference path='AppBarActions.ts' />
 ///<reference path='AppBarEvents.ts' />
 ///<reference path='AppBarTabMenu.ts' />
 ///<reference path='AppBarTabMenuButton.ts' />

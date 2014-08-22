@@ -8,13 +8,13 @@ module app.browse {
 
         private schemaTreeGrid: SchemaTreeGrid;
 
-        private browseActions: app.browse.SchemaBrowseActions;
+        private browseActions: app.browse.action.SchemaBrowseActions;
 
         private toolbar: SchemaBrowseToolbar;
 
         private schemaTreeGridPanelMask: api.ui.mask.LoadMask;
 
-        constructor(browseActions: SchemaBrowseActions, schemaTreeGrid: SchemaTreeGrid) {
+        constructor(browseActions: app.browse.action.SchemaBrowseActions, schemaTreeGrid: SchemaTreeGrid) {
             var treeGridContextMenu = new app.browse.SchemaTreeGridContextMenu();
 
             this.schemaTreeGrid = schemaTreeGrid;

@@ -1,6 +1,5 @@
 ///<reference path='ContentTypeForm.ts' />
 ///<reference path='ContentTypeWizardPanel.ts' />
-///<reference path='ContentTypeWizardActions.ts' />
 ///<reference path='ContentTypeWizardToolbar.ts' />
 ///<reference path='ContentTypeWizardEvents.ts' />
 ///<reference path='RelationshipTypeForm.ts' />

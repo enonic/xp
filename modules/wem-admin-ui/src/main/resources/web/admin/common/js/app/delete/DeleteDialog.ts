@@ -66,12 +66,6 @@ module api.app.remove {
         }
     }
 
-    export class CancelDeleteDialogAction extends api.ui.Action {
-
-        constructor() {
-            super("Cancel", "esc");
-        }
-    }
 
     export class DeleteDialogItemList extends api.dom.DivEl {
         constructor() {
