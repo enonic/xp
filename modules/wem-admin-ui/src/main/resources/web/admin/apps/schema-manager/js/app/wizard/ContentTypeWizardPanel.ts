@@ -35,7 +35,7 @@ module app.wizard {
                 this.formIcon.setSrc(api.util.getRestUri('blob/' + this.contentTypeIcon.getBlobKey() + '?mimeType=' +
                                                          event.getUploadItem().getMimeType()));
             });
-            var actions = new ContentTypeWizardActions(this);
+            var actions = new app.wizard.action.ContentTypeWizardActions(this);
 
             var mainToolbar = new ContentTypeWizardToolbar({
                 saveAction: actions.getSaveAction(),
@@ -148,7 +148,6 @@ module app.wizard {
                 newName,
                 formData.xml,
                 this.contentTypeIcon);
-
             return updateContentTypeRequest.
                 sendAndParse().
                 then((contentType: api.schema.content.ContentType) => {
