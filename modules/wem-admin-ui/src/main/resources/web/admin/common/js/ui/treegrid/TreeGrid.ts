@@ -149,6 +149,16 @@ module api.ui.treegrid {
                         this.grid.moveSelectedDown();
                     }
                 }),
+                new KeyBinding('shift+up', () => {
+                    if (this.active) {
+                        this.grid.addSelectedUp();
+                    }
+                }),
+                new KeyBinding('shift+down', () => {
+                    if (this.active) {
+                        this.grid.addSelectedDown();
+                    }
+                }),
                 new KeyBinding('left', () => {
                     var selected = this.grid.getSelectedRows();
                     if (selected.length === 1) {
