@@ -75,7 +75,10 @@
             <Import-Package>
               *;resolution:=optional
             </Import-Package>
-            <Export-Package/>
+            <Export-Package>
+              !com.enonic.wem.portal.internal.*,
+              com.enonic.wem.portal.*
+            </Export-Package>
             <Embed-Dependency>
               gson,
               attoparser,
