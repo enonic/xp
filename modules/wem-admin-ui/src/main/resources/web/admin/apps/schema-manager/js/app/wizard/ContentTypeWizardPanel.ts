@@ -22,7 +22,7 @@ module app.wizard {
          */
         private constructing: boolean;
 
-        constructor(tabId: api.app.AppBarTabId, persistedContentType: api.schema.content.ContentType,
+        constructor(tabId: api.app.bar.AppBarTabId, persistedContentType: api.schema.content.ContentType,
                     callback: (wizard: ContentTypeWizardPanel) => void) {
             this.constructing = true;
             this.contentTypeWizardHeader = new api.app.wizard.WizardHeaderWithName();

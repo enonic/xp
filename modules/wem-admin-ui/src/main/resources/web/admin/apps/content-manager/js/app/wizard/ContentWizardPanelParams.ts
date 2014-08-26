@@ -4,7 +4,7 @@ module app.wizard {
 
         createSite: boolean = false;
 
-        tabId: api.app.AppBarTabId;
+        tabId: api.app.bar.AppBarTabId;
 
         contentType: api.schema.content.ContentType;
 
@@ -18,7 +18,7 @@ module app.wizard {
 
         defaultModels: app.wizard.page.DefaultModels;
 
-        setAppBarTabId(value: api.app.AppBarTabId): ContentWizardPanelParams {
+        setAppBarTabId(value: api.app.bar.AppBarTabId): ContentWizardPanelParams {
             this.tabId = value;
             return this;
         }

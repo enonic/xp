@@ -5,7 +5,7 @@ module api.app.wizard {
 
     export interface WizardPanelParams {
 
-        tabId:api.app.AppBarTabId;
+        tabId:api.app.bar.AppBarTabId;
 
         persistedItem:any;
 
@@ -28,7 +28,7 @@ module api.app.wizard {
 
     export class WizardPanel<EQUITABLE extends api.Equitable> extends api.ui.panel.Panel implements api.ui.Closeable, api.ui.ActionContainer {
 
-        private tabId: api.app.AppBarTabId;
+        private tabId: api.app.bar.AppBarTabId;
 
         private persistedItem: EQUITABLE;
 
@@ -185,11 +185,11 @@ module api.app.wizard {
             });
         }
 
-        getTabId(): api.app.AppBarTabId {
+        getTabId(): api.app.bar.AppBarTabId {
             return this.tabId;
         }
 
-        setTabId(tabId: api.app.AppBarTabId) {
+        setTabId(tabId: api.app.bar.AppBarTabId) {
             this.tabId = tabId;
         }
 

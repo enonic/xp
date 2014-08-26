@@ -12,7 +12,7 @@ module app.wizard {
 
         private siteTemplateStep: SiteTemplateWizardStepForm;
 
-        constructor(tabId: api.app.AppBarTabId, siteTemplate?: api.content.site.template.SiteTemplate) {
+        constructor(tabId: api.app.bar.AppBarTabId, siteTemplate?: api.content.site.template.SiteTemplate) {
             this.wizardHeader = new api.app.wizard.WizardHeaderWithDisplayNameAndNameBuilder().build();
             if (siteTemplate) {
                 this.wizardHeader.initNames(siteTemplate.getDisplayName(), siteTemplate.getName(), true);

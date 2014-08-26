@@ -2,17 +2,17 @@ module api.app {
 
     export interface BrowseBasedAppPanelConfig<M> {
 
-        appBar:api.app.AppBar;
+        appBar:api.app.bar.AppBar;
 
     }
 
     export class BrowseAndWizardBasedAppPanel<M> extends api.app.AppPanel<M> {
 
-        private appBarTabMenu: api.app.AppBarTabMenu;
+        private appBarTabMenu: api.app.bar.AppBarTabMenu;
 
         private currentKeyBindings: api.ui.KeyBinding[];
 
-        private appBar: api.app.AppBar;
+        private appBar: api.app.bar.AppBar;
 
         constructor(config: BrowseBasedAppPanelConfig<M>) {
             super(config.appBar.getTabMenu());
@@ -49,7 +49,7 @@ module api.app {
             }
         }
 
-        getAppBarTabMenu(): api.app.AppBarTabMenu {
+        getAppBarTabMenu(): api.app.bar.AppBarTabMenu {
             return this.appBarTabMenu;
         }
 
@@ -57,7 +57,7 @@ module api.app {
             new api.app.wizard.SaveBeforeCloseDialog(wizard).open();
         }
 
-        addViewPanel(tabMenuItem: AppBarTabMenuItem, viewPanel: api.app.view.ItemViewPanel<M>) {
+        addViewPanel(tabMenuItem: api.app.bar.AppBarTabMenuItem, viewPanel: api.app.view.ItemViewPanel<M>) {
             super.addNavigablePanel(tabMenuItem, viewPanel, true);
 
             tabMenuItem.onClosed(() => {
@@ -69,7 +69,7 @@ module api.app {
             });
         }
 
-        addWizardPanel(tabMenuItem: AppBarTabMenuItem, wizardPanel: api.app.wizard.WizardPanel<any>) {
+        addWizardPanel(tabMenuItem: api.app.bar.AppBarTabMenuItem, wizardPanel: api.app.wizard.WizardPanel<any>) {
             super.addNavigablePanel(tabMenuItem, wizardPanel, true);
 
             tabMenuItem.onClosed(() => {

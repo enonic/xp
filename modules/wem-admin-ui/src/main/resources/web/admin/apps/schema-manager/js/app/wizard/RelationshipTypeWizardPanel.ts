@@ -28,7 +28,7 @@ module app.wizard {
          */
         private constructing: boolean;
 
-        constructor(tabId: api.app.AppBarTabId, persistedRelationshipType: RelationshipType,
+        constructor(tabId: api.app.bar.AppBarTabId, persistedRelationshipType: RelationshipType,
                     callback: (wizard: RelationshipTypeWizardPanel) => void) {
 
             this.constructing = true;

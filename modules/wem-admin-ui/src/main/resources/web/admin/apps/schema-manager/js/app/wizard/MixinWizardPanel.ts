@@ -22,7 +22,7 @@ module app.wizard {
          */
         private constructing: boolean;
 
-        constructor(tabId: api.app.AppBarTabId, persistedMixin: api.schema.mixin.Mixin, callback: (wizard: MixinWizardPanel) => void) {
+        constructor(tabId: api.app.bar.AppBarTabId, persistedMixin: api.schema.mixin.Mixin, callback: (wizard: MixinWizardPanel) => void) {
 
             this.constructing = true;
             this.mixinWizardHeader = new api.app.wizard.WizardHeaderWithName();

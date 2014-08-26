@@ -1,4 +1,4 @@
-module api.app {
+module api.app.bar {
 
     export class AppBar extends api.dom.DivEl implements api.ui.ActionContainer {
 
@@ -14,23 +14,23 @@ module api.app {
 
         private userInfoPopup: UserInfoPopup;
 
-        private showAppLauncherAction: ShowAppLauncherAction;
+        private showAppLauncherAction: api.app.bar.action.ShowAppLauncherAction;
 
         constructor(application: Application) {
             super("appbar");
 
             this.application = application;
-            this.tabMenu = new api.app.AppBarTabMenu();
+            this.tabMenu = new AppBarTabMenu();
             this.tabMenu.onNavigationItemSelected(() => this.layoutChildren());
             this.tabMenu.onNavigationItemDeselected(() => this.layoutChildren());
             this.tabMenu.onButtonLabelChanged(() => this.layoutChildren());
 
-            this.showAppLauncherAction = new ShowAppLauncherAction(this.application);
+            this.showAppLauncherAction = new action.ShowAppLauncherAction(this.application);
 
             this.launcherButton = new LauncherButton(this.showAppLauncherAction);
             this.appendChild(this.launcherButton);
 
-            this.homeButton = new HomeButton(this.application.getName(), AppBarActions.SHOW_BROWSE_PANEL);
+            this.homeButton = new HomeButton(this.application.getName(), api.app.bar.action.AppBarActions.SHOW_BROWSE_PANEL);
             this.appendChild(this.homeButton);
 
             this.userButton = new UserButton();

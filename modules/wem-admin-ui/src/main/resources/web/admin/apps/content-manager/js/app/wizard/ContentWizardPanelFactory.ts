@@ -19,7 +19,7 @@ module app.wizard {
 
         private contentId: ContentId;
 
-        private appBarTabId: api.app.AppBarTabId;
+        private appBarTabId: api.app.bar.AppBarTabId;
 
         private contentTypeName: ContentTypeName;
 
@@ -58,7 +58,7 @@ module app.wizard {
             return this;
         }
 
-        setAppBarTabId(value: api.app.AppBarTabId): ContentWizardPanelFactory {
+        setAppBarTabId(value: api.app.bar.AppBarTabId): ContentWizardPanelFactory {
             this.appBarTabId = value;
             return this;
         }
