@@ -141,22 +141,22 @@ module api.ui.treegrid {
             var keyBindings = [
                 new KeyBinding('up', () => {
                     if (this.active) {
-                        this.grid.moveSelectedUp();
+                        this.scrollToRow(this.grid.moveSelectedUp());
                     }
                 }),
                 new KeyBinding('down', () => {
                     if (this.active) {
-                        this.grid.moveSelectedDown();
+                        this.scrollToRow(this.grid.moveSelectedDown());
                     }
                 }),
                 new KeyBinding('shift+up', () => {
                     if (this.active) {
-                        this.grid.addSelectedUp();
+                        this.scrollToRow(this.grid.addSelectedUp());
                     }
                 }),
                 new KeyBinding('shift+down', () => {
                     if (this.active) {
-                        this.grid.addSelectedDown();
+                        this.scrollToRow(this.grid.addSelectedDown());
                     }
                 }),
                 new KeyBinding('left', () => {
@@ -266,6 +266,16 @@ module api.ui.treegrid {
 
         hasToolbar(): boolean {
             return !!this.toolbar;
+        }
+
+        private scrollToRow(row: number) {
+            if (row > -1 && this.grid.getSelectedRows().length > 0) {
+                if (this.grid.getEl().getScrollTop() > row * 45) {
+                    this.grid.getEl().setScrollTop(row * 45);
+                } else if (this.grid.getEl().getScrollTop() + this.grid.getEl().getHeight() < (row + 1) * 45) {
+                    this.grid.getEl().setScrollTop((row + 1) * 45 - this.grid.getEl().getHeight());
+                }
+            }
         }
 
         /**
