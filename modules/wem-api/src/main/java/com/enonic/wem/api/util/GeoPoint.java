@@ -70,8 +70,8 @@ public final class GeoPoint
         try
         {
             final double latitude = Double.parseDouble( parts[0].trim() );
-            final double longitute = Double.parseDouble( parts[1].trim() );
-            return new GeoPoint( latitude, longitute );
+            final double longitude = Double.parseDouble( parts[1].trim() );
+            return new GeoPoint( latitude, longitude );
         }
         catch ( final NumberFormatException e )
         {

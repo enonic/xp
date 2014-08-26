@@ -1,5 +1,7 @@
 module api.content.form.inputtype.long {
+
     import support = api.form.inputtype.support;
+
     export class Long extends support.BaseInputTypeNotManagingAdd<any> {
 
         constructor(config: api.form.inputtype.InputTypeViewContext<any>) {
