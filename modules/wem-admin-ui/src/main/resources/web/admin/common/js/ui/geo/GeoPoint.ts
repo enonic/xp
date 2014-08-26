@@ -11,50 +11,42 @@ module api.ui.geo {
         private longitudeChangedListeners: {(event: ValueChangedEvent):void}[] = [];
 
         constructor() {
-            super("geopoint");
+            super("geo-point");
+
             this.latitudeInput = new api.ui.text.TextInput();
-            this.latitudeInput.getEl().setAttribute("title", "latitude");
+            this.latitudeInput.getEl().setAttribute("title", "latitude").addClass("geo-point-input");
+
             this.longitudeInput = new api.ui.text.TextInput();
-            this.longitudeInput.getEl().setAttribute("title", "longitude");
+            this.longitudeInput.getEl().setAttribute("title", "longitude").addClass("geo-point-input");
+
             this.layoutItems();
+
             this.latitudeInput.onValueChanged((event: ValueChangedEvent) => {
                 this.latitudeChangedListeners.forEach((listener) => {
                     listener(event);
                 });
             });
-//            this.latitudeInput.onKeyPressed((event:KeyboardEvent) => {
-//                var symbol = String.fromCharCode((<any> event).charCode);
-//               if( !this.isNumber(symbol)){
-//                   event.preventDefault();
-//                   return false
-//               }
-//
-//            });
+
             this.longitudeInput.onValueChanged((event: ValueChangedEvent) => {
                 this.longitudeChangedListeners.forEach((listener) => {
                     listener(event);
                 });
             });
+
             this.onShown((event) => {
                 this.latitudeInput.giveFocus();
             })
         }
 
-        private isNumber(str: string): boolean {
-            var pattern = /^[+-]?\d+(\.\d+)?$/;
-            return pattern.test(str);
-        }
-
         private layoutItems() {
             this.removeChildren();
-            var latitudeDiv = new api.dom.DivEl("geopoint-input");
-            latitudeDiv.appendChild(this.latitudeInput);
-            var longitudeDiv = new api.dom.DivEl("geopoint-input");
-            longitudeDiv.appendChild(this.longitudeInput);
-            this.appendChild(latitudeDiv);
-            this.appendChild(longitudeDiv);
+
+            this.appendChild(this.latitudeInput);
             this.latitudeInput.setPlaceholder(_i18n('latitude'));
+
+            this.appendChild(this.longitudeInput);
             this.longitudeInput.setPlaceholder(_i18n('longitude'));
+
             return this;
         }
 
