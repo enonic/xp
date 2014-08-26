@@ -68,6 +68,11 @@ public final class ResourceKey
 
     public ResourceKey resolve( final String relPath )
     {
+        // absolute path
+        if ( relPath.startsWith( "/" ) )
+        {
+            return new ResourceKey( this.module, relPath );
+        }
         return new ResourceKey( this.module, this.path + "/" + relPath );
     }
 
