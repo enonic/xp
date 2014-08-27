@@ -60,6 +60,9 @@ module app.create {
             this.contentListMask = new api.ui.mask.LoadMask(this.contentList);
             this.recentListMask = new api.ui.mask.LoadMask(this.recentList);
 
+            this.contentList.appendChild(this.contentListMask);
+            this.recentList.appendChild(this.recentListMask);
+
             this.listItems = [];
             this.checkReloadListItems = true;
 
