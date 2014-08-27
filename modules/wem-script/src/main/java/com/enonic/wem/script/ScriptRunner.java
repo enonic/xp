@@ -6,7 +6,7 @@ public interface ScriptRunner
 {
     public ScriptRunner source( ResourceKey source );
 
-    public ScriptRunner property( String name, Object value );
+    public ScriptRunner variable( String name, Object value );
 
     public void execute();
 }

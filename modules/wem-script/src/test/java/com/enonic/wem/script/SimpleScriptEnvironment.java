@@ -1,4 +1,4 @@
-package com.enonic.wem.thymeleaf;
+package com.enonic.wem.script;
 
 import java.util.Map;
 
@@ -6,10 +6,9 @@ import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.script.ScriptContributor;
 import com.enonic.wem.script.internal.ScriptEnvironment;
 
-public final class SimpleScriptEnvironment
+final class SimpleScriptEnvironment
     implements ScriptEnvironment
 {
     private final Map<String, ResourceKey> libraries;
@@ -32,11 +31,6 @@ public final class SimpleScriptEnvironment
     public Object getVariable( final String name )
     {
         return this.variables.get( name );
-    }
-
-    public void addContributor( final String moduleKey, final ScriptContributor contributor )
-    {
-        addContributor( ModuleKey.from( moduleKey ), contributor );
     }
 
     public void addContributor( final ModuleKey moduleKey, final ScriptContributor contributor )

@@ -1,8 +1,8 @@
-package com.enonic.wem.thymeleaf;
+package com.enonic.wem.script;
 
 import junit.framework.Assert;
 
-public class JavascriptTestHelper
+public final class ScriptTestHelper
 {
     public void assertEquals( final Object expeced, final Object actual )
     {
