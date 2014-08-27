@@ -148,7 +148,9 @@ module api.liveedit {
 
         scrollComponentIntoView(): void {
             var dimensions = this.getElementDimensions();
-            wemjq('html, body').animate({scrollTop: dimensions.top - 10}, 200);
+            if(dimensions.top && dimensions.top - 10 < document.body.scrollTop) {
+                wemjq('html, body').animate({scrollTop: dimensions.top - 10}, 200);
+            }
         }
 
         /**
