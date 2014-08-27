@@ -234,14 +234,19 @@ module api.ui.grid {
                 if (selected.length === 1) {
                     if (row >= 0) {
                         this.selectRow(row);
+                        return row;
                     } else {
                         this.clearSelection();
+                        return 0;
                     }
                 } else if (selected.length > 1) {
                     row = Math.max(row, 0);
                     this.selectRow(row);
+                    return row;
                 }
             }
+
+            return -1;
         }
 
         moveSelectedDown() {
@@ -252,7 +257,11 @@ module api.ui.grid {
                     : 0;
 
                 this.selectRow(row);
+
+                return row;
             }
+
+            return -1;
         }
 
         addSelectedUp() {
@@ -260,24 +269,33 @@ module api.ui.grid {
                 var selected: number[] = this.getSelectedRows().sort();
 
                 if (selected.length > 0 && (selected[0] - 1) >= 0) {
-                    selected.push(selected[0] - 1);
+                    var row = selected[0] - 1;
+                    selected.push(row);
                     selected = selected.sort();
                     this.setSelectedRows(selected);
+                    return row;
                 }
             }
+
+            return -1;
         }
 
-        addSelectedDown() {
+        addSelectedDown(): number {
             if (this.slickGrid.getDataLength() > 0) {
                 var selected: number[] = this.getSelectedRows().sort();
 
                 if (selected.length > 0 && (selected[selected.length - 1] + 1) < this.slickGrid.getDataLength()) {
-                    selected.push(selected[selected.length - 1] + 1);
+                    var row = selected[selected.length - 1] + 1;
+                    selected.push(row);
                     this.setSelectedRows(selected);
+                    return row;
                 } else if (selected.length === 0) {
                     this.moveSelectedDown();
+                    return 0;
                 }
             }
+
+            return -1;
         }
 
         // Operate with cells

@@ -439,6 +439,24 @@ module api.dom {
             return this;
         }
 
+        getBoundingClientRect(): ClientRect {
+            return this.el.getBoundingClientRect();
+        }
+
+        scrollIntoView(top?: boolean): ElementHelper {
+            this.el.scrollIntoView(top);
+            return this;
+        }
+
+        getScrollTop(): number {
+            return this.el.scrollTop;
+        }
+
+        setScrollTop(top: number): ElementHelper {
+            this.el.scrollTop = top;
+            return this;
+        }
+
         getFontSize(): string {
             return this.getComputedProperty('font-size');
         }
