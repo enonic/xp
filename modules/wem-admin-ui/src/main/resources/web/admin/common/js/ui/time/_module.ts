@@ -8,3 +8,4 @@
 ///<reference path='DatePicker.ts' />
 ///<reference path='MonthOfYear.ts' />
 ///<reference path='MonthsOfYear.ts' />
+///<reference path='TimePicker.ts' />
