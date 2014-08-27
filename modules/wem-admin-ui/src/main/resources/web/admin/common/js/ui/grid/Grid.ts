@@ -255,6 +255,31 @@ module api.ui.grid {
             }
         }
 
+        addSelectedUp() {
+            if (this.slickGrid.getDataLength() > 0) {
+                var selected: number[] = this.getSelectedRows().sort();
+
+                if (selected.length > 0 && (selected[0] - 1) >= 0) {
+                    selected.push(selected[0] - 1);
+                    selected = selected.sort();
+                    this.setSelectedRows(selected);
+                }
+            }
+        }
+
+        addSelectedDown() {
+            if (this.slickGrid.getDataLength() > 0) {
+                var selected: number[] = this.getSelectedRows().sort();
+
+                if (selected.length > 0 && (selected[selected.length - 1] + 1) < this.slickGrid.getDataLength()) {
+                    selected.push(selected[selected.length - 1] + 1);
+                    this.setSelectedRows(selected);
+                } else if (selected.length === 0) {
+                    this.moveSelectedDown();
+                }
+            }
+        }
+
         // Operate with cells
         navigateUp() {
             this.slickGrid.navigateUp();
