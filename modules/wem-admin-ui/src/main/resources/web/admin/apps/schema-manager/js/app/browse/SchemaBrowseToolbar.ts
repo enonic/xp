@@ -2,7 +2,7 @@ module app.browse {
 
     export class SchemaBrowseToolbar extends api.ui.toolbar.Toolbar {
 
-        constructor(actions:SchemaBrowseActions) {
+        constructor(actions:app.browse.action.SchemaBrowseActions) {
             super();
             super.addAction(actions.NEW_SCHEMA);
             super.addAction(actions.EDIT_SCHEMA);

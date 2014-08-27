@@ -6,7 +6,7 @@ module app.browse {
             super();
         }
 
-        setActions(actions:SchemaBrowseActions) {
+        setActions(actions:app.browse.action.SchemaBrowseActions) {
             this.addAction(actions.NEW_SCHEMA);
             this.addAction(actions.EDIT_SCHEMA);
             this.addAction(actions.OPEN_SCHEMA);

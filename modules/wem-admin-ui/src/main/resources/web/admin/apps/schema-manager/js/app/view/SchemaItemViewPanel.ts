@@ -9,9 +9,9 @@ module app.view {
 
         constructor() {
 
-            this.editAction = new EditSchemaAction(this);
-            this.deleteAction = new DeleteSchemaAction(this);
-            this.closeAction = new CloseSchemaAction(this, true);
+            this.editAction = new app.view.action.EditSchemaAction(this);
+            this.deleteAction = new app.view.action.DeleteSchemaAction(this);
+            this.closeAction = new app.view.action.CloseSchemaAction(this, true);
 
             var toolbar = new SchemaItemViewToolbar({
                 editAction: this.editAction,

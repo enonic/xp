@@ -123,6 +123,7 @@
 ///<reference path='rendering/_module.ts' />
 
 ///<reference path='app/_module.ts' />
+///<reference path='app/action/_module.ts' />
 ///<reference path='app/browse/_module.ts' />
 ///<reference path='app/browse/filter/_module.ts' />
 

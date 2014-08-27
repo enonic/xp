@@ -1,15 +1,4 @@
-module app.view {
-
-    export class EditSchemaAction extends api.ui.Action {
-
-        constructor(panel: api.app.view.ItemViewPanel<api.schema.Schema>) {
-            super("Edit");
-
-            this.onExecuted(() => {
-                new app.browse.EditSchemaEvent([panel.getItem().getModel()]).fire();
-            });
-        }
-    }
+module app.view.action {
 
     export class DeleteSchemaAction extends api.ui.Action {
 
@@ -48,16 +37,4 @@ module app.view {
             });
         }
     }
-
-    export class CloseSchemaAction extends api.ui.Action {
-
-        constructor(panel: api.ui.panel.Panel, checkCanRemovePanel: boolean = true) {
-            super("Close");
-
-            this.onExecuted(() => {
-                new app.browse.CloseSchemaEvent(panel, checkCanRemovePanel).fire();
-            });
-        }
-    }
-
 }
