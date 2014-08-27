@@ -25,7 +25,7 @@ module api.liveedit.text {
 
         private getComponentTextValue(textComponent: api.content.page.text.TextComponent) : string {
             var textComponentValue: string = textComponent.getText();
-            if(textComponentValue.length > TextComponentViewer.MAX_TOOLTIP_LENGTH) {
+            if(textComponentValue && textComponentValue.length > TextComponentViewer.MAX_TOOLTIP_LENGTH) {
                 textComponentValue = textComponentValue.substring(0,TextComponentViewer.MAX_TOOLTIP_LENGTH)+"...";
             }
             return textComponentValue;
