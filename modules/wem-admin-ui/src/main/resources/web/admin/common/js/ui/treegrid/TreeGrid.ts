@@ -185,6 +185,7 @@ module api.ui.treegrid {
                                 && !node.isExpanded() && this.active) {
 
                             this.active = false;
+                            this.resetAndRender();
                             this.expandNode(node);
                         }
                     }
@@ -537,8 +538,7 @@ module api.ui.treegrid {
             this.animateExpand(expandedRows, animatedRows);
 
             setTimeout(() => {
-                this.resetZIndexes();
-                this.grid.syncGridSelection(false); // Sync selected rows
+                this.resetAndRender();
                 this.active = true;
             }, 350);
         }
@@ -569,8 +569,7 @@ module api.ui.treegrid {
             // Update data after animation
             setTimeout(() => {
                 this.gridData.refresh();
-                this.resetZIndexes();
-                this.grid.syncGridSelection(false);
+                this.resetAndRender();
                 this.active = true;
             }, 350);
         }
@@ -703,7 +702,7 @@ module api.ui.treegrid {
             this.resetZIndexes();
             this.grid.syncGridSelection(false);
             this.grid.invalidateAllRows();
-            this.grid.render();
+            this.grid.renderGrid();
         }
     }
 }
