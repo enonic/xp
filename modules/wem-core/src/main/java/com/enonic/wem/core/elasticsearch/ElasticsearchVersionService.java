@@ -15,6 +15,7 @@ import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityVersion;
 import com.enonic.wem.api.entity.EntityVersions;
+import com.enonic.wem.api.entity.FindEntityVersionsResult;
 import com.enonic.wem.core.elasticsearch.result.SearchResult;
 import com.enonic.wem.core.elasticsearch.result.SearchResultEntry;
 import com.enonic.wem.core.elasticsearch.result.SearchResultField;
@@ -69,18 +70,34 @@ public class ElasticsearchVersionService
     }
 
     @Override
-    public EntityVersions getVersions( final GetVersionsQuery query )
+    public FindEntityVersionsResult findVersions( final GetVersionsQuery query )
     {
         final SearchResult searchResults = doGetFromEntityId( query.getEntityId(), query.getFrom(), query.getSize() );
 
-        final EntityVersions.Builder builder = EntityVersions.create( query.getEntityId() );
+        final FindEntityVersionsResult.Builder findEntityVersionResultBuilder = FindEntityVersionsResult.create();
+
+        findEntityVersionResultBuilder.hits( searchResults.getResults().getSize() );
+        findEntityVersionResultBuilder.totalHits( searchResults.getResults().getTotalHits() );
+        findEntityVersionResultBuilder.from( query.getFrom() );
+        findEntityVersionResultBuilder.to( query.getSize() );
+
+        final EntityVersions entityVersions = buildEntityVersions( query, searchResults );
+
+        findEntityVersionResultBuilder.entityVersions( entityVersions );
+
+        return findEntityVersionResultBuilder.build();
+    }
+
+    private EntityVersions buildEntityVersions( final GetVersionsQuery query, final SearchResult searchResults )
+    {
+        final EntityVersions.Builder entityVersionsBuilder = EntityVersions.create( query.getEntityId() );
 
         for ( final SearchResultEntry searchResult : searchResults.getResults() )
         {
-            builder.add( createVersionEntry( searchResult ) );
+            entityVersionsBuilder.add( createVersionEntry( searchResult ) );
         }
 
-        return builder.build();
+        return entityVersionsBuilder.build();
     }
 
     private SearchResult doGetFromEntityId( final EntityId id, final int from, final int size )

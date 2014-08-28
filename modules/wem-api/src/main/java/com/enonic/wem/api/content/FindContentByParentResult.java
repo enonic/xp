@@ -2,7 +2,6 @@ package com.enonic.wem.api.content;
 
 public class FindContentByParentResult
 {
-
     private final Contents contents;
 
     private final long totalHits;
