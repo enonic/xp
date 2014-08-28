@@ -18,9 +18,6 @@ public final class SystemScriptBean
     protected XsltScriptBean xslt;
 
     @Inject
-    protected ThymeleafScriptBean thymeleaf;
-
-    @Inject
     protected ContentServiceScriptBean contentService;
 
     public MustacheScriptBean getMustache()
@@ -33,9 +30,9 @@ public final class SystemScriptBean
         return this.xslt;
     }
 
-    public ThymeleafScriptBean getThymeleaf()
+    public Object getThymeleaf()
     {
-        return this.thymeleaf;
+        throw new RuntimeException( "Converted to new format. Use require('view/thymeleaf') instead." );
     }
 
     public ContentServiceScriptBean getContentService()
@@ -43,7 +40,8 @@ public final class SystemScriptBean
         return this.contentService;
     }
 
-    public void log(String message) {
+    public void log( String message )
+    {
         LOG.info( message );
     }
 }
