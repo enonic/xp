@@ -190,11 +190,10 @@ module api.content.form.inputtype.image {
             }
 
             if (this.activeOption) {
-                this.activeOption.getOptionView().removeClass('editing first-in-row last-in-row');
+                this.activeOption.getOptionView().removeClass("editing");
             }
             this.activeOption = option;
-            option.getOptionView().addClass('editing' + (this.isFirstInRow(option.getIndex()) ? ' first-in-row' : '') +
-                                            (this.isLastInRow(option.getIndex()) ? ' last-in-row' : ''));
+            option.getOptionView().addClass("editing");
 
             this.dialog.setContent(option.getOption().displayValue);
             this.setOutsideClickListener();
