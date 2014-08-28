@@ -10,6 +10,7 @@ import com.google.common.collect.Maps;
 import junit.framework.Assert;
 
 import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.wem.api.resource.ResourceProblemException;
 import com.enonic.wem.api.resource.ResourceUrlRegistry;
 import com.enonic.wem.api.resource.ResourceUrlTestHelper;
 
@@ -38,5 +39,12 @@ public class ThymeleafProcessorImplTest
         final Map<String, Object> params = Maps.newHashMap();
         final String result = this.processor.process( ResourceKey.from( "mymodule-1.0.0:/view/test.html" ), params );
         Assert.assertEquals( "<div>\n    <div><!--# COMPONENT test --></div>\n</div>", result );
+    }
+
+    @Test(expected = ResourceProblemException.class)
+    public void testViewError()
+    {
+        final Map<String, Object> params = Maps.newHashMap();
+        this.processor.process( ResourceKey.from( "mymodule-1.0.0:/view/test-error.html" ), params );
     }
 }
