@@ -32,7 +32,6 @@ module api.data {
         static ALL: ValueType[] = [
             ValueTypes.DATA,
             ValueTypes.STRING,
-            ValueTypes.DATE_TIME,
             ValueTypes.HTML_PART,
             ValueTypes.XML,
             ValueTypes.DATE_MIDNIGHT,
