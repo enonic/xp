@@ -7,6 +7,7 @@ import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.layout.LayoutComponent;
 import com.enonic.wem.api.content.page.layout.LayoutRegions;
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.PortalRequest;
 import com.enonic.wem.portal.PortalResponse;
@@ -28,6 +29,8 @@ public final class JsContext
     private PortalUrlScriptBean portalUrlScriptBean;
 
     private PageComponent component;
+
+    private ModuleKey resolvedModule;
 
     public JsContext()
     {
@@ -163,5 +166,16 @@ public final class JsContext
     public void setComponent( final PageComponent component )
     {
         this.component = component;
+    }
+
+    @Override
+    public ModuleKey getResolvedModule()
+    {
+        return this.resolvedModule;
+    }
+
+    public void setResolvedModule( final ModuleKey resolvedModule )
+    {
+        this.resolvedModule = resolvedModule;
     }
 }

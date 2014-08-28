@@ -9,6 +9,7 @@ import com.google.common.collect.Multimap;
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.rendering.RenderingMode;
+import com.enonic.wem.core.web.servlet.ServletRequestUrlHelper;
 import com.enonic.wem.portal.PortalRequest;
 
 public final class JsHttpRequest
@@ -53,6 +54,12 @@ public final class JsHttpRequest
     public RenderingMode getMode()
     {
         return this.mode;
+    }
+
+    @Override
+    public String getBaseUri()
+    {
+        return ServletRequestUrlHelper.createUri( "" );
     }
 
     public void setMethod( final String method )
