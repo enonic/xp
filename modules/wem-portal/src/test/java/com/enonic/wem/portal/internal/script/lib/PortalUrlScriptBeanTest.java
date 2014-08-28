@@ -8,10 +8,10 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.core.web.servlet.ServletRequestHolder;
-import com.enonic.wem.portal.url2.GeneralUrlBuilder;
-import com.enonic.wem.portal.url2.ImageUrlBuilder;
-import com.enonic.wem.portal.url2.PublicUrlBuilder;
-import com.enonic.wem.portal.url2.ServiceUrlBuilder;
+import com.enonic.wem.portal.url.GeneralUrlBuilder;
+import com.enonic.wem.portal.url.ImageUrlBuilder;
+import com.enonic.wem.portal.url.PublicUrlBuilder;
+import com.enonic.wem.portal.url.ServiceUrlBuilder;
 
 import static org.junit.Assert.*;
 

@@ -1,25 +1,25 @@
-package com.enonic.wem.portal.url2;
+package com.enonic.wem.portal.url;
 
 import java.util.Map;
 
 import static com.google.common.base.Strings.emptyToNull;
 
-public final class ServiceUrlBuilder
-    extends PortalUrlBuilder<ServiceUrlBuilder>
+public final class PublicUrlBuilder
+    extends PortalUrlBuilder<PublicUrlBuilder>
 {
-    private String serviceName;
+    private String resourcePath;
 
     private String module;
 
-    public ServiceUrlBuilder module( final String module )
+    public PublicUrlBuilder module( final String module )
     {
         this.module = emptyToNull( module );
         return this;
     }
 
-    public ServiceUrlBuilder serviceName( final String serviceName )
+    public PublicUrlBuilder resourcePath( final String resourcePath )
     {
-        this.serviceName = emptyToNull( serviceName );
+        this.resourcePath = emptyToNull( resourcePath );
         return this;
     }
 
@@ -28,8 +28,8 @@ public final class ServiceUrlBuilder
     {
         super.buildUrl( url, params );
         appendPart( url, "_" );
-        appendPart( url, "service" );
+        appendPart( url, "public" );
         appendPart( url, this.module );
-        appendPart( url, this.serviceName );
+        appendPart( url, this.resourcePath );
     }
 }

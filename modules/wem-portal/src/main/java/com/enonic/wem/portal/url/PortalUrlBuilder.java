@@ -1,4 +1,4 @@
-package com.enonic.wem.portal.url2;
+package com.enonic.wem.portal.url;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
