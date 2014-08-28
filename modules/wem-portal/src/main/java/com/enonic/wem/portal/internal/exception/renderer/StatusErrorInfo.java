@@ -70,7 +70,7 @@ final class StatusErrorInfo
 
     public StatusErrorInfo callStack( final CallStackInfo callStack )
     {
-        this.callStack = callStack;
+        this.callStack = ( ( callStack != null ) && !callStack.isEmpty() ) ? callStack : null;
         return this;
     }
 

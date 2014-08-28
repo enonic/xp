@@ -10,9 +10,8 @@ import org.mozilla.javascript.ScriptableObject;
 import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.api.resource.ResourceUrlResolver;
+import com.enonic.wem.api.resource.ResourceProblemException;
 import com.enonic.wem.script.ScriptRunner;
-import com.enonic.wem.script.SourceException;
 
 final class RhinoScriptRunner
     implements ScriptRunner
@@ -81,16 +80,15 @@ final class RhinoScriptRunner
         require.requireMain( context, this.source );
     }
 
-    private SourceException createError( final RhinoException cause )
+    private ResourceProblemException createError( final RhinoException cause )
     {
         final String name = cause.sourceName();
         final ResourceKey source = ResourceKey.from( name );
 
-        final SourceException.Builder builder = SourceException.newBuilder();
+        final ResourceProblemException.Builder builder = ResourceProblemException.newBuilder();
         builder.cause( cause );
         builder.lineNumber( cause.lineNumber() );
         builder.resource( source );
-        builder.path( ResourceUrlResolver.resolve( source ) );
         builder.message( cause.details() );
 
         for ( final ScriptStackElement elem : cause.getScriptStack() )

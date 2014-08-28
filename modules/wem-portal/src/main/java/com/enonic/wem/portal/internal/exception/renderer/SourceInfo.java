@@ -1,23 +1,19 @@
 package com.enonic.wem.portal.internal.exception.renderer;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.Collections;
 import java.util.List;
 
-import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
-import com.google.common.io.Resources;
 
-import com.enonic.wem.script.SourceException;
+import com.enonic.wem.api.resource.Resource;
+import com.enonic.wem.api.resource.ResourceProblemException;
 
 final class SourceInfo
 {
     private final static int NUM_DELTA_LINES = 3;
 
-    private final SourceException error;
+    private final ResourceProblemException error;
 
-    public SourceInfo( final SourceException error )
+    public SourceInfo( final ResourceProblemException error )
     {
         this.error = error;
     }
@@ -33,7 +29,6 @@ final class SourceInfo
     }
 
     public List<LineInfo> getLines()
-        throws Exception
     {
         final List<String> allLines = getAllLines();
         final List<String> subList = sliceLines( allLines );
@@ -53,14 +48,9 @@ final class SourceInfo
     }
 
     private List<String> getAllLines()
-        throws IOException
     {
-        final URL path = this.error.getPath();
-        if ( path == null )
-        {
-            return Collections.emptyList();
-        }
-        return Resources.readLines( path, Charsets.UTF_8 );
+        final Resource resource = Resource.from( this.error.getResource() );
+        return resource.readLines();
     }
 
     private List<String> sliceLines( final List<String> all )

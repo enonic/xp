@@ -5,15 +5,20 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.script.SourceException;
+import com.enonic.wem.api.resource.ResourceProblemException;
 
 final class CallStackInfo
 {
-    private final SourceException error;
+    private final ResourceProblemException error;
 
-    public CallStackInfo( final SourceException error )
+    public CallStackInfo( final ResourceProblemException error )
     {
         this.error = error;
+    }
+
+    public boolean isEmpty()
+    {
+        return this.error.getCallStack().isEmpty();
     }
 
     public List<LineInfo> getLines()

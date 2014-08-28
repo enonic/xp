@@ -1,6 +1,6 @@
 package com.enonic.wem.portal.internal.exception.renderer;
 
-import com.enonic.wem.script.SourceException;
+import com.enonic.wem.api.resource.ResourceProblemException;
 
 public final class ExceptionRenderer
 {
@@ -41,7 +41,7 @@ public final class ExceptionRenderer
         return this;
     }
 
-    public ExceptionRenderer sourceError( final SourceException error )
+    public ExceptionRenderer sourceError( final ResourceProblemException error )
     {
         this.info.source( new SourceInfo( error ) );
         this.info.callStack( new CallStackInfo( error ) );

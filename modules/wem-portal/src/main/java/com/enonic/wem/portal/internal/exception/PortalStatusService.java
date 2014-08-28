@@ -10,9 +10,9 @@ import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
 import org.restlet.service.StatusService;
 
+import com.enonic.wem.api.resource.ResourceProblemException;
 import com.enonic.wem.core.entity.dao.NodeNotFoundException;
 import com.enonic.wem.portal.internal.exception.renderer.ExceptionRenderer;
-import com.enonic.wem.script.SourceException;
 
 @Singleton
 public final class PortalStatusService
@@ -39,9 +39,9 @@ public final class PortalStatusService
 
     private String renderThrowable( final Status status, final Throwable cause )
     {
-        if ( cause instanceof SourceException )
+        if ( cause instanceof ResourceProblemException )
         {
-            return renderSourceException( status, (SourceException) cause );
+            return renderSourceException( status, (ResourceProblemException) cause );
         }
         else if ( status.isServerError() )
         {
@@ -53,12 +53,12 @@ public final class PortalStatusService
         }
     }
 
-    private String renderSourceException( final Status status, final SourceException cause )
+    private String renderSourceException( final Status status, final ResourceProblemException cause )
     {
         return new ExceptionRenderer().
-            sourceError( cause.getInnerSourceError() ).
+            sourceError( cause.getInnerError() ).
             exception( cause ).
-            description( getDescription( status, cause ) ).
+            description( getDescription( status, cause.getInnerError() ) ).
             status( status.getCode() ).
             title( "Script evaluation error" ).
             render();

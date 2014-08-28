@@ -19,8 +19,9 @@ import org.restlet.representation.Representation;
 import com.google.common.base.Charsets;
 
 import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.wem.api.resource.ResourceProblemException;
+import com.enonic.wem.api.resource.ResourceUrlTestHelper;
 import com.enonic.wem.core.entity.dao.NodeNotFoundException;
-import com.enonic.wem.script.SourceException;
 
 import static org.junit.Assert.*;
 
@@ -82,17 +83,18 @@ public class PortalStatusServiceTest
     }
 
     @Test
-    @Ignore
     public void testRepresentation_SourceException()
         throws Exception
     {
+        ResourceUrlTestHelper.mockModuleScheme().modulesDir( this.temporaryFolder.getRoot() );
+
         final String source = "var i = 3;";
         final File file = this.temporaryFolder.newFile( "source.js" );
+
         Files.write( file.toPath(), Collections.singleton( source ), Charsets.UTF_8 );
 
-        final SourceException exception = SourceException.newBuilder().
+        final ResourceProblemException exception = ResourceProblemException.newBuilder().
             lineNumber( 1 ).
-            // path( file.toPath() ).
             resource( ResourceKey.from( "mymodule-1.0.0:source.js" ) ).
             build();
         final Status status = new Status( 500, exception );

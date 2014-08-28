@@ -21,12 +21,12 @@ import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.layout.LayoutRegions;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.wem.api.resource.ResourceProblemException;
 import com.enonic.wem.portal.internal.controller.JsContext;
 import com.enonic.wem.portal.internal.xml.DomBuilder;
 import com.enonic.wem.xslt.XsltProcessor;
 import com.enonic.wem.xslt.XsltProcessorException;
 import com.enonic.wem.xslt.XsltProcessorParams;
-import com.enonic.wem.script.SourceException;
 
 public final class XsltScriptBean
 {
@@ -95,11 +95,11 @@ public final class XsltScriptBean
         return result;
     }
 
-    private SourceException createError( final XsltProcessorException e )
+    private ResourceProblemException createError( final XsltProcessorException e )
     {
         final SourceLocator locator = findLocation( e );
 
-        final SourceException.Builder error = SourceException.newBuilder();
+        final ResourceProblemException.Builder error = ResourceProblemException.newBuilder();
         error.cause( e );
         error.message( e.getMessage() );
         error.lineNumber( locator.getLineNumber() );
@@ -108,7 +108,6 @@ public final class XsltScriptBean
         try
         {
             url = new URL( locator.getSystemId() );
-            error.path( url );
             error.resource( ResourceKey.from( url ) );
         }
         catch ( MalformedURLException mue )
