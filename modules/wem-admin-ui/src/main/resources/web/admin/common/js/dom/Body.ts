@@ -4,7 +4,17 @@ module api.dom {
 
         private static instance: Body;
 
-        private withChildren: boolean = false;
+        constructor(loadExistingChildren: boolean = false, body?: HTMLElement) {
+            if (!body) {
+                body = document.body;
+            }
+            super(new ElementFromHelperBuilder().
+                setHelper(new ElementHelper(body)).
+                setLoadExistingChildren(loadExistingChildren).
+                setParentElement(Element.fromHtmlElement(body.parentElement)));
+
+            this.init();
+        }
 
         static get(): Body {
             if (!Body.instance) {
@@ -14,19 +24,10 @@ module api.dom {
         }
 
         static getAndLoadExistingChildren(): Body {
-            if (!Body.instance || !Body.instance.withChildren) {
+            if (!Body.instance) {
                 Body.instance = new Body(true);
             }
             return Body.instance;
-        }
-
-        constructor(loadExistingChildren: boolean = false) {
-            super(new ElementFromHelperBuilder().
-                setHelper(new ElementHelper(document.body)).
-                setLoadExistingChildren(loadExistingChildren).
-                setParentElement(Element.fromHtmlElement(document.body.parentElement)));
-
-            this.init();
         }
     }
 }
