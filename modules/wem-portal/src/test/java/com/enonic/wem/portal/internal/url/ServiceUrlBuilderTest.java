@@ -2,7 +2,7 @@ package com.enonic.wem.portal.internal.url;
 
 import org.junit.Test;
 
-import com.enonic.wem.portal.PortalUrlBuilder;
+import com.enonic.wem.portal.url.PortalUrlBuilder;
 import com.enonic.wem.portal.url.ServiceUrlBuilder;
 
 import static org.junit.Assert.*;

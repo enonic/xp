@@ -1,4 +1,4 @@
-package com.enonic.wem.portal;
+package com.enonic.wem.portal.url;
 
 import com.enonic.wem.portal.internal.url.GeneralUrlBuilderImpl;
 import com.enonic.wem.portal.internal.url.ImageByIdUrlBuilderImpl;
