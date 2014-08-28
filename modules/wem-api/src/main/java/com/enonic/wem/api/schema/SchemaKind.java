@@ -33,6 +33,21 @@ public enum SchemaKind
         return this.id;
     }
 
+    public boolean isContentType()
+    {
+        return this == SchemaKind.CONTENT_TYPE;
+    }
+
+    public boolean isMixin()
+    {
+        return this == SchemaKind.MIXIN;
+    }
+
+    public boolean isRelationshipType()
+    {
+        return this == SchemaKind.RELATIONSHIP_TYPE;
+    }
+
     public static SchemaKind from( final String value )
     {
         if ( value == null )

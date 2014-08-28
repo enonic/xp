@@ -53,7 +53,7 @@ public class PageTemplateXmlTest
             displayName( "Main page template" ).
             regions( regions ).
             config( pageTemplateConfig ).
-            canRender( ContentTypeNames.from( "com.enonic.sometype", "some.other.type" ) ).
+            canRender( ContentTypeNames.from( "mymodule-1.0.0:com.enonic.sometype", "mymodule-1.0.0:some.other.type" ) ).
             descriptor( PageDescriptorKey.from( ModuleKey.from( "mainmodule-1.0.0" ), new ComponentDescriptorName( "landing-page" ) ) ).
             build();
 
@@ -122,8 +122,8 @@ public class PageTemplateXmlTest
 
         assertEquals( "Main page template", pageTemplate.getDisplayName() );
         assertEquals( PageDescriptorKey.from( "mainmodule-1.0.0:landing-page" ), pageTemplate.getDescriptor() );
-        assertTrue( pageTemplate.getCanRender().contains( ContentTypeName.from( "com.enonic.sometype" ) ) );
-        assertTrue( pageTemplate.getCanRender().contains( ContentTypeName.from( "some.other.type" ) ) );
+        assertTrue( pageTemplate.getCanRender().contains( ContentTypeName.from( "mymodule-1.0.0:com.enonic.sometype" ) ) );
+        assertTrue( pageTemplate.getCanRender().contains( ContentTypeName.from( "mymodule-1.0.0:some.other.type" ) ) );
 
         // verify: config
         RootDataSet config = pageTemplate.getConfig();

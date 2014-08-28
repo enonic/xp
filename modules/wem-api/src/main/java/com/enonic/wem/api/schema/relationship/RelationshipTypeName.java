@@ -1,6 +1,9 @@
 package com.enonic.wem.api.schema.relationship;
 
 
+import org.apache.commons.lang.StringUtils;
+
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.schema.SchemaKey;
 import com.enonic.wem.api.schema.SchemaName;
 
@@ -15,19 +18,31 @@ public final class RelationshipTypeName
 
     public static final RelationshipTypeName LIKE = new RelationshipTypeName( "like" );
 
-    private RelationshipTypeName( final String name )
+    private RelationshipTypeName( final ModuleKey moduleKey, final String localName )
     {
-        super( name );
+        super( moduleKey, localName );
     }
 
-    public static RelationshipTypeName from( String relationTypeName )
+    private RelationshipTypeName( final String localName )
     {
-        return new RelationshipTypeName( relationTypeName );
+        super( ModuleKey.SYSTEM, localName );
     }
 
     @Override
     public SchemaKey toSchemaKey()
     {
         return SchemaKey.from( this );
+    }
+
+    public static RelationshipTypeName from( final ModuleKey moduleKey, final String localName )
+    {
+        return new RelationshipTypeName( moduleKey, localName );
+    }
+
+    public static RelationshipTypeName from( final String relationshipTypeName )
+    {
+        final String moduleKey = StringUtils.substringBefore( relationshipTypeName, SEPARATOR );
+        final String localName = StringUtils.substringAfter( relationshipTypeName, SEPARATOR );
+        return new RelationshipTypeName( ModuleKey.from( moduleKey ), localName );
     }
 }

@@ -43,7 +43,7 @@ public class CreateContentTypeCommandTest
             ContentTypes.from( ContentTypesInitializer.STRUCTURED ) );
 
         final ContentType contentType = newContentType().
-            name( "my_content_type" ).
+            name( "mymodule-1.0.0:my_content_type" ).
             displayName( "My content type" ).
             description( "description" ).
             setAbstract( false ).
@@ -67,7 +67,7 @@ public class CreateContentTypeCommandTest
 
         // verify
         assertNotNull( createdContentType );
-        assertEquals( "my_content_type", createdContentType.getName().toString() );
+        assertEquals( "mymodule-1.0.0:my_content_type", createdContentType.getName().toString() );
     }
 
     @Test(expected = InvalidContentTypeException.class)
@@ -79,7 +79,7 @@ public class CreateContentTypeCommandTest
             ContentTypes.from( ContentTypesInitializer.SHORTCUT ) );
 
         final ContentType contentType = newContentType().
-            name( "my_content_type" ).
+            name( "mymodule-1.0.0:my_content_type" ).
             displayName( "Inheriting a final ContentType" ).
             displayName( "A description" ).
             setAbstract( false ).

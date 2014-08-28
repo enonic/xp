@@ -35,7 +35,7 @@ public class GetContentTypeCommandTest
     public void handle()
         throws Exception
     {
-        final String name = "content_type_1";
+        final String name = "mymodule-1.0.0:content_type_1";
         final String displayName = "DisplayName";
         final String description = "Description";
 

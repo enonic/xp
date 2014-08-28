@@ -1,7 +1,7 @@
 {
-    "name": "several-levels-of-form-item-set",
+    "name": "demo-1.0.0:several-levels-of-form-item-set",
     "displayName": "Several layers of FormItemSet",
-    "superType": "structured",
+    "superType": "system-0.0.0:structured",
     "isAbstract": false,
     "isFinal": true,
     "form": [

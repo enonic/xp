@@ -18,12 +18,12 @@
                 "modifiedTime": "2007-12-03T10:15:30Z",
                 "size": 3
             },
-            "iconUrl": "/admin/rest/schema/icon/ContentType:contenttype?hash=65e081e748bb9e06d7dbd25b6a7ac795",
-            "key": "ContentType:contenttype",
+            "iconUrl": "/admin/rest/schema/icon/ContentType:mymodule-1.0.0:contenttype?hash=65e081e748bb9e06d7dbd25b6a7ac795",
+            "key": "ContentType:mymodule-1.0.0:contenttype",
             "modifiedTime": "2013-08-23T12:55:09.162Z",
             "modifier": null,
-            "name": "contenttype",
-            "superType": "unstructured"
+            "name": "mymodule-1.0.0:contenttype",
+            "superType": "system-0.0.0:unstructured"
         }
     ],
     "total": 1

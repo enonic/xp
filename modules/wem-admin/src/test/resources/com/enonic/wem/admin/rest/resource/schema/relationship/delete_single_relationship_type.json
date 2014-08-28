@@ -3,7 +3,7 @@
     "success": true,
     "successes": [
         {
-            "name": "partner"
+            "name": "mymodule-1.0.0:partner"
         }
     ]
 }

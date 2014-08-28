@@ -7,7 +7,6 @@ import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.schema.BaseSchema;
 import com.enonic.wem.api.schema.Schema;
-import com.enonic.wem.api.schema.SchemaKey;
 import com.enonic.wem.api.schema.SchemaKind;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
 import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
@@ -64,17 +63,6 @@ public class ContentType
     public static Builder newContentType( final ContentType contentType )
     {
         return new Builder( contentType );
-    }
-
-    @Override
-    public SchemaKey getSchemaKey()
-    {
-        return getName() != null ? SchemaKey.from( getName() ) : null;
-    }
-
-    public SchemaKind getSchemaType()
-    {
-        return getName() != null ? SchemaKey.from( getName() ).getType() : null;
     }
 
     @Override
@@ -137,8 +125,7 @@ public class ContentType
     public void checkIllegalEdit( final ContentType to )
         throws IllegalEditException
     {
-        IllegalEdit.check( "id", this.getId(), to.getId(), ContentType.class );
-        IllegalEdit.check( "schemaType", this.getSchemaType(), to.getSchemaType(), ContentType.class );
+        IllegalEdit.check( "schemaType", this.getType(), to.getType(), ContentType.class );
         IllegalEdit.check( "createdTime", this.getCreatedTime(), to.getCreatedTime(), ContentType.class );
         IllegalEdit.check( "creator", this.getCreator(), to.getCreator(), ContentType.class );
         IllegalEdit.check( "modifiedTime", this.getModifiedTime(), to.getModifiedTime(), ContentType.class );
@@ -185,7 +172,7 @@ public class ContentType
 
         private Builder()
         {
-            super();
+            super( SchemaKind.CONTENT_TYPE );
             formBuilder = newForm();
             allowChildContent = true;
             isBuiltIn = false;

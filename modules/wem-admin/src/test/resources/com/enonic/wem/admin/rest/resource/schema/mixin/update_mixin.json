@@ -10,7 +10,7 @@
         "editable": true,
         "hasChildren": false,
         "icon": null,
-        "iconUrl": "/admin/rest/schema/icon/Mixin:some_input",
+        "iconUrl": "/admin/rest/schema/icon/Mixin:mymodule-1.0.0:some_input",
         "items": [
             {
                 "Input": {
@@ -32,9 +32,9 @@
                 }
             }
         ],
-        "key": "Mixin:some_input",
+        "key": "Mixin:mymodule-1.0.0:some_input",
         "modifiedTime": null,
         "modifier": null,
-        "name": "some_input"
+        "name": "mymodule-1.0.0:some_input"
     }
 }

@@ -1,5 +1,5 @@
 {
-    "name": "my_set",
+    "name": "mymodule-1.0.0:my_set",
     "icon": {
         "blobKey": "edc1af66-ecb4-4f8a-8df4-0738418f84fc",
         "mimeType": "image/png"

@@ -1,6 +1,6 @@
 {
     "error": {
-        "msg": "Mixin [my_set] already exists"
+        "msg": "Mixin [mymodule-1.0.0:my_set] already exists"
     },
     "result": null
 }

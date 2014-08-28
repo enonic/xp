@@ -1,7 +1,7 @@
 {
-    "name": "imageselector",
+    "name": "demo-1.0.0:imageselector",
     "displayName": "Image selector",
-    "superType": "structured",
+    "superType": "system-0.0.0:structured",
     "isAbstract": false,
     "isFinal": true,
     "form": [
@@ -21,7 +21,7 @@
                 "type": {
                     "name": "ImageSelector",
                     "config": {
-                        "relationshipType": "image"
+                        "relationshipType": "demo-1.0.0:image"
                     }
                 }
             }
@@ -42,7 +42,7 @@
                 "type": {
                     "name": "ImageSelector",
                     "config": {
-                        "relationshipType": "image"
+                        "relationshipType": "demo-1.0.0:image"
                     }
                 }
             }
@@ -63,7 +63,7 @@
                 "type": {
                     "name": "ImageSelector",
                     "config": {
-                        "relationshipType": "image"
+                        "relationshipType": "demo-1.0.0:image"
                     }
                 }
             }
@@ -84,7 +84,7 @@
                 "type": {
                     "name": "ImageSelector",
                     "config": {
-                        "relationshipType": "image"
+                        "relationshipType": "demo-1.0.0:image"
                     }
                 }
             }

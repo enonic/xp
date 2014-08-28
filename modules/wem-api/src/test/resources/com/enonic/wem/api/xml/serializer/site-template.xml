@@ -15,8 +15,8 @@
   </modules>
   <content-filter>
     <deny>*</deny>
-    <allow>com.enonic.tweet</allow>
-    <allow>system.folder</allow>
-    <deny>com.enonic.tweet.internal</deny>
+    <allow>mymodule-1.0.0:com.enonic.tweet</allow>
+    <allow>mymodule-1.0.0:system.folder</allow>
+    <deny>mymodule-1.0.0:com.enonic.tweet.internal</deny>
   </content-filter>
 </site-template>

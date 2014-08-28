@@ -9,7 +9,7 @@ import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.schema.BaseSchema;
 import com.enonic.wem.api.schema.Schema;
-import com.enonic.wem.api.schema.SchemaKey;
+import com.enonic.wem.api.schema.SchemaKind;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
@@ -34,12 +34,6 @@ public final class RelationshipType
         this.toSemantic = builder.toSemantic;
         this.allowedFromTypes = ContentTypeNames.from( builder.allowedFromTypes );
         this.allowedToTypes = ContentTypeNames.from( builder.allowedToTypes );
-    }
-
-    @Override
-    public SchemaKey getSchemaKey()
-    {
-        return getName() != null ? SchemaKey.from( getName() ) : null;
     }
 
     @Override
@@ -93,7 +87,8 @@ public final class RelationshipType
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( getName(), getDisplayName(), getDescription(), fromSemantic, toSemantic, allowedFromTypes, allowedToTypes );
+        return Objects.hashCode( getName(), getDisplayName(), getDescription(), fromSemantic, toSemantic, allowedFromTypes,
+                                 allowedToTypes );
     }
 
     public void checkIllegalEdit( final RelationshipType to )
@@ -125,7 +120,7 @@ public final class RelationshipType
 
         private Builder()
         {
-            super();
+            super( SchemaKind.RELATIONSHIP_TYPE );
         }
 
         private Builder( final RelationshipType relationshipType )

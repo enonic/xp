@@ -1,7 +1,7 @@
 {
-    "name": "textarea",
+    "name": "demo-1.0.0:textarea",
     "displayName": "Text Area",
-    "superType": "structured",
+    "superType": "system-0.0.0:structured",
     "isAbstract": false,
     "isFinal": true,
     "form": [

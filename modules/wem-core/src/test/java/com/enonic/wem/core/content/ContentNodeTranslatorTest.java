@@ -53,7 +53,7 @@ public class ContentNodeTranslatorTest
         final ContentTypeService contentTypeService = Mockito.mock( ContentTypeService.class );
         final BlobService blobService = Mockito.mock( BlobService.class );
 
-        final ContentType contentType = ContentType.newContentType().name( "my-content-type" ).build();
+        final ContentType contentType = ContentType.newContentType().name( "mymodule-1.0.0:my-content-type" ).build();
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
 
         translator = new ContentNodeTranslator();
@@ -70,7 +70,7 @@ public class ContentNodeTranslatorTest
         final CreateContentParams mycontent = new CreateContentParams().
             name( "mycontent" ).
             parent( ContentPath.ROOT ).
-            contentType( ContentTypeName.from( "my-content-type" ) ).
+            contentType( ContentTypeName.from( "mymodule-1.0.0:my-content-type" ) ).
             contentData( new ContentData( rootDataSet.toRootDataSet() ) );
 
         final CreateNodeParams createNode = translator.toCreateNode( mycontent );
@@ -90,7 +90,7 @@ public class ContentNodeTranslatorTest
         final CreateContentParams mycontent = new CreateContentParams().
             name( "mycontent" ).
             parent( ContentPath.ROOT ).
-            contentType( ContentTypeName.from( "my-content-type" ) ).
+            contentType( ContentTypeName.from( "mymodule-1.0.0:my-content-type" ) ).
             contentData( new ContentData( rootDataSet.toRootDataSet() ) );
 
         final CreateNodeParams createNode = translator.toCreateNode( mycontent );
@@ -122,7 +122,7 @@ public class ContentNodeTranslatorTest
         final CreateContentParams mycontent = new CreateContentParams().
             name( "mycontent" ).
             parent( ContentPath.ROOT ).
-            contentType( ContentTypeName.from( "my-content-type" ) ).
+            contentType( ContentTypeName.from( "mymodule-1.0.0:my-content-type" ) ).
             form( form );
 
         final CreateNodeParams createNode = translator.toCreateNode( mycontent );

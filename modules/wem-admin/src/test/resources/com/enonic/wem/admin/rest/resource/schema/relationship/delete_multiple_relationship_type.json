@@ -1,14 +1,14 @@
 {
     "failures": [
         {
-            "name": "client",
-            "reason": "RelationshipType [client] was not found"
+            "name": "mymodule-1.0.0:client",
+            "reason": "RelationshipType [mymodule-1.0.0:client] was not found"
         }
     ],
     "success": false,
     "successes": [
         {
-            "name": "partner"
+            "name": "mymodule-1.0.0:partner"
         }
     ]
 }

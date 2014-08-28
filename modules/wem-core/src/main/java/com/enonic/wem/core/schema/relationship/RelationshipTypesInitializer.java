@@ -29,12 +29,12 @@ public class RelationshipTypesInitializer
     private static final RelationshipType LIKE = createRelationshipType( RelationshipTypeName.LIKE, "Like", "likes", "liked by" );
 
     private static final RelationshipType CITATION =
-        createRelationshipType( RelationshipTypeName.from( "citation" ), "Citation", "citation in", "cited by",
-                                ContentTypeNames.from( "article" ) );
+        createRelationshipType( RelationshipTypeName.from( "mymodule-1.0.0:citation" ), "Citation", "citation in", "cited by",
+                                ContentTypeNames.from( "mymodule-1.0.0:article" ) );
 
     private static final RelationshipType IMAGE =
-        createRelationshipType( RelationshipTypeName.from( "image" ), "Image", "relates to image", "related of image",
-                                ContentTypeNames.from( "image" ) );
+        createRelationshipType( RelationshipTypeName.from( "mymodule-1.0.0:image" ), "Image", "relates to image", "related of image",
+                                ContentTypeNames.from( "mymodule-1.0.0:image" ) );
 
     private static final RelationshipType[] SYSTEM_TYPES = {DEFAULT, PARENT, LINK, LIKE, CITATION, IMAGE};
 

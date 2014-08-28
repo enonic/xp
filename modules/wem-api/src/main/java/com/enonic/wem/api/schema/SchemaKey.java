@@ -1,8 +1,7 @@
 package com.enonic.wem.api.schema;
 
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
@@ -14,22 +13,20 @@ import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 
 public final class SchemaKey
 {
-    private final static char SEPARATOR = ':';
-
-    private final static Pattern REF_PATTERN = Pattern.compile( "^([^:]+):([^:]+)$" );
+    private final static String SEPARATOR = ":";
 
 
     private final String refString;
 
     private final SchemaKind type;
 
-    private final String localName;
+    private final SchemaName name;
 
-    private SchemaKey( final SchemaKind type, final String localName )
+    private SchemaKey( final SchemaKind type, final SchemaName name )
     {
         this.type = type;
-        this.localName = localName;
-        this.refString = Joiner.on( SEPARATOR ).join( this.type, this.localName );
+        this.name = name;
+        this.refString = Joiner.on( SEPARATOR ).join( this.type, this.name.toString() );
     }
 
     public SchemaKind getType()
@@ -52,9 +49,14 @@ public final class SchemaKey
         return this.type == SchemaKind.RELATIONSHIP_TYPE;
     }
 
+    public SchemaName getName()
+    {
+        return this.name;
+    }
+
     public String getLocalName()
     {
-        return localName;
+        return name.getLocalName();
     }
 
     @Override
@@ -88,38 +90,51 @@ public final class SchemaKey
 
     public static SchemaKey from( final ContentTypeName contentTypeName )
     {
-        return new SchemaKey( SchemaKind.CONTENT_TYPE, contentTypeName.toString() );
+        return new SchemaKey( SchemaKind.CONTENT_TYPE, contentTypeName );
     }
 
     public static SchemaKey from( final MixinName mixinName )
     {
-        return new SchemaKey( SchemaKind.MIXIN, mixinName.toString() );
+        return new SchemaKey( SchemaKind.MIXIN, mixinName );
     }
 
     public static SchemaKey from( final RelationshipTypeName relationshipTypeName )
     {
-        return new SchemaKey( SchemaKind.RELATIONSHIP_TYPE, relationshipTypeName.toString() );
+        return new SchemaKey( SchemaKind.RELATIONSHIP_TYPE, relationshipTypeName );
+    }
+
+    public static SchemaKey from( final SchemaKind type, final SchemaName name )
+    {
+        return new SchemaKey( type, name );
     }
 
     public static SchemaKey from( final String value )
     {
         Preconditions.checkArgument( !Strings.isNullOrEmpty( value ), "SchemaKey cannot be null or empty" );
-
-        final Matcher matcher = REF_PATTERN.matcher( value );
-        if ( !matcher.find() )
+        if ( !value.contains( SEPARATOR ) )
         {
             throw new IllegalArgumentException( "Not a valid SchemaKey [" + value + "]" );
         }
 
-        final String type = matcher.group( 1 );
-        final String name = matcher.group( 2 );
+        final String type = StringUtils.substringBefore( value, SEPARATOR );
+        final String name = StringUtils.substringAfter( value, SEPARATOR );
 
         final SchemaKind typeKind = SchemaKind.from( type );
         if ( typeKind == null )
         {
             throw new IllegalArgumentException( "Not a valid SchemaKey [" + value + "]" );
         }
-        return new SchemaKey( typeKind, name );
+        switch ( typeKind )
+        {
+            case CONTENT_TYPE:
+                return new SchemaKey( typeKind, ContentTypeName.from( name ) );
+            case MIXIN:
+                return new SchemaKey( typeKind, MixinName.from( name ) );
+            case RELATIONSHIP_TYPE:
+                return new SchemaKey( typeKind, RelationshipTypeName.from( name ) );
+            default:
+                throw new IllegalArgumentException( "Not a valid SchemaKey [" + value + "]" );
+        }
     }
 
 }

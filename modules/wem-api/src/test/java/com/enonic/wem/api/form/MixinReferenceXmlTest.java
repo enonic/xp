@@ -17,7 +17,7 @@ public class MixinReferenceXmlTest
     {
         final MixinReference mixinReference = newMixinReference().
             name( "mixin" ).
-            mixin( "reference" ).
+            mixin( "mymodule-1.0.0:reference" ).
             build();
 
         final MixinReferenceXml mixinReferenceXml = new MixinReferenceXml();
@@ -41,6 +41,6 @@ public class MixinReferenceXmlTest
         final MixinReference mixinReference = builder.build();
 
         assertEquals( "mixin", mixinReference.getName() );
-        assertEquals( "reference", mixinReference.getMixinName().toString() );
+        assertEquals( "mymodule-1.0.0:reference", mixinReference.getMixinName().toString() );
     }
 }

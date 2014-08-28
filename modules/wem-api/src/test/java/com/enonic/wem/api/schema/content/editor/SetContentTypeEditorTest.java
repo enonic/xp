@@ -35,7 +35,7 @@ public class SetContentTypeEditorTest
         formItemSet.add( newInput().name( "country" ).label( "Country" ).inputType( InputTypes.TEXT_LINE ).build() );
 
         final ContentType contentType = newContentType().
-            name( "test" ).
+            name( "mymodule-1.0.0:test" ).
             displayName( "test" ).
             contentDisplayNameScript( "myScript()" ).
             superType( ContentTypeName.unstructured() ).
@@ -72,7 +72,7 @@ public class SetContentTypeEditorTest
         formItemSet.add( newInput().name( "country" ).label( "Country" ).inputType( InputTypes.TEXT_LINE ).build() );
 
         final ContentType contentType = newContentType().
-            name( "test" ).
+            name( "mymodule-1.0.0:test" ).
             contentDisplayNameScript( "myScript()" ).
             superType( ContentTypeName.unstructured() ).
             setAbstract( true ).

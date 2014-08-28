@@ -17,11 +17,8 @@ import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.schema.SchemaKey;
-import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
-import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.schema.mixin.MixinService;
-import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeService;
 
 @Path("schema/icon")
@@ -89,15 +86,15 @@ public final class SchemaIconResource
         final SchemaIconResolver schemaIconResolver = new SchemaIconResolver( contentTypeService, mixinService, relationshipTypeService );
         if ( schemaKey.isContentType() )
         {
-            return schemaIconResolver.resolveFromName( ContentTypeName.from( schemaKey.getLocalName() ) );
+            return schemaIconResolver.resolveFromName( schemaKey.getName() );
         }
         else if ( schemaKey.isMixin() )
         {
-            return schemaIconResolver.resolveFromName( MixinName.from( schemaKey.getLocalName() ) );
+            return schemaIconResolver.resolveFromName( schemaKey.getName() );
         }
         else if ( schemaKey.isRelationshipType() )
         {
-            return schemaIconResolver.resolveFromName( RelationshipTypeName.from( schemaKey.getLocalName() ) );
+            return schemaIconResolver.resolveFromName( schemaKey.getName() );
         }
         else
         {

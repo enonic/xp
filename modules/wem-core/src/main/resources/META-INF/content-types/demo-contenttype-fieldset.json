@@ -1,8 +1,8 @@
 {
-    "name": "fieldset",
+    "name": "demo-1.0.0:fieldset",
     "module": "demo",
     "displayName": "FieldSet",
-    "superType": "structured",
+    "superType": "system-0.0.0:structured",
     "isAbstract": false,
     "isFinal": true,
     "form": [

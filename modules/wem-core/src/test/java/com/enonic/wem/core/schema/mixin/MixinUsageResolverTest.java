@@ -20,7 +20,7 @@ public class MixinUsageResolverTest
     @Test
     public void resolveUsingMixinReferences_given_one_FormItem_being_matching_MixinReference_then_List_with_size_one_is_returned()
     {
-        Mixin mixin = newMixin().name( "my-mixin" ).addFormItem(
+        Mixin mixin = newMixin().name( "mymodule-1.0.0:my-mixin" ).addFormItem(
             newInput().inputType( InputTypes.TEXT_LINE ).name( "my-input-to-mixin" ).build() ).build();
 
         MixinUsageResolver mixinUsageResolver = new MixinUsageResolver( mixin );
@@ -39,7 +39,7 @@ public class MixinUsageResolverTest
     @Test
     public void resolveUsingMixinReferences_given_two_FormItems_and_one_matching_MixinReference_then_List_with_size_one_is_returned()
     {
-        Mixin mixin = newMixin().name( "my-mixin" ).addFormItem(
+        Mixin mixin = newMixin().name( "mymodule-1.0.0:my-mixin" ).addFormItem(
             newInput().inputType( InputTypes.TEXT_LINE ).name( "my-input-to-mixin" ).build() ).build();
 
         MixinUsageResolver mixinUsageResolver = new MixinUsageResolver( mixin );
@@ -59,10 +59,10 @@ public class MixinUsageResolverTest
     @Test
     public void resolveUsingMixinReferences_given_two_MixinReferences_and_one_is_matching_MixinReferences_then_List_with_size_one_is_returned()
     {
-        Mixin mixin = newMixin().name( "my-mixin" ).addFormItem(
+        Mixin mixin = newMixin().name( "mymodule-1.0.0:my-mixin" ).addFormItem(
             newInput().inputType( InputTypes.TEXT_LINE ).name( "my-input-to-mixin" ).build() ).build();
 
-        Mixin otherMixin = newMixin().name( "my-other-mixin" ).addFormItem(
+        Mixin otherMixin = newMixin().name( "mymodule-1.0.0:my-other-mixin" ).addFormItem(
             newInput().inputType( InputTypes.TEXT_LINE ).name( "my-input-to-other-mixin" ).build() ).build();
 
         MixinUsageResolver mixinUsageResolver = new MixinUsageResolver( mixin );
@@ -77,6 +77,6 @@ public class MixinUsageResolverTest
 
         // verify
         assertEquals( 1, resolvedReferences.size() );
-        assertEquals( MixinName.from( "my-mixin" ), resolvedReferences.get( 0 ).getMixinName() );
+        assertEquals( MixinName.from( "mymodule-1.0.0:my-mixin" ), resolvedReferences.get( 0 ).getMixinName() );
     }
 }

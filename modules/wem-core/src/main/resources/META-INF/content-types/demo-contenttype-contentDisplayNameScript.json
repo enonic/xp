@@ -1,8 +1,8 @@
 {
-    "name": "content_display_name_script",
+    "name": "demo-1.0.0:content_display_name_script",
     "module": "demo",
     "displayName": "Content Display name script",
-    "superType": "structured",
+    "superType": "system-0.0.0:structured",
     "isAbstract": false,
     "isFinal": true,
     "contentDisplayNameScript": "$('firstName', 'middleName', 'lastName')",

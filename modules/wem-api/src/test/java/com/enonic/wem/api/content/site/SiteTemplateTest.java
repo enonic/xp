@@ -22,7 +22,7 @@ public class SiteTemplateTest
     public void siteTemplate()
     {
         final ContentTypeFilter contentTypeFilter =
-            newContentFilter().defaultDeny().allowContentTypes( ContentTypeNames.from( "com.enonic.intranet", "system.folder" ) ).build();
+            newContentFilter().defaultDeny().allowContentTypes( ContentTypeNames.from( "mymodule-1.0.0:com.enonic.intranet", "mymodule-1.0.0:system.folder" ) ).build();
         SiteTemplate siteTemplate = SiteTemplate.newSiteTemplate().
             key( SiteTemplateKey.from( "Intranet-1.0.0" ) ).
             displayName( "Enonic Intranet" ).
@@ -58,7 +58,7 @@ public class SiteTemplateTest
             key( PageTemplateKey.from( "mainmodule.0|main-page" ) ).
             displayName( "Main page template" ).
             config( pageTemplateConfig ).
-            canRender( ContentTypeNames.from( "article", "banner" ) ).
+            canRender( ContentTypeNames.from( "mymodule-1.0.0:article", "mymodule-1.0.0:banner" ) ).
             descriptor( PageDescriptorKey.from( "mainmodule-1.0.0:landing-page" ) ).
             build();
 

@@ -8,6 +8,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public final class ModuleKey
 {
+    public final static ModuleKey SYSTEM = new ModuleKey( ModuleName.from( "system" ), new ModuleVersion( "0.0.0" ) );
+
     private static final String SEPARATOR = "-";
 
     private final ModuleName name;

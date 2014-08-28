@@ -37,7 +37,7 @@ public class GetRootContentTypesCommandTest
         // setup
         final ContentType contentType1 = ContentType.
             newContentType().
-            name( "my_content_type1" ).
+            name( "mymodule-1.0.0:my_content_type1" ).
             displayName( "Display Name 1" ).
             superType( null ).
             setBuiltIn().
@@ -45,9 +45,9 @@ public class GetRootContentTypesCommandTest
 
         final ContentType contentType2 = ContentType.
             newContentType().
-            name( "my_content_type2" ).
+            name( "mymodule-1.0.0:my_content_type2" ).
             displayName( "Display Name 2" ).
-            superType( ContentTypeName.from( "my_content_type2" ) ).
+            superType( ContentTypeName.from( "mymodule-1.0.0:my_content_type2" ) ).
             build();
 
         final ContentTypes allContentTypes = ContentTypes.from( contentType1, contentType2 );
@@ -58,6 +58,6 @@ public class GetRootContentTypesCommandTest
 
         // verify
         assertEquals( 1, contentTypes.getSize() );
-        assertEquals( "my_content_type1", contentTypes.get( 0 ).getName().toString() );
+        assertEquals( "mymodule-1.0.0:my_content_type1", contentTypes.get( 0 ).getName().toString() );
     }
 }

@@ -10,12 +10,12 @@
         "editable": true,
         "hasChildren": false,
         "icon": null,
-        "iconUrl": "/admin/rest/schema/icon/Mixin:my_set",
+        "iconUrl": "/admin/rest/schema/icon/Mixin:mymodule-1.0.0:my_set",
         "items": [ ],
-        "key": "Mixin:my_set",
+        "key": "Mixin:mymodule-1.0.0:my_set",
         "modifiedTime": null,
         "modifier": null,
-        "name": "my_set"
+        "name": "mymodule-1.0.0:my_set"
     }
 }
 

@@ -37,7 +37,7 @@ class ContentQueryEntityQueryTranslatorTest
         when:
         ContentQuery contentQuery = ContentQuery.newContentQuery().
                 queryExpr( QueryParser.parse( "status = 2" ) ).
-                addContentTypeNames( ContentTypeNames.from( "contenttype1", "contenttype2" ) ).
+                addContentTypeNames( ContentTypeNames.from( "mymodule-1.0.0:contenttype1", "mymodule-1.0.0:contenttype2" ) ).
                 build();
 
         EntityQuery entityQuery = translator.translate( contentQuery );

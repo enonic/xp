@@ -58,15 +58,15 @@ public class RelationshipTypeResourceTest
         throws Exception
     {
         final RelationshipType relationshipType = newRelationshipType().
-            name( "the_relationship_type" ).
+            name( "mymodule-1.0.0:the_relationship_type" ).
             description( "RT description" ).
             build();
 
-        final RelationshipTypeName name = RelationshipTypeName.from( "the_relationship_type" );
+        final RelationshipTypeName name = RelationshipTypeName.from( "mymodule-1.0.0:the_relationship_type" );
         final GetRelationshipTypeParams params = new GetRelationshipTypeParams().name( name );
         Mockito.when( relationshipTypeService.getByName( params ) ).thenReturn( relationshipType );
 
-        String response = request().path( "schema/relationship" ).queryParam( "name", "the_relationship_type" ).get().getAsString();
+        String response = request().path( "schema/relationship" ).queryParam( "name", "mymodule-1.0.0:the_relationship_type" ).get().getAsString();
 
         assertJson( "get_relationship_type.json", response );
 
@@ -77,14 +77,14 @@ public class RelationshipTypeResourceTest
         throws Exception
     {
         final RelationshipType relationshipType = newRelationshipType().
-            name( "the_relationship_type" ).
+            name( "mymodule-1.0.0:the_relationship_type" ).
             build();
 
-        final RelationshipTypeName name = RelationshipTypeName.from( "the_relationship_type" );
+        final RelationshipTypeName name = RelationshipTypeName.from( "mymodule-1.0.0:the_relationship_type" );
         final GetRelationshipTypeParams params = new GetRelationshipTypeParams().name( name );
         Mockito.when( relationshipTypeService.getByName( params ) ).thenReturn( relationshipType );
 
-        String response = request().path( "schema/relationship/config" ).queryParam( "name", "the_relationship_type" ).get().getAsString();
+        String response = request().path( "schema/relationship/config" ).queryParam( "name", "mymodule-1.0.0:the_relationship_type" ).get().getAsString();
 
         assertJson( "get_relationship_type_config.json", response );
     }
@@ -95,9 +95,9 @@ public class RelationshipTypeResourceTest
     {
         Mockito.when( relationshipTypeService.getByName( Mockito.any( GetRelationshipTypeParams.class ) ) ).thenReturn( null );
 
-        final MockRestResponse response = request().path( "schema/relationship" ).queryParam( "name", "relationship_type" ).get();
+        final MockRestResponse response = request().path( "schema/relationship" ).queryParam( "name", "mymodule-1.0.0:relationship_type" ).get();
         Assert.assertEquals( 404, response.getStatus() );
-        Assert.assertEquals( "RelationshipType [relationship_type] was not found.", response.getAsString() );
+        Assert.assertEquals( "RelationshipType [mymodule-1.0.0:relationship_type] was not found.", response.getAsString() );
     }
 
     @Test
@@ -105,11 +105,11 @@ public class RelationshipTypeResourceTest
         throws Exception
     {
         final RelationshipType relationshipType1 = newRelationshipType().
-            name( "the_relationship_type_1" ).
+            name( "mymodule-1.0.0:the_relationship_type_1" ).
             build();
 
         final RelationshipType relationshipType2 = newRelationshipType().
-            name( "the_relationship_type_2" ).
+            name( "mymodule-1.0.0:the_relationship_type_2" ).
             build();
 
         final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType1, relationshipType2 );
@@ -126,7 +126,7 @@ public class RelationshipTypeResourceTest
     {
         Mockito.when( relationshipTypeService.delete( Mockito.any( RelationshipTypeName.class ) ) ).thenReturn(
             new DeleteRelationshipTypeResult(
-                RelationshipType.newRelationshipType().name( RelationshipTypeName.from( "partner" ) ).build() ) );
+                RelationshipType.newRelationshipType().name( RelationshipTypeName.from( "mymodule-1.0.0:partner" ) ).build() ) );
 
         String result =
             request().path( "schema/relationship/delete" ).entity( readFromFile( "delete_single_relationship_type_params.json" ),
@@ -141,8 +141,8 @@ public class RelationshipTypeResourceTest
     public void deleteMultipleRelationshipTypes()
         throws Exception
     {
-        RelationshipTypeName partnerRel = RelationshipTypeName.from( "partner" );
-        RelationshipTypeName clientRel = RelationshipTypeName.from( "client" );
+        RelationshipTypeName partnerRel = RelationshipTypeName.from( "mymodule-1.0.0:partner" );
+        RelationshipTypeName clientRel = RelationshipTypeName.from( "mymodule-1.0.0:client" );
 
         Mockito.when( relationshipTypeService.delete( Mockito.eq( partnerRel ) ) ).thenReturn(
             new DeleteRelationshipTypeResult( RelationshipType.newRelationshipType().name( partnerRel ).build() ) );
@@ -166,7 +166,7 @@ public class RelationshipTypeResourceTest
         Mockito.when( relationshipTypeService.exists( isA( RelationshipTypeNames.class ) ) ).thenReturn(
             RelationshipTypesExistsResult.empty() );
         Mockito.when( relationshipTypeService.create( isA( CreateRelationshipTypeParams.class ) ) ).thenReturn(
-            RelationshipTypeName.from( "love" ) );
+            RelationshipTypeName.from( "mymodule-1.0.0:love" ) );
 
         request().path( "schema/relationship/create" ).entity( readFromFile( "create_relationship_type_params.json" ),
                                                                MediaType.APPLICATION_JSON_TYPE ).post();
@@ -178,8 +178,8 @@ public class RelationshipTypeResourceTest
     public void testUpdate()
         throws Exception
     {
-        final RelationshipTypeNames relationshipTypeNames = RelationshipTypeNames.from( RelationshipTypeName.from( "love" ) );
-        final RelationshipType relationshipType = newRelationshipType().name( "like" ).build();
+        final RelationshipTypeNames relationshipTypeNames = RelationshipTypeNames.from( RelationshipTypeName.from( "mymodule-1.0.0:love" ) );
+        final RelationshipType relationshipType = newRelationshipType().name( "mymodule-1.0.0:like" ).build();
 
         final UpdateRelationshipTypeResult result = new UpdateRelationshipTypeResult( relationshipType );
 
@@ -200,7 +200,7 @@ public class RelationshipTypeResourceTest
         Mockito.when( relationshipTypeService.exists( isA( RelationshipTypeNames.class ) ) ).thenReturn(
             RelationshipTypesExistsResult.empty() );
         Mockito.when( relationshipTypeService.create( isA( CreateRelationshipTypeParams.class ) ) ).thenReturn(
-            RelationshipTypeName.from( "love" ) );
+            RelationshipTypeName.from( "mymodule-1.0.0:love" ) );
         final Blob iconBlob = Mockito.mock( Blob.class );
         Mockito.when( iconBlob.getStream() ).thenReturn( new ByteArrayInputStream( "icondata".getBytes() ) );
         Mockito.when( blobService.get( isA( BlobKey.class ) ) ).thenReturn( iconBlob );

@@ -15,7 +15,7 @@
     "editable": true,
     "form": null,
     "hasChildren": false,
-    "iconUrl": "/admin/rest/schema/icon/ContentType:my_type?hash=f95b70fdc3088560732a5ac135644506",
+    "iconUrl": "/admin/rest/schema/icon/ContentType:mymodule-1.0.0:my_type?hash=f95b70fdc3088560732a5ac135644506",
     "id": "aaa",
     "isDraft": false,
     "isPage": false,
@@ -46,5 +46,5 @@
     },
     "siteTemplateKey": "mysitetemplate-1.0.0",
     "thumbnail": null,
-    "type": "my_type"
+    "type": "mymodule-1.0.0:my_type"
 }

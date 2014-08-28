@@ -85,7 +85,7 @@ public class FormXmlTest
 
         final MixinReference myMixinReference = newMixinReference().
             name( "mixin" ).
-            mixin( "reference" ).
+            mixin( "mymodule-1.0.0:reference" ).
             build();
 
         final Form form = Form.newForm().
@@ -190,7 +190,7 @@ public class FormXmlTest
     private Form createFormWithAllFormItemTypes()
     {
 
-        Mixin inputMixin = newMixin().name( "my_shared_input" ).addFormItem(
+        Mixin inputMixin = newMixin().name( "mymodule-1.0.0:my_shared_input" ).addFormItem(
             Input.newInput().name( "my_shared_input" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
         FormItemSet set = newFormItemSet().name( "mySet" ).build();
         Layout layout = FieldSet.newFieldSet().label( "My field set" ).name( "myFieldSet" ).addFormItem(

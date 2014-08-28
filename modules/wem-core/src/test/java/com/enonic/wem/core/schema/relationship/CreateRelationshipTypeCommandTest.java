@@ -35,8 +35,8 @@ public class CreateRelationshipTypeCommandTest
     {
         // exercise
         final CreateRelationshipTypeParams params =
-            new CreateRelationshipTypeParams().name( "like" ).displayName( "Like" ).fromSemantic( "likes" ).toSemantic(
-                "liked by" ).allowedFromTypes( ContentTypeNames.from( "person" ) ).allowedToTypes( ContentTypeNames.from( "person" ) );
+            new CreateRelationshipTypeParams().name( "mymodule-1.0.0:like" ).displayName( "Like" ).fromSemantic( "likes" ).toSemantic(
+                "liked by" ).allowedFromTypes( ContentTypeNames.from( "mymodule-1.0.0:person" ) ).allowedToTypes( ContentTypeNames.from( "mymodule-1.0.0:person" ) );
 
         this.command.params( params );
         final RelationshipTypeName relationshipTypeName = this.command.execute();
@@ -44,7 +44,7 @@ public class CreateRelationshipTypeCommandTest
         // verify
         verify( relationshipTypeDao, atLeastOnce() ).createRelationshipType( Mockito.isA( RelationshipType.class ) );
         assertNotNull( relationshipTypeName );
-        assertEquals( "like", relationshipTypeName.toString() );
+        assertEquals( "mymodule-1.0.0:like", relationshipTypeName.toString() );
     }
 
 }

@@ -1,7 +1,7 @@
 {
-    "name": "long",
+    "name": "demo-1.0.0:long",
     "displayName": "Long",
-    "superType": "structured",
+    "superType": "system-0.0.0:structured",
     "isAbstract": false,
     "isFinal": true,
     "form": [

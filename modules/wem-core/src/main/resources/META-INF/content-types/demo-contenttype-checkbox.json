@@ -1,7 +1,7 @@
 {
-    "name": "checkbox",
+    "name": "demo-1.0.0:checkbox",
     "displayName": "Checkbox",
-    "superType": "structured",
+    "superType": "system-0.0.0:structured",
     "isAbstract": false,
     "isFinal": true,
     "form": [

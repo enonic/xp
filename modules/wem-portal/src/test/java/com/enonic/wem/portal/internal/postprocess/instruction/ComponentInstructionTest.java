@@ -53,9 +53,9 @@ public class ComponentInstructionTest
         resp.setPostProcess( true );
         final JsContext context = new JsContext();
         context.setResponse( resp );
-        Content content = createPage( "content-id", "content-name", "content-type" );
+        Content content = createPage( "content-id", "content-name", "mymodule-1.0.0:content-type" );
         context.setContent( content );
-        Content siteContent = createSite( "site-id", "site-name", "content-type" );
+        Content siteContent = createSite( "site-id", "site-name", "mymodule-1.0.0:content-type" );
         context.setSiteContent( siteContent );
 
         final String outputHtml = instruction.evaluate( context, "COMPONENT myRegion/0" );
@@ -77,9 +77,9 @@ public class ComponentInstructionTest
         resp.setPostProcess( true );
         final JsContext context = new JsContext();
         context.setResponse( resp );
-        Content content = createPage( "content-id", "content-name", "content-type" );
+        Content content = createPage( "content-id", "content-name", "mymodule-1.0.0:content-type" );
         context.setContent( content );
-        Content siteContent = createSite( "site-id", "site-name", "content-type" );
+        Content siteContent = createSite( "site-id", "site-name", "mymodule-1.0.0:content-type" );
         context.setSiteContent( siteContent );
         PageTemplate pageTemplate = createPageTemplate();
         context.setPageTemplate( pageTemplate );
