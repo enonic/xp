@@ -6,4 +6,5 @@
 ///<reference path='CompareContentResultsJson.ts' />
 ///<reference path='ContentVersionJson.ts' />
 ///<reference path='ContentVersionsJson.ts' />
+///<reference path='GetContentVersionsResultsJson.ts' />
 

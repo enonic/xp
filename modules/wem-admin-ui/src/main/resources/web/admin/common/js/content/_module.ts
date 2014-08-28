@@ -45,3 +45,4 @@
 ///<reference path='ContentSummaryAndCompareStatusFetcher.ts' />
 ///<reference path='ContentVersions.ts' />
 ///<reference path='ContentVersion.ts' />
+///<reference path='GetContentVersionsResult.ts' />
