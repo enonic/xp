@@ -3,34 +3,15 @@ package com.enonic.wem.portal.internal.script.lib;
 
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import com.google.common.collect.Maps;
-
-import com.enonic.wem.core.web.servlet.ServletRequestHolder;
-import com.enonic.wem.core.web.servlet.ServletRequestUrlHelper;
 
 import static org.junit.Assert.*;
 
 public class GeneralUrlBuilderTest
+    extends BasePortalUrlBuilderTest
 {
-    private HttpServletRequest request;
-
-    private String baseUrl;
-
-    @Before
-    public void setup()
-    {
-        this.request = Mockito.mock( HttpServletRequest.class );
-        ServletRequestHolder.setRequest( this.request );
-        setupRequest( "http", "localhost", 8080, null );
-        this.baseUrl = ServletRequestUrlHelper.createUri( "" );
-    }
-
     @Test
     public void createUrlResource()
     {
@@ -109,13 +90,5 @@ public class GeneralUrlBuilderTest
             param( "one", 1 ).
             params( params );
         assertEquals( "/portal/edit/test/some/content/path/_/public/resource/path?one=1&two=2&three=3", urlBuilder.toString() );
-    }
-
-    private void setupRequest( final String scheme, final String host, final int port, final String contextPath )
-    {
-        Mockito.when( this.request.getScheme() ).thenReturn( scheme );
-        Mockito.when( this.request.getServerName() ).thenReturn( host );
-        Mockito.when( this.request.getLocalPort() ).thenReturn( port );
-        Mockito.when( this.request.getContextPath() ).thenReturn( contextPath );
     }
 }

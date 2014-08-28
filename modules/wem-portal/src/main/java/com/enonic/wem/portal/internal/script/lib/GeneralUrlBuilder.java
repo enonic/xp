@@ -2,7 +2,7 @@ package com.enonic.wem.portal.internal.script.lib;
 
 
 public final class GeneralUrlBuilder
-    extends BasePortalUrlBuilder<GeneralUrlBuilder>
+    extends PortalUrlBuilder<GeneralUrlBuilder>
 {
     private GeneralUrlBuilder( final String baseUrl )
     {

@@ -12,8 +12,8 @@ import com.enonic.wem.api.content.ContentId;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Strings.nullToEmpty;
 
-public final class PortalImageUrlBuilder
-    extends BasePortalUrlBuilder<PortalImageUrlBuilder>
+public final class ImageUrlBuilder
+    extends PortalUrlBuilder<ImageUrlBuilder>
 {
     private static final String IMAGE_RESOURCE_TYPE = "image";
 
@@ -25,7 +25,7 @@ public final class PortalImageUrlBuilder
 
     private List<String> filters;
 
-    private PortalImageUrlBuilder( final String baseUrl )
+    private ImageUrlBuilder( final String baseUrl )
     {
         super( baseUrl );
         background = "";
@@ -33,31 +33,31 @@ public final class PortalImageUrlBuilder
         this.filters = Lists.newArrayList();
     }
 
-    public PortalImageUrlBuilder imageContent( final ContentId id )
+    public ImageUrlBuilder imageContent( final ContentId id )
     {
         this.imageId = id;
         return this;
     }
 
-    public PortalImageUrlBuilder filter( final List<String> filter )
+    public ImageUrlBuilder filter( final List<String> filter )
     {
         this.filters.addAll( filter );
         return this;
     }
 
-    public PortalImageUrlBuilder filter( final String... filters )
+    public ImageUrlBuilder filter( final String... filters )
     {
         Collections.addAll( this.filters, filters );
         return this;
     }
 
-    public PortalImageUrlBuilder background( final String backgroundColor )
+    public ImageUrlBuilder background( final String backgroundColor )
     {
         this.background = nullToEmpty( backgroundColor );
         return this;
     }
 
-    public PortalImageUrlBuilder quality( final int quality )
+    public ImageUrlBuilder quality( final int quality )
     {
         checkArgument( quality > 0, "Image Quality must be between 1 and 100. Value: %s", quality );
         checkArgument( quality <= 100, "Image Quality must be between 1 and 100. Value: %s", quality );
@@ -89,8 +89,8 @@ public final class PortalImageUrlBuilder
         }
     }
 
-    public static PortalImageUrlBuilder createImageUrl( final String baseUrl )
+    public static ImageUrlBuilder createImageUrl( final String baseUrl )
     {
-        return new PortalImageUrlBuilder( baseUrl );
+        return new ImageUrlBuilder( baseUrl );
     }
 }

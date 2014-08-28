@@ -16,7 +16,7 @@ import static com.google.common.base.Strings.nullToEmpty;
 import static org.apache.commons.lang.StringUtils.removeEnd;
 import static org.apache.commons.lang.StringUtils.removeStart;
 
-abstract class BasePortalUrlBuilder<T extends BasePortalUrlBuilder>
+abstract class PortalUrlBuilder<T extends PortalUrlBuilder>
 {
     private static final String PORTAL = "portal";
 
@@ -25,6 +25,8 @@ abstract class BasePortalUrlBuilder<T extends BasePortalUrlBuilder>
     private static final String DEFAULT_WORKSPACE = "stage";
 
     private static final String PUBLIC_RESOURCE = "public";
+
+    private static final String SERVICE_RESOURCE = "service";
 
     private final String baseUrl;
 
@@ -42,7 +44,7 @@ abstract class BasePortalUrlBuilder<T extends BasePortalUrlBuilder>
 
     private final Map<String, String> params;
 
-    protected BasePortalUrlBuilder( final String baseUrl )
+    protected PortalUrlBuilder( final String baseUrl )
     {
         this.baseUrl = removeEnd( baseUrl, "/" );
         this.resourcePath = "";
@@ -154,7 +156,7 @@ abstract class BasePortalUrlBuilder<T extends BasePortalUrlBuilder>
         if ( !resourceType.isEmpty() )
         {
             append( str, "/_/" + resourceType );
-            if ( PUBLIC_RESOURCE.equals( resourceType ) && !module.isEmpty() )
+            if ( ( PUBLIC_RESOURCE.equals( resourceType ) || SERVICE_RESOURCE.equals( resourceType ) ) && !module.isEmpty() )
             {
                 str.append( "/" ).append( module );
             }

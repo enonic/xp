@@ -1,40 +1,24 @@
 package com.enonic.wem.portal.internal.script.lib;
 
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.core.web.servlet.ServletRequestHolder;
-import com.enonic.wem.core.web.servlet.ServletRequestUrlHelper;
-import com.enonic.wem.portal.internal.script.lib.PortalImageUrlBuilder;
+import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.portal.url.*;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-public class PortalImageUrlBuilderTest
+public class ImageUrlBuilderTest
+    extends BasePortalUrlBuilderTest
 {
-    private HttpServletRequest request;
-
-    private String baseUrl;
-
-    @Before
-    public void setup()
-    {
-        this.request = Mockito.mock( HttpServletRequest.class );
-        ServletRequestHolder.setRequest( this.request );
-        setupRequest( "http", "localhost", 8080, null );
-        this.baseUrl = ServletRequestUrlHelper.createUri( "" );
-    }
-
     @Test
     public void createImageUrlWithoutFilters()
     {
-        final PortalImageUrlBuilder urlBuilder = PortalImageUrlBuilder.createImageUrl( baseUrl ).
+        final ImageUrlBuilder urlBuilder = ImageUrlBuilder.createImageUrl( baseUrl ).
             contentPath( "bildearkiv/trampoliner/jumping-jack-pop/pop_08.jpg" ).
             workspace( "stage" ).
             resourcePath( "pop_08.jpg" );
@@ -45,7 +29,7 @@ public class PortalImageUrlBuilderTest
     @Test
     public void createImageUrlWithFilters()
     {
-        final PortalImageUrlBuilder urlBuilder = PortalImageUrlBuilder.createImageUrl( baseUrl ).
+        final ImageUrlBuilder urlBuilder = ImageUrlBuilder.createImageUrl( baseUrl ).
             contentPath( "bildearkiv/trampoliner/jumping-jack-pop/pop_08.jpg" ).
             workspace( "stage" ).
             resourcePath( "pop_08.jpg" ).
@@ -63,7 +47,7 @@ public class PortalImageUrlBuilderTest
     @Test
     public void createImageUrlByIdWithoutFilters()
     {
-        final PortalImageUrlBuilder urlBuilder = PortalImageUrlBuilder.createImageUrl( baseUrl ).
+        final ImageUrlBuilder urlBuilder = ImageUrlBuilder.createImageUrl( baseUrl ).
             contentPath( "mypage" ).
             imageContent( ContentId.from( "abc" ) ).
             workspace( "test" ).
@@ -72,11 +56,22 @@ public class PortalImageUrlBuilderTest
         assertEquals( "/portal/live/test/mypage/_/image/id/abc", urlBuilder.toString() );
     }
 
-    private void setupRequest( final String scheme, final String host, final int port, final String contextPath )
+    @Test
+    public void createImageUrlByIdWithFilters()
     {
-        Mockito.when( this.request.getScheme() ).thenReturn( scheme );
-        Mockito.when( this.request.getServerName() ).thenReturn( host );
-        Mockito.when( this.request.getLocalPort() ).thenReturn( port );
-        Mockito.when( this.request.getContextPath() ).thenReturn( contextPath );
+        final ImageUrlBuilder urlBuilder = ImageUrlBuilder.createImageUrl( baseUrl ).
+            contentPath( ContentPath.from( "bildearkiv/trampoliner/jumping-jack-pop" ) ).
+            imageContent( ContentId.from( "abc" ) ).
+            workspace( "stage" ).
+            resourcePath( "pop_08.jpg" ).
+            filter( "scalemax(120)" ).
+            filter( "rounded(40)" ).
+            filter( "block(3,3)", "sepia()" ).
+            background( "00ff00" ).
+            quality( 33 );
+
+        assertEquals( "/portal/live/stage/bildearkiv/trampoliner/jumping-jack-pop/_/image/id/abc" +
+                          "?filter=scalemax%28120%29%3Brounded%2840%29%3Bblock%283%2C3%29%3Bsepia%28%29&background=00ff00&quality=33",
+                      urlBuilder.toString() );
     }
 }

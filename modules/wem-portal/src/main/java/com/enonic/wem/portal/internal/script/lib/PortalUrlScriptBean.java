@@ -49,18 +49,18 @@ public final class PortalUrlScriptBean
             resourcePath( resourcePath );
     }
 
-    public PortalImageUrlBuilder createImageUrl( final String name )
+    public ImageUrlBuilder createImageUrl( final String name )
     {
-        return PortalImageUrlBuilder.createImageUrl( this.baseUrl ).
+        return ImageUrlBuilder.createImageUrl( this.baseUrl ).
             mode( this.mode ).
             workspace( this.workspace ).
             contentPath( contentPath ).
             resourcePath( name );
     }
 
-    public PortalImageUrlBuilder createImageByIdUrl( final ContentId contentId )
+    public ImageUrlBuilder createImageByIdUrl( final ContentId contentId )
     {
-        return PortalImageUrlBuilder.createImageUrl( this.baseUrl ).
+        return ImageUrlBuilder.createImageUrl( this.baseUrl ).
             mode( this.mode ).
             workspace( this.workspace ).
             contentPath( contentPath ).
@@ -73,6 +73,7 @@ public final class PortalUrlScriptBean
             mode( this.mode ).
             workspace( this.workspace ).
             contentPath( contentPath ).
+            module( this.module ).
             resourceType( SERVICE_RESOURCE_TYPE ).
             resourcePath( name );
     }
