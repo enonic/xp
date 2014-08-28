@@ -150,11 +150,11 @@ module app.wizard {
         }
 
         private loadSite(contentId: ContentId): wemQ.Promise<Content> {
-            return contentId ? new api.content.site.GetNearestSiteRequest(contentId).sendAndParse() : Q<Content>(null);
+            return contentId ? new api.content.site.GetNearestSiteRequest(contentId).sendAndParse() : wemQ<Content>(null);
         }
 
         private loadSiteTemplate(key: SiteTemplateKey): wemQ.Promise<SiteTemplate> {
-            return key ? new api.content.site.template.GetSiteTemplateRequest(key).sendAndParse() : Q<SiteTemplate>(null);
+            return key ? new api.content.site.template.GetSiteTemplateRequest(key).sendAndParse() : wemQ<SiteTemplate>(null);
         }
 
         private loadDefaultModels(siteTemplate: SiteTemplate, contentType: ContentTypeName): wemQ.Promise<DefaultModels> {
@@ -167,20 +167,20 @@ module app.wizard {
                 });
             }
             else {
-                return Q<DefaultModels>(null);
+                return wemQ<DefaultModels>(null);
             }
         }
 
         private loadParentContent(): wemQ.Promise<Content> {
 
             if (this.parentContent != null) {
-                return Q(this.parentContent);
+                return wemQ(this.parentContent);
             }
             else if (!this.creatingForNew && !this.contentToEdit.hasParent()) {
-                return  Q<Content>(null);
+                return wemQ<Content>(null);
             }
             else if (this.creatingForNew && this.parentContent == null) {
-                return  Q<Content>(null);
+                return wemQ<Content>(null);
             }
 
             return new api.content.GetContentByPathRequest(this.contentToEdit.getPath().getParentPath()).sendAndParse();

@@ -693,7 +693,7 @@ module app.wizard {
                 });
             }
             else {
-                return Q<DefaultModels>(null);
+                return wemQ<DefaultModels>(null);
             }
         }
 

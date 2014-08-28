@@ -28,7 +28,7 @@ module api.schema.content {
             var contentTypeCache = ContentTypeCache.get();
             var contentType = contentTypeCache.getByKey(this.name);
             if (contentType) {
-                return Q(contentType);
+                return wemQ(contentType);
             }
             else {
                 return this.send().then((response: api.rest.JsonResponse<json.ContentTypeJson>) => {
