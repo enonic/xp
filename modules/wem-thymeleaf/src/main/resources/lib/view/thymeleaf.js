@@ -9,6 +9,12 @@
  * @param {Object} params xslt parameters
  */
 exports.render = function (template, params) {
-    return __('thymeleafProcessor').process(template, params);
+    var processor = __('thymeleafProcessor');
+
+    var request = new com.enonic.wem.thymeleaf.ThymeleafRenderParams();
+    request.view(template);
+    request.parameters(params);
+
+    return processor.render(request);
 };
 

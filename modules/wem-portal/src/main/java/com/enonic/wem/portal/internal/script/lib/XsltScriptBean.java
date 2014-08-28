@@ -21,13 +21,11 @@ import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.layout.LayoutRegions;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.api.resource.ResourceNotFoundException;
-import com.enonic.wem.api.resource.ResourceUrlResolver;
 import com.enonic.wem.portal.internal.controller.JsContext;
 import com.enonic.wem.portal.internal.xml.DomBuilder;
 import com.enonic.wem.xslt.XsltProcessor;
 import com.enonic.wem.xslt.XsltProcessorException;
-import com.enonic.wem.xslt.XsltProcessorSpec;
+import com.enonic.wem.xslt.XsltProcessorParams;
 import com.enonic.wem.script.SourceException;
 
 public final class XsltScriptBean
@@ -70,7 +68,7 @@ public final class XsltScriptBean
         final ContextScriptBean service = ContextScriptBean.get();
         final URL resourceUrl = service.resolveFile( name );
 
-        final XsltProcessorSpec spec = new XsltProcessorSpec();
+        final XsltProcessorParams spec = new XsltProcessorParams();
         spec.xsl( toSource( resourceUrl ) );
         spec.source( toSource( inputDoc ) );
         spec.parameters( convertParams( params ) );

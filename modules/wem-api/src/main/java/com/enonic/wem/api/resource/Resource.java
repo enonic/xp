@@ -34,6 +34,14 @@ public final class Resource
         return this.url;
     }
 
+    public void requireExists()
+    {
+        if ( !exists() )
+        {
+            throw new ResourceNotFoundException( this.key );
+        }
+    }
+
     public boolean exists()
     {
         try

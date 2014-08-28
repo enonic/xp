@@ -1,6 +1,5 @@
 package com.enonic.wem.thymeleaf.internal;
 
-import java.util.Map;
 import java.util.Set;
 
 import org.thymeleaf.TemplateEngine;
@@ -15,6 +14,7 @@ import com.google.common.collect.Sets;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceProblemException;
 import com.enonic.wem.thymeleaf.ThymeleafProcessor;
+import com.enonic.wem.thymeleaf.ThymeleafRenderParams;
 
 public final class ThymeleafProcessorImpl
     implements ThymeleafProcessor
@@ -40,13 +40,13 @@ public final class ThymeleafProcessorImpl
     }
 
     @Override
-    public String process( final ResourceKey view, final Map<String, Object> params )
+    public String render( final ThymeleafRenderParams params )
     {
         try
         {
             final Context context = new Context();
-            context.setVariables( params );
-            return this.engine.process( view.toString(), context );
+            context.setVariables( params.getParameters() );
+            return this.engine.process( params.getView().toString(), context );
         }
         catch ( final RuntimeException e )
         {

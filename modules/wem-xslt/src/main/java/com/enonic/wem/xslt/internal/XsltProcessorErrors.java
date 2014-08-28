@@ -1,4 +1,4 @@
-package com.enonic.wem.xslt;
+package com.enonic.wem.xslt.internal;
 
 import java.util.Iterator;
 import java.util.List;

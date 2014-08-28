@@ -5,6 +5,8 @@ import java.util.Formatter;
 import javax.xml.transform.SourceLocator;
 import javax.xml.transform.TransformerException;
 
+import com.enonic.wem.xslt.internal.XsltProcessorErrors;
+
 public final class XsltProcessorException
     extends RuntimeException
 {

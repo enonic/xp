@@ -9,9 +9,8 @@ import javax.xml.transform.stream.StreamResult;
 
 import com.google.common.io.Closeables;
 
-import com.enonic.wem.xslt.XsltProcessorErrors;
 import com.enonic.wem.xslt.XsltProcessorException;
-import com.enonic.wem.xslt.XsltProcessorSpec;
+import com.enonic.wem.xslt.XsltProcessorParams;
 
 final class SaxonXsltHandler
 {
@@ -19,11 +18,11 @@ final class SaxonXsltHandler
 
     private final XsltProcessorErrors errors;
 
-    private final XsltProcessorSpec spec;
+    private final XsltProcessorParams spec;
 
     private Transformer transformer;
 
-    public SaxonXsltHandler( final TransformerFactory factory, final XsltProcessorSpec spec )
+    public SaxonXsltHandler( final TransformerFactory factory, final XsltProcessorParams spec )
     {
         this.factory = factory;
         this.errors = new XsltProcessorErrors();

@@ -9,7 +9,7 @@ import com.google.common.collect.ImmutableMap;
 import static com.google.common.base.Predicates.notNull;
 import static com.google.common.collect.Maps.filterValues;
 
-public final class XsltProcessorSpec
+public final class XsltProcessorParams
 {
     private Source xsl;
 
@@ -17,7 +17,7 @@ public final class XsltProcessorSpec
 
     private ImmutableMap<String, Object> parameters;
 
-    public XsltProcessorSpec()
+    public XsltProcessorParams()
     {
         this.parameters = ImmutableMap.of();
     }
@@ -37,19 +37,19 @@ public final class XsltProcessorSpec
         return this.parameters;
     }
 
-    public XsltProcessorSpec xsl( final Source xsl )
+    public XsltProcessorParams xsl( final Source xsl )
     {
         this.xsl = xsl;
         return this;
     }
 
-    public XsltProcessorSpec source( final Source source )
+    public XsltProcessorParams source( final Source source )
     {
         this.source = source;
         return this;
     }
 
-    public XsltProcessorSpec parameters( final Map<String, Object> params )
+    public XsltProcessorParams parameters( final Map<String, Object> params )
     {
         this.parameters = ImmutableMap.copyOf( filterValues( params, notNull() ) );
         return this;

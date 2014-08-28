@@ -1,11 +1,7 @@
 package com.enonic.wem.thymeleaf.internal;
 
-import java.util.Map;
-
 import org.junit.Before;
 import org.junit.Test;
-
-import com.google.common.collect.Maps;
 
 import junit.framework.Assert;
 
@@ -13,6 +9,7 @@ import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceProblemException;
 import com.enonic.wem.api.resource.ResourceUrlRegistry;
 import com.enonic.wem.api.resource.ResourceUrlTestHelper;
+import com.enonic.wem.thymeleaf.ThymeleafRenderParams;
 
 public class ThymeleafProcessorImplTest
 {
@@ -29,22 +26,28 @@ public class ThymeleafProcessorImplTest
     @Test(expected = RuntimeException.class)
     public void testResourceNotFound()
     {
-        final Map<String, Object> params = Maps.newHashMap();
-        this.processor.process( ResourceKey.from( "mymodule-1.0.0:/view/unknown.html" ), params );
+        final ThymeleafRenderParams params = new ThymeleafRenderParams().
+            view( ResourceKey.from( "mymodule-1.0.0:/view/unknown.html" ) );
+
+        this.processor.render( params );
     }
 
     @Test
     public void testProcessResource()
     {
-        final Map<String, Object> params = Maps.newHashMap();
-        final String result = this.processor.process( ResourceKey.from( "mymodule-1.0.0:/view/test.html" ), params );
+        final ThymeleafRenderParams params = new ThymeleafRenderParams().
+            view( ResourceKey.from( "mymodule-1.0.0:/view/test.html" ) );
+
+        final String result = this.processor.render( params );
         Assert.assertEquals( "<div>\n    <div><!--# COMPONENT test --></div>\n</div>", result );
     }
 
     @Test(expected = ResourceProblemException.class)
     public void testViewError()
     {
-        final Map<String, Object> params = Maps.newHashMap();
-        this.processor.process( ResourceKey.from( "mymodule-1.0.0:/view/test-error.html" ), params );
+        final ThymeleafRenderParams params = new ThymeleafRenderParams().
+            view( ResourceKey.from( "mymodule-1.0.0:/view/test-error.html" ) );
+
+        this.processor.render( params );
     }
 }
