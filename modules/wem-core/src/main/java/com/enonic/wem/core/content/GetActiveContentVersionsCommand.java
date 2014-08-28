@@ -1,10 +1,6 @@
 package com.enonic.wem.core.content;
 
-import java.util.Set;
-
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.GetActiveContentVersionsResult;
@@ -14,19 +10,20 @@ import com.enonic.wem.api.entity.GetActiveNodeVersionsResult;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeVersion;
 import com.enonic.wem.api.entity.Workspace;
+import com.enonic.wem.api.entity.Workspaces;
 
 public class GetActiveContentVersionsCommand
     extends AbstractContentCommand
 {
 
-    private final ImmutableSet<Workspace> workspaces;
+    private final Workspaces workspaces;
 
     private final ContentId contentId;
 
     private GetActiveContentVersionsCommand( final Builder builder )
     {
         super( builder );
-        workspaces = ImmutableSet.copyOf( builder.workspaces );
+        workspaces = builder.workspaces;
         contentId = builder.contentId;
     }
 
@@ -64,7 +61,7 @@ public class GetActiveContentVersionsCommand
     public static final class Builder
         extends AbstractContentCommand.Builder<Builder>
     {
-        private Set<Workspace> workspaces = Sets.newHashSet();
+        private Workspaces workspaces;
 
         private ContentId contentId;
 
@@ -72,7 +69,7 @@ public class GetActiveContentVersionsCommand
         {
         }
 
-        public Builder workspaces( final Set<Workspace> workspaces )
+        public Builder workspaces( final Workspaces workspaces )
         {
             this.workspaces = workspaces;
             return this;

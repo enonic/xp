@@ -1,19 +1,15 @@
 package com.enonic.wem.api.entity;
 
-import java.util.Set;
-
-import com.google.common.collect.ImmutableSet;
-
 public class GetActiveNodeVersionsParams
 {
     private final EntityId entityId;
 
-    private final ImmutableSet<Workspace> workspaces;
+    private final Workspaces workspaces;
 
     private GetActiveNodeVersionsParams( Builder builder )
     {
         entityId = builder.entityId;
-        workspaces = ImmutableSet.copyOf( builder.workspaces );
+        workspaces = builder.workspaces;
     }
 
     public static Builder create()
@@ -26,7 +22,7 @@ public class GetActiveNodeVersionsParams
         return entityId;
     }
 
-    public ImmutableSet<Workspace> getWorkspaces()
+    public Workspaces getWorkspaces()
     {
         return workspaces;
     }
@@ -35,19 +31,19 @@ public class GetActiveNodeVersionsParams
     {
         private EntityId entityId;
 
-        private Set<Workspace> workspaces;
+        private Workspaces workspaces;
 
         private Builder()
         {
         }
 
-        public Builder entityId( EntityId entityId )
+        public Builder entityId( final EntityId entityId )
         {
             this.entityId = entityId;
             return this;
         }
 
-        public Builder workspaces( Set<Workspace> workspaces )
+        public Builder workspaces( final Workspaces workspaces )
         {
             this.workspaces = workspaces;
             return this;

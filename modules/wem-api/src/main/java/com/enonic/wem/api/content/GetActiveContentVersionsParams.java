@@ -1,22 +1,17 @@
 package com.enonic.wem.api.content;
 
-import java.util.Set;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
-
-import com.enonic.wem.api.entity.Workspace;
+import com.enonic.wem.api.entity.Workspaces;
 
 public class GetActiveContentVersionsParams
 {
     private final ContentId contentId;
 
-    private final ImmutableSet<Workspace> workspaces;
+    private final Workspaces workspaces;
 
     private GetActiveContentVersionsParams( Builder builder )
     {
         contentId = builder.contentId;
-        workspaces = ImmutableSet.copyOf( builder.workspaces );
+        workspaces = builder.workspaces;
     }
 
     public static Builder create()
@@ -29,7 +24,7 @@ public class GetActiveContentVersionsParams
         return contentId;
     }
 
-    public ImmutableSet<Workspace> getWorkspaces()
+    public Workspaces getWorkspaces()
     {
         return workspaces;
     }
@@ -38,7 +33,7 @@ public class GetActiveContentVersionsParams
     {
         private ContentId contentId;
 
-        private Set<Workspace> workspaces = Sets.newHashSet();
+        private Workspaces workspaces;
 
         private Builder()
         {
@@ -50,7 +45,7 @@ public class GetActiveContentVersionsParams
             return this;
         }
 
-        public Builder workspaces( Set<Workspace> workspaces )
+        public Builder workspaces( Workspaces workspaces )
         {
             this.workspaces = workspaces;
             return this;

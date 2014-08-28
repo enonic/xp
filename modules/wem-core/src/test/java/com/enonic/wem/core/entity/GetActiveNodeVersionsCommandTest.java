@@ -1,13 +1,10 @@
 package com.enonic.wem.core.entity;
 
 import java.time.Instant;
-import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-
-import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.context.Context;
@@ -15,6 +12,7 @@ import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.GetActiveNodeVersionsResult;
 import com.enonic.wem.api.entity.NodeVersion;
 import com.enonic.wem.api.entity.Workspace;
+import com.enonic.wem.api.entity.Workspaces;
 import com.enonic.wem.core.entity.dao.NodeDao;
 import com.enonic.wem.core.entity.dao.NodeNotFoundException;
 import com.enonic.wem.core.version.VersionService;
@@ -45,7 +43,7 @@ public class GetActiveNodeVersionsCommandTest
         final Workspace testWorkspace = Workspace.from( "test" );
         final Workspace prodWorkspace = Workspace.from( "prod" );
         final Context testContext = Context.create( testWorkspace );
-        final Set<Workspace> workspaces = Sets.newHashSet( testWorkspace, prodWorkspace );
+        final Workspaces workspaces = Workspaces.from( testWorkspace, prodWorkspace );
 
         final BlobKey testBlobKey = new BlobKey( "a" );
         final BlobKey prodBlobKey = new BlobKey( "b" );
@@ -80,7 +78,7 @@ public class GetActiveNodeVersionsCommandTest
         final Workspace testWorkspace = Workspace.from( "test" );
         final Workspace prodWorkspace = Workspace.from( "prod" );
         final Context testContext = Context.create( testWorkspace );
-        final Set<Workspace> workspaces = Sets.newHashSet( testWorkspace, prodWorkspace );
+        final Workspaces workspaces = Workspaces.from( testWorkspace, prodWorkspace );
 
         final BlobKey testBlobKey = new BlobKey( "a" );
         final NodeVersion testVersion = new NodeVersion( testBlobKey, Instant.now() );

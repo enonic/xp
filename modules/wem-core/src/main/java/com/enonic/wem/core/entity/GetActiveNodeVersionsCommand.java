@@ -1,22 +1,20 @@
 package com.enonic.wem.core.entity;
 
-import java.util.Set;
-
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableSet;
 
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.GetActiveNodeVersionsResult;
 import com.enonic.wem.api.entity.Workspace;
+import com.enonic.wem.api.entity.Workspaces;
 import com.enonic.wem.core.entity.dao.NodeNotFoundException;
 import com.enonic.wem.core.version.VersionService;
 
 public class GetActiveNodeVersionsCommand
     extends AbstractNodeCommand
 {
-    private final ImmutableSet<Workspace> workspaces;
+    private final Workspaces workspaces;
 
     private final EntityId entityId;
 
@@ -25,7 +23,7 @@ public class GetActiveNodeVersionsCommand
     private GetActiveNodeVersionsCommand( final Builder builder )
     {
         super( builder );
-        this.workspaces = ImmutableSet.copyOf( builder.workspaces );
+        this.workspaces = builder.workspaces;
         this.versionService = builder.versionService;
         this.entityId = builder.entityId;
     }
@@ -58,7 +56,7 @@ public class GetActiveNodeVersionsCommand
     public static final class Builder
         extends AbstractNodeCommand.Builder<Builder>
     {
-        private Set<Workspace> workspaces;
+        private Workspaces workspaces;
 
         private EntityId entityId;
 
@@ -69,7 +67,7 @@ public class GetActiveNodeVersionsCommand
             super( context );
         }
 
-        public Builder workspaces( Set<Workspace> workspaces )
+        public Builder workspaces( final Workspaces workspaces )
         {
             this.workspaces = workspaces;
             return this;
