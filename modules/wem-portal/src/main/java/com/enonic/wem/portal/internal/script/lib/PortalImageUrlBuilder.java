@@ -7,6 +7,8 @@ import java.util.List;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
+import com.enonic.wem.api.content.ContentId;
+
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Strings.nullToEmpty;
 
@@ -14,6 +16,8 @@ public final class PortalImageUrlBuilder
     extends BasePortalUrlBuilder<PortalImageUrlBuilder>
 {
     private static final String IMAGE_RESOURCE_TYPE = "image";
+
+    private ContentId imageId;
 
     private String background;
 
@@ -27,6 +31,12 @@ public final class PortalImageUrlBuilder
         background = "";
         quality = null;
         this.filters = Lists.newArrayList();
+    }
+
+    public PortalImageUrlBuilder imageContent( final ContentId id )
+    {
+        this.imageId = id;
+        return this;
     }
 
     public PortalImageUrlBuilder filter( final List<String> filter )
@@ -58,6 +68,11 @@ public final class PortalImageUrlBuilder
     protected void beforeBuildUrl()
     {
         resourceType( IMAGE_RESOURCE_TYPE );
+
+        if ( this.imageId != null )
+        {
+            resourcePath( "id/" + this.imageId );
+        }
 
         if ( !filters.isEmpty() )
         {

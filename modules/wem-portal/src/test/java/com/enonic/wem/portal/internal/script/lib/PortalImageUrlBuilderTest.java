@@ -9,6 +9,7 @@ import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.core.web.servlet.ServletRequestHolder;
 import com.enonic.wem.core.web.servlet.ServletRequestUrlHelper;
 import com.enonic.wem.portal.internal.script.lib.PortalImageUrlBuilder;
@@ -57,6 +58,18 @@ public class PortalImageUrlBuilderTest
         assertEquals( "/portal/live/stage/bildearkiv/trampoliner/jumping-jack-pop/pop_08.jpg/_/image/pop_08.jpg" +
                           "?filter=scalemax%28120%29%3Brounded%2840%29%3Bblock%283%2C3%29%3Bsepia%28%29&background=00ff00&quality=33",
                       urlBuilder.toString() );
+    }
+
+    @Test
+    public void createImageUrlByIdWithoutFilters()
+    {
+        final PortalImageUrlBuilder urlBuilder = PortalImageUrlBuilder.createImageUrl( baseUrl ).
+            contentPath( "mypage" ).
+            imageContent( ContentId.from( "abc" ) ).
+            workspace( "test" ).
+            resourcePath( "pop_08.jpg" );
+
+        assertEquals( "/portal/live/test/mypage/_/image/id/abc", urlBuilder.toString() );
     }
 
     private void setupRequest( final String scheme, final String host, final int port, final String contextPath )

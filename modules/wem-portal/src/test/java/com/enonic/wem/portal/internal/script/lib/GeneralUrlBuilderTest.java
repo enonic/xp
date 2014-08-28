@@ -13,11 +13,10 @@ import com.google.common.collect.Maps;
 
 import com.enonic.wem.core.web.servlet.ServletRequestHolder;
 import com.enonic.wem.core.web.servlet.ServletRequestUrlHelper;
-import com.enonic.wem.portal.internal.script.lib.PortalUrlBuilder;
 
 import static org.junit.Assert.*;
 
-public class PortalUrlBuilderTest
+public class GeneralUrlBuilderTest
 {
     private HttpServletRequest request;
 
@@ -35,7 +34,7 @@ public class PortalUrlBuilderTest
     @Test
     public void createUrlResource()
     {
-        final PortalUrlBuilder urlBuilder = PortalUrlBuilder.createUrl( baseUrl ).
+        final GeneralUrlBuilder urlBuilder = GeneralUrlBuilder.createUrl( baseUrl ).
             workspace( "test" ).
             resourcePath( "some/path" );
 
@@ -50,7 +49,7 @@ public class PortalUrlBuilderTest
         params.put( "b", 2 );
         params.put( "c", null );
 
-        final PortalUrlBuilder urlBuilder = PortalUrlBuilder.createUrl( baseUrl ).
+        final GeneralUrlBuilder urlBuilder = GeneralUrlBuilder.createUrl( baseUrl ).
             workspace( "test" ).
             resourcePath( "some/path" );
         assertEquals( "/portal/live/test/some/path", urlBuilder.toString() );
@@ -62,7 +61,7 @@ public class PortalUrlBuilderTest
     @Test
     public void createUrlWithMode()
     {
-        final PortalUrlBuilder urlBuilder = PortalUrlBuilder.createUrl( baseUrl ).
+        final GeneralUrlBuilder urlBuilder = GeneralUrlBuilder.createUrl( baseUrl ).
             workspace( "test" ).
             contentPath( "some/path" );
         assertEquals( "/portal/live/test/some/path", urlBuilder.toString() );
@@ -74,7 +73,7 @@ public class PortalUrlBuilderTest
     @Test
     public void createUrlWithWorkspace()
     {
-        final PortalUrlBuilder urlBuilder = PortalUrlBuilder.createUrl( baseUrl ).
+        final GeneralUrlBuilder urlBuilder = GeneralUrlBuilder.createUrl( baseUrl ).
             workspace( "test" ).
             contentPath( "some/path" );
         assertEquals( "/portal/live/test/some/path", urlBuilder.toString() );
@@ -87,7 +86,7 @@ public class PortalUrlBuilderTest
     @Test
     public void createUrlWithService()
     {
-        final PortalUrlBuilder urlBuilder = PortalUrlBuilder.createUrl( baseUrl ).
+        final GeneralUrlBuilder urlBuilder = GeneralUrlBuilder.createUrl( baseUrl ).
             contentPath( "some/content/path" ).
             workspace( "test" ).
             resourceType( "public" ).
@@ -101,7 +100,7 @@ public class PortalUrlBuilderTest
         final Map<String, Object> params = Maps.newLinkedHashMap();
         params.put( "two", 2 );
         params.put( "three", 3 );
-        final PortalUrlBuilder urlBuilder = PortalUrlBuilder.createUrl( baseUrl ).
+        final GeneralUrlBuilder urlBuilder = GeneralUrlBuilder.createUrl( baseUrl ).
             mode( "edit" ).
             contentPath( "some/content/path" ).
             workspace( "test" ).
