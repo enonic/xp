@@ -10,12 +10,12 @@
  * @param {Object} params xslt parameters
  */
 exports.render = function (xslt, doc, params) {
-    var processor = __('xsltProcessor');
+    var helper = __('xsltScriptHelper');
 
-    var request = new com.enonic.wem.xslt.XsltRenderParams();
+    var request = helper.newRenderParams();
     request.view(xslt);
     request.inputXml(doc);
     request.parameters(params);
 
-    return processor.render(request);
+    return helper.processor.render(request);
 };

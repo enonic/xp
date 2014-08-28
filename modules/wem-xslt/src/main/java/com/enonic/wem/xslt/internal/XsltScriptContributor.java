@@ -13,6 +13,6 @@ public final class XsltScriptContributor
 
     public void setProcessor( final XsltProcessor processor )
     {
-        addVariable( "xsltProcessor", processor );
+        addVariable( "xsltScriptHelper", new XsltScriptHelper( processor ) );
     }
 }

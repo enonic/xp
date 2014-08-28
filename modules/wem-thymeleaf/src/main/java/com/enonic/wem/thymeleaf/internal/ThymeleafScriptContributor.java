@@ -13,6 +13,6 @@ public final class ThymeleafScriptContributor
 
     public void setProcessor( final ThymeleafProcessor processor )
     {
-        addVariable( "thymeleafProcessor", processor );
+        addVariable( "thymeleafScriptHelper", new ThymeleafScriptHelper( processor ) );
     }
 }
