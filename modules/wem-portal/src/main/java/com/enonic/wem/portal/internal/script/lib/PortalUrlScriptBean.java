@@ -2,13 +2,13 @@ package com.enonic.wem.portal.internal.script.lib;
 
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.core.web.servlet.ServletRequestUrlHelper;
+import com.enonic.wem.portal.url2.GeneralUrlBuilder;
+import com.enonic.wem.portal.url2.ImageUrlBuilder;
+import com.enonic.wem.portal.url2.PublicUrlBuilder;
+import com.enonic.wem.portal.url2.ServiceUrlBuilder;
 
 public final class PortalUrlScriptBean
 {
-    private static final String PUBLIC_RESOURCE_TYPE = "public";
-
-    private static final String SERVICE_RESOURCE_TYPE = "service";
-
     private String mode;
 
     private String workspace;
@@ -32,50 +32,53 @@ public final class PortalUrlScriptBean
 
     public GeneralUrlBuilder createUrl( final String path )
     {
-        return GeneralUrlBuilder.createUrl( this.baseUrl ).
+        return new GeneralUrlBuilder().
+            baseUri( this.baseUrl ).
             mode( this.mode ).
             workspace( this.workspace ).
-            resourcePath( path );
+            contentPath( path );
     }
 
-    public GeneralUrlBuilder createResourceUrl( final String resourcePath )
+    public PublicUrlBuilder createResourceUrl( final String resourcePath )
     {
-        return GeneralUrlBuilder.createUrl( this.baseUrl ).
+        return new PublicUrlBuilder().
+            baseUri( this.baseUrl ).
             mode( this.mode ).
             workspace( this.workspace ).
             contentPath( contentPath ).
-            resourceType( PUBLIC_RESOURCE_TYPE ).
             module( this.module ).
             resourcePath( resourcePath );
     }
 
     public ImageUrlBuilder createImageUrl( final String name )
     {
-        return ImageUrlBuilder.createImageUrl( this.baseUrl ).
+        return new ImageUrlBuilder().
+            baseUri( this.baseUrl ).
             mode( this.mode ).
             workspace( this.workspace ).
             contentPath( contentPath ).
-            resourcePath( name );
+            imageName( name );
     }
 
     public ImageUrlBuilder createImageByIdUrl( final ContentId contentId )
     {
-        return ImageUrlBuilder.createImageUrl( this.baseUrl ).
+        return new ImageUrlBuilder().
+            baseUri( this.baseUrl ).
             mode( this.mode ).
             workspace( this.workspace ).
             contentPath( contentPath ).
-            imageContent( contentId );
+            imageId( contentId );
     }
 
-    public GeneralUrlBuilder createServiceUrl( final String name )
+    public ServiceUrlBuilder createServiceUrl( final String name )
     {
-        return GeneralUrlBuilder.createUrl( this.baseUrl ).
+        return new ServiceUrlBuilder().
+            baseUri( this.baseUrl ).
             mode( this.mode ).
             workspace( this.workspace ).
             contentPath( contentPath ).
             module( this.module ).
-            resourceType( SERVICE_RESOURCE_TYPE ).
-            resourcePath( name );
+            serviceName( name );
     }
 
     public void setMode( final String mode )

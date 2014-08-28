@@ -1,14 +1,34 @@
 package com.enonic.wem.portal.internal.script.lib;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.core.web.servlet.ServletRequestHolder;
+import com.enonic.wem.portal.url2.GeneralUrlBuilder;
+import com.enonic.wem.portal.url2.ImageUrlBuilder;
+import com.enonic.wem.portal.url2.PublicUrlBuilder;
+import com.enonic.wem.portal.url2.ServiceUrlBuilder;
 
 import static org.junit.Assert.*;
 
 public class PortalUrlScriptBeanTest
-    extends BasePortalUrlBuilderTest
 {
+    @Before
+    public void setup()
+    {
+        final HttpServletRequest request = Mockito.mock( HttpServletRequest.class );
+        ServletRequestHolder.setRequest( request );
+
+        Mockito.when( request.getScheme() ).thenReturn( "http" );
+        Mockito.when( request.getServerName() ).thenReturn( "localhost" );
+        Mockito.when( request.getLocalPort() ).thenReturn( 8080 );
+        Mockito.when( request.getContextPath() ).thenReturn( null );
+    }
+
     @Test
     public void getBaseUrl()
     {
@@ -36,7 +56,7 @@ public class PortalUrlScriptBeanTest
         bean.setContentPath( "a/content" );
         bean.setModule( "mymodule-1.0.0" );
 
-        final GeneralUrlBuilder urlBuilder = bean.createResourceUrl( "some/path" );
+        final PublicUrlBuilder urlBuilder = bean.createResourceUrl( "some/path" );
 
         assertEquals( "/portal/live/test/a/content/_/public/mymodule-1.0.0/some/path", urlBuilder.toString() );
     }
@@ -73,7 +93,7 @@ public class PortalUrlScriptBeanTest
         bean.setContentPath( "a/content" );
         bean.setModule( "mymodule-1.0.0" );
 
-        final GeneralUrlBuilder urlBuilder = bean.createServiceUrl( "myservice" );
+        final ServiceUrlBuilder urlBuilder = bean.createServiceUrl( "myservice" );
 
         assertEquals( "/portal/live/test/a/content/_/service/mymodule-1.0.0/myservice", urlBuilder.toString() );
     }
