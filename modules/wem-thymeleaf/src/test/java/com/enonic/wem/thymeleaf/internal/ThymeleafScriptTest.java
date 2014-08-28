@@ -1,11 +1,9 @@
-package com.enonic.wem.thymeleaf;
+package com.enonic.wem.thymeleaf.internal;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.script.AbstractScriptTest;
-import com.enonic.wem.thymeleaf.internal.ThymeleafProcessorImpl;
-import com.enonic.wem.thymeleaf.internal.ThymeleafScriptContributor;
 
 public class ThymeleafScriptTest
     extends AbstractScriptTest
