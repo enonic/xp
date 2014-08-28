@@ -6,7 +6,7 @@ module app {
 
         private mask: api.ui.mask.LoadMask;
 
-        constructor(appBar: api.app.AppBar, path?: api.rest.Path) {
+        constructor(appBar: api.app.bar.AppBar, path?: api.rest.Path) {
 
             super({
                 appBar: appBar
@@ -19,7 +19,7 @@ module app {
             this.route(path);
         }
 
-        addWizardPanel(tabMenuItem: api.app.AppBarTabMenuItem, wizardPanel: api.app.wizard.WizardPanel<api.content.Content>) {
+        addWizardPanel(tabMenuItem: api.app.bar.AppBarTabMenuItem, wizardPanel: api.app.wizard.WizardPanel<api.content.Content>) {
             super.addWizardPanel(tabMenuItem, wizardPanel);
 
             wizardPanel.getHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {
@@ -53,7 +53,7 @@ module app {
                     }
                     break;
                 default:
-                    new api.app.ShowBrowsePanelEvent().fire();
+                    new api.app.bar.event.ShowBrowsePanelEvent().fire();
                     break;
                 }
             }
@@ -72,7 +72,7 @@ module app {
                 this.handleEdit(event);
             });
 
-            api.app.ShowBrowsePanelEvent.on((event) => {
+            api.app.bar.event.ShowBrowsePanelEvent.on((event) => {
                 this.handleBrowse(event);
             });
 
@@ -90,7 +90,7 @@ module app {
             var wizard = event.getWizard(),
                 tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(wizard.getTabId());
             // update tab id so that new wizard for the same content type can be created
-            var newTabId = api.app.AppBarTabId.forEdit(event.getContent().getId());
+            var newTabId = api.app.bar.AppBarTabId.forEdit(event.getContent().getId());
             tabMenuItem.setTabId(newTabId);
             wizard.setTabId(newTabId);
         }
@@ -99,7 +99,7 @@ module app {
             // do something when content is updated
         }
 
-        private handleBrowse(event: api.app.ShowBrowsePanelEvent) {
+        private handleBrowse(event: api.app.bar.event.ShowBrowsePanelEvent) {
             var browsePanel: api.app.browse.BrowsePanel<api.content.ContentSummary> = this.getBrowsePanel();
             if (!browsePanel) {
                 this.addBrowsePanel(new app.browse.ContentBrowsePanel());
@@ -112,14 +112,14 @@ module app {
 
             var contentTypeSummary = newContentEvent.getContentType();
             var parentContent = newContentEvent.getParentContent();
-            var tabId = api.app.AppBarTabId.forNew(contentTypeSummary.getName());
+            var tabId = api.app.bar.AppBarTabId.forNew(contentTypeSummary.getName());
             var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
             if (tabMenuItem != null) {
                 this.selectPanel(tabMenuItem);
             } else {
                 this.mask.show();
-                tabMenuItem = new api.app.AppBarTabMenuItem("[New " + contentTypeSummary.getDisplayName() + "]", tabId);
+                tabMenuItem = new api.app.bar.AppBarTabMenuItem("[New " + contentTypeSummary.getDisplayName() + "]", tabId);
 
                 var contentWizardPanelFactory = new app.wizard.ContentWizardPanelFactory().
                     setAppBarTabId(tabId).
@@ -155,8 +155,8 @@ module app {
                     this.selectPanel(tabMenuItem);
 
                 } else {
-                    var tabId = api.app.AppBarTabId.forView(content.getId());
-                    tabMenuItem = new api.app.AppBarTabMenuItem(content.getDisplayName(), tabId);
+                    var tabId = api.app.bar.AppBarTabId.forView(content.getId());
+                    tabMenuItem = new api.app.bar.AppBarTabMenuItem(content.getDisplayName(), tabId);
                     var contentItemViewPanel = new app.view.ContentItemViewPanel();
 
                     var contentItem = new api.app.view.ViewItem(content)
@@ -186,17 +186,17 @@ module app {
 
                 } else {
                     this.mask.show();
-                    var tabId = api.app.AppBarTabId.forEdit(content.getId());
+                    var tabId = api.app.bar.AppBarTabId.forEdit(content.getId());
 
                     new app.wizard.ContentWizardPanelFactory().
                         setAppBarTabId(tabId).
                         setContentToEdit(content.getContentId()).
                         createForEdit().then((wizard: app.wizard.ContentWizardPanel) => {
 
-                            tabMenuItem = new api.app.AppBarTabMenuItem(content.getDisplayName(), tabId, true);
+                            tabMenuItem = new api.app.bar.AppBarTabMenuItem(content.getDisplayName(), tabId, true);
                             this.addWizardPanel(tabMenuItem, wizard);
 
-                            var viewTabId = api.app.AppBarTabId.forView(content.getId());
+                            var viewTabId = api.app.bar.AppBarTabId.forView(content.getId());
                             var viewTabMenuItem = this.getAppBarTabMenu().getNavigationItemById(viewTabId);
                             if (viewTabMenuItem != null) {
                                 this.removePanelByIndex(viewTabMenuItem.getIndex());
@@ -211,14 +211,14 @@ module app {
             });
         }
 
-        private isContentBeingEditedOrViewed(content: api.content.ContentSummary): api.app.AppBarTabMenuItem {
+        private isContentBeingEditedOrViewed(content: api.content.ContentSummary): api.app.bar.AppBarTabMenuItem {
             if (!!content) {
 
-                var tabId = this.getAppBarTabMenu().getNavigationItemById(api.app.AppBarTabId.forEdit(content.getId()));
+                var tabId = this.getAppBarTabMenu().getNavigationItemById(api.app.bar.AppBarTabId.forEdit(content.getId()));
                 if (tabId) {
                     return tabId;
                 }
-                tabId = this.getAppBarTabMenu().getNavigationItemById(api.app.AppBarTabId.forView(content.getId()));
+                tabId = this.getAppBarTabMenu().getNavigationItemById(api.app.bar.AppBarTabId.forView(content.getId()));
                 if (tabId) {
                     return tabId;
                 }

@@ -6,7 +6,7 @@ module app {
 
         private schemaTreeGrid: app.browse.SchemaTreeGrid;
 
-        constructor(appBar: api.app.AppBar, path?: api.rest.Path) {
+        constructor(appBar: api.app.bar.AppBar, path?: api.rest.Path) {
 
             super({
                 appBar: appBar
@@ -19,7 +19,7 @@ module app {
             this.route(path);
         }
 
-        addWizardPanel(tabMenuItem: api.app.AppBarTabMenuItem, wizardPanel: api.app.wizard.WizardPanel<any>) {
+        addWizardPanel(tabMenuItem: api.app.bar.AppBarTabMenuItem, wizardPanel: api.app.wizard.WizardPanel<any>) {
             super.addWizardPanel(tabMenuItem, wizardPanel);
 
             wizardPanel.getHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {
@@ -46,14 +46,14 @@ module app {
                 }
                 break;
             default:
-                new api.app.ShowBrowsePanelEvent().fire();
+                new api.app.bar.event.ShowBrowsePanelEvent().fire();
                 break;
             }
         }
 
         private handleGlobalEvents() {
 
-            api.app.ShowBrowsePanelEvent.on((event) => {
+            api.app.bar.event.ShowBrowsePanelEvent.on((event) => {
                 this.handleBrowse(event);
             });
 
@@ -96,7 +96,7 @@ module app {
             });
         }
 
-        private handleBrowse(event: api.app.ShowBrowsePanelEvent) {
+        private handleBrowse(event: api.app.bar.event.ShowBrowsePanelEvent) {
             var browsePanel: api.app.browse.BrowsePanel<api.schema.Schema> = this.getBrowsePanel();
             if (!browsePanel) {
                 this.addBrowsePanel(new app.browse.SchemaBrowsePanel(this.browseActions, this.schemaTreeGrid));
@@ -107,7 +107,7 @@ module app {
 
         private handleNew(event: app.create.NewSchemaEvent) {
             var schemaKind: api.schema.SchemaKind = event.getSchemaKind();
-            var tabId = api.app.AppBarTabId.forNew(schemaKind.toString());
+            var tabId = api.app.bar.AppBarTabId.forNew(schemaKind.toString());
             var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
             if (tabMenuItem != null) {
@@ -117,20 +117,20 @@ module app {
                 switch (schemaKind) {
                 case api.schema.SchemaKind.CONTENT_TYPE:
                     tabMenuItem =
-                    new api.app.AppBarTabMenuItem("[" + app.wizard.ContentTypeWizardPanel.NEW_WIZARD_HEADER + "]", tabId, true);
+                    new api.app.bar.AppBarTabMenuItem("[" + app.wizard.ContentTypeWizardPanel.NEW_WIZARD_HEADER + "]", tabId, true);
                     new app.wizard.ContentTypeWizardPanel(tabId, null, (wizard: app.wizard.ContentTypeWizardPanel) => {
                         this.addWizardPanel(tabMenuItem, wizard);
                     });
                     break;
                 case api.schema.SchemaKind.RELATIONSHIP_TYPE:
                     tabMenuItem =
-                    new api.app.AppBarTabMenuItem("[" + app.wizard.RelationshipTypeWizardPanel.NEW_WIZARD_HEADER + "]", tabId, true);
+                    new api.app.bar.AppBarTabMenuItem("[" + app.wizard.RelationshipTypeWizardPanel.NEW_WIZARD_HEADER + "]", tabId, true);
                     new app.wizard.RelationshipTypeWizardPanel(tabId, null, (wizard: app.wizard.RelationshipTypeWizardPanel) => {
                         this.addWizardPanel(tabMenuItem, wizard);
                     });
                     break;
                 case api.schema.SchemaKind.MIXIN:
-                    tabMenuItem = new api.app.AppBarTabMenuItem("[" + app.wizard.MixinWizardPanel.NEW_WIZARD_HEADER + "]", tabId, true);
+                    tabMenuItem = new api.app.bar.AppBarTabMenuItem("[" + app.wizard.MixinWizardPanel.NEW_WIZARD_HEADER + "]", tabId, true);
                     new app.wizard.MixinWizardPanel(tabId, null, (wizard: app.wizard.MixinWizardPanel) => {
                         this.addWizardPanel(tabMenuItem, wizard);
                     });
@@ -142,21 +142,21 @@ module app {
         private handleView(event) {
             event.getSchemas().forEach((schema: api.schema.Schema) => {
 
-                    var tabId = api.app.AppBarTabId.forEdit(schema.getId());
+                    var tabId = api.app.bar.AppBarTabId.forEdit(schema.getId());
                     var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
                     if (tabMenuItem != null) {
                         this.selectPanel(tabMenuItem);
 
                     } else {
-                        tabId = api.app.AppBarTabId.forView(schema.getKey());
+                        tabId = api.app.bar.AppBarTabId.forView(schema.getKey());
                         tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
                         if (tabMenuItem != null) {
                             this.selectPanel(tabMenuItem);
 
                         } else {
-                            tabMenuItem = new api.app.AppBarTabMenuItem(schema.getName(), tabId);
+                            tabMenuItem = new api.app.bar.AppBarTabMenuItem(schema.getName(), tabId);
                             var schemaItemViewPanel = new app.view.SchemaItemViewPanel();
                             var schemaViewItem = new api.app.view.ViewItem<api.schema.Schema>(schema)
                                 .setDisplayName(schema.getDisplayName())
@@ -175,7 +175,7 @@ module app {
         private handleEdit(event) {
             event.getSchemas().forEach((schema: api.schema.Schema) => {
 
-                var tabId = api.app.AppBarTabId.forEdit(schema.getKey());
+                var tabId = api.app.bar.AppBarTabId.forEdit(schema.getKey());
                 var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
                 var self = this;
@@ -191,7 +191,7 @@ module app {
                         promiseCreateWizardPanel = new api.schema.content.GetContentTypeByNameRequest(contentType.getContentTypeName()).
                             sendAndParse().then((contentType: api.schema.content.ContentType) => {
 
-                                tabMenuItem = new api.app.AppBarTabMenuItem(contentType.getName(), tabId, true);
+                                tabMenuItem = new api.app.bar.AppBarTabMenuItem(contentType.getName(), tabId, true);
 
                                 new app.wizard.ContentTypeWizardPanel(tabId, contentType,
                                     (wizard: app.wizard.ContentTypeWizardPanel) => {
@@ -205,7 +205,7 @@ module app {
                         new api.schema.relationshiptype.GetRelationshipTypeByNameRequest(relationhipType.getRelationshiptypeName()).
                             sendAndParse().then((relationshipType: api.schema.relationshiptype.RelationshipType) => {
 
-                                tabMenuItem = new api.app.AppBarTabMenuItem(relationshipType.getDisplayName(), tabId, true);
+                                tabMenuItem = new api.app.bar.AppBarTabMenuItem(relationshipType.getDisplayName(), tabId, true);
 
                                 new app.wizard.RelationshipTypeWizardPanel(tabId, relationshipType,
                                     (wizard: app.wizard.RelationshipTypeWizardPanel) => {
@@ -218,7 +218,7 @@ module app {
                         promiseCreateWizardPanel = new api.schema.mixin.GetMixinByQualifiedNameRequest(mixin.getMixinName()).
                             sendAndParse().then((mixin: api.schema.mixin.Mixin)=> {
 
-                                tabMenuItem = new api.app.AppBarTabMenuItem(mixin.getDisplayName(), tabId, true);
+                                tabMenuItem = new api.app.bar.AppBarTabMenuItem(mixin.getDisplayName(), tabId, true);
 
                                 new app.wizard.MixinWizardPanel(tabId, mixin, (wizard: app.wizard.MixinWizardPanel) => {
                                     this.addWizardPanel(tabMenuItem, wizard);
@@ -231,7 +231,7 @@ module app {
 
                     if (promiseCreateWizardPanel) {
                         promiseCreateWizardPanel.then(() => {
-                            var viewTabId = api.app.AppBarTabId.forView(schema.getId());
+                            var viewTabId = api.app.bar.AppBarTabId.forView(schema.getId());
                             var viewTabMenuItem = self.getAppBarTabMenu().getNavigationItemById(viewTabId);
                             if (viewTabMenuItem != null) {
                                 self.removePanelByIndex(viewTabMenuItem.getIndex());

@@ -14,7 +14,7 @@ module components {
 
 function startApplication() {
     var application: api.app.Application = api.app.Application.getApplication();
-    var appBar = new api.app.AppBar(application);
+    var appBar = new api.app.bar.AppBar(application);
     var appPanel = new app.SchemaAppPanel(appBar, application.getPath());
 
     api.dom.Body.get().appendChild(appBar);

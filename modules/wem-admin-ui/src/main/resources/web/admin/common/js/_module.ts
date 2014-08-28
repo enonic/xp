@@ -61,7 +61,6 @@
 ///<reference path='ui/selector/combobox/_module.ts' />
 ///<reference path='ui/selector/dropdown/_module.ts' />
 ///<reference path='ui/tags/_module.ts' />
-///<reference path='ui/geo/_module.ts' />
 ///<reference path='ui/time/_module.ts' />
 ///<reference path='ui/treegrid/actions/_module.ts' />
 ///<reference path='ui/treegrid/_module.ts' />
@@ -116,14 +115,15 @@
 ///<reference path='content/form/inputtype/relationship/_module.ts' />
 ///<reference path='content/form/inputtype/image/_module.ts' />
 ///<reference path='content/form/inputtype/tag/_module.ts' />
-///<reference path='content/form/inputtype/geo/_module.ts' />
 
 ///<reference path='aggregation/_module.ts' />
 
 ///<reference path='rendering/_module.ts' />
 
 ///<reference path='app/_module.ts' />
-///<reference path='app/action/_module.ts' />
+///<reference path='app/bar/action/_module.ts' />
+///<reference path='app/bar/event/_module.ts' />
+///<reference path='app/bar/_module.ts' />
 ///<reference path='app/browse/_module.ts' />
 ///<reference path='app/browse/filter/_module.ts' />
 

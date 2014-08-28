@@ -1,4 +1,4 @@
-module api.app {
+module api.app.bar {
 
     export class AppBarTabId {
 

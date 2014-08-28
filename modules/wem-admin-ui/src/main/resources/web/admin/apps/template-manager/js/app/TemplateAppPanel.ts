@@ -6,7 +6,7 @@ module app {
 
         private templateTreeGrid: app.browse.TemplateTreeGrid;
 
-        constructor(appBar: api.app.AppBar, path?: api.rest.Path) {
+        constructor(appBar: api.app.bar.AppBar, path?: api.rest.Path) {
 
             super({
                 appBar: appBar
@@ -37,7 +37,7 @@ module app {
                 }
                 break;
             default:
-                new api.app.ShowBrowsePanelEvent().fire();
+                new api.app.bar.event.ShowBrowsePanelEvent().fire();
                 break;
             }
         }
@@ -86,12 +86,12 @@ module app {
                 this.handleEdit(event);
             });
 
-            api.app.ShowBrowsePanelEvent.on((event: api.app.ShowBrowsePanelEvent) => {
+            api.app.bar.event.ShowBrowsePanelEvent.on((event: api.app.bar.event.ShowBrowsePanelEvent) => {
                 this.handleBrowse(event);
             })
         }
 
-        private handleBrowse(event: api.app.ShowBrowsePanelEvent) {
+        private handleBrowse(event: api.app.bar.event.ShowBrowsePanelEvent) {
             var browsePanel: api.app.browse.BrowsePanel<app.browse.TemplateBrowseItem> = this.getBrowsePanel();
             if (!browsePanel) {
                 this.addBrowsePanel(new app.browse.TemplateBrowsePanel(this.browseActions, this.templateTreeGrid));
@@ -101,8 +101,8 @@ module app {
         }
 
         private handleNew(event: app.browse.event.NewTemplateEvent) {
-            var tabId = api.app.AppBarTabId.forNew('new-site-template-wizard');
-            var tabMenuItem = new api.app.AppBarTabMenuItem("[New Site Template]", tabId);
+            var tabId = api.app.bar.AppBarTabId.forNew('new-site-template-wizard');
+            var tabMenuItem = new api.app.bar.AppBarTabMenuItem("[New Site Template]", tabId);
             var wizard = new app.wizard.SiteTemplateWizardPanel(tabId);
             this.addWizardPanel(tabMenuItem, wizard);
         }
@@ -116,8 +116,8 @@ module app {
                 new api.content.site.template.GetSiteTemplateRequest(template.getSiteTemplateKey()).sendAndParse().
                     done((siteTemplate: api.content.site.template.SiteTemplate)=> {
 
-                        var tabId = api.app.AppBarTabId.forEdit(template.getId());
-                        var tabMenuItem = new api.app.AppBarTabMenuItem(siteTemplate.getDisplayName(), tabId);
+                        var tabId = api.app.bar.AppBarTabId.forEdit(template.getId());
+                        var tabMenuItem = new api.app.bar.AppBarTabMenuItem(siteTemplate.getDisplayName(), tabId);
                         var wizard = new app.wizard.SiteTemplateWizardPanel(tabId, siteTemplate);
                         this.addWizardPanel(tabMenuItem, wizard);
                     });

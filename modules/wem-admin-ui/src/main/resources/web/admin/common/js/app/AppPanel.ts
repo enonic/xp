@@ -4,14 +4,14 @@ module api.app {
 
         private browsePanel: api.app.browse.BrowsePanel<M>;
 
-        constructor(tabNavigator: AppBarTabMenu) {
+        constructor(tabNavigator: api.app.bar.AppBarTabMenu) {
             super(tabNavigator);
         }
 
         addBrowsePanel(browsePanel: api.app.browse.BrowsePanel<M>) {
             // limit to 1 browse panel
             if (!this.browsePanel) {
-                var browseMenuItem = new AppBarTabMenuItem("[Select]", new AppBarTabId("hidden", "____home"));
+                var browseMenuItem = new api.app.bar.AppBarTabMenuItem("[Select]", new api.app.bar.AppBarTabId("hidden", "____home"));
                 browseMenuItem.setVisibleInMenu(false);
                 browseMenuItem.setRemovable(false);
                 this.addNavigablePanel(browseMenuItem, browsePanel, true);
@@ -34,7 +34,7 @@ module api.app {
                 this.browsePanel = undefined;
             } else if (this.getSize() == 0) {
                 // show browse panel if all others were removed
-                new api.app.ShowBrowsePanelEvent().fire();
+                new api.app.bar.event.ShowBrowsePanelEvent().fire();
             }
         }
     }
