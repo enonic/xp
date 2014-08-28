@@ -1,4 +1,4 @@
-package com.enonic.wem.api.content.versioning;
+package com.enonic.wem.api.content;
 
 import java.time.Instant;
 

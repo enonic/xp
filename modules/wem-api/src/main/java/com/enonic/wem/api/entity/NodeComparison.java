@@ -1,12 +1,12 @@
 package com.enonic.wem.api.entity;
 
-public class EntityComparison
+public class NodeComparison
 {
     private final EntityId entityId;
 
     private final CompareStatus compareStatus;
 
-    public EntityComparison( final EntityId entityId, final CompareStatus compareStatus )
+    public NodeComparison( final EntityId entityId, final CompareStatus compareStatus )
     {
         this.entityId = entityId;
         this.compareStatus = compareStatus;
@@ -29,12 +29,12 @@ public class EntityComparison
         {
             return true;
         }
-        if ( !( o instanceof EntityComparison ) )
+        if ( !( o instanceof NodeComparison ) )
         {
             return false;
         }
 
-        final EntityComparison that = (EntityComparison) o;
+        final NodeComparison that = (NodeComparison) o;
 
         if ( compareStatus != null ? !compareStatus.equals( that.compareStatus ) : that.compareStatus != null )
         {

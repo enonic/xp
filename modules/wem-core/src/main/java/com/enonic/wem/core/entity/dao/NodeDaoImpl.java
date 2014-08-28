@@ -70,13 +70,7 @@ public class NodeDaoImpl
     {
         Preconditions.checkNotNull( updateNodeArguments.nodeToUpdate(), "nodeToUpdate must be specified" );
 
-        final BlobKey currentBlobKey = workspaceService.getById( new WorkspaceIdQuery( workspace, updateNodeArguments.nodeToUpdate() ) );
-
-        if ( currentBlobKey == null )
-        {
-            throw new NodeNotFoundException(
-                "Node with id " + updateNodeArguments.nodeToUpdate() + " not found in workspace " + workspace );
-        }
+        final BlobKey currentBlobKey = doGetBlobKey( updateNodeArguments.nodeToUpdate(), workspace );
 
         final Node persistedNode = getNodeFromBlob( blobService.get( currentBlobKey ) );
 
@@ -250,6 +244,13 @@ public class NodeDaoImpl
     }
 
     @Override
+    public BlobKey getBlobKey( final EntityId entityId, final Workspace workspace )
+    {
+        return doGetBlobKey( entityId, workspace );
+    }
+
+
+    @Override
     public Node getById( final EntityId entityId, final Workspace workspace )
     {
         return doGetById( entityId, workspace );
@@ -257,14 +258,20 @@ public class NodeDaoImpl
 
     private Node doGetById( final EntityId entityId, final Workspace workspace )
     {
+        final BlobKey blobKey = doGetBlobKey( entityId, workspace );
+
+        return getNodeFromBlob( blobService.get( blobKey ) );
+    }
+
+    private BlobKey doGetBlobKey( final EntityId entityId, final Workspace workspace )
+    {
         final BlobKey blobKey = workspaceService.getById( new WorkspaceIdQuery( workspace, entityId ) );
 
         if ( blobKey == null )
         {
             throw new NodeNotFoundException( "Node with id " + entityId + " not found in workspace " + workspace );
         }
-
-        return getNodeFromBlob( blobService.get( blobKey ) );
+        return blobKey;
     }
 
     @Override

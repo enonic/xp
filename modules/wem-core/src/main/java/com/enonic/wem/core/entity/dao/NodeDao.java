@@ -23,6 +23,8 @@ public interface NodeDao
 
     public Nodes getByIds( EntityIds entityIds, Workspace workspace );
 
+    public BlobKey getBlobKey( final EntityId entityId, final Workspace workspace );
+
     public Node getByPath( NodePath path, Workspace workspace );
 
     public Nodes getByPaths( NodePaths paths, Workspace workspace );

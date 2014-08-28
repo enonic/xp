@@ -9,9 +9,9 @@ import com.enonic.wem.api.content.CompareContentResults;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.entity.EntityComparisons;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIds;
+import com.enonic.wem.api.entity.NodeComparisons;
 import com.enonic.wem.api.entity.NodeService;
 import com.enonic.wem.api.entity.Workspace;
 
@@ -41,7 +41,7 @@ public class CompareContentsCommand
     public CompareContentResults execute()
     {
         final EntityIds entityIds = getAsEntityIds( this.contentIds );
-        final EntityComparisons comparisons = this.nodeService.compare( entityIds, this.target, this.context );
+        final NodeComparisons comparisons = this.nodeService.compare( entityIds, this.target, this.context );
 
         return CompareResultTranslator.translate( comparisons );
     }

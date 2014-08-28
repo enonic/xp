@@ -26,11 +26,11 @@ public abstract class AbstractNodeCommand
 
     public static class Builder<B extends Builder>
     {
-        private Context context;
+        protected Context context;
 
-        private IndexService indexService;
+        protected IndexService indexService;
 
-        private NodeDao nodeDao;
+        protected NodeDao nodeDao;
 
         protected Builder( final Context context )
         {

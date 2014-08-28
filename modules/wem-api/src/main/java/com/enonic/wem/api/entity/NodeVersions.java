@@ -6,17 +6,17 @@ import java.util.SortedSet;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Sets;
 
-public class EntityVersions
-    implements Iterable<EntityVersion>
+public class NodeVersions
+    implements Iterable<NodeVersion>
 {
     private final EntityId entityId;
 
-    private final ImmutableSortedSet<EntityVersion> entityVersions;
+    private final ImmutableSortedSet<NodeVersion> nodeVersions;
 
-    private EntityVersions( Builder builder )
+    private NodeVersions( Builder builder )
     {
         this.entityId = builder.entityId;
-        this.entityVersions = ImmutableSortedSet.copyOf( builder.entityVersions );
+        this.nodeVersions = ImmutableSortedSet.copyOf( builder.nodeVersions );
     }
 
     public EntityId getEntityId()
@@ -30,19 +30,19 @@ public class EntityVersions
     }
 
     @Override
-    public Iterator<EntityVersion> iterator()
+    public Iterator<NodeVersion> iterator()
     {
-        return entityVersions.iterator();
+        return nodeVersions.iterator();
     }
 
     public int size()
     {
-        return entityVersions.size();
+        return nodeVersions.size();
     }
 
     public static final class Builder
     {
-        private SortedSet<EntityVersion> entityVersions = Sets.newTreeSet();
+        private SortedSet<NodeVersion> nodeVersions = Sets.newTreeSet();
 
         private EntityId entityId;
 
@@ -51,15 +51,15 @@ public class EntityVersions
             this.entityId = entityId;
         }
 
-        public Builder add( final EntityVersion entityVersion )
+        public Builder add( final NodeVersion nodeVersion )
         {
-            this.entityVersions.add( entityVersion );
+            this.nodeVersions.add( nodeVersion );
             return this;
         }
 
-        public EntityVersions build()
+        public NodeVersions build()
         {
-            return new EntityVersions( this );
+            return new NodeVersions( this );
         }
     }
 }

@@ -10,8 +10,8 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.EntityVersion;
-import com.enonic.wem.api.entity.FindEntityVersionsResult;
+import com.enonic.wem.api.entity.FindNodeVersionsResult;
+import com.enonic.wem.api.entity.NodeVersion;
 import com.enonic.wem.core.elasticsearch.result.SearchResult;
 import com.enonic.wem.core.elasticsearch.result.SearchResultEntries;
 import com.enonic.wem.core.elasticsearch.result.SearchResultEntry;
@@ -77,11 +77,11 @@ public class ElasticsearchVersionServiceTest
                     build() ).
                 build() );
 
-        final FindEntityVersionsResult result = service.findVersions( query );
+        final FindNodeVersionsResult result = service.findVersions( query );
 
-        assertEquals( 3, result.getEntityVersions().size() );
+        assertEquals( 3, result.getNodeVersions().size() );
 
-        final Iterator<EntityVersion> iterator = result.getEntityVersions().iterator();
+        final Iterator<NodeVersion> iterator = result.getNodeVersions().iterator();
         assertEquals( new BlobKey( "a" ), iterator.next().getBlobKey() );
         assertEquals( new BlobKey( "b" ), iterator.next().getBlobKey() );
         assertEquals( new BlobKey( "c" ), iterator.next().getBlobKey() );

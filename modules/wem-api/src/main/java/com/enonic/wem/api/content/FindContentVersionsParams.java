@@ -1,28 +1,24 @@
-package com.enonic.wem.api.entity;
+package com.enonic.wem.api.content;
 
-public class GetEntityVersionsParams
+public class FindContentVersionsParams
 {
-    private final EntityId entityId;
+    private final ContentId contentId;
 
     private final int from;
 
     private final int size;
 
-    private GetEntityVersionsParams( Builder builder )
+    private FindContentVersionsParams( Builder builder )
     {
-        entityId = builder.entityId;
+        contentId = builder.contentId;
         from = builder.from;
         size = builder.size;
     }
 
-    public static Builder create()
-    {
-        return new Builder();
-    }
 
-    public EntityId getEntityId()
+    public ContentId getContentId()
     {
-        return entityId;
+        return contentId;
     }
 
     public int getFrom()
@@ -35,9 +31,15 @@ public class GetEntityVersionsParams
         return size;
     }
 
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+
     public static final class Builder
     {
-        private EntityId entityId;
+        private ContentId contentId;
 
         private int from;
 
@@ -47,9 +49,9 @@ public class GetEntityVersionsParams
         {
         }
 
-        public Builder entityId( EntityId entityId )
+        public Builder contentId( ContentId contentId )
         {
-            this.entityId = entityId;
+            this.contentId = contentId;
             return this;
         }
 
@@ -65,9 +67,9 @@ public class GetEntityVersionsParams
             return this;
         }
 
-        public GetEntityVersionsParams build()
+        public FindContentVersionsParams build()
         {
-            return new GetEntityVersionsParams( this );
+            return new FindContentVersionsParams( this );
         }
     }
 }

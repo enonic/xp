@@ -1,12 +1,10 @@
-package com.enonic.wem.api.content.versioning;
+package com.enonic.wem.api.content;
 
 import java.util.Iterator;
 import java.util.SortedSet;
 
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Sets;
-
-import com.enonic.wem.api.content.ContentId;
 
 public class ContentVersions
     implements Iterable<ContentVersion>

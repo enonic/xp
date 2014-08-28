@@ -2,7 +2,7 @@ package com.enonic.wem.admin.json.content;
 
 import java.time.Instant;
 
-import com.enonic.wem.api.content.versioning.ContentVersion;
+import com.enonic.wem.api.content.ContentVersion;
 
 public class ContentVersionJson
 {

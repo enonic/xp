@@ -30,11 +30,13 @@ public interface NodeService
 
     Node deleteByPath( NodePath path, Context context );
 
-    EntityComparison compare( EntityId id, Workspace target, Context context );
+    NodeComparison compare( EntityId id, Workspace target, Context context );
 
-    EntityComparisons compare( final EntityIds ids, final Workspace target, final Context context );
+    NodeComparisons compare( final EntityIds ids, final Workspace target, final Context context );
 
-    FindEntityVersionsResult getVersions( final GetEntityVersionsParams params, final Context context );
+    FindNodeVersionsResult getVersions( final GetNodeVersionsParams params, final Context context );
+
+    GetActiveNodeVersionsResult getActiveVersions( final GetActiveNodeVersionsParams params, final Context context );
 
     Node getByBlobKey( BlobKey blobKey, Context context );
 }

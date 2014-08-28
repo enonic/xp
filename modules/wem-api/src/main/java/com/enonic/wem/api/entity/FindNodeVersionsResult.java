@@ -1,8 +1,8 @@
 package com.enonic.wem.api.entity;
 
-public class FindEntityVersionsResult
+public class FindNodeVersionsResult
 {
-    final EntityVersions entityVersions;
+    final NodeVersions nodeVersions;
 
     private final int from;
 
@@ -12,9 +12,9 @@ public class FindEntityVersionsResult
 
     private final long hits;
 
-    private FindEntityVersionsResult( Builder builder )
+    private FindNodeVersionsResult( Builder builder )
     {
-        entityVersions = builder.entityVersions;
+        nodeVersions = builder.nodeVersions;
         from = builder.from;
         size = builder.size;
         totalHits = builder.totalHits;
@@ -26,9 +26,9 @@ public class FindEntityVersionsResult
         return new Builder();
     }
 
-    public EntityVersions getEntityVersions()
+    public NodeVersions getNodeVersions()
     {
-        return entityVersions;
+        return nodeVersions;
     }
 
     public long getTotalHits()
@@ -53,7 +53,7 @@ public class FindEntityVersionsResult
 
     public static final class Builder
     {
-        private EntityVersions entityVersions;
+        private NodeVersions nodeVersions;
 
         private int from;
 
@@ -67,9 +67,9 @@ public class FindEntityVersionsResult
         {
         }
 
-        public Builder entityVersions( EntityVersions entityVersions )
+        public Builder entityVersions( NodeVersions nodeVersions )
         {
-            this.entityVersions = entityVersions;
+            this.nodeVersions = nodeVersions;
             return this;
         }
 
@@ -97,9 +97,9 @@ public class FindEntityVersionsResult
             return this;
         }
 
-        public FindEntityVersionsResult build()
+        public FindNodeVersionsResult build()
         {
-            return new FindEntityVersionsResult( this );
+            return new FindNodeVersionsResult( this );
         }
     }
 }

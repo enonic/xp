@@ -5,16 +5,18 @@ import javax.inject.Inject;
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.CreateNodeParams;
-import com.enonic.wem.api.entity.EntityComparison;
-import com.enonic.wem.api.entity.EntityComparisons;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIds;
-import com.enonic.wem.api.entity.FindEntityVersionsResult;
+import com.enonic.wem.api.entity.FindNodeVersionsResult;
 import com.enonic.wem.api.entity.FindNodesByParentParams;
 import com.enonic.wem.api.entity.FindNodesByParentResult;
 import com.enonic.wem.api.entity.FindNodesByQueryResult;
-import com.enonic.wem.api.entity.GetEntityVersionsParams;
+import com.enonic.wem.api.entity.GetActiveNodeVersionsParams;
+import com.enonic.wem.api.entity.GetActiveNodeVersionsResult;
+import com.enonic.wem.api.entity.GetNodeVersionsParams;
 import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.api.entity.NodeComparison;
+import com.enonic.wem.api.entity.NodeComparisons;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.NodePaths;
 import com.enonic.wem.api.entity.NodeService;
@@ -164,7 +166,7 @@ public class NodeServiceImpl
 
 
     @Override
-    public EntityComparison compare( final EntityId id, final Workspace target, final Context context )
+    public NodeComparison compare( final EntityId id, final Workspace target, final Context context )
     {
         return CompareNodeCommand.create( context ).
             id( id ).
@@ -175,7 +177,7 @@ public class NodeServiceImpl
     }
 
     @Override
-    public EntityComparisons compare( final EntityIds ids, final Workspace target, final Context context )
+    public NodeComparisons compare( final EntityIds ids, final Workspace target, final Context context )
     {
         return CompareNodesCommand.create( context ).
             ids( ids ).
@@ -186,7 +188,7 @@ public class NodeServiceImpl
     }
 
     @Override
-    public FindEntityVersionsResult getVersions( final GetEntityVersionsParams params, final Context context )
+    public FindNodeVersionsResult getVersions( final GetNodeVersionsParams params, final Context context )
     {
         return GetEntityVersionsCommand.create( context ).
             entityId( params.getEntityId() ).
@@ -196,6 +198,20 @@ public class NodeServiceImpl
             build().
             execute();
     }
+
+
+    @Override
+    public GetActiveNodeVersionsResult getActiveVersions( final GetActiveNodeVersionsParams params, final Context context )
+    {
+        return GetActiveNodeVersionsCommand.create( context ).
+            entityId( params.getEntityId() ).
+            workspaces( params.getWorkspaces() ).
+            versionService( this.versionService ).
+            nodeDao( this.nodeDao ).
+            build().
+            execute();
+    }
+
 
     @Override
     public Node getByBlobKey( final BlobKey blobKey, final Context context )

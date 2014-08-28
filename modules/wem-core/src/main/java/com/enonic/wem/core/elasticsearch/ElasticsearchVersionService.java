@@ -13,9 +13,9 @@ import com.google.inject.Inject;
 
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.EntityVersion;
-import com.enonic.wem.api.entity.EntityVersions;
-import com.enonic.wem.api.entity.FindEntityVersionsResult;
+import com.enonic.wem.api.entity.FindNodeVersionsResult;
+import com.enonic.wem.api.entity.NodeVersion;
+import com.enonic.wem.api.entity.NodeVersions;
 import com.enonic.wem.core.elasticsearch.result.SearchResult;
 import com.enonic.wem.core.elasticsearch.result.SearchResultEntry;
 import com.enonic.wem.core.elasticsearch.result.SearchResultField;
@@ -52,7 +52,7 @@ public class ElasticsearchVersionService
     }
 
     @Override
-    public EntityVersion getVersion( final BlobKey blobKey )
+    public NodeVersion getVersion( final BlobKey blobKey )
     {
         final SearchResult searchResult = doGetFromBlobKey( blobKey );
 
@@ -61,36 +61,36 @@ public class ElasticsearchVersionService
         return createVersionEntry( searchHit );
     }
 
-    private EntityVersion createVersionEntry( final SearchResultEntry hit )
+    private NodeVersion createVersionEntry( final SearchResultEntry hit )
     {
         final String timestamp = getStringValue( hit, TIMESTAMP_ID_FIELD_NAME, true );
         final String blobKey = getStringValue( hit, BLOBKEY_FIELD_NAME, true );
 
-        return new EntityVersion( new BlobKey( blobKey ), Instant.parse( timestamp ) );
+        return new NodeVersion( new BlobKey( blobKey ), Instant.parse( timestamp ) );
     }
 
     @Override
-    public FindEntityVersionsResult findVersions( final GetVersionsQuery query )
+    public FindNodeVersionsResult findVersions( final GetVersionsQuery query )
     {
         final SearchResult searchResults = doGetFromEntityId( query.getEntityId(), query.getFrom(), query.getSize() );
 
-        final FindEntityVersionsResult.Builder findEntityVersionResultBuilder = FindEntityVersionsResult.create();
+        final FindNodeVersionsResult.Builder findEntityVersionResultBuilder = FindNodeVersionsResult.create();
 
         findEntityVersionResultBuilder.hits( searchResults.getResults().getSize() );
         findEntityVersionResultBuilder.totalHits( searchResults.getResults().getTotalHits() );
         findEntityVersionResultBuilder.from( query.getFrom() );
         findEntityVersionResultBuilder.to( query.getSize() );
 
-        final EntityVersions entityVersions = buildEntityVersions( query, searchResults );
+        final NodeVersions nodeVersions = buildEntityVersions( query, searchResults );
 
-        findEntityVersionResultBuilder.entityVersions( entityVersions );
+        findEntityVersionResultBuilder.entityVersions( nodeVersions );
 
         return findEntityVersionResultBuilder.build();
     }
 
-    private EntityVersions buildEntityVersions( final GetVersionsQuery query, final SearchResult searchResults )
+    private NodeVersions buildEntityVersions( final GetVersionsQuery query, final SearchResult searchResults )
     {
-        final EntityVersions.Builder entityVersionsBuilder = EntityVersions.create( query.getEntityId() );
+        final NodeVersions.Builder entityVersionsBuilder = NodeVersions.create( query.getEntityId() );
 
         for ( final SearchResultEntry searchResult : searchResults.getResults() )
         {

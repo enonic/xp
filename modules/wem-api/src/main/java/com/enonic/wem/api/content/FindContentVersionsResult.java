@@ -1,4 +1,4 @@
-package com.enonic.wem.api.content.versioning;
+package com.enonic.wem.api.content;
 
 public class FindContentVersionsResult
 {

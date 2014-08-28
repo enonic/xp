@@ -1,14 +1,14 @@
 package com.enonic.wem.core.workspace.compare;
 
 import com.enonic.wem.api.entity.CompareStatus;
-import com.enonic.wem.api.entity.EntityVersion;
+import com.enonic.wem.api.entity.NodeVersion;
 
 class DiffStatusResolver
 {
     public static CompareStatus resolve( final DiffStatusParams diffStatusParams )
     {
-        final EntityVersion targetBranch = diffStatusParams.getTarget();
-        final EntityVersion sourceBranch = diffStatusParams.getSource();
+        final NodeVersion targetBranch = diffStatusParams.getTarget();
+        final NodeVersion sourceBranch = diffStatusParams.getSource();
 
         if ( targetBranch == null )
         {
