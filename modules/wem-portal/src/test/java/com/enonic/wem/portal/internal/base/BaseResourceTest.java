@@ -9,7 +9,7 @@ import org.restlet.Response;
 import org.restlet.resource.Finder;
 
 import com.enonic.wem.core.web.servlet.ServletRequestHolder;
-import com.enonic.wem.portal.PortalApplication;
+import com.enonic.wem.portal.internal.PortalApplication;
 
 public abstract class BaseResourceTest<T extends BaseResource>
 {

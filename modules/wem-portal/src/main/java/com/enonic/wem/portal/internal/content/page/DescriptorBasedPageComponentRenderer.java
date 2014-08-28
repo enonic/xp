@@ -10,10 +10,10 @@ import com.enonic.wem.api.content.page.Descriptor;
 import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.rendering.RenderingMode;
+import com.enonic.wem.portal.PortalRequest;
 import com.enonic.wem.portal.internal.controller.JsContext;
 import com.enonic.wem.portal.internal.controller.JsController;
 import com.enonic.wem.portal.internal.controller.JsControllerFactory;
-import com.enonic.wem.portal.internal.controller.JsHttpRequest;
 import com.enonic.wem.portal.internal.controller.JsHttpResponseSerializer;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
@@ -106,7 +106,7 @@ abstract class DescriptorBasedPageComponentRenderer
 
     private RenderingMode getRenderingMode( final JsContext context )
     {
-        final JsHttpRequest req = context.getRequest();
+        final PortalRequest req = context.getRequest();
         return req == null ? RenderingMode.LIVE : req.getMode();
     }
 }

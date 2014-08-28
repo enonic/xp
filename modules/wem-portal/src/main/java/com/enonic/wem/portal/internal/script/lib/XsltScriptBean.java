@@ -21,6 +21,8 @@ import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.layout.LayoutRegions;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.wem.api.resource.ResourceNotFoundException;
+import com.enonic.wem.api.resource.ResourceUrlResolver;
 import com.enonic.wem.portal.internal.controller.JsContext;
 import com.enonic.wem.portal.internal.xml.DomBuilder;
 import com.enonic.wem.xslt.XsltProcessor;

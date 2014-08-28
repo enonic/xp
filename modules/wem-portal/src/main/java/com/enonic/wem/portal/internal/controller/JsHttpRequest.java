@@ -9,8 +9,10 @@ import com.google.common.collect.Multimap;
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.rendering.RenderingMode;
+import com.enonic.wem.portal.PortalRequest;
 
 public final class JsHttpRequest
+    implements PortalRequest
 {
     private String method;
 
@@ -29,21 +31,25 @@ public final class JsHttpRequest
         this.params = HashMultimap.create();
     }
 
+    @Override
     public String getMethod()
     {
         return this.method;
     }
 
+    @Override
     public Workspace getWorkspace()
     {
         return workspace;
     }
 
+    @Override
     public Multimap<String, String> getParams()
     {
         return this.params;
     }
 
+    @Override
     public RenderingMode getMode()
     {
         return this.mode;

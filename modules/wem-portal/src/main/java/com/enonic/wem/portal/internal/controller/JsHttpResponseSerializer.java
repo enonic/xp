@@ -5,13 +5,14 @@ import java.util.Map;
 import com.google.common.net.HttpHeaders;
 import com.google.gson.Gson;
 
+import com.enonic.wem.portal.PortalResponse;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 
 public final class JsHttpResponseSerializer
 {
-    private final JsHttpResponse from;
+    private final PortalResponse from;
 
-    public JsHttpResponseSerializer( final JsHttpResponse from )
+    public JsHttpResponseSerializer( final PortalResponse from )
     {
         this.from = from;
     }

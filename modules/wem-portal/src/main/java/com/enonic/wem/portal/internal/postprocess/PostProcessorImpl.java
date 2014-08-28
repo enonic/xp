@@ -5,8 +5,8 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import com.enonic.wem.portal.PortalResponse;
 import com.enonic.wem.portal.internal.controller.JsContext;
-import com.enonic.wem.portal.internal.controller.JsHttpResponse;
 import com.enonic.wem.portal.internal.postprocess.injection.PostProcessInjection;
 import com.enonic.wem.portal.internal.postprocess.instruction.PostProcessInstruction;
 
@@ -23,7 +23,7 @@ public final class PostProcessorImpl
     @Override
     public void processResponse( final JsContext context )
     {
-        final JsHttpResponse response = context.getResponse();
+        final PortalResponse response = context.getResponse();
         if ( !response.isPostProcess() )
         {
             return;

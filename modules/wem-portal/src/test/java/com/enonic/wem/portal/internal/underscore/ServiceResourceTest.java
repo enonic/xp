@@ -10,11 +10,11 @@ import org.restlet.data.Method;
 import com.google.common.collect.Multimap;
 
 import com.enonic.wem.api.rendering.RenderingMode;
+import com.enonic.wem.portal.PortalRequest;
 import com.enonic.wem.portal.internal.base.ModuleBaseResourceTest;
 import com.enonic.wem.portal.internal.controller.JsContext;
 import com.enonic.wem.portal.internal.controller.JsController;
 import com.enonic.wem.portal.internal.controller.JsControllerFactory;
-import com.enonic.wem.portal.internal.controller.JsHttpRequest;
 
 import static org.junit.Assert.*;
 
@@ -48,7 +48,7 @@ public class ServiceResourceTest
         Mockito.verify( this.jsController ).context( jsContext.capture() );
         Mockito.verify( this.jsController ).execute();
 
-        final JsHttpRequest jsHttpRequest = jsContext.getValue().getRequest();
+        final PortalRequest jsHttpRequest = jsContext.getValue().getRequest();
         assertNotNull( jsHttpRequest );
         assertEquals( "GET", jsHttpRequest.getMethod() );
         assertEquals( RenderingMode.LIVE, jsHttpRequest.getMode() );

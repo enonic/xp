@@ -1,4 +1,4 @@
-package com.enonic.wem.portal;
+package com.enonic.wem.portal.internal;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

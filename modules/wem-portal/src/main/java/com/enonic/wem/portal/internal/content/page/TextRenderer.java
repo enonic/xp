@@ -5,9 +5,9 @@ import java.text.MessageFormat;
 
 import com.enonic.wem.api.content.page.text.TextComponent;
 import com.enonic.wem.api.rendering.RenderingMode;
+import com.enonic.wem.portal.PortalRequest;
+import com.enonic.wem.portal.PortalResponse;
 import com.enonic.wem.portal.internal.controller.JsContext;
-import com.enonic.wem.portal.internal.controller.JsHttpRequest;
-import com.enonic.wem.portal.internal.controller.JsHttpResponse;
 import com.enonic.wem.portal.internal.controller.JsHttpResponseSerializer;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
@@ -25,7 +25,7 @@ public final class TextRenderer
     public RenderResult render( final TextComponent textComponent, final JsContext context )
     {
         final RenderingMode renderingMode = getRenderingMode( context );
-        final JsHttpResponse response = context.getResponse();
+        final PortalResponse response = context.getResponse();
         response.setContentType( "text/html" );
         response.setPostProcess( false );
 
@@ -51,7 +51,7 @@ public final class TextRenderer
 
     private void renderEmptyTextComponent( final TextComponent textComponent, final JsContext context )
     {
-        final JsHttpResponse response = context.getResponse();
+        final PortalResponse response = context.getResponse();
         final RenderingMode renderingMode = getRenderingMode( context );
         switch ( renderingMode )
         {
@@ -71,7 +71,7 @@ public final class TextRenderer
 
     private RenderingMode getRenderingMode( final JsContext context )
     {
-        final JsHttpRequest req = context.getRequest();
+        final PortalRequest req = context.getRequest();
         return req == null ? RenderingMode.LIVE : req.getMode();
     }
 }

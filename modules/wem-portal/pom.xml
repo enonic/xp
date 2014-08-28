@@ -80,7 +80,7 @@
               *.restlet*
             </Embed-Dependency>
             <Bundle-Activator>
-              com.enonic.wem.portal.Activator
+              com.enonic.wem.portal.internal.Activator
             </Bundle-Activator>
           </instructions>
         </configuration>

@@ -14,6 +14,7 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceUrlTestHelper;
+import com.enonic.wem.portal.PortalResponse;
 import com.enonic.wem.portal.internal.postprocess.PostProcessor;
 import com.enonic.wem.script.ScriptRunner;
 
@@ -34,7 +35,7 @@ public class JsControllerImplTest
 
     private JsHttpRequest request;
 
-    private JsHttpResponse response;
+    private PortalResponse response;
 
     private void writeFile( final File dir, final String path, final String value )
         throws Exception
