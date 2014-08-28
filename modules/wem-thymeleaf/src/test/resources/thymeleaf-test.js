@@ -3,4 +3,4 @@ var view = resolve('view/test.html');
 
 var html = thymeleaf.render(view, {});
 
-test.assertEquals('<html></html>', html);
+test.assertEquals('<div>\n    <div><!--# COMPONENT test --></div>\n</div>', html);
