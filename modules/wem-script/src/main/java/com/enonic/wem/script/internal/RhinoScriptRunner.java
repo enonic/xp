@@ -38,7 +38,7 @@ final class RhinoScriptRunner
     }
 
     @Override
-    public ScriptRunner property( final String name, final Object value )
+    public ScriptRunner variable( final String name, final Object value )
     {
         this.objects.put( name, value );
         return this;

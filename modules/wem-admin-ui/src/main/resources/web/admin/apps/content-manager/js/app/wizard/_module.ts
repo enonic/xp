@@ -15,3 +15,5 @@
 ///<reference path='PublishContentEvent.ts' />
 ///<reference path='PublishContentDialog.ts' />
 ///<reference path='CompareContentGrid.ts' />
+///<reference path='PublishAction.ts' />
+///<reference path='ScheduleAction.ts' />

@@ -44,6 +44,15 @@
         console.log('DatePicker', event.getDate());
     });
 
+    api.dom.Body.get().appendChild(new api.dom.H2El().setHtml("TimePicker"));
+
+    var timePicker = new api.ui.time.TimePickerBuilder().build();
+    api.dom.Body.get().appendChild(timePicker);
+
+    timePicker.onSelectedTimeChanged(function (hours, minutes) {
+        console.log('TimePicker', hours, minutes);
+    });
+
 </script>
 
 </body>

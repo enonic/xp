@@ -33,11 +33,6 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>wem-thymeleaf</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
       <artifactId>wem-api</artifactId>
       <version>${project.version}</version>
       <type>test-jar</type>
@@ -85,7 +80,7 @@
               *.restlet*
             </Embed-Dependency>
             <Bundle-Activator>
-              com.enonic.wem.portal.Activator
+              com.enonic.wem.portal.internal.Activator
             </Bundle-Activator>
           </instructions>
         </configuration>

@@ -39,7 +39,7 @@ module api.ui.time {
             return this;
         }
 
-        setcloseOnOutsideClick(value: boolean): DatePickerBuilder {
+        setCloseOnOutsideClick(value: boolean): DatePickerBuilder {
             this.closeOnOutsideClick = value;
             return this;
         }
@@ -52,11 +52,11 @@ module api.ui.time {
 
     export class DatePicker extends api.dom.DivEl {
 
-        private dialog: DatePickerDialog;
+        private popup: DatePickerPopup;
 
         private input: api.ui.text.TextInput;
 
-        private trigger: api.ui.button.Button;
+        private popupTrigger: api.ui.button.Button;
 
         constructor(builder: DatePickerBuilder) {
             super('date-picker');
@@ -66,24 +66,24 @@ module api.ui.time {
                 e.stopPropagation();
                 e.preventDefault();
 
-                this.dialog.show();
+                this.popup.show();
             });
             this.appendChild(this.input);
 
-            this.trigger = new api.ui.button.Button('Change');
-            this.appendChild(this.trigger);
+            this.popupTrigger = new api.ui.button.Button('Change');
+            this.appendChild(this.popupTrigger);
 
-            this.dialog = new DatePickerDialog(builder);
-            this.appendChild(this.dialog);
+            this.popup = new DatePickerPopup(builder);
+            this.appendChild(this.popup);
 
-            this.trigger.onClicked((e: MouseEvent) => {
+            this.popupTrigger.onClicked((e: MouseEvent) => {
                 e.stopPropagation();
                 e.preventDefault();
 
-                if (this.dialog.isVisible()) {
-                    this.dialog.hide();
+                if (this.popup.isVisible()) {
+                    this.popup.hide();
                 } else {
-                    this.dialog.show();
+                    this.popup.show();
                 }
             });
 
@@ -93,19 +93,23 @@ module api.ui.time {
 
             this.onSelectedDateChanged((e: SelectedDateChangedEvent) => {
                 if (builder.closeOnSelect) {
-                    this.dialog.hide();
+                    this.popup.hide();
                 }
                 this.input.setValue(this.formatDate(e.getDate()));
             });
 
         }
 
+        getSelectedDate(): Date {
+            return this.popup.getSelectedDate();
+        }
+
         onSelectedDateChanged(listener: (event: SelectedDateChangedEvent) => void) {
-            this.dialog.onSelectedDateChanged(listener);
+            this.popup.onSelectedDateChanged(listener);
         }
 
         unSelectedDateChanged(listener: (event: SelectedDateChangedEvent) => void) {
-            this.dialog.unSelectedDateChanged(listener);
+            this.popup.unSelectedDateChanged(listener);
         }
 
         private formatDate(date: Date): string {
@@ -114,7 +118,7 @@ module api.ui.time {
 
     }
 
-    class DatePickerDialog extends api.dom.DivEl {
+    class DatePickerPopup extends api.dom.DivEl {
 
         private prevYear: api.dom.AEl;
         private year: api.dom.SpanEl;
@@ -130,7 +134,7 @@ module api.ui.time {
             var yearContainer = new api.dom.H2El('year-container');
             this.appendChild(yearContainer);
 
-            this.prevYear = new api.dom.AEl('prev year');
+            this.prevYear = new api.dom.AEl('prev');
             this.prevYear.onClicked((e: MouseEvent) => {
                 this.calendar.previousYear();
             });
@@ -139,7 +143,7 @@ module api.ui.time {
             this.year = new api.dom.SpanEl();
             yearContainer.appendChild(this.year);
 
-            this.nextYear = new api.dom.AEl('next year');
+            this.nextYear = new api.dom.AEl('next');
             this.nextYear.onClicked((e: MouseEvent) => {
                 this.calendar.nextYear();
             });
@@ -148,7 +152,7 @@ module api.ui.time {
             var monthContainer = new api.dom.H5El('month-container');
             this.appendChild(monthContainer);
 
-            this.prevMonth = new api.dom.AEl('prev month');
+            this.prevMonth = new api.dom.AEl('prev');
             this.prevMonth.onClicked((e: MouseEvent) => {
                 this.calendar.previousMonth();
             });
@@ -157,7 +161,7 @@ module api.ui.time {
             this.month = new api.dom.SpanEl();
             monthContainer.appendChild(this.month);
 
-            this.nextMonth = new api.dom.AEl('next month');
+            this.nextMonth = new api.dom.AEl('next');
             this.nextMonth.onClicked((e: MouseEvent) => {
                 this.calendar.nextMonth();
             });
@@ -182,6 +186,10 @@ module api.ui.time {
             if (builder.closeOnOutsideClick) {
                 api.dom.Body.get().onClicked((e: MouseEvent) => this.outsideClickListener(e));
             }
+        }
+
+        getSelectedDate(): Date {
+            return this.calendar.getSelectedDate();
         }
 
         onSelectedDateChanged(listener: (event: SelectedDateChangedEvent) => void) {

@@ -4,6 +4,8 @@ import org.junit.Test;
 
 import com.google.inject.Guice;
 
+import com.enonic.wem.portal.internal.Activator;
+
 public class ActivatorTest
 {
     @Test

@@ -23,7 +23,7 @@ public final class JsControllerFactoryImpl
     public JsController newController()
     {
         final ScriptRunner runner = this.scriptRunnerFactory.newRunner();
-        runner.property( SystemScriptBean.NAME, this.systemScriptBean );
+        runner.variable( SystemScriptBean.NAME, this.systemScriptBean );
 
         final JsControllerImpl jsController = new JsControllerImpl( runner );
         jsController.postProcessor( this.postProcessor );

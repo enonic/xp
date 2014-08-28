@@ -2,7 +2,7 @@ module app {
 
     export class SchemaAppPanel extends api.app.BrowseAndWizardBasedAppPanel<api.schema.Schema> {
 
-        private browseActions: app.browse.SchemaBrowseActions;
+        private browseActions: app.browse.action.SchemaBrowseActions;
 
         private schemaTreeGrid: app.browse.SchemaTreeGrid;
 
@@ -12,7 +12,7 @@ module app {
                 appBar: appBar
             });
 
-            this.browseActions = new app.browse.SchemaBrowseActions();
+            this.browseActions = new app.browse.action.SchemaBrowseActions();
             this.schemaTreeGrid = new app.browse.SchemaTreeGrid(this.browseActions);
             this.handleGlobalEvents();
 

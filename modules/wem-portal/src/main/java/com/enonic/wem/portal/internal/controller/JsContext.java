@@ -7,9 +7,13 @@ import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.layout.LayoutComponent;
 import com.enonic.wem.api.content.page.layout.LayoutRegions;
+import com.enonic.wem.portal.PortalContext;
+import com.enonic.wem.portal.PortalRequest;
+import com.enonic.wem.portal.PortalResponse;
 import com.enonic.wem.portal.internal.script.lib.PortalUrlScriptBean;
 
 public final class JsContext
+    implements PortalContext
 {
     private JsHttpRequest request;
 
@@ -30,7 +34,8 @@ public final class JsContext
         this.response = new JsHttpResponse();
     }
 
-    public JsHttpRequest getRequest()
+    @Override
+    public PortalRequest getRequest()
     {
         return this.request;
     }
@@ -40,7 +45,8 @@ public final class JsContext
         this.request = request;
     }
 
-    public JsHttpResponse getResponse()
+    @Override
+    public PortalResponse getResponse()
     {
         return this.response;
     }
@@ -50,6 +56,7 @@ public final class JsContext
         this.response = response;
     }
 
+    @Override
     public Content getSiteContent()
     {
         return siteContent;
@@ -60,6 +67,7 @@ public final class JsContext
         this.siteContent = siteContent;
     }
 
+    @Override
     public Content getContent()
     {
         return content;
@@ -70,11 +78,13 @@ public final class JsContext
         this.content = content;
     }
 
+    @Override
     public PageTemplate getPageTemplate()
     {
         return pageTemplate;
     }
 
+    @Override
     public PageRegions getPageRegions()
     {
         if ( this.content == null )
@@ -93,6 +103,7 @@ public final class JsContext
         }
     }
 
+    @Override
     public LayoutRegions getLayoutRegions()
     {
         if ( this.component == null )
@@ -143,6 +154,7 @@ public final class JsContext
         this.portalUrlScriptBean = portalUrlScriptBean;
     }
 
+    @Override
     public PageComponent getComponent()
     {
         return component;

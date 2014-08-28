@@ -33,11 +33,4 @@ module app.remove {
             this.setDeleteItems(deleteItems);
         }
     }
-
-    export class SiteTemplateDeleteDialogAction extends api.ui.Action {
-
-        constructor() {
-            super("Delete", "enter");
-        }
-    }
 }

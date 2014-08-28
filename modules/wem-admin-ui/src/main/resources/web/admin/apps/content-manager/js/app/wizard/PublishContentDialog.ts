@@ -77,31 +77,6 @@ module app.wizard {
         }
     }
 
-    export class PublishAction extends api.ui.Action {
-
-        private static BASE_STRING: string = "Publish now";
-
-        constructor() {
-            super(PublishAction.BASE_STRING);
-        }
-
-        setToBePublishedAmout(amount: number) {
-            if (amount < 1) {
-                this.setEnabled(false);
-            } else {
-                this.setEnabled(true);
-
-            }
-            this.setLabel(PublishAction.BASE_STRING + " (" + amount + ")")
-        }
-    }
-
-    export class ScheduleAction extends api.ui.Action {
-        constructor() {
-            super("Schedule");
-        }
-    }
-
     export class PublishDialogItemList extends api.dom.DivEl {
         constructor() {
             super();

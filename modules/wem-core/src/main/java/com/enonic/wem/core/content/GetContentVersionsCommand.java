@@ -1,15 +1,20 @@
 package com.enonic.wem.core.content;
 
+import java.util.Collection;
+import java.util.Set;
+
+import com.google.common.collect.Sets;
+
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.versioning.ContentVersion;
 import com.enonic.wem.api.content.versioning.ContentVersions;
+import com.enonic.wem.api.content.versioning.FindContentVersionsResult;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityVersion;
-import com.enonic.wem.api.entity.EntityVersions;
+import com.enonic.wem.api.entity.FindEntityVersionsResult;
 import com.enonic.wem.api.entity.GetEntityVersionsParams;
 import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.api.entity.Nodes;
 
 public class GetContentVersionsCommand
     extends AbstractContentCommand
@@ -34,38 +39,51 @@ public class GetContentVersionsCommand
     }
 
 
-    public ContentVersions execute()
+    public FindContentVersionsResult execute()
     {
         return doGetContentVersions();
     }
 
-    private ContentVersions doGetContentVersions()
+    private FindContentVersionsResult doGetContentVersions()
     {
         final EntityId entityId = EntityId.from( this.contentId );
 
-        final EntityVersions entityVersions = nodeService.getVersions( GetEntityVersionsParams.create().
+        final FindEntityVersionsResult findEntityVersionsResult = nodeService.getVersions( GetEntityVersionsParams.create().
             entityId( entityId ).
             from( this.from ).
             size( this.size ).
             build(), this.context );
 
-        final Nodes.Builder builder = Nodes.create();
+        final FindContentVersionsResult.Builder findContentVersionsResultBuilder = FindContentVersionsResult.create();
+        findContentVersionsResultBuilder.hits( findEntityVersionsResult.getHits() );
+        findContentVersionsResultBuilder.totalHits( findEntityVersionsResult.getTotalHits() );
+        findContentVersionsResultBuilder.from( findEntityVersionsResult.getFrom() );
+        findContentVersionsResultBuilder.size( findEntityVersionsResult.getSize() );
 
-        for ( final EntityVersion entityVersion : entityVersions )
+        final Set<Node> nodeVersions = Sets.newLinkedHashSet();
+
+        for ( final EntityVersion entityVersion : findEntityVersionsResult.getEntityVersions() )
         {
-            builder.add( nodeService.getByBlobKey( entityVersion.getBlobKey(), this.context ) );
+            nodeVersions.add( nodeService.getByBlobKey( entityVersion.getBlobKey(), this.context ) );
         }
 
-        final Nodes nodes = builder.build();
+        final ContentVersions contentVersions = buildContentVersions( entityId, nodeVersions );
 
-        final ContentVersions.Builder contentVersions = ContentVersions.create().
+        findContentVersionsResultBuilder.contentVersions( contentVersions );
+
+        return findContentVersionsResultBuilder.build();
+    }
+
+    private ContentVersions buildContentVersions( final EntityId entityId, final Collection<Node> nodes )
+    {
+        final ContentVersions.Builder contentVersionsBuilder = ContentVersions.create().
             contentId( ContentId.from( entityId ) );
 
         for ( final Node node : nodes )
         {
             final Content content = translator.fromNode( node );
 
-            contentVersions.add( ContentVersion.create().
+            contentVersionsBuilder.add( ContentVersion.create().
                 comment( "Dummy comment" ).
                 displayName( content.getDisplayName() ).
                 modified( content.getModifiedTime() ).
@@ -73,7 +91,7 @@ public class GetContentVersionsCommand
                 build() );
         }
 
-        return contentVersions.build();
+        return contentVersionsBuilder.build();
     }
 
     public static final class Builder

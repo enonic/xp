@@ -4,7 +4,6 @@ import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.TopLevel;
 
 import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.script.internal.ScriptEnvironment;
 
 final class RequireModuleScope
     extends TopLevel
@@ -45,11 +44,15 @@ final class RequireModuleScope
 
     public ResourceKey resolveResource( final String name )
     {
-        try
+        if ( name.contains( ":" ) )
         {
             return ResourceKey.from( name );
         }
-        catch ( final Exception e )
+        else if ( name.startsWith( "/" ) )
+        {
+            return this.resource.resolve( name );
+        }
+        else
         {
             return this.resource.resolve( "../" + name );
         }

@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import com.google.common.collect.Maps;
 
-import com.enonic.wem.portal.PortalUrlBuilder;
+import com.enonic.wem.portal.url.PortalUrlBuilder;
 import com.enonic.wem.portal.url.GeneralUrlBuilder;
 
 import static org.junit.Assert.*;

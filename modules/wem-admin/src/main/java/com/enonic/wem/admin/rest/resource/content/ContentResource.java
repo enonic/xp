@@ -66,7 +66,7 @@ import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.api.content.site.SiteTemplateService;
-import com.enonic.wem.api.content.versioning.ContentVersions;
+import com.enonic.wem.api.content.versioning.FindContentVersionsResult;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.DataJson;
 import com.enonic.wem.api.exception.ConflictException;
@@ -313,13 +313,13 @@ public class ContentResource
     {
         final ContentId contentId = ContentId.from( params.getContentId() );
 
-        final ContentVersions contentVersions = contentService.getVersions( GetContentVersionsParams.create().
+        final FindContentVersionsResult result = contentService.getVersions( GetContentVersionsParams.create().
             contentId( contentId ).
             from( params.getFrom() != null ? params.getFrom() : 0 ).
             size( params.getSize() != null ? params.getSize() : 10 ).
             build(), STAGE_CONTEXT );
 
-        return new GetContentVersionsResultJson( contentVersions );
+        return new GetContentVersionsResultJson( result );
     }
 
     @POST

@@ -27,7 +27,7 @@ import com.enonic.wem.api.content.RenameContentParams;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.ValidateContentData;
 import com.enonic.wem.api.content.attachment.AttachmentService;
-import com.enonic.wem.api.content.versioning.ContentVersions;
+import com.enonic.wem.api.content.versioning.FindContentVersionsResult;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.NodeService;
 import com.enonic.wem.api.schema.content.ContentTypeService;
@@ -243,7 +243,7 @@ public class ContentServiceImpl
     }
 
     @Override
-    public ContentVersions getVersions( final GetContentVersionsParams params, final Context context )
+    public FindContentVersionsResult getVersions( final GetContentVersionsParams params, final Context context )
     {
         return GetContentVersionsCommand.create().
             nodeService( this.nodeService ).

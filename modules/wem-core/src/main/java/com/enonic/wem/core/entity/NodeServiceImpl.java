@@ -9,7 +9,7 @@ import com.enonic.wem.api.entity.EntityComparison;
 import com.enonic.wem.api.entity.EntityComparisons;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIds;
-import com.enonic.wem.api.entity.EntityVersions;
+import com.enonic.wem.api.entity.FindEntityVersionsResult;
 import com.enonic.wem.api.entity.FindNodesByParentParams;
 import com.enonic.wem.api.entity.FindNodesByParentResult;
 import com.enonic.wem.api.entity.FindNodesByQueryResult;
@@ -186,7 +186,7 @@ public class NodeServiceImpl
     }
 
     @Override
-    public EntityVersions getVersions( final GetEntityVersionsParams params, final Context context )
+    public FindEntityVersionsResult getVersions( final GetEntityVersionsParams params, final Context context )
     {
         return GetEntityVersionsCommand.create( context ).
             entityId( params.getEntityId() ).

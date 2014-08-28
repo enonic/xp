@@ -57,11 +57,4 @@ module app.remove {
             this.setDeleteItems(deleteItems);
         }
     }
-
-    export class ContentDeleteDialogAction extends api.ui.Action {
-
-        constructor() {
-            super("Delete", "enter");
-        }
-    }
 }

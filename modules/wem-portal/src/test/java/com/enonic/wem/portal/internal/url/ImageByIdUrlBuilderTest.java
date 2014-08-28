@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.portal.PortalUrlBuilder;
+import com.enonic.wem.portal.url.PortalUrlBuilder;
 import com.enonic.wem.portal.url.ImageByIdUrlBuilder;
 
 import static org.junit.Assert.*;
