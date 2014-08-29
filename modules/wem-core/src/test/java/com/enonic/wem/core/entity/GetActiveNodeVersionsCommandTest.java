@@ -9,6 +9,7 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.EntityId;
+import com.enonic.wem.api.entity.EntityVersionId;
 import com.enonic.wem.api.entity.GetActiveNodeVersionsResult;
 import com.enonic.wem.api.entity.NodeVersion;
 import com.enonic.wem.api.entity.Workspace;
@@ -47,8 +48,8 @@ public class GetActiveNodeVersionsCommandTest
 
         final BlobKey testBlobKey = new BlobKey( "a" );
         final BlobKey prodBlobKey = new BlobKey( "b" );
-        final NodeVersion testVersion = new NodeVersion( testBlobKey, Instant.now() );
-        final NodeVersion prodVersion = new NodeVersion( prodBlobKey, Instant.now() );
+        final NodeVersion testVersion = new NodeVersion( EntityVersionId.from( testBlobKey ), Instant.now() );
+        final NodeVersion prodVersion = new NodeVersion( EntityVersionId.from( prodBlobKey ), Instant.now() );
 
         Mockito.when( this.nodeDao.getBlobKey( nodeId, testWorkspace ) ).thenReturn( testBlobKey );
         Mockito.when( this.nodeDao.getBlobKey( nodeId, prodWorkspace ) ).thenReturn( prodBlobKey );
@@ -81,7 +82,7 @@ public class GetActiveNodeVersionsCommandTest
         final Workspaces workspaces = Workspaces.from( testWorkspace, prodWorkspace );
 
         final BlobKey testBlobKey = new BlobKey( "a" );
-        final NodeVersion testVersion = new NodeVersion( testBlobKey, Instant.now() );
+        final NodeVersion testVersion = new NodeVersion( EntityVersionId.from( testBlobKey ), Instant.now() );
 
         Mockito.when( this.nodeDao.getBlobKey( nodeId, testWorkspace ) ).thenReturn( testBlobKey );
         Mockito.when( this.nodeDao.getBlobKey( nodeId, prodWorkspace ) ).thenThrow( new NodeNotFoundException( "expected" ) );

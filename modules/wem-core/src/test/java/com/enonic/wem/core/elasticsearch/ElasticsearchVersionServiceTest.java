@@ -82,8 +82,8 @@ public class ElasticsearchVersionServiceTest
         assertEquals( 3, result.getNodeVersions().size() );
 
         final Iterator<NodeVersion> iterator = result.getNodeVersions().iterator();
-        assertEquals( new BlobKey( "a" ), iterator.next().getBlobKey() );
-        assertEquals( new BlobKey( "b" ), iterator.next().getBlobKey() );
-        assertEquals( new BlobKey( "c" ), iterator.next().getBlobKey() );
+        assertEquals( new BlobKey( "a" ), new BlobKey( iterator.next().getId().toString() ) );
+        assertEquals( new BlobKey( "b" ), new BlobKey( iterator.next().getId().toString() ) );
+        assertEquals( new BlobKey( "c" ), new BlobKey( iterator.next().getId().toString() ) );
     }
 }

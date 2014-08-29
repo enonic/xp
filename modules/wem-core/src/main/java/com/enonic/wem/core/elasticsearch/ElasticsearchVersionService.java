@@ -13,6 +13,7 @@ import com.google.inject.Inject;
 
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.entity.EntityId;
+import com.enonic.wem.api.entity.EntityVersionId;
 import com.enonic.wem.api.entity.FindNodeVersionsResult;
 import com.enonic.wem.api.entity.NodeVersion;
 import com.enonic.wem.api.entity.NodeVersions;
@@ -66,7 +67,7 @@ public class ElasticsearchVersionService
         final String timestamp = getStringValue( hit, TIMESTAMP_ID_FIELD_NAME, true );
         final String blobKey = getStringValue( hit, BLOBKEY_FIELD_NAME, true );
 
-        return new NodeVersion( new BlobKey( blobKey ), Instant.parse( timestamp ) );
+        return new NodeVersion( new EntityVersionId( blobKey ), Instant.parse( timestamp ) );
     }
 
     @Override

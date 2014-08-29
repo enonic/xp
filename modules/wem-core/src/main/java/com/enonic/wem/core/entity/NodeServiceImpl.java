@@ -25,8 +25,8 @@ import com.enonic.wem.api.entity.RenameNodeParams;
 import com.enonic.wem.api.entity.UpdateNodeParams;
 import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.entity.query.NodeQuery;
-import com.enonic.wem.core.elasticsearch.ElasticsearchIndexService;
 import com.enonic.wem.core.entity.dao.NodeDao;
+import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.index.query.QueryService;
 import com.enonic.wem.core.version.VersionService;
 import com.enonic.wem.core.workspace.compare.WorkspaceCompareService;
@@ -35,7 +35,7 @@ public class NodeServiceImpl
     implements NodeService
 {
     @Inject
-    private ElasticsearchIndexService indexService;
+    private IndexService indexService;
 
     @Inject
     private NodeDao nodeDao;

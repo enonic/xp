@@ -2,24 +2,23 @@ package com.enonic.wem.api.entity;
 
 import java.time.Instant;
 
-import com.enonic.wem.api.blob.BlobKey;
-
 public class NodeVersion
     implements Comparable<NodeVersion>
 {
-    private final BlobKey blobKey;
+
+    private final EntityVersionId entityVersionId;
 
     private final Instant timestamp;
 
-    public NodeVersion( final BlobKey blobKey, final Instant timestamp )
+    public NodeVersion( final EntityVersionId entityVersionId, final Instant timestamp )
     {
-        this.blobKey = blobKey;
+        this.entityVersionId = entityVersionId;
         this.timestamp = timestamp;
     }
 
-    public BlobKey getBlobKey()
+    public EntityVersionId getId()
     {
-        return blobKey;
+        return entityVersionId;
     }
 
     public Instant getTimestamp()
@@ -45,7 +44,6 @@ public class NodeVersion
         return -1;
     }
 
-
     @Override
     public boolean equals( final Object o )
     {
@@ -60,11 +58,11 @@ public class NodeVersion
 
         final NodeVersion that = (NodeVersion) o;
 
-        if ( blobKey != null ? !blobKey.equals( that.blobKey ) : that.blobKey != null )
+        if ( !entityVersionId.equals( that.entityVersionId ) )
         {
             return false;
         }
-        if ( timestamp != null ? !timestamp.equals( that.timestamp ) : that.timestamp != null )
+        if ( !timestamp.equals( that.timestamp ) )
         {
             return false;
         }
@@ -75,8 +73,8 @@ public class NodeVersion
     @Override
     public int hashCode()
     {
-        int result = blobKey != null ? blobKey.hashCode() : 0;
-        result = 31 * result + ( timestamp != null ? timestamp.hashCode() : 0 );
+        int result = entityVersionId.hashCode();
+        result = 31 * result + timestamp.hashCode();
         return result;
     }
 }

@@ -1,17 +1,11 @@
 package com.enonic.wem.core.content;
 
-import java.util.Set;
-
-import com.google.common.collect.Sets;
-
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentVersions;
 import com.enonic.wem.api.content.FindContentVersionsResult;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.FindNodeVersionsResult;
 import com.enonic.wem.api.entity.GetNodeVersionsParams;
-import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.api.entity.NodeVersion;
 
 public class FindContentVersionsCommand
     extends AbstractContentCommand
@@ -56,27 +50,15 @@ public class FindContentVersionsCommand
         findContentVersionsResultBuilder.from( findNodeVersionsResult.getFrom() );
         findContentVersionsResultBuilder.size( findNodeVersionsResult.getSize() );
 
-        final Set<Node> nodes = getNodesFromVersions( findNodeVersionsResult );
+        final ContentVersionFactory contentVersionFactory = new ContentVersionFactory( this.translator, this.nodeService, this.context );
 
-        final ContentVersionsFactory contentVersionsFactory = new ContentVersionsFactory( this.translator );
-
-        final ContentVersions contentVersions = contentVersionsFactory.create( entityId, nodes );
+        final ContentVersions contentVersions = contentVersionFactory.create( entityId, findNodeVersionsResult.getNodeVersions() );
 
         findContentVersionsResultBuilder.contentVersions( contentVersions );
 
         return findContentVersionsResultBuilder.build();
     }
 
-    private Set<Node> getNodesFromVersions( final FindNodeVersionsResult findNodeVersionsResult )
-    {
-        final Set<Node> nodeVersions = Sets.newLinkedHashSet();
-
-        for ( final NodeVersion nodeVersion : findNodeVersionsResult.getNodeVersions() )
-        {
-            nodeVersions.add( nodeService.getByBlobKey( nodeVersion.getBlobKey(), this.context ) );
-        }
-        return nodeVersions;
-    }
 
     public static final class Builder
         extends AbstractContentCommand.Builder<Builder>
