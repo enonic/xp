@@ -4,7 +4,6 @@ import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.portal.PortalContextAccessor;
 import com.enonic.wem.portal.internal.postprocess.PostProcessor;
-import com.enonic.wem.portal.internal.script.lib.ContextScriptBean;
 import com.enonic.wem.script.ScriptRunner;
 
 final class JsControllerImpl
@@ -74,11 +73,6 @@ final class JsControllerImpl
 
     private void doExecute( final ResourceKey script )
     {
-        final ContextScriptBean scriptBean = new ContextScriptBean();
-        scriptBean.setModule( script.getModule() );
-        scriptBean.setJsContext( this.context );
-        scriptBean.install();
-
         PortalContextAccessor.set( this.context );
 
         try
@@ -91,7 +85,6 @@ final class JsControllerImpl
         finally
         {
             PortalContextAccessor.remove();
-            ContextScriptBean.remove();
         }
     }
 
