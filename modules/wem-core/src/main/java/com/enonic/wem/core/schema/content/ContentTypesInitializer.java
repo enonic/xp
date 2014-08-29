@@ -98,6 +98,7 @@ public class ContentTypesInitializer
             "demo-contenttype-all-input-types.json", "demo-contenttype-imageselector.json",
             "demo-contenttype-several-levels-of-formItemset.json", "demo-contenttype-tag.json", "demo-contenttype-checkbox.json",
             "demo-contenttype-long.json", "demo-geo-location.json", "demo-contentype-date.json"};
+            "demo-contenttype-long.json", "demo-geo-location.json","demo-contenttype-time.json"};
 
     private final ContentTypeJsonSerializer contentTypeJsonSerializer = new ContentTypeJsonSerializer();
 
