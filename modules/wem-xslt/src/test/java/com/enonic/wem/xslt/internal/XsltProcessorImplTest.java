@@ -1,8 +1,12 @@
 package com.enonic.wem.xslt.internal;
 
+import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import com.google.common.collect.Maps;
 
 import junit.framework.Assert;
 
@@ -16,18 +20,20 @@ import com.enonic.wem.api.resource.ResourceUrlTestHelper;
 import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.PortalContextAccessor;
 import com.enonic.wem.portal.PortalRequest;
-import com.enonic.wem.xslt.XsltRenderParams;
+import com.enonic.wem.xslt.XsltProcessor;
+import com.enonic.wem.xslt.XsltProcessorFactory;
 
-public class SaxonXsltProcessorTest
+public class XsltProcessorImplTest
 {
-    private SaxonXsltProcessor processor;
+    private XsltProcessorFactory processorFactory;
 
     @Before
     public void setup()
     {
         final ResourceUrlRegistry urlRegistry = ResourceUrlTestHelper.mockModuleScheme();
         urlRegistry.modulesClassLoader( getClass().getClassLoader() );
-        this.processor = new SaxonXsltProcessor();
+
+        this.processorFactory = new XsltProcessorFactoryImpl();
 
         final PortalRequest portalRequest = Mockito.mock( PortalRequest.class );
         Mockito.when( portalRequest.getBaseUri() ).thenReturn( "/root" );
@@ -43,31 +49,32 @@ public class SaxonXsltProcessorTest
     @Test(expected = ResourceNotFoundException.class)
     public void testResourceNotFound()
     {
-        final XsltRenderParams params = new XsltRenderParams().
-            view( ResourceKey.from( "mymodule-1.0.0:/view/unknown.xsl" ) ).
-            inputXml( "<input/>" );
-
-        this.processor.render( params );
+        final XsltProcessor processor = this.processorFactory.newProcessor();
+        processor.view( ResourceKey.from( "mymodule-1.0.0:/view/unknown.xsl" ) );
+        processor.inputXml( "<input/>" );
+        processor.process();
     }
 
     @Test
     public void testProcessResource()
     {
-        final XsltRenderParams params = new XsltRenderParams().
-            view( ResourceKey.from( "mymodule-1.0.0:/view/test.xsl" ) ).
-            inputXml( "<input/>" );
+        final Map<String, Object> params = Maps.newHashMap();
 
-        final String result = this.processor.render( params );
+        final XsltProcessor processor = this.processorFactory.newProcessor();
+        processor.view( ResourceKey.from( "mymodule-1.0.0:/view/test.xsl" ) );
+        processor.inputXml( "<input/>" );
+        processor.parameters( params );
+
+        final String result = processor.process();
         Assert.assertEquals( "<div>Hello</div>", result );
     }
 
     @Test(expected = ResourceProblemException.class)
     public void testViewError()
     {
-        final XsltRenderParams params = new XsltRenderParams().
-            view( ResourceKey.from( "mymodule-1.0.0:/view/test-error.xsl" ) ).
-            inputXml( "<input/>" );
-
-        this.processor.render( params );
+        final XsltProcessor processor = this.processorFactory.newProcessor();
+        processor.view( ResourceKey.from( "mymodule-1.0.0:/view/test-error.xsl" ) );
+        processor.inputXml( "<input/>" );
+        processor.process();
     }
 }

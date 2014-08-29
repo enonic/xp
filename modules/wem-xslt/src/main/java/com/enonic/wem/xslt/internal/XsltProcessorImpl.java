@@ -16,50 +16,65 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import com.google.common.base.Throwables;
+import com.google.common.collect.Maps;
 import com.google.common.io.Closeables;
 
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceProblemException;
+import com.enonic.wem.xslt.XsltProcessor;
 
-final class SaxonXsltHandler
+final class XsltProcessorImpl
+    implements XsltProcessor
 {
     private final TransformerFactory factory;
 
     private final XsltProcessorErrors errors;
 
+    private ResourceKey view;
+
     private Source xsltSource;
 
     private Source xmlSource;
 
-    private Map<String, Object> parameters;
+    private final Map<String, Object> parameters;
 
     private Transformer transformer;
 
-    public SaxonXsltHandler( final TransformerFactory factory )
+    public XsltProcessorImpl( final TransformerFactory factory )
     {
         this.factory = factory;
         this.errors = new XsltProcessorErrors();
+        this.parameters = Maps.newHashMap();
     }
 
-    public void setXsltSource( final ResourceKey xslt )
+    @Override
+    public XsltProcessor view( final ResourceKey view )
     {
-        final Resource resource = Resource.from( xslt );
+        this.view = view;
+
+        final Resource resource = Resource.from( view );
         resource.requireExists();
 
         this.xsltSource = new StreamSource( resource.getUrl().toString() );
+        return this;
     }
 
-    public void setXmlSource( final String inputXml )
+    @Override
+    public XsltProcessor inputXml( final String inputXml )
     {
         this.xmlSource = new StreamSource( new StringReader( inputXml ) );
+        return this;
     }
 
-    public void setParameters( final Map<String, Object> parameters )
+    @Override
+    public XsltProcessor parameters( final Map<String, Object> parameters )
     {
-        this.parameters = parameters;
+        this.parameters.putAll( parameters );
+        return this;
     }
 
+    @Override
     public String process()
     {
         try
@@ -95,13 +110,19 @@ final class SaxonXsltHandler
     private RuntimeException handleError( final TransformerException e )
     {
         final SourceLocator locator = e.getLocator();
+        final String systemId = locator.getSystemId();
 
-        return ResourceProblemException.newBuilder().
-            lineNumber( locator.getLineNumber() ).
-            resource( toResourceKey( locator.getSystemId() ) ).
-            cause( e ).
-            message( e.getMessage() ).
-            build();
+        if ( systemId != null )
+        {
+            return ResourceProblemException.newBuilder().
+                lineNumber( locator.getLineNumber() ).
+                resource( toResourceKey( systemId ) ).
+                cause( e ).
+                message( e.getMessage() ).
+                build();
+        }
+
+        return Throwables.propagate( e );
     }
 
     private ResourceKey toResourceKey( final String systemId )
@@ -112,7 +133,7 @@ final class SaxonXsltHandler
         }
         catch ( final IOException e )
         {
-            throw Throwables.propagate( e );
+            return null;
         }
     }
 

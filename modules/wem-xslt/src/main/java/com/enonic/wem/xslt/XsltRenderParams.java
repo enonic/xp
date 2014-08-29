@@ -48,11 +48,6 @@ public final class XsltRenderParams
 
     public XsltRenderParams parameter( final String name, final Object value )
     {
-        return this;
-    }
-
-    public XsltRenderParams parameters( final String name, final Object value )
-    {
         this.parameters.put( name, value );
         return this;
     }

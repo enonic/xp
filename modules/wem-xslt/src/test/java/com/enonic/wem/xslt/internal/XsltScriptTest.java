@@ -28,7 +28,7 @@ public class XsltScriptTest
         PortalContextAccessor.set( portalContext );
 
         final XsltScriptContributor contributor = new XsltScriptContributor();
-        contributor.setProcessor( new SaxonXsltProcessor() );
+        contributor.setProcessorFactory( new XsltProcessorFactoryImpl() );
 
         addContributor( contributor );
     }

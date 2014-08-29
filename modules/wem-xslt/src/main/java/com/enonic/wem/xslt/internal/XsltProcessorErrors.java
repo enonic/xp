@@ -8,7 +8,7 @@ import javax.xml.transform.TransformerException;
 
 import com.google.common.collect.Lists;
 
-public final class XsltProcessorErrors
+final class XsltProcessorErrors
     implements ErrorListener, Iterable<TransformerException>
 {
     private final List<TransformerException> errors;

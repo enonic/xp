@@ -6,14 +6,14 @@ import net.sf.saxon.Configuration;
 import net.sf.saxon.TransformerFactoryImpl;
 
 import com.enonic.wem.xslt.XsltProcessor;
-import com.enonic.wem.xslt.XsltRenderParams;
+import com.enonic.wem.xslt.XsltProcessorFactory;
 
-public final class SaxonXsltProcessor
-    implements XsltProcessor
+public final class XsltProcessorFactoryImpl
+    implements XsltProcessorFactory
 {
     private final Configuration configuration;
 
-    public SaxonXsltProcessor()
+    public XsltProcessorFactoryImpl()
     {
         this.configuration = new Configuration();
         this.configuration.setLineNumbering( true );
@@ -29,13 +29,9 @@ public final class SaxonXsltProcessor
     }
 
     @Override
-    public String render( final XsltRenderParams params )
+    public XsltProcessor newProcessor()
     {
         final TransformerFactory factory = createTransformerFactory();
-        final SaxonXsltHandler handler = new SaxonXsltHandler( factory );
-        handler.setXsltSource( params.getView() );
-        handler.setXmlSource( params.getInputXml() );
-        handler.setParameters( params.getParameters() );
-        return handler.process();
+        return new XsltProcessorImpl( factory );
     }
 }

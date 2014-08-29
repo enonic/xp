@@ -10,12 +10,12 @@
  * @param {Object} params xslt parameters
  */
 exports.render = function (xslt, doc, params) {
-    var helper = __('xsltScriptHelper');
+    var factory = __('xsltProcessorFactory');
 
-    var request = helper.newRenderParams();
-    request.view(xslt);
-    request.inputXml(doc);
-    request.parameters(params);
+    var processor = factory.newProcessor();
+    processor.view(xslt);
+    processor.inputXml(doc);
+    processor.parameters(params);
 
-    return helper.processor.render(request);
+    return processor.process();
 };
