@@ -8,7 +8,6 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.entity.Workspace;
-import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.rendering.RenderingMode;
 import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.PortalRequest;
@@ -32,7 +31,7 @@ public class PortalUrlBuildersTest
         setBaseUri( "" );
         setMode( RenderingMode.LIVE );
         setWorkspace( Workspace.from( "stage" ) );
-        setResolvedModule( ModuleKey.from( "mymodule-1.0.0" ) );
+        setResolvedModule( "mymodule-1.0.0" );
         setContent( ContentPath.from( "path/to/content" ) );
     }
 
@@ -51,7 +50,7 @@ public class PortalUrlBuildersTest
         Mockito.when( this.request.getWorkspace() ).thenReturn( workspace );
     }
 
-    private void setResolvedModule( final ModuleKey resolvedModule )
+    private void setResolvedModule( final String resolvedModule )
     {
         Mockito.when( this.context.getResolvedModule() ).thenReturn( resolvedModule );
     }

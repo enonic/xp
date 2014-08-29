@@ -14,7 +14,6 @@ import com.enonic.wem.portal.internal.controller.JsControllerFactory;
 import com.enonic.wem.portal.internal.controller.JsHttpRequest;
 import com.enonic.wem.portal.internal.controller.JsHttpResponseSerializer;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
-import com.enonic.wem.portal.internal.script.lib.PortalUrlScriptBean;
 
 public final class ServiceResource
     extends ModuleBaseResource
@@ -34,9 +33,6 @@ public final class ServiceResource
         jsRequest.setMethod( getRequest().getMethod().toString() );
         jsRequest.addParams( getParams() );
         context.setRequest( jsRequest );
-
-        final PortalUrlScriptBean portalUrlScriptBean = new PortalUrlScriptBean();
-        context.setPortalUrlScriptBean( portalUrlScriptBean );
 
         final JsController controller = this.controllerFactory.newController();
 

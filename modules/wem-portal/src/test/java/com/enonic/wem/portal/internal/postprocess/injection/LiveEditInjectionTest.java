@@ -13,7 +13,6 @@ import com.enonic.wem.api.rendering.RenderingMode;
 import com.enonic.wem.core.web.servlet.ServletRequestHolder;
 import com.enonic.wem.portal.internal.controller.JsContext;
 import com.enonic.wem.portal.internal.controller.JsHttpRequest;
-import com.enonic.wem.portal.internal.script.lib.PortalUrlScriptBean;
 
 import static org.junit.Assert.*;
 
@@ -33,9 +32,6 @@ public class LiveEditInjectionTest
 
         this.request = new JsHttpRequest();
         this.context.setRequest( this.request );
-
-        final PortalUrlScriptBean urlBean = new PortalUrlScriptBean();
-        this.context.setPortalUrlScriptBean( urlBean );
 
         this.injection = new LiveEditInjection();
     }

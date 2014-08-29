@@ -36,7 +36,6 @@ import com.enonic.wem.portal.internal.controller.JsControllerFactory;
 import com.enonic.wem.portal.internal.controller.JsHttpRequest;
 import com.enonic.wem.portal.internal.controller.JsHttpResponseSerializer;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
-import com.enonic.wem.portal.internal.script.lib.PortalUrlScriptBean;
 
 import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.api.content.site.ModuleConfig.newModuleConfig;
@@ -102,19 +101,15 @@ public final class PageTemplateResource
         context.setSiteContent( siteContent );
         context.setPageTemplate( pageTemplate );
 
+        // set resolved module (with version) from site template
+        final ModuleKey pageTemplateModule = resolvePageTemplateModule( pageTemplate, siteTemplate );
+        context.setResolvedModule( pageTemplateModule.toString() );
+
         final JsHttpRequest jsRequest = new JsHttpRequest();
         jsRequest.setMode( RenderingMode.EDIT );
         jsRequest.setWorkspace( Workspace.from( "stage" ) );
         jsRequest.setMethod( getRequest().getMethod().toString() );
         context.setRequest( jsRequest );
-
-        final PortalUrlScriptBean portalUrlScriptBean = new PortalUrlScriptBean();
-        portalUrlScriptBean.setContentPath( content.getPath().toString() );
-
-        // set resolved module (with version) from site template
-        final ModuleKey pageTemplateModule = resolvePageTemplateModule( pageTemplate, siteTemplate );
-        portalUrlScriptBean.setModule( pageTemplateModule.toString() );
-        context.setPortalUrlScriptBean( portalUrlScriptBean );
 
         final JsController controller = this.controllerFactory.newController();
         controller.scriptDir( pageDescriptor.getResourceKey() );

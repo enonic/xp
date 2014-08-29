@@ -12,7 +12,6 @@ import com.enonic.wem.portal.internal.controller.JsController;
 import com.enonic.wem.portal.internal.controller.JsHttpRequest;
 import com.enonic.wem.portal.internal.controller.JsHttpResponseSerializer;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
-import com.enonic.wem.portal.internal.script.lib.PortalUrlScriptBean;
 
 public final class ContentResource
     extends RenderBaseResource
@@ -45,6 +44,10 @@ public final class ContentResource
         context.setContent( content );
         context.setSiteContent( siteContent );
         context.setPageTemplate( pageTemplate );
+        context.setResolvedModule( pageTemplate.getKey().getModuleName().toString() );
+
+        // createResourceUrl('my.css');
+        // /portal/edit/workspace/path/to/content/_/public/mymodule-1.0.0/my.css
 
         final JsHttpRequest jsRequest = new JsHttpRequest();
         jsRequest.setMode( this.mode );
@@ -52,11 +55,6 @@ public final class ContentResource
         jsRequest.setMethod( getRequest().getMethod().toString() );
         jsRequest.addParams( getParams() );
         context.setRequest( jsRequest );
-
-        final PortalUrlScriptBean portalUrlScriptBean = new PortalUrlScriptBean();
-        portalUrlScriptBean.setContentPath( content.getPath().toString() );
-        portalUrlScriptBean.setModule( pageTemplate.getKey().getModuleName().toString() );
-        context.setPortalUrlScriptBean( portalUrlScriptBean );
 
         final JsController controller = this.controllerFactory.newController();
         controller.scriptDir( pageDescriptor.getResourceKey() );
