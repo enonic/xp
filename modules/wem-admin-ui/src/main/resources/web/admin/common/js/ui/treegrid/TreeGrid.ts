@@ -149,15 +149,19 @@ module api.ui.treegrid {
                         this.scrollToRow(this.grid.moveSelectedDown());
                     }
                 }),
-                new KeyBinding('shift+up', () => {
+                new KeyBinding('shift+up', (event: ExtendedKeyboardEvent) => {
                     if (this.active) {
                         this.scrollToRow(this.grid.addSelectedUp());
                     }
+                    event.preventDefault();
+                    event.stopImmediatePropagation();
                 }),
-                new KeyBinding('shift+down', () => {
+                new KeyBinding('shift+down', (event: ExtendedKeyboardEvent) => {
                     if (this.active) {
                         this.scrollToRow(this.grid.addSelectedDown());
                     }
+                    event.preventDefault();
+                    event.stopImmediatePropagation();
                 }),
                 new KeyBinding('left', () => {
                     var selected = this.grid.getSelectedRows();
