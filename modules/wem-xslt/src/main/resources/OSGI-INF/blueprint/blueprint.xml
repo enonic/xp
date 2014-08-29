@@ -5,7 +5,7 @@
 
   <service auto-export="interfaces" ref="processorFactory"/>
 
-  <service interface="com.enonic.wem.script.ScriptContributor">
+  <service auto-export="interfaces">
     <bean class="com.enonic.wem.xslt.internal.XsltScriptContributor">
       <property name="processorFactory" ref="processorFactory"/>
     </bean>

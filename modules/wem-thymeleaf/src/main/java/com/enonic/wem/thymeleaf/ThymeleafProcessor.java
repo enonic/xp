@@ -1,6 +1,14 @@
 package com.enonic.wem.thymeleaf;
 
+import java.util.Map;
+
+import com.enonic.wem.api.resource.ResourceKey;
+
 public interface ThymeleafProcessor
 {
-    public String render( ThymeleafRenderParams params );
+    public ThymeleafProcessor view( ResourceKey view );
+
+    public ThymeleafProcessor parameters( Map<String, Object> parameters );
+
+    public String process();
 }
