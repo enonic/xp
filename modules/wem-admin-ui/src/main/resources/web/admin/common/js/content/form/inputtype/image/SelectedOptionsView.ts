@@ -97,7 +97,10 @@ module api.content.form.inputtype.image {
             optionView.onClicked((event: MouseEvent) => {
                 if (this.dialog.isVisible()) {
                     this.hideImageSelectorDialog();
-                    optionView.getCheckbox().giveBlur();
+                    if (optionView.getOption().displayValue != this.dialog.getContent()) {
+                        this.showImageSelectorDialog(selectedOption);
+                        optionView.getCheckbox().giveFocus();
+                    }
                 } else {
                     this.showImageSelectorDialog(selectedOption);
                     optionView.getCheckbox().giveFocus();
@@ -129,7 +132,7 @@ module api.content.form.inputtype.image {
             });
 
             optionView.getCheckbox().onFocus((event: FocusEvent) => this.showImageSelectorDialog(selectedOption));
-            optionView.getCheckbox().onBlur((event: FocusEvent) => this.hideImageSelectorDialog());
+//            optionView.getCheckbox().onBlur((event: FocusEvent) => this.hideImageSelectorDialog());
 
             optionView.onChecked((view: SelectedOptionView, checked: boolean) => {
                 if (checked) {
@@ -178,6 +181,9 @@ module api.content.form.inputtype.image {
         }
 
         private showImageSelectorDialog(option: SelectedOption<ImageSelectorDisplayValue>) {
+            if (this.dialog) {
+                this.dialog.remove();
+            }
 
             var selectedOptionViews = this.getOptionViews();
             for (var i = 0; i < selectedOptionViews.length; i++) {
