@@ -4,6 +4,8 @@ module api.dom {
 
         private static instance: Body;
 
+        private childrenLoaded: boolean;
+
         constructor(loadExistingChildren: boolean = false, body?: HTMLElement) {
             if (!body) {
                 body = document.body;
@@ -14,6 +16,7 @@ module api.dom {
                 setParentElement(Element.fromHtmlElement(body.parentElement)));
 
             this.init();
+            this.childrenLoaded = loadExistingChildren;
         }
 
         static get(): Body {
@@ -23,11 +26,16 @@ module api.dom {
             return Body.instance;
         }
 
-        static getAndLoadExistingChildren(): Body {
-            if (!Body.instance) {
-                Body.instance = new Body(true);
+        isChildrenLoaded(): boolean {
+            return this.childrenLoaded;
+        }
+
+        loadExistingChildren(): Body {
+            if (!this.isChildrenLoaded()) {
+                super.loadExistingChildren();
+                this.childrenLoaded = true;
             }
-            return Body.instance;
+            return this;
         }
     }
 }
