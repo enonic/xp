@@ -23,6 +23,11 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>wem-guice</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>wem-api</artifactId>
       <version>${project.version}</version>
       <type>test-jar</type>
@@ -54,6 +59,9 @@
         <artifactId>maven-bundle-plugin</artifactId>
         <configuration>
           <instructions>
+            <Bundle-Activator>
+              com.enonic.wem.mustache.internal.MustacheActivator
+            </Bundle-Activator>
             <Import-Package>
               *
             </Import-Package>
