@@ -22,7 +22,7 @@ import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceProblemException;
 
-final class SaxonXsltHandler2
+final class SaxonXsltHandler
 {
     private final TransformerFactory factory;
 
@@ -36,7 +36,7 @@ final class SaxonXsltHandler2
 
     private Transformer transformer;
 
-    public SaxonXsltHandler2( final TransformerFactory factory )
+    public SaxonXsltHandler( final TransformerFactory factory )
     {
         this.factory = factory;
         this.errors = new XsltProcessorErrors();

@@ -32,7 +32,7 @@ public final class SaxonXsltProcessor
     public String render( final XsltRenderParams params )
     {
         final TransformerFactory factory = createTransformerFactory();
-        final SaxonXsltHandler2 handler = new SaxonXsltHandler2( factory );
+        final SaxonXsltHandler handler = new SaxonXsltHandler( factory );
         handler.setXsltSource( params.getView() );
         handler.setXmlSource( params.getInputXml() );
         handler.setParameters( params.getParameters() );
