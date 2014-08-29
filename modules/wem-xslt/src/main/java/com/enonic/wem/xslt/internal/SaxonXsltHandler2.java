@@ -146,7 +146,11 @@ final class SaxonXsltHandler2
     }
 
     private void setParameters()
+        throws Exception
     {
+        final ContextDocBuilder contextDocBuilder = new ContextDocBuilder();
+        this.transformer.setParameter( "_", contextDocBuilder.createContextDoc() );
+
         if ( this.parameters == null )
         {
             return;

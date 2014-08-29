@@ -1,4 +1,4 @@
-package com.enonic.wem.portal.internal.xml;
+package com.enonic.wem.api.xml;
 
 import javax.xml.parsers.ParserConfigurationException;
 

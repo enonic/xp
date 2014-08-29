@@ -15,9 +15,6 @@ public final class SystemScriptBean
     protected MustacheScriptBean mustache;
 
     @Inject
-    protected XsltScriptBean xslt;
-
-    @Inject
     protected ContentServiceScriptBean contentService;
 
     public MustacheScriptBean getMustache()
@@ -25,9 +22,9 @@ public final class SystemScriptBean
         return this.mustache;
     }
 
-    public XsltScriptBean getXslt()
+    public Object getXslt()
     {
-        return this.xslt;
+        throw new RuntimeException( "Converted to new format. Use require('view/xslt') instead." );
     }
 
     public Object getThymeleaf()

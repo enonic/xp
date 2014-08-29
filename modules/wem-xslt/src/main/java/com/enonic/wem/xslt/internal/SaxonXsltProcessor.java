@@ -6,8 +6,6 @@ import net.sf.saxon.Configuration;
 import net.sf.saxon.TransformerFactoryImpl;
 
 import com.enonic.wem.xslt.XsltProcessor;
-import com.enonic.wem.xslt.XsltProcessorException;
-import com.enonic.wem.xslt.XsltProcessorParams;
 import com.enonic.wem.xslt.XsltRenderParams;
 
 public final class SaxonXsltProcessor
@@ -28,15 +26,6 @@ public final class SaxonXsltProcessor
     private TransformerFactory createTransformerFactory()
     {
         return new TransformerFactoryImpl( this.configuration );
-    }
-
-    @Override
-    public String process( final XsltProcessorParams spec )
-        throws XsltProcessorException
-    {
-        final TransformerFactory factory = createTransformerFactory();
-        final SaxonXsltHandler handler = new SaxonXsltHandler( factory, spec );
-        return handler.process();
     }
 
     @Override

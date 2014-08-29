@@ -2,14 +2,20 @@ package com.enonic.wem.xslt.internal;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import junit.framework.Assert;
 
+import com.enonic.wem.api.entity.Workspace;
+import com.enonic.wem.api.rendering.RenderingMode;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceNotFoundException;
 import com.enonic.wem.api.resource.ResourceProblemException;
 import com.enonic.wem.api.resource.ResourceUrlRegistry;
 import com.enonic.wem.api.resource.ResourceUrlTestHelper;
+import com.enonic.wem.portal.PortalContext;
+import com.enonic.wem.portal.PortalContextAccessor;
+import com.enonic.wem.portal.PortalRequest;
 import com.enonic.wem.xslt.XsltRenderParams;
 
 public class SaxonXsltProcessorTest
@@ -22,6 +28,16 @@ public class SaxonXsltProcessorTest
         final ResourceUrlRegistry urlRegistry = ResourceUrlTestHelper.mockModuleScheme();
         urlRegistry.modulesClassLoader( getClass().getClassLoader() );
         this.processor = new SaxonXsltProcessor();
+
+        final PortalRequest portalRequest = Mockito.mock( PortalRequest.class );
+        Mockito.when( portalRequest.getBaseUri() ).thenReturn( "/root" );
+        Mockito.when( portalRequest.getMode() ).thenReturn( RenderingMode.EDIT );
+        Mockito.when( portalRequest.getWorkspace() ).thenReturn( Workspace.from( "stage" ) );
+
+        final PortalContext portalContext = Mockito.mock( PortalContext.class );
+        Mockito.when( portalContext.getRequest() ).thenReturn( portalRequest );
+
+        PortalContextAccessor.set( portalContext );
     }
 
     @Test(expected = ResourceNotFoundException.class)
