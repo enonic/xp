@@ -68,13 +68,18 @@ module api.ui.time {
 
                 this.popup.show();
             });
-            this.appendChild(this.input);
 
-            this.popupTrigger = new api.ui.button.Button('Change');
+            var wrapper = new api.dom.DivEl('wrapper');
+            wrapper.appendChild(this.input);
+
+            this.popupTrigger = new api.ui.button.Button();
+            this.popupTrigger.addClass('icon-calendar4');
             this.appendChild(this.popupTrigger);
 
             this.popup = new DatePickerPopup(builder);
-            this.appendChild(this.popup);
+            wrapper.appendChild(this.popup);
+
+            this.appendChild(wrapper);
 
             this.popupTrigger.onClicked((e: MouseEvent) => {
                 e.stopPropagation();
