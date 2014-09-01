@@ -24,7 +24,7 @@ class WorkspaceXContentBuilderFactory
         {
             final XContentBuilder builder = startBuilder();
 
-            addField( builder, BLOBKEY_FIELD_NAME, workspaceDocument.getBlobKey().toString() );
+            addField( builder, BLOBKEY_FIELD_NAME, workspaceDocument.getNodeVersionId().toString() );
             addField( builder, WORKSPACE_FIELD_NAME, workspaceDocument.getWorkspace().toString() );
             addField( builder, ENTITY_ID_FIELD_NAME, workspaceDocument.getEntityId().toString() );
             addField( builder, PATH_FIELD_NAME, workspaceDocument.getPath() );

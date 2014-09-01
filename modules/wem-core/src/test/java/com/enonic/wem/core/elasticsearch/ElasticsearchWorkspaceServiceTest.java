@@ -12,14 +12,14 @@ import org.mockito.Mockito;
 
 import com.google.common.collect.Iterators;
 
-import com.enonic.wem.api.blob.BlobKey;
-import com.enonic.wem.api.blob.BlobKeys;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIds;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.NodePaths;
+import com.enonic.wem.api.entity.NodeVersionId;
+import com.enonic.wem.api.entity.NodeVersionIds;
 import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.core.elasticsearch.result.SearchResult;
 import com.enonic.wem.core.elasticsearch.result.SearchResultEntries;
@@ -60,7 +60,7 @@ public class ElasticsearchWorkspaceServiceTest
             build();
 
         final WorkspaceDocument workspaceDocument = WorkspaceDocument.create().
-            blobKey( new BlobKey( "a" ) ).
+            nodeVersionId( NodeVersionId.from( "a" ) ).
             workspace( Workspace.from( "test" ) ).
             parentPath( node.parent() ).
             path( node.path() ).
@@ -86,7 +86,7 @@ public class ElasticsearchWorkspaceServiceTest
             build();
 
         final WorkspaceDocument workspaceDocument = WorkspaceDocument.create().
-            blobKey( new BlobKey( "a" ) ).
+            nodeVersionId( NodeVersionId.from( "a" ) ).
             workspace( Workspace.from( "test" ) ).
             parentPath( node.parent() ).
             path( node.path() ).
@@ -120,7 +120,7 @@ public class ElasticsearchWorkspaceServiceTest
             build();
 
         final WorkspaceDocument workspaceDocument = WorkspaceDocument.create().
-            blobKey( new BlobKey( "b" ) ).
+            nodeVersionId( NodeVersionId.from( "a" ) ).
             workspace( Workspace.from( "test" ) ).
             parentPath( node.parent() ).
             path( node.path() ).
@@ -160,7 +160,7 @@ public class ElasticsearchWorkspaceServiceTest
             results( SearchResultEntries.create().
                 add( SearchResultEntry.create().
                     id( "a" ).
-                    addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, Arrays.asList( "myBlobKey" ) ) ).
+                    addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, Arrays.asList( "versionId" ) ) ).
                     build() ).
                 build() ).
             build();
@@ -170,9 +170,9 @@ public class ElasticsearchWorkspaceServiceTest
 
         final WorkspaceIdQuery idQuery = new WorkspaceIdQuery( Workspace.from( "test" ), EntityId.from( "1" ) );
 
-        final BlobKey blobKey = wsStore.getById( idQuery );
+        final NodeVersionId version = wsStore.getCurrentVersion( idQuery );
 
-        Assert.assertEquals( new BlobKey( "myBlobKey" ), blobKey );
+        Assert.assertEquals( NodeVersionId.from( "versionId" ), version );
     }
 
 
@@ -190,9 +190,9 @@ public class ElasticsearchWorkspaceServiceTest
 
         final WorkspaceIdQuery idQuery = new WorkspaceIdQuery( Workspace.from( "test" ), EntityId.from( "1" ) );
 
-        final BlobKey byId = wsStore.getById( idQuery );
+        final NodeVersionId version = wsStore.getCurrentVersion( idQuery );
 
-        assertTrue( byId == null );
+        assertTrue( version == null );
     }
 
     @Test(expected = ElasticsearchDataException.class)
@@ -212,7 +212,7 @@ public class ElasticsearchWorkspaceServiceTest
 
         final WorkspaceIdQuery idQuery = new WorkspaceIdQuery( Workspace.from( "test" ), EntityId.from( "1" ) );
 
-        wsStore.getById( idQuery );
+        wsStore.getCurrentVersion( idQuery );
     }
 
 
@@ -242,16 +242,16 @@ public class ElasticsearchWorkspaceServiceTest
 
         final WorkspaceIdsQuery idQuery = new WorkspaceIdsQuery( Workspace.from( "test" ), EntityIds.from( "1", "2", "3" ) );
 
-        final BlobKeys blobKeys = wsStore.getByIds( idQuery );
+        final NodeVersionIds versions = wsStore.getByVersionIds( idQuery );
 
-        assertEquals( 3, Iterators.size( blobKeys.iterator() ) );
-        final Iterator<BlobKey> iterator = blobKeys.iterator();
-        BlobKey next = iterator.next();
-        assertEquals( next, new BlobKey( "b" ) );
+        assertEquals( 3, Iterators.size( versions.iterator() ) );
+        final Iterator<NodeVersionId> iterator = versions.iterator();
+        NodeVersionId next = iterator.next();
+        assertEquals( next, NodeVersionId.from( "b" ) );
         next = iterator.next();
-        assertEquals( next, new BlobKey( "a" ) );
+        assertEquals( next, NodeVersionId.from( "a" ) );
         next = iterator.next();
-        assertEquals( next, new BlobKey( "c" ) );
+        assertEquals( next, NodeVersionId.from( "c" ) );
     }
 
     @Test
@@ -280,16 +280,16 @@ public class ElasticsearchWorkspaceServiceTest
 
         final WorkspaceIdsQuery idQuery = new WorkspaceIdsQuery( Workspace.from( "test" ), EntityIds.from( "3", "1", "2" ) );
 
-        final BlobKeys blobKeys = wsStore.getByIds( idQuery );
+        final NodeVersionIds versions = wsStore.getByVersionIds( idQuery );
 
-        assertEquals( 3, Iterators.size( blobKeys.iterator() ) );
-        final Iterator<BlobKey> iterator = blobKeys.iterator();
-        BlobKey next = iterator.next();
-        assertEquals( next, new BlobKey( "c" ) );
+        assertEquals( 3, Iterators.size( versions.iterator() ) );
+        final Iterator<NodeVersionId> iterator = versions.iterator();
+        NodeVersionId next = iterator.next();
+        assertEquals( next, NodeVersionId.from( "c" ) );
         next = iterator.next();
-        assertEquals( next, new BlobKey( "a" ) );
+        assertEquals( next, NodeVersionId.from( "a" ) );
         next = iterator.next();
-        assertEquals( next, new BlobKey( "b" ) );
+        assertEquals( next, NodeVersionId.from( "b" ) );
     }
 
 
@@ -315,9 +315,9 @@ public class ElasticsearchWorkspaceServiceTest
 
         final WorkspaceIdsQuery idQuery = new WorkspaceIdsQuery( Workspace.from( "test" ), EntityIds.from( "2", "3", "1", "4" ) );
 
-        final BlobKeys byIds = wsStore.getByIds( idQuery );
+        final NodeVersionIds versions = wsStore.getByVersionIds( idQuery );
 
-        assertEquals( 2, byIds.size() );
+        assertEquals( 2, versions.getSize() );
     }
 
     @Test
@@ -334,9 +334,9 @@ public class ElasticsearchWorkspaceServiceTest
 
         final WorkspaceIdsQuery idQuery = new WorkspaceIdsQuery( Workspace.from( "test" ), EntityIds.from( "1", "2", "3" ) );
 
-        final BlobKeys result = wsStore.getByIds( idQuery );
+        final NodeVersionIds versions = wsStore.getByVersionIds( idQuery );
 
-        assertEquals( 0, result.size() );
+        assertEquals( 0, versions.getSize() );
     }
 
     @Test
@@ -357,9 +357,9 @@ public class ElasticsearchWorkspaceServiceTest
 
         final WorkspacePathQuery pathQuery = new WorkspacePathQuery( Workspace.from( "test" ), NodePath.newPath( "/test" ).build() );
 
-        final BlobKey blobKey = wsStore.getByPath( pathQuery );
+        final NodeVersionId version = wsStore.getByPath( pathQuery );
 
-        Assert.assertEquals( new BlobKey( "myBlobKey" ), blobKey );
+        Assert.assertEquals( NodeVersionId.from( "myBlobKey" ), version );
     }
 
     @Test
@@ -376,9 +376,9 @@ public class ElasticsearchWorkspaceServiceTest
 
         final WorkspacePathQuery pathQuery = new WorkspacePathQuery( Workspace.from( "test" ), NodePath.newPath( "/test" ).build() );
 
-        final BlobKey result = wsStore.getByPath( pathQuery );
+        final NodeVersionId version = wsStore.getByPath( pathQuery );
 
-        assertTrue( result == null );
+        assertTrue( version == null );
     }
 
     @Test
@@ -410,16 +410,16 @@ public class ElasticsearchWorkspaceServiceTest
                                                                                         NodePath.newPath( "/test2" ).build(),
                                                                                         NodePath.newPath( "/test3" ).build() ) );
 
-        final BlobKeys byPaths = wsStore.getByPaths( pathsQuery );
+        final NodeVersionIds versions = wsStore.getByPaths( pathsQuery );
 
-        assertEquals( 3, Iterators.size( byPaths.iterator() ) );
-        final Iterator<BlobKey> iterator = byPaths.iterator();
-        BlobKey next = iterator.next();
-        assertEquals( next, new BlobKey( "b" ) );
+        assertEquals( 3, Iterators.size( versions.iterator() ) );
+        final Iterator<NodeVersionId> iterator = versions.iterator();
+        NodeVersionId next = iterator.next();
+        assertEquals( next, NodeVersionId.from( "b" ) );
         next = iterator.next();
-        assertEquals( next, new BlobKey( "a" ) );
+        assertEquals( next, NodeVersionId.from( "a" ) );
         next = iterator.next();
-        assertEquals( next, new BlobKey( "c" ) );
+        assertEquals( next, NodeVersionId.from( "c" ) );
     }
 
     @Test
@@ -447,9 +447,8 @@ public class ElasticsearchWorkspaceServiceTest
                                                                                         NodePath.newPath( "/test2" ).build(),
                                                                                         NodePath.newPath( "/test3" ).build() ) );
 
-        final BlobKeys result = wsStore.getByPaths( pathsQuery );
-
-        assertEquals( 2, result.size() );
+        final NodeVersionIds versions = wsStore.getByPaths( pathsQuery );
+        assertEquals( 2, versions.getSize() );
     }
 
     @Test
@@ -479,16 +478,16 @@ public class ElasticsearchWorkspaceServiceTest
 
         final WorkspaceParentQuery query = new WorkspaceParentQuery( Workspace.from( "test" ), NodePath.newPath( "/test" ).build() );
 
-        final BlobKeys blobKeys = wsStore.getByParent( query );
+        final NodeVersionIds versions = wsStore.findByParent( query );
 
-        assertEquals( 3, Iterators.size( blobKeys.iterator() ) );
-        final Iterator<BlobKey> iterator = blobKeys.iterator();
-        BlobKey next = iterator.next();
-        assertEquals( next, new BlobKey( "b" ) );
+        assertEquals( 3, Iterators.size( versions.iterator() ) );
+        final Iterator<NodeVersionId> iterator = versions.iterator();
+        NodeVersionId next = iterator.next();
+        assertEquals( next, NodeVersionId.from( "b" ) );
         next = iterator.next();
-        assertEquals( next, new BlobKey( "a" ) );
+        assertEquals( next, NodeVersionId.from( "a" ) );
         next = iterator.next();
-        assertEquals( next, new BlobKey( "c" ) );
+        assertEquals( next, NodeVersionId.from( "c" ) );
     }
 
     @Test
@@ -505,8 +504,8 @@ public class ElasticsearchWorkspaceServiceTest
 
         final WorkspaceParentQuery query = new WorkspaceParentQuery( Workspace.from( "test" ), NodePath.newPath( "/test" ).build() );
 
-        final BlobKeys blobKeys = wsStore.getByParent( query );
+        final NodeVersionIds versions = wsStore.findByParent( query );
 
-        assertEquals( 0, Iterators.size( blobKeys.iterator() ) );
+        assertEquals( 0, Iterators.size( versions.iterator() ) );
     }
 }

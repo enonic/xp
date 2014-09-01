@@ -9,6 +9,7 @@ import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.entity.FindNodesByParentParams;
 import com.enonic.wem.api.entity.FindNodesByParentResult;
+import com.enonic.wem.api.entity.NodeVersionIds;
 import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.entity.query.NodeQuery;
 import com.enonic.wem.api.query.expr.FieldExpr;
@@ -18,6 +19,7 @@ import com.enonic.wem.api.query.expr.QueryExpr;
 import com.enonic.wem.api.query.filter.Filter;
 import com.enonic.wem.core.entity.index.NodeIndexDocumentFactory;
 import com.enonic.wem.core.index.query.NodeQueryResult;
+import com.enonic.wem.core.workspace.query.WorkspaceIdsQuery;
 
 public class FindNodesByParentCommand
     extends AbstractFindNodeCommand
@@ -41,7 +43,10 @@ public class FindNodesByParentCommand
 
         final NodeQueryResult nodeQueryResult = this.queryService.find( query, this.context.getWorkspace() );
 
-        final Nodes nodes = nodeDao.getByIds( nodeQueryResult.getEntityIds(), this.context.getWorkspace() );
+        final NodeVersionIds versions =
+            this.workspaceService.getByVersionIds( new WorkspaceIdsQuery( this.context.getWorkspace(), nodeQueryResult.getEntityIds() ) );
+
+        final Nodes nodes = nodeDao.getByVersionIds( versions );
 
         return FindNodesByParentResult.create().
             nodes( nodes ).

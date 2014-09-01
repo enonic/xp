@@ -34,7 +34,7 @@ public interface NodeService
 
     NodeComparisons compare( final EntityIds ids, final Workspace target, final Context context );
 
-    FindNodeVersionsResult getVersions( final GetNodeVersionsParams params, final Context context );
+    FindNodeVersionsResult findVersions( final GetNodeVersionsParams params, final Context context );
 
     GetActiveNodeVersionsResult getActiveVersions( final GetActiveNodeVersionsParams params, final Context context );
 

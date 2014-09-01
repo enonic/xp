@@ -38,7 +38,7 @@ public class FindContentVersionsCommand
     {
         final EntityId entityId = EntityId.from( this.contentId );
 
-        final FindNodeVersionsResult findNodeVersionsResult = nodeService.getVersions( GetNodeVersionsParams.create().
+        final FindNodeVersionsResult findNodeVersionsResult = nodeService.findVersions( GetNodeVersionsParams.create().
             entityId( entityId ).
             from( this.from ).
             size( this.size ).

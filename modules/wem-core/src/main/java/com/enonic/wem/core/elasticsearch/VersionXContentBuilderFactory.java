@@ -22,7 +22,7 @@ public class VersionXContentBuilderFactory
         {
             final XContentBuilder builder = startBuilder();
 
-            addField( builder, BLOBKEY_FIELD_NAME, entityVersionDocument.getBlobKey().toString() );
+            addField( builder, BLOBKEY_FIELD_NAME, entityVersionDocument.getNodeVersionId().toString() );
             addField( builder, ENTITY_ID_FIELD_NAME, entityVersionDocument.getEntityId().toString() );
             addField( builder, TIMESTAMP_ID_FIELD_NAME, Instant.now() );
 

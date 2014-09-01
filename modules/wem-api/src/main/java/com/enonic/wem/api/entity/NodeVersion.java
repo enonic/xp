@@ -6,19 +6,19 @@ public class NodeVersion
     implements Comparable<NodeVersion>
 {
 
-    private final EntityVersionId entityVersionId;
+    private final NodeVersionId nodeVersionId;
 
     private final Instant timestamp;
 
-    public NodeVersion( final EntityVersionId entityVersionId, final Instant timestamp )
+    public NodeVersion( final NodeVersionId nodeVersionId, final Instant timestamp )
     {
-        this.entityVersionId = entityVersionId;
+        this.nodeVersionId = nodeVersionId;
         this.timestamp = timestamp;
     }
 
-    public EntityVersionId getId()
+    public NodeVersionId getId()
     {
-        return entityVersionId;
+        return nodeVersionId;
     }
 
     public Instant getTimestamp()
@@ -58,7 +58,7 @@ public class NodeVersion
 
         final NodeVersion that = (NodeVersion) o;
 
-        if ( !entityVersionId.equals( that.entityVersionId ) )
+        if ( !nodeVersionId.equals( that.nodeVersionId ) )
         {
             return false;
         }
@@ -73,7 +73,7 @@ public class NodeVersion
     @Override
     public int hashCode()
     {
-        int result = entityVersionId.hashCode();
+        int result = nodeVersionId.hashCode();
         result = 31 * result + timestamp.hashCode();
         return result;
     }

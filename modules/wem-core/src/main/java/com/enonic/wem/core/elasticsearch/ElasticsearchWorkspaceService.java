@@ -29,6 +29,8 @@ import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.blob.BlobKeys;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIds;
+import com.enonic.wem.api.entity.NodeVersionId;
+import com.enonic.wem.api.entity.NodeVersionIds;
 import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.core.elasticsearch.result.SearchResult;
 import com.enonic.wem.core.elasticsearch.result.SearchResultEntry;
@@ -97,7 +99,7 @@ public class ElasticsearchWorkspaceService
     }
 
     @Override
-    public BlobKey getById( final WorkspaceIdQuery query )
+    public NodeVersionId getCurrentVersion( final WorkspaceIdQuery query )
     {
         final EntityId entityId = query.getEntityId();
 
@@ -117,7 +119,7 @@ public class ElasticsearchWorkspaceService
                                                       " in workspace " + query.getWorkspace().getName() );
         }
 
-        return new BlobKey( field.getValue().toString() );
+        return NodeVersionId.from( field.getValue().toString() );
     }
 
     private SearchResultEntry doGetById( final EntityId entityId, final Workspace workspace, final String field )
@@ -157,14 +159,14 @@ public class ElasticsearchWorkspaceService
      * @return
      */
     @Override
-    public BlobKeys getByIds( final WorkspaceIdsQuery query )
+    public NodeVersionIds getByVersionIds( final WorkspaceIdsQuery query )
     {
         final Set<String> entityIdsAsStrings = query.getEntityIdsAsStrings();
 
         return doGetByIds( query.getWorkspace(), entityIdsAsStrings );
     }
 
-    private BlobKeys doGetByIds( final Workspace workspace, final Set<String> entityIdsAsStrings )
+    private NodeVersionIds doGetByIds( final Workspace workspace, final Set<String> entityIdsAsStrings )
     {
         final String workspaceName = workspace.getName();
 
@@ -176,15 +178,13 @@ public class ElasticsearchWorkspaceService
 
         if ( searchResult.isEmpty() )
         {
-            return BlobKeys.empty();
+            return NodeVersionIds.empty();
         }
 
         final Map<String, SearchResultField> orderedResultMap =
             getSearchResultFieldsWithPreservedOrder( workspace, entityIdsAsStrings, searchResult );
 
-        final BlobKeys blobKeys = fieldValuesToBlobKeys( orderedResultMap.values() );
-
-        return blobKeys;
+        return fieldValuesToVersionIds( orderedResultMap.values() );
     }
 
     private Map<String, SearchResultField> getSearchResultFieldsWithPreservedOrder( final Workspace workspace,
@@ -196,7 +196,7 @@ public class ElasticsearchWorkspaceService
 
 
     @Override
-    public BlobKey getByPath( final WorkspacePathQuery query )
+    public NodeVersionId getByPath( final WorkspacePathQuery query )
     {
         final TermQueryBuilder parentQuery = new TermQueryBuilder( PATH_FIELD_NAME, query.getNodePathAsString() );
         final BoolQueryBuilder workspacedByPathQuery = joinWithWorkspaceQuery( query.getWorkspace().getName(), parentQuery );
@@ -221,11 +221,11 @@ public class ElasticsearchWorkspaceService
                                                       " in workspace " + query.getWorkspace() );
         }
 
-        return new BlobKey( value.toString() );
+        return NodeVersionId.from( value.toString() );
     }
 
     @Override
-    public BlobKeys getByPaths( final WorkspacePathsQuery query )
+    public NodeVersionIds getByPaths( final WorkspacePathsQuery query )
     {
         final TermsQueryBuilder parentQuery = new TermsQueryBuilder( PATH_FIELD_NAME, query.getNodePathsAsStrings() );
         final BoolQueryBuilder workspacedByPathsQuery = joinWithWorkspaceQuery( query.getWorkspace().getName(), parentQuery );
@@ -235,11 +235,11 @@ public class ElasticsearchWorkspaceService
 
         final Set<SearchResultField> fieldValues = searchResult.getResults().getFields( BLOBKEY_FIELD_NAME );
 
-        return fieldValuesToBlobKeys( fieldValues );
+        return fieldValuesToVersionIds( fieldValues );
     }
 
     @Override
-    public BlobKeys getByParent( final WorkspaceParentQuery query )
+    public NodeVersionIds findByParent( final WorkspaceParentQuery query )
     {
         final TermQueryBuilder parentQuery = new TermQueryBuilder( PARENT_PATH_FIELD_NAME, query.getParentPath() );
         final BoolQueryBuilder byParentQuery = joinWithWorkspaceQuery( query.getWorkspace().getName(), parentQuery );
@@ -250,12 +250,12 @@ public class ElasticsearchWorkspaceService
 
         if ( searchResult.getResults().getSize() == 0 )
         {
-            return BlobKeys.empty();
+            return NodeVersionIds.empty();
         }
 
         final Set<SearchResultField> fieldValues = searchResult.getResults().getFields( BLOBKEY_FIELD_NAME );
 
-        return fieldValuesToBlobKeys( fieldValues );
+        return fieldValuesToVersionIds( fieldValues );
     }
 
     @Override
@@ -303,6 +303,22 @@ public class ElasticsearchWorkspaceService
             throw new ClassCastException(
                 "Aggregation of unexpected type, should be BucketAggregation, was " + changedAggregation.getClass().getName() );
         }
+    }
+
+    private NodeVersionIds fieldValuesToVersionIds( final Collection<SearchResultField> fieldValues )
+    {
+        final NodeVersionIds.Builder builder = NodeVersionIds.create();
+
+        for ( final SearchResultField searchResultField : fieldValues )
+        {
+            if ( searchResultField == null )
+            {
+                continue;
+            }
+
+            builder.add( NodeVersionId.from( searchResultField.getValue().toString() ) );
+        }
+        return builder.build();
     }
 
     private BlobKeys fieldValuesToBlobKeys( final Collection<SearchResultField> fieldValues )

@@ -1,5 +1,7 @@
 package com.enonic.wem.core.entity;
 
+import java.time.Instant;
+
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.EntityId;
@@ -7,21 +9,21 @@ import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeAlreadyExistException;
 import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodePath;
+import com.enonic.wem.api.entity.NodeVersionId;
+import com.enonic.wem.api.entity.NodeVersionIds;
 import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.entity.RenameNodeParams;
 import com.enonic.wem.api.entity.Workspace;
-import com.enonic.wem.api.util.Exceptions;
-import com.enonic.wem.core.elasticsearch.ElasticsearchIndexService;
-import com.enonic.wem.core.entity.dao.MoveNodeArguments;
 import com.enonic.wem.core.entity.dao.NodeDao;
-import com.enonic.wem.core.entity.dao.NodeNotFoundException;
+import com.enonic.wem.core.version.EntityVersionDocument;
+import com.enonic.wem.core.workspace.WorkspaceDocument;
+import com.enonic.wem.core.workspace.query.WorkspaceParentQuery;
+import com.enonic.wem.core.workspace.query.WorkspacePathQuery;
 
 final class RenameNodeCommand
     extends AbstractNodeCommand
 {
     private final RenameNodeParams params;
-
-    private final ElasticsearchIndexService indexService;
 
     private final NodeDao nodeDao;
 
@@ -30,69 +32,62 @@ final class RenameNodeCommand
         super( builder );
 
         this.params = builder.params;
-        this.indexService = builder.indexService;
         this.nodeDao = builder.nodeDao;
     }
 
     Node execute()
     {
-        this.params.validate();
-
-        try
-        {
-            return doExecute();
-        }
-        catch ( NodeAlreadyExistException e )
-        {
-            throw e;
-        }
-        catch ( Exception e )
-        {
-            throw Exceptions.newRutime( "Error renaming node" ).withCause( e );
-        }
-    }
-
-    private Node doExecute()
-    {
         final EntityId entityId = params.getEntityId();
         final Workspace workspace = this.context.getWorkspace();
 
-        final Node nodeToBeRenamed = nodeDao.getById( entityId, workspace );
-
-        if ( nodeToBeRenamed == null )
-        {
-            throw new NodeNotFoundException( "Node with id " + entityId + " not found" );
-        }
+        final NodeVersionId currentVersion = this.getCurrentVersionInWorkspace( workspace, entityId, true );
+        final Node nodeToBeRenamed = nodeDao.getByVersionId( currentVersion );
 
         final NodePath parentPath = nodeToBeRenamed.parent().asAbsolute();
-        final NodePath targetPath = new NodePath( parentPath, params.getNodeName() );
-        final EntityId existingNodeId = getNodeIdFromPath( targetPath );
+        final NodePath targetPath = new NodePath( parentPath, params.getNewNodeName() );
+        final EntityId existingNodeAtTargetPath = getExistingNode( targetPath );
 
-        if ( ( existingNodeId != null ) && !nodeToBeRenamed.id().equals( existingNodeId ) )
+        if ( ( existingNodeAtTargetPath != null ) && !nodeToBeRenamed.id().equals( existingNodeAtTargetPath ) )
         {
             throw new NodeAlreadyExistException( targetPath );
         }
 
-        final Nodes children = nodeDao.getByParent( nodeToBeRenamed.path(), workspace );
+        final Nodes children = getChildNodes( workspace, nodeToBeRenamed );
 
-        final Node renamedNode = doMoveNode( parentPath, params.getNodeName(), params.getEntityId() );
+        final Node renamedNode = doMoveNode( parentPath, params.getNewNodeName(), params.getEntityId() );
 
-        moveNodesToNewParentPath( children, renamedNode.path() );
+        if ( !children.isEmpty() )
+        {
+            moveNodesToNewParentPath( children, renamedNode.path() );
+        }
 
         return renamedNode;
     }
 
-    private EntityId getNodeIdFromPath( final NodePath path )
+    private Nodes getChildNodes( final Workspace workspace, final Node parentNode )
     {
-        try
+        final NodeVersionIds childrenVersions = workspaceService.findByParent( new WorkspaceParentQuery( workspace, parentNode.path() ) );
+
+        if ( childrenVersions.isEmpty() )
         {
-            final Node existingNode = nodeDao.getByPath( path, this.context.getWorkspace() );
-            return existingNode == null ? null : existingNode.id();
+            return Nodes.empty();
         }
-        catch ( final NodeNotFoundException e )
+
+        return nodeDao.getByVersionIds( childrenVersions );
+    }
+
+    private EntityId getExistingNode( final NodePath path )
+    {
+        final NodeVersionId existingVersion = workspaceService.getByPath( new WorkspacePathQuery( this.context.getWorkspace(), path ) );
+
+        if ( existingVersion == null )
         {
             return null;
         }
+
+        final Node existingNode = nodeDao.getByVersionId( existingVersion );
+
+        return existingNode == null ? null : existingNode.id();
     }
 
     private void moveNodesToNewParentPath( final Nodes nodes, final NodePath newParentPath )
@@ -101,7 +96,7 @@ final class RenameNodeCommand
         {
             final Node movedNode = doMoveNode( newParentPath, node.name(), node.id() );
 
-            final Nodes children = nodeDao.getByParent( node.path(), this.context.getWorkspace() );
+            final Nodes children = getChildNodes( this.context.getWorkspace(), movedNode );
 
             if ( children != null && children.isNotEmpty() )
             {
@@ -112,18 +107,41 @@ final class RenameNodeCommand
 
     private Node doMoveNode( final NodePath newParentPath, final NodeName newNodeName, final EntityId id )
     {
-        final MoveNodeArguments moveChildArgument = MoveNodeArguments.newMoveNode().
-            name( newNodeName ).
-            parentPath( newParentPath ).
-            updater( UserKey.superUser() ).
-            nodeToMove( id ).
-            build();
-
         final Workspace workspace = this.context.getWorkspace();
 
-        nodeDao.move( moveChildArgument, workspace );
+        final NodeVersionId currentVersion = this.getCurrentVersionInWorkspace( workspace, id, true );
 
-        final Node movedNode = nodeDao.getById( id, workspace );
+        final Node persistedNode = nodeDao.getByVersionId( currentVersion );
+
+        if ( persistedNode.path().equals( new NodePath( newParentPath, newNodeName ) ) )
+        {
+            return persistedNode;
+        }
+
+        final Instant now = Instant.now();
+
+        final Node movedNode = Node.newNode( persistedNode ).
+            name( newNodeName ).
+            parent( newParentPath ).
+            modifiedTime( now ).
+            modifier( UserKey.superUser() ).
+            entityIndexConfig( persistedNode.getEntityIndexConfig() ).
+            build();
+
+        final NodeVersionId newVersion = nodeDao.store( movedNode );
+
+        workspaceService.store( WorkspaceDocument.create().
+            id( movedNode.id() ).
+            parentPath( movedNode.parent() ).
+            path( movedNode.path() ).
+            workspace( workspace ).
+            nodeVersionId( newVersion ).
+            build() );
+
+        versionService.store( EntityVersionDocument.create().
+            entityId( movedNode.id() ).
+            nodeVersionId( newVersion ).
+            build() );
 
         indexService.index( movedNode, workspace );
 
@@ -145,19 +163,11 @@ final class RenameNodeCommand
 
         private RenameNodeParams params;
 
-        private ElasticsearchIndexService indexService;
-
         private NodeDao nodeDao;
 
         public Builder params( RenameNodeParams params )
         {
             this.params = params;
-            return this;
-        }
-
-        public Builder indexService( final ElasticsearchIndexService indexService )
-        {
-            this.indexService = indexService;
             return this;
         }
 

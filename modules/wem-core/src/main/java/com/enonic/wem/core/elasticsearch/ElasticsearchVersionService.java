@@ -11,11 +11,10 @@ import org.elasticsearch.search.sort.SortOrder;
 
 import com.google.inject.Inject;
 
-import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.EntityVersionId;
 import com.enonic.wem.api.entity.FindNodeVersionsResult;
 import com.enonic.wem.api.entity.NodeVersion;
+import com.enonic.wem.api.entity.NodeVersionId;
 import com.enonic.wem.api.entity.NodeVersions;
 import com.enonic.wem.core.elasticsearch.result.SearchResult;
 import com.enonic.wem.core.elasticsearch.result.SearchResultEntry;
@@ -46,16 +45,16 @@ public class ElasticsearchVersionService
             index( VERSION_INDEX.getName() ).
             type( IndexType.NODE.getName() ).
             source( VersionXContentBuilderFactory.create( entityVersionDocument ) ).
-            id( entityVersionDocument.getId().toString() ).
+            id( entityVersionDocument.getNodeVersionId().toString() ).
             refresh( DEFAULT_REFRESH );
 
         elasticsearchDao.store( versionsDocument );
     }
 
     @Override
-    public NodeVersion getVersion( final BlobKey blobKey )
+    public NodeVersion getVersion( final NodeVersionId nodeVersionId )
     {
-        final SearchResult searchResult = doGetFromBlobKey( blobKey );
+        final SearchResult searchResult = doGetFromVersionId( nodeVersionId );
 
         final SearchResultEntry searchHit = searchResult.getResults().getFirstHit();
 
@@ -67,7 +66,7 @@ public class ElasticsearchVersionService
         final String timestamp = getStringValue( hit, TIMESTAMP_ID_FIELD_NAME, true );
         final String blobKey = getStringValue( hit, BLOBKEY_FIELD_NAME, true );
 
-        return new NodeVersion( new EntityVersionId( blobKey ), Instant.parse( timestamp ) );
+        return new NodeVersion( NodeVersionId.from( blobKey ), Instant.parse( timestamp ) );
     }
 
     @Override
@@ -116,9 +115,9 @@ public class ElasticsearchVersionService
         return searchResults;
     }
 
-    private SearchResult doGetFromBlobKey( final BlobKey blobKey )
+    private SearchResult doGetFromVersionId( final NodeVersionId nodeVersionId )
     {
-        final TermQueryBuilder blobKeyQuery = new TermQueryBuilder( BLOBKEY_FIELD_NAME, blobKey.toString() );
+        final TermQueryBuilder blobKeyQuery = new TermQueryBuilder( BLOBKEY_FIELD_NAME, nodeVersionId.toString() );
 
         final QueryMetaData queryMetaData = createQueryMetaData( 0, 1, BLOBKEY_FIELD_NAME, TIMESTAMP_ID_FIELD_NAME );
 
@@ -126,7 +125,7 @@ public class ElasticsearchVersionService
 
         if ( searchResult.isEmpty() )
         {
-            throw new RuntimeException( "Did not find version entry with blobKey: " + blobKey );
+            throw new RuntimeException( "Did not find version entry with blobKey: " + nodeVersionId );
         }
         return searchResult;
     }
