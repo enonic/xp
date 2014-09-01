@@ -465,13 +465,18 @@ module api.ui.treegrid {
             dataList.forEach((elem: NODE) => {
                 var node = root.findNode(elem);
                 if (node && node.getParent()) {
-                    updated.push(node.getParent());
-                    node.getParent().removeChild(node);
+                    var parent = node.getParent();
+                    updated.push(parent);
+                    parent.removeChild(node);
+                    parent.setMaxChildren(parent.getMaxChildren() - 1);
                     updated.filter((el) => {
                         return el.getDataId() !== node.getId();
                     });
                 }
             });
+
+            // TODO: For future use. Implement single node update by node id.
+            /*
             var promises = updated.map((el) => {
                 return this.fetch(el);
             });
@@ -484,6 +489,7 @@ module api.ui.treegrid {
             }).finally(() => {
                 this.active = true;
             }).done(() => this.notifyLoaded());
+            */
         }
 
         initData(nodes: TreeNode<NODE>[]) {
