@@ -651,7 +651,7 @@ module app.wizard {
         }
 
         private isSplitView(): boolean {
-            return this.getSplitPanel().hasClass("toggle-split");
+            return this.getSplitPanel() && this.getSplitPanel().hasClass("toggle-split");
         }
 
         private handleSiteTemplateChanged(siteTemplateChanged: SiteTemplateChangedEvent) {
