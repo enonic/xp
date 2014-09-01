@@ -65,7 +65,7 @@
         },
         {
             "Input": {
-                "name": "myLocalTime",
+                "name": "myTime",
                 "label": null,
                 "immutable": false,
                 "occurrences": {
