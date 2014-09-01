@@ -1,0 +1,27 @@
+{
+    "name": "time",
+    "displayName": "Local Time",
+    "superType": "structured",
+    "isAbstract": false,
+    "isFinal": true,
+    "form": [
+        {
+            "Input": {
+                "name": "time",
+                "label": "local time",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 0
+                },
+                "indexed": true,
+                "customText": "Custom text",
+                "validationRegexp": null,
+                "helpText": "..that's the question!",
+                "type": {
+                    "name": "Time"
+                }
+            }
+        }
+    ]
+}
