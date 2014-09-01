@@ -1,5 +1,6 @@
 package com.enonic.wem.core.schema.content;
 
+import org.apache.commons.lang.WordUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -18,6 +19,12 @@ import static org.junit.Assert.*;
 
 public class CreateContentTypeCommandTest
 {
+    private static final ContentType SHORTCUT = createSystemType( ContentTypeName.shortcut() ).
+        setFinal( true ).setAbstract( false ).build();
+
+    private static final ContentType STRUCTURED = createSystemType( ContentTypeName.structured() ).
+        setFinal( false ).setAbstract( true ).build();
+
     private CreateContentTypeCommand command;
 
     private ContentTypeDao contentTypeDao;
@@ -40,7 +47,7 @@ public class CreateContentTypeCommandTest
     {
         // setup
         Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn(
-            ContentTypes.from( ContentTypesInitializer.STRUCTURED ) );
+            ContentTypes.from( STRUCTURED ) );
 
         final ContentType contentType = newContentType().
             name( "mymodule-1.0.0:my_content_type" ).
@@ -76,7 +83,7 @@ public class CreateContentTypeCommandTest
     {
         //setup
         Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn(
-            ContentTypes.from( ContentTypesInitializer.SHORTCUT ) );
+            ContentTypes.from( SHORTCUT ) );
 
         final ContentType contentType = newContentType().
             name( "mymodule-1.0.0:my_content_type" ).
@@ -101,4 +108,13 @@ public class CreateContentTypeCommandTest
         this.command.params( params ).execute();
     }
 
+
+    private static ContentType.Builder createSystemType( final ContentTypeName contentTypeName )
+    {
+        final String displayName = WordUtils.capitalize( contentTypeName.getContentTypeName() );
+        return newContentType().
+            name( contentTypeName ).
+            displayName( displayName ).
+            setBuiltIn();
+    }
 }

@@ -9,16 +9,13 @@ import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeService;
 import com.enonic.wem.core.initializer.InitializerTaskBinder;
 import com.enonic.wem.core.schema.content.ContentTypeServiceImpl;
-import com.enonic.wem.core.schema.content.ContentTypesInitializer;
 import com.enonic.wem.core.schema.content.DemoImagesInitializer;
 import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 import com.enonic.wem.core.schema.content.dao.ContentTypeDaoImpl;
 import com.enonic.wem.core.schema.mixin.MixinServiceImpl;
-import com.enonic.wem.core.schema.mixin.MixinsInitializer;
 import com.enonic.wem.core.schema.mixin.dao.MixinDao;
 import com.enonic.wem.core.schema.mixin.dao.MixinDaoImpl;
 import com.enonic.wem.core.schema.relationship.RelationshipTypeServiceImpl;
-import com.enonic.wem.core.schema.relationship.RelationshipTypesInitializer;
 import com.enonic.wem.core.schema.relationship.dao.RelationshipTypeDao;
 import com.enonic.wem.core.schema.relationship.dao.RelationshipTypeDaoImpl;
 
@@ -37,9 +34,6 @@ public final class SchemaModule
         bind( SchemaService.class ).to( SchemaServiceImpl.class ).in( Scopes.SINGLETON );
 
         final InitializerTaskBinder tasks = InitializerTaskBinder.from( binder() );
-        tasks.add( ContentTypesInitializer.class );
-        tasks.add( MixinsInitializer.class );
-        tasks.add( RelationshipTypesInitializer.class );
         tasks.add( DemoImagesInitializer.class );
     }
 }

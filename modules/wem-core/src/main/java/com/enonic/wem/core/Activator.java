@@ -33,6 +33,10 @@ import com.enonic.wem.core.lifecycle.LifecycleService;
 import com.enonic.wem.core.module.ModuleKeyResolverService;
 import com.enonic.wem.core.module.ModuleLoader;
 import com.enonic.wem.core.module.ModuleURLStreamHandler;
+import com.enonic.wem.core.schema.SchemaManagerImpl;
+import com.enonic.wem.core.schema.content.CoreContentTypesProvider;
+import com.enonic.wem.core.schema.mixin.CoreMixinsProvider;
+import com.enonic.wem.core.schema.relationship.CoreRelationshipTypesProvider;
 import com.enonic.wem.guice.GuiceActivator;
 
 public final class Activator
@@ -43,6 +47,9 @@ public final class Activator
 
     @Inject
     protected ModuleLoader moduleLoader;
+
+    @Inject
+    protected SchemaManagerImpl schemaManager;
 
     @Override
     protected void configure()
@@ -81,6 +88,9 @@ public final class Activator
         service( StartupInitializer.class ).export();
         service( ModuleURLStreamHandler.class ).attribute( "url.handler.protocol", "module" ).export();
         service( EventPublisher.class ).export();
+        service( CoreContentTypesProvider.class ).export();
+        service( CoreMixinsProvider.class ).export();
+        service( CoreRelationshipTypesProvider.class ).export();
     }
 
     @Override
@@ -89,6 +99,7 @@ public final class Activator
     {
         this.moduleLoader.start();
         this.lifecycleService.startAll();
+        this.schemaManager.start();
     }
 
     @Override
@@ -97,5 +108,6 @@ public final class Activator
     {
         this.lifecycleService.stopAll();
         this.moduleLoader.stop();
+        this.schemaManager.stop();
     }
 }

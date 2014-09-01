@@ -101,7 +101,7 @@ public class DemoImagesInitializer
 
         final CreateContentParams params = new CreateContentParams().
             contentType( ContentTypeName.imageMedia() ).
-            form( ContentTypesInitializer.MEDIA_IMAGE_FORM ).
+            form( CoreContentTypesProvider.MEDIA_IMAGE_FORM ).
             displayName( displayName ).
             name( filteredFileName ).
             parent( parent ).

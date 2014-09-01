@@ -1,23 +1,24 @@
 package com.enonic.wem.core.schema.relationship;
 
 
-import javax.inject.Inject;
+import java.util.List;
 
+import com.google.common.collect.Lists;
+
+import com.enonic.wem.api.schema.SchemaProvider;
+import com.enonic.wem.api.schema.Schemas;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
-import com.enonic.wem.api.schema.relationship.CreateRelationshipTypeParams;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
-import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
-import com.enonic.wem.api.schema.relationship.RelationshipTypeService;
-import com.enonic.wem.api.schema.relationship.UpdateRelationshipTypeParams;
-import com.enonic.wem.api.schema.relationship.editor.RelationshipTypeEditor;
-import com.enonic.wem.core.support.BaseInitializer;
+import com.enonic.wem.core.support.BaseCoreSchemaProvider;
 
 import static com.enonic.wem.api.schema.relationship.RelationshipType.newRelationshipType;
 
 
-public class RelationshipTypesInitializer
-    extends BaseInitializer
+public class CoreRelationshipTypesProvider
+    extends BaseCoreSchemaProvider
+    implements SchemaProvider
+
 {
     private static final RelationshipType DEFAULT =
         createRelationshipType( RelationshipTypeName.DEFAULT, "Default", "relates to", "related of" );
@@ -38,68 +39,26 @@ public class RelationshipTypesInitializer
 
     private static final RelationshipType[] SYSTEM_TYPES = {DEFAULT, PARENT, LINK, LIKE, CITATION, IMAGE};
 
-    @Inject
-    private RelationshipTypeService relationshipTypeService;
 
-    protected RelationshipTypesInitializer()
+    protected CoreRelationshipTypesProvider()
     {
-        super( 10, "relationship-types" );
+        super( "relationship-types" );
     }
 
     @Override
-    public void initialize()
-        throws Exception
+    public Schemas getSchemas()
     {
+        List<RelationshipType> relationshipTypes = Lists.newArrayList();
         for ( RelationshipType relationshipType : SYSTEM_TYPES )
         {
             relationshipType = RelationshipType.newRelationshipType( relationshipType ).
                 icon( loadSchemaIcon( relationshipType.getName().toString() ) ).
                 build();
-            createOrUpdate( relationshipType );
+            relationshipTypes.add( relationshipType );
         }
+        return Schemas.from( relationshipTypes );
     }
 
-    private void createOrUpdate( final RelationshipType relationshipType )
-    {
-        final RelationshipTypeNames relationshipTypeNames = RelationshipTypeNames.from( relationshipType.getName() );
-
-        final boolean notExists = relationshipTypeService.exists( relationshipTypeNames ).isEmpty();
-        if ( notExists )
-        {
-            final CreateRelationshipTypeParams createParams = new CreateRelationshipTypeParams().
-                name( relationshipType.getName() ).
-                displayName( relationshipType.getDisplayName() ).
-                fromSemantic( relationshipType.getFromSemantic() ).
-                toSemantic( relationshipType.getToSemantic() ).
-                allowedFromTypes( relationshipType.getAllowedFromTypes() ).
-                allowedToTypes( relationshipType.getAllowedToTypes() ).
-                schemaIcon( relationshipType.getIcon() );
-
-            relationshipTypeService.create( createParams );
-        }
-        else
-        {
-            final UpdateRelationshipTypeParams updateParams = new UpdateRelationshipTypeParams().
-                name( relationshipType.getName() ).
-                editor( new RelationshipTypeEditor()
-                {
-                    @Override
-                    public RelationshipType edit( final RelationshipType relationshipType )
-                    {
-                        return RelationshipType.newRelationshipType( relationshipType ).
-                            displayName( relationshipType.getDisplayName() ).
-                            fromSemantic( relationshipType.getFromSemantic() ).
-                            toSemantic( relationshipType.getToSemantic() ).
-                            addAllowedFromTypes( relationshipType.getAllowedFromTypes() ).
-                            addAllowedToTypes( relationshipType.getAllowedToTypes() ).
-                            icon( relationshipType.getIcon() ).
-                            build();
-                    }
-                } );
-
-            relationshipTypeService.update( updateParams );
-        }
-    }
 
     private static RelationshipType createRelationshipType( final RelationshipTypeName relationshipTypeName, final String displayName,
                                                             final String fromSemantic, final String toSemantic )

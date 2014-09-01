@@ -1,29 +1,29 @@
 package com.enonic.wem.core.schema.content;
 
-import javax.inject.Inject;
+import java.util.List;
 
 import org.apache.commons.lang.WordUtils;
+
+import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
+import com.enonic.wem.api.schema.Schema;
+import com.enonic.wem.api.schema.SchemaProvider;
+import com.enonic.wem.api.schema.Schemas;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.content.ContentTypeService;
-import com.enonic.wem.api.schema.content.CreateContentTypeParams;
-import com.enonic.wem.api.schema.content.GetContentTypeParams;
-import com.enonic.wem.api.schema.content.UpdateContentTypeParams;
-import com.enonic.wem.api.schema.content.editor.ContentTypeEditor;
 import com.enonic.wem.core.schema.content.serializer.ContentTypeJsonSerializer;
-import com.enonic.wem.core.support.BaseInitializer;
+import com.enonic.wem.core.support.BaseCoreSchemaProvider;
 
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
-import static com.enonic.wem.api.schema.content.editor.SetContentTypeEditor.newSetContentTypeEditor;
 
-
-public class ContentTypesInitializer
-    extends BaseInitializer
+public final class CoreContentTypesProvider
+    extends BaseCoreSchemaProvider
+    implements SchemaProvider
 {
+
     public static Form MEDIA_IMAGE_FORM = createMediaImageForm();
 
     static final ContentType STRUCTURED = createSystemType( ContentTypeName.structured() ).
@@ -101,11 +101,9 @@ public class ContentTypesInitializer
 
     private final ContentTypeJsonSerializer contentTypeJsonSerializer = new ContentTypeJsonSerializer();
 
-    private ContentTypeService contentTypeService;
-
-    protected ContentTypesInitializer()
+    public CoreContentTypesProvider()
     {
-        super( 10, "content-types" );
+        super( "content-types" );
     }
 
     private static ContentType.Builder createSystemType( final ContentTypeName contentTypeName )
@@ -131,78 +129,40 @@ public class ContentTypesInitializer
             build();
     }
 
-    @Override
-    public void initialize()
-        throws Exception
+    private List<ContentType> generateSystemContentTypes()
     {
-        systemContentTypes();
-        demoContentTypes();
-    }
-
-    private void systemContentTypes()
-    {
+        final List<ContentType> systemContentTypes = Lists.newArrayList();
         for ( ContentType contentType : SYSTEM_TYPES )
         {
             contentType = newContentType( contentType ).
                 icon( loadSchemaIcon( contentType.getName().toString() ) ).
                 build();
-            createOrUpdate( contentType );
+            systemContentTypes.add( contentType );
         }
+        return systemContentTypes;
     }
 
-    private void demoContentTypes()
+    private List<ContentType> generateDemoContentTypes()
     {
+        final List<ContentType> demoContentTypes = Lists.newArrayList();
         for ( String testContentTypeFile : DEMO_CONTENT_TYPES )
         {
             final ContentType contentType = contentTypeJsonSerializer.toObject( loadFileAsString( testContentTypeFile ) );
-            createOrUpdate( contentType );
+            demoContentTypes.add( contentType );
         }
+        return demoContentTypes;
     }
 
-    private void createOrUpdate( final ContentType contentType )
+
+    @Override
+    public Schemas getSchemas()
     {
-        final GetContentTypeParams getParams = new GetContentTypeParams().contentTypeName( contentType.getName() ).notFoundAsNull();
-        final boolean contentTypeExists = contentTypeService.getByName( getParams ) != null;
-
-        if ( !contentTypeExists )
-        {
-            final CreateContentTypeParams createParams = new CreateContentTypeParams().
-                name( contentType.getName() ).
-                displayName( contentType.getDisplayName() ).
-                description( contentType.getDescription() ).
-                superType( contentType.getSuperType() ).
-                setAbstract( contentType.isAbstract() ).
-                setFinal( contentType.isFinal() ).
-                allowChildContent( contentType.allowChildContent() ).
-                builtIn( contentType.isBuiltIn() ).
-                form( contentType.form() ).
-                schemaIcon( contentType.getIcon() ).
-                contentDisplayNameScript( contentType.getContentDisplayNameScript() );
-            contentTypeService.create( createParams );
-        }
-        else
-        {
-            final ContentTypeEditor editor = newSetContentTypeEditor().
-                displayName( contentType.getDisplayName() ).
-                icon( contentType.getIcon() ).
-                superType( contentType.getSuperType() ).
-                setAbstract( contentType.isAbstract() ).
-                setFinal( contentType.isFinal() ).
-                contentDisplayNameScript( contentType.getContentDisplayNameScript() ).
-                form( contentType.form() ).
-                build();
-
-            final UpdateContentTypeParams updateParams = new UpdateContentTypeParams().
-                contentTypeName( contentType.getName() ).
-                editor( editor );
-
-            contentTypeService.update( updateParams );
-        }
+        final List<Schema> schemas = Lists.newArrayList();
+        final List<ContentType> systemContentTypes = generateSystemContentTypes();
+        final List<ContentType> demoContentTypes = generateDemoContentTypes();
+        schemas.addAll( systemContentTypes );
+        schemas.addAll( demoContentTypes );
+        return Schemas.from( schemas );
     }
 
-    @Inject
-    public void setContentTypeService( final ContentTypeService contentTypeService )
-    {
-        this.contentTypeService = contentTypeService;
-    }
 }
