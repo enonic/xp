@@ -24,6 +24,10 @@ module api.content.form.inputtype.image {
             this.refreshUI();
         }
 
+        getContent(): ImageSelectorDisplayValue {
+            return this.content;
+        }
+
         private refreshUI() {
             this.nameEl.getEl().setInnerHtml(this.content.getLabel());
             this.pathEl.getEl().setInnerHtml(this.content.getPath());

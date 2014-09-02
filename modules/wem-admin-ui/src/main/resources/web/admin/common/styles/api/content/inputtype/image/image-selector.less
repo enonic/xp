@@ -52,31 +52,18 @@
       float: left;
       width: 28.3018867924%;
       padding: 0;
-      margin: 10px 4.716981132% 20px 0;
+      margin: 10px 4.5% 20px 0;
       cursor: pointer;
       border: 1px solid #d3d3d3;
       background-color: #ffffff;
 
       &.editing {
-        border: none;
-        .scale(1.66667);
+        border: 1px solid @admin-input-blue;
         .box-shadow(0px 0px 10px darken(@admin-input-blue, 10%));
         z-index: @z-index-wizard-option;
 
-        &.first-in-row {
-          .transform(scale(1.66667) translateX(20%));
-        }
-
-        &.last-in-row {
-          .transform(scale(1.66667) translate(-20%));;
-        }
-
         &:hover .label {
           display: none;
-        }
-
-        > .checkbox {
-          .scale(0.6); // to keep the size;
         }
       }
 
@@ -205,7 +192,6 @@
         }
 
         &.editing {
-          .scale(1.5);
           top: auto;
           background-color: @admin-blue-button2;
         }

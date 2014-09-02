@@ -97,9 +97,8 @@ module api.content.form.inputtype.relationship {
         private doLoadContent(properties: api.data.Property[]): wemQ.Promise<api.content.ContentSummary[]> {
 
             if (!properties) {
-                return Q<api.content.ContentSummary[]>([]);
-            }
-            else {
+                return wemQ<api.content.ContentSummary[]>([]);
+            } else {
                 var contentIds = properties.map((property: api.data.Property) => {
                     return new api.content.ContentId(property.getString());
                 });

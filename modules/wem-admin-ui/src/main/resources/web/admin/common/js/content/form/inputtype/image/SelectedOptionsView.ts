@@ -97,7 +97,10 @@ module api.content.form.inputtype.image {
             optionView.onClicked((event: MouseEvent) => {
                 if (this.dialog.isVisible()) {
                     this.hideImageSelectorDialog();
-                    optionView.getCheckbox().giveBlur();
+                    if (optionView.getOption().displayValue != this.dialog.getContent()) {
+                        this.showImageSelectorDialog(selectedOption);
+                        optionView.getCheckbox().giveFocus();
+                    }
                 } else {
                     this.showImageSelectorDialog(selectedOption);
                     optionView.getCheckbox().giveFocus();
@@ -129,7 +132,7 @@ module api.content.form.inputtype.image {
             });
 
             optionView.getCheckbox().onFocus((event: FocusEvent) => this.showImageSelectorDialog(selectedOption));
-            optionView.getCheckbox().onBlur((event: FocusEvent) => this.hideImageSelectorDialog());
+//            optionView.getCheckbox().onBlur((event: FocusEvent) => this.hideImageSelectorDialog());
 
             optionView.onChecked((view: SelectedOptionView, checked: boolean) => {
                 if (checked) {
@@ -178,6 +181,9 @@ module api.content.form.inputtype.image {
         }
 
         private showImageSelectorDialog(option: SelectedOption<ImageSelectorDisplayValue>) {
+            if (this.dialog) {
+                this.dialog.remove();
+            }
 
             var selectedOptionViews = this.getOptionViews();
             for (var i = 0; i < selectedOptionViews.length; i++) {
@@ -190,11 +196,10 @@ module api.content.form.inputtype.image {
             }
 
             if (this.activeOption) {
-                this.activeOption.getOptionView().removeClass('editing first-in-row last-in-row');
+                this.activeOption.getOptionView().removeClass("editing");
             }
             this.activeOption = option;
-            option.getOptionView().addClass('editing' + (this.isFirstInRow(option.getIndex()) ? ' first-in-row' : '') +
-                                            (this.isLastInRow(option.getIndex()) ? ' last-in-row' : ''));
+            option.getOptionView().addClass("editing");
 
             this.dialog.setContent(option.getOption().displayValue);
             this.setOutsideClickListener();

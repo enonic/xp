@@ -107,6 +107,7 @@ module api.ui.selector.combobox {
         moveOccurrence(formIndex: number, toIndex: number) {
 
             api.util.ArrayHelper.moveElement(formIndex, toIndex, this.list);
+            api.util.ArrayHelper.moveElement(formIndex, toIndex, this.getChildren());
 
             this.list.forEach((selectedOption: SelectedOption<T>, index: number) => selectedOption.setIndex(index));
         }
