@@ -51,6 +51,9 @@ module api.content.form.inputtype.long {
             if (api.util.isStringBlank(value.asString())) {
                 return true;
             } else {
+                if (isNaN(parseInt(value.asString()))) {
+                    throw new Error('Value is not a Number');
+                }
                 return false;
             }
         }
