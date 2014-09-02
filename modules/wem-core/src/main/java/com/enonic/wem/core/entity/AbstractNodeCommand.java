@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.EntityId;
+import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeVersionId;
 import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.core.entity.dao.NodeDao;
@@ -48,6 +49,18 @@ public abstract class AbstractNodeCommand
             throw new NodeNotFoundException( "Node with id " + id + " not found in workspace " + workspace );
         }
         return currentVersion;
+    }
+
+    protected Node getCurrentNodeInWorkspace( final Workspace workspace, final EntityId id, final boolean failOnNull )
+    {
+        final NodeVersionId currentVersion = workspaceService.getCurrentVersion( new WorkspaceIdQuery( workspace, id ) );
+
+        if ( currentVersion == null && failOnNull )
+        {
+            throw new NodeNotFoundException( "Node with id " + id + " not found in workspace " + workspace );
+        }
+
+        return nodeDao.getByVersionId( currentVersion );
     }
 
     public static class Builder<B extends Builder>

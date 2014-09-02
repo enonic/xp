@@ -11,6 +11,7 @@ import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.NodeVersionId;
 import com.enonic.wem.api.entity.NodeVersionIds;
 import com.enonic.wem.api.entity.RenameNodeParams;
+import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.core.workspace.query.WorkspaceIdQuery;
 import com.enonic.wem.core.workspace.query.WorkspaceParentQuery;
 
@@ -47,8 +48,10 @@ public class RenameNodeCommandTest
 
         final NodeVersionId renamedNodeVersionId = NodeVersionId.from( "new-node-version-id" );
 
+        final Workspace workspace = TEST_CONTEXT.getWorkspace();
+
         // Mock the fetching of the node to be renamed
-        when( this.workspaceService.getCurrentVersion( new WorkspaceIdQuery( TEST_CONTEXT.getWorkspace(), nodeId ) ) ).
+        when( this.workspaceService.getCurrentVersion( new WorkspaceIdQuery( workspace, nodeId ) ) ).
             thenReturn( nodeVersionId );
         when( this.nodeDao.getByVersionId( nodeVersionId ) ).
             thenReturn( nodeToBeRenamed );
@@ -56,7 +59,7 @@ public class RenameNodeCommandTest
             thenReturn( renamedNodeVersionId );
 
         // Mock no children of the node to be renamed
-        when( workspaceService.findByParent( new WorkspaceParentQuery( TEST_CONTEXT.getWorkspace(), nodeToBeRenamed.path() ) ) ).
+        when( workspaceService.findByParent( new WorkspaceParentQuery( workspace, nodeToBeRenamed.path() ) ) ).
             thenReturn( NodeVersionIds.empty() );
 
         // Exercise

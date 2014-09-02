@@ -1,6 +1,5 @@
 package com.enonic.wem.core.content;
 
-import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentVersion;
@@ -61,7 +60,7 @@ public class ContentVersionFactory
 
     private Node getNode( final NodeVersion nodeVersion )
     {
-        return nodeService.getByBlobKey( new BlobKey( nodeVersion.getId().toString() ), this.context );
+        return nodeService.getByVersionId( nodeVersion.getId(), this.context );
     }
 
 }

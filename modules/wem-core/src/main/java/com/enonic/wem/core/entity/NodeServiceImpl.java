@@ -2,7 +2,6 @@ package com.enonic.wem.core.entity;
 
 import javax.inject.Inject;
 
-import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.CreateNodeParams;
 import com.enonic.wem.api.entity.EntityId;
@@ -244,8 +243,8 @@ public class NodeServiceImpl
 
 
     @Override
-    public Node getByBlobKey( final BlobKey blobKey, final Context context )
+    public Node getByVersionId( final NodeVersionId blobKey, final Context context )
     {
-        return nodeDao.getByBlobKey( blobKey );
+        return nodeDao.getByVersionId( blobKey );
     }
 }

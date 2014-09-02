@@ -50,14 +50,6 @@ public class NodeDaoImpl
         return getNodeFromBlob( blobService.get( blobKey ) );
     }
 
-    @Override
-    public Node getByBlobKey( final BlobKey blobKey )
-    {
-        final Blob blob = blobService.get( blobKey );
-
-        return getNodeFromBlob( blob );
-    }
-
     private Nodes doGetFromVersionIds( final NodeVersionIds nodeVersionIds )
     {
         final Nodes.Builder nodesBuilder = Nodes.create();

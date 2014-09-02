@@ -1,6 +1,5 @@
 package com.enonic.wem.core.entity.dao;
 
-import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeVersionId;
 import com.enonic.wem.api.entity.NodeVersionIds;
@@ -13,10 +12,4 @@ public interface NodeDao
     public Node getByVersionId( final NodeVersionId nodeVersionId );
 
     public Nodes getByVersionIds( final NodeVersionIds nodeVersionIds );
-
-    //public Node deleteById( EntityId entityId, Workspace workspace );
-
-    public Node getByBlobKey( BlobKey blobKey );
-
-
 }
