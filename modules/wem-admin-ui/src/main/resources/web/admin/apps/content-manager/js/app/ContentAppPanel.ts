@@ -170,7 +170,6 @@ module app {
                 }
             });
         }
-
         private handleEdit(event: app.browse.EditContentEvent) {
 
             var contents: api.content.ContentSummary[] = event.getModels();
@@ -178,12 +177,11 @@ module app {
                 if (!content) {
                     return;
                 }
-
-                var tabMenuItem = this.isContentBeingEditedOrViewed(content);
+                var closeViewPanelMenuItem = this.isContentBeingViewed(content);
+                var tabMenuItem = this.isContentBeingEdited(content);
 
                 if (tabMenuItem != null) {
                     this.selectPanel(tabMenuItem);
-
                 } else {
                     this.mask.show();
                     var tabId = api.app.bar.AppBarTabId.forEdit(content.getId());
@@ -192,7 +190,11 @@ module app {
                         setAppBarTabId(tabId).
                         setContentToEdit(content.getContentId()).
                         createForEdit().then((wizard: app.wizard.ContentWizardPanel) => {
-
+                            if(closeViewPanelMenuItem != null) {
+                                this.getAppBarTabMenu().deselectNavigationItem();
+                                this.getAppBarTabMenu().removeNavigationItem(closeViewPanelMenuItem);
+                                this.removePanelByIndex(closeViewPanelMenuItem.getIndex());
+                            }
                             tabMenuItem = new api.app.bar.AppBarTabMenuItem(content.getDisplayName(), tabId, true);
                             this.addWizardPanel(tabMenuItem, wizard);
 
@@ -212,18 +214,28 @@ module app {
         }
 
         private isContentBeingEditedOrViewed(content: api.content.ContentSummary): api.app.bar.AppBarTabMenuItem {
+            var result = this.isContentBeingEdited(content);
+            if(!result) {
+                result = this.isContentBeingViewed(content)
+            }
+            return result;
+        }
+        private isContentBeingEdited(content: api.content.ContentSummary): api.app.bar.AppBarTabMenuItem {
             if (!!content) {
-
                 var tabId = this.getAppBarTabMenu().getNavigationItemById(api.app.bar.AppBarTabId.forEdit(content.getId()));
                 if (tabId) {
                     return tabId;
                 }
-                tabId = this.getAppBarTabMenu().getNavigationItemById(api.app.bar.AppBarTabId.forView(content.getId()));
+            }
+            return null;
+        }
+        private isContentBeingViewed(content: api.content.ContentSummary): api.app.bar.AppBarTabMenuItem {
+            if (!!content) {
+                var tabId = this.getAppBarTabMenu().getNavigationItemById(api.app.bar.AppBarTabId.forView(content.getId()));
                 if (tabId) {
                     return tabId;
                 }
             }
-
             return null;
         }
     }
