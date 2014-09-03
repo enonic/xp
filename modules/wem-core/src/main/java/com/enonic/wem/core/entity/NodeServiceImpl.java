@@ -27,6 +27,7 @@ import com.enonic.wem.api.entity.UpdateNodeParams;
 import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.entity.query.NodeQuery;
 import com.enonic.wem.core.entity.dao.NodeDao;
+import com.enonic.wem.core.entity.dao.NodeNotFoundException;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.index.query.QueryService;
 import com.enonic.wem.core.version.VersionService;
@@ -62,6 +63,12 @@ public class NodeServiceImpl
     public Node getById( final EntityId id, final Context context )
     {
         final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( new WorkspaceIdQuery( context.getWorkspace(), id ) );
+
+        if ( currentVersion == null )
+        {
+            throw new NodeNotFoundException( "Node with id " + id + " not found in workspace " + context.getWorkspace().getName() );
+        }
+
         return nodeDao.getByVersionId( currentVersion );
     }
 
@@ -77,6 +84,11 @@ public class NodeServiceImpl
     public Node getByPath( final NodePath path, final Context context )
     {
         final NodeVersionId currentVersion = this.workspaceService.getByPath( new WorkspacePathQuery( context.getWorkspace(), path ) );
+
+        if ( currentVersion == null )
+        {
+            throw new NodeNotFoundException( "Node with path " + path + " not found in workspace " + context.getWorkspace().getName() );
+        }
 
         return nodeDao.getByVersionId( currentVersion );
     }
