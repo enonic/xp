@@ -231,6 +231,7 @@ public class FormXmlTest
         formBuilder.addFormItem( newInput().name( "myDate" ).inputType( InputTypes.DATE ).build() );
         formBuilder.addFormItem( newInput().name( "myCheckbox" ).inputType( InputTypes.CHECKBOX ).build() );
         formBuilder.addFormItem( newInput().name( "myTime" ).inputType( InputTypes.TIME ).build() );
+        formBuilder.addFormItem( newInput().name( "myDateTime" ).inputType( InputTypes.DATE_TIME ).build() );
         formBuilder.addFormItem( newInput().name( "myDouble" ).inputType( InputTypes.DOUBLE ).build() );
         formBuilder.addFormItem( newInput().name( "myGeoPoint" ).inputType( InputTypes.GEO_POINT ).build() );
         formBuilder.addFormItem( newInput().name( "myHtmlArea" ).inputType( InputTypes.HTML_AREA ).build() );
