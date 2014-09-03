@@ -10,7 +10,7 @@ import com.enonic.wem.core.version.EntityVersionDocument;
 public class VersionXContentBuilderFactory
     extends AbstractXContentBuilderFactor
 {
-    public static final String BLOBKEY_FIELD_NAME = "blobKey";
+    public static final String NODE_VERSION_ID_FIELD_NAME = "versionId";
 
     public static final String ENTITY_ID_FIELD_NAME = "entityId";
 
@@ -22,7 +22,7 @@ public class VersionXContentBuilderFactory
         {
             final XContentBuilder builder = startBuilder();
 
-            addField( builder, BLOBKEY_FIELD_NAME, entityVersionDocument.getNodeVersionId().toString() );
+            addField( builder, NODE_VERSION_ID_FIELD_NAME, entityVersionDocument.getNodeVersionId().toString() );
             addField( builder, ENTITY_ID_FIELD_NAME, entityVersionDocument.getEntityId().toString() );
             addField( builder, TIMESTAMP_ID_FIELD_NAME, Instant.now() );
 

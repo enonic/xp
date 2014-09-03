@@ -33,7 +33,7 @@ import com.enonic.wem.core.workspace.query.WorkspaceParentQuery;
 import com.enonic.wem.core.workspace.query.WorkspacePathQuery;
 import com.enonic.wem.core.workspace.query.WorkspacePathsQuery;
 
-import static com.enonic.wem.core.elasticsearch.WorkspaceXContentBuilderFactory.BLOBKEY_FIELD_NAME;
+import static com.enonic.wem.core.elasticsearch.WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME;
 import static org.junit.Assert.*;
 
 public class ElasticsearchWorkspaceServiceTest
@@ -98,7 +98,7 @@ public class ElasticsearchWorkspaceServiceTest
                 add( SearchResultEntry.create().
                     id( "1" ).
                     score( 1 ).
-                    addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, Arrays.asList( "a" ) ) ).
+                    addField( NODE_VERSION_ID_FIELD_NAME, new SearchResultField( NODE_VERSION_ID_FIELD_NAME, Arrays.asList( "a" ) ) ).
                     build() ).
                 build() ).
             build();
@@ -132,7 +132,7 @@ public class ElasticsearchWorkspaceServiceTest
                 add( SearchResultEntry.create().
                     id( "1" ).
                     score( 1 ).
-                    addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, Arrays.asList( "a" ) ) ).
+                    addField( NODE_VERSION_ID_FIELD_NAME, new SearchResultField( NODE_VERSION_ID_FIELD_NAME, Arrays.asList( "a" ) ) ).
                     build() ).
                 build() ).
             build();
@@ -160,7 +160,8 @@ public class ElasticsearchWorkspaceServiceTest
             results( SearchResultEntries.create().
                 add( SearchResultEntry.create().
                     id( "a" ).
-                    addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, Arrays.asList( "versionId" ) ) ).
+                    addField( NODE_VERSION_ID_FIELD_NAME,
+                              new SearchResultField( NODE_VERSION_ID_FIELD_NAME, Arrays.asList( "versionId" ) ) ).
                     build() ).
                 build() ).
             build();
@@ -224,15 +225,15 @@ public class ElasticsearchWorkspaceServiceTest
             results( SearchResultEntries.create().
                 add( SearchResultEntry.create().
                     id( new WorkspaceDocumentId( EntityId.from( "1" ), Workspace.from( "test" ) ).toString() ).
-                    addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, Arrays.asList( "b" ) ) ).
+                    addField( NODE_VERSION_ID_FIELD_NAME, new SearchResultField( NODE_VERSION_ID_FIELD_NAME, Arrays.asList( "b" ) ) ).
                     build() ).
                 add( SearchResultEntry.create().
                     id( new WorkspaceDocumentId( EntityId.from( "2" ), Workspace.from( "test" ) ).toString() ).
-                    addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, Arrays.asList( "a" ) ) ).
+                    addField( NODE_VERSION_ID_FIELD_NAME, new SearchResultField( NODE_VERSION_ID_FIELD_NAME, Arrays.asList( "a" ) ) ).
                     build() ).
                 add( SearchResultEntry.create().
                     id( new WorkspaceDocumentId( EntityId.from( "3" ), Workspace.from( "test" ) ).toString() ).
-                    addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, Arrays.asList( "c" ) ) ).
+                    addField( NODE_VERSION_ID_FIELD_NAME, new SearchResultField( NODE_VERSION_ID_FIELD_NAME, Arrays.asList( "c" ) ) ).
                     build() ).
                 build() ).
             build();
@@ -262,15 +263,15 @@ public class ElasticsearchWorkspaceServiceTest
             results( SearchResultEntries.create().
                 add( SearchResultEntry.create().
                     id( new WorkspaceDocumentId( EntityId.from( "1" ), Workspace.from( "test" ) ).toString() ).
-                    addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, Arrays.asList( "a" ) ) ).
+                    addField( NODE_VERSION_ID_FIELD_NAME, new SearchResultField( NODE_VERSION_ID_FIELD_NAME, Arrays.asList( "a" ) ) ).
                     build() ).
                 add( SearchResultEntry.create().
                     id( new WorkspaceDocumentId( EntityId.from( "2" ), Workspace.from( "test" ) ).toString() ).
-                    addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, Arrays.asList( "b" ) ) ).
+                    addField( NODE_VERSION_ID_FIELD_NAME, new SearchResultField( NODE_VERSION_ID_FIELD_NAME, Arrays.asList( "b" ) ) ).
                     build() ).
                 add( SearchResultEntry.create().
                     id( new WorkspaceDocumentId( EntityId.from( "3" ), Workspace.from( "test" ) ).toString() ).
-                    addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, Arrays.asList( "c" ) ) ).
+                    addField( NODE_VERSION_ID_FIELD_NAME, new SearchResultField( NODE_VERSION_ID_FIELD_NAME, Arrays.asList( "c" ) ) ).
                     build() ).
                 build() ).
             build();
@@ -301,11 +302,11 @@ public class ElasticsearchWorkspaceServiceTest
             results( SearchResultEntries.create().
                 add( SearchResultEntry.create().
                     id( new WorkspaceDocumentId( EntityId.from( "1" ), Workspace.from( "test" ) ).toString() ).
-                    addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, Arrays.asList( "b" ) ) ).
+                    addField( NODE_VERSION_ID_FIELD_NAME, new SearchResultField( NODE_VERSION_ID_FIELD_NAME, Arrays.asList( "b" ) ) ).
                     build() ).
                 add( SearchResultEntry.create().
                     id( new WorkspaceDocumentId( EntityId.from( "2" ), Workspace.from( "test" ) ).toString() ).
-                    addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, Arrays.asList( "a" ) ) ).
+                    addField( NODE_VERSION_ID_FIELD_NAME, new SearchResultField( NODE_VERSION_ID_FIELD_NAME, Arrays.asList( "a" ) ) ).
                     build() ).
                 build() ).
             build();
@@ -347,7 +348,8 @@ public class ElasticsearchWorkspaceServiceTest
             results( SearchResultEntries.create().
                 add( SearchResultEntry.create().
                     id( "a" ).
-                    addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, Arrays.asList( "myBlobKey" ) ) ).
+                    addField( NODE_VERSION_ID_FIELD_NAME,
+                              new SearchResultField( NODE_VERSION_ID_FIELD_NAME, Arrays.asList( "myBlobKey" ) ) ).
                     build() ).
                 build() ).
             build();
@@ -389,15 +391,15 @@ public class ElasticsearchWorkspaceServiceTest
             results( SearchResultEntries.create().
                 add( SearchResultEntry.create().
                     id( "b" ).
-                    addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, Arrays.asList( "b" ) ) ).
+                    addField( NODE_VERSION_ID_FIELD_NAME, new SearchResultField( NODE_VERSION_ID_FIELD_NAME, Arrays.asList( "b" ) ) ).
                     build() ).
                 add( SearchResultEntry.create().
                     id( "a" ).
-                    addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, Arrays.asList( "a" ) ) ).
+                    addField( NODE_VERSION_ID_FIELD_NAME, new SearchResultField( NODE_VERSION_ID_FIELD_NAME, Arrays.asList( "a" ) ) ).
                     build() ).
                 add( SearchResultEntry.create().
                     id( "c" ).
-                    addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, Arrays.asList( "c" ) ) ).
+                    addField( NODE_VERSION_ID_FIELD_NAME, new SearchResultField( NODE_VERSION_ID_FIELD_NAME, Arrays.asList( "c" ) ) ).
                     build() ).
                 build() ).
             build();
@@ -430,11 +432,11 @@ public class ElasticsearchWorkspaceServiceTest
             results( SearchResultEntries.create().
                 add( SearchResultEntry.create().
                     id( "b" ).
-                    addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, Arrays.asList( "b" ) ) ).
+                    addField( NODE_VERSION_ID_FIELD_NAME, new SearchResultField( NODE_VERSION_ID_FIELD_NAME, Arrays.asList( "b" ) ) ).
                     build() ).
                 add( SearchResultEntry.create().
                     id( "a" ).
-                    addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, Arrays.asList( "a" ) ) ).
+                    addField( NODE_VERSION_ID_FIELD_NAME, new SearchResultField( NODE_VERSION_ID_FIELD_NAME, Arrays.asList( "a" ) ) ).
                     build() ).
                 build() ).
             build();
@@ -460,15 +462,15 @@ public class ElasticsearchWorkspaceServiceTest
             results( SearchResultEntries.create().
                 add( SearchResultEntry.create().
                     id( new WorkspaceDocumentId( EntityId.from( "1" ), Workspace.from( "test" ) ).toString() ).
-                    addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, Arrays.asList( "b" ) ) ).
+                    addField( NODE_VERSION_ID_FIELD_NAME, new SearchResultField( NODE_VERSION_ID_FIELD_NAME, Arrays.asList( "b" ) ) ).
                     build() ).
                 add( SearchResultEntry.create().
                     id( new WorkspaceDocumentId( EntityId.from( "2" ), Workspace.from( "test" ) ).toString() ).
-                    addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, Arrays.asList( "a" ) ) ).
+                    addField( NODE_VERSION_ID_FIELD_NAME, new SearchResultField( NODE_VERSION_ID_FIELD_NAME, Arrays.asList( "a" ) ) ).
                     build() ).
                 add( SearchResultEntry.create().
                     id( new WorkspaceDocumentId( EntityId.from( "3" ), Workspace.from( "test" ) ).toString() ).
-                    addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, Arrays.asList( "c" ) ) ).
+                    addField( NODE_VERSION_ID_FIELD_NAME, new SearchResultField( NODE_VERSION_ID_FIELD_NAME, Arrays.asList( "c" ) ) ).
                     build() ).
                 build() ).
             build();

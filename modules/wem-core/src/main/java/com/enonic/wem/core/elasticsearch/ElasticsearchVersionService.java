@@ -25,8 +25,8 @@ import com.enonic.wem.core.version.EntityVersionDocument;
 import com.enonic.wem.core.version.GetVersionsQuery;
 import com.enonic.wem.core.version.VersionService;
 
-import static com.enonic.wem.core.elasticsearch.VersionXContentBuilderFactory.BLOBKEY_FIELD_NAME;
 import static com.enonic.wem.core.elasticsearch.VersionXContentBuilderFactory.ENTITY_ID_FIELD_NAME;
+import static com.enonic.wem.core.elasticsearch.VersionXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME;
 import static com.enonic.wem.core.elasticsearch.VersionXContentBuilderFactory.TIMESTAMP_ID_FIELD_NAME;
 
 public class ElasticsearchVersionService
@@ -64,9 +64,9 @@ public class ElasticsearchVersionService
     private NodeVersion createVersionEntry( final SearchResultEntry hit )
     {
         final String timestamp = getStringValue( hit, TIMESTAMP_ID_FIELD_NAME, true );
-        final String blobKey = getStringValue( hit, BLOBKEY_FIELD_NAME, true );
+        final String versionId = getStringValue( hit, NODE_VERSION_ID_FIELD_NAME, true );
 
-        return new NodeVersion( NodeVersionId.from( blobKey ), Instant.parse( timestamp ) );
+        return new NodeVersion( NodeVersionId.from( versionId ), Instant.parse( timestamp ) );
     }
 
     @Override
@@ -104,7 +104,7 @@ public class ElasticsearchVersionService
     {
         final TermQueryBuilder entityIdQuery = new TermQueryBuilder( ENTITY_ID_FIELD_NAME, id.toString() );
 
-        final QueryMetaData queryMetaData = createQueryMetaData( from, size, TIMESTAMP_ID_FIELD_NAME, BLOBKEY_FIELD_NAME );
+        final QueryMetaData queryMetaData = createQueryMetaData( from, size, TIMESTAMP_ID_FIELD_NAME, NODE_VERSION_ID_FIELD_NAME );
 
         final SearchResult searchResults = elasticsearchDao.get( queryMetaData, entityIdQuery );
 
@@ -117,9 +117,9 @@ public class ElasticsearchVersionService
 
     private SearchResult doGetFromVersionId( final NodeVersionId nodeVersionId )
     {
-        final TermQueryBuilder blobKeyQuery = new TermQueryBuilder( BLOBKEY_FIELD_NAME, nodeVersionId.toString() );
+        final TermQueryBuilder blobKeyQuery = new TermQueryBuilder( NODE_VERSION_ID_FIELD_NAME, nodeVersionId.toString() );
 
-        final QueryMetaData queryMetaData = createQueryMetaData( 0, 1, BLOBKEY_FIELD_NAME, TIMESTAMP_ID_FIELD_NAME );
+        final QueryMetaData queryMetaData = createQueryMetaData( 0, 1, NODE_VERSION_ID_FIELD_NAME, TIMESTAMP_ID_FIELD_NAME );
 
         final SearchResult searchResult = elasticsearchDao.get( queryMetaData, blobKeyQuery );
 

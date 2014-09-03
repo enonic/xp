@@ -47,8 +47,8 @@ import com.enonic.wem.core.workspace.query.WorkspaceParentQuery;
 import com.enonic.wem.core.workspace.query.WorkspacePathQuery;
 import com.enonic.wem.core.workspace.query.WorkspacePathsQuery;
 
-import static com.enonic.wem.core.elasticsearch.WorkspaceXContentBuilderFactory.BLOBKEY_FIELD_NAME;
 import static com.enonic.wem.core.elasticsearch.WorkspaceXContentBuilderFactory.ENTITY_ID_FIELD_NAME;
+import static com.enonic.wem.core.elasticsearch.WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME;
 import static com.enonic.wem.core.elasticsearch.WorkspaceXContentBuilderFactory.PARENT_PATH_FIELD_NAME;
 import static com.enonic.wem.core.elasticsearch.WorkspaceXContentBuilderFactory.PATH_FIELD_NAME;
 import static com.enonic.wem.core.elasticsearch.WorkspaceXContentBuilderFactory.WORKSPACE_FIELD_NAME;
@@ -103,18 +103,18 @@ public class ElasticsearchWorkspaceService
     {
         final EntityId entityId = query.getEntityId();
 
-        final SearchResultEntry searchResultEntry = doGetById( entityId, query.getWorkspace(), BLOBKEY_FIELD_NAME );
+        final SearchResultEntry searchResultEntry = doGetById( entityId, query.getWorkspace(), NODE_VERSION_ID_FIELD_NAME );
 
         if ( searchResultEntry == null )
         {
             return null;
         }
 
-        final SearchResultField field = searchResultEntry.getField( WorkspaceXContentBuilderFactory.BLOBKEY_FIELD_NAME );
+        final SearchResultField field = searchResultEntry.getField( WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME );
 
         if ( field == null || field.getValue() == null )
         {
-            throw new ElasticsearchDataException( "Field " + BLOBKEY_FIELD_NAME + " not found on node with id " +
+            throw new ElasticsearchDataException( "Field " + NODE_VERSION_ID_FIELD_NAME + " not found on node with id " +
                                                       entityId +
                                                       " in workspace " + query.getWorkspace().getName() );
         }
@@ -191,7 +191,8 @@ public class ElasticsearchWorkspaceService
                                                                                     final Set<String> entityIdsAsStrings,
                                                                                     final SearchResult searchResult )
     {
-        return Maps.asMap( entityIdsAsStrings, new EntityIdToSearchResultFieldMapper( searchResult, BLOBKEY_FIELD_NAME, workspace ) );
+        return Maps.asMap( entityIdsAsStrings,
+                           new EntityIdToSearchResultFieldMapper( searchResult, NODE_VERSION_ID_FIELD_NAME, workspace ) );
     }
 
 
@@ -212,11 +213,11 @@ public class ElasticsearchWorkspaceService
 
         final SearchResultEntry firstHit = searchResult.getResults().getFirstHit();
 
-        final Object value = firstHit.getField( BLOBKEY_FIELD_NAME ).getValue();
+        final Object value = firstHit.getField( NODE_VERSION_ID_FIELD_NAME ).getValue();
 
         if ( value == null )
         {
-            throw new ElasticsearchDataException( "Field " + BLOBKEY_FIELD_NAME + " not found on node with path " +
+            throw new ElasticsearchDataException( "Field " + NODE_VERSION_ID_FIELD_NAME + " not found on node with path " +
                                                       query.getNodePathAsString() +
                                                       " in workspace " + query.getWorkspace() );
         }
@@ -233,7 +234,7 @@ public class ElasticsearchWorkspaceService
 
         final SearchResult searchResult = elasticsearchDao.get( queryMetaData, workspacedByPathsQuery );
 
-        final Set<SearchResultField> fieldValues = searchResult.getResults().getFields( BLOBKEY_FIELD_NAME );
+        final Set<SearchResultField> fieldValues = searchResult.getResults().getFields( NODE_VERSION_ID_FIELD_NAME );
 
         return fieldValuesToVersionIds( fieldValues );
     }
@@ -253,7 +254,7 @@ public class ElasticsearchWorkspaceService
             return NodeVersionIds.empty();
         }
 
-        final Set<SearchResultField> fieldValues = searchResult.getResults().getFields( BLOBKEY_FIELD_NAME );
+        final Set<SearchResultField> fieldValues = searchResult.getResults().getFields( NODE_VERSION_ID_FIELD_NAME );
 
         return fieldValuesToVersionIds( fieldValues );
     }
@@ -346,7 +347,7 @@ public class ElasticsearchWorkspaceService
             from( 0 ).
             size( numberOfHits ).
             addField( ENTITY_ID_FIELD_NAME ).
-            addField( BLOBKEY_FIELD_NAME ).
+            addField( NODE_VERSION_ID_FIELD_NAME ).
             addSort( fieldSortBuilder ).
             build();
     }

@@ -5,7 +5,6 @@ import java.time.Instant;
 public class NodeVersion
     implements Comparable<NodeVersion>
 {
-
     private final NodeVersionId nodeVersionId;
 
     private final Instant timestamp;

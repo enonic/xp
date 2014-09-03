@@ -8,7 +8,7 @@ import com.enonic.wem.core.workspace.WorkspaceDocument;
 class WorkspaceXContentBuilderFactory
     extends AbstractXContentBuilderFactor
 {
-    public static final String BLOBKEY_FIELD_NAME = "blobKey";
+    public static final String NODE_VERSION_ID_FIELD_NAME = "versionId";
 
     public static final String WORKSPACE_FIELD_NAME = "workspace";
 
@@ -24,7 +24,7 @@ class WorkspaceXContentBuilderFactory
         {
             final XContentBuilder builder = startBuilder();
 
-            addField( builder, BLOBKEY_FIELD_NAME, workspaceDocument.getNodeVersionId().toString() );
+            addField( builder, NODE_VERSION_ID_FIELD_NAME, workspaceDocument.getNodeVersionId().toString() );
             addField( builder, WORKSPACE_FIELD_NAME, workspaceDocument.getWorkspace().toString() );
             addField( builder, ENTITY_ID_FIELD_NAME, workspaceDocument.getEntityId().toString() );
             addField( builder, PATH_FIELD_NAME, workspaceDocument.getPath() );
