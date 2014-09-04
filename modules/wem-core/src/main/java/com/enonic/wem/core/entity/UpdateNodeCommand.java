@@ -43,7 +43,6 @@ final class UpdateNodeCommand
     }
 
     private Node doExecute()
-        throws Exception
     {
         final Workspace workspace = this.context.getWorkspace();
 
@@ -74,7 +73,11 @@ final class UpdateNodeCommand
 
         this.indexService.index( updatedNode, context.getWorkspace() );
 
-        return updatedNode;
+        return NodeHasChildResolver.create().
+            workspace( context.getWorkspace() ).
+            workspaceService( this.workspaceService ).
+            build().
+            resolve( updatedNode );
     }
 
     private Node getPersistedNode( final Workspace workspace )

@@ -69,7 +69,11 @@ public class NodeServiceImpl
             throw new NodeNotFoundException( "Node with id " + id + " not found in workspace " + context.getWorkspace().getName() );
         }
 
-        return nodeDao.getByVersionId( currentVersion );
+        return NodeHasChildResolver.create().
+            workspace( context.getWorkspace() ).
+            workspaceService( this.workspaceService ).
+            build().
+            resolve( nodeDao.getByVersionId( currentVersion ) );
     }
 
     @Override
@@ -77,7 +81,11 @@ public class NodeServiceImpl
     {
         final NodeVersionIds versionIds = this.workspaceService.getByVersionIds( new WorkspaceIdsQuery( context.getWorkspace(), ids ) );
 
-        return nodeDao.getByVersionIds( versionIds );
+        return NodeHasChildResolver.create().
+            workspace( context.getWorkspace() ).
+            workspaceService( this.workspaceService ).
+            build().
+            resolve( nodeDao.getByVersionIds( versionIds ) );
     }
 
     @Override
@@ -90,7 +98,11 @@ public class NodeServiceImpl
             throw new NodeNotFoundException( "Node with path " + path + " not found in workspace " + context.getWorkspace().getName() );
         }
 
-        return nodeDao.getByVersionId( currentVersion );
+        return NodeHasChildResolver.create().
+            workspace( context.getWorkspace() ).
+            workspaceService( this.workspaceService ).
+            build().
+            resolve( nodeDao.getByVersionId( currentVersion ) );
     }
 
     @Override
@@ -98,7 +110,11 @@ public class NodeServiceImpl
     {
         final NodeVersionIds versionIds = this.workspaceService.getByPaths( new WorkspacePathsQuery( context.getWorkspace(), paths ) );
 
-        return nodeDao.getByVersionIds( versionIds );
+        return NodeHasChildResolver.create().
+            workspace( context.getWorkspace() ).
+            workspaceService( this.workspaceService ).
+            build().
+            resolve( nodeDao.getByVersionIds( versionIds ) );
     }
 
     @Override
@@ -189,7 +205,6 @@ public class NodeServiceImpl
             versionService( this.versionService ).
             build().
             execute();
-
     }
 
     @Override
@@ -240,7 +255,6 @@ public class NodeServiceImpl
             execute();
     }
 
-
     @Override
     public GetActiveNodeVersionsResult getActiveVersions( final GetActiveNodeVersionsParams params, final Context context )
     {
@@ -253,10 +267,13 @@ public class NodeServiceImpl
             execute();
     }
 
-
     @Override
     public Node getByVersionId( final NodeVersionId blobKey, final Context context )
     {
-        return nodeDao.getByVersionId( blobKey );
+        return NodeHasChildResolver.create().
+            workspace( context.getWorkspace() ).
+            workspaceService( this.workspaceService ).
+            build().
+            resolve( nodeDao.getByVersionId( blobKey ) );
     }
 }

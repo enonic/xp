@@ -47,7 +47,11 @@ public class PushNodeCommand
 
         this.indexService.index( currentNode, this.target );
 
-        return currentNode;
+        return NodeHasChildResolver.create().
+            workspace( context.getWorkspace() ).
+            workspaceService( this.workspaceService ).
+            build().
+            resolve( currentNode );
     }
 
     public static class Builder

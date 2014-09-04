@@ -25,10 +25,9 @@ import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.aggregation.Aggregation;
 import com.enonic.wem.api.aggregation.BucketAggregation;
-import com.enonic.wem.api.blob.BlobKey;
-import com.enonic.wem.api.blob.BlobKeys;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIds;
+import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.NodeVersionId;
 import com.enonic.wem.api.entity.NodeVersionIds;
 import com.enonic.wem.api.entity.Workspace;
@@ -62,7 +61,7 @@ public class ElasticsearchWorkspaceService
 
     private static final int DEFAULT_UNKNOWN_SIZE = 1000;
 
-    public static final String BUILTIN_TIMESTAMP_FIELD = "_timestamp";
+    private static final String BUILTIN_TIMESTAMP_FIELD = "_timestamp";
 
     private ElasticsearchDao elasticsearchDao;
 
@@ -306,6 +305,23 @@ public class ElasticsearchWorkspaceService
         }
     }
 
+    @Override
+    public boolean hasChildren( final NodePath parent, final Workspace workspace )
+    {
+        final QueryMetaData queryMetaData = QueryMetaData.create( WORKSPACE_INDEX ).
+            indexType( IndexType.NODE ).
+            from( 0 ).
+            size( 0 ).
+            build();
+
+        final TermQueryBuilder findWithParentQuery = new TermQueryBuilder( PARENT_PATH_FIELD_NAME, parent.toString() );
+        final BoolQueryBuilder query = joinWithWorkspaceQuery( workspace.getName(), findWithParentQuery );
+
+        final long count = elasticsearchDao.count( queryMetaData, query );
+
+        return count > 0;
+    }
+
     private NodeVersionIds fieldValuesToVersionIds( final Collection<SearchResultField> fieldValues )
     {
         final NodeVersionIds.Builder builder = NodeVersionIds.create();
@@ -320,22 +336,6 @@ public class ElasticsearchWorkspaceService
             builder.add( NodeVersionId.from( searchResultField.getValue().toString() ) );
         }
         return builder.build();
-    }
-
-    private BlobKeys fieldValuesToBlobKeys( final Collection<SearchResultField> fieldValues )
-    {
-        final BlobKeys.Builder blobKeysBuilder = BlobKeys.create();
-
-        for ( final SearchResultField searchResultField : fieldValues )
-        {
-            if ( searchResultField == null )
-            {
-                continue;
-            }
-
-            blobKeysBuilder.add( new BlobKey( searchResultField.getValue().toString() ) );
-        }
-        return blobKeysBuilder.build();
     }
 
     private QueryMetaData createGetBlobKeyQueryMetaData( final int numberOfHits )
