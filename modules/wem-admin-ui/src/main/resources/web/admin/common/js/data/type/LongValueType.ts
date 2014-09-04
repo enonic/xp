@@ -10,7 +10,7 @@ module api.data.type {
             return typeof value === 'number' && !isNaN(value);
         }
 
-        isConvertible(value: any): boolean {
+        isConvertible(value: string): boolean {
             if (api.util.isStringBlank(value)) {
                 return false;
             }
@@ -25,7 +25,7 @@ module api.data.type {
             return new Value(this.convertFromString(value), this);
         }
 
-        private convertFromString(value: any): number {
+        private convertFromString(value: string): number {
             return Number(value);
         }
 

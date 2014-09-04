@@ -119,7 +119,7 @@ module api.ui.time {
 
         private resolveDaysInMonth() {
             var calendarDays: CalendarDay[] = [];
-            var daysInMonth = new Date(this.year, this.month, 0).getDate();
+            var daysInMonth = api.util.DateHelper.newUTCDate(this.year, this.month, 0).getDate();
             var previousDay: CalendarDay = null;
             for (var i = 1; i <= daysInMonth; i++) {
                 var calendarDay = this.createCalendarDay(i, previousDay);
@@ -169,7 +169,7 @@ module api.ui.time {
 
         private createCalendarDay(dayOfMonth: number, previousDay: CalendarDay): CalendarDay {
 
-            var date = new Date(this.year, this.month, dayOfMonth);
+            var date = api.util.DateHelper.newUTCDate(this.year, this.month, dayOfMonth);
             var calendarDay = new CalendarDayBuilder().
                 setDate(date).
                 setMonth(this.month).

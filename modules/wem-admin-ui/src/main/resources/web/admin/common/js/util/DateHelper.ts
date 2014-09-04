@@ -1,10 +1,11 @@
 module api.util {
 
-    export function parseDate(str: string): Date {
-        return new Date(Date.parse(str));
-    }
-
     export class DateHelper {
+
+        public static newUTCDate(year: number, month: number, date: number) {
+
+            return new Date(Date.UTC(year, month, date));
+        }
 
         public static formUtcDate(date: Date = new Date): string {
             return date.getFullYear() + "-" +

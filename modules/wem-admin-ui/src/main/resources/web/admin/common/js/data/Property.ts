@@ -39,7 +39,7 @@ module api.data {
             return <api.data.json.DataTypeWrapperJson>{ Property: {
                 name: this.getName(),
                 type: this.getType().toString(),
-                value: this.getValue().getObject()
+                value: this.getType().toJsonValue(this.value)
             }};
         }
 

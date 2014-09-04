@@ -13,7 +13,7 @@ module api.data.type {
 
         static XML = new ValueType("Xml");
 
-        static DATE_MIDNIGHT = new ValueType("DateMidnight");
+        static LOCAL_DATE = new LocalDateValueType();
 
         static DATE_TIME = new ValueType("DateTime");
 
@@ -34,7 +34,7 @@ module api.data.type {
             ValueTypes.STRING,
             ValueTypes.HTML_PART,
             ValueTypes.XML,
-            ValueTypes.DATE_MIDNIGHT,
+            ValueTypes.LOCAL_DATE,
             ValueTypes.DATE_TIME,
             ValueTypes.CONTENT_ID,
             ValueTypes.LONG,

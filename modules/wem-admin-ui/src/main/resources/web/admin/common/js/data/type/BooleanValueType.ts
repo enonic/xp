@@ -10,12 +10,11 @@ module api.data.type {
             return typeof value === 'boolean';
         }
 
-        isConvertible(value: any): boolean {
+        isConvertible(value: string): boolean {
             if (api.util.isStringBlank(value)) {
                 return false;
             }
-            var valueAsString = value.toString();
-            if (!(valueAsString == "true" || valueAsString == "false" )) {
+            if (!(value == "true" || value == "false" )) {
                 return false;
             }
             var convertedValue = Boolean(value);

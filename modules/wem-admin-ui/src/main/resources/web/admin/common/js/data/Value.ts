@@ -23,6 +23,18 @@ module api.data {
             return this.value;
         }
 
+        getDate(): Date {
+            return <Date>this.value;
+        }
+
+        getBoolean(): boolean {
+            return <boolean>this.value;
+        }
+
+        getNumber(): number {
+            return <number><number>this.value;
+        }
+
         asString(): string {
             return this.type.valueToString(this);
         }

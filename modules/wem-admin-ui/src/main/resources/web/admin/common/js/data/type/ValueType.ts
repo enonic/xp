@@ -28,7 +28,7 @@ module api.data.type {
             return true;
         }
 
-        isConvertible(value: any): boolean {
+        isConvertible(value: string): boolean {
             return true;
         }
 
@@ -49,6 +49,14 @@ module api.data.type {
             }
 
             return true;
+        }
+
+        /**
+         * Returns the actual object backing this Value.
+         * If the REST service or JSON would not understand this value, then override and return compatible value.
+         */
+        toJsonValue(value: api.data.Value): any {
+            return value.getObject();
         }
     }
 }
