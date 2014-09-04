@@ -20,9 +20,7 @@ public class SortBuilderFactory
 {
     public static final boolean IGNORE_UNMAPPED = true;
 
-    public final DynamicSortBuilderFactory dynamicSortBuilderFactory = new DynamicSortBuilderFactory();
-
-    public Set<SortBuilder> create( final Collection<OrderExpr> orderExpressions )
+    public static Set<SortBuilder> create( final Collection<OrderExpr> orderExpressions )
     {
         Set<SortBuilder> sortBuilders = Sets.newHashSet();
 
@@ -34,14 +32,14 @@ public class SortBuilderFactory
             }
             else if ( orderExpr instanceof DynamicOrderExpr )
             {
-                sortBuilders.add( dynamicSortBuilderFactory.create( (DynamicOrderExpr) orderExpr ) );
+                sortBuilders.add( DynamicSortBuilderFactory.create( (DynamicOrderExpr) orderExpr ) );
             }
         }
 
         return sortBuilders;
     }
 
-    private SortBuilder createFieldSortBuilder( final FieldOrderExpr fieldOrderExpr )
+    private static SortBuilder createFieldSortBuilder( final FieldOrderExpr fieldOrderExpr )
     {
         final FieldSortBuilder fieldSortBuilder =
             new FieldSortBuilder( IndexQueryFieldNameResolver.resolveOrderByFieldName( fieldOrderExpr.getField().getName() ) );

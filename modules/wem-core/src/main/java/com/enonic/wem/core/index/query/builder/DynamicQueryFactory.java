@@ -8,15 +8,13 @@ import com.enonic.wem.core.index.query.function.FunctionQueryBuilderFactory;
 
 public class DynamicQueryFactory
 {
-    private FunctionQueryBuilderFactory functionQueryBuilderFactory = new FunctionQueryBuilderFactory();
-
-    public QueryBuilder create( final DynamicConstraintExpr expression )
+    public static QueryBuilder create( final DynamicConstraintExpr expression )
     {
         final FunctionExpr function = expression.getFunction();
 
         if ( function != null )
         {
-            return functionQueryBuilderFactory.create( function );
+            return FunctionQueryBuilderFactory.create( function );
         }
 
         return null;

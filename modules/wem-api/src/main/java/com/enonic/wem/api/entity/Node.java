@@ -25,6 +25,8 @@ public final class Node
 
     private final UserKey creator;
 
+    private final Boolean hasChildren;
+
     private Node( final BaseBuilder builder )
     {
         super( builder );
@@ -37,6 +39,8 @@ public final class Node
         this.path = this.parent != null && this.name != null ? new NodePath( this.parent, this.name ) : null;
 
         this.modifier = builder.modifier;
+
+        this.hasChildren = builder.hasChildren;
     }
 
     public void validateForIndexing()
@@ -147,6 +151,8 @@ public final class Node
 
         UserKey creator;
 
+        Boolean hasChildren;
+
         BaseBuilder()
         {
         }
@@ -217,6 +223,7 @@ public final class Node
 
         private UserKey creator;
 
+        Boolean hasChildren;
 
         public Builder()
         {
@@ -273,6 +280,12 @@ public final class Node
             return this;
         }
 
+        public Builder hasChildren( final boolean hasChildren )
+        {
+            this.hasChildren = hasChildren;
+            return this;
+        }
+
         public Node build()
         {
             BaseBuilder baseBuilder = new BaseBuilder();
@@ -281,12 +294,14 @@ public final class Node
             baseBuilder.modifiedTime = this.modifiedTime;
             baseBuilder.data = this.data;
             baseBuilder.attachments = this.attachments;
-
             baseBuilder.name = this.name;
             baseBuilder.parent = this.parent;
             baseBuilder.creator = this.creator;
             baseBuilder.modifier = this.modifier;
             baseBuilder.entityIndexConfig = this.entityIndexConfig;
+
+            baseBuilder.hasChildren = this.hasChildren;
+
             return new Node( baseBuilder );
         }
     }

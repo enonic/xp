@@ -10,6 +10,7 @@ import com.enonic.wem.api.query.aggregation.AggregationQuery;
 import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.query.expr.QueryExpr;
 import com.enonic.wem.api.query.filter.Filter;
+import com.enonic.wem.api.query.filter.Filters;
 
 public class EntityQuery
 {
@@ -17,9 +18,9 @@ public class EntityQuery
 
     private final ImmutableSet<EntityId> ids;
 
-    private final ImmutableSet<Filter> filters;
+    private final Filters postFilters;
 
-    private final ImmutableSet<Filter> queryFilters;
+    private final Filters queryFilters;
 
     private final ImmutableSet<AggregationQuery> aggregationQueries;
 
@@ -32,8 +33,8 @@ public class EntityQuery
     public EntityQuery( final Builder builder )
     {
         this.query = builder.query;
-        this.filters = ImmutableSet.copyOf( builder.filters );
-        this.queryFilters = ImmutableSet.copyOf( builder.queryFilters );
+        this.postFilters = builder.postFilters.build();
+        this.queryFilters = builder.queryFilters.build();
         this.orderBys = query != null ? ImmutableSet.copyOf( query.getOrderSet() ) : ImmutableSet.<OrderExpr>of();
         this.size = builder.size;
         this.from = builder.from;
@@ -52,13 +53,13 @@ public class EntityQuery
     }
 
     // These are filters that are applied outside query, not considered in facets
-    public ImmutableSet<Filter> getFilters()
+    public Filters getPostFilters()
     {
-        return filters;
+        return postFilters;
     }
 
     // These are filters to be applied into query, and considered in facets also
-    public ImmutableSet<Filter> getQueryFilters()
+    public Filters getQueryFilters()
     {
         return queryFilters;
     }
@@ -87,9 +88,9 @@ public class EntityQuery
     {
         private QueryExpr query;
 
-        private Set<Filter> filters = Sets.newHashSet();
+        private Filters.Builder postFilters = Filters.create();
 
-        private Set<Filter> queryFilters = Sets.newHashSet();
+        private Filters.Builder queryFilters = Filters.create();
 
         private Set<AggregationQuery> aggregationQueries = Sets.newHashSet();
 
@@ -114,9 +115,9 @@ public class EntityQuery
         }
 
         @SuppressWarnings("unchecked")
-        public T addFilter( final Filter filter )
+        public T addPostFilter( final Filter filter )
         {
-            this.filters.add( filter );
+            this.postFilters.add( filter );
             return (T) this;
         }
 
@@ -127,10 +128,11 @@ public class EntityQuery
             return (T) this;
         }
 
+
         @SuppressWarnings("unchecked")
-        public T addQueryFilters( final Set<Filter> queryFilters )
+        public T addQueryFilters( final Filters queryFilters )
         {
-            this.queryFilters.addAll( queryFilters );
+            this.queryFilters.addAll( queryFilters.getSet() );
             return (T) this;
         }
 

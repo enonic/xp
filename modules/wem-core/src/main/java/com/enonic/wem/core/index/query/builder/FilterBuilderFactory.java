@@ -17,6 +17,7 @@ import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.query.filter.BooleanFilter;
 import com.enonic.wem.api.query.filter.ExistsFilter;
 import com.enonic.wem.api.query.filter.Filter;
+import com.enonic.wem.api.query.filter.Filters;
 import com.enonic.wem.api.query.filter.RangeFilter;
 import com.enonic.wem.api.query.filter.ValueFilter;
 import com.enonic.wem.core.index.query.IndexQueryFieldNameResolver;
@@ -24,17 +25,17 @@ import com.enonic.wem.core.index.query.IndexQueryFieldNameResolver;
 public class FilterBuilderFactory
     extends AbstractBuilderFactory
 {
-    public FilterBuilder create( final Filter queryFilter )
+    public static FilterBuilder create( final Filters filters )
     {
-        if ( queryFilter == null )
+        if ( filters == null || filters.isEmpty() )
         {
             return null;
         }
 
-        return doCreate( ImmutableSet.<Filter>of( queryFilter ) );
+        return doCreate( ImmutableSet.copyOf( filters ) );
     }
 
-    public FilterBuilder create( final ImmutableSet<Filter> queryFilters )
+    public static FilterBuilder create( final ImmutableSet<Filter> queryFilters )
     {
         if ( queryFilters == null || queryFilters.isEmpty() )
         {
@@ -44,7 +45,7 @@ public class FilterBuilderFactory
         return doCreate( queryFilters );
     }
 
-    private FilterBuilder doCreate( final ImmutableSet<Filter> queryFilters )
+    private static FilterBuilder doCreate( final ImmutableSet<Filter> queryFilters )
     {
         List<FilterBuilder> filtersToApply = Lists.newArrayList();
 
@@ -62,7 +63,7 @@ public class FilterBuilderFactory
         return null;
     }
 
-    private void appendFilters( final ImmutableSet<Filter> queryFilters, final List<FilterBuilder> filtersToApply )
+    private static void appendFilters( final ImmutableSet<Filter> queryFilters, final List<FilterBuilder> filtersToApply )
     {
         for ( final Filter filter : queryFilters )
         {
@@ -86,18 +87,22 @@ public class FilterBuilderFactory
     }
 
 
-    private FilterBuilder createBooleanFilter( final BooleanFilter booleanFilter )
+    private static FilterBuilder createBooleanFilter( final BooleanFilter booleanFilter )
     {
-        final BoolFilterBuilder builder = new BoolFilterBuilder();
+        final BoolFilterBuilder builder = new BoolFilterBuilder().
+            must( createBooleanFilterChildren( booleanFilter.getMust() ) ).
+            mustNot( createBooleanFilterChildren( booleanFilter.getMustNot() ) ).
+            should( createBooleanFilterChildren( booleanFilter.getShould() ) );
 
-        builder.must( createBooleanFilterChildren( booleanFilter.getMust() ) );
-        builder.mustNot( createBooleanFilterChildren( booleanFilter.getMustNot() ) );
-        builder.should( createBooleanFilterChildren( booleanFilter.getShould() ) );
+        if ( booleanFilter.isCache() != null )
+        {
+            builder.cache( booleanFilter.isCache() );
+        }
 
         return builder;
     }
 
-    private FilterBuilder[] createBooleanFilterChildren( final ImmutableSet<Filter> queryFilters )
+    private static FilterBuilder[] createBooleanFilterChildren( final ImmutableSet<Filter> queryFilters )
     {
         List<FilterBuilder> filtersToApply = Lists.newArrayList();
 
@@ -107,7 +112,7 @@ public class FilterBuilderFactory
     }
 
 
-    private FilterBuilder createRangeFilter( final RangeFilter filter )
+    private static FilterBuilder createRangeFilter( final RangeFilter filter )
     {
         final Value from = filter.getFrom();
         final Value to = filter.getTo();
@@ -120,16 +125,21 @@ public class FilterBuilderFactory
         final String queryFieldName =
             IndexQueryFieldNameResolver.createValueTypeAwareFieldName( filter.getFieldName(), from != null ? from : to );
 
-        RangeFilterBuilder builder = new RangeFilterBuilder( queryFieldName );
-        builder.from( from );
-        builder.to( to );
-        builder.includeLower( true );
-        builder.includeUpper( true );
+        RangeFilterBuilder builder = new RangeFilterBuilder( queryFieldName ).
+            from( from ).
+            to( to ).
+            includeLower( true ).
+            includeUpper( true );
+
+        if ( filter.isCache() != null )
+        {
+            builder.cache( filter.isCache() );
+        }
 
         return builder;
     }
 
-    private FilterBuilder createTermFilter( final ValueFilter filter )
+    private static FilterBuilder createTermFilter( final ValueFilter filter )
     {
         final String queryFieldName = IndexQueryFieldNameResolver.resolve( filter );
 
@@ -140,10 +150,17 @@ public class FilterBuilderFactory
             values.add( getValueAsType( value ) );
         }
 
-        return new TermsFilterBuilder( queryFieldName, values );
+        final TermsFilterBuilder builder = new TermsFilterBuilder( queryFieldName, values );
+
+        if ( filter.isCache() != null )
+        {
+            builder.cache( filter.isCache() );
+        }
+
+        return builder;
     }
 
-    private FilterBuilder createExistsFilter( final ExistsFilter filter )
+    private static FilterBuilder createExistsFilter( final ExistsFilter filter )
     {
         final String resolvedQueryFieldName = IndexQueryFieldNameResolver.resolveStringFieldName( filter.getFieldName() );
 

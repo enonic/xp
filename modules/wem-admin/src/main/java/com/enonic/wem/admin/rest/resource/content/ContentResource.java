@@ -52,7 +52,6 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.DeleteContentParams;
-import com.enonic.wem.api.content.Direction;
 import com.enonic.wem.api.content.FindContentByParentParams;
 import com.enonic.wem.api.content.FindContentByParentResult;
 import com.enonic.wem.api.content.FindContentByQueryParams;
@@ -74,6 +73,7 @@ import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.DataJson;
 import com.enonic.wem.api.entity.Workspaces;
 import com.enonic.wem.api.exception.ConflictException;
+import com.enonic.wem.api.query.Direction;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 
 import static com.enonic.wem.api.content.Content.editContent;

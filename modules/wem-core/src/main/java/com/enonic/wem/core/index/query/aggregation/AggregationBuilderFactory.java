@@ -16,7 +16,7 @@ import com.enonic.wem.core.index.query.IndexQueryFieldNameResolver;
 
 public class AggregationBuilderFactory
 {
-    public Set<AggregationBuilder> create( final Collection<AggregationQuery> aggregationQueries )
+    public static Set<AggregationBuilder> create( final Collection<AggregationQuery> aggregationQueries )
     {
 
         Set<AggregationBuilder> aggregationBuilders = Sets.newHashSet();
@@ -36,7 +36,7 @@ public class AggregationBuilderFactory
         return aggregationBuilders;
     }
 
-    private AggregationBuilder createTerms( final TermsAggregationQuery aggregationQuery )
+    private static AggregationBuilder createTerms( final TermsAggregationQuery aggregationQuery )
     {
         final String fieldName = IndexQueryFieldNameResolver.resolveStringFieldName( aggregationQuery.getFieldName() );
 

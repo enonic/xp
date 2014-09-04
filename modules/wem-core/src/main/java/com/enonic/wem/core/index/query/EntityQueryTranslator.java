@@ -11,23 +11,18 @@ import com.enonic.wem.core.index.query.builder.SortBuilderFactory;
 
 public class EntityQueryTranslator
 {
-    private QueryBuilderFactory queryBuilderFactory = new QueryBuilderFactory();
-
-    private FilterBuilderFactory filterBuilderFactory = new FilterBuilderFactory();
-
-    private SortBuilderFactory sortBuilderFactory = new SortBuilderFactory();
-
-    private AggregationBuilderFactory aggregationBuilderFactory = new AggregationBuilderFactory();
-
-    public ElasticsearchQuery translate( final EntityQuery entityQuery, final Workspace workspace )
+    public static ElasticsearchQuery translate( final EntityQuery entityQuery, final Workspace workspace )
     {
         ElasticsearchQuery elasticsearchQuery = ElasticsearchQuery.newQuery().
             index( workspace.getSearchIndexName() ).
             indexType( IndexType.NODE ).
-            query( queryBuilderFactory.create( entityQuery.getQuery(), entityQuery.getQueryFilters() ) ).
-            filter( filterBuilderFactory.create( entityQuery.getFilters() ) ).
-            setAggregations( aggregationBuilderFactory.create( entityQuery.getAggregationQueries() ) ).
-            sortBuilders( sortBuilderFactory.create( entityQuery.getOrderBys() ) ).
+            query( QueryBuilderFactory.create().
+                queryExpr( entityQuery.getQuery() ).
+                addQueryFilters( entityQuery.getQueryFilters() ).
+                build() ).
+            filter( FilterBuilderFactory.create( entityQuery.getPostFilters() ) ).
+            setAggregations( AggregationBuilderFactory.create( entityQuery.getAggregationQueries() ) ).
+            sortBuilders( SortBuilderFactory.create( entityQuery.getOrderBys() ) ).
             from( entityQuery.getFrom() ).
             size( entityQuery.getSize() ).
             build();
