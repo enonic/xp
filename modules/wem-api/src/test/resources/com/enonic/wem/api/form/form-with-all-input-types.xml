@@ -16,7 +16,12 @@
     <occurrences minimum="0" maximum="1"/>
   </input>
   <input name="myTime" type="Time">
-  <immutable>false</immutable>
+    <immutable>false</immutable>
+    <indexed>false</indexed>
+    <occurrences minimum="0" maximum="1"/>
+  </input>
+  <input name="myDateTime" type="DateTime">
+    <immutable>false</immutable>
     <indexed>false</indexed>
     <occurrences minimum="0" maximum="1"/>
   </input>

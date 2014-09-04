@@ -93,7 +93,7 @@ module api.ui.time {
             this.popup.unSelectedTimeChanged(listener);
         }
 
-        private formatTime(hours: number, minutes: number): string {
+        formatTime(hours: number, minutes: number): string {
             return this.padNumber(hours, 2) + ':' + this.padNumber(minutes, 2);
         }
 

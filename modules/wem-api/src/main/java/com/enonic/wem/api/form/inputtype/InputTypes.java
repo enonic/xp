@@ -19,6 +19,8 @@ public final class InputTypes
 
     public static final InputType TIME = new Time();
 
+    public static final InputType DATE_TIME = new DateTime();
+
     public static final InputType CHECKBOX = new Checkbox();
 
     public static final InputType DOUBLE = new Double();
@@ -53,7 +55,8 @@ public final class InputTypes
         add( COLOR ).
         add( COMBO_BOX ).
         add( DATE ).
-        add( TIME).
+        add( TIME ).
+        add( DATE_TIME ).
         add( CHECKBOX ).
         add( DOUBLE ).
         add( GEO_POINT ).
