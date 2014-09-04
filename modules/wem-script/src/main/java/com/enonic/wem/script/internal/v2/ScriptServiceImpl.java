@@ -6,18 +6,18 @@ import javax.script.ScriptEngine;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 
 import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.script.v2.ScriptExports;
-import com.enonic.wem.script.v2.ScriptService;
+import com.enonic.wem.script.ScriptExports;
+import com.enonic.wem.script.ScriptService;
 
 public final class ScriptServiceImpl
     implements ScriptService
 {
     private final ScriptExecutor executor;
 
-    public ScriptServiceImpl()
+    public ScriptServiceImpl( final ScriptLibraries libraries )
     {
         final ScriptEngine engine = new NashornScriptEngineFactory().getScriptEngine();
-        this.executor = new ScriptExecutorImpl( engine );
+        this.executor = new ScriptExecutorImpl( engine, libraries );
     }
 
     @Override

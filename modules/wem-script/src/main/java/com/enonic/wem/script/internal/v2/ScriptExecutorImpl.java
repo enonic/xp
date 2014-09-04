@@ -14,6 +14,7 @@ import com.google.common.io.Resources;
 
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.wem.script.ScriptLibrary;
 
 final class ScriptExecutorImpl
     implements ScriptExecutor
@@ -24,11 +25,14 @@ final class ScriptExecutorImpl
 
     private final String globalScript;
 
-    public ScriptExecutorImpl( final ScriptEngine engine )
+    private final ScriptLibraries libraries;
+
+    public ScriptExecutorImpl( final ScriptEngine engine, final ScriptLibraries libraries )
     {
         this.engine = engine;
         this.invocable = (Invocable) this.engine;
         this.globalScript = loadScript( "global.js" );
+        this.libraries = libraries;
     }
 
     @Override
@@ -79,5 +83,11 @@ final class ScriptExecutorImpl
         {
             throw Throwables.propagate( e );
         }
+    }
+
+    @Override
+    public ScriptLibrary getLibrary( final String name )
+    {
+        return this.libraries.getLibrary( name );
     }
 }

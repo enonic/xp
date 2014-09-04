@@ -3,6 +3,7 @@ package com.enonic.wem.script.internal.v2;
 import javax.script.Bindings;
 
 import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.wem.script.ScriptLibrary;
 
 public final class ScriptModuleScope
 {
@@ -46,6 +47,12 @@ public final class ScriptModuleScope
 
     public Object require( final String name )
     {
+        final ScriptLibrary library = this.executor.getLibrary( name );
+        if ( library != null )
+        {
+            return library;
+        }
+
         final ResourceKey key = resolveScript( name );
         final ScriptModuleScope scope = new ScriptModuleScope( key, this.executor );
         return scope.executeThis();

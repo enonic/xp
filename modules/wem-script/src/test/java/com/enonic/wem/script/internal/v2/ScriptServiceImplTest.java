@@ -6,8 +6,8 @@ import org.junit.Test;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceUrlRegistry;
 import com.enonic.wem.api.resource.ResourceUrlTestHelper;
-import com.enonic.wem.script.v2.ScriptExports;
-import com.enonic.wem.script.v2.ScriptService;
+import com.enonic.wem.script.ScriptExports;
+import com.enonic.wem.script.ScriptService;
 
 import static org.junit.Assert.*;
 
@@ -24,7 +24,8 @@ public class ScriptServiceImplTest
     @Before
     public void setup()
     {
-        this.service = new ScriptServiceImpl();
+        final TestScriptLibraries libraries = new TestScriptLibraries();
+        this.service = new ScriptServiceImpl( libraries );
     }
 
     @Test

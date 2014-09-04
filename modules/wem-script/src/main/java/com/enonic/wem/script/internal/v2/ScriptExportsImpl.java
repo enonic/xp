@@ -3,7 +3,7 @@ package com.enonic.wem.script.internal.v2;
 import javax.script.Bindings;
 
 import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.script.v2.ScriptExports;
+import com.enonic.wem.script.ScriptExports;
 
 final class ScriptExportsImpl
     implements ScriptExports
