@@ -2,6 +2,8 @@ module api.schema.content {
 
     export class ContentTypeName implements api.Equitable {
 
+        static SITE:string = 'system-0.0.0:site';
+
         private value: string;
 
         constructor(name: string) {

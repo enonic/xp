@@ -56,7 +56,7 @@ module api.schema {
         }
 
         isSite(): boolean {
-            return this.name === 'site';
+            return this.name === api.schema.content.ContentTypeName.SITE;
         }
 
         equals(o: api.Equitable): boolean {

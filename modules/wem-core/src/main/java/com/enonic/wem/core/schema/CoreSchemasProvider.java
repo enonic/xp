@@ -15,6 +15,7 @@ import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.schema.Schema;
 import com.enonic.wem.api.schema.SchemaProvider;
 import com.enonic.wem.api.schema.Schemas;
@@ -130,12 +131,12 @@ public final class CoreSchemasProvider
     private static final RelationshipType LIKE = createRelationshipType( RelationshipTypeName.LIKE, "Like", "likes", "liked by" );
 
     private static final RelationshipType CITATION =
-        createRelationshipType( RelationshipTypeName.from( "mymodule-1.0.0:citation" ), "Citation", "citation in", "cited by",
-                                ContentTypeNames.from( "mymodule-1.0.0:article" ) );
+        createRelationshipType( RelationshipTypeName.from( "demo-1.0.0:citation" ), "Citation", "citation in", "cited by",
+                                ContentTypeNames.from( "demo-1.0.0:article" ) );
 
     private static final RelationshipType IMAGE =
-        createRelationshipType( RelationshipTypeName.from( "mymodule-1.0.0:image" ), "Image", "relates to image", "related of image",
-                                ContentTypeNames.from( "mymodule-1.0.0:image" ) );
+        createRelationshipType( RelationshipTypeName.from( ModuleKey.SYSTEM, "related-image" ), "Image", "relates to image", "related of image",
+                                ContentTypeNames.from( ContentTypeName.imageMedia() ) );
 
     private static final RelationshipType[] RELATIONSHIP_TYPES = {DEFAULT, PARENT, LINK, LIKE, CITATION, IMAGE};
 
