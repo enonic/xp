@@ -1,7 +1,5 @@
 module api.data.type {
 
-    import Value = api.data.Value;
-
     export class ValueType implements api.Equitable {
 
         private name: string;
@@ -14,15 +12,15 @@ module api.data.type {
             return this.name;
         }
 
-        valueToString(value: Value): string {
+        valueToString(value: api.data.Value): string {
             return String(value.getObject());
         }
 
-        valueToBoolean(value: Value): boolean {
+        valueToBoolean(value: api.data.Value): boolean {
             return value.asString() == "true";
         }
 
-        valueToNumber(value: Value): number {
+        valueToNumber(value: api.data.Value): number {
             return Number(value.getObject());
         }
 
@@ -34,7 +32,7 @@ module api.data.type {
             return true;
         }
 
-        newValue(value: string): Value {
+        newValue(value: string): api.data.Value {
             return new Value(value, this);
         }
 
