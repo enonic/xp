@@ -30,6 +30,7 @@ public class EntityQuery
 
     private final int size;
 
+    @SuppressWarnings("unchecked")
     public EntityQuery( final Builder builder )
     {
         this.query = builder.query;
