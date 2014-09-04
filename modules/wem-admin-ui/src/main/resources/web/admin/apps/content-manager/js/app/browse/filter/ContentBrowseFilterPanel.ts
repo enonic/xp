@@ -23,7 +23,7 @@ module app.browse.filter {
     import LogicalExp = api.query.expr.LogicalExpr;
     import DynamicConstraintExpr = api.query.expr.DynamicConstraintExpr;
     import Value = api.data.Value;
-    import ValueTypes = api.data.ValueTypes;
+    import ValueTypes = api.data.type.ValueTypes;
 
 
     export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilterPanel {

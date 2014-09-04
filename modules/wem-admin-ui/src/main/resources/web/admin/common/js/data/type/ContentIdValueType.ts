@@ -1,4 +1,4 @@
-module api.data {
+module api.data.type {
 
     export class ContentIdValueType extends ValueType {
 
@@ -11,7 +11,7 @@ module api.data {
         }
 
         valueToString(value: Value): string {
-            return (<api.content.ContentId>value.asObject()).toString();
+            return (<api.content.ContentId>value.getObject()).toString();
         }
     }
 }

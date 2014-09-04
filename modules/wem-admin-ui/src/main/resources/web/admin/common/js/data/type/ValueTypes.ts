@@ -1,4 +1,4 @@
-module api.data {
+module api.data.type {
 
     /*
      * Types need to be named as in ValueTypes.java
@@ -19,9 +19,9 @@ module api.data {
 
         static CONTENT_ID = new ContentIdValueType("ContentId");
 
-        static LONG = new ValueType("Long");
+        static LONG = new LongValueType();
 
-        static BOOLEAN = new ValueType("Boolean");
+        static BOOLEAN = new BooleanValueType();
 
         static DOUBLE = new ValueType("Double");
 

@@ -67,6 +67,7 @@
 ///<reference path='ui/treegrid/_module.ts' />
 
 ///<reference path='data/json/_module.ts' />
+///<reference path='data/type/_module.ts' />
 ///<reference path='data/_module.ts' />
 
 ///<reference path='form/json/_module.ts' />

@@ -1,4 +1,6 @@
-module api.data {
+module api.data.type {
+
+    import Value = api.data.Value;
 
     export class ValueType implements api.Equitable {
 
@@ -8,19 +10,31 @@ module api.data {
             this.name = name;
         }
 
-        toString() {
+        toString(): string {
             return this.name;
         }
 
         valueToString(value: Value): string {
-            return <string>value.asObject();
+            return String(value.getObject());
         }
 
         valueToBoolean(value: Value): boolean {
             return value.asString() == "true";
         }
 
-        newValue(value: string) {
+        valueToNumber(value: Value): number {
+            return Number(value.getObject());
+        }
+
+        isValid(value: any): boolean {
+            return true;
+        }
+
+        isConvertible(value: any): boolean {
+            return true;
+        }
+
+        newValue(value: string): Value {
             return new Value(value, this);
         }
 

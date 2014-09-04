@@ -111,8 +111,8 @@ public class ContentResourceTest
 
         final ContentData aContentData = aContent.getContentData();
 
-        aContentData.setProperty( "myArray[0]", Value.newString( "arrayValue1" ) );
-        aContentData.setProperty( "myArray[1]", Value.newString( "arrayValue2" ) );
+        aContentData.setProperty( "myArray[0]", Value.newLong( 1 ) );
+        aContentData.setProperty( "myArray[1]", Value.newLong( 2 ) );
 
         aContentData.setProperty( "mySetWithArray.myArray[0]", Value.newDouble( 3.14159 ) );
         aContentData.setProperty( "mySetWithArray.myArray[1]", Value.newDouble( 1.333 ) );
@@ -206,8 +206,8 @@ public class ContentResourceTest
 
         final ContentData aContentData = aContent.getContentData();
 
-        aContentData.setProperty( "myArray[0]", Value.newString( "arrayValue1" ) );
-        aContentData.setProperty( "myArray[1]", Value.newString( "arrayValue2" ) );
+        aContentData.setProperty( "myArray[0]", Value.newLong( 1 ) );
+        aContentData.setProperty( "myArray[1]", Value.newLong( 2 ) );
 
         aContentData.setProperty( "mySetWithArray.myArray[0]", Value.newDouble( 3.14159 ) );
         aContentData.setProperty( "mySetWithArray.myArray[1]", Value.newDouble( 1.333 ) );
