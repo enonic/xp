@@ -1,6 +1,7 @@
 module api.content.form.inputtype.time {
 
     import support = api.form.inputtype.support;
+    import ValueTypes = api.data.type.ValueTypes;
 
     export class DateTime extends support.BaseInputTypeNotManagingAdd<any> {
 
@@ -9,7 +10,7 @@ module api.content.form.inputtype.time {
         }
 
         newInitialValue(): api.data.Value {
-            return new api.data.Value("", api.data.ValueTypes.STRING);
+            return new api.data.Value("", ValueTypes.STRING);
         }
 
 
@@ -19,7 +20,7 @@ module api.content.form.inputtype.time {
                     return new api.ui.time.DateTime();
                 } else {
 
-                    var date = api.util.parseDate(property.getValue().asString());
+                    var date = property.getValue().getDate();
                     var dateBuilder = new api.ui.time.DatePickerBuilder().
                         setMonth(date.getMonth()).setYear(date.getFullYear()).setSelectedDate(date);
                     var timeBuilder = new api.ui.time.TimePickerBuilder().setHours(date.getHours()).setMinutes(date.getMinutes());
@@ -51,7 +52,7 @@ module api.content.form.inputtype.time {
 
 
         private newValue(s: string): api.data.Value {
-            return new api.data.Value(s, api.data.ValueTypes.STRING);
+            return new api.data.Value(s, ValueTypes.STRING);
         }
 
         getValue(occurrence: api.dom.Element): api.data.Value {

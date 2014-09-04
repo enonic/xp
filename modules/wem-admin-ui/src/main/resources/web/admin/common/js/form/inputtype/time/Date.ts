@@ -60,11 +60,7 @@ module api.content.form.inputtype.time {
             if (value == null) {
                 return true;
             }
-            if (api.util.isStringBlank(value.asString())) {
-                return true;
-            } else {
-                return false;
-            }
+            return !value.getType().equals(ValueTypes.LOCAL_DATE);
         }
 
     }
