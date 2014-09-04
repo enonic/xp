@@ -37,18 +37,6 @@ module app.wizard.page.contextwindow {
                 }
             });
         }
-
-        hideContextWindow() {
-            if (this.contextWindow.isFloating() && this.contextWindow.isShown()) {
-                this.contextWindow.slideOut();
-            }
-        }
-
-        showContextWindow() {
-            if (this.contextWindow.isFloating() && !this.contextWindow.isShown()) {
-                this.contextWindow.slideIn();
-            }
-        }
     }
 
 }
