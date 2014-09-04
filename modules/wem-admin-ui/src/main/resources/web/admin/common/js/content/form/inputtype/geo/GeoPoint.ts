@@ -82,7 +82,7 @@ module api.content.form.inputtype.geo {
 
         private validateGeoPoint(values: string[]): boolean {
             values.forEach((value: string) => {
-                if (!api.util.isStringBlank(value) && isNaN(parseInt(value))) {
+                if (!api.util.isStringBlank(value) && !this.isNumeric(value)) {
                     throw new Error('GeoPoint value is not a Number');
                 }
             });
@@ -92,6 +92,11 @@ module api.content.form.inputtype.geo {
             } else {
                 return true;
             }
+        }
+
+        private  isNumeric(input: string) {
+            var re = /^-{0,1}\d*\.{0,1}\d+$/;
+            return (re.test(input));
         }
 
     }
