@@ -13,9 +13,9 @@ import com.google.inject.Inject;
 
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.schema.Schema;
-import com.enonic.wem.api.schema.SchemaManager;
 import com.enonic.wem.api.schema.SchemaName;
 import com.enonic.wem.api.schema.SchemaProvider;
+import com.enonic.wem.api.schema.SchemaRegistry;
 import com.enonic.wem.api.schema.Schemas;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -29,8 +29,8 @@ import com.enonic.wem.api.schema.relationship.RelationshipTypes;
 
 import static java.util.stream.Collectors.toList;
 
-public final class SchemaManagerImpl
-    implements ServiceTrackerCustomizer, SchemaManager
+public final class SchemaRegistryImpl
+    implements ServiceTrackerCustomizer, SchemaRegistry
 {
 
     private BundleContext bundleContext;
@@ -41,7 +41,7 @@ public final class SchemaManagerImpl
 
     private ConcurrentHashMap<ModuleKey, Schemas> moduleSchemas;
 
-    public SchemaManagerImpl()
+    public SchemaRegistryImpl()
     {
         this.allSchemas = new ConcurrentHashMap<>();
         this.moduleSchemas = new ConcurrentHashMap<>();
@@ -178,7 +178,7 @@ public final class SchemaManagerImpl
     public RelationshipTypes getAllRelationshipTypes()
     {
         final List<RelationshipType> relationshipTypes = allSchemas.values().stream().
-            filter( ( schema ) -> schema.getType().isMixin() ).
+            filter( ( schema ) -> schema.getType().isRelationshipType() ).
             map( ( schema ) -> (RelationshipType) schema ).
             collect( toList() );
         return RelationshipTypes.from( relationshipTypes );

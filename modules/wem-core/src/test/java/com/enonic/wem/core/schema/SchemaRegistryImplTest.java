@@ -25,9 +25,9 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static org.mockito.Matchers.eq;
 
-public class SchemaManagerImplTest
+public class SchemaRegistryImplTest
 {
-    private SchemaManagerImpl schemaManager;
+    private SchemaRegistryImpl schemaManager;
 
     private BundleContext bundleContext;
 
@@ -35,7 +35,7 @@ public class SchemaManagerImplTest
     public void setup()
         throws Exception
     {
-        this.schemaManager = new SchemaManagerImpl();
+        this.schemaManager = new SchemaRegistryImpl();
         this.bundleContext = Mockito.mock( BundleContext.class );
         this.schemaManager.setBundleContext( bundleContext );
         this.schemaManager.start();

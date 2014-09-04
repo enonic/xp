@@ -3,6 +3,7 @@ package com.enonic.wem.core.schema;
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
 
+import com.enonic.wem.api.schema.SchemaRegistry;
 import com.enonic.wem.api.schema.SchemaService;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.mixin.MixinService;
@@ -25,6 +26,7 @@ public final class SchemaModule
     @Override
     protected void configure()
     {
+        bind( SchemaRegistry.class ).to( SchemaRegistryImpl.class ).in( Scopes.SINGLETON );
         bind( RelationshipTypeDao.class ).to( RelationshipTypeDaoImpl.class ).in( Scopes.SINGLETON );
         bind( ContentTypeDao.class ).to( ContentTypeDaoImpl.class ).in( Scopes.SINGLETON );
         bind( MixinDao.class ).to( MixinDaoImpl.class ).in( Scopes.SINGLETON );

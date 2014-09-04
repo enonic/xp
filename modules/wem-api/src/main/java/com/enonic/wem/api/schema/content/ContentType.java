@@ -71,7 +71,7 @@ public class ContentType
         return hasInheritors();
     }
 
-    public boolean hasInheritors()
+    private boolean hasInheritors()
     {
         return this.hasInheritors;
     }

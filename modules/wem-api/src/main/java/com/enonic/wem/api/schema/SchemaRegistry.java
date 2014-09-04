@@ -11,7 +11,7 @@ import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
 
-public interface SchemaManager
+public interface SchemaRegistry
 {
 
     Schema getSchema( SchemaName schemaName );

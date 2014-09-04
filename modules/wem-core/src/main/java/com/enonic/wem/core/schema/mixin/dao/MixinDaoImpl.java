@@ -1,7 +1,6 @@
 package com.enonic.wem.core.schema.mixin.dao;
 
 import java.io.IOException;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -15,14 +14,14 @@ import com.google.common.base.Charsets;
 
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.exception.SystemException;
+import com.enonic.wem.api.schema.SchemaRegistry;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.schema.mixin.Mixins;
 import com.enonic.wem.core.config.SystemConfig;
-import com.enonic.wem.core.support.dao.IconDao;
 import com.enonic.wem.core.schema.mixin.MixinXmlSerializer;
+import com.enonic.wem.core.support.dao.IconDao;
 
-import static com.enonic.wem.api.schema.mixin.Mixins.newMixins;
 import static java.nio.file.Files.getLastModifiedTime;
 import static java.nio.file.Files.isDirectory;
 import static java.nio.file.Files.isRegularFile;
@@ -34,6 +33,8 @@ public final class MixinDaoImpl
     private static final String MIXIN_XML = "mixin.xml";
 
     private Path basePath;
+
+    private SchemaRegistry schemaRegistry;
 
     @Override
     public Mixin createMixin( final Mixin mixin )
@@ -58,32 +59,13 @@ public final class MixinDaoImpl
     @Override
     public Mixins getAllMixins()
     {
-        final Mixins.Builder mixins = newMixins();
-
-        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream( this.basePath ))
-        {
-            for ( Path schemaDir : directoryStream )
-            {
-                final Mixin.Builder mixinBuilder = readMixin( schemaDir );
-                final Mixin mixin = mixinBuilder != null ? mixinBuilder.build() : null;
-                if ( mixin != null )
-                {
-                    mixins.add( mixin );
-                }
-            }
-        }
-        catch ( IOException e )
-        {
-            throw new SystemException( e, "Could not retrieve mixins" );
-        }
-        return mixins.build();
+        return this.schemaRegistry.getAllMixins();
     }
 
     @Override
     public Mixin.Builder getMixin( final MixinName mixinName )
     {
-        final Path mixinPath = pathForMixin( mixinName );
-        return readMixin( mixinPath );
+        return Mixin.newMixin( this.schemaRegistry.getMixin( mixinName ) );
     }
 
     @Override
@@ -178,5 +160,11 @@ public final class MixinDaoImpl
     {
         this.basePath = systemConfig.getMixinsDir();
         Files.createDirectories( this.basePath );
+    }
+
+    @Inject
+    public void setSchemaRegistry( final SchemaRegistry schemaRegistry )
+    {
+        this.schemaRegistry = schemaRegistry;
     }
 }

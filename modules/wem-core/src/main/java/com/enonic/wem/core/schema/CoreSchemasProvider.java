@@ -149,7 +149,7 @@ public final class CoreSchemasProvider
 
     private static ContentType.Builder createSystemType( final ContentTypeName contentTypeName )
     {
-        final String displayName = WordUtils.capitalize( contentTypeName.getContentTypeName() );
+        final String displayName = WordUtils.capitalize( contentTypeName.getLocalName() );
         return newContentType().
             name( contentTypeName ).
             displayName( displayName ).
@@ -195,7 +195,7 @@ public final class CoreSchemasProvider
         for ( ContentType contentType : SYSTEM_TYPES )
         {
             contentType = newContentType( contentType ).
-                icon( loadSchemaIcon( CONTENT_TYPES_FOLDER, contentType.getName().toString() ) ).
+                icon( loadSchemaIcon( CONTENT_TYPES_FOLDER, contentType.getName().getLocalName() ) ).
                 build();
             systemContentTypes.add( contentType );
         }
@@ -222,7 +222,7 @@ public final class CoreSchemasProvider
             final String mixinJson = loadFileAsString( MIXINS_FOLDER, demoMixinFileName );
             Mixin mixin = mixinJsonSerializer.toMixin( mixinJson );
             mixin = Mixin.newMixin( mixin ).
-                icon( loadSchemaIcon( MIXINS_FOLDER, mixin.getName().toString() ) ).
+                icon( loadSchemaIcon( MIXINS_FOLDER, mixin.getName().getLocalName() ) ).
                 build();
 
             mixins.add( mixin );
@@ -236,7 +236,7 @@ public final class CoreSchemasProvider
         for ( RelationshipType relationshipType : RELATIONSHIP_TYPES )
         {
             relationshipType = RelationshipType.newRelationshipType( relationshipType ).
-                icon( loadSchemaIcon( RELATIONSHIP_TYPES_FOLDER, relationshipType.getName().toString() ) ).
+                icon( loadSchemaIcon( RELATIONSHIP_TYPES_FOLDER, relationshipType.getName().getLocalName() ) ).
                 build();
             relationshipTypes.add( relationshipType );
         }
