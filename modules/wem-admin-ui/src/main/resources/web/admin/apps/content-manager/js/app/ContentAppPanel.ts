@@ -149,7 +149,7 @@ module app {
                     return;
                 }
 
-                var tabMenuItem = this.isContentBeingEditedOrViewed(content);
+                var tabMenuItem = this.resolveTabMenuItemForContentBeingEditedOrViewed(content);
 
                 if (tabMenuItem) {
                     this.selectPanel(tabMenuItem);
@@ -177,8 +177,8 @@ module app {
                 if (!content) {
                     return;
                 }
-                var closeViewPanelMenuItem = this.isContentBeingViewed(content);
-                var tabMenuItem = this.isContentBeingEdited(content);
+                var closeViewPanelMenuItem = this.resolveTabMenuItemForContentBeingViewed(content);
+                var tabMenuItem = this.resolveTabMenuItemForContentBeingEdited(content);
 
                 if (tabMenuItem != null) {
                     this.selectPanel(tabMenuItem);
@@ -213,14 +213,14 @@ module app {
             });
         }
 
-        private isContentBeingEditedOrViewed(content: api.content.ContentSummary): api.app.bar.AppBarTabMenuItem {
-            var result = this.isContentBeingEdited(content);
+        private resolveTabMenuItemForContentBeingEditedOrViewed(content: api.content.ContentSummary): api.app.bar.AppBarTabMenuItem {
+            var result = this.resolveTabMenuItemForContentBeingEdited(content);
             if(!result) {
-                result = this.isContentBeingViewed(content)
+                result = this.resolveTabMenuItemForContentBeingViewed(content)
             }
             return result;
         }
-        private isContentBeingEdited(content: api.content.ContentSummary): api.app.bar.AppBarTabMenuItem {
+        private resolveTabMenuItemForContentBeingEdited(content: api.content.ContentSummary): api.app.bar.AppBarTabMenuItem {
             if (!!content) {
                 var tabId = this.getAppBarTabMenu().getNavigationItemById(api.app.bar.AppBarTabId.forEdit(content.getId()));
                 if (tabId) {
@@ -229,7 +229,7 @@ module app {
             }
             return null;
         }
-        private isContentBeingViewed(content: api.content.ContentSummary): api.app.bar.AppBarTabMenuItem {
+        private resolveTabMenuItemForContentBeingViewed(content: api.content.ContentSummary): api.app.bar.AppBarTabMenuItem {
             if (!!content) {
                 var tabId = this.getAppBarTabMenu().getNavigationItemById(api.app.bar.AppBarTabId.forView(content.getId()));
                 if (tabId) {
