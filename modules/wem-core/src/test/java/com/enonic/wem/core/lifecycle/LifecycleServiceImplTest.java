@@ -76,7 +76,7 @@ public class LifecycleServiceImplTest
         assertEquals( false, this.bean2.isRunning() );
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void testStartAll_error()
         throws Exception
     {
@@ -88,5 +88,10 @@ public class LifecycleServiceImplTest
         assertEquals( false, this.bean2.isRunning() );
 
         this.service.startAll();
+
+        assertEquals( 1, this.bean1.startCount );
+        assertEquals( false, this.bean1.isRunning() );
+        assertEquals( 1, this.bean2.startCount );
+        assertEquals( false, this.bean2.isRunning() );
     }
 }

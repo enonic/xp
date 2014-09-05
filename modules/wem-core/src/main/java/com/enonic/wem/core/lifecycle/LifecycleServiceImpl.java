@@ -28,10 +28,9 @@ final class LifecycleServiceImpl
         {
             doStartAll();
         }
-        catch ( final RuntimeException e )
+        catch ( final Exception e )
         {
             stopAll();
-            throw e;
         }
     }
 

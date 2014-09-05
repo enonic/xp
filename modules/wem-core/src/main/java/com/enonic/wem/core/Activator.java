@@ -20,6 +20,7 @@ import com.enonic.wem.api.event.EventListener;
 import com.enonic.wem.api.event.EventPublisher;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.relationship.RelationshipService;
+import com.enonic.wem.api.schema.SchemaRegistry;
 import com.enonic.wem.api.schema.SchemaService;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.mixin.MixinService;
@@ -31,8 +32,10 @@ import com.enonic.wem.core.image.filter.ImageFilterBuilder;
 import com.enonic.wem.core.initializer.StartupInitializer;
 import com.enonic.wem.core.lifecycle.LifecycleService;
 import com.enonic.wem.core.module.ModuleKeyResolverService;
+import com.enonic.wem.core.module.ModuleLoader;
 import com.enonic.wem.core.module.ModuleURLStreamHandler;
 import com.enonic.wem.core.schema.CoreSchemasProvider;
+import com.enonic.wem.core.schema.SchemaRegistryImpl;
 import com.enonic.wem.guice.GuiceActivator;
 
 public final class Activator
@@ -40,6 +43,12 @@ public final class Activator
 {
     @Inject
     protected LifecycleService lifecycleService;
+
+    @Inject
+    protected ModuleLoader moduleLoader;
+
+    @Inject
+    protected SchemaRegistry schemaManager;
 
     @Override
     protected void configure()
@@ -85,6 +94,8 @@ public final class Activator
     protected void doStart()
         throws Exception
     {
+        ( (SchemaRegistryImpl) this.schemaManager ).start();
+        this.moduleLoader.start();
         this.lifecycleService.startAll();
     }
 
@@ -93,5 +104,7 @@ public final class Activator
         throws Exception
     {
         this.lifecycleService.stopAll();
+        this.moduleLoader.stop();
+        ( (SchemaRegistryImpl) this.schemaManager ).stop();
     }
 }

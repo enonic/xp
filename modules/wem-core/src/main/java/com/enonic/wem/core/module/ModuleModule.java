@@ -14,6 +14,5 @@ public final class ModuleModule
     {
         bind( ModuleService.class ).to( ModuleServiceImpl.class ).in( Singleton.class );
         bind( ModuleKeyResolverService.class ).to( ModuleKeyResolverServiceImpl.class );
-        bind( ModuleLoader.class ).asEagerSingleton();
     }
 }
