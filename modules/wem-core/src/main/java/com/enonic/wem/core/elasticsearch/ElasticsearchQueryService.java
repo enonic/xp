@@ -5,10 +5,11 @@ import javax.inject.Inject;
 import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.entity.query.EntityQuery;
 import com.enonic.wem.api.entity.query.NodeQuery;
+import com.enonic.wem.core.elasticsearch.query.ElasticsearchQuery;
+import com.enonic.wem.core.elasticsearch.query.EntityQueryTranslator;
+import com.enonic.wem.core.elasticsearch.query.NodeQueryTranslator;
 import com.enonic.wem.core.elasticsearch.result.SearchResult;
-import com.enonic.wem.core.index.query.EntityQueryTranslator;
 import com.enonic.wem.core.index.query.NodeQueryResult;
-import com.enonic.wem.core.index.query.NodeQueryTranslator;
 import com.enonic.wem.core.index.query.QueryResultFactory;
 import com.enonic.wem.core.index.query.QueryService;
 

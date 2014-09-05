@@ -24,6 +24,7 @@ import org.elasticsearch.search.sort.SortBuilder;
 
 import com.google.common.collect.ImmutableSet;
 
+import com.enonic.wem.core.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.core.elasticsearch.result.SearchResult;
 import com.enonic.wem.core.elasticsearch.result.SearchResultFactory;
 import com.enonic.wem.core.index.DeleteDocument;

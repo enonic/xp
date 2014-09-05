@@ -31,6 +31,7 @@ import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.NodeVersionId;
 import com.enonic.wem.api.entity.NodeVersionIds;
 import com.enonic.wem.api.entity.Workspace;
+import com.enonic.wem.core.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.core.elasticsearch.result.SearchResult;
 import com.enonic.wem.core.elasticsearch.result.SearchResultEntry;
 import com.enonic.wem.core.elasticsearch.result.SearchResultField;

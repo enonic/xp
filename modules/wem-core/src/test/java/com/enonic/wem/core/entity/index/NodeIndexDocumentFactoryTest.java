@@ -220,7 +220,6 @@ public class NodeIndexDocumentFactoryTest
     public Set<AbstractIndexDocumentItem> getItemsWithName( final IndexDocument indexDocument, final IndexDocumentItemPath path,
                                                             final IndexValueType baseType )
     {
-
         Set<AbstractIndexDocumentItem> items = Sets.newHashSet();
 
         for ( AbstractIndexDocumentItem item : indexDocument.getIndexDocumentItems() )

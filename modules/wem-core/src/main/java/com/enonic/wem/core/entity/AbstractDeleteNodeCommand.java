@@ -1,7 +1,5 @@
 package com.enonic.wem.core.entity;
 
-import org.elasticsearch.common.Strings;
-
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeVersionIds;
 import com.enonic.wem.api.entity.Nodes;
@@ -34,7 +32,7 @@ public abstract class AbstractDeleteNodeCommand
         {
             final String nodeName = child.name().toString();
 
-            final boolean isAttachmentNode = Strings.startsWithIgnoreCase( nodeName, ATTACHMENTS_NODE_NAME );
+            final boolean isAttachmentNode = nodeName.startsWith( ATTACHMENTS_NODE_NAME );
             if ( !isAttachmentNode )
             {
                 workspaceService.delete( new WorkspaceDeleteQuery( workspace, child.id() ) );
