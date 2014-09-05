@@ -70,7 +70,7 @@ module api.form.inputtype.combobox {
             });
             comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<string>) => {
 
-                var value = new api.data.Value(event.getOption().displayValue, api.data.ValueTypes.STRING);
+                var value = new api.data.Value(event.getOption().displayValue, api.data.type.ValueTypes.STRING);
                 this.notifyValueAdded(value);
 
                 this.validate(false);
@@ -89,7 +89,7 @@ module api.form.inputtype.combobox {
 
             var values: api.data.Value[] = [];
             this.comboBox.getSelectedOptions().forEach((option: api.ui.selector.Option<string>)  => {
-                var value = new api.data.Value(option.value, api.data.ValueTypes.STRING);
+                var value = new api.data.Value(option.value, api.data.type.ValueTypes.STRING);
                 values.push(value);
             });
             return values;

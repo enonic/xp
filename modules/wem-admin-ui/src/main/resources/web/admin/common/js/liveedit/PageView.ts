@@ -36,6 +36,14 @@ module api.liveedit {
         }
     }
 
+    class PageViewContextMenuTitle extends ItemViewContextMenuTitle {
+
+        constructor(content: Content) {
+            super(content.getDisplayName(), PageItemType.get().getConfig().getIconCls());
+        }
+
+    }
+
     export class PageView extends ItemView {
 
         private content: Content;
@@ -62,7 +70,8 @@ module api.liveedit {
                 setType(PageItemType.get()).
                 setElement(builder.element).
                 setParentElement(builder.element.getParentElement()).
-                setContextMenuActions(this.createPageContextMenuActions()));
+                setContextMenuActions(this.createPageContextMenuActions()).
+                setContextMenuTitle(new PageViewContextMenuTitle(builder.content)));
             this.setContent(builder.content);
             this.pageRegions = builder.pageRegions;
             this.parseItemViews();

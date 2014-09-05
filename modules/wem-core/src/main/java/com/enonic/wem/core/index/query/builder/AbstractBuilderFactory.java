@@ -9,7 +9,7 @@ import com.enonic.wem.api.util.GeoPoint;
 
 public class AbstractBuilderFactory
 {
-    Object getValueAsType( Value value )
+    static Object getValueAsType( Value value )
     {
         if ( value.isDateType() )
         {
@@ -30,7 +30,7 @@ public class AbstractBuilderFactory
         return value.asString();
     }
 
-    QueryBuilder buildNotQuery( final QueryBuilder negated )
+    static QueryBuilder buildNotQuery( final QueryBuilder negated )
     {
         return QueryBuilders.boolQuery().mustNot( negated );
     }

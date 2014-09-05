@@ -10,7 +10,7 @@ import com.enonic.wem.core.index.query.IndexQueryFieldNameResolver;
 public class TermQueryBuilderFactory
     extends AbstractBuilderFactory
 {
-    public QueryBuilder create( final CompareExpr compareExpr )
+    public static QueryBuilder create( final CompareExpr compareExpr )
     {
         final String queryFieldName = IndexQueryFieldNameResolver.resolve( compareExpr );
 
@@ -18,7 +18,7 @@ public class TermQueryBuilderFactory
         return QueryBuilders.termQuery( queryFieldName, getValueAsType( value ) );
     }
 
-    public QueryBuilder create( final String fieldName, final Value value )
+    public static QueryBuilder create( final String fieldName, final Value value )
     {
         return QueryBuilders.termQuery( fieldName, getValueAsType( value ) );
     }

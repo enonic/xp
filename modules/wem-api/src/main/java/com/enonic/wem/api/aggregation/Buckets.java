@@ -10,7 +10,6 @@ import com.enonic.wem.api.support.AbstractImmutableEntitySet;
 public class Buckets
     extends AbstractImmutableEntitySet<Bucket>
 {
-
     public Buckets( final ImmutableSet<Bucket> buckets )
     {
         super( buckets );
@@ -25,7 +24,7 @@ public class Buckets
     {
         private Set<Bucket> buckets = Sets.newLinkedHashSet();
 
-        public Builder addBucket( final Bucket bucket )
+        public Builder add( final Bucket bucket )
         {
             this.buckets.add( bucket );
             return this;

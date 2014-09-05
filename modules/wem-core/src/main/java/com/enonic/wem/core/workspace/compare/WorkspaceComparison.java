@@ -5,11 +5,11 @@ import java.util.Set;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.entity.EntityComparison;
+import com.enonic.wem.api.entity.NodeComparison;
 
 public class WorkspaceComparison
 {
-    private final ImmutableSet<EntityComparison> diffEntries;
+    private final ImmutableSet<NodeComparison> diffEntries;
 
     private WorkspaceComparison( final Builder builder )
     {
@@ -21,20 +21,20 @@ public class WorkspaceComparison
         return new Builder();
     }
 
-    public ImmutableSet<EntityComparison> getDiffEntries()
+    public ImmutableSet<NodeComparison> getDiffEntries()
     {
         return diffEntries;
     }
 
     public static class Builder
     {
-        private final Set<EntityComparison> diffEntries = Sets.newLinkedHashSet();
+        private final Set<NodeComparison> diffEntries = Sets.newLinkedHashSet();
 
         private Builder()
         {
         }
 
-        final Builder add( final EntityComparison diffEntry )
+        final Builder add( final NodeComparison diffEntry )
         {
             this.diffEntries.add( diffEntry );
             return this;

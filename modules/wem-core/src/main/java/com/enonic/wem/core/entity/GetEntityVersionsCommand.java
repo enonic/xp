@@ -2,7 +2,7 @@ package com.enonic.wem.core.entity;
 
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.FindEntityVersionsResult;
+import com.enonic.wem.api.entity.FindNodeVersionsResult;
 import com.enonic.wem.core.version.GetVersionsQuery;
 import com.enonic.wem.core.version.VersionService;
 
@@ -27,7 +27,7 @@ public class GetEntityVersionsCommand
         versionService = builder.versionService;
     }
 
-    public FindEntityVersionsResult execute()
+    public FindNodeVersionsResult execute()
     {
         final GetVersionsQuery query = GetVersionsQuery.create().
             entityId( this.entityId ).

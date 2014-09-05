@@ -1,8 +1,8 @@
 package com.enonic.wem.core.entity;
 
 import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.entity.EntityComparisons;
 import com.enonic.wem.api.entity.EntityIds;
+import com.enonic.wem.api.entity.NodeComparisons;
 import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.core.workspace.compare.WorkspaceCompareService;
 import com.enonic.wem.core.workspace.compare.query.CompareEntitiesQuery;
@@ -30,7 +30,7 @@ public class CompareNodesCommand
         return new Builder( context );
     }
 
-    public EntityComparisons execute()
+    public NodeComparisons execute()
     {
         return this.compareService.compare( CompareEntitiesQuery.create().
             source( context.getWorkspace() ).

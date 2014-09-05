@@ -1,5 +1,8 @@
 module api.data {
 
+    import ValueType = api.data.type.ValueType;
+    import ValueTypes = api.data.type.ValueTypes;
+
     export class Value implements api.Equitable, api.Cloneable {
 
         private value: Object;
@@ -11,15 +14,33 @@ module api.data {
             api.util.assertNotNull(type, "type of a Value cannot be null");
             this.value = value;
             this.type = type;
+            if (!this.type.isValid(value)) {
+                throw new Error("Invalid value for type " + type.toString() + ": " + value);
+            }
         }
 
-        asObject(): Object {
+        getObject(): Object {
             return this.value;
         }
 
-        asString(): string {
+        getDate(): Date {
+            return <Date>this.value;
+        }
 
+        getBoolean(): boolean {
+            return <boolean>this.value;
+        }
+
+        getNumber(): number {
+            return <number><number>this.value;
+        }
+
+        asString(): string {
             return this.type.valueToString(this);
+        }
+
+        asNumber(): number {
+            return this.type.valueToNumber(this);
         }
 
         asBoolean(): boolean {

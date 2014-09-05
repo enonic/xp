@@ -1,6 +1,5 @@
 package com.enonic.wem.api.content;
 
-import com.enonic.wem.api.content.versioning.FindContentVersionsResult;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 
@@ -34,7 +33,9 @@ public interface ContentService
 
     CompareContentResults compare( final CompareContentsParams params, final Context context );
 
-    FindContentVersionsResult getVersions( final GetContentVersionsParams params, final Context context );
+    FindContentVersionsResult getVersions( final FindContentVersionsParams params, final Context context );
+
+    GetActiveContentVersionsResult getActiveVersions( final GetActiveContentVersionsParams params, final Context context );
 
     String generateContentName( String displayName );
 }

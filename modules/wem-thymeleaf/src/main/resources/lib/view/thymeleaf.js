@@ -6,15 +6,14 @@
  * Render using thymeleaf template.
  *
  * @param {Object} template resolved template
- * @param {Object} params xslt parameters
+ * @param {Object} params thymeleaf parameters
  */
 exports.render = function (template, params) {
-    var helper = __('thymeleafScriptHelper');
+    var factory = __('thymeleafProcessorFactory');
 
-    var request = helper.newRenderParams();
-    request.view(template);
-    request.parameters(params);
+    var processor = factory.newProcessor();
+    processor.view(template);
+    processor.parameters(params);
 
-    return helper.processor.render(request);
+    return processor.process();
 };
-

@@ -5,15 +5,15 @@
         {
             "Property": {
                 "name": "myArray",
-                "type": "String",
-                "value": "arrayValue1"
+                "type": "Long",
+                "value": 1
             }
         },
         {
             "Property": {
                 "name": "myArray",
-                "type": "String",
-                "value": "arrayValue2"
+                "type": "Long",
+                "value": 2
             }
         },
         {

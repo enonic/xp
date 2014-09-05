@@ -2,13 +2,13 @@ package com.enonic.wem.core.workspace.compare;
 
 import javax.inject.Inject;
 
-import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.entity.CompareStatus;
-import com.enonic.wem.api.entity.EntityComparison;
-import com.enonic.wem.api.entity.EntityComparisons;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIds;
-import com.enonic.wem.api.entity.EntityVersion;
+import com.enonic.wem.api.entity.NodeComparison;
+import com.enonic.wem.api.entity.NodeComparisons;
+import com.enonic.wem.api.entity.NodeVersion;
+import com.enonic.wem.api.entity.NodeVersionId;
 import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.core.version.VersionService;
 import com.enonic.wem.core.workspace.WorkspaceService;
@@ -36,18 +36,18 @@ public class WorkspaceCompareServiceImpl
 
         for ( final EntityId entityId : allEntitiesWithDifference )
         {
-            final EntityComparison entityComparison = doCompareEntity( entityId, sourceWorkspace, targetWorkspace );
+            final NodeComparison nodeComparison = doCompareEntity( entityId, sourceWorkspace, targetWorkspace );
 
-            builder.add( entityComparison );
+            builder.add( nodeComparison );
         }
 
         return builder.build();
     }
 
     @Override
-    public EntityComparisons compare( final CompareEntitiesQuery query )
+    public NodeComparisons compare( final CompareEntitiesQuery query )
     {
-        final EntityComparisons.Builder builder = EntityComparisons.create();
+        final NodeComparisons.Builder builder = NodeComparisons.create();
 
         final Workspace source = query.getSource();
         final Workspace target = query.getTarget();
@@ -61,33 +61,33 @@ public class WorkspaceCompareServiceImpl
     }
 
     @Override
-    public EntityComparison compare( final CompareEntityQuery query )
+    public NodeComparison compare( final CompareEntityQuery query )
     {
         return doCompareEntity( query.getEntityId(), query.getSource(), query.getTarget() );
     }
 
 
-    private EntityComparison doCompareEntity( final EntityId entityId, final Workspace sourceWorkspace, final Workspace targetWorkspace )
+    private NodeComparison doCompareEntity( final EntityId entityId, final Workspace sourceWorkspace, final Workspace targetWorkspace )
     {
-        final BlobKey sourceBlobKey = workspaceService.getById( new WorkspaceIdQuery( sourceWorkspace, entityId ) );
-        final BlobKey targetBlobKey = workspaceService.getById( new WorkspaceIdQuery( targetWorkspace, entityId ) );
+        final NodeVersionId sourceVersionId = workspaceService.getCurrentVersion( new WorkspaceIdQuery( sourceWorkspace, entityId ) );
+        final NodeVersionId targetVersionId = workspaceService.getCurrentVersion( new WorkspaceIdQuery( targetWorkspace, entityId ) );
 
-        final EntityVersion sourceVersion = getVersion( sourceBlobKey );
-        final EntityVersion targetVersion = getVersion( targetBlobKey );
+        final NodeVersion sourceVersion = getVersion( sourceVersionId );
+        final NodeVersion targetVersion = getVersion( targetVersionId );
 
         final CompareStatus compareStatus = DiffStatusResolver.resolve( new DiffStatusParams( sourceVersion, targetVersion ) );
 
-        return new EntityComparison( entityId, compareStatus );
+        return new NodeComparison( entityId, compareStatus );
     }
 
-    private EntityVersion getVersion( final BlobKey blobKey )
+    private NodeVersion getVersion( final NodeVersionId nodeVersionId )
     {
-        if ( blobKey == null )
+        if ( nodeVersionId == null )
         {
             return null;
         }
 
-        return versionService.getVersion( blobKey );
+        return versionService.getVersion( nodeVersionId );
     }
 
     @Inject

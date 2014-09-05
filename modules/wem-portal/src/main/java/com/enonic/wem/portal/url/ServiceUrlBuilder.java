@@ -1,20 +1,35 @@
 package com.enonic.wem.portal.url;
 
-import com.enonic.wem.api.content.ContentPath;
+import java.util.Map;
 
-public interface ServiceUrlBuilder
+import static com.google.common.base.Strings.emptyToNull;
+
+public final class ServiceUrlBuilder
+    extends PortalUrlBuilder<ServiceUrlBuilder>
 {
+    private String serviceName;
 
-    ServiceUrlBuilder mode( String mode );
+    private String module;
 
-    ServiceUrlBuilder contentPath( String contentPath );
+    public ServiceUrlBuilder module( final String module )
+    {
+        this.module = emptyToNull( module );
+        return this;
+    }
 
-    ServiceUrlBuilder contentPath( ContentPath contentPath );
+    public ServiceUrlBuilder serviceName( final String serviceName )
+    {
+        this.serviceName = emptyToNull( serviceName );
+        return this;
+    }
 
-    ServiceUrlBuilder module( String module );
-
-    ServiceUrlBuilder serviceName( String name );
-
-    ServiceUrlBuilder param( String name, Object value );
-
+    @Override
+    protected void buildUrl( final StringBuilder url, final Map<String, String> params )
+    {
+        super.buildUrl( url, params );
+        appendPart( url, "_" );
+        appendPart( url, "service" );
+        appendPart( url, this.module );
+        appendPart( url, this.serviceName );
+    }
 }

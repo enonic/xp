@@ -25,7 +25,7 @@ module api.module {
             var cache = ModuleCache.get();
             var cachedObject = cache.getByKey(this.moduleKey);
             if (cachedObject) {
-                return Q(cachedObject);
+                return wemQ(cachedObject);
             }
             else {
                 return this.send().then((response: api.rest.JsonResponse<json.ModuleJson>) => {

@@ -52,7 +52,7 @@ module LiveEdit {
                 api.liveedit.PageItemType.get().setContent(event.getContent());
                 api.liveedit.PageItemType.get().setSiteTemplate(event.getSiteTemplate());
 
-                var body = api.dom.Body.getAndLoadExistingChildren();
+                var body = api.dom.Body.get().loadExistingChildren();
                 //body.traverse( (el: api.dom.Element) => {
                 //el.setDraggable(false);
                 //});

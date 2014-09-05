@@ -3,8 +3,7 @@ package com.enonic.wem.core.content;
 import com.enonic.wem.api.content.query.ContentQuery;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.entity.query.EntityQuery;
-import com.enonic.wem.api.query.filter.Filter;
-import com.enonic.wem.api.query.filter.GenericValueFilter;
+import com.enonic.wem.api.query.filter.ValueFilter;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.core.index.IndexConstants;
@@ -20,7 +19,6 @@ public class ContentQueryEntityQueryTranslator
         return entityQueryBuilder.build();
     }
 
-
     protected static void doTranslateEntityQueryProperties( final ContentQuery contentQuery, final EntityQuery.Builder builder )
     {
         builder.query( contentQuery.getQueryExpr() ).
@@ -33,11 +31,13 @@ public class ContentQueryEntityQueryTranslator
 
         if ( contentTypeNames != null && contentTypeNames.isNotEmpty() )
         {
-            final GenericValueFilter.Builder contentTypeFilterBuilder = Filter.newValueQueryFilter().fieldName( "contentType" );
+            final ValueFilter.Builder contentTypeFilterBuilder = ValueFilter.create().
+                fieldName( ContentDataSerializer.CONTENT_TYPE_FIELD_NAME ).
+                setCache( true );
 
             for ( final ContentTypeName contentTypeName : contentTypeNames )
             {
-                contentTypeFilterBuilder.add( Value.newString( contentTypeName.toString() ) );
+                contentTypeFilterBuilder.addValue( Value.newString( contentTypeName.toString() ) );
             }
 
             builder.addQueryFilter( contentTypeFilterBuilder.build() );
@@ -48,9 +48,10 @@ public class ContentQueryEntityQueryTranslator
 
     private static void addCollectionFilter( final EntityQuery.Builder entityQueryBuilder )
     {
-        entityQueryBuilder.addQueryFilter( Filter.newValueQueryFilter().
+        entityQueryBuilder.addQueryFilter( ValueFilter.create().
             fieldName( IndexConstants.COLLECTION_FIELD ).
-            add( Value.newString( IndexConstants.CONTENT_COLLECTION_NAME ) ).
+            addValue( Value.newString( IndexConstants.CONTENT_COLLECTION_NAME ) ).
+            setCache( true ).
             build() );
     }
 

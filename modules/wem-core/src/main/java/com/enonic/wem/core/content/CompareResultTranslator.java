@@ -3,31 +3,31 @@ package com.enonic.wem.core.content;
 import com.enonic.wem.api.content.CompareContentResult;
 import com.enonic.wem.api.content.CompareContentResults;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.entity.EntityComparison;
-import com.enonic.wem.api.entity.EntityComparisons;
+import com.enonic.wem.api.entity.NodeComparison;
+import com.enonic.wem.api.entity.NodeComparisons;
 
 class CompareResultTranslator
 {
-    public static CompareContentResults translate( final EntityComparisons entityComparisons )
+    public static CompareContentResults translate( final NodeComparisons nodeComparisons )
     {
         final CompareContentResults.Builder builder = CompareContentResults.create();
 
-        for ( final EntityComparison entityComparison : entityComparisons )
+        for ( final NodeComparison nodeComparison : nodeComparisons )
         {
-            builder.add( doTranslate( entityComparison ) );
+            builder.add( doTranslate( nodeComparison ) );
         }
 
         return builder.build();
     }
 
-    public static CompareContentResult translate( final EntityComparison entityComparison )
+    public static CompareContentResult translate( final NodeComparison nodeComparison )
     {
-        return doTranslate( entityComparison );
+        return doTranslate( nodeComparison );
     }
 
-    private static CompareContentResult doTranslate( final EntityComparison entityComparison )
+    private static CompareContentResult doTranslate( final NodeComparison nodeComparison )
     {
-        return new CompareContentResult( entityComparison.getCompareStatus(), ContentId.from( entityComparison.getEntityId() ) );
+        return new CompareContentResult( nodeComparison.getCompareStatus(), ContentId.from( nodeComparison.getEntityId() ) );
     }
 
 }

@@ -16,6 +16,16 @@ public class NodeQuery
         this.path = builder.path;
     }
 
+    public NodePath getParent()
+    {
+        return parent;
+    }
+
+    public NodePath getPath()
+    {
+        return path;
+    }
+
     public static Builder create()
     {
         return new Builder();

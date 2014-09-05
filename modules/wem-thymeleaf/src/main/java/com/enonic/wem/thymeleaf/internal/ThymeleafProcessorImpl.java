@@ -1,52 +1,54 @@
 package com.enonic.wem.thymeleaf.internal;
 
-import java.util.Set;
+import java.util.Map;
 
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-import org.thymeleaf.dialect.IDialect;
 import org.thymeleaf.exceptions.TemplateProcessingException;
-import org.thymeleaf.standard.StandardDialect;
-import org.thymeleaf.templateresolver.TemplateResolver;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceProblemException;
 import com.enonic.wem.thymeleaf.ThymeleafProcessor;
-import com.enonic.wem.thymeleaf.ThymeleafRenderParams;
 
-public final class ThymeleafProcessorImpl
+final class ThymeleafProcessorImpl
     implements ThymeleafProcessor
 {
     private final TemplateEngine engine;
 
-    public ThymeleafProcessorImpl()
+    private ResourceKey view;
+
+    private final Map<String, Object> parameters;
+
+    public ThymeleafProcessorImpl( final TemplateEngine engine )
     {
-        this.engine = new TemplateEngine();
-
-        final Set<IDialect> dialects = Sets.newHashSet();
-        dialects.add( new ThymeleafDialect() );
-        dialects.add( new StandardDialect() );
-
-        this.engine.setDialects( dialects );
-
-        final TemplateResolver templateResolver = new TemplateResolver();
-        templateResolver.setCacheable( false );
-        templateResolver.setResourceResolver( new ThymeleafResourceResolver() );
-        this.engine.setTemplateResolver( templateResolver );
-
-        this.engine.initialize();
+        this.engine = engine;
+        this.parameters = Maps.newHashMap();
     }
 
     @Override
-    public String render( final ThymeleafRenderParams params )
+    public ThymeleafProcessor view( final ResourceKey view )
+    {
+        this.view = view;
+        return this;
+    }
+
+    @Override
+    public ThymeleafProcessor parameters( final Map<String, Object> parameters )
+    {
+        this.parameters.putAll( parameters );
+        return this;
+    }
+
+    @Override
+    public String process()
     {
         try
         {
             final Context context = new Context();
-            context.setVariables( params.getParameters() );
-            return this.engine.process( params.getView().toString(), context );
+            context.setVariables( this.parameters );
+            return this.engine.process( this.view.toString(), context );
         }
         catch ( final RuntimeException e )
         {

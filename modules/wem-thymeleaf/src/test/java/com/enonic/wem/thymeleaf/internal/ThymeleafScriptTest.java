@@ -12,7 +12,7 @@ public class ThymeleafScriptTest
     public void setUp()
     {
         final ThymeleafScriptContributor contributor = new ThymeleafScriptContributor();
-        contributor.setProcessor( new ThymeleafProcessorImpl() );
+        contributor.setProcessorFactory( new ThymeleafProcessorFactoryImpl() );
 
         addContributor( contributor );
     }

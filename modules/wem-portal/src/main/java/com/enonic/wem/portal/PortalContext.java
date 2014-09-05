@@ -23,4 +23,7 @@ public interface PortalContext
     public LayoutRegions getLayoutRegions();
 
     public PageComponent getComponent();
+
+    // TODO: Should be ModuleKey here
+    public String getResolvedModule();
 }

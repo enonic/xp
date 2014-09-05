@@ -1,47 +1,56 @@
 .date-picker {
 
-  .text-input, .button {
-    display: inline-block;
+  .button {
+    float: right;
   }
 
-  .date-picker-dialog {
-    position: absolute;
-    display: none;
-    top: auto;
-    left: auto;
-    bottom: auto;
-    right: auto;
-    height: auto;
-    width: auto;
-    z-index: 100;
-    padding: 10px;
-    background-color: #fff;
+  .wrapper {
+    margin-right: 54px;
 
-    .box-shadow(0 1px 5px rgba(0, 0, 0, 0.7));
-
-    h2, h5 {
-      text-align: center;
+    .text-input {
+      width: 100%;
     }
 
-    .prev, .next {
-      cursor: pointer;
-      padding: 0 5px;
-    }
+    .date-picker-dialog {
+      position: absolute;
+      display: none;
+      top: auto;
+      left: auto;
+      bottom: auto;
+      right: auto;
+      height: auto;
+      width: auto;
+      z-index: 100;
+      padding: 10px;
+      background-color: #fff;
 
-    .prev {
-      &:before {
-        content: '\27E8';
+      .box-shadow(0 1px 5px rgba(0, 0, 0, 0.7));
+
+      h2, h5 {
+        text-align: center;
       }
-    }
 
-    .next {
-      &:before {
-        content: '\27E9';
+      .prev, .next {
+        cursor: pointer;
+        padding: 0 5px;
       }
-    }
 
-    .month-container {
-      margin-bottom: 10px;
+      .prev {
+        &:before {
+          content: '\27E8';
+        }
+      }
+
+      .next {
+        &:before {
+          content: '\27E9';
+        }
+      }
+
+      .month-container {
+        margin-bottom: 10px;
+      }
+
     }
 
   }

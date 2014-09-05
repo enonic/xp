@@ -1,66 +1,75 @@
 .time-picker {
 
-  .text-input, .button {
-    display: inline-block;
+  .button {
+    float: right;
   }
 
-  .time-picker-dialog {
-    position: absolute;
-    display: none;
-    top: auto;
-    left: auto;
-    bottom: auto;
-    right: auto;
-    height: auto;
-    width: auto;
-    z-index: 100;
-    padding: 5px;
-    background-color: #fff;
+  .wrapper {
+    margin-right: 54px;
 
-    .box-shadow(0 1px 5px rgba(0, 0, 0, 0.7));
-
-    li {
-      float: left;
-      font-size: 30px;
-      line-height: 40px;
-      padding: 5px;
-
-      &.colon {
-        padding: 0;
-        margin-top: 19px;
-
-        &:before {
-          content: ':';
-        }
-      }
-
-      a, span {
-        display: block;
-      }
-
-      .prev, .next {
-        cursor: pointer;
-        overflow: hidden;
-        height: 16px;
-
-        span {
-          .rotate(90deg);
-        }
-      }
-
-      .prev {
-        span:before {
-          content: '\27E9';
-        }
-      }
-
-      .next {
-        span:before {
-          content: '\27E8';
-        }
-      }
-
+    .text-input {
+      width: 100%;
     }
+
+    .time-picker-dialog {
+      position: absolute;
+      display: none;
+      top: auto;
+      left: auto;
+      bottom: auto;
+      right: auto;
+      height: auto;
+      width: auto;
+      z-index: 100;
+      padding: 5px;
+      background-color: #fff;
+
+      .box-shadow(0 1px 5px rgba(0, 0, 0, 0.7));
+
+      li {
+        float: left;
+        font-size: 30px;
+        line-height: 40px;
+        padding: 5px;
+
+        &.colon {
+          padding: 0;
+          margin-top: 19px;
+
+          &:before {
+            content: ':';
+          }
+        }
+
+        a, span {
+          display: block;
+        }
+
+        .prev, .next {
+          cursor: pointer;
+          overflow: hidden;
+          height: 16px;
+
+          span {
+            .rotate(90deg);
+          }
+        }
+
+        .prev {
+          span:before {
+            content: '\27E9';
+          }
+        }
+
+        .next {
+          span:before {
+            content: '\27E8';
+          }
+        }
+
+      }
+    }
+
   }
 
 }

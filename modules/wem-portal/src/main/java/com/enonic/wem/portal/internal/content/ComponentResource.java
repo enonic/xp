@@ -16,7 +16,6 @@ import com.enonic.wem.portal.internal.controller.JsHttpRequest;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
 import com.enonic.wem.portal.internal.rendering.RendererFactory;
-import com.enonic.wem.portal.internal.script.lib.PortalUrlScriptBean;
 
 public final class ComponentResource
     extends RenderBaseResource
@@ -76,17 +75,14 @@ public final class ComponentResource
         context.setSiteContent( siteContent );
         context.setComponent( component );
 
+        context.setResolvedModule( pageTemplate.getKey().getModuleName().toString() );
+
         final JsHttpRequest jsRequest = new JsHttpRequest();
         jsRequest.setMode( this.mode );
         jsRequest.setWorkspace( this.workspace );
         jsRequest.setMethod( getRequest().getMethod().toString() );
         jsRequest.addParams( getParams() );
         context.setRequest( jsRequest );
-
-        final PortalUrlScriptBean portalUrlScriptBean = new PortalUrlScriptBean();
-        portalUrlScriptBean.setContentPath( content.getPath().toString() );
-        portalUrlScriptBean.setModule( pageTemplate.getKey().getModuleName().toString() );
-        context.setPortalUrlScriptBean( portalUrlScriptBean );
 
         return context;
     }

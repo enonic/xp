@@ -14,4 +14,6 @@ public interface PortalRequest
     public Multimap<String, String> getParams();
 
     public RenderingMode getMode();
+
+    public String getBaseUri();
 }

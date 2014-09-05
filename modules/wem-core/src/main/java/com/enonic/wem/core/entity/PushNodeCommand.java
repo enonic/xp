@@ -5,8 +5,9 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.api.entity.NodeVersionId;
 import com.enonic.wem.api.entity.Workspace;
-import com.enonic.wem.core.entity.dao.PushNodeArguments;
+import com.enonic.wem.core.workspace.WorkspaceDocument;
 
 public class PushNodeCommand
     extends AbstractNodeCommand
@@ -27,9 +28,30 @@ public class PushNodeCommand
         return new Builder( context );
     }
 
+
     Node execute()
     {
-        return nodeDao.push( new PushNodeArguments( this.target, this.id ), this.context.getWorkspace() );
+        final Workspace workspace = this.context.getWorkspace();
+
+        final NodeVersionId currentVersion = getCurrentVersionInWorkspace( workspace, this.id, true );
+
+        final Node currentNode = nodeDao.getByVersionId( currentVersion );
+
+        this.workspaceService.store( WorkspaceDocument.create().
+            nodeVersionId( currentVersion ).
+            workspace( this.target ).
+            id( this.id ).
+            path( currentNode.path() ).
+            parentPath( currentNode.parent() ).
+            build() );
+
+        this.indexService.index( currentNode, this.target );
+
+        return NodeHasChildResolver.create().
+            workspace( context.getWorkspace() ).
+            workspaceService( this.workspaceService ).
+            build().
+            resolve( currentNode );
     }
 
     public static class Builder
@@ -62,7 +84,7 @@ public class PushNodeCommand
             return new PushNodeCommand( this );
         }
 
-        private void validate()
+        protected void validate()
         {
             Preconditions.checkNotNull( target );
             Preconditions.checkNotNull( id );

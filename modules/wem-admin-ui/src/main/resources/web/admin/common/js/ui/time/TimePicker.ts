@@ -47,13 +47,18 @@ module api.ui.time {
 
                 this.popup.show();
             });
-            this.appendChild(this.input);
 
-            this.popupTrigger = new api.ui.button.Button('Change');
+            var wrapper = new api.dom.DivEl('wrapper');
+            wrapper.appendChild(this.input);
+
+            this.popupTrigger = new api.ui.button.Button();
+            this.popupTrigger.addClass('icon-clock');
             this.appendChild(this.popupTrigger);
 
             this.popup = new TimePickerPopup(builder);
-            this.appendChild(this.popup);
+            wrapper.appendChild(this.popup);
+
+            this.appendChild(wrapper);
 
             this.popupTrigger.onClicked((e: MouseEvent) => {
                 e.stopPropagation();
@@ -88,7 +93,7 @@ module api.ui.time {
             this.popup.unSelectedTimeChanged(listener);
         }
 
-        private formatTime(hours: number, minutes: number): string {
+        formatTime(hours: number, minutes: number): string {
             return this.padNumber(hours, 2) + ':' + this.padNumber(minutes, 2);
         }
 

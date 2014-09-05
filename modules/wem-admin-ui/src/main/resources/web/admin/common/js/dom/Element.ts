@@ -167,7 +167,7 @@ module api.dom {
             this.children[index] = replacementChild;
         }
 
-        private loadExistingChildren() {
+        public loadExistingChildren() {
 
             var children = this.getHTMLElement().children;
             for (var i = 0; i < children.length; i++) {

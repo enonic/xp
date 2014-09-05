@@ -14,7 +14,7 @@ import com.enonic.wem.core.index.query.IndexQueryFieldNameResolver;
 public class InQueryBuilderFactory
 {
 
-    public QueryBuilder create( final CompareExpr compareExpr )
+    public static QueryBuilder create( final CompareExpr compareExpr )
     {
 
         final String queryFieldName = IndexQueryFieldNameResolver.resolveStringFieldName( compareExpr.getField().getName() );
@@ -30,7 +30,7 @@ public class InQueryBuilderFactory
 
         for ( ValueExpr value : values )
         {
-            boolQuery.should( new TermQueryBuilderFactory().create( queryFieldName, value.getValue() ) );
+            boolQuery.should( TermQueryBuilderFactory.create( queryFieldName, value.getValue() ) );
         }
 
         return boolQuery;

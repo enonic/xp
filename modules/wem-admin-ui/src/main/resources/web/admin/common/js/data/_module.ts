@@ -2,9 +2,6 @@
 ///<reference path='Data.ts' />
 ///<reference path='DataSet.ts' />
 ///<reference path='DataPath.ts' />
-///<reference path='ValueType.ts' />
-///<reference path='ContentIdValueType.ts' />
-///<reference path='ValueTypes.ts' />
 ///<reference path='Value.ts' />
 ///<reference path='Property.ts' />
 ///<reference path='DataFactory.ts' />

@@ -2,27 +2,28 @@ package com.enonic.wem.portal.url;
 
 import java.util.Map;
 
-import com.enonic.wem.api.content.ContentPath;
+import static com.google.common.base.Strings.emptyToNull;
 
-public interface GeneralUrlBuilder
+public final class GeneralUrlBuilder
+    extends PortalUrlBuilder<GeneralUrlBuilder>
 {
+    private String optionPath;
 
-    GeneralUrlBuilder mode( String mode );
+    public GeneralUrlBuilder optionPath( final String optionPath )
+    {
+        this.optionPath = emptyToNull( optionPath );
+        return this;
+    }
 
-    GeneralUrlBuilder workspace( String workspace );
+    @Override
+    protected void buildUrl( final StringBuilder url, final Map<String, String> params )
+    {
+        super.buildUrl( url, params );
 
-    GeneralUrlBuilder resourcePath( String path );
-
-    GeneralUrlBuilder resourceType( String resourceType );
-
-    GeneralUrlBuilder params( Map<String, Object> params );
-
-    GeneralUrlBuilder param( String name, Object value );
-
-    GeneralUrlBuilder contentPath( String contentPath );
-
-    GeneralUrlBuilder contentPath( ContentPath contentPath );
-
-    GeneralUrlBuilder module( String module );
-
+        if ( this.optionPath != null )
+        {
+            appendPart( url, "_" );
+            appendPart( url, this.optionPath );
+        }
+    }
 }

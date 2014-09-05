@@ -24,6 +24,7 @@ import com.enonic.wem.admin.json.content.ContentJson;
 import com.enonic.wem.admin.json.content.ContentListJson;
 import com.enonic.wem.admin.json.content.ContentSummaryJson;
 import com.enonic.wem.admin.json.content.ContentSummaryListJson;
+import com.enonic.wem.admin.json.content.GetActiveContentVersionsResultJson;
 import com.enonic.wem.admin.json.content.GetContentVersionsResultJson;
 import com.enonic.wem.admin.json.content.attachment.AttachmentJson;
 import com.enonic.wem.admin.rest.exception.NotFoundWebException;
@@ -51,12 +52,14 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.DeleteContentParams;
-import com.enonic.wem.api.content.Direction;
 import com.enonic.wem.api.content.FindContentByParentParams;
 import com.enonic.wem.api.content.FindContentByParentResult;
 import com.enonic.wem.api.content.FindContentByQueryParams;
 import com.enonic.wem.api.content.FindContentByQueryResult;
-import com.enonic.wem.api.content.GetContentVersionsParams;
+import com.enonic.wem.api.content.FindContentVersionsParams;
+import com.enonic.wem.api.content.FindContentVersionsResult;
+import com.enonic.wem.api.content.GetActiveContentVersionsParams;
+import com.enonic.wem.api.content.GetActiveContentVersionsResult;
 import com.enonic.wem.api.content.PushContentParams;
 import com.enonic.wem.api.content.RenameContentParams;
 import com.enonic.wem.api.content.UnableToDeleteContentException;
@@ -66,10 +69,11 @@ import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.api.content.site.SiteTemplateService;
-import com.enonic.wem.api.content.versioning.FindContentVersionsResult;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.DataJson;
+import com.enonic.wem.api.entity.Workspaces;
 import com.enonic.wem.api.exception.ConflictException;
+import com.enonic.wem.api.query.Direction;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 
 import static com.enonic.wem.api.content.Content.editContent;
@@ -313,7 +317,7 @@ public class ContentResource
     {
         final ContentId contentId = ContentId.from( params.getContentId() );
 
-        final FindContentVersionsResult result = contentService.getVersions( GetContentVersionsParams.create().
+        final FindContentVersionsResult result = contentService.getVersions( FindContentVersionsParams.create().
             contentId( contentId ).
             from( params.getFrom() != null ? params.getFrom() : 0 ).
             size( params.getSize() != null ? params.getSize() : 10 ).
@@ -321,6 +325,19 @@ public class ContentResource
 
         return new GetContentVersionsResultJson( result );
     }
+
+    @GET
+    @Path("getActiveVersions")
+    public GetActiveContentVersionsResultJson getActiveVersions( @QueryParam("id") final String id )
+    {
+        final GetActiveContentVersionsResult result = contentService.getActiveVersions( GetActiveContentVersionsParams.create().
+            workspaces( Workspaces.from( ContentConstants.WORKSPACE_STAGE, ContentConstants.WORKSPACE_PROD ) ).
+            contentId( ContentId.from( id ) ).
+            build(), STAGE_CONTEXT );
+
+        return new GetActiveContentVersionsResultJson( result );
+    }
+
 
     @POST
     @Path("publish")

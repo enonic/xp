@@ -102,10 +102,16 @@ module api.form {
 
             this.inputTypeView.onValueChanged((event: inputtype.ValueChangedEvent) => {
 
+                api.util.assertNotNull(event.getNewValue(), "sending ValueChangedEvent-s for null values is not allowed");
+
                 var dataId = new DataId(this.input.getName(), event.getArrayIndex());
                 var property: Property = this.parentDataSet.getPropertyFromDataId(dataId);
                 if (property != null) {
                     property.setValue(event.getNewValue());
+                }
+                else {
+                    var property = Property.fromNameValue(this.input.getName(), event.getNewValue());
+                    this.parentDataSet.addData(property);
                 }
             });
 

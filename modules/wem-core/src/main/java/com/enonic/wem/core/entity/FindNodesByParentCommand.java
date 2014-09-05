@@ -4,20 +4,19 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.content.FieldSort;
 import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.entity.FindNodesByParentParams;
 import com.enonic.wem.api.entity.FindNodesByParentResult;
+import com.enonic.wem.api.entity.NodeVersionIds;
 import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.entity.query.NodeQuery;
+import com.enonic.wem.api.query.FieldSort;
 import com.enonic.wem.api.query.expr.FieldExpr;
 import com.enonic.wem.api.query.expr.FieldOrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.query.expr.QueryExpr;
-import com.enonic.wem.api.query.filter.Filter;
-import com.enonic.wem.core.entity.index.NodeIndexDocumentFactory;
 import com.enonic.wem.core.index.query.NodeQueryResult;
+import com.enonic.wem.core.workspace.query.WorkspaceIdsQuery;
 
 public class FindNodesByParentCommand
     extends AbstractFindNodeCommand
@@ -41,7 +40,14 @@ public class FindNodesByParentCommand
 
         final NodeQueryResult nodeQueryResult = this.queryService.find( query, this.context.getWorkspace() );
 
-        final Nodes nodes = nodeDao.getByIds( nodeQueryResult.getEntityIds(), this.context.getWorkspace() );
+        final NodeVersionIds versions =
+            this.workspaceService.getByVersionIds( new WorkspaceIdsQuery( this.context.getWorkspace(), nodeQueryResult.getEntityIds() ) );
+
+        final Nodes nodes = NodeHasChildResolver.create().
+            workspace( context.getWorkspace() ).
+            workspaceService( this.workspaceService ).
+            build().
+            resolve( nodeDao.getByVersionIds( versions ) );
 
         return FindNodesByParentResult.create().
             nodes( nodes ).
@@ -62,10 +68,7 @@ public class FindNodesByParentCommand
         }
 
         return NodeQuery.create().
-            addQueryFilter( Filter.newValueQueryFilter().
-                fieldName( NodeIndexDocumentFactory.PARENT_PATH_KEY ).
-                add( Value.newString( params.getParentPath().toString() ) ).
-                build() ).
+            parent( this.params.getParentPath() ).
             query( new QueryExpr( orderBys ) ).
             from( params.getFrom() ).
             size( params.getSize() ).

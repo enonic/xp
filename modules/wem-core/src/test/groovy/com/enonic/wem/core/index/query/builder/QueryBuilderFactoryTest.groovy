@@ -1,10 +1,8 @@
 package com.enonic.wem.core.index.query.builder
 
 import com.enonic.wem.api.data.Value
-import com.enonic.wem.api.query.filter.Filter
+import com.enonic.wem.api.query.filter.ValueFilter
 import com.enonic.wem.api.query.parser.QueryParser
-import com.google.common.collect.ImmutableSet
-import com.google.common.collect.Sets
 import spock.lang.Unroll
 
 class QueryBuilderFactoryTest
@@ -14,9 +12,13 @@ class QueryBuilderFactoryTest
     def "create query #query"()
     {
         given:
-        def QueryBuilderFactory factory = new QueryBuilderFactory()
+        def QueryBuilderFactory queryBuilderFactory = new QueryBuilderFactory()
         def expected = this.getClass().getResource( fileContainingExpectedJson ).text
-        def expression = factory.create( QueryParser.parse( query ), null ).toString()
+        def expression = queryBuilderFactory.
+            create().
+            queryExpr( QueryParser.parse( query ) ).
+            build().
+            toString()
 
         def expectedJson = cleanString( expected )
         def actualJson = cleanString( expression )
@@ -37,19 +39,19 @@ class QueryBuilderFactoryTest
         QueryBuilderFactory factory = new QueryBuilderFactory();
         def expected = this.getClass().getResource( "query_with_queryfilter.json" ).text
 
-        def queryFilter = Filter.newValueQueryFilter().
+        def queryFilter = ValueFilter.create().
             fieldName( "myField" ).
-            add( Value.newString( "myValue1" ) ).
-            add( Value.newString( "myValue2" ) ).
+            addValue( Value.newString( "myValue1" ) ).
+            addValue( Value.newString( "myValue2" ) ).
             build()
-
-        Set<Filter> queryFilters = Sets.newHashSet();
-        queryFilters.add( queryFilter );
 
         def query = QueryParser.parse( "not( myField > 1) " )
 
         when:
-        def builtQuery = factory.create( query, ImmutableSet.copyOf( queryFilters ) )
+        def builtQuery = factory.create().
+            queryExpr( query ).
+            addQueryFilter( queryFilter ).
+            build();
 
         then:
         cleanString( expected ) == cleanString( builtQuery.toString() )

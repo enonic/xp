@@ -67,6 +67,19 @@ module api.liveedit {
         }
     }
 
+    class PageComponentViewContextMenuTitle<PAGE_COMPONENT extends PageComponent> extends ItemViewContextMenuTitle {
+
+        constructor(pageComponent: PAGE_COMPONENT, type: PageComponentItemType) {
+            pageComponent.onPropertyChanged((event: api.PropertyChangedEvent) => {
+                if (event.getPropertyName() == PageComponent.PROPERTY_NAME) {
+                    this.setMainName((<ComponentName> event.getNewValue()).toString());
+                }
+            });
+            super(pageComponent.getName().toString(), type.getConfig().getIconCls());
+        }
+
+    }
+
     export class PageComponentView<PAGE_COMPONENT extends PageComponent> extends ItemView {
 
         private parentRegionView: RegionView;
@@ -93,7 +106,8 @@ module api.liveedit {
                     setElement(builder.element).
                     setParentView(builder.parentRegionView).
                     setParentElement(builder.parentElement).
-                    setContextMenuActions(this.createPageComponentContextMenuActions(builder.contextMenuActions))
+                    setContextMenuActions(this.createPageComponentContextMenuActions(builder.contextMenuActions)).
+                    setContextMenuTitle(new PageComponentViewContextMenuTitle(builder.pageComponent, builder.type))
             );
 
             this.parentRegionView = builder.parentRegionView;

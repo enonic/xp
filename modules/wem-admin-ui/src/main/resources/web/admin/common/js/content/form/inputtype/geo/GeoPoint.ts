@@ -12,7 +12,7 @@ module api.content.form.inputtype.geo {
 
         newInitialValue(): api.data.Value {
 
-            return new api.data.Value("", api.data.ValueTypes.STRING);
+            return new api.data.Value("", api.data.type.ValueTypes.STRING);
         }
 
         createInputOccurrenceElement(index: number, property: api.data.Property): api.dom.Element {
@@ -54,12 +54,17 @@ module api.content.form.inputtype.geo {
         }
 
         private newValue(s: string): api.data.Value {
-            return new api.data.Value(s, api.data.ValueTypes.STRING);
+            return new api.data.Value(s, api.data.type.ValueTypes.STRING);
         }
 
         getValue(occurrence: api.dom.Element): api.data.Value {
             var geoPoint: api.ui.geo.GeoPoint = <api.ui.geo.GeoPoint>occurrence;
-            var newValue: string = [ geoPoint.getLatitude(), geoPoint.getLongitude()].join();
+            var newValue: string;
+            if (!api.util.isStringBlank(geoPoint.getLatitude()) && !api.util.isStringBlank(geoPoint.getLongitude())) {
+                newValue = [ geoPoint.getLatitude(), geoPoint.getLongitude()].join();
+            } else {
+                newValue = "";
+            }
             return this.newValue(newValue);
         }
 
@@ -70,8 +75,28 @@ module api.content.form.inputtype.geo {
             if (api.util.isStringBlank(value.asString())) {
                 return true;
             } else {
-                return false;
+                var values: string[] = value.asString().split(',');
+                return this.validateGeoPoint(values);
             }
+        }
+
+        private validateGeoPoint(values: string[]): boolean {
+            values.forEach((value: string) => {
+                if (!api.util.isStringBlank(value) && !this.isNumeric(value)) {
+                    throw new Error('GeoPoint value is not a Number');
+                }
+            });
+
+            if (api.util.isStringBlank(values[0]) || api.util.isStringBlank(values[1])) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        private  isNumeric(input: string) {
+            var re = /^-{0,1}\d*\.{0,1}\d+$/;
+            return (re.test(input));
         }
 
     }

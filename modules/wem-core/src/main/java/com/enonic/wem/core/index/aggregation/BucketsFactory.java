@@ -18,7 +18,7 @@ public class BucketsFactory
 
         for ( final Terms.Bucket bucket : buckets )
         {
-            bucketsBuilder.addBucket( new Bucket( bucket.getKey().toString(), bucket.getDocCount() ) );
+            bucketsBuilder.add( new Bucket( bucket.getKey().toString(), bucket.getDocCount() ) );
         }
 
         return bucketsBuilder.build();
@@ -34,7 +34,7 @@ public class BucketsFactory
             final DateRangeBucket dateRangeBucket = new DateRangeBucket( bucket.getKey().toString(), bucket.getDocCount() );
             dateRangeBucket.setFrom( bucket.getFromAsDate() != null ? bucket.getFromAsDate().toDate().toInstant() : null );
             dateRangeBucket.setTo( bucket.getToAsDate() != null ? bucket.getToAsDate().toDate().toInstant() : null );
-            bucketsBuilder.addBucket( dateRangeBucket );
+            bucketsBuilder.add( dateRangeBucket );
         }
 
         return bucketsBuilder.build();

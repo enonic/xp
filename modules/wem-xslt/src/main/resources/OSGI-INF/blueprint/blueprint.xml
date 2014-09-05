@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
-  <bean id="processor" class="com.enonic.wem.xslt.internal.SaxonXsltProcessor"/>
+  <bean id="processorFactory" class="com.enonic.wem.xslt.internal.XsltProcessorFactoryImpl"/>
 
-  <service interface="com.enonic.wem.xslt.XsltProcessor" ref="processor"/>
+  <service auto-export="interfaces" ref="processorFactory"/>
 
-  <service interface="com.enonic.wem.script.ScriptContributor">
+  <service auto-export="interfaces">
     <bean class="com.enonic.wem.xslt.internal.XsltScriptContributor">
-      <property name="processor" ref="processor"/>
+      <property name="processorFactory" ref="processorFactory"/>
+    </bean>
+  </service>
+
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.xslt.internal.XsltScriptLibrary">
+      <argument index="0" ref="processorFactory"/>
     </bean>
   </service>
 

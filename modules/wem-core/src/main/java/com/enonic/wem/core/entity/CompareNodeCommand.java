@@ -3,8 +3,8 @@ package com.enonic.wem.core.entity;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.entity.EntityComparison;
 import com.enonic.wem.api.entity.EntityId;
+import com.enonic.wem.api.entity.NodeComparison;
 import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.core.workspace.compare.WorkspaceCompareService;
 import com.enonic.wem.core.workspace.compare.query.CompareEntityQuery;
@@ -32,7 +32,7 @@ public class CompareNodeCommand
         return new Builder( context );
     }
 
-    public EntityComparison execute()
+    public NodeComparison execute()
     {
         return this.workspaceCompareService.compare( new CompareEntityQuery( this.id, this.context.getWorkspace(), this.target ) );
     }

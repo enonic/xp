@@ -65,6 +65,42 @@
         },
         {
             "Input": {
+                "name": "myTime",
+                "label": null,
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "Time"
+                }
+            }
+        },
+        {
+            "Input": {
+                "name": "myDateTime",
+                "label": null,
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "DateTime"
+                }
+            }
+        },
+        {
+            "Input": {
                 "name": "myDouble",
                 "label": null,
                 "immutable": false,

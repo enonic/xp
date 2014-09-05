@@ -75,6 +75,21 @@ module api.ui.time {
             this.renderMonth();
         }
 
+        public selectDate(value: Date) {
+            this.year = value.getUTCFullYear();
+            this.month = value.getUTCMonth();
+            this.selectedDate = value;
+            this.removeChildren();
+
+            if (api.util.DateHelper.isInvalidDate(value)) {
+                var spanEl = new api.dom.SpanEl().setHtml("Invalid date");
+                this.appendChild(spanEl);
+            }
+            else {
+                this.renderMonth();
+            }
+        }
+
         public nextMonth() {
             this.month++;
             if (this.month > 11) {
@@ -119,7 +134,7 @@ module api.ui.time {
 
         private resolveDaysInMonth() {
             var calendarDays: CalendarDay[] = [];
-            var daysInMonth = new Date(this.year, this.month, 0).getDate();
+            var daysInMonth = api.util.DateHelper.newUTCDate(this.year, this.month, 0).getDate();
             var previousDay: CalendarDay = null;
             for (var i = 1; i <= daysInMonth; i++) {
                 var calendarDay = this.createCalendarDay(i, previousDay);
@@ -169,7 +184,7 @@ module api.ui.time {
 
         private createCalendarDay(dayOfMonth: number, previousDay: CalendarDay): CalendarDay {
 
-            var date = new Date(this.year, this.month, dayOfMonth);
+            var date = api.util.DateHelper.newUTCDate(this.year, this.month, dayOfMonth);
             var calendarDay = new CalendarDayBuilder().
                 setDate(date).
                 setMonth(this.month).
@@ -221,7 +236,7 @@ module api.ui.time {
         unSelectedDateChanged(listener: (event: SelectedDateChangedEvent) => void) {
             this.selectedDateChangedListeners = this.selectedDateChangedListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         private notifySelectedDateChanged(date: Date) {

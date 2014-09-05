@@ -126,6 +126,7 @@ public class ContentNodeTranslator
         }
 
         final Content.Builder builder = CONTENT_SERIALIZER.fromData( node.data() );
+
         builder.
             id( ContentId.from( node.id() ) ).
             parentPath( parentContentPath ).
@@ -134,6 +135,7 @@ public class ContentNodeTranslator
             creator( node.getCreator() ).
             modifiedTime( node.getModifiedTime() ).
             modifier( node.getModifier() ).
+            hasChildren( node.getHasChildren() ).
             thumbnail( thumbnail );
 
         return builder.build();

@@ -20,14 +20,16 @@ import com.enonic.wem.api.content.FindContentByParentParams;
 import com.enonic.wem.api.content.FindContentByParentResult;
 import com.enonic.wem.api.content.FindContentByQueryParams;
 import com.enonic.wem.api.content.FindContentByQueryResult;
+import com.enonic.wem.api.content.FindContentVersionsParams;
+import com.enonic.wem.api.content.FindContentVersionsResult;
+import com.enonic.wem.api.content.GetActiveContentVersionsParams;
+import com.enonic.wem.api.content.GetActiveContentVersionsResult;
 import com.enonic.wem.api.content.GetContentByIdsParams;
-import com.enonic.wem.api.content.GetContentVersionsParams;
 import com.enonic.wem.api.content.PushContentParams;
 import com.enonic.wem.api.content.RenameContentParams;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.ValidateContentData;
 import com.enonic.wem.api.content.attachment.AttachmentService;
-import com.enonic.wem.api.content.versioning.FindContentVersionsResult;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.NodeService;
 import com.enonic.wem.api.schema.content.ContentTypeService;
@@ -243,9 +245,9 @@ public class ContentServiceImpl
     }
 
     @Override
-    public FindContentVersionsResult getVersions( final GetContentVersionsParams params, final Context context )
+    public FindContentVersionsResult getVersions( final FindContentVersionsParams params, final Context context )
     {
-        return GetContentVersionsCommand.create().
+        return FindContentVersionsCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
@@ -254,6 +256,22 @@ public class ContentServiceImpl
             contentId( params.getContentId() ).
             from( params.getFrom() ).
             size( params.getSize() ).
+            build().
+            execute();
+    }
+
+
+    @Override
+    public GetActiveContentVersionsResult getActiveVersions( final GetActiveContentVersionsParams params, final Context context )
+    {
+        return GetActiveContentVersionsCommand.create().
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            blobService( this.blobService ).
+            translator( this.contentNodeTranslator ).
+            context( context ).
+            contentId( params.getContentId() ).
+            workspaces( params.getWorkspaces() ).
             build().
             execute();
     }

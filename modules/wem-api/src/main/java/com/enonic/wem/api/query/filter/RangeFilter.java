@@ -11,7 +11,7 @@ public class RangeFilter
 
     public RangeFilter( final Builder builder )
     {
-        super( builder.fieldName );
+        super( builder );
         this.from = builder.from;
         this.to = builder.to;
     }
@@ -26,18 +26,17 @@ public class RangeFilter
         return to;
     }
 
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
     public static class Builder
+        extends FieldFilter.Builder<Builder>
     {
         private Value from;
 
         private Value to;
-
-        private String fieldName;
-
-        public Builder( final String fieldName )
-        {
-            this.fieldName = fieldName;
-        }
 
         public Builder from( final Value from )
         {

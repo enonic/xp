@@ -12,22 +12,16 @@ public final class SystemScriptBean
     public final static String NAME = "system";
 
     @Inject
-    protected MustacheScriptBean mustache;
-
-    @Inject
-    protected XsltScriptBean xslt;
-
-    @Inject
     protected ContentServiceScriptBean contentService;
 
-    public MustacheScriptBean getMustache()
+    public Object getMustache()
     {
-        return this.mustache;
+        throw new RuntimeException( "Converted to new format. Use require('view/mustache') instead." );
     }
 
-    public XsltScriptBean getXslt()
+    public Object getXslt()
     {
-        return this.xslt;
+        throw new RuntimeException( "Converted to new format. Use require('view/xslt') instead." );
     }
 
     public Object getThymeleaf()

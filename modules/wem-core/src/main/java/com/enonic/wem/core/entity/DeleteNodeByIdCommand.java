@@ -4,6 +4,7 @@ import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.Workspace;
+import com.enonic.wem.core.workspace.query.WorkspaceDeleteQuery;
 
 final class DeleteNodeByIdCommand
     extends AbstractDeleteNodeCommand
@@ -20,15 +21,14 @@ final class DeleteNodeByIdCommand
     {
         final Workspace workspace = this.context.getWorkspace();
 
-        final Node nodeToDelete = nodeDao.getById( this.entityId, workspace );
+        final Node nodeToDelete = getCurrentNodeInWorkspace( workspace, this.entityId, true );
 
-        doDeleteChildIndexDocuments( nodeToDelete, workspace );
+        doDeleteChildren( nodeToDelete, workspace );
 
-        final Node deletedNode = nodeDao.deleteById( entityId, workspace );
-
+        workspaceService.delete( new WorkspaceDeleteQuery( workspace, entityId ) );
         indexService.delete( entityId, workspace );
 
-        return deletedNode;
+        return nodeToDelete;
     }
 
     static Builder create( final Context context )

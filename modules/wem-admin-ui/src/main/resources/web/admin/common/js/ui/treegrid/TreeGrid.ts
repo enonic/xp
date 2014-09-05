@@ -149,15 +149,19 @@ module api.ui.treegrid {
                         this.scrollToRow(this.grid.moveSelectedDown());
                     }
                 }),
-                new KeyBinding('shift+up', () => {
+                new KeyBinding('shift+up', (event: ExtendedKeyboardEvent) => {
                     if (this.active) {
                         this.scrollToRow(this.grid.addSelectedUp());
                     }
+                    event.preventDefault();
+                    event.stopImmediatePropagation();
                 }),
-                new KeyBinding('shift+down', () => {
+                new KeyBinding('shift+down', (event: ExtendedKeyboardEvent) => {
                     if (this.active) {
                         this.scrollToRow(this.grid.addSelectedDown());
                     }
+                    event.preventDefault();
+                    event.stopImmediatePropagation();
                 }),
                 new KeyBinding('left', () => {
                     var selected = this.grid.getSelectedRows();
@@ -185,6 +189,7 @@ module api.ui.treegrid {
                                 && !node.isExpanded() && this.active) {
 
                             this.active = false;
+                            this.resetAndRender();
                             this.expandNode(node);
                         }
                     }
@@ -461,13 +466,18 @@ module api.ui.treegrid {
             dataList.forEach((elem: NODE) => {
                 var node = root.findNode(elem);
                 if (node && node.getParent()) {
-                    updated.push(node.getParent());
-                    node.getParent().removeChild(node);
+                    var parent = node.getParent();
+                    updated.push(parent);
+                    parent.removeChild(node);
+                    parent.setMaxChildren(parent.getMaxChildren() - 1);
                     updated.filter((el) => {
                         return el.getDataId() !== node.getId();
                     });
                 }
             });
+
+            // TODO: For future use. Implement single node update by node id.
+            /*
             var promises = updated.map((el) => {
                 return this.fetch(el);
             });
@@ -480,6 +490,7 @@ module api.ui.treegrid {
             }).finally(() => {
                 this.active = true;
             }).done(() => this.notifyLoaded());
+            */
         }
 
         initData(nodes: TreeNode<NODE>[]) {
@@ -537,8 +548,7 @@ module api.ui.treegrid {
             this.animateExpand(expandedRows, animatedRows);
 
             setTimeout(() => {
-                this.resetZIndexes();
-                this.grid.syncGridSelection(false); // Sync selected rows
+                this.resetAndRender();
                 this.active = true;
             }, 350);
         }
@@ -569,8 +579,7 @@ module api.ui.treegrid {
             // Update data after animation
             setTimeout(() => {
                 this.gridData.refresh();
-                this.resetZIndexes();
-                this.grid.syncGridSelection(false);
+                this.resetAndRender();
                 this.active = true;
             }, 350);
         }
@@ -703,7 +712,7 @@ module api.ui.treegrid {
             this.resetZIndexes();
             this.grid.syncGridSelection(false);
             this.grid.invalidateAllRows();
-            this.grid.render();
+            this.grid.renderGrid();
         }
     }
 }

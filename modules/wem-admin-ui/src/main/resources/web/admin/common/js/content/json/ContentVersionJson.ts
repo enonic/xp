@@ -10,6 +10,7 @@ module api.content.json {
 
         comment: string;
 
+        id: string;
     }
 
 

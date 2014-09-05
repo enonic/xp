@@ -472,7 +472,7 @@ module app.wizard.page {
 
                 this.contextWindow.show();
 
-                Q(!this.pageTemplate ? this.initializePageFromDefault() : null).
+                wemQ(!this.pageTemplate ? this.initializePageFromDefault() : null).
                     then(() => {
                         event.getPageComponentView().getPageComponent().removeFromParent();
                         this.contextWindow.clearSelection();
@@ -484,7 +484,7 @@ module app.wizard.page {
 
             this.liveEditPage.onPageComponentReset((event: PageComponentResetEvent) => {
 
-                Q(!this.pageTemplate ? this.initializePageFromDefault() : null).
+                wemQ(!this.pageTemplate ? this.initializePageFromDefault() : null).
                     then(() => {
                         var component: PageComponent = event.getComponentView().getPageComponent();
                         if (component) {
@@ -531,7 +531,7 @@ module app.wizard.page {
                     setPageComponentView(event.getImageComponentView()).
                     setImageName(event.getImageName());
 
-                Q(!this.pageTemplate ? this.initializePageFromDefault() : null).
+                wemQ(!this.pageTemplate ? this.initializePageFromDefault() : null).
                     then(() => {
                         command.execute();
                         this.saveAndReloadOnlyPageComponent(event.getImageComponentView());
@@ -547,7 +547,7 @@ module app.wizard.page {
                     setPageRegions(this.pageRegions).
                     setDescriptor(event.getDescriptor());
 
-                Q(!this.pageTemplate ? this.initializePageFromDefault() : null).
+                wemQ(!this.pageTemplate ? this.initializePageFromDefault() : null).
                     then(() => {
                         command.execute();
                         this.saveAndReloadOnlyPageComponent(event.getPageComponentView());
