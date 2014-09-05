@@ -15,7 +15,7 @@ module api.data.type {
                 return false;
             }
             var valueAsDate = <Date>value;
-            return !isNaN(valueAsDate.getTime());
+            return !api.util.DateHelper.isInvalidDate(valueAsDate);
         }
 
         isConvertible(value: string): boolean {
@@ -38,29 +38,12 @@ module api.data.type {
             if (!this.isConvertible(value)) {
                 return null;
             }
-            return new Value(this.convertFromString(value), this);
+            var date = api.util.DateHelper.parseUTCDate(value);
+            return new Value(date, this);
         }
 
         toJsonValue(value: api.data.Value): string {
-            var date = value.getDate();
-            var yearAsString = "" + date.getUTCFullYear();
-            var monthAsString = "" + (date.getUTCMonth() + 1);
-            if (monthAsString.length == 1) {
-                monthAsString = "0" + monthAsString;
-            }
-            var dateAsString = "" + date.getUTCDate();
-            if (dateAsString.length == 1) {
-                dateAsString = "0" + dateAsString;
-            }
-            return yearAsString + "-" + monthAsString + "-" + dateAsString;
-        }
-
-        private convertFromString(value: string): Date {
-
-            var parsedYear: number = Number(value.substring(0, 4));
-            var parsedMonth: number = Number(value.substring(5, 7));
-            var parsedDayOfMonth: number = Number(value.substring(8, 10));
-            return api.util.DateHelper.newUTCDate(parsedYear, parsedMonth - 1, parsedDayOfMonth);
+            return api.util.DateHelper.formatUTCDate(value.getDate());
         }
 
         valueToString(value: Value): string {

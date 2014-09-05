@@ -58,6 +58,12 @@ module api.ui.time {
 
         private popupTrigger: api.ui.button.Button;
 
+        private calendar: Calendar;
+
+        private selectedDate: Date;
+
+        private selectedDateChangedListeners: {(event: SelectedDateChangedEvent) : void}[] = [];
+
         constructor(builder: DatePickerBuilder) {
             super('date-picker');
 
@@ -76,7 +82,14 @@ module api.ui.time {
             this.popupTrigger.addClass('icon-calendar4');
             this.appendChild(this.popupTrigger);
 
-            this.popup = new DatePickerPopup(builder);
+            this.calendar = new CalendarBuilder().
+                setSelectedDate(builder.selectedDate).
+                setMonth(builder.month).
+                setYear(builder.year).
+                setInteractive(true).
+                build();
+
+            this.popup = new DatePickerPopup(this.calendar, builder);
             wrapper.appendChild(this.popup);
 
             this.appendChild(wrapper);
@@ -96,29 +109,67 @@ module api.ui.time {
                 this.input.setValue(this.formatDate(builder.selectedDate));
             }
 
-            this.onSelectedDateChanged((e: SelectedDateChangedEvent) => {
+            this.popup.onSelectedDateChanged((e: SelectedDateChangedEvent) => {
                 if (builder.closeOnSelect) {
                     this.popup.hide();
                 }
+                this.selectedDate = e.getDate();
                 this.input.setValue(this.formatDate(e.getDate()));
+                this.notifySelectedDateChanged(e);
+            });
+
+            this.input.onKeyUp((event: KeyboardEvent) => {
+                if (api.ui.KeyHelper.isNumber(event) ||
+                    api.ui.KeyHelper.isDash(event) ||
+                    api.ui.KeyHelper.isBackspace(event) ||
+                    api.ui.KeyHelper.isDel(event)) {
+
+                    var typedDate = this.input.getValue();
+                    var date = api.util.DateHelper.parseUTCDate(typedDate);
+                    if (date) {
+                        var correctlyTyped = api.util.DateHelper.formatUTCDate(date) == typedDate;
+                        if (correctlyTyped) {
+                            this.selectedDate = date;
+                            this.calendar.selectDate(date);
+                            this.notifySelectedDateChanged(new SelectedDateChangedEvent(date));
+                            if (!this.popup.isVisible()) {
+                                this.popup.show();
+                            }
+                        }
+                        else {
+                            this.selectedDate = null;
+                        }
+                    }
+                    else {
+                        this.selectedDate = null;
+                    }
+                }
             });
 
         }
 
         getSelectedDate(): Date {
-            return this.popup.getSelectedDate();
+            return this.selectedDate;
         }
 
         onSelectedDateChanged(listener: (event: SelectedDateChangedEvent) => void) {
-            this.popup.onSelectedDateChanged(listener);
+            this.selectedDateChangedListeners.push(listener);
         }
 
         unSelectedDateChanged(listener: (event: SelectedDateChangedEvent) => void) {
-            this.popup.unSelectedDateChanged(listener);
+            this.selectedDateChangedListeners = this.selectedDateChangedListeners.filter((curr) => {
+                return curr !== listener;
+            });
+        }
+
+        private notifySelectedDateChanged(event: SelectedDateChangedEvent) {
+            this.selectedDateChangedListeners.forEach((listener) => {
+                listener(event);
+            });
         }
 
         private formatDate(date: Date): string {
-            return date.toDateString();
+            return api.util.DateHelper.formatUTCDate(date);
         }
 
     }
@@ -133,7 +184,7 @@ module api.ui.time {
         private nextMonth: api.dom.AEl;
         private calendar: Calendar;
 
-        constructor(builder: DatePickerBuilder) {
+        constructor(calendar: Calendar, builder: DatePickerBuilder) {
             super('date-picker-dialog');
 
             var yearContainer = new api.dom.H2El('year-container');
@@ -172,12 +223,7 @@ module api.ui.time {
             });
             monthContainer.appendChild(this.nextMonth);
 
-            this.calendar = new CalendarBuilder().
-                setSelectedDate(builder.selectedDate).
-                setMonth(builder.month).
-                setYear(builder.year).
-                setInteractive(true).
-                build();
+            this.calendar = calendar;
 
             this.year.setHtml(this.calendar.getYear().toString());
             this.month.setHtml(MonthsOfYear.getByNumberCode(this.calendar.getMonth()).getFullName());

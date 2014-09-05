@@ -75,6 +75,21 @@ module api.ui.time {
             this.renderMonth();
         }
 
+        public selectDate(value: Date) {
+            this.year = value.getUTCFullYear();
+            this.month = value.getUTCMonth();
+            this.selectedDate = value;
+            this.removeChildren();
+
+            if (api.util.DateHelper.isInvalidDate(value)) {
+                var spanEl = new api.dom.SpanEl().setHtml("Invalid date");
+                this.appendChild(spanEl);
+            }
+            else {
+                this.renderMonth();
+            }
+        }
+
         public nextMonth() {
             this.month++;
             if (this.month > 11) {
@@ -221,7 +236,7 @@ module api.ui.time {
         unSelectedDateChanged(listener: (event: SelectedDateChangedEvent) => void) {
             this.selectedDateChangedListeners = this.selectedDateChangedListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         private notifySelectedDateChanged(date: Date) {
