@@ -18,6 +18,8 @@ public final class RelationshipTypeName
 
     public static final RelationshipTypeName LIKE = new RelationshipTypeName( "like" );
 
+    public static final RelationshipTypeName IMAGE = new RelationshipTypeName( "related-image" );
+
     private RelationshipTypeName( final ModuleKey moduleKey, final String localName )
     {
         super( moduleKey, localName );

@@ -65,7 +65,8 @@ public final class MixinDaoImpl
     @Override
     public Mixin.Builder getMixin( final MixinName mixinName )
     {
-        return Mixin.newMixin( this.schemaRegistry.getMixin( mixinName ) );
+        final Mixin mixin = this.schemaRegistry.getMixin( mixinName );
+        return mixin != null ? Mixin.newMixin( mixin ) : null;
     }
 
     @Override
