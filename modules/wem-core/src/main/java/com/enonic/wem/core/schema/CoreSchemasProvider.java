@@ -1,12 +1,9 @@
 package com.enonic.wem.core.schema;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
 import java.time.Instant;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.WordUtils;
 
 import com.google.common.collect.Lists;
@@ -15,18 +12,14 @@ import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
-import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.schema.Schema;
 import com.enonic.wem.api.schema.SchemaProvider;
 import com.enonic.wem.api.schema.Schemas;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
-import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
-import com.enonic.wem.core.schema.content.serializer.ContentTypeJsonSerializer;
-import com.enonic.wem.core.schema.mixin.MixinJsonSerializer;
 
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
 import static com.enonic.wem.api.schema.relationship.RelationshipType.newRelationshipType;
@@ -36,10 +29,7 @@ public final class CoreSchemasProvider
 {
     private static final String CONTENT_TYPES_FOLDER = "content-types";
 
-    private static final String MIXINS_FOLDER = "mixins";
-
     private static final String RELATIONSHIP_TYPES_FOLDER = "relationship-types";
-
 
     // System Content Types
     public static Form MEDIA_IMAGE_FORM = createMediaImageForm();
@@ -109,18 +99,6 @@ public final class CoreSchemasProvider
         {UNSTRUCTURED, STRUCTURED, FOLDER, PAGE, SHORTCUT, MEDIA, MEDIA_TEXT, MEDIA_DATA, MEDIA_AUDIO, MEDIA_VIDEO, MEDIA_IMAGE,
             MEDIA_VECTOR, MEDIA_ARCHIVE, MEDIA_DOCUMENT, MEDIA_SPREADSHEET, MEDIA_PRESENTATION, MEDIA_CODE, MEDIA_EXECUTABLE, SITE};
 
-    private static final String[] DEMO_CONTENT_TYPES =
-        {"demo-contenttype-textline.json", "demo-contenttype-textarea.json", "demo-contenttype-htmlarea.json",
-            "demo-contenttype-fieldset.json", "demo-contenttype-formItemset.json", "demo-contenttype-blog.json",
-            "demo-contenttype-article1.json", "demo-contenttype-article2.json", "demo-contenttype-relation.json",
-            "demo-contenttype-occurrences.json", "demo-contenttype-contentDisplayNameScript.json", "demo-contenttype-mixin-address.json",
-            "demo-contenttype-mixin-norwegian-counties.json", "demo-contenttype-relation-article.json", "demo-contenttype-layout.json",
-            "demo-contenttype-formItemset-min-occurrences.json", "demo-contenttype-singleSelectors.json", "demo-contenttype-comboBox.json",
-            "demo-contenttype-all-input-types.json", "demo-contenttype-imageselector.json",
-            "demo-contenttype-several-levels-of-formItemset.json", "demo-contenttype-tag.json", "demo-contenttype-checkbox.json",
-            "demo-contenttype-long.json", "demo-geo-location.json", "demo-contenttype-date.json", "demo-contenttype-time.json",
-            "demo-contenttype-datetime.json"};
-
     // System Relationship Types
     private static final RelationshipType DEFAULT =
         createRelationshipType( RelationshipTypeName.DEFAULT, "Default", "relates to", "related of" );
@@ -131,22 +109,11 @@ public final class CoreSchemasProvider
 
     private static final RelationshipType LIKE = createRelationshipType( RelationshipTypeName.LIKE, "Like", "likes", "liked by" );
 
-    private static final RelationshipType CITATION =
-        createRelationshipType( RelationshipTypeName.from( "demo-1.0.0:citation" ), "Citation", "citation in", "cited by",
-                                ContentTypeNames.from( "demo-1.0.0:article" ) );
-
     private static final RelationshipType IMAGE =
-        createRelationshipType( RelationshipTypeName.from( ModuleKey.SYSTEM, "related-image" ), "Image", "relates to image",
-                                "related of image", ContentTypeNames.from( ContentTypeName.imageMedia() ) );
+        createRelationshipType( RelationshipTypeName.IMAGE, "Image", "relates to image", "related of image",
+                                ContentTypeNames.from( ContentTypeName.imageMedia() ) );
 
-    private static final RelationshipType[] RELATIONSHIP_TYPES = {DEFAULT, PARENT, LINK, LIKE, CITATION, IMAGE};
-
-    // Demo Mixins
-    private static final String[] DEMO_MIXINS = {"demo-mixin-address.json", "demo-mixin-norwegian-counties.json"};
-
-    private final ContentTypeJsonSerializer contentTypeJsonSerializer = new ContentTypeJsonSerializer();
-
-    private final MixinJsonSerializer mixinJsonSerializer = new MixinJsonSerializer();
+    private static final RelationshipType[] RELATIONSHIP_TYPES = {DEFAULT, PARENT, LINK, LIKE, IMAGE};
 
 
     private static ContentType.Builder createSystemType( final ContentTypeName contentTypeName )
@@ -204,34 +171,6 @@ public final class CoreSchemasProvider
         return systemContentTypes;
     }
 
-    private List<ContentType> generateDemoContentTypes()
-    {
-        final List<ContentType> demoContentTypes = Lists.newArrayList();
-        for ( String testContentTypeFile : DEMO_CONTENT_TYPES )
-        {
-            final ContentType contentType =
-                contentTypeJsonSerializer.toObject( loadFileAsString( CONTENT_TYPES_FOLDER, testContentTypeFile ) );
-            demoContentTypes.add( contentType );
-        }
-        return demoContentTypes;
-    }
-
-    private List<Mixin> generateDemoMixins()
-    {
-        final List<Mixin> mixins = Lists.newArrayList();
-        for ( String demoMixinFileName : DEMO_MIXINS )
-        {
-            final String mixinJson = loadFileAsString( MIXINS_FOLDER, demoMixinFileName );
-            Mixin mixin = mixinJsonSerializer.toMixin( mixinJson );
-            mixin = Mixin.newMixin( mixin ).
-                icon( loadSchemaIcon( MIXINS_FOLDER, mixin.getName().getLocalName() ) ).
-                build();
-
-            mixins.add( mixin );
-        }
-        return mixins;
-    }
-
     private List<RelationshipType> generateSystemRelationshipTypes()
     {
         final List<RelationshipType> relationshipTypes = Lists.newArrayList();
@@ -250,26 +189,8 @@ public final class CoreSchemasProvider
     {
         final List<Schema> schemas = Lists.newArrayList();
         schemas.addAll( generateSystemContentTypes() );
-        schemas.addAll( generateDemoContentTypes() );
-        schemas.addAll( generateDemoMixins() );
         schemas.addAll( generateSystemRelationshipTypes() );
         return Schemas.from( schemas );
-    }
-
-    private String loadFileAsString( final String metaInfFolderName, final String name )
-    {
-        final String metaInfFolderBasePath = "/" + "META-INF" + "/" + metaInfFolderName;
-        final String filePath = metaInfFolderBasePath + "/" + name;
-        final StringWriter writer = new StringWriter();
-        try
-        {
-            IOUtils.copy( getClass().getResourceAsStream( filePath ), writer );
-            return writer.toString();
-        }
-        catch ( IOException e )
-        {
-            throw new RuntimeException( "Failed to load file: " + filePath, e );
-        }
     }
 
     private Icon loadSchemaIcon( final String metaInfFolderName, final String name )
