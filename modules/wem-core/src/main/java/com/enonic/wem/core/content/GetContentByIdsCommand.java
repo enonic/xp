@@ -26,14 +26,11 @@ final class GetContentByIdsCommand
 
     private final NodeService nodeService;
 
-    private final QueryService queryService;
-
     private GetContentByIdsCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
         this.nodeService = builder.nodeService;
-        this.queryService = builder.queryService;
     }
 
     Contents execute()
@@ -50,16 +47,7 @@ final class GetContentByIdsCommand
             throw new ContentNotFoundException( contentId, this.context.getWorkspace() );
         }
 
-        return this.params.doGetChildrenIds() ? ChildContentIdsResolver.
-            create().
-            context( this.context ).
-            nodeService( this.nodeService ).
-            blobService( this.blobService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            queryService( this.queryService ).
-            build().
-            resolve( contents ) : contents;
+        return contents;
     }
 
     private Contents doExecute()

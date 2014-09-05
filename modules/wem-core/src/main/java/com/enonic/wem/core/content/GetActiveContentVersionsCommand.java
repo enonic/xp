@@ -7,7 +7,6 @@ import com.enonic.wem.api.content.GetActiveContentVersionsResult;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.GetActiveNodeVersionsParams;
 import com.enonic.wem.api.entity.GetActiveNodeVersionsResult;
-import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeVersion;
 import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.entity.Workspaces;
@@ -41,7 +40,7 @@ public class GetActiveContentVersionsCommand
             workspaces( this.workspaces ).
             build(), this.context );
 
-        final ContentVersionsFactory contentVersionsFactory = new ContentVersionsFactory( this.translator );
+        final ContentVersionFactory contentVersionFactory = new ContentVersionFactory( this.translator, this.nodeService, this.context );
 
         final GetActiveContentVersionsResult.Builder builder = GetActiveContentVersionsResult.create();
 
@@ -49,10 +48,7 @@ public class GetActiveContentVersionsCommand
         for ( final Workspace workspace : nodeVersionsMap.keySet() )
         {
             final NodeVersion nodeVersion = nodeVersionsMap.get( workspace );
-
-            final Node node = nodeService.getByBlobKey( nodeVersion.getBlobKey(), this.context );
-
-            builder.add( workspace, contentVersionsFactory.create( node ) );
+            builder.add( workspace, contentVersionFactory.create( nodeVersion ) );
         }
 
         return builder.build();

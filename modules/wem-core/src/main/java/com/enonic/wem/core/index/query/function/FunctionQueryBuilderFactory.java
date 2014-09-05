@@ -10,7 +10,7 @@ import com.enonic.wem.api.query.expr.FunctionExpr;
 
 public class FunctionQueryBuilderFactory
 {
-    public QueryBuilder create( final FunctionExpr function )
+    public static QueryBuilder create( final FunctionExpr function )
     {
         final String functionName = function.getName();
 
@@ -26,7 +26,7 @@ public class FunctionQueryBuilderFactory
         throw new UnsupportedOperationException( "Function '" + functionName + "' is not supported" );
     }
 
-    private QueryBuilder createFulltext( final FunctionExpr functionExpr )
+    private static QueryBuilder createFulltext( final FunctionExpr functionExpr )
     {
         final FulltextFunctionArguments arguments = new FulltextFunctionArguments( functionExpr.getArguments() );
 
@@ -43,7 +43,7 @@ public class FunctionQueryBuilderFactory
         return builder;
     }
 
-    private QueryBuilder createNGram( final FunctionExpr functionExpr )
+    private static QueryBuilder createNGram( final FunctionExpr functionExpr )
     {
         final NGramFunctionArguments arguments = new NGramFunctionArguments( functionExpr.getArguments() );
 
@@ -55,7 +55,7 @@ public class FunctionQueryBuilderFactory
         return builder;
     }
 
-    private void appendQueryFieldNames( final AbstractSimpleQueryStringFunction arguments, final SimpleQueryStringBuilder builder )
+    private static void appendQueryFieldNames( final AbstractSimpleQueryStringFunction arguments, final SimpleQueryStringBuilder builder )
     {
         for ( final WeightedQueryFieldName weightedQueryFieldName : arguments.getWeightedQueryFieldName() )
         {

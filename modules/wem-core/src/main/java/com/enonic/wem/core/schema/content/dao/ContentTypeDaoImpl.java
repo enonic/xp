@@ -1,7 +1,6 @@
 package com.enonic.wem.core.schema.content.dao;
 
 import java.io.IOException;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -15,15 +14,15 @@ import com.google.common.base.Charsets;
 
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.exception.SystemException;
+import com.enonic.wem.api.schema.SchemaRegistry;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeXml;
 import com.enonic.wem.api.schema.content.ContentTypes;
+import com.enonic.wem.api.xml.XmlSerializers;
 import com.enonic.wem.core.config.SystemConfig;
 import com.enonic.wem.core.support.dao.IconDao;
-import com.enonic.wem.api.xml.XmlSerializers;
 
-import static com.enonic.wem.api.schema.content.ContentTypes.newContentTypes;
 import static java.nio.file.Files.getLastModifiedTime;
 import static java.nio.file.Files.isDirectory;
 import static java.nio.file.Files.isRegularFile;
@@ -35,6 +34,8 @@ public final class ContentTypeDaoImpl
     private static final String CONTENT_TYPE_XML = "content-type.xml";
 
     private Path basePath;
+
+    private SchemaRegistry schemaRegistry;
 
     @Override
     public ContentType createContentType( final ContentType contentType )
@@ -59,32 +60,13 @@ public final class ContentTypeDaoImpl
     @Override
     public ContentTypes getAllContentTypes()
     {
-        final ContentTypes.Builder contentTypes = newContentTypes();
-
-        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream( this.basePath ))
-        {
-            for ( Path schemaDir : directoryStream )
-            {
-                final ContentType.Builder contentTypeBuilder = readContentType( schemaDir );
-                final ContentType contentType = contentTypeBuilder != null ? contentTypeBuilder.build() : null;
-                if ( contentType != null )
-                {
-                    contentTypes.add( contentType );
-                }
-            }
-        }
-        catch ( IOException e )
-        {
-            throw new SystemException( e, "Could not retrieve content types" );
-        }
-        return contentTypes.build();
+        return this.schemaRegistry.getAllContentTypes();
     }
 
     @Override
     public ContentType.Builder getContentType( final ContentTypeName contentTypeName )
     {
-        final Path contentTypePath = pathForContentType( contentTypeName );
-        return readContentType( contentTypePath );
+        return ContentType.newContentType( this.schemaRegistry.getContentType( contentTypeName ) );
     }
 
     @Override
@@ -179,5 +161,11 @@ public final class ContentTypeDaoImpl
     {
         this.basePath = systemConfig.getContentTypesDir();
         Files.createDirectories( this.basePath );
+    }
+
+    @Inject
+    public void setSchemaRegistry( final SchemaRegistry schemaRegistry )
+    {
+        this.schemaRegistry = schemaRegistry;
     }
 }

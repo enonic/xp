@@ -3,7 +3,6 @@ package com.enonic.wem.api.schema.relationship;
 
 import org.junit.Test;
 
-
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 
@@ -16,20 +15,20 @@ public class RelationshipTypeTest
     {
         // setup
         RelationshipType.Builder builder = RelationshipType.newRelationshipType();
-        builder.name( "like" );
+        builder.name( "mymodule-1.0.0:like" );
         builder.fromSemantic( "likes" );
         builder.toSemantic( "liked by" );
-        builder.addAllowedFromType( ContentTypeName.from( "person" ) );
-        builder.addAllowedToType( ContentTypeName.from( "person" ) );
+        builder.addAllowedFromType( ContentTypeName.from( "mymodule-1.0.0:person" ) );
+        builder.addAllowedToType( ContentTypeName.from( "mymodule-1.0.0:person" ) );
 
         // exercise
         RelationshipType relationshipType = builder.build();
 
         // verify
-        assertEquals( "like", relationshipType.getName().toString() );
+        assertEquals( "mymodule-1.0.0:like", relationshipType.getName().toString() );
         assertEquals( "likes", relationshipType.getFromSemantic() );
         assertEquals( "liked by", relationshipType.getToSemantic() );
-        assertEquals( ContentTypeNames.from( "person" ), relationshipType.getAllowedFromTypes() );
-        assertEquals( ContentTypeNames.from( "person" ), relationshipType.getAllowedToTypes() );
+        assertEquals( ContentTypeNames.from( "mymodule-1.0.0:person" ), relationshipType.getAllowedFromTypes() );
+        assertEquals( ContentTypeNames.from( "mymodule-1.0.0:person" ), relationshipType.getAllowedToTypes() );
     }
 }

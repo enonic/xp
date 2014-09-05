@@ -10,6 +10,8 @@ module api.content {
 
         comment: string;
 
+        id: string;
+
         static fromJson(contentVersionJson: api.content.json.ContentVersionJson): ContentVersion {
 
             var contentVersion: ContentVersion = new ContentVersion();
@@ -17,6 +19,7 @@ module api.content {
             contentVersion.displayName = contentVersionJson.displayName;
             contentVersion.modified = contentVersionJson.modified;
             contentVersion.comment = contentVersionJson.comment;
+            contentVersion.id = contentVersionJson.id;
 
             return contentVersion;
         }

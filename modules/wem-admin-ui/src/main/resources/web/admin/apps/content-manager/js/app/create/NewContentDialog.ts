@@ -182,7 +182,7 @@ module app.create {
                 items.push(NewContentDialogListItem.fromContentType(contentType))
             });
 
-            var siteContentType = contentTypesByName['site'];
+            var siteContentType = contentTypesByName[api.schema.content.ContentTypeName.SITE];
             siteTemplates.forEach((siteTemplate: SiteTemplateSummary) => {
                 items.push(NewContentDialogListItem.fromSiteTemplate(siteTemplate, siteContentType));
             });

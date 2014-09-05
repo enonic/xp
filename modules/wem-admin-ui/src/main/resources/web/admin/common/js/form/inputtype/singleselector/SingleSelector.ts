@@ -31,7 +31,7 @@ module api.form.inputtype.singleselector {
         }
 
         newInitialValue(): api.data.Value {
-            return new api.data.Value("", api.data.ValueTypes.STRING);
+            return new api.data.Value("", api.data.type.ValueTypes.STRING);
         }
 
         createInputOccurrenceElement(index: number, property: api.data.Property): api.dom.Element {
@@ -153,7 +153,7 @@ module api.form.inputtype.singleselector {
         }
 
         private newValue(s: string): api.data.Value {
-            return new api.data.Value(s, api.data.ValueTypes.STRING);
+            return new api.data.Value(s, api.data.type.ValueTypes.STRING);
         }
 
         getValue(occurrence: api.dom.Element): api.data.Value {

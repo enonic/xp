@@ -20,7 +20,7 @@ public class SiteTemplateXmlTest
         throws Exception
     {
         final ContentTypeFilter contentTypeFilter =
-            newContentFilter().defaultDeny().allowContentTypes( ContentTypeNames.from( "com.enonic.tweet", "system.folder" ) ).build();
+            newContentFilter().defaultDeny().allowContentTypes( ContentTypeNames.from( "mymodule-1.0.0:com.enonic.tweet", "mymodule-1.0.0:system.folder" ) ).build();
 
         final SiteTemplate siteTemplate = SiteTemplate.newSiteTemplate().
             key( SiteTemplateKey.from( "Intranet-1.0.0" ) ).
@@ -60,7 +60,7 @@ public class SiteTemplateXmlTest
                                        "com.enonic.resolvers-1.0.0" ), siteTemplate.getModules() );
 
         final ContentTypeFilter contentTypeFilter =
-            newContentFilter().defaultDeny().allowContentTypes( ContentTypeNames.from( "com.enonic.tweet", "system.folder" ) ).build();
+            newContentFilter().defaultDeny().allowContentTypes( ContentTypeNames.from( "mymodule-1.0.0:com.enonic.tweet", "mymodule-1.0.0:system.folder" ) ).build();
         assertEquals( contentTypeFilter, siteTemplate.getContentTypeFilter() );
     }
 }

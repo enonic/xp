@@ -11,7 +11,7 @@ import com.enonic.wem.core.index.query.IndexQueryFieldNameResolver;
 public class DynamicSortBuilderFactory
 {
 
-    public SortBuilder create( final DynamicOrderExpr orderExpr )
+    public static SortBuilder create( final DynamicOrderExpr orderExpr )
     {
         final FunctionExpr function = orderExpr.getFunction();
 
@@ -26,7 +26,7 @@ public class DynamicSortBuilderFactory
         }
     }
 
-    private SortBuilder createGeoDistanceSort( final DynamicOrderExpr orderExpr )
+    private static SortBuilder createGeoDistanceSort( final DynamicOrderExpr orderExpr )
     {
         final FunctionExpr function = orderExpr.getFunction();
 

@@ -29,7 +29,7 @@ public class SchemaServiceImpl_getChildrenTest
             build();
 
         final ContentType contentType = newContentType().
-            name( "my_content_type" ).
+            name( "mymodule-1.0.0:my_content_type" ).
             displayName( "My content type" ).
             setAbstract( false ).
             superType( unstructuredContentType.getName() ).
@@ -44,6 +44,6 @@ public class SchemaServiceImpl_getChildrenTest
         // verify
         assertEquals( 1, schemas.getSize() );
         assertTrue( schemas.get( 0 ).getSchemaKey().isContentType() );
-        assertEquals( "my_content_type", schemas.get( 0 ).getName().toString() );
+        assertEquals( "mymodule-1.0.0:my_content_type", schemas.get( 0 ).getName().toString() );
     }
 }

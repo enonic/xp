@@ -32,7 +32,7 @@ public class SchemaServiceImpl_getTypesTest
     {
         // setup
         final ContentType contentType = newContentType().
-            name( "my_content_type" ).
+            name( "mymodule-1.0.0:my_content_type" ).
             displayName( "My content type" ).
             setAbstract( false ).
             build();
@@ -44,18 +44,18 @@ public class SchemaServiceImpl_getTypesTest
             newInput().inputType( InputTypes.TEXT_LINE ).name( "street" ).build() ).addFormItem(
             newInput().inputType( InputTypes.TEXT_LINE ).name( "postalCode" ).build() ).addFormItem(
             newInput().inputType( InputTypes.TEXT_LINE ).name( "postalPlace" ).build() ).build();
-        final Mixin mixin = newMixin().name( "address" ).
+        final Mixin mixin = newMixin().name( "mymodule-1.0.0:address" ).
             addFormItem( formItemSet ).
             build();
         final Mixins mixins = Mixins.from( mixin );
         Mockito.when( this.mixinService.getAll() ).thenReturn( mixins );
 
         final RelationshipType relationshipType = newRelationshipType().
-            name( "like" ).
+            name( "mymodule-1.0.0:like" ).
             fromSemantic( "likes" ).
             toSemantic( "liked by" ).
-            addAllowedFromType( ContentTypeName.from( "person" ) ).
-            addAllowedToType( ContentTypeName.from( "person" ) ).
+            addAllowedFromType( ContentTypeName.from( "mymodule-1.0.0:person" ) ).
+            addAllowedToType( ContentTypeName.from( "mymodule-1.0.0:person" ) ).
             build();
         final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType );
         Mockito.when( this.relationshipTypeService.getAll() ).thenReturn( relationshipTypes );

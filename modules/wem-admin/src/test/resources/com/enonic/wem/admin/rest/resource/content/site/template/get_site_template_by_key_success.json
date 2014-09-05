@@ -1,7 +1,7 @@
 {
     "contentTypeFilter": {
         "allow": [ "*" ],
-        "deny": [ "com.enonic.tweet", "system.folder", "com.enonic.article", "com.enonic.employee" ]
+        "deny" : [ "mymodule-1.0.0:com.enonic.tweet", "mymodule-1.0.0:system.folder", "mymodule-1.0.0:com.enonic.article", "mymodule-1.0.0:com.enonic.employee" ]
     },
     "deletable": true,
     "description": "Demo site template",

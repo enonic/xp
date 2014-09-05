@@ -19,13 +19,13 @@ public class RelationshipTypeXmlTest
         throws Exception
     {
         final RelationshipType relationshipType = newRelationshipType().
-            name( "like" ).
+            name( "mymodule-1.0.0:like" ).
             description( "description" ).
             fromSemantic( "likes" ).
             toSemantic( "liked by" ).
-            addAllowedFromType(  ContentTypeName.from( "person" ) ).
-            addAllowedFromType(  ContentTypeName.from( "animal" ) ).
-            addAllowedToType(  ContentTypeName.from( "vehicle" ) ).
+            addAllowedFromType(  ContentTypeName.from( "mymodule-1.0.0:person" ) ).
+            addAllowedFromType(  ContentTypeName.from( "mymodule-1.0.0:animal" ) ).
+            addAllowedToType(  ContentTypeName.from( "mymodule-1.0.0:vehicle" ) ).
             build();
 
         final RelationshipTypeXml relationshipTypeXml = new RelationshipTypeXml();
@@ -44,13 +44,14 @@ public class RelationshipTypeXmlTest
 
         XmlSerializers.relationshipType().parse( xml ).to( builder );
 
+        builder.name( "mymodule-1.0.0:myreltype" );
         final RelationshipType relationshipType = builder.build();
 
-        assertEquals( null, relationshipType.getName() );
+        assertEquals( "mymodule-1.0.0:myreltype", relationshipType.getName().toString() );
         assertEquals( "description", relationshipType.getDescription() );
         assertEquals( "likes", relationshipType.getFromSemantic() );
         assertEquals( "liked by", relationshipType.getToSemantic() );
-        assertEquals( ContentTypeNames.from( "animal", "person" ), relationshipType.getAllowedFromTypes() );
-        assertEquals( ContentTypeNames.from( "vehicle" ), relationshipType.getAllowedToTypes() );
+        assertEquals( ContentTypeNames.from( "mymodule-1.0.0:animal", "mymodule-1.0.0:person" ), relationshipType.getAllowedFromTypes() );
+        assertEquals( ContentTypeNames.from( "mymodule-1.0.0:vehicle" ), relationshipType.getAllowedToTypes() );
     }
 }

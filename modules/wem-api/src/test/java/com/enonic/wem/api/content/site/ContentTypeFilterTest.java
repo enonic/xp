@@ -20,17 +20,17 @@ public class ContentTypeFilterTest
     {
         final ContentTypeFilter filter = ContentTypeFilter.newContentFilter().
             defaultDeny().
-            allowContentType( ContentTypeName.from( "com.enonic.tweet" ) ).
-            allowContentType( "system.folder" ).
-            allowContentTypes( ContentTypeNames.from( "com.enonic.article", "com.enonic.employee" ) ).
+            allowContentType( ContentTypeName.from( "mymodule-1.0.0:com.enonic.tweet" ) ).
+            allowContentType( "mymodule-1.0.0:system.folder" ).
+            allowContentTypes( ContentTypeNames.from( "mymodule-1.0.0:com.enonic.article", "mymodule-1.0.0:com.enonic.employee" ) ).
             build();
 
         assertEquals( ContentTypeFilter.AccessType.DENY, filter.getDefaultAccess() );
-        assertTrue( filter.isContentTypeAllowed( ContentTypeName.from( "com.enonic.tweet" ) ) );
-        assertTrue( filter.isContentTypeAllowed( ContentTypeName.from( "system.folder" ) ) );
-        assertTrue( filter.isContentTypeAllowed( ContentTypeName.from( "com.enonic.article" ) ) );
-        assertTrue( filter.isContentTypeAllowed( ContentTypeName.from( "com.enonic.employee" ) ) );
-        assertFalse( filter.isContentTypeAllowed( ContentTypeName.from( "other" ) ) );
+        assertTrue( filter.isContentTypeAllowed( ContentTypeName.from( "mymodule-1.0.0:com.enonic.tweet" ) ) );
+        assertTrue( filter.isContentTypeAllowed( ContentTypeName.from( "mymodule-1.0.0:system.folder" ) ) );
+        assertTrue( filter.isContentTypeAllowed( ContentTypeName.from( "mymodule-1.0.0:com.enonic.article" ) ) );
+        assertTrue( filter.isContentTypeAllowed( ContentTypeName.from( "mymodule-1.0.0:com.enonic.employee" ) ) );
+        assertFalse( filter.isContentTypeAllowed( ContentTypeName.from( "mymodule-1.0.0:other" ) ) );
     }
 
     @Test
@@ -39,17 +39,17 @@ public class ContentTypeFilterTest
     {
         final ContentTypeFilter filter = ContentTypeFilter.newContentFilter().
             defaultAllow().
-            denyContentType( ContentTypeName.from( "com.enonic.tweet" ) ).
-            denyContentType( "system.folder" ).
-            denyContentTypes( ContentTypeNames.from( "com.enonic.article", "com.enonic.employee" ) ).
+            denyContentType( ContentTypeName.from( "mymodule-1.0.0:com.enonic.tweet" ) ).
+            denyContentType( "mymodule-1.0.0:system.folder" ).
+            denyContentTypes( ContentTypeNames.from( "mymodule-1.0.0:com.enonic.article", "mymodule-1.0.0:com.enonic.employee" ) ).
             build();
 
         assertEquals( ContentTypeFilter.AccessType.ALLOW, filter.getDefaultAccess() );
-        assertFalse( filter.isContentTypeAllowed( ContentTypeName.from( "com.enonic.tweet" ) ) );
-        assertFalse( filter.isContentTypeAllowed( ContentTypeName.from( "system.folder" ) ) );
-        assertFalse( filter.isContentTypeAllowed( ContentTypeName.from( "com.enonic.article" ) ) );
-        assertFalse( filter.isContentTypeAllowed( ContentTypeName.from( "com.enonic.employee" ) ) );
-        assertTrue( filter.isContentTypeAllowed( ContentTypeName.from( "other" ) ) );
+        assertFalse( filter.isContentTypeAllowed( ContentTypeName.from( "mymodule-1.0.0:com.enonic.tweet" ) ) );
+        assertFalse( filter.isContentTypeAllowed( ContentTypeName.from( "mymodule-1.0.0:system.folder" ) ) );
+        assertFalse( filter.isContentTypeAllowed( ContentTypeName.from( "mymodule-1.0.0:com.enonic.article" ) ) );
+        assertFalse( filter.isContentTypeAllowed( ContentTypeName.from( "mymodule-1.0.0:com.enonic.employee" ) ) );
+        assertTrue( filter.isContentTypeAllowed( ContentTypeName.from( "mymodule-1.0.0:other" ) ) );
     }
 
     @Test
@@ -58,16 +58,16 @@ public class ContentTypeFilterTest
     {
         final ContentTypeFilter filter = ContentTypeFilter.newContentFilter().
             defaultAllow().
-            denyContentType( ContentTypeName.from( "com.enonic.tweet" ) ).
-            denyContentType( "system.folder" ).
-            denyContentTypes( ContentTypeNames.from( "com.enonic.article", "com.enonic.employee" ) ).
+            denyContentType( ContentTypeName.from( "mymodule-1.0.0:com.enonic.tweet" ) ).
+            denyContentType( "mymodule-1.0.0:system.folder" ).
+            denyContentTypes( ContentTypeNames.from( "mymodule-1.0.0:com.enonic.article", "mymodule-1.0.0:com.enonic.employee" ) ).
             build();
 
         final Iterator<ContentTypeName> iterator = filter.iterator();
-        Assert.assertEquals( ContentTypeName.from( "com.enonic.tweet" ), iterator.next() );
-        Assert.assertEquals( ContentTypeName.from( "system.folder" ), iterator.next() );
-        Assert.assertEquals( ContentTypeName.from( "com.enonic.article" ), iterator.next() );
-        Assert.assertEquals( ContentTypeName.from( "com.enonic.employee" ), iterator.next() );
+        Assert.assertEquals( ContentTypeName.from( "mymodule-1.0.0:com.enonic.tweet" ), iterator.next() );
+        Assert.assertEquals( ContentTypeName.from( "mymodule-1.0.0:system.folder" ), iterator.next() );
+        Assert.assertEquals( ContentTypeName.from( "mymodule-1.0.0:com.enonic.article" ), iterator.next() );
+        Assert.assertEquals( ContentTypeName.from( "mymodule-1.0.0:com.enonic.employee" ), iterator.next() );
         assertFalse( iterator.hasNext() );
     }
 }

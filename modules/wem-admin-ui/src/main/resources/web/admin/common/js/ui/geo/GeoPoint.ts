@@ -6,10 +6,6 @@ module api.ui.geo {
 
         private longitudeInput: api.ui.text.TextInput;
 
-        private latitudeChangedListeners: {(event: ValueChangedEvent):void}[] = [];
-
-        private longitudeChangedListeners: {(event: ValueChangedEvent):void}[] = [];
-
         constructor() {
             super("geo-point");
 
@@ -20,19 +16,6 @@ module api.ui.geo {
             this.longitudeInput.getEl().setAttribute("title", "longitude").addClass("geo-point-input");
 
             this.layoutItems();
-
-            this.latitudeInput.onValueChanged((event: ValueChangedEvent) => {
-                this.latitudeChangedListeners.forEach((listener) => {
-                    listener(event);
-                });
-            });
-
-            this.longitudeInput.onValueChanged((event: ValueChangedEvent) => {
-                this.longitudeChangedListeners.forEach((listener) => {
-                    listener(event);
-                });
-            });
-
             this.onShown((event) => {
                 this.latitudeInput.giveFocus();
             })
@@ -51,11 +34,11 @@ module api.ui.geo {
         }
 
         onLatitudeChanged(listener: (event: api.ui.ValueChangedEvent)=>void) {
-            this.latitudeChangedListeners.push(listener);
+            this.latitudeInput.onValueChanged(listener);
         }
 
         onLongitudeChanged(listener: (event: api.ui.ValueChangedEvent)=>void) {
-            this.longitudeChangedListeners.push(listener);
+            this.longitudeInput.onValueChanged(listener);
         }
 
         setLatitude(value: string): GeoPoint {

@@ -3,7 +3,7 @@
     "success": true,
     "successes": [
         {
-            "name": "existing_mixin"
+            "name": "mymodule-1.0.0:existing_mixin"
         }
     ]
 }

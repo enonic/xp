@@ -35,6 +35,14 @@ module api.liveedit {
         }
     }
 
+    class RegionViewContextMenuTitle extends ItemViewContextMenuTitle {
+
+        constructor(region: Region) {
+            super(region.getName(), RegionItemType.get().getConfig().getIconCls());
+        }
+
+    }
+
     export class RegionView extends ItemView {
 
         private parentView: ItemView;
@@ -61,7 +69,9 @@ module api.liveedit {
                 setElement(builder.element).
                 setParentElement(builder.parentElement).
                 setParentView(builder.parentView).
-                setContextMenuActions(this.createRegionContextMenuActions()));
+                setContextMenuActions(this.createRegionContextMenuActions()).
+                setContextMenuTitle(new RegionViewContextMenuTitle(builder.region)));
+
             this.setRegion(builder.region);
 
             this.parentView = builder.parentView;

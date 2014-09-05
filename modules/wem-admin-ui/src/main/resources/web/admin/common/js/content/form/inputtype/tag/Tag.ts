@@ -53,7 +53,7 @@ module api.content.form.inputtype.tag {
             });
 
             this.tags.onTagAdded((event) => {
-                this.notifyValueAdded(new api.data.Value(event.getValue(), api.data.ValueTypes.STRING));
+                this.notifyValueAdded(new api.data.Value(event.getValue(), api.data.type.ValueTypes.STRING));
             });
 
             this.tags.onTagRemoved((event) => {
@@ -64,7 +64,7 @@ module api.content.form.inputtype.tag {
         getValues(): api.data.Value[] {
             var values: api.data.Value[] = [];
             this.tags.getTags().forEach((tag) => {
-                values.push(new api.data.Value(tag, api.data.ValueTypes.STRING));
+                values.push(new api.data.Value(tag, api.data.type.ValueTypes.STRING));
             });
             return values;
         }

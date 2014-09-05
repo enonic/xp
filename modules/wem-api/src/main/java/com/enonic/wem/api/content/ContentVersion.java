@@ -7,6 +7,8 @@ import com.enonic.wem.api.account.UserKey;
 public class ContentVersion
     implements Comparable<ContentVersion>
 {
+    private final ContentVersionId id;
+
     private final UserKey modifier;
 
     private final String displayName;
@@ -17,10 +19,11 @@ public class ContentVersion
 
     private ContentVersion( Builder builder )
     {
-        modifier = builder.modifier;
-        displayName = builder.displayName;
-        modified = builder.modified;
-        comment = builder.comment;
+        this.modifier = builder.modifier;
+        this.displayName = builder.displayName;
+        this.modified = builder.modified;
+        this.comment = builder.comment;
+        this.id = builder.id;
     }
 
     public UserKey getModifier()
@@ -41,6 +44,11 @@ public class ContentVersion
     public String getComment()
     {
         return comment;
+    }
+
+    public ContentVersionId getId()
+    {
+        return id;
     }
 
     public static Builder create()
@@ -118,8 +126,16 @@ public class ContentVersion
 
         private String comment;
 
+        private ContentVersionId id;
+
         private Builder()
         {
+        }
+
+        public Builder id( final ContentVersionId id )
+        {
+            this.id = id;
+            return this;
         }
 
         public Builder modifier( UserKey modifier )

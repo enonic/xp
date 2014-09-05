@@ -297,11 +297,12 @@ module app.wizard {
 
             this.formIcon.setSrc(new ContentIconUrlResolver().setContent(persistedContent).setCrop(false).resolve());
 
+            var viewedContent;
             if (!this.constructing) {
 
                 var deferred = wemQ.defer<void>();
 
-                var viewedContent = this.assembleViewedContent(new ContentBuilder(persistedContent)).build();
+                viewedContent = this.assembleViewedContent(new ContentBuilder(persistedContent)).build();
                 if (viewedContent.equals(persistedContent)) {
 
                     if (this.liveFormPanel) {
@@ -311,6 +312,11 @@ module app.wizard {
                     return deferred.promise;
                 }
                 else {
+
+                    console.warn("Received Content from server differs from what's viewed:");
+                    console.warn(" viewedContent: ", viewedContent);
+                    console.warn(" persistedContent: ", persistedContent);
+
                     ConfirmationDialog.get().
                         setQuestion("Received Content from server differs from what you have. Would you like to load changes from server?").
                         setYesCallback(() => {
@@ -693,7 +699,7 @@ module app.wizard {
                 });
             }
             else {
-                return Q<DefaultModels>(null);
+                return wemQ<DefaultModels>(null);
             }
         }
 

@@ -1,9 +1,9 @@
 {
-    "name": "all_input_types",
+    "name": "mymodule-1.0.0:all_input_types",
     "displayName": "All the Input Types",
     "description": "A description",
     "contentDisplayNameScript": null,
-    "superType": "structured",
+    "superType": "system-0.0.0:structured",
     "isAbstract": false,
     "isFinal": true,
     "isBuiltIn": false,
@@ -65,7 +65,7 @@
         },
         {
             "Input": {
-                "name": "myLocalTime",
+                "name": "myTime",
                 "label": null,
                 "immutable": false,
                 "occurrences": {
@@ -78,6 +78,24 @@
                 "helpText": null,
                 "type": {
                     "name": "Time"
+                }
+            }
+        },
+        {
+            "Input": {
+                "name": "myDateTime",
+                "label": null,
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "DateTime"
                 }
             }
         },
@@ -338,7 +356,7 @@
                 "type": {
                     "name": "Relationship",
                     "config": {
-                        "relationshipType": "like"
+                        "relationshipType": "system-0.0.0:like"
                     }
                 }
             }
@@ -359,7 +377,7 @@
                 "type": {
                     "name": "ImageSelector",
                     "config": {
-                        "relationshipType": "default"
+                        "relationshipType": "system-0.0.0:default"
                     }
                 }
             }

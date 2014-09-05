@@ -1,7 +1,7 @@
 {
     "names": [
-        "existing_mixin",
-        "being_used_mixin",
-        "not_existing_mixin"
+        "mymodule-1.0.0:existing_mixin",
+        "mymodule-1.0.0:being_used_mixin",
+        "mymodule-1.0.0:not_existing_mixin"
     ]
 }

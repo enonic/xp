@@ -80,7 +80,7 @@ public class MixinXmlSerializer
         try
         {
             final Document document = this.jdomHelper.parse( xml );
-            return parse( document.getRootElement() );
+            return parse( document.getRootElement() ).build();
         }
         catch ( JDOMException | IOException e )
         {
@@ -88,11 +88,14 @@ public class MixinXmlSerializer
         }
     }
 
-    private Mixin parse( final Element mixinEl )
+    private Mixin.Builder parse( final Element mixinEl )
         throws IOException
     {
         final Mixin.Builder builder = newMixin();
-        builder.name( overridingName != null ? overridingName : mixinEl.getChildTextTrim( "name" ) );
+        if ( overridingName != null )
+        {
+            builder.name( overridingName );
+        }
         builder.displayName( mixinEl.getChildTextTrim( "display-name" ) );
         builder.description( mixinEl.getChildTextTrim( "description" ) );
 
@@ -102,6 +105,22 @@ public class MixinXmlSerializer
             builder.addFormItem( formItem );
         }
 
-        return builder.build();
+        return builder;
     }
+
+    // TODO remove this after creating JAXB serializer
+    public Mixin.Builder toMixinBuilder( final String xml )
+        throws ParsingException
+    {
+        try
+        {
+            final Document document = this.jdomHelper.parse( xml );
+            return parse( document.getRootElement() );
+        }
+        catch ( JDOMException | IOException e )
+        {
+            throw new XmlParsingException( "Failed to read XML", e );
+        }
+    }
+
 }

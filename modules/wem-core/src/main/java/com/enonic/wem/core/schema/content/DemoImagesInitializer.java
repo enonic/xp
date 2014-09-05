@@ -21,13 +21,14 @@ import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.core.content.ContentInitializer;
-import com.enonic.wem.core.support.BaseInitializer;
+import com.enonic.wem.core.initializer.InitializerTask;
+import com.enonic.wem.core.schema.CoreSchemasProvider;
 
 import static com.enonic.wem.api.content.attachment.Attachment.newAttachment;
 
 
 public class DemoImagesInitializer
-    extends BaseInitializer
+    extends InitializerTask
 {
 
     static final Context STAGE_CONTEXT = new Context( ContentConstants.WORKSPACE_STAGE );
@@ -49,7 +50,7 @@ public class DemoImagesInitializer
 
     protected DemoImagesInitializer()
     {
-        super( 20, "demo-images" );
+        super( 20 );
     }
 
     @Override
@@ -101,7 +102,7 @@ public class DemoImagesInitializer
 
         final CreateContentParams params = new CreateContentParams().
             contentType( ContentTypeName.imageMedia() ).
-            form( ContentTypesInitializer.MEDIA_IMAGE_FORM ).
+            form( CoreSchemasProvider.MEDIA_IMAGE_FORM ).
             displayName( displayName ).
             name( filteredFileName ).
             parent( parent ).

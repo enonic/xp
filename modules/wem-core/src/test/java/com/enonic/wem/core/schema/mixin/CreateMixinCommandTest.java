@@ -20,7 +20,7 @@ public class CreateMixinCommandTest
 
         // setup
         final Mixin createdMixin = Mixin.newMixin().
-            name( "age" ).
+            name( "mymodule-1.0.0:age" ).
             displayName( "Age" ).
             description( "description" ).
             addFormItem( newInput().name( "age" ).inputType( InputTypes.TEXT_LINE ).build() ).
@@ -29,7 +29,7 @@ public class CreateMixinCommandTest
 
         // exercise
         final CreateMixinParams params = new CreateMixinParams().
-            name( "age" ).
+            name( "mymodule-1.0.0:age" ).
             displayName( "Age" ).
             addFormItem( newInput().name( "age" ).inputType( InputTypes.TEXT_LINE ).build() );
 
@@ -39,7 +39,7 @@ public class CreateMixinCommandTest
         Mockito.verify( mixinDao, Mockito.atLeastOnce() ).createMixin( Mockito.isA( Mixin.class ) );
 
         assertNotNull( result );
-        assertEquals( "age", result.getName().toString() );
+        assertEquals( "mymodule-1.0.0:age", result.getName().toString() );
         assertEquals( "description", result.getDescription() );
     }
 

@@ -46,7 +46,7 @@ module api.content.form.inputtype.imageupload {
                     this.attachmentName = event.getUploadedItem().getName();
                     this.attachment = this.uploadItemToAttachment(event.getUploadedItem());
 
-                    var value = new api.data.Value(this.attachmentName, api.data.ValueTypes.STRING);
+                    var value = new api.data.Value(this.attachmentName, api.data.type.ValueTypes.STRING);
                     this.notifyValueAdded(new api.form.inputtype.ValueAddedEvent(value));
                 }
             });
@@ -73,7 +73,7 @@ module api.content.form.inputtype.imageupload {
             if (!this.attachmentName) {
                 return null;
             }
-            return new api.data.Value(this.attachmentName, api.data.ValueTypes.STRING);
+            return new api.data.Value(this.attachmentName, api.data.type.ValueTypes.STRING);
         }
 
         getAttachments(): api.content.attachment.Attachment[] {
@@ -97,12 +97,12 @@ module api.content.form.inputtype.imageupload {
             var imageUploader = <api.ui.uploader.ImageUploader>element;
             imageUploader.onImageUploaded((event: api.ui.uploader.ImageUploadedEvent) => {
                 var attachmentName = event.getUploadedItem().getName();
-                var value = new api.data.Value(attachmentName, api.data.ValueTypes.STRING);
+                var value = new api.data.Value(attachmentName, api.data.type.ValueTypes.STRING);
                 var valueChangedEvent = new api.form.inputtype.support.ValueChangedEvent(value);
                 listener(valueChangedEvent);
             });
             imageUploader.onImageReset(() => {
-                var value = new api.data.Value("", api.data.ValueTypes.STRING);
+                var value = new api.data.Value("", api.data.type.ValueTypes.STRING);
                 var valueChangedEvent = new api.form.inputtype.support.ValueChangedEvent(value);
                 listener(valueChangedEvent);
             })

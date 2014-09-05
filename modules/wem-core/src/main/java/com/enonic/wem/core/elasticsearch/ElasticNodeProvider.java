@@ -13,7 +13,7 @@ import com.google.inject.Provider;
 
 import com.enonic.wem.core.elasticsearch.resource.NodeSettingsBuilder;
 import com.enonic.wem.core.lifecycle.LifecycleBean;
-import com.enonic.wem.core.lifecycle.RunLevel;
+import com.enonic.wem.core.lifecycle.LifecycleStage;
 
 @Singleton
 public final class ElasticNodeProvider
@@ -25,7 +25,7 @@ public final class ElasticNodeProvider
     @Inject
     public ElasticNodeProvider( final NodeSettingsBuilder nodeSettingsBuilder )
     {
-        super( RunLevel.L1 );
+        super( LifecycleStage.L1 );
 
         ESLoggerFactory.setDefaultFactory( new Slf4jESLoggerFactory() );
         final Settings settings = nodeSettingsBuilder.buildNodeSettings();

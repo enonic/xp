@@ -9,7 +9,7 @@
     },
     "moduleKeys": [ "module1-1.0.0", "module2-1.0.0" ],
     "contentTypeFilter": {
-        "allow": [ "image" ],
-        "deny": [ "com.enonic.tweet", "system.folder", "com.enonic.article", "com.enonic.employee" ]
+        "allow": [ "mymodule-1.0.0:image" ],
+        "deny": [ "mymodule-1.0.0:com.enonic.tweet", "mymodule-1.0.0:system.folder", "mymodule-1.0.0:com.enonic.article", "mymodule-1.0.0:com.enonic.employee" ]
     }
 }

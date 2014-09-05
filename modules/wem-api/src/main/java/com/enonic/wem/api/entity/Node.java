@@ -25,6 +25,8 @@ public final class Node
 
     private final UserKey creator;
 
+    private final boolean hasChildren;
+
     private Node( final BaseBuilder builder )
     {
         super( builder );
@@ -37,21 +39,14 @@ public final class Node
         this.path = this.parent != null && this.name != null ? new NodePath( this.parent, this.name ) : null;
 
         this.modifier = builder.modifier;
+
+        this.hasChildren = builder.hasChildren;
     }
 
     public void validateForIndexing()
     {
         Preconditions.checkNotNull( this.id, "Id must be set" );
         Preconditions.checkNotNull( this.entityIndexConfig, "EntityIndexConfig must be set" );
-    }
-
-    public void validateForPersistence()
-    {
-        Preconditions.checkNotNull( this.createdTime, "createdTime must be set" );
-        Preconditions.checkNotNull( this.id, "Id must be set" );
-        Preconditions.checkNotNull( this.name, "Name must be set" );
-        Preconditions.checkNotNull( this.creator, "creator must be set" );
-        Preconditions.checkNotNull( this.parent, "parent must be set" );
     }
 
     public NodeName name()
@@ -89,6 +84,10 @@ public final class Node
         return modifier;
     }
 
+    public boolean getHasChildren()
+    {
+        return hasChildren;
+    }
 
     @Override
     public void checkIllegalEdit( final Node to )
@@ -120,11 +119,6 @@ public final class Node
         return new Builder( id );
     }
 
-    public static Builder newNode( final EntityId id, final NodeName name )
-    {
-        return new Builder( id, name );
-    }
-
     public static Builder newNode( final Node node )
     {
         return new Builder( node );
@@ -146,6 +140,8 @@ public final class Node
         UserKey modifier;
 
         UserKey creator;
+
+        boolean hasChildren = false;
 
         BaseBuilder()
         {
@@ -217,6 +213,7 @@ public final class Node
 
         private UserKey creator;
 
+        boolean hasChildren = false;
 
         public Builder()
         {
@@ -273,6 +270,12 @@ public final class Node
             return this;
         }
 
+        public Builder hasChildren( final boolean hasChildren )
+        {
+            this.hasChildren = hasChildren;
+            return this;
+        }
+
         public Node build()
         {
             BaseBuilder baseBuilder = new BaseBuilder();
@@ -281,12 +284,13 @@ public final class Node
             baseBuilder.modifiedTime = this.modifiedTime;
             baseBuilder.data = this.data;
             baseBuilder.attachments = this.attachments;
-
             baseBuilder.name = this.name;
             baseBuilder.parent = this.parent;
             baseBuilder.creator = this.creator;
             baseBuilder.modifier = this.modifier;
             baseBuilder.entityIndexConfig = this.entityIndexConfig;
+            baseBuilder.hasChildren = this.hasChildren;
+
             return new Node( baseBuilder );
         }
     }

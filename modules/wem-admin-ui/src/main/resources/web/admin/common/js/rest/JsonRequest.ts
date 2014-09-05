@@ -33,7 +33,7 @@ module api.rest {
 
                 if (request.readyState == 4) {
 
-                    if (request.status >= 204) {
+                    if (request.status == 204) {
                         deferred.resolve(new JsonResponse<RAW_JSON_TYPE>(null));
                     }
                     else if (request.status >= 200 && request.status < 300) {

@@ -22,7 +22,6 @@ import com.google.common.collect.Lists;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.Icon;
-import com.enonic.wem.api.Name;
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageTemplate;
@@ -39,6 +38,7 @@ import com.enonic.wem.api.content.site.Vendor;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeys;
+import com.enonic.wem.api.schema.SchemaName;
 import com.enonic.wem.api.schema.content.ContentTypeFilter;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
@@ -161,9 +161,9 @@ public class SiteTemplateResourceTest
 
         final ContentTypeFilter filter = ContentTypeFilter.newContentFilter().
             defaultAllow().
-            denyContentType( ContentTypeName.from( "com.enonic.tweet" ) ).
-            denyContentType( "system.folder" ).
-            denyContentTypes( ContentTypeNames.from( "com.enonic.article", "com.enonic.employee" ) ).
+            denyContentType( ContentTypeName.from( "mymodule-1.0.0:com.enonic.tweet" ) ).
+            denyContentType( "mymodule-1.0.0:system.folder" ).
+            denyContentTypes( ContentTypeNames.from( "mymodule-1.0.0:com.enonic.article", "mymodule-1.0.0:com.enonic.employee" ) ).
             build();
 
         final SiteTemplate siteTemplate = SiteTemplate.newSiteTemplate().
@@ -224,9 +224,9 @@ public class SiteTemplateResourceTest
 
         final ContentTypeFilter filter = ContentTypeFilter.newContentFilter().
             defaultAllow().
-            denyContentType( ContentTypeName.from( "com.enonic.tweet" ) ).
-            denyContentType( "system.folder" ).
-            denyContentTypes( ContentTypeNames.from( "com.enonic.article", "com.enonic.employee" ) ).
+            denyContentType( ContentTypeName.from( "mymodule-1.0.0:com.enonic.tweet" ) ).
+            denyContentType( "mymodule-1.0.0:system.folder" ).
+            denyContentTypes( ContentTypeNames.from( "mymodule-1.0.0:com.enonic.article", "mymodule-1.0.0:com.enonic.employee" ) ).
             build();
 
         final SiteTemplate siteTemplate = SiteTemplate.newSiteTemplate().
@@ -257,7 +257,7 @@ public class SiteTemplateResourceTest
 
                 // ContentTypeFilter
                 final ContentTypeFilter filter1 = command.getContentTypeFilter();
-                assertListEquals( new String[]{"image", "com.enonic.tweet", "system.folder", "com.enonic.article", "com.enonic.employee"},
+                assertListEquals( new String[]{"mymodule-1.0.0:image", "mymodule-1.0.0:com.enonic.tweet", "mymodule-1.0.0:system.folder", "mymodule-1.0.0:com.enonic.article", "mymodule-1.0.0:com.enonic.employee"},
                                   parseContentTypeNames( filter1.iterator() ) );
 
                 return siteTemplate;
@@ -283,9 +283,9 @@ public class SiteTemplateResourceTest
 
         final ContentTypeFilter filter = ContentTypeFilter.newContentFilter().
             defaultAllow().
-            denyContentType( ContentTypeName.from( "com.enonic.tweet" ) ).
-            denyContentType( "system.folder" ).
-            denyContentTypes( ContentTypeNames.from( "com.enonic.article", "com.enonic.employee" ) ).
+            denyContentType( ContentTypeName.from( "mymodule-1.0.0:com.enonic.tweet" ) ).
+            denyContentType( "mymodule-1.0.0:system.folder" ).
+            denyContentTypes( ContentTypeNames.from( "mymodule-1.0.0:com.enonic.article", "mymodule-1.0.0:com.enonic.employee" ) ).
             build();
 
         final SiteTemplate siteTemplate = SiteTemplate.newSiteTemplate().
@@ -317,7 +317,7 @@ public class SiteTemplateResourceTest
 
     private List<String> parseContentTypeNames( Iterator<ContentTypeName> iterator )
     {
-        return Lists.transform( Lists.newArrayList( iterator ), Name::toString );
+        return Lists.transform( Lists.newArrayList( iterator ), SchemaName::toString );
     }
 
     @Test
@@ -382,14 +382,14 @@ public class SiteTemplateResourceTest
         final PageTemplate pageTemplate1 = PageTemplate.newPageTemplate().
             key( PageTemplateKey.from( "module|my-page" ) ).
             displayName( "Main page template" ).
-            canRender( ContentTypeNames.from( "article", "banner" ) ).
+            canRender( ContentTypeNames.from( "mymodule-1.0.0:article", "mymodule-1.0.0:banner" ) ).
             descriptor( PageDescriptorKey.from( "mainmodule-1.0.0:landing-page" ) ).
             regions( newPageRegions().build() ).
             build();
         final PageTemplate pageTemplate2 = PageTemplate.newPageTemplate().
             key( PageTemplateKey.from( "module|my-other-page" ) ).
             displayName( "Another page template" ).
-            canRender( ContentTypeNames.from( "article" ) ).
+            canRender( ContentTypeNames.from( "mymodule-1.0.0:article" ) ).
             descriptor( PageDescriptorKey.from( "mainmodule-1.0.0:other-page" ) ).
             regions( newPageRegions().build() ).
             build();

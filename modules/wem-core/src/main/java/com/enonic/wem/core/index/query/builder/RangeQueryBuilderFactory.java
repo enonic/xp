@@ -10,8 +10,7 @@ import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 public class RangeQueryBuilderFactory
     extends AbstractBuilderFactory
 {
-
-    public QueryBuilder create( final CompareExpr compareExpr )
+    public static QueryBuilder create( final CompareExpr compareExpr )
     {
         final CompareExpr.Operator operator = compareExpr.getOperator();
 
@@ -31,7 +30,7 @@ public class RangeQueryBuilderFactory
 
     }
 
-    private QueryBuilder doBuildGT( final CompareExpr compareExpr, final boolean includeLower )
+    private static QueryBuilder doBuildGT( final CompareExpr compareExpr, final boolean includeLower )
     {
         final String queryFieldName = IndexQueryFieldNameResolver.resolve( compareExpr );
         final Object value = getValueAsType( compareExpr.getFirstValue().getValue() );
@@ -42,7 +41,7 @@ public class RangeQueryBuilderFactory
             includeLower( includeLower );
     }
 
-    private QueryBuilder doBuildLT( final CompareExpr compareExpr, final boolean includeUpper )
+    private static QueryBuilder doBuildLT( final CompareExpr compareExpr, final boolean includeUpper )
     {
         final String queryFieldName = IndexQueryFieldNameResolver.resolve( compareExpr );
         final Object value = getValueAsType( compareExpr.getFirstValue().getValue() );

@@ -96,7 +96,7 @@ module app.wizard {
             }
             else {
 
-                return Q(context.content);
+                return wemQ(context.content);
             }
         }
 

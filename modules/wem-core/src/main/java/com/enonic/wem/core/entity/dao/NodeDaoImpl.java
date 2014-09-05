@@ -2,174 +2,30 @@ package com.enonic.wem.core.entity.dao;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.time.Instant;
 
-import com.google.common.base.Preconditions;
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
 
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobKey;
-import com.enonic.wem.api.blob.BlobKeys;
 import com.enonic.wem.api.blob.BlobService;
-import com.enonic.wem.api.entity.Attachments;
-import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.EntityIds;
 import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.api.entity.NodeName;
-import com.enonic.wem.api.entity.NodePath;
-import com.enonic.wem.api.entity.NodePaths;
+import com.enonic.wem.api.entity.NodeVersionId;
+import com.enonic.wem.api.entity.NodeVersionIds;
 import com.enonic.wem.api.entity.Nodes;
-import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.core.entity.json.NodeJsonSerializer;
-import com.enonic.wem.core.version.EntityVersionDocument;
-import com.enonic.wem.core.version.VersionService;
-import com.enonic.wem.core.workspace.WorkspaceDocument;
-import com.enonic.wem.core.workspace.WorkspaceService;
-import com.enonic.wem.core.workspace.query.WorkspaceDeleteQuery;
-import com.enonic.wem.core.workspace.query.WorkspaceIdQuery;
-import com.enonic.wem.core.workspace.query.WorkspaceIdsQuery;
-import com.enonic.wem.core.workspace.query.WorkspaceParentQuery;
-import com.enonic.wem.core.workspace.query.WorkspacePathQuery;
-import com.enonic.wem.core.workspace.query.WorkspacePathsQuery;
 
 public class NodeDaoImpl
     implements NodeDao
 {
     private BlobService blobService;
 
-    private WorkspaceService workspaceService;
-
-    private VersionService versionService;
-
     @Override
-    public Node create( final CreateNodeArguments createNodeArguments, final Workspace workspace )
+    public NodeVersionId store( final Node node )
     {
-        final Node newNode = createNodeFromArguments( createNodeArguments );
+        final Blob blob = doStoreNodeAsBlob( node );
 
-        final Blob blob = doStoreNodeAsBlob( newNode );
-
-        workspaceService.store( WorkspaceDocument.create().
-            id( newNode.id() ).
-            parentPath( newNode.parent() ).
-            path( newNode.path() ).
-            blobKey( blob.getKey() ).
-            workspace( workspace ).
-            build() );
-
-        versionService.store( EntityVersionDocument.create().
-            entityId( newNode.id() ).
-            blobKey( blob.getKey() ).
-            build() );
-
-        return newNode;
-    }
-
-    @Override
-    public Node update( final UpdateNodeArgs updateNodeArguments, final Workspace workspace )
-    {
-        Preconditions.checkNotNull( updateNodeArguments.nodeToUpdate(), "nodeToUpdate must be specified" );
-
-        final BlobKey currentBlobKey = doGetBlobKey( updateNodeArguments.nodeToUpdate(), workspace );
-
-        final Node persistedNode = getNodeFromBlob( blobService.get( currentBlobKey ) );
-
-        final Instant now = Instant.now();
-
-        final Node.Builder updateNodeBuilder = Node.newNode( persistedNode ).
-            modifiedTime( now ).
-            modifier( updateNodeArguments.updater() ).
-            rootDataSet( updateNodeArguments.rootDataSet() ).
-            attachments( syncronizeAttachments( updateNodeArguments, persistedNode ) ).
-            entityIndexConfig( updateNodeArguments.entityIndexConfig() != null
-                                   ? updateNodeArguments.entityIndexConfig()
-                                   : persistedNode.getEntityIndexConfig() );
-
-        final Node updatedNode = updateNodeBuilder.build();
-
-        final Blob newBlob = doStoreNodeAsBlob( updatedNode );
-
-        workspaceService.store( WorkspaceDocument.create().
-            path( updatedNode.path() ).
-            parentPath( updatedNode.parent() ).
-            id( updatedNode.id() ).
-            blobKey( newBlob.getKey() ).
-            workspace( workspace ).
-            build() );
-
-        versionService.store( EntityVersionDocument.create().
-            entityId( updatedNode.id() ).
-            blobKey( newBlob.getKey() ).
-            build() );
-
-        return updatedNode;
-    }
-
-    @Override
-    public Node push( final PushNodeArguments pushNodeArguments, final Workspace workspace )
-    {
-        final Node persistedNode = getById( pushNodeArguments.getId(), workspace );
-
-        if ( persistedNode == null )
-        {
-            throw new NodeNotFoundException( "Node with id " + pushNodeArguments.getId() + " not found in workspace " + workspace );
-        }
-
-        final BlobKey existingBlob = workspaceService.getById( new WorkspaceIdQuery( workspace, pushNodeArguments.getId() ) );
-
-        this.workspaceService.store( WorkspaceDocument.create().
-            blobKey( existingBlob ).
-            workspace( pushNodeArguments.getTo() ).
-            id( persistedNode.id() ).
-            path( persistedNode.path() ).
-            parentPath( persistedNode.parent() ).
-            build() );
-
-        final BlobKey pushed = workspaceService.getById( new WorkspaceIdQuery( pushNodeArguments.getTo(), pushNodeArguments.getId() ) );
-
-        return getNodeFromBlob( blobService.get( pushed ) );
-    }
-
-    @Override
-    public boolean move( final MoveNodeArguments moveNodeArguments, final Workspace workspace )
-    {
-        final BlobKey currentBlobKey = workspaceService.getById( new WorkspaceIdQuery( workspace, moveNodeArguments.nodeToMove() ) );
-
-        final Node persistedNode = getNodeFromBlob( blobService.get( currentBlobKey ) );
-
-        if ( persistedNode.path().equals( new NodePath( moveNodeArguments.parentPath(), moveNodeArguments.name() ) ) )
-        {
-            return false;
-        }
-
-        final Instant now = Instant.now();
-
-        final Node movedNode = Node.newNode( persistedNode ).
-            name( moveNodeArguments.name() ).
-            parent( moveNodeArguments.parentPath() ).
-            modifiedTime( now ).
-            modifier( moveNodeArguments.updater() ).
-            entityIndexConfig( moveNodeArguments.getEntityIndexConfig() != null
-                                   ? moveNodeArguments.getEntityIndexConfig()
-                                   : persistedNode.getEntityIndexConfig() ).
-            build();
-
-        final Blob newBlob = doStoreNodeAsBlob( movedNode );
-
-        workspaceService.store( WorkspaceDocument.create().
-            id( movedNode.id() ).
-            parentPath( movedNode.parent() ).
-            path( movedNode.path() ).
-            workspace( workspace ).
-            blobKey( newBlob.getKey() ).
-            build() );
-
-        versionService.store( EntityVersionDocument.create().
-            entityId( movedNode.id() ).
-            blobKey( newBlob.getKey() ).
-            build() );
-
-        return true;
+        return NodeVersionId.from( blob.getKey() );
     }
 
     private Blob doStoreNodeAsBlob( final Node newNode )
@@ -180,162 +36,31 @@ public class NodeDaoImpl
         return blobService.create( byteArrayInputStream );
     }
 
-    private Node createNodeFromArguments( final CreateNodeArguments createNodeArguments )
-    {
-        Preconditions.checkNotNull( createNodeArguments.parent(), "Path of parent Node must be specified" );
-        Preconditions.checkArgument( createNodeArguments.parent().isAbsolute(),
-                                     "Path to parent Node must be absolute: " + createNodeArguments.parent() );
-
-        final Instant now = Instant.now();
-
-        return Node.newNode().
-            id( new EntityId() ).
-            createdTime( now ).
-            modifiedTime( now ).
-            creator( createNodeArguments.creator() ).
-            modifier( createNodeArguments.creator() ).
-            parent( createNodeArguments.parent() ).
-            name( NodeName.from( createNodeArguments.name() ) ).
-            rootDataSet( createNodeArguments.rootDataSet() ).
-            attachments( createNodeArguments.attachments() ).
-            entityIndexConfig( createNodeArguments.entityIndexConfig() ).
-            build();
-    }
-
-
     @Override
-    public Nodes getByParent( final NodePath parent, final Workspace workspace )
+    public Nodes getByVersionIds( final NodeVersionIds nodeVersionIds )
     {
-        final BlobKeys blobKeys = workspaceService.getByParent( new WorkspaceParentQuery( workspace, parent ) );
-        return getNodesFromBlobKeys( blobKeys );
-    }
-
-
-    @Override
-    public Nodes getByPaths( final NodePaths paths, final Workspace workspace )
-    {
-        final BlobKeys blobKeys = workspaceService.getByPaths( new WorkspacePathsQuery( workspace, paths ) );
-        return getNodesFromBlobKeys( blobKeys );
+        return doGetFromVersionIds( nodeVersionIds );
     }
 
     @Override
-    public Node getByPath( final NodePath path, final Workspace workspace )
+    public Node getByVersionId( final NodeVersionId nodeVersionId )
     {
-        return doGetByPath( path, workspace );
-    }
-
-    private Node doGetByPath( final NodePath path, final Workspace workspace )
-    {
-        final BlobKey blobKey = workspaceService.getByPath( new WorkspacePathQuery( workspace, path ) );
-
-        if ( blobKey == null )
-        {
-            throw new NodeNotFoundException( "Node with path " + path + " not found in workspace " + workspace );
-        }
+        final BlobKey blobKey = new BlobKey( nodeVersionId.toString() );
 
         return getNodeFromBlob( blobService.get( blobKey ) );
     }
 
-    @Override
-    public Nodes getByIds( final EntityIds entityIds, final Workspace workspace )
+    private Nodes doGetFromVersionIds( final NodeVersionIds nodeVersionIds )
     {
-        final BlobKeys blobKeys = workspaceService.getByIds( new WorkspaceIdsQuery( workspace, entityIds ) );
-        return getNodesFromBlobKeys( blobKeys );
-    }
-
-    @Override
-    public BlobKey getBlobKey( final EntityId entityId, final Workspace workspace )
-    {
-        return doGetBlobKey( entityId, workspace );
-    }
-
-
-    @Override
-    public Node getById( final EntityId entityId, final Workspace workspace )
-    {
-        return doGetById( entityId, workspace );
-    }
-
-    private Node doGetById( final EntityId entityId, final Workspace workspace )
-    {
-        final BlobKey blobKey = doGetBlobKey( entityId, workspace );
-
-        return getNodeFromBlob( blobService.get( blobKey ) );
-    }
-
-    private BlobKey doGetBlobKey( final EntityId entityId, final Workspace workspace )
-    {
-        final BlobKey blobKey = workspaceService.getById( new WorkspaceIdQuery( workspace, entityId ) );
-
-        if ( blobKey == null )
-        {
-            throw new NodeNotFoundException( "Node with id " + entityId + " not found in workspace " + workspace );
-        }
-        return blobKey;
-    }
-
-    @Override
-    public Node deleteById( final EntityId entityId, final Workspace workspace )
-    {
-        final Node node = getById( entityId, workspace );
-
-        if ( node == null )
-        {
-            throw new NodeNotFoundException( "Unable to delete node with id " + entityId + " in workspace " + workspace.getName() );
-        }
-
-        doDeleteNodeWithChildren( node, workspace );
-
-        return node;
-    }
-
-    @Override
-    public Node getByBlobKey( final BlobKey blobKey )
-    {
-        final Blob blob = blobService.get( blobKey );
-
-        return getNodeFromBlob( blob );
-    }
-
-    private void doDeleteNodeWithChildren( final Node nodeToDelete, final Workspace workspace )
-    {
-        final Nodes children = this.getByParent( nodeToDelete.path(), workspace );
-
-        for ( final Node child : children )
-        {
-            doDeleteNodeWithChildren( child, workspace );
-        }
-
-        workspaceService.delete( new WorkspaceDeleteQuery( workspace, nodeToDelete.id() ) );
-    }
-
-
-    private Attachments syncronizeAttachments( final UpdateNodeArgs updateNodeArgs, final Node persistedNode )
-    {
-
-        final Attachments persistedAttachments = persistedNode.attachments();
-
-        if ( updateNodeArgs.attachments() == null )
-        {
-            return persistedAttachments;
-        }
-
-        return updateNodeArgs.attachments();
-
-    }
-
-    private Nodes getNodesFromBlobKeys( final BlobKeys blobKeys )
-    {
-
         final Nodes.Builder nodesBuilder = Nodes.create();
 
-        for ( final BlobKey blobKey : blobKeys )
+        for ( final NodeVersionId nodeVersionId : nodeVersionIds )
         {
-            final Blob blob = blobService.get( blobKey );
+            final Blob blob = blobService.get( new BlobKey( nodeVersionId.toString() ) );
 
             if ( blob == null )
             {
-                throw new NodeNotFoundException( "Blob for node with BlobKey " + blobKey + " not found" );
+                throw new NodeNotFoundException( "Blob for node with BlobKey " + nodeVersionId + " not found" );
             }
 
             nodesBuilder.add( getNodeFromBlob( blob ) );
@@ -370,15 +95,4 @@ public class NodeDaoImpl
         this.blobService = blobService;
     }
 
-    @Inject
-    public void setWorkspaceService( final WorkspaceService workspaceService )
-    {
-        this.workspaceService = workspaceService;
-    }
-
-    @Inject
-    public void setVersionService( final VersionService versionService )
-    {
-        this.versionService = versionService;
-    }
 }

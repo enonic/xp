@@ -16,7 +16,7 @@ final class GetChildSchemasCommand
     public Schemas execute()
     {
         // Get child contentTypes
-        final ContentTypeName contentTypeName = ContentTypeName.from( this.parentKey.getLocalName() );
+        final ContentTypeName contentTypeName = (ContentTypeName) this.parentKey.getName();
         final GetChildContentTypesParams params = new GetChildContentTypesParams().parentName( contentTypeName );
         final ContentTypes contentTypes = this.contentTypeService.getChildren( params );
 

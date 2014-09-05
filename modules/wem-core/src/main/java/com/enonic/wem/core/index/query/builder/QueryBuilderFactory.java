@@ -5,8 +5,6 @@ import org.elasticsearch.index.query.FilteredQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 
-import com.google.common.collect.ImmutableSet;
-
 import com.enonic.wem.api.query.expr.CompareExpr;
 import com.enonic.wem.api.query.expr.ConstraintExpr;
 import com.enonic.wem.api.query.expr.DynamicConstraintExpr;
@@ -15,23 +13,18 @@ import com.enonic.wem.api.query.expr.LogicalExpr;
 import com.enonic.wem.api.query.expr.NotExpr;
 import com.enonic.wem.api.query.expr.QueryExpr;
 import com.enonic.wem.api.query.filter.Filter;
+import com.enonic.wem.api.query.filter.Filters;
 
 public class QueryBuilderFactory
     extends AbstractBuilderFactory
 {
-    private CompareQueryFactory compareQueryFactory = new CompareQueryFactory();
-
-    private DynamicQueryFactory dynamicQueryFactory = new DynamicQueryFactory();
-
-    private FilterBuilderFactory filterBuilderFactory = new FilterBuilderFactory();
-
-    public QueryBuilder create( final QueryExpr queryExpr, final ImmutableSet<Filter> queryFilters )
+    private static QueryBuilder doCreate( final Builder builder )
     {
         final QueryBuilder queryBuilder;
 
-        if ( queryExpr != null )
+        if ( builder.queryExpr != null )
         {
-            final ConstraintExpr constraint = queryExpr.getConstraint();
+            final ConstraintExpr constraint = builder.queryExpr.getConstraint();
 
             queryBuilder = buildConstraint( constraint );
         }
@@ -40,11 +33,13 @@ public class QueryBuilderFactory
             queryBuilder = QueryBuilders.matchAllQuery();
         }
 
-        final boolean wrapInFilteredQuery = queryFilters != null && !queryFilters.isEmpty();
+        final Filters filters = builder.filterBuilder.build();
+
+        final boolean wrapInFilteredQuery = filters != null && !filters.isEmpty();
 
         if ( wrapInFilteredQuery )
         {
-            final FilterBuilder filterBuilder = filterBuilderFactory.create( queryFilters );
+            final FilterBuilder filterBuilder = FilterBuilderFactory.create( filters );
             return new FilteredQueryBuilder( queryBuilder, filterBuilder );
         }
         else
@@ -53,7 +48,7 @@ public class QueryBuilderFactory
         }
     }
 
-    private QueryBuilder buildConstraint( final Expression constraint )
+    private static QueryBuilder buildConstraint( final Expression constraint )
     {
         if ( constraint == null )
         {
@@ -65,11 +60,11 @@ public class QueryBuilderFactory
         }
         else if ( constraint instanceof DynamicConstraintExpr )
         {
-            return dynamicQueryFactory.create( (DynamicConstraintExpr) constraint );
+            return DynamicQueryFactory.create( (DynamicConstraintExpr) constraint );
         }
         else if ( constraint instanceof CompareExpr )
         {
-            return compareQueryFactory.create( (CompareExpr) constraint );
+            return CompareQueryFactory.create( (CompareExpr) constraint );
 
         }
         else if ( constraint instanceof NotExpr )
@@ -82,14 +77,14 @@ public class QueryBuilderFactory
         }
     }
 
-    private QueryBuilder buildNotExpr( final NotExpr expr )
+    private static QueryBuilder buildNotExpr( final NotExpr expr )
     {
         final QueryBuilder negated = buildConstraint( expr.getExpression() );
         return buildNotQuery( negated );
     }
 
 
-    private QueryBuilder buildLogicalExpression( final LogicalExpr expr )
+    private static QueryBuilder buildLogicalExpression( final LogicalExpr expr )
     {
 
         final QueryBuilder left = buildConstraint( expr.getLeft() );
@@ -107,6 +102,43 @@ public class QueryBuilderFactory
         {
             throw new IllegalArgumentException( "Operation [" + expr.getOperator() + "] not supported" );
         }
+    }
+
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static class Builder
+    {
+        private QueryExpr queryExpr;
+
+        private Filters.Builder filterBuilder = Filters.create();
+
+        public Builder queryExpr( final QueryExpr queryExpr )
+        {
+            this.queryExpr = queryExpr;
+            return this;
+        }
+
+        public Builder addQueryFilter( final Filter filter )
+        {
+            filterBuilder.add( filter );
+            return this;
+        }
+
+        public Builder addQueryFilters( final Filters filters )
+        {
+            filterBuilder.addAll( filters.getSet() );
+            return this;
+        }
+
+        public QueryBuilder build()
+        {
+            return QueryBuilderFactory.doCreate( this );
+        }
+
     }
 
 }

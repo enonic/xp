@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.Name;
+import com.enonic.wem.api.schema.SchemaName;
 
 public class SchemaDeleteJson
 {
@@ -12,12 +12,12 @@ public class SchemaDeleteJson
 
     private List<FailureJson> failures = Lists.newArrayList();
 
-    public void success( final Name name )
+    public void success( final SchemaName name )
     {
         successes.add( new SuccessJson( name ) );
     }
 
-    public void failure( final Name name, final String reason )
+    public void failure( final SchemaName name, final String reason )
     {
         failures.add( new FailureJson( name, reason ) );
     }
@@ -39,9 +39,9 @@ public class SchemaDeleteJson
 
     public class SuccessJson
     {
-        private final Name name;
+        private final SchemaName name;
 
-        public SuccessJson( final Name name )
+        public SuccessJson( final SchemaName name )
         {
             this.name = name;
         }
@@ -54,11 +54,11 @@ public class SchemaDeleteJson
 
     public class FailureJson
     {
-        private final Name name;
+        private final SchemaName name;
 
         private final String reason;
 
-        public FailureJson( final Name name, final String reason )
+        public FailureJson( final SchemaName name, final String reason )
         {
             this.name = name;
             this.reason = reason;

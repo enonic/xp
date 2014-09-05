@@ -1,15 +1,16 @@
 module api.content.form.inputtype.long {
 
-    import support = api.form.inputtype.support;
+    import BaseInputTypeNotManagingAdd = api.form.inputtype.support.BaseInputTypeNotManagingAdd;
+    import ValueTypes = api.data.type.ValueTypes;
 
-    export class Long extends support.BaseInputTypeNotManagingAdd<any> {
+    export class Long extends BaseInputTypeNotManagingAdd<any> {
 
         constructor(config: api.form.inputtype.InputTypeViewContext<any>) {
             super(config);
         }
 
         newInitialValue(): api.data.Value {
-            return new api.data.Value("", api.data.ValueTypes.STRING);
+            return null;
         }
 
         createInputOccurrenceElement(index: number, property: api.data.Property): api.dom.Element {
@@ -31,28 +32,24 @@ module api.content.form.inputtype.long {
         onOccurrenceValueChanged(element: api.dom.Element, listener: (event: api.form.inputtype.support.ValueChangedEvent) => void) {
             var inputEl = <api.ui.text.TextInput>element;
             inputEl.onValueChanged((event: api.ui.ValueChangedEvent) => {
-                listener(new api.form.inputtype.support.ValueChangedEvent(this.newValue(Number(event.getNewValue()).toString())));
-            });
-        }
 
-        private newValue(s: string): api.data.Value {
-            return new api.data.Value(s, api.data.ValueTypes.STRING);
+                var value = ValueTypes.LONG.newValue(event.getNewValue());
+                if (value) {
+                    listener(new api.form.inputtype.support.ValueChangedEvent(value));
+                }
+            });
         }
 
         getValue(occurrence: api.dom.Element): api.data.Value {
             var inputEl: api.ui.text.TextInput = <api.ui.text.TextInput>occurrence;
-            return this.newValue(Number(inputEl.getValue()).toString());
+            return ValueTypes.LONG.newValue(inputEl.getValue());
         }
 
         valueBreaksRequiredContract(value: api.data.Value): boolean {
             if (value == null) {
                 return true;
             }
-            if (api.util.isStringBlank(value.asString())) {
-                return true;
-            } else {
-                return false;
-            }
+            return !value.getType().equals(ValueTypes.LONG);
         }
 
     }

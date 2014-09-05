@@ -89,7 +89,14 @@ final class JavaTypeConverters
         }
         else if ( value instanceof String )
         {
-            return new Long( (String) value );
+            if ( isNumber( value.toString() ) )
+            {
+                return new Long( (String) value );
+            }
+            else
+            {
+                return null;
+            }
         }
         else
         {
@@ -97,6 +104,21 @@ final class JavaTypeConverters
         }
     }
 
+    public static boolean isNumber( String strNum )
+    {
+        boolean ret = true;
+        try
+        {
+
+            Double.parseDouble( strNum );
+
+        }
+        catch ( NumberFormatException e )
+        {
+            ret = false;
+        }
+        return ret;
+    }
     private static Double convertToDouble( final Object value )
     {
         if ( value instanceof Number )
@@ -105,7 +127,11 @@ final class JavaTypeConverters
         }
         else if ( value instanceof String )
         {
-            return new Double( (String) value );
+            if ( isNumber( value.toString() ) )
+            {
+                return new Double( (String) value );
+            }
+            return null;
         }
         else
         {

@@ -4,7 +4,8 @@ import org.junit.Test;
 
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.entity.query.EntityQuery;
-import com.enonic.wem.api.query.filter.FieldFilter;
+import com.enonic.wem.api.query.filter.ExistsFilter;
+import com.enonic.wem.api.query.filter.ValueFilter;
 import com.enonic.wem.api.query.parser.QueryParser;
 
 import static org.junit.Assert.*;
@@ -16,18 +17,19 @@ public class EntityQueryTest
         throws Exception
     {
         final EntityQuery entityQuery = EntityQuery.newEntityQuery().
-            addFilter( FieldFilter.newValueQueryFilter().
+            addPostFilter( ValueFilter.create().
                 fieldName( "myField" ).
-                add( Value.newString( "test1" ), Value.newString( "test2" ) ).
+                addValue( Value.newString( "test1" ) ).
+                addValue( Value.newString( "test2" ) ).
                 build() ).
-            addFilter( FieldFilter.newContentTypeFilter().
-                add( "myContentTypeId", "myOtherContentTypeId" ).
+            addPostFilter( ExistsFilter.create().
+                fieldName( "myPossiblyExistingField" ).
                 build() ).
             query( QueryParser.parse( "data/test > 3 ORDER BY test ASC" ) ).
             build();
 
         assertNotNull( entityQuery.getQuery() );
-        assertEquals( 2, entityQuery.getFilters().size() );
+        assertEquals( 2, entityQuery.getPostFilters().getSize() );
 
     }
 }

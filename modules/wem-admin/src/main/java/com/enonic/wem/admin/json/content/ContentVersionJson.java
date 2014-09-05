@@ -14,12 +14,15 @@ public class ContentVersionJson
 
     private final String comment;
 
+    private final String id;
+
     public ContentVersionJson( final ContentVersion contentVersion )
     {
         this.modified = contentVersion.getModified();
         this.displayName = contentVersion.getDisplayName();
         this.comment = contentVersion.getComment();
         this.modifier = contentVersion.getModifier().getQualifiedName();
+        this.id = contentVersion.getId().toString();
     }
 
     @SuppressWarnings("UnusedDeclaration")
@@ -44,5 +47,11 @@ public class ContentVersionJson
     public String getComment()
     {
         return comment;
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    public String getId()
+    {
+        return id;
     }
 }

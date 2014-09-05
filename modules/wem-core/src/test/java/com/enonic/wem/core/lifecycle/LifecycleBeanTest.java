@@ -9,9 +9,8 @@ public class LifecycleBeanTest
     @Test
     public void testBasic()
     {
-        final LifecycleTestingBean bean = new LifecycleTestingBean( RunLevel.L2 );
-        assertEquals( "LifecycleTestingBean", bean.getName() );
-        assertEquals( RunLevel.L2, bean.getRunLevel() );
+        final LifecycleTestingBean bean = new LifecycleTestingBean( LifecycleStage.L2 );
+        assertEquals( LifecycleStage.L2, bean.getStage() );
         assertEquals( false, bean.isRunning() );
     }
 
@@ -19,7 +18,7 @@ public class LifecycleBeanTest
     public void testStart()
         throws Exception
     {
-        final LifecycleTestingBean bean = new LifecycleTestingBean( RunLevel.L2 );
+        final LifecycleTestingBean bean = new LifecycleTestingBean( LifecycleStage.L2 );
         assertEquals( 0, bean.startCount );
         assertEquals( false, bean.isRunning() );
 
@@ -36,7 +35,7 @@ public class LifecycleBeanTest
     public void testStop()
         throws Exception
     {
-        final LifecycleTestingBean bean = new LifecycleTestingBean( RunLevel.L2 );
+        final LifecycleTestingBean bean = new LifecycleTestingBean( LifecycleStage.L2 );
         assertEquals( 0, bean.stopCount );
         assertEquals( false, bean.isRunning() );
 
@@ -61,7 +60,7 @@ public class LifecycleBeanTest
     public void testStart_error()
         throws Exception
     {
-        final LifecycleTestingBean bean = new LifecycleTestingBean( RunLevel.L2 );
+        final LifecycleTestingBean bean = new LifecycleTestingBean( LifecycleStage.L2 );
         bean.exceptionOnStart = true;
 
         assertEquals( 0, bean.startCount );
@@ -83,7 +82,7 @@ public class LifecycleBeanTest
     public void testStop_error()
         throws Exception
     {
-        final LifecycleTestingBean bean = new LifecycleTestingBean( RunLevel.L2 );
+        final LifecycleTestingBean bean = new LifecycleTestingBean( LifecycleStage.L2 );
         bean.exceptionOnStop = true;
 
         bean.start();

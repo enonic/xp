@@ -23,6 +23,8 @@ module api.liveedit {
 
         contextMenuActions: api.ui.Action[];
 
+        contextMenuTitle: ItemViewContextMenuTitle;
+
         setItemViewIdProducer(value: ItemViewIdProducer): ItemViewBuilder {
             this.itemViewIdProducer = value;
             return this;
@@ -52,6 +54,11 @@ module api.liveedit {
             this.contextMenuActions = actions;
             return this;
         }
+
+        setContextMenuTitle(title: ItemViewContextMenuTitle): ItemViewBuilder {
+            this.contextMenuTitle = title;
+            return this;
+        }
     }
 
     export class ItemView extends api.dom.Element {
@@ -77,6 +84,8 @@ module api.liveedit {
         private mouseOutViewListeners: {(): void} [];
 
         private contextMenuActions: api.ui.Action[];
+
+        private contextMenuTitle: ItemViewContextMenuTitle;
 
         private debug: boolean;
 
@@ -127,6 +136,7 @@ module api.liveedit {
             }
 
             this.contextMenuActions = builder.contextMenuActions;
+            this.contextMenuTitle = builder.contextMenuTitle;
 
             this.onMouseEnter(this.handleMouseEnter.bind(this));
             this.onMouseLeave(this.handleMouseLeave.bind(this));
@@ -327,7 +337,7 @@ module api.liveedit {
 
         showContextMenu(position?: Position) {
             if (!this.contextMenu) {
-                this.contextMenu = new api.liveedit.ItemViewContextMenu(this, this.contextMenuActions);
+                this.contextMenu = new api.liveedit.ItemViewContextMenu(this.contextMenuTitle, this.contextMenuActions);
             }
             var dimensions = this.getElementDimensions();
             var x, y;

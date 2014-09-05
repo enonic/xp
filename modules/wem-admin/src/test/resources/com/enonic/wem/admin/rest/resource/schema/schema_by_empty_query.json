@@ -17,12 +17,12 @@
             "modifiedTime": "2013-08-23T12:55:09.162Z",
             "size": 1
         },
-        "iconUrl": "/admin/rest/schema/icon/ContentType:contenttype?hash=f95b70fdc3088560732a5ac135644506",
-        "key": "ContentType:contenttype",
+        "iconUrl": "/admin/rest/schema/icon/ContentType:mymodule-1.0.0:contenttype?hash=f95b70fdc3088560732a5ac135644506",
+        "key": "ContentType:mymodule-1.0.0:contenttype",
         "modifiedTime": "2013-08-23T12:55:09.162Z",
         "modifier": null,
-        "name": "contenttype",
-        "superType": "unstructured"
+        "name": "mymodule-1.0.0:contenttype",
+        "superType": "system-0.0.0:unstructured"
     },
     {
         "schemaKind": "Mixin",
@@ -34,7 +34,7 @@
         "editable": true,
         "hasChildren": false,
         "icon": null,
-        "iconUrl": "/admin/rest/schema/icon/Mixin:mixin",
+        "iconUrl": "/admin/rest/schema/icon/Mixin:mymodule-1.0.0:mixin",
         "items": [
             {
                 "Input": {
@@ -56,10 +56,10 @@
                 }
             }
         ],
-        "key": "Mixin:mixin",
+        "key": "Mixin:mymodule-1.0.0:mixin",
         "modifiedTime": "2013-08-23T12:55:09.162Z",
         "modifier": null,
-        "name": "mixin"
+        "name": "mymodule-1.0.0:mixin"
     },
     {
         "schemaKind": "RelationshipType",
@@ -73,10 +73,10 @@
         "fromSemantic": null,
         "hasChildren": false,
         "icon": null,
-        "iconUrl": "/admin/rest/schema/icon/RelationshipType:relationship",
-        "key": "RelationshipType:relationship",
+        "iconUrl": "/admin/rest/schema/icon/RelationshipType:mymodule-1.0.0:relationship",
+        "key": "RelationshipType:mymodule-1.0.0:relationship",
         "modifiedTime": "2013-08-23T12:55:09.162Z",
-        "name": "relationship",
+        "name": "mymodule-1.0.0:relationship",
         "toSemantic": null
     }
 ]

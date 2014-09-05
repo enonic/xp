@@ -3,9 +3,8 @@ package com.enonic.wem.core.index.query
 import com.enonic.wem.api.data.Value
 import com.enonic.wem.api.entity.Workspace
 import com.enonic.wem.api.entity.query.EntityQuery
-import com.enonic.wem.api.query.filter.Filter
+import com.enonic.wem.api.query.filter.ValueFilter
 import com.enonic.wem.api.query.parser.QueryParser
-import com.enonic.wem.core.index.Index
 import com.enonic.wem.core.index.IndexType
 import com.enonic.wem.core.index.query.builder.BaseTestBuilderFactory
 import org.elasticsearch.index.query.MatchAllQueryBuilder
@@ -17,16 +16,15 @@ import org.elasticsearch.search.sort.GeoDistanceSortBuilder
 class EntityQueryTranslatorTest
     extends BaseTestBuilderFactory
 {
-    def Workspace TEST_WORKSPACE = new Workspace( "test" );
+    def Workspace TEST_WORKSPACE = Workspace.from( "test" );
 
     def "query values populated"()
     {
         given:
-        EntityQueryTranslator entityQueryTranslator = new EntityQueryTranslator()
         EntityQuery entityQuery = EntityQuery.newEntityQuery().query( QueryParser.parse( "myField >= 1" ) ).build()
 
         when:
-        def translatedQuery = entityQueryTranslator.translate( entityQuery, TEST_WORKSPACE )
+        def translatedQuery = EntityQueryTranslator.translate( entityQuery, TEST_WORKSPACE )
 
         then:
         translatedQuery.getQuery() != null
@@ -42,13 +40,13 @@ class EntityQueryTranslatorTest
         given:
         EntityQueryTranslator entityQueryTranslator = new EntityQueryTranslator();
 
-        def queryFilter = Filter.newValueQueryFilter().
+        def queryFilter = ValueFilter.create().
             fieldName( "myField" ).
-            add( Value.newString( "myValue" ) ).
-            add( Value.newString( "mySecondValue" ) ).
+            addValue( Value.newString( "myValue" ) ).
+            addValue( Value.newString( "mySecondValue" ) ).
             build()
 
-        EntityQuery entityQuery = EntityQuery.newEntityQuery().addFilter( queryFilter ).build();
+        EntityQuery entityQuery = EntityQuery.newEntityQuery().addPostFilter( queryFilter ).build();
 
         when:
         def translatedQuery = entityQueryTranslator.translate( entityQuery, TEST_WORKSPACE )

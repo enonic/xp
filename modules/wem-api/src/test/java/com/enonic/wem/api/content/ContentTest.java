@@ -35,7 +35,7 @@ public class ContentTest
     public void before()
     {
         contentType = newContentType().
-            name( "mytype" ).
+            name( "mymodule-1.0.0:mytype" ).
             build();
     }
 

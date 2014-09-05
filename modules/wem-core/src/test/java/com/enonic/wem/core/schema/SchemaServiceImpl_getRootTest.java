@@ -45,7 +45,7 @@ public class SchemaServiceImpl_getRootTest
             addFormItem( newInput().inputType( InputTypes.TEXT_LINE ).name( "street" ).build() ).
             build();
 
-        final Mixin mixin = newMixin().name( "address" ).
+        final Mixin mixin = newMixin().name( "mymodule-1.0.0:address" ).
             addFormItem( formItemSet ).
             build();
 
@@ -53,11 +53,11 @@ public class SchemaServiceImpl_getRootTest
         Mockito.when( this.mixinService.getAll() ).thenReturn( mixins );
 
         final RelationshipType relationshipType = newRelationshipType().
-            name( "like" ).
+            name( "mymodule-1.0.0:like" ).
             fromSemantic( "likes" ).
             toSemantic( "liked by" ).
-            addAllowedFromType( ContentTypeName.from( "person" ) ).
-            addAllowedToType( ContentTypeName.from( "person" ) ).
+            addAllowedFromType( ContentTypeName.from( "mymodule-1.0.0:person" ) ).
+            addAllowedToType( ContentTypeName.from( "mymodule-1.0.0:person" ) ).
             build();
 
         final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType );

@@ -168,7 +168,7 @@ module api.content.form.inputtype.image {
         private doLoadContent(properties: api.data.Property[]): wemQ.Promise<ContentSummary[]> {
 
             if (!properties) {
-                return Q(<ContentSummary[]> []);
+                return wemQ(<ContentSummary[]> []);
             }
             else {
                 var contentIds = properties.map((property: api.data.Property) => new api.content.ContentId(property.getString()));
@@ -256,7 +256,7 @@ module api.content.form.inputtype.image {
                     if (!contentId) {
                         return;
                     }
-                    var value = new api.data.Value(contentId, api.data.ValueTypes.CONTENT_ID);
+                    var value = new api.data.Value(contentId, api.data.type.ValueTypes.CONTENT_ID);
                     this.notifyValueAdded(value);
                 }
                 this.validate(false);

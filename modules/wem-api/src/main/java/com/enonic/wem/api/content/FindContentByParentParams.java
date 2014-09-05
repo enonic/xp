@@ -5,6 +5,9 @@ import java.util.Set;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.api.query.Direction;
+import com.enonic.wem.api.query.FieldSort;
+
 public class FindContentByParentParams
 {
     private final ContentPath parentPath;

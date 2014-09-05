@@ -30,7 +30,7 @@ class SiteTemplateServiceImpl_getSiteTemplatesTest
     {
         def vendor = Vendor.newVendor().name( "Enonic" ).url( "http://enonic.net" ).build();
         def moduleKeys = ModuleKeys.from( "foomodule-1.0.0" );
-        def filter = newContentFilter().defaultDeny().allowContentType( ContentTypeName.from( "page" ) ).build();
+        def filter = newContentFilter().defaultDeny().allowContentType( ContentTypeName.from( "mymodule-1.0.0:page" ) ).build();
         def createSiteTemplateParam = new CreateSiteTemplateParams().
             name( name ).
             version( SiteTemplateVersion.from( "1.2.0" ) ).

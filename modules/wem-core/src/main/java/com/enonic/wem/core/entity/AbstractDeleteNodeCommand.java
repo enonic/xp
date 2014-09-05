@@ -3,8 +3,11 @@ package com.enonic.wem.core.entity;
 import org.elasticsearch.common.Strings;
 
 import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.api.entity.NodeVersionIds;
 import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.entity.Workspace;
+import com.enonic.wem.core.workspace.query.WorkspaceDeleteQuery;
+import com.enonic.wem.core.workspace.query.WorkspaceParentQuery;
 
 public abstract class AbstractDeleteNodeCommand
     extends AbstractNodeCommand
@@ -16,9 +19,16 @@ public abstract class AbstractDeleteNodeCommand
         super( builder );
     }
 
-    protected void doDeleteChildIndexDocuments( final Node node, final Workspace workspace )
+    protected void doDeleteChildren( final Node parent, final Workspace workspace )
     {
-        final Nodes childrenNodes = nodeDao.getByParent( node.path(), workspace );
+        final NodeVersionIds childrenVersions = workspaceService.findByParent( new WorkspaceParentQuery( workspace, parent.path() ) );
+
+        if ( childrenVersions.isEmpty() )
+        {
+            return;
+        }
+
+        final Nodes childrenNodes = nodeDao.getByVersionIds( childrenVersions );
 
         for ( final Node child : childrenNodes )
         {
@@ -27,8 +37,14 @@ public abstract class AbstractDeleteNodeCommand
             final boolean isAttachmentNode = Strings.startsWithIgnoreCase( nodeName, ATTACHMENTS_NODE_NAME );
             if ( !isAttachmentNode )
             {
+                workspaceService.delete( new WorkspaceDeleteQuery( workspace, child.id() ) );
                 indexService.delete( child.id(), workspace );
-                doDeleteChildIndexDocuments( child, workspace );
+                doDeleteChildren( child, workspace );
+            }
+            else
+            {
+                // TODO; What to do with attachment nodes?
+                workspaceService.delete( new WorkspaceDeleteQuery( workspace, child.id() ) );
             }
         }
     }

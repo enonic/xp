@@ -1,1 +1,1 @@
-{ "names": ["partner", "client"] }
+{ "names": ["mymodule-1.0.0:partner", "mymodule-1.0.0:client"] }

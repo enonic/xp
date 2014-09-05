@@ -14,7 +14,7 @@ import com.google.common.collect.Lists;
 import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.lifecycle.LifecycleBean;
-import com.enonic.wem.core.lifecycle.RunLevel;
+import com.enonic.wem.core.lifecycle.LifecycleStage;
 
 final class StartupInitializerImpl
     extends LifecycleBean
@@ -30,7 +30,7 @@ final class StartupInitializerImpl
 
     public StartupInitializerImpl()
     {
-        super( RunLevel.L5 );
+        super( LifecycleStage.L5 );
     }
 
     @Override

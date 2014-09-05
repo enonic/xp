@@ -1,11 +1,11 @@
 package com.enonic.wem.core.schema.content;
 
+import org.apache.commons.lang.WordUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.event.EventPublisher;
-import com.enonic.wem.api.schema.SchemaId;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
@@ -25,6 +25,9 @@ import static junit.framework.Assert.assertEquals;
 
 public class UpdateContentTypeCommandTest
 {
+    private static final ContentType STRUCTURED = createSystemType( ContentTypeName.structured() ).
+        setFinal( false ).setAbstract( true ).build();
+
     private UpdateContentTypeCommand command;
 
     private ContentTypeDao contentTypeDao;
@@ -57,10 +60,10 @@ public class UpdateContentTypeCommandTest
     {
         // setup
         Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn(
-            ContentTypes.from( ContentTypesInitializer.STRUCTURED ) );
+            ContentTypes.from( STRUCTURED ) );
 
-        final String contentType1Name = "my-contenttype-1";
-        final String contentType2Name = "my-contenttype-2";
+        final String contentType1Name = "mymodule-1.0.0:my-contenttype-1";
+        final String contentType2Name = "mymodule-1.0.0:my-contenttype-2";
 
         final String displayName1 = "DisplayName";
         final String displayName2 = "DisplayName2";
@@ -112,8 +115,8 @@ public class UpdateContentTypeCommandTest
         throws Exception
     {
         // setup
-        final String contentType1Name = "my-contenttype-1";
-        final String contentType2Name = "my-contenttype-2";
+        final String contentType1Name = "mymodule-1.0.0:my-contenttype-1";
+        final String contentType2Name = "mymodule-1.0.0:my-contenttype-2";
 
         final String displayName1 = "DisplayName";
         final String displayName2 = "DisplayName2";
@@ -124,11 +127,10 @@ public class UpdateContentTypeCommandTest
         final ContentTypeName name = ContentTypeName.from( contentType1Name );
 
         Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn(
-            ContentTypes.from( ContentTypesInitializer.STRUCTURED ) );
+            ContentTypes.from( STRUCTURED ) );
 
         ContentType existingContentType = newContentType().
-            id( new SchemaId( "1" ) ).
-            name( "my_content_type" ).
+            name( "mymodule-1.0.0:my_content_type" ).
             displayName( "My content type" ).
             setAbstract( false ).
             setFinal( true ).
@@ -168,4 +170,14 @@ public class UpdateContentTypeCommandTest
         // exercise
         this.command.params( params ).execute();
     }
+
+    private static ContentType.Builder createSystemType( final ContentTypeName contentTypeName )
+    {
+        final String displayName = WordUtils.capitalize( contentTypeName.getContentTypeName() );
+        return newContentType().
+            name( contentTypeName ).
+            displayName( displayName ).
+            setBuiltIn();
+    }
+
 }
