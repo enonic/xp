@@ -40,7 +40,7 @@ public final class CoreSchemasProvider
     private static final ContentType UNSTRUCTURED = createSystemType( ContentTypeName.unstructured() ).
         setFinal( false ).setAbstract( false ).build();
 
-    private static final ContentType FOLDER = createSystemType( ContentTypeName.folder() ).
+    public static final ContentType FOLDER = createSystemType( ContentTypeName.folder() ).
         setFinal( false ).setAbstract( false ).build();
 
     private static final ContentType PAGE = createSystemType( ContentTypeName.page() ).setFinal( true ).setAbstract( false ).build();
