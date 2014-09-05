@@ -28,13 +28,15 @@ import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.module.ModuleState;
 import com.enonic.wem.api.module.ModuleUpdatedEvent;
 import com.enonic.wem.api.schema.SchemaProvider;
+import com.enonic.wem.core.lifecycle.LifecycleBean;
+import com.enonic.wem.core.lifecycle.LifecycleStage;
 import com.enonic.wem.core.schema.ModuleSchemaProvider;
 
 @Singleton
 public final class ModuleLoader
+    extends LifecycleBean
     implements BundleListener
 {
-
     private static final String MODULE_XML = "/module.xml";
 
     private final static Logger LOG = LoggerFactory.getLogger( ModuleLoader.class );
@@ -52,6 +54,7 @@ public final class ModuleLoader
     @Inject
     public ModuleLoader( final BundleContext context, final ModuleService moduleService, final EventPublisher eventPublisher )
     {
+        super( LifecycleStage.L1 );
         this.bundles = Lists.newCopyOnWriteArrayList();
         this.context = context;
         this.moduleService = (ModuleServiceImpl) moduleService;
@@ -59,7 +62,8 @@ public final class ModuleLoader
         this.eventPublisher = eventPublisher;
     }
 
-    public void start()
+    @Override
+    protected void doStart()
     {
         this.context.addBundleListener( this );
         for ( final Bundle bundle : this.context.getBundles() )
@@ -68,7 +72,8 @@ public final class ModuleLoader
         }
     }
 
-    public void stop()
+    @Override
+    protected void doStop()
     {
         this.context.removeBundleListener( this );
     }

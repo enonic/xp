@@ -26,10 +26,13 @@ import com.enonic.wem.api.schema.mixin.Mixins;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
+import com.enonic.wem.core.lifecycle.LifecycleBean;
+import com.enonic.wem.core.lifecycle.LifecycleStage;
 
 import static java.util.stream.Collectors.toList;
 
 public final class SchemaRegistryImpl
+    extends LifecycleBean
     implements ServiceTrackerCustomizer, SchemaRegistry
 {
 
@@ -43,6 +46,7 @@ public final class SchemaRegistryImpl
 
     public SchemaRegistryImpl()
     {
+        super( LifecycleStage.L1 );
         this.allSchemas = new ConcurrentHashMap<>();
         this.moduleSchemas = new ConcurrentHashMap<>();
     }
@@ -53,13 +57,15 @@ public final class SchemaRegistryImpl
         this.bundleContext = bundleContext;
     }
 
-    public void start()
+    @Override
+    protected void doStart()
     {
         this.serviceTracker = new ServiceTracker( this.bundleContext, SchemaProvider.class.getName(), this );
         this.serviceTracker.open();
     }
 
-    public void stop()
+    @Override
+    protected void doStop()
     {
         this.serviceTracker.close();
     }
