@@ -1,15 +1,11 @@
 package com.enonic.wem.core.initializer;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexService;
@@ -23,7 +19,7 @@ final class StartupInitializerImpl
     private final static Logger LOG = LoggerFactory.getLogger( StartupInitializerImpl.class );
 
     @Inject
-    protected Set<InitializerTask> tasks;
+    protected DemoInitializer demoInitializer;
 
     @Inject
     protected IndexService indexService;
@@ -53,26 +49,16 @@ final class StartupInitializerImpl
         if ( reinit )
         {
             cleanupOldData();
-            doInitialize();
         }
-        else if ( !isInitialized() )
-        {
-            doInitialize();
-        }
+
+        doInitialize();
     }
 
     protected void doInitialize()
         throws Exception
     {
-        LOG.info( "Running all initializers..." );
-
-        final List<InitializerTask> sortedTaskList = Lists.newArrayList( this.tasks );
-        Collections.sort( sortedTaskList );
-
-        for ( final InitializerTask task : sortedTaskList )
-        {
-            doInitialize( task );
-        }
+        LOG.info( "Running demo initializer..." );
+        this.demoInitializer.initialize();
     }
 
     private void cleanupOldData()
@@ -89,20 +75,5 @@ final class StartupInitializerImpl
 
         this.indexService.createIndex( Index.WORKSPACE );
         this.indexService.createIndex( Index.VERSION );
-    }
-
-    private void doInitialize( final InitializerTask task )
-        throws Exception
-    {
-        long tm = System.currentTimeMillis();
-
-        LOG.info( "Running " + task.getClass().getSimpleName() + " initializer..." );
-        task.initialize();
-        LOG.info( "Executed " + task.getClass().getSimpleName() + " initializer in " + ( System.currentTimeMillis() - tm ) + " ms" );
-    }
-
-    private boolean isInitialized()
-    {
-        return this.indexService.countDocuments( Index.WORKSPACE ) > 0;
     }
 }

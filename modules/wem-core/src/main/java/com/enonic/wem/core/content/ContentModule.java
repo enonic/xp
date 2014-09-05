@@ -11,7 +11,6 @@ import com.enonic.wem.core.content.page.PageModule;
 import com.enonic.wem.core.content.site.SiteModule;
 import com.enonic.wem.core.elasticsearch.ElasticsearchQueryService;
 import com.enonic.wem.core.index.query.QueryService;
-import com.enonic.wem.core.initializer.InitializerTaskBinder;
 
 public final class ContentModule
     extends AbstractModule
@@ -22,9 +21,6 @@ public final class ContentModule
         bind( AttachmentService.class ).to( AttachmentServiceImpl.class ).in( Singleton.class );
         bind( ContentService.class ).to( ContentServiceImpl.class ).in( Singleton.class );
         bind( QueryService.class ).to( ElasticsearchQueryService.class ).in( Singleton.class );
-
-        final InitializerTaskBinder tasks = InitializerTaskBinder.from( binder() );
-        tasks.add( ContentInitializer.class );
 
         install( new SiteModule() );
         install( new PageModule() );
