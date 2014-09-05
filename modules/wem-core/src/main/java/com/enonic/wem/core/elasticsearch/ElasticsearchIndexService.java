@@ -45,7 +45,7 @@ import com.enonic.wem.core.index.IndexStatus;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.document.IndexDocument;
 import com.enonic.wem.core.lifecycle.LifecycleBean;
-import com.enonic.wem.core.lifecycle.RunLevel;
+import com.enonic.wem.core.lifecycle.LifecycleStage;
 
 @Singleton
 public class ElasticsearchIndexService
@@ -73,7 +73,7 @@ public class ElasticsearchIndexService
 
     public ElasticsearchIndexService()
     {
-        super( RunLevel.L3 );
+        super( LifecycleStage.L3 );
     }
 
     @Override

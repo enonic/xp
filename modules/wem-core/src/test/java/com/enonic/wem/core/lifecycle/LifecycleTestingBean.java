@@ -11,7 +11,7 @@ final class LifecycleTestingBean
 
     protected boolean exceptionOnStop;
 
-    public LifecycleTestingBean( final RunLevel level )
+    public LifecycleTestingBean( final LifecycleStage level )
     {
         super( level );
         this.startCount = this.stopCount = 0;

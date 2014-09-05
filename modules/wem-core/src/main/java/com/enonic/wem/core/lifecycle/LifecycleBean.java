@@ -5,25 +5,20 @@ import org.slf4j.LoggerFactory;
 
 public abstract class LifecycleBean
 {
-    private final RunLevel runLevel;
+    private final LifecycleStage runLevel;
 
     private final Logger log;
 
     private boolean running;
 
-    public LifecycleBean( final RunLevel runLevel )
+    public LifecycleBean( final LifecycleStage runLevel )
     {
         this.runLevel = runLevel;
         this.log = LoggerFactory.getLogger( getClass() );
         this.running = false;
     }
 
-    public final String getName()
-    {
-        return this.getClass().getSimpleName();
-    }
-
-    public final RunLevel getRunLevel()
+    public final LifecycleStage getStage()
     {
         return this.runLevel;
     }
@@ -34,7 +29,6 @@ public abstract class LifecycleBean
     }
 
     public final void start()
-        throws Exception
     {
         if ( this.running )
         {
@@ -48,8 +42,7 @@ public abstract class LifecycleBean
         }
         catch ( final Exception e )
         {
-            this.log.error( "Error starting service [" + getName() + "]", e );
-            throw e;
+            throw new RuntimeException( "Error starting service [" + getClass().getName() + "]", e );
         }
     }
 
@@ -66,7 +59,7 @@ public abstract class LifecycleBean
         }
         catch ( final Exception e )
         {
-            this.log.warn( "Error stopping service [" + getName() + "]", e );
+            this.log.warn( "Error stopping service [" + getClass().getName() + "]", e );
         }
         finally
         {

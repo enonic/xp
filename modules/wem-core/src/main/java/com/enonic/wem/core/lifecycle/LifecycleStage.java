@@ -5,7 +5,7 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
-public enum RunLevel
+public enum LifecycleStage
 {
     L1,
     L2,
@@ -13,12 +13,12 @@ public enum RunLevel
     L4,
     L5;
 
-    public static List<RunLevel> all()
+    public static List<LifecycleStage> all()
     {
         return ImmutableList.copyOf( values() );
     }
 
-    public static List<RunLevel> reverse()
+    public static List<LifecycleStage> reverse()
     {
         return Lists.reverse( all() );
     }
