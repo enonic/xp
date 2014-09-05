@@ -4,7 +4,6 @@ package com.enonic.wem.api.schema;
 import com.google.common.base.Joiner;
 
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.resource.ResourceKey;
 
 public abstract class SchemaName
 {
@@ -62,10 +61,5 @@ public abstract class SchemaName
     }
 
     public abstract SchemaKey toSchemaKey();
-
-    public ResourceKey toResourceKey()
-    {
-        return ResourceKey.from( getModuleKey(), "schema/" + getLocalName() + "/schema.xml" );
-    }
 
 }

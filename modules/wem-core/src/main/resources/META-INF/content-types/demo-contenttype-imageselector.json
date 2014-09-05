@@ -21,7 +21,7 @@
                 "type": {
                     "name": "ImageSelector",
                     "config": {
-                        "relationshipType": "demo-1.0.0:image"
+                        "relationshipType": "system-0.0.0:related-image"
                     }
                 }
             }
@@ -42,7 +42,7 @@
                 "type": {
                     "name": "ImageSelector",
                     "config": {
-                        "relationshipType": "demo-1.0.0:image"
+                        "relationshipType": "system-0.0.0:related-image"
                     }
                 }
             }
@@ -63,7 +63,7 @@
                 "type": {
                     "name": "ImageSelector",
                     "config": {
-                        "relationshipType": "demo-1.0.0:image"
+                        "relationshipType": "system-0.0.0:related-image"
                     }
                 }
             }
@@ -84,7 +84,7 @@
                 "type": {
                     "name": "ImageSelector",
                     "config": {
-                        "relationshipType": "demo-1.0.0:image"
+                        "relationshipType": "system-0.0.0:related-image"
                     }
                 }
             }

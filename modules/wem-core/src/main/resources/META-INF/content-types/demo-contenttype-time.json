@@ -1,7 +1,7 @@
 {
-    "name": "time",
+    "name": "demo-1.0.0:time",
     "displayName": "Local Time",
-    "superType": "structured",
+    "superType": "system-0.0.0:structured",
     "isAbstract": false,
     "isFinal": true,
     "form": [

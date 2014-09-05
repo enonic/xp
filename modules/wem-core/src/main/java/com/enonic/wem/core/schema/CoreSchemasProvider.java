@@ -118,7 +118,8 @@ public final class CoreSchemasProvider
             "demo-contenttype-formItemset-min-occurrences.json", "demo-contenttype-singleSelectors.json", "demo-contenttype-comboBox.json",
             "demo-contenttype-all-input-types.json", "demo-contenttype-imageselector.json",
             "demo-contenttype-several-levels-of-formItemset.json", "demo-contenttype-tag.json", "demo-contenttype-checkbox.json",
-            "demo-contenttype-long.json", "demo-geo-location.json"};
+            "demo-contenttype-long.json", "demo-geo-location.json", "demo-contenttype-date.json", "demo-contenttype-time.json",
+            "demo-contenttype-datetime.json"};
 
     // System Relationship Types
     private static final RelationshipType DEFAULT =
@@ -135,8 +136,8 @@ public final class CoreSchemasProvider
                                 ContentTypeNames.from( "demo-1.0.0:article" ) );
 
     private static final RelationshipType IMAGE =
-        createRelationshipType( RelationshipTypeName.from( ModuleKey.SYSTEM, "related-image" ), "Image", "relates to image", "related of image",
-                                ContentTypeNames.from( ContentTypeName.imageMedia() ) );
+        createRelationshipType( RelationshipTypeName.from( ModuleKey.SYSTEM, "related-image" ), "Image", "relates to image",
+                                "related of image", ContentTypeNames.from( ContentTypeName.imageMedia() ) );
 
     private static final RelationshipType[] RELATIONSHIP_TYPES = {DEFAULT, PARENT, LINK, LIKE, CITATION, IMAGE};
 

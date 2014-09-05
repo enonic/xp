@@ -1,7 +1,7 @@
 {
-    "name": "date",
+    "name": "demo-1.0.0:date",
     "displayName": "Date",
-    "superType": "structured",
+    "superType": "system-0.0.0:structured",
     "isAbstract": false,
     "isFinal": true,
     "form": [
