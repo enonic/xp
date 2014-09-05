@@ -21,6 +21,10 @@ module api.data {
             return this.value.asBoolean();
         }
 
+        getDate(): Date {
+            return this.value.getDate();
+        }
+
         setValue(value: Value) {
             api.util.assertNotNull(value, "value of a Property cannot be null");
             this.value = value;

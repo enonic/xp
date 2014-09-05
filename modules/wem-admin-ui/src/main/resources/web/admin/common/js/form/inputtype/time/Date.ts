@@ -16,21 +16,16 @@ module api.content.form.inputtype.time {
 
         createInputOccurrenceElement(index: number, property: api.data.Property): api.dom.Element {
 
-            var datePicker: api.ui.time.DatePicker;
+            var datePickerBuilder = new api.ui.time.DatePickerBuilder();
 
             if (property != null) {
-                if (api.util.isStringEmpty(property.getValue().asString())) {
-                    return new api.ui.time.DatePickerBuilder().build();
-                }
-                var date = property.getValue().getDate();
-
-                datePicker = new api.ui.time.DatePickerBuilder().
-                    setMonth(date.getMonth()).setYear(date.getFullYear()).setSelectedDate(date).build();
+                var date = property.getDate();
+                datePickerBuilder.
+                    setSelectedDate(date).
+                    setYear(date.getUTCFullYear()).
+                    setMonth(date.getUTCMonth());
             }
-            else {
-                datePicker = new api.ui.time.DatePickerBuilder().build();
-            }
-            return datePicker;
+            return datePickerBuilder.build();
         }
 
         availableSizeChanged() {
