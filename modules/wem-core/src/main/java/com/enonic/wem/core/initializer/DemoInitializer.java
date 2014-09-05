@@ -19,12 +19,14 @@ import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.form.Form;
+import com.enonic.wem.api.form.Input;
+import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.GetContentTypesParams;
-import com.enonic.wem.core.schema.CoreSchemasProvider;
 
 import static com.enonic.wem.api.content.attachment.Attachment.newAttachment;
 
@@ -41,6 +43,8 @@ public final class DemoInitializer
         {"Big Bounce - R\u00f8d Tattoo.jpg", "Big Bounce - R\u00f8d.jpg", "Big Bounce_01.jpg", "Big Bounce_02.jpg", "Big Bounce_03.jpg",
             "Big Bounce_04.jpg", "Big Bounce_05.jpg", "Big Bounce_06.jpg", "Big Bounce_07.jpg", "Big Bounce_08.jpg", "Big Bounce_10.jpg",
             "Big Bounce_11.jpg", "Big Bounce_12.jpg"};
+
+    private static final Form MEDIA_IMAGE_FORM = createMediaImageForm();
 
     private static final String IMAGE_ARCHIVE_PATH_ELEMENT = "imagearchive";
 
@@ -152,7 +156,7 @@ public final class DemoInitializer
 
         final CreateContentParams params = new CreateContentParams().
             contentType( ContentTypeName.imageMedia() ).
-            form( CoreSchemasProvider.MEDIA_IMAGE_FORM ).
+            form( MEDIA_IMAGE_FORM ).
             displayName( displayName ).
             name( filteredFileName ).
             parent( parent ).
@@ -196,5 +200,19 @@ public final class DemoInitializer
     {
         final GetContentTypesParams params = new GetContentTypesParams().contentTypeNames( ContentTypeNames.from( name ) );
         return contentTypeService.getByNames( params ).first();
+    }
+
+    private static Form createMediaImageForm()
+    {
+        return Form.newForm().
+            addFormItem( Input.newInput().name( "image" ).
+                inputType( InputTypes.IMAGE ).build() ).
+            addFormItem( Input.newInput().name( "mimeType" ).
+                inputType( InputTypes.TEXT_LINE ).
+                label( "Mime type" ).
+                occurrences( 1, 1 ).
+                build() ).
+
+            build();
     }
 }
