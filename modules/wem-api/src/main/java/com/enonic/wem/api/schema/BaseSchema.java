@@ -11,9 +11,9 @@ import com.enonic.wem.api.account.UserKey;
 public abstract class BaseSchema<T extends SchemaName>
     implements Schema
 {
-    final SchemaId id;
-
     final T name;
+
+    final SchemaKey schemaKey;
 
     final String displayName;
 
@@ -31,7 +31,6 @@ public abstract class BaseSchema<T extends SchemaName>
 
     protected BaseSchema( final Builder builder )
     {
-        this.id = builder.id;
         this.name = (T) builder.name;
         this.displayName = builder.displayName;
         this.description = builder.description;
@@ -40,48 +39,64 @@ public abstract class BaseSchema<T extends SchemaName>
         this.creator = builder.creator;
         this.modifier = builder.modifier;
         this.icon = builder.schemaIcon;
+        this.schemaKey = SchemaKey.from( builder.type, builder.name );
     }
 
-    public SchemaId getId()
+    @Override
+    public SchemaKey getSchemaKey()
     {
-        return id;
+        return this.schemaKey;
     }
 
+    @Override
     public T getName()
     {
         return name;
     }
 
+    @Override
+    public SchemaKind getType()
+    {
+        return this.schemaKey.getType();
+    }
+
+    @Override
     public String getDisplayName()
     {
         return displayName;
     }
 
+    @Override
     public String getDescription()
     {
         return description;
     }
 
+    @Override
     public Instant getCreatedTime()
     {
         return createdTime;
     }
 
+    @Override
     public Instant getModifiedTime()
     {
         return modifiedTime;
     }
 
+    @Override
     public UserKey getCreator()
     {
         return creator;
     }
 
+    @Override
     public UserKey getModifier()
     {
         return modifier;
     }
 
+    @Override
     public Icon getIcon()
     {
         return icon;
@@ -91,7 +106,7 @@ public abstract class BaseSchema<T extends SchemaName>
     {
         protected SCHEMA_NAME name;
 
-        private SchemaId id;
+        private final SchemaKind type;
 
         private String displayName;
 
@@ -107,16 +122,16 @@ public abstract class BaseSchema<T extends SchemaName>
 
         private Icon schemaIcon;
 
-        public Builder()
+        protected Builder( final SchemaKind type )
         {
-
+            this.type = type;
         }
 
         public Builder( final BaseSchema schema )
         {
             Preconditions.checkNotNull( schema, "schema cannot be null" );
-            this.id = schema.id;
             this.name = (SCHEMA_NAME) schema.name;
+            this.type = schema.getType();
             this.displayName = schema.displayName;
             this.description = schema.description;
             this.createdTime = schema.createdTime;
@@ -129,12 +144,6 @@ public abstract class BaseSchema<T extends SchemaName>
         private T getThis()
         {
             return (T) this;
-        }
-
-        public T id( final SchemaId value )
-        {
-            this.id = value;
-            return getThis();
         }
 
         public T name( final SCHEMA_NAME value )

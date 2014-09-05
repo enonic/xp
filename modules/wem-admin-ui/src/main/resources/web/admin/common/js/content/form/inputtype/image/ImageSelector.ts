@@ -256,7 +256,7 @@ module api.content.form.inputtype.image {
                     if (!contentId) {
                         return;
                     }
-                    var value = new api.data.Value(contentId, api.data.ValueTypes.CONTENT_ID);
+                    var value = new api.data.Value(contentId, api.data.type.ValueTypes.CONTENT_ID);
                     this.notifyValueAdded(value);
                 }
                 this.validate(false);

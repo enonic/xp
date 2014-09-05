@@ -3,13 +3,24 @@ package com.enonic.wem.api.query.filter;
 public class ExistsFilter
     extends FieldFilter
 {
-    public static ExistsFilter newExistsFilter( final String fieldName )
+    public static Builder create()
     {
-        return new ExistsFilter( fieldName );
+        return new Builder();
     }
 
-    public ExistsFilter( final String fieldName )
+    public ExistsFilter( final Builder builder )
     {
-        super( fieldName );
+        super( builder );
+    }
+
+    public static class Builder
+        extends FieldFilter.Builder<Builder>
+    {
+        public final ExistsFilter build()
+        {
+            return new ExistsFilter( this );
+        }
     }
 }
+
+

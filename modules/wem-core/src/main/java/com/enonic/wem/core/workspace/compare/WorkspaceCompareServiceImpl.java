@@ -2,13 +2,13 @@ package com.enonic.wem.core.workspace.compare;
 
 import javax.inject.Inject;
 
-import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.entity.CompareStatus;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIds;
 import com.enonic.wem.api.entity.NodeComparison;
 import com.enonic.wem.api.entity.NodeComparisons;
 import com.enonic.wem.api.entity.NodeVersion;
+import com.enonic.wem.api.entity.NodeVersionId;
 import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.core.version.VersionService;
 import com.enonic.wem.core.workspace.WorkspaceService;
@@ -69,25 +69,25 @@ public class WorkspaceCompareServiceImpl
 
     private NodeComparison doCompareEntity( final EntityId entityId, final Workspace sourceWorkspace, final Workspace targetWorkspace )
     {
-        final BlobKey sourceBlobKey = workspaceService.getById( new WorkspaceIdQuery( sourceWorkspace, entityId ) );
-        final BlobKey targetBlobKey = workspaceService.getById( new WorkspaceIdQuery( targetWorkspace, entityId ) );
+        final NodeVersionId sourceVersionId = workspaceService.getCurrentVersion( new WorkspaceIdQuery( sourceWorkspace, entityId ) );
+        final NodeVersionId targetVersionId = workspaceService.getCurrentVersion( new WorkspaceIdQuery( targetWorkspace, entityId ) );
 
-        final NodeVersion sourceVersion = getVersion( sourceBlobKey );
-        final NodeVersion targetVersion = getVersion( targetBlobKey );
+        final NodeVersion sourceVersion = getVersion( sourceVersionId );
+        final NodeVersion targetVersion = getVersion( targetVersionId );
 
         final CompareStatus compareStatus = DiffStatusResolver.resolve( new DiffStatusParams( sourceVersion, targetVersion ) );
 
         return new NodeComparison( entityId, compareStatus );
     }
 
-    private NodeVersion getVersion( final BlobKey blobKey )
+    private NodeVersion getVersion( final NodeVersionId nodeVersionId )
     {
-        if ( blobKey == null )
+        if ( nodeVersionId == null )
         {
             return null;
         }
 
-        return versionService.getVersion( blobKey );
+        return versionService.getVersion( nodeVersionId );
     }
 
     @Inject

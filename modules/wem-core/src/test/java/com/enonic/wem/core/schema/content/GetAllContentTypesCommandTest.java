@@ -50,8 +50,8 @@ public class GetAllContentTypesCommandTest
         throws Exception
     {
         // Setup:
-        final String contentType1Name = "my-contenttype-1";
-        final String contentType2Name = "my-contenttype-2";
+        final String contentType1Name = "mymodule-1.0.0:my-contenttype-1";
+        final String contentType2Name = "mymodule-1.0.0:my-contenttype-2";
 
         final String displayName1 = "DisplayName";
         final String displayName2 = "DisplayName2";
@@ -78,9 +78,9 @@ public class GetAllContentTypesCommandTest
     public void handle_given_mixin()
         throws Exception
     {
-        final String contentTypeName = "my-contenttype-1";
+        final String contentTypeName = "mymodule-1.0.0:my-contenttype-1";
 
-        final Mixin mixin = newMixin().name( "my_mixin" ).
+        final Mixin mixin = newMixin().name( "mymodule-1.0.0:my_mixin" ).
             addFormItem( newInput().
                 name( "inputToBeMixedIn" ).
                 inputType( InputTypes.TEXT_LINE ).

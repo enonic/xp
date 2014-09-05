@@ -52,7 +52,7 @@ module api.content.form.inputtype.relationship {
             this.contentComboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.ContentSummary>) => {
 
                 if (!this.layoutInProgress) {
-                    var value = new api.data.Value(event.getOption().displayValue.getContentId(), api.data.ValueTypes.CONTENT_ID);
+                    var value = new api.data.Value(event.getOption().displayValue.getContentId(), api.data.type.ValueTypes.CONTENT_ID);
                     this.notifyValueAdded(value);
                 }
                 this.validate(false);
@@ -112,7 +112,7 @@ module api.content.form.inputtype.relationship {
         getValues(): api.data.Value[] {
             var values: api.data.Value[] = [];
             this.contentComboBox.getSelectedValues().forEach((content: api.content.ContentSummary) => {
-                var value = new api.data.Value(content.getContentId(), api.data.ValueTypes.CONTENT_ID);
+                var value = new api.data.Value(content.getContentId(), api.data.type.ValueTypes.CONTENT_ID);
                 values.push(value);
             });
             return values;

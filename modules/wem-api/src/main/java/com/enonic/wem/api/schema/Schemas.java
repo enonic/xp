@@ -4,16 +4,26 @@ import java.util.Collection;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.support.AbstractImmutableEntityList;
 
 public final class Schemas
     extends AbstractImmutableEntityList<Schema>
 {
+    private final ImmutableMap<SchemaName, Schema> map;
+
     private Schemas( final ImmutableList<Schema> list )
     {
         super( list );
+        this.map = Maps.uniqueIndex( list, Schema::getName );
+    }
+
+    public Schema getSchema( final SchemaName schemaName )
+    {
+        return map.get( schemaName );
     }
 
     public static Schemas empty()
@@ -44,5 +54,4 @@ public final class Schemas
     {
         return new Schemas( ImmutableList.copyOf( schemas ) );
     }
-
 }

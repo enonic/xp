@@ -4,26 +4,19 @@ import com.google.common.base.Preconditions;
 
 public class RenameNodeParams
 {
-    private EntityId entityId;
+    private final EntityId entityId;
 
-    private NodeName nodeName;
+    private final NodeName newNodeName;
 
-    public RenameNodeParams entityId( final EntityId entityId )
+    private RenameNodeParams( Builder builder )
     {
-        this.entityId = entityId;
-        return this;
+        entityId = builder.entityId;
+        newNodeName = builder.newNodeName;
     }
 
-    public RenameNodeParams nodeName( final NodeName nodeName )
+    public static Builder create()
     {
-        this.nodeName = nodeName;
-        return this;
-    }
-
-    public void validate()
-    {
-        Preconditions.checkNotNull( this.entityId, "id cannot be null" );
-        Preconditions.checkNotNull( this.nodeName, "name cannot be null" );
+        return new Builder();
     }
 
     public EntityId getEntityId()
@@ -31,9 +24,43 @@ public class RenameNodeParams
         return entityId;
     }
 
-    public NodeName getNodeName()
+    public NodeName getNewNodeName()
     {
-        return nodeName;
+        return newNodeName;
     }
 
+    public static final class Builder
+    {
+        private EntityId entityId;
+
+        private NodeName newNodeName;
+
+        private Builder()
+        {
+        }
+
+        public Builder entityId( final EntityId entityId )
+        {
+            this.entityId = entityId;
+            return this;
+        }
+
+        public Builder nodeName( final NodeName nodeName )
+        {
+            this.newNodeName = nodeName;
+            return this;
+        }
+
+        private void validate()
+        {
+            Preconditions.checkNotNull( this.entityId, "id cannot be null" );
+            Preconditions.checkNotNull( this.newNodeName, "name cannot be null" );
+        }
+
+        public RenameNodeParams build()
+        {
+            this.validate();
+            return new RenameNodeParams( this );
+        }
+    }
 }

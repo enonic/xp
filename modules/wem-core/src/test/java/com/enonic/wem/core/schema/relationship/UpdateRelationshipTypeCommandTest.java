@@ -50,18 +50,18 @@ public class UpdateRelationshipTypeCommandTest
     {
         // setup
         RelationshipType.Builder relationshipType = RelationshipType.newRelationshipType().
-            name( "like" ).
+            name( "mymodule-1.0.0:like" ).
             fromSemantic( "likes" ).
             toSemantic( "liked by" ).
-            addAllowedFromType( ContentTypeName.from( "person" ) ).
-            addAllowedToType( ContentTypeName.from( "person" ) ).
+            addAllowedFromType( ContentTypeName.from( "mymodule-1.0.0:person" ) ).
+            addAllowedToType( ContentTypeName.from( "mymodule-1.0.0:person" ) ).
             createdTime( Instant.now() ).
             modifiedTime( Instant.now() );
         Mockito.when( relationshipTypeDao.getRelationshipType( isA( RelationshipTypeName.class ) ) ).thenReturn( relationshipType );
 
         // exercise
         final UpdateRelationshipTypeParams params = new UpdateRelationshipTypeParams().
-            name( RelationshipTypeName.from( "like" ) ).
+            name( RelationshipTypeName.from( "system-0.0.0:like" ) ).
             editor( new RelationshipTypeEditor()
             {
                 @Override

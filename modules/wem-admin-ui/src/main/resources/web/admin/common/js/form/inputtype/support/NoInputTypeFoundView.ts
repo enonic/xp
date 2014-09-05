@@ -32,7 +32,7 @@ module api.form.inputtype.support {
         }
 
         private newValue(s: string): api.data.Value {
-            return new api.data.Value(s, api.data.ValueTypes.STRING);
+            return new api.data.Value(s, api.data.type.ValueTypes.STRING);
         }
 
         getValue(occurrence: api.dom.Element): api.data.Value {

@@ -22,8 +22,8 @@ public class XmlSiteTemplateSerializerTest
         throws Exception
     {
         final ContentTypeFilter contentTypeFilter = newContentFilter().defaultDeny().
-            allowContentTypes( ContentTypeNames.from( "com.enonic.tweet", "system.folder" ) ).
-            denyContentType( "com.enonic.tweet.internal" ).
+            allowContentTypes( ContentTypeNames.from( "mymodule-1.0.0:com.enonic.tweet", "mymodule-1.0.0:system.folder" ) ).
+            denyContentType( "mymodule-1.0.0:com.enonic.tweet.internal" ).
             build();
 
         final SiteTemplate siteTemplate = SiteTemplate.newSiteTemplate().
@@ -64,8 +64,8 @@ public class XmlSiteTemplateSerializerTest
 
         final ContentTypeFilter contentTypeFilter = newContentFilter().
             defaultDeny().
-            allowContentTypes( ContentTypeNames.from( "com.enonic.tweet", "system.folder" ) ).
-            denyContentType( "com.enonic.tweet.internal" ).
+            allowContentTypes( ContentTypeNames.from( "mymodule-1.0.0:com.enonic.tweet", "mymodule-1.0.0:system.folder" ) ).
+            denyContentType( "mymodule-1.0.0:com.enonic.tweet.internal" ).
             build();
         assertEquals( contentTypeFilter, siteTemplate.getContentTypeFilter() );
 

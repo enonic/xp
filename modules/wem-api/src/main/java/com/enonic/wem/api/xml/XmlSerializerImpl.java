@@ -100,7 +100,6 @@ final class XmlSerializerImpl<X extends XmlObject>
         }
         catch ( final JAXBException e )
         {
-            e.printStackTrace(); // TODO just for debugging, to be removed soon
             throw new XmlException( e );
         }
     }

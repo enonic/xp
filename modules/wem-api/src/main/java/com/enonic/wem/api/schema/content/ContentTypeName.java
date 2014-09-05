@@ -1,8 +1,9 @@
 package com.enonic.wem.api.schema.content;
 
 
-import com.google.common.collect.ComparisonChain;
+import org.apache.commons.lang.StringUtils;
 
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.schema.SchemaKey;
 import com.enonic.wem.api.schema.SchemaName;
 
@@ -48,9 +49,14 @@ public final class ContentTypeName
 
     private static final ContentTypeName MEDIA_EXECUTABLE = new ContentTypeName( "executable" );
 
-    private ContentTypeName( final String name )
+    private ContentTypeName( final String localName )
     {
-        super( name );
+        super( ModuleKey.SYSTEM, localName );
+    }
+
+    private ContentTypeName( final ModuleKey moduleKey, final String localName )
+    {
+        super( moduleKey, localName );
     }
 
     public static ContentTypeName structured()
@@ -148,16 +154,6 @@ public final class ContentTypeName
         return MEDIA_EXECUTABLE;
     }
 
-    public static ContentTypeName from( String contentTypeName )
-    {
-        return new ContentTypeName( contentTypeName );
-    }
-
-    public String getContentTypeName()
-    {
-        return toString();
-    }
-
     public boolean isUnstructured()
     {
         return UNSTRUCTURED.equals( this );
@@ -253,15 +249,34 @@ public final class ContentTypeName
         return MEDIA_EXECUTABLE.equals( this );
     }
 
-    @Override
-    public int compareTo( final ContentTypeName that )
+    // TODO remove? -> toString
+    public String getContentTypeName()
     {
-        return ComparisonChain.start().compare( this.getContentTypeName(), that.getContentTypeName() ).result();
+        return toString();
     }
 
     @Override
     public SchemaKey toSchemaKey()
     {
         return SchemaKey.from( this );
+    }
+
+    @Override
+    public int compareTo( final ContentTypeName that )
+    {
+        return this.toString().compareTo( that.toString() );
+    }
+
+    public static ContentTypeName from( final ModuleKey moduleKey, final String localName )
+    {
+        return new ContentTypeName( moduleKey, localName );
+    }
+
+    public static ContentTypeName from( final String contentTypeName )
+    {
+        final String moduleKey = StringUtils.substringBefore( contentTypeName, SEPARATOR );
+        final String localName = StringUtils.substringAfter( contentTypeName, SEPARATOR );
+
+        return new ContentTypeName( ModuleKey.from( moduleKey ), localName );
     }
 }

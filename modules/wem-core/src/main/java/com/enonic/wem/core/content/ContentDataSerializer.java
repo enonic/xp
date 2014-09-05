@@ -15,13 +15,13 @@ import com.enonic.wem.core.form.FormDataSerializer;
 public class ContentDataSerializer
     extends AbstractDataSetSerializer<Content, Content.Builder>
 {
-    public static final String DISPLAY_NAME = "displayName";
+    public static final String DISPLAY_NAME_FIELD_NAME = "displayName";
 
     public static final String DRAFT = "draft";
 
     public static final String CONTENT_DATA = "contentdata";
 
-    public static final String CONTENT_TYPE = "contentType";
+    public static final String CONTENT_TYPE_FIELD_NAME = "contentType";
 
     public static final String FORM = "form";
 
@@ -41,8 +41,8 @@ public class ContentDataSerializer
         final RootDataSet contentAsData = new RootDataSet();
 
         addPropertyIfNotNull( contentAsData, DRAFT, content.isDraft() );
-        addPropertyIfNotNull( contentAsData, DISPLAY_NAME, content.getDisplayName() );
-        addPropertyIfNotNull( contentAsData, CONTENT_TYPE, content.getType().getContentTypeName() );
+        addPropertyIfNotNull( contentAsData, DISPLAY_NAME_FIELD_NAME, content.getDisplayName() );
+        addPropertyIfNotNull( contentAsData, CONTENT_TYPE_FIELD_NAME, content.getType().getContentTypeName() );
 
         contentAsData.add( content.getContentData().toDataSet( CONTENT_DATA ) );
 
@@ -68,14 +68,14 @@ public class ContentDataSerializer
     {
         final Content.Builder builder = Content.newContent();
 
-        if ( dataSet.hasData( DISPLAY_NAME ) )
+        if ( dataSet.hasData( DISPLAY_NAME_FIELD_NAME ) )
         {
-            builder.displayName( dataSet.getProperty( DISPLAY_NAME ).getString() );
+            builder.displayName( dataSet.getProperty( DISPLAY_NAME_FIELD_NAME ).getString() );
         }
 
-        if ( dataSet.hasData( CONTENT_TYPE ) )
+        if ( dataSet.hasData( CONTENT_TYPE_FIELD_NAME ) )
         {
-            builder.type( ContentTypeName.from( dataSet.getProperty( CONTENT_TYPE ).getString() ) );
+            builder.type( ContentTypeName.from( dataSet.getProperty( CONTENT_TYPE_FIELD_NAME ).getString() ) );
         }
 
         if ( dataSet.hasData( CONTENT_DATA ) )
@@ -111,8 +111,8 @@ public class ContentDataSerializer
         final RootDataSet contentAsData = new RootDataSet();
 
         addPropertyIfNotNull( contentAsData, DRAFT, params.isDraft() );
-        addPropertyIfNotNull( contentAsData, DISPLAY_NAME, params.getDisplayName() );
-        addPropertyIfNotNull( contentAsData, CONTENT_TYPE, params.getContentType() );
+        addPropertyIfNotNull( contentAsData, DISPLAY_NAME_FIELD_NAME, params.getDisplayName() );
+        addPropertyIfNotNull( contentAsData, CONTENT_TYPE_FIELD_NAME, params.getContentType() );
 
         if ( params.getContentData() != null )
         {

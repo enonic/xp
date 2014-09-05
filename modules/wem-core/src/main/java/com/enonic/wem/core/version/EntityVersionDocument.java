@@ -2,25 +2,19 @@ package com.enonic.wem.core.version;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.entity.EntityId;
+import com.enonic.wem.api.entity.NodeVersionId;
 
 public class EntityVersionDocument
 {
-    private final BlobKey blobKey;
+    private final NodeVersionId nodeVersionId;
 
     private final EntityId entityId;
 
-
     private EntityVersionDocument( final Builder builder )
     {
-        this.blobKey = builder.blobKey;
+        this.nodeVersionId = builder.nodeVersionId;
         this.entityId = builder.entityId;
-    }
-
-    public BlobKey getId()
-    {
-        return blobKey;
     }
 
     public static Builder create()
@@ -28,9 +22,9 @@ public class EntityVersionDocument
         return new Builder();
     }
 
-    public BlobKey getBlobKey()
+    public NodeVersionId getNodeVersionId()
     {
-        return blobKey;
+        return nodeVersionId;
     }
 
     public EntityId getEntityId()
@@ -41,7 +35,7 @@ public class EntityVersionDocument
 
     public static class Builder
     {
-        private BlobKey blobKey;
+        private NodeVersionId nodeVersionId;
 
         private EntityId entityId;
 
@@ -49,9 +43,9 @@ public class EntityVersionDocument
         {
         }
 
-        public Builder blobKey( final BlobKey blobKey )
+        public Builder nodeVersionId( final NodeVersionId nodeVersionId )
         {
-            this.blobKey = blobKey;
+            this.nodeVersionId = nodeVersionId;
             return this;
         }
 
@@ -69,7 +63,7 @@ public class EntityVersionDocument
 
         private void validate()
         {
-            Preconditions.checkNotNull( blobKey );
+            Preconditions.checkNotNull( nodeVersionId );
             Preconditions.checkNotNull( entityId );
         }
 

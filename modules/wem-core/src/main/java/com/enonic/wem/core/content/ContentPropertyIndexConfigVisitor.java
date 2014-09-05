@@ -35,7 +35,7 @@ public class ContentPropertyIndexConfigVisitor
 
         if ( basePath.getParent().equals( DataPath.ROOT ) )
         {
-            if ( ContentDataSerializer.DISPLAY_NAME.equals( property.getName() ) )
+            if ( ContentDataSerializer.DISPLAY_NAME_FIELD_NAME.equals( property.getName() ) )
             {
                 builder.addPropertyIndexConfig( property, PropertyIndexConfig.INDEXALL_PROPERTY_CONFIG );
             }

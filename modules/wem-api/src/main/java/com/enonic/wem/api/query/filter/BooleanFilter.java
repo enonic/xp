@@ -16,6 +16,7 @@ public class BooleanFilter
 
     public BooleanFilter( final Builder builder )
     {
+        super( builder );
         this.must = ImmutableSet.copyOf( builder.must );
         this.mustNot = ImmutableSet.copyOf( builder.mustNot );
         this.should = ImmutableSet.copyOf( builder.should );
@@ -36,7 +37,13 @@ public class BooleanFilter
         return should;
     }
 
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
     public static class Builder
+        extends Filter.Builder<Builder>
     {
         Set<Filter> must = Sets.newHashSet();
 

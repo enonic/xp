@@ -17,25 +17,25 @@ public class ContentTypeNameTest
             @Override
             public Object getObjectX()
             {
-                return ContentTypeName.from( "mycontenttype" );
+                return ContentTypeName.from( "mymodule-1.0.0:mycontenttype" );
             }
 
             @Override
             public Object[] getObjectsThatNotEqualsX()
             {
-                return new Object[]{ContentTypeName.from( "myothercontenttype" )};
+                return new Object[]{ContentTypeName.from( "mymodule-1.0.0:myothercontenttype" )};
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame()
             {
-                return ContentTypeName.from( "mycontenttype" );
+                return ContentTypeName.from( "mymodule-1.0.0:mycontenttype" );
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame2()
             {
-                return ContentTypeName.from( "mycontenttype" );
+                return ContentTypeName.from( "mymodule-1.0.0:mycontenttype" );
             }
         };
         equalsTest.assertEqualsAndHashCodeContract();
@@ -64,24 +64,24 @@ public class ContentTypeNameTest
         assertTrue( ContentTypeName.codeMedia().isCodeMedia() );
         assertTrue( ContentTypeName.executableMedia().isExecutableMedia() );
 
-        assertEquals( "media", ContentTypeName.media().getContentTypeName() );
-        assertEquals( "folder", ContentTypeName.folder().getContentTypeName() );
-        assertEquals( "page", ContentTypeName.page().getContentTypeName() );
-        assertEquals( "shortcut", ContentTypeName.shortcut().getContentTypeName() );
-        assertEquals( "structured", ContentTypeName.structured().getContentTypeName() );
-        assertEquals( "unstructured", ContentTypeName.unstructured().getContentTypeName() );
+        assertEquals( "system-0.0.0:media", ContentTypeName.media().getContentTypeName() );
+        assertEquals( "system-0.0.0:folder", ContentTypeName.folder().getContentTypeName() );
+        assertEquals( "system-0.0.0:page", ContentTypeName.page().getContentTypeName() );
+        assertEquals( "system-0.0.0:shortcut", ContentTypeName.shortcut().getContentTypeName() );
+        assertEquals( "system-0.0.0:structured", ContentTypeName.structured().getContentTypeName() );
+        assertEquals( "system-0.0.0:unstructured", ContentTypeName.unstructured().getContentTypeName() );
 
-        assertEquals( "text", ContentTypeName.textMedia().getContentTypeName() );
-        assertEquals( "data", ContentTypeName.dataMedia().getContentTypeName() );
-        assertEquals( "audio", ContentTypeName.audioMedia().getContentTypeName() );
-        assertEquals( "video", ContentTypeName.videoMedia().getContentTypeName() );
-        assertEquals( "image", ContentTypeName.imageMedia().getContentTypeName() );
-        assertEquals( "vector", ContentTypeName.vectorMedia().getContentTypeName() );
-        assertEquals( "archive", ContentTypeName.archiveMedia().getContentTypeName() );
-        assertEquals( "document", ContentTypeName.documentMedia().getContentTypeName() );
-        assertEquals( "spreadsheet", ContentTypeName.spreadsheetMedia().getContentTypeName() );
-        assertEquals( "presentation", ContentTypeName.presentationMedia().getContentTypeName() );
-        assertEquals( "code", ContentTypeName.codeMedia().getContentTypeName() );
-        assertEquals( "executable", ContentTypeName.executableMedia().getContentTypeName() );
+        assertEquals( "system-0.0.0:text", ContentTypeName.textMedia().getContentTypeName() );
+        assertEquals( "system-0.0.0:data", ContentTypeName.dataMedia().getContentTypeName() );
+        assertEquals( "system-0.0.0:audio", ContentTypeName.audioMedia().getContentTypeName() );
+        assertEquals( "system-0.0.0:video", ContentTypeName.videoMedia().getContentTypeName() );
+        assertEquals( "system-0.0.0:image", ContentTypeName.imageMedia().getContentTypeName() );
+        assertEquals( "system-0.0.0:vector", ContentTypeName.vectorMedia().getContentTypeName() );
+        assertEquals( "system-0.0.0:archive", ContentTypeName.archiveMedia().getContentTypeName() );
+        assertEquals( "system-0.0.0:document", ContentTypeName.documentMedia().getContentTypeName() );
+        assertEquals( "system-0.0.0:spreadsheet", ContentTypeName.spreadsheetMedia().getContentTypeName() );
+        assertEquals( "system-0.0.0:presentation", ContentTypeName.presentationMedia().getContentTypeName() );
+        assertEquals( "system-0.0.0:code", ContentTypeName.codeMedia().getContentTypeName() );
+        assertEquals( "system-0.0.0:executable", ContentTypeName.executableMedia().getContentTypeName() );
     }
 }

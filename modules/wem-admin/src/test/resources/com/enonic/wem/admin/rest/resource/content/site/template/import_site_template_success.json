@@ -7,7 +7,7 @@
     "description": "info",
     "displayName": "displayName",
     "editable": true,
-    "iconUrl" : "/admin/rest/schema/icon/ContentType:site",
+    "iconUrl" : "/admin/rest/schema/icon/ContentType:mymodule-1.0.0:site",
     "key": "name-1.0.0",
     "modules": [ "module1-1.0.0" ],
     "name": "name",

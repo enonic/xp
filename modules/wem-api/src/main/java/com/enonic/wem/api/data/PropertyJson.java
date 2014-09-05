@@ -42,11 +42,19 @@ public class PropertyJson
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public String getValue()
+    public Object getValue()
     {
-        if ( !property.getValue().getType().equals( ValueTypes.DATA ) )
+        final ValueType type = property.getValue().getType();
+        if ( !type.equals( ValueTypes.DATA ) )
         {
-            return property.getString();
+            if ( type.equals( ValueTypes.BOOLEAN ) || type.equals( ValueTypes.LONG ) )
+            {
+                return property.getObject();
+            }
+            else
+            {
+                return property.getString();
+            }
         }
         else
         {

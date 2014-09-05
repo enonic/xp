@@ -10,7 +10,7 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 class ContentPropertyIndexConfigVisitorTest
-        extends Specification
+    extends Specification
 {
 
     @Unroll
@@ -32,13 +32,13 @@ class ContentPropertyIndexConfigVisitorTest
         config.tokenizeEnabled() == tokenized
 
         where:
-        path                                                         | enabled | fulltext | tokenized
-        "rootProperty"                                               | true    | false    | false
-        ContentDataSerializer.DISPLAY_NAME                           | true    | true     | true
-        "somePath.displayName"                                       | true    | false    | false
-        ContentDataSerializer.CONTENT_DATA + "." + "someName"        | true    | true     | true
-        ContentDataSerializer.FORM + "." + "displayName"             | false   | false    | false
-        ContentDataSerializer.PAGE + "." + "displayName"             | false   | false    | false
+        path                                                  | enabled | fulltext | tokenized
+        "rootProperty"                                        | true    | false    | false
+        ContentDataSerializer.DISPLAY_NAME_FIELD_NAME         | true    | true     | true
+        "somePath.displayName"                                | true    | false    | false
+        ContentDataSerializer.CONTENT_DATA + "." + "someName" | true    | true     | true
+        ContentDataSerializer.FORM + "." + "displayName"      | false   | false    | false
+        ContentDataSerializer.PAGE + "." + "displayName"      | false   | false    | false
 
     }
 }

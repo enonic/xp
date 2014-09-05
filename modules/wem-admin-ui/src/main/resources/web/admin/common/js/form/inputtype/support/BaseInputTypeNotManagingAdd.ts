@@ -278,6 +278,9 @@ module api.form.inputtype.support {
             });
         }
 
+        /**
+         * Note: Never fire ValueChangedEvent for null Value.
+         */
         onOccurrenceValueChanged(element: api.dom.Element, listener: (event: api.form.inputtype.support.ValueChangedEvent) => void) {
             throw new Error("Must be implemented by inheritor");
         }

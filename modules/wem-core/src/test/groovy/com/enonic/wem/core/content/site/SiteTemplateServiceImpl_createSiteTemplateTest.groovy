@@ -20,7 +20,7 @@ class SiteTemplateServiceImpl_createSiteTemplateTest
         given:
         def vendor = Vendor.newVendor().name( "Enonic" ).url( "http://enonic.net" ).build();
         def moduleKeys = ModuleKeys.from( "foomodule-1.0.0" );
-        def filter = newContentFilter().defaultDeny().allowContentType( ContentTypeName.from( "page" ) ).build();
+        def filter = newContentFilter().defaultDeny().allowContentType( ContentTypeName.from( "mymodule-1.0.0:page" ) ).build();
         def createSiteTemplateParam = new CreateSiteTemplateParams().
             name( "intranet" ).
             version( SiteTemplateVersion.from( "1.2.0" ) ).
@@ -51,7 +51,7 @@ class SiteTemplateServiceImpl_createSiteTemplateTest
         given:
         def vendor = Vendor.newVendor().name( "Enonic" ).url( "http://enonic.net" ).build();
         def moduleKeys = ModuleKeys.from( "foomodule-1.0.0" );
-        def filter = newContentFilter().defaultDeny().allowContentType( ContentTypeName.from( "page" ) ).build();
+        def filter = newContentFilter().defaultDeny().allowContentType( ContentTypeName.from( "mymodule-1.0.0:page" ) ).build();
         def pageTemplate = PageTemplate.newPageTemplate().
             key( PageTemplateKey.from( "foomodule-1.0.0|template-name" ) ).
             displayName( "My page template" ).

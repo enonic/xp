@@ -23,8 +23,8 @@ public class LifecycleServiceImplTest
     @Before
     public void setup()
     {
-        this.bean1 = new LifecycleTestingBean( RunLevel.L1 );
-        this.bean2 = new LifecycleTestingBean( RunLevel.L2 );
+        this.bean1 = new LifecycleTestingBean( LifecycleStage.L1 );
+        this.bean2 = new LifecycleTestingBean( LifecycleStage.L2 );
 
         final Injector injector = Guice.createInjector( new AbstractModule()
         {

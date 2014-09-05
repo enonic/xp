@@ -1,18 +1,24 @@
 package com.enonic.wem.core.entity;
 
+import java.time.Instant;
+
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.Attachments;
 import com.enonic.wem.api.entity.CreateNodeParams;
+import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.core.entity.dao.CreateNodeArguments;
-
-import static com.enonic.wem.core.entity.dao.CreateNodeArguments.newCreateNodeArgs;
+import com.enonic.wem.api.entity.NodeName;
+import com.enonic.wem.api.entity.NodeVersionId;
+import com.enonic.wem.core.version.EntityVersionDocument;
+import com.enonic.wem.core.workspace.WorkspaceDocument;
 
 final class CreateNodeCommand
     extends AbstractNodeCommand
 {
-    private CreateNodeParams params;
+    private final CreateNodeParams params;
 
     private CreateNodeCommand( final Builder builder )
     {
@@ -28,21 +34,43 @@ final class CreateNodeCommand
 
     private Node doExecute()
     {
-        final CreateNodeArguments createNodeArguments = newCreateNodeArgs().
+        Preconditions.checkNotNull( params.getParent(), "Path of parent Node must be specified" );
+        Preconditions.checkArgument( params.getParent().isAbsolute(), "Path to parent Node must be absolute: " + params.getParent() );
+
+        final Instant now = Instant.now();
+
+        final Node newNode = Node.newNode().
+            id( new EntityId() ).
+            createdTime( now ).
+            modifiedTime( now ).
             creator( UserKey.superUser() ).
+            modifier( UserKey.superUser() ).
             parent( params.getParent() ).
-            name( params.getName() ).
+            name( NodeName.from( params.getName() ) ).
             rootDataSet( params.getData() ).
             attachments( params.getAttachments() != null ? params.getAttachments() : Attachments.empty() ).
             entityIndexConfig( params.getEntityIndexConfig() ).
-            embed( params.isEmbed() ).
+            hasChildren( false ).
             build();
 
-        final Node persistedNode = nodeDao.create( createNodeArguments, context.getWorkspace() );
+        final NodeVersionId persistedNodeVersionId = nodeDao.store( newNode );
 
-        this.indexService.index( persistedNode, context.getWorkspace() );
+        this.workspaceService.store( WorkspaceDocument.create().
+            id( newNode.id() ).
+            parentPath( newNode.parent() ).
+            path( newNode.path() ).
+            nodeVersionId( persistedNodeVersionId ).
+            workspace( this.context.getWorkspace() ).
+            build() );
 
-        return persistedNode;
+        versionService.store( EntityVersionDocument.create().
+            entityId( newNode.id() ).
+            nodeVersionId( persistedNodeVersionId ).
+            build() );
+
+        this.indexService.index( newNode, context.getWorkspace() );
+
+        return newNode;
     }
 
     static Builder create( final Context context )
@@ -64,6 +92,12 @@ final class CreateNodeCommand
         {
             this.params = params;
             return this;
+        }
+
+        protected void validate()
+        {
+            super.validate();
+            Preconditions.checkNotNull( params );
         }
 
         public CreateNodeCommand build()

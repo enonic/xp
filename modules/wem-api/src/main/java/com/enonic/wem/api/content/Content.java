@@ -4,7 +4,6 @@ import java.time.Instant;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.data.ContentData;
@@ -52,11 +51,11 @@ public final class Content
 
     private final UserKey modifier;
 
-    private final ImmutableList<ContentId> childrenIds;
-
     private final Site site;
 
     private final Page page;
+
+    private final boolean hasChildren;
 
     private final Thumbnail thumbnail;
 
@@ -84,10 +83,10 @@ public final class Content
         this.creator = builder.creator;
         this.modifier = builder.modifier;
         this.owner = builder.owner;
-        this.childrenIds = builder.childrenIdsBuilder.build();
         this.site = builder.site;
         this.page = builder.page;
         this.thumbnail = builder.thumbnail;
+        this.hasChildren = builder.hasChildren;
     }
 
     public ContentPath getParentPath()
@@ -167,7 +166,7 @@ public final class Content
 
     public boolean hasChildren()
     {
-        return !childrenIds.isEmpty();
+        return this.hasChildren;
     }
 
     public boolean isSite()
@@ -273,18 +272,17 @@ public final class Content
 
         UserKey modifier;
 
-        ImmutableList.Builder<ContentId> childrenIdsBuilder;
-
         Site site;
 
         Page page;
 
         Thumbnail thumbnail;
 
+        boolean hasChildren;
+
         BaseBuilder()
         {
             this.contentData = new ContentData();
-            this.childrenIdsBuilder = ImmutableList.builder();
         }
 
         BaseBuilder( final Content content )
@@ -302,8 +300,7 @@ public final class Content
             this.modifiedTime = content.modifiedTime;
             this.creator = content.creator;
             this.modifier = content.modifier;
-            this.childrenIdsBuilder = ImmutableList.builder();
-            this.childrenIdsBuilder.addAll( content.childrenIds );
+            this.hasChildren = content.hasChildren;
             this.site = content.site;
             this.page = content.page;
             this.thumbnail = content.thumbnail;
@@ -381,11 +378,6 @@ public final class Content
         public boolean isChanges()
         {
             return this.changes.isChanges();
-        }
-
-        public Changes getChanges()
-        {
-            return this.changes.build();
         }
 
         public Content build()
@@ -504,9 +496,9 @@ public final class Content
             return this;
         }
 
-        public Builder addChildId( final ContentId childId )
+        public Builder hasChildren( final boolean hasChildren )
         {
-            this.childrenIdsBuilder.add( childId );
+            this.hasChildren = hasChildren;
             return this;
         }
 

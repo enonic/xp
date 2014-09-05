@@ -4,56 +4,51 @@ module api.liveedit {
 
     export class ItemViewContextMenu extends api.dom.DivEl {
 
-        private itemView: ItemView;
-
-        private names: api.app.NamesAndIconView;
+        private title: ItemViewContextMenuTitle;
         private menu: api.ui.menu.ContextMenu;
 
-        constructor(itemView: ItemView, actions: api.ui.Action[]) {
+        constructor(menuTitle: ItemViewContextMenuTitle, actions: api.ui.Action[]) {
             super('item-view-context-menu bottom');
 
-            this.itemView = itemView;
-
-            this.names = new api.app.NamesAndIconViewBuilder().setAddTitleAttribute(false).build();
-            this.names.setMainName(this.getMainName());
-            this.names.setIconClass(itemView.getType().getConfig().getIconCls());
-            this.appendChild(this.names);
-
-            var lastPosition: {
-                x: number;
-                y: number;
-            };
-
-            var dragListener = (e: MouseEvent) => {
-                e.preventDefault();
-                e.stopPropagation();
-                var x = e.pageX,
-                    y = e.pageY;
-
-                this.moveBy(x - lastPosition.x, y - lastPosition.y);
-                lastPosition = {
-                    x: x,
-                    y: y
-                };
-            };
-
-            var upListener = (e: MouseEvent) => {
-                e.preventDefault();
-                e.stopPropagation();
-
-                this.stopDrag(dragListener, upListener);
-            };
-
-            this.names.onMouseDown((e: MouseEvent) => {
-                e.preventDefault();
-                e.stopPropagation();
-                lastPosition = {
-                    x: e.pageX,
-                    y: e.pageY
+            this.title = menuTitle;
+            if (this.title) {
+                var lastPosition: {
+                    x: number;
+                    y: number;
                 };
 
-                this.startDrag(dragListener, upListener);
-            });
+                var dragListener = (e: MouseEvent) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var x = e.pageX,
+                        y = e.pageY;
+
+                    this.moveBy(x - lastPosition.x, y - lastPosition.y);
+                    lastPosition = {
+                        x: x,
+                        y: y
+                    };
+                };
+
+                var upListener = (e: MouseEvent) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    this.stopDrag(dragListener, upListener);
+                };
+
+                this.title.onMouseDown((e: MouseEvent) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    lastPosition = {
+                        x: e.pageX,
+                        y: e.pageY
+                    };
+
+                    this.startDrag(dragListener, upListener);
+                });
+                this.appendChild(this.title);
+            }
 
             this.menu = new api.ui.menu.ContextMenu(actions, false).setHideOnItemClick(false);
             this.appendChild(this.menu);
@@ -80,10 +75,6 @@ module api.liveedit {
             this.menu.moveBy.call(this, dx, dy);
         }
 
-        private getMainName(): string {
-            return this.itemView.getName();
-        }
-
         private startDrag(dragListener: (e: MouseEvent) => void, upListener: (e: MouseEvent) => void) {
             api.dom.Body.get().onMouseMove(dragListener);
             api.dom.Body.get().onMouseUp(upListener);
@@ -93,6 +84,16 @@ module api.liveedit {
             api.dom.Body.get().unMouseMove(dragListener);
             api.dom.Body.get().unMouseUp(upListener);
         }
+    }
+
+    export class ItemViewContextMenuTitle extends api.app.NamesAndIconView {
+
+        constructor(name: string, icon: string) {
+            super(new api.app.NamesAndIconViewBuilder().setAddTitleAttribute(false));
+            this.setMainName(name);
+            this.setIconClass(icon);
+        }
+
     }
 
 }

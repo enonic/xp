@@ -9,7 +9,7 @@ module api.content.form.inputtype.tag {
     import ValueExpr = api.query.expr.ValueExpr;
     import DataPath = api.data.DataPath;
     import Value = api.data.Value;
-    import ValueTypes = api.data.ValueTypes;
+    import ValueTypes = api.data.type.ValueTypes;
 
     export class ContentTagSuggesterBuilder {
 

@@ -2,14 +2,14 @@ package com.enonic.wem.core.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.GetActiveNodeVersionsResult;
+import com.enonic.wem.api.entity.NodeVersionId;
 import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.entity.Workspaces;
-import com.enonic.wem.core.entity.dao.NodeNotFoundException;
 import com.enonic.wem.core.version.VersionService;
+import com.enonic.wem.core.workspace.query.WorkspaceIdQuery;
 
 public class GetActiveNodeVersionsCommand
     extends AbstractNodeCommand
@@ -39,17 +39,13 @@ public class GetActiveNodeVersionsCommand
 
         for ( final Workspace workspace : workspaces )
         {
-            try
+            final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( new WorkspaceIdQuery( workspace, entityId ) );
+
+            if ( currentVersion != null )
             {
-                final BlobKey blobKey = nodeDao.getBlobKey( entityId, workspace );
-                builder.add( workspace, this.versionService.getVersion( blobKey ) );
-            }
-            catch ( NodeNotFoundException e )
-            {
-                // Don't add entry for this since it does not exist in that workspace
+                builder.add( workspace, this.versionService.getVersion( currentVersion ) );
             }
         }
-
         return builder.build();
     }
 
@@ -85,7 +81,7 @@ public class GetActiveNodeVersionsCommand
             return this;
         }
 
-        private void validate()
+        protected void validate()
         {
             Preconditions.checkNotNull( this.entityId );
             Preconditions.checkNotNull( this.workspaces );

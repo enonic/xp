@@ -12,7 +12,7 @@ import com.google.inject.Injector;
 final class LifecycleServiceImpl
     implements LifecycleService
 {
-    private final Multimap<RunLevel, LifecycleBean> map;
+    private final Multimap<LifecycleStage, LifecycleBean> map;
 
     @Inject
     public LifecycleServiceImpl( final Injector injector )
@@ -35,25 +35,17 @@ final class LifecycleServiceImpl
     }
 
     private void doStartAll()
-        throws Exception
     {
-        for ( final RunLevel level : RunLevel.all() )
-        {
-            doStart( level );
-        }
+        LifecycleStage.all().forEach( this::doStart );
     }
 
     @Override
     public void stopAll()
     {
-        for ( final RunLevel level : RunLevel.reverse() )
-        {
-            doStop( level );
-        }
+        LifecycleStage.reverse().forEach( this::doStop );
     }
 
-    private void doStart( final RunLevel level )
-        throws Exception
+    private void doStart( final LifecycleStage level )
     {
         for ( final LifecycleBean bean : this.map.get( level ) )
         {
@@ -61,7 +53,7 @@ final class LifecycleServiceImpl
         }
     }
 
-    private void doStop( final RunLevel level )
+    private void doStop( final LifecycleStage level )
     {
         for ( final LifecycleBean bean : this.map.get( level ) )
         {
@@ -71,10 +63,7 @@ final class LifecycleServiceImpl
 
     private void addLifecycleBeans( final Injector injector )
     {
-        for ( final Binding<?> binding : injector.getAllBindings().values() )
-        {
-            addLifecycleBean( binding );
-        }
+        injector.getAllBindings().values().forEach( this::addLifecycleBean );
     }
 
     private void addLifecycleBean( final Binding binding )
@@ -85,7 +74,7 @@ final class LifecycleServiceImpl
         }
 
         final LifecycleBean bean = (LifecycleBean) binding.getProvider().get();
-        this.map.put( bean.getRunLevel(), bean );
+        this.map.put( bean.getStage(), bean );
     }
 
     private boolean isLifecycleBean( final Binding<?> binding )

@@ -41,7 +41,7 @@
     <occurrences minimum="0" maximum="1"/>
   </form-item-set>
   <mixin-reference name="mixin">
-    <reference>reference</reference>
+    <reference>mymodule-1.0.0:reference</reference>
   </mixin-reference>
 
 </form>

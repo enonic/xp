@@ -1,38 +1,15 @@
 package com.enonic.wem.core.entity.dao;
 
-import com.enonic.wem.api.blob.BlobKey;
-import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.EntityIds;
 import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.api.entity.NodePath;
-import com.enonic.wem.api.entity.NodePaths;
+import com.enonic.wem.api.entity.NodeVersionId;
+import com.enonic.wem.api.entity.NodeVersionIds;
 import com.enonic.wem.api.entity.Nodes;
-import com.enonic.wem.api.entity.Workspace;
 
 public interface NodeDao
 {
-    public Node create( CreateNodeArguments createNodeArguments, Workspace workspace );
+    public NodeVersionId store( Node node );
 
-    public Node update( UpdateNodeArgs updateNodeArguments, Workspace workspace );
+    public Node getByVersionId( final NodeVersionId nodeVersionId );
 
-    public boolean move( MoveNodeArguments moveNodeArguments, Workspace workspace );
-
-    public Node push( PushNodeArguments pushNodeArguments, Workspace workspace );
-
-    public Node getById( EntityId entityId, Workspace workspace );
-
-    public Nodes getByIds( EntityIds entityIds, Workspace workspace );
-
-    public BlobKey getBlobKey( final EntityId entityId, final Workspace workspace );
-
-    public Node getByPath( NodePath path, Workspace workspace );
-
-    public Nodes getByPaths( NodePaths paths, Workspace workspace );
-
-    public Nodes getByParent( NodePath parent, Workspace workspace );
-
-    public Node deleteById( EntityId entityId, Workspace workspace );
-
-    public Node getByBlobKey( BlobKey blobKey );
-
+    public Nodes getByVersionIds( final NodeVersionIds nodeVersionIds );
 }

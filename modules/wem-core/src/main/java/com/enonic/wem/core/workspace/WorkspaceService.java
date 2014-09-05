@@ -1,8 +1,10 @@
 package com.enonic.wem.core.workspace;
 
-import com.enonic.wem.api.blob.BlobKey;
-import com.enonic.wem.api.blob.BlobKeys;
 import com.enonic.wem.api.entity.EntityIds;
+import com.enonic.wem.api.entity.NodePath;
+import com.enonic.wem.api.entity.NodeVersionId;
+import com.enonic.wem.api.entity.NodeVersionIds;
+import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.core.workspace.compare.query.CompareWorkspacesQuery;
 import com.enonic.wem.core.workspace.query.WorkspaceDeleteQuery;
 import com.enonic.wem.core.workspace.query.WorkspaceIdQuery;
@@ -17,16 +19,18 @@ public interface WorkspaceService
 
     public void delete( final WorkspaceDeleteQuery query );
 
-    public BlobKey getById( final WorkspaceIdQuery query );
+    public NodeVersionId getCurrentVersion( final WorkspaceIdQuery query );
 
-    public BlobKeys getByIds( final WorkspaceIdsQuery query );
+    public NodeVersionIds getByVersionIds( final WorkspaceIdsQuery query );
 
-    public BlobKey getByPath( final WorkspacePathQuery query );
+    public NodeVersionId getByPath( final WorkspacePathQuery query );
 
-    public BlobKeys getByPaths( final WorkspacePathsQuery query );
+    public NodeVersionIds getByPaths( final WorkspacePathsQuery query );
 
-    public BlobKeys getByParent( final WorkspaceParentQuery query );
+    public NodeVersionIds findByParent( final WorkspaceParentQuery query );
 
     public EntityIds getEntriesWithDiff( final CompareWorkspacesQuery query );
+
+    public boolean hasChildren( final NodePath parent, final Workspace workspace );
 
 }

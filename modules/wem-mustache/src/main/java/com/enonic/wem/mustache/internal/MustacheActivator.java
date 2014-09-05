@@ -13,5 +13,6 @@ public final class MustacheActivator
 
         service( MustacheProcessorFactory.class ).export();
         service( MustacheScriptContributor.class ).export();
+        service( MustacheScriptLibrary.class ).export();
     }
 }

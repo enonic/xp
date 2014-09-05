@@ -1,18 +1,18 @@
 {
     "failures": [
         {
-            "name": "being_used_mixin",
-            "reason": "Unable to delete Mixin [not_existing_mixin]: Being used"
+            "name": "mymodule-1.0.0:being_used_mixin",
+            "reason": "Unable to delete Mixin [mymodule-1.0.0:not_existing_mixin]: Being used"
         },
         {
-            "name": "not_existing_mixin",
-            "reason": "Mixin [being_used_mixin] was not found"
+            "name": "mymodule-1.0.0:not_existing_mixin",
+            "reason": "Mixin [mymodule-1.0.0:being_used_mixin] was not found"
         }
     ],
     "success": false,
     "successes": [
         {
-            "name": "existing_mixin"
+            "name": "mymodule-1.0.0:existing_mixin"
         }
     ]
 }

@@ -2,7 +2,7 @@
     "siteTemplates": [
         {
             "contentTypeFilter": {
-                "allow": [ "image" ],
+                "allow": [ "system-0.0.0:image" ],
                 "deny": [ "*" ]
             },
             "deletable": true,

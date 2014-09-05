@@ -5,8 +5,6 @@ import java.util.Collection;
 import javax.inject.Inject;
 
 import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.action.count.CountRequestBuilder;
-import org.elasticsearch.action.count.CountResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
@@ -15,6 +13,7 @@ import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.action.update.UpdateRequestBuilder;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
@@ -25,6 +24,7 @@ import org.elasticsearch.search.sort.SortBuilder;
 
 import com.google.common.collect.ImmutableSet;
 
+import com.enonic.wem.core.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.core.elasticsearch.result.SearchResult;
 import com.enonic.wem.core.elasticsearch.result.SearchResultFactory;
 import com.enonic.wem.core.index.DeleteDocument;
@@ -51,14 +51,6 @@ public class ElasticsearchDao
     public void store( final IndexRequest indexRequest )
     {
         this.client.index( indexRequest ).actionGet();
-    }
-
-    public void storeAll( final Collection<IndexRequest> indexRequests )
-    {
-        for ( final IndexRequest indexRequest : indexRequests )
-        {
-            this.client.index( indexRequest ).actionGet();
-        }
     }
 
     public void store( Collection<IndexDocument> indexDocuments )
@@ -170,13 +162,15 @@ public class ElasticsearchDao
 
     public long count( final QueryMetaData queryMetaData, final QueryBuilder query )
     {
-        CountRequestBuilder countRequestBuilder = new CountRequestBuilder( this.client ).
+        SearchRequestBuilder searchRequestBuilder = new SearchRequestBuilder( this.client ).
             setIndices( queryMetaData.getIndex() ).
             setTypes( queryMetaData.getIndexType() ).
-            setQuery( query );
+            setQuery( query ).
+            setSearchType( SearchType.COUNT );
 
-        final CountResponse response = this.client.count( countRequestBuilder.request() ).actionGet();
-        return response.getCount();
+        final SearchResponse searchResponse = this.client.search( searchRequestBuilder.request() ).actionGet();
+
+        return searchResponse.getHits().getTotalHits();
     }
 
     private SearchResult doSearchRequest( final SearchRequestBuilder searchRequestBuilder )

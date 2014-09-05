@@ -1,8 +1,9 @@
 module api.content.form.inputtype.checkbox {
 
-    import support = api.form.inputtype.support;
+    import ValueTypes = api.data.type.ValueTypes;
+    import BaseInputTypeSingleOccurrence = api.form.inputtype.support.BaseInputTypeSingleOccurrence;
 
-    export class Checkbox extends support.BaseInputTypeSingleOccurrence<any> {
+    export class Checkbox extends BaseInputTypeSingleOccurrence<any> {
 
         private checkbox: api.ui.Checkbox;
 
@@ -11,7 +12,7 @@ module api.content.form.inputtype.checkbox {
         }
 
         newInitialValue(): api.data.Value {
-            return new api.data.Value('false', api.data.ValueTypes.STRING);
+            return ValueTypes.BOOLEAN.newFalse();
         }
 
         layout(input: api.form.Input, properties: api.data.Property[]) {
@@ -29,13 +30,11 @@ module api.content.form.inputtype.checkbox {
 
             this.appendChild(this.checkbox);
             this.checkbox.onValueChanged((event: api.ui.ValueChangedEvent) => {
-                var newValue = this.newValue(event.getNewValue());
-                this.notifyValueChanged(new api.form.inputtype.ValueChangedEvent(newValue, 0));
+                var newValue = ValueTypes.BOOLEAN.newValue(event.getNewValue());
+                if (newValue) {
+                    this.notifyValueChanged(new api.form.inputtype.ValueChangedEvent(newValue, 0));
+                }
             });
-        }
-
-        private newValue(s: string): api.data.Value {
-            return new api.data.Value(s, api.data.ValueTypes.STRING);
         }
 
         giveFocus(): boolean {

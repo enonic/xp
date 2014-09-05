@@ -139,7 +139,10 @@ module api.form.inputtype.support {
                 this.handleOccurrenceChanged(event);
             });
 
-            this.handleOccurrenceAdded(new api.data.Value("", api.data.ValueTypes.STRING));
+            var newInitialValue = this.baseInputTypeView.newInitialValue();
+            if (newInitialValue) {
+                this.handleOccurrenceAdded(newInitialValue);
+            }
 
             return inputOccurrenceView;
         }

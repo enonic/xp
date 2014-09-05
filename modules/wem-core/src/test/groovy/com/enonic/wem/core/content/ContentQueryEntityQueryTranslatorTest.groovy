@@ -9,7 +9,7 @@ import com.enonic.wem.api.schema.content.ContentTypeNames
 import spock.lang.Specification
 
 class ContentQueryEntityQueryTranslatorTest
-        extends Specification
+    extends Specification
 {
     def "plain"()
     {
@@ -18,13 +18,13 @@ class ContentQueryEntityQueryTranslatorTest
 
         when:
         ContentQuery contentQuery = ContentQuery.newContentQuery().
-                queryExpr( QueryParser.parse( "status = 2" ) ).
-                build();
+            queryExpr( QueryParser.parse( "status = 2" ) ).
+            build();
 
         EntityQuery entityQuery = translator.translate( contentQuery );
 
         then:
-        entityQuery.queryFilters.size() == 1;
+        entityQuery.queryFilters.getSize() == 1;
 
     }
 
@@ -36,15 +36,15 @@ class ContentQueryEntityQueryTranslatorTest
 
         when:
         ContentQuery contentQuery = ContentQuery.newContentQuery().
-                queryExpr( QueryParser.parse( "status = 2" ) ).
-                addContentTypeNames( ContentTypeNames.from( "contenttype1", "contenttype2" ) ).
-                build();
+            queryExpr( QueryParser.parse( "status = 2" ) ).
+            addContentTypeNames( ContentTypeNames.from( "mymodule-1.0.0:contenttype1", "mymodule-1.0.0:contenttype2" ) ).
+            build();
 
         EntityQuery entityQuery = translator.translate( contentQuery );
 
         then:
         entityQuery.queryFilters != null
-        entityQuery.queryFilters.size() == 2;
+        entityQuery.queryFilters.getSize() == 2;
 
         for ( Filter filter : entityQuery.queryFilters )
         {

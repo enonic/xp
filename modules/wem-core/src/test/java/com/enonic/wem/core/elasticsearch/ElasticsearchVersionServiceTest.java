@@ -18,7 +18,7 @@ import com.enonic.wem.core.elasticsearch.result.SearchResultEntry;
 import com.enonic.wem.core.elasticsearch.result.SearchResultField;
 import com.enonic.wem.core.version.GetVersionsQuery;
 
-import static com.enonic.wem.core.elasticsearch.VersionXContentBuilderFactory.BLOBKEY_FIELD_NAME;
+import static com.enonic.wem.core.elasticsearch.VersionXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME;
 import static com.enonic.wem.core.elasticsearch.VersionXContentBuilderFactory.TIMESTAMP_ID_FIELD_NAME;
 import static org.junit.Assert.*;
 
@@ -59,19 +59,19 @@ public class ElasticsearchVersionServiceTest
                     add( SearchResultEntry.create().
                         id( "1" ).
                         score( 5 ).
-                        addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, "a" ) ).
+                        addField( NODE_VERSION_ID_FIELD_NAME, new SearchResultField( NODE_VERSION_ID_FIELD_NAME, "a" ) ).
                         addField( TIMESTAMP_ID_FIELD_NAME, new SearchResultField( TIMESTAMP_ID_FIELD_NAME, first ) ).
                         build() ).
                     add( SearchResultEntry.create().
                         id( "2" ).
                         score( 4 ).
-                        addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, "c" ) ).
+                        addField( NODE_VERSION_ID_FIELD_NAME, new SearchResultField( NODE_VERSION_ID_FIELD_NAME, "c" ) ).
                         addField( TIMESTAMP_ID_FIELD_NAME, new SearchResultField( TIMESTAMP_ID_FIELD_NAME, third ) ).
                         build() ).
                     add( SearchResultEntry.create().
                         id( "3" ).
                         score( 3 ).
-                        addField( BLOBKEY_FIELD_NAME, new SearchResultField( BLOBKEY_FIELD_NAME, "b" ) ).
+                        addField( NODE_VERSION_ID_FIELD_NAME, new SearchResultField( NODE_VERSION_ID_FIELD_NAME, "b" ) ).
                         addField( TIMESTAMP_ID_FIELD_NAME, new SearchResultField( TIMESTAMP_ID_FIELD_NAME, second ) ).
                         build() ).
                     build() ).
@@ -82,8 +82,8 @@ public class ElasticsearchVersionServiceTest
         assertEquals( 3, result.getNodeVersions().size() );
 
         final Iterator<NodeVersion> iterator = result.getNodeVersions().iterator();
-        assertEquals( new BlobKey( "a" ), iterator.next().getBlobKey() );
-        assertEquals( new BlobKey( "b" ), iterator.next().getBlobKey() );
-        assertEquals( new BlobKey( "c" ), iterator.next().getBlobKey() );
+        assertEquals( new BlobKey( "a" ), new BlobKey( iterator.next().getId().toString() ) );
+        assertEquals( new BlobKey( "b" ), new BlobKey( iterator.next().getId().toString() ) );
+        assertEquals( new BlobKey( "c" ), new BlobKey( iterator.next().getId().toString() ) );
     }
 }

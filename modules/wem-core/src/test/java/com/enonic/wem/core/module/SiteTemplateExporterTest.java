@@ -109,7 +109,7 @@ public class SiteTemplateExporterTest
             key( PageTemplateKey.from( module.getName(), new PageTemplateName( "my-page" ) ) ).
             displayName( "Main page template" ).
             config( pageTemplateConfig ).
-            canRender( ContentTypeNames.from( "article", "banner" ) ).
+            canRender( ContentTypeNames.from( "mymodule-1.0.0:article", "mymodule-1.0.0:banner" ) ).
             descriptor( PageDescriptorKey.from( "mainmodule-1.0.0:landing-page" ) ).
             regions( newPageRegions().build() ).
             build();
@@ -121,7 +121,7 @@ public class SiteTemplateExporterTest
         imageTemplateConfig.addProperty( "width", Value.newLong( 3000 ) );
 
         final ContentTypeFilter contentTypeFilter =
-            newContentFilter().defaultDeny().allowContentTypes( ContentTypeNames.from( "com.enonic.intranet", "system.folder" ) ).build();
+            newContentFilter().defaultDeny().allowContentTypes( ContentTypeNames.from( "mymodule-1.0.0:com.enonic.intranet", "mymodule-1.0.0:system.folder" ) ).build();
 
         return SiteTemplate.newSiteTemplate().
             key( SiteTemplateKey.from( "Intranet-1.0.0" ) ).

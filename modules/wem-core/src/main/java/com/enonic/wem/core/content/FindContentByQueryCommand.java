@@ -32,19 +32,6 @@ final class FindContentByQueryCommand
 
         Contents contents = this.translator.fromNodes( result.getNodes() );
 
-        if ( !contents.isEmpty() && this.params.isPopulateChildren() )
-        {
-            contents = ChildContentIdsResolver.create().
-                queryService( this.queryService ).
-                translator( this.translator ).
-                blobService( this.blobService ).
-                contentTypeService( this.contentTypeService ).
-                context( this.context ).
-                nodeService( this.nodeService ).
-                build().
-                resolve( contents );
-        }
-
         return FindContentByQueryResult.create().
             contents( contents ).
             aggregations( result.getAggregations() ).
