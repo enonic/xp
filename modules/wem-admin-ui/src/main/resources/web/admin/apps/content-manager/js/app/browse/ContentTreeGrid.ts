@@ -117,7 +117,7 @@ module app.browse {
              * Filter (search) events.
              */
             ContentBrowseSearchEvent.on((event) => {
-                var contentSummaries = ContentSummary.fromJsonArray(event.getJsonModels()),
+                var contentSummaries = event.getJsonModels(),
                     compareRequest = CompareContentRequest.fromContentSummaries(contentSummaries);
 
                 compareRequest.sendAndParse().then((compareResults: CompareContentResults) => {

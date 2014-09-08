@@ -116,11 +116,11 @@ module app.browse.filter {
                             setExpand(api.rest.Expand.SUMMARY).
                             sendAndParse().done((filterSearchResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
                                 this.updateAggregations(filterSearchResult.getAggregations(), true);
-                                new ContentBrowseSearchEvent(contentQueryResult.getContentsAsJson()).fire();
+                                new ContentBrowseSearchEvent(contentQueryResult.getContents()).fire();
                             });
                     } else {
                         this.resetFacets(true, true);
-                        new ContentBrowseSearchEvent(contentQueryResult.getContentsAsJson()).fire();
+                        new ContentBrowseSearchEvent(contentQueryResult.getContents()).fire();
                     }
                 });
         }
