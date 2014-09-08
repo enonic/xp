@@ -17,6 +17,12 @@
 
   <dependencies>
     <dependency>
+      <groupId>javax.inject</groupId>
+      <artifactId>javax.inject</artifactId>
+      <version>1</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.core</artifactId>
       <version>5.0.0</version>
@@ -39,21 +45,21 @@
     <dependency>
       <groupId>org.ops4j.pax.exam</groupId>
       <artifactId>pax-exam-container-native</artifactId>
-      <version>3.5.0</version>
+      <version>4.2.0</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.ops4j.pax.exam</groupId>
       <artifactId>pax-exam-link-mvn</artifactId>
-      <version>3.5.0</version>
+      <version>4.2.0</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.ops4j.pax.exam</groupId>
       <artifactId>pax-exam-junit4</artifactId>
-      <version>3.5.0</version>
+      <version>4.2.0</version>
       <scope>test</scope>
     </dependency>
 
@@ -62,6 +68,18 @@
       <artifactId>org.apache.felix.framework</artifactId>
       <version>4.4.0</version>
       <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>${pom.groupId}</groupId>
+      <artifactId>wem-api</artifactId>
+      <version>${pom.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>${pom.groupId}</groupId>
+      <artifactId>wem-guice</artifactId>
+      <version>${pom.version}</version>
     </dependency>
   </dependencies>
 
