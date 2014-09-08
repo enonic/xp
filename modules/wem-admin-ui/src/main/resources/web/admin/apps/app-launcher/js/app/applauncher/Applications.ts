@@ -12,7 +12,6 @@ module app.launcher {
             new api.app.Application('profile', 'Profile', 'PF', api.util.getAdminUri('common/images/tsi-profil.jpg'), Applications.PROFILE_DESC, null, true),
             new api.app.Application('content-manager', 'Content Manager', 'CM', 'database', Applications.DESCR1),
             new api.app.Application('relationships', 'Relationships', 'RS', 'share2', Applications.DESCR2),
-            new api.app.Application('schema-manager', 'Schema Manager', 'SC', 'signup', Applications.DESCR4),
 
             new api.app.Application('store-manager', 'Store Manager', 'ST', 'cart', Applications.DESCR4),
             //new api.app.Application('segment-builder', 'Segment Builder', 'SB', 'pie2', Applications.DESCR3),
