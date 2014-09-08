@@ -1,18 +1,30 @@
 package com.enonic.wem.portal.internal.script.lib;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.wem.script.ScriptLibrary;
+
+@Singleton
+@Deprecated
 public final class SystemScriptBean
+    implements ScriptLibrary
 {
     private final static Logger LOG = LoggerFactory.getLogger( SystemScriptBean.class );
 
-    public final static String NAME = "system";
+    private final static String NAME = "system";
 
     @Inject
     protected ContentServiceScriptBean contentService;
+
+    @Override
+    public String getName()
+    {
+        return NAME;
+    }
 
     public Object getMustache()
     {

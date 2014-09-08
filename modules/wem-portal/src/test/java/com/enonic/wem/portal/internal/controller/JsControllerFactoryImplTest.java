@@ -4,8 +4,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.portal.internal.postprocess.PostProcessor;
-import com.enonic.wem.script.ScriptRunner;
-import com.enonic.wem.script.ScriptRunnerFactory;
+import com.enonic.wem.script.ScriptExports;
+import com.enonic.wem.script.ScriptService;
 
 import static org.junit.Assert.*;
 
@@ -16,10 +16,10 @@ public class JsControllerFactoryImplTest
     {
         final JsControllerFactoryImpl factory = new JsControllerFactoryImpl();
         factory.postProcessor = Mockito.mock( PostProcessor.class );
-        factory.scriptRunnerFactory = Mockito.mock( ScriptRunnerFactory.class );
+        factory.scriptService = Mockito.mock( ScriptService.class );
 
-        final ScriptRunner runner = Mockito.mock( ScriptRunner.class );
-        Mockito.when( factory.scriptRunnerFactory.newRunner() ).thenReturn( runner );
+        final ScriptExports exports = Mockito.mock( ScriptExports.class );
+        Mockito.when( factory.scriptService.execute( Mockito.any() ) ).thenReturn( exports );
 
         final JsController controller = factory.newController();
         assertNotNull( controller );

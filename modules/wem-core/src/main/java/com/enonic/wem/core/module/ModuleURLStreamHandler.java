@@ -37,7 +37,8 @@ public final class ModuleURLStreamHandler
         final ResourceKey key = ResourceKey.from( path );
         final Bundle bundle = findBundle( key.getModule() );
 
-        return bundle.getResource( key.getPath() ).openConnection();
+        final URL resolvedUrl = bundle.getResource( key.getPath() );
+        return resolvedUrl != null ? resolvedUrl.openConnection() : null;
     }
 
     // TODO: Need to cache this in some way. Use a modulekeyresolver?

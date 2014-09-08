@@ -1,32 +1,20 @@
 package com.enonic.wem.portal.internal.controller;
 
-import java.io.File;
-import java.io.FileOutputStream;
-
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
-
-import com.google.common.base.Charsets;
-import com.google.common.io.ByteSource;
 
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceUrlTestHelper;
 import com.enonic.wem.portal.PortalResponse;
 import com.enonic.wem.portal.internal.postprocess.PostProcessor;
-import com.enonic.wem.script.ScriptRunner;
+import com.enonic.wem.script.internal.ScriptEnvironment;
+import com.enonic.wem.script.internal.v2.ScriptServiceImpl;
 
 import static org.junit.Assert.*;
 
 public class JsControllerImplTest
 {
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
-
-    private ScriptRunner scriptRunner;
-
     private JsControllerImpl controller;
 
     private PostProcessor postProcessor;
@@ -37,28 +25,17 @@ public class JsControllerImplTest
 
     private PortalResponse response;
 
-    private void writeFile( final File dir, final String path, final String value )
-        throws Exception
-    {
-        final File file = new File( dir, path );
-        file.getParentFile().mkdirs();
-        ByteSource.wrap( value.getBytes( Charsets.UTF_8 ) ).copyTo( new FileOutputStream( file ) );
-    }
-
     @Before
     public void setup()
         throws Exception
     {
-        final File modulesDir = this.temporaryFolder.newFolder( "modules" );
-        ResourceUrlTestHelper.mockModuleScheme().modulesDir( modulesDir );
-
-        writeFile( modulesDir, "mymodule-1.0.0/service/test/get.js", "1+1" );
+        ResourceUrlTestHelper.mockModuleScheme().modulesClassLoader( getClass().getClassLoader() );
 
         this.context = new JsContext();
         this.response = this.context.getResponse();
 
-        this.scriptRunner = Mockito.mock( ScriptRunner.class );
-        this.controller = new JsControllerImpl( this.scriptRunner );
+        final ScriptEnvironment environment = Mockito.mock( ScriptEnvironment.class );
+        this.controller = new JsControllerImpl( new ScriptServiceImpl( environment ) );
 
         this.postProcessor = Mockito.mock( PostProcessor.class );
         this.controller.postProcessor( this.postProcessor );
@@ -78,7 +55,6 @@ public class JsControllerImplTest
         this.controller.execute();
 
         assertEquals( JsHttpResponse.STATUS_OK, this.response.getStatus() );
-        Mockito.verify( this.scriptRunner ).execute();
     }
 
     @Test
@@ -89,7 +65,6 @@ public class JsControllerImplTest
         this.controller.execute();
 
         assertEquals( JsHttpResponse.STATUS_OK, this.response.getStatus() );
-        Mockito.verify( this.scriptRunner ).execute();
         Mockito.verify( this.postProcessor ).processResponse( this.context );
     }
 

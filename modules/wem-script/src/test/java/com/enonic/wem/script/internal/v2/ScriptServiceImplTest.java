@@ -7,6 +7,7 @@ import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceProblemException;
 import com.enonic.wem.api.resource.ResourceUrlRegistry;
 import com.enonic.wem.api.resource.ResourceUrlTestHelper;
+import com.enonic.wem.script.AssertScriptLibrary;
 import com.enonic.wem.script.ScriptExports;
 import com.enonic.wem.script.ScriptService;
 import com.enonic.wem.script.SimpleScriptEnvironment;

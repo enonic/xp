@@ -1,4 +1,4 @@
-package com.enonic.wem.script.internal.v2;
+package com.enonic.wem.script;
 
 import org.junit.Assert;
 
@@ -10,7 +10,7 @@ public final class AssertScriptLibrary
     @Override
     public String getName()
     {
-        return "lib/assert";
+        return "assert";
     }
 
     public void assertEquals( final Object expected, final Object actual )
