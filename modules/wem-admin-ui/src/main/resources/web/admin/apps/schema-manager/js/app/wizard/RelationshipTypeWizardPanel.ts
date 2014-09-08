@@ -23,6 +23,8 @@ module app.wizard {
 
         private persistedConfig: string;
 
+        private relationshipTypeWizardActions : RelationshipTypeWizardActions;
+
         /**
          * Whether constructor is being currently executed or not.
          */
@@ -45,13 +47,13 @@ module app.wizard {
                                                          event.getUploadItem().getMimeType()));
             });
 
-            var actions = new RelationshipTypeWizardActions(this);
+            this.relationshipTypeWizardActions = new RelationshipTypeWizardActions(this);
 
             var mainToolbar = new RelationshipTypeWizardToolbar({
-                saveAction: actions.getSaveAction(),
-                duplicateAction: actions.getDuplicateAction(),
-                deleteAction: actions.getDeleteAction(),
-                closeAction: actions.getCloseAction()
+                saveAction: this.relationshipTypeWizardActions.getSaveAction(),
+                duplicateAction: this.relationshipTypeWizardActions.getDuplicateAction(),
+                deleteAction: this.relationshipTypeWizardActions.getDeleteAction(),
+                closeAction: this.relationshipTypeWizardActions.getCloseAction()
             });
 
             this.relationShipTypeWizardHeader.setName(RelationshipTypeWizardPanel.NEW_WIZARD_HEADER);
@@ -65,7 +67,7 @@ module app.wizard {
                 persistedItem: persistedRelationshipType,
                 formIcon: this.formIcon,
                 mainToolbar: mainToolbar,
-                actions: actions,
+                actions: this.relationshipTypeWizardActions,
                 header: this.relationShipTypeWizardHeader,
                 steps: steps
             }, () => {
@@ -175,6 +177,10 @@ module app.wizard {
                     || !api.util.isStringsEqual(api.util.removeCarriageChars(this.persistedConfig),
                         api.util.removeCarriageChars(this.relationshipTypeForm.getFormData().xml));
             }
+        }
+
+        getCloseAction() : api.ui.Action {
+            return this.relationshipTypeWizardActions.getCloseAction();
         }
     }
 }

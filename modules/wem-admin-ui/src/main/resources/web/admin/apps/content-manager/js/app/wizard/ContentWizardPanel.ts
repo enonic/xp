@@ -704,6 +704,10 @@ module app.wizard {
         getContextWindowToggler(): app.wizard.page.contextwindow.ContextWindowToggler {
             return this.contextWindowToggler;
         }
+
+        getCloseAction() : api.ui.Action {
+            return this.contentWizardActions.getCloseAction();
+        }
     }
 
 }

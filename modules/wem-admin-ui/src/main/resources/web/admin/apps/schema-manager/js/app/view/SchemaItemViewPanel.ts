@@ -30,6 +30,10 @@ module app.view {
             this.statisticsPanel.setItem(item);
         }
 
+        getCloseAction() : api.ui.Action {
+            return this.closeAction;
+        }
+
     }
 
 }

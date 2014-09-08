@@ -18,13 +18,15 @@ module api.ui.tab {
 
         private active: boolean;
 
+        private closeAction : api.ui.Action;
+
         private labelChangedListeners: {(event: TabMenuItemLabelChangedEvent):void}[] = [];
 
         private closedListeners: {(event: TabMenuItemClosedEvent):void}[] = [];
 
         private selectedListeners: {(event: TabMenuItemSelectedEvent):void}[] = [];
 
-        constructor(label: string, options?: TabMenuItemOptions) {
+        constructor(label: string, options?: TabMenuItemOptions, closeAction?: api.ui.Action) {
             super("tab-menu-item");
             if (!options) {
                 options = {};
@@ -43,10 +45,15 @@ module api.ui.tab {
                 this.prependChild(removeButton);
                 removeButton.onClicked((event: MouseEvent) => {
                     if (this.removable) {
-                        this.notifyClosedListeners(this);
+                        if(this.closeAction && this.closeAction.isEnabled()) {
+                            this.closeAction.execute();
+                        } else {
+                            this.notifyClosedListeners(this);
+                        }
                     }
                 });
             }
+            this.closeAction = closeAction;
         }
 
         setIndex(value: number) {
@@ -112,7 +119,11 @@ module api.ui.tab {
         }
 
         onClosed(listener: (event: TabMenuItemClosedEvent)=>void) {
-            this.closedListeners.push(listener);
+            if(this.closeAction) {
+                throw new Error( "Failed to set 'on closed' listener. Close action is already setted." );
+            } else {
+                this.closedListeners.push(listener);
+            }
         }
 
         unLabelChanged(listener: (event: TabMenuItemLabelChangedEvent)=>void) {

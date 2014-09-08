@@ -17,6 +17,8 @@ module app.wizard {
 
         private contentTypeForm: app.wizard.ContentTypeForm;
 
+        private contentTypeWizardActions : app.wizard.action.ContentTypeWizardActions;
+
         /**
          * Whether constructor is being currently executed or not.
          */
@@ -35,13 +37,13 @@ module app.wizard {
                 this.formIcon.setSrc(api.util.getRestUri('blob/' + this.contentTypeIcon.getBlobKey() + '?mimeType=' +
                                                          event.getUploadItem().getMimeType()));
             });
-            var actions = new app.wizard.action.ContentTypeWizardActions(this);
+            this.contentTypeWizardActions = new app.wizard.action.ContentTypeWizardActions(this);
 
             var mainToolbar = new ContentTypeWizardToolbar({
-                saveAction: actions.getSaveAction(),
-                duplicateAction: actions.getDuplicateAction(),
-                deleteAction: actions.getDeleteAction(),
-                closeAction: actions.getCloseAction()
+                saveAction: this.contentTypeWizardActions.getSaveAction(),
+                duplicateAction: this.contentTypeWizardActions.getDuplicateAction(),
+                deleteAction: this.contentTypeWizardActions.getDeleteAction(),
+                closeAction: this.contentTypeWizardActions.getCloseAction()
             });
 
             this.contentTypeWizardHeader.setName(ContentTypeWizardPanel.NEW_WIZARD_HEADER);
@@ -56,7 +58,7 @@ module app.wizard {
                 persistedItem: persistedContentType,
                 formIcon: this.formIcon,
                 mainToolbar: mainToolbar,
-                actions: actions,
+                actions: this.contentTypeWizardActions,
                 header: this.contentTypeWizardHeader,
                 steps: steps
             }, () => {
@@ -171,6 +173,10 @@ module app.wizard {
                     || !api.util.isStringsEqual(api.util.removeCarriageChars(this.persistedConfig),
                         api.util.removeCarriageChars(this.contentTypeForm.getFormData().xml));
             }
+        }
+
+        getCloseAction() : api.ui.Action {
+            return this.contentTypeWizardActions.getCloseAction();
         }
     }
 }

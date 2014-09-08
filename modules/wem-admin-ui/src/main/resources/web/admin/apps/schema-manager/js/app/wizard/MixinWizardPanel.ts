@@ -17,6 +17,8 @@ module app.wizard {
 
         private mixinForm: MixinForm;
 
+        private mixinWizardActions : MixinWizardActions;
+
         /**
          * Whether constructor is being currently executed or not.
          */
@@ -35,13 +37,13 @@ module app.wizard {
                 this.formIcon.setSrc(api.util.getRestUri('blob/' + this.mixinIcon.getBlobKey() + '?mimeType=' +
                                                          event.getUploadItem().getMimeType()));
             });
-            var actions = new MixinWizardActions(this);
+            this.mixinWizardActions = new MixinWizardActions(this);
 
             var mainToolbar = new MixinWizardToolbar({
-                saveAction: actions.getSaveAction(),
-                duplicateAction: actions.getDuplicateAction(),
-                deleteAction: actions.getDeleteAction(),
-                closeAction: actions.getCloseAction()
+                saveAction: this.mixinWizardActions.getSaveAction(),
+                duplicateAction: this.mixinWizardActions.getDuplicateAction(),
+                deleteAction: this.mixinWizardActions.getDeleteAction(),
+                closeAction: this.mixinWizardActions.getCloseAction()
             });
 
             this.mixinWizardHeader.setName(MixinWizardPanel.NEW_WIZARD_HEADER);
@@ -56,7 +58,7 @@ module app.wizard {
                 persistedItem: persistedMixin,
                 formIcon: this.formIcon,
                 mainToolbar: mainToolbar,
-                actions: actions,
+                actions: this.mixinWizardActions,
                 header: this.mixinWizardHeader,
                 steps: steps
             }, () => {
@@ -176,6 +178,10 @@ module app.wizard {
                     || !api.util.isStringsEqual(api.util.removeCarriageChars(this.persistedConfig),
                         api.util.removeCarriageChars(this.mixinForm.getFormData().xml));
             }
+        }
+
+        getCloseAction() : api.ui.Action{
+            return this.mixinWizardActions.getCloseAction();
         }
     }
 }

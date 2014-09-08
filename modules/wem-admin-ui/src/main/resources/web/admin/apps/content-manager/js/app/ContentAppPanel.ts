@@ -11,7 +11,6 @@ module app {
             super({
                 appBar: appBar
             });
-
             this.mask = new api.ui.mask.LoadMask(this);
 
             this.handleGlobalEvents();
@@ -119,7 +118,6 @@ module app {
                 this.selectPanel(tabMenuItem);
             } else {
                 this.mask.show();
-                tabMenuItem = new api.app.bar.AppBarTabMenuItem("[New " + contentTypeSummary.getDisplayName() + "]", tabId);
 
                 var contentWizardPanelFactory = new app.wizard.ContentWizardPanelFactory().
                     setAppBarTabId(tabId).
@@ -132,6 +130,7 @@ module app {
                 }
 
                 contentWizardPanelFactory.createForNew().then((wizard: app.wizard.ContentWizardPanel) => {
+                    tabMenuItem = new api.app.bar.AppBarTabMenuItem("[New " + contentTypeSummary.getDisplayName() + "]", tabId, false, wizard.getCloseAction());
                     this.addWizardPanel(tabMenuItem, wizard);
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
@@ -156,8 +155,8 @@ module app {
 
                 } else {
                     var tabId = api.app.bar.AppBarTabId.forView(content.getId());
-                    tabMenuItem = new api.app.bar.AppBarTabMenuItem(content.getDisplayName(), tabId);
                     var contentItemViewPanel = new app.view.ContentItemViewPanel();
+                    tabMenuItem = new api.app.bar.AppBarTabMenuItem(content.getDisplayName(), tabId, false, contentItemViewPanel.getCloseAction());
 
                     var contentItem = new api.app.view.ViewItem(content)
                         .setDisplayName(content.getDisplayName())
@@ -193,7 +192,7 @@ module app {
                         setContentToEdit(content.getContentId()).
                         createForEdit().then((wizard: app.wizard.ContentWizardPanel) => {
 
-                            tabMenuItem = new api.app.bar.AppBarTabMenuItem(content.getDisplayName(), tabId, true);
+                            tabMenuItem = new api.app.bar.AppBarTabMenuItem(content.getDisplayName(), tabId, true, wizard.getCloseAction());
                             this.addWizardPanel(tabMenuItem, wizard);
 
                             var viewTabId = api.app.bar.AppBarTabId.forView(content.getId());
