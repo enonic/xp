@@ -9,7 +9,7 @@ import com.enonic.wem.api.resource.ResourceUrlTestHelper;
 import com.enonic.wem.portal.PortalResponse;
 import com.enonic.wem.portal.internal.postprocess.PostProcessor;
 import com.enonic.wem.script.internal.ScriptEnvironment;
-import com.enonic.wem.script.internal.v2.ScriptServiceImpl;
+import com.enonic.wem.script.internal.ScriptServiceImpl;
 
 import static org.junit.Assert.*;
 

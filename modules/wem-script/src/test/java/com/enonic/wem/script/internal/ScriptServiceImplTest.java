@@ -1,4 +1,4 @@
-package com.enonic.wem.script.internal.v2;
+package com.enonic.wem.script.internal;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -11,6 +11,7 @@ import com.enonic.wem.script.AssertScriptLibrary;
 import com.enonic.wem.script.ScriptExports;
 import com.enonic.wem.script.ScriptService;
 import com.enonic.wem.script.SimpleScriptEnvironment;
+import com.enonic.wem.script.internal.ScriptServiceImpl;
 
 import static org.junit.Assert.*;
 

@@ -1,4 +1,4 @@
-package com.enonic.wem.script.internal.v2;
+package com.enonic.wem.script.internal;
 
 import java.io.IOException;
 import java.net.URL;
@@ -16,7 +16,6 @@ import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceProblemException;
 import com.enonic.wem.script.ScriptLibrary;
-import com.enonic.wem.script.internal.ScriptEnvironment;
 
 final class ScriptExecutorImpl
     implements ScriptExecutor

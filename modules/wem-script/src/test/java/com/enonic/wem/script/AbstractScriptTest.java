@@ -4,7 +4,7 @@ import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceUrlRegistry;
 import com.enonic.wem.api.resource.ResourceUrlTestHelper;
-import com.enonic.wem.script.internal.v2.ScriptServiceImpl;
+import com.enonic.wem.script.internal.ScriptServiceImpl;
 
 public abstract class AbstractScriptTest
 {

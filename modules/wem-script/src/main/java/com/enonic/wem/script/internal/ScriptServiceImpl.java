@@ -1,4 +1,4 @@
-package com.enonic.wem.script.internal.v2;
+package com.enonic.wem.script.internal;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -10,7 +10,6 @@ import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.script.ScriptExports;
 import com.enonic.wem.script.ScriptService;
-import com.enonic.wem.script.internal.ScriptEnvironment;
 
 @Singleton
 public final class ScriptServiceImpl
