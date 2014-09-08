@@ -1,6 +1,7 @@
 module api.content.form.inputtype.image {
 
     import ContentSummary = api.content.ContentSummary;
+    import ContentTypeName = api.schema.content.ContentTypeName;
     import ComboBoxConfig = api.ui.selector.combobox.ComboBoxConfig;
     import ComboBox = api.ui.selector.combobox.ComboBox;
     import ResponsiveManager = api.ui.responsive.ResponsiveManager;
@@ -284,7 +285,7 @@ module api.content.form.inputtype.image {
 
         private createImageContent(uploadItem: api.ui.uploader.UploadItem) {
 
-            new api.schema.content.GetContentTypeByNameRequest(new api.schema.content.ContentTypeName("image")).
+            new api.schema.content.GetContentTypeByNameRequest(new ContentTypeName(ContentTypeName.IMAGE)).
                 sendAndParse().
                 then((contentType: api.schema.content.ContentType) => {
 

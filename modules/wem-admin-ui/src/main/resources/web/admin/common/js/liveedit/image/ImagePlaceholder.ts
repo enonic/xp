@@ -3,6 +3,7 @@ module api.liveedit.image {
     import ImageUploadedEvent = api.liveedit.ImageUploadedEvent;
     import ImageOpenUploadDialogEvent = api.liveedit.ImageOpenUploadDialogEvent;
     import PageItemType = api.liveedit.PageItemType;
+    import ContentTypeName = api.schema.content.ContentTypeName;
 
     export class ImagePlaceholder extends api.dom.DivEl {
 
@@ -40,7 +41,7 @@ module api.liveedit.image {
 
             this.comboBox = new api.content.ContentComboBoxBuilder().
                 setMaximumOccurrences(1).
-                setAllowedContentTypes([api.schema.content.ContentTypeName.IMAGE]).
+                setAllowedContentTypes([ContentTypeName.IMAGE]).
                 setLoader(new api.content.ContentSummaryLoader()).
                 build();
             this.comboBox.addClass('image-placeholder');
@@ -69,7 +70,7 @@ module api.liveedit.image {
 
             this.imageComponentView.showLoadingSpinner();
 
-            new api.schema.content.GetContentTypeByNameRequest(new api.schema.content.ContentTypeName("image")).
+            new api.schema.content.GetContentTypeByNameRequest(new ContentTypeName(ContentTypeName.IMAGE)).
                 sendAndParse().
                 then((contentType: api.schema.content.ContentType) => {
 

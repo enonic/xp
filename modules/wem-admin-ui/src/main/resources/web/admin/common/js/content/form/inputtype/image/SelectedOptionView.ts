@@ -120,6 +120,8 @@ module api.content.form.inputtype.image {
             var contentHeight = optionHeight - this.getEl().getBorderTopWidth() - this.getEl().getBorderBottomWidth();
             if (iconHeight <= contentHeight && iconHeight !== 0) {
                 this.icon.getEl().setMarginTop((contentHeight - iconHeight) / 2 + 'px');
+            } else {
+                this.icon.getEl().setMarginTop('0px');
             }
             this.progress.getEl().setMarginTop((contentHeight - this.progress.getEl().getHeight()) / 2 + 'px');
         }
