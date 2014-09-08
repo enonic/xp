@@ -23,6 +23,11 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>wem-guice</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>wem-api</artifactId>
       <version>${project.version}</version>
       <type>test-jar</type>
@@ -60,6 +65,9 @@
         <artifactId>maven-bundle-plugin</artifactId>
         <configuration>
           <instructions>
+            <Bundle-Activator>
+              com.enonic.wem.thymeleaf.internal.ThymeleafActivator
+            </Bundle-Activator>
             <Import-Package>
               !com.sun.jdi.*,
               !org.cyberneko.html,

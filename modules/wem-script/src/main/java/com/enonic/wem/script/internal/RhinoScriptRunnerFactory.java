@@ -1,5 +1,7 @@
 package com.enonic.wem.script.internal;
 
+import javax.inject.Inject;
+
 import com.enonic.wem.script.ScriptRunner;
 import com.enonic.wem.script.ScriptRunnerFactory;
 
@@ -15,6 +17,7 @@ public final class RhinoScriptRunnerFactory
         this.compiler = new RhinoScriptCompiler();
     }
 
+    @Inject
     public void setEnvironment( final ScriptEnvironment environment )
     {
         this.environment = environment;

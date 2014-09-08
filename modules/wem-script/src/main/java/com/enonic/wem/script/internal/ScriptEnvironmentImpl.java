@@ -2,6 +2,11 @@ package com.enonic.wem.script.internal;
 
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
@@ -13,6 +18,7 @@ import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.script.ScriptContributor;
 
+@Singleton
 public final class ScriptEnvironmentImpl
     implements ScriptEnvironment, ServiceTrackerCustomizer
 {
@@ -33,17 +39,20 @@ public final class ScriptEnvironmentImpl
         this.rebuild = false;
     }
 
+    @Inject
     public void setBundleContext( final BundleContext bundleContext )
     {
         this.bundleContext = bundleContext;
     }
 
+    @PostConstruct
     public void start()
     {
         this.serviceTracker = new ServiceTracker( this.bundleContext, ScriptContributor.class.getName(), this );
         this.serviceTracker.open();
     }
 
+    @PreDestroy
     public void stop()
     {
         this.serviceTracker.close();
