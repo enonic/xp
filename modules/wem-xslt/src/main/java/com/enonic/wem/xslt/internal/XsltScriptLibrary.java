@@ -25,7 +25,7 @@ public final class XsltScriptLibrary
     @Override
     public String getName()
     {
-        return "xslt";
+        return "view/xslt";
     }
 
     public String render( final ResourceKey view, final String inputXml, final Map<String, Object> params )

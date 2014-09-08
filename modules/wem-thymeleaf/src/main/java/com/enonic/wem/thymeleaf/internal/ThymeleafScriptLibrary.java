@@ -25,7 +25,7 @@ public final class ThymeleafScriptLibrary
     @Override
     public String getName()
     {
-        return "thymeleaf";
+        return "view/thymeleaf";
     }
 
     public String render( final ResourceKey view, final Map<String, Object> params )

@@ -20,7 +20,7 @@ public final class MustacheScriptLibrary
     @Override
     public String getName()
     {
-        return "mustache";
+        return "view/mustache";
     }
 
     public String render( final ResourceKey view, final Map<String, Object> params )
