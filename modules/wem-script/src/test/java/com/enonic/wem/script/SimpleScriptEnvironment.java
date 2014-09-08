@@ -6,7 +6,7 @@ import com.google.common.collect.Maps;
 
 import com.enonic.wem.script.internal.ScriptEnvironment;
 
-final class SimpleScriptEnvironment
+public final class SimpleScriptEnvironment
     implements ScriptEnvironment
 {
     private final Map<String, ScriptLibrary> libraries;
