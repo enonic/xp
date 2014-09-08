@@ -12,12 +12,9 @@ final class RequireModuleScope
 
     private final ResourceKey resource;
 
-    private final ScriptEnvironment environment;
-
-    public RequireModuleScope( final Scriptable prototype, final ResourceKey resource, final ScriptEnvironment environment )
+    public RequireModuleScope( final Scriptable prototype, final ResourceKey resource )
     {
         this.resource = resource;
-        this.environment = environment;
         setPrototype( prototype );
     }
 
@@ -28,12 +25,6 @@ final class RequireModuleScope
 
     public ResourceKey resolveScript( final String name )
     {
-        final ResourceKey lib = this.environment.getLibrary( name );
-        if ( lib != null )
-        {
-            return lib;
-        }
-
         if ( !name.endsWith( SCRIPT_SUFFIX ) )
         {
             return resolveScript( name + SCRIPT_SUFFIX );

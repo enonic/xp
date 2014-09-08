@@ -12,7 +12,6 @@ public final class XsltActivator
         bind( XsltProcessorFactory.class ).to( XsltProcessorFactoryImpl.class );
 
         service( XsltProcessorFactory.class ).export();
-        service( XsltScriptContributor.class ).export();
         service( XsltScriptLibrary.class ).export();
     }
 }

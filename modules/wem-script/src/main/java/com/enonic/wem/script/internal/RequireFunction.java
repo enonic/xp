@@ -11,6 +11,7 @@ import org.mozilla.javascript.ScriptableObject;
 import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.wem.script.ScriptLibrary;
 
 final class RequireFunction
     extends RhinoBaseFunction
@@ -49,6 +50,12 @@ final class RequireFunction
         final RequireModuleScope moduleScope = (RequireModuleScope) thisObj;
         final String name = (String) Context.jsToJava( args[0], String.class );
 
+        final ScriptLibrary library = this.environment.getLibrary( name );
+        if ( library != null )
+        {
+            return library;
+        }
+
         final ResourceKey resource = moduleScope.resolveScript( name );
         return getExportedInterface( context, resource );
     }
@@ -83,7 +90,7 @@ final class RequireFunction
     {
         final ScriptableObject moduleObject = (ScriptableObject) context.newObject( this.nativeScope );
 
-        final Scriptable executionScope = new RequireModuleScope( this.nativeScope, resource, this.environment );
+        final Scriptable executionScope = new RequireModuleScope( this.nativeScope, resource );
         executionScope.put( EXPORTS_NAME, executionScope, exports );
         moduleObject.put( EXPORTS_NAME, moduleObject, exports );
 

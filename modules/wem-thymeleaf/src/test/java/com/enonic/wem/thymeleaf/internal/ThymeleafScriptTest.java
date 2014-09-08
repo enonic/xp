@@ -11,10 +11,8 @@ public class ThymeleafScriptTest
     @Before
     public void setUp()
     {
-        final ThymeleafScriptContributor contributor = new ThymeleafScriptContributor();
-        contributor.setProcessorFactory( new ThymeleafProcessorFactoryImpl() );
-
-        addContributor( contributor );
+        final ThymeleafScriptLibrary lib = new ThymeleafScriptLibrary( new ThymeleafProcessorFactoryImpl() );
+        addLibrary( lib );
     }
 
     @Test

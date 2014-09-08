@@ -1,10 +1,8 @@
 package com.enonic.wem.script.internal;
 
-import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.wem.script.ScriptLibrary;
 
 public interface ScriptEnvironment
 {
-    public ResourceKey getLibrary( String name );
-
-    public Object getVariable( String name );
+    public ScriptLibrary getLibrary( String name );
 }

@@ -12,7 +12,6 @@ public final class ThymeleafActivator
         bind( ThymeleafProcessorFactory.class ).to( ThymeleafProcessorFactoryImpl.class );
 
         service( ThymeleafProcessorFactory.class ).export();
-        service( ThymeleafScriptContributor.class ).export();
         service( ThymeleafScriptLibrary.class ).export();
     }
 }

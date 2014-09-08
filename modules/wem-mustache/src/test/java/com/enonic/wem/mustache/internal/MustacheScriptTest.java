@@ -11,10 +11,10 @@ public class MustacheScriptTest
     @Before
     public void setUp()
     {
-        final MustacheScriptContributor contributor = new MustacheScriptContributor();
-        contributor.setProcessorFactory( new MustacheProcessorFactoryImpl() );
+        final MustacheScriptLibrary lib = new MustacheScriptLibrary();
+        lib.processorFactory = new MustacheProcessorFactoryImpl();
 
-        addContributor( contributor );
+        addLibrary( lib );
     }
 
     @Test

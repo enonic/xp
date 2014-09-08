@@ -8,8 +8,6 @@ import com.enonic.wem.script.internal.RhinoScriptRunnerFactory;
 
 public abstract class AbstractScriptTest
 {
-    private final static ModuleKey MYLIBRARY_KEY = ModuleKey.from( "mylibrary-1.0.0" );
-
     private final static ModuleKey MYMODULE_KEY = ModuleKey.from( "mymodule-1.0.0" );
 
     private final SimpleScriptEnvironment environment;
@@ -22,9 +20,9 @@ public abstract class AbstractScriptTest
         urlRegistry.modulesClassLoader( getClass().getClassLoader() );
     }
 
-    protected final void addContributor( final ScriptContributor contributor )
+    protected final void addLibrary( final ScriptLibrary library )
     {
-        this.environment.addContributor( MYLIBRARY_KEY, contributor );
+        this.environment.addLibrary( library );
     }
 
     protected final void runTestScript( final String name )

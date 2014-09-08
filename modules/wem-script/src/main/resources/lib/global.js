@@ -1,14 +1,4 @@
 /**
- * This function returns an internal variable registered using Java.
- *
- * @param {String} name name of internal variable
- * @returns {Object} a Java object representing the internal variable
- */
-function __(name) {
-    // Do nothing. Only a skeleton for documentation.
-}
-
-/**
  * This function imports another module using CommonJS require specification.
  *
  * @param {String} name name of module

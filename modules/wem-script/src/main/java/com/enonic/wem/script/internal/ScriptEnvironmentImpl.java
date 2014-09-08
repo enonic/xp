@@ -14,17 +14,13 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
 import com.google.common.collect.Maps;
 
-import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.script.ScriptContributor;
+import com.enonic.wem.script.ScriptLibrary;
 
 @Singleton
 public final class ScriptEnvironmentImpl
     implements ScriptEnvironment, ServiceTrackerCustomizer
 {
-    private final Map<String, ResourceKey> libraries;
-
-    private final Map<String, Object> variables;
+    private final Map<String, ScriptLibrary> libraries;
 
     private BundleContext bundleContext;
 
@@ -35,7 +31,6 @@ public final class ScriptEnvironmentImpl
     public ScriptEnvironmentImpl()
     {
         this.libraries = Maps.newHashMap();
-        this.variables = Maps.newHashMap();
         this.rebuild = false;
     }
 
@@ -48,7 +43,7 @@ public final class ScriptEnvironmentImpl
     @PostConstruct
     public void start()
     {
-        this.serviceTracker = new ServiceTracker( this.bundleContext, ScriptContributor.class.getName(), this );
+        this.serviceTracker = new ServiceTracker( this.bundleContext, ScriptLibrary.class.getName(), this );
         this.serviceTracker.open();
     }
 
@@ -59,17 +54,10 @@ public final class ScriptEnvironmentImpl
     }
 
     @Override
-    public ResourceKey getLibrary( final String name )
+    public ScriptLibrary getLibrary( final String name )
     {
         rebuildIfNeeded();
         return this.libraries.get( name );
-    }
-
-    @Override
-    public Object getVariable( final String name )
-    {
-        rebuildIfNeeded();
-        return this.variables.get( name );
     }
 
     @Override
@@ -104,8 +92,7 @@ public final class ScriptEnvironmentImpl
 
     private synchronized void rebuildStructures()
     {
-        this.variables.clear();
-
+        this.libraries.clear();
         for ( final ServiceReference reference : this.serviceTracker.getServiceReferences() )
         {
             rebuildStructures( reference );
@@ -114,22 +101,10 @@ public final class ScriptEnvironmentImpl
 
     private void rebuildStructures( final ServiceReference reference )
     {
-        final ModuleKey moduleKey = ModuleKey.from( reference.getBundle() );
-        final ScriptContributor contributor = (ScriptContributor) this.bundleContext.getService( reference );
-
-        if ( contributor != null )
+        final ScriptLibrary library = (ScriptLibrary) this.bundleContext.getService( reference );
+        if ( library != null )
         {
-            rebuildStructures( moduleKey, contributor );
-        }
-    }
-
-    private void rebuildStructures( final ModuleKey moduleKey, final ScriptContributor contributor )
-    {
-        this.variables.putAll( contributor.getVariables() );
-
-        for ( final Map.Entry<String, String> library : contributor.getLibraries().entrySet() )
-        {
-            this.libraries.put( library.getKey(), ResourceKey.from( moduleKey, library.getValue() ) );
+            this.libraries.put( library.getName(), library );
         }
     }
 }
