@@ -9,7 +9,7 @@ module app.browse.filter {
             this.model = model || [];
         }
 
-        getJsonModels(): api.content.ContentSummary[] {
+        getContent(): api.content.ContentSummary[] {
             return this.model;
         }
 
