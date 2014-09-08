@@ -3,6 +3,9 @@ package com.enonic.wem.core.schema;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -53,12 +56,14 @@ public final class SchemaRegistryImpl
         this.bundleContext = bundleContext;
     }
 
+    @PostConstruct
     public void start()
     {
         this.serviceTracker = new ServiceTracker( this.bundleContext, SchemaProvider.class.getName(), this );
         this.serviceTracker.open();
     }
 
+    @PreDestroy
     public void stop()
     {
         this.serviceTracker.close();

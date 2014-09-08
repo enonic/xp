@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -39,6 +41,7 @@ public final class ResourceLocator
         this.resourcesDevDir = config.getResourcesDevDir();
     }
 
+    @PostConstruct
     public void start()
     {
         this.context.addBundleListener( this );
@@ -48,6 +51,7 @@ public final class ResourceLocator
         }
     }
 
+    @PreDestroy
     public void stop()
     {
         this.context.removeBundleListener( this );

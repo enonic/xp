@@ -2,6 +2,7 @@ package com.enonic.wem.core.initializer;
 
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
@@ -10,11 +11,8 @@ import org.slf4j.LoggerFactory;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexService;
-import com.enonic.wem.core.lifecycle.LifecycleBean;
-import com.enonic.wem.core.lifecycle.LifecycleStage;
 
 final class StartupInitializerImpl
-    extends LifecycleBean
     implements StartupInitializer
 {
     private final static Logger LOG = LoggerFactory.getLogger( StartupInitializerImpl.class );
@@ -25,23 +23,11 @@ final class StartupInitializerImpl
     @Inject
     protected ContentService contentService;
 
-    public StartupInitializerImpl()
-    {
-        super( LifecycleStage.L5 );
-    }
-
-    @Override
-    protected void doStart()
+    @PostConstruct
+    public void start()
         throws Exception
     {
         initialize( false );
-    }
-
-    @Override
-    protected void doStop()
-        throws Exception
-    {
-        // Do nothing
     }
 
     public void initialize( final boolean reinit )

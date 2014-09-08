@@ -57,23 +57,11 @@ public abstract class GuiceActivator
             module( this );
 
         this.manager.activate();
-        doStart();
     }
 
     private void deactivate()
         throws Exception
     {
         this.manager.deactivate();
-        doStop();
-    }
-
-    protected void doStart()
-        throws Exception
-    {
-    }
-
-    protected void doStop()
-        throws Exception
-    {
     }
 }
