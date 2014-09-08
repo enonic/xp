@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.wem.api.resource.ResourceProblemException;
 import com.enonic.wem.api.resource.ResourceUrlRegistry;
 import com.enonic.wem.api.resource.ResourceUrlTestHelper;
 import com.enonic.wem.script.ScriptExports;
@@ -86,5 +87,42 @@ public class ScriptServiceImplTest
         assertNotNull( exports );
         assertSame( script, exports.getScript() );
         assertEquals( ResourceKey.from( "other-1.0.0:/util.js" ), exports.executeMethod( "test", "util.js" ) );
+    }
+
+    @Test
+    public void testCompileError()
+    {
+        final ResourceKey script = ResourceKey.from( "mymodule-1.0.0:/error/error-test.js" );
+
+        try
+        {
+            this.service.execute( script );
+            fail( "Should throw ResourceProblemException" );
+        }
+        catch ( final ResourceProblemException e )
+        {
+            assertEquals( 1, e.getLineNumber() );
+            assertEquals( script, e.getResource() );
+        }
+    }
+
+    @Test
+    public void testRuntimeError()
+    {
+        final ResourceKey script = ResourceKey.from( "mymodule-1.0.0:/error/error-in-export-test.js" );
+        final ScriptExports exports = this.service.execute( script );
+
+        assertNotNull( exports );
+
+        try
+        {
+            exports.executeMethod( "hello" );
+            fail( "Should throw ResourceProblemException" );
+        }
+        catch ( final ResourceProblemException e )
+        {
+            assertEquals( 1, e.getLineNumber() );
+            assertEquals( ResourceKey.from( "mymodule-1.0.0:/error/error-test.js" ), e.getResource() );
+        }
     }
 }

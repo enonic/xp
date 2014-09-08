@@ -14,6 +14,7 @@ import com.google.common.io.Resources;
 
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.wem.api.resource.ResourceProblemException;
 import com.enonic.wem.script.ScriptLibrary;
 import com.enonic.wem.script.internal.ScriptEnvironment;
 
@@ -50,12 +51,13 @@ final class ScriptExecutorImpl
             final Resource resource = Resource.from( script );
             final String source = resource.readString();
 
+            bindings.put( ScriptEngine.FILENAME, script.toString() );
             this.engine.eval( this.globalScript, bindings );
             this.engine.eval( source, bindings );
         }
         catch ( final ScriptException e )
         {
-            throw Throwables.propagate( e );
+            throw handleException( e );
         }
     }
 
@@ -80,9 +82,13 @@ final class ScriptExecutorImpl
             return this.invocable.invokeMethod( scope, name, args );
 
         }
-        catch ( final NoSuchMethodException | ScriptException e )
+        catch ( final NoSuchMethodException e )
         {
-            throw Throwables.propagate( e );
+            return null;
+        }
+        catch ( final ScriptException e )
+        {
+            throw handleException( e );
         }
     }
 
@@ -90,5 +96,14 @@ final class ScriptExecutorImpl
     public ScriptLibrary getLibrary( final String name )
     {
         return this.environment.getLibrary( name );
+    }
+
+    private ResourceProblemException handleException( final ScriptException e )
+    {
+        final ResourceProblemException.Builder builder = ResourceProblemException.newBuilder();
+        builder.cause( e.getCause() );
+        builder.lineNumber( e.getLineNumber() );
+        builder.resource( ResourceKey.from( e.getFileName() ) );
+        return builder.build();
     }
 }
