@@ -1,3 +1,4 @@
 node_modules
 tscommand*tmp.txt
 _all.*
+src/main/resources/web/dev/test/coverage
