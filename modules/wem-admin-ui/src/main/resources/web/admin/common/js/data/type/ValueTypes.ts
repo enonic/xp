@@ -15,6 +15,8 @@ module api.data.type {
 
         static LOCAL_DATE = new LocalDateValueType();
 
+        static LOCAL_TIME = new LocalTimeValueType();
+
         static LOCAL_DATE_TIME = new LocalDateTimeValueType();
 
         static DATE_TIME = new ValueType("DateTime");
@@ -37,6 +39,7 @@ module api.data.type {
             ValueTypes.HTML_PART,
             ValueTypes.XML,
             ValueTypes.LOCAL_DATE,
+            ValueTypes.LOCAL_TIME,
             ValueTypes.LOCAL_DATE_TIME,
             ValueTypes.DATE_TIME,
             ValueTypes.CONTENT_ID,

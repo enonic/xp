@@ -6,6 +6,10 @@ module api.util {
             return isNaN(value.getTime());
         }
 
+        public static padNumber(value: number, pad: number): string {
+            return Array(pad - String(value).length + 1).join('0') + value;
+        }
+
         public static parseUTCDate(value: string): Date {
 
             var parsedYear: number = Number(value.substring(0, 4));
