@@ -200,17 +200,7 @@ module app.wizard {
                     this.getSplitPanel().addClass("prerendered");
                 }
 
-                this.onShown((event: api.dom.ElementShownEvent) => {
-                    if (this.getPersistedItem()) {
-                        app.Router.setHash("edit/" + this.getPersistedItem().getId());
-                    } else {
-                        app.Router.setHash("new/" + this.contentType.getName());
-                    }
-                    //Set split panel default
-                    this.contentWizardActions.getShowSplitEditAction().execute();
-                });
-
-                ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
+                var responsiveItem = ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
                     if (this.isVisible()) {
                         this.updateStickyToolbar();
                         if (item.isInRangeOrSmaller(ResponsiveRanges._720_960)) {
@@ -226,6 +216,17 @@ module app.wizard {
 
                 this.onRemoved((event) => {
                     ResponsiveManager.unAvailableSizeChanged(this);
+                });
+
+                this.onShown((event: api.dom.ElementShownEvent) => {
+                    if (this.getPersistedItem()) {
+                        app.Router.setHash("edit/" + this.getPersistedItem().getId());
+                    } else {
+                        app.Router.setHash("new/" + this.contentType.getName());
+                    }
+                    //Set split panel default
+                    this.contentWizardActions.getShowSplitEditAction().execute();
+                    responsiveItem.update();
                 });
 
                 this.constructing = false;
