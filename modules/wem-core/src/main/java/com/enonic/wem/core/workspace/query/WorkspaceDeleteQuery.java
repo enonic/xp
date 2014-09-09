@@ -1,18 +1,23 @@
 package com.enonic.wem.core.workspace.query;
 
 import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.Workspace;
 
 public class WorkspaceDeleteQuery
     extends AbstractWorkspaceQuery
 {
     private EntityId entityId;
 
-    public WorkspaceDeleteQuery( final Workspace workspace, final EntityId entityId )
+    private WorkspaceDeleteQuery( Builder builder )
     {
-        super( workspace );
-        this.entityId = entityId;
+        super( builder );
+        entityId = builder.entityId;
     }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
 
     public EntityId getEntityId()
     {
@@ -51,5 +56,27 @@ public class WorkspaceDeleteQuery
         int result = super.hashCode();
         result = 31 * result + entityId.hashCode();
         return result;
+    }
+
+    public static class Builder
+        extends AbstractWorkspaceQuery.Builder<Builder>
+    {
+        private EntityId entityId;
+
+        private Builder()
+        {
+            super();
+        }
+
+        public Builder entityId( EntityId entityId )
+        {
+            this.entityId = entityId;
+            return this;
+        }
+
+        public WorkspaceDeleteQuery build()
+        {
+            return new WorkspaceDeleteQuery( this );
+        }
     }
 }

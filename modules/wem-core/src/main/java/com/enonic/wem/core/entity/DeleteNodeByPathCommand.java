@@ -24,7 +24,11 @@ final class DeleteNodeByPathCommand
     {
         final Workspace workspace = this.context.getWorkspace();
 
-        final NodeVersionId version = this.workspaceService.getByPath( new WorkspacePathQuery( workspace, this.nodePath ) );
+        final NodeVersionId version = this.workspaceService.getByPath( WorkspacePathQuery.create().
+            workspace( workspace ).
+            repository( this.context.getRepository() ).
+            nodePath( this.nodePath ).
+            build() );
 
         if ( version == null )
         {
@@ -35,7 +39,11 @@ final class DeleteNodeByPathCommand
 
         doDeleteChildren( nodeToDelete, workspace );
 
-        this.workspaceService.delete( new WorkspaceDeleteQuery( workspace, nodeToDelete.id() ) );
+        this.workspaceService.delete( WorkspaceDeleteQuery.create().
+            workspace( workspace ).
+            repository( this.context.getRepository() ).
+            entityId( nodeToDelete.id() ).
+            build() );
 
         this.indexService.delete( nodeToDelete.id(), workspace );
 

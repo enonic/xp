@@ -3,13 +3,15 @@ package com.enonic.wem.core.workspace.compare.query;
 import com.enonic.wem.api.entity.Workspace;
 
 public class CompareWorkspacesQuery
+    extends AbstractCompareQuery
 {
     private final Workspace source;
 
     private final Workspace target;
 
-    private CompareWorkspacesQuery( Builder builder )
+    private CompareWorkspacesQuery( final Builder builder )
     {
+        super( builder );
         source = builder.source;
         target = builder.target;
     }
@@ -30,14 +32,11 @@ public class CompareWorkspacesQuery
     }
 
     public static final class Builder
+        extends AbstractCompareQuery.Builder<Builder>
     {
         private Workspace source;
 
         private Workspace target;
-
-        private Builder()
-        {
-        }
 
         public Builder source( Workspace source )
         {

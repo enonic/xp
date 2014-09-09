@@ -6,18 +6,23 @@ import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.NodePaths;
-import com.enonic.wem.api.entity.Workspace;
 
 public class WorkspacePathsQuery
     extends AbstractWorkspaceQuery
 {
     private final NodePaths nodePaths;
 
-    public WorkspacePathsQuery( final Workspace workspace, final NodePaths nodePaths )
+    private WorkspacePathsQuery( final Builder builder )
     {
-        super( workspace );
-        this.nodePaths = nodePaths;
+        super( builder );
+        nodePaths = builder.nodePaths;
     }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
 
     public Set<String> getNodePathsAsStrings()
     {
@@ -30,4 +35,26 @@ public class WorkspacePathsQuery
 
         return nodePathsAsStrings;
     }
+
+    public static final class Builder
+        extends AbstractWorkspaceQuery.Builder<Builder>
+    {
+        private NodePaths nodePaths;
+
+        private Builder()
+        {
+        }
+
+        public Builder nodePaths( NodePaths nodePaths )
+        {
+            this.nodePaths = nodePaths;
+            return this;
+        }
+
+        public WorkspacePathsQuery build()
+        {
+            return new WorkspacePathsQuery( this );
+        }
+    }
 }
+

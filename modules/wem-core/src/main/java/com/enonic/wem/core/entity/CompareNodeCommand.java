@@ -34,7 +34,12 @@ public class CompareNodeCommand
 
     public NodeComparison execute()
     {
-        return this.workspaceCompareService.compare( new CompareEntityQuery( this.id, this.context.getWorkspace(), this.target ) );
+        return this.workspaceCompareService.compare( CompareEntityQuery.create().
+            entityId( this.id ).
+            repository( this.context.getRepository() ).
+            source( this.context.getWorkspace() ).
+            target( this.target ).
+            build() );
     }
 
     public static class Builder

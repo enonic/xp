@@ -54,6 +54,7 @@ public class PushNodeCommandTest
             nodeVersionId( currentVersion ).
             parentPath( NodePath.ROOT ).
             path( NodePath.newNodePath( NodePath.ROOT, "myname" ).build() ).
+            repository( testContext.getRepository() ).
             build() ) );
 
         Mockito.verify( this.indexService ).index( publishedNode, targetWorkspace );

@@ -1,18 +1,23 @@
 package com.enonic.wem.core.workspace.query;
 
 import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.Workspace;
 
 public class WorkspaceIdQuery
     extends AbstractWorkspaceQuery
 {
     private final EntityId entityId;
 
-    public WorkspaceIdQuery( final Workspace workspace, final EntityId entityId )
+    private WorkspaceIdQuery( Builder builder )
     {
-        super( workspace );
-        this.entityId = entityId;
+        super( builder );
+        entityId = builder.entityId;
     }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
 
     public EntityId getEntityId()
     {
@@ -52,6 +57,27 @@ public class WorkspaceIdQuery
         int result = super.hashCode();
         result = 31 * result + ( entityId != null ? entityId.hashCode() : 0 );
         return result;
+    }
+
+    public static final class Builder
+        extends AbstractWorkspaceQuery.Builder<Builder>
+    {
+        private EntityId entityId;
+
+        private Builder()
+        {
+        }
+
+        public Builder entityId( EntityId entityId )
+        {
+            this.entityId = entityId;
+            return this;
+        }
+
+        public WorkspaceIdQuery build()
+        {
+            return new WorkspaceIdQuery( this );
+        }
     }
 }
 

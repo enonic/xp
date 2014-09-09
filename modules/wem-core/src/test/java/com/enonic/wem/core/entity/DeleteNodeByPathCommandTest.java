@@ -86,7 +86,10 @@ public class DeleteNodeByPathCommandTest
         final NodeVersionId childVersionId = NodeVersionId.from( "child-node-version" );
 
         // Mock fetching of nodeToDelete
-        Mockito.when( this.workspaceService.getByPath( new WorkspacePathQuery( workspace, nodeToDelete.path() ) ) ).
+        Mockito.when( this.workspaceService.getByPath( WorkspacePathQuery.create().
+            workspace( workspace ).
+            repository( testContext.getRepository() ).
+            nodePath( nodeToDelete.path() ).build() ) ).
             thenReturn( parentVersionId );
         Mockito.when( this.nodeDao.getByVersionId( parentVersionId ) ).
             thenReturn( nodeToDelete );
@@ -95,13 +98,21 @@ public class DeleteNodeByPathCommandTest
         final NodeVersionIds childVersions = NodeVersionIds.create().
             add( childVersionId ).
             build();
-        Mockito.when( this.workspaceService.findByParent( new WorkspaceParentQuery( workspace, nodeToDelete.path() ) ) ).
+        Mockito.when( this.workspaceService.findByParent( WorkspaceParentQuery.create().
+            workspace( workspace ).
+            repository( testContext.getRepository() ).
+            parentPath( nodeToDelete.path() ).
+            build() ) ).
             thenReturn( childVersions );
         Mockito.when( this.nodeDao.getByVersionIds( childVersions ) ).
             thenReturn( Nodes.from( childNode ) );
 
         // Mock empty result from child of nodeToDelete getByParent
-        Mockito.when( this.workspaceService.findByParent( new WorkspaceParentQuery( workspace, childNode.path() ) ) ).
+        Mockito.when( this.workspaceService.findByParent( WorkspaceParentQuery.create().
+            workspace( workspace ).
+            repository( testContext.getRepository() ).
+            parentPath( childNode.path() ).
+            build() ) ).
             thenReturn( NodeVersionIds.empty() );
 
         // Exercise
@@ -114,8 +125,16 @@ public class DeleteNodeByPathCommandTest
 
         deleteNode.execute();
 
-        verify( workspaceService ).delete( new WorkspaceDeleteQuery( workspace, nodeToDelete.id() ) );
-        verify( workspaceService ).delete( new WorkspaceDeleteQuery( workspace, childNode.id() ) );
+        verify( workspaceService ).delete( WorkspaceDeleteQuery.create().
+            workspace( workspace ).
+            repository( testContext.getRepository() ).
+            entityId( nodeToDelete.id() ).
+            build() );
+        verify( workspaceService ).delete( WorkspaceDeleteQuery.create().
+            workspace( workspace ).
+            repository( testContext.getRepository() ).
+            entityId( childNode.id() ).
+            build() );
         verify( indexService ).delete( nodeToDelete.id(), workspace );
         verify( indexService ).delete( childNode.id(), workspace );
     }

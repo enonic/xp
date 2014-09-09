@@ -51,7 +51,10 @@ public class RenameNodeCommandTest
         final Workspace workspace = testContext.getWorkspace();
 
         // Mock the fetching of the node to be renamed
-        when( this.workspaceService.getCurrentVersion( new WorkspaceIdQuery( workspace, nodeId ) ) ).
+        when( this.workspaceService.getCurrentVersion( WorkspaceIdQuery.create().
+            workspace( workspace ).
+            repository( testContext.getRepository() ).
+            entityId( nodeId ).build() ) ).
             thenReturn( nodeVersionId );
         when( this.nodeDao.getByVersionId( nodeVersionId ) ).
             thenReturn( nodeToBeRenamed );
@@ -59,7 +62,11 @@ public class RenameNodeCommandTest
             thenReturn( renamedNodeVersionId );
 
         // Mock no children of the node to be renamed
-        when( workspaceService.findByParent( new WorkspaceParentQuery( workspace, nodeToBeRenamed.path() ) ) ).
+        when( workspaceService.findByParent( WorkspaceParentQuery.create().
+            workspace( workspace ).
+            repository( testContext.getRepository() ).
+            parentPath( nodeToBeRenamed.path() ).
+            build() ) ).
             thenReturn( NodeVersionIds.empty() );
 
         // Exercise

@@ -19,7 +19,11 @@ public abstract class AbstractDeleteNodeCommand
 
     protected void doDeleteChildren( final Node parent, final Workspace workspace )
     {
-        final NodeVersionIds childrenVersions = workspaceService.findByParent( new WorkspaceParentQuery( workspace, parent.path() ) );
+        final NodeVersionIds childrenVersions = workspaceService.findByParent( WorkspaceParentQuery.create().
+            workspace( workspace ).
+            repository( this.context.getRepository() ).
+            parentPath( parent.path() ).
+            build() );
 
         if ( childrenVersions.isEmpty() )
         {
@@ -35,14 +39,23 @@ public abstract class AbstractDeleteNodeCommand
             final boolean isAttachmentNode = nodeName.startsWith( ATTACHMENTS_NODE_NAME );
             if ( !isAttachmentNode )
             {
-                workspaceService.delete( new WorkspaceDeleteQuery( workspace, child.id() ) );
+                workspaceService.delete( WorkspaceDeleteQuery.create().
+                    workspace( workspace ).
+                    repository( this.context.getRepository() ).
+                    entityId( child.id() ).
+                    build() );
+
                 indexService.delete( child.id(), workspace );
                 doDeleteChildren( child, workspace );
             }
             else
             {
                 // TODO; What to do with attachment nodes?
-                workspaceService.delete( new WorkspaceDeleteQuery( workspace, child.id() ) );
+                workspaceService.delete( WorkspaceDeleteQuery.create().
+                    workspace( workspace ).
+                    repository( this.context.getRepository() ).
+                    entityId( child.id() ).
+                    build() );
             }
         }
     }

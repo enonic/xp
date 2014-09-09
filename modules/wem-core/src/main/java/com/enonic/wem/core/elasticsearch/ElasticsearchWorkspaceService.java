@@ -37,6 +37,7 @@ import com.enonic.wem.core.index.result.SearchResultEntry;
 import com.enonic.wem.core.index.result.SearchResultField;
 import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexType;
+import com.enonic.wem.core.repository.StorageNameResolver;
 import com.enonic.wem.core.workspace.WorkspaceDocument;
 import com.enonic.wem.core.workspace.WorkspaceService;
 import com.enonic.wem.core.workspace.compare.query.CompareWorkspacesQuery;
@@ -78,8 +79,8 @@ public class ElasticsearchWorkspaceService
             new WorkspaceDocumentId( workspaceDocument.getEntityId(), workspaceDocument.getWorkspace() );
 
         final IndexRequest publish = Requests.indexRequest().
-            index( WORKSPACE_INDEX.getName() ).
-            type( IndexType.NODE.getName() ).
+            index( StorageNameResolver.resolveStorageIndexName( workspaceDocument.getRepository() ) ).
+            type( IndexType.WORKSPACE.getName() ).
             source( WorkspaceXContentBuilderFactory.create( workspaceDocument ) ).
             id( workspaceDocumentId.toString() ).
             refresh( DEFAULT_REFRESH );

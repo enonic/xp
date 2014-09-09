@@ -4,6 +4,7 @@ import com.enonic.wem.api.entity.EntityIds;
 import com.enonic.wem.api.entity.Workspace;
 
 public class CompareEntitiesQuery
+    extends AbstractCompareQuery
 {
     private final EntityIds entityIds;
 
@@ -11,8 +12,9 @@ public class CompareEntitiesQuery
 
     private final Workspace target;
 
-    private CompareEntitiesQuery( Builder builder )
+    private CompareEntitiesQuery( final Builder builder )
     {
+        super( builder );
         entityIds = EntityIds.from( builder.entityIds );
         source = builder.source;
         target = builder.target;
@@ -40,16 +42,13 @@ public class CompareEntitiesQuery
 
 
     public static final class Builder
+        extends AbstractCompareQuery.Builder<Builder>
     {
         private EntityIds entityIds;
 
         private Workspace source;
 
         private Workspace target;
-
-        private Builder()
-        {
-        }
 
         public Builder setEntityIds( final EntityIds entityIds )
         {

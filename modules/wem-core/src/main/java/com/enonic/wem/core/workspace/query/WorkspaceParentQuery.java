@@ -1,18 +1,23 @@
 package com.enonic.wem.core.workspace.query;
 
 import com.enonic.wem.api.entity.NodePath;
-import com.enonic.wem.api.entity.Workspace;
 
 public class WorkspaceParentQuery
     extends AbstractWorkspaceQuery
 {
     private final NodePath parentPath;
 
-    public WorkspaceParentQuery( final Workspace workspace, final NodePath parentPath )
+    private WorkspaceParentQuery( Builder builder )
     {
-        super( workspace );
-        this.parentPath = parentPath;
+        super( builder );
+        parentPath = builder.parentPath;
     }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
 
     public String getParentPath()
     {
@@ -51,5 +56,26 @@ public class WorkspaceParentQuery
         int result = super.hashCode();
         result = 31 * result + parentPath.hashCode();
         return result;
+    }
+
+    public static final class Builder
+        extends AbstractWorkspaceQuery.Builder<Builder>
+    {
+        private NodePath parentPath;
+
+        private Builder()
+        {
+        }
+
+        public Builder parentPath( NodePath parentPath )
+        {
+            this.parentPath = parentPath;
+            return this;
+        }
+
+        public WorkspaceParentQuery build()
+        {
+            return new WorkspaceParentQuery( this );
+        }
     }
 }

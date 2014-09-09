@@ -28,8 +28,11 @@ public class FindNodesByQueryCommand
     {
         final NodeQueryResult nodeQueryResult = queryService.find( query, this.context.getWorkspace() );
 
-        final NodeVersionIds versions =
-            workspaceService.getByVersionIds( new WorkspaceIdsQuery( this.context.getWorkspace(), nodeQueryResult.getEntityIds() ) );
+        final NodeVersionIds versions = workspaceService.getByVersionIds( WorkspaceIdsQuery.create().
+            workspace( this.context.getWorkspace() ).
+            repository( this.context.getRepository() ).
+            entityIds( nodeQueryResult.getEntityIds() ).
+            build() );
 
         final Nodes nodes = NodeHasChildResolver.create().
             workspace( context.getWorkspace() ).

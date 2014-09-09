@@ -65,9 +65,17 @@ public class GetActiveNodeVersionsCommandTest
         final NodeVersion testVersion = new NodeVersion( testVersionId, Instant.now() );
         final NodeVersion prodVersion = new NodeVersion( prodVersionId, Instant.now() );
 
-        Mockito.when( this.workspaceService.getCurrentVersion( new WorkspaceIdQuery( testWorkspace, nodeId ) ) ).
+        Mockito.when( this.workspaceService.getCurrentVersion( WorkspaceIdQuery.create().
+            workspace( testWorkspace ).
+            repository( testContext.getRepository() ).
+            entityId( nodeId ).
+            build() ) ).
             thenReturn( testVersionId );
-        Mockito.when( this.workspaceService.getCurrentVersion( new WorkspaceIdQuery( prodWorkspace, nodeId ) ) ).
+        Mockito.when( this.workspaceService.getCurrentVersion( WorkspaceIdQuery.create().
+            workspace( prodWorkspace ).
+            repository( testContext.getRepository() ).
+            entityId( nodeId ).
+            build() ) ).
             thenReturn( prodVersionId );
 
         Mockito.when( this.versionService.getVersion( testVersionId ) ).
@@ -103,9 +111,17 @@ public class GetActiveNodeVersionsCommandTest
         final NodeVersionId testVersionId = NodeVersionId.from( "a" );
         final NodeVersion testVersion = new NodeVersion( testVersionId, Instant.now() );
 
-        Mockito.when( this.workspaceService.getCurrentVersion( new WorkspaceIdQuery( testWorkspace, nodeId ) ) ).
+        Mockito.when( this.workspaceService.getCurrentVersion( WorkspaceIdQuery.create().
+            workspace( testWorkspace ).
+            repository( testContext.getRepository() ).
+            entityId( nodeId ).
+            build() ) ).
             thenReturn( testVersionId );
-        Mockito.when( this.workspaceService.getCurrentVersion( new WorkspaceIdQuery( prodWorkspace, nodeId ) ) ).
+        Mockito.when( this.workspaceService.getCurrentVersion( WorkspaceIdQuery.create().
+            workspace( prodWorkspace ).
+            repository( testContext.getRepository() ).
+            entityId( nodeId ).
+            build() ) ).
             thenReturn( null );
 
         Mockito.when( this.versionService.getVersion( testVersionId ) ).thenReturn( testVersion );

@@ -69,6 +69,7 @@ final class UpdateNodeCommand
             id( updatedNode.id() ).
             nodeVersionId( updatedNodeVersionId ).
             workspace( workspace ).
+            repository( this.context.getRepository() ).
             build() );
 
         this.indexService.index( updatedNode, context.getWorkspace() );
@@ -82,7 +83,11 @@ final class UpdateNodeCommand
 
     private Node getPersistedNode( final Workspace workspace )
     {
-        final NodeVersionId currentVersionId = workspaceService.getCurrentVersion( new WorkspaceIdQuery( workspace, this.params.getId() ) );
+        final NodeVersionId currentVersionId = workspaceService.getCurrentVersion( WorkspaceIdQuery.create().
+            workspace( workspace ).
+            repository( this.context.getRepository() ).
+            entityId( this.params.getId() ).
+            build() );
 
         if ( currentVersionId == null )
         {

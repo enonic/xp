@@ -61,6 +61,7 @@ final class CreateNodeCommand
             path( newNode.path() ).
             nodeVersionId( persistedNodeVersionId ).
             workspace( this.context.getWorkspace() ).
+            repository( this.context.getRepository() ).
             build() );
 
         versionService.store( EntityVersionDocument.create().

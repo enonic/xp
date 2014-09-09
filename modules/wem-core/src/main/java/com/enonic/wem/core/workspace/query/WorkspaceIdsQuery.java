@@ -6,17 +6,21 @@ import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIds;
-import com.enonic.wem.api.entity.Workspace;
 
 public class WorkspaceIdsQuery
     extends AbstractWorkspaceQuery
 {
     private EntityIds entityIds;
 
-    public WorkspaceIdsQuery( final Workspace workspace, final EntityIds entityIds )
+    private WorkspaceIdsQuery( final Builder builder )
     {
-        super( workspace );
-        this.entityIds = entityIds;
+        super( builder );
+        entityIds = builder.entityIds;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
     }
 
     public EntityIds getEntityIds()
@@ -34,5 +38,26 @@ public class WorkspaceIdsQuery
         }
 
         return values;
+    }
+
+    public static final class Builder
+        extends AbstractWorkspaceQuery.Builder<Builder>
+    {
+        private EntityIds entityIds;
+
+        private Builder()
+        {
+        }
+
+        public Builder entityIds( EntityIds entityIds )
+        {
+            this.entityIds = entityIds;
+            return this;
+        }
+
+        public WorkspaceIdsQuery build()
+        {
+            return new WorkspaceIdsQuery( this );
+        }
     }
 }

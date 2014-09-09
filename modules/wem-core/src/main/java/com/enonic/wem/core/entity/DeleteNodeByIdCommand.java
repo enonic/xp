@@ -3,8 +3,10 @@ package com.enonic.wem.core.entity;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.api.entity.NodeVersionId;
 import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.core.workspace.query.WorkspaceDeleteQuery;
+import com.enonic.wem.core.workspace.query.WorkspaceIdQuery;
 
 final class DeleteNodeByIdCommand
     extends AbstractDeleteNodeCommand
@@ -21,11 +23,22 @@ final class DeleteNodeByIdCommand
     {
         final Workspace workspace = this.context.getWorkspace();
 
-        final Node nodeToDelete = getCurrentNodeInWorkspace( workspace, this.entityId, true );
+        final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( WorkspaceIdQuery.create().
+            workspace( workspace ).
+            repository( this.context.getRepository() ).
+            entityId( this.entityId ).
+            build() );
+
+        final Node nodeToDelete = this.nodeDao.getByVersionId( currentVersion );
 
         doDeleteChildren( nodeToDelete, workspace );
 
-        workspaceService.delete( new WorkspaceDeleteQuery( workspace, entityId ) );
+        workspaceService.delete( WorkspaceDeleteQuery.create().
+            workspace( workspace ).
+            repository( this.context.getRepository() ).
+            entityId( entityId ).
+            build() );
+
         indexService.delete( entityId, workspace );
 
         return nodeToDelete;

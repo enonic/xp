@@ -8,6 +8,7 @@ import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeVersionId;
 import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.core.workspace.WorkspaceDocument;
+import com.enonic.wem.core.workspace.query.WorkspaceIdQuery;
 
 public class PushNodeCommand
     extends AbstractNodeCommand
@@ -33,7 +34,11 @@ public class PushNodeCommand
     {
         final Workspace workspace = this.context.getWorkspace();
 
-        final NodeVersionId currentVersion = getCurrentVersionInWorkspace( workspace, this.id, true );
+        final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( WorkspaceIdQuery.create().
+            workspace( workspace ).
+            repository( this.context.getRepository() ).
+            entityId( this.id ).
+            build() );
 
         final Node currentNode = nodeDao.getByVersionId( currentVersion );
 
@@ -43,6 +48,7 @@ public class PushNodeCommand
             id( this.id ).
             path( currentNode.path() ).
             parentPath( currentNode.parent() ).
+            repository( this.context.getRepository() ).
             build() );
 
         this.indexService.index( currentNode, this.target );

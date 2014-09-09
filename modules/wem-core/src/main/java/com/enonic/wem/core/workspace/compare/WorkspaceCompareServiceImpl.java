@@ -10,6 +10,7 @@ import com.enonic.wem.api.entity.NodeComparisons;
 import com.enonic.wem.api.entity.NodeVersion;
 import com.enonic.wem.api.entity.NodeVersionId;
 import com.enonic.wem.api.entity.Workspace;
+import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.core.version.VersionService;
 import com.enonic.wem.core.workspace.WorkspaceService;
 import com.enonic.wem.core.workspace.compare.query.CompareEntitiesQuery;
@@ -36,7 +37,7 @@ public class WorkspaceCompareServiceImpl
 
         for ( final EntityId entityId : allEntitiesWithDifference )
         {
-            final NodeComparison nodeComparison = doCompareEntity( entityId, sourceWorkspace, targetWorkspace );
+            final NodeComparison nodeComparison = doCompareEntity( entityId, sourceWorkspace, targetWorkspace, query.getRepository() );
 
             builder.add( nodeComparison );
         }
@@ -54,7 +55,7 @@ public class WorkspaceCompareServiceImpl
 
         for ( final EntityId entityId : query.getEntityIds() )
         {
-            builder.add( doCompareEntity( entityId, source, target ) );
+            builder.add( doCompareEntity( entityId, source, target, query.getRepository() ) );
         }
 
         return builder.build();
@@ -63,14 +64,24 @@ public class WorkspaceCompareServiceImpl
     @Override
     public NodeComparison compare( final CompareEntityQuery query )
     {
-        return doCompareEntity( query.getEntityId(), query.getSource(), query.getTarget() );
+        return doCompareEntity( query.getEntityId(), query.getSource(), query.getTarget(), query.getRepository() );
     }
 
 
-    private NodeComparison doCompareEntity( final EntityId entityId, final Workspace sourceWorkspace, final Workspace targetWorkspace )
+    private NodeComparison doCompareEntity( final EntityId entityId, final Workspace sourceWorkspace, final Workspace targetWorkspace,
+                                            final Repository repository )
     {
-        final NodeVersionId sourceVersionId = workspaceService.getCurrentVersion( new WorkspaceIdQuery( sourceWorkspace, entityId ) );
-        final NodeVersionId targetVersionId = workspaceService.getCurrentVersion( new WorkspaceIdQuery( targetWorkspace, entityId ) );
+        final NodeVersionId sourceVersionId = workspaceService.getCurrentVersion( WorkspaceIdQuery.create().
+            workspace( sourceWorkspace ).
+            repository( repository ).
+            entityId( entityId ).
+            build() );
+
+        final NodeVersionId targetVersionId = workspaceService.getCurrentVersion( WorkspaceIdQuery.create().
+            workspace( targetWorkspace ).
+            repository( repository ).
+            entityId( entityId ).
+            build() );
 
         final NodeVersion sourceVersion = getVersion( sourceVersionId );
         final NodeVersion targetVersion = getVersion( targetVersionId );

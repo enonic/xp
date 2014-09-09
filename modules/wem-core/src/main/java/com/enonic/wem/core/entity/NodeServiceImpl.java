@@ -62,7 +62,11 @@ public class NodeServiceImpl
     @Override
     public Node getById( final EntityId id, final Context context )
     {
-        final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( new WorkspaceIdQuery( context.getWorkspace(), id ) );
+        final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( WorkspaceIdQuery.create().
+            workspace( context.getWorkspace() ).
+            repository( context.getRepository() ).
+            entityId( id ).
+            build() );
 
         if ( currentVersion == null )
         {
@@ -79,7 +83,11 @@ public class NodeServiceImpl
     @Override
     public Nodes getByIds( final EntityIds ids, final Context context )
     {
-        final NodeVersionIds versionIds = this.workspaceService.getByVersionIds( new WorkspaceIdsQuery( context.getWorkspace(), ids ) );
+        final NodeVersionIds versionIds = this.workspaceService.getByVersionIds( WorkspaceIdsQuery.create().
+            workspace( context.getWorkspace() ).
+            repository( context.getRepository() ).
+            entityIds( ids ).
+            build() );
 
         return NodeHasChildResolver.create().
             workspace( context.getWorkspace() ).
@@ -91,7 +99,11 @@ public class NodeServiceImpl
     @Override
     public Node getByPath( final NodePath path, final Context context )
     {
-        final NodeVersionId currentVersion = this.workspaceService.getByPath( new WorkspacePathQuery( context.getWorkspace(), path ) );
+        final NodeVersionId currentVersion = this.workspaceService.getByPath( WorkspacePathQuery.create().
+            workspace( context.getWorkspace() ).
+            repository( context.getRepository() ).
+            nodePath( path ).
+            build() );
 
         if ( currentVersion == null )
         {
@@ -108,7 +120,11 @@ public class NodeServiceImpl
     @Override
     public Nodes getByPaths( final NodePaths paths, final Context context )
     {
-        final NodeVersionIds versionIds = this.workspaceService.getByPaths( new WorkspacePathsQuery( context.getWorkspace(), paths ) );
+        final NodeVersionIds versionIds = this.workspaceService.getByPaths( WorkspacePathsQuery.create().
+            workspace( context.getWorkspace() ).
+            repository( context.getRepository() ).
+            nodePaths( paths ).
+            build() );
 
         return NodeHasChildResolver.create().
             workspace( context.getWorkspace() ).

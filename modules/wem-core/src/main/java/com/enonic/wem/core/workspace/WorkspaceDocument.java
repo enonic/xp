@@ -4,6 +4,7 @@ import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.NodeVersionId;
 import com.enonic.wem.api.entity.Workspace;
+import com.enonic.wem.api.repository.Repository;
 
 public class WorkspaceDocument
 {
@@ -17,6 +18,8 @@ public class WorkspaceDocument
 
     private final Workspace workspace;
 
+    private final Repository repository;
+
     private WorkspaceDocument( final Builder builder )
     {
         this.entityId = builder.entityId;
@@ -24,6 +27,7 @@ public class WorkspaceDocument
         this.parentPath = builder.parentPath;
         this.path = builder.path;
         this.workspace = builder.workspace;
+        this.repository = builder.repository;
     }
 
     public EntityId getEntityId()
@@ -51,11 +55,15 @@ public class WorkspaceDocument
         return workspace;
     }
 
+    public Repository getRepository()
+    {
+        return repository;
+    }
+
     public static Builder create()
     {
         return new Builder();
     }
-
 
     public static class Builder
     {
@@ -69,6 +77,7 @@ public class WorkspaceDocument
 
         private Workspace workspace;
 
+        private Repository repository;
 
         public Builder path( final NodePath path )
         {
@@ -97,6 +106,12 @@ public class WorkspaceDocument
         public Builder nodeVersionId( final NodeVersionId nodeVersionId )
         {
             this.nodeVersionId = nodeVersionId;
+            return this;
+        }
+
+        public Builder repository( final Repository repository )
+        {
+            this.repository = repository;
             return this;
         }
 
