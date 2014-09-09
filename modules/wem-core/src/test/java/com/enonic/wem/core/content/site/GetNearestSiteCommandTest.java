@@ -12,6 +12,9 @@ import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.Workspace;
+import com.enonic.wem.api.entity.Workspaces;
+import com.enonic.wem.api.repository.Repository;
+import com.enonic.wem.api.repository.RepositoryId;
 
 import static org.junit.Assert.*;
 
@@ -19,7 +22,15 @@ public class GetNearestSiteCommandTest
 {
     private ContentService contentService;
 
-    private final Context testContext = new Context( Workspace.from( "test" ) );
+    public final Workspace testWorkspace = Workspace.from( "test" );
+
+    private final Context testContext = Context.create().
+        workspace( testWorkspace ).
+        repository( Repository.create().
+            id( RepositoryId.from( "testing" ) ).
+            workspaces( Workspaces.from( testWorkspace ) ).
+            build() ).
+        build();
 
     @Before
     public void setUp()

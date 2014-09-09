@@ -23,7 +23,11 @@ import com.enonic.wem.core.web.servlet.ServletRequestUrlHelper;
 
 public final class ContentIconUrlResolver
 {
-    static final Context STAGE_CONTEXT = new Context( ContentConstants.WORKSPACE_STAGE );
+    protected final static Context STAGE_CONTEXT = Context.create().
+        workspace( ContentConstants.WORKSPACE_STAGE ).
+        repository( ContentConstants.CONTENT_REPO ).
+        build();
+
 
     private ContentTypeService contentTypeService;
 

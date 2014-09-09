@@ -16,6 +16,9 @@ import com.enonic.wem.api.entity.NodeVersionId;
 import com.enonic.wem.api.entity.NodeVersionIds;
 import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.entity.Workspace;
+import com.enonic.wem.api.entity.Workspaces;
+import com.enonic.wem.api.repository.Repository;
+import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.core.elasticsearch.ElasticsearchIndexService;
 import com.enonic.wem.core.entity.dao.NodeDao;
 import com.enonic.wem.core.workspace.WorkspaceService;
@@ -28,12 +31,21 @@ import static org.mockito.Mockito.verify;
 
 public class DeleteNodeByPathCommandTest
 {
-
     private NodeDao nodeDao;
 
     private ElasticsearchIndexService indexService;
 
     private WorkspaceService workspaceService;
+
+    public final Workspace testWorkspace = Workspace.from( "test" );
+
+    private final Context testContext = Context.create().
+        workspace( testWorkspace ).
+        repository( Repository.create().
+            id( RepositoryId.from( "testing" ) ).
+            workspaces( Workspaces.from( testWorkspace ) ).
+            build() ).
+        build();
 
     @Before
     public void setUp()
@@ -93,7 +105,7 @@ public class DeleteNodeByPathCommandTest
             thenReturn( NodeVersionIds.empty() );
 
         // Exercise
-        final DeleteNodeByPathCommand deleteNode = DeleteNodeByPathCommand.create( new Context( workspace ) ).
+        final DeleteNodeByPathCommand deleteNode = DeleteNodeByPathCommand.create( testContext ).
             nodePath( nodeToDelete.path() ).
             nodeDao( this.nodeDao ).
             indexService( this.indexService ).

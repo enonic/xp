@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import org.restlet.resource.ResourceException;
 
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.module.ModuleKey;
@@ -51,8 +52,10 @@ public abstract class ModuleBaseResource
     {
         try
         {
-            final ModuleKeyResolver moduleKeyResolver =
-                this.moduleKeyResolverService.forContent( contentPath, Context.create( this.workspace ) );
+            final ModuleKeyResolver moduleKeyResolver = this.moduleKeyResolverService.forContent( contentPath, Context.create().
+                workspace( this.workspace ).
+                repository( ContentConstants.CONTENT_REPO ).
+                build() );
             return moduleKeyResolver.resolve( ModuleName.from( moduleName ) );
         }
         catch ( final ModuleNotFoundException e )

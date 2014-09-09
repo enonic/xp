@@ -1,19 +1,23 @@
 package com.enonic.wem.api.context;
 
 import com.enonic.wem.api.entity.Workspace;
+import com.enonic.wem.api.repository.Repository;
 
 public class Context
 {
     private final Workspace workspace;
 
-    public static Context create( final Workspace workspace )
+    private final Repository repository;
+
+    private Context( Builder builder )
     {
-        return new Context( workspace );
+        workspace = builder.workspace;
+        repository = builder.repository;
     }
 
-    public Context( final Workspace workspace )
+    public static Builder create()
     {
-        this.workspace = workspace;
+        return new Builder();
     }
 
     public Workspace getWorkspace()
@@ -21,6 +25,10 @@ public class Context
         return workspace;
     }
 
+    public Repository getRepository()
+    {
+        return repository;
+    }
 
     @Override
     public boolean equals( final Object o )
@@ -48,5 +56,33 @@ public class Context
     public int hashCode()
     {
         return workspace != null ? workspace.hashCode() : 0;
+    }
+
+    public static final class Builder
+    {
+        private Workspace workspace;
+
+        private Repository repository;
+
+        private Builder()
+        {
+        }
+
+        public Builder workspace( Workspace workspace )
+        {
+            this.workspace = workspace;
+            return this;
+        }
+
+        public Builder repository( Repository repository )
+        {
+            this.repository = repository;
+            return this;
+        }
+
+        public Context build()
+        {
+            return new Context( this );
+        }
     }
 }

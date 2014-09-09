@@ -1,5 +1,5 @@
 {
-    "entity": {
+    "version": {
         "_all": {
             "enabled": false
         },
@@ -9,18 +9,18 @@
         "date_detection": false,
         "numeric_detection": false,
         "properties": {
-            "entity": {
+            "entityId": {
                 "type": "string",
                 "store": "true",
                 "index": "not_analyzed"
             },
-            "path": {
+            "blobKey": {
                 "type": "string",
                 "store": "true",
                 "index": "not_analyzed"
             },
-            "parent_path": {
-                "type": "string",
+            "timestamp": {
+                "type": "date",
                 "store": "true",
                 "index": "not_analyzed"
             }

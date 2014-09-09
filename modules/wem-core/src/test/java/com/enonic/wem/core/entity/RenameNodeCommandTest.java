@@ -48,7 +48,7 @@ public class RenameNodeCommandTest
 
         final NodeVersionId renamedNodeVersionId = NodeVersionId.from( "new-node-version-id" );
 
-        final Workspace workspace = TEST_CONTEXT.getWorkspace();
+        final Workspace workspace = testContext.getWorkspace();
 
         // Mock the fetching of the node to be renamed
         when( this.workspaceService.getCurrentVersion( new WorkspaceIdQuery( workspace, nodeId ) ) ).
@@ -72,7 +72,7 @@ public class RenameNodeCommandTest
 
     private RenameNodeCommand createCommand( final RenameNodeParams params )
     {
-        return RenameNodeCommand.create( TEST_CONTEXT ).
+        return RenameNodeCommand.create( testContext ).
             indexService( this.indexService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).

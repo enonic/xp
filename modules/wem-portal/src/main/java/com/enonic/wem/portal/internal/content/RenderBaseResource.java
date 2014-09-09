@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import org.restlet.resource.ResourceException;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
@@ -59,7 +60,11 @@ public abstract class RenderBaseResource
 
     protected final Content getSite( final Content content )
     {
-        final Content siteContent = this.siteService.getNearestSite( content.getId(), Context.create( this.workspace ) );
+        final Content siteContent = this.siteService.getNearestSite( content.getId(), Context.create().
+            workspace( this.workspace ).
+            repository( ContentConstants.CONTENT_REPO ).
+            build() );
+
         if ( siteContent == null )
         {
             throw notFound( "Site for content [%s] not found", content.getPath() );
@@ -145,7 +150,10 @@ public abstract class RenderBaseResource
     {
         try
         {
-            return this.contentService.getByPath( contentPath, Context.create( this.workspace ) );
+            return this.contentService.getByPath( contentPath, Context.create().
+                workspace( this.workspace ).
+                repository( ContentConstants.CONTENT_REPO ).
+                build() );
         }
         catch ( ContentNotFoundException e )
         {
@@ -157,7 +165,10 @@ public abstract class RenderBaseResource
     {
         try
         {
-            return this.contentService.getById( contentId, Context.create( this.workspace ) );
+            return this.contentService.getById( contentId, Context.create().
+                workspace( this.workspace ).
+                repository( ContentConstants.CONTENT_REPO ).
+                build() );
         }
         catch ( ContentNotFoundException e )
         {

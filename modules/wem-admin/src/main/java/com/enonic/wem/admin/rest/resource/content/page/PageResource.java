@@ -26,7 +26,11 @@ import com.enonic.wem.api.schema.content.ContentTypeService;
 @Produces(MediaType.APPLICATION_JSON)
 public final class PageResource
 {
-    private static final Context STAGE_CONTEXT = new Context( ContentConstants.WORKSPACE_STAGE );
+    protected final Context STAGE_CONTEXT = Context.create().
+        workspace( ContentConstants.WORKSPACE_STAGE ).
+        repository( ContentConstants.CONTENT_REPO ).
+        build();
+
 
     @Inject
     protected PageService pageService;

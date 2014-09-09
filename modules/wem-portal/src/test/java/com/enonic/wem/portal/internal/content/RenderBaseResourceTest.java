@@ -27,7 +27,11 @@ import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.entity.Workspace;
+import com.enonic.wem.api.entity.Workspaces;
 import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.repository.Repository;
+import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.xml.mapper.XmlPageDescriptorMapper;
@@ -58,6 +62,16 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResource>
     protected PageDescriptorService pageDescriptorService;
 
     protected JsController jsController;
+
+    public final Workspace testWorkspace = Workspace.from( "test" );
+
+    protected final Context testContext = Context.create().
+        workspace( testWorkspace ).
+        repository( Repository.create().
+            id( RepositoryId.from( "testing" ) ).
+            workspaces( Workspaces.from( testWorkspace ) ).
+            build() ).
+        build();
 
     @Override
     protected void configure()

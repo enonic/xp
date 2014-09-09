@@ -25,7 +25,7 @@ public class PushNodeCommandTest
         final EntityId nodeId = EntityId.from( "mynode" );
         final Workspace targetWorkspace = Workspace.from( "prod" );
 
-        final PushNodeCommand command = PushNodeCommand.create( TEST_CONTEXT ).
+        final PushNodeCommand command = PushNodeCommand.create( testContext ).
             nodeDao( nodeDao ).
             workspaceService( workspaceService ).
             versionService( versionService ).

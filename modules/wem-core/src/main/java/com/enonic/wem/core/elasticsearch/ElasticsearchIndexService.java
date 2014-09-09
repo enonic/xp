@@ -1,7 +1,6 @@
 package com.enonic.wem.core.elasticsearch;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -14,6 +13,7 @@ import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
+import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
@@ -21,23 +21,17 @@ import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.action.admin.indices.stats.IndexStats;
 import org.elasticsearch.action.admin.indices.stats.IndicesStatsRequest;
 import org.elasticsearch.action.admin.indices.stats.IndicesStatsResponse;
-import org.elasticsearch.action.admin.indices.template.put.PutIndexTemplateRequestBuilder;
-import org.elasticsearch.action.admin.indices.template.put.PutIndexTemplateResponse;
-import org.elasticsearch.action.count.CountRequest;
-import org.elasticsearch.action.count.CountResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.unit.TimeValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
+import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.Workspace;
-import com.enonic.wem.core.elasticsearch.resource.IndexMapping;
-import com.enonic.wem.core.elasticsearch.resource.IndexMappingProvider;
-import com.enonic.wem.core.elasticsearch.resource.IndexSettingsBuilder;
+import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.core.entity.index.NodeIndexDocumentFactory;
 import com.enonic.wem.core.index.DeleteDocument;
 import com.enonic.wem.core.index.Index;
@@ -46,27 +40,26 @@ import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.index.IndexStatus;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.document.IndexDocument;
+import com.enonic.wem.core.repository.IndexNameResolver;
+import com.enonic.wem.core.repository.StorageNameResolver;
 
 @Singleton
 public class ElasticsearchIndexService
     implements IndexService
 {
-
     private final static Logger LOG = LoggerFactory.getLogger( ElasticsearchIndexService.class );
 
-    public static final String SEARCH_INDEX_NAME_PATTERN = "workspace-*";
-
-    public static final String SEARCH_INDEX_TEMPLATE_NAME = "search-index-template";
-
     private ElasticsearchDao elasticsearchDao;
-
-    private IndexMappingProvider indexMappingProvider;
 
     private final TimeValue WAIT_FOR_YELLOW_TIMEOUT = TimeValue.timeValueSeconds( 5 );
 
     public static final TimeValue CLUSTER_NOWAIT_TIMEOUT = TimeValue.timeValueSeconds( 5 );
 
-    private IndexSettingsBuilder indexSettingsBuilder;
+    private String deleteTimout = "5s";
+
+    private String createTimeout = "5s";
+
+    private String applyMappingTimeout = "5s";
 
     private Client client;
 
@@ -74,10 +67,6 @@ public class ElasticsearchIndexService
     public void start()
         throws Exception
     {
-        applyIndexTemplates( Index.SEARCH );
-
-        doInitializeWorkspaceIndex();
-        doInitializeVersionIndex();
     }
 
     @PreDestroy
@@ -86,49 +75,6 @@ public class ElasticsearchIndexService
     {
         this.client.close();
     }
-
-    private void applyIndexTemplates( final Index index )
-    {
-        final List<IndexMapping> mappingsForIndex = indexMappingProvider.getTemplatesForIndex( Index.SEARCH );
-
-        final PutIndexTemplateRequestBuilder request =
-            new PutIndexTemplateRequestBuilder( this.client.admin().indices(), SEARCH_INDEX_TEMPLATE_NAME ).
-                setTemplate( SEARCH_INDEX_NAME_PATTERN );
-
-        for ( final IndexMapping indexMapping : mappingsForIndex )
-        {
-            request.addMapping( indexMapping.getIndexType(), indexMapping.getSource() );
-        }
-
-        request.setSettings( indexSettingsBuilder.buildIndexSettings( index ) );
-
-        final PutIndexTemplateResponse response = client.admin().indices().putTemplate( request.request() ).actionGet();
-
-        LOG.info( "Applied index template: " + response.isAcknowledged() );
-    }
-
-    private void doInitializeVersionIndex()
-        throws Exception
-    {
-        getIndexStatus( Index.VERSION, true );
-
-        if ( !indexExists( Index.VERSION ) )
-        {
-            createIndex( Index.VERSION );
-        }
-    }
-
-    private void doInitializeWorkspaceIndex()
-        throws Exception
-    {
-        getIndexStatus( Index.WORKSPACE, true );
-
-        if ( !indexExists( Index.WORKSPACE ) )
-        {
-            createIndex( Index.WORKSPACE );
-        }
-    }
-
 
     private IndexStatus getIndexStatus( final Index index, final boolean waitForStatusYellow )
     {
@@ -175,84 +121,73 @@ public class ElasticsearchIndexService
         return exists.isExists();
     }
 
-    public void createIndex( Index index )
+    public void createIndex( final String indexName, final String settings )
     {
-        LOG.debug( "creating index: " + index.getName() );
+        LOG.info( "creating index {}", indexName );
 
-        CreateIndexRequest createIndexRequest = new CreateIndexRequest( index.getName() );
-        createIndexRequest.settings( indexSettingsBuilder.buildIndexSettings( index ) );
+        CreateIndexRequest createIndexRequest = new CreateIndexRequest( indexName );
+        createIndexRequest.settings( settings );
 
         try
         {
-            client.admin().indices().create( createIndexRequest ).actionGet();
+            final CreateIndexResponse createIndexResponse =
+                client.admin().indices().create( createIndexRequest ).actionGet( this.createTimeout );
+
+            LOG.info( "Index {} created with status {}", indexName, createIndexResponse.isAcknowledged() );
+
         }
         catch ( ElasticsearchException e )
         {
-            throw new IndexException( "Failed to create index:" + index, e );
-        }
-
-        applyMappings( index );
-
-        LOG.info( "Created index: " + index );
-    }
-
-    private void applyMappings( final Index index )
-    {
-        final List<IndexMapping> allIndexMappings = indexMappingProvider.getMappingsForIndex( index );
-
-        for ( IndexMapping indexMapping : allIndexMappings )
-        {
-            doPutMapping( indexMapping );
+            throw new IndexException( "Failed to create index: " + indexName, e );
         }
     }
 
-    private void doPutMapping( final IndexMapping indexMapping )
+    public void applyMapping( final String indexName, final String indexType, final String mapping )
     {
-        final Index index = indexMapping.getIndex();
-        final String indexType = indexMapping.getIndexType();
-        final String source = indexMapping.getSource();
+        LOG.info( "Apply mapping for index {}", indexName );
 
-        Preconditions.checkNotNull( index );
-        Preconditions.checkNotNull( indexType );
-        Preconditions.checkNotNull( source );
-
-        PutMappingRequest mappingRequest = new PutMappingRequest( index.getName() ).type( indexType ).source( source );
+        PutMappingRequest mappingRequest = new PutMappingRequest( indexName ).type( indexType ).source( mapping );
 
         try
         {
-            this.client.admin().indices().putMapping( mappingRequest ).actionGet();
+            this.client.admin().indices().putMapping( mappingRequest ).actionGet( this.applyMappingTimeout );
+            LOG.info( "Mapping for index {} applied", indexName );
         }
         catch ( ElasticsearchException e )
         {
-            throw new IndexException( "Failed to apply mapping to index: " + index, e );
+            throw new IndexException( "Failed to apply mapping to index: " + indexName, e );
         }
-
-        LOG.info( "Mapping for index " + index + ", index-type: " + indexType + " applied" );
     }
 
-
-    public Set<String> getAllIndicesNames()
+    public Set<String> getAllRepositoryIndices( final Repository repository )
     {
         IndicesStatsRequest indicesStatsRequest = new IndicesStatsRequest();
         indicesStatsRequest.listenerThreaded( false );
         indicesStatsRequest.clear();
 
+        final String storageName = StorageNameResolver.resolveStorageIndexName( repository );
+        final String searchIndexName = IndexNameResolver.resolveSearchIndexName( repository );
+
         final IndicesStatsResponse response = this.client.admin().indices().stats( indicesStatsRequest ).actionGet( 10 );
 
         final Map<String, IndexStats> indicesMap = response.getIndices();
 
-        return indicesMap.keySet();
-    }
+        final Set<String> indexNames = Sets.newHashSet();
 
-    public void deleteIndex( final Index... indexes )
-    {
-        for ( final Index index : indexes )
+        // TODO as filter
+        for ( final String indexName : indicesMap.keySet() )
         {
-            doDeleteIndex( index.getName() );
+            if ( indexName.startsWith( storageName ) || ( indexName.startsWith( searchIndexName ) ) )
+            {
+                indexNames.add( indexName );
+            }
         }
+
+        return indexNames;
     }
 
-    public void deleteIndex( final String... indexNames )
+    @Override
+    public void deleteIndex( final Collection<String> indexNames )
     {
         for ( final String indexName : indexNames )
         {
@@ -266,11 +201,12 @@ public class ElasticsearchIndexService
 
         try
         {
-            client.admin().indices().delete( req ).actionGet();
+            client.admin().indices().delete( req ).actionGet( this.deleteTimout );
+            LOG.info( "Deleted index {}", indexName );
         }
         catch ( ElasticsearchException e )
         {
-            LOG.warn( "Failed to delte index " + indexName );
+            LOG.warn( "Failed to delete index {}", indexName );
         }
     }
 
@@ -292,28 +228,9 @@ public class ElasticsearchIndexService
     }
 
     @Inject
-    public void setIndexMappingProvider( final IndexMappingProvider indexMappingProvider )
-    {
-        this.indexMappingProvider = indexMappingProvider;
-    }
-
-    @Inject
     public void setClient( final Client client )
     {
         this.client = client;
     }
 
-    @Inject
-    public void setIndexSettingsBuilder( final IndexSettingsBuilder indexSettingsBuilder )
-    {
-        this.indexSettingsBuilder = indexSettingsBuilder;
-    }
-
-    @Override
-    public long countDocuments( final Index index )
-    {
-        final CountRequest request = new CountRequest().indices( index.getName() );
-        final CountResponse response = this.client.count( request ).actionGet();
-        return response.getCount();
-    }
 }

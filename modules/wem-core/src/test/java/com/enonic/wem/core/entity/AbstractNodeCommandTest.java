@@ -4,6 +4,9 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.Workspace;
+import com.enonic.wem.api.entity.Workspaces;
+import com.enonic.wem.api.repository.Repository;
+import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.core.entity.dao.NodeDao;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.version.VersionService;
@@ -19,7 +22,13 @@ public abstract class AbstractNodeCommandTest
 
     protected final IndexService indexService = Mockito.mock( IndexService.class );
 
-    protected final static Context TEST_CONTEXT = Context.create( Workspace.from( "test" ) );
+    public final Workspace testWorkspace = Workspace.from( "test" );
 
-
+    protected final Context testContext = Context.create().
+        workspace( testWorkspace ).
+        repository( Repository.create().
+            id( RepositoryId.from( "testing" ) ).
+            workspaces( Workspaces.from( testWorkspace ) ).
+            build() ).
+        build();
 }

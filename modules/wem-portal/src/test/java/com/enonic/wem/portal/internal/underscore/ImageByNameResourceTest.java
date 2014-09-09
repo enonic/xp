@@ -6,9 +6,6 @@ import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.data.Method;
 
-import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.entity.Workspace;
-
 import static org.junit.Assert.*;
 
 public class ImageByNameResourceTest
@@ -26,7 +23,7 @@ public class ImageByNameResourceTest
     public void getImageFound()
         throws Exception
     {
-        setupContent( Context.create( Workspace.from( "test" ) ) );
+        setupContent( testContext );
 
         final Request request = new Request( Method.GET, "/live/test/path/to/content/_/image/enonic-logo.png" );
         final Response response = executeRequest( request );
@@ -53,7 +50,7 @@ public class ImageByNameResourceTest
     public void getImageWithFilter()
         throws Exception
     {
-        setupContent( Context.create( Workspace.from( "test" ) ) );
+        setupContent( testContext );
 
         final Request request =
             new Request( Method.GET, "/live/test/path/to/content/_/image/enonic-logo.png?filter=sepia()&quality=75&background=0x0" );

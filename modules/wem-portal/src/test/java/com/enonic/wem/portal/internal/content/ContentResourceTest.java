@@ -7,8 +7,6 @@ import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.data.Method;
 
-import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.portal.internal.controller.JsContext;
 
 import static org.junit.Assert.*;
@@ -16,6 +14,8 @@ import static org.junit.Assert.*;
 public class ContentResourceTest
     extends RenderBaseResourceTest<ContentResource>
 {
+
+
     @Override
     protected void configure()
         throws Exception
@@ -29,7 +29,7 @@ public class ContentResourceTest
     public void getContentFound()
         throws Exception
     {
-        setupContentAndSite( Context.create( Workspace.from( "test" ) ) );
+        setupContentAndSite( testContext );
         setupTemplates();
 
         final Request request = new Request( Method.GET, "/live/test/site/somepath/content" );
@@ -59,7 +59,7 @@ public class ContentResourceTest
     public void getContentWithTemplateNotFound()
         throws Exception
     {
-        setupContentAndSite( Context.create( Workspace.from( "test" ) ) );
+        setupContentAndSite( testContext );
 
         final Request request = new Request( Method.GET, "/live/test/site/somepath/content" );
         final Response response = executeRequest( request );

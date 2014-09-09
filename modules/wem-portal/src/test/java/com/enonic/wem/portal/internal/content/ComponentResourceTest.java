@@ -9,7 +9,10 @@ import org.restlet.data.Method;
 
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.Workspace;
+import com.enonic.wem.api.entity.Workspaces;
 import com.enonic.wem.api.rendering.Renderable;
+import com.enonic.wem.api.repository.Repository;
+import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.portal.internal.controller.JsContext;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
@@ -24,6 +27,16 @@ public class ComponentResourceTest
     extends RenderBaseResourceTest<ComponentResource>
 {
     private Renderer<Renderable> renderer;
+
+    public final Workspace testWorkspace = Workspace.from( "test" );
+
+    protected final Context testContext = Context.create().
+        workspace( testWorkspace ).
+        repository( Repository.create().
+            id( RepositoryId.from( "testing" ) ).
+            workspaces( Workspaces.from( testWorkspace ) ).
+            build() ).
+        build();
 
     @Override
     @SuppressWarnings("unchecked")
@@ -45,7 +58,7 @@ public class ComponentResourceTest
     public void getComponentFound()
         throws Exception
     {
-        setupContentAndSite( Context.create( Workspace.from( "test" ) ) );
+        setupContentAndSite( testContext );
         setupTemplates();
         final RenderResult result = RenderResult.newRenderResult().
             entity( "component rendered" ).
@@ -71,7 +84,7 @@ public class ComponentResourceTest
     public void getComponentPageNotFound()
         throws Exception
     {
-        setupNonPageContent( Context.create( Workspace.from( "test" ) ) );
+        setupNonPageContent( testContext );
 
         final Request request = new Request( Method.GET, "/live/test/site/somepath/content/_/component/main-region/0" );
         final Response response = executeRequest( request );
@@ -83,7 +96,7 @@ public class ComponentResourceTest
     public void getComponentNotFound()
         throws Exception
     {
-        setupContentAndSite( Context.create( Workspace.from( "test" ) ) );
+        setupContentAndSite( testContext );
         setupTemplates();
 
         final Request request = new Request( Method.GET, "/live/test/site/somepath/content/_/component/main-region/666" );

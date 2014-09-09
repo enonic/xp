@@ -29,6 +29,9 @@ import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeService;
 import com.enonic.wem.api.entity.UpdateNodeParams;
 import com.enonic.wem.api.entity.Workspace;
+import com.enonic.wem.api.entity.Workspaces;
+import com.enonic.wem.api.repository.Repository;
+import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.core.entity.dao.NodeNotFoundException;
 
@@ -53,8 +56,15 @@ public class UpdateContentCommandTest
 
     private final ContentNodeTranslator translator = Mockito.mock( ContentNodeTranslator.class );
 
-    private final Context TEST_CONTEXT = new Context( Workspace.from( "test" ) );
+    public final Workspace testWorkspace = Workspace.from( "test" );
 
+    private final Context testContext = Context.create().
+        workspace( testWorkspace ).
+        repository( Repository.create().
+            id( RepositoryId.from( "testing" ) ).
+            workspaces( Workspaces.from( testWorkspace ) ).
+            build() ).
+        build();
 
     //@Ignore // Rewriting content stuff to node
     @Test(expected = ContentNotFoundException.class)
@@ -90,10 +100,10 @@ public class UpdateContentCommandTest
             nodeService( this.nodeService ).
             blobService( this.blobService ).
             translator( this.translator ).
-            context( TEST_CONTEXT ).
+            context( testContext ).
             build();
 
-        Mockito.when( attachmentService.getAll( contentId, TEST_CONTEXT ) ).thenReturn( Attachments.empty() );
+        Mockito.when( attachmentService.getAll( contentId, testContext ) ).thenReturn( Attachments.empty() );
 
         Mockito.when( nodeService.getById( Mockito.isA( EntityId.class ), Mockito.isA( Context.class ) ) ).thenThrow(
             new NodeNotFoundException( "Node not found" ) );
@@ -136,11 +146,11 @@ public class UpdateContentCommandTest
             nodeService( this.nodeService ).
             blobService( this.blobService ).
             translator( this.translator ).
-            context( TEST_CONTEXT ).
+            context( testContext ).
             build();
 
         final Node mockNode = Node.newNode().build();
-        Mockito.when( nodeService.getById( EntityId.from( existingContent.getId() ), TEST_CONTEXT ) ).
+        Mockito.when( nodeService.getById( EntityId.from( existingContent.getId() ), testContext ) ).
             thenReturn( mockNode );
         Mockito.when( translator.fromNode( mockNode ) ).thenReturn( existingContent );
 

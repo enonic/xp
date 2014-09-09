@@ -6,14 +6,12 @@ import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.data.Method;
 
-import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.entity.Workspace;
-
 import static org.junit.Assert.*;
 
 public class ImageByIdResourceTest
     extends ImageBaseResourceTest<ImageByIdResource>
 {
+
     @Override
     protected void configure()
         throws Exception
@@ -26,7 +24,7 @@ public class ImageByIdResourceTest
     public void getImageFound()
         throws Exception
     {
-        setupContent( Context.create( Workspace.from( "test" ) ) );
+        setupContent( testContext );
 
         final Request request = new Request( Method.GET, "/live/test/path/to/content/_/image/id/content-id" );
         final Response response = executeRequest( request );
@@ -53,7 +51,7 @@ public class ImageByIdResourceTest
     public void getImageWithFilter()
         throws Exception
     {
-        setupContent( Context.create( Workspace.from( "test" ) ) );
+        setupContent( testContext );
 
         final Request request =
             new Request( Method.GET, "/live/test/path/to/content/_/image/id/content-id?filter=sepia()&quality=75&background=0x0" );

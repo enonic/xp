@@ -1,16 +1,16 @@
 package com.enonic.wem.core.initializer;
 
-import java.util.Set;
-
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentService;
-import com.enonic.wem.core.index.Index;
+import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.core.index.IndexService;
+import com.enonic.wem.core.repository.RepositoryInitializer;
 
 final class StartupInitializerImpl
     implements StartupInitializer
@@ -22,6 +22,10 @@ final class StartupInitializerImpl
 
     @Inject
     protected ContentService contentService;
+
+    @Inject
+    protected RepositoryInitializer repositoryInitializer;
+
 
     @PostConstruct
     public void start()
@@ -35,24 +39,15 @@ final class StartupInitializerImpl
     {
         if ( reinit )
         {
-            cleanupOldData();
+            initializeRespositories();
         }
     }
 
-    private void cleanupOldData()
+    private void initializeRespositories()
     {
-        LOG.info( "Recreating indexes..." );
+        final Repository contentRepo = ContentConstants.CONTENT_REPO;
 
-        final Set<String> indicesNames = indexService.getAllIndicesNames();
-
-        for ( final String indexName : indicesNames )
-        {
-            LOG.info( "Deleting index: " + indexName );
-            this.indexService.deleteIndex( indexName );
-        }
-
-        this.indexService.createIndex( Index.WORKSPACE );
-        this.indexService.createIndex( Index.VERSION );
-        this.indexService.createIndex( Index.SEARCH );
+        repositoryInitializer.init( contentRepo );
     }
+
 }

@@ -13,6 +13,8 @@ import com.enonic.wem.api.entity.NodeVersion;
 import com.enonic.wem.api.entity.NodeVersionId;
 import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.entity.Workspaces;
+import com.enonic.wem.api.repository.Repository;
+import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.core.entity.dao.NodeDao;
 import com.enonic.wem.core.version.VersionService;
 import com.enonic.wem.core.workspace.WorkspaceService;
@@ -22,11 +24,22 @@ import static org.junit.Assert.*;
 
 public class GetActiveNodeVersionsCommandTest
 {
+
+    public static final Workspace TEST_WORKSPACE = Workspace.from( "test" );
+
     private VersionService versionService;
 
     private NodeDao nodeDao;
 
     private WorkspaceService workspaceService;
+
+    private final Context testContext = Context.create().
+        workspace( TEST_WORKSPACE ).
+        repository( Repository.create().
+            id( RepositoryId.from( "testing" ) ).
+            workspaces( Workspaces.from( TEST_WORKSPACE ) ).
+            build() ).
+        build();
 
     @Before
     public void setUp()
@@ -45,7 +58,6 @@ public class GetActiveNodeVersionsCommandTest
 
         final Workspace testWorkspace = Workspace.from( "test" );
         final Workspace prodWorkspace = Workspace.from( "prod" );
-        final Context testContext = Context.create( testWorkspace );
         final Workspaces workspaces = Workspaces.from( testWorkspace, prodWorkspace );
 
         final NodeVersionId testVersionId = NodeVersionId.from( "a" );
@@ -86,7 +98,6 @@ public class GetActiveNodeVersionsCommandTest
 
         final Workspace testWorkspace = Workspace.from( "test" );
         final Workspace prodWorkspace = Workspace.from( "prod" );
-        final Context testContext = Context.create( testWorkspace );
         final Workspaces workspaces = Workspaces.from( testWorkspace, prodWorkspace );
 
         final NodeVersionId testVersionId = NodeVersionId.from( "a" );

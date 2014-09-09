@@ -18,6 +18,7 @@ import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
@@ -160,7 +161,10 @@ public abstract class ImageBaseResource
     {
         try
         {
-            return this.attachmentService.getAll( contentId, Context.create( this.workspace ) ).first();
+            return this.attachmentService.getAll( contentId, Context.create().
+                workspace( this.workspace ).
+                repository( ContentConstants.CONTENT_REPO ).
+                build() ).first();
         }
         catch ( final ContentNotFoundException e )
         {
@@ -170,7 +174,10 @@ public abstract class ImageBaseResource
 
     protected final Content getContent( final ContentId contentId )
     {
-        final Content content = this.contentService.getById( contentId, Context.create( this.workspace ) );
+        final Content content = this.contentService.getById( contentId, Context.create().
+            workspace( this.workspace ).
+            repository( ContentConstants.CONTENT_REPO ).
+            build() );
         if ( content != null )
         {
             return content;
@@ -181,7 +188,10 @@ public abstract class ImageBaseResource
 
     protected final Content getContent( final ContentPath contentPath )
     {
-        final Content content = this.contentService.getByPath( contentPath, Context.create( this.workspace ) );
+        final Content content = this.contentService.getByPath( contentPath, Context.create().
+            workspace( this.workspace ).
+            repository( ContentConstants.CONTENT_REPO ).
+            build() );
         if ( content != null )
         {
             return content;
@@ -195,7 +205,10 @@ public abstract class ImageBaseResource
         try
         {
             return this.attachmentService.get( GetAttachmentParameters.create().
-                context( Context.create( this.workspace ) ).
+                context( Context.create().
+                    workspace( this.workspace ).
+                    repository( ContentConstants.CONTENT_REPO ).
+                    build() ).
                 contentId( contentId ).
                 attachmentName( attachmentName ).
                 build() );
