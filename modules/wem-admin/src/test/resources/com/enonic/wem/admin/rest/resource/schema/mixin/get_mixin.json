@@ -8,7 +8,7 @@
     "editable": true,
     "hasChildren": false,
     "icon": null,
-    "iconUrl": "/admin/rest/schema/icon/Mixin:input_text_1",
+    "iconUrl": "/admin/rest/schema/icon/Mixin:mymodule-1.0.0:input_text_1",
     "items": [
         {
             "Input": {
@@ -30,8 +30,8 @@
             }
         }
     ],
-    "key": "Mixin:input_text_1",
+    "key": "Mixin:mymodule-1.0.0:input_text_1",
     "modifiedTime": null,
     "modifier": null,
-    "name": "input_text_1"
+    "name": "mymodule-1.0.0:input_text_1"
 }

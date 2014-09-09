@@ -26,7 +26,7 @@ public class RelationshipTest
         relationBuilder.creator( UserKey.from( "myStore:myUser" ) );
         relationBuilder.modifiedTime( LocalDateTime.parse( "2012-01-01T12:00:00" ).toInstant( ZoneOffset.UTC ) );
         relationBuilder.modifier( UserKey.from( "myStore:myUser" ) );
-        relationBuilder.type( RelationshipTypeName.from( "like" ) );
+        relationBuilder.type( RelationshipTypeName.from( "system-0.0.0:like" ) );
         relationBuilder.property( "stars", "4" );
 
         // exercise
@@ -39,7 +39,7 @@ public class RelationshipTest
         assertEquals( LocalDateTime.parse( "2012-01-01T12:00:00" ).toInstant( ZoneOffset.UTC ), relationship.getCreatedTime() );
         assertEquals( "myUser", relationship.getModifier().getLocalName() );
         assertEquals( LocalDateTime.parse( "2012-01-01T12:00:00" ).toInstant( ZoneOffset.UTC ), relationship.getModifiedTime() );
-        assertEquals( "like", relationship.getType().toString() );
+        assertEquals( "system-0.0.0:like", relationship.getType().toString() );
         assertEquals( "4", relationship.getProperty( "stars" ) );
     }
 
@@ -50,14 +50,14 @@ public class RelationshipTest
         final Relationship.Builder relationBuilder = Relationship.newRelationship();
         relationBuilder.fromContent( ContentId.from( "a" ) );
         relationBuilder.toContent( ContentId.from( "b" ) );
-        relationBuilder.type( RelationshipTypeName.from( "like" ) );
+        relationBuilder.type( RelationshipTypeName.from( "system-0.0.0:like" ) );
         relationBuilder.managed( DataPath.from( "myData" ) );
 
         // exercise
         Relationship relationship = relationBuilder.build();
 
         // verify
-        assertEquals( "like", relationship.getKey().getType().toString() );
+        assertEquals( "system-0.0.0:like", relationship.getKey().getType().toString() );
         assertEquals( "a", relationship.getKey().getFromContent().toString() );
         assertEquals( "b", relationship.getKey().getToContent().toString() );
         assertEquals( "myData", relationship.getKey().getManagingData().toString() );
@@ -70,13 +70,13 @@ public class RelationshipTest
         final Relationship.Builder relationBuilder = Relationship.newRelationship();
         relationBuilder.fromContent( ContentId.from( "a" ) );
         relationBuilder.toContent( ContentId.from( "b" ) );
-        relationBuilder.type( RelationshipTypeName.from( "like" ) );
+        relationBuilder.type( RelationshipTypeName.from( "system-0.0.0:like" ) );
 
         // exercise
         Relationship relationship = relationBuilder.build();
 
         // verify
-        assertEquals( "like", relationship.getKey().getType().toString() );
+        assertEquals( "system-0.0.0:like", relationship.getKey().getType().toString() );
         assertEquals( "a", relationship.getKey().getFromContent().toString() );
         assertEquals( "b", relationship.getKey().getToContent().toString() );
         assertEquals( null, relationship.getKey().getManagingData() );
@@ -89,7 +89,7 @@ public class RelationshipTest
         final Relationship.Builder relationBuilder = Relationship.newRelationship();
         relationBuilder.fromContent( ContentId.from( "a" ) );
         relationBuilder.toContent( ContentId.from( "b" ) );
-        relationBuilder.type( RelationshipTypeName.from( "like" ) );
+        relationBuilder.type( RelationshipTypeName.from( "system-0.0.0:like" ) );
         relationBuilder.property( "key", null );
 
         // exercise
@@ -103,7 +103,7 @@ public class RelationshipTest
         final Relationship.Builder relationBuilder = Relationship.newRelationship();
         relationBuilder.fromContent( ContentId.from( "a" ) );
         relationBuilder.toContent( ContentId.from( "b" ) );
-        relationBuilder.type( RelationshipTypeName.from( "like" ) );
+        relationBuilder.type( RelationshipTypeName.from( "system-0.0.0:like" ) );
         relationBuilder.property( null, "value" );
 
         // exercise

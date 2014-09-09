@@ -17,7 +17,6 @@ import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.form.inputtype.InputTypes;
-import com.enonic.wem.api.schema.SchemaId;
 import com.enonic.wem.api.schema.mixin.CreateMixinParams;
 import com.enonic.wem.api.schema.mixin.DeleteMixinParams;
 import com.enonic.wem.api.schema.mixin.DeleteMixinResult;
@@ -44,9 +43,13 @@ import static org.mockito.Mockito.verify;
 public class MixinResourceTest
     extends AbstractResourceTest
 {
-    private static MixinName MY_MIXIN_QUALIFIED_NAME_1 = MixinName.from( "input_text_1" );
+    private static MixinName MY_MIXIN_QUALIFIED_NAME_1 = MixinName.from( "mymodule-1.0.0:input_text_1" );
 
-    private static MixinName MY_MIXIN_QUALIFIED_NAME_2 = MixinName.from( "text_area_1" );
+    private static String MY_MIXIN_INPUT_NAME_1 = "input_text_1";
+
+    private static MixinName MY_MIXIN_QUALIFIED_NAME_2 = MixinName.from( "mymodule-1.0.0:text_area_2" );
+
+    private static String MY_MIXIN_INPUT_NAME_2 = "text_area_2";
 
     private MixinService mixinService;
 
@@ -72,7 +75,7 @@ public class MixinResourceTest
         Mixin mixin = Mixin.newMixin().
             createdTime( LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC ) ).
             name( MY_MIXIN_QUALIFIED_NAME_1.toString() ).addFormItem(
-            newInput().name( MY_MIXIN_QUALIFIED_NAME_1.toString() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
+            newInput().name( MY_MIXIN_INPUT_NAME_1 ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
                 "Help text line 1" ).required( true ).build() ).build();
 
         Mockito.when( mixinService.getByName( Mockito.isA( GetMixinParams.class ) ) ).thenReturn( mixin );
@@ -88,7 +91,7 @@ public class MixinResourceTest
     {
         Mixin mixin = Mixin.newMixin().createdTime( LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC ) ).name(
             MY_MIXIN_QUALIFIED_NAME_1.toString() ).addFormItem(
-            newInput().name( MY_MIXIN_QUALIFIED_NAME_1.toString() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
+            newInput().name( MY_MIXIN_INPUT_NAME_1 ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
                 "Help text line 1" ).required( true ).build() ).build();
 
         Mockito.when( mixinService.getByName( Mockito.isA( GetMixinParams.class ) ) ).thenReturn( mixin );
@@ -107,7 +110,7 @@ public class MixinResourceTest
 
         final MockRestResponse response = request().path( "schema/mixin" ).queryParam( "name", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get();
         Assert.assertEquals( 404, response.getStatus() );
-        Assert.assertEquals( "Mixin [input_text_1] was not found.", response.getAsString() );
+        Assert.assertEquals( "Mixin [mymodule-1.0.0:input_text_1] was not found.", response.getAsString() );
     }
 
     @Test
@@ -119,7 +122,7 @@ public class MixinResourceTest
         final MockRestResponse response =
             request().path( "schema/mixin/config" ).queryParam( "name", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get();
         Assert.assertEquals( 404, response.getStatus() );
-        Assert.assertEquals( "Mixin [input_text_1] was not found.", response.getAsString() );
+        Assert.assertEquals( "Mixin [mymodule-1.0.0:input_text_1] was not found.", response.getAsString() );
     }
 
     @Test
@@ -128,14 +131,13 @@ public class MixinResourceTest
     {
         Mixin mixin1 = Mixin.newMixin().createdTime( LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC ) ).name(
             MY_MIXIN_QUALIFIED_NAME_1.toString() ).addFormItem(
-            newInput().name( MY_MIXIN_QUALIFIED_NAME_1.toString() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
+            newInput().name( MY_MIXIN_INPUT_NAME_1 ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
                 "Help text line 1" ).required( true ).build() ).build();
 
         Mixin mixin2 = Mixin.newMixin().createdTime( LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC ) ).name(
             MY_MIXIN_QUALIFIED_NAME_2.toString() ).addFormItem(
-            newInput().name( MY_MIXIN_QUALIFIED_NAME_2.toString() ).inputType( TEXT_AREA ).inputTypeConfig(
-                TEXT_AREA.getDefaultConfig() ).label( "Text Area" ).required( true ).helpText( "Help text area" ).required(
-                true ).build() ).build();
+            newInput().name( MY_MIXIN_INPUT_NAME_2 ).inputType( TEXT_AREA ).inputTypeConfig( TEXT_AREA.getDefaultConfig() ).label(
+                "Text Area" ).required( true ).helpText( "Help text area" ).required( true ).build() ).build();
 
         Mockito.when( mixinService.getAll() ).thenReturn( Mixins.from( mixin1, mixin2 ) );
 
@@ -151,8 +153,7 @@ public class MixinResourceTest
         // setup
         Mockito.when( mixinService.getByNames( isA( GetMixinsParams.class ) ) ).thenReturn( Mixins.empty() );
         Mockito.when( mixinService.create( isA( CreateMixinParams.class ) ) ).thenReturn( Mixin.newMixin().
-            id( new SchemaId( "abc" ) ).
-            name( "my_set" ).
+            name( "mymodule-1.0.0:my_set" ).
             description( "description" ).
             build() );
 
@@ -166,10 +167,10 @@ public class MixinResourceTest
     public void test_create_mixin_already_exists()
         throws Exception
     {
-        newMixin().createdTime( LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC ) ).name( "some_input" ).addFormItem(
-            newInput().name( "some_input" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
+        newMixin().createdTime( LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC ) ).name(
+            "mymodule-1.0.0:some_input" ).addFormItem( newInput().name( "some_input" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
         Mockito.when( mixinService.create( isA( CreateMixinParams.class ) ) ).thenThrow(
-            new MixinAlreadyExistException( MixinName.from( "my_set" ) ) );
+            new MixinAlreadyExistException( MixinName.from( "mymodule-1.0.0:my_set" ) ) );
 
         String result = request().path( "schema/mixin/create" ).entity( readFromFile( "create_mixin_params.json" ),
                                                                         MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
@@ -183,8 +184,7 @@ public class MixinResourceTest
         // setup
         Mockito.when( mixinService.getByNames( isA( GetMixinsParams.class ) ) ).thenReturn( Mixins.empty() );
         Mockito.when( mixinService.create( isA( CreateMixinParams.class ) ) ).thenReturn( Mixin.newMixin().
-            id( new SchemaId( "abc" ) ).
-            name( "my_set" ).
+            name( "mymodule-1.0.0:my_set" ).
             description( "description" ).
             build() );
         final Blob iconBlob = Mockito.mock( Blob.class );
@@ -202,7 +202,7 @@ public class MixinResourceTest
     public void test_update_mixin()
         throws Exception
     {
-        Mixin mixin = newMixin().name( "some_input" ).addFormItem(
+        Mixin mixin = newMixin().name( "mymodule-1.0.0:some_input" ).addFormItem(
             newInput().name( "some_input" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
 
         Mockito.when( mixinService.update( isA( UpdateMixinParams.class ) ) ).thenReturn( new UpdateMixinResult( mixin ) );
@@ -221,7 +221,7 @@ public class MixinResourceTest
         throws Exception
     {
         Mockito.when( mixinService.update( isA( UpdateMixinParams.class ) ) ).thenThrow(
-            new MixinNotFoundException( MixinName.from( "my_set" ) ) );
+            new MixinNotFoundException( MixinName.from( "mymodule-1.0.0:my_set" ) ) );
         String result = request().path( "schema/mixin/update" ).entity( readFromFile( "create_mixin_params.json" ),
                                                                         MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
         assertJson( "update_mixin_not_found.json", result );
@@ -232,7 +232,7 @@ public class MixinResourceTest
         throws Exception
     {
         Mockito.when( mixinService.delete( Mockito.isA( DeleteMixinParams.class ) ) ).thenReturn(
-            new DeleteMixinResult( Mixin.newMixin().name( "existing_mixin" ).build() ) );
+            new DeleteMixinResult( Mixin.newMixin().name( "mymodule-1.0.0:existing_mixin" ).build() ) );
 
         String result = request().path( "schema/mixin/delete" ).entity( readFromFile( "delete_single_mixin_params.json" ),
                                                                         MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
@@ -243,15 +243,15 @@ public class MixinResourceTest
     public void test_delete_multiple_mixins()
         throws Exception
     {
-        Mockito.when( mixinService.delete( Mockito.eq( new DeleteMixinParams().name( MixinName.from( "existing_mixin" ) ) ) ) ).thenReturn(
-            new DeleteMixinResult( Mixin.newMixin().name( MixinName.from( "existing_mixin" ) ).build() ) );
+        Mockito.when( mixinService.delete( Mockito.eq( new DeleteMixinParams().name( MixinName.from( "mymodule-1.0.0:existing_mixin" ) ) ) ) ).thenReturn(
+            new DeleteMixinResult( Mixin.newMixin().name( MixinName.from( "mymodule-1.0.0:existing_mixin" ) ).build() ) );
 
-        Mockito.when( mixinService.delete( Mockito.eq( new DeleteMixinParams().name( MixinName.from( "being_used_mixin" ) ) ) ) ).thenThrow(
-            new UnableToDeleteMixinException( MixinName.from( "not_existing_mixin" ), "Being used" ) );
+        Mockito.when( mixinService.delete( Mockito.eq( new DeleteMixinParams().name( MixinName.from( "mymodule-1.0.0:being_used_mixin" ) ) ) ) ).thenThrow(
+            new UnableToDeleteMixinException( MixinName.from( "mymodule-1.0.0:not_existing_mixin" ), "Being used" ) );
 
         Mockito.when(
-            mixinService.delete( Mockito.eq( new DeleteMixinParams().name( MixinName.from( "not_existing_mixin" ) ) ) ) ).thenThrow(
-            new MixinNotFoundException( MixinName.from( "being_used_mixin" ) ) );
+            mixinService.delete( Mockito.eq( new DeleteMixinParams().name( MixinName.from( "mymodule-1.0.0:not_existing_mixin" ) ) ) ) ).thenThrow(
+            new MixinNotFoundException( MixinName.from( "mymodule-1.0.0:being_used_mixin" ) ) );
 
         String result = request().path( "schema/mixin/delete" ).entity( readFromFile( "delete_multiple_mixins_params.json" ),
                                                                         MediaType.APPLICATION_JSON_TYPE ).post().getAsString();

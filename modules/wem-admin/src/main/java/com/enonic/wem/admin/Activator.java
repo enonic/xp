@@ -1,10 +1,8 @@
 package com.enonic.wem.admin;
 
-import javax.inject.Inject;
 import javax.servlet.Servlet;
 
 import com.enonic.wem.admin.app.MainServlet;
-import com.enonic.wem.admin.app.ResourceLocator;
 import com.enonic.wem.admin.event.EventListenerImpl;
 import com.enonic.wem.admin.event.EventServlet;
 import com.enonic.wem.admin.rest.RestServlet;
@@ -32,9 +30,6 @@ import com.enonic.wem.guice.GuiceActivator;
 public final class Activator
     extends GuiceActivator
 {
-    @Inject
-    protected ResourceLocator resourceLocator;
-
     @Override
     protected void configure()
     {
@@ -69,20 +64,6 @@ public final class Activator
 
         service( EventServlet.class ).attribute( "alias", "/admin/event/*" ).exportAs( Servlet.class );
 
-        service( EventListenerImpl.class ).export( );
-    }
-
-    @Override
-    protected void doStart()
-        throws Exception
-    {
-        this.resourceLocator.start();
-    }
-
-    @Override
-    protected void doStop()
-        throws Exception
-    {
-        this.resourceLocator.stop();
+        service( EventListenerImpl.class ).export();
     }
 }

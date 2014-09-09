@@ -18,7 +18,7 @@ import com.enonic.wem.core.workspace.WorkspaceDocument;
 final class CreateNodeCommand
     extends AbstractNodeCommand
 {
-    private CreateNodeParams params;
+    private final CreateNodeParams params;
 
     private CreateNodeCommand( final Builder builder )
     {
@@ -50,6 +50,7 @@ final class CreateNodeCommand
             rootDataSet( params.getData() ).
             attachments( params.getAttachments() != null ? params.getAttachments() : Attachments.empty() ).
             entityIndexConfig( params.getEntityIndexConfig() ).
+            hasChildren( false ).
             build();
 
         final NodeVersionId persistedNodeVersionId = nodeDao.store( newNode );

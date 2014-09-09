@@ -21,11 +21,11 @@
             "modifiedTime": "2013-01-01T12:00:00Z",
             "size": 1
         },
-        "iconUrl": "/admin/rest/schema/icon/ContentType:htmlarea?hash=f95b70fdc3088560732a5ac135644506",
-        "key": "ContentType:htmlarea",
+        "iconUrl": "/admin/rest/schema/icon/ContentType:mymodule-1.0.0:htmlarea?hash=f95b70fdc3088560732a5ac135644506",
+        "key": "ContentType:mymodule-1.0.0:htmlarea",
         "modifiedTime": null,
         "modifier": null,
-        "name": "htmlarea",
-        "superType": "structured"
+        "name": "mymodule-1.0.0:htmlarea",
+        "superType": "system-0.0.0:structured"
     }
 }

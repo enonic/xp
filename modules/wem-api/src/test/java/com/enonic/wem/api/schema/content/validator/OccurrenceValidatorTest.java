@@ -32,7 +32,7 @@ public class OccurrenceValidatorTest
     public void before()
     {
         contentType = newContentType().
-            name( "my_type" ).
+            name( "mymodule-1.0.0:my_type" ).
             build();
     }
 

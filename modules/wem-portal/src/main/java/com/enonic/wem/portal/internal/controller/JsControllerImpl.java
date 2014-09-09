@@ -1,86 +1,31 @@
 package com.enonic.wem.portal.internal.controller;
 
-import com.enonic.wem.api.resource.Resource;
-import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.portal.PortalContextAccessor;
 import com.enonic.wem.portal.internal.postprocess.PostProcessor;
-import com.enonic.wem.script.ScriptRunner;
+import com.enonic.wem.script.ScriptExports;
 
 final class JsControllerImpl
     implements JsController
 {
-    private final ScriptRunner runner;
+    private final ScriptExports scriptExports;
 
-    private ResourceKey scriptDir;
+    private final PostProcessor postProcessor;
 
-    private JsContext context;
-
-    private PostProcessor postProcessor;
-
-    public JsControllerImpl( final ScriptRunner runner )
+    public JsControllerImpl( final ScriptExports scriptExports, final PostProcessor postProcessor )
     {
-        this.runner = runner;
-    }
-
-    @Override
-    public JsController scriptDir( final ResourceKey dir )
-    {
-        this.scriptDir = dir;
-        return this;
-    }
-
-    @Override
-    public JsController context( final JsContext context )
-    {
-        this.context = context;
-        this.runner.variable( "portal", this.context );
-        return this;
-    }
-
-    public JsController postProcessor( final PostProcessor postProcessor )
-    {
+        this.scriptExports = scriptExports;
         this.postProcessor = postProcessor;
-        return this;
-    }
-
-    private ResourceKey findScript( final String method )
-    {
-        final ResourceKey key = this.scriptDir.resolve( method.toLowerCase() + ".js" );
-        final Resource resource = Resource.from( key );
-
-        if ( resource.exists() )
-        {
-            return key;
-        }
-
-        return null;
     }
 
     @Override
-    public void execute()
+    public void execute( final JsContext context )
     {
-        final String method = this.context.getRequest().getMethod();
-        final ResourceKey script = findScript( method );
-
-        if ( script == null )
-        {
-            methodNotAllowed();
-            return;
-        }
-
-        doExecute( script );
-    }
-
-    private void doExecute( final ResourceKey script )
-    {
-        PortalContextAccessor.set( this.context );
+        PortalContextAccessor.set( context );
 
         try
         {
-            this.runner.source( script );
-            this.runner.execute();
-
-            this.postProcessor.processResponse( this.context );
+            doExecute( context );
+            this.postProcessor.processResponse( context );
         }
         finally
         {
@@ -88,8 +33,22 @@ final class JsControllerImpl
         }
     }
 
-    private void methodNotAllowed()
+    private void doExecute( final JsContext context )
     {
-        this.context.getResponse().setStatus( JsHttpResponse.STATUS_METHOD_NOT_ALLOWED );
+        final String method = context.getRequest().getMethod();
+        final String methodName = method.toLowerCase();
+
+        if ( !this.scriptExports.hasProperty( methodName ) )
+        {
+            methodNotAllowed( context );
+            return;
+        }
+
+        this.scriptExports.executeMethod( methodName, context );
+    }
+
+    private void methodNotAllowed( final JsContext context )
+    {
+        context.getResponse().setStatus( JsHttpResponse.STATUS_METHOD_NOT_ALLOWED );
     }
 }

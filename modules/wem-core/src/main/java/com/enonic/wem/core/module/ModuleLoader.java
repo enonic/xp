@@ -5,6 +5,8 @@ import java.net.URL;
 import java.util.Dictionary;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -21,10 +23,14 @@ import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 
 import com.enonic.wem.api.event.EventPublisher;
+import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.module.ModuleNotFoundException;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.module.ModuleState;
 import com.enonic.wem.api.module.ModuleUpdatedEvent;
+import com.enonic.wem.api.schema.SchemaProvider;
+import com.enonic.wem.core.schema.ModuleSchemaProvider;
 
 @Singleton
 public final class ModuleLoader
@@ -55,6 +61,7 @@ public final class ModuleLoader
         this.eventPublisher = eventPublisher;
     }
 
+    @PostConstruct
     public void start()
     {
         this.context.addBundleListener( this );
@@ -64,6 +71,7 @@ public final class ModuleLoader
         }
     }
 
+    @PreDestroy
     public void stop()
     {
         this.context.removeBundleListener( this );
@@ -73,6 +81,7 @@ public final class ModuleLoader
     public void bundleChanged( final BundleEvent event )
     {
         final Bundle bundle = event.getBundle();
+        final ModuleKey moduleKey = ModuleKey.from( bundle );
         switch ( event.getType() )
         {
             case BundleEvent.UNINSTALLED:
@@ -83,11 +92,26 @@ public final class ModuleLoader
             case BundleEvent.UPDATED:
                 addBundle( bundle );
                 break;
+
+            case BundleEvent.STARTED:
+                registerSchemas( bundle, moduleKey );
+                break;
         }
 
-        final ModuleKey module = ModuleKey.from( bundle );
         final ModuleState state = ModuleState.fromBundleState( bundle );
-        this.eventPublisher.publish( new ModuleUpdatedEvent( module, state ) );
+        this.eventPublisher.publish( new ModuleUpdatedEvent( moduleKey, state ) );
+    }
+
+    private void registerSchemas( final Bundle bundle, final ModuleKey moduleKey )
+    {
+        final Module module = findModule( moduleKey );
+        if ( module != null )
+        {
+            final ModuleSchemaProvider moduleSchemaProvider = new ModuleSchemaProvider( module );
+            // TODO register only if schemas found in module
+            final BundleContext bundleContext = bundle.getBundleContext();
+            bundleContext.registerService( SchemaProvider.class.getName(), moduleSchemaProvider, null );
+        }
     }
 
     private void addBundle( final Bundle bundle )
@@ -151,4 +175,15 @@ public final class ModuleLoader
         }
     }
 
+    private Module findModule( final ModuleKey moduleKey )
+    {
+        try
+        {
+            return this.moduleService.getModule( moduleKey );
+        }
+        catch ( ModuleNotFoundException e )
+        {
+            return null;
+        }
+    }
 }

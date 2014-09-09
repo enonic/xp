@@ -36,8 +36,7 @@ public class ContentResourceTest
         final Response response = executeRequest( request );
 
         final ArgumentCaptor<JsContext> jsContext = ArgumentCaptor.forClass( JsContext.class );
-        Mockito.verify( this.jsController ).context( jsContext.capture() );
-        Mockito.verify( this.jsController ).execute();
+        Mockito.verify( this.jsController ).execute( jsContext.capture() );
 
         assertEquals( 200, response.getStatus().getCode() );
         assertEquals( "text/plain", response.getEntity().getMediaType().toString() );

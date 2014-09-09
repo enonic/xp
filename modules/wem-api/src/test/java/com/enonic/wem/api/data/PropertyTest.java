@@ -111,4 +111,12 @@ public class PropertyTest
         Property property = Property.newData( "myData", data );
         assertTrue( data.valueEquals( property.getData() ) );
     }
+
+    @Test
+    public void setProperty_value_allowed_to_be_null()
+    {
+        Property property = new Property( "myProperty", Value.newLocalDate( null ) );
+        assertEquals( true, property.getValue().isNull() );
+        assertEquals( true, property.hasNullValue() );
+    }
 }

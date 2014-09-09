@@ -4,7 +4,7 @@ import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.form.FormItems;
 import com.enonic.wem.api.schema.BaseSchema;
 import com.enonic.wem.api.schema.Schema;
-import com.enonic.wem.api.schema.SchemaKey;
+import com.enonic.wem.api.schema.SchemaKind;
 
 public class Mixin
     extends BaseSchema<MixinName>
@@ -16,12 +16,6 @@ public class Mixin
     {
         super( builder );
         this.formItems = builder.formItems;
-    }
-
-    @Override
-    public SchemaKey getSchemaKey()
-    {
-        return getName() != null ? SchemaKey.from( getName() ) : null;
     }
 
     @Override
@@ -52,7 +46,7 @@ public class Mixin
 
         public Builder()
         {
-            super();
+            super( SchemaKind.MIXIN );
         }
 
         public Builder( final Mixin mixin )

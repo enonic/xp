@@ -23,7 +23,7 @@ module app.browse.filter {
     import LogicalExp = api.query.expr.LogicalExpr;
     import DynamicConstraintExpr = api.query.expr.DynamicConstraintExpr;
     import Value = api.data.Value;
-    import ValueTypes = api.data.ValueTypes;
+    import ValueTypes = api.data.type.ValueTypes;
 
 
     export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilterPanel {
@@ -89,7 +89,6 @@ module app.browse.filter {
                 this.reset();
                 return;
             }
-
             var contentQuery: ContentQuery = new ContentQuery();
             this.appendFulltextSearch(event.getSearchInputValues(), contentQuery);
             this.appendContentTypeFilter(event.getSearchInputValues(), contentQuery);
@@ -105,19 +104,28 @@ module app.browse.filter {
             new ContentQueryRequest<ContentSummaryJson,ContentSummary>(contentQuery).
                 setExpand(api.rest.Expand.SUMMARY).
                 sendAndParse().done((contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
+                    var serchStrValue : string = event.getSearchInputValues().getTextSearchFieldValue();
+                    if(serchStrValue != null && serchStrValue.length > 0) {
+                        var contentQuery: ContentQuery = new ContentQuery();
+                        this.appendFulltextSearch(event.getSearchInputValues(), contentQuery);
 
-                    var doUpdateAll = true;
-                    if (event.getElementChanged() instanceof api.aggregation.BucketView) {
-                        doUpdateAll = false;
+                        this.appendContentTypesAggregation(contentQuery);
+                        this.appendLastModifiedAggregation(contentQuery);
+
+                        new ContentQueryRequest<ContentSummaryJson,ContentSummary>(contentQuery).
+                            setExpand(api.rest.Expand.SUMMARY).
+                            sendAndParse().done((filterSearchResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
+                                this.updateAggregations(filterSearchResult.getAggregations(), true);
+                                new ContentBrowseSearchEvent(contentQueryResult.getContents()).fire();
+                            });
+                    } else {
+                        this.resetFacets(true, true);
+                        new ContentBrowseSearchEvent(contentQueryResult.getContents()).fire();
                     }
-
-                    this.updateAggregations(contentQueryResult.getAggregations(), doUpdateAll);
-
-                    new ContentBrowseSearchEvent(contentQueryResult.getContentsAsJson()).fire();
                 });
         }
 
-        private resetFacets(supressEvent?: boolean) {
+        private resetFacets(supressEvent?: boolean, doResetAll?: boolean) {
             var queryExpr: QueryExpr = new QueryExpr(null);
 
             var contentQuery: ContentQuery = new ContentQuery();
@@ -129,7 +137,7 @@ module app.browse.filter {
             new ContentQueryRequest<ContentSummaryJson,ContentSummary>(contentQuery).
                 sendAndParse().done((contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
 
-                    this.updateAggregations(contentQueryResult.getAggregations());
+                    this.updateAggregations(contentQueryResult.getAggregations(), doResetAll);
 
                     if (!supressEvent) {
                         new ContentBrowseResetEvent().fire();

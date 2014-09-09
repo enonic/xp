@@ -62,16 +62,16 @@ module api.form {
             }
 
             var inputType: api.form.InputTypeName = this.input.getInputType();
-
+            var inputTypeViewContext = this.getContext().createInputTypeViewContext(this.input.getInputTypeConfig(),
+                this.getParentDataPath(),
+                this.input);
             if (inputtype.InputTypeManager.isRegistered(inputType.getName())) {
-                var inputTypeConfig = this.input.getInputTypeConfig();
-                var inputTypeViewConfig = this.getContext().createInputTypeViewContext(inputTypeConfig, this.getParentDataPath(),
-                    this.input);
-                this.inputTypeView = inputtype.InputTypeManager.createView(inputType.getName(), inputTypeViewConfig);
+
+                this.inputTypeView = inputtype.InputTypeManager.createView(inputType.getName(), inputTypeViewContext);
             }
             else {
                 console.log("Input type [" + inputType.getName() + "] needs to be registered first.");
-                this.inputTypeView = inputtype.InputTypeManager.createView("NoInputTypeFound", null);
+                this.inputTypeView = inputtype.InputTypeManager.createView("NoInputTypeFound", inputTypeViewContext);
             }
 
             this.inputTypeView.onEditContentRequest((content: api.content.ContentSummary) => {
@@ -79,12 +79,16 @@ module api.form {
             });
 
             if (this.properties.length == 0) {
-                var initialValue: api.data.Value = this.inputTypeView.newInitialValue();
-                if (initialValue != null) {
-                    var initialProperty = new api.data.Property(this.input.getName(), initialValue);
-                    this.properties.push(initialProperty);
-                    this.parentDataSet.addData(initialProperty);
+
+                var initialRawValue: any = this.inputTypeView.newInitialValue();
+                if (api.ObjectHelper.iFrameSafeInstanceOf(initialRawValue, api.data.Value)) {
+                    throw new Error(api.util.getClassName(this.inputTypeView) +
+                                    ".newInitialValue must not return a api.data.Value, but the raw value instead");
                 }
+                var initialValue = new api.data.Value(initialRawValue, this.inputTypeView.getValueType());
+                var initialProperty = new api.data.Property(this.input.getName(), initialValue);
+                this.properties.push(initialProperty);
+                this.parentDataSet.addData(initialProperty);
             }
 
             this.inputTypeView.layout(this.input, this.properties);
@@ -102,10 +106,16 @@ module api.form {
 
             this.inputTypeView.onValueChanged((event: inputtype.ValueChangedEvent) => {
 
+                api.util.assertNotNull(event.getNewValue(), "sending ValueChangedEvent-s for null values is not allowed");
+
                 var dataId = new DataId(this.input.getName(), event.getArrayIndex());
                 var property: Property = this.parentDataSet.getPropertyFromDataId(dataId);
                 if (property != null) {
                     property.setValue(event.getNewValue());
+                }
+                else {
+                    var property = Property.fromNameValue(this.input.getName(), event.getNewValue());
+                    this.parentDataSet.addData(property);
                 }
             });
 

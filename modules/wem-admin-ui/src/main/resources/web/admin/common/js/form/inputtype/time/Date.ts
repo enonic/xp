@@ -2,57 +2,57 @@ module api.content.form.inputtype.time {
 
     import support = api.form.inputtype.support;
 
+    import ValueTypes = api.data.type.ValueTypes;
+
     export class Date extends support.BaseInputTypeNotManagingAdd<any> {
 
         constructor(config: api.form.inputtype.InputTypeViewContext<any>) {
             super(config);
         }
 
+        getValueType(): api.data.type.ValueType {
+            return ValueTypes.LOCAL_DATE;
+        }
+
         newInitialValue(): api.data.Value {
-            return new api.data.Value("", api.data.ValueTypes.STRING);
+            return null;
         }
 
         createInputOccurrenceElement(index: number, property: api.data.Property): api.dom.Element {
 
-            var datePicker: api.ui.time.DatePicker;
+            var datePickerBuilder = new api.ui.time.DatePickerBuilder();
 
-            if (property != null) {
-                if (api.util.isStringEmpty(property.getValue().asString())) {
-                    return new api.ui.time.DatePickerBuilder().build();
-                }
-                var date = api.util.parseDate(property.getValue().asString());
-
-                datePicker = new api.ui.time.DatePickerBuilder().
-                    setMonth(date.getMonth()).setYear(date.getFullYear()).setSelectedDate(date).build();
+            if (!property.hasNullValue()) {
+                var date = property.getDate();
+                datePickerBuilder.
+                    setSelectedDate(date).
+                    setYear(date.getUTCFullYear()).
+                    setMonth(date.getUTCMonth());
             }
-            else {
-                datePicker = new api.ui.time.DatePickerBuilder().build();
-            }
-            return datePicker;
+            return datePickerBuilder.build();
         }
 
         availableSizeChanged() {
         }
 
+
         onOccurrenceValueChanged(element: api.dom.Element, listener: (event: api.form.inputtype.support.ValueChangedEvent) => void) {
             var datePicker = <api.ui.time.DatePicker>element;
             datePicker.onSelectedDateChanged((event: api.ui.time.SelectedDateChangedEvent) => {
-                listener(new api.form.inputtype.support.ValueChangedEvent(this.newValue(event.getDate().toDateString())));
+                var changedValue = new api.data.Value(event.getDate(), ValueTypes.LOCAL_DATE);
+                listener(new api.form.inputtype.support.ValueChangedEvent(changedValue));
             });
         }
 
-
-        private newValue(s: string): api.data.Value {
-            return new api.data.Value(s, api.data.ValueTypes.STRING);
-        }
-
         getValue(occurrence: api.dom.Element): api.data.Value {
+
             var datePicker: api.ui.time.DatePicker = < api.ui.time.DatePicker>occurrence;
+
             if (datePicker.getSelectedDate()) {
-                return  this.newValue(datePicker.getSelectedDate().toDateString());
+                return new api.data.Value(datePicker.getSelectedDate(), ValueTypes.LOCAL_DATE);
             }
             else {
-                return  this.newValue("");
+                return null;
             }
         }
 
@@ -60,11 +60,7 @@ module api.content.form.inputtype.time {
             if (value == null) {
                 return true;
             }
-            if (api.util.isStringBlank(value.asString())) {
-                return true;
-            } else {
-                return false;
-            }
+            return !value.getType().equals(ValueTypes.LOCAL_DATE);
         }
 
     }

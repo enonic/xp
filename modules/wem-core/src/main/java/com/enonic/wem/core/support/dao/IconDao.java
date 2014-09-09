@@ -7,6 +7,8 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
+import java.time.Instant;
+import java.util.Map;
 
 import org.apache.commons.io.FilenameUtils;
 
@@ -15,6 +17,8 @@ import com.google.common.net.MediaType;
 
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.exception.SystemException;
+import com.enonic.wem.api.resource.Resource;
+import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.util.MediaTypes;
 
 public final class IconDao
@@ -68,6 +72,28 @@ public final class IconDao
         {
             throw new SystemException( e, "Could not read icon from [{0}]", itemPath );
         }
+    }
+
+    public Icon readIcon( final ResourceKey parentResource )
+    {
+        final Resource imageResource = imageTypeExtensions.values().stream().
+            map( ext -> Resource.from( parentResource.resolve( ICON_FILE_NAME + "." + ext ) ) ).
+            filter( Resource::exists ).
+            findFirst().orElse( null );
+
+        if ( imageResource == null )
+        {
+            return null;
+        }
+
+        final Instant modifiedTime = Instant.ofEpochMilli( imageResource.getTimestamp() );
+        final String extension = FilenameUtils.getExtension( imageResource.getKey().getPath() );
+        final MediaType mediaType = imageTypeExtensions.entrySet().stream().
+            filter( entry -> entry.getValue().equals( extension ) ).
+            map( Map.Entry::getKey ).
+            findFirst().orElse( MediaType.ANY_IMAGE_TYPE );
+        return Icon.from( imageResource.openStream(), mediaType.toString(), modifiedTime );
+
     }
 
     private String getIconFileName( final Icon icon )

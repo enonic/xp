@@ -40,7 +40,7 @@ public class ContentTypeResourceTest
 {
     private static final Instant SOME_DATE = LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC );
 
-    private static final ContentTypeName MY_CTY_QUALIFIED_NAME = ContentTypeName.from( "my_cty" );
+    private static final ContentTypeName MY_CTY_QUALIFIED_NAME = ContentTypeName.from( "mymodule-1.0.0:my_cty" );
 
     private ContentTypeService contentTypeService;
 
@@ -133,7 +133,7 @@ public class ContentTypeResourceTest
 
         MixinReference myMixinReference = newMixinReference().
             name( "myMixinReference" ).
-            mixin( "mymixin" ).
+            mixin( "mymodule-1.0.0:mymixin" ).
             build();
 
         ContentType contentType = newContentType().
@@ -225,7 +225,7 @@ public class ContentTypeResourceTest
     {
         Mockito.when( contentTypeService.getByName( Mockito.any( GetContentTypeParams.class ) ) ).thenReturn( null );
         ContentType createdContentType = ContentType.newContentType().
-            name( "htmlarea" ).
+            name( "mymodule-1.0.0:htmlarea" ).
             icon( Icon.from( new byte[]{123}, "image/gif", SOME_DATE ) ).
             superType( ContentTypeName.structured() ).
             build();
@@ -242,7 +242,7 @@ public class ContentTypeResourceTest
         throws Exception
     {
         Mockito.when( contentTypeService.getByName( Mockito.any( GetContentTypeParams.class ) ) ).thenReturn( ContentType.newContentType().
-            name( "htmlarea" ).
+            name( "mymodule-1.0.0:htmlarea" ).
             icon( Icon.from( new byte[]{123}, "image/gif", SOME_DATE ) ).
             build() );
         String resultJson = request().path( "schema/content/create" ).entity( readFromFile( "create_content_type.json" ),
@@ -277,7 +277,7 @@ public class ContentTypeResourceTest
         throws Exception
     {
         ContentType contentType = ContentType.newContentType().
-            name( "htmlarea" ).
+            name( "mymodule-1.0.0:htmlarea" ).
             superType( ContentTypeName.structured() ).
             icon( Icon.from( new byte[]{123}, "image/gif", SOME_DATE ) ).
             build();

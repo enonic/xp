@@ -23,6 +23,11 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>wem-guice</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>wem-api</artifactId>
       <version>${project.version}</version>
       <type>test-jar</type>
@@ -45,6 +50,12 @@
       <artifactId>thymeleaf</artifactId>
       <version>2.1.1.RELEASE</version>
     </dependency>
+    <dependency>
+      <groupId>com.googlecode.pojosr</groupId>
+      <artifactId>de.kalpatec.pojosr.framework</artifactId>
+      <version>0.2.1</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -54,6 +65,9 @@
         <artifactId>maven-bundle-plugin</artifactId>
         <configuration>
           <instructions>
+            <Bundle-Activator>
+              com.enonic.wem.thymeleaf.internal.ThymeleafActivator
+            </Bundle-Activator>
             <Import-Package>
               !com.sun.jdi.*,
               !org.cyberneko.html,

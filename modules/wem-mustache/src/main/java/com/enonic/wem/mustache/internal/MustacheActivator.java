@@ -12,6 +12,6 @@ public final class MustacheActivator
         bind( MustacheProcessorFactory.class ).to( MustacheProcessorFactoryImpl.class );
 
         service( MustacheProcessorFactory.class ).export();
-        service( MustacheScriptContributor.class ).export();
+        service( MustacheScriptLibrary.class ).export();
     }
 }

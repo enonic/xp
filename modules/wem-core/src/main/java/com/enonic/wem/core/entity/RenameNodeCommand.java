@@ -61,7 +61,11 @@ final class RenameNodeCommand
             moveNodesToNewParentPath( children, renamedNode.path() );
         }
 
-        return renamedNode;
+        return NodeHasChildResolver.create().
+            workspace( context.getWorkspace() ).
+            workspaceService( this.workspaceService ).
+            build().
+            resolve( renamedNode );
     }
 
     private Nodes getChildNodes( final Workspace workspace, final Node parentNode )

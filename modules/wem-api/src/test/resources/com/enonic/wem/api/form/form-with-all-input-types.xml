@@ -16,7 +16,12 @@
     <occurrences minimum="0" maximum="1"/>
   </input>
   <input name="myTime" type="Time">
-  <immutable>false</immutable>
+    <immutable>false</immutable>
+    <indexed>false</indexed>
+    <occurrences minimum="0" maximum="1"/>
+  </input>
+  <input name="myDateTime" type="DateTime">
+    <immutable>false</immutable>
     <indexed>false</indexed>
     <occurrences minimum="0" maximum="1"/>
   </input>
@@ -111,7 +116,7 @@
     <indexed>false</indexed>
     <occurrences minimum="0" maximum="1"/>
     <config>
-      <relationship-type>like</relationship-type>
+      <relationship-type>system-0.0.0:like</relationship-type>
     </config>
   </input>
   <input name="myImage" type="ImageSelector">
@@ -119,7 +124,7 @@
     <indexed>false</indexed>
     <occurrences minimum="0" maximum="1"/>
     <config>
-      <relationship-type>default</relationship-type>
+      <relationship-type>system-0.0.0:default</relationship-type>
     </config>
   </input>
   <input name="myCustomInput" type="custom:DummyCustomInputType">

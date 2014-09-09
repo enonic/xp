@@ -2,8 +2,6 @@ package com.enonic.wem.core;
 
 import java.io.File;
 
-import javax.inject.Inject;
-
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.attachment.AttachmentService;
@@ -29,21 +27,14 @@ import com.enonic.wem.core.config.SystemConfig;
 import com.enonic.wem.core.home.HomeDir;
 import com.enonic.wem.core.image.filter.ImageFilterBuilder;
 import com.enonic.wem.core.initializer.StartupInitializer;
-import com.enonic.wem.core.lifecycle.LifecycleService;
 import com.enonic.wem.core.module.ModuleKeyResolverService;
-import com.enonic.wem.core.module.ModuleLoader;
 import com.enonic.wem.core.module.ModuleURLStreamHandler;
+import com.enonic.wem.core.schema.CoreSchemasProvider;
 import com.enonic.wem.guice.GuiceActivator;
 
 public final class Activator
     extends GuiceActivator
 {
-    @Inject
-    protected LifecycleService lifecycleService;
-
-    @Inject
-    protected ModuleLoader moduleLoader;
-
     @Override
     protected void configure()
     {
@@ -81,21 +72,6 @@ public final class Activator
         service( StartupInitializer.class ).export();
         service( ModuleURLStreamHandler.class ).attribute( "url.handler.protocol", "module" ).export();
         service( EventPublisher.class ).export();
-    }
-
-    @Override
-    protected void doStart()
-        throws Exception
-    {
-        this.moduleLoader.start();
-        this.lifecycleService.startAll();
-    }
-
-    @Override
-    protected void doStop()
-        throws Exception
-    {
-        this.lifecycleService.stopAll();
-        this.moduleLoader.stop();
+        service( CoreSchemasProvider.class ).export();
     }
 }

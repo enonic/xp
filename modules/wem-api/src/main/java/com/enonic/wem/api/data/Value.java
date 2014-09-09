@@ -26,8 +26,10 @@ public final class Value
     private Value( final ValueType type, final Object value )
     {
         Preconditions.checkNotNull( type, "type cannot be null" );
-        Preconditions.checkNotNull( value, "value cannot be null" );
-        Preconditions.checkArgument( !( value instanceof Value ), "The value of a Value cannot be: " + value.getClass() );
+        if ( value != null )
+        {
+            Preconditions.checkArgument( !( value instanceof Value ), "The value of a Value cannot be: " + value.getClass() );
+        }
         this.type = type;
         this.object = value;
     }
@@ -189,7 +191,7 @@ public final class Value
 
     public static Value newValue( final ValueType type, final Object value )
     {
-        return new Value( type, type.convert( value ) );
+        return new Value( type, value != null ? type.convert( value ) : null );
     }
 
     public static Value newInstant( final Object value )
@@ -260,5 +262,10 @@ public final class Value
     public static Value newData( final Object value )
     {
         return newValue( ValueTypes.DATA, value );
+    }
+
+    public boolean isNull()
+    {
+        return this.object == null;
     }
 }

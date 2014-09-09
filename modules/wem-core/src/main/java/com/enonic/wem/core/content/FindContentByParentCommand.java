@@ -13,15 +13,12 @@ import com.enonic.wem.api.entity.Nodes;
 final class FindContentByParentCommand
     extends AbstractFindContentCommand
 {
-    private final boolean populateChildIds;
-
     private final FindContentByParentParams params;
 
     private FindContentByParentCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
-        this.populateChildIds = builder.populateChildIds;
     }
 
     public static Builder create( final FindContentByParentParams params )
@@ -53,19 +50,6 @@ final class FindContentByParentCommand
 
         Contents contents = this.translator.fromNodes( nodes );
 
-        if ( populateChildIds && contents.isNotEmpty() )
-        {
-            contents = ChildContentIdsResolver.create().
-                context( this.context ).
-                nodeService( this.nodeService ).
-                blobService( this.blobService ).
-                contentTypeService( this.contentTypeService ).
-                translator( this.translator ).
-                queryService( this.queryService ).
-                build().
-                resolve( contents );
-        }
-
         return FindContentByParentResult.create().
             contents( contents ).
             totalHits( result.getTotalHits() ).
@@ -73,23 +57,14 @@ final class FindContentByParentCommand
             build();
     }
 
-
     public static class Builder
         extends AbstractFindContentCommand.Builder<Builder>
     {
-        private FindContentByParentParams params;
-
-        private boolean populateChildIds = true;
+        private final FindContentByParentParams params;
 
         public Builder( final FindContentByParentParams params )
         {
             this.params = params;
-        }
-
-        public Builder populateChildIds( final boolean populateChildIds )
-        {
-            this.populateChildIds = populateChildIds;
-            return this;
         }
 
         void validate()

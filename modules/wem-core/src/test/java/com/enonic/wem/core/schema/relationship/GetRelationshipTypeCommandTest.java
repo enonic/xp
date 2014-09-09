@@ -34,13 +34,13 @@ public class GetRelationshipTypeCommandTest
         throws Exception
     {
         // setup
-        final RelationshipTypeName name = RelationshipTypeName.from( "like" );
+        final RelationshipTypeName name = RelationshipTypeName.from( "system-0.0.0:like" );
         final RelationshipType relationshipType = RelationshipType.newRelationshipType().
             name( name ).
             fromSemantic( "likes" ).
             toSemantic( "liked by" ).
-            addAllowedFromType( ContentTypeName.from( "person" ) ).
-            addAllowedToType( ContentTypeName.from( "person" ) ).
+            addAllowedFromType( ContentTypeName.from( "mymodule-1.0.0:person" ) ).
+            addAllowedToType( ContentTypeName.from( "mymodule-1.0.0:person" ) ).
             build();
 
         // expectation

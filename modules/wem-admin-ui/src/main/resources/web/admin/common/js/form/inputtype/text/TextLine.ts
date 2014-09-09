@@ -8,15 +8,19 @@ module api.form.inputtype.text {
             super(config);
         }
 
+        getValueType(): api.data.type.ValueType {
+            return api.data.type.ValueTypes.STRING;
+        }
+
         newInitialValue(): api.data.Value {
-            return new api.data.Value("", api.data.ValueTypes.STRING);
+            return null;
         }
 
         createInputOccurrenceElement(index: number, property: api.data.Property): api.dom.Element {
 
             var inputEl = api.ui.text.TextInput.middle();
 
-            if (property != null) {
+            if (property.hasNonNullValue()) {
                 inputEl.setName(this.getInput().getName() + "-" + property.getArrayIndex());
                 inputEl.setValue(property.getString());
             }
@@ -37,7 +41,7 @@ module api.form.inputtype.text {
         }
 
         private newValue(s: string): api.data.Value {
-            return new api.data.Value(s, api.data.ValueTypes.STRING);
+            return new api.data.Value(s, api.data.type.ValueTypes.STRING);
         }
 
         getValue(occurrence: api.dom.Element): api.data.Value {

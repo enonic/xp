@@ -45,6 +45,11 @@
       <artifactId>org.apache.felix.utils</artifactId>
       <version>1.6.0</version>
     </dependency>
+    <dependency>
+      <groupId>org.eclipse.sisu</groupId>
+      <artifactId>org.eclipse.sisu.inject</artifactId>
+      <version>0.3.0.M1</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -66,8 +71,7 @@
               com.google.inject.*;version=3.0.0
             </_exportcontents>
             <Import-Package>
-              !com.google.inject.*,
-              *
+              *;resolution:=optional
             </Import-Package>
             <Embed-Dependency>
               guice,
@@ -75,7 +79,8 @@
               peaberry,
               javax.inject,
               aopalliance,
-              org.apache.felix.utils
+              org.apache.felix.utils,
+              org.eclipse.sisu.inject
             </Embed-Dependency>
           </instructions>
         </configuration>

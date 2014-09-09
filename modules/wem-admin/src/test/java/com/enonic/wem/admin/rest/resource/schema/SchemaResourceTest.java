@@ -27,9 +27,9 @@ public class SchemaResourceTest
 
     private SchemaService schemaService;
 
-    private Mixin createMixin( String displayName )
+    private Mixin createMixin( final String name, final String displayName )
     {
-        return Mixin.newMixin().name( displayName.toLowerCase() ).displayName( displayName ).description( "M description" ).createdTime(
+        return Mixin.newMixin().name( name ).displayName( displayName ).description( "M description" ).createdTime(
             Instant.parse( currentTime ) ).modifiedTime( Instant.parse( currentTime ) ).addFormItem(
             Input.newInput().name( displayName.toLowerCase() ).inputType( InputTypes.TEXT_AREA ).inputTypeConfig(
                 InputTypes.TEXT_AREA.getDefaultConfig() ).build() ).build();
@@ -62,9 +62,9 @@ public class SchemaResourceTest
 
     private Schemas createSchemaList()
     {
-        ContentType contentType = createContentType( "contenttype" );
-        Mixin mixin = createMixin( "mixin" );
-        RelationshipType relationshipType = createRelationshipType( "relationship" );
+        ContentType contentType = createContentType( "mymodule-1.0.0:contenttype" );
+        Mixin mixin = createMixin( "mymodule-1.0.0:mixin", "mixin" );
+        RelationshipType relationshipType = createRelationshipType( "mymodule-1.0.0:relationship" );
         return Schemas.from( contentType, mixin, relationshipType );
     }
 
@@ -100,8 +100,8 @@ public class SchemaResourceTest
     public void searchSchemaByTypes()
         throws Exception
     {
-        ContentType contentType = createContentType( "contenttype" );
-        Mixin mixin = createMixin( "mixin" );
+        ContentType contentType = createContentType( "mymodule-1.0.0:contenttype" );
+        Mixin mixin = createMixin( "mymodule-1.0.0:mixin", "mixin" );
         Schemas schemas = Schemas.from( contentType, mixin );
         Mockito.when( this.schemaService.getTypes( Mockito.isA( SchemaTypesParams.class ) ) ).thenReturn( schemas );
 
@@ -132,11 +132,11 @@ public class SchemaResourceTest
         throws Exception
     {
         byte[] iconBytes = new byte[]{111, 122, 123};
-        Schemas schemas = Schemas.from(
-            createContentType( "contenttype", Icon.from( iconBytes, "img/gif", Instant.parse( "2007-12-03T10:15:30.00Z" ) ) ) );
+        Schemas schemas = Schemas.from( createContentType( "mymodule-1.0.0:contenttype", Icon.from( iconBytes, "img/gif", Instant.parse(
+            "2007-12-03T10:15:30.00Z" ) ) ) );
         Mockito.when( this.schemaService.getChildren( Mockito.isA( SchemaKey.class ) ) ).thenReturn( schemas );
 
-        String json = request().path( "schema/list" ).queryParam( "parentKey", "ContentType:parent" ).get().getAsString();
+        String json = request().path( "schema/list" ).queryParam( "parentKey", "ContentType:mymodule-1.0.0:parent" ).get().getAsString();
 
         assertJson( "schema_by_parent.json", json );
     }
@@ -147,7 +147,7 @@ public class SchemaResourceTest
     {
         Mockito.when( this.schemaService.getChildren( Mockito.isA( SchemaKey.class ) ) ).thenReturn( Schemas.empty() );
 
-        String json = request().path( "schema/list" ).queryParam( "parentKey", "ContentType:parent" ).get().getAsString();
+        String json = request().path( "schema/list" ).queryParam( "parentKey", "ContentType:mymodule-1.0.0:parent" ).get().getAsString();
         assertEquals( "{\"schemas\":[],\"total\":0}", json );
     }
 

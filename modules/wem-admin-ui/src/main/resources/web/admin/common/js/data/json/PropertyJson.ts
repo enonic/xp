@@ -4,7 +4,7 @@ module api.data.json{
 
         type:string;
 
-        value?:string;
+        value?:any;
 
         set?:DataTypeWrapperJson[];
     }

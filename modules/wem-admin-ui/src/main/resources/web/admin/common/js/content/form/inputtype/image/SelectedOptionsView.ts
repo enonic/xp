@@ -302,7 +302,7 @@ module api.content.form.inputtype.image {
 
         getValues(): Value[] {
             return this.getOptions().map((option: Option<ImageSelectorDisplayValue>) => {
-                return new Value(option.value, api.data.ValueTypes.CONTENT_ID);
+                return new Value(option.value, api.data.type.ValueTypes.CONTENT_ID);
             });
         }
 

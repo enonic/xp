@@ -4,7 +4,7 @@ import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
 
-import com.enonic.wem.api.content.FieldSort;
+import com.enonic.wem.api.query.FieldSort;
 
 public class FindNodesByParentParams
 {

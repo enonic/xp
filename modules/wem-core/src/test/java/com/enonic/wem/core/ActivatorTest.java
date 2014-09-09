@@ -3,12 +3,14 @@ package com.enonic.wem.core;
 import java.io.File;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import com.google.inject.Guice;
 
+@Ignore
 public class ActivatorTest
 {
     @Rule

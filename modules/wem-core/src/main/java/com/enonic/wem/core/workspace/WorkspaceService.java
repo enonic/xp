@@ -1,8 +1,10 @@
 package com.enonic.wem.core.workspace;
 
 import com.enonic.wem.api.entity.EntityIds;
+import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.NodeVersionId;
 import com.enonic.wem.api.entity.NodeVersionIds;
+import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.core.workspace.compare.query.CompareWorkspacesQuery;
 import com.enonic.wem.core.workspace.query.WorkspaceDeleteQuery;
 import com.enonic.wem.core.workspace.query.WorkspaceIdQuery;
@@ -28,5 +30,7 @@ public interface WorkspaceService
     public NodeVersionIds findByParent( final WorkspaceParentQuery query );
 
     public EntityIds getEntriesWithDiff( final CompareWorkspacesQuery query );
+
+    public boolean hasChildren( final NodePath parent, final Workspace workspace );
 
 }

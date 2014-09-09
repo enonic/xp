@@ -1,25 +1,25 @@
 module api.form.inputtype.support {
 
-    export class BaseInputTypeSingleOccurrence<CONFIG> extends api.dom.DivEl implements api.form.inputtype.InputTypeView {
+    export class BaseInputTypeSingleOccurrence<CONTEXT> extends api.dom.DivEl implements api.form.inputtype.InputTypeView {
 
-        private config: api.form.inputtype.InputTypeViewContext<CONFIG>;
+        private context: api.form.inputtype.InputTypeViewContext<CONTEXT>;
 
         private input: api.form.Input;
 
         private valueChangedListeners: {(event: api.form.inputtype.ValueChangedEvent) : void}[] = [];
 
-        constructor(config: api.form.inputtype.InputTypeViewContext<CONFIG>, className?: string) {
+        constructor(CONTEXT: api.form.inputtype.InputTypeViewContext<CONTEXT>, className?: string) {
             super("input-type-view" + ( className ? " " + className : ""));
-            api.util.assertNotNull(config, "config cannt be null");
-            this.config = config;
+            api.util.assertNotNull(CONTEXT, "CONTEXT cannt be null");
+            this.context = CONTEXT;
         }
 
         availableSizeChanged() {
 
         }
 
-        public getConfig(): api.form.inputtype.InputTypeViewContext<CONFIG> {
-            return this.config;
+        public getContext(): api.form.inputtype.InputTypeViewContext<CONTEXT> {
+            return this.context;
         }
 
         getElement(): api.dom.Element {
@@ -31,17 +31,25 @@ module api.form.inputtype.support {
         }
 
         layout(input: api.form.Input, properties: api.data.Property[]) {
-
-            throw new Error("Must be implemented by inheritor");
+            this.layoutProperty(input, properties[0])
         }
 
-        newInitialValue(): api.data.Value {
-            throw new Error("Must be implemented by inheritor");
+        layoutProperty(input: api.form.Input, property: api.data.Property) {
+
+            throw new Error("Must be implemented by inheritor: " + api.util.getClassName(this));
+        }
+
+        getValueType(): api.data.type.ValueType {
+            throw new Error("Must be implemented by inheritor: " + api.util.getClassName(this));
+        }
+
+        newInitialValue(): any {
+            throw new Error("Must be implemented by inheritor: " + api.util.getClassName(this));
         }
 
         getValues(): api.data.Value[] {
 
-            throw new Error("Must be implemented by inheritor");
+            throw new Error("Must be implemented by inheritor: " + api.util.getClassName(this));
         }
 
         getAttachments(): api.content.attachment.Attachment[] {
@@ -50,7 +58,7 @@ module api.form.inputtype.support {
 
         validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
 
-            throw new Error("Must be implemented by inheritor");
+            throw new Error("Must be implemented by inheritor: " + api.util.getClassName(this));
         }
 
         onValueChanged(listener: (event: api.form.inputtype.ValueChangedEvent) => void) {
@@ -89,19 +97,19 @@ module api.form.inputtype.support {
         }
 
         onFocus(listener: (event: FocusEvent) => void) {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error("Must be implemented by inheritor: " + api.util.getClassName(this));
         }
 
         unFocus(listener: (event: FocusEvent) => void) {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error("Must be implemented by inheritor: " + api.util.getClassName(this));
         }
 
         onBlur(listener: (event: FocusEvent) => void) {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error("Must be implemented by inheritor: " + api.util.getClassName(this));
         }
 
         unBlur(listener: (event: FocusEvent) => void) {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error("Must be implemented by inheritor: " + api.util.getClassName(this));
         }
 
         onEditContentRequest(listener: (content: api.content.ContentSummary) => void) {

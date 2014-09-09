@@ -11,6 +11,7 @@ module app {
             super({
                 appBar: appBar
             });
+
             this.mask = new api.ui.mask.LoadMask(this);
 
             this.handleGlobalEvents();
@@ -118,6 +119,7 @@ module app {
                 this.selectPanel(tabMenuItem);
             } else {
                 this.mask.show();
+                tabMenuItem = new api.app.bar.AppBarTabMenuItem("[New " + contentTypeSummary.getDisplayName() + "]", tabId);
 
                 var contentWizardPanelFactory = new app.wizard.ContentWizardPanelFactory().
                     setAppBarTabId(tabId).
@@ -130,7 +132,6 @@ module app {
                 }
 
                 contentWizardPanelFactory.createForNew().then((wizard: app.wizard.ContentWizardPanel) => {
-                    tabMenuItem = new api.app.bar.AppBarTabMenuItem("[New " + contentTypeSummary.getDisplayName() + "]", tabId, false, wizard.getCloseAction());
                     this.addWizardPanel(tabMenuItem, wizard);
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
@@ -148,7 +149,7 @@ module app {
                     return;
                 }
 
-                var tabMenuItem = this.isContentBeingEditedOrViewed(content);
+                var tabMenuItem = this.resolveTabMenuItemForContentBeingEditedOrViewed(content);
 
                 if (tabMenuItem) {
                     this.selectPanel(tabMenuItem);
@@ -169,7 +170,6 @@ module app {
                 }
             });
         }
-
         private handleEdit(event: app.browse.EditContentEvent) {
 
             var contents: api.content.ContentSummary[] = event.getModels();
@@ -177,12 +177,11 @@ module app {
                 if (!content) {
                     return;
                 }
-
-                var tabMenuItem = this.isContentBeingEditedOrViewed(content);
+                var closeViewPanelMenuItem = this.resolveTabMenuItemForContentBeingViewed(content);
+                var tabMenuItem = this.resolveTabMenuItemForContentBeingEdited(content);
 
                 if (tabMenuItem != null) {
                     this.selectPanel(tabMenuItem);
-
                 } else {
                     this.mask.show();
                     var tabId = api.app.bar.AppBarTabId.forEdit(content.getId());
@@ -191,7 +190,11 @@ module app {
                         setAppBarTabId(tabId).
                         setContentToEdit(content.getContentId()).
                         createForEdit().then((wizard: app.wizard.ContentWizardPanel) => {
-
+                            if(closeViewPanelMenuItem != null) {
+                                this.getAppBarTabMenu().deselectNavigationItem();
+                                this.getAppBarTabMenu().removeNavigationItem(closeViewPanelMenuItem);
+                                this.removePanelByIndex(closeViewPanelMenuItem.getIndex());
+                            }
                             tabMenuItem = new api.app.bar.AppBarTabMenuItem(content.getDisplayName(), tabId, true, wizard.getCloseAction());
                             this.addWizardPanel(tabMenuItem, wizard);
 
@@ -210,14 +213,26 @@ module app {
             });
         }
 
-        private isContentBeingEditedOrViewed(content: api.content.ContentSummary): api.app.bar.AppBarTabMenuItem {
+        private resolveTabMenuItemForContentBeingEditedOrViewed(content: api.content.ContentSummary): api.app.bar.AppBarTabMenuItem {
+            var result = this.resolveTabMenuItemForContentBeingEdited(content);
+            if(!result) {
+                result = this.resolveTabMenuItemForContentBeingViewed(content)
+            }
+            return result;
+        }
+        private resolveTabMenuItemForContentBeingEdited(content: api.content.ContentSummary): api.app.bar.AppBarTabMenuItem {
             if (!!content) {
 
                 var tabId = this.getAppBarTabMenu().getNavigationItemById(api.app.bar.AppBarTabId.forEdit(content.getId()));
                 if (tabId) {
                     return tabId;
                 }
-                tabId = this.getAppBarTabMenu().getNavigationItemById(api.app.bar.AppBarTabId.forView(content.getId()));
+            }
+            return null;
+        }
+        private resolveTabMenuItemForContentBeingViewed(content: api.content.ContentSummary): api.app.bar.AppBarTabMenuItem {
+            if (!!content) {
+                var tabId = this.getAppBarTabMenu().getNavigationItemById(api.app.bar.AppBarTabId.forView(content.getId()));
                 if (tabId) {
                     return tabId;
                 }

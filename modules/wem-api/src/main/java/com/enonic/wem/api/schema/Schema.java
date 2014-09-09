@@ -13,6 +13,8 @@ public interface Schema
 
     SchemaName getName();
 
+    SchemaKind getType();
+
     String getDisplayName();
 
     String getDescription();

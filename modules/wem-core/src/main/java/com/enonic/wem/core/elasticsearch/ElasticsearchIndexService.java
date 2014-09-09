@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -44,12 +46,9 @@ import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.index.IndexStatus;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.document.IndexDocument;
-import com.enonic.wem.core.lifecycle.LifecycleBean;
-import com.enonic.wem.core.lifecycle.RunLevel;
 
 @Singleton
 public class ElasticsearchIndexService
-    extends LifecycleBean
     implements IndexService
 {
 
@@ -71,13 +70,8 @@ public class ElasticsearchIndexService
 
     private Client client;
 
-    public ElasticsearchIndexService()
-    {
-        super( RunLevel.L3 );
-    }
-
-    @Override
-    protected void doStart()
+    @PostConstruct
+    public void start()
         throws Exception
     {
         applyIndexTemplates( Index.SEARCH );
@@ -86,13 +80,12 @@ public class ElasticsearchIndexService
         doInitializeVersionIndex();
     }
 
-    @Override
-    protected void doStop()
+    @PreDestroy
+    public void stop()
         throws Exception
     {
         this.client.close();
     }
-
 
     private void applyIndexTemplates( final Index index )
     {

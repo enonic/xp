@@ -1,12 +1,12 @@
 package com.enonic.wem.core.schema.relationship.dao;
 
 import java.io.IOException;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.List;
 import java.time.Instant;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.apache.commons.io.FileUtils;
@@ -16,13 +16,15 @@ import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.exception.SystemException;
+import com.enonic.wem.api.schema.SchemaRegistry;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeXml;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
-import com.enonic.wem.core.config.SystemConfig;import com.enonic.wem.core.support.dao.IconDao;
 import com.enonic.wem.api.xml.XmlSerializers;
+import com.enonic.wem.core.config.SystemConfig;
+import com.enonic.wem.core.support.dao.IconDao;
 
 import static java.nio.file.Files.getLastModifiedTime;
 import static java.nio.file.Files.isDirectory;
@@ -36,6 +38,7 @@ public final class RelationshipTypeDaoImpl
 
     private Path basePath;
 
+    private SchemaRegistry schemaRegistry;
 
     @Override
     public RelationshipType createRelationshipType( final RelationshipType relationshipType )
@@ -60,32 +63,13 @@ public final class RelationshipTypeDaoImpl
     @Override
     public RelationshipTypes getAllRelationshipTypes()
     {
-        final List<RelationshipType> relationshipTypeList = Lists.newArrayList();
-
-        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream( this.basePath ))
-        {
-            for ( Path schemaDir : directoryStream )
-            {
-                final RelationshipType.Builder relationshipTypeBuilder = readRelationshipType( schemaDir );
-                final RelationshipType relationshipType = relationshipTypeBuilder != null ? relationshipTypeBuilder.build() : null;
-                if ( relationshipType != null )
-                {
-                    relationshipTypeList.add( relationshipType );
-                }
-            }
-        }
-        catch ( IOException e )
-        {
-            throw new SystemException( e, "Could not retrieve relationship types" );
-        }
-        return RelationshipTypes.from( relationshipTypeList );
+        return this.schemaRegistry.getAllRelationshipTypes();
     }
 
     @Override
     public RelationshipType.Builder getRelationshipType( final RelationshipTypeName relationshipTypeName )
     {
-        final Path relationshipPath = pathForRelationshipType( relationshipTypeName );
-        return readRelationshipType( relationshipPath );
+        return RelationshipType.newRelationshipType( this.schemaRegistry.getRelationshipType( relationshipTypeName ) );
     }
 
     @Override
@@ -204,5 +188,11 @@ public final class RelationshipTypeDaoImpl
     {
         this.basePath = systemConfig.getRelationshiptTypesDir();
         Files.createDirectories( this.basePath );
+    }
+
+    @Inject
+    public void setSchemaRegistry( final SchemaRegistry schemaRegistry )
+    {
+        this.schemaRegistry = schemaRegistry;
     }
 }

@@ -41,7 +41,7 @@ public class SearchResult
 
     public static class Builder
     {
-        public SearchResultEntries results;
+        public SearchResultEntries results = SearchResultEntries.create().build();
 
         private Aggregations aggregations;
 

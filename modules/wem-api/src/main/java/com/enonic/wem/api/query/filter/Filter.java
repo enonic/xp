@@ -2,24 +2,30 @@ package com.enonic.wem.api.query.filter;
 
 public abstract class Filter
 {
-    public static ContentTypeFilter.Builder newContentTypeFilter()
+    private Boolean cache;
+
+    Filter( final Builder builder )
     {
-        return new ContentTypeFilter.Builder();
+        this.cache = builder.cache;
     }
 
-    public static GenericValueFilter.Builder newValueQueryFilter()
+    public Boolean isCache()
     {
-        return new GenericValueFilter.Builder();
+        return cache;
     }
 
-    public static BooleanFilter.Builder newBooleanFilter()
+    static class Builder<B extends Builder>
     {
-        return new BooleanFilter.Builder();
-    }
+        private Boolean cache;
 
-    public static RangeFilter.Builder newRangeFilter( final String fieldName )
-    {
-        return new RangeFilter.Builder( fieldName );
+        @SuppressWarnings("unchecked")
+        public B setCache( final boolean cache )
+        {
+            this.cache = cache;
+            return (B) this;
+        }
+
+
     }
 
 }

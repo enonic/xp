@@ -51,6 +51,8 @@ module app.wizard.page.contextwindow {
 
         private parentMinWidth: number = 15;
 
+        private displayModeChangedListeners: {() : void}[] = [];
+
         constructor(config: ContextWindowConfig) {
             super();
 
@@ -153,18 +155,6 @@ module app.wizard.page.contextwindow {
             this.updateFrameSize();
         }
 
-        hide() {
-            if (this.shown) {
-                this.slideOut();
-            }
-        }
-
-        show() {
-            if (!this.shown) {
-                this.slideIn();
-            }
-        }
-
         public showInspectionPanel(panel: BaseInspectionPanel) {
             this.inspectionPanel.showInspectionPanel(panel);
             this.selectPanel(this.inspectionPanel);
@@ -176,16 +166,34 @@ module app.wizard.page.contextwindow {
         }
 
         private updateFrameSize() {
-            var contextWindowWidth = this.actualWidth || this.getEl().getWidth();
-            this.liveFormPanel.updateFrameContainerSize(this.isPinned() && this.shown, contextWindowWidth);
+            var contextWindowWidth = this.actualWidth || this.getEl().getWidth(),
+                displayModeChanged = this.hasClass('floating') && !this.isFloating();
+            this.liveFormPanel.updateFrameContainerSize(!this.isFloating() && this.shown, contextWindowWidth);
 
-            !this.isPinned() ? this.addClass("unpinned") : this.removeClass("unpinned");
+            this.isFloating() ? this.addClass("floating") : this.removeClass("floating");
+            if (displayModeChanged) {
+                this.notifyDisplayModeChanged();
+            }
         }
 
-        isPinned(): boolean {
+        isFloating(): boolean {
             var contextWindowWidth = this.actualWidth || this.getEl().getWidth();
             var liveFormPanelWidth = this.liveFormPanel.getEl().getWidth();
-            return (liveFormPanelWidth > 1380) && ((liveFormPanelWidth - contextWindowWidth) > 960);
+            return (liveFormPanelWidth < 1380) || ((liveFormPanelWidth - contextWindowWidth) < 960);
+        }
+
+        notifyDisplayModeChanged() {
+            this.displayModeChangedListeners.forEach((listener: ()=> void) => listener());
+        }
+
+        onDisplayModeChanged(listener: () => void) {
+            this.displayModeChangedListeners.push(listener);
+        }
+
+        unDisplayModeChanged(listener: () => void) {
+            this.displayModeChangedListeners.filter((currentListener: () => void) => {
+                return listener == currentListener;
+            });
         }
     }
 }

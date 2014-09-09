@@ -3,6 +3,8 @@ module api.form.inputtype.singleselector {
     import Option = api.ui.selector.Option;
     import Dropdown = api.ui.selector.dropdown.Dropdown;
     import DropdownConfig = api.ui.selector.dropdown.DropdownConfig;
+    import ComboBox = api.ui.selector.combobox.ComboBox;
+    import SelectedOptionsView = api.ui.selector.combobox.SelectedOptionsView;
 
     export interface SingleSelectorConfig {
         selectorType: string;
@@ -30,8 +32,12 @@ module api.form.inputtype.singleselector {
             }
         }
 
+        getValueType(): api.data.type.ValueType {
+            return api.data.type.ValueTypes.STRING;
+        }
+
         newInitialValue(): api.data.Value {
-            return new api.data.Value("", api.data.ValueTypes.STRING);
+            return null;
         }
 
         createInputOccurrenceElement(index: number, property: api.data.Property): api.dom.Element {
@@ -49,7 +55,8 @@ module api.form.inputtype.singleselector {
             return null;
         }
 
-        onOccurrenceValueChanged(element: api.dom.Element, listener: (event: api.form.inputtype.support.ValueChangedEvent) => void) {
+        onOccurrenceValueChanged(element: api.dom.Element,
+                                 listener: (listenerEvent: api.form.inputtype.support.ValueChangedEvent) => void) {
 
             if (SingleSelector.TYPE_RADIO == this.type) {
                 var radioGroup = <api.ui.RadioGroup>element;
@@ -58,36 +65,29 @@ module api.form.inputtype.singleselector {
                 });
             }
             else if (SingleSelector.TYPE_COMBOBOX == this.type) {
-                var comboBox = <api.ui.selector.combobox.ComboBox<string>>element;
-                comboBox.onOptionSelected(()=> {
-                    // TODO: detect selected option changed
-                    //listener(new api.form.inputtype.support.ValueChangedEvent(this.newValue(event.getOldValue()),
-                    //    this.newValue(event.getNewValue())));
+                var comboBox = <ComboBox<string>>element;
+                comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<string>)=> {
+                    listener(new api.form.inputtype.support.ValueChangedEvent(this.newValue(event.getOption().value)));
                 });
             }
             else if (SingleSelector.TYPE_DROPDOWN == this.type) {
-                var dropdown = <api.ui.Dropdown>element;
-                dropdown.onValueChanged((event: api.ui.ValueChangedEvent) => {
-
-                    // TODO: detect selected option changed
-
-                    //listener(new api.form.inputtype.support.ValueChangedEvent(this.newValue(event.getOldValue()),
-                    //    this.newValue(event.getNewValue())));
-
+                var dropdown = <Dropdown<string>>element;
+                dropdown.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<string>) => {
+                    listener(new api.form.inputtype.support.ValueChangedEvent(this.newValue(event.getOption().value)));
                 });
             }
         }
 
         private createComboBoxElement(name: string, property: api.data.Property): api.dom.Element {
 
-            var selectedOptionsView = new api.ui.selector.combobox.SelectedOptionsView<string>();
-            var comboBox = new api.ui.selector.combobox.ComboBox<string>(name, {
+            var selectedOptionsView = new SelectedOptionsView<string>();
+            var comboBox = new ComboBox<string>(name, {
                 filter: this.comboboxFilter,
                 selectedOptionsView: selectedOptionsView,
                 maximumOccurrences: 1,
                 hideComboBoxWhenMaxReached: true
             });
-            var inputConfig: SingleSelectorConfig = this.getConfig().inputConfig;
+            var inputConfig: SingleSelectorConfig = this.getContext().inputConfig;
             if (inputConfig) {
                 var option;
                 for (var i = 0; i < inputConfig.options.length; i++) {
@@ -96,7 +96,7 @@ module api.form.inputtype.singleselector {
                 }
             }
 
-            if (property) {
+            if (property.hasNonNullValue()) {
                 comboBox.setValue(property.getString());
             }
 
@@ -114,7 +114,7 @@ module api.form.inputtype.singleselector {
 
             var inputEl = new api.ui.Dropdown(name);
 
-            var inputConfig: SingleSelectorConfig = this.getConfig().inputConfig;
+            var inputConfig: SingleSelectorConfig = this.getContext().inputConfig;
             if (inputConfig) {
                 for (var i = 0; i < inputConfig.options.length; i++) {
                     var option = inputConfig.options[i];
@@ -124,7 +124,7 @@ module api.form.inputtype.singleselector {
                 }
             }
 
-            if (property) {
+            if (property.hasNonNullValue()) {
                 inputEl.setValue(property.getString());
                 dropdown.setValue(property.getString());
             }
@@ -137,7 +137,7 @@ module api.form.inputtype.singleselector {
 
             var inputEl = new api.ui.RadioGroup(name);
 
-            var inputConfig: SingleSelectorConfig = this.getConfig().inputConfig;
+            var inputConfig: SingleSelectorConfig = this.getContext().inputConfig;
             if (inputConfig) {
                 for (var i = 0; i < inputConfig.options.length; i++) {
                     var option = inputConfig.options[i];
@@ -145,7 +145,7 @@ module api.form.inputtype.singleselector {
                 }
             }
 
-            if (property) {
+            if (property.hasNonNullValue()) {
                 inputEl.setValue(property.getString());
             }
 
@@ -153,7 +153,7 @@ module api.form.inputtype.singleselector {
         }
 
         private newValue(s: string): api.data.Value {
-            return new api.data.Value(s, api.data.ValueTypes.STRING);
+            return new api.data.Value(s, api.data.type.ValueTypes.STRING);
         }
 
         getValue(occurrence: api.dom.Element): api.data.Value {

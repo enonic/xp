@@ -2,11 +2,13 @@ module api.form.inputtype {
 
     export interface InputTypeView {
 
+        getValueType(): api.data.type.ValueType;
+
         getElement(): api.dom.Element;
 
         layout(input: api.form.Input, properties: api.data.Property[]);
 
-        newInitialValue(): api.data.Value;
+        newInitialValue(): any;
 
         getValues(): api.data.Value[];
 

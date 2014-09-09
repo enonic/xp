@@ -31,7 +31,11 @@ public class FindNodesByQueryCommand
         final NodeVersionIds versions =
             workspaceService.getByVersionIds( new WorkspaceIdsQuery( this.context.getWorkspace(), nodeQueryResult.getEntityIds() ) );
 
-        final Nodes nodes = nodeDao.getByVersionIds( versions );
+        final Nodes nodes = NodeHasChildResolver.create().
+            workspace( context.getWorkspace() ).
+            workspaceService( this.workspaceService ).
+            build().
+            resolve( nodeDao.getByVersionIds( versions ) );
 
         return FindNodesByQueryResult.create().
             hits( nodeQueryResult.getHits() ).

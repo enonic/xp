@@ -78,7 +78,7 @@ describe("Tests for DataPath", function () {
         expect(path.toString()).toBe('.element[0]');
     });
 
-    xit(".newWithoutFirstElement() method", function () {
+    it(".newWithoutFirstElement() method", function () {
         var original = DataPath.fromString('.first.second'),
             newPath = original.newWithoutFirstElement();
 

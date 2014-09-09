@@ -2,7 +2,7 @@
     "name": "my_content_type",
     "displayName": "My module",
     "contentDisplayNameScript": "$('firstName') + ' ' +  $('lastName')",
-    "superType": "unstructured",
+    "superType": "system-0.0.0:unstructured",
     "isAbstract": false,
     "isFinal": true,
     "isBuiltIn": false,

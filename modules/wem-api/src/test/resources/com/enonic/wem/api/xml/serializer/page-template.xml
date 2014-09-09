@@ -10,8 +10,8 @@
     </thing>
   </config>
   <can-render>
-    <content-type>com.enonic.sometype</content-type>
-    <content-type>some.other.type</content-type>
+    <content-type>mymodule-1.0.0:com.enonic.sometype</content-type>
+    <content-type>mymodule-1.0.0:some.other.type</content-type>
   </can-render>
   <regions>
     <region name="my-region">

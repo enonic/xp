@@ -1,7 +1,7 @@
 {
     "contentId": "content-id",
     "contentName": "content-name",
-    "contentType": "my-type",
+    "contentType": "mymodule-1.0.0:my-type",
     "form": {
         "formItems": []
     },

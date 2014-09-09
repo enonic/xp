@@ -32,7 +32,7 @@ public class ServiceResourceTest
 
         this.jsController = Mockito.mock( JsController.class );
         this.resource.controllerFactory = Mockito.mock( JsControllerFactory.class );
-        Mockito.when( this.resource.controllerFactory.newController() ).thenReturn( this.jsController );
+        Mockito.when( this.resource.controllerFactory.newController( Mockito.anyObject() ) ).thenReturn( this.jsController );
 
         mockCurrentContextHttpRequest();
     }
@@ -45,8 +45,7 @@ public class ServiceResourceTest
         executeRequest( request );
 
         final ArgumentCaptor<JsContext> jsContext = ArgumentCaptor.forClass( JsContext.class );
-        Mockito.verify( this.jsController ).context( jsContext.capture() );
-        Mockito.verify( this.jsController ).execute();
+        Mockito.verify( this.jsController ).execute( jsContext.capture() );
 
         final PortalRequest jsHttpRequest = jsContext.getValue().getRequest();
         assertNotNull( jsHttpRequest );

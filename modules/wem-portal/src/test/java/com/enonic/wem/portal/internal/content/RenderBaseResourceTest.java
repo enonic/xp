@@ -72,7 +72,7 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResource>
         final JsControllerFactory jsControllerFactory = Mockito.mock( JsControllerFactory.class );
 
         this.jsController = Mockito.mock( JsController.class );
-        when( jsControllerFactory.newController() ).thenReturn( jsController );
+        when( jsControllerFactory.newController( Mockito.any() ) ).thenReturn( jsController );
 
         this.resource.contentService = this.contentService;
         this.resource.siteService = this.siteService;
@@ -86,20 +86,20 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResource>
         throws Exception
     {
         when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ), context ) ).
-            thenReturn( createPage( "id", "site/somepath/content", "ctype", true ) );
+            thenReturn( createPage( "id", "site/somepath/content", "mymodule-1.0.0:ctype", true ) );
 
         when( this.siteService.getNearestSite( isA( ContentId.class ), isA( Context.class ) ) ).
-            thenReturn( createSite( "id", "site", "contenttypename" ) );
+            thenReturn( createSite( "id", "site", "mymodule-1.0.0:contenttypename" ) );
     }
 
     protected final void setupNonPageContent( final Context context )
         throws Exception
     {
         when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ), context ) ).
-            thenReturn( createPage( "id", "site/somepath/content", "ctype", false ) );
+            thenReturn( createPage( "id", "site/somepath/content", "mymodule-1.0.0:ctype", false ) );
 
         when( this.siteService.getNearestSite( isA( ContentId.class ), isA( Context.class ) ) ).
-            thenReturn( createSite( "id", "site", "contenttypename" ) );
+            thenReturn( createSite( "id", "site", "mymodule-1.0.0:contenttypename" ) );
     }
 
     protected final void setupTemplates()
@@ -181,7 +181,7 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResource>
             key( PageTemplateKey.from( module.getName(), new PageTemplateName( "my-page" ) ) ).
             displayName( "Main page emplate" ).
             config( pageTemplateConfig ).
-            canRender( ContentTypeNames.from( "article", "banner" ) ).
+            canRender( ContentTypeNames.from( "mymodule-1.0.0:article", "mymodule-1.0.0:banner" ) ).
             descriptor( PageDescriptorKey.from( "mainmodule-1.0.0:landing-page" ) ).
             regions( pageRegions ).
             build();

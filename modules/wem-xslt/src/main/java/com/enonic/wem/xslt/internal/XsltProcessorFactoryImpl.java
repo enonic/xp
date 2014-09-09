@@ -1,5 +1,6 @@
 package com.enonic.wem.xslt.internal;
 
+import javax.inject.Singleton;
 import javax.xml.transform.TransformerFactory;
 
 import net.sf.saxon.Configuration;
@@ -8,7 +9,8 @@ import net.sf.saxon.TransformerFactoryImpl;
 import com.enonic.wem.xslt.XsltProcessor;
 import com.enonic.wem.xslt.XsltProcessorFactory;
 
-public final class XsltProcessorFactoryImpl
+@Singleton
+final class XsltProcessorFactoryImpl
     implements XsltProcessorFactory
 {
     private final Configuration configuration;

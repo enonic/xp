@@ -1,4 +1,5 @@
 ///<reference path='ValueChangedEvent.ts' />
+///<reference path='KeyHelper.ts'/>
 ///<reference path='KeyBinding.ts'/>
 ///<reference path='KeyBindings.ts'/>
 ///<reference path='Mnemonic.ts' />

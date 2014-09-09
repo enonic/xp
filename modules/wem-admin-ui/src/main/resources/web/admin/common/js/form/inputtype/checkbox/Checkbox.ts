@@ -1,41 +1,42 @@
 module api.content.form.inputtype.checkbox {
 
-    import support = api.form.inputtype.support;
+    import ValueTypes = api.data.type.ValueTypes;
+    import BaseInputTypeSingleOccurrence = api.form.inputtype.support.BaseInputTypeSingleOccurrence;
 
-    export class Checkbox extends support.BaseInputTypeSingleOccurrence<any> {
+    export class Checkbox extends BaseInputTypeSingleOccurrence<any> {
 
         private checkbox: api.ui.Checkbox;
 
         constructor(config: api.form.inputtype.InputTypeViewContext<any>) {
             super(config);
-        }
-
-        newInitialValue(): api.data.Value {
-            return new api.data.Value('false', api.data.ValueTypes.STRING);
-        }
-
-        layout(input: api.form.Input, properties: api.data.Property[]) {
 
             this.checkbox = new api.ui.Checkbox();
+        }
 
-            if (properties[0] != null) {
-                this.checkbox.setChecked(properties[0].getBoolean());
+        getValueType(): api.data.type.ValueType {
+            return ValueTypes.BOOLEAN;
+        }
 
+        newInitialValue(): boolean {
+            return false;
+        }
+
+        layoutProperty(input: api.form.Input, property: api.data.Property) {
+
+            if (property.hasNonNullValue()) {
+                this.checkbox.setChecked(property.getBoolean());
             }
             else {
                 this.checkbox.setChecked(false);
             }
 
-
             this.appendChild(this.checkbox);
             this.checkbox.onValueChanged((event: api.ui.ValueChangedEvent) => {
-                var newValue = this.newValue(event.getNewValue());
-                this.notifyValueChanged(new api.form.inputtype.ValueChangedEvent(newValue, 0));
+                var newValue = ValueTypes.BOOLEAN.newValue(event.getNewValue());
+                if (newValue) {
+                    this.notifyValueChanged(new api.form.inputtype.ValueChangedEvent(newValue, 0));
+                }
             });
-        }
-
-        private newValue(s: string): api.data.Value {
-            return new api.data.Value(s, api.data.ValueTypes.STRING);
         }
 
         giveFocus(): boolean {

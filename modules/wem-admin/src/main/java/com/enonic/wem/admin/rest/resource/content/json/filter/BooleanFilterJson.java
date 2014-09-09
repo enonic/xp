@@ -18,7 +18,7 @@ public class BooleanFilterJson
                               @JsonProperty("should") final List<FilterJson> should )
     {
 
-        final BooleanFilter.Builder builder = BooleanFilter.newBooleanFilter();
+        final BooleanFilter.Builder builder = BooleanFilter.create();
 
         for ( final FilterJson filter : must )
         {

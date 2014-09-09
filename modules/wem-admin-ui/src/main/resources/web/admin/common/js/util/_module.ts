@@ -7,5 +7,7 @@
 ///<reference path='CookieHelper.ts'/>
 ///<reference path='ClassHelper.ts'/>
 ///<reference path='DateHelper.ts' />
+///<reference path='NumberHelper.ts' />
 ///<reference path='Flow.ts' />
 ///<reference path='DelayedFunctionCall.ts' />
+///<reference path='GeoPoint.ts' />

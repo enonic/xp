@@ -22,7 +22,8 @@ public class RangeFilterJson
                             @JsonProperty("fieldName") final String fieldName, //
                             @JsonProperty("to") final String to )
     {
-        final RangeFilter.Builder builder = Filter.newRangeFilter( fieldName );
+        final RangeFilter.Builder builder = RangeFilter.create().
+            fieldName( fieldName );
 
         if ( !Strings.isNullOrEmpty( from ) )
         {

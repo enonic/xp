@@ -1,5 +1,8 @@
 module api.data {
 
+    import ValueType = api.data.type.ValueType;
+    import ValueTypes = api.data.type.ValueTypes;
+
     export class Property extends Data implements api.Equitable {
 
         private value: Value;
@@ -10,12 +13,32 @@ module api.data {
             this.value = value;
         }
 
+        hasNonNullValue(): boolean {
+            return !this.value.isNull();
+        }
+
+        hasNullValue(): boolean {
+            return this.value.isNull();
+        }
+
         getString(): string {
             return this.value.asString();
         }
 
         getBoolean(): boolean {
             return this.value.asBoolean();
+        }
+
+        getDate(): Date {
+            return this.value.getDate();
+        }
+
+        getGeoPoint(): api.util.GeoPoint {
+            return this.value.getGeoPoint();
+        }
+
+        getContentId(): api.content.ContentId {
+            return this.value.getContentId();
         }
 
         setValue(value: Value) {
@@ -36,7 +59,7 @@ module api.data {
             return <api.data.json.DataTypeWrapperJson>{ Property: {
                 name: this.getName(),
                 type: this.getType().toString(),
-                value: this.getString()
+                value: this.value.isNotNull() ? this.getType().toJsonValue(this.value) : null
             }};
         }
 
@@ -83,7 +106,7 @@ module api.data {
                 value = new Value(rootDataSet, valueType);
             }
             else {
-                value = valueType.newValue(json.value);
+                value = valueType.fromJsonValue(json.value);
             }
 
             return new Property(json.name, value);

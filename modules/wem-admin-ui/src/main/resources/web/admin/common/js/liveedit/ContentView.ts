@@ -28,6 +28,14 @@ module api.liveedit {
 
     }
 
+    class ContentViewContextMenuTitle extends ItemViewContextMenuTitle {
+
+        constructor(contentView: ContentView) {
+            super(contentView.getName(), ContentItemType.get().getConfig().getIconCls());
+        }
+
+    }
+
     export class ContentView extends ItemView {
 
         private parentPartComponentView: PartComponentView;
@@ -41,7 +49,8 @@ module api.liveedit {
                 setElement(builder.element).
                 setParentElement(builder.parentElement).
                 setParentView(builder.parentPartComponentView).
-                setContextMenuActions(this.createContentContextMenuActions()));
+                setContextMenuActions(this.createContentContextMenuActions()).
+                setContextMenuTitle(new ContentViewContextMenuTitle(this)));
             this.parentPartComponentView = builder.parentPartComponentView;
         }
 
@@ -69,11 +78,6 @@ module api.liveedit {
 
         getParentPartComponentView(): PartComponentView {
             return this.parentPartComponentView;
-        }
-
-        getName(): string {
-
-            return "[No name]";
         }
 
         getParentItemView(): PartComponentView {

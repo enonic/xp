@@ -1,5 +1,7 @@
 module api.data {
 
+    import ValueType = api.data.type.ValueType;
+
     export class PropertyVisitor {
 
         private valueType: ValueType;

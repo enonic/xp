@@ -2,9 +2,9 @@ declare var plupload;
 
 module api.content.form.inputtype.imageupload {
 
-    export class Image extends api.form.inputtype.support.BaseInputTypeNotManagingAdd<any> {
+    export class Image extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<any> {
 
-        private imageUploadersByIndex: {[i:number] : api.ui.uploader.ImageUploader;} = {};
+        private imageUploader: api.ui.uploader.ImageUploader;
 
         private attachmentName: string;
 
@@ -13,6 +13,7 @@ module api.content.form.inputtype.imageupload {
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext<any>) {
             super(config, "image");
 
+            var input = config.input;
             var attachments: api.content.attachment.Attachment[] = config.attachments.getAttachments();
 
             if (attachments.length > 1) {
@@ -20,92 +21,88 @@ module api.content.form.inputtype.imageupload {
             }
 
             this.attachment = attachments.pop();
-        }
 
-        getConfig(): api.content.form.inputtype.ContentInputTypeViewContext<any> {
-            return <api.content.form.inputtype.ContentInputTypeViewContext<any>>super.getConfig();
-        }
-
-        newInitialValue(): api.data.Value {
-            return null;
-        }
-
-        createInputOccurrenceElement(index: number, property: api.data.Property): api.dom.Element {
-
-            var inputName = this.getInput().getName() + "-" + index;
-
+            var uploadUrl = api.util.getRestUri("blob/upload");
             var imageUploaderConfig = <api.ui.uploader.ImageUploaderConfig> {
                 showImageAfterUpload: true,
                 maximumOccurrences: 1
             };
-            var uploadUrl = api.util.getRestUri("blob/upload");
-            var imageUploader: api.ui.uploader.ImageUploader = new api.ui.uploader.ImageUploader(inputName, uploadUrl, imageUploaderConfig);
+            this.imageUploader = new api.ui.uploader.ImageUploader(input.getName(), uploadUrl, imageUploaderConfig);
 
-            imageUploader.onImageUploaded((event: api.ui.uploader.ImageUploadedEvent) => {
+            this.imageUploader.onImageUploaded((event: api.ui.uploader.ImageUploadedEvent) => {
                 if (this.attachmentName == null) {
                     this.attachmentName = event.getUploadedItem().getName();
                     this.attachment = this.uploadItemToAttachment(event.getUploadedItem());
 
-                    var value = new api.data.Value(this.attachmentName, api.data.ValueTypes.STRING);
-                    this.notifyValueAdded(new api.form.inputtype.ValueAddedEvent(value));
+                    var value = new api.data.Value(this.attachmentName, api.data.type.ValueTypes.STRING);
+                    this.notifyValueChanged(new api.form.inputtype.ValueChangedEvent(value, 0));
                 }
             });
 
-            imageUploader.onImageReset(() => {
+            this.imageUploader.onImageReset(() => {
                 this.attachment = null;
                 this.attachmentName = null;
-                this.notifyValueRemoved(new api.form.inputtype.ValueRemovedEvent(index));
+                var value = api.data.type.ValueTypes.STRING.newNullValue();
+                this.notifyValueChanged(new api.form.inputtype.ValueChangedEvent(value, 0));
             });
 
-            if (property != null) {
-                this.attachmentName = property.getString();
-
-                // TODO: size is a hack
-                var imgUrl = new ContentImageUrlResolver().setContentId(this.getConfig().contentId).setSize(494).resolve();
-
-                imageUploader.setValue(imgUrl);
-            }
-            this.imageUploadersByIndex[index] = imageUploader;
-            return imageUploader;
+            this.appendChild(this.imageUploader);
         }
+
+        getContext(): api.content.form.inputtype.ContentInputTypeViewContext<any> {
+            return <api.content.form.inputtype.ContentInputTypeViewContext<any>>super.getContext();
+        }
+
+        getValueType(): api.data.type.ValueType {
+            return api.data.type.ValueTypes.STRING;
+        }
+
+        newInitialValue(): string {
+            return null;
+        }
+
+        layoutProperty(input: api.form.Input, property: api.data.Property) {
+
+            if (property.hasNonNullValue()) {
+                this.attachmentName = property.getString();
+                var imgUrl = new ContentImageUrlResolver().
+                    setContentId(this.getContext().contentId).
+                    setSize(494).resolve();
+                this.imageUploader.setValue(imgUrl);
+            }
+        }
+
 
         getValue(occurrence: api.dom.Element): api.data.Value {
             if (!this.attachmentName) {
-                return null;
+                return api.data.type.ValueTypes.STRING.newNullValue();
             }
-            return new api.data.Value(this.attachmentName, api.data.ValueTypes.STRING);
+            return new api.data.Value(this.attachmentName, api.data.type.ValueTypes.STRING);
         }
 
         getAttachments(): api.content.attachment.Attachment[] {
-            return [this.attachment];
+            return this.attachment ? [this.attachment] : [];
         }
 
-        valueBreaksRequiredContract(value: api.data.Value): boolean {
-            if (value == null) {
-                return true;
-            }
+        validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
 
-            if (api.util.isStringBlank(value.asString())) {
-                return true;
-            } else {
-                return false;
-            }
+            return new api.form.inputtype.InputValidationRecording();
         }
 
-        onOccurrenceValueChanged(element: api.dom.Element, listener: (event: api.form.inputtype.support.ValueChangedEvent) => void) {
+        onFocus(listener: (event: FocusEvent) => void) {
+            this.imageUploader.onFocus(listener);
+        }
 
-            var imageUploader = <api.ui.uploader.ImageUploader>element;
-            imageUploader.onImageUploaded((event: api.ui.uploader.ImageUploadedEvent) => {
-                var attachmentName = event.getUploadedItem().getName();
-                var value = new api.data.Value(attachmentName, api.data.ValueTypes.STRING);
-                var valueChangedEvent = new api.form.inputtype.support.ValueChangedEvent(value);
-                listener(valueChangedEvent);
-            });
-            imageUploader.onImageReset(() => {
-                var value = new api.data.Value("", api.data.ValueTypes.STRING);
-                var valueChangedEvent = new api.form.inputtype.support.ValueChangedEvent(value);
-                listener(valueChangedEvent);
-            })
+        unFocus(listener: (event: FocusEvent) => void) {
+            this.imageUploader.unFocus(listener);
+        }
+
+        onBlur(listener: (event: FocusEvent) => void) {
+            this.imageUploader.onBlur(listener);
+        }
+
+        unBlur(listener: (event: FocusEvent) => void) {
+            this.imageUploader.unBlur(listener);
         }
 
         private uploadItemToAttachment(uploadItem: api.ui.uploader.UploadItem): api.content.attachment.Attachment {

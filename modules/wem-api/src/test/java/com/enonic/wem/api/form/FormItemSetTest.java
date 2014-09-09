@@ -31,7 +31,7 @@ public class FormItemSetTest
     {
         // setup
         FormItemSet formItemSet = newFormItemSet().name( "mySet" ).label( "Label" ).multiple( true ).build();
-        formItemSet.add( newMixinReference().name( "myMix" ).mixin( "mymixin" ).build() );
+        formItemSet.add( newMixinReference().name( "myMix" ).mixin( "mymodule-1.0.0:mymixin" ).build() );
 
         // exercise
 

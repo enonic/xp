@@ -27,9 +27,9 @@ public class ContentTypeXmlTest
         set.add( layout );
 
         final ContentType.Builder contentTypeBuilder =
-            newContentType().name( "all_schemas" ).addFormItem( set ).displayName( "All the Base Types" ).description(
+            newContentType().name( "mymodule-1.0.0:all_schemas" ).addFormItem( set ).displayName( "All the Base Types" ).description(
                 "description" ).contentDisplayNameScript( "$('firstName') + ' ' + $('lastName')" ).superType(
-                ContentTypeName.from( "content" ) ).setAbstract( false ).setFinal( true );
+                ContentTypeName.from( "mymodule-1.0.0:content" ) ).setAbstract( false ).setFinal( true );
 
         final ContentType contentType = contentTypeBuilder.build();
 
@@ -46,15 +46,15 @@ public class ContentTypeXmlTest
     {
         final String xml = readFromFile( "contentType.xml" );
         final ContentType.Builder builder = ContentType.newContentType();
-        builder.name( "my-cty" );
+        builder.name( "mymodule-1.0.0:my-cty" );
         XmlSerializers.contentType().parse( xml ).to( builder );
 
         final ContentType contentType = builder.build();
-        assertEquals( "my-cty", contentType.getName().toString() );
+        assertEquals( "mymodule-1.0.0:my-cty", contentType.getName().toString() );
         assertEquals( "All the Base Types", contentType.getDisplayName() );
         assertEquals( "description", contentType.getDescription() );
         assertEquals( "$('firstName') + ' ' + $('lastName')", contentType.getContentDisplayNameScript() );
-        assertEquals( "content", contentType.getSuperType().toString() );
+        assertEquals( "mymodule-1.0.0:content", contentType.getSuperType().toString() );
         assertEquals( false, contentType.isAbstract() );
         assertEquals( true, contentType.isFinal() );
 

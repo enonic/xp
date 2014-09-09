@@ -31,8 +31,17 @@ public class PropertyJson
 
     private static Property newProperty( final String type, final String name, final String stringValue, final List<DataJson> set )
     {
-        ValueType valueType = ValueTypes.getByName( type );
-        Value value = Value.newValue( valueType, stringValue != null ? stringValue : RootDataSetJson.dataJsonListToRootDataSet( set ) );
+        final ValueType valueType = ValueTypes.getByName( type );
+        final Value value;
+        if ( stringValue == null && set == null )
+        {
+            value = Value.newValue( valueType, null );
+        }
+        else
+        {
+            value = Value.newValue( valueType, stringValue != null ? stringValue : RootDataSetJson.dataJsonListToRootDataSet( set ) );
+        }
+
         return Property.newProperty( name, value );
     }
 
@@ -42,11 +51,23 @@ public class PropertyJson
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public String getValue()
+    public Object getValue()
     {
-        if ( !property.getValue().getType().equals( ValueTypes.DATA ) )
+        final ValueType type = property.getValue().getType();
+        if ( !type.equals( ValueTypes.DATA ) )
         {
-            return property.getString();
+            if ( property.hasNullValue() )
+            {
+                return null;
+            }
+            else if ( type.equals( ValueTypes.BOOLEAN ) || type.equals( ValueTypes.LONG ) )
+            {
+                return property.getObject();
+            }
+            else
+            {
+                return property.getString();
+            }
         }
         else
         {

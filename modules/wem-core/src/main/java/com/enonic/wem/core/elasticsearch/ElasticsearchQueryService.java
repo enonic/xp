@@ -5,8 +5,10 @@ import javax.inject.Inject;
 import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.entity.query.EntityQuery;
 import com.enonic.wem.api.entity.query.NodeQuery;
+import com.enonic.wem.core.elasticsearch.query.ElasticsearchQuery;
+import com.enonic.wem.core.elasticsearch.query.EntityQueryTranslator;
+import com.enonic.wem.core.elasticsearch.query.NodeQueryTranslator;
 import com.enonic.wem.core.elasticsearch.result.SearchResult;
-import com.enonic.wem.core.index.query.EntityQueryTranslator;
 import com.enonic.wem.core.index.query.NodeQueryResult;
 import com.enonic.wem.core.index.query.QueryResultFactory;
 import com.enonic.wem.core.index.query.QueryService;
@@ -18,18 +20,17 @@ public class ElasticsearchQueryService
 
     private QueryResultFactory queryResultFactory = new QueryResultFactory();
 
-    private EntityQueryTranslator translator = new EntityQueryTranslator();
 
     @Override
     public NodeQueryResult find( final NodeQuery query, final Workspace workspace )
     {
-        return doFind( translator.translate( query, workspace ) );
+        return doFind( NodeQueryTranslator.translate( query, workspace ) );
     }
 
     @Override
     public NodeQueryResult find( final EntityQuery query, final Workspace workspace )
     {
-        return doFind( translator.translate( query, workspace ) );
+        return doFind( EntityQueryTranslator.translate( query, workspace ) );
     }
 
     private NodeQueryResult doFind( final ElasticsearchQuery query )

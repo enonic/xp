@@ -17,6 +17,6 @@ public class ImageContentType
     {
         final ContentData contentData = content.getContentData();
         final Property imageProperty = contentData.getProperty( "image" );
-        return imageProperty == null ? content.getName().toString() : imageProperty.getString();
+        return imageProperty.hasNullValue() ? content.getName().toString() : imageProperty.getString();
     }
 }

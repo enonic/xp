@@ -4,6 +4,8 @@ module api.content.page {
 
     export class PageComponent implements api.Equitable, api.Cloneable {
 
+        public static PROPERTY_NAME = 'name';
+
         private index: number = -1;
 
         private name: ComponentName;
@@ -43,7 +45,7 @@ module api.content.page {
             var oldValue = this.name;
             this.name = newValue;
             if (!newValue.equals(oldValue)) {
-                this.notifyPropertyChanged("name", oldValue, newValue);
+                this.notifyPropertyChanged(PageComponent.PROPERTY_NAME, oldValue, newValue);
             }
         }
 

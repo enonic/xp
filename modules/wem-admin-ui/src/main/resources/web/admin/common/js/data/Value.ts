@@ -1,5 +1,8 @@
 module api.data {
 
+    import ValueType = api.data.type.ValueType;
+    import ValueTypes = api.data.type.ValueTypes;
+
     export class Value implements api.Equitable, api.Cloneable {
 
         private value: Object;
@@ -7,23 +10,84 @@ module api.data {
         private type: ValueType;
 
         constructor(value: Object, type: ValueType) {
-            api.util.assertNotNull(value, "value of a Value cannot be null");
-            api.util.assertNotNull(type, "type of a Value cannot be null");
             this.value = value;
             this.type = type;
+            if (value) {
+                var isValid = this.type.isValid(value);
+                if (isValid == undefined) {
+                    throw new Error(api.util.getClassName(this.type) + ".isValid() did not return any value: " + isValid);
+                }
+                if (isValid == false) {
+                    throw new Error("Invalid value for type " + type.toString() + ": " + value);
+                }
+            }
         }
 
-        asObject(): Object {
+        isNotNull(): boolean {
+            return !this.isNull();
+        }
+
+        isNull(): boolean {
+            return this.value == null || this.value == undefined;
+        }
+
+        getObject(): Object {
             return this.value;
         }
 
-        asString(): string {
+        getDate(): Date {
+            if (this.isNull()) {
+                return null;
+            }
+            return <Date>this.value;
+        }
 
+        getGeoPoint(): api.util.GeoPoint {
+            if (this.isNull()) {
+                return null;
+            }
+            return <api.util.GeoPoint>this.value;
+        }
+
+        getContentId(): api.content.ContentId {
+            if (this.isNull()) {
+                return null;
+            }
+            return <api.content.ContentId>this.value;
+        }
+
+        getBoolean(): boolean {
+            if (this.isNull()) {
+                return null;
+            }
+            return <boolean>this.value;
+        }
+
+        getNumber(): number {
+            if (this.isNull()) {
+                return null;
+            }
+            return <number><number>this.value;
+        }
+
+        asString(): string {
+            if (this.isNull()) {
+                return null;
+            }
             return this.type.valueToString(this);
         }
 
-        asBoolean(): boolean {
+        asNumber(): number {
+            if (this.isNull()) {
+                return null;
+            }
+            return this.type.valueToNumber(this);
+        }
 
+        asBoolean(): boolean {
+            if (this.isNull()) {
+                return null;
+            }
             return this.type.valueToBoolean(this);
         }
 

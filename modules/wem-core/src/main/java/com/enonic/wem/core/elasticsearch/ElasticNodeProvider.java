@@ -1,5 +1,7 @@
 package com.enonic.wem.core.elasticsearch;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -12,12 +14,9 @@ import org.elasticsearch.node.NodeBuilder;
 import com.google.inject.Provider;
 
 import com.enonic.wem.core.elasticsearch.resource.NodeSettingsBuilder;
-import com.enonic.wem.core.lifecycle.LifecycleBean;
-import com.enonic.wem.core.lifecycle.RunLevel;
 
 @Singleton
 public final class ElasticNodeProvider
-    extends LifecycleBean
     implements Provider<Node>
 {
     private final Node node;
@@ -25,8 +24,6 @@ public final class ElasticNodeProvider
     @Inject
     public ElasticNodeProvider( final NodeSettingsBuilder nodeSettingsBuilder )
     {
-        super( RunLevel.L1 );
-
         ESLoggerFactory.setDefaultFactory( new Slf4jESLoggerFactory() );
         final Settings settings = nodeSettingsBuilder.buildNodeSettings();
         this.node = NodeBuilder.nodeBuilder().settings( settings ).build();
@@ -38,15 +35,15 @@ public final class ElasticNodeProvider
         return this.node;
     }
 
-    @Override
-    protected void doStart()
+    @PostConstruct
+    public void start()
         throws Exception
     {
         this.node.start();
     }
 
-    @Override
-    protected void doStop()
+    @PreDestroy
+    public void stop()
         throws Exception
     {
         this.node.close();
