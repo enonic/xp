@@ -11,32 +11,31 @@ module app.wizard.page.contextwindow {
             this.contextWindowToggler = contextWindowToggler;
 
             this.contextWindowToggler.onClicked((event: MouseEvent) => {
-                var active = this.contextWindowToggler.isActive();
-                var shown = this.contextWindow.isShown();
+                var active = !this.contextWindowToggler.isActive();
+                this.contextWindowToggler.setActive(active);
 
-                if (active && !shown) {
+                if (active) {
                     this.contextWindow.slideIn();
-                } else if (active && shown) {
-                    this.contextWindowToggler.setActive(false);
+                } else {
                     this.contextWindow.slideOut();
-                } else if (!active && shown) {
-                    this.contextWindow.slideOut();
-                } else {// !active && !shown
-                    this.contextWindow.slideIn();
-                    this.contextWindowToggler.setActive(true);
                 }
             });
 
             this.contextWindow.onShown(() => {
-                if (this.contextWindow.isPinned()) {
+                if (this.contextWindow.isFloating()) {
                     this.contextWindow.slideIn();
-                    this.contextWindowToggler.setActive(true);
+                    this.contextWindowToggler.setActive(false);
                 } else {
                     this.contextWindow.slideOut();
-                    this.contextWindowToggler.setActive(false);
+                    this.contextWindowToggler.setActive(true);
                 }
             });
 
+            this.contextWindow.onDisplayModeChanged(() => {
+                if (!this.contextWindow.isFloating() && !this.contextWindowToggler.isActive() && this.contextWindow.isShown()) {
+                    this.contextWindow.slideOut();
+                }
+            });
         }
     }
 
