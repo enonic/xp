@@ -89,6 +89,9 @@ module api.ui.tags {
                     }
                 }
             });
+            this.textInput.onBlur((event: FocusEvent) => {
+                this.handleWordCompleted();
+            });
 
             this.textInput.onValueChanged((event: api.ui.ValueChangedEvent) => {
 
