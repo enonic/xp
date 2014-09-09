@@ -63,10 +63,7 @@ module api.ui.tags {
             this.appendChild(this.tagSuggestions);
 
             this.textInput.onKeyDown((event: KeyboardEvent) => {
-                // 9 == tab
-                if (event.keyCode == 9) {
-                    this.handleWordCompleted();
-                } else if (event.keyCode == 188 || event.keyCode == 13) { // comma or enter
+                if (event.keyCode == 188 || event.keyCode == 13) { // comma or enter
                     this.handleWordCompleted();
                     event.preventDefault();
                 } else if (event.keyCode == 8) {
