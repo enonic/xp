@@ -5,8 +5,12 @@ describe("api.data.type.LongValueType", function () {
 
     describe("when isValid", function () {
 
-        it("given a number as number then true is returned", function () {
+        it("given a whole number as number then true is returned", function () {
             expect(ValueTypes.LONG.isValid(1)).toBe(true);
+        });
+
+        it("given a decimal number as number then false is returned", function () {
+            expect(ValueTypes.LONG.isValid(1.1)).toBe(false);
         });
 
         it("given a number as string then false is returned", function () {
@@ -28,6 +32,11 @@ describe("api.data.type.LongValueType", function () {
             expect(ValueTypes.LONG.isConvertible("1")).toBeTruthy();
         });
 
+        it("given a decimal number as string then true is returned", function () {
+            expect(ValueTypes.LONG.isConvertible("1.1")).toBeFalsy();
+        });
+
+
         it("given a letter as string then false is returned", function () {
             expect(ValueTypes.LONG.isConvertible("a")).toBeFalsy();
         });
@@ -47,8 +56,12 @@ describe("api.data.type.LongValueType", function () {
             expect(ValueTypes.LONG.newValue("1")).toEqual(new Value(1, ValueTypes.LONG));
         });
 
-        it("given an empty string then a null is returned", function () {
-            expect(ValueTypes.LONG.newValue("")).toBeNull();
+        it("given a decimal number as string then a Value with null is returned", function () {
+            expect(ValueTypes.LONG.newValue("1.1")).toEqual(new Value(null, ValueTypes.LONG));
+        });
+
+        it("given an empty string then a Value with null is returned", function () {
+            expect(ValueTypes.LONG.newValue("")).toEqual(new Value(null, ValueTypes.LONG));
         });
     });
 

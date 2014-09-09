@@ -107,6 +107,7 @@ module api.ui.time {
 
             if (builder.selectedDate) {
                 this.input.setValue(this.formatDate(builder.selectedDate));
+                this.selectedDate = builder.selectedDate;
             }
 
             this.popup.onSelectedDateChanged((e: SelectedDateChangedEvent) => {
@@ -125,23 +126,33 @@ module api.ui.time {
                     api.ui.KeyHelper.isDel(event)) {
 
                     var typedDate = this.input.getValue();
-                    var date = api.util.DateHelper.parseUTCDate(typedDate);
-                    if (date) {
-                        var correctlyTyped = api.util.DateHelper.formatUTCDate(date) == typedDate;
-                        if (correctlyTyped) {
-                            this.selectedDate = date;
-                            this.calendar.selectDate(date);
-                            this.notifySelectedDateChanged(new SelectedDateChangedEvent(date));
-                            if (!this.popup.isVisible()) {
-                                this.popup.show();
+                    if (api.util.isStringEmpty(typedDate)) {
+                        this.calendar.selectDate(null);
+                        this.selectedDate = null;
+                        this.popup.hide();
+                        this.notifySelectedDateChanged(new SelectedDateChangedEvent(null));
+                    }
+                    else {
+                        var date = api.util.DateHelper.parseUTCDate(typedDate);
+                        if (date) {
+                            var correctlyTyped = api.util.DateHelper.formatUTCDate(date) == typedDate;
+                            if (correctlyTyped) {
+                                this.selectedDate = date;
+                                this.calendar.selectDate(date);
+                                this.notifySelectedDateChanged(new SelectedDateChangedEvent(date));
+                                if (!this.popup.isVisible()) {
+                                    this.popup.show();
+                                }
+                            }
+                            else {
+                                this.selectedDate = null;
+                                this.notifySelectedDateChanged(new SelectedDateChangedEvent(null));
                             }
                         }
                         else {
                             this.selectedDate = null;
+                            this.notifySelectedDateChanged(new SelectedDateChangedEvent(null));
                         }
-                    }
-                    else {
-                        this.selectedDate = null;
                     }
                 }
             });

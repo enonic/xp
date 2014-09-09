@@ -1,9 +1,9 @@
 module api.data.type {
 
-    export class LocalDateValueType extends ValueType {
+    export class LocalDateTimeValueType extends ValueType {
 
         constructor() {
-            super("LocalDate");
+            super("LocalDateTime");
         }
 
         isValid(value: any): boolean {
@@ -22,11 +22,14 @@ module api.data.type {
             if (api.util.isStringBlank(value)) {
                 return false;
             }
-
-            if (value.length != 10) {
+            // 2010-01-01T10:55:00
+            if (value.length != 19) {
                 return false;
             }
             if (!(value.charAt(4) == '-' && value.charAt(7) == '-')) {
+                return false;
+            }
+            if (!(value.charAt(10) == 'T' && value.charAt(13) == ':' && value.charAt(16) == ':')) {
                 return false;
             }
             return this.isValid(new Date(value));
@@ -39,16 +42,16 @@ module api.data.type {
             if (!this.isConvertible(value)) {
                 return this.newNullValue();
             }
-            var date = api.util.DateHelper.parseUTCDate(value);
+            var date = api.util.DateHelper.parseUTCDateTime(value);
             return new Value(date, this);
         }
 
         toJsonValue(value: api.data.Value): string {
-            return api.util.DateHelper.formatUTCDate(value.getDate());
+            return api.util.DateHelper.formatUTCDateTime(value.getDate());
         }
 
         valueToString(value: Value): string {
-            return api.util.DateHelper.formatUTCDate((<Date>value.getObject()));
+            return api.util.DateHelper.formatUTCDateTime((<Date>value.getObject()));
         }
     }
 }

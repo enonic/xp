@@ -60,7 +60,7 @@ describe("api.data.type.BooleanValueType", function () {
         });
 
         it("given an empty string then a null is returned", function () {
-            expect(ValueTypes.BOOLEAN.newValue("")).toBeNull();
+            expect(ValueTypes.BOOLEAN.newValue("")).toEqual(new Value(null, ValueTypes.BOOLEAN));
         });
     });
 

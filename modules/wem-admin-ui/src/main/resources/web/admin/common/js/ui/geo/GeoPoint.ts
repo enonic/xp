@@ -41,18 +41,14 @@ module api.ui.geo {
             this.longitudeInput.onValueChanged(listener);
         }
 
-        setLatitude(value: string): GeoPoint {
-            this.latitudeInput.setValue(value);
+        setGeoPoint(value: api.util.GeoPoint): GeoPoint {
+            this.latitudeInput.setValue("" + value.getLatitude());
+            this.longitudeInput.setValue("" + value.getLongitude());
             return this;
         }
 
         getLatitude(): string {
             return this.latitudeInput.getValue();
-        }
-
-        setLongitude(value: string): GeoPoint {
-            this.longitudeInput.setValue(value);
-            return this;
         }
 
         getLongitude(): string {

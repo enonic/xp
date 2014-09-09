@@ -23,9 +23,13 @@ module api.data.type {
 
         newValue(value: string): Value {
             if (!this.isConvertible(value)) {
-                return null;
+                return new Value(null, this);
             }
             return new Value(this.convertFromString(value), this);
+        }
+
+        fromJsonValue(jsonValue: boolean): api.data.Value {
+            return new Value(jsonValue, this);
         }
 
         private convertFromString(value: string): boolean {

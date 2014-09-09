@@ -36,6 +36,10 @@ module api.data.type {
             return new Value(value, this);
         }
 
+        newNullValue(): api.data.Value {
+            return new Value(null, this);
+        }
+
         equals(o: api.Equitable): boolean {
 
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, ValueType)) {
@@ -57,6 +61,15 @@ module api.data.type {
          */
         toJsonValue(value: api.data.Value): any {
             return value.getObject();
+        }
+
+        fromJsonValue(jsonValue: any): api.data.Value {
+            if (jsonValue) {
+                return this.newValue(jsonValue.toString());
+            }
+            else {
+                return this.newNullValue();
+            }
         }
     }
 }

@@ -29,7 +29,11 @@ module api.form.inputtype.combobox {
             console.log("ComboBox.availableSizeChanged(" + this.getEl().getWidth() + "x" + this.getEl().getWidth() + ")");
         }
 
-        newInitialValue(): api.data.Value {
+        getValueType(): api.data.type.ValueType {
+            return api.data.type.ValueTypes.STRING;
+        }
+
+        newInitialValue(): string {
             return null;
         }
 
@@ -44,13 +48,12 @@ module api.form.inputtype.combobox {
                 this.comboBox.addOption({value: option.value, displayValue: option.label})
             });
 
-            if (properties != null) {
-                var valueArray: string[] = [];
-                properties.forEach((property: api.data.Property) => {
-                    valueArray.push(property.getString());
-                });
-                this.comboBox.setValues(valueArray);
-            }
+            var valueArray: string[] = [];
+            properties.forEach((property: api.data.Property) => {
+                valueArray.push(property.getString());
+            });
+            this.comboBox.setValues(valueArray);
+
 
             this.appendChild(this.comboBox);
             this.appendChild(this.selectedOptionsView);
@@ -70,8 +73,15 @@ module api.form.inputtype.combobox {
             });
             comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<string>) => {
 
-                var value = new api.data.Value(event.getOption().displayValue, api.data.type.ValueTypes.STRING);
-                this.notifyValueAdded(value);
+                var value = new api.data.Value(event.getOption().value, api.data.type.ValueTypes.STRING);
+
+                if (comboBox.countSelectedOptions() == 1) { // overwrite initial value
+                    this.notifyValueChanged(new api.form.inputtype.ValueChangedEvent(value, 0));
+                }
+                else {
+                    this.notifyValueAdded(value);
+                }
+
 
                 this.validate(false);
             });

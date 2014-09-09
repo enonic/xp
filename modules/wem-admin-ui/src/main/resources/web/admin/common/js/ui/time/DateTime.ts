@@ -40,18 +40,14 @@ module api.ui.time {
             this.timePicker.onSelectedTimeChanged(listener);
         }
 
-        getSelectedTime(): string {
-            return this.timePicker.formatTime(this.timePicker.getSelectedTime().hour, this.timePicker.getSelectedTime().minute);
-
-        }
-
-        getSelectedDate(): string {
-            if (!this.datePicker.getSelectedDate()) {
+        getSelectedDateTime(): Date {
+            var date = this.datePicker.getSelectedDate();
+            var time = this.timePicker.getSelectedTime();
+            if (!date || !time) {
                 return null;
             }
-            return this.datePicker.getSelectedDate().toDateString();
-
+            return api.util.DateHelper.newUTCDateTime(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(),
+                time.hour, time.minute);
         }
-
     }
 }

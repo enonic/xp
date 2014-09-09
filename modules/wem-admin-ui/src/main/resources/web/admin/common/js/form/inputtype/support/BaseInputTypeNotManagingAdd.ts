@@ -2,7 +2,7 @@ module api.form.inputtype.support {
 
     export class BaseInputTypeNotManagingAdd<CONFIG> extends api.dom.DivEl implements api.form.inputtype.InputTypeViewNotManagingAdd {
 
-        private config: api.form.inputtype.InputTypeViewContext<CONFIG>;
+        private context: api.form.inputtype.InputTypeViewContext<CONFIG>;
 
         private input: api.form.Input;
 
@@ -23,10 +23,10 @@ module api.form.inputtype.support {
          */
         private draggingIndex: number;
 
-        constructor(config: api.form.inputtype.InputTypeViewContext<CONFIG>, className?: string) {
+        constructor(context: api.form.inputtype.InputTypeViewContext<CONFIG>, className?: string) {
             super("input-type-view" + ( className ? " " + className : ""));
-            api.util.assertNotNull(config, "config cannt be null");
-            this.config = config;
+            api.util.assertNotNull(context, "context cannot be null");
+            this.context = context;
 
             wemjq(this.getHTMLElement()).sortable({
                 axis: "y",
@@ -66,8 +66,8 @@ module api.form.inputtype.support {
 
         }
 
-        public getConfig(): api.form.inputtype.InputTypeViewContext<CONFIG> {
-            return this.config;
+        public getContext(): api.form.inputtype.InputTypeViewContext<CONFIG> {
+            return this.context;
         }
 
         getElement(): api.dom.Element {
@@ -215,19 +215,23 @@ module api.form.inputtype.support {
         }
 
         valueBreaksRequiredContract(value: api.data.Value): boolean {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error("Must be implemented by inheritor: " + api.util.getClassName(this));
         }
 
         createInputOccurrenceElement(index: number, property: api.data.Property): api.dom.Element {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error("Must be implemented by inheritor: " + api.util.getClassName(this));
         }
 
-        newInitialValue(): api.data.Value {
-            throw new Error("Must be implemented by inheritor");
+        getValueType(): api.data.type.ValueType {
+            throw new Error("Must be implemented by inheritor: " + api.util.getClassName(this));
+        }
+
+        newInitialValue(): any {
+            throw new Error("Must be implemented by inheritor: " + api.util.getClassName(this));
         }
 
         getValue(occurrence: api.dom.Element): api.data.Value {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error("Must be implemented by inheritor: " + api.util.getClassName(this));
         }
 
         onValueAdded(listener: (event: api.form.inputtype.ValueAddedEvent) => void) {
@@ -282,7 +286,7 @@ module api.form.inputtype.support {
          * Note: Never fire ValueChangedEvent for null Value.
          */
         onOccurrenceValueChanged(element: api.dom.Element, listener: (event: api.form.inputtype.support.ValueChangedEvent) => void) {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error("Must be implemented by inheritor: " + api.util.getClassName(this));
         }
 
         giveFocus(): boolean {

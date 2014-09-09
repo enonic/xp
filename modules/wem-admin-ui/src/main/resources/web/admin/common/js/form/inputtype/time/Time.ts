@@ -8,15 +8,19 @@ module api.content.form.inputtype.time {
             super(config);
         }
 
+        getValueType(): api.data.type.ValueType {
+            return api.data.type.ValueTypes.STRING;
+        }
+
         newInitialValue(): api.data.Value {
-            return new api.data.Value("", api.data.type.ValueTypes.STRING);
+            return null;
         }
 
         createInputOccurrenceElement(index: number, property: api.data.Property): api.dom.Element {
 
             var timePicker: api.ui.time.TimePicker;
 
-            if (property != null) {
+            if (property.hasNonNullValue()) {
                 if (property.getValue().asString().length == 0) {
                     return new api.ui.time.TimePickerBuilder().build();
                 }
@@ -54,7 +58,7 @@ module api.content.form.inputtype.time {
                 return  this.newValue(timePicker.getSelectedTime().hour + ":" + timePicker.getSelectedTime().minute);
             }
             else {
-                return    this.newValue("");
+                return this.newValue("");
             }
         }
 

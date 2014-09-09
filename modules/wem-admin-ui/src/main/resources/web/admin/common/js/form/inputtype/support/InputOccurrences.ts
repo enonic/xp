@@ -50,15 +50,12 @@ module api.form.inputtype.support {
             }
         }
 
-        private handleOccurrenceAdded(value: api.data.Value) {
+        private handleOccurrenceAdded(property: api.data.Property) {
             if (this.isLayingOut()) {
                 return;
             }
 
-            var property = new api.data.Property(this.input.getName(), value);
-            this.properties.push(property);
-
-            this.notifyValueAdded(new api.form.inputtype.ValueAddedEvent(value));
+            this.notifyValueAdded(new api.form.inputtype.ValueAddedEvent(property.getValue()));
         }
 
         private handleOccurrenceRemoved(index: number) {
@@ -127,7 +124,14 @@ module api.form.inputtype.support {
 
         createNewOccurrenceView(occurrence: InputOccurrence): InputOccurrenceView {
 
+            var newInitialRawValue = this.baseInputTypeView.newInitialValue();
+            var newInitialValue = new api.data.Value(newInitialRawValue, this.baseInputTypeView.getValueType());
+
             var property: api.data.Property = this.properties != null ? this.properties[occurrence.getIndex()] : null;
+            if (!property) {
+                property = new api.data.Property(this.input.getName(), newInitialValue);
+                this.properties.push(property);
+            }
             var inputOccurrenceView: InputOccurrenceView = new InputOccurrenceView(occurrence, this.baseInputTypeView, property);
 
             var inputOccurrences: InputOccurrences = this;
@@ -139,10 +143,7 @@ module api.form.inputtype.support {
                 this.handleOccurrenceChanged(event);
             });
 
-            var newInitialValue = this.baseInputTypeView.newInitialValue();
-            if (newInitialValue) {
-                this.handleOccurrenceAdded(newInitialValue);
-            }
+            this.handleOccurrenceAdded(property);
 
             return inputOccurrenceView;
         }

@@ -119,6 +119,11 @@ public final class Property
         return (PropertyArray) super.getArray();
     }
 
+    public boolean hasNullValue()
+    {
+        return this.value.isNull();
+    }
+
     public List<Value> getValuesAsList()
     {
         final PropertyArray propertyArray = getArray();

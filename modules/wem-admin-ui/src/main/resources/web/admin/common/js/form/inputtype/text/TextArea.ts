@@ -8,14 +8,18 @@ module api.form.inputtype.text {
             super(config);
         }
 
+        getValueType(): api.data.type.ValueType {
+            return api.data.type.ValueTypes.STRING;
+        }
+
         newInitialValue(): api.data.Value {
-            return new api.data.Value("", api.data.type.ValueTypes.STRING);
+            return null;
         }
 
         createInputOccurrenceElement(index: number, property: api.data.Property): api.dom.Element {
 
             var inputEl = new api.ui.text.TextArea(this.getInput().getName() + "-" + index);
-            if (property != null) {
+            if (property.hasNonNullValue()) {
                 inputEl.setValue(property.getString());
             }
             return inputEl;

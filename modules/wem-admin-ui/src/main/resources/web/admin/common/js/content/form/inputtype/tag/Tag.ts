@@ -41,7 +41,11 @@ module api.content.form.inputtype.tag {
 
         }
 
-        newInitialValue(): api.data.Value {
+        getValueType(): api.data.type.ValueType {
+            return api.data.type.ValueTypes.STRING;
+        }
+
+        newInitialValue(): string {
             return null;
         }
 
@@ -49,7 +53,9 @@ module api.content.form.inputtype.tag {
 
             this.tags.clearTags();
             properties.forEach((property) => {
-                this.tags.addTag(property.getString());
+                if (property.hasNonNullValue()) {
+                    this.tags.addTag(property.getString());
+                }
             });
 
             this.tags.onTagAdded((event) => {

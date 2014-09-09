@@ -47,18 +47,18 @@ describe("api.data.type.LocalDateValueType", function () {
 
     describe("when newValue", function () {
 
-        it("given date 2000-01-01 as string then a new Value with that date is returned", function () {
+        it("given date string '2000-01-01' then a new Value with that date is returned", function () {
             var actual = ValueTypes.LOCAL_DATE.newValue("2000-01-01");
             var expected = new Value(new Date(Date.UTC(2000, 0, 1)), ValueTypes.LOCAL_DATE);
             expect(actual).toEqual(expected);
         });
 
-        it("given invalid date string 2000-01 then a null is returned", function () {
-            expect(ValueTypes.LOCAL_DATE.newValue("")).toBeNull();
+        it("given invalid date string '2000-01' then a null is returned", function () {
+            expect(ValueTypes.LOCAL_DATE.newValue("2000-01")).toEqual(new Value(null, ValueTypes.LOCAL_DATE));
         });
 
         it("given an empty string then a null is returned", function () {
-            expect(ValueTypes.LOCAL_DATE.newValue("")).toBeNull();
+            expect(ValueTypes.LOCAL_DATE.newValue("")).toEqual(new Value(null, ValueTypes.LOCAL_DATE));
         });
     });
 

@@ -1,16 +1,16 @@
 module api.data.type {
 
-    export class ContentIdValueType extends ValueType {
+    export class GeoPointValueType extends ValueType {
 
         constructor() {
-            super("ContentId");
+            super("GeoPoint");
         }
 
         isValid(value: any): boolean {
             if (!(typeof value === 'object')) {
                 return false;
             }
-            if (!api.ObjectHelper.iFrameSafeInstanceOf(value, api.content.ContentId)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(value, api.util.GeoPoint)) {
                 return false;
             }
             return true;
@@ -20,21 +20,23 @@ module api.data.type {
             if (api.util.isStringBlank(value)) {
                 return false;
             }
-            return api.content.ContentId.isValidContentId(value);
+            return api.util.GeoPoint.isValidString(value);
         }
 
         newValue(value: string): Value {
-            if (this.isConvertible(value)) {
-                return new Value(new api.content.ContentId(value), this);
-            }
-            else {
+            if (!value) {
                 return this.newNullValue();
             }
+
+            if (!this.isConvertible(value)) {
+                return this.newNullValue();
+            }
+            return new Value(api.util.GeoPoint.fromString(value), this);
         }
 
         valueToString(value: Value): string {
             if (value.isNotNull()) {
-                return value.getContentId().toString();
+                return value.getGeoPoint().toString();
             }
             else {
                 return null;
@@ -43,7 +45,7 @@ module api.data.type {
 
         toJsonValue(value: api.data.Value): any {
             if (value.isNotNull()) {
-                return value.getContentId().toString();
+                return value.getGeoPoint().toString();
             }
             else {
                 return null;

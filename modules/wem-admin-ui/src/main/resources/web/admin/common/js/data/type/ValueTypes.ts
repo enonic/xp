@@ -15,9 +15,11 @@ module api.data.type {
 
         static LOCAL_DATE = new LocalDateValueType();
 
+        static LOCAL_DATE_TIME = new LocalDateTimeValueType();
+
         static DATE_TIME = new ValueType("DateTime");
 
-        static CONTENT_ID = new ContentIdValueType("ContentId");
+        static CONTENT_ID = new ContentIdValueType();
 
         static LONG = new LongValueType();
 
@@ -25,7 +27,7 @@ module api.data.type {
 
         static DOUBLE = new ValueType("Double");
 
-        static GEO_POINT = new ValueType("GeoPoint");
+        static GEO_POINT = new GeoPointValueType();
 
         static ENTITY_ID = new ValueType("EntityId");
 
@@ -35,6 +37,7 @@ module api.data.type {
             ValueTypes.HTML_PART,
             ValueTypes.XML,
             ValueTypes.LOCAL_DATE,
+            ValueTypes.LOCAL_DATE_TIME,
             ValueTypes.DATE_TIME,
             ValueTypes.CONTENT_ID,
             ValueTypes.LONG,
@@ -51,7 +54,7 @@ module api.data.type {
                 }
             });
 
-            api.util.assertNotNull(match, "Uknown ValueType: " + name);
+            api.util.assertNotNull(match, "Unknown ValueType: " + name);
             return match;
         }
     }

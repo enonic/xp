@@ -66,8 +66,8 @@ module api.ui.time {
             super("calendar");
 
             var now = new Date();
-            this.year = builder.year || now.getFullYear();
-            this.month = builder.month != undefined ? builder.month : now.getMonth();
+            this.year = builder.year || now.getUTCFullYear();
+            this.month = builder.month != undefined ? builder.month : now.getUTCMonth();
             this.selectedDate = builder.selectedDate;
             this.startingDayOfWeek = builder.startingDayOfWeek || DaysOfWeek.MONDAY;
             this.interactive = builder.interactive;
@@ -76,17 +76,25 @@ module api.ui.time {
         }
 
         public selectDate(value: Date) {
-            this.year = value.getUTCFullYear();
-            this.month = value.getUTCMonth();
-            this.selectedDate = value;
-            this.removeChildren();
+            if (value) {
+                this.year = value.getUTCFullYear();
+                this.month = value.getUTCMonth();
+                this.selectedDate = value;
+                this.removeChildren();
 
-            if (api.util.DateHelper.isInvalidDate(value)) {
-                var spanEl = new api.dom.SpanEl().setHtml("Invalid date");
-                this.appendChild(spanEl);
+                if (api.util.DateHelper.isInvalidDate(value)) {
+                    var spanEl = new api.dom.SpanEl().setHtml("Invalid date");
+                    this.appendChild(spanEl);
+                }
+                else {
+                    this.renderMonth();
+                }
             }
             else {
-                this.renderMonth();
+                this.selectedDate = null;
+                var now = new Date();
+                this.year = now.getUTCFullYear();
+                this.month = now.getUTCMonth();
             }
         }
 

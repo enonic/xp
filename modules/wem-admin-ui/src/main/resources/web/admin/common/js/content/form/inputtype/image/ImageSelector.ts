@@ -1,5 +1,8 @@
 module api.content.form.inputtype.image {
 
+    import ValueTypes = api.data.type.ValueTypes;
+    import ValueType = api.data.type.ValueType;
+    import ContentId = api.content.ContentId;
     import ContentSummary = api.content.ContentSummary;
     import ComboBoxConfig = api.ui.selector.combobox.ComboBoxConfig;
     import ComboBox = api.ui.selector.combobox.ComboBox;
@@ -106,7 +109,11 @@ module api.content.form.inputtype.image {
             this.selectedOptionsView.updateLayout();
         }
 
-        newInitialValue(): api.data.Value {
+        getValueType(): ValueType {
+            return ValueTypes.CONTENT_ID;
+        }
+
+        newInitialValue(): ContentId {
             return null;
         }
 
@@ -167,13 +174,13 @@ module api.content.form.inputtype.image {
 
         private doLoadContent(properties: api.data.Property[]): wemQ.Promise<ContentSummary[]> {
 
-            if (!properties) {
-                return wemQ(<ContentSummary[]> []);
-            }
-            else {
-                var contentIds = properties.map((property: api.data.Property) => new api.content.ContentId(property.getString()));
-                return new api.content.GetContentSummaryByIds(contentIds).get();
-            }
+            var contentIds: ContentId[] = [];
+            properties.forEach((property: api.data.Property) => {
+                if (property.hasNonNullValue()) {
+                    contentIds.push(property.getContentId());
+                }
+            });
+            return new api.content.GetContentSummaryByIds(contentIds).get();
         }
 
         getValues(): api.data.Value[] {
@@ -256,7 +263,7 @@ module api.content.form.inputtype.image {
                     if (!contentId) {
                         return;
                     }
-                    var value = new api.data.Value(contentId, api.data.type.ValueTypes.CONTENT_ID);
+                    var value = new api.data.Value(contentId, ValueTypes.CONTENT_ID);
                     this.notifyValueAdded(value);
                 }
                 this.validate(false);

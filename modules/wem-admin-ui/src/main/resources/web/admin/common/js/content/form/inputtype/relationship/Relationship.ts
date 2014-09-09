@@ -31,7 +31,11 @@ module api.content.form.inputtype.relationship {
             console.log("Relationship.availableSizeChanged(" + this.getEl().getWidth() + "x" + this.getEl().getWidth() + ")");
         }
 
-        newInitialValue(): api.data.Value {
+        getValueType(): api.data.type.ValueType {
+            return api.data.type.ValueTypes.CONTENT_ID;
+        }
+
+        newInitialValue(): api.content.ContentId {
             return null;
         }
 
@@ -53,7 +57,13 @@ module api.content.form.inputtype.relationship {
 
                 if (!this.layoutInProgress) {
                     var value = new api.data.Value(event.getOption().displayValue.getContentId(), api.data.type.ValueTypes.CONTENT_ID);
-                    this.notifyValueAdded(value);
+                    if (this.contentComboBox.countSelected() == 1) { // overwrite initial value
+                        this.notifyValueChanged(new api.form.inputtype.ValueChangedEvent(value, 0));
+                    }
+                    else {
+                        this.notifyValueAdded(value);
+                    }
+
                 }
                 this.validate(false);
             });
@@ -96,17 +106,17 @@ module api.content.form.inputtype.relationship {
 
         private doLoadContent(properties: api.data.Property[]): wemQ.Promise<api.content.ContentSummary[]> {
 
-            if (!properties) {
-                return wemQ<api.content.ContentSummary[]>([]);
-            } else {
-                var contentIds = properties.map((property: api.data.Property) => {
-                    return new api.content.ContentId(property.getString());
+            var contentIds: ContentId[] = [];
+            properties.forEach((property: api.data.Property) => {
+                if (property.hasNonNullValue()) {
+                    contentIds.push(property.getContentId());
+                }
+            });
+            return new api.content.GetContentSummaryByIds(contentIds).get().
+                then((result: api.content.ContentSummary[]) => {
+                    return result;
                 });
-                return new api.content.GetContentSummaryByIds(contentIds).get().
-                    then((result: api.content.ContentSummary[]) => {
-                        return result;
-                    });
-            }
+
         }
 
         getValues(): api.data.Value[] {

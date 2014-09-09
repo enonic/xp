@@ -9,20 +9,18 @@ module api.content.form.inputtype.long {
             super(config);
         }
 
-        newInitialValue(): api.data.Value {
+        getValueType(): api.data.type.ValueType {
+            return ValueTypes.LONG;
+        }
+
+        newInitialValue(): number {
             return null;
         }
 
         createInputOccurrenceElement(index: number, property: api.data.Property): api.dom.Element {
             var inputEl = api.ui.text.TextInput.middle();
-
-            if (property != null) {
-                inputEl.setName(this.getInput().getName() + "-" + property.getArrayIndex());
-                inputEl.setValue(property.getValue().asString());
-            }
-            else {
-                inputEl.setName(this.getInput().getName());
-            }
+            inputEl.setName(this.getInput().getName() + "-" + property.getArrayIndex());
+            inputEl.setValue(!property.hasNullValue() ? property.getString() : "");
             return inputEl;
         }
 
@@ -34,9 +32,7 @@ module api.content.form.inputtype.long {
             inputEl.onValueChanged((event: api.ui.ValueChangedEvent) => {
 
                 var value = ValueTypes.LONG.newValue(event.getNewValue());
-                if (value) {
-                    listener(new api.form.inputtype.support.ValueChangedEvent(value));
-                }
+                listener(new api.form.inputtype.support.ValueChangedEvent(value));
             });
         }
 

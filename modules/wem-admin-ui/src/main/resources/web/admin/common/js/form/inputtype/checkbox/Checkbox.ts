@@ -9,24 +9,26 @@ module api.content.form.inputtype.checkbox {
 
         constructor(config: api.form.inputtype.InputTypeViewContext<any>) {
             super(config);
-        }
-
-        newInitialValue(): api.data.Value {
-            return ValueTypes.BOOLEAN.newFalse();
-        }
-
-        layout(input: api.form.Input, properties: api.data.Property[]) {
 
             this.checkbox = new api.ui.Checkbox();
+        }
 
-            if (properties[0] != null) {
-                this.checkbox.setChecked(properties[0].getBoolean());
+        getValueType(): api.data.type.ValueType {
+            return ValueTypes.BOOLEAN;
+        }
 
+        newInitialValue(): boolean {
+            return false;
+        }
+
+        layoutProperty(input: api.form.Input, property: api.data.Property) {
+
+            if (property.hasNonNullValue()) {
+                this.checkbox.setChecked(property.getBoolean());
             }
             else {
                 this.checkbox.setChecked(false);
             }
-
 
             this.appendChild(this.checkbox);
             this.checkbox.onValueChanged((event: api.ui.ValueChangedEvent) => {

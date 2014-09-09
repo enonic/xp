@@ -146,7 +146,7 @@ public class NodeIndexDocumentFactory
             @Override
             public void visit( final Property property )
             {
-                if ( property.getValue() != null && !Strings.isNullOrEmpty( property.getValue().asString() ) )
+                if ( !property.hasNullValue() && !Strings.isNullOrEmpty( property.getValue().asString() ) )
                 {
                     PropertyIndexConfig propertyIndexConfig = node.getEntityIndexConfig().getPropertyIndexConfig( property.getPath() );
 

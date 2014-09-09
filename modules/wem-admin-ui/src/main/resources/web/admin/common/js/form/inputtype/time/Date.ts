@@ -10,6 +10,10 @@ module api.content.form.inputtype.time {
             super(config);
         }
 
+        getValueType(): api.data.type.ValueType {
+            return ValueTypes.LOCAL_DATE;
+        }
+
         newInitialValue(): api.data.Value {
             return null;
         }
@@ -18,7 +22,7 @@ module api.content.form.inputtype.time {
 
             var datePickerBuilder = new api.ui.time.DatePickerBuilder();
 
-            if (property != null) {
+            if (!property.hasNullValue()) {
                 var date = property.getDate();
                 datePickerBuilder.
                     setSelectedDate(date).
@@ -30,6 +34,7 @@ module api.content.form.inputtype.time {
 
         availableSizeChanged() {
         }
+
 
         onOccurrenceValueChanged(element: api.dom.Element, listener: (event: api.form.inputtype.support.ValueChangedEvent) => void) {
             var datePicker = <api.ui.time.DatePicker>element;
