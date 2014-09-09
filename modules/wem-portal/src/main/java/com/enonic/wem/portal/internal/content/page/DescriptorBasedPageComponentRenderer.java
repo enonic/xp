@@ -39,16 +39,14 @@ abstract class DescriptorBasedPageComponentRenderer
         }
 
         // create controller
-        final JsController controller = this.controllerFactory.newController();
-        controller.scriptDir( descriptor.getComponentPath() );
-        controller.context( context );
+        final JsController controller = this.controllerFactory.newController( descriptor.getComponentPath() );
 
         // render
         final PageComponent previousComponent = context.getComponent();
         try
         {
             context.setComponent( pageComponent );
-            controller.execute();
+            controller.execute( context );
             return new JsHttpResponseSerializer( context.getResponse() ).serialize();
         }
         finally

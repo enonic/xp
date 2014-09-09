@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
 
 public class JsControllerImplTest
 {
-    private JsControllerImpl controller;
+    private JsController controller;
 
     private PostProcessor postProcessor;
 
@@ -35,14 +35,12 @@ public class JsControllerImplTest
         this.response = this.context.getResponse();
 
         final ScriptEnvironment environment = Mockito.mock( ScriptEnvironment.class );
-        this.controller = new JsControllerImpl( new ScriptServiceImpl( environment ) );
-
-        this.postProcessor = Mockito.mock( PostProcessor.class );
-        this.controller.postProcessor( this.postProcessor );
-        this.controller.context( this.context );
+        final JsControllerFactoryImpl factory = new JsControllerFactoryImpl();
+        factory.scriptService = new ScriptServiceImpl( environment );
+        factory.postProcessor = this.postProcessor = Mockito.mock( PostProcessor.class );
 
         final ResourceKey scriptDir = ResourceKey.from( "mymodule-1.0.0:/service/test" );
-        this.controller.scriptDir( scriptDir );
+        this.controller = factory.newController( scriptDir );
 
         this.request = new JsHttpRequest();
         this.context.setRequest( this.request );
@@ -52,7 +50,7 @@ public class JsControllerImplTest
     public void testExecute()
     {
         this.request.setMethod( "GET" );
-        this.controller.execute();
+        this.controller.execute( this.context );
 
         assertEquals( JsHttpResponse.STATUS_OK, this.response.getStatus() );
     }
@@ -62,7 +60,7 @@ public class JsControllerImplTest
     {
         this.request.setMethod( "GET" );
         this.response.setPostProcess( true );
-        this.controller.execute();
+        this.controller.execute( this.context );
 
         assertEquals( JsHttpResponse.STATUS_OK, this.response.getStatus() );
         Mockito.verify( this.postProcessor ).processResponse( this.context );
@@ -72,7 +70,7 @@ public class JsControllerImplTest
     public void testMethodNotSupported()
     {
         this.request.setMethod( "POST" );
-        this.controller.execute();
+        this.controller.execute( this.context );
         assertEquals( JsHttpResponse.STATUS_METHOD_NOT_ALLOWED, this.response.getStatus() );
     }
 }

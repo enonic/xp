@@ -56,10 +56,8 @@ public final class ContentResource
         jsRequest.addParams( getParams() );
         context.setRequest( jsRequest );
 
-        final JsController controller = this.controllerFactory.newController();
-        controller.scriptDir( pageDescriptor.getResourceKey() );
-        controller.context( context );
-        controller.execute();
+        final JsController controller = this.controllerFactory.newController( pageDescriptor.getResourceKey() );
+        controller.execute( context );
 
         final RenderResult result = new JsHttpResponseSerializer( context.getResponse() ).serialize();
         return toRepresentation( result );

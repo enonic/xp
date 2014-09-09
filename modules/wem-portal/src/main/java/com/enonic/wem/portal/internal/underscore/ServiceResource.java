@@ -34,12 +34,10 @@ public final class ServiceResource
         jsRequest.addParams( getParams() );
         context.setRequest( jsRequest );
 
-        final JsController controller = this.controllerFactory.newController();
-
         final String serviceName = getAttribute( "service" );
-        controller.scriptDir( ResourceKey.from( moduleKey, "service/" + serviceName ) );
-        controller.context( context );
-        controller.execute();
+        final ResourceKey scriptDir = ResourceKey.from( moduleKey, "service/" + serviceName );
+        final JsController controller = this.controllerFactory.newController( scriptDir );
+        controller.execute( context );
 
         final RenderResult result = new JsHttpResponseSerializer( context.getResponse() ).serialize();
         return toRepresentation( result );

@@ -17,7 +17,7 @@ import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.core.image.filter.ImageFilterBuilder;
 import com.enonic.wem.core.module.ModuleKeyResolverService;
 import com.enonic.wem.guice.GuiceActivator;
-import com.enonic.wem.portal.internal.script.lib.SystemScriptBean;
+import com.enonic.wem.portal.internal.script.ContentScriptLibrary;
 import com.enonic.wem.script.ScriptService;
 
 public final class Activator
@@ -45,6 +45,6 @@ public final class Activator
         service( ScriptService.class ).importSingle();
 
         service( PortalServlet.class ).attribute( "alias", "/portal/*" ).exportAs( Servlet.class );
-        service( SystemScriptBean.class ).export();
+        service( ContentScriptLibrary.class ).export();
     }
 }

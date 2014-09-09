@@ -1,13 +1,10 @@
-package com.enonic.wem.portal.internal.script;
+package com.enonic.wem.portal.internal.controller;
 
 import javax.inject.Singleton;
 
 import com.google.inject.AbstractModule;
 
-import com.enonic.wem.portal.internal.controller.JsControllerFactory;
-import com.enonic.wem.portal.internal.controller.JsControllerFactoryImpl;
-
-public final class ScriptModule
+public final class ControllerModule
     extends AbstractModule
 {
     @Override

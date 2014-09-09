@@ -1,56 +1,31 @@
 package com.enonic.wem.portal.internal.controller;
 
-import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.portal.PortalContextAccessor;
 import com.enonic.wem.portal.internal.postprocess.PostProcessor;
 import com.enonic.wem.script.ScriptExports;
-import com.enonic.wem.script.ScriptService;
 
 final class JsControllerImpl
     implements JsController
 {
-    private final ScriptService scriptService;
+    private final ScriptExports scriptExports;
 
-    private ResourceKey scriptDir;
+    private final PostProcessor postProcessor;
 
-    private JsContext context;
-
-    private PostProcessor postProcessor;
-
-    public JsControllerImpl( final ScriptService scriptService )
+    public JsControllerImpl( final ScriptExports scriptExports, final PostProcessor postProcessor )
     {
-        this.scriptService = scriptService;
-    }
-
-    @Override
-    public JsController scriptDir( final ResourceKey dir )
-    {
-        this.scriptDir = dir;
-        return this;
-    }
-
-    @Override
-    public JsController context( final JsContext context )
-    {
-        this.context = context;
-        return this;
-    }
-
-    public JsController postProcessor( final PostProcessor postProcessor )
-    {
+        this.scriptExports = scriptExports;
         this.postProcessor = postProcessor;
-        return this;
     }
 
     @Override
-    public void execute()
+    public void execute( final JsContext context )
     {
-        PortalContextAccessor.set( this.context );
+        PortalContextAccessor.set( context );
 
         try
         {
-            doExecute();
-            this.postProcessor.processResponse( this.context );
+            doExecute( context );
+            this.postProcessor.processResponse( context );
         }
         finally
         {
@@ -58,25 +33,22 @@ final class JsControllerImpl
         }
     }
 
-    private void doExecute()
+    private void doExecute( final JsContext context )
     {
-        final ResourceKey script = this.scriptDir.resolve( "controller.js" );
-        final ScriptExports exports = this.scriptService.execute( script );
-
-        final String method = this.context.getRequest().getMethod();
+        final String method = context.getRequest().getMethod();
         final String methodName = method.toLowerCase();
 
-        if ( !exports.hasProperty( methodName ) )
+        if ( !this.scriptExports.hasProperty( methodName ) )
         {
-            methodNotAllowed();
+            methodNotAllowed( context );
             return;
         }
 
-        exports.executeMethod( methodName, this.context );
+        this.scriptExports.executeMethod( methodName, context );
     }
 
-    private void methodNotAllowed()
+    private void methodNotAllowed( final JsContext context )
     {
-        this.context.getResponse().setStatus( JsHttpResponse.STATUS_METHOD_NOT_ALLOWED );
+        context.getResponse().setStatus( JsHttpResponse.STATUS_METHOD_NOT_ALLOWED );
     }
 }

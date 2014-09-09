@@ -72,7 +72,7 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResource>
         final JsControllerFactory jsControllerFactory = Mockito.mock( JsControllerFactory.class );
 
         this.jsController = Mockito.mock( JsController.class );
-        when( jsControllerFactory.newController() ).thenReturn( jsController );
+        when( jsControllerFactory.newController( Mockito.any() ) ).thenReturn( jsController );
 
         this.resource.contentService = this.contentService;
         this.resource.siteService = this.siteService;
