@@ -18,9 +18,9 @@ public class JavaTypeConverterTest
     @Test
     public void convert_from_string_to_localtime()
     {
-        Property property = Property.newLocalTime( "myLocalTime", "10:24:50" );
+        Property property = Property.newLocalTime( "myLocalTime", "10:24" );
         LocalTime actual = property.getLocalTime();
-        LocalTime expected = LocalTime.of( 10, 24, 50 );
+        LocalTime expected = LocalTime.of( 10, 24 );
         assertEquals( expected, actual );
     }
 
@@ -30,7 +30,7 @@ public class JavaTypeConverterTest
         Instant instant = Instant.parse( "2014-12-03T10:15:30.00Z" );
         Property property = Property.newLocalTime( "myLocalTime", instant );
         LocalTime actual = property.getLocalTime();
-        LocalTime expected = LocalTime.of( 10, 15, 30 );
+        LocalTime expected = LocalTime.of( 10, 15 );
         assertEquals( expected, actual );
     }
 

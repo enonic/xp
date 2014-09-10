@@ -5,4 +5,5 @@
 ///<reference path='LocalDateValueType.ts' />
 ///<reference path='LocalDateTimeValueType.ts' />
 ///<reference path='GeoPointValueType.ts' />
+///<reference path='LocalTimeValueType.ts' />
 ///<reference path='ValueTypes.ts' />

@@ -7,6 +7,7 @@ import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
 
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.data.RootDataSet;
@@ -29,7 +30,7 @@ final class JavaTypeConverters
 
     private final static java.time.format.DateTimeFormatter LOCAL_TIME_FORMATTER =
         new java.time.format.DateTimeFormatterBuilder().appendValue( ChronoField.CLOCK_HOUR_OF_DAY, 2 ).appendLiteral( ":" ).appendValue(
-            ChronoField.MINUTE_OF_HOUR, 2 ).appendLiteral( ":" ).appendValue( ChronoField.SECOND_OF_MINUTE, 2 ).toFormatter();
+            ChronoField.MINUTE_OF_HOUR, 2 ).toFormatter();
 
     private final static RootDataSetJsonSerializer DATA_SERIALIZER = new RootDataSetJsonSerializer();
 
@@ -233,7 +234,7 @@ final class JavaTypeConverters
     {
         if ( value instanceof Instant )
         {
-            return LocalDateTime.ofInstant( (Instant) value, ZoneOffset.UTC ).toLocalTime();
+            return LocalDateTime.ofInstant( (Instant) value, ZoneOffset.UTC ).toLocalTime().truncatedTo( ChronoUnit.MINUTES );
         }
         if ( value instanceof LocalTime )
         {

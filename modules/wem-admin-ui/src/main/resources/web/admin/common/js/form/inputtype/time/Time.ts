@@ -1,6 +1,7 @@
 module api.content.form.inputtype.time {
 
     import support = api.form.inputtype.support;
+    import ValueTypes = api.data.type.ValueTypes;
 
     export class Time extends support.BaseInputTypeNotManagingAdd<any> {
 
@@ -9,7 +10,7 @@ module api.content.form.inputtype.time {
         }
 
         getValueType(): api.data.type.ValueType {
-            return api.data.type.ValueTypes.STRING;
+            return api.data.type.ValueTypes.LOCAL_TIME;
         }
 
         newInitialValue(): api.data.Value {
@@ -42,25 +43,27 @@ module api.content.form.inputtype.time {
         onOccurrenceValueChanged(element: api.dom.Element, listener: (event: api.form.inputtype.support.ValueChangedEvent) => void) {
             var timePicker = <api.ui.time.TimePicker>element;
             timePicker.onSelectedTimeChanged((hours: number, minutes: number) => {
-                var newTime: string = hours + ":" + minutes;
-                listener(new api.form.inputtype.support.ValueChangedEvent(this.newValue(newTime)));
+                var newTime: string = api.util.DateHelper.padNumber(hours, 2) + ":" + api.util.DateHelper.padNumber(minutes, 2);
+                var changedValue = ValueTypes.LOCAL_TIME.newValue(newTime);
+                listener(new api.form.inputtype.support.ValueChangedEvent(changedValue));
+
             });
         }
 
 
-        private newValue(s: string): api.data.Value {
-            return new api.data.Value(s, api.data.type.ValueTypes.STRING);
-        }
-
         getValue(occurrence: api.dom.Element): api.data.Value {
             var timePicker: api.ui.time.TimePicker = < api.ui.time.TimePicker>occurrence;
             if (timePicker.getSelectedTime()) {
-                return  this.newValue(timePicker.getSelectedTime().hour + ":" + timePicker.getSelectedTime().minute);
+                var time: string = api.util.DateHelper.padNumber(timePicker.getSelectedTime().hour, 2) + ":" +
+                                   api.util.DateHelper.padNumber(timePicker.getSelectedTime().minute, 2);
+                return new api.data.Value(time, ValueTypes.LOCAL_TIME);
+
             }
             else {
-                return this.newValue("");
+                return   null;
             }
         }
+
 
         valueBreaksRequiredContract(value: api.data.Value): boolean {
             if (value == null) {
@@ -68,9 +71,9 @@ module api.content.form.inputtype.time {
             }
             if (api.util.isStringBlank(value.asString())) {
                 return true;
-            } else {
-                return false;
             }
+            return !value.getType().equals(ValueTypes.LOCAL_TIME);
+
         }
 
     }
