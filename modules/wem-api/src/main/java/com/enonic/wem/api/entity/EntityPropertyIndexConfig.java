@@ -68,7 +68,7 @@ public class EntityPropertyIndexConfig
 
         public Builder addPropertyIndexConfig( final Property property, final PropertyIndexConfig propertyIndexConfig )
         {
-            propertyIndexConfigs.put( property.getBasePath(), propertyIndexConfig );
+            propertyIndexConfigs.put( property.getPath().removeIndexFromLastElement(), propertyIndexConfig );
             return this;
         }
 

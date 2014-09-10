@@ -193,7 +193,7 @@ public final class DataPath
         }
         else
         {
-            return DataPath.from( new Element( this.getLastElement().getName(), 0 ) );
+            return DataPath.from( new Element( this.getLastElement().getName() ) );
         }
     }
 

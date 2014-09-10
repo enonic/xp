@@ -197,7 +197,7 @@ public class DataPathTest
     @Test
     public void removeIndexFromLastElement()
     {
-        assertEquals( 0, DataPath.from( "a[1]" ).removeIndexFromLastElement().getLastElement().getIndex() );
+        assertEquals( -1, DataPath.from( "a[1]" ).removeIndexFromLastElement().getLastElement().getIndex() );
         assertEquals( "a", DataPath.from( "a[1]" ).removeIndexFromLastElement().toString() );
     }
 }

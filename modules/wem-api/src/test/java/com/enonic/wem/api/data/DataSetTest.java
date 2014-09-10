@@ -100,7 +100,7 @@ public class DataSetTest
         DataSet a = new DataSet( "a" );
         a.setProperty( "p1", Value.newString( "v1" ) );
 
-        assertTrue( a.valueEquals(  Property.newString( "b", "1" ) ) );
+        assertTrue( a.valueEquals( Property.newString( "b", "1" ) ) );
     }
 
     @Test
@@ -220,21 +220,6 @@ public class DataSetTest
 
         assertEquals( "1", dataSet.getProperty( "myArray[0]" ).getString() );
         assertEquals( "2", dataSet.getProperty( "myArray[1]" ).getString() );
-    }
-
-    @Test
-    public void base_path_is_same_for_same_path()
-    {
-        Property myArray1 = Property.newString( "myArray", "1" );
-        Property myArray2 = Property.newString( "myArray", "2" );
-
-        DataSet dataSet = new ContentData();
-        dataSet.add( myArray1 );
-        dataSet.add( myArray2 );
-
-        assertTrue( dataSet.getProperty( "myArray[0]" ).getBasePath().equals( dataSet.getProperty( "myArray[1]" ).getBasePath() ) );
-        assertFalse( dataSet.getProperty( "myArray[0]" ).getPath().equals( dataSet.getProperty( "myArray[1]" ).getPath() ) );
-        assertEquals( "myArray", dataSet.getProperty( "myArray[0]" ).getBasePath().toString() );
     }
 
     @Test

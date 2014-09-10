@@ -31,7 +31,7 @@ public class ContentPropertyIndexConfigVisitor
     @Override
     public void visit( final Property property )
     {
-        final DataPath basePath = property.getBasePath();
+        final DataPath basePath = property.getPath().removeIndexFromLastElement();
 
         if ( basePath.getParent().equals( DataPath.ROOT ) )
         {
