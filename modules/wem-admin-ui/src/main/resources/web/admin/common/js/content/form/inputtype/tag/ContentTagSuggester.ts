@@ -37,8 +37,18 @@ module api.content.form.inputtype.tag {
 
             var fieldName = 'contentdata' + this.dataPath.getParentPath().toString() + this.dataPath.getLastElement().getName();
 
-            var queryExpr = new QueryExpr(new CompareExpr(new FieldExpr(fieldName), CompareOperator.LIKE,
-                [new ValueExpr(new Value(value, ValueTypes.STRING))]));
+            var field: api.query.expr.ValueExpr = new api.query.expr.ValueExpr(new api.data.Value(fieldName,
+                api.data.type.ValueTypes.STRING));
+
+            var arguments: api.query.expr.ValueExpr[] = [];
+            arguments.push(field);
+            arguments.push(new api.query.expr.ValueExpr(new api.data.Value(value, api.data.type.ValueTypes.STRING)));
+            arguments.push(new api.query.expr.ValueExpr(new api.data.Value("AND", api.data.type.ValueTypes.STRING)));
+
+            var nGramExpr: api.query.expr.FunctionExpr = new api.query.expr.FunctionExpr("ngram", arguments);
+            var nGramDynamicExpr: api.query.expr.DynamicConstraintExpr = new api.query.expr.DynamicConstraintExpr(nGramExpr);
+
+            var queryExpr: QueryExpr = new QueryExpr(nGramDynamicExpr);
 
             var query = new ContentQuery();
             query.setSize(10);
