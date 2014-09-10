@@ -9,7 +9,7 @@ module app.wizard {
         private formIcon: api.app.wizard.FormIcon;
         private wizardHeader: api.app.wizard.WizardHeaderWithDisplayNameAndName;
         private iconUploadId: string;
-        private siteTemplateWizardActions : app.wizard.action.SiteTemplateWizardActions;
+        private wizardActions : app.wizard.action.SiteTemplateWizardActions;
 
         private siteTemplateStep: SiteTemplateWizardStepForm;
 
@@ -18,7 +18,7 @@ module app.wizard {
             if (siteTemplate) {
                 this.wizardHeader.initNames(siteTemplate.getDisplayName(), siteTemplate.getName(), true);
             }
-            this.siteTemplateWizardActions = new app.wizard.action.SiteTemplateWizardActions(this);
+            this.wizardActions = new app.wizard.action.SiteTemplateWizardActions(this);
 
             var iconUrl = SiteTemplateWizardPanel.DEFAULT_SITE_TEMPLATE_ICON_URL;
             this.formIcon = new api.app.wizard.FormIcon(iconUrl, "Click to upload icon",
@@ -32,11 +32,11 @@ module app.wizard {
             });
 
             var mainToolbar = new SiteTemplateWizardToolbar({
-                saveAction: this.siteTemplateWizardActions.getSaveAction(),
-                duplicateAction: this.siteTemplateWizardActions.getDuplicateAction(),
-                moveAction: this.siteTemplateWizardActions.getMoveAction(),
-                deleteAction: this.siteTemplateWizardActions.getDeleteAction(),
-                closeAction: this.siteTemplateWizardActions.getCloseAction()
+                saveAction: this.wizardActions.getSaveAction(),
+                duplicateAction: this.wizardActions.getDuplicateAction(),
+                moveAction: this.wizardActions.getMoveAction(),
+                deleteAction: this.wizardActions.getDeleteAction(),
+                closeAction: this.wizardActions.getCloseAction()
             });
 
             super({
@@ -45,7 +45,7 @@ module app.wizard {
                 formIcon: this.formIcon,
                 mainToolbar: mainToolbar,
                 header: this.wizardHeader,
-                actions: this.siteTemplateWizardActions,
+                actions: this.wizardActions,
                 steps: this.createSteps()
             }, () => {
             });
@@ -105,7 +105,7 @@ module app.wizard {
         }
 
         getCloseAction() : api.ui.Action {
-            return this.siteTemplateWizardActions.getCloseAction();
+            return this.wizardActions.getCloseAction();
         }
     }
 }

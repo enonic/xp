@@ -119,8 +119,6 @@ module app {
                 this.selectPanel(tabMenuItem);
             } else {
                 this.mask.show();
-                tabMenuItem = new api.app.bar.AppBarTabMenuItem("[New " + contentTypeSummary.getDisplayName() + "]", tabId);
-
                 var contentWizardPanelFactory = new app.wizard.ContentWizardPanelFactory().
                     setAppBarTabId(tabId).
                     setParentContent(parentContent).
@@ -132,6 +130,7 @@ module app {
                 }
 
                 contentWizardPanelFactory.createForNew().then((wizard: app.wizard.ContentWizardPanel) => {
+                    tabMenuItem = new api.app.bar.AppBarTabMenuItem("[New " + contentTypeSummary.getDisplayName() + "]", tabId, false, wizard.getCloseAction());
                     this.addWizardPanel(tabMenuItem, wizard);
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);

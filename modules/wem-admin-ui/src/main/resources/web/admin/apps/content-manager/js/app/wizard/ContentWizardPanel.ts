@@ -82,7 +82,7 @@ module app.wizard {
 
         private cycleViewModeButton: api.ui.button.CycleButton;
 
-        private contentWizardActions: app.wizard.action.ContentWizardActions;
+        private wizardActions: app.wizard.action.ContentWizardActions;
 
         private isSiteTemplateFormValid: boolean;
 
@@ -118,26 +118,26 @@ module app.wizard {
                                                          event.getUploadItem().getMimeType()));
             });
 
-            this.contentWizardActions = new app.wizard.action.ContentWizardActions(this);
-            this.previewAction = this.contentWizardActions.getPreviewAction();
-            this.publishAction = this.contentWizardActions.getPublishAction();
+            this.wizardActions = new app.wizard.action.ContentWizardActions(this);
+            this.previewAction = this.wizardActions.getPreviewAction();
+            this.publishAction = this.wizardActions.getPublishAction();
 
             var mainToolbar = new ContentWizardToolbar({
-                saveAction: this.contentWizardActions.getSaveAction(),
-                duplicateAction: this.contentWizardActions.getDuplicateAction(),
-                deleteAction: this.contentWizardActions.getDeleteAction(),
-                closeAction: this.contentWizardActions.getCloseAction(),
-                publishAction: this.contentWizardActions.getPublishAction(),
-                previewAction: this.contentWizardActions.getPreviewAction(),
-                showLiveEditAction: this.contentWizardActions.getShowLiveEditAction(),
-                showFormAction: this.contentWizardActions.getShowFormAction(),
-                showSplitEditAction: this.contentWizardActions.getShowSplitEditAction()
+                saveAction: this.wizardActions.getSaveAction(),
+                duplicateAction: this.wizardActions.getDuplicateAction(),
+                deleteAction: this.wizardActions.getDeleteAction(),
+                closeAction: this.wizardActions.getCloseAction(),
+                publishAction: this.wizardActions.getPublishAction(),
+                previewAction: this.wizardActions.getPreviewAction(),
+                showLiveEditAction: this.wizardActions.getShowLiveEditAction(),
+                showFormAction: this.wizardActions.getShowFormAction(),
+                showSplitEditAction: this.wizardActions.getShowSplitEditAction()
             });
 
             this.contextWindowToggler = mainToolbar.getContextWindowToggler();
             this.cycleViewModeButton = mainToolbar.getCycleViewModeButton();
-            this.showLiveEditAction = this.contentWizardActions.getShowLiveEditAction();
-            this.showSplitEditAction = this.contentWizardActions.getShowSplitEditAction();
+            this.showLiveEditAction = this.wizardActions.getShowLiveEditAction();
+            this.showSplitEditAction = this.wizardActions.getShowSplitEditAction();
             this.showLiveEditAction.setEnabled(false);
 
             if (this.parentContent) {
@@ -189,7 +189,7 @@ module app.wizard {
                 formIcon: this.formIcon,
                 mainToolbar: mainToolbar,
                 header: this.contentWizardHeader,
-                actions: this.contentWizardActions,
+                actions: this.wizardActions,
                 livePanel: this.liveFormPanel,
                 steps: this.createSteps(),
                 split: true
@@ -204,12 +204,12 @@ module app.wizard {
                     if (this.isVisible()) {
                         this.updateStickyToolbar();
                         if (item.isInRangeOrSmaller(ResponsiveRanges._720_960)) {
-                            this.cycleViewModeButton.disableAction(this.contentWizardActions.getShowSplitEditAction());
+                            this.cycleViewModeButton.disableAction(this.wizardActions.getShowSplitEditAction());
                             if (this.isSplitView()) {
-                                this.cycleViewModeButton.setCurrentAction(this.contentWizardActions.getShowFormAction());
+                                this.cycleViewModeButton.setCurrentAction(this.wizardActions.getShowFormAction());
                             }
                         } else if (item.isInRangeOrBigger(ResponsiveRanges._960_1200)) {
-                            this.cycleViewModeButton.enableAction(this.contentWizardActions.getShowSplitEditAction());
+                            this.cycleViewModeButton.enableAction(this.wizardActions.getShowSplitEditAction());
                         }
                     }
                 });
@@ -225,7 +225,7 @@ module app.wizard {
                         app.Router.setHash("new/" + this.contentType.getName());
                     }
                     //Set split panel default
-                    this.contentWizardActions.getShowSplitEditAction().execute();
+                    this.wizardActions.getShowSplitEditAction().execute();
                     responsiveItem.update();
                 });
 
@@ -358,7 +358,7 @@ module app.wizard {
                     this.cycleViewModeButton.setVisible(renderable);
 
                     if (this.getEl().getWidth() > ResponsiveRanges._720_960.getMaximumRange() && renderable) {
-                        this.cycleViewModeButton.setCurrentAction(this.contentWizardActions.getShowSplitEditAction());
+                        this.cycleViewModeButton.setCurrentAction(this.wizardActions.getShowSplitEditAction());
                     }
 
                 }).catch((reason: any) => {
@@ -713,7 +713,7 @@ module app.wizard {
         }
 
         getCloseAction() : api.ui.Action {
-            return this.contentWizardActions.getCloseAction();
+            return this.wizardActions.getCloseAction();
         }
     }
 
