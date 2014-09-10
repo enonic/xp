@@ -1,6 +1,7 @@
 module app.view {
 
     import Panel = api.ui.panel.Panel;
+    import TabMenuItemBuilder = api.ui.tab.TabMenuItemBuilder;
 
     export class ContentItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.content.ContentSummary> {
 
@@ -12,15 +13,16 @@ module app.view {
             super();
 
             this.previewPanel = new ContentItemPreviewPanel();
-            this.addNavigablePanel(new api.ui.tab.TabMenuItem("Preview"), this.previewPanel);
+            this.addNavigablePanel(new TabMenuItemBuilder().setLabel("Preview").build(),
+                this.previewPanel);
 
             this.analyticsPanel = new ContentItemAnalyticsPanel();
-            this.addNavigablePanel(new api.ui.tab.TabMenuItem("Google Analytics"), this.analyticsPanel);
+            this.addNavigablePanel(new TabMenuItemBuilder().setLabel("Google Analytics").build(), this.analyticsPanel);
 
-            this.addNavigablePanel(new api.ui.tab.TabMenuItem("Details"), new Panel());
-            this.addNavigablePanel(new api.ui.tab.TabMenuItem("Relationships"), new Panel());
-            this.addNavigablePanel(new api.ui.tab.TabMenuItem("Version History"), new Panel());
-            this.addNavigablePanel(new api.ui.tab.TabMenuItem("SEO"), new Panel());
+            this.addNavigablePanel(new TabMenuItemBuilder().setLabel("Details").build(), new Panel());
+            this.addNavigablePanel(new TabMenuItemBuilder().setLabel("Relationships").build(), new Panel());
+            this.addNavigablePanel(new TabMenuItemBuilder().setLabel("Version History").build(), new Panel());
+            this.addNavigablePanel(new TabMenuItemBuilder().setLabel("SEO").build(), new Panel());
 
             this.getTabMenu().onNavigationItemSelected((event: api.ui.NavigatorEvent) => {
                 this.onTabSelected(event.getItem());

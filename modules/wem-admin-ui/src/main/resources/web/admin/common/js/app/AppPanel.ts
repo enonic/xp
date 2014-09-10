@@ -11,7 +11,9 @@ module api.app {
         addBrowsePanel(browsePanel: api.app.browse.BrowsePanel<M>) {
             // limit to 1 browse panel
             if (!this.browsePanel) {
-                var browseMenuItem = new api.app.bar.AppBarTabMenuItem("[Select]", new api.app.bar.AppBarTabId("hidden", "____home"));
+                var browseMenuItem = new api.app.bar.AppBarTabMenuItemBuilder().setLabel("[Select]").
+                    setTabId(new api.app.bar.AppBarTabId("hidden", "____home")).
+                    build();
                 browseMenuItem.setVisibleInMenu(false);
                 browseMenuItem.setRemovable(false);
                 this.addNavigablePanel(browseMenuItem, browsePanel, true);

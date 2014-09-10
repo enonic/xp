@@ -103,7 +103,11 @@ module app {
         private handleNew(event: app.browse.event.NewTemplateEvent) {
             var tabId = api.app.bar.AppBarTabId.forNew('new-site-template-wizard');
             var wizard = new app.wizard.SiteTemplateWizardPanel(tabId);
-            var tabMenuItem = new api.app.bar.AppBarTabMenuItem("[New Site Template]", tabId, false, wizard.getCloseAction());
+            var tabMenuItem = new api.app.bar.AppBarTabMenuItemBuilder().setLabel("[New Site Template]").
+                setTabId(tabId).
+                setEditing(false).
+                setCloseAction(wizard.getCloseAction()).
+                build();
             this.addWizardPanel(tabMenuItem, wizard);
         }
 
@@ -118,7 +122,11 @@ module app {
 
                         var tabId = api.app.bar.AppBarTabId.forEdit(template.getId());
                         var wizard = new app.wizard.SiteTemplateWizardPanel(tabId, siteTemplate);
-                        var tabMenuItem = new api.app.bar.AppBarTabMenuItem(siteTemplate.getDisplayName(), tabId, false, wizard.getCloseAction());
+                        var tabMenuItem = new api.app.bar.AppBarTabMenuItemBuilder().setLabel(siteTemplate.getDisplayName()).
+                            setTabId(tabId).
+                            setEditing(false).
+                            setCloseAction(wizard.getCloseAction()).
+                            build();
                         this.addWizardPanel(tabMenuItem, wizard);
                     });
 

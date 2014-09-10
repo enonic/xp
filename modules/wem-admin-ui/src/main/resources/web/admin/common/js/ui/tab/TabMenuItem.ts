@@ -26,15 +26,14 @@ module api.ui.tab {
 
         private selectedListeners: {(event: TabMenuItemSelectedEvent):void}[] = [];
 
-        constructor(label: string, options?: TabMenuItemOptions, closeAction?: api.ui.Action) {
+        constructor(builder: TabMenuItemBuilder) {
             super("tab-menu-item");
-            if (!options) {
-                options = {};
-            }
+
+            var options = builder.options ? builder.options : {};
 
             this.labelEl = new api.dom.SpanEl('label');
             this.appendChild(this.labelEl);
-            this.setLabel(label);
+            this.setLabel(builder.label);
             this.labelEl.onClicked((event: MouseEvent) => {
                 this.notifySelectedListeners(this);
             });
@@ -53,7 +52,7 @@ module api.ui.tab {
                     }
                 });
             }
-            this.closeAction = closeAction;
+            this.closeAction = builder.closeAction;
         }
 
         setIndex(value: number) {
@@ -161,6 +160,32 @@ module api.ui.tab {
             this.closedListeners.forEach((listener: (event: TabMenuItemClosedEvent)=>void) => {
                 listener.call(this, new TabMenuItemClosedEvent(tab));
             });
+        }
+
+    }
+
+    export class TabMenuItemBuilder {
+        label: string;
+        options: TabMenuItemOptions;
+        closeAction: api.ui.Action;
+
+        setLabel(label: string) : TabMenuItemBuilder {
+            this.label = label;
+            return this;
+        }
+
+        setOptions(options: TabMenuItemOptions) : TabMenuItemBuilder {
+            this.options = options;
+            return this;
+        }
+
+        setCloseAction(closeAction: api.ui.Action) : TabMenuItemBuilder {
+            this.closeAction = closeAction;
+            return this;
+        }
+
+        build(): TabMenuItem{
+            return new TabMenuItem(this);
         }
 
     }

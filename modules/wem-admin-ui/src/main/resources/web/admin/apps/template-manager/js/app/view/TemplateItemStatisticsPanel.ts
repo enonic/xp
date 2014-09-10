@@ -8,8 +8,7 @@ module app.view {
             super();
 
             this.previewPanel = new TemplateItemPreviewPanel();
-
-            this.addNavigablePanel(new api.ui.tab.TabMenuItem("Preview"), this.previewPanel);
+            this.addNavigablePanel(new api.ui.tab.TabMenuItemBuilder().setLabel("Preview").build(), this.previewPanel);
             this.getTabMenu().hide();
 
             var firstShowListener = (event: api.dom.ElementShownEvent) => {
