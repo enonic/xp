@@ -1,11 +1,15 @@
 module api.content.form.inputtype.tag {
 
+    import Content = api.content.Content;
+    import ContentJson = api.content.json.ContentJson;
     import ContentQuery = api.content.query.ContentQuery;
     import ContentQueryRequest = api.content.ContentQueryRequest;
     import QueryExpr = api.query.expr.QueryExpr;
     import CompareExpr = api.query.expr.CompareExpr;
     import FieldExpr = api.query.expr.FieldExpr;
     import CompareOperator = api.query.expr.CompareOperator;
+    import FunctionExpr = api.query.expr.FunctionExpr;
+    import DynamicConstraintExpr = api.query.expr.DynamicConstraintExpr;
     import ValueExpr = api.query.expr.ValueExpr;
     import DataPath = api.data.DataPath;
     import Value = api.data.Value;
@@ -37,16 +41,15 @@ module api.content.form.inputtype.tag {
 
             var fieldName = 'contentdata' + this.dataPath.getParentPath().toString() + this.dataPath.getLastElement().getName();
 
-            var field: api.query.expr.ValueExpr = new api.query.expr.ValueExpr(new api.data.Value(fieldName,
-                api.data.type.ValueTypes.STRING));
+            var field = new ValueExpr(new Value(fieldName, ValueTypes.STRING));
 
-            var arguments: api.query.expr.ValueExpr[] = [];
+            var arguments: ValueExpr[] = [];
             arguments.push(field);
-            arguments.push(new api.query.expr.ValueExpr(new api.data.Value(value, api.data.type.ValueTypes.STRING)));
-            arguments.push(new api.query.expr.ValueExpr(new api.data.Value("AND", api.data.type.ValueTypes.STRING)));
+            arguments.push(new ValueExpr(new Value(value, ValueTypes.STRING)));
+            arguments.push(new ValueExpr(new Value("AND", ValueTypes.STRING)));
 
-            var nGramExpr: api.query.expr.FunctionExpr = new api.query.expr.FunctionExpr("ngram", arguments);
-            var nGramDynamicExpr: api.query.expr.DynamicConstraintExpr = new api.query.expr.DynamicConstraintExpr(nGramExpr);
+            var nGramExpr = new FunctionExpr("ngram", arguments);
+            var nGramDynamicExpr = new DynamicConstraintExpr(nGramExpr);
 
             var queryExpr: QueryExpr = new QueryExpr(nGramDynamicExpr);
 
@@ -57,17 +60,19 @@ module api.content.form.inputtype.tag {
             var queryRequest = new ContentQueryRequest(query);
             queryRequest.setExpand(api.rest.Expand.FULL);
             return queryRequest.sendAndParse().
-                then((contentQueryResult: ContentQueryResult<api.content.Content,api.content.json.ContentJson>) => {
+                then((contentQueryResult: ContentQueryResult<Content,ContentJson>) => {
                     var values: string[] = [];
-                    contentQueryResult.getContents().forEach((content: api.content.Content) => {
+                    contentQueryResult.getContents().forEach((content: Content) => {
                         var dataSet = this.dataPath.getParentPath().isRoot() ?
                                       content.getContentData() :
                                       content.getContentData().getDataSetFromDataPath(this.dataPath);
                         var properties = dataSet.getPropertiesByName(this.dataPath.getLastElement().getName());
                         properties.forEach((property: api.data.Property) => {
-                            var tag = property.getValue().asString();
-                            if (tag.indexOf(value) >= 0 && values.indexOf(tag) < 0) {
-                                values.push(tag);
+                            if (property.hasNonNullValue()) {
+                                var tag = property.getString();
+                                if (tag.indexOf(value) >= 0 && values.indexOf(tag) < 0) {
+                                    values.push(tag);
+                                }
                             }
                         });
                     });
