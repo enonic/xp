@@ -128,9 +128,11 @@ module app {
                 if (newContentEvent.getContentType().isSite()) {
                     contentWizardPanelFactory.setCreateSite(siteTemplate && siteTemplate.getKey());
                 }
-
                 contentWizardPanelFactory.createForNew().then((wizard: app.wizard.ContentWizardPanel) => {
-                    tabMenuItem = new api.app.bar.AppBarTabMenuItem("[New " + contentTypeSummary.getDisplayName() + "]", tabId, false, wizard.getCloseAction());
+                    tabMenuItem = new api.app.bar.AppBarTabMenuItemBuilder().setLabel("[New " + contentTypeSummary.getDisplayName() + "]").
+                        setTabId(tabId).
+                        setCloseAction(wizard.getCloseAction()).
+                        build();
                     this.addWizardPanel(tabMenuItem, wizard);
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
@@ -152,11 +154,13 @@ module app {
 
                 if (tabMenuItem) {
                     this.selectPanel(tabMenuItem);
-
                 } else {
                     var tabId = api.app.bar.AppBarTabId.forView(content.getId());
                     var contentItemViewPanel = new app.view.ContentItemViewPanel();
-                    tabMenuItem = new api.app.bar.AppBarTabMenuItem(content.getDisplayName(), tabId, false, contentItemViewPanel.getCloseAction());
+                    tabMenuItem = new api.app.bar.AppBarTabMenuItemBuilder().setLabel(content.getDisplayName()).
+                        setTabId(tabId).
+                        setCloseAction(contentItemViewPanel.getCloseAction()).
+                        build();
 
                     var contentItem = new api.app.view.ViewItem(content)
                         .setDisplayName(content.getDisplayName())
@@ -194,7 +198,11 @@ module app {
                                 this.getAppBarTabMenu().removeNavigationItem(closeViewPanelMenuItem);
                                 this.removePanelByIndex(closeViewPanelMenuItem.getIndex());
                             }
-                            tabMenuItem = new api.app.bar.AppBarTabMenuItem(content.getDisplayName(), tabId, true, wizard.getCloseAction());
+                            tabMenuItem = new api.app.bar.AppBarTabMenuItemBuilder().setLabel(content.getDisplayName()).
+                                setTabId(tabId).
+                                setEditing(true).
+                                setCloseAction(wizard.getCloseAction()).
+                                build();
                             this.addWizardPanel(tabMenuItem, wizard);
 
                             var viewTabId = api.app.bar.AppBarTabId.forView(content.getId());
