@@ -3,6 +3,8 @@ module app.view {
     import IsRenderableRequest = api.content.page.IsRenderableRequest;
     import RenderingMode = api.rendering.RenderingMode;
     import ContentImageUrlResolver = api.content.ContentImageUrlResolver;
+    import ViewItem = api.app.view.ViewItem;
+    import ContentSummary = api.content.ContentSummary;
 
     export class ContentItemPreviewPanel extends api.ui.panel.Panel {
 
@@ -51,7 +53,7 @@ module app.view {
 
         }
 
-        public addImageSizeToUrl(item: api.app.view.ViewItem<api.content.ContentSummary>) {
+        public addImageSizeToUrl(item: ViewItem<ContentSummary>) {
             var imgSize = Math.max(this.getEl().getWidth(), this.getEl().getHeight());
             var imgUrl = new ContentImageUrlResolver().
                 setContentId(item.getModel().getContentId()).
@@ -59,7 +61,7 @@ module app.view {
             this.image.setSrc(imgUrl);
         }
 
-        public setItem(item: api.app.view.ViewItem<api.content.ContentSummary>) {
+        public setItem(item: ViewItem<ContentSummary>) {
             this.mask.show();
             this.item = item;
             if (item.getModel().getType().toString() == "image") {
@@ -81,6 +83,10 @@ module app.view {
                         }
                     });
             }
+        }
+
+        public getItem(): ViewItem<ContentSummary> {
+            return this.item;
         }
 
     }

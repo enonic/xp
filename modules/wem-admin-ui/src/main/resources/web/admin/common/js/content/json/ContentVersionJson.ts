@@ -6,7 +6,7 @@ module api.content.json {
 
         displayName: string;
 
-        modified: Date;
+        modified: string;
 
         comment: string;
 

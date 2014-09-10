@@ -1,6 +1,6 @@
 module api.app.browse {
 
-    export class ItemsSelectionPanel<M> extends api.ui.panel.Panel {
+    export class BrowseItemsSelectionPanel<M> extends api.ui.panel.Panel {
 
         private deselectedListeners: {(event: ItemDeselectedEvent<M>):void}[] = [];
         private items: BrowseItem<M>[] = [];

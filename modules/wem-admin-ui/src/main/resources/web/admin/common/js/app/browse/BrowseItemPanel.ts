@@ -4,12 +4,12 @@ module api.app.browse {
 
         private itemStatisticsPanel: api.app.view.ItemStatisticsPanel<M>;
 
-        private itemsSelectionPanel: ItemsSelectionPanel<M>;
+        private itemsSelectionPanel: BrowseItemsSelectionPanel<M>;
 
         constructor() {
             super("browse-item-panel");
 
-            this.itemsSelectionPanel = new ItemsSelectionPanel<M>();
+            this.itemsSelectionPanel = new BrowseItemsSelectionPanel<M>();
             this.itemStatisticsPanel = this.createItemStatisticsPanel();
 
             this.addPanel(this.itemsSelectionPanel);

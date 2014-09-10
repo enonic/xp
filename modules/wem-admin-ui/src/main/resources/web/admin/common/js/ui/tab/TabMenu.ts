@@ -6,11 +6,13 @@ module api.ui.tab {
 
         private menuEl: api.dom.UlEl;
 
-        private showingMenuItems: boolean = false;
+        private menuVisible: boolean = false;
 
         private tabs: TabMenuItem[] = [];
 
         private selectedTab: number;
+
+        private hideOnItemClick: boolean = true;
 
         private navigationItemAddedListeners: {(event: NavigatorEvent):void}[] = [];
 
@@ -43,16 +45,22 @@ module api.ui.tab {
         }
 
         createTabMenuButton(): TabMenuButton {
-            var btn = new TabMenuButton();
-            return btn;
+            return new TabMenuButton();
         }
 
-        setButtonLabel(value: string) {
+        setButtonLabel(value: string): TabMenu {
             this.tabMenuButton.setLabel(value);
+            return this;
         }
 
-        setButtonClass(cls: string) {
+        setButtonClass(cls: string): TabMenu {
             this.tabMenuButton.addClass(cls);
+            return this;
+        }
+
+        setHideOnItemClick(hide: boolean): TabMenu {
+            this.hideOnItemClick = hide;
+            return this;
         }
 
         getMenuEl(): api.dom.UlEl {
@@ -60,7 +68,7 @@ module api.ui.tab {
         }
 
         private toggleMenu() {
-            if (!this.showingMenuItems) {
+            if (!this.menuVisible) {
                 this.showMenu();
             } else {
                 this.hideMenu();
@@ -69,16 +77,16 @@ module api.ui.tab {
 
         hideMenu() {
             this.menuEl.hide();
-            this.showingMenuItems = false;
+            this.menuVisible = false;
         }
 
         showMenu() {
             this.menuEl.show();
-            this.showingMenuItems = true;
+            this.menuVisible = true;
         }
 
-        isShowingMenuItems(): boolean {
-            return this.showingMenuItems;
+        isMenuVisible(): boolean {
+            return this.menuVisible;
         }
 
         addNavigationItem(tab: TabMenuItem) {
@@ -92,6 +100,9 @@ module api.ui.tab {
 
             tab.onSelected((event: TabMenuItemSelectedEvent) => {
                 this.selectNavigationItem(event.getTab().getIndex());
+                if (this.hideOnItemClick) {
+                    this.hideMenu();
+                }
             });
             tab.onLabelChanged((event: TabMenuItemLabelChangedEvent) => {
                 this.setButtonLabel(event.getNewValue());

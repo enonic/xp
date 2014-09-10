@@ -86,7 +86,7 @@ module api.app.bar {
             var centerLeftEdge = (fullWidth - tabEl.getWidth()) / 2;
             tabEl.setLeftPx(Math.max(homeElRightEdge, centerLeftEdge));
 
-            if (this.tabMenu.isShowingMenuItems()) {
+            if (this.tabMenu.isMenuVisible()) {
                 this.tabMenu.updateMenuPosition();
             }
         }

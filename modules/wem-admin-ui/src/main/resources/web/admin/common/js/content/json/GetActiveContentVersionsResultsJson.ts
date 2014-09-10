@@ -1,7 +1,6 @@
 module api.content.json {
 
-
-    export interface GetContentVersionsResultsJson {
+    export interface GetActiveContentVersionsResultsJson {
 
         from: number;
 
@@ -11,7 +10,7 @@ module api.content.json {
 
         totalHits: number;
 
-        contentVersions: ContentVersionJson[];
+        activeContentVersions: {[workspace: string]: ContentVersionJson};
     }
 }
 

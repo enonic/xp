@@ -9,48 +9,71 @@ module app.view {
 
         private analyticsPanel: ContentItemAnalyticsPanel;
 
+        private versionsPanel: ContentItemVersionsPanel;
+
         constructor() {
             super();
 
             this.previewPanel = new ContentItemPreviewPanel();
-            this.addNavigablePanel(new TabMenuItemBuilder().setLabel("Preview").build(),
-                this.previewPanel);
+            this.addNavigablePanel(new TabMenuItemBuilder().setLabel("Preview").build(), this.previewPanel, true);
 
             this.analyticsPanel = new ContentItemAnalyticsPanel();
             this.addNavigablePanel(new TabMenuItemBuilder().setLabel("Google Analytics").build(), this.analyticsPanel);
 
             this.addNavigablePanel(new TabMenuItemBuilder().setLabel("Details").build(), new Panel());
             this.addNavigablePanel(new TabMenuItemBuilder().setLabel("Relationships").build(), new Panel());
-            this.addNavigablePanel(new TabMenuItemBuilder().setLabel("Version History").build(), new Panel());
+
+            this.versionsPanel = new ContentItemVersionsPanel();
+            this.addNavigablePanel(new TabMenuItemBuilder().setLabel("Version History").build(), this.versionsPanel);
             this.addNavigablePanel(new TabMenuItemBuilder().setLabel("SEO").build(), new Panel());
 
             this.getTabMenu().onNavigationItemSelected((event: api.ui.NavigatorEvent) => {
                 this.onTabSelected(event.getItem());
             });
-
-            var firstShowListener = (event: api.dom.ElementShownEvent) => {
-                this.showPanel(0);
-                this.unShown(firstShowListener);
-            }
-            this.onShown(firstShowListener);
         }
 
         setItem(item: api.app.view.ViewItem<api.content.ContentSummary>) {
-            super.setItem(item);
-            if (this.getTabMenu().getSelectedIndex() == 0) {
-                this.previewPanel.setItem(item);
+            if (this.getItem() != item) {
+                super.setItem(item);
+                switch (this.getTabMenu().getSelectedIndex()) {
+                case 0:
+                    this.previewPanel.setItem(item);
+                    break;
+                case 1:
+                    this.analyticsPanel.setItem(item);
+                    break;
+                case 4:
+                    this.versionsPanel.setItem(item);
+                    break;
+                }
             }
         }
 
-        private onTabSelected(item: api.ui.NavigationItem) {
-            if (item.getIndex() == 0) {
+        private onTabSelected(navigationItem: api.ui.NavigationItem) {
+            var item = this.getItem();
+            switch (navigationItem.getIndex()) {
+            case 0:
                 this.getHeader().hide();
-                if (this.getBrowseItem()) {
-                    this.previewPanel.setItem(this.getBrowseItem());
+                if (this.previewPanel.getItem() != item) {
+                    this.previewPanel.setItem(item);
                 }
-            } else {
+                break;
+            case 1:
+                this.getHeader().hide();
+                if (this.analyticsPanel.getItem() != item) {
+                    this.analyticsPanel.setItem(item);
+                }
+                break;
+            case 4:
+                this.getHeader().hide();
+                if (this.versionsPanel.getItem() != item) {
+                    this.versionsPanel.setItem(item);
+                }
+                break;
+            default:
                 this.getHeader().show();
             }
+
         }
 
     }

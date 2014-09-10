@@ -4,20 +4,21 @@ module api.app.bar {
 
         private appBarTabMenuButton: AppBarTabMenuButton;
 
-        private buttonLabelChanged: {():void}[] = [];
+        private buttonLabelChangedListeners: {():void}[] = [];
 
         constructor() {
             super("appbar-tab-menu");
         }
 
-        createTabMenuButton():AppBarTabMenuButton {
+        createTabMenuButton(): AppBarTabMenuButton {
             this.appBarTabMenuButton = new AppBarTabMenuButton();
             return this.appBarTabMenuButton;
         }
 
-        setButtonLabel(value: string) {
+        setButtonLabel(value: string): AppBarTabMenu {
             super.setButtonLabel(value);
             this.notifyButtonLabelChanged();
+            return this;
         }
 
         showMenu() {
@@ -42,8 +43,8 @@ module api.app.bar {
             }
         }
 
-        getNavigationItemById(tabId:AppBarTabId):AppBarTabMenuItem {
-            var items:api.ui.tab.TabMenuItem[] = this.getNavigationItems();
+        getNavigationItemById(tabId: AppBarTabId): AppBarTabMenuItem {
+            var items: api.ui.tab.TabMenuItem[] = this.getNavigationItems();
             var item;
             for (var i = 0; i < items.length; i++) {
                 item = <AppBarTabMenuItem>items[i];
@@ -78,17 +79,17 @@ module api.app.bar {
         }
 
         onButtonLabelChanged(listener: () => void) {
-            this.buttonLabelChanged.push(listener);
+            this.buttonLabelChangedListeners.push(listener);
         }
 
         unButtonLabelChanged(listener: () => void) {
-            this.buttonLabelChanged = this.buttonLabelChanged.filter((currentListener: () => void) => {
+            this.buttonLabelChangedListeners = this.buttonLabelChangedListeners.filter((currentListener: () => void) => {
                 return listener != currentListener;
             });
         }
 
         private notifyButtonLabelChanged() {
-            this.buttonLabelChanged.forEach((listener: () => void) => {
+            this.buttonLabelChangedListeners.forEach((listener: () => void) => {
                 listener.call(this);
             });
         }

@@ -221,7 +221,9 @@ module api.ui.treegrid {
 
             this.appendChild(this.grid);
 
-            this.reload();
+            if (builder.isAutoLoad()) {
+                this.reload();
+            }
 
             this.onShown(() => {
                 this.grid.resizeCanvas();
@@ -311,7 +313,7 @@ module api.ui.treegrid {
         fetchChildren(parentNode?: TreeNode<NODE>): wemQ.Promise<NODE[]> {
             var deferred = wemQ.defer<NODE[]>();
             // Empty logic
-            deferred.resolve(null);
+            deferred.resolve([]);
             return deferred.promise;
         }
 

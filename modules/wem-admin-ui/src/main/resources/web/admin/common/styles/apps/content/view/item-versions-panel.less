@@ -1,0 +1,60 @@
+.item-versions-panel {
+  width: 100%;
+  height: 100%;
+  padding: 0 !important;
+  overflow: hidden;
+
+  .tab-bar {
+    margin: 10px 0;
+
+    .tab-bar-item {
+      display: inline-block;
+      padding: 10px 25px 5px;
+      border-bottom: 4px solid transparent;
+      cursor: pointer;
+      font-size: 14px;
+
+      &.active {
+        border-bottom-color: @admin-blue;
+        color: @admin-blue;
+      }
+
+    }
+
+  }
+
+  .tree-grid {
+
+    .description {
+
+      img {
+        background-color: lightgrey;
+        width: 32px !important;
+        height: 32px !important;
+        .border-radius(16px);
+      }
+
+    }
+
+    .status {
+
+      .badge {
+        color: white;
+        padding: 2px 10px;
+        .border-radius(10px);
+
+        &.stage {
+          background-color: @admin-blue;
+        }
+
+        &.prod {
+          background-color: forestgreen;
+        }
+
+      }
+
+    }
+
+  }
+
+}

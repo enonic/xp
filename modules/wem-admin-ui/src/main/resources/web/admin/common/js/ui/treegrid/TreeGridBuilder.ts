@@ -18,6 +18,8 @@ module api.ui.treegrid {
 
         private classes: string = "";
 
+        private autoLoad: boolean = true;
+
         constructor(grid?: TreeGrid<NODE>) {
             if (grid) {
                 this.showToolbar = grid.hasToolbar();
@@ -135,6 +137,24 @@ module api.ui.treegrid {
         prependClasses(classes: string): TreeGridBuilder<NODE> {
             this.classes = classes + " " + this.classes;
             return this;
+        }
+
+        setAutoLoad(autoLoad: boolean): TreeGridBuilder<NODE> {
+            this.autoLoad = autoLoad;
+            return this;
+        }
+
+        isAutoLoad(): boolean {
+            return this.autoLoad;
+        }
+
+        setCheckableRows(checkable: boolean): TreeGridBuilder<NODE> {
+            this.options.setCheckableRows(checkable);
+            return this;
+        }
+
+        isCheckableRows(): boolean {
+            return this.options.isCheckableRows()
         }
 
         /**
