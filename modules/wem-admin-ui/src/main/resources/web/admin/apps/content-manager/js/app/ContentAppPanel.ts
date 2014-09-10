@@ -156,8 +156,8 @@ module app {
 
                 } else {
                     var tabId = api.app.bar.AppBarTabId.forView(content.getId());
-                    tabMenuItem = new api.app.bar.AppBarTabMenuItem(content.getDisplayName(), tabId);
                     var contentItemViewPanel = new app.view.ContentItemViewPanel();
+                    tabMenuItem = new api.app.bar.AppBarTabMenuItem(content.getDisplayName(), tabId, false, contentItemViewPanel.getCloseAction());
 
                     var contentItem = new api.app.view.ViewItem(content)
                         .setDisplayName(content.getDisplayName())
@@ -195,7 +195,7 @@ module app {
                                 this.getAppBarTabMenu().removeNavigationItem(closeViewPanelMenuItem);
                                 this.removePanelByIndex(closeViewPanelMenuItem.getIndex());
                             }
-                            tabMenuItem = new api.app.bar.AppBarTabMenuItem(content.getDisplayName(), tabId, true);
+                            tabMenuItem = new api.app.bar.AppBarTabMenuItem(content.getDisplayName(), tabId, true, wizard.getCloseAction());
                             this.addWizardPanel(tabMenuItem, wizard);
 
                             var viewTabId = api.app.bar.AppBarTabId.forView(content.getId());
@@ -222,6 +222,7 @@ module app {
         }
         private resolveTabMenuItemForContentBeingEdited(content: api.content.ContentSummary): api.app.bar.AppBarTabMenuItem {
             if (!!content) {
+
                 var tabId = this.getAppBarTabMenu().getNavigationItemById(api.app.bar.AppBarTabId.forEdit(content.getId()));
                 if (tabId) {
                     return tabId;
@@ -236,6 +237,7 @@ module app {
                     return tabId;
                 }
             }
+
             return null;
         }
     }

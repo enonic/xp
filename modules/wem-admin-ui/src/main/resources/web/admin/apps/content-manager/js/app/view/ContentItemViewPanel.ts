@@ -76,6 +76,10 @@ module app.view {
             }
         }
 
+        public getCloseAction() : api.ui.Action {
+            return this.closeAction;
+        }
+
     }
 
 }

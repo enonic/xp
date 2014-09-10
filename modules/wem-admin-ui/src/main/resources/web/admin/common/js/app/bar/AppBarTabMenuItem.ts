@@ -6,8 +6,8 @@ module api.app.bar {
 
         private editing: boolean;
 
-        constructor(label: string, tabId: AppBarTabId, editing?: boolean) {
-            super(label, {removable: true});
+        constructor(label: string, tabId: AppBarTabId, editing?: boolean, closeAction?: api.ui.Action) {
+            super(label, {removable: true}, closeAction);
             this.editing = editing;
             this.tabId = tabId;
 

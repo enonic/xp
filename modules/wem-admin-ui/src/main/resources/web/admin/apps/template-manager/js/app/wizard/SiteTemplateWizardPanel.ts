@@ -9,6 +9,7 @@ module app.wizard {
         private formIcon: api.app.wizard.FormIcon;
         private wizardHeader: api.app.wizard.WizardHeaderWithDisplayNameAndName;
         private iconUploadId: string;
+        private siteTemplateWizardActions : app.wizard.action.SiteTemplateWizardActions;
 
         private siteTemplateStep: SiteTemplateWizardStepForm;
 
@@ -17,7 +18,7 @@ module app.wizard {
             if (siteTemplate) {
                 this.wizardHeader.initNames(siteTemplate.getDisplayName(), siteTemplate.getName(), true);
             }
-            var actions = new app.wizard.action.SiteTemplateWizardActions(this);
+            this.siteTemplateWizardActions = new app.wizard.action.SiteTemplateWizardActions(this);
 
             var iconUrl = SiteTemplateWizardPanel.DEFAULT_SITE_TEMPLATE_ICON_URL;
             this.formIcon = new api.app.wizard.FormIcon(iconUrl, "Click to upload icon",
@@ -31,11 +32,11 @@ module app.wizard {
             });
 
             var mainToolbar = new SiteTemplateWizardToolbar({
-                saveAction: actions.getSaveAction(),
-                duplicateAction: actions.getDuplicateAction(),
-                moveAction: actions.getMoveAction(),
-                deleteAction: actions.getDeleteAction(),
-                closeAction: actions.getCloseAction()
+                saveAction: this.siteTemplateWizardActions.getSaveAction(),
+                duplicateAction: this.siteTemplateWizardActions.getDuplicateAction(),
+                moveAction: this.siteTemplateWizardActions.getMoveAction(),
+                deleteAction: this.siteTemplateWizardActions.getDeleteAction(),
+                closeAction: this.siteTemplateWizardActions.getCloseAction()
             });
 
             super({
@@ -44,7 +45,7 @@ module app.wizard {
                 formIcon: this.formIcon,
                 mainToolbar: mainToolbar,
                 header: this.wizardHeader,
-                actions: actions,
+                actions: this.siteTemplateWizardActions,
                 steps: this.createSteps()
             }, () => {
             });
@@ -101,6 +102,10 @@ module app.wizard {
 
             }
             return deferred.promise
+        }
+
+        getCloseAction() : api.ui.Action {
+            return this.siteTemplateWizardActions.getCloseAction();
         }
     }
 }

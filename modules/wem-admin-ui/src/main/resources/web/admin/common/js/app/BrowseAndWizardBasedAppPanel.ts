@@ -60,10 +60,6 @@ module api.app {
         addViewPanel(tabMenuItem: api.app.bar.AppBarTabMenuItem, viewPanel: api.app.view.ItemViewPanel<M>) {
             super.addNavigablePanel(tabMenuItem, viewPanel, true);
 
-            tabMenuItem.onClosed(() => {
-                viewPanel.close();
-            });
-
             viewPanel.onClosed((event: api.app.view.ItemViewClosedEvent<M>) => {
                 this.removeNavigablePanel(event.getView(), false);
             });
@@ -71,15 +67,6 @@ module api.app {
 
         addWizardPanel(tabMenuItem: api.app.bar.AppBarTabMenuItem, wizardPanel: api.app.wizard.WizardPanel<any>) {
             super.addNavigablePanel(tabMenuItem, wizardPanel, true);
-
-            tabMenuItem.onClosed(() => {
-
-                if (wizardPanel.hasUnsavedChanges()) {
-                    this.askUserForSaveChangesBeforeClosing(wizardPanel);
-                } else {
-                    wizardPanel.close();
-                }
-            });
 
             wizardPanel.onClosed((event: api.app.wizard.WizardClosedEvent) => {
                 this.removeNavigablePanel(event.getWizard(), false);
