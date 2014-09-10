@@ -171,7 +171,7 @@ public final class DataPath
         return true;
     }
 
-    public DataPath asNewWithoutFirstPathElement()
+    public DataPath removeFirstPathElement()
     {
         final ImmutableList.Builder<Element> builder = ImmutableList.builder();
         for ( int i = 0; i < elements.size(); i++ )
@@ -182,6 +182,19 @@ public final class DataPath
             }
         }
         return new DataPath( builder.build() );
+    }
+
+    public DataPath removeIndexFromLastElement()
+    {
+
+        if ( this.parentPath != null )
+        {
+            return DataPath.from( this.parentPath, this.getLastElement().getName() );
+        }
+        else
+        {
+            return DataPath.from( new Element( this.getLastElement().getName(), 0 ) );
+        }
     }
 
     @Override

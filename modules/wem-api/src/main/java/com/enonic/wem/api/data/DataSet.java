@@ -104,7 +104,7 @@ public class DataSet
         if ( dataPath.elementCount() > 1 )
         {
             final DataSet dataSet = findOrCreateDataSet( DataId.from( dataPath.getFirstElement() ) );
-            return dataSet.addProperty( dataPath.asNewWithoutFirstPathElement(), value );
+            return dataSet.addProperty( dataPath.removeFirstPathElement(), value );
         }
         else
         {
@@ -157,7 +157,7 @@ public class DataSet
         if ( path.elementCount() > 1 )
         {
             final DataSet dataSet = findOrCreateDataSet( DataId.from( path.getFirstElement() ) );
-            return dataSet.setProperty( path.asNewWithoutFirstPathElement(), values );
+            return dataSet.setProperty( path.removeFirstPathElement(), values );
         }
         else
         {
@@ -291,7 +291,7 @@ public class DataSet
             return null;
         }
 
-        return data.toDataSet().getData( path.asNewWithoutFirstPathElement() );
+        return data.toDataSet().getData( path.removeFirstPathElement() );
     }
 
     private Data doGetData( final DataId dataId )
@@ -456,7 +456,7 @@ public class DataSet
         {
             final Data data = dataById.get( DataId.from( path.getFirstElement() ) );
             final DataSet dataSet = data.toDataSet();
-            return dataSet.getDataSet( path.asNewWithoutFirstPathElement() );
+            return dataSet.getDataSet( path.removeFirstPathElement() );
         }
     }
 

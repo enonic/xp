@@ -189,8 +189,15 @@ public class DataPathTest
     }
 
     @Test
-    public void asNewWithoutFirstPathElement()
+    public void removeFirstPathElement()
     {
-        assertEquals( "b.c", DataPath.from( "a.b.c" ).asNewWithoutFirstPathElement().toString() );
+        assertEquals( "b.c", DataPath.from( "a.b.c" ).removeFirstPathElement().toString() );
+    }
+
+    @Test
+    public void removeIndexFromLastElement()
+    {
+        assertEquals( 0, DataPath.from( "a[1]" ).removeIndexFromLastElement().getLastElement().getIndex() );
+        assertEquals( "a", DataPath.from( "a[1]" ).removeIndexFromLastElement().toString() );
     }
 }
