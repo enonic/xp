@@ -3,7 +3,7 @@ module app.view {
     import TreeNode = api.ui.treegrid.TreeNode;
     import ContentVersion = api.content.ContentVersion;
 
-    export class ActiveContentVersionsTreeGrid extends ContentVersionsTreeGrid {
+    export class AllContentVersionsTreeGrid extends ContentVersionsTreeGrid {
 
         constructor() {
             super();
@@ -11,10 +11,27 @@ module app.view {
 
         fetchChildren(parentNode?: TreeNode<ContentVersion>): wemQ.Promise<ContentVersion[]> {
             if (this.contentId) {
-                return new api.content.GetActiveContentVersionsRequest(this.contentId).sendAndParse();
+                var activePromise = new api.content.GetActiveContentVersionsRequest(this.contentId);
+                var allPromise = new api.content.GetContentVersionsRequest(this.contentId);
+                return wemQ.all([allPromise.sendAndParse(), activePromise.sendAndParse()]).
+                    spread<ContentVersion[]>((allVersions: ContentVersion[], activeVersions: ContentVersion[]) =>
+                    this.enrichWithWorkspaces(allVersions, activeVersions));
             } else {
                 return super.fetchChildren(parentNode);
             }
+        }
+
+        private enrichWithWorkspaces(allVersions: ContentVersion[], activeVersions: ContentVersion[]): ContentVersion[] {
+            activeVersions.forEach((activeVersion: ContentVersion) => {
+                for (var i = 0; i < allVersions.length; i++) {
+                    var allVersion = allVersions[i];
+                    if (activeVersion.id == allVersion.id) {
+                        allVersion.workspace = activeVersion.workspace;
+                        break;
+                    }
+                }
+            });
+            return allVersions;
         }
 
     }
