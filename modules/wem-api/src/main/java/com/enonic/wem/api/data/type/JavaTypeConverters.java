@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.time.format.SignStyle;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 
@@ -29,8 +30,8 @@ final class JavaTypeConverters
             ":" ).appendValue( ChronoField.SECOND_OF_MINUTE, 2 ).toFormatter();
 
     private final static java.time.format.DateTimeFormatter LOCAL_TIME_FORMATTER =
-        new java.time.format.DateTimeFormatterBuilder().appendValue( ChronoField.CLOCK_HOUR_OF_DAY, 2 ).appendLiteral( ":" ).appendValue(
-            ChronoField.MINUTE_OF_HOUR, 2 ).toFormatter();
+        new java.time.format.DateTimeFormatterBuilder().appendValue( ChronoField.CLOCK_HOUR_OF_DAY, 1, 2, SignStyle.NORMAL ).appendLiteral(
+            ":" ).appendValue( ChronoField.MINUTE_OF_HOUR, 1, 2, SignStyle.NORMAL ).toFormatter();
 
     private final static RootDataSetJsonSerializer DATA_SERIALIZER = new RootDataSetJsonSerializer();
 
@@ -120,6 +121,7 @@ final class JavaTypeConverters
         }
         return ret;
     }
+
     private static Double convertToDouble( final Object value )
     {
         if ( value instanceof Number )

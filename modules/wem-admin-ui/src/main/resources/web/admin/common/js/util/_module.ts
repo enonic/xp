@@ -11,3 +11,4 @@
 ///<reference path='Flow.ts' />
 ///<reference path='DelayedFunctionCall.ts' />
 ///<reference path='GeoPoint.ts' />
+///<reference path='LocalTime.ts' />
