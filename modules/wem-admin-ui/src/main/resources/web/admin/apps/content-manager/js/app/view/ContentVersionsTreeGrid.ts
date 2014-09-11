@@ -52,8 +52,9 @@ module app.view {
 
         private descriptionFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentVersion>) {
             if (node.getData()) {  // default node
+                var length = node.getRoot().getChildren().length;
                 var viewer = new ContentVersionViewer();
-                viewer.setObject(node.getData(), row);
+                viewer.setObject(node.getData(), length - row);
                 return viewer.toString();
 
             } else { // `load more` node

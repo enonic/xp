@@ -11,12 +11,12 @@ module app.view {
         private frame: api.dom.IFrameEl;
 
         private image: api.dom.ImgEl;
-        private item: api.app.view.ViewItem<api.content.ContentSummary>;
+        private item: ViewItem<ContentSummary>;
 
         private mask: api.ui.mask.LoadMask;
 
         constructor() {
-            super("item-preview-panel");
+            super("content-item-preview-panel");
             this.mask = new api.ui.mask.LoadMask(this);
             this.frame = new api.dom.IFrameEl();
             this.frame.onLoaded((event: UIEvent) => this.mask.hide());

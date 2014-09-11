@@ -5,12 +5,12 @@ module app.view {
 
     export class ContentItemAnalyticsPanel extends api.ui.panel.Panel {
 
-        private item: api.app.view.ViewItem<api.content.ContentSummary>;
+        private item: ViewItem<ContentSummary>;
 
         private frame: api.dom.IFrameEl;
 
         constructor() {
-            super("item-analytics-panel");
+            super("content-item-analytics-panel");
             this.frame = new api.dom.IFrameEl();
             this.frame.setSrc(api.util.getUri("dev/detailpanel/analytics.html"));
             this.appendChild(this.frame);

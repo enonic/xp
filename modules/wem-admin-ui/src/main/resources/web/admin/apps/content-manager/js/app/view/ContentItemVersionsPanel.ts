@@ -13,7 +13,7 @@ module app.view {
         private mask: api.ui.mask.LoadMask;
 
         constructor() {
-            super("item-versions-panel");
+            super("content-item-versions-panel");
 
             var navigator = new api.ui.tab.TabBar();
             this.deckPanel = new api.ui.panel.NavigatedDeckPanel(navigator);
