@@ -2,6 +2,7 @@ package com.enonic.wem.admin.rest.resource.module;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -11,7 +12,12 @@ import javax.ws.rs.core.MediaType;
 
 import org.osgi.framework.BundleContext;
 
+import com.enonic.wem.admin.json.content.ContentIdJson;
+import com.enonic.wem.admin.json.content.ContentJson;
+import com.enonic.wem.admin.json.content.ContentSummaryJson;
 import com.enonic.wem.admin.json.module.ModuleJson;
+import com.enonic.wem.admin.json.module.ModuleSummaryJson;
+import com.enonic.wem.admin.rest.exception.NotFoundWebException;
 import com.enonic.wem.admin.rest.resource.module.json.ListModuleJson;
 import com.enonic.wem.admin.rest.resource.module.json.ModuleInstallParams;
 import com.enonic.wem.admin.rest.resource.module.json.ModuleListParams;
@@ -25,6 +31,12 @@ import com.enonic.wem.api.module.Modules;
 @Produces(MediaType.APPLICATION_JSON)
 public final class ModuleResource
 {
+    private final String EXPAND_FULL = "full";
+
+    private final String EXPAND_SUMMARY = "summary";
+
+    private final String EXPAND_NONE = "none";
+
     @Inject
     protected ModuleService moduleService;
 
@@ -40,10 +52,24 @@ public final class ModuleResource
     }
 
     @GET
-    public ModuleJson getByKey( @QueryParam("moduleKey") String moduleKey )
+    public ModuleSummaryJson getByKey( @QueryParam("moduleKey") String moduleKey,
+                                @QueryParam("expand") @DefaultValue(EXPAND_FULL) final String expandParam)
     {
         final Module module = this.moduleService.getModule( ModuleKey.from( moduleKey ) );
-        return new ModuleJson( module );
+
+        if ( module == null )
+        {
+            throw new NotFoundWebException( String.format( "Module [%s] was not found", moduleKey ) );
+        }
+        else if ( EXPAND_SUMMARY.equalsIgnoreCase( expandParam ) )
+        {
+            return new ModuleSummaryJson( module );
+        }
+        else
+        {
+            return new ModuleJson( module );
+        }
+
     }
 
     @POST
