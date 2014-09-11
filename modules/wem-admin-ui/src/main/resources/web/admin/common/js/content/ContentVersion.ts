@@ -12,14 +12,17 @@ module api.content {
 
         id: string;
 
-        static fromJson(contentVersionJson: api.content.json.ContentVersionJson): ContentVersion {
+        workspace: string;
+
+        static fromJson(contentVersionJson: api.content.json.ContentVersionJson, workspace?: string): ContentVersion {
 
             var contentVersion: ContentVersion = new ContentVersion();
             contentVersion.modifier = contentVersionJson.modifier;
             contentVersion.displayName = contentVersionJson.displayName;
-            contentVersion.modified = contentVersionJson.modified;
+            contentVersion.modified = new Date(contentVersionJson.modified);
             contentVersion.comment = contentVersionJson.comment;
             contentVersion.id = contentVersionJson.id;
+            contentVersion.workspace = workspace;
 
             return contentVersion;
         }

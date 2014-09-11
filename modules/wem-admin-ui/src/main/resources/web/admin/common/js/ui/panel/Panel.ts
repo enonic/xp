@@ -26,7 +26,7 @@ module api.ui.panel {
         private calculateOffset() {
             // calculates bottom of previous element in dom and set panel top to this value.
             var previous = this.getEl().getPrevious();
-            var top = previous ? (previous.getOffsetTopRelativeToParent() + previous.getHeight()) : 0;
+            var top = previous ? (previous.getOffsetTopRelativeToParent() + previous.getHeightWithMargin()) : 0;
 
             this.getEl().setTopPx(top);
         }

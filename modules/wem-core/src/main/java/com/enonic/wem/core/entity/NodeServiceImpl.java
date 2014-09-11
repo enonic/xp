@@ -262,6 +262,7 @@ public class NodeServiceImpl
             entityId( params.getEntityId() ).
             workspaces( params.getWorkspaces() ).
             versionService( this.versionService ).
+            workspaceService( this.workspaceService ).
             nodeDao( this.nodeDao ).
             build().
             execute();
