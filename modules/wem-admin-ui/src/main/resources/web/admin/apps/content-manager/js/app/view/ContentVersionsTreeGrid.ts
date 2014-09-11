@@ -38,7 +38,7 @@ module app.view {
                     descColumn,
                     statusColumn
                 ]).
-                prependClasses("versions-tree-grid"));
+                prependClasses("content-versions-tree-grid"));
         }
 
         public setContentId(contentId: ContentId) {
