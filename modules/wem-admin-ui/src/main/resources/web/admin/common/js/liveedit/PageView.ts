@@ -36,14 +36,6 @@ module api.liveedit {
         }
     }
 
-    class PageViewContextMenuTitle extends ItemViewContextMenuTitle {
-
-        constructor(content: Content) {
-            super(content.getDisplayName(), PageItemType.get().getConfig().getIconCls());
-        }
-
-    }
-
     export class PageView extends ItemView {
 
         private content: Content;

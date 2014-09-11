@@ -35,14 +35,6 @@ module api.liveedit {
         }
     }
 
-    class RegionViewContextMenuTitle extends ItemViewContextMenuTitle {
-
-        constructor(region: Region) {
-            super(region.getName(), RegionItemType.get().getConfig().getIconCls());
-        }
-
-    }
-
     export class RegionView extends ItemView {
 
         private parentView: ItemView;

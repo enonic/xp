@@ -14,6 +14,11 @@
 ///<reference path='ItemViewRemovedEvent.ts' />
 ///<reference path='ItemViewSelectedEvent.ts' />
 ///<reference path='ItemViewDeselectEvent.ts' />
+///<reference path='ItemViewContextMenuTitle.ts' />
+///<reference path='PageComponentViewContextMenuTitle.ts' />
+///<reference path='ContentViewContextMenuTitle.ts' />
+///<reference path='PageViewContextMenuTitle.ts' />
+///<reference path='RegionViewContextMenuTitle.ts' />
 ///<reference path='ItemViewContextMenu.ts' />
 ///<reference path='RegionView.ts' />
 ///<reference path='RegionViewDropZone.ts' />

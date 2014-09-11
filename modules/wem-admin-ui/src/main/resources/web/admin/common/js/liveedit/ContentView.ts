@@ -1,6 +1,5 @@
 module api.liveedit {
 
-    import Content = api.content.Content;
     import PartComponentView = api.liveedit.part.PartComponentView;
 
     export class ContentViewBuilder {
@@ -24,14 +23,6 @@ module api.liveedit {
         setElement(value: api.dom.Element): ContentViewBuilder {
             this.element = value;
             return this;
-        }
-
-    }
-
-    class ContentViewContextMenuTitle extends ItemViewContextMenuTitle {
-
-        constructor(contentView: ContentView) {
-            super(contentView.getName(), ContentItemType.get().getConfig().getIconCls());
         }
 
     }

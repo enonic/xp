@@ -1,7 +1,5 @@
 module api.liveedit {
 
-    import PageComponent = api.content.page.PageComponent;
-
     export class ItemViewContextMenu extends api.dom.DivEl {
 
         private title: ItemViewContextMenuTitle;
@@ -84,16 +82,6 @@ module api.liveedit {
             api.dom.Body.get().unMouseMove(dragListener);
             api.dom.Body.get().unMouseUp(upListener);
         }
-    }
-
-    export class ItemViewContextMenuTitle extends api.app.NamesAndIconView {
-
-        constructor(name: string, icon: string) {
-            super(new api.app.NamesAndIconViewBuilder().setAddTitleAttribute(false));
-            this.setMainName(name);
-            this.setIconClass(icon);
-        }
-
     }
 
 }

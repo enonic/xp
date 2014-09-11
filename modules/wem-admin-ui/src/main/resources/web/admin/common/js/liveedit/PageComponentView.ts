@@ -1,6 +1,5 @@
 module api.liveedit {
 
-    import Content = api.content.Content;
     import PageComponent = api.content.page.PageComponent;
     import ComponentPath = api.content.page.ComponentPath;
     import ComponentName = api.content.page.ComponentName;
@@ -65,19 +64,6 @@ module api.liveedit {
             this.contextMenuActions = actions;
             return this;
         }
-    }
-
-    class PageComponentViewContextMenuTitle<PAGE_COMPONENT extends PageComponent> extends ItemViewContextMenuTitle {
-
-        constructor(pageComponent: PAGE_COMPONENT, type: PageComponentItemType) {
-            pageComponent.onPropertyChanged((event: api.PropertyChangedEvent) => {
-                if (event.getPropertyName() == PageComponent.PROPERTY_NAME) {
-                    this.setMainName((<ComponentName> event.getNewValue()).toString());
-                }
-            });
-            super(pageComponent.getName().toString(), type.getConfig().getIconCls());
-        }
-
     }
 
     export class PageComponentView<PAGE_COMPONENT extends PageComponent> extends ItemView {
