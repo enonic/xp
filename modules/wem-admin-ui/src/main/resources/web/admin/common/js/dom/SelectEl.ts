@@ -5,5 +5,10 @@ module api.dom {
         constructor(className?:string) {
             super("select", className);
         }
+
+        setName(value:string):SelectEl {
+            this.getEl().setAttribute('name', value);
+            return this;
+        }
     }
 }
