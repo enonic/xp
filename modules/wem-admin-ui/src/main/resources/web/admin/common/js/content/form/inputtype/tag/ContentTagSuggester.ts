@@ -70,7 +70,7 @@ module api.content.form.inputtype.tag {
                         properties.forEach((property: api.data.Property) => {
                             if (property.hasNonNullValue()) {
                                 var tag = property.getString();
-                                if (tag.indexOf(value) >= 0 && values.indexOf(tag) < 0) {
+                                if (tag.indexOf(value) == 0 && values.indexOf(tag) < 0) {
                                     values.push(tag);
                                 }
                             }
