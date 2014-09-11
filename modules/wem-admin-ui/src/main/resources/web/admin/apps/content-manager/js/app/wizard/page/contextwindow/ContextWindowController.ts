@@ -23,10 +23,10 @@ module app.wizard.page.contextwindow {
 
             this.contextWindow.onShown(() => {
                 if (this.contextWindow.isFloating()) {
-                    this.contextWindow.slideIn();
+                    this.contextWindow.slideOut();
                     this.contextWindowToggler.setActive(false);
                 } else {
-                    this.contextWindow.slideOut();
+                    this.contextWindow.slideIn();
                     this.contextWindowToggler.setActive(true);
                 }
             });
