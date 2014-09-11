@@ -15,7 +15,7 @@ module api.dom {
             this.getEl().setSrc(src ? src : ImgEl.PLACEHOLDER);
             this.onLoaded((event: UIEvent) => {
                 this.loaded = true;
-            })
+            });
         }
 
         refresh(): void {

@@ -65,6 +65,7 @@
 ///<reference path='ui/time/_module.ts' />
 ///<reference path='ui/treegrid/actions/_module.ts' />
 ///<reference path='ui/treegrid/_module.ts' />
+///<reference path='ui/image/_module.ts' />
 
 ///<reference path='data/json/_module.ts' />
 ///<reference path='data/type/_module.ts' />

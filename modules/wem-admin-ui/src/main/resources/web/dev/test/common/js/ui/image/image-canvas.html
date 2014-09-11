@@ -1,0 +1,171 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>ImageCanvas test page</title>
+    <link rel="stylesheet" type="text/css" href="../../../../../../admin/common/styles/_all.css">
+
+    <style>
+
+        .display-area {
+            width: 800px;
+            height: 700px;
+            background: #F1F1F1;
+            margin: 10px auto;
+            position: relative;
+            overflow: auto;
+        }
+
+        img {
+            border: 1px solid lightgrey;
+            position: absolute;
+        }
+
+        .settings-area {
+            width: 800px;
+            margin: 10px auto;
+        }
+
+        .display-area-settings {
+            width: 50%;
+            float: left;
+        }
+
+        .image-canvas-settings {
+            width: 50%;
+            float: right;
+        }
+
+        label, input, select {
+            display: block;
+        }
+
+        h4 {
+            margin: 0 0 10px;
+        }
+
+    </style>
+
+</head>
+<body>
+
+<!-- Configuration -->
+<script type="text/javascript">
+    var CONFIG = {
+        baseUri: '../../../..'
+    };
+</script>
+
+<!-- include source files here... -->
+<script type="text/javascript" src="../../../../../../admin/common/lib/_all.js"></script>
+<script type="text/javascript" src="../../../../../../admin/common/js/_all.js"></script>
+
+<!-- include spec files here... -->
+<script type="text/javascript">
+
+    var DivEl = api.dom.DivEl,
+        InputEl = api.dom.InputEl,
+        LabelEl = api.dom.LabelEl;
+
+    // create markup
+    ////////////////////////////////////////////
+
+    var displayArea = new DivEl('display-area');
+    api.dom.Body.get().appendChild(displayArea);
+
+    var image = new api.dom.ImgEl();
+    displayArea.appendChild(image);
+
+    var imageCanvas = new api.ui.image.ImageCanvas(image);
+
+    var settingsArea = new DivEl('settings-area');
+    api.dom.Body.get().appendChild(settingsArea);
+
+
+    var displayAreaSettings = new DivEl('display-area-settings');
+    settingsArea.appendChild(displayAreaSettings);
+
+    var displayAreaHeader = new api.dom.H4El();
+    displayAreaHeader.getEl().setInnerHtml('Display area settings');
+    displayAreaSettings.appendChild(displayAreaHeader);
+
+    var backgroundInput = new InputEl().setName('background-color').setId('background-color');
+    displayAreaSettings.appendChild(new LabelEl('Background color', backgroundInput));
+    displayAreaSettings.appendChild(backgroundInput);
+
+    var imageSelect = new api.dom.SelectEl().setName('image-url').setId('image-url');
+    displayAreaSettings.appendChild(new LabelEl('Image', imageSelect));
+    displayAreaSettings.appendChild(imageSelect);
+
+    imageSelect.appendChild(new api.dom.OptionEl('', ''));
+    imageSelect.appendChild(new api.dom.OptionEl(
+            'http://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Duisburger_Innenhafen_Five_Boats_Abend_2014.jpg/320px-Duisburger_Innenhafen_Five_Boats_Abend_2014.jpg', '320 × 170 pixels'));
+    imageSelect.appendChild(new api.dom.OptionEl(
+            'http://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Duisburger_Innenhafen_Five_Boats_Abend_2014.jpg/1280px-Duisburger_Innenhafen_Five_Boats_Abend_2014.jpg', '1,280 × 681 pixels'));
+    imageSelect.appendChild(new api.dom.OptionEl(
+            'http://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Upper_Antelope_Canyon_Heart_Formation_2013.jpg/140px-Upper_Antelope_Canyon_Heart_Formation_2013.jpg', '140 × 240 pixels'));
+    imageSelect.appendChild(new api.dom.OptionEl(
+            'http://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Upper_Antelope_Canyon_Heart_Formation_2013.jpg/598px-Upper_Antelope_Canyon_Heart_Formation_2013.jpg', '598 × 1,024 pixels'));
+
+    var positionLeftInput = new InputEl(null, 'number').setName('position-left').setId('position-left');
+    displayAreaSettings.appendChild(new LabelEl('Position left', positionLeftInput));
+    displayAreaSettings.appendChild(positionLeftInput);
+
+    var positionTopInput = new InputEl(null, 'number').setName('position-top').setId('position-top');
+    displayAreaSettings.appendChild(new LabelEl('Position top', positionTopInput));
+    displayAreaSettings.appendChild(positionTopInput);
+
+
+    var imageCanvasSettings = new DivEl('image-canvas-settings');
+    settingsArea.appendChild(imageCanvasSettings);
+
+    var imageCanvasHeader = new api.dom.H4El();
+    imageCanvasHeader.getEl().setInnerHtml('Image settings');
+    imageCanvasSettings.appendChild(imageCanvasHeader);
+
+    var imageWidthInput = new InputEl(null, 'number').setName('image-width').setId('image-width');
+    imageCanvasSettings.appendChild(new LabelEl('Image width', imageWidthInput));
+    imageCanvasSettings.appendChild(imageWidthInput);
+
+    var enableCanvasCheckbox = new InputEl(null, 'checkbox').setName('enable-canvas').setId('enable-canvas');
+    imageCanvasSettings.appendChild(new LabelEl('Enable canvas', enableCanvasCheckbox));
+    imageCanvasSettings.appendChild(enableCanvasCheckbox);
+
+    // setup listeners
+    ////////////////////////////////////////////////////
+
+    backgroundInput.onInput(function () {
+        displayArea.getHTMLElement().style.backgroundColor = backgroundInput.getValue();
+    });
+
+    imageSelect.onChange(function () {
+        image.setSrc(imageSelect.getValue());
+    });
+
+    positionLeftInput.onInput(function () {
+        image.getEl().setLeftPx(positionLeftInput.getValue());
+    });
+    positionLeftInput.setValue(0);
+
+    positionTopInput.onInput(function () {
+        image.getEl().setTopPx(positionTopInput.getValue());
+    });
+    positionTopInput.setValue(0);
+
+
+    imageWidthInput.onInput(function () {
+        imageCanvas.setWidth(imageWidthInput.getValue());
+    });
+
+    enableCanvasCheckbox.onChange(function () {
+        imageCanvas.setEnabled(enableCanvasCheckbox.getHTMLElement()["checked"]);
+    });
+
+
+</script>
+
+
+
+
+</body>
+</html>
