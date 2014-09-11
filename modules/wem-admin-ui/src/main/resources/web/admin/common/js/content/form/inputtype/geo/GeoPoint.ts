@@ -38,36 +38,26 @@ module api.content.form.inputtype.geo {
 
             var geoPoint = <api.ui.geo.GeoPoint>element;
 
-            geoPoint.onLatitudeChanged((event: api.ui.ValueChangedEvent) => {
-
-                var latitude = event.getNewValue();
-                var longitude = geoPoint.getLongitude();
-                var geoPointAsString = latitude + "," + longitude;
-                var value = ValueTypes.GEO_POINT.newValue(geoPointAsString);
+            geoPoint.onValueChanged((event: api.ui.ValueChangedEvent) => {
+                var geoLocation = event.getNewValue();
+                var value = ValueTypes.GEO_POINT.newValue(geoLocation);
                 listener(new api.form.inputtype.support.ValueChangedEvent(value));
             });
 
-            geoPoint.onLongitudeChanged((event: api.ui.ValueChangedEvent) => {
-                var latitude = geoPoint.getLatitude();
-                var longitude = event.getNewValue();
-                var geoPointAsString = latitude + "," + longitude;
-                var value = ValueTypes.GEO_POINT.newValue(geoPointAsString);
-                listener(new api.form.inputtype.support.ValueChangedEvent(value));
-            });
+
         }
 
         getValue(occurrence: api.dom.Element): api.data.Value {
             var geoPoint: api.ui.geo.GeoPoint = <api.ui.geo.GeoPoint>occurrence;
-            var latitude = geoPoint.getLatitude();
-            var longitude = geoPoint.getLongitude();
-            return ValueTypes.GEO_POINT.newValue(latitude + "," + longitude);
+            var location = geoPoint.getGeoLocation();
+            return ValueTypes.GEO_POINT.newValue(location);
         }
 
         valueBreaksRequiredContract(value: api.data.Value): boolean {
             if (value == null) {
                 return true;
             }
-            return !value.getType().equals(ValueTypes.LOCAL_DATE);
+            return !value.getType().equals(ValueTypes.GEO_POINT);
         }
     }
 
