@@ -4,8 +4,19 @@ module api.ui.tags {
 
         private selectedIndex: number = null;
 
+        private selectedListeners: {(value: string) : void}[] = [];
+
         constructor() {
             super('suggestions');
+
+            this.onMouseMove((event: MouseEvent) => {
+                // don't wrap element in ElementHelper because mousemove event is generated very frequently
+                // unnecessary new objects would clog browser memory
+                var htmlEl = <HTMLElement>event.target;
+                if (htmlEl.tagName == 'LI') {
+                    this.notifySelected(htmlEl.innerText || htmlEl.textContent);
+                }
+            });
         }
 
         setTags(values: string[]) {
@@ -16,7 +27,7 @@ module api.ui.tags {
             this.selectedIndex = null;
         }
 
-        moveDown():string {
+        moveDown() {
             var nextIndex:number;
             if (this.selectedIndex == null) {
                 nextIndex = 0;
@@ -26,10 +37,10 @@ module api.ui.tags {
                 nextIndex = this.selectedIndex + 1;
             }
 
-            return this.select(nextIndex);
+            this.select(nextIndex);
         }
 
-        moveUp():string {
+        moveUp() {
             var nextIndex:number;
             if (this.selectedIndex == null) {
                 nextIndex = this.getChildren().length - 1;
@@ -39,10 +50,10 @@ module api.ui.tags {
                 nextIndex = this.selectedIndex - 1;
             }
 
-            return this.select(nextIndex);
+            this.select(nextIndex);
         }
 
-        private select(index: number):string {
+        private select(index: number) {
             var tags = this.getChildren();
             var tag = tags[this.selectedIndex];
             if (tag) {
@@ -53,10 +64,22 @@ module api.ui.tags {
             tag = tags[this.selectedIndex];
             if (tag) {
                 tag.addClass('selected');
-                return tag.getEl().getText();
+                this.notifySelected(tag.getEl().getText());
             } else {
-                return null;
+                this.notifySelected(null);
             }
+        }
+
+        onSelected(listener: (value: string) => void) {
+            this.selectedListeners.push(listener);
+        }
+
+        unSelected(listener: (value: string) => void) {
+            this.selectedListeners.push(listener);
+        }
+
+        private notifySelected(value: string) {
+            this.selectedListeners.forEach((listener: (value: string)=>void) => listener(value));
         }
 
     }

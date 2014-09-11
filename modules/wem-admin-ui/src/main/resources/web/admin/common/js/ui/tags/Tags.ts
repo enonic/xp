@@ -72,26 +72,36 @@ module api.ui.tags {
                     }
                 } else if (event.keyCode == 38) {
                     if (this.tagSuggestions.isVisible()) {
-                        var value = this.tagSuggestions.moveUp();
-                        // call ElementHelper.setValue to avoid firing ValueChangedEvent
-                        this.textInput.getEl().setValue(value || this.preservedValue);
+                        this.tagSuggestions.moveUp();
                         event.preventDefault();
                     }
                 } else if (event.keyCode == 40) {
                     if (this.tagSuggestions.isVisible()) {
-                        var value = this.tagSuggestions.moveDown();
-                        // call ElementHelper.setValue to avoid firing ValueChangedEvent
-                        this.textInput.getEl().setValue(value || this.preservedValue);
+                        this.tagSuggestions.moveDown();
                         event.preventDefault();
                     }
                 }
             });
+
+            this.tagSuggestions.onSelected((value: string) => {
+                // call ElementHelper.setValue to avoid firing ValueChangedEvent
+                this.textInput.getEl().setValue(value || this.preservedValue);
+
+                if (value) {
+                    this.textInput.selectText(this.preservedValue.length, value.length);
+                }
+            });
+
             this.textInput.onBlur((event: FocusEvent) => {
                 this.handleWordCompleted();
                 // when tags are fill line an empty input moves to next line its looks ugly for inactive field
                 // set small input width to leave it on the same line
                 // (we can't just hide input cause it couldn't get focus then)
                 this.textInput.getEl().setValue('').setWidthPx(1);
+            });
+
+            this.textInput.onFocus((event: FocusEvent) => {
+                this.textInput.getEl().setWidth('');
             });
 
             this.textInput.onValueChanged((event: api.ui.ValueChangedEvent) => {
@@ -204,7 +214,6 @@ module api.ui.tags {
             }
             return this.countTags() >= this.maxTags;
         }
-
 
         onTagAdded(listener: (event: TagAddedEvent) => void) {
             this.tagAddedListeners.push(listener);

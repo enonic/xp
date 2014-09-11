@@ -93,8 +93,28 @@ module api.ui.text {
             return this;
         }
 
-        selectText() {
-            (<HTMLInputElement>this.getHTMLElement()).select();
+        selectText(from?: number, to?: number) {
+            var htmlEl = <any>this.getHTMLElement();
+
+            if (!from) {
+                (<HTMLInputElement>htmlEl).select();
+            } else if (!to) {
+                to == this.getValue().length;
+            }
+
+            if (htmlEl.createTextRange) {
+                var selRange = htmlEl.createTextRange();
+                selRange.collapse(true);
+                selRange.moveStart('character', from);
+                selRange.moveEnd('character', to);
+                selRange.select();
+            } else if (htmlEl.setSelectionRange) {
+                htmlEl.setSelectionRange(from, to);
+            } else if (htmlEl.selectionStart) {
+                htmlEl.selectionStart = from;
+                htmlEl.selectionEnd = to;
+            }
+            htmlEl.focus();
         }
 
         onValueChanged(listener: (event: ValueChangedEvent)=>void) {
