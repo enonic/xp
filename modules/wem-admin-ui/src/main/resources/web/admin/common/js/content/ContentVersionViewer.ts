@@ -17,7 +17,7 @@ module api.content {
 
             //TODO: use content version image and number instead of row
             this.namesAndIconView.setMainName(row + "        " +
-                                              contentVersion.modified.toDateString() + "        " +
+                                              api.ui.treegrid.DateTimeFormatter.createHtml(contentVersion.modified) + "        " +
                                               contentVersion.displayName).
                 setSubName(contentVersion.comment).
                 setIconUrl("");
