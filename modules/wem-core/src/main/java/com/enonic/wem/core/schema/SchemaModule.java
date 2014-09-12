@@ -3,6 +3,7 @@ package com.enonic.wem.core.schema;
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
 
+import com.enonic.wem.api.event.EventListener;
 import com.enonic.wem.api.schema.SchemaRegistry;
 import com.enonic.wem.api.schema.SchemaService;
 import com.enonic.wem.api.schema.content.ContentTypeService;
@@ -32,5 +33,7 @@ public final class SchemaModule
         bind( ContentTypeService.class ).to( ContentTypeServiceImpl.class ).in( Scopes.SINGLETON );
         bind( RelationshipTypeService.class ).to( RelationshipTypeServiceImpl.class ).in( Scopes.SINGLETON );
         bind( SchemaService.class ).to( SchemaServiceImpl.class ).in( Scopes.SINGLETON );
+        bind( EventListener.class ).to( SchemaModuleListener.class );
+        bind( SchemaModuleListener.class ).asEagerSingleton();
     }
 }

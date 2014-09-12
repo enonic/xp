@@ -1,7 +1,7 @@
 module api.module {
 
     export interface ModuleUpdatedEventJson {
-        state: string;
+        eventType: string;
         moduleKey: string;
     }
 
@@ -9,20 +9,20 @@ module api.module {
 
         private moduleKey: api.module.ModuleKey;
 
-        private state: string;
+        private eventType: string;
 
-        constructor(moduleKey: api.module.ModuleKey, state: string) {
+        constructor(moduleKey: api.module.ModuleKey, eventType: string) {
             super();
             this.moduleKey = moduleKey;
-            this.state = state;
+            this.eventType = eventType;
         }
 
         public getModuleKey(): api.module.ModuleKey {
             return this.moduleKey;
         }
 
-        public getState(): string {
-            return this.state;
+        public getEventType(): string {
+            return this.eventType;
         }
 
         static on(handler: (event: ModuleUpdatedEvent) => void) {
@@ -35,8 +35,8 @@ module api.module {
 
         static fromJson(json: ModuleUpdatedEventJson): ModuleUpdatedEvent {
             var moduleKey = api.module.ModuleKey.fromString(json.moduleKey);
-            var state = json.state;
-            return new ModuleUpdatedEvent(moduleKey, state);
+            var eventType = json.eventType;
+            return new ModuleUpdatedEvent(moduleKey, eventType);
         }
     }
 

@@ -7,7 +7,7 @@ import com.enonic.wem.api.event.Event;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleUpdatedEvent;
 
-import static com.enonic.wem.api.module.ModuleState.ACTIVE;
+import static com.enonic.wem.api.module.ModuleEventType.INSTALLED;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
@@ -31,7 +31,7 @@ public class EventListenerImplTest
     public void testEvent()
         throws Exception
     {
-        final ModuleUpdatedEvent event = new ModuleUpdatedEvent( ModuleKey.from( "module-1.0.0" ), ACTIVE );
+        final ModuleUpdatedEvent event = new ModuleUpdatedEvent( ModuleKey.from( "module-1.0.0" ), INSTALLED );
         eventListener.onEvent( event );
 
         verify( eventListener.webSocketManager, atLeastOnce() ).sendToAll( anyString() );

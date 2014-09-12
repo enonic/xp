@@ -30,6 +30,7 @@ import com.enonic.wem.core.initializer.StartupInitializer;
 import com.enonic.wem.core.module.ModuleKeyResolverService;
 import com.enonic.wem.core.module.ModuleURLStreamHandler;
 import com.enonic.wem.core.schema.CoreSchemasProvider;
+import com.enonic.wem.core.schema.SchemaModuleListener;
 import com.enonic.wem.guice.GuiceActivator;
 
 public final class Activator
@@ -73,5 +74,6 @@ public final class Activator
         service( ModuleURLStreamHandler.class ).attribute( "url.handler.protocol", "module" ).export();
         service( EventPublisher.class ).export();
         service( CoreSchemasProvider.class ).export();
+        service( SchemaModuleListener.class ).export();
     }
 }

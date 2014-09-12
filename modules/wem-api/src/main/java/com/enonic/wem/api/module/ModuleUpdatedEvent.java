@@ -7,19 +7,19 @@ import com.enonic.wem.api.event.Event;
 public final class ModuleUpdatedEvent
     implements Event
 {
-    private final ModuleState state;
+    private final ModuleEventType eventType;
 
     private final ModuleKey moduleKey;
 
-    public ModuleUpdatedEvent( final ModuleKey key, final ModuleState state )
+    public ModuleUpdatedEvent( final ModuleKey key, final ModuleEventType eventType )
     {
-        this.state = state;
+        this.eventType = eventType;
         this.moduleKey = key;
     }
 
-    public ModuleState getState()
+    public ModuleEventType getEventType()
     {
-        return state;
+        return eventType;
     }
 
     public ModuleKey getModuleKey()
@@ -31,7 +31,7 @@ public final class ModuleUpdatedEvent
     public String toString()
     {
         return Objects.toStringHelper( this ).
-            add( "state", this.state ).
+            add( "eventType", this.eventType ).
             add( "moduleKey", this.moduleKey ).
             omitNullValues().
             toString();

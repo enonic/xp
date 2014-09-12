@@ -6,19 +6,19 @@ import com.enonic.wem.api.module.ModuleUpdatedEvent;
 public final class ModuleUpdatedEventJson
     implements EventJson
 {
-    private final String state;
+    private final String eventType;
 
     private final String moduleKey;
 
     public ModuleUpdatedEventJson( final ModuleUpdatedEvent event )
     {
-        this.state = event.getState().name();
+        this.eventType = event.getEventType().name();
         this.moduleKey = event.getModuleKey().toString();
     }
 
-    public String getState()
+    public String getEventType()
     {
-        return state;
+        return eventType;
     }
 
     public String getModuleKey()

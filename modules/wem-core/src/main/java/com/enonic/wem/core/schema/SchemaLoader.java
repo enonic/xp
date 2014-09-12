@@ -59,7 +59,6 @@ public final class SchemaLoader
         return Schemas.from( schemas );
     }
 
-
     private Schema loadSchema( final ModuleKey moduleKey, final String schemaName )
     {
         final ResourceKey schemaFolderKey = ResourceKey.from( moduleKey, SCHEMA_DIR + "/" + schemaName );
@@ -125,51 +124,56 @@ public final class SchemaLoader
 
     final BaseSchema.Builder parseSchemaXml( final String serializedSchema )
     {
-        // TODO improve detection of schema type
-        try
+        BaseSchema.Builder schema = parseContentTypeXml( serializedSchema );
+        if ( schema == null )
         {
-            return parseContentTypeXml( serializedSchema );
+            schema = parseRelationshipTypeXml( serializedSchema );
         }
-        catch ( Exception e )
+        if ( schema == null )
         {
-            // DO NOTHING
+            schema = parseMixinXml( serializedSchema );
         }
-        try
-        {
-            return parseRelationshipTypeXml( serializedSchema );
-        }
-        catch ( Exception e )
-        {
-            // DO NOTHING
-        }
-        try
-        {
-            return parseMixinXml( serializedSchema );
-        }
-        catch ( Exception e )
-        {
-            // DO NOTHING
-        }
-        return null;
+        return schema;
     }
 
     private ContentType.Builder parseContentTypeXml( final String serializedContentType )
     {
-        final ContentType.Builder builder = ContentType.newContentType();
-        XmlSerializers.contentType().parse( serializedContentType ).to( builder );
-        return builder;
+        try
+        {
+            final ContentType.Builder builder = ContentType.newContentType();
+            XmlSerializers.contentType().parse( serializedContentType ).to( builder );
+            return builder;
+        }
+        catch ( Exception e )
+        {
+            return null;
+        }
     }
 
     private RelationshipType.Builder parseRelationshipTypeXml( final String serializedRelationshipType )
     {
-        final RelationshipType.Builder builder = RelationshipType.newRelationshipType();
-        XmlSerializers.relationshipType().parse( serializedRelationshipType ).to( builder );
-        return builder;
+        try
+        {
+            final RelationshipType.Builder builder = RelationshipType.newRelationshipType();
+            XmlSerializers.relationshipType().parse( serializedRelationshipType ).to( builder );
+            return builder;
+        }
+        catch ( Exception e )
+        {
+            return null;
+        }
     }
 
     private Mixin.Builder parseMixinXml( final String serializedMixin )
     {
-        final MixinXmlSerializer xmlSerializer = new MixinXmlSerializer();
-        return xmlSerializer.toMixinBuilder( serializedMixin );
+        try
+        {
+            final MixinXmlSerializer xmlSerializer = new MixinXmlSerializer();
+            return xmlSerializer.toMixinBuilder( serializedMixin );
+        }
+        catch ( Exception e )
+        {
+            return null;
+        }
     }
 }
