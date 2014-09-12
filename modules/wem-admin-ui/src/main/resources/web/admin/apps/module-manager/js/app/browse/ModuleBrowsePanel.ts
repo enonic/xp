@@ -106,9 +106,14 @@ module app.browse {
             });
 
             api.module.ModuleUpdatedEvent.on((event: api.module.ModuleUpdatedEvent) => {
-                // TODO reload just the module updated
-                this.moduleTreeGridPanel.updateModuleNode(event.getModuleKey());
-            })
+                if (event.getEventType() === 'INSTALLED') {
+                    this.moduleTreeGridPanel.reload(); // TODO insert new
+                } else if (event.getEventType() === 'UNINSTALLED') {
+                    this.moduleTreeGridPanel.reload(); // TODO remove
+                } else {
+                    this.moduleTreeGridPanel.updateModuleNode(event.getModuleKey());
+                }
+            });
 
         }
     }

@@ -4,10 +4,13 @@ module api.module {
 
         private moduleKey: ModuleKey;
 
-        constructor(moduleKey: ModuleKey) {
+        private skipCache: boolean;
+
+        constructor(moduleKey: ModuleKey, skipCache: boolean = false) {
             super();
             super.setMethod("GET");
             this.moduleKey = moduleKey;
+            this.skipCache = skipCache;
         }
 
         getParams(): Object {
@@ -23,7 +26,7 @@ module api.module {
         sendAndParse(): wemQ.Promise<Module> {
 
             var cache = ModuleCache.get();
-            var cachedObject = cache.getByKey(this.moduleKey);
+            var cachedObject = this.skipCache ? null : cache.getByKey(this.moduleKey);
             if (cachedObject) {
                 return wemQ(cachedObject);
             }
