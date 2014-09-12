@@ -1,6 +1,6 @@
 module app.view {
 
-    export class TemplateItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<app.browse.TemplateSummary> {
+    export class TemplateItemStatisticsPanel extends api.app.view.MultiItemStatisticsPanel<app.browse.TemplateSummary> {
 
         private previewPanel: TemplateItemPreviewPanel;
 

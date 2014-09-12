@@ -3,7 +3,7 @@ module app.view {
     import Panel = api.ui.panel.Panel;
     import TabMenuItemBuilder = api.ui.tab.TabMenuItemBuilder;
 
-    export class ContentItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.content.ContentSummary> {
+    export class ContentItemStatisticsPanel extends api.app.view.MultiItemStatisticsPanel<api.content.ContentSummary> {
 
         private previewPanel: ContentItemPreviewPanel;
 

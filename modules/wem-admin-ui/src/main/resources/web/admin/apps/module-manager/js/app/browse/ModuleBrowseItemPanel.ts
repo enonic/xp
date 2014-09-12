@@ -6,5 +6,9 @@ module app.browse {
             super();
         }
 
+        createItemStatisticsPanel(): api.app.view.ItemStatisticsPanel<api.module.ModuleSummary> {
+            return new app.view.ModuleItemStatisticsPanel();
+        }
+
     }
 }
