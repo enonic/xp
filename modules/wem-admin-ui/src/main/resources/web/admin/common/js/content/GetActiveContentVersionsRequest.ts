@@ -31,14 +31,28 @@ module api.content {
 
         private fromJsonToContentVersions(json: {[workspace: string]: ContentVersionJson}): ContentVersion[] {
 
-            var contentVersions: ContentVersion[] = [];
+            var contentVersionJson: ContentVersionJson;
+            var contentVersion: ContentVersion;
+            var contentVersionsMap: {[id:string]:ContentVersion} = {};
+
             for (var workspace in json) {
                 if (json.hasOwnProperty(workspace)) {
-                    contentVersions.push(ContentVersion.fromJson(json[workspace], workspace));
+                    contentVersionJson = json[workspace];
+                    // one content can be in multiple workspaces !
+                    contentVersion = contentVersionsMap[contentVersionJson.id];
+                    if (!contentVersion) {
+                        contentVersion = ContentVersion.fromJson(contentVersionJson, [workspace]);
+                        contentVersionsMap[contentVersion.id] = contentVersion;
+                    } else {
+                        // just add new workspace if already exists
+                        contentVersion.workspaces.push(workspace);
+                    }
                 }
             }
 
-            return contentVersions;
+            return Object.keys(contentVersionsMap).map(function (key) {
+                return contentVersionsMap[key];
+            });
         }
 
     }

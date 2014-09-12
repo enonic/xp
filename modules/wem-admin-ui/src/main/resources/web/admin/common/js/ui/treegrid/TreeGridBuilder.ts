@@ -20,6 +20,8 @@ module api.ui.treegrid {
 
         private autoLoad: boolean = true;
 
+        private hotkeysEnabled: boolean = true;
+
         constructor(grid?: TreeGrid<NODE>) {
             if (grid) {
                 this.showToolbar = grid.hasToolbar();
@@ -155,6 +157,15 @@ module api.ui.treegrid {
 
         isCheckableRows(): boolean {
             return this.options.isCheckableRows()
+        }
+
+        setHotkeysEnabled(enabled: boolean): TreeGridBuilder<NODE> {
+            this.hotkeysEnabled = enabled;
+            return this;
+        }
+
+        isHotkeysEnabled(): boolean {
+            return this.hotkeysEnabled;
         }
 
         /**

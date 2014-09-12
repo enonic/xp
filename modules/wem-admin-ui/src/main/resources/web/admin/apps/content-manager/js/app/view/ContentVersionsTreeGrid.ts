@@ -24,7 +24,7 @@ module app.view {
 
             var statusColumn = new GridColumnBuilder<TreeNode<ContentVersion>>().
                 setName("Status").
-                setField("workspace").
+                setField("workspaces").
                 setCssClass("status").
                 setFormatter(this.statusFormatter).
                 setMinWidth(80).
@@ -33,6 +33,7 @@ module app.view {
             super(new TreeGridBuilder<ContentVersion>().
                 setAutoLoad(false).
                 setCheckableRows(false).
+                setHotkeysEnabled(false).
                 setShowToolbar(false).
                 setColumns([
                     descColumn,
@@ -68,9 +69,13 @@ module app.view {
         }
 
         private statusFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentVersion>) {
-            var span = new api.dom.SpanEl('badge ' + node.getData().workspace);
-            span.setHtml(value);
-            return span.toString();
+            var badges: string[] = [];
+
+            value.forEach((workspace: string) => {
+                badges.push(new api.dom.SpanEl('badge ' + workspace).setHtml(workspace).toString());
+            });
+
+            return badges.join("");
         }
 
     }

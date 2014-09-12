@@ -26,7 +26,7 @@ module app.view {
                 for (var i = 0; i < allVersions.length; i++) {
                     var allVersion = allVersions[i];
                     if (activeVersion.id == allVersion.id) {
-                        allVersion.workspace = activeVersion.workspace;
+                        allVersion.workspaces = activeVersion.workspaces;
                         break;
                     }
                 }

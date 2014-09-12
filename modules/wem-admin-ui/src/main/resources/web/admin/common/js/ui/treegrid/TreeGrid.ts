@@ -138,67 +138,6 @@ module api.ui.treegrid {
                 event.stopPropagation();
             });
 
-            var keyBindings = [
-                new KeyBinding('up', () => {
-                    if (this.active) {
-                        this.scrollToRow(this.grid.moveSelectedUp());
-                    }
-                }),
-                new KeyBinding('down', () => {
-                    if (this.active) {
-                        this.scrollToRow(this.grid.moveSelectedDown());
-                    }
-                }),
-                new KeyBinding('shift+up', (event: ExtendedKeyboardEvent) => {
-                    if (this.active) {
-                        this.scrollToRow(this.grid.addSelectedUp());
-                    }
-                    event.preventDefault();
-                    event.stopImmediatePropagation();
-                }),
-                new KeyBinding('shift+down', (event: ExtendedKeyboardEvent) => {
-                    if (this.active) {
-                        this.scrollToRow(this.grid.addSelectedDown());
-                    }
-                    event.preventDefault();
-                    event.stopImmediatePropagation();
-                }),
-                new KeyBinding('left', () => {
-                    var selected = this.grid.getSelectedRows();
-                    if (selected.length === 1) {
-                        var node = this.gridData.getItem(selected[0]);
-                        if (node && this.active) {
-                            if (node.isExpanded()) {
-                                this.active = false;
-                                this.collapseNode(node);
-                            } else if (node.getParent() !== this.root) {
-                                node = node.getParent();
-                                this.active = false;
-                                var row = this.gridData.getRowById(node.getId());
-                                this.grid.selectRow(row);
-                                this.collapseNode(node);
-                            }
-                        }
-                    }
-                }),
-                new KeyBinding('right', () => {
-                    var selected = this.grid.getSelectedRows();
-                    if (selected.length === 1) {
-                        var node = this.gridData.getItem(selected[0]);
-                        if (node && this.hasChildren(node.getData())
-                                && !node.isExpanded() && this.active) {
-
-                            this.active = false;
-                            this.resetAndRender();
-                            this.expandNode(node);
-                        }
-                    }
-                }),
-                new KeyBinding('space', () => {
-                    this.deselectAll();
-                })
-            ];
-
             this.canvasElement = Element.fromHtmlElement(this.grid.getHTMLElement(), true);
             for (var i = 0, gridChildren = this.canvasElement.getChildren(); i < gridChildren.length; i++) {
                 if (gridChildren[i].hasClass('slick-viewport')) {
@@ -225,9 +164,73 @@ module api.ui.treegrid {
                 this.reload();
             }
 
+            var keyBindings;
+
             this.onShown(() => {
                 this.grid.resizeCanvas();
-                KeyBindings.get().bindKeys(keyBindings);
+                if (builder.isHotkeysEnabled()) {
+                    keyBindings = [
+                        new KeyBinding('up', () => {
+                            if (this.active) {
+                                this.scrollToRow(this.grid.moveSelectedUp());
+                            }
+                        }),
+                        new KeyBinding('down', () => {
+                            if (this.active) {
+                                this.scrollToRow(this.grid.moveSelectedDown());
+                            }
+                        }),
+                        new KeyBinding('shift+up', (event: ExtendedKeyboardEvent) => {
+                            if (this.active) {
+                                this.scrollToRow(this.grid.addSelectedUp());
+                            }
+                            event.preventDefault();
+                            event.stopImmediatePropagation();
+                        }),
+                        new KeyBinding('shift+down', (event: ExtendedKeyboardEvent) => {
+                            if (this.active) {
+                                this.scrollToRow(this.grid.addSelectedDown());
+                            }
+                            event.preventDefault();
+                            event.stopImmediatePropagation();
+                        }),
+                        new KeyBinding('left', () => {
+                            var selected = this.grid.getSelectedRows();
+                            if (selected.length === 1) {
+                                var node = this.gridData.getItem(selected[0]);
+                                if (node && this.active) {
+                                    if (node.isExpanded()) {
+                                        this.active = false;
+                                        this.collapseNode(node);
+                                    } else if (node.getParent() !== this.root) {
+                                        node = node.getParent();
+                                        this.active = false;
+                                        var row = this.gridData.getRowById(node.getId());
+                                        this.grid.selectRow(row);
+                                        this.collapseNode(node);
+                                    }
+                                }
+                            }
+                        }),
+                        new KeyBinding('right', () => {
+                            var selected = this.grid.getSelectedRows();
+                            if (selected.length === 1) {
+                                var node = this.gridData.getItem(selected[0]);
+                                if (node && this.hasChildren(node.getData())
+                                        && !node.isExpanded() && this.active) {
+
+                                    this.active = false;
+                                    this.resetAndRender();
+                                    this.expandNode(node);
+                                }
+                            }
+                        }),
+                        new KeyBinding('space', () => {
+                            this.deselectAll();
+                        })
+                    ];
+                    KeyBindings.get().bindKeys(keyBindings);
+                }
             });
 
             this.onRendered(() => {
@@ -235,7 +238,9 @@ module api.ui.treegrid {
             });
 
             this.onRemoved(() => {
-                KeyBindings.get().unbindKeys(keyBindings);
+                if (builder.isHotkeysEnabled()) {
+                    KeyBindings.get().unbindKeys(keyBindings);
+                }
             });
 
             this.grid.subscribeOnSelectedRowsChanged((event, rows) => {
@@ -487,19 +492,19 @@ module api.ui.treegrid {
 
             // TODO: For future use. Implement single node update by node id.
             /*
-            var promises = updated.map((el) => {
-                return this.fetch(el);
-            });
-            wemQ.all(promises).then((results: NODE[]) => {
-                results.forEach((result: NODE, index: number) => {
-                    updated[index].setData(result);
-                });
-            }).catch((reason: any) => {
-                api.DefaultErrorHandler.handle(reason);
-            }).finally(() => {
-                this.active = true;
-            }).done(() => this.notifyLoaded());
-            */
+             var promises = updated.map((el) => {
+             return this.fetch(el);
+             });
+             wemQ.all(promises).then((results: NODE[]) => {
+             results.forEach((result: NODE, index: number) => {
+             updated[index].setData(result);
+             });
+             }).catch((reason: any) => {
+             api.DefaultErrorHandler.handle(reason);
+             }).finally(() => {
+             this.active = true;
+             }).done(() => this.notifyLoaded());
+             */
         }
 
         initData(nodes: TreeNode<NODE>[]) {

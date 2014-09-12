@@ -19,8 +19,7 @@ module api.content {
             this.namesAndIconView.setMainName(row + "        " +
                                               api.ui.treegrid.DateTimeFormatter.createHtml(contentVersion.modified) + "        " +
                                               contentVersion.displayName).
-                setSubName(contentVersion.comment).
-                setIconUrl("");
+                setSubName(contentVersion.comment);
         }
 
         getPreferredHeight(): number {

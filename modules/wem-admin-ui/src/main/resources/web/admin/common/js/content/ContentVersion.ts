@@ -12,9 +12,9 @@ module api.content {
 
         id: string;
 
-        workspace: string;
+        workspaces: string[];
 
-        static fromJson(contentVersionJson: api.content.json.ContentVersionJson, workspace?: string): ContentVersion {
+        static fromJson(contentVersionJson: api.content.json.ContentVersionJson, workspaces?: string[]): ContentVersion {
 
             var contentVersion: ContentVersion = new ContentVersion();
             contentVersion.modifier = contentVersionJson.modifier;
@@ -22,7 +22,7 @@ module api.content {
             contentVersion.modified = new Date(contentVersionJson.modified);
             contentVersion.comment = contentVersionJson.comment;
             contentVersion.id = contentVersionJson.id;
-            contentVersion.workspace = workspace;
+            contentVersion.workspaces = workspaces || [];
 
             return contentVersion;
         }
