@@ -78,6 +78,10 @@ public final class Value
     public RootDataSet asData()
         throws ClassCastException
     {
+        if ( object == null )
+        {
+            return null;
+        }
         return ValueTypes.DATA.convert( object );
     }
 
@@ -86,6 +90,10 @@ public final class Value
      */
     public String asString()
     {
+        if ( object == null )
+        {
+            return null;
+        }
         return ValueTypes.STRING.convert( object );
     }
 
@@ -94,6 +102,10 @@ public final class Value
      */
     public ContentId asContentId()
     {
+        if ( object == null )
+        {
+            return null;
+        }
         return ValueTypes.CONTENT_ID.convert( object );
     }
 
@@ -102,6 +114,10 @@ public final class Value
      */
     public EntityId asEntityId()
     {
+        if ( object == null )
+        {
+            return null;
+        }
         return ValueTypes.ENTITY_ID.convert( object );
     }
 
@@ -110,6 +126,10 @@ public final class Value
      */
     public Long asLong()
     {
+        if ( object == null )
+        {
+            return null;
+        }
         return ValueTypes.LONG.convert( object );
     }
 
@@ -118,6 +138,10 @@ public final class Value
      */
     public Boolean asBoolean()
     {
+        if ( object == null )
+        {
+            return null;
+        }
         return ValueTypes.BOOLEAN.convert( object );
     }
 
@@ -126,6 +150,10 @@ public final class Value
      */
     public Double asDouble()
     {
+        if ( object == null )
+        {
+            return null;
+        }
         return ValueTypes.DOUBLE.convert( object );
     }
 
@@ -134,16 +162,28 @@ public final class Value
      */
     public LocalDate asLocalDate()
     {
+        if ( object == null )
+        {
+            return null;
+        }
         return ValueTypes.LOCAL_DATE.convert( object );
     }
 
     public LocalTime asLocalTime()
     {
+        if ( object == null )
+        {
+            return null;
+        }
         return ValueTypes.LOCAL_TIME.convert( object );
     }
 
     public LocalDateTime asLocalDateTime()
     {
+        if ( object == null )
+        {
+            return null;
+        }
         return ValueTypes.LOCAL_DATE_TIME.convert( object );
     }
 
@@ -152,11 +192,19 @@ public final class Value
      */
     public Instant asInstant()
     {
+        if ( object == null )
+        {
+            return null;
+        }
         return ValueTypes.DATE_TIME.convert( object );
     }
 
     public GeoPoint asGeoPoint()
     {
+        if ( object == null )
+        {
+            return null;
+        }
         return ValueTypes.GEO_POINT.convert( object );
     }
 
