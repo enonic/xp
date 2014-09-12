@@ -65,7 +65,7 @@ module api.content.form.inputtype.tag {
                     contentQueryResult.getContents().forEach((content: Content) => {
                         var dataSet = this.dataPath.getParentPath().isRoot() ?
                                       content.getContentData() :
-                                      content.getContentData().getDataSetFromDataPath(this.dataPath);
+                                      content.getContentData().getDataSetByPath(this.dataPath);
                         var properties = dataSet.getPropertiesByName(this.dataPath.getLastElement().getName());
                         properties.forEach((property: api.data.Property) => {
                             if (property.hasNonNullValue()) {

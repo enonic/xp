@@ -109,11 +109,7 @@ module api.data {
             return datas;
         }
 
-        getData(dataId: string): Data {
-            return this.getDataById(DataId.from(dataId));
-        }
-
-        getDataFromDataPath(path: DataPath): Data {
+        getDataByPath(path: DataPath): Data {
 
             if (path.elementCount() > 1) {
                 return this.doForwardGetData(path);
@@ -130,11 +126,26 @@ module api.data {
                 return null;
             }
 
-            return data.toDataSet().getDataFromDataPath(path.asNewWithoutFirstPathElement());
+            return data.toDataSet().getDataByPath(path.asNewWithoutFirstPathElement());
         }
 
         getDataById(dataId: DataId): Data {
             return this.dataById[dataId.toString()];
+        }
+
+        getData(identifier: any): Data {
+            if (typeof identifier === 'string') {
+                return this.getDataByPath(DataPath.fromString(<string>identifier));
+            }
+            else if (api.ObjectHelper.iFrameSafeInstanceOf(identifier, api.data.DataPath)) {
+                return this.getDataByPath(<api.data.DataPath>identifier);
+            }
+            else if (api.ObjectHelper.iFrameSafeInstanceOf(identifier, api.data.DataId)) {
+                return this.getDataById(<api.data.DataId>identifier);
+            }
+            else {
+                return this.getDataByPath(DataPath.fromString(identifier.toString()));
+            }
         }
 
         getDataByName(name: string): Data[] {
@@ -150,23 +161,23 @@ module api.data {
             return matches;
         }
 
-        getProperty(path: any): Property {
-            if (typeof path === 'string') {
-                return this.getPropertyByPath(DataPath.fromString(<string>path));
+        getProperty(identifier: any): Property {
+            if (typeof identifier === 'string') {
+                return this.getPropertyByPath(DataPath.fromString(<string>identifier));
             }
-            else if (api.ObjectHelper.iFrameSafeInstanceOf(path, api.data.DataPath)) {
-                return this.getPropertyByPath(<api.data.DataPath>path);
+            else if (api.ObjectHelper.iFrameSafeInstanceOf(identifier, api.data.DataPath)) {
+                return this.getPropertyByPath(<api.data.DataPath>identifier);
             }
-            else if (api.ObjectHelper.iFrameSafeInstanceOf(path, api.data.DataId)) {
-                return this.getPropertyById(<api.data.DataId>path);
+            else if (api.ObjectHelper.iFrameSafeInstanceOf(identifier, api.data.DataId)) {
+                return this.getPropertyById(<api.data.DataId>identifier);
             }
             else {
-                return this.getPropertyByPath(DataPath.fromString(path.toString()));
+                return this.getPropertyByPath(DataPath.fromString(identifier.toString()));
             }
         }
 
         getPropertyByPath(path: DataPath): Property {
-            var data = this.getDataFromDataPath(path);
+            var data = this.getDataByPath(path);
             return data ? data.toProperty() : null;
         }
 
@@ -189,12 +200,23 @@ module api.data {
             return matches;
         }
 
-        getDataSet(path: string): DataSet {
-            return this.getDataSetFromDataPath(DataPath.fromString(path));
+        getDataSet(identifier: any): DataSet {
+            if (typeof identifier === 'string') {
+                return this.getDataSetByPath(DataPath.fromString(<string>identifier));
+            }
+            else if (api.ObjectHelper.iFrameSafeInstanceOf(identifier, api.data.DataPath)) {
+                return this.getDataSetByPath(<api.data.DataPath>identifier);
+            }
+            else if (api.ObjectHelper.iFrameSafeInstanceOf(identifier, api.data.DataId)) {
+                return this.getDataSetById(<api.data.DataId>identifier);
+            }
+            else {
+                return this.getDataSetByPath(DataPath.fromString(identifier.toString()));
+            }
         }
 
-        getDataSetFromDataPath(path: DataPath): DataSet {
-            var data = this.getDataFromDataPath(path);
+        getDataSetByPath(path: DataPath): DataSet {
+            var data = this.getDataByPath(path);
             if (data == null) {
                 return null;
             }
