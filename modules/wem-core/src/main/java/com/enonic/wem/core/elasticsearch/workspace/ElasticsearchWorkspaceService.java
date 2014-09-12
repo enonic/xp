@@ -1,4 +1,4 @@
-package com.enonic.wem.core.elasticsearch;
+package com.enonic.wem.core.elasticsearch.workspace;
 
 import java.util.Collection;
 import java.util.Map;
@@ -31,6 +31,9 @@ import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.NodeVersionId;
 import com.enonic.wem.api.entity.NodeVersionIds;
 import com.enonic.wem.api.entity.Workspace;
+import com.enonic.wem.core.elasticsearch.ElasticsearchDao;
+import com.enonic.wem.core.elasticsearch.ElasticsearchDataException;
+import com.enonic.wem.core.elasticsearch.QueryMetaData;
 import com.enonic.wem.core.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.core.index.result.SearchResult;
 import com.enonic.wem.core.index.result.SearchResultEntry;
@@ -39,6 +42,7 @@ import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.repository.StorageNameResolver;
 import com.enonic.wem.core.workspace.WorkspaceDocument;
+import com.enonic.wem.core.workspace.WorkspaceDocumentId;
 import com.enonic.wem.core.workspace.WorkspaceService;
 import com.enonic.wem.core.workspace.compare.query.CompareWorkspacesQuery;
 import com.enonic.wem.core.workspace.query.WorkspaceDeleteQuery;
@@ -47,12 +51,6 @@ import com.enonic.wem.core.workspace.query.WorkspaceIdsQuery;
 import com.enonic.wem.core.workspace.query.WorkspaceParentQuery;
 import com.enonic.wem.core.workspace.query.WorkspacePathQuery;
 import com.enonic.wem.core.workspace.query.WorkspacePathsQuery;
-
-import static com.enonic.wem.core.elasticsearch.WorkspaceXContentBuilderFactory.ENTITY_ID_FIELD_NAME;
-import static com.enonic.wem.core.elasticsearch.WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME;
-import static com.enonic.wem.core.elasticsearch.WorkspaceXContentBuilderFactory.PARENT_PATH_FIELD_NAME;
-import static com.enonic.wem.core.elasticsearch.WorkspaceXContentBuilderFactory.PATH_FIELD_NAME;
-import static com.enonic.wem.core.elasticsearch.WorkspaceXContentBuilderFactory.WORKSPACE_FIELD_NAME;
 
 public class ElasticsearchWorkspaceService
     implements WorkspaceService
@@ -104,7 +102,8 @@ public class ElasticsearchWorkspaceService
     {
         final EntityId entityId = query.getEntityId();
 
-        final SearchResultEntry searchResultEntry = doGetById( entityId, query.getWorkspace(), NODE_VERSION_ID_FIELD_NAME );
+        final SearchResultEntry searchResultEntry =
+            doGetById( entityId, query.getWorkspace(), WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME );
 
         if ( searchResultEntry == null )
         {
@@ -115,7 +114,8 @@ public class ElasticsearchWorkspaceService
 
         if ( field == null || field.getValue() == null )
         {
-            throw new ElasticsearchDataException( "Field " + NODE_VERSION_ID_FIELD_NAME + " not found on node with id " +
+            throw new ElasticsearchDataException(
+                "Field " + WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME + " not found on node with id " +
                                                       entityId +
                                                       " in workspace " + query.getWorkspace().getName() );
         }
@@ -171,7 +171,8 @@ public class ElasticsearchWorkspaceService
     {
         final String workspaceName = workspace.getName();
 
-        final TermsQueryBuilder idsQuery = new TermsQueryBuilder( ENTITY_ID_FIELD_NAME, entityIdsAsStrings );
+        final TermsQueryBuilder idsQuery =
+            new TermsQueryBuilder( WorkspaceXContentBuilderFactory.ENTITY_ID_FIELD_NAME, entityIdsAsStrings );
         final BoolQueryBuilder boolQueryBuilder = joinWithWorkspaceQuery( workspaceName, idsQuery );
         final QueryMetaData queryMetaData = createGetBlobKeyQueryMetaData( entityIdsAsStrings.size() );
 
@@ -193,14 +194,16 @@ public class ElasticsearchWorkspaceService
                                                                                     final SearchResult searchResult )
     {
         return Maps.asMap( entityIdsAsStrings,
-                           new EntityIdToSearchResultFieldMapper( searchResult, NODE_VERSION_ID_FIELD_NAME, workspace ) );
+                           new EntityIdToSearchResultFieldMapper( searchResult, WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME,
+                                                                  workspace ) );
     }
 
 
     @Override
     public NodeVersionId getByPath( final WorkspacePathQuery query )
     {
-        final TermQueryBuilder parentQuery = new TermQueryBuilder( PATH_FIELD_NAME, query.getNodePathAsString() );
+        final TermQueryBuilder parentQuery =
+            new TermQueryBuilder( WorkspaceXContentBuilderFactory.PATH_FIELD_NAME, query.getNodePathAsString() );
         final BoolQueryBuilder workspacedByPathQuery = joinWithWorkspaceQuery( query.getWorkspace().getName(), parentQuery );
 
         final QueryMetaData queryMetaData = createGetBlobKeyQueryMetaData( 1 );
@@ -214,11 +217,12 @@ public class ElasticsearchWorkspaceService
 
         final SearchResultEntry firstHit = searchResult.getResults().getFirstHit();
 
-        final Object value = firstHit.getField( NODE_VERSION_ID_FIELD_NAME ).getValue();
+        final Object value = firstHit.getField( WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME ).getValue();
 
         if ( value == null )
         {
-            throw new ElasticsearchDataException( "Field " + NODE_VERSION_ID_FIELD_NAME + " not found on node with path " +
+            throw new ElasticsearchDataException(
+                "Field " + WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME + " not found on node with path " +
                                                       query.getNodePathAsString() +
                                                       " in workspace " + query.getWorkspace() );
         }
@@ -229,13 +233,15 @@ public class ElasticsearchWorkspaceService
     @Override
     public NodeVersionIds getByPaths( final WorkspacePathsQuery query )
     {
-        final TermsQueryBuilder parentQuery = new TermsQueryBuilder( PATH_FIELD_NAME, query.getNodePathsAsStrings() );
+        final TermsQueryBuilder parentQuery =
+            new TermsQueryBuilder( WorkspaceXContentBuilderFactory.PATH_FIELD_NAME, query.getNodePathsAsStrings() );
         final BoolQueryBuilder workspacedByPathsQuery = joinWithWorkspaceQuery( query.getWorkspace().getName(), parentQuery );
         final QueryMetaData queryMetaData = createGetBlobKeyQueryMetaData( query.getNodePathsAsStrings().size() );
 
         final SearchResult searchResult = elasticsearchDao.get( queryMetaData, workspacedByPathsQuery );
 
-        final Set<SearchResultField> fieldValues = searchResult.getResults().getFields( NODE_VERSION_ID_FIELD_NAME );
+        final Set<SearchResultField> fieldValues =
+            searchResult.getResults().getFields( WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME );
 
         return fieldValuesToVersionIds( fieldValues );
     }
@@ -243,7 +249,8 @@ public class ElasticsearchWorkspaceService
     @Override
     public NodeVersionIds findByParent( final WorkspaceParentQuery query )
     {
-        final TermQueryBuilder parentQuery = new TermQueryBuilder( PARENT_PATH_FIELD_NAME, query.getParentPath() );
+        final TermQueryBuilder parentQuery =
+            new TermQueryBuilder( WorkspaceXContentBuilderFactory.PARENT_PATH_FIELD_NAME, query.getParentPath() );
         final BoolQueryBuilder byParentQuery = joinWithWorkspaceQuery( query.getWorkspace().getName(), parentQuery );
 
         final QueryMetaData queryMetaData = createGetBlobKeyQueryMetaData( DEFAULT_UNKNOWN_SIZE );
@@ -255,7 +262,8 @@ public class ElasticsearchWorkspaceService
             return NodeVersionIds.empty();
         }
 
-        final Set<SearchResultField> fieldValues = searchResult.getResults().getFields( NODE_VERSION_ID_FIELD_NAME );
+        final Set<SearchResultField> fieldValues =
+            searchResult.getResults().getFields( WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME );
 
         return fieldValuesToVersionIds( fieldValues );
     }
@@ -263,8 +271,10 @@ public class ElasticsearchWorkspaceService
     @Override
     public EntityIds getEntriesWithDiff( final CompareWorkspacesQuery workspaceDiffQuery )
     {
-        final TermQueryBuilder inSource = new TermQueryBuilder( WORKSPACE_FIELD_NAME, workspaceDiffQuery.getSource().getName() );
-        final TermQueryBuilder inTarget = new TermQueryBuilder( WORKSPACE_FIELD_NAME, workspaceDiffQuery.getTarget().getName() );
+        final TermQueryBuilder inSource =
+            new TermQueryBuilder( WorkspaceXContentBuilderFactory.WORKSPACE_FIELD_NAME, workspaceDiffQuery.getSource().getName() );
+        final TermQueryBuilder inTarget =
+            new TermQueryBuilder( WorkspaceXContentBuilderFactory.WORKSPACE_FIELD_NAME, workspaceDiffQuery.getTarget().getName() );
 
         final long inSourceCount = elasticsearchDao.count( createGetBlobKeyQueryMetaData( 0 ), inSource );
         final long inTargetCount = elasticsearchDao.count( createGetBlobKeyQueryMetaData( 0 ), inTarget );
@@ -316,7 +326,8 @@ public class ElasticsearchWorkspaceService
             size( 0 ).
             build();
 
-        final TermQueryBuilder findWithParentQuery = new TermQueryBuilder( PARENT_PATH_FIELD_NAME, parent.toString() );
+        final TermQueryBuilder findWithParentQuery =
+            new TermQueryBuilder( WorkspaceXContentBuilderFactory.PARENT_PATH_FIELD_NAME, parent.toString() );
         final BoolQueryBuilder query = joinWithWorkspaceQuery( workspace.getName(), findWithParentQuery );
 
         final long count = elasticsearchDao.count( queryMetaData, query );
@@ -348,8 +359,8 @@ public class ElasticsearchWorkspaceService
             indexType( IndexType.NODE ).
             from( 0 ).
             size( numberOfHits ).
-            addField( ENTITY_ID_FIELD_NAME ).
-            addField( NODE_VERSION_ID_FIELD_NAME ).
+            addField( WorkspaceXContentBuilderFactory.ENTITY_ID_FIELD_NAME ).
+            addField( WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME ).
             addSort( fieldSortBuilder ).
             build();
     }
@@ -358,7 +369,7 @@ public class ElasticsearchWorkspaceService
     {
         final BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder();
 
-        final TermQueryBuilder workspaceQuery = new TermQueryBuilder( WORKSPACE_FIELD_NAME, workspaceName );
+        final TermQueryBuilder workspaceQuery = new TermQueryBuilder( WorkspaceXContentBuilderFactory.WORKSPACE_FIELD_NAME, workspaceName );
         boolQueryBuilder.must( specificQuery );
         boolQueryBuilder.must( workspaceQuery );
 

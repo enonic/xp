@@ -1,6 +1,8 @@
-package com.enonic.wem.core.elasticsearch;
+package com.enonic.wem.core.elasticsearch.workspace;
 
 import org.junit.Test;
+
+import com.enonic.wem.core.workspace.WorkspaceDocumentId;
 
 import static org.junit.Assert.*;
 
@@ -20,14 +22,14 @@ public class WorkspaceDocumentIdTest
     public void from_missing_ws()
         throws Exception
     {
-        final WorkspaceDocumentId id = WorkspaceDocumentId.from( "myBlobKey_" );
+        WorkspaceDocumentId.from( "myBlobKey_" );
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void from_missing_entityId()
         throws Exception
     {
-        final WorkspaceDocumentId id = WorkspaceDocumentId.from( "_myWorkspace" );
+        WorkspaceDocumentId.from( "_myWorkspace" );
     }
 
 
@@ -35,6 +37,6 @@ public class WorkspaceDocumentIdTest
     public void from_missing_separator()
         throws Exception
     {
-        final WorkspaceDocumentId id = WorkspaceDocumentId.from( "myBlobKeymyWorkspace" );
+        WorkspaceDocumentId.from( "myBlobKeymyWorkspace" );
     }
 }

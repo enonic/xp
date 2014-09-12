@@ -1,4 +1,4 @@
-package com.enonic.wem.core.elasticsearch;
+package com.enonic.wem.core.workspace;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;

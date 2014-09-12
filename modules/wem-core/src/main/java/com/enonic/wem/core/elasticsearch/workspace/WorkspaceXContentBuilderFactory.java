@@ -1,7 +1,8 @@
-package com.enonic.wem.core.elasticsearch;
+package com.enonic.wem.core.elasticsearch.workspace;
 
 import org.elasticsearch.common.xcontent.XContentBuilder;
 
+import com.enonic.wem.core.elasticsearch.AbstractXContentBuilderFactor;
 import com.enonic.wem.core.index.IndexException;
 import com.enonic.wem.core.workspace.WorkspaceDocument;
 

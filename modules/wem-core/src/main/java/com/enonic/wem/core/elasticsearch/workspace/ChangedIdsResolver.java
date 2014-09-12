@@ -1,4 +1,4 @@
-package com.enonic.wem.core.elasticsearch;
+package com.enonic.wem.core.elasticsearch.workspace;
 
 import java.util.Set;
 
@@ -8,8 +8,9 @@ import com.enonic.wem.api.aggregation.Bucket;
 import com.enonic.wem.api.aggregation.BucketAggregation;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIds;
+import com.enonic.wem.core.workspace.WorkspaceDocumentId;
 
-public class ChangedIdsResolver
+class ChangedIdsResolver
 {
 
     static EntityIds resolve( final BucketAggregation aggregation )

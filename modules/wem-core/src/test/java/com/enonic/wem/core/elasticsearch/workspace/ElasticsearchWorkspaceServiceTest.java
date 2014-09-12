@@ -1,4 +1,4 @@
-package com.enonic.wem.core.elasticsearch;
+package com.enonic.wem.core.elasticsearch.workspace;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -24,11 +24,15 @@ import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.entity.Workspaces;
 import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.api.repository.RepositoryId;
+import com.enonic.wem.core.elasticsearch.ElasticsearchDao;
+import com.enonic.wem.core.elasticsearch.ElasticsearchDataException;
+import com.enonic.wem.core.elasticsearch.QueryMetaData;
 import com.enonic.wem.core.elasticsearch.result.SearchResult;
 import com.enonic.wem.core.elasticsearch.result.SearchResultEntries;
 import com.enonic.wem.core.elasticsearch.result.SearchResultEntry;
 import com.enonic.wem.core.elasticsearch.result.SearchResultField;
 import com.enonic.wem.core.workspace.WorkspaceDocument;
+import com.enonic.wem.core.workspace.WorkspaceDocumentId;
 import com.enonic.wem.core.workspace.query.WorkspaceDeleteQuery;
 import com.enonic.wem.core.workspace.query.WorkspaceIdQuery;
 import com.enonic.wem.core.workspace.query.WorkspaceIdsQuery;
@@ -36,7 +40,7 @@ import com.enonic.wem.core.workspace.query.WorkspaceParentQuery;
 import com.enonic.wem.core.workspace.query.WorkspacePathQuery;
 import com.enonic.wem.core.workspace.query.WorkspacePathsQuery;
 
-import static com.enonic.wem.core.elasticsearch.WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME;
+import static com.enonic.wem.core.elasticsearch.workspace.WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME;
 import static org.junit.Assert.*;
 
 public class ElasticsearchWorkspaceServiceTest
