@@ -47,7 +47,7 @@ public class GetActiveNodeVersionsCommand
 
             if ( currentVersion != null )
             {
-                builder.add( workspace, this.versionService.getVersion( currentVersion ) );
+                builder.add( workspace, this.versionService.getVersion( currentVersion, this.context.getRepository() ) );
             }
         }
         return builder.build();

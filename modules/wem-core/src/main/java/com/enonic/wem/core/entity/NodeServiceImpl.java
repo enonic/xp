@@ -75,6 +75,7 @@ public class NodeServiceImpl
 
         return NodeHasChildResolver.create().
             workspace( context.getWorkspace() ).
+            repository( context.getRepository() ).
             workspaceService( this.workspaceService ).
             build().
             resolve( nodeDao.getByVersionId( currentVersion ) );
@@ -91,6 +92,7 @@ public class NodeServiceImpl
 
         return NodeHasChildResolver.create().
             workspace( context.getWorkspace() ).
+            repository( context.getRepository() ).
             workspaceService( this.workspaceService ).
             build().
             resolve( nodeDao.getByVersionIds( versionIds ) );
@@ -112,6 +114,7 @@ public class NodeServiceImpl
 
         return NodeHasChildResolver.create().
             workspace( context.getWorkspace() ).
+            repository( context.getRepository() ).
             workspaceService( this.workspaceService ).
             build().
             resolve( nodeDao.getByVersionId( currentVersion ) );
@@ -128,6 +131,7 @@ public class NodeServiceImpl
 
         return NodeHasChildResolver.create().
             workspace( context.getWorkspace() ).
+            repository( context.getRepository() ).
             workspaceService( this.workspaceService ).
             build().
             resolve( nodeDao.getByVersionIds( versionIds ) );
@@ -289,6 +293,7 @@ public class NodeServiceImpl
     {
         return NodeHasChildResolver.create().
             workspace( context.getWorkspace() ).
+            repository( context.getRepository() ).
             workspaceService( this.workspaceService ).
             build().
             resolve( nodeDao.getByVersionId( blobKey ) );

@@ -35,6 +35,7 @@ public class CompareNodesCommand
         return this.compareService.compare( CompareEntitiesQuery.create().
             source( context.getWorkspace() ).
             target( this.target ).
+            repository( context.getRepository() ).
             setEntityIds( this.entityIds ).
             build() );
     }

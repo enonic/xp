@@ -11,7 +11,7 @@ import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.NodeVersionId;
 import com.enonic.wem.api.entity.NodeVersionIds;
 import com.enonic.wem.api.entity.RenameNodeParams;
-import com.enonic.wem.api.entity.Workspace;
+import com.enonic.wem.core.TestContext;
 import com.enonic.wem.core.workspace.query.WorkspaceIdQuery;
 import com.enonic.wem.core.workspace.query.WorkspaceParentQuery;
 
@@ -48,12 +48,10 @@ public class RenameNodeCommandTest
 
         final NodeVersionId renamedNodeVersionId = NodeVersionId.from( "new-node-version-id" );
 
-        final Workspace workspace = testContext.getWorkspace();
-
         // Mock the fetching of the node to be renamed
         when( this.workspaceService.getCurrentVersion( WorkspaceIdQuery.create().
-            workspace( workspace ).
-            repository( testContext.getRepository() ).
+            workspace( TestContext.TEST_WORKSPACE ).
+            repository( TestContext.TEST_REPOSITORY ).
             entityId( nodeId ).build() ) ).
             thenReturn( nodeVersionId );
         when( this.nodeDao.getByVersionId( nodeVersionId ) ).
@@ -63,8 +61,8 @@ public class RenameNodeCommandTest
 
         // Mock no children of the node to be renamed
         when( workspaceService.findByParent( WorkspaceParentQuery.create().
-            workspace( workspace ).
-            repository( testContext.getRepository() ).
+            workspace( TestContext.TEST_WORKSPACE ).
+            repository( TestContext.TEST_REPOSITORY ).
             parentPath( nodeToBeRenamed.path() ).
             build() ) ).
             thenReturn( NodeVersionIds.empty() );
@@ -79,7 +77,7 @@ public class RenameNodeCommandTest
 
     private RenameNodeCommand createCommand( final RenameNodeParams params )
     {
-        return RenameNodeCommand.create( testContext ).
+        return RenameNodeCommand.create( TestContext.TEST_CONTEXT ).
             indexService( this.indexService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).

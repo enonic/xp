@@ -6,7 +6,7 @@ import com.enonic.wem.core.workspace.WorkspaceDocumentId;
 
 import static org.junit.Assert.*;
 
-public class WorkspaceDocumentIdTest
+public class StoreWorkspaceDocumentIdTest
 {
     @Test
     public void from()

@@ -4,7 +4,6 @@ import com.enonic.wem.api.entity.EntityId;
 
 public class GetVersionsQuery
 {
-
     private final Integer from;
 
     private final Integer size;

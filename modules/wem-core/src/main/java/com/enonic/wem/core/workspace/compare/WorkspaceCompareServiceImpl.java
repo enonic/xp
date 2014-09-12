@@ -83,22 +83,22 @@ public class WorkspaceCompareServiceImpl
             entityId( entityId ).
             build() );
 
-        final NodeVersion sourceVersion = getVersion( sourceVersionId );
-        final NodeVersion targetVersion = getVersion( targetVersionId );
+        final NodeVersion sourceVersion = getVersion( sourceVersionId, repository );
+        final NodeVersion targetVersion = getVersion( targetVersionId, repository );
 
         final CompareStatus compareStatus = DiffStatusResolver.resolve( new DiffStatusParams( sourceVersion, targetVersion ) );
 
         return new NodeComparison( entityId, compareStatus );
     }
 
-    private NodeVersion getVersion( final NodeVersionId nodeVersionId )
+    private NodeVersion getVersion( final NodeVersionId nodeVersionId, final Repository repository )
     {
         if ( nodeVersionId == null )
         {
             return null;
         }
 
-        return versionService.getVersion( nodeVersionId );
+        return versionService.getVersion( nodeVersionId, repository );
     }
 
     @Inject

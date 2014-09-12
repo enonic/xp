@@ -6,7 +6,7 @@ import com.enonic.wem.api.entity.NodeVersionId;
 import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.repository.Repository;
 
-public class WorkspaceDocument
+public class StoreWorkspaceDocument
 {
     private final EntityId entityId;
 
@@ -20,7 +20,7 @@ public class WorkspaceDocument
 
     private final Repository repository;
 
-    private WorkspaceDocument( final Builder builder )
+    private StoreWorkspaceDocument( final Builder builder )
     {
         this.entityId = builder.entityId;
         this.nodeVersionId = builder.nodeVersionId;
@@ -115,9 +115,9 @@ public class WorkspaceDocument
             return this;
         }
 
-        public WorkspaceDocument build()
+        public StoreWorkspaceDocument build()
         {
-            return new WorkspaceDocument( this );
+            return new StoreWorkspaceDocument( this );
         }
     }
 
@@ -128,12 +128,12 @@ public class WorkspaceDocument
         {
             return true;
         }
-        if ( !( o instanceof WorkspaceDocument ) )
+        if ( !( o instanceof StoreWorkspaceDocument ) )
         {
             return false;
         }
 
-        final WorkspaceDocument that = (WorkspaceDocument) o;
+        final StoreWorkspaceDocument that = (StoreWorkspaceDocument) o;
 
         if ( entityId != null ? !entityId.equals( that.entityId ) : that.entityId != null )
         {

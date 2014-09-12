@@ -31,7 +31,7 @@ import com.enonic.wem.core.elasticsearch.result.SearchResult;
 import com.enonic.wem.core.elasticsearch.result.SearchResultEntries;
 import com.enonic.wem.core.elasticsearch.result.SearchResultEntry;
 import com.enonic.wem.core.elasticsearch.result.SearchResultField;
-import com.enonic.wem.core.workspace.WorkspaceDocument;
+import com.enonic.wem.core.workspace.StoreWorkspaceDocument;
 import com.enonic.wem.core.workspace.WorkspaceDocumentId;
 import com.enonic.wem.core.workspace.query.WorkspaceDeleteQuery;
 import com.enonic.wem.core.workspace.query.WorkspaceIdQuery;
@@ -73,7 +73,7 @@ public class ElasticsearchWorkspaceServiceTest
             name( NodeName.from( "mynode" ) ).
             build();
 
-        final WorkspaceDocument workspaceDocument = WorkspaceDocument.create().
+        final StoreWorkspaceDocument storeWorkspaceDocument = StoreWorkspaceDocument.create().
             nodeVersionId( NodeVersionId.from( "a" ) ).
             workspace( Workspace.from( "test" ) ).
             parentPath( node.parent() ).
@@ -87,7 +87,7 @@ public class ElasticsearchWorkspaceServiceTest
         Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( String.class ) ) ).
             thenReturn( notExisting );
 
-        wsStore.store( workspaceDocument );
+        wsStore.store( storeWorkspaceDocument );
 
         Mockito.verify( elasticsearchDao, Mockito.times( 1 ) ).store( Mockito.isA( IndexRequest.class ) );
     }
@@ -100,7 +100,7 @@ public class ElasticsearchWorkspaceServiceTest
             name( NodeName.from( "mynode" ) ).
             build();
 
-        final WorkspaceDocument workspaceDocument = WorkspaceDocument.create().
+        final StoreWorkspaceDocument storeWorkspaceDocument = StoreWorkspaceDocument.create().
             nodeVersionId( NodeVersionId.from( "a" ) ).
             workspace( Workspace.from( "test" ) ).
             parentPath( node.parent() ).
@@ -122,7 +122,7 @@ public class ElasticsearchWorkspaceServiceTest
         Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( String.class ) ) ).
             thenReturn( noChanges );
 
-        wsStore.store( workspaceDocument );
+        wsStore.store( storeWorkspaceDocument );
 
 //        Mockito.verify( elasticsearchDao, Mockito.times( 0 ) ).store( Mockito.isA( IndexRequest.class ) );
     }
@@ -135,7 +135,7 @@ public class ElasticsearchWorkspaceServiceTest
             name( NodeName.from( "mynode" ) ).
             build();
 
-        final WorkspaceDocument workspaceDocument = WorkspaceDocument.create().
+        final StoreWorkspaceDocument storeWorkspaceDocument = StoreWorkspaceDocument.create().
             nodeVersionId( NodeVersionId.from( "a" ) ).
             workspace( Workspace.from( "test" ) ).
             parentPath( node.parent() ).
@@ -157,7 +157,7 @@ public class ElasticsearchWorkspaceServiceTest
         Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( String.class ) ) ).
             thenReturn( noChanges );
 
-        wsStore.store( workspaceDocument );
+        wsStore.store( storeWorkspaceDocument );
 
         Mockito.verify( elasticsearchDao, Mockito.times( 1 ) ).store( Mockito.isA( IndexRequest.class ) );
     }

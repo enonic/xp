@@ -16,9 +16,7 @@ import com.enonic.wem.api.entity.NodeVersionId;
 import com.enonic.wem.api.entity.NodeVersionIds;
 import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.entity.Workspace;
-import com.enonic.wem.api.entity.Workspaces;
-import com.enonic.wem.api.repository.Repository;
-import com.enonic.wem.api.repository.RepositoryId;
+import com.enonic.wem.core.TestContext;
 import com.enonic.wem.core.elasticsearch.ElasticsearchIndexService;
 import com.enonic.wem.core.entity.dao.NodeDao;
 import com.enonic.wem.core.workspace.WorkspaceService;
@@ -37,14 +35,9 @@ public class DeleteNodeByPathCommandTest
 
     private WorkspaceService workspaceService;
 
-    public final Workspace testWorkspace = Workspace.from( "test" );
-
     private final Context testContext = Context.create().
-        workspace( testWorkspace ).
-        repository( Repository.create().
-            id( RepositoryId.from( "testing" ) ).
-            workspaces( Workspaces.from( testWorkspace ) ).
-            build() ).
+        workspace( TestContext.TEST_WORKSPACE ).
+        repository( TestContext.TEST_REPOSITORY ).
         build();
 
     @Before

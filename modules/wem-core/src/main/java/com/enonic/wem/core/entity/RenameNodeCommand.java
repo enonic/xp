@@ -16,7 +16,7 @@ import com.enonic.wem.api.entity.RenameNodeParams;
 import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.core.entity.dao.NodeDao;
 import com.enonic.wem.core.version.EntityVersionDocument;
-import com.enonic.wem.core.workspace.WorkspaceDocument;
+import com.enonic.wem.core.workspace.StoreWorkspaceDocument;
 import com.enonic.wem.core.workspace.query.WorkspaceIdQuery;
 import com.enonic.wem.core.workspace.query.WorkspaceParentQuery;
 import com.enonic.wem.core.workspace.query.WorkspacePathQuery;
@@ -68,6 +68,7 @@ final class RenameNodeCommand
 
         return NodeHasChildResolver.create().
             workspace( context.getWorkspace() ).
+            repository( context.getRepository() ).
             workspaceService( this.workspaceService ).
             build().
             resolve( renamedNode );
@@ -151,7 +152,7 @@ final class RenameNodeCommand
 
         final NodeVersionId newVersion = nodeDao.store( movedNode );
 
-        workspaceService.store( WorkspaceDocument.create().
+        workspaceService.store( StoreWorkspaceDocument.create().
             id( movedNode.id() ).
             parentPath( movedNode.parent() ).
             path( movedNode.path() ).
@@ -163,7 +164,7 @@ final class RenameNodeCommand
         versionService.store( EntityVersionDocument.create().
             entityId( movedNode.id() ).
             nodeVersionId( newVersion ).
-            build() );
+            build(), this.context.getRepository() );
 
         indexService.index( movedNode, workspace );
 

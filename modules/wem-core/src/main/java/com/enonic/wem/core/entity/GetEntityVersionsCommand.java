@@ -35,7 +35,7 @@ public class GetEntityVersionsCommand
             size( this.size ).
             build();
 
-        return this.versionService.findVersions( query );
+        return this.versionService.findVersions( query, this.context.getRepository() );
     }
 
     public static Builder create( final Context context )

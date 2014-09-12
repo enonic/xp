@@ -10,7 +10,8 @@ import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.NodeVersionId;
 import com.enonic.wem.api.entity.Workspace;
-import com.enonic.wem.core.workspace.WorkspaceDocument;
+import com.enonic.wem.core.TestContext;
+import com.enonic.wem.core.workspace.StoreWorkspaceDocument;
 import com.enonic.wem.core.workspace.query.WorkspaceIdQuery;
 
 public class PushNodeCommandTest
@@ -25,7 +26,7 @@ public class PushNodeCommandTest
         final EntityId nodeId = EntityId.from( "mynode" );
         final Workspace targetWorkspace = Workspace.from( "prod" );
 
-        final PushNodeCommand command = PushNodeCommand.create( testContext ).
+        final PushNodeCommand command = PushNodeCommand.create( TestContext.TEST_CONTEXT ).
             nodeDao( nodeDao ).
             workspaceService( workspaceService ).
             versionService( versionService ).
@@ -48,13 +49,13 @@ public class PushNodeCommandTest
 
         command.execute();
 
-        Mockito.verify( this.workspaceService ).store( Mockito.eq( WorkspaceDocument.create().
+        Mockito.verify( this.workspaceService ).store( Mockito.eq( StoreWorkspaceDocument.create().
             workspace( targetWorkspace ).
             id( nodeId ).
             nodeVersionId( currentVersion ).
             parentPath( NodePath.ROOT ).
             path( NodePath.newNodePath( NodePath.ROOT, "myname" ).build() ).
-            repository( testContext.getRepository() ).
+            repository( TestContext.TEST_REPOSITORY ).
             build() ) );
 
         Mockito.verify( this.indexService ).index( publishedNode, targetWorkspace );

@@ -48,6 +48,7 @@ public class FindNodesByParentCommand
 
         final Nodes nodes = NodeHasChildResolver.create().
             workspace( context.getWorkspace() ).
+            repository( context.getRepository() ).
             workspaceService( this.workspaceService ).
             build().
             resolve( nodeDao.getByVersionIds( versions ) );

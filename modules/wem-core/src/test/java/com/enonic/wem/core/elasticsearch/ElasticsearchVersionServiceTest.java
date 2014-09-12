@@ -12,10 +12,11 @@ import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.FindNodeVersionsResult;
 import com.enonic.wem.api.entity.NodeVersion;
-import com.enonic.wem.core.index.result.SearchResult;
-import com.enonic.wem.core.index.result.SearchResultEntries;
-import com.enonic.wem.core.index.result.SearchResultEntry;
-import com.enonic.wem.core.index.result.SearchResultField;
+import com.enonic.wem.core.TestContext;
+import com.enonic.wem.core.elasticsearch.result.SearchResult;
+import com.enonic.wem.core.elasticsearch.result.SearchResultEntries;
+import com.enonic.wem.core.elasticsearch.result.SearchResultEntry;
+import com.enonic.wem.core.elasticsearch.result.SearchResultField;
 import com.enonic.wem.core.version.GetVersionsQuery;
 
 import static com.enonic.wem.core.elasticsearch.VersionXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME;
@@ -77,7 +78,7 @@ public class ElasticsearchVersionServiceTest
                     build() ).
                 build() );
 
-        final FindNodeVersionsResult result = service.findVersions( query );
+        final FindNodeVersionsResult result = service.findVersions( query, TestContext.TEST_REPOSITORY );
 
         assertEquals( 3, result.getNodeVersions().size() );
 

@@ -13,7 +13,7 @@ import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodeVersionId;
 import com.enonic.wem.core.version.EntityVersionDocument;
-import com.enonic.wem.core.workspace.WorkspaceDocument;
+import com.enonic.wem.core.workspace.StoreWorkspaceDocument;
 
 final class CreateNodeCommand
     extends AbstractNodeCommand
@@ -55,7 +55,7 @@ final class CreateNodeCommand
 
         final NodeVersionId persistedNodeVersionId = nodeDao.store( newNode );
 
-        this.workspaceService.store( WorkspaceDocument.create().
+        this.workspaceService.store( StoreWorkspaceDocument.create().
             id( newNode.id() ).
             parentPath( newNode.parent() ).
             path( newNode.path() ).
@@ -67,7 +67,7 @@ final class CreateNodeCommand
         versionService.store( EntityVersionDocument.create().
             entityId( newNode.id() ).
             nodeVersionId( persistedNodeVersionId ).
-            build() );
+            build(), this.context.getRepository() );
 
         this.indexService.index( newNode, context.getWorkspace() );
 

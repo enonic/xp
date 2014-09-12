@@ -10,13 +10,14 @@ import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.entity.Workspace;
+import com.enonic.wem.core.TestContext;
 import com.enonic.wem.core.workspace.WorkspaceService;
+import com.enonic.wem.core.workspace.query.WorkspaceHasChildrenQuery;
 
 import static org.junit.Assert.*;
 
 public class NodeHasChildResolverTest
 {
-
     final WorkspaceService workspaceService = Mockito.mock( WorkspaceService.class );
 
     @Test
@@ -34,7 +35,7 @@ public class NodeHasChildResolverTest
 
         assertFalse( node.getHasChildren() );
 
-        Mockito.when( workspaceService.hasChildren( node.path(), workspace ) ).
+        Mockito.when( workspaceService.hasChildren( Mockito.isA( WorkspaceHasChildrenQuery.class ) ) ).
             thenReturn( true );
 
         final Node resolvedNode = NodeHasChildResolver.create().
@@ -70,9 +71,17 @@ public class NodeHasChildResolverTest
 
         final Nodes nodes = Nodes.from( nodeWithChild, nodeWithoutChild );
 
-        Mockito.when( workspaceService.hasChildren( nodeWithChild.path(), workspace ) ).
+        Mockito.when( workspaceService.hasChildren( WorkspaceHasChildrenQuery.create().
+            parent( nodeWithChild.path() ).
+            workspace( TestContext.TEST_WORKSPACE ).
+            repository( TestContext.TEST_REPOSITORY ).
+            build() ) ).
             thenReturn( true );
-        Mockito.when( workspaceService.hasChildren( nodeWithoutChild.path(), workspace ) ).
+        Mockito.when( workspaceService.hasChildren( WorkspaceHasChildrenQuery.create().
+            parent( nodeWithoutChild.path() ).
+            workspace( TestContext.TEST_WORKSPACE ).
+            repository( TestContext.TEST_REPOSITORY ).
+            build() ) ).
             thenReturn( false );
 
         final Nodes resolvedNodes = NodeHasChildResolver.create().

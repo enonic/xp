@@ -20,6 +20,10 @@ public abstract class AbstractWorkspaceQuery
         return workspace;
     }
 
+    public Repository getRepository()
+    {
+        return repository;
+    }
 
     @Override
     public boolean equals( final Object o )

@@ -6,15 +6,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.GetActiveNodeVersionsResult;
 import com.enonic.wem.api.entity.NodeVersion;
 import com.enonic.wem.api.entity.NodeVersionId;
 import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.entity.Workspaces;
-import com.enonic.wem.api.repository.Repository;
-import com.enonic.wem.api.repository.RepositoryId;
+import com.enonic.wem.core.TestContext;
 import com.enonic.wem.core.entity.dao.NodeDao;
 import com.enonic.wem.core.version.VersionService;
 import com.enonic.wem.core.workspace.WorkspaceService;
@@ -32,14 +30,6 @@ public class GetActiveNodeVersionsCommandTest
     private NodeDao nodeDao;
 
     private WorkspaceService workspaceService;
-
-    private final Context testContext = Context.create().
-        workspace( TEST_WORKSPACE ).
-        repository( Repository.create().
-            id( RepositoryId.from( "testing" ) ).
-            workspaces( Workspaces.from( TEST_WORKSPACE ) ).
-            build() ).
-        build();
 
     @Before
     public void setUp()
@@ -67,23 +57,23 @@ public class GetActiveNodeVersionsCommandTest
 
         Mockito.when( this.workspaceService.getCurrentVersion( WorkspaceIdQuery.create().
             workspace( testWorkspace ).
-            repository( testContext.getRepository() ).
+            repository( TestContext.TEST_REPOSITORY ).
             entityId( nodeId ).
             build() ) ).
             thenReturn( testVersionId );
         Mockito.when( this.workspaceService.getCurrentVersion( WorkspaceIdQuery.create().
             workspace( prodWorkspace ).
-            repository( testContext.getRepository() ).
+            repository( TestContext.TEST_REPOSITORY ).
             entityId( nodeId ).
             build() ) ).
             thenReturn( prodVersionId );
 
-        Mockito.when( this.versionService.getVersion( testVersionId ) ).
+        Mockito.when( this.versionService.getVersion( testVersionId, TestContext.TEST_REPOSITORY ) ).
             thenReturn( testVersion );
-        Mockito.when( this.versionService.getVersion( prodVersionId ) ).
+        Mockito.when( this.versionService.getVersion( prodVersionId, TestContext.TEST_REPOSITORY ) ).
             thenReturn( prodVersion );
 
-        final GetActiveNodeVersionsResult result = GetActiveNodeVersionsCommand.create( testContext ).
+        final GetActiveNodeVersionsResult result = GetActiveNodeVersionsCommand.create( TestContext.TEST_CONTEXT ).
             versionService( this.versionService ).
             nodeDao( nodeDao ).
             workspaceService( this.workspaceService ).
@@ -113,20 +103,20 @@ public class GetActiveNodeVersionsCommandTest
 
         Mockito.when( this.workspaceService.getCurrentVersion( WorkspaceIdQuery.create().
             workspace( testWorkspace ).
-            repository( testContext.getRepository() ).
+            repository( TestContext.TEST_REPOSITORY ).
             entityId( nodeId ).
             build() ) ).
             thenReturn( testVersionId );
         Mockito.when( this.workspaceService.getCurrentVersion( WorkspaceIdQuery.create().
             workspace( prodWorkspace ).
-            repository( testContext.getRepository() ).
+            repository( TestContext.TEST_REPOSITORY ).
             entityId( nodeId ).
             build() ) ).
             thenReturn( null );
 
-        Mockito.when( this.versionService.getVersion( testVersionId ) ).thenReturn( testVersion );
+        Mockito.when( this.versionService.getVersion( testVersionId, TestContext.TEST_REPOSITORY ) ).thenReturn( testVersion );
 
-        final GetActiveNodeVersionsResult result = GetActiveNodeVersionsCommand.create( testContext ).
+        final GetActiveNodeVersionsResult result = GetActiveNodeVersionsCommand.create( TestContext.TEST_CONTEXT ).
             versionService( this.versionService ).
             nodeDao( nodeDao ).
             workspaceService( this.workspaceService ).

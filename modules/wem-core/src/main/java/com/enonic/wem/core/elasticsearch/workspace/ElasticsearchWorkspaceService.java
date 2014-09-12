@@ -27,10 +27,10 @@ import com.enonic.wem.api.aggregation.Aggregation;
 import com.enonic.wem.api.aggregation.BucketAggregation;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIds;
-import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.NodeVersionId;
 import com.enonic.wem.api.entity.NodeVersionIds;
 import com.enonic.wem.api.entity.Workspace;
+import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.core.elasticsearch.ElasticsearchDao;
 import com.enonic.wem.core.elasticsearch.ElasticsearchDataException;
 import com.enonic.wem.core.elasticsearch.QueryMetaData;
@@ -41,11 +41,12 @@ import com.enonic.wem.core.index.result.SearchResultField;
 import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.repository.StorageNameResolver;
-import com.enonic.wem.core.workspace.WorkspaceDocument;
+import com.enonic.wem.core.workspace.StoreWorkspaceDocument;
 import com.enonic.wem.core.workspace.WorkspaceDocumentId;
 import com.enonic.wem.core.workspace.WorkspaceService;
 import com.enonic.wem.core.workspace.compare.query.CompareWorkspacesQuery;
 import com.enonic.wem.core.workspace.query.WorkspaceDeleteQuery;
+import com.enonic.wem.core.workspace.query.WorkspaceHasChildrenQuery;
 import com.enonic.wem.core.workspace.query.WorkspaceIdQuery;
 import com.enonic.wem.core.workspace.query.WorkspaceIdsQuery;
 import com.enonic.wem.core.workspace.query.WorkspaceParentQuery;
@@ -66,20 +67,15 @@ public class ElasticsearchWorkspaceService
     private ElasticsearchDao elasticsearchDao;
 
     @Override
-    public void store( final WorkspaceDocument workspaceDocument )
-    {
-        doStore( workspaceDocument );
-    }
-
-    private void doStore( final WorkspaceDocument workspaceDocument )
+    public void store( final StoreWorkspaceDocument storeWorkspaceDocument )
     {
         final WorkspaceDocumentId workspaceDocumentId =
-            new WorkspaceDocumentId( workspaceDocument.getEntityId(), workspaceDocument.getWorkspace() );
+            new WorkspaceDocumentId( storeWorkspaceDocument.getEntityId(), storeWorkspaceDocument.getWorkspace() );
 
         final IndexRequest publish = Requests.indexRequest().
-            index( StorageNameResolver.resolveStorageIndexName( workspaceDocument.getRepository() ) ).
+            index( StorageNameResolver.resolveStorageIndexName( storeWorkspaceDocument.getRepository() ) ).
             type( IndexType.WORKSPACE.getName() ).
-            source( WorkspaceXContentBuilderFactory.create( workspaceDocument ) ).
+            source( WorkspaceXContentBuilderFactory.create( storeWorkspaceDocument ) ).
             id( workspaceDocumentId.toString() ).
             refresh( DEFAULT_REFRESH );
 
@@ -89,8 +85,9 @@ public class ElasticsearchWorkspaceService
     @Override
     public void delete( final WorkspaceDeleteQuery query )
     {
-        DeleteRequest deleteRequest = new DeleteRequest( WORKSPACE_INDEX.getName() ).
-            type( IndexType.NODE.getName() ).
+        DeleteRequest deleteRequest = new DeleteRequest().
+            index( StorageNameResolver.resolveStorageIndexName( query.getRepository() ) ).
+            type( IndexType.WORKSPACE.getName() ).
             id( new WorkspaceDocumentId( query.getEntityId(), query.getWorkspace() ).toString() ).
             refresh( DEFAULT_REFRESH );
 
@@ -103,7 +100,7 @@ public class ElasticsearchWorkspaceService
         final EntityId entityId = query.getEntityId();
 
         final SearchResultEntry searchResultEntry =
-            doGetById( entityId, query.getWorkspace(), WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME );
+            doGetById( entityId, query.getWorkspace(), WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME, query.getRepository() );
 
         if ( searchResultEntry == null )
         {
@@ -116,26 +113,28 @@ public class ElasticsearchWorkspaceService
         {
             throw new ElasticsearchDataException(
                 "Field " + WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME + " not found on node with id " +
-                                                      entityId +
-                                                      " in workspace " + query.getWorkspace().getName() );
+                    entityId +
+                    " in workspace " + query.getWorkspace().getName() );
         }
 
         return NodeVersionId.from( field.getValue().toString() );
     }
 
-    private SearchResultEntry doGetById( final EntityId entityId, final Workspace workspace, final String field )
+    private SearchResultEntry doGetById( final EntityId entityId, final Workspace workspace, final String field,
+                                         final Repository repository )
     {
-        return doGetById( entityId, workspace, Sets.newHashSet( field ) );
+        return doGetById( entityId, workspace, Sets.newHashSet( field ), repository );
     }
 
-    private SearchResultEntry doGetById( final EntityId entityId, final Workspace workspace, final Set<String> fields )
+    private SearchResultEntry doGetById( final EntityId entityId, final Workspace workspace, final Set<String> fields,
+                                         final Repository repository )
     {
         final TermQueryBuilder idQuery = new TermQueryBuilder( WorkspaceXContentBuilderFactory.ENTITY_ID_FIELD_NAME, entityId.toString() );
 
         final BoolQueryBuilder boolQueryBuilder = joinWithWorkspaceQuery( workspace.getName(), idQuery );
 
-        final QueryMetaData queryMetaData = QueryMetaData.create( WORKSPACE_INDEX ).
-            indexType( IndexType.NODE ).
+        final QueryMetaData queryMetaData = QueryMetaData.create( StorageNameResolver.resolveStorageIndexName( repository ) ).
+            indexTypeName( IndexType.WORKSPACE.getName() ).
             from( 0 ).
             size( 1 ).
             addFields( fields ).
@@ -151,7 +150,6 @@ public class ElasticsearchWorkspaceService
         return searchResult.getResults().getFirstHit();
     }
 
-
     /**
      * Fetch blobKeys for provided Ids.
      * The order of the provided Ids are maintained in result.
@@ -164,17 +162,17 @@ public class ElasticsearchWorkspaceService
     {
         final Set<String> entityIdsAsStrings = query.getEntityIdsAsStrings();
 
-        return doGetByIds( query.getWorkspace(), entityIdsAsStrings );
+        return doGetByIds( query.getWorkspace(), entityIdsAsStrings, query.getRepository() );
     }
 
-    private NodeVersionIds doGetByIds( final Workspace workspace, final Set<String> entityIdsAsStrings )
+    private NodeVersionIds doGetByIds( final Workspace workspace, final Set<String> entityIdsAsStrings, final Repository repository )
     {
         final String workspaceName = workspace.getName();
 
         final TermsQueryBuilder idsQuery =
             new TermsQueryBuilder( WorkspaceXContentBuilderFactory.ENTITY_ID_FIELD_NAME, entityIdsAsStrings );
         final BoolQueryBuilder boolQueryBuilder = joinWithWorkspaceQuery( workspaceName, idsQuery );
-        final QueryMetaData queryMetaData = createGetBlobKeyQueryMetaData( entityIdsAsStrings.size() );
+        final QueryMetaData queryMetaData = createGetBlobKeyQueryMetaData( entityIdsAsStrings.size(), repository );
 
         final SearchResult searchResult = elasticsearchDao.get( queryMetaData, boolQueryBuilder );
 
@@ -206,7 +204,7 @@ public class ElasticsearchWorkspaceService
             new TermQueryBuilder( WorkspaceXContentBuilderFactory.PATH_FIELD_NAME, query.getNodePathAsString() );
         final BoolQueryBuilder workspacedByPathQuery = joinWithWorkspaceQuery( query.getWorkspace().getName(), parentQuery );
 
-        final QueryMetaData queryMetaData = createGetBlobKeyQueryMetaData( 1 );
+        final QueryMetaData queryMetaData = createGetBlobKeyQueryMetaData( 1, query.getRepository() );
 
         final SearchResult searchResult = elasticsearchDao.get( queryMetaData, workspacedByPathQuery );
 
@@ -223,8 +221,8 @@ public class ElasticsearchWorkspaceService
         {
             throw new ElasticsearchDataException(
                 "Field " + WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME + " not found on node with path " +
-                                                      query.getNodePathAsString() +
-                                                      " in workspace " + query.getWorkspace() );
+                    query.getNodePathAsString() +
+                    " in workspace " + query.getWorkspace() );
         }
 
         return NodeVersionId.from( value.toString() );
@@ -236,7 +234,7 @@ public class ElasticsearchWorkspaceService
         final TermsQueryBuilder parentQuery =
             new TermsQueryBuilder( WorkspaceXContentBuilderFactory.PATH_FIELD_NAME, query.getNodePathsAsStrings() );
         final BoolQueryBuilder workspacedByPathsQuery = joinWithWorkspaceQuery( query.getWorkspace().getName(), parentQuery );
-        final QueryMetaData queryMetaData = createGetBlobKeyQueryMetaData( query.getNodePathsAsStrings().size() );
+        final QueryMetaData queryMetaData = createGetBlobKeyQueryMetaData( query.getNodePathsAsStrings().size(), query.getRepository() );
 
         final SearchResult searchResult = elasticsearchDao.get( queryMetaData, workspacedByPathsQuery );
 
@@ -253,7 +251,7 @@ public class ElasticsearchWorkspaceService
             new TermQueryBuilder( WorkspaceXContentBuilderFactory.PARENT_PATH_FIELD_NAME, query.getParentPath() );
         final BoolQueryBuilder byParentQuery = joinWithWorkspaceQuery( query.getWorkspace().getName(), parentQuery );
 
-        final QueryMetaData queryMetaData = createGetBlobKeyQueryMetaData( DEFAULT_UNKNOWN_SIZE );
+        final QueryMetaData queryMetaData = createGetBlobKeyQueryMetaData( DEFAULT_UNKNOWN_SIZE, query.getRepository() );
 
         final SearchResult searchResult = elasticsearchDao.get( queryMetaData, byParentQuery );
 
@@ -269,15 +267,15 @@ public class ElasticsearchWorkspaceService
     }
 
     @Override
-    public EntityIds getEntriesWithDiff( final CompareWorkspacesQuery workspaceDiffQuery )
+    public EntityIds getEntriesWithDiff( final CompareWorkspacesQuery query )
     {
         final TermQueryBuilder inSource =
-            new TermQueryBuilder( WorkspaceXContentBuilderFactory.WORKSPACE_FIELD_NAME, workspaceDiffQuery.getSource().getName() );
+            new TermQueryBuilder( WorkspaceXContentBuilderFactory.WORKSPACE_FIELD_NAME, query.getSource().getName() );
         final TermQueryBuilder inTarget =
-            new TermQueryBuilder( WorkspaceXContentBuilderFactory.WORKSPACE_FIELD_NAME, workspaceDiffQuery.getTarget().getName() );
+            new TermQueryBuilder( WorkspaceXContentBuilderFactory.WORKSPACE_FIELD_NAME, query.getTarget().getName() );
 
-        final long inSourceCount = elasticsearchDao.count( createGetBlobKeyQueryMetaData( 0 ), inSource );
-        final long inTargetCount = elasticsearchDao.count( createGetBlobKeyQueryMetaData( 0 ), inTarget );
+        final long inSourceCount = elasticsearchDao.count( createGetBlobKeyQueryMetaData( 0, query.getRepository() ), inSource );
+        final long inTargetCount = elasticsearchDao.count( createGetBlobKeyQueryMetaData( 0, query.getRepository() ), inTarget );
 
         final long totalCount = inSourceCount + inTargetCount;
 
@@ -293,16 +291,14 @@ public class ElasticsearchWorkspaceService
             size( (int) (long) totalCount ).
             order( Terms.Order.count( true ) );
 
-        final ElasticsearchQuery query = ElasticsearchQuery.newQuery().
+        final SearchResult searchResult = elasticsearchDao.search( ElasticsearchQuery.newQuery().
             query( inOnOfTheWorkspaces ).
             setAggregations( Sets.newHashSet( changedAggregationQuery ) ).
             size( 0 ).
             from( 0 ).
             index( WORKSPACE_INDEX.getName() ).
             indexType( IndexType.NODE ).
-            build();
-
-        final SearchResult searchResult = elasticsearchDao.search( query );
+            build() );
 
         final Aggregation changedAggregation = searchResult.getAggregations().get( changedAggregationName );
 
@@ -318,19 +314,19 @@ public class ElasticsearchWorkspaceService
     }
 
     @Override
-    public boolean hasChildren( final NodePath parent, final Workspace workspace )
+    public boolean hasChildren( final WorkspaceHasChildrenQuery query )
     {
-        final QueryMetaData queryMetaData = QueryMetaData.create( WORKSPACE_INDEX ).
-            indexType( IndexType.NODE ).
+        final QueryMetaData queryMetaData = QueryMetaData.create( StorageNameResolver.resolveStorageIndexName( query.getRepository() ) ).
+            indexTypeName( IndexType.WORKSPACE.getName() ).
             from( 0 ).
             size( 0 ).
             build();
 
         final TermQueryBuilder findWithParentQuery =
-            new TermQueryBuilder( WorkspaceXContentBuilderFactory.PARENT_PATH_FIELD_NAME, parent.toString() );
-        final BoolQueryBuilder query = joinWithWorkspaceQuery( workspace.getName(), findWithParentQuery );
+            new TermQueryBuilder( WorkspaceXContentBuilderFactory.PARENT_PATH_FIELD_NAME, query.getParent().toString() );
+        final BoolQueryBuilder joinWithWorkspaceQuery = joinWithWorkspaceQuery( query.getWorkspace().getName(), findWithParentQuery );
 
-        final long count = elasticsearchDao.count( queryMetaData, query );
+        final long count = elasticsearchDao.count( queryMetaData, joinWithWorkspaceQuery );
 
         return count > 0;
     }
@@ -351,12 +347,12 @@ public class ElasticsearchWorkspaceService
         return builder.build();
     }
 
-    private QueryMetaData createGetBlobKeyQueryMetaData( final int numberOfHits )
+    private QueryMetaData createGetBlobKeyQueryMetaData( final int numberOfHits, final Repository repository )
     {
         final SortBuilder fieldSortBuilder = new FieldSortBuilder( BUILTIN_TIMESTAMP_FIELD ).order( SortOrder.DESC );
 
-        return QueryMetaData.create( WORKSPACE_INDEX ).
-            indexType( IndexType.NODE ).
+        return QueryMetaData.create( StorageNameResolver.resolveStorageIndexName( repository ) ).
+            indexTypeName( IndexType.WORKSPACE.getName() ).
             from( 0 ).
             size( numberOfHits ).
             addField( WorkspaceXContentBuilderFactory.ENTITY_ID_FIELD_NAME ).

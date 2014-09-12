@@ -145,8 +145,8 @@ public class ElasticsearchDao
 
     public SearchResult get( final QueryMetaData queryMetaData, final QueryBuilder queryBuilder )
     {
-        final SearchRequestBuilder searchRequestBuilder = this.client.prepareSearch( queryMetaData.getIndex() ).
-            setTypes( queryMetaData.getIndexType() ).
+        final SearchRequestBuilder searchRequestBuilder = this.client.prepareSearch( queryMetaData.getIndexName() ).
+            setTypes( queryMetaData.getIndexTypeName() ).
             setQuery( queryBuilder ).
             setFrom( queryMetaData.getFrom() ).
             setSize( queryMetaData.getSize() );
@@ -170,8 +170,8 @@ public class ElasticsearchDao
 
     public SearchResult get( final QueryMetaData queryMetaData, final String id )
     {
-        final GetRequest getRequest = new GetRequest( queryMetaData.getIndex() ).
-            type( queryMetaData.getIndexType() ).
+        final GetRequest getRequest = new GetRequest( queryMetaData.getIndexName() ).
+            type( queryMetaData.getIndexTypeName() ).
             id( id );
 
         if ( queryMetaData.hasFields() )
@@ -187,8 +187,8 @@ public class ElasticsearchDao
     public long count( final QueryMetaData queryMetaData, final QueryBuilder query )
     {
         SearchRequestBuilder searchRequestBuilder = new SearchRequestBuilder( this.client ).
-            setIndices( queryMetaData.getIndex() ).
-            setTypes( queryMetaData.getIndexType() ).
+            setIndices( queryMetaData.getIndexName() ).
+            setTypes( queryMetaData.getIndexTypeName() ).
             setQuery( query ).
             setSearchType( SearchType.COUNT );
 

@@ -8,14 +8,11 @@ import org.elasticsearch.search.sort.SortBuilder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.core.index.Index;
-import com.enonic.wem.core.index.IndexType;
-
 public class QueryMetaData
 {
-    private final Index index;
+    private final String indexName;
 
-    private final IndexType indexType;
+    private final String indexTypeName;
 
     private final int from;
 
@@ -27,22 +24,22 @@ public class QueryMetaData
 
     private QueryMetaData( final Builder builder )
     {
-        this.index = builder.index;
-        this.indexType = builder.indexType;
+        this.indexName = builder.indexName;
+        this.indexTypeName = builder.indexTypeName;
         this.fields = ImmutableSet.copyOf( builder.fields );
         this.from = builder.from;
         this.size = builder.size;
         this.sortBuilders = ImmutableSet.copyOf( builder.sortBuilders );
     }
 
-    public String getIndex()
+    public String getIndexName()
     {
-        return index.getName();
+        return indexName;
     }
 
-    public String getIndexType()
+    public String getIndexTypeName()
     {
-        return indexType.getName();
+        return indexTypeName;
     }
 
     public int getFrom()
@@ -70,17 +67,16 @@ public class QueryMetaData
         return fields.toArray( new String[fields.size()] );
     }
 
-    public static Builder create( final Index index )
+    public static Builder create( final String indexName )
     {
-        return new Builder( index );
+        return new Builder( indexName );
     }
-
 
     public static class Builder
     {
-        private Index index;
+        private String indexName;
 
-        private IndexType indexType;
+        private String indexTypeName;
 
         private int from = 0;
 
@@ -90,14 +86,14 @@ public class QueryMetaData
 
         private final Set<SortBuilder> sortBuilders = Sets.newHashSet();
 
-        public Builder( final Index index )
+        public Builder( final String indexName )
         {
-            this.index = index;
+            this.indexName = indexName;
         }
 
-        public Builder indexType( final IndexType indexType )
+        public Builder indexTypeName( final String indexTypeName )
         {
-            this.indexType = indexType;
+            this.indexTypeName = indexTypeName;
             return this;
         }
 
