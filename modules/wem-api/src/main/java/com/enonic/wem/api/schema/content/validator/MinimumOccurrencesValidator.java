@@ -105,7 +105,7 @@ final class MinimumOccurrencesValidator
         final List<DataSet> dataSets = new ArrayList<>();
         for ( DataSet parentDataSet : parentDataSets )
         {
-            dataSets.addAll( parentDataSet.dataSets( name ) );
+            dataSets.addAll( parentDataSet.getDataSetsByName( name ) );
         }
         return dataSets;
     }

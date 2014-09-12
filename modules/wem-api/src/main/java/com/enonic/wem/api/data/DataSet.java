@@ -17,6 +17,7 @@ import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.data.type.ValueType;
 
+@SuppressWarnings("UnusedDeclaration")
 public class DataSet
     extends Data<DataSet>
     implements Iterable<Data>
@@ -247,7 +248,7 @@ public class DataSet
         return dataById.values().iterator();
     }
 
-    public final Iterable<String> dataNames()
+    public final Iterable<String> getDataNames()
     {
         return arrayByDataName.keySet();
     }
@@ -266,6 +267,11 @@ public class DataSet
     public final Data getData( final String path )
     {
         return getData( DataPath.from( path ) );
+    }
+
+    public final Data getData( final DataId id )
+    {
+        return doGetData( id );
     }
 
     public final Data getData( final DataPath path )
@@ -305,11 +311,11 @@ public class DataSet
         return data;
     }
 
-    public final List<Data> datas( final String dataName )
+    public final List<Data> getDataByName( final String dataName )
     {
         DataPath.Element.checkName( dataName );
-        DataArray array = arrayByDataName.get( dataName );
-        return array != null ? array.asList() : new ArrayList<Data>();
+        final DataArray array = arrayByDataName.get( dataName );
+        return array != null ? array.asList() : new ArrayList<>();
     }
 
     public boolean hasData( final String dataId )
@@ -325,7 +331,7 @@ public class DataSet
     /**
      * Returns a ImmutableList of the Data-s in this DataSet.
      */
-    public ImmutableList<Data> datas()
+    public ImmutableList<Data> getData()
     {
         final ImmutableList.Builder<Data> list = new ImmutableList.Builder<>();
 
@@ -390,6 +396,30 @@ public class DataSet
             }
         }
         return list.build();
+    }
+
+    /**
+     * Returns all DataSet's with the given name.
+     */
+    public final List<Property> getPropertiesByName( final String name )
+    {
+        DataPath.Element.checkName( name );
+
+        final DataArray array = arrayByDataName.get( name );
+
+        if ( array == null )
+        {
+            return Lists.newArrayList();
+        }
+        else if ( array instanceof PropertyArray )
+        {
+            return ( (PropertyArray) array ).asList();
+        }
+        else
+        {
+            throw new IllegalArgumentException(
+                "Data with name [" + name + "] in [" + getPath() + "] is not a Property: " + array.getClass().getSimpleName() );
+        }
     }
 
     final Value getValue( final DataPath path )
@@ -492,7 +522,7 @@ public class DataSet
     /**
      * Returns all DataSet's with the given name.
      */
-    public final List<DataSet> dataSets( final String name )
+    public final List<DataSet> getDataSetsByName( final String name )
     {
         DataPath.Element.checkName( name );
 
@@ -504,17 +534,12 @@ public class DataSet
         }
         else if ( array instanceof DataSetArray )
         {
-            final List<DataSet> list = Lists.newArrayList();
-            final DataSetArray dataSetArray = (DataSetArray) array;
-            for ( Data data : dataSetArray )
-            {
-                list.add( data.toDataSet() );
-            }
-            return list;
+            return ( (DataSetArray) array ).asList();
         }
         else
         {
-            throw new IllegalArgumentException( "Data with name [" + name + "] in [" + getPath() + "] is not a DataSet" );
+            throw new IllegalArgumentException(
+                "Data with name [" + name + "] in [" + getPath() + "] is not a DataSet: " + array.getClass().getSimpleName() );
         }
     }
 
@@ -608,7 +633,7 @@ public class DataSet
             if ( data instanceof Property )
             {
                 final Property property = (Property) data;
-                final List<Value> valuesAsList = property.getValuesAsList();
+                final List<Value> valuesAsList = property.getArray().getValues();
                 map.put( id.toString(), valuesAsList );
             }
             else if ( data instanceof DataSet )

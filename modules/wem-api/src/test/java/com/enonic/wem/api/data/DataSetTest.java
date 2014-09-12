@@ -230,7 +230,7 @@ public class DataSetTest
         dataSet.add( Property.newString( "myOtherData", "A" ) );
         dataSet.add( Property.newString( "myData", "2" ) );
 
-        Iterator<String> dataNames = dataSet.dataNames().iterator();
+        Iterator<String> dataNames = dataSet.getDataNames().iterator();
         assertEquals( "myOtherData", dataNames.next() );
         assertEquals( "myData", dataNames.next() );
         assertEquals( false, dataNames.hasNext() );
@@ -504,6 +504,24 @@ public class DataSetTest
 
         // verify
         assertEquals( 2, foundDataSets.size() );
+    }
+
+    @Test
+    public void getPropertiesByName()
+    {
+        DataSet dataSet = DataSet.newDataSet().name( "mySet" ).build();
+        dataSet.addProperty( "prop", Value.newString( "1" ) );
+        dataSet.addProperty( "prop", Value.newString( "2" ) );
+        dataSet.addProperty( "prop", Value.newString( "3" ) );
+
+        // exercise
+        List<Property> foundData = dataSet.getPropertiesByName( "prop" );
+
+        // verify
+        assertEquals( 3, foundData.size() );
+        assertEquals( "1", foundData.get( 0 ).getString() );
+        assertEquals( "2", foundData.get( 1 ).getString() );
+        assertEquals( "3", foundData.get( 2 ).getString() );
     }
 
 }

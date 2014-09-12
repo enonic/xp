@@ -4,8 +4,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import com.google.common.base.Preconditions;
@@ -122,17 +120,6 @@ public final class Property
     public boolean hasNullValue()
     {
         return this.value.isNull();
-    }
-
-    public List<Value> getValuesAsList()
-    {
-        final PropertyArray propertyArray = getArray();
-        final List<Value> values = new ArrayList<>( propertyArray.size() );
-        for ( Property property : propertyArray )
-        {
-            values.add( property.getValue() );
-        }
-        return values;
     }
 
     public Value getValue()

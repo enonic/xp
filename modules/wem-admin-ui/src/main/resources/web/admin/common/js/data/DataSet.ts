@@ -30,6 +30,18 @@ module api.data {
             this.dataArray.push(data);
         }
 
+        addProperty(name: string, value: Value): Property {
+            var property = new Property(name, value);
+            this.addData(property);
+            return property;
+        }
+
+        setProperty(dataId: DataId, value: Value): Property {
+            var existing = this.getPropertyById(dataId);
+            existing.setValue(value)
+            return existing;
+        }
+
         setData(dataArray: Data[]) {
 
             var newDataById: {[s:string] : Data;} = {};
@@ -98,7 +110,7 @@ module api.data {
         }
 
         getData(dataId: string): Data {
-            return this.getDataFromDataId(DataId.from(dataId));
+            return this.getDataById(DataId.from(dataId));
         }
 
         getDataFromDataPath(path: DataPath): Data {
@@ -107,13 +119,13 @@ module api.data {
                 return this.doForwardGetData(path);
             }
             else {
-                return this.getDataFromDataId(path.getFirstElement().toDataId());
+                return this.getDataById(path.getFirstElement().toDataId());
             }
         }
 
         private doForwardGetData(path: DataPath): Data {
 
-            var data = this.getDataFromDataId(path.getFirstElement().toDataId());
+            var data = this.getDataById(path.getFirstElement().toDataId());
             if (data == null) {
                 return null;
             }
@@ -121,7 +133,7 @@ module api.data {
             return data.toDataSet().getDataFromDataPath(path.asNewWithoutFirstPathElement());
         }
 
-        getDataFromDataId(dataId: DataId): Data {
+        getDataById(dataId: DataId): Data {
             return this.dataById[dataId.toString()];
         }
 
@@ -138,17 +150,28 @@ module api.data {
             return matches;
         }
 
-        getProperty(path: string): Property {
-            return this.getPropertyFromDataPath(DataPath.fromString(path));
+        getProperty(path: any): Property {
+            if (typeof path === 'string') {
+                return this.getPropertyByPath(DataPath.fromString(<string>path));
+            }
+            else if (api.ObjectHelper.iFrameSafeInstanceOf(path, api.data.DataPath)) {
+                return this.getPropertyByPath(<api.data.DataPath>path);
+            }
+            else if (api.ObjectHelper.iFrameSafeInstanceOf(path, api.data.DataId)) {
+                return this.getPropertyById(<api.data.DataId>path);
+            }
+            else {
+                return this.getPropertyByPath(DataPath.fromString(path.toString()));
+            }
         }
 
-        getPropertyFromDataPath(path: DataPath): Property {
+        getPropertyByPath(path: DataPath): Property {
             var data = this.getDataFromDataPath(path);
             return data ? data.toProperty() : null;
         }
 
-        getPropertyFromDataId(dataId: DataId): Property {
-            var data = this.getDataFromDataId(dataId);
+        getPropertyById(dataId: DataId): Property {
+            var data = this.getDataById(dataId);
             return data ? data.toProperty() : null;
         }
 
@@ -178,8 +201,8 @@ module api.data {
             return data.toDataSet();
         }
 
-        getDataSetFromDataId(dataId: DataId): DataSet {
-            var data = this.getDataFromDataId(dataId);
+        getDataSetById(dataId: DataId): DataSet {
+            var data = this.getDataById(dataId);
             return data ? data.toDataSet() : null;
         }
 

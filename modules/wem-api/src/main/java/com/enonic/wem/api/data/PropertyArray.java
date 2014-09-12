@@ -1,5 +1,8 @@
 package com.enonic.wem.api.data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.data.type.ValueType;
@@ -48,6 +51,16 @@ public class PropertyArray
     public static Builder newPropertyArray()
     {
         return new Builder();
+    }
+
+    public List<Value> getValues()
+    {
+        final List<Value> values = new ArrayList<>( this.size() );
+        for ( Property property : this )
+        {
+            values.add( property.getValue() );
+        }
+        return values;
     }
 
     public static class Builder

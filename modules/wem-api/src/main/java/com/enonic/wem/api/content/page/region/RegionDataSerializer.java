@@ -44,7 +44,7 @@ public class RegionDataSerializer
         region.name( asData.getProperty( NAME ).getString() );
 
         final DataSet componentsDataSet = asData.getDataSet( COMPONENTS );
-        for ( PageComponent component : componentsSerializer.fromData( componentsDataSet.datas() ) )
+        for ( PageComponent component : componentsSerializer.fromData( componentsDataSet.getData() ) )
         {
             region.add( component );
         }

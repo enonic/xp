@@ -31,7 +31,7 @@ public class FormDataSerializer
     public Form fromData( final DataSet dataSet )
     {
         final Form.Builder form = Form.newForm();
-        final FormItems formItems = formItemsDataSerializer.fromData( dataSet.datas() );
+        final FormItems formItems = formItemsDataSerializer.fromData( dataSet.getData() );
         form.addFormItems( formItems );
         return form.build();
     }
