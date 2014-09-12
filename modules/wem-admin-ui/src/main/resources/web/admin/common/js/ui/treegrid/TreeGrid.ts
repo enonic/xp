@@ -459,7 +459,14 @@ module api.ui.treegrid {
 
         updateNode(data: NODE): void {
             var root = this.stash || this.root;
-//            var node: TreeNode<NODE> = root.findNode(data);
+            var node: TreeNode<NODE> = root.findNode(data);
+            this.fetch(node)
+                .then((data: NODE) => {
+                    node.setData(data);
+                    this.gridData.updateItem(node.getId(), node);
+                }).catch((reason: any) => {
+                    api.DefaultErrorHandler.handle(reason);
+                });
         }
 
         deleteNodes(dataList: NODE[]): void {

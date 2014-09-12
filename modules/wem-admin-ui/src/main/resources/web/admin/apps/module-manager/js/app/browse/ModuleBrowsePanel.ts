@@ -88,10 +88,7 @@ module app.browse {
                 var moduleKeys: string[] = event.getModules().map<string>((mod: ModuleSummary) => {
                     return mod.getModuleKey().toString();
                 });
-                new api.module.UpdateModuleRequest(moduleKeys).sendAndParse()
-                    .then(() => {
-                        this.moduleTreeGridPanel.reload();
-                    }).done();
+                new api.module.UpdateModuleRequest(moduleKeys).sendAndParse().done();
             });
             app.browse.UninstallModuleEvent.on((event: app.browse.UninstallModuleEvent) => {
                 var moduleKeys: string[] = event.getModules().map<string>((mod: ModuleSummary) => {
@@ -110,7 +107,7 @@ module app.browse {
 
             api.module.ModuleUpdatedEvent.on((event: api.module.ModuleUpdatedEvent) => {
                 // TODO reload just the module updated
-                this.moduleTreeGridPanel.reload();
+                this.moduleTreeGridPanel.updateModuleNode(event.getModuleKey());
             })
 
         }

@@ -64,5 +64,26 @@ module app.browse {
         fetchRoot(): wemQ.Promise<ModuleSummary[]> {
             return new api.module.ListModulesRequest().sendAndParse();
         }
+
+        fetch(parentNode: TreeNode<ModuleSummary>): wemQ.Promise<api.module.Module> {
+
+            var parentId = parentNode.getData().getModuleKey();
+            var deferred = wemQ.defer<api.module.Module>();
+            new api.module.GetModuleRequest(parentId).sendAndParse().then((modulee: api.module.Module)=> {
+                deferred.resolve(modulee);
+            });
+
+            return deferred.promise;
+        }
+
+        updateModuleNode(moduleKey : api.module.ModuleKey) {
+            var root = this.getRoot();
+            root.getChildren().forEach((child: TreeNode<ModuleSummary>) => {
+                var moduleSummary : ModuleSummary = child.getData();
+                if(moduleSummary.getModuleKey().toString() == moduleKey.toString()) {
+                   this.updateNode(moduleSummary);
+                }
+            });
+        }
     }
 }
