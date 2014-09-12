@@ -14,8 +14,6 @@ module app.browse {
         
         private moduleIconUrl: string;
 
-        private flag : boolean;
-
         constructor() {
             var treeGridContextMenu = new app.browse.ModuleTreeGridContextMenu();
             this.moduleTreeGridPanel = new ModuleTreeGrid(); // TODO add contextMenu
