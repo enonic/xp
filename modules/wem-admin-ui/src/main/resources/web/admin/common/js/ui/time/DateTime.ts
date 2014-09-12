@@ -7,7 +7,7 @@ module api.ui.time {
         private datePicker: api.ui.time.DatePicker;
 
         constructor(dateBuilder?: api.ui.time.DatePickerBuilder, timeBuilder?: api.ui.time.TimePickerBuilder) {
-            super("date-picker");
+            super("date-time-picker");
 
             if (!dateBuilder) {
                 dateBuilder = new api.ui.time.DatePickerBuilder()
