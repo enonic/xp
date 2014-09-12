@@ -12,7 +12,7 @@ module app.view {
         private versionsPanel: ContentItemVersionsPanel;
 
         constructor() {
-            super();
+            super("content-item-statistics-panel");
 
             this.previewPanel = new ContentItemPreviewPanel();
             this.addNavigablePanel(new TabMenuItemBuilder().setLabel("Preview").build(), this.previewPanel, true);

@@ -6,9 +6,8 @@ module api.app.view {
 
         private deckPanel: api.ui.panel.NavigatedDeckPanel;
 
-        constructor() {
-            super();
-            this.addClass("item-statistics-panel");
+        constructor(className?: string) {
+            super(className);
 
             this.tabMenu = new api.ui.tab.TabMenu();
             this.tabMenu.hide();

@@ -7,8 +7,7 @@ module app.view {
         private moduleDataContainer:api.dom.DivEl;
 
         constructor() {
-            super();
-            this.addClass("module-item-statistics-panel");
+            super("module-item-statistics-panel");
 
             this.upgradeMessageContainer = new api.dom.DivEl("upgrade-message-container");
             if (this.upgradeNeeded) {

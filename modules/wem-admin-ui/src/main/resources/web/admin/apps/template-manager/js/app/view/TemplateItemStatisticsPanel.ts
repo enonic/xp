@@ -5,7 +5,7 @@ module app.view {
         private previewPanel: TemplateItemPreviewPanel;
 
         constructor() {
-            super();
+            super("template-item-statistics-panel");
 
             this.previewPanel = new TemplateItemPreviewPanel();
             this.addNavigablePanel(new api.ui.tab.TabMenuItemBuilder().setLabel("Preview").build(), this.previewPanel);

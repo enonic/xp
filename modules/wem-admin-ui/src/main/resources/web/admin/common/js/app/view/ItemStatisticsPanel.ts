@@ -6,9 +6,8 @@ module api.app.view {
 
         private header: ItemStatisticsHeader<M>;
 
-        constructor() {
-            super();
-            this.addClass("item-statistics-panel");
+        constructor(className?: string) {
+            super("item-statistics-panel" + (className ? " " + className : ""));
 
             this.header = new ItemStatisticsHeader<M>();
             this.appendChild(this.header);
