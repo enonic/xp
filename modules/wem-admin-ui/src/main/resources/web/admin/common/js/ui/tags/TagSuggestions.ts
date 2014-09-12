@@ -7,7 +7,7 @@ module api.ui.tags {
         private selectedListeners: {(value: string) : void}[] = [];
 
         constructor() {
-            super('suggestions');
+            super('tag-suggestions');
 
             this.onMouseMove((event: MouseEvent) => {
                 // don't wrap element in ElementHelper because mousemove event is generated very frequently
