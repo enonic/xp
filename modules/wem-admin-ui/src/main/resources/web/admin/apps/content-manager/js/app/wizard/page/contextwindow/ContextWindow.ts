@@ -67,7 +67,7 @@ module app.wizard.page.contextwindow {
             this.splitter = new api.dom.DivEl("splitter");
 
             this.insertablesPanel.onHideContextWindowRequest(() => {
-                this.hide();
+                this.slideOut();
             });
 
             ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
