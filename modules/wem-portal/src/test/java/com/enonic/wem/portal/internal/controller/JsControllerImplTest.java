@@ -1,57 +1,25 @@
 package com.enonic.wem.portal.internal.controller;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.api.resource.ResourceUrlTestHelper;
-import com.enonic.wem.portal.PortalResponse;
-import com.enonic.wem.portal.internal.postprocess.PostProcessor;
-import com.enonic.wem.script.internal.ScriptEnvironment;
-import com.enonic.wem.script.internal.ScriptServiceImpl;
+import com.enonic.wem.api.blob.BlobKey;
+import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.page.Page;
+import com.enonic.wem.api.content.page.PageTemplateKey;
+import com.enonic.wem.api.content.thumb.Thumbnail;
 
 import static org.junit.Assert.*;
 
 public class JsControllerImplTest
+    extends AbstractControllerTest
 {
-    private JsController controller;
-
-    private PostProcessor postProcessor;
-
-    private JsContext context;
-
-    private JsHttpRequest request;
-
-    private PortalResponse response;
-
-    @Before
-    public void setup()
-        throws Exception
-    {
-        ResourceUrlTestHelper.mockModuleScheme().modulesClassLoader( getClass().getClassLoader() );
-
-        this.context = new JsContext();
-        this.response = this.context.getResponse();
-
-        final ScriptEnvironment environment = Mockito.mock( ScriptEnvironment.class );
-        final JsControllerFactoryImpl factory = new JsControllerFactoryImpl();
-        factory.scriptService = new ScriptServiceImpl( environment );
-        factory.postProcessor = this.postProcessor = Mockito.mock( PostProcessor.class );
-
-        final ResourceKey scriptDir = ResourceKey.from( "mymodule-1.0.0:/service/test" );
-        this.controller = factory.newController( scriptDir );
-
-        this.request = new JsHttpRequest();
-        this.context.setRequest( this.request );
-    }
-
     @Test
     public void testExecute()
     {
         this.request.setMethod( "GET" );
-        this.controller.execute( this.context );
-
+        execute( "mymodule-1.0.0:/service/test" );
         assertEquals( JsHttpResponse.STATUS_OK, this.response.getStatus() );
     }
 
@@ -60,7 +28,8 @@ public class JsControllerImplTest
     {
         this.request.setMethod( "GET" );
         this.response.setPostProcess( true );
-        this.controller.execute( this.context );
+
+        execute( "mymodule-1.0.0:/service/test" );
 
         assertEquals( JsHttpResponse.STATUS_OK, this.response.getStatus() );
         Mockito.verify( this.postProcessor ).processResponse( this.context );
@@ -70,7 +39,23 @@ public class JsControllerImplTest
     public void testMethodNotSupported()
     {
         this.request.setMethod( "POST" );
-        this.controller.execute( this.context );
+        execute( "mymodule-1.0.0:/service/test" );
         assertEquals( JsHttpResponse.STATUS_METHOD_NOT_ALLOWED, this.response.getStatus() );
+    }
+
+    @Test
+    public void testGetterAccess()
+    {
+        final Page page = Page.newPage().template( PageTemplateKey.from( "mymodule|mypagetemplate" ) ).build();
+        final Thumbnail thumbnail = Thumbnail.from( new BlobKey( "1234" ), "image/jpg", 1000 );
+
+        final Content content =
+            Content.newContent().name( "test" ).parentPath( ContentPath.ROOT ).page( page ).thumbnail( thumbnail ).build();
+        this.context.setContent( content );
+
+        this.request.setMethod( "GET" );
+        execute( "mymodule-1.0.0:/service/getters" );
+        assertEquals( JsHttpResponse.STATUS_OK, this.response.getStatus() );
+        assertEquals( "GET,test,mymodule|mypagetemplate,1000", this.response.getBody() );
     }
 }

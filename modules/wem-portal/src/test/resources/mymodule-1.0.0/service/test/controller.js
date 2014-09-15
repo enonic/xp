@@ -1,3 +1,2 @@
-
-exports.get = function() {
+exports.get = function (context) {
 };
