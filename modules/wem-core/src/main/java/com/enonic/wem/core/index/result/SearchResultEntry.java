@@ -1,4 +1,4 @@
-package com.enonic.wem.core.elasticsearch.result;
+package com.enonic.wem.core.index.result;
 
 import java.util.Map;
 

@@ -1,8 +1,8 @@
 package com.enonic.wem.core.elasticsearch.query.builder.function
 
 import com.enonic.wem.api.query.expr.ValueExpr
-import com.enonic.wem.core.index.function.FulltextFunctionArguments
-import com.enonic.wem.core.index.function.FunctionQueryBuilderException
+import com.enonic.wem.core.elasticsearch.function.FulltextFunctionArguments
+import com.enonic.wem.core.elasticsearch.function.FunctionQueryBuilderException
 import org.elasticsearch.index.query.SimpleQueryStringBuilder
 import spock.lang.Specification
 

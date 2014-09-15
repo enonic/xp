@@ -1,8 +1,8 @@
 package com.enonic.wem.core.elasticsearch.query.builder.function
 
 import com.enonic.wem.api.query.expr.ValueExpr
-import com.enonic.wem.core.index.function.FunctionQueryBuilderException
-import com.enonic.wem.core.index.function.GeoDistanceSortFunctionArguments
+import com.enonic.wem.core.elasticsearch.function.FunctionQueryBuilderException
+import com.enonic.wem.core.elasticsearch.function.GeoDistanceSortFunctionArguments
 import spock.lang.Specification
 
 class GeoDistanceSortFunctionArgumentsTest

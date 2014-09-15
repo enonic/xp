@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.wem.core.elasticsearch.query.ElasticsearchQuery;
-import com.enonic.wem.core.elasticsearch.result.SearchResult;
+import com.enonic.wem.core.index.result.SearchResult;
 import com.enonic.wem.core.elasticsearch.result.SearchResultFactory;
 import com.enonic.wem.core.index.DeleteDocument;
 import com.enonic.wem.core.index.IndexException;

@@ -6,8 +6,8 @@ import org.elasticsearch.search.sort.SortOrder;
 
 import com.enonic.wem.api.query.expr.DynamicOrderExpr;
 import com.enonic.wem.api.query.expr.FunctionExpr;
-import com.enonic.wem.core.index.function.FunctionQueryBuilderException;
-import com.enonic.wem.core.index.function.GeoDistanceSortFunctionArguments;
+import com.enonic.wem.core.elasticsearch.function.FunctionQueryBuilderException;
+import com.enonic.wem.core.elasticsearch.function.GeoDistanceSortFunctionArguments;
 import com.enonic.wem.core.index.query.IndexQueryFieldNameResolver;
 
 public class DynamicSortBuilderFactory

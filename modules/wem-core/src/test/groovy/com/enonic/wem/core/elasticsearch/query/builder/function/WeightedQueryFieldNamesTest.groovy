@@ -1,7 +1,7 @@
 package com.enonic.wem.core.elasticsearch.query.builder.function
 
-import com.enonic.wem.core.index.function.WeightedQueryFieldName
-import com.enonic.wem.core.index.function.WeightedQueryFieldNames
+import com.enonic.wem.core.elasticsearch.function.WeightedQueryFieldName
+import com.enonic.wem.core.elasticsearch.function.WeightedQueryFieldNames
 import com.google.common.collect.ImmutableList
 import spock.lang.Specification
 import spock.lang.Unroll

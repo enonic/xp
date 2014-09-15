@@ -4,6 +4,9 @@ import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 
+import com.enonic.wem.core.index.result.SearchResultEntries;
+import com.enonic.wem.core.index.result.SearchResultEntry;
+
 public class SearchResultEntriesFactory
 {
     public static SearchResultEntries create( final SearchHits searchHits )

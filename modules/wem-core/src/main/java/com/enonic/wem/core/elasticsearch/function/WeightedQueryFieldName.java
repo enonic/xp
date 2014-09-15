@@ -1,4 +1,4 @@
-package com.enonic.wem.core.index.function;
+package com.enonic.wem.core.elasticsearch.function;
 
 import com.google.common.base.Strings;
 

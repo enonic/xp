@@ -16,8 +16,6 @@ import com.enonic.wem.core.initializer.InitializerModule;
 import com.enonic.wem.core.module.ModuleModule;
 import com.enonic.wem.core.relationship.RelationshipModule;
 import com.enonic.wem.core.schema.SchemaModule;
-import com.enonic.wem.core.version.VersionModule;
-import com.enonic.wem.core.workspace.WorkspaceModule;
 
 public final class CoreModule
     extends AbstractModule
@@ -38,8 +36,6 @@ public final class CoreModule
         install( new IndexModule() );
         install( new ModuleModule() );
         install( new ImageModule() );
-        install( new WorkspaceModule() );
-        install( new VersionModule() );
         install( new EventModule() );
     }
 }

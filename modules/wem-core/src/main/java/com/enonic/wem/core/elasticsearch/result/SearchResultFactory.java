@@ -4,6 +4,7 @@ import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.search.SearchResponse;
 
 import com.enonic.wem.core.elasticsearch.aggregation.AggregationsFactory;
+import com.enonic.wem.core.index.result.SearchResult;
 
 public class SearchResultFactory
 {

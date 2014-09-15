@@ -7,9 +7,9 @@ import org.elasticsearch.index.query.SimpleQueryStringBuilder;
 import com.google.common.base.Strings;
 
 import com.enonic.wem.api.query.expr.FunctionExpr;
-import com.enonic.wem.core.index.function.FulltextFunctionArguments;
-import com.enonic.wem.core.index.function.NGramFunctionArguments;
-import com.enonic.wem.core.index.function.WeightedQueryFieldName;
+import com.enonic.wem.core.elasticsearch.function.FulltextFunctionArguments;
+import com.enonic.wem.core.elasticsearch.function.NGramFunctionArguments;
+import com.enonic.wem.core.elasticsearch.function.WeightedQueryFieldName;
 
 public class FunctionQueryBuilderFactory
 {

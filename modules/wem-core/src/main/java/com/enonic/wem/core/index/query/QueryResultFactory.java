@@ -1,8 +1,8 @@
 package com.enonic.wem.core.index.query;
 
-import com.enonic.wem.core.elasticsearch.result.SearchResult;
-import com.enonic.wem.core.elasticsearch.result.SearchResultEntries;
-import com.enonic.wem.core.elasticsearch.result.SearchResultEntry;
+import com.enonic.wem.core.index.result.SearchResult;
+import com.enonic.wem.core.index.result.SearchResultEntries;
+import com.enonic.wem.core.index.result.SearchResultEntry;
 
 public class QueryResultFactory
 {
