@@ -5,12 +5,12 @@ describe("api.data.type.LocalTimeValueType", function () {
 
     describe("when isValid", function () {
 
-        it("given a time as string then true is returned", function () {
-            expect(ValueTypes.LOCAL_TIME.isValid("10:43")).toBe(true);
+        it("given a time as 'api.util.LocalTime' then true is returned", function () {
+            expect(ValueTypes.LOCAL_TIME.isValid(new api.util.LocalTime.fromString("10:20"))).toBe(true);
         });
 
-        it("given a time as string and wrong format then false is returned", function () {
-            expect(ValueTypes.LOCAL_TIME.isValid("1:43")).toBe(false);
+        it("given a time as string then false is returned", function () {
+            expect(ValueTypes.LOCAL_TIME.isValid("2000-01-01")).toBe(false);
         });
 
         it("given a letter as string then false is returned", function () {
@@ -25,11 +25,11 @@ describe("api.data.type.LocalTimeValueType", function () {
     describe("when isConvertible", function () {
 
         it("given a time as string then true is returned", function () {
-            expect(ValueTypes.LOCAL_TIME.isConvertible("12:43")).toBeTruthy();
+            expect(ValueTypes.LOCAL_TIME.isConvertible("07:00")).toBeTruthy();
         });
 
-        it("given a time as string and wrong delimiter then false is returned", function () {
-            expect(ValueTypes.LOCAL_TIME.isConvertible("12-43")).toBeFalsy();
+        it("given a partly date as string then true is returned", function () {
+            expect(ValueTypes.LOCAL_TIME.isConvertible("09-01")).toBeFalsy();
         });
 
         it("given a letter as string then false is returned", function () {
@@ -47,33 +47,35 @@ describe("api.data.type.LocalTimeValueType", function () {
 
     describe("when newValue", function () {
 
-        it("given time 11:11 as string then a new Value with that time is returned", function () {
-            var actual = ValueTypes.LOCAL_TIME.newValue("11:11");
-            var expected = new Value("11:11", ValueTypes.LOCAL_TIME);
+        it("given time string '20:00' then a new Value with that date is returned", function () {
+            var actual = ValueTypes.LOCAL_TIME.newValue("20:00");
+            var expected = new Value(new api.util.LocalTime.fromString("20:00"), ValueTypes.LOCAL_TIME);
             expect(actual).toEqual(expected);
         });
 
-        it("given invalid time string 12-12 then a null is returned", function () {
-            expect(ValueTypes.LOCAL_TIME.newValue("12-12")).toBeNull();
+        it("given invalid time string '20,01' then a null is returned", function () {
+            expect(ValueTypes.LOCAL_TIME.newValue("20,01")).toEqual(new Value(null, ValueTypes.LOCAL_TIME));
         });
 
         it("given an empty string then a null is returned", function () {
-            expect(ValueTypes.LOCAL_TIME.newValue("")).toBeNull();
+            expect(ValueTypes.LOCAL_TIME.newValue("")).toEqual(new Value(null, ValueTypes.LOCAL_TIME));
         });
     });
 
     describe("when toJsonValue", function () {
 
-        it("given time 20:00 as string then an equal time string is returned", function () {
-            expect(ValueTypes.LOCAL_TIME.toJsonValue(ValueTypes.LOCAL_TIME.newValue("20:00"))).toEqual("20:00");
+        it("given a time '12:08' as string then an equal time string is returned", function () {
+            expect(ValueTypes.LOCAL_TIME.toJsonValue(ValueTypes.LOCAL_TIME.newValue("12:08"))).toEqual("12:08");
         });
 
-        it("given date 20:00 then an equal time string is returned", function () {
-            expect(ValueTypes.LOCAL_TIME.toJsonValue(new Value("20:00", ValueTypes.LOCAL_TIME))).toEqual("20:00");
+        it("given a time '16:20' then an equal time string is returned", function () {
+            var newValue = new Value(new api.util.LocalTime.fromString("16:20"), ValueTypes.LOCAL_TIME);
+            expect(ValueTypes.LOCAL_TIME.toJsonValue(newValue)).toEqual("16:20");
         });
 
-        it("given date 04:00 then an equal time string is returned", function () {
-            expect(ValueTypes.LOCAL_TIME.toJsonValue(new Value("04:00", ValueTypes.LOCAL_TIME))).toEqual("04:00");
+        it("given a time '22:22' then an equal time string is returned", function () {
+            var newValue = new Value(new api.util.LocalTime.fromString("22:22"), ValueTypes.LOCAL_TIME);
+            expect(ValueTypes.LOCAL_TIME.toJsonValue(newValue)).toEqual("22:22");
         });
     });
 

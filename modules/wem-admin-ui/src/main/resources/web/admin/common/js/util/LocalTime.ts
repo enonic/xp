@@ -37,12 +37,15 @@ module api.util {
 
         toString(): string {
             if (this.seconds) {
-
-                return "" + this.hours + ":" + this.minutes + ":" + this.seconds;
+                return this.padNumber(this.hours) + ":" + this.padNumber(this.minutes) + ":" + this.padNumber(this.seconds);
             }
             else {
-                return "" + this.hours + ":" + this.minutes;
+                return this.padNumber(this.hours) + ":" + this.padNumber(this.minutes);
             }
+        }
+
+        private  padNumber(num: number): string {
+            return (num < 10 ? '0' : '') + num;
         }
 
         static isValidString(s: string): boolean {

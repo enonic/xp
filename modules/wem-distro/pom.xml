@@ -45,8 +45,13 @@
     </dependency>
     <dependency>
       <groupId>org.apache.aries.proxy</groupId>
+      <artifactId>org.apache.aries.proxy.api</artifactId>
+      <version>1.0.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.aries.proxy</groupId>
       <artifactId>org.apache.aries.proxy.impl</artifactId>
-      <version>1.0.3-SNAPSHOT</version>
+      <version>1.0.3</version>
     </dependency>
   </dependencies>
 
@@ -91,7 +96,11 @@
             </goals>
             <configuration>
               <outputDirectory>target/assembly/system</outputDirectory>
-              <includeArtifactIds>asm-all,org.apache.aries.proxy.impl</includeArtifactIds>
+              <includeArtifactIds>
+                asm-all,
+                org.apache.aries.proxy.api,
+                org.apache.aries.proxy.impl
+              </includeArtifactIds>
               <useRepositoryLayout>true</useRepositoryLayout>
             </configuration>
           </execution>
