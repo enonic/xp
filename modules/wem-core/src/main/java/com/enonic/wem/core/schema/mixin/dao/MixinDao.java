@@ -6,13 +6,7 @@ import com.enonic.wem.api.schema.mixin.Mixins;
 
 public interface MixinDao
 {
-    Mixin createMixin( Mixin mixin );
-
-    void updateMixin( Mixin mixin );
-
     Mixins getAllMixins();
 
     Mixin.Builder getMixin( MixinName mixinName );
-
-    boolean deleteMixin( MixinName mixinName );
 }

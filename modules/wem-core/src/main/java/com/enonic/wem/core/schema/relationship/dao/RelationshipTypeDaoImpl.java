@@ -1,64 +1,16 @@
 package com.enonic.wem.core.schema.relationship.dao;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.time.Instant;
-import java.util.List;
-
 import javax.inject.Inject;
 
-import org.apache.commons.io.FileUtils;
-
-import com.google.common.base.Charsets;
-import com.google.common.collect.Lists;
-
-import com.enonic.wem.api.Icon;
-import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.api.schema.SchemaRegistry;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
-import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
-import com.enonic.wem.api.schema.relationship.RelationshipTypeXml;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
-import com.enonic.wem.api.xml.XmlSerializers;
-import com.enonic.wem.core.config.SystemConfig;
-import com.enonic.wem.core.support.dao.IconDao;
-
-import static java.nio.file.Files.getLastModifiedTime;
-import static java.nio.file.Files.isDirectory;
-import static java.nio.file.Files.isRegularFile;
-import static java.nio.file.Files.readAttributes;
 
 public final class RelationshipTypeDaoImpl
     implements RelationshipTypeDao
 {
-    private static final String RELATIONSHIP_TYPE_XML = "relationship-type.xml";
-
-    private Path basePath;
-
     private SchemaRegistry schemaRegistry;
-
-    @Override
-    public RelationshipType createRelationshipType( final RelationshipType relationshipType )
-    {
-        final Path relationshipPath = pathForRelationshipType( relationshipType.getName() );
-
-        writeRelationshipTypeXml( relationshipType, relationshipPath );
-        new IconDao().writeIcon( relationshipType.getIcon(), relationshipPath );
-
-        return relationshipType;
-    }
-
-    @Override
-    public void updateRelationshipType( final RelationshipType relationshipType )
-    {
-        final Path relationshipPath = pathForRelationshipType( relationshipType.getName() );
-
-        writeRelationshipTypeXml( relationshipType, relationshipPath );
-        new IconDao().writeIcon( relationshipType.getIcon(), relationshipPath );
-    }
 
     @Override
     public RelationshipTypes getAllRelationshipTypes()
@@ -70,124 +22,6 @@ public final class RelationshipTypeDaoImpl
     public RelationshipType.Builder getRelationshipType( final RelationshipTypeName relationshipTypeName )
     {
         return RelationshipType.newRelationshipType( this.schemaRegistry.getRelationshipType( relationshipTypeName ) );
-    }
-
-    @Override
-    public boolean deleteRelationshipType( final RelationshipTypeName relationshipTypeName )
-    {
-        final Path relationshipPath = pathForRelationshipType( relationshipTypeName );
-        final boolean relationTypeDirExists =
-            isDirectory( relationshipPath ) && isRegularFile( relationshipPath.resolve( RELATIONSHIP_TYPE_XML ) );
-        if ( relationTypeDirExists )
-        {
-            try
-            {
-                FileUtils.deleteDirectory( relationshipPath.toFile() );
-                return true;
-            }
-            catch ( IOException e )
-            {
-                throw new SystemException( e, "Could not delete relationship type [{0}]", relationshipTypeName );
-            }
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    @Override
-    public RelationshipTypeNames exists( final RelationshipTypeNames relationshipTypeNames )
-    {
-        final List<RelationshipTypeName> existingList = Lists.newArrayList();
-        for ( RelationshipTypeName name : relationshipTypeNames )
-        {
-            if ( relationshipTypeExists( name ) )
-            {
-                existingList.add( name );
-            }
-        }
-        return RelationshipTypeNames.from( existingList );
-    }
-
-    private boolean relationshipTypeExists( final RelationshipTypeName relationshipType )
-    {
-        final Path relationshipPath = pathForRelationshipType( relationshipType );
-        return isDirectory( relationshipPath ) &&
-            isRegularFile( relationshipPath.resolve( relationshipPath.resolve( RELATIONSHIP_TYPE_XML ) ) );
-    }
-
-    private RelationshipType.Builder readRelationshipType( final Path relationshipPath )
-    {
-        final boolean isRelationshipDir =
-            isDirectory( relationshipPath ) && isRegularFile( relationshipPath.resolve( RELATIONSHIP_TYPE_XML ) );
-        if ( isRelationshipDir )
-        {
-            final RelationshipType.Builder relationshipType = readRelationshipTypeXml( relationshipPath );
-            final Icon icon = new IconDao().readIcon( relationshipPath );
-            relationshipType.icon( icon );
-            return relationshipType;
-        }
-        return null;
-    }
-
-    private void writeRelationshipTypeXml( final RelationshipType relationshipType, final Path relationshipPath )
-    {
-        final RelationshipTypeXml relationshipTypeXml = new RelationshipTypeXml();
-        relationshipTypeXml.from( relationshipType );
-        final String serializedRelationshipType = XmlSerializers.relationshipType().serialize( relationshipTypeXml );
-
-        final Path xmlFile = relationshipPath.resolve( RELATIONSHIP_TYPE_XML );
-
-        try
-        {
-            Files.createDirectories( relationshipPath );
-            Files.write( xmlFile, serializedRelationshipType.getBytes( Charsets.UTF_8 ) );
-        }
-        catch ( IOException e )
-        {
-            throw new SystemException( e, "Could not store relationship type [{0}]", relationshipType.getName() );
-        }
-    }
-
-    private RelationshipType.Builder readRelationshipTypeXml( final Path relationshipPath )
-    {
-        final Path xmlFile = relationshipPath.resolve( RELATIONSHIP_TYPE_XML );
-        try
-        {
-            final String serializedRelationshipType = new String( Files.readAllBytes( xmlFile ), Charsets.UTF_8 );
-            final String relationshipTypeName = relationshipPath.getFileName().toString();
-
-            final RelationshipType.Builder builder = RelationshipType.newRelationshipType().name( relationshipTypeName );
-            XmlSerializers.relationshipType().parse( serializedRelationshipType ).to( builder );
-
-            // XXX remove conversion to JODA Instant and use Java 8 Instant, call toInstant() instead of toMillis()
-            final Instant modifiedTime = Instant.ofEpochMilli( getLastModifiedTime( xmlFile ).toMillis() );
-            builder.modifiedTime( modifiedTime );
-
-            final BasicFileAttributes basicAttr = readAttributes( xmlFile, BasicFileAttributes.class );
-            final Instant createdTime = Instant.ofEpochMilli( basicAttr.creationTime().toMillis() );
-            builder.createdTime( createdTime );
-
-            return builder;
-        }
-        catch ( IOException e )
-        {
-            throw new SystemException( e, "Could not read relationship type [{0}]", relationshipPath.getFileName() );
-        }
-    }
-
-    private Path pathForRelationshipType( final RelationshipTypeName relationshipTypeName )
-    {
-        return this.basePath.resolve( relationshipTypeName.toString() );
-    }
-
-    @Inject
-    public void setSystemConfig( final SystemConfig systemConfig )
-        throws IOException
-    {
-        this.basePath = systemConfig.getRelationshiptTypesDir();
-        Files.createDirectories( this.basePath );
     }
 
     @Inject

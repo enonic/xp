@@ -28,7 +28,7 @@
   <xsd:element name="page-template" type="pageTemplate"/>
 
   <!-- Content type element -->
-  <xsd:element name="content-type" type="contentType"/>
+  <xsd:element name="type" type="contentType"/>
 
   <!-- Mixin type element -->
   <xsd:element name="mixin" type="mixin"/>
@@ -178,7 +178,7 @@
     <xsd:all>
       <xsd:element name="display-name" type="xsd:string" minOccurs="0" maxOccurs="1"/>
       <xsd:element name="descriptor" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="config" type="xsd:anyType"  minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="config" type="xsd:anyType" minOccurs="0" maxOccurs="1"/>
       <xsd:element name="can-render" type="canRenderDescriptor" minOccurs="0" maxOccurs="1"/>
       <xsd:element name="regions" type="pageRegions" minOccurs="0" maxOccurs="1"/>
     </xsd:all>

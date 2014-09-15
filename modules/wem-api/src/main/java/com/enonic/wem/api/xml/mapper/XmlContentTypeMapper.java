@@ -18,7 +18,7 @@ public final class XmlContentTypeMapper
         result.setIsFinal( object.isFinal() );
         result.setIsBuiltIn( object.isBuiltIn() );
         result.setAllowChildContent( object.allowChildContent() );
-        result.setForm( XmlFormMapper.toXml( object.form() ) );
+        result.setForm( XmlFormMapper.toItemsXml( object.form().getFormItems() ) );
         return result;
     }
 

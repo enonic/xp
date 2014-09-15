@@ -3,9 +3,7 @@ package com.enonic.wem.api.content.page.text;
 
 import com.enonic.wem.api.content.page.AbstractPageComponent;
 import com.enonic.wem.api.content.page.ComponentName;
-import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.PageComponentType;
-import com.enonic.wem.api.data.RootDataSet;
 
 public class TextComponent
     extends AbstractPageComponent

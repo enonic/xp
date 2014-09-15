@@ -1,7 +1,5 @@
 package com.enonic.wem.api.entity;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.wem.api.data.RootDataSet;
 
 public class CreateNodeParams

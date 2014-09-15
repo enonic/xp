@@ -11,7 +11,6 @@ import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.data.ContentData;
-import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 

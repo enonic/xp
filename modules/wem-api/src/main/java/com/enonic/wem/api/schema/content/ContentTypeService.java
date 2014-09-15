@@ -14,11 +14,5 @@ public interface ContentTypeService
 
     ContentTypes getChildren( GetChildContentTypesParams params );
 
-    ContentType create( CreateContentTypeParams params );
-
-    UpdateContentTypeResult update( UpdateContentTypeParams params );
-
-    DeleteContentTypeResult delete( DeleteContentTypeParams params );
-
     ContentTypeValidationResult validate( ValidateContentTypeParams params );
 }

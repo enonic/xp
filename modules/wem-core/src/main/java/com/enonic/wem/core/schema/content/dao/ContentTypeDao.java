@@ -6,13 +6,7 @@ import com.enonic.wem.api.schema.content.ContentTypes;
 
 public interface ContentTypeDao
 {
-    ContentType createContentType( ContentType contentType );
-
-    void updateContentType( ContentType contentType );
-
     ContentTypes getAllContentTypes();
 
     ContentType.Builder getContentType( ContentTypeName contentTypeName );
-
-    boolean deleteContentType( ContentTypeName contentTypeName );
 }

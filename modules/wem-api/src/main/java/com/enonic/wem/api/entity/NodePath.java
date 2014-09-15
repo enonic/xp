@@ -71,7 +71,7 @@ public class NodePath
 
     public Element getElement( int index )
     {
-        return (Element) super.getElement( index );
+        return super.getElement( index );
     }
 
     public List<NodePath> getParentPaths()

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<content-type>
+<type>
   <display-name>All the Base Types</display-name>
   <description>description</description>
   <content-display-name-script>$('firstName') + ' ' + $('lastName')</content-display-name-script>
@@ -8,7 +8,7 @@
   <is-final>true</is-final>
   <is-built-in>false</is-built-in>
   <allow-child-content>true</allow-child-content>
-  <form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="form">
+  <form>
     <form-item-set name="mySet">
       <immutable>false</immutable>
       <occurrences minimum="0" maximum="1"/>
@@ -26,4 +26,4 @@
       </items>
     </form-item-set>
   </form>
-</content-type>
+</type>

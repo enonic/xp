@@ -4,9 +4,6 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
-import javax.ws.rs.core.MediaType;
-
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -22,10 +19,8 @@ import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.api.schema.content.CreateContentTypeParams;
 import com.enonic.wem.api.schema.content.GetAllContentTypesParams;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
-import com.enonic.wem.api.schema.content.UpdateContentTypeParams;
 
 import static com.enonic.wem.api.form.FieldSet.newFieldSet;
 import static com.enonic.wem.api.form.FormItemSet.newFormItemSet;
@@ -218,95 +213,4 @@ public class ContentTypeResourceTest
         // verify
         assertJson( "ContentTypeResourceTest-list_one_contentType_with_only_one_input-result.json", jsonString );
     }
-
-    @Test
-    public void test_create_new_content_type()
-        throws Exception
-    {
-        Mockito.when( contentTypeService.getByName( Mockito.any( GetContentTypeParams.class ) ) ).thenReturn( null );
-        ContentType createdContentType = ContentType.newContentType().
-            name( "mymodule-1.0.0:htmlarea" ).
-            icon( Icon.from( new byte[]{123}, "image/gif", SOME_DATE ) ).
-            superType( ContentTypeName.structured() ).
-            build();
-        Mockito.when( contentTypeService.create( Mockito.any( CreateContentTypeParams.class ) ) ).thenReturn( createdContentType );
-
-        String jsonString = request().path( "schema/content/create" ).entity( readFromFile( "create_content_type.json" ),
-                                                                              MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
-        assertJson( "create_content_type_result.json", jsonString );
-    }
-
-    @Test
-    @Ignore
-    public void test_create_existing_content_type()
-        throws Exception
-    {
-        Mockito.when( contentTypeService.getByName( Mockito.any( GetContentTypeParams.class ) ) ).thenReturn( ContentType.newContentType().
-            name( "mymodule-1.0.0:htmlarea" ).
-            icon( Icon.from( new byte[]{123}, "image/gif", SOME_DATE ) ).
-            build() );
-        String resultJson = request().path( "schema/content/create" ).entity( readFromFile( "create_content_type.json" ),
-                                                                              MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
-        assertJson( "create_existing_content_type_result.json", resultJson );
-    }
-
-    @Test
-    @Ignore
-    public void test_create_content_type_with_broken_xml_config()
-        throws Exception
-    {
-        String result = request().path( "schema/content/create" ).entity( readFromFile( "broken_xml_content_type.json" ),
-                                                                          MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
-        assertJson( "create_content_type_with_broken_xml.json", result );
-    }
-
-    @Test
-    public void test_fail_to_create_new_content_type()
-        throws Exception
-    {
-        Mockito.when( contentTypeService.getByName( Mockito.any( GetContentTypeParams.class ) ) ).thenReturn( null );
-        Mockito.when( contentTypeService.create( Mockito.any( CreateContentTypeParams.class ) ) ).thenThrow(
-            new RuntimeException( "name cannot be null" ) );
-        String result = request().path( "schema/content/create" ).entity( readFromFile( "create_content_type.json" ),
-                                                                          MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
-        assertJson( "fail_to_create_new_content_type.json", result );
-    }
-
-    @Test
-    public void test_update_content_type()
-        throws Exception
-    {
-        ContentType contentType = ContentType.newContentType().
-            name( "mymodule-1.0.0:htmlarea" ).
-            superType( ContentTypeName.structured() ).
-            icon( Icon.from( new byte[]{123}, "image/gif", SOME_DATE ) ).
-            build();
-        Mockito.when( contentTypeService.getByName( Mockito.any( GetContentTypeParams.class ) ) ).thenReturn( contentType );
-        String jsonString = request().path( "schema/content/update" ).entity( readFromFile( "update_content_type.json" ),
-                                                                              MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
-        assertJson( "update_content_type_result.json", jsonString );
-    }
-
-    @Test
-    @Ignore
-    public void test_update_content_type_with_broken_xml_config()
-        throws Exception
-    {
-        String result = request().path( "schema/content/update" ).entity( readFromFile( "broken_xml_content_type.json" ),
-                                                                          MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
-        assertJson( "update_content_type_with_broken_xml_config.json", result );
-
-    }
-
-    @Test
-    public void test_fail_to_update_content_type()
-        throws Exception
-    {
-        Mockito.when( contentTypeService.update( Mockito.any( UpdateContentTypeParams.class ) ) ).thenThrow(
-            new RuntimeException( "Content type update failed" ) );
-        String result = request().path( "schema/content/update" ).entity( readFromFile( "update_content_type.json" ),
-                                                                          MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
-        assertJson( "fail_to_update_content_type.json", result );
-    }
-
 }
