@@ -51,11 +51,11 @@ public class ContentDataSerializer
             contentAsData.add( FORM_SERIALIZER.toData( content.getForm() ) );
         }
 
-        if ( content.isPage() )
+        if ( content.hasPage() )
         {
             contentAsData.add( PAGE_SERIALIZER.toData( content.getPage() ) );
         }
-        if ( content.isSite() )
+        if ( content.hasSite() )
         {
             contentAsData.add( SITE_SERIALIZER.toData( content.getSite() ) );
         }

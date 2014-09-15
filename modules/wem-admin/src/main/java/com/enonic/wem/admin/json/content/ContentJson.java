@@ -27,8 +27,8 @@ public final class ContentJson
         super( content, iconUrlResolver );
         this.data = new DataSetJson( content.getContentData() );
         this.form = content.getForm() != null ? new FormJson( content.getForm() ) : null;
-        this.siteJson = content.isSite() ? new SiteJson( content.getSite() ) : null;
-        this.pageJson = content.isPage() ? new PageJson( content.getPage() ) : null;
+        this.siteJson = content.hasSite() ? new SiteJson( content.getSite() ) : null;
+        this.pageJson = content.hasPage() ? new PageJson( content.getPage() ) : null;
     }
 
     public List<DataJson> getData()

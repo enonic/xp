@@ -30,7 +30,7 @@ final class GetNearestSiteCommand
     {
         final Content content = contentService.getById( this.contentId, this.context );
 
-        if ( content.isSite() )
+        if ( content.hasSite() )
         {
             return content;
         }
@@ -51,7 +51,7 @@ final class GetNearestSiteCommand
 
         final Content content = this.contentService.getByPath( contentPath, this.context );
 
-        if ( content.isSite() )
+        if ( content.hasSite() )
         {
             return content;
         }

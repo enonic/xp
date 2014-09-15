@@ -169,7 +169,7 @@ public final class Content
         return this.hasChildren;
     }
 
-    public boolean isSite()
+    public boolean hasSite()
     {
         return site != null;
     }
@@ -179,7 +179,7 @@ public final class Content
         return site;
     }
 
-    public boolean isPage()
+    public boolean hasPage()
     {
         return page != null;
     }

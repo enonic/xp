@@ -97,7 +97,7 @@ public abstract class RenderBaseResource
 
     protected final Page getPage( final Content content )
     {
-        if ( !content.isPage() )
+        if ( !content.hasPage() )
         {
             throw notFound( "Content [%s] is not a page", content.getPath().toString() );
         }

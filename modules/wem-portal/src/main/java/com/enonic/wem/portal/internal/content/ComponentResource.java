@@ -36,7 +36,7 @@ public final class ComponentResource
         final PageTemplate pageTemplate;
         final PageRegions pageRegions;
 
-        if ( !content.isPage() )
+        if ( !content.hasPage() )
         {
             pageTemplate = getDefaultPageTemplate( content.getType(), siteContent.getSite() );
             if ( pageTemplate == null )

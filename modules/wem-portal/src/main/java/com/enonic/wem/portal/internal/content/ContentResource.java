@@ -24,7 +24,7 @@ public final class ContentResource
         final Content siteContent = getSite( content );
 
         final PageTemplate pageTemplate;
-        if ( !content.isPage() )
+        if ( !content.hasPage() )
         {
             pageTemplate = getDefaultPageTemplate( content.getType(), siteContent.getSite() );
             if ( pageTemplate == null )

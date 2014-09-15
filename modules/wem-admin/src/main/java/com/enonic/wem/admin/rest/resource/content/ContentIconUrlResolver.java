@@ -72,7 +72,7 @@ public final class ContentIconUrlResolver
                     this.contentTypeService.getByName( GetContentTypeParams.from( ContentTypeName.imageMedia() ) ) );
             }
         }
-        else if ( content.isSite() )
+        else if ( content.hasSite() )
         {
             final SiteTemplate siteTemplate = getSiteTemplate( content.getSite().getTemplate() );
             if ( siteTemplate != null && siteTemplate.getIcon() != null )
