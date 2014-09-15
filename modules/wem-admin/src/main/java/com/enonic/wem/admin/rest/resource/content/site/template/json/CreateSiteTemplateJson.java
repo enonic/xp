@@ -9,7 +9,7 @@ import com.google.common.collect.Iterables;
 
 import com.enonic.wem.api.content.site.CreateSiteTemplateParams;
 import com.enonic.wem.api.module.ModuleKeys;
-import com.enonic.wem.api.schema.content.ContentTypeFilterJson;
+import com.enonic.wem.admin.json.content.ContentTypeFilterJson;
 
 public class CreateSiteTemplateJson
 {

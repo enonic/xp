@@ -12,7 +12,7 @@ import com.enonic.wem.api.content.site.SiteTemplateEditor;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.UpdateSiteTemplateParams;
 import com.enonic.wem.api.module.ModuleKeys;
-import com.enonic.wem.api.schema.content.ContentTypeFilterJson;
+import com.enonic.wem.admin.json.content.ContentTypeFilterJson;
 
 public class UpdateSiteTemplateJson
 {

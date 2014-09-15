@@ -11,21 +11,10 @@ import com.enonic.wem.api.account.UserKey;
 
 public class JsonSerializerUtil
 {
-
     public static UserKey getUserKeyValue( final String propertyName, final JsonNode node )
     {
         final String value = getStringValue( propertyName, node, null );
         return value != null ? AccountKey.from( value ).asUser() : null;
-    }
-
-    public static Integer getIntegerValue( String fieldName, JsonNode node, Integer defaultValue )
-    {
-        JsonNode subNode = node.get( fieldName );
-        if ( subNode == null )
-        {
-            return defaultValue;
-        }
-        return subNode.isNull() ? defaultValue : subNode.intValue();
     }
 
     public static void setInstantValue( String fieldName, Instant instant, ObjectNode node )

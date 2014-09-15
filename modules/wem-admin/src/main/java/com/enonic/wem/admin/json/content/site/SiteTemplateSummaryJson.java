@@ -11,7 +11,7 @@ import com.enonic.wem.admin.rest.resource.content.site.template.json.VendorJson;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.schema.content.ContentTypeFilterJson;
+import com.enonic.wem.admin.json.content.ContentTypeFilterJson;
 
 
 @SuppressWarnings("UnusedDeclaration")

@@ -3,9 +3,6 @@ package com.enonic.wem.api.relationship;
 
 import java.util.Objects;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.base.Preconditions;
-
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.data.DataPath;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
@@ -106,20 +103,6 @@ public final class RelationshipKey
                                         final ContentId toContent )
     {
         return new RelationshipKey( type, fromContent, toContent, managingData );
-    }
-
-    public static RelationshipKey from( final ObjectNode objectNode )
-    {
-        Preconditions.checkArgument( objectNode.has( "type" ), "missing required field: type" );
-        final RelationshipTypeName type = RelationshipTypeName.from( objectNode.get( "type" ).asText() );
-
-        Preconditions.checkArgument( objectNode.has( "fromContent" ), "missing required field: fromContent" );
-        final ContentId fromContent = ContentId.from( objectNode.get( "fromContent" ).asText() );
-
-        Preconditions.checkArgument( objectNode.has( "toContent" ), "missing required field: toContent" );
-        final ContentId toContent = ContentId.from( objectNode.get( "toContent" ).asText() );
-
-        return new RelationshipKey( type, fromContent, toContent, null );
     }
 
     public static Builder newRelationshipKey()

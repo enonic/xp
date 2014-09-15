@@ -3,12 +3,6 @@ package com.enonic.wem.api.content.page;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
-import com.enonic.wem.api.content.page.image.ImageComponentJson;
-import com.enonic.wem.api.content.page.layout.LayoutComponentJson;
-import com.enonic.wem.api.content.page.part.PartComponentJson;
 import com.enonic.wem.api.data.DataJson;
 import com.enonic.wem.api.data.RootDataSetJson;
 
