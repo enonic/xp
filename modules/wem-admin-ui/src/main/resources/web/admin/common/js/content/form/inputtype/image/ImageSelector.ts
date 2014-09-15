@@ -18,7 +18,7 @@ module api.content.form.inputtype.image {
         relationshipType: string
     }
 
-    export class ImageSelector extends api.form.inputtype.support.BaseInputTypeManagingAdd {
+    export class ImageSelector extends api.form.inputtype.support.BaseInputTypeManagingAdd<ContentId> {
 
         private config: api.content.form.inputtype.ContentInputTypeViewContext<ImageSelectorConfig>;
 

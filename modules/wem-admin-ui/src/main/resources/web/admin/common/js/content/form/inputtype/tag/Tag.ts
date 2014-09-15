@@ -2,7 +2,7 @@ module api.content.form.inputtype.tag {
 
     import DataPath = api.data.DataPath;
 
-    export class Tag extends api.form.inputtype.support.BaseInputTypeManagingAdd {
+    export class Tag extends api.form.inputtype.support.BaseInputTypeManagingAdd<string> {
 
         private input: api.form.Input;
 

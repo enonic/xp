@@ -4,7 +4,7 @@ module api.form.inputtype.combobox {
         options: ComboBoxOption[]
     }
 
-    export class ComboBox extends api.form.inputtype.support.BaseInputTypeManagingAdd {
+    export class ComboBox extends api.form.inputtype.support.BaseInputTypeManagingAdd<string> {
 
         private config: api.form.inputtype.InputTypeViewContext<ComboBoxConfig>;
 

@@ -1,6 +1,6 @@
 module api.form.inputtype.support {
 
-    export class NoInputTypeFoundView extends BaseInputTypeNotManagingAdd<any> {
+    export class NoInputTypeFoundView extends BaseInputTypeNotManagingAdd<any,string> {
 
         constructor(context: api.form.inputtype.InputTypeViewContext<any>) {
             super(context);
@@ -10,7 +10,7 @@ module api.form.inputtype.support {
             return api.data.type.ValueTypes.STRING;
         }
 
-        newInitialValue(): any {
+        newInitialValue(): string {
             return "";
         }
 

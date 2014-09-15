@@ -1,6 +1,6 @@
 module api.form.inputtype.support {
 
-    export class BaseInputTypeNotManagingAdd<CONFIG> extends api.dom.DivEl implements api.form.inputtype.InputTypeViewNotManagingAdd {
+    export class BaseInputTypeNotManagingAdd<CONFIG,RAW_VALUE_TYPE> extends api.dom.DivEl implements api.form.inputtype.InputTypeViewNotManagingAdd<RAW_VALUE_TYPE> {
 
         private context: api.form.inputtype.InputTypeViewContext<CONFIG>;
 
@@ -226,7 +226,7 @@ module api.form.inputtype.support {
             throw new Error("Must be implemented by inheritor: " + api.util.getClassName(this));
         }
 
-        newInitialValue(): any {
+        newInitialValue(): RAW_VALUE_TYPE {
             throw new Error("Must be implemented by inheritor: " + api.util.getClassName(this));
         }
 

@@ -4,7 +4,7 @@ module api.content.form.inputtype.relationship {
         relationshipType: string
     }
 
-    export class Relationship extends api.form.inputtype.support.BaseInputTypeManagingAdd {
+    export class Relationship extends api.form.inputtype.support.BaseInputTypeManagingAdd<api.content.ContentId> {
 
         private config: api.content.form.inputtype.ContentInputTypeViewContext<RelationshipConfig>;
 

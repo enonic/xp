@@ -2,7 +2,7 @@ declare var plupload;
 
 module api.content.form.inputtype.imageupload {
 
-    export class Image extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<any> {
+    export class Image extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<any,string> {
 
         private imageUploader: api.ui.uploader.ImageUploader;
 

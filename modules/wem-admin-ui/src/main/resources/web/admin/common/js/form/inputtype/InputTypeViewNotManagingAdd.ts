@@ -1,6 +1,6 @@
 module api.form.inputtype {
 
-    export interface InputTypeViewNotManagingAdd extends InputTypeView {
+    export interface InputTypeViewNotManagingAdd<RAW_VALUE_TYPE> extends InputTypeView<RAW_VALUE_TYPE> {
 
 
         createAndAddOccurrence();

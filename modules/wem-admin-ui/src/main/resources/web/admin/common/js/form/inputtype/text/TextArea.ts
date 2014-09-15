@@ -2,7 +2,7 @@ module api.form.inputtype.text {
 
     import support = api.form.inputtype.support;
 
-    export class TextArea extends support.BaseInputTypeNotManagingAdd<{}> {
+    export class TextArea extends support.BaseInputTypeNotManagingAdd<{},string> {
 
         constructor(config: api.form.inputtype.InputTypeViewContext<{}>) {
             super(config);
@@ -12,8 +12,8 @@ module api.form.inputtype.text {
             return api.data.type.ValueTypes.STRING;
         }
 
-        newInitialValue(): api.data.Value {
-            return null;
+        newInitialValue(): string {
+            return "";
         }
 
         createInputOccurrenceElement(index: number, property: api.data.Property): api.dom.Element {

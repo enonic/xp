@@ -1,6 +1,6 @@
 module api.form.inputtype {
 
-    export interface InputTypeView {
+    export interface InputTypeView<RAW_VALUE_TYPE> {
 
         getValueType(): api.data.type.ValueType;
 
@@ -8,7 +8,7 @@ module api.form.inputtype {
 
         layout(input: api.form.Input, properties: api.data.Property[]);
 
-        newInitialValue(): any;
+        newInitialValue(): RAW_VALUE_TYPE;
 
         getValues(): api.data.Value[];
 

@@ -2,7 +2,7 @@ module api.form.inputtype.support {
 
     import DataPath = api.data.DataPath;
 
-    export class BaseInputTypeManagingAdd extends api.dom.DivEl implements api.form.inputtype.InputTypeView {
+    export class BaseInputTypeManagingAdd<RAW_VALUE_TYPE> extends api.dom.DivEl implements api.form.inputtype.InputTypeView<RAW_VALUE_TYPE> {
 
         private valueAddedListeners: {(event: api.form.inputtype.ValueAddedEvent) : void}[] = [];
 
@@ -35,7 +35,7 @@ module api.form.inputtype.support {
         /**
          * Must be overridden by inheritors.
          */
-        newInitialValue(): any {
+        newInitialValue(): RAW_VALUE_TYPE {
             throw new Error("Must be overridden by inheritor: " + api.util.getClassName(this));
         }
 

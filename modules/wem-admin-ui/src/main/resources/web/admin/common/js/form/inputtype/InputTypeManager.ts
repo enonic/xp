@@ -33,7 +33,7 @@ module api.form.inputtype {
             }
         }
 
-        static createView(inputTypeClassName: string, context: InputTypeViewContext<any>): InputTypeView {
+        static createView(inputTypeClassName: string, context: InputTypeViewContext<any>): InputTypeView<any> {
 
             if (InputTypeManager.isRegistered(inputTypeClassName)) {
                 var inputTypeClass = InputTypeManager.inputTypes[inputTypeClassName];

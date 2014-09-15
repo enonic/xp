@@ -1,6 +1,6 @@
 module api.form.inputtype.support {
 
-    export class BaseInputTypeSingleOccurrence<CONTEXT> extends api.dom.DivEl implements api.form.inputtype.InputTypeView {
+    export class BaseInputTypeSingleOccurrence<CONTEXT,RAW_VALUE_TYPE> extends api.dom.DivEl implements api.form.inputtype.InputTypeView<RAW_VALUE_TYPE> {
 
         private context: api.form.inputtype.InputTypeViewContext<CONTEXT>;
 
@@ -43,7 +43,7 @@ module api.form.inputtype.support {
             throw new Error("Must be implemented by inheritor: " + api.util.getClassName(this));
         }
 
-        newInitialValue(): any {
+        newInitialValue(): RAW_VALUE_TYPE {
             throw new Error("Must be implemented by inheritor: " + api.util.getClassName(this));
         }
 

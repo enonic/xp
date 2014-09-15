@@ -23,7 +23,7 @@ module api.form {
 
         private properties: Property[];
 
-        private inputTypeView: api.form.inputtype.InputTypeView;
+        private inputTypeView: api.form.inputtype.InputTypeView<any>;
 
         private bottomButtonRow: api.dom.DivEl;
 
@@ -123,7 +123,7 @@ module api.form {
 
             if (!this.inputTypeView.isManagingAdd()) {
 
-                var inputTypeViewNotManagingAdd: api.form.inputtype.InputTypeViewNotManagingAdd = <api.form.inputtype.InputTypeViewNotManagingAdd>this.inputTypeView;
+                var inputTypeViewNotManagingAdd = <api.form.inputtype.InputTypeViewNotManagingAdd<any>>this.inputTypeView;
                 inputTypeViewNotManagingAdd.onOccurrenceAdded(() => {
                     this.refresh();
                 });
@@ -161,7 +161,7 @@ module api.form {
 
         refresh() {
             if (!this.inputTypeView.isManagingAdd()) {
-                var inputTypeViewNotManagingAdd: api.form.inputtype.InputTypeViewNotManagingAdd = <api.form.inputtype.InputTypeViewNotManagingAdd>this.inputTypeView;
+                var inputTypeViewNotManagingAdd = <api.form.inputtype.InputTypeViewNotManagingAdd<any>>this.inputTypeView;
                 this.addButton.setVisible(!inputTypeViewNotManagingAdd.maximumOccurrencesReached());
             }
         }

@@ -3,7 +3,7 @@ module api.content.form.inputtype.checkbox {
     import ValueTypes = api.data.type.ValueTypes;
     import BaseInputTypeSingleOccurrence = api.form.inputtype.support.BaseInputTypeSingleOccurrence;
 
-    export class Checkbox extends BaseInputTypeSingleOccurrence<any> {
+    export class Checkbox extends BaseInputTypeSingleOccurrence<any,boolean> {
 
         private checkbox: api.ui.Checkbox;
 

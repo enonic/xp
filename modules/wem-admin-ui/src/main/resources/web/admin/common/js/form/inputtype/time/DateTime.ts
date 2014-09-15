@@ -3,7 +3,7 @@ module api.content.form.inputtype.time {
     import support = api.form.inputtype.support;
     import ValueTypes = api.data.type.ValueTypes;
 
-    export class DateTime extends support.BaseInputTypeNotManagingAdd<any> {
+    export class DateTime extends support.BaseInputTypeNotManagingAdd<any,Date> {
 
         constructor(config: api.form.inputtype.InputTypeViewContext<any>) {
             super(config);
@@ -13,7 +13,7 @@ module api.content.form.inputtype.time {
             return api.data.type.ValueTypes.LOCAL_DATE_TIME;
         }
 
-        newInitialValue(): api.data.Value {
+        newInitialValue(): Date {
             return null;
         }
 

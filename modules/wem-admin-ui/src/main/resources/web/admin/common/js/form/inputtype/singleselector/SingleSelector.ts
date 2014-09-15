@@ -14,7 +14,7 @@ module api.form.inputtype.singleselector {
         }[]
     }
 
-    export class SingleSelector extends api.form.inputtype.support.BaseInputTypeNotManagingAdd<SingleSelectorConfig> {
+    export class SingleSelector extends api.form.inputtype.support.BaseInputTypeNotManagingAdd<SingleSelectorConfig,string> {
 
         public static TYPE_DROPDOWN: string = "DROPDOWN";
         public static TYPE_RADIO: string = "RADIO";
@@ -36,7 +36,7 @@ module api.form.inputtype.singleselector {
             return api.data.type.ValueTypes.STRING;
         }
 
-        newInitialValue(): api.data.Value {
+        newInitialValue(): string {
             return null;
         }
 

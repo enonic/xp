@@ -2,7 +2,7 @@ module api.form.inputtype.support {
 
     export interface InputOccurrencesConfig {
 
-        baseInputTypeView: BaseInputTypeNotManagingAdd<any>;
+        baseInputTypeView: BaseInputTypeNotManagingAdd<any,any>;
 
         input: api.form.Input;
 
@@ -15,7 +15,7 @@ module api.form.inputtype.support {
      */
     export class InputOccurrences extends api.form.FormItemOccurrences<InputOccurrenceView> {
 
-        private baseInputTypeView: BaseInputTypeNotManagingAdd<any>;
+        private baseInputTypeView: BaseInputTypeNotManagingAdd<any,any>;
 
         private input: api.form.Input;
 

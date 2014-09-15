@@ -4,7 +4,7 @@ module api.content.form.inputtype.geo {
 
     import ValueTypes = api.data.type.ValueTypes;
 
-    export class GeoPoint extends support.BaseInputTypeNotManagingAdd<any> {
+    export class GeoPoint extends support.BaseInputTypeNotManagingAdd<any,api.util.GeoPoint> {
 
         constructor(config: api.form.inputtype.InputTypeViewContext<any>) {
             super(config);
@@ -14,7 +14,7 @@ module api.content.form.inputtype.geo {
             return ValueTypes.GEO_POINT;
         }
 
-        newInitialValue(): string {
+        newInitialValue(): api.util.GeoPoint {
             return null;
         }
 
