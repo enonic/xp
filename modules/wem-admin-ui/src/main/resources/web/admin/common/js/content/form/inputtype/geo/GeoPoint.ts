@@ -49,7 +49,7 @@ module api.content.form.inputtype.geo {
 
         getValue(occurrence: api.dom.Element): api.data.Value {
             var geoPoint: api.ui.geo.GeoPoint = <api.ui.geo.GeoPoint>occurrence;
-            var location = geoPoint.getGeoLocation();
+            var location = geoPoint.getGeoPoint();
             return ValueTypes.GEO_POINT.newValue(location);
         }
 

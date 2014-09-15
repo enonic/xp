@@ -34,7 +34,7 @@ module api.ui.geo {
             return this;
         }
 
-        getGeoLocation(): string {
+        getGeoPoint(): string {
             return this.geoLocationInput.getValue();
         }
 
