@@ -26,6 +26,12 @@
             margin: 10px auto;
         }
 
+        .settings-area:after {
+            content: '';
+            display: table;
+            clear: both;
+        }
+
         .display-area-settings {
             width: 50%;
             float: left;
@@ -77,6 +83,9 @@
     displayArea.appendChild(image);
 
     var imageCanvas = new api.ui.image.ImageCanvas(image);
+    image.onLoaded(function () {
+        imageCanvas = new api.ui.image.ImageCanvas(image);
+    });
 
     var settingsArea = new DivEl('settings-area');
     api.dom.Body.get().appendChild(settingsArea);
@@ -123,13 +132,18 @@
     imageCanvasHeader.getEl().setInnerHtml('Image settings');
     imageCanvasSettings.appendChild(imageCanvasHeader);
 
+    var enableCanvasCheckbox = new InputEl(null, 'checkbox').setName('enable-canvas').setId('enable-canvas');
+    imageCanvasSettings.appendChild(new LabelEl('Enable canvas', enableCanvasCheckbox));
+    imageCanvasSettings.appendChild(enableCanvasCheckbox);
+
     var imageWidthInput = new InputEl(null, 'number').setName('image-width').setId('image-width');
     imageCanvasSettings.appendChild(new LabelEl('Image width', imageWidthInput));
     imageCanvasSettings.appendChild(imageWidthInput);
 
-    var enableCanvasCheckbox = new InputEl(null, 'checkbox').setName('enable-canvas').setId('enable-canvas');
-    imageCanvasSettings.appendChild(new LabelEl('Enable canvas', enableCanvasCheckbox));
-    imageCanvasSettings.appendChild(enableCanvasCheckbox);
+    var imageZoomInput = new InputEl(null, 'number').setName('image-zoom').setId('image-zoom');
+    imageZoomInput.getEl().setAttribute('min', '100');
+    imageCanvasSettings.appendChild(new LabelEl('Image zoom', imageZoomInput));
+    imageCanvasSettings.appendChild(imageZoomInput);
 
     // setup listeners
     ////////////////////////////////////////////////////
@@ -153,13 +167,17 @@
     positionTopInput.setValue(0);
 
 
+    enableCanvasCheckbox.onChange(function () {
+        imageCanvas.setEnabled(enableCanvasCheckbox.getHTMLElement()["checked"]);
+    });
+
     imageWidthInput.onInput(function () {
         imageCanvas.setWidth(imageWidthInput.getValue());
     });
 
-    enableCanvasCheckbox.onChange(function () {
-        imageCanvas.setEnabled(enableCanvasCheckbox.getHTMLElement()["checked"]);
-    });
+    imageZoomInput.onInput(function () {
+        imageCanvas.setZoom(Math.max(imageZoomInput.getValue(), 100));
+    })
 
 
 </script>

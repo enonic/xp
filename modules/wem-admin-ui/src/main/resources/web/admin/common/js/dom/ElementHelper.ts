@@ -434,6 +434,14 @@ module api.dom {
             return parseFloat(this.getComputedProperty('border-bottom-width'));
         }
 
+        getBorderRightWidth(): number {
+            return parseFloat(this.getComputedProperty('border-right-width'));
+        }
+
+        getBorderLeftWidth(): number {
+            return parseFloat(this.getComputedProperty('border-left-width'));
+        }
+
         setZindex(value: number): ElementHelper {
             this.el.style.zIndex = value.toString();
             return this;
