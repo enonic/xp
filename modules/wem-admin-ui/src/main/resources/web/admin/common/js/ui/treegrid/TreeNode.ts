@@ -138,6 +138,11 @@ module api.ui.treegrid {
             child.setParent(this);
         }
 
+        addChildFromData(childData: NODE) {
+            this.children = this.children || [];
+            this.children.push(new TreeNodeBuilder<NODE>().setData(childData).setParent(this).build());
+        }
+
         removeChild(child: TreeNode<NODE>) {
             var children: TreeNode<NODE>[] = [];
             for (var i = 0; i < this.children.length; i++) {

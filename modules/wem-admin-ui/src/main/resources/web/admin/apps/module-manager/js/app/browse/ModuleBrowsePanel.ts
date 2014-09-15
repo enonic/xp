@@ -107,9 +107,9 @@ module app.browse {
 
             api.module.ModuleUpdatedEvent.on((event: api.module.ModuleUpdatedEvent) => {
                 if (event.getEventType() === 'INSTALLED') {
-                    this.moduleTreeGridPanel.reload(); // TODO insert new
+                    this.moduleTreeGridPanel.appendModuleNode(event.getModuleKey());
                 } else if (event.getEventType() === 'UNINSTALLED') {
-                    this.moduleTreeGridPanel.reload(); // TODO remove
+                    this.moduleTreeGridPanel.deleteModuleNode(event.getModuleKey());
                 } else {
                     this.moduleTreeGridPanel.updateModuleNode(event.getModuleKey());
                 }
