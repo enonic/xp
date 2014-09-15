@@ -1,7 +1,5 @@
 package com.enonic.wem.api.xml;
 
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -50,7 +48,6 @@ public final class DomBuilder
     }
 
     public static DomBuilder create( final String name )
-        throws ParserConfigurationException
     {
         return new DomBuilder( DomHelper.newDocument(), name );
     }
