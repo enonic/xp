@@ -50,12 +50,7 @@ module api.content.form.inputtype.geo {
         getValue(occurrence: api.dom.Element): api.data.Value {
             var geoPointEL: api.ui.geo.GeoPoint = <api.ui.geo.GeoPoint>occurrence;
             var geoPointVo: api.util.GeoPoint = geoPointEL.getGeoPoint();
-            if (geoPointVo == null) {
-                return  new api.data.Value(geoPointVo, ValueTypes.GEO_POINT);
-            } else {
-                return ValueTypes.GEO_POINT.newValue(geoPointVo.toString());
-            }
-
+            return  new api.data.Value(geoPointVo, ValueTypes.GEO_POINT);
         }
 
         valueBreaksRequiredContract(value: api.data.Value): boolean {
