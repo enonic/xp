@@ -19,6 +19,7 @@
         img {
             border: 1px solid lightgrey;
             position: absolute;
+            box-sizing: border-box;
         }
 
         .settings-area {
@@ -107,14 +108,10 @@
     displayAreaSettings.appendChild(imageSelect);
 
     imageSelect.appendChild(new api.dom.OptionEl('', ''));
-    imageSelect.appendChild(new api.dom.OptionEl(
-            'http://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Duisburger_Innenhafen_Five_Boats_Abend_2014.jpg/320px-Duisburger_Innenhafen_Five_Boats_Abend_2014.jpg', '320 × 170 pixels'));
-    imageSelect.appendChild(new api.dom.OptionEl(
-            'http://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Duisburger_Innenhafen_Five_Boats_Abend_2014.jpg/1280px-Duisburger_Innenhafen_Five_Boats_Abend_2014.jpg', '1,280 × 681 pixels'));
-    imageSelect.appendChild(new api.dom.OptionEl(
-            'http://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Upper_Antelope_Canyon_Heart_Formation_2013.jpg/140px-Upper_Antelope_Canyon_Heart_Formation_2013.jpg', '140 × 240 pixels'));
-    imageSelect.appendChild(new api.dom.OptionEl(
-            'http://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Upper_Antelope_Canyon_Heart_Formation_2013.jpg/598px-Upper_Antelope_Canyon_Heart_Formation_2013.jpg', '598 × 1,024 pixels'));
+    imageSelect.appendChild(new api.dom.OptionEl('320_170px.jpg', '320 × 170 pixels'));
+    imageSelect.appendChild(new api.dom.OptionEl('1280_854px.jpg', '1,280 × 854 pixels'));
+    imageSelect.appendChild(new api.dom.OptionEl('140_240px.jpg', '140 × 240 pixels'));
+    imageSelect.appendChild(new api.dom.OptionEl('683_1024px.jpg', '683 × 1,024 pixels'));
 
     var positionLeftInput = new InputEl(null, 'number').setName('position-left').setId('position-left');
     displayAreaSettings.appendChild(new LabelEl('Position left', positionLeftInput));
