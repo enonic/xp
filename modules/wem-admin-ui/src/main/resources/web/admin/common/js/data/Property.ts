@@ -37,6 +37,10 @@ module api.data {
             return this.value.getGeoPoint();
         }
 
+        getLocalTime(): api.util.LocalTime {
+            return this.value.getLocalTime();
+        }
+
         getContentId(): api.content.ContentId {
             return this.value.getContentId();
         }

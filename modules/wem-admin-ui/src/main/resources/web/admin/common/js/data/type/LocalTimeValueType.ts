@@ -7,12 +7,14 @@ module api.data.type {
         }
 
         isValid(value: any): boolean {
-            if (!(typeof value === 'string')) {
+
+            if (!(typeof value === 'object')) {
                 return false;
             }
-            var valueAsString = <string>value;
-            var re = /^[0-2]\d:[0-5]\d$/;
-            return re.test(valueAsString);
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(value, api.util.LocalTime)) {
+                return false;
+            }
+            return true;
         }
 
         isConvertible(value: string): boolean {
@@ -21,25 +23,33 @@ module api.data.type {
             if (api.util.isStringBlank(value)) {
                 return false;
             }
-            if (asString.indexOf(':') == -1) {
-                return false;
-            }
-            if (asString.length != 5) {
-                return false;
-            }
-
-            return this.isValid(value);
+            return api.util.LocalTime.isValidString(value);
         }
+
 
         newValue(value: string): Value {
-            if (!this.isConvertible(value)) {
-                return null;
+            if (!value) {
+                return this.newNullValue();
             }
-            return new Value(value, this);
+
+            if (!this.isConvertible(value)) {
+                return this.newNullValue();
+            }
+            return new Value(api.util.LocalTime.fromString(value), this);
         }
 
+        valueToString(value: Value): string {
+            if (value.isNotNull()) {
+                return value.getLocalTime().toString();
+            }
+            else {
+                return null;
+            }
+        }
+
+
         toJsonValue(value: api.data.Value): string {
-            var time: string = value.getObject().toString();
+            var time: string = value.getLocalTime().toString();
             return time;
         }
     }

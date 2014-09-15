@@ -10,3 +10,4 @@
 ///<reference path='MonthsOfYear.ts' />
 ///<reference path='TimePicker.ts' />
 ///<reference path='DateTime.ts' />
+///<reference path='LocalTime.ts' />

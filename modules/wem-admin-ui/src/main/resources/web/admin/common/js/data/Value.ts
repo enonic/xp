@@ -49,6 +49,13 @@ module api.data {
             return <api.util.GeoPoint>this.value;
         }
 
+        getLocalTime(): api.util.LocalTime {
+            if (this.isNull()) {
+                return null;
+            }
+            return <api.util.LocalTime>this.value;
+        }
+
         getContentId(): api.content.ContentId {
             if (this.isNull()) {
                 return null;

@@ -6,8 +6,32 @@ module api.util {
             return isNaN(value.getTime());
         }
 
-        public static padNumber(value: number, pad: number): string {
-            return Array(pad - String(value).length + 1).join('0') + value;
+        public static getTZOffset(): number {
+            return (new Date().getTimezoneOffset() / 60) * -1;
+        }
+
+        public static formatLocalTime(value: api.util.LocalTime): {hour: number; minute: number} {
+            var date = new Date();
+            date.setHours(value.getHours() + this.getTZOffset(), value.getMinutes());
+            return {
+                hour: date.getHours(),
+                minute: date.getMinutes()
+            }
+        }
+
+        public static parseUTCTime(localTime: string): string {
+            var values = localTime.split(':');
+            var date = new Date();
+            var localHours = Number(values[0]);
+            if (values.length == 3) {
+                date.setHours(localHours, Number(values[1]), Number(values[2]));
+            } else {
+                date.setHours(localHours, Number(values[1]));
+            }
+
+            var hoursAsString = "" + date.getUTCHours();
+            var minutesAsString = "" + date.getUTCMinutes();
+            return hoursAsString + ":" + minutesAsString;
         }
 
         public static parseUTCDate(value: string): Date {
@@ -42,32 +66,17 @@ module api.util {
 
         public static formatUTCDate(date: Date): string {
             var yearAsString = "" + date.getUTCFullYear();
-            var monthAsString = "" + (date.getUTCMonth() + 1);
-            if (monthAsString.length == 1) {
-                monthAsString = "0" + monthAsString;
-            }
-            var dateAsString = "" + date.getUTCDate();
-            if (dateAsString.length == 1) {
-                dateAsString = "0" + dateAsString;
-            }
-            return yearAsString + "-" + monthAsString + "-" + dateAsString;
+            return yearAsString + "-" + this.padNumber(date.getUTCMonth() + 1) + "-" + this.padNumber(date.getUTCDate());
+        }
+
+        private static padNumber(num: number): string {
+            return (num < 10 ? '0' : '') + num;
         }
 
         public static formatUTCDateTime(date: Date): string {
             var dateAsString = DateHelper.formatUTCDate(date);
-            var hoursAsString = "" + date.getUTCHours();
-            if (hoursAsString.length == 1) {
-                hoursAsString = "0" + hoursAsString;
-            }
-            var minutesAsString = "" + date.getUTCMinutes();
-            if (minutesAsString.length == 1) {
-                minutesAsString = "0" + minutesAsString;
-            }
-            var secondsAsString = "" + date.getUTCSeconds();
-            if (secondsAsString.length == 1) {
-                secondsAsString = "0" + secondsAsString;
-            }
-            return dateAsString + "T" + hoursAsString + ":" + minutesAsString + ":" + secondsAsString;
+            return dateAsString + "T" + this.padNumber(date.getUTCHours()) + ":" + this.padNumber(date.getUTCMinutes()) + ":" +
+                   this.padNumber(date.getUTCSeconds());
         }
 
     }

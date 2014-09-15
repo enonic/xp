@@ -18,50 +18,37 @@ module api.content.form.inputtype.time {
         }
 
         createInputOccurrenceElement(index: number, property: api.data.Property): api.dom.Element {
+            var localTimeEl = new api.ui.time.LocalTime();
 
-            var timePicker: api.ui.time.TimePicker;
+            var timeValue: api.util.LocalTime = property.getLocalTime();
+            if (timeValue) {
+                localTimeEl.setTime(timeValue);
+            }
 
-            if (property.hasNonNullValue()) {
-                if (property.getValue().asString().length == 0) {
-                    return new api.ui.time.TimePickerBuilder().build();
-                }
-                var time = property.getValue().asString();
-                var arrTime = time.split(":");
-                var h = arrTime[0];
-                var m = arrTime[1];
-                timePicker = new api.ui.time.TimePickerBuilder().setHours(parseInt(h)).setMinutes(parseInt(m)).build();
-            }
-            else {
-                timePicker = new api.ui.time.TimePickerBuilder().build();
-            }
-            return timePicker;
+            return localTimeEl;
         }
 
         availableSizeChanged() {
         }
 
         onOccurrenceValueChanged(element: api.dom.Element, listener: (event: api.form.inputtype.support.ValueChangedEvent) => void) {
-            var timePicker = <api.ui.time.TimePicker>element;
-            timePicker.onSelectedTimeChanged((hours: number, minutes: number) => {
-                var newTime: string = api.util.DateHelper.padNumber(hours, 2) + ":" + api.util.DateHelper.padNumber(minutes, 2);
-                var changedValue = ValueTypes.LOCAL_TIME.newValue(newTime);
+            var localTimeEl = <api.ui.time.LocalTime>element;
+            localTimeEl.onTimeChanged((hours: number, minutes: number) => {
+                var newTime: string = hours + ":" + minutes;
+                var utcTime = api.util.DateHelper.parseUTCTime(newTime);
+                var changedValue: api.data.Value = ValueTypes.LOCAL_TIME.newValue(utcTime);
                 listener(new api.form.inputtype.support.ValueChangedEvent(changedValue));
+
 
             });
         }
 
 
         getValue(occurrence: api.dom.Element): api.data.Value {
-            var timePicker: api.ui.time.TimePicker = < api.ui.time.TimePicker>occurrence;
-            if (timePicker.getSelectedTime()) {
-                var time: string = api.util.DateHelper.padNumber(timePicker.getSelectedTime().hour, 2) + ":" +
-                                   api.util.DateHelper.padNumber(timePicker.getSelectedTime().minute, 2);
-                return new api.data.Value(time, ValueTypes.LOCAL_TIME);
-
-            }
-            else {
-                return   null;
-            }
+            var localTimeEl: api.ui.time.LocalTime = <api.ui.time.LocalTime>occurrence;
+            var selectedTime = localTimeEl.getSelectedTime();
+            var time: string = selectedTime.hour + ":" + selectedTime.minute;
+            return ValueTypes.LOCAL_TIME.newValue(time);
         }
 
 
