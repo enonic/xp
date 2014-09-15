@@ -48,9 +48,13 @@ module api.content.form.inputtype.geo {
         }
 
         getValue(occurrence: api.dom.Element): api.data.Value {
-            var geoPoint: api.ui.geo.GeoPoint = <api.ui.geo.GeoPoint>occurrence;
-            var location = geoPoint.getGeoPoint();
-            return ValueTypes.GEO_POINT.newValue(location);
+            var geoPointEL: api.ui.geo.GeoPoint = <api.ui.geo.GeoPoint>occurrence;
+            var geoPointVo: api.util.GeoPoint = geoPointEL.getGeoPoint();
+            var geoLocationValue: string = null;
+            if (geoPointVo != null) {
+                geoLocationValue = geoPointVo.toString()
+            }
+            return ValueTypes.GEO_POINT.newValue(geoLocationValue);
         }
 
         valueBreaksRequiredContract(value: api.data.Value): boolean {

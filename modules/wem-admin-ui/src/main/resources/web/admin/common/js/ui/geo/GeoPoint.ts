@@ -34,7 +34,15 @@ module api.ui.geo {
             return this;
         }
 
-        getGeoPoint(): string {
+        getGeoPoint(): api.util.GeoPoint {
+            if (api.util.isStringEmpty(this.geoLocationInput.getValue())) {
+                return null;
+            }
+            return  api.util.GeoPoint.fromString(this.geoLocationInput.getValue());
+
+        }
+
+        getGeoPoint1(): string {
             return this.geoLocationInput.getValue();
         }
 
