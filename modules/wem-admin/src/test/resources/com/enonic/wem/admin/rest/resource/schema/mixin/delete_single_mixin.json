@@ -1,9 +1,0 @@
-{
-    "failures": [ ],
-    "success": true,
-    "successes": [
-        {
-            "name": "mymodule-1.0.0:existing_mixin"
-        }
-    ]
-}

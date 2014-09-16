@@ -62,41 +62,12 @@ public class MixinResourceTest
     }
 
     @Test
-    public final void test_get_mixin_config()
-        throws Exception
-    {
-        Mixin mixin = Mixin.newMixin().createdTime( LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC ) ).name(
-            MY_MIXIN_QUALIFIED_NAME_1.toString() ).addFormItem(
-            newInput().name( MY_MIXIN_INPUT_NAME_1 ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
-                "Help text line 1" ).required( true ).build() ).build();
-
-        Mockito.when( mixinService.getByName( Mockito.isA( GetMixinParams.class ) ) ).thenReturn( mixin );
-
-        String result =
-            request().path( "schema/mixin/config" ).queryParam( "name", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get().getAsString();
-
-        assertJson( "get_mixin_config.json", result );
-    }
-
-    @Test
     public final void test_get_mixin_not_found()
         throws Exception
     {
         Mockito.when( mixinService.getByName( Mockito.any( GetMixinParams.class ) ) ).thenReturn( null );
 
         final MockRestResponse response = request().path( "schema/mixin" ).queryParam( "name", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get();
-        Assert.assertEquals( 404, response.getStatus() );
-        Assert.assertEquals( "Mixin [mymodule-1.0.0:input_text_1] was not found.", response.getAsString() );
-    }
-
-    @Test
-    public final void test_get_mixin_config_not_found()
-        throws Exception
-    {
-        Mockito.when( mixinService.getByName( Mockito.any( GetMixinParams.class ) ) ).thenReturn( null );
-
-        final MockRestResponse response =
-            request().path( "schema/mixin/config" ).queryParam( "name", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get();
         Assert.assertEquals( 404, response.getStatus() );
         Assert.assertEquals( "Mixin [mymodule-1.0.0:input_text_1] was not found.", response.getAsString() );
     }

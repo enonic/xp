@@ -8,9 +8,6 @@
 
 ///<reference path="SchemaIconUrlResolver.ts"/>
 
-///<reference path="SchemaResourceRequest.ts"/>
-///<reference path="SchemaTreeRequest.ts"/>
-
 ///<reference path="SchemaCreatedEvent.ts"/>
 ///<reference path="SchemaUpdatedEvent.ts"/>
 ///<reference path="SchemaDeletedEvent.ts"/>

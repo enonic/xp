@@ -154,34 +154,6 @@ public class ContentTypeResourceTest
     }
 
     @Test
-    public void get_contentType_with_format_as_xml()
-        throws Exception
-    {
-        // setup
-        final ContentType contentType = newContentType().
-            createdTime( SOME_DATE ).
-            name( MY_CTY_QUALIFIED_NAME ).
-            icon( Icon.from( new byte[]{123}, "image/gif", SOME_DATE ) ).
-            superType( ContentTypeName.unstructured() ).
-            addFormItem( newInput().
-                name( "myTextLine" ).
-                inputType( TEXT_LINE ).
-                label( "My text line" ).
-                required( true ).
-                build() ).
-            build();
-
-        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
-
-        // execute
-        String jsonString =
-            request().path( "schema/content/config" ).queryParam( "name", MY_CTY_QUALIFIED_NAME.toString() ).get().getAsString();
-
-        // verify
-        assertJson( "ContentTypeResourceTest-get_contentType_with_format_as_xml-result.json", jsonString );
-    }
-
-    @Test
     public void list_one_contentType_with_only_one_input()
         throws Exception
     {

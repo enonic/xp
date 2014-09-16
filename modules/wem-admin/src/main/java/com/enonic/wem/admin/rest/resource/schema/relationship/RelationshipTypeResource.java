@@ -42,24 +42,6 @@ public class RelationshipTypeResource
         return new RelationshipTypeJson( relationshipType, newSchemaIconUrlResolver() );
     }
 
-    @GET
-    @Path("config")
-    public RelationshipTypeConfigJson getConfig( @QueryParam("name") final String name )
-    {
-        final RelationshipTypeName relationshipTypeName = RelationshipTypeName.from( name );
-        final RelationshipType relationshipType = fetchRelationshipType( relationshipTypeName );
-
-        if ( relationshipType == null )
-        {
-            String message = String.format( "RelationshipType [%s] was not found.", relationshipTypeName );
-            throw new WebApplicationException( Response.status( Response.Status.NOT_FOUND ).
-                entity( message ).type( MediaType.TEXT_PLAIN_TYPE ).build() );
-        }
-
-        return new RelationshipTypeConfigJson( relationshipType );
-
-    }
-
     public RelationshipType fetchRelationshipType( final RelationshipTypeName name )
     {
         final GetRelationshipTypeParams params = new GetRelationshipTypeParams().name( name );

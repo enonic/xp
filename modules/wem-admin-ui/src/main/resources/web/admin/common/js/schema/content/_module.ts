@@ -10,11 +10,6 @@
 ///<reference path='ContentTypeResourceRequest.ts' />
 ///<reference path='GetAllContentTypesRequest.ts' />
 ///<reference path='GetContentTypeByNameRequest.ts' />
-///<reference path='GetContentTypeConfigResult.ts' />
-///<reference path='GetContentTypeConfigByNameRequest.ts' />
-///<reference path='CreateContentTypeRequest.ts' />
-///<reference path='UpdateContentTypeRequest.ts' />
-///<reference path='DeleteContentTypeRequest.ts' />
 ///<reference path='ContentTypeUpdatedEvent.ts' />
 ///<reference path='ContentTypeDeletedEvent.ts' />
 ///<reference path='ContentTypeCache.ts' />

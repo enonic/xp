@@ -9,7 +9,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.enonic.wem.admin.json.schema.mixin.MixinConfigJson;
 import com.enonic.wem.admin.json.schema.mixin.MixinJson;
 import com.enonic.wem.admin.json.schema.mixin.MixinListJson;
 import com.enonic.wem.admin.rest.resource.schema.SchemaIconResolver;
@@ -40,23 +39,6 @@ public class MixinResource
         }
 
         return new MixinJson( mixin, newSchemaIconUrlResolver() );
-    }
-
-    @GET
-    @Path("config")
-    public MixinConfigJson getConfig( @QueryParam("name") final String name )
-    {
-        final MixinName mixinName = MixinName.from( name );
-        final Mixin mixin = fetchMixin( mixinName );
-
-        if ( mixin == null )
-        {
-            String message = String.format( "Mixin [%s] was not found.", mixinName );
-            throw new WebApplicationException( Response.status( Response.Status.NOT_FOUND ).
-                entity( message ).type( MediaType.TEXT_PLAIN_TYPE ).build() );
-        }
-
-        return new MixinConfigJson( mixin );
     }
 
     @GET

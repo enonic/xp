@@ -1,3 +1,0 @@
-{
-    "contentTypeXml" : "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<type>\n    <super-type>system-0.0.0:unstructured</super-type>\n    <is-abstract>false</is-abstract>\n    <is-final>false</is-final>\n    <is-built-in>false</is-built-in>\n    <allow-child-content>true</allow-child-content>\n    <form>\n        <input type=\"TextLine\" name=\"myTextLine\">\n            <label>My text line</label>\n            <immutable>false</immutable>\n            <indexed>false</indexed>\n            <occurrences minimum=\"1\" maximum=\"1\"/>\n        </input>\n    </form>\n</type>\n"
-}

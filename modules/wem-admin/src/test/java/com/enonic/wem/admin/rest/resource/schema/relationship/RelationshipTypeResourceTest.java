@@ -52,24 +52,6 @@ public class RelationshipTypeResourceTest
     }
 
     @Test
-    public void testRequestGetRelationshipTypeXml_existing()
-        throws Exception
-    {
-        final RelationshipType relationshipType = newRelationshipType().
-            name( "mymodule-1.0.0:the_relationship_type" ).
-            build();
-
-        final RelationshipTypeName name = RelationshipTypeName.from( "mymodule-1.0.0:the_relationship_type" );
-        final GetRelationshipTypeParams params = new GetRelationshipTypeParams().name( name );
-        Mockito.when( relationshipTypeService.getByName( params ) ).thenReturn( relationshipType );
-
-        String response =
-            request().path( "schema/relationship/config" ).queryParam( "name", "mymodule-1.0.0:the_relationship_type" ).get().getAsString();
-
-        assertJson( "get_relationship_type_config.json", response );
-    }
-
-    @Test
     public void testRequestGetRelationshipTypeJson_not_found()
         throws Exception
     {
