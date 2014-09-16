@@ -1,14 +1,15 @@
-package com.enonic.wem.api.content.page.layout;
-
+package com.enonic.wem.admin.json.content.page.layout;
 
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.wem.api.content.page.AbstractDescriptorBasedPageComponentJson;
+import com.enonic.wem.admin.json.content.page.AbstractDescriptorBasedPageComponentJson;
+import com.enonic.wem.admin.json.content.page.region.RegionJson;
 import com.enonic.wem.api.content.page.ComponentName;
-import com.enonic.wem.api.content.page.region.RegionJson;
+import com.enonic.wem.api.content.page.layout.LayoutComponent;
+import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.data.DataJson;
 import com.enonic.wem.api.data.RootDataSetJson;
 

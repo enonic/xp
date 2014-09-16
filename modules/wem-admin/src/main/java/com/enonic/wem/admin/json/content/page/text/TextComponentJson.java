@@ -1,11 +1,11 @@
-package com.enonic.wem.api.content.page.text;
-
+package com.enonic.wem.admin.json.content.page.text;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.wem.api.content.page.AbstractPageComponentJson;
+import com.enonic.wem.admin.json.content.page.AbstractPageComponentJson;
 import com.enonic.wem.api.content.page.ComponentName;
+import com.enonic.wem.api.content.page.text.TextComponent;
 
 import static com.enonic.wem.api.content.page.text.TextComponent.newTextComponent;
 

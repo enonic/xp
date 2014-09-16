@@ -1,8 +1,9 @@
-package com.enonic.wem.api.content.page;
+package com.enonic.wem.admin.json.content.page;
 
 
 import java.util.List;
 
+import com.enonic.wem.api.content.page.DescriptorBasedPageComponent;
 import com.enonic.wem.api.data.DataJson;
 import com.enonic.wem.api.data.RootDataSetJson;
 

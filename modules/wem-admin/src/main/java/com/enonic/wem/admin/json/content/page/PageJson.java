@@ -4,7 +4,7 @@ package com.enonic.wem.admin.json.content.page;
 import java.util.List;
 
 import com.enonic.wem.admin.json.content.page.region.PageRegionsJson;
-import com.enonic.wem.api.content.page.region.RegionJson;
+import com.enonic.wem.admin.json.content.page.region.RegionJson;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.data.DataJson;
 import com.enonic.wem.api.data.RootDataSetJson;

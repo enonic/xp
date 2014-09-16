@@ -1,4 +1,4 @@
-package com.enonic.wem.api.content.page.layout;
+package com.enonic.wem.admin.json.content.page.layout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,8 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import com.enonic.wem.api.content.page.region.RegionJson;
+import com.enonic.wem.admin.json.content.page.region.RegionJson;
+import com.enonic.wem.api.content.page.layout.LayoutRegions;
 import com.enonic.wem.api.content.page.region.Region;
 
 import static com.enonic.wem.api.content.page.layout.LayoutRegions.newLayoutRegions;

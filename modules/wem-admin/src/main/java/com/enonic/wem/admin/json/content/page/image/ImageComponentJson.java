@@ -1,4 +1,4 @@
-package com.enonic.wem.api.content.page.image;
+package com.enonic.wem.admin.json.content.page.image;
 
 
 import java.util.List;
@@ -6,9 +6,11 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import com.enonic.wem.admin.json.content.page.AbstractDescriptorBasedPageComponentJson;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.page.AbstractDescriptorBasedPageComponentJson;
 import com.enonic.wem.api.content.page.ComponentName;
+import com.enonic.wem.api.content.page.image.ImageComponent;
+import com.enonic.wem.api.content.page.image.ImageDescriptorKey;
 import com.enonic.wem.api.data.DataJson;
 import com.enonic.wem.api.data.RootDataSetJson;
 

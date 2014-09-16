@@ -6,7 +6,7 @@ public abstract class PageComponentType
 {
     private final static LinkedHashMap<String, PageComponentType> bySimpleClassName = new LinkedHashMap<>();
 
-    private String shortName;
+    private final String shortName;
 
     public PageComponentType( final String shortName, final Class clazz )
     {

@@ -1,13 +1,14 @@
-package com.enonic.wem.api.content.page;
+package com.enonic.wem.admin.json.content.page;
 
+import com.enonic.wem.admin.json.content.page.image.ImageComponentJson;
+import com.enonic.wem.admin.json.content.page.layout.LayoutComponentJson;
+import com.enonic.wem.admin.json.content.page.part.PartComponentJson;
+import com.enonic.wem.admin.json.content.page.text.TextComponentJson;
+import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.image.ImageComponent;
-import com.enonic.wem.api.content.page.image.ImageComponentJson;
 import com.enonic.wem.api.content.page.layout.LayoutComponent;
-import com.enonic.wem.api.content.page.layout.LayoutComponentJson;
 import com.enonic.wem.api.content.page.part.PartComponent;
-import com.enonic.wem.api.content.page.part.PartComponentJson;
 import com.enonic.wem.api.content.page.text.TextComponent;
-import com.enonic.wem.api.content.page.text.TextComponentJson;
 
 public final class PageComponentJsonSerializer
 {

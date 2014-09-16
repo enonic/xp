@@ -1,4 +1,4 @@
-package com.enonic.wem.api.content.page.region;
+package com.enonic.wem.admin.json.content.page.region;
 
 
 import java.util.ArrayList;
@@ -8,8 +8,10 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.wem.api.content.page.AbstractPageComponentJson;
+import com.enonic.wem.admin.json.content.page.AbstractPageComponentJson;
 import com.enonic.wem.api.content.page.PageComponent;
+import com.enonic.wem.admin.json.content.page.PageComponentJsonSerializer;
+import com.enonic.wem.api.content.page.region.Region;
 
 @SuppressWarnings("UnusedDeclaration")
 public class RegionJson
@@ -34,9 +36,9 @@ public class RegionJson
     public RegionJson( final Region region )
     {
         this.region = region;
-        for ( PageComponent component : region.getComponents() )
+        for ( final PageComponent component : region.getComponents() )
         {
-            this.components.add( AbstractPageComponentJson.fromPageComponent( component ) );
+            this.components.add( PageComponentJsonSerializer.toJson( component ) );
         }
     }
 

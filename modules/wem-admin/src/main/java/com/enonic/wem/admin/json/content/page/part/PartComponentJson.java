@@ -1,13 +1,14 @@
-package com.enonic.wem.api.content.page.part;
-
+package com.enonic.wem.admin.json.content.page.part;
 
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import com.enonic.wem.admin.json.content.page.AbstractDescriptorBasedPageComponentJson;
 import com.enonic.wem.api.content.page.ComponentName;
-import com.enonic.wem.api.content.page.AbstractDescriptorBasedPageComponentJson;
+import com.enonic.wem.api.content.page.part.PartComponent;
+import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.data.DataJson;
 import com.enonic.wem.api.data.RootDataSetJson;
 

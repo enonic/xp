@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.region.Region;
-import com.enonic.wem.api.content.page.region.RegionJson;
 
 import static com.enonic.wem.api.content.page.PageRegions.newPageRegions;
 
