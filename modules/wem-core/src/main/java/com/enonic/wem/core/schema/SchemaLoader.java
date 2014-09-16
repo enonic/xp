@@ -23,11 +23,12 @@ import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.xml.mapper.XmlContentTypeMapper;
+import com.enonic.wem.api.xml.mapper.XmlMixinMapper;
 import com.enonic.wem.api.xml.mapper.XmlRelationshipTypeMapper;
 import com.enonic.wem.api.xml.model.XmlContentType;
+import com.enonic.wem.api.xml.model.XmlMixin;
 import com.enonic.wem.api.xml.model.XmlRelationshipType;
 import com.enonic.wem.api.xml.serializer.XmlSerializers2;
-import com.enonic.wem.core.schema.mixin.MixinXmlSerializer;
 import com.enonic.wem.core.support.dao.IconDao;
 
 import static java.util.stream.Collectors.toList;
@@ -174,8 +175,10 @@ public final class SchemaLoader
     {
         try
         {
-            final MixinXmlSerializer xmlSerializer = new MixinXmlSerializer();
-            return xmlSerializer.toMixinBuilder( serializedMixin );
+            final Mixin.Builder builder = Mixin.newMixin();
+            final XmlMixin mixinXml = XmlSerializers2.mixin().parse( serializedMixin );
+            XmlMixinMapper.fromXml( mixinXml, builder );
+            return builder;
         }
         catch ( Exception e )
         {
