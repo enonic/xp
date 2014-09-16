@@ -20,8 +20,8 @@ final class GetContentTypeCommand
 
     private ContentType doExecute()
     {
-        final ContentType.Builder contentTypeBuilder = contentTypeDao.getContentType( this.params.getContentTypeName() );
-        if ( contentTypeBuilder == null )
+        final ContentType contentType = contentTypeDao.getContentType( this.params.getContentTypeName() );
+        if ( contentType == null )
         {
             if ( this.params.isNotFoundAsException() )
             {
@@ -32,8 +32,6 @@ final class GetContentTypeCommand
                 return null;
             }
         }
-
-        final ContentType contentType = contentTypeBuilder.build();
 
         if ( !this.params.isMixinReferencesToFormItems() )
         {

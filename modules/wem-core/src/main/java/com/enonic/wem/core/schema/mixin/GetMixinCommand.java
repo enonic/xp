@@ -21,7 +21,7 @@ final class GetMixinCommand
 
     private Mixin doExecute()
     {
-        final Mixin.Builder mixin = mixinDao.getMixin( params.getName() );
+        final Mixin mixin = mixinDao.getMixin( params.getName() );
         if ( mixin == null )
         {
             if ( params.isNotFoundAsException() )
@@ -35,7 +35,7 @@ final class GetMixinCommand
         }
         else
         {
-            return mixin.build();
+            return mixin;
         }
     }
 

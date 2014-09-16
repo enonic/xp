@@ -39,10 +39,10 @@ final class GetContentTypesCommand
         final ContentTypes.Builder contentTypes = ContentTypes.newContentTypes();
         for ( ContentTypeName contentTypeName : contentTypeNames )
         {
-            final ContentType.Builder contentTypeBuilder = contentTypeDao.getContentType( contentTypeName );
-            if ( contentTypeBuilder != null )
+            final ContentType contentType = contentTypeDao.getContentType( contentTypeName );
+            if ( contentType != null )
             {
-                contentTypes.add( contentTypeBuilder.build() );
+                contentTypes.add( contentType );
             }
         }
         return contentTypes.build();

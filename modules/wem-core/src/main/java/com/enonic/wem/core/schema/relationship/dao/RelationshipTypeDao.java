@@ -8,5 +8,5 @@ public interface RelationshipTypeDao
 {
     RelationshipTypes getAllRelationshipTypes();
 
-    RelationshipType.Builder getRelationshipType( RelationshipTypeName relationshipTypeName );
+    RelationshipType getRelationshipType( RelationshipTypeName relationshipTypeName );
 }

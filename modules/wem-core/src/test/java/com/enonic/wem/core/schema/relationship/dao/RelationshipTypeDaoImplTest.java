@@ -13,7 +13,6 @@ import com.enonic.wem.api.schema.relationship.RelationshipTypes;
 
 import static org.junit.Assert.*;
 
-@Ignore
 public class RelationshipTypeDaoImplTest
 {
     private SchemaRegistry schemaRegistry;
@@ -46,12 +45,11 @@ public class RelationshipTypeDaoImplTest
         Mockito.when( this.schemaRegistry.getRelationshipType( RelationshipTypeName.from( "system-0.0.0:like" ) ) ).thenReturn( like );
 
         // exercise
-        RelationshipType.Builder relationshipType =
+        RelationshipType createdRelationshipType =
             relationshipTypeDao.getRelationshipType( RelationshipTypeName.from( "system-0.0.0:like" ) );
 
         // verify
-        assertNotNull( relationshipType );
-        RelationshipType createdRelationshipType = relationshipType.build();
+        assertNotNull( createdRelationshipType );
         assertEquals( "mymodule-1.0.0:like", createdRelationshipType.getName().toString() );
         assertEquals( like, createdRelationshipType );
     }

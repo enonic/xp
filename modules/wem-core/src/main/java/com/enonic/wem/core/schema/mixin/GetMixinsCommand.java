@@ -46,7 +46,7 @@ final class GetMixinsCommand
 
         for ( MixinName mixinName : mixinNames )
         {
-            final Mixin mixin = getMixin( mixinName );
+            final Mixin mixin = mixinDao.getMixin( mixinName );
             if ( mixin != null )
             {
                 mixins.add( mixin );
@@ -57,12 +57,6 @@ final class GetMixinsCommand
             }
         }
         return mixins.build();
-    }
-
-    private Mixin getMixin( final MixinName mixinName )
-    {
-        final Mixin.Builder mixin = mixinDao.getMixin( mixinName );
-        return mixin != null ? mixin.build() : null;
     }
 
     GetMixinsCommand mixinDao( final MixinDao mixinDao )

@@ -8,5 +8,5 @@ public interface MixinDao
 {
     Mixins getAllMixins();
 
-    Mixin.Builder getMixin( MixinName mixinName );
+    Mixin getMixin( MixinName mixinName );
 }

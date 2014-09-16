@@ -8,5 +8,5 @@ public interface ContentTypeDao
 {
     ContentTypes getAllContentTypes();
 
-    ContentType.Builder getContentType( ContentTypeName contentTypeName );
+    ContentType getContentType( ContentTypeName contentTypeName );
 }

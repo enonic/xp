@@ -19,10 +19,9 @@ public final class ContentTypeDaoImpl
     }
 
     @Override
-    public ContentType.Builder getContentType( final ContentTypeName contentTypeName )
+    public ContentType getContentType( final ContentTypeName contentTypeName )
     {
-        final ContentType contentType = this.schemaRegistry.getContentType( contentTypeName );
-        return contentType != null ? ContentType.newContentType( contentType ) : null;
+        return this.schemaRegistry.getContentType( contentTypeName );
     }
 
     @Inject

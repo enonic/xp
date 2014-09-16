@@ -44,8 +44,7 @@ public class GetRelationshipTypeCommandTest
             build();
 
         // expectation
-        Mockito.when( relationshipTypeDao.getRelationshipType( Mockito.eq( name ) ) ).thenReturn(
-            RelationshipType.newRelationshipType( relationshipType ) );
+        Mockito.when( relationshipTypeDao.getRelationshipType( Mockito.eq( name ) ) ).thenReturn( relationshipType );
 
         // exercise
         final GetRelationshipTypeParams params = new GetRelationshipTypeParams().name( name );

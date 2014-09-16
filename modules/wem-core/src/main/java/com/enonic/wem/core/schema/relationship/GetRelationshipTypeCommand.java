@@ -23,7 +23,7 @@ final class GetRelationshipTypeCommand
     private RelationshipType doExecute()
     {
         final RelationshipTypeName selector = params.getName();
-        final RelationshipType.Builder relationshipType = relationshipTypeDao.getRelationshipType( selector );
+        final RelationshipType relationshipType = relationshipTypeDao.getRelationshipType( selector );
         if ( relationshipType == null )
         {
             if ( params.isNotFoundAsException() )
@@ -37,7 +37,7 @@ final class GetRelationshipTypeCommand
         }
         else
         {
-            return relationshipType.build();
+            return relationshipType;
         }
     }
 
