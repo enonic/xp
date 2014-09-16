@@ -19,7 +19,6 @@ import com.enonic.wem.api.content.site.SiteService;
 import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.relationship.RelationshipService;
-import com.enonic.wem.api.schema.SchemaService;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeService;
@@ -47,7 +46,6 @@ public final class Activator
         service( SiteService.class ).importSingle();
         service( RelationshipService.class ).importSingle();
         service( MixinService.class ).importSingle();
-        service( SchemaService.class ).importSingle();
         service( ModuleService.class ).importSingle();
         service( SiteTemplateService.class ).importSingle();
         service( PageDescriptorService.class ).importSingle();

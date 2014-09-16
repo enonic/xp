@@ -18,7 +18,6 @@ import com.enonic.wem.api.event.EventListener;
 import com.enonic.wem.api.event.EventPublisher;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.relationship.RelationshipService;
-import com.enonic.wem.api.schema.SchemaService;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeService;
@@ -68,7 +67,6 @@ public final class Activator
         service( PageService.class ).export();
         service( RelationshipService.class ).export();
         service( MixinService.class ).export();
-        service( SchemaService.class ).export();
         service( ModuleService.class ).export();
         service( StartupInitializer.class ).export();
         service( ModuleURLStreamHandler.class ).attribute( "url.handler.protocol", "module" ).export();

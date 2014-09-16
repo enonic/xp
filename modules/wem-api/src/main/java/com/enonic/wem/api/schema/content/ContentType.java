@@ -62,11 +62,6 @@ public final class ContentType
         return new Builder( contentType );
     }
 
-    public boolean inherit( final ContentTypeName contentType )
-    {
-        return this.superType != null && this.superType.equals( contentType );
-    }
-
     public boolean hasSuperType()
     {
         return superType != null;

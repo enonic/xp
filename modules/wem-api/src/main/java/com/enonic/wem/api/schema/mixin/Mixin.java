@@ -6,7 +6,7 @@ import com.enonic.wem.api.schema.BaseSchema;
 import com.enonic.wem.api.schema.Schema;
 import com.enonic.wem.api.schema.SchemaKind;
 
-public class Mixin
+public final class Mixin
     extends BaseSchema<MixinName>
     implements Schema
 {
