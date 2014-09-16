@@ -35,7 +35,7 @@ module api.ui.time {
         }
 
         setTime(value: api.util.LocalTime): LocalTime {
-            var localTime = api.util.DateHelper.formatLocalTime(value);
+            var localTime = value.getAdjustedTime();
             this.timePicker = new api.ui.time.TimePickerBuilder().setHours(localTime.hour).setMinutes(localTime.minute).build();
             this.layoutItems();
             return this;

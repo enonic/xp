@@ -10,15 +10,6 @@ module api.util {
             return (new Date().getTimezoneOffset() / 60) * -1;
         }
 
-        public static formatLocalTime(value: api.util.LocalTime): {hour: number; minute: number} {
-            var date = new Date();
-            date.setHours(value.getHours() + this.getTZOffset(), value.getMinutes());
-            return {
-                hour: date.getHours(),
-                minute: date.getMinutes()
-            }
-        }
-
         public static parseUTCTime(localTime: string): string {
             var values = localTime.split(':');
             var date = new Date();

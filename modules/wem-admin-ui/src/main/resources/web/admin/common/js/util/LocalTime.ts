@@ -68,5 +68,15 @@ module api.util {
 
 
         }
+
+        public  getAdjustedTime(): {hour: number; minute: number} {
+            var date = new Date();
+            date.setHours(this.getHours() + DateHelper.getTZOffset(), this.getMinutes());
+            return {
+                hour: date.getHours(),
+                minute: date.getMinutes()
+            }
+        }
+
     }
 }
