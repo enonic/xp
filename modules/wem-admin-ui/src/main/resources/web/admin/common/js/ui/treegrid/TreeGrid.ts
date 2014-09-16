@@ -474,6 +474,24 @@ module api.ui.treegrid {
                 });
         }
 
+        deleteNode(data: NODE): void {
+            var root = this.stash || this.root;
+            var node = root.findNode(data);
+            this.gridData.deleteItem(node.getId());
+            if (node && node.getParent()) {
+                var parent = node.getParent();
+                parent.removeChild(node);
+                parent.setMaxChildren(parent.getMaxChildren() - 1);
+            }
+        }
+
+        appendNode(data: NODE): void {
+            var root = this.stash || this.root;
+            root.addChildFromData(data);
+            var node = root.findNode(data);
+            this.gridData.insertItem(this.gridData.getLength(), node);
+        }
+
         deleteNodes(dataList: NODE[]): void {
             var root = this.stash || this.root;
             var updated: TreeNode<NODE>[] = [];

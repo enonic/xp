@@ -66,10 +66,12 @@ module app.browse {
         }
 
         fetch(node: TreeNode<ModuleSummary>): wemQ.Promise<api.module.Module> {
+            return this .fetchByKey(node.getData().getModuleKey());
+        }
 
-            var parentId = node.getData().getModuleKey();
+        fetchByKey(moduleKey: api.module.ModuleKey): wemQ.Promise<api.module.Module> {
             var deferred = wemQ.defer<api.module.Module>();
-            new api.module.GetModuleRequest(parentId, true).sendAndParse().then((modulee: api.module.Module)=> {
+            new api.module.GetModuleRequest(moduleKey, true).sendAndParse().then((modulee: api.module.Module)=> {
                 deferred.resolve(modulee);
             });
 
@@ -83,6 +85,26 @@ module app.browse {
                 if (moduleSummary.getModuleKey().toString() == moduleKey.toString()) {
                     this.updateNode(moduleSummary);
                 }
+            });
+        }
+
+        deleteModuleNode(moduleKey: api.module.ModuleKey) {
+            var root = this.getRoot();
+            root.getChildren().forEach((child: TreeNode<ModuleSummary>) => {
+                var moduleSummary: ModuleSummary = child.getData();
+                if (moduleSummary.getModuleKey().toString() == moduleKey.toString()) {
+                    this.deleteNode(moduleSummary);
+                }
+            });
+        }
+
+        appendModuleNode(moduleKey: api.module.ModuleKey) {
+            var root = this.getRoot();
+            this.fetchByKey(moduleKey)
+                .then((data: api.module.Module) => {
+               this.appendNode(data);
+            }).catch((reason: any) => {
+                api.DefaultErrorHandler.handle(reason);
             });
         }
 

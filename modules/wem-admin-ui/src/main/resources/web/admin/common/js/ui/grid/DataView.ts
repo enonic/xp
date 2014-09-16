@@ -48,6 +48,10 @@ module api.ui.grid {
             this.slickDataView.updateItem(id, item);
         }
 
+        deleteItem(id: string) {
+            this.slickDataView.deleteItem(id);
+        }
+
         syncGridSelection(grid: Slick.Grid<T>, preserveHidden: boolean) {
             this.slickDataView.syncGridSelection(grid, preserveHidden);
         }
