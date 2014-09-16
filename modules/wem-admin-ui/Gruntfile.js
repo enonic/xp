@@ -14,7 +14,7 @@ module.exports = function (grunt) {
     // Register aliases
     grunt.registerTask('default', 'all');
 
-    grunt.registerTask('all', ['less', 'newer', 'directives']);
+    grunt.registerTask('all', ['less', 'newer', 'directives', 'karma']);
     grunt.registerTask('all_no_ts', ['less', 'directives']);
 
     grunt.registerTask('common', ['all_no_ts', 'ts:common']);
