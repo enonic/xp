@@ -1,10 +1,14 @@
 module app.view {
 
+    import ModuleBrowseActions = app.browse.ModuleBrowseActions;
+
     export class ModuleItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.module.ModuleSummary> {
 
         private upgradeNeeded:boolean = true;
         private upgradeMessageContainer:api.dom.DivEl;
         private moduleDataContainer:api.dom.DivEl;
+        private moduleActions:api.ui.Action[] = [];
+        private actionMenu:api.ui.menu.ActionMenu;
 
         constructor() {
             super("module-item-statistics-panel");
@@ -15,12 +19,28 @@ module app.view {
                 this.appendChild(this.upgradeMessageContainer)
             }
 
+            this.actionMenu = new api.ui.menu.ActionMenu("Module actions", ModuleBrowseActions.get().START_MODULE, ModuleBrowseActions.get().STOP_MODULE, ModuleBrowseActions.get().UNINSTALL_MODULE);
+
+            this.appendChild(this.actionMenu);
+
             this.moduleDataContainer = new api.dom.DivEl("module-data-container");
             this.appendChild(this.moduleDataContainer);
+
+
         }
 
         setItem(item: api.app.view.ViewItem<api.module.ModuleSummary>) {
             super.setItem(item);
+            this.actionMenu.setLabel(api.util.capitalize(item.getModel().getState()));
+
+            if (item.getModel().getState() == "started") {
+                this.actionMenu.disableAction(ModuleBrowseActions.get().START_MODULE);
+                this.actionMenu.enableAction(ModuleBrowseActions.get().STOP_MODULE);
+            } else {
+                this.actionMenu.disableAction(ModuleBrowseActions.get().STOP_MODULE);
+                this.actionMenu.enableAction(ModuleBrowseActions.get().START_MODULE);
+            }
+
             this.moduleDataContainer.removeChildren();
 
             var infoGroup = new ModuleItemDataGroup("Info");
