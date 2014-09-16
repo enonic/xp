@@ -68,6 +68,7 @@
               <arguments>
                 <argument>${grunt.script}</argument>
                 <argument>all</argument>
+                <argument>karma</argument>
               </arguments>
             </configuration>
           </execution>
