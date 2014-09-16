@@ -16,12 +16,6 @@
             overflow: auto;
         }
 
-        img {
-            border: 1px solid lightgrey;
-            position: absolute;
-            box-sizing: border-box;
-        }
-
         .settings-area {
             width: 800px;
             margin: 10px auto;
@@ -49,6 +43,11 @@
 
         h4 {
             margin: 0 0 10px;
+        }
+
+        .display-area > img,
+        .display-area > .image-canvas {
+            position: absolute;
         }
 
     </style>
@@ -84,9 +83,6 @@
     displayArea.appendChild(image);
 
     var imageCanvas = new api.ui.image.ImageCanvas(image);
-    image.onLoaded(function () {
-        imageCanvas = new api.ui.image.ImageCanvas(image);
-    });
 
     var settingsArea = new DivEl('settings-area');
     api.dom.Body.get().appendChild(settingsArea);
@@ -151,30 +147,44 @@
 
     imageSelect.onChange(function () {
         image.setSrc(imageSelect.getValue());
+        imageWidthInput.setValue(image.getEl().getWidth());
     });
 
     positionLeftInput.onInput(function () {
-        image.getEl().setLeftPx(positionLeftInput.getValue());
+        if (imageCanvas.isEnabled()) {
+            imageCanvas.getEl().setLeftPx(positionLeftInput.getValue());
+        } else {
+            image.getEl().setLeftPx(positionLeftInput.getValue());
+        }
     });
     positionLeftInput.setValue(0);
 
     positionTopInput.onInput(function () {
-        image.getEl().setTopPx(positionTopInput.getValue());
+        if (imageCanvas.isEnabled()) {
+            imageCanvas.getEl().setTopPx(positionTopInput.getValue());
+        } else {
+            image.getEl().setTopPx(positionTopInput.getValue());
+        }
     });
     positionTopInput.setValue(0);
 
 
     enableCanvasCheckbox.onChange(function () {
         imageCanvas.setEnabled(enableCanvasCheckbox.getHTMLElement()["checked"]);
+        if (imageCanvas.isEnabled()) {
+            imageCanvas.getEl().setTopPx(positionTopInput.getValue()).setLeftPx(positionLeftInput.getValue());
+        }
     });
 
     imageWidthInput.onInput(function () {
         imageCanvas.setWidth(imageWidthInput.getValue());
     });
+    imageWidthInput.setValue(image.getEl().getWidth());
 
     imageZoomInput.onInput(function () {
         imageCanvas.setZoom(Math.max(imageZoomInput.getValue(), 100));
-    })
+    });
+    imageZoomInput.setValue(100);
 
 
 </script>
