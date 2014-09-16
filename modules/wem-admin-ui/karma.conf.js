@@ -1,12 +1,11 @@
-// Karma configuration
-// Generated on Tue Sep 09 2014 13:01:56 GMT+0200 (CEST)
+var srcDir = 'src/main/resources/web';
+var targetDir = 'target/karma';
 
 module.exports = function (config) {
     config.set({
 
         // base path that will be used to resolve all patterns (eg. files, exclude)
-        basePath: '.',
-
+        basePath: 'src/main/resources/web',
 
         // frameworks to use
         // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
@@ -15,11 +14,10 @@ module.exports = function (config) {
 
         // list of files / patterns to load in the browser
         files: [
-            '../../admin/common/lib/_all.js',
-            '../../admin/common/js/_all.js',
-            'common/js/**/*Test.js'
+            'admin/common/lib/_all.js',
+            'admin/common/js/_all.js',
+            'dev/test/common/js/**/*Test.js'
         ],
-
 
         // list of files to exclude
         exclude: [
@@ -29,7 +27,7 @@ module.exports = function (config) {
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            '../../admin/common/js/_all.js': ['coverage']
+            'admin/common/js/_all.js': ['coverage']
         },
 
 
@@ -58,11 +56,16 @@ module.exports = function (config) {
 
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-        browsers: ['Chrome', "Firefox"],
+        browsers: ['PhantomJS'],
 
 
         // Continuous Integration mode
         // if true, Karma captures browsers, runs the tests and exits
-        singleRun: false
+        singleRun: true,
+
+        coverageReporter: {
+            type: 'html',
+            dir: '../../../../target/karma/coverage'
+        }
     });
 };

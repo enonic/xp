@@ -6,6 +6,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks("grunt-newer-explicit");
+    grunt.loadNpmTasks('grunt-karma');
 
     // Load grunt task configuration from grunt/*
     require('load-grunt-config')(grunt);
