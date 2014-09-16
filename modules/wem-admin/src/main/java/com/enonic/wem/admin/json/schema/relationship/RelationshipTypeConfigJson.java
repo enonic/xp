@@ -1,8 +1,9 @@
 package com.enonic.wem.admin.json.schema.relationship;
 
 import com.enonic.wem.api.schema.relationship.RelationshipType;
-import com.enonic.wem.api.schema.relationship.RelationshipTypeXml;
-import com.enonic.wem.api.xml.XmlSerializers;
+import com.enonic.wem.api.xml.mapper.XmlRelationshipTypeMapper;
+import com.enonic.wem.api.xml.model.XmlRelationshipType;
+import com.enonic.wem.api.xml.serializer.XmlSerializers2;
 
 public class RelationshipTypeConfigJson
 {
@@ -10,10 +11,8 @@ public class RelationshipTypeConfigJson
 
     public RelationshipTypeConfigJson( final RelationshipType model )
     {
-        final RelationshipTypeXml relationshipTypeXml = new RelationshipTypeXml();
-        relationshipTypeXml.from( model );
-
-        this.contentTypeXml = XmlSerializers.relationshipType().serialize( relationshipTypeXml );
+        final XmlRelationshipType relationshipTypeXml = XmlRelationshipTypeMapper.toXml( model );
+        this.contentTypeXml = XmlSerializers2.relationshipType().serialize( relationshipTypeXml );
     }
 
     public String getRelationshipTypeXml()

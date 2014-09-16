@@ -22,7 +22,11 @@ import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
-import com.enonic.wem.api.xml.XmlSerializers;
+import com.enonic.wem.api.xml.mapper.XmlContentTypeMapper;
+import com.enonic.wem.api.xml.mapper.XmlRelationshipTypeMapper;
+import com.enonic.wem.api.xml.model.XmlContentType;
+import com.enonic.wem.api.xml.model.XmlRelationshipType;
+import com.enonic.wem.api.xml.serializer.XmlSerializers2;
 import com.enonic.wem.core.schema.mixin.MixinXmlSerializer;
 import com.enonic.wem.core.support.dao.IconDao;
 
@@ -141,7 +145,8 @@ public final class SchemaLoader
         try
         {
             final ContentType.Builder builder = ContentType.newContentType();
-            XmlSerializers.contentType().parse( serializedContentType ).to( builder );
+            final XmlContentType contentTypeXml = XmlSerializers2.contentType().parse( serializedContentType );
+            XmlContentTypeMapper.fromXml( contentTypeXml, builder );
             return builder;
         }
         catch ( Exception e )
@@ -155,7 +160,8 @@ public final class SchemaLoader
         try
         {
             final RelationshipType.Builder builder = RelationshipType.newRelationshipType();
-            XmlSerializers.relationshipType().parse( serializedRelationshipType ).to( builder );
+            final XmlRelationshipType relationshipTypeXml = XmlSerializers2.relationshipType().parse( serializedRelationshipType );
+            XmlRelationshipTypeMapper.fromXml( relationshipTypeXml, builder );
             return builder;
         }
         catch ( Exception e )
