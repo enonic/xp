@@ -14,7 +14,7 @@ import com.enonic.wem.api.support.illegaledit.IllegalEditException;
 
 import static com.enonic.wem.api.form.Form.newForm;
 
-public class ContentType
+public final class ContentType
     extends BaseSchema<ContentTypeName>
     implements Schema, IllegalEditAware<ContentType>
 {
@@ -256,14 +256,7 @@ public class ContentType
 
         public ContentType build()
         {
-            if ( this.name.equals( ContentTypeName.imageMedia() ) )
-            {
-                return new ImageContentType( this );
-            }
-            else
-            {
-                return new ContentType( this );
-            }
+            return new ContentType( this );
         }
     }
 }

@@ -10,14 +10,15 @@ import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.attachment.GetAttachmentParameters;
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
-import com.enonic.wem.api.schema.content.ImageContentType;
 import com.enonic.wem.core.web.servlet.ServletRequestUrlHelper;
 
 public final class ContentIconUrlResolver
@@ -46,6 +47,13 @@ public final class ContentIconUrlResolver
         this.attachmentService = attachmentService;
     }
 
+    private String getImageAttachmentName( final Content content )
+    {
+        final ContentData contentData = content.getContentData();
+        final Property imageProperty = contentData.getProperty( "image" );
+        return imageProperty.hasNullValue() ? content.getName().toString() : imageProperty.getString();
+    }
+
     public String resolve( final Content content )
     {
         if ( content.hasThumbnail() )
@@ -55,7 +63,7 @@ public final class ContentIconUrlResolver
         }
         else if ( content.getType().isImageMedia() )
         {
-            final String attachmentName = ImageContentType.getImageAttachmentName( content );
+            final String attachmentName = getImageAttachmentName( content );
             final Attachment attachment = attachmentService.get( GetAttachmentParameters.create().
                 contentId( content.getId() ).
                 attachmentName( attachmentName ).
