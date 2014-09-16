@@ -11,11 +11,9 @@ module api.ui.image {
         paddingLeft: number;
     }
 
-    export class ImageCanvas {
+    export class ImageCanvas extends api.dom.DivEl {
 
         private image: ImgEl;
-
-        private originalStyles: ImageStyles;
 
         private width: number;
 
@@ -24,20 +22,17 @@ module api.ui.image {
         private enabled: boolean;
 
         constructor(image: ImgEl) {
+            super('image-canvas');
+
             this.image = image;
-
-            var imageEl = image.getEl();
-            this.originalStyles = {
-                width: imageEl.getWidth(),
-                height: imageEl.getHeight(),
-                paddingTop: imageEl.getPaddingTop(),
-                paddingRight: imageEl.getPaddingRight(),
-                paddingBottom: imageEl.getPaddingBottom(),
-                paddingLeft: imageEl.getPaddingLeft()
-            };
-
-            this.width = this.originalStyles.width;
+            this.width = image.getEl().getWidth();
             this.zoom = 100;
+
+            image.onLoaded(() => {
+                if (this.enabled) {
+                    this.updateCanvas();
+                }
+            });
         }
 
         setWidth(width: number) {
@@ -56,41 +51,47 @@ module api.ui.image {
 
         setEnabled(isEnabled: boolean) {
             this.enabled = isEnabled;
-            isEnabled ? this.updateCanvas() : this.disableCanvas();
+            if (isEnabled) {
+                this.insertAfterEl(this.image);
+                this.image.unregisterFromParentElement(true);
+                this.appendChild(this.image);
+
+                this.updateCanvas();
+            } else {
+                this.image.unregisterFromParentElement(true);
+                this.image.insertBeforeEl(this);
+                this.unregisterFromParentElement(true);
+                this.getEl().remove();
+
+                this.disableCanvas();
+            }
+        }
+
+        isEnabled(): boolean {
+            return this.enabled;
         }
 
         private updateCanvas() {
-            var imageEl = this.image.getEl();
-            imageEl.setWidthPx(this.width);
+            this.updateWidth();
             this.updateZoom();
         }
 
-        private disableCanvas() {
-            this.image.getEl().
-                setWidthPx(this.originalStyles.width).
-                setHeightPx(this.originalStyles.height).
-                setPaddingTop(this.originalStyles.paddingTop + 'px').
-                setPaddingRight(this.originalStyles.paddingRight + 'px').
-                setPaddingBottom(this.originalStyles.paddingBottom + 'px').
-                setPaddingLeft(this.originalStyles.paddingLeft + 'px');
+        private updateWidth() {
+            this.image.getEl().setWidthPx(this.width);
+            this.getEl().
+                setWidthPx(this.width).
+                setHeightPx(this.image.getEl().getHeight());
         }
 
         private updateZoom() {
-            if (this.width < this.originalStyles.width) {
-                return;
-            }
-
-            var zoomedWidth = Math.min(this.originalStyles.width * (this.zoom / 100), this.width);
-            var horizontalPadding = (this.width - zoomedWidth) / 2;
-            var height = this.originalStyles.height * (this.width / this.originalStyles.width);
-            var zoomedHeight = Math.min(this.originalStyles.height * (this.zoom / 100), height);
-            var verticalPadding =  (height - zoomedHeight) / 2;
-
             this.image.getEl().
-                setPaddingLeft(horizontalPadding + this.originalStyles.paddingLeft + 'px').
-                setPaddingRight(horizontalPadding + this.originalStyles.paddingRight + 'px').
-                setPaddingTop(verticalPadding + this.originalStyles.paddingTop + 'px').
-                setPaddingBottom(verticalPadding + this.originalStyles.paddingBottom + 'px');
+                setWidthPx(this.width * (this.zoom / 100)).
+                setMarginLeft(-(this.width * ((this.zoom / 100) - 1) / 2) + 'px').
+                setMarginTop(-(this.getEl().getHeight() * ((this.zoom / 100) - 1) / 2) + 'px');
+        }
+
+        private disableCanvas() {
+            this.image.getEl().setWidth('').setMarginLeft('').setMarginTop('');
         }
     }
 
