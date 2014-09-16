@@ -32,6 +32,18 @@ public class ModuleKeyTest
     }
 
     @Test
+    public void testParseSystemModuleWithoutVersion()
+    {
+        final ModuleKey systemModuleKey = ModuleKey.from( "system" );
+        final ModuleKey systemModuleKeyWithVersion = ModuleKey.from( "system-0.0.0" );
+
+        assertEquals( ModuleKey.from( ModuleName.from( "system" ), ModuleVersion.from( "0.0.0" ) ), systemModuleKey );
+        assertEquals( ModuleKey.from( ModuleName.from( "system" ), ModuleVersion.from( "0.0.0" ) ), systemModuleKeyWithVersion );
+        assertEquals( systemModuleKey, systemModuleKeyWithVersion );
+        assertEquals( ModuleKey.SYSTEM, systemModuleKey );
+    }
+
+    @Test
     public void testModuleVersionToStringParse()
     {
         final ModuleKey moduleKey = ModuleKey.from( ModuleName.from( "mymodule" ), ModuleVersion.from( "3.2.1" ) );

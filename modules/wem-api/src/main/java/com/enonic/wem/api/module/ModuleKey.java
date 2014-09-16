@@ -1,14 +1,21 @@
 package com.enonic.wem.api.module;
 
-import org.apache.commons.lang.StringUtils;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Version;
 
+import com.google.common.base.Preconditions;
+
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static org.apache.commons.lang.StringUtils.substringAfterLast;
+import static org.apache.commons.lang.StringUtils.substringBeforeLast;
 
 public final class ModuleKey
 {
-    public final static ModuleKey SYSTEM = new ModuleKey( ModuleName.from( "system" ), new ModuleVersion( "0.0.0" ) );
+
+    private static final String SYSTEM_MODULE_NAME = "system";
+
+    public final static ModuleKey SYSTEM = new ModuleKey( ModuleName.from( SYSTEM_MODULE_NAME ), new ModuleVersion( "0.0.0" ) );
 
     private static final String SEPARATOR = "-";
 
@@ -71,9 +78,18 @@ public final class ModuleKey
 
     public static ModuleKey from( final String moduleKey )
     {
-        final String name = StringUtils.substringBeforeLast( moduleKey, SEPARATOR );
-        final String version = StringUtils.substringAfterLast( moduleKey, SEPARATOR );
-        return new ModuleKey( ModuleName.from( name ), ModuleVersion.from( version ) );
+        final String name = substringBeforeLast( moduleKey, SEPARATOR );
+        if ( SYSTEM_MODULE_NAME.equals( moduleKey ) )
+        {
+            return ModuleKey.SYSTEM;
+        }
+
+        final String version = substringAfterLast( moduleKey, SEPARATOR );
+        Preconditions.checkArgument( !isNullOrEmpty( version ), "Missing version in module key [" + moduleKey + "]" );
+
+        final ModuleName moduleName = ModuleName.from( name );
+        final ModuleVersion moduleVersion = ModuleVersion.from( version );
+        return new ModuleKey( moduleName, moduleVersion );
     }
 
     public static ModuleKey from( final Bundle bundle )
