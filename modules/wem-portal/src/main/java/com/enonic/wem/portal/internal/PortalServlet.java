@@ -21,15 +21,11 @@ public final class PortalServlet
     @Override
     protected Component createComponent()
     {
-        final String contextPath = getServletContext().getContextPath();
-        final String attachPath = contextPath + ( contextPath.endsWith( "/" ) ? "portal" : "/portal" );
-
         final Component component = new Component()
         {
             @Override
             public void handle( final Request request, final Response response )
             {
-                request.getAttributes().put( "__contextPath", contextPath );
                 try
                 {
                     ServletRequestHolder.setRequest( ServletUtils.getRequest( request ) );
@@ -43,7 +39,7 @@ public final class PortalServlet
             }
         };
 
-        component.getDefaultHost().attach( attachPath, this.portalApplication );
+        component.getDefaultHost().attach( "/portal", this.portalApplication );
         return component;
     }
 }
