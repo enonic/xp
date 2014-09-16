@@ -39,39 +39,9 @@ final class SystemConfigImpl
 
 
     @Override
-    public Path getModulesDir()
-    {
-        return getSharedConfigDir().resolve( "modules" );
-    }
-
-    @Override
     public Path getTemplatesDir()
     {
         return getSharedConfigDir().resolve( "templates" );
-    }
-
-    @Override
-    public Path getSchemasDir()
-    {
-        return getSharedConfigDir().resolve( "schemas" );
-    }
-
-    @Override
-    public Path getContentTypesDir()
-    {
-        return getSchemasDir().resolve( "content-types" );
-    }
-
-    @Override
-    public Path getMixinsDir()
-    {
-        return getSchemasDir().resolve( "mixins" );
-    }
-
-    @Override
-    public Path getRelationshiptTypesDir()
-    {
-        return getSchemasDir().resolve( "relationship-types" );
     }
 
     @Override

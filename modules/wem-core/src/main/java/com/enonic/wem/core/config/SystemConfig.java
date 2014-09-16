@@ -13,17 +13,7 @@ public interface SystemConfig
 
     public File getConfigDir();
 
-    public Path getModulesDir();
-
     public Path getTemplatesDir();
-
-    public Path getSchemasDir();
-
-    public Path getContentTypesDir();
-
-    public Path getMixinsDir();
-
-    public Path getRelationshiptTypesDir();
 
     public Path getSharedDir();
 
