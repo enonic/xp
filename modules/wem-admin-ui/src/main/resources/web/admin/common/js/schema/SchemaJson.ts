@@ -14,7 +14,5 @@ module api.schema {
 
         schemaKind:string;
 
-        hasChildren:boolean;
-
     }
 }

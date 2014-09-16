@@ -3,7 +3,6 @@ package com.enonic.wem.core.schema.content;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
 import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
@@ -40,32 +39,4 @@ abstract class AbstractContentTypeCommand
         return transformedContentTypes.build();
     }
 
-    protected ContentTypes populateInheritors( final ContentTypes contentTypes )
-    {
-        final ContentTypes.Builder builder = ContentTypes.newContentTypes();
-
-        final ContentTypes allContentTypes = this.contentTypeDao.getAllContentTypes();
-        final ContentTypeInheritorResolver resolver = new ContentTypeInheritorResolver( allContentTypes );
-
-        for ( final ContentType contentType : contentTypes )
-        {
-            builder.add( populateInheritors( resolver, contentType ) );
-        }
-        return builder.build();
-    }
-
-    private ContentType populateInheritors( final ContentTypeInheritorResolver resolver, ContentType contentType )
-    {
-        contentType = ContentType.newContentType( contentType ).
-            inheritors( resolver.resolveInheritors( contentType.getName() ).isNotEmpty() ).
-            build();
-        return contentType;
-    }
-
-    protected void populateInheritors( final ContentTypeInheritorResolver resolver,
-                                       final ContentType.Builder contentType,
-                                       final ContentTypeName contentTypeName )
-    {
-        contentType.inheritors( resolver.resolveInheritors( contentTypeName ).isNotEmpty() );
-    }
 }

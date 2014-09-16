@@ -8,7 +8,6 @@
             "description": null,
             "displayName": null,
             "editable": true,
-            "hasChildren": false,
             "icon": null,
             "iconUrl": "/admin/rest/schema/icon/Mixin:mymodule-1.0.0:input_text_1",
             "items": [
@@ -45,7 +44,6 @@
             "description": null,
             "displayName": null,
             "editable": true,
-            "hasChildren": false,
             "icon": null,
             "iconUrl": "/admin/rest/schema/icon/Mixin:mymodule-1.0.0:text_area_2",
             "items": [

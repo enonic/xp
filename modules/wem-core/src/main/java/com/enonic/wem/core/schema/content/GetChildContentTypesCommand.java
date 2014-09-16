@@ -31,7 +31,7 @@ final class GetChildContentTypesCommand
                 builder.add( contentType );
             }
         }
-        return populateInheritors( builder.build() );
+        return builder.build();
     }
 
     GetChildContentTypesCommand params( final GetChildContentTypesParams params )

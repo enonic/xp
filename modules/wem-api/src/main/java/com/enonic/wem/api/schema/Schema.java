@@ -23,8 +23,6 @@ public interface Schema
 
     Instant getModifiedTime();
 
-    boolean hasChildren();
-
     Icon getIcon();
 
 }

@@ -21,7 +21,7 @@ final class GetRootContentTypesCommand
             }
         }
 
-        return populateInheritors( builder.build() );
+        return builder.build();
     }
 
     GetRootContentTypesCommand contentTypeDao( final ContentTypeDao contentTypeDao )

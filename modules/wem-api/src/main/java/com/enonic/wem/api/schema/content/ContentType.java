@@ -32,8 +32,6 @@ public class ContentType
 
     private final String contentDisplayNameScript;
 
-    private final boolean hasInheritors;
-
     ContentType( final Builder builder )
     {
         super( builder );
@@ -46,7 +44,6 @@ public class ContentType
         {
             this.superType = builder.superType;
         }
-        this.hasInheritors = builder.inheritors;
         this.isAbstract = builder.isAbstract;
         this.isFinal = builder.isFinal;
         this.allowChildContent = builder.allowChildContent;
@@ -63,17 +60,6 @@ public class ContentType
     public static Builder newContentType( final ContentType contentType )
     {
         return new Builder( contentType );
-    }
-
-    @Override
-    public boolean hasChildren()
-    {
-        return hasInheritors();
-    }
-
-    private boolean hasInheritors()
-    {
-        return this.hasInheritors;
     }
 
     public boolean inherit( final ContentTypeName contentType )
@@ -130,7 +116,6 @@ public class ContentType
         IllegalEdit.check( "creator", this.getCreator(), to.getCreator(), ContentType.class );
         IllegalEdit.check( "modifiedTime", this.getModifiedTime(), to.getModifiedTime(), ContentType.class );
         IllegalEdit.check( "modifier", this.getModifier(), to.getModifier(), ContentType.class );
-        IllegalEdit.check( "inheritors", this.hasInheritors(), to.hasInheritors(), ContentType.class );
     }
 
     @Override
@@ -168,8 +153,6 @@ public class ContentType
 
         private String contentDisplayNameScript;
 
-        private boolean inheritors;
-
         private Builder()
         {
             super( SchemaKind.CONTENT_TYPE );
@@ -185,7 +168,6 @@ public class ContentType
             this.isFinal = source.isFinal();
             this.allowChildContent = source.allowChildContent();
             this.isBuiltIn = source.isBuiltIn();
-            this.inheritors = source.hasInheritors();
             this.superType = source.getSuperType();
             if ( source.form() != null )
             {
@@ -263,12 +245,6 @@ public class ContentType
         public Builder form( final Form form )
         {
             this.formBuilder = newForm( form );
-            return this;
-        }
-
-        public Builder inheritors( final boolean value )
-        {
-            this.inheritors = value;
             return this;
         }
 

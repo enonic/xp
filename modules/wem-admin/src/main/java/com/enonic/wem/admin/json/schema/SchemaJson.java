@@ -41,8 +41,6 @@ public class SchemaJson
 
     private final IconJson iconJson;
 
-    private final boolean hasChildren;
-
     protected SchemaJson( final Schema schema, final SchemaIconUrlResolver iconUrlResolver )
     {
         this.key = schema.getSchemaKey() != null ? schema.getSchemaKey().toString() : null;
@@ -53,7 +51,6 @@ public class SchemaJson
         this.modifiedTime = schema.getModifiedTime();
         this.iconUrl = iconUrlResolver.resolve( schema );
         this.iconJson = schema.getIcon() != null ? new IconJson( schema.getIcon() ) : null;
-        this.hasChildren = schema.hasChildren();
     }
 
     public static SchemaJson from( final Schema schema, final SchemaIconUrlResolver iconUrlResolver )
@@ -110,11 +107,6 @@ public class SchemaJson
     public IconJson getIcon()
     {
         return this.iconJson;
-    }
-
-    public boolean isHasChildren()
-    {
-        return hasChildren;
     }
 
     @Override

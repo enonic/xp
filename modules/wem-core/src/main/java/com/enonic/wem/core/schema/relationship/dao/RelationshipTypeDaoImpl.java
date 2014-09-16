@@ -21,7 +21,8 @@ public final class RelationshipTypeDaoImpl
     @Override
     public RelationshipType.Builder getRelationshipType( final RelationshipTypeName relationshipTypeName )
     {
-        return RelationshipType.newRelationshipType( this.schemaRegistry.getRelationshipType( relationshipTypeName ) );
+        final RelationshipType relationshipType = this.schemaRegistry.getRelationshipType( relationshipTypeName );
+        return relationshipType != null ? RelationshipType.newRelationshipType( relationshipType ) : null;
     }
 
     @Inject

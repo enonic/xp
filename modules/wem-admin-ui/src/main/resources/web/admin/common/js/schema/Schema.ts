@@ -14,8 +14,6 @@ module api.schema {
 
         private kind: SchemaKind;
 
-        private children: boolean;
-
         constructor(builder: SchemaBuilder) {
             super(builder);
             this.key = builder.key;
@@ -24,7 +22,6 @@ module api.schema {
             this.description = builder.description;
             this.iconUrl = builder.iconUrl;
             this.kind = builder.kind;
-            this.children = builder.children;
         }
 
         getKey(): string {
@@ -37,10 +34,6 @@ module api.schema {
 
         getDisplayName(): string {
             return this.displayName;
-        }
-
-        hasChildren(): boolean {
-            return this.children;
         }
 
         getDescription(): string {
@@ -113,8 +106,6 @@ module api.schema {
 
         kind: SchemaKind;
 
-        children: boolean;
-
         constructor(source?: Schema) {
             if (source) {
                 super(source);
@@ -124,7 +115,6 @@ module api.schema {
                 this.description = source.getDescription();
                 this.iconUrl = source.getIconUrl();
                 this.kind = source.getSchemaKind();
-                this.children = source.hasChildren();
             }
         }
 
@@ -137,7 +127,6 @@ module api.schema {
             this.description = json.description;
             this.iconUrl = json.iconUrl;
             this.kind = SchemaKind.fromString(json.schemaKind);
-            this.children = json.hasChildren;
             return this;
         }
 

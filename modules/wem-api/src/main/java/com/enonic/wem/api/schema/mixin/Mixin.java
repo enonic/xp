@@ -18,12 +18,6 @@ public class Mixin
         this.formItems = builder.formItems;
     }
 
-    @Override
-    public boolean hasChildren()
-    {
-        return false;
-    }
-
     public FormItems getFormItems()
     {
         return formItems;

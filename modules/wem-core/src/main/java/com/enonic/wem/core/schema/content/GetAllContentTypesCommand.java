@@ -12,8 +12,7 @@ final class GetAllContentTypesCommand
 
     ContentTypes execute()
     {
-        final ContentTypes allContentTypes = contentTypeDao.getAllContentTypes();
-        final ContentTypes contentTypes = populateInheritors( allContentTypes );
+        final ContentTypes contentTypes = contentTypeDao.getAllContentTypes();
 
         if ( !params.isMixinReferencesToFormItems() )
         {

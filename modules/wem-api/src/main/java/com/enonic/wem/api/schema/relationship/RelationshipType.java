@@ -36,12 +36,6 @@ public final class RelationshipType
         this.allowedToTypes = ContentTypeNames.from( builder.allowedToTypes );
     }
 
-    @Override
-    public boolean hasChildren()
-    {
-        return false;
-    }
-
     public String getFromSemantic()
     {
         return fromSemantic;

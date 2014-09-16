@@ -1,5 +1,4 @@
 ///<reference path="SchemaJson.ts"/>
-///<reference path="SchemaListJson.ts"/>
 ///<reference path="SchemaDeleteJson.ts"/>
 ///<reference path="SchemaDeleteResult.ts"/>
 

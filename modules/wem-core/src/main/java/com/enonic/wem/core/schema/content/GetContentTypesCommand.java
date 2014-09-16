@@ -42,9 +42,6 @@ final class GetContentTypesCommand
             final ContentType.Builder contentTypeBuilder = contentTypeDao.getContentType( contentTypeName );
             if ( contentTypeBuilder != null )
             {
-                final ContentTypes allContentTypes = contentTypeDao.getAllContentTypes();
-                final ContentTypeInheritorResolver contentTypeInheritorResolver = new ContentTypeInheritorResolver( allContentTypes );
-                populateInheritors( contentTypeInheritorResolver, contentTypeBuilder, contentTypeName );
                 contentTypes.add( contentTypeBuilder.build() );
             }
         }
