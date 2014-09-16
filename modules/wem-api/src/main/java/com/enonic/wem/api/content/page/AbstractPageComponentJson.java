@@ -25,11 +25,6 @@ public abstract class AbstractPageComponentJson<COMPONENT extends PageComponent>
         this.component = component;
     }
 
-    public static AbstractPageComponentJson fromPageComponent( final PageComponent component )
-    {
-        return component.getType().toJson( component );
-    }
-
     public String getName()
     {
         return component.getName().toString();
@@ -39,5 +34,10 @@ public abstract class AbstractPageComponentJson<COMPONENT extends PageComponent>
     public COMPONENT getComponent()
     {
         return this.component;
+    }
+
+    public static AbstractPageComponentJson fromPageComponent( final PageComponent component )
+    {
+        return PageComponentJsonSerializer.toJson( component );
     }
 }

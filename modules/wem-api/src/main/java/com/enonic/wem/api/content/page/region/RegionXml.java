@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import com.enonic.wem.api.content.page.AbstractPageComponentXml;
 import com.enonic.wem.api.content.page.PageComponent;
+import com.enonic.wem.api.content.page.PageComponentXmlSerializer;
 import com.enonic.wem.api.content.page.image.ImageComponentXml;
 import com.enonic.wem.api.content.page.layout.LayoutComponentXml;
 import com.enonic.wem.api.content.page.part.PartComponentXml;
@@ -32,9 +33,10 @@ public final class RegionXml
     {
         this.name = region.getName();
         this.components = new ArrayList<>();
-        for ( PageComponent component : region.getComponents() )
+
+        for ( final PageComponent component : region.getComponents() )
         {
-            this.components.add( component.getType().toXml( component ) );
+            this.components.add( PageComponentXmlSerializer.toXml( component ) );
         }
     }
 
@@ -43,7 +45,7 @@ public final class RegionXml
     {
         builder.name( this.name );
 
-        for ( AbstractPageComponentXml componentXml : components )
+        for ( final AbstractPageComponentXml componentXml : components )
         {
             builder.add( componentXml.toPageComponent() );
         }

@@ -2,12 +2,11 @@ package com.enonic.wem.api.content.page;
 
 import java.util.LinkedHashMap;
 
-public abstract class PageComponentType<COMPONENT extends PageComponent>
+public abstract class PageComponentType
 {
     private final static LinkedHashMap<String, PageComponentType> bySimpleClassName = new LinkedHashMap<>();
 
     private String shortName;
-
 
     public PageComponentType( final String shortName, final Class clazz )
     {
@@ -21,16 +20,10 @@ public abstract class PageComponentType<COMPONENT extends PageComponent>
         return bySimpleClassName.get( simpleClassName );
     }
 
-    public abstract AbstractPageComponentXml toXml( final COMPONENT component );
-
     public String toString()
     {
         return shortName;
     }
 
-    public abstract AbstractPageComponentJson toJson( final COMPONENT component );
-
     public abstract AbstractPageComponentDataSerializer getDataSerializer();
-
-
 }

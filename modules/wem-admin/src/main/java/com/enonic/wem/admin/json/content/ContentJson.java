@@ -5,7 +5,7 @@ import java.util.List;
 import com.enonic.wem.admin.json.content.site.SiteJson;
 import com.enonic.wem.admin.rest.resource.content.ContentIconUrlResolver;
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.page.PageJson;
+import com.enonic.wem.admin.json.content.page.PageJson;
 import com.enonic.wem.api.data.DataJson;
 import com.enonic.wem.api.data.DataSetJson;
 import com.enonic.wem.api.form.FormJson;

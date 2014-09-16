@@ -18,11 +18,6 @@ public abstract class AbstractDescriptorBasedPageComponentJson<COMPONENT extends
         this.config = component.getConfig() != null ? new RootDataSetJson( component.getConfig() ).getSet() : null;
     }
 
-    public static AbstractDescriptorBasedPageComponentJson fromPageComponent( final DescriptorBasedPageComponent component )
-    {
-        return (AbstractDescriptorBasedPageComponentJson) component.getType().toJson( component );
-    }
-
     public String getDescriptor()
     {
         return getComponent().getDescriptor() != null ? getComponent().getDescriptor().toString() : null;
@@ -32,5 +27,4 @@ public abstract class AbstractDescriptorBasedPageComponentJson<COMPONENT extends
     {
         return config;
     }
-
 }

@@ -1,4 +1,4 @@
-package com.enonic.wem.api.content.page.region;
+package com.enonic.wem.admin.json.content.page.region;
 
 import java.util.ArrayList;
 import java.util.List;
