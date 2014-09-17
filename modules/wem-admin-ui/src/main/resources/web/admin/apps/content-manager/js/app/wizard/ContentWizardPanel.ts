@@ -374,6 +374,7 @@ module app.wizard {
                         build();
 
                     var formContextBuilder = new ContentFormContextBuilder().
+                        setSite(this.siteContent).
                         setParentContent(this.parentContent).
                         setPersistedContent(content).
                         setAttachments(attachments);

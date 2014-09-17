@@ -2,6 +2,8 @@ module api.content.form.inputtype {
 
     export interface ContentInputTypeViewContext<INPUT_CONFIG> extends api.form.inputtype.InputTypeViewContext<INPUT_CONFIG> {
 
+        site: api.content.Content;
+
         contentId: api.content.ContentId;
 
         contentPath: api.content.ContentPath;

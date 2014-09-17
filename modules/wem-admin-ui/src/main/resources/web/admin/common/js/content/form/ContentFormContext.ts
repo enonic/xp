@@ -2,6 +2,8 @@ module api.content.form {
 
     export class ContentFormContext extends api.form.FormContext {
 
+        private site: api.content.Content;
+
         private parentContent: api.content.Content;
 
         private persistedContent: api.content.Content;
@@ -10,9 +12,14 @@ module api.content.form {
 
         constructor(builder: ContentFormContextBuilder) {
             super(builder);
+            this.site = builder.site;
             this.parentContent = builder.parentContent;
             this.persistedContent = builder.persistedContent;
             this.attachments = builder.attachments;
+        }
+
+        getSite(): api.content.Content {
+            return this.site;
         }
 
         getContentId(): api.content.ContentId {
@@ -37,11 +44,12 @@ module api.content.form {
         }
 
         createInputTypeViewContext(inputTypeConfig: any, parentDataPath: api.data.DataPath,
-                                  input: api.form.Input): api.form.inputtype.InputTypeViewContext<any> {
+                                   input: api.form.Input): api.form.inputtype.InputTypeViewContext<any> {
             return <api.content.form.inputtype.ContentInputTypeViewContext<any>> {
                 input: input,
                 inputConfig: inputTypeConfig,
                 parentDataPath: parentDataPath,
+                site: this.getSite(),
                 contentId: this.getContentId(),
                 contentPath: this.getContentPath(),
                 parentContentPath: this.getParentContentPath(),
@@ -50,13 +58,20 @@ module api.content.form {
         }
     }
 
-    export class ContentFormContextBuilder extends api.form.FormContextBuilder{
+    export class ContentFormContextBuilder extends api.form.FormContextBuilder {
+
+        site: api.content.Content;
 
         parentContent: api.content.Content;
 
         persistedContent: api.content.Content;
 
         attachments: api.content.attachment.Attachments;
+
+        public setSite(value: api.content.Content): ContentFormContextBuilder {
+            this.site = value;
+            return this;
+        }
 
         public setParentContent(value: api.content.Content): ContentFormContextBuilder {
             this.parentContent = value;
