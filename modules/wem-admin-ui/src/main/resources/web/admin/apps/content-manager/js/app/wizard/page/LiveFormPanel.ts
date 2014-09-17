@@ -588,6 +588,12 @@ module app.wizard.page {
 
                 this.saveAndReloadOnlyPageComponent(event.getDuplicatedPageComponentView());
             });
+
+            this.insertablesPanel.onHideContextWindowRequest(() => {
+                if (this.contextWindow.isFloating() && this.contextWindow.isShown()) {
+                    this.contextWindow.slideOut();
+                }
+            });
         }
 
         private inspectContent(contentId: api.content.ContentId) {
