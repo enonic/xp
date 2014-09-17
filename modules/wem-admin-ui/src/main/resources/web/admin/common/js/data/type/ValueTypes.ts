@@ -5,7 +5,7 @@ module api.data.type {
      */
     export class ValueTypes {
 
-        static DATA = new ValueType("Data");
+        static DATA = new DataValueType();
 
         static STRING = new ValueType("String");
 

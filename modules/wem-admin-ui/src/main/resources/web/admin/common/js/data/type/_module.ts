@@ -1,4 +1,5 @@
 ///<reference path='ValueType.ts' />
+///<reference path='DataValueType.ts' />
 ///<reference path='LongValueType.ts' />
 ///<reference path='ContentIdValueType.ts' />
 ///<reference path='BooleanValueType.ts' />
