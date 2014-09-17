@@ -66,10 +66,6 @@ module app.wizard.page.contextwindow {
             this.ghostDragger = new api.dom.DivEl("ghost-dragger");
             this.splitter = new api.dom.DivEl("splitter");
 
-            this.insertablesPanel.onHideContextWindowRequest(() => {
-                this.slideOut();
-            });
-
             ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
                 this.updateFrameSize();
             });
