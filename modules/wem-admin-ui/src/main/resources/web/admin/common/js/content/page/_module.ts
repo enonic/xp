@@ -4,6 +4,7 @@
 ///<reference path='PageComponentTypeWrapperJson.ts' />
 
 ///<reference path='PageDescriptorJson.ts' />
+///<reference path='PageDescriptorsJson.ts' />
 
 ///<reference path='PageTemplateSummaryJson.ts' />
 ///<reference path='PageTemplateJson.ts' />
@@ -17,6 +18,7 @@
 ///<reference path='PageDescriptor.ts' />
 ///<reference path='PageDescriptorResourceRequest.ts' />
 ///<reference path='GetPageDescriptorByKeyRequest.ts' />
+///<reference path='GetPageDescriptorsByModulesRequest.ts' />
 
 ///<reference path='PageTemplateKey.ts' />
 ///<reference path='PageTemplateName.ts' />
