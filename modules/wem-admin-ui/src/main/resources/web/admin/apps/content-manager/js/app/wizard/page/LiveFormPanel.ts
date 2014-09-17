@@ -396,15 +396,21 @@ module app.wizard.page {
             api.util.assertNotNull(pageComponentView, "pageComponentView cannot be null");
 
             this.pageSkipReload = true;
+            var componentUrl = api.rendering.UriHelper.getComponentUri(this.content.getContentId().toString(),
+                pageComponentView.getComponentPath().toString(),
+                RenderingMode.EDIT,
+                api.content.Workspace.STAGE);
+
             this.contentWizardPanel.saveChanges().
                 then(() => {
                     this.pageSkipReload = false;
                     pageComponentView.showLoadingSpinner();
-
-                    this.liveEditPage.loadComponent(pageComponentView, this.content);
+                    return this.liveEditPage.loadComponent(pageComponentView, componentUrl);
                 }).
-                catch((reason: any) => api.DefaultErrorHandler.handle(reason)).
-                done();
+                catch((reason: any) => {
+                    pageComponentView.hideLoadingSpinner();
+                    pageComponentView.showRenderingError(componentUrl);
+                }).done();
         }
 
         updateFrameContainerSize(contextWindowShown: boolean, contextWindowWidth?: number) {

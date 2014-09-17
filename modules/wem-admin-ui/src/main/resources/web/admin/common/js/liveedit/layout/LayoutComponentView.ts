@@ -19,16 +19,13 @@ module api.liveedit.layout {
 
         private layoutComponent: LayoutComponent;
 
-        private placeholder: LayoutPlaceholder;
-
         private regionViews: RegionView[];
 
         constructor(builder: LayoutComponentViewBuilder) {
             this.regionViews = [];
-            super(builder);
+            super(builder.setPlaceholder(new LayoutPlaceholder(this)));
             this.layoutComponent = builder.pageComponent;
 
-            this.placeholder = new LayoutPlaceholder(this);
             if (this.conditionedForEmpty()) {
                 this.displayPlaceholder();
             }
@@ -49,32 +46,11 @@ module api.liveedit.layout {
             return this.regionViews;
         }
 
-        select(clickPosition?: Position) {
-            super.select(clickPosition);
-            if (this.isEmpty()) {
-                this.placeholder.select();
-            }
-        }
-
-        deselect() {
-            super.deselect();
-            if (this.isEmpty()) {
-                this.placeholder.deselect();
-            }
-        }
-
         private conditionedForEmpty(): boolean {
             if (!this.layoutComponent) {
                 return super.isEmpty();
             }
             return this.isEmpty() || !this.layoutComponent.getDescriptor();
-        }
-
-        displayPlaceholder() {
-            this.markAsEmpty();
-
-            this.removeChildren();
-            this.appendChild(this.placeholder);
         }
 
         duplicate(duplicate: LayoutComponent): LayoutComponentView {

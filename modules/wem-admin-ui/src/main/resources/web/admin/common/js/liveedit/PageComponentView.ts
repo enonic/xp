@@ -6,6 +6,8 @@ module api.liveedit {
 
     export class PageComponentViewBuilder<PAGE_COMPONENT extends PageComponent> {
 
+        placeholder: PageComponentPlaceholder;
+
         itemViewProducer: ItemViewIdProducer;
 
         type: PageComponentItemType;
@@ -21,6 +23,11 @@ module api.liveedit {
         positionIndex: number;
 
         contextMenuActions: api.ui.Action[];
+
+        setPlaceholder(value: PageComponentPlaceholder): PageComponentViewBuilder<PAGE_COMPONENT> {
+            this.placeholder = value;
+            return this;
+        }
 
         /**
          * Optional. The ItemViewIdProducer of parentRegionView will be used if not set.
@@ -68,6 +75,8 @@ module api.liveedit {
 
     export class PageComponentView<PAGE_COMPONENT extends PageComponent> extends ItemView {
 
+        private placeholder: PageComponentPlaceholder;
+
         private parentRegionView: RegionView;
 
         private pageComponent: PAGE_COMPONENT;
@@ -83,6 +92,7 @@ module api.liveedit {
             this.itemViewAddedListeners = [];
             this.itemViewRemovedListeners = [];
             this.moving = false;
+            this.placeholder = builder.placeholder;
 
             super(new ItemViewBuilder().
                     setItemViewIdProducer(builder.itemViewProducer
@@ -211,8 +221,33 @@ module api.liveedit {
             return this.moving;
         }
 
-        displayPlaceholder() {
+        select(clickPosition?: Position) {
+            super.select(clickPosition);
+            if (this.isEmpty()) {
+                this.selectPlaceholder();
+            }
+        }
 
+        selectPlaceholder() {
+            this.placeholder.select();
+        }
+
+        deselect() {
+            super.deselect();
+            if (this.isEmpty()) {
+                this.placeholder.deselect();
+            }
+        }
+
+        displayPlaceholder() {
+            this.markAsEmpty();
+
+            this.removeChildren();
+            this.appendChild(this.placeholder);
+        }
+
+        showRenderingError(url: string) {
+            this.placeholder.showRenderingError(url);
         }
 
         duplicate(duplicate: PAGE_COMPONENT): PageComponentView<PAGE_COMPONENT> {

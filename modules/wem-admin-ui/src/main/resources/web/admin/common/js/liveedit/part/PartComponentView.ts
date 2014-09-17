@@ -15,16 +15,15 @@ module api.liveedit.part {
 
     export class PartComponentView extends PageComponentView<PartComponent> {
 
-        private contentViews: ContentView[] = [];
-
-        private placeholder: PartPlaceholder;
+        private contentViews: ContentView[];
 
         private partComponent: PartComponent;
 
         constructor(builder: PartComponentViewBuilder) {
-            super(builder);
+            this.contentViews = [];
+            super(builder.setPlaceholder(new PartPlaceholder(this)));
             this.partComponent = builder.pageComponent;
-            this.placeholder = new PartPlaceholder(this);
+
             if (this.conditionedForEmpty()) {
                 this.displayPlaceholder();
             }
@@ -39,32 +38,11 @@ module api.liveedit.part {
             return this.contentViews;
         }
 
-        select(clickPosition?: Position) {
-            super.select(clickPosition);
-            if (this.isEmpty()) {
-                this.placeholder.select();
-            }
-        }
-
-        deselect() {
-            super.deselect();
-            if (this.isEmpty()) {
-                this.placeholder.deselect();
-            }
-        }
-
         conditionedForEmpty(): boolean {
             if (!this.partComponent) {
                 return super.isEmpty();
             }
             return this.isEmpty() || !this.partComponent.getDescriptor();
-        }
-
-        displayPlaceholder() {
-            this.markAsEmpty();
-
-            this.removeChildren();
-            this.appendChild(this.placeholder);
         }
 
         duplicate(duplicate: PartComponent): PartComponentView {

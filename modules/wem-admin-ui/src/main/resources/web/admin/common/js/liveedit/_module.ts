@@ -24,6 +24,7 @@
 ///<reference path='RegionViewDropZone.ts' />
 ///<reference path='RegionComponentViewer.ts' />
 ///<reference path='RegionPlaceholder.ts' />
+///<reference path='PageComponentPlaceholder.ts' />
 ///<reference path='PageComponentView.ts' />
 ///<reference path='PageView.ts' />
 ///<reference path='ContentView.ts' />

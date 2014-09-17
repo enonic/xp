@@ -16,16 +16,18 @@ module api.liveedit.text {
 
         private textComponent: TextComponent;
 
-        private placeholder: api.dom.DivEl;
+        private textPlaceholder: TextPlaceholder;
 
         private editing: boolean;
 
         constructor(builder: TextComponentViewBuilder) {
             this.editing = false;
-            super(builder.setContextMenuActions(this.createTextContextMenuActions()));
+            this.textPlaceholder = new TextPlaceholder(this);
+            super(builder.
+                setContextMenuActions(this.createTextContextMenuActions()).
+                setPlaceholder(this.textPlaceholder));
             this.textComponent = builder.pageComponent;
-            this.placeholder = new api.dom.DivEl('text-placeholder');
-            this.placeholder.getEl().setInnerHtml('Click to edit');
+
             if (this.conditionedForEmpty()) {
                 this.markAsEmpty();
                 this.addPlaceholder();
@@ -46,11 +48,11 @@ module api.liveedit.text {
 
         addPlaceholder() {
             this.removeChildren();
-            this.appendChild(this.placeholder);
+            this.appendChild(this.textPlaceholder);
         }
 
         removePlaceholder() {
-            this.placeholder.remove();
+            this.textPlaceholder.remove();
         }
 
         duplicate(duplicate: TextComponent): TextComponentView {
@@ -91,17 +93,17 @@ module api.liveedit.text {
 
         select(clickPosition?: Position) {
             super.select(clickPosition);
-            if (this.isEmpty()) {
-                this.addPlaceholder();
-            }
             this.getEl().setCursor('url(' + api.util.getAdminUri('live-edit/images/pencil.png') + ') 0 40, text');
+        }
+
+        selectPlaceholder() {
+            this.addPlaceholder();
         }
 
         deselect() {
             super.deselect();
-            if (this.isEmpty()) {
-                this.removePlaceholder();
-            } else if (api.util.isStringBlank(this.getEl().getText())) {
+
+            if (!this.isEmpty() && api.util.isStringBlank(this.getEl().getText())) {
                 this.markAsEmpty();
             }
 
