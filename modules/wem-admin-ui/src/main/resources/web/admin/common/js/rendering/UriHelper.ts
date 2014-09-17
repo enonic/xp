@@ -29,7 +29,7 @@ module api.rendering {
         }
 
         public static getComponentUri(contentId: string, componentPath: string, renderingMode: RenderingMode,
-                                      workspace: api.content.Workspace) {
+                                      workspace: api.content.Workspace): string {
             return UriHelper.getPortalUri(contentId + "/_/component/" + componentPath, renderingMode, workspace);
         }
 
