@@ -180,7 +180,9 @@ module app.wizard.page {
             this.contentLoadedOnPage = content;
 
             this.loadMask.show();
-            this.liveEditIFrame.setSrc(this.baseUrl + content.getContentId().toString());
+            var pageUrl = this.baseUrl + content.getContentId().toString();
+            console.log("LiveEditPageProxy.load pageUrl: " + pageUrl);
+            this.liveEditIFrame.setSrc(pageUrl);
 
             return this.iFrameLoadDeffered.promise;
         }
@@ -210,16 +212,14 @@ module app.wizard.page {
             this.iFrameLoadDeffered.resolve(null);
         }
 
-        public loadComponent(pageComponentView: PageComponentView<PageComponent>, content: api.content.Content) {
+        public loadComponent(pageComponentView: PageComponentView<PageComponent>, componentUrl: string): wemQ.Promise<void> {
 
+            var deferred = wemQ.defer<void>();
             api.util.assertNotNull(pageComponentView, "pageComponentView cannot be null");
-            api.util.assertNotNull(content, "content cannot be null");
+            api.util.assertNotNull(componentUrl, "componentUrl cannot be null");
 
             wemjq.ajax({
-                url: api.rendering.UriHelper.getComponentUri(content.getContentId().toString(),
-                    pageComponentView.getComponentPath().toString(),
-                    RenderingMode.EDIT,
-                    api.content.Workspace.STAGE),
+                url: componentUrl,
                 type: 'GET',
                 success: (htmlAsString: string) => {
 
@@ -240,8 +240,15 @@ module app.wizard.page {
                     new PageComponentLoadedEvent(newPageComponentView).fire(this.liveEditWindow);
 
                     newPageComponentView.select();
+
+                    deferred.resolve(null);
+                },
+                error: () => {
+                    deferred.reject(null);
                 }
             });
+
+            return deferred.promise;
         }
 
         public listenToPage() {
