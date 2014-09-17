@@ -4,7 +4,7 @@ package com.enonic.wem.api.support;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,7 +25,7 @@ public class ResourceTestHelper
         try
         {
             Path path = Paths.get( url.toURI() );
-            final List<String> lines = Files.readAllLines( path, Charset.forName( "UTF-8" ) );
+            final List<String> lines = Files.readAllLines( path, StandardCharsets.UTF_8 );
             final StringBuilder s = new StringBuilder();
             for ( final String line : lines )
             {

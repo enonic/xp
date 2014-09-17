@@ -2,6 +2,7 @@ package com.enonic.wem.core.entity.dao;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
@@ -32,7 +33,7 @@ public class NodeDaoImpl
     {
         final String serializedNode = NodeJsonSerializer.toString( newNode );
 
-        final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream( serializedNode.getBytes() );
+        final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream( serializedNode.getBytes( StandardCharsets.UTF_8 ) );
         return blobService.create( byteArrayInputStream );
     }
 
@@ -80,7 +81,7 @@ public class NodeDaoImpl
         {
             final byte[] bytes = ByteStreams.toByteArray( blob.getStream() );
 
-            return NodeJsonSerializer.toNode( new String( bytes ) );
+            return NodeJsonSerializer.toNode( new String( bytes, StandardCharsets.UTF_8 ) );
         }
         catch ( IOException e )
         {

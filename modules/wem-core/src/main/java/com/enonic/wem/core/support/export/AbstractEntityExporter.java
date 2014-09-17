@@ -4,7 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileSystem;
@@ -178,7 +178,7 @@ public abstract class AbstractEntityExporter<I, O>
     public O importObject( final Path directoryPath, final Path file )
         throws IOException
     {
-        final String xml = new String( Files.readAllBytes( file ), Charset.forName( "UTF-8" ) );
+        final String xml = new String( Files.readAllBytes( file ), StandardCharsets.UTF_8 );
         return fromXMLString( xml, directoryPath );
     }
 
@@ -189,7 +189,7 @@ public abstract class AbstractEntityExporter<I, O>
         final String xmlFileName = isNullOrEmpty( objectName ) ? fileNameSuffix : objectName + NAME_SEPARATOR + fileNameSuffix;
         final Path xmlFile = rootPath.resolve( xmlFileName );
         final String xml = toXMLString( object );
-        Files.write( xmlFile, xml.getBytes( Charset.forName( "UTF-8" ) ) );
+        Files.write( xmlFile, xml.getBytes( StandardCharsets.UTF_8 ) );
     }
 
     @SuppressWarnings("EmptyTryBlock")
