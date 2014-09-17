@@ -9,8 +9,6 @@ import junit.framework.Assert;
 
 import com.enonic.wem.itests.AbstractOsgiTest;
 
-import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
-
 public class ApiBundleTest
     extends AbstractOsgiTest
 {
@@ -18,7 +16,7 @@ public class ApiBundleTest
     protected void options( final List<Option> options )
     {
         super.options( options );
-        options.add( mavenBundle( "com.enonic.wem", "wem-api" ) );
+        // options.add( mavenBundle( "com.enonic.wem", "wem-api" ) );
     }
 
     @Test
