@@ -303,7 +303,7 @@ module api.ui.treegrid {
          * Must be overridden.
          */
         getDataId(data: NODE): string {
-            return "";
+            throw new Error("Must be implemented by inheritors");
         }
 
         /**
@@ -471,23 +471,19 @@ module api.ui.treegrid {
         }
 
         updateNode(data: NODE): void {
-            try {
-                var root = this.stash || this.root;
-                var node: TreeNode<NODE> = root.findNode(data);
-                if(!node) {
-                    throw new Error("Node not found for data: " + this.getDataId(data));
-                }
-
-                this.fetch(node)
-                    .then((data: NODE) => {
-                        node.setData(data);
-                        this.gridData.updateItem(node.getId(), node);
-                    }).catch((reason: any) => {
-                        api.DefaultErrorHandler.handle(reason);
-                    });
-            } catch (e) {
-                console.warn(e);
+            var root = this.stash || this.root;
+            var node: TreeNode<NODE> = root.findNode(data);
+            if(!node) {
+                throw new Error("Node not found for data: " + this.getDataId(data));
             }
+
+            this.fetch(node)
+                .then((data: NODE) => {
+                    node.setData(data);
+                    this.gridData.updateItem(node.getId(), node);
+                }).catch((reason: any) => {
+                    api.DefaultErrorHandler.handle(reason);
+                });
         }
 
         deleteNode(data: NODE): void {
