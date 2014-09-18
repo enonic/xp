@@ -292,10 +292,18 @@ module api.ui.treegrid {
 
         /**
          * Used to determine if a data have child nodes.
-         * Must be overridden for the  grids with a tree structure.
+         * Must be overridden for the grids with a tree structure.
          */
         hasChildren(data: NODE): boolean {
             return false;
+        }
+
+        /**
+         * Used to get the data identifier or key.
+         * Must be overridden.
+         */
+        getDataId(data: NODE): string {
+            return "";
         }
 
         /**
@@ -463,15 +471,23 @@ module api.ui.treegrid {
         }
 
         updateNode(data: NODE): void {
-            var root = this.stash || this.root;
-            var node: TreeNode<NODE> = root.findNode(data);
-            this.fetch(node)
-                .then((data: NODE) => {
-                    node.setData(data);
-                    this.gridData.updateItem(node.getId(), node);
-                }).catch((reason: any) => {
-                    api.DefaultErrorHandler.handle(reason);
-                });
+            try {
+                var root = this.stash || this.root;
+                var node: TreeNode<NODE> = root.findNode(data);
+                if(!node) {
+                    throw new Error("Node not found for data: " + this.getDataId(data));
+                }
+
+                this.fetch(node)
+                    .then((data: NODE) => {
+                        node.setData(data);
+                        this.gridData.updateItem(node.getId(), node);
+                    }).catch((reason: any) => {
+                        api.DefaultErrorHandler.handle(reason);
+                    });
+            } catch (e) {
+                console.warn(e);
+            }
         }
 
         deleteNode(data: NODE): void {

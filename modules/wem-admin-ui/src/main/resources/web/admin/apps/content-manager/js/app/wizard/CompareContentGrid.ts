@@ -53,5 +53,9 @@ module app.wizard {
         hasChildren(elem: ContentSummaryAndCompareStatus): boolean {
             return elem.hasChildren();
         }
+
+        getDataId(data: ContentSummaryAndCompareStatus): string {
+            return data.getId();
+        }
     }
 }

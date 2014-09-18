@@ -61,6 +61,10 @@ module app.browse {
             return viewer.toString();
         }
 
+        getDataId(data: ModuleSummary): string {
+            return data.getId();
+        }
+
         fetchRoot(): wemQ.Promise<ModuleSummary[]> {
             return new api.module.ListModulesRequest().sendAndParse();
         }

@@ -224,5 +224,9 @@ module app.browse {
             return data.hasChildren();
         }
 
+        getDataId(data: ContentSummaryAndCompareStatus): string {
+            return data.getId();
+        }
+
     }
 }
