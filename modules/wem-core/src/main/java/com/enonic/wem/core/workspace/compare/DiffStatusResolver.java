@@ -3,7 +3,7 @@ package com.enonic.wem.core.workspace.compare;
 import com.enonic.wem.api.entity.CompareStatus;
 import com.enonic.wem.api.entity.NodeVersion;
 
-class DiffStatusResolver
+public class DiffStatusResolver
 {
     public static CompareStatus resolve( final DiffStatusParams diffStatusParams )
     {

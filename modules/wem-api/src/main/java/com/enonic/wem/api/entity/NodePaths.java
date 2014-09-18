@@ -45,7 +45,19 @@ public class NodePaths
         return new NodePaths( ImmutableSet.copyOf( paths ) );
     }
 
-    public static Builder newNodePaths()
+    public ImmutableSet<String> getAsStrings()
+    {
+        ImmutableSet.Builder<String> builder = ImmutableSet.builder();
+
+        for ( final NodePath nodePath : this.getSet() )
+        {
+            builder.add( nodePath.toString() );
+        }
+
+        return builder.build();
+    }
+
+    public static Builder create()
     {
         return new Builder();
     }
@@ -69,7 +81,7 @@ public class NodePaths
 
     public static class Builder
     {
-        private Set<NodePath> nodePaths = Sets.newHashSet();
+        private final Set<NodePath> nodePaths = Sets.newHashSet();
 
         public Builder addNodePath( final NodePath nodePath )
         {

@@ -9,12 +9,10 @@ import com.enonic.wem.api.entity.Attachments;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeVersionId;
 import com.enonic.wem.api.entity.UpdateNodeParams;
-import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.util.Exceptions;
 import com.enonic.wem.core.entity.dao.NodeNotFoundException;
 import com.enonic.wem.core.version.EntityVersionDocument;
 import com.enonic.wem.core.workspace.StoreWorkspaceDocument;
-import com.enonic.wem.core.workspace.query.WorkspaceIdQuery;
 
 final class UpdateNodeCommand
     extends AbstractNodeCommand
@@ -44,9 +42,7 @@ final class UpdateNodeCommand
 
     private Node doExecute()
     {
-        final Workspace workspace = this.context.getWorkspace();
-
-        final Node persistedNode = getPersistedNode( workspace );
+        final Node persistedNode = getPersistedNode();
 
         final Node.EditBuilder editBuilder = params.getEditor().edit( persistedNode );
         if ( !editBuilder.isChanges() )
@@ -68,27 +64,20 @@ final class UpdateNodeCommand
             parentPath( updatedNode.parent() ).
             id( updatedNode.id() ).
             nodeVersionId( updatedNodeVersionId ).
-            workspace( workspace ).
-            repository( this.context.getRepository() ).
-            build() );
+            build(), this.context );
 
         this.indexService.index( updatedNode, context.getWorkspace() );
 
         return NodeHasChildResolver.create().
-            workspace( context.getWorkspace() ).
-            repository( context.getRepository() ).
             workspaceService( this.workspaceService ).
+            context( this.context ).
             build().
             resolve( updatedNode );
     }
 
-    private Node getPersistedNode( final Workspace workspace )
+    private Node getPersistedNode()
     {
-        final NodeVersionId currentVersionId = workspaceService.getCurrentVersion( WorkspaceIdQuery.create().
-            workspace( workspace ).
-            repository( this.context.getRepository() ).
-            entityId( this.params.getId() ).
-            build() );
+        final NodeVersionId currentVersionId = workspaceService.getCurrentVersion( params.getId(), this.context );
 
         if ( currentVersionId == null )
         {

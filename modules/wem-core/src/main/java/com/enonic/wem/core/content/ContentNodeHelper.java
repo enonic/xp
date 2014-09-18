@@ -9,7 +9,7 @@ import com.enonic.wem.api.entity.NodePaths;
 
 public class ContentNodeHelper
 {
-    final static String CONTENT_ROOT_NODE_NAME = "content";
+    private final static String CONTENT_ROOT_NODE_NAME = "content";
 
     final static NodePath CONTENT_ROOT_NODE = NodePath.newNodePath( NodePath.ROOT, CONTENT_ROOT_NODE_NAME ).build();
 
@@ -20,7 +20,7 @@ public class ContentNodeHelper
 
     public static NodePaths translateContentPathsToNodePaths( final ContentPaths contentPaths )
     {
-        final NodePaths.Builder builder = NodePaths.newNodePaths();
+        final NodePaths.Builder builder = NodePaths.create();
         for ( final ContentPath contentPath : contentPaths )
         {
             builder.addNodePath( ContentNodeHelper.translateContentPathToNodePath( contentPath ) );

@@ -16,7 +16,6 @@ import com.enonic.wem.api.query.expr.FieldOrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.query.expr.QueryExpr;
 import com.enonic.wem.core.index.query.NodeQueryResult;
-import com.enonic.wem.core.workspace.query.WorkspaceIdsQuery;
 
 public class FindNodesByParentCommand
     extends AbstractFindNodeCommand
@@ -40,16 +39,11 @@ public class FindNodesByParentCommand
 
         final NodeQueryResult nodeQueryResult = this.queryService.find( query, this.context.getWorkspace() );
 
-        final NodeVersionIds versions = this.workspaceService.getByVersionIds( WorkspaceIdsQuery.create().
-            workspace( this.context.getWorkspace() ).
-            repository( this.context.getRepository() ).
-            entityIds( nodeQueryResult.getEntityIds() ).
-            build() );
+        final NodeVersionIds versions = this.workspaceService.getByVersionIds( nodeQueryResult.getEntityIds(), this.context );
 
         final Nodes nodes = NodeHasChildResolver.create().
-            workspace( context.getWorkspace() ).
-            repository( context.getRepository() ).
             workspaceService( this.workspaceService ).
+            context( this.context ).
             build().
             resolve( nodeDao.getByVersionIds( versions ) );
 

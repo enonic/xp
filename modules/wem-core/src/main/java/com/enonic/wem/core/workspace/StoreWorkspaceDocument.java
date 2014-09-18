@@ -3,8 +3,6 @@ package com.enonic.wem.core.workspace;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.NodeVersionId;
-import com.enonic.wem.api.entity.Workspace;
-import com.enonic.wem.api.repository.Repository;
 
 public class StoreWorkspaceDocument
 {
@@ -16,9 +14,6 @@ public class StoreWorkspaceDocument
 
     private final NodePath parentPath;
 
-    private final Workspace workspace;
-
-    private final Repository repository;
 
     private StoreWorkspaceDocument( final Builder builder )
     {
@@ -26,8 +21,6 @@ public class StoreWorkspaceDocument
         this.nodeVersionId = builder.nodeVersionId;
         this.parentPath = builder.parentPath;
         this.path = builder.path;
-        this.workspace = builder.workspace;
-        this.repository = builder.repository;
     }
 
     public EntityId getEntityId()
@@ -50,16 +43,6 @@ public class StoreWorkspaceDocument
         return parentPath;
     }
 
-    public Workspace getWorkspace()
-    {
-        return workspace;
-    }
-
-    public Repository getRepository()
-    {
-        return repository;
-    }
-
     public static Builder create()
     {
         return new Builder();
@@ -74,10 +57,6 @@ public class StoreWorkspaceDocument
         private NodePath path;
 
         private NodePath parentPath;
-
-        private Workspace workspace;
-
-        private Repository repository;
 
         public Builder path( final NodePath path )
         {
@@ -97,21 +76,9 @@ public class StoreWorkspaceDocument
             return this;
         }
 
-        public Builder workspace( final Workspace workspace )
-        {
-            this.workspace = workspace;
-            return this;
-        }
-
         public Builder nodeVersionId( final NodeVersionId nodeVersionId )
         {
             this.nodeVersionId = nodeVersionId;
-            return this;
-        }
-
-        public Builder repository( final Repository repository )
-        {
-            this.repository = repository;
             return this;
         }
 
@@ -151,10 +118,6 @@ public class StoreWorkspaceDocument
         {
             return false;
         }
-        if ( workspace != null ? !workspace.equals( that.workspace ) : that.workspace != null )
-        {
-            return false;
-        }
 
         return true;
     }
@@ -166,7 +129,6 @@ public class StoreWorkspaceDocument
         result = 31 * result + ( nodeVersionId != null ? nodeVersionId.hashCode() : 0 );
         result = 31 * result + ( path != null ? path.hashCode() : 0 );
         result = 31 * result + ( parentPath != null ? parentPath.hashCode() : 0 );
-        result = 31 * result + ( workspace != null ? workspace.hashCode() : 0 );
         return result;
     }
 }

@@ -39,6 +39,18 @@ public class EntityIds
         return new EntityIds( ImmutableSet.copyOf( ids ) );
     }
 
+    public ImmutableSet<String> getAsStrings()
+    {
+        ImmutableSet.Builder<String> builder = ImmutableSet.builder();
+
+        for ( final EntityId entityId : this.getSet() )
+        {
+            builder.add( entityId.toString() );
+        }
+
+        return builder.build();
+    }
+
     private static ImmutableSet<EntityId> parseIds( final String... paths )
     {
         final Collection<String> list = Lists.newArrayList( paths );

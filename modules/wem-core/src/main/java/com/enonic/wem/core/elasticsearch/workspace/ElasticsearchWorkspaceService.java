@@ -1,401 +1,143 @@
 package com.enonic.wem.core.elasticsearch.workspace;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
-
 import javax.inject.Inject;
 
-import org.elasticsearch.action.delete.DeleteRequest;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.client.Requests;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.TermQueryBuilder;
-import org.elasticsearch.index.query.TermsQueryBuilder;
-import org.elasticsearch.search.aggregations.AggregationBuilders;
-import org.elasticsearch.search.aggregations.bucket.terms.Terms;
-import org.elasticsearch.search.aggregations.bucket.terms.TermsBuilder;
-import org.elasticsearch.search.sort.FieldSortBuilder;
-import org.elasticsearch.search.sort.SortBuilder;
-import org.elasticsearch.search.sort.SortOrder;
-
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-
-import com.enonic.wem.api.aggregation.Aggregation;
-import com.enonic.wem.api.aggregation.BucketAggregation;
+import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIds;
+import com.enonic.wem.api.entity.NodePath;
+import com.enonic.wem.api.entity.NodePaths;
 import com.enonic.wem.api.entity.NodeVersionId;
 import com.enonic.wem.api.entity.NodeVersionIds;
 import com.enonic.wem.api.entity.Workspace;
-import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.core.elasticsearch.ElasticsearchDao;
-import com.enonic.wem.core.elasticsearch.ElasticsearchDataException;
-import com.enonic.wem.core.elasticsearch.QueryMetaData;
-import com.enonic.wem.core.elasticsearch.query.ElasticsearchQuery;
-import com.enonic.wem.core.index.result.SearchResult;
-import com.enonic.wem.core.index.result.SearchResultEntry;
-import com.enonic.wem.core.index.result.SearchResultField;
-import com.enonic.wem.core.index.Index;
-import com.enonic.wem.core.index.IndexType;
-import com.enonic.wem.core.repository.StorageNameResolver;
 import com.enonic.wem.core.workspace.StoreWorkspaceDocument;
-import com.enonic.wem.core.workspace.WorkspaceDocumentId;
 import com.enonic.wem.core.workspace.WorkspaceService;
 import com.enonic.wem.core.workspace.compare.query.CompareWorkspacesQuery;
-import com.enonic.wem.core.workspace.query.WorkspaceDeleteQuery;
-import com.enonic.wem.core.workspace.query.WorkspaceHasChildrenQuery;
-import com.enonic.wem.core.workspace.query.WorkspaceIdQuery;
-import com.enonic.wem.core.workspace.query.WorkspaceIdsQuery;
-import com.enonic.wem.core.workspace.query.WorkspaceParentQuery;
-import com.enonic.wem.core.workspace.query.WorkspacePathQuery;
-import com.enonic.wem.core.workspace.query.WorkspacePathsQuery;
 
 public class ElasticsearchWorkspaceService
     implements WorkspaceService
 {
-    private final static Index WORKSPACE_INDEX = Index.WORKSPACE;
-
-    private static final boolean DEFAULT_REFRESH = true;
-
-    private static final int DEFAULT_UNKNOWN_SIZE = 1000;
-
-    private static final String BUILTIN_TIMESTAMP_FIELD = "_timestamp";
-
     private ElasticsearchDao elasticsearchDao;
 
     @Override
-    public void store( final StoreWorkspaceDocument storeWorkspaceDocument )
+    public void store( final StoreWorkspaceDocument storeWorkspaceDocument, final Context context )
     {
-        final WorkspaceDocumentId workspaceDocumentId =
-            new WorkspaceDocumentId( storeWorkspaceDocument.getEntityId(), storeWorkspaceDocument.getWorkspace() );
-
-        final IndexRequest publish = Requests.indexRequest().
-            index( StorageNameResolver.resolveStorageIndexName( storeWorkspaceDocument.getRepository() ) ).
-            type( IndexType.WORKSPACE.getName() ).
-            source( WorkspaceXContentBuilderFactory.create( storeWorkspaceDocument ) ).
-            id( workspaceDocumentId.toString() ).
-            refresh( DEFAULT_REFRESH );
-
-        elasticsearchDao.store( publish );
+        StoreWorkspaceDocumentCommand.create().
+            elasticsearchDao( this.elasticsearchDao ).
+            workspace( context.getWorkspace() ).
+            repository( context.getRepository() ).
+            document( storeWorkspaceDocument ).
+            build().
+            execute();
     }
 
     @Override
-    public void delete( final WorkspaceDeleteQuery query )
+    public void delete( final EntityId entityId, final Context context )
     {
-        DeleteRequest deleteRequest = new DeleteRequest().
-            index( StorageNameResolver.resolveStorageIndexName( query.getRepository() ) ).
-            type( IndexType.WORKSPACE.getName() ).
-            id( new WorkspaceDocumentId( query.getEntityId(), query.getWorkspace() ).toString() ).
-            refresh( DEFAULT_REFRESH );
-
-        elasticsearchDao.delete( deleteRequest );
+        DeleteNodeVersionCommand.create().
+            elasticsearchDao( this.elasticsearchDao ).
+            repository( context.getRepository() ).
+            workspace( context.getWorkspace() ).
+            entityId( entityId ).
+            build().
+            execute();
     }
 
     @Override
-    public NodeVersionId getCurrentVersion( final WorkspaceIdQuery query )
+    public NodeVersionId getCurrentVersion( final EntityId entityId, final Context context )
     {
-        final EntityId entityId = query.getEntityId();
-
-        final SearchResultEntry searchResultEntry =
-            doGetById( entityId, query.getWorkspace(), WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME, query.getRepository() );
-
-        if ( searchResultEntry == null )
-        {
-            return null;
-        }
-
-        final SearchResultField field = searchResultEntry.getField( WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME );
-
-        if ( field == null || field.getValue() == null )
-        {
-            throw new ElasticsearchDataException(
-                "Field " + WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME + " not found on node with id " +
-                    entityId +
-                    " in workspace " + query.getWorkspace().getName() );
-        }
-
-        return NodeVersionId.from( field.getValue().toString() );
-    }
-
-    private SearchResultEntry doGetById( final EntityId entityId, final Workspace workspace, final String field,
-                                         final Repository repository )
-    {
-        return doGetById( entityId, workspace, Sets.newHashSet( field ), repository );
-    }
-
-    private SearchResultEntry doGetById( final EntityId entityId, final Workspace workspace, final Set<String> fields,
-                                         final Repository repository )
-    {
-        final TermQueryBuilder idQuery = new TermQueryBuilder( WorkspaceXContentBuilderFactory.ENTITY_ID_FIELD_NAME, entityId.toString() );
-
-        final BoolQueryBuilder boolQueryBuilder = joinWithWorkspaceQuery( workspace.getName(), idQuery );
-
-        final QueryMetaData queryMetaData = QueryMetaData.create( StorageNameResolver.resolveStorageIndexName( repository ) ).
-            indexTypeName( IndexType.WORKSPACE.getName() ).
-            from( 0 ).
-            size( 1 ).
-            addFields( fields ).
-            build();
-
-        final SearchResult searchResult = elasticsearchDao.get( queryMetaData, boolQueryBuilder );
-
-        if ( searchResult.isEmpty() )
-        {
-            return null;
-        }
-
-        return searchResult.getResults().getFirstHit();
-    }
-
-    /**
-     * Fetch blobKeys for provided Ids.
-     * The order of the provided Ids are maintained in result.
-     *
-     * @param query
-     * @return
-     */
-    @Override
-    public NodeVersionIds getByVersionIds( final WorkspaceIdsQuery query )
-    {
-        final Set<String> entityIdsAsStrings = query.getEntityIdsAsStrings();
-
-        return doGetByIds( query.getWorkspace(), entityIdsAsStrings, query.getRepository() );
-    }
-
-    private NodeVersionIds doGetByIds( final Workspace workspace, final Set<String> entityIdsAsStrings, final Repository repository )
-    {
-        final String workspaceName = workspace.getName();
-
-        final TermsQueryBuilder idsQuery =
-            new TermsQueryBuilder( WorkspaceXContentBuilderFactory.ENTITY_ID_FIELD_NAME, entityIdsAsStrings );
-        final BoolQueryBuilder boolQueryBuilder = joinWithWorkspaceQuery( workspaceName, idsQuery );
-        final QueryMetaData queryMetaData = createGetBlobKeyQueryMetaData( entityIdsAsStrings.size(), repository );
-
-        final SearchResult searchResult = elasticsearchDao.get( queryMetaData, boolQueryBuilder );
-
-        if ( searchResult.isEmpty() )
-        {
-            return NodeVersionIds.empty();
-        }
-
-        final Map<String, SearchResultField> orderedResultMap =
-            getSearchResultFieldsWithPreservedOrder( workspace, entityIdsAsStrings, searchResult );
-
-        return fieldValuesToVersionIds( orderedResultMap.values() );
-    }
-
-    private Map<String, SearchResultField> getSearchResultFieldsWithPreservedOrder( final Workspace workspace,
-                                                                                    final Set<String> entityIdsAsStrings,
-                                                                                    final SearchResult searchResult )
-    {
-        return Maps.asMap( entityIdsAsStrings,
-                           new EntityIdToSearchResultFieldMapper( searchResult, WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME,
-                                                                  workspace ) );
-    }
-
-
-    @Override
-    public NodeVersionId getByPath( final WorkspacePathQuery query )
-    {
-        final TermQueryBuilder parentQuery =
-            new TermQueryBuilder( WorkspaceXContentBuilderFactory.PATH_FIELD_NAME, query.getNodePathAsString() );
-        final BoolQueryBuilder workspacedByPathQuery = joinWithWorkspaceQuery( query.getWorkspace().getName(), parentQuery );
-
-        final QueryMetaData queryMetaData = createGetBlobKeyQueryMetaData( 1, query.getRepository() );
-
-        final SearchResult searchResult = elasticsearchDao.get( queryMetaData, workspacedByPathQuery );
-
-        if ( searchResult.isEmpty() )
-        {
-            return null;
-        }
-
-        final SearchResultEntry firstHit = searchResult.getResults().getFirstHit();
-
-        final Object value = firstHit.getField( WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME ).getValue();
-
-        if ( value == null )
-        {
-            throw new ElasticsearchDataException(
-                "Field " + WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME + " not found on node with path " +
-                    query.getNodePathAsString() +
-                    " in workspace " + query.getWorkspace() );
-        }
-
-        return NodeVersionId.from( value.toString() );
+        return GetNodeVersionIdByIdCommand.create().
+            elasticsearchDao( this.elasticsearchDao ).
+            workspace( context.getWorkspace() ).
+            repository( context.getRepository() ).
+            entityId( entityId ).
+            build().
+            execute();
     }
 
     @Override
-    public NodeVersionIds getByPaths( final WorkspacePathsQuery query )
+    public NodeVersionId getWorkspaceVersion( final EntityId entityId, final Workspace workspace, final Context context )
     {
-        final TermsQueryBuilder parentQuery =
-            new TermsQueryBuilder( WorkspaceXContentBuilderFactory.PATH_FIELD_NAME, query.getNodePathsAsStrings() );
-        final BoolQueryBuilder workspacedByPathsQuery = joinWithWorkspaceQuery( query.getWorkspace().getName(), parentQuery );
-        final QueryMetaData queryMetaData = createGetBlobKeyQueryMetaData( query.getNodePathsAsStrings().size(), query.getRepository() );
-
-        final SearchResult searchResult = elasticsearchDao.get( queryMetaData, workspacedByPathsQuery );
-
-        final Set<SearchResultField> fieldValues =
-            searchResult.getResults().getFields( WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME );
-
-        return fieldValuesToVersionIds( fieldValues );
+        return GetNodeVersionIdByIdCommand.create().
+            elasticsearchDao( this.elasticsearchDao ).
+            workspace( workspace ).
+            repository( context.getRepository() ).
+            entityId( entityId ).
+            build().
+            execute();
     }
 
     @Override
-    public NodeVersionIds findByParent( final WorkspaceParentQuery query )
+    public NodeVersionIds getByVersionIds( final EntityIds entityIds, final Context context )
     {
-        final TermQueryBuilder parentQuery =
-            new TermQueryBuilder( WorkspaceXContentBuilderFactory.PARENT_PATH_FIELD_NAME, query.getParentPath() );
-        final BoolQueryBuilder byParentQuery = joinWithWorkspaceQuery( query.getWorkspace().getName(), parentQuery );
-
-        final QueryMetaData queryMetaData = createGetBlobKeyQueryMetaData( DEFAULT_UNKNOWN_SIZE, query.getRepository() );
-
-        final SearchResult searchResult = elasticsearchDao.get( queryMetaData, byParentQuery );
-
-        if ( searchResult.getResults().getSize() == 0 )
-        {
-            return NodeVersionIds.empty();
-        }
-
-        final Set<SearchResultField> fieldValues =
-            searchResult.getResults().getFields( WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME );
-
-        return fieldValuesToVersionIds( fieldValues );
+        return GetNodeVersionIdsByIdsCommand.create().
+            entityIds( entityIds ).
+            workspace( context.getWorkspace() ).
+            elasticsearchDao( this.elasticsearchDao ).
+            repository( context.getRepository() ).
+            build().
+            execute();
     }
 
     @Override
-    public EntityIds getEntriesWithDiff( final CompareWorkspacesQuery query )
+    public NodeVersionId getByPath( final NodePath nodePath, final Context context )
     {
-        final TermQueryBuilder inSource =
-            new TermQueryBuilder( WorkspaceXContentBuilderFactory.WORKSPACE_FIELD_NAME, query.getSource().getName() );
-        final TermQueryBuilder inTarget =
-            new TermQueryBuilder( WorkspaceXContentBuilderFactory.WORKSPACE_FIELD_NAME, query.getTarget().getName() );
-
-        final long inSourceCount = elasticsearchDao.count( createGetBlobKeyQueryMetaData( 0, query.getRepository() ), inSource );
-        final long inTargetCount = elasticsearchDao.count( createGetBlobKeyQueryMetaData( 0, query.getRepository() ), inTarget );
-
-        final long totalCount = inSourceCount + inTargetCount;
-
-        final BoolQueryBuilder inOnOfTheWorkspaces = new BoolQueryBuilder().
-            should( inSource ).
-            should( inTarget ).
-            minimumNumberShouldMatch( 1 );
-
-        final String changedAggregationName = "changed";
-
-        final TermsBuilder changedAggregationQuery = AggregationBuilders.
-            terms( changedAggregationName ).
-            size( (int) (long) totalCount ).
-            order( Terms.Order.count( true ) );
-
-        final SearchResult searchResult = elasticsearchDao.search( ElasticsearchQuery.newQuery().
-            query( inOnOfTheWorkspaces ).
-            setAggregations( Sets.newHashSet( changedAggregationQuery ) ).
-            size( 0 ).
-            from( 0 ).
-            index( WORKSPACE_INDEX.getName() ).
-            indexType( IndexType.NODE ).
-            build() );
-
-        final Aggregation changedAggregation = searchResult.getAggregations().get( changedAggregationName );
-
-        if ( changedAggregation instanceof BucketAggregation )
-        {
-            return ChangedIdsResolver.resolve( (BucketAggregation) changedAggregation );
-        }
-        else
-        {
-            throw new ClassCastException(
-                "Aggregation of unexpected type, should be BucketAggregation, was " + changedAggregation.getClass().getName() );
-        }
+        return GetNodeVersionIdByPathCommand.create().
+            repository( context.getRepository() ).
+            elasticsearchDao( this.elasticsearchDao ).
+            workspace( context.getWorkspace() ).
+            nodePath( nodePath ).
+            build().
+            execute();
     }
 
     @Override
-    public boolean hasChildren( final WorkspaceHasChildrenQuery query )
+    public NodeVersionIds getByPaths( final NodePaths nodePaths, final Context context )
     {
-        final QueryMetaData queryMetaData = QueryMetaData.create( StorageNameResolver.resolveStorageIndexName( query.getRepository() ) ).
-            indexTypeName( IndexType.WORKSPACE.getName() ).
-            from( 0 ).
-            size( 0 ).
-            build();
-
-        final TermQueryBuilder findWithParentQuery =
-            new TermQueryBuilder( WorkspaceXContentBuilderFactory.PARENT_PATH_FIELD_NAME, query.getParent().toString() );
-        final BoolQueryBuilder joinWithWorkspaceQuery = joinWithWorkspaceQuery( query.getWorkspace().getName(), findWithParentQuery );
-
-        final long count = elasticsearchDao.count( queryMetaData, joinWithWorkspaceQuery );
-
-        return count > 0;
+        return GetNodeVersionIdsByPathsCommand.create().
+            elasticsearchDao( this.elasticsearchDao ).
+            repository( context.getRepository() ).
+            workspace( context.getWorkspace() ).
+            nodePaths( nodePaths ).
+            build().
+            execute();
     }
 
-    private NodeVersionIds fieldValuesToVersionIds( final Collection<SearchResultField> fieldValues )
+    @Override
+    public NodeVersionIds findByParent( final NodePath parentPath, final Context context )
     {
-        final NodeVersionIds.Builder builder = NodeVersionIds.create();
-
-        for ( final SearchResultField searchResultField : fieldValues )
-        {
-            if ( searchResultField == null )
-            {
-                continue;
-            }
-
-            builder.add( NodeVersionId.from( searchResultField.getValue().toString() ) );
-        }
-        return builder.build();
+        return FindNodeVersionIdsByParentCommand.create().
+            elasticsearchDao( this.elasticsearchDao ).
+            workspace( context.getWorkspace() ).
+            repository( context.getRepository() ).
+            parentPath( parentPath ).
+            build().
+            execute();
     }
 
-    private QueryMetaData createGetBlobKeyQueryMetaData( final int numberOfHits, final Repository repository )
+    @Override
+    public EntityIds findNodesWithDifferences( final CompareWorkspacesQuery query, final Context context )
     {
-        final SortBuilder fieldSortBuilder = new FieldSortBuilder( BUILTIN_TIMESTAMP_FIELD ).order( SortOrder.DESC );
-
-        return QueryMetaData.create( StorageNameResolver.resolveStorageIndexName( repository ) ).
-            indexTypeName( IndexType.WORKSPACE.getName() ).
-            from( 0 ).
-            size( numberOfHits ).
-            addField( WorkspaceXContentBuilderFactory.ENTITY_ID_FIELD_NAME ).
-            addField( WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME ).
-            addSort( fieldSortBuilder ).
-            build();
+        return FindNodesWithDifferencesCommand.create().
+            elasticsearchDao( this.elasticsearchDao ).
+            repository( context.getRepository() ).
+            source( query.getSource() ).
+            target( query.getTarget() ).
+            build().
+            execute();
     }
 
-    private BoolQueryBuilder joinWithWorkspaceQuery( final String workspaceName, final QueryBuilder specificQuery )
+    @Override
+    public boolean hasChildren( final NodePath parent, final Context context )
     {
-        final BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder();
-
-        final TermQueryBuilder workspaceQuery = new TermQueryBuilder( WorkspaceXContentBuilderFactory.WORKSPACE_FIELD_NAME, workspaceName );
-        boolQueryBuilder.must( specificQuery );
-        boolQueryBuilder.must( workspaceQuery );
-
-        return boolQueryBuilder;
-    }
-
-    private final class EntityIdToSearchResultFieldMapper
-        implements com.google.common.base.Function<String, SearchResultField>
-    {
-        private final SearchResult searchResult;
-
-        private final String fieldName;
-
-        private final Workspace workspace;
-
-        private EntityIdToSearchResultFieldMapper( final SearchResult searchResult, final String fieldName, final Workspace workspace )
-        {
-            this.searchResult = searchResult;
-            this.fieldName = fieldName;
-            this.workspace = workspace;
-        }
-
-        @Override
-        public SearchResultField apply( final String entityId )
-        {
-            final WorkspaceDocumentId workspaceDocumentId = new WorkspaceDocumentId( EntityId.from( entityId ), this.workspace );
-
-            final SearchResultEntry entry = this.searchResult.getEntry( workspaceDocumentId.toString() );
-            return entry != null ? entry.getField( fieldName ) : null;
-        }
+        return GetHasChildrenCommand.create().
+            elasticsearchDao( this.elasticsearchDao ).
+            repository( context.getRepository() ).
+            workspace( context.getWorkspace() ).
+            parentPath( parent ).
+            build().
+            execute();
     }
 
     @Inject

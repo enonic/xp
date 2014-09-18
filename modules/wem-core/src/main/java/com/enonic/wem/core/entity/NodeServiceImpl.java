@@ -32,11 +32,6 @@ import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.index.query.QueryService;
 import com.enonic.wem.core.version.VersionService;
 import com.enonic.wem.core.workspace.WorkspaceService;
-import com.enonic.wem.core.workspace.compare.WorkspaceCompareService;
-import com.enonic.wem.core.workspace.query.WorkspaceIdQuery;
-import com.enonic.wem.core.workspace.query.WorkspaceIdsQuery;
-import com.enonic.wem.core.workspace.query.WorkspacePathQuery;
-import com.enonic.wem.core.workspace.query.WorkspacePathsQuery;
 
 public class NodeServiceImpl
     implements NodeService
@@ -51,9 +46,6 @@ public class NodeServiceImpl
     WorkspaceService workspaceService;
 
     @Inject
-    private WorkspaceCompareService workspaceCompareService;
-
-    @Inject
     private VersionService versionService;
 
     @Inject
@@ -62,11 +54,7 @@ public class NodeServiceImpl
     @Override
     public Node getById( final EntityId id, final Context context )
     {
-        final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( WorkspaceIdQuery.create().
-            workspace( context.getWorkspace() ).
-            repository( context.getRepository() ).
-            entityId( id ).
-            build() );
+        final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( id, context );
 
         if ( currentVersion == null )
         {
@@ -74,9 +62,8 @@ public class NodeServiceImpl
         }
 
         return NodeHasChildResolver.create().
-            workspace( context.getWorkspace() ).
-            repository( context.getRepository() ).
             workspaceService( this.workspaceService ).
+            context( context ).
             build().
             resolve( nodeDao.getByVersionId( currentVersion ) );
     }
@@ -84,16 +71,11 @@ public class NodeServiceImpl
     @Override
     public Nodes getByIds( final EntityIds ids, final Context context )
     {
-        final NodeVersionIds versionIds = this.workspaceService.getByVersionIds( WorkspaceIdsQuery.create().
-            workspace( context.getWorkspace() ).
-            repository( context.getRepository() ).
-            entityIds( ids ).
-            build() );
+        final NodeVersionIds versionIds = this.workspaceService.getByVersionIds( ids, context );
 
         return NodeHasChildResolver.create().
-            workspace( context.getWorkspace() ).
-            repository( context.getRepository() ).
             workspaceService( this.workspaceService ).
+            context( context ).
             build().
             resolve( nodeDao.getByVersionIds( versionIds ) );
     }
@@ -101,11 +83,7 @@ public class NodeServiceImpl
     @Override
     public Node getByPath( final NodePath path, final Context context )
     {
-        final NodeVersionId currentVersion = this.workspaceService.getByPath( WorkspacePathQuery.create().
-            workspace( context.getWorkspace() ).
-            repository( context.getRepository() ).
-            nodePath( path ).
-            build() );
+        final NodeVersionId currentVersion = this.workspaceService.getByPath( path, context );
 
         if ( currentVersion == null )
         {
@@ -113,9 +91,8 @@ public class NodeServiceImpl
         }
 
         return NodeHasChildResolver.create().
-            workspace( context.getWorkspace() ).
-            repository( context.getRepository() ).
             workspaceService( this.workspaceService ).
+            context( context ).
             build().
             resolve( nodeDao.getByVersionId( currentVersion ) );
     }
@@ -123,16 +100,11 @@ public class NodeServiceImpl
     @Override
     public Nodes getByPaths( final NodePaths paths, final Context context )
     {
-        final NodeVersionIds versionIds = this.workspaceService.getByPaths( WorkspacePathsQuery.create().
-            workspace( context.getWorkspace() ).
-            repository( context.getRepository() ).
-            nodePaths( paths ).
-            build() );
+        final NodeVersionIds versionIds = this.workspaceService.getByPaths( paths, context );
 
         return NodeHasChildResolver.create().
-            workspace( context.getWorkspace() ).
-            repository( context.getRepository() ).
             workspaceService( this.workspaceService ).
+            context( context ).
             build().
             resolve( nodeDao.getByVersionIds( versionIds ) );
     }
@@ -240,25 +212,28 @@ public class NodeServiceImpl
             execute();
     }
 
-
     @Override
-    public NodeComparison compare( final EntityId id, final Workspace target, final Context context )
+    public NodeComparison compare( final EntityId entityId, final Workspace target, final Context context )
     {
-        return CompareNodeCommand.create( context ).
-            id( id ).
+        return CompareNodeCommand.create().
+            context( context ).
+            entityId( entityId ).
             target( target ).
-            compareService( workspaceCompareService ).
+            workspaceService( this.workspaceService ).
+            versionService( this.versionService ).
             build().
             execute();
     }
 
     @Override
-    public NodeComparisons compare( final EntityIds ids, final Workspace target, final Context context )
+    public NodeComparisons compare( final EntityIds entityIds, final Workspace target, final Context context )
     {
-        return CompareNodesCommand.create( context ).
-            ids( ids ).
+        return CompareNodesCommand.create().
+            context( context ).
+            entityIds( entityIds ).
             target( target ).
-            compareService( workspaceCompareService ).
+            workspaceService( this.workspaceService ).
+            versionService( this.versionService ).
             build().
             execute();
     }
@@ -292,8 +267,6 @@ public class NodeServiceImpl
     public Node getByVersionId( final NodeVersionId blobKey, final Context context )
     {
         return NodeHasChildResolver.create().
-            workspace( context.getWorkspace() ).
-            repository( context.getRepository() ).
             workspaceService( this.workspaceService ).
             build().
             resolve( nodeDao.getByVersionId( blobKey ) );

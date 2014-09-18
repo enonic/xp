@@ -17,9 +17,6 @@ import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.core.entity.dao.NodeDao;
 import com.enonic.wem.core.version.EntityVersionDocument;
 import com.enonic.wem.core.workspace.StoreWorkspaceDocument;
-import com.enonic.wem.core.workspace.query.WorkspaceIdQuery;
-import com.enonic.wem.core.workspace.query.WorkspaceParentQuery;
-import com.enonic.wem.core.workspace.query.WorkspacePathQuery;
 
 final class RenameNodeCommand
     extends AbstractNodeCommand
@@ -39,12 +36,8 @@ final class RenameNodeCommand
     Node execute()
     {
         final EntityId entityId = params.getEntityId();
-        final Workspace workspace = this.context.getWorkspace();
 
-        final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( WorkspaceIdQuery.create().
-            workspace( workspace ).
-            repository( this.context.getRepository() ).
-            entityId( entityId ).build() );
+        final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( entityId, this.context );
 
         final Node nodeToBeRenamed = nodeDao.getByVersionId( currentVersion );
 
@@ -57,7 +50,7 @@ final class RenameNodeCommand
             throw new NodeAlreadyExistException( targetPath );
         }
 
-        final Nodes children = getChildNodes( workspace, nodeToBeRenamed );
+        final Nodes children = getChildNodes( nodeToBeRenamed );
 
         final Node renamedNode = doMoveNode( parentPath, params.getNewNodeName(), params.getEntityId() );
 
@@ -67,20 +60,15 @@ final class RenameNodeCommand
         }
 
         return NodeHasChildResolver.create().
-            workspace( context.getWorkspace() ).
-            repository( context.getRepository() ).
             workspaceService( this.workspaceService ).
+            context( this.context ).
             build().
             resolve( renamedNode );
     }
 
-    private Nodes getChildNodes( final Workspace workspace, final Node parentNode )
+    private Nodes getChildNodes( final Node parentNode )
     {
-        final NodeVersionIds childrenVersions = workspaceService.findByParent( WorkspaceParentQuery.create().
-            workspace( workspace ).
-            repository( this.context.getRepository() ).
-            parentPath( parentNode.path() ).
-            build() );
+        final NodeVersionIds childrenVersions = workspaceService.findByParent( parentNode.path(), this.context );
 
         if ( childrenVersions.isEmpty() )
         {
@@ -92,11 +80,7 @@ final class RenameNodeCommand
 
     private EntityId getExistingNode( final NodePath path )
     {
-        final NodeVersionId existingVersion = workspaceService.getByPath( WorkspacePathQuery.create().
-            workspace( this.context.getWorkspace() ).
-            repository( this.context.getRepository() ).
-            nodePath( path ).
-            build() );
+        final NodeVersionId existingVersion = workspaceService.getByPath( path, this.context );
 
         if ( existingVersion == null )
         {
@@ -114,7 +98,7 @@ final class RenameNodeCommand
         {
             final Node movedNode = doMoveNode( newParentPath, node.name(), node.id() );
 
-            final Nodes children = getChildNodes( this.context.getWorkspace(), movedNode );
+            final Nodes children = getChildNodes( movedNode );
 
             if ( children != null && children.isNotEmpty() )
             {
@@ -127,11 +111,7 @@ final class RenameNodeCommand
     {
         final Workspace workspace = this.context.getWorkspace();
 
-        final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( WorkspaceIdQuery.create().
-            workspace( workspace ).
-            repository( this.context.getRepository() ).
-            entityId( id ).
-            build() );
+        final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( id, this.context );
 
         final Node persistedNode = nodeDao.getByVersionId( currentVersion );
 
@@ -156,10 +136,8 @@ final class RenameNodeCommand
             id( movedNode.id() ).
             parentPath( movedNode.parent() ).
             path( movedNode.path() ).
-            workspace( workspace ).
             nodeVersionId( newVersion ).
-            repository( this.context.getRepository() ).
-            build() );
+            build(), this.context );
 
         versionService.store( EntityVersionDocument.create().
             entityId( movedNode.id() ).

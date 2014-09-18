@@ -2,7 +2,7 @@ package com.enonic.wem.core.workspace.compare;
 
 import com.enonic.wem.api.entity.NodeVersion;
 
-class DiffStatusParams
+public class DiffStatusParams
 {
     private final NodeVersion source;
 

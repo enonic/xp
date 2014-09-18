@@ -6,15 +6,13 @@ import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.NodeVersionId;
 import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.core.entity.dao.NodeNotFoundException;
-import com.enonic.wem.core.workspace.query.WorkspaceDeleteQuery;
-import com.enonic.wem.core.workspace.query.WorkspacePathQuery;
 
 final class DeleteNodeByPathCommand
     extends AbstractDeleteNodeCommand
 {
     private final NodePath nodePath;
 
-    DeleteNodeByPathCommand( final Builder builder )
+    private DeleteNodeByPathCommand( final Builder builder )
     {
         super( builder );
         this.nodePath = builder.nodePath;
@@ -24,11 +22,7 @@ final class DeleteNodeByPathCommand
     {
         final Workspace workspace = this.context.getWorkspace();
 
-        final NodeVersionId version = this.workspaceService.getByPath( WorkspacePathQuery.create().
-            workspace( workspace ).
-            repository( this.context.getRepository() ).
-            nodePath( this.nodePath ).
-            build() );
+        final NodeVersionId version = this.workspaceService.getByPath( this.nodePath, this.context );
 
         if ( version == null )
         {
@@ -39,11 +33,7 @@ final class DeleteNodeByPathCommand
 
         doDeleteChildren( nodeToDelete, workspace );
 
-        this.workspaceService.delete( WorkspaceDeleteQuery.create().
-            workspace( workspace ).
-            repository( this.context.getRepository() ).
-            entityId( nodeToDelete.id() ).
-            build() );
+        this.workspaceService.delete( nodeToDelete.id(), this.context );
 
         this.indexService.delete( nodeToDelete.id(), workspace );
 

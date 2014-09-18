@@ -24,6 +24,7 @@ import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.entity.Workspaces;
 import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.api.repository.RepositoryId;
+import com.enonic.wem.core.TestContext;
 import com.enonic.wem.core.elasticsearch.ElasticsearchDao;
 import com.enonic.wem.core.elasticsearch.ElasticsearchDataException;
 import com.enonic.wem.core.elasticsearch.QueryMetaData;
@@ -33,12 +34,6 @@ import com.enonic.wem.core.index.result.SearchResultEntry;
 import com.enonic.wem.core.index.result.SearchResultField;
 import com.enonic.wem.core.workspace.StoreWorkspaceDocument;
 import com.enonic.wem.core.workspace.WorkspaceDocumentId;
-import com.enonic.wem.core.workspace.query.WorkspaceDeleteQuery;
-import com.enonic.wem.core.workspace.query.WorkspaceIdQuery;
-import com.enonic.wem.core.workspace.query.WorkspaceIdsQuery;
-import com.enonic.wem.core.workspace.query.WorkspaceParentQuery;
-import com.enonic.wem.core.workspace.query.WorkspacePathQuery;
-import com.enonic.wem.core.workspace.query.WorkspacePathsQuery;
 
 import static com.enonic.wem.core.elasticsearch.workspace.WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME;
 import static org.junit.Assert.*;
@@ -49,7 +44,7 @@ public class ElasticsearchWorkspaceServiceTest
 
     private ElasticsearchWorkspaceService wsStore;
 
-    private Workspace testWorkspace = Workspace.from( "test" );
+    private final Workspace testWorkspace = Workspace.from( "test" );
 
     private Repository testRepo = Repository.create().
         workspaces( Workspaces.from( testWorkspace ) ).
@@ -75,11 +70,9 @@ public class ElasticsearchWorkspaceServiceTest
 
         final StoreWorkspaceDocument storeWorkspaceDocument = StoreWorkspaceDocument.create().
             nodeVersionId( NodeVersionId.from( "a" ) ).
-            workspace( Workspace.from( "test" ) ).
             parentPath( node.parent() ).
             path( node.path() ).
             id( node.id() ).
-            repository( testRepo ).
             build();
 
         final SearchResult notExisting = SearchResult.create().results( SearchResultEntries.create().build() ).build();
@@ -87,7 +80,7 @@ public class ElasticsearchWorkspaceServiceTest
         Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( String.class ) ) ).
             thenReturn( notExisting );
 
-        wsStore.store( storeWorkspaceDocument );
+        wsStore.store( storeWorkspaceDocument, TestContext.TEST_CONTEXT );
 
         Mockito.verify( elasticsearchDao, Mockito.times( 1 ) ).store( Mockito.isA( IndexRequest.class ) );
     }
@@ -102,11 +95,9 @@ public class ElasticsearchWorkspaceServiceTest
 
         final StoreWorkspaceDocument storeWorkspaceDocument = StoreWorkspaceDocument.create().
             nodeVersionId( NodeVersionId.from( "a" ) ).
-            workspace( Workspace.from( "test" ) ).
             parentPath( node.parent() ).
             path( node.path() ).
             id( node.id() ).
-            repository( testRepo ).
             build();
 
         final SearchResult noChanges = SearchResult.create().
@@ -122,7 +113,7 @@ public class ElasticsearchWorkspaceServiceTest
         Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( String.class ) ) ).
             thenReturn( noChanges );
 
-        wsStore.store( storeWorkspaceDocument );
+        wsStore.store( storeWorkspaceDocument, TestContext.TEST_CONTEXT );
 
 //        Mockito.verify( elasticsearchDao, Mockito.times( 0 ) ).store( Mockito.isA( IndexRequest.class ) );
     }
@@ -137,11 +128,9 @@ public class ElasticsearchWorkspaceServiceTest
 
         final StoreWorkspaceDocument storeWorkspaceDocument = StoreWorkspaceDocument.create().
             nodeVersionId( NodeVersionId.from( "a" ) ).
-            workspace( Workspace.from( "test" ) ).
             parentPath( node.parent() ).
             path( node.path() ).
             id( node.id() ).
-            repository( testRepo ).
             build();
 
         final SearchResult noChanges = SearchResult.create().
@@ -157,7 +146,7 @@ public class ElasticsearchWorkspaceServiceTest
         Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( String.class ) ) ).
             thenReturn( noChanges );
 
-        wsStore.store( storeWorkspaceDocument );
+        wsStore.store( storeWorkspaceDocument, TestContext.TEST_CONTEXT );
 
         Mockito.verify( elasticsearchDao, Mockito.times( 1 ) ).store( Mockito.isA( IndexRequest.class ) );
     }
@@ -165,13 +154,7 @@ public class ElasticsearchWorkspaceServiceTest
     @Test
     public void delete()
     {
-        final WorkspaceDeleteQuery deleteQuery = WorkspaceDeleteQuery.create().
-            entityId( EntityId.from( "1" ) ).
-            repository( testRepo ).
-            workspace( testWorkspace ).
-            build();
-
-        wsStore.delete( deleteQuery );
+        wsStore.delete( EntityId.from( "1" ), TestContext.TEST_CONTEXT );
     }
 
     @Test
@@ -191,13 +174,7 @@ public class ElasticsearchWorkspaceServiceTest
         Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( QueryBuilder.class ) ) ).
             thenReturn( searchResult );
 
-        final WorkspaceIdQuery idQuery = WorkspaceIdQuery.create().
-            entityId( EntityId.from( "1" ) ).
-            repository( testRepo ).
-            workspace( testWorkspace ).
-            build();
-
-        final NodeVersionId version = wsStore.getCurrentVersion( idQuery );
+        final NodeVersionId version = wsStore.getCurrentVersion( EntityId.from( "1" ), TestContext.TEST_CONTEXT );
 
         Assert.assertEquals( NodeVersionId.from( "versionId" ), version );
     }
@@ -215,13 +192,7 @@ public class ElasticsearchWorkspaceServiceTest
         Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( QueryBuilder.class ) ) ).
             thenReturn( emptySearchResult );
 
-        final WorkspaceIdQuery idQuery = WorkspaceIdQuery.create().
-            entityId( EntityId.from( "1" ) ).
-            repository( testRepo ).
-            workspace( testWorkspace ).
-            build();
-
-        final NodeVersionId version = wsStore.getCurrentVersion( idQuery );
+        final NodeVersionId version = wsStore.getCurrentVersion( EntityId.from( "1" ), TestContext.TEST_CONTEXT );
 
         assertTrue( version == null );
     }
@@ -241,15 +212,8 @@ public class ElasticsearchWorkspaceServiceTest
         Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( QueryBuilder.class ) ) ).
             thenReturn( searchResultMissingField );
 
-        final WorkspaceIdQuery idQuery = WorkspaceIdQuery.create().
-            entityId( EntityId.from( "1" ) ).
-            repository( testRepo ).
-            workspace( testWorkspace ).
-            build();
-
-        wsStore.getCurrentVersion( idQuery );
+        wsStore.getCurrentVersion( EntityId.from( "1" ), TestContext.TEST_CONTEXT );
     }
-
 
     @Test
     public void getByIds()
@@ -275,13 +239,7 @@ public class ElasticsearchWorkspaceServiceTest
         Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( QueryBuilder.class ) ) ).
             thenReturn( searchResult );
 
-        final WorkspaceIdsQuery idQuery = WorkspaceIdsQuery.create().
-            workspace( testWorkspace ).
-            repository( testRepo ).
-            entityIds( EntityIds.from( "1", "2", "3" ) ).
-            build();
-
-        final NodeVersionIds versions = wsStore.getByVersionIds( idQuery );
+        final NodeVersionIds versions = wsStore.getByVersionIds( EntityIds.from( "1", "2", "3" ), TestContext.TEST_CONTEXT );
 
         assertEquals( 3, Iterators.size( versions.iterator() ) );
         final Iterator<NodeVersionId> iterator = versions.iterator();
@@ -317,13 +275,7 @@ public class ElasticsearchWorkspaceServiceTest
         Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( QueryBuilder.class ) ) ).
             thenReturn( searchResult );
 
-        final WorkspaceIdsQuery idQuery = WorkspaceIdsQuery.create().
-            workspace( testWorkspace ).
-            repository( testRepo ).
-            entityIds( EntityIds.from( "3", "1", "2" ) ).
-            build();
-
-        final NodeVersionIds versions = wsStore.getByVersionIds( idQuery );
+        final NodeVersionIds versions = wsStore.getByVersionIds( EntityIds.from( "3", "1", "2" ), TestContext.TEST_CONTEXT );
 
         assertEquals( 3, Iterators.size( versions.iterator() ) );
         final Iterator<NodeVersionId> iterator = versions.iterator();
@@ -356,13 +308,7 @@ public class ElasticsearchWorkspaceServiceTest
         Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( QueryBuilder.class ) ) ).
             thenReturn( searchResult );
 
-        final WorkspaceIdsQuery idQuery = WorkspaceIdsQuery.create().
-            workspace( testWorkspace ).
-            repository( testRepo ).
-            entityIds( EntityIds.from( "2", "3", "1", "4" ) ).
-            build();
-
-        final NodeVersionIds versions = wsStore.getByVersionIds( idQuery );
+        final NodeVersionIds versions = wsStore.getByVersionIds( EntityIds.from( "2", "3", "1", "4" ), TestContext.TEST_CONTEXT );
 
         assertEquals( 2, versions.getSize() );
     }
@@ -379,13 +325,7 @@ public class ElasticsearchWorkspaceServiceTest
         Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( QueryBuilder.class ) ) ).
             thenReturn( searchResult );
 
-        final WorkspaceIdsQuery idQuery = WorkspaceIdsQuery.create().
-            workspace( testWorkspace ).
-            repository( testRepo ).
-            entityIds( EntityIds.from( "1", "2", "3" ) ).
-            build();
-
-        final NodeVersionIds versions = wsStore.getByVersionIds( idQuery );
+        final NodeVersionIds versions = wsStore.getByVersionIds( EntityIds.from( "1", "2", "3" ), TestContext.TEST_CONTEXT );
 
         assertEquals( 0, versions.getSize() );
     }
@@ -407,13 +347,7 @@ public class ElasticsearchWorkspaceServiceTest
         Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( QueryBuilder.class ) ) ).
             thenReturn( searchResult );
 
-        final WorkspacePathQuery pathQuery = WorkspacePathQuery.create().
-            workspace( testWorkspace ).
-            repository( testRepo ).
-            nodePath( NodePath.newPath( "/test" ).build() ).
-            build();
-
-        final NodeVersionId version = wsStore.getByPath( pathQuery );
+        final NodeVersionId version = wsStore.getByPath( NodePath.newPath( "/test" ).build(), TestContext.TEST_CONTEXT );
 
         Assert.assertEquals( NodeVersionId.from( "myBlobKey" ), version );
     }
@@ -430,13 +364,7 @@ public class ElasticsearchWorkspaceServiceTest
         Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( QueryBuilder.class ) ) ).
             thenReturn( searchResult );
 
-        final WorkspacePathQuery pathQuery = WorkspacePathQuery.create().
-            workspace( testWorkspace ).
-            repository( testRepo ).
-            nodePath( NodePath.newPath( "/test" ).build() ).
-            build();
-
-        final NodeVersionId version = wsStore.getByPath( pathQuery );
+        final NodeVersionId version = wsStore.getByPath( NodePath.newPath( "/test" ).build(), TestContext.TEST_CONTEXT );
 
         assertTrue( version == null );
     }
@@ -465,14 +393,9 @@ public class ElasticsearchWorkspaceServiceTest
         Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( QueryBuilder.class ) ) ).
             thenReturn( searchResult );
 
-        final WorkspacePathsQuery pathsQuery = WorkspacePathsQuery.create().
-            workspace( Workspace.from( "test" ) ).
-            repository( testRepo ).
-            nodePaths( NodePaths.from( NodePath.newPath( "/test" ).build(), NodePath.newPath( "/test2" ).build(),
-                                       NodePath.newPath( "/test3" ).build() ) ).
-            build();
-
-        final NodeVersionIds versions = wsStore.getByPaths( pathsQuery );
+        final NodeVersionIds versions = wsStore.getByPaths(
+            NodePaths.from( NodePath.newPath( "/test" ).build(), NodePath.newPath( "/test2" ).build(),
+                            NodePath.newPath( "/test3" ).build() ), TestContext.TEST_CONTEXT );
 
         assertEquals( 3, Iterators.size( versions.iterator() ) );
         final Iterator<NodeVersionId> iterator = versions.iterator();
@@ -504,14 +427,9 @@ public class ElasticsearchWorkspaceServiceTest
         Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( QueryBuilder.class ) ) ).
             thenReturn( searchResult );
 
-        final WorkspacePathsQuery pathsQuery = WorkspacePathsQuery.create().
-            workspace( testWorkspace ).
-            repository( testRepo ).
-            nodePaths( NodePaths.from( NodePath.newPath( "/test" ).build(), NodePath.newPath( "/test2" ).build(),
-                                       NodePath.newPath( "/test3" ).build() ) ).
-            build();
-
-        final NodeVersionIds versions = wsStore.getByPaths( pathsQuery );
+        final NodeVersionIds versions = wsStore.getByPaths(
+            NodePaths.from( NodePath.newPath( "/test" ).build(), NodePath.newPath( "/test2" ).build(),
+                            NodePath.newPath( "/test3" ).build() ), TestContext.TEST_CONTEXT );
         assertEquals( 2, versions.getSize() );
     }
 
@@ -540,13 +458,7 @@ public class ElasticsearchWorkspaceServiceTest
         Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( QueryBuilder.class ) ) ).
             thenReturn( searchResult );
 
-        final WorkspaceParentQuery query = WorkspaceParentQuery.create().
-            workspace( testWorkspace ).
-            repository( testRepo ).
-            parentPath( NodePath.newPath( "/test" ).build() ).
-            build();
-
-        final NodeVersionIds versions = wsStore.findByParent( query );
+        final NodeVersionIds versions = wsStore.findByParent( NodePath.newPath( "/test" ).build(), TestContext.TEST_CONTEXT );
 
         assertEquals( 3, Iterators.size( versions.iterator() ) );
         final Iterator<NodeVersionId> iterator = versions.iterator();
@@ -570,13 +482,7 @@ public class ElasticsearchWorkspaceServiceTest
         Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( QueryBuilder.class ) ) ).
             thenReturn( emptyResult );
 
-        final WorkspaceParentQuery query = WorkspaceParentQuery.create().
-            workspace( testWorkspace ).
-            repository( testRepo ).
-            parentPath( NodePath.newPath( "/test" ).build() ).
-            build();
-
-        final NodeVersionIds versions = wsStore.findByParent( query );
+        final NodeVersionIds versions = wsStore.findByParent( NodePath.newPath( "/test" ).build(), TestContext.TEST_CONTEXT );
 
         assertEquals( 0, Iterators.size( versions.iterator() ) );
     }

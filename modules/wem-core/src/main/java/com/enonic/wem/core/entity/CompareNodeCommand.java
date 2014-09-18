@@ -3,89 +3,124 @@ package com.enonic.wem.core.entity;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.entity.CompareStatus;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.NodeComparison;
+import com.enonic.wem.api.entity.NodeVersion;
+import com.enonic.wem.api.entity.NodeVersionId;
 import com.enonic.wem.api.entity.Workspace;
-import com.enonic.wem.core.workspace.compare.WorkspaceCompareService;
-import com.enonic.wem.core.workspace.compare.query.CompareEntityQuery;
+import com.enonic.wem.core.version.VersionService;
+import com.enonic.wem.core.workspace.WorkspaceService;
+import com.enonic.wem.core.workspace.compare.DiffStatusParams;
+import com.enonic.wem.core.workspace.compare.DiffStatusResolver;
 
 public class CompareNodeCommand
 {
-    private final EntityId id;
+    private final EntityId entityId;
 
     private final Workspace target;
 
     private final Context context;
 
-    private final WorkspaceCompareService workspaceCompareService;
+    private final WorkspaceService workspaceService;
 
-    private CompareNodeCommand( final Builder builder )
+    private final VersionService versionService;
+
+    private CompareNodeCommand( Builder builder )
     {
-        this.id = builder.id;
-        this.target = builder.target;
-        this.context = builder.context;
-        this.workspaceCompareService = builder.workspaceCompareService;
+        entityId = builder.entityId;
+        target = builder.target;
+        context = builder.context;
+        workspaceService = builder.workspaceService;
+        versionService = builder.versionService;
     }
 
-    public static Builder create( final Context context )
+    public static Builder create()
     {
-        return new Builder( context );
+        return new Builder();
     }
 
     public NodeComparison execute()
     {
-        return this.workspaceCompareService.compare( CompareEntityQuery.create().
-            entityId( this.id ).
-            repository( this.context.getRepository() ).
-            source( this.context.getWorkspace() ).
-            target( this.target ).
-            build() );
+        final NodeVersionId sourceVersionId = workspaceService.getCurrentVersion( entityId, this.context );
+        final NodeVersionId targetVersionId = workspaceService.getWorkspaceVersion( entityId, target, this.context );
+
+        final NodeVersion sourceVersion = getVersion( sourceVersionId );
+        final NodeVersion targetVersion = getVersion( targetVersionId );
+
+        final CompareStatus compareStatus = DiffStatusResolver.resolve( new DiffStatusParams( sourceVersion, targetVersion ) );
+
+        return new NodeComparison( entityId, compareStatus );
     }
 
-    public static class Builder
+    private NodeVersion getVersion( final NodeVersionId nodeVersionId )
     {
-        private EntityId id;
+        if ( nodeVersionId == null )
+        {
+            return null;
+        }
+
+        return versionService.getVersion( nodeVersionId, this.context.getRepository() );
+    }
+
+    public static final class Builder
+    {
+        private EntityId entityId;
 
         private Workspace target;
 
-        private final Context context;
+        private Context context;
 
-        private WorkspaceCompareService workspaceCompareService;
+        private WorkspaceService workspaceService;
 
-        public Builder( final Context context )
+        private VersionService versionService;
+
+        private Builder()
         {
-            this.context = context;
         }
 
-        public Builder id( final EntityId id )
+        public Builder entityId( EntityId entityId )
         {
-            this.id = id;
+            this.entityId = entityId;
             return this;
         }
 
-        public Builder target( final Workspace target )
+        public Builder target( Workspace target )
         {
             this.target = target;
             return this;
         }
 
-        public Builder compareService( final WorkspaceCompareService workspaceCompareService )
+        public Builder context( Context context )
         {
-            this.workspaceCompareService = workspaceCompareService;
+            this.context = context;
+            return this;
+        }
+
+        public Builder workspaceService( WorkspaceService workspaceService )
+        {
+            this.workspaceService = workspaceService;
+            return this;
+        }
+
+        public Builder versionService( VersionService versionService )
+        {
+            this.versionService = versionService;
             return this;
         }
 
         private void validate()
         {
-            Preconditions.checkNotNull( id );
+            Preconditions.checkNotNull( entityId );
             Preconditions.checkNotNull( target );
             Preconditions.checkNotNull( context );
-            Preconditions.checkNotNull( workspaceCompareService );
+            Preconditions.checkNotNull( workspaceService );
+            Preconditions.checkNotNull( versionService );
         }
 
         public CompareNodeCommand build()
         {
-            validate();
+            this.validate();
             return new CompareNodeCommand( this );
         }
     }

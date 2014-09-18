@@ -4,26 +4,20 @@ import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeVersionIds;
 import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.entity.Workspace;
-import com.enonic.wem.core.workspace.query.WorkspaceDeleteQuery;
-import com.enonic.wem.core.workspace.query.WorkspaceParentQuery;
 
-public abstract class AbstractDeleteNodeCommand
+abstract class AbstractDeleteNodeCommand
     extends AbstractNodeCommand
 {
     private final static String ATTACHMENTS_NODE_NAME = "__att";
 
-    protected AbstractDeleteNodeCommand( final Builder builder )
+    AbstractDeleteNodeCommand( final Builder builder )
     {
         super( builder );
     }
 
-    protected void doDeleteChildren( final Node parent, final Workspace workspace )
+    void doDeleteChildren( final Node parent, final Workspace workspace )
     {
-        final NodeVersionIds childrenVersions = workspaceService.findByParent( WorkspaceParentQuery.create().
-            workspace( workspace ).
-            repository( this.context.getRepository() ).
-            parentPath( parent.path() ).
-            build() );
+        final NodeVersionIds childrenVersions = workspaceService.findByParent( parent.path(), this.context );
 
         if ( childrenVersions.isEmpty() )
         {
@@ -39,11 +33,7 @@ public abstract class AbstractDeleteNodeCommand
             final boolean isAttachmentNode = nodeName.startsWith( ATTACHMENTS_NODE_NAME );
             if ( !isAttachmentNode )
             {
-                workspaceService.delete( WorkspaceDeleteQuery.create().
-                    workspace( workspace ).
-                    repository( this.context.getRepository() ).
-                    entityId( child.id() ).
-                    build() );
+                workspaceService.delete( child.id(), this.context );
 
                 indexService.delete( child.id(), workspace );
                 doDeleteChildren( child, workspace );
@@ -51,11 +41,7 @@ public abstract class AbstractDeleteNodeCommand
             else
             {
                 // TODO; What to do with attachment nodes?
-                workspaceService.delete( WorkspaceDeleteQuery.create().
-                    workspace( workspace ).
-                    repository( this.context.getRepository() ).
-                    entityId( child.id() ).
-                    build() );
+                workspaceService.delete( child.id(), this.context );
             }
         }
     }
