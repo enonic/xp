@@ -17,28 +17,28 @@ module app.browse {
 
         private contentTreeGridPanelMask: api.ui.mask.LoadMask;
 
-        private contentTreeGridPanel2: app.browse.ContentTreeGrid;
+        private contentTreeGridPanel: app.browse.ContentTreeGrid;
 
         private contentFilterPanel: app.browse.filter.ContentBrowseFilterPanel;
 
         private contentBrowseItemPanel: ContentBrowseItemPanel;
 
         constructor() {
-            this.contentTreeGridPanel2 = new app.browse.ContentTreeGrid();
+            this.contentTreeGridPanel = new app.browse.ContentTreeGrid();
 
             this.contentBrowseItemPanel = components.detailPanel = new ContentBrowseItemPanel();
 
             this.contentFilterPanel = new app.browse.filter.ContentBrowseFilterPanel();
 
-            this.browseActions = <app.browse.action.ContentTreeGridActions>this.contentTreeGridPanel2.getContextMenu().getActions();
+            this.browseActions = <app.browse.action.ContentTreeGridActions>this.contentTreeGridPanel.getContextMenu().getActions();
 
             this.toolbar = new ContentBrowseToolbar(this.browseActions);
 
-            this.contentTreeGridPanelMask = new api.ui.mask.LoadMask(this.contentTreeGridPanel2);
+            this.contentTreeGridPanelMask = new api.ui.mask.LoadMask(this.contentTreeGridPanel);
 
             super({
                 browseToolbar: this.toolbar,
-                treeGridPanel2: this.contentTreeGridPanel2,
+                treeGridPanel2: this.contentTreeGridPanel,
                 browseItemPanel: this.contentBrowseItemPanel,
                 filterPanel: this.contentFilterPanel
             });
@@ -49,7 +49,7 @@ module app.browse {
                  Deleting content won't trigger browsePanel.onShow event,
                  because we are left on the same panel. We need to refresh manually.
                  */
-                this.contentTreeGridPanel2.deleteNodes(event.getContents().map((elem) => {
+                this.contentTreeGridPanel.deleteNodes(event.getContents().map((elem) => {
                     return new api.content.ContentSummaryAndCompareStatus(elem, null);
                 }));
                 this.refreshFilterAndGrid();
@@ -60,7 +60,6 @@ module app.browse {
             });
 
             api.content.ContentUpdatedEvent.on((event) => {
-//                this.contentTreeGridPanel2.updateNode(new api.content.ContentSummaryAndCompareStatus(event.getContent(), null));
                 this.setRefreshNeeded(true);
             });
 
@@ -70,8 +69,8 @@ module app.browse {
             this.contentTreeGridPanelMask.show();
             this.contentFilterPanel.onSearch(showMask);
             this.contentFilterPanel.onReset(showMask);
-            this.contentTreeGridPanel2.onRendered(showMask);
-            this.contentTreeGridPanel2.onLoaded(() => {
+            this.contentTreeGridPanel.onRendered(showMask);
+            this.contentTreeGridPanel.onLoaded(() => {
                 this.contentTreeGridPanelMask.hide();
             });
 
