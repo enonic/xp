@@ -3,8 +3,6 @@ package com.enonic.wem.admin.rest.resource.schema;
 
 import java.util.HashMap;
 
-import org.elasticsearch.cluster.metadata.MetaDataService;
-
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.schema.Schema;
 import com.enonic.wem.api.schema.SchemaName;
@@ -28,8 +26,6 @@ public class SchemaIconResolver
     private MixinService mixinService;
 
     private RelationshipTypeService relationshipTypeService;
-
-    private MetadataService metadataService;
 
     private HashMap<ContentTypeName, ContentType> contentTypesByName = new HashMap<>();
 
