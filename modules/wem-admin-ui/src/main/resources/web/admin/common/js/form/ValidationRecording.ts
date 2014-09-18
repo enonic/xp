@@ -25,7 +25,6 @@ module api.form {
         flatten(recording: ValidationRecording) {
 
             recording.breaksMinimumOccurrencesArray.forEach((path: ValidationRecordingPath)=> {
-
                 this.breaksMinimumOccurrences(path);
             });
 
@@ -86,10 +85,19 @@ module api.form {
             return previous == undefined || previous == null || !previous.equals(this);
         }
 
-        print() {
-            this.breaksMinimumOccurrencesArray.forEach((path: ValidationRecordingPath, index: number) => {
-                console.log("   " + path.toString());
-            });
+        toString(): string {
+            if (this.isValid()) {
+                return "";
+            } else {
+                var out = "<ul>";
+                this.breaksMinimumOccurrencesArray.forEach((path: ValidationRecordingPath, index: number) => {
+                    out += "<li>" + path.toString() + " - Minimum " + path.getMin() + " occurence(s) must exist</li>";
+                });
+                this.breaksMaximumOccurrencesArray.forEach((path: ValidationRecordingPath, index: number) => {
+                    out += "<li>" + path.toString() + " - Maximum " + path.getMax() + " occurence(s) must exist</li>";
+                });
+                return out += "</ul>";
+            }
         }
 
         private exists(path: ValidationRecordingPath, array: ValidationRecordingPath[]): boolean {

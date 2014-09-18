@@ -9,7 +9,7 @@ module app.wizard.action {
 
             this.onExecuted(() => {
 
-                if (wizard.contentCanBePublished()) {
+                if (wizard.checkContentCanBePublished()) {
                     wizard.setPersistAsDraft(false);
 
                     this.setEnabled(false);

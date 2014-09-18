@@ -8,10 +8,16 @@ module api.form {
 
         private refString;
 
-        constructor(parentDataSet: api.data.DataPath, dataName: string) {
+        private min: number;
+
+        private max: number;
+
+        constructor(parentDataSet: api.data.DataPath, dataName: string, min?: number, max?: number) {
             this.parentDataSet = parentDataSet != null ? parentDataSet.asRelative() : null;
             this.dataName = dataName;
             this.refString = this.resolveRefString();
+            this.min = min;
+            this.max = max;
         }
 
         private resolveRefString(): string {
@@ -37,6 +43,14 @@ module api.form {
 
         getDataName(): string {
             return this.dataName;
+        }
+
+        getMin(): number {
+            return this.min;
+        }
+
+        getMax(): number {
+            return this.max;
         }
 
         toString(): string {

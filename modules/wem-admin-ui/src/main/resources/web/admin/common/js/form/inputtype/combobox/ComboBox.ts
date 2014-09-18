@@ -136,10 +136,8 @@ module api.form.inputtype.combobox {
                 recording.setBreaksMaximumOccurrences(true);
             }
 
-            if (!silent) {
-                if (recording.validityChanged(this.previousValidationRecording)) {
-                    this.notifyValidityChanged(new api.form.inputtype.InputValidityChangedEvent(recording, this.input.getName()));
-                }
+            if (!silent && recording.validityChanged(this.previousValidationRecording)) {
+                this.notifyValidityChanged(new api.form.inputtype.InputValidityChangedEvent(recording, this.input.getName()));
             }
 
             this.previousValidationRecording = recording;

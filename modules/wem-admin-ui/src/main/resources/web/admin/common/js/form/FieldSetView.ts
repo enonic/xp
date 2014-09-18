@@ -109,8 +109,7 @@ module api.form {
 
             var recording = new ValidationRecording();
             this.formItemViews.forEach((formItemView: FormItemView)=> {
-                var currRecording = formItemView.validate(silent);
-                recording.flatten(currRecording);
+                recording.flatten(formItemView.validate(silent));
             });
 
             return recording;

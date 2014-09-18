@@ -50,7 +50,16 @@ module app.wizard {
             this.formView.onValidityChanged((event: api.form.FormValidityChangedEvent) => {
                 this.notifyValidityChanged(new WizardStepValidityChangedEvent(event.isValid()));
             });
+
             this.notifyValidityChanged(new WizardStepValidityChangedEvent(this.formView.isValid()));
+        }
+
+        public validate(silent?: boolean): api.form.ValidationRecording {
+            return this.formView.validate(silent);
+        }
+
+        public displayValidationErrors(display: boolean) {
+            this.formView.displayValidationErrors(display);
         }
 
         getForm(): Form {

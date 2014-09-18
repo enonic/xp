@@ -3,6 +3,17 @@
   position: relative;
   overflow: visible;
 
+  .validation-container {
+    display: none;
+    color: #ff0000;
+  }
+
+  &.display-validation-errors {
+    .validation-container {
+      display: block;
+    }
+  }
+
   .form-element-spacing(@form-field-set-spacing);
 
   .field-set-view, .form-item-set-view {

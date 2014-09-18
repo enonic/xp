@@ -29,6 +29,8 @@ module api.form {
 
         private addButton: api.ui.button.Button;
 
+        private validationContainer: api.dom.DivEl;
+
         private previousValidityRecording: ValidationRecording;
 
         private validityChangedListeners: {(event: ValidityChangedEvent) : void}[] = [];
@@ -147,6 +149,9 @@ module api.form {
                 this.bottomButtonRow.appendChild(this.addButton);
             }
 
+            this.validationContainer = new api.dom.DivEl("validation-container");
+            this.appendChild(this.validationContainer);
+
             this.inputTypeView.onValidityChanged((event: api.form.inputtype.InputValidityChangedEvent)=> {
 
                 this.handleInputValidationRecording(event.getRecording(), false);
@@ -176,7 +181,8 @@ module api.form {
 
         private resolveValidationRecordingPath(): ValidationRecordingPath {
 
-            return new ValidationRecordingPath(this.getParentDataPath(), this.input.getName());
+            return new ValidationRecordingPath(this.getParentDataPath(), this.input.getName(), this.input.getOccurrences().getMinimum(),
+                this.input.getOccurrences().getMaximum());
         }
 
         validate(silent: boolean = true): ValidationRecording {
@@ -198,20 +204,11 @@ module api.form {
                 recording.breaksMaximumOccurrences(validationRecordingPath);
             }
 
-            if (!silent) {
-                if (recording.validityChanged(this.previousValidityRecording)) {
-                    this.notifyFormValidityChanged(new ValidityChangedEvent(recording, validationRecordingPath));
-                }
+            if (!silent && recording.validityChanged(this.previousValidityRecording)) {
+                this.notifyFormValidityChanged(new ValidityChangedEvent(recording, validationRecordingPath));
             }
 
-            if (recording.isValid()) {
-                this.removeClass("invalid");
-                this.addClass("valid");
-            }
-            else {
-                this.removeClass("valid");
-                this.addClass("invalid");
-            }
+            this.renderValidationErrors(recording);
 
             this.previousValidityRecording = recording;
             return recording;
@@ -246,6 +243,18 @@ module api.form {
             this.validityChangedListeners.forEach((listener: (event: ValidityChangedEvent)=>void) => {
                 listener(event);
             });
+        }
+
+        private renderValidationErrors(recording: ValidationRecording) {
+            if (recording.isValid()) {
+                this.removeClass("invalid");
+                this.addClass("valid");
+            }
+            else {
+                this.removeClass("valid");
+                this.addClass("invalid");
+            }
+            this.validationContainer.setHtml(recording.toString())
         }
 
         onFocus(listener: (event: FocusEvent) => void) {

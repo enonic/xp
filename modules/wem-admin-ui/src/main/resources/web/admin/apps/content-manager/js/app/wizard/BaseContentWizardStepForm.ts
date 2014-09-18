@@ -1,8 +1,12 @@
 module app.wizard {
 
+    import ValidationRecording = api.form.ValidationRecording;
+
     export class BaseContentWizardStepForm extends api.app.wizard.WizardStepForm {
 
         private validityChangedListeners: {(event: WizardStepValidityChangedEvent): void}[] = [];
+
+        previousValidation: ValidationRecording;
 
         constructor(className?: string) {
             super(className);
@@ -25,6 +29,20 @@ module app.wizard {
             this.validityChangedListeners.forEach((listener) => {
                 listener(event);
             })
+        }
+
+        /*
+         *   public to be used by inheritors
+         */
+        public validate(silent?: boolean): ValidationRecording {
+            return new ValidationRecording();
+        }
+
+        public isValid(): boolean {
+            if (!this.previousValidation) {
+                this.previousValidation = this.validate(true);
+            }
+            return this.previousValidation.isValid();
         }
     }
 }

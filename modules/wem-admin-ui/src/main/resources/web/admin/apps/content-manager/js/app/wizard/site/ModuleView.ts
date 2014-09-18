@@ -39,6 +39,10 @@ module app.wizard.site {
             return this.moduleConfig;
         }
 
+        getFormView(): api.form.FormView {
+            return this.formView;
+        }
+
         onFocus(listener: (event: FocusEvent) => void) {
             this.formView.onFocus(listener);
         }

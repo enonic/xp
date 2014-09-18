@@ -1,6 +1,6 @@
 module app.wizard {
 
-    export class SiteTemplateWizardStepForm extends api.app.wizard.WizardStepForm {
+    export class SiteTemplateWizardStepForm extends api.ui.form.Form {
 
         private descriptionField: api.ui.text.TextInput;
         private moduleComboBox: api.module.ModuleComboBox;

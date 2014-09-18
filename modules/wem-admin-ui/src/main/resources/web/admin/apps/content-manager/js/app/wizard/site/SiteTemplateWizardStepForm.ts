@@ -31,8 +31,6 @@ module app.wizard.site {
 
         private moduleViewsValid: {[moduleKey: string]: boolean} = {};
 
-        private previousValidation: boolean = false;
-
         private siteTemplateChangedListeners: {(event: SiteTemplateChangedEvent) : void}[] = [];
 
         constructor(siteTemplate: SiteTemplate) {
@@ -55,6 +53,21 @@ module app.wizard.site {
 
             this.moduleViewsContainer = new api.dom.DivEl();
             this.appendChild(this.moduleViewsContainer);
+        }
+
+        public displayValidationErrors(display: boolean) {
+            this.moduleViews.forEach((moduleView: ModuleView) => {
+                moduleView.getFormView().displayValidationErrors(display);
+            })
+        }
+
+        public validate(silent?: boolean): api.form.ValidationRecording {
+            var recording = new api.form.ValidationRecording();
+            this.moduleViews.forEach((moduleView: ModuleView) => {
+                recording.flatten(moduleView.getFormView().validate(silent));
+            });
+            this.previousValidation = recording;
+            return recording;
         }
 
         private loadSiteTemplateDropdown(): wemQ.Promise<void> {
@@ -200,13 +213,25 @@ module app.wizard.site {
                     this.notifyBlurred(event);
                 });
                 moduleView.onValidityChanged((event: api.form.FormValidityChangedEvent) => {
-                    var moduleKey = moduleView.getModuleConfig().getModuleKey().toString();
-                    this.moduleViewsValid[moduleKey] = event.isValid();
-                    var allModuleFormsValid = this.areAllModuleFormsValid();
-                    if (this.previousValidation !== allModuleFormsValid) {
-                        this.notifyValidityChanged(new WizardStepValidityChangedEvent(allModuleFormsValid));
+
+                    if (!this.previousValidation) {
+                        this.previousValidation = event.getRecording();
+                        this.notifyValidityChanged(new WizardStepValidityChangedEvent(this.previousValidation.isValid()));
+                    } else {
+                        var previousValidState = this.previousValidation.isValid();
+
+                        if (event.isValid()) {
+                            // TODO: no origin in FormValidityChangedEvent
+                            // this.previousValidation.removeByPath(event.getOrigin())
+                        } else {
+                            this.previousValidation.flatten(event.getRecording());
+                        }
+
+                        if (previousValidState != this.previousValidation.isValid()) {
+                            this.notifyValidityChanged(new WizardStepValidityChangedEvent(this.previousValidation.isValid()))
+                        }
                     }
-                    this.previousValidation = allModuleFormsValid;
+
                 });
 
                 this.moduleViewsContainer.appendChild(moduleView);
@@ -214,11 +239,6 @@ module app.wizard.site {
                 var moduleKey = moduleView.getModuleConfig().getModuleKey().toString();
                 this.moduleViewsValid[moduleKey] = false;
             });
-            this.previousValidation = this.areAllModuleFormsValid();
-        }
-
-        private areAllModuleFormsValid(): boolean {
-            return this.moduleViews.every((mod: ModuleView) => this.moduleViewsValid[mod.getModuleConfig().getModuleKey().toString()]);
         }
 
         private removeExistingModuleViews() {
