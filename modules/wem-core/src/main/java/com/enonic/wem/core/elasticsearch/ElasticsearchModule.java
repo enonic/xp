@@ -7,6 +7,7 @@ import org.elasticsearch.node.Node;
 
 import com.google.inject.AbstractModule;
 
+import com.enonic.wem.core.elasticsearch.workspace.ElasticsearchWorkspaceService;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.index.query.QueryService;
 import com.enonic.wem.core.version.VersionService;
