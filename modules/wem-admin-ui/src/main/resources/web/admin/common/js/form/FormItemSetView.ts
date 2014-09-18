@@ -27,6 +27,8 @@ module api.form {
 
         private collapseButton: api.dom.AEl;
 
+        private validationContainer: api.dom.DivEl;
+
         private validityChangedListeners: {(event: ValidityChangedEvent) : void}[] = [];
 
         private previousValidationRecording: ValidationRecording;
@@ -77,7 +79,6 @@ module api.form {
             });
             this.formItemSetOccurrences.layout();
 
-            this.validate(true);
             this.formItemSetOccurrences.onOccurrenceAdded((event: OccurrenceAddedEvent) => {
                 this.refresh();
                 wemjq(this.occurrenceViewsContainer.getHTMLElement()).sortable("refresh");
@@ -134,7 +135,12 @@ module api.form {
 
             this.bottomButtonRow.appendChild(this.addButton);
             this.bottomButtonRow.appendChild(this.collapseButton);
+
+            this.validationContainer = new api.dom.DivEl("validation-container");
+            this.appendChild(this.validationContainer);
+
             this.refresh();
+            this.validate(true);
         }
 
         private handleFormItemSetOccurrenceViewValidityChanged(event: ValidityChangedEvent) {
@@ -210,7 +216,8 @@ module api.form {
 
         private resolveValidationRecordingPath(): ValidationRecordingPath {
 
-            return new ValidationRecordingPath(this.getParentDataPath(), this.formItemSet.getName());
+            return new ValidationRecordingPath(this.getParentDataPath(), this.formItemSet.getName(),
+                this.formItemSet.getOccurrences().getMinimum(), this.formItemSet.getOccurrences().getMaximum());
         }
 
         validate(silent: boolean = true): ValidationRecording {
@@ -238,22 +245,14 @@ module api.form {
                 recording.breaksMaximumOccurrences(validationRecordingPath);
             }
 
-            if (!silent) {
-                if (recording.validityChanged(this.previousValidationRecording)) {
-                    this.notifyValidityChanged(new ValidityChangedEvent(recording, validationRecordingPath));
-                }
+
+            if (!silent && recording.validityChanged(this.previousValidationRecording)) {
+                this.notifyValidityChanged(new ValidityChangedEvent(recording, validationRecordingPath));
             }
+
+            this.renderValidationErrors(recording);
 
             this.previousValidationRecording = recording;
-
-            if (this.previousValidationRecording.isValid()) {
-                this.removeClass("invalid");
-                this.addClass("valid");
-            }
-            else {
-                this.removeClass("valid");
-                this.addClass("invalid");
-            }
 
             return recording;
         }
@@ -269,19 +268,21 @@ module api.form {
         }
 
         private notifyValidityChanged(event: ValidityChangedEvent) {
-
-            /*console.log("FormItemSetView[ " + event.getOrigin().toString() + " ] validity changed");
-             if (event.getRecording().isValid()) {
-             console.log(" valid!");
-             }
-             else {
-             console.log(" invalid: ");
-             event.getRecording().print();
-             }*/
-
             this.validityChangedListeners.forEach((listener: (event: ValidityChangedEvent)=>void) => {
                 listener(event);
             });
+        }
+
+        private renderValidationErrors(recording: ValidationRecording) {
+            if (recording.isValid()) {
+                this.removeClass("invalid");
+                this.addClass("valid");
+            }
+            else {
+                this.removeClass("valid");
+                this.addClass("invalid");
+            }
+            this.validationContainer.setHtml(recording.toString());
         }
 
         giveFocus(): boolean {

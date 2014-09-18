@@ -1,6 +1,6 @@
 module api.app.wizard {
 
-    export class WizardStepForm extends api.ui.form.Form {
+    export class WizardStepForm extends api.ui.panel.Panel {
 
         private focusListeners: {(event: FocusEvent): void}[] = [];
 

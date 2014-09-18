@@ -94,24 +94,34 @@ module api.form {
             });
         }
 
-        public validate(): ValidationRecording {
+        public validate(silent?: boolean): ValidationRecording {
 
-            var allRecordings: ValidationRecording = new ValidationRecording();
+            var recording: ValidationRecording = new ValidationRecording();
             this.formItemViews.forEach((formItemView: FormItemView) => {
-                var currRecording = formItemView.validate(true);
-                allRecordings.flatten(currRecording);
+                recording.flatten(formItemView.validate(silent));
             });
 
-            this.previousValidationRecording = allRecordings;
+            if (!silent && recording.validityChanged(this.previousValidationRecording)) {
+                this.notifyValidityChanged(new FormValidityChangedEvent(recording));
+            }
 
-            //console.log("FormView.validate:");
-            //allRecordings.print();
-            return allRecordings;
+            this.previousValidationRecording = recording;
+            return recording;
         }
 
         public isValid(): boolean {
+            if (!this.previousValidationRecording) {
+                this.previousValidationRecording = this.validate(true);
+            }
+            return this.previousValidationRecording.isValid();
+        }
 
-            return this.validate().isValid();
+        public displayValidationErrors(display: boolean) {
+            if (display) {
+                this.addClass("display-validation-errors");
+            } else {
+                this.removeClass("display-validation-errors");
+            }
         }
 
         public getValueAtPath(path: api.data.DataPath): api.data.Value {

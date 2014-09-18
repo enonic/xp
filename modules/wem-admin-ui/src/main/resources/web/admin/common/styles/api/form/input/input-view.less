@@ -17,7 +17,8 @@
     }
 
     .input-type-view,
-    .bottom-button-row {
+    .bottom-button-row,
+    .validation-container {
       margin-left: 0px;
     }
   }
@@ -37,7 +38,7 @@
       padding: 0 15px 0 0;
       &:after {
         position: absolute;
-        content:'\00a0*';
+        content: '\00a0*';
         color: red;
       }
     }
@@ -53,7 +54,7 @@
     .required {
       &:after {
         content: '*';
-        color:crimson;
+        color: crimson;
       }
     }
   }
@@ -64,12 +65,16 @@
 
   .bottom-button-row {
     clear: left;
-    overflow: visible;    // for button glow
+    overflow: visible; // for button glow
     margin: 0 0 0 @form-label-width;
 
     button {
       margin-top: 7px;
     }
+  }
+
+  .validation-container {
+    margin-left: @form-label-width;
   }
 }
 
@@ -82,7 +87,8 @@
     }
 
     .input-type-view,
-    .bottom-button-row {
+    .bottom-button-row,
+    .validation-container {
       width: 100%;
       margin-left: 0;
     }
