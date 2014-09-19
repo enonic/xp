@@ -159,8 +159,8 @@ public final class SchemaRegistryImpl
     @Override
     public MetadataSchema getMetadata( final MetadataSchemaName metadataName )
     {
-        // TODO
-        return null;
+        final Schema schema = getSchema( metadataName );
+        return schema != null && schema.getType().isMetadataSchema() ? (MetadataSchema) schema : null;
     }
 
     @Override
@@ -202,8 +202,11 @@ public final class SchemaRegistryImpl
     @Override
     public MetadataSchemas getAllMetadataSchemas()
     {
-        // TODO
-        return MetadataSchemas.empty();
+        final List<MetadataSchema> metadataSchemas = allSchemas.values().stream().
+            filter( ( schema ) -> schema.getType().isMetadataSchema() ).
+            map( ( schema ) -> (MetadataSchema) schema ).
+            collect( toList() );
+        return MetadataSchemas.from( metadataSchemas );
     }
 
     @Override

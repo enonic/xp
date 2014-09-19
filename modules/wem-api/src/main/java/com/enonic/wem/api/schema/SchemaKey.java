@@ -50,9 +50,9 @@ public final class SchemaKey
         return this.type == SchemaKind.RELATIONSHIP_TYPE;
     }
 
-    public boolean isMetadata()
+    public boolean isMetadataSchema()
     {
-        return this.type == SchemaKind.METADATA;
+        return this.type == SchemaKind.METADATA_SCHEMA;
     }
 
     public SchemaName getName()
@@ -111,7 +111,7 @@ public final class SchemaKey
 
     public static SchemaKey from( final MetadataSchemaName metadataSchemaName )
     {
-        return new SchemaKey( SchemaKind.METADATA, metadataSchemaName );
+        return new SchemaKey( SchemaKind.METADATA_SCHEMA, metadataSchemaName );
     }
 
     public static SchemaKey from( final SchemaKind type, final SchemaName name )
@@ -143,7 +143,7 @@ public final class SchemaKey
                 return new SchemaKey( typeKind, MixinName.from( name ) );
             case RELATIONSHIP_TYPE:
                 return new SchemaKey( typeKind, RelationshipTypeName.from( name ) );
-            case METADATA:
+            case METADATA_SCHEMA:
                 return new SchemaKey( typeKind, MetadataSchemaName.from( name ) );
             default:
                 throw new IllegalArgumentException( "Not a valid SchemaKey [" + value + "]" );

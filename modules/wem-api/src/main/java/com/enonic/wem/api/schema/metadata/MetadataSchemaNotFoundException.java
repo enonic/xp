@@ -11,11 +11,11 @@ public final class MetadataSchemaNotFoundException
 {
     public MetadataSchemaNotFoundException( final MetadataSchemaName metadataSchemaName )
     {
-        super( "Metadata [{0}] was not found", metadataSchemaName );
+        super( "MetadataSchema [{0}] was not found", metadataSchemaName );
     }
 
     public MetadataSchemaNotFoundException( final MetadataSchemaNames metadataSchemaNames )
     {
-        super( MessageFormat.format( "Metadatas with names [{0}] were not found", Joiner.on( ", " ).join( metadataSchemaNames ) ) );
+        super( MessageFormat.format( "MetadataSchemas with names [{0}] were not found", Joiner.on( ", " ).join( metadataSchemaNames ) ) );
     }
 }

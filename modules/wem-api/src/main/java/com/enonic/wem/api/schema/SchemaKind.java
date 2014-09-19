@@ -9,7 +9,7 @@ public enum SchemaKind
     CONTENT_TYPE( "ContentType" ),
     MIXIN( "Mixin" ),
     RELATIONSHIP_TYPE( "RelationshipType" ),
-    METADATA( "Metadata" );
+    METADATA_SCHEMA( "MetadataSchema" );
 
     private static final Map<String, SchemaKind> lookupTable = Maps.newHashMap();
 
@@ -49,9 +49,9 @@ public enum SchemaKind
         return this == SchemaKind.RELATIONSHIP_TYPE;
     }
 
-    public boolean isMetadata()
+    public boolean isMetadataSchema()
     {
-        return this == SchemaKind.METADATA;
+        return this == SchemaKind.METADATA_SCHEMA;
     }
 
     public static SchemaKind from( final String value )
