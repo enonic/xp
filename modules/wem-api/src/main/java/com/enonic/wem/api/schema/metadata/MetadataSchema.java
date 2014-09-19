@@ -29,6 +29,11 @@ public final class MetadataSchema
         return form;
     }
 
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
     public static class Builder
         extends BaseSchema.Builder<Builder, MetadataSchemaName>
     {
