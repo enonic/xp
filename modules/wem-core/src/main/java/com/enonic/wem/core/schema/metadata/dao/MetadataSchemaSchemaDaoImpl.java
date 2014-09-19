@@ -15,7 +15,7 @@ public final class MetadataSchemaSchemaDaoImpl
     @Override
     public MetadataSchemas getAllMetadataSchemas()
     {
-        return this.schemaRegistry.getAllMetadatas();
+        return this.schemaRegistry.getAllMetadataSchemas();
     }
 
     @Override

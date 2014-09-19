@@ -7,7 +7,7 @@ import com.enonic.wem.core.schema.metadata.dao.MetadataSchemaDao;
 
 final class GetMetadataSchemaCommand
 {
-    private MetadataSchemaDao metadataSchemaDao;
+    private MetadataSchemaDao dao;
 
     private GetMetadataSchemaParams params;
 
@@ -20,7 +20,7 @@ final class GetMetadataSchemaCommand
 
     private MetadataSchema doExecute()
     {
-        final MetadataSchema metadataSchema = metadataSchemaDao.getMetadataSchema( params.getName() );
+        final MetadataSchema metadataSchema = dao.getMetadataSchema( params.getName() );
         if ( metadataSchema == null )
         {
             if ( params.isNotFoundAsException() )
@@ -38,9 +38,9 @@ final class GetMetadataSchemaCommand
         }
     }
 
-    GetMetadataSchemaCommand mixinDao( final MetadataSchemaDao metadataSchemaDao )
+    GetMetadataSchemaCommand metadataSchemaDao( final MetadataSchemaDao metadataSchemaDao )
     {
-        this.metadataSchemaDao = metadataSchemaDao;
+        this.dao = metadataSchemaDao;
         return this;
     }
 

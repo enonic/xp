@@ -18,13 +18,13 @@ public class MetadataSchemaServiceImpl
     @Override
     public MetadataSchema getByName( final GetMetadataSchemaParams params )
     {
-        return new GetMetadataSchemaCommand().mixinDao( this.metadataSchemaDao ).params( params ).execute();
+        return new GetMetadataSchemaCommand().metadataSchemaDao( this.metadataSchemaDao ).params( params ).execute();
     }
 
     @Override
     public MetadataSchemas getByNames( final GetMetadataSchemasParams params )
     {
-        return new GetMetadataSchemasCommand().metadataDao( this.metadataSchemaDao ).params( params ).execute();
+        return new GetMetadataSchemasCommand().metadataSchemaDao( this.metadataSchemaDao ).params( params ).execute();
     }
 
     @Override

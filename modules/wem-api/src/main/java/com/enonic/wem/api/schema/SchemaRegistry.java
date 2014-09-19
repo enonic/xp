@@ -35,7 +35,7 @@ public interface SchemaRegistry
 
     RelationshipTypes getAllRelationshipTypes();
 
-    MetadataSchemas getAllMetadatas();
+    MetadataSchemas getAllMetadataSchemas();
 
     Schemas getModuleSchemas( ModuleKey moduleKey );
 

@@ -15,7 +15,7 @@ import static com.enonic.wem.api.schema.metadata.MetadataSchemas.newMetadatas;
 
 final class GetMetadataSchemasCommand
 {
-    private MetadataSchemaDao metadataSchemaDao;
+    private MetadataSchemaDao dao;
 
     private GetMetadataSchemasParams params;
 
@@ -29,7 +29,7 @@ final class GetMetadataSchemasCommand
     private MetadataSchemas doExecute()
     {
         final List<MetadataSchemaName> missingMetadatas = new ArrayList<>();
-        final MetadataSchemas metadataSchemas = getMetadatas( params.getNames(), missingMetadatas );
+        final MetadataSchemas metadataSchemas = getMetadataSchemas( params.getNames(), missingMetadatas );
 
         if ( !missingMetadatas.isEmpty() )
         {
@@ -39,13 +39,13 @@ final class GetMetadataSchemasCommand
         return metadataSchemas;
     }
 
-    private MetadataSchemas getMetadatas( final MetadataSchemaNames metadataSchemaNames, final List<MetadataSchemaName> missingMetadatas )
+    private MetadataSchemas getMetadataSchemas( final MetadataSchemaNames metadataSchemaNames, final List<MetadataSchemaName> missingMetadatas )
     {
         final MetadataSchemas.Builder metadatas = newMetadatas();
 
         for ( MetadataSchemaName metadataSchemaName : metadataSchemaNames )
         {
-            final MetadataSchema metadataSchema = metadataSchemaDao.getMetadataSchema( metadataSchemaName );
+            final MetadataSchema metadataSchema = dao.getMetadataSchema( metadataSchemaName );
             if ( metadataSchema != null )
             {
                 metadatas.add( metadataSchema );
@@ -58,9 +58,9 @@ final class GetMetadataSchemasCommand
         return metadatas.build();
     }
 
-    GetMetadataSchemasCommand metadataDao( final MetadataSchemaDao metadataSchemaDao )
+    GetMetadataSchemasCommand metadataSchemaDao( final MetadataSchemaDao metadataSchemaDao )
     {
-        this.metadataSchemaDao = metadataSchemaDao;
+        this.dao = metadataSchemaDao;
         return this;
     }
 

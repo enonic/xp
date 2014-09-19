@@ -23,9 +23,9 @@ import com.enonic.wem.api.schema.Schemas;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.api.schema.metadata.Metadata;
-import com.enonic.wem.api.schema.metadata.MetadataName;
-import com.enonic.wem.api.schema.metadata.Metadatas;
+import com.enonic.wem.api.schema.metadata.MetadataSchema;
+import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
+import com.enonic.wem.api.schema.metadata.MetadataSchemas;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.schema.mixin.Mixins;
@@ -157,7 +157,7 @@ public final class SchemaRegistryImpl
     }
 
     @Override
-    public Metadata getMetadata( final MetadataName metadataName )
+    public MetadataSchema getMetadata( final MetadataSchemaName metadataName )
     {
         // TODO
         return null;
@@ -200,10 +200,10 @@ public final class SchemaRegistryImpl
     }
 
     @Override
-    public Metadatas getAllMetadatas()
+    public MetadataSchemas getAllMetadataSchemas()
     {
         // TODO
-        return Metadatas.empty();
+        return MetadataSchemas.empty();
     }
 
     @Override
