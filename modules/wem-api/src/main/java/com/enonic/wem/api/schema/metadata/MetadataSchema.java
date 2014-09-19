@@ -37,7 +37,7 @@ public final class MetadataSchema
 
         public Builder()
         {
-            super( SchemaKind.METADATA );
+            super( SchemaKind.METADATA_SCHEMA );
         }
 
         public Builder( final MetadataSchema metadataSchema )
