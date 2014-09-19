@@ -5,13 +5,14 @@ import com.enonic.wem.api.schema.BaseSchema;
 import com.enonic.wem.api.schema.Schema;
 import com.enonic.wem.api.schema.SchemaKind;
 
-public final class Metadata extends BaseSchema<MetadataName>
+public final class MetadataSchema
+    extends BaseSchema<MetadataSchemaName>
     implements Schema
 {
     private final String displayName;
     private final Form form;
 
-    private Metadata( final Builder builder )
+    private MetadataSchema( final Builder builder )
     {
         super( builder );
         this.displayName = builder.displayName;
@@ -29,7 +30,7 @@ public final class Metadata extends BaseSchema<MetadataName>
     }
 
     public static class Builder
-        extends BaseSchema.Builder<Builder, MetadataName>
+        extends BaseSchema.Builder<Builder, MetadataSchemaName>
     {
         private String displayName;
         private Form form;
@@ -39,14 +40,14 @@ public final class Metadata extends BaseSchema<MetadataName>
             super( SchemaKind.METADATA );
         }
 
-        public Builder( final Metadata metadata )
+        public Builder( final MetadataSchema metadataSchema )
         {
-            super( metadata );
-            this.displayName = metadata.displayName;
-            this.form = metadata.form;
+            super( metadataSchema );
+            this.displayName = metadataSchema.displayName;
+            this.form = metadataSchema.form;
         }
 
-        public Builder name( final MetadataName value )
+        public Builder name( final MetadataSchemaName value )
         {
             super.name( value );
             return this;
@@ -54,7 +55,7 @@ public final class Metadata extends BaseSchema<MetadataName>
 
         public Builder name( final String value )
         {
-            super.name( MetadataName.from( value ) );
+            super.name( MetadataSchemaName.from( value ) );
             return this;
         }
 
@@ -70,9 +71,9 @@ public final class Metadata extends BaseSchema<MetadataName>
             return this;
         }
 
-        public Metadata build()
+        public MetadataSchema build()
         {
-            return new Metadata( this );
+            return new MetadataSchema( this );
         }
     }
 

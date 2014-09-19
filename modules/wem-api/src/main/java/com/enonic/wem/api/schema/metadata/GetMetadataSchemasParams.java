@@ -3,16 +3,16 @@ package com.enonic.wem.api.schema.metadata;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
-public class GetMetadatasParams
+public class GetMetadataSchemasParams
 {
-    private MetadataNames names;
+    private MetadataSchemaNames names;
 
-    public MetadataNames getNames()
+    public MetadataSchemaNames getNames()
     {
         return this.names;
     }
 
-    public GetMetadatasParams names( final MetadataNames names )
+    public GetMetadataSchemasParams names( final MetadataSchemaNames names )
     {
         this.names = names;
         return this;
@@ -26,12 +26,12 @@ public class GetMetadatasParams
             return true;
         }
 
-        if ( !( o instanceof GetMetadataParams ) )
+        if ( !( o instanceof GetMetadataSchemaParams ) )
         {
             return false;
         }
 
-        final GetMetadatasParams that = (GetMetadatasParams) o;
+        final GetMetadataSchemasParams that = (GetMetadataSchemasParams) o;
         return Objects.equal( this.names, that.names );
     }
 

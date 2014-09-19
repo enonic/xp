@@ -3,30 +3,30 @@ package com.enonic.wem.api.schema.metadata;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
-public final class GetMetadataParams
+public final class GetMetadataSchemaParams
 {
-    private MetadataName name;
+    private MetadataSchemaName name;
 
     private boolean notFoundAsException = false;
 
-    public GetMetadataParams( final MetadataName name )
+    public GetMetadataSchemaParams( final MetadataSchemaName name )
     {
         this.name = name;
     }
 
-    public GetMetadataParams name( final MetadataName value )
+    public GetMetadataSchemaParams name( final MetadataSchemaName value )
     {
         this.name = value;
         return this;
     }
 
-    public GetMetadataParams notFoundAsException()
+    public GetMetadataSchemaParams notFoundAsException()
     {
         notFoundAsException = true;
         return this;
     }
 
-    public GetMetadataParams notFoundAsNull()
+    public GetMetadataSchemaParams notFoundAsNull()
     {
         notFoundAsException = false;
         return this;
@@ -40,12 +40,12 @@ public final class GetMetadataParams
             return true;
         }
 
-        if ( !( o instanceof GetMetadataParams ) )
+        if ( !( o instanceof GetMetadataSchemaParams ) )
         {
             return false;
         }
 
-        final GetMetadataParams that = (GetMetadataParams) o;
+        final GetMetadataSchemaParams that = (GetMetadataSchemaParams) o;
         return Objects.equal( this.name, that.name );
     }
 
@@ -60,7 +60,7 @@ public final class GetMetadataParams
         Preconditions.checkNotNull( this.name, "name cannot be null" );
     }
 
-    public MetadataName getName()
+    public MetadataSchemaName getName()
     {
         return this.name;
     }

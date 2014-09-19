@@ -7,7 +7,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
-import com.enonic.wem.api.schema.metadata.MetadataName;
+import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
@@ -109,9 +109,9 @@ public final class SchemaKey
         return new SchemaKey( SchemaKind.RELATIONSHIP_TYPE, relationshipTypeName );
     }
 
-    public static SchemaKey from( final MetadataName metadataName )
+    public static SchemaKey from( final MetadataSchemaName metadataSchemaName )
     {
-        return new SchemaKey( SchemaKind.METADATA, metadataName );
+        return new SchemaKey( SchemaKind.METADATA, metadataSchemaName );
     }
 
     public static SchemaKey from( final SchemaKind type, final SchemaName name )
@@ -144,7 +144,7 @@ public final class SchemaKey
             case RELATIONSHIP_TYPE:
                 return new SchemaKey( typeKind, RelationshipTypeName.from( name ) );
             case METADATA:
-                return new SchemaKey( typeKind, MetadataName.from( name ) );
+                return new SchemaKey( typeKind, MetadataSchemaName.from( name ) );
             default:
                 throw new IllegalArgumentException( "Not a valid SchemaKey [" + value + "]" );
         }

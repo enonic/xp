@@ -6,10 +6,10 @@ import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.schema.SchemaKey;
 import com.enonic.wem.api.schema.SchemaName;
 
-public final class MetadataName
+public final class MetadataSchemaName
     extends SchemaName
 {
-    private MetadataName( final ModuleKey moduleKey, final String localName )
+    private MetadataSchemaName( final ModuleKey moduleKey, final String localName )
     {
         super( moduleKey, localName );
     }
@@ -20,15 +20,15 @@ public final class MetadataName
         return SchemaKey.from( this );
     }
 
-    public static MetadataName from( final ModuleKey moduleKey, final String localName )
+    public static MetadataSchemaName from( final ModuleKey moduleKey, final String localName )
     {
-        return new MetadataName( moduleKey, localName );
+        return new MetadataSchemaName( moduleKey, localName );
     }
 
-    public static MetadataName from( final String metadataName )
+    public static MetadataSchemaName from( final String metadataName )
     {
         final String moduleKey = StringUtils.substringBefore( metadataName, SEPARATOR );
         final String localName = StringUtils.substringAfter( metadataName, SEPARATOR );
-        return new MetadataName( ModuleKey.from( moduleKey ), localName );
+        return new MetadataSchemaName( ModuleKey.from( moduleKey ), localName );
     }
 }
