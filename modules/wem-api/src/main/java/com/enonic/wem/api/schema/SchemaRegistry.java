@@ -1,5 +1,8 @@
 package com.enonic.wem.api.schema;
 
+import com.enonic.wem.api.schema.metadata.Metadata;
+import com.enonic.wem.api.schema.metadata.MetadataName;
+import com.enonic.wem.api.schema.metadata.Metadatas;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -22,6 +25,8 @@ public interface SchemaRegistry
 
     RelationshipType getRelationshipType( RelationshipTypeName relationshipTypeName );
 
+    Metadata getMetadata(MetadataName metadataName);
+
     Schemas getAllSchemas();
 
     ContentTypes getAllContentTypes();
@@ -29,6 +34,8 @@ public interface SchemaRegistry
     Mixins getAllMixins();
 
     RelationshipTypes getAllRelationshipTypes();
+
+    Metadatas getAllMetadatas();
 
     Schemas getModuleSchemas( ModuleKey moduleKey );
 
