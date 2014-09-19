@@ -23,6 +23,9 @@ import com.enonic.wem.api.schema.Schemas;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypes;
+import com.enonic.wem.api.schema.metadata.Metadata;
+import com.enonic.wem.api.schema.metadata.MetadataName;
+import com.enonic.wem.api.schema.metadata.Metadatas;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.schema.mixin.Mixins;
@@ -154,6 +157,13 @@ public final class SchemaRegistryImpl
     }
 
     @Override
+    public Metadata getMetadata( final MetadataName metadataName )
+    {
+        // TODO
+        return null;
+    }
+
+    @Override
     public Schemas getAllSchemas()
     {
         return Schemas.from( allSchemas.values() );
@@ -187,6 +197,13 @@ public final class SchemaRegistryImpl
             map( ( schema ) -> (RelationshipType) schema ).
             collect( toList() );
         return RelationshipTypes.from( relationshipTypes );
+    }
+
+    @Override
+    public Metadatas getAllMetadatas()
+    {
+        // TODO
+        return Metadatas.empty();
     }
 
     @Override
