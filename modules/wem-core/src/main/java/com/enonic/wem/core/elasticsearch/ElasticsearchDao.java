@@ -28,11 +28,11 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.wem.core.elasticsearch.query.ElasticsearchQuery;
-import com.enonic.wem.core.index.result.SearchResult;
 import com.enonic.wem.core.elasticsearch.result.SearchResultFactory;
 import com.enonic.wem.core.index.DeleteDocument;
 import com.enonic.wem.core.index.IndexException;
 import com.enonic.wem.core.index.document.IndexDocument;
+import com.enonic.wem.core.index.result.SearchResult;
 
 public class ElasticsearchDao
 {
@@ -87,7 +87,7 @@ public class ElasticsearchDao
     public boolean delete( final DeleteDocument deleteDocument )
     {
         DeleteRequest deleteRequest = new DeleteRequest( deleteDocument.getIndexName() ).
-            type( deleteDocument.getIndexTypeName() ).
+            type( deleteDocument.getIndexType() ).
             id( deleteDocument.getId() ).
             refresh( DEFAULT_REFRESH );
 
@@ -99,7 +99,7 @@ public class ElasticsearchDao
         catch ( ElasticsearchException e )
         {
             throw new IndexException( "Failed to delete from index " + deleteDocument.getIndexName() + " of type " +
-                                          deleteDocument.getIndexTypeName() + " with id " + deleteDocument.getId(), e );
+                                          deleteDocument.getIndexType() + " with id " + deleteDocument.getId(), e );
         }
     }
 
@@ -111,7 +111,7 @@ public class ElasticsearchDao
 
         final SearchRequest searchRequest = Requests.
             searchRequest( elasticsearchQuery.getIndexName() ).
-            types( elasticsearchQuery.getIndexType().getName() ).
+            types( elasticsearchQuery.getIndexType() ).
             source( searchSource );
 
         return doSearchRequest( searchRequest );

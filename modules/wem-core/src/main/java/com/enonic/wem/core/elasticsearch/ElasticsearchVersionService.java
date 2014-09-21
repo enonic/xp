@@ -45,7 +45,7 @@ public class ElasticsearchVersionService
     {
         final IndexRequest versionsDocument = Requests.indexRequest().
             index( StorageNameResolver.resolveStorageIndexName( repository ) ).
-            type( IndexType.NODE.getName() ).
+            type( IndexType.VERSION.getName() ).
             source( VersionXContentBuilderFactory.create( entityVersionDocument ) ).
             id( entityVersionDocument.getNodeVersionId().toString() ).
             refresh( DEFAULT_REFRESH );

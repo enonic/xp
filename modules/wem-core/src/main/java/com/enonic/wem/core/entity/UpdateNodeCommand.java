@@ -11,6 +11,7 @@ import com.enonic.wem.api.entity.NodeVersionId;
 import com.enonic.wem.api.entity.UpdateNodeParams;
 import com.enonic.wem.api.util.Exceptions;
 import com.enonic.wem.core.entity.dao.NodeNotFoundException;
+import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.version.EntityVersionDocument;
 import com.enonic.wem.core.workspace.StoreWorkspaceDocument;
 
@@ -66,7 +67,7 @@ final class UpdateNodeCommand
             nodeVersionId( updatedNodeVersionId ).
             build(), this.context );
 
-        this.indexService.index( updatedNode, context.getWorkspace() );
+        this.indexService.store( updatedNode, IndexContext.from( this.context ) );
 
         return NodeHasChildResolver.create().
             workspaceService( this.workspaceService ).

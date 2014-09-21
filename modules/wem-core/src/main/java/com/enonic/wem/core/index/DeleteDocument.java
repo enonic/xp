@@ -4,11 +4,11 @@ public class DeleteDocument
 {
     private final String indexName;
 
-    private final IndexType indexType;
+    private final String indexType;
 
     private final String id;
 
-    public DeleteDocument( final String indexName, final IndexType indexType, final String id )
+    public DeleteDocument( final String indexName, final String indexType, final String id )
     {
         this.indexName = indexName;
         this.indexType = indexType;
@@ -20,9 +20,9 @@ public class DeleteDocument
         return indexName;
     }
 
-    public String getIndexTypeName()
+    public String getIndexType()
     {
-        return indexType.getName();
+        return indexType;
     }
 
     public String getId()

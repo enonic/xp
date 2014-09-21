@@ -12,6 +12,7 @@ import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodeVersionId;
+import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.version.EntityVersionDocument;
 import com.enonic.wem.core.workspace.StoreWorkspaceDocument;
 
@@ -67,7 +68,7 @@ final class CreateNodeCommand
             nodeVersionId( persistedNodeVersionId ).
             build(), this.context.getRepository() );
 
-        this.indexService.index( newNode, context.getWorkspace() );
+        this.indexService.store( newNode, IndexContext.from( this.context ) );
 
         return newNode;
     }

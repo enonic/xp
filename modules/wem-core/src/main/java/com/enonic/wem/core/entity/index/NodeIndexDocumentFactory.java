@@ -13,35 +13,22 @@ import com.enonic.wem.api.entity.EntityIndexConfig;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.PropertyIndexConfig;
 import com.enonic.wem.api.entity.Workspace;
-import com.enonic.wem.core.index.IndexType;
+import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.core.index.document.IndexDocument;
 import com.enonic.wem.core.index.document.IndexDocumentItemFactory;
-import com.enonic.wem.core.index.document.IndexDocumentItemPath;
+import com.enonic.wem.core.repository.IndexNameResolver;
+
+import static com.enonic.wem.core.entity.index.IndexPaths.CREATED_TIME_PROPERTY;
+import static com.enonic.wem.core.entity.index.IndexPaths.CREATOR_PROPERTY_PATH;
+import static com.enonic.wem.core.entity.index.IndexPaths.MODIFIED_TIME_PROPERTY_PATH;
+import static com.enonic.wem.core.entity.index.IndexPaths.MODIFIER_PROPERTY_PATH;
+import static com.enonic.wem.core.entity.index.IndexPaths.NAME_PROPERTY;
+import static com.enonic.wem.core.entity.index.IndexPaths.PARENT_PROPERTY_PATH;
+import static com.enonic.wem.core.entity.index.IndexPaths.PATH_PROPERTY_PATH;
 
 
 public class NodeIndexDocumentFactory
 {
-    protected static final IndexDocumentItemPath CREATED_TIME_PROPERTY = IndexDocumentItemPath.from( "createdTime" );
-
-    protected static final IndexDocumentItemPath NAME_PROPERTY = IndexDocumentItemPath.from( "name" );
-
-    public static final String ENTITY_KEY = "_entity";
-
-    public static final IndexDocumentItemPath CREATOR_PROPERTY_PATH = IndexDocumentItemPath.from( "creator" );
-
-    public static final String MODIFIED_TIME_KEY = "modifiedTime";
-
-    public static final IndexDocumentItemPath MODIFIED_TIME_PROPERTY_PATH = IndexDocumentItemPath.from( MODIFIED_TIME_KEY );
-
-    public static final IndexDocumentItemPath MODIFIER_PROPERTY_PATH = IndexDocumentItemPath.from( "modifier" );
-
-    public static final String PARENT_PATH_KEY = "parentpath";
-
-    protected static final IndexDocumentItemPath PARENT_PROPERTY_PATH = IndexDocumentItemPath.from( PARENT_PATH_KEY );
-
-    public static final String PATH_KEY = "path";
-
-    protected static final IndexDocumentItemPath PATH_PROPERTY_PATH = IndexDocumentItemPath.from( PATH_KEY );
 
     private static final PropertyIndexConfig metadataPropertyIndexConfig = PropertyIndexConfig.newPropertyIndexConfig().
         enabled( true ).
@@ -55,32 +42,32 @@ public class NodeIndexDocumentFactory
         fulltextEnabled( false ).
         build();
 
-    public static final PropertyIndexConfig namePropertyIndexConfig = PropertyIndexConfig.
+    private static final PropertyIndexConfig namePropertyIndexConfig = PropertyIndexConfig.
         newPropertyIndexConfig().
         enabled( true ).
         nGramEnabled( true ).
         fulltextEnabled( false ).
         build();
 
-    public static Collection<IndexDocument> create( final Node node, final Workspace workspace )
+    public static Collection<IndexDocument> create( final Node node, final Workspace workspace, final Repository repository )
     {
         node.validateForIndexing();
 
         Set<IndexDocument> indexDocuments = Sets.newHashSet();
 
-        indexDocuments.add( createDataDocument( node, workspace ) );
+        indexDocuments.add( createDataDocument( node, workspace, repository ) );
 
         return indexDocuments;
     }
 
-    private static IndexDocument createDataDocument( final Node node, final Workspace workspace )
+    private static IndexDocument createDataDocument( final Node node, final Workspace workspace, final Repository repository )
     {
         final EntityIndexConfig entityIndexConfig = node.getEntityIndexConfig();
 
         final IndexDocument.Builder builder = IndexDocument.newIndexDocument().
             id( node.id() ).
-            index( workspace.getSearchIndexName() ).
-            indexType( IndexType.NODE ).
+            index( IndexNameResolver.resolveSearchIndexName( repository ) ).
+            indexType( workspace.getName() ).
             analyzer( entityIndexConfig.getAnalyzer() ).
             collection( entityIndexConfig.getCollection() );
 

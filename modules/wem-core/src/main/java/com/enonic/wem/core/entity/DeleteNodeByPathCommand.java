@@ -6,6 +6,7 @@ import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.NodeVersionId;
 import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.core.entity.dao.NodeNotFoundException;
+import com.enonic.wem.core.index.IndexContext;
 
 final class DeleteNodeByPathCommand
     extends AbstractDeleteNodeCommand
@@ -31,11 +32,11 @@ final class DeleteNodeByPathCommand
 
         final Node nodeToDelete = nodeDao.getByVersionId( version );
 
-        doDeleteChildren( nodeToDelete, workspace );
+        doDeleteChildren( nodeToDelete );
 
         this.workspaceService.delete( nodeToDelete.id(), this.context );
 
-        this.indexService.delete( nodeToDelete.id(), workspace );
+        this.indexService.delete( nodeToDelete.id(), IndexContext.from( this.context ) );
 
         return nodeToDelete;
     }

@@ -14,7 +14,6 @@ import org.junit.Test;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexConstants;
-import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.document.IndexDocument;
 import com.enonic.wem.core.index.document.IndexDocumentDateItem;
 import com.enonic.wem.core.index.document.IndexDocumentGeoPointItem;
@@ -34,7 +33,7 @@ public class XContentBuilderFactoryTest
     {
         IndexDocument indexDocument = IndexDocument.newIndexDocument().
             index( Index.SEARCH ).
-            indexType( IndexType.NODE ).
+            indexType( "test" ).
             analyzer( "myAnalyzer" ).
             build();
 
@@ -54,7 +53,7 @@ public class XContentBuilderFactoryTest
     {
         IndexDocument indexDocument = IndexDocument.newIndexDocument().
             index( Index.SEARCH ).
-            indexType( IndexType.NODE ).
+            indexType( "test" ).
             addEntry( new IndexDocumentStringItem( IndexDocumentItemPath.from( "myField" ), "myValue1" ) ).
             addEntry( new IndexDocumentStringItem( IndexDocumentItemPath.from( "myField" ), "myValue2" ) ).
             addEntry( new IndexDocumentOrderbyItem( IndexDocumentItemPath.from( "myField" ), "myOrderByValue1" ) ).
@@ -79,7 +78,7 @@ public class XContentBuilderFactoryTest
 
         IndexDocument indexDocument = IndexDocument.newIndexDocument().
             index( Index.SEARCH ).
-            indexType( IndexType.NODE ).
+            indexType( "test" ).
             addEntry( new IndexDocumentStringItem( IndexDocumentItemPath.from( "myField" ), "myValue1" ) ).
             addEntry( new IndexDocumentStringItem( IndexDocumentItemPath.from( "myField" ), "myValue2" ) ).
             addEntry( new IndexDocumentNumberItem( IndexDocumentItemPath.from( "myNumericField" ), 1.0 ) ).

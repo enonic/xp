@@ -30,15 +30,14 @@ import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.core.entity.index.NodeIndexDocumentFactory;
 import com.enonic.wem.core.index.DeleteDocument;
 import com.enonic.wem.core.index.Index;
+import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.index.IndexException;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.index.IndexStatus;
-import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.document.IndexDocument;
 import com.enonic.wem.core.repository.IndexNameResolver;
 import com.enonic.wem.core.repository.StorageNameResolver;
@@ -53,9 +52,9 @@ public class ElasticsearchIndexService
 
     private final TimeValue WAIT_FOR_YELLOW_TIMEOUT = TimeValue.timeValueSeconds( 5 );
 
-    public static final TimeValue CLUSTER_NOWAIT_TIMEOUT = TimeValue.timeValueSeconds( 5 );
+    private static final TimeValue CLUSTER_NOWAIT_TIMEOUT = TimeValue.timeValueSeconds( 5 );
 
-    private String deleteTimout = "5s";
+    private String deleteTimeout = "5s";
 
     private String createTimeout = "5s";
 
@@ -201,7 +200,7 @@ public class ElasticsearchIndexService
 
         try
         {
-            client.admin().indices().delete( req ).actionGet( this.deleteTimout );
+            client.admin().indices().delete( req ).actionGet( this.deleteTimeout );
             LOG.info( "Deleted index {}", indexName );
         }
         catch ( ElasticsearchException e )
@@ -210,15 +209,19 @@ public class ElasticsearchIndexService
         }
     }
 
-    public void index( final Node node, final Workspace workspace )
+    public void store( final Node node, final IndexContext context )
     {
-        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node, workspace );
+        final Collection<IndexDocument> indexDocuments =
+            NodeIndexDocumentFactory.create( node, context.getWorkspace(), context.getRepository() );
         elasticsearchDao.store( indexDocuments );
     }
 
-    public void delete( final EntityId entityId, final Workspace workspace )
+    public void delete( final EntityId entityId, final IndexContext context )
     {
-        elasticsearchDao.delete( new DeleteDocument( workspace.getSearchIndexName(), IndexType.NODE, entityId.toString() ) );
+        final String indexName = IndexNameResolver.resolveSearchIndexName( context.getRepository() );
+        final String indexType = context.getWorkspace().getName();
+
+        elasticsearchDao.delete( new DeleteDocument( indexName, indexType, entityId.toString() ) );
     }
 
     @Inject

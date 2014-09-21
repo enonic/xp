@@ -13,7 +13,6 @@ import com.enonic.wem.api.aggregation.BucketAggregation;
 import com.enonic.wem.api.entity.EntityIds;
 import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.core.elasticsearch.query.ElasticsearchQuery;
-import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.result.SearchResult;
 import com.enonic.wem.core.repository.StorageNameResolver;
 
@@ -67,7 +66,7 @@ public class FindNodesWithDifferencesCommand
             size( 0 ).
             from( 0 ).
             index( StorageNameResolver.resolveStorageIndexName( this.repository ) ).
-            indexType( IndexType.NODE ).
+            indexType( source.getName() ).
             build() );
 
         final Aggregation changedAggregation = searchResult.getAggregations().get( changedAggregationName );

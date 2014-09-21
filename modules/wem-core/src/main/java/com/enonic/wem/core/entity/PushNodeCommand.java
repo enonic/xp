@@ -7,6 +7,7 @@ import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeVersionId;
 import com.enonic.wem.api.entity.Workspace;
+import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.workspace.StoreWorkspaceDocument;
 
 public class PushNodeCommand
@@ -42,7 +43,7 @@ public class PushNodeCommand
             parentPath( currentNode.parent() ).
             build(), this.context );
 
-        this.indexService.index( currentNode, this.target );
+        this.indexService.store( currentNode, IndexContext.from( this.target, this.context.getRepository() ) );
 
         return NodeHasChildResolver.create().
             workspaceService( this.workspaceService ).

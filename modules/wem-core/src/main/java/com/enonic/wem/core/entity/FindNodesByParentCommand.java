@@ -15,6 +15,7 @@ import com.enonic.wem.api.query.expr.FieldExpr;
 import com.enonic.wem.api.query.expr.FieldOrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.query.expr.QueryExpr;
+import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.index.query.NodeQueryResult;
 
 public class FindNodesByParentCommand
@@ -37,7 +38,7 @@ public class FindNodesByParentCommand
     {
         final NodeQuery query = createByPathQuery();
 
-        final NodeQueryResult nodeQueryResult = this.queryService.find( query, this.context.getWorkspace() );
+        final NodeQueryResult nodeQueryResult = this.queryService.find( query, IndexContext.from( this.context ) );
 
         final NodeVersionIds versions = this.workspaceService.getByVersionIds( nodeQueryResult.getEntityIds(), this.context );
 

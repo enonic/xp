@@ -6,24 +6,25 @@ import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.entity.query.NodeQuery;
 import com.enonic.wem.api.query.filter.ValueFilter;
+import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.core.elasticsearch.aggregation.AggregationBuilderFactory;
 import com.enonic.wem.core.elasticsearch.query.builder.FilterBuilderFactory;
 import com.enonic.wem.core.elasticsearch.query.builder.QueryBuilderFactory;
 import com.enonic.wem.core.elasticsearch.query.builder.SortQueryBuilderFactory;
-import com.enonic.wem.core.entity.index.NodeIndexDocumentFactory;
-import com.enonic.wem.core.index.IndexType;
+import com.enonic.wem.core.entity.index.IndexPaths;
+import com.enonic.wem.core.repository.IndexNameResolver;
 
 public class NodeQueryTranslator
     extends EntityQueryTranslator
 {
 
-    public static ElasticsearchQuery translate( final NodeQuery nodeQuery, final Workspace workspace )
+    public static ElasticsearchQuery translate( final NodeQuery nodeQuery, final Workspace workspace, final Repository repository )
     {
         final QueryBuilder queryWithQueryFilters = createQueryWithQueryFilters( nodeQuery );
 
         final ElasticsearchQuery.Builder queryBuilder = ElasticsearchQuery.newQuery().
-            index( workspace.getSearchIndexName() ).
-            indexType( IndexType.NODE ).
+            index( IndexNameResolver.resolveSearchIndexName( repository ) ).
+            indexType( workspace.getName() ).
             query( queryWithQueryFilters ).
             setAggregations( AggregationBuilderFactory.create( nodeQuery.getAggregationQueries() ) ).
             sortBuilders( SortQueryBuilderFactory.create( nodeQuery.getOrderBys() ) ).
@@ -42,7 +43,7 @@ public class NodeQueryTranslator
         if ( nodeQuery.getParent() != null )
         {
             queryBuilderBuilder.addQueryFilter( ValueFilter.create().
-                fieldName( NodeIndexDocumentFactory.PARENT_PATH_KEY ).
+                fieldName( IndexPaths.PARENT_PATH_KEY ).
                 addValue( Value.newString( nodeQuery.getParent().toString() ) ).
                 setCache( true ).
                 build() );
@@ -51,7 +52,7 @@ public class NodeQueryTranslator
         if ( nodeQuery.getPath() != null )
         {
             queryBuilderBuilder.addQueryFilter( ValueFilter.create().
-                fieldName( NodeIndexDocumentFactory.PATH_KEY ).
+                fieldName( IndexPaths.PATH_KEY ).
                 addValue( Value.newString( nodeQuery.getPath().toString() ) ).
                 build() );
         }

@@ -13,8 +13,8 @@ import com.enonic.wem.api.entity.NodeVersionId;
 import com.enonic.wem.api.entity.NodeVersionIds;
 import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.entity.RenameNodeParams;
-import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.core.entity.dao.NodeDao;
+import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.version.EntityVersionDocument;
 import com.enonic.wem.core.workspace.StoreWorkspaceDocument;
 
@@ -109,8 +109,6 @@ final class RenameNodeCommand
 
     private Node doMoveNode( final NodePath newParentPath, final NodeName newNodeName, final EntityId id )
     {
-        final Workspace workspace = this.context.getWorkspace();
-
         final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( id, this.context );
 
         final Node persistedNode = nodeDao.getByVersionId( currentVersion );
@@ -144,7 +142,7 @@ final class RenameNodeCommand
             nodeVersionId( newVersion ).
             build(), this.context.getRepository() );
 
-        indexService.index( movedNode, workspace );
+        indexService.store( movedNode, IndexContext.from( this.context.getWorkspace(), this.context.getRepository() ) );
 
         return movedNode;
     }

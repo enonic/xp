@@ -6,8 +6,7 @@ public enum IndexType
     WORKSPACE,
     VERSION,
     SEARCH,
-    ENTITY,
-    NODE;
+    ENTITY;
 
     public String getName()
     {

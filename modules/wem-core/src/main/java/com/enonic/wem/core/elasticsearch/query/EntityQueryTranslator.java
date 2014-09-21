@@ -1,20 +1,20 @@
 package com.enonic.wem.core.elasticsearch.query;
 
-import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.entity.query.EntityQuery;
 import com.enonic.wem.core.elasticsearch.aggregation.AggregationBuilderFactory;
 import com.enonic.wem.core.elasticsearch.query.builder.FilterBuilderFactory;
 import com.enonic.wem.core.elasticsearch.query.builder.QueryBuilderFactory;
 import com.enonic.wem.core.elasticsearch.query.builder.SortQueryBuilderFactory;
-import com.enonic.wem.core.index.IndexType;
+import com.enonic.wem.core.index.IndexContext;
+import com.enonic.wem.core.repository.IndexNameResolver;
 
 public class EntityQueryTranslator
 {
-    public static ElasticsearchQuery translate( final EntityQuery entityQuery, final Workspace workspace )
+    public static ElasticsearchQuery translate( final EntityQuery entityQuery, final IndexContext indexContext )
     {
         ElasticsearchQuery elasticsearchQuery = ElasticsearchQuery.newQuery().
-            index( workspace.getSearchIndexName() ).
-            indexType( IndexType.NODE ).
+            index( IndexNameResolver.resolveSearchIndexName( indexContext.getRepository() ) ).
+            indexType( indexContext.getWorkspace().getName() ).
             query( QueryBuilderFactory.create().
                 queryExpr( entityQuery.getQuery() ).
                 addQueryFilters( entityQuery.getQueryFilters() ).

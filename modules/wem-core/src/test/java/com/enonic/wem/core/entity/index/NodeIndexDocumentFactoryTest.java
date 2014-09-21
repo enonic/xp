@@ -21,18 +21,21 @@ import com.enonic.wem.api.entity.EntityPropertyIndexConfig;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodePath;
-import com.enonic.wem.api.entity.Workspace;
-import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.IndexValueType;
 import com.enonic.wem.core.index.document.AbstractIndexDocumentItem;
 import com.enonic.wem.core.index.document.IndexDocument;
 import com.enonic.wem.core.index.document.IndexDocumentItemPath;
+import com.enonic.wem.core.repository.IndexNameResolver;
 
+import static com.enonic.wem.core.TestContext.TEST_REPOSITORY;
+import static com.enonic.wem.core.TestContext.TEST_WORKSPACE;
+import static com.enonic.wem.core.entity.index.IndexPaths.CREATED_TIME_PROPERTY;
+import static com.enonic.wem.core.entity.index.IndexPaths.CREATOR_PROPERTY_PATH;
+import static com.enonic.wem.core.entity.index.IndexPaths.MODIFIER_PROPERTY_PATH;
 import static org.junit.Assert.*;
 
 public class NodeIndexDocumentFactoryTest
 {
-    public static final Workspace TEST_WORKSPACE = Workspace.from( "test" );
 
     @Test
     public void validate_given_no_id_then_exception()
@@ -43,7 +46,7 @@ public class NodeIndexDocumentFactoryTest
 
         try
         {
-            NodeIndexDocumentFactory.create( node, TEST_WORKSPACE );
+            NodeIndexDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY );
         }
         catch ( NullPointerException e )
         {
@@ -61,7 +64,7 @@ public class NodeIndexDocumentFactoryTest
             id( EntityId.from( "abc" ) ).
             build();
 
-        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node, TEST_WORKSPACE );
+        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY );
 
         assertNotNull( indexDocuments );
     }
@@ -74,10 +77,10 @@ public class NodeIndexDocumentFactoryTest
             id( EntityId.from( "abc" ) ).
             build();
 
-        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node, TEST_WORKSPACE );
+        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY );
 
         assertNotNull( indexDocuments );
-        assertNotNull( getIndexDocumentOfType( indexDocuments, IndexType.NODE ) );
+        assertNotNull( getIndexDocumentOfType( indexDocuments, "test" ) );
     }
 
     @Test
@@ -93,9 +96,9 @@ public class NodeIndexDocumentFactoryTest
                 build() ).
             build();
 
-        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node, TEST_WORKSPACE );
+        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY );
 
-        final IndexDocument indexDocument = getIndexDocumentOfType( indexDocuments, IndexType.NODE );
+        final IndexDocument indexDocument = getIndexDocumentOfType( indexDocuments, "test" );
 
         assertEquals( myAnalyzerName, indexDocument.getAnalyzer() );
     }
@@ -121,26 +124,23 @@ public class NodeIndexDocumentFactoryTest
                 build() ).
             build();
 
-        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node, TEST_WORKSPACE );
+        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY );
 
-        final IndexDocument indexDocument = getIndexDocumentOfType( indexDocuments, IndexType.NODE );
+        final IndexDocument indexDocument = getIndexDocumentOfType( indexDocuments, "test" );
 
         assertEquals( myAnalyzerName, indexDocument.getAnalyzer() );
-        assertEquals( TEST_WORKSPACE.getSearchIndexName(), indexDocument.getIndexName() );
-        assertEquals( IndexType.NODE.getName(), indexDocument.getIndexTypeName() );
+        assertEquals( IndexNameResolver.resolveSearchIndexName( TEST_REPOSITORY ), indexDocument.getIndexName() );
+        assertEquals( "test", indexDocument.getIndexTypeName() );
 
-        final AbstractIndexDocumentItem createdTimeItem =
-            getItemWithName( indexDocument, NodeIndexDocumentFactory.CREATED_TIME_PROPERTY, IndexValueType.DATETIME );
+        final AbstractIndexDocumentItem createdTimeItem = getItemWithName( indexDocument, CREATED_TIME_PROPERTY, IndexValueType.DATETIME );
 
         assertEquals( Date.from( node.getCreatedTime() ), createdTimeItem.getValue() );
 
-        final AbstractIndexDocumentItem creator =
-            getItemWithName( indexDocument, NodeIndexDocumentFactory.CREATOR_PROPERTY_PATH, IndexValueType.STRING );
+        final AbstractIndexDocumentItem creator = getItemWithName( indexDocument, CREATOR_PROPERTY_PATH, IndexValueType.STRING );
 
         assertEquals( "test:creator", creator.getValue() );
 
-        final AbstractIndexDocumentItem modifier =
-            getItemWithName( indexDocument, NodeIndexDocumentFactory.MODIFIER_PROPERTY_PATH, IndexValueType.STRING );
+        final AbstractIndexDocumentItem modifier = getItemWithName( indexDocument, MODIFIER_PROPERTY_PATH, IndexValueType.STRING );
 
         assertEquals( "test:modifier", modifier.getValue() );
     }
@@ -158,9 +158,9 @@ public class NodeIndexDocumentFactoryTest
             rootDataSet( rootDataSet ).
             build();
 
-        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node, TEST_WORKSPACE );
+        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY );
 
-        final IndexDocument indexDocument = getIndexDocumentOfType( indexDocuments, IndexType.NODE );
+        final IndexDocument indexDocument = getIndexDocumentOfType( indexDocuments, "test" );
 
         assertNotNull( getItemWithName( indexDocument, IndexDocumentItemPath.from( "a_b_c" ), IndexValueType.NUMBER ) );
         assertNotNull( getItemWithName( indexDocument, IndexDocumentItemPath.from( "a_b_d" ), IndexValueType.DATETIME ) );
@@ -179,7 +179,7 @@ public class NodeIndexDocumentFactoryTest
             rootDataSet( rootDataSet ).
             build();
 
-        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node, TEST_WORKSPACE );
+        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY );
 
         assertTrue( indexDocuments.iterator().hasNext() );
         final IndexDocument next = indexDocuments.iterator().next();
@@ -191,11 +191,11 @@ public class NodeIndexDocumentFactoryTest
 
     }
 
-    private IndexDocument getIndexDocumentOfType( final Collection<IndexDocument> indexDocuments, final IndexType indexType )
+    private IndexDocument getIndexDocumentOfType( final Collection<IndexDocument> indexDocuments, final String indexType )
     {
         for ( IndexDocument indexDocument : indexDocuments )
         {
-            if ( indexType.getName().equals( indexDocument.getIndexTypeName() ) )
+            if ( indexType.equals( indexDocument.getIndexTypeName() ) )
             {
                 return indexDocument;
             }
@@ -203,8 +203,8 @@ public class NodeIndexDocumentFactoryTest
         return null;
     }
 
-    public AbstractIndexDocumentItem getItemWithName( final IndexDocument indexDocument, final IndexDocumentItemPath path,
-                                                      final IndexValueType baseType )
+    AbstractIndexDocumentItem getItemWithName( final IndexDocument indexDocument, final IndexDocumentItemPath path,
+                                               final IndexValueType baseType )
     {
         for ( AbstractIndexDocumentItem item : indexDocument.getIndexDocumentItems() )
         {
@@ -217,8 +217,8 @@ public class NodeIndexDocumentFactoryTest
         return null;
     }
 
-    public Set<AbstractIndexDocumentItem> getItemsWithName( final IndexDocument indexDocument, final IndexDocumentItemPath path,
-                                                            final IndexValueType baseType )
+    Set<AbstractIndexDocumentItem> getItemsWithName( final IndexDocument indexDocument, final IndexDocumentItemPath path,
+                                                     final IndexValueType baseType )
     {
         Set<AbstractIndexDocumentItem> items = Sets.newHashSet();
 

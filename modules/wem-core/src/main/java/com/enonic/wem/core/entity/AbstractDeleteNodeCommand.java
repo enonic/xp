@@ -3,7 +3,7 @@ package com.enonic.wem.core.entity;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeVersionIds;
 import com.enonic.wem.api.entity.Nodes;
-import com.enonic.wem.api.entity.Workspace;
+import com.enonic.wem.core.index.IndexContext;
 
 abstract class AbstractDeleteNodeCommand
     extends AbstractNodeCommand
@@ -15,7 +15,7 @@ abstract class AbstractDeleteNodeCommand
         super( builder );
     }
 
-    void doDeleteChildren( final Node parent, final Workspace workspace )
+    void doDeleteChildren( final Node parent )
     {
         final NodeVersionIds childrenVersions = workspaceService.findByParent( parent.path(), this.context );
 
@@ -35,8 +35,8 @@ abstract class AbstractDeleteNodeCommand
             {
                 workspaceService.delete( child.id(), this.context );
 
-                indexService.delete( child.id(), workspace );
-                doDeleteChildren( child, workspace );
+                indexService.delete( child.id(), IndexContext.from( this.context ) );
+                doDeleteChildren( child );
             }
             else
             {

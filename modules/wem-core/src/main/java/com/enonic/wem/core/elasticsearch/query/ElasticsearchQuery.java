@@ -13,8 +13,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.core.entity.index.NodeIndexDocumentFactory;
-import com.enonic.wem.core.index.IndexType;
+import com.enonic.wem.core.entity.index.IndexPaths;
 
 public class ElasticsearchQuery
 {
@@ -26,7 +25,7 @@ public class ElasticsearchQuery
 
     private final ImmutableSet<FacetBuilder> facetBuilders;
 
-    private final IndexType indexType;
+    private final String indexType;
 
     private final String indexName;
 
@@ -59,17 +58,17 @@ public class ElasticsearchQuery
         return query;
     }
 
-    public FilterBuilder getFilter()
+    FilterBuilder getFilter()
     {
         return filter;
     }
 
-    public ImmutableSet<FacetBuilder> getFacetBuilders()
+    ImmutableSet<FacetBuilder> getFacetBuilders()
     {
         return facetBuilders;
     }
 
-    public IndexType getIndexType()
+    public String getIndexType()
     {
         return indexType;
     }
@@ -99,7 +98,7 @@ public class ElasticsearchQuery
         return explain;
     }
 
-    public ImmutableSet<SortBuilder> getSortBuilders()
+    ImmutableSet<SortBuilder> getSortBuilders()
     {
         return sortBuilders;
     }
@@ -107,7 +106,7 @@ public class ElasticsearchQuery
     public SearchSourceBuilder toSearchSourceBuilder()
     {
         SearchSourceBuilder builder = new SearchSourceBuilder().
-            field( NodeIndexDocumentFactory.ENTITY_KEY ).
+            field( IndexPaths.ENTITY_KEY ).
             query( this.getQuery() ).
             from( this.getFrom() ).
             size( this.getSize() ).
@@ -171,7 +170,7 @@ public class ElasticsearchQuery
 
         private Set<FacetBuilder> facetBuilders = Sets.newHashSet();
 
-        private IndexType indexType;
+        private String indexType;
 
         private String indexName;
 
@@ -197,7 +196,7 @@ public class ElasticsearchQuery
             return this;
         }
 
-        public Builder indexType( final IndexType indexType )
+        public Builder indexType( final String indexType )
         {
             this.indexType = indexType;
             return this;

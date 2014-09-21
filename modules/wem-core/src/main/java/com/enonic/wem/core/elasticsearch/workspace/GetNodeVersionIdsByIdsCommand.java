@@ -42,9 +42,15 @@ public class GetNodeVersionIdsByIdsCommand
     {
         final String workspaceName = workspace.getName();
 
+        if ( entityIds.isEmpty() )
+        {
+            return NodeVersionIds.empty();
+        }
+
         final ImmutableSet<String> entityIdsAsStrings = entityIds.getAsStrings();
 
-        final TermsQueryBuilder idsQuery = new TermsQueryBuilder( WorkspaceXContentBuilderFactory.ENTITY_ID_FIELD_NAME, entityIds );
+        final TermsQueryBuilder idsQuery =
+            new TermsQueryBuilder( WorkspaceXContentBuilderFactory.ENTITY_ID_FIELD_NAME, entityIdsAsStrings );
         final BoolQueryBuilder boolQueryBuilder = joinWithWorkspaceQuery( workspaceName, idsQuery );
         final QueryMetaData queryMetaData = createGetBlobKeyQueryMetaData( entityIdsAsStrings.size(), repository );
 
