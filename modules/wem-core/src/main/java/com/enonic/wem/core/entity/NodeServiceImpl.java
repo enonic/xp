@@ -31,6 +31,7 @@ import com.enonic.wem.core.entity.dao.NodeNotFoundException;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.index.query.QueryService;
 import com.enonic.wem.core.version.VersionService;
+import com.enonic.wem.core.workspace.WorkspaceContext;
 import com.enonic.wem.core.workspace.WorkspaceService;
 
 public class NodeServiceImpl
@@ -54,7 +55,7 @@ public class NodeServiceImpl
     @Override
     public Node getById( final EntityId id, final Context context )
     {
-        final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( id, context );
+        final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( id, WorkspaceContext.from( context ) );
 
         if ( currentVersion == null )
         {
@@ -71,7 +72,7 @@ public class NodeServiceImpl
     @Override
     public Nodes getByIds( final EntityIds ids, final Context context )
     {
-        final NodeVersionIds versionIds = this.workspaceService.getByVersionIds( ids, context );
+        final NodeVersionIds versionIds = this.workspaceService.getByVersionIds( ids, WorkspaceContext.from( context ) );
 
         return NodeHasChildResolver.create().
             workspaceService( this.workspaceService ).
@@ -83,7 +84,7 @@ public class NodeServiceImpl
     @Override
     public Node getByPath( final NodePath path, final Context context )
     {
-        final NodeVersionId currentVersion = this.workspaceService.getByPath( path, context );
+        final NodeVersionId currentVersion = this.workspaceService.getByPath( path, WorkspaceContext.from( context ) );
 
         if ( currentVersion == null )
         {
@@ -100,7 +101,7 @@ public class NodeServiceImpl
     @Override
     public Nodes getByPaths( final NodePaths paths, final Context context )
     {
-        final NodeVersionIds versionIds = this.workspaceService.getByPaths( paths, context );
+        final NodeVersionIds versionIds = this.workspaceService.getByPaths( paths, WorkspaceContext.from( context ) );
 
         return NodeHasChildResolver.create().
             workspaceService( this.workspaceService ).

@@ -3,28 +3,27 @@ package com.enonic.wem.core.elasticsearch.query;
 import org.elasticsearch.index.query.QueryBuilder;
 
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.entity.query.NodeQuery;
 import com.enonic.wem.api.query.filter.ValueFilter;
-import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.core.elasticsearch.aggregation.AggregationBuilderFactory;
 import com.enonic.wem.core.elasticsearch.query.builder.FilterBuilderFactory;
 import com.enonic.wem.core.elasticsearch.query.builder.QueryBuilderFactory;
 import com.enonic.wem.core.elasticsearch.query.builder.SortQueryBuilderFactory;
 import com.enonic.wem.core.entity.index.IndexPaths;
+import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.repository.IndexNameResolver;
 
 public class NodeQueryTranslator
     extends EntityQueryTranslator
 {
 
-    public static ElasticsearchQuery translate( final NodeQuery nodeQuery, final Workspace workspace, final Repository repository )
+    public static ElasticsearchQuery translate( final NodeQuery nodeQuery, final IndexContext indexContext )
     {
         final QueryBuilder queryWithQueryFilters = createQueryWithQueryFilters( nodeQuery );
 
         final ElasticsearchQuery.Builder queryBuilder = ElasticsearchQuery.newQuery().
-            index( IndexNameResolver.resolveSearchIndexName( repository ) ).
-            indexType( workspace.getName() ).
+            index( IndexNameResolver.resolveSearchIndexName( indexContext.getRepository() ) ).
+            indexType( indexContext.getWorkspace().getName() ).
             query( queryWithQueryFilters ).
             setAggregations( AggregationBuilderFactory.create( nodeQuery.getAggregationQueries() ) ).
             sortBuilders( SortQueryBuilderFactory.create( nodeQuery.getOrderBys() ) ).

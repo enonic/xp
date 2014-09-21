@@ -14,6 +14,7 @@ import com.enonic.wem.core.entity.dao.NodeNotFoundException;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.version.EntityVersionDocument;
 import com.enonic.wem.core.workspace.StoreWorkspaceDocument;
+import com.enonic.wem.core.workspace.WorkspaceContext;
 
 final class UpdateNodeCommand
     extends AbstractNodeCommand
@@ -65,7 +66,7 @@ final class UpdateNodeCommand
             parentPath( updatedNode.parent() ).
             id( updatedNode.id() ).
             nodeVersionId( updatedNodeVersionId ).
-            build(), this.context );
+            build(), WorkspaceContext.from( context ) );
 
         this.indexService.store( updatedNode, IndexContext.from( this.context ) );
 
@@ -78,7 +79,7 @@ final class UpdateNodeCommand
 
     private Node getPersistedNode()
     {
-        final NodeVersionId currentVersionId = workspaceService.getCurrentVersion( params.getId(), this.context );
+        final NodeVersionId currentVersionId = workspaceService.getCurrentVersion( params.getId(), WorkspaceContext.from( context ) );
 
         if ( currentVersionId == null )
         {

@@ -9,6 +9,7 @@ import com.enonic.wem.api.entity.NodeVersionId;
 import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.entity.Workspaces;
 import com.enonic.wem.core.version.VersionService;
+import com.enonic.wem.core.workspace.WorkspaceContext;
 
 public class GetActiveNodeVersionsCommand
     extends AbstractNodeCommand
@@ -38,7 +39,7 @@ public class GetActiveNodeVersionsCommand
 
         for ( final Workspace workspace : workspaces )
         {
-            final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( this.entityId, this.context );
+            final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( this.entityId, WorkspaceContext.from( context ) );
 
             if ( currentVersion != null )
             {

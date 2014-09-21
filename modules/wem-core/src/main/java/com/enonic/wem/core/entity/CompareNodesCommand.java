@@ -10,6 +10,7 @@ import com.enonic.wem.api.entity.NodeVersion;
 import com.enonic.wem.api.entity.NodeVersionId;
 import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.core.version.VersionService;
+import com.enonic.wem.core.workspace.WorkspaceContext;
 import com.enonic.wem.core.workspace.WorkspaceService;
 import com.enonic.wem.core.workspace.compare.DiffStatusParams;
 import com.enonic.wem.core.workspace.compare.DiffStatusResolver;
@@ -56,8 +57,9 @@ public class CompareNodesCommand
 
     private NodeComparison doCompareVersions( final EntityId entityId )
     {
-        final NodeVersionId sourceVersionId = workspaceService.getCurrentVersion( entityId, this.context );
-        final NodeVersionId targetVersionId = workspaceService.getWorkspaceVersion( entityId, target, this.context );
+        final NodeVersionId sourceVersionId = workspaceService.getCurrentVersion( entityId, WorkspaceContext.from( context ) );
+        final NodeVersionId targetVersionId =
+            workspaceService.getCurrentVersion( entityId, WorkspaceContext.from( this.target, this.context.getRepository() ) );
 
         final NodeVersion sourceVersion = getVersion( sourceVersionId );
         final NodeVersion targetVersion = getVersion( targetVersionId );

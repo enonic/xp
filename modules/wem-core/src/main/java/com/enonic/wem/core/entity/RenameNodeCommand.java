@@ -17,6 +17,7 @@ import com.enonic.wem.core.entity.dao.NodeDao;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.version.EntityVersionDocument;
 import com.enonic.wem.core.workspace.StoreWorkspaceDocument;
+import com.enonic.wem.core.workspace.WorkspaceContext;
 
 final class RenameNodeCommand
     extends AbstractNodeCommand
@@ -37,7 +38,7 @@ final class RenameNodeCommand
     {
         final EntityId entityId = params.getEntityId();
 
-        final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( entityId, this.context );
+        final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( entityId, WorkspaceContext.from( context ) );
 
         final Node nodeToBeRenamed = nodeDao.getByVersionId( currentVersion );
 
@@ -68,7 +69,7 @@ final class RenameNodeCommand
 
     private Nodes getChildNodes( final Node parentNode )
     {
-        final NodeVersionIds childrenVersions = workspaceService.findByParent( parentNode.path(), this.context );
+        final NodeVersionIds childrenVersions = workspaceService.findByParent( parentNode.path(), WorkspaceContext.from( context ) );
 
         if ( childrenVersions.isEmpty() )
         {
@@ -80,7 +81,7 @@ final class RenameNodeCommand
 
     private EntityId getExistingNode( final NodePath path )
     {
-        final NodeVersionId existingVersion = workspaceService.getByPath( path, this.context );
+        final NodeVersionId existingVersion = workspaceService.getByPath( path, WorkspaceContext.from( context ) );
 
         if ( existingVersion == null )
         {
@@ -109,7 +110,7 @@ final class RenameNodeCommand
 
     private Node doMoveNode( final NodePath newParentPath, final NodeName newNodeName, final EntityId id )
     {
-        final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( id, this.context );
+        final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( id, WorkspaceContext.from( context ) );
 
         final Node persistedNode = nodeDao.getByVersionId( currentVersion );
 
@@ -135,7 +136,7 @@ final class RenameNodeCommand
             parentPath( movedNode.parent() ).
             path( movedNode.path() ).
             nodeVersionId( newVersion ).
-            build(), this.context );
+            build(), WorkspaceContext.from( context ) );
 
         versionService.store( EntityVersionDocument.create().
             entityId( movedNode.id() ).

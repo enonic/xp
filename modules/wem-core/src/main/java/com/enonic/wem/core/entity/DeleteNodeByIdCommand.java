@@ -5,6 +5,7 @@ import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeVersionId;
 import com.enonic.wem.core.index.IndexContext;
+import com.enonic.wem.core.workspace.WorkspaceContext;
 
 final class DeleteNodeByIdCommand
     extends AbstractDeleteNodeCommand
@@ -19,13 +20,13 @@ final class DeleteNodeByIdCommand
 
     Node execute()
     {
-        final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( this.entityId, this.context );
+        final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( this.entityId, WorkspaceContext.from( context ) );
 
         final Node nodeToDelete = this.nodeDao.getByVersionId( currentVersion );
 
         doDeleteChildren( nodeToDelete );
 
-        workspaceService.delete( entityId, this.context );
+        workspaceService.delete( entityId, WorkspaceContext.from( context ) );
 
         indexService.delete( entityId, IndexContext.from( this.context ) );
 

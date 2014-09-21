@@ -107,7 +107,7 @@ public class ElasticsearchDao
     {
         final SearchSourceBuilder searchSource = elasticsearchQuery.toSearchSourceBuilder();
 
-        //System.out.println( searchSource.toString() );
+        System.out.println( searchSource.toString() );
 
         final SearchRequest searchRequest = Requests.
             searchRequest( elasticsearchQuery.getIndexName() ).
@@ -154,10 +154,7 @@ public class ElasticsearchDao
         final ImmutableSet<SortBuilder> sortBuilders = queryMetaData.getSortBuilders();
         if ( !sortBuilders.isEmpty() )
         {
-            for ( final SortBuilder sortBuilder : sortBuilders )
-            {
-                searchRequestBuilder.addSort( sortBuilder );
-            }
+            sortBuilders.forEach( searchRequestBuilder::addSort );
         }
 
         if ( queryMetaData.hasFields() )
