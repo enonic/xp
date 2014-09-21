@@ -34,13 +34,14 @@ public class FindNodeVersionIdsByParentCommand
 
     NodeVersionIds execute()
     {
-        final TermQueryBuilder parentQuery =
+        final TermQueryBuilder getByParentQuery =
             new TermQueryBuilder( WorkspaceXContentBuilderFactory.PARENT_PATH_FIELD_NAME, this.parentPath );
-        final BoolQueryBuilder byParentQuery = joinWithWorkspaceQuery( this.workspace.getName(), parentQuery );
+        final TermQueryBuilder workspaceQuery = createWorkspaceQuery( this.workspace );
+        final BoolQueryBuilder query = join( workspaceQuery, getByParentQuery );
 
         final QueryMetaData queryMetaData = createGetBlobKeyQueryMetaData( DEFAULT_UNKNOWN_SIZE, this.repository );
 
-        final SearchResult searchResult = elasticsearchDao.get( queryMetaData, byParentQuery );
+        final SearchResult searchResult = elasticsearchDao.get( queryMetaData, query );
 
         if ( searchResult.getResults().getSize() == 0 )
         {

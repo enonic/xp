@@ -38,10 +38,8 @@ public class FindNodesWithDifferencesCommand
     EntityIds execute()
     {
 
-        final TermQueryBuilder inSource =
-            new TermQueryBuilder( WorkspaceXContentBuilderFactory.WORKSPACE_FIELD_NAME, this.source.getName() );
-        final TermQueryBuilder inTarget =
-            new TermQueryBuilder( WorkspaceXContentBuilderFactory.WORKSPACE_FIELD_NAME, this.target.getName() );
+        final TermQueryBuilder inSource = createWorkspaceQuery( this.source );
+        final TermQueryBuilder inTarget = createWorkspaceQuery( this.target );
 
         final long inSourceCount = elasticsearchDao.count( createGetBlobKeyQueryMetaData( 0, this.repository ), inSource );
         final long inTargetCount = elasticsearchDao.count( createGetBlobKeyQueryMetaData( 0, this.repository ), inTarget );

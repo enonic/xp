@@ -11,6 +11,7 @@ import org.elasticsearch.search.sort.SortOrder;
 
 import com.enonic.wem.api.entity.NodeVersionId;
 import com.enonic.wem.api.entity.NodeVersionIds;
+import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.core.elasticsearch.ElasticsearchDao;
 import com.enonic.wem.core.elasticsearch.QueryMetaData;
@@ -63,6 +64,14 @@ abstract class AbstractWorkspaceCommand
         return boolQueryBuilder;
     }
 
+    BoolQueryBuilder join( final QueryBuilder query1, final QueryBuilder query2 )
+    {
+        final BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder();
+        boolQueryBuilder.must( query1 );
+        boolQueryBuilder.must( query2 );
+
+        return boolQueryBuilder;
+    }
 
     QueryMetaData createGetBlobKeyQueryMetaData( final int numberOfHits, final Repository repository )
     {
@@ -76,6 +85,11 @@ abstract class AbstractWorkspaceCommand
             addField( WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME ).
             addSort( fieldSortBuilder ).
             build();
+    }
+
+    protected TermQueryBuilder createWorkspaceQuery( final Workspace workspace )
+    {
+        return new TermQueryBuilder( WorkspaceXContentBuilderFactory.WORKSPACE_FIELD_NAME, workspace.getName() );
     }
 
     static abstract class Builder<B extends Builder>
