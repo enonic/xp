@@ -36,5 +36,37 @@ public class WorkspaceContext
         return workspace;
     }
 
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( !( o instanceof WorkspaceContext ) )
+        {
+            return false;
+        }
 
+        final WorkspaceContext that = (WorkspaceContext) o;
+
+        if ( repository != null ? !repository.equals( that.repository ) : that.repository != null )
+        {
+            return false;
+        }
+        if ( workspace != null ? !workspace.equals( that.workspace ) : that.workspace != null )
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = repository != null ? repository.hashCode() : 0;
+        result = 31 * result + ( workspace != null ? workspace.hashCode() : 0 );
+        return result;
+    }
 }

@@ -42,7 +42,6 @@ public class NodeHasChildResolver
         return Node.newNode( node ).hasChildren( hasChildren ).build();
     }
 
-
     public static Builder create()
     {
         return new Builder();

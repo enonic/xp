@@ -269,6 +269,7 @@ public class NodeServiceImpl
     {
         return NodeHasChildResolver.create().
             workspaceService( this.workspaceService ).
+            context( context ).
             build().
             resolve( nodeDao.getByVersionId( blobKey ) );
     }

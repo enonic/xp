@@ -14,7 +14,6 @@ import com.enonic.wem.api.entity.Workspaces;
 public class GetActiveContentVersionsCommand
     extends AbstractContentCommand
 {
-
     private final Workspaces workspaces;
 
     private final ContentId contentId;
