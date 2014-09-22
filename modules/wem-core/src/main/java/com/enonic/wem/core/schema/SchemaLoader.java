@@ -18,14 +18,17 @@ import com.enonic.wem.api.schema.Schema;
 import com.enonic.wem.api.schema.Schemas;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.metadata.MetadataSchema;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.xml.mapper.XmlContentTypeMapper;
+import com.enonic.wem.api.xml.mapper.XmlMetadataSchemaMapper;
 import com.enonic.wem.api.xml.mapper.XmlMixinMapper;
 import com.enonic.wem.api.xml.mapper.XmlRelationshipTypeMapper;
 import com.enonic.wem.api.xml.model.XmlContentType;
+import com.enonic.wem.api.xml.model.XmlMetadataSchema;
 import com.enonic.wem.api.xml.model.XmlMixin;
 import com.enonic.wem.api.xml.model.XmlRelationshipType;
 import com.enonic.wem.api.xml.serializer.XmlSerializers2;
@@ -138,6 +141,10 @@ public final class SchemaLoader
         {
             schema = parseMixinXml( serializedSchema );
         }
+        if ( schema == null )
+        {
+            schema = parseMetadataSchemaXml( serializedSchema );
+        }
         return schema;
     }
 
@@ -178,6 +185,21 @@ public final class SchemaLoader
             final Mixin.Builder builder = Mixin.newMixin();
             final XmlMixin mixinXml = XmlSerializers2.mixin().parse( serializedMixin );
             XmlMixinMapper.fromXml( mixinXml, builder );
+            return builder;
+        }
+        catch ( Exception e )
+        {
+            return null;
+        }
+    }
+
+    private MetadataSchema.Builder parseMetadataSchemaXml( final String serializedMetadataSchema )
+    {
+        try
+        {
+            final MetadataSchema.Builder builder = MetadataSchema.newMetadataSchema();
+            final XmlMetadataSchema metadataSchemaXml = XmlSerializers2.metadataSchema().parse( serializedMetadataSchema );
+            XmlMetadataSchemaMapper.fromXml( metadataSchemaXml, builder );
             return builder;
         }
         catch ( Exception e )

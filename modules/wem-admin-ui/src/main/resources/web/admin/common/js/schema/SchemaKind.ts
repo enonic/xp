@@ -10,6 +10,8 @@ module api.schema {
 
         public static MIXIN = new SchemaKind("Mixin");
 
+        public static METADATA_SCHEMA = new SchemaKind("MetadataSchema");
+
         private name: string;
 
         static fromString(str: string): SchemaKind {
@@ -22,6 +24,9 @@ module api.schema {
             }
             else if (SchemaKind.MIXIN.nameEquals(str)) {
                 return SchemaKind.MIXIN;
+            }
+            else if (SchemaKind.METADATA_SCHEMA.nameEquals(str)) {
+                return SchemaKind.METADATA_SCHEMA;
             }
             else {
                 throw new Error("Unknown SchemaKind: " + str);

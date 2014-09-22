@@ -36,6 +36,9 @@
   <!-- Relationship type element -->
   <xsd:element name="relationship-type" type="relationshipType"/>
 
+  <!-- MetadataSchema type element -->
+  <xsd:element name="metadata-schema" type="metadataSchema"/>
+
   <!-- Layout component element -->
   <xsd:element name="layout-component" type="layoutDescriptor"/>
 
@@ -251,8 +254,7 @@
   <xsd:complexType name="metadataSchema">
     <xsd:all>
       <xsd:element name="display-name" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="description" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="form" type="formItems" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="form" type="form" minOccurs="0" maxOccurs="1"/>
     </xsd:all>
   </xsd:complexType>
 

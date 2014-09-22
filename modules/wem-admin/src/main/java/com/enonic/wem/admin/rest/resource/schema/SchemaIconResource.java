@@ -96,6 +96,11 @@ public final class SchemaIconResource
         {
             return schemaIconResolver.resolveFromName( schemaKey.getName() );
         }
+        else if ( schemaKey.isMetadataSchema() )
+        {
+            return schemaIconResolver.resolveFromName( schemaKey.getName() );
+        }
+
         else
         {
             throw new IllegalArgumentException( "Unknown SchemaKind: " + schemaKey.getType() );
