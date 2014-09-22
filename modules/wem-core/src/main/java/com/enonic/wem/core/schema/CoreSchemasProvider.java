@@ -43,8 +43,6 @@ public final class CoreSchemasProvider
     public static final ContentType FOLDER = createSystemType( ContentTypeName.folder() ).
         setFinal( false ).setAbstract( false ).build();
 
-    private static final ContentType PAGE = createSystemType( ContentTypeName.page() ).setFinal( true ).setAbstract( false ).build();
-
     private static final ContentType SITE =
         createSystemType( ContentTypeName.site() ).description( "Root content for sites" ).setFinal( true ).setAbstract( false ).build();
 
@@ -96,8 +94,8 @@ public final class CoreSchemasProvider
             setFinal( true ).setAbstract( false ).allowChildContent( false ).build();
 
     private static final ContentType[] SYSTEM_TYPES =
-        {UNSTRUCTURED, STRUCTURED, FOLDER, PAGE, SHORTCUT, MEDIA, MEDIA_TEXT, MEDIA_DATA, MEDIA_AUDIO, MEDIA_VIDEO, MEDIA_IMAGE,
-            MEDIA_VECTOR, MEDIA_ARCHIVE, MEDIA_DOCUMENT, MEDIA_SPREADSHEET, MEDIA_PRESENTATION, MEDIA_CODE, MEDIA_EXECUTABLE, SITE};
+        {UNSTRUCTURED, STRUCTURED, FOLDER, SHORTCUT, MEDIA, MEDIA_TEXT, MEDIA_DATA, MEDIA_AUDIO, MEDIA_VIDEO, MEDIA_IMAGE, MEDIA_VECTOR,
+            MEDIA_ARCHIVE, MEDIA_DOCUMENT, MEDIA_SPREADSHEET, MEDIA_PRESENTATION, MEDIA_CODE, MEDIA_EXECUTABLE, SITE};
 
     // System Relationship Types
     private static final RelationshipType DEFAULT =
