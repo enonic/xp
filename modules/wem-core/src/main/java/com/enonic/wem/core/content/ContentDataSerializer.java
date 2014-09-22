@@ -19,7 +19,7 @@ public class ContentDataSerializer
 
     public static final String DRAFT = "draft";
 
-    public static final String CONTENT_DATA = "contentdata";
+    public static final String CONTENT_DATA = "data";
 
     public static final String CONTENT_TYPE_FIELD_NAME = "contentType";
 

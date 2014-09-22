@@ -2,6 +2,8 @@ module api.content {
 
     export class ContentData extends api.data.RootDataSet implements api.Cloneable {
 
+        public static CONTENT_DATA_PATH = "data";
+
         constructor() {
             super();
         }

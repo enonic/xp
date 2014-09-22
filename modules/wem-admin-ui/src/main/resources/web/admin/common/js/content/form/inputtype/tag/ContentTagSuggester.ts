@@ -39,7 +39,9 @@ module api.content.form.inputtype.tag {
 
         suggest(value: string): wemQ.Promise<string[]> {
 
-            var fieldName = 'contentdata' + this.dataPath.getParentPath().toString() + this.dataPath.getLastElement().getName();
+            var fieldName = ContentData.CONTENT_DATA_PATH +
+                            this.dataPath.getParentPath().toString() +
+                            this.dataPath.getLastElement().getName();
 
             var field = new ValueExpr(new Value(fieldName, ValueTypes.STRING));
 

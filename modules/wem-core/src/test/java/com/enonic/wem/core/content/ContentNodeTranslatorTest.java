@@ -45,6 +45,8 @@ import static org.junit.Assert.*;
 
 public class ContentNodeTranslatorTest
 {
+    public static final String CONTENT_DATA_PREFIX = ContentDataSerializer.CONTENT_DATA;
+
     private ContentNodeTranslator translator;
 
     @Before
@@ -75,7 +77,7 @@ public class ContentNodeTranslatorTest
 
         final CreateNodeParams createNode = translator.toCreateNode( mycontent );
 
-        final Property testProperty = createNode.getData().getProperty( "contentdata.test" );
+        final Property testProperty = createNode.getData().getProperty( CONTENT_DATA_PREFIX + ".test" );
 
         assertNotNull( testProperty );
         assertEquals( "testValue", testProperty.getValue().asString() );
@@ -97,7 +99,8 @@ public class ContentNodeTranslatorTest
 
         final EntityIndexConfig entityIndexConfig = createNode.getEntityIndexConfig();
 
-        final PropertyIndexConfig testIndexConfig = entityIndexConfig.getPropertyIndexConfig( DataPath.from( "contentdata.test" ) );
+        final PropertyIndexConfig testIndexConfig =
+            entityIndexConfig.getPropertyIndexConfig( DataPath.from( CONTENT_DATA_PREFIX + ".test" ) );
 
         assertNotNull( testIndexConfig );
         assertTrue( testIndexConfig.enabled() && testIndexConfig.fulltextEnabled() && testIndexConfig.tokenizeEnabled() );
