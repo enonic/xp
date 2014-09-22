@@ -10,6 +10,7 @@ public final class MetadataSchema
     implements Schema
 {
     private final String displayName;
+
     private final Form form;
 
     private MetadataSchema( final Builder builder )
@@ -34,10 +35,21 @@ public final class MetadataSchema
         return new Builder();
     }
 
+    public static Builder newMetadataSchema()
+    {
+        return new Builder();
+    }
+
+    public static Builder newMetadataSchema( final MetadataSchema metadataSchema )
+    {
+        return new Builder( metadataSchema );
+    }
+
     public static class Builder
         extends BaseSchema.Builder<Builder, MetadataSchemaName>
     {
         private String displayName;
+
         private Form form;
 
         public Builder()

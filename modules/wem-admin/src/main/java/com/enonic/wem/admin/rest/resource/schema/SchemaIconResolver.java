@@ -10,6 +10,10 @@ import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
+import com.enonic.wem.api.schema.metadata.GetMetadataSchemaParams;
+import com.enonic.wem.api.schema.metadata.MetadataSchema;
+import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
+import com.enonic.wem.api.schema.metadata.MetadataSchemaService;
 import com.enonic.wem.api.schema.mixin.GetMixinParams;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinName;
@@ -27,14 +31,17 @@ public class SchemaIconResolver
 
     private RelationshipTypeService relationshipTypeService;
 
+    private MetadataSchemaService metadataSchemaService;
+
     private HashMap<ContentTypeName, ContentType> contentTypesByName = new HashMap<>();
 
     public SchemaIconResolver( final ContentTypeService contentTypeService, final MixinService mixinService,
-                               final RelationshipTypeService relationshipTypeService )
+                               final RelationshipTypeService relationshipTypeService, final MetadataSchemaService metadataSchemaService )
     {
         this.contentTypeService = contentTypeService;
         this.mixinService = mixinService;
         this.relationshipTypeService = relationshipTypeService;
+        this.metadataSchemaService = metadataSchemaService;
     }
 
     public SchemaIconResolver( final ContentTypeService contentTypeService )
@@ -52,6 +59,11 @@ public class SchemaIconResolver
         this.relationshipTypeService = relationshipTypeService;
     }
 
+    public SchemaIconResolver( final MetadataSchemaService metadataSchemaService )
+    {
+        this.metadataSchemaService = metadataSchemaService;
+    }
+
     public Icon resolveFromName( SchemaName schemaName )
     {
         if ( schemaName instanceof ContentTypeName )
@@ -65,6 +77,10 @@ public class SchemaIconResolver
         else if ( schemaName instanceof RelationshipTypeName )
         {
             return resolveFromName( (RelationshipTypeName) schemaName );
+        }
+        else if ( schemaName instanceof MetadataSchemaName )
+        {
+            return resolveFromName( (MetadataSchemaName) schemaName );
         }
         else
         {
@@ -91,6 +107,12 @@ public class SchemaIconResolver
         return relationshipType == null ? null : relationshipType.getIcon();
     }
 
+    public Icon resolveFromName( MetadataSchemaName metadataSchemaName )
+    {
+        final MetadataSchema metadataSchema = metadataSchemaService.getByName( new GetMetadataSchemaParams( metadataSchemaName ) );
+        return metadataSchema == null ? null : metadataSchema.getIcon();
+    }
+
     public Icon resolveFromSchema( Schema schema )
     {
         if ( schema instanceof ContentType )
@@ -104,6 +126,10 @@ public class SchemaIconResolver
         else if ( schema instanceof RelationshipType )
         {
             return resolveFromSchema( (RelationshipType) schema );
+        }
+        else if ( schema instanceof MetadataSchema )
+        {
+            return resolveFromSchema( (MetadataSchema) schema );
         }
         else
         {
@@ -138,6 +164,15 @@ public class SchemaIconResolver
         if ( relationshipType.getIcon() != null )
         {
             return relationshipType.getIcon();
+        }
+        return null;
+    }
+
+    public Icon resolveFromSchema( MetadataSchema metadataSchema )
+    {
+        if ( metadataSchema.getIcon() != null )
+        {
+            return metadataSchema.getIcon();
         }
         return null;
     }
