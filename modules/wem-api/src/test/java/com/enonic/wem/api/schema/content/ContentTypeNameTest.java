@@ -46,7 +46,7 @@ public class ContentTypeNameTest
     {
         assertTrue( ContentTypeName.media().isMedia() );
         assertTrue( ContentTypeName.folder().isFolder() );
-        assertTrue( ContentTypeName.page().isPage() );
+        assertTrue( ContentTypeName.pageTemplate().isPageTemplate() );
         assertTrue( ContentTypeName.shortcut().isShortcut() );
         assertTrue( ContentTypeName.structured().isStructured() );
         assertTrue( ContentTypeName.unstructured().isUnstructured() );
@@ -66,7 +66,7 @@ public class ContentTypeNameTest
 
         assertEquals( "system-0.0.0:media", ContentTypeName.media().getContentTypeName() );
         assertEquals( "system-0.0.0:folder", ContentTypeName.folder().getContentTypeName() );
-        assertEquals( "system-0.0.0:page", ContentTypeName.page().getContentTypeName() );
+        assertEquals( "system-0.0.0:page-template", ContentTypeName.pageTemplate().getContentTypeName() );
         assertEquals( "system-0.0.0:shortcut", ContentTypeName.shortcut().getContentTypeName() );
         assertEquals( "system-0.0.0:structured", ContentTypeName.structured().getContentTypeName() );
         assertEquals( "system-0.0.0:unstructured", ContentTypeName.unstructured().getContentTypeName() );

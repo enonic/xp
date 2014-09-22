@@ -32,8 +32,6 @@ public final class CoreSchemasProvider
     private static final String RELATIONSHIP_TYPES_FOLDER = "relationship-types";
 
     // System Content Types
-    public static Form MEDIA_IMAGE_FORM = createMediaImageForm();
-
     private static final ContentType STRUCTURED = createSystemType( ContentTypeName.structured() ).
         setFinal( false ).setAbstract( true ).build();
 
@@ -45,6 +43,9 @@ public final class CoreSchemasProvider
 
     private static final ContentType SITE =
         createSystemType( ContentTypeName.site() ).description( "Root content for sites" ).setFinal( true ).setAbstract( false ).build();
+
+    private static final ContentType PAGE_TEMPLATE =
+        createSystemType( ContentTypeName.pageTemplate() ).setFinal( false ).setAbstract( true ).form( createPageTemplateForm() ).build();
 
     private static final ContentType SHORTCUT = createSystemType( ContentTypeName.shortcut() ).
         setFinal( true ).setAbstract( false ).build();
@@ -65,7 +66,7 @@ public final class CoreSchemasProvider
         setFinal( true ).setAbstract( false ).allowChildContent( false ).build();
 
     private static final ContentType MEDIA_IMAGE = createSystemType( ContentTypeName.imageMedia() ).superType( ContentTypeName.media() ).
-        setFinal( true ).setAbstract( false ).allowChildContent( false ).form( MEDIA_IMAGE_FORM ).build();
+        setFinal( true ).setAbstract( false ).allowChildContent( false ).form( createMediaImageForm() ).build();
 
     private static final ContentType MEDIA_VECTOR = createSystemType( ContentTypeName.vectorMedia() ).superType( ContentTypeName.media() ).
         setFinal( true ).setAbstract( false ).allowChildContent( false ).build();
@@ -95,7 +96,7 @@ public final class CoreSchemasProvider
 
     private static final ContentType[] SYSTEM_TYPES =
         {UNSTRUCTURED, STRUCTURED, FOLDER, SHORTCUT, MEDIA, MEDIA_TEXT, MEDIA_DATA, MEDIA_AUDIO, MEDIA_VIDEO, MEDIA_IMAGE, MEDIA_VECTOR,
-            MEDIA_ARCHIVE, MEDIA_DOCUMENT, MEDIA_SPREADSHEET, MEDIA_PRESENTATION, MEDIA_CODE, MEDIA_EXECUTABLE, SITE};
+            MEDIA_ARCHIVE, MEDIA_DOCUMENT, MEDIA_SPREADSHEET, MEDIA_PRESENTATION, MEDIA_CODE, MEDIA_EXECUTABLE, SITE, PAGE_TEMPLATE};
 
     // System Relationship Types
     private static final RelationshipType DEFAULT =
@@ -134,6 +135,14 @@ public final class CoreSchemasProvider
                 occurrences( 1, 1 ).
                 build() ).
 
+            build();
+    }
+
+    private static Form createPageTemplateForm()
+    {
+        // TODO: add input: controller of type PageController
+        // TODO: add input: canRender of type ContentTypeFilter
+        return Form.newForm().
             build();
     }
 

@@ -17,7 +17,7 @@ public final class ContentTypeName
 
     private static final ContentTypeName FOLDER = new ContentTypeName( "folder" );
 
-    private static final ContentTypeName PAGE = new ContentTypeName( "page" );
+    private static final ContentTypeName PAGE_TEMPLATE = new ContentTypeName( "page-template" );
 
     private static final ContentTypeName SITE = new ContentTypeName( "site" );
 
@@ -74,9 +74,9 @@ public final class ContentTypeName
         return FOLDER;
     }
 
-    public static ContentTypeName page()
+    public static ContentTypeName pageTemplate()
     {
-        return PAGE;
+        return PAGE_TEMPLATE;
     }
 
     public static ContentTypeName site()
@@ -169,9 +169,9 @@ public final class ContentTypeName
         return FOLDER.equals( this );
     }
 
-    public boolean isPage()
+    public boolean isPageTemplate()
     {
-        return PAGE.equals( this );
+        return PAGE_TEMPLATE.equals( this );
     }
 
     public boolean isSite()
