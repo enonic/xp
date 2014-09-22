@@ -102,7 +102,7 @@ public final class SchemaLoader
             }
             catch ( Exception e )
             {
-                LOG.warn( "Could not load schema from [" + schemaResource + "]", e );
+                LOG.warn( "Could not load schema [" + schemaXmlKey + "]", e );
             }
         }
         return null;
