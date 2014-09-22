@@ -29,7 +29,7 @@ module api.form {
 
         private addButton: api.ui.button.Button;
 
-        private validationContainer: api.dom.DivEl;
+        private validationViewer: api.form.ValidationRecordingViewer;
 
         private previousValidityRecording: ValidationRecording;
 
@@ -149,8 +149,8 @@ module api.form {
                 this.bottomButtonRow.appendChild(this.addButton);
             }
 
-            this.validationContainer = new api.dom.DivEl("validation-container");
-            this.appendChild(this.validationContainer);
+            this.validationViewer = new api.form.ValidationRecordingViewer();
+            this.appendChild(this.validationViewer);
 
             this.inputTypeView.onValidityChanged((event: api.form.inputtype.InputValidityChangedEvent)=> {
 
@@ -254,7 +254,7 @@ module api.form {
                 this.removeClass("valid");
                 this.addClass("invalid");
             }
-            this.validationContainer.setHtml(recording.toString())
+            this.validationViewer.setObject(recording)
         }
 
         onFocus(listener: (event: FocusEvent) => void) {

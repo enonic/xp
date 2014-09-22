@@ -40,3 +40,5 @@
 ///<reference path='OccurrenceRemovedEvent.ts' />
 ///<reference path='OccurrenceAddedEvent.ts' />
 
+///<reference path='ValidationRecordingViewer.ts' />
+

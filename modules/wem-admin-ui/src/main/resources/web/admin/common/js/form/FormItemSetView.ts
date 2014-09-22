@@ -27,7 +27,7 @@ module api.form {
 
         private collapseButton: api.dom.AEl;
 
-        private validationContainer: api.dom.DivEl;
+        private validationViewer: api.form.ValidationRecordingViewer;
 
         private validityChangedListeners: {(event: ValidityChangedEvent) : void}[] = [];
 
@@ -136,8 +136,8 @@ module api.form {
             this.bottomButtonRow.appendChild(this.addButton);
             this.bottomButtonRow.appendChild(this.collapseButton);
 
-            this.validationContainer = new api.dom.DivEl("validation-container");
-            this.appendChild(this.validationContainer);
+            this.validationViewer = new api.form.ValidationRecordingViewer();
+            this.appendChild(this.validationViewer);
 
             this.refresh();
             this.validate(true);
@@ -283,7 +283,7 @@ module api.form {
                 this.removeClass("valid");
                 this.addClass("invalid");
             }
-            this.validationContainer.setHtml(recording.toString());
+            this.validationViewer.setObject(recording);
         }
 
         giveFocus(): boolean {

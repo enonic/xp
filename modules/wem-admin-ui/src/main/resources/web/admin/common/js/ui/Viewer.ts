@@ -7,10 +7,10 @@ module api.ui {
 
         private object: OBJECT;
 
-        constructor() {
+        constructor(className?: string) {
             super(new api.dom.NewElementBuilder().
                 setTagName("div").
-                setClassName('viewer').
+                setClassName('viewer ' + (className || '')).
                 setGenerateId(false));
         }
 

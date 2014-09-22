@@ -2,9 +2,9 @@ module api.form {
 
     export class ValidationRecording {
 
-        private breaksMinimumOccurrencesArray: ValidationRecordingPath[] = [];
+        breaksMinimumOccurrencesArray: ValidationRecordingPath[] = [];
 
-        private breaksMaximumOccurrencesArray: ValidationRecordingPath[] = [];
+        breaksMaximumOccurrencesArray: ValidationRecordingPath[] = [];
 
         breaksMinimumOccurrences(path: ValidationRecordingPath) {
             if (!this.exists(path, this.breaksMinimumOccurrencesArray)) {
@@ -30,6 +30,16 @@ module api.form {
 
             recording.breaksMaximumOccurrencesArray.forEach((path: ValidationRecordingPath)=> {
                 this.breaksMaximumOccurrences(path);
+            });
+        }
+
+        subtract(recording: ValidationRecording) {
+            this.breaksMinimumOccurrencesArray = this.breaksMinimumOccurrencesArray.filter((path: ValidationRecordingPath)=> {
+                return !this.exists(path, recording.breaksMinimumOccurrencesArray);
+            });
+
+            this.breaksMaximumOccurrencesArray = this.breaksMaximumOccurrencesArray.filter((path: ValidationRecordingPath)=> {
+                return !this.exists(path, recording.breaksMaximumOccurrencesArray);
             });
         }
 
@@ -83,21 +93,6 @@ module api.form {
 
         validityChanged(previous: api.form.ValidationRecording): boolean {
             return previous == undefined || previous == null || !previous.equals(this);
-        }
-
-        toString(): string {
-            if (this.isValid()) {
-                return "";
-            } else {
-                var out = "<ul>";
-                this.breaksMinimumOccurrencesArray.forEach((path: ValidationRecordingPath, index: number) => {
-                    out += "<li>" + path.toString() + " - Minimum " + path.getMin() + " occurence(s) must exist</li>";
-                });
-                this.breaksMaximumOccurrencesArray.forEach((path: ValidationRecordingPath, index: number) => {
-                    out += "<li>" + path.toString() + " - Maximum " + path.getMax() + " occurence(s) must exist</li>";
-                });
-                return out += "</ul>";
-            }
         }
 
         private exists(path: ValidationRecordingPath, array: ValidationRecordingPath[]): boolean {
