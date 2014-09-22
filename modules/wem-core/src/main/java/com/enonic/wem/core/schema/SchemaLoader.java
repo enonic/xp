@@ -19,6 +19,7 @@ import com.enonic.wem.api.schema.Schemas;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.metadata.MetadataSchema;
+import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
@@ -86,18 +87,23 @@ public final class SchemaLoader
 
                 if ( schemaBuilder instanceof ContentType.Builder )
                 {
-                    final ContentType.Builder contentTypeBuilder = (ContentType.Builder) schemaBuilder;
-                    return contentTypeBuilder.name( ContentTypeName.from( moduleKey, schemaName ) ).build();
+                    final ContentType.Builder builder = (ContentType.Builder) schemaBuilder;
+                    return builder.name( ContentTypeName.from( moduleKey, schemaName ) ).build();
                 }
                 else if ( schemaBuilder instanceof Mixin.Builder )
                 {
-                    final Mixin.Builder mixinBuilder = (Mixin.Builder) schemaBuilder;
-                    return mixinBuilder.name( MixinName.from( moduleKey, schemaName ) ).build();
+                    final Mixin.Builder builder = (Mixin.Builder) schemaBuilder;
+                    return builder.name( MixinName.from( moduleKey, schemaName ) ).build();
                 }
                 else if ( schemaBuilder instanceof RelationshipType.Builder )
                 {
-                    final RelationshipType.Builder relationshipTypeBuilder = (RelationshipType.Builder) schemaBuilder;
-                    return relationshipTypeBuilder.name( RelationshipTypeName.from( moduleKey, schemaName ) ).build();
+                    final RelationshipType.Builder builder = (RelationshipType.Builder) schemaBuilder;
+                    return builder.name( RelationshipTypeName.from( moduleKey, schemaName ) ).build();
+                }
+                else if ( schemaBuilder instanceof MetadataSchema.Builder )
+                {
+                    final MetadataSchema.Builder builder = (MetadataSchema.Builder) schemaBuilder;
+                    return builder.name( MetadataSchemaName.from( moduleKey, schemaName ) ).build();
                 }
             }
             catch ( Exception e )
