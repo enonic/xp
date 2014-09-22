@@ -18,6 +18,8 @@ import com.enonic.wem.api.schema.Schemas;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
+import com.enonic.wem.api.schema.metadata.MetadataSchema;
+import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 
@@ -30,6 +32,8 @@ public final class CoreSchemasProvider
     private static final String CONTENT_TYPES_FOLDER = "content-types";
 
     private static final String RELATIONSHIP_TYPES_FOLDER = "relationship-types";
+
+    private static final String METADATA_SCHEMAS_FOLDER = "metadata-schemas";
 
     // System Content Types
     private static final ContentType STRUCTURED = createSystemType( ContentTypeName.structured() ).
@@ -114,6 +118,11 @@ public final class CoreSchemasProvider
 
     private static final RelationshipType[] RELATIONSHIP_TYPES = {DEFAULT, PARENT, LINK, LIKE, IMAGE};
 
+    // System Metadata schemas
+    private static final MetadataSchema MENU =
+        MetadataSchema.newMetadataSchema().name( MetadataSchemaName.MENU ).displayName( "Menu" ).form( createMenuMetadataForm() ).build();
+
+    private static final MetadataSchema[] METADATA_SCHEMAS = {MENU};
 
     private static ContentType.Builder createSystemType( final ContentTypeName contentTypeName )
     {
@@ -135,6 +144,23 @@ public final class CoreSchemasProvider
                 occurrences( 1, 1 ).
                 build() ).
 
+            build();
+    }
+
+    private static Form createMenuMetadataForm()
+    {
+        return Form.newForm().
+            addFormItem( Input.newInput().name( "menu" ).
+                inputType( InputTypes.CHECKBOX ).
+                occurrences( 1, 1 ).
+                helpText( "Check this to include this Page in the menu" ).
+                build() ).
+            addFormItem( Input.newInput().name( "menuName" ).
+                inputType( InputTypes.TEXT_LINE ).
+                label( "Menu name" ).
+                occurrences( 0, 1 ).
+                helpText( "Name to be used in menu. Optional" ).
+                build() ).
             build();
     }
 
@@ -191,12 +217,26 @@ public final class CoreSchemasProvider
         return relationshipTypes;
     }
 
+    private List<MetadataSchema> generateSystemMetadataSchemas()
+    {
+        final List<MetadataSchema> metadataSchemas = Lists.newArrayList();
+        for ( MetadataSchema metadataSchema : METADATA_SCHEMAS )
+        {
+            metadataSchema = MetadataSchema.newMetadataSchema( metadataSchema ).
+                icon( loadSchemaIcon( METADATA_SCHEMAS_FOLDER, metadataSchema.getName().getLocalName() ) ).
+                build();
+            metadataSchemas.add( metadataSchema );
+        }
+        return metadataSchemas;
+    }
+
     @Override
     public Schemas getSchemas()
     {
         final List<Schema> schemas = Lists.newArrayList();
         schemas.addAll( generateSystemContentTypes() );
         schemas.addAll( generateSystemRelationshipTypes() );
+        schemas.addAll( generateSystemMetadataSchemas() );
         return Schemas.from( schemas );
     }
 

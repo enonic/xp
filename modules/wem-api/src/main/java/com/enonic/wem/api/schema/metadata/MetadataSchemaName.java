@@ -9,6 +9,8 @@ import com.enonic.wem.api.schema.SchemaName;
 public final class MetadataSchemaName
     extends SchemaName
 {
+    public static MetadataSchemaName MENU = new MetadataSchemaName( ModuleKey.SYSTEM, "menu" );
+
     private MetadataSchemaName( final ModuleKey moduleKey, final String localName )
     {
         super( moduleKey, localName );
