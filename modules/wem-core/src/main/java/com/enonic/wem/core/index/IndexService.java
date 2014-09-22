@@ -13,6 +13,8 @@ public interface IndexService
 
     public void deleteIndex( final Collection<String> indexNames );
 
+    public boolean indicesExists( final String... indices );
+
     public void store( final Node node, final IndexContext context );
 
     public void delete( final EntityId entityId, final IndexContext context );

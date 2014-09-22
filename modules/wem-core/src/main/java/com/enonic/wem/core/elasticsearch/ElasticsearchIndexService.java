@@ -16,6 +16,7 @@ import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
+import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequestBuilder;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.action.admin.indices.stats.IndexStats;
@@ -59,6 +60,8 @@ public class ElasticsearchIndexService
     private String createTimeout = "5s";
 
     private String applyMappingTimeout = "5s";
+
+    private String existsTimeout = "5s";
 
     private Client client;
 
@@ -192,6 +195,15 @@ public class ElasticsearchIndexService
         {
             doDeleteIndex( indexName );
         }
+    }
+
+    public boolean indicesExists( final String... indices )
+    {
+        IndicesExistsRequest request = new IndicesExistsRequestBuilder( this.client.admin().indices() ).setIndices( indices ).request();
+
+        final IndicesExistsResponse response = client.admin().indices().exists( request ).actionGet( existsTimeout );
+
+        return response.isExists();
     }
 
     private void doDeleteIndex( final String indexName )

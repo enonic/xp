@@ -59,4 +59,12 @@ public class RepositoryInitializer
         }
     }
 
+    public boolean isInitialized( final Repository repository )
+    {
+        final String storageIndexName = StorageNameResolver.resolveStorageIndexName( repository );
+        final String searchIndexName = IndexNameResolver.resolveSearchIndexName( repository );
+
+        return indexService.indicesExists( storageIndexName, searchIndexName );
+    }
+
 }

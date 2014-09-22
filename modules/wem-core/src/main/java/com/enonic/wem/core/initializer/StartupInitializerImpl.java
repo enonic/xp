@@ -37,17 +37,17 @@ final class StartupInitializerImpl
     public void initialize( final boolean reinit )
         throws Exception
     {
-        if ( reinit )
-        {
-            initializeRespositories();
-        }
+        initializeRespositories( reinit );
     }
 
-    private void initializeRespositories()
+    private void initializeRespositories( final boolean reinit )
     {
         final Repository contentRepo = ContentConstants.CONTENT_REPO;
 
-        repositoryInitializer.init( contentRepo );
+        if ( reinit || !repositoryInitializer.isInitialized( contentRepo ) )
+        {
+            repositoryInitializer.init( contentRepo );
+        }
     }
 
 }
