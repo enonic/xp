@@ -143,10 +143,14 @@ public class SchemaIconResolver
         {
             return contentType.getIcon();
         }
-        else
+        else if ( contentType.hasSuperType() )
         {
             final ContentType superTypeWithIcon = findContentTypeIcon( contentType.getSuperType() );
             return superTypeWithIcon.getIcon();
+        }
+        else
+        {
+            return null;
         }
     }
 
