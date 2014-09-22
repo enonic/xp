@@ -18,6 +18,7 @@ import org.apache.commons.lang.StringUtils;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.schema.SchemaKey;
 import com.enonic.wem.api.schema.content.ContentTypeService;
+import com.enonic.wem.api.schema.metadata.MetadataSchemaService;
 import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeService;
 
@@ -34,6 +35,8 @@ public final class SchemaIconResource
     private MixinService mixinService;
 
     private RelationshipTypeService relationshipTypeService;
+
+    private MetadataSchemaService metadataSchemaService;
 
     @GET
     @Path("{schemaKey}")
@@ -83,7 +86,8 @@ public final class SchemaIconResource
 
     private Icon resolveSchemaIcon( final SchemaKey schemaKey )
     {
-        final SchemaIconResolver schemaIconResolver = new SchemaIconResolver( contentTypeService, mixinService, relationshipTypeService );
+        final SchemaIconResolver schemaIconResolver =
+            new SchemaIconResolver( contentTypeService, mixinService, relationshipTypeService, metadataSchemaService );
         if ( schemaKey.isContentType() )
         {
             return schemaIconResolver.resolveFromName( schemaKey.getName() );
