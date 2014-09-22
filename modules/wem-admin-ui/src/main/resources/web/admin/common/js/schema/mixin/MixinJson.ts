@@ -1,4 +1,4 @@
-module api.schema.mixin.json {
+module api.schema.mixin {
 
     export interface MixinJson extends api.schema.SchemaJson {
 

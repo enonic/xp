@@ -14,3 +14,6 @@
 ///<reference path='ContentTypeDeletedEvent.ts' />
 ///<reference path='ContentTypeCache.ts' />
 
+///<reference path='ContentTypeSummaryJson.ts' />
+///<reference path='ContentTypeSummaryListJson.ts' />
+///<reference path='ContentTypeJson.ts' />

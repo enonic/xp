@@ -48,7 +48,7 @@ module api.schema.mixin {
             return true;
         }
 
-        static fromJson(json: api.schema.mixin.json.MixinJson): Mixin {
+        static fromJson(json: api.schema.mixin.MixinJson): Mixin {
             return new MixinBuilder().fromMixinJson(json).build();
         }
 
@@ -68,7 +68,7 @@ module api.schema.mixin {
             }
         }
 
-        fromMixinJson(mixinJson: api.schema.mixin.json.MixinJson): MixinBuilder {
+        fromMixinJson(mixinJson: api.schema.mixin.MixinJson): MixinBuilder {
 
             super.fromSchemaJson(mixinJson);
 

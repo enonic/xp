@@ -48,7 +48,7 @@ module api.schema.metadata {
             return true;
         }
 
-        static fromJson(json: api.schema.metadata.json.MetadataSchemaJson): MetadataSchema {
+        static fromJson(json: api.schema.metadata.MetadataSchemaJson): MetadataSchema {
             return new MetadataSchemaBuilder().fromMetadataSchemaJson(json).build();
         }
 
@@ -68,10 +68,10 @@ module api.schema.metadata {
             }
         }
 
-        fromMetadataSchemaJson(metadataSchemaJson: api.schema.metadata.json.MetadataSchemaJson): MetadataSchemaBuilder {
+        fromMetadataSchemaJson(metadataSchemaJson: MetadataSchemaJson): MetadataSchemaBuilder {
 
             super.fromSchemaJson(metadataSchemaJson);
-            this.form = api.form.FormItemFactory.createFormItem(metadataSchemaJson.form);
+            this.form = api.form.FormItemFactory.createForm(metadataSchemaJson.form);
             this.schemaKey = "metadataSchema:" + this.name;
             return this;
         }

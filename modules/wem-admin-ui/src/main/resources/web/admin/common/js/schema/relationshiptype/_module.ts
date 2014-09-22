@@ -3,3 +3,5 @@
 
 ///<reference path="RelationshipTypeResourceRequest.ts" />
 ///<reference path="GetRelationshipTypeByNameRequest.ts" />
+
+///<reference path="RelationshipTypeJson.ts" />

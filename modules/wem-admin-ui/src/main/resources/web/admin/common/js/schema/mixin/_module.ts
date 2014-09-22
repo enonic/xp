@@ -3,3 +3,6 @@
 
 ///<reference path="MixinResourceRequest.ts"/>
 ///<reference path="GetMixinByQualifiedNameRequest.ts"/>
+
+///<reference path="MixinJson.ts" />
+///<reference path="MixinReferenceJson.ts" />

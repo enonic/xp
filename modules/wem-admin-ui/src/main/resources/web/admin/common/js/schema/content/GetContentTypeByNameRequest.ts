@@ -1,6 +1,6 @@
 module api.schema.content {
 
-    export class GetContentTypeByNameRequest extends ContentTypeResourceRequest<json.ContentTypeJson, ContentType> {
+    export class GetContentTypeByNameRequest extends ContentTypeResourceRequest<ContentTypeJson, ContentType> {
 
         private name: ContentTypeName;
 
@@ -31,7 +31,7 @@ module api.schema.content {
                 return wemQ(contentType);
             }
             else {
-                return this.send().then((response: api.rest.JsonResponse<json.ContentTypeJson>) => {
+                return this.send().then((response: api.rest.JsonResponse<ContentTypeJson>) => {
                     contentType = this.fromJsonToContentType(response.getResult());
                     contentTypeCache.put(contentType);
                     return  contentType;

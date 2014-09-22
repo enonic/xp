@@ -102,16 +102,16 @@ module api.schema.content {
             return true;
         }
 
-        static fromJsonArray(jsonArray: api.schema.content.json.ContentTypeSummaryJson[]): ContentTypeSummary[] {
+        static fromJsonArray(jsonArray: api.schema.content.ContentTypeSummaryJson[]): ContentTypeSummary[] {
             var array: ContentTypeSummary[] = [];
 
-            jsonArray.forEach((summaryJson: api.schema.content.json.ContentTypeSummaryJson) => {
+            jsonArray.forEach((summaryJson: api.schema.content.ContentTypeSummaryJson) => {
                 array.push(ContentTypeSummary.fromJson(summaryJson));
             });
             return array;
         }
 
-        static fromJson(json: api.schema.content.json.ContentTypeSummaryJson): ContentTypeSummary {
+        static fromJson(json: api.schema.content.ContentTypeSummaryJson): ContentTypeSummary {
             return new ContentTypeSummaryBuilder().fromContentTypeSummaryJson(json).build();
         }
 
@@ -146,7 +146,7 @@ module api.schema.content {
             }
         }
 
-        fromContentTypeSummaryJson(json: api.schema.content.json.ContentTypeSummaryJson): ContentTypeSummaryBuilder {
+        fromContentTypeSummaryJson(json: api.schema.content.ContentTypeSummaryJson): ContentTypeSummaryBuilder {
             super.fromSchemaJson(json);
 
             this.allowChildContent = json.allowChildContent;

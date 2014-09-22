@@ -32,7 +32,7 @@ module api.schema.content {
             return true;
         }
 
-        static fromJson(json: api.schema.content.json.ContentTypeJson): ContentType {
+        static fromJson(json: api.schema.content.ContentTypeJson): ContentType {
             return new ContentTypeBuilder().fromContentTypeJson(json).build();
         }
     }
@@ -48,7 +48,7 @@ module api.schema.content {
             }
         }
 
-        fromContentTypeJson(json: api.schema.content.json.ContentTypeJson): ContentTypeBuilder {
+        fromContentTypeJson(json: api.schema.content.ContentTypeJson): ContentTypeBuilder {
             super.fromContentTypeSummaryJson(json);
             this.form = api.form.FormItemFactory.createForm(json.form);
             return this;

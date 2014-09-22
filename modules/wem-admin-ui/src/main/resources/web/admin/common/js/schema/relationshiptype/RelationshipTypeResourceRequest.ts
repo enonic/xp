@@ -13,7 +13,7 @@ module api.schema.relationshiptype {
             return this.resourceUrl;
         }
 
-        fromJsonToReleationshipType(json: api.schema.relationshiptype.json.RelationshipTypeJson): RelationshipType {
+        fromJsonToReleationshipType(json: api.schema.relationshiptype.RelationshipTypeJson): RelationshipType {
             return RelationshipType.fromJson(json);
         }
     }

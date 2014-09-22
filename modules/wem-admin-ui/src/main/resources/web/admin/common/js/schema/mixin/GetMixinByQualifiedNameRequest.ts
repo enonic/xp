@@ -1,28 +1,28 @@
 module api.schema.mixin {
 
-    export class GetMixinByQualifiedNameRequest extends MixinResourceRequest<api.schema.mixin.json.MixinJson, Mixin> {
+    export class GetMixinByQualifiedNameRequest extends MixinResourceRequest<api.schema.mixin.MixinJson, Mixin> {
 
-        private name:MixinName;
+        private name: MixinName;
 
-        constructor(name:MixinName) {
+        constructor(name: MixinName) {
             super();
             super.setMethod("GET");
             this.name = name;
         }
 
-        getParams():Object {
+        getParams(): Object {
             return {
                 name: this.name.toString()
             };
         }
 
-        getRequestPath():api.rest.Path {
+        getRequestPath(): api.rest.Path {
             return super.getResourcePath();
         }
 
         sendAndParse(): wemQ.Promise<Mixin> {
 
-            return this.send().then((response: api.rest.JsonResponse<api.schema.mixin.json.MixinJson>) => {
+            return this.send().then((response: api.rest.JsonResponse<api.schema.mixin.MixinJson>) => {
                 return this.fromJsonToMixin(response.getResult());
             });
         }

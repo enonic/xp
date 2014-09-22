@@ -13,11 +13,11 @@ module api.schema.content {
             return this.resourceUrl;
         }
 
-        fromJsonToContentType(json: api.schema.content.json.ContentTypeJson): ContentType {
+        fromJsonToContentType(json: api.schema.content.ContentTypeJson): ContentType {
             return ContentType.fromJson(json);
         }
 
-        fromJsonToContentTypeSummary(json: api.schema.content.json.ContentTypeSummaryJson): ContentTypeSummary {
+        fromJsonToContentTypeSummary(json: api.schema.content.ContentTypeSummaryJson): ContentTypeSummary {
             return ContentTypeSummary.fromJson(json);
         }
     }

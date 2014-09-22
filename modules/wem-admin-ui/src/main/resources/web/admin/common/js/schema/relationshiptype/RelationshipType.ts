@@ -69,7 +69,7 @@ module api.schema.relationshiptype {
             return true;
         }
 
-        static fromJson(json: api.schema.relationshiptype.json.RelationshipTypeJson): RelationshipType {
+        static fromJson(json: api.schema.relationshiptype.RelationshipTypeJson): RelationshipType {
             return new RelationshipTypeBuilder().fromRelationshipTypeJson(json).build();
         }
     }
@@ -94,7 +94,7 @@ module api.schema.relationshiptype {
             }
         }
 
-        fromRelationshipTypeJson(relationshipTypeJson: api.schema.relationshiptype.json.RelationshipTypeJson): RelationshipTypeBuilder {
+        fromRelationshipTypeJson(relationshipTypeJson: api.schema.relationshiptype.RelationshipTypeJson): RelationshipTypeBuilder {
 
             super.fromSchemaJson(relationshipTypeJson);
 

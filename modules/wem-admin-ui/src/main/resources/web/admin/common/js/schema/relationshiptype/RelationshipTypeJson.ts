@@ -1,4 +1,4 @@
-module api.schema.relationshiptype.json {
+module api.schema.relationshiptype {
 
     export interface RelationshipTypeJson extends api.schema.SchemaJson {
 

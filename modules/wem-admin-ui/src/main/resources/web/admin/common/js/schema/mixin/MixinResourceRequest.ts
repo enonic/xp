@@ -12,7 +12,7 @@ module api.schema.mixin {
             return this.resourceUrl;
         }
 
-        fromJsonToMixin(json: api.schema.mixin.json.MixinJson) {
+        fromJsonToMixin(json: api.schema.mixin.MixinJson) {
             return Mixin.fromJson(json);
         }
     }

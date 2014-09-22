@@ -1,6 +1,6 @@
 module api.schema.content {
 
-    export class GetAllContentTypesRequest extends ContentTypeResourceRequest<json.ContentTypeSummaryListJson, ContentTypeSummary[]> {
+    export class GetAllContentTypesRequest extends ContentTypeResourceRequest<ContentTypeSummaryListJson, ContentTypeSummary[]> {
 
         private mixinReferencesToFormItems:boolean = true;
 
@@ -21,8 +21,8 @@ module api.schema.content {
 
         sendAndParse(): wemQ.Promise<ContentTypeSummary[]> {
 
-            return this.send().then((response: api.rest.JsonResponse<json.ContentTypeSummaryListJson>) => {
-                return response.getResult().contentTypes.map((contentTypeJson:json.ContentTypeSummaryJson) => {
+            return this.send().then((response: api.rest.JsonResponse<ContentTypeSummaryListJson>) => {
+                return response.getResult().contentTypes.map((contentTypeJson: ContentTypeSummaryJson) => {
                     return this.fromJsonToContentTypeSummary(contentTypeJson);
                 });
             });

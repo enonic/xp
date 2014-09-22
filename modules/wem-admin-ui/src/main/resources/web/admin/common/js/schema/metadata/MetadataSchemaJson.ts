@@ -1,4 +1,4 @@
-module api.schema.metadata.json {
+module api.schema.metadata {
 
     export interface MetadataSchemaJson extends api.schema.SchemaJson {
 
