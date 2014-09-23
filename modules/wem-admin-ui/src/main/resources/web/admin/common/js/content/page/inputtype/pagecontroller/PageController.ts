@@ -14,7 +14,7 @@ module api.content.page.inputtype.pagecontroller {
     import ContentInputTypeViewContext = api.content.form.inputtype.ContentInputTypeViewContext;
 
     export class PageController extends support.BaseInputTypeNotManagingAdd<any, string> {
-        
+
         constructor(context: ContentInputTypeViewContext<any>) {
             super(context);
         }
@@ -32,7 +32,7 @@ module api.content.page.inputtype.pagecontroller {
                 moduleKeys = context.site.getSite().getModuleKeys(),
                 request = new GetPageDescriptorsByModulesRequest(moduleKeys);
 
-            return new PageDescriptorDropdown('page-controller['+index+']', {
+            return new PageDescriptorDropdown('page-controller[' + index + ']', {
                 loader: new api.util.loader.BaseLoader<PageDescriptorsJson, PageDescriptor>(request)
             });
         }
@@ -52,7 +52,7 @@ module api.content.page.inputtype.pagecontroller {
         }
 
         valueBreaksRequiredContract(value: Value): boolean {
-            return (value == null) || !value.getType().equals(ValueTypes.STRING);
+            return super.valueBreaksRequiredContract(value) || !value.getType().equals(ValueTypes.STRING);
         }
 
     }

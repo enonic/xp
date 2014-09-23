@@ -5,7 +5,7 @@ module api.dom {
         private el: HTMLElement;
 
         static fromName(name: string): ElementHelper {
-            api.util.assert(!api.util.isStringEmpty(name), 'Tag name cannot be empty');
+            api.util.assert(!api.util.StringHelper.isEmpty(name), 'Tag name cannot be empty');
             return new ElementHelper(document.createElement(name));
         }
 
@@ -108,8 +108,8 @@ module api.dom {
         }
 
         setData(name: string, value: string): ElementHelper {
-            api.util.assert(!api.util.isStringEmpty(name), 'Name cannot be empty');
-            api.util.assert(!api.util.isStringEmpty(value), 'Value cannot be empty');
+            api.util.assert(!api.util.StringHelper.isEmpty(name), 'Name cannot be empty');
+            api.util.assert(!api.util.StringHelper.isEmpty(value), 'Value cannot be empty');
             this.el.setAttribute('data-' + name, value);
             wemjq(this.el).data(name, value);
             return this;
@@ -129,7 +129,7 @@ module api.dom {
         }
 
         addClass(clsName: string): ElementHelper {
-            api.util.assert(!api.util.isStringEmpty(clsName), 'Class name cannot be empty');
+            api.util.assert(!api.util.StringHelper.isEmpty(clsName), 'Class name cannot be empty');
             // spaces are not allowed
             var classList: string[] = clsName.split(" ");
             classList.forEach((classItem: string) => {
@@ -150,7 +150,7 @@ module api.dom {
         }
 
         hasClass(clsName: string): boolean {
-            api.util.assert(!api.util.isStringEmpty(clsName), 'Class name cannot be empty');
+            api.util.assert(!api.util.StringHelper.isEmpty(clsName), 'Class name cannot be empty');
             // spaces are not allowed
             var classList: string[] = clsName.split(" ");
             for (var i = 0; i < classList.length; i++) {
@@ -163,7 +163,7 @@ module api.dom {
         }
 
         removeClass(clsName: string): ElementHelper {
-            api.util.assert(!api.util.isStringEmpty(clsName), 'Class name cannot be empty');
+            api.util.assert(!api.util.StringHelper.isEmpty(clsName), 'Class name cannot be empty');
             // spaces are not allowed
             var classList: string[] = clsName.split(" ");
             classList.forEach((classItem: string) => {

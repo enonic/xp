@@ -11,7 +11,7 @@ module api.data.type {
         }
 
         isConvertible(value: string): boolean {
-            if (api.util.isStringBlank(value)) {
+            if (api.util.StringHelper.isBlank(value)) {
                 return false;
             }
             var convertedValue = Number(value);

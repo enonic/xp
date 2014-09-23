@@ -113,7 +113,7 @@ module api.form.inputtype.combobox {
         }
 
         valueBreaksRequiredContract(value: api.data.Value): boolean {
-            if (api.util.isStringBlank(value.asString())) {
+            if (api.util.StringHelper.isBlank(value.asString())) {
                 return true;
             } else {
                 return false;

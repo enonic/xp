@@ -66,7 +66,7 @@ module api.dom {
         helper: ElementHelper;
 
         setTagName(name: string): NewElementBuilder {
-            api.util.assert(!api.util.isStringEmpty(name), 'Tag name cannot be empty');
+            api.util.assert(!api.util.StringHelper.isEmpty(name), 'Tag name cannot be empty');
             this.tagName = name;
             return this;
         }
@@ -228,13 +228,13 @@ module api.dom {
         }
 
         setClass(className: string): Element {
-            api.util.assert(!api.util.isStringEmpty(className), 'Class name cannot be empty');
+            api.util.assert(!api.util.StringHelper.isEmpty(className), 'Class name cannot be empty');
             this.el.setClass(className);
             return this;
         }
 
         addClass(className: string): Element {
-            api.util.assert(!api.util.isStringEmpty(className), 'Class name cannot be empty');
+            api.util.assert(!api.util.StringHelper.isEmpty(className), 'Class name cannot be empty');
             this.el.addClass(className);
             return this;
         }
@@ -253,7 +253,7 @@ module api.dom {
         }
 
         removeClass(className: string): Element {
-            api.util.assert(!api.util.isStringEmpty(className), 'Class name cannot be empty');
+            api.util.assert(!api.util.StringHelper.isEmpty(className), 'Class name cannot be empty');
             this.el.removeClass(className);
             return this;
         }

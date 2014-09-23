@@ -17,7 +17,7 @@ module app.wizard {
         }
 
         hasScript(): boolean {
-            return !api.util.isStringBlank(this.script);
+            return !api.util.StringHelper.isBlank(this.script);
         }
 
         execute(): string {
@@ -37,7 +37,7 @@ module app.wizard {
                     var value = formView.getValueAtPath(api.data.DataPath.fromString(path));
                     if (value != null) {
                         var strValue = value.asString();
-                        if (!api.util.isStringBlank(strValue)) {
+                        if (!api.util.StringHelper.isBlank(strValue)) {
                             strValues.push(strValue);
                         }
                     }

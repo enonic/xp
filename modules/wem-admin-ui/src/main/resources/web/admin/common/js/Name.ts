@@ -12,7 +12,7 @@ module api {
 
             api.util.assertNotNull(name, "Name cannot be null");
 
-            api.util.assert(!api.util.isStringEmpty(name), "Name cannot be empty");
+            api.util.assert(!api.util.StringHelper.isEmpty(name), "Name cannot be empty");
 
             api.util.assert(Name.NAME_REG_EXP.test(name),
                     "A name can only start with lower case latin letters or digit, and further consist of the same, digits or the following special chars: _-.: " +
