@@ -8,7 +8,7 @@ module api.liveedit {
 
         dropAllowed: boolean = true;
 
-        text: string = "Drop %COMPONENT% here";
+        text: string = "Drop {0} here";
 
         regionView: RegionView;
 
@@ -61,9 +61,7 @@ module api.liveedit {
             super("region-view-drop-zone");
             this.itemType = builder.itemType;
             this.dropAllowed = builder.dropAllowed;
-            this.text = api.util.replaceTokens(builder.text, {
-                "%COMPONENT%": api.util.capitalize(this.itemType.getShortName())
-            });
+            this.text = api.util.StringHelper.format(builder.text, api.util.StringHelper.capitalize(this.itemType.getShortName()));
             this.regionView = builder.regionView;
             this.pageComponentView = builder.pageComponentView;
 

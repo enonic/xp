@@ -215,7 +215,8 @@ module api.form.inputtype.support {
         }
 
         valueBreaksRequiredContract(value: api.data.Value): boolean {
-            throw new Error("Must be implemented by inheritor: " + api.util.getClassName(this));
+            // basic non-empty check implementation
+            return value == null || api.util.StringHelper.isBlank(value.asString());
         }
 
         createInputOccurrenceElement(index: number, property: api.data.Property): api.dom.Element {

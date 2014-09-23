@@ -126,7 +126,7 @@ module api.ui.time {
                     api.ui.KeyHelper.isDel(event)) {
 
                     var typedDate = this.input.getValue();
-                    if (api.util.isStringEmpty(typedDate)) {
+                    if (api.util.StringHelper.isEmpty(typedDate)) {
                         this.calendar.selectDate(null);
                         this.selectedDate = null;
                         this.popup.hide();

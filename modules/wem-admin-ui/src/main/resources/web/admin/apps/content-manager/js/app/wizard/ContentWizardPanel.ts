@@ -237,7 +237,7 @@ module app.wizard {
 
         giveInitialFocus() {
             var newWithoutDisplayCameScript = this.isLayingOutNew() && !this.contentType.hasContentDisplayNameScript();
-            var displayNameEmpty = api.util.isStringEmpty(this.getPersistedItem().getDisplayName());
+            var displayNameEmpty = api.util.StringHelper.isEmpty(this.getPersistedItem().getDisplayName());
             var editWithEmptyDisplayName = !this.isLayingOutNew() && displayNameEmpty && !this.contentType.hasContentDisplayNameScript();
 
             if (newWithoutDisplayCameScript || editWithEmptyDisplayName) {
@@ -628,7 +628,7 @@ module app.wizard {
         }
 
         private resolveContentNameForUpdateReuest(): ContentName {
-            if (api.util.isStringEmpty(this.contentWizardHeader.getName()) && this.getPersistedItem().getName().isUnnamed()) {
+            if (api.util.StringHelper.isEmpty(this.contentWizardHeader.getName()) && this.getPersistedItem().getName().isUnnamed()) {
                 return this.getPersistedItem().getName();
             }
             else {

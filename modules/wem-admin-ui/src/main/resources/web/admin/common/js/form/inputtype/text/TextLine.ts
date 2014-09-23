@@ -50,15 +50,9 @@ module api.form.inputtype.text {
         }
 
         valueBreaksRequiredContract(value: api.data.Value): boolean {
-            if (value == null) {
-                return true;
-            }
-            return this.stringValueBreaksRequiredContract(value.asString());
+            return super.valueBreaksRequiredContract(value) || !value.getType().equals(api.data.type.ValueTypes.STRING);
         }
 
-        private stringValueBreaksRequiredContract(value: string): boolean {
-            return api.util.isStringBlank(value);
-        }
     }
 
     api.form.inputtype.InputTypeManager.register(new api.Class("TextLine", TextLine));

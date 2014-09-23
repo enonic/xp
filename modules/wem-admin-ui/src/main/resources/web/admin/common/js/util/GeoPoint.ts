@@ -24,7 +24,7 @@ module api.util {
         }
 
         static isValidString(s: string): boolean {
-            if (isStringBlank(s)) {
+            if (StringHelper.isBlank(s)) {
                 return false;
             }
 
