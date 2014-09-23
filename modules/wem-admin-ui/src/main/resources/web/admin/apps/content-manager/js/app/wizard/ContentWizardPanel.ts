@@ -708,11 +708,9 @@ module app.wizard {
         public checkContentCanBePublished(): boolean {
             if (!this.isContentFormValid) {
                 this.contentWizardStepForm.displayValidationErrors(true);
-                this.isContentFormValid = this.contentWizardStepForm.validate().isValid();
             }
             if (!this.isSiteTemplateFormValid) {
                 this.siteTemplateWizardStepForm.displayValidationErrors(true);
-                this.isSiteTemplateFormValid = this.siteTemplateWizardStepForm.validate().isValid();
             }
             return this.isContentFormValid && this.isSiteTemplateFormValid;
         }

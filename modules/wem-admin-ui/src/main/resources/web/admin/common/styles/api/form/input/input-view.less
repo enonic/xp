@@ -1,13 +1,18 @@
 .input-view {
   .clearfix();
 
-  /*&.invalid {
-    TODO: To be designed in a better way
-    border-right: 2px solid lightcoral;
-  }*/
-
   &.valid {
 
+    input, textarea {
+      .input-glow();
+    }
+  }
+
+  .display-validation-errors &.invalid {
+
+    input, textarea {
+      .input-error();
+    }
   }
 
   &.no-label {

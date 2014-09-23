@@ -7,7 +7,7 @@ module app.wizard {
             super(PublishAction.BASE_STRING);
         }
 
-        setToBePublishedAmout(amount: number) {
+        setToBePublishedAmount(amount: number) {
             if (amount < 1) {
                 this.setEnabled(false);
             } else {
