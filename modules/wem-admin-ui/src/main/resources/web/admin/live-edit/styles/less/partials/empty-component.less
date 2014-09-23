@@ -11,6 +11,34 @@
   font-family: @admin-font-family;
   text-align: center;
 
+  &.error {
+    background-color: #A31012;
+    .rendering-error {
+      pointer-events: none;
+    }
+    p {
+      color:white;
+      padding: 28px 10px;
+      font-size:20px;
+    }
+    a {
+      text-decoration: none;
+      color:white;
+      padding: 28px 10px;
+      font-size:14px;
+      pointer-events:all;
+      display: inline-block;
+      &:hover {
+        color:darken(white, 20%);
+      }
+    }
+    &[data-live-edit-type] {
+      &:before {
+        content:'';
+      }
+    }
+  }
+
   //Reset styles from page
   & * {
     font-family: @admin-font-family;

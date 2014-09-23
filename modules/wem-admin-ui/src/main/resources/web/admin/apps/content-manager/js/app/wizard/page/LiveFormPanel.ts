@@ -407,9 +407,9 @@ module app.wizard.page {
                     pageComponentView.showLoadingSpinner();
                     return this.liveEditPage.loadComponent(pageComponentView, componentUrl);
                 }).
-                catch((reason: any) => {
+                catch((errorMessage: string) => {
                     pageComponentView.hideLoadingSpinner();
-                    pageComponentView.showRenderingError(componentUrl);
+                    pageComponentView.showRenderingError(componentUrl, errorMessage);
                 }).done();
         }
 

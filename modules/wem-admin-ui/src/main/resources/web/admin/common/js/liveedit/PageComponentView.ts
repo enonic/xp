@@ -246,8 +246,9 @@ module api.liveedit {
             this.appendChild(this.placeholder);
         }
 
-        showRenderingError(url: string) {
-            this.placeholder.showRenderingError(url);
+        showRenderingError(url: string, errorMessage?: string) {
+            this.addClass("error");
+            this.placeholder.showRenderingError(url, errorMessage);
         }
 
         duplicate(duplicate: PAGE_COMPONENT): PageComponentView<PAGE_COMPONENT> {

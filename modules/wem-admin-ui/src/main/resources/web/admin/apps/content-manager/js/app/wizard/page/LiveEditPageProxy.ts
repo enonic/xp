@@ -212,7 +212,7 @@ module app.wizard.page {
             this.iFrameLoadDeffered.resolve(null);
         }
 
-        public loadComponent(pageComponentView: PageComponentView<PageComponent>, componentUrl: string): wemQ.Promise<void> {
+        public loadComponent(pageComponentView: PageComponentView<PageComponent>, componentUrl: string): wemQ.Promise<string> {
 
             var deferred = wemQ.defer<void>();
             api.util.assertNotNull(pageComponentView, "pageComponentView cannot be null");
@@ -241,10 +241,17 @@ module app.wizard.page {
 
                     newPageComponentView.select();
 
-                    deferred.resolve(null);
+                    deferred.resolve("");
                 },
-                error: () => {
-                    deferred.reject(null);
+                error: (jqXHR: JQueryXHR, textStatus: string, errorThrow: string) => {
+                    var responseHtml = wemjq.parseHTML(jqXHR.responseText);
+                    var errorMessage = "";
+                    responseHtml.forEach((el:HTMLElement, i) => {
+                        if (el.tagName && el.tagName.toLowerCase() == "title") {
+                            errorMessage = el.innerHTML;
+                        }
+                    });
+                    deferred.reject(errorMessage);
                 }
             });
 

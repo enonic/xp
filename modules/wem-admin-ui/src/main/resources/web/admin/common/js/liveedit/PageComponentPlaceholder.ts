@@ -2,12 +2,15 @@ module api.liveedit {
 
     export class PageComponentPlaceholder extends api.dom.DivEl {
 
-        showRenderingError(url: string) {
+        showRenderingError(url: string, errorMessage:string = "Error rendering component") {
 
             this.removeChildren();
             this.addClass("rendering-error");
+            var errorTitle = new api.dom.PEl();
+            errorTitle.setHtml(errorMessage);
+            this.appendChild(errorTitle);
             var urlAnchor = new api.dom.AEl();
-            urlAnchor.setHtml("Error rendering");
+            urlAnchor.setHtml("Show more...");
             urlAnchor.setUrl(url, "_blank");
             this.appendChild(urlAnchor);
         }
