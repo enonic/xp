@@ -110,7 +110,7 @@ final class XsltProcessorImpl
     private RuntimeException handleError( final TransformerException e )
     {
         final SourceLocator locator = e.getLocator();
-        final String systemId = locator.getSystemId();
+        final String systemId = locator != null ? locator.getSystemId() : null;
 
         if ( systemId != null )
         {
