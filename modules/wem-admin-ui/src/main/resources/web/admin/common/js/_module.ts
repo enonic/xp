@@ -109,6 +109,7 @@
 ///<reference path='content/page/layout/_module.ts' />
 ///<reference path='content/page/part/_module.ts' />
 ///<reference path='content/page/text/_module.ts' />
+///<reference path='content/page/inputtype/pagecontroller/_module.ts' />
 ///<reference path='content/site/_module.ts' />
 ///<reference path='content/site/template/_module.ts' />
 ///<reference path='content/form/_module.ts' />
@@ -118,7 +119,6 @@
 ///<reference path='content/form/inputtype/image/_module.ts' />
 ///<reference path='content/form/inputtype/tag/_module.ts' />
 ///<reference path='content/form/inputtype/geo/_module.ts' />
-///<reference path='content/form/inputtype/pagecontroller/_module.ts' />
 
 ///<reference path='aggregation/_module.ts' />
 

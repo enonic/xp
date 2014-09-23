@@ -1,4 +1,4 @@
-module api.content.form.inputtype.pagecontroller {
+module api.content.page.inputtype.pagecontroller {
 
     import support = api.form.inputtype.support;
     import ValueTypes = api.data.type.ValueTypes;
