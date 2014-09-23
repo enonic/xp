@@ -19,7 +19,7 @@ module api.data.type {
         }
 
         isConvertible(value: string): boolean {
-            if (api.util.isStringBlank(value)) {
+            if (api.util.StringHelper.isBlank(value)) {
                 return false;
             }
             // 2010-01-01T10:55:00

@@ -164,19 +164,6 @@ module api.form.inputtype.singleselector {
             return this.newValue(inputEl.getValue());
         }
 
-        valueBreaksRequiredContract(value: api.data.Value): boolean {
-
-            if (value == null) {
-                return true;
-            }
-
-            if (api.util.isStringBlank(value.asString())) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-
         private comboboxFilter(item: Option<string>, args) {
             return !(args && args.searchString && item.displayValue.toUpperCase().indexOf(args.searchString.toUpperCase()) == -1);
         }

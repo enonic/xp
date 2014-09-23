@@ -20,7 +20,7 @@ module api.data.type {
         isConvertible(value: string): boolean {
 
             var asString = <string>value;
-            if (api.util.isStringBlank(value)) {
+            if (api.util.StringHelper.isBlank(value)) {
                 return false;
             }
             return api.util.LocalTime.isValidString(value);

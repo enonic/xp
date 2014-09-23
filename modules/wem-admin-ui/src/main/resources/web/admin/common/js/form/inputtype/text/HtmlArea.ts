@@ -43,14 +43,7 @@ module api.form.inputtype.text {
         }
 
         valueBreaksRequiredContract(value: api.data.Value): boolean {
-            if (value == null) {
-                return true;
-            }
-            return this.stringValueBreaksRequiredContract(value.asString());
-        }
-
-        private stringValueBreaksRequiredContract(value: string): boolean {
-            return api.util.isStringBlank(value);
+            return super.valueBreaksRequiredContract(value) || !value.getType().equals(api.data.type.ValueTypes.HTML_PART);
         }
     }
 

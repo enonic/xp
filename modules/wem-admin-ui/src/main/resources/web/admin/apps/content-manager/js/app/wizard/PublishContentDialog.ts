@@ -46,7 +46,7 @@ module app.wizard {
                 //this.grid = new CompareContentGrid(event.getContent());
                 //this.grid.selectAll();
 //                this.grid.onRowSelectionChanged((selectedRows:TreeNode<ContentSummaryAndCompareStatus>[]) => {
-//                    this.publishAction.setToBePublishedAmout(selectedRows.length);
+//                    this.publishAction.setToBePublishedAmount(selectedRows.length);
 //                });
                 this.publishList.clear();
                 var req = api.content.CompareContentRequest.fromContentSummaries([this.content]);

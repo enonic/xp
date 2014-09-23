@@ -100,7 +100,7 @@ module api.ui.selector.dropdown {
 
         private defaultFilter(option: Option<OPTION_DISPLAY_VALUE>, args: any) {
 
-            if (!args.searchString || api.util.isStringEmpty(args.searchString)) {
+            if (!args.searchString || api.util.StringHelper.isEmpty(args.searchString)) {
                 return true;
             }
 

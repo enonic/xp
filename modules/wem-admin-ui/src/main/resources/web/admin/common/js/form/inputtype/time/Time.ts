@@ -43,7 +43,6 @@ module api.content.form.inputtype.time {
             });
         }
 
-
         getValue(occurrence: api.dom.Element): api.data.Value {
             var localTimeEl: api.ui.time.LocalTime = <api.ui.time.LocalTime>occurrence;
             var selectedTime = localTimeEl.getSelectedTime();
@@ -51,16 +50,8 @@ module api.content.form.inputtype.time {
             return ValueTypes.LOCAL_TIME.newValue(time);
         }
 
-
         valueBreaksRequiredContract(value: api.data.Value): boolean {
-            if (value == null) {
-                return true;
-            }
-            if (api.util.isStringBlank(value.asString())) {
-                return true;
-            }
-            return !value.getType().equals(ValueTypes.LOCAL_TIME);
-
+            return super.valueBreaksRequiredContract(value) || !value.getType().equals(ValueTypes.LOCAL_TIME);
         }
 
     }
