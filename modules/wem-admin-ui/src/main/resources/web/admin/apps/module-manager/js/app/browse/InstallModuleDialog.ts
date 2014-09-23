@@ -49,7 +49,6 @@ module app.browse {
                 new api.module.InstallModuleRequest(url).sendAndParse()
                     .then(() => {
                         api.notify.showFeedback('Module \'' + url + '\' installed');
-                        moduleTreeGrid.reload();
                     }).catch((reason: any) => {
                         api.DefaultErrorHandler.handle('Error while installing module.');
                     }).done();
