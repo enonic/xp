@@ -265,7 +265,13 @@ module api.content.form.inputtype.image {
                         return;
                     }
                     var value = new api.data.Value(contentId, ValueTypes.CONTENT_ID);
-                    this.notifyValueAdded(value);
+
+                    if (comboBox.countSelectedOptions() == 1) { // overwrite initial value
+                        this.notifyValueChanged(new api.form.inputtype.ValueChangedEvent(value, 0));
+                    }
+                    else {
+                        this.notifyValueAdded(value);
+                    }
                 }
                 this.validate(false);
             });
