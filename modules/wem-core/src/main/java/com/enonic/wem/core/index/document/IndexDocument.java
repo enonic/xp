@@ -7,7 +7,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexType;
 
 public class IndexDocument
@@ -122,18 +121,11 @@ public class IndexDocument
             return this;
         }
 
-        public Builder index( final Index index )
-        {
-            this.indexName = index.getName();
-            return this;
-        }
-
         public Builder index( final String indexName )
         {
             this.indexName = indexName;
             return this;
         }
-
 
         public Builder analyzer( final String analyzer )
         {

@@ -12,7 +12,6 @@ import org.elasticsearch.common.xcontent.XContentType;
 import org.junit.Test;
 
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexConstants;
 import com.enonic.wem.core.index.document.IndexDocument;
 import com.enonic.wem.core.index.document.IndexDocumentDateItem;
@@ -32,7 +31,7 @@ public class XContentBuilderFactoryTest
         throws Exception
     {
         IndexDocument indexDocument = IndexDocument.newIndexDocument().
-            index( Index.SEARCH ).
+            index( "testindex" ).
             indexType( "test" ).
             analyzer( "myAnalyzer" ).
             build();
@@ -52,7 +51,7 @@ public class XContentBuilderFactoryTest
     public void multiple_orderby_entries_gives_one()
     {
         IndexDocument indexDocument = IndexDocument.newIndexDocument().
-            index( Index.SEARCH ).
+            index( "testindex" ).
             indexType( "test" ).
             addEntry( new IndexDocumentStringItem( IndexDocumentItemPath.from( "myField" ), "myValue1" ) ).
             addEntry( new IndexDocumentStringItem( IndexDocumentItemPath.from( "myField" ), "myValue2" ) ).
@@ -77,7 +76,7 @@ public class XContentBuilderFactoryTest
     {
 
         IndexDocument indexDocument = IndexDocument.newIndexDocument().
-            index( Index.SEARCH ).
+            index( "testindex" ).
             indexType( "test" ).
             addEntry( new IndexDocumentStringItem( IndexDocumentItemPath.from( "myField" ), "myValue1" ) ).
             addEntry( new IndexDocumentStringItem( IndexDocumentItemPath.from( "myField" ), "myValue2" ) ).

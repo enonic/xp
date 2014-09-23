@@ -34,7 +34,6 @@ import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.core.entity.index.NodeIndexDocumentFactory;
 import com.enonic.wem.core.index.DeleteDocument;
-import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.index.IndexException;
 import com.enonic.wem.core.index.IndexService;
@@ -78,18 +77,18 @@ public class ElasticsearchIndexService
         this.client.close();
     }
 
-    private IndexStatus getIndexStatus( final Index index, final boolean waitForStatusYellow )
+    private IndexStatus getIndexStatus( final String indexName, final boolean waitForStatusYellow )
     {
-        final ClusterHealthResponse clusterHealth = getClusterHealth( index, waitForStatusYellow );
+        final ClusterHealthResponse clusterHealth = getClusterHealth( indexName, waitForStatusYellow );
 
         LOG.info( "Cluster in state: " + clusterHealth.getStatus().toString() );
 
         return IndexStatus.valueOf( clusterHealth.getStatus().name() );
     }
 
-    private ClusterHealthResponse getClusterHealth( Index index, boolean waitForYellow )
+    private ClusterHealthResponse getClusterHealth( final String indexName, boolean waitForYellow )
     {
-        ClusterHealthRequest request = new ClusterHealthRequest( index.getName() );
+        ClusterHealthRequest request = new ClusterHealthRequest( indexName );
 
         if ( waitForYellow )
         {
@@ -114,13 +113,6 @@ public class ElasticsearchIndexService
         }
 
         return clusterHealthResponse;
-    }
-
-    private boolean indexExists( final Index index )
-    {
-        final IndicesExistsResponse exists =
-            this.client.admin().indices().exists( new IndicesExistsRequest( index.getName() ) ).actionGet();
-        return exists.isExists();
     }
 
     public void createIndex( final String indexName, final String settings )

@@ -17,7 +17,6 @@ import com.enonic.wem.api.entity.NodeVersion;
 import com.enonic.wem.api.entity.NodeVersionId;
 import com.enonic.wem.api.entity.NodeVersions;
 import com.enonic.wem.api.repository.Repository;
-import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.result.SearchResult;
 import com.enonic.wem.core.index.result.SearchResultEntry;
@@ -34,8 +33,6 @@ import static com.enonic.wem.core.elasticsearch.VersionXContentBuilderFactory.TI
 public class ElasticsearchVersionService
     implements VersionService
 {
-    private final static Index VERSION_INDEX = Index.VERSION;
-
     private static final boolean DEFAULT_REFRESH = true;
 
     private ElasticsearchDao elasticsearchDao;

@@ -19,7 +19,6 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.indices.IndexMissingException;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.slf4j.Logger;
@@ -119,26 +118,7 @@ public class ElasticsearchDao
 
     private SearchResult doSearchRequest( final SearchRequest searchRequest )
     {
-        final SearchResponse searchResponse;
-        try
-        {
-            searchResponse = this.client.search( searchRequest ).actionGet();
-        }
-        catch ( IndexMissingException e )
-        {
-            // TODO: Index must be injected here, as dynamic indexes should not cause exception if not existing
-
-            //if ( index.isDynamic() )
-            //{
-            LOG.warn( "Indices does not exist", searchRequest.indices() );
-            return SearchResult.create().build();
-            //}
-            //else
-            //{
-            //    throw new IndexException( "Index " + index.name() + " does not exist" );
-            //}
-
-        }
+        final SearchResponse searchResponse = this.client.search( searchRequest ).actionGet();
 
         return SearchResultFactory.create( searchResponse );
     }
