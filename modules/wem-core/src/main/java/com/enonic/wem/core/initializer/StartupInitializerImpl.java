@@ -19,7 +19,7 @@ final class StartupInitializerImpl
     public void cleanData()
         throws Exception
     {
-        initializeRespositories();
+        initializeRespositories( true );
     }
 
     public void initializeData()
