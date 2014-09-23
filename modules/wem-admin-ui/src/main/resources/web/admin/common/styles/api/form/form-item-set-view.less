@@ -5,6 +5,27 @@
 
   }
 
+  .display-validation-errors &.invalid {
+    border: 2px solid lightcoral;
+
+    // subtract 2px border from the every element touching edges
+    .occurrence-views-container {
+      padding-top: 8px;
+
+      .form-item-set-occurrence-view {
+        margin: 0 8px 10px 8px;
+      }
+    }
+
+    & > .bottom-button-row {
+      padding: 0 8px 10px 8px;
+    }
+
+    & > .validation-viewer {
+      padding: 0 8px 8px 8px;
+    }
+  }
+
   .occurrence-views-container {
     background-color: @admin-light-gray-bg;
     padding-top: 10px;
@@ -90,31 +111,6 @@
     margin-left: -10px;
     margin-right: -10px;
   }
-}
-
-.display-validation-errors {
-
-  .form-item-set-view.invalid {
-    border: 2px solid lightcoral;
-
-    // subtract 2px border from the every element touching edges
-    .occurrence-views-container {
-      padding-top: 8px;
-
-      .form-item-set-occurrence-view {
-        margin: 0 8px 10px 8px;
-      }
-    }
-
-    & > .bottom-button-row {
-      padding: 0 8px 10px 8px;
-    }
-
-    & > .validation-viewer {
-      padding: 0 8px 8px 8px;
-    }
-  }
-
 }
 
 ._0-240, ._240-360, ._360-540, ._540-720 {
