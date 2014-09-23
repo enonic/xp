@@ -1,5 +1,7 @@
 module api.content.site {
 
+    import ModuleKey = api.module.ModuleKey;
+
     export class Site implements api.Equitable, api.Cloneable {
 
         private templateKey: api.content.site.template.SiteTemplateKey;
@@ -17,6 +19,10 @@ module api.content.site {
 
         getModuleConfigs(): ModuleConfig[] {
             return this.moduleConfigs;
+        }
+
+        getModuleKeys(): ModuleKey[] {
+            return this.moduleConfigs.map((config: ModuleConfig) => config.getModuleKey());
         }
 
         equals(o: api.Equitable): boolean {

@@ -51,6 +51,8 @@ public final class InputTypes
 
     public static final InputType XML = new Xml();
 
+    public static final InputType PAGE_CONTROLLER = new PageController();
+
     private static final ImmutableList<InputType> inputTypes = new ImmutableList.Builder<InputType>().
         add( COLOR ).
         add( COMBO_BOX ).
@@ -72,6 +74,7 @@ public final class InputTypes
         add( TEXT_LINE ).
         add( LONG ).
         add( XML ).
+        add( PAGE_CONTROLLER ).
         build();
 
     private static LinkedHashMap<String, InputType> inputTypeByName = new LinkedHashMap<>();
