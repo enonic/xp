@@ -42,13 +42,10 @@ module api.content.form.inputtype.long {
         }
 
         valueBreaksRequiredContract(value: api.data.Value): boolean {
-            if (value == null) {
-                return true;
-            }
-            return !value.getType().equals(ValueTypes.LONG);
+            return value == null || !api.util.NumberHelper.isWholeNumber(value.asNumber());
         }
 
     }
-    api.form.inputtype.InputTypeManager.register(new api.Class("Long", Long));
 
+    api.form.inputtype.InputTypeManager.register(new api.Class("Long", Long));
 }

@@ -63,19 +63,6 @@ module api.data {
             return <api.content.ContentId>this.value;
         }
 
-        getBoolean(): boolean {
-            if (this.isNull()) {
-                return null;
-            }
-            return <boolean>this.value;
-        }
-
-        getNumber(): number {
-            if (this.isNull()) {
-                return null;
-            }
-            return <number><number>this.value;
-        }
 
         asString(): string {
             if (this.isNull()) {

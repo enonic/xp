@@ -335,7 +335,7 @@ module api.liveedit {
             }
 
             var asString = previousItemView.getData(ItemViewId.DATA_ATTRIBUTE);
-            if (api.util.isStringEmpty(asString)) {
+            if (api.util.StringHelper.isEmpty(asString)) {
                 return null;
             }
             return ItemViewId.fromString(asString);

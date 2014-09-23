@@ -49,7 +49,7 @@ module api.util {
         }
 
         static isValidString(s: string): boolean {
-            if (isStringBlank(s)) {
+            if (StringHelper.isBlank(s)) {
                 return false;
             }
             var re = /^[0-2]?\d:[0-5]?\d$/;

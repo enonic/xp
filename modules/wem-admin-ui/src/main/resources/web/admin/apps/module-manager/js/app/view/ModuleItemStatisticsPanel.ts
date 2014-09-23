@@ -4,13 +4,13 @@ module app.view {
 
     export class ModuleItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.module.ModuleSummary> {
 
-        private upgradeNeeded:boolean = true;
-        private upgradeMessageContainer:api.dom.DivEl;
-        private moduleDataContainer:api.dom.DivEl;
-        private moduleActions:api.ui.Action[] = [];
-        private actionMenu:api.ui.menu.ActionMenu;
+        private upgradeNeeded: boolean = true;
+        private upgradeMessageContainer: api.dom.DivEl;
+        private moduleDataContainer: api.dom.DivEl;
+        private moduleActions: api.ui.Action[] = [];
+        private actionMenu: api.ui.menu.ActionMenu;
 
-        constructor() {
+        constructor() {
             super("module-item-statistics-panel");
 
             this.upgradeMessageContainer = new api.dom.DivEl("upgrade-message-container");
@@ -19,7 +19,9 @@ module app.view {
                 this.appendChild(this.upgradeMessageContainer)
             }
 
-            this.actionMenu = new api.ui.menu.ActionMenu("Module actions", ModuleBrowseActions.get().START_MODULE, ModuleBrowseActions.get().STOP_MODULE, ModuleBrowseActions.get().UNINSTALL_MODULE);
+            this.actionMenu =
+            new api.ui.menu.ActionMenu("Module actions", ModuleBrowseActions.get().START_MODULE, ModuleBrowseActions.get().STOP_MODULE,
+                ModuleBrowseActions.get().UNINSTALL_MODULE);
 
             this.appendChild(this.actionMenu);
 
@@ -31,7 +33,7 @@ module app.view {
 
         setItem(item: api.app.view.ViewItem<api.module.ModuleSummary>) {
             super.setItem(item);
-            this.actionMenu.setLabel(api.util.capitalize(item.getModel().getState()));
+            this.actionMenu.setLabel(api.util.StringHelper.capitalize(item.getModel().getState()));
 
             if (item.getModel().getState() == "started") {
                 this.actionMenu.disableAction(ModuleBrowseActions.get().START_MODULE);
@@ -61,16 +63,16 @@ module app.view {
 
     export class ModuleItemDataGroup extends api.dom.DivEl {
 
-        private header:api.dom.H2El;
+        private header: api.dom.H2El;
 
-        constructor(title:string) {
+        constructor(title: string) {
             super("module-item-data-group");
             this.header = new api.dom.H2El();
             this.header.getEl().setInnerHtml(title);
             this.appendChild(this.header);
         }
 
-        addDataList(header:string, ...datas:string[]) {
+        addDataList(header: string, ...datas: string[]) {
             var dataList = new api.dom.UlEl("data-list");
 
             if (header) {

@@ -31,7 +31,7 @@ module api.content {
         }
 
         static isValidContentId(id: string): boolean {
-            return !api.util.isStringEmpty(id) && !api.util.isStringBlank(id);
+            return !api.util.StringHelper.isEmpty(id) && !api.util.StringHelper.isBlank(id);
         }
     }
 }
