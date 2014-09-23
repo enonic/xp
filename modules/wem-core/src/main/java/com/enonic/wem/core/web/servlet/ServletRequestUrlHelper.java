@@ -37,4 +37,24 @@ public final class ServletRequestUrlHelper
 
         return str.toString();
     }
+
+    public static String createUriWithHost( final String path )
+    {
+        return createUriWithHost( ServletRequestHolder.getRequest(), path );
+    }
+
+    public static String createUriWithHost( final HttpServletRequest req, final String path )
+    {
+        final StringBuilder str = new StringBuilder();
+        str.append( req.getScheme() ).append( "://" );
+        str.append( req.getServerName() );
+
+        if ( req.getServerPort() != 80 )
+        {
+            str.append( ":" ).append( req.getServerPort() );
+        }
+
+        str.append( createUri( req, path ) );
+        return str.toString();
+    }
 }

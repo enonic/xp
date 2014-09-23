@@ -16,6 +16,7 @@ import com.enonic.wem.api.content.site.SiteService;
 import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.event.EventListener;
 import com.enonic.wem.api.event.EventPublisher;
+import com.enonic.wem.api.initializer.DataInitializer;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.relationship.RelationshipService;
 import com.enonic.wem.api.schema.content.ContentTypeService;
@@ -44,7 +45,9 @@ public final class Activator
         // Install core module
         install( new CoreModule() );
 
+        // Import services
         service( EventListener.class ).importMultiple();
+        service( DataInitializer.class ).importMultiple();
 
         // Export needed services
         service( PageComponentService.class ).export();

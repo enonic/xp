@@ -1,43 +1,34 @@
 package com.enonic.wem.core.initializer;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.enonic.wem.api.content.ContentConstants;
-import com.enonic.wem.api.content.ContentService;
+import com.enonic.wem.api.initializer.DataInitializer;
 import com.enonic.wem.api.repository.Repository;
-import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.repository.RepositoryInitializer;
 
 final class StartupInitializerImpl
     implements StartupInitializer
 {
-    private final static Logger LOG = LoggerFactory.getLogger( StartupInitializerImpl.class );
-
-    @Inject
-    protected IndexService indexService;
-
-    @Inject
-    protected ContentService contentService;
-
     @Inject
     protected RepositoryInitializer repositoryInitializer;
 
+    @Inject
+    protected Iterable<DataInitializer> initializers;
 
-    @PostConstruct
-    public void start()
+    public void cleanData()
         throws Exception
     {
-        initialize( false );
+        initializeRespositories();
     }
 
-    public void initialize( final boolean reinit )
+    public void initializeData()
         throws Exception
     {
-        initializeRespositories( reinit );
+        for ( final DataInitializer initializer : this.initializers )
+        {
+            initializer.initialize();
+        }
     }
 
     private void initializeRespositories( final boolean reinit )
