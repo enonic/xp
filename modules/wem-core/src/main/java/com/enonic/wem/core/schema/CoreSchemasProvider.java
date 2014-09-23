@@ -169,6 +169,9 @@ public final class CoreSchemasProvider
         // TODO: add input: controller of type PageController
         // TODO: add input: canRender of type ContentTypeFilter
         return Form.newForm().
+            addFormItem( Input.newInput().name( "controller" ).
+                inputType( InputTypes.PAGE_CONTROLLER ).
+                build() ).
             build();
     }
 
