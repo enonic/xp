@@ -23,11 +23,17 @@ module api.content.page {
             this.setName(new DescriptorName(json.name));
             this.setDisplayName(json.displayName);
             this.setConfig(json.config != null ? new api.form.Form(json.config) : null);
+            this.setKey(DescriptorKey.fromString(json.key));
             for (var i = 0; i < json.regions.length; i++) {
                 var region = new api.content.page.region.RegionDescriptorBuilder().fromJson(json.regions[i]).build();
                 this.regions.push(region);
             }
 
+            return this;
+        }
+
+        public setKey(key: DescriptorKey): PageDescriptorBuilder {
+            this.key = key;
             return this;
         }
 

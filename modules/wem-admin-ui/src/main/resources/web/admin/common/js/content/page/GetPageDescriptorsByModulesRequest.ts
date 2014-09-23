@@ -29,11 +29,9 @@ module api.content.page {
 
         private fromJsonToPageDescriptors(json: PageDescriptorsJson): PageDescriptor[] {
 
-            var array: api.content.page.PageDescriptor[] = [];
-            json.descriptors.forEach((descriptorJson: PageDescriptorJson)=> {
-                array.push(this.fromJsonToPageDescriptor(descriptorJson));
+            return json.descriptors.map((descriptorJson: PageDescriptorJson)=> {
+                return this.fromJsonToPageDescriptor(descriptorJson);
             });
-            return array;
         }
 
     }

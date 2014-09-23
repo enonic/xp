@@ -118,6 +118,7 @@
 ///<reference path='content/form/inputtype/image/_module.ts' />
 ///<reference path='content/form/inputtype/tag/_module.ts' />
 ///<reference path='content/form/inputtype/geo/_module.ts' />
+///<reference path='content/form/inputtype/pagecontroller/_module.ts' />
 
 ///<reference path='aggregation/_module.ts' />
 

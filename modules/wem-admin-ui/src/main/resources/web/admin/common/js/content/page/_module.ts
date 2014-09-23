@@ -19,6 +19,8 @@
 ///<reference path='PageDescriptorResourceRequest.ts' />
 ///<reference path='GetPageDescriptorByKeyRequest.ts' />
 ///<reference path='GetPageDescriptorsByModulesRequest.ts' />
+///<reference path='PageDescriptorDropdown.ts' />
+///<reference path='PageDescriptorViewer.ts' />
 
 ///<reference path='PageTemplateKey.ts' />
 ///<reference path='PageTemplateName.ts' />
