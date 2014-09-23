@@ -14,20 +14,13 @@ import com.enonic.wem.core.index.IndexConstants;
 public class IndexDocumentItemFactory
 {
 
-    private final boolean decideFulltextByType;
-
-    public IndexDocumentItemFactory( final boolean decideFulltextByType )
-    {
-        this.decideFulltextByType = decideFulltextByType;
-    }
-
-    public Set<AbstractIndexDocumentItem> create( final IndexDocumentItemPath path, final Value value,
-                                                  final PropertyIndexConfig propertyIndexConfig )
+    public static Set<AbstractIndexDocumentItem> create( final IndexDocumentItemPath path, final Value value,
+                                                         final PropertyIndexConfig propertyIndexConfig )
     {
         return doCreate( propertyIndexConfig, path, value );
     }
 
-    public Set<AbstractIndexDocumentItem> create( final Property property, final PropertyIndexConfig propertyIndexConfig )
+    public static Set<AbstractIndexDocumentItem> create( final Property property, final PropertyIndexConfig propertyIndexConfig )
     {
         final IndexDocumentItemPath path = IndexDocumentItemPath.from( property );
         final Value propertyValue = property.getValue();
@@ -35,8 +28,8 @@ public class IndexDocumentItemFactory
         return doCreate( propertyIndexConfig, path, propertyValue );
     }
 
-    private Set<AbstractIndexDocumentItem> doCreate( final PropertyIndexConfig propertyIndexConfig, final IndexDocumentItemPath path,
-                                                     final Value propertyValue )
+    private static Set<AbstractIndexDocumentItem> doCreate( final PropertyIndexConfig propertyIndexConfig, final IndexDocumentItemPath path,
+                                                            final Value propertyValue )
     {
         final Set<AbstractIndexDocumentItem> indexDocumentItems = Sets.newHashSet();
 
@@ -47,14 +40,7 @@ public class IndexDocumentItemFactory
 
         addIndexBaseTypeEntries( path, indexDocumentItems, propertyValue );
 
-        if ( decideFulltextByType )
-        {
-            addFulltextFieldsTypeBased( path, propertyValue, indexDocumentItems );
-        }
-        else
-        {
-            addFulltextFields( propertyIndexConfig, path, propertyValue, indexDocumentItems );
-        }
+        addFulltextFields( propertyIndexConfig, path, propertyValue, indexDocumentItems );
 
         indexDocumentItems.add( createOrderbyItemType( path, propertyValue ) );
 
@@ -63,7 +49,7 @@ public class IndexDocumentItemFactory
         return indexDocumentItems;
     }
 
-    private void addAllFields( final Value propertyValue, final Set<AbstractIndexDocumentItem> indexDocumentItems )
+    private static void addAllFields( final Value propertyValue, final Set<AbstractIndexDocumentItem> indexDocumentItems )
     {
 
         // TODO: This should be decided e.g by PropertyIndexConfig
@@ -77,8 +63,8 @@ public class IndexDocumentItemFactory
         }
     }
 
-    private void addFulltextFields( final PropertyIndexConfig propertyIndexConfig, final IndexDocumentItemPath path,
-                                    final Value propertyValue, final Set<AbstractIndexDocumentItem> indexDocumentItems )
+    private static void addFulltextFields( final PropertyIndexConfig propertyIndexConfig, final IndexDocumentItemPath path,
+                                           final Value propertyValue, final Set<AbstractIndexDocumentItem> indexDocumentItems )
     {
         if ( propertyIndexConfig.fulltextEnabled() )
         {
@@ -91,8 +77,8 @@ public class IndexDocumentItemFactory
         }
     }
 
-    private void addFulltextFieldsTypeBased( final IndexDocumentItemPath path, final Value propertyValue,
-                                             final Set<AbstractIndexDocumentItem> indexDocumentItems )
+    private static void addFulltextFieldsTypeBased( final IndexDocumentItemPath path, final Value propertyValue,
+                                                    final Set<AbstractIndexDocumentItem> indexDocumentItems )
     {
         final ValueType valueType = propertyValue.getType();
 
@@ -103,20 +89,20 @@ public class IndexDocumentItemFactory
         }
     }
 
-    private boolean isTextField( final ValueType valueType )
+    private static boolean isTextField( final ValueType valueType )
     {
         return ( valueType == ValueTypes.STRING ) ||
             ( valueType == ValueTypes.HTML_PART ) ||
             ( valueType == ValueTypes.XML );
     }
 
-    private IndexDocumentOrderbyItem createOrderbyItemType( final IndexDocumentItemPath path, final Value propertyValue )
+    private static IndexDocumentOrderbyItem createOrderbyItemType( final IndexDocumentItemPath path, final Value propertyValue )
     {
         return new IndexDocumentOrderbyItem( path, OrderbyValueResolver.getOrderbyValue( propertyValue ) );
     }
 
-    private void addIndexBaseTypeEntries( final IndexDocumentItemPath path, final Set<AbstractIndexDocumentItem> indexDocumentItems,
-                                          final Value propertyValue )
+    private static void addIndexBaseTypeEntries( final IndexDocumentItemPath path, final Set<AbstractIndexDocumentItem> indexDocumentItems,
+                                                 final Value propertyValue )
     {
         if ( propertyValue.isDateType() )
         {
@@ -136,17 +122,17 @@ public class IndexDocumentItemFactory
         indexDocumentItems.add( createStringItemType( path, propertyValue ) );
     }
 
-    private IndexDocumentGeoPointItem createGeoPointItemType( final IndexDocumentItemPath path, final Value propertyValue )
+    private static IndexDocumentGeoPointItem createGeoPointItemType( final IndexDocumentItemPath path, final Value propertyValue )
     {
         return new IndexDocumentGeoPointItem( path, propertyValue.asString() );
     }
 
-    private IndexDocumentStringItem createStringItemType( final IndexDocumentItemPath path, final Value propertyValue )
+    private static IndexDocumentStringItem createStringItemType( final IndexDocumentItemPath path, final Value propertyValue )
     {
         return new IndexDocumentStringItem( path, propertyValue.asString() );
     }
 
-    private IndexDocumentNumberItem createNumericItemType( final IndexDocumentItemPath path, final Value propertyValue )
+    private static IndexDocumentNumberItem createNumericItemType( final IndexDocumentItemPath path, final Value propertyValue )
     {
         return new IndexDocumentNumberItem( path, propertyValue.asDouble() );
     }
@@ -156,7 +142,7 @@ public class IndexDocumentItemFactory
 //        return new IndexDocumentDateItem( path, propertyValue.asDateTime() );
 //    }
 
-    private IndexDocumentDateItem createInstantType( final IndexDocumentItemPath path, final Value propertyValue )
+    private static IndexDocumentDateItem createInstantType( final IndexDocumentItemPath path, final Value propertyValue )
     {
         return new IndexDocumentDateItem( path, propertyValue.asInstant() );
     }

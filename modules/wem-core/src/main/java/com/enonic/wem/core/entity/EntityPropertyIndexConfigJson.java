@@ -8,8 +8,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.data.DataPath;
-import com.enonic.wem.api.entity.EntityIndexConfig;
-import com.enonic.wem.api.entity.EntityPropertyIndexConfig;
+import com.enonic.wem.api.entity.NodeIndexConfig;
+import com.enonic.wem.api.entity.NodePropertyIndexConfig;
 import com.enonic.wem.api.entity.PropertyIndexConfig;
 import com.enonic.wem.core.entity.relationship.EntityIndexConfigJson;
 
@@ -19,7 +19,7 @@ public class EntityPropertyIndexConfigJson
 
     private final Map<String, PropertyIndexConfigJson> propertyIndexConfigs;
 
-    public EntityPropertyIndexConfigJson( final EntityPropertyIndexConfig indexConfig )
+    public EntityPropertyIndexConfigJson( final NodePropertyIndexConfig indexConfig )
     {
         super( indexConfig.getAnalyzer(), indexConfig.getCollection(), indexConfig.isDecideFulltextByValueType() );
         this.propertyIndexConfigs = translateMap( indexConfig.getPropertyIndexConfigs() );
@@ -49,9 +49,9 @@ public class EntityPropertyIndexConfigJson
         return translatedMap;
     }
 
-    public EntityIndexConfig toEntityIndexConfig()
+    public NodeIndexConfig toEntityIndexConfig()
     {
-        final EntityPropertyIndexConfig.Builder builder = EntityPropertyIndexConfig.newEntityIndexConfig().
+        final NodePropertyIndexConfig.Builder builder = NodePropertyIndexConfig.create().
             analyzer( this.getAnalyzer() ).
             collection( this.getCollection() );
 

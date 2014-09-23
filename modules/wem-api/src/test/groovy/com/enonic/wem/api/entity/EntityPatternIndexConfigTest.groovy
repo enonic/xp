@@ -9,24 +9,24 @@ class EntityPatternIndexConfigTest
     def "test patterns"()
     {
         given:
-        final EntityIndexConfig config = EntityIndexConfig.newPatternIndexConfig().
-            addConfig( EntityPatternIndexConfig.newConfig().
+        final NodeIndexConfig config = NodeIndexConfig.newPatternIndexConfig().
+            addConfig( NodePatternIndexConfig.newConfig().
                            propertyIndexConfig( allConfig() ).
                            path( DataPath.from( "data" ) ).
                            build() ).
-            addConfig( EntityPatternIndexConfig.newConfig().
+            addConfig( NodePatternIndexConfig.newConfig().
                            propertyIndexConfig( nonConfig() ).
                            path( DataPath.from( "page" ) ).
                            build() ).
-            addConfig( EntityPatternIndexConfig.newConfig().
+            addConfig( NodePatternIndexConfig.newConfig().
                            propertyIndexConfig( allConfig() ).
                            path( DataPath.from( "page.displayname" ) ).
                            build() ).
-            addConfig( EntityPatternIndexConfig.newConfig().
+            addConfig( NodePatternIndexConfig.newConfig().
                            propertyIndexConfig( nonConfig() ).
                            path( DataPath.from( "page.displayname.exclude" ) ).
                            build() ).
-            addConfig( EntityPatternIndexConfig.newConfig().
+            addConfig( NodePatternIndexConfig.newConfig().
                            propertyIndexConfig( allConfig() ).
                            path( DataPath.from( "page.displayname.exclude.others" ) ).
                            build() ).
@@ -52,7 +52,7 @@ class EntityPatternIndexConfigTest
 
     private PropertyIndexConfig defaultConfig()
     {
-        return PropertyIndexConfig.newPropertyIndexConfig().
+        return PropertyIndexConfig.create().
             enabled( true ).
             fulltextEnabled( false ).
             nGramEnabled( false ).
@@ -61,11 +61,11 @@ class EntityPatternIndexConfigTest
 
     private PropertyIndexConfig nonConfig()
     {
-        return PropertyIndexConfig.INDEXNON_PROPERTY_CONFIG
+        return PropertyIndexConfig.SKIP
     }
 
     private PropertyIndexConfig allConfig()
     {
-        return PropertyIndexConfig.INDEXALL_PROPERTY_CONFIG
+        return PropertyIndexConfig.FULL
     }
 }

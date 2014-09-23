@@ -12,7 +12,7 @@ public class CreateNodeParams
 
     private Attachments attachments;
 
-    private EntityIndexConfig entityIndexConfig;
+    private NodeIndexConfig nodeIndexConfig;
 
     private boolean embed;
 
@@ -46,9 +46,9 @@ public class CreateNodeParams
         return this;
     }
 
-    public CreateNodeParams entityIndexConfig( final EntityIndexConfig entityIndexConfig )
+    public CreateNodeParams entityIndexConfig( final NodeIndexConfig nodeIndexConfig )
     {
-        this.entityIndexConfig = entityIndexConfig;
+        this.nodeIndexConfig = nodeIndexConfig;
         return this;
     }
 
@@ -78,9 +78,9 @@ public class CreateNodeParams
         return attachments;
     }
 
-    public EntityIndexConfig getEntityIndexConfig()
+    public NodeIndexConfig getNodeIndexConfig()
     {
-        return entityIndexConfig;
+        return nodeIndexConfig;
     }
 
     public boolean isEmbed()

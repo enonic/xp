@@ -9,20 +9,20 @@ import com.google.common.collect.Maps;
 import com.enonic.wem.api.data.DataPath;
 import com.enonic.wem.api.data.Property;
 
-public class EntityPropertyIndexConfig
-    extends EntityIndexConfig
+public class NodePropertyIndexConfig
+    extends NodeIndexConfig
 {
     private final ImmutableMap<DataPath, PropertyIndexConfig> propertyIndexConfigs;
 
-    public static Builder newEntityIndexConfig()
-    {
-        return new Builder();
-    }
-
-    private EntityPropertyIndexConfig( final Builder builder )
+    private NodePropertyIndexConfig( final Builder builder )
     {
         super( builder );
         this.propertyIndexConfigs = ImmutableMap.copyOf( builder.propertyIndexConfigs );
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
     }
 
     public PropertyIndexConfig getPropertyIndexConfig( final DataPath dataPath )
@@ -47,7 +47,7 @@ public class EntityPropertyIndexConfig
             return false;
         }
 
-        final EntityPropertyIndexConfig that = (EntityPropertyIndexConfig) o;
+        final NodePropertyIndexConfig that = (NodePropertyIndexConfig) o;
 
         return Objects.equals( this.getAnalyzer(), that.getAnalyzer() ) &&
             Objects.equals( this.propertyIndexConfigs, that.propertyIndexConfigs );
@@ -60,7 +60,7 @@ public class EntityPropertyIndexConfig
     }
 
     public static class Builder
-        extends EntityIndexConfig.Builder<Builder>
+        extends NodeIndexConfig.Builder<Builder>
     {
 
         private final Map<DataPath, PropertyIndexConfig> propertyIndexConfigs = Maps.newHashMap();
@@ -79,9 +79,9 @@ public class EntityPropertyIndexConfig
         }
 
 
-        public EntityPropertyIndexConfig build()
+        public NodePropertyIndexConfig build()
         {
-            return new EntityPropertyIndexConfig( this );
+            return new NodePropertyIndexConfig( this );
         }
 
     }

@@ -4,7 +4,7 @@ package com.enonic.wem.core.entity.relationship;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-import com.enonic.wem.api.entity.EntityIndexConfig;
+import com.enonic.wem.api.entity.NodeIndexConfig;
 import com.enonic.wem.core.entity.EntityPatternIndexConfigJson;
 import com.enonic.wem.core.entity.EntityPropertyIndexConfigJson;
 
@@ -26,7 +26,7 @@ public abstract class EntityIndexConfigJson
         this.decideFulltextByValueType = decideFulltextByValueType;
     }
 
-    public abstract EntityIndexConfig toEntityIndexConfig();
+    public abstract NodeIndexConfig toEntityIndexConfig();
 
     @SuppressWarnings("UnusedDeclaration")
     public String getAnalyzer()

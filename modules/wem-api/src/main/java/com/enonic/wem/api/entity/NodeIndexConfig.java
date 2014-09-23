@@ -2,7 +2,7 @@ package com.enonic.wem.api.entity;
 
 import com.enonic.wem.api.data.DataPath;
 
-public abstract class EntityIndexConfig
+public abstract class NodeIndexConfig
 {
     private final String analyzer;
 
@@ -10,8 +10,7 @@ public abstract class EntityIndexConfig
 
     private final boolean decideFulltextByValueType;
 
-
-    EntityIndexConfig( final Builder builder )
+    NodeIndexConfig( final Builder builder )
     {
         this.analyzer = builder.analyzer;
         this.collection = builder.collection;
@@ -33,9 +32,9 @@ public abstract class EntityIndexConfig
         return decideFulltextByValueType;
     }
 
-    public static EntityPatternIndexConfig.Builder newPatternIndexConfig()
+    public static NodePatternIndexConfig.Builder newPatternIndexConfig()
     {
-        return new EntityPatternIndexConfig.Builder();
+        return new NodePatternIndexConfig.Builder();
     }
 
     public abstract PropertyIndexConfig getPropertyIndexConfig( final DataPath dataPath );
@@ -80,7 +79,7 @@ public abstract class EntityIndexConfig
             return false;
         }
 
-        final EntityIndexConfig that = (EntityIndexConfig) o;
+        final NodeIndexConfig that = (NodeIndexConfig) o;
 
         if ( decideFulltextByValueType != that.decideFulltextByValueType )
         {

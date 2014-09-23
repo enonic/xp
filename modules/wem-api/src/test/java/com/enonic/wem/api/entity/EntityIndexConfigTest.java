@@ -16,7 +16,7 @@ public class EntityIndexConfigTest
     public void analyzer()
         throws Exception
     {
-        final EntityPropertyIndexConfig indexConfig = EntityPropertyIndexConfig.newEntityIndexConfig().analyzer( "myAnalyzer" ).build();
+        final NodePropertyIndexConfig indexConfig = NodePropertyIndexConfig.create().analyzer( "myAnalyzer" ).build();
         assertEquals( "myAnalyzer", indexConfig.getAnalyzer() );
     }
 
@@ -25,12 +25,12 @@ public class EntityIndexConfigTest
         throws Exception
     {
         final PropertyIndexConfig propertyIndexConfig =
-            PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).nGramEnabled( true ).fulltextEnabled( true ).build();
+            PropertyIndexConfig.create().enabled( true ).nGramEnabled( true ).fulltextEnabled( true ).build();
 
         final Property myProperty = new Property( "test", Value.newString( "testValue" ) );
 
-        final EntityPropertyIndexConfig indexConfig =
-            EntityPropertyIndexConfig.newEntityIndexConfig().addPropertyIndexConfig( myProperty, propertyIndexConfig ).build();
+        final NodePropertyIndexConfig indexConfig =
+            NodePropertyIndexConfig.create().addPropertyIndexConfig( myProperty, propertyIndexConfig ).build();
 
         final Map<DataPath, PropertyIndexConfig> propertyIndexConfigs = indexConfig.getPropertyIndexConfigs();
 
@@ -44,10 +44,10 @@ public class EntityIndexConfigTest
         throws Exception
     {
         final PropertyIndexConfig propertyIndexConfig =
-            PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).nGramEnabled( true ).fulltextEnabled( true ).build();
+            PropertyIndexConfig.create().enabled( true ).nGramEnabled( true ).fulltextEnabled( true ).build();
 
-        final EntityPropertyIndexConfig indexConfig =
-            EntityPropertyIndexConfig.newEntityIndexConfig().addPropertyIndexConfig( "test/path", propertyIndexConfig ).build();
+        final NodePropertyIndexConfig indexConfig =
+            NodePropertyIndexConfig.create().addPropertyIndexConfig( "test/path", propertyIndexConfig ).build();
 
         final Map<DataPath, PropertyIndexConfig> propertyIndexConfigs = indexConfig.getPropertyIndexConfigs();
 
@@ -61,18 +61,18 @@ public class EntityIndexConfigTest
         throws Exception
     {
         final PropertyIndexConfig propertyIndexConfig1 =
-            PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).nGramEnabled( true ).fulltextEnabled( true ).build();
+            PropertyIndexConfig.create().enabled( true ).nGramEnabled( true ).fulltextEnabled( true ).build();
 
         final PropertyIndexConfig propertyIndexConfig2 =
-            PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).nGramEnabled( true ).fulltextEnabled( true ).build();
+            PropertyIndexConfig.create().enabled( true ).nGramEnabled( true ).fulltextEnabled( true ).build();
 
         final PropertyIndexConfig propertyIndexConfig3 =
-            PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).nGramEnabled( true ).fulltextEnabled( true ).build();
+            PropertyIndexConfig.create().enabled( true ).nGramEnabled( true ).fulltextEnabled( true ).build();
 
         final PropertyIndexConfig propertyIndexConfig4 =
-            PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).nGramEnabled( true ).fulltextEnabled( true ).build();
+            PropertyIndexConfig.create().enabled( true ).nGramEnabled( true ).fulltextEnabled( true ).build();
 
-        final EntityPropertyIndexConfig indexConfig = EntityPropertyIndexConfig.newEntityIndexConfig().
+        final NodePropertyIndexConfig indexConfig = NodePropertyIndexConfig.create().
             addPropertyIndexConfig( "test", propertyIndexConfig1 ).
             addPropertyIndexConfig( "test/path", propertyIndexConfig2 ).
             addPropertyIndexConfig( "test/path/child", propertyIndexConfig3 ).
@@ -91,14 +91,14 @@ public class EntityIndexConfigTest
         Property myArray1 = Property.newString( "myArray", "1" );
         Property myArray2 = Property.newString( "myArray", "2" );
 
-        final EntityPropertyIndexConfig indexConfig = EntityPropertyIndexConfig.
-            newEntityIndexConfig().
-            addPropertyIndexConfig( myArray1, PropertyIndexConfig.INDEXNON_PROPERTY_CONFIG ).
-            addPropertyIndexConfig( myArray2, PropertyIndexConfig.INDEXALL_PROPERTY_CONFIG ).
+        final NodePropertyIndexConfig indexConfig = NodePropertyIndexConfig.
+            create().
+            addPropertyIndexConfig( myArray1, PropertyIndexConfig.SKIP ).
+            addPropertyIndexConfig( myArray2, PropertyIndexConfig.FULL ).
             build();
 
         assertNotNull( indexConfig.getPropertyIndexConfig( myArray1.getPath() ) );
-        assertEquals( PropertyIndexConfig.INDEXALL_PROPERTY_CONFIG, indexConfig.getPropertyIndexConfig( myArray1.getPath() ) );
+        assertEquals( PropertyIndexConfig.FULL, indexConfig.getPropertyIndexConfig( myArray1.getPath() ) );
         assertEquals( indexConfig.getPropertyIndexConfig( myArray1.getPath() ), indexConfig.getPropertyIndexConfig( myArray2.getPath() ) );
     }
 

@@ -36,7 +36,7 @@ public class PropertyIndexConfigJson
     public PropertyIndexConfig toPropertyIndexConfig()
     {
         return PropertyIndexConfig.
-            newPropertyIndexConfig().
+            create().
             enabled( this.enabled ).
             fulltextEnabled( this.fulltextEnabled ).
             nGramEnabled( this.nGramEnabled ).

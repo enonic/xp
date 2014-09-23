@@ -8,8 +8,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.data.DataPath;
-import com.enonic.wem.api.entity.EntityIndexConfig;
-import com.enonic.wem.api.entity.EntityPatternIndexConfig;
+import com.enonic.wem.api.entity.NodeIndexConfig;
+import com.enonic.wem.api.entity.NodePatternIndexConfig;
 import com.enonic.wem.api.entity.PathIndexConfig;
 import com.enonic.wem.core.entity.relationship.EntityIndexConfigJson;
 
@@ -20,7 +20,7 @@ public class EntityPatternIndexConfigJson
 
     private PropertyIndexConfigJson defaultConfig;
 
-    public EntityPatternIndexConfigJson( final EntityPatternIndexConfig indexConfig )
+    public EntityPatternIndexConfigJson( final NodePatternIndexConfig indexConfig )
     {
         super( indexConfig.getAnalyzer(), indexConfig.getCollection(), indexConfig.isDecideFulltextByValueType() );
         this.configs = translateToJson( indexConfig.getPathIndexConfigs() );
@@ -53,9 +53,9 @@ public class EntityPatternIndexConfigJson
     }
 
     @Override
-    public EntityIndexConfig toEntityIndexConfig()
+    public NodeIndexConfig toEntityIndexConfig()
     {
-        final EntityPatternIndexConfig.Builder builder = EntityPatternIndexConfig.newPatternIndexConfig();
+        final NodePatternIndexConfig.Builder builder = NodePatternIndexConfig.newPatternIndexConfig();
 
         for ( final PathIndexConfigJson config : this.configs )
         {

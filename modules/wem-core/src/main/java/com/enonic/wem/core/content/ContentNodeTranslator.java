@@ -21,9 +21,9 @@ import com.enonic.wem.api.content.thumb.Thumbnail;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.entity.CreateNodeParams;
 import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.EntityIndexConfig;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeEditor;
+import com.enonic.wem.api.entity.NodeIndexConfig;
 import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.Nodes;
@@ -54,7 +54,7 @@ public class ContentNodeTranslator
     {
         final RootDataSet contentAsData = CONTENT_SERIALIZER.toData( params );
 
-        final EntityIndexConfig entityIndexConfig = ContentEntityIndexConfigFactory.create();
+        final NodeIndexConfig nodeIndexConfig = ContentIndexConfigFactory.create();
 
         Attachments contentAttachments = params.getAttachments();
 
@@ -75,7 +75,7 @@ public class ContentNodeTranslator
             data( contentAsData ).
             attachments( nodeAttachmentsBuilder.build() ).
 
-            entityIndexConfig( entityIndexConfig );
+            entityIndexConfig( nodeIndexConfig );
     }
 
     public UpdateNodeParams toUpdateNodeCommand( final Content content, final Attachments attachments )
@@ -145,7 +145,7 @@ public class ContentNodeTranslator
     {
         final RootDataSet rootDataSet = CONTENT_SERIALIZER.toData( content );
 
-        final EntityIndexConfig entityIndexConfig = ContentEntityIndexConfigFactory.create();
+        final NodeIndexConfig nodeIndexConfig = ContentIndexConfigFactory.create();
 
         return new NodeEditor()
         {
@@ -171,7 +171,7 @@ public class ContentNodeTranslator
                 return Node.editNode( toBeEdited ).
                     name( NodeName.from( content.getName().toString() ) ).
                     attachments( nodeAttachmentsBuilder.build() ).
-                    entityIndexConfig( entityIndexConfig ).
+                    entityIndexConfig( nodeIndexConfig ).
                     rootDataSet( rootDataSet );
             }
         };

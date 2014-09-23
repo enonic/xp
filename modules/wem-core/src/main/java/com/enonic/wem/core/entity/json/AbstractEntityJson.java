@@ -7,9 +7,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import com.enonic.wem.api.data.RootDataSetJson;
 import com.enonic.wem.api.entity.Entity;
-import com.enonic.wem.api.entity.EntityIndexConfig;
-import com.enonic.wem.api.entity.EntityPatternIndexConfig;
-import com.enonic.wem.api.entity.EntityPropertyIndexConfig;
+import com.enonic.wem.api.entity.NodeIndexConfig;
+import com.enonic.wem.api.entity.NodePatternIndexConfig;
+import com.enonic.wem.api.entity.NodePropertyIndexConfig;
 import com.enonic.wem.core.entity.EntityPatternIndexConfigJson;
 import com.enonic.wem.core.entity.EntityPropertyIndexConfigJson;
 import com.enonic.wem.core.entity.relationship.EntityIndexConfigJson;
@@ -48,19 +48,19 @@ public abstract class AbstractEntityJson
         this.createdTime = entity.getCreatedTime();
         this.modifiedTime = entity.getModifiedTime();
         this.data = new RootDataSetJson( entity.data() );
-        this.entityIndexConfig = createEntityIndexConfig( entity.getEntityIndexConfig() );
+        this.entityIndexConfig = createEntityIndexConfig( entity.getNodeIndexConfig() );
         this.attachments = new AttachmentsJson( entity.attachments() );
     }
 
-    private EntityIndexConfigJson createEntityIndexConfig( final EntityIndexConfig indexConfig )
+    private EntityIndexConfigJson createEntityIndexConfig( final NodeIndexConfig indexConfig )
     {
-        if ( indexConfig instanceof EntityPropertyIndexConfig )
+        if ( indexConfig instanceof NodePropertyIndexConfig )
         {
-            return new EntityPropertyIndexConfigJson( (EntityPropertyIndexConfig) indexConfig );
+            return new EntityPropertyIndexConfigJson( (NodePropertyIndexConfig) indexConfig );
         }
-        else if ( indexConfig instanceof EntityPatternIndexConfig )
+        else if ( indexConfig instanceof NodePatternIndexConfig )
         {
-            return new EntityPatternIndexConfigJson( (EntityPatternIndexConfig) indexConfig );
+            return new EntityPatternIndexConfigJson( (NodePatternIndexConfig) indexConfig );
         }
 
         return null;

@@ -2,7 +2,7 @@ package com.enonic.wem.core.entity.dao;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.EntityIndexConfig;
+import com.enonic.wem.api.entity.NodeIndexConfig;
 import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodePath;
 
@@ -17,12 +17,12 @@ public class MoveNodeArguments
     private final NodePath parentPath;
 
 
-    private final EntityIndexConfig entityIndexConfig;
+    private final NodeIndexConfig nodeIndexConfig;
 
     private MoveNodeArguments( final Builder builder )
     {
         this.updater = builder.updater;
-        this.entityIndexConfig = builder.entityIndexConfig;
+        this.nodeIndexConfig = builder.nodeIndexConfig;
         this.name = builder.name;
         this.parentPath = builder.parentPath;
         this.nodeToMove = builder.nodeToUpdate;
@@ -48,9 +48,9 @@ public class MoveNodeArguments
         return parentPath;
     }
 
-    public EntityIndexConfig getEntityIndexConfig()
+    public NodeIndexConfig getNodeIndexConfig()
     {
-        return entityIndexConfig;
+        return nodeIndexConfig;
     }
 
     public static Builder newMoveNode()
@@ -68,7 +68,7 @@ public class MoveNodeArguments
 
         private NodePath parentPath;
 
-        private EntityIndexConfig entityIndexConfig;
+        private NodeIndexConfig nodeIndexConfig;
 
 
         public Builder updater( final UserKey updater )
@@ -96,9 +96,9 @@ public class MoveNodeArguments
         }
 
 
-        public Builder entityIndexConfig( final EntityIndexConfig entityIndexConfig )
+        public Builder entityIndexConfig( final NodeIndexConfig nodeIndexConfig )
         {
-            this.entityIndexConfig = entityIndexConfig;
+            this.nodeIndexConfig = nodeIndexConfig;
             return this;
         }
 

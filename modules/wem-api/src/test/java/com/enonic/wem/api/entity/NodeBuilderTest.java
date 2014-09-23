@@ -29,13 +29,13 @@ public class NodeBuilderTest
     public void build_given_index_config()
     {
         final Node myNode = Node.newNode().
-            entityIndexConfig( EntityPropertyIndexConfig.newEntityIndexConfig().
+            entityIndexConfig( NodePropertyIndexConfig.create().
                 analyzer( "myAnalyzer" ).
                 build() ).
             build();
 
-        assertNotNull( myNode.getEntityIndexConfig() );
-        assertEquals( "myAnalyzer", myNode.getEntityIndexConfig().getAnalyzer() );
+        assertNotNull( myNode.getNodeIndexConfig() );
+        assertEquals( "myAnalyzer", myNode.getNodeIndexConfig().getAnalyzer() );
 
     }
 

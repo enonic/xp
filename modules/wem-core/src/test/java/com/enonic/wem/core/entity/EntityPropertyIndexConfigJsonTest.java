@@ -2,7 +2,7 @@ package com.enonic.wem.core.entity;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.entity.EntityPropertyIndexConfig;
+import com.enonic.wem.api.entity.NodePropertyIndexConfig;
 import com.enonic.wem.api.entity.PropertyIndexConfig;
 import com.enonic.wem.api.support.JsonTestHelper;
 
@@ -21,13 +21,13 @@ public class EntityPropertyIndexConfigJsonTest
     public void deserialize_serialization_of_EntityIndexConfig_no_analyzer()
         throws Exception
     {
-        EntityPropertyIndexConfig entityIndexConfig = EntityPropertyIndexConfig.newEntityIndexConfig().
-            addPropertyIndexConfig( "test", PropertyIndexConfig.newPropertyIndexConfig().
+        NodePropertyIndexConfig entityIndexConfig = NodePropertyIndexConfig.create().
+            addPropertyIndexConfig( "test", PropertyIndexConfig.create().
                 enabled( true ).
                 fulltextEnabled( true ).
                 nGramEnabled( true ).
                 build() ).
-            addPropertyIndexConfig( "test2", PropertyIndexConfig.newPropertyIndexConfig().
+            addPropertyIndexConfig( "test2", PropertyIndexConfig.create().
                 enabled( false ).
                 fulltextEnabled( false ).
                 nGramEnabled( false ).
@@ -55,15 +55,15 @@ public class EntityPropertyIndexConfigJsonTest
     public void deserialize_serialization_of_EntityIndexConfig()
         throws Exception
     {
-        EntityPropertyIndexConfig entityIndexConfig = EntityPropertyIndexConfig.newEntityIndexConfig().
+        NodePropertyIndexConfig entityIndexConfig = NodePropertyIndexConfig.create().
             analyzer( "myAnalyzer" ).
             collection( "myCollection" ).
-            addPropertyIndexConfig( "test", PropertyIndexConfig.newPropertyIndexConfig().
+            addPropertyIndexConfig( "test", PropertyIndexConfig.create().
                 enabled( true ).
                 fulltextEnabled( true ).
                 nGramEnabled( true ).
                 build() ).
-            addPropertyIndexConfig( "test2", PropertyIndexConfig.newPropertyIndexConfig().
+            addPropertyIndexConfig( "test2", PropertyIndexConfig.create().
                 enabled( false ).
                 fulltextEnabled( false ).
                 nGramEnabled( false ).

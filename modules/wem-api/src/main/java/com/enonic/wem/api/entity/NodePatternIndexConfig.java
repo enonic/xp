@@ -7,14 +7,14 @@ import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.data.DataPath;
 
-public class EntityPatternIndexConfig
-    extends EntityIndexConfig
+public class NodePatternIndexConfig
+    extends NodeIndexConfig
 {
     private final ImmutableSortedSet<PathIndexConfig> pathIndexConfigs;
 
     private final PropertyIndexConfig defaultConfig;
 
-    private EntityPatternIndexConfig( final Builder builder )
+    private NodePatternIndexConfig( final Builder builder )
     {
         super( builder );
         this.pathIndexConfigs = ImmutableSortedSet.copyOf( builder.configs );
@@ -51,11 +51,11 @@ public class EntityPatternIndexConfig
     }
 
     public static class Builder
-        extends EntityIndexConfig.Builder<Builder>
+        extends NodeIndexConfig.Builder<Builder>
     {
         private SortedSet<PathIndexConfig> configs = Sets.newTreeSet();
 
-        private PropertyIndexConfig defaultConfig = PropertyIndexConfig.INDEXNON_PROPERTY_CONFIG;
+        private PropertyIndexConfig defaultConfig = PropertyIndexConfig.SKIP;
 
         public Builder addConfig( final PathIndexConfig config )
         {
@@ -76,9 +76,9 @@ public class EntityPatternIndexConfig
             return this;
         }
 
-        public EntityIndexConfig build()
+        public NodeIndexConfig build()
         {
-            return new EntityPatternIndexConfig( this );
+            return new NodePatternIndexConfig( this );
         }
 
     }
@@ -99,7 +99,7 @@ public class EntityPatternIndexConfig
             return false;
         }
 
-        final EntityPatternIndexConfig that = (EntityPatternIndexConfig) o;
+        final NodePatternIndexConfig that = (NodePatternIndexConfig) o;
 
         if ( defaultConfig != null ? !defaultConfig.equals( that.defaultConfig ) : that.defaultConfig != null )
         {

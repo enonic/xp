@@ -11,13 +11,13 @@ public final class PropertyIndexConfig
 
     private final boolean nGramEnabled;
 
-    public static final PropertyIndexConfig INDEXNON_PROPERTY_CONFIG = PropertyIndexConfig.newPropertyIndexConfig().
+    public static final PropertyIndexConfig SKIP = PropertyIndexConfig.create().
         nGramEnabled( false ).
         fulltextEnabled( false ).
         enabled( false ).
         build();
 
-    public static final PropertyIndexConfig INDEXALL_PROPERTY_CONFIG = PropertyIndexConfig.newPropertyIndexConfig().
+    public static final PropertyIndexConfig FULL = PropertyIndexConfig.create().
         nGramEnabled( true ).
         fulltextEnabled( true ).
         enabled( true ).
@@ -35,7 +35,7 @@ public final class PropertyIndexConfig
         return enabled;
     }
 
-    public static Builder newPropertyIndexConfig()
+    public static Builder create()
     {
         return new Builder();
     }

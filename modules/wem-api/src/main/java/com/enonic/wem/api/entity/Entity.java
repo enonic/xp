@@ -21,7 +21,7 @@ public class Entity
 
     protected final Instant modifiedTime;
 
-    protected final EntityIndexConfig entityIndexConfig;
+    protected final NodeIndexConfig nodeIndexConfig;
 
     protected final Attachments attachments;
 
@@ -42,13 +42,13 @@ public class Entity
 
         this.attachments = builder.attachments;
 
-        if ( builder.entityIndexConfig != null )
+        if ( builder.nodeIndexConfig != null )
         {
-            this.entityIndexConfig = builder.entityIndexConfig;
+            this.nodeIndexConfig = builder.nodeIndexConfig;
         }
         else
         {
-            this.entityIndexConfig = EntityPropertyIndexConfig.newEntityIndexConfig().build();
+            this.nodeIndexConfig = NodePropertyIndexConfig.create().build();
         }
 
     }
@@ -88,9 +88,9 @@ public class Entity
         return data.getProperty( path );
     }
 
-    public EntityIndexConfig getEntityIndexConfig()
+    public NodeIndexConfig getNodeIndexConfig()
     {
-        return entityIndexConfig;
+        return nodeIndexConfig;
     }
 
     public static class BaseBuilder
@@ -105,7 +105,7 @@ public class Entity
 
         Attachments attachments;
 
-        EntityIndexConfig entityIndexConfig;
+        NodeIndexConfig nodeIndexConfig;
 
         BaseBuilder()
         {
@@ -117,7 +117,7 @@ public class Entity
             this.createdTime = entity.createdTime;
             this.modifiedTime = entity.modifiedTime;
             this.data = entity.data;
-            this.entityIndexConfig = entity.entityIndexConfig;
+            this.nodeIndexConfig = entity.nodeIndexConfig;
         }
 
         BaseBuilder( final EntityId id )
@@ -204,11 +204,11 @@ public class Entity
             return getThisBuilder();
         }
 
-        public B entityIndexConfig( final EntityIndexConfig entityIndexConfig )
+        public B entityIndexConfig( final NodeIndexConfig nodeIndexConfig )
         {
             changes.recordChange(
-                newPossibleChange( "data" ).from( this.originalEntity.entityIndexConfig ).to( this.entityIndexConfig ).build() );
-            this.entityIndexConfig = entityIndexConfig;
+                newPossibleChange( "data" ).from( this.originalEntity.nodeIndexConfig ).to( this.nodeIndexConfig ).build() );
+            this.nodeIndexConfig = nodeIndexConfig;
             return getThisBuilder();
         }
 
@@ -248,7 +248,7 @@ public class Entity
             this.createdTime = entity.createdTime;
             this.modifiedTime = entity.modifiedTime;
             this.data = entity.data;
-            this.entityIndexConfig = entity.entityIndexConfig;
+            this.nodeIndexConfig = entity.nodeIndexConfig;
             this.attachments = entity.attachments;
         }
 
@@ -326,9 +326,9 @@ public class Entity
             return getThisBuilder();
         }
 
-        public B entityIndexConfig( final EntityIndexConfig entityIndexConfig )
+        public B entityIndexConfig( final NodeIndexConfig nodeIndexConfig )
         {
-            this.entityIndexConfig = entityIndexConfig;
+            this.nodeIndexConfig = nodeIndexConfig;
             return getThisBuilder();
         }
 
@@ -377,7 +377,7 @@ public class Entity
         {
             return false;
         }
-        if ( entityIndexConfig != null ? !entityIndexConfig.equals( entity.entityIndexConfig ) : entity.entityIndexConfig != null )
+        if ( nodeIndexConfig != null ? !nodeIndexConfig.equals( entity.nodeIndexConfig ) : entity.nodeIndexConfig != null )
         {
             return false;
         }
@@ -400,7 +400,7 @@ public class Entity
         result = 31 * result + ( createdTime != null ? createdTime.hashCode() : 0 );
         result = 31 * result + ( data != null ? data.hashCode() : 0 );
         result = 31 * result + ( modifiedTime != null ? modifiedTime.hashCode() : 0 );
-        result = 31 * result + ( entityIndexConfig != null ? entityIndexConfig.hashCode() : 0 );
+        result = 31 * result + ( nodeIndexConfig != null ? nodeIndexConfig.hashCode() : 0 );
         result = 31 * result + ( attachments != null ? attachments.hashCode() : 0 );
         return result;
     }

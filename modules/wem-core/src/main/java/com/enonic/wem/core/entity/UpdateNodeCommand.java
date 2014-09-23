@@ -102,7 +102,7 @@ final class UpdateNodeCommand
             rootDataSet( editResult.data() ).
             attachments( syncronizeAttachments( editResult.attachments(), persistedNode ) ).
             entityIndexConfig(
-                editResult.getEntityIndexConfig() != null ? editResult.getEntityIndexConfig() : persistedNode.getEntityIndexConfig() );
+                editResult.getNodeIndexConfig() != null ? editResult.getNodeIndexConfig() : persistedNode.getNodeIndexConfig() );
 
         return updateNodeBuilder.build();
     }
