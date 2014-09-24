@@ -374,7 +374,7 @@ module api.liveedit {
 
         static parseItemId(element: HTMLElement): ItemViewId {
             var attribute = element.getAttribute("data-" + ItemViewId.DATA_ATTRIBUTE);
-            if (api.util.isStringEmpty(attribute)) {
+            if (api.util.StringHelper.isEmpty(attribute)) {
                 return null;
             }
             return ItemViewId.fromString(attribute);

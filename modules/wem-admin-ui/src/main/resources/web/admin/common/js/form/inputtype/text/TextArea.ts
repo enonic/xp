@@ -47,7 +47,7 @@ module api.form.inputtype.text {
                 return true;
             }
 
-            if (api.util.isStringBlank(value.asString())) {
+            if (api.util.StringHelper.isBlank(value.asString())) {
                 return true;
             } else {
                 return false;

@@ -62,7 +62,7 @@ module api.app.wizard {
                     var generatedDisplayName = this.displayNameGenerator.execute();
 
                     this.displayNameProgrammaticallySet =
-                    generatedDisplayName == actualDisplayName || api.util.isStringEmpty(actualDisplayName);
+                    generatedDisplayName == actualDisplayName || api.util.StringHelper.isEmpty(actualDisplayName);
                 }
                 this.doAutoGenerateName(actualDisplayName);
             });
