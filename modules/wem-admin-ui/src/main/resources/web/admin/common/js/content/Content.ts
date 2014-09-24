@@ -107,7 +107,7 @@ module api.content {
             super.fromContentSummaryJson(json);
 
             this.data = ContentDataFactory.createContentData(json.data);
-            this.form = json.form != null ? new api.form.Form(json.form) : null;
+            this.form = json.form != null ? api.form.Form.fromJson(json.form) : null;
 
             if (this.site) {
                 this.siteObj = api.content.site.Site.fromJson(json.site);

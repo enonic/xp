@@ -49,9 +49,6 @@ module app.wizard.page {
 
             var imageComponent = this.imageView.getPageComponent();
             imageComponent.setImage(this.image);
-            if (this.defaultModels.hasImageDescriptor()) {
-                imageComponent.setDescriptor(this.defaultModels.getImageDescriptor().getKey());
-            }
 
             new PageComponentNameChanger().
                 setPageRegions(this.pageRegions).

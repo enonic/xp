@@ -25,7 +25,6 @@ public class ImageComponentXmlTest
 
         ImageComponent component = ImageComponent.newImageComponent().
             name( "my-component" ).
-            descriptor( ImageDescriptorKey.from( "mainmodule-1.0.0:imageName" ) ).
             config( componentConfig ).
             build();
 

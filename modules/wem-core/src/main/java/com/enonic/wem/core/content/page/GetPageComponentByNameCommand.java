@@ -3,14 +3,7 @@ package com.enonic.wem.core.content.page;
 
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.ComponentName;
-import com.enonic.wem.api.content.page.DescriptorBasedPageComponent;
-import com.enonic.wem.api.content.page.DescriptorKey;
-import com.enonic.wem.api.content.page.AbstractDescriptorBasedPageComponent;
-import com.enonic.wem.api.content.page.image.ImageComponent;
-import com.enonic.wem.api.content.page.image.ImageDescriptor;
-import com.enonic.wem.api.content.page.image.ImageDescriptorKey;
-import com.enonic.wem.api.content.page.image.ImageDescriptorNotFoundException;
-import com.enonic.wem.api.content.page.image.ImageDescriptorService;
+import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.layout.LayoutComponent;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
@@ -31,11 +24,9 @@ class GetPageComponentByNameCommand
 
     private PartDescriptorService partDescriptorService;
 
-    private ImageDescriptorService imageDescriptorService;
-
     private LayoutDescriptorService layoutDescriptorService;
 
-    public DescriptorBasedPageComponent execute()
+    public PageComponent execute()
     {
         final ComponentDescriptorName componentDescriptorName = new ComponentDescriptorName( name.toString() );
 
@@ -45,14 +36,6 @@ class GetPageComponentByNameCommand
             return PartComponent.newPartComponent().
                 name( this.name ).
                 descriptor( partDescriptor.getKey() ).
-                build();
-        }
-        final ImageDescriptor imageDescriptor = getImageDescriptor( componentDescriptorName );
-        if ( imageDescriptor != null )
-        {
-            return ImageComponent.newImageComponent().
-                name( this.name ).
-                descriptor( imageDescriptor.getKey() ).
                 build();
         }
         final LayoutDescriptor layoutDescriptor = getLayoutDescriptor( componentDescriptorName );
@@ -74,19 +57,6 @@ class GetPageComponentByNameCommand
             return partDescriptorService.getByKey( partDescriptorKey );
         }
         catch ( PartDescriptorNotFoundException e )
-        {
-            return null;
-        }
-    }
-
-    private ImageDescriptor getImageDescriptor( final ComponentDescriptorName descriptorName )
-    {
-        try
-        {
-            final ImageDescriptorKey partDescriptorKey = ImageDescriptorKey.from( this.module, descriptorName );
-            return imageDescriptorService.getImageDescriptor( partDescriptorKey );
-        }
-        catch ( ImageDescriptorNotFoundException e )
         {
             return null;
         }
@@ -120,12 +90,6 @@ class GetPageComponentByNameCommand
     public GetPageComponentByNameCommand partDescriptorService( final PartDescriptorService partDescriptorService )
     {
         this.partDescriptorService = partDescriptorService;
-        return this;
-    }
-
-    public GetPageComponentByNameCommand imageDescriptorService( final ImageDescriptorService imageDescriptorService )
-    {
-        this.imageDescriptorService = imageDescriptorService;
         return this;
     }
 

@@ -2,8 +2,6 @@ package com.enonic.wem.api.content.page;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.content.page.image.ImageDescriptor;
-import com.enonic.wem.api.content.page.image.ImageDescriptorKey;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.content.page.part.PartDescriptor;
@@ -70,23 +68,6 @@ public class DescriptorsTest
             build();
 
         assertEquals( "Fancy layout", layoutDescriptor.getDisplayName() );
-    }
-
-    @Test
-    public void imageDescriptor()
-    {
-        Form partForm = Form.newForm().
-            addFormItem( newInput().name( "quality" ).inputType( InputTypes.DOUBLE ).build() ).
-            build();
-
-        ImageDescriptor partDescriptor = ImageDescriptor.newImageDescriptor().
-            name( "image" ).
-            displayName( "Image" ).
-            config( partForm ).
-            key( ImageDescriptorKey.from( "module-1.0.0:image" ) ).
-            build();
-
-        assertEquals( "Image", partDescriptor.getDisplayName() );
     }
 
 }

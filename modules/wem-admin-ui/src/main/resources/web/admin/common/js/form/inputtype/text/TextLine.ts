@@ -59,7 +59,11 @@ module api.form.inputtype.text {
         private stringValueBreaksRequiredContract(value: string): boolean {
             return api.util.isStringBlank(value);
         }
+
+        static getName(): api.form.InputTypeName {
+            return new api.form.InputTypeName("TextLine", false);
+        }
     }
 
-    api.form.inputtype.InputTypeManager.register(new api.Class("TextLine", TextLine));
+    api.form.inputtype.InputTypeManager.register(new api.Class(TextLine.getName().getName(), TextLine));
 }

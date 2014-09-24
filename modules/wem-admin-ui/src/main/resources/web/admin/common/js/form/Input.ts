@@ -1,5 +1,97 @@
 module api.form {
 
+    export class InputBuilder {
+
+        name: string;
+
+        inputType: InputTypeName;
+
+        label: string;
+
+        immutable: boolean = false;
+
+        occurrences: Occurrences;
+
+        indexed: boolean = true;
+
+        customText: string;
+
+        validationRegex: string;
+
+        helpText: string;
+
+        inputTypeConfig: any;
+
+        setName(value: string): InputBuilder {
+            this.name = value;
+            return this;
+        }
+
+        setInputType(value: InputTypeName): InputBuilder {
+            this.inputType = value;
+            return this;
+        }
+
+        setLabel(value: string): InputBuilder {
+            this.label = value;
+            return this;
+        }
+
+        setImmutable(value: boolean): InputBuilder {
+            this.immutable = value;
+            return this;
+        }
+
+        setOccurrences(value: Occurrences): InputBuilder {
+            this.occurrences = value;
+            return this;
+        }
+
+        setIndexed(value: boolean): InputBuilder {
+            this.indexed = value;
+            return this;
+        }
+
+        setCustomText(value: string): InputBuilder {
+            this.customText = value;
+            return this;
+        }
+
+        setValidationRegex(value: string): InputBuilder {
+            this.validationRegex = value;
+            return this;
+        }
+
+        setHelpText(value: string): InputBuilder {
+            this.helpText = value;
+            return this;
+        }
+
+        setInputTypeConfig(value: any): InputBuilder {
+            this.inputTypeConfig = value;
+            return this;
+        }
+
+        fromJson(json: json.InputJson): InputBuilder {
+            this.name = json.name;
+            this.inputType = InputTypeName.parseInputTypeName(json.inputType.name);
+            this.label = json.label;
+            this.immutable = json.immutable;
+            this.occurrences = Occurrences.fromJson(json.occurrences);
+            this.indexed = json.indexed;
+            this.customText = json.customText;
+            this.validationRegex = json.validationRegexp;
+            this.helpText = json.helpText;
+            this.inputTypeConfig = json.config;
+            return this;
+        }
+
+        build(): Input {
+            return new Input(this);
+        }
+
+    }
+
     export class Input extends FormItem implements api.Equitable {
 
         private inputType: InputTypeName;
@@ -20,26 +112,23 @@ module api.form {
 
         private inputTypeConfig: any;
 
-        constructor(name: string) {
-            super(name);
+        constructor(builder: InputBuilder) {
+            super(builder.name);
+            this.inputType = builder.inputType;
+            this.inputTypeConfig = builder.inputTypeConfig;
+            this.label = builder.label;
+            this.immutable = builder.immutable;
+            this.occurrences = builder.occurrences;
+            this.indexed = builder.indexed;
+            this.customText = builder.customText;
+            this.validationRegex = builder.validationRegex;
+            this.helpText = builder.helpText;
         }
 
         static fromJson(json: api.form.json.InputJson): Input {
-            var input = new Input(json.name);
-            input.setFromJson(json);
-            return input;
-        }
-
-        private setFromJson(json: api.form.json.InputJson) {
-            this.inputType = InputTypeName.parseInputTypeName(json.inputType.name);
-            this.label = json.label;
-            this.immutable = json.immutable;
-            this.occurrences = new Occurrences(json.occurrences);
-            this.indexed = json.indexed;
-            this.customText = json.customText;
-            this.validationRegex = json.validationRegexp;
-            this.helpText = json.helpText;
-            this.inputTypeConfig = json.config;
+            var builder = new InputBuilder();
+            builder.fromJson(json);
+            return builder.build();
         }
 
         getInputType(): InputTypeName {
@@ -76,14 +165,6 @@ module api.form {
 
         getInputTypeConfig(): any {
             return this.inputTypeConfig;
-        }
-
-        setInputType(inputTypeName: InputTypeName) {
-            this.inputType = inputTypeName;
-        }
-
-        setOccurences(minimum: number, maximum: number) {
-            this.occurrences = new Occurrences({"maximum": maximum, "minimum": minimum})
         }
 
         equals(o: api.Equitable): boolean {

@@ -20,7 +20,7 @@ module api.form {
             super(formItemSetJson.name);
             this.label = formItemSetJson.label;
             this.immutable = formItemSetJson.immutable;
-            this.occurrences = new Occurrences(formItemSetJson.occurrences);
+            this.occurrences = Occurrences.fromJson(formItemSetJson.occurrences);
             this.customText = formItemSetJson.customText;
             this.helpText = formItemSetJson.helpText;
 

@@ -55,7 +55,7 @@ module app.wizard.page.contextwindow.inspect {
 
             var formContext = new api.form.FormContextBuilder().build();
             var form = descriptor.getConfig();
-            var config: RootDataSet = component.getConfig();
+            var config = component.getConfig();
             this.formView = new FormView(formContext, form, config);
             this.formView.setDoOffset(false);
             this.appendChild(this.formView);

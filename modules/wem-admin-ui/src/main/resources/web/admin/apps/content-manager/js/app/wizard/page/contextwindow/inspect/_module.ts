@@ -2,7 +2,6 @@
 ///<reference path='PageComponentInspectionPanel.ts' />
 ///<reference path='DescriptorBasedPageComponentInspectionPanel.ts' />
 ///<reference path='NoSelectionInspectionPanel.ts' />
-///<reference path='ImageDescriptorChangedEvent.ts' />
 ///<reference path='ImageInspectionPanel.ts' />
 ///<reference path='PartInspectionPanel.ts' />
 ///<reference path='LayoutDescriptorChangedEvent.ts' />

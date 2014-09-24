@@ -1,13 +1,46 @@
 module api.form {
 
+    export class OccurrencesBuilder {
+
+        minimum: number;
+
+        maximum: number;
+
+        setMinimum(value: number): OccurrencesBuilder {
+            this.minimum = value;
+            return this;
+        }
+
+        setMaximum(value: number): OccurrencesBuilder {
+            this.maximum = value;
+            return this;
+        }
+
+        fromJson(json: json.OccurrencesJson) {
+            this.minimum = json.minimum;
+            this.maximum = json.maximum;
+        }
+
+        build(): Occurrences {
+            return new Occurrences(this);
+        }
+    }
+
     export class Occurrences implements api.Equitable {
 
         private minimum: number;
+
         private maximum: number;
 
-        constructor(json) {
-            this.minimum = json.minimum;
-            this.maximum = json.maximum;
+        static fromJson(json: json.OccurrencesJson): Occurrences {
+            var builder = new OccurrencesBuilder();
+            builder.fromJson(json);
+            return builder.build();
+        }
+
+        constructor(builder: OccurrencesBuilder) {
+            this.minimum = builder.minimum;
+            this.maximum = builder.maximum;
         }
 
         getMaximum(): number {

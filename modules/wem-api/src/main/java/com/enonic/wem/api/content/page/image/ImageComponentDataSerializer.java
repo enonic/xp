@@ -2,13 +2,12 @@ package com.enonic.wem.api.content.page.image;
 
 
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.page.DescriptorKey;
-import com.enonic.wem.api.content.page.AbstractDescriptorBasedPageComponentDataSerializer;
+import com.enonic.wem.api.content.page.AbstractPageComponentDataSerializer;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Value;
 
 public class ImageComponentDataSerializer
-    extends AbstractDescriptorBasedPageComponentDataSerializer<ImageComponent, ImageComponent>
+    extends AbstractPageComponentDataSerializer<ImageComponent, ImageComponent>
 {
 
     public DataSet toData( final ImageComponent component )
@@ -18,6 +17,10 @@ public class ImageComponentDataSerializer
         if ( component.getImage() != null )
         {
             asData.addProperty( "image", Value.newContentId( component.getImage() ) );
+        }
+        if ( component.hasConfig() )
+        {
+            asData.add( component.getConfig().toDataSet( "config" ) );
         }
         return asData;
     }
@@ -30,12 +33,10 @@ public class ImageComponentDataSerializer
         {
             component.image( ContentId.from( asData.getProperty( "image" ).getString() ) );
         }
+        if ( asData.hasData( "config" ) )
+        {
+            component.config( asData.getData( "config" ).toDataSet().toRootDataSet() );
+        }
         return component.build();
-    }
-
-    @Override
-    protected DescriptorKey toDescriptorKey( final String s )
-    {
-        return ImageDescriptorKey.from( s );
     }
 }
