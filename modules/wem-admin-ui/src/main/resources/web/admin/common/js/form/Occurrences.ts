@@ -59,8 +59,12 @@ module api.form {
             return this.maximum > 1 || this.maximum == 0;
         }
 
-        minimumReached(occurrenceCount: number) {
-            return occurrenceCount > this.minimum;
+        minimumReached(occurrenceCount: number): boolean {
+            return occurrenceCount >= this.minimum;
+        }
+
+        minimumBreached(occurrenceCount: number): boolean {
+            return (this.minimum == 0) ? false : (occurrenceCount < this.minimum);
         }
 
         maximumReached(occurrenceCount: number): boolean {

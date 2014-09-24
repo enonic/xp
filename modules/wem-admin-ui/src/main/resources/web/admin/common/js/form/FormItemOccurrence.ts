@@ -51,7 +51,7 @@ module api.form {
         }
 
         private moreThanRequiredOccurrences() {
-            return this.allowedOccurrences.minimumReached(this.occurrences.countOccurrences());
+            return this.occurrences.countOccurrences() > this.allowedOccurrences.getMinimum();
         }
 
         private lessOccurrencesThanMaximumAllowed(): boolean {
