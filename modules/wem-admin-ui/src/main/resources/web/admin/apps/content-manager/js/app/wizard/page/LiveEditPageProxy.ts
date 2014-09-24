@@ -214,7 +214,7 @@ module app.wizard.page {
 
         public loadComponent(pageComponentView: PageComponentView<PageComponent>, componentUrl: string): wemQ.Promise<string> {
 
-            var deferred = wemQ.defer<void>();
+            var deferred = wemQ.defer<string>();
             api.util.assertNotNull(pageComponentView, "pageComponentView cannot be null");
             api.util.assertNotNull(componentUrl, "componentUrl cannot be null");
 
