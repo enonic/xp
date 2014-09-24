@@ -53,6 +53,8 @@ public final class InputTypes
 
     public static final InputType PAGE_CONTROLLER = new PageController();
 
+    public static final InputType CONTENT_TYPE_FILTER = new ContentTypeFilter();
+
     private static final ImmutableList<InputType> inputTypes = new ImmutableList.Builder<InputType>().
         add( COLOR ).
         add( COMBO_BOX ).
@@ -75,6 +77,7 @@ public final class InputTypes
         add( LONG ).
         add( XML ).
         add( PAGE_CONTROLLER ).
+        add( CONTENT_TYPE_FILTER ).
         build();
 
     private static LinkedHashMap<String, InputType> inputTypeByName = new LinkedHashMap<>();
