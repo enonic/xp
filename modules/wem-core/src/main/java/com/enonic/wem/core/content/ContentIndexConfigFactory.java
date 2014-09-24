@@ -1,29 +1,26 @@
 package com.enonic.wem.core.content;
 
-import com.enonic.wem.api.entity.NodeIndexConfig;
-import com.enonic.wem.api.entity.NodePatternIndexConfig;
-import com.enonic.wem.api.entity.NodePropertyIndexConfig;
-import com.enonic.wem.api.entity.PropertyIndexConfig;
-import com.enonic.wem.core.index.IndexConstants;
+import com.enonic.wem.api.index.IndexConfig;
+import com.enonic.wem.api.index.IndexConfigDocumentNew;
+import com.enonic.wem.api.index.PatternBasedIndexConfigDocument;
 
-public class ContentIndexConfigFactory
+class ContentIndexConfigFactory
 {
-    public static NodeIndexConfig create()
+    public static IndexConfigDocumentNew create()
     {
-        final NodePatternIndexConfig.Builder builder = NodePropertyIndexConfig.newPatternIndexConfig().
-            collection( IndexConstants.CONTENT_COLLECTION_NAME ).
+        final PatternBasedIndexConfigDocument config = PatternBasedIndexConfigDocument.create().
             analyzer( "content_default" ).
-            addConfig( ContentDataSerializer.PAGE, PropertyIndexConfig.SKIP ).
-            addConfig( ContentDataSerializer.CONTENT_DATA, PropertyIndexConfig.FULL ).
-            addConfig( ContentDataSerializer.FORM, PropertyIndexConfig.SKIP ).
-            addConfig( ContentDataSerializer.SITE, PropertyIndexConfig.SKIP ).
-            decideFulltextByValueType( true ).
-            defaultConfig( PropertyIndexConfig.create().
-                enabled( true ).
-                fulltextEnabled( true ).
-                nGramEnabled( true ).
-                build() );
+            add( ContentDataSerializer.PAGE, IndexConfig.NONE ).
+            add( ContentDataSerializer.SITE, IndexConfig.NONE ).
+            add( ContentDataSerializer.DRAFT, IndexConfig.NONE ).
+            add( ContentDataSerializer.FORM, IndexConfig.NONE ).
+            add( ContentDataSerializer.CONTENT_DATA, IndexConfig.BY_TYPE ).
+            add( ContentDataSerializer.CONTENT_TYPE_FIELD_NAME, IndexConfig.MINIMAL ).
+            defaultConfig( IndexConfig.BY_TYPE ).
+            build();
 
-        return builder.build();
+        return config;
     }
+
+
 }

@@ -25,7 +25,7 @@ public class PathIndexConfig
         return path;
     }
 
-    public static Builder newConfig()
+    public static Builder create()
     {
         return new Builder();
     }

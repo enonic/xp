@@ -7,6 +7,9 @@ import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.index.IndexConfig;
+import com.enonic.wem.api.index.IndexConfigDocumentNew;
+import com.enonic.wem.api.index.PatternBasedIndexConfigDocument;
 import com.enonic.wem.api.support.Changes;
 
 import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;
@@ -21,7 +24,9 @@ public class Entity
 
     protected final Instant modifiedTime;
 
-    protected final NodeIndexConfig nodeIndexConfig;
+    //protected final IndexConfigDocument indexConfigDocument;
+
+    protected final IndexConfigDocumentNew indexConfigDocument;
 
     protected final Attachments attachments;
 
@@ -42,13 +47,26 @@ public class Entity
 
         this.attachments = builder.attachments;
 
-        if ( builder.nodeIndexConfig != null )
+        /*
+        if ( builder.indexConfigDocument != null )
         {
-            this.nodeIndexConfig = builder.nodeIndexConfig;
+            this.indexConfigDocument = builder.indexConfigDocument;
         }
         else
         {
-            this.nodeIndexConfig = NodePropertyIndexConfig.create().build();
+            this.indexConfigDocument = PorpertyIndexConfigDocument.create().build();
+        }
+          */
+
+        if ( builder.indexConfigDocument != null )
+        {
+            this.indexConfigDocument = builder.indexConfigDocument;
+        }
+        else
+        {
+            this.indexConfigDocument = PatternBasedIndexConfigDocument.create().
+                defaultConfig( IndexConfig.BY_TYPE ).
+                build();
         }
 
     }
@@ -88,9 +106,16 @@ public class Entity
         return data.getProperty( path );
     }
 
-    public NodeIndexConfig getNodeIndexConfig()
+    /*
+    public IndexConfigDocument getIndexConfigDocument()
     {
-        return nodeIndexConfig;
+        return indexConfigDocument;
+    }
+*/
+
+    public IndexConfigDocumentNew getIndexConfigDocument()
+    {
+        return indexConfigDocument;
     }
 
     public static class BaseBuilder
@@ -105,7 +130,7 @@ public class Entity
 
         Attachments attachments;
 
-        NodeIndexConfig nodeIndexConfig;
+        IndexConfigDocumentNew indexConfigDocument;
 
         BaseBuilder()
         {
@@ -117,7 +142,8 @@ public class Entity
             this.createdTime = entity.createdTime;
             this.modifiedTime = entity.modifiedTime;
             this.data = entity.data;
-            this.nodeIndexConfig = entity.nodeIndexConfig;
+            //this.indexConfigDocument = entity.indexConfigDocument;
+            this.indexConfigDocument = entity.indexConfigDocument;
         }
 
         BaseBuilder( final EntityId id )
@@ -204,11 +230,20 @@ public class Entity
             return getThisBuilder();
         }
 
-        public B entityIndexConfig( final NodeIndexConfig nodeIndexConfig )
+      /*  public B entityIndexConfig( final IndexConfigDocument indexConfigDocument )
         {
             changes.recordChange(
-                newPossibleChange( "data" ).from( this.originalEntity.nodeIndexConfig ).to( this.nodeIndexConfig ).build() );
-            this.nodeIndexConfig = nodeIndexConfig;
+                newPossibleChange( "data" ).from( this.originalEntity.indexConfigDocument ).to( this.indexConfigDocument ).build() );
+            this.indexConfigDocument = indexConfigDocument;
+            return getThisBuilder();
+        }
+*/
+
+        public B entityIndexConfig( final IndexConfigDocumentNew indexConfigDocumentNew )
+        {
+            changes.recordChange(
+                newPossibleChange( "data" ).from( this.originalEntity.indexConfigDocument ).to( this.indexConfigDocument ).build() );
+            this.indexConfigDocument = indexConfigDocumentNew;
             return getThisBuilder();
         }
 
@@ -248,7 +283,7 @@ public class Entity
             this.createdTime = entity.createdTime;
             this.modifiedTime = entity.modifiedTime;
             this.data = entity.data;
-            this.nodeIndexConfig = entity.nodeIndexConfig;
+            //  this.indexConfigDocument = entity.indexConfigDocument;
             this.attachments = entity.attachments;
         }
 
@@ -326,11 +361,20 @@ public class Entity
             return getThisBuilder();
         }
 
-        public B entityIndexConfig( final NodeIndexConfig nodeIndexConfig )
+        /*
+        public B entityIndexConfig( final IndexConfigDocument indexConfigDocument )
         {
-            this.nodeIndexConfig = nodeIndexConfig;
+            this.indexConfigDocument = indexConfigDocument;
             return getThisBuilder();
         }
+        */
+
+        public B indexConfigDocument( final IndexConfigDocumentNew indexConfigDocumentNew )
+        {
+            this.indexConfigDocument = indexConfigDocumentNew;
+            return getThisBuilder();
+        }
+
 
         public B attachments( final Attachments value )
         {
@@ -377,7 +421,7 @@ public class Entity
         {
             return false;
         }
-        if ( nodeIndexConfig != null ? !nodeIndexConfig.equals( entity.nodeIndexConfig ) : entity.nodeIndexConfig != null )
+        if ( indexConfigDocument != null ? !indexConfigDocument.equals( entity.indexConfigDocument ) : entity.indexConfigDocument != null )
         {
             return false;
         }
@@ -400,7 +444,7 @@ public class Entity
         result = 31 * result + ( createdTime != null ? createdTime.hashCode() : 0 );
         result = 31 * result + ( data != null ? data.hashCode() : 0 );
         result = 31 * result + ( modifiedTime != null ? modifiedTime.hashCode() : 0 );
-        result = 31 * result + ( nodeIndexConfig != null ? nodeIndexConfig.hashCode() : 0 );
+        result = 31 * result + ( indexConfigDocument != null ? indexConfigDocument.hashCode() : 0 );
         result = 31 * result + ( attachments != null ? attachments.hashCode() : 0 );
         return result;
     }

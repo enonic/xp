@@ -24,15 +24,15 @@ import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.entity.CreateNodeParams;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.api.entity.NodeIndexConfig;
 import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodePath;
-import com.enonic.wem.api.entity.PropertyIndexConfig;
 import com.enonic.wem.api.entity.UpdateNodeParams;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
+import com.enonic.wem.api.index.IndexConfig;
+import com.enonic.wem.api.index.IndexConfigDocumentNew;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
@@ -85,7 +85,7 @@ public class ContentNodeTranslatorTest
     }
 
     @Test
-    public void translate_entityIndexConfig_enabled_for_contentdata()
+    public void translate_entityIndexConfig_decide_by_type_for_contentdata()
         throws Exception
     {
         final DataSet rootDataSet = RootDataSet.newDataSet().set( "test", "testValue", ValueTypes.STRING ).build();
@@ -98,13 +98,13 @@ public class ContentNodeTranslatorTest
 
         final CreateNodeParams createNode = translator.toCreateNode( mycontent );
 
-        final NodeIndexConfig nodeIndexConfig = createNode.getNodeIndexConfig();
+        final IndexConfigDocumentNew indexConfigDocument = createNode.getIndexConfigDocument();
 
-        final PropertyIndexConfig testIndexConfig =
-            nodeIndexConfig.getPropertyIndexConfig( DataPath.from( CONTENT_DATA_PREFIX + ".test" ) );
+        final IndexConfig configForData = indexConfigDocument.getConfigForData( DataPath.from( CONTENT_DATA_PREFIX + ".test" ) );
 
-        assertNotNull( testIndexConfig );
-        assertTrue( testIndexConfig.enabled() && testIndexConfig.fulltextEnabled() && testIndexConfig.tokenizeEnabled() );
+        assertNotNull( configForData );
+        assertEquals( true, configForData.isEnabled() );
+        assertEquals( true, configForData.isDecideByType() );
     }
 
     @Test
@@ -131,13 +131,12 @@ public class ContentNodeTranslatorTest
 
         final CreateNodeParams createNode = translator.toCreateNode( mycontent );
 
-        final NodeIndexConfig nodeIndexConfig = createNode.getNodeIndexConfig();
+        final IndexConfigDocumentNew indexConfigDocument = createNode.getIndexConfigDocument();
 
-        final PropertyIndexConfig testIndexConfig =
-            nodeIndexConfig.getPropertyIndexConfig( DataPath.from( "form.formItems.Input[0].inputType.name" ) );
+        final IndexConfig indexConfig = indexConfigDocument.getConfigForData( DataPath.from( "form.formItems.Input[0].inputType.name" ) );
 
-        assertNotNull( testIndexConfig );
-        assertTrue( !testIndexConfig.enabled() && !testIndexConfig.fulltextEnabled() && !testIndexConfig.tokenizeEnabled() );
+        assertNotNull( indexConfig );
+        assertTrue( !indexConfig.isEnabled() && !indexConfig.isFulltext() && !indexConfig.isnGram() );
     }
 
     @Test

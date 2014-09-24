@@ -4,7 +4,7 @@ import com.enonic.wem.api.content.data.ContentData
 import com.enonic.wem.api.data.DataPath
 import com.enonic.wem.api.data.Property
 import com.enonic.wem.api.data.Value
-import com.enonic.wem.api.entity.NodePropertyIndexConfig
+import com.enonic.wem.api.entity.PorpertyIndexConfigDocumentOldShit
 import com.enonic.wem.api.entity.PropertyIndexConfig
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -17,13 +17,13 @@ class ContentPropertyIndexConfigVisitorTest
     def "create for #path"()
     {
         given:
-        def NodePropertyIndexConfig.Builder builder = NodePropertyIndexConfig.create();
+        def PorpertyIndexConfigDocumentOldShit.Builder builder = PorpertyIndexConfigDocumentOldShit.create();
         def ContentPropertyIndexConfigVisitor visitor = new ContentPropertyIndexConfigVisitor( builder );
         def ContentData contentData = new ContentData();
 
         def Property myProperty = contentData.addProperty( path, Value.newString( "doesNotMatter" ) );
         visitor.visit( myProperty );
-        def PropertyIndexConfig config = builder.build().getPropertyIndexConfig( DataPath.from( path ) )
+        def PropertyIndexConfig config = builder.build().getIndexConfig( DataPath.from( path ) )
 
         expect:
         config != null

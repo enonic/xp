@@ -10,6 +10,7 @@ import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.data.type.ValueTypes;
+import com.enonic.wem.api.index.PatternBasedIndexConfigDocument;
 import com.enonic.wem.api.support.illegaledit.IllegalEditException;
 
 import static org.junit.Assert.*;
@@ -29,13 +30,13 @@ public class NodeBuilderTest
     public void build_given_index_config()
     {
         final Node myNode = Node.newNode().
-            entityIndexConfig( NodePropertyIndexConfig.create().
+            indexConfigDocument( PatternBasedIndexConfigDocument.create().
                 analyzer( "myAnalyzer" ).
                 build() ).
             build();
 
-        assertNotNull( myNode.getNodeIndexConfig() );
-        assertEquals( "myAnalyzer", myNode.getNodeIndexConfig().getAnalyzer() );
+        assertNotNull( myNode.getIndexConfigDocument() );
+        assertEquals( "myAnalyzer", myNode.getIndexConfigDocument().getAnalyzer() );
 
     }
 

@@ -8,39 +8,39 @@ import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.data.type.ValueType;
 import com.enonic.wem.api.data.type.ValueTypes;
-import com.enonic.wem.api.entity.PropertyIndexConfig;
+import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.core.index.IndexConstants;
 
 public class IndexDocumentItemFactory
 {
 
     public static Set<AbstractIndexDocumentItem> create( final IndexDocumentItemPath path, final Value value,
-                                                         final PropertyIndexConfig propertyIndexConfig )
+                                                         final IndexConfig indexConfig )
     {
-        return doCreate( propertyIndexConfig, path, value );
+        return doCreate( indexConfig, path, value );
     }
 
-    public static Set<AbstractIndexDocumentItem> create( final Property property, final PropertyIndexConfig propertyIndexConfig )
+    public static Set<AbstractIndexDocumentItem> create( final Property property, final IndexConfig indexConfig )
     {
         final IndexDocumentItemPath path = IndexDocumentItemPath.from( property );
         final Value propertyValue = property.getValue();
 
-        return doCreate( propertyIndexConfig, path, propertyValue );
+        return doCreate( indexConfig, path, propertyValue );
     }
 
-    private static Set<AbstractIndexDocumentItem> doCreate( final PropertyIndexConfig propertyIndexConfig, final IndexDocumentItemPath path,
+    private static Set<AbstractIndexDocumentItem> doCreate( final IndexConfig indexConfig, final IndexDocumentItemPath path,
                                                             final Value propertyValue )
     {
         final Set<AbstractIndexDocumentItem> indexDocumentItems = Sets.newHashSet();
 
-        if ( !propertyIndexConfig.enabled() )
+        if ( !indexConfig.isEnabled() )
         {
             return indexDocumentItems;
         }
 
         addIndexBaseTypeEntries( path, indexDocumentItems, propertyValue );
 
-        addFulltextFields( propertyIndexConfig, path, propertyValue, indexDocumentItems );
+        addFulltextFields( indexConfig, path, propertyValue, indexDocumentItems );
 
         indexDocumentItems.add( createOrderbyItemType( path, propertyValue ) );
 
@@ -51,8 +51,6 @@ public class IndexDocumentItemFactory
 
     private static void addAllFields( final Value propertyValue, final Set<AbstractIndexDocumentItem> indexDocumentItems )
     {
-
-        // TODO: This should be decided e.g by PropertyIndexConfig
         if ( isTextField( propertyValue.getType() ) )
         {
             indexDocumentItems.add( new IndexDocumentAnalyzedItem( IndexDocumentItemPath.from( IndexConstants.ALL_TEXT_FIELD_NAME ),
@@ -63,17 +61,24 @@ public class IndexDocumentItemFactory
         }
     }
 
-    private static void addFulltextFields( final PropertyIndexConfig propertyIndexConfig, final IndexDocumentItemPath path,
-                                           final Value propertyValue, final Set<AbstractIndexDocumentItem> indexDocumentItems )
+    private static void addFulltextFields( final IndexConfig indexConfig, final IndexDocumentItemPath path, final Value propertyValue,
+                                           final Set<AbstractIndexDocumentItem> indexDocumentItems )
     {
-        if ( propertyIndexConfig.fulltextEnabled() )
+        if ( indexConfig.isDecideByType() )
         {
-            indexDocumentItems.add( new IndexDocumentAnalyzedItem( path, propertyValue.asString() ) );
+            addFulltextFieldsTypeBased( path, propertyValue, indexDocumentItems );
         }
-
-        if ( propertyIndexConfig.tokenizeEnabled() )
+        else
         {
-            indexDocumentItems.add( new IndexDocumentNGramItem( path, propertyValue.asString() ) );
+            if ( indexConfig.isFulltext() )
+            {
+                indexDocumentItems.add( new IndexDocumentAnalyzedItem( path, propertyValue.asString() ) );
+            }
+
+            if ( indexConfig.isnGram() )
+            {
+                indexDocumentItems.add( new IndexDocumentNGramItem( path, propertyValue.asString() ) );
+            }
         }
     }
 

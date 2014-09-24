@@ -46,7 +46,7 @@ public final class Node
     public void validateForIndexing()
     {
         Preconditions.checkNotNull( this.id, "Id must be set" );
-        Preconditions.checkNotNull( this.nodeIndexConfig, "EntityIndexConfig must be set" );
+        Preconditions.checkNotNull( this.indexConfigDocument, "EntityIndexConfig must be set" );
     }
 
     public NodeName name()
@@ -195,7 +195,7 @@ public final class Node
             Node.BaseBuilder baseBuilder = new BaseBuilder( this.originalNode );
             baseBuilder.data = this.data;
             baseBuilder.attachments = this.attachments;
-            baseBuilder.nodeIndexConfig = this.nodeIndexConfig;
+            baseBuilder.indexConfigDocument = this.indexConfigDocument;
 
             baseBuilder.name = this.name;
             return new Node( baseBuilder );
@@ -288,7 +288,7 @@ public final class Node
             baseBuilder.parent = this.parent;
             baseBuilder.creator = this.creator;
             baseBuilder.modifier = this.modifier;
-            baseBuilder.nodeIndexConfig = this.nodeIndexConfig;
+            baseBuilder.indexConfigDocument = this.indexConfigDocument;
             baseBuilder.hasChildren = this.hasChildren;
 
             return new Node( baseBuilder );

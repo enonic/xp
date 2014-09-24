@@ -7,12 +7,10 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import com.enonic.wem.api.data.RootDataSetJson;
 import com.enonic.wem.api.entity.Entity;
-import com.enonic.wem.api.entity.NodeIndexConfig;
-import com.enonic.wem.api.entity.NodePatternIndexConfig;
-import com.enonic.wem.api.entity.NodePropertyIndexConfig;
-import com.enonic.wem.core.entity.EntityPatternIndexConfigJson;
-import com.enonic.wem.core.entity.EntityPropertyIndexConfigJson;
-import com.enonic.wem.core.entity.relationship.EntityIndexConfigJson;
+import com.enonic.wem.api.index.IndexConfigDocumentNew;
+import com.enonic.wem.api.index.PatternBasedIndexConfigDocument;
+import com.enonic.wem.core.entity.PatternBasedIndexConfigDocumentJson;
+import com.enonic.wem.core.entity.relationship.IndexConfigDocumentJson;
 
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.WRAPPER_OBJECT)
@@ -27,18 +25,18 @@ public abstract class AbstractEntityJson
 
     protected Instant modifiedTime;
 
-    protected EntityIndexConfigJson entityIndexConfig;
+    protected IndexConfigDocumentJson indexConfigDocument;
 
     private AttachmentsJson attachments;
 
     protected AbstractEntityJson( final String id, final Instant createdTime, final RootDataSetJson data, final Instant modifiedTime,
-                                  final EntityIndexConfigJson entityIndexConfig, final AttachmentsJson attachments )
+                                  final IndexConfigDocumentJson indexConfigDocument, final AttachmentsJson attachments )
     {
         this.id = id;
         this.createdTime = createdTime;
         this.data = data;
         this.modifiedTime = modifiedTime;
-        this.entityIndexConfig = entityIndexConfig;
+        this.indexConfigDocument = indexConfigDocument;
         this.attachments = attachments;
     }
 
@@ -48,21 +46,16 @@ public abstract class AbstractEntityJson
         this.createdTime = entity.getCreatedTime();
         this.modifiedTime = entity.getModifiedTime();
         this.data = new RootDataSetJson( entity.data() );
-        this.entityIndexConfig = createEntityIndexConfig( entity.getNodeIndexConfig() );
+        this.indexConfigDocument = createEntityIndexConfig( entity.getIndexConfigDocument() );
         this.attachments = new AttachmentsJson( entity.attachments() );
     }
 
-    private EntityIndexConfigJson createEntityIndexConfig( final NodeIndexConfig indexConfig )
+    private IndexConfigDocumentJson createEntityIndexConfig( final IndexConfigDocumentNew indexConfig )
     {
-        if ( indexConfig instanceof NodePropertyIndexConfig )
+        if ( indexConfig instanceof PatternBasedIndexConfigDocument )
         {
-            return new EntityPropertyIndexConfigJson( (NodePropertyIndexConfig) indexConfig );
+            return new PatternBasedIndexConfigDocumentJson( (PatternBasedIndexConfigDocument) indexConfig );
         }
-        else if ( indexConfig instanceof NodePatternIndexConfig )
-        {
-            return new EntityPatternIndexConfigJson( (NodePatternIndexConfig) indexConfig );
-        }
-
         return null;
     }
 
@@ -91,9 +84,9 @@ public abstract class AbstractEntityJson
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    public EntityIndexConfigJson getEntityIndexConfig()
+    public IndexConfigDocumentJson getIndexConfigDocument()
     {
-        return entityIndexConfig;
+        return indexConfigDocument;
     }
 
     @SuppressWarnings("UnusedDeclaration")

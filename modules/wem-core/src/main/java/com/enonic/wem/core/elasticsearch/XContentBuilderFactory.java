@@ -30,7 +30,6 @@ public class XContentBuilderFactory
         {
             final XContentBuilder builder = startBuilder();
             addDocumentAnalyzer( builder, indexDocument );
-            addCollectionInfo( builder, indexDocument );
             adddIndexDocumentItems( builder, indexDocument );
             endBuilder( builder );
             return builder;
@@ -59,15 +58,6 @@ public class XContentBuilderFactory
         {
             addField( builder, IndexConstants.ANALYZER_VALUE_FIELD, analyzer );
         }
-    }
-
-    private static void addCollectionInfo( final XContentBuilder builder, final IndexDocument indexDocument )
-        throws Exception
-    {
-        final String collection = indexDocument.getCollection();
-
-        addField( builder, IndexConstants.COLLECTION_FIELD,
-                  Strings.isNullOrEmpty( collection ) ? IndexConstants.DEFAULT_COLLECTION : collection );
     }
 
     private static void adddIndexDocumentItems( final XContentBuilder result, final IndexDocument indexDocument )

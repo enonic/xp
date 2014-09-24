@@ -13,7 +13,7 @@ import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodePath;
-import com.enonic.wem.core.entity.relationship.EntityIndexConfigJson;
+import com.enonic.wem.core.entity.relationship.IndexConfigDocumentJson;
 
 public class NodeJson
     extends AbstractEntityJson
@@ -41,10 +41,10 @@ public class NodeJson
                      @JsonProperty("createdTime") final Instant createdTime, //
                      @JsonProperty("data") final RootDataSetJson data, //
                      @JsonProperty("modifiedTime") final Instant modifiedTime, //
-                     @JsonProperty("entityIndexConfig") final EntityIndexConfigJson entityIndexConfig,
+                     @JsonProperty("indexConfigDocument") final IndexConfigDocumentJson indexConfigDocument,
                      @JsonProperty("attachments") final AttachmentsJson attachments )
     {
-        super( id, createdTime, data, modifiedTime, entityIndexConfig, attachments );
+        super( id, createdTime, data, modifiedTime, indexConfigDocument, attachments );
 
         this.name = name;
         this.parent = parent;
@@ -62,7 +62,7 @@ public class NodeJson
             path( path ).
             parent( parent != null ? NodePath.newPath( parent ).build() : null ).
             rootDataSet( data.getRootDataSet() ).
-            entityIndexConfig( entityIndexConfig.toEntityIndexConfig() ).
+            indexConfigDocument( indexConfigDocument.toEntityIndexConfig() ).
             attachments( attachments != null ? attachments.getAttachments() : Attachments.empty() ).
             build();
     }

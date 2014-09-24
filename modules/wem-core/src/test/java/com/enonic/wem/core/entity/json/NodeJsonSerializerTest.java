@@ -19,8 +19,8 @@ import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodePath;
-import com.enonic.wem.api.entity.NodePropertyIndexConfig;
-import com.enonic.wem.api.entity.PropertyIndexConfig;
+import com.enonic.wem.api.index.IndexConfig;
+import com.enonic.wem.api.index.PatternBasedIndexConfigDocument;
 
 import static org.junit.Assert.*;
 
@@ -47,9 +47,10 @@ public class NodeJsonSerializerTest
             creator( UserKey.from( "test:creator" ) ).
             modifier( UserKey.from( "test:modifier" ).asUser() ).
             modifiedTime( modifiedDateTime ).
-            entityIndexConfig( NodePropertyIndexConfig.create().
+            indexConfigDocument( PatternBasedIndexConfigDocument.create().
                 analyzer( "myAnalyzer" ).
-                addPropertyIndexConfig( "mypath", PropertyIndexConfig.FULL ).
+                defaultConfig( IndexConfig.MINIMAL ).
+                add( "myPath", IndexConfig.FULLTEXT ).
                 build() ).
             rootDataSet( rootDataSet ).
             attachments( Attachments.from( Attachment.

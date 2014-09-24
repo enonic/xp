@@ -4,7 +4,7 @@ package com.enonic.wem.core.entity.relationship;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-import com.enonic.wem.api.entity.NodeIndexConfig;
+import com.enonic.wem.api.entity.IndexConfigDocumentOldShit;
 import com.enonic.wem.core.entity.EntityPatternIndexConfigJson;
 import com.enonic.wem.core.entity.EntityPropertyIndexConfigJson;
 
@@ -15,18 +15,12 @@ public abstract class EntityIndexConfigJson
 {
     private final String analyzer;
 
-    private final String collection;
-
-    private final boolean decideFulltextByValueType;
-
-    public EntityIndexConfigJson( final String analyzer, final String collection, final boolean decideFulltextByValueType )
+    public EntityIndexConfigJson( final String analyzer )
     {
         this.analyzer = analyzer;
-        this.collection = collection;
-        this.decideFulltextByValueType = decideFulltextByValueType;
     }
 
-    public abstract NodeIndexConfig toEntityIndexConfig();
+    public abstract IndexConfigDocumentOldShit toEntityIndexConfig();
 
     @SuppressWarnings("UnusedDeclaration")
     public String getAnalyzer()
@@ -34,14 +28,4 @@ public abstract class EntityIndexConfigJson
         return analyzer;
     }
 
-    @SuppressWarnings("UnusedDeclaration")
-    public String getCollection()
-    {
-        return collection;
-    }
-
-    public boolean isDecideFulltextByValueType()
-    {
-        return decideFulltextByValueType;
-    }
 }

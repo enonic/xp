@@ -23,11 +23,11 @@ import com.enonic.wem.api.entity.CreateNodeParams;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeEditor;
-import com.enonic.wem.api.entity.NodeIndexConfig;
 import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.entity.UpdateNodeParams;
+import com.enonic.wem.api.index.IndexConfigDocumentNew;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
@@ -54,7 +54,7 @@ public class ContentNodeTranslator
     {
         final RootDataSet contentAsData = CONTENT_SERIALIZER.toData( params );
 
-        final NodeIndexConfig nodeIndexConfig = ContentIndexConfigFactory.create();
+        final IndexConfigDocumentNew indexConfigDocumentNew = ContentIndexConfigFactory.create();
 
         Attachments contentAttachments = params.getAttachments();
 
@@ -74,8 +74,7 @@ public class ContentNodeTranslator
             embed( params.isEmbed() ).
             data( contentAsData ).
             attachments( nodeAttachmentsBuilder.build() ).
-
-            entityIndexConfig( nodeIndexConfig );
+            indexConfigDocument( indexConfigDocumentNew );
     }
 
     public UpdateNodeParams toUpdateNodeCommand( final Content content, final Attachments attachments )
@@ -145,7 +144,7 @@ public class ContentNodeTranslator
     {
         final RootDataSet rootDataSet = CONTENT_SERIALIZER.toData( content );
 
-        final NodeIndexConfig nodeIndexConfig = ContentIndexConfigFactory.create();
+        final IndexConfigDocumentNew indexConfigDocument = ContentIndexConfigFactory.create();
 
         return new NodeEditor()
         {
@@ -171,7 +170,7 @@ public class ContentNodeTranslator
                 return Node.editNode( toBeEdited ).
                     name( NodeName.from( content.getName().toString() ) ).
                     attachments( nodeAttachmentsBuilder.build() ).
-                    entityIndexConfig( nodeIndexConfig ).
+                    entityIndexConfig( indexConfigDocument ).
                     rootDataSet( rootDataSet );
             }
         };

@@ -9,12 +9,12 @@ import com.google.common.collect.Maps;
 import com.enonic.wem.api.data.DataPath;
 import com.enonic.wem.api.data.Property;
 
-public class NodePropertyIndexConfig
-    extends NodeIndexConfig
+public class PorpertyIndexConfigDocumentOldShit
+    extends IndexConfigDocumentOldShit
 {
     private final ImmutableMap<DataPath, PropertyIndexConfig> propertyIndexConfigs;
 
-    private NodePropertyIndexConfig( final Builder builder )
+    private PorpertyIndexConfigDocumentOldShit( final Builder builder )
     {
         super( builder );
         this.propertyIndexConfigs = ImmutableMap.copyOf( builder.propertyIndexConfigs );
@@ -25,7 +25,7 @@ public class NodePropertyIndexConfig
         return new Builder();
     }
 
-    public PropertyIndexConfig getPropertyIndexConfig( final DataPath dataPath )
+    public PropertyIndexConfig getIndexConfig( final DataPath dataPath )
     {
         return propertyIndexConfigs.get( dataPath );
     }
@@ -47,7 +47,7 @@ public class NodePropertyIndexConfig
             return false;
         }
 
-        final NodePropertyIndexConfig that = (NodePropertyIndexConfig) o;
+        final PorpertyIndexConfigDocumentOldShit that = (PorpertyIndexConfigDocumentOldShit) o;
 
         return Objects.equals( this.getAnalyzer(), that.getAnalyzer() ) &&
             Objects.equals( this.propertyIndexConfigs, that.propertyIndexConfigs );
@@ -60,7 +60,7 @@ public class NodePropertyIndexConfig
     }
 
     public static class Builder
-        extends NodeIndexConfig.Builder<Builder>
+        extends IndexConfigDocumentOldShit.Builder<Builder>
     {
 
         private final Map<DataPath, PropertyIndexConfig> propertyIndexConfigs = Maps.newHashMap();
@@ -79,9 +79,9 @@ public class NodePropertyIndexConfig
         }
 
 
-        public NodePropertyIndexConfig build()
+        public PorpertyIndexConfigDocumentOldShit build()
         {
-            return new NodePropertyIndexConfig( this );
+            return new PorpertyIndexConfigDocumentOldShit( this );
         }
 
     }

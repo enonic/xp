@@ -2,7 +2,7 @@ package com.enonic.wem.core.entity;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.entity.NodePropertyIndexConfig;
+import com.enonic.wem.api.entity.PorpertyIndexConfigDocumentOldShit;
 import com.enonic.wem.api.entity.PropertyIndexConfig;
 import com.enonic.wem.api.support.JsonTestHelper;
 
@@ -21,7 +21,7 @@ public class EntityPropertyIndexConfigJsonTest
     public void deserialize_serialization_of_EntityIndexConfig_no_analyzer()
         throws Exception
     {
-        NodePropertyIndexConfig entityIndexConfig = NodePropertyIndexConfig.create().
+        PorpertyIndexConfigDocumentOldShit entityIndexConfig = PorpertyIndexConfigDocumentOldShit.create().
             addPropertyIndexConfig( "test", PropertyIndexConfig.create().
                 enabled( true ).
                 fulltextEnabled( true ).
@@ -55,9 +55,8 @@ public class EntityPropertyIndexConfigJsonTest
     public void deserialize_serialization_of_EntityIndexConfig()
         throws Exception
     {
-        NodePropertyIndexConfig entityIndexConfig = NodePropertyIndexConfig.create().
+        PorpertyIndexConfigDocumentOldShit entityIndexConfig = PorpertyIndexConfigDocumentOldShit.create().
             analyzer( "myAnalyzer" ).
-            collection( "myCollection" ).
             addPropertyIndexConfig( "test", PropertyIndexConfig.create().
                 enabled( true ).
                 fulltextEnabled( true ).

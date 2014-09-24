@@ -101,8 +101,9 @@ final class UpdateNodeCommand
             modifier( UserKey.superUser() ).
             rootDataSet( editResult.data() ).
             attachments( syncronizeAttachments( editResult.attachments(), persistedNode ) ).
-            entityIndexConfig(
-                editResult.getNodeIndexConfig() != null ? editResult.getNodeIndexConfig() : persistedNode.getNodeIndexConfig() );
+            indexConfigDocument( editResult.getIndexConfigDocument() != null
+                                     ? editResult.getIndexConfigDocument()
+                                     : persistedNode.getIndexConfigDocument() );
 
         return updateNodeBuilder.build();
     }

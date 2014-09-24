@@ -20,7 +20,8 @@ import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodePath;
-import com.enonic.wem.api.entity.NodePropertyIndexConfig;
+import com.enonic.wem.api.index.IndexConfig;
+import com.enonic.wem.api.index.PatternBasedIndexConfigDocument;
 import com.enonic.wem.core.index.IndexValueType;
 import com.enonic.wem.core.index.document.AbstractIndexDocumentItem;
 import com.enonic.wem.core.index.document.IndexDocument;
@@ -91,8 +92,9 @@ public class NodeIndexDocumentFactoryTest
 
         final Node node = Node.newNode().
             id( EntityId.from( "abc" ) ).
-            entityIndexConfig( NodePropertyIndexConfig.create().
+            indexConfigDocument( PatternBasedIndexConfigDocument.create().
                 analyzer( myAnalyzerName ).
+                defaultConfig( IndexConfig.MINIMAL ).
                 build() ).
             build();
 
@@ -119,8 +121,9 @@ public class NodeIndexDocumentFactoryTest
             creator( UserKey.from( "test:creator" ) ).
             modifier( UserKey.from( "test:modifier" ).asUser() ).
             modifiedTime( modifiedDateTime ).
-            entityIndexConfig( NodePropertyIndexConfig.create().
+            indexConfigDocument( PatternBasedIndexConfigDocument.create().
                 analyzer( myAnalyzerName ).
+                defaultConfig( IndexConfig.MINIMAL ).
                 build() ).
             build();
 

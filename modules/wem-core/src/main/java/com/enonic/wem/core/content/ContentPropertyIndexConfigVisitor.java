@@ -3,13 +3,13 @@ package com.enonic.wem.core.content;
 import com.enonic.wem.api.data.DataPath;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.PropertyVisitor;
-import com.enonic.wem.api.entity.NodePropertyIndexConfig;
+import com.enonic.wem.api.entity.PorpertyIndexConfigDocumentOldShit;
 import com.enonic.wem.api.entity.PropertyIndexConfig;
 
 public class ContentPropertyIndexConfigVisitor
     extends PropertyVisitor
 {
-    private final NodePropertyIndexConfig.Builder builder;
+    private final PorpertyIndexConfigDocumentOldShit.Builder builder;
 
     public static final PropertyIndexConfig CONTENT_DEFAULT_INDEX_CONFIG = PropertyIndexConfig.create().
         nGramEnabled( false ).
@@ -23,7 +23,7 @@ public class ContentPropertyIndexConfigVisitor
         enabled( true ).
         build();
 
-    public ContentPropertyIndexConfigVisitor( final NodePropertyIndexConfig.Builder builder )
+    public ContentPropertyIndexConfigVisitor( final PorpertyIndexConfigDocumentOldShit.Builder builder )
     {
         this.builder = builder;
     }

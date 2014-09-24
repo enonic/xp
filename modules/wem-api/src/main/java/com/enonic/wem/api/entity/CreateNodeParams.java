@@ -1,6 +1,7 @@
 package com.enonic.wem.api.entity;
 
 import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.index.IndexConfigDocumentNew;
 
 public class CreateNodeParams
 {
@@ -12,7 +13,7 @@ public class CreateNodeParams
 
     private Attachments attachments;
 
-    private NodeIndexConfig nodeIndexConfig;
+    private IndexConfigDocumentNew indexConfigDocumentNew;
 
     private boolean embed;
 
@@ -46,11 +47,12 @@ public class CreateNodeParams
         return this;
     }
 
-    public CreateNodeParams entityIndexConfig( final NodeIndexConfig nodeIndexConfig )
+    public CreateNodeParams indexConfigDocument( final IndexConfigDocumentNew indexConfigDocumentNew )
     {
-        this.nodeIndexConfig = nodeIndexConfig;
+        this.indexConfigDocumentNew = indexConfigDocumentNew;
         return this;
     }
+
 
     public CreateNodeParams embed( final boolean embed )
     {
@@ -78,9 +80,9 @@ public class CreateNodeParams
         return attachments;
     }
 
-    public NodeIndexConfig getNodeIndexConfig()
+    public IndexConfigDocumentNew getIndexConfigDocument()
     {
-        return nodeIndexConfig;
+        return indexConfigDocumentNew;
     }
 
     public boolean isEmbed()

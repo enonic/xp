@@ -7,23 +7,23 @@ import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.data.DataPath;
 
-public class NodePatternIndexConfig
-    extends NodeIndexConfig
+public class PatternIndexConfigDocumentOldShit
+    extends IndexConfigDocumentOldShit
 {
     private final ImmutableSortedSet<PathIndexConfig> pathIndexConfigs;
 
     private final PropertyIndexConfig defaultConfig;
 
-    private NodePatternIndexConfig( final Builder builder )
+    private PatternIndexConfigDocumentOldShit( final Builder builder )
     {
         super( builder );
         this.pathIndexConfigs = ImmutableSortedSet.copyOf( builder.configs );
         this.defaultConfig = builder.defaultConfig;
     }
 
-    public static PathIndexConfig.Builder newConfig()
+    public static PatternIndexConfigDocumentOldShit.Builder create()
     {
-        return PathIndexConfig.newConfig();
+        return new Builder();
     }
 
     public ImmutableSortedSet<PathIndexConfig> getPathIndexConfigs()
@@ -37,7 +37,7 @@ public class NodePatternIndexConfig
     }
 
     @Override
-    public PropertyIndexConfig getPropertyIndexConfig( final DataPath dataPath )
+    public PropertyIndexConfig getIndexConfig( final DataPath dataPath )
     {
         for ( final PathIndexConfig config : pathIndexConfigs )
         {
@@ -51,7 +51,7 @@ public class NodePatternIndexConfig
     }
 
     public static class Builder
-        extends NodeIndexConfig.Builder<Builder>
+        extends IndexConfigDocumentOldShit.Builder<Builder>
     {
         private SortedSet<PathIndexConfig> configs = Sets.newTreeSet();
 
@@ -65,8 +65,7 @@ public class NodePatternIndexConfig
 
         public Builder addConfig( final String path, final PropertyIndexConfig propertyIndexConfig )
         {
-            this.configs.add(
-                PathIndexConfig.newConfig().path( DataPath.from( path ) ).propertyIndexConfig( propertyIndexConfig ).build() );
+            this.configs.add( PathIndexConfig.create().path( DataPath.from( path ) ).propertyIndexConfig( propertyIndexConfig ).build() );
             return this;
         }
 
@@ -76,9 +75,9 @@ public class NodePatternIndexConfig
             return this;
         }
 
-        public NodeIndexConfig build()
+        public IndexConfigDocumentOldShit build()
         {
-            return new NodePatternIndexConfig( this );
+            return new PatternIndexConfigDocumentOldShit( this );
         }
 
     }
@@ -99,7 +98,7 @@ public class NodePatternIndexConfig
             return false;
         }
 
-        final NodePatternIndexConfig that = (NodePatternIndexConfig) o;
+        final PatternIndexConfigDocumentOldShit that = (PatternIndexConfigDocumentOldShit) o;
 
         if ( defaultConfig != null ? !defaultConfig.equals( that.defaultConfig ) : that.defaultConfig != null )
         {

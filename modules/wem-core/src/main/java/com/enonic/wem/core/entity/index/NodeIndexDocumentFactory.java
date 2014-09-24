@@ -10,9 +10,10 @@ import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.PropertyVisitor;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.api.entity.NodeIndexConfig;
 import com.enonic.wem.api.entity.PropertyIndexConfig;
 import com.enonic.wem.api.entity.Workspace;
+import com.enonic.wem.api.index.IndexConfig;
+import com.enonic.wem.api.index.IndexConfigDocumentNew;
 import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.core.index.document.IndexDocument;
 import com.enonic.wem.core.index.document.IndexDocumentItemFactory;
@@ -62,14 +63,13 @@ public class NodeIndexDocumentFactory
 
     private static IndexDocument createDataDocument( final Node node, final Workspace workspace, final Repository repository )
     {
-        final NodeIndexConfig nodeIndexConfig = node.getNodeIndexConfig();
+        final IndexConfigDocumentNew indexConfigDocument = node.getIndexConfigDocument();
 
         final IndexDocument.Builder builder = IndexDocument.newIndexDocument().
             id( node.id() ).
             index( IndexNameResolver.resolveSearchIndexName( repository ) ).
             indexType( workspace.getName() ).
-            analyzer( nodeIndexConfig.getAnalyzer() ).
-            collection( nodeIndexConfig.getCollection() );
+            analyzer( indexConfigDocument.getAnalyzer() );
 
         addNodeMetaData( node, builder );
         addNodeProperties( node, builder );
@@ -83,45 +83,45 @@ public class NodeIndexDocumentFactory
         if ( node.name() != null )
         {
             final Value nameValue = Value.newString( node.name().toString() );
-            builder.addEntries( IndexDocumentItemFactory.create( NAME_PROPERTY, nameValue, namePropertyIndexConfig ) );
+            builder.addEntries( IndexDocumentItemFactory.create( NAME_PROPERTY, nameValue, IndexConfig.FULLTEXT ) );
         }
 
         if ( node.getCreatedTime() != null )
         {
-            builder.addEntries( IndexDocumentItemFactory.create( CREATED_TIME_PROPERTY, Value.newInstant( node.getCreatedTime() ),
-                                                                 metadataPropertyIndexConfig ) );
+            builder.addEntries(
+                IndexDocumentItemFactory.create( CREATED_TIME_PROPERTY, Value.newInstant( node.getCreatedTime() ), IndexConfig.MINIMAL ) );
         }
 
         if ( node.getCreator() != null )
         {
             builder.addEntries(
                 IndexDocumentItemFactory.create( CREATOR_PROPERTY_PATH, Value.newString( node.getCreator().getQualifiedName() ),
-                                                 metadataPropertyIndexConfig ) );
+                                                 IndexConfig.MINIMAL ) );
         }
 
         if ( node.getModifiedTime() != null )
         {
             builder.addEntries( IndexDocumentItemFactory.create( MODIFIED_TIME_PROPERTY_PATH, Value.newInstant( node.getModifiedTime() ),
-                                                                 metadataPropertyIndexConfig ) );
+                                                                 IndexConfig.MINIMAL ) );
         }
 
         if ( node.getModifier() != null )
         {
             builder.addEntries(
                 IndexDocumentItemFactory.create( MODIFIER_PROPERTY_PATH, Value.newString( node.getModifier().getQualifiedName() ),
-                                                 metadataPropertyIndexConfig ) );
+                                                 IndexConfig.MINIMAL ) );
         }
 
         if ( node.path() != null )
         {
-            builder.addEntries( IndexDocumentItemFactory.create( PATH_PROPERTY_PATH, Value.newString( node.path().toString() ),
-                                                                 metadataPropertyIndexConfig ) );
+            builder.addEntries(
+                IndexDocumentItemFactory.create( PATH_PROPERTY_PATH, Value.newString( node.path().toString() ), IndexConfig.MINIMAL ) );
         }
 
         if ( node.parent() != null )
         {
-            builder.addEntries( IndexDocumentItemFactory.create( PARENT_PROPERTY_PATH, Value.newString( node.parent().toString() ),
-                                                                 metadataPropertyIndexConfig ) );
+            builder.addEntries(
+                IndexDocumentItemFactory.create( PARENT_PROPERTY_PATH, Value.newString( node.parent().toString() ), IndexConfig.MINIMAL ) );
         }
 
     }
@@ -135,14 +135,14 @@ public class NodeIndexDocumentFactory
             {
                 if ( !property.hasNullValue() && !Strings.isNullOrEmpty( property.getValue().asString() ) )
                 {
-                    PropertyIndexConfig propertyIndexConfig = node.getNodeIndexConfig().getPropertyIndexConfig( property.getPath() );
+                    final IndexConfig configForData = node.getIndexConfigDocument().getConfigForData( property.getPath() );
 
-                    if ( propertyIndexConfig == null )
+                    if ( configForData == null )
                     {
-                        propertyIndexConfig = defaultPropertyIndexConfig;
+                        throw new RuntimeException( "Missing index configuration for data " + property.getPath() );
                     }
 
-                    builder.addEntries( IndexDocumentItemFactory.create( property, propertyIndexConfig ) );
+                    builder.addEntries( IndexDocumentItemFactory.create( property, configForData ) );
                 }
             }
         };

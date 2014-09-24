@@ -8,9 +8,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.data.DataPath;
-import com.enonic.wem.api.entity.NodeIndexConfig;
-import com.enonic.wem.api.entity.NodePatternIndexConfig;
+import com.enonic.wem.api.entity.IndexConfigDocumentOldShit;
 import com.enonic.wem.api.entity.PathIndexConfig;
+import com.enonic.wem.api.entity.PatternIndexConfigDocumentOldShit;
 import com.enonic.wem.core.entity.relationship.EntityIndexConfigJson;
 
 public class EntityPatternIndexConfigJson
@@ -20,9 +20,9 @@ public class EntityPatternIndexConfigJson
 
     private PropertyIndexConfigJson defaultConfig;
 
-    public EntityPatternIndexConfigJson( final NodePatternIndexConfig indexConfig )
+    public EntityPatternIndexConfigJson( final PatternIndexConfigDocumentOldShit indexConfig )
     {
-        super( indexConfig.getAnalyzer(), indexConfig.getCollection(), indexConfig.isDecideFulltextByValueType() );
+        super( indexConfig.getAnalyzer() );
         this.configs = translateToJson( indexConfig.getPathIndexConfigs() );
         this.defaultConfig = new PropertyIndexConfigJson( indexConfig.getDefaultConfig() );
     }
@@ -30,12 +30,10 @@ public class EntityPatternIndexConfigJson
     @SuppressWarnings("UnusedDeclaration")
     @JsonCreator
     public EntityPatternIndexConfigJson( @JsonProperty("analyzer") final String analyzer,
-                                         @JsonProperty("collection") final String collection, //
                                          @JsonProperty("configs") final Set<PathIndexConfigJson> configs,  //
-                                         @JsonProperty("decideFulltextByValueType") final boolean decideFulltextByValueType, //
                                          @JsonProperty("defaultConfig") final PropertyIndexConfigJson defaultConfig )
     {
-        super( analyzer, collection, decideFulltextByValueType );
+        super( analyzer );
         this.configs = configs;
         this.defaultConfig = defaultConfig;
     }
@@ -53,22 +51,20 @@ public class EntityPatternIndexConfigJson
     }
 
     @Override
-    public NodeIndexConfig toEntityIndexConfig()
+    public IndexConfigDocumentOldShit toEntityIndexConfig()
     {
-        final NodePatternIndexConfig.Builder builder = NodePatternIndexConfig.newPatternIndexConfig();
+        final PatternIndexConfigDocumentOldShit.Builder builder = PatternIndexConfigDocumentOldShit.create();
 
         for ( final PathIndexConfigJson config : this.configs )
         {
             builder.addConfig( PathIndexConfig.
-                newConfig().
+                create().
                 propertyIndexConfig( config.getPropertyIndexConfigJson().toPropertyIndexConfig() ).path(
                 DataPath.from( config.getDataPath() ) ).build() );
         }
 
         builder.defaultConfig( this.defaultConfig.toPropertyIndexConfig() ).
-            collection( this.getCollection() ).
-            analyzer( this.getAnalyzer() ).
-            decideFulltextByValueType( this.isDecideFulltextByValueType() );
+            analyzer( this.getAnalyzer() );
 
         return builder.build();
     }

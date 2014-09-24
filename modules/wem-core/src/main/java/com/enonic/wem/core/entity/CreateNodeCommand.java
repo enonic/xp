@@ -51,7 +51,7 @@ final class CreateNodeCommand
             name( NodeName.from( params.getName() ) ).
             rootDataSet( params.getData() ).
             attachments( params.getAttachments() != null ? params.getAttachments() : Attachments.empty() ).
-            entityIndexConfig( params.getNodeIndexConfig() ).
+            indexConfigDocument( params.getIndexConfigDocument() ).
             hasChildren( false ).
             build();
 

@@ -6,7 +6,6 @@ import com.enonic.wem.api.entity.query.EntityQuery;
 import com.enonic.wem.api.query.filter.ValueFilter;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
-import com.enonic.wem.core.index.IndexConstants;
 
 public class ContentQueryEntityQueryTranslator
 {
@@ -42,18 +41,6 @@ public class ContentQueryEntityQueryTranslator
 
             builder.addQueryFilter( contentTypeFilterBuilder.build() );
         }
-
-        addCollectionFilter( builder );
     }
-
-    private static void addCollectionFilter( final EntityQuery.Builder entityQueryBuilder )
-    {
-        entityQueryBuilder.addQueryFilter( ValueFilter.create().
-            fieldName( IndexConstants.COLLECTION_FIELD ).
-            addValue( Value.newString( IndexConstants.CONTENT_COLLECTION_NAME ) ).
-            setCache( true ).
-            build() );
-    }
-
 
 }

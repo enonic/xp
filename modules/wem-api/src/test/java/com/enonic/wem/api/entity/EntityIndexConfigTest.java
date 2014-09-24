@@ -16,7 +16,7 @@ public class EntityIndexConfigTest
     public void analyzer()
         throws Exception
     {
-        final NodePropertyIndexConfig indexConfig = NodePropertyIndexConfig.create().analyzer( "myAnalyzer" ).build();
+        final PorpertyIndexConfigDocumentOldShit indexConfig = PorpertyIndexConfigDocumentOldShit.create().analyzer( "myAnalyzer" ).build();
         assertEquals( "myAnalyzer", indexConfig.getAnalyzer() );
     }
 
@@ -29,8 +29,8 @@ public class EntityIndexConfigTest
 
         final Property myProperty = new Property( "test", Value.newString( "testValue" ) );
 
-        final NodePropertyIndexConfig indexConfig =
-            NodePropertyIndexConfig.create().addPropertyIndexConfig( myProperty, propertyIndexConfig ).build();
+        final PorpertyIndexConfigDocumentOldShit indexConfig =
+            PorpertyIndexConfigDocumentOldShit.create().addPropertyIndexConfig( myProperty, propertyIndexConfig ).build();
 
         final Map<DataPath, PropertyIndexConfig> propertyIndexConfigs = indexConfig.getPropertyIndexConfigs();
 
@@ -46,8 +46,8 @@ public class EntityIndexConfigTest
         final PropertyIndexConfig propertyIndexConfig =
             PropertyIndexConfig.create().enabled( true ).nGramEnabled( true ).fulltextEnabled( true ).build();
 
-        final NodePropertyIndexConfig indexConfig =
-            NodePropertyIndexConfig.create().addPropertyIndexConfig( "test/path", propertyIndexConfig ).build();
+        final PorpertyIndexConfigDocumentOldShit indexConfig =
+            PorpertyIndexConfigDocumentOldShit.create().addPropertyIndexConfig( "test/path", propertyIndexConfig ).build();
 
         final Map<DataPath, PropertyIndexConfig> propertyIndexConfigs = indexConfig.getPropertyIndexConfigs();
 
@@ -72,17 +72,17 @@ public class EntityIndexConfigTest
         final PropertyIndexConfig propertyIndexConfig4 =
             PropertyIndexConfig.create().enabled( true ).nGramEnabled( true ).fulltextEnabled( true ).build();
 
-        final NodePropertyIndexConfig indexConfig = NodePropertyIndexConfig.create().
+        final PorpertyIndexConfigDocumentOldShit indexConfig = PorpertyIndexConfigDocumentOldShit.create().
             addPropertyIndexConfig( "test", propertyIndexConfig1 ).
             addPropertyIndexConfig( "test/path", propertyIndexConfig2 ).
             addPropertyIndexConfig( "test/path/child", propertyIndexConfig3 ).
             addPropertyIndexConfig( "test/path/child/sub", propertyIndexConfig4 ).
             build();
 
-        assertEquals( propertyIndexConfig1, indexConfig.getPropertyIndexConfig( DataPath.from( "test" ) ) );
-        assertEquals( propertyIndexConfig2, indexConfig.getPropertyIndexConfig( DataPath.from( "test/path" ) ) );
-        assertEquals( propertyIndexConfig3, indexConfig.getPropertyIndexConfig( DataPath.from( "test/path/child" ) ) );
-        assertEquals( propertyIndexConfig4, indexConfig.getPropertyIndexConfig( DataPath.from( "test/path/child/sub" ) ) );
+        assertEquals( propertyIndexConfig1, indexConfig.getIndexConfig( DataPath.from( "test" ) ) );
+        assertEquals( propertyIndexConfig2, indexConfig.getIndexConfig( DataPath.from( "test/path" ) ) );
+        assertEquals( propertyIndexConfig3, indexConfig.getIndexConfig( DataPath.from( "test/path/child" ) ) );
+        assertEquals( propertyIndexConfig4, indexConfig.getIndexConfig( DataPath.from( "test/path/child/sub" ) ) );
     }
 
     @Test
@@ -91,15 +91,15 @@ public class EntityIndexConfigTest
         Property myArray1 = Property.newString( "myArray", "1" );
         Property myArray2 = Property.newString( "myArray", "2" );
 
-        final NodePropertyIndexConfig indexConfig = NodePropertyIndexConfig.
+        final PorpertyIndexConfigDocumentOldShit indexConfig = PorpertyIndexConfigDocumentOldShit.
             create().
             addPropertyIndexConfig( myArray1, PropertyIndexConfig.SKIP ).
             addPropertyIndexConfig( myArray2, PropertyIndexConfig.FULL ).
             build();
 
-        assertNotNull( indexConfig.getPropertyIndexConfig( myArray1.getPath() ) );
-        assertEquals( PropertyIndexConfig.FULL, indexConfig.getPropertyIndexConfig( myArray1.getPath() ) );
-        assertEquals( indexConfig.getPropertyIndexConfig( myArray1.getPath() ), indexConfig.getPropertyIndexConfig( myArray2.getPath() ) );
+        assertNotNull( indexConfig.getIndexConfig( myArray1.getPath() ) );
+        assertEquals( PropertyIndexConfig.FULL, indexConfig.getIndexConfig( myArray1.getPath() ) );
+        assertEquals( indexConfig.getIndexConfig( myArray1.getPath() ), indexConfig.getIndexConfig( myArray2.getPath() ) );
     }
 
 }

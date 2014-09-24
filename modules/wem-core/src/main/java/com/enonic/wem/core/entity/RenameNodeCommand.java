@@ -126,7 +126,7 @@ final class RenameNodeCommand
             parent( newParentPath ).
             modifiedTime( now ).
             modifier( UserKey.superUser() ).
-            entityIndexConfig( persistedNode.getNodeIndexConfig() ).
+            indexConfigDocument( persistedNode.getIndexConfigDocument() ).
             build();
 
         final NodeVersionId newVersion = nodeDao.store( movedNode );
