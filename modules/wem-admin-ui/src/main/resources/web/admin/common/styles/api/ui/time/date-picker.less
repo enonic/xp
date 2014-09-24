@@ -1,58 +1,79 @@
 .date-picker {
 
   .button {
-    float: right;
+    position: absolute;
+    height: 100%;
+    top: 0;
+    right: 0;
+    background: transparent;
+    padding: 0 6px;
+    border: 1px solid transparent;
+    font-size: 20px;
+    line-height: 0px;
+    &:before {
+      color: @admin-dark-gray;
+      vertical-align: middle;
+    }
+    &:hover, &:active {
+      background: transparent;
+      &:before {
+        color: @admin-dark-gray;
+      }
+    }
   }
 
   .wrapper {
-    margin-right: 54px;
+    position: relative;
 
     .text-input {
       width: 100%;
+      padding: 4px 32px 4px 5px;
+      line-height: 27px;
     }
 
-    .date-picker-dialog {
-      position: absolute;
-      display: none;
-      top: auto;
-      left: auto;
-      bottom: auto;
-      right: auto;
-      height: auto;
-      width: auto;
-      z-index: 100;
-      padding: 10px;
-      background-color: #fff;
+    .date-picker-dialog-content();
+  }
 
-      .box-shadow(0 1px 5px rgba(0, 0, 0, 0.7));
+}
 
-      h2, h5 {
-        text-align: center;
-      }
+.date-picker-dialog-content() {
+  .date-picker-dialog {
+    position: absolute;
+    display: none;
+    top: auto;
+    left: auto;
+    bottom: auto;
+    right: auto;
+    height: auto;
+    width: auto;
+    z-index: 100;
+    padding: 10px;
+    background-color: #fff;
 
-      .prev, .next {
-        cursor: pointer;
-        padding: 0 5px;
-      }
+    .box-shadow(0 1px 5px rgba(0, 0, 0, 0.7));
 
-      .prev {
-        &:before {
-          content: '\27E8';
-        }
-      }
-
-      .next {
-        &:before {
-          content: '\27E9';
-        }
-      }
-
-      .month-container {
-        margin-bottom: 10px;
-      }
-
+    h2, h5 {
+      text-align: center;
     }
 
+    .prev, .next {
+      cursor: pointer;
+      padding: 0 5px;
+      color: @admin-blue-button;
+      vertical-align: middle;
+    }
+
+    .prev {
+      .icon-arrow-left-thin();
+    }
+
+    .next {
+      .icon-arrow-right-thin();
+    }
+
+    .month-container {
+      margin-bottom: 10px;
+    }
   }
 
 }

@@ -51,12 +51,12 @@ module api.ui.time {
             var wrapper = new api.dom.DivEl('wrapper');
             wrapper.appendChild(this.input);
 
-            this.popupTrigger = new api.ui.button.Button();
-            this.popupTrigger.addClass('icon-clock');
-            this.appendChild(this.popupTrigger);
-
             this.popup = new TimePickerPopup(builder);
             wrapper.appendChild(this.popup);
+
+            this.popupTrigger = new api.ui.button.Button();
+            this.popupTrigger.addClass('icon-clock');
+            wrapper.appendChild(this.popupTrigger);
 
             this.appendChild(wrapper);
 

@@ -78,10 +78,6 @@ module api.ui.time {
             var wrapper = new api.dom.DivEl('wrapper');
             wrapper.appendChild(this.input);
 
-            this.popupTrigger = new api.ui.button.Button();
-            this.popupTrigger.addClass('icon-calendar4');
-            this.appendChild(this.popupTrigger);
-
             this.calendar = new CalendarBuilder().
                 setSelectedDate(builder.selectedDate).
                 setMonth(builder.month).
@@ -91,6 +87,10 @@ module api.ui.time {
 
             this.popup = new DatePickerPopup(this.calendar, builder);
             wrapper.appendChild(this.popup);
+
+            this.popupTrigger = new api.ui.button.Button();
+            this.popupTrigger.addClass('icon-calendar4');
+            wrapper.appendChild(this.popupTrigger);
 
             this.appendChild(wrapper);
 
