@@ -17,10 +17,6 @@ public class ImageComponent
 
     private static final String CAPTION = "caption";
 
-    private static final String PHOTOGRAPHER = "photographer";
-
-    private static final String COPYRIGHT = "copyright";
-
     private final static ImageComponentType type = new ImageComponentType();
 
     private ContentId image;
@@ -73,31 +69,6 @@ public class ImageComponent
         return config.getProperty( CAPTION ).getString();
     }
 
-    public boolean hasPhotographer()
-    {
-        return config.hasData( PHOTOGRAPHER ) && StringUtils.isNotBlank( config.getProperty( PHOTOGRAPHER ).getString() );
-    }
-
-    /**
-     * Returns value of property "photographer" in config.
-     */
-    public String getPhotographer()
-    {
-        return config.getProperty( PHOTOGRAPHER ).getString();
-    }
-
-    public boolean hasCopyright()
-    {
-        return config.hasData( COPYRIGHT ) && StringUtils.isNotBlank( config.getProperty( COPYRIGHT ).getString() );
-    }
-
-    /**
-     * Returns value of property "copyright" in config.
-     */
-    public String getCopyright()
-    {
-        return config.getProperty( COPYRIGHT ).getString();
-    }
 
     public static class Builder
         extends AbstractPageComponent.Builder

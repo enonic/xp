@@ -29,18 +29,6 @@ module api.content.page.image {
                 setLabel("Caption").
                 setOccurrences(new OccurrencesBuilder().setMinimum(0).setMaximum(1).build()).
                 build());
-            formBuilder.addFormItem(new api.form.InputBuilder().
-                setName("photographer").
-                setInputType(TextLine.getName()).
-                setLabel("Photographer").
-                setOccurrences(new OccurrencesBuilder().setMinimum(0).setMaximum(1).build()).
-                build());
-            formBuilder.addFormItem(new api.form.InputBuilder().
-                setName("copyright").
-                setInputType(TextLine.getName()).
-                setLabel("Copyright").
-                setOccurrences(new OccurrencesBuilder().setMinimum(0).setMaximum(1).build()).
-                build());
             this.form = formBuilder.build();
         }
 

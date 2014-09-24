@@ -28,37 +28,22 @@ public final class ImageRenderer
         {
             s.append( "<div data-live-edit-type=\"" ).append( component.getType().toString() ).append( "\">" );
         }
-        final PortalUrlBuilders portalUrlBuilders = new PortalUrlBuilders( context );
-        final ImageUrlBuilder imageUrlBuilder = portalUrlBuilders.createImageByIdUrl( component.getImage() );
-        imageUrlBuilder.filter( "scalewidth(500)" );
-        final String imageUrl = imageUrlBuilder.toString();
-        s.append( "<figure>" );
-        s.append( "<img style=\"display: block; width: 100%\" src=\"" ).append( imageUrl ).append( "\"/>" );
-        if ( component.hasCaption() )
-        {
-            s.append( "<figcaption>" ).append( component.getCaption() ).append( "</figcaption>" );
-        }
-        if ( component.hasCopyright() || component.hasPhotographer() )
-        {
-            s.append( "<footer>" );
-            s.append( "<small>" );
-            if ( component.hasPhotographer() )
-            {
-                s.append( component.getPhotographer() );
-            }
-            if ( component.hasCopyright() )
-            {
-                if ( component.hasPhotographer() )
-                {
-                    s.append( " - " );
-                }
-                s.append( component.getCopyright() );
-            }
-            s.append( "</small>" );
-            s.append( "</footer>" );
-        }
-        s.append( "</figure>" );
 
+        if ( component.getImage() != null )
+        {
+            final PortalUrlBuilders portalUrlBuilders = new PortalUrlBuilders( context );
+            final ImageUrlBuilder imageUrlBuilder = portalUrlBuilders.createImageByIdUrl( component.getImage() );
+            imageUrlBuilder.filter( "scalewidth(500)" );
+            final String imageUrl = imageUrlBuilder.toString();
+            s.append( "<figure>" );
+            s.append( "<img style=\"display: block; width: 100%\" src=\"" ).append( imageUrl ).append( "\"/>" );
+            if ( component.hasCaption() )
+            {
+                s.append( "<figcaption>" ).append( component.getCaption() ).append( "</figcaption>" );
+            }
+            s.append( "</figure>" );
+
+        }
         if ( renderingMode == RenderingMode.EDIT )
         {
             s.append( "</div>" );
