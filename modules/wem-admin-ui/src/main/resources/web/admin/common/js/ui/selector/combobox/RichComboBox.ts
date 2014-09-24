@@ -20,6 +20,8 @@ module api.ui.selector.combobox {
 
         maximumOccurrences: number;
 
+        minWidth: number;
+
         private delayedInputValueChangedHandling: number;
 
         private optionDisplayValueViewer: Viewer<OPTION_DISPLAY_VALUE>;
@@ -45,6 +47,7 @@ module api.ui.selector.combobox {
             this.selectedOptionsView = config.selectedOptionsView;
             this.selectedOptionsView.hide();
             this.maximumOccurrences = config.maximumOccurrences;
+            this.minWidth = config.minWidth;
             this.optionDisplayValueViewer = config.optionDisplayValueViewer;
             this.setNextInputFocusWhenMaxReached = config.nextInputFocusWhenMaxReached;
             this.comboBox = this.createComboBox(config.comboBoxName);
@@ -141,7 +144,8 @@ module api.ui.selector.combobox {
                 optionDisplayValueViewer: this.optionDisplayValueViewer,
                 hideComboBoxWhenMaxReached: true,
                 setNextInputFocusWhenMaxReached: this.setNextInputFocusWhenMaxReached,
-                delayedInputValueChangedHandling: this.delayedInputValueChangedHandling
+                delayedInputValueChangedHandling: this.delayedInputValueChangedHandling,
+                minWidth: this.minWidth
             };
         }
 
@@ -248,6 +252,8 @@ module api.ui.selector.combobox {
 
         nextInputFocusWhenMaxReached: boolean = true;
 
+        minWidth: number;
+
         setComboBoxName(comboBoxName: string): RichComboBoxBuilder<T> {
             this.comboBoxName = comboBoxName;
             return this;
@@ -285,6 +291,11 @@ module api.ui.selector.combobox {
 
         setNextInputFocusWhenMaxReached(value: boolean): RichComboBoxBuilder<T> {
             this.nextInputFocusWhenMaxReached = value;
+            return this;
+        }
+
+        setMinWidth(value:number) {
+            this.minWidth = value;
             return this;
         }
 

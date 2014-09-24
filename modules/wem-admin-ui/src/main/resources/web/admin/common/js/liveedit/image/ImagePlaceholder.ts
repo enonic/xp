@@ -43,6 +43,7 @@ module api.liveedit.image {
                 setMaximumOccurrences(1).
                 setAllowedContentTypes([ContentTypeName.IMAGE]).
                 setLoader(new api.content.ContentSummaryLoader()).
+                setMinWidth(270).
                 build();
             this.comboBox.addClass('image-placeholder');
             this.comboBox.hide();

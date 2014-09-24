@@ -34,7 +34,7 @@ module api.ui.selector.combobox {
 
             this.dropdownGrid = new DropdownGrid<OPTION_DISPLAY_VALUE>(<DropdownGridConfig<OPTION_DISPLAY_VALUE>>{
                 maxHeight: config.maxHeight,
-                width: config.width,
+                width: Math.max(config.width, 240),
                 optionDisplayValueViewer: config.optionDisplayValueViewer,
                 filter: config.filter,
                 dataIdProperty: config.dataIdProperty,

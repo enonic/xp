@@ -28,6 +28,8 @@ module api.ui.selector.combobox {
 
         delayedInputValueChangedHandling?: number;
 
+        minWidth?: number;
+
     }
 
     export class ComboBox<OPTION_DISPLAY_VALUE> extends api.dom.FormInputEl {
@@ -54,6 +56,8 @@ module api.ui.selector.combobox {
 
         private setNextInputFocusWhenMaxReached: boolean = true;
 
+        private minWidth: number = -1;
+
         private optionSelectedListeners: {(event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>):void}[] = [];
 
         private optionFilterInputValueChangedListeners: {(event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>):void}[] = [];
@@ -79,6 +83,10 @@ module api.ui.selector.combobox {
             if (config.iconUrl) {
                 this.icon = new api.dom.ImgEl(config.iconUrl, "input-icon");
                 this.appendChild(this.icon);
+            }
+
+            if (config.minWidth) {
+                this.minWidth = config.minWidth;
             }
 
             this.input = new ComboBoxOptionFilterInput();
@@ -121,7 +129,7 @@ module api.ui.selector.combobox {
         private doUpdateDropdownTopPositionAndWidth() {
             var inputEl = this.input.getEl();
             this.comboBoxDropdown.setTopPx(inputEl.getHeightWithBorder() - inputEl.getBorderBottomWidth());
-            this.comboBoxDropdown.setWidth(inputEl.getWidthWithBorder());
+            this.comboBoxDropdown.setWidth(Math.max(inputEl.getWidthWithBorder(), this.minWidth));
         }
 
         giveFocus(): boolean {

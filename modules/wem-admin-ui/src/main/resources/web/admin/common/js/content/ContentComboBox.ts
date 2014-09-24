@@ -17,7 +17,8 @@ module api.content {
                 .setSelectedOptionsView(new ContentSelectedOptionsView())
                 .setMaximumOccurrences(builder.maximumOccurrences)
                 .setOptionDisplayValueViewer(new api.content.ContentSummaryViewer())
-                .setDelayedInputValueChangedHandling(500);
+                .setDelayedInputValueChangedHandling(500)
+                .setMinWidth(builder.minWidth);
 
             super(richComboBoxBuilder);
         }
@@ -62,6 +63,8 @@ module api.content {
 
         allowedContentTypes: string[];
 
+        minWidth: number;
+
         setName(value: string): ContentComboBoxBuilder {
             this.name = value;
             return this;
@@ -79,6 +82,11 @@ module api.content {
 
         setAllowedContentTypes(allowedTypes: string[]): ContentComboBoxBuilder {
             this.allowedContentTypes = allowedTypes;
+            return this;
+        }
+
+        setMinWidth(value:number) {
+            this.minWidth = value;
             return this;
         }
 
