@@ -12,6 +12,7 @@ module api.content.page.inputtype.pagecontroller {
     import ValueChangedEvent = api.form.inputtype.support.ValueChangedEvent;
     import Element = api.dom.Element;
     import ContentInputTypeViewContext = api.content.form.inputtype.ContentInputTypeViewContext;
+    import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
 
     export class PageController extends support.BaseInputTypeNotManagingAdd<any, string> {
 
@@ -30,11 +31,18 @@ module api.content.page.inputtype.pagecontroller {
         createInputOccurrenceElement(index: number, property: api.data.Property): Element {
             var context = <ContentInputTypeViewContext<any>>this.getContext(),
                 moduleKeys = context.site.getSite().getModuleKeys(),
-                request = new GetPageDescriptorsByModulesRequest(moduleKeys);
+                request = new GetPageDescriptorsByModulesRequest(moduleKeys),
+                loader = new api.util.loader.BaseLoader<PageDescriptorsJson, PageDescriptor>(request);
 
-            return new PageDescriptorDropdown('page-controller[' + index + ']', {
-                loader: new api.util.loader.BaseLoader<PageDescriptorsJson, PageDescriptor>(request)
+            var dropdown = new PageDescriptorDropdown('page-controller[' + index + ']', {
+                loader: loader
             });
+
+            loader.onLoadedData((event: LoadedDataEvent<PageDescriptor>) => {
+                dropdown.setValue(property.getString());
+            });
+
+            return dropdown;
         }
 
         onOccurrenceValueChanged(element: Element, listener: (event: ValueChangedEvent) => void) {

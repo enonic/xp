@@ -210,15 +210,6 @@ module api.ui.selector.dropdown {
             }
         }
 
-        setValues(values: string[]) {
-            values.forEach((value: string) => {
-                var option = this.getOptionByValue(value);
-                if (option != null) {
-                    this.selectOption(option);
-                }
-            });
-        }
-
         selectRow(index: number) {
             var option = this.getOptionByRow(index);
             if (option != null) {
