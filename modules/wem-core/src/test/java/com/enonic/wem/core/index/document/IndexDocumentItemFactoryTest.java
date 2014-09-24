@@ -3,7 +3,6 @@ package com.enonic.wem.core.index.document;
 import java.time.LocalDate;
 import java.util.Set;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.enonic.wem.api.data.Property;
@@ -62,17 +61,41 @@ public class IndexDocumentItemFactoryTest
         assertEquals( 3, indexDocumentItems.size() );
     }
 
-    @Ignore
     @Test
-    public void fulltext_by_type()
+    public void string_by_type()
         throws Exception
     {
         Property property = new Property( "myStringProp", Value.newString( "myStringValue" ) );
 
-        // When not by type, no analyzed or tokenized
-        assertEquals( 4, IndexDocumentItemFactory.create( property, IndexConfig.BY_TYPE ).size() );
-
         // When by type, should yield string, fulltext, tokenized, orderby, all analyzed, all tokenized
         assertEquals( 6, IndexDocumentItemFactory.create( property, IndexConfig.BY_TYPE ).size() );
     }
+
+    @Test
+    public void double_by_type()
+        throws Exception
+    {
+        Property property = new Property( "myStringProp", Value.newDouble( 1.0 ) );
+
+        // When by type, should yield string, number, orderby
+        assertEquals( 3, IndexDocumentItemFactory.create( property, IndexConfig.BY_TYPE ).size() );
+    }
+
+    @Test
+    public void fulltext_not_in_all()
+        throws Exception
+    {
+        Property property = new Property( "myStringProp", Value.newString( "myStringValue" ) );
+
+        // should yield string, fulltext, !tokenized, orderby, !all analyzed, !all tokenized
+        assertEquals( 3, IndexDocumentItemFactory.create( property, IndexConfig.create().
+            decideByType( false ).
+            enabled( true ).
+            fulltext( true ).
+            nGram( false ).
+            includeInAllText( false ).
+            build() ).size() );
+    }
+
+
 }
