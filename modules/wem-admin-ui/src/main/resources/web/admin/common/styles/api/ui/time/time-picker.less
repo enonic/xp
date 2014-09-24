@@ -1,75 +1,106 @@
 .time-picker {
 
   .button {
-    float: right;
+    position: absolute;
+    height: 100%;
+    top: 0;
+    right: 0;
+    background: transparent;
+    padding: 0 6px;
+    border: 1px solid transparent;
+    font-size: 20px;
+    line-height: 0px;
+    &:before {
+      color: @admin-dark-gray;
+      vertical-align: middle;
+    }
+    &:hover, &:active {
+      background: transparent;
+      &:before {
+        color: @admin-dark-gray;
+      }
+    }
   }
 
   .wrapper {
-    margin-right: 54px;
+    position: relative;
 
     .text-input {
       width: 100%;
+      padding: 4px 32px 4px 5px;
+      line-height: 27px;
     }
 
-    .time-picker-dialog {
-      position: absolute;
-      display: none;
-      top: auto;
-      left: auto;
-      bottom: auto;
-      right: auto;
-      height: auto;
-      width: auto;
-      z-index: 100;
-      padding: 5px;
-      background-color: #fff;
-
-      .box-shadow(0 1px 5px rgba(0, 0, 0, 0.7));
-
-      li {
-        float: left;
-        font-size: 30px;
-        line-height: 40px;
-        padding: 5px;
-
-        &.colon {
-          padding: 0;
-          margin-top: 19px;
-
-          &:before {
-            content: ':';
-          }
-        }
-
-        a, span {
-          display: block;
-        }
-
-        .prev, .next {
-          cursor: pointer;
-          overflow: hidden;
-          height: 16px;
-
-          span {
-            .rotate(90deg);
-          }
-        }
-
-        .prev {
-          span:before {
-            content: '\27E9';
-          }
-        }
-
-        .next {
-          span:before {
-            content: '\27E8';
-          }
-        }
-
-      }
-    }
+    .time-picker-dialog-content();
 
   }
 
+}
+
+.time-picker-dialog-content() {
+  .time-picker-dialog {
+    position: absolute;
+    display: none;
+    top: auto;
+    left: auto;
+    bottom: auto;
+    right: auto;
+    height: auto;
+    width: auto;
+    z-index: 100;
+    padding: 5px;
+    background-color: #fff;
+
+    .box-shadow(0 1px 5px rgba(0, 0, 0, 0.7));
+
+    li {
+      float: left;
+      font-size: 30px;
+      line-height: 40px;
+      padding: 5px;
+
+      &.colon {
+        padding: 0;
+        margin-top: 19px;
+
+        &:before {
+          content: ':';
+        }
+      }
+
+      a, span {
+        display: block;
+      }
+
+      .prev, .next {
+        cursor: pointer;
+        overflow: hidden;
+        height: 16px;
+
+        width: 34px;
+        text-align: center;
+
+        span {
+          position: absolute;
+          width: inherit;
+          margin-top: -3px;
+          font-size: 0.8em;
+          color: @admin-blue-button;
+        }
+      }
+
+      .prev {
+        span {
+          .icon-arrow-down-thin();
+        }
+      }
+
+      .next {
+        span {
+          .icon-arrow-up-thin();
+        }
+      }
+
+    }
+  }
 }
