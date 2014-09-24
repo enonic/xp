@@ -28,7 +28,6 @@ class ContentQueryEntityQueryTranslatorTest
 
     }
 
-
     def "with content name filter"()
     {
         given:

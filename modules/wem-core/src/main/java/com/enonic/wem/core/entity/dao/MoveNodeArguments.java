@@ -2,9 +2,9 @@ package com.enonic.wem.core.entity.dao;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.IndexConfigDocumentOldShit;
 import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodePath;
+import com.enonic.wem.api.index.IndexConfigDocumentNew;
 
 public class MoveNodeArguments
 {
@@ -16,16 +16,15 @@ public class MoveNodeArguments
 
     private final NodePath parentPath;
 
-
-    private final IndexConfigDocumentOldShit indexConfigDocumentOldShit;
+    private final IndexConfigDocumentNew indexConfigDocument;
 
     private MoveNodeArguments( final Builder builder )
     {
         this.updater = builder.updater;
-        this.indexConfigDocumentOldShit = builder.indexConfigDocumentOldShit;
         this.name = builder.name;
         this.parentPath = builder.parentPath;
         this.nodeToMove = builder.nodeToUpdate;
+        this.indexConfigDocument = builder.indexConfigDocument;
     }
 
     public UserKey updater()
@@ -48,15 +47,6 @@ public class MoveNodeArguments
         return parentPath;
     }
 
-    public IndexConfigDocumentOldShit getIndexConfigDocumentOldShit()
-    {
-        return indexConfigDocumentOldShit;
-    }
-
-    public static Builder newMoveNode()
-    {
-        return new Builder();
-    }
 
     public static class Builder
     {
@@ -68,8 +58,7 @@ public class MoveNodeArguments
 
         private NodePath parentPath;
 
-        private IndexConfigDocumentOldShit indexConfigDocumentOldShit;
-
+        private IndexConfigDocumentNew indexConfigDocument;
 
         public Builder updater( final UserKey updater )
         {
@@ -95,10 +84,9 @@ public class MoveNodeArguments
             return this;
         }
 
-
-        public Builder entityIndexConfig( final IndexConfigDocumentOldShit indexConfigDocumentOldShit )
+        public Builder indexConfigDocument( final IndexConfigDocumentNew indexConfigDocument )
         {
-            this.indexConfigDocumentOldShit = indexConfigDocumentOldShit;
+            this.indexConfigDocument = indexConfigDocument;
             return this;
         }
 

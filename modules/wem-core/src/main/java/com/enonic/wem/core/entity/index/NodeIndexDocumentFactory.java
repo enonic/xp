@@ -10,7 +10,6 @@ import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.PropertyVisitor;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.api.entity.PropertyIndexConfig;
 import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.index.IndexConfigDocumentNew;
@@ -30,25 +29,6 @@ import static com.enonic.wem.core.entity.index.IndexPaths.PATH_PROPERTY_PATH;
 
 public class NodeIndexDocumentFactory
 {
-
-    private static final PropertyIndexConfig metadataPropertyIndexConfig = PropertyIndexConfig.create().
-        enabled( true ).
-        nGramEnabled( false ).
-        fulltextEnabled( false ).
-        build();
-
-    private static final PropertyIndexConfig defaultPropertyIndexConfig = PropertyIndexConfig.create().
-        enabled( true ).
-        nGramEnabled( false ).
-        fulltextEnabled( false ).
-        build();
-
-    private static final PropertyIndexConfig namePropertyIndexConfig = PropertyIndexConfig.
-        create().
-        enabled( true ).
-        nGramEnabled( true ).
-        fulltextEnabled( false ).
-        build();
 
     public static Collection<IndexDocument> create( final Node node, final Workspace workspace, final Repository repository )
     {
