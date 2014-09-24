@@ -8,7 +8,6 @@ import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.page.PageComponentService;
 import com.enonic.wem.api.content.page.PageDescriptorService;
 import com.enonic.wem.api.content.page.PageTemplateService;
-import com.enonic.wem.api.content.page.image.ImageDescriptorService;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorService;
 import com.enonic.wem.api.content.page.part.PartDescriptorService;
 import com.enonic.wem.api.content.site.SiteService;
@@ -29,7 +28,6 @@ public final class Activator
         install( new PortalModule() );
 
         service( PageComponentService.class ).importSingle();
-        service( ImageDescriptorService.class ).importSingle();
         service( LayoutDescriptorService.class ).importSingle();
         service( PartDescriptorService.class ).importSingle();
         service( ContentService.class ).importSingle();

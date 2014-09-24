@@ -1,16 +1,41 @@
 module api.form {
 
+    export class FormBuilder {
+
+        formItems: FormItem[] = [];
+
+        addFormItem(formItem: FormItem): FormBuilder {
+            this.formItems.push(formItem);
+            return this;
+        }
+
+        fromJson(json: json.FormJson): FormBuilder {
+            json.formItems.forEach((formItemJson: api.form.json.FormItemJson) => {
+                this.addFormItem(FormItemFactory.createFormItem(formItemJson));
+            });
+            return this;
+        }
+
+        build(): Form {
+            return new Form(this);
+        }
+    }
+
     export class Form implements api.Equitable {
 
         private formItems: FormItem[] = [];
 
         private formItemByName: {[name:string] : FormItem; } = {};
 
-        constructor(formJson: api.form.json.FormJson) {
+        static fromJson(json: json.FormJson) {
+            var builder = new FormBuilder();
+            builder.fromJson(json);
+            return builder.build();
+        }
 
-            //TODO: this breaks "edit", cause formJson is empty. Commented out.
-            formJson.formItems.forEach((formItemJson: api.form.json.FormItemJson) => {
-                this.addFormItem(FormItemFactory.createFormItem(formItemJson));
+        constructor(builder: FormBuilder) {
+            builder.formItems.forEach((formItem: FormItem) => {
+                this.addFormItem(formItem);
             });
         }
 

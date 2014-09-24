@@ -16,7 +16,6 @@ module app.wizard.page {
     import Descriptor = api.content.page.Descriptor;
     import LayoutRegions = api.content.page.layout.LayoutRegions;
     import GetPageDescriptorByKeyRequest = api.content.page.GetPageDescriptorByKeyRequest;
-    import ImageDescriptorChangedEvent = app.wizard.page.contextwindow.inspect.ImageDescriptorChangedEvent;
     import LayoutDescriptorChangedEvent = app.wizard.page.contextwindow.inspect.LayoutDescriptorChangedEvent;
 
     import PageComponentBuilder = api.content.page.PageComponentBuilder;
@@ -31,7 +30,6 @@ module app.wizard.page {
     import ImageComponent = api.content.page.image.ImageComponent;
 
     import GetPartDescriptorsByModulesRequest = api.content.page.part.GetPartDescriptorsByModulesRequest;
-    import GetImageDescriptorsByModulesRequest = api.content.page.image.GetImageDescriptorsByModulesRequest;
     import GetLayoutDescriptorsByModulesRequest = api.content.page.layout.GetLayoutDescriptorsByModulesRequest;
 
     import InspectionPanelConfig = app.wizard.page.contextwindow.inspect.InspectionPanelConfig;
@@ -147,17 +145,6 @@ module app.wizard.page {
             this.imageInspectionPanel = new ImageInspectionPanel(<ImageInspectionPanelConfig>{
                 siteTemplate: this.siteTemplate,
                 defaultModels: config.defaultModels
-            });
-
-            this.imageInspectionPanel.onImageDescriptorChanged((event: ImageDescriptorChangedEvent) => {
-
-                var imageView: ImageComponentView = event.getImageComponentView();
-                var command = new PageComponentSetDescriptorCommand().
-                    setPageComponentView(imageView).
-                    setPageRegions(this.pageRegions).
-                    setDescriptor(event.getDescriptor());
-                command.execute();
-                this.saveAndReloadOnlyPageComponent(imageView);
             });
 
             this.partInspectionPanel = new PartInspectionPanel(<PartInspectionPanelConfig>{

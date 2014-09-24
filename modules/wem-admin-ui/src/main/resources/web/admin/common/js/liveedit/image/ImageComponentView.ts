@@ -33,7 +33,7 @@ module api.liveedit.image {
             if (!this.imageComponent) {
                 return this.isEmpty();
             }
-            return this.isEmpty() || !this.imageComponent.getDescriptor();
+            return this.isEmpty() || !this.imageComponent.getImage();
         }
 
         duplicate(duplicate: ImageComponent): ImageComponentView {

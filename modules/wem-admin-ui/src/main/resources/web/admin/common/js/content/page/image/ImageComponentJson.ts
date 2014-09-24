@@ -1,7 +1,9 @@
 module api.content.page.image {
 
-    export interface ImageComponentJson extends api.content.page.DescriptorBasedPageComponentJson {
+    export interface ImageComponentJson extends api.content.page.PageComponentJson {
 
         image:string;
+
+        config: api.data.json.DataTypeWrapperJson[];
     }
 }

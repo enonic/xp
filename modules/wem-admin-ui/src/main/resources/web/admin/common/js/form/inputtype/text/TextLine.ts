@@ -53,7 +53,11 @@ module api.form.inputtype.text {
             return super.valueBreaksRequiredContract(value) || !value.getType().equals(api.data.type.ValueTypes.STRING);
         }
 
+        static getName(): api.form.InputTypeName {
+            return new api.form.InputTypeName("TextLine", false);
+        }
+
     }
 
-    api.form.inputtype.InputTypeManager.register(new api.Class("TextLine", TextLine));
+    api.form.inputtype.InputTypeManager.register(new api.Class(TextLine.getName().getName(), TextLine));
 }

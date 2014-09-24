@@ -83,7 +83,7 @@ module api.module {
         fromJson(json: api.module.json.ModuleJson): ModuleBuilder {
             super.fromJson(json);
 
-            this.config = json.config != null ? new api.form.Form(json.config) : null;
+            this.config = json.config != null ? api.form.Form.fromJson(json.config) : null;
             this.minSystemVersion = json.minSystemVersion;
             this.maxSystemVersion = json.maxSystemVersion;
 

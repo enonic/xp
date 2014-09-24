@@ -1,20 +1,63 @@
 module api.content.page.image {
 
     import Region = api.content.page.region.Region;
+    import Form = api.form.Form;
+    import FormBuilder = api.form.FormBuilder;
+    import OccurrencesBuilder = api.form.OccurrencesBuilder;
+    import TextLine = api.form.inputtype.text.TextLine;
+    import TextArea = api.form.inputtype.text.TextArea;
+    import RootDataSet = api.data.RootDataSet;
 
-    export class ImageComponent extends api.content.page.DescriptorBasedPageComponent implements api.Equitable, api.Cloneable {
+    export class ImageComponent extends api.content.page.PageComponent implements api.Equitable, api.Cloneable {
 
         private image: api.content.ContentId;
+
+        private config: RootDataSet;
+
+        private form: Form;
 
         constructor(builder?: ImageComponentBuilder) {
             super(builder);
             if (builder) {
                 this.image = builder.image;
+                this.config = builder.config;
             }
+            var formBuilder = new FormBuilder();
+            formBuilder.addFormItem(new api.form.InputBuilder().
+                setName("caption").
+                setInputType(TextArea.getName()).
+                setLabel("Caption").
+                setOccurrences(new OccurrencesBuilder().setMinimum(0).setMaximum(1).build()).
+                build());
+            formBuilder.addFormItem(new api.form.InputBuilder().
+                setName("photographer").
+                setInputType(TextLine.getName()).
+                setLabel("Photographer").
+                setOccurrences(new OccurrencesBuilder().setMinimum(0).setMaximum(1).build()).
+                build());
+            formBuilder.addFormItem(new api.form.InputBuilder().
+                setName("copyright").
+                setInputType(TextLine.getName()).
+                setLabel("Copyright").
+                setOccurrences(new OccurrencesBuilder().setMinimum(0).setMaximum(1).build()).
+                build());
+            this.form = formBuilder.build();
         }
 
         getImage(): api.content.ContentId {
             return this.image;
+        }
+
+        getForm(): api.form.Form {
+            return this.form;
+        }
+
+        getConfig(): api.data.RootDataSet {
+            return this.config;
+        }
+
+        setConfig(value: api.data.RootDataSet) {
+            this.config = value;
         }
 
         setImage(value: api.content.ContentId) {
@@ -25,6 +68,7 @@ module api.content.page.image {
 
             var json: ImageComponentJson = <ImageComponentJson>super.toPageComponentJson();
             json.image = this.image != null ? this.image.toString() : null;
+            json.config = this.config != null ? this.config.toJson() : null;
 
             return <api.content.page.PageComponentTypeWrapperJson> {
                 ImageComponent: json
@@ -47,6 +91,10 @@ module api.content.page.image {
                 return false;
             }
 
+            if (!api.ObjectHelper.equals(this.config, other.config)) {
+                return false;
+            }
+
             return true;
         }
 
@@ -55,16 +103,28 @@ module api.content.page.image {
         }
     }
 
-    export class ImageComponentBuilder extends api.content.page.DescriptorBasedPageComponentBuilder<ImageComponent> {
+    export class ImageComponentBuilder extends api.content.page.PageComponentBuilder<ImageComponent> {
 
         image: api.content.ContentId;
 
-        constructor(source?: ImageComponent) {
+        config: RootDataSet;
 
+        constructor(source?: ImageComponent) {
             super(source);
             if (source) {
                 this.image = source.getImage();
+                this.config = source.getConfig();
             }
+        }
+
+        public setImage(value: api.content.ContentId): ImageComponentBuilder {
+            this.image = value;
+            return this;
+        }
+
+        public setConfig(value: api.data.RootDataSet): ImageComponentBuilder {
+            this.config = value;
+            return this;
         }
 
         public fromJson(json: ImageComponentJson, region: Region): ImageComponentBuilder {
@@ -75,18 +135,10 @@ module api.content.page.image {
 
             this.setName(new api.content.page.ComponentName(json.name));
 
-            if (json.descriptor) {
-                this.setDescriptor(api.content.page.DescriptorKey.fromString(json.descriptor));
-            }
 
             this.setConfig(api.data.DataFactory.createRootDataSet(json.config));
             this.setParent(region);
 
-            return this;
-        }
-
-        public setImage(value: api.content.ContentId): ImageComponentBuilder {
-            this.image = value;
             return this;
         }
 

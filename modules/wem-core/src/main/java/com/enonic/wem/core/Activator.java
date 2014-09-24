@@ -9,7 +9,6 @@ import com.enonic.wem.api.content.page.PageComponentService;
 import com.enonic.wem.api.content.page.PageDescriptorService;
 import com.enonic.wem.api.content.page.PageService;
 import com.enonic.wem.api.content.page.PageTemplateService;
-import com.enonic.wem.api.content.page.image.ImageDescriptorService;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorService;
 import com.enonic.wem.api.content.page.part.PartDescriptorService;
 import com.enonic.wem.api.content.site.SiteService;
@@ -51,7 +50,6 @@ public final class Activator
 
         // Export needed services
         service( PageComponentService.class ).export();
-        service( ImageDescriptorService.class ).export();
         service( LayoutDescriptorService.class ).export();
         service( PartDescriptorService.class ).export();
         service( ContentService.class ).export();

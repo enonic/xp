@@ -8,10 +8,10 @@ module api.content.page.part {
 
         public fromJson(json: api.content.page.part.PartDescriptorJson): PartDescriptorBuilder {
 
-            this.setKey(api.content.page.DescriptorKey.fromString(json.key))
+            this.setKey(api.content.page.DescriptorKey.fromString(json.key));
             this.setName(new api.content.page.DescriptorName(json.name));
             this.setDisplayName(json.displayName);
-            this.setConfig(json.config != null ? new api.form.Form(json.config) : null);
+            this.setConfig(json.config != null ? api.form.Form.fromJson(json.config) : null);
             return this;
         }
 

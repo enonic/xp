@@ -53,7 +53,11 @@ module api.form.inputtype.text {
                 return false;
             }
         }
+
+        static getName(): api.form.InputTypeName {
+            return new api.form.InputTypeName("TextArea", false);
+        }
     }
 
-    api.form.inputtype.InputTypeManager.register(new api.Class("TextArea", TextArea));
+    api.form.inputtype.InputTypeManager.register(new api.Class(TextArea.getName().getName(), TextArea));
 }

@@ -39,7 +39,7 @@ public abstract class AbstractDescriptorBasedPageComponentXml
         {
             builder.descriptor( toDescriptorKey( this.descriptor ) );
         }
-        RootDataSet config = new RootDataSet();
+        final RootDataSet config = new RootDataSet();
         if ( this.config != null )
         {
             this.config.to( config );

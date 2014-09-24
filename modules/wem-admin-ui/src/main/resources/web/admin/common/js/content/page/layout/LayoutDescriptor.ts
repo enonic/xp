@@ -19,10 +19,10 @@ module api.content.page.layout {
 
         public fromJson(json: api.content.page.layout.LayoutDescriptorJson): LayoutDescriptorBuilder {
 
-            this.setKey(api.content.page.DescriptorKey.fromString(json.key))
+            this.setKey(api.content.page.DescriptorKey.fromString(json.key));
             this.setName(new api.content.page.DescriptorName(json.name));
             this.setDisplayName(json.displayName);
-            this.setConfig(json.config != null ? new api.form.Form(json.config) : null);
+            this.setConfig(json.config != null ? api.form.Form.fromJson(json.config) : null);
             for (var i = 0; i < json.regions.length; i++) {
                 var region = new api.content.page.region.RegionDescriptorBuilder().fromJson(json.regions[i]).build();
                 this.regions.push(region);
