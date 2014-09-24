@@ -44,14 +44,17 @@ public class IndexDocumentItemFactory
 
         indexDocumentItems.add( createOrderbyItemType( path, propertyValue ) );
 
-        addAllFields( propertyValue, indexDocumentItems );
+        addAllFields( propertyValue, indexDocumentItems, indexConfig );
 
         return indexDocumentItems;
     }
 
-    private static void addAllFields( final Value propertyValue, final Set<AbstractIndexDocumentItem> indexDocumentItems )
+    private static void addAllFields( final Value propertyValue, final Set<AbstractIndexDocumentItem> indexDocumentItems,
+                                      final IndexConfig indexConfig )
     {
-        if ( isTextField( propertyValue.getType() ) )
+        final boolean includeFromType = indexConfig.isDecideByType() && isTextField( propertyValue.getType() );
+
+        if ( includeFromType || indexConfig.isIncludeInAllText() )
         {
             indexDocumentItems.add( new IndexDocumentAnalyzedItem( IndexDocumentItemPath.from( IndexConstants.ALL_TEXT_FIELD_NAME ),
                                                                    propertyValue.asString() ) );
