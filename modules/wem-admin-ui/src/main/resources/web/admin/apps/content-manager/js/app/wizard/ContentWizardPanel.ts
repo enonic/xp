@@ -381,7 +381,7 @@ module app.wizard {
                     formContextBuilder.setShowEmptyFormItemSetOccurrences(this.isItemPersisted());
                     this.formContext = formContextBuilder.build();
 
-                    this.contentWizardStepForm.layout(this.formContext, contentData, content.getForm());
+                    this.contentWizardStepForm.layout(this.formContext, contentData, this.contentType.getForm());
 
                     // Must pass FormView from contentWizardStepForm displayNameScriptExecutor, since a new is created for each call to renderExisting
                     this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
