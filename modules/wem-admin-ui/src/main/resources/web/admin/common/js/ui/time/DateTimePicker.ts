@@ -150,7 +150,7 @@ module api.ui.time {
                     api.ui.KeyHelper.isDel(event)) {
 
                     var typedDateTime = this.input.getValue();
-                    if (api.util.isStringEmpty(typedDateTime)) {
+                    if (api.util.StringHelper.isEmpty(typedDateTime)) {
                         this.calendar.selectDate(null);
                         this.selectedDate = null;
                         this.popup.hide();
