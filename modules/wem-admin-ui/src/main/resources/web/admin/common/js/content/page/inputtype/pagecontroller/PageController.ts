@@ -52,7 +52,7 @@ module api.content.page.inputtype.pagecontroller {
         }
 
         valueBreaksRequiredContract(value: Value): boolean {
-            return super.valueBreaksRequiredContract(value) || !value.getType().equals(ValueTypes.STRING);
+            return value == null || api.util.StringHelper.isBlank(value.asString()) || !value.getType().equals(ValueTypes.STRING);
         }
 
     }

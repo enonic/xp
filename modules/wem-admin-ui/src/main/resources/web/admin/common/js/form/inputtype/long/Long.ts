@@ -42,7 +42,7 @@ module api.content.form.inputtype.long {
         }
 
         valueBreaksRequiredContract(value: api.data.Value): boolean {
-            return value == null || !api.util.NumberHelper.isWholeNumber(value.asNumber());
+            return value == null || api.util.StringHelper.isBlank(value.asString()) || !value.getType().equals(ValueTypes.LONG);
         }
 
     }

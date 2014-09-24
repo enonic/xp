@@ -50,7 +50,8 @@ module api.form.inputtype.text {
         }
 
         valueBreaksRequiredContract(value: api.data.Value): boolean {
-            return super.valueBreaksRequiredContract(value) || !value.getType().equals(api.data.type.ValueTypes.STRING);
+            return value == null || api.util.StringHelper.isBlank(value.asString()) ||
+                   !value.getType().equals(api.data.type.ValueTypes.STRING);
         }
 
         static getName(): api.form.InputTypeName {

@@ -167,6 +167,21 @@ module api.form.inputtype.singleselector {
         private comboboxFilter(item: Option<string>, args) {
             return !(args && args.searchString && item.displayValue.toUpperCase().indexOf(args.searchString.toUpperCase()) == -1);
         }
+
+        valueBreaksRequiredContract(value: api.data.Value): boolean {
+            return value == null || api.util.StringHelper.isBlank(value.asString()) ||
+                   !value.getType().equals(api.data.type.ValueTypes.STRING) || !this.isExistingValue(value.asString());
+        }
+
+        private isExistingValue(value: string): boolean {
+            var options = this.getContext().inputConfig.options || [];
+            for (var i = 0; i < options.length; i++) {
+                if (options[i].value == value) {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 
     api.form.inputtype.InputTypeManager.register(new api.Class("SingleSelector", SingleSelector));

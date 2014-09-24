@@ -50,15 +50,13 @@ module api.data.type {
             ValueTypes.ENTITY_ID];
 
         public static fromName(name: string): ValueType {
-            var match = null;
-            ValueTypes.ALL.forEach((valueType: ValueType) => {
-                if (valueType.toString() == name) {
-                    match = valueType;
+            for (var i = 0; i < ValueTypes.ALL.length; i++) {
+                var type = ValueTypes.ALL[i];
+                if (type.toString() == name) {
+                    return type;
                 }
-            });
-
-            api.util.assertNotNull(match, "Unknown ValueType: " + name);
-            return match;
+            }
+            throw("Unknown ValueType: " + name);
         }
     }
 }

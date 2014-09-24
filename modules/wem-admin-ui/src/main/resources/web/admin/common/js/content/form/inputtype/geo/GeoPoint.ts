@@ -54,7 +54,7 @@ module api.content.form.inputtype.geo {
         }
 
         valueBreaksRequiredContract(value: api.data.Value): boolean {
-            return super.valueBreaksRequiredContract(value) || !value.getType().equals(ValueTypes.GEO_POINT);
+            return value == null || api.util.StringHelper.isBlank(value.asString()) || !value.getType().equals(ValueTypes.GEO_POINT);
         }
     }
 

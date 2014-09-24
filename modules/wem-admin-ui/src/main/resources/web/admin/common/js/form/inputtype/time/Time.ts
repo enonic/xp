@@ -51,7 +51,7 @@ module api.content.form.inputtype.time {
         }
 
         valueBreaksRequiredContract(value: api.data.Value): boolean {
-            return super.valueBreaksRequiredContract(value) || !value.getType().equals(ValueTypes.LOCAL_TIME);
+            return value == null || api.util.StringHelper.isBlank(value.asString()) || !value.getType().equals(ValueTypes.LOCAL_TIME);
         }
 
     }

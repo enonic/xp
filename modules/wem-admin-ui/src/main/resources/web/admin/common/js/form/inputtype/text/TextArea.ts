@@ -42,16 +42,7 @@ module api.form.inputtype.text {
         }
 
         valueBreaksRequiredContract(value: api.data.Value): boolean {
-
-            if (value == null) {
-                return true;
-            }
-
-            if (api.util.StringHelper.isBlank(value.asString())) {
-                return true;
-            } else {
-                return false;
-            }
+            return value == null || api.util.StringHelper.isBlank(value.asString());
         }
 
         static getName(): api.form.InputTypeName {
