@@ -6,8 +6,14 @@
 ///<reference path='SelectedDateChangedEvent.ts' />
 ///<reference path='Calendar.ts' />
 ///<reference path='DatePicker.ts' />
+///<reference path='DatePickerBuilder.ts' />
+///<reference path='DatePickerPopup.ts' />
 ///<reference path='MonthOfYear.ts' />
 ///<reference path='MonthsOfYear.ts' />
 ///<reference path='TimePicker.ts' />
+///<reference path='TimePickerBuilder.ts' />
+///<reference path='TimePickerPopup.ts' />
 ///<reference path='DateTimePicker.ts' />
+///<reference path='DateTimePickerBuilder.ts' />
+///<reference path='DateTimePickerPopup.ts' />
 ///<reference path='LocalTime.ts' />
