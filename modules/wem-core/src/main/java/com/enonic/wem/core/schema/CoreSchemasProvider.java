@@ -173,8 +173,9 @@ public final class CoreSchemasProvider
                 inputType( InputTypes.PAGE_CONTROLLER ).
                 build() ).
             addFormItem( Input.newInput().
-                name( "canRender" ).
-                label( "Can render" ).
+                name( "supports" ).
+                label( "Supports" ).
+                helpText( "Choose which content types this page template should support" ).
                 inputType( InputTypes.CONTENT_TYPE_FILTER ).
                 required( false ).
                 multiple( true ).
