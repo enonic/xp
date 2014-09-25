@@ -15,7 +15,7 @@ module api.content.page {
         setObject(desriptor: PageDescriptor) {
             super.setObject(desriptor);
             this.namesAndIconView.setMainName(desriptor.getDisplayName()).
-                setSubName(desriptor.getName().toString());
+                setSubName(desriptor.getKey().toString());
         }
 
         getPreferredHeight(): number {

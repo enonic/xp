@@ -13,7 +13,7 @@ module api.form.inputtype.support {
         private inputValidityChangedListeners: {(event: api.form.inputtype.InputValidityChangedEvent) : void}[] = [];
 
         constructor(className: string) {
-            super(className);
+            super("input-type-view" + (className ? " " + className : ""));
         }
 
         availableSizeChanged() {
