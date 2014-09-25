@@ -60,7 +60,7 @@ module api.content.form.inputtype.time {
         }
 
         valueBreaksRequiredContract(value: api.data.Value): boolean {
-            return value == null || api.util.StringHelper.isBlank(value.asString()) || !value.getType().equals(ValueTypes.LOCAL_DATE_TIME);
+            return value.isNull() || !value.getType().equals(ValueTypes.LOCAL_DATE_TIME);
         }
     }
     api.form.inputtype.InputTypeManager.register(new api.Class("DateTime", DateTime));

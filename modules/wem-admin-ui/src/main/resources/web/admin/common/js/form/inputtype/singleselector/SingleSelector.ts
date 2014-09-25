@@ -169,18 +169,15 @@ module api.form.inputtype.singleselector {
         }
 
         valueBreaksRequiredContract(value: api.data.Value): boolean {
-            return value == null || api.util.StringHelper.isBlank(value.asString()) ||
-                   !value.getType().equals(api.data.type.ValueTypes.STRING) || !this.isExistingValue(value.asString());
+            return value.isNull() || !value.getType().equals(api.data.type.ValueTypes.STRING) || !this.isExistingValue(value.asString());
         }
 
         private isExistingValue(value: string): boolean {
             var options = this.getContext().inputConfig.options || [];
-            for (var i = 0; i < options.length; i++) {
-                if (options[i].value == value) {
-                    return true;
-                }
-            }
-            return false;
+
+            return options.some((option: any) => {
+                return option.value == value;
+            });
         }
     }
 

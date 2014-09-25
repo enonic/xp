@@ -60,7 +60,7 @@ module api.content.page.inputtype.pagecontroller {
         }
 
         valueBreaksRequiredContract(value: Value): boolean {
-            return value == null || api.util.StringHelper.isBlank(value.asString()) || !value.getType().equals(ValueTypes.STRING);
+            return value.isNull() || !value.getType().equals(ValueTypes.STRING);
         }
 
     }

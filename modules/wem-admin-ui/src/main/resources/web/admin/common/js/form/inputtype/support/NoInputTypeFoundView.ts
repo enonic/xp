@@ -44,6 +44,10 @@ module api.form.inputtype.support {
             return api.data.type.ValueTypes.STRING.newValue(inputEl.getValue());
         }
 
+        valueBreaksRequiredContract(value: api.data.Value): boolean {
+            return value.isNull() || !value.getType().equals(api.data.type.ValueTypes.STRING) ||
+                   api.util.StringHelper.isBlank(value.asString());
+        }
     }
 
     api.form.inputtype.InputTypeManager.register(new api.Class("NoInputTypeFound", NoInputTypeFoundView));

@@ -6,7 +6,7 @@ module api.form.inputtype.combobox {
 
     export class ComboBox extends api.form.inputtype.support.BaseInputTypeManagingAdd<string> {
 
-        private config: api.form.inputtype.InputTypeViewContext<ComboBoxConfig>;
+        private context: api.form.inputtype.InputTypeViewContext<ComboBoxConfig>;
 
         private comboBoxConfig: ComboBoxConfig;
 
@@ -18,11 +18,11 @@ module api.form.inputtype.combobox {
 
         private previousValidationRecording: api.form.inputtype.InputValidationRecording;
 
-        constructor(config: api.form.inputtype.InputTypeViewContext<ComboBoxConfig>) {
+        constructor(context: api.form.inputtype.InputTypeViewContext<ComboBoxConfig>) {
             super("combo-box");
             this.addClass("input-type-view");
-            this.config = config;
-            this.comboBoxConfig = config.inputConfig;
+            this.context = context;
+            this.comboBoxConfig = context.inputConfig;
         }
 
         availableSizeChanged() {
@@ -113,11 +113,13 @@ module api.form.inputtype.combobox {
         }
 
         valueBreaksRequiredContract(value: api.data.Value): boolean {
-            if (api.util.StringHelper.isBlank(value.asString())) {
-                return true;
-            } else {
-                return false;
-            }
+            return value.isNull() || !value.getType().equals(api.data.type.ValueTypes.STRING) || !this.isExistingValue(value.asString());
+        }
+
+        private isExistingValue(value: string): boolean {
+            return this.comboBoxConfig.options.some((option: ComboBoxOption) => {
+                return option.value == value;
+            });
         }
 
         private comboboxFilter(item: api.ui.selector.Option<string>, args) {
