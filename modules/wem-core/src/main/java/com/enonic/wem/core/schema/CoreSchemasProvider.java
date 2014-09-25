@@ -167,10 +167,14 @@ public final class CoreSchemasProvider
     private static Form createPageTemplateForm()
     {
         return Form.newForm().
-            addFormItem( Input.newInput().name( "controller" ).
+            addFormItem( Input.newInput().
+                name( "controller" ).
+                label( "Controller" ).
                 inputType( InputTypes.PAGE_CONTROLLER ).
                 build() ).
-            addFormItem( Input.newInput().name( "canRender" ).
+            addFormItem( Input.newInput().
+                name( "canRender" ).
+                label( "Can render" ).
                 inputType( InputTypes.CONTENT_TYPE_FILTER ).
                 required( false ).
                 multiple( true ).
