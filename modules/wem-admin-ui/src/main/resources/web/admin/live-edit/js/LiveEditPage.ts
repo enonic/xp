@@ -215,7 +215,7 @@ module LiveEdit {
 
         createComponent(region: Region, type: PageComponentType, precedingComponentView: PageComponentView<PageComponent>): PageComponent {
 
-            var componentName = new ComponentName(api.util.StringHelper.capitalize(api.util.StringHelper.removeInvalidChars(type.getShortName())));
+            var componentName = new ComponentName(api.util.StringHelper.capitalize(api.util.StringHelper.removeWhitespaces(type.getShortName())));
 
             var builder = type.newComponentBuilder();
             builder.setName(componentName);

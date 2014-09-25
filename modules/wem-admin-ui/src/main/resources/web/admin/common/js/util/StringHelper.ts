@@ -2,35 +2,28 @@ module api.util {
 
     export class StringHelper {
 
-        static limit(str: string, length: number, ending: string = "…"): string {
-            str = str.substring(0, length) + ending;
-            return str;
+        private static EMPTY_STRING = "";
+
+        static limit(str: string, length: number, ending: string = "\u2026"): string {
+            return StringHelper.isEmpty(str) ? StringHelper.EMPTY_STRING : str.substring(0, length) + ending;
         }
 
         static capitalize(str: string): string {
-            return str.charAt(0).toUpperCase() + str.slice(1);
+            return StringHelper.isEmpty(str) ? StringHelper.EMPTY_STRING : str.charAt(0).toUpperCase() + str.slice(1);
         }
 
         static capitalizeAll(str: string): string {
-            return str.replace(/(?:^|\s)\S/g, function (ch) {
+            return StringHelper.isEmpty(str) ? StringHelper.EMPTY_STRING : str.replace(/(?:^|\s)\S/g, function (ch) {
                 return ch.toUpperCase();
             });
         }
 
-        static removeInvalidChars(str: string): string {
-            return str.replace(/\s/g, "");
-        }
-
         static isEmpty(str: string): boolean {
-            return !str;
+            return !str || str.length == 0;
         }
 
         static isBlank(str: string): boolean {
-            return (!str || /^\s*$/.test(str));
-        }
-
-        static isStringsEqual(str1: string, str2: string): boolean {
-            return (!str1 && !str2) || (str1 == str2);
+            return StringHelper.isEmpty(str) || str.trim().length == 0;
         }
 
         /**
@@ -43,23 +36,22 @@ module api.util {
          * @returns {string} string without '\r' characters.
          */
         static removeCarriageChars(str: string): string {
-            return str.replace(/\r/g, "");
+            return StringHelper.isEmpty(str) ? StringHelper.EMPTY_STRING : str.replace(/\r/g, "");
         }
 
-        static removeEmptyStringElements(elements: string[]): string[] {
-            var filteredElements: string[] = [];
-            elements.forEach((element: string) => {
-                if (element.length > 0) {
-                    filteredElements.push(element);
-                }
+        static removeWhitespaces(str: string): string {
+            return StringHelper.isEmpty(str) ? StringHelper.EMPTY_STRING : str.replace(/\s/g, "");
+        }
+
+        static removeEmptyStrings(elements: string[]): string[] {
+            return !elements ? [] : elements.filter((element: string) => {
+                return !StringHelper.isEmpty(element);
             });
-            return filteredElements;
         }
 
         static substringBetween(str: string, left: string, right: string): string {
-            if ((typeof str === "undefined") || (str === null) || (typeof left === "undefined") || (left === null) ||
-                (typeof right === "undefined") || (right === null)) {
-                return '';
+            if (StringHelper.isEmpty(str) || StringHelper.isEmpty(left) || StringHelper.isEmpty(right)) {
+                return StringHelper.EMPTY_STRING;
             }
             var start = str.indexOf(left);
             if (start !== -1) {
@@ -68,7 +60,7 @@ module api.util {
                     return str.substring(start + left.length, end);
                 }
             }
-            return '';
+            return StringHelper.EMPTY_STRING;
         }
 
         /**
@@ -77,8 +69,8 @@ module api.util {
          * @param tokens
          * @returns {string}
          */
-        static format(str: string, ...tokens: string[]): string {
-            return str.replace(/\{\{|\}\}|\{(\d+)\}/g, function (m, n) {
+        static format(str: string, ...tokens: any[]): string {
+            return StringHelper.isEmpty(str) ? StringHelper.EMPTY_STRING : str.replace(/\{\{|\}\}|\{(\d+)\}/g, function (m, n) {
                 if (m == "{{") { return "{"; }
                 if (m == "}}") { return "}"; }
                 return tokens[n];

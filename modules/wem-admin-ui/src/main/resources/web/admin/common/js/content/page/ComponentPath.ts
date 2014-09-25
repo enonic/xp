@@ -96,8 +96,7 @@ module api.content.page {
                 return null;
             }
 
-            var elements: string[] = str.split(ComponentPath.DIVIDER);
-            elements = api.util.StringHelper.removeEmptyStringElements(elements);
+            var elements: string[] = api.util.StringHelper.removeEmptyStrings(str.split(ComponentPath.DIVIDER));
 
             var regionAndComponentList: ComponentPathRegionAndComponent[] = [];
             for (var i = 0; i < elements.length - 1; i += 2) {
