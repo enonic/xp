@@ -286,6 +286,7 @@ public abstract class AbstractContentSerializerTest
         final FormItemSet formItemSet = newFormItemSet().name( "formItemSet" ).build();
         formItemSet.add( newInput().name( "myText" ).inputType( InputTypes.TEXT_LINE ).build() );
         final ContentType contentType = newContentType().
+            superType( ContentTypeName.structured() ).
             name( "mymodule:my_content_type" ).
             addFormItem( newInput().name( "myText" ).inputType( InputTypes.TEXT_LINE ).required( true ).build() ).
             addFormItem( formItemSet ).
@@ -316,6 +317,7 @@ public abstract class AbstractContentSerializerTest
         formItemSet.add( newInput().name( "myText" ).inputType( InputTypes.TEXT_LINE ).build() );
 
         final ContentType contentType = newContentType().
+            superType( ContentTypeName.structured() ).
             name( "mymodule:my_content_type" ).
             addFormItem( formItemSet ).
             build();
@@ -345,6 +347,7 @@ public abstract class AbstractContentSerializerTest
             newInput().name( "myText" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
 
         final ContentType contentType = newContentType().
+            superType( ContentTypeName.structured() ).
             name( "mymodule:my_content_type" ).
             addFormItem( newInput().name( "myField" ).inputType( InputTypes.TEXT_LINE ).build() ).
             addFormItem( layout ).

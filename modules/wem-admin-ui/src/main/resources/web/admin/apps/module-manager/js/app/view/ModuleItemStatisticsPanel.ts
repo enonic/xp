@@ -36,11 +36,11 @@ module app.view {
             this.actionMenu.setLabel(api.util.StringHelper.capitalize(item.getModel().getState()));
 
             if (item.getModel().getState() == "started") {
-                this.actionMenu.disableAction(ModuleBrowseActions.get().START_MODULE);
-                this.actionMenu.enableAction(ModuleBrowseActions.get().STOP_MODULE);
+                ModuleBrowseActions.get().START_MODULE.setEnabled(false);
+                ModuleBrowseActions.get().STOP_MODULE.setEnabled(true);
             } else {
-                this.actionMenu.disableAction(ModuleBrowseActions.get().STOP_MODULE);
-                this.actionMenu.enableAction(ModuleBrowseActions.get().START_MODULE);
+                ModuleBrowseActions.get().START_MODULE.setEnabled(true);
+                ModuleBrowseActions.get().STOP_MODULE.setEnabled(false);
             }
 
             this.moduleDataContainer.removeChildren();

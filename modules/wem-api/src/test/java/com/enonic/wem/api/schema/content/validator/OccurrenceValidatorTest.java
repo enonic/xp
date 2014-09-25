@@ -14,6 +14,7 @@ import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 
 import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.api.form.FieldSet.newFieldSet;
@@ -33,6 +34,7 @@ public class OccurrenceValidatorTest
     {
         contentType = newContentType().
             name( "mymodule:my_type" ).
+            superType( ContentTypeName.structured() ).
             build();
     }
 

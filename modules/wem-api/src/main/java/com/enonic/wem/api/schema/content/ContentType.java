@@ -38,7 +38,7 @@ public final class ContentType
 
         if ( builder.superType == null && !builder.isBuiltIn )
         {
-            superType = ContentTypeName.unstructured();
+            throw new IllegalArgumentException( "Non-built-in content types must have a super type defined" );
         }
         else
         {

@@ -91,6 +91,7 @@ public class SchemaIconResourceTest
         Icon schemaIcon = Icon.from( data, "image/png", Instant.now() );
 
         final ContentType systemContentType = ContentType.newContentType().
+            superType( ContentTypeName.structured() ).
             name( "mymodule:unstructured" ).
             displayName( "Unstructured" ).
             icon( schemaIcon ).

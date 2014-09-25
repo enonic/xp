@@ -55,7 +55,8 @@ public class ContentNodeTranslatorTest
         final ContentTypeService contentTypeService = Mockito.mock( ContentTypeService.class );
         final BlobService blobService = Mockito.mock( BlobService.class );
 
-        final ContentType contentType = ContentType.newContentType().name( "mymodule:my-content-type" ).build();
+        final ContentType contentType =
+            ContentType.newContentType().superType( ContentTypeName.structured() ).name( "mymodule:my-content-type" ).build();
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
 
         translator = new ContentNodeTranslator();

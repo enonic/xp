@@ -215,6 +215,7 @@ public class SiteResourceTest
     private ContentType createContentType( String name )
     {
         return ContentType.newContentType().
+            superType( ContentTypeName.structured() ).
             displayName( "My type" ).
             name( name ).
             icon( Icon.from( new byte[]{123}, "image/gif", Instant.now() ) ).

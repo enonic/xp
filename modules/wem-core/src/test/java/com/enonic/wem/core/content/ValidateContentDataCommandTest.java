@@ -12,6 +12,7 @@ import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
@@ -45,6 +46,7 @@ public class ValidateContentDataCommandTest
     {
         // setup
         final ContentType contentType = ContentType.newContentType().
+            superType( ContentTypeName.structured() ).
             name( "mymodule:my_type" ).
             addFormItem( FieldSet.newFieldSet().
                 label( "My layout" ).
@@ -61,7 +63,8 @@ public class ValidateContentDataCommandTest
         final Content content = Content.newContent().path( "/mycontent" ).type( contentType.getName() ).build();
 
         // exercise
-        final ValidateContentData data = new ValidateContentData().contentData( content.getContentData() ).contentType( contentType.getName() );
+        final ValidateContentData data =
+            new ValidateContentData().contentData( content.getContentData() ).contentType( contentType.getName() );
 
         // test
         final DataValidationErrors result = this.command.data( data ).execute();
@@ -80,6 +83,7 @@ public class ValidateContentDataCommandTest
             newFormItemSet().name( "mySet" ).required( true ).addFormItem(
                 newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).build() ).build() ).build();
         final ContentType contentType = ContentType.newContentType().
+            superType( ContentTypeName.structured() ).
             name( "mymodule:my_type" ).
             addFormItem( fieldSet ).
             build();
@@ -90,7 +94,8 @@ public class ValidateContentDataCommandTest
         content.getContentData().setProperty( "mySet.myInput", Value.newString( "thing" ) );
 
         // exercise
-        final ValidateContentData data = new ValidateContentData().contentData( content.getContentData() ).contentType( contentType.getName() );
+        final ValidateContentData data =
+            new ValidateContentData().contentData( content.getContentData() ).contentType( contentType.getName() );
 
         // test
         final DataValidationErrors result = this.command.data( data ).execute();

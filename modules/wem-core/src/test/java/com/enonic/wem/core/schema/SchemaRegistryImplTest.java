@@ -54,6 +54,7 @@ public class SchemaRegistryImplTest
     {
         // setup
         final ContentType contentType = ContentType.newContentType().
+            superType( ContentTypeName.structured() ).
             name( "mymodule:my_content_type" ).
             displayName( "My content type" ).
             build();
@@ -75,6 +76,7 @@ public class SchemaRegistryImplTest
     {
         // setup
         ContentType contentType = ContentType.newContentType().
+            superType( ContentTypeName.structured() ).
             name( "mymodule:my_content_type" ).
             displayName( "My content type" ).
             build();
@@ -85,6 +87,7 @@ public class SchemaRegistryImplTest
 
         // update module schemas
         ContentType contentType2 = ContentType.newContentType().
+            superType( ContentTypeName.structured() ).
             name( "mymodule:my_content_type2" ).
             displayName( "My content type" ).
             build();
@@ -106,6 +109,7 @@ public class SchemaRegistryImplTest
     {
         // setup
         final ContentType contentType = ContentType.newContentType().
+            superType( ContentTypeName.structured() ).
             name( "mymodule:my_content_type" ).
             displayName( "My content type" ).
             build();
@@ -171,6 +175,7 @@ public class SchemaRegistryImplTest
     {
         // setup
         final ContentType contentType = ContentType.newContentType().
+            superType( ContentTypeName.structured() ).
             name( "mymodule:my_content_type" ).
             displayName( "My content type" ).
             build();
@@ -203,6 +208,7 @@ public class SchemaRegistryImplTest
     {
         // setup
         final ContentType contentType = ContentType.newContentType().
+            superType( ContentTypeName.structured() ).
             name( "mymodule:my_content_type" ).
             displayName( "My content type" ).
             build();
@@ -235,6 +241,7 @@ public class SchemaRegistryImplTest
     {
         // setup
         final ContentType contentType = ContentType.newContentType().
+            superType( ContentTypeName.structured() ).
             name( "mymodule:my_content_type" ).
             displayName( "My content type" ).
             build();
@@ -268,6 +275,7 @@ public class SchemaRegistryImplTest
     {
         // setup
         final ContentType contentType = ContentType.newContentType().
+            superType( ContentTypeName.structured() ).
             name( "mymodule:my_content_type" ).
             displayName( "My content type" ).
             build();

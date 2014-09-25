@@ -7,7 +7,7 @@ module api.ui.menu {
         private actionListEl: api.dom.UlEl;
         private labelEl: api.dom.DivEl;
 
-        constructor(label:string, ...actions: Action[]) {
+        constructor(label: string, ...actions: Action[]) {
             super("action-menu");
             this.labelEl = new api.dom.DivEl("drop-down-button icon-arrow-down");
             this.labelEl.getEl().setInnerHtml(label);
@@ -32,33 +32,12 @@ module api.ui.menu {
             });
         }
 
-        setLabel(label:string) {
+        setLabel(label: string) {
             this.labelEl.getEl().setInnerHtml(label);
         }
 
-        disableAction(action: Action) {
-            action.setEnabled(false);
-            this.getElementFromIndex(this.getIndexFromAction(action)).addClass("hidden");
-        }
-
-
-        enableAction(action: Action) {
-            action.setEnabled(true);
-            this.getElementFromIndex(this.getIndexFromAction(action)).removeClass("hidden");
-        }
-
         private addAction(action: Action, index: number): api.dom.DivEl {
-            var actionEl = new api.dom.LiEl("action");
-            actionEl.getEl().setInnerHtml(action.getLabel());
-            actionEl.getEl().setData("action", index + "");
-
-            action.onPropertyChanged((a: api.ui.Action) => {
-                if(!a.isEnabled()) {
-                    this.disableAction(action);
-                } else {
-                    this.enableAction(action);
-                }
-            });
+            var actionEl = new ActionMenuItem(action, index);
 
             actionEl.onClicked(() => {
                 this.removeClass("expanded");
@@ -92,28 +71,5 @@ module api.ui.menu {
             }
             this.actionList[index].execute();
         }
-
-        private getIndexFromAction(action: Action) {
-            var index = -1;
-            this.actionList.forEach((a, i) => {
-                if (a == action) {
-                    index = i;
-                }
-            });
-            return index;
-        }
-
-        private getElementFromIndex(index: number): api.dom.Element {
-            var element = null;
-            this.actionListEl.getChildren().forEach((actionEl) => {
-                if (parseInt(actionEl.getEl().getData("action")) == index) {
-                    element = actionEl;
-                }
-            });
-            return element;
-        }
-
-
-
     }
 }
