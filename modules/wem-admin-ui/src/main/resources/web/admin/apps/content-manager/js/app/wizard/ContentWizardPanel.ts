@@ -587,7 +587,6 @@ module app.wizard {
             viewedContentBuilder.setDisplayName(this.contentWizardHeader.getDisplayName());
             if (this.contentWizardStepForm) {
                 viewedContentBuilder.setData(this.contentWizardStepForm.getContentData());
-                viewedContentBuilder.setForm(this.contentWizardStepForm.getForm());
             }
             viewedContentBuilder.setSite(this.assembleViewedSite());
             viewedContentBuilder.setPage(this.assembleViewedPage());
