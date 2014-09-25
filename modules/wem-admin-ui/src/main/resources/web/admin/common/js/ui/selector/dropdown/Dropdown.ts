@@ -163,11 +163,17 @@ module api.ui.selector.dropdown {
 
         hideDropdown() {
 
-            this.input.hide();
-            this.dropdownHandle.hide();
-            this.selectedOptionView.show();
+            if (this.selectedOptionView.getOption()) {
+                this.input.hide();
+                this.dropdownHandle.hide();
+                this.selectedOptionView.show();
+            } else {
+                this.selectedOptionView.hide();
+                this.input.show();
+                this.dropdownHandle.up();
+                this.dropdownHandle.show();
+            }
 
-            this.dropdownHandle.up();
             this.dropdownDropdown.hideDropdown();
         }
 
@@ -208,15 +214,6 @@ module api.ui.selector.dropdown {
             if (option != null) {
                 this.selectOption(option);
             }
-        }
-
-        setValues(values: string[]) {
-            values.forEach((value: string) => {
-                var option = this.getOptionByValue(value);
-                if (option != null) {
-                    this.selectOption(option);
-                }
-            });
         }
 
         selectRow(index: number) {

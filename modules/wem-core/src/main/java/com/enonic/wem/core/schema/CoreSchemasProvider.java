@@ -166,11 +166,14 @@ public final class CoreSchemasProvider
 
     private static Form createPageTemplateForm()
     {
-        // TODO: add input: controller of type PageController
-        // TODO: add input: canRender of type ContentTypeFilter
         return Form.newForm().
             addFormItem( Input.newInput().name( "controller" ).
                 inputType( InputTypes.PAGE_CONTROLLER ).
+                build() ).
+            addFormItem( Input.newInput().name( "canRender" ).
+                inputType( InputTypes.CONTENT_TYPE_FILTER ).
+                required( false ).
+                multiple( true ).
                 build() ).
             build();
     }
