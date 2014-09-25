@@ -2,14 +2,14 @@ package com.enonic.wem.api.index;
 
 import com.enonic.wem.api.data.DataPath;
 
-public class PatternConfig
-    implements Comparable<PatternConfig>
+public class PathIndexConfig
+    implements Comparable<PathIndexConfig>
 {
     private final DataPath path;
 
     private final IndexConfig indexConfig;
 
-    private PatternConfig( Builder builder )
+    private PathIndexConfig( Builder builder )
     {
         path = builder.path;
         indexConfig = builder.indexConfig;
@@ -17,12 +17,8 @@ public class PatternConfig
 
     public boolean matches( final DataPath dataPath )
     {
-        if ( dataPath.startsWith( path ) )
-        {
-            return true;
-        }
+        return dataPath.startsWith( path );
 
-        return false;
     }
 
     public DataPath getPath()
@@ -62,14 +58,14 @@ public class PatternConfig
             return this;
         }
 
-        public PatternConfig build()
+        public PathIndexConfig build()
         {
-            return new PatternConfig( this );
+            return new PathIndexConfig( this );
         }
     }
 
     @Override
-    public int compareTo( final PatternConfig o )
+    public int compareTo( final PathIndexConfig o )
     {
         final int BEFORE = -1;
         final int EQUAL = 0;
@@ -102,12 +98,12 @@ public class PatternConfig
         {
             return true;
         }
-        if ( !( o instanceof PatternConfig ) )
+        if ( !( o instanceof PathIndexConfig ) )
         {
             return false;
         }
 
-        final PatternConfig that = (PatternConfig) o;
+        final PathIndexConfig that = (PathIndexConfig) o;
 
         if ( indexConfig != null ? !indexConfig.equals( that.indexConfig ) : that.indexConfig != null )
         {

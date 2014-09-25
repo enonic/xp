@@ -7,8 +7,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import com.enonic.wem.api.data.RootDataSetJson;
 import com.enonic.wem.api.entity.Entity;
-import com.enonic.wem.api.index.IndexConfigDocumentNew;
-import com.enonic.wem.api.index.PatternBasedIndexConfigDocument;
+import com.enonic.wem.api.index.IndexConfigDocument;
+import com.enonic.wem.api.index.PatternIndexConfigDocument;
 import com.enonic.wem.core.entity.PatternBasedIndexConfigDocumentJson;
 import com.enonic.wem.core.entity.relationship.IndexConfigDocumentJson;
 
@@ -50,11 +50,11 @@ public abstract class AbstractEntityJson
         this.attachments = new AttachmentsJson( entity.attachments() );
     }
 
-    private IndexConfigDocumentJson createEntityIndexConfig( final IndexConfigDocumentNew indexConfig )
+    private IndexConfigDocumentJson createEntityIndexConfig( final IndexConfigDocument indexConfig )
     {
-        if ( indexConfig instanceof PatternBasedIndexConfigDocument )
+        if ( indexConfig instanceof PatternIndexConfigDocument )
         {
-            return new PatternBasedIndexConfigDocumentJson( (PatternBasedIndexConfigDocument) indexConfig );
+            return new PatternBasedIndexConfigDocumentJson( (PatternIndexConfigDocument) indexConfig );
         }
         return null;
     }

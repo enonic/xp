@@ -32,7 +32,7 @@ import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.index.IndexConfig;
-import com.enonic.wem.api.index.IndexConfigDocumentNew;
+import com.enonic.wem.api.index.IndexConfigDocument;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
@@ -45,7 +45,7 @@ import static org.junit.Assert.*;
 
 public class ContentNodeTranslatorTest
 {
-    public static final String CONTENT_DATA_PREFIX = ContentDataSerializer.CONTENT_DATA;
+    private static final String CONTENT_DATA_PREFIX = ContentDataSerializer.CONTENT_DATA;
 
     private ContentNodeTranslator translator;
 
@@ -98,9 +98,9 @@ public class ContentNodeTranslatorTest
 
         final CreateNodeParams createNode = translator.toCreateNode( mycontent );
 
-        final IndexConfigDocumentNew indexConfigDocument = createNode.getIndexConfigDocument();
+        final IndexConfigDocument indexConfigDocument = createNode.getIndexConfigDocument();
 
-        final IndexConfig configForData = indexConfigDocument.getConfigForData( DataPath.from( CONTENT_DATA_PREFIX + ".test" ) );
+        final IndexConfig configForData = indexConfigDocument.getConfigForPath( DataPath.from( CONTENT_DATA_PREFIX + ".test" ) );
 
         assertNotNull( configForData );
         assertEquals( true, configForData.isEnabled() );
@@ -131,9 +131,9 @@ public class ContentNodeTranslatorTest
 
         final CreateNodeParams createNode = translator.toCreateNode( mycontent );
 
-        final IndexConfigDocumentNew indexConfigDocument = createNode.getIndexConfigDocument();
+        final IndexConfigDocument indexConfigDocument = createNode.getIndexConfigDocument();
 
-        final IndexConfig indexConfig = indexConfigDocument.getConfigForData( DataPath.from( "form.formItems.Input[0].inputType.name" ) );
+        final IndexConfig indexConfig = indexConfigDocument.getConfigForPath( DataPath.from( "form.formItems.Input[0].inputType.name" ) );
 
         assertNotNull( indexConfig );
         assertTrue( !indexConfig.isEnabled() && !indexConfig.isFulltext() && !indexConfig.isnGram() );

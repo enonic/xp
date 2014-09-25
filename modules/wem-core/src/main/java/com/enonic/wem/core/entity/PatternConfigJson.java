@@ -4,13 +4,13 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.wem.api.data.DataPath;
-import com.enonic.wem.api.index.PatternConfig;
+import com.enonic.wem.api.index.PathIndexConfig;
 
 public class PatternConfigJson
 {
-    private String path;
+    private final String path;
 
-    private IndexConfigJson indexConfig;
+    private final IndexConfigJson indexConfig;
 
     @SuppressWarnings("UnusedDeclaration")
     @JsonCreator
@@ -21,15 +21,15 @@ public class PatternConfigJson
         this.indexConfig = indexConfig;
     }
 
-    public PatternConfigJson( final PatternConfig patternConfig )
+    public PatternConfigJson( final PathIndexConfig pathIndexConfig )
     {
-        this.path = patternConfig.getPath().toString();
-        this.indexConfig = new IndexConfigJson( patternConfig.getIndexConfig() );
+        this.path = pathIndexConfig.getPath().toString();
+        this.indexConfig = new IndexConfigJson( pathIndexConfig.getIndexConfig() );
     }
 
-    public PatternConfig toPatternConfig()
+    public PathIndexConfig toPatternConfig()
     {
-        return PatternConfig.create().
+        return PathIndexConfig.create().
             path( DataPath.from( this.path ) ).
             indexConfig( this.indexConfig.toIndexConfig() ).
             build();

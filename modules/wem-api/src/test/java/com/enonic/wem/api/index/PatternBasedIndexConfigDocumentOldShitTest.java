@@ -12,7 +12,7 @@ public class PatternBasedIndexConfigDocumentOldShitTest
     public void test_best_matching_pattern_used()
         throws Exception
     {
-        final PatternBasedIndexConfigDocument config = PatternBasedIndexConfigDocument.create().
+        final PatternIndexConfigDocument config = PatternIndexConfigDocument.create().
             add( DataPath.from( "data" ), IndexConfig.BY_TYPE ).
             add( DataPath.from( "data.secret.show" ), IndexConfig.FULLTEXT ).
             add( DataPath.from( "data.secret" ), IndexConfig.NONE ).
@@ -21,10 +21,10 @@ public class PatternBasedIndexConfigDocumentOldShitTest
             defaultConfig( IndexConfig.MINIMAL ).
             build();
 
-        assertEquals( IndexConfig.NONE, config.getConfigForData( DataPath.from( "data.secret.dummy" ) ) );
-        assertEquals( IndexConfig.FULLTEXT, config.getConfigForData( DataPath.from( "data.secret.show" ) ) );
-        assertEquals( IndexConfig.BY_TYPE, config.getConfigForData( DataPath.from( "data.stuff" ) ) );
-        assertEquals( IndexConfig.MINIMAL, config.getConfigForData( DataPath.from( "creator" ) ) );
+        assertEquals( IndexConfig.NONE, config.getConfigForPath( DataPath.from( "data.secret.dummy" ) ) );
+        assertEquals( IndexConfig.FULLTEXT, config.getConfigForPath( DataPath.from( "data.secret.show" ) ) );
+        assertEquals( IndexConfig.BY_TYPE, config.getConfigForPath( DataPath.from( "data.stuff" ) ) );
+        assertEquals( IndexConfig.MINIMAL, config.getConfigForPath( DataPath.from( "creator" ) ) );
 
     }
 }

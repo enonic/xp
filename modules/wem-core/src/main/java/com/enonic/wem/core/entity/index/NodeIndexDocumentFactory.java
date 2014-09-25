@@ -12,7 +12,7 @@ import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.index.IndexConfig;
-import com.enonic.wem.api.index.IndexConfigDocumentNew;
+import com.enonic.wem.api.index.IndexConfigDocument;
 import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.core.index.document.IndexDocument;
 import com.enonic.wem.core.index.document.IndexDocumentItemFactory;
@@ -43,7 +43,7 @@ public class NodeIndexDocumentFactory
 
     private static IndexDocument createDataDocument( final Node node, final Workspace workspace, final Repository repository )
     {
-        final IndexConfigDocumentNew indexConfigDocument = node.getIndexConfigDocument();
+        final IndexConfigDocument indexConfigDocument = node.getIndexConfigDocument();
 
         final IndexDocument.Builder builder = IndexDocument.newIndexDocument().
             id( node.id() ).
@@ -115,7 +115,7 @@ public class NodeIndexDocumentFactory
             {
                 if ( !property.hasNullValue() && !Strings.isNullOrEmpty( property.getValue().asString() ) )
                 {
-                    final IndexConfig configForData = node.getIndexConfigDocument().getConfigForData( property.getPath() );
+                    final IndexConfig configForData = node.getIndexConfigDocument().getConfigForPath( property.getPath() );
 
                     if ( configForData == null )
                     {

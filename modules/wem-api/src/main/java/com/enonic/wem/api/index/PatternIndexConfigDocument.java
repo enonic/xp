@@ -7,27 +7,22 @@ import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.data.DataPath;
 
-public class PatternBasedIndexConfigDocument
+public class PatternIndexConfigDocument
     extends AbstractIndexConfigDocument
 {
-    public final ImmutableSortedSet<PatternConfig> patternConfigs;
+    public final ImmutableSortedSet<PathIndexConfig> pathIndexConfigs;
 
-    public final IndexConfig defaultConfig;
+    private final IndexConfig defaultConfig;
 
     public IndexConfig getDefaultConfig()
     {
         return defaultConfig;
     }
 
-    public ImmutableSortedSet<PatternConfig> getPatternConfigs()
-    {
-        return patternConfigs;
-    }
-
-    private PatternBasedIndexConfigDocument( final Builder builder )
+    private PatternIndexConfigDocument( final Builder builder )
     {
         super( builder );
-        patternConfigs = ImmutableSortedSet.copyOf( builder.patternConfigs );
+        pathIndexConfigs = ImmutableSortedSet.copyOf( builder.pathIndexConfigs );
         defaultConfig = builder.defaultConfig;
     }
 
@@ -38,13 +33,13 @@ public class PatternBasedIndexConfigDocument
 
 
     @Override
-    public IndexConfig getConfigForData( final DataPath dataPath )
+    public IndexConfig getConfigForPath( final DataPath dataPath )
     {
-        for ( final PatternConfig patternConfig : patternConfigs )
+        for ( final PathIndexConfig pathIndexConfig : pathIndexConfigs )
         {
-            if ( patternConfig.matches( dataPath ) )
+            if ( pathIndexConfig.matches( dataPath ) )
             {
-                return patternConfig.getIndexConfig();
+                return pathIndexConfig.getIndexConfig();
             }
         }
 
@@ -54,7 +49,7 @@ public class PatternBasedIndexConfigDocument
     public static final class Builder
         extends AbstractIndexConfigDocument.Builder<Builder>
     {
-        private SortedSet<PatternConfig> patternConfigs = Sets.newTreeSet();
+        private final SortedSet<PathIndexConfig> pathIndexConfigs = Sets.newTreeSet();
 
         private IndexConfig defaultConfig;
 
@@ -64,7 +59,7 @@ public class PatternBasedIndexConfigDocument
 
         public Builder add( final String path, final IndexConfig indexConfig )
         {
-            this.patternConfigs.add( PatternConfig.create().
+            this.pathIndexConfigs.add( PathIndexConfig.create().
                 path( DataPath.from( path ) ).
                 indexConfig( indexConfig ).
                 build() );
@@ -74,7 +69,7 @@ public class PatternBasedIndexConfigDocument
 
         public Builder add( final DataPath path, final IndexConfig indexConfig )
         {
-            this.patternConfigs.add( PatternConfig.create().
+            this.pathIndexConfigs.add( PathIndexConfig.create().
                 path( path ).
                 indexConfig( indexConfig ).
                 build() );
@@ -82,9 +77,9 @@ public class PatternBasedIndexConfigDocument
             return this;
         }
 
-        public Builder addPattern( final PatternConfig patternConfig )
+        public Builder addPattern( final PathIndexConfig pathIndexConfig )
         {
-            this.patternConfigs.add( patternConfig );
+            this.pathIndexConfigs.add( pathIndexConfig );
             return this;
         }
 
@@ -94,9 +89,9 @@ public class PatternBasedIndexConfigDocument
             return this;
         }
 
-        public PatternBasedIndexConfigDocument build()
+        public PatternIndexConfigDocument build()
         {
-            return new PatternBasedIndexConfigDocument( this );
+            return new PatternIndexConfigDocument( this );
         }
     }
 
@@ -107,18 +102,18 @@ public class PatternBasedIndexConfigDocument
         {
             return true;
         }
-        if ( !( o instanceof PatternBasedIndexConfigDocument ) )
+        if ( !( o instanceof PatternIndexConfigDocument ) )
         {
             return false;
         }
 
-        final PatternBasedIndexConfigDocument that = (PatternBasedIndexConfigDocument) o;
+        final PatternIndexConfigDocument that = (PatternIndexConfigDocument) o;
 
         if ( defaultConfig != null ? !defaultConfig.equals( that.defaultConfig ) : that.defaultConfig != null )
         {
             return false;
         }
-        if ( patternConfigs != null ? !patternConfigs.equals( that.patternConfigs ) : that.patternConfigs != null )
+        if ( pathIndexConfigs != null ? !pathIndexConfigs.equals( that.pathIndexConfigs ) : that.pathIndexConfigs != null )
         {
             return false;
         }
@@ -129,7 +124,7 @@ public class PatternBasedIndexConfigDocument
     @Override
     public int hashCode()
     {
-        int result = patternConfigs != null ? patternConfigs.hashCode() : 0;
+        int result = pathIndexConfigs != null ? pathIndexConfigs.hashCode() : 0;
         result = 31 * result + ( defaultConfig != null ? defaultConfig.hashCode() : 0 );
         return result;
     }

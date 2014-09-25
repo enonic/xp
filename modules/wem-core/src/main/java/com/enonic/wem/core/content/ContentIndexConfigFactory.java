@@ -1,14 +1,14 @@
 package com.enonic.wem.core.content;
 
 import com.enonic.wem.api.index.IndexConfig;
-import com.enonic.wem.api.index.IndexConfigDocumentNew;
-import com.enonic.wem.api.index.PatternBasedIndexConfigDocument;
+import com.enonic.wem.api.index.IndexConfigDocument;
+import com.enonic.wem.api.index.PatternIndexConfigDocument;
 
 class ContentIndexConfigFactory
 {
-    public static IndexConfigDocumentNew create()
+    public static IndexConfigDocument create()
     {
-        final PatternBasedIndexConfigDocument config = PatternBasedIndexConfigDocument.create().
+        final PatternIndexConfigDocument config = PatternIndexConfigDocument.create().
             analyzer( "content_default" ).
             add( ContentDataSerializer.PAGE, IndexConfig.NONE ).
             add( ContentDataSerializer.SITE, IndexConfig.NONE ).

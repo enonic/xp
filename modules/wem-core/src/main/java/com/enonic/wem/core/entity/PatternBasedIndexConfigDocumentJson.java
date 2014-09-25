@@ -6,18 +6,18 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.index.PatternBasedIndexConfigDocument;
-import com.enonic.wem.api.index.PatternConfig;
+import com.enonic.wem.api.index.PathIndexConfig;
+import com.enonic.wem.api.index.PatternIndexConfigDocument;
 import com.enonic.wem.core.entity.relationship.IndexConfigDocumentJson;
 
 public class PatternBasedIndexConfigDocumentJson
     extends IndexConfigDocumentJson
 {
-    public String analyzer;
+    private final String analyzer;
 
-    public Set<PatternConfigJson> patternConfigs = Sets.newHashSet();
+    private Set<PatternConfigJson> patternConfigs = Sets.newHashSet();
 
-    public IndexConfigJson defaultConfig;
+    private final IndexConfigJson defaultConfig;
 
     @SuppressWarnings("UnusedDeclaration")
     @JsonCreator
@@ -30,21 +30,21 @@ public class PatternBasedIndexConfigDocumentJson
         this.defaultConfig = defaultConfig;
     }
 
-    public PatternBasedIndexConfigDocumentJson( final PatternBasedIndexConfigDocument indexConfigDocument )
+    public PatternBasedIndexConfigDocumentJson( final PatternIndexConfigDocument indexConfigDocument )
     {
         this.analyzer = indexConfigDocument.getAnalyzer();
 
-        for ( final PatternConfig patternConfig : indexConfigDocument.patternConfigs )
+        for ( final PathIndexConfig pathIndexConfig : indexConfigDocument.pathIndexConfigs )
         {
-            patternConfigs.add( new PatternConfigJson( patternConfig ) );
+            patternConfigs.add( new PatternConfigJson( pathIndexConfig ) );
         }
 
         this.defaultConfig = new IndexConfigJson( indexConfigDocument.getDefaultConfig() );
     }
 
-    public PatternBasedIndexConfigDocument toEntityIndexConfig()
+    public PatternIndexConfigDocument toEntityIndexConfig()
     {
-        final PatternBasedIndexConfigDocument.Builder builder = PatternBasedIndexConfigDocument.create().
+        final PatternIndexConfigDocument.Builder builder = PatternIndexConfigDocument.create().
             analyzer( this.analyzer ).
             defaultConfig( this.defaultConfig.toIndexConfig() );
 

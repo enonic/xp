@@ -8,8 +8,8 @@ import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.index.IndexConfig;
-import com.enonic.wem.api.index.IndexConfigDocumentNew;
-import com.enonic.wem.api.index.PatternBasedIndexConfigDocument;
+import com.enonic.wem.api.index.IndexConfigDocument;
+import com.enonic.wem.api.index.PatternIndexConfigDocument;
 import com.enonic.wem.api.support.Changes;
 
 import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;
@@ -18,17 +18,17 @@ public class Entity
 {
     protected final EntityId id;
 
-    protected final Instant createdTime;
+    private final Instant createdTime;
 
-    protected final RootDataSet data;
+    private final RootDataSet data;
 
-    protected final Instant modifiedTime;
+    private final Instant modifiedTime;
 
     //protected final IndexConfigDocument indexConfigDocument;
 
-    protected final IndexConfigDocumentNew indexConfigDocument;
+    protected final IndexConfigDocument indexConfigDocument;
 
-    protected final Attachments attachments;
+    private final Attachments attachments;
 
     protected Entity( final BaseBuilder builder )
     {
@@ -64,7 +64,7 @@ public class Entity
         }
         else
         {
-            this.indexConfigDocument = PatternBasedIndexConfigDocument.create().
+            this.indexConfigDocument = PatternIndexConfigDocument.create().
                 defaultConfig( IndexConfig.BY_TYPE ).
                 build();
         }
@@ -113,7 +113,7 @@ public class Entity
     }
 */
 
-    public IndexConfigDocumentNew getIndexConfigDocument()
+    public IndexConfigDocument getIndexConfigDocument()
     {
         return indexConfigDocument;
     }
@@ -130,7 +130,7 @@ public class Entity
 
         Attachments attachments;
 
-        IndexConfigDocumentNew indexConfigDocument;
+        IndexConfigDocument indexConfigDocument;
 
         BaseBuilder()
         {
@@ -239,11 +239,11 @@ public class Entity
         }
 */
 
-        public B entityIndexConfig( final IndexConfigDocumentNew indexConfigDocumentNew )
+        public B entityIndexConfig( final IndexConfigDocument indexConfigDocument )
         {
             changes.recordChange(
                 newPossibleChange( "data" ).from( this.originalEntity.indexConfigDocument ).to( this.indexConfigDocument ).build() );
-            this.indexConfigDocument = indexConfigDocumentNew;
+            this.indexConfigDocument = indexConfigDocument;
             return getThisBuilder();
         }
 
@@ -369,9 +369,9 @@ public class Entity
         }
         */
 
-        public B indexConfigDocument( final IndexConfigDocumentNew indexConfigDocumentNew )
+        public B indexConfigDocument( final IndexConfigDocument indexConfigDocument )
         {
-            this.indexConfigDocument = indexConfigDocumentNew;
+            this.indexConfigDocument = indexConfigDocument;
             return getThisBuilder();
         }
 

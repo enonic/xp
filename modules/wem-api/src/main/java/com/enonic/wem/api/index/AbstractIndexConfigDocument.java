@@ -1,7 +1,7 @@
 package com.enonic.wem.api.index;
 
 public abstract class AbstractIndexConfigDocument
-    implements IndexConfigDocumentNew
+    implements IndexConfigDocument
 {
     private final String analyzer;
 

@@ -27,7 +27,7 @@ import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.entity.UpdateNodeParams;
-import com.enonic.wem.api.index.IndexConfigDocumentNew;
+import com.enonic.wem.api.index.IndexConfigDocument;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
@@ -44,8 +44,6 @@ public class ContentNodeTranslator
 
     private static final String THUMBNAIL_MIME_TYPE = "image/png";
 
-    public static final String FORM_PATH = "form";
-
     private static final ContentAttachmentNodeTranslator CONTENT_ATTACHMENT_NODE_TRANSLATOR = new ContentAttachmentNodeTranslator();
 
     private final ContentDataSerializer CONTENT_SERIALIZER = new ContentDataSerializer();
@@ -54,7 +52,7 @@ public class ContentNodeTranslator
     {
         final RootDataSet contentAsData = CONTENT_SERIALIZER.toData( params );
 
-        final IndexConfigDocumentNew indexConfigDocumentNew = ContentIndexConfigFactory.create();
+        final IndexConfigDocument indexConfigDocument = ContentIndexConfigFactory.create();
 
         Attachments contentAttachments = params.getAttachments();
 
@@ -74,7 +72,7 @@ public class ContentNodeTranslator
             embed( params.isEmbed() ).
             data( contentAsData ).
             attachments( nodeAttachmentsBuilder.build() ).
-            indexConfigDocument( indexConfigDocumentNew );
+            indexConfigDocument( indexConfigDocument );
     }
 
     public UpdateNodeParams toUpdateNodeCommand( final Content content, final Attachments attachments )
@@ -144,7 +142,7 @@ public class ContentNodeTranslator
     {
         final RootDataSet rootDataSet = CONTENT_SERIALIZER.toData( content );
 
-        final IndexConfigDocumentNew indexConfigDocument = ContentIndexConfigFactory.create();
+        final IndexConfigDocument indexConfigDocument = ContentIndexConfigFactory.create();
 
         return new NodeEditor()
         {
