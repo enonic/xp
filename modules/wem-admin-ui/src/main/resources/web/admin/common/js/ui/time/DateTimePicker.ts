@@ -23,17 +23,9 @@ module api.ui.time {
             return this;
         }
 
-        getYear(): number {
-            return this.year;
-        }
-
         setMonth(value: number): DateTimePickerBuilder {
             this.month = value;
             return this;
-        }
-
-        getMonth(): number {
-            return this.month;
         }
 
         setSelectedDate(value: Date): DateTimePickerBuilder {
@@ -41,17 +33,9 @@ module api.ui.time {
             return this;
         }
 
-        getSelectedDate(): Date {
-            return this.selectedDate;
-        }
-
         setHours(value: number): DateTimePickerBuilder {
             this.hours = value;
             return this;
-        }
-
-        getHours(): number {
-            return this.hours;
         }
 
         setMinutes(value: number): DateTimePickerBuilder {
@@ -59,17 +43,9 @@ module api.ui.time {
             return this;
         }
 
-        getMinutes(): number {
-            return this.minutes;
-        }
-
         setStartingDayOfWeek(value: DayOfWeek): DateTimePickerBuilder {
             this.startingDayOfWeek = value;
             return this;
-        }
-
-        getStartingDayOfWeek(): DayOfWeek {
-            return this.startingDayOfWeek;
         }
 
         setCloseOnSelect(value: boolean): DateTimePickerBuilder {
@@ -77,17 +53,9 @@ module api.ui.time {
             return this;
         }
 
-        isCloseOnSelect(): boolean {
-            return this.closeOnSelect;
-        }
-
         setCloseOnOutsideClick(value: boolean): DateTimePickerBuilder {
             this.closeOnOutsideClick = value;
             return this;
-        }
-
-        isCloseOnOutsideClick(): boolean {
-            return this.closeOnOutsideClick;
         }
 
         build(): DateTimePicker {
@@ -130,10 +98,10 @@ module api.ui.time {
                 build();
 
             var popupBuilder = new DateTimePickerPopupBuilder().
-                setHours(builder.getHours()).
-                setMinutes(builder.getMinutes()).
+                setHours(builder.hours).
+                setMinutes(builder.minutes).
                 setCalendar(this.calendar).
-                setCloseOnOutsideClick(builder.isCloseOnOutsideClick());
+                setCloseOnOutsideClick(builder.closeOnOutsideClick);
             this.popup = new DateTimePickerPopup(popupBuilder);
             wrapper.appendChild(this.popup);
 
