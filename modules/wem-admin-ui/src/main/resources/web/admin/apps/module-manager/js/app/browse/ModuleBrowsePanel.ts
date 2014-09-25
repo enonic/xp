@@ -72,7 +72,6 @@ module app.browse {
                 });
                 new api.module.StopModuleRequest(moduleKeys).sendAndParse()
                     .then(() => {
-                        this.moduleTreeGridPanel.reload();
                     }).done();
             });
             app.browse.StartModuleEvent.on((event: app.browse.StartModuleEvent) => {
@@ -81,7 +80,6 @@ module app.browse {
                 });
                 new api.module.StartModuleRequest(moduleKeys).sendAndParse()
                     .then(() => {
-                        this.moduleTreeGridPanel.reload();
                     }).done();
             });
             app.browse.UpdateModuleEvent.on((event: app.browse.UpdateModuleEvent) => {
