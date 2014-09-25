@@ -175,7 +175,7 @@ public final class CoreSchemasProvider
             addFormItem( Input.newInput().
                 name( "supports" ).
                 label( "Supports" ).
-                helpText( "Choose which content types this page template should support" ).
+                helpText( "Choose which content types this page template supports" ).
                 inputType( InputTypes.CONTENT_TYPE_FILTER ).
                 required( false ).
                 multiple( true ).
