@@ -21,8 +21,8 @@ public class IndexDocumentItemFactoryTest
 
         final Set<AbstractIndexDocumentItem> indexDocumentItems = IndexDocumentItemFactory.create( property, IndexConfig.BY_TYPE );
 
-        // Should yield number, string, orderby
-        assertEquals( 3, indexDocumentItems.size() );
+        // Should yield number, string, orderby, all*2
+        assertEquals( 5, indexDocumentItems.size() );
     }
 
     @Test
@@ -33,8 +33,8 @@ public class IndexDocumentItemFactoryTest
 
         final Set<AbstractIndexDocumentItem> indexDocumentItems = IndexDocumentItemFactory.create( property, IndexConfig.BY_TYPE );
 
-        // Should yield number, string, orderby
-        assertEquals( 3, indexDocumentItems.size() );
+        // Should yield number, string, orderby, all*2
+        assertEquals( 5, indexDocumentItems.size() );
     }
 
     @Test
@@ -45,8 +45,8 @@ public class IndexDocumentItemFactoryTest
 
         final Set<AbstractIndexDocumentItem> indexDocumentItems = IndexDocumentItemFactory.create( property, IndexConfig.BY_TYPE );
 
-        // Should yield date, string, orderby
-        assertEquals( 3, indexDocumentItems.size() );
+        // Should yield date, string, orderby, all*2
+        assertEquals( 5, indexDocumentItems.size() );
     }
 
     @Test
@@ -57,8 +57,8 @@ public class IndexDocumentItemFactoryTest
 
         final Set<AbstractIndexDocumentItem> indexDocumentItems = IndexDocumentItemFactory.create( property, IndexConfig.BY_TYPE );
 
-        // Should yield string, geo-point, orderby
-        assertEquals( 3, indexDocumentItems.size() );
+        // Should yield string, geo-point, orderby, all*2
+        assertEquals( 5, indexDocumentItems.size() );
     }
 
     @Test
@@ -77,8 +77,8 @@ public class IndexDocumentItemFactoryTest
     {
         Property property = new Property( "myStringProp", Value.newDouble( 1.0 ) );
 
-        // When by type, should yield string, number, orderby
-        assertEquals( 3, IndexDocumentItemFactory.create( property, IndexConfig.BY_TYPE ).size() );
+        // When by type, should yield string, number, orderby, all*2
+        assertEquals( 5, IndexDocumentItemFactory.create( property, IndexConfig.BY_TYPE ).size() );
     }
 
     @Test

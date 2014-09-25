@@ -52,9 +52,7 @@ public class IndexDocumentItemFactory
     private static void addAllFields( final Value propertyValue, final Set<AbstractIndexDocumentItem> indexDocumentItems,
                                       final IndexConfig indexConfig )
     {
-        final boolean includeFromType = indexConfig.isDecideByType() && isTextField( propertyValue.getType() );
-
-        if ( includeFromType || indexConfig.isIncludeInAllText() )
+        if ( indexConfig.isDecideByType() || indexConfig.isIncludeInAllText() )
         {
             indexDocumentItems.add( new IndexDocumentAnalyzedItem( IndexDocumentItemPath.from( IndexConstants.ALL_TEXT_FIELD_NAME ),
                                                                    propertyValue.asString() ) );
