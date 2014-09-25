@@ -24,7 +24,7 @@ module api.module {
             this.vendorUrl = builder.vendorUrl;
             this.url = builder.url;
             this.state = builder.state;
-            this.version = builder.moduleKey.getVersion();
+            this.version = builder.version;
         }
 
         getDisplayName(): string {
@@ -90,6 +90,8 @@ module api.module {
 
         state: string;
 
+        version: string;
+
         constructor(source?: ModuleSummary) {
             if (source) {
                 super(source);
@@ -99,6 +101,7 @@ module api.module {
                 this.vendorUrl = source.getVendorUrl();
                 this.url = source.getUrl();
                 this.state = source.getState();
+                this.version = source.getVersion();
             }
         }
 
@@ -112,6 +115,7 @@ module api.module {
             this.vendorUrl = json.vendorUrl;
             this.url = json.url;
             this.state = json.state;
+            this.version = json.version;
             return this;
         }
 

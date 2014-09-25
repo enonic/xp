@@ -25,7 +25,7 @@
     "deletable": false,
     "displayName": "module display name",
     "editable": false,
-    "key": "testmodule-1.0.0",
+    "key": "testmodule",
     "modifiedTime": "2012-01-01T00:00:00Z",
     "name": "testmodule",
     "state": "started",

@@ -39,37 +39,37 @@ public class GetContentTypesCommandTest
         throws Exception
     {
         final ContentTypes allContentTypes =
-            ContentTypes.from( createContentType( "mymodule-1.0.0:content_type_1", "DisplayName", "Description" ),
-                               createContentType( "mymodule-1.0.0:content_type_2", "DisplayName2", "Description2" ) );
+            ContentTypes.from( createContentType( "mymodule:content_type_1", "DisplayName", "Description" ),
+                               createContentType( "mymodule:content_type_2", "DisplayName2", "Description2" ) );
         Mockito.when( contentTypeDao.getAllContentTypes() ).thenReturn( allContentTypes );
 
         final ContentType contentTypeBuilder1 = ContentType.
             newContentType().
             displayName( "DisplayName" ).
             description( "Description" ).
-            name( "mymodule-1.0.0:content_type_1" ).
+            name( "mymodule:content_type_1" ).
             build();
-        Mockito.when( contentTypeDao.getContentType( Mockito.eq( ContentTypeName.from( "mymodule-1.0.0:content_type_1" ) ) ) ).thenReturn(
+        Mockito.when( contentTypeDao.getContentType( Mockito.eq( ContentTypeName.from( "mymodule:content_type_1" ) ) ) ).thenReturn(
             contentTypeBuilder1 );
 
         final ContentType contentTypeBuilder2 = ContentType.
             newContentType().
             displayName( "DisplayName2" ).
             description( "Description2" ).
-            name( "mymodule-1.0.0:content_type_2" ).
+            name( "mymodule:content_type_2" ).
             build();
-        Mockito.when( contentTypeDao.getContentType( Mockito.eq( ContentTypeName.from( "mymodule-1.0.0:content_type_2" ) ) ) ).thenReturn(
+        Mockito.when( contentTypeDao.getContentType( Mockito.eq( ContentTypeName.from( "mymodule:content_type_2" ) ) ) ).thenReturn(
             contentTypeBuilder2 );
 
         // Exercise:
         final GetContentTypesParams params = new GetContentTypesParams().contentTypeNames(
-            ContentTypeNames.from( "mymodule-1.0.0:content_type_1", "mymodule-1.0.0:content_type_2" ) );
+            ContentTypeNames.from( "mymodule:content_type_1", "mymodule:content_type_2" ) );
         final ContentTypes result = this.command.params( params ).execute();
 
         // Verify
         assertEquals( 2, result.getSize() );
-        verifyContentType( "mymodule-1.0.0:content_type_1", "DisplayName", "Description", result );
-        verifyContentType( "mymodule-1.0.0:content_type_2", "DisplayName2", "Description2", result );
+        verifyContentType( "mymodule:content_type_1", "DisplayName", "Description", result );
+        verifyContentType( "mymodule:content_type_2", "DisplayName2", "Description2", result );
     }
 
     private void verifyContentType( final String contentTypeName, final String displayName, final String description,

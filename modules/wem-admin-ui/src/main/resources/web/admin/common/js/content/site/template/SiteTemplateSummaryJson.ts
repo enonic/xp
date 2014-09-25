@@ -18,8 +18,6 @@ module api.content.site.template {
 
         deletable:boolean;
 
-        version:string;
-
         url:string;
 
         contentTypeFilter:ContentTypeFilterJson;

@@ -7,6 +7,7 @@ import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.module.ModuleVersion;
 import com.enonic.wem.api.support.SerializingTestHelper;
 import com.enonic.wem.api.xml.XmlException;
 
@@ -33,7 +34,9 @@ public class ModuleXmlBuilderTest
     public void testModuleXmlDeserialization()
     {
         final String xml = loadTestXml( "serialized-module.xml" );
-        final ModuleBuilder module = new ModuleBuilder().moduleKey( ModuleKey.from( "mymodule-1.0.0" ) );
+        final ModuleBuilder module = new ModuleBuilder().
+            moduleKey( ModuleKey.from( "mymodule" ) ).
+            moduleVersion( ModuleVersion.from( "1.0.0" ) );
         this.xmlBuilder.toModule( xml, module );
         assertEquals( createModule().toString(), module.build().toString() );
     }
@@ -51,7 +54,7 @@ public class ModuleXmlBuilderTest
             build();
 
         return new ModuleBuilder().
-            moduleKey( ModuleKey.from( "mymodule-1.0.0" ) ).
+            moduleKey( ModuleKey.from( "mymodule" ) ).
             displayName( "module display name" ).
             url( "http://enonic.net" ).
             vendorName( "Enonic" ).

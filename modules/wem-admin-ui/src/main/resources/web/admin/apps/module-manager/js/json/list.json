@@ -1,7 +1,7 @@
 {
     "modules": [
         {
-            "moduleKey": "testmodule-1.0.0",
+            "moduleKey": "testmodule",
             "version": "1.0.0",
             "displayName": "Test Module",
             "url": "http://test-module.com",

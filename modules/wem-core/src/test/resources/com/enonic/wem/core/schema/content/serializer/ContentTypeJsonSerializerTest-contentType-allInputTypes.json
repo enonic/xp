@@ -1,9 +1,9 @@
 {
-    "name": "mymodule-1.0.0:all_input_types",
+    "name": "mymodule:all_input_types",
     "displayName": "All the Input Types",
     "description": "A description",
     "contentDisplayNameScript": null,
-    "superType": "system-0.0.0:structured",
+    "superType": "system:structured",
     "isAbstract": false,
     "isFinal": true,
     "isBuiltIn": false,
@@ -356,7 +356,7 @@
                 "type": {
                     "name": "Relationship",
                     "config": {
-                        "relationshipType": "system-0.0.0:like"
+                        "relationshipType": "system:like"
                     }
                 }
             }
@@ -377,7 +377,7 @@
                 "type": {
                     "name": "ImageSelector",
                     "config": {
-                        "relationshipType": "system-0.0.0:default"
+                        "relationshipType": "system:default"
                     }
                 }
             }

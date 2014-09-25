@@ -32,7 +32,7 @@ public class ThymeleafProcessorImplTest
     public void testResourceNotFound()
     {
         final ThymeleafProcessor processor = this.processorFactory.newProcessor().
-            view( ResourceKey.from( "mymodule-1.0.0:/view/unknown.html" ) );
+            view( ResourceKey.from( "mymodule:/view/unknown.html" ) );
 
         processor.process();
     }
@@ -43,7 +43,7 @@ public class ThymeleafProcessorImplTest
         final Map<String, Object> params = Maps.newHashMap();
 
         final ThymeleafProcessor processor = this.processorFactory.newProcessor().
-            view( ResourceKey.from( "mymodule-1.0.0:/view/test.html" ) ).
+            view( ResourceKey.from( "mymodule:/view/test.html" ) ).
             parameters( params );
 
         final String result = processor.process();
@@ -54,7 +54,7 @@ public class ThymeleafProcessorImplTest
     public void testViewError()
     {
         final ThymeleafProcessor processor = this.processorFactory.newProcessor().
-            view( ResourceKey.from( "mymodule-1.0.0:/view/test-error.html" ) );
+            view( ResourceKey.from( "mymodule:/view/test-error.html" ) );
 
         processor.process();
     }

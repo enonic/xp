@@ -57,7 +57,7 @@ public class SiteResourceTest
     public void create_site_failure()
         throws Exception
     {
-        Content content = createSiteContent( "content-id", "content-name", "mymodule-1.0.0:content-type" );
+        Content content = createSiteContent( "content-id", "content-name", "mymodule:content-type" );
 
         Mockito.when( this.siteService.create( Mockito.isA( CreateSiteParams.class ), Mockito.isA( Context.class ) ) ).thenThrow(
             new ContentNotFoundException( content.getId(), WORKSPACE ) );
@@ -71,7 +71,7 @@ public class SiteResourceTest
     public void create_site_success()
         throws Exception
     {
-        Content content = createSiteContent( "content-id", "content-name", "mymodule-1.0.0:content-type" );
+        Content content = createSiteContent( "content-id", "content-name", "mymodule:content-type" );
 
         Mockito.when( this.siteService.create( Mockito.isA( CreateSiteParams.class ), Mockito.isA( Context.class ) ) ).thenReturn(
             content );
@@ -87,7 +87,7 @@ public class SiteResourceTest
     public void update_site_failure()
         throws Exception
     {
-        Content content = createSiteContent( "content-id", "content-name", "mymodule-1.0.0:content-type" );
+        Content content = createSiteContent( "content-id", "content-name", "mymodule:content-type" );
 
         Mockito.when( this.siteService.update( Mockito.isA( UpdateSiteParams.class ), Mockito.isA( Context.class ) ) ).thenThrow(
             new ContentNotFoundException( content.getId(), WORKSPACE ) );
@@ -103,7 +103,7 @@ public class SiteResourceTest
     public void update_site_success()
         throws Exception
     {
-        Content content = createSiteContent( "content-id", "content-name", "mymodule-1.0.0:content-type" );
+        Content content = createSiteContent( "content-id", "content-name", "mymodule:content-type" );
 
         Mockito.when( this.siteService.update( Mockito.isA( UpdateSiteParams.class ), Mockito.isA( Context.class ) ) ).thenReturn(
             content );
@@ -119,7 +119,7 @@ public class SiteResourceTest
     public void delete_site_failure()
         throws Exception
     {
-        Content content = createContent( "content-id", "content-name", "mymodule-1.0.0:content-type" );
+        Content content = createContent( "content-id", "content-name", "mymodule:content-type" );
 
         Mockito.when( this.siteService.delete( Mockito.isA( ContentId.class ), Mockito.isA( Context.class ) ) ).thenThrow(
             new ContentNotFoundException( content.getId(), WORKSPACE ) );
@@ -133,7 +133,7 @@ public class SiteResourceTest
     public void delete_site_success()
         throws Exception
     {
-        Content content = createContent( "content-id", "content-name", "mymodule-1.0.0:content-type" );
+        Content content = createContent( "content-id", "content-name", "mymodule:content-type" );
 
         Mockito.when( this.siteService.delete( Mockito.isA( ContentId.class ), Mockito.isA( Context.class ) ) ).thenReturn( content );
 
@@ -152,7 +152,7 @@ public class SiteResourceTest
         siteTemplateService = Mockito.mock( SiteTemplateService.class );
 
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
-            thenReturn( createContentType( "mymodule-1.0.0:content-type" ) );
+            thenReturn( createContentType( "mymodule:content-type" ) );
 
         final SiteResource resource = new SiteResource();
         resource.siteService = this.siteService;
@@ -170,7 +170,7 @@ public class SiteResourceTest
         rootDataSet.add( dataSet );
 
         ModuleConfig moduleConfig = ModuleConfig.newModuleConfig().
-            module( ModuleKey.from( "module-1.0.0" ) ).
+            module( ModuleKey.from( "module" ) ).
             config( rootDataSet ).
             build();
 

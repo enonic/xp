@@ -33,7 +33,7 @@ public class MixinReferencesToFormItemsTransformTest
     {
         // setup
         Mixin mixin = Mixin.newMixin().
-            name( "mymodule-1.0.0:my_mixin" ).
+            name( "mymodule:my_mixin" ).
             addFormItem( newInput().name( "input1" ).
                 inputType( InputTypes.TEXT_LINE ).
                 helpText( "myHelpText" ).
@@ -42,7 +42,7 @@ public class MixinReferencesToFormItemsTransformTest
 
         Form form = newForm().
             addFormItem( newInput().name( "my_input" ).inputType( InputTypes.TEXT_LINE ).build() ).
-            addFormItem( newMixinReference().name( "my_mixin" ).mixin( "mymodule-1.0.0:my_mixin" ).build() ).
+            addFormItem( newMixinReference().name( "my_mixin" ).mixin( "mymodule:my_mixin" ).build() ).
             build();
 
         Mockito.when( mixinService.getByName( Mockito.isA( GetMixinParams.class ) ) ).thenReturn( mixin );
@@ -62,7 +62,7 @@ public class MixinReferencesToFormItemsTransformTest
     public void transform_formItemSet()
     {
         // setup
-        Mixin mixin = Mixin.newMixin().name( "mymodule-1.0.0:address" ).addFormItem( newFormItemSet().name( "address" ).addFormItem(
+        Mixin mixin = Mixin.newMixin().name( "mymodule:address" ).addFormItem( newFormItemSet().name( "address" ).addFormItem(
             newInput().name( "label" ).label( "Label" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(
             newInput().name( "street" ).label( "Street" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(
             newInput().name( "postalNo" ).label( "Postal No" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(
@@ -89,7 +89,7 @@ public class MixinReferencesToFormItemsTransformTest
     public void transform_two_formItemSets_with_changed_names()
     {
         // setup
-        Mixin mixin = Mixin.newMixin().name( "mymodule-1.0.0:address" ).
+        Mixin mixin = Mixin.newMixin().name( "mymodule:address" ).
             addFormItem( newFormItemSet().name( "address" ).
                 addFormItem( newInput().name( "label" ).label( "Label" ).inputType( InputTypes.TEXT_LINE ).build() ).
                 addFormItem( newInput().name( "street" ).label( "Street" ).inputType( InputTypes.TEXT_LINE ).build() ).
@@ -133,7 +133,7 @@ public class MixinReferencesToFormItemsTransformTest
     {
         // setup
         Mixin mixin = Mixin.newMixin().
-            name( "mymodule-1.0.0:address" ).
+            name( "mymodule:address" ).
             addFormItem( newFormItemSet().
                 name( "address" ).
                 addFormItem( FieldSet.newFieldSet().

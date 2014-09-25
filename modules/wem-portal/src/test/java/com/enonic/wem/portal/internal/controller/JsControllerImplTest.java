@@ -19,7 +19,7 @@ public class JsControllerImplTest
     public void testExecute()
     {
         this.request.setMethod( "GET" );
-        execute( "mymodule-1.0.0:/service/test" );
+        execute( "mymodule:/service/test" );
         assertEquals( JsHttpResponse.STATUS_OK, this.response.getStatus() );
     }
 
@@ -29,7 +29,7 @@ public class JsControllerImplTest
         this.request.setMethod( "GET" );
         this.response.setPostProcess( true );
 
-        execute( "mymodule-1.0.0:/service/test" );
+        execute( "mymodule:/service/test" );
 
         assertEquals( JsHttpResponse.STATUS_OK, this.response.getStatus() );
         Mockito.verify( this.postProcessor ).processResponse( this.context );
@@ -39,7 +39,7 @@ public class JsControllerImplTest
     public void testMethodNotSupported()
     {
         this.request.setMethod( "POST" );
-        execute( "mymodule-1.0.0:/service/test" );
+        execute( "mymodule:/service/test" );
         assertEquals( JsHttpResponse.STATUS_METHOD_NOT_ALLOWED, this.response.getStatus() );
     }
 
@@ -54,7 +54,7 @@ public class JsControllerImplTest
         this.context.setContent( content );
 
         this.request.setMethod( "GET" );
-        execute( "mymodule-1.0.0:/service/getters" );
+        execute( "mymodule:/service/getters" );
         assertEquals( JsHttpResponse.STATUS_OK, this.response.getStatus() );
         assertEquals( "GET,test,mymodule|mypagetemplate,1000", this.response.getBody() );
     }

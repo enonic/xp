@@ -14,7 +14,6 @@ import com.enonic.wem.api.content.site.SiteService;
 import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.core.image.filter.ImageFilterBuilder;
-import com.enonic.wem.core.module.ModuleKeyResolverService;
 import com.enonic.wem.guice.GuiceActivator;
 import com.enonic.wem.portal.internal.script.ContentScriptLibrary;
 import com.enonic.wem.script.ScriptService;
@@ -38,7 +37,6 @@ public final class Activator
         service( AttachmentService.class ).importSingle();
         service( BlobService.class ).importSingle();
         service( ImageFilterBuilder.class ).importSingle();
-        service( ModuleKeyResolverService.class ).importSingle();
         service( ModuleService.class ).importSingle();
         service( ScriptService.class ).importSingle();
 

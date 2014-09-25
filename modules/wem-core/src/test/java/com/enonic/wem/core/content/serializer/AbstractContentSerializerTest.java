@@ -73,7 +73,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void set()
     {
-        Content content = newContent().path( MY_CONTENT_PATH ).type( ContentTypeName.from( "mymodule-1.0.0:my_type" ) ).build();
+        Content content = newContent().path( MY_CONTENT_PATH ).type( ContentTypeName.from( "mymodule:my_type" ) ).build();
         content.getContentData().setProperty( "mySet.myInput", Value.newString( "1" ) );
         content.getContentData().setProperty( "mySet.myOtherInput", Value.newString( "2" ) );
 
@@ -97,7 +97,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void array_of_values()
     {
-        Content content = newContent().path( MY_CONTENT_PATH ).type( ContentTypeName.from( "mymodule-1.0.0:my_type" ) ).build();
+        Content content = newContent().path( MY_CONTENT_PATH ).type( ContentTypeName.from( "mymodule:my_type" ) ).build();
         content.getContentData().setProperty( "myArray[0]", Value.newString( "1" ) );
         content.getContentData().setProperty( "myArray[1]", Value.newString( "2" ) );
 
@@ -121,7 +121,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void array_within_set()
     {
-        Content content = newContent().path( MY_CONTENT_PATH ).type( ContentTypeName.from( "mymodule-1.0.0:my_type" ) ).build();
+        Content content = newContent().path( MY_CONTENT_PATH ).type( ContentTypeName.from( "mymodule:my_type" ) ).build();
         content.getContentData().setProperty( "mySet.myArray[0]", Value.newString( "1" ) );
         content.getContentData().setProperty( "mySet.myArray[1]", Value.newString( "2" ) );
 
@@ -160,7 +160,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void array_of_set()
     {
-        Content content = newContent().path( MY_CONTENT_PATH ).type( ContentTypeName.from( "mymodule-1.0.0:my_type" ) ).build();
+        Content content = newContent().path( MY_CONTENT_PATH ).type( ContentTypeName.from( "mymodule:my_type" ) ).build();
         content.getContentData().setProperty( "mySet[0].myInput", Value.newString( "1" ) );
         content.getContentData().setProperty( "mySet[0].myOtherInput", Value.newString( "a" ) );
         content.getContentData().setProperty( "mySet[1].myInput", Value.newString( "2" ) );
@@ -193,7 +193,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void insertion_order_of_entries_within_a_DataSet_is_preserved()
     {
-        Content content = newContent().path( MY_CONTENT_PATH ).type( ContentTypeName.from( "mymodule-1.0.0:my_type" ) ).build();
+        Content content = newContent().path( MY_CONTENT_PATH ).type( ContentTypeName.from( "mymodule:my_type" ) ).build();
         content.getContentData().setProperty( "mySet.myArray[0]", Value.newString( "1" ) );
         content.getContentData().setProperty( "mySet.myInput", Value.newString( "a" ) );
         content.getContentData().setProperty( "mySet.myArray[1]", Value.newString( "2" ) );
@@ -218,7 +218,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void array_within_array()
     {
-        Content content = newContent().path( MY_CONTENT_PATH ).type( ContentTypeName.from( "mymodule-1.0.0:my_type" ) ).build();
+        Content content = newContent().path( MY_CONTENT_PATH ).type( ContentTypeName.from( "mymodule:my_type" ) ).build();
         content.getContentData().setProperty( "mySet[0].myArray[0]", Value.newString( "1" ) );
         content.getContentData().setProperty( "mySet[0].myArray[1]", Value.newString( "2" ) );
         content.getContentData().setProperty( "mySet[1].myArray[0]", Value.newString( "3" ) );
@@ -286,7 +286,7 @@ public abstract class AbstractContentSerializerTest
         final FormItemSet formItemSet = newFormItemSet().name( "formItemSet" ).build();
         formItemSet.add( newInput().name( "myText" ).inputType( InputTypes.TEXT_LINE ).build() );
         final ContentType contentType = newContentType().
-            name( "mymodule-1.0.0:my_content_type" ).
+            name( "mymodule:my_content_type" ).
             addFormItem( newInput().name( "myText" ).inputType( InputTypes.TEXT_LINE ).required( true ).build() ).
             addFormItem( formItemSet ).
             build();
@@ -316,7 +316,7 @@ public abstract class AbstractContentSerializerTest
         formItemSet.add( newInput().name( "myText" ).inputType( InputTypes.TEXT_LINE ).build() );
 
         final ContentType contentType = newContentType().
-            name( "mymodule-1.0.0:my_content_type" ).
+            name( "mymodule:my_content_type" ).
             addFormItem( formItemSet ).
             build();
         //contentTypeFetcher.add( contentType );
@@ -345,7 +345,7 @@ public abstract class AbstractContentSerializerTest
             newInput().name( "myText" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
 
         final ContentType contentType = newContentType().
-            name( "mymodule-1.0.0:my_content_type" ).
+            name( "mymodule:my_content_type" ).
             addFormItem( newInput().name( "myField" ).inputType( InputTypes.TEXT_LINE ).build() ).
             addFormItem( layout ).
             build();
@@ -390,7 +390,7 @@ public abstract class AbstractContentSerializerTest
     {
         final Instant time = Instant.now();
         final Content content = newContent().
-            type( ContentTypeName.from( "mymodule-1.0.0:my_type" ) ).
+            type( ContentTypeName.from( "mymodule:my_type" ) ).
             createdTime( time ).
             modifiedTime( time ).
             owner( AccountKey.superUser() ).

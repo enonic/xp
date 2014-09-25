@@ -6,9 +6,9 @@
         "name": "Enonic AS",
         "url": "http://www.enonic.com"
     },
-    "moduleKeys": [ "module1-1.0.0", "module2-1.0.0" ],
+    "moduleKeys": [ "module1", "module2" ],
     "contentTypeFilter": {
-        "allow": [ "mymodule-1.0.0:image" ],
-        "deny": [ "mymodule-1.0.0:com.enonic.tweet", "mymodule-1.0.0:system.folder", "mymodule-1.0.0:com.enonic.article", "mymodule-1.0.0:com.enonic.employee" ]
+        "allow": [ "mymodule:image" ],
+        "deny": [ "mymodule:com.enonic.tweet", "mymodule:system.folder", "mymodule:com.enonic.article", "mymodule:com.enonic.employee" ]
     }
 }

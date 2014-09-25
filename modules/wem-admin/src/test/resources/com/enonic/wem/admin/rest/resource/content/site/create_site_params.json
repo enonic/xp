@@ -3,7 +3,7 @@
     "siteTemplateKey": "template-1.0.0",
     "moduleConfigs": [
         {
-            "moduleKey": "module-1.0.0",
+            "moduleKey": "module",
             "config": [{
                 "Property": {
                     "name": "property1",

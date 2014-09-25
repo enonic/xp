@@ -34,12 +34,12 @@ public class RelationshipTypeDaoImplTest
     {
         // setup
         RelationshipType like = RelationshipType.newRelationshipType().
-            name( "mymodule-1.0.0:like" ).
+            name( "mymodule:like" ).
             displayName( "Like" ).
             fromSemantic( "likes" ).
             toSemantic( "liked by" ).
-            addAllowedFromType( ContentTypeName.from( "mymodule-1.0.0:person" ) ).
-            addAllowedToType( ContentTypeName.from( "mymodule-1.0.0:person" ) ).
+            addAllowedFromType( ContentTypeName.from( "mymodule:person" ) ).
+            addAllowedToType( ContentTypeName.from( "mymodule:person" ) ).
             build();
 
         Mockito.when( this.schemaRegistry.getRelationshipType( RelationshipTypeName.from( "system-0.0.0:like" ) ) ).thenReturn( like );
@@ -50,7 +50,7 @@ public class RelationshipTypeDaoImplTest
 
         // verify
         assertNotNull( createdRelationshipType );
-        assertEquals( "mymodule-1.0.0:like", createdRelationshipType.getName().toString() );
+        assertEquals( "mymodule:like", createdRelationshipType.getName().toString() );
         assertEquals( like, createdRelationshipType );
     }
 
@@ -60,21 +60,21 @@ public class RelationshipTypeDaoImplTest
     {
         // setup
         RelationshipType like = RelationshipType.newRelationshipType().
-            name( "mymodule-1.0.0:like" ).
+            name( "mymodule:like" ).
             displayName( "Like" ).
             fromSemantic( "likes" ).
             toSemantic( "liked by" ).
-            addAllowedFromType( ContentTypeName.from( "mymodule-1.0.0:person" ) ).
-            addAllowedToType( ContentTypeName.from( "mymodule-1.0.0:thing" ) ).
+            addAllowedFromType( ContentTypeName.from( "mymodule:person" ) ).
+            addAllowedToType( ContentTypeName.from( "mymodule:thing" ) ).
             build();
 
         RelationshipType hates = RelationshipType.newRelationshipType().
-            name( "mymodule-1.0.0:hate" ).
+            name( "mymodule:hate" ).
             displayName( "Hate" ).
             fromSemantic( "hates" ).
             toSemantic( "hated by" ).
-            addAllowedFromType( ContentTypeName.from( "mymodule-1.0.0:person" ) ).
-            addAllowedToType( ContentTypeName.from( "mymodule-1.0.0:thing" ) ).
+            addAllowedFromType( ContentTypeName.from( "mymodule:person" ) ).
+            addAllowedToType( ContentTypeName.from( "mymodule:thing" ) ).
             build();
 
         Mockito.when( this.schemaRegistry.getAllRelationshipTypes() ).thenReturn( RelationshipTypes.from( like, hates ) );
@@ -85,12 +85,12 @@ public class RelationshipTypeDaoImplTest
         // verify
         assertNotNull( relationshipTypes );
         assertEquals( 2, relationshipTypes.getSize() );
-        RelationshipType retrievedRelationshipType1 = relationshipTypes.get( RelationshipTypeName.from( "mymodule-1.0.0:like" ) );
-        RelationshipType retrievedRelationshipType2 = relationshipTypes.get( RelationshipTypeName.from( "mymodule-1.0.0:hate" ) );
+        RelationshipType retrievedRelationshipType1 = relationshipTypes.get( RelationshipTypeName.from( "mymodule:like" ) );
+        RelationshipType retrievedRelationshipType2 = relationshipTypes.get( RelationshipTypeName.from( "mymodule:hate" ) );
 
-        assertEquals( "mymodule-1.0.0:like", retrievedRelationshipType1.getName().toString() );
+        assertEquals( "mymodule:like", retrievedRelationshipType1.getName().toString() );
         assertEquals( like, retrievedRelationshipType1 );
-        assertEquals( "mymodule-1.0.0:hate", retrievedRelationshipType2.getName().toString() );
+        assertEquals( "mymodule:hate", retrievedRelationshipType2.getName().toString() );
         assertEquals( hates, retrievedRelationshipType2 );
     }
 }

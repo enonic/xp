@@ -37,7 +37,7 @@ public class PageTemplateXmlTest
             name( "my-region" ).
             add( PartComponent.newPartComponent().
                 name( "PartInHeader" ).
-                descriptor( "demo-1.0.0:my-part-template" ).
+                descriptor( "demo:my-part-template" ).
                 config( partInHeaderConfig ).
                 build() ).
             build();
@@ -53,8 +53,8 @@ public class PageTemplateXmlTest
             displayName( "Main page template" ).
             regions( regions ).
             config( pageTemplateConfig ).
-            canRender( ContentTypeNames.from( "mymodule-1.0.0:com.enonic.sometype", "mymodule-1.0.0:some.other.type" ) ).
-            descriptor( PageDescriptorKey.from( ModuleKey.from( "mainmodule-1.0.0" ), new ComponentDescriptorName( "landing-page" ) ) ).
+            canRender( ContentTypeNames.from( "mymodule:com.enonic.sometype", "mymodule:some.other.type" ) ).
+            descriptor( PageDescriptorKey.from( ModuleKey.from( "mainmodule" ), new ComponentDescriptorName( "landing-page" ) ) ).
             build();
 
         final PageTemplateXml pageTemplateXml = new PageTemplateXml();
@@ -121,9 +121,9 @@ public class PageTemplateXmlTest
         final PageTemplate pageTemplate = builder.build();
 
         assertEquals( "Main page template", pageTemplate.getDisplayName() );
-        assertEquals( PageDescriptorKey.from( "mainmodule-1.0.0:landing-page" ), pageTemplate.getDescriptor() );
-        assertTrue( pageTemplate.getCanRender().contains( ContentTypeName.from( "mymodule-1.0.0:com.enonic.sometype" ) ) );
-        assertTrue( pageTemplate.getCanRender().contains( ContentTypeName.from( "mymodule-1.0.0:some.other.type" ) ) );
+        assertEquals( PageDescriptorKey.from( "mainmodule:landing-page" ), pageTemplate.getDescriptor() );
+        assertTrue( pageTemplate.getCanRender().contains( ContentTypeName.from( "mymodule:com.enonic.sometype" ) ) );
+        assertTrue( pageTemplate.getCanRender().contains( ContentTypeName.from( "mymodule:some.other.type" ) ) );
 
         // verify: config
         RootDataSet config = pageTemplate.getConfig();
@@ -145,7 +145,7 @@ public class PageTemplateXmlTest
         assertTrue( component instanceof PartComponent );
         PartComponent partComponent = (PartComponent) component;
         assertEquals( "PartInHeader", partComponent.getName().toString() );
-        assertEquals( "demo-1.0.0:my-part-template", partComponent.getDescriptor().toString() );
+        assertEquals( "demo:my-part-template", partComponent.getDescriptor().toString() );
 
         // verify: component config
         RootDataSet partComponentConfig = partComponent.getConfig();

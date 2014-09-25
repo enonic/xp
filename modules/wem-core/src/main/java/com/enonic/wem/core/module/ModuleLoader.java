@@ -27,6 +27,7 @@ import com.enonic.wem.api.module.ModuleEventType;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.module.ModuleUpdatedEvent;
+import com.enonic.wem.api.module.ModuleVersion;
 
 @Singleton
 public final class ModuleLoader
@@ -137,6 +138,7 @@ public final class ModuleLoader
         final String displayName = bundleDisplayName != null ? bundleDisplayName : name;
 
         moduleBuilder.moduleKey( ModuleKey.from( bundle ) );
+        moduleBuilder.moduleVersion( ModuleVersion.from( bundle.getVersion().toString() ) );
         moduleBuilder.displayName( displayName );
         moduleBuilder.bundle( bundle );
 

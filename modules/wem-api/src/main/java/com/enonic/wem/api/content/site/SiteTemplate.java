@@ -63,11 +63,6 @@ public final class SiteTemplate
         return siteTemplateKey.getName();
     }
 
-    public SiteTemplateVersion getVersion()
-    {
-        return siteTemplateKey.getVersion();
-    }
-
     public String getDisplayName()
     {
         return displayName;

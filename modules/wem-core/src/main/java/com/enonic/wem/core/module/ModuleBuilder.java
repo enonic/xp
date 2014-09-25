@@ -7,6 +7,7 @@ import org.osgi.framework.Bundle;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.module.ModuleVersion;
 
 public final class ModuleBuilder
 {
@@ -20,6 +21,12 @@ public final class ModuleBuilder
     public ModuleBuilder moduleKey( final ModuleKey moduleKey )
     {
         this.module.moduleKey = moduleKey;
+        return this;
+    }
+
+    public ModuleBuilder moduleVersion( final ModuleVersion moduleVersion )
+    {
+        this.module.moduleVersion = moduleVersion;
         return this;
     }
 

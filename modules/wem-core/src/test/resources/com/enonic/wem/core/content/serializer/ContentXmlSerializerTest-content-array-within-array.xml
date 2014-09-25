@@ -2,7 +2,7 @@
 <content>
   <parentPath>/</parentPath>
   <name>mycontent</name>
-  <type>mymodule-1.0.0:my_type</type>
+  <type>mymodule:my_type</type>
   <data>
     <mySet type="DataSet">
       <myArray type="String">1</myArray>

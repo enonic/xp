@@ -3,6 +3,7 @@ package com.enonic.wem.core.content.page
 import com.enonic.wem.api.module.Module
 import com.enonic.wem.api.module.ModuleKey
 import com.enonic.wem.api.module.ModuleService
+import com.enonic.wem.api.module.ModuleVersion
 import com.enonic.wem.api.module.Modules
 import com.enonic.wem.api.resource.ResourceKey
 import com.enonic.wem.api.resource.ResourceUrlTestHelper
@@ -41,6 +42,7 @@ abstract class AbstractDescriptorServiceTest
         def key = ModuleKey.from( moduleKey )
         def module = new ModuleBuilder().
             moduleKey( key ).
+            moduleVersion( ModuleVersion.from( "1.0.0" ) ).
             displayName( moduleKey.toUpperCase() ).
             moduleDir( new File( this.modulesDir, key.toString() ) ).
             build();

@@ -7,7 +7,7 @@
     "editable": true,
     "form": null,
     "hasChildren": false,
-    "iconUrl": "/admin/rest/schema/icon/ContentType:mymodule-1.0.0:content-type?hash=f95b70fdc3088560732a5ac135644506",
+    "iconUrl": "/admin/rest/schema/icon/ContentType:mymodule:content-type?hash=f95b70fdc3088560732a5ac135644506",
     "id": "content-id",
     "isDraft": false,
     "isPage": false,
@@ -31,12 +31,12 @@
                         }
                     }
                 ],
-                "moduleKey": "module-1.0.0"
+                "moduleKey": "module"
             }
         ],
         "templateName": "template-1.0.0"
     },
     "siteTemplateKey": "template-1.0.0",
     "thumbnail": null,
-    "type": "mymodule-1.0.0:content-type"
+    "type": "mymodule:content-type"
 }

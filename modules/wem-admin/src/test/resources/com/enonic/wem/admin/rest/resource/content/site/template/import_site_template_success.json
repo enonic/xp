@@ -7,15 +7,14 @@
     "description": "info",
     "displayName": "displayName",
     "editable": true,
-    "iconUrl" : "/admin/rest/schema/icon/ContentType:mymodule-1.0.0:site",
-    "key": "name-1.0.0",
-    "modules": [ "module1-1.0.0" ],
+    "iconUrl" : "/admin/rest/schema/icon/ContentType:mymodule:site",
+    "key": "name",
+    "modules": [ "module1" ],
     "name": "name",
     "pageTemplateKeys": [ ],
     "url": "url",
     "vendor": {
         "name": "vendorName",
         "url": "vendorUrl"
-    },
-    "version": "1.0.0"
+    }
 }

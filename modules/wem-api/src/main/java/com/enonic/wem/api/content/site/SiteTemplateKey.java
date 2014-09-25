@@ -1,37 +1,21 @@
 package com.enonic.wem.api.content.site;
 
-import org.apache.commons.lang.StringUtils;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 
 
 public final class SiteTemplateKey
 {
-    private static final String SEPARATOR = "-";
-
     private final SiteTemplateName name;
 
-    private final SiteTemplateVersion version;
-
-    private final String refString;
-
-    private SiteTemplateKey( final SiteTemplateName name, final SiteTemplateVersion version )
+    private SiteTemplateKey( final SiteTemplateName name )
     {
         checkNotNull( name );
-        checkNotNull( version );
         this.name = name;
-        this.version = version;
-        this.refString = name.toString() + SEPARATOR + version.toString();
     }
 
     public SiteTemplateName getName()
     {
         return name;
-    }
-
-    public SiteTemplateVersion getVersion()
-    {
-        return version;
     }
 
     @Override
@@ -46,30 +30,23 @@ public final class SiteTemplateKey
             return false;
         }
         final SiteTemplateKey that = (SiteTemplateKey) o;
-        return refString.equals( that.refString );
+        return name.equals( that.name );
     }
 
     @Override
     public int hashCode()
     {
-        return refString.hashCode();
+        return name.hashCode();
     }
 
     @Override
     public String toString()
     {
-        return refString;
+        return name.toString();
     }
 
-    public static SiteTemplateKey from( final SiteTemplateName name, final SiteTemplateVersion version )
+    public static SiteTemplateKey from( final String siteTemplateName )
     {
-        return new SiteTemplateKey( name, version );
-    }
-
-    public static SiteTemplateKey from( final String siteTemplateKey )
-    {
-        final String name = StringUtils.substringBeforeLast( siteTemplateKey, SEPARATOR );
-        final String version = StringUtils.substringAfterLast( siteTemplateKey, SEPARATOR );
-        return new SiteTemplateKey( new SiteTemplateName( name ), SiteTemplateVersion.from( version ) );
+        return new SiteTemplateKey( new SiteTemplateName( siteTemplateName ) );
     }
 }

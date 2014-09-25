@@ -9,7 +9,7 @@
             "editable": true,
             "form": null,
             "hasChildren": false,
-            "iconUrl": "/admin/rest/schema/icon/ContentType:mymodule-1.0.0:my_type?hash=f95b70fdc3088560732a5ac135644506",
+            "iconUrl": "/admin/rest/schema/icon/ContentType:mymodule:my_type?hash=f95b70fdc3088560732a5ac135644506",
             "id": "aaa",
             "isDraft": false,
             "isPage": false,
@@ -24,7 +24,7 @@
             "site": null,
             "siteTemplateKey": null,
             "thumbnail": null,
-            "type": "mymodule-1.0.0:my_type"
+            "type": "mymodule:my_type"
         },
         {
             "createdTime": "2013-08-23T12:55:09.162Z",
@@ -35,7 +35,7 @@
             "editable": true,
             "form": null,
             "hasChildren": false,
-            "iconUrl": "/admin/rest/schema/icon/ContentType:mymodule-1.0.0:my_type?hash=f95b70fdc3088560732a5ac135644506",
+            "iconUrl": "/admin/rest/schema/icon/ContentType:mymodule:my_type?hash=f95b70fdc3088560732a5ac135644506",
             "id": "bbb",
             "isDraft": false,
             "isPage": false,
@@ -50,7 +50,7 @@
             "site": null,
             "siteTemplateKey": null,
             "thumbnail": null,
-            "type": "mymodule-1.0.0:my_type"
+            "type": "mymodule:my_type"
         }
     ],
     "metadata": {

@@ -88,7 +88,7 @@ public class FormItemDataSerializerTest
     public void serializeFormItems_given_MixinReference()
     {
         final MixinReference mixinReference =
-            MixinReference.newMixinReference().name( "mymixinreference" ).mixin( "mymodule-1.0.0:mymixinreferencedto" ).build();
+            MixinReference.newMixinReference().name( "mymixinreference" ).mixin( "mymodule:mymixinreferencedto" ).build();
 
         final Data dataSet = serializer.toData( mixinReference );
 

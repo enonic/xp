@@ -18,6 +18,7 @@ import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.module.ModuleVersion;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -44,7 +45,8 @@ public class ModuleImplTest
             build();
 
         final Module module = new ModuleBuilder().
-            moduleKey( ModuleKey.from( "mymodule-1.0.0" ) ).
+            moduleKey( ModuleKey.from( "mymodule" ) ).
+            moduleVersion( ModuleVersion.from( "1.0.0" ) ).
             displayName( "module display name" ).
             url( "http://enonic.net" ).
             vendorName( "Enonic" ).
@@ -52,7 +54,7 @@ public class ModuleImplTest
             config( config ).
             build();
 
-        assertEquals( "mymodule-1.0.0", module.getKey().toString() );
+        assertEquals( "mymodule", module.getKey().toString() );
         assertEquals( "module display name", module.getDisplayName() );
         assertEquals( "http://enonic.net", module.getUrl() );
         assertEquals( "Enonic", module.getVendorName() );
@@ -64,7 +66,8 @@ public class ModuleImplTest
     public void testGetResource()
     {
         final Module module = new ModuleBuilder().
-            moduleKey( ModuleKey.from( "mymodule-1.0.0" ) ).
+            moduleKey( ModuleKey.from( "mymodule" ) ).
+            moduleVersion( ModuleVersion.from( "1.0.0" ) ).
             bundle( bundle ).
             build();
 
@@ -78,7 +81,8 @@ public class ModuleImplTest
     public void testGetResourcePaths()
     {
         final Module module = new ModuleBuilder().
-            moduleKey( ModuleKey.from( "mymodule-1.0.0" ) ).
+            moduleKey( ModuleKey.from( "mymodule" ) ).
+            moduleVersion( ModuleVersion.from( "1.0.0" ) ).
             bundle( bundle ).
             build();
 

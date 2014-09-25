@@ -38,7 +38,7 @@ public abstract class AbstractControllerTest
         this.factory.scriptService = new ScriptServiceImpl( environment );
         this.factory.postProcessor = this.postProcessor = Mockito.mock( PostProcessor.class );
 
-        final ResourceKey scriptDir = ResourceKey.from( "mymodule-1.0.0:/service/test" );
+        final ResourceKey scriptDir = ResourceKey.from( "mymodule:/service/test" );
         this.controller = factory.newController( scriptDir );
 
         this.request = new JsHttpRequest();

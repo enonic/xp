@@ -15,7 +15,7 @@
         </items>
       </field-set>
       <mixin-reference name="myCommonInput">
-        <reference>mymodule-1.0.0:my_shared_input</reference>
+        <reference>mymodule:my_shared_input</reference>
       </mixin-reference>
     </items>
   </form-item-set>

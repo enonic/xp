@@ -53,9 +53,9 @@ public class ComponentInstructionTest
         resp.setPostProcess( true );
         final JsContext context = new JsContext();
         context.setResponse( resp );
-        Content content = createPage( "content-id", "content-name", "mymodule-1.0.0:content-type" );
+        Content content = createPage( "content-id", "content-name", "mymodule:content-type" );
         context.setContent( content );
-        Content siteContent = createSite( "site-id", "site-name", "mymodule-1.0.0:content-type" );
+        Content siteContent = createSite( "site-id", "site-name", "mymodule:content-type" );
         context.setSiteContent( siteContent );
 
         final String outputHtml = instruction.evaluate( context, "COMPONENT myRegion/0" );
@@ -77,9 +77,9 @@ public class ComponentInstructionTest
         resp.setPostProcess( true );
         final JsContext context = new JsContext();
         context.setResponse( resp );
-        Content content = createPage( "content-id", "content-name", "mymodule-1.0.0:content-type" );
+        Content content = createPage( "content-id", "content-name", "mymodule:content-type" );
         context.setContent( content );
-        Content siteContent = createSite( "site-id", "site-name", "mymodule-1.0.0:content-type" );
+        Content siteContent = createSite( "site-id", "site-name", "mymodule:content-type" );
         context.setSiteContent( siteContent );
         PageTemplate pageTemplate = createPageTemplate();
         context.setPageTemplate( pageTemplate );
@@ -92,7 +92,7 @@ public class ComponentInstructionTest
     {
         return PageTemplate.newPageTemplate().
             key( PageTemplateKey.from( "mymodule|my-page" ) ).
-            descriptor( PageDescriptorKey.from( "mymodule-1.0.0:mypagetemplate" ) ).
+            descriptor( PageDescriptorKey.from( "mymodule:mypagetemplate" ) ).
             build();
     }
 
@@ -100,7 +100,7 @@ public class ComponentInstructionTest
     {
         return newPartComponent().
             name( "myPartComponent" ).
-            descriptor( PartDescriptorKey.from( "mymodule-1.0.0:myparttemplate" ) ).
+            descriptor( PartDescriptorKey.from( "mymodule:myparttemplate" ) ).
             build();
     }
 
@@ -114,7 +114,7 @@ public class ComponentInstructionTest
             name( "myRegion" ).
             add( newPartComponent().
                 name( "myPartComponent" ).
-                descriptor( PartDescriptorKey.from( "mymodule-1.0.0:myparttemplate" ) ).
+                descriptor( PartDescriptorKey.from( "mymodule:myparttemplate" ) ).
                 build() ).
             build();
 

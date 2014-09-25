@@ -75,7 +75,7 @@ public abstract class ImageBaseResourceTest<T extends ImageBaseResource>
         throws Exception
     {
         final ContentPath contentPath = ContentPath.from( "path/to/content" );
-        final Content content = createContent( "content-id", contentPath, "mymodule-1.0.0:image" );
+        final Content content = createContent( "content-id", contentPath, "mymodule:image" );
         Mockito.when( this.contentService.getById( Mockito.eq( content.getId() ), Mockito.eq( context ) ) ).
             thenReturn( content );
         Mockito.when( this.contentService.getByPath( Mockito.eq( content.getPath() ), Mockito.eq( context ) ) ).

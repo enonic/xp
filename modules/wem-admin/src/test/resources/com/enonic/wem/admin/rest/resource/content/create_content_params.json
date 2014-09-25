@@ -2,7 +2,7 @@
     "draft": false,
     "name": "content-path",
     "parent": "parent-path:/",
-    "contentType": "mymodule-1.0.0:my-type",
+    "contentType": "mymodule::my-type",
     "contentData": [],
     "form": {
         "formItems": []

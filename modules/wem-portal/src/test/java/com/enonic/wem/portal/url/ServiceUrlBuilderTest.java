@@ -12,10 +12,10 @@ public class ServiceUrlBuilderTest
         final ServiceUrlBuilder urlBuilder = new ServiceUrlBuilder().
             baseUri( "/root" ).
             contentPath( "some/path" ).
-            module( "mymodule-1.0.0" ).
+            module( "mymodule" ).
             serviceName( "myservice" ).
             param( "a", 3 );
 
-        assertEquals( "/root/portal/live/stage/some/path/_/service/mymodule-1.0.0/myservice?a=3", urlBuilder.toString() );
+        assertEquals( "/root/portal/live/stage/some/path/_/service/mymodule/myservice?a=3", urlBuilder.toString() );
     }
 }

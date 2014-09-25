@@ -22,8 +22,8 @@ public class XmlSiteTemplateSerializerTest
         throws Exception
     {
         final ContentTypeFilter contentTypeFilter = newContentFilter().defaultDeny().
-            allowContentTypes( ContentTypeNames.from( "mymodule-1.0.0:com.enonic.tweet", "mymodule-1.0.0:system.folder" ) ).
-            denyContentType( "mymodule-1.0.0:com.enonic.tweet.internal" ).
+            allowContentTypes( ContentTypeNames.from( "mymodule:com.enonic.tweet", "mymodule:system.folder" ) ).
+            denyContentType( "mymodule:com.enonic.tweet.internal" ).
             build();
 
         final SiteTemplate siteTemplate = SiteTemplate.newSiteTemplate().
@@ -32,8 +32,8 @@ public class XmlSiteTemplateSerializerTest
             description( "A social intranet for the Enterprise" ).
             url( "http://www.enonic.com/intranet" ).
             vendor( newVendor().name( "Enonic" ).url( "https://www.enonic.com" ).build() ).
-            modules( ModuleKeys.from( "com.enonic.intranet-1.0.0", "com.company.sampleModule-1.1.0", "com.company.theme.someTheme-1.4.1",
-                                      "com.enonic.resolvers-1.0.0" ) ).
+            modules( ModuleKeys.from( "com.enonic.intranet", "com.company.sampleModule", "com.company.theme.someTheme",
+                                      "com.enonic.resolvers" ) ).
             contentTypeFilter( contentTypeFilter ).
             build();
 
@@ -59,13 +59,13 @@ public class XmlSiteTemplateSerializerTest
         assertEquals( "http://www.enonic.com/intranet", siteTemplate.getUrl() );
         assertEquals( "Enonic", siteTemplate.getVendor().getName() );
         assertEquals( "https://www.enonic.com", siteTemplate.getVendor().getUrl() );
-        assertEquals( ModuleKeys.from( "com.enonic.intranet-1.0.0", "com.company.sampleModule-1.1.0", "com.company.theme.someTheme-1.4.1",
-                                       "com.enonic.resolvers-1.0.0" ), siteTemplate.getModules() );
+        assertEquals( ModuleKeys.from( "com.enonic.intranet", "com.company.sampleModule", "com.company.theme.someTheme",
+                                       "com.enonic.resolvers" ), siteTemplate.getModules() );
 
         final ContentTypeFilter contentTypeFilter = newContentFilter().
             defaultDeny().
-            allowContentTypes( ContentTypeNames.from( "mymodule-1.0.0:com.enonic.tweet", "mymodule-1.0.0:system.folder" ) ).
-            denyContentType( "mymodule-1.0.0:com.enonic.tweet.internal" ).
+            allowContentTypes( ContentTypeNames.from( "mymodule:com.enonic.tweet", "mymodule:system.folder" ) ).
+            denyContentType( "mymodule:com.enonic.tweet.internal" ).
             build();
         assertEquals( contentTypeFilter, siteTemplate.getContentTypeFilter() );
 

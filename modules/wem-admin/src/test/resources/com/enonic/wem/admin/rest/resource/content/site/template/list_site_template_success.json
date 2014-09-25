@@ -2,24 +2,23 @@
     "siteTemplates": [
         {
             "contentTypeFilter": {
-                "allow": [ "system-0.0.0:image" ],
+                "allow": [ "system:image" ],
                 "deny": [ "*" ]
             },
             "deletable": true,
             "description": "info",
             "displayName": "displayName",
             "editable": true,
-            "iconUrl": "/admin/rest/sitetemplate/icon/name-1.0.0?hash=f95b70fdc3088560732a5ac135644506",
-            "key": "name-1.0.0",
-            "modules": [ "module1-1.0.0" ],
+            "iconUrl": "/admin/rest/sitetemplate/icon/name?hash=f95b70fdc3088560732a5ac135644506",
+            "key": "name",
+            "modules": [ "module1" ],
             "name": "name",
             "pageTemplateKeys": [ ],
             "url": "url",
             "vendor": {
                 "name": "vendorName",
                 "url": "vendorUrl"
-            },
-            "version": "1.0.0"
+            }
         }
     ],
     "total": 1

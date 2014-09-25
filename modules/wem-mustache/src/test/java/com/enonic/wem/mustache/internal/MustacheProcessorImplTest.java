@@ -32,7 +32,7 @@ public class MustacheProcessorImplTest
     public void testResourceNotFound()
     {
         final MustacheProcessor processor = this.processorFactory.newProcessor().
-            view( ResourceKey.from( "mymodule-1.0.0:/view/unknown.html" ) );
+            view( ResourceKey.from( "mymodule:/view/unknown.html" ) );
 
         processor.process();
     }
@@ -44,7 +44,7 @@ public class MustacheProcessorImplTest
         params.put( "name", "Steve" );
 
         final MustacheProcessor processor = this.processorFactory.newProcessor().
-            view( ResourceKey.from( "mymodule-1.0.0:/view/test.html" ) ).
+            view( ResourceKey.from( "mymodule:/view/test.html" ) ).
             parameters( params );
 
         final String result = processor.process();
@@ -55,7 +55,7 @@ public class MustacheProcessorImplTest
     public void testViewError()
     {
         final MustacheProcessor processor = this.processorFactory.newProcessor().
-            view( ResourceKey.from( "mymodule-1.0.0:/view/test.html" ) );
+            view( ResourceKey.from( "mymodule:/view/test.html" ) );
 
         processor.process();
     }

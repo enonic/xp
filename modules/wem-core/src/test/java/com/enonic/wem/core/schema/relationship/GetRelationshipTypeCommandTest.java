@@ -39,8 +39,8 @@ public class GetRelationshipTypeCommandTest
             name( name ).
             fromSemantic( "likes" ).
             toSemantic( "liked by" ).
-            addAllowedFromType( ContentTypeName.from( "mymodule-1.0.0:person" ) ).
-            addAllowedToType( ContentTypeName.from( "mymodule-1.0.0:person" ) ).
+            addAllowedFromType( ContentTypeName.from( "mymodule:person" ) ).
+            addAllowedToType( ContentTypeName.from( "mymodule:person" ) ).
             build();
 
         // expectation

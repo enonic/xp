@@ -36,16 +36,16 @@ public class RelationshipTypeResourceTest
         throws Exception
     {
         final RelationshipType relationshipType = newRelationshipType().
-            name( "mymodule-1.0.0:the_relationship_type" ).
+            name( "mymodule:the_relationship_type" ).
             description( "RT description" ).
             build();
 
-        final RelationshipTypeName name = RelationshipTypeName.from( "mymodule-1.0.0:the_relationship_type" );
+        final RelationshipTypeName name = RelationshipTypeName.from( "mymodule:the_relationship_type" );
         final GetRelationshipTypeParams params = new GetRelationshipTypeParams().name( name );
         Mockito.when( relationshipTypeService.getByName( params ) ).thenReturn( relationshipType );
 
         String response =
-            request().path( "schema/relationship" ).queryParam( "name", "mymodule-1.0.0:the_relationship_type" ).get().getAsString();
+            request().path( "schema/relationship" ).queryParam( "name", "mymodule:the_relationship_type" ).get().getAsString();
 
         assertJson( "get_relationship_type.json", response );
 
@@ -58,9 +58,9 @@ public class RelationshipTypeResourceTest
         Mockito.when( relationshipTypeService.getByName( Mockito.any( GetRelationshipTypeParams.class ) ) ).thenReturn( null );
 
         final MockRestResponse response =
-            request().path( "schema/relationship" ).queryParam( "name", "mymodule-1.0.0:relationship_type" ).get();
+            request().path( "schema/relationship" ).queryParam( "name", "mymodule:relationship_type" ).get();
         Assert.assertEquals( 404, response.getStatus() );
-        Assert.assertEquals( "RelationshipType [mymodule-1.0.0:relationship_type] was not found.", response.getAsString() );
+        Assert.assertEquals( "RelationshipType [mymodule:relationship_type] was not found.", response.getAsString() );
     }
 
     @Test
@@ -68,11 +68,11 @@ public class RelationshipTypeResourceTest
         throws Exception
     {
         final RelationshipType relationshipType1 = newRelationshipType().
-            name( "mymodule-1.0.0:the_relationship_type_1" ).
+            name( "mymodule:the_relationship_type_1" ).
             build();
 
         final RelationshipType relationshipType2 = newRelationshipType().
-            name( "mymodule-1.0.0:the_relationship_type_2" ).
+            name( "mymodule:the_relationship_type_2" ).
             build();
 
         final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType1, relationshipType2 );

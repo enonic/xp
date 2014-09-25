@@ -97,7 +97,7 @@ public class SiteTemplateExporterTest
 
     private SiteTemplate createSiteTemplate()
     {
-        final ModuleKey module = ModuleKey.from( "mymodule-1.0.0" );
+        final ModuleKey module = ModuleKey.from( "mymodule" );
 
         final RootDataSet partTemplateConfig = new RootDataSet();
         partTemplateConfig.addProperty( "width", Value.newLong( 200 ) );
@@ -109,8 +109,8 @@ public class SiteTemplateExporterTest
             key( PageTemplateKey.from( module.getName(), new PageTemplateName( "my-page" ) ) ).
             displayName( "Main page template" ).
             config( pageTemplateConfig ).
-            canRender( ContentTypeNames.from( "mymodule-1.0.0:article", "mymodule-1.0.0:banner" ) ).
-            descriptor( PageDescriptorKey.from( "mainmodule-1.0.0:landing-page" ) ).
+            canRender( ContentTypeNames.from( "mymodule:article", "mymodule:banner" ) ).
+            descriptor( PageDescriptorKey.from( "mainmodule:landing-page" ) ).
             regions( newPageRegions().build() ).
             build();
 
@@ -121,15 +121,15 @@ public class SiteTemplateExporterTest
         imageTemplateConfig.addProperty( "width", Value.newLong( 3000 ) );
 
         final ContentTypeFilter contentTypeFilter =
-            newContentFilter().defaultDeny().allowContentTypes( ContentTypeNames.from( "mymodule-1.0.0:com.enonic.intranet", "mymodule-1.0.0:system.folder" ) ).build();
+            newContentFilter().defaultDeny().allowContentTypes( ContentTypeNames.from( "mymodule:com.enonic.intranet", "mymodule:system.folder" ) ).build();
 
         return SiteTemplate.newSiteTemplate().
             key( SiteTemplateKey.from( "Intranet-1.0.0" ) ).
             displayName( "Enonic Intranet" ).
             description( "A social intranet for the Enterprise" ).
             vendor( newVendor().name( "Enonic" ).url( "https://www.enonic.com" ).build() ).
-            modules( ModuleKeys.from( "com.enonic.intranet-1.0.0", "com.company.sampleModule-1.1.0", "com.company.theme.someTheme-1.4.1",
-                                      "com.enonic.resolvers-1.0.0", "mymodule-1.0.0" ) ).
+            modules( ModuleKeys.from( "com.enonic.intranet", "com.company.sampleModule", "com.company.theme.someTheme",
+                                      "com.enonic.resolvers", "mymodule" ) ).
             contentTypeFilter( contentTypeFilter ).
             addPageTemplate( pageTemplate ).
             build();

@@ -15,25 +15,25 @@ public class RelationshipTypeNamesTest
             @Override
             public Object getObjectX()
             {
-                return RelationshipTypeNames.from( "mymodule-1.0.0:my_relation" );
+                return RelationshipTypeNames.from( "mymodule:my_relation" );
             }
 
             @Override
             public Object[] getObjectsThatNotEqualsX()
             {
-                return new Object[]{RelationshipTypeNames.from( "mymodule-1.0.0:my_other_relation" )};
+                return new Object[]{RelationshipTypeNames.from( "mymodule:my_other_relation" )};
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame()
             {
-                return RelationshipTypeNames.from( "mymodule-1.0.0:my_relation" );
+                return RelationshipTypeNames.from( "mymodule:my_relation" );
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame2()
             {
-                return RelationshipTypeNames.from( "mymodule-1.0.0:my_relation" );
+                return RelationshipTypeNames.from( "mymodule:my_relation" );
             }
         };
         equalsTest.assertEqualsAndHashCodeContract();

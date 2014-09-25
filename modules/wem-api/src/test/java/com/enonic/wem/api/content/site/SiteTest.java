@@ -20,18 +20,17 @@ public class SiteTest
     public void EditBuilder_isChanges_given_values_with_no_changes_since_original_then_false_is_returned()
     {
         // setup
-        Site original =
-            Site.newSite().template( SiteTemplateKey.from( new SiteTemplateName( "unchanged" ), new SiteTemplateVersion( "1.0.0" ) ) ).
-                addModuleConfig( newModuleConfig().module( ModuleKey.from( "unchanged-1.1.1" ) ).config( new RootDataSet() ).build() ).
-                addModuleConfig( newModuleConfig().module( ModuleKey.from( "unchanged-1.1.2" ) ).config( new RootDataSet() ).build() ).
-                build();
+        Site original = Site.newSite().template( SiteTemplateKey.from( "unchanged" ) ).
+            addModuleConfig( newModuleConfig().module( ModuleKey.from( "unchanged-1.1.1" ) ).config( new RootDataSet() ).build() ).
+            addModuleConfig( newModuleConfig().module( ModuleKey.from( "unchanged-1.1.2" ) ).config( new RootDataSet() ).build() ).
+            build();
 
         List<ModuleConfig> newConfigs =
             newArrayList( newModuleConfig().module( ModuleKey.from( "unchanged-1.1.1" ) ).config( new RootDataSet() ).build(),
                           newModuleConfig().module( ModuleKey.from( "unchanged-1.1.2" ) ).config( new RootDataSet() ).build() );
 
         Site.SiteEditBuilder editBuilder = Site.editSite( original ).
-            template( SiteTemplateKey.from( new SiteTemplateName( "unchanged" ), new SiteTemplateVersion( "1.0.0" ) ) ).
+            template( SiteTemplateKey.from( "unchanged" ) ).
             moduleConfigs( ModuleConfigs.from( newConfigs ) );
 
         // exercise & verify
@@ -42,18 +41,17 @@ public class SiteTest
     public void EditBuilder_isChanges_given_no_then_false_is_returned()
     {
         // setup
-        Site original =
-            Site.newSite().template( SiteTemplateKey.from( new SiteTemplateName( "unchanged" ), new SiteTemplateVersion( "1.0.0" ) ) ).
-                addModuleConfig( newModuleConfig().module( ModuleKey.from( "unchanged-1.1.1" ) ).config( new RootDataSet() ).build() ).
-                addModuleConfig( newModuleConfig().module( ModuleKey.from( "unchanged-1.1.2" ) ).config( new RootDataSet() ).build() ).
-                build();
+        Site original = Site.newSite().template( SiteTemplateKey.from( "unchanged" ) ).
+            addModuleConfig( newModuleConfig().module( ModuleKey.from( "unchanged-1.1.1" ) ).config( new RootDataSet() ).build() ).
+            addModuleConfig( newModuleConfig().module( ModuleKey.from( "unchanged-1.1.2" ) ).config( new RootDataSet() ).build() ).
+            build();
 
         List<ModuleConfig> newConfigs =
             newArrayList( newModuleConfig().module( ModuleKey.from( "unchanged-1.1.1" ) ).config( new RootDataSet() ).build(),
                           newModuleConfig().module( ModuleKey.from( "unchanged-1.1.2" ) ).config( new RootDataSet() ).build() );
 
         Site.SiteEditBuilder editBuilder = Site.editSite( original ).
-            template( SiteTemplateKey.from( new SiteTemplateName( "unchanged" ), new SiteTemplateVersion( "1.0.0" ) ) ).
+            template( SiteTemplateKey.from( "unchanged" ) ).
             moduleConfigs( ModuleConfigs.from( newConfigs ) );
 
         // exercise & verify
@@ -64,18 +62,17 @@ public class SiteTest
     public void EditBuilder_isChanges_given_values_with_changes_in_module_config_since_original_then_true_is_returned()
     {
         // setup
-        Site original =
-            Site.newSite().template( SiteTemplateKey.from( new SiteTemplateName( "unchanged" ), new SiteTemplateVersion( "1.0.0" ) ) ).
-                addModuleConfig( newModuleConfig().module( ModuleKey.from( "unchanged-1.1.1" ) ).config( new RootDataSet() ).build() ).
-                addModuleConfig( newModuleConfig().module( ModuleKey.from( "mymodule-1.1.2" ) ).config( new RootDataSet() ).build() ).
-                build();
+        Site original = Site.newSite().template( SiteTemplateKey.from( "unchanged" ) ).
+            addModuleConfig( newModuleConfig().module( ModuleKey.from( "unchanged-1.1.1" ) ).config( new RootDataSet() ).build() ).
+            addModuleConfig( newModuleConfig().module( ModuleKey.from( "mymodule-1.1.2" ) ).config( new RootDataSet() ).build() ).
+            build();
 
         List<ModuleConfig> newConfigs =
             newArrayList( newModuleConfig().module( ModuleKey.from( "unchanged-1.1.1" ) ).config( new RootDataSet() ).build(),
                           newModuleConfig().module( ModuleKey.from( "changed-1.1.2" ) ).config( new RootDataSet() ).build() );
 
         Site.SiteEditBuilder editBuilder = Site.editSite( original ).
-            template( SiteTemplateKey.from( new SiteTemplateName( "unchanged" ), new SiteTemplateVersion( "1.0.0" ) ) ).
+            template( SiteTemplateKey.from( "unchanged" ) ).
             moduleConfigs( ModuleConfigs.from( newConfigs ) );
 
         // exercise & verify
@@ -86,18 +83,17 @@ public class SiteTest
     public void EditBuilder_isChanges_given_values_with_changes_in_template_since_original_then_true_is_returned()
     {
         // setup
-        Site original =
-            Site.newSite().template( SiteTemplateKey.from( new SiteTemplateName( "template" ), new SiteTemplateVersion( "1.0.0" ) ) ).
-                addModuleConfig( newModuleConfig().module( ModuleKey.from( "unchanged-1.1.1" ) ).config( new RootDataSet() ).build() ).
-                addModuleConfig( newModuleConfig().module( ModuleKey.from( "unchanged-1.1.2" ) ).config( new RootDataSet() ).build() ).
-                build();
+        Site original = Site.newSite().template( SiteTemplateKey.from( "template" ) ).
+            addModuleConfig( newModuleConfig().module( ModuleKey.from( "unchanged-1.1.1" ) ).config( new RootDataSet() ).build() ).
+            addModuleConfig( newModuleConfig().module( ModuleKey.from( "unchanged-1.1.2" ) ).config( new RootDataSet() ).build() ).
+            build();
 
         List<ModuleConfig> newConfigs =
             newArrayList( newModuleConfig().module( ModuleKey.from( "unchanged-1.1.1" ) ).config( new RootDataSet() ).build(),
                           newModuleConfig().module( ModuleKey.from( "unchanged-1.1.2" ) ).config( new RootDataSet() ).build() );
 
         Site.SiteEditBuilder editBuilder = Site.editSite( original ).
-            template( SiteTemplateKey.from( new SiteTemplateName( "changed" ), new SiteTemplateVersion( "1.0.0" ) ) ).
+            template( SiteTemplateKey.from( "changed" ) ).
             moduleConfigs( ModuleConfigs.from( newConfigs ) );
 
         // exercise & verify

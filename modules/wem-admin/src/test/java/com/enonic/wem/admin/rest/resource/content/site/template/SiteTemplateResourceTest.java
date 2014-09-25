@@ -122,7 +122,7 @@ public class SiteTemplateResourceTest
         Mockito.when( siteTemplateService.getSiteTemplate( Mockito.eq( siteTemplateKey ) ) ).thenReturn( siteTemplate );
 
         String resultJson = request().path( "content/site/template/tree" ).
-            queryParam( "parentId", "name-1.0.0" ).
+            queryParam( "parentId", "name" ).
             get().getAsString();
 
         assertJson( "tree_page_templates_success.json", resultJson );
@@ -141,7 +141,7 @@ public class SiteTemplateResourceTest
     public void testDeleteNonExistingSiteTemplate()
         throws Exception
     {
-        Mockito.doThrow( new NoSiteTemplateExistsException( SiteTemplateKey.from( "sitetemplate-1.0.0" ) ) ).when(
+        Mockito.doThrow( new NoSiteTemplateExistsException( SiteTemplateKey.from( "sitetemplate" ) ) ).when(
             this.siteTemplateService ).deleteSiteTemplate( Mockito.isA( SiteTemplateKey.class ) );
         String response = request().path( "content/site/template/delete" ).entity( readFromFile( "delete_site_template_params.json" ),
                                                                                    MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
@@ -155,23 +155,23 @@ public class SiteTemplateResourceTest
         final PageTemplate pageTemplate = newPageTemplate().
             key( PageTemplateKey.from( "mod|mainpage" ) ).
             displayName( "Main Page" ).
-            descriptor( PageDescriptorKey.from( ModuleKey.from( "mod-1.0.0" ), new ComponentDescriptorName( "page-descr" ) ) ).
+            descriptor( PageDescriptorKey.from( ModuleKey.from( "mod" ), new ComponentDescriptorName( "page-descr" ) ) ).
             config( new RootDataSet() ).
             build();
 
         final ContentTypeFilter filter = ContentTypeFilter.newContentFilter().
             defaultAllow().
-            denyContentType( ContentTypeName.from( "mymodule-1.0.0:com.enonic.tweet" ) ).
-            denyContentType( "mymodule-1.0.0:system.folder" ).
-            denyContentTypes( ContentTypeNames.from( "mymodule-1.0.0:com.enonic.article", "mymodule-1.0.0:com.enonic.employee" ) ).
+            denyContentType( ContentTypeName.from( "mymodule:com.enonic.tweet" ) ).
+            denyContentType( "mymodule:system.folder" ).
+            denyContentTypes( ContentTypeNames.from( "mymodule:com.enonic.article", "mymodule:com.enonic.employee" ) ).
             build();
 
         final SiteTemplate siteTemplate = SiteTemplate.newSiteTemplate().
-            key( SiteTemplateKey.from( "blueman-1.0.0" ) ).
+            key( SiteTemplateKey.from( "blueman" ) ).
             displayName( "Blueman Site Template" ).
             icon( Icon.from( new byte[]{123}, "image/gif", SOME_DATE ) ).
             vendor( newVendor().name( "Enonic AS" ).url( "http://www.enonic.com" ).build() ).
-            modules( ModuleKeys.from( "module1-1.0.0", "module2-1.0.0" ) ).
+            modules( ModuleKeys.from( "module1", "module2" ) ).
             description( "Demo site template" ).
             url( "http://enonic.net" ).
             contentTypeFilter( filter ).
@@ -190,7 +190,7 @@ public class SiteTemplateResourceTest
     public void testGetSiteTemplateMissing()
         throws Exception
     {
-        final SiteTemplateKey siteTemplate = SiteTemplateKey.from( "blueman-1.0.0" );
+        final SiteTemplateKey siteTemplate = SiteTemplateKey.from( "blueman" );
         Mockito.when( siteTemplateService.getSiteTemplate( Mockito.isA( SiteTemplateKey.class ) ) ).thenThrow(
             new SiteTemplateNotFoundException( siteTemplate ) );
         request().
@@ -205,7 +205,7 @@ public class SiteTemplateResourceTest
     {
         final String jsonString = request().
             path( "content/site/template/import" ).
-            multipart( "file", "template-1.0.0.zip", "INVALID_ZIP_CONTENT".getBytes(), MediaType.TEXT_PLAIN_TYPE ).
+            multipart( "file", "template.zip", "INVALID_ZIP_CONTENT".getBytes(), MediaType.TEXT_PLAIN_TYPE ).
             post().getAsString();
 
         assertJson( "import_site_template_exception.json", jsonString );
@@ -218,23 +218,23 @@ public class SiteTemplateResourceTest
         final PageTemplate pageTemplate = newPageTemplate().
             key( PageTemplateKey.from( "mod|mainpage" ) ).
             displayName( "Main Page" ).
-            descriptor( PageDescriptorKey.from( ModuleKey.from( "mod-1.0.0" ), new ComponentDescriptorName( "page-descr" ) ) ).
+            descriptor( PageDescriptorKey.from( ModuleKey.from( "mod" ), new ComponentDescriptorName( "page-descr" ) ) ).
             config( new RootDataSet() ).
             build();
 
         final ContentTypeFilter filter = ContentTypeFilter.newContentFilter().
             defaultAllow().
-            denyContentType( ContentTypeName.from( "mymodule-1.0.0:com.enonic.tweet" ) ).
-            denyContentType( "mymodule-1.0.0:system.folder" ).
-            denyContentTypes( ContentTypeNames.from( "mymodule-1.0.0:com.enonic.article", "mymodule-1.0.0:com.enonic.employee" ) ).
+            denyContentType( ContentTypeName.from( "mymodule:com.enonic.tweet" ) ).
+            denyContentType( "mymodule:system.folder" ).
+            denyContentTypes( ContentTypeNames.from( "mymodule:com.enonic.article", "mymodule:com.enonic.employee" ) ).
             build();
 
         final SiteTemplate siteTemplate = SiteTemplate.newSiteTemplate().
-            key( SiteTemplateKey.from( "blueman-1.0.0" ) ).
+            key( SiteTemplateKey.from( "blueman" ) ).
             displayName( "Blueman Site Template" ).
             icon( Icon.from( new byte[]{123}, "image/gif", SOME_DATE ) ).
             vendor( newVendor().name( "Enonic AS" ).url( "http://www.enonic.com" ).build() ).
-            modules( ModuleKeys.from( "module1-1.0.0", "module2-1.0.0" ) ).
+            modules( ModuleKeys.from( "module1", "module2" ) ).
             description( "Demo site template" ).
             url( "http://enonic.net" ).
             contentTypeFilter( filter ).
@@ -253,11 +253,11 @@ public class SiteTemplateResourceTest
                 assertEquals( vendor, command.getVendor() );
 
                 // Module keys
-                assertUnorderedListEquals( new String[]{"module1-1.0.0", "module2-1.0.0"}, command.getModules().getList() );
+                assertUnorderedListEquals( new String[]{"module1", "module2"}, command.getModules().getList() );
 
                 // ContentTypeFilter
                 final ContentTypeFilter filter1 = command.getContentTypeFilter();
-                assertListEquals( new String[]{"mymodule-1.0.0:image", "mymodule-1.0.0:com.enonic.tweet", "mymodule-1.0.0:system.folder", "mymodule-1.0.0:com.enonic.article", "mymodule-1.0.0:com.enonic.employee"},
+                assertListEquals( new String[]{"mymodule:image", "mymodule:com.enonic.tweet", "mymodule:system.folder", "mymodule:com.enonic.article", "mymodule:com.enonic.employee"},
                                   parseContentTypeNames( filter1.iterator() ) );
 
                 return siteTemplate;
@@ -277,23 +277,23 @@ public class SiteTemplateResourceTest
         final PageTemplate pageTemplate = newPageTemplate().
             key( PageTemplateKey.from( "mod|mainpage" ) ).
             displayName( "Main Page" ).
-            descriptor( PageDescriptorKey.from( ModuleKey.from( "mod-1.0.0" ), new ComponentDescriptorName( "page-descr" ) ) ).
+            descriptor( PageDescriptorKey.from( ModuleKey.from( "mod" ), new ComponentDescriptorName( "page-descr" ) ) ).
             config( new RootDataSet() ).
             build();
 
         final ContentTypeFilter filter = ContentTypeFilter.newContentFilter().
             defaultAllow().
-            denyContentType( ContentTypeName.from( "mymodule-1.0.0:com.enonic.tweet" ) ).
-            denyContentType( "mymodule-1.0.0:system.folder" ).
-            denyContentTypes( ContentTypeNames.from( "mymodule-1.0.0:com.enonic.article", "mymodule-1.0.0:com.enonic.employee" ) ).
+            denyContentType( ContentTypeName.from( "mymodule:com.enonic.tweet" ) ).
+            denyContentType( "mymodule:system.folder" ).
+            denyContentTypes( ContentTypeNames.from( "mymodule:com.enonic.article", "mymodule:com.enonic.employee" ) ).
             build();
 
         final SiteTemplate siteTemplate = SiteTemplate.newSiteTemplate().
-            key( SiteTemplateKey.from( "blueman-1.0.0" ) ).
+            key( SiteTemplateKey.from( "blueman" ) ).
             displayName( "Blueman Site Template" ).
             icon( Icon.from( new byte[]{123}, "image/gif", SOME_DATE ) ).
             vendor( newVendor().name( "Enonic AS" ).url( "http://www.enonic.com" ).build() ).
-            modules( ModuleKeys.from( "module1-1.0.0", "module2-1.0.0" ) ).
+            modules( ModuleKeys.from( "module1", "module2" ) ).
             description( "Demo site template" ).
             url( "http://enonic.net" ).
             contentTypeFilter( filter ).
@@ -303,7 +303,7 @@ public class SiteTemplateResourceTest
         Mockito.when( this.siteTemplateService.updateSiteTemplate( Mockito.isA( UpdateSiteTemplateParams.class ) ) ).thenAnswer(
             invocation -> {
                 final UpdateSiteTemplateParams command = (UpdateSiteTemplateParams) invocation.getArguments()[0];
-                assertEquals( SiteTemplateKey.from( "blueman-1.0.0" ), command.getKey() );
+                assertEquals( SiteTemplateKey.from( "blueman" ), command.getKey() );
 
                 return siteTemplate;
             } );
@@ -334,7 +334,7 @@ public class SiteTemplateResourceTest
         final byte[] fileData = Files.readAllBytes( exportedSiteTemplateFile );
         final String jsonString = request().
             path( "content/site/template/import" ).
-            multipart( "file", "name-1.0.0.zip", fileData, MediaType.APPLICATION_OCTET_STREAM_TYPE ).
+            multipart( "file", "name.zip", fileData, MediaType.APPLICATION_OCTET_STREAM_TYPE ).
             post().getAsString();
 
         assertJson( "import_site_template_success.json", jsonString );
@@ -350,26 +350,26 @@ public class SiteTemplateResourceTest
 
         final byte[] response = request().
             path( "content/site/template/export" ).
-            queryParam( "siteTemplateKey", "name-1.0.0" ).get().getData();
+            queryParam( "siteTemplateKey", "name" ).get().getData();
 
         final SiteTemplateExporter exporter = new SiteTemplateExporter();
-        final Path zipFilePath = Files.write( tempDir.resolve( "name-1.0.0.zip" ), response );
+        final Path zipFilePath = Files.write( tempDir.resolve( "name.zip" ), response );
         final SiteTemplate exportedTemplate = exporter.importFromZip( zipFilePath ).build();
 
         assertEquals( "displayName", exportedTemplate.getDisplayName() );
-        assertEquals( "name-1.0.0", exportedTemplate.getKey().toString() );
+        assertEquals( "name", exportedTemplate.getKey().toString() );
     }
 
     private SiteTemplate createSiteTemplate()
     {
         return SiteTemplate.newSiteTemplate().
-            key( SiteTemplateKey.from( "name-1.0.0" ) ).
+            key( SiteTemplateKey.from( "name" ) ).
             displayName( "displayName" ).
             icon( Icon.from( new byte[]{123}, "image/gif", SOME_DATE ) ).
             description( "info" ).
             url( "url" ).
             vendor( Vendor.newVendor().name( "vendorName" ).url( "vendorUrl" ).build() ).
-            modules( ModuleKeys.from( "module1-1.0.0" ) ).
+            modules( ModuleKeys.from( "module1" ) ).
             contentTypeFilter( ContentTypeFilter.newContentFilter().
                 allowContentType( ContentTypeName.imageMedia() ).
                 denyContentType( ContentTypeName.shortcut() ).
@@ -382,25 +382,25 @@ public class SiteTemplateResourceTest
         final PageTemplate pageTemplate1 = PageTemplate.newPageTemplate().
             key( PageTemplateKey.from( "module|my-page" ) ).
             displayName( "Main page template" ).
-            canRender( ContentTypeNames.from( "mymodule-1.0.0:article", "mymodule-1.0.0:banner" ) ).
-            descriptor( PageDescriptorKey.from( "mainmodule-1.0.0:landing-page" ) ).
+            canRender( ContentTypeNames.from( "mymodule:article", "mymodule:banner" ) ).
+            descriptor( PageDescriptorKey.from( "mainmodule:landing-page" ) ).
             regions( newPageRegions().build() ).
             build();
         final PageTemplate pageTemplate2 = PageTemplate.newPageTemplate().
             key( PageTemplateKey.from( "module|my-other-page" ) ).
             displayName( "Another page template" ).
-            canRender( ContentTypeNames.from( "mymodule-1.0.0:article" ) ).
-            descriptor( PageDescriptorKey.from( "mainmodule-1.0.0:other-page" ) ).
+            canRender( ContentTypeNames.from( "mymodule:article" ) ).
+            descriptor( PageDescriptorKey.from( "mainmodule:other-page" ) ).
             regions( newPageRegions().build() ).
             build();
 
         return SiteTemplate.newSiteTemplate().
-            key( SiteTemplateKey.from( "name-1.0.0" ) ).
+            key( SiteTemplateKey.from( "name" ) ).
             displayName( "displayName" ).
             description( "info" ).
             url( "url" ).
             vendor( Vendor.newVendor().name( "vendorName" ).url( "vendorUrl" ).build() ).
-            modules( ModuleKeys.from( "module1-1.0.0" ) ).
+            modules( ModuleKeys.from( "module1" ) ).
             contentTypeFilter( ContentTypeFilter.newContentFilter().
                 allowContentType( ContentTypeName.imageMedia() ).
                 denyContentType( ContentTypeName.shortcut() ).

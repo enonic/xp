@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <page-template>
   <display-name>Main page template</display-name>
-  <descriptor>mainmodule-1.0.0:landing-page</descriptor>
+  <descriptor>mainmodule:landing-page</descriptor>
   <config>
     <pause type="Long">10000</pause>
     <thing type="DataSet">
@@ -10,12 +10,12 @@
     </thing>
   </config>
   <can-render>
-    <content-type>mymodule-1.0.0:com.enonic.sometype</content-type>
-    <content-type>mymodule-1.0.0:some.other.type</content-type>
+    <content-type>mymodule:com.enonic.sometype</content-type>
+    <content-type>mymodule:some.other.type</content-type>
   </can-render>
   <regions>
     <region name="my-region">
-      <part-component descriptor="demo-1.0.0:my-part-template" name="PartInHeader">
+      <part-component descriptor="demo:my-part-template" name="PartInHeader">
         <config>
           <width type="Long">500</width>
           <caption type="String">So sweet!</caption>

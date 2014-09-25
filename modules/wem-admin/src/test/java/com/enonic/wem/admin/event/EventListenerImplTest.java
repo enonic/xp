@@ -31,7 +31,7 @@ public class EventListenerImplTest
     public void testEvent()
         throws Exception
     {
-        final ModuleUpdatedEvent event = new ModuleUpdatedEvent( ModuleKey.from( "module-1.0.0" ), INSTALLED );
+        final ModuleUpdatedEvent event = new ModuleUpdatedEvent( ModuleKey.from( "module" ), INSTALLED );
         eventListener.onEvent( event );
 
         verify( eventListener.webSocketManager, atLeastOnce() ).sendToAll( anyString() );

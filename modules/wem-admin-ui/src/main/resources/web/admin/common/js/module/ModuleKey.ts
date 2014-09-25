@@ -2,42 +2,22 @@ module api.module {
 
     export class ModuleKey implements api.Equitable {
 
-        private static SEPARATOR: string = "-";
-
         private name: string;
 
-        private version: string;
-
-        private refString: string;
-
-        public static fromString(str: string): ModuleKey {
-            var sepIndex: number = str.lastIndexOf(ModuleKey.SEPARATOR);
-            if (sepIndex == -1) {
-                throw new Error("ModuleKey must contain separator '" + ModuleKey.SEPARATOR + "':" + str);
-            }
-
-            var name = str.substring(0, sepIndex);
-            var version = str.substring(sepIndex + 1, str.length);
-
-            return new ModuleKey(name, version);
+        public static fromString(moduleName: string): ModuleKey {
+            return new ModuleKey(moduleName);
         }
 
-        constructor(moduleName: string, moduleVersion: string) {
+        constructor(moduleName: string) {
             this.name = moduleName;
-            this.version = moduleVersion;
-            this.refString = this.name + ModuleKey.SEPARATOR + this.version;
         }
 
         getName(): string {
             return this.name;
         }
 
-        getVersion(): string {
-            return this.version;
-        }
-
         toString(): string {
-            return this.refString;
+            return this.name;
         }
 
         equals(o: api.Equitable): boolean {
@@ -47,12 +27,7 @@ module api.module {
             }
 
             var other = <ModuleKey>o;
-
-            if (!api.ObjectHelper.stringEquals(this.refString, other.refString)) {
-                return false;
-            }
-
-            return true;
+            return api.ObjectHelper.stringEquals(this.name, other.name);
         }
 
         static toStringArray(keys: ModuleKey[]): string[] {

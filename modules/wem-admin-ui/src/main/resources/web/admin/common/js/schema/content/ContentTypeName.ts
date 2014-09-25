@@ -2,9 +2,9 @@ module api.schema.content {
 
     export class ContentTypeName implements api.Equitable {
 
-        static SITE:string = 'system-0.0.0:site';
+        static SITE:string = 'system:site';
 
-        static IMAGE:string = 'system-0.0.0:image';
+        static IMAGE:string = 'system:image';
 
         private value: string;
 

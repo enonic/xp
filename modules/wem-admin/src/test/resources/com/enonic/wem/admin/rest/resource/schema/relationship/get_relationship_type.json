@@ -9,9 +9,9 @@
     "editable": true,
     "fromSemantic": null,
     "icon": null,
-    "iconUrl": "/admin/rest/schema/icon/RelationshipType:mymodule-1.0.0:the_relationship_type",
-    "key": "RelationshipType:mymodule-1.0.0:the_relationship_type",
+    "iconUrl": "/admin/rest/schema/icon/RelationshipType:mymodule:the_relationship_type",
+    "key": "RelationshipType:mymodule:the_relationship_type",
     "modifiedTime": null,
-    "name": "mymodule-1.0.0:the_relationship_type",
+    "name": "mymodule:the_relationship_type",
     "toSemantic": null
 }

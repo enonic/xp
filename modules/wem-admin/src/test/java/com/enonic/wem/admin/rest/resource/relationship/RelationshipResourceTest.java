@@ -113,8 +113,8 @@ public class RelationshipResourceTest
 
         Assert.assertEquals( 404, response.getStatus() );
         Assert.assertEquals(
-            "Failed to update Relationship [RelationshipKey{fromContent=123, toContent=321, type=system-0.0.0:like, managingData=null}]:\n" +
-                "Failure #1: Relationship [RelationshipKey{fromContent=123, toContent=321, type=system-0.0.0:like, managingData=null}] was not found\n",
+            "Failed to update Relationship [RelationshipKey{fromContent=123, toContent=321, type=system:like, managingData=null}]:\n" +
+                "Failure #1: Relationship [RelationshipKey{fromContent=123, toContent=321, type=system:like, managingData=null}] was not found\n",
             response.getAsString() );
     }
 

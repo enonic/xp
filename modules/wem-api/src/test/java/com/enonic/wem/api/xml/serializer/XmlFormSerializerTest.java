@@ -90,7 +90,7 @@ public class XmlFormSerializerTest
 
         final MixinReference myMixinReference = newMixinReference().
             name( "mixin" ).
-            mixin( "mymodule-1.0.0:reference" ).
+            mixin( "mymodule:reference" ).
             build();
 
         final Form form = Form.newForm().
@@ -187,7 +187,7 @@ public class XmlFormSerializerTest
 
     private Form createFormWithAllFormItemTypes()
     {
-        final Mixin inputMixin = newMixin().name( "mymodule-1.0.0:my_shared_input" ).addFormItem(
+        final Mixin inputMixin = newMixin().name( "mymodule:my_shared_input" ).addFormItem(
             Input.newInput().name( "my_shared_input" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
         final FormItemSet set = newFormItemSet().name( "mySet" ).build();
         final Layout layout = FieldSet.newFieldSet().label( "My field set" ).name( "myFieldSet" ).addFormItem(

@@ -21,6 +21,8 @@ final class ModuleImpl
 {
     protected ModuleKey moduleKey;
 
+    protected ModuleVersion moduleVersion;
+
     protected String displayName;
 
     protected String url;
@@ -47,7 +49,7 @@ final class ModuleImpl
 
     public ModuleVersion getVersion()
     {
-        return moduleKey.getVersion();
+        return moduleVersion;
     }
 
     public String getDisplayName()

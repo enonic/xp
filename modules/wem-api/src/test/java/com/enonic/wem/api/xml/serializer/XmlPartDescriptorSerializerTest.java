@@ -29,7 +29,7 @@ public class XmlPartDescriptorSerializerTest
             displayName( "A Part" ).
             name( "mypart" ).
             config( configForm ).
-            key( PartDescriptorKey.from( "module-1.0.0:mypart" ) ).
+            key( PartDescriptorKey.from( "module:mypart" ) ).
             build();
 
         final XmlPartDescriptor xml = XmlPartDescriptorMapper.toXml( partDescriptor );
@@ -44,7 +44,7 @@ public class XmlPartDescriptorSerializerTest
     {
         final String xml = readFromFile( "part-descriptor.xml" );
         final PartDescriptor.Builder builder = PartDescriptor.newPartDescriptor();
-        builder.key( PartDescriptorKey.from( "module-1.0.0:mypart" ) );
+        builder.key( PartDescriptorKey.from( "module:mypart" ) );
         builder.name( "A part" );
 
         final XmlPartDescriptor xmlObject = XmlSerializers2.partDescriptor().parse( xml );

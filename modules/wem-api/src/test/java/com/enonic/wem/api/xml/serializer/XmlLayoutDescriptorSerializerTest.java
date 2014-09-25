@@ -35,7 +35,7 @@ public class XmlLayoutDescriptorSerializerTest
                 add( newRegionDescriptor().name( "left" ).build() ).
                 add( newRegionDescriptor().name( "right" ).build() ).
                 build() ).
-            key( LayoutDescriptorKey.from( "module-1.0.0:mylayout" ) ).
+            key( LayoutDescriptorKey.from( "module:mylayout" ) ).
             build();
 
         XmlLayoutDescriptor xml = XmlLayoutDescriptorMapper.toXml( layoutDescriptor );
@@ -50,7 +50,7 @@ public class XmlLayoutDescriptorSerializerTest
     {
         final String xml = readFromFile( "layout-descriptor.xml" );
         final LayoutDescriptor.Builder builder = LayoutDescriptor.newLayoutDescriptor();
-        builder.key( LayoutDescriptorKey.from( "module-1.0.0:mylayout" ) );
+        builder.key( LayoutDescriptorKey.from( "module:mylayout" ) );
         builder.name( "mylayout" );
 
         XmlLayoutDescriptor xmlObject = XmlSerializers2.layoutDescriptor().parse( xml );

@@ -40,6 +40,6 @@
     </items>
   </form-item-set>
   <mixin-reference name="mixin">
-    <reference>mymodule-1.0.0:reference</reference>
+    <reference>mymodule:reference</reference>
   </mixin-reference>
 </form>

@@ -12,8 +12,6 @@ module api.content.site.template {
 
         private modules: api.module.ModuleKey[] = [];
 
-        private version: string;
-
         private url: string;
 
         private key: SiteTemplateKey;
@@ -33,7 +31,6 @@ module api.content.site.template {
             this.displayName = builder.name;
             this.vendor = builder.vendor;
             this.modules = builder.modules;
-            this.version = builder.version;
             this.url = builder.url;
             this.key = builder.key;
             this.description = builder.description;
@@ -60,10 +57,6 @@ module api.content.site.template {
 
         getModules(): api.module.ModuleKey[] {
             return this.modules;
-        }
-
-        getVersion(): string {
-            return this.version;
         }
 
         getUrl(): string {
@@ -103,10 +96,6 @@ module api.content.site.template {
             }
 
             if (!api.ObjectHelper.equals(this.vendor, other.vendor)) {
-                return false;
-            }
-
-            if (!api.ObjectHelper.stringEquals(this.version, other.version)) {
                 return false;
             }
 
@@ -167,8 +156,6 @@ module api.content.site.template {
 
         modules: api.module.ModuleKey[] = [];
 
-        version: string;
-
         url: string;
 
         key: SiteTemplateKey;
@@ -191,7 +178,6 @@ module api.content.site.template {
             for (var i = 0; i < json.modules.length; i++) {
                 this.modules.push(api.module.ModuleKey.fromString(json.modules[i]));
             }
-            this.version = json.version;
             this.url = json.url;
             this.key = SiteTemplateKey.fromString(json.key);
             this.description = json.description;

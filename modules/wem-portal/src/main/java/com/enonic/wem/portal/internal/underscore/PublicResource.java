@@ -26,7 +26,11 @@ public final class PublicResource
         final String resourceName = getAttribute( "resource" );
 
         final Module module = moduleService.getModule( moduleKey );
-        final URL resourceUrl = ( module == null ) ? null : module.getResource( "public/" + resourceName );
+        if ( module == null )
+        {
+            throw notFound( "Module [%s] not found", moduleKey );
+        }
+        final URL resourceUrl = module.getResource( "public/" + resourceName );
         if ( resourceUrl == null )
         {
             throw notFound( "File [%s] not found in module [%s]", resourceName, moduleKey.toString() );

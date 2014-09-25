@@ -36,7 +36,7 @@ final class CreateSiteTemplateCommand
     private SiteTemplate doExecute()
         throws IOException
     {
-        final SiteTemplateKey siteTemplatekey = SiteTemplateKey.from( this.param.getName(), this.param.getVersion() );
+        final SiteTemplateKey siteTemplatekey = SiteTemplateKey.from( this.param.getName().toString() );
         final SiteTemplate.Builder builder = SiteTemplate.newSiteTemplate().
             displayName( this.param.getDisplayName() ).
             url( this.param.getUrl() ).

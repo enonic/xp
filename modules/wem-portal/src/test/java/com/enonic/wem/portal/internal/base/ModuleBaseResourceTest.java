@@ -11,13 +11,10 @@ import org.mockito.Mockito;
 
 import com.google.common.base.Charsets;
 
-import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.module.Module;
-import com.enonic.wem.api.module.ModuleKeyResolver;
-import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleService;
-import com.enonic.wem.core.module.ModuleKeyResolverService;
+import com.enonic.wem.api.resource.ResourceKey;
 
 public abstract class ModuleBaseResourceTest<T extends ModuleBaseResource>
     extends BaseResourceTest<T>
@@ -37,11 +34,6 @@ public abstract class ModuleBaseResourceTest<T extends ModuleBaseResource>
 
         this.moduleService = Mockito.mock( ModuleService.class );
         this.resource.moduleService = moduleService;
-        this.resource.moduleKeyResolverService = Mockito.mock( ModuleKeyResolverService.class );
-
-        Mockito.when( this.resource.moduleKeyResolverService.forContent( Mockito.isA( ContentPath.class ),
-                                                                         Mockito.isA( Context.class ) ) ).thenReturn(
-            ModuleKeyResolver.empty() );
     }
 
     protected final void addResource( final String name, final String key, final String content )
@@ -56,5 +48,12 @@ public abstract class ModuleBaseResourceTest<T extends ModuleBaseResource>
         final String path = StringUtils.removeStart( moduleResourceKey.getPath(), "/" );
         Mockito.when( module.getResource( path ) ).thenReturn( resourcePathUrl );
         Mockito.when( this.moduleService.getModule( moduleResourceKey.getModule() ) ).thenReturn( module );
+    }
+
+    protected final void addModule( final String moduleName )
+        throws Exception
+    {
+        final Module module = Mockito.mock( Module.class );
+        Mockito.when( this.moduleService.getModule( ModuleKey.from( moduleName ) ) ).thenReturn( module );
     }
 }

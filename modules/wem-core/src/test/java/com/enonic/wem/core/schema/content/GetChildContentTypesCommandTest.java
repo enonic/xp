@@ -37,7 +37,7 @@ public class GetChildContentTypesCommandTest
         // setup
         final ContentType contentType1 = ContentType.
             newContentType().
-            name( "mymodule-1.0.0:my_content_type1" ).
+            name( "mymodule:my_content_type1" ).
             displayName( ContentTypeName.unstructured().toString() ).
             superType( null ).
             setBuiltIn().
@@ -45,23 +45,23 @@ public class GetChildContentTypesCommandTest
 
         final ContentType contentType2 = ContentType.
             newContentType().
-            name( "mymodule-1.0.0:my_content_type2" ).
+            name( "mymodule:my_content_type2" ).
             displayName( "Display Name 2" ).
-            superType( ContentTypeName.from( "mymodule-1.0.0:my_content_type1" ) ).
+            superType( ContentTypeName.from( "mymodule:my_content_type1" ) ).
             build();
 
         final ContentType contentType3 = ContentType.
             newContentType().
-            name( "mymodule-1.0.0:my_content_type3" ).
+            name( "mymodule:my_content_type3" ).
             displayName( "Display Name 3" ).
-            superType( ContentTypeName.from( "mymodule-1.0.0:my_content_type2" ) ).
+            superType( ContentTypeName.from( "mymodule:my_content_type2" ) ).
             build();
 
         final ContentType contentType4 = ContentType.
             newContentType().
-            name( "mymodule-1.0.0:my_content_type4" ).
+            name( "mymodule:my_content_type4" ).
             displayName( "Display Name 4" ).
-            superType( ContentTypeName.from( "mymodule-1.0.0:my_content_type2" ) ).
+            superType( ContentTypeName.from( "mymodule:my_content_type2" ) ).
             build();
 
         final ContentType contentType5 = ContentType.
@@ -87,7 +87,7 @@ public class GetChildContentTypesCommandTest
 
         // verify
         assertEquals( 1, types.getSize() );
-        assertEquals( "mymodule-1.0.0:my_content_type2", types.get( 0 ).getName().toString() );
+        assertEquals( "mymodule:my_content_type2", types.get( 0 ).getName().toString() );
 
         // exercise
         params = new GetChildContentTypesParams().parentName( contentType2.getName() );
@@ -95,7 +95,7 @@ public class GetChildContentTypesCommandTest
 
         // verify
         assertEquals( 2, types.getSize() );
-        assertEquals( "mymodule-1.0.0:my_content_type3", types.get( 0 ).getName().toString() );
-        assertEquals( "mymodule-1.0.0:my_content_type4", types.get( 1 ).getName().toString() );
+        assertEquals( "mymodule:my_content_type3", types.get( 0 ).getName().toString() );
+        assertEquals( "mymodule:my_content_type4", types.get( 1 ).getName().toString() );
     }
 }

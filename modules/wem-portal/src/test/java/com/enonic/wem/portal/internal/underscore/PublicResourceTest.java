@@ -24,9 +24,9 @@ public class PublicResourceTest
     public void getPublicResource_found()
         throws Exception
     {
-        addResource( "main.css", "demo-1.0.0:/public/css/main.css", "p {color:red;}" );
+        addResource( "main.css", "demo:/public/css/main.css", "p {color:red;}" );
 
-        final Request request = new Request( Method.GET, "/live/path/to/content/_/public/demo-1.0.0/css/main.css" );
+        final Request request = new Request( Method.GET, "/live/path/to/content/_/public/demo/css/main.css" );
         final Response response = executeRequest( request );
 
         assertEquals( 200, response.getStatus().getCode() );
@@ -49,18 +49,20 @@ public class PublicResourceTest
     public void getPublicResource_fileNotFound()
         throws Exception
     {
-        final Request request = new Request( Method.GET, "/live/path/to/content/_/public/demo-1.0.0/css/main.css" );
+        addModule( "demo" );
+
+        final Request request = new Request( Method.GET, "/live/path/to/content/_/public/demo/css/main.css" );
         final Response response = executeRequest( request );
 
         assertEquals( 404, response.getStatus().getCode() );
-        assertEquals( "File [css/main.css] not found in module [demo-1.0.0]", response.getStatus().getDescription() );
+        assertEquals( "File [css/main.css] not found in module [demo]", response.getStatus().getDescription() );
     }
 
     @Test
     public void methodNotAllowed()
         throws Exception
     {
-        final Request request = new Request( Method.POST, "/live/path/to/content/_/public/demo-1.0.0/css/main.css" );
+        final Request request = new Request( Method.POST, "/live/path/to/content/_/public/demo/css/main.css" );
         final Response response = executeRequest( request );
         assertEquals( 405, response.getStatus().getCode() );
     }
@@ -69,7 +71,7 @@ public class PublicResourceTest
     public final void illegalMode()
         throws Exception
     {
-        final Request request = new Request( Method.GET, "/unknown/path/to/content/_/public/demo-1.0.0/css/main.css" );
+        final Request request = new Request( Method.GET, "/unknown/path/to/content/_/public/demo/css/main.css" );
         final Response response = executeRequest( request );
 
         assertEquals( 404, response.getStatus().getCode() );

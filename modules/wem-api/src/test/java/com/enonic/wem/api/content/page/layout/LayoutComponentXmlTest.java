@@ -25,7 +25,7 @@ public class LayoutComponentXmlTest
 
         LayoutComponent component = LayoutComponent.newLayoutComponent().
             name( "my-component" ).
-            descriptor( LayoutDescriptorKey.from( "mainmodule-1.0.0:layoutName" ) ).
+            descriptor( LayoutDescriptorKey.from( "mainmodule:layoutName" ) ).
             config( componentConfig ).
             build();
 

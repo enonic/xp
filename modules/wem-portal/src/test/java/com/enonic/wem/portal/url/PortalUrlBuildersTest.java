@@ -31,7 +31,7 @@ public class PortalUrlBuildersTest
         setBaseUri( "" );
         setMode( RenderingMode.LIVE );
         setWorkspace( Workspace.from( "stage" ) );
-        setResolvedModule( "mymodule-1.0.0" );
+        setResolvedModule( "mymodule" );
         setContent( ContentPath.from( "path/to/content" ) );
     }
 
@@ -88,7 +88,7 @@ public class PortalUrlBuildersTest
         final PortalUrlBuilders bean = new PortalUrlBuilders( this.context );
         final PublicUrlBuilder urlBuilder = bean.createResourceUrl( "some/path" );
 
-        assertEquals( "/portal/live/stage/path/to/content/_/public/mymodule-1.0.0/some/path", urlBuilder.toString() );
+        assertEquals( "/portal/live/stage/path/to/content/_/public/mymodule/some/path", urlBuilder.toString() );
     }
 
     @Test
@@ -115,6 +115,6 @@ public class PortalUrlBuildersTest
         final PortalUrlBuilders bean = new PortalUrlBuilders( this.context );
         final ServiceUrlBuilder urlBuilder = bean.createServiceUrl( "myservice" );
 
-        assertEquals( "/portal/live/stage/path/to/content/_/service/mymodule-1.0.0/myservice", urlBuilder.toString() );
+        assertEquals( "/portal/live/stage/path/to/content/_/service/mymodule/myservice", urlBuilder.toString() );
     }
 }

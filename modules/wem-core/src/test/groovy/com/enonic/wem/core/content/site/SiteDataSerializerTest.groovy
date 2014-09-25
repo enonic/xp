@@ -2,8 +2,6 @@ package com.enonic.wem.core.content.site
 
 import com.enonic.wem.api.content.site.Site
 import com.enonic.wem.api.content.site.SiteTemplateKey
-import com.enonic.wem.api.content.site.SiteTemplateName
-import com.enonic.wem.api.content.site.SiteTemplateVersion
 import com.enonic.wem.api.data.DataSet
 import com.enonic.wem.api.data.RootDataSet
 import com.enonic.wem.api.module.ModuleKey
@@ -20,7 +18,7 @@ class SiteDataSerializerTest
         SiteDataSerializer siteSerializer = new SiteDataSerializer( "mySiteDataSet" );
 
         Site site =
-                Site.newSite().template( SiteTemplateKey.from( new SiteTemplateName( "unchanged" ), new SiteTemplateVersion( "1.0.0" ) ) ).
+                Site.newSite().template( SiteTemplateKey.from( "unchanged" ) ).
                         addModuleConfig(
                                 newModuleConfig().module( ModuleKey.from( "unchanged-1.1.1" ) ).config( new RootDataSet() ).build() ).
                         addModuleConfig(

@@ -19,13 +19,13 @@ public class XmlRelationshipTypeSerializerTest
         throws Exception
     {
         final RelationshipType relationshipType = newRelationshipType().
-            name( "mymodule-1.0.0:like" ).
+            name( "mymodule:like" ).
             description( "description" ).
             fromSemantic( "likes" ).
             toSemantic( "liked by" ).
-            addAllowedFromType(  ContentTypeName.from( "mymodule-1.0.0:person" ) ).
-            addAllowedFromType(  ContentTypeName.from( "mymodule-1.0.0:animal" ) ).
-            addAllowedToType(  ContentTypeName.from( "mymodule-1.0.0:vehicle" ) ).
+            addAllowedFromType(  ContentTypeName.from( "mymodule:person" ) ).
+            addAllowedFromType(  ContentTypeName.from( "mymodule:animal" ) ).
+            addAllowedToType(  ContentTypeName.from( "mymodule:vehicle" ) ).
             build();
 
         XmlRelationshipType xmlObject = XmlRelationshipTypeMapper.toXml( relationshipType );
@@ -43,15 +43,15 @@ public class XmlRelationshipTypeSerializerTest
 
         XmlRelationshipType xmlObject = XmlSerializers2.relationshipType().parse( xml );
         XmlRelationshipTypeMapper.fromXml( xmlObject, builder );
-        builder.name( "mymodule-1.0.0:myreltype" );
+        builder.name( "mymodule:myreltype" );
         RelationshipType relationshipType = builder.build();
 
-        assertEquals( "mymodule-1.0.0:myreltype", relationshipType.getName().toString() );
+        assertEquals( "mymodule:myreltype", relationshipType.getName().toString() );
         assertEquals( "description", relationshipType.getDescription() );
         assertEquals( "likes", relationshipType.getFromSemantic() );
         assertEquals( "liked by", relationshipType.getToSemantic() );
-        assertEquals( ContentTypeNames.from( "mymodule-1.0.0:animal", "mymodule-1.0.0:person" ), relationshipType.getAllowedFromTypes() );
-        assertEquals( ContentTypeNames.from( "mymodule-1.0.0:vehicle" ), relationshipType.getAllowedToTypes() );
+        assertEquals( ContentTypeNames.from( "mymodule:animal", "mymodule:person" ), relationshipType.getAllowedFromTypes() );
+        assertEquals( ContentTypeNames.from( "mymodule:vehicle" ), relationshipType.getAllowedToTypes() );
     }
 
 }

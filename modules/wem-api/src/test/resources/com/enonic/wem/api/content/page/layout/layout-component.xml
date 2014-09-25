@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<layout-component descriptor="mainmodule-1.0.0:layoutName" name="my-component">
+<layout-component descriptor="mainmodule:layoutName" name="my-component">
   <config>
     <my-prop type="String">value</my-prop>
     <things type="String">a</things>

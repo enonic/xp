@@ -32,10 +32,10 @@ public class ResourceTest
     {
         final File modulesDir = this.temporaryFolder.newFolder( "modules" );
 
-        writeFile( modulesDir, "mymodule-1.0.0/a/b.txt", "a/b.txt" );
-        writeFile( modulesDir, "mymodule-1.0.0/a/c.txt", "a/c.txt" );
-        writeFile( modulesDir, "mymodule-1.0.0/a/c/d.txt", "a/c/d.txt" );
-        writeFile( modulesDir, "othermodule-1.0.0/a.txt", "a.txt" );
+        writeFile( modulesDir, "mymodule/a/b.txt", "a/b.txt" );
+        writeFile( modulesDir, "mymodule/a/c.txt", "a/c.txt" );
+        writeFile( modulesDir, "mymodule/a/c/d.txt", "a/c/d.txt" );
+        writeFile( modulesDir, "othermodule/a.txt", "a.txt" );
 
         final ResourceUrlRegistry registry = ResourceUrlTestHelper.mockModuleScheme();
         registry.modulesDir( modulesDir );
@@ -45,7 +45,7 @@ public class ResourceTest
     public void testGetResource()
         throws Exception
     {
-        final ResourceKey key = ResourceKey.from( "mymodule-1.0.0:/a/b.txt" );
+        final ResourceKey key = ResourceKey.from( "mymodule:/a/b.txt" );
 
         final Resource resource = Resource.from( key );
         assertNotNull( resource );
@@ -62,7 +62,7 @@ public class ResourceTest
     @Test
     public void testGetResource_notFound()
     {
-        final ResourceKey key = ResourceKey.from( "mymodule-1.0.0:/not/exists.txt" );
+        final ResourceKey key = ResourceKey.from( "mymodule:/not/exists.txt" );
 
         final Resource resource = Resource.from( key );
         assertNotNull( resource );

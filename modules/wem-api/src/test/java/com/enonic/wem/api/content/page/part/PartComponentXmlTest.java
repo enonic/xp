@@ -25,7 +25,7 @@ public class PartComponentXmlTest
 
         PartComponent component = PartComponent.newPartComponent().
             name( "my-component" ).
-            descriptor( PartDescriptorKey.from( "mainmodule-1.0.0:partName" ) ).
+            descriptor( PartDescriptorKey.from( "mainmodule:partName" ) ).
             config( componentConfig ).
             build();
 

@@ -1,6 +1,7 @@
 package com.enonic.wem.core.module
 
 import com.enonic.wem.api.module.ModuleKey
+import com.enonic.wem.api.module.ModuleVersion
 import spock.lang.Specification
 
 abstract class AbstractModuleServiceTest
@@ -17,6 +18,7 @@ abstract class AbstractModuleServiceTest
     {
         return new ModuleBuilder().
             moduleKey( ModuleKey.from( key ) ).
+            moduleVersion( ModuleVersion.from( "1.0.0") ).
             displayName( "module display name" ).
             url( "http://enonic.net" ).
             vendorName( "Enonic" ).

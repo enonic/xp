@@ -16,6 +16,7 @@ import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleService;
+import com.enonic.wem.api.module.ModuleVersion;
 import com.enonic.wem.api.module.Modules;
 import com.enonic.wem.core.module.ModuleBuilder;
 
@@ -48,7 +49,7 @@ public class ModuleResourceTest
 
         String response = request().
             path( "module" ).
-            queryParam( "moduleKey", "testmodule-1.0.0" ).
+            queryParam( "moduleKey", "testmodule" ).
             get().getAsString();
         assertJson( "get_module_by_key_success.json", response );
     }
@@ -62,7 +63,7 @@ public class ModuleResourceTest
 
         request().
             path( "module/start" ).
-            entity( "{\"key\":[\"testmodule-1.0.0\"]}", MediaType.APPLICATION_JSON_TYPE ).
+            entity( "{\"key\":[\"testmodule\"]}", MediaType.APPLICATION_JSON_TYPE ).
             post();
 
         Mockito.verify( module.getBundle() ).start();
@@ -77,7 +78,7 @@ public class ModuleResourceTest
 
         request().
             path( "module/stop" ).
-            entity( "{\"key\":[\"testmodule-1.0.0\"]}", MediaType.APPLICATION_JSON_TYPE ).
+            entity( "{\"key\":[\"testmodule\"]}", MediaType.APPLICATION_JSON_TYPE ).
             post();
 
         Mockito.verify( module.getBundle() ).stop();
@@ -92,7 +93,7 @@ public class ModuleResourceTest
 
         request().
             path( "module/update" ).
-            entity( "{\"key\":[\"testmodule-1.0.0\"]}", MediaType.APPLICATION_JSON_TYPE ).
+            entity( "{\"key\":[\"testmodule\"]}", MediaType.APPLICATION_JSON_TYPE ).
             post();
 
         Mockito.verify( module.getBundle() ).update();
@@ -107,7 +108,7 @@ public class ModuleResourceTest
 
         request().
             path( "module/uninstall" ).
-            entity( "{\"key\":[\"testmodule-1.0.0\"]}", MediaType.APPLICATION_JSON_TYPE ).
+            entity( "{\"key\":[\"testmodule\"]}", MediaType.APPLICATION_JSON_TYPE ).
             post();
 
         Mockito.verify( module.getBundle() ).uninstall();
@@ -136,7 +137,8 @@ public class ModuleResourceTest
         Mockito.when( bundle.getLastModified() ).thenReturn( Instant.parse( "2012-01-01T00:00:00.00Z" ).toEpochMilli() );
 
         return new ModuleBuilder().
-            moduleKey( ModuleKey.from( "testmodule-1.0.0" ) ).
+            moduleKey( ModuleKey.from( "testmodule" ) ).
+            moduleVersion( ModuleVersion.from( "1.0.0" ) ).
             displayName( "module display name" ).
             url( "http://enonic.net" ).
             vendorName( "Enonic" ).

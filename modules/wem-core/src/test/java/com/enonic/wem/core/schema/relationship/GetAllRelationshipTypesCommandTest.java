@@ -24,18 +24,18 @@ public class GetAllRelationshipTypesCommandTest
 
         // setup
         final RelationshipType relationshipType = RelationshipType.newRelationshipType().
-            name( "mymodule-1.0.0:like" ).
+            name( "mymodule:like" ).
             fromSemantic( "likes" ).
             toSemantic( "liked by" ).
-            addAllowedFromType( ContentTypeName.from( "mymodule-1.0.0:person" ) ).
-            addAllowedToType( ContentTypeName.from( "mymodule-1.0.0:person" ) ).
+            addAllowedFromType( ContentTypeName.from( "mymodule:person" ) ).
+            addAllowedToType( ContentTypeName.from( "mymodule:person" ) ).
             build();
         final RelationshipType relationshipType2 = RelationshipType.newRelationshipType().
-            name( "mymodule-1.0.0:hate" ).
+            name( "mymodule:hate" ).
             fromSemantic( "hates" ).
             toSemantic( "hated by" ).
-            addAllowedFromType( ContentTypeName.from( "mymodule-1.0.0:person" ) ).
-            addAllowedToType( ContentTypeName.from( "mymodule-1.0.0:person" ) ).
+            addAllowedFromType( ContentTypeName.from( "mymodule:person" ) ).
+            addAllowedToType( ContentTypeName.from( "mymodule:person" ) ).
             build();
 
         final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType, relationshipType2 );

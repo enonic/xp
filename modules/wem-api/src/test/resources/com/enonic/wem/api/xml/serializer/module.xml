@@ -12,7 +12,7 @@
 
   <config>
     <mixin-reference name="test">
-      <reference>mymodule-1.0.0:other</reference>
+      <reference>mymodule:other</reference>
     </mixin-reference>
   </config>
 

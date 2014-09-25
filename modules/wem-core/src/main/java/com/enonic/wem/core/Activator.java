@@ -26,7 +26,6 @@ import com.enonic.wem.core.config.SystemConfig;
 import com.enonic.wem.core.home.HomeDir;
 import com.enonic.wem.core.image.filter.ImageFilterBuilder;
 import com.enonic.wem.core.initializer.StartupInitializer;
-import com.enonic.wem.core.module.ModuleKeyResolverService;
 import com.enonic.wem.core.module.ModuleURLStreamHandler;
 import com.enonic.wem.core.schema.CoreSchemasProvider;
 import com.enonic.wem.core.schema.SchemaModuleListener;
@@ -62,7 +61,6 @@ public final class Activator
         service( AttachmentService.class ).export();
         service( BlobService.class ).export();
         service( ImageFilterBuilder.class ).export();
-        service( ModuleKeyResolverService.class ).export();
         service( ContentTypeService.class ).export();
         service( RelationshipTypeService.class ).export();
         service( PageService.class ).export();

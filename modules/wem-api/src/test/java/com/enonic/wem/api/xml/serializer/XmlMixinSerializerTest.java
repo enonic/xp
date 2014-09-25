@@ -27,7 +27,7 @@ public class XmlMixinSerializerTest
             newInput().name( "myTextLine" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
         set.add( layout );
 
-        final Mixin.Builder builder = newMixin().name( "mymodule-1.0.0:mixin" );
+        final Mixin.Builder builder = newMixin().name( "mymodule:mixin" );
         builder.displayName( "display name" ).description( "description" );
 
         builder.addFormItem( set );
@@ -50,9 +50,9 @@ public class XmlMixinSerializerTest
         final XmlMixin xmlObject = XmlSerializers2.mixin().parse( xml );
         XmlMixinMapper.fromXml( xmlObject, builder );
 
-        builder.name( "mymodule-1.0.0:mymixin" );
+        builder.name( "mymodule:mymixin" );
         final Mixin mixin = builder.build();
-        assertEquals( "mymodule-1.0.0:mymixin", mixin.getName().toString() );
+        assertEquals( "mymodule:mymixin", mixin.getName().toString() );
         assertEquals( "display name", mixin.getDisplayName() );
         assertEquals( "description", mixin.getDescription() );
 

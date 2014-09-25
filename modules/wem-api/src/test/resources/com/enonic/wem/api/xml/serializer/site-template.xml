@@ -8,15 +8,15 @@
     <url>https://www.enonic.com</url>
   </vendor>
   <modules>
-    <module>com.enonic.intranet-1.0.0</module>
-    <module>com.company.sampleModule-1.1.0</module>
-    <module>com.company.theme.someTheme-1.4.1</module>
-    <module>com.enonic.resolvers-1.0.0</module>
+    <module>com.enonic.intranet</module>
+    <module>com.company.sampleModule</module>
+    <module>com.company.theme.someTheme</module>
+    <module>com.enonic.resolvers</module>
   </modules>
   <content-filter>
     <deny>*</deny>
-    <allow>mymodule-1.0.0:com.enonic.tweet</allow>
-    <allow>mymodule-1.0.0:system.folder</allow>
-    <deny>mymodule-1.0.0:com.enonic.tweet.internal</deny>
+    <allow>mymodule:com.enonic.tweet</allow>
+    <allow>mymodule:system.folder</allow>
+    <deny>mymodule:com.enonic.tweet.internal</deny>
   </content-filter>
 </site-template>

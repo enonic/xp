@@ -1,15 +1,15 @@
 {
     "contentTypeFilter": {
         "allow": [ "*" ],
-        "deny": [ "mymodule-1.0.0:com.enonic.tweet", "mymodule-1.0.0:system.folder", "mymodule-1.0.0:com.enonic.article", "mymodule-1.0.0:com.enonic.employee" ]
+        "deny": [ "mymodule:com.enonic.tweet", "mymodule:system.folder", "mymodule:com.enonic.article", "mymodule:com.enonic.employee" ]
     },
     "deletable": true,
     "description": "Demo site template",
     "displayName": "Blueman Site Template",
     "editable": true,
-    "iconUrl": "/admin/rest/sitetemplate/icon/blueman-1.0.0?hash=f95b70fdc3088560732a5ac135644506",
-    "key": "blueman-1.0.0",
-    "modules": [ "module1-1.0.0", "module2-1.0.0" ],
+    "iconUrl": "/admin/rest/sitetemplate/icon/blueman?hash=f95b70fdc3088560732a5ac135644506",
+    "key": "blueman",
+    "modules": [ "module1", "module2" ],
     "name": "blueman",
     "pageTemplateKeys": [ "mod|mainpage" ],
     "pageTemplates": [
@@ -17,7 +17,7 @@
             "canRender": [ ],
             "config": [ ],
             "deletable": true,
-            "descriptorKey": "mod-1.0.0:page-descr",
+            "descriptorKey": "mod:page-descr",
             "displayName": "Main Page",
             "editable": true,
             "key": "mod|mainpage",
@@ -28,6 +28,5 @@
     "vendor": {
         "name": "Enonic AS",
         "url": "http://www.enonic.com"
-    },
-    "version": "1.0.0"
+    }
 }

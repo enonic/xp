@@ -28,7 +28,7 @@ public class DescriptorsTest
             displayName( "Landing page" ).
             config( pageForm ).
             regions( newRegionDescriptors().build() ).
-            key( PageDescriptorKey.from( "module-1.0.0:landing-page" ) ).
+            key( PageDescriptorKey.from( "module:landing-page" ) ).
             build();
 
         assertEquals( "Landing page", pageDescriptor.getDisplayName() );
@@ -46,7 +46,7 @@ public class DescriptorsTest
             name( "news-part" ).
             displayName( "News part" ).
             config( partForm ).
-            key( PartDescriptorKey.from( "module-1.0.0:new-part" ) ).
+            key( PartDescriptorKey.from( "module:new-part" ) ).
             build();
 
         assertEquals( "News part", partDescriptor.getDisplayName() );
@@ -64,7 +64,7 @@ public class DescriptorsTest
             displayName( "Fancy layout" ).
             config( layoutForm ).
             regions( newRegionDescriptors().build() ).
-            key( LayoutDescriptorKey.from( "module-1.0.0:fancy-layout" ) ).
+            key( LayoutDescriptorKey.from( "module:fancy-layout" ) ).
             build();
 
         assertEquals( "Fancy layout", layoutDescriptor.getDisplayName() );

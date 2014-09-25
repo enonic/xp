@@ -12,10 +12,10 @@ public class PublicUrlBuilderTest
         final PublicUrlBuilder urlBuilder = new PublicUrlBuilder().
             baseUri( "/root" ).
             contentPath( "some/path" ).
-            module( "mymodule-1.0.0" ).
+            module( "mymodule" ).
             resourcePath( "css/my.css" );
 
-        assertEquals( "/root/portal/live/stage/some/path/_/public/mymodule-1.0.0/css/my.css", urlBuilder.toString() );
+        assertEquals( "/root/portal/live/stage/some/path/_/public/mymodule/css/my.css", urlBuilder.toString() );
     }
 }
 

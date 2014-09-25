@@ -18,7 +18,7 @@ public class ContentTypeTest
     @Test
     public void layout()
     {
-        ContentType contentType = newContentType().name( "mymodule-1.0.0:test" ).build();
+        ContentType contentType = newContentType().name( "mymodule:test" ).build();
         FieldSet layout = FieldSet.newFieldSet().
             label( "Personalia" ).
             name( "personalia" ).
@@ -33,7 +33,7 @@ public class ContentTypeTest
     @Test
     public void layout_inside_formItemSet()
     {
-        ContentType contentType = newContentType().name( "mymodule-1.0.0:test" ).build();
+        ContentType contentType = newContentType().name( "mymodule:test" ).build();
 
         FieldSet layout = FieldSet.newFieldSet().
             label( "Personalia" ).
@@ -57,7 +57,7 @@ public class ContentTypeTest
         formItemSet.add( newInput().name( "country" ).label( "Country" ).inputType( InputTypes.TEXT_LINE ).build() );
 
         ContentType contentType = newContentType().
-            name( "mymodule-1.0.0:test" ).
+            name( "mymodule:test" ).
             addFormItem( newInput().name( "title" ).inputType( InputTypes.TEXT_LINE ).build() ).
             addFormItem( formItemSet ).
             build();
@@ -77,7 +77,7 @@ public class ContentTypeTest
             newFormItemSet().name( "inner-set" ).addFormItem(
                 newInput().name( "myInnerInput" ).inputType( InputTypes.TEXT_LINE ).build() ).build() ).build();
         ContentType contentType = newContentType().
-            name( "mymodule-1.0.0:test" ).
+            name( "mymodule:test" ).
             addFormItem( formItemSet ).
             build();
 

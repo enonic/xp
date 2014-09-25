@@ -50,7 +50,7 @@ public class XsltProcessorImplTest
     public void testResourceNotFound()
     {
         final XsltProcessor processor = this.processorFactory.newProcessor();
-        processor.view( ResourceKey.from( "mymodule-1.0.0:/view/unknown.xsl" ) );
+        processor.view( ResourceKey.from( "mymodule:/view/unknown.xsl" ) );
         processor.inputXml( "<input/>" );
         processor.process();
     }
@@ -61,7 +61,7 @@ public class XsltProcessorImplTest
         final Map<String, Object> params = Maps.newHashMap();
 
         final XsltProcessor processor = this.processorFactory.newProcessor();
-        processor.view( ResourceKey.from( "mymodule-1.0.0:/view/test.xsl" ) );
+        processor.view( ResourceKey.from( "mymodule:/view/test.xsl" ) );
         processor.inputXml( "<input/>" );
         processor.parameters( params );
 
@@ -73,7 +73,7 @@ public class XsltProcessorImplTest
     public void testViewError()
     {
         final XsltProcessor processor = this.processorFactory.newProcessor();
-        processor.view( ResourceKey.from( "mymodule-1.0.0:/view/test-error.xsl" ) );
+        processor.view( ResourceKey.from( "mymodule:/view/test-error.xsl" ) );
         processor.inputXml( "<input/>" );
         processor.process();
     }

@@ -2,14 +2,14 @@
     "templates": [
         {
             "deletable": true,
-            "descriptorKey": "module1-1.0.0:layout1-template",
+            "descriptorKey": "module1:layout1-template",
             "displayName": "Layout1 template",
             "editable": true,
             "key": "module1|layout1"
         },
         {
             "deletable": true,
-            "descriptorKey": "module2-1.0.0:layout2-template",
+            "descriptorKey": "module2:layout2-template",
             "displayName": "Layout2 template",
             "editable": true,
             "key": "module2|layout2"

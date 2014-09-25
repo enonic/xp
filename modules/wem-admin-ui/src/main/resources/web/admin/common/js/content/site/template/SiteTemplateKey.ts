@@ -2,42 +2,22 @@ module api.content.site.template {
 
     export class SiteTemplateKey implements api.Equitable {
 
-        private static SEPARATOR: string = "-";
-
         private name: string;
 
-        private version: string;
-
-        private refString: string;
-
-        public static fromString(str: string): SiteTemplateKey {
-            var sepIndex: number = str.lastIndexOf(SiteTemplateKey.SEPARATOR);
-            if (sepIndex == -1) {
-                throw new Error("SiteTemplateKey must contain separator '" + SiteTemplateKey.SEPARATOR + "':" + str);
-            }
-
-            var name = str.substring(0, sepIndex);
-            var version = str.substring(sepIndex + 1, str.length);
-
-            return new SiteTemplateKey(name, version);
+        public static fromString(name: string): SiteTemplateKey {
+            return new SiteTemplateKey(name);
         }
 
-        constructor(siteTemplateName: string, siteTemplateVersion: string) {
+        constructor(siteTemplateName: string) {
             this.name = siteTemplateName;
-            this.version = siteTemplateVersion;
-            this.refString = this.name + SiteTemplateKey.SEPARATOR + this.version;
         }
 
         getName(): string {
             return this.name;
         }
 
-        getVersion(): string {
-            return this.version;
-        }
-
         toString(): string {
-            return this.refString;
+            return this.name;
         }
 
         equals(o: api.Equitable): boolean {
@@ -48,7 +28,7 @@ module api.content.site.template {
 
             var other = <SiteTemplateKey>o;
 
-            if (!api.ObjectHelper.stringEquals(this.refString, other.refString)) {
+            if (!api.ObjectHelper.stringEquals(this.name, other.name)) {
                 return false;
             }
 

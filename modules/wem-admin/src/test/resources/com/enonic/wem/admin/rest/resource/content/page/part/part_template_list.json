@@ -2,14 +2,14 @@
     "templates": [
         {
             "deletable": true,
-            "descriptorKey": "module-1.0.0:tpl",
+            "descriptorKey": "module:tpl",
             "displayName": "partTemplate1",
             "editable": true,
             "key": "module|partTemplate1"
         },
         {
             "deletable": true,
-            "descriptorKey": "module-1.0.0:tpl",
+            "descriptorKey": "module:tpl",
             "displayName": "partTemplate2",
             "editable": true,
             "key": "module|partTemplate2"

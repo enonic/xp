@@ -25,7 +25,7 @@
     "deletable": false,
     "displayName": "Fancy layout",
     "editable": false,
-    "key": "module-1.0.0:fancy-layout",
+    "key": "module:fancy-layout",
     "name": "fancy-layout",
     "regions": [
         {

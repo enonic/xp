@@ -67,11 +67,6 @@ public class SiteTemplateSummaryJson
         return new VendorJson( siteTemplate.getVendor() );
     }
 
-    public String getVersion()
-    {
-        return siteTemplate.getVersion().toString();
-    }
-
     public List<String> getModules()
     {
         return Lists.transform( siteTemplate.getModules().getList(), new Function<ModuleKey, String>()

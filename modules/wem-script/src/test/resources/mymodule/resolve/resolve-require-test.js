@@ -1,4 +1,4 @@
-var other = require('other-1.0.0:/other');
+var other = require('other:/other');
 
 exports.test = function (name) {
     return other.test(name);

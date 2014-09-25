@@ -100,20 +100,20 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResource>
         throws Exception
     {
         when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ), context ) ).
-            thenReturn( createPage( "id", "site/somepath/content", "mymodule-1.0.0:ctype", true ) );
+            thenReturn( createPage( "id", "site/somepath/content", "mymodule:ctype", true ) );
 
         when( this.siteService.getNearestSite( isA( ContentId.class ), isA( Context.class ) ) ).
-            thenReturn( createSite( "id", "site", "mymodule-1.0.0:contenttypename" ) );
+            thenReturn( createSite( "id", "site", "mymodule:contenttypename" ) );
     }
 
     protected final void setupNonPageContent( final Context context )
         throws Exception
     {
         when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ), context ) ).
-            thenReturn( createPage( "id", "site/somepath/content", "mymodule-1.0.0:ctype", false ) );
+            thenReturn( createPage( "id", "site/somepath/content", "mymodule:ctype", false ) );
 
         when( this.siteService.getNearestSite( isA( ContentId.class ), isA( Context.class ) ) ).
-            thenReturn( createSite( "id", "site", "mymodule-1.0.0:contenttypename" ) );
+            thenReturn( createSite( "id", "site", "mymodule:contenttypename" ) );
     }
 
     protected final void setupTemplates()
@@ -179,7 +179,7 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResource>
 
     private PageTemplate createPageTemplate()
     {
-        final ModuleKey module = ModuleKey.from( "mymodule-1.0.0" );
+        final ModuleKey module = ModuleKey.from( "mymodule" );
 
         final RootDataSet pageTemplateConfig = new RootDataSet();
         pageTemplateConfig.addProperty( "pause", Value.newLong( 10000 ) );
@@ -195,8 +195,8 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResource>
             key( PageTemplateKey.from( module.getName(), new PageTemplateName( "my-page" ) ) ).
             displayName( "Main page emplate" ).
             config( pageTemplateConfig ).
-            canRender( ContentTypeNames.from( "mymodule-1.0.0:article", "mymodule-1.0.0:banner" ) ).
-            descriptor( PageDescriptorKey.from( "mainmodule-1.0.0:landing-page" ) ).
+            canRender( ContentTypeNames.from( "mymodule:article", "mymodule:banner" ) ).
+            descriptor( PageDescriptorKey.from( "mainmodule:landing-page" ) ).
             regions( pageRegions ).
             build();
     }
@@ -204,7 +204,7 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResource>
     private PageDescriptor createDescriptor()
         throws Exception
     {
-        final ModuleKey module = ModuleKey.from( "mainmodule-1.0.0" );
+        final ModuleKey module = ModuleKey.from( "mainmodule" );
         final ComponentDescriptorName name = new ComponentDescriptorName( "mypage" );
         final PageDescriptorKey key = PageDescriptorKey.from( module, name );
 

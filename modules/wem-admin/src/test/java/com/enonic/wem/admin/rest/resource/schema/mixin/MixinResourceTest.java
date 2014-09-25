@@ -23,11 +23,11 @@ import static com.enonic.wem.api.form.inputtype.InputTypes.TEXT_LINE;
 public class MixinResourceTest
     extends AbstractResourceTest
 {
-    private final static MixinName MY_MIXIN_QUALIFIED_NAME_1 = MixinName.from( "mymodule-1.0.0:input_text_1" );
+    private final static MixinName MY_MIXIN_QUALIFIED_NAME_1 = MixinName.from( "mymodule:input_text_1" );
 
     private final static String MY_MIXIN_INPUT_NAME_1 = "input_text_1";
 
-    private final static MixinName MY_MIXIN_QUALIFIED_NAME_2 = MixinName.from( "mymodule-1.0.0:text_area_2" );
+    private final static MixinName MY_MIXIN_QUALIFIED_NAME_2 = MixinName.from( "mymodule:text_area_2" );
 
     private final static String MY_MIXIN_INPUT_NAME_2 = "text_area_2";
 
@@ -69,7 +69,7 @@ public class MixinResourceTest
 
         final MockRestResponse response = request().path( "schema/mixin" ).queryParam( "name", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get();
         Assert.assertEquals( 404, response.getStatus() );
-        Assert.assertEquals( "Mixin [mymodule-1.0.0:input_text_1] was not found.", response.getAsString() );
+        Assert.assertEquals( "Mixin [mymodule:input_text_1] was not found.", response.getAsString() );
     }
 
     @Test

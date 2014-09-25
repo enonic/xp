@@ -5,7 +5,7 @@
     "displayName": "My Content",
     "editable": true,
     "hasChildren": false,
-    "iconUrl": "/admin/rest/schema/icon/ContentType:mymodule-1.0.0:my_type?hash=f95b70fdc3088560732a5ac135644506",
+    "iconUrl": "/admin/rest/schema/icon/ContentType:mymodule:my_type?hash=f95b70fdc3088560732a5ac135644506",
     "id": "aaa",
     "isDraft": false,
     "isPage": false,
@@ -18,5 +18,5 @@
     "path": "/my_a_content",
     "siteTemplateKey": null,
     "thumbnail": null,
-    "type": "mymodule-1.0.0:my_type"
+    "type": "mymodule:my_type"
 }

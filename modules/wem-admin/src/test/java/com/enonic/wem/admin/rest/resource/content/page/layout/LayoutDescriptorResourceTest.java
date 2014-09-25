@@ -38,7 +38,7 @@ public class LayoutDescriptorResourceTest
     public void test_get_by_key()
         throws Exception
     {
-        final LayoutDescriptorKey key = LayoutDescriptorKey.from( "module-1.0.0:fancy-layout" );
+        final LayoutDescriptorKey key = LayoutDescriptorKey.from( "module:fancy-layout" );
         final Form layoutForm = Form.newForm().
             addFormItem( newInput().name( "columns" ).inputType( InputTypes.DOUBLE ).build() ).
             build();
@@ -57,7 +57,7 @@ public class LayoutDescriptorResourceTest
         Mockito.when( layoutDescriptorService.getByKey( key ) ).thenReturn( layoutDescriptor );
 
         String jsonString = request().path( "content/page/layout/descriptor" ).
-            queryParam( "key", "module-1.0.0:fancy-layout" ).get().getAsString();
+            queryParam( "key", "module:fancy-layout" ).get().getAsString();
 
         assertJson( "get_by_key_success.json", jsonString );
     }
@@ -78,7 +78,7 @@ public class LayoutDescriptorResourceTest
                 add( newRegionDescriptor().name( "left" ).build() ).
                 add( newRegionDescriptor().name( "right" ).build() ).
                 build() ).
-            key( LayoutDescriptorKey.from( "module-1.0.0:fancy-layout" ) ).
+            key( LayoutDescriptorKey.from( "module:fancy-layout" ) ).
             build();
 
         final LayoutDescriptor layoutDescriptor2 = LayoutDescriptor.newLayoutDescriptor().
@@ -89,12 +89,12 @@ public class LayoutDescriptorResourceTest
                 add( newRegionDescriptor().name( "top" ).build() ).
                 add( newRegionDescriptor().name( "bottom" ).build() ).
                 build() ).
-            key( LayoutDescriptorKey.from( "module-1.0.0:putty-layout" ) ).
+            key( LayoutDescriptorKey.from( "module:putty-layout" ) ).
             build();
 
         final LayoutDescriptors layoutDescriptors = LayoutDescriptors.from( layoutDescriptor1, layoutDescriptor2 );
 
-        final ModuleKeys moduleKeys = ModuleKeys.from( "module-1.0.0", "module-1.0.1", "module-1.0.2" );
+        final ModuleKeys moduleKeys = ModuleKeys.from( "module1", "module2", "module3" );
 
         Mockito.when( layoutDescriptorService.getByModules( moduleKeys ) ).thenReturn( layoutDescriptors );
 

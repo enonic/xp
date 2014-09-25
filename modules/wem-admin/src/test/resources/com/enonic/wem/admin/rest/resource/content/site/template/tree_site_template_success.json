@@ -5,8 +5,8 @@
             "displayName": "displayName",
             "editable": true,
             "hasChildren": false,
-            "iconUrl": "/admin/rest/sitetemplate/icon/name-1.0.0?hash=f95b70fdc3088560732a5ac135644506",
-            "key": "name-1.0.0",
+            "iconUrl": "/admin/rest/sitetemplate/icon/name?hash=f95b70fdc3088560732a5ac135644506",
+            "key": "name",
             "name": "name",
             "parentKey": null,
             "templateType": "SITE"

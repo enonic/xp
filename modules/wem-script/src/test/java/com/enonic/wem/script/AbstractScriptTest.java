@@ -8,7 +8,7 @@ import com.enonic.wem.script.internal.ScriptServiceImpl;
 
 public abstract class AbstractScriptTest
 {
-    private final static ModuleKey MYMODULE_KEY = ModuleKey.from( "mymodule-1.0.0" );
+    private final static ModuleKey MYMODULE_KEY = ModuleKey.from( "mymodule" );
 
     private final SimpleScriptEnvironment environment;
 

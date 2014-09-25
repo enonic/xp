@@ -14,8 +14,6 @@ public final class CreateSiteTemplateParams
 {
     private SiteTemplateName name;
 
-    private SiteTemplateVersion version;
-
     private String displayName;
 
     private String description;
@@ -34,7 +32,6 @@ public final class CreateSiteTemplateParams
     {
         final CreateSiteTemplateParams createSiteTemplate = new CreateSiteTemplateParams().
             name( siteTemplate.getName() ).
-            version( siteTemplate.getVersion() ).
             displayName( siteTemplate.getDisplayName() ).
             description( siteTemplate.getDescription() ).
             url( siteTemplate.getUrl() ).
@@ -51,7 +48,6 @@ public final class CreateSiteTemplateParams
     public CreateSiteTemplateParams siteTemplateKey( final SiteTemplateKey key )
     {
         this.name( key.getName() );
-        this.version( key.getVersion() );
         return this;
     }
 
@@ -63,12 +59,6 @@ public final class CreateSiteTemplateParams
     public CreateSiteTemplateParams name( final SiteTemplateName name )
     {
         this.name = name;
-        return this;
-    }
-
-    public CreateSiteTemplateParams version( final SiteTemplateVersion version )
-    {
-        this.version = version;
         return this;
     }
 
@@ -125,11 +115,6 @@ public final class CreateSiteTemplateParams
         return name;
     }
 
-    public SiteTemplateVersion getVersion()
-    {
-        return version;
-    }
-
     public String getDisplayName()
     {
         return displayName;
@@ -168,7 +153,6 @@ public final class CreateSiteTemplateParams
     public void validate()
     {
         Preconditions.checkNotNull( this.name, "name cannot be null" );
-        Preconditions.checkNotNull( this.version, "version cannot be null" );
         Preconditions.checkNotNull( this.displayName, "displayName cannot be null" );
     }
 }

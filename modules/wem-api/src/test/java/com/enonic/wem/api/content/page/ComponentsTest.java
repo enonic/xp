@@ -41,13 +41,13 @@ public class ComponentsTest
 
         PartComponent partComponent = newPartComponent().
             name( "my-part" ).
-            descriptor( PartDescriptorKey.from( "mainmodule-1.0.0:partTemplateName" ) ).
+            descriptor( PartDescriptorKey.from( "mainmodule:partTemplateName" ) ).
             config( partConfig ).
             build();
 
         assertEquals( "my-part", partComponent.getName().toString() );
         assertEquals( "partTemplateName", partComponent.getDescriptor().getName().toString() );
-        assertEquals( "mainmodule-1.0.0", partComponent.getDescriptor().getModuleKey().toString() );
+        assertEquals( "mainmodule", partComponent.getDescriptor().getModuleKey().toString() );
     }
 
     @Test
@@ -58,12 +58,12 @@ public class ComponentsTest
 
         LayoutComponent layoutComponent = newLayoutComponent().
             name( "my-template" ).
-            descriptor( LayoutDescriptorKey.from( "mainmodule-1.0.0:layoutTemplateName" ) ).
+            descriptor( LayoutDescriptorKey.from( "mainmodule:layoutTemplateName" ) ).
             config( layoutConfig ).
             build();
 
         assertEquals( "my-template", layoutComponent.getName().toString() );
         assertEquals( "layoutTemplateName", layoutComponent.getDescriptor().getName().toString() );
-        assertEquals( "mainmodule-1.0.0", layoutComponent.getDescriptor().getModuleKey().toString() );
+        assertEquals( "mainmodule", layoutComponent.getDescriptor().getModuleKey().toString() );
     }
 }

@@ -45,7 +45,7 @@ public class ValidateContentDataCommandTest
     {
         // setup
         final ContentType contentType = ContentType.newContentType().
-            name( "mymodule-1.0.0:my_type" ).
+            name( "mymodule:my_type" ).
             addFormItem( FieldSet.newFieldSet().
                 label( "My layout" ).
                 name( "myLayout" ).
@@ -80,7 +80,7 @@ public class ValidateContentDataCommandTest
             newFormItemSet().name( "mySet" ).required( true ).addFormItem(
                 newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).build() ).build() ).build();
         final ContentType contentType = ContentType.newContentType().
-            name( "mymodule-1.0.0:my_type" ).
+            name( "mymodule:my_type" ).
             addFormItem( fieldSet ).
             build();
 

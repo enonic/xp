@@ -23,11 +23,11 @@ public class PageTemplateTest
             key( PageTemplateKey.from( "mainmodule|main-page" ) ).
             displayName( "Main page template" ).
             config( pageTemplateConfig ).
-            canRender( ContentTypeNames.from( "mainmodule-1.0.0:article", "mainmodule-1.0.0:banner" ) ).
-            descriptor( PageDescriptorKey.from( ModuleKey.from( "mainmodule-1.0.0" ), new ComponentDescriptorName( "landing-page" ) ) ).
+            canRender( ContentTypeNames.from( "mainmodule:article", "mainmodule:banner" ) ).
+            descriptor( PageDescriptorKey.from( ModuleKey.from( "mainmodule" ), new ComponentDescriptorName( "landing-page" ) ) ).
             build();
 
         assertEquals( "main-page", pageTemplate.getName().toString() );
-        assertTrue( pageTemplate.getCanRender().contains( ContentTypeName.from( "mainmodule-1.0.0:article" ) ) );
+        assertTrue( pageTemplate.getCanRender().contains( ContentTypeName.from( "mainmodule:article" ) ) );
     }
 }

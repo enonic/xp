@@ -38,10 +38,10 @@
         "modifiedTime": "2013-01-01T12:00:00Z",
         "size": 1
     },
-    "iconUrl": "/admin/rest/schema/icon/ContentType:mymodule-1.0.0:my_cty?hash=f95b70fdc3088560732a5ac135644506",
-    "key": "ContentType:mymodule-1.0.0:my_cty",
+    "iconUrl": "/admin/rest/schema/icon/ContentType:mymodule:my_cty?hash=f95b70fdc3088560732a5ac135644506",
+    "key": "ContentType:mymodule:my_cty",
     "modifiedTime": null,
     "modifier": null,
-    "name": "mymodule-1.0.0:my_cty",
-    "superType": "system-0.0.0:unstructured"
+    "name": "mymodule:my_cty",
+    "superType": "system:unstructured"
 }

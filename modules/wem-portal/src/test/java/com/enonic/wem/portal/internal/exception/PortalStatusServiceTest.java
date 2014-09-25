@@ -95,7 +95,7 @@ public class PortalStatusServiceTest
 
         final ResourceProblemException exception = ResourceProblemException.newBuilder().
             lineNumber( 1 ).
-            resource( ResourceKey.from( "mymodule-1.0.0:source.js" ) ).
+            resource( ResourceKey.from( "mymodule:source.js" ) ).
             build();
         final Status status = new Status( 500, exception );
         final Representation representation = getRepresentation( status );

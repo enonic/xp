@@ -35,7 +35,7 @@ public class ContentTypeResourceTest
 {
     private static final Instant SOME_DATE = LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC );
 
-    private static final ContentTypeName MY_CTY_QUALIFIED_NAME = ContentTypeName.from( "mymodule-1.0.0:my_cty" );
+    private static final ContentTypeName MY_CTY_QUALIFIED_NAME = ContentTypeName.from( "mymodule:my_cty" );
 
     private ContentTypeService contentTypeService;
 
@@ -128,7 +128,7 @@ public class ContentTypeResourceTest
 
         MixinReference myMixinReference = newMixinReference().
             name( "myMixinReference" ).
-            mixin( "mymodule-1.0.0:mymixin" ).
+            mixin( "mymodule:mymixin" ).
             build();
 
         ContentType contentType = newContentType().

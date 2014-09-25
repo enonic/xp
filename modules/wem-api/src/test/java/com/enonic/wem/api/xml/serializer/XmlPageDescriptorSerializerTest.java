@@ -76,7 +76,7 @@ public class XmlPageDescriptorSerializerTest
                 add( newRegionDescriptor().name( "main" ).build() ).
                 add( newRegionDescriptor().name( "footer" ).build() ).
                 build() ).
-            key( PageDescriptorKey.from( "module-1.0.0:mypage" ) ).
+            key( PageDescriptorKey.from( "module:mypage" ) ).
             build();
 
         final XmlPageDescriptor xml = XmlPageDescriptorMapper.toXml( pageDescriptor );
@@ -91,7 +91,7 @@ public class XmlPageDescriptorSerializerTest
     {
         final String xml = readFromFile( "page-descriptor.xml" );
         final PageDescriptor.Builder builder = PageDescriptor.newPageDescriptor();
-        builder.key( PageDescriptorKey.from( "module-1.0.0:mypage" ) );
+        builder.key( PageDescriptorKey.from( "module:mypage" ) );
         builder.regions( RegionDescriptors.newRegionDescriptors().build() );
 
         final XmlPageDescriptor xmlObject = XmlSerializers2.pageDescriptor().parse( xml );
