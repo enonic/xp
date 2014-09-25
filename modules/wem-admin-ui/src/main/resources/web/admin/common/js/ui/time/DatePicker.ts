@@ -1,5 +1,90 @@
 module api.ui.time {
 
+    export class DatePickerBuilder {
+
+        year: number;
+
+        month: number;
+
+        selectedDate: Date;
+
+        calendar: Calendar;
+
+        startingDayOfWeek: DayOfWeek = DaysOfWeek.MONDAY;
+
+        closeOnSelect: boolean = true;
+
+        closeOnOutsideClick: boolean = true;
+
+        setYear(value: number): DatePickerBuilder {
+            this.year = value;
+            return this;
+        }
+
+        getYear(): number {
+            return this.year;
+        }
+
+        setMonth(value: number): DatePickerBuilder {
+            this.month = value;
+            return this;
+        }
+
+        getMonth(): number {
+            return this.month;
+        }
+
+        setSelectedDate(value: Date): DatePickerBuilder {
+            this.selectedDate = value;
+            return this;
+        }
+
+        getSelectedDate(): Date {
+            return this.selectedDate;
+        }
+
+        setCalendar(value: Calendar): DatePickerBuilder {
+            this.calendar = value;
+            return this;
+        }
+
+        getCalendar(): Calendar {
+            return this.calendar;
+        }
+
+        setStartingDayOfWeek(value: DayOfWeek): DatePickerBuilder {
+            this.startingDayOfWeek = value;
+            return this;
+        }
+
+        getStartingDayOfWeek(): DayOfWeek {
+            return this.startingDayOfWeek;
+        }
+
+        setCloseOnSelect(value: boolean): DatePickerBuilder {
+            this.closeOnSelect = value;
+            return this;
+        }
+
+        isCloseOnSelect(): boolean {
+            return this.closeOnSelect;
+        }
+
+        setCloseOnOutsideClick(value: boolean): DatePickerBuilder {
+            this.closeOnOutsideClick = value;
+            return this;
+        }
+
+        isCloseOnOutsideClick(): boolean {
+            return this.closeOnOutsideClick;
+        }
+
+        build(): DatePicker {
+            return new DatePicker(this);
+        }
+
+    }
+
     export class DatePicker extends api.dom.DivEl {
 
         private popup: DatePickerPopup;
@@ -28,14 +113,17 @@ module api.ui.time {
             var wrapper = new api.dom.DivEl('wrapper');
             wrapper.appendChild(this.input);
 
-            this.calendar = new CalendarBuilder().
+            this.calendar = builder.getCalendar() || new CalendarBuilder().
                 setSelectedDate(builder.selectedDate).
                 setMonth(builder.month).
                 setYear(builder.year).
                 setInteractive(true).
                 build();
 
-            this.popup = new DatePickerPopup(this.calendar, builder);
+            var popupBuilder = new DatePickerPopupBuilder().
+                setCalendar(this.calendar).
+                setCloseOnOutsideClick(builder.isCloseOnOutsideClick());
+            this.popup = popupBuilder.build();
             wrapper.appendChild(this.popup);
 
             this.popupTrigger = new api.ui.button.Button();

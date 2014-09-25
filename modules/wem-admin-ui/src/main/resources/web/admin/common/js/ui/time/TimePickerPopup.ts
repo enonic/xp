@@ -1,5 +1,46 @@
 module api.ui.time {
 
+    export class TimePickerPopupBuilder {
+
+        hours: number;
+
+        minutes: number;
+
+        closeOnOutsideClick: boolean = true;
+
+        setHours(value: number): TimePickerPopupBuilder {
+            this.hours = value;
+            return this;
+        }
+
+        getHours(): number {
+            return this.hours;
+        }
+
+        setMinutes(value: number): TimePickerPopupBuilder {
+            this.minutes = value;
+            return this;
+        }
+
+        getMinutes(): number {
+            return this.minutes;
+        }
+
+        setCloseOnOutsideClick(value: boolean): TimePickerPopupBuilder {
+            this.closeOnOutsideClick = value;
+            return this;
+        }
+
+        isCloseOnOutsideClick(): boolean {
+            return this.closeOnOutsideClick;
+        }
+
+        build(): TimePickerPopup {
+            return new TimePickerPopup(this);
+        }
+
+    }
+
     export class TimePickerPopup extends api.dom.UlEl {
 
         private nextHour: api.dom.AEl;
@@ -15,7 +56,7 @@ module api.ui.time {
 
         private timeChangedListeners: {(hours: number, minutes: number) : void}[] = [];
 
-        constructor(builder: CommonTimePickerBuilder) {
+        constructor(builder: TimePickerPopupBuilder) {
             super('time-picker-dialog');
 
             var hourContainer = new api.dom.LiEl();

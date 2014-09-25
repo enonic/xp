@@ -1,5 +1,35 @@
 module api.ui.time {
 
+    export class DatePickerPopupBuilder {
+
+        calendar: Calendar;
+
+        closeOnOutsideClick: boolean = true;
+
+        setCalendar(value: Calendar): DatePickerPopupBuilder {
+            this.calendar = value;
+            return this;
+        }
+
+        getCalendar(): Calendar {
+            return this.calendar;
+        }
+
+        setCloseOnOutsideClick(value: boolean): DatePickerPopupBuilder {
+            this.closeOnOutsideClick = value;
+            return this;
+        }
+
+        isCloseOnOutsideClick(): boolean {
+            return this.closeOnOutsideClick;
+        }
+
+        build(): DatePickerPopup {
+            return new DatePickerPopup(this);
+        }
+
+    }
+
     export class DatePickerPopup extends api.dom.DivEl {
 
         private prevYear: api.dom.AEl;
@@ -10,7 +40,7 @@ module api.ui.time {
         private nextMonth: api.dom.AEl;
         private calendar: Calendar;
 
-        constructor(calendar: Calendar, builder: CommonDatePickerBuilder) {
+        constructor(builder: DatePickerPopupBuilder) {
             super('date-picker-dialog');
 
             var yearContainer = new api.dom.H2El('year-container');
@@ -49,7 +79,7 @@ module api.ui.time {
             });
             monthContainer.appendChild(this.nextMonth);
 
-            this.calendar = calendar;
+            this.calendar = builder.getCalendar() || new CalendarBuilder().build();
 
             this.year.setHtml(this.calendar.getYear().toString());
             this.month.setHtml(MonthsOfYear.getByNumberCode(this.calendar.getMonth()).getFullName());

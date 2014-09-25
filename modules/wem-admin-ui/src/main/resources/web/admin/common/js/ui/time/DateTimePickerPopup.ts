@@ -1,19 +1,76 @@
 module api.ui.time {
 
+    export class DateTimePickerPopupBuilder {
+
+        hours: number;
+
+        minutes: number;
+
+        calendar: Calendar;
+
+        closeOnOutsideClick: boolean = true;
+
+        setHours(value: number): DateTimePickerPopupBuilder {
+            this.hours = value;
+            return this;
+        }
+
+        getHours(): number {
+            return this.hours;
+        }
+
+        setMinutes(value: number): DateTimePickerPopupBuilder {
+            this.minutes = value;
+            return this;
+        }
+
+        getMinutes(): number {
+            return this.minutes;
+        }
+
+        setCalendar(value: Calendar): DateTimePickerPopupBuilder {
+            this.calendar = value;
+            return this;
+        }
+
+        getCalendar(): Calendar {
+            return this.calendar;
+        }
+
+        setCloseOnOutsideClick(value: boolean): DateTimePickerPopupBuilder {
+            this.closeOnOutsideClick = value;
+            return this;
+        }
+
+        isCloseOnOutsideClick(): boolean {
+            return this.closeOnOutsideClick;
+        }
+
+        build(): DateTimePickerPopup {
+            return new DateTimePickerPopup(this);
+        }
+
+    }
+
     export class DateTimePickerPopup extends api.dom.DivEl {
 
         private datePickerPopup: DatePickerPopup;
 
         private timePickerPopup: TimePickerPopup;
 
-        constructor(calendar: Calendar, builder: DateTimePickerBuilder) {
+        constructor(builder: DateTimePickerPopupBuilder) {
             super('date-time-dialog');
 
             var closeOnOutsideClick = builder.isCloseOnOutsideClick();
             builder.setCloseOnOutsideClick(false);
 
-            this.datePickerPopup = new DatePickerPopup(calendar, builder);
-            this.timePickerPopup = new TimePickerPopup(builder);
+            this.datePickerPopup = new DatePickerPopupBuilder().
+                setCalendar(builder.getCalendar()).
+                setCloseOnOutsideClick(false).build();
+            this.timePickerPopup = new TimePickerPopupBuilder().
+                setHours(builder.getHours()).
+                setCloseOnOutsideClick(false).
+                setMinutes(builder.getMinutes()).build();
 
             this.appendChildren([this.datePickerPopup, this.timePickerPopup]);
 
