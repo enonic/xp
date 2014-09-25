@@ -61,7 +61,13 @@ module api.schema.content.inputtype {
                 }
 
                 var value = new Value(event.getOption().displayValue.getContentTypeName().toString(), ValueTypes.STRING);
-                this.notifyValueAdded(value);
+                if (this.combobox.countSelected() == 1) { // overwrite initial value
+                    this.notifyValueChanged(new api.form.inputtype.ValueChangedEvent(value, 0));
+                }
+                else {
+                    this.notifyValueAdded(value);
+                }
+
                 this.validate(false);
             });
 
