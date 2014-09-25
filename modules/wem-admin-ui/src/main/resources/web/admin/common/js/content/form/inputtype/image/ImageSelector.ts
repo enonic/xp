@@ -298,7 +298,7 @@ module api.content.form.inputtype.image {
 
         private createImageContent(uploadItem: api.ui.uploader.UploadItem) {
 
-            new api.schema.content.GetContentTypeByNameRequest(new ContentTypeName(ContentTypeName.IMAGE)).
+            new api.schema.content.GetContentTypeByNameRequest(ContentTypeName.IMAGE).
                 sendAndParse().
                 then((contentType: api.schema.content.ContentType) => {
 

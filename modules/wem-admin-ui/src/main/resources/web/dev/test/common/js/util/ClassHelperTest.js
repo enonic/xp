@@ -1,4 +1,4 @@
-describe("Tests for ClassHelper", function () {
+describe("api.util.ClassHelper", function () {
 
     function namedFunction() {};
     var anonymousFunction = function () {};

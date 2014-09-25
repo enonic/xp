@@ -41,7 +41,7 @@ module api.liveedit.image {
 
             this.comboBox = new api.content.ContentComboBoxBuilder().
                 setMaximumOccurrences(1).
-                setAllowedContentTypes([ContentTypeName.IMAGE]).
+                setAllowedContentTypes([ContentTypeName.IMAGE.toString()]).
                 setLoader(new api.content.ContentSummaryLoader()).
                 setMinWidth(270).
                 build();
@@ -71,7 +71,7 @@ module api.liveedit.image {
 
             this.imageComponentView.showLoadingSpinner();
 
-            new api.schema.content.GetContentTypeByNameRequest(new ContentTypeName(ContentTypeName.IMAGE)).
+            new api.schema.content.GetContentTypeByNameRequest(ContentTypeName.IMAGE).
                 sendAndParse().
                 then((contentType: api.schema.content.ContentType) => {
 

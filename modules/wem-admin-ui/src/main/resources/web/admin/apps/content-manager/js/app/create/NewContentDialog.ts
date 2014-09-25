@@ -2,6 +2,7 @@ module app.create {
 
     import GetAllContentTypesRequest = api.schema.content.GetAllContentTypesRequest;
     import GetAllSiteTemplatesRequest = api.content.site.template.GetAllSiteTemplatesRequest;
+    import ContentTypeName = api.schema.content.ContentTypeName;
     import ContentTypeSummary = api.schema.content.ContentTypeSummary;
     import SiteTemplateSummary = api.content.site.template.SiteTemplateSummary;
 
@@ -117,9 +118,9 @@ module app.create {
 
         private filterByParentContent(items: NewContentDialogListItem[]): NewContentDialogListItem[] {
             return items.filter((item: NewContentDialogListItem) => {
-                var contentTypeName = item.getContentType().getContentTypeName().toString();
-                // don't show 'page-template' content type if parent content doesn't have site
-                return contentTypeName != 'system:page-template' || !!(this.parentContent && this.parentContent.getSite());
+                var contentTypeName = item.getContentType().getContentTypeName();
+                // Don't show page-template content type if parent content doesn't have site
+                return !contentTypeName.equals(ContentTypeName.PAGE_TEMPLATE) || !!(this.parentContent && this.parentContent.getSite());
             });
         }
 
@@ -188,7 +189,7 @@ module app.create {
                 items.push(NewContentDialogListItem.fromContentType(contentType))
             });
 
-            var siteContentType = contentTypesByName[api.schema.content.ContentTypeName.SITE];
+            var siteContentType = contentTypesByName[ContentTypeName.SITE.toString()];
             siteTemplates.forEach((siteTemplate: SiteTemplateSummary) => {
                 items.push(NewContentDialogListItem.fromSiteTemplate(siteTemplate, siteContentType));
             });

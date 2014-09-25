@@ -2,9 +2,13 @@ module api.schema.content {
 
     export class ContentTypeName implements api.Equitable {
 
-        static SITE:string = 'system:site';
+        // Built-in ContentTypes can be listed here
 
-        static IMAGE:string = 'system:image';
+        static SITE = new ContentTypeName('system:site');
+
+        static PAGE_TEMPLATE = new ContentTypeName('system:page-template');
+
+        static IMAGE = new ContentTypeName('system:image');
 
         private value: string;
 

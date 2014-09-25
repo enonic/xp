@@ -31,6 +31,10 @@ module api.schema.content {
             return new api.schema.content.ContentTypeName(this.getName());
         }
 
+        isSite(): boolean {
+            return this.getContentTypeName().equals(ContentTypeName.SITE);
+        }
+
         isFinal(): boolean {
             return this.final;
         }
