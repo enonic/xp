@@ -2,6 +2,7 @@ package com.enonic.wem.script.internal;
 
 import javax.script.Bindings;
 
+import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.script.ScriptLibrary;
 
@@ -21,11 +22,7 @@ public final class ScriptModuleScope
 
     public ResourceKey resolve( final String name )
     {
-        if ( name.contains( ":" ) )
-        {
-            return ResourceKey.from( name );
-        }
-        else if ( name.startsWith( "/" ) )
+        if ( name.startsWith( "/" ) )
         {
             return this.script.resolve( name );
         }
@@ -42,7 +39,23 @@ public final class ScriptModuleScope
             return resolveScript( name + SCRIPT_SUFFIX );
         }
 
-        return resolve( name );
+        if ( name.startsWith( "/" ) )
+        {
+            return this.script.resolve( name );
+        }
+
+        if ( name.startsWith( "./" ) )
+        {
+            return this.script.resolve( "../" + name );
+        }
+
+        final ResourceKey resolved = this.script.resolve( "../" + name );
+        if ( Resource.from( resolved ).exists() )
+        {
+            return resolved;
+        }
+
+        return this.script.resolve( "/lib/" + name );
     }
 
     public Object require( final String name )
