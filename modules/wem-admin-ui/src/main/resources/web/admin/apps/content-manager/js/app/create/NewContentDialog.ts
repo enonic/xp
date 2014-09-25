@@ -21,7 +21,6 @@ module app.create {
         private facetContainer: NewContentDialogFacets;
 
         private listItems: NewContentDialogListItem[];
-        private checkReloadListItems: boolean;
 
         constructor() {
             this.contentDialogTitle = new NewContentDialogTitle("What do you want to create?", "");
@@ -64,7 +63,6 @@ module app.create {
             this.recentList.appendChild(this.recentListMask);
 
             this.listItems = [];
-            this.checkReloadListItems = true;
 
             this.input.onValueChanged((event: api.ui.ValueChangedEvent) => {
                 this.filterList();
@@ -117,6 +115,14 @@ module app.create {
             this.facetContainer.updateLabels(contentTypesCount, siteTemplatesCount);
         }
 
+        private filterByParentContent(items: NewContentDialogListItem[]): NewContentDialogListItem[] {
+            return items.filter((item: NewContentDialogListItem) => {
+                var contentTypeName = item.getContentType().getContentTypeName().toString();
+                // don't show 'page-template' content type if parent content doesn't have site
+                return contentTypeName != 'system:page-template' || !!(this.parentContent && this.parentContent.getSite());
+            });
+        }
+
         setParentContent(value: api.content.Content) {
             this.parentContent = value;
         }
@@ -132,11 +138,9 @@ module app.create {
             }
             this.input.giveFocus();
 
-            if (this.checkReloadListItems) {
-                this.loadContentTypes();
-            } else {
-                this.recentList.setItems(this.listItems);
-            }
+            // CMS-3711: reload content types each time when dialog is show.
+            // It is slow but newly create content types are displayed.
+            this.loadContentTypes();
         }
 
         private loadContentTypes() {
@@ -150,7 +154,9 @@ module app.create {
                 .spread((contentTypes: ContentTypeSummary[], siteTemplates: SiteTemplateSummary[]) => {
 
                     this.facetContainer.updateLabels(contentTypes.length, siteTemplates.length);
-                    this.listItems = this.createListItems(contentTypes, siteTemplates);
+                    var listItems = this.createListItems(contentTypes, siteTemplates);
+                    this.listItems = this.filterByParentContent(listItems);
+
                     this.contentList.setItems(this.listItems);
                     this.recentList.setItems(this.listItems);
 
