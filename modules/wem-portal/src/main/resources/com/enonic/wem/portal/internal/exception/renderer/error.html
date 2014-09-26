@@ -115,10 +115,11 @@
 <p id="detail">{{description}}</p>
 
 {{#source}}
+{{#name}}
 <h2>
     In {{name}} at line {{line}}.
 </h2>
-
+{{/name}}
 <div id="source-code">
     {{#lines}}
     {{#mark}}

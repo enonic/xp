@@ -68,9 +68,11 @@ final class ThymeleafProcessorImpl
 
     private RuntimeException handleException( final TemplateProcessingException e )
     {
+        final int lineNumber = e.getLineNumber() != null ? e.getLineNumber() : 0;
+        final ResourceKey resource = e.getTemplateName() != null ? ResourceKey.from( e.getTemplateName() ) : null;
         return ResourceProblemException.newBuilder().
-            lineNumber( e.getLineNumber() ).
-            resource( ResourceKey.from( e.getTemplateName() ) ).
+            lineNumber( lineNumber ).
+            resource( resource ).
             cause( e ).
             message( e.getMessage() ).
             build();

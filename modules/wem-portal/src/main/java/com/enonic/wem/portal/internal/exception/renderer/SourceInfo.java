@@ -5,6 +5,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.resource.Resource;
+import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceProblemException;
 
 final class SourceInfo
@@ -20,7 +21,8 @@ final class SourceInfo
 
     public String getName()
     {
-        return this.error.getResource().toString();
+        final ResourceKey resource = this.error.getResource();
+        return resource != null ? resource.toString() : null;
     }
 
     public int getLine()
@@ -49,7 +51,12 @@ final class SourceInfo
 
     private List<String> getAllLines()
     {
-        final Resource resource = Resource.from( this.error.getResource() );
+        final ResourceKey resourceKey = this.error.getResource();
+        if ( resourceKey == null )
+        {
+            return Lists.newArrayList();
+        }
+        final Resource resource = Resource.from( resourceKey );
         return resource.readLines();
     }
 
