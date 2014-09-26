@@ -1,24 +1,30 @@
 module app.browse {
 
+    import ModuleKey = api.module.ModuleKey;
     import ModuleSummary = api.module.ModuleSummary;
     import TreeNode = api.ui.treegrid.TreeNode;
     import BrowseItem = api.app.browse.BrowseItem;
+    import UninstallModuleRequest = api.module.UninstallModuleRequest;
+    import UpdateModuleRequest = api.module.UpdateModuleRequest;
+    import StartModuleRequest = api.module.StartModuleRequest;
+    import StopModuleRequest = api.module.StopModuleRequest;
+    import ModuleUpdatedEvent = api.module.ModuleUpdatedEvent;
 
     export class ModuleBrowsePanel extends api.app.browse.BrowsePanel<api.module.ModuleSummary> {
 
         private browseActions: app.browse.ModuleBrowseActions;
 
-        private moduleTreeGridPanel: ModuleTreeGrid;
+        private moduleTreeGrid: ModuleTreeGrid;
 
         private toolbar: ModuleBrowseToolbar;
-        
+
         private moduleIconUrl: string;
 
         constructor() {
             var treeGridContextMenu = new app.browse.ModuleTreeGridContextMenu();
-            this.moduleTreeGridPanel = new ModuleTreeGrid(); // TODO add contextMenu
+            this.moduleTreeGrid = new ModuleTreeGrid(); // TODO add contextMenu
 
-            this.browseActions = ModuleBrowseActions.init(this.moduleTreeGridPanel);
+            this.browseActions = ModuleBrowseActions.init(this.moduleTreeGrid);
             treeGridContextMenu.setActions(this.browseActions);
 
             this.toolbar = new ModuleBrowseToolbar(this.browseActions);
@@ -26,12 +32,12 @@ module app.browse {
 
             super({
                 browseToolbar: this.toolbar,
-                treeGridPanel2: this.moduleTreeGridPanel,
+                treeGrid: this.moduleTreeGrid,
                 browseItemPanel: browseItemPanel,
                 filterPanel: undefined
             });
 
-            this.moduleTreeGridPanel.onRowSelectionChanged((selectedRows: TreeNode<ModuleSummary>[]) => {
+            this.moduleTreeGrid.onRowSelectionChanged((selectedRows: TreeNode<ModuleSummary>[]) => {
                 this.browseActions.updateActionsEnabledState(<any[]>selectedRows.map((elem) => {
                     return elem.getData();
                 }));
@@ -42,7 +48,7 @@ module app.browse {
             this.registerEvents();
         }
 
-        treeNodesToBrowseItems(nodes: TreeNode<ModuleSummary>[]): api.app.browse.BrowseItem<ModuleSummary>[] {
+        treeNodesToBrowseItems(nodes: TreeNode<ModuleSummary>[]): BrowseItem<ModuleSummary>[] {
             var browseItems: BrowseItem<ModuleSummary>[] = [];
 
             // do not proceed duplicated content. still, it can be selected
@@ -66,50 +72,42 @@ module app.browse {
         }
 
         private registerEvents() {
-            app.browse.StopModuleEvent.on((event: app.browse.StopModuleEvent) => {
-                var moduleKeys: string[] = event.getModules().map<string>((mod: ModuleSummary) => {
-                    return mod.getModuleKey().toString();
-                });
-                new api.module.StopModuleRequest(moduleKeys).sendAndParse()
+            StopModuleEvent.on((event: StopModuleEvent) => {
+                var moduleKeys = ModuleKey.fromModules(event.getModules());
+                new StopModuleRequest(moduleKeys).sendAndParse()
                     .then(() => {
                     }).done();
             });
-            app.browse.StartModuleEvent.on((event: app.browse.StartModuleEvent) => {
-                var moduleKeys: string[] = event.getModules().map<string>((mod: ModuleSummary) => {
-                    return mod.getModuleKey().toString();
-                });
-                new api.module.StartModuleRequest(moduleKeys).sendAndParse()
+            StartModuleEvent.on((event: StartModuleEvent) => {
+                var moduleKeys = ModuleKey.fromModules(event.getModules());
+                new StartModuleRequest(moduleKeys).sendAndParse()
                     .then(() => {
                     }).done();
             });
-            app.browse.UpdateModuleEvent.on((event: app.browse.UpdateModuleEvent) => {
-                var moduleKeys: string[] = event.getModules().map<string>((mod: ModuleSummary) => {
-                    return mod.getModuleKey().toString();
-                });
-                new api.module.UpdateModuleRequest(moduleKeys).sendAndParse().done();
+            UpdateModuleEvent.on((event: UpdateModuleEvent) => {
+                var moduleKeys = ModuleKey.fromModules(event.getModules());
+                new UpdateModuleRequest(moduleKeys).sendAndParse().done();
             });
-            app.browse.UninstallModuleEvent.on((event: app.browse.UninstallModuleEvent) => {
-                var moduleKeys: string[] = event.getModules().map<string>((mod: ModuleSummary) => {
-                    return mod.getModuleKey().toString();
-                });
-                new api.module.UninstallModuleRequest(moduleKeys).sendAndParse()
+            UninstallModuleEvent.on((event: UninstallModuleEvent) => {
+                var moduleKeys = ModuleKey.fromModules(event.getModules());
+                new UninstallModuleRequest(moduleKeys).sendAndParse()
                     .then(() => {
-                        this.moduleTreeGridPanel.reload();
+                        this.moduleTreeGrid.reload();
                     }).done();
             });
 
-            var installModuleDialog: app.browse.InstallModuleDialog = new app.browse.InstallModuleDialog(this.moduleTreeGridPanel);
-            app.browse.InstallModuleEvent.on((event: app.browse.InstallModuleEvent) => {
+            var installModuleDialog = new InstallModuleDialog(this.moduleTreeGrid);
+            InstallModuleEvent.on((event: InstallModuleEvent) => {
                 installModuleDialog.open();
             });
 
-            api.module.ModuleUpdatedEvent.on((event: api.module.ModuleUpdatedEvent) => {
+            api.module.ModuleUpdatedEvent.on((event: ModuleUpdatedEvent) => {
                 if (event.getEventType() === 'INSTALLED') {
-                    this.moduleTreeGridPanel.appendModuleNode(event.getModuleKey());
+                    this.moduleTreeGrid.appendModuleNode(event.getModuleKey());
                 } else if (event.getEventType() === 'UNINSTALLED') {
-                    this.moduleTreeGridPanel.deleteModuleNode(event.getModuleKey());
+                    this.moduleTreeGrid.deleteModuleNode(event.getModuleKey());
                 } else {
-                    this.moduleTreeGridPanel.updateModuleNode(event.getModuleKey());
+                    this.moduleTreeGrid.updateModuleNode(event.getModuleKey());
                 }
             });
 

@@ -1,10 +1,9 @@
 module api.ui.menu {
 
-
     export class ActionMenu extends api.dom.DivEl {
 
-        private actionList: Action[];
         private actionListEl: api.dom.UlEl;
+
         private labelEl: api.dom.DivEl;
 
         constructor(label: string, ...actions: Action[]) {
@@ -16,11 +15,8 @@ module api.ui.menu {
             this.actionListEl = new api.dom.UlEl();
             this.appendChild(this.actionListEl);
 
-            this.actionList = actions;
-
-
-            this.actionList.forEach((action: Action, i: number) => {
-                var el = this.addAction(action, i);
+            actions.forEach((action: Action) => {
+                this.addAction(action);
             });
 
             this.labelEl.onClicked((event) => {
@@ -36,40 +32,12 @@ module api.ui.menu {
             this.labelEl.getEl().setInnerHtml(label);
         }
 
-        private addAction(action: Action, index: number): api.dom.DivEl {
-            var actionEl = new ActionMenuItem(action, index);
-
-            actionEl.onClicked(() => {
+        private addAction(action: Action) {
+            var actionMenuItem = new ActionMenuItem(action);
+            this.actionListEl.appendChild(actionMenuItem);
+            actionMenuItem.onClicked(() => {
                 this.removeClass("expanded");
-                if (actionEl.hasClass("active")) {
-                    this.doAction(this.nextActionIndex(index));
-                } else {
-                    this.doAction(index);
-                }
-
             });
-            this.actionListEl.appendChild(actionEl);
-            return actionEl
-        }
-
-        private nextActionIndex(index: number): number {
-            index = index + 1;
-            if (index < this.actionList.length) {
-                if (this.actionList[index].isEnabled()) {
-                    return index;
-                } else {
-                    return this.nextActionIndex(index);
-                }
-            } else {
-                return 0;
-            }
-        }
-
-        private doAction(index: number) {
-            while (!this.actionList[index].isEnabled()) {
-                index++;
-            }
-            this.actionList[index].execute();
         }
     }
 }

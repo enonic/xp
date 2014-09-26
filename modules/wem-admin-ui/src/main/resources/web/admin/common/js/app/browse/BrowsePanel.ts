@@ -8,7 +8,7 @@ module api.app.browse {
 
         browseToolbar:api.ui.toolbar.Toolbar;
 
-        treeGridPanel2?:api.ui.treegrid.TreeGrid<Object>;
+        treeGrid?:api.ui.treegrid.TreeGrid<Object>;
 
         browseItemPanel:BrowseItemPanel<M>;
 
@@ -21,7 +21,7 @@ module api.app.browse {
 
         private browseToolbar: api.ui.toolbar.Toolbar;
 
-        private newTreeGrid: api.ui.treegrid.TreeGrid<Object>;
+        private treeGrid: api.ui.treegrid.TreeGrid<Object>;
 
         private browseItemPanel: BrowseItemPanel<M>;
 
@@ -41,19 +41,19 @@ module api.app.browse {
             super();
 
             this.browseToolbar = params.browseToolbar;
-            this.newTreeGrid = params.treeGridPanel2;
+            this.treeGrid = params.treeGrid;
             this.browseItemPanel = params.browseItemPanel;
             this.filterPanel = params.filterPanel;
 
             this.browseItemPanel.onDeselected((event: ItemDeselectedEvent<M>) => {
-                this.newTreeGrid.deselectNode(event.getBrowseItem().getId());
+                this.treeGrid.deselectNode(event.getBrowseItem().getId());
             });
 
             this.gridAndToolbarContainer = new api.ui.panel.Panel();
             this.gridAndToolbarContainer.appendChild(this.browseToolbar);
 
             var gridPanel = new api.ui.panel.Panel();
-            gridPanel.appendChild(this.newTreeGrid);
+            gridPanel.appendChild(this.treeGrid);
 
             this.gridAndToolbarContainer.appendChild(gridPanel);
 
@@ -68,7 +68,7 @@ module api.app.browse {
                 this.filterAndGridAndDetailSplitPanel = this.gridAndDetailSplitPanel;
             }
 
-            this.newTreeGrid.onRowSelectionChanged((nodes: api.ui.treegrid.TreeNode<Object>[]) => {
+            this.treeGrid.onRowSelectionChanged((nodes: api.ui.treegrid.TreeNode<Object>[]) => {
                 var browseItems: api.app.browse.BrowseItem<M>[] = this.treeNodesToBrowseItems(nodes);
                 this.browseItemPanel.setItems(browseItems);
             });
@@ -111,7 +111,7 @@ module api.app.browse {
                 if (this.filterPanel) {
                     this.filterPanel.search();
                 } else {
-                    this.newTreeGrid.reload();
+                    this.treeGrid.reload();
                 }
                 this.refreshNeeded = false;
             }

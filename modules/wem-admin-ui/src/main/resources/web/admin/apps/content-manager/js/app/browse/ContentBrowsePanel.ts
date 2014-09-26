@@ -38,7 +38,7 @@ module app.browse {
 
             super({
                 browseToolbar: this.toolbar,
-                treeGridPanel2: this.contentTreeGridPanel,
+                treeGrid: this.contentTreeGridPanel,
                 browseItemPanel: this.contentBrowseItemPanel,
                 filterPanel: this.contentFilterPanel
             });

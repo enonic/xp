@@ -4,21 +4,24 @@ module api.ui.menu {
 
         private action: api.ui.Action;
 
-        constructor(action: api.ui.Action, index: number) {
+        constructor(action: api.ui.Action) {
 
             super("action");
             this.action = action;
 
             this.getEl().setInnerHtml(this.action.getLabel());
-            this.getEl().setData("action", index + "");
 
             this.action.onPropertyChanged(() => {
-                if (this.action.isEnabled() && !this.isVisible()) {
+                if (this.action.isEnabled()) {
                     this.show();
                 }
-                else if (!this.action.isEnabled() && this.isVisible()) {
+                else if (!this.action.isEnabled()) {
                     this.hide();
                 }
+            });
+
+            this.onClicked(() => {
+                this.action.execute();
             });
         }
     }

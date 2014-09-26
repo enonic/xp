@@ -26,7 +26,7 @@ module app.browse {
 
             super({
                 browseToolbar: this.toolbar,
-                treeGridPanel2: this.templateTreeGrid,
+                treeGrid: this.templateTreeGrid,
                 browseItemPanel: browseItemPanel,
                 filterPanel: undefined
             });
