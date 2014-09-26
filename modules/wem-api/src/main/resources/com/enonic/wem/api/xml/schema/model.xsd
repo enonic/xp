@@ -28,7 +28,7 @@
   <xsd:element name="page-template" type="pageTemplate"/>
 
   <!-- Content type element -->
-  <xsd:element name="type" type="contentType"/>
+  <xsd:element name="content-type" type="contentType"/>
 
   <!-- Mixin type element -->
   <xsd:element name="mixin" type="mixin"/>

@@ -15,6 +15,6 @@ final class XmlContentTypeSerializer
     @Override
     protected Object wrapXml( final XmlContentType xml )
     {
-        return new ObjectFactory().createType( xml );
+        return new ObjectFactory().createContentType( xml );
     }
 }

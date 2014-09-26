@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<type>
+<content-type>
     <display-name>All the Base Types</display-name>
     <description>description</description>
     <content-display-name-script>$('firstName') + ' ' + $('lastName')</content-display-name-script>
@@ -26,4 +26,4 @@
           <occurrences minimum="0" maximum="1"/>
         </form-item-set>
     </form>
-</type>
+</content-type>
