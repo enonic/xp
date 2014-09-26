@@ -9,12 +9,15 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableMap;
+
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.schema.BaseSchema;
 import com.enonic.wem.api.schema.Schema;
+import com.enonic.wem.api.schema.SchemaKind;
 import com.enonic.wem.api.schema.Schemas;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -35,43 +38,58 @@ import com.enonic.wem.api.xml.model.XmlRelationshipType;
 import com.enonic.wem.api.xml.serializer.XmlSerializers2;
 import com.enonic.wem.core.support.dao.IconDao;
 
+import static com.enonic.wem.api.schema.SchemaKind.CONTENT_TYPE;
+import static com.enonic.wem.api.schema.SchemaKind.METADATA_SCHEMA;
+import static com.enonic.wem.api.schema.SchemaKind.MIXIN;
+import static com.enonic.wem.api.schema.SchemaKind.RELATIONSHIP_TYPE;
 import static java.util.stream.Collectors.toList;
 
 public final class SchemaLoader
 {
     private final static Logger LOG = LoggerFactory.getLogger( SchemaLoader.class );
 
-    private final static Pattern PATTERN = Pattern.compile( "schema/([^/]+)/schema\\.xml" );
+    private final static Pattern CONTENT_TYPE_PATTERN = Pattern.compile( "content-type/([^/]+)/content-type\\.xml" );
 
-    private static final String SCHEMA_XML = "schema.xml";
+    private final static Pattern MIXIN_PATTERN = Pattern.compile( "mixin/([^/]+)/mixin\\.xml" );
 
-    private static final String SCHEMA_DIR = "schema";
+    private final static Pattern RELATIONSHIP_TYPE_PATTERN = Pattern.compile( "relationship-type/([^/]+)/relationship-type\\.xml" );
+
+    private final static Pattern METADATA_PATTERN = Pattern.compile( "metadata/([^/]+)/metadata\\.xml" );
+
+    private final static ImmutableMap<SchemaKind, Pattern> SCHEMA_PATTERNS =
+        ImmutableMap.of( CONTENT_TYPE, CONTENT_TYPE_PATTERN, MIXIN, MIXIN_PATTERN, RELATIONSHIP_TYPE, RELATIONSHIP_TYPE_PATTERN,
+                         METADATA_SCHEMA, METADATA_PATTERN );
+
+    private final static ImmutableMap<SchemaKind, String> SCHEMA_FILES =
+        ImmutableMap.of( CONTENT_TYPE, "content-type.xml", MIXIN, "mixin.xml", RELATIONSHIP_TYPE, "relationship-type.xml", METADATA_SCHEMA,
+                         "metadata.xml" );
+
+    private final static ImmutableMap<SchemaKind, String> SCHEMA_DIRECTORIES =
+        ImmutableMap.of( CONTENT_TYPE, "content-type", MIXIN, "mixin", RELATIONSHIP_TYPE, "relationship-type", METADATA_SCHEMA,
+                         "metadata" );
 
     private final IconDao iconDao = new IconDao();
 
     public Schemas loadSchemas( final Module module )
     {
         final ModuleKey moduleKey = module.getKey();
-        final ResourceKey schemaDir = findSchemaDirectory( moduleKey );
-        if ( schemaDir == null )
-        {
-            return Schemas.empty();
-        }
+        final List<SchemaKindName> schemaKeys = findSchemaKeys( module );
 
-        final List<String> schemaNames = getSchemaNames( module );
-
-        final List<Schema> schemas = schemaNames.stream().
-            map( ( schemaName ) -> loadSchema( moduleKey, schemaName ) ).
+        final List<Schema> schemas = schemaKeys.stream().
+            map( ( schemaKey ) -> loadSchema( moduleKey, schemaKey ) ).
             filter( Objects::nonNull ).
             collect( toList() );
 
         return Schemas.from( schemas );
     }
 
-    private Schema loadSchema( final ModuleKey moduleKey, final String schemaName )
+    private Schema loadSchema( final ModuleKey moduleKey, final SchemaKindName schemaKey )
     {
-        final ResourceKey schemaFolderKey = ResourceKey.from( moduleKey, SCHEMA_DIR + "/" + schemaName );
-        final ResourceKey schemaXmlKey = schemaFolderKey.resolve( SCHEMA_XML );
+        final SchemaKind kind = schemaKey.schemaKind;
+        final String schemaName = schemaKey.name;
+        final ResourceKey schemaFolderKey = ResourceKey.from( moduleKey, SCHEMA_DIRECTORIES.get( kind ) + "/" + schemaName );
+        final ResourceKey schemaXmlKey = schemaFolderKey.resolve( SCHEMA_FILES.get( kind ) );
+
         final Resource schemaResource = Resource.from( schemaXmlKey );
         if ( schemaResource.exists() )
         {
@@ -79,7 +97,7 @@ public final class SchemaLoader
             {
                 final String serializedSchema = schemaResource.readString();
 
-                final BaseSchema.Builder schemaBuilder = parseSchemaXml( serializedSchema );
+                final BaseSchema.Builder schemaBuilder = parseSchemaXml( kind, serializedSchema );
                 final Instant modifiedTime = Instant.now();
                 schemaBuilder.modifiedTime( modifiedTime );
                 schemaBuilder.createdTime( modifiedTime );
@@ -114,103 +132,84 @@ public final class SchemaLoader
         return null;
     }
 
-    private List<String> getSchemaNames( final Module module )
+    private List<SchemaKindName> findSchemaKeys( final Module module )
     {
         return module.getResourcePaths().stream().
-            map( PATTERN::matcher ).
-            filter( Matcher::matches ).
-            map( matcher -> matcher.group( 1 ) ).
+            map( this::resourcePathToSchemaKey ).
+            filter( Objects::nonNull ).
             collect( toList() );
     }
 
-    private ResourceKey findSchemaDirectory( final ModuleKey moduleKey )
+    private SchemaKindName resourcePathToSchemaKey( final String resourcePath )
     {
-        final ResourceKey key = ResourceKey.from( moduleKey, SCHEMA_DIR );
-        final Resource resource = Resource.from( key );
-
-        if ( resource.exists() )
-        {
-            return key;
-        }
-
-        return null;
+        return SCHEMA_PATTERNS.entrySet().stream().
+            map( schemaEntry -> {
+                final Matcher matcher = schemaEntry.getValue().matcher( resourcePath );
+                return matcher.matches() ? new SchemaKindName( schemaEntry.getKey(), matcher.group( 1 ) ) : null;
+            } ).
+            filter( Objects::nonNull ).
+            findFirst().
+            orElse( null );
     }
 
-    final BaseSchema.Builder parseSchemaXml( final String serializedSchema )
+    private BaseSchema.Builder parseSchemaXml( final SchemaKind kind, final String serializedSchema )
     {
-        BaseSchema.Builder schema = parseContentTypeXml( serializedSchema );
-        if ( schema == null )
+        switch ( kind )
         {
-            schema = parseRelationshipTypeXml( serializedSchema );
+            case CONTENT_TYPE:
+                return parseContentTypeXml( serializedSchema );
+            case MIXIN:
+                return parseMixinXml( serializedSchema );
+            case RELATIONSHIP_TYPE:
+                return parseRelationshipTypeXml( serializedSchema );
+            case METADATA_SCHEMA:
+                return parseMetadataSchemaXml( serializedSchema );
         }
-        if ( schema == null )
-        {
-            schema = parseMixinXml( serializedSchema );
-        }
-        if ( schema == null )
-        {
-            schema = parseMetadataSchemaXml( serializedSchema );
-        }
-        return schema;
+        throw new IllegalArgumentException( "Unsupported SchemaKind [" + kind + "]" );
     }
 
     private ContentType.Builder parseContentTypeXml( final String serializedContentType )
     {
-        try
-        {
-            final ContentType.Builder builder = ContentType.newContentType();
-            final XmlContentType contentTypeXml = XmlSerializers2.contentType().parse( serializedContentType );
-            XmlContentTypeMapper.fromXml( contentTypeXml, builder );
-            return builder;
-        }
-        catch ( Exception e )
-        {
-            return null;
-        }
+        final ContentType.Builder builder = ContentType.newContentType();
+        final XmlContentType contentTypeXml = XmlSerializers2.contentType().parse( serializedContentType );
+        XmlContentTypeMapper.fromXml( contentTypeXml, builder );
+        return builder;
     }
 
     private RelationshipType.Builder parseRelationshipTypeXml( final String serializedRelationshipType )
     {
-        try
-        {
-            final RelationshipType.Builder builder = RelationshipType.newRelationshipType();
-            final XmlRelationshipType relationshipTypeXml = XmlSerializers2.relationshipType().parse( serializedRelationshipType );
-            XmlRelationshipTypeMapper.fromXml( relationshipTypeXml, builder );
-            return builder;
-        }
-        catch ( Exception e )
-        {
-            return null;
-        }
+        final RelationshipType.Builder builder = RelationshipType.newRelationshipType();
+        final XmlRelationshipType relationshipTypeXml = XmlSerializers2.relationshipType().parse( serializedRelationshipType );
+        XmlRelationshipTypeMapper.fromXml( relationshipTypeXml, builder );
+        return builder;
     }
 
     private Mixin.Builder parseMixinXml( final String serializedMixin )
     {
-        try
-        {
-            final Mixin.Builder builder = Mixin.newMixin();
-            final XmlMixin mixinXml = XmlSerializers2.mixin().parse( serializedMixin );
-            XmlMixinMapper.fromXml( mixinXml, builder );
-            return builder;
-        }
-        catch ( Exception e )
-        {
-            return null;
-        }
+        final Mixin.Builder builder = Mixin.newMixin();
+        final XmlMixin mixinXml = XmlSerializers2.mixin().parse( serializedMixin );
+        XmlMixinMapper.fromXml( mixinXml, builder );
+        return builder;
     }
 
     private MetadataSchema.Builder parseMetadataSchemaXml( final String serializedMetadataSchema )
     {
-        try
+        final MetadataSchema.Builder builder = MetadataSchema.newMetadataSchema();
+        final XmlMetadataSchema metadataSchemaXml = XmlSerializers2.metadataSchema().parse( serializedMetadataSchema );
+        XmlMetadataSchemaMapper.fromXml( metadataSchemaXml, builder );
+        return builder;
+    }
+
+    private static class SchemaKindName
+    {
+        public final SchemaKind schemaKind;
+
+        public final String name;
+
+        SchemaKindName( final SchemaKind schemaKind, final String name )
         {
-            final MetadataSchema.Builder builder = MetadataSchema.newMetadataSchema();
-            final XmlMetadataSchema metadataSchemaXml = XmlSerializers2.metadataSchema().parse( serializedMetadataSchema );
-            XmlMetadataSchemaMapper.fromXml( metadataSchemaXml, builder );
-            return builder;
-        }
-        catch ( Exception e )
-        {
-            return null;
+            this.schemaKind = schemaKind;
+            this.name = name;
         }
     }
 }
