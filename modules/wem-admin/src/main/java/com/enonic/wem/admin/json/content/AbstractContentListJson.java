@@ -8,6 +8,7 @@ import com.enonic.wem.admin.rest.resource.content.ContentIconUrlResolver;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentListMetaData;
 import com.enonic.wem.api.content.Contents;
+import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
 
 
 @SuppressWarnings("UnusedDeclaration")
@@ -17,18 +18,23 @@ public abstract class AbstractContentListJson<T extends ContentIdJson>
 
     private final ContentListMetaDataJson metadata;
 
+    protected final MixinReferencesToFormItemsTransformer mixinReferencesToFormItemsTransformer;
+
     private ImmutableList<T> contents;
 
     public AbstractContentListJson( final Content content, ContentListMetaData contentListMetaData,
-                                    final ContentIconUrlResolver iconUrlResolver )
+                                    final ContentIconUrlResolver iconUrlResolver,
+                                    final MixinReferencesToFormItemsTransformer mixinReferencesToFormItemsTransformer )
     {
-        this( Contents.from( content ), contentListMetaData, iconUrlResolver );
+        this( Contents.from( content ), contentListMetaData, iconUrlResolver, mixinReferencesToFormItemsTransformer );
     }
 
     public AbstractContentListJson( final Contents contents, final ContentListMetaData contentListMetaData,
-                                    final ContentIconUrlResolver iconUrlResolver )
+                                    final ContentIconUrlResolver iconUrlResolver,
+                                    final MixinReferencesToFormItemsTransformer mixinReferencesToFormItemsTransformer )
     {
         this.iconUrlResolver = iconUrlResolver;
+        this.mixinReferencesToFormItemsTransformer = mixinReferencesToFormItemsTransformer;
         this.metadata = new ContentListMetaDataJson( contentListMetaData );
 
         final ImmutableList.Builder<T> builder = ImmutableList.builder();

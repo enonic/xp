@@ -8,6 +8,7 @@ import com.google.common.collect.Sets;
 import com.enonic.wem.admin.json.aggregation.AggregationJson;
 import com.enonic.wem.admin.json.content.ContentIdJson;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
 
 public abstract class AbstractContentQueryResultJson<T extends ContentIdJson>
 {
@@ -30,7 +31,8 @@ public abstract class AbstractContentQueryResultJson<T extends ContentIdJson>
             return (T) this;
         }
 
-        public abstract T addContent( final Content content );
+        public abstract T addContent( final Content content,
+                                      final MixinReferencesToFormItemsTransformer mixinReferencesToFormItemsTransformer );
 
         public abstract AbstractContentQueryResultJson build();
 

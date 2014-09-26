@@ -8,6 +8,7 @@ import com.google.common.collect.Sets;
 import com.enonic.wem.admin.json.content.ContentJson;
 import com.enonic.wem.admin.rest.resource.content.ContentIconUrlResolver;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
 
 public class ContentQueryResultJson
     extends AbstractContentQueryResultJson<ContentJson>
@@ -35,9 +36,10 @@ public class ContentQueryResultJson
             this.iconUrlResolver = iconUrlResolver;
         }
 
-        public Builder addContent( final Content content )
+        public Builder addContent( final Content content,
+                                   final MixinReferencesToFormItemsTransformer mixinReferencesToFormItemsTransformer )
         {
-            this.contents.add( new ContentJson( content, iconUrlResolver ) );
+            this.contents.add( new ContentJson( content, iconUrlResolver, mixinReferencesToFormItemsTransformer ) );
             return this;
         }
 

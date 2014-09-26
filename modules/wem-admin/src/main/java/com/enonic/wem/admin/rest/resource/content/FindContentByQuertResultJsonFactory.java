@@ -11,11 +11,13 @@ import com.enonic.wem.api.aggregation.BucketAggregation;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.FindContentByQueryResult;
+import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
 
 public class FindContentByQuertResultJsonFactory
 {
     public static AbstractContentQueryResultJson create( final FindContentByQueryResult contentQueryResult, final String expand,
-                                                         final ContentIconUrlResolver iconUrlResolver )
+                                                         final ContentIconUrlResolver iconUrlResolver,
+                                                         final MixinReferencesToFormItemsTransformer mixinReferencesToFormItemsTransformer )
     {
         final AbstractContentQueryResultJson.Builder builder;
 
@@ -33,16 +35,17 @@ public class FindContentByQuertResultJsonFactory
         }
 
         addAggregations( contentQueryResult.getAggregations(), builder );
-        addContents( contentQueryResult.getContents(), builder );
+        addContents( contentQueryResult.getContents(), builder, mixinReferencesToFormItemsTransformer );
 
         return builder.build();
     }
 
-    private static void addContents( final Contents contents, final AbstractContentQueryResultJson.Builder builder )
+    private static void addContents( final Contents contents, final AbstractContentQueryResultJson.Builder builder,
+                                     final MixinReferencesToFormItemsTransformer mixinReferencesToFormItemsTransformer )
     {
         for ( final Content content : contents )
         {
-            builder.addContent( content );
+            builder.addContent( content, mixinReferencesToFormItemsTransformer );
         }
     }
 

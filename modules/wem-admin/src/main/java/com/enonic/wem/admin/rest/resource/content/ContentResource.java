@@ -73,8 +73,10 @@ import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.DataJson;
 import com.enonic.wem.api.entity.Workspaces;
 import com.enonic.wem.api.exception.ConflictException;
+import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
 import com.enonic.wem.api.query.Direction;
 import com.enonic.wem.api.schema.content.ContentTypeService;
+import com.enonic.wem.api.schema.mixin.MixinService;
 
 import static com.enonic.wem.api.content.Content.editContent;
 
@@ -110,6 +112,8 @@ public class ContentResource
 
     private AttachmentService attachmentService;
 
+    private MixinReferencesToFormItemsTransformer mixinReferencesToFormItemsTransformer;
+
     @GET
     public ContentIdJson getById( @QueryParam("id") final String idParam,
                                   @QueryParam("expand") @DefaultValue(EXPAND_FULL) final String expandParam )
@@ -132,7 +136,7 @@ public class ContentResource
         }
         else
         {
-            return new ContentJson( content, newContentIconUrlResolver() );
+            return new ContentJson( content, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
         }
     }
 
@@ -157,7 +161,7 @@ public class ContentResource
         }
         else
         {
-            return new ContentJson( content, newContentIconUrlResolver() );
+            return new ContentJson( content, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
         }
     }
 
@@ -235,7 +239,8 @@ public class ContentResource
         }
         else if ( EXPAND_FULL.equalsIgnoreCase( expandParam ) )
         {
-            return new ContentListJson( result.getContents(), metaData, newContentIconUrlResolver() );
+            return new ContentListJson( result.getContents(), metaData, newContentIconUrlResolver(),
+                                        mixinReferencesToFormItemsTransformer );
         }
         else
         {
@@ -256,10 +261,8 @@ public class ContentResource
             contentQuery( contentQueryJson.getContentQuery() ).
             build(), STAGE_CONTEXT );
 
-        final AbstractContentQueryResultJson abstractContentQueryResultJson =
-            FindContentByQuertResultJsonFactory.create( findResult, contentQueryJson.getExpand(), iconUrlResolver );
-
-        return abstractContentQueryResultJson;
+        return FindContentByQuertResultJsonFactory.create( findResult, contentQueryJson.getExpand(), iconUrlResolver,
+                                                           mixinReferencesToFormItemsTransformer );
     }
 
     @GET
@@ -350,7 +353,7 @@ public class ContentResource
         final Content publishedContent =
             contentService.push( new PushContentParams( ContentConstants.WORKSPACE_PROD, params.getContentId() ), STAGE_CONTEXT );
 
-        return new ContentJson( publishedContent, newContentIconUrlResolver() );
+        return new ContentJson( publishedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
     }
 
     @POST
@@ -359,7 +362,7 @@ public class ContentResource
     {
         final Content persistedContent = contentService.create( params.getCreateContent(), STAGE_CONTEXT );
 
-        return new ContentJson( persistedContent, newContentIconUrlResolver() );
+        return new ContentJson( persistedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
     }
 
     @POST
@@ -393,7 +396,7 @@ public class ContentResource
         final Content updatedContent = contentService.update( updateParams, STAGE_CONTEXT );
         if ( json.getContentName().equals( updatedContent.getName() ) )
         {
-            return new ContentJson( updatedContent, newContentIconUrlResolver() );
+            return new ContentJson( updatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
         }
 
         try
@@ -404,7 +407,7 @@ public class ContentResource
 
             final Content renamedContent = contentService.rename( renameParams, STAGE_CONTEXT );
 
-            return new ContentJson( renamedContent, newContentIconUrlResolver() );
+            return new ContentJson( renamedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
         }
         catch ( ContentAlreadyExistException e )
         {
@@ -462,5 +465,11 @@ public class ContentResource
     public void setAttachmentService( final AttachmentService attachmentService )
     {
         this.attachmentService = attachmentService;
+    }
+
+    @Inject
+    public void setMixinService( final MixinService mixinService )
+    {
+        this.mixinReferencesToFormItemsTransformer = new MixinReferencesToFormItemsTransformer( mixinService );
     }
 }

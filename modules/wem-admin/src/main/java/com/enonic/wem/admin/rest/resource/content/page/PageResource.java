@@ -20,7 +20,9 @@ import com.enonic.wem.api.content.page.PageService;
 import com.enonic.wem.api.content.page.UpdatePageParams;
 import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
 import com.enonic.wem.api.schema.content.ContentTypeService;
+import com.enonic.wem.api.schema.mixin.MixinService;
 
 @Path("content/page")
 @Produces(MediaType.APPLICATION_JSON)
@@ -44,6 +46,8 @@ public final class PageResource
     @Inject
     protected AttachmentService attachmentService;
 
+    private MixinReferencesToFormItemsTransformer mixinReferencesToFormItemsTransformer;
+
     @POST
     @Path("create")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -52,7 +56,7 @@ public final class PageResource
         final CreatePageParams command = params.getCreatePage();
         final Content updatedContent = this.pageService.create( command, STAGE_CONTEXT );
 
-        return new ContentJson( updatedContent, newContentIconUrlResolver() );
+        return new ContentJson( updatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
     }
 
     @POST
@@ -63,7 +67,7 @@ public final class PageResource
         final UpdatePageParams command = params.getUpdatePage();
         final Content updatedContent = this.pageService.update( command, STAGE_CONTEXT );
 
-        return new ContentJson( updatedContent, newContentIconUrlResolver() );
+        return new ContentJson( updatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
     }
 
     @GET
@@ -74,11 +78,17 @@ public final class PageResource
         final ContentId contentId = ContentId.from( contentIdAsString );
         final Content updatedContent = this.pageService.delete( contentId, STAGE_CONTEXT );
 
-        return new ContentJson( updatedContent, newContentIconUrlResolver() );
+        return new ContentJson( updatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
     }
 
     private ContentIconUrlResolver newContentIconUrlResolver()
     {
         return new ContentIconUrlResolver( this.siteTemplateService, this.contentTypeService, this.attachmentService );
+    }
+
+    @Inject
+    public void setMixinService( final MixinService mixinService )
+    {
+        this.mixinReferencesToFormItemsTransformer = new MixinReferencesToFormItemsTransformer( mixinService );
     }
 }

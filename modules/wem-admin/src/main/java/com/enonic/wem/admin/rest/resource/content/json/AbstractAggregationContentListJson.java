@@ -13,6 +13,7 @@ import com.enonic.wem.api.aggregation.BucketAggregation;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentListMetaData;
 import com.enonic.wem.api.content.Contents;
+import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
 
 public abstract class AbstractAggregationContentListJson<T extends ContentIdJson>
     extends AbstractContentListJson<T>
@@ -21,16 +22,18 @@ public abstract class AbstractAggregationContentListJson<T extends ContentIdJson
 
 
     public AbstractAggregationContentListJson( final Content content, final ContentListMetaData contentListMetaData,
-                                               final Aggregations aggregations, final ContentIconUrlResolver iconUrlResolver )
+                                               final Aggregations aggregations, final ContentIconUrlResolver iconUrlResolver,
+                                               final MixinReferencesToFormItemsTransformer mixinReferencesToFormItemsTransformer )
     {
-        this( Contents.from( content ), contentListMetaData, ImmutableSet.copyOf( aggregations.getSet() ), iconUrlResolver );
+        this( Contents.from( content ), contentListMetaData, ImmutableSet.copyOf( aggregations.getSet() ), iconUrlResolver,
+              mixinReferencesToFormItemsTransformer );
     }
 
     public AbstractAggregationContentListJson( final Contents contents, final ContentListMetaData contentListMetaData,
-                                               final ImmutableSet<Aggregation> aggregations,
-                                               final ContentIconUrlResolver iconUrlResolver )
+                                               final ImmutableSet<Aggregation> aggregations, final ContentIconUrlResolver iconUrlResolver,
+                                               final MixinReferencesToFormItemsTransformer mixinReferencesToFormItemsTransformer )
     {
-        super( contents, contentListMetaData, iconUrlResolver );
+        super( contents, contentListMetaData, iconUrlResolver, mixinReferencesToFormItemsTransformer );
 
         ImmutableSet.Builder<AggregationJson> builder = ImmutableSet.builder();
 

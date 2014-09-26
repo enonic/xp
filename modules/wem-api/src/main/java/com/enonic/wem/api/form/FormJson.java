@@ -47,4 +47,18 @@ public class FormJson
     {
         return this.form;
     }
+
+    public static FormJson resolveJson( final Form form, final MixinReferencesToFormItemsTransformer mixinReferencesToFormItemsTransformer )
+    {
+        if ( form == null )
+        {
+            return null;
+        }
+        if ( mixinReferencesToFormItemsTransformer == null )
+        {
+            return new FormJson( form );
+        }
+
+        return new FormJson( mixinReferencesToFormItemsTransformer.transformForm( form ) );
+    }
 }
