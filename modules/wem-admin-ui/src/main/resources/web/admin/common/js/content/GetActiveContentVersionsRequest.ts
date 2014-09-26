@@ -1,6 +1,7 @@
 module api.content {
 
     import ContentVersionJson = json.ContentVersionJson;
+    import ActiveContentVersionJson = json.ActiveContentVersionJson;
 
     export class GetActiveContentVersionsRequest extends ContentResourceRequest<json.GetActiveContentVersionsResultsJson, ContentVersion[]> {
 
@@ -29,26 +30,29 @@ module api.content {
             });
         }
 
-        private fromJsonToContentVersions(json: {[workspace: string]: ContentVersionJson}): ContentVersion[] {
+        private fromJsonToContentVersions(json: ActiveContentVersionJson[]): ContentVersion[] {
 
             var contentVersionJson: ContentVersionJson;
             var contentVersion: ContentVersion;
             var contentVersionsMap: {[id:string]:ContentVersion} = {};
 
-            for (var workspace in json) {
-                if (json.hasOwnProperty(workspace)) {
-                    contentVersionJson = json[workspace];
-                    // one content can be in multiple workspaces !
-                    contentVersion = contentVersionsMap[contentVersionJson.id];
-                    if (!contentVersion) {
-                        contentVersion = ContentVersion.fromJson(contentVersionJson, [workspace]);
-                        contentVersionsMap[contentVersion.id] = contentVersion;
-                    } else {
-                        // just add new workspace if already exists
-                        contentVersion.workspaces.push(workspace);
-                    }
+            json.forEach((activeContentVersion: ActiveContentVersionJson) => {
+
+                console.log("ActiveContentVersion: ", activeContentVersion);
+
+                contentVersionJson = activeContentVersion.contentVersion;
+
+                console.log("contentVersionJson: ", activeContentVersion.contentVersion);
+
+                contentVersion = contentVersionsMap[contentVersionJson.id];
+                if (!contentVersion) {
+                    contentVersion = ContentVersion.fromJson(contentVersionJson, [activeContentVersion.workspace]);
+                    contentVersionsMap[contentVersion.id] = contentVersion;
+                } else {
+                    // just add new workspace if already exists
+                    contentVersion.workspaces.push(activeContentVersion.workspace);
                 }
-            }
+            });
 
             return Object.keys(contentVersionsMap).map(function (key) {
                 return contentVersionsMap[key];

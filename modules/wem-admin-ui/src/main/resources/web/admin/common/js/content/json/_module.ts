@@ -7,4 +7,5 @@
 ///<reference path='ContentVersionJson.ts' />
 ///<reference path='GetContentVersionsResultsJson.ts' />
 ///<reference path='GetActiveContentVersionsResultsJson.ts' />
+///<reference path='ActiveContentVersionJson.ts' />
 
