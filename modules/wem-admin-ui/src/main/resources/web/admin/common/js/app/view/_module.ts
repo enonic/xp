@@ -4,3 +4,4 @@
 ///<reference path='ItemStatisticsHeader.ts' />
 ///<reference path='ItemViewPanel.ts' />
 ///<reference path='ItemViewClosedEvent.ts' />
+///<reference path='ItemPreviewPanel.ts' />

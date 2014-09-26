@@ -1,17 +1,9 @@
 module app.view {
 
-    export class TemplateItemPreviewPanel extends api.ui.panel.Panel {
-
-        private frame: api.dom.IFrameEl;
-
-        private mask: api.ui.mask.LoadMask;
+    export class TemplateItemPreviewPanel extends api.app.view.ItemPreviewPanel {
 
         constructor() {
-            super("template-item-preview-panel");
-            this.mask = new api.ui.mask.LoadMask(this);
-            this.frame = new api.dom.IFrameEl();
-            this.frame.onLoaded((event: UIEvent) => this.mask.hide());
-            this.appendChild(this.frame);
+            super();
         }
 
         public setItem(item: api.app.view.ViewItem<app.browse.TemplateSummary>) {

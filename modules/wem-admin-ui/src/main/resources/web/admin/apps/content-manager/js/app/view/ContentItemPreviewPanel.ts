@@ -6,21 +6,13 @@ module app.view {
     import ViewItem = api.app.view.ViewItem;
     import ContentSummary = api.content.ContentSummary;
 
-    export class ContentItemPreviewPanel extends api.ui.panel.Panel {
-
-        private frame: api.dom.IFrameEl;
+    export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
 
         private image: api.dom.ImgEl;
         private item: ViewItem<ContentSummary>;
 
-        private mask: api.ui.mask.LoadMask;
-
         constructor() {
             super("content-item-preview-panel");
-            this.mask = new api.ui.mask.LoadMask(this);
-            this.frame = new api.dom.IFrameEl();
-            this.frame.onLoaded((event: UIEvent) => this.mask.hide());
-            this.appendChild(this.frame);
             this.image = new api.dom.ImgEl();
             this.image.onLoaded((event: UIEvent) => {
                 this.mask.hide();
