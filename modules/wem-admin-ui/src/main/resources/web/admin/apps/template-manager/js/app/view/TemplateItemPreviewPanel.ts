@@ -7,7 +7,7 @@ module app.view {
         private mask: api.ui.mask.LoadMask;
 
         constructor() {
-            super("item-preview-panel");
+            super("template-item-preview-panel");
             this.mask = new api.ui.mask.LoadMask(this);
             this.frame = new api.dom.IFrameEl();
             this.frame.onLoaded((event: UIEvent) => this.mask.hide());
