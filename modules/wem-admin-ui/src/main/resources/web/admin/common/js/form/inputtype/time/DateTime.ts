@@ -41,14 +41,8 @@ module api.content.form.inputtype.time {
         onOccurrenceValueChanged(element: api.dom.Element, listener: (event: api.form.inputtype.support.ValueChangedEvent) => void) {
 
             var dateTime = <api.ui.time.DateTimePicker>element;
-            dateTime.onSelectedTimeChanged((hours: number, minutes: number) => {
-                var selectedDateTime = dateTime.getSelectedDateTime();
-                var newValue = new api.data.Value(selectedDateTime, ValueTypes.LOCAL_DATE_TIME);
-                listener(new api.form.inputtype.support.ValueChangedEvent(newValue));
-            });
-            dateTime.onSelectedDateChanged((event: api.ui.time.SelectedDateChangedEvent) => {
-                var selectedDateTime = dateTime.getSelectedDateTime();
-                var newValue = new api.data.Value(selectedDateTime, ValueTypes.LOCAL_DATE_TIME);
+            dateTime.onSelectedDateTimeChanged((event: api.ui.time.SelectedDateChangedEvent) => {
+                var newValue = new api.data.Value(event.getDate(), ValueTypes.LOCAL_DATE_TIME);
                 listener(new api.form.inputtype.support.ValueChangedEvent(newValue));
             });
         }
