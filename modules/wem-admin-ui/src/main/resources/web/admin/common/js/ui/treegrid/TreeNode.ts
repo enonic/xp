@@ -4,6 +4,8 @@ module api.ui.treegrid {
 
         private id: string;
 
+        private dataId: string;
+
         private data: NODE;
 
         private expanded: boolean;
@@ -20,6 +22,7 @@ module api.ui.treegrid {
 
         constructor(builder: TreeNodeBuilder<NODE>) {
             this.id = Math.random().toString(36).substring(2);
+            this.dataId = builder.getDataId();
             this.data = builder.getData();
             this.parent = builder.getParent();
             this.setChildren(builder.getChildren());
@@ -36,11 +39,12 @@ module api.ui.treegrid {
             return this.id;
         }
 
+        hasData(): boolean {
+            return !!this.data;
+        }
+
         getDataId(): string {
-            var id = this.id;
-            id = (this.data && this.data["getId"] instanceof Function) ? this.data["getId"]() : id;
-            id = (this.data && this.data["getKey"] instanceof Function) ? this.data["getKey"]() : id;
-            return id;
+            return this.dataId;
         }
 
         regenerateIds(): void {
@@ -124,23 +128,10 @@ module api.ui.treegrid {
             return this.children.length > 0;
         }
 
-        setChildrenFromData(dataList: NODE[]) {
-            this.children = [];
-
-            dataList.forEach((child) => {
-                this.children.push(new TreeNodeBuilder<NODE>().setData(child).setParent(this).build());
-            });
-        }
-
         addChild(child: TreeNode<NODE>) {
             this.children = this.children || [];
             this.children.push(child);
             child.setParent(this);
-        }
-
-        addChildFromData(childData: NODE) {
-            this.children = this.children || [];
-            this.children.push(new TreeNodeBuilder<NODE>().setData(childData).setParent(this).build());
         }
 
         removeChild(child: TreeNode<NODE>) {
@@ -190,16 +181,14 @@ module api.ui.treegrid {
             return list;
         }
 
-        findNode(data: NODE): TreeNode<NODE> {
-            var dataId = (data && data["getId"] instanceof Function) ? data["getId"]() : "";
-            dataId = (data && data["getKey"] instanceof Function) ? data["getKey"]() : dataId;
+        findNode(dataId: string): TreeNode<NODE> {
 
-            if (this.data && this.getDataId() === dataId) {
+            if (this.hasData() && this.getDataId() === dataId) {
                 return this;
             }
 
             for (var i = 0; i < this.children.length; i++) {
-                var child: TreeNode<NODE> = this.children[i].findNode(data);
+                var child = this.children[i].findNode(dataId);
                 if (child) {
                     return child;
                 }

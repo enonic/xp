@@ -343,6 +343,22 @@ module api.ui.treegrid {
             return parentNode ? this.fetchChildren(parentNode) : this.fetchRoot();
         }
 
+
+        dataToTreeNode(data: NODE, parent: TreeNode<NODE>): TreeNode<NODE> {
+            return new TreeNodeBuilder<NODE>().
+                setData(data, this.getDataId(data)).
+                setParent(parent).
+                build();
+        }
+
+        dataToTreeNodes(dataArray: NODE[], parent: TreeNode<NODE>): TreeNode<NODE>[] {
+            var nodes: TreeNode<NODE>[] = [];
+            dataArray.forEach((data) => {
+                nodes.push(this.dataToTreeNode(data, parent));
+            });
+            return nodes;
+        }
+
         filter(dataList: NODE[]) {
             if (!this.stash) {
                 this.stash = this.root;
@@ -355,7 +371,7 @@ module api.ui.treegrid {
             this.root.setExpanded(true);
 
             this.active = false;
-            this.root.setChildrenFromData(dataList);
+            this.root.setChildren(this.dataToTreeNodes(dataList, this.root));
             this.initData(this.root.treeToList());
             this.resetAndRender();
             this.active = true;
@@ -443,7 +459,7 @@ module api.ui.treegrid {
 
             this.fetchData(parentNode)
                 .then((dataList: NODE[]) => {
-                    this.root.setChildrenFromData(dataList);
+                    this.root.setChildren(this.dataToTreeNodes(dataList, this.root));
                     this.initData(this.root.treeToList());
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
@@ -472,15 +488,16 @@ module api.ui.treegrid {
 
         updateNode(data: NODE): void {
             var root = this.stash || this.root;
-            var node: TreeNode<NODE> = root.findNode(data);
-            if(!node) {
+            var dataId = this.getDataId(data);
+            var treeNode = root.findNode(dataId);
+            if (!treeNode) {
                 throw new Error("Node not found for data: " + this.getDataId(data));
             }
 
-            this.fetch(node)
+            this.fetch(treeNode)
                 .then((data: NODE) => {
-                    node.setData(data);
-                    this.gridData.updateItem(node.getId(), node);
+                    treeNode.setData(data);
+                    this.gridData.updateItem(treeNode.getId(), treeNode);
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 });
@@ -488,7 +505,7 @@ module api.ui.treegrid {
 
         deleteNode(data: NODE): void {
             var root = this.stash || this.root;
-            var node = root.findNode(data);
+            var node = root.findNode(this.getDataId(data));
             this.gridData.deleteItem(node.getId());
             if (node && node.getParent()) {
                 var parent = node.getParent();
@@ -499,16 +516,16 @@ module api.ui.treegrid {
 
         appendNode(data: NODE): void {
             var root = this.stash || this.root;
-            root.addChildFromData(data);
-            var node = root.findNode(data);
+            root.addChild(this.dataToTreeNode(data, root));
+            var node = root.findNode(this.getDataId(data));
             this.gridData.insertItem(this.gridData.getLength(), node);
         }
 
         deleteNodes(dataList: NODE[]): void {
             var root = this.stash || this.root;
             var updated: TreeNode<NODE>[] = [];
-            dataList.forEach((elem: NODE) => {
-                var node = root.findNode(elem);
+            dataList.forEach((data: NODE) => {
+                var node = root.findNode(this.getDataId(data));
                 if (node && node.getParent()) {
                     var parent = node.getParent();
                     updated.push(parent);
@@ -558,7 +575,7 @@ module api.ui.treegrid {
                 } else {
                     this.fetchData(node)
                         .then((dataList: NODE[]) => {
-                            node.setChildrenFromData(dataList);
+                            node.setChildren(this.dataToTreeNodes(dataList, node));
                             rootList = this.root.treeToList();
                             nodeList = node.treeToList();
                             this.initData(rootList);

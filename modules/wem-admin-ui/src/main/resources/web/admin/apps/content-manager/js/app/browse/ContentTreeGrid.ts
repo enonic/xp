@@ -71,7 +71,7 @@ module app.browse {
                     this.getGrid().setColumns([nameColumn, compareStatusColumn, modifiedTimeColumn]);
                 }
 
-                if(item.isInRangeOrSmaller(api.ui.responsive.ResponsiveRanges._360_540)) {
+                if (item.isInRangeOrSmaller(api.ui.responsive.ResponsiveRanges._360_540)) {
                     modifiedTimeColumn.setMaxWidth(100);
                     modifiedTimeColumn.setFormatter(DateTimeFormatter.formatNoTimestamp);
                 } else {
@@ -100,7 +100,7 @@ module app.browse {
                     if (!node.getData().getContentSummary()) {
                         this.setActive(false);
                         this.fetchChildren(node.getParent()).then((dataList: ContentSummaryAndCompareStatus[]) => {
-                            node.getParent().setChildrenFromData(dataList);
+                            node.getParent().setChildren(this.dataToTreeNodes(dataList, node.getParent()));
                             this.initData(this.getRoot().treeToList());
                         }).catch((reason: any) => {
                             api.DefaultErrorHandler.handle(reason);
@@ -177,7 +177,8 @@ module app.browse {
             } else { // `load more` node
                 var content = new api.dom.DivEl("children-to-load"),
                     parent = node.getParent();
-                content.setHtml((parent.getMaxChildren() - parent.getChildren().length + 1) + " children left to load. Double-click to load more.");
+                content.setHtml((parent.getMaxChildren() - parent.getChildren().length + 1) +
+                                " children left to load. Double-click to load more.");
 
                 return content.toString();
             }
@@ -206,8 +207,8 @@ module app.browse {
             return ContentSummaryAndCompareStatusFetcher.fetchChildren(parentContentId, from, ContentTreeGrid.MAX_FETCH_SIZE).
                 then((data: ContentResponse<ContentSummaryAndCompareStatus>) => {
                     var contents = parentNode.getChildren().map((el) => {
-                            return el.getData();
-                        }).slice(0, from).concat(data.getContents());
+                        return el.getData();
+                    }).slice(0, from).concat(data.getContents());
 
                     var meta = data.getMetadata();
 
