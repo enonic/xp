@@ -182,9 +182,11 @@ module api.form.inputtype.support {
             this.inputOccurrences.getOccurrenceViews().forEach((occurrenceView: InputOccurrenceView) => {
 
                 var value = this.getValue(occurrenceView.getInputElement());
-                var breaksRequiredContract = this.valueBreaksRequiredContract(value);
-                if (!breaksRequiredContract) {
-                    numberOfValids++;
+                if (value) {
+                    var breaksRequiredContract = this.valueBreaksRequiredContract(value);
+                    if (!breaksRequiredContract) {
+                        numberOfValids++;
+                    }
                 }
             });
 
