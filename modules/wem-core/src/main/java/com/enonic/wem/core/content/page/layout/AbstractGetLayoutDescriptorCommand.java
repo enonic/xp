@@ -22,7 +22,7 @@ import com.enonic.wem.api.xml.serializer.XmlSerializers2;
 
 abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDescriptorCommand>
 {
-    private final static Pattern PATTERN = Pattern.compile( "component/([^/]+)/layout.xml" );
+    private final static Pattern PATTERN = Pattern.compile( "layout/([^/]+)/layout.xml" );
 
     protected ModuleService moduleService;
 

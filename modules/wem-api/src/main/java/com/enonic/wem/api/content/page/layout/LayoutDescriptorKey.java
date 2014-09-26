@@ -30,6 +30,6 @@ public final class LayoutDescriptorKey
     @Override
     public ResourceKey toResourceKey()
     {
-        return ResourceKey.from( getModuleKey(), "component/" + getName().toString() + "/layout.xml" );
+        return ResourceKey.from( getModuleKey(), "layout/" + getName().toString() + "/layout.xml" );
     }
 }

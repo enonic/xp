@@ -22,7 +22,7 @@ import com.enonic.wem.api.xml.serializer.XmlSerializers2;
 
 abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescriptorCommand>
 {
-    private final static Pattern PATTERN = Pattern.compile( "component/([^/]+)/part.xml" );
+    private final static Pattern PATTERN = Pattern.compile( "part/([^/]+)/part.xml" );
 
     protected ModuleService moduleService;
 

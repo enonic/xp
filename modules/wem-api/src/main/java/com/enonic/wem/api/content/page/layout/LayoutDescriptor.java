@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.page.Descriptor;
 import com.enonic.wem.api.content.page.region.RegionDescriptors;
+import com.enonic.wem.api.resource.ResourceKey;
 
 public class LayoutDescriptor
     extends Descriptor<LayoutDescriptorKey>
@@ -20,6 +21,13 @@ public class LayoutDescriptor
     public RegionDescriptors getRegions()
     {
         return regions;
+    }
+
+    @Override
+    public ResourceKey getComponentPath()
+    {
+        final LayoutDescriptorKey key = this.getKey();
+        return ResourceKey.from( key.getModuleKey(), "layout/" + key.getName().toString() );
     }
 
     public static LayoutDescriptor.Builder newLayoutDescriptor()

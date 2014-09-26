@@ -2,6 +2,7 @@ package com.enonic.wem.api.content.page.part;
 
 
 import com.enonic.wem.api.content.page.Descriptor;
+import com.enonic.wem.api.resource.ResourceKey;
 
 public class PartDescriptor
     extends Descriptor<PartDescriptorKey>
@@ -9,6 +10,13 @@ public class PartDescriptor
     private PartDescriptor( final Builder builder )
     {
         super( builder );
+    }
+
+    @Override
+    public ResourceKey getComponentPath()
+    {
+        final PartDescriptorKey key = this.getKey();
+        return ResourceKey.from( key.getModuleKey(), "part/" + key.getName().toString() );
     }
 
     public static PartDescriptor.Builder newPartDescriptor()

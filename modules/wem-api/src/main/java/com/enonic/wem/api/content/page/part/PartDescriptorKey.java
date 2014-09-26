@@ -30,6 +30,6 @@ public final class PartDescriptorKey
     @Override
     public ResourceKey toResourceKey()
     {
-        return ResourceKey.from( getModuleKey(), "component/" + getName().toString() + "/part.xml" );
+        return ResourceKey.from( getModuleKey(), "part/" + getName().toString() + "/part.xml" );
     }
 }

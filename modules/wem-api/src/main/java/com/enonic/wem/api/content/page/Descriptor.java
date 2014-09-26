@@ -47,10 +47,7 @@ public abstract class Descriptor<KEY extends DescriptorKey>
         return config;
     }
 
-    public ResourceKey getComponentPath()
-    {
-        return ResourceKey.from( key.getModuleKey(), "component/" + key.getName().toString() );
-    }
+    public abstract ResourceKey getComponentPath();
 
     public abstract static class BaseDescriptorBuilder<T extends Descriptor.BaseDescriptorBuilder, KEY>
     {
