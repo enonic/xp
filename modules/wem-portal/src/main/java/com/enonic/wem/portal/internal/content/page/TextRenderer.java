@@ -1,6 +1,5 @@
 package com.enonic.wem.portal.internal.content.page;
 
-
 import java.text.MessageFormat;
 
 import com.enonic.wem.api.content.page.text.TextComponent;
@@ -12,7 +11,6 @@ import com.enonic.wem.portal.internal.controller.JsHttpResponseSerializer;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
 
-
 public final class TextRenderer
     implements Renderer<TextComponent>
 {
@@ -20,6 +18,12 @@ public final class TextRenderer
         "<div data-live-edit-type=\"{0}\" data-live-edit-empty-component=\"true\" class=\"live-edit-empty-component\"></div>";
 
     private static final String EMPTY_COMPONENT_PREVIEW_MODE_HTML = "<div></div>";
+
+    @Override
+    public Class<TextComponent> getType()
+    {
+        return TextComponent.class;
+    }
 
     @Override
     public RenderResult render( final TextComponent textComponent, final JsContext context )

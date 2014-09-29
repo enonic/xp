@@ -5,5 +5,7 @@ import com.enonic.wem.portal.internal.controller.JsContext;
 
 public interface Renderer<RENDERABLE extends Renderable>
 {
+    Class<RENDERABLE> getType();
+
     RenderResult render( RENDERABLE component, JsContext context );
 }

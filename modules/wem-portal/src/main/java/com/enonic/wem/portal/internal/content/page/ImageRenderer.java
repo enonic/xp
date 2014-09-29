@@ -16,6 +16,12 @@ public final class ImageRenderer
     implements Renderer<ImageComponent>
 {
     @Override
+    public Class<ImageComponent> getType()
+    {
+        return ImageComponent.class;
+    }
+
+    @Override
     public RenderResult render( final ImageComponent component, final JsContext context )
     {
         final RenderingMode renderingMode = getRenderingMode( context );

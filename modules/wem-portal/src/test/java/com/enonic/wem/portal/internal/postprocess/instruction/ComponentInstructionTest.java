@@ -164,7 +164,21 @@ public class ComponentInstructionTest
     private RendererFactory newRendererFactory( final String renderResult )
     {
         final RendererFactory rendererFactory = mock( RendererFactory.class );
-        final Renderer<Renderable> renderer = ( component, context ) -> RenderResult.newRenderResult().entity( renderResult ).build();
+        final Renderer<Renderable> renderer = new Renderer<Renderable>()
+        {
+            @Override
+            public Class<Renderable> getType()
+            {
+                return Renderable.class;
+            }
+
+            @Override
+            public RenderResult render( final Renderable component, final JsContext context )
+            {
+                return RenderResult.newRenderResult().entity( renderResult ).build();
+            }
+        };
+
         when( rendererFactory.getRenderer( isA( Renderable.class ) ) ).thenReturn( renderer );
         return rendererFactory;
     }

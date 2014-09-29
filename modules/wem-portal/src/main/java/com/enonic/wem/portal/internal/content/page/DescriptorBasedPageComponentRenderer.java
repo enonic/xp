@@ -18,10 +18,9 @@ import com.enonic.wem.portal.internal.controller.JsHttpResponseSerializer;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
 
-abstract class DescriptorBasedPageComponentRenderer
-    implements Renderer<AbstractDescriptorBasedPageComponent>
+public abstract class DescriptorBasedPageComponentRenderer<R extends AbstractDescriptorBasedPageComponent>
+    implements Renderer<R>
 {
-
     private static final String EMPTY_COMPONENT_EDIT_MODE_HTML =
         "<div data-live-edit-type=\"{0}\" data-live-edit-empty-component=\"true\" class=\"live-edit-empty-component\"></div>";
 
@@ -30,7 +29,7 @@ abstract class DescriptorBasedPageComponentRenderer
     @Inject
     protected JsControllerFactory controllerFactory;
 
-    public RenderResult render( final AbstractDescriptorBasedPageComponent pageComponent, final JsContext context )
+    public final RenderResult render( final R pageComponent, final JsContext context )
     {
         final Descriptor descriptor = resolveDescriptor( pageComponent );
         if ( descriptor == null )

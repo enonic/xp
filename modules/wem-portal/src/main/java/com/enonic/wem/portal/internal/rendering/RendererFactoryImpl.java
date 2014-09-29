@@ -1,22 +1,27 @@
 package com.enonic.wem.portal.internal.rendering;
 
 import java.util.Map;
+import java.util.Set;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 
 import com.enonic.wem.api.rendering.Renderable;
 
-final class RendererFactoryImpl
+public final class RendererFactoryImpl
     implements RendererFactory
 {
-    private final ImmutableMap<Class<? extends Renderable>, Provider<Renderer>> renderers;
+    private final Map<Class, Renderer> renderers;
 
     @Inject
-    public RendererFactoryImpl( final Map<Class<? extends Renderable>, Provider<Renderer>> renderers )
+    public RendererFactoryImpl( final Set<Renderer> renderers )
     {
-        this.renderers = ImmutableMap.copyOf( renderers );
+        this.renderers = Maps.newHashMap();
+
+        for ( final Renderer renderer : renderers )
+        {
+            this.renderers.put( renderer.getType(), renderer );
+        }
     }
 
     @Override
@@ -35,7 +40,6 @@ final class RendererFactoryImpl
     @SuppressWarnings("unchecked")
     private <T extends Renderable> Renderer<T> findRenderer( final Class<T> type )
     {
-        final Provider<? extends Renderer> renderer = this.renderers.get( type );
-        return renderer != null ? renderer.get() : null;
+        return this.renderers.get( type );
     }
 }
