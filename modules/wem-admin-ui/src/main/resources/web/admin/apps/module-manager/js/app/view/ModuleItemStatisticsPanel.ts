@@ -9,7 +9,7 @@ module app.view {
         private moduleDataContainer: api.dom.DivEl;
         private moduleActions: api.ui.Action[] = [];
         private actionMenu: api.ui.menu.ActionMenu;
-        private currentItem: api.app.view.ViewItem<api.module.ModuleSummary>;
+        private currentItem: api.app.view.ViewItem<api.module.Module>;
 
         constructor() {
             super("module-item-statistics-panel");
