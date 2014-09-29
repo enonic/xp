@@ -2,8 +2,6 @@ package com.enonic.wem.script.internal;
 
 import java.util.Map;
 
-import javax.inject.Singleton;
-
 import com.google.common.collect.Maps;
 
 import com.enonic.wem.script.ScriptLibrary;
@@ -11,7 +9,6 @@ import com.enonic.wem.script.command.Command;
 import com.enonic.wem.script.command.CommandHandler;
 import com.enonic.wem.script.command.CommandInvoker;
 
-@Singleton
 public final class ScriptEnvironment
     implements CommandInvoker
 {

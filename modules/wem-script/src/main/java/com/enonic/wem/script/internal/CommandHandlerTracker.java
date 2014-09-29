@@ -1,21 +1,16 @@
 package com.enonic.wem.script.internal;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
 import com.enonic.wem.script.command.CommandHandler;
 
-@Singleton
-final class CommandHandlerTracker
+public final class CommandHandlerTracker
     extends ServiceTracker
 {
     private final ScriptEnvironment environment;
 
-    @Inject
     public CommandHandlerTracker( final BundleContext context, final ScriptEnvironment environment )
     {
         super( context, CommandHandler.class.getName(), null );
