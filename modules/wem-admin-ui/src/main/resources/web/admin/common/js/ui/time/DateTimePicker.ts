@@ -14,7 +14,7 @@ module api.ui.time {
 
         startingDayOfWeek: DayOfWeek = DaysOfWeek.MONDAY;
 
-        closeOnSelect: boolean = true;
+        closeOnSelect: boolean = false;
 
         closeOnOutsideClick: boolean = true;
 
@@ -76,6 +76,8 @@ module api.ui.time {
 
         private selectedDate: Date;
 
+        private selectedDateTimeChangedListeners: {(event: SelectedDateChangedEvent) : void}[] = [];
+
         constructor(builder: DateTimePickerBuilder) {
             super('date-time-picker');
 
@@ -129,24 +131,25 @@ module api.ui.time {
 
             if (builder.hours || builder.minutes) {
                 var value = this.input.getValue() || "";
+                this.setTime(builder.hours, builder.minutes);
                 this.input.setValue(value + " " + this.formatTime(builder.hours, builder.minutes));
             }
 
-            this.onSelectedDateChanged((e: SelectedDateChangedEvent) => {
+            this.popup.onSelectedDateChanged((e: SelectedDateChangedEvent) => {
                 if (builder.closeOnSelect) {
                     this.popup.hide();
                 }
-                this.selectedDate = e.getDate();
-                this.input.setValue(this.formatDate(e.getDate()) + " " +
-                    this.formatTime(this.popup.getSelectedTime().hour, this.popup.getSelectedTime().minute));
+
+                this.setDate(e.getDate());
+                this.input.setValue(this.formatDate(this.selectedDate) + " " +
+                                    this.formatTime(this.selectedDate.getUTCHours(), this.selectedDate.getUTCMinutes()));
+                this.notifySelectedDateTimeChanged(new SelectedDateChangedEvent(this.selectedDate));
             });
 
-            this.onSelectedTimeChanged((hours: number, minutes: number) => {
-                if (!this.popup.getSelectedDate()) {
-                    this.selectedDate = new Date();
-                    this.calendar.selectDate(this.selectedDate);
-                }
-                this.input.setValue(this.formatDate(this.popup.getSelectedDate()) + " " + this.formatTime(hours, minutes));
+            this.popup.onSelectedTimeChanged((hours: number, minutes: number) => {
+                this.setTime(hours, minutes);
+                this.input.setValue(this.formatDate(this.selectedDate) + " " + this.formatTime(hours, minutes));
+                this.notifySelectedDateTimeChanged(new SelectedDateChangedEvent(this.selectedDate));
             });
 
             this.input.onKeyUp((event: KeyboardEvent) => {
@@ -159,6 +162,7 @@ module api.ui.time {
                     if (api.util.StringHelper.isEmpty(typedDateTime)) {
                         this.calendar.selectDate(null);
                         this.selectedDate = null;
+                        this.notifySelectedDateTimeChanged(new SelectedDateChangedEvent(null));
                         this.popup.hide();
                     } else {
                         var date = api.util.DateHelper.parseUTCDateTime(typedDateTime);
@@ -167,11 +171,13 @@ module api.ui.time {
                             this.selectedDate = date;
                             this.calendar.selectDate(date);
                             this.popup.setSelectedTime(date.getUTCHours(), date.getUTCMinutes());
+                            this.notifySelectedDateTimeChanged(new SelectedDateChangedEvent(date));
                             if (!this.popup.isVisible()) {
                                 this.popup.show();
                             }
                         } else {
                             this.selectedDate = null;
+                            this.notifySelectedDateTimeChanged(new SelectedDateChangedEvent(null));
                         }
                     }
                 }
@@ -179,39 +185,51 @@ module api.ui.time {
 
         }
 
-        getSelectedDateTime(): Date {
-            return this.popup.getSelectedDateTime();
+        private setTime(hours: number, minutes: number) {
+            if (!this.selectedDate) {
+                var today = new Date();
+                this.selectedDate = api.util.DateHelper.newUTCDate(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate());
+            }
+            this.selectedDate.setUTCHours(hours);
+            this.selectedDate.setUTCMinutes(minutes);
         }
 
-        getSelectedDate(): Date {
+        private setDate(date: Date) {
+            var hours = this.selectedDate ? this.selectedDate.getUTCHours() : 0,
+                minutes = this.selectedDate ? this.selectedDate.getUTCMinutes() : 0;
+
+            this.selectedDate = date;
+
+            if (hours || minutes) {
+                this.setTime(hours, minutes);
+            }
+        }
+
+        getSelectedDateTime(): Date {
             return this.selectedDate;
         }
 
-        onSelectedDateChanged(listener: (event: SelectedDateChangedEvent) => void) {
-            this.popup.onSelectedDateChanged(listener);
+        onSelectedDateTimeChanged(listener: (event: SelectedDateChangedEvent) => void) {
+            this.selectedDateTimeChangedListeners.push(listener);
         }
 
-        unSelectedDateChanged(listener: (event: SelectedDateChangedEvent) => void) {
-            this.popup.unSelectedDateChanged(listener);
+        unSelectedDateTimeChanged(listener: (event: SelectedDateChangedEvent) => void) {
+            this.selectedDateTimeChangedListeners = this.selectedDateTimeChangedListeners.filter((curr) => {
+                return curr !== listener;
+            });
+        }
+
+        private notifySelectedDateTimeChanged(event: SelectedDateChangedEvent) {
+            this.selectedDateTimeChangedListeners.forEach((listener) => {
+                listener(event);
+            })
         }
 
         private formatDate(date: Date): string {
             return api.util.DateHelper.formatUTCDate(date);
         }
 
-        getSelectedTime(): {hour: number; minute: number} {
-            return this.popup.getSelectedTime();
-        }
-
-        onSelectedTimeChanged(listener: (hours: number, minutes: number) => void) {
-            this.popup.onSelectedTimeChanged(listener);
-        }
-
-        unSelectedTimeChanged(listener: (hours: number, minutes: number) => void) {
-            this.popup.unSelectedTimeChanged(listener);
-        }
-
-        formatTime(hours: number, minutes: number): string {
+        private formatTime(hours: number, minutes: number): string {
             return this.padNumber(hours, 2) + ':' + this.padNumber(minutes, 2);
         }
 
