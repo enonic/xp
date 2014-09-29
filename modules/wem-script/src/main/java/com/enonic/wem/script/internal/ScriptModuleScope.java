@@ -60,13 +60,17 @@ public final class ScriptModuleScope
 
     public Object require( final String name )
     {
-        final ScriptLibrary library = this.executor.getLibrary( name );
-        if ( library != null )
+        final ResourceKey key = resolveScript( name );
+
+        if ( !Resource.from( key ).exists() )
         {
-            return library;
+            final ScriptLibrary library = this.executor.getLibrary( name );
+            if ( library != null )
+            {
+                return library;
+            }
         }
 
-        final ResourceKey key = resolveScript( name );
         final ScriptModuleScope scope = new ScriptModuleScope( key, this.executor );
         return scope.executeThis();
     }
