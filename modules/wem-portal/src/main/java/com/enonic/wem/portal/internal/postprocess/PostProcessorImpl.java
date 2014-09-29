@@ -14,11 +14,9 @@ import com.enonic.wem.portal.internal.postprocess.instruction.PostProcessInstruc
 public final class PostProcessorImpl
     implements PostProcessor
 {
-    @Inject
-    protected Set<PostProcessInstruction> instructions;
+    private Set<PostProcessInstruction> instructions;
 
-    @Inject
-    protected Set<PostProcessInjection> injections;
+    private Set<PostProcessInjection> injections;
 
     @Override
     public void processResponse( final JsContext context )
@@ -47,5 +45,17 @@ public final class PostProcessorImpl
         evaluator.injections = this.injections;
 
         context.getResponse().setBody( evaluator.evaluate() );
+    }
+
+    @Inject
+    public void setInstructions( final Set<PostProcessInstruction> instructions )
+    {
+        this.instructions = instructions;
+    }
+
+    @Inject
+    public void setInjections( final Set<PostProcessInjection> injections )
+    {
+        this.injections = injections;
     }
 }

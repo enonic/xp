@@ -35,8 +35,10 @@ public abstract class AbstractControllerTest
 
         final ScriptEnvironment environment = new ScriptEnvironment();
         this.factory = new JsControllerFactoryImpl();
-        this.factory.scriptService = new ScriptServiceImpl( environment );
-        this.factory.postProcessor = this.postProcessor = Mockito.mock( PostProcessor.class );
+        this.factory.setScriptService( new ScriptServiceImpl( environment ) );
+
+        this.postProcessor = Mockito.mock( PostProcessor.class );
+        this.factory.setPostProcessor( this.postProcessor );
 
         final ResourceKey scriptDir = ResourceKey.from( "mymodule:/service/test" );
         this.controller = factory.newController( scriptDir );

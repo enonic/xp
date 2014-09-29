@@ -16,11 +16,9 @@ public final class JsControllerFactoryImpl
 {
     private final Cache<String, JsControllerImpl> cache;
 
-    @Inject
-    protected ScriptService scriptService;
+    private ScriptService scriptService;
 
-    @Inject
-    protected PostProcessor postProcessor;
+    private PostProcessor postProcessor;
 
     // TODO: Make caching better. Invaliate on module change.
     public JsControllerFactoryImpl()
@@ -58,5 +56,17 @@ public final class JsControllerFactoryImpl
     private String composeCacheKey( final ResourceKey script )
     {
         return script.toString() + "_" + Resource.from( script ).getTimestamp();
+    }
+
+    @Inject
+    public void setScriptService( final ScriptService scriptService )
+    {
+        this.scriptService = scriptService;
+    }
+
+    @Inject
+    public void setPostProcessor( final PostProcessor postProcessor )
+    {
+        this.postProcessor = postProcessor;
     }
 }
