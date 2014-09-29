@@ -1,9 +1,7 @@
-module api.module
-{
-    export class ModuleLoaderListener
-    {
+module api.module {
+    export class ModuleLoaderListener {
         onLoading: () => void;
 
-        onLoaded: (modules:api.module.ModuleSummary[]) => void;
+        onLoaded: (modules: api.module.Module[]) => void;
     }
 }

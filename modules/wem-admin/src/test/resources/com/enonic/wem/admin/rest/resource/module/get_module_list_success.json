@@ -1,6 +1,29 @@
 {
     "modules": [
         {
+            "config": {
+                "formItems": [
+                    {
+                        "Input": {
+                            "config": { },
+                            "customText": null,
+                            "helpText": null,
+                            "immutable": false,
+                            "indexed": false,
+                            "inputType": {
+                                "name": "TextLine"
+                            },
+                            "label": null,
+                            "name": "some-name",
+                            "occurrences": {
+                                "maximum": 1,
+                                "minimum": 0
+                            },
+                            "validationRegexp": null
+                        }
+                    }
+                ]
+            },
             "deletable": false,
             "displayName": "module display name",
             "editable": false,

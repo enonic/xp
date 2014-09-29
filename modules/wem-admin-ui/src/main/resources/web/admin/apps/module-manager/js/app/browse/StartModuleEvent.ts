@@ -1,17 +1,17 @@
 module app.browse {
 
-    import ModuleSummary = api.module.ModuleSummary;
+    import Module = api.module.Module;
     import Event = api.event.Event;
 
     export class StartModuleEvent extends Event {
-        private modules: ModuleSummary[];
+        private modules: Module[];
 
-        constructor(modules: ModuleSummary[]) {
+        constructor(modules: Module[]) {
             this.modules = modules;
             super();
         }
 
-        getModules(): ModuleSummary[] {
+        getModules(): Module[] {
             return this.modules;
         }
 

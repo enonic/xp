@@ -38,8 +38,8 @@ module api.module {
             return stringArray;
         }
 
-        static fromModules(modules: ModuleSummary[]): ModuleKey[] {
-            return modules.map<ModuleKey>((mod: ModuleSummary) => {
+        static fromModules(modules: Module[]): ModuleKey[] {
+            return modules.map<ModuleKey>((mod: Module) => {
                 return mod.getModuleKey();
             });
         }

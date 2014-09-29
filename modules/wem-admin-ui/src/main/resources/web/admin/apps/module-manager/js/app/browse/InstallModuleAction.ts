@@ -1,6 +1,6 @@
 module app.browse {
 
-    import ModuleSummary = api.module.ModuleSummary;
+    import Module = api.module.Module;
 
     export class InstallModuleAction extends api.ui.Action {
 

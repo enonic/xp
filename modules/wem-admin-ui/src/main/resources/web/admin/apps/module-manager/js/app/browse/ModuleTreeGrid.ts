@@ -3,19 +3,19 @@ module app.browse {
     import GridColumn = api.ui.grid.GridColumn;
     import GridColumnBuilder = api.ui.grid.GridColumnBuilder;
 
-    import ModuleSummary = api.module.ModuleSummary;
-    import ModuleSummaryViewer = api.module.ModuleSummaryViewer;
+    import Module = api.module.Module;
+    import ModuleViewer = api.module.ModuleViewer;
     import TreeGrid = api.ui.treegrid.TreeGrid;
     import TreeNode = api.ui.treegrid.TreeNode;
     import TreeGridBuilder = api.ui.treegrid.TreeGridBuilder;
     import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
 
-    export class ModuleTreeGrid extends TreeGrid<ModuleSummary> {
+    export class ModuleTreeGrid extends TreeGrid<Module> {
 
         constructor() {
-            super(new TreeGridBuilder<ModuleSummary>().
+            super(new TreeGridBuilder<Module>().
                     setColumns([
-                        new GridColumnBuilder<TreeNode<ModuleSummary>>().
+                        new GridColumnBuilder<TreeNode<Module>>().
                             setName("Name").
                             setId("displayName").
                             setField("displayName").
@@ -23,7 +23,7 @@ module app.browse {
                             setMinWidth(250).
                             build(),
 
-                        new GridColumnBuilder<TreeNode<ModuleSummary>>().
+                        new GridColumnBuilder<TreeNode<Module>>().
                             setName("Version").
                             setId("version").
                             setField("version").
@@ -32,7 +32,7 @@ module app.browse {
                             setMaxWidth(70).
                             build(),
 
-                        new GridColumnBuilder<TreeNode<ModuleSummary>>().
+                        new GridColumnBuilder<TreeNode<Module>>().
                             setName("State").
                             setId("state").
                             setField("state").
@@ -41,7 +41,7 @@ module app.browse {
                             setMaxWidth(100).
                             build(),
 
-                        new GridColumnBuilder<TreeNode<ModuleSummary>>().
+                        new GridColumnBuilder<TreeNode<Module>>().
                             setName("ModifiedTime").
                             setId("modifiedTime").
                             setField("modifiedTime").
@@ -55,21 +55,21 @@ module app.browse {
             );
         }
 
-        private nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ModuleSummary>) {
-            var viewer = new ModuleSummaryViewer();
+        private nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<Module>) {
+            var viewer = new ModuleViewer();
             viewer.setObject(node.getData());
             return viewer.toString();
         }
 
-        getDataId(data: ModuleSummary): string {
+        getDataId(data: Module): string {
             return data.getId();
         }
 
-        fetchRoot(): wemQ.Promise<ModuleSummary[]> {
+        fetchRoot(): wemQ.Promise<Module[]> {
             return new api.module.ListModulesRequest().sendAndParse();
         }
 
-        fetch(node: TreeNode<ModuleSummary>): wemQ.Promise<api.module.Module> {
+        fetch(node: TreeNode<Module>): wemQ.Promise<api.module.Module> {
             return this .fetchByKey(node.getData().getModuleKey());
         }
 
@@ -84,20 +84,20 @@ module app.browse {
 
         updateModuleNode(moduleKey: api.module.ModuleKey) {
             var root = this.getRoot();
-            root.getChildren().forEach((child: TreeNode<ModuleSummary>) => {
-                var moduleSummary: ModuleSummary = child.getData();
-                if (moduleSummary.getModuleKey().toString() == moduleKey.toString()) {
-                    this.updateNode(moduleSummary);
+            root.getChildren().forEach((child: TreeNode<Module>) => {
+                var curModule: Module = child.getData();
+                if (curModule.getModuleKey().toString() == moduleKey.toString()) {
+                    this.updateNode(curModule);
                 }
             });
         }
 
         deleteModuleNode(moduleKey: api.module.ModuleKey) {
             var root = this.getRoot();
-            root.getChildren().forEach((child: TreeNode<ModuleSummary>) => {
-                var moduleSummary: ModuleSummary = child.getData();
-                if (moduleSummary.getModuleKey().toString() == moduleKey.toString()) {
-                    this.deleteNode(moduleSummary);
+            root.getChildren().forEach((child: TreeNode<Module>) => {
+                var curModule: Module = child.getData();
+                if (curModule.getModuleKey().toString() == moduleKey.toString()) {
+                    this.deleteNode(curModule);
                 }
             });
         }

@@ -1,6 +1,6 @@
 module app {
 
-    export class ModuleAppPanel extends api.app.BrowseAndWizardBasedAppPanel<api.module.ModuleSummary> {
+    export class ModuleAppPanel extends api.app.BrowseAndWizardBasedAppPanel<api.module.Module> {
 
         constructor(appBar: api.app.bar.AppBar, path?: api.rest.Path) {
 
@@ -43,7 +43,7 @@ module app {
         }
 
         private handleBrowse(event: api.app.bar.event.ShowBrowsePanelEvent) {
-            var browsePanel: api.app.browse.BrowsePanel<api.module.ModuleSummary> = this.getBrowsePanel();
+            var browsePanel: api.app.browse.BrowsePanel<api.module.Module> = this.getBrowsePanel();
             if (!browsePanel) {
                 this.addBrowsePanel(new app.browse.ModuleBrowsePanel());
             } else {

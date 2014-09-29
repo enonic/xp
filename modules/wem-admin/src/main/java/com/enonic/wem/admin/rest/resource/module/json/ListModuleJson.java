@@ -1,29 +1,35 @@
 package com.enonic.wem.admin.rest.resource.module.json;
 
-import com.enonic.wem.admin.json.module.ModuleSummaryJson;
-import com.enonic.wem.api.module.Module;
-import com.enonic.wem.api.module.Modules;
-import com.google.common.collect.ImmutableList;
-
 import java.util.List;
 
-public class ListModuleJson {
+import com.google.common.collect.ImmutableList;
 
-    private List<ModuleSummaryJson> list;
+import com.enonic.wem.admin.json.module.ModuleJson;
+import com.enonic.wem.api.module.Module;
+import com.enonic.wem.api.module.Modules;
 
-    public ListModuleJson(Modules modules) {
-        ImmutableList.Builder<ModuleSummaryJson> builder = ImmutableList.builder();
-        for (Module module : modules) {
-            builder.add(new ModuleSummaryJson(module));
+public class ListModuleJson
+{
+
+    private List<ModuleJson> list;
+
+    public ListModuleJson( Modules modules )
+    {
+        ImmutableList.Builder<ModuleJson> builder = ImmutableList.builder();
+        for ( Module module : modules )
+        {
+            builder.add( new ModuleJson( module ) );
         }
         this.list = builder.build();
     }
 
-    public int getTotal() {
+    public int getTotal()
+    {
         return this.list.size();
     }
 
-    public List<ModuleSummaryJson> getModules() {
+    public List<ModuleJson> getModules()
+    {
         return this.list;
     }
 }
