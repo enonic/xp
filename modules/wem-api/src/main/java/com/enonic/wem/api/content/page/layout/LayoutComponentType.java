@@ -5,9 +5,11 @@ import com.enonic.wem.api.content.page.PageComponentType;
 public final class LayoutComponentType
     extends PageComponentType
 {
+    public final static LayoutComponentType INSTANCE = new LayoutComponentType();
+
     private static final LayoutComponentDataSerializer dataSerializer = new LayoutComponentDataSerializer();
 
-    public LayoutComponentType()
+    private LayoutComponentType()
     {
         super( "layout", LayoutComponent.class );
     }

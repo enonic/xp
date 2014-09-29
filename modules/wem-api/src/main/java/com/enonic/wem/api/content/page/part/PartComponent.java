@@ -11,8 +11,6 @@ public final class PartComponent
     extends AbstractDescriptorBasedPageComponent<PartDescriptorKey>
     implements RegionPlaceableComponent
 {
-    private static PartComponentType type = new PartComponentType();
-
     public PartComponent( final Builder builder )
     {
         super( builder );
@@ -26,7 +24,7 @@ public final class PartComponent
     @Override
     public PageComponentType getType()
     {
-        return PartComponent.type;
+        return PartComponentType.INSTANCE;
     }
 
     public static class Builder

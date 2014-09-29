@@ -4,8 +4,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -63,19 +61,6 @@ public class ElasticsearchIndexService
     private String existsTimeout = "5s";
 
     private Client client;
-
-    @PostConstruct
-    public void start()
-        throws Exception
-    {
-    }
-
-    @PreDestroy
-    public void stop()
-        throws Exception
-    {
-        this.client.close();
-    }
 
     private IndexStatus getIndexStatus( final String indexName, final boolean waitForStatusYellow )
     {

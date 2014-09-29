@@ -1,7 +1,5 @@
 package com.enonic.wem.core.elasticsearch;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -35,14 +33,12 @@ public final class ElasticNodeProvider
         return this.node;
     }
 
-    @PostConstruct
     public void start()
         throws Exception
     {
         this.node.start();
     }
 
-    @PreDestroy
     public void stop()
         throws Exception
     {

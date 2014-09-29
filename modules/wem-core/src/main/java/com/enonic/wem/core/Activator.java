@@ -1,6 +1,6 @@
 package com.enonic.wem.core;
 
-import java.io.File;
+import javax.inject.Inject;
 
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.ContentService;
@@ -23,22 +23,33 @@ import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeService;
 import com.enonic.wem.core.config.ConfigProperties;
 import com.enonic.wem.core.config.SystemConfig;
-import com.enonic.wem.core.home.HomeDir;
+import com.enonic.wem.core.elasticsearch.ElasticNodeProvider;
+import com.enonic.wem.core.home.HomeResolver;
 import com.enonic.wem.core.image.filter.ImageFilterBuilder;
 import com.enonic.wem.core.initializer.StartupInitializer;
+import com.enonic.wem.core.module.ModuleLoader;
 import com.enonic.wem.core.module.ModuleURLStreamHandler;
 import com.enonic.wem.core.schema.CoreSchemasProvider;
 import com.enonic.wem.core.schema.SchemaModuleListener;
+import com.enonic.wem.core.schema.SchemaRegistryImpl;
 import com.enonic.wem.guice.GuiceActivator;
 
 public final class Activator
     extends GuiceActivator
 {
+    @Inject
+    protected ElasticNodeProvider nodeProvider;
+
+    @Inject
+    protected ModuleLoader moduleLoader;
+
+    @Inject
+    protected SchemaRegistryImpl schemaRegistry;
+
     @Override
     protected void configure()
     {
-        final String karafHome = System.getProperty( "karaf.home" );
-        new HomeDir( new File( karafHome, "wem.home" ) );
+        new HomeResolver().resolve();
 
         // Install core module
         install( new CoreModule() );
@@ -72,5 +83,23 @@ public final class Activator
         service( EventPublisher.class ).export();
         service( CoreSchemasProvider.class ).export();
         service( SchemaModuleListener.class ).export();
+    }
+
+    @Override
+    protected void doStart()
+        throws Exception
+    {
+        this.nodeProvider.start();
+        this.moduleLoader.start();
+        this.schemaRegistry.start();
+    }
+
+    @Override
+    protected void doStop()
+        throws Exception
+    {
+        this.schemaRegistry.stop();
+        this.moduleLoader.stop();
+        this.nodeProvider.stop();
     }
 }

@@ -8,8 +8,6 @@ import com.enonic.wem.api.content.page.PageComponentType;
 public class TextComponent
     extends AbstractPageComponent
 {
-    private static TextComponentType type = new TextComponentType();
-
     private String text;
 
     protected TextComponent( final Builder builder )
@@ -25,7 +23,7 @@ public class TextComponent
 
     public PageComponentType getType()
     {
-        return TextComponent.type;
+        return TextComponentType.INSTANCE;
     }
 
     public String getText()

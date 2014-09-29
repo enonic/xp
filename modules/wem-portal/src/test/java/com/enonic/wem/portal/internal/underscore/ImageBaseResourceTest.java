@@ -24,7 +24,7 @@ import com.enonic.wem.api.entity.Workspaces;
 import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.core.blobstore.memory.MemoryBlobRecord;
+import com.enonic.wem.core.blob.memory.MemoryBlobRecord;
 import com.enonic.wem.core.image.filter.BuilderContext;
 import com.enonic.wem.core.image.filter.ImageFilter;
 import com.enonic.wem.core.image.filter.ImageFilterBuilder;

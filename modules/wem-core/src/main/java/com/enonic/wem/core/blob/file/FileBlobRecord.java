@@ -1,8 +1,4 @@
-/*
- * Copyright 2000-2013 Enonic AS
- * http://www.enonic.com/license
- */
-package com.enonic.wem.core.blobstore.file;
+package com.enonic.wem.core.blob.file;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,9 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import com.enonic.wem.api.blob.BlobKey;
-import com.enonic.wem.core.blobstore.BlobRecord;
-import com.enonic.wem.core.blobstore.BlobStoreException;
-
+import com.enonic.wem.core.blob.BlobRecord;
+import com.enonic.wem.core.blob.BlobStoreException;
 
 final class FileBlobRecord
     extends BlobRecord

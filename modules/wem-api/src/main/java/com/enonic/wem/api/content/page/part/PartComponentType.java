@@ -5,9 +5,11 @@ import com.enonic.wem.api.content.page.PageComponentType;
 public final class PartComponentType
     extends PageComponentType
 {
+    public final static PartComponentType INSTANCE = new PartComponentType();
+
     private static final PartComponentDataSerializer dataSerializer = new PartComponentDataSerializer();
 
-    public PartComponentType()
+    private PartComponentType()
     {
         super( "part", PartComponent.class );
     }

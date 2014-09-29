@@ -24,6 +24,7 @@ public final class SchemaModule
     @Override
     protected void configure()
     {
+        bind( SchemaRegistryImpl.class ).in( Scopes.SINGLETON );
         bind( SchemaRegistry.class ).to( SchemaRegistryImpl.class ).in( Scopes.SINGLETON );
         bind( RelationshipTypeDao.class ).to( RelationshipTypeDaoImpl.class ).in( Scopes.SINGLETON );
         bind( ContentTypeDao.class ).to( ContentTypeDaoImpl.class ).in( Scopes.SINGLETON );

@@ -2,15 +2,15 @@
  * Copyright 2000-2013 Enonic AS
  * http://www.enonic.com/license
  */
-package com.enonic.wem.core.blobstore.memory;
+package com.enonic.wem.core.blob.memory;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 
 import com.enonic.wem.api.blob.BlobKey;
-import com.enonic.wem.core.blobstore.BlobKeyCreator;
-import com.enonic.wem.core.blobstore.BlobRecord;
+import com.enonic.wem.core.blob.BlobKeyCreator;
+import com.enonic.wem.core.blob.BlobRecord;
 
 
 final public class MemoryBlobRecord

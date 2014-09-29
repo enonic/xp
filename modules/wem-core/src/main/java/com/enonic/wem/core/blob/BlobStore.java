@@ -1,4 +1,4 @@
-package com.enonic.wem.core.blobstore;
+package com.enonic.wem.core.blob;
 
 import java.io.IOException;
 import java.io.InputStream;

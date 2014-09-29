@@ -4,9 +4,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
 
 import com.enonic.wem.api.blob.BlobService;
-import com.enonic.wem.core.blob.binary.BlobServiceImpl;
-import com.enonic.wem.core.blob.binary.dao.BlobDao;
-import com.enonic.wem.core.blob.binary.dao.BlobDaoImpl;
+import com.enonic.wem.core.blob.file.FileBlobStore;
 
 public final class BlobModule
     extends AbstractModule
@@ -14,7 +12,7 @@ public final class BlobModule
     @Override
     protected void configure()
     {
-        bind( BlobDao.class ).to( BlobDaoImpl.class ).in( Scopes.SINGLETON );
+        bind( BlobStore.class ).to( FileBlobStore.class ).in( Scopes.SINGLETON );
         bind( BlobService.class ).to( BlobServiceImpl.class ).in( Scopes.SINGLETON );
     }
 }

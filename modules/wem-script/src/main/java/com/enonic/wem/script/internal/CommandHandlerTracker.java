@@ -1,7 +1,5 @@
 package com.enonic.wem.script.internal;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -22,20 +20,6 @@ final class CommandHandlerTracker
     {
         super( context, CommandHandler.class.getName(), null );
         this.environment = environment;
-    }
-
-    @PostConstruct
-    @Override
-    public void open()
-    {
-        super.open();
-    }
-
-    @PreDestroy
-    @Override
-    public void close()
-    {
-        super.close();
     }
 
     @Override

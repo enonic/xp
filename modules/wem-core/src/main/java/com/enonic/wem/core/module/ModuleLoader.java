@@ -5,8 +5,6 @@ import java.net.URL;
 import java.util.Dictionary;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -58,7 +56,6 @@ public final class ModuleLoader
         this.eventPublisher = eventPublisher;
     }
 
-    @PostConstruct
     public void start()
     {
         this.context.addBundleListener( this );
@@ -68,7 +65,6 @@ public final class ModuleLoader
         }
     }
 
-    @PreDestroy
     public void stop()
     {
         this.context.removeBundleListener( this );

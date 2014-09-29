@@ -1,7 +1,5 @@
 package com.enonic.wem.guice.internal;
 
-import org.eclipse.sisu.bean.BeanManager;
-import org.eclipse.sisu.bean.LifecycleModule;
 import org.ops4j.peaberry.Peaberry;
 import org.osgi.framework.BundleContext;
 
@@ -39,7 +37,6 @@ public final class GuiceManager
     protected void configure()
     {
         install( Peaberry.osgiModule( this.context ) );
-        install( new LifecycleModule() );
         install( this.module );
     }
 
@@ -56,7 +53,6 @@ public final class GuiceManager
     {
         try
         {
-            this.injector.getInstance( BeanManager.class ).unmanage();
             this.serviceManager.unexportAll();
         }
         finally

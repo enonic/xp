@@ -1,8 +1,4 @@
-/*
- * Copyright 2000-2013 Enonic AS
- * http://www.enonic.com/license
- */
-package com.enonic.wem.core.blobstore.file;
+package com.enonic.wem.core.blob.file;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -18,10 +14,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.wem.api.blob.BlobKey;
-import com.enonic.wem.core.blobstore.BlobKeyCreator;
-import com.enonic.wem.core.blobstore.BlobRecord;
-import com.enonic.wem.core.blobstore.BlobStore;
-import com.enonic.wem.core.blobstore.BlobStoreException;
+import com.enonic.wem.core.blob.BlobKeyCreator;
+import com.enonic.wem.core.blob.BlobRecord;
+import com.enonic.wem.core.blob.BlobStore;
+import com.enonic.wem.core.blob.BlobStoreException;
 import com.enonic.wem.core.config.SystemConfig;
 
 public final class FileBlobStore

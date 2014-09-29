@@ -5,9 +5,11 @@ import com.enonic.wem.api.content.page.PageComponentType;
 public final class ImageComponentType
     extends PageComponentType
 {
+    public final static ImageComponentType INSTANCE = new ImageComponentType();
+
     private static final ImageComponentDataSerializer dataSerializer = new ImageComponentDataSerializer();
 
-    public ImageComponentType()
+    private ImageComponentType()
     {
         super( "image", ImageComponent.class );
     }
