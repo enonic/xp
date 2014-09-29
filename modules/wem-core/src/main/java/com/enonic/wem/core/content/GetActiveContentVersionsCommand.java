@@ -2,6 +2,7 @@ package com.enonic.wem.core.content;
 
 import com.google.common.collect.ImmutableMap;
 
+import com.enonic.wem.api.content.ActiveContentVersionEntry;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.GetActiveContentVersionsResult;
 import com.enonic.wem.api.entity.EntityId;
@@ -47,7 +48,7 @@ public class GetActiveContentVersionsCommand
         for ( final Workspace workspace : nodeVersionsMap.keySet() )
         {
             final NodeVersion nodeVersion = nodeVersionsMap.get( workspace );
-            builder.add( workspace, contentVersionFactory.create( nodeVersion ) );
+            builder.add( ActiveContentVersionEntry.from( workspace, contentVersionFactory.create( nodeVersion ) ) );
         }
 
         return builder.build();

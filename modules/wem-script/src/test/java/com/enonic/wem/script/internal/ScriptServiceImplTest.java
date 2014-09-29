@@ -11,7 +11,6 @@ import com.enonic.wem.script.AssertScriptLibrary;
 import com.enonic.wem.script.ScriptExports;
 import com.enonic.wem.script.ScriptService;
 import com.enonic.wem.script.SimpleScriptEnvironment;
-import com.enonic.wem.script.internal.ScriptServiceImpl;
 
 import static org.junit.Assert.*;
 
@@ -61,34 +60,17 @@ public class ScriptServiceImplTest
     public void testResolve()
     {
         final ResourceKey script = ResourceKey.from( "mymodule:/resolve/resolve-test.js" );
-
         final ScriptExports exports = this.service.execute( script );
         assertNotNull( exports );
         assertSame( script, exports.getScript() );
-        assertEquals( ResourceKey.from( "mymodule:/resolve/other.js" ), exports.executeMethod( "test", "other.js" ) );
-        assertEquals( ResourceKey.from( "mymodule:/other/other.js" ), exports.executeMethod( "test", "../other/other.js" ) );
     }
 
     @Test
     public void testRequire()
     {
         final ResourceKey script = ResourceKey.from( "mymodule:/require/require-test.js" );
-
         final ScriptExports exports = this.service.execute( script );
         assertNotNull( exports );
-        assertSame( script, exports.getScript() );
-        assertEquals( "Hello World!", exports.executeMethod( "test", "World" ) );
-    }
-
-    @Test
-    public void testResolveRequire()
-    {
-        final ResourceKey script = ResourceKey.from( "mymodule:/resolve/resolve-require-test.js" );
-
-        final ScriptExports exports = this.service.execute( script );
-        assertNotNull( exports );
-        assertSame( script, exports.getScript() );
-        assertEquals( ResourceKey.from( "other:/util.js" ), exports.executeMethod( "test", "util.js" ) );
     }
 
     @Test

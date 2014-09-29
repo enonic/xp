@@ -9,6 +9,7 @@ module app.view {
         private moduleDataContainer: api.dom.DivEl;
         private moduleActions: api.ui.Action[] = [];
         private actionMenu: api.ui.menu.ActionMenu;
+        private currentItem: api.app.view.ViewItem<api.module.ModuleSummary>;
 
         constructor() {
             super("module-item-statistics-panel");
@@ -28,10 +29,21 @@ module app.view {
             this.moduleDataContainer = new api.dom.DivEl("module-data-container");
             this.appendChild(this.moduleDataContainer);
 
+            app.browse.StartModuleEvent.on(() => {
+                this.actionMenu.setLabel("Started");
+            });
 
+            app.browse.StopModuleEvent.on(() => {
+                this.actionMenu.setLabel("Stopped");
+            });
         }
 
         setItem(item: api.app.view.ViewItem<api.module.Module>) {
+            if (this.currentItem && this.currentItem.getPath() == item.getPath()) {
+                return;
+            }
+            this.currentItem = item;
+
             super.setItem(item);
             this.actionMenu.setLabel(api.util.StringHelper.capitalize(item.getModel().getState()));
 

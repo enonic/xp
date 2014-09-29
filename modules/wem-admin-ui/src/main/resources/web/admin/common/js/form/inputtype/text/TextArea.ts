@@ -42,7 +42,7 @@ module api.form.inputtype.text {
         }
 
         valueBreaksRequiredContract(value: api.data.Value): boolean {
-            return value.isNull() || !value.getType().equals(api.data.type.ValueTypes.HTML_PART) ||
+            return value.isNull() || !value.getType().equals(api.data.type.ValueTypes.STRING) ||
                    api.util.StringHelper.isBlank(value.asString());
         }
 

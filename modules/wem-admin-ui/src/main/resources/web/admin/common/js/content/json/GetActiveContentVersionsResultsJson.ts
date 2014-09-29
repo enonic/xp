@@ -10,7 +10,7 @@ module api.content.json {
 
         totalHits: number;
 
-        activeContentVersions: {[workspace: string]: ContentVersionJson};
+        activeContentVersions: ActiveContentVersionJson[];
     }
 }
 

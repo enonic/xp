@@ -1,28 +1,26 @@
 package com.enonic.wem.admin.json.content;
 
-import java.util.Map;
+import java.util.Set;
 
-import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
+import com.enonic.wem.api.content.ActiveContentVersionEntry;
 import com.enonic.wem.api.content.GetActiveContentVersionsResult;
-import com.enonic.wem.api.entity.Workspace;
 
 public class GetActiveContentVersionsResultJson
 {
-    public final Map<String, ContentVersionJson> activeContentVersions;
+    private final Set<ActiveContentVersionEntryJson> activeContentVersions = Sets.newLinkedHashSet();
 
     public GetActiveContentVersionsResultJson( final GetActiveContentVersionsResult result )
     {
-        this.activeContentVersions = Maps.newLinkedHashMap();
-
-        for ( final Workspace workspace : result.getContentVersions().keySet() )
+        for ( final ActiveContentVersionEntry activeContentVersionEntry : result.getActiveContentVersions() )
         {
-            this.activeContentVersions.put( workspace.getName(), new ContentVersionJson( result.getContentVersions().get( workspace ) ) );
+            activeContentVersions.add( new ActiveContentVersionEntryJson( activeContentVersionEntry ) );
         }
     }
 
-    @SuppressWarnings("unusedDeclaration")
-    public Map<String, ContentVersionJson> getActiveContentVersions()
+    @SuppressWarnings("UnusedDeclaration")
+    public Set<ActiveContentVersionEntryJson> getActiveContentVersions()
     {
         return activeContentVersions;
     }

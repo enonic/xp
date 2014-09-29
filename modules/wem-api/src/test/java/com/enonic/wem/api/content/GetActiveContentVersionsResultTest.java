@@ -27,12 +27,11 @@ public class GetActiveContentVersionsResultTest
         final Workspace prod = Workspace.from( "prod" );
 
         final GetActiveContentVersionsResult result = GetActiveContentVersionsResult.create().
-            add( stage, version ).
-            add( prod, version ).
+            add( ActiveContentVersionEntry.from( stage, version ) ).
+            add( ActiveContentVersionEntry.from( prod, version ) ).
             build();
 
-        assertNotNull( result.getContentVersions().get( stage ) );
-        assertNotNull( result.getContentVersions().get( prod ) );
+        assertEquals( 2, result.getActiveContentVersions().size() );
     }
 
     @Test
@@ -50,12 +49,11 @@ public class GetActiveContentVersionsResultTest
         final Workspace prod = Workspace.from( "prod" );
 
         final GetActiveContentVersionsResult result = GetActiveContentVersionsResult.create().
-            add( stage, version ).
-            add( prod, null ).
+            add( ActiveContentVersionEntry.from( stage, version ) ).
+            add( ActiveContentVersionEntry.from( prod, null ) ).
             build();
 
-        assertEquals( 1, result.getContentVersions().size() );
-        assertNotNull( result.getContentVersions().get( stage ) );
+        assertEquals( 1, result.getActiveContentVersions().size() );
     }
 
     @Test
@@ -86,15 +84,15 @@ public class GetActiveContentVersionsResultTest
             build();
 
         final GetActiveContentVersionsResult result = GetActiveContentVersionsResult.create().
-            add( prod, oldVersion ).
-            add( stage, newVersion ).
-            add( archive, oldestVersion ).
+            add( ActiveContentVersionEntry.from( prod, oldVersion ) ).
+            add( ActiveContentVersionEntry.from( stage, newVersion ) ).
+            add( ActiveContentVersionEntry.from( archive, oldestVersion ) ).
             build();
 
-        final UnmodifiableIterator<Workspace> iterator = result.getContentVersions().keySet().iterator();
+        final UnmodifiableIterator<ActiveContentVersionEntry> iterator = result.getActiveContentVersions().iterator();
 
-        assertEquals( stage, iterator.next() );
-        assertEquals( prod, iterator.next() );
-        assertEquals( archive, iterator.next() );
+        assertEquals( stage, iterator.next().getWorkspace() );
+        assertEquals( prod, iterator.next().getWorkspace() );
+        assertEquals( archive, iterator.next().getWorkspace() );
     }
 }

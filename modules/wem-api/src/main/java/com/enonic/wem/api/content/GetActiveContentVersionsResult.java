@@ -1,27 +1,22 @@
 package com.enonic.wem.api.content;
 
-import java.util.Map;
+import java.util.SortedSet;
 
-import com.google.common.base.Functions;
-import com.google.common.collect.ImmutableSortedMap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Ordering;
-
-import com.enonic.wem.api.entity.Workspace;
+import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.Sets;
 
 public class GetActiveContentVersionsResult
 {
-    private ImmutableSortedMap<Workspace, ContentVersion> contentVersions;
+    private final ImmutableSortedSet<ActiveContentVersionEntry> activeContentVersions;
 
-    private GetActiveContentVersionsResult( Builder builder )
+    private GetActiveContentVersionsResult( final Builder builder )
     {
-        // Order map by ordering of contentVersions, then WorkspaceName in case same version
-        final Ordering<Workspace> workspaceOrdering = Ordering.
-            natural().
-            onResultOf( Functions.forMap( builder.contentVersions ) ).
-            compound( Ordering.usingToString() );
+        this.activeContentVersions = ImmutableSortedSet.copyOf( builder.activeContentVersions );
+    }
 
-        contentVersions = ImmutableSortedMap.copyOf( builder.contentVersions, workspaceOrdering );
+    public ImmutableSortedSet<ActiveContentVersionEntry> getActiveContentVersions()
+    {
+        return activeContentVersions;
     }
 
     public static Builder create()
@@ -29,25 +24,21 @@ public class GetActiveContentVersionsResult
         return new Builder();
     }
 
-    public ImmutableSortedMap<Workspace, ContentVersion> getContentVersions()
-    {
-        return contentVersions;
-    }
-
     public static final class Builder
     {
-        private Map<Workspace, ContentVersion> contentVersions = Maps.newHashMap();
+        private final SortedSet<ActiveContentVersionEntry> activeContentVersions = Sets.newTreeSet();
 
         private Builder()
         {
         }
 
-        public Builder add( final Workspace workspace, final ContentVersion contentVersion )
+        public Builder add( final ActiveContentVersionEntry activeContentVersion )
         {
-            if ( contentVersion != null )
+            if ( activeContentVersion != null && activeContentVersion.getContentVersion() != null )
             {
-                this.contentVersions.put( workspace, contentVersion );
+                this.activeContentVersions.add( activeContentVersion );
             }
+
             return this;
         }
 
