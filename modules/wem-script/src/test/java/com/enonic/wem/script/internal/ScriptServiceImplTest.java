@@ -36,7 +36,7 @@ public class ScriptServiceImplTest
     @Test
     public void testEmpty()
     {
-        final ResourceKey script = ResourceKey.from( "mymodule-1.0.0:/empty-test.js" );
+        final ResourceKey script = ResourceKey.from( "mymodule:/empty-test.js" );
 
         final ScriptExports exports = this.service.execute( script );
         assertNotNull( exports );
@@ -47,7 +47,7 @@ public class ScriptServiceImplTest
     @Test
     public void testExecuteExported()
     {
-        final ResourceKey script = ResourceKey.from( "mymodule-1.0.0:/export-test.js" );
+        final ResourceKey script = ResourceKey.from( "mymodule:/export-test.js" );
 
         final ScriptExports exports = this.service.execute( script );
         assertNotNull( exports );
@@ -59,7 +59,7 @@ public class ScriptServiceImplTest
     @Test
     public void testResolve()
     {
-        final ResourceKey script = ResourceKey.from( "mymodule-1.0.0:/resolve/resolve-test.js" );
+        final ResourceKey script = ResourceKey.from( "mymodule:/resolve/resolve-test.js" );
         final ScriptExports exports = this.service.execute( script );
         assertNotNull( exports );
         assertSame( script, exports.getScript() );
@@ -68,7 +68,7 @@ public class ScriptServiceImplTest
     @Test
     public void testRequire()
     {
-        final ResourceKey script = ResourceKey.from( "mymodule-1.0.0:/require/require-test.js" );
+        final ResourceKey script = ResourceKey.from( "mymodule:/require/require-test.js" );
         final ScriptExports exports = this.service.execute( script );
         assertNotNull( exports );
     }
@@ -76,7 +76,7 @@ public class ScriptServiceImplTest
     @Test
     public void testCompileError()
     {
-        final ResourceKey script = ResourceKey.from( "mymodule-1.0.0:/error/error-test.js" );
+        final ResourceKey script = ResourceKey.from( "mymodule:/error/error-test.js" );
 
         try
         {
@@ -93,7 +93,7 @@ public class ScriptServiceImplTest
     @Test
     public void testRuntimeError()
     {
-        final ResourceKey script = ResourceKey.from( "mymodule-1.0.0:/error/error-in-export-test.js" );
+        final ResourceKey script = ResourceKey.from( "mymodule:/error/error-in-export-test.js" );
         final ScriptExports exports = this.service.execute( script );
 
         assertNotNull( exports );
@@ -106,7 +106,7 @@ public class ScriptServiceImplTest
         catch ( final ResourceProblemException e )
         {
             assertEquals( 1, e.getLineNumber() );
-            assertEquals( ResourceKey.from( "mymodule-1.0.0:/error/error-test.js" ), e.getResource() );
+            assertEquals( ResourceKey.from( "mymodule:/error/error-test.js" ), e.getResource() );
         }
     }
 }
