@@ -40,16 +40,12 @@ public abstract class ImageBaseResource
 
     private final static int DEFAULT_QUALITY = 85;
 
-    @Inject
     protected ImageFilterBuilder imageFilterBuilder;
 
-    @Inject
     protected AttachmentService attachmentService;
 
-    @Inject
     protected BlobService blobService;
 
-    @Inject
     protected ContentService contentService;
 
     protected String filterParam;
@@ -217,5 +213,29 @@ public abstract class ImageBaseResource
         {
             throw notFound( "Attachment [%s] for content [%s] not found", attachmentName, contentId.toString() );
         }
+    }
+
+    @Inject
+    public void setImageFilterBuilder( final ImageFilterBuilder imageFilterBuilder )
+    {
+        this.imageFilterBuilder = imageFilterBuilder;
+    }
+
+    @Inject
+    public void setAttachmentService( final AttachmentService attachmentService )
+    {
+        this.attachmentService = attachmentService;
+    }
+
+    @Inject
+    public void setBlobService( final BlobService blobService )
+    {
+        this.blobService = blobService;
+    }
+
+    @Inject
+    public void setContentService( final ContentService contentService )
+    {
+        this.contentService = contentService;
     }
 }

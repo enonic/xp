@@ -30,22 +30,16 @@ import com.enonic.wem.portal.internal.controller.JsControllerFactory;
 public abstract class RenderBaseResource
     extends WorkspaceBaseResource
 {
-    @Inject
     protected JsControllerFactory controllerFactory;
 
-    @Inject
     protected PageDescriptorService pageDescriptorService;
 
-    @Inject
     protected PageTemplateService pageTemplateService;
 
-    @Inject
     protected SiteTemplateService siteTemplateService;
 
-    @Inject
     protected ContentService contentService;
 
-    @Inject
     protected SiteService siteService;
 
     protected String contentPath;
@@ -174,5 +168,41 @@ public abstract class RenderBaseResource
         {
             return null;
         }
+    }
+
+    @Inject
+    public void setControllerFactory( final JsControllerFactory controllerFactory )
+    {
+        this.controllerFactory = controllerFactory;
+    }
+
+    @Inject
+    public void setPageDescriptorService( final PageDescriptorService pageDescriptorService )
+    {
+        this.pageDescriptorService = pageDescriptorService;
+    }
+
+    @Inject
+    public void setPageTemplateService( final PageTemplateService pageTemplateService )
+    {
+        this.pageTemplateService = pageTemplateService;
+    }
+
+    @Inject
+    public void setSiteTemplateService( final SiteTemplateService siteTemplateService )
+    {
+        this.siteTemplateService = siteTemplateService;
+    }
+
+    @Inject
+    public void setContentService( final ContentService contentService )
+    {
+        this.contentService = contentService;
+    }
+
+    @Inject
+    public void setSiteService( final SiteService siteService )
+    {
+        this.siteService = siteService;
     }
 }

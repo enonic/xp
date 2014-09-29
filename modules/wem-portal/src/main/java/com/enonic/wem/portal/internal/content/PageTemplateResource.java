@@ -43,22 +43,17 @@ import static com.enonic.wem.api.content.site.ModuleConfig.newModuleConfig;
 public final class PageTemplateResource
     extends BaseResource
 {
-    @Inject
     protected JsControllerFactory controllerFactory;
 
-    @Inject
     protected SiteTemplateService siteTemplateService;
 
-    @Inject
     protected PageTemplateService pageTemplateService;
 
-    @Inject
     protected PageDescriptorService pageDescriptorService;
 
     protected String siteTemplateKeyParam;
 
     protected String pageTemplateKeyParam;
-
 
     @Override
     protected void doInit()
@@ -172,4 +167,27 @@ public final class PageTemplateResource
         }
     }
 
+    @Inject
+    public void setControllerFactory( final JsControllerFactory controllerFactory )
+    {
+        this.controllerFactory = controllerFactory;
+    }
+
+    @Inject
+    public void setSiteTemplateService( final SiteTemplateService siteTemplateService )
+    {
+        this.siteTemplateService = siteTemplateService;
+    }
+
+    @Inject
+    public void setPageTemplateService( final PageTemplateService pageTemplateService )
+    {
+        this.pageTemplateService = pageTemplateService;
+    }
+
+    @Inject
+    public void setPageDescriptorService( final PageDescriptorService pageDescriptorService )
+    {
+        this.pageDescriptorService = pageDescriptorService;
+    }
 }

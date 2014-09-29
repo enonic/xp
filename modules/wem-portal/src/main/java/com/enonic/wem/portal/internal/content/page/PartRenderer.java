@@ -12,7 +12,6 @@ import com.enonic.wem.api.content.page.part.PartDescriptorService;
 public final class PartRenderer
     extends DescriptorBasedPageComponentRenderer<PartComponent>
 {
-    @Inject
     protected PartDescriptorService partDescriptorService;
 
     @Override
@@ -25,5 +24,11 @@ public final class PartRenderer
     protected Descriptor getComponentDescriptor( final DescriptorKey descriptorKey )
     {
         return partDescriptorService.getByKey( (PartDescriptorKey) descriptorKey );
+    }
+
+    @Inject
+    public void setPartDescriptorService( final PartDescriptorService partDescriptorService )
+    {
+        this.partDescriptorService = partDescriptorService;
     }
 }

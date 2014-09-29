@@ -12,7 +12,6 @@ import com.enonic.wem.api.content.page.layout.LayoutDescriptorService;
 public final class LayoutRenderer
     extends DescriptorBasedPageComponentRenderer<LayoutComponent>
 {
-    @Inject
     protected LayoutDescriptorService layoutDescriptorService;
 
     @Override
@@ -25,5 +24,11 @@ public final class LayoutRenderer
     protected Descriptor getComponentDescriptor( final DescriptorKey descriptorKey )
     {
         return layoutDescriptorService.getByKey( (LayoutDescriptorKey) descriptorKey );
+    }
+
+    @Inject
+    public void setLayoutDescriptorService( final LayoutDescriptorService layoutDescriptorService )
+    {
+        this.layoutDescriptorService = layoutDescriptorService;
     }
 }
