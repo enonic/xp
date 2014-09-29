@@ -1,6 +1,6 @@
 module api.content {
 
-    export class ContentImageUrlResolver extends api.icon.IconUrlResolver{
+    export class ContentImageUrlResolver extends api.icon.IconUrlResolver {
 
         private contentId: ContentId;
 
@@ -22,7 +22,7 @@ module api.content {
             if (this.size.length > 0) {
                 url = this.appendParam("size", this.size, url);
             }
-            return api.util.getRestUri(url);
+            return api.util.UriHelper.getRestUri(url);
         }
     }
 }

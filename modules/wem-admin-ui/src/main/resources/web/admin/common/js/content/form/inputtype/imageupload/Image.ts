@@ -22,7 +22,7 @@ module api.content.form.inputtype.imageupload {
 
             this.attachment = attachments.pop();
 
-            var uploadUrl = api.util.getRestUri("blob/upload");
+            var uploadUrl = api.util.UriHelper.getRestUri("blob/upload");
             var imageUploaderConfig = <api.ui.uploader.ImageUploaderConfig> {
                 showImageAfterUpload: true,
                 maximumOccurrences: 1

@@ -54,14 +54,17 @@ module app.view {
         }
 
         public setItem(item: ViewItem<ContentSummary>) {
-            this.mask.show();
             this.item = item;
             if (item.getModel().getType().equals(api.schema.content.ContentTypeName.IMAGE)) {
                 this.getEl().removeClass("no-preview page-preview").addClass("image-preview");
                 if (this.isVisible()) {
                     this.addImageSizeToUrl(item);
                 }
+                if (!this.image.isLoaded()) {
+                    this.mask.show();
+                }
             } else {
+                this.mask.show();
                 new IsRenderableRequest(item.getModel().getContentId()).sendAndParse()
                     .done((renderable: boolean) => {
                         if (renderable) {

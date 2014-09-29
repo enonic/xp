@@ -99,7 +99,7 @@ module app.wizard.page {
 
         constructor(config: LiveEditPageProxyConfig) {
 
-            this.baseUrl = api.util.getUri("portal/edit/stage/");
+            this.baseUrl = api.util.UriHelper.getUri("portal/edit/stage/");
             this.liveFormPanel = config.liveFormPanel;
             this.siteTemplate = config.siteTemplate;
 

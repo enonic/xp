@@ -43,7 +43,7 @@ module api.app.bar {
 
             this.userButton.onClicked((event: MouseEvent) => this.userInfoPopup.toggle());
 
-            this.setBackgroundImgUrl(api.util.getRestUri('ui/background.jpg'));
+            this.setBackgroundImgUrl(api.util.UriHelper.getRestUri('ui/background.jpg'));
 
             api.dom.Window.get().onResized((event: UIEvent) => this.layoutChildren(), this);
             this.onRendered((event) => this.layoutChildren());
@@ -132,7 +132,7 @@ module api.app.bar {
         constructor() {
             super('user-button');
 
-            var photoUrl = api.util.getAdminUri('common/images/tsi-profil.jpg');
+            var photoUrl = api.util.UriHelper.getAdminUri('common/images/tsi-profil.jpg');
             this.setIcon(photoUrl);
         }
 

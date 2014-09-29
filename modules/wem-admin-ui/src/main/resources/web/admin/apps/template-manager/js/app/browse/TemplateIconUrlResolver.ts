@@ -10,8 +10,8 @@ module app.browse {
 
         constructor() {
             super();
-            this.pageTemplateIconUri = api.util.getAdminUri('common/images/icons/icoMoon/32x32/newspaper.png');
-            this.siteTemplateIconUri = api.util.getAdminUri('common/images/icons/icoMoon/32x32/earth.png');
+            this.pageTemplateIconUri = api.util.UriHelper.getAdminUri('common/images/icons/icoMoon/32x32/newspaper.png');
+            this.siteTemplateIconUri = api.util.UriHelper.getAdminUri('common/images/icons/icoMoon/32x32/earth.png');
         }
 
         setTemplate(value: TemplateSummary): TemplateIconUrlResolver {

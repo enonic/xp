@@ -12,7 +12,7 @@ module app.view {
         constructor() {
             super("content-item-analytics-panel");
             this.frame = new api.dom.IFrameEl();
-            this.frame.setSrc(api.util.getUri("dev/detailpanel/analytics.html"));
+            this.frame.setSrc(api.util.UriHelper.getUri("dev/detailpanel/analytics.html"));
             this.appendChild(this.frame);
         }
 

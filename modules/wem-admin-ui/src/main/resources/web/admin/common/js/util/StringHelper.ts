@@ -2,7 +2,7 @@ module api.util {
 
     export class StringHelper {
 
-        private static EMPTY_STRING = "";
+        static EMPTY_STRING = "";
 
         static limit(str: string, length: number, ending: string = "\u2026"): string {
             return StringHelper.isEmpty(str) ? StringHelper.EMPTY_STRING : str.substring(0, length) + ending;

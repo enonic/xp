@@ -8,35 +8,43 @@ module app.launcher {
         private static DESCR3 = 'Doctus recteque intellegat duo ut, cu vidit neglegentur duo, has tritani verterem id. Feugiat omnesque intellegam ut sea, elitr tractatos et mel, pri paulo definiebas liberavisse ea. Eos diceret electram no, ad liber dictas vel. Vix solum tation veritus eu.';
         private static DESCR4 = 'Ei malis impedit expetendis quo. His id iusto nihil quando, qui facer equidem molestie ei, dolore possit eripuit ad eum. Dissentiet instructior no nec, blandit salutandi ea vel, legere essent quo at. At eos consul perpetua. Sea duis postea et, cum agam justo cu. Nulla numquam vim no.';
 
-        private static applications:api.app.Application[] = [
-            new api.app.Application('profile', 'Profile', 'PF', api.util.getAdminUri('common/images/tsi-profil.jpg'), Applications.PROFILE_DESC, null, true),
-            new api.app.Application('content-manager', 'Content Manager', 'CM', 'database', Applications.DESCR1),
-            new api.app.Application('relationships', 'Relationships', 'RS', 'share2', Applications.DESCR2),
+        private static apps: api.app.Application[];
 
-            new api.app.Application('store-manager', 'Store Manager', 'ST', 'cart', Applications.DESCR4),
-            //new api.app.Application('segment-builder', 'Segment Builder', 'SB', 'pie2', Applications.DESCR3),
-            //new api.app.Application('optimizer', 'Optimizer', 'OP', 'target3', Applications.DESCR2),
-            new api.app.Application('analytics', 'Analytics', 'AN', 'stats', Applications.DESCR1),
-
-            new api.app.Application('accounts', 'Accounts', 'AC', 'users', Applications.DESCR2),
-            new api.app.Application('module-manager', 'Modules', 'MD', 'puzzle', Applications.DESCR1),
-            new api.app.Application('template-manager', 'Templates', 'TM', 'earth', Applications.DESCR4),
-            //new api.app.Application('diagnostics', 'Diagnostics', 'DI', 'aid', Applications.DESCR3),
-            //new api.app.Application('dummy', 'Dummy', 'DU', 'rotate', Applications.DESCR3)
-        ];
-
-        static getAllApps():api.app.Application[] {
-            return Applications.applications;
+        static getAllApps(): api.app.Application[] {
+            if (!Applications.apps) {
+                Applications.apps = Applications.initApps();
+            }
+            return Applications.apps;
         }
 
-        static getAppById(id:string):api.app.Application {
-            var app:api.app.Application = null;
-            Applications.getAllApps().forEach((currentApp:api.app.Application) => {
-               if (currentApp.getId() == id) {
-                   app = currentApp;
-               }
+        static getAppById(id: string): api.app.Application {
+            var app: api.app.Application = null;
+            Applications.getAllApps().forEach((currentApp: api.app.Application) => {
+                if (currentApp.getId() == id) {
+                    app = currentApp;
+                }
             });
             return app;
+        }
+
+        private static initApps(): api.app.Application[] {
+            return [
+                new api.app.Application('profile', 'Profile', 'PF', api.util.UriHelper.getAdminUri('common/images/tsi-profil.jpg'),
+                    Applications.PROFILE_DESC, null, true),
+                new api.app.Application('content-manager', 'Content Manager', 'CM', 'database', Applications.DESCR1),
+                new api.app.Application('relationships', 'Relationships', 'RS', 'share2', Applications.DESCR2),
+
+                new api.app.Application('store-manager', 'Store Manager', 'ST', 'cart', Applications.DESCR4),
+                //new api.app.Application('segment-builder', 'Segment Builder', 'SB', 'pie2', Applications.DESCR3),
+                //new api.app.Application('optimizer', 'Optimizer', 'OP', 'target3', Applications.DESCR2),
+                new api.app.Application('analytics', 'Analytics', 'AN', 'stats', Applications.DESCR1),
+
+                new api.app.Application('accounts', 'Accounts', 'AC', 'users', Applications.DESCR2),
+                new api.app.Application('module-manager', 'Modules', 'MD', 'puzzle', Applications.DESCR1),
+                new api.app.Application('template-manager', 'Templates', 'TM', 'earth', Applications.DESCR4),
+                //new api.app.Application('diagnostics', 'Diagnostics', 'DI', 'aid', Applications.DESCR3),
+                //new api.app.Application('dummy', 'Dummy', 'DU', 'rotate', Applications.DESCR3)
+            ];
         }
     }
 }

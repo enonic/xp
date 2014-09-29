@@ -47,7 +47,7 @@ module api.ui.text {
             this.options = {
                 lineNumbers: builder.lineNumbers
             };
-            CodeMirror.modeURL = api.util.getUri('admin/common/lib/codemirror/mode/%N.js');
+            CodeMirror.modeURL = api.util.UriHelper.getUri('admin/common/lib/codemirror/mode/%N.js');
 
             this.onAdded((event) => {
                 this.codeMirror = CodeMirror.fromTextArea(<HTMLTextAreaElement>this.textArea.getHTMLElement(), this.options);

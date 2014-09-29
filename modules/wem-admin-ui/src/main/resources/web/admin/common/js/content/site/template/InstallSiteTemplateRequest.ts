@@ -86,8 +86,8 @@ module api.content.site.template {
                 url: this.getRequestPath(),
                 multipart: true,
                 drop_element: triggerElement.getId(),
-                flash_swf_url: api.util.getUri('common/js/fileupload/plupload/js/plupload.flash.swf'),
-                silverlight_xap_url: api.util.getUri('common/js/fileupload/plupload/js/plupload.silverlight.xap'),
+                flash_swf_url: api.util.UriHelper.getUri('common/js/fileupload/plupload/js/plupload.flash.swf'),
+                silverlight_xap_url: api.util.UriHelper.getUri('common/js/fileupload/plupload/js/plupload.silverlight.xap'),
                 filters: [
                     {title: 'Zip Archive', extensions: 'zip'}
                 ]
@@ -151,19 +151,19 @@ module api.content.site.template {
             return this.templates;
         }
 
-        isBlank():boolean {
+        isBlank(): boolean {
             return this.templates.length == 0;
         }
 
-        getJson():any {
+        getJson(): any {
             return null;
         }
 
-        hasResult():boolean {
+        hasResult(): boolean {
             return !this.isBlank();
         }
 
-        getResult():SiteTemplateSummaryJson[] {
+        getResult(): SiteTemplateSummaryJson[] {
             return this.result;
         }
 

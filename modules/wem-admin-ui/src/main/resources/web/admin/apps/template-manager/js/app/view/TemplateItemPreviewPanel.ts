@@ -14,8 +14,8 @@ module app.view {
                 this.mask.show();
 
                 templateSummary.getKey();
-                var url = api.util.getUri('portal/theme/' + templateSummary.getSiteTemplateKey().toString() + '/' +
-                                          templateSummary.getKey());
+                var url = api.util.UriHelper.getUri('portal/theme/' + templateSummary.getSiteTemplateKey().toString() + '/' +
+                                                    templateSummary.getKey());
                 this.getEl().removeClass("no-preview").addClass('page-preview');
                 this.frame.setSrc(url);
             } else {
