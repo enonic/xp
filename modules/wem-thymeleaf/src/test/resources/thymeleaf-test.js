@@ -1,4 +1,4 @@
-var assert = require('assert');
+var assert = Java.type('org.junit.Assert');
 var thymeleaf = require('view/thymeleaf');
 var view = resolve('view/test.html');
 

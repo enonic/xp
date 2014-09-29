@@ -9,8 +9,9 @@ public final class ScriptActivator
     @Override
     protected void configure()
     {
-        bind( ScriptEnvironment.class ).to( ScriptEnvironmentImpl.class );
         bind( ScriptService.class ).to( ScriptServiceImpl.class );
+        bind( ScriptLibraryTracker.class ).asEagerSingleton();
+        bind( CommandHandlerTracker.class ).asEagerSingleton();
 
         service( ScriptService.class ).export();
     }

@@ -33,7 +33,7 @@ public abstract class AbstractControllerTest
         this.context = new JsContext();
         this.response = this.context.getResponse();
 
-        final ScriptEnvironment environment = Mockito.mock( ScriptEnvironment.class );
+        final ScriptEnvironment environment = new ScriptEnvironment();
         this.factory = new JsControllerFactoryImpl();
         this.factory.scriptService = new ScriptServiceImpl( environment );
         this.factory.postProcessor = this.postProcessor = Mockito.mock( PostProcessor.class );

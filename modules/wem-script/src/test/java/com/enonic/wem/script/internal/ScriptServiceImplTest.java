@@ -7,10 +7,8 @@ import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceProblemException;
 import com.enonic.wem.api.resource.ResourceUrlRegistry;
 import com.enonic.wem.api.resource.ResourceUrlTestHelper;
-import com.enonic.wem.script.AssertScriptLibrary;
 import com.enonic.wem.script.ScriptExports;
 import com.enonic.wem.script.ScriptService;
-import com.enonic.wem.script.SimpleScriptEnvironment;
 
 import static org.junit.Assert.*;
 
@@ -27,9 +25,7 @@ public class ScriptServiceImplTest
     @Before
     public void setup()
     {
-        final SimpleScriptEnvironment environment = new SimpleScriptEnvironment();
-        environment.addLibrary( new AssertScriptLibrary() );
-
+        final ScriptEnvironment environment = new ScriptEnvironment();
         this.service = new ScriptServiceImpl( environment );
     }
 

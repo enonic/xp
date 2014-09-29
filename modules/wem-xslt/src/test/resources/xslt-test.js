@@ -1,4 +1,4 @@
-var assert = require('assert');
+var assert = Java.type('org.junit.Assert');
 var xslt = require('view/xslt');
 var view = resolve('view/test.xsl');
 

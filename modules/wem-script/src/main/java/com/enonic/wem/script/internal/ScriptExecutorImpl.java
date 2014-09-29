@@ -15,7 +15,6 @@ import com.google.common.io.Resources;
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceProblemException;
-import com.enonic.wem.script.ScriptLibrary;
 
 final class ScriptExecutorImpl
     implements ScriptExecutor
@@ -92,9 +91,9 @@ final class ScriptExecutorImpl
     }
 
     @Override
-    public ScriptLibrary getLibrary( final String name )
+    public ScriptEnvironment getEnvironment()
     {
-        return this.environment.getLibrary( name );
+        return this.environment;
     }
 
     private ResourceProblemException handleException( final ScriptException e )

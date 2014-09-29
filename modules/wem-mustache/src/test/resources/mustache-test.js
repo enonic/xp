@@ -1,4 +1,4 @@
-var assert = require('assert');
+var assert = Java.type('org.junit.Assert');
 var mustache = require('view/mustache');
 var view = resolve('view/test.html');
 

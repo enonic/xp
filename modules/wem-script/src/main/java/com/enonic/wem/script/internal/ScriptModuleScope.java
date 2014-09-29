@@ -64,7 +64,7 @@ public final class ScriptModuleScope
 
         if ( !Resource.from( key ).exists() )
         {
-            final ScriptLibrary library = this.executor.getLibrary( name );
+            final ScriptLibrary library = this.executor.getEnvironment().getLibrary( name );
             if ( library != null )
             {
                 return library;
