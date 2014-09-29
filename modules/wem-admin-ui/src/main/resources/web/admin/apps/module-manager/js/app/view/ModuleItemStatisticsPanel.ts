@@ -35,7 +35,6 @@ module app.view {
 
             app.browse.StopModuleEvent.on(() => {
                 this.actionMenu.setLabel("Stopped");
-                console.log("changing label from event stop");
             });
         }
 
