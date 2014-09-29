@@ -95,9 +95,9 @@ module app.browse {
         deleteModuleNode(moduleKey: api.module.ModuleKey) {
             var root = this.getRoot();
             root.getChildren().forEach((child: TreeNode<Module>) => {
-                var moduleSummary: Module = child.getData();
-                if (moduleSummary.getModuleKey().toString() == moduleKey.toString()) {
-                    this.deleteNode(moduleSummary);
+                var curModule: Module = child.getData();
+                if (curModule.getModuleKey().toString() == moduleKey.toString()) {
+                    this.deleteNode(curModule);
                 }
             });
         }
