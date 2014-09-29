@@ -30,9 +30,9 @@ module app.wizard {
 
             this.descriptionField.setValue(siteTemplate.getDescription());
 
-            var setModulesListener = (modules: api.module.ModuleSummary[]) => {
+            var setModulesListener = (modules: api.module.Module[]) => {
                 siteTemplate.getModules().forEach((moduleKey: api.module.ModuleKey) => {
-                    var aModule: api.module.ModuleSummary;
+                    var aModule: api.module.Module;
                     for (var i = 0; i < modules.length; i++) {
                         aModule = modules[i];
                         if (moduleKey.equals(aModule.getModuleKey())) {

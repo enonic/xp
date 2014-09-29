@@ -1,7 +1,7 @@
 module app.browse {
 
     import ModuleKey = api.module.ModuleKey;
-    import ModuleSummary = api.module.ModuleSummary;
+    import Module = api.module.Module;
     import TreeNode = api.ui.treegrid.TreeNode;
     import BrowseItem = api.app.browse.BrowseItem;
     import UninstallModuleRequest = api.module.UninstallModuleRequest;
@@ -10,7 +10,7 @@ module app.browse {
     import StopModuleRequest = api.module.StopModuleRequest;
     import ModuleUpdatedEvent = api.module.ModuleUpdatedEvent;
 
-    export class ModuleBrowsePanel extends api.app.browse.BrowsePanel<api.module.ModuleSummary> {
+    export class ModuleBrowsePanel extends api.app.browse.BrowsePanel<api.module.Module> {
 
         private browseActions: app.browse.ModuleBrowseActions;
 
@@ -37,7 +37,7 @@ module app.browse {
                 filterPanel: undefined
             });
 
-            this.moduleTreeGrid.onRowSelectionChanged((selectedRows: TreeNode<ModuleSummary>[]) => {
+            this.moduleTreeGrid.onRowSelectionChanged((selectedRows: TreeNode<Module>[]) => {
                 this.browseActions.updateActionsEnabledState(<any[]>selectedRows.map((elem) => {
                     return elem.getData();
                 }));
@@ -48,11 +48,11 @@ module app.browse {
             this.registerEvents();
         }
 
-        treeNodesToBrowseItems(nodes: TreeNode<ModuleSummary>[]): BrowseItem<ModuleSummary>[] {
-            var browseItems: BrowseItem<ModuleSummary>[] = [];
+        treeNodesToBrowseItems(nodes: TreeNode<Module>[]): BrowseItem<Module>[] {
+            var browseItems: BrowseItem<Module>[] = [];
 
             // do not proceed duplicated content. still, it can be selected
-            nodes.forEach((node: TreeNode<ModuleSummary>, index: number) => {
+            nodes.forEach((node: TreeNode<Module>, index: number) => {
                 for (var i = 0; i <= index; i++) {
                     if (nodes[i].getData().getId() === node.getData().getId()) {
                         break;
@@ -60,7 +60,7 @@ module app.browse {
                 }
                 if (i === index) {
                     var moduleEl = node.getData();
-                    var item = new BrowseItem<ModuleSummary>(moduleEl).
+                    var item = new BrowseItem<Module>(moduleEl).
                         setId(moduleEl.getId()).
                         setDisplayName(moduleEl.getDisplayName()).
                         setPath(moduleEl.getName()).

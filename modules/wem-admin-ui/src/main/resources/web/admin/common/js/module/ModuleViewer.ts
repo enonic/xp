@@ -1,6 +1,6 @@
 module api.module {
 
-    export class ModuleSummaryViewer extends api.ui.Viewer<ModuleSummary> {
+    export class ModuleViewer extends api.ui.Viewer<Module> {
 
         private namesAndIconView: api.app.NamesAndIconView;
 
@@ -10,10 +10,10 @@ module api.module {
             this.appendChild(this.namesAndIconView);
         }
 
-        setObject(moduleSummary: ModuleSummary) {
-            super.setObject(moduleSummary);
-            this.namesAndIconView.setMainName(moduleSummary.getDisplayName()).
-                setSubName(moduleSummary.getName()).
+        setObject(moduleObj: Module) {
+            super.setObject(moduleObj);
+            this.namesAndIconView.setMainName(moduleObj.getDisplayName()).
+                setSubName(moduleObj.getName()).
                 setIconClass("icon-puzzle icon-large");
         }
 

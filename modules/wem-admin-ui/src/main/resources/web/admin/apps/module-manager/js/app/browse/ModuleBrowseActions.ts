@@ -38,12 +38,12 @@ module app.browse {
             return this.allActions;
         }
 
-        updateActionsEnabledState(selectedModules: ModuleSummary[]) {
+        updateActionsEnabledState(selectedModules: Module[]) {
             var modulesSelected = selectedModules.length;
             var anySelected = modulesSelected > 0;
             var anyStarted = false;
             var anyStopped = false;
-            selectedModules.forEach((mod: ModuleSummary) => {
+            selectedModules.forEach((mod: Module) => {
                 var state = mod.getState();
                 if (state === 'started') {
                     anyStarted = true;

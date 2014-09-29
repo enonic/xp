@@ -1,7 +1,7 @@
 declare var Admin;
 declare var CONFIG;
 
-import ModuleSummary = api.module.ModuleSummary;
+import Module = api.module.Module;
 
 function startApplication() {
     var application: api.app.Application = api.app.Application.getApplication();

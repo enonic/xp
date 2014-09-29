@@ -2,7 +2,7 @@ module app.view {
 
     import ModuleBrowseActions = app.browse.ModuleBrowseActions;
 
-    export class ModuleItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.module.ModuleSummary> {
+    export class ModuleItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.module.Module> {
 
         private upgradeNeeded: boolean = true;
         private upgradeMessageContainer: api.dom.DivEl;
@@ -31,7 +31,7 @@ module app.view {
 
         }
 
-        setItem(item: api.app.view.ViewItem<api.module.ModuleSummary>) {
+        setItem(item: api.app.view.ViewItem<api.module.Module>) {
             super.setItem(item);
             this.actionMenu.setLabel(api.util.StringHelper.capitalize(item.getModel().getState()));
 

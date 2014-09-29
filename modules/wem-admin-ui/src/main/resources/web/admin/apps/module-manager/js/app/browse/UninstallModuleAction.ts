@@ -1,6 +1,6 @@
 module app.browse {
 
-    import ModuleSummary = api.module.ModuleSummary;
+    import Module = api.module.Module;
 
     export class UninstallModuleAction extends api.ui.Action {
 
@@ -8,7 +8,7 @@ module app.browse {
             super("Uninstall");
             this.setEnabled(false);
             this.onExecuted(() => {
-                var modules: ModuleSummary[] = moduleTreeGrid.getSelectedDataList();
+                var modules: Module[] = moduleTreeGrid.getSelectedDataList();
                 new UninstallModuleEvent(modules).fire();
             });
         }

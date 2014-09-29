@@ -1,47 +1,42 @@
 module api.module {
 
-    export class ModuleComboBox extends api.ui.selector.combobox.RichComboBox<api.module.ModuleSummary>
-    {
-        constructor()
-        {
-            var builder = new api.ui.selector.combobox.RichComboBoxBuilder<api.module.ModuleSummary>();
+    export class ModuleComboBox extends api.ui.selector.combobox.RichComboBox<api.module.Module> {
+        constructor() {
+            var builder = new api.ui.selector.combobox.RichComboBoxBuilder<api.module.Module>();
             builder.
-                setComboBoxName("moduleSelector" ).
-                setLoader(new api.module.ModuleLoader() ).
+                setComboBoxName("moduleSelector").
+                setLoader(new api.module.ModuleLoader()).
                 setSelectedOptionsView(new ModuleSelectedOptionsView()).
-                setOptionDisplayValueViewer(new ModuleSummaryViewer()).
+                setOptionDisplayValueViewer(new ModuleViewer()).
                 setDelayedInputValueChangedHandling(500);
             super(builder);
         }
     }
 
-    export class ModuleSelectedOptionsView extends api.ui.selector.combobox.SelectedOptionsView<api.module.ModuleSummary> {
+    export class ModuleSelectedOptionsView extends api.ui.selector.combobox.SelectedOptionsView<api.module.Module> {
 
-        createSelectedOption(option:api.ui.selector.Option<api.module.ModuleSummary>):api.ui.selector.combobox.SelectedOption<api.module.ModuleSummary> {
-            var optionView = new ModuleSelectedOptionView( option );
-            return new api.ui.selector.combobox.SelectedOption<api.module.ModuleSummary>( optionView, this.count() );
+        createSelectedOption(option: api.ui.selector.Option<api.module.Module>): api.ui.selector.combobox.SelectedOption<api.module.Module> {
+            var optionView = new ModuleSelectedOptionView(option);
+            return new api.ui.selector.combobox.SelectedOption<api.module.Module>(optionView, this.count());
         }
     }
 
-    export class ModuleSelectedOptionView extends api.ui.selector.combobox.RichSelectedOptionView<api.module.ModuleSummary> {
+    export class ModuleSelectedOptionView extends api.ui.selector.combobox.RichSelectedOptionView<api.module.Module> {
 
 
-        constructor(option:api.ui.selector.Option<api.module.ModuleSummary>) {
+        constructor(option: api.ui.selector.Option<api.module.Module>) {
             super(option);
         }
 
-        resolveIconUrl(content:api.module.ModuleSummary):string
-        {
+        resolveIconUrl(content: api.module.Module): string {
             return api.util.getAdminUri("common/images/icons/icoMoon/128x128/puzzle.png");
         }
 
-        resolveTitle(content:api.module.ModuleSummary):string
-        {
+        resolveTitle(content: api.module.Module): string {
             return content.getDisplayName().toString();
         }
 
-        resolveSubTitle(content:api.module.ModuleSummary):string
-        {
+        resolveSubTitle(content: api.module.Module): string {
             return content.getModuleKey().toString();
         }
 

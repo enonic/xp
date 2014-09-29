@@ -1,7 +1,6 @@
 ///<reference path='ResourcePath.ts' />
 ///<reference path='ModuleKey.ts' />
 ///<reference path='ModuleResourceKey.ts' />
-///<reference path='ModuleSummary.ts' />
 ///<reference path='Module.ts' />
 ///<reference path='ModuleResourceRequest.ts' />
 ///<reference path='GetModuleRequest.ts' />
@@ -9,7 +8,7 @@
 ///<reference path='ModuleListResult.ts' />
 ///<reference path='ModuleLoader.ts' />
 ///<reference path='ModuleLoaderListener.ts' />
-///<reference path='ModuleSummaryViewer.ts' />
+///<reference path='ModuleViewer.ts' />
 ///<reference path='ModuleComboBox.ts' />
 ///<reference path='StopModuleRequest.ts' />
 ///<reference path='StartModuleRequest.ts' />
