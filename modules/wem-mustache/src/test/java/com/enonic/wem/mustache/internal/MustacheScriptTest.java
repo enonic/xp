@@ -11,9 +11,7 @@ public class MustacheScriptTest
     @Before
     public void setUp()
     {
-        final MustacheScriptLibrary lib = new MustacheScriptLibrary();
-        lib.processorFactory = new MustacheProcessorFactoryImpl();
-
+        final MustacheScriptLibrary lib = new MustacheScriptLibrary( new MustacheProcessorFactoryImpl() );
         addLibrary( lib );
     }
 
