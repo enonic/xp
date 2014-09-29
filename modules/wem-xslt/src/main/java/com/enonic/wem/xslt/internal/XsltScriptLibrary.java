@@ -2,21 +2,16 @@ package com.enonic.wem.xslt.internal;
 
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.script.ScriptLibrary;
 import com.enonic.wem.xslt.XsltProcessor;
 import com.enonic.wem.xslt.XsltProcessorFactory;
 
-@Singleton
 public final class XsltScriptLibrary
     implements ScriptLibrary
 {
     private final XsltProcessorFactory processorFactory;
 
-    @Inject
     public XsltScriptLibrary( final XsltProcessorFactory processorFactory )
     {
         this.processorFactory = processorFactory;
