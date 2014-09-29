@@ -84,8 +84,8 @@
 
 ///<reference path='item/_module.ts' />
 
-///<reference path='query/_module.ts' />
 ///<reference path='query/expr/_module.ts' />
+///<reference path='query/_module.ts' />
 ///<reference path='query/aggregation/_module.ts' />
 ///<reference path='query/filter/_module.ts' />
 

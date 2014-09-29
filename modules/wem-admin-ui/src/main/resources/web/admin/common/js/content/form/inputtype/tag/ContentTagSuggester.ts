@@ -43,17 +43,12 @@ module api.content.form.inputtype.tag {
                             this.dataPath.getParentPath().toString() +
                             this.dataPath.getLastElement().getName();
 
-            var field = new ValueExpr(new Value(fieldName, ValueTypes.STRING));
+            var fulltextExpression: api.query.expr.Expression = new api.query.FulltextSearchExpressionBuilder().
+                setSearchString(value).
+                addField(new api.query.QueryField(fieldName)).
+                build();
 
-            var arguments: ValueExpr[] = [];
-            arguments.push(field);
-            arguments.push(new ValueExpr(new Value(value, ValueTypes.STRING)));
-            arguments.push(new ValueExpr(new Value("AND", ValueTypes.STRING)));
-
-            var nGramExpr = new FunctionExpr("ngram", arguments);
-            var nGramDynamicExpr = new DynamicConstraintExpr(nGramExpr);
-
-            var queryExpr: QueryExpr = new QueryExpr(nGramDynamicExpr);
+            var queryExpr: QueryExpr = new QueryExpr(fulltextExpression);
 
             var query = new ContentQuery();
             query.setSize(10);
@@ -72,7 +67,7 @@ module api.content.form.inputtype.tag {
                         properties.forEach((property: api.data.Property) => {
                             if (property.hasNonNullValue()) {
                                 var tag = property.getString();
-                                if (tag.indexOf(value) == 0 && values.indexOf(tag) < 0) {
+                                if (values.indexOf(tag) < 0) {
                                     values.push(tag);
                                 }
                             }

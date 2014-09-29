@@ -29,7 +29,7 @@ module api.content {
                 return;
             }
 
-            this.contentSummaryRequest.setQueryString(searchString);
+            this.contentSummaryRequest.setQueryExpr(searchString);
 
             this.load();
         }
@@ -103,8 +103,15 @@ module api.content {
             this.contentQuery.setSize(size);
         }
 
-        setQueryString(searchString: string) {
-            var fulltextExpression: api.query.expr.Expression = api.query.FulltextSearchExpressionFactory.create(searchString);
+        setQueryExpr(searchString: string) {
+
+            var fulltextExpression: api.query.expr.Expression = new api.query.FulltextSearchExpressionBuilder().
+                setSearchString(searchString).
+                addField(new api.query.QueryField("displayName", 5)).
+                addField(new api.query.QueryField("name", 3)).
+                addField(new api.query.QueryField("_all_text")).
+                build();
+
             var queryExpr: api.query.expr.QueryExpr = new api.query.expr.QueryExpr(fulltextExpression);
             this.contentQuery.setQueryExpr(queryExpr);
         }

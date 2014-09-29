@@ -104,8 +104,8 @@ module app.browse.filter {
             new ContentQueryRequest<ContentSummaryJson,ContentSummary>(contentQuery).
                 setExpand(api.rest.Expand.SUMMARY).
                 sendAndParse().done((contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
-                    var serchStrValue : string = event.getSearchInputValues().getTextSearchFieldValue();
-                    if(serchStrValue != null && serchStrValue.length > 0) {
+                    var serchStrValue: string = event.getSearchInputValues().getTextSearchFieldValue();
+                    if (serchStrValue != null && serchStrValue.length > 0) {
                         var contentQuery: ContentQuery = new ContentQuery();
                         this.appendFulltextSearch(event.getSearchInputValues(), contentQuery);
 
@@ -149,7 +149,14 @@ module app.browse.filter {
         private appendFulltextSearch(searchInputValues: SearchInputValues, contentQuery: ContentQuery) {
 
             var searchString: string = searchInputValues.getTextSearchFieldValue();
-            var fulltextSearchExpression: api.query.expr.Expression = api.query.FulltextSearchExpressionFactory.create(searchString);
+
+            var fulltextSearchExpression: api.query.expr.Expression = new api.query.FulltextSearchExpressionBuilder().
+                setSearchString(searchString).
+                addField(new api.query.QueryField("displayName", 5)).
+                addField(new api.query.QueryField("name", 3)).
+                addField(new api.query.QueryField("_all_text")).
+                build();
+
             var query: QueryExpr = new QueryExpr(fulltextSearchExpression);
             contentQuery.setQueryExpr(query);
         }
