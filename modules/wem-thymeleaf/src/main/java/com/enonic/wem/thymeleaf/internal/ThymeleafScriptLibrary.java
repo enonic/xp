@@ -30,4 +30,10 @@ public final class ThymeleafScriptLibrary
         processor.parameters( params );
         return processor.process();
     }
+
+    @Override
+    public ScriptLibrary getInstance()
+    {
+        return this;
+    }
 }

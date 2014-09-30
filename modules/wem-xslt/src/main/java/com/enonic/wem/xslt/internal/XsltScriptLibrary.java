@@ -31,4 +31,10 @@ public final class XsltScriptLibrary
         processor.parameters( params );
         return processor.process();
     }
+
+    @Override
+    public ScriptLibrary getInstance()
+    {
+        return this;
+    }
 }

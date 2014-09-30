@@ -24,7 +24,8 @@ public final class ScriptEnvironment
 
     public ScriptLibrary getLibrary( final String name )
     {
-        return this.libraries.get( name );
+        final ScriptLibrary library = this.libraries.get( name );
+        return library != null ? library.getInstance() : null;
     }
 
     public void addLibrary( final ScriptLibrary library )

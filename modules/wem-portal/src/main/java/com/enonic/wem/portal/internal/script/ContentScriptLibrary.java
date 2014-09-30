@@ -54,4 +54,10 @@ public final class ContentScriptLibrary
     {
         return contentService.getById( ContentId.from( id ), ContentConstants.CONTEXT_STAGE );
     }
+
+    @Override
+    public ScriptLibrary getInstance()
+    {
+        return this;
+    }
 }

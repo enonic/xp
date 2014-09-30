@@ -30,4 +30,10 @@ public final class MustacheScriptLibrary
         processor.parameters( params );
         return processor.process();
     }
+
+    @Override
+    public ScriptLibrary getInstance()
+    {
+        return this;
+    }
 }
