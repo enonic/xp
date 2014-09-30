@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import com.google.common.io.ByteStreams;
-import com.google.inject.Inject;
 
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobKey;
@@ -89,11 +88,8 @@ public class NodeDaoImpl
         }
     }
 
-
-    @Inject
     public void setBlobService( final BlobService blobService )
     {
         this.blobService = blobService;
     }
-
 }

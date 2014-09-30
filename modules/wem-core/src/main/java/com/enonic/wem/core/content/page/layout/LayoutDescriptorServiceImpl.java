@@ -1,7 +1,5 @@
 package com.enonic.wem.core.content.page.layout;
 
-import javax.inject.Inject;
-
 import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorService;
@@ -12,8 +10,7 @@ import com.enonic.wem.api.module.ModuleService;
 public final class LayoutDescriptorServiceImpl
     implements LayoutDescriptorService
 {
-    @Inject
-    protected ModuleService moduleService;
+    private ModuleService moduleService;
 
     public LayoutDescriptor getByKey( final LayoutDescriptorKey key )
     {

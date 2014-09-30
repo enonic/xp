@@ -1,7 +1,5 @@
 package com.enonic.wem.core.content.page;
 
-import javax.inject.Inject;
-
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplateService;
@@ -14,8 +12,7 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 public final class PageTemplateServiceImpl
     implements PageTemplateService
 {
-    @Inject
-    protected SiteTemplateService siteTemplateService;
+    private SiteTemplateService siteTemplateService;
 
     public PageTemplate getByKey( final PageTemplateKey pageTemplateKey, final SiteTemplateKey siteTemplateKey )
     {

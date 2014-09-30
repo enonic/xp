@@ -4,15 +4,12 @@
  */
 package com.enonic.wem.core.image.filter;
 
-import javax.inject.Singleton;
-
 import com.enonic.wem.core.image.filter.command.FilterCommand;
 import com.enonic.wem.core.image.filter.command.FilterCommandRegistry;
 import com.enonic.wem.core.image.filter.parser.FilterExpr;
 import com.enonic.wem.core.image.filter.parser.FilterExprParser;
 import com.enonic.wem.core.image.filter.parser.FilterSetExpr;
 
-@Singleton
 public final class ImageFilterBuilderImpl
     implements ImageFilterBuilder
 {

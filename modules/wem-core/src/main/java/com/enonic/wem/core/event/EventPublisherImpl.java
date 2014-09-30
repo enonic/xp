@@ -5,8 +5,6 @@ import java.util.Collections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Inject;
-
 import com.enonic.wem.api.event.Event;
 import com.enonic.wem.api.event.EventListener;
 import com.enonic.wem.api.event.EventPublisher;
@@ -44,7 +42,6 @@ public final class EventPublisherImpl
         }
     }
 
-    @Inject
     public void setEventListeners( final Iterable<EventListener> eventListeners )
     {
         this.eventListeners = eventListeners;

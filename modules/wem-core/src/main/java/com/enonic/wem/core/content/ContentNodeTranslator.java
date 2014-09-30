@@ -3,8 +3,6 @@ package com.enonic.wem.core.content;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-import javax.inject.Inject;
-
 import com.google.common.io.InputSupplier;
 
 import com.enonic.wem.api.blob.Blob;
@@ -236,13 +234,11 @@ public class ContentNodeTranslator
         return contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) );
     }
 
-    @Inject
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
         this.contentTypeService = contentTypeService;
     }
 
-    @Inject
     public void setBlobService( final BlobService blobService )
     {
         this.blobService = blobService;

@@ -1,7 +1,5 @@
 package com.enonic.wem.core.schema.mixin.dao;
 
-import javax.inject.Inject;
-
 import com.enonic.wem.api.schema.SchemaRegistry;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinName;
@@ -24,7 +22,6 @@ public final class MixinDaoImpl
         return this.schemaRegistry.getMixin( mixinName );
     }
 
-    @Inject
     public void setSchemaRegistry( final SchemaRegistry schemaRegistry )
     {
         this.schemaRegistry = schemaRegistry;

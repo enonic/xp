@@ -1,8 +1,5 @@
 package com.enonic.wem.core.schema;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
@@ -18,7 +15,6 @@ import com.enonic.wem.api.module.ModuleUpdatedEvent;
 import com.enonic.wem.api.schema.SchemaProvider;
 import com.enonic.wem.core.module.ModuleServiceImpl;
 
-@Singleton
 public final class SchemaModuleListener
     implements EventListener
 {
@@ -26,7 +22,6 @@ public final class SchemaModuleListener
 
     private final EventFilter<ModuleUpdatedEvent> eventFilter;
 
-    @Inject
     public SchemaModuleListener( final ModuleService moduleService )
     {
         this.moduleService = (ModuleServiceImpl) moduleService;

@@ -1,7 +1,5 @@
 package com.enonic.wem.core.content;
 
-import javax.inject.Inject;
-
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.CompareContentParams;
 import com.enonic.wem.api.content.CompareContentResult;
@@ -39,22 +37,16 @@ import com.enonic.wem.core.index.query.QueryService;
 public class ContentServiceImpl
     implements ContentService
 {
-    @Inject
     private ContentTypeService contentTypeService;
 
-    @Inject
     private NodeService nodeService;
 
-    @Inject
     private BlobService blobService;
 
-    @Inject
     private AttachmentService attachmentService;
 
-    @Inject
     private QueryService queryService;
 
-    @Inject
     private ContentNodeTranslator contentNodeTranslator;
 
     @Override

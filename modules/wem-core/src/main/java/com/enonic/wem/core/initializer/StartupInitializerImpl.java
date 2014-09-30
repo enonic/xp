@@ -1,7 +1,5 @@
 package com.enonic.wem.core.initializer;
 
-import javax.inject.Inject;
-
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.initializer.DataInitializer;
 import com.enonic.wem.api.repository.Repository;
@@ -10,11 +8,9 @@ import com.enonic.wem.core.repository.RepositoryInitializer;
 public final class StartupInitializerImpl
     implements StartupInitializer
 {
-    @Inject
-    protected RepositoryInitializer repositoryInitializer;
+    private RepositoryInitializer repositoryInitializer;
 
-    @Inject
-    protected Iterable<DataInitializer> initializers;
+    private Iterable<DataInitializer> initializers;
 
     public void cleanData()
         throws Exception

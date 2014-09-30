@@ -9,8 +9,6 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
-import com.google.inject.Inject;
-
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.schema.Schema;
 import com.enonic.wem.api.schema.SchemaName;
@@ -49,7 +47,6 @@ public final class SchemaRegistryImpl
         this.moduleSchemas = new ConcurrentHashMap<>();
     }
 
-    @Inject
     public void setBundleContext( final BundleContext bundleContext )
     {
         this.bundleContext = bundleContext;

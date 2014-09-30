@@ -1,7 +1,5 @@
 package com.enonic.wem.core.schema.content.dao;
 
-import javax.inject.Inject;
-
 import com.enonic.wem.api.schema.SchemaRegistry;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -24,7 +22,6 @@ public final class ContentTypeDaoImpl
         return this.schemaRegistry.getContentType( contentTypeName );
     }
 
-    @Inject
     public void setSchemaRegistry( final SchemaRegistry schemaRegistry )
     {
         this.schemaRegistry = schemaRegistry;

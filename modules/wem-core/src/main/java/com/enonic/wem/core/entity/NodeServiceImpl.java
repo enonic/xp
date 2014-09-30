@@ -1,7 +1,5 @@
 package com.enonic.wem.core.entity;
 
-import javax.inject.Inject;
-
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.entity.CreateNodeParams;
 import com.enonic.wem.api.entity.EntityId;
@@ -37,19 +35,14 @@ import com.enonic.wem.core.workspace.WorkspaceService;
 public class NodeServiceImpl
     implements NodeService
 {
-    @Inject
     private IndexService indexService;
 
-    @Inject
     private NodeDao nodeDao;
 
-    @Inject
-    WorkspaceService workspaceService;
+    private WorkspaceService workspaceService;
 
-    @Inject
     private VersionService versionService;
 
-    @Inject
     private QueryService queryService;
 
     @Override

@@ -1,7 +1,5 @@
 package com.enonic.wem.core.content.page.part;
 
-import javax.inject.Inject;
-
 import com.enonic.wem.api.content.page.part.PartDescriptor;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.content.page.part.PartDescriptorService;
@@ -12,8 +10,7 @@ import com.enonic.wem.api.module.ModuleService;
 public final class PartDescriptorServiceImpl
     implements PartDescriptorService
 {
-    @Inject
-    protected ModuleService moduleService;
+    private ModuleService moduleService;
 
     public PartDescriptor getByKey( final PartDescriptorKey key )
     {

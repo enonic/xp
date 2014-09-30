@@ -9,8 +9,6 @@ import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 
-import com.google.inject.Inject;
-
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.FindNodeVersionsResult;
 import com.enonic.wem.api.entity.NodeVersion;
@@ -157,7 +155,6 @@ public class ElasticsearchVersionService
         return field.getValue().toString();
     }
 
-    @Inject
     public void setElasticsearchDao( final ElasticsearchDao elasticsearchDao )
     {
         this.elasticsearchDao = elasticsearchDao;

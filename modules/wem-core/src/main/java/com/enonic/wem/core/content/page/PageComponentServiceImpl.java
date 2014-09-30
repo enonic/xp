@@ -1,7 +1,5 @@
 package com.enonic.wem.core.content.page;
 
-import javax.inject.Inject;
-
 import com.enonic.wem.api.content.page.ComponentName;
 import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.PageComponentService;
@@ -12,10 +10,8 @@ import com.enonic.wem.api.module.ModuleKey;
 public final class PageComponentServiceImpl
     implements PageComponentService
 {
-    @Inject
     protected PartDescriptorService partDescriptorService;
 
-    @Inject
     protected LayoutDescriptorService layoutDescriptorService;
 
     @Override
