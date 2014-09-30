@@ -6,16 +6,13 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
-import com.google.inject.Inject;
-
 import com.enonic.wem.core.initializer.StartupInitializer;
 import com.enonic.wem.core.web.servlet.ServletRequestUrlHelper;
 
 @Path("tools")
 public final class ToolsResource
 {
-    @Inject
-    protected StartupInitializer startupInitializer;
+    private StartupInitializer startupInitializer;
 
     @GET
     @Path("cleanData")
@@ -40,5 +37,10 @@ public final class ToolsResource
     {
         final String uri = ServletRequestUrlHelper.createUriWithHost( "/" );
         return Response.temporaryRedirect( new URI( uri ) ).build();
+    }
+
+    public void setStartupInitializer( final StartupInitializer startupInitializer )
+    {
+        this.startupInitializer = startupInitializer;
     }
 }

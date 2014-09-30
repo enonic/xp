@@ -1,6 +1,5 @@
 package com.enonic.wem.admin.rest.resource.content.site.template;
 
-import javax.inject.Inject;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -63,16 +62,13 @@ public final class SiteTemplateIconResource
         return siteTemplate == null ? null : siteTemplate.getIcon();
     }
 
-    @Inject
     public void setSiteTemplateService( final SiteTemplateService siteTemplateService )
     {
         this.siteTemplateService = siteTemplateService;
     }
 
-    @Inject
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
         this.schemaIconResolver = new SchemaIconResolver( contentTypeService );
     }
-
 }

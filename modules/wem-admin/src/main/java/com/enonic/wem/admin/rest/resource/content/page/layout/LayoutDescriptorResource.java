@@ -1,6 +1,5 @@
 package com.enonic.wem.admin.rest.resource.content.page.layout;
 
-import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -20,8 +19,7 @@ import com.enonic.wem.api.content.page.layout.LayoutDescriptors;
 @Produces(MediaType.APPLICATION_JSON)
 public class LayoutDescriptorResource
 {
-    @Inject
-    protected LayoutDescriptorService layoutDescriptorService;
+    private LayoutDescriptorService layoutDescriptorService;
 
     @GET
     public LayoutDescriptorJson getByKey( @QueryParam("key") final String layoutDescriptorKey )
@@ -38,5 +36,10 @@ public class LayoutDescriptorResource
     {
         final LayoutDescriptors descriptors = layoutDescriptorService.getByModules( params.getModuleKeys() );
         return new LayoutDescriptorsJson( descriptors );
+    }
+
+    public void setLayoutDescriptorService( final LayoutDescriptorService layoutDescriptorService )
+    {
+        this.layoutDescriptorService = layoutDescriptorService;
     }
 }

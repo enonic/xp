@@ -29,7 +29,7 @@ public class LayoutDescriptorResourceTest
         layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
 
         final LayoutDescriptorResource resource = new LayoutDescriptorResource();
-        resource.layoutDescriptorService = layoutDescriptorService;
+        resource.setLayoutDescriptorService( layoutDescriptorService );
 
         return resource;
     }

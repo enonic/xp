@@ -39,10 +39,6 @@ public class SiteResourceTest
 {
     private SiteService siteService;
 
-    private ContentTypeService contentTypeService;
-
-    private SiteTemplateService siteTemplateService;
-
     private final String currentTime = "2013-08-23T12:55:09.162Z";
 
     private final static Workspace WORKSPACE = Workspace.from( "workspace" );
@@ -148,16 +144,16 @@ public class SiteResourceTest
     protected Object getResourceInstance()
     {
         siteService = Mockito.mock( SiteService.class );
-        contentTypeService = Mockito.mock( ContentTypeService.class );
-        siteTemplateService = Mockito.mock( SiteTemplateService.class );
+        final ContentTypeService contentTypeService = Mockito.mock( ContentTypeService.class );
+        final SiteTemplateService siteTemplateService = Mockito.mock( SiteTemplateService.class );
 
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
             thenReturn( createContentType( "mymodule:content-type" ) );
 
         final SiteResource resource = new SiteResource();
-        resource.siteService = this.siteService;
-        resource.contentTypeService = this.contentTypeService;
-        resource.siteTemplateService = this.siteTemplateService;
+        resource.setSiteService( this.siteService );
+        resource.setContentTypeService( contentTypeService );
+        resource.setSiteTemplateService( siteTemplateService );
 
         return resource;
     }

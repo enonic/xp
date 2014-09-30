@@ -1,6 +1,5 @@
 package com.enonic.wem.admin.rest.resource.module;
 
-import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -25,11 +24,9 @@ import com.enonic.wem.api.module.Modules;
 @Produces(MediaType.APPLICATION_JSON)
 public final class ModuleResource
 {
-    @Inject
-    protected ModuleService moduleService;
+    private ModuleService moduleService;
 
-    @Inject
-    protected BundleContext bundleContext;
+    private BundleContext bundleContext;
 
     @GET
     @Path("list")
@@ -110,5 +107,15 @@ public final class ModuleResource
     {
         this.bundleContext.installBundle( params.getUrl() );
         return new ModuleSuccessJson();
+    }
+
+    public void setModuleService( final ModuleService moduleService )
+    {
+        this.moduleService = moduleService;
+    }
+
+    public void setBundleContext( final BundleContext bundleContext )
+    {
+        this.bundleContext = bundleContext;
     }
 }

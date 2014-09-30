@@ -5,7 +5,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 
-import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -198,13 +197,11 @@ public final class SiteTemplateResource
         }
     }
 
-    @Inject
     public void setSiteTemplateService( final SiteTemplateService siteTemplateService )
     {
         this.siteTemplateService = siteTemplateService;
     }
 
-    @Inject
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
         this.siteTemplateIconUrlResolver =

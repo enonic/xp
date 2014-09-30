@@ -124,7 +124,7 @@ public class RelationshipResourceTest
         this.relationshipService = Mockito.mock( RelationshipService.class );
 
         final RelationshipResource resource = new RelationshipResource();
-        resource.relationshipService = relationshipService;
+        resource.setRelationshipService( relationshipService );
         return resource;
     }
 }

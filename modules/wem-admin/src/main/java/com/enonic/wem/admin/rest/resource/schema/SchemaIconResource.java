@@ -2,7 +2,6 @@ package com.enonic.wem.admin.rest.resource.schema;
 
 import java.awt.image.BufferedImage;
 
-import javax.inject.Inject;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -111,22 +110,18 @@ public final class SchemaIconResource
         }
     }
 
-    @Inject
     public void setMixinService( final MixinService mixinService )
     {
         this.mixinService = mixinService;
     }
 
-    @Inject
     public void setRelationshipTypeService( final RelationshipTypeService relationshipTypeService )
     {
         this.relationshipTypeService = relationshipTypeService;
     }
 
-    @Inject
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
         this.contentTypeService = contentTypeService;
     }
-
 }

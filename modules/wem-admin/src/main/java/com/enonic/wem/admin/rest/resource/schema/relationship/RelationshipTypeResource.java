@@ -1,6 +1,5 @@
 package com.enonic.wem.admin.rest.resource.schema.relationship;
 
-import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -9,7 +8,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeConfigJson;
 import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeJson;
 import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeListJson;
 import com.enonic.wem.admin.rest.resource.schema.SchemaIconResolver;
@@ -62,7 +60,6 @@ public class RelationshipTypeResource
         return new SchemaIconUrlResolver( new SchemaIconResolver( relationshipTypeService ) );
     }
 
-    @Inject
     public void setRelationshipTypeService( final RelationshipTypeService relationshipTypeService )
     {
         this.relationshipTypeService = relationshipTypeService;

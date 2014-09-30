@@ -1,6 +1,5 @@
 package com.enonic.wem.admin.rest.resource.content.page;
 
-import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -33,18 +32,13 @@ public final class PageResource
         repository( ContentConstants.CONTENT_REPO ).
         build();
 
+    private PageService pageService;
 
-    @Inject
-    protected PageService pageService;
+    private ContentTypeService contentTypeService;
 
-    @Inject
-    protected ContentTypeService contentTypeService;
+    private SiteTemplateService siteTemplateService;
 
-    @Inject
-    protected SiteTemplateService siteTemplateService;
-
-    @Inject
-    protected AttachmentService attachmentService;
+    private AttachmentService attachmentService;
 
     private MixinReferencesToFormItemsTransformer mixinReferencesToFormItemsTransformer;
 
@@ -86,9 +80,28 @@ public final class PageResource
         return new ContentIconUrlResolver( this.siteTemplateService, this.contentTypeService, this.attachmentService );
     }
 
-    @Inject
     public void setMixinService( final MixinService mixinService )
     {
         this.mixinReferencesToFormItemsTransformer = new MixinReferencesToFormItemsTransformer( mixinService );
+    }
+
+    public void setPageService( final PageService pageService )
+    {
+        this.pageService = pageService;
+    }
+
+    public void setContentTypeService( final ContentTypeService contentTypeService )
+    {
+        this.contentTypeService = contentTypeService;
+    }
+
+    public void setSiteTemplateService( final SiteTemplateService siteTemplateService )
+    {
+        this.siteTemplateService = siteTemplateService;
+    }
+
+    public void setAttachmentService( final AttachmentService attachmentService )
+    {
+        this.attachmentService = attachmentService;
     }
 }

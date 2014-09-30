@@ -23,11 +23,6 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>wem-guice</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
       <artifactId>wem-api</artifactId>
       <version>${project.version}</version>
       <type>test-jar</type>
@@ -84,9 +79,6 @@
               resteasy-jaxrs,
               jaxrs-api;scope=compile
             </Embed-Dependency>
-            <Bundle-Activator>
-              com.enonic.wem.admin.Activator
-            </Bundle-Activator>
           </instructions>
         </configuration>
       </plugin>

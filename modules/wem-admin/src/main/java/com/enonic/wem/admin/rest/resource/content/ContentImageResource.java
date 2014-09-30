@@ -2,7 +2,6 @@ package com.enonic.wem.admin.rest.resource.content;
 
 import java.awt.image.BufferedImage;
 
-import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -43,16 +42,12 @@ public class ContentImageResource
 
     private static final ContentImageHelper helper = new ContentImageHelper();
 
-    @Inject
     private AttachmentService attachmentService;
 
-    @Inject
     private ContentTypeService contentTypeService;
 
-    @Inject
     private BlobService blobService;
 
-    @Inject
     private ContentService contentService;
 
     @GET
@@ -157,5 +152,25 @@ public class ContentImageResource
             return null;
         }
         return contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) );
+    }
+
+    public void setAttachmentService( final AttachmentService attachmentService )
+    {
+        this.attachmentService = attachmentService;
+    }
+
+    public void setContentTypeService( final ContentTypeService contentTypeService )
+    {
+        this.contentTypeService = contentTypeService;
+    }
+
+    public void setBlobService( final BlobService blobService )
+    {
+        this.blobService = blobService;
+    }
+
+    public void setContentService( final ContentService contentService )
+    {
+        this.contentService = contentService;
     }
 }

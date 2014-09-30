@@ -1,11 +1,8 @@
 package com.enonic.wem.admin.event;
 
-import javax.inject.Singleton;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Throwables;
-import com.google.inject.Inject;
 
 import com.enonic.wem.admin.json.ObjectMapperHelper;
 import com.enonic.wem.admin.json.module.ModuleUpdatedEventJson;
@@ -17,14 +14,12 @@ import com.enonic.wem.api.module.ModuleUpdatedEvent;
 import com.enonic.wem.api.schema.content.ContentTypeDeletedEvent;
 import com.enonic.wem.api.schema.content.ContentTypeUpdatedEvent;
 
-@Singleton
 public final class EventListenerImpl
     implements EventListener
 {
-    @Inject
-    protected WebSocketManager webSocketManager;
+    private WebSocketManager webSocketManager;
 
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
     public EventListenerImpl()
     {
@@ -71,5 +66,10 @@ public final class EventListenerImpl
             return new ContentTypeDeletedEventJson( (ContentTypeDeletedEvent) event );
         }
         return null;
+    }
+
+    public void setWebSocketManager( final WebSocketManager webSocketManager )
+    {
+        this.webSocketManager = webSocketManager;
     }
 }

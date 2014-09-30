@@ -1,6 +1,5 @@
 package com.enonic.wem.admin.rest.resource.schema.content;
 
-import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -55,7 +54,6 @@ public class ContentTypeResource
         return new SchemaIconUrlResolver( new SchemaIconResolver( contentTypeService ) );
     }
 
-    @Inject
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
         this.contentTypeService = contentTypeService;

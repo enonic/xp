@@ -37,21 +37,17 @@ public class PageResourceTest
 {
     private PageService pageService;
 
-    private ContentTypeService contentTypeService;
-
-    private SiteTemplateService siteTemplateService;
-
     @Override
     protected Object getResourceInstance()
     {
-        contentTypeService = Mockito.mock( ContentTypeService.class );
-        siteTemplateService = Mockito.mock( SiteTemplateService.class );
+        final ContentTypeService contentTypeService = Mockito.mock( ContentTypeService.class );
+        final SiteTemplateService siteTemplateService = Mockito.mock( SiteTemplateService.class );
         this.pageService = Mockito.mock( PageService.class );
 
         final PageResource resource = new PageResource();
-        resource.pageService = pageService;
-        resource.contentTypeService = contentTypeService;
-        resource.siteTemplateService = siteTemplateService;
+        resource.setPageService( pageService );
+        resource.setContentTypeService( contentTypeService );
+        resource.setSiteTemplateService( siteTemplateService );
 
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
             thenReturn( createContentType( "mymodule:my_type" ) );
