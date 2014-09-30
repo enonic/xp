@@ -58,11 +58,11 @@ module api.content.form.inputtype.image {
                 runtimes: 'gears,html5,flash,silverlight,browserplus',
                 multi_selection: true,
                 browse_button: this.dropzone.getId(),
-                url: api.util.getRestUri("blob/upload"),
+                url: api.util.UriHelper.getRestUri("blob/upload"),
                 multipart: true,
                 drop_element: this.dropzone.getId(),
-                flash_swf_url: api.util.getUri('common/js/fileupload/plupload/js/plupload.flash.swf'),
-                silverlight_xap_url: api.util.getUri('common/js/fileupload/plupload/js/plupload.silverlight.xap'),
+                flash_swf_url: api.util.UriHelper.getUri('common/js/fileupload/plupload/js/plupload.flash.swf'),
+                silverlight_xap_url: api.util.UriHelper.getUri('common/js/fileupload/plupload/js/plupload.silverlight.xap'),
                 filters: [
                     {title: 'Image files', extensions: 'jpg,gif,png'}
                 ]

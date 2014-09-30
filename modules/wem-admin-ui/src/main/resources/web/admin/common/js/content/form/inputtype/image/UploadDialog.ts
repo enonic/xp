@@ -23,7 +23,7 @@ module api.content.form.inputtype.image {
                 showImageAfterUpload: false
             };
             this.uploader =
-            new api.ui.uploader.ImageUploader("image-selector-upload-dialog", api.util.getRestUri("blob/upload"), uploaderConfig);
+            new api.ui.uploader.ImageUploader("image-selector-upload-dialog", api.util.UriHelper.getRestUri("blob/upload"), uploaderConfig);
             this.uploader.onImageUploaded((event: api.ui.uploader.ImageUploadedEvent) => {
                 this.notifyImageUploaded(event.getUploadedItem());
             });

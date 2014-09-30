@@ -57,7 +57,7 @@ module api.app {
         }
 
         getAppUrl(): string {
-            return api.util.getUri('admin?app=' + this.id);
+            return api.util.UriHelper.getUri('admin?app=' + this.id);
         }
 
         getOpenTabs(): number {

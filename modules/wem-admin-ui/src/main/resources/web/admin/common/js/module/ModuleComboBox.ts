@@ -29,7 +29,7 @@ module api.module {
         }
 
         resolveIconUrl(content: api.module.Module): string {
-            return api.util.getAdminUri("common/images/icons/icoMoon/128x128/puzzle.png");
+            return api.util.UriHelper.getAdminUri("common/images/icons/icoMoon/128x128/puzzle.png");
         }
 
         resolveTitle(content: api.module.Module): string {

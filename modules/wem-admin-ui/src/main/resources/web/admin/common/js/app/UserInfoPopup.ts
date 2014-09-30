@@ -16,7 +16,7 @@ module api.app {
 
         private createContent() {
             var userName = 'Thomas Lund Sigdestad',
-                photoUrl = api.util.getAdminUri('common/images/tsi-profil.jpg'),
+                photoUrl = api.util.UriHelper.getAdminUri('common/images/tsi-profil.jpg'),
                 qName = 'system/tsi';
 
             var content = '<div class="title">User</div>' +

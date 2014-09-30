@@ -3,7 +3,7 @@ module api.rendering {
     export class UriHelper {
 
         public static getPortalUri(path: string, renderingMode: RenderingMode, workspace: api.content.Workspace): string {
-            path = UriHelper.relativePath(path);
+            path = api.util.UriHelper.relativePath(path);
 
             var workspaceName: string;
 
@@ -20,11 +20,11 @@ module api.rendering {
 
             switch (renderingMode) {
             case RenderingMode.EDIT:
-                return api.util.getUri('portal/edit/' + workspaceName + '/' + path);
+                return api.util.UriHelper.getPortalUri('edit/' + workspaceName + '/' + path);
             case RenderingMode.LIVE:
-                return api.util.getUri('portal/live/' + workspaceName + '/' + path);
+                return api.util.UriHelper.getPortalUri('live/' + workspaceName + '/' + path);
             case RenderingMode.PREVIEW:
-                return api.util.getUri('portal/preview/' + workspaceName + '/' + path);
+                return api.util.UriHelper.getPortalUri('preview/' + workspaceName + '/' + path);
             }
         }
 
@@ -33,8 +33,5 @@ module api.rendering {
             return UriHelper.getPortalUri(contentId + "/_/component/" + componentPath, renderingMode, workspace);
         }
 
-        private static relativePath(path: string): string {
-            return path.charAt(0) == '/' ? path.substring(1) : path;
-        }
     }
 }

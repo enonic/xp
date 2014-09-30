@@ -55,8 +55,8 @@ module api.app.wizard {
                 url: this.uploadUrl,
                 multipart: true,
                 drop_element: elId,
-                flash_swf_url: api.util.getUri('common/js/fileupload/plupload/js/plupload.flash.swf'),
-                silverlight_xap_url: api.util.getUri('common/js/fileupload/plupload/js/plupload.silverlight.xap'),
+                flash_swf_url: api.util.UriHelper.getUri('common/js/fileupload/plupload/js/plupload.flash.swf'),
+                silverlight_xap_url: api.util.UriHelper.getUri('common/js/fileupload/plupload/js/plupload.silverlight.xap'),
                 filters: [
                     {title: 'Image files', extensions: 'jpg,gif,png'}
                 ]

@@ -49,7 +49,7 @@ module app.wizard.page.contextwindow {
 
         private getData(): void {
             wemjq.ajax({
-                url: api.util.getAdminUri("apps/content-manager/js/data/context-window/devices.json"),
+                url: api.util.UriHelper.getAdminUri("apps/content-manager/js/data/context-window/devices.json"),
                 success: (data: any, textStatus: string, jqXHR: JQueryXHR) => {
                     this.dataView.setItems(EmulatorGrid.toSlickData(data));
                     this.grid.setActiveCell(0, 0); // select first option

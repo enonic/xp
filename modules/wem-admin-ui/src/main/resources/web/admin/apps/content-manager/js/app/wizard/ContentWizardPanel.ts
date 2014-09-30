@@ -109,13 +109,13 @@ module app.wizard {
                 build();
             var iconUrl = ContentIconUrlResolver.default();
             this.formIcon = new FormIcon(iconUrl, "Click to upload icon",
-                api.util.getRestUri("blob/upload"));
+                api.util.UriHelper.getRestUri("blob/upload"));
 
             this.formIcon.onUploadFinished((event: UploadFinishedEvent) => {
 
                 this.iconUploadItem = event.getUploadItem();
-                this.formIcon.setSrc(api.util.getRestUri('blob/' + this.iconUploadItem.getBlobKey() + '?mimeType=' +
-                                                         event.getUploadItem().getMimeType()));
+                this.formIcon.setSrc(api.util.UriHelper.getRestUri('blob/' + this.iconUploadItem.getBlobKey() + '?mimeType=' +
+                                                                   event.getUploadItem().getMimeType()));
             });
 
             this.wizardActions = new app.wizard.action.ContentWizardActions(this);
