@@ -1,12 +1,17 @@
 package com.enonic.wem.admin.json.module;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.osgi.framework.Bundle;
 
 import com.enonic.wem.admin.json.ItemJson;
 import com.enonic.wem.api.form.FormJson;
 import com.enonic.wem.api.module.Module;
+import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
+import com.enonic.wem.api.schema.metadata.MetadataSchemaNames;
 
 public class ModuleJson
     implements ItemJson
@@ -63,6 +68,21 @@ public class ModuleJson
     public FormJson getConfig()
     {
         return config;
+    }
+
+    public String[] getMetadataSchemaDependencies()
+    {
+        List<String> dependencies = new ArrayList<String>();
+        MetadataSchemaNames names = this.module.getMetadata();
+        if ( names != null )
+        {
+            Iterator<MetadataSchemaName> iterator = this.module.getMetadata().iterator();
+            while ( iterator.hasNext() )
+            {
+                dependencies.add( iterator.next().getLocalName() );
+            }
+        }
+        return dependencies.toArray( new String[dependencies.size()] );
     }
 
     @Override

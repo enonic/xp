@@ -66,6 +66,13 @@ module app.view {
             var schemasGroup = new ModuleItemDataGroup("Schemas");
             schemasGroup.addDataList("Content Types", "Content Type1", "Content Type2", "Content Type3");
             schemasGroup.addDataList("Mixins", "TBA");
+            var metadataNames = item.getModel().getMetadataSchemaDependencies();
+            var strings: string[] = [];
+            metadataNames.forEach((data: api.schema.metadata.MetadataSchemaName) => {
+                strings.push(data.toString());
+            });
+
+            schemasGroup.addDataArray("MetadataSchemas", strings);
 
             this.moduleDataContainer.appendChild(infoGroup);
             this.moduleDataContainer.appendChild(schemasGroup);
@@ -85,6 +92,10 @@ module app.view {
         }
 
         addDataList(header: string, ...datas: string[]) {
+            this.addDataArray(header, datas);
+        }
+
+        addDataArray(header: string, datas: string[]) {
             var dataList = new api.dom.UlEl("data-list");
 
             if (header) {

@@ -15,6 +15,7 @@ import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.module.ModuleVersion;
+import com.enonic.wem.api.schema.metadata.MetadataSchemaNames;
 
 final class ModuleImpl
     implements Module
@@ -36,6 +37,8 @@ final class ModuleImpl
     protected File moduleDir;
 
     protected Bundle bundle;
+
+    protected MetadataSchemaNames metadata;
 
     public ModuleKey getKey()
     {
@@ -81,6 +84,12 @@ final class ModuleImpl
     public Bundle getBundle()
     {
         return this.bundle;
+    }
+
+    @Override
+    public MetadataSchemaNames getMetadata()
+    {
+        return metadata;
     }
 
     @Override

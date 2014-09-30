@@ -7,6 +7,7 @@ import org.osgi.framework.Bundle;
 
 import com.enonic.wem.api.Identity;
 import com.enonic.wem.api.form.Form;
+import com.enonic.wem.api.schema.metadata.MetadataSchemaNames;
 
 public interface Module
     extends Identity<ModuleKey, ModuleName>
@@ -32,4 +33,6 @@ public interface Module
     public Set<String> getResourcePaths();
 
     public Bundle getBundle();
+
+    public MetadataSchemaNames getMetadata();
 }

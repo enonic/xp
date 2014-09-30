@@ -40,6 +40,7 @@ module api.module {
             this.config = builder.config;
             this.moduleDependencies = builder.moduleDependencies;
             this.contentTypeDependencies = builder.contentTypeDependencies;
+            this.metadataSchemaDependencies = builder.metadataSchemaDependencies;
             this.minSystemVersion = builder.minSystemVersion;
             this.maxSystemVersion = builder.maxSystemVersion;
         }
@@ -193,6 +194,12 @@ module api.module {
             if (json.contentTypeDependencies != null) {
                 json.contentTypeDependencies.forEach((dependency: string) => {
                     this.contentTypeDependencies.push(new api.schema.content.ContentTypeName(dependency));
+                });
+            }
+
+            if (json.metadataSchemaDependencies != null) {
+                json.metadataSchemaDependencies.forEach((dependency: string) => {
+                    this.metadataSchemaDependencies.push(new api.schema.metadata.MetadataSchemaName(dependency));
                 });
             }
 

@@ -34,17 +34,18 @@ public class ModuleXmlBuilderTest
     public void testModuleXmlDeserialization()
     {
         final String xml = loadTestXml( "serialized-module.xml" );
+        ModuleKey key = ModuleKey.from( "mymodule" );
         final ModuleBuilder module = new ModuleBuilder().
-            moduleKey( ModuleKey.from( "mymodule" ) ).
+            moduleKey( key ).
             moduleVersion( ModuleVersion.from( "1.0.0" ) );
-        this.xmlBuilder.toModule( xml, module );
+        this.xmlBuilder.toModule( xml, module, key );
         assertEquals( createModule().toString(), module.build().toString() );
     }
 
     @Test(expected = XmlException.class)
     public void testBadXmlModuleSerialization()
     {
-        this.xmlBuilder.toModule( "<module><display-name/>", new ModuleBuilder() );
+        this.xmlBuilder.toModule( "<module><display-name/>", new ModuleBuilder(), ModuleKey.from( "testModuleKey" ) );
     }
 
     private Module createModule()

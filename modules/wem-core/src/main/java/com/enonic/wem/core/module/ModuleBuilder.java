@@ -8,6 +8,7 @@ import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleVersion;
+import com.enonic.wem.api.schema.metadata.MetadataSchemaNames;
 
 public final class ModuleBuilder
 {
@@ -69,6 +70,12 @@ public final class ModuleBuilder
     public ModuleBuilder bundle( final Bundle bundle )
     {
         this.module.bundle = bundle;
+        return this;
+    }
+
+    public ModuleBuilder metadataSchemaNames( final MetadataSchemaNames metadataSchemaNames )
+    {
+        this.module.metadata = metadataSchemaNames;
         return this;
     }
 
