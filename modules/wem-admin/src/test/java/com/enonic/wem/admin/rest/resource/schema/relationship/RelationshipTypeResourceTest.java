@@ -1,12 +1,21 @@
 package com.enonic.wem.admin.rest.resource.schema.relationship;
 
+import java.awt.image.BufferedImage;
+import java.time.Instant;
+
+import javax.ws.rs.core.Response;
+
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import com.google.common.io.Resources;
 
 import junit.framework.Assert;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.admin.rest.resource.MockRestResponse;
+import com.enonic.wem.api.Icon;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.relationship.GetRelationshipTypeParams;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
@@ -14,16 +23,19 @@ import com.enonic.wem.api.schema.relationship.RelationshipTypeService;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
 
 import static com.enonic.wem.api.schema.relationship.RelationshipType.newRelationshipType;
+import static org.junit.Assert.*;
 
 public class RelationshipTypeResourceTest
     extends AbstractResourceTest
 {
     private RelationshipTypeService relationshipTypeService;
 
+    private RelationshipTypeResource resource;
+
     @Override
     protected Object getResourceInstance()
     {
-        final RelationshipTypeResource resource = new RelationshipTypeResource();
+        resource = new RelationshipTypeResource();
 
         relationshipTypeService = Mockito.mock( RelationshipTypeService.class );
         resource.setRelationshipTypeService( relationshipTypeService );
@@ -57,8 +69,7 @@ public class RelationshipTypeResourceTest
     {
         Mockito.when( relationshipTypeService.getByName( Mockito.any( GetRelationshipTypeParams.class ) ) ).thenReturn( null );
 
-        final MockRestResponse response =
-            request().path( "schema/relationship" ).queryParam( "name", "mymodule:relationship_type" ).get();
+        final MockRestResponse response = request().path( "schema/relationship" ).queryParam( "name", "mymodule:relationship_type" ).get();
         Assert.assertEquals( 404, response.getStatus() );
         Assert.assertEquals( "RelationshipType [mymodule:relationship_type] was not found.", response.getAsString() );
     }
@@ -82,4 +93,65 @@ public class RelationshipTypeResourceTest
 
         assertJson( "get_relationship_type_list.json", response );
     }
+
+
+    @Test
+    public void testRelationshipTypeIcon()
+        throws Exception
+    {
+        byte[] data = Resources.toByteArray( getClass().getResource( "relationshipicon.png" ) );
+        final Icon icon = Icon.from( data, "image/png", Instant.now() );
+
+        RelationshipType relationshipType = newRelationshipType().
+            name( "mymodule:like" ).
+            fromSemantic( "likes" ).
+            toSemantic( "liked by" ).
+            addAllowedFromType( ContentTypeName.from( "mymodule:person" ) ).
+            addAllowedToType( ContentTypeName.from( "mymodule:person" ) ).
+            icon( icon ).
+            build();
+        setupRelationshipType( relationshipType );
+
+        // exercise
+        final Response response = this.resource.getIcon( "mymodule:like", 20, null );
+        final BufferedImage mixinIcon = (BufferedImage) response.getEntity();
+
+        // verify
+        assertImage( mixinIcon, 20 );
+    }
+
+    @Test
+    public void testRelationshipTypeIcon_default_image()
+        throws Exception
+    {
+        RelationshipType relationshipType = newRelationshipType().
+            name( "mymodule:like" ).
+            fromSemantic( "likes" ).
+            toSemantic( "liked by" ).
+            addAllowedFromType( ContentTypeName.from( "mymodule:person" ) ).
+            addAllowedToType( ContentTypeName.from( "mymodule:person" ) ).
+            build();
+        setupRelationshipType( relationshipType );
+
+        // exercise
+        final Response response = this.resource.getIcon( "mymodule:like", 20, null );
+        final BufferedImage mixinIcon = (BufferedImage) response.getEntity();
+
+        // verify
+        assertImage( mixinIcon, 20 );
+    }
+
+
+    private void setupRelationshipType( final RelationshipType relationshipType )
+    {
+        final GetRelationshipTypeParams params = new GetRelationshipTypeParams().name( relationshipType.getName() );
+        Mockito.when( relationshipTypeService.getByName( params ) ).thenReturn( relationshipType );
+    }
+
+    private void assertImage( final BufferedImage image, final int size )
+    {
+        assertNotNull( image );
+        assertEquals( size, image.getWidth() );
+    }
+
 }

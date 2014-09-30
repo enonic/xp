@@ -1,15 +1,23 @@
 package com.enonic.wem.admin.rest.resource.schema.mixin;
 
+import java.awt.image.BufferedImage;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
+import javax.ws.rs.core.Response;
+
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import com.google.common.io.Resources;
 
 import junit.framework.Assert;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.admin.rest.resource.MockRestResponse;
+import com.enonic.wem.api.Icon;
+import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.mixin.GetMixinParams;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinName;
@@ -19,6 +27,8 @@ import com.enonic.wem.api.schema.mixin.Mixins;
 import static com.enonic.wem.api.form.Input.newInput;
 import static com.enonic.wem.api.form.inputtype.InputTypes.TEXT_AREA;
 import static com.enonic.wem.api.form.inputtype.InputTypes.TEXT_LINE;
+import static com.enonic.wem.api.schema.mixin.Mixin.newMixin;
+import static org.junit.Assert.*;
 
 public class MixinResourceTest
     extends AbstractResourceTest
@@ -33,12 +43,14 @@ public class MixinResourceTest
 
     private MixinService mixinService;
 
+    private MixinResource resource;
+
     @Override
     protected Object getResourceInstance()
     {
         mixinService = Mockito.mock( MixinService.class );
 
-        final MixinResource resource = new MixinResource();
+        resource = new MixinResource();
         resource.setMixinService( mixinService );
 
         return resource;
@@ -92,4 +104,60 @@ public class MixinResourceTest
 
         assertJson( "list_mixins.json", result );
     }
+
+
+    @Test
+    public void testMixinIcon()
+        throws Exception
+    {
+        byte[] data = Resources.toByteArray( getClass().getResource( "mixinicon.png" ) );
+        final Icon icon = Icon.from( data, "image/png", Instant.now() );
+
+        Mixin mixin = newMixin().
+            name( "mymodule:postal_code" ).
+            displayName( "My content type" ).
+            icon( icon ).
+            addFormItem( newInput().name( "postal_code" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            build();
+        setupMixin( mixin );
+
+        // exercise
+        final Response response = this.resource.getIcon( "mymodule:postal_code", 20, null );
+        final BufferedImage mixinIcon = (BufferedImage) response.getEntity();
+
+        // verify
+        assertImage( mixinIcon, 20 );
+    }
+
+    @Test
+    public void testMixinIcon_default_image()
+        throws Exception
+    {
+        Mixin mixin = newMixin().
+            name( "mymodule:postal_code" ).
+            displayName( "My content type" ).
+            addFormItem( newInput().name( "postal_code" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            build();
+        setupMixin( mixin );
+
+        // exercise
+        final Response response = this.resource.getIcon( "mymodule:postal_code", 20, null );
+        final BufferedImage mixinIcon = (BufferedImage) response.getEntity();
+
+        // verify
+        assertImage( mixinIcon, 20 );
+    }
+
+    private void setupMixin( final Mixin mixin )
+    {
+        final GetMixinParams params = new GetMixinParams( mixin.getName() );
+        Mockito.when( mixinService.getByName( params ) ).thenReturn( mixin );
+    }
+
+    private void assertImage( final BufferedImage image, final int size )
+    {
+        assertNotNull( image );
+        assertEquals( size, image.getWidth() );
+    }
+
 }

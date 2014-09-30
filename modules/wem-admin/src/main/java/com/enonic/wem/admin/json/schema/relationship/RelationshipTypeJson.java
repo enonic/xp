@@ -1,16 +1,15 @@
 package com.enonic.wem.admin.json.schema.relationship;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.enonic.wem.admin.json.ItemJson;
-import com.enonic.wem.admin.json.schema.SchemaJson;
-import com.enonic.wem.admin.rest.resource.schema.SchemaIconUrlResolver;
+import com.enonic.wem.admin.rest.resource.schema.relationship.RelationshipTypeIconUrlResolver;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 
 public class RelationshipTypeJson
-    extends SchemaJson
     implements ItemJson
 {
     private final RelationshipType relationshipType;
@@ -19,16 +18,11 @@ public class RelationshipTypeJson
 
     private final List<String> allowedToTypes;
 
-    private final boolean editable;
+    private final String iconUrl;
 
-    private final boolean deletable;
-
-    public RelationshipTypeJson( final RelationshipType type, final SchemaIconUrlResolver iconUrlResolver )
+    public RelationshipTypeJson( final RelationshipType type, final RelationshipTypeIconUrlResolver iconUrlResolver )
     {
-        super( type, iconUrlResolver );
         this.relationshipType = type;
-        this.editable = true;
-        this.deletable = true;
 
         this.allowedFromTypes = new ArrayList<>( relationshipType.getAllowedFromTypes().getSize() );
         for ( ContentTypeName allowedFromType : relationshipType.getAllowedFromTypes() )
@@ -41,6 +35,43 @@ public class RelationshipTypeJson
         {
             this.allowedToTypes.add( allowedToType.toString() );
         }
+
+        this.iconUrl = iconUrlResolver.resolve( type );
+    }
+
+    public String getKey()
+    {
+        return relationshipType.getSchemaKey() != null ? relationshipType.getSchemaKey().toString() : null;
+    }
+
+    public String getName()
+    {
+        return relationshipType.getName() != null ? relationshipType.getName().toString() : null;
+    }
+
+    public String getDisplayName()
+    {
+        return relationshipType.getDisplayName();
+    }
+
+    public String getDescription()
+    {
+        return relationshipType.getDescription();
+    }
+
+    public Instant getCreatedTime()
+    {
+        return relationshipType.getCreatedTime();
+    }
+
+    public Instant getModifiedTime()
+    {
+        return relationshipType.getModifiedTime();
+    }
+
+    public String getIconUrl()
+    {
+        return iconUrl;
     }
 
     public String getFromSemantic()
@@ -66,12 +97,12 @@ public class RelationshipTypeJson
     @Override
     public boolean getEditable()
     {
-        return editable;
+        return false;
     }
 
     @Override
     public boolean getDeletable()
     {
-        return deletable;
+        return false;
     }
 }

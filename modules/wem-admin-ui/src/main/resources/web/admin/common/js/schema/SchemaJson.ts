@@ -11,8 +11,5 @@ module api.schema {
         name: string;
 
         iconUrl: string;
-
-        schemaKind:string;
-
     }
 }

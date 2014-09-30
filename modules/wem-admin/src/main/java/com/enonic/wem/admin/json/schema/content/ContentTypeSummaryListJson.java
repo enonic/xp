@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.wem.admin.rest.resource.schema.SchemaIconUrlResolver;
+import com.enonic.wem.admin.rest.resource.schema.content.ContentTypeIconUrlResolver;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
 
@@ -14,7 +14,7 @@ public class ContentTypeSummaryListJson
 {
     private final ImmutableList<ContentTypeSummaryJson> list;
 
-    public ContentTypeSummaryListJson( final ContentTypes contentTypes, final SchemaIconUrlResolver iconUrlResolver )
+    public ContentTypeSummaryListJson( final ContentTypes contentTypes, final ContentTypeIconUrlResolver iconUrlResolver )
     {
         final ImmutableList.Builder<ContentTypeSummaryJson> builder = ImmutableList.builder();
         for ( final ContentType contentType : contentTypes )

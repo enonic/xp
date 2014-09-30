@@ -3,8 +3,8 @@ package com.enonic.wem.admin.rest.resource.content;
 import java.util.HashMap;
 
 import com.enonic.wem.admin.rest.resource.content.site.template.SiteTemplateIconUrlResolver;
-import com.enonic.wem.admin.rest.resource.schema.SchemaIconResolver;
-import com.enonic.wem.admin.rest.resource.schema.SchemaIconUrlResolver;
+import com.enonic.wem.admin.rest.resource.schema.content.ContentTypeIconResolver;
+import com.enonic.wem.admin.rest.resource.schema.content.ContentTypeIconUrlResolver;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.attachment.Attachment;
@@ -35,9 +35,9 @@ public final class ContentIconUrlResolver
 
     private SiteTemplateService siteTemplateService;
 
-    private SchemaIconResolver schemaIconResolver;
+    private ContentTypeIconResolver contentTypeIconResolver;
 
-    private SchemaIconUrlResolver schemaIconUrlResolver;
+    private ContentTypeIconUrlResolver contentTypeIconUrlResolver;
 
     private HashMap<SiteTemplateKey, SiteTemplate> siteTemplatesByKey = new HashMap<>();
 
@@ -46,8 +46,8 @@ public final class ContentIconUrlResolver
     {
         this.siteTemplateService = siteTemplateService;
         this.contentTypeService = contentTypeService;
-        this.schemaIconResolver = new SchemaIconResolver( contentTypeService );
-        this.schemaIconUrlResolver = new SchemaIconUrlResolver( this.schemaIconResolver );
+        this.contentTypeIconResolver = new ContentTypeIconResolver( contentTypeService );
+        this.contentTypeIconUrlResolver = new ContentTypeIconUrlResolver( this.contentTypeIconResolver );
         this.attachmentService = attachmentService;
     }
 
@@ -80,7 +80,7 @@ public final class ContentIconUrlResolver
             }
             else
             {
-                return new SchemaIconUrlResolver( this.schemaIconResolver ).resolve(
+                return this.contentTypeIconUrlResolver.resolve(
                     this.contentTypeService.getByName( GetContentTypeParams.from( ContentTypeName.imageMedia() ) ) );
             }
         }
@@ -90,10 +90,10 @@ public final class ContentIconUrlResolver
             if ( siteTemplate != null && siteTemplate.getIcon() != null )
             {
                 return ServletRequestUrlHelper.createUri(
-                    new SiteTemplateIconUrlResolver( schemaIconUrlResolver ).resolve( siteTemplate ) );
+                    new SiteTemplateIconUrlResolver( contentTypeIconUrlResolver ).resolve( siteTemplate ) );
             }
         }
-        return new SchemaIconUrlResolver( schemaIconResolver ).resolve( content.getType() );
+        return this.contentTypeIconUrlResolver.resolve( content.getType() );
     }
 
     private SiteTemplate getSiteTemplate( final SiteTemplateKey key )

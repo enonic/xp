@@ -39,7 +39,6 @@ import com.enonic.wem.admin.rest.resource.content.site.template.SiteTemplateIcon
 import com.enonic.wem.admin.rest.resource.content.site.template.SiteTemplateResource;
 import com.enonic.wem.admin.rest.resource.module.ModuleResource;
 import com.enonic.wem.admin.rest.resource.relationship.RelationshipResource;
-import com.enonic.wem.admin.rest.resource.schema.SchemaIconResource;
 import com.enonic.wem.admin.rest.resource.schema.content.ContentTypeResource;
 import com.enonic.wem.admin.rest.resource.schema.mixin.MixinResource;
 import com.enonic.wem.admin.rest.resource.schema.relationship.RelationshipTypeResource;
@@ -112,7 +111,6 @@ public final class RestServlet
         addSingleton( PageResource.class );
         addSingleton( SiteResource.class );
 
-        addSingleton( SchemaIconResource.class );
         addSingleton( MixinResource.class );
         addSingleton( ContentTypeResource.class );
 

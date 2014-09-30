@@ -32,7 +32,6 @@ import com.enonic.wem.admin.rest.resource.content.site.template.SiteTemplateIcon
 import com.enonic.wem.admin.rest.resource.content.site.template.SiteTemplateResource;
 import com.enonic.wem.admin.rest.resource.module.ModuleResource;
 import com.enonic.wem.admin.rest.resource.relationship.RelationshipResource;
-import com.enonic.wem.admin.rest.resource.schema.SchemaIconResource;
 import com.enonic.wem.admin.rest.resource.schema.content.ContentTypeResource;
 import com.enonic.wem.admin.rest.resource.schema.mixin.MixinResource;
 import com.enonic.wem.admin.rest.resource.schema.relationship.RelationshipTypeResource;
@@ -68,7 +67,6 @@ public final class AdminModule
         bind( PageResource.class ).in( Singleton.class );
         bind( SiteResource.class ).in( Singleton.class );
 
-        bind( SchemaIconResource.class ).in( Singleton.class );
         bind( MixinResource.class ).in( Singleton.class );
         bind( ContentTypeResource.class ).in( Singleton.class );
 

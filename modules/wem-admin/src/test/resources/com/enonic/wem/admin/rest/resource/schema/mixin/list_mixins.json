@@ -1,15 +1,13 @@
 {
     "mixins": [
         {
-            "schemaKind": "Mixin",
             "createdTime": "2013-01-01T12:00:00Z",
             "creator": null,
-            "deletable": true,
+            "deletable": false,
             "description": null,
             "displayName": null,
-            "editable": true,
-            "icon": null,
-            "iconUrl": "/admin/rest/schema/icon/Mixin:mymodule:input_text_1",
+            "editable": false,
+            "iconUrl": "/admin/rest/schema/mixin/icon/mymodule:input_text_1",
             "items": [
                 {
                     "Input": {
@@ -37,15 +35,13 @@
             "name": "mymodule:input_text_1"
         },
         {
-            "schemaKind": "Mixin",
             "createdTime": "2013-01-01T12:00:00Z",
             "creator": null,
-            "deletable": true,
+            "deletable": false,
             "description": null,
             "displayName": null,
-            "editable": true,
-            "icon": null,
-            "iconUrl": "/admin/rest/schema/icon/Mixin:mymodule:text_area_2",
+            "editable": false,
+            "iconUrl": "/admin/rest/schema/mixin/icon/mymodule:text_area_2",
             "items": [
                 {
                     "Input": {

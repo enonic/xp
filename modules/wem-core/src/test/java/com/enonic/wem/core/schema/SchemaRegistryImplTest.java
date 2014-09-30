@@ -15,10 +15,13 @@ import com.enonic.wem.api.schema.SchemaProvider;
 import com.enonic.wem.api.schema.Schemas;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinName;
+import com.enonic.wem.api.schema.mixin.Mixins;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypes;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -49,61 +52,6 @@ public class SchemaRegistryImplTest
     }
 
     @Test
-    public void testGetSchema()
-        throws Exception
-    {
-        // setup
-        final ContentType contentType = ContentType.newContentType().
-            superType( ContentTypeName.structured() ).
-            name( "mymodule:my_content_type" ).
-            displayName( "My content type" ).
-            build();
-        mockAddBundle( contentType );
-
-        // exercise
-        final Schema existingSchema = this.schemaManager.getSchema( ContentTypeName.from( "mymodule:my_content_type" ) );
-        final Schema nonExistingSchema = this.schemaManager.getSchema( ContentTypeName.from( "mymodule:other_type" ) );
-
-        // verify
-        assertNotNull( existingSchema );
-        assertNull( nonExistingSchema );
-        assertEquals( "mymodule:my_content_type", existingSchema.getName().toString() );
-    }
-
-    @Test
-    public void testGetSchemaAfterUpdate()
-        throws Exception
-    {
-        // setup
-        ContentType contentType = ContentType.newContentType().
-            superType( ContentTypeName.structured() ).
-            name( "mymodule:my_content_type" ).
-            displayName( "My content type" ).
-            build();
-        mockAddBundle( contentType );
-
-        Schema existingSchema = this.schemaManager.getSchema( ContentTypeName.from( "mymodule:my_content_type" ) );
-        assertNotNull( existingSchema );
-
-        // update module schemas
-        ContentType contentType2 = ContentType.newContentType().
-            superType( ContentTypeName.structured() ).
-            name( "mymodule:my_content_type2" ).
-            displayName( "My content type" ).
-            build();
-        mockAddBundle( contentType2 );
-
-        // exercise
-        existingSchema = this.schemaManager.getSchema( ContentTypeName.from( "mymodule:my_content_type2" ) );
-        Schema nonExistingSchema = this.schemaManager.getSchema( ContentTypeName.from( "mymodule:my_content_type" ) );
-
-        // verify
-        assertNotNull( existingSchema );
-        assertNull( nonExistingSchema );
-        assertEquals( "mymodule:my_content_type2", existingSchema.getName().toString() );
-    }
-
-    @Test
     public void testGetContentType()
         throws Exception
     {
@@ -123,6 +71,39 @@ public class SchemaRegistryImplTest
         assertNotNull( existingSchema );
         assertNull( nonExistingSchema );
         assertEquals( "mymodule:my_content_type", existingSchema.getName().toString() );
+    }
+
+    @Test
+    public void testGetContentTypeAfterUpdate()
+        throws Exception
+    {
+        // setup
+        ContentType contentType = ContentType.newContentType().
+            superType( ContentTypeName.structured() ).
+            name( "mymodule:my_content_type" ).
+            displayName( "My content type" ).
+            build();
+        mockAddBundle( contentType );
+
+        ContentType existingSchema = this.schemaManager.getContentType( ContentTypeName.from( "mymodule:my_content_type" ) );
+        assertNotNull( existingSchema );
+
+        // update module schemas
+        ContentType contentType2 = ContentType.newContentType().
+            superType( ContentTypeName.structured() ).
+            name( "mymodule:my_content_type2" ).
+            displayName( "My content type" ).
+            build();
+        mockAddBundle( contentType2 );
+
+        // exercise
+        existingSchema = this.schemaManager.getContentType( ContentTypeName.from( "mymodule:my_content_type2" ) );
+        ContentType nonExistingSchema = this.schemaManager.getContentType( ContentTypeName.from( "mymodule:my_content_type" ) );
+
+        // verify
+        assertNotNull( existingSchema );
+        assertNull( nonExistingSchema );
+        assertEquals( "mymodule:my_content_type2", existingSchema.getName().toString() );
     }
 
     @Test
@@ -170,7 +151,7 @@ public class SchemaRegistryImplTest
     }
 
     @Test
-    public void testGetAllSchemas()
+    public void testGetAll()
         throws Exception
     {
         // setup
@@ -192,47 +173,20 @@ public class SchemaRegistryImplTest
         mockAddBundle( mixin );
 
         // exercise
-        final Schemas schemas = this.schemaManager.getAllSchemas();
+        final ContentTypes contentTypes = this.schemaManager.getAllContentTypes();
+        final Mixins mixins = this.schemaManager.getAllMixins();
+        final RelationshipTypes relationshipTypes = this.schemaManager.getAllRelationshipTypes();
 
         // verify
-        assertNotNull( schemas );
-        assertEquals( 3, schemas.getSize() );
-        assertNotNull( schemas.getSchema( ContentTypeName.from( "mymodule:my_content_type" ) ) );
-        assertNotNull( schemas.getSchema( RelationshipTypeName.from( "mymodule:my_rel_type" ) ) );
-        assertNotNull( schemas.getSchema( MixinName.from( "othermodule:my_mixin" ) ) );
-    }
-
-    @Test
-    public void testGetModuleSchemas()
-        throws Exception
-    {
-        // setup
-        final ContentType contentType = ContentType.newContentType().
-            superType( ContentTypeName.structured() ).
-            name( "mymodule:my_content_type" ).
-            displayName( "My content type" ).
-            build();
-        final RelationshipType relationshipType = RelationshipType.newRelationshipType().
-            name( "mymodule:my_rel_type" ).
-            displayName( "My relationship type" ).
-            build();
-        mockAddBundle( contentType, relationshipType );
-
-        final Mixin mixin = Mixin.newMixin().
-            name( "othermodule:my_mixin" ).
-            displayName( "My mixin" ).
-            build();
-        mockAddBundle( mixin );
-
-        // exercise
-        final Schemas schemas = this.schemaManager.getModuleSchemas( ModuleKey.from( "mymodule" ) );
-
-        // verify
-        assertNotNull( schemas );
-        assertEquals( 2, schemas.getSize() );
-        assertNotNull( schemas.getSchema( ContentTypeName.from( "mymodule:my_content_type" ) ) );
-        assertNotNull( schemas.getSchema( RelationshipTypeName.from( "mymodule:my_rel_type" ) ) );
-        assertNull( schemas.getSchema( MixinName.from( "othermodule:my_mixin" ) ) );
+        assertNotNull( contentTypes );
+        assertNotNull( mixins );
+        assertNotNull( relationshipTypes );
+        assertEquals( 1, contentTypes.getSize() );
+        assertEquals( 1, mixins.getSize() );
+        assertEquals( 1, relationshipTypes.getSize() );
+        assertNotNull( contentTypes.getContentType( ContentTypeName.from( "mymodule:my_content_type" ) ) );
+        assertNotNull( relationshipTypes.get( RelationshipTypeName.from( "mymodule:my_rel_type" ) ) );
+        assertNotNull( mixins.getMixin( MixinName.from( "othermodule:my_mixin" ) ) );
     }
 
     @Test
@@ -245,11 +199,7 @@ public class SchemaRegistryImplTest
             name( "mymodule:my_content_type" ).
             displayName( "My content type" ).
             build();
-        final RelationshipType relationshipType = RelationshipType.newRelationshipType().
-            name( "mymodule:my_rel_type" ).
-            displayName( "My relationship type" ).
-            build();
-        mockAddBundle( contentType, relationshipType );
+        mockAddBundle( contentType );
 
         final Mixin mixin = Mixin.newMixin().
             name( "othermodule:my_mixin" ).
@@ -259,14 +209,14 @@ public class SchemaRegistryImplTest
 
         // exercise
         mockRemoveBundle( bundleOtherModule );
-        final Schemas schemas = this.schemaManager.getAllSchemas();
+        final ContentTypes contentTypes = this.schemaManager.getAllContentTypes();
+        final Mixins mixins = this.schemaManager.getAllMixins();
 
         // verify
-        assertNotNull( schemas );
-        assertEquals( 2, schemas.getSize() );
-        assertNotNull( schemas.getSchema( ContentTypeName.from( "mymodule:my_content_type" ) ) );
-        assertNotNull( schemas.getSchema( RelationshipTypeName.from( "mymodule:my_rel_type" ) ) );
-        assertNull( schemas.getSchema( MixinName.from( "othermodule:my_mixin" ) ) );
+        assertNotNull( contentTypes );
+        assertEquals( 1, contentTypes.getSize() );
+        assertNotNull( contentTypes.getContentType( ContentTypeName.from( "mymodule:my_content_type" ) ) );
+        assertNull( mixins.getMixin( MixinName.from( "othermodule:my_mixin" ) ) );
     }
 
     @Test
@@ -279,26 +229,22 @@ public class SchemaRegistryImplTest
             name( "mymodule:my_content_type" ).
             displayName( "My content type" ).
             build();
-        final RelationshipType relationshipType = RelationshipType.newRelationshipType().
-            name( "mymodule:my_rel_type" ).
-            displayName( "My relationship type" ).
-            build();
-        final Bundle moduleBundle = mockAddBundle( contentType, relationshipType );
+        final Bundle moduleBundle = mockAddBundle( contentType );
 
         // exercise
-        final Mixin mixin = Mixin.newMixin().
-            name( "othermodule:my_mixin" ).
-            displayName( "My mixin" ).
+        final ContentType otherContentType = ContentType.newContentType().
+            superType( ContentTypeName.structured() ).
+            name( "othermodule:other_content_type" ).
+            displayName( "Somet other content type" ).
             build();
-        mockModifyBundle( moduleBundle, mixin );
-        final Schemas schemas = this.schemaManager.getAllSchemas();
+        mockModifyBundle( moduleBundle, otherContentType );
+        final ContentTypes contentTypes = this.schemaManager.getAllContentTypes();
 
         // verify
-        assertNotNull( schemas );
-        assertEquals( 1, schemas.getSize() );
-        assertNull( schemas.getSchema( ContentTypeName.from( "mymodule:my_content_type" ) ) );
-        assertNull( schemas.getSchema( RelationshipTypeName.from( "mymodule:my_rel_type" ) ) );
-        assertNotNull( schemas.getSchema( MixinName.from( "othermodule:my_mixin" ) ) );
+        assertNotNull( contentTypes );
+        assertEquals( 1, contentTypes.getSize() );
+        assertNull( contentTypes.getContentType( ContentTypeName.from( "mymodule:my_content_type" ) ) );
+        assertNotNull( contentTypes.getContentType( ContentTypeName.from( "othermodule:other_content_type" ) ) );
     }
 
     private Bundle mockAddBundle( final Schema... schemas )
@@ -307,7 +253,7 @@ public class SchemaRegistryImplTest
         final ModuleKey moduleKey = schemas[0].getName().getModuleKey();
         final Bundle bundle = Mockito.mock( Bundle.class );
         Mockito.when( bundle.getSymbolicName() ).thenReturn( moduleKey.getName().toString() );
-        Mockito.when( bundle.getVersion() ).thenReturn( new Version( "1.0.0") );
+        Mockito.when( bundle.getVersion() ).thenReturn( new Version( "1.0.0" ) );
 
         final ServiceReference serviceRef = Mockito.mock( ServiceReference.class );
         Mockito.when( serviceRef.getBundle() ).thenReturn( bundle );
