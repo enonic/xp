@@ -11,8 +11,8 @@ import com.google.common.io.Resources;
 
 import com.enonic.wem.portal.internal.controller.JsContext;
 import com.enonic.wem.portal.internal.controller.JsHttpResponse;
-import com.enonic.wem.portal.internal.postprocess.injection.PostProcessInjection;
-import com.enonic.wem.portal.internal.postprocess.instruction.PostProcessInstruction;
+import com.enonic.wem.portal.postprocess.PostProcessInjection;
+import com.enonic.wem.portal.postprocess.PostProcessInstruction;
 
 import static junit.framework.Assert.assertEquals;
 

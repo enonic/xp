@@ -13,7 +13,8 @@ import com.samskivert.mustache.Mustache;
 import com.samskivert.mustache.Template;
 
 import com.enonic.wem.api.rendering.RenderingMode;
-import com.enonic.wem.portal.internal.controller.JsContext;
+import com.enonic.wem.portal.PortalContext;
+import com.enonic.wem.portal.postprocess.PostProcessInjection;
 
 @Singleton
 public final class LiveEditInjection
@@ -30,7 +31,7 @@ public final class LiveEditInjection
     }
 
     @Override
-    public String inject( final JsContext context, final Tag tag )
+    public String inject( final PortalContext context, final Tag tag )
     {
         if ( RenderingMode.EDIT != context.getRequest().getMode() )
         {
@@ -50,20 +51,20 @@ public final class LiveEditInjection
         return null;
     }
 
-    private String injectHeadEnd( final JsContext context )
+    private String injectHeadEnd( final PortalContext context )
     {
         return injectUsingTemplate( context, this.headEndTemplate );
     }
 
-    private String injectBodyEnd( final JsContext context )
+    private String injectBodyEnd( final PortalContext context )
     {
         return injectUsingTemplate( context, this.bodyEndTemplate );
     }
 
-    private String injectUsingTemplate( final JsContext context, final Template template )
+    private String injectUsingTemplate( final PortalContext context, final Template template )
     {
         final Map<String, String> map = Maps.newHashMap();
-        map.put( "adminUrl", context.getUrl().getBaseUrl() + "/admin" );
+        map.put( "adminUrl", context.getRequest().getBaseUri() + "/admin" );
 
         final StringWriter out = new StringWriter();
         template.execute( map, out );

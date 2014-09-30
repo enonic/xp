@@ -24,6 +24,7 @@ import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.rendering.Renderable;
 import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.internal.controller.JsContext;
 import com.enonic.wem.portal.internal.controller.JsHttpResponse;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
@@ -173,7 +174,7 @@ public class ComponentInstructionTest
             }
 
             @Override
-            public RenderResult render( final Renderable component, final JsContext context )
+            public RenderResult render( final Renderable component, final PortalContext context )
             {
                 return RenderResult.newRenderResult().entity( renderResult ).build();
             }

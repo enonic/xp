@@ -155,6 +155,7 @@ public final class JsContext
         return component;
     }
 
+    @Override
     public void setComponent( final PageComponent component )
     {
         this.component = component;

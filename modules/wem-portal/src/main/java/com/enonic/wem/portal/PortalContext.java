@@ -24,6 +24,8 @@ public interface PortalContext
 
     public PageComponent getComponent();
 
+    public void setComponent( PageComponent component );
+
     // TODO: Should be ModuleKey here
     public String getResolvedModule();
 }

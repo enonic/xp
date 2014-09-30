@@ -10,9 +10,9 @@ import com.enonic.wem.portal.internal.controller.JsControllerFactoryImpl;
 import com.enonic.wem.portal.internal.postprocess.PostProcessor;
 import com.enonic.wem.portal.internal.postprocess.PostProcessorImpl;
 import com.enonic.wem.portal.internal.postprocess.injection.LiveEditInjection;
-import com.enonic.wem.portal.internal.postprocess.injection.PostProcessInjection;
+import com.enonic.wem.portal.postprocess.PostProcessInjection;
 import com.enonic.wem.portal.internal.postprocess.instruction.ComponentInstruction;
-import com.enonic.wem.portal.internal.postprocess.instruction.PostProcessInstruction;
+import com.enonic.wem.portal.postprocess.PostProcessInstruction;
 import com.enonic.wem.portal.internal.rendering.RenderingModule;
 import com.enonic.wem.portal.internal.restlet.RestletModule;
 

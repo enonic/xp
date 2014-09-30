@@ -1,13 +1,13 @@
 package com.enonic.wem.portal.internal.postprocess;
 
-import com.enonic.wem.portal.internal.controller.JsContext;
-import com.enonic.wem.portal.internal.postprocess.injection.PostProcessInjection;
+import com.enonic.wem.portal.PortalContext;
+import com.enonic.wem.portal.postprocess.PostProcessInjection;
 
 public final class TestPostProcessInjection
     implements PostProcessInjection
 {
     @Override
-    public String inject( final JsContext context, final Tag tag )
+    public String inject( final PortalContext context, final Tag tag )
     {
         return "<!-- " + tag.toString() + "-->";
     }

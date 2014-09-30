@@ -17,11 +17,12 @@ import com.enonic.wem.api.content.page.PageComponentService;
 import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.portal.internal.controller.JsContext;
+import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.internal.rendering.RenderException;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
 import com.enonic.wem.portal.internal.rendering.RendererFactory;
+import com.enonic.wem.portal.postprocess.PostProcessInstruction;
 
 import static org.apache.commons.lang.StringUtils.substringAfter;
 
@@ -43,7 +44,7 @@ public final class ComponentInstruction
     }
 
     @Override
-    public String evaluate( final JsContext context, final String instruction )
+    public String evaluate( final PortalContext context, final String instruction )
     {
         if ( !instruction.startsWith( "COMPONENT " ) )
         {
@@ -60,7 +61,7 @@ public final class ComponentInstruction
         return renderComponent( context, path );
     }
 
-    private String renderComponent( final JsContext context, final String componentSelector )
+    private String renderComponent( final PortalContext context, final String componentSelector )
     {
         final PageComponent component;
         if ( !componentSelector.startsWith( MODULE_COMPONENT_PREFIX ) )
@@ -78,7 +79,7 @@ public final class ComponentInstruction
         return renderPageComponent( context, component );
     }
 
-    private String renderPageComponent( final JsContext context, final PageComponent component )
+    private String renderPageComponent( final PortalContext context, final PageComponent component )
     {
         final Renderer<PageComponent> renderer = this.rendererFactory.getRenderer( component );
         if ( renderer == null )
@@ -90,7 +91,7 @@ public final class ComponentInstruction
         return result.getAsString();
     }
 
-    private PageComponent resolveComponent( final JsContext context, final ComponentPath path )
+    private PageComponent resolveComponent( final PortalContext context, final ComponentPath path )
     {
         final Content content = context.getContent();
         if ( content == null )

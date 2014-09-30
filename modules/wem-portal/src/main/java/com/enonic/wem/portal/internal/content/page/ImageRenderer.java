@@ -3,9 +3,9 @@ package com.enonic.wem.portal.internal.content.page;
 
 import com.enonic.wem.api.content.page.image.ImageComponent;
 import com.enonic.wem.api.rendering.RenderingMode;
+import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.PortalRequest;
 import com.enonic.wem.portal.PortalResponse;
-import com.enonic.wem.portal.internal.controller.JsContext;
 import com.enonic.wem.portal.internal.controller.JsHttpResponseSerializer;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
@@ -22,7 +22,7 @@ public final class ImageRenderer
     }
 
     @Override
-    public RenderResult render( final ImageComponent component, final JsContext context )
+    public RenderResult render( final ImageComponent component, final PortalContext context )
     {
         final RenderingMode renderingMode = getRenderingMode( context );
         final PortalResponse response = context.getResponse();
@@ -58,7 +58,7 @@ public final class ImageRenderer
         return new JsHttpResponseSerializer( response ).serialize();
     }
 
-    private RenderingMode getRenderingMode( final JsContext context )
+    private RenderingMode getRenderingMode( final PortalContext context )
     {
         final PortalRequest req = context.getRequest();
         return req == null ? RenderingMode.LIVE : req.getMode();

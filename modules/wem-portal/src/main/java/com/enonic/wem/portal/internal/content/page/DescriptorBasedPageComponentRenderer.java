@@ -10,8 +10,8 @@ import com.enonic.wem.api.content.page.Descriptor;
 import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.rendering.RenderingMode;
+import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.PortalRequest;
-import com.enonic.wem.portal.internal.controller.JsContext;
 import com.enonic.wem.portal.internal.controller.JsController;
 import com.enonic.wem.portal.internal.controller.JsControllerFactory;
 import com.enonic.wem.portal.internal.controller.JsHttpResponseSerializer;
@@ -29,7 +29,7 @@ public abstract class DescriptorBasedPageComponentRenderer<R extends AbstractDes
     @Inject
     protected JsControllerFactory controllerFactory;
 
-    public final RenderResult render( final R pageComponent, final JsContext context )
+    public final RenderResult render( final R pageComponent, final PortalContext context )
     {
         final Descriptor descriptor = resolveDescriptor( pageComponent );
         if ( descriptor == null )
@@ -54,7 +54,7 @@ public abstract class DescriptorBasedPageComponentRenderer<R extends AbstractDes
         }
     }
 
-    private RenderResult renderEmptyComponent( final AbstractDescriptorBasedPageComponent pageComponent, final JsContext context )
+    private RenderResult renderEmptyComponent( final AbstractDescriptorBasedPageComponent pageComponent, final PortalContext context )
     {
         final RenderingMode renderingMode = getRenderingMode( context );
         switch ( renderingMode )
@@ -101,7 +101,7 @@ public abstract class DescriptorBasedPageComponentRenderer<R extends AbstractDes
 
     protected abstract Descriptor getComponentDescriptor( final DescriptorKey descriptorKey );
 
-    private RenderingMode getRenderingMode( final JsContext context )
+    private RenderingMode getRenderingMode( final PortalContext context )
     {
         final PortalRequest req = context.getRequest();
         return req == null ? RenderingMode.LIVE : req.getMode();

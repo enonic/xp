@@ -4,9 +4,9 @@ import java.text.MessageFormat;
 
 import com.enonic.wem.api.content.page.text.TextComponent;
 import com.enonic.wem.api.rendering.RenderingMode;
+import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.PortalRequest;
 import com.enonic.wem.portal.PortalResponse;
-import com.enonic.wem.portal.internal.controller.JsContext;
 import com.enonic.wem.portal.internal.controller.JsHttpResponseSerializer;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
@@ -26,7 +26,7 @@ public final class TextRenderer
     }
 
     @Override
-    public RenderResult render( final TextComponent textComponent, final JsContext context )
+    public RenderResult render( final TextComponent textComponent, final PortalContext context )
     {
         final RenderingMode renderingMode = getRenderingMode( context );
         final PortalResponse response = context.getResponse();
@@ -53,7 +53,7 @@ public final class TextRenderer
         return new JsHttpResponseSerializer( response ).serialize();
     }
 
-    private void renderEmptyTextComponent( final TextComponent textComponent, final JsContext context )
+    private void renderEmptyTextComponent( final TextComponent textComponent, final PortalContext context )
     {
         final PortalResponse response = context.getResponse();
         final RenderingMode renderingMode = getRenderingMode( context );
@@ -73,7 +73,7 @@ public final class TextRenderer
         }
     }
 
-    private RenderingMode getRenderingMode( final JsContext context )
+    private RenderingMode getRenderingMode( final PortalContext context )
     {
         final PortalRequest req = context.getRequest();
         return req == null ? RenderingMode.LIVE : req.getMode();
