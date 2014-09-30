@@ -16,7 +16,6 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.attachment.Attachments;
@@ -24,15 +23,15 @@ import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.api.entity.NodeService;
-import com.enonic.wem.api.entity.UpdateNodeParams;
-import com.enonic.wem.api.entity.Workspace;
-import com.enonic.wem.api.entity.Workspaces;
 import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.schema.content.ContentTypeService;
+import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.api.workspace.Workspaces;
+import com.enonic.wem.core.entity.EntityId;
+import com.enonic.wem.core.entity.Node;
+import com.enonic.wem.core.entity.NodeService;
+import com.enonic.wem.core.entity.UpdateNodeParams;
 import com.enonic.wem.core.entity.dao.NodeNotFoundException;
 
 import static com.enonic.wem.api.content.Content.editContent;
@@ -45,8 +44,6 @@ public class UpdateContentCommandTest
     private static final Instant UPDATED_TIME = LocalDateTime.of( 2013, 1, 1, 13, 0, 0, 0 ).toInstant( ZoneOffset.UTC );
 
     private final AttachmentService attachmentService = Mockito.mock( AttachmentService.class );
-
-    private final ContentService contentService = Mockito.mock( ContentService.class );
 
     private final ContentTypeService contentTypeService = Mockito.mock( ContentTypeService.class );
 

@@ -4,8 +4,8 @@ import org.restlet.resource.ResourceException;
 
 import com.google.common.base.Joiner;
 
-import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.rendering.RenderingMode;
+import com.enonic.wem.api.workspace.Workspace;
 
 public abstract class WorkspaceBaseResource
     extends BaseResource

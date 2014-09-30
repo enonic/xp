@@ -1,6 +1,6 @@
 package com.enonic.wem.api.content;
 
-import com.enonic.wem.api.entity.Workspace;
+import com.enonic.wem.api.workspace.Workspace;
 
 public class ActiveContentVersionEntry
     implements Comparable<ActiveContentVersionEntry>

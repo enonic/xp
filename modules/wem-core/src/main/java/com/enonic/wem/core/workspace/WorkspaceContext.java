@@ -1,8 +1,8 @@
 package com.enonic.wem.core.workspace;
 
 import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.repository.Repository;
+import com.enonic.wem.api.workspace.Workspace;
 
 public class WorkspaceContext
 {

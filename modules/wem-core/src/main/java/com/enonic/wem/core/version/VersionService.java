@@ -1,9 +1,9 @@
 package com.enonic.wem.core.version;
 
-import com.enonic.wem.api.entity.FindNodeVersionsResult;
-import com.enonic.wem.api.entity.NodeVersion;
-import com.enonic.wem.api.entity.NodeVersionId;
 import com.enonic.wem.api.repository.Repository;
+import com.enonic.wem.core.entity.FindNodeVersionsResult;
+import com.enonic.wem.core.entity.NodeVersion;
+import com.enonic.wem.core.entity.NodeVersionId;
 
 public interface VersionService
 {

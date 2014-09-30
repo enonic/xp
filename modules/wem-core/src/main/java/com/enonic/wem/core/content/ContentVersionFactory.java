@@ -6,13 +6,13 @@ import com.enonic.wem.api.content.ContentVersion;
 import com.enonic.wem.api.content.ContentVersionId;
 import com.enonic.wem.api.content.ContentVersions;
 import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.api.entity.NodeService;
-import com.enonic.wem.api.entity.NodeVersion;
-import com.enonic.wem.api.entity.NodeVersions;
+import com.enonic.wem.core.entity.EntityId;
+import com.enonic.wem.core.entity.Node;
+import com.enonic.wem.core.entity.NodeService;
+import com.enonic.wem.core.entity.NodeVersion;
+import com.enonic.wem.core.entity.NodeVersions;
 
-public class ContentVersionFactory
+class ContentVersionFactory
 {
     private final ContentNodeTranslator translator;
 
@@ -30,7 +30,7 @@ public class ContentVersionFactory
     public ContentVersions create( final EntityId entityId, final NodeVersions nodeVersions )
     {
         final ContentVersions.Builder contentVersionsBuilder = ContentVersions.create().
-            contentId( ContentId.from( entityId ) );
+            contentId( ContentId.from( entityId.toString() ) );
 
         for ( final NodeVersion nodeVersion : nodeVersions )
         {
@@ -54,7 +54,7 @@ public class ContentVersionFactory
             displayName( content.getDisplayName() ).
             modified( content.getModifiedTime() ).
             modifier( content.getModifier() ).
-            id( ContentVersionId.from( nodeVersion.getId() ) ).
+            id( ContentVersionId.from( nodeVersion.getId().toString() ) ).
             build();
     }
 

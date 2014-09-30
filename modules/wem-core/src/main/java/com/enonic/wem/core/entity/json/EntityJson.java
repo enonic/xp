@@ -2,7 +2,7 @@ package com.enonic.wem.core.entity.json;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import com.enonic.wem.api.entity.Entity;
+import com.enonic.wem.core.entity.Entity;
 
 public class EntityJson
     extends AbstractEntityJson

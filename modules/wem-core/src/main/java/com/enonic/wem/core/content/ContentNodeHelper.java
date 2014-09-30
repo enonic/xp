@@ -4,10 +4,10 @@ import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
-import com.enonic.wem.api.entity.NodePath;
-import com.enonic.wem.api.entity.NodePaths;
+import com.enonic.wem.core.entity.NodePath;
+import com.enonic.wem.core.entity.NodePaths;
 
-public class ContentNodeHelper
+class ContentNodeHelper
 {
     private final static String CONTENT_ROOT_NODE_NAME = "content";
 

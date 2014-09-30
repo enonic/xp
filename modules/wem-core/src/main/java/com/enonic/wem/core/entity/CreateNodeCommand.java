@@ -6,12 +6,6 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.entity.Attachments;
-import com.enonic.wem.api.entity.CreateNodeParams;
-import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.api.entity.NodeName;
-import com.enonic.wem.api.entity.NodeVersionId;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.version.EntityVersionDocument;
 import com.enonic.wem.core.workspace.StoreWorkspaceDocument;

@@ -7,11 +7,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.entity.NodePath;
-import com.enonic.wem.api.entity.NodeVersionId;
-import com.enonic.wem.api.entity.NodeVersionIds;
 import com.enonic.wem.core.elasticsearch.ElasticsearchDao;
 import com.enonic.wem.core.elasticsearch.QueryMetaData;
+import com.enonic.wem.core.entity.NodePath;
+import com.enonic.wem.core.entity.NodeVersionId;
+import com.enonic.wem.core.entity.NodeVersionIds;
 import com.enonic.wem.core.index.result.SearchResult;
 import com.enonic.wem.core.index.result.SearchResultEntries;
 import com.enonic.wem.core.index.result.SearchResultEntry;

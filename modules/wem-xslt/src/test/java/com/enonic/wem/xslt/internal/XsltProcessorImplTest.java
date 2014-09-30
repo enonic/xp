@@ -10,13 +10,13 @@ import com.google.common.collect.Maps;
 
 import junit.framework.Assert;
 
-import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.rendering.RenderingMode;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceNotFoundException;
 import com.enonic.wem.api.resource.ResourceProblemException;
 import com.enonic.wem.api.resource.ResourceUrlRegistry;
 import com.enonic.wem.api.resource.ResourceUrlTestHelper;
+import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.PortalContextAccessor;
 import com.enonic.wem.portal.PortalRequest;

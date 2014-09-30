@@ -11,11 +11,11 @@ import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.GetContentByIdsParams;
-import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.EntityIds;
-import com.enonic.wem.api.entity.NoEntityWithIdFoundException;
-import com.enonic.wem.api.entity.NodeService;
-import com.enonic.wem.api.entity.Nodes;
+import com.enonic.wem.core.entity.EntityId;
+import com.enonic.wem.core.entity.EntityIds;
+import com.enonic.wem.core.entity.NoEntityWithIdFoundException;
+import com.enonic.wem.core.entity.NodeService;
+import com.enonic.wem.core.entity.Nodes;
 import com.enonic.wem.core.index.query.QueryService;
 
 

@@ -1,11 +1,11 @@
 package com.enonic.wem.core.content
 
 import com.enonic.wem.api.content.query.ContentQuery
-import com.enonic.wem.api.entity.query.EntityQuery
 import com.enonic.wem.api.query.filter.Filter
 import com.enonic.wem.api.query.filter.ValueFilter
 import com.enonic.wem.api.query.parser.QueryParser
 import com.enonic.wem.api.schema.content.ContentTypeNames
+import com.enonic.wem.core.entity.query.EntityQuery
 import spock.lang.Specification
 
 class ContentQueryEntityQueryTranslatorTest

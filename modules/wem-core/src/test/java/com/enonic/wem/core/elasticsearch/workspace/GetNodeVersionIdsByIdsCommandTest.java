@@ -4,9 +4,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.entity.EntityIds;
-import com.enonic.wem.api.entity.NodeVersionIds;
 import com.enonic.wem.core.elasticsearch.ElasticsearchDao;
+import com.enonic.wem.core.entity.EntityIds;
+import com.enonic.wem.core.entity.NodeVersionIds;
 
 import static com.enonic.wem.core.TestContext.TEST_REPOSITORY;
 import static com.enonic.wem.core.TestContext.TEST_WORKSPACE;

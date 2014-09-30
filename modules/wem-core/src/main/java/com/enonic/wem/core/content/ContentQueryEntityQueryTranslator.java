@@ -2,10 +2,10 @@ package com.enonic.wem.core.content;
 
 import com.enonic.wem.api.content.query.ContentQuery;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.entity.query.EntityQuery;
 import com.enonic.wem.api.query.filter.ValueFilter;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
+import com.enonic.wem.core.entity.query.EntityQuery;
 
 public class ContentQueryEntityQueryTranslator
 {
@@ -18,7 +18,7 @@ public class ContentQueryEntityQueryTranslator
         return entityQueryBuilder.build();
     }
 
-    protected static void doTranslateEntityQueryProperties( final ContentQuery contentQuery, final EntityQuery.Builder builder )
+    static void doTranslateEntityQueryProperties( final ContentQuery contentQuery, final EntityQuery.Builder builder )
     {
         builder.query( contentQuery.getQueryExpr() ).
             from( contentQuery.getFrom() ).

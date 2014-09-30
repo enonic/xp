@@ -17,20 +17,20 @@ import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.thumb.Thumbnail;
 import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.entity.CreateNodeParams;
-import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.api.entity.NodeEditor;
-import com.enonic.wem.api.entity.NodeName;
-import com.enonic.wem.api.entity.NodePath;
-import com.enonic.wem.api.entity.Nodes;
-import com.enonic.wem.api.entity.UpdateNodeParams;
 import com.enonic.wem.api.index.IndexConfigDocument;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.wem.core.content.serializer.ThumbnailAttachmentSerializer;
+import com.enonic.wem.core.entity.CreateNodeParams;
+import com.enonic.wem.core.entity.EntityId;
+import com.enonic.wem.core.entity.Node;
+import com.enonic.wem.core.entity.NodeEditor;
+import com.enonic.wem.core.entity.NodeName;
+import com.enonic.wem.core.entity.NodePath;
+import com.enonic.wem.core.entity.Nodes;
+import com.enonic.wem.core.entity.UpdateNodeParams;
 
 public class ContentNodeTranslator
 {
@@ -54,7 +54,7 @@ public class ContentNodeTranslator
 
         Attachments contentAttachments = params.getAttachments();
 
-        final com.enonic.wem.api.entity.Attachments.Builder nodeAttachmentsBuilder = com.enonic.wem.api.entity.Attachments.builder().
+        final com.enonic.wem.core.entity.Attachments.Builder nodeAttachmentsBuilder = com.enonic.wem.core.entity.Attachments.builder().
             addAll( CONTENT_ATTACHMENT_NODE_TRANSLATOR.toNodeAttachments( contentAttachments ) );
 
         final Thumbnail thumbnail = resolveThumbnailAttachment( params );
@@ -104,9 +104,9 @@ public class ContentNodeTranslator
         final NodePath parentContentPathAsNodePath = parentNodePath.removeFromBeginning( CONTENTS_ROOT_PATH );
         final ContentPath parentContentPath = ContentPath.from( parentContentPathAsNodePath.toString() );
 
-        final com.enonic.wem.api.entity.Attachments nodeAttachments = node.attachments();
+        final com.enonic.wem.core.entity.Attachments nodeAttachments = node.attachments();
 
-        final com.enonic.wem.api.entity.Attachment thumbnailAttachment =
+        final com.enonic.wem.core.entity.Attachment thumbnailAttachment =
             nodeAttachments.getAttachment( ThumbnailAttachmentSerializer.THUMB_NAME );
 
         final Thumbnail thumbnail;
@@ -123,7 +123,7 @@ public class ContentNodeTranslator
         final Content.Builder builder = CONTENT_SERIALIZER.fromData( node.data() );
 
         builder.
-            id( ContentId.from( node.id() ) ).
+            id( ContentId.from( node.id().toString() ) ).
             parentPath( parentContentPath ).
             name( node.name().toString() ).
             createdTime( node.getCreatedTime() ).
@@ -148,14 +148,14 @@ public class ContentNodeTranslator
             public Node.EditBuilder edit( final Node toBeEdited )
             {
 
-                final com.enonic.wem.api.entity.Attachments contentAttachmentsAsNodeAttachments =
+                final com.enonic.wem.core.entity.Attachments contentAttachmentsAsNodeAttachments =
                     CONTENT_ATTACHMENT_NODE_TRANSLATOR.toNodeAttachments( attachments );
 
-                final com.enonic.wem.api.entity.Attachments.Builder nodeAttachmentsBuilder =
-                    com.enonic.wem.api.entity.Attachments.builder().
+                final com.enonic.wem.core.entity.Attachments.Builder nodeAttachmentsBuilder =
+                    com.enonic.wem.core.entity.Attachments.builder().
                         addAll( contentAttachmentsAsNodeAttachments );
 
-                final com.enonic.wem.api.entity.Attachment thumbnailAttachment =
+                final com.enonic.wem.core.entity.Attachment thumbnailAttachment =
                     ThumbnailAttachmentSerializer.toAttachment( content.getThumbnail() );
 
                 if ( thumbnailAttachment != null )

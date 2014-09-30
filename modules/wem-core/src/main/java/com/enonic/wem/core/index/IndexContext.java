@@ -1,14 +1,14 @@
 package com.enonic.wem.core.index;
 
 import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.repository.Repository;
+import com.enonic.wem.api.workspace.Workspace;
 
 public class IndexContext
 {
-    private Repository repository;
+    private final Repository repository;
 
-    private Workspace workspace;
+    private final Workspace workspace;
 
     private IndexContext( final Repository repository, final Workspace workspace )
     {

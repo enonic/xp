@@ -8,11 +8,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.data.RootDataSetJson;
-import com.enonic.wem.api.entity.Attachments;
-import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.api.entity.NodeName;
-import com.enonic.wem.api.entity.NodePath;
+import com.enonic.wem.core.entity.Attachments;
+import com.enonic.wem.core.entity.EntityId;
+import com.enonic.wem.core.entity.Node;
+import com.enonic.wem.core.entity.NodeName;
+import com.enonic.wem.core.entity.NodePath;
 import com.enonic.wem.core.entity.relationship.IndexConfigDocumentJson;
 
 public class NodeJson

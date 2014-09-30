@@ -1,6 +1,5 @@
 package com.enonic.wem.api.content;
 
-import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.support.AbstractId;
 
 public final class ContentId
@@ -14,11 +13,6 @@ public final class ContentId
     public static ContentId from( String id )
     {
         return new ContentId( id );
-    }
-
-    public static ContentId from( EntityId entityId )
-    {
-        return new ContentId( entityId.toString() );
     }
 
 }

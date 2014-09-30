@@ -9,10 +9,10 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.blob.BlobKey;
-import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.FindNodeVersionsResult;
-import com.enonic.wem.api.entity.NodeVersion;
 import com.enonic.wem.core.TestContext;
+import com.enonic.wem.core.entity.EntityId;
+import com.enonic.wem.core.entity.FindNodeVersionsResult;
+import com.enonic.wem.core.entity.NodeVersion;
 import com.enonic.wem.core.index.result.SearchResult;
 import com.enonic.wem.core.index.result.SearchResultEntries;
 import com.enonic.wem.core.index.result.SearchResultEntry;

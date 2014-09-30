@@ -5,7 +5,7 @@ import java.io.IOException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.support.ObjectMapperHelper;
 
 public class NodeJsonSerializer

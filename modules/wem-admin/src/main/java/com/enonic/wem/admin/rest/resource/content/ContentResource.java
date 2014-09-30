@@ -71,12 +71,12 @@ import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.DataJson;
-import com.enonic.wem.api.entity.Workspaces;
 import com.enonic.wem.api.exception.ConflictException;
 import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
 import com.enonic.wem.api.query.Direction;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.mixin.MixinService;
+import com.enonic.wem.api.workspace.Workspaces;
 
 import static com.enonic.wem.api.content.Content.editContent;
 

@@ -2,8 +2,8 @@ package com.enonic.wem.core.elasticsearch.workspace;
 
 import org.elasticsearch.action.delete.DeleteRequest;
 
-import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.Workspace;
+import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.core.entity.EntityId;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.repository.StorageNameResolver;
 import com.enonic.wem.core.workspace.WorkspaceDocumentId;

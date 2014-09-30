@@ -24,9 +24,9 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.repository.Repository;
+import com.enonic.wem.core.entity.EntityId;
+import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.entity.index.NodeIndexDocumentFactory;
 import com.enonic.wem.core.index.DeleteDocument;
 import com.enonic.wem.core.index.IndexContext;
