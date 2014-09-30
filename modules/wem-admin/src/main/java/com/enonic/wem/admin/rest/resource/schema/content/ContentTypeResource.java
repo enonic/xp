@@ -98,5 +98,7 @@ public class ContentTypeResource
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
         this.contentTypeService = contentTypeService;
+        this.contentTypeIconResolver = new ContentTypeIconResolver( contentTypeService );
+        this.contentTypeIconUrlResolver = new ContentTypeIconUrlResolver( this.contentTypeIconResolver );
     }
 }

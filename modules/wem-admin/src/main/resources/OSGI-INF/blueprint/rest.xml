@@ -101,12 +101,6 @@
     <property name="siteService" ref="siteService"/>
   </bean>
 
-  <bean id="schemaIconResource" class="com.enonic.wem.admin.rest.resource.schema.SchemaIconResource">
-    <property name="mixinService" ref="mixinService"/>
-    <property name="relationshipTypeService" ref="relationshipTypeService"/>
-    <property name="contentTypeService" ref="contentTypeService"/>
-  </bean>
-
   <bean id="mixinResource" class="com.enonic.wem.admin.rest.resource.schema.mixin.MixinResource">
     <property name="mixinService" ref="mixinService"/>
   </bean>
@@ -169,7 +163,6 @@
         <ref component-id="contentResource"/>
         <ref component-id="pageResource"/>
         <ref component-id="siteResource"/>
-        <ref component-id="schemaIconResource"/>
         <ref component-id="mixinResource"/>
         <ref component-id="contentTypeResource"/>
         <ref component-id="siteTemplateResource"/>
