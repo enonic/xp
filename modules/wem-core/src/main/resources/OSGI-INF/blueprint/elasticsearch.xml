@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+
+  <bean id="nodeSettingsBuilder" class="com.enonic.wem.core.elasticsearch.resource.NodeSettingsBuilder">
+    <property name="configProperties" ref="configProperties"/>
+  </bean>
+
+  <bean id="elasticNodeProvider" class="com.enonic.wem.core.elasticsearch.ElasticNodeProvider" init-method="start" destroy-method="stop">
+    <argument index="0" ref="nodeSettingsBuilder"/>
+  </bean>
+
+  <bean id="elasticNode" factory-ref="elasticNodeProvider" factory-method="get"/>
+
+  <bean id="elasticClient" factory-ref="elasticNode" factory-method="client"/>
+
+  <bean id="elasticsearchDao" class="com.enonic.wem.core.elasticsearch.ElasticsearchDao">
+    <property name="client" ref="elasticClient"/>
+  </bean>
+
+  <bean id="verisonService" class="com.enonic.wem.core.elasticsearch.ElasticsearchVersionService">
+    <property name="elasticsearchDao" ref="elasticsearchDao"/>
+  </bean>
+
+  <bean id="queryService" class="com.enonic.wem.core.elasticsearch.ElasticsearchQueryService">
+    <property name="elasticsearchDao" ref="elasticsearchDao"/>
+  </bean>
+
+  <bean id="indexService" class="com.enonic.wem.core.elasticsearch.ElasticsearchIndexService">
+    <property name="client" ref="elasticClient"/>
+    <property name="elasticsearchDao" ref="elasticsearchDao"/>
+  </bean>
+
+  <bean id="workspaceService" class="com.enonic.wem.core.elasticsearch.workspace.ElasticsearchWorkspaceService">
+    <property name="elasticsearchDao" ref="elasticsearchDao"/>
+  </bean>
+
+</blueprint>

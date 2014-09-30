@@ -83,9 +83,6 @@
               asm,
               spatial4j
             </Embed-Dependency>
-            <Bundle-Activator>
-              com.enonic.wem.core.Activator
-            </Bundle-Activator>
           </instructions>
         </configuration>
       </plugin>
