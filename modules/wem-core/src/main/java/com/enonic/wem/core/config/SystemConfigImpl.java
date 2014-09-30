@@ -3,7 +3,7 @@ package com.enonic.wem.core.config;
 import java.io.File;
 import java.nio.file.Path;
 
-final class SystemConfigImpl
+public final class SystemConfigImpl
     implements SystemConfig
 {
     private final ConfigProperties config;

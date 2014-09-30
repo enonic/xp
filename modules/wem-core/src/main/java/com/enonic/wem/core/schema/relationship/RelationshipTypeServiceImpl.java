@@ -1,7 +1,5 @@
 package com.enonic.wem.core.schema.relationship;
 
-import javax.inject.Inject;
-
 import com.enonic.wem.api.schema.relationship.GetRelationshipTypeParams;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeService;
@@ -11,8 +9,7 @@ import com.enonic.wem.core.schema.relationship.dao.RelationshipTypeDao;
 public class RelationshipTypeServiceImpl
     implements RelationshipTypeService
 {
-    @Inject
-    protected RelationshipTypeDao relationshipTypeDao;
+    private RelationshipTypeDao relationshipTypeDao;
 
     @Override
     public RelationshipTypes getAll()
@@ -24,5 +21,10 @@ public class RelationshipTypeServiceImpl
     public RelationshipType getByName( final GetRelationshipTypeParams params )
     {
         return new GetRelationshipTypeCommand().params( params ).relationshipTypeDao( relationshipTypeDao ).execute();
+    }
+
+    public void setRelationshipTypeDao( final RelationshipTypeDao relationshipTypeDao )
+    {
+        this.relationshipTypeDao = relationshipTypeDao;
     }
 }

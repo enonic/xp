@@ -4,9 +4,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
@@ -40,7 +37,6 @@ import com.enonic.wem.core.index.document.IndexDocument;
 import com.enonic.wem.core.repository.IndexNameResolver;
 import com.enonic.wem.core.repository.StorageNameResolver;
 
-@Singleton
 public class ElasticsearchIndexService
     implements IndexService
 {
@@ -52,13 +48,13 @@ public class ElasticsearchIndexService
 
     private static final TimeValue CLUSTER_NOWAIT_TIMEOUT = TimeValue.timeValueSeconds( 5 );
 
-    private String deleteTimeout = "5s";
+    private final static String deleteTimeout = "5s";
 
-    private String createTimeout = "5s";
+    private final static String createTimeout = "5s";
 
-    private String applyMappingTimeout = "5s";
+    private final static String applyMappingTimeout = "5s";
 
-    private String existsTimeout = "5s";
+    private final static String existsTimeout = "5s";
 
     private Client client;
 
@@ -213,16 +209,13 @@ public class ElasticsearchIndexService
         elasticsearchDao.delete( new DeleteDocument( indexName, indexType, entityId.toString() ) );
     }
 
-    @Inject
     public void setElasticsearchDao( final ElasticsearchDao elasticsearchDao )
     {
         this.elasticsearchDao = elasticsearchDao;
     }
 
-    @Inject
     public void setClient( final Client client )
     {
         this.client = client;
     }
-
 }

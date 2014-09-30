@@ -2,8 +2,6 @@ package com.enonic.wem.core.elasticsearch;
 
 import java.util.Collection;
 
-import javax.inject.Inject;
-
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
@@ -183,10 +181,8 @@ public class ElasticsearchDao
         return SearchResultFactory.create( searchResponse );
     }
 
-    @Inject
     public void setClient( final Client client )
     {
         this.client = client;
     }
-
 }

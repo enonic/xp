@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+
+  <bean id="attachmentService" class="com.enonic.wem.core.content.attachment.AttachmentServiceImpl">
+    <property name="nodeService" ref="nodeService"/>
+  </bean>
+
+  <service ref="attachmentService" auto-export="interfaces"/>
+
+  <bean id="contentNodeTranslator" class="com.enonic.wem.core.content.ContentNodeTranslator">
+    <property name="blobService" ref="blobService"/>
+    <property name="contentTypeService" ref="contentTypeService"/>
+  </bean>
+
+  <bean id="contentService" class="com.enonic.wem.core.content.ContentServiceImpl">
+    <property name="contentTypeService" ref="contentTypeService"/>
+    <property name="nodeService" ref="nodeService"/>
+    <property name="blobService" ref="blobService"/>
+    <property name="attachmentService" ref="attachmentService"/>
+    <property name="queryService" ref="queryService"/>
+    <property name="contentNodeTranslator" ref="contentNodeTranslator"/>
+  </bean>
+
+  <service ref="contentService" auto-export="interfaces"/>
+
+  <bean id="siteTemplateExporter" class="com.enonic.wem.core.content.site.SiteTemplateExporter"/>
+
+  <bean id="siteTemplateService" class="com.enonic.wem.core.content.site.SiteTemplateServiceImpl">
+    <property name="systemConfig" ref="systemConfig"/>
+    <property name="siteTemplateExporter" ref="siteTemplateExporter"/>
+  </bean>
+
+  <service ref="siteTemplateService" auto-export="interfaces"/>
+
+  <bean id="siteService" class="com.enonic.wem.core.content.site.SiteServiceImpl">
+    <property name="contentService" ref="contentService"/>
+  </bean>
+
+  <service ref="siteService" auto-export="interfaces"/>
+
+  <bean id="pageService" class="com.enonic.wem.core.content.page.PageServiceImpl">
+    <property name="contentService" ref="contentService"/>
+  </bean>
+
+  <service ref="pageService" auto-export="interfaces"/>
+
+  <bean id="layoutDescriptorService" class="com.enonic.wem.core.content.page.layout.LayoutDescriptorServiceImpl">
+    <property name="moduleService" ref="moduleService"/>
+  </bean>
+
+  <service ref="layoutDescriptorService" auto-export="interfaces"/>
+
+  <bean id="partDescriptorService" class="com.enonic.wem.core.content.page.part.PartDescriptorServiceImpl">
+    <property name="moduleService" ref="moduleService"/>
+  </bean>
+
+  <service ref="partDescriptorService" auto-export="interfaces"/>
+
+  <bean id="pageDescriptorService" class="com.enonic.wem.core.content.page.PageDescriptorServiceImpl">
+    <property name="moduleService" ref="moduleService"/>
+  </bean>
+
+  <service ref="pageDescriptorService" auto-export="interfaces"/>
+
+  <bean id="pageTemplateService" class="com.enonic.wem.core.content.page.PageTemplateServiceImpl">
+    <property name="siteTemplateService" ref="siteTemplateService"/>
+  </bean>
+
+  <service ref="pageTemplateService" auto-export="interfaces"/>
+
+  <bean id="pageComponentService" class="com.enonic.wem.core.content.page.PageComponentServiceImpl">
+    <property name="partDescriptorService" ref="partDescriptorService"/>
+    <property name="layoutDescriptorService" ref="layoutDescriptorService"/>
+  </bean>
+
+  <service ref="pageComponentService" auto-export="interfaces"/>
+
+</blueprint>

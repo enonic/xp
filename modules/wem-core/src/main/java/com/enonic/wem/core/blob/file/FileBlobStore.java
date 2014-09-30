@@ -7,8 +7,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +27,6 @@ public final class FileBlobStore
 
     private final File dir;
 
-    @Inject
     public FileBlobStore( final SystemConfig systemConfig )
     {
         this.dir = systemConfig.getBlobStoreDir();

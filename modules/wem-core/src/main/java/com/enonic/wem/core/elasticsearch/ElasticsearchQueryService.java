@@ -1,7 +1,5 @@
 package com.enonic.wem.core.elasticsearch;
 
-import javax.inject.Inject;
-
 import com.enonic.wem.api.entity.query.EntityQuery;
 import com.enonic.wem.api.entity.query.NodeQuery;
 import com.enonic.wem.core.elasticsearch.query.ElasticsearchQuery;
@@ -45,7 +43,6 @@ public class ElasticsearchQueryService
         return queryResultFactory.create( searchResult );
     }
 
-    @Inject
     public void setElasticsearchDao( final ElasticsearchDao elasticsearchDao )
     {
         this.elasticsearchDao = elasticsearchDao;

@@ -1,7 +1,5 @@
 package com.enonic.wem.core.elasticsearch.workspace;
 
-import javax.inject.Inject;
-
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIds;
 import com.enonic.wem.api.entity.NodePath;
@@ -127,7 +125,6 @@ public class ElasticsearchWorkspaceService
             execute();
     }
 
-    @Inject
     public void setElasticsearchDao( final ElasticsearchDao elasticsearchDao )
     {
         this.elasticsearchDao = elasticsearchDao;

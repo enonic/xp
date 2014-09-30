@@ -1,8 +1,6 @@
 package com.enonic.wem.core.content.site;
 
 
-import javax.inject.Inject;
-
 import com.enonic.wem.api.content.site.CreateSiteTemplateParams;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
@@ -15,11 +13,9 @@ import com.enonic.wem.core.config.SystemConfig;
 public final class SiteTemplateServiceImpl
     implements SiteTemplateService
 {
-    @Inject
-    protected SystemConfig systemConfig;
+    private SystemConfig systemConfig;
 
-    @Inject
-    protected SiteTemplateExporter siteTemplateExporter;
+    private SiteTemplateExporter siteTemplateExporter;
 
     @Override
     public SiteTemplates getSiteTemplates()
@@ -70,5 +66,15 @@ public final class SiteTemplateServiceImpl
             key( key ).
             systemConfig( this.systemConfig ).
             execute();
+    }
+
+    public void setSystemConfig( final SystemConfig systemConfig )
+    {
+        this.systemConfig = systemConfig;
+    }
+
+    public void setSiteTemplateExporter( final SiteTemplateExporter siteTemplateExporter )
+    {
+        this.siteTemplateExporter = siteTemplateExporter;
     }
 }
