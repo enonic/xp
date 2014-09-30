@@ -1,8 +1,8 @@
 package com.enonic.wem.core.workspace;
 
-import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.NodePath;
-import com.enonic.wem.api.entity.NodeVersionId;
+import com.enonic.wem.core.entity.EntityId;
+import com.enonic.wem.core.entity.NodePath;
+import com.enonic.wem.core.entity.NodeVersionId;
 
 public class StoreWorkspaceDocument
 {

@@ -9,12 +9,12 @@ import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 
-import com.enonic.wem.api.entity.NodeVersionId;
-import com.enonic.wem.api.entity.NodeVersionIds;
-import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.repository.Repository;
+import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.elasticsearch.ElasticsearchDao;
 import com.enonic.wem.core.elasticsearch.QueryMetaData;
+import com.enonic.wem.core.entity.NodeVersionId;
+import com.enonic.wem.core.entity.NodeVersionIds;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.result.SearchResultField;
 import com.enonic.wem.core.repository.StorageNameResolver;
@@ -87,7 +87,7 @@ abstract class AbstractWorkspaceCommand
             build();
     }
 
-    protected TermQueryBuilder createWorkspaceQuery( final Workspace workspace )
+    TermQueryBuilder createWorkspaceQuery( final Workspace workspace )
     {
         return new TermQueryBuilder( WorkspaceXContentBuilderFactory.WORKSPACE_FIELD_NAME, workspace.getName() );
     }

@@ -1,6 +1,6 @@
 package com.enonic.wem.core.index.query;
 
-import com.enonic.wem.api.entity.EntityId;
+import com.enonic.wem.core.entity.EntityId;
 
 public class NodeQueryResultEntry
 {

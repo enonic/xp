@@ -1,10 +1,10 @@
 package com.enonic.wem.core.elasticsearch.query;
 
-import com.enonic.wem.api.entity.query.EntityQuery;
 import com.enonic.wem.core.elasticsearch.aggregation.AggregationBuilderFactory;
 import com.enonic.wem.core.elasticsearch.query.builder.FilterBuilderFactory;
 import com.enonic.wem.core.elasticsearch.query.builder.QueryBuilderFactory;
 import com.enonic.wem.core.elasticsearch.query.builder.SortQueryBuilderFactory;
+import com.enonic.wem.core.entity.query.EntityQuery;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.repository.IndexNameResolver;
 

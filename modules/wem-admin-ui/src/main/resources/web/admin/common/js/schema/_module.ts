@@ -2,7 +2,6 @@
 ///<reference path="SchemaDeleteJson.ts"/>
 ///<reference path="SchemaDeleteResult.ts"/>
 
-///<reference path="SchemaKind.ts"/>
 ///<reference path="Schema.ts"/>
 
 ///<reference path="SchemaIconUrlResolver.ts"/>

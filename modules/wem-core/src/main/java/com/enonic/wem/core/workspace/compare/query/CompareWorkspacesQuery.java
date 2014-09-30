@@ -1,6 +1,6 @@
 package com.enonic.wem.core.workspace.compare.query;
 
-import com.enonic.wem.api.entity.Workspace;
+import com.enonic.wem.api.workspace.Workspace;
 
 public class CompareWorkspacesQuery
 {

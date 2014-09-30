@@ -1,53 +1,84 @@
 package com.enonic.wem.admin.json.schema.content;
 
+import java.time.Instant;
+
 import com.enonic.wem.admin.json.ChangeTraceableJson;
 import com.enonic.wem.admin.json.ItemJson;
-import com.enonic.wem.admin.json.schema.SchemaJson;
-import com.enonic.wem.admin.rest.resource.schema.SchemaIconUrlResolver;
+import com.enonic.wem.admin.rest.resource.schema.content.ContentTypeIconUrlResolver;
 import com.enonic.wem.api.schema.content.ContentType;
 
 @SuppressWarnings("UnusedDeclaration")
 public class ContentTypeSummaryJson
-    extends SchemaJson
     implements ItemJson, ChangeTraceableJson
 {
     private final ContentType contentType;
 
-    private final boolean editable;
+    private final String iconUrl;
 
-    private final boolean deletable;
-
-    public ContentTypeSummaryJson( final ContentType contentType, final SchemaIconUrlResolver iconUrlResolver )
+    public ContentTypeSummaryJson( final ContentType contentType, final ContentTypeIconUrlResolver iconUrlResolver )
     {
-        super( contentType, iconUrlResolver );
         this.contentType = contentType;
-        this.editable = !this.contentType.isBuiltIn();
-        this.deletable = !this.contentType.isBuiltIn();
+        this.iconUrl = iconUrlResolver.resolve( contentType );
+    }
+
+    public String getKey()
+    {
+        return contentType.getSchemaKey() != null ? contentType.getSchemaKey().toString() : null;
+    }
+
+    public String getName()
+    {
+        return contentType.getName() != null ? contentType.getName().toString() : null;
+    }
+
+    public String getDisplayName()
+    {
+        return contentType.getDisplayName();
+    }
+
+    public String getDescription()
+    {
+        return contentType.getDescription();
+    }
+
+    public Instant getCreatedTime()
+    {
+        return contentType.getCreatedTime();
+    }
+
+    public Instant getModifiedTime()
+    {
+        return contentType.getModifiedTime();
+    }
+
+    public String getIconUrl()
+    {
+        return iconUrl;
     }
 
     public String getContentDisplayNameScript()
     {
-        return this.contentType.getContentDisplayNameScript();
+        return contentType.getContentDisplayNameScript();
     }
 
     public String getSuperType()
     {
-        return this.contentType.getSuperType() != null ? this.contentType.getSuperType().toString() : null;
+        return contentType.getSuperType() != null ? contentType.getSuperType().toString() : null;
     }
 
     public boolean isAbstract()
     {
-        return this.contentType.isAbstract();
+        return contentType.isAbstract();
     }
 
     public boolean isFinal()
     {
-        return this.contentType.isFinal();
+        return contentType.isFinal();
     }
 
     public boolean isAllowChildContent()
     {
-        return this.contentType.allowChildContent();
+        return contentType.allowChildContent();
     }
 
     public String getCreator()
@@ -63,12 +94,12 @@ public class ContentTypeSummaryJson
     @Override
     public boolean getEditable()
     {
-        return editable;
+        return false;
     }
 
     @Override
     public boolean getDeletable()
     {
-        return deletable;
+        return false;
     }
 }

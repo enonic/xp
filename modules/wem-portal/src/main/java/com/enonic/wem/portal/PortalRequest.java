@@ -2,8 +2,8 @@ package com.enonic.wem.portal;
 
 import com.google.common.collect.Multimap;
 
-import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.rendering.RenderingMode;
+import com.enonic.wem.api.workspace.Workspace;
 
 public interface PortalRequest
 {

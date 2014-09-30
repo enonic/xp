@@ -1,23 +1,17 @@
 {
     "contentTypes": [
         {
-            "schemaKind": "ContentType",
             "abstract": false,
             "allowChildContent": true,
             "contentDisplayNameScript": null,
             "createdTime": "2013-01-01T12:00:00Z",
             "creator": null,
-            "deletable": true,
+            "deletable": false,
             "description": null,
             "displayName": null,
-            "editable": true,
+            "editable": false,
             "final": false,
-            "icon": {
-                "mimeType": "image/gif",
-                "modifiedTime": "2013-01-01T12:00:00Z",
-                "size": 1
-            },
-            "iconUrl": "/admin/rest/schema/icon/ContentType:mymodule:my_cty?hash=f95b70fdc3088560732a5ac135644506",
+            "iconUrl": "/admin/rest/schema/content/icon/mymodule:my_cty?hash=f95b70fdc3088560732a5ac135644506",
             "key": "ContentType:mymodule:my_cty",
             "modifiedTime": null,
             "modifier": null,

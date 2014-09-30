@@ -1,13 +1,20 @@
 package com.enonic.wem.admin.rest.resource.schema.content;
 
+import java.awt.image.BufferedImage;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
+
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.acme.DummyCustomInputType;
+import com.google.common.collect.Lists;
+import com.google.common.io.Resources;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.Icon;
@@ -28,6 +35,7 @@ import static com.enonic.wem.api.form.Input.newInput;
 import static com.enonic.wem.api.form.MixinReference.newMixinReference;
 import static com.enonic.wem.api.form.inputtype.InputTypes.TEXT_LINE;
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
+import static org.junit.Assert.*;
 
 
 public class ContentTypeResourceTest
@@ -39,6 +47,8 @@ public class ContentTypeResourceTest
 
     private ContentTypeService contentTypeService;
 
+    private ContentTypeResource resource;
+
     public ContentTypeResourceTest()
     {
         super();
@@ -47,11 +57,10 @@ public class ContentTypeResourceTest
     @Override
     protected Object getResourceInstance()
     {
-        final ContentTypeResource resource = new ContentTypeResource();
+        this.resource = new ContentTypeResource();
         contentTypeService = Mockito.mock( ContentTypeService.class );
-        resource.setContentTypeService( contentTypeService );
-
-        return resource;
+        this.resource.setContentTypeService( contentTypeService );
+        return this.resource;
     }
 
     @Test
@@ -184,5 +193,91 @@ public class ContentTypeResourceTest
 
         // verify
         assertJson( "ContentTypeResourceTest-list_one_contentType_with_only_one_input-result.json", jsonString );
+    }
+
+    @Test
+    public void testContentTypeIcon()
+        throws Exception
+    {
+        byte[] data = Resources.toByteArray( getClass().getResource( "contenttypeicon.png" ) );
+        Icon schemaIcon = Icon.from( data, "image/png", Instant.now() );
+
+        final ContentType contentType = ContentType.newContentType().
+            name( "mymodule:my_content_type" ).
+            displayName( "My content type" ).
+            superType( ContentTypeName.from( "mymodule:unstructured" ) ).
+            icon( schemaIcon ).
+            build();
+        setupContentType( contentType );
+
+        // exercise
+        final Response response = this.resource.getIcon( "mymodule:my_content_type", 20, null );
+        final BufferedImage contentTypeIcon = (BufferedImage) response.getEntity();
+
+        // verify
+        assertImage( contentTypeIcon, 20 );
+    }
+
+    @Test
+    public void testContentTypeIcon_fromSuperType()
+        throws Exception
+    {
+        byte[] data = Resources.toByteArray( getClass().getResource( "contenttypeicon.png" ) );
+        Icon schemaIcon = Icon.from( data, "image/png", Instant.now() );
+
+        final ContentType systemContentType = ContentType.newContentType().
+            superType( ContentTypeName.structured() ).
+            name( "mymodule:unstructured" ).
+            displayName( "Unstructured" ).
+            icon( schemaIcon ).
+            build();
+        setupContentType( systemContentType );
+
+        final ContentType contentType = ContentType.newContentType().
+            name( "mymodule:my_content_type" ).
+            displayName( "My content type" ).
+            superType( systemContentType.getName() ).
+            build();
+        setupContentType( contentType );
+
+        // exercise
+        final Response response = this.resource.getIcon( "mymodule:my_content_type", 20, null );
+        final BufferedImage contentTypeIcon = (BufferedImage) response.getEntity();
+
+        // verify
+        assertImage( contentTypeIcon, 20 );
+    }
+
+    @Test(expected = javax.ws.rs.WebApplicationException.class)
+    public void testContentTypeIcon_notFound()
+        throws Exception
+    {
+        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( null );
+
+        try
+        {
+            // exercise
+            this.resource.getIcon( "mymodule:my_content_type", 10, null );
+        }
+        catch ( WebApplicationException e )
+        {
+            // verify
+            assertEquals( 404, e.getResponse().getStatus() ); // HTTP Not Found
+            throw e;
+        }
+    }
+
+    private void setupContentType( final ContentType contentType )
+    {
+        final List<ContentType> list = Lists.newArrayList();
+        list.add( contentType );
+        final GetContentTypeParams params = new GetContentTypeParams().contentTypeName( contentType.getName() );
+        Mockito.when( contentTypeService.getByName( params ) ).thenReturn( contentType );
+    }
+
+    private void assertImage( final BufferedImage image, final int size )
+    {
+        assertNotNull( image );
+        assertEquals( size, image.getWidth() );
     }
 }

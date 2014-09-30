@@ -1,17 +1,25 @@
 package com.enonic.wem.admin.rest.resource.schema.relationship;
 
+import java.awt.image.BufferedImage;
+
+import javax.inject.Inject;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeJson;
 import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeListJson;
-import com.enonic.wem.admin.rest.resource.schema.SchemaIconResolver;
-import com.enonic.wem.admin.rest.resource.schema.SchemaIconUrlResolver;
+import com.enonic.wem.admin.rest.resource.schema.SchemaImageHelper;
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.schema.relationship.GetRelationshipTypeParams;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
@@ -22,7 +30,15 @@ import com.enonic.wem.api.schema.relationship.RelationshipTypes;
 @Produces(MediaType.APPLICATION_JSON)
 public class RelationshipTypeResource
 {
+    private static final String DEFAULT_MIME_TYPE = "image/png";
+
+    private static final SchemaImageHelper helper = new SchemaImageHelper();
+
     private RelationshipTypeService relationshipTypeService;
+
+    private RelationshipTypeIconUrlResolver relationshipTypeIconUrlResolver;
+
+    private RelationshipTypeIconResolver relationshipTypeIconResolver;
 
     @GET
     public RelationshipTypeJson get( @QueryParam("name") final String name )
@@ -37,7 +53,7 @@ public class RelationshipTypeResource
                 entity( message ).type( MediaType.TEXT_PLAIN_TYPE ).build() );
         }
 
-        return new RelationshipTypeJson( relationshipType, newSchemaIconUrlResolver() );
+        return new RelationshipTypeJson( relationshipType, this.relationshipTypeIconUrlResolver );
     }
 
     public RelationshipType fetchRelationshipType( final RelationshipTypeName name )
@@ -52,16 +68,51 @@ public class RelationshipTypeResource
     {
         final RelationshipTypes relationshipTypes = relationshipTypeService.getAll();
 
-        return new RelationshipTypeListJson( relationshipTypes, newSchemaIconUrlResolver() );
+        return new RelationshipTypeListJson( relationshipTypes, this.relationshipTypeIconUrlResolver );
     }
 
-    private SchemaIconUrlResolver newSchemaIconUrlResolver()
+    @GET
+    @Path("icon/{relationshipTypeName}")
+    @Produces("image/*")
+    public Response getIcon( @PathParam("relationshipTypeName") final String relationshipTypeStr,
+                             @QueryParam("size") @DefaultValue("128") final int size, @QueryParam("hash") final String hash )
+        throws Exception
     {
-        return new SchemaIconUrlResolver( new SchemaIconResolver( relationshipTypeService ) );
+        final RelationshipTypeName relationshipTypeName = RelationshipTypeName.from( relationshipTypeStr );
+        final Icon icon = this.relationshipTypeIconResolver.resolveIcon( relationshipTypeName );
+
+        final Response.ResponseBuilder responseBuilder;
+        if ( icon == null )
+        {
+            final BufferedImage defaultRelationshipTypeImage = helper.getDefaultRelationshipTypeImage( size );
+            responseBuilder = Response.ok( defaultRelationshipTypeImage, DEFAULT_MIME_TYPE );
+            applyMaxAge( Integer.MAX_VALUE, responseBuilder );
+        }
+        else
+        {
+            final BufferedImage image = helper.resizeImage( icon.asInputStream(), size );
+            responseBuilder = Response.ok( image, icon.getMimeType() );
+            if ( StringUtils.isNotEmpty( hash ) )
+            {
+                applyMaxAge( Integer.MAX_VALUE, responseBuilder );
+            }
+        }
+
+        return responseBuilder.build();
     }
 
+    private void applyMaxAge( int maxAge, final Response.ResponseBuilder responseBuilder )
+    {
+        final CacheControl cacheControl = new CacheControl();
+        cacheControl.setMaxAge( maxAge );
+        responseBuilder.cacheControl( cacheControl );
+    }
+
+    @Inject
     public void setRelationshipTypeService( final RelationshipTypeService relationshipTypeService )
     {
         this.relationshipTypeService = relationshipTypeService;
+        this.relationshipTypeIconResolver = new RelationshipTypeIconResolver( relationshipTypeService );
+        this.relationshipTypeIconUrlResolver = new RelationshipTypeIconUrlResolver( this.relationshipTypeIconResolver );
     }
 }

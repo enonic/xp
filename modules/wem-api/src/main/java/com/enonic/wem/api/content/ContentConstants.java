@@ -1,10 +1,10 @@
 package com.enonic.wem.api.content;
 
 import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.entity.Workspace;
-import com.enonic.wem.api.entity.Workspaces;
 import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.api.repository.RepositoryId;
+import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.api.workspace.Workspaces;
 
 public class ContentConstants
 {

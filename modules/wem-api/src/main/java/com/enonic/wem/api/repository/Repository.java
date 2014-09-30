@@ -1,12 +1,12 @@
 package com.enonic.wem.api.repository;
 
-import com.enonic.wem.api.entity.Workspaces;
+import com.enonic.wem.api.workspace.Workspaces;
 
 public class Repository
 {
-    private RepositoryId id;
+    private final RepositoryId id;
 
-    private Workspaces workspaces;
+    private final Workspaces workspaces;
 
     private Repository( Builder builder )
     {

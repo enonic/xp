@@ -5,16 +5,12 @@ import java.util.Set;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.entity.FindNodesByParentParams;
-import com.enonic.wem.api.entity.FindNodesByParentResult;
-import com.enonic.wem.api.entity.NodeVersionIds;
-import com.enonic.wem.api.entity.Nodes;
-import com.enonic.wem.api.entity.query.NodeQuery;
 import com.enonic.wem.api.query.FieldSort;
 import com.enonic.wem.api.query.expr.FieldExpr;
 import com.enonic.wem.api.query.expr.FieldOrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.query.expr.QueryExpr;
+import com.enonic.wem.core.entity.query.NodeQuery;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.index.query.NodeQueryResult;
 import com.enonic.wem.core.workspace.WorkspaceContext;

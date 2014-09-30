@@ -9,11 +9,11 @@ import org.elasticsearch.index.query.TermsQueryBuilder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
-import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.EntityIds;
-import com.enonic.wem.api.entity.NodeVersionIds;
-import com.enonic.wem.api.entity.Workspace;
+import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.elasticsearch.QueryMetaData;
+import com.enonic.wem.core.entity.EntityId;
+import com.enonic.wem.core.entity.EntityIds;
+import com.enonic.wem.core.entity.NodeVersionIds;
 import com.enonic.wem.core.index.result.SearchResult;
 import com.enonic.wem.core.index.result.SearchResultEntry;
 import com.enonic.wem.core.index.result.SearchResultField;

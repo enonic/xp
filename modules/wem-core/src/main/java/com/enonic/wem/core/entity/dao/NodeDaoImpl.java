@@ -9,10 +9,10 @@ import com.google.common.io.ByteStreams;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.blob.BlobService;
-import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.api.entity.NodeVersionId;
-import com.enonic.wem.api.entity.NodeVersionIds;
-import com.enonic.wem.api.entity.Nodes;
+import com.enonic.wem.core.entity.Node;
+import com.enonic.wem.core.entity.NodeVersionId;
+import com.enonic.wem.core.entity.NodeVersionIds;
+import com.enonic.wem.core.entity.Nodes;
 import com.enonic.wem.core.entity.json.NodeJsonSerializer;
 
 public class NodeDaoImpl

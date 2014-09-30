@@ -5,10 +5,6 @@ import java.time.Instant;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.entity.Attachments;
-import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.api.entity.NodeVersionId;
-import com.enonic.wem.api.entity.UpdateNodeParams;
 import com.enonic.wem.api.util.Exceptions;
 import com.enonic.wem.core.entity.dao.NodeNotFoundException;
 import com.enonic.wem.core.index.IndexContext;

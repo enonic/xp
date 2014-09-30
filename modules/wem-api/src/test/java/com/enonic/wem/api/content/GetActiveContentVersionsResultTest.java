@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import com.google.common.collect.UnmodifiableIterator;
 
-import com.enonic.wem.api.entity.Workspace;
+import com.enonic.wem.api.workspace.Workspace;
 
 import static org.junit.Assert.*;
 

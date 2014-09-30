@@ -6,7 +6,7 @@ import java.util.Set;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.entity.EntityId;
+import com.enonic.wem.core.entity.EntityId;
 import com.enonic.wem.core.index.IndexType;
 
 public class IndexDocument
@@ -80,7 +80,7 @@ public class IndexDocument
 
         private boolean refreshOnStore = true;
 
-        private Set<AbstractIndexDocumentItem> indexDocumentEntries;
+        private final Set<AbstractIndexDocumentItem> indexDocumentEntries;
 
         public Builder()
         {

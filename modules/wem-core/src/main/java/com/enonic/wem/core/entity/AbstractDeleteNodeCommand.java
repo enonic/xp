@@ -1,8 +1,5 @@
 package com.enonic.wem.core.entity;
 
-import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.api.entity.NodeVersionIds;
-import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.workspace.WorkspaceContext;
 

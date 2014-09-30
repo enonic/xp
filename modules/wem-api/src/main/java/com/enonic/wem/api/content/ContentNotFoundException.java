@@ -4,8 +4,8 @@ import java.text.MessageFormat;
 
 import com.google.common.base.Joiner;
 
-import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.exception.NotFoundException;
+import com.enonic.wem.api.workspace.Workspace;
 
 public final class ContentNotFoundException
     extends NotFoundException

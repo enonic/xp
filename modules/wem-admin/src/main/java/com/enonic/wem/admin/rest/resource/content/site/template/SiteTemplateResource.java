@@ -26,8 +26,8 @@ import com.enonic.wem.admin.rest.resource.content.site.template.json.DeleteSiteT
 import com.enonic.wem.admin.rest.resource.content.site.template.json.ListSiteTemplateJson;
 import com.enonic.wem.admin.rest.resource.content.site.template.json.ListTemplateItemJson;
 import com.enonic.wem.admin.rest.resource.content.site.template.json.UpdateSiteTemplateJson;
-import com.enonic.wem.admin.rest.resource.schema.SchemaIconResolver;
-import com.enonic.wem.admin.rest.resource.schema.SchemaIconUrlResolver;
+import com.enonic.wem.admin.rest.resource.schema.content.ContentTypeIconResolver;
+import com.enonic.wem.admin.rest.resource.schema.content.ContentTypeIconUrlResolver;
 import com.enonic.wem.api.content.site.CreateSiteTemplateParams;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
@@ -205,6 +205,6 @@ public final class SiteTemplateResource
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
         this.siteTemplateIconUrlResolver =
-            new SiteTemplateIconUrlResolver( new SchemaIconUrlResolver( new SchemaIconResolver( contentTypeService ) ) );
+            new SiteTemplateIconUrlResolver( new ContentTypeIconUrlResolver( new ContentTypeIconResolver( contentTypeService ) ) );
     }
 }

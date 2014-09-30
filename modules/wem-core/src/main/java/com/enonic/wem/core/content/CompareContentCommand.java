@@ -3,10 +3,10 @@ package com.enonic.wem.core.content;
 import com.enonic.wem.api.content.CompareContentResult;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.NodeComparison;
-import com.enonic.wem.api.entity.NodeService;
-import com.enonic.wem.api.entity.Workspace;
+import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.core.entity.EntityId;
+import com.enonic.wem.core.entity.NodeComparison;
+import com.enonic.wem.core.entity.NodeService;
 
 public class CompareContentCommand
 {

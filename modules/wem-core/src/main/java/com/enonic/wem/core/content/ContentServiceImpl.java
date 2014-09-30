@@ -29,9 +29,9 @@ import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.ValidateContentData;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.entity.NodeService;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
+import com.enonic.wem.core.entity.NodeService;
 import com.enonic.wem.core.index.query.QueryService;
 
 public class ContentServiceImpl

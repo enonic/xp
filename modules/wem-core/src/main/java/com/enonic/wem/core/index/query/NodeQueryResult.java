@@ -6,18 +6,18 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.aggregation.Aggregations;
-import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.EntityIds;
+import com.enonic.wem.core.entity.EntityId;
+import com.enonic.wem.core.entity.EntityIds;
 
 public final class NodeQueryResult
 {
-    protected ImmutableSet<NodeQueryResultEntry> entries;
+    private final ImmutableSet<NodeQueryResultEntry> entries;
 
-    protected final long totalHits;
+    private final long totalHits;
 
-    protected final long hits;
+    private final long hits;
 
-    protected final float maxScore;
+    private final float maxScore;
 
     public ImmutableSet<NodeQueryResultEntry> getEntries()
     {
@@ -78,7 +78,7 @@ public final class NodeQueryResult
 
     public static final class Builder
     {
-        private Set<NodeQueryResultEntry> entries = Sets.newLinkedHashSet();
+        private final Set<NodeQueryResultEntry> entries = Sets.newLinkedHashSet();
 
         private long totalHits;
 

@@ -21,12 +21,6 @@ import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.type.ValueTypes;
-import com.enonic.wem.api.entity.CreateNodeParams;
-import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.api.entity.NodeName;
-import com.enonic.wem.api.entity.NodePath;
-import com.enonic.wem.api.entity.UpdateNodeParams;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.Input;
@@ -38,6 +32,12 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.wem.core.content.serializer.ThumbnailAttachmentSerializer;
+import com.enonic.wem.core.entity.CreateNodeParams;
+import com.enonic.wem.core.entity.EntityId;
+import com.enonic.wem.core.entity.Node;
+import com.enonic.wem.core.entity.NodeName;
+import com.enonic.wem.core.entity.NodePath;
+import com.enonic.wem.core.entity.UpdateNodeParams;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -163,7 +163,7 @@ public class ContentNodeTranslatorTest
 
         final Node editedNode = updateNode.getEditor().edit( node ).build();
 
-        final com.enonic.wem.api.entity.Attachment thumbnailAttachment =
+        final com.enonic.wem.core.entity.Attachment thumbnailAttachment =
             editedNode.attachments().getAttachment( ThumbnailAttachmentSerializer.THUMB_NAME );
 
         assertNotNull( thumbnailAttachment );
@@ -174,8 +174,8 @@ public class ContentNodeTranslatorTest
     public void node_to_content_thumbnail()
     {
 
-        final com.enonic.wem.api.entity.Attachments attachments =
-            com.enonic.wem.api.entity.Attachments.from( com.enonic.wem.api.entity.Attachment.newAttachment().
+        final com.enonic.wem.core.entity.Attachments attachments =
+            com.enonic.wem.core.entity.Attachments.from( com.enonic.wem.core.entity.Attachment.newAttachment().
                 blobKey( new BlobKey( "myThumbnail" ) ).
                 name( ThumbnailAttachmentSerializer.THUMB_NAME ).
                 size( 1200 ).

@@ -6,12 +6,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.GetActiveNodeVersionsResult;
-import com.enonic.wem.api.entity.NodeVersion;
-import com.enonic.wem.api.entity.NodeVersionId;
-import com.enonic.wem.api.entity.Workspace;
-import com.enonic.wem.api.entity.Workspaces;
+import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.api.workspace.Workspaces;
 import com.enonic.wem.core.entity.dao.NodeDao;
 import com.enonic.wem.core.version.VersionService;
 import com.enonic.wem.core.workspace.WorkspaceContext;

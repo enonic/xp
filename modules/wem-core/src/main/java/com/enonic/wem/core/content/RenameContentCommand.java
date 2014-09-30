@@ -4,10 +4,10 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentAlreadyExistException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.RenameContentParams;
-import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.NodeAlreadyExistException;
-import com.enonic.wem.api.entity.NodeName;
-import com.enonic.wem.api.entity.RenameNodeParams;
+import com.enonic.wem.core.entity.EntityId;
+import com.enonic.wem.core.entity.NodeAlreadyExistException;
+import com.enonic.wem.core.entity.NodeName;
+import com.enonic.wem.core.entity.RenameNodeParams;
 
 import static com.enonic.wem.core.content.ContentNodeHelper.translateNodePathToContentPath;
 

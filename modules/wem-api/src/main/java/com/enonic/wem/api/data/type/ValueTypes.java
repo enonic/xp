@@ -11,7 +11,6 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.util.GeoPoint;
 
 public final class ValueTypes
@@ -40,8 +39,6 @@ public final class ValueTypes
 
     public static final ValueType<GeoPoint> GEO_POINT = newGeoPoint();
 
-    public static final ValueType<EntityId> ENTITY_ID = newEntityId();
-
     public static final ValueType<Boolean> BOOLEAN = newBoolean();
 
     private static final Map<Integer, ValueType> typesByKey = new HashMap<>();
@@ -62,7 +59,6 @@ public final class ValueTypes
         register( LONG );
         register( DOUBLE );
         register( GEO_POINT );
-        register( ENTITY_ID );
         register( BOOLEAN );
     }
 
@@ -143,11 +139,6 @@ public final class ValueTypes
     private static ValueType<ContentId> newContentId()
     {
         return new ValueTypeImpl<>( 7, "ContentId", JavaTypeConverters.CONTENT_ID );
-    }
-
-    private static ValueType<EntityId> newEntityId()
-    {
-        return new ValueTypeImpl<>( 11, "EntityId", JavaTypeConverters.ENTITY_ID );
     }
 
     private static ValueType<GeoPoint> newGeoPoint()

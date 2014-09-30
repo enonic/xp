@@ -5,10 +5,10 @@ import java.util.Set;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.TermQueryBuilder;
 
-import com.enonic.wem.api.entity.NodePath;
-import com.enonic.wem.api.entity.NodeVersionIds;
-import com.enonic.wem.api.entity.Workspace;
+import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.elasticsearch.QueryMetaData;
+import com.enonic.wem.core.entity.NodePath;
+import com.enonic.wem.core.entity.NodeVersionIds;
 import com.enonic.wem.core.index.result.SearchResult;
 import com.enonic.wem.core.index.result.SearchResultField;
 

@@ -13,14 +13,14 @@ import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.data.DataPath;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.entity.Attachment;
-import com.enonic.wem.api.entity.Attachments;
-import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.api.entity.NodeName;
-import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
+import com.enonic.wem.core.entity.Attachment;
+import com.enonic.wem.core.entity.Attachments;
+import com.enonic.wem.core.entity.EntityId;
+import com.enonic.wem.core.entity.Node;
+import com.enonic.wem.core.entity.NodeName;
+import com.enonic.wem.core.entity.NodePath;
 
 import static org.junit.Assert.*;
 

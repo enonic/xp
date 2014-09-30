@@ -1,6 +1,6 @@
 package com.enonic.wem.api.content;
 
-import com.enonic.wem.api.entity.Workspaces;
+import com.enonic.wem.api.workspace.Workspaces;
 
 public class GetActiveContentVersionsParams
 {

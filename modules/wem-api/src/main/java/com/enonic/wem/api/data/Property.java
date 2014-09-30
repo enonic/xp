@@ -10,7 +10,6 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.data.type.ValueType;
-import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.util.GeoPoint;
 
 public final class Property
@@ -59,16 +58,6 @@ public final class Property
     public static Property newLocalTime( final String name, final Object value )
     {
         return newProperty( name, Value.newLocalTime( value ) );
-    }
-
-    public static Property newContentId( final String name, final Object value )
-    {
-        return newProperty( name, Value.newContentId( value ) );
-    }
-
-    public static Property newEntityId( final String name, final Object value )
-    {
-        return newProperty( name, Value.newEntityId( value ) );
     }
 
     public static Property newHtmlPart( final String name, final Object value )
@@ -154,11 +143,6 @@ public final class Property
         return value.asContentId();
     }
 
-    public EntityId getEntityId()
-    {
-        return value.asEntityId();
-    }
-
     /**
      * Returns the value of the Property at the given array index as a String.
      */
@@ -170,11 +154,6 @@ public final class Property
     public ContentId getContentId( final int arrayIndex )
     {
         return getArray().getValue( arrayIndex ).asContentId();
-    }
-
-    public EntityId getEntityId( final int arrayIndex )
-    {
-        return getArray().getValue( arrayIndex ).asEntityId();
     }
 
     public Long getLong()

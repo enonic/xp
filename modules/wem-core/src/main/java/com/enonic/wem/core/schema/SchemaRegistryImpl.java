@@ -120,8 +120,7 @@ public final class SchemaRegistryImpl
         }
     }
 
-    @Override
-    public Schema getSchema( final SchemaName schemaName )
+    private Schema getSchema( final SchemaName schemaName )
     {
         return allSchemas.get( schemaName );
     }
@@ -152,12 +151,6 @@ public final class SchemaRegistryImpl
     {
         final Schema schema = getSchema( metadataName );
         return schema != null && schema.getType().isMetadataSchema() ? (MetadataSchema) schema : null;
-    }
-
-    @Override
-    public Schemas getAllSchemas()
-    {
-        return Schemas.from( allSchemas.values() );
     }
 
     @Override
@@ -198,11 +191,5 @@ public final class SchemaRegistryImpl
             map( ( schema ) -> (MetadataSchema) schema ).
             collect( toList() );
         return MetadataSchemas.from( metadataSchemas );
-    }
-
-    @Override
-    public Schemas getModuleSchemas( final ModuleKey moduleKey )
-    {
-        return moduleSchemas.get( moduleKey );
     }
 }

@@ -6,9 +6,9 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import com.enonic.wem.api.data.RootDataSetJson;
-import com.enonic.wem.api.entity.Entity;
 import com.enonic.wem.api.index.IndexConfigDocument;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
+import com.enonic.wem.core.entity.Entity;
 import com.enonic.wem.core.entity.PatternBasedIndexConfigDocumentJson;
 import com.enonic.wem.core.entity.relationship.IndexConfigDocumentJson;
 

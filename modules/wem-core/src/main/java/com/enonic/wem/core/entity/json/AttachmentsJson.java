@@ -7,8 +7,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.entity.Attachment;
-import com.enonic.wem.api.entity.Attachments;
+import com.enonic.wem.core.entity.Attachment;
+import com.enonic.wem.core.entity.Attachments;
 
 public class AttachmentsJson
 {

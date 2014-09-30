@@ -1,12 +1,12 @@
 package com.enonic.wem.core.elasticsearch.workspace;
 
-import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.EntityIds;
-import com.enonic.wem.api.entity.NodePath;
-import com.enonic.wem.api.entity.NodePaths;
-import com.enonic.wem.api.entity.NodeVersionId;
-import com.enonic.wem.api.entity.NodeVersionIds;
 import com.enonic.wem.core.elasticsearch.ElasticsearchDao;
+import com.enonic.wem.core.entity.EntityId;
+import com.enonic.wem.core.entity.EntityIds;
+import com.enonic.wem.core.entity.NodePath;
+import com.enonic.wem.core.entity.NodePaths;
+import com.enonic.wem.core.entity.NodeVersionId;
+import com.enonic.wem.core.entity.NodeVersionIds;
 import com.enonic.wem.core.workspace.StoreWorkspaceDocument;
 import com.enonic.wem.core.workspace.WorkspaceContext;
 import com.enonic.wem.core.workspace.WorkspaceService;

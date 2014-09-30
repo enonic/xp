@@ -1,7 +1,7 @@
 package com.enonic.wem.api.context;
 
-import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.repository.Repository;
+import com.enonic.wem.api.workspace.Workspace;
 
 public class Context
 {
