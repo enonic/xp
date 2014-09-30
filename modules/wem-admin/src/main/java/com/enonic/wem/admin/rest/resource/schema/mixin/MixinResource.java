@@ -2,7 +2,6 @@ package com.enonic.wem.admin.rest.resource.schema.mixin;
 
 import java.awt.image.BufferedImage;
 
-import javax.inject.Inject;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -108,7 +107,6 @@ public class MixinResource
         return mixinService.getByName( new GetMixinParams( name ) );
     }
 
-    @Inject
     public void setMixinService( final MixinService mixinService )
     {
         this.mixinService = mixinService;

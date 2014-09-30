@@ -2,7 +2,6 @@ package com.enonic.wem.admin.rest.resource.schema.relationship;
 
 import java.awt.image.BufferedImage;
 
-import javax.inject.Inject;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -108,7 +107,6 @@ public class RelationshipTypeResource
         responseBuilder.cacheControl( cacheControl );
     }
 
-    @Inject
     public void setRelationshipTypeService( final RelationshipTypeService relationshipTypeService )
     {
         this.relationshipTypeService = relationshipTypeService;

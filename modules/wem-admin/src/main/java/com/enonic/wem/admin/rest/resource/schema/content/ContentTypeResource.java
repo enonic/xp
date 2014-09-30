@@ -1,5 +1,8 @@
 package com.enonic.wem.admin.rest.resource.schema.content;
 
+import java.awt.image.BufferedImage;
+
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -85,7 +88,13 @@ public class ContentTypeResource
         return responseBuilder.build();
     }
 
-    @Inject
+    private void applyMaxAge( int maxAge, final Response.ResponseBuilder responseBuilder )
+    {
+        final CacheControl cacheControl = new CacheControl();
+        cacheControl.setMaxAge( maxAge );
+        responseBuilder.cacheControl( cacheControl );
+    }
+
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
         this.contentTypeService = contentTypeService;
