@@ -34,4 +34,9 @@ public final class PageTemplateServiceImpl
     {
         return this.siteTemplateService.getSiteTemplate( siteTemplateKey ).getPageTemplates();
     }
+
+    public void setSiteTemplateService( final SiteTemplateService siteTemplateService )
+    {
+        this.siteTemplateService = siteTemplateService;
+    }
 }

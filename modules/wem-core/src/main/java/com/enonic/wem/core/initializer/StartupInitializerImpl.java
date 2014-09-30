@@ -7,7 +7,7 @@ import com.enonic.wem.api.initializer.DataInitializer;
 import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.core.repository.RepositoryInitializer;
 
-final class StartupInitializerImpl
+public final class StartupInitializerImpl
     implements StartupInitializer
 {
     @Inject
@@ -41,4 +41,13 @@ final class StartupInitializerImpl
         }
     }
 
+    public void setRepositoryInitializer( final RepositoryInitializer repositoryInitializer )
+    {
+        this.repositoryInitializer = repositoryInitializer;
+    }
+
+    public void setInitializers( final Iterable<DataInitializer> initializers )
+    {
+        this.initializers = initializers;
+    }
 }

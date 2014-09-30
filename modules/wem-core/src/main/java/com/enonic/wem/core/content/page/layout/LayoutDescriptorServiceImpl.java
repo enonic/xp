@@ -24,4 +24,9 @@ public final class LayoutDescriptorServiceImpl
     {
         return new GetLayoutDescriptorsByModulesCommand().moduleService( this.moduleService ).moduleKeys( moduleKeys ).execute();
     }
+
+    public void setModuleService( final ModuleService moduleService )
+    {
+        this.moduleService = moduleService;
+    }
 }

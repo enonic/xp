@@ -273,4 +273,29 @@ public class NodeServiceImpl
             build().
             resolve( nodeDao.getByVersionId( blobKey ) );
     }
+
+    public void setIndexService( final IndexService indexService )
+    {
+        this.indexService = indexService;
+    }
+
+    public void setNodeDao( final NodeDao nodeDao )
+    {
+        this.nodeDao = nodeDao;
+    }
+
+    public void setWorkspaceService( final WorkspaceService workspaceService )
+    {
+        this.workspaceService = workspaceService;
+    }
+
+    public void setVersionService( final VersionService versionService )
+    {
+        this.versionService = versionService;
+    }
+
+    public void setQueryService( final QueryService queryService )
+    {
+        this.queryService = queryService;
+    }
 }

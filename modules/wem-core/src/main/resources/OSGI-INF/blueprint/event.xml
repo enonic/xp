@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+
+  <reference-list id="eventListeners" interface="com.enonic.wem.api.event.EventListener" availability="optional"/>
+
+  <bean id="eventPublisher" class="com.enonic.wem.core.event.EventPublisherImpl">
+    <property name="eventListeners" ref="eventListeners"/>
+  </bean>
+
+  <service ref="eventPublisher" auto-export="interfaces"/>
+
+</blueprint>

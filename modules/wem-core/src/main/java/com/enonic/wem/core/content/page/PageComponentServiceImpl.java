@@ -28,4 +28,14 @@ public final class PageComponentServiceImpl
             name( name ).
             execute();
     }
+
+    public void setPartDescriptorService( final PartDescriptorService partDescriptorService )
+    {
+        this.partDescriptorService = partDescriptorService;
+    }
+
+    public void setLayoutDescriptorService( final LayoutDescriptorService layoutDescriptorService )
+    {
+        this.layoutDescriptorService = layoutDescriptorService;
+    }
 }

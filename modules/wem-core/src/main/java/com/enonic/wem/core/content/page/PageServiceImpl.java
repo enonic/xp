@@ -48,4 +48,9 @@ public final class PageServiceImpl
             build().
             execute();
     }
+
+    public void setContentService( final ContentService contentService )
+    {
+        this.contentService = contentService;
+    }
 }

@@ -281,4 +281,34 @@ public class ContentServiceImpl
     {
         return new ContentPathNameGenerator().generatePathName( displayName );
     }
+
+    public void setContentTypeService( final ContentTypeService contentTypeService )
+    {
+        this.contentTypeService = contentTypeService;
+    }
+
+    public void setNodeService( final NodeService nodeService )
+    {
+        this.nodeService = nodeService;
+    }
+
+    public void setBlobService( final BlobService blobService )
+    {
+        this.blobService = blobService;
+    }
+
+    public void setAttachmentService( final AttachmentService attachmentService )
+    {
+        this.attachmentService = attachmentService;
+    }
+
+    public void setQueryService( final QueryService queryService )
+    {
+        this.queryService = queryService;
+    }
+
+    public void setContentNodeTranslator( final ContentNodeTranslator contentNodeTranslator )
+    {
+        this.contentNodeTranslator = contentNodeTranslator;
+    }
 }

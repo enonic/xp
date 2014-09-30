@@ -77,4 +77,14 @@ public class ContentTypeServiceImpl
     {
         return new ValidateContentTypeCommand().params( params ).contentTypeService( this ).execute();
     }
+
+    public void setContentTypeDao( final ContentTypeDao contentTypeDao )
+    {
+        this.contentTypeDao = contentTypeDao;
+    }
+
+    public void setMixinService( final MixinService mixinService )
+    {
+        this.mixinService = mixinService;
+    }
 }

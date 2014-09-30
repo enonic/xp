@@ -20,7 +20,7 @@ public final class ImageFilterBuilderImpl
 
     private final FilterCommandRegistry commandRegistry;
 
-    ImageFilterBuilderImpl()
+    public ImageFilterBuilderImpl()
     {
         this.parser = new FilterExprParser();
         this.commandRegistry = new FilterCommandRegistry();

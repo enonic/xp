@@ -11,4 +11,12 @@
 
   <bean id="configProperties" factory-ref="configLoader" factory-method="load"/>
 
+  <service interface="com.enonic.wem.core.config.ConfigProperties" ref="configProperties"/>
+
+  <bean id="systemConfig" class="com.enonic.wem.core.config.SystemConfigImpl">
+    <argument index="0" ref="configProperties"/>
+  </bean>
+
+  <service auto-export="interfaces" ref="systemConfig"/>
+
 </blueprint>

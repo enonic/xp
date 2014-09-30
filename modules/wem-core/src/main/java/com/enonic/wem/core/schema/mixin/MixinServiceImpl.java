@@ -32,4 +32,9 @@ public class MixinServiceImpl
     {
         return mixinDao.getAllMixins();
     }
+
+    public void setMixinDao( final MixinDao mixinDao )
+    {
+        this.mixinDao = mixinDao;
+    }
 }

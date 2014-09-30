@@ -38,4 +38,9 @@ public class AttachmentServiceImpl
             build().
             execute();
     }
+
+    public void setNodeService( final NodeService nodeService )
+    {
+        this.nodeService = nodeService;
+    }
 }

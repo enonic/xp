@@ -67,4 +67,8 @@ public class RepositoryInitializer
         return indexService.indicesExists( storageIndexName, searchIndexName );
     }
 
+    public void setIndexService( final IndexService indexService )
+    {
+        this.indexService = indexService;
+    }
 }

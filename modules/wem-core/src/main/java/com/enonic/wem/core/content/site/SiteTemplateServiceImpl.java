@@ -71,4 +71,14 @@ public final class SiteTemplateServiceImpl
             systemConfig( this.systemConfig ).
             execute();
     }
+
+    public void setSystemConfig( final SystemConfig systemConfig )
+    {
+        this.systemConfig = systemConfig;
+    }
+
+    public void setSiteTemplateExporter( final SiteTemplateExporter siteTemplateExporter )
+    {
+        this.siteTemplateExporter = siteTemplateExporter;
+    }
 }

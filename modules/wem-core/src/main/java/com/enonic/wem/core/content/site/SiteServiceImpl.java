@@ -58,4 +58,9 @@ public final class SiteServiceImpl
             build().
             execute();
     }
+
+    public void setContentService( final ContentService contentService )
+    {
+        this.contentService = contentService;
+    }
 }

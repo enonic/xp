@@ -15,9 +15,6 @@ public final class PartDescriptorServiceImpl
     @Inject
     protected ModuleService moduleService;
 
-    @Inject
-    protected PartDescriptorService partDescriptorService;
-
     public PartDescriptor getByKey( final PartDescriptorKey key )
     {
         return new GetPartDescriptorCommand().moduleService( this.moduleService ).key( key ).execute();
@@ -26,5 +23,10 @@ public final class PartDescriptorServiceImpl
     public PartDescriptors getByModules( final ModuleKeys moduleKeys )
     {
         return new GetPartDescriptorsByModulesCommand().moduleService( this.moduleService ).moduleKeys( moduleKeys ).execute();
+    }
+
+    public void setModuleService( final ModuleService moduleService )
+    {
+        this.moduleService = moduleService;
     }
 }

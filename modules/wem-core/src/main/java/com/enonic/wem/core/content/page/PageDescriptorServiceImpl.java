@@ -25,4 +25,9 @@ public class PageDescriptorServiceImpl
     {
         return new GetPageDescriptorsByModulesCommand().moduleService( this.moduleService ).moduleKeys( moduleKeys ).execute();
     }
+
+    public void setModuleService( final ModuleService moduleService )
+    {
+        this.moduleService = moduleService;
+    }
 }

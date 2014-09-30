@@ -25,4 +25,9 @@ public class RelationshipTypeServiceImpl
     {
         return new GetRelationshipTypeCommand().params( params ).relationshipTypeDao( relationshipTypeDao ).execute();
     }
+
+    public void setRelationshipTypeDao( final RelationshipTypeDao relationshipTypeDao )
+    {
+        this.relationshipTypeDao = relationshipTypeDao;
+    }
 }
