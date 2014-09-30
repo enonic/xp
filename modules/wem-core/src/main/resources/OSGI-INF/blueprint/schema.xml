@@ -5,7 +5,7 @@
     <property name="bundleContext" ref="blueprintBundleContext"/>
   </bean>
 
-  <service ref="schemaRegistry" auto-export="interfaces"/>
+  <service ref="schemaRegistry" interface="com.enonic.wem.api.schema.SchemaRegistry"/>
 
   <service auto-export="interfaces">
     <bean class="com.enonic.wem.core.schema.CoreSchemasProvider"/>
