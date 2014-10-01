@@ -7,4 +7,16 @@
     </bean>
   </service>
 
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.portal.internal.content.FindContentByParentHandler">
+      <argument index="0" ref="contentService"/>
+    </bean>
+  </service>
+
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.portal.internal.content.GetContentByIdHandler">
+      <argument index="0" ref="contentService"/>
+    </bean>
+  </service>
+
 </blueprint>
