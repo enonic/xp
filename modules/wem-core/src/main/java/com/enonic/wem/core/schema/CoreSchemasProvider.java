@@ -45,8 +45,12 @@ public final class CoreSchemasProvider
     public static final ContentType FOLDER = createSystemType( ContentTypeName.folder() ).
         setFinal( false ).setAbstract( false ).build();
 
-    private static final ContentType SITE = createSystemType( ContentTypeName.site() ).description( "Root content for sites" ).
-        setFinal( true ).setAbstract( false ).allowChildContent( false ).form( createModuleConfigForm() ).build();
+    private static final ContentType SITE = createSystemType( ContentTypeName.site() ).
+        description( "Root content for sites" ).
+        setFinal( true ).
+        setAbstract( false ).
+        form( createSiteForm() ).
+        build();
 
     private static final ContentType PAGE_TEMPLATE =
         createSystemType( ContentTypeName.pageTemplate() ).setFinal( false ).setAbstract( true ).form( createPageTemplateForm() ).build();
@@ -183,24 +187,24 @@ public final class CoreSchemasProvider
             build();
     }
 
-    private static Form createModuleConfigForm()
+    private static Form createSiteForm()
     {
         return Form.newForm().
-                addFormItem( Input.newInput().name( "description" ).
-                        inputType( InputTypes.TEXT_AREA ).
-                        label( "Description" ).
-                        occurrences( 0, 1 ).
-                        helpText( "Description of the site. Optional" ).
-                        build() ).
-                addFormItem( Input.newInput().
-                        name( "module-configurator" ).
-                        label( "ModuleConfigurator" ).
-                        helpText( "Configures modules." ).
-                        inputType( InputTypes.MODULE_CONFIGURATOR ).
-                        required( false ).
-                        multiple( true ).
-                        build() ).
-                build();
+            addFormItem( Input.newInput().name( "description" ).
+                inputType( InputTypes.TEXT_AREA ).
+                label( "Description" ).
+                occurrences( 0, 1 ).
+                helpText( "Description of the site. Optional" ).
+                build() ).
+            addFormItem( Input.newInput().
+                name( "module-configurator" ).
+                label( "ModuleConfigurator" ).
+                helpText( "Configures modules." ).
+                inputType( InputTypes.MODULE_CONFIGURATOR ).
+                required( false ).
+                multiple( true ).
+                build() ).
+            build();
     }
 
     private static RelationshipType createRelationshipType( final RelationshipTypeName relationshipTypeName, final String displayName,
