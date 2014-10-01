@@ -124,7 +124,7 @@ module api.aggregation {
             });
         }
 
-        private getAggregationView(name: string): api.aggregation.AggregationView {
+        getAggregationView(name: string): api.aggregation.AggregationView {
 
             for (var i = 0; i < this.aggregationViews.length; i++) {
                 var aggregationView: api.aggregation.AggregationView = this.aggregationViews[i];

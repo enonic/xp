@@ -45,42 +45,34 @@ module app.browse.filter {
 
             super(null, [contentTypeAggregation, lastModifiedAggregation]);
 
-            this.loadAndSetContentTypeDisplayNames(contentTypeAggregation);
+            var mask: api.ui.mask.LoadMask = new api.ui.mask.LoadMask(this);
+            this.appendChild(mask);
 
-            this.resetFacets(true);
+            this.onRendered((event: api.dom.ElementRenderedEvent) => mask.show());
 
-            this.onReset(()=> {
-                this.resetFacets();
-            });
+            wemQ.all([this.loadContentTypeDisplayNamesMap(), this.resetFacets(true)]).spread((displayNameMap: string[]) => {
 
+                var aggregationView = contentTypeAggregation.getAggregationView(ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_NAME);
+                aggregationView.setDisplayNamesMap(displayNameMap);
+                mask.remove();
+            }).done();
+
+            this.onReset(this.resetFacets);
             this.onSearch(this.searchFacets);
         }
 
-        private loadAndSetContentTypeDisplayNames(aggregationGroupView: AggregationGroupView) {
+        private loadContentTypeDisplayNamesMap(): wemQ.Promise<string[]> {
 
-            var displayNameMap: string[] = [];
-
-            var mask: api.ui.mask.LoadMask = new api.ui.mask.LoadMask(this);
-            this.appendChild(mask);
-            aggregationGroupView.onRendered((event: api.dom.ElementRenderedEvent) => {
-                mask.show();
-            });
-
-            var request = new api.schema.content.GetAllContentTypesRequest();
-            request.sendAndParse().done((contentTypes: api.schema.content.ContentTypeSummary[]) => {
-
-                contentTypes.forEach((contentType: api.schema.content.ContentTypeSummary)=> {
-                    displayNameMap[contentType.getName()] = contentType.getDisplayName();
+            return new api.schema.content.GetAllContentTypesRequest().sendAndParse().
+                then((contentTypes: api.schema.content.ContentTypeSummary[]) => {
+                    var displayNameMap: string[] = [];
+                    contentTypes.forEach((contentType: api.schema.content.ContentTypeSummary)=> {
+                        displayNameMap[contentType.getName()] = contentType.getDisplayName();
+                    });
+                    return displayNameMap;
                 });
-
-                aggregationGroupView.getAggregationViews().forEach((aggregationView: api.aggregation.AggregationView)=> {
-                    if (aggregationView.getName() == ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_NAME) {
-                        aggregationView.setDisplayNamesMap(displayNameMap);
-                    }
-                });
-                mask.remove();
-            });
         }
+
 
         private searchFacets(event: api.app.browse.filter.SearchEvent) {
 
@@ -125,7 +117,7 @@ module app.browse.filter {
                 });
         }
 
-        private resetFacets(supressEvent?: boolean, doResetAll?: boolean) {
+        private resetFacets(supressEvent?: boolean, doResetAll?: boolean): wemQ.Promise<void> {
             var queryExpr: QueryExpr = new QueryExpr(null);
 
             var contentQuery: ContentQuery = new ContentQuery();
@@ -134,9 +126,8 @@ module app.browse.filter {
             this.appendContentTypesAggregation(contentQuery);
             this.appendLastModifiedAggregation(contentQuery);
 
-            new ContentQueryRequest<ContentSummaryJson,ContentSummary>(contentQuery).
-                sendAndParse().done((contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
-
+            return new ContentQueryRequest<ContentSummaryJson,ContentSummary>(contentQuery).sendAndParse().
+                then((contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
                     this.updateAggregations(contentQueryResult.getAggregations(), doResetAll);
 
                     if (!supressEvent) {
