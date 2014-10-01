@@ -19,8 +19,6 @@ public final class ContentTypeName
 
     private static final ContentTypeName PAGE_TEMPLATE = new ContentTypeName( "page-template" );
 
-    private static final ContentTypeName MODULE_CONFIGURATOR = new ContentTypeName( "module-configurator" );
-
     private static final ContentTypeName SITE = new ContentTypeName( "site" );
 
     private static final ContentTypeName SHORTCUT = new ContentTypeName( "shortcut" );
@@ -79,11 +77,6 @@ public final class ContentTypeName
     public static ContentTypeName pageTemplate()
     {
         return PAGE_TEMPLATE;
-    }
-
-    public static ContentTypeName moduleConfigurator()
-    {
-        return MODULE_CONFIGURATOR;
     }
 
     public static ContentTypeName site()
