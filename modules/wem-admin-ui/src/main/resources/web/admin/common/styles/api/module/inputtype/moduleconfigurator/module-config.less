@@ -10,8 +10,29 @@
       z-index: 1;
     }
 
+    .module-view {
+      .header {
+        position: relative;
+      }
+    }
+
     .module-form {
-      padding-right: 30px;
+      .bottom-button-row {
+        margin-left: 0px;
+        padding-right: 0px;
+      }
+    }
+  }
+
+  .multiple-occurrence {
+    .module-config {
+      .drag-control, .module-form .remove-button {
+        display: none;
+      }
+
+      .module-form {
+        padding-right: 0px;
+      }
     }
   }
 }
