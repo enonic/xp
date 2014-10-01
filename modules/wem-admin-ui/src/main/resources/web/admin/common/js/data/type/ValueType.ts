@@ -55,6 +55,10 @@ module api.data.type {
             return true;
         }
 
+        valueEquals(a: any, b: any): boolean {
+            return api.ObjectHelper.objectEquals(a, b);
+        }
+
         /**
          * Returns the actual object backing this Value.
          * If the REST service or JSON would not understand this value, then override and return compatible value.

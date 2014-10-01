@@ -33,6 +33,10 @@ module api.data {
             return this.value.getDate();
         }
 
+        getData(): RootDataSet {
+            return this.value.getData();
+        }
+
         getGeoPoint(): api.util.GeoPoint {
             return this.value.getGeoPoint();
         }

@@ -37,5 +37,9 @@ module api.data.type {
         valueToString(value: Value): string {
             throw new Error("A value of type Data cannot be made into a string");
         }
+
+        valueEquals(a: api.data.RootDataSet, b: api.data.RootDataSet): boolean {
+            return api.ObjectHelper.equals(a, b);
+        }
     }
 }

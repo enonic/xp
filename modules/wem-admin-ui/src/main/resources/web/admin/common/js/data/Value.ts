@@ -42,6 +42,13 @@ module api.data {
             return <Date>this.value;
         }
 
+        getData(): RootDataSet {
+            if (this.isNull()) {
+                return null;
+            }
+            return <RootDataSet>this.value;
+        }
+
         getGeoPoint(): api.util.GeoPoint {
             if (this.isNull()) {
                 return null;
@@ -111,15 +118,11 @@ module api.data {
 
             var other = <Value>o;
 
-            if (!api.ObjectHelper.objectEquals(this.value, other.value)) {
-                return false;
-            }
-
             if (!api.ObjectHelper.equals(this.type, other.type)) {
                 return false;
             }
 
-            return true;
+            return this.type.valueEquals(this.value, other.value);
         }
 
         clone(): Value {
