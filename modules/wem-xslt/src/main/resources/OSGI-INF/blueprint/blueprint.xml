@@ -11,4 +11,10 @@
     </bean>
   </service>
 
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.xslt.internal.RenderViewHandler">
+      <argument index="0" ref="processorFactory"/>
+    </bean>
+  </service>
+
 </blueprint>

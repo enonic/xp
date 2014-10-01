@@ -1,7 +1,10 @@
 var assert = Java.type('org.junit.Assert');
-var xslt = require('view/xslt');
 var view = resolve('view/test.xsl');
 
-var html = xslt.render(view, '<input/>', {});
+var html = executeCommand('com.enonic.wem.xslt.RenderView', {
+    view: view,
+    inputXml: '<input/>',
+    parameters: {}
+});
 
 assert.assertEquals('<div>Hello</div>', html);

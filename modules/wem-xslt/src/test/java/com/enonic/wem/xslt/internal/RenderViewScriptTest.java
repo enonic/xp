@@ -11,7 +11,7 @@ import com.enonic.wem.portal.PortalContextAccessor;
 import com.enonic.wem.portal.PortalRequest;
 import com.enonic.wem.script.AbstractScriptTest;
 
-public class XsltScriptTest
+public class RenderViewScriptTest
     extends AbstractScriptTest
 {
     @Before
@@ -27,8 +27,7 @@ public class XsltScriptTest
 
         PortalContextAccessor.set( portalContext );
 
-        final XsltScriptLibrary lib = new XsltScriptLibrary( new XsltProcessorFactoryImpl() );
-        addLibrary( lib );
+        addHandler( new RenderViewHandler( new XsltProcessorFactoryImpl() ) );
     }
 
     @Test
