@@ -1,6 +1,7 @@
 package com.enonic.wem.api.content;
 
 import java.time.Instant;
+import java.util.LinkedHashMap;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
@@ -10,6 +11,7 @@ import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.content.thumb.Thumbnail;
+import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.support.ChangeTraceable;
@@ -40,6 +42,8 @@ public final class Content
     private final Form form;
 
     private final ContentData contentData;
+
+    private final LinkedHashMap metadataByName;
 
     private final Instant createdTime;
 
@@ -78,6 +82,7 @@ public final class Content
         this.id = builder.contentId;
         this.form = builder.form;
         this.contentData = builder.contentData;
+        this.metadataByName = builder.metadataByName;
         this.createdTime = builder.createdTime;
         this.modifiedTime = builder.modifiedTime;
         this.creator = builder.creator;
@@ -157,6 +162,11 @@ public final class Content
     public ContentData getContentData()
     {
         return contentData;
+    }
+
+    public LinkedHashMap<String, RootDataSet> getMetadata()
+    {
+        return metadataByName;
     }
 
     public ContentId getId()
@@ -260,6 +270,8 @@ public final class Content
 
         ContentData contentData;
 
+        LinkedHashMap<String, RootDataSet> metadataByName;
+
         String displayName;
 
         UserKey owner;
@@ -294,6 +306,7 @@ public final class Content
             this.type = content.type;
             this.form = content.form; // TODO make DataSet immutable, or make copy
             this.contentData = content.contentData; // TODO make DataSet immutable, or make copy
+            this.metadataByName = content.metadataByName;
             this.displayName = content.displayName;
             this.owner = content.owner;
             this.createdTime = content.createdTime;
@@ -344,6 +357,13 @@ public final class Content
         {
             changes.recordChange( newPossibleChange( "contentData" ).from( this.original.getContentData() ).to( contentData ).build() );
             this.contentData = contentData;
+            return this;
+        }
+
+        public EditBuilder metadata( final LinkedHashMap<String, RootDataSet> metadataByName)
+        {
+            changes.recordChange( newPossibleChange( "metadataByName" ).from( this.original.metadataByName ).to( metadataByName ).build() );
+            this.metadataByName = metadataByName;
             return this;
         }
 
@@ -451,6 +471,12 @@ public final class Content
         public Builder contentData( final ContentData contentData )
         {
             this.contentData = contentData;
+            return this;
+        }
+
+        public Builder metadata( final LinkedHashMap<String, RootDataSet> metadataByName )
+        {
+            this.metadataByName = metadataByName;
             return this;
         }
 

@@ -467,6 +467,9 @@ module app.wizard {
 
             var parentPath = this.parentContent != null ? this.parentContent.getPath() : api.content.ContentPath.ROOT;
 
+            var dataSet = new api.data.RootDataSet();
+            dataSet.addProperty('prop', new api.data.Value('value', api.data.type.ValueTypes.STRING));
+
             var createRequest = new CreateContentRequest().
                 setDraft(this.persistAsDraft).
                 setName(api.content.ContentUnnamed.newUnnamed()).
@@ -474,7 +477,10 @@ module app.wizard {
                 setContentType(this.contentType.getContentTypeName()).
                 setDisplayName(this.contentWizardHeader.getDisplayName()).
                 setForm(this.contentType.getForm()).
-                setContentData(contentData);
+                setContentData(contentData).
+                setMetadata({
+                    'moduleName': dataSet
+                });
 
             return createRequest;
         }
