@@ -1,4 +1,4 @@
-package com.enonic.wem.thymeleaf;
+package com.enonic.wem.mustache;
 
 import java.util.Map;
 
@@ -30,5 +30,4 @@ public final class RenderView extends Command<String>
     {
         this.view = view;
     }
-
 }
