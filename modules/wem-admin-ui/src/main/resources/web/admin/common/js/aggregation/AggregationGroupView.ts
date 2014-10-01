@@ -12,7 +12,6 @@ module api.aggregation {
 
         private bucketSelectionChangedListeners: Function[] = [];
 
-
         constructor(name: string, displayName: string) {
             super("aggregation-group-view");
 
@@ -32,6 +31,10 @@ module api.aggregation {
             );
 
             this.aggregationViews.push(aggregationView);
+        }
+
+        initialize(): void {
+
         }
 
         getAggregationViews(): api.aggregation.AggregationView[] {

@@ -8,6 +8,7 @@ module app.browse.filter {
     import ContentSummary = api.content.ContentSummary;
     import AggregationTypeWrapperJson = api.aggregation.AggregationTypeWrapperJson;
     import AggregationGroupView = api.aggregation.AggregationGroupView;
+    import ContentTypeAggregationGroupView = api.aggregation.ContentTypeAggregationGroupView;
     import Aggregation = api.aggregation.Aggregation;
     import AggregationFactory = api.aggregation.AggregationFactory;
     import SearchInputValues = api.query.SearchInputValues;
@@ -35,7 +36,7 @@ module app.browse.filter {
 
         constructor() {
 
-            var contentTypeAggregation: AggregationGroupView = new AggregationGroupView(
+            var contentTypeAggregation: ContentTypeAggregationGroupView = new ContentTypeAggregationGroupView(
                 ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_NAME,
                 ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_DISPLAY_NAME);
 
@@ -45,41 +46,14 @@ module app.browse.filter {
 
             super(null, [contentTypeAggregation, lastModifiedAggregation]);
 
-            this.loadAndSetContentTypeDisplayNames(contentTypeAggregation);
 
-            this.resetFacets(true);
+            this.initAggregationGroupView([contentTypeAggregation, lastModifiedAggregation]);
 
             this.onReset(()=> {
                 this.resetFacets();
             });
 
             this.onSearch(this.searchFacets);
-        }
-
-        private loadAndSetContentTypeDisplayNames(aggregationGroupView: AggregationGroupView) {
-
-            var displayNameMap: string[] = [];
-
-            var mask: api.ui.mask.LoadMask = new api.ui.mask.LoadMask(this);
-            this.appendChild(mask);
-            aggregationGroupView.onRendered((event: api.dom.ElementRenderedEvent) => {
-                mask.show();
-            });
-
-            var request = new api.schema.content.GetAllContentTypesRequest();
-            request.sendAndParse().done((contentTypes: api.schema.content.ContentTypeSummary[]) => {
-
-                contentTypes.forEach((contentType: api.schema.content.ContentTypeSummary)=> {
-                    displayNameMap[contentType.getName()] = contentType.getDisplayName();
-                });
-
-                aggregationGroupView.getAggregationViews().forEach((aggregationView: api.aggregation.AggregationView)=> {
-                    if (aggregationView.getName() == ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_NAME) {
-                        aggregationView.setDisplayNamesMap(displayNameMap);
-                    }
-                });
-                mask.remove();
-            });
         }
 
         private searchFacets(event: api.app.browse.filter.SearchEvent) {
@@ -98,8 +72,8 @@ module app.browse.filter {
                 contentQuery.addQueryFilter(lastModifiedFilter);
             }
 
-            this.appendContentTypesAggregation(contentQuery);
-            this.appendLastModifiedAggregation(contentQuery);
+            this.appendContentTypesAggregationQuery(contentQuery);
+            this.appendLastModifiedAggregationQuery(contentQuery);
 
             new ContentQueryRequest<ContentSummaryJson,ContentSummary>(contentQuery).
                 setExpand(api.rest.Expand.SUMMARY).
@@ -109,8 +83,8 @@ module app.browse.filter {
                         var contentQuery: ContentQuery = new ContentQuery();
                         this.appendFulltextSearch(event.getSearchInputValues(), contentQuery);
 
-                        this.appendContentTypesAggregation(contentQuery);
-                        this.appendLastModifiedAggregation(contentQuery);
+                        this.appendContentTypesAggregationQuery(contentQuery);
+                        this.appendLastModifiedAggregationQuery(contentQuery);
 
                         new ContentQueryRequest<ContentSummaryJson,ContentSummary>(contentQuery).
                             setExpand(api.rest.Expand.SUMMARY).
@@ -125,14 +99,25 @@ module app.browse.filter {
                 });
         }
 
-        private resetFacets(supressEvent?: boolean, doResetAll?: boolean) {
-            var queryExpr: QueryExpr = new QueryExpr(null);
+        private initAggregationGroupView(aggregationGroupView: AggregationGroupView[]) {
 
-            var contentQuery: ContentQuery = new ContentQuery();
-            contentQuery.setQueryExpr(queryExpr);
-            contentQuery.setSize(0);
-            this.appendContentTypesAggregation(contentQuery);
-            this.appendLastModifiedAggregation(contentQuery);
+            var contentQuery: ContentQuery = this.buildAggregationsQuery(new QueryExpr(null));
+
+            new ContentQueryRequest<ContentSummaryJson,ContentSummary>(contentQuery).
+                sendAndParse().done((contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
+
+                    this.updateAggregations(contentQueryResult.getAggregations(), false);
+
+                    aggregationGroupView.forEach((aggregationGroupView: AggregationGroupView) => {
+                        aggregationGroupView.initialize();
+                    })
+                }
+            );
+        }
+
+        private resetFacets(supressEvent?: boolean, doResetAll?: boolean) {
+
+            var contentQuery: ContentQuery = this.buildAggregationsQuery(new QueryExpr(null));
 
             new ContentQueryRequest<ContentSummaryJson,ContentSummary>(contentQuery).
                 sendAndParse().done((contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
@@ -144,6 +129,16 @@ module app.browse.filter {
                     }
                 }
             );
+        }
+
+        private buildAggregationsQuery(queryExpr: QueryExpr): ContentQuery {
+            var contentQuery: ContentQuery = new ContentQuery();
+            contentQuery.setQueryExpr(queryExpr);
+            contentQuery.setSize(0);
+            this.appendContentTypesAggregationQuery(contentQuery);
+            this.appendLastModifiedAggregationQuery(contentQuery);
+
+            return contentQuery;
         }
 
         private appendFulltextSearch(searchInputValues: SearchInputValues, contentQuery: ContentQuery) {
@@ -207,7 +202,7 @@ module app.browse.filter {
             return contentTypeNames;
         }
 
-        private appendContentTypesAggregation(contentQuery) {
+        private appendContentTypesAggregationQuery(contentQuery) {
             contentQuery.addAggregationQuery(this.createTermsAggregation((ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_NAME),
                 "contenttype", 10));
         }
@@ -219,7 +214,7 @@ module app.browse.filter {
             return termsAggregation;
         }
 
-        private appendLastModifiedAggregation(contentQuery: ContentQuery) {
+        private appendLastModifiedAggregationQuery(contentQuery: ContentQuery) {
 
             var dateRangeAgg = new DateRangeAggregationQuery((ContentBrowseFilterPanel.LAST_MODIFIED_AGGREGATION_NAME));
             dateRangeAgg.setFieldName("modifiedTime");

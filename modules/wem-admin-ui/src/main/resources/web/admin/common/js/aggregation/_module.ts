@@ -21,6 +21,7 @@
 ///<reference path='AggregationFactory.ts' />
 
 ///<reference path='AggregationGroupView.ts' />
+///<reference path='ContentTypeAggregationGroupView.ts' />
 
 ///<reference path='AggregationEntryViewSelectionChangedEvent.ts' />
 ///<reference path='BucketViewSelectionChangedEvent.ts' />
