@@ -4,9 +4,9 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.api.entity.Workspace;
+import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.core.entity.EntityId;
+import com.enonic.wem.core.entity.Node;
 
 public class PushContentCommand
     extends AbstractContentCommand

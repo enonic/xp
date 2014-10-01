@@ -1,8 +1,8 @@
 package com.enonic.wem.core.entity.dao;
 
-import com.enonic.wem.api.entity.Workspace;
+import com.enonic.wem.api.workspace.Workspace;
 
-public abstract class AbstractGetNodeArgument
+abstract class AbstractGetNodeArgument
 {
     private final Workspace workspace;
 

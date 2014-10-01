@@ -13,7 +13,6 @@ import java.time.temporal.ChronoUnit;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.serializer.RootDataSetJsonSerializer;
-import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.util.GeoPoint;
 
 final class JavaTypeConverters
@@ -46,8 +45,6 @@ final class JavaTypeConverters
     public final static JavaTypeConverter<RootDataSet> DATA = newData();
 
     public final static JavaTypeConverter<ContentId> CONTENT_ID = newContentId();
-
-    public final static JavaTypeConverter<EntityId> ENTITY_ID = newEntityId();
 
     public final static JavaTypeConverter<Instant> DATE_TIME = newInstant();
 
@@ -181,22 +178,6 @@ final class JavaTypeConverters
         else if ( value instanceof String )
         {
             return ContentId.from( (String) value );
-        }
-        else
-        {
-            return null;
-        }
-    }
-
-    private static EntityId convertToEntityId( final Object value )
-    {
-        if ( value instanceof EntityId )
-        {
-            return (EntityId) value;
-        }
-        else if ( value instanceof String )
-        {
-            return EntityId.from( (String) value );
         }
         else
         {
@@ -361,11 +342,6 @@ final class JavaTypeConverters
     private static JavaTypeConverter<ContentId> newContentId()
     {
         return new JavaTypeConverter<>( ContentId.class, JavaTypeConverters::convertToContentId );
-    }
-
-    private static JavaTypeConverter<EntityId> newEntityId()
-    {
-        return new JavaTypeConverter<>( EntityId.class, JavaTypeConverters::convertToEntityId );
     }
 
     private static JavaTypeConverter<Instant> newInstant()

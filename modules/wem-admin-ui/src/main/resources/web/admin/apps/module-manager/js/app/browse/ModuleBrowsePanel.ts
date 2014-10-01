@@ -43,7 +43,7 @@ module app.browse {
                 }));
             });
 
-            this.moduleIconUrl = api.util.getAdminUri('common/images/icons/icoMoon/128x128/puzzle.png');
+            this.moduleIconUrl = api.util.UriHelper.getAdminUri('common/images/icons/icoMoon/128x128/puzzle.png');
 
             this.registerEvents();
         }

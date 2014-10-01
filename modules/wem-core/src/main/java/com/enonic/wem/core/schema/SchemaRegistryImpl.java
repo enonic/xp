@@ -3,16 +3,11 @@ package com.enonic.wem.core.schema;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
-
-import com.google.inject.Inject;
 
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.schema.Schema;
@@ -38,7 +33,6 @@ import static java.util.stream.Collectors.toList;
 public final class SchemaRegistryImpl
     implements ServiceTrackerCustomizer, SchemaRegistry
 {
-
     private BundleContext bundleContext;
 
     private ServiceTracker serviceTracker;
@@ -53,20 +47,17 @@ public final class SchemaRegistryImpl
         this.moduleSchemas = new ConcurrentHashMap<>();
     }
 
-    @Inject
     public void setBundleContext( final BundleContext bundleContext )
     {
         this.bundleContext = bundleContext;
     }
 
-    @PostConstruct
     public void start()
     {
         this.serviceTracker = new ServiceTracker( this.bundleContext, SchemaProvider.class.getName(), this );
         this.serviceTracker.open();
     }
 
-    @PreDestroy
     public void stop()
     {
         this.serviceTracker.close();
@@ -129,8 +120,7 @@ public final class SchemaRegistryImpl
         }
     }
 
-    @Override
-    public Schema getSchema( final SchemaName schemaName )
+    private Schema getSchema( final SchemaName schemaName )
     {
         return allSchemas.get( schemaName );
     }
@@ -161,12 +151,6 @@ public final class SchemaRegistryImpl
     {
         final Schema schema = getSchema( metadataName );
         return schema != null && schema.getType().isMetadataSchema() ? (MetadataSchema) schema : null;
-    }
-
-    @Override
-    public Schemas getAllSchemas()
-    {
-        return Schemas.from( allSchemas.values() );
     }
 
     @Override
@@ -207,11 +191,5 @@ public final class SchemaRegistryImpl
             map( ( schema ) -> (MetadataSchema) schema ).
             collect( toList() );
         return MetadataSchemas.from( metadataSchemas );
-    }
-
-    @Override
-    public Schemas getModuleSchemas( final ModuleKey moduleKey )
-    {
-        return moduleSchemas.get( moduleKey );
     }
 }

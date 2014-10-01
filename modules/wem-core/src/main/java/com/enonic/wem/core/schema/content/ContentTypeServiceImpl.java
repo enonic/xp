@@ -1,7 +1,5 @@
 package com.enonic.wem.core.schema.content;
 
-import javax.inject.Inject;
-
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.ContentTypes;
@@ -17,10 +15,8 @@ import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 public class ContentTypeServiceImpl
     implements ContentTypeService
 {
-    @Inject
     private ContentTypeDao contentTypeDao;
 
-    @Inject
     private MixinService mixinService;
 
     @Override
@@ -76,5 +72,15 @@ public class ContentTypeServiceImpl
     public ContentTypeValidationResult validate( final ValidateContentTypeParams params )
     {
         return new ValidateContentTypeCommand().params( params ).contentTypeService( this ).execute();
+    }
+
+    public void setContentTypeDao( final ContentTypeDao contentTypeDao )
+    {
+        this.contentTypeDao = contentTypeDao;
+    }
+
+    public void setMixinService( final MixinService mixinService )
+    {
+        this.mixinService = mixinService;
     }
 }

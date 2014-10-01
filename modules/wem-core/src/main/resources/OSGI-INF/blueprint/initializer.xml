@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+
+  <reference-list id="dataInitializers" interface="com.enonic.wem.api.initializer.DataInitializer" availability="optional"/>
+
+  <bean id="repositoryInitializer" class="com.enonic.wem.core.repository.RepositoryInitializer">
+    <property name="indexService" ref="indexService"/>
+  </bean>
+
+  <bean id="startupInitializer" class="com.enonic.wem.core.initializer.StartupInitializerImpl">
+    <property name="repositoryInitializer" ref="repositoryInitializer"/>
+    <property name="initializers" ref="dataInitializers"/>
+  </bean>
+
+  <service ref="startupInitializer" auto-export="interfaces"/>
+
+</blueprint>

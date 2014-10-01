@@ -3,7 +3,6 @@ package com.enonic.wem.admin.rest.resource.ui;
 import java.io.File;
 import java.io.FileInputStream;
 
-import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -49,7 +48,6 @@ public final class BackgroundImageResource
         responseBuilder.cacheControl( cacheControl );
     }
 
-    @Inject
     public void setConfigProperties( final ConfigProperties configProperties )
     {
         this.configProperties = configProperties;

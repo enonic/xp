@@ -11,7 +11,6 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.data.type.ValueType;
 import com.enonic.wem.api.data.type.ValueTypes;
-import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.util.GeoPoint;
 
 /**
@@ -111,17 +110,6 @@ public final class Value
         return ValueTypes.CONTENT_ID.convert( object );
     }
 
-    /**
-     * Attempts to return value as com.enonic.wem.api.entity.EntityId, using best effort converting if value is not of type com.enonic.wem.api.entity.EntityId.
-     */
-    public EntityId asEntityId()
-    {
-        if ( object == null )
-        {
-            return null;
-        }
-        return ValueTypes.ENTITY_ID.convert( object );
-    }
 
     /**
      * Attempts to return value as Long, using best effort converting if value is not of type Long.
@@ -302,11 +290,6 @@ public final class Value
     public static Value newContentId( final Object value )
     {
         return newValue( ValueTypes.CONTENT_ID, value );
-    }
-
-    public static Value newEntityId( final Object value )
-    {
-        return newValue( ValueTypes.ENTITY_ID, value );
     }
 
     public static Value newData( final Object value )

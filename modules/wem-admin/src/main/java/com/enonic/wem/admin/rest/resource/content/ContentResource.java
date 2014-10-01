@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -71,12 +70,12 @@ import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.DataJson;
-import com.enonic.wem.api.entity.Workspaces;
 import com.enonic.wem.api.exception.ConflictException;
 import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
 import com.enonic.wem.api.query.Direction;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.mixin.MixinService;
+import com.enonic.wem.api.workspace.Workspaces;
 
 import static com.enonic.wem.api.content.Content.editContent;
 
@@ -443,31 +442,26 @@ public class ContentResource
         return new ContentIconUrlResolver( this.siteTemplateService, this.contentTypeService, this.attachmentService );
     }
 
-    @Inject
     public void setContentService( final ContentService contentService )
     {
         this.contentService = contentService;
     }
 
-    @Inject
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
         this.contentTypeService = contentTypeService;
     }
 
-    @Inject
     public void setSiteTemplateService( final SiteTemplateService siteTemplateService )
     {
         this.siteTemplateService = siteTemplateService;
     }
 
-    @Inject
     public void setAttachmentService( final AttachmentService attachmentService )
     {
         this.attachmentService = attachmentService;
     }
 
-    @Inject
     public void setMixinService( final MixinService mixinService )
     {
         this.mixinReferencesToFormItemsTransformer = new MixinReferencesToFormItemsTransformer( mixinService );

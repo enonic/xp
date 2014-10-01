@@ -9,14 +9,12 @@ import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 
-import com.google.inject.Inject;
-
-import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.FindNodeVersionsResult;
-import com.enonic.wem.api.entity.NodeVersion;
-import com.enonic.wem.api.entity.NodeVersionId;
-import com.enonic.wem.api.entity.NodeVersions;
 import com.enonic.wem.api.repository.Repository;
+import com.enonic.wem.core.entity.EntityId;
+import com.enonic.wem.core.entity.FindNodeVersionsResult;
+import com.enonic.wem.core.entity.NodeVersion;
+import com.enonic.wem.core.entity.NodeVersionId;
+import com.enonic.wem.core.entity.NodeVersions;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.result.SearchResult;
 import com.enonic.wem.core.index.result.SearchResultEntry;
@@ -157,7 +155,6 @@ public class ElasticsearchVersionService
         return field.getValue().toString();
     }
 
-    @Inject
     public void setElasticsearchDao( final ElasticsearchDao elasticsearchDao )
     {
         this.elasticsearchDao = elasticsearchDao;

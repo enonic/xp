@@ -1,6 +1,5 @@
 package com.enonic.wem.admin.rest.resource.content.page;
 
-import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -22,8 +21,7 @@ import com.enonic.wem.api.module.ModuleKeys;
 @Produces(MediaType.APPLICATION_JSON)
 public class PageDescriptorResource
 {
-    @Inject
-    protected PageDescriptorService pageDescriptorService;
+    private PageDescriptorService pageDescriptorService;
 
     @GET
     public PageDescriptorJson getByKey( @QueryParam("key") final String pageDescriptorKey )
@@ -43,5 +41,10 @@ public class PageDescriptorResource
         final PageDescriptors pageDescriptors = this.pageDescriptorService.getByModules( moduleKeys );
 
         return new PageDescriptorListJson( PageDescriptors.from( pageDescriptors ) );
+    }
+
+    public void setPageDescriptorService( final PageDescriptorService pageDescriptorService )
+    {
+        this.pageDescriptorService = pageDescriptorService;
     }
 }

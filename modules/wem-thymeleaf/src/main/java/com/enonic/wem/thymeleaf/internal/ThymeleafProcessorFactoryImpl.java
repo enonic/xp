@@ -2,8 +2,6 @@ package com.enonic.wem.thymeleaf.internal;
 
 import java.util.Set;
 
-import javax.inject.Singleton;
-
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.dialect.IDialect;
 import org.thymeleaf.standard.StandardDialect;
@@ -14,8 +12,7 @@ import com.google.common.collect.Sets;
 import com.enonic.wem.thymeleaf.ThymeleafProcessor;
 import com.enonic.wem.thymeleaf.ThymeleafProcessorFactory;
 
-@Singleton
-final class ThymeleafProcessorFactoryImpl
+public final class ThymeleafProcessorFactoryImpl
     implements ThymeleafProcessorFactory
 {
     private final TemplateEngine engine;

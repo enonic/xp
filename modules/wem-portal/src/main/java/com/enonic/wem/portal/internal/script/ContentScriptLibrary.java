@@ -16,8 +16,13 @@ import com.enonic.wem.script.ScriptLibrary;
 public final class ContentScriptLibrary
     implements ScriptLibrary
 {
+    private final ContentService contentService;
+
     @Inject
-    protected ContentService contentService;
+    public ContentScriptLibrary( final ContentService contentService )
+    {
+        this.contentService = contentService;
+    }
 
     @Override
     public String getName()
@@ -48,5 +53,11 @@ public final class ContentScriptLibrary
     public Content getContentById( final String id )
     {
         return contentService.getById( ContentId.from( id ), ContentConstants.CONTEXT_STAGE );
+    }
+
+    @Override
+    public ScriptLibrary getInstance()
+    {
+        return this;
     }
 }

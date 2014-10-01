@@ -2,8 +2,6 @@ package com.enonic.wem.core.elasticsearch.resource;
 
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.common.Strings;
 import org.elasticsearch.common.settings.ImmutableSettings;
@@ -49,10 +47,8 @@ public class AbstractSettingsBuilder
         return indexPropertyValue;
     }
 
-    @Inject
     public void setConfigProperties( final ConfigProperties configProperties )
     {
         this.configProperties = configProperties;
     }
-
 }

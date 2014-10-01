@@ -4,11 +4,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
@@ -29,9 +24,9 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.repository.Repository;
+import com.enonic.wem.core.entity.EntityId;
+import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.entity.index.NodeIndexDocumentFactory;
 import com.enonic.wem.core.index.DeleteDocument;
 import com.enonic.wem.core.index.IndexContext;
@@ -42,7 +37,6 @@ import com.enonic.wem.core.index.document.IndexDocument;
 import com.enonic.wem.core.repository.IndexNameResolver;
 import com.enonic.wem.core.repository.StorageNameResolver;
 
-@Singleton
 public class ElasticsearchIndexService
     implements IndexService
 {
@@ -54,28 +48,15 @@ public class ElasticsearchIndexService
 
     private static final TimeValue CLUSTER_NOWAIT_TIMEOUT = TimeValue.timeValueSeconds( 5 );
 
-    private String deleteTimeout = "5s";
+    private final static String deleteTimeout = "5s";
 
-    private String createTimeout = "5s";
+    private final static String createTimeout = "5s";
 
-    private String applyMappingTimeout = "5s";
+    private final static String applyMappingTimeout = "5s";
 
-    private String existsTimeout = "5s";
+    private final static String existsTimeout = "5s";
 
     private Client client;
-
-    @PostConstruct
-    public void start()
-        throws Exception
-    {
-    }
-
-    @PreDestroy
-    public void stop()
-        throws Exception
-    {
-        this.client.close();
-    }
 
     private IndexStatus getIndexStatus( final String indexName, final boolean waitForStatusYellow )
     {
@@ -228,16 +209,13 @@ public class ElasticsearchIndexService
         elasticsearchDao.delete( new DeleteDocument( indexName, indexType, entityId.toString() ) );
     }
 
-    @Inject
     public void setElasticsearchDao( final ElasticsearchDao elasticsearchDao )
     {
         this.elasticsearchDao = elasticsearchDao;
     }
 
-    @Inject
     public void setClient( final Client client )
     {
         this.client = client;
     }
-
 }

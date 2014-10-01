@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.wem.api.blob.BlobKey;
-import com.enonic.wem.api.entity.Attachment;
+import com.enonic.wem.core.entity.Attachment;
 
 public class AttachmentJson
 {

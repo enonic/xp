@@ -2,8 +2,8 @@ package com.enonic.wem.core.version;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.NodeVersionId;
+import com.enonic.wem.core.entity.EntityId;
+import com.enonic.wem.core.entity.NodeVersionId;
 
 public class EntityVersionDocument
 {

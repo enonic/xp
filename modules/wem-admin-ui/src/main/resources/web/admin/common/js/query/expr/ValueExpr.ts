@@ -12,6 +12,10 @@ module api.query.expr {
             return this.value;
         }
 
+        static stringValue(value: string): ValueExpr {
+            return new ValueExpr(new api.data.Value(value, api.data.type.ValueTypes.STRING));
+        }
+
         toString() {
             var type: api.data.type.ValueType = this.value.getType();
 

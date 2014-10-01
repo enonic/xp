@@ -3,7 +3,7 @@ package com.enonic.wem.core.elasticsearch.workspace;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.Requests;
 
-import com.enonic.wem.api.entity.Workspace;
+import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.repository.StorageNameResolver;
 import com.enonic.wem.core.workspace.StoreWorkspaceDocument;

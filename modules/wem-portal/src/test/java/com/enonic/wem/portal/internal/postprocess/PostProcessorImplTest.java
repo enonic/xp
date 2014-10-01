@@ -1,6 +1,8 @@
 package com.enonic.wem.portal.internal.postprocess;
 
 
+import java.util.Set;
+
 import org.junit.Test;
 
 import com.google.common.base.Charsets;
@@ -9,6 +11,8 @@ import com.google.common.io.Resources;
 
 import com.enonic.wem.portal.internal.controller.JsContext;
 import com.enonic.wem.portal.internal.controller.JsHttpResponse;
+import com.enonic.wem.portal.postprocess.PostProcessInjection;
+import com.enonic.wem.portal.postprocess.PostProcessInstruction;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -21,9 +25,12 @@ public class PostProcessorImplTest
         final String html = readResource( "postProcessSource1.html" );
 
         final PostProcessorImpl postProcessor = new PostProcessorImpl();
-        postProcessor.instructions = Sets.newHashSet();
-        postProcessor.instructions.add( new TestPostProcessInstruction() );
-        postProcessor.injections = Sets.newHashSet();
+
+        final Set<PostProcessInstruction> instructions = Sets.newHashSet();
+        instructions.add( new TestPostProcessInstruction() );
+
+        postProcessor.setInstructions( instructions );
+        postProcessor.setInjections( Sets.newHashSet() );
 
         final JsHttpResponse resp = new JsHttpResponse();
         resp.setPostProcess( true );
@@ -47,9 +54,12 @@ public class PostProcessorImplTest
         final String html = readResource( "postProcessSource2.html" );
 
         final PostProcessorImpl postProcessor = new PostProcessorImpl();
-        postProcessor.instructions = Sets.newHashSet();
-        postProcessor.injections = Sets.newHashSet();
-        postProcessor.injections.add( new TestPostProcessInjection() );
+
+        final Set<PostProcessInjection> injections = Sets.newHashSet();
+        injections.add( new TestPostProcessInjection() );
+
+        postProcessor.setInjections( injections );
+        postProcessor.setInstructions( Sets.newHashSet() );
 
         final JsHttpResponse resp = new JsHttpResponse();
         resp.setPostProcess( true );

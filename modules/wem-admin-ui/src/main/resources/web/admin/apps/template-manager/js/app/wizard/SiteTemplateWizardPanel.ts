@@ -5,11 +5,11 @@ module app.wizard {
 
     export class SiteTemplateWizardPanel extends api.app.wizard.WizardPanel<api.content.site.template.SiteTemplate> {
 
-        private static DEFAULT_SITE_TEMPLATE_ICON_URL: string = api.util.getAdminUri("common/images/icons/icoMoon/128x128/earth.png");
+        private static DEFAULT_SITE_TEMPLATE_ICON_URL: string = api.util.UriHelper.getAdminUri("common/images/icons/icoMoon/128x128/earth.png");
         private formIcon: api.app.wizard.FormIcon;
         private wizardHeader: api.app.wizard.WizardHeaderWithDisplayNameAndName;
         private iconUploadId: string;
-        private wizardActions : app.wizard.action.SiteTemplateWizardActions;
+        private wizardActions: app.wizard.action.SiteTemplateWizardActions;
 
         private siteTemplateStep: SiteTemplateWizardStepForm;
 
@@ -22,13 +22,13 @@ module app.wizard {
 
             var iconUrl = SiteTemplateWizardPanel.DEFAULT_SITE_TEMPLATE_ICON_URL;
             this.formIcon = new api.app.wizard.FormIcon(iconUrl, "Click to upload icon",
-                api.util.getRestUri("upload"));
+                api.util.UriHelper.getRestUri("upload"));
 
             this.formIcon.onUploadFinished((event: api.app.wizard.UploadFinishedEvent) => {
 
                 this.iconUploadId = event.getUploadItem().getName();
-                this.formIcon.setSrc(api.util.getRestUri('upload/' + event.getUploadItem().getName() + '?' +
-                                                         event.getUploadItem().getMimeType()));
+                this.formIcon.setSrc(api.util.UriHelper.getRestUri('upload/' + event.getUploadItem().getName() + '?' +
+                                                                   event.getUploadItem().getMimeType()));
             });
 
             var mainToolbar = new SiteTemplateWizardToolbar({
@@ -104,7 +104,7 @@ module app.wizard {
             return deferred.promise
         }
 
-        getCloseAction() : api.ui.Action {
+        getCloseAction(): api.ui.Action {
             return this.wizardActions.getCloseAction();
         }
     }

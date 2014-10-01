@@ -25,10 +25,10 @@ import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.rendering.RenderingMode;
+import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.portal.internal.base.BaseResource;
 import com.enonic.wem.portal.internal.controller.JsContext;
 import com.enonic.wem.portal.internal.controller.JsController;
@@ -43,22 +43,17 @@ import static com.enonic.wem.api.content.site.ModuleConfig.newModuleConfig;
 public final class PageTemplateResource
     extends BaseResource
 {
-    @Inject
     protected JsControllerFactory controllerFactory;
 
-    @Inject
     protected SiteTemplateService siteTemplateService;
 
-    @Inject
     protected PageTemplateService pageTemplateService;
 
-    @Inject
     protected PageDescriptorService pageDescriptorService;
 
     protected String siteTemplateKeyParam;
 
     protected String pageTemplateKeyParam;
-
 
     @Override
     protected void doInit()
@@ -172,4 +167,27 @@ public final class PageTemplateResource
         }
     }
 
+    @Inject
+    public void setControllerFactory( final JsControllerFactory controllerFactory )
+    {
+        this.controllerFactory = controllerFactory;
+    }
+
+    @Inject
+    public void setSiteTemplateService( final SiteTemplateService siteTemplateService )
+    {
+        this.siteTemplateService = siteTemplateService;
+    }
+
+    @Inject
+    public void setPageTemplateService( final PageTemplateService pageTemplateService )
+    {
+        this.pageTemplateService = pageTemplateService;
+    }
+
+    @Inject
+    public void setPageDescriptorService( final PageDescriptorService pageDescriptorService )
+    {
+        this.pageDescriptorService = pageDescriptorService;
+    }
 }

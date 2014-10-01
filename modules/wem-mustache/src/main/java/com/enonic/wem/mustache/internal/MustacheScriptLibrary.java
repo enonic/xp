@@ -2,20 +2,20 @@ package com.enonic.wem.mustache.internal;
 
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.mustache.MustacheProcessor;
 import com.enonic.wem.mustache.MustacheProcessorFactory;
 import com.enonic.wem.script.ScriptLibrary;
 
-@Singleton
 public final class MustacheScriptLibrary
     implements ScriptLibrary
 {
-    @Inject
-    protected MustacheProcessorFactory processorFactory;
+    private final MustacheProcessorFactory processorFactory;
+
+    public MustacheScriptLibrary( final MustacheProcessorFactory processorFactory )
+    {
+        this.processorFactory = processorFactory;
+    }
 
     @Override
     public String getName()
@@ -29,5 +29,11 @@ public final class MustacheScriptLibrary
         processor.view( view );
         processor.parameters( params );
         return processor.process();
+    }
+
+    @Override
+    public ScriptLibrary getInstance()
+    {
+        return this;
     }
 }

@@ -12,17 +12,17 @@ import org.attoparser.markup.MarkupAttoParser;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.portal.internal.controller.JsContext;
-import com.enonic.wem.portal.internal.postprocess.injection.PostProcessInjection;
-import com.enonic.wem.portal.internal.postprocess.instruction.PostProcessInstruction;
+import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.internal.rendering.RenderException;
+import com.enonic.wem.portal.postprocess.PostProcessInjection;
+import com.enonic.wem.portal.postprocess.PostProcessInstruction;
 
 final class PostProcessEvaluator
     implements IAttoHandler, ICommentHandling, IBasicElementHandling
 {
     private final StringBuilder result;
 
-    protected JsContext context;
+    protected PortalContext context;
 
     protected String input;
 

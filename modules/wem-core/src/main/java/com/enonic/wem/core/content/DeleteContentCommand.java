@@ -4,13 +4,12 @@ package com.enonic.wem.core.content;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.DeleteContentParams;
 import com.enonic.wem.api.content.DeleteContentResult;
-import com.enonic.wem.api.entity.NoNodeAtPathFoundException;
-import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.api.entity.NodePath;
+import com.enonic.wem.core.entity.NoNodeAtPathFoundException;
+import com.enonic.wem.core.entity.Node;
+import com.enonic.wem.core.entity.NodePath;
 
 
 final class DeleteContentCommand

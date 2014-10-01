@@ -1,9 +1,9 @@
 package com.enonic.wem.portal.internal.postprocess;
 
 
-import com.enonic.wem.portal.internal.controller.JsContext;
+import com.enonic.wem.portal.PortalContext;
 
 public interface PostProcessor
 {
-    void processResponse( JsContext context );
+    void processResponse( PortalContext context );
 }

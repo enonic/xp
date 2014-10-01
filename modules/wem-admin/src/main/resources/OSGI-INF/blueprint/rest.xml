@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+
+  <reference id="configProperties" interface="com.enonic.wem.core.config.ConfigProperties"/>
+
+  <reference id="startupInitializer" interface="com.enonic.wem.core.initializer.StartupInitializer"/>
+
+  <reference id="attachmentService" interface="com.enonic.wem.api.content.attachment.AttachmentService"/>
+
+  <reference id="contentService" interface="com.enonic.wem.api.content.ContentService"/>
+
+  <reference id="contentTypeService" interface="com.enonic.wem.api.schema.content.ContentTypeService"/>
+
+  <reference id="mixinService" interface="com.enonic.wem.api.schema.mixin.MixinService"/>
+
+  <reference id="blobService" interface="com.enonic.wem.api.blob.BlobService"/>
+
+  <reference id="moduleService" interface="com.enonic.wem.api.module.ModuleService"/>
+
+  <reference id="relationshipService" interface="com.enonic.wem.api.relationship.RelationshipService"/>
+
+  <reference id="relationshipTypeService" interface="com.enonic.wem.api.schema.relationship.RelationshipTypeService"/>
+
+  <reference id="siteTemplateService" interface="com.enonic.wem.api.content.site.SiteTemplateService"/>
+
+  <reference id="pageService" interface="com.enonic.wem.api.content.page.PageService"/>
+
+  <reference id="siteService" interface="com.enonic.wem.api.content.site.SiteService"/>
+
+  <reference id="pageTemplateService" interface="com.enonic.wem.api.content.page.PageTemplateService"/>
+
+  <reference id="pageDescriptorService" interface="com.enonic.wem.api.content.page.PageDescriptorService"/>
+
+  <reference id="partDescriptorService" interface="com.enonic.wem.api.content.page.part.PartDescriptorService"/>
+
+  <reference id="layoutDescriptorService" interface="com.enonic.wem.api.content.page.layout.LayoutDescriptorService"/>
+
+  <bean id="backgroundImageResource" class="com.enonic.wem.admin.rest.resource.ui.BackgroundImageResource">
+    <property name="configProperties" ref="configProperties"/>
+  </bean>
+
+  <bean id="toolsResource" class="com.enonic.wem.admin.rest.resource.tools.ToolsResource">
+    <property name="startupInitializer" ref="startupInitializer"/>
+  </bean>
+
+  <bean id="contentImageResource" class="com.enonic.wem.admin.rest.resource.content.ContentImageResource">
+    <property name="attachmentService" ref="attachmentService"/>
+    <property name="contentService" ref="contentService"/>
+    <property name="contentTypeService" ref="contentTypeService"/>
+    <property name="blobService" ref="blobService"/>
+  </bean>
+
+  <bean id="contentIconResource" class="com.enonic.wem.admin.rest.resource.content.ContentIconResource">
+    <property name="attachmentService" ref="attachmentService"/>
+    <property name="contentService" ref="contentService"/>
+    <property name="blobService" ref="blobService"/>
+  </bean>
+
+  <bean id="contentAttachmentResource" class="com.enonic.wem.admin.rest.resource.content.ContentAttachmentResource">
+    <property name="attachmentService" ref="attachmentService"/>
+  </bean>
+
+  <bean id="blobResource" class="com.enonic.wem.admin.rest.resource.blob.BlobResource">
+    <property name="blobService" ref="blobService"/>
+  </bean>
+
+  <bean id="moduleResource" class="com.enonic.wem.admin.rest.resource.module.ModuleResource">
+    <property name="bundleContext" ref="blueprintBundleContext"/>
+    <property name="moduleService" ref="moduleService"/>
+  </bean>
+
+  <bean id="relationshipResource" class="com.enonic.wem.admin.rest.resource.relationship.RelationshipResource">
+    <property name="relationshipService" ref="relationshipService"/>
+  </bean>
+
+  <bean id="relationshipTypeResource" class="com.enonic.wem.admin.rest.resource.schema.relationship.RelationshipTypeResource">
+    <property name="relationshipTypeService" ref="relationshipTypeService"/>
+  </bean>
+
+  <bean id="contentResource" class="com.enonic.wem.admin.rest.resource.content.ContentResource">
+    <property name="contentService" ref="contentService"/>
+    <property name="contentTypeService" ref="contentTypeService"/>
+    <property name="attachmentService" ref="attachmentService"/>
+    <property name="mixinService" ref="mixinService"/>
+    <property name="siteTemplateService" ref="siteTemplateService"/>
+  </bean>
+
+  <bean id="pageResource" class="com.enonic.wem.admin.rest.resource.content.page.PageResource">
+    <property name="contentTypeService" ref="contentTypeService"/>
+    <property name="attachmentService" ref="attachmentService"/>
+    <property name="mixinService" ref="mixinService"/>
+    <property name="siteTemplateService" ref="siteTemplateService"/>
+    <property name="pageService" ref="pageService"/>
+  </bean>
+
+  <bean id="siteResource" class="com.enonic.wem.admin.rest.resource.content.site.SiteResource">
+    <property name="contentTypeService" ref="contentTypeService"/>
+    <property name="attachmentService" ref="attachmentService"/>
+    <property name="mixinService" ref="mixinService"/>
+    <property name="siteTemplateService" ref="siteTemplateService"/>
+    <property name="siteService" ref="siteService"/>
+  </bean>
+
+  <bean id="mixinResource" class="com.enonic.wem.admin.rest.resource.schema.mixin.MixinResource">
+    <property name="mixinService" ref="mixinService"/>
+  </bean>
+
+  <bean id="contentTypeResource" class="com.enonic.wem.admin.rest.resource.schema.content.ContentTypeResource">
+    <property name="contentTypeService" ref="contentTypeService"/>
+  </bean>
+
+  <bean id="siteTemplateResource" class="com.enonic.wem.admin.rest.resource.content.site.template.SiteTemplateResource">
+    <property name="siteTemplateService" ref="siteTemplateService"/>
+    <property name="contentTypeService" ref="contentTypeService"/>
+  </bean>
+
+  <bean id="siteTemplateIconResource" class="com.enonic.wem.admin.rest.resource.content.site.template.SiteTemplateIconResource">
+    <property name="siteTemplateService" ref="siteTemplateService"/>
+    <property name="contentTypeService" ref="contentTypeService"/>
+  </bean>
+
+  <bean id="pageTemplateResource" class="com.enonic.wem.admin.rest.resource.content.page.PageTemplateResource">
+    <property name="pageTemplateService" ref="pageTemplateService"/>
+    <property name="contentService" ref="contentService"/>
+    <property name="siteService" ref="siteService"/>
+  </bean>
+
+  <bean id="pageDescriptorResource" class="com.enonic.wem.admin.rest.resource.content.page.PageDescriptorResource">
+    <property name="pageDescriptorService" ref="pageDescriptorService"/>
+  </bean>
+
+  <bean id="partDescriptorResource" class="com.enonic.wem.admin.rest.resource.content.page.part.PartDescriptorResource">
+    <property name="partDescriptorService" ref="partDescriptorService"/>
+  </bean>
+
+  <bean id="layoutDescriptorResource" class="com.enonic.wem.admin.rest.resource.content.page.layout.LayoutDescriptorResource">
+    <property name="layoutDescriptorService" ref="layoutDescriptorService"/>
+  </bean>
+
+  <bean id="restServlet" class="com.enonic.wem.admin.rest.RestServlet">
+    <property name="resources">
+      <list>
+        <bean class="com.enonic.wem.admin.rest.provider.JsonObjectProvider"/>
+        <bean class="com.enonic.wem.admin.rest.provider.JsonSerializableProvider"/>
+        <bean class="com.enonic.wem.admin.rest.exception.DefaultExceptionMapper"/>
+        <bean class="com.enonic.wem.admin.rest.exception.ConflictExceptionMapper"/>
+        <bean class="com.enonic.wem.admin.rest.exception.IllegalArgumentExceptionMapper"/>
+        <bean class="com.enonic.wem.admin.rest.exception.JsonMappingExceptionMapper"/>
+        <bean class="com.enonic.wem.admin.rest.exception.NotFoundExceptionMapper"/>
+        <bean class="com.enonic.wem.admin.rest.multipart.MultipartFormReader"/>
+        <bean class="com.enonic.wem.admin.rest.provider.RenderedImageProvider"/>
+        <ref component-id="backgroundImageResource"/>
+        <ref component-id="toolsResource"/>
+        <bean class="com.enonic.wem.admin.rest.resource.status.StatusResource"/>
+        <bean class="com.enonic.wem.admin.rest.resource.auth.AuthResource"/>
+        <ref component-id="contentImageResource"/>
+        <ref component-id="contentIconResource"/>
+        <ref component-id="contentAttachmentResource"/>
+        <ref component-id="blobResource"/>
+        <ref component-id="moduleResource"/>
+        <ref component-id="relationshipResource"/>
+        <ref component-id="relationshipTypeResource"/>
+        <ref component-id="contentResource"/>
+        <ref component-id="pageResource"/>
+        <ref component-id="siteResource"/>
+        <ref component-id="mixinResource"/>
+        <ref component-id="contentTypeResource"/>
+        <ref component-id="siteTemplateResource"/>
+        <ref component-id="siteTemplateIconResource"/>
+        <ref component-id="pageTemplateResource"/>
+        <ref component-id="pageDescriptorResource"/>
+        <ref component-id="partDescriptorResource"/>
+        <ref component-id="layoutDescriptorResource"/>
+      </list>
+    </property>
+  </bean>
+
+  <service interface="javax.servlet.Servlet" ref="restServlet">
+    <service-properties>
+      <entry key="alias" value="/admin/rest/*"/>
+      <entry key="init.resteasy.servlet.mapping.prefix" value="/admin/rest"/>
+    </service-properties>
+  </service>
+
+</blueprint>

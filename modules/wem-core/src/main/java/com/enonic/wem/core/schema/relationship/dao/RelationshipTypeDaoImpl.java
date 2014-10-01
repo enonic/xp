@@ -1,7 +1,5 @@
 package com.enonic.wem.core.schema.relationship.dao;
 
-import javax.inject.Inject;
-
 import com.enonic.wem.api.schema.SchemaRegistry;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
@@ -24,7 +22,6 @@ public final class RelationshipTypeDaoImpl
         return this.schemaRegistry.getRelationshipType( relationshipTypeName );
     }
 
-    @Inject
     public void setSchemaRegistry( final SchemaRegistry schemaRegistry )
     {
         this.schemaRegistry = schemaRegistry;

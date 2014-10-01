@@ -1,7 +1,5 @@
 package com.enonic.wem.core.content;
 
-import javax.inject.Inject;
-
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.CompareContentParams;
 import com.enonic.wem.api.content.CompareContentResult;
@@ -31,30 +29,24 @@ import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.ValidateContentData;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.entity.NodeService;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
+import com.enonic.wem.core.entity.NodeService;
 import com.enonic.wem.core.index.query.QueryService;
 
 public class ContentServiceImpl
     implements ContentService
 {
-    @Inject
     private ContentTypeService contentTypeService;
 
-    @Inject
     private NodeService nodeService;
 
-    @Inject
     private BlobService blobService;
 
-    @Inject
     private AttachmentService attachmentService;
 
-    @Inject
     private QueryService queryService;
 
-    @Inject
     private ContentNodeTranslator contentNodeTranslator;
 
     @Override
@@ -280,5 +272,35 @@ public class ContentServiceImpl
     public String generateContentName( final String displayName )
     {
         return new ContentPathNameGenerator().generatePathName( displayName );
+    }
+
+    public void setContentTypeService( final ContentTypeService contentTypeService )
+    {
+        this.contentTypeService = contentTypeService;
+    }
+
+    public void setNodeService( final NodeService nodeService )
+    {
+        this.nodeService = nodeService;
+    }
+
+    public void setBlobService( final BlobService blobService )
+    {
+        this.blobService = blobService;
+    }
+
+    public void setAttachmentService( final AttachmentService attachmentService )
+    {
+        this.attachmentService = attachmentService;
+    }
+
+    public void setQueryService( final QueryService queryService )
+    {
+        this.queryService = queryService;
+    }
+
+    public void setContentNodeTranslator( final ContentNodeTranslator contentNodeTranslator )
+    {
+        this.contentNodeTranslator = contentNodeTranslator;
     }
 }

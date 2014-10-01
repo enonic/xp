@@ -1,6 +1,5 @@
 package com.enonic.wem.admin.rest.resource.content;
 
-import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -24,10 +23,7 @@ public class ContentAttachmentResource
         repository( ContentConstants.CONTENT_REPO ).
         build();
 
-
-    @Inject
     private AttachmentService attachmentService;
-
 
     @GET
     @Path("all")
@@ -38,4 +34,8 @@ public class ContentAttachmentResource
         return new AttachmentListJson( attachments );
     }
 
+    public void setAttachmentService( final AttachmentService attachmentService )
+    {
+        this.attachmentService = attachmentService;
+    }
 }

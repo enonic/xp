@@ -1,33 +1,10 @@
 package com.enonic.wem.core.entity;
 
-import javax.inject.Inject;
-
 import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.entity.CreateNodeParams;
-import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.EntityIds;
-import com.enonic.wem.api.entity.FindNodeVersionsResult;
-import com.enonic.wem.api.entity.FindNodesByParentParams;
-import com.enonic.wem.api.entity.FindNodesByParentResult;
-import com.enonic.wem.api.entity.FindNodesByQueryResult;
-import com.enonic.wem.api.entity.GetActiveNodeVersionsParams;
-import com.enonic.wem.api.entity.GetActiveNodeVersionsResult;
-import com.enonic.wem.api.entity.GetNodeVersionsParams;
-import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.api.entity.NodeComparison;
-import com.enonic.wem.api.entity.NodeComparisons;
-import com.enonic.wem.api.entity.NodePath;
-import com.enonic.wem.api.entity.NodePaths;
-import com.enonic.wem.api.entity.NodeService;
-import com.enonic.wem.api.entity.NodeVersionId;
-import com.enonic.wem.api.entity.NodeVersionIds;
-import com.enonic.wem.api.entity.Nodes;
-import com.enonic.wem.api.entity.RenameNodeParams;
-import com.enonic.wem.api.entity.UpdateNodeParams;
-import com.enonic.wem.api.entity.Workspace;
-import com.enonic.wem.api.entity.query.NodeQuery;
+import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.entity.dao.NodeDao;
 import com.enonic.wem.core.entity.dao.NodeNotFoundException;
+import com.enonic.wem.core.entity.query.NodeQuery;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.index.query.QueryService;
 import com.enonic.wem.core.version.VersionService;
@@ -37,19 +14,14 @@ import com.enonic.wem.core.workspace.WorkspaceService;
 public class NodeServiceImpl
     implements NodeService
 {
-    @Inject
     private IndexService indexService;
 
-    @Inject
     private NodeDao nodeDao;
 
-    @Inject
-    WorkspaceService workspaceService;
+    private WorkspaceService workspaceService;
 
-    @Inject
     private VersionService versionService;
 
-    @Inject
     private QueryService queryService;
 
     @Override
@@ -272,5 +244,30 @@ public class NodeServiceImpl
             context( context ).
             build().
             resolve( nodeDao.getByVersionId( blobKey ) );
+    }
+
+    public void setIndexService( final IndexService indexService )
+    {
+        this.indexService = indexService;
+    }
+
+    public void setNodeDao( final NodeDao nodeDao )
+    {
+        this.nodeDao = nodeDao;
+    }
+
+    public void setWorkspaceService( final WorkspaceService workspaceService )
+    {
+        this.workspaceService = workspaceService;
+    }
+
+    public void setVersionService( final VersionService versionService )
+    {
+        this.versionService = versionService;
+    }
+
+    public void setQueryService( final QueryService queryService )
+    {
+        this.queryService = queryService;
     }
 }

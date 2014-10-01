@@ -1,17 +1,15 @@
 package com.enonic.wem.portal.internal.content.page;
 
-
 import java.text.MessageFormat;
 
 import com.enonic.wem.api.content.page.text.TextComponent;
 import com.enonic.wem.api.rendering.RenderingMode;
+import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.PortalRequest;
 import com.enonic.wem.portal.PortalResponse;
-import com.enonic.wem.portal.internal.controller.JsContext;
 import com.enonic.wem.portal.internal.controller.JsHttpResponseSerializer;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
-
 
 public final class TextRenderer
     implements Renderer<TextComponent>
@@ -22,7 +20,13 @@ public final class TextRenderer
     private static final String EMPTY_COMPONENT_PREVIEW_MODE_HTML = "<div></div>";
 
     @Override
-    public RenderResult render( final TextComponent textComponent, final JsContext context )
+    public Class<TextComponent> getType()
+    {
+        return TextComponent.class;
+    }
+
+    @Override
+    public RenderResult render( final TextComponent textComponent, final PortalContext context )
     {
         final RenderingMode renderingMode = getRenderingMode( context );
         final PortalResponse response = context.getResponse();
@@ -49,7 +53,7 @@ public final class TextRenderer
         return new JsHttpResponseSerializer( response ).serialize();
     }
 
-    private void renderEmptyTextComponent( final TextComponent textComponent, final JsContext context )
+    private void renderEmptyTextComponent( final TextComponent textComponent, final PortalContext context )
     {
         final PortalResponse response = context.getResponse();
         final RenderingMode renderingMode = getRenderingMode( context );
@@ -69,7 +73,7 @@ public final class TextRenderer
         }
     }
 
-    private RenderingMode getRenderingMode( final JsContext context )
+    private RenderingMode getRenderingMode( final PortalContext context )
     {
         final PortalRequest req = context.getRequest();
         return req == null ? RenderingMode.LIVE : req.getMode();

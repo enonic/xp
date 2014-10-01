@@ -12,8 +12,6 @@ module api.schema {
 
         private iconUrl: string;
 
-        private kind: SchemaKind;
-
         constructor(builder: SchemaBuilder) {
             super(builder);
             this.key = builder.key;
@@ -21,7 +19,6 @@ module api.schema {
             this.displayName = builder.displayName;
             this.description = builder.description;
             this.iconUrl = builder.iconUrl;
-            this.kind = builder.kind;
         }
 
         getKey(): string {
@@ -42,10 +39,6 @@ module api.schema {
 
         getIconUrl(): string {
             return this.iconUrl;
-        }
-
-        getSchemaKind(): SchemaKind {
-            return this.kind;
         }
 
         equals(o: api.Equitable): boolean {
@@ -76,10 +69,6 @@ module api.schema {
                 return false;
             }
 
-            if (!ObjectHelper.equals(this.kind, other.kind)) {
-                return false;
-            }
-
             return true;
         }
 
@@ -100,8 +89,6 @@ module api.schema {
 
         iconUrl: string;
 
-        kind: SchemaKind;
-
         constructor(source?: Schema) {
             if (source) {
                 super(source);
@@ -110,7 +97,6 @@ module api.schema {
                 this.displayName = source.getDisplayName();
                 this.description = source.getDescription();
                 this.iconUrl = source.getIconUrl();
-                this.kind = source.getSchemaKind();
             }
         }
 
@@ -122,7 +108,6 @@ module api.schema {
             this.displayName = json.displayName;
             this.description = json.description;
             this.iconUrl = json.iconUrl;
-            this.kind = SchemaKind.fromString(json.schemaKind);
             return this;
         }
 

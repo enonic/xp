@@ -5,6 +5,7 @@ import javax.script.Bindings;
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.script.ScriptLibrary;
+import com.enonic.wem.script.command.Command;
 
 public final class ScriptModuleScope
 {
@@ -94,5 +95,15 @@ public final class ScriptModuleScope
         }
 
         return null;
+    }
+
+    public Command newCommand( final String name )
+    {
+        return this.executor.getEnvironment().newCommand( name );
+    }
+
+    public void invokeCommand( final Command command )
+    {
+        this.executor.getEnvironment().invokeCommand( command );
     }
 }

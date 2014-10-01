@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+
+  <bean id="schemaRegistry" class="com.enonic.wem.core.schema.SchemaRegistryImpl" init-method="start" destroy-method="stop">
+    <property name="bundleContext" ref="blueprintBundleContext"/>
+  </bean>
+
+  <service ref="schemaRegistry" interface="com.enonic.wem.api.schema.SchemaRegistry"/>
+
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.core.schema.CoreSchemasProvider"/>
+  </service>
+
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.core.schema.SchemaModuleListener">
+      <argument index="0" ref="moduleService"/>
+    </bean>
+  </service>
+
+  <bean id="relationshipTypeDao" class="com.enonic.wem.core.schema.relationship.dao.RelationshipTypeDaoImpl">
+    <property name="schemaRegistry" ref="schemaRegistry"/>
+  </bean>
+
+  <bean id="contentTypeDao" class="com.enonic.wem.core.schema.content.dao.ContentTypeDaoImpl">
+    <property name="schemaRegistry" ref="schemaRegistry"/>
+  </bean>
+
+  <bean id="mixinDao" class="com.enonic.wem.core.schema.mixin.dao.MixinDaoImpl">
+    <property name="schemaRegistry" ref="schemaRegistry"/>
+  </bean>
+
+  <bean id="relationshipTypeService" class="com.enonic.wem.core.schema.relationship.RelationshipTypeServiceImpl">
+    <property name="relationshipTypeDao" ref="relationshipTypeDao"/>
+  </bean>
+
+  <bean id="contentTypeService" class="com.enonic.wem.core.schema.content.ContentTypeServiceImpl">
+    <property name="contentTypeDao" ref="contentTypeDao"/>
+    <property name="mixinService" ref="mixinService"/>
+  </bean>
+
+  <bean id="mixinService" class="com.enonic.wem.core.schema.mixin.MixinServiceImpl">
+    <property name="mixinDao" ref="mixinDao"/>
+  </bean>
+
+  <service ref="mixinService" auto-export="interfaces"/>
+
+  <service ref="contentTypeService" auto-export="interfaces"/>
+
+  <service ref="relationshipTypeService" auto-export="interfaces"/>
+
+</blueprint>

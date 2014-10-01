@@ -1,9 +1,9 @@
 package com.enonic.wem.core.content;
 
 import com.enonic.wem.api.content.query.ContentQuery;
-import com.enonic.wem.api.entity.query.NodeQuery;
+import com.enonic.wem.core.entity.query.NodeQuery;
 
-public class ContentQueryNodeQueryTranslator
+class ContentQueryNodeQueryTranslator
     extends ContentQueryEntityQueryTranslator
 {
     public static NodeQuery translate( final ContentQuery contentQuery )

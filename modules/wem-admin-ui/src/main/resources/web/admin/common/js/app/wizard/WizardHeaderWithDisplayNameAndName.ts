@@ -56,22 +56,22 @@ module api.app.wizard {
 
             this.displayNameEl.onValueChanged((event: api.ui.ValueChangedEvent) => {
 
-                var actualDisplayName = this.displayNameEl.getValue();
+                var currentDisplayName = event.getNewValue();
 
                 if (this.displayNameGenerator && this.displayNameGenerator.hasScript()) {
                     var generatedDisplayName = this.displayNameGenerator.execute();
 
                     this.displayNameProgrammaticallySet =
-                    generatedDisplayName == actualDisplayName || api.util.StringHelper.isEmpty(actualDisplayName);
+                    generatedDisplayName == currentDisplayName || api.util.StringHelper.isEmpty(currentDisplayName);
                 }
-                this.doAutoGenerateName(actualDisplayName);
+                this.doAutoGenerateName(currentDisplayName);
             });
 
             this.nameEl.onValueChanged((event: api.ui.ValueChangedEvent) => {
-                var currentName = this.nameEl.getValue();
-
+                var currentName = event.getNewValue();
                 var generatedName = this.generateName(this.getDisplayName());
-                this.autoGenerateName = currentName == generatedName;
+
+                this.autoGenerateName = this.checkAutoGenerateName(currentName, generatedName);
             });
 
             this.onShown((event) => this.updatePathAndNameWidth());
@@ -79,11 +79,13 @@ module api.app.wizard {
 
         }
 
+        private checkAutoGenerateName(name: string, displayName: string) {
+            return api.util.StringHelper.isEmpty(name) || displayName == name || name == this.generateName(displayName);
+        }
+
         initNames(displayName: string, name: string, forceDisplayNameProgrammaticallySet: boolean) {
 
-            if (displayName == name || name == this.generateName(displayName)) {
-                this.autoGenerateName = true;
-            }
+            this.autoGenerateName = this.checkAutoGenerateName(name, displayName);
 
             this.displayNameEl.setValue(displayName);
             if (name != null) {

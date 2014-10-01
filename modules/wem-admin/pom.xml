@@ -79,9 +79,6 @@
               resteasy-jaxrs,
               jaxrs-api;scope=compile
             </Embed-Dependency>
-            <Bundle-Activator>
-              com.enonic.wem.admin.Activator
-            </Bundle-Activator>
           </instructions>
         </configuration>
       </plugin>

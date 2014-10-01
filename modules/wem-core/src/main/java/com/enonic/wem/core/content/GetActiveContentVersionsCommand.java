@@ -5,12 +5,12 @@ import com.google.common.collect.ImmutableMap;
 import com.enonic.wem.api.content.ActiveContentVersionEntry;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.GetActiveContentVersionsResult;
-import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.GetActiveNodeVersionsParams;
-import com.enonic.wem.api.entity.GetActiveNodeVersionsResult;
-import com.enonic.wem.api.entity.NodeVersion;
-import com.enonic.wem.api.entity.Workspace;
-import com.enonic.wem.api.entity.Workspaces;
+import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.api.workspace.Workspaces;
+import com.enonic.wem.core.entity.EntityId;
+import com.enonic.wem.core.entity.GetActiveNodeVersionsParams;
+import com.enonic.wem.core.entity.GetActiveNodeVersionsResult;
+import com.enonic.wem.core.entity.NodeVersion;
 
 public class GetActiveContentVersionsCommand
     extends AbstractContentCommand

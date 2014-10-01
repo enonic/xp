@@ -18,7 +18,6 @@ import com.enonic.wem.portal.internal.rendering.RenderResult;
 public final class ServiceResource
     extends ModuleBaseResource
 {
-    @Inject
     protected JsControllerFactory controllerFactory;
 
     @Override
@@ -41,5 +40,11 @@ public final class ServiceResource
 
         final RenderResult result = new JsHttpResponseSerializer( context.getResponse() ).serialize();
         return toRepresentation( result );
+    }
+
+    @Inject
+    public void setControllerFactory( final JsControllerFactory controllerFactory )
+    {
+        this.controllerFactory = controllerFactory;
     }
 }

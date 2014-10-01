@@ -33,6 +33,7 @@ public abstract class GuiceActivator
     {
         this.context = context;
         activate();
+        doStart();
     }
 
     @Override
@@ -41,6 +42,7 @@ public abstract class GuiceActivator
     {
         try
         {
+            doStop();
             deactivate();
         }
         finally
@@ -63,5 +65,17 @@ public abstract class GuiceActivator
         throws Exception
     {
         this.manager.deactivate();
+    }
+
+    protected void doStart()
+        throws Exception
+    {
+        // Do nothing
+    }
+
+    protected void doStop()
+        throws Exception
+    {
+        // Do nothing
     }
 }

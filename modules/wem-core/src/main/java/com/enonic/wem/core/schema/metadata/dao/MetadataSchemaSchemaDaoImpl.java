@@ -1,11 +1,9 @@
 package com.enonic.wem.core.schema.metadata.dao;
 
-import javax.inject.Inject;
-
+import com.enonic.wem.api.schema.SchemaRegistry;
 import com.enonic.wem.api.schema.metadata.MetadataSchema;
 import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
 import com.enonic.wem.api.schema.metadata.MetadataSchemas;
-import com.enonic.wem.api.schema.SchemaRegistry;
 
 public final class MetadataSchemaSchemaDaoImpl
     implements MetadataSchemaDao
@@ -24,7 +22,6 @@ public final class MetadataSchemaSchemaDaoImpl
         return this.schemaRegistry.getMetadata( metadataSchemaName );
     }
 
-    @Inject
     public void setSchemaRegistry( final SchemaRegistry schemaRegistry )
     {
         this.schemaRegistry = schemaRegistry;

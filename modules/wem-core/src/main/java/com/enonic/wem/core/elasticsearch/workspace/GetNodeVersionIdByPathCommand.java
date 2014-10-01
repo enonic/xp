@@ -3,11 +3,11 @@ package com.enonic.wem.core.elasticsearch.workspace;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.TermQueryBuilder;
 
-import com.enonic.wem.api.entity.NodePath;
-import com.enonic.wem.api.entity.NodeVersionId;
-import com.enonic.wem.api.entity.Workspace;
+import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.elasticsearch.ElasticsearchDataException;
 import com.enonic.wem.core.elasticsearch.QueryMetaData;
+import com.enonic.wem.core.entity.NodePath;
+import com.enonic.wem.core.entity.NodeVersionId;
 import com.enonic.wem.core.index.result.SearchResult;
 import com.enonic.wem.core.index.result.SearchResultEntry;
 

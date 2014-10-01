@@ -5,11 +5,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
@@ -17,11 +12,9 @@ import org.osgi.framework.BundleListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.admin.config.AdminConfig;
-
-@Singleton
 public final class ResourceLocator
     implements BundleListener
 {
@@ -31,17 +24,19 @@ public final class ResourceLocator
 
     private final BundleContext context;
 
-    private final File resourcesDevDir;
+    private File resourcesDevDir;
 
-    @Inject
-    public ResourceLocator( final BundleContext context, final AdminConfig config )
+    public ResourceLocator( final BundleContext context )
     {
         this.bundles = Lists.newCopyOnWriteArrayList();
         this.context = context;
-        this.resourcesDevDir = config.getResourcesDevDir();
     }
 
-    @PostConstruct
+    public void setResourcesDevDir( final String dir )
+    {
+        this.resourcesDevDir = Strings.isNullOrEmpty( dir ) ? null : new File( dir );
+    }
+
     public void start()
     {
         this.context.addBundleListener( this );
@@ -51,7 +46,6 @@ public final class ResourceLocator
         }
     }
 
-    @PreDestroy
     public void stop()
     {
         this.context.removeBundleListener( this );

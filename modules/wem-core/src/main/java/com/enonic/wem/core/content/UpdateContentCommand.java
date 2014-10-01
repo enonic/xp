@@ -17,13 +17,13 @@ import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.thumb.Thumbnail;
-import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.api.entity.UpdateNodeParams;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
+import com.enonic.wem.core.entity.Node;
+import com.enonic.wem.core.entity.UpdateNodeParams;
 
 import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.api.content.ContentConstants.CONTEXT_STAGE;

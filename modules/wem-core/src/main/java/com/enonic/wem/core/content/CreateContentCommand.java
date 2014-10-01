@@ -4,13 +4,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentDataValidationException;
 import com.enonic.wem.api.content.CreateContentParams;
-import com.enonic.wem.api.entity.CreateNodeParams;
-import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
+import com.enonic.wem.core.entity.CreateNodeParams;
+import com.enonic.wem.core.entity.Node;
 
 final class CreateContentCommand
     extends AbstractContentCommand

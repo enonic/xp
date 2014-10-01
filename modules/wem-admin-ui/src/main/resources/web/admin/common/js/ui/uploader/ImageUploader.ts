@@ -157,7 +157,7 @@ module api.ui.uploader {
             this.value = value;
             var src: string;
             if (value && (value.indexOf('/') == -1)) {
-                src = api.util.getRestUri(value ? 'blob/' + value + '?mimeType=image/png' : 'common/images/x-user-photo.png');
+                src = api.util.UriHelper.getRestUri(value ? 'blob/' + value + '?mimeType=image/png' : 'common/images/x-user-photo.png');
             } else {
                 src = value;
             }
@@ -218,8 +218,8 @@ module api.ui.uploader {
                 url: this.uploadUrl,
                 multipart: true,
                 drop_element: elId,
-                flash_swf_url: api.util.getUri('common/js/fileupload/plupload/js/plupload.flash.swf'),
-                silverlight_xap_url: api.util.getUri('common/js/fileupload/plupload/js/plupload.silverlight.xap'),
+                flash_swf_url: api.util.UriHelper.getUri('common/js/fileupload/plupload/js/plupload.flash.swf'),
+                silverlight_xap_url: api.util.UriHelper.getUri('common/js/fileupload/plupload/js/plupload.silverlight.xap'),
                 filters: [
                     {title: 'Image files', extensions: 'jpg,gif,png'}
                 ]

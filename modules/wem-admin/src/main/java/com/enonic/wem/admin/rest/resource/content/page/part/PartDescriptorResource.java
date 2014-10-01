@@ -1,6 +1,5 @@
 package com.enonic.wem.admin.rest.resource.content.page.part;
 
-import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -20,8 +19,7 @@ import com.enonic.wem.api.content.page.part.PartDescriptors;
 @Produces(MediaType.APPLICATION_JSON)
 public class PartDescriptorResource
 {
-    @Inject
-    protected PartDescriptorService partDescriptorService;
+    private PartDescriptorService partDescriptorService;
 
     @GET
     public PartDescriptorJson getByKey( @QueryParam("key") final String partDescriptorKey )
@@ -38,5 +36,10 @@ public class PartDescriptorResource
     {
         final PartDescriptors descriptors = partDescriptorService.getByModules( params.getModuleKeys() );
         return new PartDescriptorsJson( descriptors );
+    }
+
+    public void setPartDescriptorService( final PartDescriptorService partDescriptorService )
+    {
+        this.partDescriptorService = partDescriptorService;
     }
 }

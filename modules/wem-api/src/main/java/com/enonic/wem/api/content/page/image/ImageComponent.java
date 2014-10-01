@@ -14,10 +14,7 @@ public class ImageComponent
     extends AbstractPageComponent
     implements RegionPlaceableComponent
 {
-
     private static final String CAPTION = "caption";
-
-    private final static ImageComponentType type = new ImageComponentType();
 
     private ContentId image;
 
@@ -38,7 +35,7 @@ public class ImageComponent
     @Override
     public PageComponentType getType()
     {
-        return ImageComponent.type;
+        return ImageComponentType.INSTANCE;
     }
 
     public ContentId getImage()

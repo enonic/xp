@@ -93,7 +93,7 @@ module api.liveedit.text {
 
         select(clickPosition?: Position) {
             super.select(clickPosition);
-            this.getEl().setCursor('url(' + api.util.getAdminUri('live-edit/images/pencil.png') + ') 0 40, text');
+            this.getEl().setCursor('url(' + api.util.UriHelper.getAdminUri('live-edit/images/pencil.png') + ') 0 40, text');
         }
 
         selectPlaceholder() {

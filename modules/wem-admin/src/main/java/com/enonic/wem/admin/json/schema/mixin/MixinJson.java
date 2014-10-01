@@ -1,34 +1,63 @@
 package com.enonic.wem.admin.json.schema.mixin;
 
+import java.time.Instant;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.wem.admin.json.ItemJson;
-import com.enonic.wem.admin.json.schema.SchemaJson;
-import com.enonic.wem.admin.rest.resource.schema.SchemaIconUrlResolver;
+import com.enonic.wem.admin.rest.resource.schema.mixin.MixinIconUrlResolver;
 import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.form.FormItemJson;
 import com.enonic.wem.api.form.FormItemJsonFactory;
 import com.enonic.wem.api.schema.mixin.Mixin;
 
 public class MixinJson
-    extends SchemaJson
     implements ItemJson
 {
     private final Mixin mixin;
 
-    private final boolean editable;
+    private final String iconUrl;
 
-    private final boolean deletable;
-
-    public MixinJson( final Mixin mixin, final SchemaIconUrlResolver iconUrlResolver )
+    public MixinJson( final Mixin mixin, final MixinIconUrlResolver iconUrlResolver )
     {
-        super( mixin, iconUrlResolver );
         this.mixin = mixin;
+        this.iconUrl = iconUrlResolver.resolve( mixin );
+    }
 
-        this.editable = true;
-        this.deletable = true;
+    public String getKey()
+    {
+        return mixin.getSchemaKey() != null ? mixin.getSchemaKey().toString() : null;
+    }
+
+    public String getName()
+    {
+        return mixin.getName() != null ? mixin.getName().toString() : null;
+    }
+
+    public String getDisplayName()
+    {
+        return mixin.getDisplayName();
+    }
+
+    public String getDescription()
+    {
+        return mixin.getDescription();
+    }
+
+    public Instant getCreatedTime()
+    {
+        return mixin.getCreatedTime();
+    }
+
+    public Instant getModifiedTime()
+    {
+        return mixin.getModifiedTime();
+    }
+
+    public String getIconUrl()
+    {
+        return iconUrl;
     }
 
     public List<FormItemJson> getItems()
@@ -54,12 +83,12 @@ public class MixinJson
     @Override
     public boolean getDeletable()
     {
-        return deletable;
+        return false;
     }
 
     @Override
     public boolean getEditable()
     {
-        return editable;
+        return false;
     }
 }

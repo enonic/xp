@@ -1,6 +1,5 @@
 package com.enonic.wem.admin.rest.resource.content.site;
 
-import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -25,17 +24,13 @@ import com.enonic.wem.api.schema.mixin.MixinService;
 @Produces(MediaType.APPLICATION_JSON)
 public final class SiteResource
 {
-    @Inject
-    protected SiteService siteService;
+    private SiteService siteService;
 
-    @Inject
-    protected ContentTypeService contentTypeService;
+    private ContentTypeService contentTypeService;
 
-    @Inject
-    protected SiteTemplateService siteTemplateService;
+    private SiteTemplateService siteTemplateService;
 
-    @Inject
-    protected AttachmentService attachmentService;
+    private AttachmentService attachmentService;
 
     private MixinReferencesToFormItemsTransformer mixinReferencesToFormItemsTransformer;
 
@@ -94,9 +89,28 @@ public final class SiteResource
         return new ContentIconUrlResolver( this.siteTemplateService, this.contentTypeService, this.attachmentService );
     }
 
-    @Inject
     public void setMixinService( final MixinService mixinService )
     {
         this.mixinReferencesToFormItemsTransformer = new MixinReferencesToFormItemsTransformer( mixinService );
+    }
+
+    public void setSiteService( final SiteService siteService )
+    {
+        this.siteService = siteService;
+    }
+
+    public void setContentTypeService( final ContentTypeService contentTypeService )
+    {
+        this.contentTypeService = contentTypeService;
+    }
+
+    public void setSiteTemplateService( final SiteTemplateService siteTemplateService )
+    {
+        this.siteTemplateService = siteTemplateService;
+    }
+
+    public void setAttachmentService( final AttachmentService attachmentService )
+    {
+        this.attachmentService = attachmentService;
     }
 }

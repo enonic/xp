@@ -20,7 +20,6 @@ import com.enonic.wem.portal.internal.rendering.RendererFactory;
 public final class ComponentResource
     extends RenderBaseResource
 {
-    @Inject
     protected RendererFactory rendererFactory;
 
     @Override
@@ -97,5 +96,11 @@ public final class ComponentResource
         {
             return template.getRegions();
         }
+    }
+
+    @Inject
+    public void setRendererFactory( final RendererFactory rendererFactory )
+    {
+        this.rendererFactory = rendererFactory;
     }
 }

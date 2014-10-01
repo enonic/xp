@@ -30,7 +30,7 @@ public class PageComponentsDataSerializer
         {
             final DataSet componentAsDataSet = componentAsData.toDataSet();
             final AbstractPageComponentDataSerializer pageComponentDataSerializer =
-                PageComponentType.bySimpleClassName( componentAsDataSet.getName() ).getDataSerializer();
+                PageComponentTypes.bySimpleClassName( componentAsDataSet.getName() ).getDataSerializer();
             final PageComponent component = pageComponentDataSerializer.fromData( componentAsDataSet );
             componentList.add( component );
         }

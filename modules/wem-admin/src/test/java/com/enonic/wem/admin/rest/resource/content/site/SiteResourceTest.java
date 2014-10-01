@@ -27,21 +27,17 @@ import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.entity.Workspace;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
+import com.enonic.wem.api.workspace.Workspace;
 
 public class SiteResourceTest
     extends AbstractResourceTest
 {
     private SiteService siteService;
-
-    private ContentTypeService contentTypeService;
-
-    private SiteTemplateService siteTemplateService;
 
     private final String currentTime = "2013-08-23T12:55:09.162Z";
 
@@ -148,16 +144,16 @@ public class SiteResourceTest
     protected Object getResourceInstance()
     {
         siteService = Mockito.mock( SiteService.class );
-        contentTypeService = Mockito.mock( ContentTypeService.class );
-        siteTemplateService = Mockito.mock( SiteTemplateService.class );
+        final ContentTypeService contentTypeService = Mockito.mock( ContentTypeService.class );
+        final SiteTemplateService siteTemplateService = Mockito.mock( SiteTemplateService.class );
 
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
             thenReturn( createContentType( "mymodule:content-type" ) );
 
         final SiteResource resource = new SiteResource();
-        resource.siteService = this.siteService;
-        resource.contentTypeService = this.contentTypeService;
-        resource.siteTemplateService = this.siteTemplateService;
+        resource.setSiteService( this.siteService );
+        resource.setContentTypeService( contentTypeService );
+        resource.setSiteTemplateService( siteTemplateService );
 
         return resource;
     }

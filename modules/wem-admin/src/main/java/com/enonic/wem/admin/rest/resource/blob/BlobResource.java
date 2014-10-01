@@ -2,7 +2,6 @@ package com.enonic.wem.admin.rest.resource.blob;
 
 import java.util.List;
 
-import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -89,7 +88,6 @@ public final class BlobResource
         items.add( item );
     }
 
-    @Inject
     public void setBlobService( final BlobService blobService )
     {
         this.blobService = blobService;

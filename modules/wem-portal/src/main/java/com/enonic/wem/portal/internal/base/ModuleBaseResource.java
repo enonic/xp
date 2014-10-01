@@ -10,7 +10,6 @@ import com.enonic.wem.api.module.ModuleService;
 public abstract class ModuleBaseResource
     extends WorkspaceBaseResource
 {
-    @Inject
     protected ModuleService moduleService;
 
     protected String contentPath;
@@ -29,4 +28,9 @@ public abstract class ModuleBaseResource
         return ModuleKey.from( moduleName );
     }
 
+    @Inject
+    public final void setModuleService( final ModuleService moduleService )
+    {
+        this.moduleService = moduleService;
+    }
 }

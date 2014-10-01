@@ -8,11 +8,11 @@ import org.restlet.Response;
 import org.restlet.data.Method;
 
 import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.entity.Workspace;
-import com.enonic.wem.api.entity.Workspaces;
 import com.enonic.wem.api.rendering.Renderable;
 import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.api.repository.RepositoryId;
+import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.api.workspace.Workspaces;
 import com.enonic.wem.portal.internal.controller.JsContext;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
@@ -28,9 +28,9 @@ public class ComponentResourceTest
 {
     private Renderer<Renderable> renderer;
 
-    public final Workspace testWorkspace = Workspace.from( "test" );
+    private final Workspace testWorkspace = Workspace.from( "test" );
 
-    protected final Context testContext = Context.create().
+    private final Context testContext = Context.create().
         workspace( testWorkspace ).
         repository( Repository.create().
             id( RepositoryId.from( "testing" ) ).

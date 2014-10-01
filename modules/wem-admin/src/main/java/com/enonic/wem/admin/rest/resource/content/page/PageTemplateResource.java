@@ -2,7 +2,6 @@ package com.enonic.wem.admin.rest.resource.content.page;
 
 import java.io.IOException;
 
-import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -29,14 +28,11 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 @Produces(MediaType.APPLICATION_JSON)
 public final class PageTemplateResource
 {
-    @Inject
-    protected PageTemplateService pageTemplateService;
+    private PageTemplateService pageTemplateService;
 
-    @Inject
     private ContentService contentService;
 
-    @Inject
-    protected SiteService siteService;
+    private SiteService siteService;
 
     @GET
     public PageTemplateJson getByKey( @QueryParam("siteTemplateKey") final String siteTemplateKeyAsString,
@@ -118,5 +114,20 @@ public final class PageTemplateResource
         {
             return false;
         }
+    }
+
+    public void setPageTemplateService( final PageTemplateService pageTemplateService )
+    {
+        this.pageTemplateService = pageTemplateService;
+    }
+
+    public void setContentService( final ContentService contentService )
+    {
+        this.contentService = contentService;
+    }
+
+    public void setSiteService( final SiteService siteService )
+    {
+        this.siteService = siteService;
     }
 }

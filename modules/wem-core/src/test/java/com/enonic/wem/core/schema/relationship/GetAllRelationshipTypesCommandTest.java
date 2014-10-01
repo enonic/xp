@@ -20,7 +20,7 @@ public class GetAllRelationshipTypesCommandTest
     {
         final RelationshipTypeDao relationshipTypeDao = Mockito.mock( RelationshipTypeDao.class );
         final RelationshipTypeServiceImpl service = new RelationshipTypeServiceImpl();
-        service.relationshipTypeDao = relationshipTypeDao;
+        service.setRelationshipTypeDao( relationshipTypeDao );
 
         // setup
         final RelationshipType relationshipType = RelationshipType.newRelationshipType().

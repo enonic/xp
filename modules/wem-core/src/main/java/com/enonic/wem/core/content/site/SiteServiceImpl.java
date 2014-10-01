@@ -1,7 +1,5 @@
 package com.enonic.wem.core.content.site;
 
-import javax.inject.Inject;
-
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentService;
@@ -13,8 +11,7 @@ import com.enonic.wem.api.context.Context;
 public final class SiteServiceImpl
     implements SiteService
 {
-    @Inject
-    protected ContentService contentService;
+    private ContentService contentService;
 
     @Override
     public Content create( final CreateSiteParams params, final Context context )
@@ -57,5 +54,10 @@ public final class SiteServiceImpl
             context( context ).
             build().
             execute();
+    }
+
+    public void setContentService( final ContentService contentService )
+    {
+        this.contentService = contentService;
     }
 }

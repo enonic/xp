@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+
+  <bean id="blobStore" class="com.enonic.wem.core.blob.file.FileBlobStore">
+    <argument index="0" ref="systemConfig"/>
+  </bean>
+
+  <bean id="blobService" class="com.enonic.wem.core.blob.BlobServiceImpl">
+    <property name="blobStore" ref="blobStore"/>
+  </bean>
+
+  <service auto-export="interfaces" ref="blobService"/>
+
+</blueprint>

@@ -7,9 +7,6 @@ import java.net.URLConnection;
 import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
@@ -23,11 +20,9 @@ import com.enonic.wem.api.resource.ResourceKey;
 import static org.osgi.framework.BundleEvent.INSTALLED;
 import static org.osgi.framework.BundleEvent.UNINSTALLED;
 
-@Singleton
 public final class ModuleURLStreamHandler
     extends AbstractURLStreamHandlerService
 {
-
     private BundleContext bundleContext;
 
     private final ConcurrentHashMap<String, Long> moduleNameToBundleIdCache;
@@ -94,11 +89,9 @@ public final class ModuleURLStreamHandler
         }
     }
 
-    @Inject
     public void setBundleContext( final BundleContext bundleContext )
     {
         this.bundleContext = bundleContext;
         this.bundleContext.addBundleListener( this::invalidateCache );
     }
-
 }

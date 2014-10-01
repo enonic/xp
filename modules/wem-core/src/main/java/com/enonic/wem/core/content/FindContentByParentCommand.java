@@ -5,10 +5,10 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.FindContentByParentParams;
 import com.enonic.wem.api.content.FindContentByParentResult;
-import com.enonic.wem.api.entity.FindNodesByParentParams;
-import com.enonic.wem.api.entity.FindNodesByParentResult;
-import com.enonic.wem.api.entity.NodePath;
-import com.enonic.wem.api.entity.Nodes;
+import com.enonic.wem.core.entity.FindNodesByParentParams;
+import com.enonic.wem.core.entity.FindNodesByParentResult;
+import com.enonic.wem.core.entity.NodePath;
+import com.enonic.wem.core.entity.Nodes;
 
 final class FindContentByParentCommand
     extends AbstractFindContentCommand

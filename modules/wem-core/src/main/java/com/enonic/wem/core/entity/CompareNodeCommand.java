@@ -2,13 +2,9 @@ package com.enonic.wem.core.entity;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.CompareStatus;
 import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.entity.CompareStatus;
-import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.NodeComparison;
-import com.enonic.wem.api.entity.NodeVersion;
-import com.enonic.wem.api.entity.NodeVersionId;
-import com.enonic.wem.api.entity.Workspace;
+import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.version.VersionService;
 import com.enonic.wem.core.workspace.WorkspaceContext;
 import com.enonic.wem.core.workspace.WorkspaceService;

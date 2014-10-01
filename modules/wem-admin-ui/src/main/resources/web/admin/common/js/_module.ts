@@ -84,13 +84,14 @@
 
 ///<reference path='item/_module.ts' />
 
-///<reference path='query/_module.ts' />
 ///<reference path='query/expr/_module.ts' />
+///<reference path='query/_module.ts' />
 ///<reference path='query/aggregation/_module.ts' />
 ///<reference path='query/filter/_module.ts' />
 
 ///<reference path='module/_module.ts' />
 ///<reference path='module/json/_module.ts' />
+///<reference path='module/inputtype/moduleconfigurator/_module.ts' />
 
 ///<reference path='schema/_module.ts' />
 ///<reference path='schema/content/_module.ts' />

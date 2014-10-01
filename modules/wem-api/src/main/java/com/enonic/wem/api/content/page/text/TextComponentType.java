@@ -5,9 +5,11 @@ import com.enonic.wem.api.content.page.PageComponentType;
 public final class TextComponentType
     extends PageComponentType
 {
+    public final static TextComponentType INSTANCE = new TextComponentType();
+
     private static final TextComponentDataSerializer dataSerializer = new TextComponentDataSerializer();
 
-    public TextComponentType()
+    private TextComponentType()
     {
         super( "text", TextComponent.class );
     }

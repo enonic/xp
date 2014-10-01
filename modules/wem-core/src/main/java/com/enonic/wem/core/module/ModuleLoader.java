@@ -5,11 +5,6 @@ import java.net.URL;
 import java.util.Dictionary;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
@@ -29,11 +24,9 @@ import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.module.ModuleUpdatedEvent;
 import com.enonic.wem.api.module.ModuleVersion;
 
-@Singleton
 public final class ModuleLoader
     implements BundleListener
 {
-
     private static final String MODULE_XML = "/module.xml";
 
     private final static Logger LOG = LoggerFactory.getLogger( ModuleLoader.class );
@@ -48,7 +41,6 @@ public final class ModuleLoader
 
     private final EventPublisher eventPublisher;
 
-    @Inject
     public ModuleLoader( final BundleContext context, final ModuleService moduleService, final EventPublisher eventPublisher )
     {
         this.bundles = Lists.newCopyOnWriteArrayList();
@@ -58,7 +50,6 @@ public final class ModuleLoader
         this.eventPublisher = eventPublisher;
     }
 
-    @PostConstruct
     public void start()
     {
         this.context.addBundleListener( this );
@@ -68,7 +59,6 @@ public final class ModuleLoader
         }
     }
 
-    @PreDestroy
     public void stop()
     {
         this.context.removeBundleListener( this );
@@ -157,5 +147,4 @@ public final class ModuleLoader
             throw new RuntimeException( "Invalid module.xml file", e );
         }
     }
-
 }

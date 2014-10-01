@@ -45,8 +45,12 @@ public final class CoreSchemasProvider
     public static final ContentType FOLDER = createSystemType( ContentTypeName.folder() ).
         setFinal( false ).setAbstract( false ).build();
 
-    private static final ContentType SITE =
-        createSystemType( ContentTypeName.site() ).description( "Root content for sites" ).setFinal( true ).setAbstract( false ).build();
+    private static final ContentType SITE = createSystemType( ContentTypeName.site() ).
+        description( "Root content for sites" ).
+        setFinal( true ).
+        setAbstract( false ).
+        form( createSiteForm() ).
+        build();
 
     private static final ContentType PAGE_TEMPLATE =
         createSystemType( ContentTypeName.pageTemplate() ).setFinal( false ).setAbstract( true ).form( createPageTemplateForm() ).build();
@@ -177,6 +181,27 @@ public final class CoreSchemasProvider
                 label( "Supports" ).
                 helpText( "Choose which content types this page template supports" ).
                 inputType( InputTypes.CONTENT_TYPE_FILTER ).
+                required( false ).
+                multiple( true ).
+                build() ).
+            build();
+    }
+
+    private static Form createSiteForm()
+    {
+        return Form.newForm().
+            addFormItem( Input.newInput().
+                name( "description" ).
+                label( "Description" ).
+                inputType( InputTypes.TEXT_AREA ).
+                occurrences( 0, 1 ).
+                helpText( "Description of the site. Optional" ).
+                build() ).
+            addFormItem( Input.newInput().
+                name( "modules" ).
+                label( "Modules" ).
+                helpText( "Configure modules needed for the Site" ).
+                inputType( InputTypes.MODULE_CONFIGURATOR ).
                 required( false ).
                 multiple( true ).
                 build() ).

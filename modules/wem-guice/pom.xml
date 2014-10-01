@@ -45,11 +45,6 @@
       <artifactId>org.apache.felix.utils</artifactId>
       <version>1.6.0</version>
     </dependency>
-    <dependency>
-      <groupId>org.eclipse.sisu</groupId>
-      <artifactId>org.eclipse.sisu.inject</artifactId>
-      <version>0.3.0.M1</version>
-    </dependency>
   </dependencies>
 
   <build>
@@ -79,8 +74,7 @@
               peaberry,
               javax.inject,
               aopalliance,
-              org.apache.felix.utils,
-              org.eclipse.sisu.inject
+              org.apache.felix.utils
             </Embed-Dependency>
           </instructions>
         </configuration>

@@ -155,8 +155,8 @@ public class ModuleResourceTest
         this.bundleContext = Mockito.mock( BundleContext.class );
 
         final ModuleResource resource = new ModuleResource();
-        resource.moduleService = this.moduleService;
-        resource.bundleContext = this.bundleContext;
+        resource.setModuleService( this.moduleService );
+        resource.setBundleContext( this.bundleContext );
 
         return resource;
     }

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+
+  <bean id="processorFactory" class="com.enonic.wem.thymeleaf.internal.ThymeleafProcessorFactoryImpl"/>
+
+  <service auto-export="interfaces" ref="processorFactory"/>
+
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.thymeleaf.internal.ThymeleafScriptLibrary">
+      <argument index="0" ref="processorFactory"/>
+    </bean>
+  </service>
+
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.thymeleaf.internal.RenderViewHandler">
+      <argument index="0" ref="processorFactory"/>
+    </bean>
+  </service>
+
+</blueprint>

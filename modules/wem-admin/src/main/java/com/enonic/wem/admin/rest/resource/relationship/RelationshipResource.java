@@ -1,6 +1,5 @@
 package com.enonic.wem.admin.rest.resource.relationship;
 
-import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -9,6 +8,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import com.enonic.wem.admin.rest.exception.NotFoundWebException;
 import com.enonic.wem.admin.rest.resource.relationship.json.CreateRelationshipJson;
 import com.enonic.wem.admin.rest.resource.relationship.json.RelationshipCreateParams;
 import com.enonic.wem.admin.rest.resource.relationship.json.RelationshipListJson;
@@ -23,14 +23,12 @@ import com.enonic.wem.api.relationship.UpdateRelationshipFailureException;
 import com.enonic.wem.api.relationship.UpdateRelationshipParams;
 import com.enonic.wem.api.relationship.editor.RelationshipEditors;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
-import com.enonic.wem.admin.rest.exception.NotFoundWebException;
 
 @Path("relationship")
 @Produces(MediaType.APPLICATION_JSON)
 public final class RelationshipResource
 {
-    @Inject
-    protected RelationshipService relationshipService;
+    private RelationshipService relationshipService;
 
     @GET
     public RelationshipListJson get( @QueryParam("fromContent") final String fromContent )
@@ -85,5 +83,10 @@ public final class RelationshipResource
         {
             throw new NotFoundWebException( e.getMessage() );
         }
+    }
+
+    public void setRelationshipService( final RelationshipService relationshipService )
+    {
+        this.relationshipService = relationshipService;
     }
 }

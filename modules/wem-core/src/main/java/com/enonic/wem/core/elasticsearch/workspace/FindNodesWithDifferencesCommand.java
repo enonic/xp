@@ -10,9 +10,9 @@ import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.aggregation.Aggregation;
 import com.enonic.wem.api.aggregation.BucketAggregation;
-import com.enonic.wem.api.entity.EntityIds;
-import com.enonic.wem.api.entity.Workspace;
+import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.elasticsearch.query.ElasticsearchQuery;
+import com.enonic.wem.core.entity.EntityIds;
 import com.enonic.wem.core.index.result.SearchResult;
 import com.enonic.wem.core.repository.StorageNameResolver;
 

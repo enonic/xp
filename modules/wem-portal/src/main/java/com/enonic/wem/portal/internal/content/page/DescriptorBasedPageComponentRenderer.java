@@ -10,18 +10,17 @@ import com.enonic.wem.api.content.page.Descriptor;
 import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.rendering.RenderingMode;
+import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.PortalRequest;
-import com.enonic.wem.portal.internal.controller.JsContext;
 import com.enonic.wem.portal.internal.controller.JsController;
 import com.enonic.wem.portal.internal.controller.JsControllerFactory;
 import com.enonic.wem.portal.internal.controller.JsHttpResponseSerializer;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
 
-abstract class DescriptorBasedPageComponentRenderer
-    implements Renderer<AbstractDescriptorBasedPageComponent>
+public abstract class DescriptorBasedPageComponentRenderer<R extends AbstractDescriptorBasedPageComponent>
+    implements Renderer<R>
 {
-
     private static final String EMPTY_COMPONENT_EDIT_MODE_HTML =
         "<div data-live-edit-type=\"{0}\" data-live-edit-empty-component=\"true\" class=\"live-edit-empty-component\"></div>";
 
@@ -30,7 +29,7 @@ abstract class DescriptorBasedPageComponentRenderer
     @Inject
     protected JsControllerFactory controllerFactory;
 
-    public RenderResult render( final AbstractDescriptorBasedPageComponent pageComponent, final JsContext context )
+    public final RenderResult render( final R pageComponent, final PortalContext context )
     {
         final Descriptor descriptor = resolveDescriptor( pageComponent );
         if ( descriptor == null )
@@ -55,7 +54,7 @@ abstract class DescriptorBasedPageComponentRenderer
         }
     }
 
-    private RenderResult renderEmptyComponent( final AbstractDescriptorBasedPageComponent pageComponent, final JsContext context )
+    private RenderResult renderEmptyComponent( final AbstractDescriptorBasedPageComponent pageComponent, final PortalContext context )
     {
         final RenderingMode renderingMode = getRenderingMode( context );
         switch ( renderingMode )
@@ -102,7 +101,7 @@ abstract class DescriptorBasedPageComponentRenderer
 
     protected abstract Descriptor getComponentDescriptor( final DescriptorKey descriptorKey );
 
-    private RenderingMode getRenderingMode( final JsContext context )
+    private RenderingMode getRenderingMode( final PortalContext context )
     {
         final PortalRequest req = context.getRequest();
         return req == null ? RenderingMode.LIVE : req.getMode();

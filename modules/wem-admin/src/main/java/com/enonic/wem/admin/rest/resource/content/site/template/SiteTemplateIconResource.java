@@ -1,6 +1,5 @@
 package com.enonic.wem.admin.rest.resource.content.site.template;
 
-import javax.inject.Inject;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -12,8 +11,8 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.enonic.wem.admin.rest.resource.schema.SchemaIconResolver;
 import com.enonic.wem.admin.rest.resource.schema.SchemaImageHelper;
+import com.enonic.wem.admin.rest.resource.schema.content.ContentTypeIconResolver;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
@@ -29,7 +28,7 @@ public final class SiteTemplateIconResource
 
     private SiteTemplateService siteTemplateService;
 
-    private SchemaIconResolver schemaIconResolver;
+    private ContentTypeIconResolver contentTypeIconResolver;
 
     @GET
     @Path("{siteTemplateKey}")
@@ -52,7 +51,7 @@ public final class SiteTemplateIconResource
         }
         else
         {
-            final Icon siteIcon = schemaIconResolver.resolveFromName( ContentTypeName.site() );
+            final Icon siteIcon = contentTypeIconResolver.resolveIcon( ContentTypeName.site() );
             return Response.ok( helper.resizeImage( siteIcon.asInputStream(), size ), siteIcon.getMimeType() ).build();
         }
     }
@@ -63,16 +62,13 @@ public final class SiteTemplateIconResource
         return siteTemplate == null ? null : siteTemplate.getIcon();
     }
 
-    @Inject
     public void setSiteTemplateService( final SiteTemplateService siteTemplateService )
     {
         this.siteTemplateService = siteTemplateService;
     }
 
-    @Inject
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
-        this.schemaIconResolver = new SchemaIconResolver( contentTypeService );
+        this.contentTypeIconResolver = new ContentTypeIconResolver( contentTypeService );
     }
-
 }

@@ -25,7 +25,7 @@ module api.app {
                 console.warn('WebSockets not supported. Server events disabled.');
                 return;
             }
-            var wsUrl = this.getWebSocketUriPrefix() + api.util.getAdminUri('event');
+            var wsUrl = api.util.UriHelper.joinPath(this.getWebSocketUriPrefix(), api.util.UriHelper.getAdminUri('event'));
 
             this.ws = new WebSocket(wsUrl, 'text');
 

@@ -1,10 +1,7 @@
 package com.enonic.wem.core.entity;
 
 import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.entity.FindNodesByQueryResult;
-import com.enonic.wem.api.entity.NodeVersionIds;
-import com.enonic.wem.api.entity.Nodes;
-import com.enonic.wem.api.entity.query.NodeQuery;
+import com.enonic.wem.core.entity.query.NodeQuery;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.index.query.NodeQueryResult;
 import com.enonic.wem.core.workspace.WorkspaceContext;

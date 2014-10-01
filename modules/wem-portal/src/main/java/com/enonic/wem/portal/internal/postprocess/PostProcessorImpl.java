@@ -5,23 +5,21 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.PortalResponse;
-import com.enonic.wem.portal.internal.controller.JsContext;
-import com.enonic.wem.portal.internal.postprocess.injection.PostProcessInjection;
-import com.enonic.wem.portal.internal.postprocess.instruction.PostProcessInstruction;
+import com.enonic.wem.portal.postprocess.PostProcessInjection;
+import com.enonic.wem.portal.postprocess.PostProcessInstruction;
 
 @Singleton
 public final class PostProcessorImpl
     implements PostProcessor
 {
-    @Inject
-    protected Set<PostProcessInstruction> instructions;
+    private Set<PostProcessInstruction> instructions;
 
-    @Inject
-    protected Set<PostProcessInjection> injections;
+    private Set<PostProcessInjection> injections;
 
     @Override
-    public void processResponse( final JsContext context )
+    public void processResponse( final PortalContext context )
     {
         final PortalResponse response = context.getResponse();
         if ( !response.isPostProcess() )
@@ -38,7 +36,7 @@ public final class PostProcessorImpl
         doPostProcess( context, (String) body );
     }
 
-    private void doPostProcess( final JsContext context, final String body )
+    private void doPostProcess( final PortalContext context, final String body )
     {
         final PostProcessEvaluator evaluator = new PostProcessEvaluator();
         evaluator.context = context;
@@ -47,5 +45,17 @@ public final class PostProcessorImpl
         evaluator.injections = this.injections;
 
         context.getResponse().setBody( evaluator.evaluate() );
+    }
+
+    @Inject
+    public void setInstructions( final Set<PostProcessInstruction> instructions )
+    {
+        this.instructions = instructions;
+    }
+
+    @Inject
+    public void setInjections( final Set<PostProcessInjection> injections )
+    {
+        this.injections = injections;
     }
 }

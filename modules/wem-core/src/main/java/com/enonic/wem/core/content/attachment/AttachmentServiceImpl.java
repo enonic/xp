@@ -1,19 +1,16 @@
 package com.enonic.wem.core.content.attachment;
 
-import javax.inject.Inject;
-
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.attachment.GetAttachmentParameters;
 import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.entity.NodeService;
+import com.enonic.wem.core.entity.NodeService;
 
 public class AttachmentServiceImpl
     implements AttachmentService
 {
-    @Inject
     private NodeService nodeService;
 
     @Override
@@ -37,5 +34,10 @@ public class AttachmentServiceImpl
             context( context ).
             build().
             execute();
+    }
+
+    public void setNodeService( final NodeService nodeService )
+    {
+        this.nodeService = nodeService;
     }
 }

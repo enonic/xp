@@ -19,12 +19,16 @@ public class EventListenerImplTest
 
     private EventListenerImpl eventListener;
 
+    private WebSocketManager webSocketManager;
+
     @Before
     public final void setUp()
         throws Exception
     {
-        eventListener = new EventListenerImpl();
-        eventListener.webSocketManager = mock( WebSocketManager.class );
+        this.webSocketManager = mock( WebSocketManager.class );
+
+        this.eventListener = new EventListenerImpl();
+        this.eventListener.setWebSocketManager( this.webSocketManager );
     }
 
     @Test
@@ -34,7 +38,7 @@ public class EventListenerImplTest
         final ModuleUpdatedEvent event = new ModuleUpdatedEvent( ModuleKey.from( "module" ), INSTALLED );
         eventListener.onEvent( event );
 
-        verify( eventListener.webSocketManager, atLeastOnce() ).sendToAll( anyString() );
+        verify( this.webSocketManager, atLeastOnce() ).sendToAll( anyString() );
     }
 
     @Test
@@ -44,7 +48,7 @@ public class EventListenerImplTest
         final TestEvent event = new TestEvent();
         eventListener.onEvent( event );
 
-        verify( eventListener.webSocketManager, never() ).sendToAll( anyString() );
+        verify( this.webSocketManager, never() ).sendToAll( anyString() );
     }
 
     class TestEvent
