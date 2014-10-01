@@ -1,7 +1,5 @@
 package com.enonic.wem.portal.internal.content;
 
-import javax.inject.Inject;
-
 import org.restlet.resource.ResourceException;
 
 import com.enonic.wem.api.content.Content;
@@ -168,41 +166,5 @@ public abstract class RenderBaseResource
         {
             return null;
         }
-    }
-
-    @Inject
-    public void setControllerFactory( final JsControllerFactory controllerFactory )
-    {
-        this.controllerFactory = controllerFactory;
-    }
-
-    @Inject
-    public void setPageDescriptorService( final PageDescriptorService pageDescriptorService )
-    {
-        this.pageDescriptorService = pageDescriptorService;
-    }
-
-    @Inject
-    public void setPageTemplateService( final PageTemplateService pageTemplateService )
-    {
-        this.pageTemplateService = pageTemplateService;
-    }
-
-    @Inject
-    public void setSiteTemplateService( final SiteTemplateService siteTemplateService )
-    {
-        this.siteTemplateService = siteTemplateService;
-    }
-
-    @Inject
-    public void setContentService( final ContentService contentService )
-    {
-        this.contentService = contentService;
-    }
-
-    @Inject
-    public void setSiteService( final SiteService siteService )
-    {
-        this.siteService = siteService;
     }
 }

@@ -1,7 +1,5 @@
 package com.enonic.wem.portal.internal.base;
 
-import javax.inject.Inject;
-
 import org.restlet.resource.ResourceException;
 
 import com.enonic.wem.api.module.ModuleKey;
@@ -26,11 +24,5 @@ public abstract class ModuleBaseResource
     {
         final String moduleName = getAttribute( "module" );
         return ModuleKey.from( moduleName );
-    }
-
-    @Inject
-    public final void setModuleService( final ModuleService moduleService )
-    {
-        this.moduleService = moduleService;
     }
 }

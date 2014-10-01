@@ -3,8 +3,6 @@ package com.enonic.wem.portal.internal.content.page;
 
 import java.text.MessageFormat;
 
-import javax.inject.Inject;
-
 import com.enonic.wem.api.content.page.AbstractDescriptorBasedPageComponent;
 import com.enonic.wem.api.content.page.Descriptor;
 import com.enonic.wem.api.content.page.DescriptorKey;
@@ -26,7 +24,6 @@ public abstract class DescriptorBasedPageComponentRenderer<R extends AbstractDes
 
     private static final String EMPTY_COMPONENT_PREVIEW_MODE_HTML = "<div></div>";
 
-    @Inject
     protected JsControllerFactory controllerFactory;
 
     public final RenderResult render( final R pageComponent, final PortalContext context )
@@ -105,5 +102,10 @@ public abstract class DescriptorBasedPageComponentRenderer<R extends AbstractDes
     {
         final PortalRequest req = context.getRequest();
         return req == null ? RenderingMode.LIVE : req.getMode();
+    }
+
+    public void setControllerFactory( final JsControllerFactory controllerFactory )
+    {
+        this.controllerFactory = controllerFactory;
     }
 }

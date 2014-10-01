@@ -1,10 +1,9 @@
 package com.enonic.wem.portal.internal.rendering;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.google.common.collect.Maps;
-import com.google.inject.Inject;
 
 import com.enonic.wem.api.rendering.Renderable;
 
@@ -13,8 +12,7 @@ public final class RendererFactoryImpl
 {
     private final Map<Class, Renderer> renderers;
 
-    @Inject
-    public RendererFactoryImpl( final Set<Renderer> renderers )
+    public RendererFactoryImpl( final List<Renderer> renderers )
     {
         this.renderers = Maps.newHashMap();
 
@@ -24,8 +22,7 @@ public final class RendererFactoryImpl
         }
     }
 
-    @Override
-    public <T extends Renderable> Renderer<T> getRenderer( final Class<T> renderableType )
+    private <T extends Renderable> Renderer<T> getRenderer( final Class<T> renderableType )
     {
         return findRenderer( renderableType );
     }

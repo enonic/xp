@@ -1,7 +1,5 @@
 package com.enonic.wem.portal.internal.content;
 
-import javax.inject.Inject;
-
 import org.restlet.representation.Representation;
 import org.restlet.resource.ResourceException;
 
@@ -96,11 +94,5 @@ public final class ComponentResource
         {
             return template.getRegions();
         }
-    }
-
-    @Inject
-    public void setRendererFactory( final RendererFactory rendererFactory )
-    {
-        this.rendererFactory = rendererFactory;
     }
 }

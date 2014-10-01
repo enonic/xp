@@ -1,29 +1,30 @@
 package com.enonic.wem.portal.internal.restlet;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import java.util.List;
+import java.util.Map;
 
 import org.restlet.resource.Finder;
 import org.restlet.resource.ServerResource;
 
-import com.google.inject.Injector;
-import com.google.inject.Key;
+import com.google.common.collect.Maps;
 
-@Singleton
-final class FinderFactoryImpl
+public final class FinderFactoryImpl
     implements FinderFactory
 {
-    private final Injector injector;
+    private final Map<Class, ResourceFactory> factories;
 
-    @Inject
-    public FinderFactoryImpl( final Injector injector )
+    public FinderFactoryImpl( final List<ResourceFactory> factories )
     {
-        this.injector = injector;
+        this.factories = Maps.newHashMap();
+        for ( final ResourceFactory factory : factories )
+        {
+            this.factories.put( factory.getType(), factory );
+        }
     }
 
     @Override
     public Finder finder( final Class<? extends ServerResource> type )
     {
-        return new ResourceKeyFinder<>( this.injector, Key.get( type ) );
+        return this.factories.get( type );
     }
 }

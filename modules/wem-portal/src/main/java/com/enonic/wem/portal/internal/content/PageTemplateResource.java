@@ -3,8 +3,6 @@ package com.enonic.wem.portal.internal.content;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.restlet.representation.Representation;
 import org.restlet.resource.ResourceException;
 
@@ -165,29 +163,5 @@ public final class PageTemplateResource
         {
             return value;
         }
-    }
-
-    @Inject
-    public void setControllerFactory( final JsControllerFactory controllerFactory )
-    {
-        this.controllerFactory = controllerFactory;
-    }
-
-    @Inject
-    public void setSiteTemplateService( final SiteTemplateService siteTemplateService )
-    {
-        this.siteTemplateService = siteTemplateService;
-    }
-
-    @Inject
-    public void setPageTemplateService( final PageTemplateService pageTemplateService )
-    {
-        this.pageTemplateService = pageTemplateService;
-    }
-
-    @Inject
-    public void setPageDescriptorService( final PageDescriptorService pageDescriptorService )
-    {
-        this.pageDescriptorService = pageDescriptorService;
     }
 }

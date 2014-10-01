@@ -1,7 +1,5 @@
 package com.enonic.wem.portal.internal.exception;
 
-import javax.inject.Singleton;
-
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.data.MediaType;
@@ -14,7 +12,6 @@ import com.enonic.wem.api.resource.ResourceProblemException;
 import com.enonic.wem.core.entity.dao.NodeNotFoundException;
 import com.enonic.wem.portal.internal.exception.renderer.ExceptionRenderer;
 
-@Singleton
 public final class PortalStatusService
     extends StatusService
 {

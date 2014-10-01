@@ -1,8 +1,5 @@
 package com.enonic.wem.portal.internal.content.page;
 
-
-import javax.inject.Inject;
-
 import com.enonic.wem.api.content.page.Descriptor;
 import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.part.PartComponent;
@@ -26,7 +23,6 @@ public final class PartRenderer
         return partDescriptorService.getByKey( (PartDescriptorKey) descriptorKey );
     }
 
-    @Inject
     public void setPartDescriptorService( final PartDescriptorService partDescriptorService )
     {
         this.partDescriptorService = partDescriptorService;

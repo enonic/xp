@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+
+  <bean id="publicResourceFactory" class="com.enonic.wem.portal.internal.underscore.PublicResourceFactory">
+    <property name="moduleService" ref="moduleService"/>
+  </bean>
+
+  <bean id="serviceResourceFactory" class="com.enonic.wem.portal.internal.underscore.ServiceResourceFactory">
+    <property name="controllerFactory" ref="controllerFactory"/>
+    <property name="moduleService" ref="moduleService"/>
+  </bean>
+
+  <bean id="imageByIdResourceFactory" class="com.enonic.wem.portal.internal.underscore.ImageByIdResourceFactory">
+    <property name="moduleService" ref="moduleService"/>
+    <property name="imageFilterBuilder" ref="imageFilterBuilder"/>
+    <property name="attachmentService" ref="attachmentService"/>
+    <property name="blobService" ref="blobService"/>
+    <property name="contentService" ref="contentService"/>
+  </bean>
+
+  <bean id="imageByNameResourceFactory" class="com.enonic.wem.portal.internal.underscore.ImageByNameResourceFactory">
+    <property name="moduleService" ref="moduleService"/>
+    <property name="imageFilterBuilder" ref="imageFilterBuilder"/>
+    <property name="attachmentService" ref="attachmentService"/>
+    <property name="blobService" ref="blobService"/>
+    <property name="contentService" ref="contentService"/>
+  </bean>
+
+  <bean id="pageTemplateResourceFactory" class="com.enonic.wem.portal.internal.content.PageTemplateResourceFactory">
+    <property name="controllerFactory" ref="controllerFactory"/>
+    <property name="siteTemplateService" ref="siteTemplateService"/>
+    <property name="pageTemplateService" ref="pageTemplateService"/>
+    <property name="pageDescriptorService" ref="pageDescriptorService"/>
+  </bean>
+
+  <bean id="contentResourceFactory" class="com.enonic.wem.portal.internal.content.ContentResourceFactory">
+    <property name="controllerFactory" ref="controllerFactory"/>
+    <property name="pageDescriptorService" ref="pageDescriptorService"/>
+    <property name="pageTemplateService" ref="pageTemplateService"/>
+    <property name="siteTemplateService" ref="siteTemplateService"/>
+    <property name="contentService" ref="contentService"/>
+    <property name="siteService" ref="siteService"/>
+  </bean>
+
+  <bean id="componentResourceFactory" class="com.enonic.wem.portal.internal.content.ComponentResourceFactory">
+    <property name="controllerFactory" ref="controllerFactory"/>
+    <property name="pageDescriptorService" ref="pageDescriptorService"/>
+    <property name="pageTemplateService" ref="pageTemplateService"/>
+    <property name="siteTemplateService" ref="siteTemplateService"/>
+    <property name="contentService" ref="contentService"/>
+    <property name="siteService" ref="siteService"/>
+    <property name="rendererFactory" ref="rendererFactory"/>
+  </bean>
+
+  <bean id="finderFactory" class="com.enonic.wem.portal.internal.restlet.FinderFactoryImpl">
+    <argument index="0">
+      <list>
+        <ref component-id="publicResourceFactory"/>
+        <ref component-id="serviceResourceFactory"/>
+        <ref component-id="imageByIdResourceFactory"/>
+        <ref component-id="imageByNameResourceFactory"/>
+        <ref component-id="pageTemplateResourceFactory"/>
+        <ref component-id="contentResourceFactory"/>
+        <ref component-id="componentResourceFactory"/>
+      </list>
+    </argument>
+  </bean>
+
+</blueprint>

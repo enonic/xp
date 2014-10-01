@@ -1,8 +1,5 @@
 package com.enonic.wem.portal.internal.script;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
@@ -12,13 +9,11 @@ import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.FindContentByParentParams;
 import com.enonic.wem.script.ScriptLibrary;
 
-@Singleton
 public final class ContentScriptLibrary
     implements ScriptLibrary
 {
     private final ContentService contentService;
 
-    @Inject
     public ContentScriptLibrary( final ContentService contentService )
     {
         this.contentService = contentService;
