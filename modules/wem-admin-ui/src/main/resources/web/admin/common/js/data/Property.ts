@@ -60,11 +60,20 @@ module api.data {
 
         toPropertyJson(): api.data.json.DataTypeWrapperJson {
 
-            return <api.data.json.DataTypeWrapperJson>{ Property: {
-                name: this.getName(),
-                type: this.getType().toString(),
-                value: this.value.isNotNull() ? this.getType().toJsonValue(this.value) : null
-            }};
+            if (this.value.isRootDataSet()) {
+                return <api.data.json.DataTypeWrapperJson>{ Property: {
+                    name: this.getName(),
+                    type: this.getType().toString(),
+                    set: this.value.isNotNull() ? this.getType().toJsonValue(this.value) : null
+                }};
+            }
+            else {
+                return <api.data.json.DataTypeWrapperJson>{ Property: {
+                    name: this.getName(),
+                    type: this.getType().toString(),
+                    value: this.value.isNotNull() ? this.getType().toJsonValue(this.value) : null
+                }};
+            }
         }
 
         equals(o: api.Equitable): boolean {
