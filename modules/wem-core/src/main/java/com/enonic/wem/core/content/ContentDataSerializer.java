@@ -1,5 +1,7 @@
 package com.enonic.wem.core.content;
 
+import java.util.LinkedHashMap;
+
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.data.ContentData;
@@ -20,6 +22,8 @@ public class ContentDataSerializer
     public static final String DRAFT = "draft";
 
     public static final String CONTENT_DATA = "data";
+
+    public static final String METADATA = "metadata";
 
     public static final String CONTENT_TYPE_FIELD_NAME = "contentType";
 
@@ -45,6 +49,19 @@ public class ContentDataSerializer
         addPropertyIfNotNull( contentAsData, CONTENT_TYPE_FIELD_NAME, content.getType().getContentTypeName() );
 
         contentAsData.add( content.getContentData().toDataSet( CONTENT_DATA ) );
+
+        if ( content.getMetadata() != null )
+        {
+            final DataSet dataSet = new DataSet( METADATA );
+
+            LinkedHashMap<String, RootDataSet> metadata = content.getMetadata();
+            for ( String name : metadata.keySet() )
+            {
+                dataSet.add( metadata.get( name ).toDataSet( name ) );
+            }
+
+            contentAsData.add( dataSet );
+        }
 
         if ( content.getForm() != null )
         {
@@ -83,6 +100,18 @@ public class ContentDataSerializer
             builder.contentData( new ContentData( dataSet.getDataSet( CONTENT_DATA ).toRootDataSet() ) );
         }
 
+        if ( dataSet.hasData( METADATA ) )
+        {
+            LinkedHashMap<String, RootDataSet> metadataByName = new LinkedHashMap<>();
+            DataSet data = dataSet.getDataSet( METADATA );
+            for ( String name : data.getDataNames() )
+            {
+                metadataByName.put( name, data.getDataSet( name ).toRootDataSet() );
+            }
+
+            builder.metadata( metadataByName );
+        }
+
         if ( dataSet.hasData( FORM ) )
         {
             builder.form( FORM_SERIALIZER.fromData( dataSet.getDataSet( FORM ) ) );
@@ -117,6 +146,19 @@ public class ContentDataSerializer
         if ( params.getContentData() != null )
         {
             contentAsData.add( params.getContentData().toDataSet( ContentDataSerializer.CONTENT_DATA ) );
+        }
+
+        if ( params.getMetadata() != null )
+        {
+            final DataSet dataSet = new DataSet( METADATA );
+
+            LinkedHashMap<String, RootDataSet> metadata = params.getMetadata();
+            for ( String name : metadata.keySet() )
+            {
+                dataSet.add( metadata.get( name ).toDataSet( name ) );
+            }
+
+            contentAsData.add( dataSet );
         }
 
         if ( params.getForm() != null )
