@@ -1,4 +1,4 @@
-module api.module.json{
+module api.module.json {
 
     export interface ModuleJson extends api.item.ItemJson {
 
@@ -25,6 +25,8 @@ module api.module.json{
         moduleDependencies: string[];
 
         contentTypeDependencies: string[];
+
+        metadataSchemaNames: string[];
 
         minSystemVersion: string;
 

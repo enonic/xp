@@ -8,14 +8,14 @@ public final class XmlMetadataSchemaMapper
     public static XmlMetadataSchema toXml( final XmlMetadataSchema object )
     {
         final XmlMetadataSchema result = new XmlMetadataSchema();
-        result.setDisplayName( object.getDisplayName() );
+        result.setName( object.getName() );
         result.setForm( object.getForm() );
         return result;
     }
 
     public static void fromXml( final XmlMetadataSchema xml, final MetadataSchema.Builder builder )
     {
-        builder.displayName( xml.getDisplayName() );
+        builder.displayName( xml.getName() );
         builder.form( XmlFormMapper.fromXml( xml.getForm() ) );
     }
 }

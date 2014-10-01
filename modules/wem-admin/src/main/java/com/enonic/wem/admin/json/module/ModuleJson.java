@@ -1,12 +1,16 @@
 package com.enonic.wem.admin.json.module;
 
 import java.time.Instant;
+import java.util.List;
 
 import org.osgi.framework.Bundle;
+
+import com.google.common.collect.ImmutableList;
 
 import com.enonic.wem.admin.json.ItemJson;
 import com.enonic.wem.api.form.FormJson;
 import com.enonic.wem.api.module.Module;
+import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
 
 public class ModuleJson
     implements ItemJson
@@ -14,6 +18,8 @@ public class ModuleJson
     final Module module;
 
     private final FormJson config;
+
+    private final ImmutableList<String> metadataSchemaNames;
 
     public String getKey()
     {
@@ -65,6 +71,11 @@ public class ModuleJson
         return config;
     }
 
+    public List<String> getMetadataSchemaNames()
+    {
+        return metadataSchemaNames;
+    }
+
     @Override
     public boolean getDeletable()
     {
@@ -81,5 +92,14 @@ public class ModuleJson
     {
         this.module = module;
         this.config = module.getConfig() != null ? new FormJson( module.getConfig() ) : null;
+        ImmutableList.Builder<String> metadataSchemaNamesBuilder = new ImmutableList.Builder<>();
+        if ( this.module.getMetadataSchemaNames() != null )
+        {
+            for ( MetadataSchemaName metadataSchemaName : this.module.getMetadataSchemaNames() )
+            {
+                metadataSchemaNamesBuilder.add( metadataSchemaName.getLocalName() );
+            }
+        }
+        this.metadataSchemaNames = metadataSchemaNamesBuilder.build();
     }
 }

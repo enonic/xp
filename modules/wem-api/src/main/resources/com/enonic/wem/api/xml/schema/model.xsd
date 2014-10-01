@@ -144,7 +144,19 @@
       <xsd:element name="url" type="xsd:string" minOccurs="0" maxOccurs="1"/>
       <xsd:element name="vendor" type="vendor" minOccurs="0" maxOccurs="1"/>
       <xsd:element name="config" type="form" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="metadata-schemas" type="metadata-schemas" minOccurs="0" maxOccurs="1"/>
     </xsd:all>
+  </xsd:complexType>
+
+  <xsd:complexType name="metadata-schemas">
+    <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+      <xsd:annotation>
+        <xsd:appinfo>
+          <jaxb:property name="metadataSchema"/>
+        </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:element name="metadata-schema" type="metadataSchema"/>
+    </xsd:sequence>
   </xsd:complexType>
 
   <!-- Site template schema -->
@@ -253,9 +265,9 @@
   <!-- MetadataSchema schema -->
   <xsd:complexType name="metadataSchema">
     <xsd:all>
-      <xsd:element name="display-name" type="xsd:string" minOccurs="0" maxOccurs="1"/>
       <xsd:element name="form" type="form" minOccurs="0" maxOccurs="1"/>
     </xsd:all>
+    <xsd:attribute name="name" type="xsd:string" use="required"/>
   </xsd:complexType>
 
   <!-- Relationship Type schema -->

@@ -120,7 +120,8 @@ public final class ModuleLoader
         final URL moduleResource = bundle.getResource( MODULE_XML );
         final String moduleXml = parseModuleXml( moduleResource );
         final ModuleBuilder moduleBuilder = new ModuleBuilder();
-        this.xmlSerializer.toModule( moduleXml, moduleBuilder );
+        final ModuleKey moduleKey = ModuleKey.from( bundle );
+        this.xmlSerializer.toModule( moduleXml, moduleBuilder, moduleKey );
 
         final Dictionary<String, String> headers = bundle.getHeaders();
         final String bundleDisplayName = headers.get( Constants.BUNDLE_NAME );
