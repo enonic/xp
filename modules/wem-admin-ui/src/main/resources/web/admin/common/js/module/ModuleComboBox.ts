@@ -1,9 +1,10 @@
 module api.module {
 
     export class ModuleComboBox extends api.ui.selector.combobox.RichComboBox<api.module.Module> {
-        constructor() {
+        constructor(maximumOccurrences?: number) {
             var builder = new api.ui.selector.combobox.RichComboBoxBuilder<api.module.Module>();
             builder.
+                setMaximumOccurrences(maximumOccurrences || 0).
                 setComboBoxName("moduleSelector").
                 setLoader(new api.module.ModuleLoader()).
                 setSelectedOptionsView(new ModuleSelectedOptionsView()).

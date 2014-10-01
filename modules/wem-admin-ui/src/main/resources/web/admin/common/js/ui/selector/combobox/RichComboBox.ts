@@ -93,6 +93,10 @@ module api.ui.selector.combobox {
             });
         }
 
+        deselect(option: Option<OPTION_DISPLAY_VALUE>) {
+            this.comboBox.removeSelectedOption(option);
+        }
+
         private createComboBox(name: string): api.ui.selector.combobox.ComboBox<OPTION_DISPLAY_VALUE> {
 
             var comboBoxConfig = this.createConfig();

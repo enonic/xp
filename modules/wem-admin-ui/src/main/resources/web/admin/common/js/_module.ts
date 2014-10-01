@@ -91,6 +91,7 @@
 
 ///<reference path='module/_module.ts' />
 ///<reference path='module/json/_module.ts' />
+///<reference path='module/inputtype/moduleconfigurator/_module.ts' />
 
 ///<reference path='schema/_module.ts' />
 ///<reference path='schema/content/_module.ts' />

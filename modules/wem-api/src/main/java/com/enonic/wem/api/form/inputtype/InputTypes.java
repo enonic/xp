@@ -55,6 +55,8 @@ public final class InputTypes
 
     public static final InputType CONTENT_TYPE_FILTER = new ContentTypeFilter();
 
+    public static final InputType MODULE_CONFIGURATOR = new ModuleConfigurator();
+
     private static final ImmutableList<InputType> inputTypes = new ImmutableList.Builder<InputType>().
         add( COLOR ).
         add( COMBO_BOX ).
@@ -78,6 +80,7 @@ public final class InputTypes
         add( XML ).
         add( PAGE_CONTROLLER ).
         add( CONTENT_TYPE_FILTER ).
+        add( MODULE_CONFIGURATOR ).
         build();
 
     private static LinkedHashMap<String, InputType> inputTypeByName = new LinkedHashMap<>();
