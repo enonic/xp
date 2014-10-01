@@ -5,14 +5,13 @@ import org.junit.Test;
 
 import com.enonic.wem.script.AbstractScriptTest;
 
-public class MustacheScriptTest
+public class RenderViewScriptTest
     extends AbstractScriptTest
 {
     @Before
     public void setUp()
     {
-        final MustacheScriptLibrary lib = new MustacheScriptLibrary( new MustacheProcessorFactoryImpl() );
-        addLibrary( lib );
+        addHandler( new RenderViewHandler( new MustacheProcessorFactoryImpl() ) );
     }
 
     @Test

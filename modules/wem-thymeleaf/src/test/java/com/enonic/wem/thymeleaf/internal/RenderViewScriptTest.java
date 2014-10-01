@@ -5,14 +5,13 @@ import org.junit.Test;
 
 import com.enonic.wem.script.AbstractScriptTest;
 
-public class ThymeleafScriptTest
+public class RenderViewScriptTest
     extends AbstractScriptTest
 {
     @Before
     public void setUp()
     {
-        final ThymeleafScriptLibrary lib = new ThymeleafScriptLibrary( new ThymeleafProcessorFactoryImpl() );
-        addLibrary( lib );
+        addHandler( new RenderViewHandler( new ThymeleafProcessorFactoryImpl() ) );
     }
 
     @Test
