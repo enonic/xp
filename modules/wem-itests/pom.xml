@@ -82,12 +82,12 @@
       <version>${project.version}</version>
     </dependency>
 
-    <dependency>
+    <!--dependency>
       <groupId>org.apache.karaf.tooling.exam</groupId>
       <artifactId>org.apache.karaf.tooling.exam.container</artifactId>
       <version>2.3.8</version>
       <scope>test</scope>
-    </dependency>
+    </dependency-->
 
   </dependencies>
 
