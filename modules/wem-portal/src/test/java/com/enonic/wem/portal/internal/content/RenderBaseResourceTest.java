@@ -18,6 +18,8 @@ import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplateName;
 import com.enonic.wem.api.content.page.PageTemplateService;
+import com.enonic.wem.api.content.page.part.PartComponent;
+import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.content.site.SiteService;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
@@ -41,15 +43,8 @@ import com.enonic.wem.portal.internal.base.BaseResourceTest;
 import com.enonic.wem.portal.internal.controller.JsController;
 import com.enonic.wem.portal.internal.controller.JsControllerFactory;
 
-import static com.enonic.wem.api.content.page.PageRegions.newPageRegions;
-import static com.enonic.wem.api.content.page.part.PartComponent.newPartComponent;
-import static com.enonic.wem.api.content.page.region.Region.newRegion;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.isA;
-import static org.mockito.Mockito.when;
-
-public abstract class RenderBaseResourceTest<T extends RenderBaseResource>
-    extends BaseResourceTest<T>
+public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvider>
+    extends BaseResourceTest
 {
     protected ContentService contentService;
 
@@ -62,6 +57,8 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResource>
     protected PageDescriptorService pageDescriptorService;
 
     protected JsController jsController;
+
+    protected T resourceProvider;
 
     public final Workspace testWorkspace = Workspace.from( "test" );
 
@@ -81,48 +78,50 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResource>
         this.siteService = Mockito.mock( SiteService.class );
         this.pageTemplateService = Mockito.mock( PageTemplateService.class );
         this.siteTemplateService = Mockito.mock( SiteTemplateService.class );
-        when( siteTemplateService.getSiteTemplate( any() ) ).thenThrow( new SiteTemplateNotFoundException( null ) );
+        Mockito.when( siteTemplateService.getSiteTemplate( Mockito.any() ) ).thenThrow( new SiteTemplateNotFoundException( null ) );
         this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
         final JsControllerFactory jsControllerFactory = Mockito.mock( JsControllerFactory.class );
 
         this.jsController = Mockito.mock( JsController.class );
-        when( jsControllerFactory.newController( Mockito.any() ) ).thenReturn( jsController );
+        Mockito.when( jsControllerFactory.newController( Mockito.any() ) ).thenReturn( jsController );
 
-        this.resource.contentService = this.contentService;
-        this.resource.siteService = this.siteService;
-        this.resource.pageTemplateService = this.pageTemplateService;
-        this.resource.siteTemplateService = this.siteTemplateService;
-        this.resource.pageDescriptorService = this.pageDescriptorService;
-        this.resource.controllerFactory = jsControllerFactory;
+        this.resourceProvider.setContentService( this.contentService );
+        this.resourceProvider.setSiteService( this.siteService );
+        this.resourceProvider.setPageTemplateService( this.pageTemplateService );
+        this.resourceProvider.setSiteTemplateService( this.siteTemplateService );
+        this.resourceProvider.setPageDescriptorService( this.pageDescriptorService );
+        this.resourceProvider.setControllerFactory( jsControllerFactory );
+
+        this.application.addSingleton( this.resourceProvider );
     }
 
     protected final void setupContentAndSite( final Context context )
         throws Exception
     {
-        when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ), context ) ).
+        Mockito.when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ), context ) ).
             thenReturn( createPage( "id", "site/somepath/content", "mymodule:ctype", true ) );
 
-        when( this.siteService.getNearestSite( isA( ContentId.class ), isA( Context.class ) ) ).
+        Mockito.when( this.siteService.getNearestSite( Mockito.isA( ContentId.class ), Mockito.isA( Context.class ) ) ).
             thenReturn( createSite( "id", "site", "mymodule:contenttypename" ) );
     }
 
     protected final void setupNonPageContent( final Context context )
         throws Exception
     {
-        when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ), context ) ).
+        Mockito.when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ), context ) ).
             thenReturn( createPage( "id", "site/somepath/content", "mymodule:ctype", false ) );
 
-        when( this.siteService.getNearestSite( isA( ContentId.class ), isA( Context.class ) ) ).
+        Mockito.when( this.siteService.getNearestSite( Mockito.isA( ContentId.class ), Mockito.isA( Context.class ) ) ).
             thenReturn( createSite( "id", "site", "mymodule:contenttypename" ) );
     }
 
     protected final void setupTemplates()
         throws Exception
     {
-        when( this.pageTemplateService.getByKey( Mockito.eq( PageTemplateKey.from( "mymodule|my-page" ) ),
-                                                 Mockito.eq( (SiteTemplateKey) null ) ) ).thenReturn( createPageTemplate() );
+        Mockito.when( this.pageTemplateService.getByKey( Mockito.eq( PageTemplateKey.from( "mymodule|my-page" ) ),
+                                                         Mockito.eq( (SiteTemplateKey) null ) ) ).thenReturn( createPageTemplate() );
 
-        when( this.pageDescriptorService.getByKey( isA( PageDescriptorKey.class ) ) ).thenReturn( createDescriptor() );
+        Mockito.when( this.pageDescriptorService.getByKey( Mockito.isA( PageDescriptorKey.class ) ) ).thenReturn( createDescriptor() );
     }
 
     private Content createPage( final String id, final String path, final String contentTypeName, final boolean withPage )
@@ -184,9 +183,9 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResource>
         final RootDataSet pageTemplateConfig = new RootDataSet();
         pageTemplateConfig.addProperty( "pause", Value.newLong( 10000 ) );
 
-        PageRegions pageRegions = newPageRegions().
-            add( newRegion().name( "main-region" ).
-                add( newPartComponent().name( ComponentName.from( "mypart" ) ).
+        PageRegions pageRegions = PageRegions.newPageRegions().
+            add( Region.newRegion().name( "main-region" ).
+                add( PartComponent.newPartComponent().name( ComponentName.from( "mypart" ) ).
                     build() ).
                 build() ).
             build();

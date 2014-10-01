@@ -1,77 +1,75 @@
 package com.enonic.wem.portal.internal;
 
-import java.util.Map;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-import org.restlet.Application;
-import org.restlet.Restlet;
-import org.restlet.resource.Finder;
-import org.restlet.resource.ServerResource;
-import org.restlet.routing.Router;
-import org.restlet.routing.TemplateRoute;
-import org.restlet.routing.Variable;
-
-import com.enonic.wem.portal.internal.content.ComponentResource;
-import com.enonic.wem.portal.internal.content.ContentResource;
-import com.enonic.wem.portal.internal.content.PageTemplateResource;
-import com.enonic.wem.portal.internal.restlet.FinderFactory;
-import com.enonic.wem.portal.internal.underscore.ImageByIdResource;
-import com.enonic.wem.portal.internal.underscore.ImageByNameResource;
-import com.enonic.wem.portal.internal.underscore.PublicResource;
-import com.enonic.wem.portal.internal.underscore.ServiceResource;
+import javax.ws.rs.Path;
+import javax.ws.rs.ext.Provider;
 
 public final class PortalApplication
-    extends Application
 {
-    protected FinderFactory finderFactory;
+    private final Set<Object> resources;
 
-    public void setFinderFactory( final FinderFactory finderFactory )
+    private final Set<ResourceProvider> resourceProviders;
+
+    private final Set<Object> providers;
+
+    public PortalApplication()
     {
-        this.finderFactory = finderFactory;
+        this.resources = new HashSet<>();
+        this.resourceProviders = new HashSet<>();
+        this.providers = new HashSet<>();
     }
 
-    @Override
-    public Restlet createInboundRoot()
+    public Set<Object> getResources()
     {
-        final Router underscoreRouter = new Router( getContext() );
-        underscoreRouter.setDefaultMatchingMode( Router.MODE_FIRST_MATCH );
-
-        attach( underscoreRouter, "/service/{module}/{service}", ServiceResource.class );
-        attach( underscoreRouter, "/public/{module}/{resource}", PublicResource.class, "resource" );
-        attach( underscoreRouter, "/image/id/{id}", ImageByIdResource.class, "id" );
-        attach( underscoreRouter, "/image/{fileName}", ImageByNameResource.class, "fileName" );
-        attach( underscoreRouter, "/component/{component}", ComponentResource.class, "component" );
-
-        final Router contentRouter = new Router( getContext() );
-        contentRouter.setDefaultMatchingMode( Router.MODE_FIRST_MATCH );
-        attach( contentRouter, "/{path}/_", underscoreRouter, "path" );
-        attach( contentRouter, "/{path}", ContentResource.class, "path" );
-
-        final Router router = new Router( getContext() );
-        attach( router, "/theme/{siteTemplateKey}/{pageTemplateKey}", PageTemplateResource.class, "siteTemplateKey", "pageTemplateKey" );
-        attach( router, "/{mode}/{workspace}", contentRouter );
-
-        return router;
+        return this.resources;
     }
 
-    private void attach( final Router router, final String template, final Class<? extends ServerResource> type,
-                         final String... greedyVars )
+    public Set<ResourceProvider> getResourceProviders()
     {
-        final Finder finder = this.finderFactory.finder( type );
-        attach( router, template, finder, greedyVars );
+        return this.resourceProviders;
     }
 
-    private void attach( final Router router, final String template, final Restlet restlet, final String... greedyVars )
+    public Set<Object> getProviders()
     {
-        final TemplateRoute route = router.attach( template, restlet );
-        greedyVariable( route, greedyVars );
+        return this.providers;
     }
 
-    private void greedyVariable( final TemplateRoute route, final String... names )
+    public void addSingleton( final Object object )
     {
-        final Map<String, Variable> map = route.getTemplate().getVariables();
-        for ( final String name : names )
+        if ( isResource( object ) )
         {
-            map.put( name, new Variable( Variable.TYPE_URI_PATH ) );
+            this.resources.add( object );
         }
+        else if ( isProvider( object ) )
+        {
+            this.providers.add( object );
+        }
+        else if ( object instanceof ResourceProvider )
+        {
+            this.resourceProviders.add( (ResourceProvider) object );
+        }
+    }
+
+    private boolean isResource( final Object object )
+    {
+        return isResource( object.getClass() );
+    }
+
+    private boolean isResource( final Class<?> type )
+    {
+        return type.getAnnotation( Path.class ) != null;
+    }
+
+    private boolean isProvider( final Object object )
+    {
+        return object.getClass().getAnnotation( Provider.class ) != null;
+    }
+
+    public void setSingletons( final List<Object> list )
+    {
+        list.forEach( this::addSingleton );
     }
 }

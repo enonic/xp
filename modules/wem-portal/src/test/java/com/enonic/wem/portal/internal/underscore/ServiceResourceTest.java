@@ -1,12 +1,10 @@
 package com.enonic.wem.portal.internal.underscore;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-import org.restlet.Request;
-import org.restlet.Response;
-import org.restlet.data.Method;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.google.common.collect.Multimap;
 
@@ -20,7 +18,7 @@ import com.enonic.wem.portal.internal.controller.JsControllerFactory;
 import static org.junit.Assert.*;
 
 public class ServiceResourceTest
-    extends ModuleBaseResourceTest<ServiceResource>
+    extends ModuleBaseResourceTest
 {
     private JsController jsController;
 
@@ -28,22 +26,29 @@ public class ServiceResourceTest
     protected void configure()
         throws Exception
     {
-        this.resource = new ServiceResource();
-        super.configure();
+        configureModuleService();
+
+        final ServiceResourceProvider provider = new ServiceResourceProvider();
+        provider.setModuleService( this.moduleService );
+
+        final JsControllerFactory controllerFactory = Mockito.mock( JsControllerFactory.class );
+        provider.setControllerFactory( controllerFactory );
 
         this.jsController = Mockito.mock( JsController.class );
-        this.resource.controllerFactory = Mockito.mock( JsControllerFactory.class );
-        Mockito.when( this.resource.controllerFactory.newController( Mockito.anyObject() ) ).thenReturn( this.jsController );
+        Mockito.when( controllerFactory.newController( Mockito.anyObject() ) ).thenReturn( this.jsController );
 
-        mockCurrentContextHttpRequest();
+        this.application.addSingleton( provider );
     }
 
     @Test
     public void executeScript()
         throws Exception
     {
-        final Request request = new Request( Method.GET, "/live/path/to/content/_/service/demo/test?a=b" );
-        executeRequest( request );
+        final MockHttpServletRequest request = newGetRequest( "/live/path/to/content/_/service/demo/test" );
+        request.setQueryString( "a=b" );
+        final MockHttpServletResponse response = executeRequest( request );
+
+        assertEquals( 200, response.getStatus() );
 
         final ArgumentCaptor<JsContext> jsContext = ArgumentCaptor.forClass( JsContext.class );
         Mockito.verify( this.jsController ).execute( jsContext.capture() );
@@ -56,17 +61,5 @@ public class ServiceResourceTest
         final Multimap<String, String> params = jsHttpRequest.getParams();
         assertNotNull( params );
         assertEquals( "b", params.get( "a" ).iterator().next() );
-    }
-
-    @Test
-    @Ignore
-    public void executeScript_moduleNotFound()
-        throws Exception
-    {
-        final Request request = new Request( Method.GET, "/live/path/to/content/_/service/demo/test" );
-        final Response response = executeRequest( request );
-
-        assertEquals( 404, response.getStatus().getCode() );
-        assertEquals( "Module [demo] not found", response.getStatus().getDescription() );
     }
 }

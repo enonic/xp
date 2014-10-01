@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
-  <bean id="statusService" class="com.enonic.wem.portal.internal.exception.PortalStatusService"/>
+  <bean id="exceptionMapper" class="com.enonic.wem.portal.internal.exception.PortalExceptionMapper"/>
 
   <bean id="portalApplication" class="com.enonic.wem.portal.internal.PortalApplication">
-    <property name="finderFactory" ref="finderFactory"/>
-    <property name="statusService" ref="statusService"/>
+    <property name="singletons">
+      <list>
+        <ref component-id="publicResourceProvider"/>
+        <ref component-id="serviceResourceProvider"/>
+        <ref component-id="imageResourceProvider"/>
+        <ref component-id="pageTemplateResourceProvider"/>
+        <ref component-id="contentResourceProvider"/>
+        <ref component-id="componentResourceProvider"/>
+        <ref component-id="exceptionMapper"/>
+      </list>
+    </property>
   </bean>
 
   <service interface="javax.servlet.Servlet">
@@ -13,7 +22,7 @@
       <entry key="alias" value="/portal/*"/>
     </service-properties>
     <bean class="com.enonic.wem.portal.internal.PortalServlet">
-      <property name="portalApplication" ref="portalApplication"/>
+      <property name="application" ref="portalApplication"/>
     </bean>
   </service>
 

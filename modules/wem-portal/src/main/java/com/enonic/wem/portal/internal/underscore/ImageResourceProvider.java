@@ -4,10 +4,10 @@ import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.core.image.filter.ImageFilterBuilder;
-import com.enonic.wem.portal.internal.base.ModuleBaseResourceFactory;
+import com.enonic.wem.portal.internal.ResourceProvider;
 
-public abstract class ImageBaseResourceFactory<T extends ImageBaseResource>
-    extends ModuleBaseResourceFactory<T>
+public final class ImageResourceProvider
+    implements ResourceProvider<ImageResource2>
 {
     private ImageFilterBuilder imageFilterBuilder;
 
@@ -17,19 +17,21 @@ public abstract class ImageBaseResourceFactory<T extends ImageBaseResource>
 
     private ContentService contentService;
 
-    public ImageBaseResourceFactory( final Class<T> type )
+    @Override
+    public Class<ImageResource2> getType()
     {
-        super( type );
+        return ImageResource2.class;
     }
 
     @Override
-    protected void configure( final T instance )
+    public ImageResource2 newResource()
     {
-        super.configure( instance );
+        final ImageResource2 instance = new ImageResource2();
         instance.imageFilterBuilder = this.imageFilterBuilder;
         instance.attachmentService = this.attachmentService;
         instance.blobService = this.blobService;
         instance.contentService = this.contentService;
+        return instance;
     }
 
     public final void setImageFilterBuilder( final ImageFilterBuilder imageFilterBuilder )

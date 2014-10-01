@@ -1,7 +1,9 @@
 package com.enonic.wem.portal.internal.content;
 
-import org.restlet.representation.Representation;
-import org.restlet.resource.ResourceException;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.Response;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.page.Page;
@@ -13,12 +15,23 @@ import com.enonic.wem.portal.internal.controller.JsHttpRequest;
 import com.enonic.wem.portal.internal.controller.JsHttpResponseSerializer;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 
-public final class ContentResource
-    extends RenderBaseResource
+@Path("/{mode}/{workspace}/{contentPath:.+}")
+public final class ContentResource2
+    extends RenderBaseResource2
 {
-    @Override
-    protected Representation doHandle()
-        throws ResourceException
+    @GET
+    public Response handleGet()
+    {
+        return doHandle();
+    }
+
+    @POST
+    public Response handlePost()
+    {
+        return doHandle();
+    }
+
+    private Response doHandle()
     {
         final Content content = getContent( this.contentPath );
         final Content siteContent = getSite( content );
@@ -52,14 +65,14 @@ public final class ContentResource
         final JsHttpRequest jsRequest = new JsHttpRequest();
         jsRequest.setMode( this.mode );
         jsRequest.setWorkspace( this.workspace );
-        jsRequest.setMethod( getRequest().getMethod().toString() );
-        jsRequest.addParams( getParams() );
+        jsRequest.setMethod( this.request.getMethod() );
+        jsRequest.addParams( this.uriInfo.getQueryParameters() );
         context.setRequest( jsRequest );
 
         final JsController controller = this.controllerFactory.newController( pageDescriptor.getResourceKey() );
         controller.execute( context );
 
         final RenderResult result = new JsHttpResponseSerializer( context.getResponse() ).serialize();
-        return toRepresentation( result );
+        return toResponse( result );
     }
 }

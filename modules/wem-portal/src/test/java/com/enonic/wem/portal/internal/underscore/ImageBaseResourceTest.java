@@ -28,10 +28,10 @@ import com.enonic.wem.core.blob.memory.MemoryBlobRecord;
 import com.enonic.wem.core.image.filter.BuilderContext;
 import com.enonic.wem.core.image.filter.ImageFilter;
 import com.enonic.wem.core.image.filter.ImageFilterBuilder;
-import com.enonic.wem.portal.internal.base.ModuleBaseResourceTest;
+import com.enonic.wem.portal.internal.base.BaseResourceTest;
 
-public abstract class ImageBaseResourceTest<T extends ImageBaseResource>
-    extends ModuleBaseResourceTest<T>
+public abstract class ImageBaseResourceTest
+    extends BaseResourceTest
 {
     private ImageFilterBuilder imageFilterBuilder;
 
@@ -40,7 +40,6 @@ public abstract class ImageBaseResourceTest<T extends ImageBaseResource>
     private BlobService blobService;
 
     protected ContentService contentService;
-
 
     public final Workspace testWorkspace = Workspace.from( "test" );
 
@@ -56,19 +55,18 @@ public abstract class ImageBaseResourceTest<T extends ImageBaseResource>
     protected void configure()
         throws Exception
     {
-        super.configure();
-
         this.imageFilterBuilder = Mockito.mock( ImageFilterBuilder.class );
-        this.resource.imageFilterBuilder = imageFilterBuilder;
-
         this.attachmentService = Mockito.mock( AttachmentService.class );
-        this.resource.attachmentService = attachmentService;
-
         this.blobService = Mockito.mock( BlobService.class );
-        this.resource.blobService = blobService;
-
         this.contentService = Mockito.mock( ContentService.class );
-        this.resource.contentService = contentService;
+
+        final ImageResourceProvider provider = new ImageResourceProvider();
+        provider.setImageFilterBuilder( this.imageFilterBuilder );
+        provider.setAttachmentService( this.attachmentService );
+        provider.setBlobService( this.blobService );
+        provider.setContentService( this.contentService );
+
+        this.application.addSingleton( provider );
     }
 
     protected final void setupContent( final Context context )

@@ -1,6 +1,8 @@
 package com.enonic.wem.portal.internal.content;
 
-import org.restlet.resource.ResourceException;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Request;
+import javax.ws.rs.core.UriInfo;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentConstants;
@@ -22,11 +24,12 @@ import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.rendering.RenderingMode;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.portal.internal.base.WorkspaceBaseResource;
+import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.portal.internal.base.BaseResource2;
 import com.enonic.wem.portal.internal.controller.JsControllerFactory;
 
-public abstract class RenderBaseResource
-    extends WorkspaceBaseResource
+public abstract class RenderBaseResource2
+    extends BaseResource2
 {
     protected JsControllerFactory controllerFactory;
 
@@ -40,14 +43,29 @@ public abstract class RenderBaseResource
 
     protected SiteService siteService;
 
+    @PathParam("contentPath")
     protected String contentPath;
 
-    @Override
-    protected void doInit()
-        throws ResourceException
+    protected Workspace workspace;
+
+    protected RenderingMode mode;
+
+    @javax.ws.rs.core.Context
+    protected Request request;
+
+    @javax.ws.rs.core.Context
+    protected UriInfo uriInfo;
+
+    @PathParam("workspace")
+    public void setWorkspace( final String value )
     {
-        super.doInit();
-        this.contentPath = getAttribute( "path" );
+        this.workspace = Workspace.from( value );
+    }
+
+    @PathParam("mode")
+    public void setMode( final String mode )
+    {
+        this.mode = parseMode( mode );
     }
 
     protected final Content getSite( final Content content )

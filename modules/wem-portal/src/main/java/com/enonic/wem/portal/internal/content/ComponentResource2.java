@@ -1,7 +1,10 @@
 package com.enonic.wem.portal.internal.content;
 
-import org.restlet.representation.Representation;
-import org.restlet.resource.ResourceException;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Response;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.page.ComponentPath;
@@ -15,18 +18,30 @@ import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
 import com.enonic.wem.portal.internal.rendering.RendererFactory;
 
-public final class ComponentResource
-    extends RenderBaseResource
+@Path("/{mode}/{workspace}/{contentPath:.+}/_/component/{component:.+}")
+public final class ComponentResource2
+    extends RenderBaseResource2
 {
     protected RendererFactory rendererFactory;
 
-    @Override
-    protected Representation doHandle()
-        throws ResourceException
-    {
-        final String componentSelector = getAttribute( "component" );
-        final ComponentPath componentPath = ComponentPath.from( componentSelector );
+    @PathParam("component")
+    protected String componentSelector;
 
+    @GET
+    public Response handleGet()
+    {
+        return doHandle();
+    }
+
+    @POST
+    public Response handlePost()
+    {
+        return doHandle();
+    }
+
+    private Response doHandle()
+    {
+        final ComponentPath componentPath = ComponentPath.from( this.componentSelector );
         final Content content = getContent( this.contentPath );
 
         final Content siteContent = getSite( content );
@@ -61,7 +76,7 @@ public final class ComponentResource
         final JsContext context = createContext( content, component, siteContent, pageTemplate );
         final RenderResult result = renderer.render( component, context );
 
-        return toRepresentation( result );
+        return toResponse( result );
     }
 
     private JsContext createContext( final Content content, final PageComponent component, final Content siteContent,
@@ -77,8 +92,8 @@ public final class ComponentResource
         final JsHttpRequest jsRequest = new JsHttpRequest();
         jsRequest.setMode( this.mode );
         jsRequest.setWorkspace( this.workspace );
-        jsRequest.setMethod( getRequest().getMethod().toString() );
-        jsRequest.addParams( getParams() );
+        jsRequest.setMethod( this.request.getMethod() );
+        jsRequest.addParams( this.uriInfo.getQueryParameters() );
         context.setRequest( jsRequest );
 
         return context;

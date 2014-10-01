@@ -1,10 +1,13 @@
 package com.enonic.wem.portal.internal.content;
 
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
-import org.restlet.representation.Representation;
-import org.restlet.resource.ResourceException;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Request;
+import javax.ws.rs.core.Response;
 
 import com.google.common.collect.Lists;
 
@@ -27,7 +30,7 @@ import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.rendering.RenderingMode;
 import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.portal.internal.base.BaseResource;
+import com.enonic.wem.portal.internal.base.BaseResource2;
 import com.enonic.wem.portal.internal.controller.JsContext;
 import com.enonic.wem.portal.internal.controller.JsController;
 import com.enonic.wem.portal.internal.controller.JsControllerFactory;
@@ -38,8 +41,9 @@ import com.enonic.wem.portal.internal.rendering.RenderResult;
 import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.api.content.site.ModuleConfig.newModuleConfig;
 
-public final class PageTemplateResource
-    extends BaseResource
+@Path("/theme/{siteTemplateKey}/{pageTemplateKey}")
+public final class PageTemplateResource2
+    extends BaseResource2
 {
     protected JsControllerFactory controllerFactory;
 
@@ -49,41 +53,35 @@ public final class PageTemplateResource
 
     protected PageDescriptorService pageDescriptorService;
 
-    protected String siteTemplateKeyParam;
+    protected PageTemplateKey pageTemplateKey;
 
-    protected String pageTemplateKeyParam;
+    protected SiteTemplateKey siteTemplateKey;
 
-    @Override
-    protected void doInit()
-        throws ResourceException
+    @Context
+    protected Request request;
+
+    @PathParam("pageTemplateKey")
+    public void setPageTemplateKey( final String value )
     {
-        this.pageTemplateKeyParam = attribute( "pageTemplateKey" );
-        if ( this.pageTemplateKeyParam == null )
-        {
-            throw notFound( "Missing pageTemplateKey" );
-        }
-
-        this.siteTemplateKeyParam = attribute( "siteTemplateKey" );
-        if ( this.siteTemplateKeyParam == null )
-        {
-            throw notFound( "Missing siteTemplateKey" );
-        }
+        this.pageTemplateKey = PageTemplateKey.from( value );
     }
 
-    @Override
-    protected Representation doHandle()
-        throws ResourceException
+    @PathParam("siteTemplateKey")
+    public void setSiteTemplateKey( final String value )
     {
-        final PageTemplateKey pageTemplateKey = PageTemplateKey.from( this.pageTemplateKeyParam );
-        final SiteTemplateKey siteTemplateKey = SiteTemplateKey.from( this.siteTemplateKeyParam );
+        this.siteTemplateKey = SiteTemplateKey.from( value );
+    }
+
+    @GET
+    public Response doHandle()
+    {
         final PageTemplate pageTemplate = this.pageTemplateService.getByKey( pageTemplateKey, siteTemplateKey );
         final SiteTemplate siteTemplate = this.siteTemplateService.getSiteTemplate( siteTemplateKey );
 
         return renderPageTemplate( siteTemplate, pageTemplate );
     }
 
-    protected Representation renderPageTemplate( final SiteTemplate siteTemplate, final PageTemplate pageTemplate )
-        throws ResourceException
+    private Response renderPageTemplate( final SiteTemplate siteTemplate, final PageTemplate pageTemplate )
     {
         final Content content = createDummyPageContent( siteTemplate );
         final Content siteContent = content;
@@ -101,14 +99,14 @@ public final class PageTemplateResource
         final JsHttpRequest jsRequest = new JsHttpRequest();
         jsRequest.setMode( RenderingMode.EDIT );
         jsRequest.setWorkspace( Workspace.from( "stage" ) );
-        jsRequest.setMethod( getRequest().getMethod().toString() );
+        jsRequest.setMethod( this.request.getMethod() );
         context.setRequest( jsRequest );
 
         final JsController controller = this.controllerFactory.newController( pageDescriptor.getResourceKey() );
         controller.execute( context );
 
         final RenderResult result = new JsHttpResponseSerializer( context.getResponse() ).serialize();
-        return toRepresentation( result );
+        return toResponse( result );
     }
 
     private ModuleKey resolvePageTemplateModule( final PageTemplate pageTemplate, final SiteTemplate siteTemplate )
@@ -150,18 +148,5 @@ public final class PageTemplateResource
         }
 
         return pageDescriptor;
-    }
-
-    private String attribute( final String name )
-    {
-        final String value = getAttribute( name );
-        try
-        {
-            return java.net.URLDecoder.decode( value, "UTF-8" );
-        }
-        catch ( UnsupportedEncodingException e )
-        {
-            return value;
-        }
     }
 }

@@ -1,23 +1,26 @@
 package com.enonic.wem.portal.internal.underscore;
 
 import org.junit.Test;
-import org.restlet.Request;
-import org.restlet.Response;
-import org.restlet.data.Method;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.enonic.wem.portal.internal.base.ModuleBaseResourceTest;
 
 import static org.junit.Assert.*;
 
 public class PublicResourceTest
-    extends ModuleBaseResourceTest<PublicResource>
+    extends ModuleBaseResourceTest
 {
     @Override
     protected void configure()
         throws Exception
     {
-        this.resource = new PublicResource();
-        super.configure();
+        configureModuleService();
+
+        final PublicResourceProvider provider = new PublicResourceProvider();
+        provider.setModuleService( this.moduleService );
+
+        this.application.addSingleton( provider );
     }
 
     @Test
@@ -26,23 +29,23 @@ public class PublicResourceTest
     {
         addResource( "main.css", "demo:/public/css/main.css", "p {color:red;}" );
 
-        final Request request = new Request( Method.GET, "/live/path/to/content/_/public/demo/css/main.css" );
-        final Response response = executeRequest( request );
+        final MockHttpServletRequest request = newGetRequest( "/live/path/to/content/_/public/demo/css/main.css" );
+        final MockHttpServletResponse response = executeRequest( request );
 
-        assertEquals( 200, response.getStatus().getCode() );
-        assertEquals( "text/css", response.getEntity().getMediaType().toString() );
-        assertEquals( "p {color:red;}", response.getEntityAsText() );
+        assertEquals( 200, response.getStatus() );
+        assertEquals( "text/css", response.getContentType() );
+        assertEquals( "p {color:red;}", response.getContentAsString() );
     }
 
     @Test
     public void getPublicResource_moduleNotFound()
         throws Exception
     {
-        final Request request = new Request( Method.GET, "/live/path/to/content/_/public/demo/css/main.css" );
-        final Response response = executeRequest( request );
+        final MockHttpServletRequest request = newGetRequest( "/live/path/to/content/_/public/demo/css/main.css" );
+        final MockHttpServletResponse response = executeRequest( request );
 
-        assertEquals( 404, response.getStatus().getCode() );
-        assertEquals( "Module [demo] not found", response.getStatus().getDescription() );
+        assertEquals( 404, response.getStatus() );
+        assertTrue( response.getContentAsString().contains( "Module [demo] not found" ) );
     }
 
     @Test
@@ -51,30 +54,19 @@ public class PublicResourceTest
     {
         addModule( "demo" );
 
-        final Request request = new Request( Method.GET, "/live/path/to/content/_/public/demo/css/main.css" );
-        final Response response = executeRequest( request );
+        final MockHttpServletRequest request = newGetRequest( "/live/path/to/content/_/public/demo/css/main.css" );
+        final MockHttpServletResponse response = executeRequest( request );
 
-        assertEquals( 404, response.getStatus().getCode() );
-        assertEquals( "File [css/main.css] not found in module [demo]", response.getStatus().getDescription() );
+        assertEquals( 404, response.getStatus() );
+        assertTrue( response.getContentAsString().contains( "File [css/main.css] not found in module [demo]" ) );
     }
 
     @Test
     public void methodNotAllowed()
         throws Exception
     {
-        final Request request = new Request( Method.POST, "/live/path/to/content/_/public/demo/css/main.css" );
-        final Response response = executeRequest( request );
-        assertEquals( 405, response.getStatus().getCode() );
-    }
-
-    @Test
-    public final void illegalMode()
-        throws Exception
-    {
-        final Request request = new Request( Method.GET, "/unknown/path/to/content/_/public/demo/css/main.css" );
-        final Response response = executeRequest( request );
-
-        assertEquals( 404, response.getStatus().getCode() );
-        assertEquals( "Illegal mode [unknown]. Should be one of [edit,preview,live].", response.getStatus().getDescription() );
+        final MockHttpServletRequest request = newPostRequest( "/live/path/to/content/_/public/demo/css/main.css" );
+        final MockHttpServletResponse response = executeRequest( request );
+        assertEquals( 405, response.getStatus() );
     }
 }

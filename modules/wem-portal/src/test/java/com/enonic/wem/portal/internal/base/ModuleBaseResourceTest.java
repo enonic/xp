@@ -16,8 +16,8 @@ import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.resource.ResourceKey;
 
-public abstract class ModuleBaseResourceTest<T extends ModuleBaseResource>
-    extends BaseResourceTest<T>
+public abstract class ModuleBaseResourceTest
+    extends BaseResourceTest
 {
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
@@ -26,14 +26,11 @@ public abstract class ModuleBaseResourceTest<T extends ModuleBaseResource>
 
     protected ModuleService moduleService;
 
-    @Override
-    protected void configure()
+    protected final void configureModuleService()
         throws Exception
     {
         this.tmpDir = this.temporaryFolder.getRoot().toPath();
-
         this.moduleService = Mockito.mock( ModuleService.class );
-        this.resource.moduleService = moduleService;
     }
 
     protected final void addResource( final String name, final String key, final String content )

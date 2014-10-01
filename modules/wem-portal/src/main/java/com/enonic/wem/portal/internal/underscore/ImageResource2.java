@@ -5,9 +5,13 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.imageio.ImageIO;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
-import org.restlet.resource.ResourceException;
 
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
@@ -26,14 +30,16 @@ import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.attachment.GetAttachmentParameters;
 import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.image.ImageHelper;
 import com.enonic.wem.core.image.filter.BuilderContext;
 import com.enonic.wem.core.image.filter.ImageFilter;
 import com.enonic.wem.core.image.filter.ImageFilterBuilder;
-import com.enonic.wem.portal.internal.base.ModuleBaseResource;
+import com.enonic.wem.portal.internal.base.BaseResource2;
 
-public abstract class ImageBaseResource
-    extends ModuleBaseResource
+@Path("/{mode}/{workspace}/{contentPath:.+}/_/image")
+public final class ImageResource2
+    extends BaseResource2
 {
     private final static int DEFAULT_BACKGROUND = 0x00FFFFFF;
 
@@ -47,24 +53,42 @@ public abstract class ImageBaseResource
 
     protected ContentService contentService;
 
+    protected Workspace workspace;
+
+    protected ContentPath contentPath;
+
+    @QueryParam("filter")
     protected String filterParam;
 
-    protected int quality;
+    protected int quality = DEFAULT_QUALITY;
 
-    protected int backgroundColor;
+    protected int backgroundColor = DEFAULT_BACKGROUND;
 
-    @Override
-    protected void doInit()
-        throws ResourceException
+    @PathParam("workspace")
+    public void setWorkspace( final String value )
     {
-        super.doInit();
-
-        this.filterParam = getQueryValue( "filter" );
-        this.backgroundColor = parseBackgroundColor( getQueryValue( "background" ) );
-        this.quality = parseQuality( getQueryValue( "quality" ) );
+        this.workspace = Workspace.from( value );
     }
 
-    protected final BufferedImage toBufferedImage( final InputStream dataStream )
+    @QueryParam("quality")
+    public void setQuality( final String value )
+    {
+        this.quality = parseQuality( value );
+    }
+
+    @QueryParam("background")
+    public void setBackground( final String value )
+    {
+        this.backgroundColor = parseBackgroundColor( value );
+    }
+
+    @PathParam("contentPath")
+    public void setContentPath( final String value )
+    {
+        this.contentPath = ContentPath.from( value );
+    }
+
+    private BufferedImage toBufferedImage( final InputStream dataStream )
     {
         try
         {
@@ -76,7 +100,7 @@ public abstract class ImageBaseResource
         }
     }
 
-    protected final byte[] serializeImage( final BufferedImage image, final String format )
+    private byte[] serializeImage( final BufferedImage image, final String format )
     {
         try
         {
@@ -122,12 +146,12 @@ public abstract class ImageBaseResource
         }
     }
 
-    protected final String getFormat( final String fileName )
+    private String getFormat( final String fileName )
     {
         return StringUtils.substringAfterLast( fileName, "." ).toLowerCase();
     }
 
-    protected final BufferedImage applyFilters( final BufferedImage sourceImage, final String format )
+    private BufferedImage applyFilters( final BufferedImage sourceImage, final String format )
     {
         if ( Strings.isNullOrEmpty( this.filterParam ) )
         {
@@ -147,12 +171,12 @@ public abstract class ImageBaseResource
         }
     }
 
-    protected final Blob getBlob( final BlobKey blobKey )
+    private Blob getBlob( final BlobKey blobKey )
     {
         return this.blobService.get( blobKey );
     }
 
-    protected final Attachment getAttachment( final ContentId contentId )
+    private Attachment getAttachment( final ContentId contentId )
     {
         try
         {
@@ -167,7 +191,7 @@ public abstract class ImageBaseResource
         }
     }
 
-    protected final Content getContent( final ContentId contentId )
+    private Content getContent( final ContentId contentId )
     {
         final Content content = this.contentService.getById( contentId, Context.create().
             workspace( this.workspace ).
@@ -181,7 +205,7 @@ public abstract class ImageBaseResource
         throw notFound( "Content with id [%s] not found", contentId.toString() );
     }
 
-    protected final Content getContent( final ContentPath contentPath )
+    private Content getContent( final ContentPath contentPath )
     {
         final Content content = this.contentService.getByPath( contentPath, Context.create().
             workspace( this.workspace ).
@@ -195,7 +219,7 @@ public abstract class ImageBaseResource
         throw notFound( "Content with path [%s] not found", contentPath.toString() );
     }
 
-    protected final Attachment getAttachment( final ContentId contentId, final String attachmentName )
+    private Attachment getAttachment( final ContentId contentId, final String attachmentName )
     {
         try
         {
@@ -212,5 +236,53 @@ public abstract class ImageBaseResource
         {
             throw notFound( "Attachment [%s] for content [%s] not found", attachmentName, contentId.toString() );
         }
+    }
+
+    @GET
+    @Path("id/{imageId}")
+    public Response getById( @PathParam("imageId") final String id )
+    {
+        final ContentId imageContentId = ContentId.from( id );
+        final Content imageContent = getContent( imageContentId );
+
+        final Attachment attachment = getAttachment( imageContent.getId() );
+        if ( attachment == null )
+        {
+            throw notFound( "Attachment [%s] not found", imageContent.getName().toString() );
+        }
+
+        final Blob blob = getBlob( attachment.getBlobKey() );
+        if ( blob == null )
+        {
+            throw notFound( "Blob [%s] not found", attachment.getBlobKey() );
+        }
+
+        final BufferedImage contentImage = toBufferedImage( blob.getStream() );
+        final String format = getFormat( attachment.getName() );
+        final BufferedImage image = applyFilters( contentImage, format );
+
+        final byte[] imageData = serializeImage( image, format );
+        return Response.ok().type( attachment.getMimeType() ).entity( imageData ).build();
+    }
+
+    @GET
+    @Path("{fileName}")
+    public Response getByName( @PathParam("fileName") final String fileName )
+    {
+        final Content content = getContent( this.contentPath );
+        final Attachment attachment = getAttachment( content.getId(), fileName );
+
+        final Blob blob = getBlob( attachment.getBlobKey() );
+        if ( blob == null )
+        {
+            throw notFound( "Blob [%s] not found", attachment.getBlobKey() );
+        }
+
+        final BufferedImage contentImage = toBufferedImage( blob.getStream() );
+        final String format = getFormat( fileName );
+        final BufferedImage image = applyFilters( contentImage, format );
+
+        final byte[] imageData = serializeImage( image, format );
+        return Response.ok().type( attachment.getMimeType() ).entity( imageData ).build();
     }
 }

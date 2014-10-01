@@ -5,11 +5,11 @@ import com.enonic.wem.api.content.page.PageDescriptorService;
 import com.enonic.wem.api.content.page.PageTemplateService;
 import com.enonic.wem.api.content.site.SiteService;
 import com.enonic.wem.api.content.site.SiteTemplateService;
-import com.enonic.wem.portal.internal.base.BaseResourceFactory;
 import com.enonic.wem.portal.internal.controller.JsControllerFactory;
+import com.enonic.wem.portal.internal.ResourceProvider;
 
-public abstract class RenderBaseResourceFactory<T extends RenderBaseResource>
-    extends BaseResourceFactory<T>
+public abstract class RenderBaseResourceProvider<T extends RenderBaseResource2>
+    implements ResourceProvider<T>
 {
     private JsControllerFactory controllerFactory;
 
@@ -23,13 +23,7 @@ public abstract class RenderBaseResourceFactory<T extends RenderBaseResource>
 
     private SiteService siteService;
 
-    public RenderBaseResourceFactory( final Class<T> type )
-    {
-        super( type );
-    }
-
-    @Override
-    protected void configure( final T instance )
+    protected final void configure( final T instance )
     {
         instance.controllerFactory = this.controllerFactory;
         instance.pageDescriptorService = this.pageDescriptorService;

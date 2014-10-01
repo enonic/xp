@@ -1,57 +1,59 @@
 package com.enonic.wem.portal.internal.base;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.Before;
-import org.mockito.Mockito;
-import org.restlet.Request;
-import org.restlet.Response;
-import org.restlet.resource.Finder;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockServletConfig;
 
-import com.enonic.wem.core.web.servlet.ServletRequestHolder;
 import com.enonic.wem.portal.internal.PortalApplication;
+import com.enonic.wem.portal.internal.PortalServlet;
+import com.enonic.wem.portal.internal.exception.PortalExceptionMapper;
 
-public abstract class BaseResourceTest<T extends BaseResource>
+public abstract class BaseResourceTest
 {
-    protected T resource;
+    private PortalServlet servlet;
 
-    private PortalApplication app;
+    protected PortalApplication application;
 
     @Before
     public final void setup()
         throws Exception
     {
-        configure();
-        final Finder finder = new SingletonFinder( this.resource );
-        final Finder notFoundFinder = new SingletonFinder( new NotFoundResource() );
+        this.application = new PortalApplication();
+        this.application.addSingleton( new PortalExceptionMapper() );
 
-        this.app = new PortalApplication();
-        this.app.setFinderFactory( type -> {
-            if ( resource.getClass() == type )
-            {
-                return finder;
-            }
-            else
-            {
-                return notFoundFinder;
-            }
-        } );
+        this.servlet = new PortalServlet();
+        this.servlet.setApplication( this.application );
+
+        configure();
+
+        this.servlet.init( new MockServletConfig() );
     }
 
     protected abstract void configure()
         throws Exception;
 
-    protected final Response executeRequest( final Request request )
+    protected final MockHttpServletRequest newGetRequest( final String uri )
     {
-        return this.app.handle( request );
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setMethod( "GET" );
+        request.setRequestURI( uri );
+        return request;
     }
 
-    protected void mockCurrentContextHttpRequest()
+    protected final MockHttpServletRequest newPostRequest( final String uri )
     {
-        final HttpServletRequest req = Mockito.mock( HttpServletRequest.class );
-        Mockito.when( req.getScheme() ).thenReturn( "http" );
-        Mockito.when( req.getServerName() ).thenReturn( "localhost" );
-        Mockito.when( req.getLocalPort() ).thenReturn( 80 );
-        ServletRequestHolder.setRequest( req );
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setMethod( "POST" );
+        request.setRequestURI( uri );
+        return request;
+    }
+
+    protected final MockHttpServletResponse executeRequest( final MockHttpServletRequest request )
+        throws Exception
+    {
+        final MockHttpServletResponse response = new MockHttpServletResponse();
+        this.servlet.service( request, response );
+        return response;
     }
 }
