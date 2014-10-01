@@ -1,6 +1,6 @@
 package com.enonic.wem.portal.internal.postprocess;
 
-import java.util.Set;
+import java.util.List;
 
 import org.attoparser.AttoParseException;
 import org.attoparser.IAttoHandler;
@@ -10,7 +10,7 @@ import org.attoparser.markup.IBasicElementHandling;
 import org.attoparser.markup.ICommentHandling;
 import org.attoparser.markup.MarkupAttoParser;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 
 import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.internal.rendering.RenderException;
@@ -26,9 +26,9 @@ final class PostProcessEvaluator
 
     protected String input;
 
-    protected Set<PostProcessInstruction> instructions;
+    protected List<PostProcessInstruction> instructions;
 
-    protected Set<PostProcessInjection> injections;
+    protected List<PostProcessInjection> injections;
 
     public PostProcessEvaluator()
     {
@@ -136,7 +136,7 @@ final class PostProcessEvaluator
 
         final PostProcessEvaluator evaluator = new PostProcessEvaluator();
         evaluator.context = this.context;
-        evaluator.injections = Sets.newHashSet();
+        evaluator.injections = Lists.newArrayList();
         evaluator.instructions = this.instructions;
         evaluator.input = result;
 

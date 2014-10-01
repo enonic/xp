@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+
+  <reference id="scriptService" interface="com.enonic.wem.script.ScriptService"/>
+
+  <reference id="partDescriptorService" interface="com.enonic.wem.api.content.page.part.PartDescriptorService"/>
+
+  <reference id="layoutDescriptorService" interface="com.enonic.wem.api.content.page.layout.LayoutDescriptorService"/>
+
+  <reference id="pageComponentService" interface="com.enonic.wem.api.content.page.PageComponentService"/>
+
+  <reference id="contentService" interface="com.enonic.wem.api.content.ContentService"/>
+
+  <reference id="attachmentService" interface="com.enonic.wem.api.content.attachment.AttachmentService"/>
+
+  <reference id="moduleService" interface="com.enonic.wem.api.module.ModuleService"/>
+
+  <reference id="blobService" interface="com.enonic.wem.api.blob.BlobService"/>
+
+  <reference id="imageFilterBuilder" interface="com.enonic.wem.core.image.filter.ImageFilterBuilder"/>
+
+  <reference id="siteTemplateService" interface="com.enonic.wem.api.content.site.SiteTemplateService"/>
+
+  <reference id="pageDescriptorService" interface="com.enonic.wem.api.content.page.PageDescriptorService"/>
+
+  <reference id="pageTemplateService" interface="com.enonic.wem.api.content.page.PageTemplateService"/>
+
+  <reference id="siteService" interface="com.enonic.wem.api.content.site.SiteService"/>
+
+</blueprint>

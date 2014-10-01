@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.imageio.ImageIO;
-import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.restlet.resource.ResourceException;
@@ -213,29 +212,5 @@ public abstract class ImageBaseResource
         {
             throw notFound( "Attachment [%s] for content [%s] not found", attachmentName, contentId.toString() );
         }
-    }
-
-    @Inject
-    public void setImageFilterBuilder( final ImageFilterBuilder imageFilterBuilder )
-    {
-        this.imageFilterBuilder = imageFilterBuilder;
-    }
-
-    @Inject
-    public void setAttachmentService( final AttachmentService attachmentService )
-    {
-        this.attachmentService = attachmentService;
-    }
-
-    @Inject
-    public void setBlobService( final BlobService blobService )
-    {
-        this.blobService = blobService;
-    }
-
-    @Inject
-    public void setContentService( final ContentService contentService )
-    {
-        this.contentService = contentService;
     }
 }

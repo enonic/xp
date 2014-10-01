@@ -4,8 +4,6 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.util.Map;
 
-import javax.inject.Singleton;
-
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
@@ -16,7 +14,6 @@ import com.enonic.wem.api.rendering.RenderingMode;
 import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.postprocess.PostProcessInjection;
 
-@Singleton
 public final class LiveEditInjection
     implements PostProcessInjection
 {

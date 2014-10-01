@@ -2,9 +2,6 @@ package com.enonic.wem.portal.internal;
 
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.restlet.Application;
 import org.restlet.Restlet;
 import org.restlet.resource.Finder;
@@ -16,29 +13,20 @@ import org.restlet.routing.Variable;
 import com.enonic.wem.portal.internal.content.ComponentResource;
 import com.enonic.wem.portal.internal.content.ContentResource;
 import com.enonic.wem.portal.internal.content.PageTemplateResource;
-import com.enonic.wem.portal.internal.exception.PortalStatusService;
 import com.enonic.wem.portal.internal.restlet.FinderFactory;
 import com.enonic.wem.portal.internal.underscore.ImageByIdResource;
 import com.enonic.wem.portal.internal.underscore.ImageByNameResource;
 import com.enonic.wem.portal.internal.underscore.PublicResource;
 import com.enonic.wem.portal.internal.underscore.ServiceResource;
 
-@Singleton
 public final class PortalApplication
     extends Application
 {
     protected FinderFactory finderFactory;
 
-    @Inject
     public void setFinderFactory( final FinderFactory finderFactory )
     {
         this.finderFactory = finderFactory;
-    }
-
-    @Inject
-    public void setStatusService( final PortalStatusService statusService )
-    {
-        super.setStatusService( statusService );
     }
 
     @Override

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+
+  <bean id="statusService" class="com.enonic.wem.portal.internal.exception.PortalStatusService"/>
+
+  <bean id="portalApplication" class="com.enonic.wem.portal.internal.PortalApplication">
+    <property name="finderFactory" ref="finderFactory"/>
+    <property name="statusService" ref="statusService"/>
+  </bean>
+
+  <service interface="javax.servlet.Servlet">
+    <service-properties>
+      <entry key="alias" value="/portal/*"/>
+    </service-properties>
+    <bean class="com.enonic.wem.portal.internal.PortalServlet">
+      <property name="portalApplication" ref="portalApplication"/>
+    </bean>
+  </service>
+
+</blueprint>

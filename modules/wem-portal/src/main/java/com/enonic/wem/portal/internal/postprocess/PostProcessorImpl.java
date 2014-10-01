@@ -1,22 +1,18 @@
 package com.enonic.wem.portal.internal.postprocess;
 
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import java.util.List;
 
 import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.PortalResponse;
 import com.enonic.wem.portal.postprocess.PostProcessInjection;
 import com.enonic.wem.portal.postprocess.PostProcessInstruction;
 
-@Singleton
 public final class PostProcessorImpl
     implements PostProcessor
 {
-    private Set<PostProcessInstruction> instructions;
+    private List<PostProcessInstruction> instructions;
 
-    private Set<PostProcessInjection> injections;
+    private List<PostProcessInjection> injections;
 
     @Override
     public void processResponse( final PortalContext context )
@@ -47,14 +43,12 @@ public final class PostProcessorImpl
         context.getResponse().setBody( evaluator.evaluate() );
     }
 
-    @Inject
-    public void setInstructions( final Set<PostProcessInstruction> instructions )
+    public void setInstructions( final List<PostProcessInstruction> instructions )
     {
         this.instructions = instructions;
     }
 
-    @Inject
-    public void setInjections( final Set<PostProcessInjection> injections )
+    public void setInjections( final List<PostProcessInjection> injections )
     {
         this.injections = injections;
     }

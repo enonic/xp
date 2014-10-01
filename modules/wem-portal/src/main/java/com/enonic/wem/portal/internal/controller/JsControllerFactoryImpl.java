@@ -1,7 +1,5 @@
 package com.enonic.wem.portal.internal.controller;
 
-import javax.inject.Inject;
-
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
@@ -58,13 +56,11 @@ public final class JsControllerFactoryImpl
         return script.toString() + "_" + Resource.from( script ).getTimestamp();
     }
 
-    @Inject
     public void setScriptService( final ScriptService scriptService )
     {
         this.scriptService = scriptService;
     }
 
-    @Inject
     public void setPostProcessor( final PostProcessor postProcessor )
     {
         this.postProcessor = postProcessor;

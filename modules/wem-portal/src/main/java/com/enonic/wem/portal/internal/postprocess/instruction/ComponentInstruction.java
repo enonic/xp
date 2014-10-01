@@ -2,9 +2,6 @@ package com.enonic.wem.portal.internal.postprocess.instruction;
 
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
@@ -26,7 +23,6 @@ import com.enonic.wem.portal.postprocess.PostProcessInstruction;
 
 import static org.apache.commons.lang.StringUtils.substringAfter;
 
-@Singleton
 public final class ComponentInstruction
     implements PostProcessInstruction
 {
@@ -36,7 +32,6 @@ public final class ComponentInstruction
 
     private final PageComponentService pageComponentService;
 
-    @Inject
     public ComponentInstruction( final RendererFactory rendererFactory, final PageComponentService pageComponentService )
     {
         this.rendererFactory = rendererFactory;

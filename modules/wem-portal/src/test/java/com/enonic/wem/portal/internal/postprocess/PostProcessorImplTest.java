@@ -1,12 +1,12 @@
 package com.enonic.wem.portal.internal.postprocess;
 
 
-import java.util.Set;
+import java.util.List;
 
 import org.junit.Test;
 
 import com.google.common.base.Charsets;
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 
 import com.enonic.wem.portal.internal.controller.JsContext;
@@ -26,11 +26,11 @@ public class PostProcessorImplTest
 
         final PostProcessorImpl postProcessor = new PostProcessorImpl();
 
-        final Set<PostProcessInstruction> instructions = Sets.newHashSet();
+        final List<PostProcessInstruction> instructions = Lists.newArrayList();
         instructions.add( new TestPostProcessInstruction() );
 
         postProcessor.setInstructions( instructions );
-        postProcessor.setInjections( Sets.newHashSet() );
+        postProcessor.setInjections( Lists.newArrayList() );
 
         final JsHttpResponse resp = new JsHttpResponse();
         resp.setPostProcess( true );
@@ -55,11 +55,11 @@ public class PostProcessorImplTest
 
         final PostProcessorImpl postProcessor = new PostProcessorImpl();
 
-        final Set<PostProcessInjection> injections = Sets.newHashSet();
+        final List<PostProcessInjection> injections = Lists.newArrayList();
         injections.add( new TestPostProcessInjection() );
 
         postProcessor.setInjections( injections );
-        postProcessor.setInstructions( Sets.newHashSet() );
+        postProcessor.setInstructions( Lists.newArrayList() );
 
         final JsHttpResponse resp = new JsHttpResponse();
         resp.setPostProcess( true );

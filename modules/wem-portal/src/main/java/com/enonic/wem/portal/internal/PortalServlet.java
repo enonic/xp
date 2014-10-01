@@ -1,8 +1,5 @@
 package com.enonic.wem.portal.internal;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.restlet.Component;
 import org.restlet.Request;
 import org.restlet.Response;
@@ -11,12 +8,10 @@ import org.restlet.ext.servlet.ServletUtils;
 
 import com.enonic.wem.core.web.servlet.ServletRequestHolder;
 
-@Singleton
 public final class PortalServlet
     extends ServerServlet
 {
-    @Inject
-    protected PortalApplication portalApplication;
+    private PortalApplication application;
 
     @Override
     protected Component createComponent()
@@ -39,7 +34,12 @@ public final class PortalServlet
             }
         };
 
-        component.getDefaultHost().attach( "/portal", this.portalApplication );
+        component.getDefaultHost().attach( "/portal", this.application );
         return component;
+    }
+
+    public void setPortalApplication( final PortalApplication application )
+    {
+        this.application = application;
     }
 }

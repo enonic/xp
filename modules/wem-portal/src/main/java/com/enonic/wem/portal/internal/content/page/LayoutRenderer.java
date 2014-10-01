@@ -1,8 +1,5 @@
 package com.enonic.wem.portal.internal.content.page;
 
-
-import javax.inject.Inject;
-
 import com.enonic.wem.api.content.page.Descriptor;
 import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.layout.LayoutComponent;
@@ -26,7 +23,6 @@ public final class LayoutRenderer
         return layoutDescriptorService.getByKey( (LayoutDescriptorKey) descriptorKey );
     }
 
-    @Inject
     public void setLayoutDescriptorService( final LayoutDescriptorService layoutDescriptorService )
     {
         this.layoutDescriptorService = layoutDescriptorService;

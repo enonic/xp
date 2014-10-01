@@ -23,11 +23,6 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>wem-guice</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
       <artifactId>wem-script</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -79,9 +74,6 @@
               attoparser,
               *.restlet*
             </Embed-Dependency>
-            <Bundle-Activator>
-              com.enonic.wem.portal.internal.Activator
-            </Bundle-Activator>
           </instructions>
         </configuration>
       </plugin>

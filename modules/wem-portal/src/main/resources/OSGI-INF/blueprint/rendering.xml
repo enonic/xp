@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+
+  <bean id="rendererFactory" class="com.enonic.wem.portal.internal.rendering.RendererFactoryImpl">
+    <argument index="0">
+      <list>
+        <bean class="com.enonic.wem.portal.internal.content.page.TextRenderer"/>
+        <bean class="com.enonic.wem.portal.internal.content.page.ImageRenderer"/>
+        <bean class="com.enonic.wem.portal.internal.content.page.LayoutRenderer">
+          <property name="controllerFactory" ref="controllerFactory"/>
+          <property name="layoutDescriptorService" ref="layoutDescriptorService"/>
+        </bean>
+        <bean class="com.enonic.wem.portal.internal.content.page.PartRenderer">
+          <property name="controllerFactory" ref="controllerFactory"/>
+          <property name="partDescriptorService" ref="partDescriptorService"/>
+        </bean>
+      </list>
+    </argument>
+  </bean>
+
+</blueprint>

@@ -1,7 +1,5 @@
 package com.enonic.wem.portal.internal.underscore;
 
-import javax.inject.Inject;
-
 import org.restlet.representation.Representation;
 import org.restlet.resource.ResourceException;
 
@@ -40,11 +38,5 @@ public final class ServiceResource
 
         final RenderResult result = new JsHttpResponseSerializer( context.getResponse() ).serialize();
         return toRepresentation( result );
-    }
-
-    @Inject
-    public void setControllerFactory( final JsControllerFactory controllerFactory )
-    {
-        this.controllerFactory = controllerFactory;
     }
 }
