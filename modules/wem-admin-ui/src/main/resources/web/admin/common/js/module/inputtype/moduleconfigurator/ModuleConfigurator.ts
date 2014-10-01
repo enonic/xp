@@ -1,9 +1,11 @@
 module api.module.inputtype.moduleconfigurator {
 
     import Value = api.data.Value;
+    import Property = api.data.Property;
     import ValueType = api.data.type.ValueType;
     import ValueTypes = api.data.type.ValueTypes;
     import ValueChangedEvent = api.form.inputtype.support.ValueChangedEvent;
+    import RootDataSet = api.data.RootDataSet;
 
     export class ModuleConfigurator extends api.form.inputtype.support.BaseInputTypeNotManagingAdd<any, ModuleConfig> {
 
@@ -19,11 +21,20 @@ module api.module.inputtype.moduleconfigurator {
             return null;
         }
 
-        createInputOccurrenceElement(index: number, property: api.data.Property): api.dom.Element {
+        createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
 
-            var moduleConfig = new ModuleConfig();
+            var data = property.getRootDataSet(),
+                moduleConfigBuilder = new ModuleConfigBuilder();
 
-            return moduleConfig;
+            if (!!data) {
+                var moduleKeyProperty = (<Property>data.getDataByName("moduleKey")[0]);
+                var configProperty = (<Property>data.getDataByName("config")[0]);
+                moduleConfigBuilder.
+                    setModuleKey(!!moduleKeyProperty ? moduleKeyProperty.getString() : "").
+                    setConfig(!!configProperty ? configProperty.getRootDataSet() : new RootDataSet());
+            }
+
+            return moduleConfigBuilder.build();
         }
 
         availableSizeChanged() {
@@ -33,18 +44,22 @@ module api.module.inputtype.moduleconfigurator {
 
             var moduleConfig = <ModuleConfig>element;
             moduleConfig.onModuleSelected((event: ModuleSelectedEvent) => {
-                var data = new api.data.RootDataSet();
+                var data = new RootDataSet();
                 data.addProperty("moduleKey", new Value(event.getSelectedModule().getModuleKey().getName(), ValueTypes.STRING));
                 data.addProperty("config", new Value(event.getFormView().getData(), ValueTypes.DATA));
                 var newValue = new Value(data, ValueTypes.DATA);
                 listener(new ValueChangedEvent(newValue));
             });
-
         }
 
         getValue(occurrence: api.dom.Element): Value {
-            // Needs implementation
-            return  new api.data.Value(null, ValueTypes.DATA);
+            var moduleConfig = <ModuleConfig> occurrence,
+                data = new RootDataSet();
+            if (moduleConfig.getSelectedModule()) {
+                data.addProperty("moduleKey", new Value(moduleConfig.getSelectedModule().getModuleKey().getName(), ValueTypes.STRING));
+                data.addProperty("config", new Value(moduleConfig.getFormView().getData(), ValueTypes.DATA));
+            }
+            return new Value(data, ValueTypes.DATA);
         }
 
         valueBreaksRequiredContract(value: Value): boolean {

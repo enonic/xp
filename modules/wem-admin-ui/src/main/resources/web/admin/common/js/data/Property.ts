@@ -45,6 +45,10 @@ module api.data {
             return this.value.getContentId();
         }
 
+        getRootDataSet(): api.data.RootDataSet {
+            return this.value.getRootDataSet();
+        }
+
         setValue(value: Value) {
             api.util.assertNotNull(value, "value of a Property cannot be null");
             this.value = value;
