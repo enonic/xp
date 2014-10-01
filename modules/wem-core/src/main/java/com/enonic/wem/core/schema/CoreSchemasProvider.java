@@ -190,16 +190,17 @@ public final class CoreSchemasProvider
     private static Form createSiteForm()
     {
         return Form.newForm().
-            addFormItem( Input.newInput().name( "description" ).
-                inputType( InputTypes.TEXT_AREA ).
+            addFormItem( Input.newInput().
+                name( "description" ).
                 label( "Description" ).
+                inputType( InputTypes.TEXT_AREA ).
                 occurrences( 0, 1 ).
                 helpText( "Description of the site. Optional" ).
                 build() ).
             addFormItem( Input.newInput().
-                name( "module-configurator" ).
-                label( "ModuleConfigurator" ).
-                helpText( "Configures modules." ).
+                name( "modules" ).
+                label( "Modules" ).
+                helpText( "Configure modules needed for the Site" ).
                 inputType( InputTypes.MODULE_CONFIGURATOR ).
                 required( false ).
                 multiple( true ).
