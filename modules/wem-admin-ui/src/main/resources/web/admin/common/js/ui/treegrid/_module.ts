@@ -5,4 +5,5 @@
 ///<reference path='TreeGridBuilder.ts' />
 ///<reference path='TreeNodeBuilder.ts' />
 ///<reference path='TreeGridContextMenu.ts' />
-///<reference path='TreeGridShowContextMenuEvent.ts' />
+///<reference path='ContextMenuShownEvent.ts' />
+///<reference path='DataChangedEvent.ts' />

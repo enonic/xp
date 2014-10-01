@@ -45,7 +45,7 @@ module app.wizard {
                 this.content = event.getContent();
                 //this.grid = new CompareContentGrid(event.getContent());
                 //this.grid.selectAll();
-//                this.grid.onRowSelectionChanged((selectedRows:TreeNode<ContentSummaryAndCompareStatus>[]) => {
+//                this.grid.onSelectionChanged((selectedRows:TreeNode<ContentSummaryAndCompareStatus>[]) => {
 //                    this.publishAction.setToBePublishedAmount(selectedRows.length);
 //                });
                 this.publishList.clear();

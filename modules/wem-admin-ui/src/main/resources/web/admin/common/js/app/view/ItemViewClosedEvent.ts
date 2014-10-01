@@ -1,6 +1,6 @@
 module api.app.view {
 
-    export class ItemViewClosedEvent<M> {
+    export class ItemViewClosedEvent<M extends api.Equitable> {
 
         private view: ItemViewPanel<M>;
 

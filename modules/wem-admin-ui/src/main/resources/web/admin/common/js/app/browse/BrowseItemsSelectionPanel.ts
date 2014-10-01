@@ -1,6 +1,6 @@
 module api.app.browse {
 
-    export class BrowseItemsSelectionPanel<M> extends api.ui.panel.Panel {
+    export class BrowseItemsSelectionPanel<M extends api.Equitable> extends api.ui.panel.Panel {
 
         private deselectedListeners: {(event: ItemDeselectedEvent<M>):void}[] = [];
         private items: BrowseItem<M>[] = [];
@@ -31,7 +31,14 @@ module api.app.browse {
         }
 
         addItem(item: BrowseItem<M>) {
-            if (this.indexOf(item) >= 0) {
+            var index = this.indexOf(item);
+            if (index >= 0) {
+                // item already exist
+                var currentItem = this.items[index];
+                if (!currentItem.equals(item)) {
+                    // update current item
+                    this.items[index] = item;
+                }
                 return;
             }
 
@@ -98,7 +105,7 @@ module api.app.browse {
 
     }
 
-    export class SelectionItem<M> extends api.dom.DivEl {
+    export class SelectionItem<M extends api.Equitable> extends api.dom.DivEl {
 
         private browseItem: api.app.browse.BrowseItem<M>;
 
