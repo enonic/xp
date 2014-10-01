@@ -1,6 +1,5 @@
 package com.enonic.wem.admin.rest.resource.schema.metadata;
 
-import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -10,8 +9,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.enonic.wem.admin.json.schema.metadata.MetadataSchemaJson;
-import com.enonic.wem.admin.rest.resource.schema.SchemaIconResolver;
-import com.enonic.wem.admin.rest.resource.schema.SchemaIconUrlResolver;
 import com.enonic.wem.api.schema.metadata.GetMetadataSchemaParams;
 import com.enonic.wem.api.schema.metadata.MetadataSchema;
 import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
@@ -22,6 +19,11 @@ import com.enonic.wem.api.schema.metadata.MetadataSchemaService;
 public class MetadataSchemaResource
 {
     private MetadataSchemaService metadataSchemaService;
+
+    private MetadataSchemaIconUrlResolver metadataSchemaIconUrlResolver;
+
+    private MetadataSchemaIconResolver metadataSchemaIconResolver;
+
 
     @GET
     public MetadataSchemaJson get( @QueryParam("name") final String name )
@@ -36,7 +38,7 @@ public class MetadataSchemaResource
                 entity( message ).type( MediaType.TEXT_PLAIN_TYPE ).build() );
         }
 
-        return new MetadataSchemaJson( metadataSchema, newSchemaIconUrlResolver() );
+        return new MetadataSchemaJson( metadataSchema, this.metadataSchemaIconUrlResolver );
     }
 
     public MetadataSchema fetchMetadataSchema( final MetadataSchemaName name )
@@ -46,14 +48,10 @@ public class MetadataSchemaResource
     }
 
 
-    private SchemaIconUrlResolver newSchemaIconUrlResolver()
-    {
-        return new SchemaIconUrlResolver( new SchemaIconResolver( metadataSchemaService ) );
-    }
-
-    @Inject
     public void setMetadataSchemaService( final MetadataSchemaService metadataSchemaService )
     {
         this.metadataSchemaService = metadataSchemaService;
+        this.metadataSchemaIconResolver = new MetadataSchemaIconResolver( metadataSchemaService );
+        this.metadataSchemaIconUrlResolver = new MetadataSchemaIconUrlResolver( this.metadataSchemaIconResolver );
     }
 }

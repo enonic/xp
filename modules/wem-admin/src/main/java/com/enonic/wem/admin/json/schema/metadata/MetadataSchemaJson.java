@@ -1,27 +1,65 @@
 package com.enonic.wem.admin.json.schema.metadata;
 
+import java.time.Instant;
+
 import com.enonic.wem.admin.json.ItemJson;
-import com.enonic.wem.admin.json.schema.SchemaJson;
-import com.enonic.wem.admin.rest.resource.schema.SchemaIconUrlResolver;
+import com.enonic.wem.admin.rest.resource.schema.metadata.MetadataSchemaIconUrlResolver;
+import com.enonic.wem.api.form.FormJson;
 import com.enonic.wem.api.schema.metadata.MetadataSchema;
 
 public class MetadataSchemaJson
-    extends SchemaJson
     implements ItemJson
 {
     private final MetadataSchema metadataSchema;
 
-    private final boolean editable;
+    private final String iconUrl;
 
-    private final boolean deletable;
-
-    public MetadataSchemaJson( final MetadataSchema metadataSchema, final SchemaIconUrlResolver iconUrlResolver )
+    public MetadataSchemaJson( final MetadataSchema metadataSchema, final MetadataSchemaIconUrlResolver iconUrlResolver )
     {
-        super( metadataSchema, iconUrlResolver );
         this.metadataSchema = metadataSchema;
-        this.editable = true;
-        this.deletable = true;
+        this.iconUrl = iconUrlResolver.resolve( metadataSchema );
     }
+
+    public String getKey()
+    {
+        return metadataSchema.getSchemaKey() != null ? metadataSchema.getSchemaKey().toString() : null;
+    }
+
+    public String getName()
+    {
+        return metadataSchema.getName() != null ? metadataSchema.getName().toString() : null;
+    }
+
+    public String getDisplayName()
+    {
+        return metadataSchema.getDisplayName();
+    }
+
+    public String getDescription()
+    {
+        return metadataSchema.getDescription();
+    }
+
+    public Instant getCreatedTime()
+    {
+        return metadataSchema.getCreatedTime();
+    }
+
+    public Instant getModifiedTime()
+    {
+        return metadataSchema.getModifiedTime();
+    }
+
+    public String getIconUrl()
+    {
+        return iconUrl;
+    }
+
+    public FormJson getForm()
+    {
+        return new FormJson( metadataSchema.getForm() );
+    }
+
 
     public String getCreator()
     {
@@ -36,12 +74,12 @@ public class MetadataSchemaJson
     @Override
     public boolean getEditable()
     {
-        return editable;
+        return false;
     }
 
     @Override
     public boolean getDeletable()
     {
-        return deletable;
+        return false;
     }
 }

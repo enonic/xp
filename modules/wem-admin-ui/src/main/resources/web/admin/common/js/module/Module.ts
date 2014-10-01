@@ -197,8 +197,8 @@ module api.module {
                 });
             }
 
-            if (json.metadataSchemaDependencies != null) {
-                json.metadataSchemaDependencies.forEach((dependency: string) => {
+            if (json.metadataSchemaNames != null) {
+                json.metadataSchemaNames.forEach((dependency: string) => {
                     this.metadataSchemaDependencies.push(new api.schema.metadata.MetadataSchemaName(dependency));
                 });
             }

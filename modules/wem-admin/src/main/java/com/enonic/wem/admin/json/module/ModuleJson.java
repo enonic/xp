@@ -1,17 +1,16 @@
 package com.enonic.wem.admin.json.module;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.osgi.framework.Bundle;
+
+import com.google.common.collect.ImmutableList;
 
 import com.enonic.wem.admin.json.ItemJson;
 import com.enonic.wem.api.form.FormJson;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
-import com.enonic.wem.api.schema.metadata.MetadataSchemaNames;
 
 public class ModuleJson
     implements ItemJson
@@ -19,6 +18,8 @@ public class ModuleJson
     final Module module;
 
     private final FormJson config;
+
+    private final ImmutableList<String> metadataSchemaNames;
 
     public String getKey()
     {
@@ -70,19 +71,9 @@ public class ModuleJson
         return config;
     }
 
-    public String[] getMetadataSchemaDependencies()
+    public List<String> getMetadataSchemaNames()
     {
-        List<String> dependencies = new ArrayList<String>();
-        MetadataSchemaNames names = this.module.getMetadata();
-        if ( names != null )
-        {
-            Iterator<MetadataSchemaName> iterator = this.module.getMetadata().iterator();
-            while ( iterator.hasNext() )
-            {
-                dependencies.add( iterator.next().getLocalName() );
-            }
-        }
-        return dependencies.toArray( new String[dependencies.size()] );
+        return metadataSchemaNames;
     }
 
     @Override
@@ -101,5 +92,14 @@ public class ModuleJson
     {
         this.module = module;
         this.config = module.getConfig() != null ? new FormJson( module.getConfig() ) : null;
+        ImmutableList.Builder<String> metadataSchemaNamesBuilder = new ImmutableList.Builder<>();
+        if ( this.module.getMetadataSchemaNames() != null )
+        {
+            for ( MetadataSchemaName metadataSchemaName : this.module.getMetadataSchemaNames() )
+            {
+                metadataSchemaNamesBuilder.add( metadataSchemaName.getLocalName() );
+            }
+        }
+        this.metadataSchemaNames = metadataSchemaNamesBuilder.build();
     }
 }

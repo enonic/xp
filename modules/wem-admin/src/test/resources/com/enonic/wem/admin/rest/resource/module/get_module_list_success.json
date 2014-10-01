@@ -28,7 +28,7 @@
             "displayName": "module display name",
             "editable": false,
             "key": "testmodule",
-            "metadataSchemaDependencies": [ ],
+            "metadataSchemaNames": [ ],
             "modifiedTime": "2012-01-01T00:00:00Z",
             "name": "testmodule",
             "state": "started",

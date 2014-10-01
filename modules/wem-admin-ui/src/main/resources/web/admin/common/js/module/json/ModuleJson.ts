@@ -26,7 +26,7 @@ module api.module.json {
 
         contentTypeDependencies: string[];
 
-        metadataSchemaDependencies: string[];
+        metadataSchemaNames: string[];
 
         minSystemVersion: string;
 

@@ -87,7 +87,7 @@ final class ModuleImpl
     }
 
     @Override
-    public MetadataSchemaNames getMetadata()
+    public MetadataSchemaNames getMetadataSchemaNames()
     {
         return metadata;
     }

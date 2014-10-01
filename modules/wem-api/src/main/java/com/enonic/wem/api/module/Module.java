@@ -34,5 +34,5 @@ public interface Module
 
     public Bundle getBundle();
 
-    public MetadataSchemaNames getMetadata();
+    public MetadataSchemaNames getMetadataSchemaNames();
 }
