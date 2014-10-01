@@ -23,7 +23,7 @@ module api.module.inputtype.moduleconfigurator {
 
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
 
-            var data = property.getRootDataSet(),
+            var data = property.getData(),
                 moduleConfigBuilder = new ModuleConfigBuilder();
 
             if (!!data) {
@@ -31,7 +31,7 @@ module api.module.inputtype.moduleconfigurator {
                 var configProperty = (<Property>data.getDataByName("config")[0]);
                 moduleConfigBuilder.
                     setModuleKey(!!moduleKeyProperty ? moduleKeyProperty.getString() : "").
-                    setConfig(!!configProperty ? configProperty.getRootDataSet() : new RootDataSet());
+                    setConfig(!!configProperty ? configProperty.getData() : new RootDataSet());
             }
 
             return moduleConfigBuilder.build();
