@@ -1,9 +1,8 @@
 module api.ui.treegrid {
 
-    export class TreeGridShowContextMenuEvent {
+    export class ContextMenuShownEvent {
 
         private x: number;
-
         private y: number;
 
         constructor(x: number, y: number) {

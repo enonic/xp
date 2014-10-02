@@ -51,7 +51,9 @@ module api.ui.treegrid {
 
         private contextMenuListeners: Function[] = [];
 
-        private rowSelectionChangeListeners: Function[] = [];
+        private selectionChangeListeners: Function[] = [];
+
+        private dataChangeListeners: {(event: DataChangedEvent<NODE>):void}[] = [];
 
         constructor(builder: TreeGridBuilder<NODE>) {
 
@@ -100,11 +102,8 @@ module api.ui.treegrid {
                     this.active = false;
                     var cell = this.grid.getCellFromEvent(event);
                     this.grid.selectRow(cell.row);
-                    var showContextMenuEvent = new TreeGridShowContextMenuEvent(event.pageX, event.pageY);
-                    this.contextMenuListeners.forEach((listener) => {
-                        listener(showContextMenuEvent);
-                    });
                     this.contextMenu.showAt(event.pageX, event.pageY);
+                    this.notifyContextMenuShown(event.pageX, event.pageY);
                     this.active = true;
                 });
             }
@@ -244,7 +243,7 @@ module api.ui.treegrid {
             });
 
             this.grid.subscribeOnSelectedRowsChanged((event, rows) => {
-                this.notifyRowSelectionChanged(event, rows.rows);
+                this.notifySelectionChanged(event, rows.rows);
             });
         }
 
@@ -489,15 +488,16 @@ module api.ui.treegrid {
         updateNode(data: NODE): void {
             var root = this.stash || this.root;
             var dataId = this.getDataId(data);
-            var treeNode = root.findNode(dataId);
-            if (!treeNode) {
+            var node = root.findNode(dataId);
+            if (!node) {
                 throw new Error("Node not found for data: " + this.getDataId(data));
             }
 
-            this.fetch(treeNode)
+            this.fetch(node)
                 .then((data: NODE) => {
-                    treeNode.setData(data);
-                    this.gridData.updateItem(treeNode.getId(), treeNode);
+                    node.setData(data);
+                    this.gridData.updateItem(node.getId(), node);
+                    this.notifyDataChanged(new DataChangedEvent<NODE>([node], DataChangedEvent.ACTION_UPDATED));
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 });
@@ -507,10 +507,11 @@ module api.ui.treegrid {
             var root = this.stash || this.root;
             var node = root.findNode(this.getDataId(data));
             this.gridData.deleteItem(node.getId());
-            if (node && node.getParent()) {
-                var parent = node.getParent();
+            var parent = node.getParent();
+            if (node && parent) {
                 parent.removeChild(node);
                 parent.setMaxChildren(parent.getMaxChildren() - 1);
+                this.notifyDataChanged(new DataChangedEvent<NODE>([node], DataChangedEvent.ACTION_DELETED));
             }
         }
 
@@ -518,24 +519,30 @@ module api.ui.treegrid {
             var root = this.stash || this.root;
             root.addChild(this.dataToTreeNode(data, root));
             var node = root.findNode(this.getDataId(data));
-            this.gridData.insertItem(this.gridData.getLength(), node);
+            if (node) {
+                this.gridData.insertItem(this.gridData.getLength(), node);
+                this.notifyDataChanged(new DataChangedEvent<NODE>([node], DataChangedEvent.ACTION_ADDED));
+            }
         }
 
-        deleteNodes(dataList: NODE[]): void {
+        deleteNodes(nodes: NODE[]): void {
             var root = this.stash || this.root;
             var updated: TreeNode<NODE>[] = [];
-            dataList.forEach((data: NODE) => {
+            var deleted: TreeNode<NODE>[] = [];
+            nodes.forEach((data: NODE) => {
                 var node = root.findNode(this.getDataId(data));
                 if (node && node.getParent()) {
                     var parent = node.getParent();
                     updated.push(parent);
                     parent.removeChild(node);
+                    deleted.push(node);
                     parent.setMaxChildren(parent.getMaxChildren() - 1);
                     updated.filter((el) => {
                         return el.getDataId() !== node.getId();
                     });
                 }
             });
+            this.notifyDataChanged(new DataChangedEvent<NODE>(deleted, DataChangedEvent.ACTION_DELETED));
 
             // TODO: For future use. Implement single node update by node id.
             /*
@@ -556,6 +563,7 @@ module api.ui.treegrid {
 
         initData(nodes: TreeNode<NODE>[]) {
             this.gridData.setItems(nodes, "id");
+            this.notifyDataChanged(new DataChangedEvent<NODE>(nodes, DataChangedEvent.ACTION_ADDED));
         }
 
         private expandNode(node?: TreeNode<NODE>) {
@@ -726,37 +734,62 @@ module api.ui.treegrid {
             return this;
         }
 
-        private notifyRowSelectionChanged(event: any, rows: number[]): void {
+        private notifySelectionChanged(event: any, rows: number[]): void {
             var selectedRows: TreeNode<NODE>[] = [];
             if (rows) {
                 rows.forEach((rowIndex) => {
                     selectedRows.push(this.gridData.getItem(rowIndex));
                 });
             }
-            for (var i in this.rowSelectionChangeListeners) {
-                this.rowSelectionChangeListeners[i](selectedRows);
+            for (var i in this.selectionChangeListeners) {
+                this.selectionChangeListeners[i](selectedRows);
             }
         }
 
-        onRowSelectionChanged(listener: (selectedRows: TreeNode<NODE>[]) => void) {
-            this.rowSelectionChangeListeners.push(listener);
+        onSelectionChanged(listener: (selectedRows: TreeNode<NODE>[]) => void) {
+            this.selectionChangeListeners.push(listener);
             return this;
         }
 
-        unRowSelectionChanged(listener: (selectedRows: TreeNode<NODE>[]) => void) {
-            this.rowSelectionChangeListeners = this.rowSelectionChangeListeners.filter((curr) => {
+        unSelectionChanged(listener: (selectedRows: TreeNode<NODE>[]) => void) {
+            this.selectionChangeListeners = this.selectionChangeListeners.filter((curr) => {
                 return curr != listener;
             });
             return this;
         }
 
-        onShowContextMenu(listener: () => void) {
+        private notifyContextMenuShown(x: number, y: number) {
+            var showContextMenuEvent = new ContextMenuShownEvent(x, y);
+            this.contextMenuListeners.forEach((listener) => {
+                listener(showContextMenuEvent);
+            });
+        }
+
+        onContextMenuShown(listener: () => void) {
             this.contextMenuListeners.push(listener);
             return this;
         }
 
-        unShowContextMenu(listener: () => void) {
+        unContextMenuShown(listener: () => void) {
             this.contextMenuListeners = this.contextMenuListeners.filter((curr) => {
+                return curr != listener;
+            });
+            return this;
+        }
+
+        private notifyDataChanged(event: DataChangedEvent<NODE>) {
+            this.dataChangeListeners.forEach((listener) => {
+                listener(event);
+            });
+        }
+
+        onDataChanged(listener: (event: DataChangedEvent<NODE>) => void) {
+            this.dataChangeListeners.push(listener);
+            return this;
+        }
+
+        unDataChanged(listener: (event: DataChangedEvent<NODE>) => void) {
+            this.dataChangeListeners = this.dataChangeListeners.filter((curr) => {
                 return curr != listener;
             });
             return this;

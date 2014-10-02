@@ -35,7 +35,7 @@ module app.browse {
                 this.templateTreeGrid.reload();
             });
 
-            this.templateTreeGrid.onRowSelectionChanged((selectedRows: TreeNode<TemplateSummary>[]) => {
+            this.templateTreeGrid.onSelectionChanged((selectedRows: TreeNode<TemplateSummary>[]) => {
                 this.browseActions.updateActionsEnabledState(<TemplateSummary[]>selectedRows.map((elem) => {
                     return elem.getData();
                 }));

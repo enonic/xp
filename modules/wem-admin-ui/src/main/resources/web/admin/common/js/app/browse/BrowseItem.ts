@@ -1,6 +1,6 @@
 module api.app.browse {
 
-    export class BrowseItem<M> {
+    export class BrowseItem<M extends api.Equitable> implements api.Equitable {
 
         private model: M;
 
@@ -61,6 +61,17 @@ module api.app.browse {
                 .setIconUrl(this.iconUrl)
                 .setDisplayName(this.displayName)
                 .setPath(this.path);
+        }
+
+        equals(o: api.Equitable): boolean {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, BrowseItem)) {
+                return false;
+            }
+            var other = <BrowseItem<M>> o;
+            return this.model.equals(other.model) &&
+                   this.displayName == other.displayName &&
+                   this.path == other.path &&
+                   this.iconUrl == other.iconUrl;
         }
     }
 

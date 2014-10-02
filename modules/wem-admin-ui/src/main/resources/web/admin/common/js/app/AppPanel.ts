@@ -1,6 +1,6 @@
 module api.app {
 
-    export class AppPanel<M> extends api.ui.panel.NavigatedDeckPanel {
+    export class AppPanel<M extends api.Equitable> extends api.ui.panel.NavigatedDeckPanel {
 
         private browsePanel: api.app.browse.BrowsePanel<M>;
 

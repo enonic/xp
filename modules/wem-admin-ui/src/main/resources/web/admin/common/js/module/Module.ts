@@ -116,6 +116,26 @@ module api.module {
             });
             return array;
         }
+
+        equals(o: api.Equitable): boolean {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, Module) || !super.equals(o)) {
+                return false;
+            }
+            var other = <Module>o;
+
+            return this.moduleKey.equals(other.moduleKey) &&
+                   this.displayName == other.displayName &&
+                   this.vendorName == other.vendorName &&
+                   this.vendorUrl == other.vendorUrl &&
+                   this.url == other.url &&
+                   this.state == other.state &&
+                   this.version == other.version &&
+                   api.ObjectHelper.arrayEquals(this.moduleDependencies, other.moduleDependencies) &&
+                   api.ObjectHelper.arrayEquals(this.contentTypeDependencies, other.contentTypeDependencies) &&
+                   api.ObjectHelper.arrayEquals(this.metadataSchemaDependencies, other.metadataSchemaDependencies) &&
+                   this.minSystemVersion == other.minSystemVersion &&
+                   this.maxSystemVersion == other.maxSystemVersion;
+        }
     }
 
     export class ModuleBuilder extends api.item.BaseItemBuilder {

@@ -1,6 +1,6 @@
 module api.app.view {
 
-    export class ItemViewPanel<M> extends api.ui.panel.Panel implements api.ui.Closeable {
+    export class ItemViewPanel<M extends api.Equitable> extends api.ui.panel.Panel implements api.ui.Closeable {
 
         private toolbar: api.ui.toolbar.Toolbar;
 

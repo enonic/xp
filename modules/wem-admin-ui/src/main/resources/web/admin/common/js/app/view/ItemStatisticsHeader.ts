@@ -1,10 +1,10 @@
 module api.app.view {
 
-    export class ItemStatisticsHeader<M> extends api.dom.DivEl {
+    export class ItemStatisticsHeader<M extends api.Equitable> extends api.dom.DivEl {
 
-        private browseItem:ViewItem<M>;
+        private browseItem: ViewItem<M>;
 
-        private iconEl:api.dom.ImgEl;
+        private iconEl: api.dom.ImgEl;
 
         private headerTextEl = new api.dom.H1El();
 
@@ -13,19 +13,20 @@ module api.app.view {
             this.appendChild(this.headerTextEl);
         }
 
-        setItem(item:ViewItem<M>) {
+        setItem(item: ViewItem<M>) {
             this.browseItem = item;
 
             if (this.iconEl) {
                 this.removeChild(this.iconEl);
             }
-            var icon:HTMLImageElement = api.util.loader.ImageLoader.get(this.browseItem.getIconUrl() + "?size=64", 64, 64);
+            var icon: HTMLImageElement = api.util.loader.ImageLoader.get(this.browseItem.getIconUrl() + "?size=64", 64, 64);
             this.iconEl = <api.dom.ImgEl> new api.dom.Element(new api.dom.NewElementBuilder().
                 setTagName("img").
                 setHelper(new api.dom.ImgHelper(icon)));
             this.prependChild(this.iconEl);
 
-            this.headerTextEl.getEl().setInnerHtml(this.browseItem.getDisplayName()).setAttribute('title', this.browseItem.getDisplayName());
+            this.headerTextEl.getEl().setInnerHtml(this.browseItem.getDisplayName()).setAttribute('title',
+                this.browseItem.getDisplayName());
         }
     }
 

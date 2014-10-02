@@ -28,18 +28,11 @@ module app.view {
 
             this.moduleDataContainer = new api.dom.DivEl("module-data-container");
             this.appendChild(this.moduleDataContainer);
-
-            app.browse.StartModuleEvent.on(() => {
-                this.actionMenu.setLabel("Started");
-            });
-
-            app.browse.StopModuleEvent.on(() => {
-                this.actionMenu.setLabel("Stopped");
-            });
         }
 
         setItem(item: api.app.view.ViewItem<api.module.Module>) {
-            if (this.currentItem && this.currentItem.getPath() == item.getPath()) {
+            if (this.currentItem && this.currentItem.equals(item)) {
+                // do nothing in case item has not changed
                 return;
             }
             this.currentItem = item;

@@ -1,6 +1,6 @@
 module api.schema.metadata {
 
-    export class MetadataSchemaName {
+    export class MetadataSchemaName implements api.Equitable {
 
         private value: string;
 
@@ -10,6 +10,15 @@ module api.schema.metadata {
 
         toString(): string {
             return this.value;
+        }
+
+        equals(o: api.Equitable): boolean {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, MetadataSchemaName)) {
+                return false;
+            }
+            var other = <MetadataSchemaName> o;
+
+            return this.value == other.value;
         }
     }
 }

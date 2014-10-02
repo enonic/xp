@@ -1,6 +1,6 @@
 module api.app.view {
 
-    export class ItemStatisticsPanel<M> extends api.ui.panel.Panel {
+    export class ItemStatisticsPanel<M extends api.Equitable> extends api.ui.panel.Panel {
 
         private browseItem: ViewItem<M>;
 

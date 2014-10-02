@@ -82,7 +82,7 @@ module app.browse {
                 this.getGrid().resizeCanvas();
             });
 
-            this.onRowSelectionChanged((selectedRows: TreeNode<ContentSummaryAndCompareStatus>[]) => {
+            this.onSelectionChanged((selectedRows: TreeNode<ContentSummaryAndCompareStatus>[]) => {
                 var contentSummaries: ContentSummary[] = selectedRows.map((elem) => {
                     return elem.getData().getContentSummary();
                 });

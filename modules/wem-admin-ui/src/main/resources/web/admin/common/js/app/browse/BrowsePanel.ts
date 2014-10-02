@@ -4,7 +4,7 @@ module api.app.browse {
     import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
 
-    export interface BrowsePanelParams<M> {
+    export interface BrowsePanelParams<M extends api.Equitable> {
 
         browseToolbar:api.ui.toolbar.Toolbar;
 
@@ -15,7 +15,7 @@ module api.app.browse {
         filterPanel?:api.app.browse.filter.BrowseFilterPanel;
     }
 
-    export class BrowsePanel<M> extends api.ui.panel.Panel implements api.ui.ActionContainer {
+    export class BrowsePanel<M extends api.Equitable> extends api.ui.panel.Panel implements api.ui.ActionContainer {
 
         private static SPLIT_PANEL_ALIGNMENT_TRESHOLD: number = 1180;
 
@@ -68,9 +68,27 @@ module api.app.browse {
                 this.filterAndGridAndDetailSplitPanel = this.gridAndDetailSplitPanel;
             }
 
-            this.treeGrid.onRowSelectionChanged((nodes: api.ui.treegrid.TreeNode<Object>[]) => {
+            this.treeGrid.onSelectionChanged((nodes: api.ui.treegrid.TreeNode<Object>[]) => {
                 var browseItems: api.app.browse.BrowseItem<M>[] = this.treeNodesToBrowseItems(nodes);
                 this.browseItemPanel.setItems(browseItems);
+            });
+
+            this.treeGrid.onDataChanged((event: api.ui.treegrid.DataChangedEvent<Object>) => {
+                var selectedNodes = this.treeGrid.getSelectedNodes();
+                if (event.getAction() == api.ui.treegrid.DataChangedEvent.ACTION_UPDATED && selectedNodes.length > 0) {
+                    // check if any of the selected nodes were updated
+                    var changedNodes = event.getData();
+                    for (var i = 0; i < changedNodes.length; i++) {
+                        for (var j = 0; j < selectedNodes.length; j++) {
+                            if (changedNodes[i].getDataId() == selectedNodes[j].getDataId()) {
+                                // one of the selected nodes was updated, reflect this in the item panel
+                                var browseItems: api.app.browse.BrowseItem<M>[] = this.treeNodesToBrowseItems(changedNodes);
+                                this.browseItemPanel.setItems(browseItems);
+                                break;
+                            }
+                        }
+                    }
+                }
             });
 
             this.onRendered((event) => {
