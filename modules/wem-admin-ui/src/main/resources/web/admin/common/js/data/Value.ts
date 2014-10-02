@@ -70,13 +70,6 @@ module api.data {
             return <api.content.ContentId>this.value;
         }
 
-        getRootDataSet(): api.data.RootDataSet {
-            if (this.isNull()) {
-                return null;
-            }
-            return <api.data.RootDataSet>this.value;
-        }
-
         asString(): string {
             if (this.isNull()) {
                 return null;
