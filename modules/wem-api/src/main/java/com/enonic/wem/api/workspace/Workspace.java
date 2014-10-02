@@ -18,7 +18,7 @@ public final class Workspace
 
     private Workspace( final String name )
     {
-        this.name = name.toLowerCase();
+        this.name = name;
     }
 
     public String getName()
@@ -45,7 +45,7 @@ public final class Workspace
         }
 
         final Workspace workspace = (Workspace) o;
-        return !name.equals( workspace.name );
+        return name.equals( workspace.name );
     }
 
     @Override
