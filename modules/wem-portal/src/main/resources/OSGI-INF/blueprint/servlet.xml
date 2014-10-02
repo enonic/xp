@@ -20,6 +20,7 @@
   <service interface="javax.servlet.Servlet">
     <service-properties>
       <entry key="alias" value="/portal/*"/>
+      <entry key="init.resteasy.servlet.mapping.prefix" value="/portal"/>
     </service-properties>
     <bean class="com.enonic.wem.portal.internal.PortalServlet">
       <property name="application" ref="portalApplication"/>
