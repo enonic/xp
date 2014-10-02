@@ -66,7 +66,7 @@ public abstract class ImageBaseResourceTest
         provider.setBlobService( this.blobService );
         provider.setContentService( this.contentService );
 
-        this.application.addSingleton( provider );
+        this.resources.add( provider );
     }
 
     protected final void setupContent( final Context context )

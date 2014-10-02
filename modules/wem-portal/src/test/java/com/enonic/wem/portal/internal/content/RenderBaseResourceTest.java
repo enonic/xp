@@ -92,7 +92,7 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
         this.resourceProvider.setPageDescriptorService( this.pageDescriptorService );
         this.resourceProvider.setControllerFactory( jsControllerFactory );
 
-        this.application.addSingleton( this.resourceProvider );
+        this.resources.add( this.resourceProvider );
     }
 
     protected final void setupContentAndSite( final Context context )

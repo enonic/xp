@@ -2,7 +2,7 @@ package com.enonic.wem.portal.internal.underscore;
 
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.portal.internal.controller.JsControllerFactory;
-import com.enonic.wem.portal.internal.ResourceProvider;
+import com.enonic.wem.servlet.jaxrs.ResourceProvider;
 
 public final class ServiceResourceProvider
     implements ResourceProvider<ServiceResource2>

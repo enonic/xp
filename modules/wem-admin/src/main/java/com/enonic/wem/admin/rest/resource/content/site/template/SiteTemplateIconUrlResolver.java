@@ -6,7 +6,7 @@ import com.enonic.wem.admin.rest.resource.schema.content.ContentTypeIconUrlResol
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.core.web.servlet.ServletRequestUrlHelper;
+import com.enonic.wem.servlet.ServletRequestUrlHelper;
 
 public final class SiteTemplateIconUrlResolver
 {

@@ -7,7 +7,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
 import com.enonic.wem.core.initializer.StartupInitializer;
-import com.enonic.wem.core.web.servlet.ServletRequestUrlHelper;
+import com.enonic.wem.servlet.ServletRequestUrlHelper;
 
 @Path("tools")
 public final class ToolsResource

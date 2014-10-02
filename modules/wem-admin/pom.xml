@@ -18,7 +18,7 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>wem-core</artifactId>
+      <artifactId>wem-servlet</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -42,6 +42,7 @@
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-jaxrs</artifactId>
       <version>3.0.8.Final</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
@@ -75,9 +76,7 @@
             <Export-Package/>
             <Embed-Dependency>
               jackson-jaxrs-*,
-              commons-fileupload,
-              resteasy-jaxrs,
-              jaxrs-api;scope=compile
+              commons-fileupload;scope=compile
             </Embed-Dependency>
           </instructions>
         </configuration>

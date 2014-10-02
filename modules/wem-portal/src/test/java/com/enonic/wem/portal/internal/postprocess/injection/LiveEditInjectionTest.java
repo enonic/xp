@@ -10,10 +10,10 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
 import com.enonic.wem.api.rendering.RenderingMode;
-import com.enonic.wem.core.web.servlet.ServletRequestHolder;
 import com.enonic.wem.portal.internal.controller.JsContext;
 import com.enonic.wem.portal.internal.controller.JsHttpRequest;
 import com.enonic.wem.portal.postprocess.PostProcessInjection;
+import com.enonic.wem.servlet.ServletRequestHolder;
 
 import static org.junit.Assert.*;
 

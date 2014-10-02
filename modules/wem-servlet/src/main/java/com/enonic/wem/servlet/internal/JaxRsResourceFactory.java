@@ -1,4 +1,4 @@
-package com.enonic.wem.portal.internal;
+package com.enonic.wem.servlet.internal;
 
 import org.jboss.resteasy.spi.HttpRequest;
 import org.jboss.resteasy.spi.HttpResponse;
@@ -8,7 +8,9 @@ import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.jboss.resteasy.spi.metadata.ResourceBuilder;
 import org.jboss.resteasy.spi.metadata.ResourceClass;
 
-final class ResourceFactoryImpl
+import com.enonic.wem.servlet.jaxrs.ResourceProvider;
+
+public final class JaxRsResourceFactory
     implements ResourceFactory
 {
     private final ResourceProvider provider;
@@ -17,7 +19,7 @@ final class ResourceFactoryImpl
 
     private PropertyInjector propertyInjector;
 
-    public ResourceFactoryImpl( final ResourceProvider provider )
+    public JaxRsResourceFactory( final ResourceProvider provider )
     {
         this.provider = provider;
         this.resourceClass = ResourceBuilder.rootResourceFromAnnotations( this.provider.getType() );

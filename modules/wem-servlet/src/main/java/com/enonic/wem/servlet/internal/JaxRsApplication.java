@@ -1,21 +1,22 @@
-package com.enonic.wem.portal.internal;
+package com.enonic.wem.servlet.internal;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.ws.rs.Path;
 import javax.ws.rs.ext.Provider;
 
-public final class PortalApplication
+import com.enonic.wem.servlet.jaxrs.ResourceProvider;
+
+public final class JaxRsApplication
 {
-    private final Set<Object> resources;
+    private final HashSet<Object> resources;
 
-    private final Set<ResourceProvider> resourceProviders;
+    private final HashSet<ResourceProvider> resourceProviders;
 
-    private final Set<Object> providers;
+    private final HashSet<Object> providers;
 
-    public PortalApplication()
+    public JaxRsApplication()
     {
         this.resources = new HashSet<>();
         this.resourceProviders = new HashSet<>();
@@ -53,6 +54,7 @@ public final class PortalApplication
         }
     }
 
+
     private boolean isResource( final Object object )
     {
         return isResource( object.getClass() );
@@ -66,10 +68,5 @@ public final class PortalApplication
     private boolean isProvider( final Object object )
     {
         return object.getClass().getAnnotation( Provider.class ) != null;
-    }
-
-    public void setSingletons( final List<Object> list )
-    {
-        list.forEach( this::addSingleton );
     }
 }

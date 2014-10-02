@@ -9,8 +9,8 @@ import com.google.common.collect.Multimap;
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.rendering.RenderingMode;
 import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.core.web.servlet.ServletRequestUrlHelper;
 import com.enonic.wem.portal.PortalRequest;
+import com.enonic.wem.servlet.ServletRequestUrlHelper;
 
 public final class JsHttpRequest
     implements PortalRequest

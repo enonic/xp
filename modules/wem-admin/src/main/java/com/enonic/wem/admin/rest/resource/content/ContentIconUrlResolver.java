@@ -19,7 +19,7 @@ import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
-import com.enonic.wem.core.web.servlet.ServletRequestUrlHelper;
+import com.enonic.wem.servlet.ServletRequestUrlHelper;
 
 public final class ContentIconUrlResolver
 {

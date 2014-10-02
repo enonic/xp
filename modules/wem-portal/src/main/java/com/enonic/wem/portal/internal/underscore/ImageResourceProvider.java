@@ -4,7 +4,7 @@ import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.core.image.filter.ImageFilterBuilder;
-import com.enonic.wem.portal.internal.ResourceProvider;
+import com.enonic.wem.servlet.jaxrs.ResourceProvider;
 
 public final class ImageResourceProvider
     implements ResourceProvider<ImageResource2>

@@ -20,7 +20,7 @@ public class PublicResourceTest
         final PublicResourceProvider provider = new PublicResourceProvider();
         provider.setModuleService( this.moduleService );
 
-        this.application.addSingleton( provider );
+        this.resources.add( provider );
     }
 
     @Test

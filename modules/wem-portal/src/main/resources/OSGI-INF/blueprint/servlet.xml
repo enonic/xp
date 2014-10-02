@@ -3,27 +3,23 @@
 
   <bean id="exceptionMapper" class="com.enonic.wem.portal.internal.exception.PortalExceptionMapper"/>
 
-  <bean id="portalApplication" class="com.enonic.wem.portal.internal.PortalApplication">
-    <property name="singletons">
-      <list>
-        <ref component-id="publicResourceProvider"/>
-        <ref component-id="serviceResourceProvider"/>
-        <ref component-id="imageResourceProvider"/>
-        <ref component-id="pageTemplateResourceProvider"/>
-        <ref component-id="contentResourceProvider"/>
-        <ref component-id="componentResourceProvider"/>
-        <ref component-id="exceptionMapper"/>
-      </list>
-    </property>
-  </bean>
-
   <service interface="javax.servlet.Servlet">
     <service-properties>
       <entry key="alias" value="/portal/*"/>
       <entry key="init.resteasy.servlet.mapping.prefix" value="/portal"/>
     </service-properties>
     <bean class="com.enonic.wem.portal.internal.PortalServlet">
-      <property name="application" ref="portalApplication"/>
+      <property name="resources">
+        <list>
+          <ref component-id="publicResourceProvider"/>
+          <ref component-id="serviceResourceProvider"/>
+          <ref component-id="imageResourceProvider"/>
+          <ref component-id="pageTemplateResourceProvider"/>
+          <ref component-id="contentResourceProvider"/>
+          <ref component-id="componentResourceProvider"/>
+          <ref component-id="exceptionMapper"/>
+        </list>
+      </property>
     </bean>
   </service>
 

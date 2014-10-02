@@ -21,7 +21,7 @@ import com.enonic.wem.admin.json.ObjectMapperHelper;
 import com.enonic.wem.admin.rest.multipart.MultipartFormReader;
 import com.enonic.wem.admin.rest.provider.JsonObjectProvider;
 import com.enonic.wem.admin.rest.provider.JsonSerializableProvider;
-import com.enonic.wem.core.web.servlet.ServletRequestHolder;
+import com.enonic.wem.servlet.ServletRequestHolder;
 
 import static org.junit.Assert.*;
 

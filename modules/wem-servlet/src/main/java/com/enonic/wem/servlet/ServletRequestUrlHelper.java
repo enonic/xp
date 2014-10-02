@@ -1,4 +1,4 @@
-package com.enonic.wem.core.web.servlet;
+package com.enonic.wem.servlet;
 
 import javax.servlet.http.HttpServletRequest;
 

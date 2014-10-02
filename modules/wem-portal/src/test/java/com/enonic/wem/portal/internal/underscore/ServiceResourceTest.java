@@ -37,7 +37,7 @@ public class ServiceResourceTest
         this.jsController = Mockito.mock( JsController.class );
         Mockito.when( controllerFactory.newController( Mockito.anyObject() ) ).thenReturn( this.jsController );
 
-        this.application.addSingleton( provider );
+        this.resources.add( provider );
     }
 
     @Test

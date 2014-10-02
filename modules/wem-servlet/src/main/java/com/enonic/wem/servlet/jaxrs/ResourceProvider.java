@@ -1,4 +1,4 @@
-package com.enonic.wem.portal.internal;
+package com.enonic.wem.servlet.jaxrs;
 
 public interface ResourceProvider<T>
 {

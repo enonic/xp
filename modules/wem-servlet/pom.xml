@@ -11,49 +11,36 @@
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <artifactId>wem-portal</artifactId>
+  <artifactId>wem-servlet</artifactId>
   <packaging>bundle</packaging>
-  <name>Enonic WEM Portal</name>
+  <name>Enonic WEM Servlet</name>
 
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>wem-servlet</artifactId>
+      <artifactId>wem-core</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>wem-script</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.jboss.resteasy</groupId>
+      <artifactId>resteasy-jaxrs</artifactId>
+      <version>3.0.8.Final</version>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>wem-script</artifactId>
-      <version>${project.version}</version>
-      <type>test-jar</type>
+      <groupId>org.jboss.resteasy</groupId>
+      <artifactId>jaxrs-api</artifactId>
+      <version>3.0.8.Final</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpmime</artifactId>
+      <version>4.3.4</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>wem-api</artifactId>
-      <version>${project.version}</version>
-      <type>test-jar</type>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.google.code.gson</groupId>
-      <artifactId>gson</artifactId>
-      <version>2.2.4</version>
-    </dependency>
-    <dependency>
-      <groupId>org.attoparser</groupId>
-      <artifactId>attoparser</artifactId>
-      <version>1.3</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-test</artifactId>
-      <version>4.1.1.RELEASE</version>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.3.4</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -68,13 +55,14 @@
             <Import-Package>
               *;resolution:=optional
             </Import-Package>
-            <Export-Package>
-              !com.enonic.wem.portal.internal.*,
-              com.enonic.wem.portal.*
-            </Export-Package>
+            <_exportcontents>
+              !*.internal.*,
+              com.enonic.wem.servlet.*,
+              javax.ws.rs.*;version=2.0
+            </_exportcontents>
             <Embed-Dependency>
-              gson,
-              attoparser;scope=compile
+              resteasy-jaxrs,
+              jaxrs-api;scope=compile
             </Embed-Dependency>
           </instructions>
         </configuration>

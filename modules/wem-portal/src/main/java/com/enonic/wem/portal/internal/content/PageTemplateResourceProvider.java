@@ -4,7 +4,7 @@ import com.enonic.wem.api.content.page.PageDescriptorService;
 import com.enonic.wem.api.content.page.PageTemplateService;
 import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.portal.internal.controller.JsControllerFactory;
-import com.enonic.wem.portal.internal.ResourceProvider;
+import com.enonic.wem.servlet.jaxrs.ResourceProvider;
 
 public final class PageTemplateResourceProvider
     implements ResourceProvider<PageTemplateResource2>

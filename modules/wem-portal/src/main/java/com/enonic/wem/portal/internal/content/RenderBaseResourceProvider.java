@@ -6,7 +6,7 @@ import com.enonic.wem.api.content.page.PageTemplateService;
 import com.enonic.wem.api.content.site.SiteService;
 import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.portal.internal.controller.JsControllerFactory;
-import com.enonic.wem.portal.internal.ResourceProvider;
+import com.enonic.wem.servlet.jaxrs.ResourceProvider;
 
 public abstract class RenderBaseResourceProvider<T extends RenderBaseResource2>
     implements ResourceProvider<T>

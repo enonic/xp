@@ -12,7 +12,7 @@ import com.google.common.collect.Maps;
 import com.samskivert.mustache.Template;
 
 import com.enonic.wem.core.mustache.MustacheCompiler;
-import com.enonic.wem.core.web.servlet.ServletRequestUrlHelper;
+import com.enonic.wem.servlet.ServletRequestUrlHelper;
 
 final class AppHtmlHandler
 {

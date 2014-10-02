@@ -10,6 +10,7 @@
     <bundle>mvn:com.enonic.wem/wem-api/${project.version}</bundle>
     <bundle>mvn:com.enonic.wem/wem-core/${project.version}</bundle>
     <bundle>mvn:com.enonic.wem/wem-script/${project.version}</bundle>
+    <bundle>mvn:com.enonic.wem/wem-servlet/${project.version}</bundle>
     <bundle>mvn:com.enonic.wem/wem-portal/${project.version}</bundle>
     <bundle>mvn:com.enonic.wem/wem-thymeleaf/${project.version}</bundle>
     <bundle>mvn:com.enonic.wem/wem-mustache/${project.version}</bundle>
