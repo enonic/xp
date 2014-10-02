@@ -8,11 +8,6 @@
     <argument index="1" ref="environment"/>
   </bean>
 
-  <bean class="com.enonic.wem.script.internal.ScriptLibraryTracker" init-method="open" destroy-method="close">
-    <argument index="0" ref="blueprintBundleContext"/>
-    <argument index="1" ref="environment"/>
-  </bean>
-
   <bean id="scriptService" class="com.enonic.wem.script.internal.ScriptServiceImpl">
     <argument index="0" ref="environment"/>
   </bean>

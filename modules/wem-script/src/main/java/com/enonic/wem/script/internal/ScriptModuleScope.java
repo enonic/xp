@@ -4,7 +4,6 @@ import javax.script.Bindings;
 
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.script.ScriptLibrary;
 import com.enonic.wem.script.command.Command;
 
 public final class ScriptModuleScope
@@ -62,16 +61,6 @@ public final class ScriptModuleScope
     public Object require( final String name )
     {
         final ResourceKey key = resolveScript( name );
-
-        if ( !Resource.from( key ).exists() )
-        {
-            final ScriptLibrary library = this.executor.getEnvironment().getLibrary( name );
-            if ( library != null )
-            {
-                return library;
-            }
-        }
-
         final ScriptModuleScope scope = new ScriptModuleScope( key, this.executor );
         return scope.executeThis();
     }

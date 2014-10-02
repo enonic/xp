@@ -4,7 +4,6 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
-import com.enonic.wem.script.ScriptLibrary;
 import com.enonic.wem.script.command.Command;
 import com.enonic.wem.script.command.CommandHandler;
 import com.enonic.wem.script.command.CommandInvoker;
@@ -12,40 +11,11 @@ import com.enonic.wem.script.command.CommandInvoker;
 public final class ScriptEnvironment
     implements CommandInvoker
 {
-    private final Map<String, ScriptLibrary> libraries;
-
     private final Map<String, CommandHandler> commandHandlers;
 
     public ScriptEnvironment()
     {
-        this.libraries = Maps.newConcurrentMap();
         this.commandHandlers = Maps.newConcurrentMap();
-    }
-
-    public ScriptLibrary getLibrary( final String name )
-    {
-        final ScriptLibrary library = this.libraries.get( name );
-        return library != null ? library.getInstance() : null;
-    }
-
-    public void addLibrary( final ScriptLibrary library )
-    {
-        if ( library == null )
-        {
-            return;
-        }
-
-        this.libraries.put( library.getName(), library );
-    }
-
-    public void removeLibrary( final ScriptLibrary library )
-    {
-        if ( library == null )
-        {
-            return;
-        }
-
-        this.libraries.remove( library.getName() );
     }
 
     public void addHandler( final CommandHandler commandHandler )

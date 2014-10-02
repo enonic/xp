@@ -2,12 +2,6 @@
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
   <service auto-export="interfaces">
-    <bean class="com.enonic.wem.portal.internal.script.ContentScriptLibrary">
-      <argument index="0" ref="contentService"/>
-    </bean>
-  </service>
-
-  <service auto-export="interfaces">
     <bean class="com.enonic.wem.portal.internal.content.FindContentByParentHandler">
       <argument index="0" ref="contentService"/>
     </bean>

@@ -25,11 +25,6 @@ public abstract class AbstractScriptTest
         urlRegistry.modulesClassLoader( getClass().getClassLoader() );
     }
 
-    protected final void addLibrary( final ScriptLibrary library )
-    {
-        this.environment.addLibrary( library );
-    }
-
     protected final void addHandler( final CommandHandler handler )
     {
         this.environment.addHandler( handler );

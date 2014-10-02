@@ -6,12 +6,6 @@
   <service auto-export="interfaces" ref="processorFactory"/>
 
   <service auto-export="interfaces">
-    <bean class="com.enonic.wem.mustache.internal.MustacheScriptLibrary">
-      <argument index="0" ref="processorFactory"/>
-    </bean>
-  </service>
-
-  <service auto-export="interfaces">
     <bean class="com.enonic.wem.mustache.internal.RenderViewHandler">
       <argument index="0" ref="processorFactory"/>
     </bean>
