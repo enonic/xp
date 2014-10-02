@@ -8,7 +8,6 @@ import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
@@ -33,9 +32,18 @@ import com.enonic.wem.core.index.result.SearchResult;
 
 public class ElasticsearchDao
 {
+
     private final static Logger LOG = LoggerFactory.getLogger( ElasticsearchDao.class );
 
     private static final boolean DEFAULT_REFRESH = true;
+
+    private String searchPreference = "_local";
+
+    private String searchTimeout = "5s";
+
+    private String storeTimeout = "1s";
+
+    private String deleteTimeout = "1s";
 
     private Client client;
 
@@ -52,10 +60,11 @@ public class ElasticsearchDao
 
     public void store( final IndexRequest indexRequest )
     {
-        this.client.index( indexRequest ).actionGet();
+        this.client.index( indexRequest ).
+            actionGet( storeTimeout );
     }
 
-    public void store( Collection<IndexDocument> indexDocuments )
+    public void store( final Collection<IndexDocument> indexDocuments )
     {
         for ( IndexDocument indexDocument : indexDocuments )
         {
@@ -70,16 +79,14 @@ public class ElasticsearchDao
                 source( xContentBuilder ).
                 refresh( indexDocument.doRefreshOnStore() );
 
-            this.client.index( req ).actionGet();
+            this.client.index( req ).actionGet( storeTimeout );
         }
     }
 
     public boolean delete( final DeleteRequest deleteRequest )
     {
-        final DeleteResponse deleteResponse = this.client.delete( deleteRequest ).actionGet();
-        return deleteResponse.isFound();
+        return doDelete( deleteRequest );
     }
-
 
     public boolean delete( final DeleteDocument deleteDocument )
     {
@@ -88,16 +95,15 @@ public class ElasticsearchDao
             id( deleteDocument.getId() ).
             refresh( DEFAULT_REFRESH );
 
-        try
-        {
-            final DeleteResponse deleteResponse = this.client.delete( deleteRequest ).actionGet();
-            return deleteResponse.isFound();
-        }
-        catch ( ElasticsearchException e )
-        {
-            throw new IndexException( "Failed to delete from index " + deleteDocument.getIndexName() + " of type " +
-                                          deleteDocument.getIndexType() + " with id " + deleteDocument.getId(), e );
-        }
+        return doDelete( deleteRequest );
+    }
+
+    private boolean doDelete( final DeleteRequest deleteRequest )
+    {
+        final DeleteResponse deleteResponse = this.client.delete( deleteRequest ).
+            actionGet( deleteTimeout );
+
+        return deleteResponse.isFound();
     }
 
     public SearchResult search( final ElasticsearchQuery elasticsearchQuery )
@@ -106,19 +112,12 @@ public class ElasticsearchDao
 
         //System.out.println( searchSource.toString() );
 
-        final SearchRequest searchRequest = Requests.
-            searchRequest( elasticsearchQuery.getIndexName() ).
-            types( elasticsearchQuery.getIndexType() ).
-            source( searchSource );
+        final SearchRequestBuilder searchRequest = new SearchRequestBuilder( this.client ).
+            setIndices( elasticsearchQuery.getIndexName() ).
+            setTypes( elasticsearchQuery.getIndexType() ).
+            setSource( searchSource.buildAsBytes() );
 
         return doSearchRequest( searchRequest );
-    }
-
-    private SearchResult doSearchRequest( final SearchRequest searchRequest )
-    {
-        final SearchResponse searchResponse = this.client.search( searchRequest ).actionGet();
-
-        return SearchResultFactory.create( searchResponse );
     }
 
     public SearchResult get( final QueryMetaData queryMetaData, final QueryBuilder queryBuilder )
@@ -147,6 +146,7 @@ public class ElasticsearchDao
     {
         final GetRequest getRequest = new GetRequest( queryMetaData.getIndexName() ).
             type( queryMetaData.getIndexTypeName() ).
+            preference( searchPreference ).
             id( id );
 
         if ( queryMetaData.hasFields() )
@@ -154,7 +154,8 @@ public class ElasticsearchDao
             getRequest.fields( queryMetaData.getFields() );
         }
 
-        final GetResponse getResponse = client.get( getRequest ).actionGet();
+        final GetResponse getResponse = client.get( getRequest ).
+            actionGet( searchTimeout );
 
         return SearchResultFactory.create( getResponse );
     }
@@ -165,18 +166,28 @@ public class ElasticsearchDao
             setIndices( queryMetaData.getIndexName() ).
             setTypes( queryMetaData.getIndexTypeName() ).
             setQuery( query ).
-            setSearchType( SearchType.COUNT );
+            setSearchType( SearchType.COUNT ).
+            setPreference( searchPreference );
 
-        final SearchResponse searchResponse = this.client.search( searchRequestBuilder.request() ).actionGet();
+        final SearchResult searchResult = doSearchRequest( searchRequestBuilder );
 
-        return searchResponse.getHits().getTotalHits();
+        return searchResult.getResults().getTotalHits();
     }
 
     private SearchResult doSearchRequest( final SearchRequestBuilder searchRequestBuilder )
     {
-        final SearchResponse searchResponse = searchRequestBuilder.
-            execute().
-            actionGet();
+        final SearchResponse searchResponse;
+        try
+        {
+            searchResponse = searchRequestBuilder.
+                setPreference( searchPreference ).
+                execute().
+                actionGet( searchTimeout );
+        }
+        catch ( ElasticsearchException e )
+        {
+            throw new IndexException( "Search request failed", e );
+        }
 
         return SearchResultFactory.create( searchResponse );
     }
@@ -185,4 +196,6 @@ public class ElasticsearchDao
     {
         this.client = client;
     }
+
+
 }

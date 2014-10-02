@@ -15,7 +15,12 @@ public final class StartupInitializerImpl
     public void cleanData()
         throws Exception
     {
-        initializeRespositories( true );
+        initializeRepositories( true );
+    }
+
+    public void start()
+    {
+        initializeRepositories( false );
     }
 
     public void initializeData()
@@ -27,7 +32,7 @@ public final class StartupInitializerImpl
         }
     }
 
-    private void initializeRespositories( final boolean reinit )
+    private void initializeRepositories( final boolean reinit )
     {
         final Repository contentRepo = ContentConstants.CONTENT_REPO;
 
