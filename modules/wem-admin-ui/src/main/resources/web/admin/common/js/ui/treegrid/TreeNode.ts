@@ -1,12 +1,12 @@
 module api.ui.treegrid {
 
-    export class TreeNode<NODE> {
+    export class TreeNode<DATA> {
 
         private id: string;
 
         private dataId: string;
 
-        private data: NODE;
+        private data: DATA;
 
         private expanded: boolean;
 
@@ -16,11 +16,11 @@ module api.ui.treegrid {
 
         private maxChildren: number;
 
-        private parent: TreeNode<NODE>;
+        private parent: TreeNode<DATA>;
 
-        private children: TreeNode<NODE>[];
+        private children: TreeNode<DATA>[];
 
-        constructor(builder: TreeNodeBuilder<NODE>) {
+        constructor(builder: TreeNodeBuilder<DATA>) {
             this.id = Math.random().toString(36).substring(2);
             this.dataId = builder.getDataId();
             this.data = builder.getData();
@@ -82,26 +82,26 @@ module api.ui.treegrid {
             this.maxChildren = maxChildren;
         }
 
-        getData(): NODE {
+        getData(): DATA {
             return this.data;
         }
 
-        setData(node: NODE) {
-            this.data = node;
+        setData(data: DATA) {
+            this.data = data;
         }
 
-        getParent(): TreeNode<NODE> {
+        getParent(): TreeNode<DATA> {
             return this.parent;
         }
 
-        setParent(parent: TreeNode<NODE>) {
+        setParent(parent: TreeNode<DATA>) {
             this.parent = parent;
             if (this.pinned) {
                 this.pinToRoot();
             }
         }
 
-        getRoot(): TreeNode<NODE> {
+        getRoot(): TreeNode<DATA> {
             var root = this,
                 parent = this.getParent();
             while (parent) {
@@ -112,11 +112,11 @@ module api.ui.treegrid {
             return root;
         }
 
-        getChildren(): TreeNode<NODE>[] {
+        getChildren(): TreeNode<DATA>[] {
             return this.children;
         }
 
-        setChildren(children: TreeNode<NODE>[]) {
+        setChildren(children: TreeNode<DATA>[]) {
             this.children = children;
 
             this.children.forEach((child) => {
@@ -128,14 +128,14 @@ module api.ui.treegrid {
             return this.children.length > 0;
         }
 
-        addChild(child: TreeNode<NODE>) {
+        addChild(child: TreeNode<DATA>) {
             this.children = this.children || [];
             this.children.push(child);
             child.setParent(this);
         }
 
-        removeChild(child: TreeNode<NODE>) {
-            var children: TreeNode<NODE>[] = [];
+        removeChild(child: TreeNode<DATA>) {
+            var children: TreeNode<DATA>[] = [];
             for (var i = 0; i < this.children.length; i++) {
                 if (this.children[i].getId() !== child.getId()) {
                     children.push(this.children[i]);
@@ -163,8 +163,8 @@ module api.ui.treegrid {
          @expanded - determines to display only reachable nodes.
          @selected - determines to display only seleted nodes.
          */
-        treeToList(empty: boolean = false, expanded: boolean = true, selected: boolean = false): TreeNode<NODE>[] {
-            var list: TreeNode<NODE>[] = [];
+        treeToList(empty: boolean = false, expanded: boolean = true, selected: boolean = false): TreeNode<DATA>[] {
+            var list: TreeNode<DATA>[] = [];
 
             if (this.selected === true || selected === false) {
                 if (this.getData() || empty === true) {
@@ -181,7 +181,7 @@ module api.ui.treegrid {
             return list;
         }
 
-        findNode(dataId: string): TreeNode<NODE> {
+        findNode(dataId: string): TreeNode<DATA> {
 
             if (this.hasData() && this.getDataId() === dataId) {
                 return this;
@@ -226,7 +226,7 @@ module api.ui.treegrid {
                         this.parent.removeChild(this);
                         this.getRoot().addChild(this);
                     } else {
-                        new TreeNodeBuilder<NODE>(this).setPinned(true).build();
+                        new TreeNodeBuilder<DATA>(this).setPinned(true).build();
                     }
                 }
             }
