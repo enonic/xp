@@ -28,7 +28,7 @@
             }
         ],
         "regions": [ ],
-        "template": "mymodule|my-page"
+        "template": "my-page"
     },
     "path": "/content-name",
     "site": null,

@@ -49,7 +49,7 @@ public class PageTemplateXmlTest
         pageTemplateConfig.addProperty( "thing.second", Value.newString( "two" ) );
 
         PageTemplate pageTemplate = PageTemplate.newPageTemplate().
-            key( PageTemplateKey.from( "mainmodule|main-page" ) ).
+            key( PageTemplateKey.from( "main-page" ) ).
             displayName( "Main page template" ).
             regions( regions ).
             config( pageTemplateConfig ).

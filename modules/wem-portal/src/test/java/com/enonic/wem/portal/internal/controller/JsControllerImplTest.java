@@ -46,7 +46,7 @@ public class JsControllerImplTest
     @Test
     public void testGetterAccess()
     {
-        final Page page = Page.newPage().template( PageTemplateKey.from( "mymodule|mypagetemplate" ) ).build();
+        final Page page = Page.newPage().template( PageTemplateKey.from( "mypagetemplate" ) ).build();
         final Thumbnail thumbnail = Thumbnail.from( new BlobKey( "1234" ), "image/jpg", 1000 );
 
         final Content content =
@@ -56,6 +56,6 @@ public class JsControllerImplTest
         this.request.setMethod( "GET" );
         execute( "mymodule:/service/getters" );
         assertEquals( JsHttpResponse.STATUS_OK, this.response.getStatus() );
-        assertEquals( "GET,test,mymodule|mypagetemplate,1000", this.response.getBody() );
+        assertEquals( "GET,test,mypagetemplate,1000", this.response.getBody() );
     }
 }

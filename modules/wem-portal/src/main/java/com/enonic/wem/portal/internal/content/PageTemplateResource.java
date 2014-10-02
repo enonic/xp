@@ -101,7 +101,7 @@ public final class PageTemplateResource
         context.setPageTemplate( pageTemplate );
 
         // set resolved module (with version) from site template
-        final ModuleKey pageTemplateModule = resolvePageTemplateModule( pageTemplate, siteTemplate );
+        final ModuleKey pageTemplateModule = resolvePageTemplateModule( pageDescriptor, siteTemplate );
         context.setResolvedModule( pageTemplateModule.toString() );
 
         final JsHttpRequest jsRequest = new JsHttpRequest();
@@ -117,9 +117,9 @@ public final class PageTemplateResource
         return toResponse( result );
     }
 
-    private ModuleKey resolvePageTemplateModule( final PageTemplate pageTemplate, final SiteTemplate siteTemplate )
+    private ModuleKey resolvePageTemplateModule( final PageDescriptor pageDescriptor, final SiteTemplate siteTemplate )
     {
-        final ModuleName pageTemplateModuleName = pageTemplate.getKey().getModuleName();
+        final ModuleName pageTemplateModuleName = pageDescriptor.getKey().getModuleKey().getName();
         return siteTemplate.getModules().
             stream().
             filter( m -> m.getName().equals( pageTemplateModuleName ) ).

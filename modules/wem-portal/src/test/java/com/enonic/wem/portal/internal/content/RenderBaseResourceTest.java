@@ -118,7 +118,7 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
     protected final void setupTemplates()
         throws Exception
     {
-        Mockito.when( this.pageTemplateService.getByKey( Mockito.eq( PageTemplateKey.from( "mymodule|my-page" ) ),
+        Mockito.when( this.pageTemplateService.getByKey( Mockito.eq( PageTemplateKey.from( "my-page" ) ),
                                                          Mockito.eq( (SiteTemplateKey) null ) ) ).thenReturn( createPageTemplate() );
 
         Mockito.when( this.pageDescriptorService.getByKey( Mockito.isA( PageDescriptorKey.class ) ) ).thenReturn( createDescriptor() );
@@ -132,7 +132,7 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
         rootDataSet.add( dataSet );
 
         Page page = Page.newPage().
-            template( PageTemplateKey.from( "mymodule|my-page" ) ).
+            template( PageTemplateKey.from( "my-page" ) ).
             config( rootDataSet ).
             build();
 
@@ -158,7 +158,7 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
         rootDataSet.add( dataSet );
 
         Page page = Page.newPage().
-            template( PageTemplateKey.from( "mymodule|my-page" ) ).
+            template( PageTemplateKey.from( "my-page" ) ).
             config( rootDataSet ).
             build();
 
@@ -178,8 +178,6 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
 
     private PageTemplate createPageTemplate()
     {
-        final ModuleKey module = ModuleKey.from( "mymodule" );
-
         final RootDataSet pageTemplateConfig = new RootDataSet();
         pageTemplateConfig.addProperty( "pause", Value.newLong( 10000 ) );
 
@@ -191,7 +189,7 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
             build();
 
         return PageTemplate.newPageTemplate().
-            key( PageTemplateKey.from( module.getName(), new PageTemplateName( "my-page" ) ) ).
+            key( PageTemplateKey.from( new PageTemplateName( "my-page" ) ) ).
             displayName( "Main page emplate" ).
             config( pageTemplateConfig ).
             canRender( ContentTypeNames.from( "mymodule:article", "mymodule:banner" ) ).

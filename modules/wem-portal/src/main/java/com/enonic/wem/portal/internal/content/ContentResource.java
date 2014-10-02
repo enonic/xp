@@ -57,7 +57,7 @@ public final class ContentResource
         context.setContent( content );
         context.setSiteContent( siteContent );
         context.setPageTemplate( pageTemplate );
-        context.setResolvedModule( pageTemplate.getKey().getModuleName().toString() );
+        context.setResolvedModule( pageDescriptor.getKey().getModuleKey().getName().toString() );
 
         // createResourceUrl('my.css');
         // /portal/edit/workspace/path/to/content/_/public/mymodule-1.0.0/my.css

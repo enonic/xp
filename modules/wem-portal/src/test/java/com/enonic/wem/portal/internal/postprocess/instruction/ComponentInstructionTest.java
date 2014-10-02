@@ -92,7 +92,7 @@ public class ComponentInstructionTest
     private PageTemplate createPageTemplate()
     {
         return PageTemplate.newPageTemplate().
-            key( PageTemplateKey.from( "mymodule|my-page" ) ).
+            key( PageTemplateKey.from( "my-page" ) ).
             descriptor( PageDescriptorKey.from( "mymodule:mypagetemplate" ) ).
             build();
     }
@@ -121,7 +121,7 @@ public class ComponentInstructionTest
 
         final PageRegions pageRegions = newPageRegions().add( region ).build();
         Page page = Page.newPage().
-            template( PageTemplateKey.from( "mymodule|my-page" ) ).
+            template( PageTemplateKey.from( "my-page" ) ).
             regions( pageRegions ).
             build();
 
@@ -144,7 +144,7 @@ public class ComponentInstructionTest
         rootDataSet.add( dataSet );
 
         Page page = Page.newPage().
-            template( PageTemplateKey.from( "mymodule|my-page" ) ).
+            template( PageTemplateKey.from( "my-page" ) ).
             config( rootDataSet ).
             build();
 

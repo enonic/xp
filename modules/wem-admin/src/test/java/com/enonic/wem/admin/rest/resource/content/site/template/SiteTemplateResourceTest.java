@@ -153,7 +153,7 @@ public class SiteTemplateResourceTest
         throws Exception
     {
         final PageTemplate pageTemplate = newPageTemplate().
-            key( PageTemplateKey.from( "mod|mainpage" ) ).
+            key( PageTemplateKey.from( "mainpage" ) ).
             displayName( "Main Page" ).
             descriptor( PageDescriptorKey.from( ModuleKey.from( "mod" ), new ComponentDescriptorName( "page-descr" ) ) ).
             config( new RootDataSet() ).
@@ -216,7 +216,7 @@ public class SiteTemplateResourceTest
         throws Exception
     {
         final PageTemplate pageTemplate = newPageTemplate().
-            key( PageTemplateKey.from( "mod|mainpage" ) ).
+            key( PageTemplateKey.from( "mainpage" ) ).
             displayName( "Main Page" ).
             descriptor( PageDescriptorKey.from( ModuleKey.from( "mod" ), new ComponentDescriptorName( "page-descr" ) ) ).
             config( new RootDataSet() ).
@@ -275,7 +275,7 @@ public class SiteTemplateResourceTest
         throws Exception
     {
         final PageTemplate pageTemplate = newPageTemplate().
-            key( PageTemplateKey.from( "mod|mainpage" ) ).
+            key( PageTemplateKey.from( "mainpage" ) ).
             displayName( "Main Page" ).
             descriptor( PageDescriptorKey.from( ModuleKey.from( "mod" ), new ComponentDescriptorName( "page-descr" ) ) ).
             config( new RootDataSet() ).
@@ -380,14 +380,14 @@ public class SiteTemplateResourceTest
     private SiteTemplate createTemplateWithPageTemplates()
     {
         final PageTemplate pageTemplate1 = PageTemplate.newPageTemplate().
-            key( PageTemplateKey.from( "module|my-page" ) ).
+            key( PageTemplateKey.from( "my-page" ) ).
             displayName( "Main page template" ).
             canRender( ContentTypeNames.from( "mymodule:article", "mymodule:banner" ) ).
             descriptor( PageDescriptorKey.from( "mainmodule:landing-page" ) ).
             regions( newPageRegions().build() ).
             build();
         final PageTemplate pageTemplate2 = PageTemplate.newPageTemplate().
-            key( PageTemplateKey.from( "module|my-other-page" ) ).
+            key( PageTemplateKey.from( "my-other-page" ) ).
             displayName( "Another page template" ).
             canRender( ContentTypeNames.from( "mymodule:article" ) ).
             descriptor( PageDescriptorKey.from( "mainmodule:other-page" ) ).

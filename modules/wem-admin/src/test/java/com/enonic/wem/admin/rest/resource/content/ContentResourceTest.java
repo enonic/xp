@@ -271,7 +271,7 @@ public class ContentResourceTest
         RootDataSet pageConfig = new RootDataSet();
         pageConfig.setProperty( "background-color", Value.newString( "blue" ) );
         Page page = Page.newPage().
-            template( PageTemplateKey.from( "mymodule|mypagetemplate" ) ).
+            template( PageTemplateKey.from( "mypagetemplate" ) ).
             regions( regions ).
             config( pageConfig ).
             build();

@@ -57,7 +57,7 @@
                 "name": "my-region"
             }
         ],
-        "template": "mymodule|mypagetemplate"
+        "template": "mypagetemplate"
     },
     "path": "/my_a_content",
     "site": null,

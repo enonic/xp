@@ -20,7 +20,7 @@ public class PageTemplateTest
         pageTemplateConfig.addProperty( "pause", Value.newLong( 10000 ) );
 
         PageTemplate pageTemplate = PageTemplate.newPageTemplate().
-            key( PageTemplateKey.from( "mainmodule|main-page" ) ).
+            key( PageTemplateKey.from( "main-page" ) ).
             displayName( "Main page template" ).
             config( pageTemplateConfig ).
             canRender( ContentTypeNames.from( "mainmodule:article", "mainmodule:banner" ) ).

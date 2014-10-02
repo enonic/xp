@@ -6,7 +6,7 @@
             "editable": false,
             "hasChildren": false,
             "iconUrl": "",
-            "key": "module|my-other-page",
+            "key": "my-other-page",
             "name": "my-other-page",
             "parentKey": "name",
             "templateType": "PAGE"
@@ -17,7 +17,7 @@
             "editable": false,
             "hasChildren": false,
             "iconUrl": "",
-            "key": "module|my-page",
+            "key": "my-page",
             "name": "my-page",
             "parentKey": "name",
             "templateType": "PAGE"

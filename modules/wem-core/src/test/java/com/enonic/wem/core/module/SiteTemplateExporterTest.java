@@ -17,7 +17,6 @@ import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.schema.content.ContentTypeFilter;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
@@ -97,8 +96,6 @@ public class SiteTemplateExporterTest
 
     private SiteTemplate createSiteTemplate()
     {
-        final ModuleKey module = ModuleKey.from( "mymodule" );
-
         final RootDataSet partTemplateConfig = new RootDataSet();
         partTemplateConfig.addProperty( "width", Value.newLong( 200 ) );
 
@@ -106,7 +103,7 @@ public class SiteTemplateExporterTest
         pageTemplateConfig.addProperty( "pause", Value.newLong( 10000 ) );
 
         final PageTemplate pageTemplate = PageTemplate.newPageTemplate().
-            key( PageTemplateKey.from( module.getName(), new PageTemplateName( "my-page" ) ) ).
+            key( PageTemplateKey.from( new PageTemplateName( "my-page" ) ) ).
             displayName( "Main page template" ).
             config( pageTemplateConfig ).
             canRender( ContentTypeNames.from( "mymodule:article", "mymodule:banner" ) ).
@@ -120,16 +117,17 @@ public class SiteTemplateExporterTest
         final RootDataSet imageTemplateConfig = new RootDataSet();
         imageTemplateConfig.addProperty( "width", Value.newLong( 3000 ) );
 
-        final ContentTypeFilter contentTypeFilter =
-            newContentFilter().defaultDeny().allowContentTypes( ContentTypeNames.from( "mymodule:com.enonic.intranet", "mymodule:system.folder" ) ).build();
+        final ContentTypeFilter contentTypeFilter = newContentFilter().defaultDeny().allowContentTypes(
+            ContentTypeNames.from( "mymodule:com.enonic.intranet", "mymodule:system.folder" ) ).build();
 
         return SiteTemplate.newSiteTemplate().
             key( SiteTemplateKey.from( "Intranet-1.0.0" ) ).
             displayName( "Enonic Intranet" ).
             description( "A social intranet for the Enterprise" ).
             vendor( newVendor().name( "Enonic" ).url( "https://www.enonic.com" ).build() ).
-            modules( ModuleKeys.from( "com.enonic.intranet", "com.company.sampleModule", "com.company.theme.someTheme",
-                                      "com.enonic.resolvers", "mymodule" ) ).
+            modules(
+                ModuleKeys.from( "com.enonic.intranet", "com.company.sampleModule", "com.company.theme.someTheme", "com.enonic.resolvers",
+                                 "mymodule" ) ).
             contentTypeFilter( contentTypeFilter ).
             addPageTemplate( pageTemplate ).
             build();

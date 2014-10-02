@@ -40,8 +40,7 @@ public final class PageTemplate
         else
         {
             Preconditions.checkNotNull( builder.descriptor, "descriptor cannot be null when key is not given" );
-            Preconditions.checkNotNull( builder.name, "name cannot be null when key is not given" );
-            return PageTemplateKey.from( builder.descriptor.getModuleKey().getName(), builder.name );
+            return PageTemplateKey.from( builder.name );
         }
     }
 

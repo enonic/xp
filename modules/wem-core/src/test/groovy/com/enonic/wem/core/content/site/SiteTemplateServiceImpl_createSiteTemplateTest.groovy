@@ -50,7 +50,7 @@ class SiteTemplateServiceImpl_createSiteTemplateTest
         def moduleKeys = ModuleKeys.from( "foomodule-1.0.0" );
         def filter = newContentFilter().defaultDeny().allowContentType( ContentTypeName.from( "mymodule-1.0.0:page" ) ).build();
         def pageTemplate = PageTemplate.newPageTemplate().
-            key( PageTemplateKey.from( "foomodule-1.0.0|template-name" ) ).
+            key( PageTemplateKey.from( "template-name" ) ).
             displayName( "My page template" ).
             descriptor( PageDescriptorKey.from( "resource-1.0.0:page-descr" ) ).build();
 

@@ -24,13 +24,12 @@ public class ComponentsTest
         pageConfig.addProperty( "pause", Value.newLong( 200 ) );
 
         Page page = newPage().
-            template( PageTemplateKey.from( "mainmodule|pageTemplateName" ) ).
+            template( PageTemplateKey.from( "pageTemplateName" ) ).
             config( pageConfig ).
             regions( PageRegions.newPageRegions().build() ).
             build();
 
         assertEquals( "pageTemplateName", page.getTemplate().getTemplateName().toString() );
-        assertEquals( "mainmodule", page.getTemplate().getModuleName().toString() );
     }
 
     @Test

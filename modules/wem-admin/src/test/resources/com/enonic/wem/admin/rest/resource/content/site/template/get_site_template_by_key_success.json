@@ -11,7 +11,7 @@
     "key": "blueman",
     "modules": [ "module1", "module2" ],
     "name": "blueman",
-    "pageTemplateKeys": [ "mod|mainpage" ],
+    "pageTemplateKeys": [ "mainpage" ],
     "pageTemplates": [
         {
             "canRender": [ ],
@@ -20,7 +20,7 @@
             "descriptorKey": "mod:page-descr",
             "displayName": "Main Page",
             "editable": true,
-            "key": "mod|mainpage",
+            "key": "mainpage",
             "regions": null
         }
     ],
