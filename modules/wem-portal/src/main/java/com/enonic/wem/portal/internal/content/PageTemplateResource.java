@@ -28,8 +28,8 @@ import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleName;
-import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.portal.internal.base.BaseResource;
 import com.enonic.wem.portal.internal.controller.JsContext;
 import com.enonic.wem.portal.internal.controller.JsController;
@@ -41,7 +41,7 @@ import com.enonic.wem.portal.internal.rendering.RenderResult;
 import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.api.content.site.ModuleConfig.newModuleConfig;
 
-@Path("/theme/{siteTemplateKey}/{pageTemplateKey}")
+@Path("/{workspace}/page-template/{siteTemplateKey}/{pageTemplateKey}")
 public final class PageTemplateResource
     extends BaseResource
 {
@@ -56,6 +56,14 @@ public final class PageTemplateResource
     protected PageTemplateKey pageTemplateKey;
 
     protected SiteTemplateKey siteTemplateKey;
+
+    protected Workspace workspace;
+
+    @PathParam("workspace")
+    public void setWorkspace( final String value )
+    {
+        this.workspace = Workspace.from( value );
+    }
 
     @Context
     protected Request request;
@@ -98,7 +106,7 @@ public final class PageTemplateResource
 
         final JsHttpRequest jsRequest = new JsHttpRequest();
         jsRequest.setMode( RenderingMode.EDIT );
-        jsRequest.setWorkspace( Workspace.from( "stage" ) );
+        jsRequest.setWorkspace( this.workspace );
         jsRequest.setMethod( this.request.getMethod() );
         context.setRequest( jsRequest );
 

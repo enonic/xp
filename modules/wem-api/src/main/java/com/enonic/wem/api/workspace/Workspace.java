@@ -2,12 +2,8 @@ package com.enonic.wem.api.workspace;
 
 import com.google.common.base.Strings;
 
-public class Workspace
+public final class Workspace
 {
-    private static final String SEPARATOR = "-";
-
-    private static final String PREFIX = "workspace";
-
     private final String name;
 
     public static Workspace from( final String name )
@@ -22,7 +18,7 @@ public class Workspace
 
     private Workspace( final String name )
     {
-        this.name = name;
+        this.name = name.toLowerCase();
     }
 
     public String getName()
@@ -49,19 +45,13 @@ public class Workspace
         }
 
         final Workspace workspace = (Workspace) o;
-
-        if ( name != null ? !name.equals( workspace.name ) : workspace.name != null )
-        {
-            return false;
-        }
-
-        return true;
+        return !name.equals( workspace.name );
     }
 
     @Override
     public int hashCode()
     {
-        return name != null ? name.hashCode() : 0;
+        return name.hashCode();
     }
 }
 
