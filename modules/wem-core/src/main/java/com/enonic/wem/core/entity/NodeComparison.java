@@ -1,6 +1,6 @@
 package com.enonic.wem.core.entity;
 
-import com.enonic.wem.api.CompareStatus;
+import com.enonic.wem.api.content.CompareStatus;
 
 public class NodeComparison
 {

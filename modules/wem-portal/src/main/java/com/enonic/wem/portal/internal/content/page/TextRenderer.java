@@ -3,7 +3,7 @@ package com.enonic.wem.portal.internal.content.page;
 import java.text.MessageFormat;
 
 import com.enonic.wem.api.content.page.text.TextComponent;
-import com.enonic.wem.api.rendering.RenderingMode;
+import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.PortalRequest;
 import com.enonic.wem.portal.PortalResponse;

@@ -11,7 +11,7 @@ import javax.ws.rs.core.UriInfo;
 
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleService;
-import com.enonic.wem.api.rendering.RenderingMode;
+import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.portal.internal.base.BaseResource2;
 import com.enonic.wem.portal.internal.controller.JsContext;

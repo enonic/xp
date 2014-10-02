@@ -7,7 +7,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 import com.enonic.wem.api.content.ContentConstants;
-import com.enonic.wem.api.rendering.RenderingMode;
+import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.portal.PortalRequest;
 import com.enonic.wem.servlet.ServletRequestUrlHelper;

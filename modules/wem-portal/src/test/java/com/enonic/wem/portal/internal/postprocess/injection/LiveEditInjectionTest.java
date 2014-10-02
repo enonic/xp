@@ -9,7 +9,7 @@ import org.mockito.Mockito;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
-import com.enonic.wem.api.rendering.RenderingMode;
+import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.portal.internal.controller.JsContext;
 import com.enonic.wem.portal.internal.controller.JsHttpRequest;
 import com.enonic.wem.portal.postprocess.PostProcessInjection;

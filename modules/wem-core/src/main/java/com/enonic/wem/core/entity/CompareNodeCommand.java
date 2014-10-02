@@ -2,7 +2,7 @@ package com.enonic.wem.core.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.CompareStatus;
+import com.enonic.wem.api.content.CompareStatus;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.version.VersionService;

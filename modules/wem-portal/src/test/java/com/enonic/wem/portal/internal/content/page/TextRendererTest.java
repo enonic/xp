@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.page.text.TextComponent;
-import com.enonic.wem.api.rendering.RenderingMode;
+import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.portal.internal.controller.JsContext;
 import com.enonic.wem.portal.internal.controller.JsHttpRequest;
 import com.enonic.wem.portal.internal.controller.JsHttpResponse;

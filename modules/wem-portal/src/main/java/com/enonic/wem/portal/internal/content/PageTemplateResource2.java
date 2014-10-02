@@ -28,7 +28,7 @@ import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleName;
-import com.enonic.wem.api.rendering.RenderingMode;
+import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.portal.internal.base.BaseResource2;
 import com.enonic.wem.portal.internal.controller.JsContext;

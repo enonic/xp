@@ -10,7 +10,7 @@ import com.google.common.io.Resources;
 import com.samskivert.mustache.Mustache;
 import com.samskivert.mustache.Template;
 
-import com.enonic.wem.api.rendering.RenderingMode;
+import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.postprocess.PostProcessInjection;
 

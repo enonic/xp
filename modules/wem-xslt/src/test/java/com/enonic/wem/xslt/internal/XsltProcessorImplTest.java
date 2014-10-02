@@ -10,7 +10,7 @@ import com.google.common.collect.Maps;
 
 import junit.framework.Assert;
 
-import com.enonic.wem.api.rendering.RenderingMode;
+import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceNotFoundException;
 import com.enonic.wem.api.resource.ResourceProblemException;

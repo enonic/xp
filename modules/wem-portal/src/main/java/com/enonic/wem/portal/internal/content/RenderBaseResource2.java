@@ -22,7 +22,7 @@ import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateNotFoundException;
 import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.rendering.RenderingMode;
+import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.portal.internal.base.BaseResource2;

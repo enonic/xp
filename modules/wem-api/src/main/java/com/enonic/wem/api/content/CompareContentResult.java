@@ -1,7 +1,5 @@
 package com.enonic.wem.api.content;
 
-import com.enonic.wem.api.CompareStatus;
-
 public class CompareContentResult
 {
     private final ContentId contentId;

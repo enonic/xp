@@ -2,7 +2,7 @@ package com.enonic.wem.portal.internal.content.page;
 
 
 import com.enonic.wem.api.content.page.image.ImageComponent;
-import com.enonic.wem.api.rendering.RenderingMode;
+import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.PortalRequest;
 import com.enonic.wem.portal.PortalResponse;

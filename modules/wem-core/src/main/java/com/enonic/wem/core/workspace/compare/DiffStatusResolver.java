@@ -1,6 +1,6 @@
 package com.enonic.wem.core.workspace.compare;
 
-import com.enonic.wem.api.CompareStatus;
+import com.enonic.wem.api.content.CompareStatus;
 import com.enonic.wem.core.entity.NodeVersion;
 
 public class DiffStatusResolver
