@@ -19,8 +19,8 @@ import com.enonic.wem.portal.internal.rendering.Renderer;
 import com.enonic.wem.portal.internal.rendering.RendererFactory;
 
 @Path("/{mode}/{workspace}/{contentPath:.+}/_/component/{component:.+}")
-public final class ComponentResource2
-    extends RenderBaseResource2
+public final class ComponentResource
+    extends RenderBaseResource
 {
     protected RendererFactory rendererFactory;
 

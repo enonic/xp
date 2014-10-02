@@ -30,7 +30,7 @@ import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.portal.internal.base.BaseResource2;
+import com.enonic.wem.portal.internal.base.BaseResource;
 import com.enonic.wem.portal.internal.controller.JsContext;
 import com.enonic.wem.portal.internal.controller.JsController;
 import com.enonic.wem.portal.internal.controller.JsControllerFactory;
@@ -42,8 +42,8 @@ import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.api.content.site.ModuleConfig.newModuleConfig;
 
 @Path("/theme/{siteTemplateKey}/{pageTemplateKey}")
-public final class PageTemplateResource2
-    extends BaseResource2
+public final class PageTemplateResource
+    extends BaseResource
 {
     protected JsControllerFactory controllerFactory;
 

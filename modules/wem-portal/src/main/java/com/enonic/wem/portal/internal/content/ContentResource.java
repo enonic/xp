@@ -16,8 +16,8 @@ import com.enonic.wem.portal.internal.controller.JsHttpResponseSerializer;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 
 @Path("/{mode}/{workspace}/{contentPath:.+}")
-public final class ContentResource2
-    extends RenderBaseResource2
+public final class ContentResource
+    extends RenderBaseResource
 {
     @GET
     public Response handleGet()

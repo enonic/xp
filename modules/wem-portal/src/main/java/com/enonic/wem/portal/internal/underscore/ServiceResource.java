@@ -13,7 +13,7 @@ import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.portal.internal.base.BaseResource2;
+import com.enonic.wem.portal.internal.base.BaseResource;
 import com.enonic.wem.portal.internal.controller.JsContext;
 import com.enonic.wem.portal.internal.controller.JsController;
 import com.enonic.wem.portal.internal.controller.JsControllerFactory;
@@ -22,8 +22,8 @@ import com.enonic.wem.portal.internal.controller.JsHttpResponseSerializer;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 
 @Path("/{mode}/{workspace}/{contentPath:.+}/_/service/{module}/{service}")
-public final class ServiceResource2
-    extends BaseResource2
+public final class ServiceResource
+    extends BaseResource
 {
     protected ModuleService moduleService;
 

@@ -25,11 +25,11 @@ import com.enonic.wem.api.context.Context;
 import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.portal.internal.base.BaseResource2;
+import com.enonic.wem.portal.internal.base.BaseResource;
 import com.enonic.wem.portal.internal.controller.JsControllerFactory;
 
-public abstract class RenderBaseResource2
-    extends BaseResource2
+public abstract class RenderBaseResource
+    extends BaseResource
 {
     protected JsControllerFactory controllerFactory;
 

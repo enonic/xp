@@ -11,11 +11,11 @@ import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.util.MediaTypes;
-import com.enonic.wem.portal.internal.base.BaseResource2;
+import com.enonic.wem.portal.internal.base.BaseResource;
 
 @Path("{mode}/{workspace}/{contentPath:.+}/_/public/{module}/{resource:.+}")
-public final class PublicResource2
-    extends BaseResource2
+public final class PublicResource
+    extends BaseResource
 {
     protected ModuleService moduleService;
 

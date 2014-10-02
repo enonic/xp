@@ -5,22 +5,22 @@ import com.enonic.wem.portal.internal.controller.JsControllerFactory;
 import com.enonic.wem.servlet.jaxrs.ResourceProvider;
 
 public final class ServiceResourceProvider
-    implements ResourceProvider<ServiceResource2>
+    implements ResourceProvider<ServiceResource>
 {
     private ModuleService moduleService;
 
     private JsControllerFactory controllerFactory;
 
     @Override
-    public Class<ServiceResource2> getType()
+    public Class<ServiceResource> getType()
     {
-        return ServiceResource2.class;
+        return ServiceResource.class;
     }
 
     @Override
-    public ServiceResource2 newResource()
+    public ServiceResource newResource()
     {
-        final ServiceResource2 instance = new ServiceResource2();
+        final ServiceResource instance = new ServiceResource();
         instance.moduleService = this.moduleService;
         instance.controllerFactory = this.controllerFactory;
         return instance;

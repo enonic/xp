@@ -7,7 +7,7 @@ import com.enonic.wem.portal.internal.controller.JsControllerFactory;
 import com.enonic.wem.servlet.jaxrs.ResourceProvider;
 
 public final class PageTemplateResourceProvider
-    implements ResourceProvider<PageTemplateResource2>
+    implements ResourceProvider<PageTemplateResource>
 {
     private JsControllerFactory controllerFactory;
 
@@ -18,15 +18,15 @@ public final class PageTemplateResourceProvider
     private PageDescriptorService pageDescriptorService;
 
     @Override
-    public Class<PageTemplateResource2> getType()
+    public Class<PageTemplateResource> getType()
     {
-        return PageTemplateResource2.class;
+        return PageTemplateResource.class;
     }
 
     @Override
-    public PageTemplateResource2 newResource()
+    public PageTemplateResource newResource()
     {
-        final PageTemplateResource2 instance = new PageTemplateResource2();
+        final PageTemplateResource instance = new PageTemplateResource();
         instance.controllerFactory = this.controllerFactory;
         instance.siteTemplateService = this.siteTemplateService;
         instance.pageTemplateService = this.pageTemplateService;

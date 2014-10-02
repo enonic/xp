@@ -7,7 +7,7 @@ import com.enonic.wem.core.image.filter.ImageFilterBuilder;
 import com.enonic.wem.servlet.jaxrs.ResourceProvider;
 
 public final class ImageResourceProvider
-    implements ResourceProvider<ImageResource2>
+    implements ResourceProvider<ImageResource>
 {
     private ImageFilterBuilder imageFilterBuilder;
 
@@ -18,15 +18,15 @@ public final class ImageResourceProvider
     private ContentService contentService;
 
     @Override
-    public Class<ImageResource2> getType()
+    public Class<ImageResource> getType()
     {
-        return ImageResource2.class;
+        return ImageResource.class;
     }
 
     @Override
-    public ImageResource2 newResource()
+    public ImageResource newResource()
     {
-        final ImageResource2 instance = new ImageResource2();
+        final ImageResource instance = new ImageResource();
         instance.imageFilterBuilder = this.imageFilterBuilder;
         instance.attachmentService = this.attachmentService;
         instance.blobService = this.blobService;

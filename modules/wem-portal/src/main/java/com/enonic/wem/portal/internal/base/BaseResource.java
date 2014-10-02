@@ -10,7 +10,7 @@ import com.google.common.base.Joiner;
 import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 
-public abstract class BaseResource2
+public abstract class BaseResource
 {
     protected final RenderingMode parseMode( final String mode )
     {

@@ -1,18 +1,18 @@
 package com.enonic.wem.portal.internal.content;
 
 public final class ContentResourceProvider
-    extends RenderBaseResourceProvider<ContentResource2>
+    extends RenderBaseResourceProvider<ContentResource>
 {
     @Override
-    public Class<ContentResource2> getType()
+    public Class<ContentResource> getType()
     {
-        return ContentResource2.class;
+        return ContentResource.class;
     }
 
     @Override
-    public ContentResource2 newResource()
+    public ContentResource newResource()
     {
-        final ContentResource2 instance = new ContentResource2();
+        final ContentResource instance = new ContentResource();
         configure( instance );
         return instance;
     }

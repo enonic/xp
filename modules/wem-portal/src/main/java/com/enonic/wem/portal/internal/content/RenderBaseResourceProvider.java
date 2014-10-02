@@ -8,7 +8,7 @@ import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.portal.internal.controller.JsControllerFactory;
 import com.enonic.wem.servlet.jaxrs.ResourceProvider;
 
-public abstract class RenderBaseResourceProvider<T extends RenderBaseResource2>
+public abstract class RenderBaseResourceProvider<T extends RenderBaseResource>
     implements ResourceProvider<T>
 {
     private JsControllerFactory controllerFactory;

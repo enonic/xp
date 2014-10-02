@@ -35,11 +35,11 @@ import com.enonic.wem.core.image.ImageHelper;
 import com.enonic.wem.core.image.filter.BuilderContext;
 import com.enonic.wem.core.image.filter.ImageFilter;
 import com.enonic.wem.core.image.filter.ImageFilterBuilder;
-import com.enonic.wem.portal.internal.base.BaseResource2;
+import com.enonic.wem.portal.internal.base.BaseResource;
 
 @Path("/{mode}/{workspace}/{contentPath:.+}/_/image")
-public final class ImageResource2
-    extends BaseResource2
+public final class ImageResource
+    extends BaseResource
 {
     private final static int DEFAULT_BACKGROUND = 0x00FFFFFF;
 

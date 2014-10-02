@@ -4,20 +4,20 @@ import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.servlet.jaxrs.ResourceProvider;
 
 public final class PublicResourceProvider
-    implements ResourceProvider<PublicResource2>
+    implements ResourceProvider<PublicResource>
 {
     private ModuleService moduleService;
 
     @Override
-    public Class<PublicResource2> getType()
+    public Class<PublicResource> getType()
     {
-        return PublicResource2.class;
+        return PublicResource.class;
     }
 
     @Override
-    public PublicResource2 newResource()
+    public PublicResource newResource()
     {
-        final PublicResource2 instance = new PublicResource2();
+        final PublicResource instance = new PublicResource();
         instance.moduleService = this.moduleService;
         return instance;
     }

@@ -3,20 +3,20 @@ package com.enonic.wem.portal.internal.content;
 import com.enonic.wem.portal.internal.rendering.RendererFactory;
 
 public final class ComponentResourceProvider
-    extends RenderBaseResourceProvider<ComponentResource2>
+    extends RenderBaseResourceProvider<ComponentResource>
 {
     private RendererFactory rendererFactory;
 
     @Override
-    public Class<ComponentResource2> getType()
+    public Class<ComponentResource> getType()
     {
-        return ComponentResource2.class;
+        return ComponentResource.class;
     }
 
     @Override
-    public ComponentResource2 newResource()
+    public ComponentResource newResource()
     {
-        final ComponentResource2 instance = new ComponentResource2();
+        final ComponentResource instance = new ComponentResource();
         instance.rendererFactory = this.rendererFactory;
         configure( instance );
         return instance;
