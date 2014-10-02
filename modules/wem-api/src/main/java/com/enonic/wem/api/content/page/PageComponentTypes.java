@@ -26,7 +26,7 @@ public final class PageComponentTypes
 
     private void register( final PageComponentType type )
     {
-        this.bySimpleClassName.put( type.getClass().getSimpleName(), type );
+        this.bySimpleClassName.put( type.getComponentClass().getSimpleName(), type );
     }
 
     public static PageComponentType bySimpleClassName( final String simpleClassName )
