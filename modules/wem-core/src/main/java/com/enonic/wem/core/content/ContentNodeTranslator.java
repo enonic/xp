@@ -3,8 +3,11 @@ package com.enonic.wem.core.content;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.google.common.io.InputSupplier;
 
+import com.enonic.wem.api.Name;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
@@ -48,6 +51,10 @@ public class ContentNodeTranslator
 
     public CreateNodeParams toCreateNode( final CreateContentParams params )
     {
+        if ( params.getName() == null || StringUtils.isEmpty( params.getName().toString() ) )
+        {
+            params.name( Name.ensureValidName( params.getDisplayName() ) );
+        }
         final RootDataSet contentAsData = CONTENT_SERIALIZER.toData( params );
 
         final IndexConfigDocument indexConfigDocument = ContentIndexConfigFactory.create();
