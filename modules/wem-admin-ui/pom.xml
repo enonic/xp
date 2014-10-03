@@ -59,7 +59,7 @@
           </execution>
           <execution>
             <id>gruntAll</id>
-            <phase>generate-sources</phase>
+            <phase>compile</phase>
             <goals>
               <goal>exec</goal>
             </goals>
