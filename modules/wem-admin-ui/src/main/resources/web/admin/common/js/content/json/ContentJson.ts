@@ -4,6 +4,8 @@ module api.content.json{
 
         data: api.data.json.DataTypeWrapperJson[];
 
+        metadata: api.content.json.MetadataJson[];
+
         form: api.form.json.FormJson;
 
         site: api.content.site.SiteJson;

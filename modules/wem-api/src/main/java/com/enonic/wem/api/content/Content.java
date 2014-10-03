@@ -1,6 +1,10 @@
 package com.enonic.wem.api.content;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
@@ -10,8 +14,10 @@ import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.content.thumb.Thumbnail;
+import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
 import com.enonic.wem.api.support.ChangeTraceable;
 import com.enonic.wem.api.support.Changes;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
@@ -40,6 +46,8 @@ public final class Content
     private final Form form;
 
     private final ContentData contentData;
+
+    private final List<Metadata> metadata;
 
     private final Instant createdTime;
 
@@ -78,6 +86,7 @@ public final class Content
         this.id = builder.contentId;
         this.form = builder.form;
         this.contentData = builder.contentData;
+        this.metadata = builder.metadata;
         this.createdTime = builder.createdTime;
         this.modifiedTime = builder.modifiedTime;
         this.creator = builder.creator;
@@ -157,6 +166,24 @@ public final class Content
     public ContentData getContentData()
     {
         return contentData;
+    }
+
+    public Metadata getMetadata(MetadataSchemaName name)
+    {
+        for (Metadata item : this.metadata)
+        {
+            if (item.getName().equals( name ))
+            {
+                return item;
+            }
+        }
+
+        return null;
+    }
+
+    public List<Metadata> getAllMetadata()
+    {
+        return metadata;
     }
 
     public ContentId getId()
@@ -260,6 +287,8 @@ public final class Content
 
         ContentData contentData;
 
+        List<Metadata> metadata;
+
         String displayName;
 
         UserKey owner;
@@ -283,6 +312,7 @@ public final class Content
         BaseBuilder()
         {
             this.contentData = new ContentData();
+            this.metadata = new ArrayList<>();
         }
 
         BaseBuilder( final Content content )
@@ -294,6 +324,7 @@ public final class Content
             this.type = content.type;
             this.form = content.form; // TODO make DataSet immutable, or make copy
             this.contentData = content.contentData; // TODO make DataSet immutable, or make copy
+            this.metadata = content.metadata;
             this.displayName = content.displayName;
             this.owner = content.owner;
             this.createdTime = content.createdTime;
@@ -344,6 +375,13 @@ public final class Content
         {
             changes.recordChange( newPossibleChange( "contentData" ).from( this.original.getContentData() ).to( contentData ).build() );
             this.contentData = contentData;
+            return this;
+        }
+
+        public EditBuilder metadata( final List<Metadata> metadata)
+        {
+            changes.recordChange( newPossibleChange( "metadata" ).from( this.original.metadata ).to( metadata ).build() );
+            this.metadata = metadata;
             return this;
         }
 
@@ -451,6 +489,12 @@ public final class Content
         public Builder contentData( final ContentData contentData )
         {
             this.contentData = contentData;
+            return this;
+        }
+
+        public Builder metadata( final List<Metadata> metadata )
+        {
+            this.metadata = metadata;
             return this;
         }
 

@@ -13,6 +13,7 @@
     "isPage": true,
     "isRoot": true,
     "isSite": false,
+    "metadata": [ ],
     "modifiedTime": null,
     "modifier": "user:system:admin",
     "name": "content-name",

@@ -4,6 +4,7 @@
     "parent": "parent-path:/",
     "contentType": "mymodule::my-type",
     "contentData": [],
+    "metadata": [],
     "form": {
         "formItems": []
     },

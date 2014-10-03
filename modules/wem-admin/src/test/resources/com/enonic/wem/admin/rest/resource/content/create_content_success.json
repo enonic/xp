@@ -13,6 +13,7 @@
     "isPage": false,
     "isRoot": true,
     "isSite": false,
+    "metadata" : [ ],
     "modifiedTime": "2013-08-23T12:55:09.162Z",
     "modifier": "user:system:admin",
     "name": "content-path",
