@@ -23,7 +23,7 @@ module api.content {
         sendAndParse(): wemQ.Promise<api.content.site.Site> {
 
             return this.send().then((response: api.rest.JsonResponse<api.content.json.ContentJson>) => {
-                return response.isBlank() ? null : <Site>this.fromJsonToContent(response.getResult());
+                return response.isBlank() ? null : <api.content.site.Site>this.fromJsonToContent(response.getResult());
             });
         }
     }
