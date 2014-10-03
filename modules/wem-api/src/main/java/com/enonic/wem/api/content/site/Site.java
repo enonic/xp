@@ -2,6 +2,9 @@ package com.enonic.wem.api.content.site;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.data.DataId;
+import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.module.ModuleKey;
 
 public final class Site
     extends Content
@@ -14,6 +17,11 @@ public final class Site
     public String getDescription()
     {
         return this.getContentData().getProperty( "description" ).getString();
+    }
+
+    public ModuleConfig getModuleConfig( final ModuleKey moduleKey )
+    {
+        return this.getModuleConfigs().get( moduleKey );
     }
 
     public ModuleConfigs getModuleConfigs()
@@ -59,6 +67,17 @@ public final class Site
         public Builder()
         {
             super();
+        }
+
+        public Builder description( final String description )
+        {
+
+            if ( contentData == null )
+            {
+                contentData = new ContentData();
+            }
+            contentData.setProperty( DataId.from( "description", 0 ), Value.newString( description ) );
+            return this;
         }
 
         public Builder addModuleConfig( ModuleConfig moduleConfig )
