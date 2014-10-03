@@ -1,6 +1,7 @@
 package com.enonic.wem.api.module;
 
 import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 // TODO merge this class with ModuleName
 public final class ModuleKey
@@ -48,5 +49,10 @@ public final class ModuleKey
     public static ModuleKey from( final Bundle bundle )
     {
         return ModuleKey.from( bundle.getSymbolicName() );
+    }
+
+    public static ModuleKey from( final Class<?> clzz )
+    {
+        return from( FrameworkUtil.getBundle( clzz ) );
     }
 }
