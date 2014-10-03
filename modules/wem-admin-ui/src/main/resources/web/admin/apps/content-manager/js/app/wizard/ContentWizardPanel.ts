@@ -19,7 +19,6 @@ module app.wizard {
     import Site = api.content.site.Site;
     import SiteBuilder = api.content.site.SiteBuilder;
     import ContentType = api.schema.content.ContentType;
-    import SiteTemplate = api.content.site.template.SiteTemplate;
     import PageTemplate = api.content.page.PageTemplate;
     import GetPageTemplateByKeyRequest = api.content.page.GetPageTemplateByKeyRequest;
     import IsRenderableRequest = api.content.page.IsRenderableRequest;
@@ -37,7 +36,6 @@ module app.wizard {
     import DefaultModels = app.wizard.page.DefaultModels;
     import DefaultModelsFactoryConfig = app.wizard.page.DefaultModelsFactoryConfig;
     import DefaultModelsFactory = app.wizard.page.DefaultModelsFactory;
-    import SiteTemplateChangedEvent = app.wizard.site.SiteTemplateChangedEvent;
 
     export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
@@ -79,8 +77,6 @@ module app.wizard {
 
         private wizardActions: app.wizard.action.ContentWizardActions;
 
-        private isSiteTemplateFormValid: boolean;
-
         private isContentFormValid: boolean;
 
         /**
@@ -91,7 +87,6 @@ module app.wizard {
         constructor(params: ContentWizardPanelParams, callback: (wizard: ContentWizardPanel) => void) {
 
             this.constructing = true;
-            this.isSiteTemplateFormValid = false;
             this.isContentFormValid = false;
 
             this.persistAsDraft = true;
@@ -145,10 +140,7 @@ module app.wizard {
             if (this.createSite || (params.persistedContent && params.persistedContent.isSite())) {
                 this.formIcon.addClass("site");
             }
-            else {
-                //this.siteTemplateWizardStepForm = null;
-                this.isSiteTemplateFormValid = true;
-            }
+
             this.contentWizardStepForm = new ContentWizardStepForm();
             this.contentWizardStepForm.onValidityChanged(
                 (event: WizardStepValidityChangedEvent) =>
@@ -603,25 +595,11 @@ module app.wizard {
             return this.getSplitPanel() && this.getSplitPanel().hasClass("toggle-split");
         }
 
-        private loadDefaultModels(siteTemplate: SiteTemplate, contentType: ContentTypeName): wemQ.Promise<DefaultModels> {
-
-            if (this.siteContent) {
-                return DefaultModelsFactory.create(<DefaultModelsFactoryConfig>{
-                    siteId: this.siteContent.getContentId(),
-                    contentType: contentType,
-                    modules: siteTemplate.getModules()
-                });
-            }
-            else {
-                return wemQ<DefaultModels>(null);
-            }
-        }
-
         public checkContentCanBePublished(): boolean {
             if (!this.isContentFormValid) {
                 this.contentWizardStepForm.displayValidationErrors(true);
             }
-            return this.isContentFormValid && this.isSiteTemplateFormValid;
+            return this.isContentFormValid;
         }
 
         getContextWindowToggler(): app.wizard.page.contextwindow.ContextWindowToggler {

@@ -15,7 +15,6 @@
 ///<reference path='app/wizard/page/_module.ts' />
 ///<reference path='app/wizard/BaseContentWizardStepForm.ts' />
 ///<reference path='app/wizard/WizardStepValidityChangedEvent.ts' />
-///<reference path='app/wizard/site/_module.ts' />
 ///<reference path='app/wizard/_module.ts' />
 
 ///<reference path='main.ts' />
