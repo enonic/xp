@@ -1,7 +1,12 @@
 package com.enonic.wem.core.content;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.CreateContentParams;
+import com.enonic.wem.api.content.Metadata;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.site.Site;
@@ -9,6 +14,7 @@ import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
 import com.enonic.wem.api.support.serializer.AbstractDataSetSerializer;
 import com.enonic.wem.core.content.page.PageDataSerializer;
 import com.enonic.wem.core.form.FormDataSerializer;
@@ -21,6 +27,8 @@ public class ContentDataSerializer
     public static final String DRAFT = "draft";
 
     public static final String CONTENT_DATA = "data";
+
+    public static final String METADATA = "metadata";
 
     public static final String CONTENT_TYPE_FIELD_NAME = "contentType";
 
@@ -46,6 +54,19 @@ public class ContentDataSerializer
         addPropertyIfNotNull( contentAsData, CONTENT_TYPE_FIELD_NAME, content.getType().getContentTypeName() );
 
         contentAsData.add( content.getContentData().toDataSet( CONTENT_DATA ) );
+
+        if ( content.getAllMetadata() != null )
+        {
+            final DataSet dataSet = new DataSet( METADATA );
+
+            List<Metadata> metadataList = content.getAllMetadata();
+            for ( Metadata metadata : metadataList )
+            {
+                dataSet.add( metadata.getData().toDataSet( metadata.getName().toString() ) );
+            }
+
+            contentAsData.add( dataSet );
+        }
 
         if ( content.getForm() != null )
         {
@@ -99,6 +120,18 @@ public class ContentDataSerializer
             builder.contentData( new ContentData( dataSet.getDataSet( CONTENT_DATA ).toRootDataSet() ) );
         }
 
+        if ( dataSet.hasData( METADATA ) )
+        {
+            List<Metadata> metadataList = new ArrayList<>();
+            DataSet data = dataSet.getDataSet( METADATA );
+            for ( String name : data.getDataNames() )
+            {
+                metadataList.add( new Metadata( MetadataSchemaName.from( name ), data.getDataSet( name ).toRootDataSet() ) );
+            }
+
+            builder.metadata( metadataList );
+        }
+
         if ( dataSet.hasData( FORM ) )
         {
             builder.form( FORM_SERIALIZER.fromData( dataSet.getDataSet( FORM ) ) );
@@ -123,6 +156,19 @@ public class ContentDataSerializer
         if ( params.getContentData() != null )
         {
             contentAsData.add( params.getContentData().toDataSet( ContentDataSerializer.CONTENT_DATA ) );
+        }
+
+        if ( params.getMetadata() != null )
+        {
+            final DataSet dataSet = new DataSet( METADATA );
+
+            List<Metadata> metadataList = params.getMetadata();
+            for ( Metadata metadata : metadataList )
+            {
+                dataSet.add( metadata.getData().toDataSet( metadata.getName().toString() ) );
+            }
+
+            contentAsData.add( dataSet );
         }
 
         if ( params.getForm() != null )

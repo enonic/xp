@@ -12,6 +12,7 @@
     "isDraft": false,
     "isPage": true,
     "isRoot": true,
+    "metadata": [ ],
     "modifiedTime": null,
     "modifier": "user:system:admin",
     "name": "content-name",
