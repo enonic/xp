@@ -1,19 +1,14 @@
 package com.enonic.wem.core.content.page;
 
 
-import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
-import com.enonic.wem.api.content.FindContentByParentParams;
-import com.enonic.wem.api.content.FindContentByParentResult;
 import com.enonic.wem.api.content.page.CreatePageTemplateParams;
 import com.enonic.wem.api.content.page.GetDefaultPageTemplateParams;
 import com.enonic.wem.api.content.page.PageService;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplateService;
-import com.enonic.wem.api.content.page.PageTemplateSpec;
 import com.enonic.wem.api.content.page.PageTemplates;
 import com.enonic.wem.api.context.Context;
 
@@ -52,34 +47,21 @@ public final class PageTemplateServiceImpl
     @Override
     public PageTemplate getDefault( GetDefaultPageTemplateParams params, final Context context )
     {
-        // TODO: Make command
-        final PageTemplates pageTemplates = doGetBySite( params.getSite(), context );
-        final PageTemplateSpec spec = PageTemplateSpec.newPageTemplateParams().canRender( params.getContentType() ).build();
-        final PageTemplates supportedTemplates = pageTemplates.filter( spec );
-        return supportedTemplates.first();
+        return new GetDefaultPageTemplateCommand().
+            contentType( params.getContentType() ).
+            site( params.getSite() ).
+            context( context ).
+            contentService( this.contentService ).
+            execute();
     }
 
     public PageTemplates getBySite( final ContentId siteId, final Context context )
     {
-        return doGetBySite( siteId, context );
-    }
-
-    private PageTemplates doGetBySite( final ContentId siteId, final Context context )
-    {
-        // TODO: Make command
-        final PageTemplates.Builder pageTemplatesBuilder = PageTemplates.newPageTemplates();
-        final Content site = contentService.getById( siteId, context );
-        final ContentPath pageTemplatesFolderPath = ContentPath.from( site.getPath(), "templates" );
-        final FindContentByParentResult result =
-            contentService.findByParent( FindContentByParentParams.create().parentPath( pageTemplatesFolderPath ).build(), context );
-        for ( final Content content : result.getContents() )
-        {
-            if ( content instanceof PageTemplate )
-            {
-                pageTemplatesBuilder.add( (PageTemplate) content );
-            }
-        }
-        return pageTemplatesBuilder.build();
+        return new GetPageTemplateBySiteCommand().
+            site( siteId ).
+            context( context ).
+            contentService( this.contentService ).
+            execute();
     }
 
     public void setContentService( final ContentService contentService )
