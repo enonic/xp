@@ -23,12 +23,6 @@
 
   <service ref="contentService" auto-export="interfaces"/>
 
-  <bean id="siteService" class="com.enonic.wem.core.content.site.SiteServiceImpl">
-    <property name="contentService" ref="contentService"/>
-  </bean>
-
-  <service ref="siteService" auto-export="interfaces"/>
-
   <bean id="pageService" class="com.enonic.wem.core.content.page.PageServiceImpl">
     <property name="contentService" ref="contentService"/>
   </bean>

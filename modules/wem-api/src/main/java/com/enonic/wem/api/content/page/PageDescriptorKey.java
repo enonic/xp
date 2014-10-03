@@ -18,6 +18,11 @@ public final class PageDescriptorKey
         return new PageDescriptorKey( moduleKey, descriptorName );
     }
 
+    public static PageDescriptorKey from( final ModuleKey moduleKey, final String descriptorName )
+    {
+        return new PageDescriptorKey( moduleKey, new ComponentDescriptorName( descriptorName ) );
+    }
+
     public static PageDescriptorKey from( final String pageDescriptorKey )
     {
         final String moduleKey = StringUtils.substringBefore( pageDescriptorKey, SEPARATOR );

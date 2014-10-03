@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.site;
+package com.enonic.wem.core.content;
 
 import org.junit.Before;
 import org.junit.Test;

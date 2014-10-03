@@ -23,6 +23,4 @@
 
   <reference id="pageTemplateService" interface="com.enonic.wem.api.content.page.PageTemplateService"/>
 
-  <reference id="siteService" interface="com.enonic.wem.api.content.site.SiteService"/>
-
 </blueprint>

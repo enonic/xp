@@ -127,7 +127,7 @@ module app.wizard {
         }
 
         private loadSite(contentId: ContentId): wemQ.Promise<Site> {
-            return contentId ? new api.content.site.GetNearestSiteRequest(contentId).sendAndParse() : wemQ<Site>(null);
+            return contentId ? new api.content.GetNearestSiteRequest(contentId).sendAndParse() : wemQ<Site>(null);
         }
 
         private loadDefaultModels(site: Site, contentType: ContentTypeName): wemQ.Promise<DefaultModels> {

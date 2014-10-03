@@ -28,7 +28,6 @@
     <property name="pageDescriptorService" ref="pageDescriptorService"/>
     <property name="pageTemplateService" ref="pageTemplateService"/>
     <property name="contentService" ref="contentService"/>
-    <property name="siteService" ref="siteService"/>
   </bean>
 
   <bean id="componentResourceProvider" class="com.enonic.wem.portal.internal.content.ComponentResourceProvider">
@@ -36,7 +35,6 @@
     <property name="pageDescriptorService" ref="pageDescriptorService"/>
     <property name="pageTemplateService" ref="pageTemplateService"/>
     <property name="contentService" ref="contentService"/>
-    <property name="siteService" ref="siteService"/>
     <property name="rendererFactory" ref="rendererFactory"/>
   </bean>
 

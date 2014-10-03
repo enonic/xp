@@ -20,6 +20,11 @@ public final class LayoutDescriptorKey
         return new LayoutDescriptorKey( moduleKey, descriptorName );
     }
 
+    public static LayoutDescriptorKey from( final ModuleKey moduleKey, final String descriptorName )
+    {
+        return new LayoutDescriptorKey( moduleKey, new ComponentDescriptorName( descriptorName ) );
+    }
+
     public static LayoutDescriptorKey from( final String layoutDescriptorKey )
     {
         final String moduleKey = StringUtils.substringBefore( layoutDescriptorKey, SEPARATOR );

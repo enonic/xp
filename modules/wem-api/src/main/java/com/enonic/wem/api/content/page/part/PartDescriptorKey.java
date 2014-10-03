@@ -20,6 +20,11 @@ public final class PartDescriptorKey
         return new PartDescriptorKey( moduleKey, descriptorName );
     }
 
+    public static PartDescriptorKey from( final ModuleKey moduleKey, final String descriptorName )
+    {
+        return new PartDescriptorKey( moduleKey, new ComponentDescriptorName( descriptorName ) );
+    }
+
     public static PartDescriptorKey from( final String partDescriptorKey )
     {
         final String moduleKey = StringUtils.substringBefore( partDescriptorKey, SEPARATOR );

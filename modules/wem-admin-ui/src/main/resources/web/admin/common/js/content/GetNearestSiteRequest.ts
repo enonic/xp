@@ -1,6 +1,6 @@
-module api.content.site {
+module api.content {
 
-    export class GetNearestSiteRequest extends SiteResourceRequest<api.content.json.ContentJson, Site> {
+    export class GetNearestSiteRequest extends ContentResourceRequest<api.content.json.ContentJson, api.content.site.Site> {
 
         private contentId: api.content.ContentId;
 
@@ -17,10 +17,10 @@ module api.content.site {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "nearest");
+            return api.rest.Path.fromParent(super.getResourcePath(), "nearestSite");
         }
 
-        sendAndParse(): wemQ.Promise<Site> {
+        sendAndParse(): wemQ.Promise<api.content.site.Site> {
 
             return this.send().then((response: api.rest.JsonResponse<api.content.json.ContentJson>) => {
                 return response.isBlank() ? null : <Site>this.fromJsonToContent(response.getResult());

@@ -19,7 +19,7 @@ import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplateService;
 import com.enonic.wem.api.content.page.part.PartComponent;
 import com.enonic.wem.api.content.page.region.Region;
-import com.enonic.wem.api.content.site.SiteService;
+import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
@@ -42,8 +42,6 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
     extends BaseResourceTest
 {
     protected ContentService contentService;
-
-    protected SiteService siteService;
 
     protected PageTemplateService pageTemplateService;
 
@@ -68,7 +66,6 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
         throws Exception
     {
         this.contentService = Mockito.mock( ContentService.class );
-        this.siteService = Mockito.mock( SiteService.class );
         this.pageTemplateService = Mockito.mock( PageTemplateService.class );
         this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
         final JsControllerFactory jsControllerFactory = Mockito.mock( JsControllerFactory.class );
@@ -77,7 +74,6 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
         Mockito.when( jsControllerFactory.newController( Mockito.any() ) ).thenReturn( jsController );
 
         this.resourceProvider.setContentService( this.contentService );
-        this.resourceProvider.setSiteService( this.siteService );
         this.resourceProvider.setPageTemplateService( this.pageTemplateService );
         this.resourceProvider.setPageDescriptorService( this.pageDescriptorService );
         this.resourceProvider.setControllerFactory( jsControllerFactory );
@@ -91,7 +87,7 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
         Mockito.when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ), context ) ).
             thenReturn( createPage( "id", "site/somepath/content", "mymodule:ctype", true ) );
 
-        Mockito.when( this.siteService.getNearestSite( Mockito.isA( ContentId.class ), Mockito.isA( Context.class ) ) ).
+        Mockito.when( this.contentService.getNearestSite( Mockito.isA( ContentId.class ), Mockito.isA( Context.class ) ) ).
             thenReturn( createSite( "id", "site", "mymodule:contenttypename" ) );
     }
 
@@ -101,7 +97,7 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
         Mockito.when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ), context ) ).
             thenReturn( createPage( "id", "site/somepath/content", "mymodule:ctype", false ) );
 
-        Mockito.when( this.siteService.getNearestSite( Mockito.isA( ContentId.class ), Mockito.isA( Context.class ) ) ).
+        Mockito.when( this.contentService.getNearestSite( Mockito.isA( ContentId.class ), Mockito.isA( Context.class ) ) ).
             thenReturn( createSite( "id", "site", "mymodule:contenttypename" ) );
     }
 
@@ -141,7 +137,7 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
         return content.build();
     }
 
-    private Content createSite( final String id, final String path, final String contentTypeName )
+    private Site createSite( final String id, final String path, final String contentTypeName )
     {
         RootDataSet rootDataSet = new RootDataSet();
 
@@ -153,7 +149,7 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
             config( rootDataSet ).
             build();
 
-        return Content.newContent().
+        return Site.newSite().
             id( ContentId.from( id ) ).
             path( ContentPath.from( path ) ).
             owner( UserKey.from( "myStore:me" ) ).
