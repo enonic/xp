@@ -4,6 +4,8 @@ module api.content {
 
         private data: api.content.ContentData;
 
+        private metadataByName: {[name: string]: api.data.RootDataSet} = {};
+
         private form: api.form.Form;
 
         private siteObj: api.content.site.Site;
