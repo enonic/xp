@@ -74,6 +74,17 @@ public class ContentServiceImpl
     }
 
     @Override
+    public Site getNearestSite( final ContentId contentId, final Context context )
+    {
+        return GetNearestSiteCommand.create().
+            contentService( this ).
+            contentId( contentId ).
+            context( context ).
+            build().
+            execute();
+    }
+
+    @Override
     public Contents getByIds( final GetContentByIdsParams params, final Context context )
     {
         return GetContentByIdsCommand.create( params ).

@@ -16,7 +16,6 @@ import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptorService;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateService;
-import com.enonic.wem.api.content.site.SiteService;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.workspace.Workspace;
@@ -34,8 +33,6 @@ public abstract class RenderBaseResource
     protected PageTemplateService pageTemplateService;
 
     protected ContentService contentService;
-
-    protected SiteService siteService;
 
     @PathParam("contentPath")
     protected String contentPath;
@@ -64,7 +61,7 @@ public abstract class RenderBaseResource
 
     protected final Content getSite( final Content content )
     {
-        final Content siteContent = this.siteService.getNearestSite( content.getId(), resolveContext() );
+        final Content siteContent = this.contentService.getNearestSite( content.getId(), resolveContext() );
 
         if ( siteContent == null )
         {

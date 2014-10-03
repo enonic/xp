@@ -3,7 +3,6 @@ package com.enonic.wem.portal.internal.content;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.page.PageDescriptorService;
 import com.enonic.wem.api.content.page.PageTemplateService;
-import com.enonic.wem.api.content.site.SiteService;
 import com.enonic.wem.portal.internal.controller.JsControllerFactory;
 import com.enonic.wem.servlet.jaxrs.ResourceProvider;
 
@@ -18,15 +17,12 @@ public abstract class RenderBaseResourceProvider<T extends RenderBaseResource>
 
     private ContentService contentService;
 
-    private SiteService siteService;
-
     protected final void configure( final T instance )
     {
         instance.controllerFactory = this.controllerFactory;
         instance.pageDescriptorService = this.pageDescriptorService;
         instance.pageTemplateService = this.pageTemplateService;
         instance.contentService = this.contentService;
-        instance.siteService = this.siteService;
     }
 
     public final void setControllerFactory( final JsControllerFactory controllerFactory )
@@ -49,8 +45,4 @@ public abstract class RenderBaseResourceProvider<T extends RenderBaseResource>
         this.contentService = contentService;
     }
 
-    public final void setSiteService( final SiteService siteService )
-    {
-        this.siteService = siteService;
-    }
 }

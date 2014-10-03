@@ -11,7 +11,6 @@ import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.support.serializer.AbstractDataSetSerializer;
 import com.enonic.wem.core.content.page.PageDataSerializer;
-import com.enonic.wem.core.content.site.SiteDataSerializer;
 import com.enonic.wem.core.form.FormDataSerializer;
 
 public class ContentDataSerializer

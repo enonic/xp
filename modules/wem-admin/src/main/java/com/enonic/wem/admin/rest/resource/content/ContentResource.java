@@ -67,7 +67,6 @@ import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.editor.ContentEditor;
-import com.enonic.wem.api.content.site.SiteService;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.DataJson;
 import com.enonic.wem.api.exception.ConflictException;
@@ -104,8 +103,6 @@ public class ContentResource
     private final String EXPAND_NONE = "none";
 
     private ContentService contentService;
-
-    private SiteService siteService;
 
     private ContentTypeService contentTypeService;
 
@@ -161,6 +158,23 @@ public class ContentResource
         else
         {
             return new ContentJson( content, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
+        }
+    }
+
+    @POST
+    @Path("nearestSite")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public ContentJson getNearest( final GetNearestSiteJson params )
+    {
+        final ContentId contentId = params.getGetNearestSiteByContentId();
+        final Content nearestSite = this.contentService.getNearestSite( contentId, ContentConstants.CONTEXT_STAGE );
+        if ( nearestSite != null )
+        {
+            return new ContentJson( nearestSite, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
+        }
+        else
+        {
+            return null;
         }
     }
 

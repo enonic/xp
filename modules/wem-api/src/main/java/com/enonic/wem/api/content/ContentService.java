@@ -9,6 +9,8 @@ public interface ContentService
 {
     Content getById( ContentId id, final Context context );
 
+    Site getNearestSite( ContentId contentId, Context context );
+
     Contents getByIds( GetContentByIdsParams params, final Context context );
 
     Content getByPath( ContentPath path, final Context context );

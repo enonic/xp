@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.site;
+package com.enonic.wem.core.content;
 
 import com.enonic.wem.api.content.site.ModuleConfig;
 import com.enonic.wem.api.content.site.Site;
@@ -6,7 +6,7 @@ import com.enonic.wem.api.data.DataId;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Value;
 
-public class SiteDataSerializer
+class SiteDataSerializer
 {
     static final String SITE_MODULE_CONFIG = "moduleConfig";
 
@@ -18,12 +18,12 @@ public class SiteDataSerializer
 
     private final String dataSetName;
 
-    public SiteDataSerializer( final String dataSetName )
+    SiteDataSerializer( final String dataSetName )
     {
         this.dataSetName = dataSetName;
     }
 
-    public DataSet toData( final Site site )
+    DataSet toData( final Site site )
     {
         final DataSet siteDataSet = new DataSet( dataSetName );
         siteDataSet.setProperty( DataId.from( "description", 0 ), Value.newString( site.getDescription() ) );

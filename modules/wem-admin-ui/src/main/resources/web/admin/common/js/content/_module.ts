@@ -47,3 +47,5 @@
 ///<reference path='ContentVersionViewer.ts' />
 ///<reference path='GetActiveContentVersionsRequest.ts' />
 ///<reference path='GetContentVersionsRequest.ts' />
+
+///<reference path='GetNearestSiteRequest.ts' />

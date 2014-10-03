@@ -23,7 +23,6 @@ import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplateService;
 import com.enonic.wem.api.content.page.PageTemplateSpec;
 import com.enonic.wem.api.content.page.PageTemplates;
-import com.enonic.wem.api.content.site.SiteService;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -42,8 +41,6 @@ public final class PageTemplateResource
     protected PageTemplateService pageTemplateService;
 
     private ContentService contentService;
-
-    private SiteService siteService;
 
     private ContentTypeService contentTypeService;
 
@@ -111,7 +108,6 @@ public final class PageTemplateResource
         return new ContentJson( pageTemplate, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
     }
 
-    // TODO: Move to some kind of Portal meta resource?
     @GET
     @javax.ws.rs.Path("isRenderable")
     public boolean isRenderable( @QueryParam("contentId") String contentIdAsString )
@@ -120,7 +116,7 @@ public final class PageTemplateResource
         try
         {
             final Content content = contentService.getById( contentId, STAGE_CONTEXT );
-            final Content nearestSite = this.siteService.getNearestSite( contentId, STAGE_CONTEXT );
+            final Content nearestSite = this.contentService.getNearestSite( contentId, STAGE_CONTEXT );
 
             if ( nearestSite != null )
             {
@@ -161,11 +157,6 @@ public final class PageTemplateResource
     public void setContentService( final ContentService contentService )
     {
         this.contentService = contentService;
-    }
-
-    public void setSiteService( final SiteService siteService )
-    {
-        this.siteService = siteService;
     }
 
     public void setContentTypeService( final ContentTypeService contentTypeService )

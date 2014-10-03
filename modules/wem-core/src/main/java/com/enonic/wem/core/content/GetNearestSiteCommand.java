@@ -1,9 +1,10 @@
-package com.enonic.wem.core.content.site;
+package com.enonic.wem.core.content;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
+import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.context.Context;
 
 final class GetNearestSiteCommand
@@ -26,19 +27,19 @@ final class GetNearestSiteCommand
         return new Builder();
     }
 
-    public Content execute()
+    public Site execute()
     {
         final Content content = contentService.getById( this.contentId, this.context );
 
         if ( content.isSite() )
         {
-            return content;
+            return (Site) content;
         }
 
         return returnIfSiteOrTryParent( content.getParentPath() );
     }
 
-    private Content returnIfSiteOrTryParent( final ContentPath contentPath )
+    private Site returnIfSiteOrTryParent( final ContentPath contentPath )
     {
         if ( contentPath == null )
         {
@@ -53,7 +54,7 @@ final class GetNearestSiteCommand
 
         if ( content.isSite() )
         {
-            return content;
+            return (Site) content;
         }
         else
         {
