@@ -153,44 +153,11 @@
     </xsd:sequence>
   </xsd:complexType>
 
-  <!-- Site template schema -->
-  <xsd:complexType name="siteTemplate">
-    <xsd:all>
-      <xsd:element name="display-name" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="description" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="url" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="vendor" type="vendor" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="modules" type="modules" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="content-filter" type="contentFilter" minOccurs="0" maxOccurs="1"/>
-    </xsd:all>
-  </xsd:complexType>
-  <xsd:complexType name="modules">
-    <xsd:sequence minOccurs="0" maxOccurs="unbounded">
-      <xsd:annotation>
-        <xsd:appinfo>
-          <jaxb:property name="List"/>
-        </xsd:appinfo>
-      </xsd:annotation>
-      <xsd:element name="module" type="xsd:string"/>
-    </xsd:sequence>
-  </xsd:complexType>
-
   <xsd:complexType name="contentFilter">
     <xsd:choice minOccurs="1" maxOccurs="unbounded">
       <xsd:element name="deny" type="xsd:string"/>
       <xsd:element name="allow" type="xsd:string"/>
     </xsd:choice>
-  </xsd:complexType>
-
-  <!-- Page template schema -->
-  <xsd:complexType name="pageTemplate">
-    <xsd:all>
-      <xsd:element name="display-name" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="descriptor" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="config" type="xsd:anyType" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="can-render" type="canRenderDescriptor" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="regions" type="pageRegions" minOccurs="0" maxOccurs="1"/>
-    </xsd:all>
   </xsd:complexType>
 
   <xsd:complexType name="canRenderDescriptor">
