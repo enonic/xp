@@ -29,6 +29,7 @@ import com.enonic.wem.api.content.DeleteContentResult;
 import com.enonic.wem.api.content.FindContentByParentParams;
 import com.enonic.wem.api.content.FindContentByParentResult;
 import com.enonic.wem.api.content.GetContentByIdsParams;
+import com.enonic.wem.api.content.Metadata;
 import com.enonic.wem.api.content.PushContentParams;
 import com.enonic.wem.api.content.RenameContentParams;
 import com.enonic.wem.api.content.UnableToDeleteContentException;
@@ -63,6 +64,7 @@ import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.schema.content.validator.MaximumOccurrencesValidationError;
 import com.enonic.wem.api.schema.content.validator.MissingRequiredValueValidationError;
+import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
 
 import static com.enonic.wem.api.content.Content.newContent;
 import static org.junit.Assert.*;
@@ -116,6 +118,12 @@ public class ContentResourceTest
 
         aContentData.setProperty( "mySetWithArray.myArray[0]", Value.newDouble( 3.14159 ) );
         aContentData.setProperty( "mySetWithArray.myArray[1]", Value.newDouble( 1.333 ) );
+
+        RootDataSet data = new RootDataSet();
+        data.setProperty( "myProperty", Value.newLong( 1 ) );
+        data.setProperty( "myStWithProperty.myProperty", Value.newLong( 2 ) );
+
+        aContent.getAllMetadata().add( new Metadata( MetadataSchemaName.from( "myModule:myField" ), data ) );
 
         Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ), Mockito.isA( Context.class ) ) ).
             thenReturn( aContent );
@@ -211,6 +219,12 @@ public class ContentResourceTest
 
         aContentData.setProperty( "mySetWithArray.myArray[0]", Value.newDouble( 3.14159 ) );
         aContentData.setProperty( "mySetWithArray.myArray[1]", Value.newDouble( 1.333 ) );
+
+        RootDataSet data = new RootDataSet();
+        data.setProperty( "myProperty", Value.newLong( 1 ) );
+        data.setProperty( "myStWithProperty.myProperty", Value.newLong( 2 ) );
+
+        aContent.getAllMetadata().add( new Metadata( MetadataSchemaName.from( "myModule:myField" ), data ) );
 
         Mockito.when( contentService.getById( ContentId.from( "aaa" ), ContentResource.STAGE_CONTEXT ) ).thenReturn( aContent );
 

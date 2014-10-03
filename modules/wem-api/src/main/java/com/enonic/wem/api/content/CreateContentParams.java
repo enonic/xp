@@ -2,6 +2,7 @@ package com.enonic.wem.api.content;
 
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Preconditions;
@@ -22,7 +23,7 @@ public final class CreateContentParams
 
     private ContentData contentData;
 
-    private LinkedHashMap<String, RootDataSet> metadataByName;
+    private List<Metadata> metadata;
 
     private ContentTypeName contentType;
 
@@ -70,9 +71,9 @@ public final class CreateContentParams
         return this;
     }
 
-    public CreateContentParams metadata( final LinkedHashMap<String, RootDataSet> metadata )
+    public CreateContentParams metadata( final List<Metadata> metadata )
     {
-        this.metadataByName = metadata;
+        this.metadata = metadata;
         return this;
     }
 
@@ -153,9 +154,9 @@ public final class CreateContentParams
         return contentData;
     }
 
-    public LinkedHashMap<String, RootDataSet> getMetadata()
+    public List<Metadata> getMetadata()
     {
-        return metadataByName;
+        return metadata;
     }
 
     public UserKey getOwner()

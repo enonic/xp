@@ -16,7 +16,7 @@ module api.content {
 
         private contentData: ContentData;
 
-        private metadata: {[name: string]: api.data.RootDataSet};
+        private metadata: Metadata[];
 
         private displayName: string;
 
@@ -62,7 +62,7 @@ module api.content {
             return this;
         }
 
-        setMetadata(metadata: {[name: string]: api.data.RootDataSet}): CreateContentRequest {
+        setMetadata(metadata: Metadata[]): CreateContentRequest {
             this.metadata = metadata;
             return this;
         }
@@ -98,14 +98,8 @@ module api.content {
             };
         }
 
-        private metadataToJson(): {[name: string]: api.data.json.DataTypeWrapperJson} {
-            var metadataJson: {[name: string]: api.data.json.DataTypeWrapperJson} = {};
-            for (var name in this.metadata) {
-                if (this.metadata.hasOwnProperty(name)) {
-                    metadataJson[name] = this.metadata[name].toJson();
-                }
-            }
-            return metadataJson;
+        private metadataToJson(): api.content.json.MetadataJson[] {
+            return this.metadata.map((metadata: Metadata) => metadata.toJson());
         }
 
         private attachmentsToJson(): api.content.attachment.AttachmentJson[] {

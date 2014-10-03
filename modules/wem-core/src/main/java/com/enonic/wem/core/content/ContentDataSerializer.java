@@ -1,14 +1,18 @@
 package com.enonic.wem.core.content;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.CreateContentParams;
+import com.enonic.wem.api.content.Metadata;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
 import com.enonic.wem.api.support.serializer.AbstractDataSetSerializer;
 import com.enonic.wem.core.content.page.PageDataSerializer;
 import com.enonic.wem.core.content.site.SiteDataSerializer;
@@ -50,14 +54,14 @@ public class ContentDataSerializer
 
         contentAsData.add( content.getContentData().toDataSet( CONTENT_DATA ) );
 
-        if ( content.getMetadata() != null )
+        if ( content.getAllMetadata() != null )
         {
             final DataSet dataSet = new DataSet( METADATA );
 
-            LinkedHashMap<String, RootDataSet> metadata = content.getMetadata();
-            for ( String name : metadata.keySet() )
+            List<Metadata> metadataList = content.getAllMetadata();
+            for ( Metadata metadata : metadataList )
             {
-                dataSet.add( metadata.get( name ).toDataSet( name ) );
+                dataSet.add( metadata.getData().toDataSet( metadata.getName().toString() ) );
             }
 
             contentAsData.add( dataSet );
@@ -102,14 +106,14 @@ public class ContentDataSerializer
 
         if ( dataSet.hasData( METADATA ) )
         {
-            LinkedHashMap<String, RootDataSet> metadataByName = new LinkedHashMap<>();
+            List<Metadata> metadataList = new ArrayList<>();
             DataSet data = dataSet.getDataSet( METADATA );
             for ( String name : data.getDataNames() )
             {
-                metadataByName.put( name, data.getDataSet( name ).toRootDataSet() );
+                metadataList.add( new Metadata( MetadataSchemaName.from( name ), data.getDataSet( name ).toRootDataSet() ) );
             }
 
-            builder.metadata( metadataByName );
+            builder.metadata( metadataList );
         }
 
         if ( dataSet.hasData( FORM ) )
@@ -152,10 +156,10 @@ public class ContentDataSerializer
         {
             final DataSet dataSet = new DataSet( METADATA );
 
-            LinkedHashMap<String, RootDataSet> metadata = params.getMetadata();
-            for ( String name : metadata.keySet() )
+            List<Metadata> metadataList = params.getMetadata();
+            for ( Metadata metadata : metadataList )
             {
-                dataSet.add( metadata.get( name ).toDataSet( name ) );
+                dataSet.add( metadata.getData().toDataSet( metadata.getName().toString() ) );
             }
 
             contentAsData.add( dataSet );

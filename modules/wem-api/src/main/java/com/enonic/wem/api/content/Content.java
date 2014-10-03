@@ -1,7 +1,10 @@
 package com.enonic.wem.api.content;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
@@ -14,6 +17,7 @@ import com.enonic.wem.api.content.thumb.Thumbnail;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
 import com.enonic.wem.api.support.ChangeTraceable;
 import com.enonic.wem.api.support.Changes;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
@@ -43,7 +47,7 @@ public final class Content
 
     private final ContentData contentData;
 
-    private final LinkedHashMap metadataByName;
+    private final List<Metadata> metadata;
 
     private final Instant createdTime;
 
@@ -82,7 +86,7 @@ public final class Content
         this.id = builder.contentId;
         this.form = builder.form;
         this.contentData = builder.contentData;
-        this.metadataByName = builder.metadataByName;
+        this.metadata = builder.metadata;
         this.createdTime = builder.createdTime;
         this.modifiedTime = builder.modifiedTime;
         this.creator = builder.creator;
@@ -164,9 +168,22 @@ public final class Content
         return contentData;
     }
 
-    public LinkedHashMap<String, RootDataSet> getMetadata()
+    public Metadata getMetadata(MetadataSchemaName name)
     {
-        return metadataByName;
+        for (Metadata item : this.metadata)
+        {
+            if (item.getName().equals( name ))
+            {
+                return item;
+            }
+        }
+
+        return null;
+    }
+
+    public List<Metadata> getAllMetadata()
+    {
+        return metadata;
     }
 
     public ContentId getId()
@@ -270,7 +287,7 @@ public final class Content
 
         ContentData contentData;
 
-        LinkedHashMap<String, RootDataSet> metadataByName;
+        List<Metadata> metadata;
 
         String displayName;
 
@@ -295,6 +312,7 @@ public final class Content
         BaseBuilder()
         {
             this.contentData = new ContentData();
+            this.metadata = new ArrayList<>();
         }
 
         BaseBuilder( final Content content )
@@ -306,7 +324,7 @@ public final class Content
             this.type = content.type;
             this.form = content.form; // TODO make DataSet immutable, or make copy
             this.contentData = content.contentData; // TODO make DataSet immutable, or make copy
-            this.metadataByName = content.metadataByName;
+            this.metadata = content.metadata;
             this.displayName = content.displayName;
             this.owner = content.owner;
             this.createdTime = content.createdTime;
@@ -360,10 +378,10 @@ public final class Content
             return this;
         }
 
-        public EditBuilder metadata( final LinkedHashMap<String, RootDataSet> metadataByName)
+        public EditBuilder metadata( final List<Metadata> metadata)
         {
-            changes.recordChange( newPossibleChange( "metadataByName" ).from( this.original.metadataByName ).to( metadataByName ).build() );
-            this.metadataByName = metadataByName;
+            changes.recordChange( newPossibleChange( "metadata" ).from( this.original.metadata ).to( metadata ).build() );
+            this.metadata = metadata;
             return this;
         }
 
@@ -474,9 +492,9 @@ public final class Content
             return this;
         }
 
-        public Builder metadata( final LinkedHashMap<String, RootDataSet> metadataByName )
+        public Builder metadata( final List<Metadata> metadata )
         {
-            this.metadataByName = metadataByName;
+            this.metadata = metadata;
             return this;
         }
 
