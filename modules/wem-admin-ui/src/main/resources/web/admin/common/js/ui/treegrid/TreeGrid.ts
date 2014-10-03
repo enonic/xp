@@ -279,6 +279,14 @@ module api.ui.treegrid {
             return !!this.toolbar;
         }
 
+        getCanvas(): api.dom.Element {
+            return this.canvasElement;
+        }
+
+        setCanvas(canvasElement: api.dom.Element) {
+            this.canvasElement = canvasElement;
+        }
+
         private scrollToRow(row: number) {
             if (row > -1 && this.grid.getSelectedRows().length > 0) {
                 if (this.grid.getEl().getScrollTop() > row * 45) {
