@@ -3,6 +3,8 @@ package com.enonic.wem.api;
 
 import java.util.Objects;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.google.common.base.Preconditions;
 
 public class Name
@@ -18,6 +20,18 @@ public class Name
                                          name );
         this.value = name;
     }
+
+    public static String ensureValidName( String possibleInvalidName )
+    {
+        if ( StringUtils.isEmpty( possibleInvalidName ) )
+        {
+            return "";
+        }
+        String generated =
+            possibleInvalidName.replaceAll( "[\\s+\\.\\/]", "-" ).replaceAll( "-{2,}", "-" ).replaceAll( "^-|-$", "" ).toLowerCase();
+        return ( generated ).replace( "[^a-z0-9\\-]+", "" );
+    }
+
 
     @Override
     public boolean equals( final Object o )
