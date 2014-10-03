@@ -4,9 +4,8 @@ module app.wizard {
     import ContentId = api.content.ContentId;
     import ContentTypeName = api.schema.content.ContentTypeName;
     import Content = api.content.Content;
+    import Site = api.content.site.Site;
     import ContentType = api.schema.content.ContentType;
-    import SiteTemplateKey = api.content.site.template.SiteTemplateKey;
-    import SiteTemplate = api.content.site.template.SiteTemplate;
     import DefaultModels = app.wizard.page.DefaultModels;
     import DefaultModelsFactoryConfig = app.wizard.page.DefaultModelsFactoryConfig;
     import DefaultModelsFactory = app.wizard.page.DefaultModelsFactory;
@@ -29,11 +28,7 @@ module app.wizard {
 
         private contentType: ContentType;
 
-        private siteTemplateKey: SiteTemplateKey;
-
-        private siteTemplate: SiteTemplate;
-
-        private siteContent: Content;
+        private siteContent: Site;
 
         private defaultModels: DefaultModels;
 
@@ -52,9 +47,8 @@ module app.wizard {
             return this;
         }
 
-        setCreateSite(value: SiteTemplateKey): ContentWizardPanelFactory {
-            this.siteTemplateKey = value;
-            this.createSite = true;
+        setCreateSite(value: boolean): ContentWizardPanelFactory {
+            this.createSite = value;
             return this;
         }
 
@@ -77,20 +71,10 @@ module app.wizard {
                 this.parentContent = loadedParentContent;
                 return this.loadSite(loadedParentContent ? loadedParentContent.getContentId() : null);
 
-            }).then((loadedSite: Content) => {
+            }).then((loadedSite: Site) => {
 
                 this.siteContent = loadedSite;
-                var siteTemplateToLoad: SiteTemplateKey = this.siteTemplateKey;
-                if (!siteTemplateToLoad && this.siteContent) {
-                    siteTemplateToLoad = this.siteContent.getSite().getTemplateKey();
-                }
-
-                return this.loadSiteTemplate(siteTemplateToLoad);
-
-            }).then((loadedSiteTemplate: SiteTemplate) => {
-
-                this.siteTemplate = loadedSiteTemplate;
-                return this.loadDefaultModels(this.siteTemplate, this.contentTypeName);
+                return this.loadDefaultModels(this.siteContent, this.contentTypeName);
 
             }).then((defaultModels: DefaultModels) => {
 
@@ -119,19 +103,12 @@ module app.wizard {
                 this.parentContent = loadedParentContent;
                 return this.loadSite(this.contentId);
 
-            }).then((loadedSite: Content) => {
+            }).then((loadedSite: Site) => {
 
-                var templateKey: SiteTemplateKey;
-                if (loadedSite && loadedSite.getSite()) {
+                if (loadedSite && loadedSite) {
                     this.siteContent = loadedSite;
-                    templateKey = this.siteContent.getSite().getTemplateKey();
                 }
-                return this.loadSiteTemplate(templateKey);
-
-            }).then((loadedSiteTemplate: SiteTemplate) => {
-
-                this.siteTemplate = loadedSiteTemplate;
-                return this.loadDefaultModels(this.siteTemplate, this.contentToEdit.getType());
+                return this.loadDefaultModels(this.siteContent, this.contentToEdit.getType());
 
             }).then((defaultModels: DefaultModels) => {
 
@@ -149,21 +126,17 @@ module app.wizard {
             return new api.schema.content.GetContentTypeByNameRequest(name).sendAndParse();
         }
 
-        private loadSite(contentId: ContentId): wemQ.Promise<Content> {
-            return contentId ? new api.content.site.GetNearestSiteRequest(contentId).sendAndParse() : wemQ<Content>(null);
+        private loadSite(contentId: ContentId): wemQ.Promise<Site> {
+            return contentId ? new api.content.site.GetNearestSiteRequest(contentId).sendAndParse() : wemQ<Site>(null);
         }
 
-        private loadSiteTemplate(key: SiteTemplateKey): wemQ.Promise<SiteTemplate> {
-            return key ? new api.content.site.template.GetSiteTemplateRequest(key).sendAndParse() : wemQ<SiteTemplate>(null);
-        }
+        private loadDefaultModels(site: Site, contentType: ContentTypeName): wemQ.Promise<DefaultModels> {
 
-        private loadDefaultModels(siteTemplate: SiteTemplate, contentType: ContentTypeName): wemQ.Promise<DefaultModels> {
-
-            if (siteTemplate) {
+            if (site) {
                 return DefaultModelsFactory.create(<DefaultModelsFactoryConfig>{
-                    siteTemplateKey: siteTemplate.getKey(),
+                    siteId: site.getContentId(),
                     contentType: contentType,
-                    modules: siteTemplate.getModules()
+                    modules: site.getModuleKeys()
                 });
             }
             else {
@@ -197,16 +170,7 @@ module app.wizard {
                 setSite(this.siteContent).
                 setDefaultModels(this.defaultModels);
 
-            if (this.createSite) {
-                if (this.siteTemplate) {
-                    wizardParams.setCreateSite(this.siteTemplate);
-                } else {
-                    wizardParams.setCreateSiteWithoutTemplate();
-                }
-            }
-            else if (this.siteTemplate) {
-                wizardParams.setSiteTemplate(this.siteTemplate);
-            }
+            wizardParams.setCreateSite(this.createSite);
 
             new app.wizard.ContentWizardPanel(wizardParams, (wizard: ContentWizardPanel) => {
                 deferred.resolve(wizard);
@@ -225,7 +189,6 @@ module app.wizard {
                 setParentContent(this.parentContent).
                 setPersistedContent(this.contentToEdit).
                 setSite(this.siteContent).
-                setSiteTemplate(this.siteTemplate).
                 setDefaultModels(this.defaultModels);
 
             new ContentWizardPanel(wizardParams, (wizard: ContentWizardPanel) => {

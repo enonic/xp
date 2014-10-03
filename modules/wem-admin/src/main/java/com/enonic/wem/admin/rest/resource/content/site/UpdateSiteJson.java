@@ -11,7 +11,6 @@ import com.enonic.wem.admin.json.content.site.ModuleConfigJson;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.content.site.SiteEditor;
-import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.UpdateSiteParams;
 
 public class UpdateSiteJson
@@ -20,8 +19,7 @@ public class UpdateSiteJson
 
     @SuppressWarnings("UnusedDeclaration")
     @JsonCreator
-    UpdateSiteJson( @JsonProperty("contentId") String content, @JsonProperty("siteTemplateKey") final String siteTemplate,
-                    @JsonProperty("moduleConfigs") final List<ModuleConfigJson> moduleConfigs )
+    UpdateSiteJson( @JsonProperty("contentId") String content, @JsonProperty("moduleConfigs") final List<ModuleConfigJson> moduleConfigs )
     {
         this.updateSite = new UpdateSiteParams().
             content( ContentId.from( content ) ).
@@ -31,7 +29,6 @@ public class UpdateSiteJson
                 public Site.SiteEditBuilder edit( final Site toBeEdited )
                 {
                     return Site.editSite( toBeEdited ).
-                        template( SiteTemplateKey.from( siteTemplate ) ).
                         moduleConfigs( ModuleConfigJson.toModuleConfigs( moduleConfigs ) );
                 }
             } );

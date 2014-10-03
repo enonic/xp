@@ -82,7 +82,7 @@ module api.content.page {
         }
 
         public fromJson(json: api.content.page.PageJson): PageBuilder {
-            this.setTemplate(PageTemplateKey.fromString(json.template));
+            this.setTemplate(json.template ? PageTemplateKey.fromString(json.template) : null);
             this.setRegions(json.regions != null ? new PageRegionsBuilder().fromJson(json.regions).build() : null);
             this.setConfig(json.config != null ? api.data.DataFactory.createRootDataSet(json.config) : null);
             return this;

@@ -28,7 +28,16 @@ import com.enonic.wem.api.content.RenameContentParams;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.ValidateContentData;
 import com.enonic.wem.api.content.attachment.AttachmentService;
+import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.content.site.CreateSiteParams;
+import com.enonic.wem.api.content.site.ModuleConfig;
+import com.enonic.wem.api.content.site.ModuleConfigDataSerializer;
+import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.data.DataId;
+import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.schema.content.ContentTypeForms;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.core.entity.NodeService;
@@ -48,6 +57,8 @@ public class ContentServiceImpl
     private QueryService queryService;
 
     private ContentNodeTranslator contentNodeTranslator;
+
+    private final static ModuleConfigDataSerializer MODULE_CONFIG_DATA_SERIALIZER = new ModuleConfigDataSerializer();
 
     @Override
     public Content getById( final ContentId id, final Context context )
@@ -117,9 +128,49 @@ public class ContentServiceImpl
     }
 
     @Override
+    public Site create( final CreateSiteParams params, final Context context )
+    {
+        final ContentData data = new ContentData();
+        data.setProperty( DataId.from( "description", 0 ), Value.newString( params.getDescription() ) );
+        for ( final ModuleConfig moduleConfig : params.getModuleConfigs() )
+        {
+            data.addProperty( "modules", Value.newData( MODULE_CONFIG_DATA_SERIALIZER.toData( moduleConfig ) ) );
+        }
+
+        final CreateContentParams createContentParams = new CreateContentParams().
+            contentType( ContentTypeName.site() ).
+            parent( params.getParentContentPath() ).
+            name( params.getName() ).
+            displayName( params.getDisplayName() ).
+            form( ContentTypeForms.SITE ).
+            contentData( data ).draft( params.isDraft() );
+
+        final Site site = (Site) CreateContentCommand.create().
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            blobService( this.blobService ).
+            translator( this.contentNodeTranslator ).
+            params( createContentParams ).
+            context( context ).
+            build().
+            execute();
+
+        this.create( new CreateContentParams().
+            owner( site.getOwner() ).
+            displayName( "Templates" ).
+            name( "templates" ).
+            parent( site.getPath() ).
+            contentType( ContentTypeName.folder() ).
+            draft( false ).
+            contentData( new ContentData() ), context );
+
+        return site;
+    }
+
+    @Override
     public Content create( final CreateContentParams params, final Context context )
     {
-        return CreateContentCommand.create().
+        final Content content = CreateContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
@@ -128,6 +179,20 @@ public class ContentServiceImpl
             context( context ).
             build().
             execute();
+
+        if ( content instanceof Site )
+        {
+            this.create( new CreateContentParams().
+                owner( content.getOwner() ).
+                displayName( "Templates" ).
+                name( "templates" ).
+                parent( content.getPath() ).
+                contentType( ContentTypeName.folder() ).
+                draft( false ).
+                contentData( new ContentData() ), context );
+        }
+
+        return content;
     }
 
     @Override

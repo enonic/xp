@@ -94,6 +94,8 @@ public class ComponentInstructionTest
         return PageTemplate.newPageTemplate().
             key( PageTemplateKey.from( "my-page" ) ).
             descriptor( PageDescriptorKey.from( "mymodule:mypagetemplate" ) ).
+            name( "my-page-template" ).
+            parentPath( ContentPath.ROOT ).
             build();
     }
 
@@ -148,9 +150,7 @@ public class ComponentInstructionTest
             config( rootDataSet ).
             build();
 
-        Site site = Site.newSite().build();
-
-        return Content.newContent().
+        return Site.newSite().
             id( ContentId.from( id ) ).
             path( ContentPath.from( name ) ).
             owner( UserKey.from( "myStore:me" ) ).
@@ -158,7 +158,6 @@ public class ComponentInstructionTest
             modifier( UserKey.superUser() ).
             type( ContentTypeName.from( contentTypeName ) ).
             page( page ).
-            site( site ).
             build();
     }
 

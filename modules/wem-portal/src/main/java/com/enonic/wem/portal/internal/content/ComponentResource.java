@@ -51,7 +51,7 @@ public final class ComponentResource
 
         if ( !content.hasPage() )
         {
-            pageTemplate = getDefaultPageTemplate( content.getType(), siteContent.getSite() );
+            pageTemplate = getDefaultPageTemplate( content.getType(), siteContent );
             if ( pageTemplate == null )
             {
                 throw notFound( "Page not found." );
@@ -62,7 +62,7 @@ public final class ComponentResource
         else
         {
             final Page page = getPage( content );
-            pageTemplate = getPageTemplate( page, siteContent.getSite() );
+            pageTemplate = getPageTemplate( page );
             pageRegions = resolvePageRegions( page, pageTemplate );
         }
 

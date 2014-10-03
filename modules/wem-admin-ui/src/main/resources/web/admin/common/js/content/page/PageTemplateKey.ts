@@ -1,31 +1,19 @@
 module api.content.page {
 
-    export class PageTemplateKey implements api.Equitable {
+    export class PageTemplateKey extends api.content.ContentId {
 
-        private templateName: PageTemplateName;
+        public static fromContentId(id: api.content.ContentId): PageTemplateKey {
 
-        private refString: string;
-
-        public static fromString(str: string): PageTemplateKey {
-
-            var templateName = new PageTemplateName(str);
-            return new PageTemplateKey(templateName);
+            return new PageTemplateKey(id.toString());
         }
 
-        constructor(templateName: PageTemplateName) {
-            if (name == null) {
-                throw new Error("name cannot be null");
-            }
-            this.templateName = templateName;
-            this.refString = this.templateName.toString();
+        public static fromString(s: string): PageTemplateKey {
+
+            return new PageTemplateKey(s);
         }
 
-        getTemplateName(): PageTemplateName {
-            return this.templateName;
-        }
-
-        toString(): string {
-            return this.refString;
+        constructor(s: string) {
+            super(s);
         }
 
         equals(o: api.Equitable): boolean {
@@ -35,12 +23,7 @@ module api.content.page {
             }
 
             var other = <PageTemplateKey>o;
-
-            if (!api.ObjectHelper.stringEquals(this.refString, other.refString)) {
-                return false;
-            }
-
-            return true;
+            return super.equals(other);
         }
     }
 }

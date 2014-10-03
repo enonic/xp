@@ -3,6 +3,8 @@ package com.enonic.wem.core.content;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.content.page.PageTemplate;
+import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
@@ -55,9 +57,10 @@ public class ContentDataSerializer
         {
             contentAsData.add( PAGE_SERIALIZER.toData( content.getPage() ) );
         }
-        if ( content.hasSite() )
+        if ( content instanceof Site )
         {
-            contentAsData.add( SITE_SERIALIZER.toData( content.getSite() ) );
+            final Site site = (Site) content;
+            contentAsData.add( SITE_SERIALIZER.toData( site ) );
         }
 
         return contentAsData;
@@ -66,16 +69,30 @@ public class ContentDataSerializer
 
     public Content.Builder fromData( final DataSet dataSet )
     {
-        final Content.Builder builder = Content.newContent();
+        final ContentTypeName contentTypeName = ContentTypeName.from( dataSet.getProperty( CONTENT_TYPE_FIELD_NAME ).getString() );
+        final Content.Builder builder;
+        if ( contentTypeName.isPageTemplate() )
+        {
+            builder = PageTemplate.newPageTemplate();
+        }
+        else if ( contentTypeName.isSite() )
+        {
+            builder = Site.newSite();
+        }
+        else
+        {
+            builder = Content.newContent();
+        }
+        builder.type( contentTypeName );
 
         if ( dataSet.hasData( DISPLAY_NAME_FIELD_NAME ) )
         {
             builder.displayName( dataSet.getProperty( DISPLAY_NAME_FIELD_NAME ).getString() );
         }
 
-        if ( dataSet.hasData( CONTENT_TYPE_FIELD_NAME ) )
+        if ( dataSet.hasData( DRAFT ) )
         {
-            builder.type( ContentTypeName.from( dataSet.getProperty( CONTENT_TYPE_FIELD_NAME ).getString() ) );
+            builder.draft( Boolean.parseBoolean( dataSet.getProperty( DRAFT ).getString() ) );
         }
 
         if ( dataSet.hasData( CONTENT_DATA ) )
@@ -91,16 +108,6 @@ public class ContentDataSerializer
         if ( dataSet.hasData( PAGE ) )
         {
             builder.page( PAGE_SERIALIZER.fromData( dataSet.getDataSet( PAGE ) ) );
-        }
-
-        if ( dataSet.hasData( SITE ) )
-        {
-            builder.site( SITE_SERIALIZER.fromData( dataSet.getDataSet( SITE ) ) );
-        }
-
-        if ( dataSet.hasData( DRAFT ) )
-        {
-            builder.draft( Boolean.parseBoolean( dataSet.getProperty( DRAFT ).getString() ) );
         }
 
         return builder;

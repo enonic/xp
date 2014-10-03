@@ -4,6 +4,36 @@
     "data": [
         {
             "Property": {
+                "name": "modules",
+                "set": [
+                    {
+                        "Property": {
+                            "name": "moduleKey",
+                            "type": "String",
+                            "value": "mymodule"
+                        }
+                    },
+                    {
+                        "Property": {
+                            "name": "config",
+                            "set": [
+                                {
+                                    "Property": {
+                                        "name": "A",
+                                        "type": "Long",
+                                        "value": 1
+                                    }
+                                }
+                            ],
+                            "type": "Data"
+                        }
+                    }
+                ],
+                "type": "Data"
+            }
+        },
+        {
+            "Property": {
                 "name": "myProperty",
                 "type": "String",
                 "value": "myValue"
@@ -20,31 +50,12 @@
     "isDraft": false,
     "isPage": false,
     "isRoot": true,
-    "isSite": true,
     "modifiedTime": "2013-08-23T12:55:09.162Z",
     "modifier": "user:system:admin",
     "name": "my_a_content",
     "owner": "user:myStore:me",
     "page": null,
     "path": "/my_a_content",
-    "site": {
-        "moduleConfigs": [
-            {
-                "config": [
-                    {
-                        "Property": {
-                            "name": "A",
-                            "type": "Long",
-                            "value": 1
-                        }
-                    }
-                ],
-                "moduleKey": "mymodule"
-            }
-        ],
-        "templateName": "mysitetemplate-1.0.0"
-    },
-    "siteTemplateKey": "mysitetemplate-1.0.0",
     "thumbnail": null,
     "type": "mymodule:my_type"
 }

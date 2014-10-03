@@ -6,10 +6,7 @@
 ///<reference path='PageDescriptorJson.ts' />
 ///<reference path='PageDescriptorsJson.ts' />
 
-///<reference path='PageTemplateSummaryJson.ts' />
-///<reference path='PageTemplateJson.ts' />
 ///<reference path='PageJson.ts' />
-///<reference path='PageTemplateSummaryListJson.ts' />
 
 ///<reference path='DescriptorName.ts' />
 ///<reference path='Descriptor.ts' />
@@ -36,13 +33,12 @@
 ///<reference path='AbstractRegions.ts' />
 ///<reference path='PageRegions.ts' />
 
-///<reference path='PageTemplateSummary.ts' />
 ///<reference path='PageTemplate.ts' />
 
-///<reference path='PageTemplateSummaryViewer.ts' />
+///<reference path='PageTemplateViewer.ts' />
 ///<reference path='PageTemplateComboBox.ts' />
 
-///<reference path='PageTemplateSummaryLoader.ts' />
+///<reference path='PageTemplateLoader.ts' />
 ///<reference path='PageTemplateResourceRequest.ts' />
 ///<reference path='GetPageTemplateByKeyRequest.ts' />
 ///<reference path="GetPageTemplatesRequest.ts"/>

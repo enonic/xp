@@ -29,7 +29,7 @@ public class ComponentsTest
             regions( PageRegions.newPageRegions().build() ).
             build();
 
-        assertEquals( "pageTemplateName", page.getTemplate().getTemplateName().toString() );
+        assertEquals( "pageTemplateName", page.getTemplate().toString() );
     }
 
     @Test

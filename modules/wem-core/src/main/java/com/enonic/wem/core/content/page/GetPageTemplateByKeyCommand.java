@@ -1,31 +1,21 @@
 package com.enonic.wem.core.content.page;
 
+import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
-import com.enonic.wem.api.content.page.PageTemplateNotFoundException;
-import com.enonic.wem.api.content.site.SiteTemplate;
-import com.enonic.wem.api.content.site.SiteTemplateKey;
-import com.enonic.wem.api.content.site.SiteTemplateService;
+import com.enonic.wem.api.context.Context;
 
 final class GetPageTemplateByKeyCommand
 {
+    private Context context;
+
+    private ContentService contentService;
+
     private PageTemplateKey pageTemplateKey;
-
-    private SiteTemplateKey siteTemplateKey;
-
-    private SiteTemplateService siteTemplateService;
 
     public PageTemplate execute()
     {
-        final SiteTemplate siteTemplate = this.siteTemplateService.getSiteTemplate( this.siteTemplateKey );
-        final PageTemplate pageTemplate = siteTemplate.getPageTemplates().getTemplate( this.pageTemplateKey.getTemplateName() );
-
-        if ( pageTemplate == null )
-        {
-            throw new PageTemplateNotFoundException( this.pageTemplateKey );
-        }
-
-        return pageTemplate;
+        return (PageTemplate) this.contentService.getById( pageTemplateKey, context );
     }
 
     public GetPageTemplateByKeyCommand pageTemplateKey( final PageTemplateKey pageTemplateKey )
@@ -34,15 +24,15 @@ final class GetPageTemplateByKeyCommand
         return this;
     }
 
-    public GetPageTemplateByKeyCommand siteTemplateKey( final SiteTemplateKey siteTemplateKey )
+    public GetPageTemplateByKeyCommand context( final Context context )
     {
-        this.siteTemplateKey = siteTemplateKey;
+        this.context = context;
         return this;
     }
 
-    public GetPageTemplateByKeyCommand siteTemplateService( final SiteTemplateService siteTemplateService )
+    public GetPageTemplateByKeyCommand contentService( final ContentService contentService )
     {
-        this.siteTemplateService = siteTemplateService;
+        this.contentService = contentService;
         return this;
     }
 }

@@ -1,22 +1,12 @@
 module app.wizard.page.contextwindow.inspect {
 
-    import DefaultModels = app.wizard.page.DefaultModels;
     import LiveFormPanel = app.wizard.page.LiveFormPanel;
-    import SiteTemplate = api.content.site.template.SiteTemplate;
     import ImageComponent = api.content.page.image.ImageComponent;
     import PageComponentView = api.liveedit.PageComponentView;
     import ImageComponentView = api.liveedit.image.ImageComponentView;
-    import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
-    import DescriptorKey = api.content.page.DescriptorKey;
-    import Descriptor = api.content.page.Descriptor;
-    import Option = api.ui.selector.Option;
-    import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
 
     export interface ImageInspectionPanelConfig {
 
-        siteTemplate: SiteTemplate;
-
-        defaultModels: DefaultModels;
     }
 
     export class ImageInspectionPanel extends PageComponentInspectionPanel<ImageComponent> {

@@ -10,7 +10,7 @@ import com.enonic.wem.api.Name;
 public class ContentName
     extends Name
 {
-    private ContentName( final String name )
+    protected ContentName( final String name )
     {
         super( name );
     }

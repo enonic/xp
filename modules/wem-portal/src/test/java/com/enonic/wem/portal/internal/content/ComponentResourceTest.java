@@ -55,7 +55,7 @@ public class ComponentResourceTest
         throws Exception
     {
         setupContentAndSite( testContext );
-        setupTemplates();
+        setupTemplates( testContext );
         final RenderResult result = RenderResult.newRenderResult().
             entity( "component rendered" ).
             header( "some-heaer", "some-value" ).
@@ -92,7 +92,7 @@ public class ComponentResourceTest
         throws Exception
     {
         setupContentAndSite( testContext );
-        setupTemplates();
+        setupTemplates( testContext );
 
         final MockHttpServletRequest request = newGetRequest( "/live/test/site/somepath/content/_/component/main-region/666" );
         final MockHttpServletResponse response = executeRequest( request );

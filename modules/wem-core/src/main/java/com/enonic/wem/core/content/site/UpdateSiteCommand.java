@@ -3,17 +3,13 @@ package com.enonic.wem.core.content.site;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.UpdateContentParams;
-import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.content.site.SiteNotFoundException;
 import com.enonic.wem.api.content.site.UpdateSiteParams;
 import com.enonic.wem.api.context.Context;
-
-import static com.enonic.wem.api.content.Content.editContent;
 
 final class UpdateSiteCommand
 {
@@ -52,18 +48,9 @@ final class UpdateSiteCommand
 
         if ( editBuilder.isChanges() )
         {
-            final Site editedSite = editBuilder.build();
-
             final UpdateContentParams updateContent = new UpdateContentParams().
                 contentId( this.params.getContent() ).
-                editor( new ContentEditor()
-                {
-                    @Override
-                    public Content.EditBuilder edit( final Content toBeEdited )
-                    {
-                        return editContent( toBeEdited ).site( editedSite );
-                    }
-                } );
+                editor( this.params.getEditor() );
 
             this.contentService.update( updateContent, this.context );
         }

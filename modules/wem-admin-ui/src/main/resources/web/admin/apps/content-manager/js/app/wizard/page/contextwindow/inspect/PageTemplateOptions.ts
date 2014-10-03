@@ -1,23 +1,23 @@
 module app.wizard.page.contextwindow.inspect {
 
+    import ContentId = api.content.ContentId;
     import ContentTypeName = api.schema.content.ContentTypeName;
-    import SiteTemplateKey = api.content.site.template.SiteTemplateKey;
     import GetPageTemplatesByCanRenderRequest = api.content.page.GetPageTemplatesByCanRenderRequest;
-    import PageTemplateSummary = api.content.page.PageTemplateSummary;
-    import PageTemplateSummaryLoader = api.content.page.PageTemplateSummaryLoader;
+    import PageTemplate = api.content.page.PageTemplate;
+    import PageTemplateLoader = api.content.page.PageTemplateLoader;
     import Option = api.ui.selector.Option;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
 
     export class PageTemplateOptions {
 
-        private siteTemplateKey: SiteTemplateKey;
+        private siteId: ContentId;
 
         private contentType: ContentTypeName;
 
         private static defaultPageTemplateOption: Option<PageTemplateOption> = {value: "__auto__", displayValue: new PageTemplateOption(null)};
 
-        constructor(siteTemplateKey: SiteTemplateKey, contentType: ContentTypeName) {
-            this.siteTemplateKey = siteTemplateKey;
+        constructor(siteId: ContentId, contentType: ContentTypeName) {
+            this.siteId = siteId;
             this.contentType = contentType;
         }
 
@@ -32,22 +32,22 @@ module app.wizard.page.contextwindow.inspect {
             var options: Option<PageTemplateOption>[] = [];
             options.push(PageTemplateOptions.defaultPageTemplateOption);
 
-            var loader = new PageTemplateSummaryLoader(new GetPageTemplatesByCanRenderRequest(this.siteTemplateKey,
+            var loader = new PageTemplateLoader(new GetPageTemplatesByCanRenderRequest(this.siteId,
                 this.contentType));
 
-            loader.onLoadedData((event: LoadedDataEvent<PageTemplateSummary>) => {
+            loader.onLoadedData((event: LoadedDataEvent<PageTemplate>) => {
 
-                var pageTemplates: PageTemplateSummary[] = event.getData();
+                var pageTemplates: PageTemplate[] = event.getData();
 
-                pageTemplates.forEach((pageTemplate: PageTemplateSummary, index: number) => {
+                pageTemplates.forEach((pageTemplate: PageTemplate, index: number) => {
 
-                    var indices:string[] = [];
-                    indices.push( pageTemplate.getName().toString() );
-                    indices.push( pageTemplate.getDisplayName() );
-                    indices.push( pageTemplate.getDescriptorKey().toString() );
+                    var indices: string[] = [];
+                    indices.push(pageTemplate.getName().toString());
+                    indices.push(pageTemplate.getDisplayName());
+                    indices.push(pageTemplate.getDescriptorKey().toString());
 
                     var option = {
-                        value: pageTemplate.getKey().toString(),
+                        value: pageTemplate.getId().toString(),
                         displayValue: new PageTemplateOption(pageTemplate),
                         indices: indices
                     };

@@ -32,7 +32,15 @@ module api.schema.content {
         }
 
         isSite(): boolean {
-            return this.getContentTypeName().equals(ContentTypeName.SITE);
+            return this.getContentTypeName().isSite();
+        }
+
+        isPageTemplate(): boolean {
+            return this.getContentTypeName().isPageTemplate();
+        }
+
+        isImage(): boolean {
+            return this.getContentTypeName().isImage();
         }
 
         isFinal(): boolean {

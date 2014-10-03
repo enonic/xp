@@ -1,6 +1,9 @@
 module api.content.page {
 
-    export class GetPageTemplatesRequest extends PageTemplateResourceRequest<PageTemplateSummaryListJson, PageTemplateSummary[]> {
+    import ContentJson = api.content.json.ContentJson;
+    import ListContentResult = api.content.ListContentResult;
+
+    export class GetPageTemplatesRequest extends PageTemplateResourceRequest<ListContentResult<ContentJson>, PageTemplate[]> {
 
         private siteTemplateKey: api.content.site.template.SiteTemplateKey;
 
@@ -20,11 +23,11 @@ module api.content.page {
             return api.rest.Path.fromParent(super.getResourcePath(), "list");
         }
 
-        sendAndParse(): wemQ.Promise<PageTemplateSummary[]> {
+        sendAndParse(): wemQ.Promise<PageTemplate[]> {
 
-            return this.send().then((response: api.rest.JsonResponse<PageTemplateSummaryListJson>) => {
-                return response.getResult().templates.map((templateJson:PageTemplateSummaryJson) => {
-                    return this.fromJsonToPageTemplateSummary(templateJson);
+            return this.send().then((response: api.rest.JsonResponse<ListContentResult<ContentJson>>) => {
+                return response.getResult().contents.map((contentJson: ContentJson) => {
+                    return this.fromJsonToContent(contentJson);
                 });
             });
         }

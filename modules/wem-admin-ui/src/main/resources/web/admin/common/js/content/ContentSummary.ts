@@ -24,10 +24,6 @@ module api.content {
 
         private owner: string;
 
-        private site: boolean;
-
-        private siteTemplateKey: api.content.site.template.SiteTemplateKey;
-
         private page: boolean;
 
         private draft: boolean;
@@ -52,8 +48,6 @@ module api.content {
             this.thumbnail = builder.thumbnail;
             this.modifier = builder.modifier;
             this.owner = builder.owner;
-            this.site = builder.site;
-            this.siteTemplateKey = builder.siteTemplateKey;
             this.page = builder.page;
             this.draft = builder.draft;
 
@@ -113,15 +107,19 @@ module api.content {
         }
 
         isSite(): boolean {
-            return this.site;
-        }
-
-        getSiteTemplateKey(): api.content.site.template.SiteTemplateKey {
-            return this.siteTemplateKey;
+            return this.type.isSite();
         }
 
         isPage(): boolean {
             return this.page;
+        }
+
+        isPageTemplate(): boolean {
+            return this.type.isPageTemplate();
+        }
+
+        isImage(): boolean {
+            return this.type.isImage();
         }
 
         isDraft(): boolean {
@@ -193,12 +191,6 @@ module api.content {
             if (!api.ObjectHelper.stringEquals(this.owner, other.owner)) {
                 return false;
             }
-            if (!api.ObjectHelper.booleanEquals(this.site, other.site)) {
-                return false;
-            }
-            if (!api.ObjectHelper.equals(this.siteTemplateKey, other.siteTemplateKey)) {
-                return false;
-            }
             if (!api.ObjectHelper.booleanEquals(this.page, other.page)) {
                 return false;
             }
@@ -257,10 +249,6 @@ module api.content {
 
         owner: string;
 
-        site: boolean;
-
-        siteTemplateKey: api.content.site.template.SiteTemplateKey;
-
         page: boolean;
 
         draft: boolean;
@@ -287,8 +275,6 @@ module api.content {
                 this.thumbnail = source.getThumbnail();
                 this.modifier = source.getModifier();
                 this.owner = source.getOwner();
-                this.site = source.isSite();
-                this.siteTemplateKey = source.getSiteTemplateKey();
                 this.page = source.isPage();
                 this.draft = source.isDraft();
                 this.createdTime = source.getCreatedTime();
@@ -312,8 +298,6 @@ module api.content {
             this.thumbnail = json.thumbnail ? new ThumbnailBuilder().fromJson(json.thumbnail).build() : null;
             this.modifier = json.modifier;
             this.owner = json.owner;
-            this.site = json.isSite;
-            this.siteTemplateKey = json.siteTemplateKey ? api.content.site.template.SiteTemplateKey.fromString(json.siteTemplateKey) : null;
             this.page = json.isPage;
             this.draft = json.draft;
 

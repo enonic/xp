@@ -5,27 +5,25 @@ module app.wizard.page.contextwindow.inspect {
     import FormView = api.form.FormView;
     import SiteTemplateKey = api.content.site.template.SiteTemplateKey;
     import SiteTemplate = api.content.site.template.SiteTemplate;
+    import ContentId = api.content.ContentId;
     import Content = api.content.Content;
     import ContentTypeName = api.schema.content.ContentTypeName;
     import Page = api.content.page.Page;
     import PageBuilder = api.content.page.PageBuilder;
     import PageTemplate = api.content.page.PageTemplate;
     import PageTemplateKey = api.content.page.PageTemplateKey;
-    import PageTemplateSummary = api.content.page.PageTemplateSummary;
     import GetPageTemplateByKeyRequest = api.content.page.GetPageTemplateByKeyRequest;
     import GetPageDescriptorByKeyRequest = api.content.page.GetPageDescriptorByKeyRequest;
     import PageDescriptor = api.content.page.PageDescriptor;
 
     export interface PageInspectionPanelConfig {
 
-        contentType:ContentTypeName;
+        siteId: ContentId;
 
-        siteTemplateKey:SiteTemplateKey;
+        contentType:ContentTypeName;
     }
 
     export class PageInspectionPanel extends BaseInspectionPanel {
-
-        private siteTemplateKey: SiteTemplateKey;
 
         private content: Content;
 
@@ -40,8 +38,6 @@ module app.wizard.page.contextwindow.inspect {
         constructor(config: PageInspectionPanelConfig) {
             super();
 
-            this.siteTemplateKey = config.siteTemplateKey;
-
             this.formView = null;
             this.pageSelectorEl = null;
             this.currentPageTemplate = null;
@@ -52,7 +48,7 @@ module app.wizard.page.contextwindow.inspect {
             this.pageTemplateSelector = new PageTemplateSelector({
                 form: containerForm,
                 contentType: config.contentType,
-                siteTemplateKey: config.siteTemplateKey});
+                siteId: config.siteId});
 
             this.pageSelectorEl = containerForm;
             this.appendChild(containerForm);
@@ -63,7 +59,6 @@ module app.wizard.page.contextwindow.inspect {
             var pageTemplateKey = pageTemplate ? pageTemplate.getKey() : null;
 
             this.content = content;
-
 
 
             this.pageTemplateSelector.setPageTemplate(pageTemplateKey);

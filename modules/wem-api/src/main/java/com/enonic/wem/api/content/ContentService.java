@@ -1,5 +1,7 @@
 package com.enonic.wem.api.content;
 
+import com.enonic.wem.api.content.site.CreateSiteParams;
+import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 
@@ -14,6 +16,8 @@ public interface ContentService
     Contents getByPaths( ContentPaths paths, final Context context );
 
     FindContentByParentResult findByParent( FindContentByParentParams params, final Context context );
+
+    Site create( final CreateSiteParams params, final Context context );
 
     Content create( CreateContentParams params, final Context context );
 

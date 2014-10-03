@@ -67,7 +67,7 @@ import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.editor.ContentEditor;
-import com.enonic.wem.api.content.site.SiteTemplateService;
+import com.enonic.wem.api.content.site.SiteService;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.DataJson;
 import com.enonic.wem.api.exception.ConflictException;
@@ -105,9 +105,9 @@ public class ContentResource
 
     private ContentService contentService;
 
-    private ContentTypeService contentTypeService;
+    private SiteService siteService;
 
-    private SiteTemplateService siteTemplateService;
+    private ContentTypeService contentTypeService;
 
     private AttachmentService attachmentService;
 
@@ -439,7 +439,7 @@ public class ContentResource
 
     private ContentIconUrlResolver newContentIconUrlResolver()
     {
-        return new ContentIconUrlResolver( this.siteTemplateService, this.contentTypeService, this.attachmentService );
+        return new ContentIconUrlResolver( this.contentTypeService, this.attachmentService );
     }
 
     public void setContentService( final ContentService contentService )
@@ -450,11 +450,6 @@ public class ContentResource
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
         this.contentTypeService = contentTypeService;
-    }
-
-    public void setSiteTemplateService( final SiteTemplateService siteTemplateService )
-    {
-        this.siteTemplateService = siteTemplateService;
     }
 
     public void setAttachmentService( final AttachmentService attachmentService )

@@ -21,12 +21,6 @@
   <!-- Module element -->
   <xsd:element name="module" type="module"/>
 
-  <!-- Site template element -->
-  <xsd:element name="site-template" type="siteTemplate"/>
-
-  <!-- Page template element -->
-  <xsd:element name="page-template" type="pageTemplate"/>
-
   <!-- Content type element -->
   <xsd:element name="content-type" type="contentType"/>
 

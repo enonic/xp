@@ -12,15 +12,12 @@
     "isDraft": false,
     "isPage": false,
     "isRoot": true,
-    "isSite": false,
     "modifiedTime": "2013-08-23T12:55:09.162Z",
     "modifier": "user:system:admin",
     "name": "content-path",
     "owner": "user:myStore:me",
     "page": null,
     "path": "/content-path",
-    "site": null,
-    "siteTemplateKey": null,
     "thumbnail": null,
     "type": "mymodule:content-type"
 }

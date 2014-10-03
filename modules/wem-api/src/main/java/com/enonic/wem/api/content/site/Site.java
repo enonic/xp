@@ -1,34 +1,33 @@
 package com.enonic.wem.api.content.site;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
+import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.support.Changes;
-import com.enonic.wem.api.support.EditBuilder;
 
 import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;
 
 public final class Site
+    extends Content
 {
-    private final SiteTemplateKey template;
-
-    private final ModuleConfigs moduleConfigs;
-
-    private Site( final SiteProperties builder )
+    private Site( final SiteEditBuilder builder )
     {
-        this.template = builder.templateName;
-        this.moduleConfigs = ModuleConfigs.from( builder.moduleConfigs );
+        super( builder );
     }
 
-    public SiteTemplateKey getTemplate()
+    public Site( final Builder builder )
     {
-        return template;
+        super( builder );
+    }
+
+    public String getDescription()
+    {
+        return this.getContentData().getProperty( "description" ).getString();
     }
 
     public ModuleConfigs getModuleConfigs()
     {
-        return moduleConfigs;
+        return new ModuleConfigsDataSerializer().fromData( this.getContentData() ).build();
     }
 
     @Override
@@ -43,15 +42,7 @@ public final class Site
             return false;
         }
 
-        final Site that = (Site) o;
-
-        return Objects.equals( this.template, that.template ) && Objects.equals( this.moduleConfigs, that.moduleConfigs );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash( template, moduleConfigs );
+        return super.equals( o );
     }
 
     public static Builder newSite()
@@ -69,28 +60,11 @@ public final class Site
         return new SiteEditBuilder( toBeEdited );
     }
 
-    static class SiteProperties
-    {
-        SiteTemplateKey templateName;
-
-        List<ModuleConfig> moduleConfigs = new ArrayList<>();
-
-        SiteProperties( final Site source )
-        {
-            this.templateName = source.getTemplate();
-            this.moduleConfigs = source.getModuleConfigs().getList();
-        }
-
-        SiteProperties()
-        {
-
-        }
-    }
-
     public static class SiteEditBuilder
-        extends SiteProperties
-        implements EditBuilder<Site>
+        extends Content.EditBuilder
     {
+        private static final ModuleConfigsDataSerializer MODULE_CONFIGS_DATA_SERIALIZER = new ModuleConfigsDataSerializer();
+
         private final Site original;
 
         private final Changes.Builder changes = new Changes.Builder();
@@ -101,18 +75,20 @@ public final class Site
             this.original = original;
         }
 
-        public SiteEditBuilder template( SiteTemplateKey value )
-        {
-            changes.recordChange( newPossibleChange( "template" ).from( this.original.getTemplate() ).to( value ).build() );
-            this.templateName = value;
-            return this;
-        }
-
-        public SiteEditBuilder moduleConfigs( ModuleConfigs configs )
+        public SiteEditBuilder moduleConfigs( ModuleConfigs moduleConfigs )
         {
             changes.recordChange(
-                newPossibleChange( "moduleConfigs" ).from( original.getModuleConfigs().getList() ).to( configs.getList() ).build() );
-            moduleConfigs = configs.getList();
+                newPossibleChange( "moduleConfigs" ).from( original.getModuleConfigs().getList() ).to( moduleConfigs.getList() ).build() );
+
+            if ( contentData == null )
+            {
+                contentData = new ContentData();
+            }
+            for ( final Property property : MODULE_CONFIGS_DATA_SERIALIZER.toData( moduleConfigs ) )
+            {
+                contentData.add( property );
+            }
+
             return this;
         }
 
@@ -135,8 +111,10 @@ public final class Site
     }
 
     public static class Builder
-        extends SiteProperties
+        extends Content.Builder<Builder, Site>
     {
+        private static final ModuleConfigsDataSerializer MODULE_CONFIGS_DATA_SERIALIZER = new ModuleConfigsDataSerializer();
+
         public Builder( final Site source )
         {
             super( source );
@@ -147,24 +125,24 @@ public final class Site
             super();
         }
 
-        public Builder template( SiteTemplateKey value )
+        public Builder addModuleConfig( ModuleConfig moduleConfig )
         {
-            this.templateName = value;
-            return this;
-        }
-
-        public Builder addModuleConfig( ModuleConfig value )
-        {
-            moduleConfigs.add( value );
-            return this;
-        }
-
-        public Builder moduleConfigs( ModuleConfigs configs )
-        {
-            if ( configs != null )
+            if ( contentData == null )
             {
-                moduleConfigs = configs.getList();
+                contentData = new ContentData();
             }
+            MODULE_CONFIGS_DATA_SERIALIZER.addToData( moduleConfig, contentData );
+
+            return this;
+        }
+
+        public Builder moduleConfigs( ModuleConfigs moduleConfigs )
+        {
+            if ( contentData == null )
+            {
+                contentData = new ContentData();
+            }
+            MODULE_CONFIGS_DATA_SERIALIZER.toData( moduleConfigs ).forEach( contentData::add );
             return this;
         }
 

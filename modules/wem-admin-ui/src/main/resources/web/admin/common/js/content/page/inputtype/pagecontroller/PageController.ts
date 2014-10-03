@@ -30,7 +30,7 @@ module api.content.page.inputtype.pagecontroller {
 
         createInputOccurrenceElement(index: number, property: api.data.Property): Element {
             var context = <ContentInputTypeViewContext<any>>this.getContext(),
-                moduleKeys = context.site.getSite().getModuleKeys(),
+                moduleKeys = context.site.getModuleKeys(),
                 request = new GetPageDescriptorsByModulesRequest(moduleKeys),
                 loader = new api.util.loader.BaseLoader<PageDescriptorsJson, PageDescriptor>(request);
 

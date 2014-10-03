@@ -30,7 +30,7 @@ public class ContentSummaryJson
         this.content = content;
         this.iconUrl = iconUrlResolver.resolve( content );
         this.thumbnailJson = content.hasThumbnail() ? new ContentThumbnailJson( content.getThumbnail() ) : null;
-        this.isSite = content.hasSite();
+        this.isSite = content.isSite();
         this.isPage = content.hasPage();
         this.deletable = !content.hasChildren();
     }
@@ -103,16 +103,6 @@ public class ContentSummaryJson
     public boolean getIsDraft()
     {
         return content.isDraft();
-    }
-
-    public boolean getIsSite()
-    {
-        return isSite;
-    }
-
-    public String getSiteTemplateKey()
-    {
-        return content.hasSite() ? content.getSite().getTemplate().toString() : null;
     }
 
     public boolean getIsPage()

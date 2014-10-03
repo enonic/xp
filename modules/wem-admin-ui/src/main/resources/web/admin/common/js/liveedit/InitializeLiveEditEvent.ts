@@ -1,21 +1,21 @@
 module api.liveedit {
 
     import Content = api.content.Content;
+    import Site = api.content.site.Site;
     import PageRegions = api.content.page.PageRegions;
-    import SiteTemplate = api.content.site.template.SiteTemplate;
 
     export class InitializeLiveEditEvent extends api.event.Event {
 
         private content: Content;
 
-        private siteTemplate: SiteTemplate;
+        private site: Site;
 
         private pageRegions: PageRegions;
 
-        constructor(content: Content, siteTemplate: SiteTemplate, pageRegions: PageRegions) {
+        constructor(content: Content, site: Site, pageRegions: PageRegions) {
             super();
             this.content = content;
-            this.siteTemplate = siteTemplate;
+            this.site = site;
             this.pageRegions = pageRegions;
         }
 
@@ -23,8 +23,8 @@ module api.liveedit {
             return this.content;
         }
 
-        getSiteTemplate(): SiteTemplate {
-            return this.siteTemplate;
+        getSite(): Site {
+            return this.site;
         }
 
         getPageRegions(): PageRegions {

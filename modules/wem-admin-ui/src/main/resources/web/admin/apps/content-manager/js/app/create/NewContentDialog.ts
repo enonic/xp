@@ -1,14 +1,14 @@
 module app.create {
 
     import GetAllContentTypesRequest = api.schema.content.GetAllContentTypesRequest;
-    import GetAllSiteTemplatesRequest = api.content.site.template.GetAllSiteTemplatesRequest;
+    import ContentName = api.content.ContentName;
     import ContentTypeName = api.schema.content.ContentTypeName;
     import ContentTypeSummary = api.schema.content.ContentTypeSummary;
-    import SiteTemplateSummary = api.content.site.template.SiteTemplateSummary;
 
     export class NewContentDialog extends api.ui.dialog.ModalDialog {
 
         private parentContent: api.content.Content;
+        private grandParent: api.content.Content;
 
         private contentDialogTitle: NewContentDialogTitle;
 
@@ -89,7 +89,7 @@ module app.create {
 
         private closeAndFireEventFromContentType(item: NewContentDialogListItem) {
             this.close();
-            new NewContentEvent(item.getContentType(), this.parentContent, item.getSiteTemplate()).fire();
+            new NewContentEvent(item.getContentType(), this.parentContent).fire();
         }
 
         private filterList() {
@@ -101,31 +101,36 @@ module app.create {
 
             var filteredItems = this.listItems.filter((item: NewContentDialogListItem) => {
                 return (!inputValue || (item.getDisplayName().indexOf(inputValue) != -1) || (item.getName().indexOf(inputValue) != -1))
-                    && (all || (contentOnly && !item.isSiteTemplate()) || (sitesOnly && item.isSiteTemplate()));
+                    && (all || (contentOnly && !item.isSite()) || (sitesOnly && item.isSite()));
             });
 
             this.contentList.setItems(filteredItems);
 
             var contentTypesCount: number = 0;
-            var siteTemplatesCount: number = 0;
             this.listItems.forEach((item: NewContentDialogListItem) => {
                 if (!inputValue || (item.getDisplayName().indexOf(inputValue) != -1) || (item.getName().indexOf(inputValue) != -1)) {
-                    item.isSiteTemplate() ? siteTemplatesCount++ : contentTypesCount++;
+                    if (!item.isSite()) {
+                        contentTypesCount++;
+                    }
                 }
             });
-            this.facetContainer.updateLabels(contentTypesCount, siteTemplatesCount);
+            this.facetContainer.updateLabels(contentTypesCount);
         }
 
         private filterByParentContent(items: NewContentDialogListItem[]): NewContentDialogListItem[] {
             return items.filter((item: NewContentDialogListItem) => {
                 var contentTypeName = item.getContentType().getContentTypeName();
-                // Don't show page-template content type if parent content doesn't have site
-                return !contentTypeName.equals(ContentTypeName.PAGE_TEMPLATE) || !!(this.parentContent && this.parentContent.getSite());
+                // Don't show page-template content type if parent content is not 'templates'
+                var parentContentIsPageTemplates = (this.parentContent &&
+                                                    this.parentContent.getName().equals(ContentName.fromString("templates")));
+                var grandParentIsSite = this.grandParent && this.grandParent.isSite();
+                return !contentTypeName.isPageTemplate() || (parentContentIsPageTemplates && grandParentIsSite);
             });
         }
 
-        setParentContent(value: api.content.Content) {
-            this.parentContent = value;
+        setParentContent(parent: api.content.Content, grandParent: api.content.Content) {
+            this.parentContent = parent;
+            this.grandParent = grandParent;
         }
 
         show() {
@@ -149,13 +154,12 @@ module app.create {
             this.recentListMask.show();
 
             var contentTypesRequest = new GetAllContentTypesRequest();
-            var siteTemplatesRequest = new GetAllSiteTemplatesRequest();
 
-            wemQ.all([contentTypesRequest.sendAndParse(), siteTemplatesRequest.sendAndParse()])
-                .spread((contentTypes: ContentTypeSummary[], siteTemplates: SiteTemplateSummary[]) => {
+            wemQ.all([contentTypesRequest.sendAndParse()])
+                .spread((contentTypes: ContentTypeSummary[]) => {
 
-                    this.facetContainer.updateLabels(contentTypes.length, siteTemplates.length);
-                    var listItems = this.createListItems(contentTypes, siteTemplates);
+                    this.facetContainer.updateLabels(contentTypes.length);
+                    var listItems = this.createListItems(contentTypes);
                     this.listItems = this.filterByParentContent(listItems);
 
                     this.contentList.setItems(this.listItems);
@@ -178,7 +182,7 @@ module app.create {
                 }).done();
         }
 
-        private createListItems(contentTypes: ContentTypeSummary[], siteTemplates: SiteTemplateSummary[]): NewContentDialogListItem[] {
+        private createListItems(contentTypes: ContentTypeSummary[]): NewContentDialogListItem[] {
             var contentTypesByName: {[name: string]: ContentTypeSummary} = {};
             contentTypes.forEach((contentType: ContentTypeSummary) => {
                 contentTypesByName[contentType.getName()] = contentType;
@@ -190,9 +194,7 @@ module app.create {
             });
 
             var siteContentType = contentTypesByName[ContentTypeName.SITE.toString()];
-            siteTemplates.forEach((siteTemplate: SiteTemplateSummary) => {
-                items.push(NewContentDialogListItem.fromSiteTemplate(siteTemplate, siteContentType));
-            });
+            items.push(NewContentDialogListItem.fromContentType(siteContentType));
 
             items.sort(this.compareListItems);
             return items;

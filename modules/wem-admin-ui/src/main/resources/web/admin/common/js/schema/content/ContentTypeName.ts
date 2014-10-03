@@ -16,6 +16,18 @@ module api.schema.content {
             this.value = name
         }
 
+        isSite(): boolean {
+            return this.equals(ContentTypeName.SITE);
+        }
+
+        isPageTemplate(): boolean {
+            return this.equals(ContentTypeName.PAGE_TEMPLATE);
+        }
+
+        isImage(): boolean {
+            return this.equals(ContentTypeName.IMAGE);
+        }
+
         toString(): string {
             return this.value;
         }

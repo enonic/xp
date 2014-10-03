@@ -20,6 +20,7 @@ import com.enonic.wem.api.data.DataPath;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormItemSet;
@@ -182,11 +183,15 @@ public class ContentNodeTranslatorTest
                 mimeType( "image/png" ).
                 build() );
 
+        final RootDataSet data = new RootDataSet();
+        data.addProperty( "contentType", Value.newString( "my-type" ) );
+
         final Node node = Node.newNode().id( EntityId.from( "myId" ) ).
             attachments( attachments ).
             parent( NodePath.ROOT ).
             path( "myPath" ).
             name( NodeName.from( "myname" ) ).
+            rootDataSet( data ).
             build();
 
         final Content content = translator.fromNode( node );

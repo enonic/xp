@@ -1,13 +1,15 @@
 package com.enonic.wem.api.content.page;
 
-import com.enonic.wem.api.content.site.SiteTemplateKey;
-import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.context.Context;
 
 public interface PageTemplateService
 {
-    PageTemplate getByKey( final PageTemplateKey pageTemplateKey, final SiteTemplateKey siteTemplateKey );
+    PageTemplate create( CreatePageTemplateParams params, Context context );
 
-    PageTemplate getDefault( final SiteTemplateKey siteTemplateKey, final ContentTypeName contentType );
+    PageTemplate getByKey( PageTemplateKey pageTemplateKey, Context context );
 
-    PageTemplates getBySiteTemplate( final SiteTemplateKey siteTemplateKey );
+    PageTemplate getDefault( GetDefaultPageTemplateParams params, Context context );
+
+    PageTemplates getBySite( ContentId site, Context context );
 }

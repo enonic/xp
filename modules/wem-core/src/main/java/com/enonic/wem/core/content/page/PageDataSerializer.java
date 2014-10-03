@@ -28,7 +28,8 @@ public class PageDataSerializer
     {
         final DataSet asData = new DataSet( dataSetName );
 
-        asData.addProperty( PAGE_TEMPLATE, Value.newString( page.getTemplate().toString() ) );
+        asData.addProperty( PAGE_TEMPLATE, Value.newString( page.getTemplate() != null ? page.getTemplate().toString() : null ) );
+
         if ( page.hasRegions() )
         {
             asData.add( regionsDataSerializer.toData( page.getRegions() ) );
@@ -45,7 +46,10 @@ public class PageDataSerializer
     public Page fromData( final DataSet asData )
     {
         final Page.Builder page = Page.newPage();
-        page.template( PageTemplateKey.from( asData.getProperty( PAGE_TEMPLATE ).getString() ) );
+        if ( asData.hasData( PAGE_TEMPLATE ) && !asData.getProperty( PAGE_TEMPLATE ).hasNullValue() )
+        {
+            page.template( PageTemplateKey.from( asData.getProperty( PAGE_TEMPLATE ).getString() ) );
+        }
         if ( asData.hasData( PAGE_REGIONS ) )
         {
             page.regions( regionsDataSerializer.fromData( asData.getDataSet( PAGE_REGIONS ) ) );

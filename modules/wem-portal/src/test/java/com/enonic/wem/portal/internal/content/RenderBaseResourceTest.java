@@ -16,15 +16,10 @@ import com.enonic.wem.api.content.page.PageDescriptorService;
 import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
-import com.enonic.wem.api.content.page.PageTemplateName;
 import com.enonic.wem.api.content.page.PageTemplateService;
 import com.enonic.wem.api.content.page.part.PartComponent;
 import com.enonic.wem.api.content.page.region.Region;
-import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.content.site.SiteService;
-import com.enonic.wem.api.content.site.SiteTemplateKey;
-import com.enonic.wem.api.content.site.SiteTemplateNotFoundException;
-import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
@@ -49,8 +44,6 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
     protected ContentService contentService;
 
     protected SiteService siteService;
-
-    protected SiteTemplateService siteTemplateService;
 
     protected PageTemplateService pageTemplateService;
 
@@ -77,8 +70,6 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
         this.contentService = Mockito.mock( ContentService.class );
         this.siteService = Mockito.mock( SiteService.class );
         this.pageTemplateService = Mockito.mock( PageTemplateService.class );
-        this.siteTemplateService = Mockito.mock( SiteTemplateService.class );
-        Mockito.when( siteTemplateService.getSiteTemplate( Mockito.any() ) ).thenThrow( new SiteTemplateNotFoundException( null ) );
         this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
         final JsControllerFactory jsControllerFactory = Mockito.mock( JsControllerFactory.class );
 
@@ -88,7 +79,6 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
         this.resourceProvider.setContentService( this.contentService );
         this.resourceProvider.setSiteService( this.siteService );
         this.resourceProvider.setPageTemplateService( this.pageTemplateService );
-        this.resourceProvider.setSiteTemplateService( this.siteTemplateService );
         this.resourceProvider.setPageDescriptorService( this.pageDescriptorService );
         this.resourceProvider.setControllerFactory( jsControllerFactory );
 
@@ -115,11 +105,12 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
             thenReturn( createSite( "id", "site", "mymodule:contenttypename" ) );
     }
 
-    protected final void setupTemplates()
+    protected final void setupTemplates( final Context context )
         throws Exception
     {
-        Mockito.when( this.pageTemplateService.getByKey( Mockito.eq( PageTemplateKey.from( "my-page" ) ),
-                                                         Mockito.eq( (SiteTemplateKey) null ) ) ).thenReturn( createPageTemplate() );
+        Mockito.when(
+            this.pageTemplateService.getByKey( Mockito.eq( PageTemplateKey.from( "my-page" ) ), Mockito.eq( context ) ) ).thenReturn(
+            createPageTemplate() );
 
         Mockito.when( this.pageDescriptorService.getByKey( Mockito.isA( PageDescriptorKey.class ) ) ).thenReturn( createDescriptor() );
     }
@@ -162,8 +153,6 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
             config( rootDataSet ).
             build();
 
-        Site site = Site.newSite().build();
-
         return Content.newContent().
             id( ContentId.from( id ) ).
             path( ContentPath.from( path ) ).
@@ -172,7 +161,6 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
             modifier( UserKey.superUser() ).
             type( ContentTypeName.from( contentTypeName ) ).
             page( page ).
-            site( site ).
             build();
     }
 
@@ -189,12 +177,14 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
             build();
 
         return PageTemplate.newPageTemplate().
-            key( PageTemplateKey.from( new PageTemplateName( "my-page" ) ) ).
-            displayName( "Main page emplate" ).
-            config( pageTemplateConfig ).
+            key( PageTemplateKey.from( "abc" ) ).
             canRender( ContentTypeNames.from( "mymodule:article", "mymodule:banner" ) ).
             descriptor( PageDescriptorKey.from( "mainmodule:landing-page" ) ).
             regions( pageRegions ).
+            config( pageTemplateConfig ).
+            displayName( "Main page emplate" ).
+            name( "main-page-template" ).
+            parentPath( ContentPath.ROOT ).
             build();
     }
 

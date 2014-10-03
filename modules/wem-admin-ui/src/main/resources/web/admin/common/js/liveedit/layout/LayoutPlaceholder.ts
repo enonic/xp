@@ -17,7 +17,7 @@ module api.liveedit.layout {
             this.onClicked((event: MouseEvent) => {
                 event.stopPropagation();
             });
-            var request = new api.content.page.layout.GetLayoutDescriptorsByModulesRequest(PageItemType.get().getSiteTemplate().getModules());
+            var request = new api.content.page.layout.GetLayoutDescriptorsByModulesRequest(PageItemType.get().getSite().getModuleKeys());
             var loader = new api.content.page.layout.LayoutDescriptorLoader(request);
             this.comboBox = new api.content.page.layout.LayoutDescriptorComboBox(loader);
             loader.load();

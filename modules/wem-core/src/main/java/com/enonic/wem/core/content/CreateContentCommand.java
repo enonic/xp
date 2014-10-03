@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentDataValidationException;
 import com.enonic.wem.api.content.CreateContentParams;
+import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.core.entity.CreateNodeParams;
@@ -33,13 +35,20 @@ final class CreateContentCommand
 
     private Content doExecute()
     {
-        if ( !this.params.isDraft() )
+        if ( !params.isDraft() )
         {
-            validateContentData( this.params );
+            validateContentData( params );
         }
 
-        final CreateNodeParams createNodeParams = translator.toCreateNode( this.params );
-        final Node createdNode = nodeService.create( createNodeParams, this.context );
+        if ( params.getForm() == null )
+        {
+            final ContentType contentType =
+                contentTypeService.getByName( new GetContentTypeParams().contentTypeName( params.getContentType() ) );
+            params.form( contentType.form() );
+        }
+
+        final CreateNodeParams createNodeParams = translator.toCreateNode( params );
+        final Node createdNode = nodeService.create( createNodeParams, context );
 
         return translator.fromNode( createdNode );
     }

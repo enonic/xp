@@ -9,4 +9,9 @@ public class DeleteContentResult
     {
         this.deletedContent = deletedContent;
     }
+
+    public Content getDeletedContent()
+    {
+        return deletedContent;
+    }
 }

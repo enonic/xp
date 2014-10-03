@@ -1,47 +1,29 @@
 package com.enonic.wem.api.content.page;
 
 
-import com.google.common.base.Preconditions;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 
 public final class PageTemplate
+    extends Content<PageTemplate>
 {
     private final PageTemplateKey key;
 
-    private final String displayName;
-
-    private final PageDescriptorKey descriptor;
-
-    private final RootDataSet config;
-
-    private final PageRegions regions;
-
-    private final ContentTypeNames canRender;
+    private final PageTemplateName pageTemplateName;
 
     private PageTemplate( final Builder builder )
     {
-        this.key = resolveKey( builder );
-        this.displayName = builder.displayName;
-        this.descriptor = builder.descriptor;
-        this.config = builder.config;
-        this.canRender = builder.canRender != null ? builder.canRender : ContentTypeNames.empty();
-        this.regions = builder.regions;
-    }
-
-    private PageTemplateKey resolveKey( final Builder builder )
-    {
-        if ( builder.key != null )
-        {
-            return builder.key;
-        }
-        else
-        {
-            Preconditions.checkNotNull( builder.descriptor, "descriptor cannot be null when key is not given" );
-            return PageTemplateKey.from( builder.name );
-        }
+        super( builder );
+        this.key = builder.key;
+        this.pageTemplateName = PageTemplateName.from( super.getName() );
     }
 
     public PageTemplateKey getKey()
@@ -51,27 +33,36 @@ public final class PageTemplate
 
     public PageTemplateName getName()
     {
-        return this.key.getTemplateName();
-    }
-
-    public String getDisplayName()
-    {
-        return displayName;
-    }
-
-    public PageDescriptorKey getDescriptor()
-    {
-        return descriptor;
+        return this.pageTemplateName;
     }
 
     public RootDataSet getConfig()
     {
-        return config;
+        return getPage().getConfig();
+    }
+
+    public PageDescriptorKey getDescriptor()
+    {
+        final Property property = this.getContentData().getProperty( "controller" );
+        if ( property == null || property.hasNullValue() )
+        {
+            return null;
+        }
+        return PageDescriptorKey.from( property.getString() );
     }
 
     public ContentTypeNames getCanRender()
     {
-        return canRender;
+        final List<Property> supports = this.getContentData().getPropertiesByName( "supports" );
+        final ArrayList<ContentTypeName> list = new ArrayList<>( supports.size() );
+        for ( final Property property : supports )
+        {
+            if ( !property.hasNullValue() )
+            {
+                list.add( ContentTypeName.from( property.getString() ) );
+            }
+        }
+        return ContentTypeNames.from( list );
     }
 
     public boolean canRender( ContentTypeName name )
@@ -81,12 +72,12 @@ public final class PageTemplate
 
     public boolean hasRegions()
     {
-        return regions != null;
+        return getPage().hasRegions();
     }
 
     public PageRegions getRegions()
     {
-        return regions;
+        return getPage().getRegions();
     }
 
     public static PageTemplate.Builder newPageTemplate()
@@ -100,86 +91,77 @@ public final class PageTemplate
     }
 
     public static class Builder
+        extends Content.Builder<Builder, PageTemplate>
     {
         private PageTemplateKey key;
 
-        private PageTemplateName name;
-
-        private String displayName;
-
-        private PageDescriptorKey descriptor;
-
-        private RootDataSet config;
-
-        private ContentTypeNames canRender;
-
-        private PageRegions regions;
-
         private Builder()
         {
+            super();
         }
 
         private Builder( final PageTemplate source )
         {
-            this.key = source.key;
-            this.displayName = source.displayName;
-            this.descriptor = source.descriptor;
-            this.config = source.config == null ? null : source.config.copy().toRootDataSet();
-            this.canRender = source.canRender;
-            this.regions = source.regions;
+            super( source );
         }
 
-        public Builder key( final PageTemplateKey key )
+        public Builder key( final PageTemplateKey value )
         {
-            this.key = key;
+            this.key = value;
+            this.contentId = value;
             return this;
         }
 
-        /**
-         * Optional. Only required when key is not given.
-         */
-        public Builder name( final PageTemplateName name )
+        public Builder descriptor( final PageDescriptorKey descriptorKey )
         {
-            this.name = name;
+            final Value value =
+                descriptorKey != null ? Value.newString( descriptorKey.toString() ) : Value.newValue( null, ValueTypes.STRING );
+            this.contentData.setProperty( "controller", value );
             return this;
         }
 
-        /**
-         * Optional. Only required when key is not given.
-         */
-        public Builder name( final String name )
+        public Builder canRender( final ContentTypeNames names )
         {
-            this.name = PageTemplateName.from( name );
-            return this;
-        }
-
-        public Builder displayName( final String displayName )
-        {
-            this.displayName = displayName;
-            return this;
-        }
-
-        public Builder descriptor( final PageDescriptorKey descriptor )
-        {
-            this.descriptor = descriptor;
-            return this;
-        }
-
-        public Builder config( final RootDataSet config )
-        {
-            this.config = config;
-            return this;
-        }
-
-        public Builder canRender( final ContentTypeNames canRender )
-        {
-            this.canRender = canRender;
+            for ( ContentTypeName name : names )
+            {
+                this.contentData.addProperty( "supports", Value.newString( name.toString() ) );
+            }
             return this;
         }
 
         public Builder regions( final PageRegions value )
         {
-            this.regions = value;
+            if ( this.page == null )
+            {
+                this.page = Page.newPage().
+                    regions( value ).
+                    build();
+            }
+            else
+            {
+                this.page = Page.newPage( this.page ).
+                    regions( value ).
+                    build();
+            }
+
+            return this;
+        }
+
+        public Builder config( final RootDataSet config )
+        {
+            if ( this.page == null )
+            {
+                this.page = Page.newPage().
+                    config( config ).
+                    build();
+            }
+            else
+            {
+                this.page = Page.newPage( this.page ).
+                    config( config ).
+                    build();
+            }
+
             return this;
         }
 
@@ -187,6 +169,7 @@ public final class PageTemplate
         {
             return new PageTemplate( this );
         }
+
     }
 
 }

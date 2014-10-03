@@ -124,10 +124,7 @@ module app {
                     setParentContent(parentContent).
                     setContentTypeName(contentTypeSummary.getContentTypeName());
 
-                var siteTemplate = newContentEvent.getSiteTemplate();
-                if (newContentEvent.getContentType().isSite()) {
-                    contentWizardPanelFactory.setCreateSite(siteTemplate && siteTemplate.getKey());
-                }
+                contentWizardPanelFactory.setCreateSite(newContentEvent.isCreateSite());
                 contentWizardPanelFactory.createForNew().then((wizard: app.wizard.ContentWizardPanel) => {
                     tabMenuItem = new api.app.bar.AppBarTabMenuItemBuilder().setLabel("[New " + contentTypeSummary.getDisplayName() + "]").
                         setTabId(tabId).
@@ -173,6 +170,7 @@ module app {
                 }
             });
         }
+
         private handleEdit(event: app.browse.EditContentEvent) {
 
             var contents: api.content.ContentSummary[] = event.getModels();
@@ -193,7 +191,7 @@ module app {
                         setAppBarTabId(tabId).
                         setContentToEdit(content.getContentId()).
                         createForEdit().then((wizard: app.wizard.ContentWizardPanel) => {
-                            if(closeViewPanelMenuItem != null) {
+                            if (closeViewPanelMenuItem != null) {
                                 this.getAppBarTabMenu().deselectNavigationItem();
                                 this.getAppBarTabMenu().removeNavigationItem(closeViewPanelMenuItem);
                                 this.removePanelByIndex(closeViewPanelMenuItem.getIndex());
@@ -222,11 +220,12 @@ module app {
 
         private resolveTabMenuItemForContentBeingEditedOrViewed(content: api.content.ContentSummary): api.app.bar.AppBarTabMenuItem {
             var result = this.resolveTabMenuItemForContentBeingEdited(content);
-            if(!result) {
+            if (!result) {
                 result = this.resolveTabMenuItemForContentBeingViewed(content)
             }
             return result;
         }
+
         private resolveTabMenuItemForContentBeingEdited(content: api.content.ContentSummary): api.app.bar.AppBarTabMenuItem {
             if (!!content) {
 
@@ -237,6 +236,7 @@ module app {
             }
             return null;
         }
+
         private resolveTabMenuItemForContentBeingViewed(content: api.content.ContentSummary): api.app.bar.AppBarTabMenuItem {
             if (!!content) {
                 var tabId = this.getAppBarTabMenu().getNavigationItemById(api.app.bar.AppBarTabId.forView(content.getId()));

@@ -16,6 +16,7 @@ import com.enonic.wem.api.schema.Schema;
 import com.enonic.wem.api.schema.SchemaProvider;
 import com.enonic.wem.api.schema.Schemas;
 import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.ContentTypeForms;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.metadata.MetadataSchema;
@@ -49,11 +50,12 @@ public final class CoreSchemasProvider
         description( "Root content for sites" ).
         setFinal( true ).
         setAbstract( false ).
-        form( createSiteForm() ).
+        form( ContentTypeForms.SITE ).
         build();
 
     private static final ContentType PAGE_TEMPLATE =
-        createSystemType( ContentTypeName.pageTemplate() ).setFinal( false ).setAbstract( true ).form( createPageTemplateForm() ).build();
+        createSystemType( ContentTypeName.pageTemplate() ).setFinal( false ).setAbstract( true ).form(
+            ContentTypeForms.PAGE_TEMPLATE ).build();
 
     private static final ContentType SHORTCUT = createSystemType( ContentTypeName.shortcut() ).
         setFinal( true ).setAbstract( false ).build();
@@ -74,7 +76,7 @@ public final class CoreSchemasProvider
         setFinal( true ).setAbstract( false ).allowChildContent( false ).build();
 
     private static final ContentType MEDIA_IMAGE = createSystemType( ContentTypeName.imageMedia() ).superType( ContentTypeName.media() ).
-        setFinal( true ).setAbstract( false ).allowChildContent( false ).form( createMediaImageForm() ).build();
+        setFinal( true ).setAbstract( false ).allowChildContent( false ).form( ContentTypeForms.MEDIA_IMAGE ).build();
 
     private static final ContentType MEDIA_VECTOR = createSystemType( ContentTypeName.vectorMedia() ).superType( ContentTypeName.media() ).
         setFinal( true ).setAbstract( false ).allowChildContent( false ).build();
@@ -137,20 +139,6 @@ public final class CoreSchemasProvider
             setBuiltIn();
     }
 
-    private static Form createMediaImageForm()
-    {
-        return Form.newForm().
-            addFormItem( Input.newInput().name( "image" ).
-                inputType( InputTypes.IMAGE ).build() ).
-            addFormItem( Input.newInput().name( "mimeType" ).
-                inputType( InputTypes.TEXT_LINE ).
-                label( "Mime type" ).
-                occurrences( 1, 1 ).
-                build() ).
-
-            build();
-    }
-
     private static Form createMenuMetadataForm()
     {
         return Form.newForm().
@@ -164,46 +152,6 @@ public final class CoreSchemasProvider
                 label( "Menu name" ).
                 occurrences( 0, 1 ).
                 helpText( "Name to be used in menu. Optional" ).
-                build() ).
-            build();
-    }
-
-    private static Form createPageTemplateForm()
-    {
-        return Form.newForm().
-            addFormItem( Input.newInput().
-                name( "controller" ).
-                label( "Controller" ).
-                inputType( InputTypes.PAGE_CONTROLLER ).
-                build() ).
-            addFormItem( Input.newInput().
-                name( "supports" ).
-                label( "Supports" ).
-                helpText( "Choose which content types this page template supports" ).
-                inputType( InputTypes.CONTENT_TYPE_FILTER ).
-                required( false ).
-                multiple( true ).
-                build() ).
-            build();
-    }
-
-    private static Form createSiteForm()
-    {
-        return Form.newForm().
-            addFormItem( Input.newInput().
-                name( "description" ).
-                label( "Description" ).
-                inputType( InputTypes.TEXT_AREA ).
-                occurrences( 0, 1 ).
-                helpText( "Description of the site. Optional" ).
-                build() ).
-            addFormItem( Input.newInput().
-                name( "modules" ).
-                label( "Modules" ).
-                helpText( "Configure modules needed for the Site" ).
-                inputType( InputTypes.MODULE_CONFIGURATOR ).
-                required( false ).
-                multiple( true ).
                 build() ).
             build();
     }

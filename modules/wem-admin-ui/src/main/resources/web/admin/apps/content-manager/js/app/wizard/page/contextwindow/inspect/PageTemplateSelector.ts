@@ -1,10 +1,9 @@
 module app.wizard.page.contextwindow.inspect {
 
-    import SiteTemplateKey = api.content.site.template.SiteTemplateKey;
+    import ContentId = api.content.ContentId;
     import PageTemplateKey = api.content.page.PageTemplateKey;
-    import PageTemplateSummary = api.content.page.PageTemplateSummary;
+    import PageTemplate = api.content.page.PageTemplate;
     import ContentTypeName = api.schema.content.ContentTypeName;
-    import PageTemplateSummaryLoader = api.content.page.PageTemplateSummaryLoader;
     import GetPageTemplatesByCanRenderRequest = api.content.page.GetPageTemplatesByCanRenderRequest;
     import Option = api.ui.selector.Option;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
@@ -18,14 +17,14 @@ module app.wizard.page.contextwindow.inspect {
 
         contentType:ContentTypeName;
 
-        siteTemplateKey:SiteTemplateKey;
+        siteId:ContentId;
     }
 
     export class PageTemplateSelector extends api.dom.DivEl {
 
         private contentType: ContentTypeName;
 
-        private siteTemplateKey: SiteTemplateKey;
+        private siteId: ContentId;
 
         private pageTemplateDropdown: Dropdown<PageTemplateOption>;
 
@@ -36,7 +35,7 @@ module app.wizard.page.contextwindow.inspect {
         constructor(config: PageTemplateSelectorConfig) {
             super("page-template-selector-form");
             this.contentType = config.contentType;
-            this.siteTemplateKey = config.siteTemplateKey;
+            this.siteId = config.siteId;
 
             this.pageTemplateDropdown = new Dropdown<PageTemplateOption>("pageTemplate", <DropdownConfig<PageTemplateOption>>{
                 optionDisplayValueViewer: new PageTemplateOptionViewer()
@@ -46,7 +45,7 @@ module app.wizard.page.contextwindow.inspect {
             fieldSet.add(new api.ui.form.FormItemBuilder(this.pageTemplateDropdown).setLabel("Page Template").build());
             config.form.add(fieldSet);
 
-            var pageTemplateOptions = new PageTemplateOptions(this.siteTemplateKey, this.contentType);
+            var pageTemplateOptions = new PageTemplateOptions(this.siteId, this.contentType);
             pageTemplateOptions.getOptions().
                 done((options: Option<PageTemplateOption>[]) => {
 

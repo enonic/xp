@@ -44,8 +44,6 @@ import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.content.site.ModuleConfig;
 import com.enonic.wem.api.content.site.ModuleConfigs;
 import com.enonic.wem.api.content.site.Site;
-import com.enonic.wem.api.content.site.SiteTemplateKey;
-import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
@@ -65,6 +63,7 @@ import com.enonic.wem.api.schema.content.validator.MaximumOccurrencesValidationE
 import com.enonic.wem.api.schema.content.validator.MissingRequiredValueValidationError;
 
 import static com.enonic.wem.api.content.Content.newContent;
+import static com.enonic.wem.api.content.site.Site.newSite;
 import static org.junit.Assert.*;
 
 public class ContentResourceTest
@@ -76,8 +75,6 @@ public class ContentResourceTest
 
     private ContentService contentService;
 
-    private SiteTemplateService siteTemplateService;
-
     @After
     public void after()
     {
@@ -88,13 +85,11 @@ public class ContentResourceTest
     protected Object getResourceInstance()
     {
         contentTypeService = Mockito.mock( ContentTypeService.class );
-        siteTemplateService = Mockito.mock( SiteTemplateService.class );
 
         final ContentResource resource = new ContentResource();
 
         contentService = Mockito.mock( ContentService.class );
         resource.setContentService( contentService );
-        resource.setSiteTemplateService( siteTemplateService );
         resource.setContentTypeService( contentTypeService );
 
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
@@ -229,12 +224,8 @@ public class ContentResourceTest
             module( ModuleKey.from( "mymodule" ) ).
             config( moduleConfigConfig ).
             build();
-        Site site = Site.newSite().
-            template( SiteTemplateKey.from( "mysitetemplate-1.0.0" ) ).
-            moduleConfigs( ModuleConfigs.from( moduleConfig ) ).build();
 
-        Content content = createContent( "aaa", "my_a_content", "mymodule:my_type" );
-        content = newContent( content ).site( site ).build();
+        Site content = createSite( "aaa", "my_a_content", "mymodule:my_type", ModuleConfigs.from( moduleConfig ) );
 
         ContentData contentData = content.getContentData();
         contentData.setProperty( "myProperty", Value.newString( "myValue" ) );
@@ -761,6 +752,21 @@ public class ContentResourceTest
     private Content createContent( final String id, final String name, final String contentTypeName )
     {
         return newContent().
+            id( ContentId.from( id ) ).
+            path( ContentPath.from( name ) ).
+            createdTime( Instant.parse( this.currentTime ) ).
+            owner( UserKey.from( "myStore:me" ) ).
+            displayName( "My Content" ).
+            modifiedTime( Instant.parse( this.currentTime ) ).
+            modifier( UserKey.superUser() ).
+            type( ContentTypeName.from( contentTypeName ) ).
+            build();
+    }
+
+    private Site createSite( final String id, final String name, final String contentTypeName, ModuleConfigs moduleConfigs )
+    {
+        return newSite().
+            moduleConfigs( moduleConfigs ).
             id( ContentId.from( id ) ).
             path( ContentPath.from( name ) ).
             createdTime( Instant.parse( this.currentTime ) ).

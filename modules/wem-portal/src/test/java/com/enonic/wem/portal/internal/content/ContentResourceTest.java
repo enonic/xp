@@ -26,7 +26,7 @@ public class ContentResourceTest
         throws Exception
     {
         setupContentAndSite( testContext );
-        setupTemplates();
+        setupTemplates( testContext );
 
         final MockHttpServletRequest request = newGetRequest( "/live/test/site/somepath/content" );
         final MockHttpServletResponse response = executeRequest( request );

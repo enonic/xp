@@ -1,7 +1,7 @@
 module app.wizard.page {
 
     import ContentTypeName = api.schema.content.ContentTypeName;
-    import SiteTemplateKey = api.content.site.template.SiteTemplateKey;
+    import ContentId = api.content.ContentId;
     import PageTemplate = api.content.page.PageTemplate;
     import PartDescriptor = api.content.page.part.PartDescriptor;
     import LayoutDescriptor = api.content.page.layout.LayoutDescriptor;
@@ -13,7 +13,7 @@ module app.wizard.page {
 
     export interface DefaultModelsFactoryConfig {
 
-        siteTemplateKey: SiteTemplateKey;
+        siteId: ContentId;
 
         contentType: ContentTypeName;
 
@@ -24,7 +24,7 @@ module app.wizard.page {
 
         static create(config: DefaultModelsFactoryConfig): wemQ.Promise<DefaultModels> {
 
-            var defaultPageTemplatePromise = new GetDefaultPageTemplateRequest(config.siteTemplateKey, config.contentType).sendAndParse();
+            var defaultPageTemplatePromise = new GetDefaultPageTemplateRequest(config.siteId, config.contentType).sendAndParse();
             var defaultPartDescriptorPromise = DefaultPartDescriptorResolver.resolve(config.modules);
             var defaultLayoutDescriptorPromise = DefaultLayoutDescriptorResolver.resolve(config.modules);
 

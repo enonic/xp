@@ -55,7 +55,7 @@ module app.view {
 
         public setItem(item: ViewItem<ContentSummary>) {
             this.item = item;
-            if (item.getModel().getType().equals(api.schema.content.ContentTypeName.IMAGE)) {
+            if (item.getModel().getType().isImage()) {
                 this.getEl().removeClass("no-preview page-preview").addClass("image-preview");
                 if (this.isVisible()) {
                     this.addImageSizeToUrl(item);

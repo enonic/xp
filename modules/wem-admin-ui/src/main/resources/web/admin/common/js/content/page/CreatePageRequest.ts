@@ -34,7 +34,7 @@ module api.content.page {
         getParams(): Object {
             return {
                 contentId: this.contentId.toString(),
-                template: this.template.toString(),
+                template: this.template ? this.template.toString() : null,
                 config: this.config != null ? this.config.toJson() : null,
                 regions: this.regions != null ? this.regions.toJson() : null
             };

@@ -119,7 +119,7 @@ module api.data {
             var valueType: ValueType = ValueTypes.fromName(json.type);
             var value;
             if (valueType == ValueTypes.DATA) {
-                var rootDataSet = DataFactory.createRootDataSet(<api.data.json.DataJson[]>json.set);
+                var rootDataSet = json.set ? DataFactory.createRootDataSet(<api.data.json.DataJson[]>json.set) : null;
                 value = new Value(rootDataSet, valueType);
             }
             else {

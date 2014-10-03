@@ -23,15 +23,6 @@
 
   <service ref="contentService" auto-export="interfaces"/>
 
-  <bean id="siteTemplateExporter" class="com.enonic.wem.core.content.site.SiteTemplateExporter"/>
-
-  <bean id="siteTemplateService" class="com.enonic.wem.core.content.site.SiteTemplateServiceImpl">
-    <property name="systemConfig" ref="systemConfig"/>
-    <property name="siteTemplateExporter" ref="siteTemplateExporter"/>
-  </bean>
-
-  <service ref="siteTemplateService" auto-export="interfaces"/>
-
   <bean id="siteService" class="com.enonic.wem.core.content.site.SiteServiceImpl">
     <property name="contentService" ref="contentService"/>
   </bean>
@@ -63,7 +54,8 @@
   <service ref="pageDescriptorService" auto-export="interfaces"/>
 
   <bean id="pageTemplateService" class="com.enonic.wem.core.content.page.PageTemplateServiceImpl">
-    <property name="siteTemplateService" ref="siteTemplateService"/>
+    <property name="contentService" ref="contentService"/>
+    <property name="pageService" ref="pageService"/>
   </bean>
 
   <service ref="pageTemplateService" auto-export="interfaces"/>

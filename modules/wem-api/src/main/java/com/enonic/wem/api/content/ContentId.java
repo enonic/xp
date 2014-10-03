@@ -2,10 +2,10 @@ package com.enonic.wem.api.content;
 
 import com.enonic.wem.api.support.AbstractId;
 
-public final class ContentId
+public class ContentId
     extends AbstractId
 {
-    private ContentId( final String id )
+    protected ContentId( final String id )
     {
         super( id );
     }

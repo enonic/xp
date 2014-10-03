@@ -8,6 +8,7 @@ module app.wizard.page {
     import ContentTypeName = api.schema.content.ContentTypeName;
     import ComponentPathRegionAndComponent = api.content.page.ComponentPathRegionAndComponent;
     import PageRegions = api.content.page.PageRegions;
+    import PageRegionsBuilder = api.content.page.PageRegionsBuilder;
     import RegionPath = api.content.page.RegionPath;
     import RootDataSet = api.data.RootDataSet;
 
@@ -77,7 +78,7 @@ module app.wizard.page {
 
     export interface LiveFormPanelConfig {
 
-        siteTemplate:SiteTemplate;
+        site:Content;
 
         contentType:ContentTypeName;
 
@@ -88,7 +89,7 @@ module app.wizard.page {
 
     export class LiveFormPanel extends api.ui.panel.Panel {
 
-        private siteTemplate: SiteTemplate;
+        private site: Content;
 
         private defaultModels: DefaultModels;
 
@@ -123,7 +124,7 @@ module app.wizard.page {
         constructor(config: LiveFormPanelConfig) {
             super("live-form-panel");
             this.contentWizardPanel = config.contentWizardPanel;
-            this.siteTemplate = config.siteTemplate;
+            this.site = config.site;
             this.defaultModels = config.defaultModels;
 
             this.pageLoading = false;
@@ -131,28 +132,26 @@ module app.wizard.page {
 
             this.liveEditPage = new LiveEditPageProxy(<LiveEditPageProxyConfig>{
                 liveFormPanel: this,
-                siteTemplate: this.siteTemplate
+                site: this.site
             });
 
             this.contentInspectionPanel = new ContentInspectionPanel();
             this.pageInspectionPanel = new PageInspectionPanel(<PageInspectionPanelConfig>{
-                siteTemplateKey: this.siteTemplate.getKey(),
+                siteId: this.site.getContentId(),
                 contentType: config.contentType
             });
 
             this.regionInspectionPanel = new RegionInspectionPanel();
 
             this.imageInspectionPanel = new ImageInspectionPanel(<ImageInspectionPanelConfig>{
-                siteTemplate: this.siteTemplate,
-                defaultModels: config.defaultModels
             });
 
             this.partInspectionPanel = new PartInspectionPanel(<PartInspectionPanelConfig>{
-                siteTemplate: this.siteTemplate
+                site: this.site
             });
 
             this.layoutInspectionPanel = new LayoutInspectionPanel(<LayoutInspectionPanelConfig>{
-                siteTemplate: this.siteTemplate
+                site: this.site
             });
 
             this.layoutInspectionPanel.onLayoutDescriptorChanged((event: LayoutDescriptorChangedEvent) => {
@@ -209,7 +208,6 @@ module app.wizard.page {
                 if (selectedPageTemplate) {
 
                     new api.content.page.GetPageTemplateByKeyRequest(selectedPageTemplate.getKey()).
-                        setSiteTemplateKey(this.siteTemplate.getKey()).
                         sendAndParse().
                         then((pageTemplate: PageTemplate) => {
 
@@ -262,14 +260,24 @@ module app.wizard.page {
 
             if (!this.pageSkipReload) {
 
-                if (!this.pageRegions && !this.content.isPage()) {
-                    this.setPageRegions(this.defaultModels.getPageTemplate().getRegions());
-                    this.pageConfig = this.defaultModels.getPageTemplate().getConfig();
-                }
-                else if (!this.pageRegions && this.content.isPage()) {
+                if (!this.pageRegions) {
 
-                    this.setPageRegions(content.getPage().getRegions());
-                    this.pageConfig = content.getPage().getConfig();
+                    if (this.content.isPageTemplate()) {
+                        this.setPageRegions(new PageRegionsBuilder().build());
+                        this.pageConfig = new RootDataSet();
+                    }
+                    else if (!this.content.isPage()) {
+                        if (this.defaultModels.hasPageTemplate()) {
+                            this.setPageRegions(this.defaultModels.getPageTemplate().getRegions());
+                            this.pageConfig = this.defaultModels.getPageTemplate().getConfig();
+                        }
+                    }
+                    else if (this.content.isPage()) {
+
+                        this.setPageRegions(content.getPage().getRegions());
+                        this.pageConfig = content.getPage().getConfig();
+                    }
+
                 }
             }
 
@@ -406,10 +414,6 @@ module app.wizard.page {
             } else {
                 this.frameContainer.getEl().setWidth("100%");
             }
-        }
-
-        public getFrameContainer(): Panel {
-            return this.frameContainer;
         }
 
         public getPageTemplate(): PageTemplateKey {

@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.support.AbstractImmutableEntityList;
 
 public final class PageTemplates
@@ -31,6 +32,19 @@ public final class PageTemplates
         return this.templatesByName.get( name );
     }
 
+    public PageTemplate getTemplate( final PageTemplateKey key )
+    {
+
+        for ( PageTemplate pageTemplate : this.templatesByName.values() )
+        {
+            if ( pageTemplate.getKey().equals( key ) )
+            {
+                return pageTemplate;
+            }
+        }
+        return null;
+    }
+
     public PageTemplates filter( final PageTemplateSpec spec )
     {
         return PageTemplates.from( Collections2.filter( templatesByName.values(), new Predicate<PageTemplate>()
@@ -41,6 +55,16 @@ public final class PageTemplates
                 return spec.isSatisfiedBy( pageTemplate );
             }
         } ) );
+    }
+
+    public Contents toContents()
+    {
+        final Contents.Builder builder = Contents.builder();
+        for ( final PageTemplate pageTemplate : this )
+        {
+            builder.add( pageTemplate );
+        }
+        return builder.build();
     }
 
     public static PageTemplates empty()

@@ -12,6 +12,7 @@ import javax.ws.rs.core.Response;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
@@ -22,10 +23,6 @@ import com.enonic.wem.api.content.page.PageTemplateService;
 import com.enonic.wem.api.content.site.ModuleConfig;
 import com.enonic.wem.api.content.site.ModuleConfigs;
 import com.enonic.wem.api.content.site.Site;
-import com.enonic.wem.api.content.site.SiteTemplate;
-import com.enonic.wem.api.content.site.SiteTemplateKey;
-import com.enonic.wem.api.content.site.SiteTemplateService;
-import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.workspace.Workspace;
@@ -39,7 +36,6 @@ import com.enonic.wem.portal.internal.controller.JsHttpResponseSerializer;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 
 import static com.enonic.wem.api.content.Content.newContent;
-import static com.enonic.wem.api.content.site.ModuleConfig.newModuleConfig;
 
 @Path("/{workspace}/page-template/{siteTemplateKey}/{pageTemplateKey}")
 public final class PageTemplateResource
@@ -47,15 +43,11 @@ public final class PageTemplateResource
 {
     protected JsControllerFactory controllerFactory;
 
-    protected SiteTemplateService siteTemplateService;
-
     protected PageTemplateService pageTemplateService;
 
     protected PageDescriptorService pageDescriptorService;
 
     protected PageTemplateKey pageTemplateKey;
-
-    protected SiteTemplateKey siteTemplateKey;
 
     protected Workspace workspace;
 
@@ -74,24 +66,19 @@ public final class PageTemplateResource
         this.pageTemplateKey = PageTemplateKey.from( value );
     }
 
-    @PathParam("siteTemplateKey")
-    public void setSiteTemplateKey( final String value )
-    {
-        this.siteTemplateKey = SiteTemplateKey.from( value );
-    }
-
     @GET
     public Response doHandle()
     {
-        final PageTemplate pageTemplate = this.pageTemplateService.getByKey( pageTemplateKey, siteTemplateKey );
-        final SiteTemplate siteTemplate = this.siteTemplateService.getSiteTemplate( siteTemplateKey );
-
-        return renderPageTemplate( siteTemplate, pageTemplate );
+        final PageTemplate pageTemplate = this.pageTemplateService.getByKey( pageTemplateKey, com.enonic.wem.api.context.Context.create().
+            workspace( workspace ).
+            repository( ContentConstants.CONTENT_REPO ).
+            build() );
+        return renderPageTemplate( pageTemplate );
     }
 
-    private Response renderPageTemplate( final SiteTemplate siteTemplate, final PageTemplate pageTemplate )
+    private Response renderPageTemplate( final PageTemplate pageTemplate )
     {
-        final Content content = createDummyPageContent( siteTemplate );
+        final Content content = createDummyPageContent();
         final Content siteContent = content;
         final PageDescriptor pageDescriptor = getPageDescriptor( pageTemplate );
 
@@ -101,7 +88,7 @@ public final class PageTemplateResource
         context.setPageTemplate( pageTemplate );
 
         // set resolved module (with version) from site template
-        final ModuleKey pageTemplateModule = resolvePageTemplateModule( pageDescriptor, siteTemplate );
+        final ModuleKey pageTemplateModule = resolvePageTemplateModule( pageDescriptor );
         context.setResolvedModule( pageTemplateModule.toString() );
 
         final JsHttpRequest jsRequest = new JsHttpRequest();
@@ -117,32 +104,32 @@ public final class PageTemplateResource
         return toResponse( result );
     }
 
-    private ModuleKey resolvePageTemplateModule( final PageDescriptor pageDescriptor, final SiteTemplate siteTemplate )
+    private ModuleKey resolvePageTemplateModule( final PageDescriptor pageDescriptor )
     {
         final ModuleName pageTemplateModuleName = pageDescriptor.getKey().getModuleKey().getName();
-        return siteTemplate.getModules().
+        /*return siteTemplate.getModules().
             stream().
             filter( m -> m.getName().equals( pageTemplateModuleName ) ).
-            findFirst().get();
+            findFirst().get();*/
+        // TODO
+        return null;
     }
 
-    private Content createDummyPageContent( final SiteTemplate siteTemplate )
+    private Content createDummyPageContent()
     {
         final List<ModuleConfig> moduleConfigList = Lists.newArrayList();
-        for ( ModuleKey moduleKey : siteTemplate.getModules() )
+        /*for ( ModuleKey moduleKey : siteTemplate.getModules() )
         {
             moduleConfigList.add( newModuleConfig().module( moduleKey ).config( new RootDataSet() ).build() );
-        }
+        }*/
         final ModuleConfigs moduleConfigs = ModuleConfigs.from( moduleConfigList );
         final Site site = Site.newSite().
-            template( siteTemplate.getKey() ).
             moduleConfigs( moduleConfigs ).
             build();
 
         return newContent().
             parentPath( ContentPath.ROOT ).
             name( "page" ).
-            site( site ).
             build();
     }
 

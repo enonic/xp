@@ -1,13 +1,10 @@
 module app.wizard.site {
 
-    import SiteTemplate = api.content.site.template.SiteTemplate;
     import Site = api.content.site.Site;
     import Module = api.module.Module;
     import Dropdown = api.ui.selector.dropdown.Dropdown;
     import DropdownConfig = api.ui.selector.dropdown.DropdownConfig;
     import Option = api.ui.selector.Option;
-    import SiteTemplateSummary = api.content.site.template.SiteTemplateSummary;
-    import GetAllSiteTemplatesRequest = api.content.site.template.GetAllSiteTemplatesRequest;
     import RootDataSet = api.data.RootDataSet;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
@@ -19,37 +16,19 @@ module app.wizard.site {
 
         private moduleConfigsByKey: api.content.site.ModuleConfig[];
 
-        private siteTemplate: SiteTemplate;
-
-        private siteTemplateDropdown: Dropdown<SiteTemplateSummary>;
-
-        private siteTemplateDropdownLoaded: boolean;
-
         private moduleViewsContainer: api.dom.DivEl;
 
         private moduleViews: ModuleView[] = [];
 
         private moduleViewsValid: {[moduleKey: string]: boolean} = {};
 
-        private siteTemplateChangedListeners: {(event: SiteTemplateChangedEvent) : void}[] = [];
-
-        constructor(siteTemplate: SiteTemplate) {
+        constructor() {
             super("site-wizard-step-form");
 
-            this.siteTemplate = siteTemplate;
-
-            this.siteTemplateDropdown = new Dropdown<SiteTemplateSummary>('siteTemplate', <DropdownConfig<SiteTemplateSummary>>{
-                optionDisplayValueViewer: new api.content.site.template.SiteTemplateSummaryViewer()
-            });
-            this.siteTemplateDropdown.addClass('site-template-combo');
-
-            var fieldSet = new api.ui.form.Fieldset();
-            fieldSet.addClass('site-template-field');
-            fieldSet.add(new api.ui.form.FormItemBuilder(this.siteTemplateDropdown).setLabel('Site Template').build());
-            this.appendChild(fieldSet);
-            this.loadSiteTemplateDropdown().then(()=> {
-                this.siteTemplateDropdown.onOptionSelected((event: OptionSelectedEvent<SiteTemplate>) => this.handleSiteTemplateComboBoxOptionSelected(event));
-            });
+            //var fieldSet = new api.ui.form.Fieldset();
+            //fieldSet.addClass('site-template-field');
+            //fieldSet.add(new api.ui.form.FormItemBuilder(this.siteTemplateDropdown).setLabel('Site Template').build());
+            //this.appendChild(fieldSet);
 
             this.moduleViewsContainer = new api.dom.DivEl();
             this.appendChild(this.moduleViewsContainer);
@@ -70,69 +49,6 @@ module app.wizard.site {
             return recording;
         }
 
-        private loadSiteTemplateDropdown(): wemQ.Promise<void> {
-            var deferred = wemQ.defer<void>();
-
-            new GetAllSiteTemplatesRequest().sendAndParse()
-                .then((siteTemplates: SiteTemplateSummary[]) => {
-                    var selecteSiteTemplateKey = this.siteTemplate ? this.siteTemplate.getKey().toString() : '';
-                    var selectedSiteOption: Option<SiteTemplateSummary> = null;
-                    siteTemplates.forEach((siteTemplate: SiteTemplateSummary) => {
-                        var option = {
-                            value: siteTemplate.getKey().toString(),
-                            displayValue: siteTemplate
-                        };
-                        this.siteTemplateDropdown.addOption(option);
-                        if (option.value === selecteSiteTemplateKey) {
-                            selectedSiteOption = option;
-                        }
-                    });
-
-                    if (selectedSiteOption) {
-                        this.siteTemplateDropdown.selectOption(selectedSiteOption);
-                    }
-
-                    this.siteTemplateDropdownLoaded = true;
-                    deferred.resolve(null);
-                });
-
-            return deferred.promise;
-        }
-
-        private handleSiteTemplateComboBoxOptionSelected(event: OptionSelectedEvent<SiteTemplate>): void {
-            this.removeExistingModuleViews();
-
-            this.siteTemplate = event.getOption().displayValue;
-            var moduleConfigs: api.content.site.ModuleConfig[] = [];
-            this.siteTemplate.getModules().forEach((moduleKey: api.module.ModuleKey) => {
-                var moduleConfig = new api.content.site.ModuleConfigBuilder().
-                    setModuleKey(moduleKey).
-                    setConfig(new RootDataSet()).
-                    build();
-                moduleConfigs.push(moduleConfig);
-            });
-            this.doLayout(moduleConfigs).then(() => {
-                this.notifySiteTemplateChanged(this.siteTemplate);
-            });
-        }
-
-        onSiteTemplateChanged(listener: (event: SiteTemplateChangedEvent) => void) {
-            this.siteTemplateChangedListeners.push(listener);
-        }
-
-        unSiteTemplateChanged(listener: (event: SiteTemplateChangedEvent) => void) {
-            this.siteTemplateChangedListeners = this.siteTemplateChangedListeners.filter((curr) => {
-                return curr !== listener;
-            })
-        }
-
-        private notifySiteTemplateChanged(siteTemplate: SiteTemplate) {
-            var shownEvent = new SiteTemplateChangedEvent(siteTemplate);
-            this.siteTemplateChangedListeners.forEach((listener) => {
-                listener(shownEvent);
-            });
-        }
-
         private setModuleConfigs(moduleConfigs: api.content.site.ModuleConfig[]): void {
             this.moduleConfigsByKey = [];
             for (var i = 0; i < moduleConfigs.length; i++) {
@@ -142,28 +58,26 @@ module app.wizard.site {
 
         public layout(context: api.content.form.ContentFormContext, site: Site): wemQ.Promise<void> {
             this.setFormContext(context);
-            return this.doLayout(site.getModuleConfigs());
+            return this.doLayout(site);
         }
 
-        private doLayout(moduleConfigs: api.content.site.ModuleConfig[]): wemQ.Promise<void> {
-            this.setModuleConfigs(moduleConfigs);
+        private doLayout(site: Site): wemQ.Promise<void> {
 
-            if (this.siteTemplateDropdownLoaded) {
-                var option = this.siteTemplateDropdown.getOptionByValue(this.siteTemplate.getKey().toString());
-                var selectedOption = this.siteTemplateDropdown.getSelectedOption();
-                if (!selectedOption || (selectedOption.value !== option.value)) {
-                    this.siteTemplateDropdown.selectOption(option, true);
-                }
-            }
+            this.setModuleConfigs(site.getModuleConfigs());
 
-            return this.loadModules(moduleConfigs).
+
+            /*if (this.siteTemplateDropdownLoaded) {
+             var option = this.siteTemplateDropdown.getOptionByValue(this.siteTemplate.getKey().toString());
+             var selectedOption = this.siteTemplateDropdown.getSelectedOption();
+             if (!selectedOption || (selectedOption.value !== option.value)) {
+             this.siteTemplateDropdown.selectOption(option, true);
+             }
+             }*/
+
+            return this.loadModules(site.getModuleConfigs()).
                 then((modules: Module[]): void => {
                     this.layoutModules(modules);
                 });
-        }
-
-        public getTemplateKey(): api.content.site.template.SiteTemplateKey {
-            return this.siteTemplate && this.siteTemplate.getKey();
         }
 
         public getModuleConfigs(): api.content.site.ModuleConfig[] {

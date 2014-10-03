@@ -1,8 +1,6 @@
 package com.enonic.wem.api.content.page;
 
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.rendering.Component;
 import com.enonic.wem.api.support.Changes;
@@ -21,11 +19,14 @@ public final class Page
 
     private Page( final PageProperties properties )
     {
-        Preconditions.checkNotNull( properties.template, "template is required" );
-
         this.template = properties.template;
         this.config = properties.config;
         this.regions = properties.regions;
+    }
+
+    public boolean hasTemplate()
+    {
+        return template != null;
     }
 
     public PageTemplateKey getTemplate()
@@ -63,6 +64,11 @@ public final class Page
         return new Builder();
     }
 
+    public static Builder newPage( final Page source )
+    {
+        return new Builder( source );
+    }
+
     static class PageProperties
     {
         PageTemplateKey template;
@@ -80,6 +86,8 @@ public final class Page
         {
             this.config = source.config.copy().toRootDataSet();
             this.template = source.getTemplate();
+            this.regions = source.getRegions();
+            this.config = source.getConfig();
         }
 
         public PageProperties template( PageTemplateKey value )
@@ -153,6 +161,11 @@ public final class Page
         private Builder()
         {
             this.config = RootDataSet.newDataSet().build().toRootDataSet();
+        }
+
+        private Builder( final Page page )
+        {
+            super( page );
         }
 
         public Builder regions( final PageRegions value )

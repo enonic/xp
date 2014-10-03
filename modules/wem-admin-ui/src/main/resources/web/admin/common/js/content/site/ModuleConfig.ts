@@ -68,12 +68,6 @@ module api.content.site {
             }
         }
 
-        setFromJson(moduleConfigJson: api.content.site.ModuleConfigJson): ModuleConfigBuilder {
-            this.moduleKey = api.module.ModuleKey.fromString(moduleConfigJson.moduleKey);
-            this.config = api.data.DataFactory.createRootDataSet(moduleConfigJson.config);
-            return this;
-        }
-
         setModuleKey(value: api.module.ModuleKey): ModuleConfigBuilder {
             this.moduleKey = value;
             return this;

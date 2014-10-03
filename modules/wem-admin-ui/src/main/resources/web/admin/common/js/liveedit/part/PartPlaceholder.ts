@@ -23,7 +23,7 @@ module api.liveedit.part {
             this.onClicked((event: MouseEvent) => {
                 event.stopPropagation();
             });
-            var request = new GetPartDescriptorsByModulesRequest(PageItemType.get().getSiteTemplate().getModules());
+            var request = new GetPartDescriptorsByModulesRequest(PageItemType.get().getSite().getModuleKeys());
             var loader = new PartDescriptorLoader(request);
             this.comboBox = new PartDescriptorComboBox(loader);
             loader.load();

@@ -30,7 +30,7 @@ final class GetNearestSiteCommand
     {
         final Content content = contentService.getById( this.contentId, this.context );
 
-        if ( content.hasSite() )
+        if ( content.isSite() )
         {
             return content;
         }
@@ -51,7 +51,7 @@ final class GetNearestSiteCommand
 
         final Content content = this.contentService.getByPath( contentPath, this.context );
 
-        if ( content.hasSite() )
+        if ( content.isSite() )
         {
             return content;
         }
@@ -60,21 +60,6 @@ final class GetNearestSiteCommand
             final ContentPath parentPath = content.getParentPath();
             return returnIfSiteOrTryParent( parentPath );
         }
-    }
-
-    public ContentId getContentId()
-    {
-        return contentId;
-    }
-
-    public ContentService getContentService()
-    {
-        return contentService;
-    }
-
-    public Context getContext()
-    {
-        return context;
     }
 
     public static final class Builder

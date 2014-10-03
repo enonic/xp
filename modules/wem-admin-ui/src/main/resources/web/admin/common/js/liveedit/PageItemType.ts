@@ -1,7 +1,7 @@
 module api.liveedit {
 
     import Content = api.content.Content;
-    import SiteTemplate = api.content.site.template.SiteTemplate;
+    import Site = api.content.site.Site;
 
     export class PageItemType extends ItemType {
 
@@ -13,7 +13,7 @@ module api.liveedit {
 
         private content: Content;
 
-        private siteTemplate: SiteTemplate;
+        private site: Site;
 
         constructor() {
             super("page", <ItemTypeConfigJson>{
@@ -34,16 +34,16 @@ module api.liveedit {
             this.content = content;
         }
 
-        setSiteTemplate(siteTemplate: SiteTemplate) {
-            this.siteTemplate = siteTemplate;
+        setSite(site: Site) {
+            this.site = site;
         }
 
         getContent(): Content {
             return this.content;
         }
 
-        getSiteTemplate(): SiteTemplate {
-            return this.siteTemplate;
+        getSite(): Site {
+            return this.site;
         }
 
         createView(config: CreateItemViewConfig<any,any>): PageView {

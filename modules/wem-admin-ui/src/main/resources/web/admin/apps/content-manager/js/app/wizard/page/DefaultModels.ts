@@ -1,5 +1,7 @@
 module app.wizard.page {
 
+    import Content = api.content.Content;
+    import ContentTypeName = api.schema.content.ContentTypeName;
     import PageTemplate = api.content.page.PageTemplate;
     import PartDescriptor = api.content.page.part.PartDescriptor;
     import LayoutDescriptor = api.content.page.layout.LayoutDescriptor;
@@ -22,6 +24,10 @@ module app.wizard.page {
         private layoutDescriptor: LayoutDescriptor;
 
         constructor(config: DefaultModelsConfig) {
+            if (config.pageTemplate) {
+                api.util.assert(config.pageTemplate.getType().isPageTemplate(),
+                        "given pageTemplate is not a PageTemplate: " + config.pageTemplate.getType().toString());
+            }
             this.pageTemplate = config.pageTemplate;
             this.partDescriptor = config.partDescriptor;
             this.layoutDescriptor = config.layoutDescriptor;

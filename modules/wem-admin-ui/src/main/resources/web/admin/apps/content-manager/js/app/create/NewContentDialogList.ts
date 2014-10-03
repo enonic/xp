@@ -28,14 +28,14 @@ module app.create {
         }
 
         createListItem(item: NewContentDialogListItem): api.dom.Element {
-            var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize( api.app.NamesAndIconViewSize.small ).build();
+            var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
             namesAndIconView
                 .setIconUrl(item.getIconUrl())
                 .setMainName(item.getDisplayName())
                 .setSubName(item.getName())
-                .setDisplayIconLabel(item.isSiteTemplate());
+                .setDisplayIconLabel(item.isSite());
 
-            var itemEl = new api.dom.LiEl('content-types-list-item' + (item.isSiteTemplate() ? ' site' : ''));
+            var itemEl = new api.dom.LiEl('content-types-list-item' + (item.isSite() ? ' site' : ''));
             itemEl.appendChild(namesAndIconView);
             itemEl.onClicked((event: MouseEvent) => this.notifySelected(item));
             return itemEl;

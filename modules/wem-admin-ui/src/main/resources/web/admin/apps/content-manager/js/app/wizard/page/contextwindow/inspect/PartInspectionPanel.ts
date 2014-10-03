@@ -1,6 +1,6 @@
 module app.wizard.page.contextwindow.inspect {
 
-    import SiteTemplate = api.content.site.template.SiteTemplate;
+    import Site = api.content.site.Site;
     import PartDescriptor = api.content.page.part.PartDescriptor;
     import GetPartDescriptorsByModulesRequest = api.content.page.part.GetPartDescriptorsByModulesRequest;
     import PartComponent = api.content.page.part.PartComponent;
@@ -9,7 +9,7 @@ module app.wizard.page.contextwindow.inspect {
 
     export interface PartInspectionPanelConfig {
 
-        siteTemplate: SiteTemplate;
+        site: Site;
     }
 
     export class PartInspectionPanel extends DescriptorBasedPageComponentInspectionPanel<PartComponent, PartDescriptor> {
@@ -25,7 +25,7 @@ module app.wizard.page.contextwindow.inspect {
 
             this.partDescriptors = {};
 
-            var getPartDescriptorsRequest = new GetPartDescriptorsByModulesRequest(config.siteTemplate.getModules());
+            var getPartDescriptorsRequest = new GetPartDescriptorsByModulesRequest(config.site.getModuleKeys());
             getPartDescriptorsRequest.sendAndParse().done((results: PartDescriptor[]) => {
                 results.forEach((partDescriptor: PartDescriptor) => {
                     this.partDescriptors[partDescriptor.getKey().toString()] = partDescriptor;

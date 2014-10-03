@@ -19,7 +19,6 @@
 
   <bean id="pageTemplateResourceProvider" class="com.enonic.wem.portal.internal.content.PageTemplateResourceProvider">
     <property name="controllerFactory" ref="controllerFactory"/>
-    <property name="siteTemplateService" ref="siteTemplateService"/>
     <property name="pageTemplateService" ref="pageTemplateService"/>
     <property name="pageDescriptorService" ref="pageDescriptorService"/>
   </bean>
@@ -28,7 +27,6 @@
     <property name="controllerFactory" ref="controllerFactory"/>
     <property name="pageDescriptorService" ref="pageDescriptorService"/>
     <property name="pageTemplateService" ref="pageTemplateService"/>
-    <property name="siteTemplateService" ref="siteTemplateService"/>
     <property name="contentService" ref="contentService"/>
     <property name="siteService" ref="siteService"/>
   </bean>
@@ -37,7 +35,6 @@
     <property name="controllerFactory" ref="controllerFactory"/>
     <property name="pageDescriptorService" ref="pageDescriptorService"/>
     <property name="pageTemplateService" ref="pageTemplateService"/>
-    <property name="siteTemplateService" ref="siteTemplateService"/>
     <property name="contentService" ref="contentService"/>
     <property name="siteService" ref="siteService"/>
     <property name="rendererFactory" ref="rendererFactory"/>

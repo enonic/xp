@@ -43,8 +43,8 @@ module api.content.site.template {
             super.fromSiteTemplateSummaryJson(json);
 
             this.pageTemplates = [];
-            json.pageTemplates.forEach((pageTemplateJson: api.content.page.PageTemplateJson)=> {
-                this.pageTemplates.push(new api.content.page.PageTemplateBuilder().fromJson(pageTemplateJson).build());
+            json.pageTemplates.forEach((pageTemplateJson: any)=> {
+                //this.pageTemplates.push(new api.content.page.PageTemplateBuilder().fromJson(pageTemplateJson).build());
             });
             return this;
         }

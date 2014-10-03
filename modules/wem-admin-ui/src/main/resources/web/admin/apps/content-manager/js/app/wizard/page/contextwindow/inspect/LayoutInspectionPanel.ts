@@ -1,6 +1,7 @@
 module app.wizard.page.contextwindow.inspect {
 
-    import SiteTemplate = api.content.site.template.SiteTemplate;
+    import Content = api.content.Content;
+    import Site = api.content.site.Site;
     import LayoutDescriptor = api.content.page.layout.LayoutDescriptor;
     import DescriptorKey = api.content.page.DescriptorKey;
     import LayoutComponent = api.content.page.layout.LayoutComponent;
@@ -15,8 +16,7 @@ module app.wizard.page.contextwindow.inspect {
 
     export interface LayoutInspectionPanelConfig {
 
-        siteTemplate: SiteTemplate;
-
+        site: Site;
     }
 
     export class LayoutInspectionPanel extends DescriptorBasedPageComponentInspectionPanel<LayoutComponent, LayoutDescriptor> {
@@ -42,7 +42,7 @@ module app.wizard.page.contextwindow.inspect {
 
             this.layoutDescriptors = {};
 
-            var getLayoutDescriptorsRequest = new GetLayoutDescriptorsByModulesRequest(config.siteTemplate.getModules());
+            var getLayoutDescriptorsRequest = new GetLayoutDescriptorsByModulesRequest(config.site.getModuleKeys());
             var layoutDescriptorLoader = new LayoutDescriptorLoader(getLayoutDescriptorsRequest);
             this.descriptorSelector = new LayoutDescriptorDropdown("layoutDescriptor", <LayoutDescriptorDropdownConfig>{
                 loader: layoutDescriptorLoader

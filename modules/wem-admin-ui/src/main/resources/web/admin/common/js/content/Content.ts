@@ -6,8 +6,6 @@ module api.content {
 
         private form: api.form.Form;
 
-        private siteObj: api.content.site.Site;
-
         private pageObj: api.content.page.Page;
 
         constructor(builder: ContentBuilder) {
@@ -15,7 +13,6 @@ module api.content {
             this.data = builder.data;
             this.form = builder.form;
 
-            this.siteObj = builder.siteObj;
             this.pageObj = builder.pageObj;
         }
 
@@ -25,10 +22,6 @@ module api.content {
 
         getForm(): api.form.Form {
             return this.form;
-        }
-
-        getSite(): api.content.site.Site {
-            return this.siteObj;
         }
 
         getPage(): api.content.page.Page {
@@ -59,18 +52,27 @@ module api.content {
                 return false;
             }
 
-            if (!api.ObjectHelper.equals(this.siteObj, other.siteObj)) {
-                return false;
-            }
-
             return true;
         }
 
         clone(): Content {
-            return new ContentBuilder(this).build();
+            return this.newBuilder().build();
+        }
+
+        newBuilder(): ContentBuilder {
+            return new ContentBuilder(this);
         }
 
         static fromJson(json: api.content.json.ContentJson): Content {
+
+            var type = new api.schema.content.ContentTypeName(json.type);
+
+            if (type.isSite()) {
+                return new site.SiteBuilder().fromContentJson(json).build();
+            }
+            else if (type.isPageTemplate()) {
+                return new page.PageTemplateBuilder().fromContentJson(json).build();
+            }
             return new ContentBuilder().fromContentJson(json).build();
         }
     }
@@ -81,8 +83,6 @@ module api.content {
 
         form: api.form.Form;
 
-        siteObj: api.content.site.Site;
-
         pageObj: api.content.page.Page;
 
         constructor(source?: Content) {
@@ -91,10 +91,6 @@ module api.content {
 
                 this.data = source.getContentData() ? source.getContentData().clone() : null;
                 this.form = source.getForm();
-                this.siteObj = source.getSite() ? source.getSite().clone() : null;
-                if (this.siteObj) {
-                    this.site = true;
-                }
                 this.pageObj = source.getPage() ? source.getPage().clone() : null;
                 if (this.pageObj) {
 
@@ -109,10 +105,6 @@ module api.content {
             this.data = ContentDataFactory.createContentData(json.data);
             this.form = json.form != null ? api.form.Form.fromJson(json.form) : null;
 
-            if (this.site) {
-                this.siteObj = api.content.site.Site.fromJson(json.site);
-                this.site = true;
-            }
             if (this.page) {
                 this.pageObj = new api.content.page.PageBuilder().fromJson(json.page).build();
                 this.page = true;
@@ -128,12 +120,6 @@ module api.content {
 
         setForm(value: api.form.Form): ContentBuilder {
             this.form = value;
-            return this;
-        }
-
-        setSite(value: api.content.site.Site): ContentBuilder {
-            this.siteObj = value;
-            this.site = value ? true : false;
             return this;
         }
 

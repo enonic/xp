@@ -19,8 +19,6 @@
 
   <reference id="imageFilterBuilder" interface="com.enonic.wem.core.image.filter.ImageFilterBuilder"/>
 
-  <reference id="siteTemplateService" interface="com.enonic.wem.api.content.site.SiteTemplateService"/>
-
   <reference id="pageDescriptorService" interface="com.enonic.wem.api.content.page.PageDescriptorService"/>
 
   <reference id="pageTemplateService" interface="com.enonic.wem.api.content.page.PageTemplateService"/>

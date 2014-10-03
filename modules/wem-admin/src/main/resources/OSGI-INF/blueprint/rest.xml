@@ -21,8 +21,6 @@
 
   <reference id="relationshipTypeService" interface="com.enonic.wem.api.schema.relationship.RelationshipTypeService"/>
 
-  <reference id="siteTemplateService" interface="com.enonic.wem.api.content.site.SiteTemplateService"/>
-
   <reference id="pageService" interface="com.enonic.wem.api.content.page.PageService"/>
 
   <reference id="siteService" interface="com.enonic.wem.api.content.site.SiteService"/>
@@ -82,14 +80,12 @@
     <property name="contentTypeService" ref="contentTypeService"/>
     <property name="attachmentService" ref="attachmentService"/>
     <property name="mixinService" ref="mixinService"/>
-    <property name="siteTemplateService" ref="siteTemplateService"/>
   </bean>
 
   <bean id="pageResource" class="com.enonic.wem.admin.rest.resource.content.page.PageResource">
     <property name="contentTypeService" ref="contentTypeService"/>
     <property name="attachmentService" ref="attachmentService"/>
     <property name="mixinService" ref="mixinService"/>
-    <property name="siteTemplateService" ref="siteTemplateService"/>
     <property name="pageService" ref="pageService"/>
   </bean>
 
@@ -97,7 +93,6 @@
     <property name="contentTypeService" ref="contentTypeService"/>
     <property name="attachmentService" ref="attachmentService"/>
     <property name="mixinService" ref="mixinService"/>
-    <property name="siteTemplateService" ref="siteTemplateService"/>
     <property name="siteService" ref="siteService"/>
   </bean>
 
@@ -109,20 +104,13 @@
     <property name="contentTypeService" ref="contentTypeService"/>
   </bean>
 
-  <bean id="siteTemplateResource" class="com.enonic.wem.admin.rest.resource.content.site.template.SiteTemplateResource">
-    <property name="siteTemplateService" ref="siteTemplateService"/>
-    <property name="contentTypeService" ref="contentTypeService"/>
-  </bean>
-
-  <bean id="siteTemplateIconResource" class="com.enonic.wem.admin.rest.resource.content.site.template.SiteTemplateIconResource">
-    <property name="siteTemplateService" ref="siteTemplateService"/>
-    <property name="contentTypeService" ref="contentTypeService"/>
-  </bean>
-
   <bean id="pageTemplateResource" class="com.enonic.wem.admin.rest.resource.content.page.PageTemplateResource">
     <property name="pageTemplateService" ref="pageTemplateService"/>
     <property name="contentService" ref="contentService"/>
     <property name="siteService" ref="siteService"/>
+    <property name="contentTypeService" ref="contentTypeService"/>
+    <property name="attachmentService" ref="attachmentService"/>
+    <property name="mixinService" ref="mixinService"/>
   </bean>
 
   <bean id="pageDescriptorResource" class="com.enonic.wem.admin.rest.resource.content.page.PageDescriptorResource">
@@ -165,8 +153,6 @@
         <ref component-id="siteResource"/>
         <ref component-id="mixinResource"/>
         <ref component-id="contentTypeResource"/>
-        <ref component-id="siteTemplateResource"/>
-        <ref component-id="siteTemplateIconResource"/>
         <ref component-id="pageTemplateResource"/>
         <ref component-id="pageDescriptorResource"/>
         <ref component-id="partDescriptorResource"/>

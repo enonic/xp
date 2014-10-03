@@ -252,12 +252,14 @@ module api.liveedit {
                 if (itemType) {
                     if (RegionItemType.get().equals(itemType)) {
                         var region = regions[regionIndex++];
-                        var regionView = new RegionView(new RegionViewBuilder().
-                            setParentView(this).
-                            setRegion(region).
-                            setElement(element));
-                        this.addRegion(regionView);
-                        regionView.parsePageComponentViews();
+                        if (region) {
+                            var regionView = new RegionView(new RegionViewBuilder().
+                                setParentView(this).
+                                setRegion(region).
+                                setElement(element));
+                            this.addRegion(regionView);
+                            regionView.parsePageComponentViews();
+                        }
                     }
                     else {
                         this.doParseItemViews(parentElement);

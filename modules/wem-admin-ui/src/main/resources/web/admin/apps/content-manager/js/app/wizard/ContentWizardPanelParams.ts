@@ -12,9 +12,7 @@ module app.wizard {
 
         persistedContent: api.content.Content;
 
-        site: api.content.Content;
-
-        siteTemplate: api.content.site.template.SiteTemplate;
+        site: api.content.site.Site;
 
         defaultModels: app.wizard.page.DefaultModels;
 
@@ -38,13 +36,8 @@ module app.wizard {
             return this;
         }
 
-        setSite(value: api.content.Content): ContentWizardPanelParams {
+        setSite(value: api.content.site.Site): ContentWizardPanelParams {
             this.site = value;
-            return this;
-        }
-
-        setSiteTemplate(value: api.content.site.template.SiteTemplate): ContentWizardPanelParams {
-            this.siteTemplate = value;
             return this;
         }
 
@@ -53,17 +46,9 @@ module app.wizard {
             return this;
         }
 
-        setCreateSite(value: api.content.site.template.SiteTemplate): ContentWizardPanelParams {
-            this.siteTemplate = value;
-            this.createSite = this.siteTemplate != null;
+        setCreateSite(value: boolean): ContentWizardPanelParams {
+            this.createSite = value;
             return this;
         }
-
-        setCreateSiteWithoutTemplate(): ContentWizardPanelParams {
-            this.siteTemplate = null;
-            this.createSite = true;
-            return this;
-        }
-
     }
 }

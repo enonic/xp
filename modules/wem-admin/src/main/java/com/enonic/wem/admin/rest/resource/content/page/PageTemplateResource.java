@@ -7,80 +7,108 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import com.enonic.wem.admin.json.content.page.PageTemplateJson;
-import com.enonic.wem.admin.json.content.page.PageTemplateListJson;
+import com.enonic.wem.admin.json.content.ContentJson;
+import com.enonic.wem.admin.json.content.ContentListJson;
+import com.enonic.wem.admin.rest.resource.content.ContentIconUrlResolver;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.ContentListMetaData;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentService;
+import com.enonic.wem.api.content.attachment.AttachmentService;
+import com.enonic.wem.api.content.page.GetDefaultPageTemplateParams;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplateService;
 import com.enonic.wem.api.content.page.PageTemplateSpec;
 import com.enonic.wem.api.content.page.PageTemplates;
 import com.enonic.wem.api.content.site.SiteService;
-import com.enonic.wem.api.content.site.SiteTemplateKey;
-import com.enonic.wem.api.content.site.SiteTemplateNotFoundException;
+import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
 import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeService;
+import com.enonic.wem.api.schema.mixin.MixinService;
 
 @javax.ws.rs.Path("content/page/template")
 @Produces(MediaType.APPLICATION_JSON)
 public final class PageTemplateResource
 {
-    private PageTemplateService pageTemplateService;
+    protected final static Context STAGE_CONTEXT = Context.create().
+        workspace( ContentConstants.WORKSPACE_STAGE ).
+        repository( ContentConstants.CONTENT_REPO ).
+        build();
+
+    protected PageTemplateService pageTemplateService;
 
     private ContentService contentService;
 
     private SiteService siteService;
 
+    private ContentTypeService contentTypeService;
+
+    private AttachmentService attachmentService;
+
+    private MixinReferencesToFormItemsTransformer mixinReferencesToFormItemsTransformer;
+
     @GET
-    public PageTemplateJson getByKey( @QueryParam("siteTemplateKey") final String siteTemplateKeyAsString,
-                                      @QueryParam("key") final String pageTemplateKeyAsString )
+    public ContentJson getByKey( @QueryParam("key") final String pageTemplateKeyAsString )
         throws IOException
     {
-        final SiteTemplateKey siteTemplateKey = SiteTemplateKey.from( siteTemplateKeyAsString );
         final PageTemplateKey pageTemplateKey = PageTemplateKey.from( pageTemplateKeyAsString );
-        final PageTemplate pageTemplate = pageTemplateService.getByKey( pageTemplateKey, siteTemplateKey );
-        return new PageTemplateJson( pageTemplate );
+        final PageTemplate pageTemplate = pageTemplateService.getByKey( pageTemplateKey, STAGE_CONTEXT );
+        return new ContentJson( pageTemplate, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
     }
 
     @GET
     @javax.ws.rs.Path("list")
-    public PageTemplateListJson list( @QueryParam("key") String siteTemplateKeyAsString )
+    public ContentListJson list( @QueryParam("siteId") String siteContentIdAsString )
     {
-        final SiteTemplateKey siteTemplateKey = SiteTemplateKey.from( siteTemplateKeyAsString );
-        final PageTemplates pageTemplates = pageTemplateService.getBySiteTemplate( siteTemplateKey );
 
-        return new PageTemplateListJson( pageTemplates );
+        final ContentId siteId = ContentId.from( siteContentIdAsString );
+        final PageTemplates pageTemplates = pageTemplateService.getBySite( siteId, STAGE_CONTEXT );
+
+        final ContentListMetaData metaData = ContentListMetaData.create().
+            totalHits( pageTemplates.getSize() ).
+            hits( pageTemplates.getSize() ).
+            build();
+        return new ContentListJson( pageTemplates.toContents(), metaData, newContentIconUrlResolver(),
+                                    mixinReferencesToFormItemsTransformer );
     }
 
     @GET
     @javax.ws.rs.Path("listByCanRender")
-    public PageTemplateListJson listByCanRender( @QueryParam("siteTemplateKey") String siteTemplateKeyAsString,
-                                                 @QueryParam("contentTypeName") String contentTypeName )
+    public ContentListJson listByCanRender( @QueryParam("siteId") String siteContentIdAsString,
+                                            @QueryParam("contentTypeName") String contentTypeName )
     {
-        final SiteTemplateKey siteTemplateKey = SiteTemplateKey.from( siteTemplateKeyAsString );
-        final PageTemplates pageTemplates = pageTemplateService.getBySiteTemplate( siteTemplateKey );
+        final ContentId siteId = ContentId.from( siteContentIdAsString );
+        final PageTemplates pageTemplates = pageTemplateService.getBySite( siteId, STAGE_CONTEXT );
         final PageTemplateSpec spec = PageTemplateSpec.newPageTemplateParams().canRender( ContentTypeName.from( contentTypeName ) ).build();
-
-        return new PageTemplateListJson( pageTemplates.filter( spec ) );
-
+        final PageTemplates filteredPageTemplates = pageTemplates.filter( spec );
+        final ContentListMetaData metaData = ContentListMetaData.create().
+            totalHits( filteredPageTemplates.getSize() ).
+            hits( filteredPageTemplates.getSize() ).
+            build();
+        return new ContentListJson( filteredPageTemplates.toContents(), metaData, newContentIconUrlResolver(),
+                                    mixinReferencesToFormItemsTransformer );
     }
 
     @GET
     @javax.ws.rs.Path("default")
-    public PageTemplateJson getDefault( @QueryParam("siteTemplateKey") String siteTemplateKeyAsString,
-                                        @QueryParam("contentTypeName") String contentTypeNameAsString )
+    public ContentJson getDefault( @QueryParam("siteId") String siteContentIdAsString,
+                                   @QueryParam("contentTypeName") String contentTypeNameAsString )
     {
-        final SiteTemplateKey siteTemplateKey = SiteTemplateKey.from( siteTemplateKeyAsString );
+        final ContentId siteId = ContentId.from( siteContentIdAsString );
         final ContentTypeName contentTypeName = ContentTypeName.from( contentTypeNameAsString );
-        final PageTemplate pageTemplate = pageTemplateService.getDefault( siteTemplateKey, contentTypeName );
+        final PageTemplate pageTemplate = pageTemplateService.getDefault( GetDefaultPageTemplateParams.create().
+            site( siteId ).
+            contentType( contentTypeName ).
+            build(), STAGE_CONTEXT );
         if ( pageTemplate == null )
         {
             return null;
         }
-        return new PageTemplateJson( pageTemplate );
+        return new ContentJson( pageTemplate, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
     }
 
     // TODO: Move to some kind of Portal meta resource?
@@ -91,18 +119,22 @@ public final class PageTemplateResource
         final ContentId contentId = ContentId.from( contentIdAsString );
         try
         {
-            final Content content = contentService.getById( contentId, ContentConstants.CONTEXT_STAGE );
-            final Content nearestSite = this.siteService.getNearestSite( contentId, ContentConstants.CONTEXT_STAGE );
+            final Content content = contentService.getById( contentId, STAGE_CONTEXT );
+            final Content nearestSite = this.siteService.getNearestSite( contentId, STAGE_CONTEXT );
 
             if ( nearestSite != null )
             {
-                final ContentTypeName type = content.getType();
-                final SiteTemplateKey siteTemplateKey = nearestSite.getSite().getTemplate();
-                final PageTemplates pageTemplates = pageTemplateService.getBySiteTemplate( siteTemplateKey );
+                if ( content.isPageTemplate() )
+                {
+                    return true;
+                }
+
+                final ContentId siteId = nearestSite.getId();
+                final PageTemplates pageTemplates = pageTemplateService.getBySite( siteId, STAGE_CONTEXT );
 
                 for ( final PageTemplate pageTemplate : pageTemplates )
                 {
-                    if ( pageTemplate.canRender( type ) )
+                    if ( pageTemplate.canRender( content.getType() ) )
                     {
                         return true;
                     }
@@ -110,10 +142,15 @@ public final class PageTemplateResource
             }
             return false;
         }
-        catch ( SiteTemplateNotFoundException | ContentNotFoundException e )
+        catch ( ContentNotFoundException e )
         {
             return false;
         }
+    }
+
+    private ContentIconUrlResolver newContentIconUrlResolver()
+    {
+        return new ContentIconUrlResolver( this.contentTypeService, this.attachmentService );
     }
 
     public void setPageTemplateService( final PageTemplateService pageTemplateService )
@@ -129,5 +166,20 @@ public final class PageTemplateResource
     public void setSiteService( final SiteService siteService )
     {
         this.siteService = siteService;
+    }
+
+    public void setContentTypeService( final ContentTypeService contentTypeService )
+    {
+        this.contentTypeService = contentTypeService;
+    }
+
+    public void setAttachmentService( final AttachmentService attachmentService )
+    {
+        this.attachmentService = attachmentService;
+    }
+
+    public void setMixinService( final MixinService mixinService )
+    {
+        this.mixinReferencesToFormItemsTransformer = new MixinReferencesToFormItemsTransformer( mixinService );
     }
 }

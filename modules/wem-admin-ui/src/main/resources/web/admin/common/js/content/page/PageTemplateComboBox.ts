@@ -1,28 +1,28 @@
 module api.content.page {
 
-    export class PageTemplateComboBox extends api.ui.selector.combobox.RichComboBox<PageTemplateSummary> {
+    export class PageTemplateComboBox extends api.ui.selector.combobox.RichComboBox<PageTemplate> {
 
         constructor() {
-            super(new api.ui.selector.combobox.RichComboBoxBuilder<PageTemplateSummary>().
+            super(new api.ui.selector.combobox.RichComboBoxBuilder<PageTemplate>().
                 setSelectedOptionsView(new PageTemplateSelectedOptionsView()).
                 setIdentifierMethod("getKey").
                 setMaximumOccurrences(1).
-                setOptionDisplayValueViewer(new PageTemplateSummaryViewer));
+                setOptionDisplayValueViewer(new PageTemplateViewer));
         }
     }
 
-    export class PageTemplateSelectedOptionsView extends api.ui.selector.combobox.SelectedOptionsView<PageTemplateSummary> {
+    export class PageTemplateSelectedOptionsView extends api.ui.selector.combobox.SelectedOptionsView<PageTemplate> {
 
-        createSelectedOption(option: api.ui.selector.Option<PageTemplateSummary>): api.ui.selector.combobox.SelectedOption<PageTemplateSummary> {
-            return new api.ui.selector.combobox.SelectedOption<PageTemplateSummary>(new PageTemplateSelectedOptionView(option), this.count());
+        createSelectedOption(option: api.ui.selector.Option<PageTemplate>): api.ui.selector.combobox.SelectedOption<PageTemplate> {
+            return new api.ui.selector.combobox.SelectedOption<PageTemplate>(new PageTemplateSelectedOptionView(option), this.count());
         }
     }
 
-    export class PageTemplateSelectedOptionView extends api.ui.selector.combobox.SelectedOptionView<PageTemplateSummary> {
+    export class PageTemplateSelectedOptionView extends api.ui.selector.combobox.SelectedOptionView<PageTemplate> {
 
-        private pageTemplate: PageTemplateSummary;
+        private pageTemplate: PageTemplate;
 
-        constructor(option: api.ui.selector.Option<PageTemplateSummary>) {
+        constructor(option: api.ui.selector.Option<PageTemplate>) {
             this.pageTemplate = option.displayValue;
             super(option);
             this.addClass("page-template-selected-option-view");

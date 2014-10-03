@@ -1,40 +1,33 @@
 module app.create {
 
     import ContentTypeSummary = api.schema.content.ContentTypeSummary;
-    import SiteTemplateSummary = api.content.site.template.SiteTemplateSummary;
 
     export class NewContentDialogListItem {
 
         private contentType: ContentTypeSummary;
-        private siteTemplate: SiteTemplateSummary;
 
         private name: string;
         private displayName: string;
         private iconUrl: string;
 
         static fromContentType(contentType: ContentTypeSummary): NewContentDialogListItem {
-            return new NewContentDialogListItem(contentType, null);
+            return new NewContentDialogListItem(contentType);
         }
 
-        static fromSiteTemplate(siteTemplate: SiteTemplateSummary, rootContentType: ContentTypeSummary): NewContentDialogListItem {
-            return new NewContentDialogListItem(rootContentType, siteTemplate);
-        }
-
-        constructor(contentType: ContentTypeSummary, siteTemplate: SiteTemplateSummary) {
+        constructor(contentType: ContentTypeSummary) {
             this.contentType = contentType;
-            this.siteTemplate = siteTemplate;
 
-            this.name = siteTemplate ? siteTemplate.getName() : contentType.getName();
-            this.displayName = siteTemplate ? siteTemplate.getDisplayName() : contentType.getDisplayName();
-            this.iconUrl = siteTemplate ? siteTemplate.getIconUrl() : contentType.getIconUrl();
+            this.name = contentType.getName();
+            this.displayName = contentType.getDisplayName();
+            this.iconUrl = contentType.getIconUrl();
         }
 
         getContentType(): ContentTypeSummary {
             return this.contentType;
         }
 
-        getSiteTemplate(): SiteTemplateSummary {
-            return this.siteTemplate;
+        isSite(): boolean {
+            return this.contentType.isSite();
         }
 
         getName(): string {
@@ -47,10 +40,6 @@ module app.create {
 
         getIconUrl(): string {
             return this.iconUrl;
-        }
-
-        isSiteTemplate(): boolean {
-            return !!this.siteTemplate;
         }
     }
 }

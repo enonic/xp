@@ -11,21 +11,12 @@ module app.wizard {
 
         private doneHandledContent = false;
 
-        private createSiteRequestProducer: {(content: api.content.Content) : api.content.site.CreateSiteRequest; };
-
-        private doneHandledSite = false;
-
         constructor(thisOfProducer: ContentWizardPanel) {
             super(thisOfProducer);
         }
 
         public setCreateContentRequestProducer(producer: {() : api.content.CreateContentRequest; }): PersistNewContentRoutine {
             this.createContentRequestProducer = producer;
-            return this;
-        }
-
-        public setCreateSiteRequestProducer(producer: {(content: api.content.Content) : api.content.site.CreateSiteRequest; }): PersistNewContentRoutine {
-            this.createSiteRequestProducer = producer;
             return this;
         }
 
@@ -47,16 +38,6 @@ module app.wizard {
 
                     });
             }
-            else if (!this.doneHandledSite) {
-
-                return this.doHandleCreateSite(context).
-                    then(()=> {
-
-                        this.doneHandledSite = true;
-                        return this.doExecuteNext(context);
-
-                    });
-            }
             else {
                 return wemQ(context.content);
             }
@@ -68,26 +49,7 @@ module app.wizard {
 
                 return this.createContentRequestProducer.call(this.getThisOfProducer()).
                     sendAndParse().
-                    then((content: api.content.Content):void => {
-
-                        context.content = content;
-
-                    });
-            }
-            else {
-                var deferred = wemQ.defer<void>();
-                deferred.resolve(null)
-                return deferred.promise;
-            }
-        }
-
-        private doHandleCreateSite(context: PersistedNewContentRoutineContext): wemQ.Promise<void> {
-
-            var createSiteRequest = this.createSiteRequestProducer.call(this.getThisOfProducer(), context.content);
-            if (createSiteRequest != null) {
-                return createSiteRequest.
-                    sendAndParse().
-                    then((content: api.content.Content):void => {
+                    then((content: api.content.Content): void => {
 
                         context.content = content;
 

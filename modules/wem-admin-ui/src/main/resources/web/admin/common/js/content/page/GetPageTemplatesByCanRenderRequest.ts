@@ -1,21 +1,24 @@
 module api.content.page {
 
-    export class GetPageTemplatesByCanRenderRequest extends PageTemplateResourceRequest<PageTemplateSummaryListJson, PageTemplateSummary[]> {
+    import ContentJson = api.content.json.ContentJson;
+    import ListContentResult = api.content.ListContentResult;
 
-        private siteTemplateKey: api.content.site.template.SiteTemplateKey;
+    export class GetPageTemplatesByCanRenderRequest extends PageTemplateResourceRequest<ListContentResult<ContentJson>, PageTemplate[]> {
+
+        private site: api.content.ContentId;
 
         private contentTypeName: api.schema.content.ContentTypeName;
 
-        constructor(siteTemplateKey:api.content.site.template.SiteTemplateKey, contentTypeName:api.schema.content.ContentTypeName) {
+        constructor(site: api.content.ContentId, contentTypeName: api.schema.content.ContentTypeName) {
             super();
             this.setMethod("GET");
-            this.siteTemplateKey = siteTemplateKey;
+            this.site = site;
             this.contentTypeName = contentTypeName;
         }
 
-        getParams():Object {
+        getParams(): Object {
             return {
-                siteTemplateKey: this.siteTemplateKey.toString(),
+                siteId: this.site.toString(),
                 contentTypeName: this.contentTypeName.toString()
             }
         }
@@ -24,11 +27,11 @@ module api.content.page {
             return api.rest.Path.fromParent(super.getResourcePath(), "listByCanRender");
         }
 
-        sendAndParse(): wemQ.Promise<PageTemplateSummary[]> {
+        sendAndParse(): wemQ.Promise<PageTemplate[]> {
 
-            return this.send().then((response: api.rest.JsonResponse<PageTemplateSummaryListJson>) => {
-                return response.getResult().templates.map((templateJson:PageTemplateSummaryJson) => {
-                    return this.fromJsonToPageTemplateSummary(templateJson);
+            return this.send().then((response: api.rest.JsonResponse<ListContentResult<ContentJson>>) => {
+                return response.getResult().contents.map((contentJson: ContentJson) => {
+                    return this.fromJsonToContent(contentJson);
                 });
             });
         }

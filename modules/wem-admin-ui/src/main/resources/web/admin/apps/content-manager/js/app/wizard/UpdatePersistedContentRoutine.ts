@@ -1,11 +1,11 @@
 module app.wizard {
 
     import Content = api.content.Content;
+    import Site = api.content.site.Site;
     import PageCUDRequest = api.content.page.PageCUDRequest;
     import CreatePageRequest = api.content.page.CreatePageRequest;
     import UpdatePageRequest = api.content.page.UpdatePageRequest;
     import DeletePageRequest = api.content.page.DeletePageRequest;
-    import UpdateSiteRequest = api.content.site.UpdateSiteRequest;
 
     export class UpdatePersistedContentRoutineContext {
 
@@ -20,11 +20,7 @@ module app.wizard {
 
         private updateContentRequestProducer: {(content: Content, viewedContent: Content) : api.content.UpdateContentRequest; };
 
-        private createSiteRequestProducer: {(content: api.content.Content) : api.content.site.CreateSiteRequest; };
-
         private doneHandledContent = false;
-
-        private doneHandledSite = false;
 
         private doneHandledPage = false;
 
@@ -37,11 +33,6 @@ module app.wizard {
         public setUpdateContentRequestProducer(producer: {(content: Content,
                                                            viewedContent: Content) : api.content.UpdateContentRequest; }): UpdatePersistedContentRoutine {
             this.updateContentRequestProducer = producer;
-            return this;
-        }
-
-        public setCreateSiteRequestProducer(producer: {(content: api.content.Content) : api.content.site.CreateSiteRequest; }): UpdatePersistedContentRoutine {
-            this.createSiteRequestProducer = producer;
             return this;
         }
 
@@ -63,26 +54,6 @@ module app.wizard {
                         return this.doExecuteNext(context);
 
                     });
-            }
-            else if (!this.doneHandledSite) {
-
-                if (this.isNewSite()) {
-                    return this.doHandleCreateSite(context).
-                        then(()=> {
-
-                            this.doneHandledSite = true;
-                            return this.doExecuteNext(context);
-
-                        });
-                } else {
-                    return this.doHandleUpdateSite(context).
-                        then(()=> {
-
-                            this.doneHandledSite = true;
-                            return this.doExecuteNext(context);
-
-                        });
-                }
             }
             else if (!this.doneHandledPage) {
 
@@ -109,61 +80,6 @@ module app.wizard {
                     context.content = content;
 
                 });
-        }
-
-        private doHandleUpdateSite(context: UpdatePersistedContentRoutineContext): wemQ.Promise<void> {
-
-            var updateSiteRequest = this.produceUpdateSiteRequest(context.content, this.viewedContent);
-            if (updateSiteRequest != null) {
-                return updateSiteRequest.
-                    sendAndParse().
-                    then((content: Content): void => {
-
-                        context.content = content;
-
-                    });
-            }
-            else {
-                var deferred = wemQ.defer<void>();
-                deferred.resolve(null);
-                return deferred.promise;
-            }
-        }
-
-        private doHandleCreateSite(context: PersistedNewContentRoutineContext): wemQ.Promise<void> {
-
-            var createSiteRequest = this.createSiteRequestProducer.call(this.getThisOfProducer(), context.content);
-            if (createSiteRequest != null) {
-                return createSiteRequest.
-                    sendAndParse().
-                    then((content: api.content.Content):void => {
-
-                        context.content = content;
-
-                    });
-            }
-            else {
-                var deferred = wemQ.defer<void>();
-                deferred.resolve(null)
-                return deferred.promise;
-            }
-        }
-
-        private isNewSite(): boolean {
-            return !!this.createSiteRequestProducer;
-        }
-
-        private produceUpdateSiteRequest(persistedContent: Content, viewedContent: Content): UpdateSiteRequest {
-
-            if (!viewedContent.isSite()) {
-                return null;
-            }
-
-            var viewedSite = viewedContent.getSite();
-
-            return new UpdateSiteRequest(persistedContent.getId()).
-                setSiteTemplateKey(viewedSite.getTemplateKey()).
-                setModuleConfigs(viewedSite.getModuleConfigs());
         }
 
         private doHandlePage(context: UpdatePersistedContentRoutineContext): wemQ.Promise<void> {

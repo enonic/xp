@@ -10,21 +10,17 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
+import com.enonic.wem.api.content.page.GetDefaultPageTemplateParams;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageDescriptor;
-import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageDescriptorService;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateService;
-import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.content.site.SiteService;
-import com.enonic.wem.api.content.site.SiteTemplate;
-import com.enonic.wem.api.content.site.SiteTemplateNotFoundException;
-import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.context.Context;
-import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.portal.internal.base.BaseResource;
 import com.enonic.wem.portal.internal.controller.JsControllerFactory;
 
@@ -36,8 +32,6 @@ public abstract class RenderBaseResource
     protected PageDescriptorService pageDescriptorService;
 
     protected PageTemplateService pageTemplateService;
-
-    protected SiteTemplateService siteTemplateService;
 
     protected ContentService contentService;
 
@@ -70,10 +64,7 @@ public abstract class RenderBaseResource
 
     protected final Content getSite( final Content content )
     {
-        final Content siteContent = this.siteService.getNearestSite( content.getId(), Context.create().
-            workspace( this.workspace ).
-            repository( ContentConstants.CONTENT_REPO ).
-            build() );
+        final Content siteContent = this.siteService.getNearestSite( content.getId(), resolveContext() );
 
         if ( siteContent == null )
         {
@@ -122,8 +113,7 @@ public abstract class RenderBaseResource
 
     protected final PageDescriptor getPageDescriptor( final PageTemplate pageTemplate )
     {
-        final PageDescriptorKey descriptorKey = pageTemplate.getDescriptor();
-        final PageDescriptor pageDescriptor = pageDescriptorService.getByKey( descriptorKey );
+        final PageDescriptor pageDescriptor = pageDescriptorService.getByKey( pageTemplate.getDescriptor() );
         if ( pageDescriptor == null )
         {
             throw notFound( "Page descriptor for template [%s] not found", pageTemplate.getName() );
@@ -132,9 +122,9 @@ public abstract class RenderBaseResource
         return pageDescriptor;
     }
 
-    protected PageTemplate getPageTemplate( final Page page, final Site site )
+    protected PageTemplate getPageTemplate( final Page page )
     {
-        final PageTemplate pageTemplate = pageTemplateService.getByKey( page.getTemplate(), site.getTemplate() );
+        final PageTemplate pageTemplate = pageTemplateService.getByKey( page.getTemplate(), resolveContext() );
         if ( pageTemplate == null )
         {
             throw notFound( "Page template [%s] not found", page.getTemplate() );
@@ -143,17 +133,10 @@ public abstract class RenderBaseResource
         return pageTemplate;
     }
 
-    protected final PageTemplate getDefaultPageTemplate( final ContentTypeName contentType, final Site site )
+    protected final PageTemplate getDefaultPageTemplate( final ContentTypeName contentType, final Content site )
     {
-        try
-        {
-            final SiteTemplate siteTemplate = this.siteTemplateService.getSiteTemplate( site.getTemplate() );
-            return siteTemplate.getDefaultPageTemplate( contentType );
-        }
-        catch ( SiteTemplateNotFoundException e )
-        {
-            return null;
-        }
+        return this.pageTemplateService.getDefault(
+            GetDefaultPageTemplateParams.create().site( site.getId() ).contentType( contentType ).build(), resolveContext() );
     }
 
     private Content getContentByPath( final ContentPath contentPath )
@@ -175,14 +158,19 @@ public abstract class RenderBaseResource
     {
         try
         {
-            return this.contentService.getById( contentId, Context.create().
-                workspace( this.workspace ).
-                repository( ContentConstants.CONTENT_REPO ).
-                build() );
+            return this.contentService.getById( contentId, resolveContext() );
         }
         catch ( ContentNotFoundException e )
         {
             return null;
         }
+    }
+
+    private Context resolveContext()
+    {
+        return Context.create().
+            workspace( this.workspace ).
+            repository( ContentConstants.CONTENT_REPO ).
+            build();
     }
 }

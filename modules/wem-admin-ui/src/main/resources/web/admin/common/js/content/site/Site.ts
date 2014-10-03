@@ -1,28 +1,45 @@
 module api.content.site {
 
+    import Property = api.data.Property;
+    import DataId = api.data.DataId;
     import ModuleKey = api.module.ModuleKey;
+    import ValueTypes = api.data.type.ValueTypes;
 
-    export class Site implements api.Equitable, api.Cloneable {
-
-        private templateKey: api.content.site.template.SiteTemplateKey;
-
-        private moduleConfigs: ModuleConfig[] = [];
+    export class Site extends api.content.Content implements api.Equitable, api.Cloneable {
 
         constructor(builder: SiteBuilder) {
-            this.templateKey = builder.templateKey;
-            this.moduleConfigs = builder.moduleConfigs;
+            super(builder);
         }
 
-        getTemplateKey(): api.content.site.template.SiteTemplateKey {
-            return this.templateKey;
+        isSite(): boolean {
+            return true;
+        }
+
+        getDescription(): string {
+            return this.getContentData().getProperty("description").getString();
         }
 
         getModuleConfigs(): ModuleConfig[] {
-            return this.moduleConfigs;
+
+            var moduleConfigs: ModuleConfig[] = [];
+            var modulesProperites = this.getContentData().getPropertiesByName("modules");
+            modulesProperites.forEach((moduleProperty: Property) => {
+                var moduleConfigData = moduleProperty.getData();
+                if (moduleConfigData) {
+                    var moduleKey = ModuleKey.fromString(moduleConfigData.getProperty("moduleKey").getString());
+                    var moduleConfigData = moduleConfigData.getProperty("config").getData();
+                    var moduleConfig = new ModuleConfigBuilder().
+                        setModuleKey(moduleKey).
+                        setConfig(moduleConfigData).build();
+                    moduleConfigs.push(moduleConfig);
+                }
+            });
+
+            return moduleConfigs;
         }
 
         getModuleKeys(): ModuleKey[] {
-            return this.moduleConfigs.map((config: ModuleConfig) => config.getModuleKey());
+            return this.getModuleConfigs().map((config: ModuleConfig) => config.getModuleKey());
         }
 
         equals(o: api.Equitable): boolean {
@@ -31,64 +48,27 @@ module api.content.site {
                 return false;
             }
 
-            var other = <Site>o;
-
-            if (!api.ObjectHelper.equals(this.templateKey, other.templateKey)) {
-                return false;
-            }
-
-            if (!api.ObjectHelper.arrayEquals(this.moduleConfigs, other.moduleConfigs)) {
-                return false;
-            }
-
-            return true;
+            return super.equals(o);
         }
 
         clone(): Site {
 
-            return new SiteBuilder(this).build();
+            return this.newBuilder().build();
         }
 
-        public static fromJson(siteJson: api.content.site.SiteJson): Site {
-            return new SiteBuilder().fromSiteJson(siteJson).build();
+        newBuilder(): SiteBuilder {
+            return new SiteBuilder(this);
         }
     }
 
-    export class SiteBuilder {
-
-        templateKey: api.content.site.template.SiteTemplateKey;
-
-        moduleConfigs: ModuleConfig[] = [];
+    export class SiteBuilder extends api.content.ContentBuilder {
 
         constructor(source?: Site) {
-            if (source) {
-                this.templateKey = source.getTemplateKey();
-
-                source.getModuleConfigs().forEach((config: ModuleConfig) => {
-                    this.moduleConfigs.push(config.clone());
-                });
-
-            }
+            super(source);
         }
 
-        fromSiteJson(siteJson: api.content.site.SiteJson): SiteBuilder {
-            this.templateKey = api.content.site.template.SiteTemplateKey.fromString(siteJson.templateName);
-
-            if (siteJson.moduleConfigs != null) {
-                siteJson.moduleConfigs.forEach((moduleConfigJson: api.content.site.ModuleConfigJson) => {
-                    this.moduleConfigs.push(new ModuleConfigBuilder().setFromJson(moduleConfigJson).build());
-                });
-            }
-            return this;
-        }
-
-        setTemplateKey(value: api.content.site.template.SiteTemplateKey): SiteBuilder {
-            this.templateKey = value;
-            return this;
-        }
-
-        setModuleConfigs(value: ModuleConfig[]): SiteBuilder {
-            this.moduleConfigs = value;
+        fromContentJson(contentJson: api.content.json.ContentJson): SiteBuilder {
+            super.fromContentJson(contentJson);
             return this;
         }
 

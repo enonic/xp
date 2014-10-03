@@ -1,25 +1,50 @@
 package com.enonic.wem.api.content.site;
 
 
-import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.ContentName;
+import com.enonic.wem.api.content.ContentPath;
 
 public final class CreateSiteParams
 {
-    private ContentId content;
+    private ContentPath parentContentPath;
 
-    private SiteTemplateKey template;
+    private ContentName name;
+
+    private String displayName;
+
+    private String description;
 
     private ModuleConfigs moduleConfigs;
 
-    public CreateSiteParams content( final ContentId value )
+    private boolean draft;
+
+    public CreateSiteParams parent( final ContentPath parentContentPath )
     {
-        this.content = value;
+        this.parentContentPath = parentContentPath;
         return this;
     }
 
-    public CreateSiteParams template( final SiteTemplateKey value )
+    public CreateSiteParams name( final String name )
     {
-        this.template = value;
+        this.name = ContentName.from( name );
+        return this;
+    }
+
+    public CreateSiteParams name( final ContentName name )
+    {
+        this.name = name;
+        return this;
+    }
+
+    public CreateSiteParams displayName( final String displayName )
+    {
+        this.displayName = displayName;
+        return this;
+    }
+
+    public CreateSiteParams description( final String value )
+    {
+        this.description = value;
         return this;
     }
 
@@ -29,18 +54,39 @@ public final class CreateSiteParams
         return this;
     }
 
-    public ContentId getContent()
+    public CreateSiteParams draft()
     {
-        return content;
+        this.draft = true;
+        return this;
     }
 
-    public SiteTemplateKey getTemplate()
+    public ContentPath getParentContentPath()
     {
-        return template;
+        return parentContentPath;
+    }
+
+    public ContentName getName()
+    {
+        return name;
+    }
+
+    public String getDisplayName()
+    {
+        return displayName;
+    }
+
+    public String getDescription()
+    {
+        return description;
     }
 
     public ModuleConfigs getModuleConfigs()
     {
         return moduleConfigs;
+    }
+
+    public boolean isDraft()
+    {
+        return draft;
     }
 }

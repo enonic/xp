@@ -9,7 +9,7 @@ public abstract class AbstractId
 
     protected AbstractId( final String value )
     {
-        Preconditions.checkNotNull( value, "No use of an id with a null-value" );
+        Preconditions.checkNotNull( value, "No use of an " + this.getClass().getSimpleName() + " with a null-value" );
         this.value = value;
     }
 

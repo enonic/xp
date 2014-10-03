@@ -2,13 +2,13 @@ module app.wizard.page.contextwindow.inspect {
 
     export class PageTemplateOption {
 
-        private pageTemplate: api.content.page.PageTemplateSummary;
+        private pageTemplate: api.content.page.PageTemplate;
 
-        constructor(pageTemplate: api.content.page.PageTemplateSummary) {
+        constructor(pageTemplate: api.content.page.PageTemplate) {
             this.pageTemplate = pageTemplate;
         }
 
-        getPageTemplate(): api.content.page.PageTemplateSummary {
+        getPageTemplate(): api.content.page.PageTemplate {
             return this.pageTemplate;
         }
     }

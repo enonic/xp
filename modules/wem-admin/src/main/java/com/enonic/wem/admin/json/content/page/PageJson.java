@@ -26,7 +26,7 @@ public final class PageJson
 
     public String getTemplate()
     {
-        return page.getTemplate().toString();
+        return page.hasTemplate() ? page.getTemplate().toString() : null;
     }
 
     public List<RegionJson> getRegions()

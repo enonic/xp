@@ -19,7 +19,6 @@ import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageService;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.UpdatePageParams;
-import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
@@ -37,17 +36,16 @@ public class PageResourceTest
 {
     private PageService pageService;
 
+
     @Override
     protected Object getResourceInstance()
     {
         final ContentTypeService contentTypeService = Mockito.mock( ContentTypeService.class );
-        final SiteTemplateService siteTemplateService = Mockito.mock( SiteTemplateService.class );
         this.pageService = Mockito.mock( PageService.class );
 
         final PageResource resource = new PageResource();
         resource.setPageService( pageService );
         resource.setContentTypeService( contentTypeService );
-        resource.setSiteTemplateService( siteTemplateService );
 
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
             thenReturn( createContentType( "mymodule:my_type" ) );

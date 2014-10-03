@@ -1,24 +1,19 @@
 package com.enonic.wem.api.content.page;
 
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.enonic.wem.api.content.ContentId;
 
 public final class PageTemplateKey
+    extends ContentId
 {
-    private final PageTemplateName name;
-
-    private final String refString;
-
-    private PageTemplateKey( final PageTemplateName templateName )
+    private PageTemplateKey( final String id )
     {
-        checkNotNull( templateName, "PageTemplateName name cannot be null" );
-        this.name = templateName;
-        this.refString = name.toString();
+        super( id );
     }
 
-    public PageTemplateName getTemplateName()
+    private PageTemplateKey( final ContentId id )
     {
-        return name;
+        super( id.toString() );
     }
 
     @Override
@@ -34,35 +29,16 @@ public final class PageTemplateKey
         }
 
         final PageTemplateKey that = (PageTemplateKey) o;
-        if ( !refString.equals( that.refString ) )
-        {
-            return false;
-        }
-
-        return true;
+        return super.equals( that );
     }
 
-    @Override
-    public int hashCode()
+    public static PageTemplateKey from( final String value )
     {
-        return refString.hashCode();
+        return new PageTemplateKey( value );
     }
 
-    @Override
-    public String toString()
+    public static PageTemplateKey from( final ContentId value )
     {
-        return refString;
-    }
-
-    public static PageTemplateKey from( final PageTemplateName templateName )
-    {
-        return new PageTemplateKey( templateName );
-    }
-
-    public static PageTemplateKey from( final String templateKey )
-    {
-        checkNotNull( templateKey, "templateKey cannot be null" );
-        final PageTemplateName templateName = new PageTemplateName( templateKey );
-        return new PageTemplateKey( templateName );
+        return new PageTemplateKey( value );
     }
 }

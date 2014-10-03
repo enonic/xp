@@ -8,6 +8,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.page.Page;
+import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.content.thumb.Thumbnail;
 import com.enonic.wem.api.form.Form;
@@ -20,7 +21,7 @@ import com.enonic.wem.api.support.illegaledit.IllegalEditException;
 
 import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;
 
-public final class Content
+public class Content<C>
     implements IllegalEditAware<Content>, ChangeTraceable
 {
     private final boolean draft;
@@ -51,15 +52,13 @@ public final class Content
 
     private final UserKey modifier;
 
-    private final Site site;
-
     private final Page page;
 
     private final boolean hasChildren;
 
     private final Thumbnail thumbnail;
 
-    private Content( final BaseBuilder builder )
+    protected Content( final BaseBuilder builder )
     {
         Preconditions.checkNotNull( builder.name, "name is required for a Content" );
         Preconditions.checkNotNull( builder.parentPath, "parentPath is required for a Content" );
@@ -83,7 +82,6 @@ public final class Content
         this.creator = builder.creator;
         this.modifier = builder.modifier;
         this.owner = builder.owner;
-        this.site = builder.site;
         this.page = builder.page;
         this.thumbnail = builder.thumbnail;
         this.hasChildren = builder.hasChildren;
@@ -169,14 +167,19 @@ public final class Content
         return this.hasChildren;
     }
 
-    public boolean hasSite()
+    public boolean isSite()
     {
-        return site != null;
+        return this instanceof Site;
+    }
+
+    public boolean isPageTemplate()
+    {
+        return this instanceof PageTemplate;
     }
 
     public Site getSite()
     {
-        return site;
+        return (Site) this;
     }
 
     public boolean hasPage()
@@ -252,13 +255,13 @@ public final class Content
 
         ContentName name;
 
-        ContentId contentId;
+        protected ContentId contentId;
 
         ContentTypeName type;
 
         Form form;
 
-        ContentData contentData;
+        protected ContentData contentData;
 
         String displayName;
 
@@ -272,9 +275,7 @@ public final class Content
 
         UserKey modifier;
 
-        Site site;
-
-        Page page;
+        protected Page page;
 
         Thumbnail thumbnail;
 
@@ -301,7 +302,6 @@ public final class Content
             this.creator = content.creator;
             this.modifier = content.modifier;
             this.hasChildren = content.hasChildren;
-            this.site = content.site;
             this.page = content.page;
             this.thumbnail = content.thumbnail;
         }
@@ -354,13 +354,6 @@ public final class Content
             return this;
         }
 
-        public EditBuilder site( final Site site )
-        {
-            changes.recordChange( newPossibleChange( "site" ).from( this.original.getSite() ).to( site ).build() );
-            this.site = site;
-            return this;
-        }
-
         public EditBuilder page( final Page page )
         {
             changes.recordChange( newPossibleChange( "page" ).from( this.original.getPage() ).to( page ).build() );
@@ -386,7 +379,7 @@ public final class Content
         }
     }
 
-    public static class Builder
+    public static class Builder<BUILDER extends Builder, C extends Content>
         extends BaseBuilder
     {
         public Builder()
@@ -399,30 +392,30 @@ public final class Content
             super( content );
         }
 
-        public Builder parentPath( final ContentPath path )
+        public Builder<BUILDER, C> parentPath( final ContentPath path )
         {
             this.parentPath = path;
             return this;
         }
 
-        public Builder name( final String name )
+        public Builder<BUILDER, C> name( final String name )
         {
             this.name = ContentName.from( name );
             return this;
         }
 
-        public Builder name( final ContentName name )
+        public Builder<BUILDER, C> name( final ContentName name )
         {
             this.name = name;
             return this;
         }
 
-        public Builder path( final String path )
+        public Builder<BUILDER, C> path( final String path )
         {
             return path( ContentPath.from( path ) );
         }
 
-        public Builder path( final ContentPath path )
+        public Builder<BUILDER, C> path( final ContentPath path )
         {
             this.parentPath = path.getParentPath();
             Preconditions.checkArgument( path.elementCount() > 0, "No content can be \"root content\": " + path.toString() );
@@ -430,99 +423,93 @@ public final class Content
             return this;
         }
 
-        public Builder draft( final boolean draft )
+        public Builder<BUILDER, C> draft( final boolean draft )
         {
             this.draft = draft;
             return this;
         }
 
-        public Builder type( final ContentTypeName type )
+        public Builder<BUILDER, C> type( final ContentTypeName type )
         {
             this.type = type;
             return this;
         }
 
-        public Builder form( final Form form )
+        public Builder<BUILDER, C> form( final Form form )
         {
             this.form = form;
             return this;
         }
 
-        public Builder contentData( final ContentData contentData )
+        public Builder<BUILDER, C> contentData( final ContentData contentData )
         {
             this.contentData = contentData;
             return this;
         }
 
-        public Builder displayName( final String displayName )
+        public Builder<BUILDER, C> displayName( final String displayName )
         {
             this.displayName = displayName;
             return this;
         }
 
-        public Builder owner( final UserKey owner )
+        public Builder<BUILDER, C> owner( final UserKey owner )
         {
             this.owner = owner;
             return this;
         }
 
-        public Builder creator( final UserKey modifier )
+        public Builder<BUILDER, C> creator( final UserKey modifier )
         {
             this.creator = modifier;
             return this;
         }
 
-        public Builder modifier( final UserKey modifier )
+        public Builder<BUILDER, C> modifier( final UserKey modifier )
         {
             this.modifier = modifier;
             return this;
         }
 
-        public Builder createdTime( final Instant createdTime )
+        public Builder<BUILDER, C> createdTime( final Instant createdTime )
         {
             this.createdTime = createdTime;
             return this;
         }
 
-        public Builder modifiedTime( final Instant modifiedTime )
+        public Builder<BUILDER, C> modifiedTime( final Instant modifiedTime )
         {
             this.modifiedTime = modifiedTime;
             return this;
         }
 
-        public Builder id( final ContentId contentId )
+        public Builder<BUILDER, C> id( final ContentId contentId )
         {
             this.contentId = contentId;
             return this;
         }
 
-        public Builder hasChildren( final boolean hasChildren )
+        public Builder<BUILDER, C> hasChildren( final boolean hasChildren )
         {
             this.hasChildren = hasChildren;
             return this;
         }
 
-        public Builder page( final Page page )
+        public Builder<BUILDER, C> page( final Page page )
         {
             this.page = page;
             return this;
         }
 
-        public Builder site( final Site site )
-        {
-            this.site = site;
-            return this;
-        }
-
-        public Builder thumbnail( final Thumbnail thumbnail )
+        public Builder<BUILDER, C> thumbnail( final Thumbnail thumbnail )
         {
             this.thumbnail = thumbnail;
             return this;
         }
 
-        public Content build()
+        public C build()
         {
-            return new Content( this );
+            return (C) new Content( this );
         }
     }
 }

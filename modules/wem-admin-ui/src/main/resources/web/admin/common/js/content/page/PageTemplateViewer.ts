@@ -1,6 +1,6 @@
 module api.content.page {
 
-    export class PageTemplateSummaryViewer extends api.ui.Viewer<PageTemplateSummary> {
+    export class PageTemplateViewer extends api.ui.Viewer<PageTemplate> {
 
         private namesAndIconView: api.app.NamesAndIconView;
 
@@ -11,7 +11,7 @@ module api.content.page {
             this.appendChild(this.namesAndIconView);
         }
 
-        setObject(pageTemplate: PageTemplateSummary) {
+        setObject(pageTemplate: PageTemplate) {
             super.setObject(pageTemplate);
             this.namesAndIconView.setMainName(pageTemplate.getDisplayName()).
                 setSubName(pageTemplate.getDescriptorKey().toString());

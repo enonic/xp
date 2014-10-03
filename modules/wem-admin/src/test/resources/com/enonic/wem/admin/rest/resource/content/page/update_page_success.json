@@ -12,7 +12,6 @@
     "isDraft": false,
     "isPage": true,
     "isRoot": true,
-    "isSite": false,
     "modifiedTime": null,
     "modifier": "user:system:admin",
     "name": "content-name",
@@ -31,8 +30,6 @@
         "template": "my-page"
     },
     "path": "/content-name",
-    "site": null,
-    "siteTemplateKey": null,
     "thumbnail": null,
     "type": "mymodule:content-type"
 }

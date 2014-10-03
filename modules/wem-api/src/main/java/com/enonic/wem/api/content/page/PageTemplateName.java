@@ -1,16 +1,13 @@
 package com.enonic.wem.api.content.page;
 
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.enonic.wem.api.content.ContentName;
 
 public class PageTemplateName
+    extends ContentName
 {
-    private final String name;
-
     public PageTemplateName( final String name )
     {
-        checkNotNull( name, "Template name cannot be null" );
-        this.name = name;
+        super( name );
     }
 
     @Override
@@ -26,29 +23,16 @@ public class PageTemplateName
         }
 
         final PageTemplateName that = (PageTemplateName) o;
-
-        if ( !name.equals( that.name ) )
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return name.hashCode();
-    }
-
-    @Override
-    public String toString()
-    {
-        return name;
+        return super.equals( that );
     }
 
     public static PageTemplateName from( final String name )
     {
         return new PageTemplateName( name );
+    }
+
+    public static PageTemplateName from( final ContentName name )
+    {
+        return new PageTemplateName( name.toString() );
     }
 }

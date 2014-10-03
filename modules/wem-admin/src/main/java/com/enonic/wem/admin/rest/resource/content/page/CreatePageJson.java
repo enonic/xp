@@ -25,7 +25,7 @@ public class CreatePageJson
     {
         this.createPage = new CreatePageParams().
             content( ContentId.from( contentId ) ).
-            pageTemplate( PageTemplateKey.from( pageTemplateKey ) ).
+            pageTemplate( pageTemplateKey != null ? PageTemplateKey.from( pageTemplateKey ) : null ).
             config( config != null ? new RootDataSetJson( config ).getRootDataSet() : null ).
             regions( regions != null ? new PageRegionsJson( regions ).getPageRegions() : null );
     }

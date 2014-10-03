@@ -11,10 +11,9 @@ import com.enonic.wem.admin.rest.resource.content.ContentIconUrlResolver;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.attachment.AttachmentService;
-import com.enonic.wem.api.content.site.CreateSiteParams;
 import com.enonic.wem.api.content.site.SiteService;
-import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.content.site.UpdateSiteParams;
 import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
 import com.enonic.wem.api.schema.content.ContentTypeService;
@@ -26,25 +25,15 @@ public final class SiteResource
 {
     private SiteService siteService;
 
-    private ContentTypeService contentTypeService;
+    private ContentService contentService;
 
-    private SiteTemplateService siteTemplateService;
+    private ContentTypeService contentTypeService;
 
     private AttachmentService attachmentService;
 
     private MixinReferencesToFormItemsTransformer mixinReferencesToFormItemsTransformer;
 
-    @POST
-    @Path("create")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public ContentJson create( final CreateSiteJson createSiteJson )
-    {
-        final CreateSiteParams createSiteCommand = createSiteJson.getCreateSite();
-        final Content updatedContent = this.siteService.create( createSiteCommand, ContentConstants.CONTEXT_STAGE );
-
-        return new ContentJson( updatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
-    }
-
+    // TODO: Remove, content update is used instead
     @POST
     @Path("update")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -56,17 +45,7 @@ public final class SiteResource
         return new ContentJson( updatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
     }
 
-    @POST
-    @Path("delete")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public ContentJson delete( final DeleteSiteJson deleteSiteJson )
-    {
-        final ContentId deleteSiteCommand = deleteSiteJson.getDeleteSite();
-        final Content deletedContent = this.siteService.delete( deleteSiteCommand, ContentConstants.CONTEXT_STAGE );
-
-        return new ContentJson( deletedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
-    }
-
+    // TODO: move to ContentResource service method also
     @POST
     @Path("nearest")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -86,7 +65,7 @@ public final class SiteResource
 
     private ContentIconUrlResolver newContentIconUrlResolver()
     {
-        return new ContentIconUrlResolver( this.siteTemplateService, this.contentTypeService, this.attachmentService );
+        return new ContentIconUrlResolver( this.contentTypeService, this.attachmentService );
     }
 
     public void setMixinService( final MixinService mixinService )
@@ -102,11 +81,6 @@ public final class SiteResource
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
         this.contentTypeService = contentTypeService;
-    }
-
-    public void setSiteTemplateService( final SiteTemplateService siteTemplateService )
-    {
-        this.siteTemplateService = siteTemplateService;
     }
 
     public void setAttachmentService( final AttachmentService attachmentService )

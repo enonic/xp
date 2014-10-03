@@ -9,6 +9,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageTemplate;
+import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.portal.internal.controller.JsContext;
 import com.enonic.wem.portal.internal.controller.JsController;
 import com.enonic.wem.portal.internal.controller.JsHttpRequest;
@@ -37,9 +38,13 @@ public final class ContentResource
         final Content siteContent = getSite( content );
 
         final PageTemplate pageTemplate;
-        if ( !content.hasPage() )
+        if ( content instanceof PageTemplate )
         {
-            pageTemplate = getDefaultPageTemplate( content.getType(), siteContent.getSite() );
+            pageTemplate = (PageTemplate) content;
+        }
+        else if ( !content.hasPage() )
+        {
+            pageTemplate = getDefaultPageTemplate( content.getType(), siteContent );
             if ( pageTemplate == null )
             {
                 throw notFound( "Page not found." );
@@ -48,10 +53,18 @@ public final class ContentResource
         else
         {
             final Page page = getPage( content );
-            pageTemplate = getPageTemplate( page, siteContent.getSite() );
+            pageTemplate = getPageTemplate( page );
         }
 
-        final PageDescriptor pageDescriptor = getPageDescriptor( pageTemplate );
+        final PageDescriptor pageDescriptor;
+        if ( pageTemplate.getDescriptor() != null )
+        {
+            pageDescriptor = getPageDescriptor( pageTemplate );
+        }
+        else
+        {
+            return toResponse( createRenderResultForNoPageDescriptor( content ) );
+        }
 
         final JsContext context = new JsContext();
         context.setContent( content );
@@ -75,4 +88,29 @@ public final class ContentResource
         final RenderResult result = new JsHttpResponseSerializer( context.getResponse() ).serialize();
         return toResponse( result );
     }
+
+    private RenderResult createRenderResultForNoPageDescriptor( final Content content )
+    {
+        String html = "<html>" +
+            "<head>" +
+            "<meta charset=\"utf-8\"/>" +
+            "<title>" + content.getDisplayName() + "</title>" +
+            "</head>";
+        if ( RenderingMode.EDIT.equals( this.mode ) )
+        {
+            html += "<body data-live-edit-type=\"page\"></body>";
+        }
+        else
+        {
+            html += "<body></body>";
+        }
+        html += "</html>";
+
+        return RenderResult.newRenderResult().
+            status( 200 ).
+            type( "text/html" ).
+            entity( html ).
+            build();
+    }
+
 }

@@ -1,7 +1,7 @@
 module app.wizard.page {
 
-    import SiteTemplate = api.content.site.template.SiteTemplate;
     import Content = api.content.Content;
+    import Site = api.content.site.Site;
     import ContentId = api.content.ContentId;
     import Descriptor = api.content.page.Descriptor;
     import PageRegions = api.content.page.PageRegions;
@@ -38,7 +38,7 @@ module app.wizard.page {
 
         liveFormPanel: LiveFormPanel;
 
-        siteTemplate: SiteTemplate;
+        site: Site;
     }
 
     export class LiveEditPageProxy {
@@ -49,7 +49,7 @@ module app.wizard.page {
 
         private liveFormPanel: LiveFormPanel;
 
-        private siteTemplate: SiteTemplate;
+        private site: Site;
 
         private liveEditIFrame: api.dom.IFrameEl;
 
@@ -101,7 +101,7 @@ module app.wizard.page {
 
             this.baseUrl = api.util.UriHelper.getUri("portal/edit/stage/");
             this.liveFormPanel = config.liveFormPanel;
-            this.siteTemplate = config.siteTemplate;
+            this.site = config.site;
 
             this.liveEditIFrame = new api.dom.IFrameEl("live-edit-frame");
             this.iFrameLoadDeffered = wemQ.defer<void>();
@@ -201,7 +201,7 @@ module app.wizard.page {
 
                 this.loadMask.hide();
 
-                new api.liveedit.InitializeLiveEditEvent(this.contentLoadedOnPage, this.siteTemplate,
+                new api.liveedit.InitializeLiveEditEvent(this.contentLoadedOnPage, this.site,
                     this.pageRegions).fire(this.liveEditWindow);
 
                 this.notifyLoaded();
@@ -246,7 +246,7 @@ module app.wizard.page {
                 error: (jqXHR: JQueryXHR, textStatus: string, errorThrow: string) => {
                     var responseHtml = wemjq.parseHTML(jqXHR.responseText);
                     var errorMessage = "";
-                    responseHtml.forEach((el:HTMLElement, i) => {
+                    responseHtml.forEach((el: HTMLElement, i) => {
                         if (el.tagName && el.tagName.toLowerCase() == "title") {
                             errorMessage = el.innerHTML;
                         }

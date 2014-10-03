@@ -50,7 +50,7 @@ module LiveEdit {
             api.liveedit.InitializeLiveEditEvent.on((event: api.liveedit.InitializeLiveEditEvent) => {
 
                 api.liveedit.PageItemType.get().setContent(event.getContent());
-                api.liveedit.PageItemType.get().setSiteTemplate(event.getSiteTemplate());
+                api.liveedit.PageItemType.get().setSite(event.getSite());
 
                 var body = api.dom.Body.get().loadExistingChildren();
                 //body.traverse( (el: api.dom.Element) => {

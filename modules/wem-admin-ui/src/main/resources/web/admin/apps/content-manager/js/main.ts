@@ -31,13 +31,29 @@ function startApplication() {
 
         if (parentContent != null) {
             new api.content.GetContentByIdRequest(parentContent.getContentId()).sendAndParse().
-                done((newParentContent: api.content.Content) => {
-                    newContentDialog.setParentContent(newParentContent);
-                    newContentDialog.open();
-                });
+                then((newParentContent: api.content.Content) => {
+
+                    // TODO: remove pyramid of doom
+                    if (parentContent.hasParent() && parentContent.getName().equals(api.content.ContentName.fromString("templates"))) {
+                        new api.content.GetContentByPathRequest(parentContent.getPath().getParentPath()).
+                            sendAndParse().then((grandParent: api.content.Content) => {
+
+                                newContentDialog.setParentContent(newParentContent, grandParent);
+                                newContentDialog.open();
+                            }).catch((reason: any) => {
+                                api.DefaultErrorHandler.handle(reason);
+                            }).done();
+                    }
+                    else {
+                        newContentDialog.setParentContent(newParentContent, null);
+                        newContentDialog.open();
+                    }
+                }).catch((reason: any) => {
+                    api.DefaultErrorHandler.handle(reason);
+                }).done();
         }
         else {
-            newContentDialog.setParentContent(null);
+            newContentDialog.setParentContent(null, null);
             newContentDialog.open();
         }
     });

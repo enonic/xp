@@ -1,8 +1,8 @@
 module api.content.page {
 
-    export class GetPageTemplateByKeyRequest extends PageTemplateResourceRequest<PageTemplateJson, PageTemplate> {
+    import ContentJson = api.content.json.ContentJson;
 
-        private siteTemplateKey: api.content.site.template.SiteTemplateKey;
+    export class GetPageTemplateByKeyRequest extends PageTemplateResourceRequest<ContentJson, PageTemplate> {
 
         private pageTemplateKey: PageTemplateKey;
 
@@ -12,19 +12,12 @@ module api.content.page {
             this.pageTemplateKey = pageTemplateKey;
         }
 
-        setSiteTemplateKey(value: api.content.site.template.SiteTemplateKey): GetPageTemplateByKeyRequest {
-            this.siteTemplateKey = value;
-            return this;
-        }
-
         validate() {
-            api.util.assertNotNull(this.siteTemplateKey, "siteTemplateKey cannot be null");
             api.util.assertNotNull(this.pageTemplateKey, "pageTemplateKey cannot be null");
         }
 
         getParams(): Object {
             return {
-                siteTemplateKey: this.siteTemplateKey.toString(),
                 key: this.pageTemplateKey.toString()
             };
         }
@@ -35,8 +28,8 @@ module api.content.page {
 
         sendAndParse(): wemQ.Promise<PageTemplate> {
 
-            return this.send().then((response: api.rest.JsonResponse<PageTemplateJson>) => {
-                return this.fromJsonToPageTemplate(response.getResult());
+            return this.send().then((response: api.rest.JsonResponse<ContentJson>) => {
+                return this.fromJsonToContent(response.getResult());
             });
         }
     }

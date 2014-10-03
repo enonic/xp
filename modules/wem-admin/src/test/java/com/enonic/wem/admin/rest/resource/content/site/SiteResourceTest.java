@@ -16,12 +16,10 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.site.CreateSiteParams;
 import com.enonic.wem.api.content.site.ModuleConfig;
+import com.enonic.wem.api.content.site.ModuleConfigs;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.content.site.SiteService;
-import com.enonic.wem.api.content.site.SiteTemplateKey;
-import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.content.site.UpdateSiteParams;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.Property;
@@ -49,41 +47,12 @@ public class SiteResourceTest
         DateTimeUtils.setCurrentMillisSystem();
     }
 
-    @Test(expected = ContentNotFoundException.class)
-    public void create_site_failure()
-        throws Exception
-    {
-        Content content = createSiteContent( "content-id", "content-name", "mymodule:content-type" );
-
-        Mockito.when( this.siteService.create( Mockito.isA( CreateSiteParams.class ), Mockito.isA( Context.class ) ) ).thenThrow(
-            new ContentNotFoundException( content.getId(), WORKSPACE ) );
-
-        request().path( "content/site/create" ).
-            entity( readFromFile( "create_site_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post().getAsString();
-    }
-
-    @Test
-    public void create_site_success()
-        throws Exception
-    {
-        Content content = createSiteContent( "content-id", "content-name", "mymodule:content-type" );
-
-        Mockito.when( this.siteService.create( Mockito.isA( CreateSiteParams.class ), Mockito.isA( Context.class ) ) ).thenReturn(
-            content );
-
-        String jsonString = request().path( "content/site/create" ).
-            entity( readFromFile( "create_site_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post().getAsString();
-
-        assertJson( "create_site_success.json", jsonString );
-    }
 
     @Test(expected = ContentNotFoundException.class)
     public void update_site_failure()
         throws Exception
     {
-        Content content = createSiteContent( "content-id", "content-name", "mymodule:content-type" );
+        Content content = createSite( "content-id", "content-name", "mymodule:content-type" );
 
         Mockito.when( this.siteService.update( Mockito.isA( UpdateSiteParams.class ), Mockito.isA( Context.class ) ) ).thenThrow(
             new ContentNotFoundException( content.getId(), WORKSPACE ) );
@@ -99,7 +68,7 @@ public class SiteResourceTest
     public void update_site_success()
         throws Exception
     {
-        Content content = createSiteContent( "content-id", "content-name", "mymodule:content-type" );
+        Content content = createSite( "content-id", "content-name", "mymodule:content-type" );
 
         Mockito.when( this.siteService.update( Mockito.isA( UpdateSiteParams.class ), Mockito.isA( Context.class ) ) ).thenReturn(
             content );
@@ -111,41 +80,11 @@ public class SiteResourceTest
         assertJson( "update_site_success.json", jsonString );
     }
 
-    @Test(expected = ContentNotFoundException.class)
-    public void delete_site_failure()
-        throws Exception
-    {
-        Content content = createContent( "content-id", "content-name", "mymodule:content-type" );
-
-        Mockito.when( this.siteService.delete( Mockito.isA( ContentId.class ), Mockito.isA( Context.class ) ) ).thenThrow(
-            new ContentNotFoundException( content.getId(), WORKSPACE ) );
-
-        request().path( "content/site/delete" ).
-            entity( readFromFile( "delete_site_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post().getAsString();
-    }
-
-    @Test
-    public void delete_site_success()
-        throws Exception
-    {
-        Content content = createContent( "content-id", "content-name", "mymodule:content-type" );
-
-        Mockito.when( this.siteService.delete( Mockito.isA( ContentId.class ), Mockito.isA( Context.class ) ) ).thenReturn( content );
-
-        String jsonString = request().path( "content/site/delete" ).
-            entity( readFromFile( "delete_site_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post().getAsString();
-
-        assertJson( "delete_site_success.json", jsonString );
-    }
-
     @Override
     protected Object getResourceInstance()
     {
         siteService = Mockito.mock( SiteService.class );
         final ContentTypeService contentTypeService = Mockito.mock( ContentTypeService.class );
-        final SiteTemplateService siteTemplateService = Mockito.mock( SiteTemplateService.class );
 
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
             thenReturn( createContentType( "mymodule:content-type" ) );
@@ -153,12 +92,11 @@ public class SiteResourceTest
         final SiteResource resource = new SiteResource();
         resource.setSiteService( this.siteService );
         resource.setContentTypeService( contentTypeService );
-        resource.setSiteTemplateService( siteTemplateService );
 
         return resource;
     }
 
-    private Content createSiteContent( final String id, final String name, final String contentTypeName )
+    private Site createSite( final String id, final String name, final String contentTypeName )
     {
         RootDataSet rootDataSet = new RootDataSet();
 
@@ -170,12 +108,8 @@ public class SiteResourceTest
             config( rootDataSet ).
             build();
 
-        Site site = Site.newSite().
-            template( SiteTemplateKey.from( "template-1.0.0" ) ).
-            addModuleConfig( moduleConfig ).
-            build();
-
-        return Content.newContent().
+        return Site.newSite().
+            moduleConfigs( ModuleConfigs.from( moduleConfig ) ).
             id( ContentId.from( id ) ).
             path( ContentPath.from( name ) ).
             createdTime( Instant.parse( this.currentTime ) ).
@@ -184,27 +118,6 @@ public class SiteResourceTest
             modifiedTime( Instant.parse( this.currentTime ) ).
             modifier( UserKey.superUser() ).
             type( ContentTypeName.from( contentTypeName ) ).
-            site( site ).
-            build();
-    }
-
-    private Content createContent( final String id, final String name, final String contentTypeName )
-    {
-        RootDataSet rootDataSet = new RootDataSet();
-
-        Property dataSet = new Property( "property1", Value.newString( "value1" ) );
-        rootDataSet.add( dataSet );
-
-        return Content.newContent().
-            id( ContentId.from( id ) ).
-            path( ContentPath.from( name ) ).
-            createdTime( Instant.parse( this.currentTime ) ).
-            owner( UserKey.from( "myStore:me" ) ).
-            displayName( "My Content" ).
-            modifiedTime( Instant.parse( this.currentTime ) ).
-            modifier( UserKey.superUser() ).
-            type( ContentTypeName.from( contentTypeName ) ).
-            site( null ).
             build();
     }
 

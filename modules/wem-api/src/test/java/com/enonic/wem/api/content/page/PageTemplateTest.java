@@ -2,6 +2,7 @@ package com.enonic.wem.api.content.page;
 
 import org.junit.Test;
 
+import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.module.ModuleKey;
@@ -19,15 +20,18 @@ public class PageTemplateTest
         RootDataSet pageTemplateConfig = new RootDataSet();
         pageTemplateConfig.addProperty( "pause", Value.newLong( 10000 ) );
 
-        PageTemplate pageTemplate = PageTemplate.newPageTemplate().
-            key( PageTemplateKey.from( "main-page" ) ).
-            displayName( "Main page template" ).
-            config( pageTemplateConfig ).
+        final PageTemplate.Builder builder = PageTemplate.newPageTemplate().
+            key( PageTemplateKey.from( "abcdefg" ) ).
             canRender( ContentTypeNames.from( "mainmodule:article", "mainmodule:banner" ) ).
             descriptor( PageDescriptorKey.from( ModuleKey.from( "mainmodule" ), new ComponentDescriptorName( "landing-page" ) ) ).
-            build();
+            config( pageTemplateConfig );
+        builder.displayName( "Main page template" );
+        builder.name( "main-page-template" );
+        builder.parentPath( ContentPath.ROOT );
+        PageTemplate pageTemplate = builder.build();
 
-        assertEquals( "main-page", pageTemplate.getName().toString() );
+        assertEquals( "main-page-template", pageTemplate.getName().toString() );
+        assertEquals( "Main page template", pageTemplate.getDisplayName() );
         assertTrue( pageTemplate.getCanRender().contains( ContentTypeName.from( "mainmodule:article" ) ) );
     }
 }

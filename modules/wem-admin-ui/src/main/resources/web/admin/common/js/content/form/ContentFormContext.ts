@@ -2,7 +2,7 @@ module api.content.form {
 
     export class ContentFormContext extends api.form.FormContext {
 
-        private site: api.content.Content;
+        private site: api.content.site.Site;
 
         private parentContent: api.content.Content;
 
@@ -18,7 +18,7 @@ module api.content.form {
             this.attachments = builder.attachments;
         }
 
-        getSite(): api.content.Content {
+        getSite(): api.content.site.Site {
             return this.site;
         }
 
@@ -60,7 +60,7 @@ module api.content.form {
 
     export class ContentFormContextBuilder extends api.form.FormContextBuilder {
 
-        site: api.content.Content;
+        site: api.content.site.Site;
 
         parentContent: api.content.Content;
 
@@ -68,7 +68,7 @@ module api.content.form {
 
         attachments: api.content.attachment.Attachments;
 
-        public setSite(value: api.content.Content): ContentFormContextBuilder {
+        public setSite(value: api.content.site.Site): ContentFormContextBuilder {
             this.site = value;
             return this;
         }

@@ -1,8 +1,5 @@
 package com.enonic.wem.admin.rest.resource.content;
 
-import java.util.HashMap;
-
-import com.enonic.wem.admin.rest.resource.content.site.template.SiteTemplateIconUrlResolver;
 import com.enonic.wem.admin.rest.resource.schema.content.ContentTypeIconResolver;
 import com.enonic.wem.admin.rest.resource.schema.content.ContentTypeIconUrlResolver;
 import com.enonic.wem.api.content.Content;
@@ -11,9 +8,6 @@ import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.attachment.GetAttachmentParameters;
 import com.enonic.wem.api.content.data.ContentData;
-import com.enonic.wem.api.content.site.SiteTemplate;
-import com.enonic.wem.api.content.site.SiteTemplateKey;
-import com.enonic.wem.api.content.site.SiteTemplateService;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -33,18 +27,12 @@ public final class ContentIconUrlResolver
 
     private AttachmentService attachmentService;
 
-    private SiteTemplateService siteTemplateService;
-
     private ContentTypeIconResolver contentTypeIconResolver;
 
     private ContentTypeIconUrlResolver contentTypeIconUrlResolver;
 
-    private HashMap<SiteTemplateKey, SiteTemplate> siteTemplatesByKey = new HashMap<>();
-
-    public ContentIconUrlResolver( final SiteTemplateService siteTemplateService, final ContentTypeService contentTypeService,
-                                   final AttachmentService attachmentService )
+    public ContentIconUrlResolver( final ContentTypeService contentTypeService, final AttachmentService attachmentService )
     {
-        this.siteTemplateService = siteTemplateService;
         this.contentTypeService = contentTypeService;
         this.contentTypeIconResolver = new ContentTypeIconResolver( contentTypeService );
         this.contentTypeIconUrlResolver = new ContentTypeIconUrlResolver( this.contentTypeIconResolver );
@@ -84,29 +72,6 @@ public final class ContentIconUrlResolver
                     this.contentTypeService.getByName( GetContentTypeParams.from( ContentTypeName.imageMedia() ) ) );
             }
         }
-        else if ( content.hasSite() )
-        {
-            final SiteTemplate siteTemplate = getSiteTemplate( content.getSite().getTemplate() );
-            if ( siteTemplate != null && siteTemplate.getIcon() != null )
-            {
-                return ServletRequestUrlHelper.createUri(
-                    new SiteTemplateIconUrlResolver( contentTypeIconUrlResolver ).resolve( siteTemplate ) );
-            }
-        }
         return this.contentTypeIconUrlResolver.resolve( content.getType() );
-    }
-
-    private SiteTemplate getSiteTemplate( final SiteTemplateKey key )
-    {
-        SiteTemplate siteTemplate = this.siteTemplatesByKey.get( key );
-        if ( siteTemplate == null )
-        {
-            siteTemplate = siteTemplateService.getSiteTemplate( key );
-            if ( siteTemplate != null )
-            {
-                siteTemplatesByKey.put( siteTemplate.getKey(), siteTemplate );
-            }
-        }
-        return siteTemplate;
     }
 }

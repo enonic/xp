@@ -29,7 +29,7 @@ module app.create {
             this.contentFacet.onClicked((event: MouseEvent) => this.setActiveFacet(NewContentDialogFacets.CONTENT));
             this.sitesFacet.onClicked((event: MouseEvent) => this.setActiveFacet(NewContentDialogFacets.SITES));
 
-            this.updateLabels(0, 0);
+            this.updateLabels(0);
             this.setActiveFacet(NewContentDialogFacets.ALL);
         }
 
@@ -64,10 +64,10 @@ module app.create {
             }
         }
 
-        updateLabels(contentTypesCount: number, siteTemplatesCount: number) {
+        updateLabels(contentTypesCount: number) {
             this.contentFacet.setHtml("Content (" + contentTypesCount + ")");
-            this.sitesFacet.setHtml("Sites (" + siteTemplatesCount + ")");
-            this.allFacet.setHtml("All (" + (siteTemplatesCount + contentTypesCount) + ")");
+            this.sitesFacet.setHtml("Sites (" + 1 + ")");
+            this.allFacet.setHtml("All (" + (1 + contentTypesCount) + ")");
         }
 
         onValueChanged(listener: (event: ValueChangedEvent)=>void) {
