@@ -108,11 +108,11 @@ module api.ui.time {
             this.prevMinute.appendChild(new api.dom.SpanEl());
             minuteContainer.appendChild(this.prevMinute);
 
-            this.selectedHour = builder.getHours() || 0;
-            this.selectedMinute = builder.getMinutes() || 0;
+            this.selectedHour = builder.getHours() || null;
+            this.selectedMinute = builder.getMinutes() || null;
 
-            this.hour.setHtml(this.padNumber(this.selectedHour, 2));
-            this.minute.setHtml(this.padNumber(this.selectedMinute, 2));
+            this.hour.setHtml(this.padNumber(this.selectedHour || 0, 2));
+            this.minute.setHtml(this.padNumber(this.selectedMinute || 0, 2));
 
             if (builder.isCloseOnOutsideClick()) {
                 api.dom.Body.get().onClicked((e: MouseEvent) => this.outsideClickListener(e));
@@ -121,10 +121,10 @@ module api.ui.time {
         }
 
         getSelectedTime(): {hour: number; minute: number} {
-            return {
+            return this.selectedHour != null && this.selectedMinute != null ? {
                 hour: this.selectedHour,
                 minute: this.selectedMinute
-            }
+            } : null;
         }
 
         onSelectedTimeChanged(listener: (hours: number, minutes: number) => void) {
@@ -164,26 +164,19 @@ module api.ui.time {
             } else if (this.selectedHour > 23) {
                 this.selectedHour -= 24;
             }
-
-            this.hour.setHtml(this.padNumber(this.selectedHour, 2));
-            if (!silent) {
-                this.notifyTimeChanged(this.selectedHour, this.selectedMinute);
-            }
+            this.setSelectedTime(this.selectedHour, this.selectedMinute || 0, silent);
         }
 
         private addMinute(add: number, silent?: boolean) {
             this.selectedMinute += add;
             if (this.selectedMinute < 0) {
-                this.selectedMinute += 60
+                this.selectedMinute += 60;
                 this.addHour(-1, true);
             } else if (this.selectedMinute > 59) {
                 this.selectedMinute -= 60;
                 this.addHour(1, true);
             }
-            this.minute.setHtml(this.padNumber(this.selectedMinute, 2));
-            if (!silent) {
-                this.notifyTimeChanged(this.selectedHour, this.selectedMinute);
-            }
+            this.setSelectedTime(this.selectedHour || 0, this.selectedMinute, silent);
         }
 
         private notifyTimeChanged(hours: number, minutes: number) {
@@ -199,11 +192,15 @@ module api.ui.time {
         }
 
         setSelectedTime(hours: number, minutes: number, silent?: boolean) {
-            this.selectedHour = Math.min(23, Math.max(0, hours));
-            this.selectedMinute = Math.min(59, Math.max(0, minutes));
-
-            this.hour.setHtml(this.padNumber(this.selectedHour, 2));
-            this.minute.setHtml(this.padNumber(this.selectedMinute, 2));
+            if (hours == null || hours < 0 || hours > 23 || minutes == null || minutes < 0 || minutes > 59) {
+                this.selectedHour = null;
+                this.selectedMinute = null;
+            } else {
+                this.selectedHour = hours;
+                this.selectedMinute = minutes;
+            }
+            this.hour.setHtml(this.padNumber(this.selectedHour || 0, 2));
+            this.minute.setHtml(this.padNumber(this.selectedMinute || 0, 2));
             if (!silent) {
                 this.notifyTimeChanged(this.selectedHour, this.selectedMinute);
             }

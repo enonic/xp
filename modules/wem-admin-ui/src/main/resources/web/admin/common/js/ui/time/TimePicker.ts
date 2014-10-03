@@ -48,6 +48,33 @@ module api.ui.time {
                 this.popup.show();
             });
 
+            this.input.onKeyUp((event: KeyboardEvent) => {
+                if (api.ui.KeyHelper.isNumber(event) ||
+                    api.ui.KeyHelper.isDash(event) ||
+                    api.ui.KeyHelper.isBackspace(event) ||
+                    api.ui.KeyHelper.isDel(event)) {
+
+                    var typedTime = this.input.getValue();
+                    if (api.util.StringHelper.isEmpty(typedTime)) {
+                        this.popup.setSelectedTime(null, null);
+                        if (this.popup.isVisible()) {
+                            this.popup.hide();
+                        }
+                    } else {
+                        var parsedTime = typedTime.match(/^[0-2][0-9]:[0-5][0-9]$/);
+                        if (parsedTime && parsedTime.length == 1) {
+                            var splitTime = parsedTime[0].split(':');
+                            this.popup.setSelectedTime(parseInt(splitTime[0]), parseInt(splitTime[1]));
+                            if (!this.popup.isVisible()) {
+                                this.popup.show();
+                            }
+                        } else {
+                            this.popup.setSelectedTime(null, null);
+                        }
+                    }
+                }
+            });
+
             var wrapper = new api.dom.DivEl('wrapper');
             wrapper.appendChild(this.input);
 
@@ -79,8 +106,10 @@ module api.ui.time {
                 this.input.setValue(this.formatTime(builder.hours, builder.minutes));
             }
 
-            this.onSelectedTimeChanged((hours: number, minutes: number) => {
-                this.input.setValue(this.formatTime(hours, minutes));
+            this.popup.onSelectedTimeChanged((hours: number, minutes: number) => {
+                if (hours != null && minutes != null) {
+                    this.input.setValue(this.formatTime(hours, minutes));
+                }
             });
 
         }

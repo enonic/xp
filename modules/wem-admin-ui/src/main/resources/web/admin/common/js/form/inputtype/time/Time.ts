@@ -32,21 +32,18 @@ module api.content.form.inputtype.time {
         }
 
         onOccurrenceValueChanged(element: api.dom.Element, listener: (event: api.form.inputtype.support.ValueChangedEvent) => void) {
-            var localTimeEl = <api.ui.time.LocalTime>element;
+            var localTimeEl = <api.ui.time.LocalTime> element;
             localTimeEl.onTimeChanged((hours: number, minutes: number) => {
-                var newTime: string = hours + ":" + minutes;
-                var utcTime = api.util.DateHelper.parseUTCTime(newTime);
+                var utcTime = api.util.DateHelper.parseUTCTime(hours + ":" + minutes);
                 var changedValue: api.data.Value = ValueTypes.LOCAL_TIME.newValue(utcTime);
                 listener(new api.form.inputtype.support.ValueChangedEvent(changedValue));
-
-
             });
         }
 
         getValue(occurrence: api.dom.Element): api.data.Value {
-            var localTimeEl: api.ui.time.LocalTime = <api.ui.time.LocalTime>occurrence;
+            var localTimeEl: api.ui.time.LocalTime = <api.ui.time.LocalTime> occurrence;
             var selectedTime = localTimeEl.getSelectedTime();
-            var time: string = selectedTime.hour + ":" + selectedTime.minute;
+            var time: string = selectedTime ? selectedTime.hour + ":" + selectedTime.minute : null;
             return ValueTypes.LOCAL_TIME.newValue(time);
         }
 
