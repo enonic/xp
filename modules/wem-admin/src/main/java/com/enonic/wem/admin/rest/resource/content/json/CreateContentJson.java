@@ -1,13 +1,19 @@
 package com.enonic.wem.admin.rest.resource.content.json;
 
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import com.enonic.wem.admin.json.content.MetadataJson;
 import com.enonic.wem.admin.json.content.attachment.AttachmentJson;
+import com.enonic.wem.api.content.Metadata;
+import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.form.FormJson;
 import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentPath;
@@ -27,7 +33,8 @@ public class CreateContentJson
                        @JsonProperty("displayName") final String displayName, @JsonProperty("parent") final String parent,
                        @JsonProperty("embed") final boolean embed, @JsonProperty("contentType") final String contentType,
                        @JsonProperty("form") final FormJson formJson, @JsonProperty("contentData") final List<DataJson> dataJsonList,
-                       @JsonProperty("attachments") final List<AttachmentJson> attachmentJsonList )
+                       @JsonProperty("attachments") final List<AttachmentJson> attachmentJsonList,
+                       @JsonProperty("metadata") final List<MetadataJson> metadataJsonList)
     {
 
         this.createContent = new CreateContentParams();
@@ -45,6 +52,13 @@ public class CreateContentJson
             contentData.add( dataJson.getData() );
         }
         this.createContent.contentData( contentData );
+
+        final List<Metadata> metadataList = new ArrayList<>();
+        for ( MetadataJson metadataJson : metadataJsonList )
+        {
+            metadataList.add( metadataJson.getMetadata() );
+        }
+        this.createContent.metadata( metadataList );
 
         for ( AttachmentJson attachmentJson : attachmentJsonList )
         {

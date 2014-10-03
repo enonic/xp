@@ -1,6 +1,8 @@
 package com.enonic.wem.api.content;
 
 
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Preconditions;
@@ -11,6 +13,7 @@ import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
@@ -19,6 +22,8 @@ public final class CreateContentParams
     private Form form;
 
     private ContentData contentData;
+
+    private List<Metadata> metadata;
 
     private ContentTypeName contentType;
 
@@ -63,6 +68,12 @@ public final class CreateContentParams
     public CreateContentParams contentData( final ContentData value )
     {
         this.contentData = value;
+        return this;
+    }
+
+    public CreateContentParams metadata( final List<Metadata> metadata )
+    {
+        this.metadata = metadata;
         return this;
     }
 
@@ -141,6 +152,11 @@ public final class CreateContentParams
     public ContentData getContentData()
     {
         return contentData;
+    }
+
+    public List<Metadata> getMetadata()
+    {
+        return metadata;
     }
 
     public UserKey getOwner()
