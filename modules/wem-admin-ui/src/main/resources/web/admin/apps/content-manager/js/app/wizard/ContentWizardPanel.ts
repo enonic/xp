@@ -434,7 +434,8 @@ module app.wizard {
                 setContentType(this.contentType.getContentTypeName()).
                 setDisplayName(this.contentWizardHeader.getDisplayName()).
                 setForm(this.contentType.getForm()).
-                setContentData(contentData);
+                setContentData(contentData).
+                setMetadata([]);
 
             return createRequest;
         }

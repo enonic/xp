@@ -4,6 +4,8 @@ module api.content {
 
         private data: api.content.ContentData;
 
+        private metadata: Metadata[] = [];
+
         private form: api.form.Form;
 
         private pageObj: api.content.page.Page;
@@ -18,6 +20,14 @@ module api.content {
 
         getContentData(): ContentData {
             return this.data;
+        }
+
+        getMetadata(name: api.schema.metadata.MetadataSchemaName): Metadata {
+            return this.metadata.filter((item: Metadata) => item.getName().equals(name))[0];
+        }
+
+        getAllMetadata(): Metadata[] {
+            return this.metadata;
         }
 
         getForm(): api.form.Form {
@@ -83,6 +93,8 @@ module api.content {
 
         form: api.form.Form;
 
+        metadata: Metadata[];
+
         pageObj: api.content.page.Page;
 
         constructor(source?: Content) {
@@ -103,6 +115,7 @@ module api.content {
             super.fromContentSummaryJson(json);
 
             this.data = ContentDataFactory.createContentData(json.data);
+            this.metadata = json.metadata.map(Metadata.fromJson);
             this.form = json.form != null ? api.form.Form.fromJson(json.form) : null;
 
             if (this.page) {
