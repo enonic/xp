@@ -193,4 +193,16 @@ public class ContentNodeTranslatorTest
 
         Assert.assertNotNull( content.getThumbnail() );
     }
+
+    @Test
+    public void test_create_node_with_empty_name()
+    {
+        final CreateContentParams mycontent = new CreateContentParams().
+            parent( ContentPath.ROOT ).
+            displayName( "test Name" );
+        final CreateNodeParams createNodeParams = translator.toCreateNode( mycontent );
+        Assert.assertNotNull( createNodeParams );
+        Assert.assertEquals( createNodeParams.getName(), "test-name" );
+
+    }
 }

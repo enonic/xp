@@ -5,6 +5,8 @@ import org.junit.Test;
 
 import com.enonic.wem.api.support.AbstractEqualsTest;
 
+import static org.junit.Assert.*;
+
 public class NameTest
 {
     @Test
@@ -37,5 +39,29 @@ public class NameTest
             }
         };
         equalsTest.assertEqualsAndHashCodeContract();
+    }
+
+    @Test
+    public void test_ensure_valid_name()
+    {
+        final String testName = " test Name ";
+        final String testResult = "test-name";
+        assertEquals( Name.ensureValidName( testName ), testResult );
+    }
+
+    @Test
+    public void test_ensure_valid_name_empty()
+    {
+        final String testName = "";
+        final String testResult = "";
+        assertEquals( Name.ensureValidName( testName ), testResult );
+    }
+
+    @Test
+    public void test_ensure_valid_name_null()
+    {
+        final String testName = null;
+        final String testResult = "";
+        assertEquals( Name.ensureValidName( testName ), testResult );
     }
 }
