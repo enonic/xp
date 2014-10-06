@@ -47,7 +47,7 @@ public class NodeIndexDocumentFactoryTest
 
         try
         {
-            NodeIndexDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY );
+            NodeIndexDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY.getId() );
         }
         catch ( NullPointerException e )
         {
@@ -65,7 +65,7 @@ public class NodeIndexDocumentFactoryTest
             id( EntityId.from( "abc" ) ).
             build();
 
-        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY );
+        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY.getId() );
 
         assertNotNull( indexDocuments );
     }
@@ -78,7 +78,7 @@ public class NodeIndexDocumentFactoryTest
             id( EntityId.from( "abc" ) ).
             build();
 
-        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY );
+        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY.getId() );
 
         assertNotNull( indexDocuments );
         assertNotNull( getIndexDocumentOfType( indexDocuments, "test" ) );
@@ -98,7 +98,7 @@ public class NodeIndexDocumentFactoryTest
                 build() ).
             build();
 
-        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY );
+        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY.getId() );
 
         final IndexDocument indexDocument = getIndexDocumentOfType( indexDocuments, "test" );
 
@@ -127,12 +127,12 @@ public class NodeIndexDocumentFactoryTest
                 build() ).
             build();
 
-        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY );
+        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY.getId() );
 
         final IndexDocument indexDocument = getIndexDocumentOfType( indexDocuments, "test" );
 
         assertEquals( myAnalyzerName, indexDocument.getAnalyzer() );
-        assertEquals( IndexNameResolver.resolveSearchIndexName( TEST_REPOSITORY ), indexDocument.getIndexName() );
+        assertEquals( IndexNameResolver.resolveSearchIndexName( TEST_REPOSITORY.getId() ), indexDocument.getIndexName() );
         assertEquals( "test", indexDocument.getIndexTypeName() );
 
         final AbstractIndexDocumentItem createdTimeItem = getItemWithName( indexDocument, CREATED_TIME_PROPERTY, IndexValueType.DATETIME );
@@ -161,7 +161,7 @@ public class NodeIndexDocumentFactoryTest
             rootDataSet( rootDataSet ).
             build();
 
-        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY );
+        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY.getId() );
 
         final IndexDocument indexDocument = getIndexDocumentOfType( indexDocuments, "test" );
 
@@ -182,7 +182,7 @@ public class NodeIndexDocumentFactoryTest
             rootDataSet( rootDataSet ).
             build();
 
-        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY );
+        final Collection<IndexDocument> indexDocuments = NodeIndexDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY.getId() );
 
         assertTrue( indexDocuments.iterator().hasNext() );
         final IndexDocument next = indexDocuments.iterator().next();

@@ -61,7 +61,7 @@ final class CreateNodeCommand
         versionService.store( EntityVersionDocument.create().
             entityId( newNode.id() ).
             nodeVersionId( persistedNodeVersionId ).
-            build(), this.context.getRepository() );
+            build(), this.context.getRepositoryId() );
 
         this.indexService.store( newNode, IndexContext.from( this.context ) );
 

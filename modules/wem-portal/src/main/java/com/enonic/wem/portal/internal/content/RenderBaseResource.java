@@ -152,7 +152,7 @@ public abstract class RenderBaseResource
         {
             return this.contentService.getByPath( contentPath, Context.create().
                 workspace( this.workspace ).
-                repository( ContentConstants.CONTENT_REPO ).
+                repositoryId( ContentConstants.CONTENT_REPO.getId() ).
                 build() );
         }
         catch ( ContentNotFoundException e )
@@ -177,7 +177,7 @@ public abstract class RenderBaseResource
     {
         return Context.create().
             workspace( this.workspace ).
-            repository( ContentConstants.CONTENT_REPO ).
+            repositoryId( ContentConstants.CONTENT_REPO.getId() ).
             build();
     }
 

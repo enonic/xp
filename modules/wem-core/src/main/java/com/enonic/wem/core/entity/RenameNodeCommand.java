@@ -132,9 +132,9 @@ final class RenameNodeCommand
         versionService.store( EntityVersionDocument.create().
             entityId( movedNode.id() ).
             nodeVersionId( newVersion ).
-            build(), this.context.getRepository() );
+            build(), this.context.getRepositoryId() );
 
-        indexService.store( movedNode, IndexContext.from( this.context.getWorkspace(), this.context.getRepository() ) );
+        indexService.store( movedNode, IndexContext.from( this.context.getWorkspace(), this.context.getRepositoryId() ) );
 
         return movedNode;
     }

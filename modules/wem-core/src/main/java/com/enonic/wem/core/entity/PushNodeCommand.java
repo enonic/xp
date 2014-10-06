@@ -39,9 +39,9 @@ public class PushNodeCommand
             id( this.id ).
             path( currentNode.path() ).
             parentPath( currentNode.parent() ).
-            build(), WorkspaceContext.from( this.target, this.context.getRepository() ) );
+            build(), WorkspaceContext.from( this.target, this.context.getRepositoryId() ) );
 
-        this.indexService.store( currentNode, IndexContext.from( this.target, this.context.getRepository() ) );
+        this.indexService.store( currentNode, IndexContext.from( this.target, this.context.getRepositoryId() ) );
 
         return NodeHasChildResolver.create().
             workspaceService( this.workspaceService ).

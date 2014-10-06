@@ -52,7 +52,7 @@ public class GetNodeVersionIdsByIdsCommand
         final TermsQueryBuilder idsQuery =
             new TermsQueryBuilder( WorkspaceXContentBuilderFactory.ENTITY_ID_FIELD_NAME, entityIdsAsStrings );
         final BoolQueryBuilder boolQueryBuilder = joinWithWorkspaceQuery( workspaceName, idsQuery );
-        final QueryMetaData queryMetaData = createGetBlobKeyQueryMetaData( entityIdsAsStrings.size(), repository );
+        final QueryMetaData queryMetaData = createGetBlobKeyQueryMetaData( entityIdsAsStrings.size(), this.repositoryId );
 
         final SearchResult searchResult = elasticsearchDao.get( queryMetaData, boolQueryBuilder );
 

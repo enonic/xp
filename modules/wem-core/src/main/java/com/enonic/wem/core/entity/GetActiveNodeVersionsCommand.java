@@ -36,12 +36,12 @@ public class GetActiveNodeVersionsCommand
 
         for ( final Workspace workspace : workspaces )
         {
-            final NodeVersionId currentVersion =
-                this.workspaceService.getCurrentVersion( this.entityId, WorkspaceContext.from( workspace, this.context.getRepository() ) );
+            final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( this.entityId, WorkspaceContext.from( workspace,
+                                                                                                                                this.context.getRepositoryId() ) );
 
             if ( currentVersion != null )
             {
-                builder.add( workspace, this.versionService.getVersion( currentVersion, this.context.getRepository() ) );
+                builder.add( workspace, this.versionService.getVersion( currentVersion, this.context.getRepositoryId() ) );
             }
         }
         return builder.build();

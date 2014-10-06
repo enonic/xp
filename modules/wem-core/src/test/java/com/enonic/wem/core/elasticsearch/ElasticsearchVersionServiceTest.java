@@ -78,7 +78,7 @@ public class ElasticsearchVersionServiceTest
                     build() ).
                 build() );
 
-        final FindNodeVersionsResult result = service.findVersions( query, TestContext.TEST_REPOSITORY );
+        final FindNodeVersionsResult result = service.findVersions( query, TestContext.TEST_REPOSITORY.getId() );
 
         assertEquals( 3, result.getNodeVersions().size() );
 

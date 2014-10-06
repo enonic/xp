@@ -86,11 +86,7 @@ public class ContentResource
 
     public static final String DEFAULT_SORT_FIELD = "modifiedTime";
 
-    protected final static Context STAGE_CONTEXT = Context.create().
-        workspace( ContentConstants.WORKSPACE_STAGE ).
-        repository( ContentConstants.CONTENT_REPO ).
-        build();
-
+    protected final static Context STAGE_CONTEXT = ContentConstants.CONTEXT_STAGE;
 
     private static final String DEFAULT_FROM_PARAM = "0";
 

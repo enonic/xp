@@ -1,34 +1,34 @@
 package com.enonic.wem.core.index;
 
 import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.repository.Repository;
+import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.workspace.Workspace;
 
 public class IndexContext
 {
-    private final Repository repository;
+    private final RepositoryId repositoryId;
 
     private final Workspace workspace;
 
-    private IndexContext( final Repository repository, final Workspace workspace )
+    private IndexContext( final RepositoryId repositoryId, final Workspace workspace )
     {
-        this.repository = repository;
+        this.repositoryId = repositoryId;
         this.workspace = workspace;
     }
 
     public static IndexContext from( final Context context )
     {
-        return new IndexContext( context.getRepository(), context.getWorkspace() );
+        return new IndexContext( context.getRepositoryId(), context.getWorkspace() );
     }
 
-    public static IndexContext from( final Workspace workspace, final Repository repository )
+    public static IndexContext from( final Workspace workspace, final RepositoryId repositoryId )
     {
-        return new IndexContext( repository, workspace );
+        return new IndexContext( repositoryId, workspace );
     }
 
-    public Repository getRepository()
+    public RepositoryId getRepositoryId()
     {
-        return repository;
+        return repositoryId;
     }
 
     public Workspace getWorkspace()

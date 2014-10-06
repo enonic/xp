@@ -9,7 +9,7 @@ import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 
-import com.enonic.wem.api.repository.Repository;
+import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.elasticsearch.ElasticsearchDao;
 import com.enonic.wem.core.elasticsearch.QueryMetaData;
@@ -29,12 +29,12 @@ abstract class AbstractWorkspaceCommand
 
     final ElasticsearchDao elasticsearchDao;
 
-    final Repository repository;
+    final RepositoryId repositoryId;
 
     AbstractWorkspaceCommand( final Builder builder )
     {
         this.elasticsearchDao = builder.elasticsearchDao;
-        this.repository = builder.repository;
+        this.repositoryId = builder.repositoryId;
     }
 
     NodeVersionIds fieldValuesToVersionIds( final Collection<SearchResultField> fieldValues )
@@ -73,11 +73,11 @@ abstract class AbstractWorkspaceCommand
         return boolQueryBuilder;
     }
 
-    QueryMetaData createGetBlobKeyQueryMetaData( final int numberOfHits, final Repository repository )
+    QueryMetaData createGetBlobKeyQueryMetaData( final int numberOfHits, final RepositoryId repositoryId )
     {
         final SortBuilder fieldSortBuilder = new FieldSortBuilder( BUILTIN_TIMESTAMP_FIELD ).order( SortOrder.DESC );
 
-        return QueryMetaData.create( StorageNameResolver.resolveStorageIndexName( repository ) ).
+        return QueryMetaData.create( StorageNameResolver.resolveStorageIndexName( repositoryId ) ).
             indexTypeName( IndexType.WORKSPACE.getName() ).
             from( 0 ).
             size( numberOfHits ).
@@ -96,7 +96,7 @@ abstract class AbstractWorkspaceCommand
     {
         private ElasticsearchDao elasticsearchDao;
 
-        private Repository repository;
+        private RepositoryId repositoryId;
 
         @SuppressWarnings("unchecked")
         B elasticsearchDao( final ElasticsearchDao elasticsearchDao )
@@ -106,9 +106,9 @@ abstract class AbstractWorkspaceCommand
         }
 
         @SuppressWarnings("unchecked")
-        B repository( final Repository repository )
+        B repository( final RepositoryId repositoryId )
         {
-            this.repository = repository;
+            this.repositoryId = repositoryId;
             return (B) this;
         }
 

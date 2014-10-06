@@ -18,10 +18,7 @@ import com.enonic.wem.api.context.Context;
 @Produces(MediaType.APPLICATION_JSON)
 public class ContentAttachmentResource
 {
-    protected final static Context STAGE_CONTEXT = Context.create().
-        workspace( ContentConstants.WORKSPACE_STAGE ).
-        repository( ContentConstants.CONTENT_REPO ).
-        build();
+    protected final static Context STAGE_CONTEXT = ContentConstants.CONTEXT_STAGE;
 
     private AttachmentService attachmentService;
 

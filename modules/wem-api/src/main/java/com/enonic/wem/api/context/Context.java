@@ -1,18 +1,18 @@
 package com.enonic.wem.api.context;
 
-import com.enonic.wem.api.repository.Repository;
+import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.workspace.Workspace;
 
 public class Context
 {
     private final Workspace workspace;
 
-    private final Repository repository;
+    private RepositoryId repositoryId;
 
     private Context( Builder builder )
     {
         workspace = builder.workspace;
-        repository = builder.repository;
+        repositoryId = builder.repositoryId;
     }
 
     public static Builder create()
@@ -25,9 +25,9 @@ public class Context
         return workspace;
     }
 
-    public Repository getRepository()
+    public RepositoryId getRepositoryId()
     {
-        return repository;
+        return repositoryId;
     }
 
     @Override
@@ -62,7 +62,7 @@ public class Context
     {
         private Workspace workspace;
 
-        private Repository repository;
+        private RepositoryId repositoryId;
 
         private Builder()
         {
@@ -74,9 +74,9 @@ public class Context
             return this;
         }
 
-        public Builder repository( Repository repository )
+        public Builder repositoryId( RepositoryId repositoryId )
         {
-            this.repository = repository;
+            this.repositoryId = repositoryId;
             return this;
         }
 

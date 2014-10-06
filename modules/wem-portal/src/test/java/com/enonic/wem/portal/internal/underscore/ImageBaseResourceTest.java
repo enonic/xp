@@ -19,11 +19,9 @@ import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.attachment.GetAttachmentParameters;
 import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.api.workspace.Workspaces;
 import com.enonic.wem.core.blob.memory.MemoryBlobRecord;
 import com.enonic.wem.core.image.filter.BuilderContext;
 import com.enonic.wem.core.image.filter.ImageFilter;
@@ -45,10 +43,7 @@ public abstract class ImageBaseResourceTest
 
     protected final Context testContext = Context.create().
         workspace( testWorkspace ).
-        repository( Repository.create().
-            id( RepositoryId.from( "testing" ) ).
-            workspaces( Workspaces.from( testWorkspace ) ).
-            build() ).
+        repositoryId( RepositoryId.from( "testing" ) ).
         build();
 
     @Override

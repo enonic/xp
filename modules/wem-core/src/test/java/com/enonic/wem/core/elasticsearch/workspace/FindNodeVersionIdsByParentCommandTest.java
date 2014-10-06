@@ -58,7 +58,7 @@ public class FindNodeVersionIdsByParentCommandTest
 
         final NodeVersionIds result = FindNodeVersionIdsByParentCommand.create().
             elasticsearchDao( this.elasticsearchDao ).
-            repository( TEST_REPOSITORY ).
+            repository( TEST_REPOSITORY.getId() ).
             parentPath( parentPath ).
             workspace( TEST_WORKSPACE ).
             build().
@@ -84,7 +84,7 @@ public class FindNodeVersionIdsByParentCommandTest
 
         final NodeVersionIds result = FindNodeVersionIdsByParentCommand.create().
             elasticsearchDao( this.elasticsearchDao ).
-            repository( TEST_REPOSITORY ).
+            repository( TEST_REPOSITORY.getId() ).
             parentPath( parentPath ).
             workspace( TEST_WORKSPACE ).
             build().

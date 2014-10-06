@@ -13,7 +13,7 @@ public class EntityQueryTranslator
     public static ElasticsearchQuery translate( final EntityQuery entityQuery, final IndexContext indexContext )
     {
         ElasticsearchQuery elasticsearchQuery = ElasticsearchQuery.newQuery().
-            index( IndexNameResolver.resolveSearchIndexName( indexContext.getRepository() ) ).
+            index( IndexNameResolver.resolveSearchIndexName( indexContext.getRepositoryId() ) ).
             indexType( indexContext.getWorkspace().getName() ).
             query( QueryBuilderFactory.create().
                 queryExpr( entityQuery.getQuery() ).

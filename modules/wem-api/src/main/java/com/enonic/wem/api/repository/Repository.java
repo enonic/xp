@@ -1,22 +1,12 @@
 package com.enonic.wem.api.repository;
 
-import com.enonic.wem.api.workspace.Workspaces;
-
 public class Repository
 {
     private final RepositoryId id;
 
-    private final Workspaces workspaces;
-
     private Repository( Builder builder )
     {
         id = builder.id;
-        workspaces = builder.workspaces;
-    }
-
-    public Workspaces getWorkspaces()
-    {
-        return workspaces;
     }
 
     public RepositoryId getId()
@@ -36,7 +26,7 @@ public class Repository
         {
             return true;
         }
-        if ( !( o instanceof Repository ) )
+        if ( o == null || getClass() != o.getClass() )
         {
             return false;
         }
@@ -47,10 +37,6 @@ public class Repository
         {
             return false;
         }
-        if ( workspaces != null ? !workspaces.equals( that.workspaces ) : that.workspaces != null )
-        {
-            return false;
-        }
 
         return true;
     }
@@ -58,16 +44,12 @@ public class Repository
     @Override
     public int hashCode()
     {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + ( workspaces != null ? workspaces.hashCode() : 0 );
-        return result;
+        return id != null ? id.hashCode() : 0;
     }
 
     public static final class Builder
     {
         private RepositoryId id;
-
-        private Workspaces workspaces;
 
         private Builder()
         {
@@ -76,12 +58,6 @@ public class Repository
         public Builder id( RepositoryId id )
         {
             this.id = id;
-            return this;
-        }
-
-        public Builder workspaces( Workspaces workspaces )
-        {
-            this.workspaces = workspaces;
             return this;
         }
 

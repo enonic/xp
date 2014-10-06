@@ -28,7 +28,7 @@ public class GetNodeVersionIdsByIdsCommandTest
         throws Exception
     {
         final NodeVersionIds nodeVersionIds = GetNodeVersionIdsByIdsCommand.create().
-            repository( TEST_REPOSITORY ).
+            repository( TEST_REPOSITORY.getId() ).
             workspace( TEST_WORKSPACE ).
             entityIds( EntityIds.empty() ).
             elasticsearchDao( this.elasticsearchDao ).

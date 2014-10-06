@@ -25,7 +25,6 @@ import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -61,10 +60,7 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
 
     protected final Context testContext = Context.create().
         workspace( testWorkspace ).
-        repository( Repository.create().
-            id( RepositoryId.from( "testing" ) ).
-            workspaces( Workspaces.from( testWorkspace ) ).
-            build() ).
+        repositoryId( RepositoryId.from( "testing" ) ).
         build();
 
     @Override

@@ -17,10 +17,7 @@ import com.enonic.wem.servlet.ServletRequestUrlHelper;
 
 public final class ContentIconUrlResolver
 {
-    protected final static Context STAGE_CONTEXT = Context.create().
-        workspace( ContentConstants.WORKSPACE_STAGE ).
-        repository( ContentConstants.CONTENT_REPO ).
-        build();
+    protected final static Context STAGE_CONTEXT = ContentConstants.CONTEXT_STAGE;
 
 
     private ContentTypeService contentTypeService;

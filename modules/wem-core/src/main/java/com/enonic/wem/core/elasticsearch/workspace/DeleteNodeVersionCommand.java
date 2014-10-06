@@ -30,7 +30,7 @@ public class DeleteNodeVersionCommand
     void execute()
     {
         DeleteRequest deleteRequest = new DeleteRequest().
-            index( StorageNameResolver.resolveStorageIndexName( this.repository ) ).
+            index( StorageNameResolver.resolveStorageIndexName( this.repositoryId ) ).
             type( IndexType.WORKSPACE.getName() ).
             id( new WorkspaceDocumentId( this.entityId, this.workspace ).toString() ).
             refresh( DEFAULT_REFRESH );

@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.repository.Repository;
+import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.core.entity.EntityId;
 import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.entity.index.NodeIndexDocumentFactory;
@@ -134,14 +134,14 @@ public class ElasticsearchIndexService
         }
     }
 
-    public Set<String> getAllRepositoryIndices( final Repository repository )
+    public Set<String> getAllRepositoryIndices( final RepositoryId repositoryId )
     {
         IndicesStatsRequest indicesStatsRequest = new IndicesStatsRequest();
         indicesStatsRequest.listenerThreaded( false );
         indicesStatsRequest.clear();
 
-        final String storageName = StorageNameResolver.resolveStorageIndexName( repository );
-        final String searchIndexName = IndexNameResolver.resolveSearchIndexName( repository );
+        final String storageName = StorageNameResolver.resolveStorageIndexName( repositoryId );
+        final String searchIndexName = IndexNameResolver.resolveSearchIndexName( repositoryId );
 
         final IndicesStatsResponse response = this.client.admin().indices().stats( indicesStatsRequest ).actionGet( 10 );
 
@@ -197,13 +197,13 @@ public class ElasticsearchIndexService
     public void store( final Node node, final IndexContext context )
     {
         final Collection<IndexDocument> indexDocuments =
-            NodeIndexDocumentFactory.create( node, context.getWorkspace(), context.getRepository() );
+            NodeIndexDocumentFactory.create( node, context.getWorkspace(), context.getRepositoryId() );
         elasticsearchDao.store( indexDocuments );
     }
 
     public void delete( final EntityId entityId, final IndexContext context )
     {
-        final String indexName = IndexNameResolver.resolveSearchIndexName( context.getRepository() );
+        final String indexName = IndexNameResolver.resolveSearchIndexName( context.getRepositoryId() );
         final String indexType = context.getWorkspace().getName();
 
         elasticsearchDao.delete( new DeleteDocument( indexName, indexType, entityId.toString() ) );

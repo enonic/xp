@@ -41,7 +41,7 @@ public class CompareNodeCommand
     {
         final NodeVersionId sourceVersionId = workspaceService.getCurrentVersion( entityId, WorkspaceContext.from( this.context ) );
         final NodeVersionId targetVersionId =
-            workspaceService.getCurrentVersion( entityId, WorkspaceContext.from( this.target, this.context.getRepository() ) );
+            workspaceService.getCurrentVersion( entityId, WorkspaceContext.from( this.target, this.context.getRepositoryId() ) );
 
         final NodeVersion sourceVersion = getVersion( sourceVersionId );
         final NodeVersion targetVersion = getVersion( targetVersionId );
@@ -58,7 +58,7 @@ public class CompareNodeCommand
             return null;
         }
 
-        return versionService.getVersion( nodeVersionId, this.context.getRepository() );
+        return versionService.getVersion( nodeVersionId, this.context.getRepositoryId() );
     }
 
     public static final class Builder

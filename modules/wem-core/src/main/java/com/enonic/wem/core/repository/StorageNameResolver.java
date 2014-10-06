@@ -1,6 +1,6 @@
 package com.enonic.wem.core.repository;
 
-import com.enonic.wem.api.repository.Repository;
+import com.enonic.wem.api.repository.RepositoryId;
 
 public class StorageNameResolver
 {
@@ -8,8 +8,8 @@ public class StorageNameResolver
 
     public final static String DIVIDER = "-";
 
-    public static String resolveStorageIndexName( final Repository repository )
+    public static String resolveStorageIndexName( final RepositoryId repositoryId )
     {
-        return STORAGE_INDEX_PREFIX + DIVIDER + repository.getId().toString();
+        return STORAGE_INDEX_PREFIX + DIVIDER + repositoryId.toString();
     }
 }

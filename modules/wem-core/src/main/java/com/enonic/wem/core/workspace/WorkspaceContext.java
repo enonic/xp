@@ -1,34 +1,34 @@
 package com.enonic.wem.core.workspace;
 
 import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.repository.Repository;
+import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.workspace.Workspace;
 
 public class WorkspaceContext
 {
-    private final Repository repository;
+    private final RepositoryId repositoryId;
 
     private final Workspace workspace;
 
-    private WorkspaceContext( final Repository repository, final Workspace workspace )
+    private WorkspaceContext( final RepositoryId repositoryId, final Workspace workspace )
     {
-        this.repository = repository;
+        this.repositoryId = repositoryId;
         this.workspace = workspace;
     }
 
     public static WorkspaceContext from( final Context context )
     {
-        return new WorkspaceContext( context.getRepository(), context.getWorkspace() );
+        return new WorkspaceContext( context.getRepositoryId(), context.getWorkspace() );
     }
 
-    public static WorkspaceContext from( final Workspace workspace, final Repository repository )
+    public static WorkspaceContext from( final Workspace workspace, final RepositoryId repositoryId )
     {
-        return new WorkspaceContext( repository, workspace );
+        return new WorkspaceContext( repositoryId, workspace );
     }
 
-    public Repository getRepository()
+    public RepositoryId getRepositoryId()
     {
-        return repository;
+        return repositoryId;
     }
 
     public Workspace getWorkspace()
@@ -50,7 +50,7 @@ public class WorkspaceContext
 
         final WorkspaceContext that = (WorkspaceContext) o;
 
-        if ( repository != null ? !repository.equals( that.repository ) : that.repository != null )
+        if ( repositoryId != null ? !repositoryId.equals( that.repositoryId ) : that.repositoryId != null )
         {
             return false;
         }
@@ -65,7 +65,7 @@ public class WorkspaceContext
     @Override
     public int hashCode()
     {
-        int result = repository != null ? repository.hashCode() : 0;
+        int result = repositoryId != null ? repositoryId.hashCode() : 0;
         result = 31 * result + ( workspace != null ? workspace.hashCode() : 0 );
         return result;
     }

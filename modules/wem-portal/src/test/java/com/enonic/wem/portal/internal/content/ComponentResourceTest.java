@@ -8,10 +8,8 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.rendering.Renderable;
-import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.api.workspace.Workspaces;
 import com.enonic.wem.portal.internal.controller.JsContext;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
@@ -28,10 +26,8 @@ public class ComponentResourceTest
 
     private final Context testContext = Context.create().
         workspace( testWorkspace ).
-        repository( Repository.create().
-            id( RepositoryId.from( "testing" ) ).
-            workspaces( Workspaces.from( testWorkspace ) ).
-            build() ).
+        repositoryId( RepositoryId.from( "testing" ) ).
+
         build();
 
     @Override

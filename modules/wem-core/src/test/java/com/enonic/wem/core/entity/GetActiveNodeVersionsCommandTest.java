@@ -46,17 +46,17 @@ public class GetActiveNodeVersionsCommandTest
         final NodeVersionId nodeVersionId1 = NodeVersionId.from( "a" );
         final NodeVersionId nodeVersionId2 = NodeVersionId.from( "b" );
 
-        Mockito.when( this.workspaceService.getCurrentVersion( id, WorkspaceContext.from( workspace1, TEST_REPOSITORY ) ) ).
+        Mockito.when( this.workspaceService.getCurrentVersion( id, WorkspaceContext.from( workspace1, TEST_REPOSITORY.getId() ) ) ).
             thenReturn( nodeVersionId1 );
-        Mockito.when( this.workspaceService.getCurrentVersion( id, WorkspaceContext.from( workspace2, TEST_REPOSITORY ) ) ).
+        Mockito.when( this.workspaceService.getCurrentVersion( id, WorkspaceContext.from( workspace2, TEST_REPOSITORY.getId() ) ) ).
             thenReturn( nodeVersionId2 );
 
         final Instant version1Timestamp = Instant.now();
         final Instant version2Timestamp = Instant.now();
 
-        Mockito.when( this.versionService.getVersion( Mockito.eq( nodeVersionId1 ), Mockito.eq( TEST_REPOSITORY ) ) ).
+        Mockito.when( this.versionService.getVersion( Mockito.eq( nodeVersionId1 ), Mockito.eq( TEST_REPOSITORY.getId() ) ) ).
             thenReturn( new NodeVersion( nodeVersionId1, version1Timestamp ) );
-        Mockito.when( this.versionService.getVersion( Mockito.eq( nodeVersionId2 ), Mockito.eq( TEST_REPOSITORY ) ) ).
+        Mockito.when( this.versionService.getVersion( Mockito.eq( nodeVersionId2 ), Mockito.eq( TEST_REPOSITORY.getId() ) ) ).
             thenReturn( new NodeVersion( nodeVersionId2, version2Timestamp ) );
 
         final GetActiveNodeVersionsResult result = GetActiveNodeVersionsCommand.create( TEST_CONTEXT ).

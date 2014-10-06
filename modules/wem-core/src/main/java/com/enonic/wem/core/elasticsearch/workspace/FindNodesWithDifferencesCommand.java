@@ -41,8 +41,8 @@ public class FindNodesWithDifferencesCommand
         final TermQueryBuilder inSource = createWorkspaceQuery( this.source );
         final TermQueryBuilder inTarget = createWorkspaceQuery( this.target );
 
-        final long inSourceCount = elasticsearchDao.count( createGetBlobKeyQueryMetaData( 0, this.repository ), inSource );
-        final long inTargetCount = elasticsearchDao.count( createGetBlobKeyQueryMetaData( 0, this.repository ), inTarget );
+        final long inSourceCount = elasticsearchDao.count( createGetBlobKeyQueryMetaData( 0, this.repositoryId ), inSource );
+        final long inTargetCount = elasticsearchDao.count( createGetBlobKeyQueryMetaData( 0, this.repositoryId ), inTarget );
 
         final long totalCount = inSourceCount + inTargetCount;
 
@@ -63,7 +63,7 @@ public class FindNodesWithDifferencesCommand
             setAggregations( Sets.newHashSet( changedAggregationQuery ) ).
             size( 0 ).
             from( 0 ).
-            index( StorageNameResolver.resolveStorageIndexName( this.repository ) ).
+            index( StorageNameResolver.resolveStorageIndexName( this.repositoryId ) ).
             indexType( source.getName() ).
             build() );
 

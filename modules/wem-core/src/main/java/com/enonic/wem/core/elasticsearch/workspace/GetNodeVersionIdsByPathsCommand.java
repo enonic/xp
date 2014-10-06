@@ -36,7 +36,7 @@ public class GetNodeVersionIdsByPathsCommand
         final TermsQueryBuilder parentQuery =
             new TermsQueryBuilder( WorkspaceXContentBuilderFactory.PATH_FIELD_NAME, nodePaths.getAsStrings() );
         final BoolQueryBuilder workspacedByPathsQuery = joinWithWorkspaceQuery( this.workspace.getName(), parentQuery );
-        final QueryMetaData queryMetaData = createGetBlobKeyQueryMetaData( nodePaths.getSize(), this.repository );
+        final QueryMetaData queryMetaData = createGetBlobKeyQueryMetaData( nodePaths.getSize(), this.repositoryId );
 
         final SearchResult searchResult = elasticsearchDao.get( queryMetaData, workspacedByPathsQuery );
 

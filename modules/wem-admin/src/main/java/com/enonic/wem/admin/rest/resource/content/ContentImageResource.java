@@ -35,10 +35,7 @@ import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.Imag
 @Produces("image/*")
 public class ContentImageResource
 {
-    protected final static Context STAGE_CONTEXT = Context.create().
-        workspace( ContentConstants.WORKSPACE_STAGE ).
-        repository( ContentConstants.CONTENT_REPO ).
-        build();
+    protected final static Context STAGE_CONTEXT = ContentConstants.CONTEXT_STAGE;
 
     private static final ContentImageHelper helper = new ContentImageHelper();
 

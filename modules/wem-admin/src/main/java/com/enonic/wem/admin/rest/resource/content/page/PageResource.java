@@ -26,10 +26,7 @@ import com.enonic.wem.api.schema.mixin.MixinService;
 @Produces(MediaType.APPLICATION_JSON)
 public final class PageResource
 {
-    protected final Context STAGE_CONTEXT = Context.create().
-        workspace( ContentConstants.WORKSPACE_STAGE ).
-        repository( ContentConstants.CONTENT_REPO ).
-        build();
+    protected final Context STAGE_CONTEXT = ContentConstants.CONTEXT_STAGE;
 
     private PageService pageService;
 

@@ -1,18 +1,13 @@
 package com.enonic.wem.api.repository;
 
+import com.enonic.wem.api.support.AbstractId;
+
 public class RepositoryId
+    extends AbstractId
 {
-    private String id;
-
-    private RepositoryId( final String id )
+    protected RepositoryId( final String id )
     {
-        this.id = id;
-    }
-
-    @Override
-    public String toString()
-    {
-        return this.id;
+        super( id );
     }
 
     public static RepositoryId from( final String value )

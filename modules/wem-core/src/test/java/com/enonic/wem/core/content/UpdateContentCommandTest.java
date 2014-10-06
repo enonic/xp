@@ -23,11 +23,9 @@ import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.api.workspace.Workspaces;
 import com.enonic.wem.core.entity.EntityId;
 import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.entity.NodeService;
@@ -57,10 +55,7 @@ public class UpdateContentCommandTest
 
     private final Context testContext = Context.create().
         workspace( testWorkspace ).
-        repository( Repository.create().
-            id( RepositoryId.from( "testing" ) ).
-            workspaces( Workspaces.from( testWorkspace ) ).
-            build() ).
+        repositoryId( RepositoryId.from( "testing" ) ).
         build();
 
     //@Ignore // Rewriting content stuff to node

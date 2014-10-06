@@ -22,7 +22,7 @@ public class NodeQueryTranslator
         final QueryBuilder queryWithQueryFilters = createQueryWithQueryFilters( nodeQuery );
 
         final ElasticsearchQuery.Builder queryBuilder = ElasticsearchQuery.newQuery().
-            index( IndexNameResolver.resolveSearchIndexName( indexContext.getRepository() ) ).
+            index( IndexNameResolver.resolveSearchIndexName( indexContext.getRepositoryId() ) ).
             indexType( indexContext.getWorkspace().getName() ).
             query( queryWithQueryFilters ).
             setAggregations( AggregationBuilderFactory.create( nodeQuery.getAggregationQueries() ) ).

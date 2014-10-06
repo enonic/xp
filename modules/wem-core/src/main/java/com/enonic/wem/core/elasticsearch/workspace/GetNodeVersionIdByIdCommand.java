@@ -56,7 +56,7 @@ class GetNodeVersionIdByIdCommand
 
         final BoolQueryBuilder boolQueryBuilder = joinWithWorkspaceQuery( workspace.getName(), idQuery );
 
-        final QueryMetaData queryMetaData = QueryMetaData.create( StorageNameResolver.resolveStorageIndexName( repository ) ).
+        final QueryMetaData queryMetaData = QueryMetaData.create( StorageNameResolver.resolveStorageIndexName( this.repositoryId ) ).
             indexTypeName( IndexType.WORKSPACE.getName() ).
             from( 0 ).
             size( 1 ).

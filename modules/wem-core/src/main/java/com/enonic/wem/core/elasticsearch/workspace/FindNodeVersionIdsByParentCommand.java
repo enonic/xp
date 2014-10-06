@@ -39,7 +39,7 @@ public class FindNodeVersionIdsByParentCommand
         final TermQueryBuilder workspaceQuery = createWorkspaceQuery( this.workspace );
         final BoolQueryBuilder query = join( workspaceQuery, getByParentQuery );
 
-        final QueryMetaData queryMetaData = createGetBlobKeyQueryMetaData( DEFAULT_UNKNOWN_SIZE, this.repository );
+        final QueryMetaData queryMetaData = createGetBlobKeyQueryMetaData( DEFAULT_UNKNOWN_SIZE, this.repositoryId );
 
         final SearchResult searchResult = elasticsearchDao.get( queryMetaData, query );
 

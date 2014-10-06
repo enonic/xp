@@ -23,7 +23,7 @@ public class ElasticsearchWorkspaceService
         StoreWorkspaceDocumentCommand.create().
             elasticsearchDao( this.elasticsearchDao ).
             workspace( context.getWorkspace() ).
-            repository( context.getRepository() ).
+            repository( context.getRepositoryId() ).
             document( storeWorkspaceDocument ).
             build().
             execute();
@@ -34,7 +34,7 @@ public class ElasticsearchWorkspaceService
     {
         DeleteNodeVersionCommand.create().
             elasticsearchDao( this.elasticsearchDao ).
-            repository( context.getRepository() ).
+            repository( context.getRepositoryId() ).
             workspace( context.getWorkspace() ).
             entityId( entityId ).
             build().
@@ -47,7 +47,7 @@ public class ElasticsearchWorkspaceService
         return GetNodeVersionIdByIdCommand.create().
             elasticsearchDao( this.elasticsearchDao ).
             workspace( context.getWorkspace() ).
-            repository( context.getRepository() ).
+            repository( context.getRepositoryId() ).
             entityId( entityId ).
             build().
             execute();
@@ -60,7 +60,7 @@ public class ElasticsearchWorkspaceService
             entityIds( entityIds ).
             workspace( context.getWorkspace() ).
             elasticsearchDao( this.elasticsearchDao ).
-            repository( context.getRepository() ).
+            repository( context.getRepositoryId() ).
             build().
             execute();
     }
@@ -69,7 +69,7 @@ public class ElasticsearchWorkspaceService
     public NodeVersionId getByPath( final NodePath nodePath, final WorkspaceContext context )
     {
         return GetNodeVersionIdByPathCommand.create().
-            repository( context.getRepository() ).
+            repository( context.getRepositoryId() ).
             elasticsearchDao( this.elasticsearchDao ).
             workspace( context.getWorkspace() ).
             nodePath( nodePath ).
@@ -82,7 +82,7 @@ public class ElasticsearchWorkspaceService
     {
         return GetNodeVersionIdsByPathsCommand.create().
             elasticsearchDao( this.elasticsearchDao ).
-            repository( context.getRepository() ).
+            repository( context.getRepositoryId() ).
             workspace( context.getWorkspace() ).
             nodePaths( nodePaths ).
             build().
@@ -95,7 +95,7 @@ public class ElasticsearchWorkspaceService
         return FindNodeVersionIdsByParentCommand.create().
             elasticsearchDao( this.elasticsearchDao ).
             workspace( context.getWorkspace() ).
-            repository( context.getRepository() ).
+            repository( context.getRepositoryId() ).
             parentPath( parentPath ).
             build().
             execute();
@@ -106,7 +106,7 @@ public class ElasticsearchWorkspaceService
     {
         return FindNodesWithDifferencesCommand.create().
             elasticsearchDao( this.elasticsearchDao ).
-            repository( context.getRepository() ).
+            repository( context.getRepositoryId() ).
             source( query.getSource() ).
             target( query.getTarget() ).
             build().
@@ -118,7 +118,7 @@ public class ElasticsearchWorkspaceService
     {
         return GetHasChildrenCommand.create().
             elasticsearchDao( this.elasticsearchDao ).
-            repository( context.getRepository() ).
+            repository( context.getRepositoryId() ).
             workspace( context.getWorkspace() ).
             parentPath( parent ).
             build().

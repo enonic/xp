@@ -55,7 +55,7 @@ final class UpdateNodeCommand
         this.versionService.store( EntityVersionDocument.create().
             entityId( updatedNode.id() ).
             nodeVersionId( updatedNodeVersionId ).
-            build(), this.context.getRepository() );
+            build(), this.context.getRepositoryId() );
 
         this.workspaceService.store( StoreWorkspaceDocument.create().
             path( updatedNode.path() ).

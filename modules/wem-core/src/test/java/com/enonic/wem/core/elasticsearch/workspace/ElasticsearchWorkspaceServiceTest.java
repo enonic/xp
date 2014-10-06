@@ -12,10 +12,7 @@ import org.mockito.Mockito;
 
 import com.google.common.collect.Iterators;
 
-import com.enonic.wem.api.repository.Repository;
-import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.api.workspace.Workspaces;
 import com.enonic.wem.core.TestContext;
 import com.enonic.wem.core.elasticsearch.ElasticsearchDao;
 import com.enonic.wem.core.elasticsearch.ElasticsearchDataException;
@@ -44,13 +41,6 @@ public class ElasticsearchWorkspaceServiceTest
     private ElasticsearchDao elasticsearchDao;
 
     private ElasticsearchWorkspaceService wsStore;
-
-    private final Workspace testWorkspace = Workspace.from( "test" );
-
-    private Repository testRepo = Repository.create().
-        workspaces( Workspaces.from( testWorkspace ) ).
-        id( RepositoryId.from( "test" ) ).
-        build();
 
     @Before
     public void setUp()

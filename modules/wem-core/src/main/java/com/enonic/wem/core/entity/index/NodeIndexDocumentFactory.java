@@ -11,7 +11,7 @@ import com.enonic.wem.api.data.PropertyVisitor;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.index.IndexConfigDocument;
-import com.enonic.wem.api.repository.Repository;
+import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.index.document.IndexDocument;
@@ -30,24 +30,24 @@ import static com.enonic.wem.core.entity.index.IndexPaths.PATH_PROPERTY_PATH;
 public class NodeIndexDocumentFactory
 {
 
-    public static Collection<IndexDocument> create( final Node node, final Workspace workspace, final Repository repository )
+    public static Collection<IndexDocument> create( final Node node, final Workspace workspace, final RepositoryId repositoryId )
     {
         node.validateForIndexing();
 
         Set<IndexDocument> indexDocuments = Sets.newHashSet();
 
-        indexDocuments.add( createDataDocument( node, workspace, repository ) );
+        indexDocuments.add( createDataDocument( node, workspace, repositoryId ) );
 
         return indexDocuments;
     }
 
-    private static IndexDocument createDataDocument( final Node node, final Workspace workspace, final Repository repository )
+    private static IndexDocument createDataDocument( final Node node, final Workspace workspace, final RepositoryId repositoryId )
     {
         final IndexConfigDocument indexConfigDocument = node.getIndexConfigDocument();
 
         final IndexDocument.Builder builder = IndexDocument.newIndexDocument().
             id( node.id() ).
-            index( IndexNameResolver.resolveSearchIndexName( repository ) ).
+            index( IndexNameResolver.resolveSearchIndexName( repositoryId ) ).
             indexType( workspace.getName() ).
             analyzer( indexConfigDocument.getAnalyzer() );
 

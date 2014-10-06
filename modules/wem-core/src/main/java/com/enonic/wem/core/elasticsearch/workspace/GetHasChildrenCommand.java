@@ -30,7 +30,7 @@ public class GetHasChildrenCommand
 
     boolean execute()
     {
-        final QueryMetaData queryMetaData = QueryMetaData.create( StorageNameResolver.resolveStorageIndexName( this.repository ) ).
+        final QueryMetaData queryMetaData = QueryMetaData.create( StorageNameResolver.resolveStorageIndexName( this.repositoryId ) ).
             indexTypeName( IndexType.WORKSPACE.getName() ).
             from( 0 ).
             size( 0 ).

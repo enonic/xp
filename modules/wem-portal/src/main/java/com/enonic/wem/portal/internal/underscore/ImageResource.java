@@ -182,7 +182,7 @@ public final class ImageResource
         {
             return this.attachmentService.getAll( contentId, Context.create().
                 workspace( this.workspace ).
-                repository( ContentConstants.CONTENT_REPO ).
+                repositoryId( ContentConstants.CONTENT_REPO.getId() ).
                 build() ).first();
         }
         catch ( final ContentNotFoundException e )
@@ -195,7 +195,7 @@ public final class ImageResource
     {
         final Content content = this.contentService.getById( contentId, Context.create().
             workspace( this.workspace ).
-            repository( ContentConstants.CONTENT_REPO ).
+            repositoryId( ContentConstants.CONTENT_REPO.getId() ).
             build() );
         if ( content != null )
         {
@@ -209,7 +209,7 @@ public final class ImageResource
     {
         final Content content = this.contentService.getByPath( contentPath, Context.create().
             workspace( this.workspace ).
-            repository( ContentConstants.CONTENT_REPO ).
+            repositoryId( ContentConstants.CONTENT_REPO.getId() ).
             build() );
         if ( content != null )
         {
@@ -226,7 +226,7 @@ public final class ImageResource
             return this.attachmentService.get( GetAttachmentParameters.create().
                 context( Context.create().
                     workspace( this.workspace ).
-                    repository( ContentConstants.CONTENT_REPO ).
+                    repositoryId( ContentConstants.CONTENT_REPO.getId() ).
                     build() ).
                 contentId( contentId ).
                 attachmentName( attachmentName ).

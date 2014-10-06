@@ -20,11 +20,11 @@ public class AbstractRepositorySettingsProvider
         }
         catch ( IOException e )
         {
-            throw new IndexException( "Failed to load settings for repository " + repository.getId() + " from file: " + fileName, e );
+            throw new IndexException( "Failed to load settings for repositoryId " + repository.getId() + " from file: " + fileName, e );
         }
         catch ( IllegalArgumentException e )
         {
-            throw new IndexException( "Settings for repository " + repository.getId() + " from file: " + fileName + " not found", e );
+            throw new IndexException( "Settings for repositoryId " + repository.getId() + " from file: " + fileName + " not found", e );
         }
     }
 
