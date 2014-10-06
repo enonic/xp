@@ -7,6 +7,7 @@ import com.google.common.collect.Maps;
 import com.enonic.wem.script.command.Command;
 import com.enonic.wem.script.command.CommandHandler;
 import com.enonic.wem.script.command.CommandInvoker;
+import com.enonic.wem.script.command.CommandName;
 
 public final class ScriptEnvironment
     implements CommandInvoker
@@ -18,24 +19,39 @@ public final class ScriptEnvironment
         this.commandHandlers = Maps.newConcurrentMap();
     }
 
-    public void addHandler( final CommandHandler commandHandler )
+    private String getName( final CommandHandler handler )
     {
-        if ( commandHandler == null )
+        final Class<?> type = handler.getType();
+        final CommandName name = type.getAnnotation( CommandName.class );
+
+        if ( name != null )
         {
-            return;
+            return name.value();
         }
 
-        this.commandHandlers.put( commandHandler.getType().getName(), commandHandler );
+        return type.getName();
     }
 
-    public void removeHandler( final CommandHandler commandHandler )
+    public void addHandler( final CommandHandler handler )
     {
-        if ( commandHandler == null )
+        if ( handler == null )
         {
             return;
         }
 
-        this.commandHandlers.remove( commandHandler.getType().getName() );
+        final String name = getName( handler );
+        this.commandHandlers.put( name, handler );
+    }
+
+    public void removeHandler( final CommandHandler handler )
+    {
+        if ( handler == null )
+        {
+            return;
+        }
+
+        final String name = getName( handler );
+        this.commandHandlers.remove( name );
     }
 
     private CommandHandler findHandler( final String name )
