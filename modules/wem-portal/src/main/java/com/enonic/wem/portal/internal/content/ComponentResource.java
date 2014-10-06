@@ -13,7 +13,7 @@ import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.site.Site;
-import com.enonic.wem.api.module.ModuleName;
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.portal.internal.controller.JsContext;
 import com.enonic.wem.portal.internal.controller.JsHttpRequest;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
@@ -75,21 +75,21 @@ public final class ComponentResource
 
         final Renderer<PageComponent> renderer = this.rendererFactory.getRenderer( component );
 
-        final ModuleName moduleName = pageTemplate.getDescriptor().getModuleKey().getName();
-        final JsContext context = createContext( content, component, site, moduleName );
+        final ModuleKey moduleKey = pageTemplate.getDescriptor().getModuleKey();
+        final JsContext context = createContext( content, component, site, moduleKey );
         final RenderResult result = renderer.render( component, context );
 
         return toResponse( result );
     }
 
-    private JsContext createContext( final Content content, final PageComponent component, final Site site, final ModuleName moduleName )
+    private JsContext createContext( final Content content, final PageComponent component, final Site site, final ModuleKey moduleKey )
     {
         final JsContext context = new JsContext();
         context.setContent( content );
         context.setSite( site );
         context.setComponent( component );
 
-        context.setResolvedModule( moduleName.toString() );
+        context.setModule( getModule( moduleKey ) );
 
         final JsHttpRequest jsRequest = new JsHttpRequest();
         jsRequest.setMode( this.mode );

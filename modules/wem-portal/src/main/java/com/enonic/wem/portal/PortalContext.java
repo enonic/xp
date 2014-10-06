@@ -6,6 +6,7 @@ import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.layout.LayoutRegions;
 import com.enonic.wem.api.content.site.Site;
+import com.enonic.wem.api.module.Module;
 
 public interface PortalContext
 {
@@ -27,6 +28,5 @@ public interface PortalContext
 
     public void setComponent( PageComponent component );
 
-    // TODO: Should be ModuleKey here
-    public String getResolvedModule();
+    public Module getModule();
 }

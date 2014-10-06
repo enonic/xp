@@ -3,6 +3,7 @@ package com.enonic.wem.portal.url;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.module.Module;
 import com.enonic.wem.portal.PortalContext;
 
 public final class PortalUrlBuilders
@@ -38,7 +39,8 @@ public final class PortalUrlBuilders
 
     private String getModule()
     {
-        return this.context.getResolvedModule();
+        final Module module = this.context.getModule();
+        return module != null ? module.getKey().toString() : null;
     }
 
     private <T extends PortalUrlBuilder> T setDefaults( final T builder )

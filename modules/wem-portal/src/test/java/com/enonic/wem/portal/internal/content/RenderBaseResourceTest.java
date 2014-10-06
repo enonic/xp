@@ -25,6 +25,7 @@ import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -54,6 +55,8 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
 
     protected PostProcessor postProcessor;
 
+    protected ModuleService moduleService;
+
     public final Workspace testWorkspace = Workspace.from( "test" );
 
     protected final Context testContext = Context.create().
@@ -72,6 +75,7 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
         this.pageTemplateService = Mockito.mock( PageTemplateService.class );
         this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
         this.postProcessor = Mockito.mock( PostProcessor.class );
+        this.moduleService = Mockito.mock( ModuleService.class );
         final JsControllerFactory jsControllerFactory = Mockito.mock( JsControllerFactory.class );
 
         this.jsController = Mockito.mock( JsController.class );
@@ -82,6 +86,7 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
         this.resourceProvider.setPageDescriptorService( this.pageDescriptorService );
         this.resourceProvider.setControllerFactory( jsControllerFactory );
         this.resourceProvider.setPostProcessor( this.postProcessor );
+        this.resourceProvider.setModuleService( this.moduleService );
 
         this.resources.add( this.resourceProvider );
     }

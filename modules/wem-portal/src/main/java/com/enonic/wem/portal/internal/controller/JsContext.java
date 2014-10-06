@@ -8,6 +8,7 @@ import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.layout.LayoutComponent;
 import com.enonic.wem.api.content.page.layout.LayoutRegions;
 import com.enonic.wem.api.content.site.Site;
+import com.enonic.wem.api.module.Module;
 import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.PortalRequest;
 import com.enonic.wem.portal.PortalResponse;
@@ -28,7 +29,7 @@ public final class JsContext
 
     private PageComponent component;
 
-    private String resolvedModule;
+    private Module module;
 
     public JsContext()
     {
@@ -163,13 +164,13 @@ public final class JsContext
     }
 
     @Override
-    public String getResolvedModule()
+    public Module getModule()
     {
-        return this.resolvedModule;
+        return this.module;
     }
 
-    public void setResolvedModule( final String resolvedModule )
+    public void setModule( final Module module )
     {
-        this.resolvedModule = resolvedModule;
+        this.module = module;
     }
 }

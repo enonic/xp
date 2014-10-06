@@ -22,6 +22,7 @@
     <property name="pageDescriptorService" ref="pageDescriptorService"/>
     <property name="pageTemplateService" ref="pageTemplateService"/>
     <property name="contentService" ref="contentService"/>
+    <property name="moduleService" ref="moduleService"/>
     <property name="postProcessor" ref="postProcessor"/>
   </bean>
 
@@ -30,6 +31,7 @@
     <property name="pageDescriptorService" ref="pageDescriptorService"/>
     <property name="pageTemplateService" ref="pageTemplateService"/>
     <property name="contentService" ref="contentService"/>
+    <property name="moduleService" ref="moduleService"/>
     <property name="rendererFactory" ref="rendererFactory"/>
   </bean>
 

@@ -18,6 +18,10 @@ import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateService;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.module.Module;
+import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.module.ModuleNotFoundException;
+import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.portal.RenderingMode;
@@ -35,6 +39,8 @@ public abstract class RenderBaseResource
     protected PageTemplateService pageTemplateService;
 
     protected ContentService contentService;
+
+    protected ModuleService moduleService;
 
     protected PostProcessor postProcessor;
 
@@ -173,5 +179,17 @@ public abstract class RenderBaseResource
             workspace( this.workspace ).
             repository( ContentConstants.CONTENT_REPO ).
             build();
+    }
+
+    protected Module getModule( final ModuleKey moduleKey )
+    {
+        try
+        {
+            return this.moduleService.getModule( moduleKey );
+        }
+        catch ( ModuleNotFoundException e )
+        {
+            return null;
+        }
     }
 }

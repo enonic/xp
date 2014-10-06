@@ -71,7 +71,7 @@ public final class ContentResource
 
         if ( pageDescriptor != null )
         {
-            context.setResolvedModule( pageDescriptor.getKey().getModuleKey().getName().toString() );
+            context.setModule( getModule( pageDescriptor.getKey().getModuleKey() ) );
         }
 
         final JsHttpRequest jsRequest = new JsHttpRequest();

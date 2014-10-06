@@ -7,10 +7,12 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.portal.RenderingMode;
+import com.enonic.wem.api.module.Module;
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.PortalRequest;
+import com.enonic.wem.portal.RenderingMode;
 
 import static org.junit.Assert.*;
 
@@ -52,7 +54,10 @@ public class PortalUrlBuildersTest
 
     private void setResolvedModule( final String resolvedModule )
     {
-        Mockito.when( this.context.getResolvedModule() ).thenReturn( resolvedModule );
+        final Module module = Mockito.mock( Module.class );
+        final ModuleKey moduleKey = ModuleKey.from( resolvedModule );
+        Mockito.when( module.getKey() ).thenReturn( moduleKey );
+        Mockito.when( this.context.getModule() ).thenReturn( module );
     }
 
     private void setContent( final ContentPath path )
