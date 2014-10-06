@@ -9,9 +9,9 @@ import com.google.common.collect.Maps;
 import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.workspace.Workspace;
 
-public final class Context2
+public final class Context
 {
-    private final static ThreadLocal<Context2> CURRENT = new ThreadLocal<Context2>()
+    private final static ThreadLocal<Context> CURRENT = new ThreadLocal<Context>()
     {
 
     };
@@ -42,7 +42,7 @@ public final class Context2
 
     public void runWith( final Runnable runnable )
     {
-        final Context2 old = CURRENT.get();
+        final Context old = CURRENT.get();
         CURRENT.set( this );
 
         try
@@ -57,7 +57,7 @@ public final class Context2
 
     public <T> T runWith( final Callable<T> runnable )
     {
-        final Context2 old = CURRENT.get();
+        final Context old = CURRENT.get();
         CURRENT.set( this );
 
         try
@@ -78,7 +78,7 @@ public final class Context2
         }
     }
 
-    public static Context2 current()
+    public static Context current()
     {
         if ( CURRENT.get() == null )
         {

@@ -1,6 +1,6 @@
 package com.enonic.wem.core;
 
-import com.enonic.wem.api.context.Context2;
+import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextBuilder;
 import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.api.repository.RepositoryId;
@@ -14,7 +14,7 @@ public class TestContext
         id( RepositoryId.from( "test" ) ).
         build();
 
-    public static final Context2 TEST_CONTEXT = ContextBuilder.create().
+    public static final Context TEST_CONTEXT = ContextBuilder.create().
         object( TEST_WORKSPACE ).
         object( TEST_REPOSITORY.getId() ).
         build();

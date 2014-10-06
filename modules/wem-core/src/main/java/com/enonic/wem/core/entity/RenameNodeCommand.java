@@ -3,7 +3,7 @@ package com.enonic.wem.core.entity;
 import java.time.Instant;
 
 import com.enonic.wem.api.account.UserKey;
-import com.enonic.wem.api.context.Context2;
+import com.enonic.wem.api.context.Context;
 import com.enonic.wem.core.entity.dao.NodeDao;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.version.EntityVersionDocument;
@@ -30,7 +30,7 @@ final class RenameNodeCommand
         final EntityId entityId = params.getEntityId();
 
         final NodeVersionId currentVersion =
-            this.workspaceService.getCurrentVersion( entityId, WorkspaceContext.from( Context2.current() ) );
+            this.workspaceService.getCurrentVersion( entityId, WorkspaceContext.from( Context.current() ) );
 
         final Node nodeToBeRenamed = nodeDao.getByVersionId( currentVersion );
 
@@ -61,7 +61,7 @@ final class RenameNodeCommand
     private Nodes getChildNodes( final Node parentNode )
     {
         final NodeVersionIds childrenVersions =
-            workspaceService.findByParent( parentNode.path(), WorkspaceContext.from( Context2.current() ) );
+            workspaceService.findByParent( parentNode.path(), WorkspaceContext.from( Context.current() ) );
 
         if ( childrenVersions.isEmpty() )
         {
@@ -73,7 +73,7 @@ final class RenameNodeCommand
 
     private EntityId getExistingNode( final NodePath path )
     {
-        final NodeVersionId existingVersion = workspaceService.getByPath( path, WorkspaceContext.from( Context2.current() ) );
+        final NodeVersionId existingVersion = workspaceService.getByPath( path, WorkspaceContext.from( Context.current() ) );
 
         if ( existingVersion == null )
         {
@@ -102,7 +102,7 @@ final class RenameNodeCommand
 
     private Node doMoveNode( final NodePath newParentPath, final NodeName newNodeName, final EntityId id )
     {
-        final Context2 context = Context2.current();
+        final Context context = Context.current();
 
         final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( id, WorkspaceContext.from( context ) );
 

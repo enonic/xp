@@ -1,6 +1,6 @@
 package com.enonic.wem.core.entity;
 
-import com.enonic.wem.api.context.Context2;
+import com.enonic.wem.api.context.Context;
 import com.enonic.wem.core.workspace.WorkspaceContext;
 import com.enonic.wem.core.workspace.WorkspaceService;
 
@@ -33,7 +33,7 @@ public class NodeHasChildResolver
 
     private Node doResolve( final Node node )
     {
-        final boolean hasChildren = workspaceService.hasChildren( node.path(), WorkspaceContext.from( Context2.current() ) );
+        final boolean hasChildren = workspaceService.hasChildren( node.path(), WorkspaceContext.from( Context.current() ) );
 
         return Node.newNode( node ).hasChildren( hasChildren ).build();
     }

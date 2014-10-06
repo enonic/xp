@@ -4,7 +4,7 @@ package com.enonic.wem.core.entity;
 import java.time.Instant;
 
 import com.enonic.wem.api.account.UserKey;
-import com.enonic.wem.api.context.Context2;
+import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.util.Exceptions;
 import com.enonic.wem.core.entity.dao.NodeNotFoundException;
 import com.enonic.wem.core.index.IndexContext;
@@ -40,7 +40,7 @@ final class UpdateNodeCommand
 
     private Node doExecute()
     {
-        final Context2 context = Context2.current();
+        final Context context = Context.current();
 
         final Node persistedNode = getPersistedNode();
 
@@ -77,7 +77,7 @@ final class UpdateNodeCommand
     private Node getPersistedNode()
     {
         final NodeVersionId currentVersionId =
-            workspaceService.getCurrentVersion( params.getId(), WorkspaceContext.from( Context2.current() ) );
+            workspaceService.getCurrentVersion( params.getId(), WorkspaceContext.from( Context.current() ) );
 
         if ( currentVersionId == null )
         {

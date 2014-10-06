@@ -1,6 +1,6 @@
 package com.enonic.wem.core.entity;
 
-import com.enonic.wem.api.context.Context2;
+import com.enonic.wem.api.context.Context;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.workspace.WorkspaceContext;
 
@@ -17,7 +17,7 @@ final class DeleteNodeByIdCommand
 
     Node execute()
     {
-        final Context2 context = Context2.current();
+        final Context context = Context.current();
 
         final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( this.entityId, WorkspaceContext.from( context ) );
 

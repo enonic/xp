@@ -1,6 +1,6 @@
 package com.enonic.wem.core.entity;
 
-import com.enonic.wem.api.context.Context2;
+import com.enonic.wem.api.context.Context;
 import com.enonic.wem.core.entity.query.NodeQuery;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.index.query.NodeQueryResult;
@@ -24,10 +24,10 @@ public class FindNodesByQueryCommand
 
     public FindNodesByQueryResult execute()
     {
-        final NodeQueryResult nodeQueryResult = queryService.find( query, IndexContext.from( Context2.current() ) );
+        final NodeQueryResult nodeQueryResult = queryService.find( query, IndexContext.from( Context.current() ) );
 
         final NodeVersionIds versions =
-            workspaceService.getByVersionIds( nodeQueryResult.getEntityIds(), WorkspaceContext.from( Context2.current() ) );
+            workspaceService.getByVersionIds( nodeQueryResult.getEntityIds(), WorkspaceContext.from( Context.current() ) );
 
         final Nodes nodes = NodeHasChildResolver.create().
             workspaceService( this.workspaceService ).

@@ -4,11 +4,11 @@ import com.enonic.wem.api.workspace.Workspace;
 
 public final class ContextBuilder
 {
-    private final Context2 context;
+    private final Context context;
 
     private ContextBuilder()
     {
-        this.context = new Context2();
+        this.context = new Context();
     }
 
     public ContextBuilder workspace( final String workspace )
@@ -33,7 +33,7 @@ public final class ContextBuilder
         return this;
     }
 
-    public Context2 build()
+    public Context build()
     {
         return this.context;
     }
@@ -43,7 +43,7 @@ public final class ContextBuilder
         return new ContextBuilder();
     }
 
-    public static ContextBuilder from( final Context2 context )
+    public static ContextBuilder from( final Context context )
     {
         return new ContextBuilder();
     }

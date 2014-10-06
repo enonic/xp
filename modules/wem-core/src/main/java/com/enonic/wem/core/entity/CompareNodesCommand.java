@@ -1,7 +1,7 @@
 package com.enonic.wem.core.entity;
 
 import com.enonic.wem.api.content.CompareStatus;
-import com.enonic.wem.api.context.Context2;
+import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.version.VersionService;
 import com.enonic.wem.core.workspace.WorkspaceContext;
@@ -48,7 +48,7 @@ public class CompareNodesCommand
 
     private NodeComparison doCompareVersions( final EntityId entityId )
     {
-        final Context2 context = Context2.current();
+        final Context context = Context.current();
 
         final NodeVersionId sourceVersionId = workspaceService.getCurrentVersion( entityId, WorkspaceContext.from( context ) );
         final NodeVersionId targetVersionId =
@@ -62,7 +62,7 @@ public class CompareNodesCommand
         return new NodeComparison( entityId, compareStatus );
     }
 
-    private NodeVersion getVersion( final NodeVersionId nodeVersionId, final Context2 context )
+    private NodeVersion getVersion( final NodeVersionId nodeVersionId, final Context context )
     {
         if ( nodeVersionId == null )
         {

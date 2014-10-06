@@ -1,6 +1,6 @@
 package com.enonic.wem.core.entity;
 
-import com.enonic.wem.api.context.Context2;
+import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.entity.dao.NodeDao;
 import com.enonic.wem.core.entity.dao.NodeNotFoundException;
@@ -27,7 +27,7 @@ public class NodeServiceImpl
     @Override
     public Node getById( final EntityId id )
     {
-        final Context2 context = Context2.current();
+        final Context context = Context.current();
 
         final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( id, WorkspaceContext.from( context ) );
 
@@ -45,7 +45,7 @@ public class NodeServiceImpl
     @Override
     public Nodes getByIds( final EntityIds ids )
     {
-        final NodeVersionIds versionIds = this.workspaceService.getByVersionIds( ids, WorkspaceContext.from( Context2.current() ) );
+        final NodeVersionIds versionIds = this.workspaceService.getByVersionIds( ids, WorkspaceContext.from( Context.current() ) );
 
         return NodeHasChildResolver.create().
             workspaceService( this.workspaceService ).
@@ -56,7 +56,7 @@ public class NodeServiceImpl
     @Override
     public Node getByPath( final NodePath path )
     {
-        final Context2 context = Context2.current();
+        final Context context = Context.current();
 
         final NodeVersionId currentVersion = this.workspaceService.getByPath( path, WorkspaceContext.from( context ) );
 
@@ -74,7 +74,7 @@ public class NodeServiceImpl
     @Override
     public Nodes getByPaths( final NodePaths paths )
     {
-        final NodeVersionIds versionIds = this.workspaceService.getByPaths( paths, WorkspaceContext.from( Context2.current() ) );
+        final NodeVersionIds versionIds = this.workspaceService.getByPaths( paths, WorkspaceContext.from( Context.current() ) );
 
         return NodeHasChildResolver.create().
             workspaceService( this.workspaceService ).

@@ -11,10 +11,10 @@ public class ContextTest
     @Test
     public void testSomething()
     {
-        final Context2 current = Context2.current();
+        final Context current = Context.current();
         Assert.assertNotNull( current );
 
-        final Context2 context = ContextBuilder.create().workspace( "test" ).build();
+        final Context context = ContextBuilder.create().workspace( "test" ).build();
 
         System.out.println( context.runWith( this::callWithOtherContext ) );
 
@@ -22,7 +22,7 @@ public class ContextTest
 
     private String callWithOtherContext()
     {
-        final Context2 current = Context2.current();
+        final Context current = Context.current();
         Assert.assertNotNull( current );
         Assert.assertEquals( Workspace.from( "test" ), current.getWorkspace() );
         return "Hello " + current.getWorkspace();

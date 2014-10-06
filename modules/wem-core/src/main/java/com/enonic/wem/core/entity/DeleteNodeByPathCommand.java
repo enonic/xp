@@ -1,6 +1,6 @@
 package com.enonic.wem.core.entity;
 
-import com.enonic.wem.api.context.Context2;
+import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.entity.dao.NodeNotFoundException;
 import com.enonic.wem.core.index.IndexContext;
@@ -19,7 +19,7 @@ final class DeleteNodeByPathCommand
 
     Node execute()
     {
-        final Context2 context = Context2.current();
+        final Context context = Context.current();
 
         final Workspace workspace = context.getWorkspace();
 

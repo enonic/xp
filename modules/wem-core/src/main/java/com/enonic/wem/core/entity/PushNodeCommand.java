@@ -2,7 +2,7 @@ package com.enonic.wem.core.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.context.Context2;
+import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.workspace.StoreWorkspaceDocument;
@@ -30,7 +30,7 @@ public class PushNodeCommand
 
     Node execute()
     {
-        final Context2 context = Context2.current();
+        final Context context = Context.current();
 
         final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( id, WorkspaceContext.from( context ) );
 

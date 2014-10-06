@@ -11,7 +11,7 @@ import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.GetContentByIdsParams;
-import com.enonic.wem.api.context.Context2;
+import com.enonic.wem.api.context.Context;
 import com.enonic.wem.core.entity.EntityId;
 import com.enonic.wem.core.entity.EntityIds;
 import com.enonic.wem.core.entity.NoEntityWithIdFoundException;
@@ -45,7 +45,7 @@ final class GetContentByIdsCommand
         catch ( NoEntityWithIdFoundException ex )
         {
             final ContentId contentId = ContentId.from( ex.getId().toString() );
-            throw new ContentNotFoundException( contentId, Context2.current().getWorkspace() );
+            throw new ContentNotFoundException( contentId, Context.current().getWorkspace() );
         }
 
         return contents;

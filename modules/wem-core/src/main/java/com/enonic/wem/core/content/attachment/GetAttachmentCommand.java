@@ -3,7 +3,7 @@ package com.enonic.wem.core.content.attachment;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.attachment.Attachment;
-import com.enonic.wem.api.context.Context2;
+import com.enonic.wem.api.context.Context;
 import com.enonic.wem.core.content.ContentAttachmentNodeTranslator;
 import com.enonic.wem.core.entity.EntityId;
 import com.enonic.wem.core.entity.NoEntityWithIdFoundException;
@@ -52,7 +52,7 @@ final class GetAttachmentCommand
         }
         catch ( NoEntityWithIdFoundException e )
         {
-            throw new ContentNotFoundException( this.contentId, Context2.current().getWorkspace() );
+            throw new ContentNotFoundException( this.contentId, Context.current().getWorkspace() );
         }
     }
 

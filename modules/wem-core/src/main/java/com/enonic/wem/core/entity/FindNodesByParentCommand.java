@@ -4,7 +4,7 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.context.Context2;
+import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.query.FieldSort;
 import com.enonic.wem.api.query.expr.FieldExpr;
 import com.enonic.wem.api.query.expr.FieldOrderExpr;
@@ -35,10 +35,10 @@ public class FindNodesByParentCommand
     {
         final NodeQuery query = createByPathQuery();
 
-        final NodeQueryResult nodeQueryResult = this.queryService.find( query, IndexContext.from( Context2.current() ) );
+        final NodeQueryResult nodeQueryResult = this.queryService.find( query, IndexContext.from( Context.current() ) );
 
         final NodeVersionIds versions =
-            this.workspaceService.getByVersionIds( nodeQueryResult.getEntityIds(), WorkspaceContext.from( Context2.current() ) );
+            this.workspaceService.getByVersionIds( nodeQueryResult.getEntityIds(), WorkspaceContext.from( Context.current() ) );
 
         final Nodes nodes = NodeHasChildResolver.create().
             workspaceService( this.workspaceService ).

@@ -10,7 +10,7 @@ import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageNotFoundException;
 import com.enonic.wem.api.content.page.UpdatePageParams;
-import com.enonic.wem.api.context.Context2;
+import com.enonic.wem.api.context.Context;
 
 import static com.enonic.wem.api.content.Content.editContent;
 
@@ -37,7 +37,7 @@ final class UpdatePageCommand
 
         if ( content == null )
         {
-            throw new ContentNotFoundException( this.params.getContent(), Context2.current().getWorkspace() );
+            throw new ContentNotFoundException( this.params.getContent(), Context.current().getWorkspace() );
         }
         if ( content.getPage() == null )
         {

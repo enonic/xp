@@ -2,7 +2,7 @@ package com.enonic.wem.core.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.context.Context2;
+import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.api.workspace.Workspaces;
 import com.enonic.wem.core.version.VersionService;
@@ -36,7 +36,7 @@ public class GetActiveNodeVersionsCommand
 
         for ( final Workspace workspace : workspaces )
         {
-            final Context2 context = Context2.current();
+            final Context context = Context.current();
 
             final NodeVersionId currentVersion =
                 this.workspaceService.getCurrentVersion( this.entityId, WorkspaceContext.from( workspace, context.getRepositoryId() ) );
