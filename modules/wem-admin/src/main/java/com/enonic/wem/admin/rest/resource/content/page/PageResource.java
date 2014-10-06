@@ -42,7 +42,7 @@ public final class PageResource
     public ContentJson create( final CreatePageJson params )
     {
         final CreatePageParams command = params.getCreatePage();
-        final Content updatedContent = this.pageService.create( command, STAGE_CONTEXT );
+        final Content updatedContent = this.pageService.create( command );
 
         return new ContentJson( updatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
     }
@@ -53,7 +53,7 @@ public final class PageResource
     public ContentJson update( final UpdatePageJson params )
     {
         final UpdatePageParams command = params.getUpdatePage();
-        final Content updatedContent = this.pageService.update( command, STAGE_CONTEXT );
+        final Content updatedContent = this.pageService.update( command );
 
         return new ContentJson( updatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
     }
@@ -64,7 +64,7 @@ public final class PageResource
     public ContentJson delete( @QueryParam("contentId") final String contentIdAsString )
     {
         final ContentId contentId = ContentId.from( contentIdAsString );
-        final Content updatedContent = this.pageService.delete( contentId, STAGE_CONTEXT );
+        final Content updatedContent = this.pageService.delete( contentId );
 
         return new ContentJson( updatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
     }

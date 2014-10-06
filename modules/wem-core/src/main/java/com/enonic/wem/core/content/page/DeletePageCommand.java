@@ -7,7 +7,6 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.editor.ContentEditor;
-import com.enonic.wem.api.context.Context;
 
 import static com.enonic.wem.api.content.Content.editContent;
 
@@ -17,13 +16,10 @@ final class DeletePageCommand
 
     private final ContentId contentId;
 
-    private final Context context;
-
     private DeletePageCommand( Builder builder )
     {
         contentService = builder.contentService;
         contentId = builder.contentId;
-        context = builder.context;
     }
 
     public static Builder create()
@@ -54,8 +50,6 @@ final class DeletePageCommand
 
         private ContentId contentId;
 
-        private Context context;
-
         private Builder()
         {
         }
@@ -72,16 +66,9 @@ final class DeletePageCommand
             return this;
         }
 
-        public Builder context( Context context )
-        {
-            this.context = context;
-            return this;
-        }
-
         private void validate()
         {
             Preconditions.checkNotNull( this.contentId );
-            Preconditions.checkNotNull( this.context );
             Preconditions.checkNotNull( this.contentService );
         }
 

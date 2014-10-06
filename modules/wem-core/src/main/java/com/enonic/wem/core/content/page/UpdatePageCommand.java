@@ -10,7 +10,7 @@ import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageNotFoundException;
 import com.enonic.wem.api.content.page.UpdatePageParams;
-import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.Context2;
 
 import static com.enonic.wem.api.content.Content.editContent;
 
@@ -20,13 +20,10 @@ final class UpdatePageCommand
 
     private final ContentService contentService;
 
-    private final Context context;
-
     private UpdatePageCommand( Builder builder )
     {
         params = builder.params;
         contentService = builder.contentService;
-        context = builder.context;
     }
 
     public static Builder create()
@@ -40,7 +37,7 @@ final class UpdatePageCommand
 
         if ( content == null )
         {
-            throw new ContentNotFoundException( this.params.getContent(), this.context.getWorkspace() );
+            throw new ContentNotFoundException( this.params.getContent(), Context2.current().getWorkspace() );
         }
         if ( content.getPage() == null )
         {
@@ -77,8 +74,6 @@ final class UpdatePageCommand
 
         private ContentService contentService;
 
-        private Context context;
-
         private Builder()
         {
         }
@@ -95,15 +90,8 @@ final class UpdatePageCommand
             return this;
         }
 
-        public Builder context( Context context )
-        {
-            this.context = context;
-            return this;
-        }
-
         private void validate()
         {
-            Preconditions.checkNotNull( context );
             Preconditions.checkNotNull( contentService );
             Preconditions.checkNotNull( params );
         }

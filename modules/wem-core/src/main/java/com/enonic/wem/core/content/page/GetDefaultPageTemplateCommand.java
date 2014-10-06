@@ -5,13 +5,10 @@ import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateSpec;
 import com.enonic.wem.api.content.page.PageTemplates;
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
 final class GetDefaultPageTemplateCommand
 {
-    private Context context;
-
     private ContentTypeName contentType;
 
     private ContentId site;
@@ -23,7 +20,6 @@ final class GetDefaultPageTemplateCommand
 
         final PageTemplates pageTemplates = new GetPageTemplateBySiteCommand().
             site( site ).
-            context( context ).
             contentService( contentService ).
             execute();
         final PageTemplateSpec spec = PageTemplateSpec.newPageTemplateParams().canRender( contentType ).build();
@@ -40,12 +36,6 @@ final class GetDefaultPageTemplateCommand
     public GetDefaultPageTemplateCommand site( final ContentId site )
     {
         this.site = site;
-        return this;
-    }
-
-    public GetDefaultPageTemplateCommand context( final Context context )
-    {
-        this.context = context;
         return this;
     }
 

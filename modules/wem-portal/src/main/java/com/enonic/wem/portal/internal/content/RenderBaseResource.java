@@ -17,7 +17,6 @@ import com.enonic.wem.api.content.page.PageDescriptorService;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateService;
 import com.enonic.wem.api.content.site.Site;
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.portal.RenderingMode;
@@ -127,7 +126,7 @@ public abstract class RenderBaseResource
 
     protected PageTemplate getPageTemplate( final Page page )
     {
-        final PageTemplate pageTemplate = pageTemplateService.getByKey( page.getTemplate(), resolveContext() );
+        final PageTemplate pageTemplate = pageTemplateService.getByKey( page.getTemplate() );
         if ( pageTemplate == null )
         {
             throw notFound( "Page template [%s] not found", page.getTemplate() );
@@ -139,7 +138,7 @@ public abstract class RenderBaseResource
     protected final PageTemplate getDefaultPageTemplate( final ContentTypeName contentType, final Site site )
     {
         return this.pageTemplateService.getDefault(
-            GetDefaultPageTemplateParams.create().site( site.getId() ).contentType( contentType ).build(), resolveContext() );
+            GetDefaultPageTemplateParams.create().site( site.getId() ).contentType( contentType ).build() );
     }
 
     private Content getContentByPath( final ContentPath contentPath )
@@ -164,14 +163,6 @@ public abstract class RenderBaseResource
         {
             return null;
         }
-    }
-
-    private Context resolveContext()
-    {
-        return Context.create().
-            workspace( this.workspace ).
-            repositoryId( ContentConstants.CONTENT_REPO.getId() ).
-            build();
     }
 
     protected Module getModule( final ModuleKey moduleKey )

@@ -10,7 +10,6 @@ import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplateService;
 import com.enonic.wem.api.content.page.PageTemplates;
-import com.enonic.wem.api.context.Context;
 
 public final class PageTemplateServiceImpl
     implements PageTemplateService
@@ -19,7 +18,7 @@ public final class PageTemplateServiceImpl
 
     protected PageService pageService;
 
-    public PageTemplate create( final CreatePageTemplateParams params, final Context context )
+    public PageTemplate create( final CreatePageTemplateParams params )
     {
         return new CreatePageTemplateCommand().
             site( params.getSite() ).
@@ -29,37 +28,33 @@ public final class PageTemplateServiceImpl
             supports( params.getSupports() ).
             pageRegions( params.getPageRegions() ).
             pageConfig( params.getPageConfig() ).
-            context( context ).
             contentService( this.contentService ).
             pageService( this.pageService ).
             execute();
     }
 
-    public PageTemplate getByKey( final PageTemplateKey pageTemplateKey, final Context context )
+    public PageTemplate getByKey( final PageTemplateKey pageTemplateKey )
     {
         return new GetPageTemplateByKeyCommand().
             pageTemplateKey( pageTemplateKey ).
             contentService( this.contentService ).
-            context( context ).
             execute();
     }
 
     @Override
-    public PageTemplate getDefault( GetDefaultPageTemplateParams params, final Context context )
+    public PageTemplate getDefault( GetDefaultPageTemplateParams params )
     {
         return new GetDefaultPageTemplateCommand().
             contentType( params.getContentType() ).
             site( params.getSite() ).
-            context( context ).
             contentService( this.contentService ).
             execute();
     }
 
-    public PageTemplates getBySite( final ContentId siteId, final Context context )
+    public PageTemplates getBySite( final ContentId siteId )
     {
         return new GetPageTemplateBySiteCommand().
             site( siteId ).
-            context( context ).
             contentService( this.contentService ).
             execute();
     }

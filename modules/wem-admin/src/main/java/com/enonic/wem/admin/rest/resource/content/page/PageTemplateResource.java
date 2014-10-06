@@ -50,7 +50,7 @@ public final class PageTemplateResource
         throws IOException
     {
         final PageTemplateKey pageTemplateKey = PageTemplateKey.from( pageTemplateKeyAsString );
-        final PageTemplate pageTemplate = pageTemplateService.getByKey( pageTemplateKey, STAGE_CONTEXT );
+        final PageTemplate pageTemplate = pageTemplateService.getByKey( pageTemplateKey );
         return new ContentJson( pageTemplate, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
     }
 
@@ -60,7 +60,7 @@ public final class PageTemplateResource
     {
 
         final ContentId siteId = ContentId.from( siteIdAsString );
-        final PageTemplates pageTemplates = pageTemplateService.getBySite( siteId, STAGE_CONTEXT );
+        final PageTemplates pageTemplates = pageTemplateService.getBySite( siteId );
 
         final ContentListMetaData metaData = ContentListMetaData.create().
             totalHits( pageTemplates.getSize() ).
@@ -76,7 +76,7 @@ public final class PageTemplateResource
                                             @QueryParam("contentTypeName") String contentTypeName )
     {
         final ContentId siteId = ContentId.from( siteIdAsString );
-        final PageTemplates pageTemplates = pageTemplateService.getBySite( siteId, STAGE_CONTEXT );
+        final PageTemplates pageTemplates = pageTemplateService.getBySite( siteId );
         final PageTemplateSpec spec = PageTemplateSpec.newPageTemplateParams().canRender( ContentTypeName.from( contentTypeName ) ).build();
         final PageTemplates filteredPageTemplates = pageTemplates.filter( spec );
         final ContentListMetaData metaData = ContentListMetaData.create().
@@ -97,7 +97,7 @@ public final class PageTemplateResource
         final PageTemplate pageTemplate = pageTemplateService.getDefault( GetDefaultPageTemplateParams.create().
             site( siteId ).
             contentType( contentTypeName ).
-            build(), STAGE_CONTEXT );
+            build() );
         if ( pageTemplate == null )
         {
             return null;
@@ -123,7 +123,7 @@ public final class PageTemplateResource
                 }
 
                 final ContentId siteId = nearestSite.getId();
-                final PageTemplates pageTemplates = pageTemplateService.getBySite( siteId, STAGE_CONTEXT );
+                final PageTemplates pageTemplates = pageTemplateService.getBySite( siteId );
 
                 for ( final PageTemplate pageTemplate : pageTemplates )
                 {

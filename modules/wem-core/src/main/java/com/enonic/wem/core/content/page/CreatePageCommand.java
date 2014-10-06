@@ -8,7 +8,6 @@ import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.api.content.page.CreatePageParams;
 import com.enonic.wem.api.content.page.Page;
-import com.enonic.wem.api.context.Context;
 
 import static com.enonic.wem.api.content.Content.editContent;
 import static com.enonic.wem.api.content.page.Page.newPage;
@@ -19,13 +18,10 @@ final class CreatePageCommand
 
     private final ContentService contentService;
 
-    private final Context context;
-
     private CreatePageCommand( Builder builder )
     {
         params = builder.params;
         contentService = builder.contentService;
-        context = builder.context;
     }
 
     public static Builder create()
@@ -62,8 +58,6 @@ final class CreatePageCommand
 
         private ContentService contentService;
 
-        private Context context;
-
         private Builder()
         {
         }
@@ -80,15 +74,8 @@ final class CreatePageCommand
             return this;
         }
 
-        public Builder context( Context context )
-        {
-            this.context = context;
-            return this;
-        }
-
         private void validate()
         {
-            Preconditions.checkNotNull( context );
             Preconditions.checkNotNull( contentService );
             Preconditions.checkNotNull( params );
         }

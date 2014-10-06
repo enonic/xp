@@ -19,7 +19,6 @@ import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageService;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.UpdatePageParams;
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
@@ -59,8 +58,7 @@ public class PageResourceTest
     {
         Content content = createPage( "content-id", "content-name", "mymodule:content-type" );
 
-        Mockito.when( this.pageService.update( Mockito.isA( UpdatePageParams.class ), Mockito.isA( Context.class ) ) ).thenReturn(
-            content );
+        Mockito.when( this.pageService.update( Mockito.isA( UpdatePageParams.class ) ) ).thenReturn( content );
 
         String jsonString = request().path( "content/page/update" ).
             entity( readFromFile( "update_page_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
@@ -75,7 +73,7 @@ public class PageResourceTest
     {
         Content content = createPage( "content-id", "content-name", "mymodule:content-type" );
 
-        Mockito.when( this.pageService.update( Mockito.isA( UpdatePageParams.class ), Mockito.isA( Context.class ) ) ).thenThrow(
+        Mockito.when( this.pageService.update( Mockito.isA( UpdatePageParams.class ) ) ).thenThrow(
             new ContentNotFoundException( content.getId(), Workspace.from( "workspace" ) ) );
 
         String jsonString = request().path( "content/page/update" ).
@@ -91,8 +89,7 @@ public class PageResourceTest
     {
         Content content = createPage( "content-id", "content-name", "mymodule:content-type" );
 
-        Mockito.when( this.pageService.create( Mockito.isA( CreatePageParams.class ), Mockito.isA( Context.class ) ) ).thenReturn(
-            content );
+        Mockito.when( this.pageService.create( Mockito.isA( CreatePageParams.class ) ) ).thenReturn( content );
 
         String jsonString = request().path( "content/page/create" ).
             entity( readFromFile( "update_page_params.json" ), MediaType.APPLICATION_JSON_TYPE ).

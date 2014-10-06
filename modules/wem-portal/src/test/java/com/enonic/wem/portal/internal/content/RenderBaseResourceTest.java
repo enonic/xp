@@ -121,8 +121,7 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
     protected final void setupTemplates( final Context context, final boolean includeDescriptor )
         throws Exception
     {
-        Mockito.when(
-            this.pageTemplateService.getByKey( Mockito.eq( PageTemplateKey.from( "my-page" ) ), Mockito.eq( context ) ) ).thenReturn(
+        Mockito.when( this.pageTemplateService.getByKey( Mockito.eq( PageTemplateKey.from( "my-page" ) ) ) ).thenReturn(
             createPageTemplate( includeDescriptor ) );
 
         if ( includeDescriptor )

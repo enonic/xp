@@ -14,7 +14,6 @@ import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageService;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateFormDataBuilder;
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.schema.content.ContentTypeForms;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -22,8 +21,6 @@ import com.enonic.wem.api.schema.content.ContentTypeNames;
 
 class CreatePageTemplateCommand
 {
-    private Context context;
-
     private ContentService contentService;
 
     private PageService pageService;
@@ -41,12 +38,6 @@ class CreatePageTemplateCommand
     private PageRegions pageRegions;
 
     private RootDataSet pageConfig;
-
-    public CreatePageTemplateCommand context( final Context context )
-    {
-        this.context = context;
-        return this;
-    }
 
     public CreatePageTemplateCommand contentService( final ContentService contentService )
     {
@@ -122,6 +113,6 @@ class CreatePageTemplateCommand
         return (PageTemplate) pageService.create( new CreatePageParams().
             content( content.getId() ).
             config( pageConfig ).
-            regions( pageRegions ), context );
+            regions( pageRegions ) );
     }
 }
