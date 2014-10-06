@@ -112,8 +112,8 @@ public final class PageTemplateResource
         final ContentId contentId = ContentId.from( contentIdAsString );
         try
         {
-            final Content content = contentService.getById( contentId, STAGE_CONTEXT );
-            final Content nearestSite = this.contentService.getNearestSite( contentId, STAGE_CONTEXT );
+            final Content content = contentService.getById( contentId );
+            final Content nearestSite = this.contentService.getNearestSite( contentId );
 
             if ( nearestSite != null )
             {

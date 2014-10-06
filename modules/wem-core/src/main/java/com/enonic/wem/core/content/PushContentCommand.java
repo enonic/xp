@@ -26,7 +26,7 @@ public class PushContentCommand
     {
         final EntityId entityId = EntityId.from( contentId.toString() );
 
-        final Node pushedNode = nodeService.push( entityId, this.target, this.context );
+        final Node pushedNode = nodeService.push( entityId, this.target );
 
         return translator.fromNode( pushedNode );
     }

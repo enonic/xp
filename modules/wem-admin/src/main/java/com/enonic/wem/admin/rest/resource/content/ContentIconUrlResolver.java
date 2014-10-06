@@ -56,7 +56,6 @@ public final class ContentIconUrlResolver
             final Attachment attachment = attachmentService.get( GetAttachmentParameters.create().
                 contentId( content.getId() ).
                 attachmentName( attachmentName ).
-                context( STAGE_CONTEXT ).
                 build() );
             if ( attachment != null )
             {

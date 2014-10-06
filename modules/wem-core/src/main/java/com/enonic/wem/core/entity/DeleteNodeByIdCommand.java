@@ -1,6 +1,6 @@
 package com.enonic.wem.core.entity;
 
-import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.Context2;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.workspace.WorkspaceContext;
 
@@ -17,6 +17,8 @@ final class DeleteNodeByIdCommand
 
     Node execute()
     {
+        final Context2 context = Context2.current();
+
         final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( this.entityId, WorkspaceContext.from( context ) );
 
         final Node nodeToDelete = this.nodeDao.getByVersionId( currentVersion );
@@ -25,14 +27,14 @@ final class DeleteNodeByIdCommand
 
         workspaceService.delete( entityId, WorkspaceContext.from( context ) );
 
-        indexService.delete( entityId, IndexContext.from( this.context ) );
+        indexService.delete( entityId, IndexContext.from( context ) );
 
         return nodeToDelete;
     }
 
-    static Builder create( final Context context )
+    static Builder create()
     {
-        return new Builder( context );
+        return new Builder();
     }
 
     static class Builder
@@ -41,9 +43,9 @@ final class DeleteNodeByIdCommand
 
         private EntityId entityId;
 
-        Builder( final Context context )
+        Builder()
         {
-            super( context );
+            super();
         }
 
         public Builder entityId( final EntityId entityId )

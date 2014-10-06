@@ -1,42 +1,41 @@
 package com.enonic.wem.core.entity;
 
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.entity.query.NodeQuery;
 
 public interface NodeService
 {
-    Node create( CreateNodeParams params, final Context context );
+    Node create( CreateNodeParams params );
 
-    Node update( UpdateNodeParams params, final Context context );
+    Node update( UpdateNodeParams params );
 
-    Node rename( RenameNodeParams params, final Context context );
+    Node rename( RenameNodeParams params );
 
-    Node push( EntityId id, Workspace target, Context context );
+    Node push( EntityId id, Workspace target );
 
-    Node deleteById( EntityId id, Context context );
+    Node deleteById( EntityId id );
 
-    Node deleteByPath( NodePath path, Context context );
+    Node deleteByPath( NodePath path );
 
-    Node getById( EntityId id, Context context );
+    Node getById( EntityId id );
 
-    Nodes getByIds( EntityIds ids, Context context );
+    Nodes getByIds( EntityIds ids );
 
-    Node getByPath( NodePath path, Context context );
+    Node getByPath( NodePath path );
 
-    Nodes getByPaths( NodePaths paths, Context context );
+    Nodes getByPaths( NodePaths paths );
 
-    FindNodesByParentResult findByParent( FindNodesByParentParams params, Context context );
+    FindNodesByParentResult findByParent( FindNodesByParentParams params );
 
-    FindNodesByQueryResult findByQuery( NodeQuery nodeQuery, Context context );
+    FindNodesByQueryResult findByQuery( NodeQuery nodeQuery );
 
-    NodeComparison compare( EntityId id, Workspace target, Context context );
+    NodeComparison compare( EntityId id, Workspace target );
 
-    NodeComparisons compare( final EntityIds ids, final Workspace target, final Context context );
+    NodeComparisons compare( final EntityIds ids, final Workspace target );
 
-    FindNodeVersionsResult findVersions( final GetNodeVersionsParams params, final Context context );
+    FindNodeVersionsResult findVersions( final GetNodeVersionsParams params );
 
-    GetActiveNodeVersionsResult getActiveVersions( final GetActiveNodeVersionsParams params, final Context context );
+    GetActiveNodeVersionsResult getActiveVersions( final GetActiveNodeVersionsParams params );
 
-    Node getByVersionId( NodeVersionId nodeVersionid, Context context );
+    Node getByVersionId( NodeVersionId nodeVersionid );
 }

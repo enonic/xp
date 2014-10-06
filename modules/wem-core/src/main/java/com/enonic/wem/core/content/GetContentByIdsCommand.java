@@ -11,6 +11,7 @@ import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.GetContentByIdsParams;
+import com.enonic.wem.api.context.Context2;
 import com.enonic.wem.core.entity.EntityId;
 import com.enonic.wem.core.entity.EntityIds;
 import com.enonic.wem.core.entity.NoEntityWithIdFoundException;
@@ -44,7 +45,7 @@ final class GetContentByIdsCommand
         catch ( NoEntityWithIdFoundException ex )
         {
             final ContentId contentId = ContentId.from( ex.getId().toString() );
-            throw new ContentNotFoundException( contentId, this.context.getWorkspace() );
+            throw new ContentNotFoundException( contentId, Context2.current().getWorkspace() );
         }
 
         return contents;
@@ -53,7 +54,7 @@ final class GetContentByIdsCommand
     private Contents doExecute()
     {
         final EntityIds entityIds = getAsEntityIds( this.params.getIds() );
-        final Nodes nodes = nodeService.getByIds( entityIds, this.context );
+        final Nodes nodes = nodeService.getByIds( entityIds );
 
         return translator.fromNodes( nodes );
     }

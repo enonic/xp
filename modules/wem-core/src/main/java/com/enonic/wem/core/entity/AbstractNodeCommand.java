@@ -2,27 +2,23 @@ package com.enonic.wem.core.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.core.entity.dao.NodeDao;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.version.VersionService;
 import com.enonic.wem.core.workspace.WorkspaceService;
 
-public abstract class AbstractNodeCommand
+abstract class AbstractNodeCommand
 {
-    protected final Context context;
+    final IndexService indexService;
 
-    protected final IndexService indexService;
+    final NodeDao nodeDao;
 
-    protected final NodeDao nodeDao;
-
-    protected final WorkspaceService workspaceService;
+    final WorkspaceService workspaceService;
 
     final VersionService versionService;
 
-    public AbstractNodeCommand( final Builder builder )
+    AbstractNodeCommand( final Builder builder )
     {
-        this.context = builder.context;
         this.indexService = builder.indexService;
         this.nodeDao = builder.nodeDao;
         this.workspaceService = builder.workspaceService;
@@ -31,19 +27,16 @@ public abstract class AbstractNodeCommand
 
     public static class Builder<B extends Builder>
     {
-        final Context context;
-
         IndexService indexService;
 
-        protected NodeDao nodeDao;
+        NodeDao nodeDao;
 
         WorkspaceService workspaceService;
 
         VersionService versionService;
 
-        protected Builder( final Context context )
+        Builder()
         {
-            this.context = context;
         }
 
         @SuppressWarnings("unchecked")
@@ -75,7 +68,7 @@ public abstract class AbstractNodeCommand
             return (B) this;
         }
 
-        protected void validate()
+        void validate()
         {
             Preconditions.checkNotNull( indexService );
             Preconditions.checkNotNull( versionService );

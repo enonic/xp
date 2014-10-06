@@ -1,5 +1,6 @@
 package com.enonic.wem.core.entity;
 
+import com.enonic.wem.api.context.Context2;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.workspace.WorkspaceContext;
 
@@ -15,7 +16,9 @@ abstract class AbstractDeleteNodeCommand
 
     void doDeleteChildren( final Node parent )
     {
-        final NodeVersionIds childrenVersions = workspaceService.findByParent( parent.path(), WorkspaceContext.from( this.context ) );
+        final Context2 context = Context2.current();
+
+        final NodeVersionIds childrenVersions = workspaceService.findByParent( parent.path(), WorkspaceContext.from( context ) );
 
         if ( childrenVersions.isEmpty() )
         {
@@ -31,15 +34,15 @@ abstract class AbstractDeleteNodeCommand
             final boolean isAttachmentNode = nodeName.startsWith( ATTACHMENTS_NODE_NAME );
             if ( !isAttachmentNode )
             {
-                workspaceService.delete( child.id(), WorkspaceContext.from( this.context ) );
+                workspaceService.delete( child.id(), WorkspaceContext.from( context ) );
 
-                indexService.delete( child.id(), IndexContext.from( this.context ) );
+                indexService.delete( child.id(), IndexContext.from( context ) );
                 doDeleteChildren( child );
             }
             else
             {
                 // TODO; What to do with attachment nodes?
-                workspaceService.delete( child.id(), WorkspaceContext.from( this.context ) );
+                workspaceService.delete( child.id(), WorkspaceContext.from( context ) );
             }
         }
     }

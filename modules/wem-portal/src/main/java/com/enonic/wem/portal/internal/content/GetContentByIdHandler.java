@@ -1,7 +1,6 @@
 package com.enonic.wem.portal.internal.content;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.portal.content.GetContentById;
@@ -33,7 +32,7 @@ public final class GetContentByIdHandler
     public void invoke( final GetContentById command )
     {
         final ContentId contentId = ContentId.from( command.getId() );
-        final Content content = contentService.getById( contentId, ContentConstants.CONTEXT_STAGE );
+        final Content content = contentService.getById( contentId );
         command.setResult( content );
     }
 }

@@ -1,14 +1,12 @@
 package com.enonic.wem.core.entity;
 
-import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.Context2;
 import com.enonic.wem.core.version.GetVersionsQuery;
 import com.enonic.wem.core.version.VersionService;
 
 public class GetEntityVersionsCommand
 {
     private final EntityId entityId;
-
-    private final Context context;
 
     private final int from;
 
@@ -19,7 +17,6 @@ public class GetEntityVersionsCommand
     private GetEntityVersionsCommand( Builder builder )
     {
         entityId = builder.entityId;
-        context = builder.context;
         from = builder.from;
         size = builder.size;
         versionService = builder.versionService;
@@ -33,19 +30,17 @@ public class GetEntityVersionsCommand
             size( this.size ).
             build();
 
-        return this.versionService.findVersions( query, this.context.getRepositoryId() );
+        return this.versionService.findVersions( query, Context2.current().getRepositoryId() );
     }
 
-    public static Builder create( final Context context )
+    public static Builder create()
     {
-        return new Builder( context );
+        return new Builder();
     }
 
     public static final class Builder
     {
         private EntityId entityId;
-
-        private final Context context;
 
         private int from;
 
@@ -53,9 +48,8 @@ public class GetEntityVersionsCommand
 
         private VersionService versionService;
 
-        private Builder( final Context context )
+        private Builder()
         {
-            this.context = context;
         }
 
         public Builder entityId( EntityId entityId )

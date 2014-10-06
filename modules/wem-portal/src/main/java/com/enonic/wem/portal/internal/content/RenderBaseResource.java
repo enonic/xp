@@ -18,10 +18,6 @@ import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateService;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.module.Module;
-import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ModuleNotFoundException;
-import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.portal.RenderingMode;
@@ -71,7 +67,7 @@ public abstract class RenderBaseResource
 
     protected final Site getSite( final Content content )
     {
-        final Site site = this.contentService.getNearestSite( content.getId(), resolveContext() );
+        final Site site = this.contentService.getNearestSite( content.getId() );
 
         if ( site == null )
         {
@@ -150,10 +146,7 @@ public abstract class RenderBaseResource
     {
         try
         {
-            return this.contentService.getByPath( contentPath, Context.create().
-                workspace( this.workspace ).
-                repositoryId( ContentConstants.CONTENT_REPO.getId() ).
-                build() );
+            return this.contentService.getByPath( contentPath );
         }
         catch ( ContentNotFoundException e )
         {
@@ -165,7 +158,7 @@ public abstract class RenderBaseResource
     {
         try
         {
-            return this.contentService.getById( contentId, resolveContext() );
+            return this.contentService.getById( contentId );
         }
         catch ( ContentNotFoundException e )
         {

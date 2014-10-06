@@ -15,7 +15,7 @@ final class GetPageTemplateByKeyCommand
 
     public PageTemplate execute()
     {
-        return (PageTemplate) this.contentService.getById( pageTemplateKey, context );
+        return (PageTemplate) this.contentService.getById( pageTemplateKey );
     }
 
     public GetPageTemplateByKeyCommand pageTemplateKey( final PageTemplateKey pageTemplateKey )

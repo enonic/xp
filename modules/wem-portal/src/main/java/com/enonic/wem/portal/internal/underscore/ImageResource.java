@@ -21,7 +21,6 @@ import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
@@ -29,7 +28,6 @@ import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.attachment.GetAttachmentParameters;
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.image.ImageHelper;
 import com.enonic.wem.core.image.filter.BuilderContext;
@@ -180,10 +178,7 @@ public final class ImageResource
     {
         try
         {
-            return this.attachmentService.getAll( contentId, Context.create().
-                workspace( this.workspace ).
-                repositoryId( ContentConstants.CONTENT_REPO.getId() ).
-                build() ).first();
+            return this.attachmentService.getAll( contentId ).first();
         }
         catch ( final ContentNotFoundException e )
         {
@@ -193,10 +188,7 @@ public final class ImageResource
 
     private Content getContent( final ContentId contentId )
     {
-        final Content content = this.contentService.getById( contentId, Context.create().
-            workspace( this.workspace ).
-            repositoryId( ContentConstants.CONTENT_REPO.getId() ).
-            build() );
+        final Content content = this.contentService.getById( contentId );
         if ( content != null )
         {
             return content;
@@ -207,10 +199,7 @@ public final class ImageResource
 
     private Content getContent( final ContentPath contentPath )
     {
-        final Content content = this.contentService.getByPath( contentPath, Context.create().
-            workspace( this.workspace ).
-            repositoryId( ContentConstants.CONTENT_REPO.getId() ).
-            build() );
+        final Content content = this.contentService.getByPath( contentPath );
         if ( content != null )
         {
             return content;
@@ -224,10 +213,6 @@ public final class ImageResource
         try
         {
             return this.attachmentService.get( GetAttachmentParameters.create().
-                context( Context.create().
-                    workspace( this.workspace ).
-                    repositoryId( ContentConstants.CONTENT_REPO.getId() ).
-                    build() ).
                 contentId( contentId ).
                 attachmentName( attachmentName ).
                 build() );

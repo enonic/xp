@@ -21,10 +21,10 @@ final class GetPageTemplateBySiteCommand
     public PageTemplates execute()
     {
         final PageTemplates.Builder pageTemplatesBuilder = PageTemplates.newPageTemplates();
-        final Content site = contentService.getById( siteId, context );
+        final Content site = contentService.getById( siteId );
         final ContentPath pageTemplatesFolderPath = ContentPath.from( site.getPath(), "templates" );
         final FindContentByParentResult result =
-            contentService.findByParent( FindContentByParentParams.create().parentPath( pageTemplatesFolderPath ).build(), context );
+            contentService.findByParent( FindContentByParentParams.create().parentPath( pageTemplatesFolderPath ).build() );
         for ( final Content content : result.getContents() )
         {
             if ( content instanceof PageTemplate )

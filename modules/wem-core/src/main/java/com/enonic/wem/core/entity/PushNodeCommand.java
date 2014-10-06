@@ -2,7 +2,7 @@ package com.enonic.wem.core.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.Context2;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.workspace.StoreWorkspaceDocument;
@@ -22,14 +22,16 @@ public class PushNodeCommand
         this.id = builder.id;
     }
 
-    public static Builder create( final Context context )
+    public static Builder create()
     {
-        return new Builder( context );
+        return new Builder();
     }
 
 
     Node execute()
     {
+        final Context2 context = Context2.current();
+
         final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( id, WorkspaceContext.from( context ) );
 
         final Node currentNode = nodeDao.getByVersionId( currentVersion );
@@ -39,13 +41,12 @@ public class PushNodeCommand
             id( this.id ).
             path( currentNode.path() ).
             parentPath( currentNode.parent() ).
-            build(), WorkspaceContext.from( this.target, this.context.getRepositoryId() ) );
+            build(), WorkspaceContext.from( this.target, context.getRepositoryId() ) );
 
-        this.indexService.store( currentNode, IndexContext.from( this.target, this.context.getRepositoryId() ) );
+        this.indexService.store( currentNode, IndexContext.from( this.target, context.getRepositoryId() ) );
 
         return NodeHasChildResolver.create().
             workspaceService( this.workspaceService ).
-            context( this.context ).
             build().
             resolve( currentNode );
     }
@@ -57,9 +58,9 @@ public class PushNodeCommand
 
         private EntityId id;
 
-        Builder( final Context context )
+        Builder()
         {
-            super( context );
+            super();
         }
 
         public Builder target( final Workspace target )

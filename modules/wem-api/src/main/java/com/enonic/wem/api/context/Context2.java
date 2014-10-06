@@ -6,28 +6,22 @@ import java.util.concurrent.Callable;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
-import com.enonic.wem.api.repository.Repository;
+import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.workspace.Workspace;
 
 public final class Context2
 {
-    private final static Context2 DEFAULT = new Context2();
-
     private final static ThreadLocal<Context2> CURRENT = new ThreadLocal<Context2>()
     {
-        @Override
-        protected Context2 initialValue()
-        {
-            return DEFAULT;
-        }
+
     };
 
     protected final Map<String, Object> objects = Maps.newHashMap();
 
     // Should be id
-    public Repository getRepository()
+    public RepositoryId getRepositoryId()
     {
-        return getObject( Repository.class );
+        return getObject( RepositoryId.class );
     }
 
     public Workspace getWorkspace()
@@ -86,6 +80,11 @@ public final class Context2
 
     public static Context2 current()
     {
+        if ( CURRENT.get() == null )
+        {
+            throw new IllegalStateException( "No context set" );
+        }
+
         return CURRENT.get();
     }
 }

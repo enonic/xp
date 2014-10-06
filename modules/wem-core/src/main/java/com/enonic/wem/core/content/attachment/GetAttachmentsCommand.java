@@ -4,7 +4,7 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.Attachments;
-import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.Context2;
 import com.enonic.wem.core.content.ContentAttachmentNodeTranslator;
 import com.enonic.wem.core.content.serializer.ThumbnailAttachmentSerializer;
 import com.enonic.wem.core.entity.EntityId;
@@ -21,13 +21,10 @@ final class GetAttachmentsCommand
 
     private final ContentId contentId;
 
-    private final Context context;
-
     private GetAttachmentsCommand( Builder builder )
     {
         nodeService = builder.nodeService;
         contentId = builder.contentId;
-        context = builder.context;
     }
 
     public static Builder create()
@@ -40,7 +37,7 @@ final class GetAttachmentsCommand
         try
         {
             final EntityId entityId = EntityId.from( this.contentId );
-            final Node node = nodeService.getById( entityId, this.context );
+            final Node node = nodeService.getById( entityId );
             final Attachments.Builder attachmentsBuilder = Attachments.builder();
 
             for ( com.enonic.wem.core.entity.Attachment entityAttachment : node.attachments() )
@@ -59,7 +56,7 @@ final class GetAttachmentsCommand
         }
         catch ( NoEntityWithIdFoundException e )
         {
-            throw new ContentNotFoundException( this.contentId, this.context.getWorkspace() );
+            throw new ContentNotFoundException( this.contentId, Context2.current().getWorkspace() );
         }
     }
 
@@ -69,8 +66,6 @@ final class GetAttachmentsCommand
         private NodeService nodeService;
 
         private ContentId contentId;
-
-        private Context context;
 
         private Builder()
         {
@@ -85,12 +80,6 @@ final class GetAttachmentsCommand
         public Builder contentId( ContentId contentId )
         {
             this.contentId = contentId;
-            return this;
-        }
-
-        public Builder context( Context context )
-        {
-            this.context = context;
             return this;
         }
 

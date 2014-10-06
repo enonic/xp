@@ -1,14 +1,13 @@
 package com.enonic.wem.core.entity;
 
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.core.index.query.QueryService;
 
-public abstract class AbstractFindNodeCommand
+abstract class AbstractFindNodeCommand
     extends AbstractNodeCommand
 {
-    protected final QueryService queryService;
+    final QueryService queryService;
 
-    protected AbstractFindNodeCommand( Builder builder )
+    AbstractFindNodeCommand( Builder builder )
     {
         super( builder );
         queryService = builder.queryService;
@@ -19,9 +18,9 @@ public abstract class AbstractFindNodeCommand
     {
         private QueryService queryService;
 
-        public Builder( final Context context )
+        public Builder()
         {
-            super( context );
+            super();
         }
 
         @SuppressWarnings("unchecked")

@@ -27,7 +27,7 @@ public class ImageByIdResourceTest
     public void getImageNotFound()
         throws Exception
     {
-        Mockito.when( this.contentService.getById( Mockito.anyObject(), Mockito.anyObject() ) ).thenReturn( null );
+        Mockito.when( this.contentService.getById( Mockito.anyObject() ) ).thenReturn( null );
 
         final MockHttpServletRequest request = newGetRequest( "/live/test/path/to/content/_/image/id/content-id" );
         final MockHttpServletResponse response = executeRequest( request );

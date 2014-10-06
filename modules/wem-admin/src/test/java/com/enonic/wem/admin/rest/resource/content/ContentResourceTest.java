@@ -45,7 +45,6 @@ import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.content.site.ModuleConfig;
 import com.enonic.wem.api.content.site.ModuleConfigs;
 import com.enonic.wem.api.content.site.Site;
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
@@ -120,7 +119,7 @@ public class ContentResourceTest
 
         aContent.getAllMetadata().add( new Metadata( MetadataSchemaName.from( "myModule:myField" ), data ) );
 
-        Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ), Mockito.isA( Context.class ) ) ).
+        Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).
             thenReturn( aContent );
 
         String jsonString = request().
@@ -143,7 +142,7 @@ public class ContentResourceTest
         aContentData.setProperty( "mySet.setProperty1", Value.newLong( 1 ) );
         aContentData.setProperty( "mySet.setProperty2", Value.newLong( 2 ) );
 
-        Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ), Mockito.isA( Context.class ) ) ).
+        Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).
             thenReturn( aContent );
 
         String jsonString = request().path( "content/bypath" ).queryParam( "path", "/my_a_content" ).
@@ -156,7 +155,7 @@ public class ContentResourceTest
     public void get_content_by_path_not_found()
         throws Exception
     {
-        Mockito.when( contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ), Mockito.isA( Context.class ) ) ).
+        Mockito.when( contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ) ) ).
             thenReturn( Contents.empty() );
 
         final MockRestResponse response = request().path( "content/bypath" ).queryParam( "path", "/my_a_content" ).get();
@@ -177,8 +176,7 @@ public class ContentResourceTest
         aContentData.setProperty( "mySet.setProperty1", Value.newLong( 1 ) );
         aContentData.setProperty( "mySet.setProperty2", Value.newLong( 2 ) );
 
-        Mockito.when( contentService.getByPath( Mockito.eq( ContentPath.from( "/my_a_content" ) ),
-                                                Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn( aContent );
+        Mockito.when( contentService.getByPath( Mockito.eq( ContentPath.from( "/my_a_content" ) ) ) ).thenReturn( aContent );
 
         String jsonString = request().
             path( "content/bypath" ).
@@ -193,8 +191,7 @@ public class ContentResourceTest
     public void get_content_by_path_and_version_not_found()
         throws Exception
     {
-        Mockito.when( contentService.getByPath( Mockito.eq( ContentPath.from( "/my_a_content" ) ),
-                                                Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn( null );
+        Mockito.when( contentService.getByPath( Mockito.eq( ContentPath.from( "/my_a_content" ) ) ) ).thenReturn( null );
 
         final MockRestResponse response = request().path( "content/bypath" ).queryParam( "path", "/my_a_content" ).get();
         assertEquals( response.getStatus(), 404 );
@@ -221,7 +218,7 @@ public class ContentResourceTest
 
         aContent.getAllMetadata().add( new Metadata( MetadataSchemaName.from( "myModule:myField" ), data ) );
 
-        Mockito.when( contentService.getById( ContentId.from( "aaa" ), ContentResource.STAGE_CONTEXT ) ).thenReturn( aContent );
+        Mockito.when( contentService.getById( ContentId.from( "aaa" ) ) ).thenReturn( aContent );
 
         String jsonString = request().path( "content" ).queryParam( "id", "aaa" ).get().getAsString();
 
@@ -244,7 +241,7 @@ public class ContentResourceTest
         ContentData contentData = content.getContentData();
         contentData.setProperty( "myProperty", Value.newString( "myValue" ) );
 
-        Mockito.when( contentService.getById( ContentId.from( "aaa" ), ContentResource.STAGE_CONTEXT ) ).thenReturn( content );
+        Mockito.when( contentService.getById( ContentId.from( "aaa" ) ) ).thenReturn( content );
 
         String jsonString = request().path( "content" ).queryParam( "id", "aaa" ).get().getAsString();
 
@@ -287,7 +284,7 @@ public class ContentResourceTest
         ContentData contentData = content.getContentData();
         contentData.setProperty( "myProperty", Value.newString( "myValue" ) );
 
-        Mockito.when( contentService.getById( ContentId.from( "aaa" ), ContentResource.STAGE_CONTEXT ) ).thenReturn( content );
+        Mockito.when( contentService.getById( ContentId.from( "aaa" ) ) ).thenReturn( content );
 
         String jsonString = request().path( "content" ).queryParam( "id", "aaa" ).get().getAsString();
 
@@ -306,7 +303,7 @@ public class ContentResourceTest
         aContentData.setProperty( "mySet.setProperty1", Value.newLong( 1 ) );
         aContentData.setProperty( "mySet.setProperty2", Value.newLong( 2 ) );
 
-        Mockito.when( contentService.getById( ContentId.from( "aaa" ), ContentResource.STAGE_CONTEXT ) ).thenReturn( aContent );
+        Mockito.when( contentService.getById( ContentId.from( "aaa" ) ) ).thenReturn( aContent );
 
         String jsonString = request().path( "content" ).queryParam( "id", "aaa" ).
             queryParam( "expand", "summary" ).get().getAsString();
@@ -318,9 +315,7 @@ public class ContentResourceTest
     public void get_content_by_id_not_found()
         throws Exception
     {
-        Mockito.when(
-            contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ), Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn(
-            Contents.empty() );
+        Mockito.when( contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ) ) ).thenReturn( Contents.empty() );
 
         final MockRestResponse response = request().path( "content" ).queryParam( "id", "aaa" ).get();
         assertEquals( response.getStatus(), 404 );
@@ -341,9 +336,7 @@ public class ContentResourceTest
         aContentData.setProperty( "mySetWithArray.myArray[0]", Value.newDouble( 3.14159 ) );
         aContentData.setProperty( "mySetWithArray.myArray[1]", Value.newDouble( 1.333 ) );
 
-        Mockito.when(
-            contentService.getById( Mockito.eq( ContentId.from( "aaa" ) ), Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn(
-            aContent );
+        Mockito.when( contentService.getById( Mockito.eq( ContentId.from( "aaa" ) ) ) ).thenReturn( aContent );
 
         String jsonString = request().path( "content" ).queryParam( "id", "aaa" ).queryParam( "expand", "none" ).get().getAsString();
 
@@ -354,9 +347,7 @@ public class ContentResourceTest
     public void get_content_by_id_and_version_not_found()
         throws Exception
     {
-        Mockito.when(
-            contentService.getById( Mockito.eq( ContentId.from( "aaa" ) ), Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn(
-            null );
+        Mockito.when( contentService.getById( Mockito.eq( ContentId.from( "aaa" ) ) ) ).thenReturn( null );
 
         final MockRestResponse response = request().path( "content" ).queryParam( "id", "aaa" ).get();
         assertEquals( response.getStatus(), 404 );
@@ -369,8 +360,7 @@ public class ContentResourceTest
     {
         final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
         final Content bContent = createContent( "bbb", "my_b_content", "mymodule:my_type" );
-        Mockito.when( contentService.findByParent( Mockito.isA( FindContentByParentParams.class ),
-                                                   Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn(
+        Mockito.when( contentService.findByParent( Mockito.isA( FindContentByParentParams.class ) ) ).thenReturn(
             FindContentByParentResult.create().
                 contents( Contents.from( aContent, bContent ) ).
                 hits( 2 ).
@@ -388,8 +378,7 @@ public class ContentResourceTest
     {
         final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
         final Content bContent = createContent( "bbb", "my_b_content", "mymodule:my_type" );
-        Mockito.when( contentService.findByParent( Mockito.isA( FindContentByParentParams.class ),
-                                                   Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn(
+        Mockito.when( contentService.findByParent( Mockito.isA( FindContentByParentParams.class ) ) ).thenReturn(
             FindContentByParentResult.create().
                 contents( Contents.from( aContent, bContent ) ).
                 hits( 2 ).
@@ -406,8 +395,7 @@ public class ContentResourceTest
     public void list_content_by_path_not_found()
         throws Exception
     {
-        Mockito.when( contentService.findByParent( Mockito.isA( FindContentByParentParams.class ),
-                                                   Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn(
+        Mockito.when( contentService.findByParent( Mockito.isA( FindContentByParentParams.class ) ) ).thenReturn(
             FindContentByParentResult.create().
                 contents( Contents.empty() ).
                 hits( 0 ).
@@ -425,8 +413,7 @@ public class ContentResourceTest
     {
         final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
         final Content bContent = createContent( "bbb", "my_b_content", "mymodule:my_type" );
-        Mockito.when( contentService.findByParent( Mockito.isA( FindContentByParentParams.class ),
-                                                   Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn(
+        Mockito.when( contentService.findByParent( Mockito.isA( FindContentByParentParams.class ) ) ).thenReturn(
             FindContentByParentResult.create().
                 contents( Contents.from( aContent, bContent ) ).
                 hits( 2 ).
@@ -443,13 +430,11 @@ public class ContentResourceTest
         throws Exception
     {
         final Content cContent = createContent( "ccc", "my_c_content", "mymodule:my_type" );
-        Mockito.when( contentService.getById( Mockito.isA( ContentId.class ), Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn(
-            cContent );
+        Mockito.when( contentService.getById( Mockito.isA( ContentId.class ) ) ).thenReturn( cContent );
 
         final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
         final Content bContent = createContent( "bbb", "my_b_content", "mymodule:my_type" );
-        Mockito.when( contentService.findByParent( Mockito.isA( FindContentByParentParams.class ),
-                                                   Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn(
+        Mockito.when( contentService.findByParent( Mockito.isA( FindContentByParentParams.class ) ) ).thenReturn(
             FindContentByParentResult.create().
                 contents( Contents.from( aContent, bContent ) ).
                 hits( 2 ).
@@ -466,13 +451,11 @@ public class ContentResourceTest
         throws Exception
     {
         final Content cContent = createContent( "ccc", "my_c_content", "mymodule:my_type" );
-        Mockito.when( contentService.getById( Mockito.isA( ContentId.class ), Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn(
-            cContent );
+        Mockito.when( contentService.getById( Mockito.isA( ContentId.class ) ) ).thenReturn( cContent );
 
         final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
         final Content bContent = createContent( "bbb", "my_b_content", "mymodule:my_type" );
-        Mockito.when( contentService.findByParent( Mockito.isA( FindContentByParentParams.class ),
-                                                   Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn(
+        Mockito.when( contentService.findByParent( Mockito.isA( FindContentByParentParams.class ) ) ).thenReturn(
             FindContentByParentResult.create().
                 contents( Contents.from( aContent, bContent ) ).
                 hits( 2 ).
@@ -491,8 +474,7 @@ public class ContentResourceTest
     {
         final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
         final Content bContent = createContent( "bbb", "my_b_content", "mymodule:my_type" );
-        Mockito.when( contentService.findByParent( Mockito.isA( FindContentByParentParams.class ),
-                                                   Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn(
+        Mockito.when( contentService.findByParent( Mockito.isA( FindContentByParentParams.class ) ) ).thenReturn(
             FindContentByParentResult.create().
                 contents( Contents.from( aContent, bContent ) ).
                 hits( 2 ).
@@ -525,8 +507,7 @@ public class ContentResourceTest
         Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn(
             ContentTypes.from( createContentType( "mymodule:my_type" ) ) );
 
-        Mockito.when( contentService.validate( Mockito.isA( ValidateContentData.class ), Mockito.isA( Context.class ) ) ).thenReturn(
-            DataValidationErrors.empty() );
+        Mockito.when( contentService.validate( Mockito.isA( ValidateContentData.class ) ) ).thenReturn( DataValidationErrors.empty() );
 
         String jsonString = request().path( "content/validate" ).
             entity( readFromFile( "validate_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
@@ -544,8 +525,7 @@ public class ContentResourceTest
         Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn(
             ContentTypes.from( createContentType( "mymodule:my_type" ) ) );
 
-        Mockito.when( contentService.validate( Mockito.isA( ValidateContentData.class ), Mockito.isA( Context.class ) ) ).thenReturn(
-            createDataValidationErrors() );
+        Mockito.when( contentService.validate( Mockito.isA( ValidateContentData.class ) ) ).thenReturn( createDataValidationErrors() );
 
         String jsonString = request().path( "content/validate" ).
             entity( readFromFile( "validate_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
@@ -558,10 +538,10 @@ public class ContentResourceTest
     public void delete_content_success()
         throws Exception
     {
-        Mockito.when( contentService.delete( Mockito.isA( DeleteContentParams.class ), Mockito.isA( Context.class ) ) ).thenReturn(
+        Mockito.when( contentService.delete( Mockito.isA( DeleteContentParams.class ) ) ).thenReturn(
             new DeleteContentResult( newContent().parentPath( ContentPath.ROOT ).name( "one" ).build() ) );
 
-        Mockito.when( contentService.delete( Mockito.isA( DeleteContentParams.class ), Mockito.isA( Context.class ) ) ).thenReturn(
+        Mockito.when( contentService.delete( Mockito.isA( DeleteContentParams.class ) ) ).thenReturn(
             new DeleteContentResult( newContent().parentPath( ContentPath.ROOT ).name( "two" ).build() ) );
 
         String jsonString = request().path( "content/delete" ).
@@ -575,12 +555,12 @@ public class ContentResourceTest
     public void delete_content_failure()
         throws Exception
     {
-        Mockito.when( contentService.delete( Mockito.eq( new DeleteContentParams().contentPath( ContentPath.from( "/one" ) ) ),
-                                             Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenThrow(
+        Mockito.when(
+            contentService.delete( Mockito.eq( new DeleteContentParams().contentPath( ContentPath.from( "/one" ) ) ) ) ).thenThrow(
             new ContentNotFoundException( ContentPath.from( "one" ), ContentConstants.WORKSPACE_STAGE ) );
 
-        Mockito.when( contentService.delete( Mockito.eq( new DeleteContentParams().contentPath( ContentPath.from( "/two" ) ) ),
-                                             Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenThrow(
+        Mockito.when(
+            contentService.delete( Mockito.eq( new DeleteContentParams().contentPath( ContentPath.from( "/two" ) ) ) ) ).thenThrow(
             new UnableToDeleteContentException( ContentPath.from( "two" ), "Some reason" ) );
 
         String jsonString = request().path( "content/delete" ).
@@ -594,12 +574,11 @@ public class ContentResourceTest
     public void delete_content_both()
         throws Exception
     {
-        Mockito.when( contentService.delete( Mockito.eq( new DeleteContentParams().contentPath( ContentPath.from( "one" ) ) ),
-                                             Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenReturn(
+        Mockito.when(
+            contentService.delete( Mockito.eq( new DeleteContentParams().contentPath( ContentPath.from( "one" ) ) ) ) ).thenReturn(
             new DeleteContentResult( newContent().parentPath( ContentPath.ROOT ).name( "one" ).build() ) );
 
-        Mockito.when( contentService.delete( Mockito.eq( new DeleteContentParams().contentPath( ContentPath.from( "two" ) ) ),
-                                             Mockito.eq( ContentResource.STAGE_CONTEXT ) ) ).thenThrow(
+        Mockito.when( contentService.delete( Mockito.eq( new DeleteContentParams().contentPath( ContentPath.from( "two" ) ) ) ) ).thenThrow(
             new UnableToDeleteContentException( ContentPath.from( "two" ), "Some reason" ) );
 
         String jsonString = request().path( "content/delete" ).
@@ -618,7 +597,7 @@ public class ContentResourceTest
 
         IllegalArgumentException e = new IllegalArgumentException( "Exception occured." );
 
-        Mockito.when( contentService.create( Mockito.isA( CreateContentParams.class ), Mockito.isA( Context.class ) ) ).thenThrow( e );
+        Mockito.when( contentService.create( Mockito.isA( CreateContentParams.class ) ) ).thenThrow( e );
 
         request().path( "content/create" ).
             entity( readFromFile( "create_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
@@ -634,8 +613,7 @@ public class ContentResourceTest
             ContentTypes.from( createContentType( "mymodule:my-type" ) ) );
 
         Content content = createContent( "content-id", "content-path", "mymodule:content-type" );
-        Mockito.when( contentService.create( Mockito.isA( CreateContentParams.class ), Mockito.isA( Context.class ) ) ).thenReturn(
-            content );
+        Mockito.when( contentService.create( Mockito.isA( CreateContentParams.class ) ) ).thenReturn( content );
 
         String jsonString = request().path( "content/create" ).
             entity( readFromFile( "create_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
@@ -655,7 +633,7 @@ public class ContentResourceTest
         Exception e =
             new com.enonic.wem.api.content.ContentNotFoundException( ContentId.from( "content-id" ), ContentConstants.WORKSPACE_STAGE );
 
-        Mockito.when( contentService.update( Mockito.isA( UpdateContentParams.class ), Mockito.isA( Context.class ) ) ).thenThrow( e );
+        Mockito.when( contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenThrow( e );
 
         request().path( "content/update" ).
             entity( readFromFile( "update_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
@@ -670,14 +648,12 @@ public class ContentResourceTest
             ContentTypes.from( createContentType( "mymodule:my-type" ) ) );
 
         Content content = createContent( "content-id", "content-name", "mymodule:content-type" );
-        Mockito.when( contentService.update( Mockito.isA( UpdateContentParams.class ), Mockito.isA( Context.class ) ) ).thenReturn(
-            content );
+        Mockito.when( contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenReturn( content );
         String jsonString = request().path( "content/update" ).
             entity( readFromFile( "update_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 
-        Mockito.verify( contentService, Mockito.times( 0 ) ).rename( Mockito.isA( RenameContentParams.class ),
-                                                                     Mockito.isA( Context.class ) );
+        Mockito.verify( contentService, Mockito.times( 0 ) ).rename( Mockito.isA( RenameContentParams.class ) );
 
         assertJson( "update_content_nothing_updated.json", jsonString );
     }
@@ -690,14 +666,12 @@ public class ContentResourceTest
             ContentTypes.from( createContentType( "mymodule:my-type" ) ) );
 
         Content content = createContent( "content-id", "content-name", "mymodule:content-type" );
-        Mockito.when( contentService.update( Mockito.isA( UpdateContentParams.class ), Mockito.isA( Context.class ) ) ).thenReturn(
-            content );
+        Mockito.when( contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenReturn( content );
         String jsonString = request().path( "content/update" ).
             entity( readFromFile( "update_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 
-        Mockito.verify( contentService, Mockito.times( 0 ) ).rename( Mockito.isA( RenameContentParams.class ),
-                                                                     Mockito.isA( Context.class ) );
+        Mockito.verify( contentService, Mockito.times( 0 ) ).rename( Mockito.isA( RenameContentParams.class ) );
 
         assertJson( "update_content_success.json", jsonString );
     }
@@ -721,7 +695,7 @@ public class ContentResourceTest
         final PushContentParams pushContentParams =
             new PushContentParams( ContentConstants.WORKSPACE_PROD, ContentId.from( contentIdString ) );
 
-        Mockito.when( contentService.push( pushContentParams, ContentResource.STAGE_CONTEXT ) ).
+        Mockito.when( contentService.push( pushContentParams ) ).
             thenReturn( aContent );
 
         String jsonString = request().path( "content/publish" ).
@@ -740,7 +714,7 @@ public class ContentResourceTest
         final Exception e =
             new com.enonic.wem.api.content.ContentNotFoundException( ContentId.from( "content-id" ), ContentConstants.WORKSPACE_STAGE );
 
-        Mockito.when( contentService.push( Mockito.isA( PushContentParams.class ), Mockito.isA( Context.class ) ) ).
+        Mockito.when( contentService.push( Mockito.isA( PushContentParams.class ) ) ).
             thenThrow( e );
 
         request().path( "content/publish" ).

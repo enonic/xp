@@ -5,7 +5,6 @@ import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.attachment.GetAttachmentParameters;
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.core.entity.NodeService;
 
 public class AttachmentServiceImpl
@@ -20,18 +19,16 @@ public class AttachmentServiceImpl
             contentId( getAttachmentParameters.getContentId() ).
             attachmentName( getAttachmentParameters.getAttachmentName() ).
             nodeService( nodeService ).
-            context( getAttachmentParameters.getContext() ).
             build().
             execute();
     }
 
     @Override
-    public Attachments getAll( final ContentId contentId, final Context context )
+    public Attachments getAll( final ContentId contentId )
     {
         return GetAttachmentsCommand.create().
             contentId( contentId ).
             nodeService( nodeService ).
-            context( context ).
             build().
             execute();
     }

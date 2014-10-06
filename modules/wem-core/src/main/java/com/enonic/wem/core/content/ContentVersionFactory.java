@@ -5,7 +5,6 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentVersion;
 import com.enonic.wem.api.content.ContentVersionId;
 import com.enonic.wem.api.content.ContentVersions;
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.core.entity.EntityId;
 import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.entity.NodeService;
@@ -18,13 +17,10 @@ class ContentVersionFactory
 
     private final NodeService nodeService;
 
-    private final Context context;
-
-    public ContentVersionFactory( final ContentNodeTranslator translator, final NodeService nodeService, final Context context )
+    public ContentVersionFactory( final ContentNodeTranslator translator, final NodeService nodeService )
     {
         this.translator = translator;
         this.nodeService = nodeService;
-        this.context = context;
     }
 
     public ContentVersions create( final EntityId entityId, final NodeVersions nodeVersions )
@@ -60,7 +56,7 @@ class ContentVersionFactory
 
     private Node getNode( final NodeVersion nodeVersion )
     {
-        return nodeService.getByVersionId( nodeVersion.getId(), this.context );
+        return nodeService.getByVersionId( nodeVersion.getId() );
     }
 
 }

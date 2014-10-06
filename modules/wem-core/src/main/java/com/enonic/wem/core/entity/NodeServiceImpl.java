@@ -1,6 +1,6 @@
 package com.enonic.wem.core.entity;
 
-import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.Context2;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.entity.dao.NodeDao;
 import com.enonic.wem.core.entity.dao.NodeNotFoundException;
@@ -25,8 +25,10 @@ public class NodeServiceImpl
     private QueryService queryService;
 
     @Override
-    public Node getById( final EntityId id, final Context context )
+    public Node getById( final EntityId id )
     {
+        final Context2 context = Context2.current();
+
         final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( id, WorkspaceContext.from( context ) );
 
         if ( currentVersion == null )
@@ -36,26 +38,26 @@ public class NodeServiceImpl
 
         return NodeHasChildResolver.create().
             workspaceService( this.workspaceService ).
-            context( context ).
             build().
             resolve( nodeDao.getByVersionId( currentVersion ) );
     }
 
     @Override
-    public Nodes getByIds( final EntityIds ids, final Context context )
+    public Nodes getByIds( final EntityIds ids )
     {
-        final NodeVersionIds versionIds = this.workspaceService.getByVersionIds( ids, WorkspaceContext.from( context ) );
+        final NodeVersionIds versionIds = this.workspaceService.getByVersionIds( ids, WorkspaceContext.from( Context2.current() ) );
 
         return NodeHasChildResolver.create().
             workspaceService( this.workspaceService ).
-            context( context ).
             build().
             resolve( nodeDao.getByVersionIds( versionIds ) );
     }
 
     @Override
-    public Node getByPath( final NodePath path, final Context context )
+    public Node getByPath( final NodePath path )
     {
+        final Context2 context = Context2.current();
+
         final NodeVersionId currentVersion = this.workspaceService.getByPath( path, WorkspaceContext.from( context ) );
 
         if ( currentVersion == null )
@@ -65,27 +67,25 @@ public class NodeServiceImpl
 
         return NodeHasChildResolver.create().
             workspaceService( this.workspaceService ).
-            context( context ).
             build().
             resolve( nodeDao.getByVersionId( currentVersion ) );
     }
 
     @Override
-    public Nodes getByPaths( final NodePaths paths, final Context context )
+    public Nodes getByPaths( final NodePaths paths )
     {
-        final NodeVersionIds versionIds = this.workspaceService.getByPaths( paths, WorkspaceContext.from( context ) );
+        final NodeVersionIds versionIds = this.workspaceService.getByPaths( paths, WorkspaceContext.from( Context2.current() ) );
 
         return NodeHasChildResolver.create().
             workspaceService( this.workspaceService ).
-            context( context ).
             build().
             resolve( nodeDao.getByVersionIds( versionIds ) );
     }
 
     @Override
-    public FindNodesByParentResult findByParent( final FindNodesByParentParams params, final Context context )
+    public FindNodesByParentResult findByParent( final FindNodesByParentParams params )
     {
-        return FindNodesByParentCommand.create( context ).
+        return FindNodesByParentCommand.create().
             params( params ).
             queryService( this.queryService ).
             nodeDao( this.nodeDao ).
@@ -95,9 +95,9 @@ public class NodeServiceImpl
     }
 
     @Override
-    public FindNodesByQueryResult findByQuery( final NodeQuery nodeQuery, final Context context )
+    public FindNodesByQueryResult findByQuery( final NodeQuery nodeQuery )
     {
-        return FindNodesByQueryCommand.create( context ).
+        return FindNodesByQueryCommand.create().
             query( nodeQuery ).
             indexService( this.indexService ).
             nodeDao( this.nodeDao ).
@@ -108,9 +108,9 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Node create( final CreateNodeParams params, final Context context )
+    public Node create( final CreateNodeParams params )
     {
-        return CreateNodeCommand.create( context ).
+        return CreateNodeCommand.create().
             params( params ).
             indexService( this.indexService ).
             versionService( this.versionService ).
@@ -121,9 +121,9 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Node update( final UpdateNodeParams params, final Context context )
+    public Node update( final UpdateNodeParams params )
     {
-        return UpdateNodeCommand.create( context ).
+        return UpdateNodeCommand.create().
             params( params ).
             indexService( this.indexService ).
             nodeDao( this.nodeDao ).
@@ -134,9 +134,9 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Node rename( final RenameNodeParams params, final Context context )
+    public Node rename( final RenameNodeParams params )
     {
-        return RenameNodeCommand.create( context ).
+        return RenameNodeCommand.create().
             params( params ).
             indexService( this.indexService ).
             nodeDao( this.nodeDao ).
@@ -147,9 +147,9 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Node deleteById( final EntityId id, final Context context )
+    public Node deleteById( final EntityId id )
     {
-        return DeleteNodeByIdCommand.create( context ).
+        return DeleteNodeByIdCommand.create().
             entityId( id ).
             indexService( this.indexService ).
             nodeDao( this.nodeDao ).
@@ -160,9 +160,9 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Node deleteByPath( final NodePath path, final Context context )
+    public Node deleteByPath( final NodePath path )
     {
-        return DeleteNodeByPathCommand.create( context ).
+        return DeleteNodeByPathCommand.create().
             nodePath( path ).
             indexService( this.indexService ).
             nodeDao( this.nodeDao ).
@@ -173,9 +173,9 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Node push( final EntityId id, final Workspace target, final Context context )
+    public Node push( final EntityId id, final Workspace target )
     {
-        return PushNodeCommand.create( context ).
+        return PushNodeCommand.create().
             indexService( this.indexService ).
             nodeDao( this.nodeDao ).
             workspaceService( this.workspaceService ).
@@ -186,10 +186,9 @@ public class NodeServiceImpl
     }
 
     @Override
-    public NodeComparison compare( final EntityId entityId, final Workspace target, final Context context )
+    public NodeComparison compare( final EntityId entityId, final Workspace target )
     {
         return CompareNodeCommand.create().
-            context( context ).
             entityId( entityId ).
             target( target ).
             workspaceService( this.workspaceService ).
@@ -199,10 +198,9 @@ public class NodeServiceImpl
     }
 
     @Override
-    public NodeComparisons compare( final EntityIds entityIds, final Workspace target, final Context context )
+    public NodeComparisons compare( final EntityIds entityIds, final Workspace target )
     {
         return CompareNodesCommand.create().
-            context( context ).
             entityIds( entityIds ).
             target( target ).
             workspaceService( this.workspaceService ).
@@ -212,9 +210,9 @@ public class NodeServiceImpl
     }
 
     @Override
-    public FindNodeVersionsResult findVersions( final GetNodeVersionsParams params, final Context context )
+    public FindNodeVersionsResult findVersions( final GetNodeVersionsParams params )
     {
-        return GetEntityVersionsCommand.create( context ).
+        return GetEntityVersionsCommand.create().
             entityId( params.getEntityId() ).
             from( params.getFrom() ).
             size( params.getSize() ).
@@ -224,9 +222,9 @@ public class NodeServiceImpl
     }
 
     @Override
-    public GetActiveNodeVersionsResult getActiveVersions( final GetActiveNodeVersionsParams params, final Context context )
+    public GetActiveNodeVersionsResult getActiveVersions( final GetActiveNodeVersionsParams params )
     {
-        return GetActiveNodeVersionsCommand.create( context ).
+        return GetActiveNodeVersionsCommand.create().
             entityId( params.getEntityId() ).
             workspaces( params.getWorkspaces() ).
             versionService( this.versionService ).
@@ -237,11 +235,10 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Node getByVersionId( final NodeVersionId blobKey, final Context context )
+    public Node getByVersionId( final NodeVersionId blobKey )
     {
         return NodeHasChildResolver.create().
             workspaceService( this.workspaceService ).
-            context( context ).
             build().
             resolve( nodeDao.getByVersionId( blobKey ) );
     }

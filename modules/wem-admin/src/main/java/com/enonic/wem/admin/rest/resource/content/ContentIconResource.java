@@ -61,7 +61,7 @@ public class ContentIconResource
         }
 
         final ContentId contentId = ContentId.from( contentIdAsString );
-        final Content content = contentService.getById( contentId, STAGE_CONTEXT );
+        final Content content = contentService.getById( contentId );
         if ( content == null )
         {
             throw new WebApplicationException( Response.Status.NOT_FOUND );
@@ -117,7 +117,6 @@ public class ContentIconResource
         final Attachment attachment = attachmentService.get( GetAttachmentParameters.create().
             contentId( content.getId() ).
             attachmentName( attachmentName ).
-            context( STAGE_CONTEXT ).
             build() );
 
         if ( attachment != null )

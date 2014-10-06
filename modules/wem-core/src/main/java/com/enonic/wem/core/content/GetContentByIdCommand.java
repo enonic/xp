@@ -3,6 +3,7 @@ package com.enonic.wem.core.content;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
+import com.enonic.wem.api.context.Context2;
 import com.enonic.wem.api.util.Exceptions;
 import com.enonic.wem.core.entity.EntityId;
 import com.enonic.wem.core.entity.NoEntityWithIdFoundException;
@@ -27,12 +28,12 @@ final class GetContentByIdCommand
 
         try
         {
-            final Node node = nodeService.getById( entityId, this.context );
+            final Node node = nodeService.getById( entityId );
             return translator.fromNode( node );
         }
         catch ( NoEntityWithIdFoundException | NodeNotFoundException e )
         {
-            throw new ContentNotFoundException( contentId, this.context.getWorkspace() );
+            throw new ContentNotFoundException( contentId, Context2.current().getWorkspace() );
         }
         catch ( Exception e )
         {

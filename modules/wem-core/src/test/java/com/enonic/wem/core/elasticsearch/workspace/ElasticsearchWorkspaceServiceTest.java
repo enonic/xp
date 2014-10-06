@@ -71,7 +71,7 @@ public class ElasticsearchWorkspaceServiceTest
         Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( String.class ) ) ).
             thenReturn( notExisting );
 
-        wsStore.store( storeWorkspaceDocument, WorkspaceContext.from( TestContext.TEST_CONTEXT ) );
+        wsStore.store( storeWorkspaceDocument, WorkspaceContext.from( TestContext.OLD_TEST_CONTEXT ) );
 
         Mockito.verify( elasticsearchDao, Mockito.times( 1 ) ).store( Mockito.isA( IndexRequest.class ) );
     }
@@ -104,7 +104,7 @@ public class ElasticsearchWorkspaceServiceTest
         Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( String.class ) ) ).
             thenReturn( noChanges );
 
-        wsStore.store( storeWorkspaceDocument, WorkspaceContext.from( TestContext.TEST_CONTEXT ) );
+        wsStore.store( storeWorkspaceDocument, WorkspaceContext.from( TestContext.OLD_TEST_CONTEXT ) );
 
 //        Mockito.verify( elasticsearchDao, Mockito.times( 0 ) ).store( Mockito.isA( IndexRequest.class ) );
     }
@@ -137,7 +137,7 @@ public class ElasticsearchWorkspaceServiceTest
         Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( String.class ) ) ).
             thenReturn( noChanges );
 
-        wsStore.store( storeWorkspaceDocument, WorkspaceContext.from( TestContext.TEST_CONTEXT ) );
+        wsStore.store( storeWorkspaceDocument, WorkspaceContext.from( TestContext.OLD_TEST_CONTEXT ) );
 
         Mockito.verify( elasticsearchDao, Mockito.times( 1 ) ).store( Mockito.isA( IndexRequest.class ) );
     }
@@ -145,7 +145,7 @@ public class ElasticsearchWorkspaceServiceTest
     @Test
     public void delete()
     {
-        wsStore.delete( EntityId.from( "1" ), WorkspaceContext.from( TestContext.TEST_CONTEXT ) );
+        wsStore.delete( EntityId.from( "1" ), WorkspaceContext.from( TestContext.OLD_TEST_CONTEXT ) );
     }
 
     @Test
@@ -165,7 +165,8 @@ public class ElasticsearchWorkspaceServiceTest
         Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( QueryBuilder.class ) ) ).
             thenReturn( searchResult );
 
-        final NodeVersionId version = wsStore.getCurrentVersion( EntityId.from( "1" ), WorkspaceContext.from( TestContext.TEST_CONTEXT ) );
+        final NodeVersionId version =
+            wsStore.getCurrentVersion( EntityId.from( "1" ), WorkspaceContext.from( TestContext.OLD_TEST_CONTEXT ) );
 
         Assert.assertEquals( NodeVersionId.from( "versionId" ), version );
     }
@@ -183,7 +184,8 @@ public class ElasticsearchWorkspaceServiceTest
         Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( QueryBuilder.class ) ) ).
             thenReturn( emptySearchResult );
 
-        final NodeVersionId version = wsStore.getCurrentVersion( EntityId.from( "1" ), WorkspaceContext.from( TestContext.TEST_CONTEXT ) );
+        final NodeVersionId version =
+            wsStore.getCurrentVersion( EntityId.from( "1" ), WorkspaceContext.from( TestContext.OLD_TEST_CONTEXT ) );
 
         assertTrue( version == null );
     }
@@ -203,7 +205,7 @@ public class ElasticsearchWorkspaceServiceTest
         Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( QueryBuilder.class ) ) ).
             thenReturn( searchResultMissingField );
 
-        wsStore.getCurrentVersion( EntityId.from( "1" ), WorkspaceContext.from( TestContext.TEST_CONTEXT ) );
+        wsStore.getCurrentVersion( EntityId.from( "1" ), WorkspaceContext.from( TestContext.OLD_TEST_CONTEXT ) );
     }
 
     @Test
@@ -231,7 +233,7 @@ public class ElasticsearchWorkspaceServiceTest
             thenReturn( searchResult );
 
         final NodeVersionIds versions =
-            wsStore.getByVersionIds( EntityIds.from( "1", "2", "3" ), WorkspaceContext.from( TestContext.TEST_CONTEXT ) );
+            wsStore.getByVersionIds( EntityIds.from( "1", "2", "3" ), WorkspaceContext.from( TestContext.OLD_TEST_CONTEXT ) );
 
         assertEquals( 3, Iterators.size( versions.iterator() ) );
         final Iterator<NodeVersionId> iterator = versions.iterator();
@@ -268,7 +270,7 @@ public class ElasticsearchWorkspaceServiceTest
             thenReturn( searchResult );
 
         final NodeVersionIds versions =
-            wsStore.getByVersionIds( EntityIds.from( "3", "1", "2" ), WorkspaceContext.from( TestContext.TEST_CONTEXT ) );
+            wsStore.getByVersionIds( EntityIds.from( "3", "1", "2" ), WorkspaceContext.from( TestContext.OLD_TEST_CONTEXT ) );
 
         assertEquals( 3, Iterators.size( versions.iterator() ) );
         final Iterator<NodeVersionId> iterator = versions.iterator();
@@ -302,7 +304,7 @@ public class ElasticsearchWorkspaceServiceTest
             thenReturn( searchResult );
 
         final NodeVersionIds versions =
-            wsStore.getByVersionIds( EntityIds.from( "2", "3", "1", "4" ), WorkspaceContext.from( TestContext.TEST_CONTEXT ) );
+            wsStore.getByVersionIds( EntityIds.from( "2", "3", "1", "4" ), WorkspaceContext.from( TestContext.OLD_TEST_CONTEXT ) );
 
         assertEquals( 2, versions.getSize() );
     }
@@ -320,7 +322,7 @@ public class ElasticsearchWorkspaceServiceTest
             thenReturn( searchResult );
 
         final NodeVersionIds versions =
-            wsStore.getByVersionIds( EntityIds.from( "1", "2", "3" ), WorkspaceContext.from( TestContext.TEST_CONTEXT ) );
+            wsStore.getByVersionIds( EntityIds.from( "1", "2", "3" ), WorkspaceContext.from( TestContext.OLD_TEST_CONTEXT ) );
 
         assertEquals( 0, versions.getSize() );
     }
@@ -343,7 +345,7 @@ public class ElasticsearchWorkspaceServiceTest
             thenReturn( searchResult );
 
         final NodeVersionId version =
-            wsStore.getByPath( NodePath.newPath( "/test" ).build(), WorkspaceContext.from( TestContext.TEST_CONTEXT ) );
+            wsStore.getByPath( NodePath.newPath( "/test" ).build(), WorkspaceContext.from( TestContext.OLD_TEST_CONTEXT ) );
 
         Assert.assertEquals( NodeVersionId.from( "myBlobKey" ), version );
     }
@@ -361,7 +363,7 @@ public class ElasticsearchWorkspaceServiceTest
             thenReturn( searchResult );
 
         final NodeVersionId version =
-            wsStore.getByPath( NodePath.newPath( "/test" ).build(), WorkspaceContext.from( TestContext.TEST_CONTEXT ) );
+            wsStore.getByPath( NodePath.newPath( "/test" ).build(), WorkspaceContext.from( TestContext.OLD_TEST_CONTEXT ) );
 
         assertTrue( version == null );
     }
@@ -392,7 +394,7 @@ public class ElasticsearchWorkspaceServiceTest
 
         final NodeVersionIds versions = wsStore.getByPaths(
             NodePaths.from( NodePath.newPath( "/test" ).build(), NodePath.newPath( "/test2" ).build(),
-                            NodePath.newPath( "/test3" ).build() ), WorkspaceContext.from( TestContext.TEST_CONTEXT ) );
+                            NodePath.newPath( "/test3" ).build() ), WorkspaceContext.from( TestContext.OLD_TEST_CONTEXT ) );
 
         assertEquals( 3, Iterators.size( versions.iterator() ) );
         final Iterator<NodeVersionId> iterator = versions.iterator();
@@ -426,7 +428,7 @@ public class ElasticsearchWorkspaceServiceTest
 
         final NodeVersionIds versions = wsStore.getByPaths(
             NodePaths.from( NodePath.newPath( "/test" ).build(), NodePath.newPath( "/test2" ).build(),
-                            NodePath.newPath( "/test3" ).build() ), WorkspaceContext.from( TestContext.TEST_CONTEXT ) );
+                            NodePath.newPath( "/test3" ).build() ), WorkspaceContext.from( TestContext.OLD_TEST_CONTEXT ) );
         assertEquals( 2, versions.getSize() );
     }
 
@@ -456,7 +458,7 @@ public class ElasticsearchWorkspaceServiceTest
             thenReturn( searchResult );
 
         final NodeVersionIds versions =
-            wsStore.findByParent( NodePath.newPath( "/test" ).build(), WorkspaceContext.from( TestContext.TEST_CONTEXT ) );
+            wsStore.findByParent( NodePath.newPath( "/test" ).build(), WorkspaceContext.from( TestContext.OLD_TEST_CONTEXT ) );
 
         assertEquals( 3, Iterators.size( versions.iterator() ) );
         final Iterator<NodeVersionId> iterator = versions.iterator();
@@ -481,7 +483,7 @@ public class ElasticsearchWorkspaceServiceTest
             thenReturn( emptyResult );
 
         final NodeVersionIds versions =
-            wsStore.findByParent( NodePath.newPath( "/test" ).build(), WorkspaceContext.from( TestContext.TEST_CONTEXT ) );
+            wsStore.findByParent( NodePath.newPath( "/test" ).build(), WorkspaceContext.from( TestContext.OLD_TEST_CONTEXT ) );
 
         assertEquals( 0, Iterators.size( versions.iterator() ) );
     }

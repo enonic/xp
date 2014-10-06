@@ -36,7 +36,7 @@ final class UpdatePageCommand
 
     public Content execute()
     {
-        final Content content = this.contentService.getById( this.params.getContent(), this.context );
+        final Content content = this.contentService.getById( this.params.getContent() );
 
         if ( content == null )
         {
@@ -64,10 +64,10 @@ final class UpdatePageCommand
                     }
                 } );
 
-            this.contentService.update( params, this.context );
+            this.contentService.update( params );
         }
 
-        return this.contentService.getById( this.params.getContent(), this.context );
+        return this.contentService.getById( this.params.getContent() );
     }
 
 

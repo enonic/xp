@@ -38,9 +38,9 @@ public class GetActiveContentVersionsCommand
         final GetActiveNodeVersionsResult activeNodeVersions = this.nodeService.getActiveVersions( GetActiveNodeVersionsParams.create().
             entityId( entityId ).
             workspaces( this.workspaces ).
-            build(), this.context );
+            build() );
 
-        final ContentVersionFactory contentVersionFactory = new ContentVersionFactory( this.translator, this.nodeService, this.context );
+        final ContentVersionFactory contentVersionFactory = new ContentVersionFactory( this.translator, this.nodeService );
 
         final GetActiveContentVersionsResult.Builder builder = GetActiveContentVersionsResult.create();
 

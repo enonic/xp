@@ -1,6 +1,7 @@
 package com.enonic.wem.core.workspace;
 
 import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.Context2;
 import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.workspace.Workspace;
 
@@ -20,6 +21,12 @@ public class WorkspaceContext
     {
         return new WorkspaceContext( context.getRepositoryId(), context.getWorkspace() );
     }
+
+    public static WorkspaceContext from( final Context2 context )
+    {
+        return new WorkspaceContext( context.getRepositoryId(), context.getWorkspace() );
+    }
+
 
     public static WorkspaceContext from( final Workspace workspace, final RepositoryId repositoryId )
     {

@@ -42,7 +42,7 @@ public class FindContentVersionsCommand
             entityId( entityId ).
             from( this.from ).
             size( this.size ).
-            build(), this.context );
+            build() );
 
         final FindContentVersionsResult.Builder findContentVersionsResultBuilder = FindContentVersionsResult.create();
         findContentVersionsResultBuilder.hits( findNodeVersionsResult.getHits() );
@@ -50,7 +50,7 @@ public class FindContentVersionsCommand
         findContentVersionsResultBuilder.from( findNodeVersionsResult.getFrom() );
         findContentVersionsResultBuilder.size( findNodeVersionsResult.getSize() );
 
-        final ContentVersionFactory contentVersionFactory = new ContentVersionFactory( this.translator, this.nodeService, this.context );
+        final ContentVersionFactory contentVersionFactory = new ContentVersionFactory( this.translator, this.nodeService );
 
         final ContentVersions contentVersions = contentVersionFactory.create( entityId, findNodeVersionsResult.getNodeVersions() );
 

@@ -2,7 +2,7 @@ package com.enonic.wem.core.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.Context2;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.api.workspace.Workspaces;
 import com.enonic.wem.core.version.VersionService;
@@ -25,9 +25,9 @@ public class GetActiveNodeVersionsCommand
         this.entityId = builder.entityId;
     }
 
-    public static Builder create( final Context context )
+    public static Builder create()
     {
-        return new Builder( context );
+        return new Builder();
     }
 
     public GetActiveNodeVersionsResult execute()
@@ -36,12 +36,14 @@ public class GetActiveNodeVersionsCommand
 
         for ( final Workspace workspace : workspaces )
         {
-            final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( this.entityId, WorkspaceContext.from( workspace,
-                                                                                                                                this.context.getRepositoryId() ) );
+            final Context2 context = Context2.current();
+
+            final NodeVersionId currentVersion =
+                this.workspaceService.getCurrentVersion( this.entityId, WorkspaceContext.from( workspace, context.getRepositoryId() ) );
 
             if ( currentVersion != null )
             {
-                builder.add( workspace, this.versionService.getVersion( currentVersion, this.context.getRepositoryId() ) );
+                builder.add( workspace, this.versionService.getVersion( currentVersion, context.getRepositoryId() ) );
             }
         }
         return builder.build();
@@ -56,9 +58,9 @@ public class GetActiveNodeVersionsCommand
 
         private VersionService versionService;
 
-        public Builder( final Context context )
+        public Builder()
         {
-            super( context );
+            super();
         }
 
         public Builder workspaces( final Workspaces workspaces )

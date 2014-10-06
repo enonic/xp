@@ -117,7 +117,7 @@ class CreatePageTemplateCommand
             contentData( data ).
             form( ContentTypeForms.PAGE_TEMPLATE ).
             contentType( ContentTypeName.pageTemplate() ).
-            parent( ContentPath.from( site, "templates" ) ), context );
+            parent( ContentPath.from( site, "templates" ) ) );
 
         return (PageTemplate) pageService.create( new CreatePageParams().
             content( content.getId() ).

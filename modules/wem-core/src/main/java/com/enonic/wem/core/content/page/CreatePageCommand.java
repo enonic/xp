@@ -52,7 +52,7 @@ final class CreatePageCommand
                 }
             } );
 
-        return this.contentService.update( params, context );
+        return this.contentService.update( params );
     }
 
 

@@ -44,7 +44,7 @@ final class DeletePageCommand
                 }
             } );
 
-        return this.contentService.update( params, this.context );
+        return this.contentService.update( params );
     }
 
 

@@ -48,7 +48,7 @@ public class FindContentByParentScriptTest
         final FindContentByParentResult findContentsResult = FindContentByParentResult.create().
             contents( contents ).
             build();
-        Mockito.when( this.contentService.findByParent( anyObject(), anyObject() ) ).thenReturn( findContentsResult );
+        Mockito.when( this.contentService.findByParent( anyObject() ) ).thenReturn( findContentsResult );
 
         runTestScript( "findContentByParent-test.js" );
     }

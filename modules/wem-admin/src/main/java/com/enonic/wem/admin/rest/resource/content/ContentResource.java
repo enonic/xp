@@ -112,7 +112,7 @@ public class ContentResource
     {
 
         final ContentId id = ContentId.from( idParam );
-        final Content content = contentService.getById( id, STAGE_CONTEXT );
+        final Content content = contentService.getById( id );
 
         if ( content == null )
         {
@@ -137,7 +137,7 @@ public class ContentResource
     public ContentIdJson getByPath( @QueryParam("path") final String pathParam,
                                     @QueryParam("expand") @DefaultValue(EXPAND_FULL) final String expandParam )
     {
-        final Content content = contentService.getByPath( ContentPath.from( pathParam ), STAGE_CONTEXT );
+        final Content content = contentService.getByPath( ContentPath.from( pathParam ) );
 
         if ( content == null )
         {
@@ -163,7 +163,7 @@ public class ContentResource
     public ContentJson getNearest( final GetNearestSiteJson params )
     {
         final ContentId contentId = params.getGetNearestSiteByContentId();
-        final Content nearestSite = this.contentService.getNearestSite( contentId, ContentConstants.CONTEXT_STAGE );
+        final Content nearestSite = this.contentService.getNearestSite( contentId );
         if ( nearestSite != null )
         {
             return new ContentJson( nearestSite, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
@@ -189,7 +189,7 @@ public class ContentResource
         }
         else
         {
-            final Content parentContent = contentService.getById( ContentId.from( parentIdParam ), STAGE_CONTEXT );
+            final Content parentContent = contentService.getById( ContentId.from( parentIdParam ) );
 
             parentContentPath = parentContent.getPath();
         }
@@ -235,7 +235,7 @@ public class ContentResource
     private AbstractContentListJson doGetByParentPath( final String expandParam, final FindContentByParentParams params,
                                                        final ContentPath parentContentPath )
     {
-        final FindContentByParentResult result = contentService.findByParent( params, STAGE_CONTEXT );
+        final FindContentByParentResult result = contentService.findByParent( params );
 
         final ContentListMetaData metaData = ContentListMetaData.create().
             totalHits( result.getTotalHits() ).
@@ -268,7 +268,7 @@ public class ContentResource
         final FindContentByQueryResult findResult = contentService.find( FindContentByQueryParams.create().
             populateChildren( getChildrenIds ).
             contentQuery( contentQueryJson.getContentQuery() ).
-            build(), STAGE_CONTEXT );
+            build() );
 
         return FindContentByQuertResultJsonFactory.create( findResult, contentQueryJson.getExpand(), iconUrlResolver,
                                                            mixinReferencesToFormItemsTransformer );
@@ -304,7 +304,7 @@ public class ContentResource
 
             try
             {
-                contentService.delete( deleteContent, STAGE_CONTEXT );
+                contentService.delete( deleteContent );
                 jsonResult.addSuccess( contentToDelete );
             }
             catch ( ContentNotFoundException | UnableToDeleteContentException e )
@@ -322,7 +322,7 @@ public class ContentResource
     {
         final ContentIds contentIds = ContentIds.from( params.getIds() );
         final CompareContentResults compareResults =
-            contentService.compare( new CompareContentsParams( contentIds, ContentConstants.WORKSPACE_PROD ), STAGE_CONTEXT );
+            contentService.compare( new CompareContentsParams( contentIds, ContentConstants.WORKSPACE_PROD ) );
 
         return new CompareContentResultsJson( compareResults );
     }
@@ -337,7 +337,7 @@ public class ContentResource
             contentId( contentId ).
             from( params.getFrom() != null ? params.getFrom() : 0 ).
             size( params.getSize() != null ? params.getSize() : 10 ).
-            build(), STAGE_CONTEXT );
+            build() );
 
         return new GetContentVersionsResultJson( result );
     }
@@ -349,7 +349,7 @@ public class ContentResource
         final GetActiveContentVersionsResult result = contentService.getActiveVersions( GetActiveContentVersionsParams.create().
             workspaces( Workspaces.from( ContentConstants.WORKSPACE_STAGE, ContentConstants.WORKSPACE_PROD ) ).
             contentId( ContentId.from( id ) ).
-            build(), STAGE_CONTEXT );
+            build() );
 
         return new GetActiveContentVersionsResultJson( result );
     }
@@ -360,7 +360,7 @@ public class ContentResource
     public ContentJson publish( final PublishContentJson params )
     {
         final Content publishedContent =
-            contentService.push( new PushContentParams( ContentConstants.WORKSPACE_PROD, params.getContentId() ), STAGE_CONTEXT );
+            contentService.push( new PushContentParams( ContentConstants.WORKSPACE_PROD, params.getContentId() ) );
 
         return new ContentJson( publishedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
     }
@@ -369,7 +369,7 @@ public class ContentResource
     @Path("create")
     public ContentJson create( final CreateContentJson params )
     {
-        final Content persistedContent = contentService.create( params.getCreateContent(), STAGE_CONTEXT );
+        final Content persistedContent = contentService.create( params.getCreateContent() );
 
         return new ContentJson( persistedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
     }
@@ -402,7 +402,7 @@ public class ContentResource
                 }
             } );
 
-        final Content updatedContent = contentService.update( updateParams, STAGE_CONTEXT );
+        final Content updatedContent = contentService.update( updateParams );
         if ( json.getContentName().equals( updatedContent.getName() ) )
         {
             return new ContentJson( updatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
@@ -414,7 +414,7 @@ public class ContentResource
                 contentId( json.getContentId() ).
                 newName( json.getContentName() );
 
-            final Content renamedContent = contentService.rename( renameParams, STAGE_CONTEXT );
+            final Content renamedContent = contentService.rename( renameParams );
 
             return new ContentJson( renamedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
         }

@@ -92,23 +92,23 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
     {
         final Content content = createPage( "id", "site/somepath/content", "mymodule:ctype", true );
 
-        Mockito.when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ), context ) ).
+        Mockito.when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ) ) ).
             thenReturn( content );
 
-        Mockito.when( this.contentService.getNearestSite( Mockito.isA( ContentId.class ), Mockito.isA( Context.class ) ) ).
+        Mockito.when( this.contentService.getNearestSite( Mockito.isA( ContentId.class ) ) ).
             thenReturn( createSite( "id", "site", "mymodule:contenttypename" ) );
 
-        Mockito.when( this.contentService.getById( content.getId(), context ) ).
+        Mockito.when( this.contentService.getById( content.getId() ) ).
             thenReturn( content );
     }
 
     protected final void setupNonPageContent( final Context context )
         throws Exception
     {
-        Mockito.when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ), context ) ).
+        Mockito.when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ) ) ).
             thenReturn( createPage( "id", "site/somepath/content", "mymodule:ctype", false ) );
 
-        Mockito.when( this.contentService.getNearestSite( Mockito.isA( ContentId.class ), Mockito.isA( Context.class ) ) ).
+        Mockito.when( this.contentService.getNearestSite( Mockito.isA( ContentId.class ) ) ).
             thenReturn( createSite( "id", "site", "mymodule:contenttypename" ) );
     }
 

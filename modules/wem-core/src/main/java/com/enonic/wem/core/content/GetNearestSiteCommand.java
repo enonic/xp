@@ -5,7 +5,6 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.site.Site;
-import com.enonic.wem.api.context.Context;
 
 final class GetNearestSiteCommand
 {
@@ -13,13 +12,10 @@ final class GetNearestSiteCommand
 
     private final ContentService contentService;
 
-    private final Context context;
-
     private GetNearestSiteCommand( Builder builder )
     {
         contentId = builder.contentId;
         contentService = builder.contentService;
-        context = builder.context;
     }
 
     public static Builder create()
@@ -29,7 +25,7 @@ final class GetNearestSiteCommand
 
     public Site execute()
     {
-        final Content content = contentService.getById( this.contentId, this.context );
+        final Content content = contentService.getById( this.contentId );
 
         if ( content.isSite() )
         {
@@ -50,7 +46,7 @@ final class GetNearestSiteCommand
             return null;
         }
 
-        final Content content = this.contentService.getByPath( contentPath, this.context );
+        final Content content = this.contentService.getByPath( contentPath );
 
         if ( content.isSite() )
         {
@@ -69,8 +65,6 @@ final class GetNearestSiteCommand
 
         private ContentService contentService;
 
-        private Context context;
-
         private Builder()
         {
         }
@@ -84,12 +78,6 @@ final class GetNearestSiteCommand
         public Builder contentService( ContentService contentService )
         {
             this.contentService = contentService;
-            return this;
-        }
-
-        public Builder context( Context context )
-        {
-            this.context = context;
             return this;
         }
 

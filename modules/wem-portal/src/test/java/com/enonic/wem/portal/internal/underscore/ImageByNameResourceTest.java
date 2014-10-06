@@ -27,7 +27,7 @@ public class ImageByNameResourceTest
     public void getImageNotFound()
         throws Exception
     {
-        Mockito.when( this.contentService.getByPath( Mockito.anyObject(), Mockito.anyObject() ) ).thenReturn( null );
+        Mockito.when( this.contentService.getByPath( Mockito.anyObject() ) ).thenReturn( null );
 
         final MockHttpServletRequest request = newGetRequest( "/live/test/path/to/content/_/image/enonic-logo.png" );
         final MockHttpServletResponse response = executeRequest( request );

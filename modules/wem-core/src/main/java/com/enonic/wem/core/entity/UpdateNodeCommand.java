@@ -4,7 +4,7 @@ package com.enonic.wem.core.entity;
 import java.time.Instant;
 
 import com.enonic.wem.api.account.UserKey;
-import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.Context2;
 import com.enonic.wem.api.util.Exceptions;
 import com.enonic.wem.core.entity.dao.NodeNotFoundException;
 import com.enonic.wem.core.index.IndexContext;
@@ -40,6 +40,8 @@ final class UpdateNodeCommand
 
     private Node doExecute()
     {
+        final Context2 context = Context2.current();
+
         final Node persistedNode = getPersistedNode();
 
         final Node.EditBuilder editBuilder = params.getEditor().edit( persistedNode );
@@ -55,7 +57,7 @@ final class UpdateNodeCommand
         this.versionService.store( EntityVersionDocument.create().
             entityId( updatedNode.id() ).
             nodeVersionId( updatedNodeVersionId ).
-            build(), this.context.getRepositoryId() );
+            build(), context.getRepositoryId() );
 
         this.workspaceService.store( StoreWorkspaceDocument.create().
             path( updatedNode.path() ).
@@ -64,18 +66,18 @@ final class UpdateNodeCommand
             nodeVersionId( updatedNodeVersionId ).
             build(), WorkspaceContext.from( context ) );
 
-        this.indexService.store( updatedNode, IndexContext.from( this.context ) );
+        this.indexService.store( updatedNode, IndexContext.from( context ) );
 
         return NodeHasChildResolver.create().
             workspaceService( this.workspaceService ).
-            context( this.context ).
             build().
             resolve( updatedNode );
     }
 
     private Node getPersistedNode()
     {
-        final NodeVersionId currentVersionId = workspaceService.getCurrentVersion( params.getId(), WorkspaceContext.from( context ) );
+        final NodeVersionId currentVersionId =
+            workspaceService.getCurrentVersion( params.getId(), WorkspaceContext.from( Context2.current() ) );
 
         if ( currentVersionId == null )
         {
@@ -104,9 +106,9 @@ final class UpdateNodeCommand
         return updateNodeBuilder.build();
     }
 
-    static Builder create( final Context context )
+    static Builder create()
     {
-        return new Builder( context );
+        return new Builder();
     }
 
     private Attachments syncronizeAttachments( final Attachments attachments, final Node persistedNode )
@@ -127,9 +129,9 @@ final class UpdateNodeCommand
     {
         private UpdateNodeParams params;
 
-        Builder( final Context context )
+        Builder()
         {
-            super( context );
+            super();
         }
 
         Builder params( final UpdateNodeParams params )

@@ -7,7 +7,6 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ValidateContentData;
 import com.enonic.wem.api.content.data.ContentData;
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
@@ -23,14 +22,11 @@ abstract class AbstractContentCommand
 
     final BlobService blobService;
 
-    final Context context;
-
     AbstractContentCommand( final Builder builder )
     {
         this.blobService = builder.blobService;
         this.contentTypeService = builder.contentTypeService;
         this.nodeService = builder.nodeService;
-        this.context = builder.context;
         this.translator = builder.translator;
     }
 
@@ -40,7 +36,6 @@ abstract class AbstractContentCommand
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
-            context( this.context ).
             translator( this.translator ).
             build().
             execute();
@@ -60,8 +55,6 @@ abstract class AbstractContentCommand
         private ContentTypeService contentTypeService;
 
         private BlobService blobService;
-
-        private Context context;
 
         private ContentNodeTranslator translator;
 
@@ -93,19 +86,11 @@ abstract class AbstractContentCommand
             return (B) this;
         }
 
-        @SuppressWarnings("unchecked")
-        public B context( final Context context )
-        {
-            this.context = context;
-            return (B) this;
-        }
-
         void validate()
         {
             Preconditions.checkNotNull( nodeService );
             Preconditions.checkNotNull( contentTypeService );
             Preconditions.checkNotNull( blobService );
-            Preconditions.checkNotNull( context );
             Preconditions.checkNotNull( translator );
         }
     }

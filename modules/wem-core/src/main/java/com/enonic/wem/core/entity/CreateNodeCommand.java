@@ -5,7 +5,7 @@ import java.time.Instant;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.account.UserKey;
-import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.Context2;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.version.EntityVersionDocument;
 import com.enonic.wem.core.workspace.StoreWorkspaceDocument;
@@ -56,21 +56,21 @@ final class CreateNodeCommand
             parentPath( newNode.parent() ).
             path( newNode.path() ).
             nodeVersionId( persistedNodeVersionId ).
-            build(), WorkspaceContext.from( context ) );
+            build(), WorkspaceContext.from( Context2.current() ) );
 
         versionService.store( EntityVersionDocument.create().
             entityId( newNode.id() ).
             nodeVersionId( persistedNodeVersionId ).
-            build(), this.context.getRepositoryId() );
+            build(), Context2.current().getRepositoryId() );
 
-        this.indexService.store( newNode, IndexContext.from( this.context ) );
+        this.indexService.store( newNode, IndexContext.from( Context2.current() ) );
 
         return newNode;
     }
 
-    static Builder create( final Context context )
+    static Builder create()
     {
-        return new Builder( context );
+        return new Builder();
     }
 
     static class Builder
@@ -78,9 +78,9 @@ final class CreateNodeCommand
     {
         private CreateNodeParams params;
 
-        Builder( final Context context )
+        Builder()
         {
-            super( context );
+            super();
         }
 
         Builder params( final CreateNodeParams params )

@@ -3,7 +3,7 @@ package com.enonic.wem.core.entity;
 import java.time.Instant;
 
 import com.enonic.wem.api.account.UserKey;
-import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.Context2;
 import com.enonic.wem.core.entity.dao.NodeDao;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.version.EntityVersionDocument;
@@ -29,7 +29,8 @@ final class RenameNodeCommand
     {
         final EntityId entityId = params.getEntityId();
 
-        final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( entityId, WorkspaceContext.from( context ) );
+        final NodeVersionId currentVersion =
+            this.workspaceService.getCurrentVersion( entityId, WorkspaceContext.from( Context2.current() ) );
 
         final Node nodeToBeRenamed = nodeDao.getByVersionId( currentVersion );
 
@@ -53,14 +54,14 @@ final class RenameNodeCommand
 
         return NodeHasChildResolver.create().
             workspaceService( this.workspaceService ).
-            context( this.context ).
             build().
             resolve( renamedNode );
     }
 
     private Nodes getChildNodes( final Node parentNode )
     {
-        final NodeVersionIds childrenVersions = workspaceService.findByParent( parentNode.path(), WorkspaceContext.from( context ) );
+        final NodeVersionIds childrenVersions =
+            workspaceService.findByParent( parentNode.path(), WorkspaceContext.from( Context2.current() ) );
 
         if ( childrenVersions.isEmpty() )
         {
@@ -72,7 +73,7 @@ final class RenameNodeCommand
 
     private EntityId getExistingNode( final NodePath path )
     {
-        final NodeVersionId existingVersion = workspaceService.getByPath( path, WorkspaceContext.from( context ) );
+        final NodeVersionId existingVersion = workspaceService.getByPath( path, WorkspaceContext.from( Context2.current() ) );
 
         if ( existingVersion == null )
         {
@@ -101,6 +102,8 @@ final class RenameNodeCommand
 
     private Node doMoveNode( final NodePath newParentPath, final NodeName newNodeName, final EntityId id )
     {
+        final Context2 context = Context2.current();
+
         final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( id, WorkspaceContext.from( context ) );
 
         final Node persistedNode = nodeDao.getByVersionId( currentVersion );
@@ -132,24 +135,24 @@ final class RenameNodeCommand
         versionService.store( EntityVersionDocument.create().
             entityId( movedNode.id() ).
             nodeVersionId( newVersion ).
-            build(), this.context.getRepositoryId() );
+            build(), context.getRepositoryId() );
 
-        indexService.store( movedNode, IndexContext.from( this.context.getWorkspace(), this.context.getRepositoryId() ) );
+        indexService.store( movedNode, IndexContext.from( context ) );
 
         return movedNode;
     }
 
-    public static Builder create( final Context context )
+    public static Builder create()
     {
-        return new Builder( context );
+        return new Builder();
     }
 
     public static class Builder
         extends AbstractNodeCommand.Builder<Builder>
     {
-        Builder( final Context context )
+        Builder()
         {
-            super( context );
+            super();
         }
 
         private RenameNodeParams params;

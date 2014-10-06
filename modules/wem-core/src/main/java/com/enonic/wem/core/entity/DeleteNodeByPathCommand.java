@@ -1,6 +1,6 @@
 package com.enonic.wem.core.entity;
 
-import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.Context2;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.entity.dao.NodeNotFoundException;
 import com.enonic.wem.core.index.IndexContext;
@@ -19,7 +19,9 @@ final class DeleteNodeByPathCommand
 
     Node execute()
     {
-        final Workspace workspace = this.context.getWorkspace();
+        final Context2 context = Context2.current();
+
+        final Workspace workspace = context.getWorkspace();
 
         final NodeVersionId version = this.workspaceService.getByPath( this.nodePath, WorkspaceContext.from( context ) );
 
@@ -34,14 +36,14 @@ final class DeleteNodeByPathCommand
 
         this.workspaceService.delete( nodeToDelete.id(), WorkspaceContext.from( context ) );
 
-        this.indexService.delete( nodeToDelete.id(), IndexContext.from( this.context ) );
+        this.indexService.delete( nodeToDelete.id(), IndexContext.from( context ) );
 
         return nodeToDelete;
     }
 
-    static Builder create( final Context context )
+    static Builder create()
     {
-        return new Builder( context );
+        return new Builder();
     }
 
     static class Builder
@@ -50,9 +52,9 @@ final class DeleteNodeByPathCommand
         private NodePath nodePath;
 
 
-        Builder( final Context context )
+        Builder()
         {
-            super( context );
+            super();
         }
 
         Builder nodePath( final NodePath nodePath )

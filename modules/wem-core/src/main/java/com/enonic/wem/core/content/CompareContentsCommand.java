@@ -8,7 +8,6 @@ import com.google.common.collect.Sets;
 import com.enonic.wem.api.content.CompareContentResults;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.entity.EntityId;
 import com.enonic.wem.core.entity.EntityIds;
@@ -21,15 +20,12 @@ public class CompareContentsCommand
 
     private final Workspace target;
 
-    private final Context context;
-
     private final NodeService nodeService;
 
     private CompareContentsCommand( Builder builder )
     {
         contentIds = builder.contentIds;
         target = builder.target;
-        context = builder.context;
         nodeService = builder.nodeService;
     }
 
@@ -41,7 +37,7 @@ public class CompareContentsCommand
     public CompareContentResults execute()
     {
         final EntityIds entityIds = getAsEntityIds( this.contentIds );
-        final NodeComparisons comparisons = this.nodeService.compare( entityIds, this.target, this.context );
+        final NodeComparisons comparisons = this.nodeService.compare( entityIds, this.target );
 
         return CompareResultTranslator.translate( comparisons );
     }
@@ -67,8 +63,6 @@ public class CompareContentsCommand
 
         private Workspace target;
 
-        private Context context;
-
         private NodeService nodeService;
 
         private Builder()
@@ -84,12 +78,6 @@ public class CompareContentsCommand
         public Builder target( Workspace target )
         {
             this.target = target;
-            return this;
-        }
-
-        public Builder context( Context context )
-        {
-            this.context = context;
             return this;
         }
 

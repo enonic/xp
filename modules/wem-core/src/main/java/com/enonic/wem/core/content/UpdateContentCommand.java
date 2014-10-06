@@ -26,7 +26,6 @@ import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.entity.UpdateNodeParams;
 
 import static com.enonic.wem.api.content.Content.newContent;
-import static com.enonic.wem.api.content.ContentConstants.CONTEXT_STAGE;
 
 final class UpdateContentCommand
     extends AbstractContentCommand
@@ -90,12 +89,12 @@ final class UpdateContentCommand
         }
         else
         {
-            attachments = attachmentService.getAll( this.params.getContentId(), this.context );
+            attachments = attachmentService.getAll( this.params.getContentId() );
         }
 
         final UpdateNodeParams updateNodeParams = translator.toUpdateNodeCommand( editedContent, attachments );
 
-        final Node editedNode = this.nodeService.update( updateNodeParams, CONTEXT_STAGE );
+        final Node editedNode = this.nodeService.update( updateNodeParams );
 
         return translator.fromNode( editedNode );
     }

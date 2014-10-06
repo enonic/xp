@@ -4,7 +4,7 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.Context2;
 import com.enonic.wem.api.query.FieldSort;
 import com.enonic.wem.api.query.expr.FieldExpr;
 import com.enonic.wem.api.query.expr.FieldOrderExpr;
@@ -26,23 +26,22 @@ public class FindNodesByParentCommand
         params = builder.params;
     }
 
-    public static Builder create( final Context context )
+    public static Builder create()
     {
-        return new Builder( context );
+        return new Builder();
     }
 
     public FindNodesByParentResult execute()
     {
         final NodeQuery query = createByPathQuery();
 
-        final NodeQueryResult nodeQueryResult = this.queryService.find( query, IndexContext.from( this.context ) );
+        final NodeQueryResult nodeQueryResult = this.queryService.find( query, IndexContext.from( Context2.current() ) );
 
         final NodeVersionIds versions =
-            this.workspaceService.getByVersionIds( nodeQueryResult.getEntityIds(), WorkspaceContext.from( context ) );
+            this.workspaceService.getByVersionIds( nodeQueryResult.getEntityIds(), WorkspaceContext.from( Context2.current() ) );
 
         final Nodes nodes = NodeHasChildResolver.create().
             workspaceService( this.workspaceService ).
-            context( this.context ).
             build().
             resolve( nodeDao.getByVersionIds( versions ) );
 
@@ -78,9 +77,9 @@ public class FindNodesByParentCommand
     {
         private FindNodesByParentParams params;
 
-        public Builder( final Context context )
+        public Builder()
         {
-            super( context );
+            super();
         }
 
         public Builder params( FindNodesByParentParams params )

@@ -21,11 +21,8 @@ import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.editor.ContentEditor;
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.schema.content.ContentTypeService;
-import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.entity.EntityId;
 import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.entity.NodeService;
@@ -50,13 +47,6 @@ public class UpdateContentCommandTest
     private final BlobService blobService = Mockito.mock( BlobService.class );
 
     private final ContentNodeTranslator translator = Mockito.mock( ContentNodeTranslator.class );
-
-    public final Workspace testWorkspace = Workspace.from( "test" );
-
-    private final Context testContext = Context.create().
-        workspace( testWorkspace ).
-        repositoryId( RepositoryId.from( "testing" ) ).
-        build();
 
     //@Ignore // Rewriting content stuff to node
     @Test(expected = ContentNotFoundException.class)
@@ -92,12 +82,11 @@ public class UpdateContentCommandTest
             nodeService( this.nodeService ).
             blobService( this.blobService ).
             translator( this.translator ).
-            context( testContext ).
             build();
 
-        Mockito.when( attachmentService.getAll( contentId, testContext ) ).thenReturn( Attachments.empty() );
+        Mockito.when( attachmentService.getAll( contentId ) ).thenReturn( Attachments.empty() );
 
-        Mockito.when( nodeService.getById( Mockito.isA( EntityId.class ), Mockito.isA( Context.class ) ) ).thenThrow(
+        Mockito.when( nodeService.getById( Mockito.isA( EntityId.class ) ) ).thenThrow(
             new NodeNotFoundException( "Node not found" ) );
 
         // exercise
@@ -138,11 +127,10 @@ public class UpdateContentCommandTest
             nodeService( this.nodeService ).
             blobService( this.blobService ).
             translator( this.translator ).
-            context( testContext ).
             build();
 
         final Node mockNode = Node.newNode().build();
-        Mockito.when( nodeService.getById( EntityId.from( existingContent.getId() ), testContext ) ).
+        Mockito.when( nodeService.getById( EntityId.from( existingContent.getId() ) ) ).
             thenReturn( mockNode );
         Mockito.when( translator.fromNode( mockNode ) ).thenReturn( existingContent );
 
@@ -150,7 +138,7 @@ public class UpdateContentCommandTest
         command.execute();
 
         // verify
-        Mockito.verify( nodeService, Mockito.never() ).update( Mockito.isA( UpdateNodeParams.class ), Mockito.isA( Context.class ) );
+        Mockito.verify( nodeService, Mockito.never() ).update( Mockito.isA( UpdateNodeParams.class ) );
     }
 
     private Content createContent( final ContentData contentData )

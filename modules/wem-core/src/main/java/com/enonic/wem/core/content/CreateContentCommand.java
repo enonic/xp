@@ -48,7 +48,7 @@ final class CreateContentCommand
         }
 
         final CreateNodeParams createNodeParams = translator.toCreateNode( params );
-        final Node createdNode = nodeService.create( createNodeParams, context );
+        final Node createdNode = nodeService.create( createNodeParams );
 
         return translator.fromNode( createdNode );
     }

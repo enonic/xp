@@ -59,17 +59,21 @@ public class GetActiveNodeVersionsCommandTest
         Mockito.when( this.versionService.getVersion( Mockito.eq( nodeVersionId2 ), Mockito.eq( TEST_REPOSITORY.getId() ) ) ).
             thenReturn( new NodeVersion( nodeVersionId2, version2Timestamp ) );
 
-        final GetActiveNodeVersionsResult result = GetActiveNodeVersionsCommand.create( TEST_CONTEXT ).
-            versionService( this.versionService ).
-            workspaceService( this.workspaceService ).
-            nodeDao( this.nodeDao ).
-            entityId( id ).
-            workspaces( Workspaces.from( workspace1, workspace2 ) ).
-            build().
-            execute();
+        final GetActiveNodeVersionsResult result = TEST_CONTEXT.runWith( () -> {
+            return GetActiveNodeVersionsCommand.create().
+                versionService( this.versionService ).
+                workspaceService( this.workspaceService ).
+                nodeDao( this.nodeDao ).
+                entityId( id ).
+                workspaces( Workspaces.from( workspace1, workspace2 ) ).
+                build().
+                execute();
+        } );
 
         assertEquals( 2, result.getNodeVersions().size() );
         assertEquals( nodeVersionId1, result.getNodeVersions().get( workspace1 ).getId() );
         assertEquals( nodeVersionId2, result.getNodeVersions().get( workspace2 ).getId() );
+
+
     }
 }

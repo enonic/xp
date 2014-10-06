@@ -1,6 +1,5 @@
 package com.enonic.wem.portal.internal.content;
 
-import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.Contents;
@@ -39,7 +38,7 @@ public final class FindContentByParentHandler
             parentPath( ContentPath.from( command.getParentPath() ) ).
             build();
 
-        final Contents result = contentService.findByParent( params, ContentConstants.CONTEXT_STAGE ).getContents();
+        final Contents result = contentService.findByParent( params ).getContents();
         command.setResult( result );
     }
 }

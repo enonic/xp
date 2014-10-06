@@ -44,7 +44,7 @@ final class FindContentByParentCommand
             from( params.getFrom() ).
             size( params.getSize() ).
             sorting( params.getSorting() ).
-            build(), this.context );
+            build() );
 
         final Nodes nodes = result.getNodes();
 

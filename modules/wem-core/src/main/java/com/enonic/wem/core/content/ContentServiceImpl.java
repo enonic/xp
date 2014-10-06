@@ -33,7 +33,6 @@ import com.enonic.wem.api.content.site.CreateSiteParams;
 import com.enonic.wem.api.content.site.ModuleConfig;
 import com.enonic.wem.api.content.site.ModuleConfigDataSerializer;
 import com.enonic.wem.api.content.site.Site;
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.DataId;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.schema.content.ContentTypeForms;
@@ -61,31 +60,29 @@ public class ContentServiceImpl
     private final static ModuleConfigDataSerializer MODULE_CONFIG_DATA_SERIALIZER = new ModuleConfigDataSerializer();
 
     @Override
-    public Content getById( final ContentId id, final Context context )
+    public Content getById( final ContentId id )
     {
         return GetContentByIdCommand.create( id ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
-            context( context ).
             build().
             execute();
     }
 
     @Override
-    public Site getNearestSite( final ContentId contentId, final Context context )
+    public Site getNearestSite( final ContentId contentId )
     {
         return GetNearestSiteCommand.create().
             contentService( this ).
             contentId( contentId ).
-            context( context ).
             build().
             execute();
     }
 
     @Override
-    public Contents getByIds( final GetContentByIdsParams params, final Context context )
+    public Contents getByIds( final GetContentByIdsParams params )
     {
         return GetContentByIdsCommand.create( params ).
             nodeService( this.nodeService ).
@@ -93,39 +90,36 @@ public class ContentServiceImpl
             blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
             queryService( this.queryService ).
-            context( context ).
             build().
             execute();
     }
 
     @Override
-    public Content getByPath( final ContentPath path, final Context context )
+    public Content getByPath( final ContentPath path )
     {
         return GetContentByPathCommand.create( path ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
-            context( context ).
             build().
             execute();
     }
 
     @Override
-    public Contents getByPaths( final ContentPaths paths, final Context context )
+    public Contents getByPaths( final ContentPaths paths )
     {
         return GetContentByPathsCommand.create( paths ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
-            context( context ).
             build().
             execute();
     }
 
     @Override
-    public FindContentByParentResult findByParent( final FindContentByParentParams params, final Context context )
+    public FindContentByParentResult findByParent( final FindContentByParentParams params )
     {
         return FindContentByParentCommand.create( params ).
             queryService( this.queryService ).
@@ -133,13 +127,12 @@ public class ContentServiceImpl
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
-            context( context ).
             build().
             execute();
     }
 
     @Override
-    public Site create( final CreateSiteParams params, final Context context )
+    public Site create( final CreateSiteParams params )
     {
 
         // TODO: validate that PageTemplates are only created below  Site/templates
@@ -165,7 +158,6 @@ public class ContentServiceImpl
             blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
             params( createContentParams ).
-            context( context ).
             build().
             execute();
 
@@ -176,13 +168,13 @@ public class ContentServiceImpl
             parent( site.getPath() ).
             contentType( ContentTypeName.folder() ).
             draft( false ).
-            contentData( new ContentData() ), context );
+            contentData( new ContentData() ) );
 
         return site;
     }
 
     @Override
-    public Content create( final CreateContentParams params, final Context context )
+    public Content create( final CreateContentParams params )
     {
         final Content content = CreateContentCommand.create().
             nodeService( this.nodeService ).
@@ -190,7 +182,6 @@ public class ContentServiceImpl
             blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
             params( params ).
-            context( context ).
             build().
             execute();
 
@@ -203,14 +194,14 @@ public class ContentServiceImpl
                 parent( content.getPath() ).
                 contentType( ContentTypeName.folder() ).
                 draft( false ).
-                contentData( new ContentData() ), context );
+                contentData( new ContentData() ) );
         }
 
         return content;
     }
 
     @Override
-    public Content update( final UpdateContentParams params, final Context context )
+    public Content update( final UpdateContentParams params )
     {
         return UpdateContentCommand.create( params ).
             nodeService( this.nodeService ).
@@ -218,13 +209,12 @@ public class ContentServiceImpl
             blobService( this.blobService ).
             attachmentService( this.attachmentService ).
             translator( this.contentNodeTranslator ).
-            context( context ).
             build().
             execute();
     }
 
     @Override
-    public DeleteContentResult delete( final DeleteContentParams params, final Context context )
+    public DeleteContentResult delete( final DeleteContentParams params )
     {
         return DeleteContentCommand.create().
             nodeService( this.nodeService ).
@@ -232,13 +222,12 @@ public class ContentServiceImpl
             blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
             params( params ).
-            context( context ).
             build().
             execute();
     }
 
     @Override
-    public Content push( final PushContentParams params, final Context context )
+    public Content push( final PushContentParams params )
     {
         params.getContentId();
 
@@ -249,13 +238,12 @@ public class ContentServiceImpl
             translator( this.contentNodeTranslator ).
             contentId( params.getContentId() ).
             target( params.getTarget() ).
-            context( context ).
             build().
             execute();
     }
 
     @Override
-    public DataValidationErrors validate( final ValidateContentData data, final Context context )
+    public DataValidationErrors validate( final ValidateContentData data )
     {
         return new ValidateContentDataCommand().
             contentTypeService( this.contentTypeService ).
@@ -264,20 +252,19 @@ public class ContentServiceImpl
     }
 
     @Override
-    public Content rename( final RenameContentParams params, final Context context )
+    public Content rename( final RenameContentParams params )
     {
         return RenameContentCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
-            context( context ).
             build().
             execute();
     }
 
     @Override
-    public FindContentByQueryResult find( final FindContentByQueryParams params, final Context context )
+    public FindContentByQueryResult find( final FindContentByQueryParams params )
     {
         return FindContentByQueryCommand.create().
             params( params ).
@@ -286,17 +273,15 @@ public class ContentServiceImpl
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
-            context( context ).
             build().
             execute();
     }
 
     @Override
-    public CompareContentResult compare( final CompareContentParams params, final Context context )
+    public CompareContentResult compare( final CompareContentParams params )
     {
         return CompareContentCommand.create().
             nodeService( this.nodeService ).
-            context( context ).
             contentId( params.getContentId() ).
             target( params.getTarget() ).
             build().
@@ -304,11 +289,10 @@ public class ContentServiceImpl
     }
 
     @Override
-    public CompareContentResults compare( final CompareContentsParams params, final Context context )
+    public CompareContentResults compare( final CompareContentsParams params )
     {
         return CompareContentsCommand.create().
             nodeService( this.nodeService ).
-            context( context ).
             contentIds( params.getContentIds() ).
             target( params.getTarget() ).
             build().
@@ -316,14 +300,13 @@ public class ContentServiceImpl
     }
 
     @Override
-    public FindContentVersionsResult getVersions( final FindContentVersionsParams params, final Context context )
+    public FindContentVersionsResult getVersions( final FindContentVersionsParams params )
     {
         return FindContentVersionsCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
-            context( context ).
             contentId( params.getContentId() ).
             from( params.getFrom() ).
             size( params.getSize() ).
@@ -333,14 +316,13 @@ public class ContentServiceImpl
 
 
     @Override
-    public GetActiveContentVersionsResult getActiveVersions( final GetActiveContentVersionsParams params, final Context context )
+    public GetActiveContentVersionsResult getActiveVersions( final GetActiveContentVersionsParams params )
     {
         return GetActiveContentVersionsCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
-            context( context ).
             contentId( params.getContentId() ).
             workspaces( params.getWorkspaces() ).
             build().

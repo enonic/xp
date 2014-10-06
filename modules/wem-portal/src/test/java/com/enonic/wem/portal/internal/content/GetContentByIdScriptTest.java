@@ -11,12 +11,10 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.script.AbstractScriptTest;
 
 import static com.enonic.wem.api.content.Content.newContent;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 
 public class GetContentByIdScriptTest
@@ -44,7 +42,7 @@ public class GetContentByIdScriptTest
             modifier( UserKey.superUser() ).
             type( ContentTypeName.from( "contenttype" ) ).
             build();
-        Mockito.when( this.contentService.getById( eq( ContentId.from( "123" ) ), any( Context.class ) ) ).thenReturn( content );
+        Mockito.when( this.contentService.getById( eq( ContentId.from( "123" ) ) ) ).thenReturn( content );
 
         runTestScript( "getContentById-test.js" );
     }

@@ -45,7 +45,7 @@ final class RenameContentCommand
         nodeService.rename( RenameNodeParams.create().
             entityId( entityId ).
             nodeName( nodeName ).
-            build(), this.context );
+            build() );
 
         return getContent( params.getContentId() );
     }

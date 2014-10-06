@@ -28,7 +28,7 @@ final class FindContentByQueryCommand
     {
         final NodeQuery nodeQuery = ContentQueryNodeQueryTranslator.translate( this.params.getContentQuery() );
 
-        final FindNodesByQueryResult result = nodeService.findByQuery( nodeQuery, context );
+        final FindNodesByQueryResult result = nodeService.findByQuery( nodeQuery );
 
         Contents contents = this.translator.fromNodes( result.getNodes() );
 

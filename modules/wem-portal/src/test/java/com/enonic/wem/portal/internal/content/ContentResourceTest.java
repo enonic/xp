@@ -42,7 +42,7 @@ public class ContentResourceTest
     public void getContentNotFound()
         throws Exception
     {
-        Mockito.when( this.contentService.getByPath( Mockito.anyObject(), Mockito.anyObject() ) ).thenReturn( null );
+        Mockito.when( this.contentService.getByPath( Mockito.anyObject() ) ).thenReturn( null );
 
         final MockHttpServletRequest request = newGetRequest( "/live/test/site/somepath/content" );
         final MockHttpServletResponse response = executeRequest( request );

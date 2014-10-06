@@ -27,7 +27,7 @@ public class ContentAttachmentResource
     public AttachmentListJson getAttachments( @QueryParam("contentId") final String contentIdAsString )
     {
         final ContentId contentId = ContentId.from( contentIdAsString );
-        final Attachments attachments = attachmentService.getAll( contentId, STAGE_CONTEXT );
+        final Attachments attachments = attachmentService.getAll( contentId );
         return new AttachmentListJson( attachments );
     }
 

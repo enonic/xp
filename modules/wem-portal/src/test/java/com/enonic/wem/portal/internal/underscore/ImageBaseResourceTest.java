@@ -37,11 +37,11 @@ public abstract class ImageBaseResourceTest
 
     private BlobService blobService;
 
-    protected ContentService contentService;
+    ContentService contentService;
 
-    public final Workspace testWorkspace = Workspace.from( "test" );
+    private final Workspace testWorkspace = Workspace.from( "test" );
 
-    protected final Context testContext = Context.create().
+    final Context testContext = Context.create().
         workspace( testWorkspace ).
         repositoryId( RepositoryId.from( "testing" ) ).
         build();
@@ -64,14 +64,14 @@ public abstract class ImageBaseResourceTest
         this.resources.add( provider );
     }
 
-    protected final void setupContent( final Context context )
+    final void setupContent( final Context context )
         throws Exception
     {
         final ContentPath contentPath = ContentPath.from( "path/to/content" );
         final Content content = createContent( "content-id", contentPath, "mymodule:image" );
-        Mockito.when( this.contentService.getById( Mockito.eq( content.getId() ), Mockito.eq( context ) ) ).
+        Mockito.when( this.contentService.getById( Mockito.eq( content.getId() ) ) ).
             thenReturn( content );
-        Mockito.when( this.contentService.getByPath( Mockito.eq( content.getPath() ), Mockito.eq( context ) ) ).
+        Mockito.when( this.contentService.getByPath( Mockito.eq( content.getPath() ) ) ).
             thenReturn( content );
 
         final BlobKey blobKey = new BlobKey( "<blobkey-1>" );
@@ -85,7 +85,7 @@ public abstract class ImageBaseResourceTest
         final byte[] imageData = ByteStreams.toByteArray( getClass().getResourceAsStream( "enonic-logo.png" ) );
         Mockito.when( this.attachmentService.get( Mockito.isA( GetAttachmentParameters.class ) ) ).
             thenReturn( attachment );
-        Mockito.when( this.attachmentService.getAll( Mockito.isA( ContentId.class ), Mockito.eq( context ) ) ).
+        Mockito.when( this.attachmentService.getAll( Mockito.isA( ContentId.class ) ) ).
             thenReturn( Attachments.from( attachment ) );
 
         final Blob blob = new MemoryBlobRecord( blobKey, imageData );
