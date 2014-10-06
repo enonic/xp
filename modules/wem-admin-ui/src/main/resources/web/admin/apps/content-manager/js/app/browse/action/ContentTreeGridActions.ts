@@ -57,8 +57,9 @@ module app.browse.action {
                 this.OPEN_CONTENT.setEnabled(!!contentSummaries[0]);
                 this.EDIT_CONTENT.setEnabled(!contentSummaries[0] ? false : contentSummaries[0].isEditable());
                 this.DELETE_CONTENT.setEnabled(!contentSummaries[0] ? false : contentSummaries[0].isDeletable());
-                this.DUPLICATE_CONTENT.setEnabled(!!contentSummaries[0]);
-                this.MOVE_CONTENT.setEnabled(!!contentSummaries[0]);
+                this.DUPLICATE_CONTENT.setEnabled(false);
+                this.DUPLICATE_CONTENT.setEnabled(false);
+                this.MOVE_CONTENT.setEnabled(false);
                 this.SHOW_PREVIEW.setEnabled(!contentSummaries[0] ? false : contentSummaries[0].isPage());
                 break;
             default:
