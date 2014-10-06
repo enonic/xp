@@ -12,6 +12,7 @@ import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplate;
+import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.portal.internal.controller.JsContext;
 import com.enonic.wem.portal.internal.controller.JsHttpRequest;
@@ -45,13 +46,13 @@ public final class ComponentResource
         final ComponentPath componentPath = ComponentPath.from( this.componentSelector );
         final Content content = getContent( this.contentPath );
 
-        final Content siteContent = getSite( content );
+        final Site site = getSite( content );
         final PageTemplate pageTemplate;
         final PageRegions pageRegions;
 
         if ( !content.hasPage() )
         {
-            pageTemplate = getDefaultPageTemplate( content.getType(), siteContent );
+            pageTemplate = getDefaultPageTemplate( content.getType(), site );
             if ( pageTemplate == null )
             {
                 throw notFound( "Page not found." );
@@ -75,7 +76,7 @@ public final class ComponentResource
         final Renderer<PageComponent> renderer = this.rendererFactory.getRenderer( component );
 
         final ModuleName moduleName = pageTemplate.getDescriptor().getModuleKey().getName();
-        final JsContext context = createContext( content, component, siteContent, moduleName );
+        final JsContext context = createContext( content, component, site, moduleName );
         final RenderResult result = renderer.render( component, context );
 
         return toResponse( result );

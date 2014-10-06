@@ -9,6 +9,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageTemplate;
+import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.portal.PortalResponse;
 import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.portal.internal.controller.JsContext;
@@ -36,7 +37,7 @@ public final class ContentResource
     private Response doHandle()
     {
         final Content content = getContent( this.contentPath );
-        final Content siteContent = getSite( content );
+        final Site site = getSite( content );
 
         final PageTemplate pageTemplate;
         if ( content instanceof PageTemplate )
@@ -45,7 +46,7 @@ public final class ContentResource
         }
         else if ( !content.hasPage() )
         {
-            pageTemplate = getDefaultPageTemplate( content.getType(), siteContent );
+            pageTemplate = getDefaultPageTemplate( content.getType(), site );
             if ( pageTemplate == null )
             {
                 throw notFound( "Page not found." );
@@ -65,7 +66,7 @@ public final class ContentResource
 
         final JsContext context = new JsContext();
         context.setContent( content );
-        context.setSiteContent( siteContent );
+        context.setSiteContent( site );
         context.setPageTemplate( pageTemplate );
 
         if ( pageDescriptor != null )

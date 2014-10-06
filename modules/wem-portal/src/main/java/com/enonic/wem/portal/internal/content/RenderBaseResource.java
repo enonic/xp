@@ -16,6 +16,7 @@ import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptorService;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateService;
+import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.workspace.Workspace;
@@ -62,9 +63,9 @@ public abstract class RenderBaseResource
         this.mode = parseMode( mode );
     }
 
-    protected final Content getSite( final Content content )
+    protected final Site getSite( final Content content )
     {
-        final Content siteContent = this.contentService.getNearestSite( content.getId(), resolveContext() );
+        final Site siteContent = this.contentService.getNearestSite( content.getId(), resolveContext() );
 
         if ( siteContent == null )
         {
@@ -133,7 +134,7 @@ public abstract class RenderBaseResource
         return pageTemplate;
     }
 
-    protected final PageTemplate getDefaultPageTemplate( final ContentTypeName contentType, final Content site )
+    protected final PageTemplate getDefaultPageTemplate( final ContentTypeName contentType, final Site site )
     {
         return this.pageTemplateService.getDefault(
             GetDefaultPageTemplateParams.create().site( site.getId() ).contentType( contentType ).build(), resolveContext() );
