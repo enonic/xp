@@ -113,7 +113,6 @@
 ///<reference path='content/page/text/_module.ts' />
 ///<reference path='content/page/inputtype/pagecontroller/_module.ts' />
 ///<reference path='content/site/_module.ts' />
-///<reference path='content/site/template/_module.ts' />
 ///<reference path='content/form/_module.ts' />
 ///<reference path='content/form/inputtype/_module.ts' />
 ///<reference path='content/form/inputtype/imageupload/_module.ts' />

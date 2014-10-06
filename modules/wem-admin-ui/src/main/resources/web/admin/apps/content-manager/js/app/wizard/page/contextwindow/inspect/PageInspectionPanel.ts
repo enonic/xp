@@ -3,8 +3,6 @@ module app.wizard.page.contextwindow.inspect {
     import RootDataSet = api.data.RootDataSet;
     import FormContextBuilder = api.form.FormContextBuilder;
     import FormView = api.form.FormView;
-    import SiteTemplateKey = api.content.site.template.SiteTemplateKey;
-    import SiteTemplate = api.content.site.template.SiteTemplate;
     import ContentId = api.content.ContentId;
     import Content = api.content.Content;
     import ContentTypeName = api.schema.content.ContentTypeName;
