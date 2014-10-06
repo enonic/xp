@@ -59,10 +59,10 @@ public final class PageTemplateResource
 
     @GET
     @javax.ws.rs.Path("list")
-    public ContentListJson list( @QueryParam("siteId") String siteContentIdAsString )
+    public ContentListJson list( @QueryParam("siteId") String siteIdAsString )
     {
 
-        final ContentId siteId = ContentId.from( siteContentIdAsString );
+        final ContentId siteId = ContentId.from( siteIdAsString );
         final PageTemplates pageTemplates = pageTemplateService.getBySite( siteId, STAGE_CONTEXT );
 
         final ContentListMetaData metaData = ContentListMetaData.create().
@@ -75,10 +75,10 @@ public final class PageTemplateResource
 
     @GET
     @javax.ws.rs.Path("listByCanRender")
-    public ContentListJson listByCanRender( @QueryParam("siteId") String siteContentIdAsString,
+    public ContentListJson listByCanRender( @QueryParam("siteId") String siteIdAsString,
                                             @QueryParam("contentTypeName") String contentTypeName )
     {
-        final ContentId siteId = ContentId.from( siteContentIdAsString );
+        final ContentId siteId = ContentId.from( siteIdAsString );
         final PageTemplates pageTemplates = pageTemplateService.getBySite( siteId, STAGE_CONTEXT );
         final PageTemplateSpec spec = PageTemplateSpec.newPageTemplateParams().canRender( ContentTypeName.from( contentTypeName ) ).build();
         final PageTemplates filteredPageTemplates = pageTemplates.filter( spec );
@@ -92,10 +92,10 @@ public final class PageTemplateResource
 
     @GET
     @javax.ws.rs.Path("default")
-    public ContentJson getDefault( @QueryParam("siteId") String siteContentIdAsString,
+    public ContentJson getDefault( @QueryParam("siteId") String siteIdAsString,
                                    @QueryParam("contentTypeName") String contentTypeNameAsString )
     {
-        final ContentId siteId = ContentId.from( siteContentIdAsString );
+        final ContentId siteId = ContentId.from( siteIdAsString );
         final ContentTypeName contentTypeName = ContentTypeName.from( contentTypeNameAsString );
         final PageTemplate pageTemplate = pageTemplateService.getDefault( GetDefaultPageTemplateParams.create().
             site( siteId ).

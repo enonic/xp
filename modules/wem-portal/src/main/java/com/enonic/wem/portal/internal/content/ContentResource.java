@@ -66,7 +66,7 @@ public final class ContentResource
 
         final JsContext context = new JsContext();
         context.setContent( content );
-        context.setSiteContent( site );
+        context.setSite( site );
         context.setPageTemplate( pageTemplate );
 
         if ( pageDescriptor != null )

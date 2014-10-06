@@ -82,12 +82,11 @@ public final class ComponentResource
         return toResponse( result );
     }
 
-    private JsContext createContext( final Content content, final PageComponent component, final Content siteContent,
-                                     final ModuleName moduleName )
+    private JsContext createContext( final Content content, final PageComponent component, final Site site, final ModuleName moduleName )
     {
         final JsContext context = new JsContext();
         context.setContent( content );
-        context.setSiteContent( siteContent );
+        context.setSite( site );
         context.setComponent( component );
 
         context.setResolvedModule( moduleName.toString() );

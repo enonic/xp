@@ -7,6 +7,7 @@ import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.layout.LayoutComponent;
 import com.enonic.wem.api.content.page.layout.LayoutRegions;
+import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.PortalRequest;
 import com.enonic.wem.portal.PortalResponse;
@@ -19,7 +20,7 @@ public final class JsContext
 
     private JsHttpResponse response;
 
-    private Content siteContent;
+    private Site site;
 
     private Content content;
 
@@ -57,14 +58,14 @@ public final class JsContext
     }
 
     @Override
-    public Content getSiteContent()
+    public Site getSite()
     {
-        return siteContent;
+        return site;
     }
 
-    public void setSiteContent( final Content siteContent )
+    public void setSite( final Site site )
     {
-        this.siteContent = siteContent;
+        this.site = site;
     }
 
     @Override

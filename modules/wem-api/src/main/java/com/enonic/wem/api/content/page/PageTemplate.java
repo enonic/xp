@@ -13,7 +13,7 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 
 public final class PageTemplate
-    extends Content<PageTemplate>
+    extends Content
 {
     private final PageTemplateKey key;
 

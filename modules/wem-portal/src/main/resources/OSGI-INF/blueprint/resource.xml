@@ -17,12 +17,6 @@
     <property name="contentService" ref="contentService"/>
   </bean>
 
-  <bean id="pageTemplateResourceProvider" class="com.enonic.wem.portal.internal.content.PageTemplateResourceProvider">
-    <property name="controllerFactory" ref="controllerFactory"/>
-    <property name="pageTemplateService" ref="pageTemplateService"/>
-    <property name="pageDescriptorService" ref="pageDescriptorService"/>
-  </bean>
-
   <bean id="contentResourceProvider" class="com.enonic.wem.portal.internal.content.ContentResourceProvider">
     <property name="controllerFactory" ref="controllerFactory"/>
     <property name="pageDescriptorService" ref="pageDescriptorService"/>

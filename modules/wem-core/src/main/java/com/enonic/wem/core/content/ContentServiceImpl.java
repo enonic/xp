@@ -141,6 +141,9 @@ public class ContentServiceImpl
     @Override
     public Site create( final CreateSiteParams params, final Context context )
     {
+
+        // TODO: validate that PageTemplates are only created below  Site/templates
+
         final ContentData data = new ContentData();
         data.setProperty( DataId.from( "description", 0 ), Value.newString( params.getDescription() ) );
         for ( final ModuleConfig moduleConfig : params.getModuleConfigs() )

@@ -24,7 +24,7 @@ import com.enonic.wem.api.support.illegaledit.IllegalEditException;
 
 import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;
 
-public class Content<C>
+public class Content
     implements IllegalEditAware<Content>, ChangeTraceable
 {
     private final boolean draft;
@@ -163,11 +163,11 @@ public class Content<C>
         return contentData;
     }
 
-    public Metadata getMetadata(MetadataSchemaName name)
+    public Metadata getMetadata( MetadataSchemaName name )
     {
-        for (Metadata item : this.metadata)
+        for ( Metadata item : this.metadata )
         {
-            if (item.getName().equals( name ))
+            if ( item.getName().equals( name ) )
             {
                 return item;
             }
@@ -199,11 +199,6 @@ public class Content<C>
     public boolean isPageTemplate()
     {
         return this instanceof PageTemplate;
-    }
-
-    public Site getSite()
-    {
-        return (Site) this;
     }
 
     public boolean hasPage()
@@ -375,7 +370,7 @@ public class Content<C>
             return this;
         }
 
-        public EditBuilder metadata( final List<Metadata> metadata)
+        public EditBuilder metadata( final List<Metadata> metadata )
         {
             changes.recordChange( newPossibleChange( "metadata" ).from( this.original.metadata ).to( metadata ).build() );
             this.metadata = metadata;

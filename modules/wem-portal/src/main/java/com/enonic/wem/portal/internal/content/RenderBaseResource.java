@@ -65,14 +65,14 @@ public abstract class RenderBaseResource
 
     protected final Site getSite( final Content content )
     {
-        final Site siteContent = this.contentService.getNearestSite( content.getId(), resolveContext() );
+        final Site site = this.contentService.getNearestSite( content.getId(), resolveContext() );
 
-        if ( siteContent == null )
+        if ( site == null )
         {
             throw notFound( "Site for content [%s] not found", content.getPath() );
         }
 
-        return siteContent;
+        return site;
     }
 
     protected final Content getContent( final String contentSelector )

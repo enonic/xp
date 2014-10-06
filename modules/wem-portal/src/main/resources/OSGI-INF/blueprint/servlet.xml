@@ -14,7 +14,6 @@
           <ref component-id="publicResourceProvider"/>
           <ref component-id="serviceResourceProvider"/>
           <ref component-id="imageResourceProvider"/>
-          <ref component-id="pageTemplateResourceProvider"/>
           <ref component-id="contentResourceProvider"/>
           <ref component-id="componentResourceProvider"/>
           <ref component-id="exceptionMapper"/>

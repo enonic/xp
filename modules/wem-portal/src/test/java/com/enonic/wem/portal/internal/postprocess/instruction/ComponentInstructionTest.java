@@ -46,20 +46,20 @@ public class ComponentInstructionTest
     public void testInstruction()
         throws Exception
     {
-        final RendererFactory rendererFactory = newRendererFactory( "<b>part content</b>" );
-        final PageComponentService pageComponentService = Mockito.mock( PageComponentService.class );
-        final ComponentInstruction instruction = new ComponentInstruction( rendererFactory, pageComponentService );
+        RendererFactory rendererFactory = newRendererFactory( "<b>part content</b>" );
+        PageComponentService pageComponentService = Mockito.mock( PageComponentService.class );
+        ComponentInstruction instruction = new ComponentInstruction( rendererFactory, pageComponentService );
 
-        final JsHttpResponse resp = new JsHttpResponse();
+        JsHttpResponse resp = new JsHttpResponse();
         resp.setPostProcess( true );
-        final JsContext context = new JsContext();
+        JsContext context = new JsContext();
         context.setResponse( resp );
         Content content = createPage( "content-id", "content-name", "mymodule:content-type" );
         context.setContent( content );
-        Content siteContent = createSite( "site-id", "site-name", "mymodule:content-type" );
-        context.setSiteContent( siteContent );
+        Site site = createSite( "site-id", "site-name", "mymodule:content-type" );
+        context.setSite( site );
 
-        final String outputHtml = instruction.evaluate( context, "COMPONENT myRegion/0" );
+        String outputHtml = instruction.evaluate( context, "COMPONENT myRegion/0" );
         assertEquals( "<b>part content</b>", outputHtml );
     }
 
@@ -67,25 +67,25 @@ public class ComponentInstructionTest
     public void testInstructionRenderByName()
         throws Exception
     {
-        final RendererFactory rendererFactory = newRendererFactory( "<b>part content</b>" );
-        final PageComponentService pageComponentService = Mockito.mock( PageComponentService.class );
+        RendererFactory rendererFactory = newRendererFactory( "<b>part content</b>" );
+        PageComponentService pageComponentService = Mockito.mock( PageComponentService.class );
 
-        final PageComponent component = createPartComponent();
+        PageComponent component = createPartComponent();
         doReturn( component ).when( pageComponentService ).getByName( isA( ModuleKey.class ), isA( ComponentName.class ) );
-        final ComponentInstruction instruction = new ComponentInstruction( rendererFactory, pageComponentService );
+        ComponentInstruction instruction = new ComponentInstruction( rendererFactory, pageComponentService );
 
-        final JsHttpResponse resp = new JsHttpResponse();
+        JsHttpResponse resp = new JsHttpResponse();
         resp.setPostProcess( true );
-        final JsContext context = new JsContext();
+        JsContext context = new JsContext();
         context.setResponse( resp );
         Content content = createPage( "content-id", "content-name", "mymodule:content-type" );
         context.setContent( content );
-        Content siteContent = createSite( "site-id", "site-name", "mymodule:content-type" );
-        context.setSiteContent( siteContent );
+        Site site = createSite( "site-id", "site-name", "mymodule:content-type" );
+        context.setSite( site );
         PageTemplate pageTemplate = createPageTemplate();
         context.setPageTemplate( pageTemplate );
 
-        final String outputHtml = instruction.evaluate( context, "COMPONENT module:myPartComponent" );
+        String outputHtml = instruction.evaluate( context, "COMPONENT module:myPartComponent" );
         assertEquals( "<b>part content</b>", outputHtml );
     }
 
@@ -109,11 +109,11 @@ public class ComponentInstructionTest
 
     private Content createPage( final String id, final String name, final String contentTypeName )
     {
-        final RootDataSet rootDataSet = new RootDataSet();
-        final Property dataSet = new Property( "property1", Value.newString( "value1" ) );
+        RootDataSet rootDataSet = new RootDataSet();
+        Property dataSet = new Property( "property1", Value.newString( "value1" ) );
         rootDataSet.add( dataSet );
 
-        final Region region = newRegion().
+        Region region = newRegion().
             name( "myRegion" ).
             add( newPartComponent().
                 name( "myPartComponent" ).
@@ -121,7 +121,7 @@ public class ComponentInstructionTest
                 build() ).
             build();
 
-        final PageRegions pageRegions = newPageRegions().add( region ).build();
+        PageRegions pageRegions = newPageRegions().add( region ).build();
         Page page = Page.newPage().
             template( PageTemplateKey.from( "my-page" ) ).
             regions( pageRegions ).
@@ -138,7 +138,7 @@ public class ComponentInstructionTest
             build();
     }
 
-    private Content createSite( final String id, final String name, final String contentTypeName )
+    private Site createSite( final String id, final String name, final String contentTypeName )
     {
         RootDataSet rootDataSet = new RootDataSet();
 
@@ -163,8 +163,8 @@ public class ComponentInstructionTest
 
     private RendererFactory newRendererFactory( final String renderResult )
     {
-        final RendererFactory rendererFactory = mock( RendererFactory.class );
-        final Renderer<Renderable> renderer = new Renderer<Renderable>()
+        RendererFactory rendererFactory = mock( RendererFactory.class );
+        Renderer<Renderable> renderer = new Renderer<Renderable>()
         {
             @Override
             public Class<Renderable> getType()
