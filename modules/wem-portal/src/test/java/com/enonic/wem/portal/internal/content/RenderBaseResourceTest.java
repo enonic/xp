@@ -37,6 +37,7 @@ import com.enonic.wem.api.xml.serializer.XmlSerializers2;
 import com.enonic.wem.portal.internal.base.BaseResourceTest;
 import com.enonic.wem.portal.internal.controller.JsController;
 import com.enonic.wem.portal.internal.controller.JsControllerFactory;
+import com.enonic.wem.portal.internal.postprocess.PostProcessor;
 
 public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvider>
     extends BaseResourceTest
@@ -50,6 +51,8 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
     protected JsController jsController;
 
     protected T resourceProvider;
+
+    protected PostProcessor postProcessor;
 
     public final Workspace testWorkspace = Workspace.from( "test" );
 
@@ -68,6 +71,7 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
         this.contentService = Mockito.mock( ContentService.class );
         this.pageTemplateService = Mockito.mock( PageTemplateService.class );
         this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
+        this.postProcessor = Mockito.mock( PostProcessor.class );
         final JsControllerFactory jsControllerFactory = Mockito.mock( JsControllerFactory.class );
 
         this.jsController = Mockito.mock( JsController.class );
@@ -77,6 +81,7 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
         this.resourceProvider.setPageTemplateService( this.pageTemplateService );
         this.resourceProvider.setPageDescriptorService( this.pageDescriptorService );
         this.resourceProvider.setControllerFactory( jsControllerFactory );
+        this.resourceProvider.setPostProcessor( this.postProcessor );
 
         this.resources.add( this.resourceProvider );
     }
@@ -84,11 +89,16 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
     protected final void setupContentAndSite( final Context context )
         throws Exception
     {
+        final Content content = createPage( "id", "site/somepath/content", "mymodule:ctype", true );
+
         Mockito.when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ), context ) ).
-            thenReturn( createPage( "id", "site/somepath/content", "mymodule:ctype", true ) );
+            thenReturn( content );
 
         Mockito.when( this.contentService.getNearestSite( Mockito.isA( ContentId.class ), Mockito.isA( Context.class ) ) ).
             thenReturn( createSite( "id", "site", "mymodule:contenttypename" ) );
+
+        Mockito.when( this.contentService.getById( content.getId(), context ) ).
+            thenReturn( content );
     }
 
     protected final void setupNonPageContent( final Context context )
@@ -104,11 +114,20 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
     protected final void setupTemplates( final Context context )
         throws Exception
     {
+        setupTemplates( context, true );
+    }
+
+    protected final void setupTemplates( final Context context, final boolean includeDescriptor )
+        throws Exception
+    {
         Mockito.when(
             this.pageTemplateService.getByKey( Mockito.eq( PageTemplateKey.from( "my-page" ) ), Mockito.eq( context ) ) ).thenReturn(
-            createPageTemplate() );
+            createPageTemplate( includeDescriptor ) );
 
-        Mockito.when( this.pageDescriptorService.getByKey( Mockito.isA( PageDescriptorKey.class ) ) ).thenReturn( createDescriptor() );
+        if ( includeDescriptor )
+        {
+            Mockito.when( this.pageDescriptorService.getByKey( Mockito.isA( PageDescriptorKey.class ) ) ).thenReturn( createDescriptor() );
+        }
     }
 
     private Content createPage( final String id, final String path, final String contentTypeName, final boolean withPage )
@@ -160,7 +179,7 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
             build();
     }
 
-    private PageTemplate createPageTemplate()
+    private PageTemplate createPageTemplate( final boolean includeDescriptor )
     {
         final RootDataSet pageTemplateConfig = new RootDataSet();
         pageTemplateConfig.addProperty( "pause", Value.newLong( 10000 ) );
@@ -172,16 +191,22 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
                 build() ).
             build();
 
-        return PageTemplate.newPageTemplate().
+        final PageTemplate.Builder builder = PageTemplate.newPageTemplate().
             key( PageTemplateKey.from( "abc" ) ).
             canRender( ContentTypeNames.from( "mymodule:article", "mymodule:banner" ) ).
-            descriptor( PageDescriptorKey.from( "mainmodule:landing-page" ) ).
             regions( pageRegions ).
-            config( pageTemplateConfig ).
-            displayName( "Main page emplate" ).
-            name( "main-page-template" ).
-            parentPath( ContentPath.ROOT ).
-            build();
+            config( pageTemplateConfig );
+
+        if ( includeDescriptor )
+        {
+            builder.descriptor( PageDescriptorKey.from( "mainmodule:landing-page" ) );
+        }
+
+        builder.displayName( "Main page emplate" );
+        builder.name( "main-page-template" );
+        builder.parentPath( ContentPath.ROOT );
+
+        return builder.build();
     }
 
     private PageDescriptor createDescriptor()

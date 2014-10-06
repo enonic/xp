@@ -61,4 +61,19 @@ public class ContentResourceTest
 
         assertEquals( 404, response.getStatus() );
     }
+
+    @Test
+    public void renderForNoPageDescriptor()
+        throws Exception
+    {
+        setupContentAndSite( testContext );
+        setupTemplates( testContext, false );
+
+        final MockHttpServletRequest request = newGetRequest( "/edit/test/id" );
+        final MockHttpServletResponse response = executeRequest( request );
+
+        assertEquals( 200, response.getStatus() );
+
+        Mockito.verify( this.postProcessor ).processResponse( Mockito.anyObject() );
+    }
 }

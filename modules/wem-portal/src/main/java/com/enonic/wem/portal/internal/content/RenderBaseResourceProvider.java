@@ -4,6 +4,7 @@ import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.page.PageDescriptorService;
 import com.enonic.wem.api.content.page.PageTemplateService;
 import com.enonic.wem.portal.internal.controller.JsControllerFactory;
+import com.enonic.wem.portal.internal.postprocess.PostProcessor;
 import com.enonic.wem.servlet.jaxrs.ResourceProvider;
 
 public abstract class RenderBaseResourceProvider<T extends RenderBaseResource>
@@ -17,12 +18,15 @@ public abstract class RenderBaseResourceProvider<T extends RenderBaseResource>
 
     private ContentService contentService;
 
+    private PostProcessor postProcessor;
+
     protected final void configure( final T instance )
     {
         instance.controllerFactory = this.controllerFactory;
         instance.pageDescriptorService = this.pageDescriptorService;
         instance.pageTemplateService = this.pageTemplateService;
         instance.contentService = this.contentService;
+        instance.postProcessor = this.postProcessor;
     }
 
     public final void setControllerFactory( final JsControllerFactory controllerFactory )
@@ -45,4 +49,8 @@ public abstract class RenderBaseResourceProvider<T extends RenderBaseResource>
         this.contentService = contentService;
     }
 
+    public final void setPostProcessor( final PostProcessor postProcessor )
+    {
+        this.postProcessor = postProcessor;
+    }
 }

@@ -9,6 +9,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageTemplate;
+import com.enonic.wem.portal.PortalResponse;
 import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.portal.internal.controller.JsContext;
 import com.enonic.wem.portal.internal.controller.JsController;
@@ -56,24 +57,21 @@ public final class ContentResource
             pageTemplate = getPageTemplate( page );
         }
 
-        final PageDescriptor pageDescriptor;
+        PageDescriptor pageDescriptor = null;
         if ( pageTemplate.getDescriptor() != null )
         {
             pageDescriptor = getPageDescriptor( pageTemplate );
-        }
-        else
-        {
-            return toResponse( createRenderResultForNoPageDescriptor( content ) );
         }
 
         final JsContext context = new JsContext();
         context.setContent( content );
         context.setSiteContent( siteContent );
         context.setPageTemplate( pageTemplate );
-        context.setResolvedModule( pageDescriptor.getKey().getModuleKey().getName().toString() );
 
-        // createResourceUrl('my.css');
-        // /portal/edit/workspace/path/to/content/_/public/mymodule-1.0.0/my.css
+        if ( pageDescriptor != null )
+        {
+            context.setResolvedModule( pageDescriptor.getKey().getModuleKey().getName().toString() );
+        }
 
         final JsHttpRequest jsRequest = new JsHttpRequest();
         jsRequest.setMode( this.mode );
@@ -82,14 +80,21 @@ public final class ContentResource
         jsRequest.addParams( this.uriInfo.getQueryParameters() );
         context.setRequest( jsRequest );
 
-        final JsController controller = this.controllerFactory.newController( pageDescriptor.getResourceKey() );
-        controller.execute( context );
+        if ( pageDescriptor != null )
+        {
+            final JsController controller = this.controllerFactory.newController( pageDescriptor.getResourceKey() );
+            controller.execute( context );
+        }
+        else
+        {
+            renderForNoPageDescriptor( context, content );
+        }
 
         final RenderResult result = new JsHttpResponseSerializer( context.getResponse() ).serialize();
         return toResponse( result );
     }
 
-    private RenderResult createRenderResultForNoPageDescriptor( final Content content )
+    private void renderForNoPageDescriptor( final JsContext context, final Content content )
     {
         String html = "<html>" +
             "<head>" +
@@ -106,11 +111,12 @@ public final class ContentResource
         }
         html += "</html>";
 
-        return RenderResult.newRenderResult().
-            status( 200 ).
-            type( "text/html" ).
-            entity( html ).
-            build();
-    }
+        final PortalResponse response = context.getResponse();
+        response.setContentType( "text/html" );
+        response.setStatus( 200 );
+        response.setBody( html );
+        response.setPostProcess( true );
 
+        this.postProcessor.processResponse( context );
+    }
 }

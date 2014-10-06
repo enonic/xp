@@ -22,6 +22,7 @@ import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.portal.internal.base.BaseResource;
 import com.enonic.wem.portal.internal.controller.JsControllerFactory;
+import com.enonic.wem.portal.internal.postprocess.PostProcessor;
 
 public abstract class RenderBaseResource
     extends BaseResource
@@ -33,6 +34,8 @@ public abstract class RenderBaseResource
     protected PageTemplateService pageTemplateService;
 
     protected ContentService contentService;
+
+    protected PostProcessor postProcessor;
 
     @PathParam("contentPath")
     protected String contentPath;
