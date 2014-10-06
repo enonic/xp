@@ -8,6 +8,10 @@ function resolve(name) {
     return __helper.resolve(name);
 }
 
+function execute(name, params) {
+    return executeCommand(name, params);
+}
+
 function executeCommand(name, params) {
     var command = __helper.newCommand(name);
 
