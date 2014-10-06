@@ -18,7 +18,6 @@ import com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.attachment.Attachment;
@@ -26,7 +25,6 @@ import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.attachment.GetAttachmentParameters;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.thumb.Thumbnail;
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.Property;
 
 import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter.ScaleMax;
@@ -37,8 +35,6 @@ import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.Imag
 @Produces("image/*")
 public class ContentIconResource
 {
-    protected final static Context STAGE_CONTEXT = ContentConstants.CONTEXT_STAGE;
-
     private static final ContentImageHelper helper = new ContentImageHelper();
 
     private AttachmentService attachmentService;

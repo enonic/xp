@@ -14,14 +14,12 @@ import javax.ws.rs.core.Response;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.attachment.GetAttachmentParameters;
 import com.enonic.wem.api.content.data.ContentData;
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -35,8 +33,6 @@ import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.Imag
 @Produces("image/*")
 public class ContentImageResource
 {
-    protected final static Context STAGE_CONTEXT = ContentConstants.CONTEXT_STAGE;
-
     private static final ContentImageHelper helper = new ContentImageHelper();
 
     private AttachmentService attachmentService;

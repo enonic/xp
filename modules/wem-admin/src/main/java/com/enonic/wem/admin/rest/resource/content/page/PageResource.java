@@ -11,13 +11,11 @@ import javax.ws.rs.core.MediaType;
 import com.enonic.wem.admin.json.content.ContentJson;
 import com.enonic.wem.admin.rest.resource.content.ContentIconUrlResolver;
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.page.CreatePageParams;
 import com.enonic.wem.api.content.page.PageService;
 import com.enonic.wem.api.content.page.UpdatePageParams;
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.mixin.MixinService;
@@ -26,8 +24,6 @@ import com.enonic.wem.api.schema.mixin.MixinService;
 @Produces(MediaType.APPLICATION_JSON)
 public final class PageResource
 {
-    protected final Context STAGE_CONTEXT = ContentConstants.CONTEXT_STAGE;
-
     private PageService pageService;
 
     private ContentTypeService contentTypeService;

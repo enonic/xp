@@ -3,12 +3,10 @@ package com.enonic.wem.admin.rest.resource.content;
 import com.enonic.wem.admin.rest.resource.schema.content.ContentTypeIconResolver;
 import com.enonic.wem.admin.rest.resource.schema.content.ContentTypeIconUrlResolver;
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.attachment.GetAttachmentParameters;
 import com.enonic.wem.api.content.data.ContentData;
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
@@ -17,9 +15,6 @@ import com.enonic.wem.servlet.ServletRequestUrlHelper;
 
 public final class ContentIconUrlResolver
 {
-    protected final static Context STAGE_CONTEXT = ContentConstants.CONTEXT_STAGE;
-
-
     private ContentTypeService contentTypeService;
 
     private AttachmentService attachmentService;

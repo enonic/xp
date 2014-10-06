@@ -1,6 +1,7 @@
 package com.enonic.wem.api.content;
 
-import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.Context2;
+import com.enonic.wem.api.context.ContextBuilder;
 import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.workspace.Workspace;
@@ -15,9 +16,9 @@ public class ContentConstants
         id( RepositoryId.from( "wem-content-repo" ) ).
         build();
 
-    public static final Context CONTEXT_STAGE = Context.create().
-        workspace( WORKSPACE_STAGE ).
-        repositoryId( CONTENT_REPO.getId() ).
+    public static final Context2 CONTEXT_STAGE = ContextBuilder.create().
+        object( WORKSPACE_STAGE ).
+        object( CONTENT_REPO.getId() ).
         build();
 
 }

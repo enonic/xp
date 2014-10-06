@@ -67,7 +67,6 @@ import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.editor.ContentEditor;
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.DataJson;
 import com.enonic.wem.api.exception.ConflictException;
 import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
@@ -83,10 +82,7 @@ import static com.enonic.wem.api.content.Content.editContent;
 @Produces(MediaType.APPLICATION_JSON)
 public class ContentResource
 {
-
     public static final String DEFAULT_SORT_FIELD = "modifiedTime";
-
-    protected final static Context STAGE_CONTEXT = ContentConstants.CONTEXT_STAGE;
 
     private static final String DEFAULT_FROM_PARAM = "0";
 

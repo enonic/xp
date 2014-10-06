@@ -6,10 +6,7 @@ import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.rendering.Renderable;
-import com.enonic.wem.api.repository.RepositoryId;
-import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.portal.internal.controller.JsContext;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
@@ -21,14 +18,6 @@ public class ComponentResourceTest
     extends RenderBaseResourceTest<ComponentResourceProvider>
 {
     private Renderer<Renderable> renderer;
-
-    private final Workspace testWorkspace = Workspace.from( "test" );
-
-    private final Context testContext = Context.create().
-        workspace( testWorkspace ).
-        repositoryId( RepositoryId.from( "testing" ) ).
-
-        build();
 
     @Override
     @SuppressWarnings("unchecked")
@@ -50,8 +39,8 @@ public class ComponentResourceTest
     public void getComponentFound()
         throws Exception
     {
-        setupContentAndSite( testContext );
-        setupTemplates( testContext );
+        setupContentAndSite();
+        setupTemplates();
         final RenderResult result = RenderResult.newRenderResult().
             entity( "component rendered" ).
             header( "some-heaer", "some-value" ).
@@ -75,7 +64,7 @@ public class ComponentResourceTest
     public void getComponentPageNotFound()
         throws Exception
     {
-        setupNonPageContent( testContext );
+        setupNonPageContent();
 
         final MockHttpServletRequest request = newGetRequest( "/live/test/site/somepath/content/_/component/main-region/0" );
         final MockHttpServletResponse response = executeRequest( request );
@@ -87,8 +76,8 @@ public class ComponentResourceTest
     public void getComponentNotFound()
         throws Exception
     {
-        setupContentAndSite( testContext );
-        setupTemplates( testContext );
+        setupContentAndSite();
+        setupTemplates();
 
         final MockHttpServletRequest request = newGetRequest( "/live/test/site/somepath/content/_/component/main-region/666" );
         final MockHttpServletResponse response = executeRequest( request );

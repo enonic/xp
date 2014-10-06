@@ -14,7 +14,7 @@ public class ImageByIdResourceTest
     public void getImageFound()
         throws Exception
     {
-        setupContent( testContext );
+        setupContent();
 
         final MockHttpServletRequest request = newGetRequest( "/live/test/path/to/content/_/image/id/content-id" );
         final MockHttpServletResponse response = executeRequest( request );
@@ -38,7 +38,7 @@ public class ImageByIdResourceTest
     public void getImageWithFilter()
         throws Exception
     {
-        setupContent( testContext );
+        setupContent();
 
         final MockHttpServletRequest request = newGetRequest( "/live/test/path/to/content/_/image/id/content-id" );
         request.setQueryString( "filter=sepia()&quality=75&background=0x0" );

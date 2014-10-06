@@ -18,10 +18,7 @@ import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.attachment.GetAttachmentParameters;
-import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.blob.memory.MemoryBlobRecord;
 import com.enonic.wem.core.image.filter.BuilderContext;
 import com.enonic.wem.core.image.filter.ImageFilter;
@@ -38,13 +35,6 @@ public abstract class ImageBaseResourceTest
     private BlobService blobService;
 
     ContentService contentService;
-
-    private final Workspace testWorkspace = Workspace.from( "test" );
-
-    final Context testContext = Context.create().
-        workspace( testWorkspace ).
-        repositoryId( RepositoryId.from( "testing" ) ).
-        build();
 
     @Override
     protected void configure()
@@ -64,7 +54,7 @@ public abstract class ImageBaseResourceTest
         this.resources.add( provider );
     }
 
-    final void setupContent( final Context context )
+    final void setupContent()
         throws Exception
     {
         final ContentPath contentPath = ContentPath.from( "path/to/content" );

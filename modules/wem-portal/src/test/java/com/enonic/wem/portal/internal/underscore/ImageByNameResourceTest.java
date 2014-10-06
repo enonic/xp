@@ -14,7 +14,7 @@ public class ImageByNameResourceTest
     public void getImageFound()
         throws Exception
     {
-        setupContent( testContext );
+        setupContent();
 
         final MockHttpServletRequest request = newGetRequest( "/live/test/path/to/content/_/image/enonic-logo.png" );
         final MockHttpServletResponse response = executeRequest( request );
@@ -38,7 +38,7 @@ public class ImageByNameResourceTest
     public void getImageWithFilter()
         throws Exception
     {
-        setupContent( testContext );
+        setupContent();
 
         final MockHttpServletRequest request = newGetRequest( "/live/test/path/to/content/_/image/enonic-logo.png" );
         request.setQueryString( "filter=sepia()&quality=75&background=0x0" );

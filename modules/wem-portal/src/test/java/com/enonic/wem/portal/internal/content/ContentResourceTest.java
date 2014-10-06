@@ -25,8 +25,8 @@ public class ContentResourceTest
     public void getContentFound()
         throws Exception
     {
-        setupContentAndSite( testContext );
-        setupTemplates( testContext );
+        setupContentAndSite();
+        setupTemplates();
 
         final MockHttpServletRequest request = newGetRequest( "/live/test/site/somepath/content" );
         final MockHttpServletResponse response = executeRequest( request );
@@ -54,7 +54,7 @@ public class ContentResourceTest
     public void getContentWithTemplateNotFound()
         throws Exception
     {
-        setupContentAndSite( testContext );
+        setupContentAndSite();
 
         final MockHttpServletRequest request = newGetRequest( "/live/test/site/somepath/content" );
         final MockHttpServletResponse response = executeRequest( request );
@@ -66,8 +66,8 @@ public class ContentResourceTest
     public void renderForNoPageDescriptor()
         throws Exception
     {
-        setupContentAndSite( testContext );
-        setupTemplates( testContext, false );
+        setupContentAndSite();
+        setupTemplates( false );
 
         final MockHttpServletRequest request = newGetRequest( "/edit/test/id" );
         final MockHttpServletResponse response = executeRequest( request );

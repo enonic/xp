@@ -11,7 +11,6 @@ import com.enonic.wem.admin.json.content.ContentJson;
 import com.enonic.wem.admin.json.content.ContentListJson;
 import com.enonic.wem.admin.rest.resource.content.ContentIconUrlResolver;
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentListMetaData;
 import com.enonic.wem.api.content.ContentNotFoundException;
@@ -23,7 +22,6 @@ import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplateService;
 import com.enonic.wem.api.content.page.PageTemplateSpec;
 import com.enonic.wem.api.content.page.PageTemplates;
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
@@ -33,8 +31,6 @@ import com.enonic.wem.api.schema.mixin.MixinService;
 @Produces(MediaType.APPLICATION_JSON)
 public final class PageTemplateResource
 {
-    protected final static Context STAGE_CONTEXT = ContentConstants.CONTEXT_STAGE;
-
     protected PageTemplateService pageTemplateService;
 
     private ContentService contentService;
