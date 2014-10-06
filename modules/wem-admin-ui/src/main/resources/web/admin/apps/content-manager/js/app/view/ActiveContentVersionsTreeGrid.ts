@@ -13,7 +13,7 @@ module app.view {
             if (this.contentId) {
                 return new api.content.GetActiveContentVersionsRequest(this.contentId).sendAndParse();
             } else {
-                return super.fetchChildren(parentNode);
+                throw new Error("Required contentId not set for ActiveContentVersionsTreeGrid")
             }
         }
 

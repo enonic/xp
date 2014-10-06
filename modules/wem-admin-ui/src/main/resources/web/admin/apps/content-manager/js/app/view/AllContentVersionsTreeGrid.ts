@@ -17,7 +17,7 @@ module app.view {
                     spread<ContentVersion[]>((allVersions: ContentVersion[], activeVersions: ContentVersion[]) =>
                     this.enrichWithWorkspaces(allVersions, activeVersions));
             } else {
-                return super.fetchChildren(parentNode);
+                throw new Error("Required contentId not set for ActiveContentVersionsTreeGrid")
             }
         }
 

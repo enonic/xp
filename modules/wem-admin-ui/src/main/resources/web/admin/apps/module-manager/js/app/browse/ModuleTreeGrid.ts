@@ -73,7 +73,7 @@ module app.browse {
             return this .fetchByKey(node.getData().getModuleKey());
         }
 
-        fetchByKey(moduleKey: api.module.ModuleKey): wemQ.Promise<api.module.Module> {
+        private fetchByKey(moduleKey: api.module.ModuleKey): wemQ.Promise<api.module.Module> {
             var deferred = wemQ.defer<api.module.Module>();
             new api.module.GetModuleRequest(moduleKey, true).sendAndParse().then((modulee: api.module.Module)=> {
                 deferred.resolve(modulee);
@@ -103,7 +103,7 @@ module app.browse {
         }
 
         appendModuleNode(moduleKey: api.module.ModuleKey) {
-            var root = this.getRoot();
+
             this.fetchByKey(moduleKey)
                 .then((data: api.module.Module) => {
                this.appendNode(data);
