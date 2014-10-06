@@ -18,24 +18,24 @@ module api.ui.treegrid {
 
     /*
      * There are several methods that should be overridden:
-     * 1. hasChildren(data: NODE)  -- Should be implemented if a grid has a tree structure and supports expand/collapse.
-     * 2. fetch(data?: NODE) -- Should fetch full data with a valid hasChildren() value;
-     * 3. fetchChildren(parentData?: NODE) -- Should fetch children of a parent data;
+     * 1. hasChildren(data: DATA)  -- Should be implemented if a grid has a tree structure and supports expand/collapse.
+     * 2. fetch(data?: DATA) -- Should fetch full data with a valid hasChildren() value;
+     * 3. fetchChildren(parentData?: DATA) -- Should fetch children of a parent data;
      * 4. fetchRoot() -- Fetches root nodes. by default return fetchChildren() with an empty parameter.
      */
-    export class TreeGrid<NODE> extends api.ui.panel.Panel {
+    export class TreeGrid<DATA> extends api.ui.panel.Panel {
 
-        private columns: GridColumn<NODE>[] = [];
+        private columns: GridColumn<DATA>[] = [];
 
-        private gridOptions: GridOptions<NODE>;
+        private gridOptions: GridOptions<DATA>;
 
-        private grid: Grid<TreeNode<NODE>>;
+        private grid: Grid<TreeNode<DATA>>;
 
-        private gridData: DataView<TreeNode<NODE>>;
+        private gridData: DataView<TreeNode<DATA>>;
 
-        private root: TreeNode<NODE>;
+        private root: TreeNode<DATA>;
 
-        private stash: TreeNode<NODE>;
+        private stash: TreeNode<DATA>;
 
         private toolbar: TreeGridToolbar;
 
@@ -53,17 +53,17 @@ module api.ui.treegrid {
 
         private selectionChangeListeners: Function[] = [];
 
-        private dataChangeListeners: {(event: DataChangedEvent<NODE>):void}[] = [];
+        private dataChangeListeners: {(event: DataChangedEvent<DATA>):void}[] = [];
 
-        constructor(builder: TreeGridBuilder<NODE>) {
+        constructor(builder: TreeGridBuilder<DATA>) {
 
             super(builder.getClasses());
 
             // root node with undefined item
-            this.root = new TreeNodeBuilder<NODE>().setExpanded(true).build();
+            this.root = new TreeNodeBuilder<DATA>().setExpanded(true).build();
 
-            this.gridData = new DataView<TreeNode<NODE>>();
-            this.gridData.setFilter((node: TreeNode<NODE>) => {
+            this.gridData = new DataView<TreeNode<DATA>>();
+            this.gridData.setFilter((node: TreeNode<DATA>) => {
                 return node.isVisible();
             });
 
@@ -71,7 +71,7 @@ module api.ui.treegrid {
 
             this.gridOptions = builder.getOptions();
 
-            this.grid = new Grid<TreeNode<NODE>>(this.gridData, this.columns, this.gridOptions);
+            this.grid = new Grid<TreeNode<DATA>>(this.gridData, this.columns, this.gridOptions);
 
             // Custom row selection required for valid behaviour
             this.grid.setSelectionModel(new Slick.RowSelectionModel({
@@ -247,15 +247,15 @@ module api.ui.treegrid {
             });
         }
 
-        getGrid(): Grid<TreeNode<NODE>> {
+        getGrid(): Grid<TreeNode<DATA>> {
             return this.grid;
         }
 
-        getOptions(): GridOptions<NODE> {
+        getOptions(): GridOptions<DATA> {
             return this.gridOptions;
         }
 
-        getColumns(): GridColumn<TreeNode<NODE>>[] {
+        getColumns(): GridColumn<TreeNode<DATA>>[] {
             return this.grid.getColumns();
         }
 
@@ -263,7 +263,7 @@ module api.ui.treegrid {
             return this.contextMenu;
         }
 
-        getRoot(): TreeNode<NODE> {
+        getRoot(): TreeNode<DATA> {
             return this.root;
         }
 
@@ -277,6 +277,14 @@ module api.ui.treegrid {
 
         hasToolbar(): boolean {
             return !!this.toolbar;
+        }
+
+        getCanvas(): api.dom.Element {
+            return this.canvasElement;
+        }
+
+        setCanvas(canvasElement: api.dom.Element) {
+            this.canvasElement = canvasElement;
         }
 
         private scrollToRow(row: number) {
@@ -293,7 +301,7 @@ module api.ui.treegrid {
          * Used to determine if a data have child nodes.
          * Must be overridden for the grids with a tree structure.
          */
-        hasChildren(data: NODE): boolean {
+        hasChildren(data: DATA): boolean {
             return false;
         }
 
@@ -301,7 +309,7 @@ module api.ui.treegrid {
          * Used to get the data identifier or key.
          * Must be overridden.
          */
-        getDataId(data: NODE): string {
+        getDataId(data: DATA): string {
             throw new Error("Must be implemented by inheritors");
         }
 
@@ -311,8 +319,8 @@ module api.ui.treegrid {
          * retrieving a a full data, or for the purpose of the
          * infinite scroll.
          */
-        fetch(node: TreeNode<NODE>): wemQ.Promise<NODE> {
-            var deferred = wemQ.defer<NODE>();
+        fetch(node: TreeNode<DATA>): wemQ.Promise<DATA> {
+            var deferred = wemQ.defer<DATA>();
             // Empty logic
             deferred.resolve(null);
             return deferred.promise;
@@ -322,8 +330,8 @@ module api.ui.treegrid {
          * Used as a default children fetcher.
          * Must be overridden to use predefined root nodes.
          */
-        fetchChildren(parentNode?: TreeNode<NODE>): wemQ.Promise<NODE[]> {
-            var deferred = wemQ.defer<NODE[]>();
+        fetchChildren(parentNode?: TreeNode<DATA>): wemQ.Promise<DATA[]> {
+            var deferred = wemQ.defer<DATA[]>();
             // Empty logic
             deferred.resolve([]);
             return deferred.promise;
@@ -334,36 +342,36 @@ module api.ui.treegrid {
          * Can be overridden to use predefined root nodes.
          * By default, return empty fetchChildren request.
          */
-        fetchRoot(): wemQ.Promise<NODE[]> {
+        fetchRoot(): wemQ.Promise<DATA[]> {
             return this.fetchChildren();
         }
 
-        private fetchData(parentNode?: TreeNode<NODE>): wemQ.Promise<NODE[]> {
+        private fetchData(parentNode?: TreeNode<DATA>): wemQ.Promise<DATA[]> {
             return parentNode ? this.fetchChildren(parentNode) : this.fetchRoot();
         }
 
 
-        dataToTreeNode(data: NODE, parent: TreeNode<NODE>): TreeNode<NODE> {
-            return new TreeNodeBuilder<NODE>().
+        dataToTreeNode(data: DATA, parent: TreeNode<DATA>): TreeNode<DATA> {
+            return new TreeNodeBuilder<DATA>().
                 setData(data, this.getDataId(data)).
                 setParent(parent).
                 build();
         }
 
-        dataToTreeNodes(dataArray: NODE[], parent: TreeNode<NODE>): TreeNode<NODE>[] {
-            var nodes: TreeNode<NODE>[] = [];
+        dataToTreeNodes(dataArray: DATA[], parent: TreeNode<DATA>): TreeNode<DATA>[] {
+            var nodes: TreeNode<DATA>[] = [];
             dataArray.forEach((data) => {
                 nodes.push(this.dataToTreeNode(data, parent));
             });
             return nodes;
         }
 
-        filter(dataList: NODE[]) {
+        filter(dataList: DATA[]) {
             if (!this.stash) {
                 this.stash = this.root;
             }
 
-            this.root = new TreeNodeBuilder<NODE>().build();
+            this.root = new TreeNodeBuilder<DATA>().build();
 
             this.initData([]);
 
@@ -393,10 +401,10 @@ module api.ui.treegrid {
             this.stash = null;
         }
 
-        private updateColumnsFormatter(columns: GridColumn<TreeNode<NODE>>[]) {
+        private updateColumnsFormatter(columns: GridColumn<TreeNode<DATA>>[]) {
             if (columns.length > 0) {
                 var formatter = columns[0].getFormatter();
-                var toggleFormatter = (row: number, cell: number, value: any, columnDef: any, node: TreeNode<NODE>) => {
+                var toggleFormatter = (row: number, cell: number, value: any, columnDef: any, node: TreeNode<DATA>) => {
                     var toggleSpan = new api.dom.SpanEl("toggle icon");
                     if (this.hasChildren(node.getData())) {
                         var toggleClass = node.isExpanded() ? "collapse" : "expand";
@@ -435,29 +443,29 @@ module api.ui.treegrid {
             }
         }
 
-        getSelectedNodes(): TreeNode<NODE>[] {
+        getSelectedNodes(): TreeNode<DATA>[] {
             return this.grid.getSelectedRowItems();
         }
 
-        getSelectedDataList(): NODE[] {
-            var dataList: NODE[] = [];
+        getSelectedDataList(): DATA[] {
+            var dataList: DATA[] = [];
             var treeNodes = this.grid.getSelectedRowItems();
-            treeNodes.forEach((treeNode: TreeNode<NODE>) => {
+            treeNodes.forEach((treeNode: TreeNode<DATA>) => {
                 dataList.push(treeNode.getData());
             });
             return dataList;
         }
 
         // Hard reset
-        reload(parentNode?: TreeNode<NODE>): void {
-            this.root = new TreeNodeBuilder<NODE>().build();
+        reload(parentNode?: TreeNode<DATA>): void {
+            this.root = new TreeNodeBuilder<DATA>().build();
 
             this.initData([]);
 
             this.root.setExpanded(true);
 
             this.fetchData(parentNode)
-                .then((dataList: NODE[]) => {
+                .then((dataList: DATA[]) => {
                     this.root.setChildren(this.dataToTreeNodes(dataList, this.root));
                     this.initData(this.root.treeToList());
                 }).catch((reason: any) => {
@@ -485,7 +493,7 @@ module api.ui.treegrid {
             this.notifyLoaded();
         }
 
-        updateNode(data: NODE): void {
+        updateNode(data: DATA): void {
             var root = this.stash || this.root;
             var dataId = this.getDataId(data);
             var node = root.findNode(dataId);
@@ -494,16 +502,16 @@ module api.ui.treegrid {
             }
 
             this.fetch(node)
-                .then((data: NODE) => {
+                .then((data: DATA) => {
                     node.setData(data);
                     this.gridData.updateItem(node.getId(), node);
-                    this.notifyDataChanged(new DataChangedEvent<NODE>([node], DataChangedEvent.ACTION_UPDATED));
+                    this.notifyDataChanged(new DataChangedEvent<DATA>([node], DataChangedEvent.ACTION_UPDATED));
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 });
         }
 
-        deleteNode(data: NODE): void {
+        deleteNode(data: DATA): void {
             var root = this.stash || this.root;
             var node = root.findNode(this.getDataId(data));
             this.gridData.deleteItem(node.getId());
@@ -511,25 +519,25 @@ module api.ui.treegrid {
             if (node && parent) {
                 parent.removeChild(node);
                 parent.setMaxChildren(parent.getMaxChildren() - 1);
-                this.notifyDataChanged(new DataChangedEvent<NODE>([node], DataChangedEvent.ACTION_DELETED));
+                this.notifyDataChanged(new DataChangedEvent<DATA>([node], DataChangedEvent.ACTION_DELETED));
             }
         }
 
-        appendNode(data: NODE): void {
+        appendNode(data: DATA): void {
             var root = this.stash || this.root;
             root.addChild(this.dataToTreeNode(data, root));
             var node = root.findNode(this.getDataId(data));
             if (node) {
                 this.gridData.insertItem(this.gridData.getLength(), node);
-                this.notifyDataChanged(new DataChangedEvent<NODE>([node], DataChangedEvent.ACTION_ADDED));
+                this.notifyDataChanged(new DataChangedEvent<DATA>([node], DataChangedEvent.ACTION_ADDED));
             }
         }
 
-        deleteNodes(nodes: NODE[]): void {
+        deleteNodes(dataList: DATA[]): void {
             var root = this.stash || this.root;
-            var updated: TreeNode<NODE>[] = [];
-            var deleted: TreeNode<NODE>[] = [];
-            nodes.forEach((data: NODE) => {
+            var updated: TreeNode<DATA>[] = [];
+            var deleted: TreeNode<DATA>[] = [];
+            dataList.forEach((data: DATA) => {
                 var node = root.findNode(this.getDataId(data));
                 if (node && node.getParent()) {
                     var parent = node.getParent();
@@ -542,15 +550,15 @@ module api.ui.treegrid {
                     });
                 }
             });
-            this.notifyDataChanged(new DataChangedEvent<NODE>(deleted, DataChangedEvent.ACTION_DELETED));
+            this.notifyDataChanged(new DataChangedEvent<DATA>(deleted, DataChangedEvent.ACTION_DELETED));
 
             // TODO: For future use. Implement single node update by node id.
             /*
              var promises = updated.map((el) => {
              return this.fetch(el);
              });
-             wemQ.all(promises).then((results: NODE[]) => {
-             results.forEach((result: NODE, index: number) => {
+             wemQ.all(promises).then((results: DATA[]) => {
+             results.forEach((result: DATA, index: number) => {
              updated[index].setData(result);
              });
              }).catch((reason: any) => {
@@ -561,16 +569,16 @@ module api.ui.treegrid {
              */
         }
 
-        initData(nodes: TreeNode<NODE>[]) {
+        initData(nodes: TreeNode<DATA>[]) {
             this.gridData.setItems(nodes, "id");
-            this.notifyDataChanged(new DataChangedEvent<NODE>(nodes, DataChangedEvent.ACTION_ADDED));
+            this.notifyDataChanged(new DataChangedEvent<DATA>(nodes, DataChangedEvent.ACTION_ADDED));
         }
 
-        private expandNode(node?: TreeNode<NODE>) {
+        private expandNode(node?: TreeNode<DATA>) {
             node = node || this.root;
 
-            var rootList: TreeNode<NODE>[],
-                nodeList: TreeNode<NODE>[];
+            var rootList: TreeNode<DATA>[],
+                nodeList: TreeNode<DATA>[];
 
             if (node) {
                 node.setExpanded(true);
@@ -582,7 +590,7 @@ module api.ui.treegrid {
                     this.updateExpanded(node, nodeList, rootList);
                 } else {
                     this.fetchData(node)
-                        .then((dataList: NODE[]) => {
+                        .then((dataList: DATA[]) => {
                             node.setChildren(this.dataToTreeNodes(dataList, node));
                             rootList = this.root.treeToList();
                             nodeList = node.treeToList();
@@ -596,7 +604,7 @@ module api.ui.treegrid {
             }
         }
 
-        private updateExpanded(node: TreeNode<NODE>, nodeList: TreeNode<NODE>[], rootList: TreeNode<NODE>[]) {
+        private updateExpanded(node: TreeNode<DATA>, nodeList: TreeNode<DATA>[], rootList: TreeNode<DATA>[]) {
             var nodeRow = node.getData() ? this.gridData.getRowById(node.getId()) : -1,
                 expandedRows = [],
                 animatedRows = [];
@@ -622,7 +630,7 @@ module api.ui.treegrid {
             }, 350);
         }
 
-        private collapseNode(node: TreeNode<NODE>) {
+        private collapseNode(node: TreeNode<DATA>) {
             var nodeRow = this.gridData.getRowById(node.getId()),
                 animatedRows = [],
                 collapsedRows = [];
@@ -735,7 +743,7 @@ module api.ui.treegrid {
         }
 
         private notifySelectionChanged(event: any, rows: number[]): void {
-            var selectedRows: TreeNode<NODE>[] = [];
+            var selectedRows: TreeNode<DATA>[] = [];
             if (rows) {
                 rows.forEach((rowIndex) => {
                     selectedRows.push(this.gridData.getItem(rowIndex));
@@ -746,12 +754,12 @@ module api.ui.treegrid {
             }
         }
 
-        onSelectionChanged(listener: (selectedRows: TreeNode<NODE>[]) => void) {
+        onSelectionChanged(listener: (selectedRows: TreeNode<DATA>[]) => void) {
             this.selectionChangeListeners.push(listener);
             return this;
         }
 
-        unSelectionChanged(listener: (selectedRows: TreeNode<NODE>[]) => void) {
+        unSelectionChanged(listener: (selectedRows: TreeNode<DATA>[]) => void) {
             this.selectionChangeListeners = this.selectionChangeListeners.filter((curr) => {
                 return curr != listener;
             });
@@ -777,18 +785,18 @@ module api.ui.treegrid {
             return this;
         }
 
-        private notifyDataChanged(event: DataChangedEvent<NODE>) {
+        private notifyDataChanged(event: DataChangedEvent<DATA>) {
             this.dataChangeListeners.forEach((listener) => {
                 listener(event);
             });
         }
 
-        onDataChanged(listener: (event: DataChangedEvent<NODE>) => void) {
+        onDataChanged(listener: (event: DataChangedEvent<DATA>) => void) {
             this.dataChangeListeners.push(listener);
             return this;
         }
 
-        unDataChanged(listener: (event: DataChangedEvent<NODE>) => void) {
+        unDataChanged(listener: (event: DataChangedEvent<DATA>) => void) {
             this.dataChangeListeners = this.dataChangeListeners.filter((curr) => {
                 return curr != listener;
             });
