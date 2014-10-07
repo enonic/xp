@@ -20,17 +20,14 @@ import com.enonic.wem.api.content.page.PageTemplateService;
 import com.enonic.wem.api.content.page.part.PartComponent;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.content.site.Site;
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.repository.Repository;
-import com.enonic.wem.api.repository.RepositoryId;
+import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.api.workspace.Workspaces;
 import com.enonic.wem.api.xml.mapper.XmlPageDescriptorMapper;
 import com.enonic.wem.api.xml.model.XmlPageDescriptor;
 import com.enonic.wem.api.xml.serializer.XmlSerializers2;
@@ -58,11 +55,6 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
 
     public final Workspace testWorkspace = Workspace.from( "test" );
 
-    protected final Context testContext = Context.create().
-        workspace( testWorkspace ).
-        repositoryId( RepositoryId.from( "testing" ) ).
-        build();
-
     @Override
     protected void configure()
         throws Exception
@@ -87,7 +79,7 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
         this.resources.add( this.resourceProvider );
     }
 
-    protected final void setupContentAndSite( final Context context )
+    protected final void setupContentAndSite()
         throws Exception
     {
         final Content content = createPage( "id", "site/somepath/content", "mymodule:ctype", true );
@@ -102,7 +94,7 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
             thenReturn( content );
     }
 
-    protected final void setupNonPageContent( final Context context )
+    protected final void setupNonPageContent()
         throws Exception
     {
         Mockito.when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ) ) ).
@@ -112,13 +104,13 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
             thenReturn( createSite( "id", "site", "mymodule:contenttypename" ) );
     }
 
-    protected final void setupTemplates( final Context context )
+    protected final void setupTemplates()
         throws Exception
     {
-        setupTemplates( context, true );
+        setupTemplates( true );
     }
 
-    protected final void setupTemplates( final Context context, final boolean includeDescriptor )
+    protected final void setupTemplates( final boolean includeDescriptor )
         throws Exception
     {
         Mockito.when( this.pageTemplateService.getByKey( Mockito.eq( PageTemplateKey.from( "my-page" ) ) ) ).thenReturn(
