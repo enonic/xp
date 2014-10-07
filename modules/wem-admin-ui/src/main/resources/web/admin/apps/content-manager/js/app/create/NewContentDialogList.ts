@@ -1,7 +1,6 @@
 module app.create {
 
     import ContentTypeSummary = api.schema.content.ContentTypeSummary;
-    import SiteTemplateSummary = api.content.site.template.SiteTemplateSummary;
 
     export class NewContentDialogList extends api.ui.selector.list.ListBox<NewContentDialogListItem> {
 

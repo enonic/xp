@@ -5,18 +5,9 @@ module api.content.page {
 
     export class GetPageTemplatesRequest extends PageTemplateResourceRequest<ListContentResult<ContentJson>, PageTemplate[]> {
 
-        private siteTemplateKey: api.content.site.template.SiteTemplateKey;
-
-        constructor(siteTemplateKey: api.content.site.template.SiteTemplateKey) {
+        constructor() {
             super();
             super.setMethod("GET");
-            this.siteTemplateKey = siteTemplateKey;
-        }
-
-        getParams(): Object {
-            return {
-                key: this.siteTemplateKey.toString()
-            };
         }
 
         getRequestPath(): api.rest.Path {

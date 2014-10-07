@@ -1,6 +1,5 @@
 module app.wizard.page {
 
-    import SiteTemplate = api.content.site.template.SiteTemplate;
     import PageTemplateKey = api.content.page.PageTemplateKey;
     import PageTemplate = api.content.page.PageTemplate;
     import Content = api.content.Content;

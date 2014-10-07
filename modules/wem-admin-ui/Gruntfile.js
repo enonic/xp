@@ -21,7 +21,6 @@ module.exports = function (grunt) {
     grunt.registerTask('cm', ['all_no_ts', 'ts:content_manager']);
     grunt.registerTask('le', ['all_no_ts', 'ts:live_edit']);
     grunt.registerTask('md', ['all_no_ts', 'ts:module_manager']);
-    grunt.registerTask('tm', ['all_no_ts', 'ts:template_manager']);
     grunt.registerTask('al', ['all_no_ts', 'ts:app_launcher']);
     grunt.registerTask('ccl', ['all_no_ts', 'ts:common', 'ts:content_manager', 'ts:live_edit']);
 
