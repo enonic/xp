@@ -46,7 +46,23 @@ public class NameTest
     {
         final String testName = " test Name ";
         final String testResult = "test-name";
-        assertEquals( Name.ensureValidName( testName ), testResult );
+        assertEquals( testResult, Name.ensureValidName( testName ) );
+    }
+
+    @Test
+    public void test_ensure_valid_spesial_chars1()
+    {
+        final String testName = "Åse Kålrot";
+        final String testResult = "se-klrot";
+        assertEquals( testResult, Name.ensureValidName( testName ) );
+    }
+
+    @Test
+    public void test_ensure_valid_spesial_chars2()
+    {
+        final String testName = "t@e&st^-$cha$r@s $1 ";
+        final String testResult = "test-chars-1";
+        assertEquals( testResult, Name.ensureValidName( testName ) );
     }
 
     @Test
@@ -54,7 +70,7 @@ public class NameTest
     {
         final String testName = "";
         final String testResult = "";
-        assertEquals( Name.ensureValidName( testName ), testResult );
+        assertEquals( testResult, Name.ensureValidName( testName ) );
     }
 
     @Test
@@ -62,6 +78,6 @@ public class NameTest
     {
         final String testName = null;
         final String testResult = "";
-        assertEquals( Name.ensureValidName( testName ), testResult );
+        assertEquals( testResult, Name.ensureValidName( testName ) );
     }
 }
