@@ -29,7 +29,7 @@ public class Name
         }
         String generated =
             possibleInvalidName.replaceAll( "[\\s+\\.\\/]", "-" ).replaceAll( "-{2,}", "-" ).replaceAll( "^-|-$", "" ).toLowerCase();
-        return ( generated ).replace( "[^a-z0-9\\-]+", "" );
+        return generated.replaceAll( "[^a-z0-9\\-]+", "" );
     }
 
 
