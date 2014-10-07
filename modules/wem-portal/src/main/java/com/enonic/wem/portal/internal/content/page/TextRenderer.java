@@ -3,16 +3,16 @@ package com.enonic.wem.portal.internal.content.page;
 import java.text.MessageFormat;
 
 import com.enonic.wem.api.content.page.text.TextComponent;
-import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.PortalRequest;
 import com.enonic.wem.portal.PortalResponse;
+import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.portal.internal.controller.JsHttpResponseSerializer;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
 
 public final class TextRenderer
-    implements Renderer<TextComponent>
+    implements Renderer<TextComponent, PortalContext>
 {
     private static final String EMPTY_COMPONENT_EDIT_MODE_HTML =
         "<div data-live-edit-type=\"{0}\" data-live-edit-empty-component=\"true\" class=\"live-edit-empty-component\"></div>";

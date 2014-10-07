@@ -2,10 +2,10 @@ package com.enonic.wem.portal.internal.content.page;
 
 
 import com.enonic.wem.api.content.page.image.ImageComponent;
-import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.PortalRequest;
 import com.enonic.wem.portal.PortalResponse;
+import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.portal.internal.controller.JsHttpResponseSerializer;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
@@ -13,7 +13,7 @@ import com.enonic.wem.portal.url.ImageUrlBuilder;
 import com.enonic.wem.portal.url.PortalUrlBuilders;
 
 public final class ImageRenderer
-    implements Renderer<ImageComponent>
+    implements Renderer<ImageComponent, PortalContext>
 {
     @Override
     public Class<ImageComponent> getType()

@@ -7,9 +7,9 @@ import com.enonic.wem.api.content.page.AbstractDescriptorBasedPageComponent;
 import com.enonic.wem.api.content.page.Descriptor;
 import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.PageComponent;
-import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.PortalRequest;
+import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.portal.internal.controller.JsController;
 import com.enonic.wem.portal.internal.controller.JsControllerFactory;
 import com.enonic.wem.portal.internal.controller.JsHttpResponseSerializer;
@@ -17,7 +17,7 @@ import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
 
 public abstract class DescriptorBasedPageComponentRenderer<R extends AbstractDescriptorBasedPageComponent>
-    implements Renderer<R>
+    implements Renderer<R, PortalContext>
 {
     private static final String EMPTY_COMPONENT_EDIT_MODE_HTML =
         "<div data-live-edit-type=\"{0}\" data-live-edit-empty-component=\"true\" class=\"live-edit-empty-component\"></div>";

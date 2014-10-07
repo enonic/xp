@@ -164,7 +164,7 @@ public class ComponentInstructionTest
     private RendererFactory newRendererFactory( final String renderResult )
     {
         RendererFactory rendererFactory = mock( RendererFactory.class );
-        Renderer<Renderable> renderer = new Renderer<Renderable>()
+        Renderer<Renderable, PortalContext> renderer = new Renderer<Renderable, PortalContext>()
         {
             @Override
             public Class<Renderable> getType()

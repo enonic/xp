@@ -14,18 +14,16 @@ import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.internal.controller.JsContext;
 import com.enonic.wem.portal.internal.controller.JsHttpRequest;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
-import com.enonic.wem.portal.internal.rendering.RendererFactory;
 
 @Path("/{mode}/{workspace}/{contentPath:.+}/_/component/{component:.+}")
 public final class ComponentResource
     extends RenderBaseResource
 {
-    protected RendererFactory rendererFactory;
-
     @PathParam("component")
     protected String componentSelector;
 
@@ -73,7 +71,7 @@ public final class ComponentResource
             throw notFound( "Pate component for [%s] not found", componentPath );
         }
 
-        final Renderer<PageComponent> renderer = this.rendererFactory.getRenderer( component );
+        final Renderer<PageComponent, PortalContext> renderer = this.rendererFactory.getRenderer( component );
 
         final ModuleKey moduleKey = pageTemplate.getDescriptor().getModuleKey();
         final JsContext context = createContext( content, component, site, moduleKey );

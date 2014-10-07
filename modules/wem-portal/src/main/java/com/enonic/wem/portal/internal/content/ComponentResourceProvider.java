@@ -22,8 +22,5 @@ public final class ComponentResourceProvider
         return instance;
     }
 
-    public void setRendererFactory( final RendererFactory rendererFactory )
-    {
-        this.rendererFactory = rendererFactory;
-    }
+
 }

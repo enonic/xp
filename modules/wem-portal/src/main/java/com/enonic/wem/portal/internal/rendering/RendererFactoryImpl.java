@@ -6,6 +6,7 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.rendering.Renderable;
+import com.enonic.wem.portal.PortalContext;
 
 public final class RendererFactoryImpl
     implements RendererFactory
@@ -22,21 +23,46 @@ public final class RendererFactoryImpl
         }
     }
 
-    private <T extends Renderable> Renderer<T> getRenderer( final Class<T> renderableType )
-    {
-        return findRenderer( renderableType );
-    }
-
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends Renderable> Renderer<T> getRenderer( final T renderable )
+    public <T extends Renderable, CONTEXT extends PortalContext> Renderer<T, CONTEXT> getRenderer( final T renderable )
     {
         return getRenderer( (Class<T>) renderable.getClass() );
     }
 
-    @SuppressWarnings("unchecked")
-    private <T extends Renderable> Renderer<T> findRenderer( final Class<T> type )
+    private <T extends Renderable, CONTEXT extends PortalContext> Renderer<T, CONTEXT> getRenderer( final Class<T> renderableType )
     {
-        return this.renderers.get( type );
+        return findRenderer( renderableType );
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T extends Renderable, CONTEXT extends PortalContext> Renderer<T, CONTEXT> findRenderer( final Class<T> type )
+    {
+        final Renderer renderer = doResolveRenderer( type );
+        if ( renderer == null )
+        {
+            throw new RendererNotFoundException( type );
+        }
+        return renderer;
+    }
+
+    private Renderer doResolveRenderer( Class type )
+    {
+        Renderer renderer = this.renderers.get( type );
+        if ( renderer == null )
+        {
+            if ( type.getSuperclass().equals( Object.class ) )
+            {
+                return null;
+            }
+            else
+            {
+                return findRenderer( type.getSuperclass() );
+            }
+        }
+        else
+        {
+            return renderer;
+        }
     }
 }

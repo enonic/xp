@@ -12,14 +12,17 @@ import com.enonic.wem.api.module.Module;
 import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.PortalRequest;
 import com.enonic.wem.portal.PortalResponse;
+import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.portal.url.PortalUrlBuilders;
 
-public final class JsContext
+public class JsContext
     implements PortalContext
 {
     private JsHttpRequest request;
 
     private JsHttpResponse response;
+
+    private RenderingMode mode;
 
     private Site site;
 
@@ -56,6 +59,17 @@ public final class JsContext
     public void setResponse( final JsHttpResponse response )
     {
         this.response = response;
+    }
+
+    @Override
+    public RenderingMode getMode()
+    {
+        return mode;
+    }
+
+    public void setMode( final RenderingMode mode )
+    {
+        this.mode = mode;
     }
 
     @Override

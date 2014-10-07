@@ -32,9 +32,6 @@ import com.enonic.wem.api.xml.mapper.XmlPageDescriptorMapper;
 import com.enonic.wem.api.xml.model.XmlPageDescriptor;
 import com.enonic.wem.api.xml.serializer.XmlSerializers2;
 import com.enonic.wem.portal.internal.base.BaseResourceTest;
-import com.enonic.wem.portal.internal.controller.JsController;
-import com.enonic.wem.portal.internal.controller.JsControllerFactory;
-import com.enonic.wem.portal.internal.postprocess.PostProcessor;
 
 public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvider>
     extends BaseResourceTest
@@ -45,11 +42,7 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
 
     protected PageDescriptorService pageDescriptorService;
 
-    protected JsController jsController;
-
     protected T resourceProvider;
-
-    protected PostProcessor postProcessor;
 
     protected ModuleService moduleService;
 
@@ -62,18 +55,11 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
         this.contentService = Mockito.mock( ContentService.class );
         this.pageTemplateService = Mockito.mock( PageTemplateService.class );
         this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
-        this.postProcessor = Mockito.mock( PostProcessor.class );
         this.moduleService = Mockito.mock( ModuleService.class );
-        final JsControllerFactory jsControllerFactory = Mockito.mock( JsControllerFactory.class );
-
-        this.jsController = Mockito.mock( JsController.class );
-        Mockito.when( jsControllerFactory.newController( Mockito.any() ) ).thenReturn( jsController );
 
         this.resourceProvider.setContentService( this.contentService );
         this.resourceProvider.setPageTemplateService( this.pageTemplateService );
         this.resourceProvider.setPageDescriptorService( this.pageDescriptorService );
-        this.resourceProvider.setControllerFactory( jsControllerFactory );
-        this.resourceProvider.setPostProcessor( this.postProcessor );
         this.resourceProvider.setModuleService( this.moduleService );
 
         this.resources.add( this.resourceProvider );

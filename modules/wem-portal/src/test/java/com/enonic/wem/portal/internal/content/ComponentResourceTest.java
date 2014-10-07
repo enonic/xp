@@ -7,6 +7,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.enonic.wem.api.rendering.Renderable;
+import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.internal.controller.JsContext;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
@@ -17,7 +18,7 @@ import static org.junit.Assert.*;
 public class ComponentResourceTest
     extends RenderBaseResourceTest<ComponentResourceProvider>
 {
-    private Renderer<Renderable> renderer;
+    private Renderer<Renderable, PortalContext> renderer;
 
     @Override
     @SuppressWarnings("unchecked")

@@ -18,16 +18,15 @@
   </bean>
 
   <bean id="contentResourceProvider" class="com.enonic.wem.portal.internal.content.ContentResourceProvider">
-    <property name="controllerFactory" ref="controllerFactory"/>
     <property name="pageDescriptorService" ref="pageDescriptorService"/>
     <property name="pageTemplateService" ref="pageTemplateService"/>
     <property name="contentService" ref="contentService"/>
     <property name="moduleService" ref="moduleService"/>
     <property name="postProcessor" ref="postProcessor"/>
+    <property name="rendererFactory" ref="rendererFactory"/>
   </bean>
 
   <bean id="componentResourceProvider" class="com.enonic.wem.portal.internal.content.ComponentResourceProvider">
-    <property name="controllerFactory" ref="controllerFactory"/>
     <property name="pageDescriptorService" ref="pageDescriptorService"/>
     <property name="pageTemplateService" ref="pageTemplateService"/>
     <property name="contentService" ref="contentService"/>

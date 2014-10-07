@@ -14,6 +14,7 @@ import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.content.thumb.Thumbnail;
 import com.enonic.wem.api.form.Form;
+import com.enonic.wem.api.rendering.Renderable;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
 import com.enonic.wem.api.support.ChangeTraceable;
@@ -25,7 +26,7 @@ import com.enonic.wem.api.support.illegaledit.IllegalEditException;
 import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;
 
 public class Content
-    implements IllegalEditAware<Content>, ChangeTraceable
+    implements IllegalEditAware<Content>, ChangeTraceable, Renderable
 {
     private final boolean draft;
 

@@ -24,13 +24,13 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.portal.internal.base.BaseResource;
-import com.enonic.wem.portal.internal.controller.JsControllerFactory;
 import com.enonic.wem.portal.internal.postprocess.PostProcessor;
+import com.enonic.wem.portal.internal.rendering.RendererFactory;
 
 public abstract class RenderBaseResource
     extends BaseResource
 {
-    protected JsControllerFactory controllerFactory;
+    protected RendererFactory rendererFactory;
 
     protected PageDescriptorService pageDescriptorService;
 

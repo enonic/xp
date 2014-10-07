@@ -14,6 +14,8 @@ public interface PortalContext
 
     public PortalResponse getResponse();
 
+    public RenderingMode getMode();
+
     public Content getContent();
 
     public Site getSite();

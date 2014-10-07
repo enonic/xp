@@ -6,18 +6,32 @@ import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import com.enonic.wem.api.rendering.Renderable;
+import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.internal.controller.JsContext;
+import com.enonic.wem.portal.internal.rendering.RenderResult;
+import com.enonic.wem.portal.internal.rendering.Renderer;
+import com.enonic.wem.portal.internal.rendering.RendererFactory;
 
 import static org.junit.Assert.*;
 
 public class ContentResourceTest
     extends RenderBaseResourceTest<ContentResourceProvider>
 {
+    private Renderer<Renderable, PortalContext> renderer;
+
     @Override
     protected void configure()
         throws Exception
     {
         this.resourceProvider = new ContentResourceProvider();
+
+        final RendererFactory rendererFactory = Mockito.mock( RendererFactory.class );
+        this.resourceProvider.setRendererFactory( rendererFactory );
+
+        this.renderer = Mockito.mock( Renderer.class );
+        Mockito.when( rendererFactory.getRenderer( Mockito.any( Renderable.class ) ) ).thenReturn( this.renderer );
+
         super.configure();
     }
 
@@ -28,11 +42,19 @@ public class ContentResourceTest
         setupContentAndSite();
         setupTemplates();
 
-        final MockHttpServletRequest request = newGetRequest( "/live/test/site/somepath/content" );
-        final MockHttpServletResponse response = executeRequest( request );
+        final RenderResult result = RenderResult.newRenderResult().
+            entity( "content rendered" ).
+            header( "some-heaer", "some-value" ).
+            status( 200 ).
+            build();
+        Mockito.when( this.renderer.render( Mockito.any(), Mockito.any() ) ).thenReturn( result );
 
-        final ArgumentCaptor<JsContext> jsContext = ArgumentCaptor.forClass( JsContext.class );
-        Mockito.verify( this.jsController ).execute( jsContext.capture() );
+        MockHttpServletRequest request = newGetRequest( "/live/test/site/somepath/content" );
+        MockHttpServletResponse response = executeRequest( request );
+
+        ArgumentCaptor<JsContext> jsContext = ArgumentCaptor.forClass( JsContext.class );
+        ArgumentCaptor<Renderable> renderable = ArgumentCaptor.forClass( Renderable.class );
+        Mockito.verify( this.renderer ).render( renderable.capture(), jsContext.capture() );
 
         assertEquals( 200, response.getStatus() );
         assertEquals( "text/plain", response.getContentType() );
@@ -69,11 +91,16 @@ public class ContentResourceTest
         setupContentAndSite();
         setupTemplates( false );
 
+        final RenderResult result = RenderResult.newRenderResult().
+            entity( "content rendered" ).
+            header( "some-heaer", "some-value" ).
+            status( 200 ).
+            build();
+        Mockito.when( this.renderer.render( Mockito.any(), Mockito.any() ) ).thenReturn( result );
+
         final MockHttpServletRequest request = newGetRequest( "/edit/test/id" );
         final MockHttpServletResponse response = executeRequest( request );
 
         assertEquals( 200, response.getStatus() );
-
-        Mockito.verify( this.postProcessor ).processResponse( Mockito.anyObject() );
     }
 }

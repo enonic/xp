@@ -76,7 +76,7 @@ public final class ComponentInstruction
 
     private String renderPageComponent( final PortalContext context, final PageComponent component )
     {
-        final Renderer<PageComponent> renderer = this.rendererFactory.getRenderer( component );
+        final Renderer<PageComponent, PortalContext> renderer = this.rendererFactory.getRenderer( component );
         if ( renderer == null )
         {
             throw new RenderException( "No Renderer found for: " + component.getClass().getSimpleName() );

@@ -4,14 +4,14 @@ import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.page.PageDescriptorService;
 import com.enonic.wem.api.content.page.PageTemplateService;
 import com.enonic.wem.api.module.ModuleService;
-import com.enonic.wem.portal.internal.controller.JsControllerFactory;
 import com.enonic.wem.portal.internal.postprocess.PostProcessor;
+import com.enonic.wem.portal.internal.rendering.RendererFactory;
 import com.enonic.wem.servlet.jaxrs.ResourceProvider;
 
 public abstract class RenderBaseResourceProvider<T extends RenderBaseResource>
     implements ResourceProvider<T>
 {
-    private JsControllerFactory controllerFactory;
+    private RendererFactory rendererFactory;
 
     private PageDescriptorService pageDescriptorService;
 
@@ -25,7 +25,7 @@ public abstract class RenderBaseResourceProvider<T extends RenderBaseResource>
 
     protected final void configure( final T instance )
     {
-        instance.controllerFactory = this.controllerFactory;
+        instance.rendererFactory = this.rendererFactory;
         instance.pageDescriptorService = this.pageDescriptorService;
         instance.pageTemplateService = this.pageTemplateService;
         instance.contentService = this.contentService;
@@ -33,9 +33,9 @@ public abstract class RenderBaseResourceProvider<T extends RenderBaseResource>
         instance.moduleService = this.moduleService;
     }
 
-    public final void setControllerFactory( final JsControllerFactory controllerFactory )
+    public void setRendererFactory( final RendererFactory rendererFactory )
     {
-        this.controllerFactory = controllerFactory;
+        this.rendererFactory = rendererFactory;
     }
 
     public final void setPageDescriptorService( final PageDescriptorService pageDescriptorService )
