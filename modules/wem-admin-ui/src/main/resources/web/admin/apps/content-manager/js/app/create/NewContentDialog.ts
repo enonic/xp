@@ -149,7 +149,7 @@ module app.create {
                     api.DefaultErrorHandler.handle(reason);
 
                 }).finally(() => {
-
+                    this.filterList();
                     this.contentListMask.hide();
                     this.recentListMask.hide();
 
