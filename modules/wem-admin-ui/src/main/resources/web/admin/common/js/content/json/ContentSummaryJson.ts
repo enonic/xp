@@ -22,8 +22,6 @@ module api.content.json {
 
         owner:string;
 
-        siteTemplateKey:string;
-
         isPage:boolean;
 
         draft:boolean;

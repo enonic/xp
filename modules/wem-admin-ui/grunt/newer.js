@@ -4,7 +4,6 @@ add('common', 'common', []);
 add('app_launcher', 'apps/app-launcher', ['common']);
 add('content_manager', 'apps/content-manager', ['common']);
 add('module_manager', 'apps/module-manager', ['common']);
-add('template_manager', 'apps/template-manager', ['common']);
 add('live_edit', 'live-edit', ['common']);
 
 function add(name, path, dependencies) {
