@@ -1,7 +1,6 @@
 ///<reference path='NewContentEvent.ts' />
 ///<reference path='NewContentDialog.ts' />
 
-///<reference path='NewContentDialogFacets.ts' />
 ///<reference path='NewContentDialogList.ts' />
 ///<reference path='NewContentDialogListItem.ts' />
 ///<reference path='NewContentDialogItemSelectedEvent.ts' />
