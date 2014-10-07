@@ -19,7 +19,6 @@ module app.create {
         private recentListMask: api.ui.mask.LoadMask;
 
         private input: api.ui.text.TextInput;
-        private facetContainer: NewContentDialogFacets;
 
         private listItems: NewContentDialogListItem[];
 
@@ -37,9 +36,6 @@ module app.create {
 
             this.input = api.ui.text.TextInput.large("list-filter").setPlaceholder("Search");
             leftColumn.appendChild(this.input);
-
-            this.facetContainer = new NewContentDialogFacets();
-            leftColumn.appendChild(this.facetContainer);
 
             this.contentList = new app.create.NewContentDialogList();
             leftColumn.appendChild(this.contentList);
@@ -74,8 +70,6 @@ module app.create {
                 }
             });
 
-            this.facetContainer.onValueChanged((event: api.ui.ValueChangedEvent) => this.filterList());
-
             this.contentList.onSelected((event: app.create.NewContentDialogItemSelectedEvent) => {
                 this.closeAndFireEventFromContentType(event.getItem());
             });
@@ -94,27 +88,12 @@ module app.create {
 
         private filterList() {
             var inputValue = this.input.getValue();
-            var activeFacet = this.facetContainer.getActiveFacet();
-            var contentOnly = activeFacet == NewContentDialogFacets.CONTENT;
-            var sitesOnly = activeFacet == NewContentDialogFacets.SITES;
-            var all = activeFacet == NewContentDialogFacets.ALL;
 
             var filteredItems = this.listItems.filter((item: NewContentDialogListItem) => {
-                return (!inputValue || (item.getDisplayName().indexOf(inputValue) != -1) || (item.getName().indexOf(inputValue) != -1))
-                    && (all || (contentOnly && !item.isSite()) || (sitesOnly && item.isSite()));
+                return (!inputValue || (item.getDisplayName().indexOf(inputValue) != -1) || (item.getName().indexOf(inputValue) != -1));
             });
 
             this.contentList.setItems(filteredItems);
-
-            var contentTypesCount: number = 0;
-            this.listItems.forEach((item: NewContentDialogListItem) => {
-                if (!inputValue || (item.getDisplayName().indexOf(inputValue) != -1) || (item.getName().indexOf(inputValue) != -1)) {
-                    if (!item.isSite()) {
-                        contentTypesCount++;
-                    }
-                }
-            });
-            this.facetContainer.updateLabels(contentTypesCount);
         }
 
         private filterByParentContent(items: NewContentDialogListItem[]): NewContentDialogListItem[] {
@@ -158,17 +137,12 @@ module app.create {
             wemQ.all([contentTypesRequest.sendAndParse()])
                 .spread((contentTypes: ContentTypeSummary[]) => {
 
-                    this.facetContainer.updateLabels(contentTypes.length);
                     var listItems = this.createListItems(contentTypes);
                     this.listItems = this.filterByParentContent(listItems);
 
                     this.contentList.setItems(this.listItems);
                     this.recentList.setItems(this.listItems);
 
-                    var activeFacet = this.facetContainer.getActiveFacet();
-                    if (this.input.getValue() || activeFacet != NewContentDialogFacets.ALL) {
-                        this.filterList();
-                    }
 
                 }).catch((reason: any) => {
 
@@ -192,9 +166,6 @@ module app.create {
             contentTypes.forEach((contentType: ContentTypeSummary) => {
                 items.push(NewContentDialogListItem.fromContentType(contentType))
             });
-
-            var siteContentType = contentTypesByName[ContentTypeName.SITE.toString()];
-            items.push(NewContentDialogListItem.fromContentType(siteContentType));
 
             items.sort(this.compareListItems);
             return items;
