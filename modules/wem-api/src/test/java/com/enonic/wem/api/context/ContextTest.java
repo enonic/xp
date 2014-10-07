@@ -2,29 +2,35 @@ package com.enonic.wem.api.context;
 
 import org.junit.Test;
 
-import junit.framework.Assert;
-
+import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.workspace.Workspace;
+
+import static org.junit.Assert.*;
 
 public class ContextTest
 {
+
     @Test
-    public void testSomething()
+    public void switch_context()
+        throws Exception
     {
-        final Context current = Context.current();
-        Assert.assertNotNull( current );
+        final Context outerContext = ContextBuilder.create().
+            object( Workspace.from( "ws-1" ) ).
+            object( RepositoryId.from( "repo1" ) ).
+            build();
 
-        final Context context = ContextBuilder.create().workspace( "test" ).build();
+        outerContext.runWith( () -> {
 
-        System.out.println( context.runWith( this::callWithOtherContext ) );
+            assertEquals( outerContext, Context.current() );
 
-    }
+            final Context innerContext = ContextBuilder.create().
+                object( Workspace.from( "ws-2" ) ).
+                object( RepositoryId.from( "repo2" ) ).
+                build();
 
-    private String callWithOtherContext()
-    {
-        final Context current = Context.current();
-        Assert.assertNotNull( current );
-        Assert.assertEquals( Workspace.from( "test" ), current.getWorkspace() );
-        return "Hello " + current.getWorkspace();
+            innerContext.runWith( () -> assertEquals( innerContext, Context.current() ) );
+
+            assertEquals( outerContext, Context.current() );
+        } );
     }
 }
