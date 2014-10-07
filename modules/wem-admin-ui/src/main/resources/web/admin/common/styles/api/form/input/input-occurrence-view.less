@@ -7,7 +7,7 @@
     margin-bottom: 7px;
   }
 
-  .drag-control {
+  > .drag-control {
     .order(1);
 
     float: left;
@@ -40,7 +40,7 @@
 
   &.single-occurrence {
 
-    .drag-control, .remove-button {
+    > .drag-control, > .remove-button {
       display: none;
     }
 
@@ -48,7 +48,7 @@
 
   &.multiple-occurrence {
 
-    .drag-control, .remove-button {
+    > .drag-control, > .remove-button {
       display: block;
     }
 
