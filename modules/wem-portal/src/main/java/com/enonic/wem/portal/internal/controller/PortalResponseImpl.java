@@ -6,13 +6,9 @@ import com.google.common.collect.Maps;
 
 import com.enonic.wem.portal.PortalResponse;
 
-public final class JsHttpResponse
+public final class PortalResponseImpl
     implements PortalResponse
 {
-    public final static int STATUS_OK = 200;
-
-    public final static int STATUS_METHOD_NOT_ALLOWED = 405;
-
     private int status = STATUS_OK;
 
     private String contentType = "text/plain";
@@ -23,7 +19,7 @@ public final class JsHttpResponse
 
     private boolean postProcess = true;
 
-    public JsHttpResponse()
+    public PortalResponseImpl()
     {
         this.headers = Maps.newHashMap();
     }

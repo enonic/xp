@@ -15,8 +15,8 @@ import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.portal.PortalContext;
-import com.enonic.wem.portal.internal.controller.JsContext;
-import com.enonic.wem.portal.internal.controller.JsHttpRequest;
+import com.enonic.wem.portal.internal.controller.PortalContextImpl;
+import com.enonic.wem.portal.internal.controller.PortalRequestImpl;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
 
@@ -74,22 +74,23 @@ public final class ComponentResource
         final Renderer<PageComponent, PortalContext> renderer = this.rendererFactory.getRenderer( component );
 
         final ModuleKey moduleKey = pageTemplate.getDescriptor().getModuleKey();
-        final JsContext context = createContext( content, component, site, moduleKey );
+        final PortalContextImpl context = createContext( content, component, site, moduleKey );
         final RenderResult result = renderer.render( component, context );
 
         return toResponse( result );
     }
 
-    private JsContext createContext( final Content content, final PageComponent component, final Site site, final ModuleKey moduleKey )
+    private PortalContextImpl createContext( final Content content, final PageComponent component, final Site site,
+                                             final ModuleKey moduleKey )
     {
-        final JsContext context = new JsContext();
+        final PortalContextImpl context = new PortalContextImpl();
         context.setContent( content );
         context.setSite( site );
         context.setComponent( component );
 
         context.setModule( getModule( moduleKey ) );
 
-        final JsHttpRequest jsRequest = new JsHttpRequest();
+        final PortalRequestImpl jsRequest = new PortalRequestImpl();
         jsRequest.setMode( this.mode );
         jsRequest.setWorkspace( this.workspace );
         jsRequest.setMethod( this.request.getMethod() );

@@ -8,11 +8,11 @@ import com.google.gson.Gson;
 import com.enonic.wem.portal.PortalResponse;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 
-public final class JsHttpResponseSerializer
+public final class PortalResponseSerializer
 {
     private final PortalResponse from;
 
-    public JsHttpResponseSerializer( final PortalResponse from )
+    public PortalResponseSerializer( final PortalResponse from )
     {
         this.from = from;
     }

@@ -8,7 +8,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.enonic.wem.api.rendering.Renderable;
 import com.enonic.wem.portal.PortalContext;
-import com.enonic.wem.portal.internal.controller.JsContext;
+import com.enonic.wem.portal.internal.controller.PortalContextImpl;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
 import com.enonic.wem.portal.internal.rendering.RendererFactory;
@@ -52,7 +52,7 @@ public class ComponentResourceTest
         final MockHttpServletRequest request = newGetRequest( "/live/test/site/somepath/content/_/component/main-region/0" );
         final MockHttpServletResponse response = executeRequest( request );
 
-        final ArgumentCaptor<JsContext> jsContext = ArgumentCaptor.forClass( JsContext.class );
+        final ArgumentCaptor<PortalContextImpl> jsContext = ArgumentCaptor.forClass( PortalContextImpl.class );
         final ArgumentCaptor<Renderable> renderable = ArgumentCaptor.forClass( Renderable.class );
         Mockito.verify( this.renderer ).render( renderable.capture(), jsContext.capture() );
 

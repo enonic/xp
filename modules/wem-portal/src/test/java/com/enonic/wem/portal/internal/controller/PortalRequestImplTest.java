@@ -10,17 +10,17 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
-import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.portal.RenderingMode;
 
 import static org.junit.Assert.*;
 
-public class JsHttpRequestTest
+public class PortalRequestImplTest
 {
     @Test
     public void setMethod()
     {
-        final JsHttpRequest request = new JsHttpRequest();
+        final PortalRequestImpl request = new PortalRequestImpl();
         assertNull( request.getMethod() );
 
         request.setMethod( "GET" );
@@ -30,7 +30,7 @@ public class JsHttpRequestTest
     @Test
     public void setMode()
     {
-        final JsHttpRequest request = new JsHttpRequest();
+        final PortalRequestImpl request = new PortalRequestImpl();
         assertEquals( RenderingMode.LIVE, request.getMode() );
 
         request.setMode( "edit" );
@@ -41,8 +41,8 @@ public class JsHttpRequestTest
     public void setWorkspace()
         throws Exception
     {
-        final JsHttpRequest request = new JsHttpRequest();
-        assertEquals( JsHttpRequest.DEFAULT_WORKSPACE, request.getWorkspace() );
+        final PortalRequestImpl request = new PortalRequestImpl();
+        assertEquals( PortalRequestImpl.DEFAULT_WORKSPACE, request.getWorkspace() );
 
         request.setWorkspace( "another" );
         assertEquals( Workspace.from( "another" ), request.getWorkspace() );
@@ -51,7 +51,7 @@ public class JsHttpRequestTest
     @Test
     public void addParam()
     {
-        final JsHttpRequest request = new JsHttpRequest();
+        final PortalRequestImpl request = new PortalRequestImpl();
         assertNotNull( request.getParams() );
         assertEquals( 0, request.getParams().size() );
 
@@ -65,7 +65,7 @@ public class JsHttpRequestTest
         final Map<String, List<String>> map = Maps.newHashMap();
         map.put( "name", Collections.singletonList( "value" ) );
 
-        final JsHttpRequest request = new JsHttpRequest();
+        final PortalRequestImpl request = new PortalRequestImpl();
         assertNotNull( request.getParams() );
         assertEquals( 0, request.getParams().size() );
 
@@ -79,7 +79,7 @@ public class JsHttpRequestTest
         final Multimap<String, String> map = HashMultimap.create();
         map.put( "name", "value" );
 
-        final JsHttpRequest request = new JsHttpRequest();
+        final PortalRequestImpl request = new PortalRequestImpl();
         assertNotNull( request.getParams() );
         assertEquals( 0, request.getParams().size() );
 

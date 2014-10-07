@@ -5,34 +5,34 @@ import org.junit.Test;
 
 import com.enonic.wem.api.content.page.text.TextComponent;
 import com.enonic.wem.portal.RenderingMode;
-import com.enonic.wem.portal.internal.controller.JsContext;
-import com.enonic.wem.portal.internal.controller.JsHttpRequest;
-import com.enonic.wem.portal.internal.controller.JsHttpResponse;
+import com.enonic.wem.portal.internal.controller.PortalContextImpl;
+import com.enonic.wem.portal.internal.controller.PortalRequestImpl;
+import com.enonic.wem.portal.internal.controller.PortalResponseImpl;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 
 import static org.junit.Assert.*;
 
 public class TextRendererTest
 {
-    private JsContext context;
+    private PortalContextImpl context;
 
     private TextComponent textComponent;
 
     private TextRenderer renderer;
 
-    private JsHttpRequest jsHttpRequest;
+    private PortalRequestImpl jsHttpRequest;
 
-    private JsHttpResponse jsHttpResponse;
+    private PortalResponseImpl jsHttpResponse;
 
     @Before
     public void before()
     {
-        jsHttpRequest = new JsHttpRequest();
+        jsHttpRequest = new PortalRequestImpl();
         jsHttpRequest.setMode( RenderingMode.LIVE );
 
-        jsHttpResponse = new JsHttpResponse();
+        jsHttpResponse = new PortalResponseImpl();
 
-        context = new JsContext();
+        context = new PortalContextImpl();
         context.setRequest( jsHttpRequest );
         context.setResponse( jsHttpResponse );
     }

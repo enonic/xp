@@ -10,9 +10,9 @@ import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.site.Site;
-import com.enonic.wem.portal.internal.content.page.JsPageRendererContext;
 import com.enonic.wem.portal.internal.content.page.PageRendererContext;
-import com.enonic.wem.portal.internal.controller.JsHttpRequest;
+import com.enonic.wem.portal.internal.content.page.PageRendererContextImpl;
+import com.enonic.wem.portal.internal.controller.PortalRequestImpl;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
 
@@ -62,7 +62,7 @@ public final class ContentResource
             pageDescriptor = getPageDescriptor( pageTemplate );
         }
 
-        final JsPageRendererContext context = new JsPageRendererContext();
+        final PageRendererContextImpl context = new PageRendererContextImpl();
         context.setContent( content );
         context.setSite( site );
         context.setPageTemplate( pageTemplate );
@@ -72,7 +72,7 @@ public final class ContentResource
             context.setModule( getModule( pageDescriptor.getKey().getModuleKey() ) );
         }
 
-        final JsHttpRequest jsRequest = new JsHttpRequest();
+        final PortalRequestImpl jsRequest = new PortalRequestImpl();
         jsRequest.setMode( this.mode );
         jsRequest.setWorkspace( this.workspace );
         jsRequest.setMethod( this.request.getMethod() );

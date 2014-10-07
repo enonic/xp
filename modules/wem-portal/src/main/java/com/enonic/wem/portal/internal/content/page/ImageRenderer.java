@@ -6,7 +6,7 @@ import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.PortalRequest;
 import com.enonic.wem.portal.PortalResponse;
 import com.enonic.wem.portal.RenderingMode;
-import com.enonic.wem.portal.internal.controller.JsHttpResponseSerializer;
+import com.enonic.wem.portal.internal.controller.PortalResponseSerializer;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
 import com.enonic.wem.portal.url.ImageUrlBuilder;
@@ -55,7 +55,7 @@ public final class ImageRenderer
             s.append( "</div>" );
         }
         response.setBody( s.toString() );
-        return new JsHttpResponseSerializer( response ).serialize();
+        return new PortalResponseSerializer( response ).serialize();
     }
 
     private RenderingMode getRenderingMode( final PortalContext context )

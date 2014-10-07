@@ -8,19 +8,19 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.google.common.collect.Multimap;
 
-import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.portal.PortalRequest;
+import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.portal.internal.base.ModuleBaseResourceTest;
-import com.enonic.wem.portal.internal.controller.JsContext;
-import com.enonic.wem.portal.internal.controller.JsController;
-import com.enonic.wem.portal.internal.controller.JsControllerFactory;
+import com.enonic.wem.portal.internal.controller.Controller;
+import com.enonic.wem.portal.internal.controller.ControllerFactory;
+import com.enonic.wem.portal.internal.controller.PortalContextImpl;
 
 import static org.junit.Assert.*;
 
 public class ServiceResourceTest
     extends ModuleBaseResourceTest
 {
-    private JsController jsController;
+    private Controller jsController;
 
     @Override
     protected void configure()
@@ -31,10 +31,10 @@ public class ServiceResourceTest
         final ServiceResourceProvider provider = new ServiceResourceProvider();
         provider.setModuleService( this.moduleService );
 
-        final JsControllerFactory controllerFactory = Mockito.mock( JsControllerFactory.class );
+        final ControllerFactory controllerFactory = Mockito.mock( ControllerFactory.class );
         provider.setControllerFactory( controllerFactory );
 
-        this.jsController = Mockito.mock( JsController.class );
+        this.jsController = Mockito.mock( Controller.class );
         Mockito.when( controllerFactory.newController( Mockito.anyObject() ) ).thenReturn( this.jsController );
 
         this.resources.add( provider );
@@ -50,7 +50,7 @@ public class ServiceResourceTest
 
         assertEquals( 200, response.getStatus() );
 
-        final ArgumentCaptor<JsContext> jsContext = ArgumentCaptor.forClass( JsContext.class );
+        final ArgumentCaptor<PortalContextImpl> jsContext = ArgumentCaptor.forClass( PortalContextImpl.class );
         Mockito.verify( this.jsController ).execute( jsContext.capture() );
 
         final PortalRequest jsHttpRequest = jsContext.getValue().getRequest();

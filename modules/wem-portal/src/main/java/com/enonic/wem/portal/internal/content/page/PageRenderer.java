@@ -4,9 +4,9 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.portal.PortalResponse;
 import com.enonic.wem.portal.RenderingMode;
-import com.enonic.wem.portal.internal.controller.JsController;
-import com.enonic.wem.portal.internal.controller.JsControllerFactory;
-import com.enonic.wem.portal.internal.controller.JsHttpResponseSerializer;
+import com.enonic.wem.portal.internal.controller.Controller;
+import com.enonic.wem.portal.internal.controller.ControllerFactory;
+import com.enonic.wem.portal.internal.controller.PortalResponseSerializer;
 import com.enonic.wem.portal.internal.postprocess.PostProcessor;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
@@ -15,7 +15,7 @@ public class PageRenderer
     implements Renderer<Content, PageRendererContext>
 {
 
-    private JsControllerFactory controllerFactory;
+    private ControllerFactory controllerFactory;
 
     private PostProcessor postProcessor;
 
@@ -28,11 +28,11 @@ public class PageRenderer
     @Override
     public RenderResult render( final Content content, final PageRendererContext context )
     {
-        final PageDescriptor pageDescriptor = context.getPageDesriptor();
+        final PageDescriptor pageDescriptor = context.getPageDescriptor();
 
         if ( pageDescriptor != null )
         {
-            final JsController controller = this.controllerFactory.newController( pageDescriptor.getResourceKey() );
+            final Controller controller = this.controllerFactory.newController( pageDescriptor.getResourceKey() );
             controller.execute( context );
         }
         else
@@ -40,7 +40,7 @@ public class PageRenderer
             renderForNoPageDescriptor( context, content );
         }
 
-        return new JsHttpResponseSerializer( context.getResponse() ).serialize();
+        return new PortalResponseSerializer( context.getResponse() ).serialize();
     }
 
     private void renderForNoPageDescriptor( final PageRendererContext context, final Content content )
@@ -69,7 +69,7 @@ public class PageRenderer
         this.postProcessor.processResponse( context );
     }
 
-    public void setControllerFactory( final JsControllerFactory controllerFactory )
+    public void setControllerFactory( final ControllerFactory controllerFactory )
     {
         this.controllerFactory = controllerFactory;
     }

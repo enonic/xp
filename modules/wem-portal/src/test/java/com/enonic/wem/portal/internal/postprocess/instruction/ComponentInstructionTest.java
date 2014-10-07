@@ -25,8 +25,8 @@ import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.rendering.Renderable;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.portal.PortalContext;
-import com.enonic.wem.portal.internal.controller.JsContext;
-import com.enonic.wem.portal.internal.controller.JsHttpResponse;
+import com.enonic.wem.portal.internal.controller.PortalContextImpl;
+import com.enonic.wem.portal.internal.controller.PortalResponseImpl;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
 import com.enonic.wem.portal.internal.rendering.RendererFactory;
@@ -50,9 +50,9 @@ public class ComponentInstructionTest
         PageComponentService pageComponentService = Mockito.mock( PageComponentService.class );
         ComponentInstruction instruction = new ComponentInstruction( rendererFactory, pageComponentService );
 
-        JsHttpResponse resp = new JsHttpResponse();
+        PortalResponseImpl resp = new PortalResponseImpl();
         resp.setPostProcess( true );
-        JsContext context = new JsContext();
+        PortalContextImpl context = new PortalContextImpl();
         context.setResponse( resp );
         Content content = createPage( "content-id", "content-name", "mymodule:content-type" );
         context.setContent( content );
@@ -74,9 +74,9 @@ public class ComponentInstructionTest
         doReturn( component ).when( pageComponentService ).getByName( isA( ModuleKey.class ), isA( ComponentName.class ) );
         ComponentInstruction instruction = new ComponentInstruction( rendererFactory, pageComponentService );
 
-        JsHttpResponse resp = new JsHttpResponse();
+        PortalResponseImpl resp = new PortalResponseImpl();
         resp.setPostProcess( true );
-        JsContext context = new JsContext();
+        PortalContextImpl context = new PortalContextImpl();
         context.setResponse( resp );
         Content content = createPage( "content-id", "content-name", "mymodule:content-type" );
         context.setContent( content );

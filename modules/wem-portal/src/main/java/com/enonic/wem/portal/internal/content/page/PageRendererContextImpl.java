@@ -2,16 +2,16 @@ package com.enonic.wem.portal.internal.content.page;
 
 
 import com.enonic.wem.api.content.page.PageDescriptor;
-import com.enonic.wem.portal.internal.controller.JsContext;
+import com.enonic.wem.portal.internal.controller.PortalContextImpl;
 
-public class JsPageRendererContext
-    extends JsContext
+public class PageRendererContextImpl
+    extends PortalContextImpl
     implements PageRendererContext
 {
     private PageDescriptor pageDescriptor;
 
     @Override
-    public PageDescriptor getPageDesriptor()
+    public PageDescriptor getPageDescriptor()
     {
         return pageDescriptor;
     }

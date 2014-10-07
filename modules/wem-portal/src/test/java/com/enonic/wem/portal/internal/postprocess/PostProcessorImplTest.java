@@ -9,8 +9,8 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 
-import com.enonic.wem.portal.internal.controller.JsContext;
-import com.enonic.wem.portal.internal.controller.JsHttpResponse;
+import com.enonic.wem.portal.internal.controller.PortalContextImpl;
+import com.enonic.wem.portal.internal.controller.PortalResponseImpl;
 import com.enonic.wem.portal.postprocess.PostProcessInjection;
 import com.enonic.wem.portal.postprocess.PostProcessInstruction;
 
@@ -32,11 +32,11 @@ public class PostProcessorImplTest
         postProcessor.setInstructions( instructions );
         postProcessor.setInjections( Lists.newArrayList() );
 
-        final JsHttpResponse resp = new JsHttpResponse();
+        final PortalResponseImpl resp = new PortalResponseImpl();
         resp.setPostProcess( true );
         resp.setBody( html );
 
-        final JsContext context = new JsContext();
+        final PortalContextImpl context = new PortalContextImpl();
         context.setResponse( resp );
 
         postProcessor.processResponse( context );
@@ -61,11 +61,11 @@ public class PostProcessorImplTest
         postProcessor.setInjections( injections );
         postProcessor.setInstructions( Lists.newArrayList() );
 
-        final JsHttpResponse resp = new JsHttpResponse();
+        final PortalResponseImpl resp = new PortalResponseImpl();
         resp.setPostProcess( true );
         resp.setBody( html );
 
-        final JsContext context = new JsContext();
+        final PortalContextImpl context = new PortalContextImpl();
         context.setResponse( resp );
 
         postProcessor.processResponse( context );

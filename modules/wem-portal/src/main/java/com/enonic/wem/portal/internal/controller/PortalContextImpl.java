@@ -15,12 +15,12 @@ import com.enonic.wem.portal.PortalResponse;
 import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.portal.url.PortalUrlBuilders;
 
-public class JsContext
+public class PortalContextImpl
     implements PortalContext
 {
-    private JsHttpRequest request;
+    private PortalRequestImpl request;
 
-    private JsHttpResponse response;
+    private PortalResponseImpl response;
 
     private RenderingMode mode;
 
@@ -34,9 +34,9 @@ public class JsContext
 
     private Module module;
 
-    public JsContext()
+    public PortalContextImpl()
     {
-        this.response = new JsHttpResponse();
+        this.response = new PortalResponseImpl();
     }
 
     @Override
@@ -45,7 +45,7 @@ public class JsContext
         return this.request;
     }
 
-    public void setRequest( final JsHttpRequest request )
+    public void setRequest( final PortalRequestImpl request )
     {
         this.request = request;
     }
@@ -56,7 +56,7 @@ public class JsContext
         return this.response;
     }
 
-    public void setResponse( final JsHttpResponse response )
+    public void setResponse( final PortalResponseImpl response )
     {
         this.response = response;
     }

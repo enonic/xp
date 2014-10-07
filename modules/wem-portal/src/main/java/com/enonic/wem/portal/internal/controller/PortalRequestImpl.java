@@ -7,12 +7,12 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 import com.enonic.wem.api.content.ContentConstants;
-import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.portal.PortalRequest;
+import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.servlet.ServletRequestUrlHelper;
 
-public final class JsHttpRequest
+public final class PortalRequestImpl
     implements PortalRequest
 {
     private String method;
@@ -25,7 +25,7 @@ public final class JsHttpRequest
 
     public final static Workspace DEFAULT_WORKSPACE = ContentConstants.WORKSPACE_STAGE;
 
-    public JsHttpRequest()
+    public PortalRequestImpl()
     {
         this.mode = RenderingMode.LIVE;
         this.workspace = DEFAULT_WORKSPACE;

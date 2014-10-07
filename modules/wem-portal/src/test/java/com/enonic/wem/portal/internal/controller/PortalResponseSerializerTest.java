@@ -13,27 +13,27 @@ import static com.google.common.net.MediaType.OCTET_STREAM;
 import static com.google.common.net.MediaType.PLAIN_TEXT_UTF_8;
 import static org.junit.Assert.*;
 
-public class JsHttpResponseSerializerTest
+public class PortalResponseSerializerTest
 {
-    private JsHttpResponse response;
+    private PortalResponseImpl response;
 
-    private JsHttpResponseSerializer serializer;
+    private PortalResponseSerializer serializer;
 
     @Before
     public void setup()
     {
-        this.response = new JsHttpResponse();
-        this.serializer = new JsHttpResponseSerializer( this.response );
+        this.response = new PortalResponseImpl();
+        this.serializer = new PortalResponseSerializer( this.response );
     }
 
     @Test
     public void testError()
     {
-        this.response.setStatus( JsHttpResponse.STATUS_METHOD_NOT_ALLOWED );
+        this.response.setStatus( PortalResponseImpl.STATUS_METHOD_NOT_ALLOWED );
         final RenderResult result = this.serializer.serialize();
 
         assertNotNull( result );
-        assertEquals( JsHttpResponse.STATUS_METHOD_NOT_ALLOWED, result.getStatus() );
+        assertEquals( PortalResponseImpl.STATUS_METHOD_NOT_ALLOWED, result.getStatus() );
         assertNull( result.getEntity() );
     }
 
@@ -45,7 +45,7 @@ public class JsHttpResponseSerializerTest
         final RenderResult result = this.serializer.serialize();
 
         assertNotNull( result );
-        assertEquals( JsHttpResponse.STATUS_OK, result.getStatus() );
+        assertEquals( PortalResponseImpl.STATUS_OK, result.getStatus() );
         assertTrue( JSON_UTF_8.withoutParameters().equals( MediaType.parse( result.getHeaders().get( "content-type" ) ) ) );
         assertEquals( "{\"key\":\"value\"}", result.getEntity() );
     }
@@ -58,7 +58,7 @@ public class JsHttpResponseSerializerTest
         final RenderResult result = this.serializer.serialize();
 
         assertNotNull( result );
-        assertEquals( JsHttpResponse.STATUS_OK, result.getStatus() );
+        assertEquals( PortalResponseImpl.STATUS_OK, result.getStatus() );
         assertTrue( PLAIN_TEXT_UTF_8.withoutParameters().equals( MediaType.parse( result.getHeaders().get( "Content-Type" ) ) ) );
         assertEquals( "Hello world!", result.getEntity() );
     }
@@ -72,7 +72,7 @@ public class JsHttpResponseSerializerTest
         final RenderResult result = this.serializer.serialize();
 
         assertNotNull( result );
-        assertEquals( JsHttpResponse.STATUS_OK, result.getStatus() );
+        assertEquals( PortalResponseImpl.STATUS_OK, result.getStatus() );
         assertTrue( OCTET_STREAM.equals( MediaType.parse( result.getHeaders().get( "Content-Type" ) ) ) );
         assertSame( bytes, result.getEntity() );
     }
@@ -85,7 +85,7 @@ public class JsHttpResponseSerializerTest
         final RenderResult result = this.serializer.serialize();
 
         assertNotNull( result );
-        assertEquals( JsHttpResponse.STATUS_OK, result.getStatus() );
+        assertEquals( PortalResponseImpl.STATUS_OK, result.getStatus() );
         assertTrue( PLAIN_TEXT_UTF_8.withoutParameters().equals( MediaType.parse( result.getHeaders().get( "Content-Type" ) ) ) );
         assertEquals( "11", result.getEntity() );
     }
@@ -99,7 +99,7 @@ public class JsHttpResponseSerializerTest
         final RenderResult result = this.serializer.serialize();
 
         assertNotNull( result );
-        assertEquals( JsHttpResponse.STATUS_OK, result.getStatus() );
+        assertEquals( PortalResponseImpl.STATUS_OK, result.getStatus() );
         assertTrue( PLAIN_TEXT_UTF_8.withoutParameters().equals( MediaType.parse( result.getHeaders().get( "Content-Type" ) ) ) );
         assertEquals( "Value", result.getHeaders().get( "X-MyHeader" ) );
         assertEquals( "With headers", result.getEntity() );

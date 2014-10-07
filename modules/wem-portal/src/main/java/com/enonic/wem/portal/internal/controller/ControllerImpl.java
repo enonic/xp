@@ -5,14 +5,14 @@ import com.enonic.wem.portal.PortalContextAccessor;
 import com.enonic.wem.portal.internal.postprocess.PostProcessor;
 import com.enonic.wem.script.ScriptExports;
 
-final class JsControllerImpl
-    implements JsController
+final class ControllerImpl
+    implements Controller
 {
     private final ScriptExports scriptExports;
 
     private final PostProcessor postProcessor;
 
-    public JsControllerImpl( final ScriptExports scriptExports, final PostProcessor postProcessor )
+    public ControllerImpl( final ScriptExports scriptExports, final PostProcessor postProcessor )
     {
         this.scriptExports = scriptExports;
         this.postProcessor = postProcessor;
@@ -50,6 +50,6 @@ final class JsControllerImpl
 
     private void methodNotAllowed( final PortalContext context )
     {
-        context.getResponse().setStatus( JsHttpResponse.STATUS_METHOD_NOT_ALLOWED );
+        context.getResponse().setStatus( PortalResponseImpl.STATUS_METHOD_NOT_ALLOWED );
     }
 }

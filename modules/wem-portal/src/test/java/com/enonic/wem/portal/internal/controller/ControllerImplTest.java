@@ -12,7 +12,7 @@ import com.enonic.wem.api.content.thumb.Thumbnail;
 
 import static org.junit.Assert.*;
 
-public class JsControllerImplTest
+public class ControllerImplTest
     extends AbstractControllerTest
 {
     @Test
@@ -20,7 +20,7 @@ public class JsControllerImplTest
     {
         this.request.setMethod( "GET" );
         execute( "mymodule:/service/test" );
-        assertEquals( JsHttpResponse.STATUS_OK, this.response.getStatus() );
+        assertEquals( PortalResponseImpl.STATUS_OK, this.response.getStatus() );
     }
 
     @Test
@@ -31,7 +31,7 @@ public class JsControllerImplTest
 
         execute( "mymodule:/service/test" );
 
-        assertEquals( JsHttpResponse.STATUS_OK, this.response.getStatus() );
+        assertEquals( PortalResponseImpl.STATUS_OK, this.response.getStatus() );
         Mockito.verify( this.postProcessor ).processResponse( this.context );
     }
 
@@ -40,7 +40,7 @@ public class JsControllerImplTest
     {
         this.request.setMethod( "POST" );
         execute( "mymodule:/service/test" );
-        assertEquals( JsHttpResponse.STATUS_METHOD_NOT_ALLOWED, this.response.getStatus() );
+        assertEquals( PortalResponseImpl.STATUS_METHOD_NOT_ALLOWED, this.response.getStatus() );
     }
 
     @Test
@@ -55,7 +55,7 @@ public class JsControllerImplTest
 
         this.request.setMethod( "GET" );
         execute( "mymodule:/service/getters" );
-        assertEquals( JsHttpResponse.STATUS_OK, this.response.getStatus() );
+        assertEquals( PortalResponseImpl.STATUS_OK, this.response.getStatus() );
         assertEquals( "GET,test,mypagetemplate,1000", this.response.getBody() );
     }
 }

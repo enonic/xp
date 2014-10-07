@@ -7,7 +7,7 @@ import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.PortalRequest;
 import com.enonic.wem.portal.PortalResponse;
 import com.enonic.wem.portal.RenderingMode;
-import com.enonic.wem.portal.internal.controller.JsHttpResponseSerializer;
+import com.enonic.wem.portal.internal.controller.PortalResponseSerializer;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
 
@@ -50,7 +50,7 @@ public final class TextRenderer
             }
         }
 
-        return new JsHttpResponseSerializer( response ).serialize();
+        return new PortalResponseSerializer( response ).serialize();
     }
 
     private void renderEmptyTextComponent( final TextComponent textComponent, final PortalContext context )

@@ -2,7 +2,7 @@ package com.enonic.wem.portal.internal.controller;
 
 import com.enonic.wem.api.resource.ResourceKey;
 
-public interface JsControllerFactory
+public interface ControllerFactory
 {
-    public JsController newController( ResourceKey scriptDir );
+    public Controller newController( ResourceKey scriptDir );
 }

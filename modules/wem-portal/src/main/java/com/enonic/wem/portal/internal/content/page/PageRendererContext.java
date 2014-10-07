@@ -7,5 +7,5 @@ import com.enonic.wem.portal.PortalContext;
 public interface PageRendererContext
     extends PortalContext
 {
-    PageDescriptor getPageDesriptor();
+    PageDescriptor getPageDescriptor();
 }

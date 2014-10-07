@@ -12,15 +12,15 @@ import com.enonic.wem.script.internal.ScriptServiceImpl;
 
 public abstract class AbstractControllerTest
 {
-    private JsController controller;
+    private Controller controller;
 
     protected PostProcessor postProcessor;
 
-    private JsControllerFactoryImpl factory;
+    private ControllerFactoryImpl factory;
 
-    protected JsContext context;
+    protected PortalContextImpl context;
 
-    protected JsHttpRequest request;
+    protected PortalRequestImpl request;
 
     protected PortalResponse response;
 
@@ -30,11 +30,11 @@ public abstract class AbstractControllerTest
     {
         ResourceUrlTestHelper.mockModuleScheme().modulesClassLoader( getClass().getClassLoader() );
 
-        this.context = new JsContext();
+        this.context = new PortalContextImpl();
         this.response = this.context.getResponse();
 
         final ScriptEnvironment environment = new ScriptEnvironment();
-        this.factory = new JsControllerFactoryImpl();
+        this.factory = new ControllerFactoryImpl();
         this.factory.setScriptService( new ScriptServiceImpl( environment ) );
 
         this.postProcessor = Mockito.mock( PostProcessor.class );
@@ -43,7 +43,7 @@ public abstract class AbstractControllerTest
         final ResourceKey scriptDir = ResourceKey.from( "mymodule:/service/test" );
         this.controller = factory.newController( scriptDir );
 
-        this.request = new JsHttpRequest();
+        this.request = new PortalRequestImpl();
         this.context.setRequest( this.request );
     }
 

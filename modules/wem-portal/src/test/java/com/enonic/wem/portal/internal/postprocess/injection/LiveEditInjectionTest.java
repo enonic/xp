@@ -10,8 +10,8 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
 import com.enonic.wem.portal.RenderingMode;
-import com.enonic.wem.portal.internal.controller.JsContext;
-import com.enonic.wem.portal.internal.controller.JsHttpRequest;
+import com.enonic.wem.portal.internal.controller.PortalContextImpl;
+import com.enonic.wem.portal.internal.controller.PortalRequestImpl;
 import com.enonic.wem.portal.postprocess.PostProcessInjection;
 import com.enonic.wem.servlet.ServletRequestHolder;
 
@@ -19,19 +19,19 @@ import static org.junit.Assert.*;
 
 public class LiveEditInjectionTest
 {
-    private JsContext context;
+    private PortalContextImpl context;
 
     private LiveEditInjection injection;
 
-    private JsHttpRequest request;
+    private PortalRequestImpl request;
 
     @Before
     public void setup()
     {
-        this.context = new JsContext();
+        this.context = new PortalContextImpl();
         mockCurrentContextHttpRequest();
 
-        this.request = new JsHttpRequest();
+        this.request = new PortalRequestImpl();
         this.context.setRequest( this.request );
 
         this.injection = new LiveEditInjection();

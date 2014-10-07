@@ -12,7 +12,7 @@
     <property name="instructions" ref="postProcessInstructions"/>
   </bean>
 
-  <bean id="controllerFactory" class="com.enonic.wem.portal.internal.controller.JsControllerFactoryImpl">
+  <bean id="controllerFactory" class="com.enonic.wem.portal.internal.controller.ControllerFactoryImpl">
     <property name="scriptService" ref="scriptService"/>
     <property name="postProcessor" ref="postProcessor"/>
   </bean>

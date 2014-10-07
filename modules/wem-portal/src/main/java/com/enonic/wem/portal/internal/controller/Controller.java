@@ -2,7 +2,7 @@ package com.enonic.wem.portal.internal.controller;
 
 import com.enonic.wem.portal.PortalContext;
 
-public interface JsController
+public interface Controller
 {
     public void execute( PortalContext context );
 }

@@ -10,9 +10,9 @@ import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.PortalRequest;
 import com.enonic.wem.portal.RenderingMode;
-import com.enonic.wem.portal.internal.controller.JsController;
-import com.enonic.wem.portal.internal.controller.JsControllerFactory;
-import com.enonic.wem.portal.internal.controller.JsHttpResponseSerializer;
+import com.enonic.wem.portal.internal.controller.Controller;
+import com.enonic.wem.portal.internal.controller.ControllerFactory;
+import com.enonic.wem.portal.internal.controller.PortalResponseSerializer;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
 
@@ -24,7 +24,7 @@ public abstract class DescriptorBasedPageComponentRenderer<R extends AbstractDes
 
     private static final String EMPTY_COMPONENT_PREVIEW_MODE_HTML = "<div></div>";
 
-    protected JsControllerFactory controllerFactory;
+    protected ControllerFactory controllerFactory;
 
     public final RenderResult render( final R pageComponent, final PortalContext context )
     {
@@ -35,7 +35,7 @@ public abstract class DescriptorBasedPageComponentRenderer<R extends AbstractDes
         }
 
         // create controller
-        final JsController controller = this.controllerFactory.newController( descriptor.getComponentPath() );
+        final Controller controller = this.controllerFactory.newController( descriptor.getComponentPath() );
 
         // render
         final PageComponent previousComponent = context.getComponent();
@@ -43,7 +43,7 @@ public abstract class DescriptorBasedPageComponentRenderer<R extends AbstractDes
         {
             context.setComponent( pageComponent );
             controller.execute( context );
-            return new JsHttpResponseSerializer( context.getResponse() ).serialize();
+            return new PortalResponseSerializer( context.getResponse() ).serialize();
         }
         finally
         {
@@ -104,7 +104,7 @@ public abstract class DescriptorBasedPageComponentRenderer<R extends AbstractDes
         return req == null ? RenderingMode.LIVE : req.getMode();
     }
 
-    public void setControllerFactory( final JsControllerFactory controllerFactory )
+    public void setControllerFactory( final ControllerFactory controllerFactory )
     {
         this.controllerFactory = controllerFactory;
     }

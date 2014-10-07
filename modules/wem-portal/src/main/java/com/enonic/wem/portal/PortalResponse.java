@@ -4,6 +4,10 @@ import java.util.Map;
 
 public interface PortalResponse
 {
+    public final static int STATUS_OK = 200;
+
+    public final static int STATUS_METHOD_NOT_ALLOWED = 405;
+
     public int getStatus();
 
     public void setStatus( int status );
