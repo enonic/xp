@@ -3,7 +3,6 @@ package com.enonic.wem.api.module;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
-// TODO merge this class with ModuleName
 public final class ModuleKey
 {
     private static final String SYSTEM_MODULE_NAME = "system";
@@ -33,12 +32,6 @@ public final class ModuleKey
     public String toString()
     {
         return name;
-    }
-
-    // TODO remove method
-    public ModuleName getName()
-    {
-        return ModuleName.from( name );
     }
 
     public static ModuleKey from( final String name )

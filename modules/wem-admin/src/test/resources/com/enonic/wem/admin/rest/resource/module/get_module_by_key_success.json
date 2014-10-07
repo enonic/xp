@@ -28,7 +28,6 @@
     "key": "testmodule",
     "metadataSchemaNames": [ ],
     "modifiedTime": "2012-01-01T00:00:00Z",
-    "name": "testmodule",
     "state": "started",
     "url": "http://enonic.net",
     "vendorName": "Enonic",

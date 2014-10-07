@@ -9,9 +9,4 @@ public final class ModuleNotFoundException
     {
         super( "Module [{0}] was not found", moduleKey );
     }
-
-    public ModuleNotFoundException( final ModuleName moduleName )
-    {
-        super( "Module [{0}] could not be resolved", moduleName );
-    }
 }

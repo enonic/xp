@@ -52,7 +52,7 @@ public final class ModuleURLStreamHandler
     private Bundle getBundle( final ModuleKey key )
         throws IOException
     {
-        final String moduleName = key.getName().toString();
+        final String moduleName = key.toString();
         final Long bundleId = this.moduleNameToBundleIdCache.computeIfAbsent( moduleName, this::findBundleId );
         if ( bundleId == null )
         {

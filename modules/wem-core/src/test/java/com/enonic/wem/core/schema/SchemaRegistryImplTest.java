@@ -252,7 +252,7 @@ public class SchemaRegistryImplTest
     {
         final ModuleKey moduleKey = schemas[0].getName().getModuleKey();
         final Bundle bundle = Mockito.mock( Bundle.class );
-        Mockito.when( bundle.getSymbolicName() ).thenReturn( moduleKey.getName().toString() );
+        Mockito.when( bundle.getSymbolicName() ).thenReturn( moduleKey.toString() );
         Mockito.when( bundle.getVersion() ).thenReturn( new Version( "1.0.0" ) );
 
         final ServiceReference serviceRef = Mockito.mock( ServiceReference.class );

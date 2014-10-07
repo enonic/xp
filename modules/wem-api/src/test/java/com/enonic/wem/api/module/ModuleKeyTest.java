@@ -11,7 +11,7 @@ public class ModuleKeyTest
     {
         final ModuleKey moduleKey = ModuleKey.from( "mymodule" );
 
-        assertEquals( ModuleName.from( "mymodule" ).toString(), moduleKey.toString() );
+        assertEquals( ModuleKey.from( "mymodule" ).toString(), moduleKey.toString() );
     }
 
     @Test

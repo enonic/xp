@@ -4,8 +4,6 @@ module api.module.json {
 
         key:string;
 
-        name:string;
-
         version:string;
 
         displayName:string;

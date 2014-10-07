@@ -26,11 +26,6 @@ public class ModuleJson
         return module.getKey().toString();
     }
 
-    public String getName()
-    {
-        return module.getName().toString();
-    }
-
     public String getVersion()
     {
         return module.getVersion().toString();
