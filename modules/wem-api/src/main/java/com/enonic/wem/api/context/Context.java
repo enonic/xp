@@ -6,6 +6,7 @@ import java.util.concurrent.Callable;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.workspace.Workspace;
 
@@ -13,7 +14,11 @@ public final class Context
 {
     private final static ThreadLocal<Context> CURRENT = new ThreadLocal<Context>()
     {
-
+        @Override
+        protected Context initialValue()
+        {
+            return ContentConstants.CONTEXT_STAGE;
+        }
     };
 
     protected final Map<String, Object> objects = Maps.newHashMap();
