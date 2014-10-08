@@ -45,18 +45,14 @@
     overflow-x: hidden !important;
   }
 
-  &.quick {
+  &.quick .grid {
     .slick-row {
-      transition: none 4s;
+      .transition(none 4s);
     }
   }
 
   .slick-row {
-    transition: margin ease-in 0.3s;
-
-    .active {
-
-    }
+    .transition(margin ease-in 0.3s);
   }
 
   .grid {
@@ -84,7 +80,7 @@
 
       background-color: @admin-white;
       z-index: 1;
-      .background-color-transition;
+      .transition(background-color 0.6s, margin ease-in 0.3s);
 
       &:hover, &.odd:hover {
         background-color: @admin-light-gray-bg;

@@ -56,19 +56,16 @@ module app.view {
         }
 
         private descriptionFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentVersion>) {
+            var description = "";
+
             if (node.getData()) {  // default node
                 var length = node.getRoot().getChildren().length;
                 var viewer = new ContentVersionViewer();
                 viewer.setObject(node.getData(), length - row);
-                return viewer.toString();
-
-            } else { // `load more` node
-                var content = new api.dom.DivEl("children-to-load"),
-                    parent = node.getParent();
-
-                return content.setHtml((parent.getMaxChildren() - parent.getChildren().length + 1) +
-                                       " children left to load. Double-click to load more.").toString();
+                description = viewer.toString();
             }
+
+            return description;
 
         }
 

@@ -72,7 +72,9 @@
   }
 }
 
-.transition (@params) {
+.transition (@value1,@value2:X,...) {
+  @params: ~`"@{arguments}".replace(/[\[\]]|\,\sX/g, '')`;
+
   -webkit-transition: @params;
   -moz-transition: @params;
   -o-transition: @params;
