@@ -115,7 +115,7 @@ module api.content {
             super.fromContentSummaryJson(json);
 
             this.data = ContentDataFactory.createContentData(json.data);
-            this.metadata = json.metadata.map(Metadata.fromJson);
+            this.metadata = (json.metadata || []).map(Metadata.fromJson);
             this.form = json.form != null ? api.form.Form.fromJson(json.form) : null;
 
             if (this.page) {
