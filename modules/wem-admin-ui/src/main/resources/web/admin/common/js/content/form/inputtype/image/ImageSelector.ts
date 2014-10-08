@@ -26,7 +26,7 @@ module api.content.form.inputtype.image {
 
         private comboBox: ComboBox<ImageSelectorDisplayValue>;
 
-        private uploadButton: api.dom.DivEl;
+        private uploadButton: api.dom.ButtonEl;
 
         private selectedOptionsView: SelectedOptionsView;
 
@@ -136,7 +136,7 @@ module api.content.form.inputtype.image {
                 this.uploadButton.show();
             });
 
-            this.uploadButton = new api.dom.DivEl();
+            this.uploadButton = new api.dom.ButtonEl();
             comboboxWrapper.appendChild(this.uploadButton);
             this.uploadButton.addClass("upload-button");
             this.uploadButton.onClicked((event: MouseEvent) => {
