@@ -1,6 +1,6 @@
 var assert = Java.type('org.junit.Assert');
 
-var contentsResult = executeCommand('com.enonic.wem.portal.content.FindContentByParent', {
+var contentsResult = execute('content.findByParent', {
     parentPath: '123',
     from: 0,
     size: 10

@@ -1,6 +1,6 @@
 var assert = Java.type('org.junit.Assert');
 
-var content = executeCommand('com.enonic.wem.portal.content.GetContentById', {
+var content = execute('content.getById', {
     id: '123'
 });
 

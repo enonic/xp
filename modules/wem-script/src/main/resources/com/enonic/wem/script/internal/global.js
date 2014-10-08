@@ -9,10 +9,6 @@ function resolve(name) {
 }
 
 function execute(name, params) {
-    return executeCommand(name, params);
-}
-
-function executeCommand(name, params) {
     var command = __helper.newCommand(name);
 
     for (key in params) {

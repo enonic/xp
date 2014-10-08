@@ -19,11 +19,19 @@ public final class ScriptEnvironment
         this.commandHandlers = Maps.newConcurrentMap();
     }
 
+    private String getName( final Command command )
+    {
+        return getName( command.getClass() );
+    }
+
     private String getName( final CommandHandler handler )
     {
-        final Class<?> type = handler.getType();
-        final CommandName name = type.getAnnotation( CommandName.class );
+        return getName( handler.getType() );
+    }
 
+    private String getName( final Class<?> type )
+    {
+        final CommandName name = type.getAnnotation( CommandName.class );
         if ( name != null )
         {
             return name.value();
@@ -75,6 +83,6 @@ public final class ScriptEnvironment
     @SuppressWarnings("unchecked")
     public void invokeCommand( final Command command )
     {
-        findHandler( command.getClass().getName() ).invoke( command );
+        findHandler( getName( command ) ).invoke( command );
     }
 }
