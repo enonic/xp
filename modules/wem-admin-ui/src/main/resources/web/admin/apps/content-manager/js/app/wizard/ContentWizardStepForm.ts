@@ -34,7 +34,6 @@ module app.wizard {
         private doLayout(form: Form, contentData: ContentData) {
 
             this.formView = new FormView(this.formContext, form, contentData);
-            this.formView.setDoOffset(false);
             this.formView.onFocus((event) => {
                 this.notifyFocused(event);
             });

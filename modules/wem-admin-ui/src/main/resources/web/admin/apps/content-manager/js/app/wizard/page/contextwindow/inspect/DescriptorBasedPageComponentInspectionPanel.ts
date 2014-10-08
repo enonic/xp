@@ -57,7 +57,6 @@ module app.wizard.page.contextwindow.inspect {
             var form = descriptor.getConfig();
             var config = component.getConfig();
             this.formView = new FormView(formContext, form, config);
-            this.formView.setDoOffset(false);
             this.appendChild(this.formView);
         }
     }

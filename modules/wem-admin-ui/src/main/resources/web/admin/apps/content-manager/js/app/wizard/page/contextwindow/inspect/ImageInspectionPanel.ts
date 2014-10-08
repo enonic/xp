@@ -46,7 +46,6 @@ module app.wizard.page.contextwindow.inspect {
             }
             var configForm = this.imageComponent.getForm();
             this.formView = new api.form.FormView(formContext, configForm, configData);
-            this.formView.setDoOffset(false);
             this.appendChild(this.formView);
         }
 

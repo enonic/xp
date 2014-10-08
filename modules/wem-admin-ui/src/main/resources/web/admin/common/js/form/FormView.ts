@@ -1,6 +1,6 @@
 module api.form {
 
-    export class FormView extends api.ui.panel.Panel {
+    export class FormView extends api.dom.DivEl {
 
         private context: FormContext;
 

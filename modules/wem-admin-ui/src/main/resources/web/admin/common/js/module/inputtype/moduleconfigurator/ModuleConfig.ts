@@ -114,7 +114,6 @@ module api.module.inputtype.moduleconfigurator {
                 this.moduleView.appendChild(header);
 
                 this.formView = new FormView(formContext, configForm, this.configData);
-                this.formView.setDoOffset(false);
                 this.formView.addClass("module-form");
                 this.moduleView.appendChild(this.formView);
 

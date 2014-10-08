@@ -41,7 +41,6 @@ module app.wizard.page.contextwindow.inspect {
             this.currentPageTemplate = null;
 
             var containerForm = new api.ui.form.Form('form-view');
-            containerForm.setDoOffset(false);
 
             this.pageTemplateSelector = new PageTemplateSelector({
                 form: containerForm,
@@ -84,7 +83,6 @@ module app.wizard.page.contextwindow.inspect {
             }
 
             this.formView = new FormView(new FormContextBuilder().build(), pageDescriptor.getConfig(), config);
-            this.formView.setDoOffset(false);
             this.appendChild(this.formView);
         }
     }
