@@ -581,8 +581,10 @@ module app.wizard {
         }
 
         showSplitEdit() {
-            this.getSplitPanel().addClass("toggle-split");
-            this.getSplitPanel().removeClass("toggle-live toggle-form prerendered");
+            if (this.getSplitPanel()) {
+                this.getSplitPanel().addClass("toggle-split");
+                this.getSplitPanel().removeClass("toggle-live toggle-form prerendered");
+            }
             ResponsiveManager.fireResizeEvent();
         }
 

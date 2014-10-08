@@ -83,8 +83,9 @@ module api.content.form.inputtype.image {
                     if (this.icon.isLoaded()) {
                         // refresh image in case it was changed by external wizard
                         this.icon.refresh();
+                    } else {
+                        this.showSpinner();
                     }
-                    this.showSpinner();
                 }
             });
             this.icon.onLoaded((event: UIEvent) => {
