@@ -370,7 +370,10 @@ module app.wizard {
                 }).then(() => {
 
                     if (this.liveFormPanel) {
-                        return this.doLayoutPage(content);
+                        this.doLayoutPage(content);
+                        var deferred = wemQ.defer<void>();
+                        deferred.resolve(null);
+                        return deferred.promise;
                     }
                 });
         }
@@ -386,7 +389,7 @@ module app.wizard {
             return deferred.promise;
         }
 
-        private doLayoutPage(content: Content): wemQ.Promise<void> {
+        private doLayoutPage(content: Content) {
 
             var page: Page = content.getPage();
 
@@ -396,12 +399,12 @@ module app.wizard {
                     sendAndParse().
                     then((pageTemplate: PageTemplate) => {
 
-                        return this.liveFormPanel.layout(content, pageTemplate);
+                        this.liveFormPanel.layout(content, pageTemplate);
 
-                    });
+                    }).done();
             }
             else {
-                return this.liveFormPanel.layout(content, null);
+                this.liveFormPanel.layout(content, null);
             }
         }
 

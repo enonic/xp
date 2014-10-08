@@ -396,7 +396,7 @@ module api.ui.panel {
             if (!this.isPanelHidden(panelNumber)) {
                 return;
             }
-
+            console.log("showing panel");
             this.splitterThickness = this.previousSplitterThickness;
             this.splitter.show();
 

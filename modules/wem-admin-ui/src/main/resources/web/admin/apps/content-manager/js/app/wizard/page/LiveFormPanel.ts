@@ -250,7 +250,7 @@ module app.wizard.page {
             super.remove();
         }
 
-        layout(content: Content, pageTemplate: PageTemplate): wemQ.Promise<void> {
+        layout(content: Content, pageTemplate: PageTemplate) {
 
             api.util.assertNotNull(content, "Expected content not be null");
 
@@ -279,46 +279,21 @@ module app.wizard.page {
 
                 }
             }
-
-            return this.loadPage();
+            this.loadPage();
         }
 
-        loadPage(): wemQ.Promise<void> {
-
-            if (this.pageSkipReload == true) {
-                var deferred = wemQ.defer<void>();
-                deferred.resolve(null);
-                return deferred.promise;
-
-            } else if (!this.isVisible()) {
-                var shownListener = (event: api.dom.ElementShownEvent) => {
-                    this.loadPage();
-                    this.unShown(shownListener);
-                };
-                this.onShown(shownListener);
-                var deferred = wemQ.defer<void>();
-                deferred.resolve(null);
-                return deferred.promise;
-
-            } else if (!this.pageLoading) {
+        loadPage() {
+            console.log("LOADING PAGE");
+            if (this.pageSkipReload == false && !this.pageLoading) {
                 this.pageLoading = true;
-                return this.liveEditPage.load(this.content).then(()=> {
-
+                this.liveEditPage.load(this.content);
+                this.liveEditPage.onLoaded(() => {
                     this.pageLoading = false;
-
-                    return this.loadPageDescriptor();
-
-                }).then((): void => {
-
-                    this.contextWindow.showInspectionPanel(this.pageInspectionPanel);
-                    this.pageInspectionPanel.setPage(this.content, this.pageTemplate, this.pageDescriptor, this.pageConfig);
-
+                    this.loadPageDescriptor().then(() => {
+                        this.contextWindow.showInspectionPanel(this.pageInspectionPanel);
+                        this.pageInspectionPanel.setPage(this.content, this.pageTemplate, this.pageDescriptor, this.pageConfig);
+                    }).done();
                 });
-
-            } else {
-                var deferred = wemQ.defer<void>();
-                deferred.resolve(null);
-                return deferred.promise;
             }
         }
 
