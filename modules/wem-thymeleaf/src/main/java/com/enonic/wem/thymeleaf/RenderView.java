@@ -4,8 +4,11 @@ import java.util.Map;
 
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.script.command.Command;
+import com.enonic.wem.script.command.CommandName;
 
-public final class RenderView extends Command<String>
+@CommandName("view.renderThymeleaf")
+public final class RenderView
+    extends Command<String>
 {
     private ResourceKey view;
 

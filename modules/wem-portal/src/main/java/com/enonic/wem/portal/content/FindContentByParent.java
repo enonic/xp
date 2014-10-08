@@ -2,7 +2,9 @@ package com.enonic.wem.portal.content;
 
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.script.command.Command;
+import com.enonic.wem.script.command.CommandName;
 
+@CommandName("content.findByParent")
 public final class FindContentByParent
     extends Command<Contents>
 {

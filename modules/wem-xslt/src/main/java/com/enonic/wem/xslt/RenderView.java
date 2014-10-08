@@ -4,7 +4,9 @@ import java.util.Map;
 
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.script.command.Command;
+import com.enonic.wem.script.command.CommandName;
 
+@CommandName("view.renderXslt")
 public final class RenderView
     extends Command<String>
 {
