@@ -163,6 +163,15 @@ module api.ui.treegrid {
                 this.reload();
             }
 
+            if (builder.isPartialLoadEnabled()) {
+                var postLoadCycle = setInterval(this.postLoad.bind(this), 100);
+
+                this.getGrid().onScroll(() => {
+                    clearInterval(postLoadCycle);
+                    postLoadCycle = setInterval(this.postLoad.bind(this), 100);
+                });
+            }
+
             var keyBindings;
 
             this.onShown(() => {
@@ -293,6 +302,53 @@ module api.ui.treegrid {
                     this.grid.getEl().setScrollTop(row * 45);
                 } else if (this.grid.getEl().getScrollTop() + this.grid.getEl().getHeight() < (row + 1) * 45) {
                     this.grid.getEl().setScrollTop((row + 1) * 45 - this.grid.getEl().getHeight());
+                }
+            }
+        }
+
+        private loadEmptyNode(node: TreeNode<DATA>, loadMask?: api.ui.mask.LoadMask) {
+            if (!this.getDataId(node.getData())) {
+                this.setActive(false);
+
+                if (loadMask) {
+                    loadMask.show();
+                }
+
+                this.fetchChildren(node.getParent()).then((dataList: DATA[]) => {
+                    node.getParent().setChildren(this.dataToTreeNodes(dataList, node.getParent()));
+                    this.initData(this.getRoot().treeToList());
+                }).catch((reason: any) => {
+                    api.DefaultErrorHandler.handle(reason);
+                }).finally(() => {
+                    this.setActive(true);
+                    if (loadMask) {
+                        loadMask.hide();
+                        loadMask.remove();
+                    }
+                }).done(() => this.notifyLoaded());
+            }
+        }
+
+        private postLoad() {
+            if (this.canvasElement.getEl().isVisible()) {
+                this.canvasElement = Element.fromHtmlElement(this.getCanvas().getHTMLElement(), true);
+                // top > point && point + 45 < bottom
+                var children = this.canvasElement.getChildren(),
+                    top = this.grid.getEl().getScrollTop(),
+                    bottom = top + this.grid.getEl().getHeight();
+                children = children.filter((el) => {
+                    return (el.getEl().getOffsetTopRelativeToParent() + 5 > top) &&
+                        (el.getEl().getOffsetTopRelativeToParent() + 40 < bottom);
+                });
+
+                for (var i = 0; i < children.length; i++) {
+                    if (children[i].getHTMLElement().getElementsByClassName("children-to-load").length > 0 && this.isActive()) {
+                        var node = this.grid.getDataView().getItem(children[i].getEl().getOffsetTopRelativeToParent() / 45),
+                            loadMask = new api.ui.mask.LoadMask(children[i]);
+                        loadMask.addClass("small");
+                        this.loadEmptyNode(node, loadMask);
+                        break;
+                    }
                 }
             }
         }

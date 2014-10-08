@@ -22,6 +22,8 @@ module api.ui.treegrid {
 
         private hotkeysEnabled: boolean = true;
 
+        private partialLoadEnabled: boolean = false;
+
         constructor(grid?: TreeGrid<NODE>) {
             if (grid) {
                 this.showToolbar = grid.hasToolbar();
@@ -166,6 +168,15 @@ module api.ui.treegrid {
 
         isHotkeysEnabled(): boolean {
             return this.hotkeysEnabled;
+        }
+
+        setPartialLoadEnabled(enabled: boolean): TreeGridBuilder<NODE> {
+            this.partialLoadEnabled = enabled;
+            return this;
+        }
+
+        isPartialLoadEnabled(): boolean {
+            return this.partialLoadEnabled;
         }
 
         /**

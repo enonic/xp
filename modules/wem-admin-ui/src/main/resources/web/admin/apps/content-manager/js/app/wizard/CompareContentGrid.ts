@@ -26,7 +26,9 @@ module app.wizard {
                             setField("displayName").
                             setFormatter(this.nameFormatter).
                             build()
-                    ]).prependClasses("content-tree-grid")
+                    ]).
+                    setPartialLoadEnabled(true).
+                    prependClasses("content-tree-grid")
             );
 
             this.content = content;
