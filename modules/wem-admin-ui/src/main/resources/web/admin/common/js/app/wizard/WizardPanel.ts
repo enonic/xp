@@ -21,8 +21,6 @@ module api.app.wizard {
 
         livePanel?:api.ui.panel.Panel;
 
-        steps:api.app.wizard.WizardStep[];
-
         split?:boolean;
     }
 
@@ -112,8 +110,6 @@ module api.app.wizard {
                 }
             });
             this.formPanel.appendChild(aboveStepPanels).appendChild(this.stepPanels);
-
-            this.setSteps(params.steps);
 
             if (this.persistedItem != null) {
                 this.startLayoutPersistedItem(this.persistedItem).
@@ -205,15 +201,12 @@ module api.app.wizard {
             return this.mainToolbar.getActions();
         }
 
-        private setSteps(steps: api.app.wizard.WizardStep[]) {
+        setSteps(steps: api.app.wizard.WizardStep[]) {
 
-            steps.forEach((step: api.app.wizard.WizardStep, index: number) => {
+            steps.forEach((step: api.app.wizard.WizardStep) => {
                 this.stepPanels.addNavigablePanel(step.getTabBarItem(), step.getPanel());
-                // Ensure first step is shown
-                if (index == 0) {
-                    this.stepPanels.showPanelByIndex(0);
-                }
             });
+            this.stepPanels.showPanelByIndex(0);
         }
 
         preLayoutNew(): wemQ.Promise<void> {

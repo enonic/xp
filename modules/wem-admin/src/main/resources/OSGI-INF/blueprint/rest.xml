@@ -31,6 +31,8 @@
 
   <reference id="layoutDescriptorService" interface="com.enonic.wem.api.content.page.layout.LayoutDescriptorService"/>
 
+  <reference id="metadataSchemaService" interface="com.enonic.wem.api.schema.metadata.MetadataSchemaService"/>
+
   <bean id="backgroundImageResource" class="com.enonic.wem.admin.rest.resource.ui.BackgroundImageResource">
     <property name="configProperties" ref="configProperties"/>
   </bean>
@@ -115,6 +117,10 @@
     <property name="layoutDescriptorService" ref="layoutDescriptorService"/>
   </bean>
 
+  <bean id="metadataSchemaResource" class="com.enonic.wem.admin.rest.resource.schema.metadata.MetadataSchemaResource">
+    <property name="metadataSchemaService" ref="metadataSchemaService"/>
+  </bean>
+
   <bean id="restServlet" class="com.enonic.wem.admin.rest.RestServlet">
     <property name="resources">
       <list>
@@ -146,6 +152,7 @@
         <ref component-id="pageDescriptorResource"/>
         <ref component-id="partDescriptorResource"/>
         <ref component-id="layoutDescriptorResource"/>
+        <ref component-id="metadataSchemaResource"/>
       </list>
     </property>
   </bean>

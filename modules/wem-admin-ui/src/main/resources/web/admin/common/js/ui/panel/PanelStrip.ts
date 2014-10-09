@@ -54,6 +54,10 @@ module api.ui.panel {
         }
 
         private updateLastPanelHeight() {
+            if (this.getSize() == 0) {
+                return;
+            }
+
             if (this.getSize() > 1) {
                 // restore the one before last panel's height if needed
                 var beforeLastEl = this.getPanel(this.getSize() - 2).getEl();

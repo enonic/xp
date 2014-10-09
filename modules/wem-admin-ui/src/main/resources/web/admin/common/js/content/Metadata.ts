@@ -3,7 +3,7 @@ module api.content {
     import MetadataSchemaName = api.schema.metadata.MetadataSchemaName;
     import RootDataSet = api.data.RootDataSet;
 
-    export class Metadata {
+    export class Metadata implements api.Cloneable {
 
         private name: MetadataSchemaName;
 
@@ -23,6 +23,10 @@ module api.content {
                 name: this.name.toString(),
                 data: this.data.toJson()
             };
+        }
+
+        clone(): Metadata {
+            return new Metadata(this.name, this.data.clone());
         }
 
         getName(): MetadataSchemaName {

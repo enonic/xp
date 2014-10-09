@@ -48,7 +48,7 @@ module api.schema.metadata {
             return true;
         }
 
-        static fromJson(json: api.schema.metadata.MetadataSchemaJson): MetadataSchema {
+        static fromJson(json: MetadataSchemaJson): MetadataSchema {
             return new MetadataSchemaBuilder().fromMetadataSchemaJson(json).build();
         }
 
