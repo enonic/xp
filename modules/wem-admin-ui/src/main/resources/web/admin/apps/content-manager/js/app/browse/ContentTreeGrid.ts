@@ -172,12 +172,10 @@ module app.browse {
             } else { // `load more` node
                 var content = new api.dom.DivEl("children-to-load"),
                     parent = node.getParent();
-                content.setHtml((parent.getMaxChildren() - parent.getChildren().length + 1) +
-                                " children left to load. Double-click to load more.");
+                content.setHtml((parent.getMaxChildren() - parent.getChildren().length + 1) + " children left to load.");
 
                 return content.toString();
             }
-
         }
 
         fetch(node: TreeNode<ContentSummaryAndCompareStatus>): wemQ.Promise<ContentSummaryAndCompareStatus> {

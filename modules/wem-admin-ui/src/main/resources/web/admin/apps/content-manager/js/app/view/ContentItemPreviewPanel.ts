@@ -54,29 +54,31 @@ module app.view {
         }
 
         public setItem(item: ViewItem<ContentSummary>) {
-            this.item = item;
-            if (item.getModel().getType().isImage()) {
-                this.getEl().removeClass("no-preview page-preview").addClass("image-preview");
-                if (this.isVisible()) {
-                    this.addImageSizeToUrl(item);
-                }
-                if (!this.image.isLoaded()) {
+            if (!this.item || !item || !this.item.equals(item)) {
+                this.item = item;
+                if (item.getModel().getType().isImage()) {
+                    this.getEl().removeClass("no-preview page-preview").addClass("image-preview");
+                    if (this.isVisible()) {
+                        this.addImageSizeToUrl(item);
+                    }
+                    if (!this.image.isLoaded()) {
+                        this.mask.show();
+                    }
+                } else {
                     this.mask.show();
+                    new IsRenderableRequest(item.getModel().getContentId()).sendAndParse()
+                        .done((renderable:boolean) => {
+                            if (renderable) {
+                                this.getEl().removeClass("image-preview no-preview").addClass('page-preview');
+                                this.frame.setSrc(api.rendering.UriHelper.getPortalUri(item.getPath(), RenderingMode.PREVIEW,
+                                    api.content.Workspace.STAGE));
+                            } else {
+                                this.getEl().removeClass("image-preview page-preview").addClass('no-preview');
+                                this.frame.setSrc("about:blank");
+                                this.mask.hide();
+                            }
+                        });
                 }
-            } else {
-                this.mask.show();
-                new IsRenderableRequest(item.getModel().getContentId()).sendAndParse()
-                    .done((renderable: boolean) => {
-                        if (renderable) {
-                            this.getEl().removeClass("image-preview no-preview").addClass('page-preview');
-                            this.frame.setSrc(api.rendering.UriHelper.getPortalUri(item.getPath(), RenderingMode.PREVIEW,
-                                api.content.Workspace.STAGE));
-                        } else {
-                            this.getEl().removeClass("image-preview page-preview").addClass('no-preview');
-                            this.frame.setSrc("about:blank");
-                            this.mask.hide();
-                        }
-                    });
             }
         }
 
