@@ -35,7 +35,11 @@ public final class ContentIconUrlResolver
     {
         final ContentData contentData = content.getContentData();
         final Property imageProperty = contentData.getProperty( "image" );
-        return imageProperty.hasNullValue() ? content.getName().toString() : imageProperty.getString();
+        if ( imageProperty == null || imageProperty.hasNullValue() )
+        {
+            return content.getName().toString();
+        }
+        return imageProperty.getString();
     }
 
     public String resolve( final Content content )
