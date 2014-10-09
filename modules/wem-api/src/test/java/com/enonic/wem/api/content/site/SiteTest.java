@@ -39,7 +39,7 @@ public class SiteTest
         ModuleConfigs moduleConfigs = site.getModuleConfigs();
         assertNotNull( moduleConfigs );
         assertEquals( 1, moduleConfigs.getSize() );
-        assertEquals( moduleConfigs.get( 0 ), site.getModuleConfig( ModuleKey.from( "mymodule" ) ) );
+        assertEquals( moduleConfigs.get( 0 ).getConfig(), site.getModuleConfig( ModuleKey.from( "mymodule" ) ) );
     }
 
 }
