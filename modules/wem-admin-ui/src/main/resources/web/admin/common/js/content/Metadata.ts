@@ -25,6 +25,10 @@ module api.content {
             };
         }
 
+        clone(): Metadata {
+            return new Metadata(this.name, this.data.clone());
+        }
+
         getName(): MetadataSchemaName {
             return this.name;
         }

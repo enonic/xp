@@ -48,4 +48,14 @@
 
   <service ref="relationshipTypeService" auto-export="interfaces"/>
 
+  <bean id="metadataSchemaDao" class="com.enonic.wem.core.schema.metadata.dao.MetadataSchemaDaoImpl">
+    <property name="schemaRegistry" ref="schemaRegistry"/>
+  </bean>
+
+  <bean id="metadataSchemaService" class="com.enonic.wem.core.schema.metadata.MetadataSchemaServiceImpl">
+    <property name="metadataSchemaDao" ref="metadataSchemaDao"/>
+  </bean>
+
+  <service ref="metadataSchemaService" auto-export="interfaces"/>
+
 </blueprint>

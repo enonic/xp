@@ -14,6 +14,7 @@ module app.wizard {
     import UpdateContentRequest = api.content.UpdateContentRequest;
     import UpdateAttachments = api.content.UpdateAttachments;
     import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
+    import Metadata = api.content.Metadata;
     import Page = api.content.page.Page;
     import PageBuilder = api.content.page.PageBuilder;
     import Site = api.content.site.Site;
@@ -37,6 +38,12 @@ module app.wizard {
     import DefaultModelsFactoryConfig = app.wizard.page.DefaultModelsFactoryConfig;
     import DefaultModelsFactory = app.wizard.page.DefaultModelsFactory;
 
+    import Module = api.module.Module;
+    import ModuleKey = api.module.ModuleKey;
+    import MetadataSchema = api.schema.metadata.MetadataSchema;
+    import MetadataSchemaName = api.schema.metadata.MetadataSchemaName;
+    import GetMetadataSchemaRequest = api.schema.metadata.GetMetadataSchemaRequest;
+
     export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         private parentContent: Content;
@@ -50,6 +57,8 @@ module app.wizard {
         private contentWizardHeader: WizardHeaderWithDisplayNameAndName;
 
         private contentWizardStepForm: ContentWizardStepForm;
+
+        private schemaStepForms: {[name: string]: ContentWizardStepForm;};
 
         private iconUploadItem: api.ui.uploader.UploadItem;
 
@@ -146,6 +155,7 @@ module app.wizard {
                 (event: WizardStepValidityChangedEvent) =>
                     this.isContentFormValid = event.isValid()
             );
+            this.schemaStepForms = {};
 
             var isSiteOrWithinSite = this.siteContent || this.createSite;
             var hasPageTemplate = params.defaultModels && params.defaultModels.hasPageTemplate();
@@ -174,7 +184,6 @@ module app.wizard {
                 header: this.contentWizardHeader,
                 actions: this.wizardActions,
                 livePanel: this.liveFormPanel,
-                steps: this.createSteps(),
                 split: true
             }, () => {
 
@@ -234,17 +243,39 @@ module app.wizard {
             this.startRememberFocus();
         }
 
-        private createSteps(): WizardStep[] {
+        private createSteps(): wemQ.Promise<MetadataSchema[]> {
 
-            var steps: WizardStep[] = [];
+            return new api.module.ListModulesRequest().sendAndParse().
+                then((modules: Module[]) => {
+                    var siteModuleKeys = ModuleKey.toStringArray(this.siteContent.getModuleKeys());
+                    var schemaNames: string[] = [];
+                    modules.filter((mdl: Module) => (siteModuleKeys.indexOf(mdl.getModuleKey().toString()) >= 0)).
+                        forEach((mdl: Module) => {
+                            var uniqNames = mdl.getMetadataSchemaDependencies().
+                                map((name: MetadataSchemaName) => name.toString()).
+                                filter((name: string) => schemaNames.indexOf(name) < 0);
+                            Array.prototype.push.apply(schemaNames, uniqNames);
+                        });
 
-            steps.push(new WizardStep(this.contentType.getDisplayName(), this.contentWizardStepForm));
+                    var requests = schemaNames.map((name: string) => new GetMetadataSchemaRequest(new MetadataSchemaName(name)));
+                    return wemQ.all(<wemQ.Promise<MetadataSchema>[]>requests.map((request: GetMetadataSchemaRequest) => request.sendAndParse()));
+                }).then((schemas: MetadataSchema[]) => {
+                    var steps: WizardStep[] = [];
 
-            steps.push(new WizardStep("Meta", new BaseContentWizardStepForm()));
-            steps.push(new WizardStep("Security", new BaseContentWizardStepForm()));
-            steps.push(new WizardStep("Summary", new BaseContentWizardStepForm()));
+                    steps.push(new WizardStep(this.contentType.getDisplayName(), this.contentWizardStepForm));
+                    schemas.forEach((schema: MetadataSchema, index: number) => {
+                        if (!this.schemaStepForms[schema.getMetadataSchemaName().toString()]) {
+                            var form = new ContentWizardStepForm();
+                            this.schemaStepForms[schema.getMetadataSchemaName().toString()] = form;
+                            steps.splice(index + 1, 0, new WizardStep(schema.getDisplayName(), form));
+                        }
+                    });
+                    steps.push(new WizardStep("Security", new BaseContentWizardStepForm()));
 
-            return steps;
+                    this.setSteps(steps);
+
+                    return schemas;
+                });
         }
 
 
@@ -288,8 +319,6 @@ module app.wizard {
                     if (this.liveFormPanel) {
                         this.liveFormPanel.loadPage();
                     }
-                    deferred.resolve(null);
-                    return deferred.promise;
                 }
                 else {
 
@@ -299,18 +328,13 @@ module app.wizard {
 
                     ConfirmationDialog.get().
                         setQuestion("Received Content from server differs from what you have. Would you like to load changes from server?").
-                        setYesCallback(() => {
-
-                            this.doLayoutPersistedItem(persistedContent.clone());
-                        }).
-                        setNoCallback(() => {
-                            // Do nothing...
-                        }).show();
-
-
-                    deferred.resolve(null);
-                    return deferred.promise;
+                        setYesCallback(() => this.doLayoutPersistedItem(persistedContent.clone())).
+                        setNoCallback(() => {/* Do nothing... */}).
+                        show();
                 }
+
+                deferred.resolve(null);
+                return deferred.promise;
             }
             else {
                 return this.doLayoutPersistedItem(persistedContent.clone());
@@ -318,8 +342,6 @@ module app.wizard {
         }
 
         private doLayoutPersistedItem(content: Content): wemQ.Promise<void> {
-
-            var contentData = content.getContentData();
 
             this.showLiveEditAction.setVisible(false);
             this.showLiveEditAction.setEnabled(false);
@@ -344,14 +366,18 @@ module app.wizard {
                     api.DefaultErrorHandler.handle(reason);
                 }).done();
 
-            return new api.content.attachment.GetAttachmentsRequest(content.getContentId()).
-                sendAndParse().
-                then((attachmentsArray: api.content.attachment.Attachment[]) => {
+            var parallelPromises: wemQ.Promise<any>[] = [
+                new api.content.attachment.GetAttachmentsRequest(content.getContentId()).sendAndParse(),
+                this.createSteps()
+            ];
+
+            return wemQ.all(parallelPromises).
+                spread<void>((attachmentsArray: api.content.attachment.Attachment[], schemas: MetadataSchema[]) => {
 
                     var attachments = new api.content.attachment.AttachmentsBuilder().
                         addAll(attachmentsArray).
                         build();
-
+    
                     var formContextBuilder = new ContentFormContextBuilder().
                         setSite(this.siteContent).
                         setParentContent(this.parentContent).
@@ -359,16 +385,21 @@ module app.wizard {
                         setAttachments(attachments);
                     formContextBuilder.setShowEmptyFormItemSetOccurrences(this.isItemPersisted());
                     this.formContext = formContextBuilder.build();
+    
+                    this.contentWizardStepForm.layout(this.formContext, content.getContentData(), this.contentType.getForm());
 
-                    this.contentWizardStepForm.layout(this.formContext, contentData, this.contentType.getForm());
-
+                    schemas.forEach((schema: MetadataSchema, index: number) => {
+                        var metadata = content.getMetadata(schema.getMetadataSchemaName());
+                        if (!metadata) {
+                            metadata = new Metadata(schema.getMetadataSchemaName(), new RootDataSet());
+                            content.getAllMetadata().push(metadata);
+                        }
+                        this.schemaStepForms[schema.getMetadataSchemaName().toString()].layout(this.formContext, metadata.getData(), schema.getForm());
+                    });
+    
                     // Must pass FormView from contentWizardStepForm displayNameScriptExecutor, since a new is created for each call to renderExisting
                     this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
-
-                    return wemQ(null);
-
-                }).then(() => {
-
+    
                     if (this.liveFormPanel) {
                         this.doLayoutPage(content);
                         var deferred = wemQ.defer<void>();
@@ -376,6 +407,8 @@ module app.wizard {
                         return deferred.promise;
                     }
                 });
+
+
         }
 
         postLayoutPersisted(existing: Content): wemQ.Promise<void> {
@@ -527,7 +560,7 @@ module app.wizard {
             viewedContentBuilder.setName(this.resolveContentNameForUpdateReuest());
             viewedContentBuilder.setDisplayName(this.contentWizardHeader.getDisplayName());
             if (this.contentWizardStepForm) {
-                viewedContentBuilder.setData(this.contentWizardStepForm.getContentData());
+                viewedContentBuilder.setData(<api.content.ContentData>this.contentWizardStepForm.getRootDataSet());
             }
 
             viewedContentBuilder.setPage(this.assembleViewedPage());

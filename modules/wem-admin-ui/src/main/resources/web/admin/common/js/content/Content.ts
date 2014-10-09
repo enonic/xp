@@ -15,6 +15,7 @@ module api.content {
             this.data = builder.data;
             this.form = builder.form;
 
+            this.metadata = builder.metadata;
             this.pageObj = builder.pageObj;
         }
 
@@ -103,6 +104,9 @@ module api.content {
 
                 this.data = source.getContentData() ? source.getContentData().clone() : null;
                 this.form = source.getForm();
+
+                this.metadata = source.getAllMetadata().map((metadata: Metadata) => metadata.clone());
+
                 this.pageObj = source.getPage() ? source.getPage().clone() : null;
                 if (this.pageObj) {
 

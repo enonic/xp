@@ -4,7 +4,7 @@ module app.wizard {
     import Form = api.form.Form;
     import FormContext = api.form.FormContext;
     import FormView = api.form.FormView;
-    import ContentData = api.content.ContentData;
+    import RootDataSet = api.data.RootDataSet;
 
     export class ContentWizardStepForm extends BaseContentWizardStepForm {
 
@@ -14,26 +14,26 @@ module app.wizard {
 
         private formView: FormView;
 
-        private contentData: ContentData;
+        private data: RootDataSet;
 
         constructor() {
             super();
         }
 
-        layout(formContext: FormContext, contentData: ContentData, form: Form) {
+        layout(formContext: FormContext, data: RootDataSet, form: Form) {
 
             this.formContext = formContext;
             this.form = form;
-            this.contentData = contentData;
-            this.doLayout(form, contentData);
+            this.data = data;
+            this.doLayout(form, data);
             if (form.getFormItems().length === 0) {
                 this.hide();
             }
         }
 
-        private doLayout(form: Form, contentData: ContentData) {
+        private doLayout(form: Form, data: RootDataSet) {
 
-            this.formView = new FormView(this.formContext, form, contentData);
+            this.formView = new FormView(this.formContext, form, data);
             this.formView.onFocus((event) => {
                 this.notifyFocused(event);
             });
@@ -69,9 +69,9 @@ module app.wizard {
             return this.formView;
         }
 
-        getContentData(): ContentData {
+        getRootDataSet(): RootDataSet {
 
-            return this.contentData;
+            return this.data;
         }
 
         giveFocus(): boolean {

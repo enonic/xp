@@ -5,7 +5,7 @@ import com.enonic.wem.api.schema.metadata.MetadataSchema;
 import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
 import com.enonic.wem.api.schema.metadata.MetadataSchemas;
 
-public final class MetadataSchemaSchemaDaoImpl
+public final class MetadataSchemaDaoImpl
     implements MetadataSchemaDao
 {
     private SchemaRegistry schemaRegistry;

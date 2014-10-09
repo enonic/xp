@@ -29,4 +29,9 @@ public class MetadataSchemaServiceImpl
     {
         return metadataSchemaDao.getAllMetadataSchemas();
     }
+
+    public void setMetadataSchemaDao( final MetadataSchemaDao metadataSchemaDao )
+    {
+        this.metadataSchemaDao = metadataSchemaDao;
+    }
 }

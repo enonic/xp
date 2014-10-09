@@ -31,17 +31,11 @@ module api.module {
         }
 
         static toStringArray(keys: ModuleKey[]): string[] {
-            var stringArray: string[] = [];
-            keys.forEach((key: ModuleKey) => {
-                stringArray.push(key.toString());
-            });
-            return stringArray;
+            return keys.map((key: ModuleKey) => key.toString());
         }
 
         static fromModules(modules: Module[]): ModuleKey[] {
-            return modules.map<ModuleKey>((mod: Module) => {
-                return mod.getModuleKey();
-            });
+            return modules.map<ModuleKey>((mod: Module) => mod.getModuleKey());
         }
 
     }
