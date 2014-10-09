@@ -142,7 +142,9 @@ public final class CoreSchemasProvider
     private static Form createMenuMetadataForm()
     {
         return Form.newForm().
-            addFormItem( Input.newInput().name( "menu" ).
+            addFormItem( Input.newInput().
+                name( "menu" ).
+                label( "Menu" ).
                 inputType( InputTypes.CHECKBOX ).
                 occurrences( 1, 1 ).
                 helpText( "Check this to include this Page in the menu" ).
