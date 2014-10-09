@@ -1,5 +1,21 @@
 .image-canvas {
   overflow: hidden;
+  position: relative;
+
+  &.draggable {
+    cursor: hand;
+    cursor: grab;
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
+    cursor: url(https://mail.google.com/mail/images/2/openhand.cur) 8 8, move;
+
+    &.dragging {
+      cursor: grabbing;
+      cursor: -moz-grabbing;
+      cursor: -webkit-grabbing;
+      cursor: url(https://mail.google.com/mail/images/2/closedhand.cur) 8 8, move;
+    }
+  }
 
   img {
     position: static !important;
