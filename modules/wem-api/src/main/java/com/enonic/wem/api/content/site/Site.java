@@ -3,6 +3,7 @@ package com.enonic.wem.api.content.site;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.DataId;
+import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.module.ModuleKey;
 
@@ -19,9 +20,14 @@ public final class Site
         return this.getContentData().getProperty( "description" ).getString();
     }
 
-    public ModuleConfig getModuleConfig( final ModuleKey moduleKey )
+    public RootDataSet getModuleConfig( final ModuleKey moduleKey )
     {
-        return this.getModuleConfigs().get( moduleKey );
+        final ModuleConfig moduleConfig = this.getModuleConfigs().get( moduleKey );
+        if ( moduleConfig == null )
+        {
+            return null;
+        }
+        return moduleConfig.getConfig();
     }
 
     public ModuleConfigs getModuleConfigs()
