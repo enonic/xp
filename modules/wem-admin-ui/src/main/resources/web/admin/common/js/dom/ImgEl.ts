@@ -27,6 +27,7 @@ module api.dom {
         }
 
         setSrc(source: string) {
+            this.loaded = false;
             this.getEl().setSrc(source);
         }
 

@@ -37,6 +37,19 @@
             float: right;
         }
 
+        .image-canvas-settings input {
+            float: left;
+        }
+
+        .image-canvas-settings span {
+            float: left;
+            margin-left: 20px;
+        }
+
+        .image-canvas-settings label {
+            clear: left;
+        }
+
         label, input, select {
             display: block;
         }
@@ -70,8 +83,9 @@
 <script type="text/javascript">
 
     var DivEl = api.dom.DivEl,
-        InputEl = api.dom.InputEl,
-        LabelEl = api.dom.LabelEl;
+            InputEl = api.dom.InputEl,
+            LabelEl = api.dom.LabelEl,
+            SpanEl = api.dom.SpanEl;
 
     // create markup
     ////////////////////////////////////////////
@@ -136,10 +150,43 @@
     imageCanvasSettings.appendChild(new LabelEl('Image width', imageWidthInput));
     imageCanvasSettings.appendChild(imageWidthInput);
 
+    var imageWidthSpan = new SpanEl();
+    imageCanvas.onWidthChanged(function (width) {
+        imageWidthSpan.setHtml(width);
+    });
+    imageCanvasSettings.appendChild(imageWidthSpan);
+
     var imageZoomInput = new InputEl(null, 'number').setName('image-zoom').setId('image-zoom');
     imageZoomInput.getEl().setAttribute('min', '100');
     imageCanvasSettings.appendChild(new LabelEl('Image zoom', imageZoomInput));
     imageCanvasSettings.appendChild(imageZoomInput);
+
+    var imageZoomSpan = new SpanEl();
+    imageCanvas.onZoomChanged(function (zoom) {
+        imageZoomSpan.setHtml(zoom);
+        imageZoomInput.setValue(zoom);
+    });
+    imageCanvasSettings.appendChild(imageZoomSpan);
+
+    var imagePanLeftInput = new InputEl(null, 'number').setName('image-pan-left').setId('image-pan-left');
+    imageCanvasSettings.appendChild(new LabelEl('Pan left', imagePanLeftInput));
+    imageCanvasSettings.appendChild(imagePanLeftInput);
+    var imagePanLeftSpan = new SpanEl();
+    imageCanvas.onPanChanged(function (x, y) {
+        imagePanLeftSpan.setHtml(x);
+        imagePanLeftInput.setValue(x);
+    });
+    imageCanvasSettings.appendChild(imagePanLeftSpan);
+
+    var imagePanTopInput = new InputEl(null, 'number').setName('image-pan-top').setId('image-pan-top');
+    imageCanvasSettings.appendChild(new LabelEl('Pan top', imagePanTopInput));
+    imageCanvasSettings.appendChild(imagePanTopInput);
+    var imagePanTopSpan = new SpanEl();
+    imageCanvas.onPanChanged(function (x, y) {
+        imagePanTopSpan.setHtml(y);
+        imagePanTopInput.setValue(y);
+    });
+    imageCanvasSettings.appendChild(imagePanTopSpan);
 
     // setup listeners
     ////////////////////////////////////////////////////
@@ -148,9 +195,19 @@
         displayArea.getHTMLElement().style.backgroundColor = backgroundInput.getValue();
     });
 
+    var loadHandler = function () {
+        var width = image.getEl().getWidth();
+        imageCanvas.setWidth(width);
+        imageWidthInput.setValue(width);
+    };
     imageSelect.onChange(function () {
+        image.getEl().setWidth('auto');
         image.setSrc(imageSelect.getValue());
-        imageWidthInput.setValue(image.getEl().getWidth());
+        if (image.isLoaded()) {
+            loadHandler();
+        } else {
+            image.onLoaded(loadHandler);
+        }
     });
 
     positionLeftInput.onInput(function () {
@@ -176,6 +233,11 @@
         imageCanvas.setEnabled(enableCanvasCheckbox.getHTMLElement()["checked"]);
         if (imageCanvas.isEnabled()) {
             imageCanvas.getEl().setTopPx(positionTopInput.getValue()).setLeftPx(positionLeftInput.getValue());
+        } else {
+            imageWidthSpan.setHtml('');
+            imageZoomSpan.setHtml('');
+            imagePanLeftSpan.setHtml('');
+            imagePanTopSpan.setHtml('');
         }
     });
 
@@ -189,10 +251,18 @@
     });
     imageZoomInput.setValue(100);
 
+    imagePanLeftInput.onInput(function () {
+        imageCanvas.setPan(imagePanLeftInput.getValue(), imageCanvas.getPan().y);
+    });
+    imagePanLeftInput.setValue(0);
+
+    imagePanTopInput.onInput(function () {
+        imageCanvas.setPan(imageCanvas.getPan().x, imagePanTopInput.getValue());
+    });
+    imagePanTopInput.setValue(0);
+
 
 </script>
-
-
 
 
 </body>

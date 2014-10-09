@@ -783,6 +783,14 @@ module api.dom {
             this.getEl().removeEventListener("mousemove", listener);
         }
 
+        onMouseWheel(listener: (event: JQueryEventObject) => void) {
+            wemjq(this.getHTMLElement()).bind("mousewheel", listener);
+        }
+
+        unMouseWheel(listener: (event: JQueryEventObject) => void) {
+            wemjq(this.getHTMLElement()).unbind("mousewheel", listener);
+        }
+
         onTouchStart(listener: (event: MouseEvent) => void) {
             this.getEl().addEventListener("touchstart", listener);
         }
