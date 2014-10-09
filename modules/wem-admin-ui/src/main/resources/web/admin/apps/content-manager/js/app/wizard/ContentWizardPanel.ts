@@ -245,20 +245,19 @@ module app.wizard {
 
         private createSteps(): wemQ.Promise<MetadataSchema[]> {
 
-            return new api.module.ListModulesRequest().sendAndParse().
+            var modulePromises = this.siteContent.getModuleKeys().map((key: ModuleKey) => new api.module.GetModuleRequest(key).sendAndParse());
+            return wemQ.all(modulePromises).
                 then((modules: Module[]) => {
-                    var siteModuleKeys = ModuleKey.toStringArray(this.siteContent.getModuleKeys());
                     var schemaNames: string[] = [];
-                    modules.filter((mdl: Module) => (siteModuleKeys.indexOf(mdl.getModuleKey().toString()) >= 0)).
-                        forEach((mdl: Module) => {
-                            var uniqNames = mdl.getMetadataSchemaDependencies().
-                                map((name: MetadataSchemaName) => name.toString()).
-                                filter((name: string) => schemaNames.indexOf(name) < 0);
-                            Array.prototype.push.apply(schemaNames, uniqNames);
-                        });
+                    modules.forEach((mdl: Module) => {
+                        var moduleSchemaNames = mdl.getMetadataSchemaDependencies().map((name: MetadataSchemaName) => name.toString()),
+                            uniqNames = moduleSchemaNames.filter((name: string) => schemaNames.indexOf(name) < 0);
+                        Array.prototype.push.apply(schemaNames, uniqNames);
+                    });
 
-                    var requests = schemaNames.map((name: string) => new GetMetadataSchemaRequest(new MetadataSchemaName(name)));
-                    return wemQ.all(<wemQ.Promise<MetadataSchema>[]>requests.map((request: GetMetadataSchemaRequest) => request.sendAndParse()));
+
+                    var metadataSchemaPromises = schemaNames.map((name: string) => new GetMetadataSchemaRequest(new MetadataSchemaName(name)).sendAndParse());
+                    return wemQ.all(metadataSchemaPromises);
                 }).then((schemas: MetadataSchema[]) => {
                     var steps: WizardStep[] = [];
 

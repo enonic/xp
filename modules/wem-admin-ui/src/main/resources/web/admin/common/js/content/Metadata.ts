@@ -3,7 +3,7 @@ module api.content {
     import MetadataSchemaName = api.schema.metadata.MetadataSchemaName;
     import RootDataSet = api.data.RootDataSet;
 
-    export class Metadata {
+    export class Metadata implements api.Cloneable {
 
         private name: MetadataSchemaName;
 
