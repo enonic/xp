@@ -1,6 +1,6 @@
 module api.ui.form {
 
-    export class Form extends api.ui.panel.Panel {
+    export class Form extends api.dom.DivEl {
 
         private formEl: api.dom.FormEl;
 

@@ -112,6 +112,10 @@ module app.wizard.page.contextwindow {
                 this.stopDrag(dragListener);
                 ResponsiveManager.fireResizeEvent();
             });
+
+            app.wizard.ShowLiveEditEvent.on(() => {
+                this.show();
+            })
         }
 
         private splitterWithinBoundaries(offset: number) {
@@ -149,6 +153,7 @@ module app.wizard.page.contextwindow {
             this.getEl().setRight("0px");
             this.shown = true;
             this.updateFrameSize();
+            this.getDeck().show();
         }
 
         public showInspectionPanel(panel: BaseInspectionPanel) {

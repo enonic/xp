@@ -283,7 +283,6 @@ module app.wizard.page {
         }
 
         loadPage() {
-            console.log("LOADING PAGE");
             if (this.pageSkipReload == false && !this.pageLoading) {
                 this.pageLoading = true;
                 this.liveEditPage.load(this.content);
