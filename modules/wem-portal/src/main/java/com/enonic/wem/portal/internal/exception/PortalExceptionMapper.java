@@ -86,12 +86,19 @@ public final class PortalExceptionMapper
 
         if ( cause != null )
         {
-            str = cause.getMessage();
+            str = cause.getMessage() + " (" + cause.getClass().getName() + ")";
         }
 
         if ( str == null )
         {
-            str = status.getReasonPhrase();
+            if ( cause != null )
+            {
+                str = cause.getClass().getName();
+            }
+            else
+            {
+                str = status.getReasonPhrase();
+            }
         }
 
         return str;
