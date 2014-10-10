@@ -245,7 +245,8 @@ module app.wizard {
 
         private createSteps(): wemQ.Promise<MetadataSchema[]> {
 
-            var modulePromises = this.site.getModuleKeys().map((key: ModuleKey) => new api.module.GetModuleRequest(key).sendAndParse());
+            var moduleKeys = this.site ? this.site.getModuleKeys() : [];
+            var modulePromises = moduleKeys.map((key: ModuleKey) => new api.module.GetModuleRequest(key).sendAndParse());
             return wemQ.all(modulePromises).
                 then((modules: Module[]) => {
                     var schemaNames: string[] = [];
@@ -328,8 +329,7 @@ module app.wizard {
                     ConfirmationDialog.get().
                         setQuestion("Received Content from server differs from what you have. Would you like to load changes from server?").
                         setYesCallback(() => this.doLayoutPersistedItem(persistedContent.clone())).
-                        setNoCallback(() => {/* Do nothing... */
-                        }).
+                        setNoCallback(() => {/* Do nothing... */}).
                         show();
                 }
 
