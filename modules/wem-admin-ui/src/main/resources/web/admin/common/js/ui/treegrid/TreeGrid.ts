@@ -533,12 +533,13 @@ module api.ui.treegrid {
         }
 
         // Soft reset, that saves node status
-        refresh(): void {
+        refresh(node?: TreeNode<DATA>): void {
             var root = this.stash || this.root;
 
             this.active = false;
 
-            root.regenerateIds();
+            node = node || root;
+            node.regenerateIds();
 
             root.setExpanded(true);
             this.initData(root.treeToList());
@@ -581,11 +582,20 @@ module api.ui.treegrid {
 
         appendNode(data: DATA): void {
             var root = this.stash || this.root;
-            root.addChild(this.dataToTreeNode(data, root));
+            var parentNode: TreeNode<DATA>;
+            if (this.getSelectedNodes() && this.getSelectedNodes().length == 1) {
+                parentNode = this.getSelectedNodes()[0];
+            } else {
+                parentNode = root;
+            }
+            parentNode.addChild(this.dataToTreeNode(data, root));
             var node = root.findNode(this.getDataId(data));
             if (node) {
-                this.gridData.insertItem(this.gridData.getLength(), node);
+                this.gridData.setItems(root.treeToList());
                 this.notifyDataChanged(new DataChangedEvent<DATA>([node], DataChangedEvent.ACTION_ADDED));
+                if (parentNode != root) {
+                    this.updateSelectedNode(parentNode);
+                }
             }
         }
 
@@ -684,6 +694,14 @@ module api.ui.treegrid {
                 this.resetAndRender();
                 this.active = true;
             }, 350);
+        }
+
+        private updateSelectedNode(node: TreeNode<DATA>) {
+            this.updateDataChildrenStatus(node);
+            this.getGrid().clearSelection();
+            this.refresh(node);
+            var row = this.gridData.getRowById(node.getId());
+            this.grid.selectRow(row);
         }
 
         private collapseNode(node: TreeNode<DATA>) {
@@ -871,6 +889,9 @@ module api.ui.treegrid {
             this.grid.syncGridSelection(false);
             this.grid.invalidateAllRows();
             this.grid.renderGrid();
+        }
+
+        updateDataChildrenStatus(parentNode: TreeNode<DATA>) {
         }
     }
 }

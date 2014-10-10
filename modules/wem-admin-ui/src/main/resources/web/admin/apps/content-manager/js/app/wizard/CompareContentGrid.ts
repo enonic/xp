@@ -5,6 +5,7 @@ module app.wizard {
 
     import ContentResponse = api.content.ContentResponse;
     import ContentSummary = api.content.ContentSummary;
+    import ContentSummaryBuilder = api.content.ContentSummaryBuilder;
     import ContentSummaryViewer = api.content.ContentSummaryViewer;
 
     import TreeGrid = api.ui.treegrid.TreeGrid;
@@ -58,6 +59,13 @@ module app.wizard {
 
         getDataId(data: ContentSummaryAndCompareStatus): string {
             return data.getId();
+        }
+
+        updateDataChildrenStatus(parentNode: TreeNode<ContentSummaryAndCompareStatus>) {
+            var hasChildren = parentNode.hasChildren();
+            parentNode.getData().setContentSummary(new ContentSummaryBuilder(parentNode.getData().getContentSummary()).
+                setHasChildren(hasChildren).
+                build());
         }
     }
 }

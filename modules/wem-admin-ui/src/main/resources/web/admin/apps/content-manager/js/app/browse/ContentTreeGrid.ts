@@ -14,6 +14,7 @@ module app.browse {
 
     import ContentResponse = api.content.ContentResponse;
     import ContentSummary = api.content.ContentSummary;
+    import ContentSummaryBuilder = api.content.ContentSummaryBuilder;
     import ContentSummaryViewer = api.content.ContentSummaryViewer;
     import CompareContentRequest = api.content.CompareContentRequest;
     import CompareContentResults = api.content.CompareContentResults;
@@ -179,8 +180,11 @@ module app.browse {
         }
 
         fetch(node: TreeNode<ContentSummaryAndCompareStatus>): wemQ.Promise<ContentSummaryAndCompareStatus> {
-            var contentId = node.getData().getId();
-            return ContentSummaryAndCompareStatusFetcher.fetch(contentId);
+            return this.fetchById(node.getData().getId());
+        }
+
+        private fetchById(id: string): wemQ.Promise<ContentSummaryAndCompareStatus> {
+            return ContentSummaryAndCompareStatusFetcher.fetch(id);
         }
 
         fetchChildren(parentNode?: TreeNode<ContentSummaryAndCompareStatus>): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
@@ -223,5 +227,21 @@ module app.browse {
             return data.getId();
         }
 
+        appendContentNode(content: api.content.Content) {
+
+            this.fetchById(content.getId())
+                .then((data: ContentSummaryAndCompareStatus) => {
+                    this.appendNode(data);
+                }).catch((reason: any) => {
+                    api.DefaultErrorHandler.handle(reason);
+                });
+        }
+
+        updateDataChildrenStatus(parentNode: TreeNode<ContentSummaryAndCompareStatus>) {
+            var hasChildren = parentNode.hasChildren();
+            parentNode.getData().setContentSummary(new ContentSummaryBuilder(parentNode.getData().getContentSummary()).
+                setHasChildren(hasChildren).
+                build());
+        }
     }
 }
