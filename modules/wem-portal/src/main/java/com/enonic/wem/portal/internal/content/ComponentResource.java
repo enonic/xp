@@ -65,7 +65,7 @@ public final class ComponentResource
         }
 
         final Content effectiveContent;
-        if ( !content.hasPage() )
+        if ( !content.hasPage() || !content.getPage().hasRegions() )
         {
             effectiveContent = Content.newContent( content ).
                 page( pageTemplate.getPage() ).
