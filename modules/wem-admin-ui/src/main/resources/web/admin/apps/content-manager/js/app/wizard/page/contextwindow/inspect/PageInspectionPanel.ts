@@ -4,6 +4,7 @@ module app.wizard.page.contextwindow.inspect {
     import FormContextBuilder = api.form.FormContextBuilder;
     import FormView = api.form.FormView;
     import Content = api.content.Content;
+    import Page = api.content.page.Page;
     import Site = api.content.site.Site;
     import ContentTypeName = api.schema.content.ContentTypeName;
     import PageTemplate = api.content.page.PageTemplate;
@@ -32,20 +33,18 @@ module app.wizard.page.contextwindow.inspect {
 
         private pageTemplateSelectorForm: api.ui.form.Form;
 
-        private pageTemplateConfigForm: FormView;
+        private configForm: FormView;
 
         private pageControllerSelectorForm: api.ui.form.Form;
 
         private pageControllerDropdown: PageDescriptorDropdown;
-
-        private pageControllerConfigForm: FormView;
 
         private pageControllerChangedListeners: {(event: PageControllerChangedEvent): void;}[] = [];
 
         constructor(config: PageInspectionPanelConfig) {
             super();
             this.site = config.site;
-            this.pageTemplateConfigForm = null;
+            this.configForm = null;
             this.pageTemplateSelectorForm = this.buildPageTemplateForm(config);
             this.pageTemplateSelectorForm.hide();
             this.pageControllerSelectorForm = this.buildPageControllerForm();
@@ -65,30 +64,29 @@ module app.wizard.page.contextwindow.inspect {
             return form;
         }
 
-        setPage(content: Content, pageTemplate: PageTemplate, pageDescriptor: PageDescriptor, config: RootDataSet) {
+        setPage(content: Content, pageDescriptor: PageDescriptor, page: Page) {
 
             this.content = content;
 
+            this.pageTemplateSelectorForm.hide();
+            this.pageControllerSelectorForm.hide();
+
             if (api.ObjectHelper.iFrameSafeInstanceOf(content, PageTemplate)) {
-                this.pageTemplateSelectorForm.hide();
+
                 this.pageControllerSelectorForm.show();
-                var contentAsPageTemplate = <PageTemplate>content;
-                var optionToSelect: api.ui.selector.Option<PageDescriptor> = null;
-                if (contentAsPageTemplate.getController()) {
-                    optionToSelect = this.pageControllerDropdown.getOptionByValue(contentAsPageTemplate.getController().toString());
+                if (page.getController()) {
+                    var optionToSelect = this.pageControllerDropdown.getOptionByValue(page.getController().toString());
                     if (optionToSelect) {
                         this.pageControllerDropdown.selectOption(optionToSelect, true);
-                        this.refreshPageTemplateConfigForm(pageDescriptor, config);
+                        this.refreshConfigForm(pageDescriptor, page.getConfig());
                     }
                 }
             }
-            else {
-                this.pageControllerSelectorForm.hide();
+            else if (page.getTemplate()) {
 
-                var pageTemplateKey = pageTemplate ? pageTemplate.getKey() : null;
-                this.pageTemplateSelector.setPageTemplate(pageTemplateKey);
+                this.pageTemplateSelector.setPageTemplate(page.getTemplate());
                 this.pageTemplateSelectorForm.show();
-                this.refreshPageTemplateConfigForm(pageDescriptor, config);
+                this.refreshConfigForm(pageDescriptor, page.getConfig());
             }
         }
 
@@ -112,32 +110,18 @@ module app.wizard.page.contextwindow.inspect {
             return form;
         }
 
-        private refreshPageControllerConfigForm(pageDescriptor: PageDescriptor, config: RootDataSet) {
+        private refreshConfigForm(pageDescriptor: PageDescriptor, config: RootDataSet) {
 
-            if (this.pageTemplateConfigForm) {
-                this.removeChild(this.pageTemplateConfigForm);
+            if (this.configForm) {
+                this.removeChild(this.configForm);
             }
 
             if (!pageDescriptor) {
                 return;
             }
 
-            this.pageTemplateConfigForm = new FormView(new FormContextBuilder().build(), pageDescriptor.getConfig(), config);
-            this.appendChild(this.pageTemplateConfigForm);
-        }
-
-        private refreshPageTemplateConfigForm(pageDescriptor: PageDescriptor, config: RootDataSet) {
-
-            if (this.pageTemplateConfigForm) {
-                this.removeChild(this.pageTemplateConfigForm);
-            }
-
-            if (!pageDescriptor) {
-                return;
-            }
-
-            this.pageTemplateConfigForm = new FormView(new FormContextBuilder().build(), pageDescriptor.getConfig(), config);
-            this.appendChild(this.pageTemplateConfigForm);
+            this.configForm = new FormView(new FormContextBuilder().build(), pageDescriptor.getConfig(), config);
+            this.appendChild(this.configForm);
         }
 
         onPageControllerChanged(listener: {(event: PageControllerChangedEvent): void;}) {

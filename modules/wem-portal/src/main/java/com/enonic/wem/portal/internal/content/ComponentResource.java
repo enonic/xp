@@ -10,7 +10,6 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.page.ComponentPath;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageComponent;
-import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.module.ModuleKey;
@@ -46,26 +45,38 @@ public final class ComponentResource
 
         final Site site = getSite( content );
         final PageTemplate pageTemplate;
-        final PageRegions pageRegions;
 
-        if ( !content.hasPage() )
+        if ( content.isPageTemplate() )
+        {
+            pageTemplate = (PageTemplate) content;
+        }
+        else if ( !content.hasPage() )
         {
             pageTemplate = getDefaultPageTemplate( content.getType(), site );
             if ( pageTemplate == null )
             {
-                throw notFound( "Page not found." );
+                throw notFound( "No template found for content" );
             }
-
-            pageRegions = pageTemplate.getRegions();
         }
         else
         {
             final Page page = getPage( content );
             pageTemplate = getPageTemplate( page );
-            pageRegions = resolvePageRegions( page, pageTemplate );
         }
 
-        final PageComponent component = pageRegions.getComponent( componentPath );
+        final Content effectiveContent;
+        if ( !content.hasPage() )
+        {
+            effectiveContent = Content.newContent( content ).
+                page( pageTemplate.getPage() ).
+                build();
+        }
+        else
+        {
+            effectiveContent = content;
+        }
+
+        final PageComponent component = effectiveContent.getPage().getRegions().getComponent( componentPath );
         if ( component == null )
         {
             throw notFound( "Pate component for [%s] not found", componentPath );
@@ -74,7 +85,7 @@ public final class ComponentResource
         final Renderer<PageComponent, PortalContext> renderer = this.rendererFactory.getRenderer( component );
 
         final ModuleKey moduleKey = pageTemplate.getController().getModuleKey();
-        final PortalContextImpl context = createContext( content, component, site, moduleKey );
+        final PortalContextImpl context = createContext( effectiveContent, component, site, moduleKey );
         final RenderResult result = renderer.render( component, context );
 
         return toResponse( result );
@@ -98,17 +109,5 @@ public final class ComponentResource
         context.setRequest( jsRequest );
 
         return context;
-    }
-
-    private static PageRegions resolvePageRegions( final Page page, final PageTemplate template )
-    {
-        if ( page.hasRegions() )
-        {
-            return page.getRegions();
-        }
-        else
-        {
-            return template.getRegions();
-        }
     }
 }

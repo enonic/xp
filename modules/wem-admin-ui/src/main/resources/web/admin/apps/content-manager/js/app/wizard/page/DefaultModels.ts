@@ -38,7 +38,7 @@ module app.wizard.page {
         }
 
         getPageTemplate(): PageTemplate {
-            return this.pageTemplate;
+            return this.pageTemplate.clone();
         }
 
         getPartDescriptor(): PartDescriptor {
