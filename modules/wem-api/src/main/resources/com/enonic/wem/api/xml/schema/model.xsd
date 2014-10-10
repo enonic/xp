@@ -45,6 +45,9 @@
   <!-- Page component element -->
   <xsd:element name="page-component" type="pageDescriptor"/>
 
+  <!-- Node element -->
+  <xsd:element name="node" type="node"/>
+
   <!-- Form schema -->
   <xsd:complexType name="formItem" abstract="true">
     <xsd:attribute name="name" type="xsd:string" use="required"/>
@@ -308,6 +311,58 @@
 
   <xsd:complexType name="regionDescriptor">
     <xsd:attribute name="name" type="xsd:string" use="required"/>
+  </xsd:complexType>
+
+  <!-- Node schema -->
+  <xsd:simpleType name="dataPropertyType">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="Boolean" />
+      <xsd:enumeration value="String" />
+      <xsd:enumeration value="Data" />
+      <xsd:enumeration value="HtmlPart" />
+      <xsd:enumeration value="Double" />
+      <xsd:enumeration value="Long" />
+      <xsd:enumeration value="Xml" />
+      <xsd:enumeration value="LocalDate" />
+      <xsd:enumeration value="LocalDateTime" />
+      <xsd:enumeration value="LocalTime" />
+      <xsd:enumeration value="DateTime" />
+      <xsd:enumeration value="ContentId" />
+      <xsd:enumeration value="GeoPoint" />
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:complexType name="dataProperty">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+        <xsd:attribute name="name" type="xsd:string" use="required" />
+        <xsd:attribute name="type" type="dataPropertyType" use="required" />
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="dataSet">
+    <xsd:choice minOccurs="0" maxOccurs="unbounded">
+      <xsd:annotation>
+        <xsd:appinfo>
+          <jaxb:property name="Properties"/>
+        </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:element name="property" type="dataProperty" minOccurs="1" maxOccurs="1" />
+      <xsd:element name="property-set" type="dataSet"/>
+    </xsd:choice>
+    <xsd:attribute name="name" type="xsd:string" use="required" />
+  </xsd:complexType>
+
+  <xsd:complexType name="node">
+    <xsd:all>
+      <xsd:element name="id" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="created-time" type="xsd:dateTime" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="modified-time" type="xsd:dateTime" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="creator" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="modifier" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="data" type="dataSet" minOccurs="0" maxOccurs="1"/>
+    </xsd:all>
   </xsd:complexType>
 
 </xsd:schema>
