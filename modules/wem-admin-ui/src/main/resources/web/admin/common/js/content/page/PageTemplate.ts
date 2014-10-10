@@ -14,6 +14,26 @@ module api.content.page {
             return <PageTemplateKey>this.getContentId();
         }
 
+        getController(): DescriptorKey {
+
+            return this.getPage().getController();
+        }
+
+        isCanRender(pattern: ContentTypeName): boolean {
+            return this.getCanRender().some((name: ContentTypeName) => {
+                return name.equals(pattern);
+            });
+        }
+
+        getCanRender(): ContentTypeName[] {
+
+            var contentTypeNames: api.schema.content.ContentTypeName[] = [];
+            this.getContentData().getPropertiesByName("supports").forEach((property: api.data.Property) => {
+                contentTypeNames.push(new ContentTypeName(property.getString()));
+            });
+            return contentTypeNames;
+        }
+
         hasRegions(): boolean {
             return this.getPage().hasRegions();
         }
@@ -26,26 +46,6 @@ module api.content.page {
             return this.getPage().getConfig();
         }
 
-        getCanRender(): ContentTypeName[] {
-
-            var contentTypeNames: api.schema.content.ContentTypeName[] = [];
-            this.getContentData().getPropertiesByName("supports").forEach((property: api.data.Property) => {
-                contentTypeNames.push(new ContentTypeName(property.getString()));
-            });
-            return contentTypeNames;
-        }
-
-        getDescriptorKey(): DescriptorKey {
-
-            return DescriptorKey.fromString(this.getContentData().getProperty("controller").getString());
-        }
-
-        isCanRender(pattern: ContentTypeName): boolean {
-            return this.getCanRender().some((name: ContentTypeName) => {
-                return name.equals(pattern);
-            });
-        }
-
         equals(o: api.Equitable): boolean {
 
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, PageTemplate)) {
@@ -53,6 +53,15 @@ module api.content.page {
             }
 
             return super.equals(o);
+        }
+
+        clone(): PageTemplate {
+
+            return this.newBuilder().build();
+        }
+
+        newBuilder(): PageTemplateBuilder {
+            return new PageTemplateBuilder(this);
         }
     }
 

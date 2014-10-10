@@ -13,7 +13,6 @@ import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageService;
 import com.enonic.wem.api.content.page.PageTemplate;
-import com.enonic.wem.api.content.page.PageTemplateFormDataBuilder;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.schema.content.ContentTypeForms;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -97,7 +96,6 @@ class CreatePageTemplateCommand
     {
         final ContentData data = new ContentData();
         new PageTemplateFormDataBuilder().
-            controller( controller ).
             supports( supports ).
             appendData( data );
 
@@ -112,6 +110,7 @@ class CreatePageTemplateCommand
 
         return (PageTemplate) pageService.create( new CreatePageParams().
             content( content.getId() ).
+            controller( controller ).
             config( pageConfig ).
             regions( pageRegions ) );
     }

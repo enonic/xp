@@ -4,9 +4,9 @@ module app.wizard.page.contextwindow.inspect {
 
         private namesAndIconView: api.app.NamesAndIconView;
 
-        private defaultPageTemplateIconUrl:string;
+        private defaultPageTemplateIconUrl: string;
 
-        private pageTemplateIconUrl:string;
+        private pageTemplateIconUrl: string;
 
         constructor() {
             super();
@@ -22,7 +22,7 @@ module app.wizard.page.contextwindow.inspect {
             if (pageTemplate) {
                 this.namesAndIconView.
                     setMainName(pageTemplate.getDisplayName()).
-                    setSubName(pageTemplate.getDescriptorKey().toString()).
+                    setSubName(pageTemplate.getController().toString()).
                     setIconClass("icon-newspaper icon-large");
             }
             else {

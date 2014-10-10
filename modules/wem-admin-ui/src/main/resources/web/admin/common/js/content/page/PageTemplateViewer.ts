@@ -14,7 +14,7 @@ module api.content.page {
         setObject(pageTemplate: PageTemplate) {
             super.setObject(pageTemplate);
             this.namesAndIconView.setMainName(pageTemplate.getDisplayName()).
-                setSubName(pageTemplate.getDescriptorKey().toString());
+                setSubName(pageTemplate.getController().toString());
         }
 
         getPreferredHeight(): number {

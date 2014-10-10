@@ -32,6 +32,7 @@ final class CreatePageCommand
     public Content execute()
     {
         final Page page = newPage().
+            controller( this.params.getController() ).
             template( this.params.getPageTemplate() ).
             config( this.params.getConfig() ).
             regions( this.params.getRegions() ).

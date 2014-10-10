@@ -32,7 +32,7 @@ module api.content.page {
             var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
             namesAndIconView.setIconClass("icon-newspaper icon-large")
                 .setMainName(this.pageTemplate.getDisplayName())
-                .setSubName(this.pageTemplate.getDescriptorKey().toString());
+                .setSubName(this.pageTemplate.getController().toString());
 
             var removeButtonEl = new api.dom.AEl("remove");
             removeButtonEl.onClicked((event: MouseEvent) => {

@@ -61,13 +61,5 @@ module app.wizard.page.contextwindow.inspect {
         public clearSelection() {
             this.showInspectionPanel(this.noSelectionPanel);
         }
-
-        onPageTemplateChanged(listener: {(event: PageTemplateChangedEvent): void;}) {
-            this.pageInspectionPanel.onPageTemplateChanged(listener);
-        }
-
-        unPageTemplateChanged(listener: {(event: PageTemplateChangedEvent): void;}) {
-            this.pageInspectionPanel.unPageTemplateChanged(listener);
-        }
     }
 }

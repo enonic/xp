@@ -9,6 +9,7 @@ import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.data.DataJson;
 import com.enonic.wem.api.data.RootDataSetJson;
 
+@SuppressWarnings("UnusedDeclaration")
 public final class PageJson
 {
     private final Page page;
@@ -22,6 +23,11 @@ public final class PageJson
         this.page = page;
         this.regionsJson = page.hasRegions() ? new PageRegionsJson( page.getRegions() ) : null;
         this.configJson = page.hasConfig() ? new RootDataSetJson( page.getConfig() ) : null;
+    }
+
+    public String getController()
+    {
+        return page.hasController() ? page.getController().toString() : null;
     }
 
     public String getTemplate()

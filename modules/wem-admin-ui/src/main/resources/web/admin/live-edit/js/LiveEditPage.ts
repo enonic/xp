@@ -2,6 +2,7 @@ module LiveEdit {
 
     import RootDataSet = api.data.RootDataSet;
     import PageComponent = api.content.page.PageComponent;
+    import Page = api.content.page.Page;
     import PageRegions = api.content.page.PageRegions;
     import Region = api.content.page.region.Region;
     import PageComponentType = api.content.page.PageComponentType;
@@ -33,7 +34,7 @@ module LiveEdit {
 
         private pageView: PageView;
 
-        private pageRegions: PageRegions;
+        private page: Page;
 
         private highlighter: LiveEdit.ui.Highlighter;
 
@@ -57,10 +58,10 @@ module LiveEdit {
                 //el.setDraggable(false);
                 //});
 
-                this.pageRegions = event.getPageRegions();
+                this.page = event.getPage();
                 this.pageView = new PageView(new PageViewBuilder().
                     setItemViewProducer(new ItemViewIdProducer()).
-                    setPageRegions(event.getPageRegions()).
+                    setPage(event.getPage()).
                     setContent(event.getContent()).
                     setElement(body));
 

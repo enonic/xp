@@ -1,5 +1,8 @@
 module api.ui.panel {
 
+    /**
+     * Use Panel when you need a container that needs 100% height.
+     */
     export class Panel extends api.dom.DivEl {
 
         private doOffset: boolean;

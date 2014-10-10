@@ -48,7 +48,7 @@ module app.wizard {
 
         private parentContent: Content;
 
-        private siteContent: Site;
+        private site: Site;
 
         private contentType: ContentType;
 
@@ -100,7 +100,7 @@ module app.wizard {
 
             this.persistAsDraft = true;
             this.parentContent = params.parentContent;
-            this.siteContent = params.site;
+            this.site = params.site;
             this.contentType = params.contentType;
             this.displayNameScriptExecutor = new DisplayNameScriptExecutor();
             this.contentWizardHeader = new WizardHeaderWithDisplayNameAndNameBuilder().
@@ -157,7 +157,7 @@ module app.wizard {
             );
             this.schemaStepForms = {};
 
-            var isSiteOrWithinSite = this.siteContent || this.createSite;
+            var isSiteOrWithinSite = this.site || this.createSite;
             var hasPageTemplate = params.defaultModels && params.defaultModels.hasPageTemplate();
             var hasSiteAndPageTemplate = isSiteOrWithinSite && hasPageTemplate;
             var isPageTemplate = this.contentType.getContentTypeName().isPageTemplate();
@@ -165,7 +165,7 @@ module app.wizard {
 
                 this.liveFormPanel = new page.LiveFormPanel(<page.LiveFormPanelConfig> {
                     contentWizardPanel: this,
-                    site: this.siteContent,
+                    site: this.site,
                     contentType: this.contentType.getContentTypeName(),
                     defaultModels: params.defaultModels
                 });
@@ -245,7 +245,7 @@ module app.wizard {
 
         private createSteps(): wemQ.Promise<MetadataSchema[]> {
 
-            var modulePromises = this.siteContent.getModuleKeys().map((key: ModuleKey) => new api.module.GetModuleRequest(key).sendAndParse());
+            var modulePromises = this.site.getModuleKeys().map((key: ModuleKey) => new api.module.GetModuleRequest(key).sendAndParse());
             return wemQ.all(modulePromises).
                 then((modules: Module[]) => {
                     var schemaNames: string[] = [];
@@ -328,7 +328,8 @@ module app.wizard {
                     ConfirmationDialog.get().
                         setQuestion("Received Content from server differs from what you have. Would you like to load changes from server?").
                         setYesCallback(() => this.doLayoutPersistedItem(persistedContent.clone())).
-                        setNoCallback(() => {/* Do nothing... */}).
+                        setNoCallback(() => {/* Do nothing... */
+                        }).
                         show();
                 }
 
@@ -373,39 +374,40 @@ module app.wizard {
             return wemQ.all(parallelPromises).
                 spread<void>((attachmentsArray: api.content.attachment.Attachment[], schemas: MetadataSchema[]) => {
 
-                    var attachments = new api.content.attachment.AttachmentsBuilder().
-                        addAll(attachmentsArray).
-                        build();
-    
-                    var formContextBuilder = new ContentFormContextBuilder().
-                        setSite(this.siteContent).
-                        setParentContent(this.parentContent).
-                        setPersistedContent(content).
-                        setAttachments(attachments);
-                    formContextBuilder.setShowEmptyFormItemSetOccurrences(this.isItemPersisted());
-                    this.formContext = formContextBuilder.build();
-    
-                    this.contentWizardStepForm.layout(this.formContext, content.getContentData(), this.contentType.getForm());
+                var attachments = new api.content.attachment.AttachmentsBuilder().
+                    addAll(attachmentsArray).
+                    build();
 
-                    schemas.forEach((schema: MetadataSchema, index: number) => {
-                        var metadata = content.getMetadata(schema.getMetadataSchemaName());
-                        if (!metadata) {
-                            metadata = new Metadata(schema.getMetadataSchemaName(), new RootDataSet());
-                            content.getAllMetadata().push(metadata);
-                        }
-                        this.schemaStepForms[schema.getMetadataSchemaName().toString()].layout(this.formContext, metadata.getData(), schema.getForm());
-                    });
-    
-                    // Must pass FormView from contentWizardStepForm displayNameScriptExecutor, since a new is created for each call to renderExisting
-                    this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
-    
-                    if (this.liveFormPanel) {
-                        this.doLayoutPage(content);
-                        var deferred = wemQ.defer<void>();
-                        deferred.resolve(null);
-                        return deferred.promise;
+                var formContextBuilder = new ContentFormContextBuilder().
+                    setSite(this.site).
+                    setParentContent(this.parentContent).
+                    setPersistedContent(content).
+                    setAttachments(attachments);
+                formContextBuilder.setShowEmptyFormItemSetOccurrences(this.isItemPersisted());
+                this.formContext = formContextBuilder.build();
+
+                this.contentWizardStepForm.layout(this.formContext, content.getContentData(), this.contentType.getForm());
+
+                schemas.forEach((schema: MetadataSchema, index: number) => {
+                    var metadata = content.getMetadata(schema.getMetadataSchemaName());
+                    if (!metadata) {
+                        metadata = new Metadata(schema.getMetadataSchemaName(), new RootDataSet());
+                        content.getAllMetadata().push(metadata);
                     }
+                    this.schemaStepForms[schema.getMetadataSchemaName().toString()].layout(this.formContext, metadata.getData(),
+                        schema.getForm());
                 });
+
+                // Must pass FormView from contentWizardStepForm displayNameScriptExecutor, since a new is created for each call to renderExisting
+                this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
+
+                if (this.liveFormPanel) {
+                    this.doLayoutPage(content);
+                    var deferred = wemQ.defer<void>();
+                    deferred.resolve(null);
+                    return deferred.promise;
+                }
+            });
 
 
         }
@@ -449,7 +451,7 @@ module app.wizard {
             var deferred = wemQ.defer<void>();
 
             if (persistedContent.isSite()) {
-                this.siteContent = <Site>persistedContent;
+                this.site = <Site>persistedContent;
             }
 
             deferred.resolve(null);
@@ -572,28 +574,7 @@ module app.wizard {
                 return null;
             }
 
-            if (this.contentType.isPageTemplate()) {
-
-                var pageTemplateKey = this.liveFormPanel.getPageTemplate();
-
-                var viewedPageBuilder = new PageBuilder();
-                viewedPageBuilder.setTemplate(pageTemplateKey);
-                viewedPageBuilder.setConfig(this.liveFormPanel.getConfig());
-                viewedPageBuilder.setRegions(this.liveFormPanel.getRegions());
-                return viewedPageBuilder.build();
-            }
-            else {
-                var pageTemplateKey = this.liveFormPanel.getPageTemplate();
-                if (!pageTemplateKey) {
-                    return null;
-                }
-
-                var viewedPageBuilder = new PageBuilder();
-                viewedPageBuilder.setTemplate(pageTemplateKey);
-                viewedPageBuilder.setConfig(this.liveFormPanel.getConfig());
-                viewedPageBuilder.setRegions(this.liveFormPanel.getRegions());
-                return viewedPageBuilder.build();
-            }
+            return this.liveFormPanel.getPage();
         }
 
         private resolveContentNameForUpdateReuest(): ContentName {

@@ -68,7 +68,7 @@ public final class ComponentInstruction
         {
             final String name = substringAfter( componentSelector, MODULE_COMPONENT_PREFIX );
             final ComponentName componentName = new ComponentName( name );
-            final ModuleKey currentModule = context.getPageTemplate().getDescriptor().getModuleKey();
+            final ModuleKey currentModule = context.getPageTemplate().getController().getModuleKey();
             component = pageComponentService.getByName( currentModule, componentName );
         }
         return renderPageComponent( context, component );

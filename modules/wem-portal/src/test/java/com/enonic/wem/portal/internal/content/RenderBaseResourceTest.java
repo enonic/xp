@@ -93,19 +93,11 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
     protected final void setupTemplates()
         throws Exception
     {
-        setupTemplates( true );
-    }
-
-    protected final void setupTemplates( final boolean includeDescriptor )
-        throws Exception
-    {
         Mockito.when( this.pageTemplateService.getByKey( Mockito.eq( PageTemplateKey.from( "my-page" ) ) ) ).thenReturn(
-            createPageTemplate( includeDescriptor ) );
+            createPageTemplate() );
 
-        if ( includeDescriptor )
-        {
-            Mockito.when( this.pageDescriptorService.getByKey( Mockito.isA( PageDescriptorKey.class ) ) ).thenReturn( createDescriptor() );
-        }
+        Mockito.when( this.pageDescriptorService.getByKey( Mockito.isA( PageDescriptorKey.class ) ) ).thenReturn( createDescriptor() );
+
     }
 
     private Content createPage( final String id, final String path, final String contentTypeName, final boolean withPage )
@@ -157,7 +149,7 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
             build();
     }
 
-    private PageTemplate createPageTemplate( final boolean includeDescriptor )
+    private PageTemplate createPageTemplate()
     {
         final RootDataSet pageTemplateConfig = new RootDataSet();
         pageTemplateConfig.addProperty( "pause", Value.newLong( 10000 ) );
@@ -175,11 +167,9 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
             regions( pageRegions ).
             config( pageTemplateConfig );
 
-        if ( includeDescriptor )
-        {
-            builder.descriptor( PageDescriptorKey.from( "mainmodule:landing-page" ) );
-        }
+        builder.controller( PageDescriptorKey.from( "mainmodule:landing-page" ) );
 
+        builder.displayName( "Main page emplate" );
         builder.displayName( "Main page emplate" );
         builder.name( "main-page-template" );
         builder.parentPath( ContentPath.ROOT );

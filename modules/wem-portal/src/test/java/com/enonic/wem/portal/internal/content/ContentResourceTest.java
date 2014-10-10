@@ -89,7 +89,7 @@ public class ContentResourceTest
         throws Exception
     {
         setupContentAndSite();
-        setupTemplates( false );
+        setupTemplates();
 
         final RenderResult result = RenderResult.newRenderResult().
             entity( "content rendered" ).

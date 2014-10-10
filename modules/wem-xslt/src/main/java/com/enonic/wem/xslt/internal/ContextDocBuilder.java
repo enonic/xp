@@ -2,7 +2,9 @@ package com.enonic.wem.xslt.internal;
 
 import org.w3c.dom.Document;
 
+import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.page.AbstractRegions;
+import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.layout.LayoutRegions;
 import com.enonic.wem.api.content.page.region.Region;
@@ -33,7 +35,15 @@ final class ContextDocBuilder
         }
         else
         {
-            createRegionElements( builder, context.getPageRegions() );
+            final Content content = context.getContent();
+            if ( content != null )
+            {
+                final Page page = content.getPage();
+                if ( page != null )
+                {
+                    createRegionElements( builder, page.getRegions() );
+                }
+            }
         }
 
         return builder.getDocument();
@@ -41,11 +51,6 @@ final class ContextDocBuilder
 
     private void createRegionElements( final DomBuilder builder, final AbstractRegions regions )
     {
-        if ( regions == null )
-        {
-            return;
-        }
-
         builder.start( "regions" );
         for ( Region region : regions )
         {

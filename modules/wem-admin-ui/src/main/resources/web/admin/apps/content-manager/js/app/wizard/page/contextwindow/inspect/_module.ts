@@ -16,6 +16,7 @@
 ///<reference path='PageTemplateOptions.ts' />
 ///<reference path='PageTemplateSelector.ts' />
 ///<reference path='PageInspectionPanel.ts' />
+///<reference path='PageControllerChangedEvent.ts' />
 
 ///<reference path='InspectionPanel.ts' />
 

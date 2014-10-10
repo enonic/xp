@@ -8,7 +8,6 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 
@@ -41,14 +40,13 @@ public final class PageTemplate
         return getPage().getConfig();
     }
 
-    public PageDescriptorKey getDescriptor()
+    public PageDescriptorKey getController()
     {
-        final Property property = this.getContentData().getProperty( "controller" );
-        if ( property == null || property.hasNullValue() )
+        if ( this.getPage() == null )
         {
             return null;
         }
-        return PageDescriptorKey.from( property.getString() );
+        return this.getPage().getController();
     }
 
     public ContentTypeNames getCanRender()
@@ -112,11 +110,20 @@ public final class PageTemplate
             return this;
         }
 
-        public Builder descriptor( final PageDescriptorKey descriptorKey )
+        public Builder controller( final PageDescriptorKey descriptorKey )
         {
-            final Value value =
-                descriptorKey != null ? Value.newString( descriptorKey.toString() ) : Value.newValue( null, ValueTypes.STRING );
-            this.contentData.setProperty( "controller", value );
+            if ( this.page == null )
+            {
+                this.page = Page.newPage().
+                    controller( descriptorKey ).
+                    build();
+            }
+            else
+            {
+                this.page = Page.newPage( this.page ).
+                    controller( descriptorKey ).
+                    build();
+            }
             return this;
         }
 

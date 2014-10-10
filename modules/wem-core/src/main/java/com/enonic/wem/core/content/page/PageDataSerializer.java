@@ -1,6 +1,7 @@
 package com.enonic.wem.core.content.page;
 
 import com.enonic.wem.api.content.page.Page;
+import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Value;
@@ -9,6 +10,8 @@ import com.enonic.wem.api.support.serializer.AbstractDataSetSerializer;
 public class PageDataSerializer
     extends AbstractDataSetSerializer<Page, Page>
 {
+    public static final String CONTROLLER = "controller";
+
     public static final String PAGE_TEMPLATE = "template";
 
     public static final String PAGE_REGIONS = "regions";
@@ -28,7 +31,8 @@ public class PageDataSerializer
     {
         final DataSet asData = new DataSet( dataSetName );
 
-        asData.addProperty( PAGE_TEMPLATE, Value.newString( page.getTemplate() != null ? page.getTemplate().toString() : null ) );
+        asData.addProperty( CONTROLLER, Value.newString( page.hasController() ? page.getController().toString() : null ) );
+        asData.addProperty( PAGE_TEMPLATE, Value.newString( page.hasTemplate() ? page.getTemplate().toString() : null ) );
 
         if ( page.hasRegions() )
         {
@@ -46,6 +50,10 @@ public class PageDataSerializer
     public Page fromData( final DataSet asData )
     {
         final Page.Builder page = Page.newPage();
+        if ( asData.hasData( CONTROLLER ) && !asData.getProperty( CONTROLLER ).hasNullValue() )
+        {
+            page.controller( PageDescriptorKey.from( asData.getProperty( CONTROLLER ).getString() ) );
+        }
         if ( asData.hasData( PAGE_TEMPLATE ) && !asData.getProperty( PAGE_TEMPLATE ).hasNullValue() )
         {
             page.template( PageTemplateKey.from( asData.getProperty( PAGE_TEMPLATE ).getString() ) );

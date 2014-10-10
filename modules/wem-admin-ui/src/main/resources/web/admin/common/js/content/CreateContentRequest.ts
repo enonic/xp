@@ -99,7 +99,7 @@ module api.content {
         }
 
         private metadataToJson(): api.content.json.MetadataJson[] {
-            return this.metadata.map((metadata: Metadata) => metadata.toJson());
+            return this.metadata ? this.metadata.map((metadata: Metadata) => metadata.toJson()) : null;
         }
 
         private attachmentsToJson(): api.content.attachment.AttachmentJson[] {

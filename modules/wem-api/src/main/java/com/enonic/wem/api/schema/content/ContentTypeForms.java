@@ -29,11 +29,6 @@ public class ContentTypeForms
 
     public static final Form PAGE_TEMPLATE = Form.newForm().
         addFormItem( Input.newInput().
-            name( "controller" ).
-            label( "Controller" ).
-            inputType( InputTypes.PAGE_CONTROLLER ).
-            build() ).
-        addFormItem( Input.newInput().
             name( "supports" ).
             label( "Supports" ).
             helpText( "Choose which content types this page template supports" ).

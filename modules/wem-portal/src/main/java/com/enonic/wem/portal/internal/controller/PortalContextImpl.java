@@ -1,9 +1,7 @@
 package com.enonic.wem.portal.internal.controller;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageComponent;
-import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.layout.LayoutComponent;
 import com.enonic.wem.api.content.page.layout.LayoutRegions;
@@ -98,25 +96,6 @@ public class PortalContextImpl
     public PageTemplate getPageTemplate()
     {
         return pageTemplate;
-    }
-
-    @Override
-    public PageRegions getPageRegions()
-    {
-        if ( this.content == null )
-        {
-            return null;
-        }
-
-        final Page page = this.content.getPage();
-        if ( ( page != null ) && page.hasRegions() )
-        {
-            return page.getRegions();
-        }
-        else
-        {
-            return this.pageTemplate.getRegions();
-        }
     }
 
     @Override

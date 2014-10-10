@@ -108,9 +108,6 @@ module api.content {
                 this.metadata = source.getAllMetadata().map((metadata: Metadata) => metadata.clone());
 
                 this.pageObj = source.getPage() ? source.getPage().clone() : null;
-                if (this.pageObj) {
-
-                }
             }
         }
 

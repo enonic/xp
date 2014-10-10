@@ -2,6 +2,8 @@ module api.content.page {
 
     export class Page implements api.Equitable, api.Cloneable {
 
+        private controller: DescriptorKey;
+
         private template: PageTemplateKey;
 
         private regions: PageRegions;
@@ -9,9 +11,18 @@ module api.content.page {
         private config: api.data.RootDataSet;
 
         constructor(builder: PageBuilder) {
+            this.controller = builder.controller;
             this.template = builder.template;
             this.regions = builder.regions;
             this.config = builder.config;
+        }
+
+        getController(): DescriptorKey {
+            return this.controller;
+        }
+
+        setController(value: DescriptorKey) {
+            this.controller = value;
         }
 
         getTemplate(): PageTemplateKey {
@@ -30,12 +41,20 @@ module api.content.page {
             return this.regions;
         }
 
+        setRegions(value: PageRegions) {
+            this.regions = value;
+        }
+
         hasConfig(): boolean {
             return this.config != null;
         }
 
         getConfig(): api.data.RootDataSet {
             return this.config;
+        }
+
+        setConfig(value: api.data.RootDataSet) {
+            this.config = value;
         }
 
         equals(o: api.Equitable): boolean {
@@ -46,6 +65,9 @@ module api.content.page {
 
             var other = <Page>o;
 
+            if (!api.ObjectHelper.equals(this.controller, other.controller)) {
+                return false;
+            }
             if (!api.ObjectHelper.equals(this.template, other.template)) {
                 return false;
             }
@@ -67,6 +89,8 @@ module api.content.page {
 
     export class PageBuilder {
 
+        controller: DescriptorKey;
+
         template: PageTemplateKey;
 
         regions: PageRegions;
@@ -75,6 +99,7 @@ module api.content.page {
 
         constructor(source?: Page) {
             if (source) {
+                this.controller = source.getController();
                 this.template = source.getTemplate();
                 this.regions = source.getRegions() ? source.getRegions().clone() : null;
                 this.config = source.getConfig() ? source.getConfig().clone() : null;
@@ -82,9 +107,15 @@ module api.content.page {
         }
 
         public fromJson(json: api.content.page.PageJson): PageBuilder {
+            this.setController(json.controller ? DescriptorKey.fromString(json.controller) : null);
             this.setTemplate(json.template ? PageTemplateKey.fromString(json.template) : null);
             this.setRegions(json.regions != null ? new PageRegionsBuilder().fromJson(json.regions).build() : null);
             this.setConfig(json.config != null ? api.data.DataFactory.createRootDataSet(json.config) : null);
+            return this;
+        }
+
+        public setController(value: DescriptorKey): PageBuilder {
+            this.controller = value;
             return this;
         }
 

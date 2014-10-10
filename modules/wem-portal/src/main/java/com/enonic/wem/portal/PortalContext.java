@@ -2,7 +2,6 @@ package com.enonic.wem.portal;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.page.PageComponent;
-import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.layout.LayoutRegions;
 import com.enonic.wem.api.content.site.Site;
@@ -21,8 +20,6 @@ public interface PortalContext
     public Site getSite();
 
     public PageTemplate getPageTemplate();
-
-    public PageRegions getPageRegions();
 
     public LayoutRegions getLayoutRegions();
 

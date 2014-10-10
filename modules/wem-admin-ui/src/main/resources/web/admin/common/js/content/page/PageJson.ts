@@ -1,6 +1,8 @@
 module api.content.page {
 
-    export interface PageJson{
+    export interface PageJson {
+
+        controller:string;
 
         template:string;
 

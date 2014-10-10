@@ -63,8 +63,12 @@ module api.content.page.inputtype.pagecontroller {
             return value.isNull() || !value.getType().equals(ValueTypes.STRING);
         }
 
+        static getName(): api.form.InputTypeName {
+            return new api.form.InputTypeName("PageController", false);
+        }
+
     }
 
-    api.form.inputtype.InputTypeManager.register(new api.Class("PageController", PageController));
+    api.form.inputtype.InputTypeManager.register(new api.Class(PageController.getName().getName(), PageController));
 
 }

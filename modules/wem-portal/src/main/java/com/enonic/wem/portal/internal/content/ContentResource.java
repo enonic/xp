@@ -47,7 +47,7 @@ public final class ContentResource
             pageTemplate = getDefaultPageTemplate( content.getType(), site );
             if ( pageTemplate == null )
             {
-                throw notFound( "Page not found." );
+                throw notFound( "No template found for content" );
             }
         }
         else
@@ -57,13 +57,25 @@ public final class ContentResource
         }
 
         PageDescriptor pageDescriptor = null;
-        if ( pageTemplate.getDescriptor() != null )
+        if ( pageTemplate.getController() != null )
         {
             pageDescriptor = getPageDescriptor( pageTemplate );
         }
 
+        final Content effectiveContent;
+        if ( !content.hasPage() )
+        {
+            effectiveContent = Content.newContent( content ).
+                page( pageTemplate.getPage() ).
+                build();
+        }
+        else
+        {
+            effectiveContent = content;
+        }
+
         final PageRendererContextImpl context = new PageRendererContextImpl();
-        context.setContent( content );
+        context.setContent( effectiveContent );
         context.setSite( site );
         context.setPageTemplate( pageTemplate );
         context.setPageDescriptor( pageDescriptor );
@@ -79,8 +91,8 @@ public final class ContentResource
         jsRequest.addParams( this.uriInfo.getQueryParameters() );
         context.setRequest( jsRequest );
 
-        final Renderer<Content, PageRendererContext> renderer = this.rendererFactory.getRenderer( content );
-        final RenderResult result = renderer.render( content, context );
+        final Renderer<Content, PageRendererContext> renderer = this.rendererFactory.getRenderer( effectiveContent );
+        final RenderResult result = renderer.render( effectiveContent, context );
         return toResponse( result );
     }
 }

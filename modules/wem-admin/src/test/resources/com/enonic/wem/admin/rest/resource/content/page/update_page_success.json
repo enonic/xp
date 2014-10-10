@@ -27,6 +27,7 @@
                 }
             }
         ],
+        "controller": null,
         "regions": [ ],
         "template": "my-page"
     },

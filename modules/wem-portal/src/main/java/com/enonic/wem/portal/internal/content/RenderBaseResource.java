@@ -118,7 +118,7 @@ public abstract class RenderBaseResource
 
     protected final PageDescriptor getPageDescriptor( final PageTemplate pageTemplate )
     {
-        final PageDescriptor pageDescriptor = pageDescriptorService.getByKey( pageTemplate.getDescriptor() );
+        final PageDescriptor pageDescriptor = pageDescriptorService.getByKey( pageTemplate.getController() );
         if ( pageDescriptor == null )
         {
             throw notFound( "Page descriptor for template [%s] not found", pageTemplate.getName() );

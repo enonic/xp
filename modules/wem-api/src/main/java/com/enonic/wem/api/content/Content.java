@@ -69,6 +69,12 @@ public class Content
         Preconditions.checkNotNull( builder.name, "name is required for a Content" );
         Preconditions.checkNotNull( builder.parentPath, "parentPath is required for a Content" );
 
+        if ( builder.page != null )
+        {
+            Preconditions.checkArgument( !( builder.page.getController() != null && builder.page.getTemplate() != null ),
+                                         "A Page cannot have both have a controller and a template set" );
+        }
+
         if ( builder.type == null )
         {
             builder.type = ContentTypeName.unstructured();

@@ -73,7 +73,7 @@ public final class ComponentResource
 
         final Renderer<PageComponent, PortalContext> renderer = this.rendererFactory.getRenderer( component );
 
-        final ModuleKey moduleKey = pageTemplate.getDescriptor().getModuleKey();
+        final ModuleKey moduleKey = pageTemplate.getController().getModuleKey();
         final PortalContextImpl context = createContext( content, component, site, moduleKey );
         final RenderResult result = renderer.render( component, context );
 

@@ -7,6 +7,8 @@ public final class CreatePageParams
 {
     private ContentId content;
 
+    private PageDescriptorKey controller;
+
     private PageTemplateKey pageTemplate;
 
     private PageRegions regions;
@@ -16,6 +18,12 @@ public final class CreatePageParams
     public CreatePageParams content( ContentId value )
     {
         this.content = value;
+        return this;
+    }
+
+    public CreatePageParams controller( PageDescriptorKey value )
+    {
+        this.controller = value;
         return this;
     }
 
@@ -45,6 +53,11 @@ public final class CreatePageParams
     public PageTemplateKey getPageTemplate()
     {
         return pageTemplate;
+    }
+
+    public PageDescriptorKey getController()
+    {
+        return controller;
     }
 
     public PageRegions getRegions()

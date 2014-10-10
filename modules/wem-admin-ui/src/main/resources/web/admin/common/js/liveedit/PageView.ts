@@ -1,6 +1,7 @@
 module api.liveedit {
 
     import Content = api.content.Content;
+    import Page = api.content.page.Page;
     import PageRegions = api.content.page.PageRegions;
     import PageComponent = api.content.page.PageComponent;
     import Region = api.content.page.region.Region;
@@ -9,7 +10,7 @@ module api.liveedit {
 
         itemViewProducer: ItemViewIdProducer;
 
-        pageRegions: PageRegions;
+        page: Page;
 
         content: Content;
 
@@ -20,8 +21,8 @@ module api.liveedit {
             return this;
         }
 
-        setPageRegions(value: PageRegions): PageViewBuilder {
-            this.pageRegions = value;
+        setPage(value: Page): PageViewBuilder {
+            this.page = value;
             return this;
         }
 
@@ -40,7 +41,7 @@ module api.liveedit {
 
         private content: Content;
 
-        private pageRegions: PageRegions;
+        private page: Page;
 
         private regionViews: RegionView[];
 
@@ -65,7 +66,7 @@ module api.liveedit {
                 setContextMenuActions(this.createPageContextMenuActions()).
                 setContextMenuTitle(new PageViewContextMenuTitle(builder.content)));
             this.setContent(builder.content);
-            this.pageRegions = builder.pageRegions;
+            this.page = builder.page;
             this.parseItemViews();
 
             var arrayofItemViews = this.toItemViewArray();
@@ -244,7 +245,7 @@ module api.liveedit {
 
         private doParseItemViews(parentElement?: api.dom.Element) {
 
-            var regions: Region[] = this.pageRegions.getRegions();
+            var regions: Region[] = this.page.getRegions().getRegions();
             var children = parentElement ? parentElement.getChildren() : this.getChildren();
             var regionIndex = 0;
             children.forEach((element: api.dom.Element) => {

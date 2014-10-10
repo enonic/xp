@@ -2,7 +2,7 @@ module api.liveedit {
 
     import Content = api.content.Content;
     import Site = api.content.site.Site;
-    import PageRegions = api.content.page.PageRegions;
+    import Page = api.content.page.Page;
 
     export class InitializeLiveEditEvent extends api.event.Event {
 
@@ -10,13 +10,13 @@ module api.liveedit {
 
         private site: Site;
 
-        private pageRegions: PageRegions;
+        private page: Page;
 
-        constructor(content: Content, site: Site, pageRegions: PageRegions) {
+        constructor(content: Content, site: Site, page: Page) {
             super();
             this.content = content;
             this.site = site;
-            this.pageRegions = pageRegions;
+            this.page = page;
         }
 
         getContent(): Content {
@@ -27,8 +27,8 @@ module api.liveedit {
             return this.site;
         }
 
-        getPageRegions(): PageRegions {
-            return this.pageRegions;
+        getPage(): Page {
+            return this.page;
         }
 
         static on(handler: (event: InitializeLiveEditEvent) => void, contextWindow: Window = window) {

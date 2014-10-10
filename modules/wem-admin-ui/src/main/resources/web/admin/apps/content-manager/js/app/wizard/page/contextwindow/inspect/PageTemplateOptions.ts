@@ -44,7 +44,7 @@ module app.wizard.page.contextwindow.inspect {
                     var indices: string[] = [];
                     indices.push(pageTemplate.getName().toString());
                     indices.push(pageTemplate.getDisplayName());
-                    indices.push(pageTemplate.getDescriptorKey().toString());
+                    indices.push(pageTemplate.getController().toString());
 
                     var option = {
                         value: pageTemplate.getId().toString(),

@@ -4,6 +4,8 @@ module api.content.page {
 
         private contentId: api.content.ContentId;
 
+        private controller: api.content.page.DescriptorKey;
+
         private template: api.content.page.PageTemplateKey;
 
         private config: api.data.RootDataSet;
@@ -14,6 +16,11 @@ module api.content.page {
             super();
             super.setMethod("POST");
             this.contentId = contentId;
+        }
+
+        setController(controller: api.content.page.DescriptorKey): UpdatePageRequest {
+            this.controller = controller;
+            return this;
         }
 
         setPageTemplateKey(pageTemplateKey: api.content.page.PageTemplateKey): UpdatePageRequest {
@@ -34,7 +41,8 @@ module api.content.page {
         getParams(): Object {
             return {
                 contentId: this.contentId.toString(),
-                template: this.template.toString(),
+                controller: this.controller ? this.controller.toString() : null,
+                template: this.template ? this.template.toString() : null,
                 config: this.config != null ? this.config.toJson() : null,
                 regions: this.regions != null ? this.regions.toJson() : null
             };

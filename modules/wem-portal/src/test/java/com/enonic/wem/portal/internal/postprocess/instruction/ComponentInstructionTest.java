@@ -93,7 +93,7 @@ public class ComponentInstructionTest
     {
         return PageTemplate.newPageTemplate().
             key( PageTemplateKey.from( "my-page" ) ).
-            descriptor( PageDescriptorKey.from( "mymodule:mypagetemplate" ) ).
+            controller( PageDescriptorKey.from( "mymodule:mypagetemplate" ) ).
             name( "my-page-template" ).
             parentPath( ContentPath.ROOT ).
             build();

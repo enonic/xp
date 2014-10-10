@@ -1,6 +1,7 @@
 package com.enonic.wem.api.content.page;
 
 
+import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.rendering.Component;
 import com.enonic.wem.api.support.Changes;
@@ -11,6 +12,8 @@ import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;
 public final class Page
     implements Component
 {
+    private final PageDescriptorKey controller;
+
     private final PageTemplateKey template;
 
     private final PageRegions regions;
@@ -19,9 +22,20 @@ public final class Page
 
     private Page( final PageProperties properties )
     {
+        this.controller = properties.controller;
         this.template = properties.template;
         this.config = properties.config;
         this.regions = properties.regions;
+    }
+
+    public boolean hasController()
+    {
+        return controller != null;
+    }
+
+    public PageDescriptorKey getController()
+    {
+        return controller;
     }
 
     public boolean hasTemplate()
@@ -37,6 +51,11 @@ public final class Page
     public boolean hasRegions()
     {
         return regions != null;
+    }
+
+    public Region getRegion( final String name )
+    {
+        return this.regions.getRegion( name );
     }
 
     public PageRegions getRegions()
@@ -71,6 +90,8 @@ public final class Page
 
     static class PageProperties
     {
+        PageDescriptorKey controller;
+
         PageTemplateKey template;
 
         PageRegions regions;
@@ -86,8 +107,15 @@ public final class Page
         {
             this.config = source.config.copy().toRootDataSet();
             this.template = source.getTemplate();
+            this.controller = source.getController();
             this.regions = source.getRegions();
             this.config = source.getConfig();
+        }
+
+        public PageProperties controller( PageDescriptorKey value )
+        {
+            this.controller = value;
+            return this;
         }
 
         public PageProperties template( PageTemplateKey value )
@@ -114,6 +142,13 @@ public final class Page
         {
             super( original );
             this.original = original;
+        }
+
+        public PageEditBuilder controller( PageDescriptorKey value )
+        {
+            changes.recordChange( newPossibleChange( "controller" ).from( this.original.getTemplate() ).to( value ).build() );
+            this.controller = value;
+            return this;
         }
 
         public PageEditBuilder template( PageTemplateKey value )
@@ -171,6 +206,12 @@ public final class Page
         public Builder regions( final PageRegions value )
         {
             this.regions = value;
+            return this;
+        }
+
+        public Builder controller( final PageDescriptorKey value )
+        {
+            this.controller = value;
             return this;
         }
 

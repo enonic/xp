@@ -4,6 +4,7 @@ module app.wizard.page {
     import Site = api.content.site.Site;
     import ContentId = api.content.ContentId;
     import Descriptor = api.content.page.Descriptor;
+    import Page = api.content.page.Page;
     import PageRegions = api.content.page.PageRegions;
     import RegionPath = api.content.page.RegionPath;
     import PageComponent = api.content.page.PageComponent;
@@ -45,7 +46,7 @@ module app.wizard.page {
 
         private baseUrl: string;
 
-        private pageRegions: PageRegions;
+        private page: Page;
 
         private liveFormPanel: LiveFormPanel;
 
@@ -60,8 +61,6 @@ module app.wizard.page {
         private liveEditJQuery: JQueryStatic;
 
         private dragMask: api.ui.mask.DragMask;
-
-        private iFrameLoadDeffered: wemQ.Deferred<void>;
 
         private contentLoadedOnPage: Content;
 
@@ -104,7 +103,6 @@ module app.wizard.page {
             this.site = config.site;
 
             this.liveEditIFrame = new api.dom.IFrameEl("live-edit-frame");
-            this.iFrameLoadDeffered = wemQ.defer<void>();
             this.liveEditIFrame.onLoaded(() => this.handleIFrameLoadedEvent());
             this.loadMask = new api.ui.mask.LoadMask(this.liveEditIFrame);
             this.dragMask = new api.ui.mask.DragMask(this.liveEditIFrame);
@@ -116,8 +114,8 @@ module app.wizard.page {
             });
         }
 
-        public setPageRegions(pageRegions: PageRegions) {
-            this.pageRegions = pageRegions;
+        public setPage(page: Page) {
+            this.page = page;
         }
 
         public setWidth(value: string) {
@@ -174,17 +172,13 @@ module app.wizard.page {
             this.loadMask.remove();
         }
 
-        public load(content: Content): wemQ.Promise<void> {
+        public load(content: Content) {
 
-            this.iFrameLoadDeffered = wemQ.defer<void>();
             this.contentLoadedOnPage = content;
-
             this.loadMask.show();
             var pageUrl = this.baseUrl + content.getContentId().toString();
             console.log("LiveEditPageProxy.load pageUrl: " + pageUrl);
             this.liveEditIFrame.setSrc(pageUrl);
-
-            return this.iFrameLoadDeffered.promise;
         }
 
         private handleIFrameLoadedEvent() {
@@ -201,15 +195,16 @@ module app.wizard.page {
 
                 this.loadMask.hide();
 
-                new api.liveedit.InitializeLiveEditEvent(this.contentLoadedOnPage, this.site,
-                    this.pageRegions).fire(this.liveEditWindow);
+                new api.liveedit.InitializeLiveEditEvent(this.contentLoadedOnPage, this.site, this.page).fire(this.liveEditWindow);
 
-                this.notifyLoaded();
-            } else if (liveEditWindow.document.body.id == this.LIVE_EDIT_ERROR_PAGE_BODY_ID) {
+
+            }
+            else if (liveEditWindow.document.body.id == this.LIVE_EDIT_ERROR_PAGE_BODY_ID) {
                 this.loadMask.hide();
             }
 
-            this.iFrameLoadDeffered.resolve(null);
+            // Notify loaded no matter the result
+            this.notifyLoaded();
         }
 
         public loadComponent(pageComponentView: PageComponentView<PageComponent>, componentUrl: string): wemQ.Promise<string> {

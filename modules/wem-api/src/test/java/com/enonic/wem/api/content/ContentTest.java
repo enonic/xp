@@ -7,8 +7,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.content.page.Page;
+import com.enonic.wem.api.content.page.PageDescriptorKey;
+import com.enonic.wem.api.content.page.PageRegions;
+import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.form.FieldSet;
@@ -481,5 +486,18 @@ public class ContentTest
             assertTrue( e instanceof IllegalArgumentException );
             assertEquals( "Array [myData] expects Property of type [String]. Property [myData] was of type: LocalDate", e.getMessage() );
         }
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void given_a_controller_and_a_pageTemplate_when_build_then_IllegalArgumentException_is_thrown()
+    {
+        newContent().
+            path( MY_CONTENT_PATH ).
+            page( Page.newPage().
+                controller( PageDescriptorKey.from( "abc:abc" ) ).
+                template( PageTemplateKey.from( "123" ) ).
+                config( new RootDataSet() ).
+                regions( PageRegions.newPageRegions().build() ).
+                build() ).build();
     }
 }

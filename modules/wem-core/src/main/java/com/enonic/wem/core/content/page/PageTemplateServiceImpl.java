@@ -1,6 +1,8 @@
 package com.enonic.wem.core.content.page;
 
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.page.CreatePageTemplateParams;
@@ -35,6 +37,7 @@ public final class PageTemplateServiceImpl
 
     public PageTemplate getByKey( final PageTemplateKey pageTemplateKey )
     {
+        Preconditions.checkNotNull( pageTemplateKey, "A PageTemplateKey is required" );
         return new GetPageTemplateByKeyCommand().
             pageTemplateKey( pageTemplateKey ).
             contentService( this.contentService ).
@@ -53,6 +56,7 @@ public final class PageTemplateServiceImpl
 
     public PageTemplates getBySite( final ContentId siteId )
     {
+        Preconditions.checkNotNull( siteId, "A ContentId is required" );
         return new GetPageTemplateBySiteCommand().
             site( siteId ).
             contentService( this.contentService ).
