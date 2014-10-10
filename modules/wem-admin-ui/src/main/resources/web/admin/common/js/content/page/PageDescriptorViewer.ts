@@ -8,7 +8,7 @@ module api.content.page {
             super();
             this.namesAndIconView = new api.app.NamesAndIconViewBuilder()
                 .setSize(api.app.NamesAndIconViewSize.small).build();
-            this.namesAndIconView.setIconClass('icon-insert-template icon-large');
+            this.namesAndIconView.setIconClass('icon-file icon-large');
             this.appendChild(this.namesAndIconView);
         }
 
