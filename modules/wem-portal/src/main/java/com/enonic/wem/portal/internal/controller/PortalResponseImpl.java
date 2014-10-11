@@ -11,7 +11,7 @@ public final class PortalResponseImpl
 {
     private int status = STATUS_OK;
 
-    private String contentType = "text/plain";
+    private String contentType = "text/plain; charset=utf-8";
 
     private Object body;
 
@@ -43,8 +43,15 @@ public final class PortalResponseImpl
     }
 
     @Override
-    public void setContentType( final String contentType )
+    public void setContentType( String contentType )
     {
+        if ( contentType != null )
+        {
+            if ( contentType.indexOf( "charset" ) < 1 )
+            {
+                contentType += "; charset=utf-8";
+            }
+        }
         this.contentType = contentType;
     }
 
