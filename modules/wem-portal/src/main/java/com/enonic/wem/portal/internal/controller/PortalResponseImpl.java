@@ -47,7 +47,7 @@ public final class PortalResponseImpl
     {
         if ( contentType != null )
         {
-            if ( contentType.indexOf( "charset" ) < 1 )
+            if ( contentType.indexOf( "charset" ) < 1 && contentType.startsWith( "text/html" ) )
             {
                 contentType += "; charset=utf-8";
             }
