@@ -1,7 +1,7 @@
 var assert = Java.type('org.junit.Assert');
 var view = resolve('view/test.html');
 
-var html = execute('view.renderThymeleaf', {
+var html = execute('thymeleaf.render', {
     view: view,
     parameters: {}
 });

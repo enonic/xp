@@ -6,8 +6,9 @@ import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.script.command.Command;
 import com.enonic.wem.script.command.CommandName;
 
-@CommandName("view.renderMustache")
-public final class RenderView extends Command<String>
+@CommandName("mustache.render")
+public final class RenderView
+    extends Command<String>
 {
     private ResourceKey view;
 

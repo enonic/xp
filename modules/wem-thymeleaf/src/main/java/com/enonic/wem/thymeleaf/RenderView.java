@@ -6,7 +6,7 @@ import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.script.command.Command;
 import com.enonic.wem.script.command.CommandName;
 
-@CommandName("view.renderThymeleaf")
+@CommandName("thymeleaf.render")
 public final class RenderView
     extends Command<String>
 {
@@ -33,5 +33,4 @@ public final class RenderView
     {
         this.view = view;
     }
-
 }
