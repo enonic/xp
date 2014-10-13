@@ -17,6 +17,17 @@ module api.content.page {
             });
         }
 
+        addRegion(region: Region) {
+            this.regionByName[name] = region;
+        }
+
+        removeRegions(regions: Region[]) {
+            regions.forEach((region: Region) => {
+                delete this.regionByName[region.getName()];
+            });
+        }
+
+
         getRegions(): region.Region[] {
             var regions = [];
             for (var i in this.regionByName) {

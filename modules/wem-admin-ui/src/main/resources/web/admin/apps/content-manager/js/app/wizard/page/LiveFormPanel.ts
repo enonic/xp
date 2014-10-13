@@ -206,13 +206,8 @@ module app.wizard.page {
 
             this.pageInspectionPanel.onPageControllerChanged((event: app.wizard.page.contextwindow.inspect.PageControllerChangedEvent) => {
                 this.page.setController(event.getPageDescriptor().getKey());
-                var regionsBuilder = new PageRegionsBuilder();
-                event.getPageDescriptor().getRegions().forEach((regionDescriptor: RegionDescriptor) => {
-                    regionsBuilder.addRegion(new RegionBuilder().
-                        setName(regionDescriptor.getName()).
-                        build());
-                });
-                this.page.setRegions(regionsBuilder.build());
+
+                this.page.changeRegionsTo(event.getPageDescriptor().getRegions());
 
                 this.saveAndReloadPage();
             });

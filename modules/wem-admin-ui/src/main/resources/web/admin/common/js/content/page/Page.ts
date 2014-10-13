@@ -45,6 +45,30 @@ module api.content.page {
             this.regions = value;
         }
 
+        changeRegionsTo(regionDescriptors: region.RegionDescriptor[]) {
+
+            // Remove regions not existing in regionDescriptors
+            var regionsToRemove: region.Region[] = this.regions.getRegions().
+                filter((region: region.Region, index: number) => {
+                    return !regionDescriptors.
+                        some((regionDescriptor: region.RegionDescriptor) => {
+                            return regionDescriptor.getName() == region.getName();
+                        });
+                });
+            this.regions.removeRegions(regionsToRemove);
+
+            // Add missing regions
+            regionDescriptors.forEach((regionDescriptor: region.RegionDescriptor) => {
+                var region = this.regions.getRegionByName(regionDescriptor.getName());
+                if (!region) {
+                    region = new api.content.page.region.RegionBuilder().
+                        setName(regionDescriptor.getName()).
+                        build();
+                    this.regions.addRegion(region);
+                }
+            });
+        }
+
         hasConfig(): boolean {
             return this.config != null;
         }
