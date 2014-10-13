@@ -331,6 +331,11 @@ module api.content {
             return this;
         }
 
+        setHasChildren(value: boolean): ContentSummaryBuilder {
+            this.children = value;
+            return this;
+        }
+
         build(): ContentSummary {
             return new ContentSummary(this);
         }

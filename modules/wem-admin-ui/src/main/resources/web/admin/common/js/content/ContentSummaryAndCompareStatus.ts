@@ -15,6 +15,10 @@ module api.content {
             return this.contentSummary;
         }
 
+        setContentSummary(contentSummary: ContentSummary): void {
+            this.contentSummary = contentSummary;
+        }
+
         getCompareContentResult(): CompareContentResult {
             return this.compareContentResult;
         }

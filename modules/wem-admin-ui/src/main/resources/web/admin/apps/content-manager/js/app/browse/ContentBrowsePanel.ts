@@ -56,7 +56,8 @@ module app.browse {
             });
 
             api.content.ContentCreatedEvent.on((event) => {
-                this.setRefreshNeeded(true);
+                this.contentTreeGridPanel.appendContentNode(event.getContent());
+                this.setRefreshNeeded(false);
             });
 
             api.content.ContentUpdatedEvent.on((event) => {
