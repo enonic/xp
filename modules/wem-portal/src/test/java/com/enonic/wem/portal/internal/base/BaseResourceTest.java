@@ -5,12 +5,13 @@ import java.util.Set;
 import org.junit.Before;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletConfig;
+// import org.springframework.mock.web.MockServletConfig;
 
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.portal.internal.PortalServlet;
 import com.enonic.wem.portal.internal.exception.PortalExceptionMapper;
+import com.enonic.wem.servlet.mock.MockServletConfig;
 
 public abstract class BaseResourceTest
 {
