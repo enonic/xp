@@ -8,45 +8,37 @@
     <style>
 
         .display-area {
-            width: 800px;
-            height: 700px;
-            background: #F1F1F1;
-            margin: 10px auto;
+            height: 100%;
+            background: #ccc;
             position: relative;
             overflow: auto;
+            border-right: 1px solid #777;
         }
 
         .settings-area {
-            width: 800px;
-            margin: 10px auto;
+            float: right;
         }
 
-        .settings-area:after {
+        .settings-area .block {
+            margin: 10px;
+        }
+
+        .settings-area .block:after {
             content: '';
             display: table;
             clear: both;
         }
 
-        .display-area-settings {
-            width: 50%;
+        .settings-area .block input {
             float: left;
         }
 
-        .image-canvas-settings {
-            width: 50%;
-            float: right;
-        }
-
-        .image-canvas-settings input {
-            float: left;
-        }
-
-        .image-canvas-settings span {
+        .settings-area .block span {
             float: left;
             margin-left: 20px;
         }
 
-        .image-canvas-settings label {
+        .settings-area .block label {
             clear: left;
         }
 
@@ -58,11 +50,21 @@
             margin: 0 0 10px;
         }
 
-        .display-area > img,
-        .display-area > .image-canvas {
-            position: absolute;
+        .display-area img,
+        .display-area .image-canvas {
+            display: block;
+            margin: 0 auto;
+            position: relative;
+            top: 50%;
         }
 
+        .display-area .image-canvas {
+            border: 5px solid white;
+        }
+
+        .display-area .image-canvas img {
+            top: 0;
+        }
     </style>
 
 </head>
@@ -90,6 +92,9 @@
     // create markup
     ////////////////////////////////////////////
 
+    var settingsArea = new DivEl('settings-area');
+    api.dom.Body.get().appendChild(settingsArea);
+
     var displayArea = new DivEl('display-area');
     api.dom.Body.get().appendChild(displayArea);
 
@@ -98,11 +103,7 @@
 
     var imageCanvas = new api.ui.image.ImageCanvas(image);
 
-    var settingsArea = new DivEl('settings-area');
-    api.dom.Body.get().appendChild(settingsArea);
-
-
-    var displayAreaSettings = new DivEl('display-area-settings');
+    var displayAreaSettings = new DivEl('block');
     settingsArea.appendChild(displayAreaSettings);
 
     var displayAreaHeader = new api.dom.H4El();
@@ -126,16 +127,8 @@
     imageSelect.appendChild(new api.dom.OptionEl('colorful-floral-pattern-1920x1080.jpg', 'colorful floral pattern, 1920x1080px'));
     imageSelect.appendChild(new api.dom.OptionEl('school-fantasy-2300x1566.gif', 'school fantasy, 2300x1566px'));
 
-    var positionLeftInput = new InputEl(null, 'number').setName('position-left').setId('position-left');
-    displayAreaSettings.appendChild(new LabelEl('Position left', positionLeftInput));
-    displayAreaSettings.appendChild(positionLeftInput);
 
-    var positionTopInput = new InputEl(null, 'number').setName('position-top').setId('position-top');
-    displayAreaSettings.appendChild(new LabelEl('Position top', positionTopInput));
-    displayAreaSettings.appendChild(positionTopInput);
-
-
-    var imageCanvasSettings = new DivEl('image-canvas-settings');
+    var imageCanvasSettings = new DivEl('block');
     settingsArea.appendChild(imageCanvasSettings);
 
     var imageCanvasHeader = new api.dom.H4El();
@@ -173,8 +166,9 @@
     imageCanvasSettings.appendChild(imagePanLeftInput);
     var imagePanLeftSpan = new SpanEl();
     imageCanvas.onPanChanged(function (x, y) {
-        imagePanLeftSpan.setHtml(x);
-        imagePanLeftInput.setValue(x);
+        var rx = Math.round(x);
+        imagePanLeftSpan.setHtml(rx);
+        imagePanLeftInput.setValue(rx);
     });
     imageCanvasSettings.appendChild(imagePanLeftSpan);
 
@@ -183,8 +177,9 @@
     imageCanvasSettings.appendChild(imagePanTopInput);
     var imagePanTopSpan = new SpanEl();
     imageCanvas.onPanChanged(function (x, y) {
-        imagePanTopSpan.setHtml(y);
-        imagePanTopInput.setValue(y);
+        var ry = Math.round(y);
+        imagePanTopSpan.setHtml(ry);
+        imagePanTopInput.setValue(ry);
     });
     imageCanvasSettings.appendChild(imagePanTopSpan);
 
@@ -199,6 +194,7 @@
         var width = image.getEl().getWidth();
         imageCanvas.setWidth(width);
         imageWidthInput.setValue(width);
+        centerVertically();
     };
     imageSelect.onChange(function () {
         image.getEl().setWidth('auto');
@@ -210,41 +206,23 @@
         }
     });
 
-    positionLeftInput.onInput(function () {
-        if (imageCanvas.isEnabled()) {
-            imageCanvas.getEl().setLeftPx(positionLeftInput.getValue());
-        } else {
-            image.getEl().setLeftPx(positionLeftInput.getValue());
-        }
-    });
-    positionLeftInput.setValue(0);
-
-    positionTopInput.onInput(function () {
-        if (imageCanvas.isEnabled()) {
-            imageCanvas.getEl().setTopPx(positionTopInput.getValue());
-        } else {
-            image.getEl().setTopPx(positionTopInput.getValue());
-        }
-    });
-    positionTopInput.setValue(0);
-
 
     enableCanvasCheckbox.onChange(function () {
         imageCanvas.setEnabled(enableCanvasCheckbox.getHTMLElement()["checked"]);
-        if (imageCanvas.isEnabled()) {
-            imageCanvas.getEl().setTopPx(positionTopInput.getValue()).setLeftPx(positionLeftInput.getValue());
-        } else {
+        if (!imageCanvas.isEnabled()) {
             imageWidthSpan.setHtml('');
             imageZoomSpan.setHtml('');
             imagePanLeftSpan.setHtml('');
             imagePanTopSpan.setHtml('');
         }
+        centerVertically();
     });
 
     imageWidthInput.onInput(function () {
         imageCanvas.setWidth(imageWidthInput.getValue());
+        centerVertically();
     });
-    imageWidthInput.setValue(image.getEl().getWidth());
+    imageWidthInput.setValue(0);
 
     imageZoomInput.onInput(function () {
         imageCanvas.setZoom(Math.max(imageZoomInput.getValue(), 100));
@@ -260,6 +238,11 @@
         imageCanvas.setPan(imageCanvas.getPan().x, imagePanTopInput.getValue());
     });
     imagePanTopInput.setValue(0);
+
+    function centerVertically() {
+        var el = imageCanvas.isEnabled() ? imageCanvas.getEl() : image.getEl();
+        el.setMarginTop('-' + el.getHeightWithBorder() / 2 + 'px')
+    }
 
 
 </script>

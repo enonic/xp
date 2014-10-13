@@ -77,7 +77,7 @@ module api.ui.image {
             console.debug('x = ' + x, 'y = ' + y);
             this.pan.x = x;
             this.pan.y = y;
-            this.pan.overrideZoomCenter = true;
+            this.pan.overrideZoomCenter = x != 0 || y != 0;
             if (!this.enabled) {
                 return;
             }
