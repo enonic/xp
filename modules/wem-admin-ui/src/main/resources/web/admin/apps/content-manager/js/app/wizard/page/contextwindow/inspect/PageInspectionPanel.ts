@@ -29,6 +29,8 @@ module app.wizard.page.contextwindow.inspect {
 
         private content: Content;
 
+        private page: Page;
+
         private pageTemplateSelector: PageTemplateSelector;
 
         private pageTemplateSelectorForm: api.ui.form.Form;
@@ -67,6 +69,7 @@ module app.wizard.page.contextwindow.inspect {
         setPage(content: Content, pageDescriptor: PageDescriptor, page: Page) {
 
             this.content = content;
+            this.page = page;
 
             this.pageTemplateSelectorForm.hide();
             this.pageControllerSelectorForm.hide();
@@ -101,6 +104,7 @@ module app.wizard.page.contextwindow.inspect {
             });
             this.pageControllerDropdown.onOptionSelected((event: OptionSelectedEvent<PageDescriptor>) => {
                 this.notifyPageControllerChanged(new PageControllerChangedEvent(event.getOption().displayValue));
+                this.refreshConfigForm(event.getOption().displayValue, this.page.getConfig());
             });
 
             var form = new api.ui.form.Form('form-view');
