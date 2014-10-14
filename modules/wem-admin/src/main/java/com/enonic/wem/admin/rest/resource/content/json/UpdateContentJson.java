@@ -1,134 +1,115 @@
 package com.enonic.wem.admin.rest.resource.content.json;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.enonic.wem.admin.json.content.MetadataJson;
-import com.enonic.wem.api.form.FormJson;
+import com.enonic.wem.api.account.AccountKey;
+import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentName;
-import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.content.Metadata;
+import com.enonic.wem.api.content.RenameContentParams;
+import com.enonic.wem.api.content.UpdateContentParams;
+import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.api.data.DataJson;
+import com.enonic.wem.api.form.FormJson;
+
+import static com.enonic.wem.api.content.Content.editContent;
 
 public class UpdateContentJson
 {
-    private ContentId contentId;
+    final ContentName contentName;
 
-    private ContentName contentName;
+    final UpdateContentParams updateContentParams;
 
-    private ContentTypeName contentType;
+    final RenameContentParams renameContentParams;
 
-    private List<DataJson> contentData;
-
-    private List<MetadataJson> metadataJsonList;
-
-    private FormJson form;
-
-    private String displayName;
-
-    private UpdateAttachmentsJson updateAttachments;
-
-    private ThumbnailJson thumbnail;
-
-    private String draft;
-
-    public boolean isDraft()
+    @JsonCreator
+    UpdateContentJson( @JsonProperty("contentId") final String contentId,
+                       @JsonProperty("contentName") final String contentName,
+                       @JsonProperty("contentType") final String contentType,
+                       @JsonProperty("contentData") final List<DataJson> contentDataJsonList,
+                       @JsonProperty("metadata") final List<MetadataJson> metadataJsonList,
+                       @JsonProperty("form") final FormJson form,
+                       @JsonProperty("displayName") final String displayName,
+                       @JsonProperty("updateAttachments") final UpdateAttachmentsJson updateAttachments,
+                       @JsonProperty("thumbnail") final ThumbnailJson thumbnail,
+                       @JsonProperty("draft") final String draft )
     {
-        return Boolean.parseBoolean( draft );
+        this.contentName = ContentName.from( contentName );
+
+        final ContentData contentData = parseContentData( contentDataJsonList );
+        final List<Metadata> metadataList = parseMetadata( metadataJsonList );
+
+        this.updateContentParams = new UpdateContentParams().
+            contentId( ContentId.from( contentId ) ).
+            modifier( AccountKey.anonymous() ).
+            updateAttachments( updateAttachments != null ? updateAttachments.getUpdateAttachments() : null ).
+            editor( new ContentEditor()
+            {
+                @Override
+                public Content.EditBuilder edit( final Content toBeEdited )
+                {
+                    Content.EditBuilder editContentBuilder = editContent( toBeEdited ).
+                        form( form.getForm() ).
+                        contentData( contentData ).
+                        metadata( metadataList ).
+                        draft( Boolean.valueOf( draft ) ).
+                        displayName( displayName );
+                    if ( thumbnail != null )
+                    {
+                        editContentBuilder = editContentBuilder.thumbnail( thumbnail.getThumbnail() );
+                    }
+                    return editContentBuilder;
+                }
+            } );
+
+        this.renameContentParams = new RenameContentParams().
+            contentId( ContentId.from( contentId ) ).
+            newName( this.contentName );
     }
 
-    public void setDraft( final String draft )
+    @JsonIgnore
+    public UpdateContentParams getUpdateContentParams()
     {
-        this.draft = draft;
+        return updateContentParams;
     }
 
-    public ContentId getContentId()
+    @JsonIgnore
+    public RenameContentParams getRenameContentParams()
     {
-        return contentId;
+        return renameContentParams;
     }
 
-    public void setContentId( final String contentId )
-    {
-        this.contentId = ContentId.from( contentId );
-    }
-
+    @JsonIgnore
     public ContentName getContentName()
     {
         return contentName;
     }
 
-    public void setContentName( final String contentName )
+    private ContentData parseContentData( final List<DataJson> dataJsonList )
     {
-        this.contentName = ContentName.from( contentName );
-    }
-
-    public ContentTypeName getContentType()
-    {
-        return contentType;
-    }
-
-    public void setContentType( final String value )
-    {
-        this.contentType = ContentTypeName.from( value );
-    }
-
-    public List<DataJson> getContentData()
-    {
+        final ContentData contentData = new ContentData();
+        for ( DataJson dataJson : dataJsonList )
+        {
+            contentData.add( dataJson.getData() );
+        }
         return contentData;
     }
 
-    public void setContentData( final List<DataJson> contentData )
-    {
-        this.contentData = contentData;
-    }
-
-    public List<MetadataJson> getMetadata()
-    {
-        return metadataJsonList;
-    }
-
-    public void setMetadata( final List<MetadataJson> metadataJsonList)
-    {
-        this.metadataJsonList = metadataJsonList;
-    }
-
-    public FormJson getForm()
-    {
-        return form;
-    }
-
-    public void setForm( final FormJson form )
-    {
-        this.form = form;
-    }
-
-    public String getDisplayName()
-    {
-        return displayName;
-    }
-
-    public void setDisplayName( final String displayName )
-    {
-        this.displayName = displayName;
-    }
-
-    public UpdateAttachmentsJson getUpdateAttachments()
-    {
-        return updateAttachments;
-    }
-
-    public void setUpdateAttachments( final UpdateAttachmentsJson updateAttachments )
-    {
-        this.updateAttachments = updateAttachments;
-    }
-
-    public ThumbnailJson getThumbnail()
-    {
-        return thumbnail;
-    }
-
-    public void setThumbnail( final ThumbnailJson thumbnail )
-    {
-        this.thumbnail = thumbnail;
+    private List<Metadata> parseMetadata( final List<MetadataJson> metadataJsonList ) {
+        final List<Metadata> metadataList = new ArrayList<>();
+        for ( MetadataJson metadataJson : metadataJsonList )
+        {
+            metadataList.add( metadataJson.getMetadata() );
+        }
+        return metadataList;
     }
 }

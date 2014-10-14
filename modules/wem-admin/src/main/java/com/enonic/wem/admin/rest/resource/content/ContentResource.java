@@ -376,31 +376,7 @@ public class ContentResource
     @Path("update")
     public ContentJson update( final UpdateContentJson json )
     {
-        final ContentData contentData = parseContentData( json.getContentData() );
-        final List<Metadata> metadataList = parseMetadata( json.getMetadata() );
-
-        final UpdateContentParams updateParams = new UpdateContentParams().
-            contentId( json.getContentId() ).
-            modifier( AccountKey.anonymous() ).
-            updateAttachments( json.getUpdateAttachments() != null ? json.getUpdateAttachments().getUpdateAttachments() : null ).
-            editor( new ContentEditor()
-            {
-                @Override
-                public Content.EditBuilder edit( final Content toBeEdited )
-                {
-                    Content.EditBuilder editContentBuilder = editContent( toBeEdited ).
-                        form( json.getForm().getForm() ).
-                        contentData( contentData ).
-                        metadata( metadataList ).
-                        draft( json.isDraft() ).
-                        displayName( json.getDisplayName() );
-                    if ( json.getThumbnail() != null )
-                    {
-                        editContentBuilder = editContentBuilder.thumbnail( json.getThumbnail().getThumbnail() );
-                    }
-                    return editContentBuilder;
-                }
-            } );
+        final UpdateContentParams updateParams = json.getUpdateContentParams();
 
         final Content updatedContent = contentService.update( updateParams );
         if ( json.getContentName().equals( updatedContent.getName() ) )
@@ -410,9 +386,7 @@ public class ContentResource
 
         try
         {
-            final RenameContentParams renameParams = new RenameContentParams().
-                contentId( json.getContentId() ).
-                newName( json.getContentName() );
+            final RenameContentParams renameParams = json.getRenameContentParams();
 
             final Content renamedContent = contentService.rename( renameParams );
 
@@ -422,25 +396,6 @@ public class ContentResource
         {
             throw new ConflictException( String.format( "Content with path [%s] already exists", e.getContentPath() ) );
         }
-    }
-
-    private ContentData parseContentData( final List<DataJson> dataJsonList )
-    {
-        final ContentData contentData = new ContentData();
-        for ( DataJson dataJson : dataJsonList )
-        {
-            contentData.add( dataJson.getData() );
-        }
-        return contentData;
-    }
-
-    private List<Metadata> parseMetadata( final List<MetadataJson> metadataJsonList ) {
-        final List<Metadata> metadataList = new ArrayList<>();
-        for ( MetadataJson metadataJson : metadataJsonList )
-        {
-            metadataList.add( metadataJson.getMetadata() );
-        }
-        return metadataList;
     }
 
     private List<Attachment> parseAttachments( final List<AttachmentJson> attachmentJsonList )
