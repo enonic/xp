@@ -45,6 +45,11 @@ module api.content.page {
             this.regions = value;
         }
 
+        /**
+         * Keeps existing regions (including components) if they are listed in given regionDescriptors.
+         * Removes others and add those missing.
+         * @param regionDescriptors
+         */
         changeRegionsTo(regionDescriptors: region.RegionDescriptor[]) {
 
             // Remove regions not existing in regionDescriptors
