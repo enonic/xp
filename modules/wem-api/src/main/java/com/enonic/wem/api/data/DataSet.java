@@ -628,22 +628,45 @@ public class DataSet
         final LinkedHashMap<String, Object> map = new LinkedHashMap<>( this.dataById.size() );
         for ( Map.Entry<DataId, Data> entry : this.dataById.entrySet() )
         {
-            final DataId id = entry.getKey();
+            final String name = entry.getKey().getName();
             final Data data = entry.getValue();
             if ( data instanceof Property )
             {
                 final Property property = (Property) data;
-                final List<Value> valuesAsList = property.getArray().getValues();
-                map.put( id.toString(), valuesAsList );
+                final Object propertyValue = property.getValue().getObject();
+                final Object mapValue = propertyValue instanceof DataSet ? ( (DataSet) propertyValue ).toMap() : propertyValue;
+                setMapValue( map, name, mapValue );
             }
             else if ( data instanceof DataSet )
             {
                 final DataSet dataSet = (DataSet) data;
-                map.put( id.toString(), dataSet.toMap() );
+                setMapValue( map, name, dataSet.toMap() );
             }
         }
 
         return map;
+    }
+
+    private void setMapValue( final Map<String, Object> map, final String key, final Object value )
+    {
+        final Object rawValue = map.get( key );
+        final ArrayList<Object> listValue;
+        if ( rawValue == null )
+        {
+            listValue = new ArrayList<>();
+            map.put( key, listValue );
+        }
+        else if ( rawValue instanceof ArrayList )
+        {
+            //noinspection unchecked
+            listValue = (ArrayList<Object>) rawValue;
+        }
+        else
+        {
+            throw new IllegalStateException( "Expected ArrayList, unexpected type of value: " + rawValue.getClass().getName() );
+        }
+
+        listValue.add( value );
     }
 
     @Override
