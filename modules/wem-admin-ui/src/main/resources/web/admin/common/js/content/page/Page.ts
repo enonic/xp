@@ -47,7 +47,7 @@ module api.content.page {
 
         /**
          * Keeps existing regions (including components) if they are listed in given regionDescriptors.
-         * Removes others and add those missing.
+         * Removes others and adds those missing.
          * @param regionDescriptors
          */
         changeRegionsTo(regionDescriptors: region.RegionDescriptor[]) {
