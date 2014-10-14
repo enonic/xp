@@ -30,7 +30,7 @@ module app.browse {
 
     export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
 
-        static MAX_FETCH_SIZE: number = 5;
+        static MAX_FETCH_SIZE: number = 10;
 
         constructor() {
             var nameColumn = new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().
@@ -67,6 +67,7 @@ module app.browse {
                     ]).
                     setShowContextMenu(new TreeGridContextMenu(new ContentTreeGridActions(this))).
                     setPartialLoadEnabled(true).
+                    setLoadBufferSize(20). // rows count
                     prependClasses("content-tree-grid")
             );
 

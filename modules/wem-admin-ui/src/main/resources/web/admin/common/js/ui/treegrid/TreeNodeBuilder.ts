@@ -2,7 +2,7 @@ module api.ui.treegrid {
 
     export class TreeNodeBuilder<NODE> {
 
-        private dataId: string;
+        private id: string;
 
         private data: NODE;
 
@@ -72,13 +72,13 @@ module api.ui.treegrid {
             return this.data;
         }
 
-        getDataId(): string {
-            return this.dataId;
+        getId(): string {
+            return this.id;
         }
 
-        setData(data: NODE, dataId: string): TreeNodeBuilder<NODE> {
+        setData(data: NODE, id: string): TreeNodeBuilder<NODE> {
             this.data = data;
-            this.dataId = dataId;
+            this.id = id;
             return this;
         }
 

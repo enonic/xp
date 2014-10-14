@@ -24,6 +24,8 @@ module api.ui.treegrid {
 
         private partialLoadEnabled: boolean = false;
 
+        private loadBufferSize: number = 0;
+
         constructor(grid?: TreeGrid<NODE>) {
             if (grid) {
                 this.showToolbar = grid.hasToolbar();
@@ -177,6 +179,15 @@ module api.ui.treegrid {
 
         isPartialLoadEnabled(): boolean {
             return this.partialLoadEnabled;
+        }
+
+        setLoadBufferSize(loadBufferSize: number): TreeGridBuilder<NODE> {
+            this.loadBufferSize = loadBufferSize;
+            return this;
+        }
+
+        getLoadBufferSize(): number {
+            return this.loadBufferSize;
         }
 
         /**

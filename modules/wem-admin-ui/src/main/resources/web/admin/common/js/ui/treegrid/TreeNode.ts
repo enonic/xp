@@ -4,8 +4,6 @@ module api.ui.treegrid {
 
         private id: string;
 
-        private dataId: string;
-
         private data: DATA;
 
         private expanded: boolean;
@@ -21,8 +19,7 @@ module api.ui.treegrid {
         private children: TreeNode<DATA>[];
 
         constructor(builder: TreeNodeBuilder<DATA>) {
-            this.id = Math.random().toString(36).substring(2);
-            this.dataId = builder.getDataId();
+            this.id = builder.getId();
             this.data = builder.getData();
             this.parent = builder.getParent();
             this.setChildren(builder.getChildren());
@@ -41,17 +38,6 @@ module api.ui.treegrid {
 
         hasData(): boolean {
             return !!this.data;
-        }
-
-        getDataId(): string {
-            return this.dataId;
-        }
-
-        regenerateIds(): void {
-            this.id = Math.random().toString(36).substring(2);
-            this.children.forEach((elem) => {
-                elem.regenerateIds();
-            });
         }
 
         isExpanded(): boolean {
@@ -181,14 +167,14 @@ module api.ui.treegrid {
             return list;
         }
 
-        findNode(dataId: string): TreeNode<DATA> {
+        findNode(id: string): TreeNode<DATA> {
 
-            if (this.hasData() && this.getDataId() === dataId) {
+            if (this.hasData() && this.getId() === id) {
                 return this;
             }
 
             for (var i = 0; i < this.children.length; i++) {
-                var child = this.children[i].findNode(dataId);
+                var child = this.children[i].findNode(id);
                 if (child) {
                     return child;
                 }
@@ -215,7 +201,7 @@ module api.ui.treegrid {
                 var relatives = this.getRoot().getChildren();
                 // check if duplicate is already in root
                 for (var i = 0; i < relatives.length; i++) {
-                    if (relatives[i].getData() && relatives[i].getDataId() === this.getDataId()) {
+                    if (relatives[i].getData() && relatives[i].getId() === this.getId()) {
                         duplicated = true;
                         break;
                     }
