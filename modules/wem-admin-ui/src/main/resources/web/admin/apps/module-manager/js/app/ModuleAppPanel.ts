@@ -13,8 +13,8 @@ module app {
             this.route(path)
         }
 
-        private route(path: api.rest.Path) {
-            var action = path.getElement(0);
+        private route(path?: api.rest.Path) {
+            var action = path ? path.getElement(0) : undefined;
 
             switch (action) {
             case 'edit':

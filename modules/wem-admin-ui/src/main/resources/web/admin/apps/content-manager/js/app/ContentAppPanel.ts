@@ -29,33 +29,31 @@ module app {
             });
         }
 
-        private route(path: api.rest.Path) {
-            if (path) {
-                var action = path.getElement(0);
+        private route(path?: api.rest.Path) {
+            var action = path ? path.getElement(0) : undefined;
 
-                switch (action) {
-                case 'edit':
-                    var id = path.getElement(1);
-                    if (id) {
-                        new api.content.GetContentByIdRequest(new api.content.ContentId(id)).sendAndParse().
-                            done((content: api.content.Content) => {
-                                new app.browse.EditContentEvent([content]).fire();
-                            });
-                    }
-                    break;
-                case 'view' :
-                    var id = path.getElement(1);
-                    if (id) {
-                        new api.content.GetContentByIdRequest(new api.content.ContentId(id)).sendAndParse().
-                            done((content: api.content.Content) => {
-                                new app.browse.ViewContentEvent([content]).fire();
-                            });
-                    }
-                    break;
-                default:
-                    new api.app.bar.event.ShowBrowsePanelEvent().fire();
-                    break;
+            switch (action) {
+            case 'edit':
+                var id = path.getElement(1);
+                if (id) {
+                    new api.content.GetContentByIdRequest(new api.content.ContentId(id)).sendAndParse().
+                        done((content: api.content.Content) => {
+                            new app.browse.EditContentEvent([content]).fire();
+                        });
                 }
+                break;
+            case 'view' :
+                var id = path.getElement(1);
+                if (id) {
+                    new api.content.GetContentByIdRequest(new api.content.ContentId(id)).sendAndParse().
+                        done((content: api.content.Content) => {
+                            new app.browse.ViewContentEvent([content]).fire();
+                        });
+                }
+                break;
+            default:
+                new api.app.bar.event.ShowBrowsePanelEvent().fire();
+                break;
             }
         }
 
