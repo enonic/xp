@@ -66,6 +66,7 @@ module app.wizard.page {
     import DraggingPageComponentViewStartedEvent = api.liveedit.DraggingPageComponentViewStartedEvent;
     import DraggingPageComponentViewCompletedEvent = api.liveedit.DraggingPageComponentViewCompletedEvent;
     import DraggingPageComponentViewCanceledEvent = api.liveedit.DraggingPageComponentViewCanceledEvent;
+    import PageControllerSelectedEvent = api.liveedit.PageControllerSelectedEvent;
     import PageSelectEvent = api.liveedit.PageSelectEvent;
     import RegionSelectEvent = api.liveedit.RegionSelectEvent;
     import ImageComponentSetImageEvent = api.liveedit.image.ImageComponentSetImageEvent;
@@ -205,11 +206,8 @@ module app.wizard.page {
                 this.contentWizardPanel.getContextWindowToggler());
 
             this.pageInspectionPanel.onPageControllerChanged((event: app.wizard.page.contextwindow.inspect.PageControllerChangedEvent) => {
-                this.page.setController(event.getPageDescriptor().getKey());
 
-                this.page.changeRegionsTo(event.getPageDescriptor().getRegions());
-
-                this.saveAndReloadPage();
+                this.handlePageControllerChanged(event.getPageDescriptor());
             });
 
             this.pageInspectionPanel.onPageTemplateChanged((event: app.wizard.page.contextwindow.inspect.PageTemplateChangedEvent) => {
@@ -448,7 +446,18 @@ module app.wizard.page {
             }
         }
 
+        private handlePageControllerChanged(pageDescriptor: PageDescriptor) {
+            this.page.setController(pageDescriptor.getKey());
+            this.page.changeRegionsTo(pageDescriptor.getRegions());
+            this.saveAndReloadPage();
+        }
+
         private liveEditListen() {
+
+            this.liveEditPage.onPageControllerSelected((event: PageControllerSelectedEvent) => {
+
+                this.handlePageControllerChanged(event.getPageDescriptor());
+            });
 
             this.liveEditPage.onPageSelected((event: PageSelectEvent) => {
 

@@ -26,6 +26,7 @@
 ///<reference path='RegionPlaceholder.ts' />
 ///<reference path='PageComponentPlaceholder.ts' />
 ///<reference path='PageComponentView.ts' />
+///<reference path='PagePlaceholder.ts' />
 ///<reference path='PageView.ts' />
 ///<reference path='ContentView.ts' />
 
@@ -45,3 +46,4 @@
 ///<reference path='PageComponentLoadedEvent.ts' />
 ///<reference path='Position.ts' />
 ///<reference path='TextComponentSetTextEvent.ts' />
+///<reference path='PageControllerSelectedEvent.ts' />

@@ -10,6 +10,7 @@ module app.wizard.page.contextwindow.inspect {
     import PageTemplate = api.content.page.PageTemplate;
     import PageTemplateKey = api.content.page.PageTemplateKey;
     import PageDescriptor = api.content.page.PageDescriptor;
+    import DescriptorKey = api.content.page.DescriptorKey;
     import PageController = api.content.page.inputtype.pagecontroller.PageController;
     import PageDescriptorDropdown = api.content.page.PageDescriptorDropdown;
     import GetPageDescriptorsByModulesRequest = api.content.page.GetPageDescriptorsByModulesRequest;
@@ -91,6 +92,18 @@ module app.wizard.page.contextwindow.inspect {
                 this.pageTemplateSelectorForm.show();
                 this.refreshConfigForm(pageDescriptor, page.getConfig());
             }
+
+            this.page.onPropertyChanged((event: api.PropertyChangedEvent) => {
+                if (event.getPropertyName() == "controller") {
+                    var pageDescriptor: DescriptorKey = <DescriptorKey>event.getNewValue();
+                    if (pageDescriptor) {
+                        var optionToSelect = this.pageControllerDropdown.getOptionByValue(pageDescriptor.toString());
+                        if (optionToSelect) {
+                            this.pageControllerDropdown.selectOption(optionToSelect, true);
+                        }
+                    }
+                }
+            });
         }
 
         private buildPageControllerForm(): api.ui.form.Form {

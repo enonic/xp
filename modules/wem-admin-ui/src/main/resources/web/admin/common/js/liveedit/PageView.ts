@@ -2,11 +2,14 @@ module api.liveedit {
 
     import Content = api.content.Content;
     import Page = api.content.page.Page;
+    import Site = api.content.site.Site;
     import PageRegions = api.content.page.PageRegions;
     import PageComponent = api.content.page.PageComponent;
     import Region = api.content.page.region.Region;
 
     export class PageViewBuilder {
+
+        site: Site;
 
         itemViewProducer: ItemViewIdProducer;
 
@@ -15,6 +18,11 @@ module api.liveedit {
         content: Content;
 
         element: api.dom.Body;
+
+        setSite(value: Site): PageViewBuilder {
+            this.site = value;
+            return this;
+        }
 
         setItemViewProducer(value: ItemViewIdProducer): PageViewBuilder {
             this.itemViewProducer = value;
@@ -35,13 +43,21 @@ module api.liveedit {
             this.element = value;
             return this;
         }
+
+        build(): PageView {
+            return new PageView(this);
+        }
     }
 
     export class PageView extends ItemView {
 
+        private site: Site;
+
         private content: Content;
 
         private page: Page;
+
+        private placeholder: PagePlaceholder;
 
         private regionViews: RegionView[];
 
@@ -53,6 +69,7 @@ module api.liveedit {
 
         constructor(builder: PageViewBuilder) {
 
+            this.site = builder.site;
             this.regionViews = [];
             this.viewsById = {};
             this.itemViewAddedListeners = [];
@@ -82,6 +99,16 @@ module api.liveedit {
                     this.unregisterItemView(event.getView());
                 });
             });
+
+            this.placeholder = new PagePlaceholder(this);
+            this.refreshPlaceholder();
+        }
+
+        private refreshPlaceholder() {
+            if (!this.page.hasController() && !this.page.hasTemplate()) {
+                this.appendChild(this.placeholder);
+                this.placeholder.select();
+            }
         }
 
         private createPageContextMenuActions() {
@@ -94,6 +121,10 @@ module api.liveedit {
 
         getName(): string {
             return this.content ? this.content.getDisplayName() : "[No name]";
+        }
+
+        getSite(): Site {
+            return this.site;
         }
 
         private setContent(content: Content) {

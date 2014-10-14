@@ -20,6 +20,7 @@ module app.wizard.page {
     import DraggingPageComponentViewCompletedEvent = api.liveedit.DraggingPageComponentViewCompletedEvent;
     import DraggingPageComponentViewCanceledEvent = api.liveedit.DraggingPageComponentViewCanceledEvent;
     import ItemFromContextWindowDroppedEvent = api.liveedit.ItemFromContextWindowDroppedEvent;
+    import PageControllerSelectedEvent = api.liveedit.PageControllerSelectedEvent;
     import PageSelectEvent = api.liveedit.PageSelectEvent;
     import RegionSelectEvent = api.liveedit.RegionSelectEvent;
     import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
@@ -73,6 +74,8 @@ module app.wizard.page {
         private draggingPageComponentViewCanceledListeners: {(event: DraggingPageComponentViewCanceledEvent): void;}[] = [];
 
         private itemFromContextWindowDroppedListeners: {(event: ItemFromContextWindowDroppedEvent): void;}[] = [];
+
+        private pageControllerSelectedListeners: {(event: PageControllerSelectedEvent): void;}[] = [];
 
         private pageSelectedListeners: {(event: PageSelectEvent): void;}[] = [];
 
@@ -273,6 +276,8 @@ module app.wizard.page {
 
             ItemFromContextWindowDroppedEvent.on(this.notifyItemFromContextWindowDropped.bind(this), this.liveEditWindow);
 
+            PageControllerSelectedEvent.on(this.notifyPageControllerSelected.bind(this), this.liveEditWindow);
+
             PageSelectEvent.on(this.notifyPageSelected.bind(this), this.liveEditWindow);
 
             RegionSelectEvent.on(this.notifyRegionSelected.bind(this), this.liveEditWindow);
@@ -368,6 +373,18 @@ module app.wizard.page {
 
         private notifyItemFromContextWindowDropped(event: ItemFromContextWindowDroppedEvent) {
             this.itemFromContextWindowDroppedListeners.forEach((listener) => listener(event));
+        }
+
+        onPageControllerSelected(listener: (event: PageControllerSelectedEvent) => void) {
+            this.pageControllerSelectedListeners.push(listener);
+        }
+
+        unPageControllerSelected(listener: (event: PageControllerSelectedEvent) => void) {
+            this.pageControllerSelectedListeners = this.pageControllerSelectedListeners.filter((curr) => (curr != listener));
+        }
+
+        private notifyPageControllerSelected(event: PageControllerSelectedEvent) {
+            this.pageControllerSelectedListeners.forEach((listener) => listener(event));
         }
 
         onPageSelected(listener: (event: PageSelectEvent) => void) {

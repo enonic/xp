@@ -59,11 +59,13 @@ module LiveEdit {
                 //});
 
                 this.page = event.getPage();
-                this.pageView = new PageView(new PageViewBuilder().
+                this.pageView = new PageViewBuilder().
+                    setSite(event.getSite()).
                     setItemViewProducer(new ItemViewIdProducer()).
                     setPage(event.getPage()).
                     setContent(event.getContent()).
-                    setElement(body));
+                    setElement(body).
+                    build();
 
                 api.liveedit.PageComponentLoadedEvent.on((event: api.liveedit.PageComponentLoadedEvent) => {
 

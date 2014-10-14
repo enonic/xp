@@ -10,6 +10,8 @@ module api.content.page {
 
         private config: api.data.RootDataSet;
 
+        private propertyChangedListeners: {(event: api.PropertyChangedEvent):void}[] = [];
+
         constructor(builder: PageBuilder) {
             this.controller = builder.controller;
             this.template = builder.template;
@@ -17,20 +19,33 @@ module api.content.page {
             this.config = builder.config;
         }
 
+        hasController(): boolean {
+            return !!this.controller;
+        }
+
         getController(): DescriptorKey {
             return this.controller;
         }
 
         setController(value: DescriptorKey) {
+            var oldValue = this.controller;
             this.controller = value;
+            this.notifyPropertyChanged("controller", oldValue, value);
+        }
+
+        hasTemplate(): boolean {
+            return !!this.template;
         }
 
         getTemplate(): PageTemplateKey {
             return this.template;
         }
 
-        setTemplate(template: PageTemplateKey) {
-            this.template = template;
+        setTemplate(value: PageTemplateKey) {
+            var oldValue = this.template;
+            this.template = value;
+            this.notifyPropertyChanged("template" +
+                                       "", oldValue, value);
         }
 
         hasRegions(): boolean {
@@ -42,7 +57,9 @@ module api.content.page {
         }
 
         setRegions(value: PageRegions) {
+            var oldValue = this.regions;
             this.regions = value;
+            this.notifyPropertyChanged("regions", oldValue, value);
         }
 
         /**
@@ -83,7 +100,9 @@ module api.content.page {
         }
 
         setConfig(value: api.data.RootDataSet) {
+            var oldValue = this.config;
             this.config = value;
+            this.notifyPropertyChanged("config", oldValue, value);
         }
 
         equals(o: api.Equitable): boolean {
@@ -113,6 +132,24 @@ module api.content.page {
         clone(): Page {
 
             return new PageBuilder(this).build();
+        }
+
+        onPropertyChanged(listener: (event: api.PropertyChangedEvent)=>void) {
+            this.propertyChangedListeners.push(listener);
+        }
+
+        unPropertyChanged(listener: (event: api.PropertyChangedEvent)=>void) {
+            this.propertyChangedListeners =
+            this.propertyChangedListeners.filter((curr: (event: api.PropertyChangedEvent)=>void) => {
+                return listener != curr;
+            });
+        }
+
+        private notifyPropertyChanged(property: string, oldValue: any, newValue: any) {
+            var event = new api.PropertyChangedEvent(property, oldValue, newValue);
+            this.propertyChangedListeners.forEach((listener: (event: api.PropertyChangedEvent)=>void) => {
+                listener(event);
+            })
         }
     }
 
