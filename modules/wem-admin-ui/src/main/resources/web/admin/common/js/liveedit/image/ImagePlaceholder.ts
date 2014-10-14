@@ -11,7 +11,7 @@ module api.liveedit.image {
 
         private comboBox: api.content.ContentComboBox;
 
-        private uploadButton: api.dom.DivEl;
+        private uploadButton: api.dom.ButtonEl;
 
         constructor(imageComponentView: ImageComponentView) {
             super();
@@ -29,7 +29,7 @@ module api.liveedit.image {
             this.onRemoved((event: api.dom.ElementRemovedEvent) => ImageUploadedEvent.un(imageUploadHandler));
 
             var comboUploadButtonDiv = new api.dom.DivEl('image-placeholder-selector');
-            this.uploadButton = new api.dom.DivEl("button upload-button");
+            this.uploadButton = new api.dom.ButtonEl("button upload-button");
             this.uploadButton.addClass("upload-button");
             this.uploadButton.onClicked((event: MouseEvent) => {
                 event.preventDefault();

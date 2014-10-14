@@ -17,24 +17,24 @@
       pointer-events: none;
     }
     p {
-      color:white;
+      color: white;
       padding: 28px 10px;
-      font-size:20px;
+      font-size: 20px;
     }
     a {
       text-decoration: none;
-      color:white;
+      color: white;
       padding: 28px 10px;
-      font-size:14px;
-      pointer-events:all;
+      font-size: 14px;
+      pointer-events: all;
       display: inline-block;
       &:hover {
-        color:darken(white, 20%);
+        color: darken(white, 20%);
       }
     }
     &[data-live-edit-type] {
       &:before {
-        content:'';
+        content: '';
       }
     }
   }
@@ -102,6 +102,7 @@
   .button.upload-button {
     .button(@admin-light-gray-font, white, @admin-dark-gray-font, white);
     .box-sizing(content-box);
+    .input-glow();
     vertical-align: middle;
     margin: 0;
     padding: 0;

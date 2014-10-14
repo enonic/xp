@@ -54,6 +54,9 @@ module api.ui.selector.combobox {
             if (config.loader) {
                 this.setLoader(config.loader);
             }
+            this.comboBox.onClicked((event: MouseEvent) => {
+                this.comboBox.giveFocus();
+            });
 
             super(this.comboBox, this.selectedOptionsView);
 
