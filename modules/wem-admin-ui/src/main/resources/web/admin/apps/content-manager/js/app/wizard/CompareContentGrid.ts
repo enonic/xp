@@ -29,6 +29,7 @@ module app.wizard {
                             build()
                     ]).
                     setPartialLoadEnabled(true).
+                    setLoadBufferSize(20). // rows count
                     prependClasses("content-tree-grid")
             );
 

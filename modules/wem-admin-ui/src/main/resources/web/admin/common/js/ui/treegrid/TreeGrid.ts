@@ -43,6 +43,8 @@ module api.ui.treegrid {
 
         private canvasElement: api.dom.Element;
 
+        private canvasNeedsUpdate: boolean;
+
         private active: boolean;
 
         private actions: TreeGridToolbarActions;
@@ -54,6 +56,8 @@ module api.ui.treegrid {
         private selectionChangeListeners: Function[] = [];
 
         private dataChangeListeners: {(event: DataChangedEvent<DATA>):void}[] = [];
+
+        private loadBufferSize: number;
 
         constructor(builder: TreeGridBuilder<DATA>) {
 
@@ -163,12 +167,16 @@ module api.ui.treegrid {
                 this.reload();
             }
 
-            if (builder.isPartialLoadEnabled()) {
-                var postLoadCycle = setInterval(this.postLoad.bind(this), 100);
+            this.canvasNeedsUpdate = false;
 
-                this.getGrid().onScroll(() => {
-                    clearInterval(postLoadCycle);
-                    postLoadCycle = setInterval(this.postLoad.bind(this), 100);
+            if (builder.isPartialLoadEnabled()) {
+
+                this.loadBufferSize = builder.getLoadBufferSize();
+
+                setInterval(this.postLoad.bind(this), 100);
+
+                this.grid.onRendered(() => {
+                    this.canvasNeedsUpdate = true;
                 });
             }
 
@@ -331,14 +339,18 @@ module api.ui.treegrid {
 
         private postLoad() {
             if (this.canvasElement.getEl().isVisible()) {
-                this.canvasElement = Element.fromHtmlElement(this.getCanvas().getHTMLElement(), true);
+                if (this.canvasNeedsUpdate) {
+                    this.canvasElement = Element.fromHtmlElement(this.getCanvas().getHTMLElement(), true);
+                    this.canvasNeedsUpdate = false;
+                }
+                var t1 = Number(new Date());
                 // top > point && point + 45 < bottom
                 var children = this.canvasElement.getChildren(),
                     top = this.grid.getEl().getScrollTop(),
-                    bottom = top + this.grid.getEl().getHeight();
+                    bottom = top + this.grid.getEl().getHeight() + this.loadBufferSize * 45;
                 children = children.filter((el) => {
                     return (el.getEl().getOffsetTopRelativeToParent() + 5 > top) &&
-                        (el.getEl().getOffsetTopRelativeToParent() + 40 < bottom);
+                        (el.getEl().getOffsetTopRelativeToParent() + 40 < (bottom + this.loadBufferSize * 45));
                 });
 
                 for (var i = 0; i < children.length; i++) {
@@ -693,6 +705,7 @@ module api.ui.treegrid {
             setTimeout(() => {
                 this.resetAndRender();
                 this.active = true;
+                this.canvasNeedsUpdate = true;
             }, 350);
         }
 
@@ -732,6 +745,7 @@ module api.ui.treegrid {
                 this.gridData.refresh();
                 this.resetAndRender();
                 this.active = true;
+                this.canvasNeedsUpdate = true;
             }, 350);
         }
 
