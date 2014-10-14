@@ -12,6 +12,8 @@ module api.content {
 
         private contentData: ContentData;
 
+        private metadata: Metadata[];
+
         private displayName: string;
 
         private draft: boolean;
@@ -60,6 +62,11 @@ module api.content {
             return this;
         }
 
+        setMetadata(metadata: Metadata[]): UpdateContentRequest {
+            this.metadata = metadata;
+            return this;
+        }
+
         setDisplayName(displayName: string): UpdateContentRequest {
             this.displayName = displayName;
             return this;
@@ -78,6 +85,7 @@ module api.content {
                 contentType: this.contentType.toString(),
                 form: this.form.toJson(),
                 contentData: this.contentData.toJson(),
+                metadata: (this.metadata || []).map((metadata: Metadata) => metadata.toJson()),
                 displayName: this.displayName,
                 updateAttachments: this.updateAttachments ? this.updateAttachments.toJson() : null,
                 thumbnail: this.thumbnail? this.thumbnail.toJson() : undefined

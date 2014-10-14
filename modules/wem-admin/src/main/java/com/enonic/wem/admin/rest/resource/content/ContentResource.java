@@ -25,6 +25,7 @@ import com.enonic.wem.admin.json.content.ContentSummaryJson;
 import com.enonic.wem.admin.json.content.ContentSummaryListJson;
 import com.enonic.wem.admin.json.content.GetActiveContentVersionsResultJson;
 import com.enonic.wem.admin.json.content.GetContentVersionsResultJson;
+import com.enonic.wem.admin.json.content.MetadataJson;
 import com.enonic.wem.admin.json.content.attachment.AttachmentJson;
 import com.enonic.wem.admin.rest.exception.NotFoundWebException;
 import com.enonic.wem.admin.rest.resource.content.json.AbstractContentQueryResultJson;
@@ -59,6 +60,7 @@ import com.enonic.wem.api.content.FindContentVersionsParams;
 import com.enonic.wem.api.content.FindContentVersionsResult;
 import com.enonic.wem.api.content.GetActiveContentVersionsParams;
 import com.enonic.wem.api.content.GetActiveContentVersionsResult;
+import com.enonic.wem.api.content.Metadata;
 import com.enonic.wem.api.content.PushContentParams;
 import com.enonic.wem.api.content.RenameContentParams;
 import com.enonic.wem.api.content.UnableToDeleteContentException;
@@ -375,6 +377,7 @@ public class ContentResource
     public ContentJson update( final UpdateContentJson json )
     {
         final ContentData contentData = parseContentData( json.getContentData() );
+        final List<Metadata> metadataList = parseMetadata( json.getMetadata() );
 
         final UpdateContentParams updateParams = new UpdateContentParams().
             contentId( json.getContentId() ).
@@ -388,6 +391,7 @@ public class ContentResource
                     Content.EditBuilder editContentBuilder = editContent( toBeEdited ).
                         form( json.getForm().getForm() ).
                         contentData( contentData ).
+                        metadata( metadataList ).
                         draft( json.isDraft() ).
                         displayName( json.getDisplayName() );
                     if ( json.getThumbnail() != null )
@@ -428,6 +432,15 @@ public class ContentResource
             contentData.add( dataJson.getData() );
         }
         return contentData;
+    }
+
+    private List<Metadata> parseMetadata( final List<MetadataJson> metadataJsonList ) {
+        final List<Metadata> metadataList = new ArrayList<>();
+        for ( MetadataJson metadataJson : metadataJsonList )
+        {
+            metadataList.add( metadataJson.getMetadata() );
+        }
+        return metadataList;
     }
 
     private List<Attachment> parseAttachments( final List<AttachmentJson> attachmentJsonList )

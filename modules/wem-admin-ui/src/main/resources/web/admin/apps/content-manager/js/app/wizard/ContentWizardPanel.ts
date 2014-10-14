@@ -256,7 +256,6 @@ module app.wizard {
                         Array.prototype.push.apply(schemaNames, uniqNames);
                     });
 
-
                     var metadataSchemaPromises = schemaNames.map((name: string) => new GetMetadataSchemaRequest(new MetadataSchemaName(name)).sendAndParse());
                     return wemQ.all(metadataSchemaPromises);
                 }).then((schemas: MetadataSchema[]) => {
@@ -512,7 +511,8 @@ module app.wizard {
                 setForm(persistedContent.getForm()).
                 setContentName(viewedContent.getName()).
                 setDisplayName(viewedContent.getDisplayName()).
-                setContentData(viewedContent.getContentData());
+                setContentData(viewedContent.getContentData()).
+                setMetadata(viewedContent.getAllMetadata());
 
             if (this.contentWizardStepForm) {
                 var updateAttachments = UpdateAttachments.create(persistedContent.getContentId(),
@@ -563,6 +563,15 @@ module app.wizard {
             if (this.contentWizardStepForm) {
                 viewedContentBuilder.setData(<api.content.ContentData>this.contentWizardStepForm.getRootDataSet());
             }
+
+            var metadata: Metadata[] = [];
+            for(var key in this.schemaStepForms) {
+                if (this.schemaStepForms.hasOwnProperty(key)) {
+                    metadata.push(new Metadata(new MetadataSchemaName(key), this.schemaStepForms[key].getRootDataSet()));
+                }
+            }
+
+            viewedContentBuilder.setMetadata(metadata);
 
             viewedContentBuilder.setPage(this.assembleViewedPage());
             return viewedContentBuilder;

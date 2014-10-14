@@ -3,6 +3,7 @@ package com.enonic.wem.admin.rest.resource.content.json;
 
 import java.util.List;
 
+import com.enonic.wem.admin.json.content.MetadataJson;
 import com.enonic.wem.api.form.FormJson;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentName;
@@ -18,6 +19,8 @@ public class UpdateContentJson
     private ContentTypeName contentType;
 
     private List<DataJson> contentData;
+
+    private List<MetadataJson> metadataJsonList;
 
     private FormJson form;
 
@@ -77,6 +80,16 @@ public class UpdateContentJson
     public void setContentData( final List<DataJson> contentData )
     {
         this.contentData = contentData;
+    }
+
+    public List<MetadataJson> getMetadata()
+    {
+        return metadataJsonList;
+    }
+
+    public void setMetadata( final List<MetadataJson> metadataJsonList)
+    {
+        this.metadataJsonList = metadataJsonList;
     }
 
     public FormJson getForm()
