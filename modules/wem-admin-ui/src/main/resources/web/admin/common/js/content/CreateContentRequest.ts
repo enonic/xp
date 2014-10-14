@@ -16,7 +16,7 @@ module api.content {
 
         private contentData: ContentData;
 
-        private metadata: Metadata[];
+        private metadata: Metadata[] = [];
 
         private displayName: string;
 
