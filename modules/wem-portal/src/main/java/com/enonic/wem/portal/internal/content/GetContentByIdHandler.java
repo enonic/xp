@@ -1,5 +1,7 @@
 package com.enonic.wem.portal.internal.content;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentService;
@@ -31,6 +33,7 @@ public final class GetContentByIdHandler
     @Override
     public void invoke( final GetContentById command )
     {
+        Preconditions.checkNotNull( command.getId(), "id is required" );
         final ContentId contentId = ContentId.from( command.getId() );
         final Content content = contentService.getById( contentId );
         command.setResult( content );
