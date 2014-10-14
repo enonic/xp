@@ -6,23 +6,21 @@
   }
 
   .display-validation-errors &.invalid {
-    border: 2px solid lightcoral;
 
-    // subtract 2px border from the every element touching edges
-    .occurrence-views-container {
-      padding-top: 8px;
-
-      .form-item-set-occurrence-view {
-        margin: 0 8px 10px 8px;
-      }
+    & > .occurrence-views-container, & > .bottom-button-row, & > .validation-viewer {
+      background-color: @input-light-red;
     }
-
-    & > .bottom-button-row {
-      padding: 0 8px 10px 8px;
+    &.odd > .occurrence-views-container, &.odd > .bottom-button-row, &.odd > .validation-viewer {
+      background-color: @input-dark-red ;
     }
+    &.odd > .validation-viewer {
+      color:white;
+    }
+  }
 
-    & > .validation-viewer {
-      padding: 0 8px 8px 8px;
+  .display-validation-errors &.valid {
+    &.odd > .occurrence-views-container {
+      background-color: @input-dark-red;
     }
   }
 
