@@ -501,7 +501,7 @@ module api.ui.treegrid {
             var oldSelected = this.grid.getSelectedRows(),
                 newSelected = [];
             for (var i = 0; i < oldSelected.length; i++) {
-                if (dataId !== this.gridData.getItem(oldSelected[i]).getDataId()) {
+                if (dataId !== this.gridData.getItem(oldSelected[i]).getId()) {
                     newSelected.push(oldSelected[i]);
                 }
             }
@@ -545,13 +545,12 @@ module api.ui.treegrid {
         }
 
         // Soft reset, that saves node status
-        refresh(node?: TreeNode<DATA>): void {
+        refresh(): void {
             var root = this.stash || this.root;
 
             this.active = false;
 
-            node = node || root;
-            node.regenerateIds();
+            this.grid.invalidateAllRows();
 
             root.setExpanded(true);
             this.initData(root.treeToList());
@@ -624,7 +623,7 @@ module api.ui.treegrid {
                     deleted.push(node);
                     parent.setMaxChildren(parent.getMaxChildren() - 1);
                     updated.filter((el) => {
-                        return el.getDataId() !== node.getId();
+                        return el.getId() !== node.getId();
                     });
                 }
             });
@@ -712,7 +711,7 @@ module api.ui.treegrid {
         private updateSelectedNode(node: TreeNode<DATA>) {
             this.updateDataChildrenStatus(node);
             this.getGrid().clearSelection();
-            this.refresh(node);
+            this.refresh();
             var row = this.gridData.getRowById(node.getId());
             this.grid.selectRow(row);
         }
