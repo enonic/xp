@@ -143,6 +143,11 @@ module api.content {
             return this;
         }
 
+        setMetadata(metadata: Metadata[]): ContentBuilder {
+            this.metadata = metadata;
+            return this;
+        }
+
         build(): Content {
             return new Content(this);
         }
