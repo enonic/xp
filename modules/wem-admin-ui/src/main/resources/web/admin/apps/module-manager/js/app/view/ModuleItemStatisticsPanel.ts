@@ -1,6 +1,7 @@
 module app.view {
 
     import ModuleBrowseActions = app.browse.ModuleBrowseActions;
+    import ContentTypeSummary = api.schema.content.ContentTypeSummary;
 
     export class ModuleItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.module.Module> {
 
@@ -57,7 +58,16 @@ module app.view {
             infoGroup.addDataList("Requirements", "Enonic 5.0.0");
 
             var schemasGroup = new ModuleItemDataGroup("Schemas");
-            schemasGroup.addDataList("Content Types", "Content Type1", "Content Type2", "Content Type3");
+
+            new api.schema.content.GetContentTypesByModuleRequest(item.getModel().getModuleKey()).
+                sendAndParse().
+                then((contentTypes: ContentTypeSummary[]) => {
+                    var contentTypeNames = contentTypes.map((contentType: ContentTypeSummary) => contentType.getContentTypeName().toString());
+                    schemasGroup.addDataArray("Content Types", contentTypeNames);
+                }).
+                catch((reason: any) => api.DefaultErrorHandler.handle(reason)).
+                done();
+
             schemasGroup.addDataList("Mixins", "TBA");
             var metadataNames = item.getModel().getMetadataSchemaDependencies();
             var strings: string[] = [];

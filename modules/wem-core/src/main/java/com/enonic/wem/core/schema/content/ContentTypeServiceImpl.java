@@ -1,5 +1,6 @@
 package com.enonic.wem.core.schema.content;
 
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.ContentTypes;
@@ -37,6 +38,12 @@ public class ContentTypeServiceImpl
             contentTypeDao( this.contentTypeDao ).
             mixinService( this.mixinService ).
             execute();
+    }
+
+    @Override
+    public ContentTypes getByModule( final ModuleKey moduleKey )
+    {
+        return this.contentTypeDao.getByModule( moduleKey );
     }
 
     @Override

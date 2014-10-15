@@ -19,6 +19,7 @@ import com.enonic.wem.admin.json.schema.content.ContentTypeSummaryListJson;
 import com.enonic.wem.admin.rest.exception.NotFoundWebException;
 import com.enonic.wem.admin.rest.resource.schema.SchemaImageHelper;
 import com.enonic.wem.api.Icon;
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
@@ -61,6 +62,14 @@ public class ContentTypeResource
         final GetAllContentTypesParams getAll = new GetAllContentTypesParams().mixinReferencesToFormItems( mixinReferencesToFormItems );
         final ContentTypes contentTypes = contentTypeService.getAll( getAll );
 
+        return new ContentTypeSummaryListJson( contentTypes, this.contentTypeIconUrlResolver );
+    }
+
+    @GET
+    @Path("byModule")
+    public ContentTypeSummaryListJson getByModule( @QueryParam("moduleKey") final String moduleKey )
+    {
+        final ContentTypes contentTypes = contentTypeService.getByModule( ModuleKey.from( moduleKey ) );
         return new ContentTypeSummaryListJson( contentTypes, this.contentTypeIconUrlResolver );
     }
 
