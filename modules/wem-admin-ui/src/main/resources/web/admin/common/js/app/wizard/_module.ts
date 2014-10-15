@@ -9,6 +9,7 @@
 ///<reference path='WizardStepsPanel.ts' />
 ///<reference path='WizardStepNavigator.ts' />
 ///<reference path='WizardStep.ts' />
+///<reference path='WizardStepValidityChangedEvent.ts' />
 ///<reference path='WizardStepForm.ts' />
 ///<reference path='WizardPanel.ts' />
 ///<reference path='SaveBeforeCloseDialog.ts' />

@@ -40,7 +40,9 @@ module api.app.wizard {
 
         private stepNavigator: WizardStepNavigator;
 
-        private stepPanels: api.app.wizard.WizardStepsPanel;
+        private steps: api.app.wizard.WizardStep[];
+
+        private stepsPanel: api.app.wizard.WizardStepsPanel;
 
         // TODO: @alb - Value is set to 'changed' by default to see SaveChangesBeforeCloseDialog behavior.
         private isChanged: boolean = true;
@@ -97,19 +99,19 @@ module api.app.wizard {
             this.stepNavigatorAndToolbarContainer.appendChild(this.stepNavigator);
             aboveStepPanels.appendChild(this.stepNavigatorAndToolbarContainer);
 
-            this.stepPanels = new WizardStepsPanel(this.stepNavigator, this.formPanel);
+            this.stepsPanel = new WizardStepsPanel(this.stepNavigator, this.formPanel);
             this.stepNavigatorAndToolbarContainer.onShown((event: api.dom.ElementShownEvent) => {
                 // set scroll offset equal to the height of the step navigator to switch steps at the bottom of it when sticky
-                this.stepPanels.setScrollOffset(event.getElement().getEl().getHeight());
+                this.stepsPanel.setScrollOffset(event.getElement().getEl().getHeight());
             });
             ResponsiveManager.onAvailableSizeChanged(this.stepNavigatorAndToolbarContainer, (item: ResponsiveItem) => {
                 // update offset if step navigator is resized
                 if (this.isVisible()) {
                     this.updateStickyToolbar();
-                    this.stepPanels.setScrollOffset(item.getElement().getEl().getHeight());
+                    this.stepsPanel.setScrollOffset(item.getElement().getEl().getHeight());
                 }
             });
-            this.formPanel.appendChild(aboveStepPanels).appendChild(this.stepPanels);
+            this.formPanel.appendChild(aboveStepPanels).appendChild(this.stepsPanel);
 
             if (this.persistedItem != null) {
                 this.startLayoutPersistedItem(this.persistedItem).
@@ -201,12 +203,17 @@ module api.app.wizard {
             return this.mainToolbar.getActions();
         }
 
+        getSteps(): api.app.wizard.WizardStep[] {
+            return this.steps;
+        }
+
         setSteps(steps: api.app.wizard.WizardStep[]) {
 
+            this.steps = steps;
             steps.forEach((step: api.app.wizard.WizardStep) => {
-                this.stepPanels.addNavigablePanel(step.getTabBarItem(), step.getPanel());
+                this.stepsPanel.addNavigablePanel(step.getTabBarItem(), step.getStepForm());
             });
-            this.stepPanels.showPanelByIndex(0);
+            this.stepsPanel.showPanelByIndex(0);
         }
 
         preLayoutNew(): wemQ.Promise<void> {

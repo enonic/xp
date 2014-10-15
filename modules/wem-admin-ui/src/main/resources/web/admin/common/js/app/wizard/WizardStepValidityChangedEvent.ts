@@ -1,4 +1,4 @@
-module app.wizard {
+module api.app.wizard {
 
     export class WizardStepValidityChangedEvent {
 

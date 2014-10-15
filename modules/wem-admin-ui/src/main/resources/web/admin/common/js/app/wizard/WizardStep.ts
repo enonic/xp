@@ -4,19 +4,19 @@ module api.app.wizard {
 
         private tabBarItem: api.ui.tab.TabBarItem;
 
-        private panel: api.ui.panel.Panel;
+        private stepForm: WizardStepForm;
 
-        constructor(label: string, panel: api.ui.panel.Panel) {
+        constructor(label: string, stepForm: WizardStepForm) {
             this.tabBarItem = new api.ui.tab.TabBarItem(label, {removable: false});
-            this.panel = panel;
+            this.stepForm = stepForm;
         }
 
         getTabBarItem(): api.ui.tab.TabBarItem {
             return this.tabBarItem;
         }
 
-        getPanel(): api.ui.panel.Panel {
-            return this.panel;
+        getStepForm(): WizardStepForm {
+            return this.stepForm;
         }
 
     }

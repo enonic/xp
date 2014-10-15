@@ -32,6 +32,7 @@ module app.wizard {
     import WizardHeaderWithDisplayNameAndName = api.app.wizard.WizardHeaderWithDisplayNameAndName;
     import WizardHeaderWithDisplayNameAndNameBuilder = api.app.wizard.WizardHeaderWithDisplayNameAndNameBuilder;
     import WizardStep = api.app.wizard.WizardStep;
+    import WizardStepValidityChangedEvent = api.app.wizard.WizardStepValidityChangedEvent;
     import UploadFinishedEvent = api.app.wizard.UploadFinishedEvent;
     import ContentTypeName = api.schema.content.ContentTypeName;
     import DefaultModels = app.wizard.page.DefaultModels;
@@ -58,7 +59,7 @@ module app.wizard {
 
         private contentWizardStepForm: ContentWizardStepForm;
 
-        private schemaStepForms: {[name: string]: ContentWizardStepForm;};
+        private metadataStepFormByName: {[name: string]: ContentWizardStepForm;};
 
         private iconUploadItem: api.ui.uploader.UploadItem;
 
@@ -155,7 +156,7 @@ module app.wizard {
                 (event: WizardStepValidityChangedEvent) =>
                     this.isContentFormValid = event.isValid()
             );
-            this.schemaStepForms = {};
+            this.metadataStepFormByName = {};
 
             var isSiteOrWithinSite = this.site || this.createSite;
             var hasPageTemplate = params.defaultModels && params.defaultModels.hasPageTemplate();
@@ -263,13 +264,13 @@ module app.wizard {
 
                     steps.push(new WizardStep(this.contentType.getDisplayName(), this.contentWizardStepForm));
                     schemas.forEach((schema: MetadataSchema, index: number) => {
-                        if (!this.schemaStepForms[schema.getMetadataSchemaName().toString()]) {
-                            var form = new ContentWizardStepForm();
-                            this.schemaStepForms[schema.getMetadataSchemaName().toString()] = form;
-                            steps.splice(index + 1, 0, new WizardStep(schema.getDisplayName(), form));
+                        if (!this.metadataStepFormByName[schema.getMetadataSchemaName().toString()]) {
+                            var stepForm = new ContentWizardStepForm();
+                            this.metadataStepFormByName[schema.getMetadataSchemaName().toString()] = stepForm;
+                            steps.splice(index + 1, 0, new WizardStep(schema.getDisplayName(), stepForm));
                         }
                     });
-                    steps.push(new WizardStep("Security", new BaseContentWizardStepForm()));
+                    steps.push(new WizardStep("Security", new api.app.wizard.WizardStepForm()));
 
                     this.setSteps(steps);
 
@@ -393,7 +394,7 @@ module app.wizard {
                         metadata = new Metadata(schema.getMetadataSchemaName(), new RootDataSet());
                         content.getAllMetadata().push(metadata);
                     }
-                    this.schemaStepForms[schema.getMetadataSchemaName().toString()].layout(this.formContext, metadata.getData(),
+                    this.metadataStepFormByName[schema.getMetadataSchemaName().toString()].layout(this.formContext, metadata.getData(),
                         schema.getForm());
                 });
 
@@ -565,9 +566,9 @@ module app.wizard {
             }
 
             var metadata: Metadata[] = [];
-            for(var key in this.schemaStepForms) {
-                if (this.schemaStepForms.hasOwnProperty(key)) {
-                    metadata.push(new Metadata(new MetadataSchemaName(key), this.schemaStepForms[key].getRootDataSet()));
+            for (var key in this.metadataStepFormByName) {
+                if (this.metadataStepFormByName.hasOwnProperty(key)) {
+                    metadata.push(new Metadata(new MetadataSchemaName(key), this.metadataStepFormByName[key].getRootDataSet()));
                 }
             }
 
@@ -627,7 +628,18 @@ module app.wizard {
             if (!this.isContentFormValid) {
                 this.contentWizardStepForm.displayValidationErrors(true);
             }
-            return this.isContentFormValid;
+
+            var allMetadataFormsValid = true;
+            for (var key in this.metadataStepFormByName) {
+                if (this.metadataStepFormByName.hasOwnProperty(key)) {
+                    var form = this.metadataStepFormByName[key];
+                    if (!form.isValid()) {
+                        form.displayValidationErrors(true);
+                        allMetadataFormsValid = false;
+                    }
+                }
+            }
+            return this.isContentFormValid && allMetadataFormsValid;
         }
 
         getContextWindowToggler(): app.wizard.page.contextwindow.ContextWindowToggler {

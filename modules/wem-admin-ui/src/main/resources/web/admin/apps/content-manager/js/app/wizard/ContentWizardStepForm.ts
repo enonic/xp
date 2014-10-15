@@ -5,8 +5,9 @@ module app.wizard {
     import FormContext = api.form.FormContext;
     import FormView = api.form.FormView;
     import RootDataSet = api.data.RootDataSet;
+    import WizardStepValidityChangedEvent = api.app.wizard.WizardStepValidityChangedEvent;
 
-    export class ContentWizardStepForm extends BaseContentWizardStepForm {
+    export class ContentWizardStepForm extends api.app.wizard.WizardStepForm {
 
         private formContext: FormContext;
 
