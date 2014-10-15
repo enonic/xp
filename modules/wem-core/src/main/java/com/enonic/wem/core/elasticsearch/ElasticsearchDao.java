@@ -11,7 +11,7 @@ import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
-import org.elasticsearch.action.update.UpdateRequestBuilder;
+import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
 import org.elasticsearch.common.xcontent.XContentBuilder;
@@ -47,15 +47,9 @@ public class ElasticsearchDao
 
     private Client client;
 
-    public void update( final IndexRequest indexRequest )
+    public void update( final UpdateRequest updateRequest )
     {
-        UpdateRequestBuilder updateRequestBuilder = new UpdateRequestBuilder( this.client ).
-            setIndex( indexRequest.index() ).
-            setType( indexRequest.type() ).
-            setId( indexRequest.id() ).
-            setDoc( indexRequest );
-
-        this.client.update( updateRequestBuilder.request() ).actionGet();
+        this.client.update( updateRequest ).actionGet( storeTimeout );
     }
 
     public void store( final IndexRequest indexRequest )
@@ -70,7 +64,7 @@ public class ElasticsearchDao
         {
             final String id = indexDocument.getId();
 
-            final XContentBuilder xContentBuilder = XContentBuilderFactory.create( indexDocument );
+            final XContentBuilder xContentBuilder = IndexDocumentXContentBuilderFactory.create( indexDocument );
 
             final IndexRequest req = Requests.indexRequest().
                 id( id ).

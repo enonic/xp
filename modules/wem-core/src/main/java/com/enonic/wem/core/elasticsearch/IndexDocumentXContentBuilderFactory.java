@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.common.xcontent.XContentFactory;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
@@ -17,10 +16,11 @@ import com.enonic.wem.core.index.document.AbstractIndexDocumentItem;
 import com.enonic.wem.core.index.document.IndexDocument;
 import com.enonic.wem.core.index.document.IndexDocumentOrderbyItem;
 
-public class XContentBuilderFactory
+public class IndexDocumentXContentBuilderFactory
+    extends AbstractXContentBuilderFactor
 {
 
-    private XContentBuilderFactory()
+    private IndexDocumentXContentBuilderFactory()
     {
     }
 
@@ -40,14 +40,6 @@ public class XContentBuilderFactory
         }
     }
 
-    private static XContentBuilder startBuilder()
-        throws Exception
-    {
-        final XContentBuilder result = XContentFactory.jsonBuilder();
-        result.startObject();
-
-        return result;
-    }
 
     private static void addDocumentAnalyzer( final XContentBuilder builder, final IndexDocument indexDocument )
         throws Exception
@@ -93,28 +85,6 @@ public class XContentBuilderFactory
         {
             addField( result, field, orderByMap.get( field ) );
         }
-    }
-
-    private static void addField( XContentBuilder result, String name, Object value )
-        throws Exception
-    {
-        if ( value == null )
-        {
-            return;
-        }
-        if ( value instanceof String )
-        {
-            value = ( (String) value ).trim();
-        }
-
-        result.field( name, value );
-    }
-
-
-    private static void endBuilder( final XContentBuilder contentBuilder )
-        throws Exception
-    {
-        contentBuilder.endObject();
     }
 
 

@@ -17,6 +17,8 @@ public interface IndexService
 
     public void store( final Node node, final IndexContext context );
 
+    public void update( final EntityId entityId, final UpdateScript updateScript, final IndexContext context );
+
     public void delete( final EntityId entityId, final IndexContext context );
 
     public Set<String> getAllRepositoryIndices( final RepositoryId repositoryId );

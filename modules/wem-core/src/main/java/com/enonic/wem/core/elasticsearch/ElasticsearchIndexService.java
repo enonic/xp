@@ -17,6 +17,7 @@ import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.action.admin.indices.stats.IndexStats;
 import org.elasticsearch.action.admin.indices.stats.IndicesStatsRequest;
 import org.elasticsearch.action.admin.indices.stats.IndicesStatsResponse;
+import org.elasticsearch.action.update.UpdateRequestBuilder;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.unit.TimeValue;
 import org.slf4j.Logger;
@@ -33,6 +34,7 @@ import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.index.IndexException;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.index.IndexStatus;
+import com.enonic.wem.core.index.UpdateScript;
 import com.enonic.wem.core.index.document.IndexDocument;
 import com.enonic.wem.core.repository.IndexNameResolver;
 import com.enonic.wem.core.repository.StorageNameResolver;
@@ -199,6 +201,20 @@ public class ElasticsearchIndexService
         final Collection<IndexDocument> indexDocuments =
             NodeIndexDocumentFactory.create( node, context.getWorkspace(), context.getRepositoryId() );
         elasticsearchDao.store( indexDocuments );
+    }
+
+
+    @Override
+    public void update( final EntityId entityId, final UpdateScript updateScript, final IndexContext context )
+    {
+        UpdateRequestBuilder updateRequest = new UpdateRequestBuilder( this.client );
+
+        updateRequest.setIndex( IndexNameResolver.resolveSearchIndexName( context.getRepositoryId() ) ).
+            setType( context.getWorkspace().getName() ).
+            setId( entityId.toString() ).
+            setDoc( UpdateScriptXContentBuilderFactory.create( updateScript ) );
+
+        elasticsearchDao.update( updateRequest.request() );
     }
 
     public void delete( final EntityId entityId, final IndexContext context )

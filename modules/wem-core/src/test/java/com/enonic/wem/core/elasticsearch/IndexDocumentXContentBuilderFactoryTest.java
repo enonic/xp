@@ -23,7 +23,7 @@ import com.enonic.wem.core.index.document.IndexDocumentStringItem;
 
 import static org.junit.Assert.*;
 
-public class XContentBuilderFactoryTest
+public class IndexDocumentXContentBuilderFactoryTest
 {
 
     @Test
@@ -36,7 +36,7 @@ public class XContentBuilderFactoryTest
             analyzer( "myAnalyzer" ).
             build();
 
-        final XContentBuilder xContentBuilder = XContentBuilderFactory.create( indexDocument );
+        final XContentBuilder xContentBuilder = IndexDocumentXContentBuilderFactory.create( indexDocument );
 
         final Map<String, Object> objectMap = getObjectMap( xContentBuilder );
 
@@ -59,7 +59,7 @@ public class XContentBuilderFactoryTest
             addEntry( new IndexDocumentOrderbyItem( IndexDocumentItemPath.from( "myField" ), "myOrderByValue2" ) ).
             build();
 
-        final XContentBuilder xContentBuilder = XContentBuilderFactory.create( indexDocument );
+        final XContentBuilder xContentBuilder = IndexDocumentXContentBuilderFactory.create( indexDocument );
 
         final Map<String, Object> objectMap = getObjectMap( xContentBuilder );
 
@@ -90,7 +90,7 @@ public class XContentBuilderFactoryTest
                 new IndexDocumentGeoPointItem( IndexDocumentItemPath.from( "myGeoPoint" ), Value.newGeoPoint( "81,81" ).toString() ) ).
             build();
 
-        final XContentBuilder xContentBuilder = XContentBuilderFactory.create( indexDocument );
+        final XContentBuilder xContentBuilder = IndexDocumentXContentBuilderFactory.create( indexDocument );
 
         final Map<String, Object> objectMap = getObjectMap( xContentBuilder );
 
