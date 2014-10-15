@@ -23,11 +23,11 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableSet;
 
+import com.enonic.wem.core.elasticsearch.document.StoreDocument;
 import com.enonic.wem.core.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.core.elasticsearch.result.SearchResultFactory;
-import com.enonic.wem.core.index.DeleteDocument;
+import com.enonic.wem.core.elasticsearch.xcontent.StoreDocumentXContentBuilderFactory;
 import com.enonic.wem.core.index.IndexException;
-import com.enonic.wem.core.index.document.IndexDocument;
 import com.enonic.wem.core.index.result.SearchResult;
 
 public class ElasticsearchDao
@@ -37,13 +37,13 @@ public class ElasticsearchDao
 
     private static final boolean DEFAULT_REFRESH = true;
 
-    private String searchPreference = "_local";
+    private final String searchPreference = "_local";
 
-    private String searchTimeout = "5s";
+    private final String searchTimeout = "5s";
 
-    private String storeTimeout = "1s";
+    private final String storeTimeout = "1s";
 
-    private String deleteTimeout = "1s";
+    private final String deleteTimeout = "1s";
 
     private Client client;
 
@@ -58,20 +58,20 @@ public class ElasticsearchDao
             actionGet( storeTimeout );
     }
 
-    public void store( final Collection<IndexDocument> indexDocuments )
+    public void store( final Collection<StoreDocument> storeDocuments )
     {
-        for ( IndexDocument indexDocument : indexDocuments )
+        for ( StoreDocument storeDocument : storeDocuments )
         {
-            final String id = indexDocument.getId();
+            final String id = storeDocument.getId();
 
-            final XContentBuilder xContentBuilder = IndexDocumentXContentBuilderFactory.create( indexDocument );
+            final XContentBuilder xContentBuilder = StoreDocumentXContentBuilderFactory.create( storeDocument );
 
             final IndexRequest req = Requests.indexRequest().
                 id( id ).
-                index( indexDocument.getIndexName() ).
-                type( indexDocument.getIndexTypeName() ).
+                index( storeDocument.getIndexName() ).
+                type( storeDocument.getIndexTypeName() ).
                 source( xContentBuilder ).
-                refresh( indexDocument.doRefreshOnStore() );
+                refresh( storeDocument.doRefreshOnStore() );
 
             this.client.index( req ).actionGet( storeTimeout );
         }

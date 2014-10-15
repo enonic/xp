@@ -11,6 +11,7 @@ import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.elasticsearch.QueryMetaData;
+import com.enonic.wem.core.elasticsearch.xcontent.WorkspaceXContentBuilderFactory;
 import com.enonic.wem.core.entity.EntityId;
 import com.enonic.wem.core.entity.EntityIds;
 import com.enonic.wem.core.entity.NodeVersionIds;

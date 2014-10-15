@@ -1,7 +1,5 @@
 package com.enonic.wem.core.entity.index;
 
-import com.enonic.wem.core.index.document.IndexDocumentItemPath;
-
 public final class IndexPaths
 {
     public static final IndexDocumentItemPath CREATED_TIME_PROPERTY = IndexDocumentItemPath.from( "createdTime" );

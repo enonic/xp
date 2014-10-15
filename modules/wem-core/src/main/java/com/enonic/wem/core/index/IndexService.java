@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import com.enonic.wem.api.repository.RepositoryId;
+import com.enonic.wem.core.elasticsearch.document.UpdateScript;
 import com.enonic.wem.core.entity.EntityId;
 import com.enonic.wem.core.entity.Node;
 

@@ -6,6 +6,7 @@ import org.elasticsearch.index.query.TermQueryBuilder;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.elasticsearch.ElasticsearchDataException;
 import com.enonic.wem.core.elasticsearch.QueryMetaData;
+import com.enonic.wem.core.elasticsearch.xcontent.WorkspaceXContentBuilderFactory;
 import com.enonic.wem.core.entity.EntityId;
 import com.enonic.wem.core.entity.NodeVersionId;
 import com.enonic.wem.core.index.IndexType;

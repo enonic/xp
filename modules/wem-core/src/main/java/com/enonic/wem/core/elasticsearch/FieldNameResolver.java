@@ -3,8 +3,8 @@ package com.enonic.wem.core.elasticsearch;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
+import com.enonic.wem.core.elasticsearch.document.AbstractIndexDocumentItem;
 import com.enonic.wem.core.index.IndexFieldNameNormalizer;
-import com.enonic.wem.core.index.document.AbstractIndexDocumentItem;
 
 public class FieldNameResolver
 {

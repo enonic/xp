@@ -33,7 +33,7 @@ import com.enonic.wem.core.workspace.StoreWorkspaceDocument;
 import com.enonic.wem.core.workspace.WorkspaceContext;
 import com.enonic.wem.core.workspace.WorkspaceDocumentId;
 
-import static com.enonic.wem.core.elasticsearch.workspace.WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME;
+import static com.enonic.wem.core.elasticsearch.xcontent.WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME;
 import static org.junit.Assert.*;
 
 public class ElasticsearchWorkspaceServiceTest

@@ -7,6 +7,7 @@ import org.elasticsearch.index.query.TermsQueryBuilder;
 
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.elasticsearch.QueryMetaData;
+import com.enonic.wem.core.elasticsearch.xcontent.WorkspaceXContentBuilderFactory;
 import com.enonic.wem.core.entity.NodePaths;
 import com.enonic.wem.core.entity.NodeVersionIds;
 import com.enonic.wem.core.index.result.SearchResult;

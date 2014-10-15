@@ -12,11 +12,11 @@ import com.enonic.wem.core.elasticsearch.function.WeightedQueryFieldNames;
 public abstract class AbstractSimpleQueryStringFunction
     extends AbstractFunctionArguments
 {
-    public static final int FIELDNAME_INDEX = 0;
+    private static final int FIELDNAME_INDEX = 0;
 
-    public static final int SEARCHSTRING_INDEX = 1;
+    private static final int SEARCHSTRING_INDEX = 1;
 
-    public static final int OPERATOR_INDEX = 2;
+    private static final int OPERATOR_INDEX = 2;
 
     private static final int MIN_ARGUMENTS = 2;
 
@@ -28,7 +28,7 @@ public abstract class AbstractSimpleQueryStringFunction
 
     private final String searchString;
 
-    public AbstractSimpleQueryStringFunction( final List<ValueExpr> arguments )
+    protected AbstractSimpleQueryStringFunction( final List<ValueExpr> arguments )
     {
         verifyNumberOfArguments( arguments );
 

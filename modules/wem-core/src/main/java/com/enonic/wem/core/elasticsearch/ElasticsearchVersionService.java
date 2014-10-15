@@ -10,6 +10,7 @@ import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 
 import com.enonic.wem.api.repository.RepositoryId;
+import com.enonic.wem.core.elasticsearch.xcontent.VersionXContentBuilderFactory;
 import com.enonic.wem.core.entity.EntityId;
 import com.enonic.wem.core.entity.FindNodeVersionsResult;
 import com.enonic.wem.core.entity.NodeVersion;
@@ -24,9 +25,9 @@ import com.enonic.wem.core.version.EntityVersionDocument;
 import com.enonic.wem.core.version.GetVersionsQuery;
 import com.enonic.wem.core.version.VersionService;
 
-import static com.enonic.wem.core.elasticsearch.VersionXContentBuilderFactory.ENTITY_ID_FIELD_NAME;
-import static com.enonic.wem.core.elasticsearch.VersionXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME;
-import static com.enonic.wem.core.elasticsearch.VersionXContentBuilderFactory.TIMESTAMP_ID_FIELD_NAME;
+import static com.enonic.wem.core.elasticsearch.xcontent.VersionXContentBuilderFactory.ENTITY_ID_FIELD_NAME;
+import static com.enonic.wem.core.elasticsearch.xcontent.VersionXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME;
+import static com.enonic.wem.core.elasticsearch.xcontent.VersionXContentBuilderFactory.TIMESTAMP_ID_FIELD_NAME;
 
 public class ElasticsearchVersionService
     implements VersionService

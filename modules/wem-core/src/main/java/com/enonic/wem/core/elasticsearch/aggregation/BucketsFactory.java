@@ -9,7 +9,7 @@ import com.enonic.wem.api.aggregation.Bucket;
 import com.enonic.wem.api.aggregation.Buckets;
 import com.enonic.wem.api.aggregation.DateRangeBucket;
 
-public class BucketsFactory
+class BucketsFactory
 {
 
     public static Buckets createFromTerms( final Collection<Terms.Bucket> buckets )
@@ -18,7 +18,7 @@ public class BucketsFactory
 
         for ( final Terms.Bucket bucket : buckets )
         {
-            bucketsBuilder.add( new Bucket( bucket.getKey().toString(), bucket.getDocCount() ) );
+            bucketsBuilder.add( new Bucket( bucket.getKey(), bucket.getDocCount() ) );
         }
 
         return bucketsBuilder.build();
@@ -31,7 +31,7 @@ public class BucketsFactory
 
         for ( final DateRange.Bucket bucket : buckets )
         {
-            final DateRangeBucket dateRangeBucket = new DateRangeBucket( bucket.getKey().toString(), bucket.getDocCount() );
+            final DateRangeBucket dateRangeBucket = new DateRangeBucket( bucket.getKey(), bucket.getDocCount() );
             dateRangeBucket.setFrom( bucket.getFromAsDate() != null ? bucket.getFromAsDate().toDate().toInstant() : null );
             dateRangeBucket.setTo( bucket.getToAsDate() != null ? bucket.getToAsDate().toDate().toInstant() : null );
             bucketsBuilder.add( dateRangeBucket );

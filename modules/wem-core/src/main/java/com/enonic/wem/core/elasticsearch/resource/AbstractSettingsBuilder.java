@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.wem.core.config.ConfigProperties;
 
-public class AbstractSettingsBuilder
+class AbstractSettingsBuilder
 {
 
     final static String ELASTICSEARCH_PROPERTIES_PREFIX = "cms.elasticsearch";
@@ -19,7 +19,7 @@ public class AbstractSettingsBuilder
 
     ConfigProperties configProperties;
 
-    protected final Logger LOG = LoggerFactory.getLogger( AbstractSettingsBuilder.class );
+    private final Logger LOG = LoggerFactory.getLogger( AbstractSettingsBuilder.class );
 
     String subtractPrefixFromProperty( final String property, final String propertyPrefix )
     {

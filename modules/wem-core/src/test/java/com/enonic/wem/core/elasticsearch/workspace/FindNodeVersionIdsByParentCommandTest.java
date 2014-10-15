@@ -19,7 +19,7 @@ import com.enonic.wem.core.index.result.SearchResultField;
 
 import static com.enonic.wem.core.TestContext.TEST_REPOSITORY;
 import static com.enonic.wem.core.TestContext.TEST_WORKSPACE;
-import static com.enonic.wem.core.elasticsearch.workspace.WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME;
+import static com.enonic.wem.core.elasticsearch.xcontent.WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME;
 import static junit.framework.Assert.assertEquals;
 
 public class FindNodeVersionIdsByParentCommandTest

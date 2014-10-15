@@ -74,7 +74,7 @@ public class QueryMetaData
 
     public static class Builder
     {
-        private String indexName;
+        private final String indexName;
 
         private String indexTypeName;
 
@@ -82,7 +82,7 @@ public class QueryMetaData
 
         private int size = 10;
 
-        private Set<String> fields = Sets.newHashSet();
+        private final Set<String> fields = Sets.newHashSet();
 
         private final Set<SortBuilder> sortBuilders = Sets.newHashSet();
 

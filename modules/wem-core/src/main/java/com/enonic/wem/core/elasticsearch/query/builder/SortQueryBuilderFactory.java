@@ -18,7 +18,7 @@ import com.enonic.wem.core.index.query.IndexQueryFieldNameResolver;
 public class SortQueryBuilderFactory
     extends AbstractQueryBuilderFactory
 {
-    public static final boolean IGNORE_UNMAPPED = true;
+    private static final boolean IGNORE_UNMAPPED = true;
 
     public static Set<SortBuilder> create( final Collection<OrderExpr> orderExpressions )
     {

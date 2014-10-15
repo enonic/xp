@@ -168,7 +168,7 @@ public class ElasticsearchQuery
 
         private FilterBuilder filter;
 
-        private Set<FacetBuilder> facetBuilders = Sets.newHashSet();
+        private final Set<FacetBuilder> facetBuilders = Sets.newHashSet();
 
         private String indexType;
 
@@ -180,7 +180,7 @@ public class ElasticsearchQuery
 
         private int size = DEFAULT_SIZE;
 
-        private boolean explain = false;
+        private final boolean explain = false;
 
         private Set<AggregationBuilder> aggregations = Sets.newHashSet();
 

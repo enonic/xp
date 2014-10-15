@@ -6,7 +6,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.util.GeoPoint;
 
-public class AbstractQueryBuilderFactory
+class AbstractQueryBuilderFactory
 {
     static Object getValueAsType( Value value )
     {

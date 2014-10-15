@@ -11,7 +11,7 @@ import com.google.common.collect.Maps;
 
 import com.enonic.wem.core.index.result.SearchResultField;
 
-public class SearchResultFieldsFactory
+class SearchResultFieldsFactory
 {
 
     public static Map<String, SearchResultField> create( final SearchHit hit )

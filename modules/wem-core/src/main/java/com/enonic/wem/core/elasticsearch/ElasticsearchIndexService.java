@@ -26,16 +26,14 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.repository.RepositoryId;
+import com.enonic.wem.core.elasticsearch.document.StoreDocument;
+import com.enonic.wem.core.elasticsearch.document.UpdateScript;
+import com.enonic.wem.core.elasticsearch.xcontent.UpdateScriptXContentBuilderFactory;
 import com.enonic.wem.core.entity.EntityId;
 import com.enonic.wem.core.entity.Node;
-import com.enonic.wem.core.entity.index.NodeIndexDocumentFactory;
-import com.enonic.wem.core.index.DeleteDocument;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.index.IndexException;
 import com.enonic.wem.core.index.IndexService;
-import com.enonic.wem.core.index.IndexStatus;
-import com.enonic.wem.core.index.UpdateScript;
-import com.enonic.wem.core.index.document.IndexDocument;
 import com.enonic.wem.core.repository.IndexNameResolver;
 import com.enonic.wem.core.repository.StorageNameResolver;
 
@@ -198,9 +196,9 @@ public class ElasticsearchIndexService
 
     public void store( final Node node, final IndexContext context )
     {
-        final Collection<IndexDocument> indexDocuments =
+        final Collection<StoreDocument> storeDocuments =
             NodeIndexDocumentFactory.create( node, context.getWorkspace(), context.getRepositoryId() );
-        elasticsearchDao.store( indexDocuments );
+        elasticsearchDao.store( storeDocuments );
     }
 
 

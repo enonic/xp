@@ -4,9 +4,9 @@ import com.google.common.base.Strings;
 
 public class WeightedQueryFieldName
 {
-    private String baseFieldName;
+    private final String baseFieldName;
 
-    private Integer weight;
+    private final Integer weight;
 
     private WeightedQueryFieldName( final String baseFieldName, final Integer weight )
     {

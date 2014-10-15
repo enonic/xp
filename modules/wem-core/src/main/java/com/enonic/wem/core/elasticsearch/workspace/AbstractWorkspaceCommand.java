@@ -13,6 +13,7 @@ import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.elasticsearch.ElasticsearchDao;
 import com.enonic.wem.core.elasticsearch.QueryMetaData;
+import com.enonic.wem.core.elasticsearch.xcontent.WorkspaceXContentBuilderFactory;
 import com.enonic.wem.core.entity.NodeVersionId;
 import com.enonic.wem.core.entity.NodeVersionIds;
 import com.enonic.wem.core.index.IndexType;

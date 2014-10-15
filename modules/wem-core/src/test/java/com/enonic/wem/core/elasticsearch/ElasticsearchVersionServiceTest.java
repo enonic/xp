@@ -19,8 +19,8 @@ import com.enonic.wem.core.index.result.SearchResultEntry;
 import com.enonic.wem.core.index.result.SearchResultField;
 import com.enonic.wem.core.version.GetVersionsQuery;
 
-import static com.enonic.wem.core.elasticsearch.VersionXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME;
-import static com.enonic.wem.core.elasticsearch.VersionXContentBuilderFactory.TIMESTAMP_ID_FIELD_NAME;
+import static com.enonic.wem.core.elasticsearch.xcontent.VersionXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME;
+import static com.enonic.wem.core.elasticsearch.xcontent.VersionXContentBuilderFactory.TIMESTAMP_ID_FIELD_NAME;
 import static org.junit.Assert.*;
 
 public class ElasticsearchVersionServiceTest

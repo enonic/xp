@@ -114,7 +114,7 @@ public class QueryBuilderFactory
     {
         private QueryExpr queryExpr;
 
-        private Filters.Builder filterBuilder = Filters.create();
+        private final Filters.Builder filterBuilder = Filters.create();
 
         public Builder queryExpr( final QueryExpr queryExpr )
         {

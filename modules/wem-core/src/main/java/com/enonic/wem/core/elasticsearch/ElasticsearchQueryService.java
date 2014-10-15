@@ -14,7 +14,7 @@ public class ElasticsearchQueryService
 {
     private ElasticsearchDao elasticsearchDao;
 
-    private QueryResultFactory queryResultFactory = new QueryResultFactory();
+    private final QueryResultFactory queryResultFactory = new QueryResultFactory();
 
 
     @Override

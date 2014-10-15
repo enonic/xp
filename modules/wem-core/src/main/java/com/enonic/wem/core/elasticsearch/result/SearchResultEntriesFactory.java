@@ -7,7 +7,7 @@ import org.elasticsearch.search.SearchHits;
 import com.enonic.wem.core.index.result.SearchResultEntries;
 import com.enonic.wem.core.index.result.SearchResultEntry;
 
-public class SearchResultEntriesFactory
+class SearchResultEntriesFactory
 {
     public static SearchResultEntries create( final SearchHits searchHits )
     {

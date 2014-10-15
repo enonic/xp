@@ -10,9 +10,9 @@ public class GeoDistanceSortFunctionArguments
     extends AbstractFunctionArguments
 {
 
-    public static final int FIELD_POSITION = 0;
+    private static final int FIELD_POSITION = 0;
 
-    public static final int LOCATION_POSITION = 1;
+    private static final int LOCATION_POSITION = 1;
 
     private final static int MIN_ARGUMENTS = 2;
 
@@ -22,7 +22,7 @@ public class GeoDistanceSortFunctionArguments
 
     private double longitude;
 
-    private String fieldName;
+    private final String fieldName;
 
 
     public GeoDistanceSortFunctionArguments( final List<ValueExpr> arguments )

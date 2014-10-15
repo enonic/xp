@@ -8,7 +8,7 @@ import com.enonic.wem.core.entity.query.EntityQuery;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.repository.IndexNameResolver;
 
-public class EntityQueryTranslator
+class EntityQueryTranslator
 {
     public static ElasticsearchQuery translate( final EntityQuery entityQuery, final IndexContext indexContext )
     {
