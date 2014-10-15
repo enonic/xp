@@ -911,12 +911,28 @@ module api.dom {
                 setParentElement(parent));
         }
 
-        static fromString(s: string): Element {
+        static fromString(s: string, setLoadExistingChildren:boolean = true): Element {
             var elementAsJQ = wemjq(s);
             var elementASHtmlElement = elementAsJQ.get(0);
-            return new Element(new ElementFromHelperBuilder().
-                setHelper(new ElementHelper(elementASHtmlElement)).
-                setLoadExistingChildren(true));
+            return !!elementASHtmlElement ? new Element(new ElementFromHelperBuilder().
+                                                setHelper(new ElementHelper(elementASHtmlElement)).
+                                                setLoadExistingChildren(setLoadExistingChildren))
+                                          : null;
+        }
+
+        static elementsFromRequest(s: string, setLoadExistingChildren:boolean = true): Element[] {
+            var elementAsJQ = wemjq(s);
+            var elements = [];
+            elementAsJQ.each((index, elem) => {
+                var e = wemjq(elem);
+                elements.push(
+                new Element(new ElementFromHelperBuilder().
+                    setHelper(new ElementHelper(e.get(0))).
+                    setLoadExistingChildren(setLoadExistingChildren))
+                );
+            });
+
+            return elements;
         }
     }
 }

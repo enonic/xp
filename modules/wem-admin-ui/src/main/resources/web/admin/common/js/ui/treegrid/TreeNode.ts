@@ -19,7 +19,10 @@ module api.ui.treegrid {
         private children: TreeNode<DATA>[];
 
         constructor(builder: TreeNodeBuilder<DATA>) {
-            this.id = builder.getId();
+
+            // The id's should not repeat. make shore that empty id's will be set to unique.
+            this.id = builder.getId() || Math.random().toString(36).substring(2);
+
             this.data = builder.getData();
             this.parent = builder.getParent();
             this.setChildren(builder.getChildren());
