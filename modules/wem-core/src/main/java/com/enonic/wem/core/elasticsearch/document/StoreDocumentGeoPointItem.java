@@ -3,12 +3,12 @@ package com.enonic.wem.core.elasticsearch.document;
 import com.enonic.wem.core.entity.index.IndexDocumentItemPath;
 import com.enonic.wem.core.index.IndexValueType;
 
-public class IndexDocumentNumberItem
-    extends AbstractIndexDocumentItem<Double>
+public class StoreDocumentGeoPointItem
+    extends AbstractStoreDocumentItem<String>
 {
-    private final Double value;
+    private final String value;
 
-    public IndexDocumentNumberItem( final IndexDocumentItemPath path, final Double value )
+    public StoreDocumentGeoPointItem( final IndexDocumentItemPath path, final String value )
     {
         super( path );
         this.value = value;
@@ -17,11 +17,11 @@ public class IndexDocumentNumberItem
     @Override
     public IndexValueType getIndexBaseType()
     {
-        return IndexValueType.NUMBER;
+        return IndexValueType.GEO_POINT;
     }
 
     @Override
-    public Double getValue()
+    public String getValue()
     {
         return value;
     }

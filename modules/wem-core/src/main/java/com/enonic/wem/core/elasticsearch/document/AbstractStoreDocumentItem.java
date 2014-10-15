@@ -3,12 +3,12 @@ package com.enonic.wem.core.elasticsearch.document;
 import com.enonic.wem.core.entity.index.IndexDocumentItemPath;
 import com.enonic.wem.core.index.IndexValueType;
 
-public abstract class AbstractIndexDocumentItem<T>
+public abstract class AbstractStoreDocumentItem<T>
 {
 
     private final IndexDocumentItemPath indexDocumentItemPath;
 
-    AbstractIndexDocumentItem( final IndexDocumentItemPath path )
+    AbstractStoreDocumentItem( final IndexDocumentItemPath path )
     {
         this.indexDocumentItemPath = path;
     }

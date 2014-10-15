@@ -17,7 +17,7 @@ public class StoreDocument
 
     private final String indexName;
 
-    private final ImmutableSet<AbstractIndexDocumentItem> indexDocumentItems;
+    private final ImmutableSet<AbstractStoreDocumentItem> indexDocumentItems;
 
     private final boolean refreshOnStore;
 
@@ -53,7 +53,7 @@ public class StoreDocument
         return indexName;
     }
 
-    public Set<AbstractIndexDocumentItem> getIndexDocumentItems()
+    public Set<AbstractStoreDocumentItem> getIndexDocumentItems()
     {
         return indexDocumentItems;
     }
@@ -80,7 +80,7 @@ public class StoreDocument
 
         private boolean refreshOnStore = true;
 
-        private final Set<AbstractIndexDocumentItem> indexDocumentEntries;
+        private final Set<AbstractStoreDocumentItem> indexDocumentEntries;
 
         public Builder()
         {
@@ -123,14 +123,14 @@ public class StoreDocument
             return this;
         }
 
-        public Builder addEntry( final AbstractIndexDocumentItem entry )
+        public Builder addEntry( final AbstractStoreDocumentItem entry )
         {
             this.indexDocumentEntries.add( entry );
 
             return this;
         }
 
-        public Builder addEntries( final Set<AbstractIndexDocumentItem> entries )
+        public Builder addEntries( final Set<AbstractStoreDocumentItem> entries )
         {
             this.indexDocumentEntries.addAll( entries );
             return this;

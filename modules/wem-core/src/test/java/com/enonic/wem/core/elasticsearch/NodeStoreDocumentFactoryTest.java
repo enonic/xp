@@ -18,7 +18,7 @@ import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
-import com.enonic.wem.core.elasticsearch.document.AbstractIndexDocumentItem;
+import com.enonic.wem.core.elasticsearch.document.AbstractStoreDocumentItem;
 import com.enonic.wem.core.elasticsearch.document.StoreDocument;
 import com.enonic.wem.core.entity.EntityId;
 import com.enonic.wem.core.entity.Node;
@@ -135,15 +135,15 @@ public class NodeStoreDocumentFactoryTest
         assertEquals( IndexNameResolver.resolveSearchIndexName( TEST_REPOSITORY.getId() ), storeDocument.getIndexName() );
         assertEquals( "test", storeDocument.getIndexTypeName() );
 
-        final AbstractIndexDocumentItem createdTimeItem = getItemWithName( storeDocument, CREATED_TIME_PROPERTY, IndexValueType.DATETIME );
+        final AbstractStoreDocumentItem createdTimeItem = getItemWithName( storeDocument, CREATED_TIME_PROPERTY, IndexValueType.DATETIME );
 
         assertEquals( Date.from( node.getCreatedTime() ), createdTimeItem.getValue() );
 
-        final AbstractIndexDocumentItem creator = getItemWithName( storeDocument, CREATOR_PROPERTY_PATH, IndexValueType.STRING );
+        final AbstractStoreDocumentItem creator = getItemWithName( storeDocument, CREATOR_PROPERTY_PATH, IndexValueType.STRING );
 
         assertEquals( "test:creator", creator.getValue() );
 
-        final AbstractIndexDocumentItem modifier = getItemWithName( storeDocument, MODIFIER_PROPERTY_PATH, IndexValueType.STRING );
+        final AbstractStoreDocumentItem modifier = getItemWithName( storeDocument, MODIFIER_PROPERTY_PATH, IndexValueType.STRING );
 
         assertEquals( "test:modifier", modifier.getValue() );
     }
@@ -187,7 +187,7 @@ public class NodeStoreDocumentFactoryTest
         assertTrue( storeDocuments.iterator().hasNext() );
         final StoreDocument next = storeDocuments.iterator().next();
 
-        final Set<AbstractIndexDocumentItem> numberItems =
+        final Set<AbstractStoreDocumentItem> numberItems =
             getItemsWithName( next, IndexDocumentItemPath.from( "a_b_c" ), IndexValueType.NUMBER );
 
         assertEquals( 2, numberItems.size() );
@@ -206,10 +206,10 @@ public class NodeStoreDocumentFactoryTest
         return null;
     }
 
-    AbstractIndexDocumentItem getItemWithName( final StoreDocument storeDocument, final IndexDocumentItemPath path,
+    AbstractStoreDocumentItem getItemWithName( final StoreDocument storeDocument, final IndexDocumentItemPath path,
                                                final IndexValueType baseType )
     {
-        for ( AbstractIndexDocumentItem item : storeDocument.getIndexDocumentItems() )
+        for ( AbstractStoreDocumentItem item : storeDocument.getIndexDocumentItems() )
         {
             if ( item.getPath().equals( path.toString() ) && item.getIndexBaseType().equals( baseType ) )
             {
@@ -220,12 +220,12 @@ public class NodeStoreDocumentFactoryTest
         return null;
     }
 
-    Set<AbstractIndexDocumentItem> getItemsWithName( final StoreDocument storeDocument, final IndexDocumentItemPath path,
+    Set<AbstractStoreDocumentItem> getItemsWithName( final StoreDocument storeDocument, final IndexDocumentItemPath path,
                                                      final IndexValueType baseType )
     {
-        Set<AbstractIndexDocumentItem> items = Sets.newHashSet();
+        Set<AbstractStoreDocumentItem> items = Sets.newHashSet();
 
-        for ( AbstractIndexDocumentItem item : storeDocument.getIndexDocumentItems() )
+        for ( AbstractStoreDocumentItem item : storeDocument.getIndexDocumentItems() )
         {
             if ( item.getPath().equals( path.toString() ) && item.getIndexBaseType().equals( baseType ) )
             {

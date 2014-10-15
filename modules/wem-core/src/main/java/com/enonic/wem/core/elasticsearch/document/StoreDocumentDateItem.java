@@ -6,12 +6,12 @@ import java.util.Date;
 import com.enonic.wem.core.entity.index.IndexDocumentItemPath;
 import com.enonic.wem.core.index.IndexValueType;
 
-public class IndexDocumentDateItem
-    extends AbstractIndexDocumentItem<Date>
+public class StoreDocumentDateItem
+    extends AbstractStoreDocumentItem<Date>
 {
     private final Instant instant;
 
-    public IndexDocumentDateItem( final IndexDocumentItemPath path, final Instant instant )
+    public StoreDocumentDateItem( final IndexDocumentItemPath path, final Instant instant )
     {
         super( path );
         this.instant = instant;

@@ -3,14 +3,14 @@ package com.enonic.wem.core.elasticsearch;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
-import com.enonic.wem.core.elasticsearch.document.AbstractIndexDocumentItem;
+import com.enonic.wem.core.elasticsearch.document.AbstractStoreDocumentItem;
 import com.enonic.wem.core.index.IndexFieldNameNormalizer;
 
 public class FieldNameResolver
 {
     private final static String SEPARATOR = ".";
 
-    public static String resolve( final AbstractIndexDocumentItem item )
+    public static String resolve( final AbstractStoreDocumentItem item )
     {
         Preconditions.checkNotNull( item, "item could not be null" );
 

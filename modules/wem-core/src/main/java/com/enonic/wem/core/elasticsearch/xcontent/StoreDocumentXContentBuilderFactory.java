@@ -12,9 +12,9 @@ import com.google.common.collect.Multimap;
 
 import com.enonic.wem.core.elasticsearch.FieldNameResolver;
 import com.enonic.wem.core.elasticsearch.IndexConstants;
-import com.enonic.wem.core.elasticsearch.document.AbstractIndexDocumentItem;
-import com.enonic.wem.core.elasticsearch.document.IndexDocumentOrderbyItem;
+import com.enonic.wem.core.elasticsearch.document.AbstractStoreDocumentItem;
 import com.enonic.wem.core.elasticsearch.document.StoreDocument;
+import com.enonic.wem.core.elasticsearch.document.StoreDocumentOrderbyItem;
 import com.enonic.wem.core.index.IndexException;
 
 public class StoreDocumentXContentBuilderFactory
@@ -61,13 +61,13 @@ public class StoreDocumentXContentBuilderFactory
         // OrderBy should only have one value, add to own one-value-map
         final Map<String, Object> orderByMap = Maps.newHashMap();
 
-        final Set<AbstractIndexDocumentItem> indexDocumentItems = storeDocument.getIndexDocumentItems();
+        final Set<AbstractStoreDocumentItem> indexDocumentItems = storeDocument.getIndexDocumentItems();
 
-        for ( AbstractIndexDocumentItem item : indexDocumentItems )
+        for ( AbstractStoreDocumentItem item : indexDocumentItems )
         {
             final String fieldName = FieldNameResolver.resolve( item );
 
-            if ( item instanceof IndexDocumentOrderbyItem )
+            if ( item instanceof StoreDocumentOrderbyItem )
             {
                 orderByMap.put( fieldName, item.getValue() );
             }

@@ -8,7 +8,7 @@ import org.junit.Test;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.index.IndexConfig;
-import com.enonic.wem.core.elasticsearch.document.AbstractIndexDocumentItem;
+import com.enonic.wem.core.elasticsearch.document.AbstractStoreDocumentItem;
 import com.enonic.wem.core.elasticsearch.document.IndexDocumentItemFactory;
 
 import static org.junit.Assert.*;
@@ -21,7 +21,7 @@ public class StoreDocumentItemFactoryTest
     {
         Property property = Property.newDouble( "myDoubleField", 123.0 );
 
-        final Set<AbstractIndexDocumentItem> indexDocumentItems = IndexDocumentItemFactory.create( property, IndexConfig.BY_TYPE );
+        final Set<AbstractStoreDocumentItem> indexDocumentItems = IndexDocumentItemFactory.create( property, IndexConfig.BY_TYPE );
 
         // Should yield number, string, orderby, all*2
         assertEquals( 5, indexDocumentItems.size() );
@@ -33,7 +33,7 @@ public class StoreDocumentItemFactoryTest
     {
         Property property = Property.newLong( "myDoubleField", 123L );
 
-        final Set<AbstractIndexDocumentItem> indexDocumentItems = IndexDocumentItemFactory.create( property, IndexConfig.BY_TYPE );
+        final Set<AbstractStoreDocumentItem> indexDocumentItems = IndexDocumentItemFactory.create( property, IndexConfig.BY_TYPE );
 
         // Should yield number, string, orderby, all*2
         assertEquals( 5, indexDocumentItems.size() );
@@ -45,7 +45,7 @@ public class StoreDocumentItemFactoryTest
     {
         Property property = Property.newLocalDate( "myDateField", LocalDate.now() );
 
-        final Set<AbstractIndexDocumentItem> indexDocumentItems = IndexDocumentItemFactory.create( property, IndexConfig.BY_TYPE );
+        final Set<AbstractStoreDocumentItem> indexDocumentItems = IndexDocumentItemFactory.create( property, IndexConfig.BY_TYPE );
 
         // Should yield date, string, orderby, all*2
         assertEquals( 5, indexDocumentItems.size() );
@@ -57,7 +57,7 @@ public class StoreDocumentItemFactoryTest
     {
         Property property = new Property( "myGeoPoint", Value.newGeoPoint( "41.12,-71.34" ) );
 
-        final Set<AbstractIndexDocumentItem> indexDocumentItems = IndexDocumentItemFactory.create( property, IndexConfig.BY_TYPE );
+        final Set<AbstractStoreDocumentItem> indexDocumentItems = IndexDocumentItemFactory.create( property, IndexConfig.BY_TYPE );
 
         // Should yield string, geo-point, orderby, all*2
         assertEquals( 5, indexDocumentItems.size() );

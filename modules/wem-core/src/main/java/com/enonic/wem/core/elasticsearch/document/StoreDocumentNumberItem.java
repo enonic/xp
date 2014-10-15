@@ -3,13 +3,12 @@ package com.enonic.wem.core.elasticsearch.document;
 import com.enonic.wem.core.entity.index.IndexDocumentItemPath;
 import com.enonic.wem.core.index.IndexValueType;
 
-class IndexDocumentAnalyzedItem
-    extends AbstractIndexDocumentItem<String>
+public class StoreDocumentNumberItem
+    extends AbstractStoreDocumentItem<Double>
 {
+    private final Double value;
 
-    private final String value;
-
-    public IndexDocumentAnalyzedItem( final IndexDocumentItemPath path, final String value )
+    public StoreDocumentNumberItem( final IndexDocumentItemPath path, final Double value )
     {
         super( path );
         this.value = value;
@@ -18,11 +17,11 @@ class IndexDocumentAnalyzedItem
     @Override
     public IndexValueType getIndexBaseType()
     {
-        return IndexValueType.ANALYZED;
+        return IndexValueType.NUMBER;
     }
 
     @Override
-    public String getValue()
+    public Double getValue()
     {
         return value;
     }

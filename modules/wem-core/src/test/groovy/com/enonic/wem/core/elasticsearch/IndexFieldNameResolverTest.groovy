@@ -18,20 +18,20 @@ class IndexFieldNameResolverTest
 
         where:
         item                                                                               | resolvedName
-        new IndexDocumentStringItem( IndexDocumentItemPath.from( "a.b.c" ), "myString" )   | "a_b_c"
-        new IndexDocumentNumberItem( IndexDocumentItemPath.from( "a.b.c" ), 1 )            | "a_b_c._number"
-        new IndexDocumentAnalyzedItem( IndexDocumentItemPath.from( "a.b.c" ), "myString" ) | "a_b_c._analyzed"
-        new IndexDocumentNGramItem( IndexDocumentItemPath.from( "a.b.c" ), "myString" )    | "a_b_c._ngram"
-        new IndexDocumentGeoPointItem( IndexDocumentItemPath.from( "a.b.c" ), "80,80" )    | "a_b_c._geopoint"
-        new IndexDocumentOrderbyItem( IndexDocumentItemPath.from( "a.b.c" ), "orderBy" )   | "a_b_c._orderby"
-        new IndexDocumentDateItem( IndexDocumentItemPath.from( "a.b.c" ), Instant.now() )  | "a_b_c._datetime"
+        new StoreDocumentStringItem( IndexDocumentItemPath.from( "a.b.c" ), "myString" )   | "a_b_c"
+        new StoreDocumentNumberItem( IndexDocumentItemPath.from( "a.b.c" ), 1 )            | "a_b_c._number"
+        new StoreDocumentAnalyzedItem( IndexDocumentItemPath.from( "a.b.c" ), "myString" ) | "a_b_c._analyzed"
+        new StoreDocumentNGramItem( IndexDocumentItemPath.from( "a.b.c" ), "myString" )    | "a_b_c._ngram"
+        new StoreDocumentGeoPointItem( IndexDocumentItemPath.from( "a.b.c" ), "80,80" )    | "a_b_c._geopoint"
+        new StoreDocumentOrderbyItem( IndexDocumentItemPath.from( "a.b.c" ), "orderBy" )   | "a_b_c._orderby"
+        new StoreDocumentDateItem( IndexDocumentItemPath.from( "a.b.c" ), Instant.now() )  | "a_b_c._datetime"
     }
 
     @Unroll
     def "resolve name from path #pathAsString"()
     {
         expect:
-        resolvedName == FieldNameResolver.resolve( new IndexDocumentStringItem( IndexDocumentItemPath.from( pathAsString ), "myValue" ) )
+        resolvedName == FieldNameResolver.resolve( new StoreDocumentStringItem( IndexDocumentItemPath.from( pathAsString ), "myValue" ) )
 
         where:
         pathAsString | resolvedName
