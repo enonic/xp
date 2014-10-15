@@ -54,6 +54,20 @@ final class ModuleImpl
         return displayName;
     }
 
+    @Override
+    public String getMaxSystemVersion()
+    {
+        // TODO: Introduce property
+        return "5.1";
+    }
+
+    @Override
+    public String getMinSystemVersion()
+    {
+        // TODO: Introduce property
+        return "5.0";
+    }
+
     public String getUrl()
     {
         return url;

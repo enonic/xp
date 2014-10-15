@@ -39,9 +39,10 @@ module app.view {
             this.currentItem = item;
 
             super.setItem(item);
-            this.actionMenu.setLabel(api.util.StringHelper.capitalize(item.getModel().getState()));
+            var currentModule = item.getModel();
+            this.actionMenu.setLabel(api.util.StringHelper.capitalize(currentModule.getState()));
 
-            if (item.getModel().getState() == "started") {
+            if (currentModule.getState() == "started") {
                 ModuleBrowseActions.get().START_MODULE.setEnabled(false);
                 ModuleBrowseActions.get().STOP_MODULE.setEnabled(true);
             } else {
@@ -53,13 +54,14 @@ module app.view {
 
             var infoGroup = new ModuleItemDataGroup("Info");
             infoGroup.addDataList("Build date", "TBA");
-            infoGroup.addDataList("Version", item.getModel().getVersion());
-            infoGroup.addDataList("ModuleID", item.getModel().getModuleKey().toString());
-            infoGroup.addDataList("Requirements", "Enonic 5.0.0");
+            infoGroup.addDataList("Version", currentModule.getVersion());
+            infoGroup.addDataList("Key", currentModule.getModuleKey().toString());
+            infoGroup.addDataList("System Required",
+                    ">= " + currentModule.getMinSystemVersion() + " and <=" + currentModule.getMaxSystemVersion());
 
             var schemasGroup = new ModuleItemDataGroup("Schemas");
 
-            new api.schema.content.GetContentTypesByModuleRequest(item.getModel().getModuleKey()).
+            new api.schema.content.GetContentTypesByModuleRequest(currentModule.getModuleKey()).
                 sendAndParse().
                 then((contentTypes: ContentTypeSummary[]) => {
                     var contentTypeNames = contentTypes.map((contentType: ContentTypeSummary) => contentType.getContentTypeName().toString());
@@ -69,7 +71,7 @@ module app.view {
                 done();
 
             schemasGroup.addDataList("Mixins", "TBA");
-            var metadataNames = item.getModel().getMetadataSchemaDependencies();
+            var metadataNames = currentModule.getMetadataSchemaDependencies();
             var strings: string[] = [];
             metadataNames.forEach((data: api.schema.metadata.MetadataSchemaName) => {
                 strings.push(data.toString());

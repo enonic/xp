@@ -36,6 +36,16 @@ public class ModuleJson
         return module.getDisplayName();
     }
 
+    public String getMaxSystemVersion()
+    {
+        return module.getMaxSystemVersion();
+    }
+
+    public String getMinSystemVersion()
+    {
+        return module.getMinSystemVersion();
+    }
+
     public String getUrl()
     {
         return module.getUrl();

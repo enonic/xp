@@ -16,6 +16,10 @@ public interface Module
 
     public String getDisplayName();
 
+    public String getMaxSystemVersion();
+
+    public String getMinSystemVersion();
+
     public String getUrl();
 
     public String getVendorName();
