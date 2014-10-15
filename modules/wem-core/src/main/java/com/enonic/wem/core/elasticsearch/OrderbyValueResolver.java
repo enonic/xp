@@ -1,12 +1,11 @@
-package com.enonic.wem.core.elasticsearch.document;
+package com.enonic.wem.core.elasticsearch;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.data.type.ValueTypes;
-import com.enonic.wem.core.elasticsearch.IndexFormats;
 
-class OrderbyValueResolver
+public class OrderbyValueResolver
 {
 
     public static String getOrderbyValue( Value value )

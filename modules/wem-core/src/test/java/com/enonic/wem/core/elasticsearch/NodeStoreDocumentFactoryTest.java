@@ -209,7 +209,7 @@ public class NodeStoreDocumentFactoryTest
     AbstractStoreDocumentItem getItemWithName( final StoreDocument storeDocument, final IndexDocumentItemPath path,
                                                final IndexValueType baseType )
     {
-        for ( AbstractStoreDocumentItem item : storeDocument.getIndexDocumentItems() )
+        for ( AbstractStoreDocumentItem item : storeDocument.getStoreDocumentItems() )
         {
             if ( item.getPath().equals( path.toString() ) && item.getIndexBaseType().equals( baseType ) )
             {
@@ -225,7 +225,7 @@ public class NodeStoreDocumentFactoryTest
     {
         Set<AbstractStoreDocumentItem> items = Sets.newHashSet();
 
-        for ( AbstractStoreDocumentItem item : storeDocument.getIndexDocumentItems() )
+        for ( AbstractStoreDocumentItem item : storeDocument.getStoreDocumentItems() )
         {
             if ( item.getPath().equals( path.toString() ) && item.getIndexBaseType().equals( baseType ) )
             {

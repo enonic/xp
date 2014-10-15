@@ -1,4 +1,4 @@
-package com.enonic.wem.core.elasticsearch.document;
+package com.enonic.wem.core.elasticsearch;
 
 final class IndexNumericUtils
 {

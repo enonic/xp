@@ -30,9 +30,9 @@ public class StoreDocumentXContentBuilderFactoryTest
     public void create_given_indexdocument_analyzer()
         throws Exception
     {
-        StoreDocument storeDocument = StoreDocument.newIndexDocument().
-            index( "testindex" ).
-            indexType( "test" ).
+        StoreDocument storeDocument = StoreDocument.create().
+            indexName( "testindex" ).
+            indexTypeName( "test" ).
             analyzer( "myAnalyzer" ).
             build();
 
@@ -50,9 +50,9 @@ public class StoreDocumentXContentBuilderFactoryTest
     @Test
     public void multiple_orderby_entries_gives_one()
     {
-        StoreDocument storeDocument = StoreDocument.newIndexDocument().
-            index( "testindex" ).
-            indexType( "test" ).
+        StoreDocument storeDocument = StoreDocument.create().
+            indexName( "testindex" ).
+            indexTypeName( "test" ).
             addEntry( new StoreDocumentStringItem( IndexDocumentItemPath.from( "myField" ), "myValue1" ) ).
             addEntry( new StoreDocumentStringItem( IndexDocumentItemPath.from( "myField" ), "myValue2" ) ).
             addEntry( new StoreDocumentOrderbyItem( IndexDocumentItemPath.from( "myField" ), "myOrderByValue1" ) ).
@@ -75,9 +75,9 @@ public class StoreDocumentXContentBuilderFactoryTest
         throws Exception
     {
 
-        StoreDocument storeDocument = StoreDocument.newIndexDocument().
-            index( "testindex" ).
-            indexType( "test" ).
+        StoreDocument storeDocument = StoreDocument.create().
+            indexName( "testindex" ).
+            indexTypeName( "test" ).
             addEntry( new StoreDocumentStringItem( IndexDocumentItemPath.from( "myField" ), "myValue1" ) ).
             addEntry( new StoreDocumentStringItem( IndexDocumentItemPath.from( "myField" ), "myValue2" ) ).
             addEntry( new StoreDocumentNumberItem( IndexDocumentItemPath.from( "myNumericField" ), 1.0 ) ).

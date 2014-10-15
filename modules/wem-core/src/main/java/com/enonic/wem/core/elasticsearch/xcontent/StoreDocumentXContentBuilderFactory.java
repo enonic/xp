@@ -31,7 +31,7 @@ public class StoreDocumentXContentBuilderFactory
         {
             final XContentBuilder builder = startBuilder();
             addDocumentAnalyzer( builder, storeDocument );
-            adddIndexDocumentItems( builder, storeDocument );
+            addIndexDocumentItems( builder, storeDocument );
             endBuilder( builder );
             return builder;
         }
@@ -53,7 +53,7 @@ public class StoreDocumentXContentBuilderFactory
         }
     }
 
-    private static void adddIndexDocumentItems( final XContentBuilder result, final StoreDocument storeDocument )
+    private static void addIndexDocumentItems( final XContentBuilder result, final StoreDocument storeDocument )
         throws Exception
     {
         final Multimap<String, Object> fieldMultiValueMap = ArrayListMultimap.create();
@@ -61,7 +61,7 @@ public class StoreDocumentXContentBuilderFactory
         // OrderBy should only have one value, add to own one-value-map
         final Map<String, Object> orderByMap = Maps.newHashMap();
 
-        final Set<AbstractStoreDocumentItem> indexDocumentItems = storeDocument.getIndexDocumentItems();
+        final Set<AbstractStoreDocumentItem> indexDocumentItems = storeDocument.getStoreDocumentItems();
 
         for ( AbstractStoreDocumentItem item : indexDocumentItems )
         {

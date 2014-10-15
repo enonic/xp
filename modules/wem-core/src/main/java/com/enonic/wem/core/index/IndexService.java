@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.Set;
 
 import com.enonic.wem.api.repository.RepositoryId;
-import com.enonic.wem.core.elasticsearch.document.UpdateScript;
 import com.enonic.wem.core.entity.EntityId;
 import com.enonic.wem.core.entity.Node;
 
@@ -17,8 +16,6 @@ public interface IndexService
     public boolean indicesExists( final String... indices );
 
     public void store( final Node node, final IndexContext context );
-
-    public void update( final EntityId entityId, final UpdateScript updateScript, final IndexContext context );
 
     public void delete( final EntityId entityId, final IndexContext context );
 

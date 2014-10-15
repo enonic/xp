@@ -11,7 +11,6 @@ import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
-import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
 import org.elasticsearch.common.xcontent.XContentBuilder;
@@ -23,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableSet;
 
+import com.enonic.wem.core.elasticsearch.document.DeleteDocument;
 import com.enonic.wem.core.elasticsearch.document.StoreDocument;
 import com.enonic.wem.core.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.core.elasticsearch.result.SearchResultFactory;
@@ -47,11 +47,6 @@ public class ElasticsearchDao
 
     private Client client;
 
-    public void update( final UpdateRequest updateRequest )
-    {
-        this.client.update( updateRequest ).actionGet( storeTimeout );
-    }
-
     public void store( final IndexRequest indexRequest )
     {
         this.client.index( indexRequest ).
@@ -71,7 +66,7 @@ public class ElasticsearchDao
                 index( storeDocument.getIndexName() ).
                 type( storeDocument.getIndexTypeName() ).
                 source( xContentBuilder ).
-                refresh( storeDocument.doRefreshOnStore() );
+                refresh( storeDocument.isRefreshAfterOperation() );
 
             this.client.index( req ).actionGet( storeTimeout );
         }
@@ -85,7 +80,7 @@ public class ElasticsearchDao
     public boolean delete( final DeleteDocument deleteDocument )
     {
         DeleteRequest deleteRequest = new DeleteRequest( deleteDocument.getIndexName() ).
-            type( deleteDocument.getIndexType() ).
+            type( deleteDocument.getIndexTypeName() ).
             id( deleteDocument.getId() ).
             refresh( DEFAULT_REFRESH );
 

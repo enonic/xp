@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.wem.core.config.ConfigProperties;
 
-class AbstractSettingsBuilder
+public class AbstractSettingsBuilder
 {
 
     final static String ELASTICSEARCH_PROPERTIES_PREFIX = "cms.elasticsearch";

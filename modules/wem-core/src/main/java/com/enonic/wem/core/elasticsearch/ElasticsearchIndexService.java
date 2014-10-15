@@ -17,7 +17,6 @@ import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.action.admin.indices.stats.IndexStats;
 import org.elasticsearch.action.admin.indices.stats.IndicesStatsRequest;
 import org.elasticsearch.action.admin.indices.stats.IndicesStatsResponse;
-import org.elasticsearch.action.update.UpdateRequestBuilder;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.unit.TimeValue;
 import org.slf4j.Logger;
@@ -26,9 +25,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.repository.RepositoryId;
+import com.enonic.wem.core.elasticsearch.document.DeleteDocument;
 import com.enonic.wem.core.elasticsearch.document.StoreDocument;
-import com.enonic.wem.core.elasticsearch.document.UpdateScript;
-import com.enonic.wem.core.elasticsearch.xcontent.UpdateScriptXContentBuilderFactory;
 import com.enonic.wem.core.entity.EntityId;
 import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.index.IndexContext;
@@ -201,26 +199,16 @@ public class ElasticsearchIndexService
         elasticsearchDao.store( storeDocuments );
     }
 
-
-    @Override
-    public void update( final EntityId entityId, final UpdateScript updateScript, final IndexContext context )
-    {
-        UpdateRequestBuilder updateRequest = new UpdateRequestBuilder( this.client );
-
-        updateRequest.setIndex( IndexNameResolver.resolveSearchIndexName( context.getRepositoryId() ) ).
-            setType( context.getWorkspace().getName() ).
-            setId( entityId.toString() ).
-            setDoc( UpdateScriptXContentBuilderFactory.create( updateScript ) );
-
-        elasticsearchDao.update( updateRequest.request() );
-    }
-
     public void delete( final EntityId entityId, final IndexContext context )
     {
         final String indexName = IndexNameResolver.resolveSearchIndexName( context.getRepositoryId() );
         final String indexType = context.getWorkspace().getName();
 
-        elasticsearchDao.delete( new DeleteDocument( indexName, indexType, entityId.toString() ) );
+        elasticsearchDao.delete( DeleteDocument.create().
+            indexName( indexName ).
+            indexTypeName( indexType ).
+            id( entityId.toString() ).
+            build() );
     }
 
     public void setElasticsearchDao( final ElasticsearchDao elasticsearchDao )

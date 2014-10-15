@@ -10,9 +10,10 @@ import com.enonic.wem.api.data.type.ValueType;
 import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.core.elasticsearch.IndexConstants;
+import com.enonic.wem.core.elasticsearch.OrderbyValueResolver;
 import com.enonic.wem.core.entity.index.IndexDocumentItemPath;
 
-public class IndexDocumentItemFactory
+public class StoreDocumentItemFactory
 {
 
     public static Set<AbstractStoreDocumentItem> create( final IndexDocumentItemPath path, final Value value,

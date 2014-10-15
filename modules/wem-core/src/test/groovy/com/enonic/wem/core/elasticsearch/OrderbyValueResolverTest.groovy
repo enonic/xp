@@ -1,4 +1,4 @@
-package com.enonic.wem.core.elasticsearch.document
+package com.enonic.wem.core.elasticsearch
 
 import com.enonic.wem.api.data.Value
 import com.google.common.collect.Lists
