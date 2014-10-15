@@ -18,13 +18,6 @@ module api.liveedit {
             this.addClass("page-placeholder");
             this.pageView = pageView;
 
-            this.onClicked((event: MouseEvent) => {
-                this.select();
-                event.stopPropagation();
-            });
-
-
-
             var moduleKeys = pageView.getSite().getModuleKeys(),
                 request = new GetPageDescriptorsByModulesRequest(moduleKeys),
                 loader = new api.util.loader.BaseLoader<PageDescriptorsJson, PageDescriptor>(request);
