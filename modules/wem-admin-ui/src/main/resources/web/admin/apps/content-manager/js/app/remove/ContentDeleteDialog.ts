@@ -50,8 +50,9 @@ module app.remove {
             var deleteItems: api.app.remove.DeleteItem[] = [];
             for (var i in contentModels) {
                 var content = contentModels[i];
+                var deleteDisplayName = content.getDisplayName() && content.getDisplayName() == ''  ? content.getDisplayName() : "Unnamed " + content.getType().toString();
                 var deleteItem = new api.app.remove.DeleteItem(new ContentIconUrlResolver().setContent(content).resolve(),
-                    content.getDisplayName());
+                    deleteDisplayName);
                 deleteItems.push(deleteItem);
             }
             this.setDeleteItems(deleteItems);
