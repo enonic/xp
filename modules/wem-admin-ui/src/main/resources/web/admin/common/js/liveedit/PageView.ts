@@ -108,6 +108,7 @@ module api.liveedit {
             if (!this.page.hasController() && !this.page.hasTemplate()) {
                 this.appendChild(this.placeholder);
                 this.placeholder.select();
+                this.markAsEmpty();
             }
         }
 
@@ -144,6 +145,7 @@ module api.liveedit {
         }
 
         getTooltipViewer(): api.ui.Viewer<api.content.ContentSummary> {
+            if (this.isEmpty) return null;
             return new api.content.ContentSummaryViewer();
         }
 

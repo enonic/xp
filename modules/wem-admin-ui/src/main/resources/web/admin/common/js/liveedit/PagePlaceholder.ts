@@ -15,10 +15,8 @@ module api.liveedit {
 
         constructor(pageView: PageView) {
             super();
+            this.addClass("page-placeholder");
             this.pageView = pageView;
-            this.onClicked((event: MouseEvent) => {
-                event.stopPropagation();
-            });
 
             var moduleKeys = pageView.getSite().getModuleKeys(),
                 request = new GetPageDescriptorsByModulesRequest(moduleKeys),
