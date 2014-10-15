@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.form.Occurrences;
 
 public abstract class InputType
 {
@@ -33,11 +34,6 @@ public abstract class InputType
     public String getName()
     {
         return inputTypeName.toString();
-    }
-
-    public final boolean isBuiltIn()
-    {
-        return builtIn;
     }
 
     public final boolean requiresConfig()
@@ -107,4 +103,12 @@ public abstract class InputType
     }
 
     public abstract InputTypeConfig getDefaultConfig();
+
+    /**
+     * Override this method to validate what type of Occurrences is allowed for this type.
+     */
+    public void validateOccurrences( final Occurrences occurrences )
+    {
+        // Default: nothing
+    }
 }

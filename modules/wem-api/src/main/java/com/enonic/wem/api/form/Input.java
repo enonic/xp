@@ -60,6 +60,8 @@ public final class Input
         this.validationRegexp = builder.validationRegexp;
         this.helpText = builder.helpText;
         this.inputTypeConfig = builder.inputTypeConfig;
+
+        this.type.validateOccurrences( this.occurrences );
     }
 
     public InputType getInputType()

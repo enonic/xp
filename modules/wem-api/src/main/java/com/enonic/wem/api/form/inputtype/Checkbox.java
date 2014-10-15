@@ -5,6 +5,7 @@ import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.form.BreaksRequiredContractException;
+import com.enonic.wem.api.form.Occurrences;
 
 public class Checkbox
     extends InputType
@@ -31,5 +32,16 @@ public class Checkbox
     public InputTypeConfig getDefaultConfig()
     {
         return null;
+    }
+
+    @Override
+    public void validateOccurrences( final Occurrences occurrences )
+    {
+        if ( occurrences.getMinimum() != 0 )
+        {
+            throw new InvalidOccurrencesConfigurationException(
+                "An Input of type " + this.getClass().getSimpleName() + " can only have 0 as minimum occurrences: " +
+                    occurrences.getMinimum() );
+        }
     }
 }

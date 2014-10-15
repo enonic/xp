@@ -146,7 +146,7 @@ public final class CoreSchemasProvider
                 name( "menu" ).
                 label( "Menu" ).
                 inputType( InputTypes.CHECKBOX ).
-                occurrences( 1, 1 ).
+                occurrences( 0, 1 ).
                 helpText( "Check this to include this Page in the menu" ).
                 build() ).
             addFormItem( Input.newInput().name( "menuName" ).
