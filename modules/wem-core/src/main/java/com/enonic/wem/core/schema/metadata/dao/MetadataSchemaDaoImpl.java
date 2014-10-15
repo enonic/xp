@@ -1,6 +1,6 @@
 package com.enonic.wem.core.schema.metadata.dao;
 
-import com.enonic.wem.api.schema.SchemaRegistry;
+import com.enonic.wem.api.schema.metadata.MetadataRegistry;
 import com.enonic.wem.api.schema.metadata.MetadataSchema;
 import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
 import com.enonic.wem.api.schema.metadata.MetadataSchemas;
@@ -8,22 +8,22 @@ import com.enonic.wem.api.schema.metadata.MetadataSchemas;
 public final class MetadataSchemaDaoImpl
     implements MetadataSchemaDao
 {
-    private SchemaRegistry schemaRegistry;
+    private MetadataRegistry metadataRegistry;
 
     @Override
     public MetadataSchemas getAllMetadataSchemas()
     {
-        return this.schemaRegistry.getAllMetadataSchemas();
+        return this.metadataRegistry.getAllMetadataSchemas();
     }
 
     @Override
     public MetadataSchema getMetadataSchema( final MetadataSchemaName metadataSchemaName )
     {
-        return this.schemaRegistry.getMetadata( metadataSchemaName );
+        return this.metadataRegistry.getMetadata( metadataSchemaName );
     }
 
-    public void setSchemaRegistry( final SchemaRegistry schemaRegistry )
+    public void setMetadataRegistry( final MetadataRegistry metadataRegistry )
     {
-        this.schemaRegistry = schemaRegistry;
+        this.metadataRegistry = metadataRegistry;
     }
 }

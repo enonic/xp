@@ -1,21 +1,20 @@
 package com.enonic.wem.core.schema.relationship.dao;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.schema.SchemaRegistry;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeRegistry;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
 
 import static org.junit.Assert.*;
 
 public class RelationshipTypeDaoImplTest
 {
-    private SchemaRegistry schemaRegistry;
+    private RelationshipTypeRegistry schemaRegistry;
 
     private RelationshipTypeDaoImpl relationshipTypeDao;
 
@@ -23,9 +22,9 @@ public class RelationshipTypeDaoImplTest
     public void setupDao()
         throws Exception
     {
-        this.schemaRegistry = Mockito.mock( SchemaRegistry.class );
+        this.schemaRegistry = Mockito.mock( RelationshipTypeRegistry.class );
         this.relationshipTypeDao = new RelationshipTypeDaoImpl();
-        this.relationshipTypeDao.setSchemaRegistry( this.schemaRegistry );
+        this.relationshipTypeDao.setRelationshipTypeRegistry( this.schemaRegistry );
     }
 
     @Test
