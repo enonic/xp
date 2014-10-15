@@ -2,18 +2,19 @@
 
   clear: left;
   margin: 0px 10px 10px 10px;
-  padding: 10px;
+  padding: 10px 0;
   background-color: white;
 
   .form-item-set-label {
     font-size: 14px;
     color: #777777;
     margin-bottom: 10px;
+    margin-left: 10px;
 
     .required {
       &:after {
         content: '*';
-        color:crimson;
+        color:@input-red-text;
       }
     }
   }
@@ -38,6 +39,7 @@
     .icon-close;
 
     margin-left: 8px;
+    margin-right: 10px;
     line-height: 22px;
     float: right;
     text-decoration: none;
