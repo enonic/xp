@@ -145,7 +145,6 @@ module api.liveedit {
         }
 
         getTooltipViewer(): api.ui.Viewer<api.content.ContentSummary> {
-            if (this.isEmpty) return null;
             return new api.content.ContentSummaryViewer();
         }
 
