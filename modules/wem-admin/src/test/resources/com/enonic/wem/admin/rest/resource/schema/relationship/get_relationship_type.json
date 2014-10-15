@@ -8,7 +8,6 @@
     "editable": false,
     "fromSemantic": null,
     "iconUrl": "/admin/rest/schema/relationship/icon/mymodule:the_relationship_type",
-    "key": "RelationshipType:mymodule:the_relationship_type",
     "modifiedTime": null,
     "name": "mymodule:the_relationship_type",
     "toSemantic": null

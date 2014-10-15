@@ -25,11 +25,6 @@ public class MixinJson
         this.iconUrl = iconUrlResolver.resolve( mixin );
     }
 
-    public String getKey()
-    {
-        return mixin.getSchemaKey() != null ? mixin.getSchemaKey().toString() : null;
-    }
-
     public String getName()
     {
         return mixin.getName() != null ? mixin.getName().toString() : null;

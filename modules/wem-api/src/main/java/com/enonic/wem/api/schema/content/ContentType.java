@@ -7,8 +7,6 @@ import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.schema.BaseSchema;
 import com.enonic.wem.api.schema.Named;
-import com.enonic.wem.api.schema.Schema;
-import com.enonic.wem.api.schema.SchemaKind;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
 import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
 import com.enonic.wem.api.support.illegaledit.IllegalEditException;
@@ -17,7 +15,7 @@ import static com.enonic.wem.api.form.Form.newForm;
 
 public final class ContentType
     extends BaseSchema<ContentTypeName>
-    implements Schema, IllegalEditAware<ContentType>, Named<ContentTypeName>
+    implements IllegalEditAware<ContentType>, Named<ContentTypeName>
 {
     private final ContentTypeName superType;
 
@@ -107,7 +105,6 @@ public final class ContentType
     public void checkIllegalEdit( final ContentType to )
         throws IllegalEditException
     {
-        IllegalEdit.check( "schemaType", this.getType(), to.getType(), ContentType.class );
         IllegalEdit.check( "createdTime", this.getCreatedTime(), to.getCreatedTime(), ContentType.class );
         IllegalEdit.check( "creator", this.getCreator(), to.getCreator(), ContentType.class );
         IllegalEdit.check( "modifiedTime", this.getModifiedTime(), to.getModifiedTime(), ContentType.class );
@@ -151,7 +148,7 @@ public final class ContentType
 
         private Builder()
         {
-            super( SchemaKind.CONTENT_TYPE );
+            super();
             formBuilder = newForm();
             allowChildContent = true;
             isBuiltIn = false;

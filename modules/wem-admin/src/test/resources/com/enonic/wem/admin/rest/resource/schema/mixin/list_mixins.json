@@ -29,7 +29,6 @@
                     }
                 }
             ],
-            "key": "Mixin:mymodule:input_text_1",
             "modifiedTime": null,
             "modifier": null,
             "name": "mymodule:input_text_1"
@@ -63,7 +62,6 @@
                     }
                 }
             ],
-            "key": "Mixin:mymodule:text_area_2",
             "modifiedTime": null,
             "modifier": null,
             "name": "mymodule:text_area_2"

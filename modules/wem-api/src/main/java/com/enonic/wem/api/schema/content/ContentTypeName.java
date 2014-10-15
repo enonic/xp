@@ -4,11 +4,10 @@ package com.enonic.wem.api.schema.content;
 import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.schema.SchemaKey;
-import com.enonic.wem.api.schema.SchemaName;
+import com.enonic.wem.api.schema.ModuleBasedName;
 
 public final class ContentTypeName
-    extends SchemaName
+    extends ModuleBasedName
     implements Comparable<ContentTypeName>
 {
     private static final ContentTypeName UNSTRUCTURED = new ContentTypeName( "unstructured" );
@@ -253,12 +252,6 @@ public final class ContentTypeName
     public String getContentTypeName()
     {
         return toString();
-    }
-
-    @Override
-    public SchemaKey toSchemaKey()
-    {
-        return SchemaKey.from( this );
     }
 
     @Override

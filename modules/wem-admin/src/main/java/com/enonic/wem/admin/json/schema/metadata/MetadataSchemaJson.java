@@ -20,11 +20,6 @@ public class MetadataSchemaJson
         this.iconUrl = iconUrlResolver.resolve( metadataSchema );
     }
 
-    public String getKey()
-    {
-        return metadataSchema.getSchemaKey() != null ? metadataSchema.getSchemaKey().toString() : null;
-    }
-
     public String getName()
     {
         return metadataSchema.getName() != null ? metadataSchema.getName().toString() : null;

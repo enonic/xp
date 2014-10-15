@@ -16,7 +16,7 @@ module api.schema.content {
         setObject(contentType: ContentTypeSummary) {
             super.setObject(contentType);
             this.namesAndIconView.setMainName(contentType.getDisplayName()).
-                setSubName(contentType.getKey()).
+                setSubName(contentType.getName()).
                 setIconUrl(this.contentTypeIconUrlResolver.resolve(contentType));
         }
 

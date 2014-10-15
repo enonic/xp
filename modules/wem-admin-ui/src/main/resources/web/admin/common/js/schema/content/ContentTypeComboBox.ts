@@ -38,7 +38,7 @@ module api.schema.content {
         }
 
         resolveSubTitle(content: ContentTypeSummary): string {
-            return content.getKey();
+            return content.getName();
         }
 
     }

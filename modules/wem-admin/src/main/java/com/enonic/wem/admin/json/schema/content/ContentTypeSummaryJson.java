@@ -21,11 +21,6 @@ public class ContentTypeSummaryJson
         this.iconUrl = iconUrlResolver.resolve( contentType );
     }
 
-    public String getKey()
-    {
-        return contentType.getSchemaKey() != null ? contentType.getSchemaKey().toString() : null;
-    }
-
     public String getName()
     {
         return contentType.getName() != null ? contentType.getName().toString() : null;

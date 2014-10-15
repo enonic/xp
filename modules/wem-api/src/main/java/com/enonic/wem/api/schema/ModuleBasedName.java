@@ -5,7 +5,7 @@ import com.google.common.base.Joiner;
 
 import com.enonic.wem.api.module.ModuleKey;
 
-public abstract class SchemaName
+public abstract class ModuleBasedName
 {
     protected final static String SEPARATOR = ":";
 
@@ -15,7 +15,7 @@ public abstract class SchemaName
 
     private final String localName;
 
-    protected SchemaName( final ModuleKey moduleKey, final String localName )
+    protected ModuleBasedName( final ModuleKey moduleKey, final String localName )
     {
         this.moduleKey = moduleKey;
         this.localName = localName;
@@ -44,9 +44,9 @@ public abstract class SchemaName
             return false;
         }
 
-        final SchemaName schemaName = (SchemaName) o;
+        final ModuleBasedName moduleBasedName = (ModuleBasedName) o;
 
-        return refString.equals( schemaName.refString );
+        return refString.equals( moduleBasedName.refString );
     }
 
     @Override
@@ -59,7 +59,5 @@ public abstract class SchemaName
     {
         return refString;
     }
-
-    public abstract SchemaKey toSchemaKey();
 
 }

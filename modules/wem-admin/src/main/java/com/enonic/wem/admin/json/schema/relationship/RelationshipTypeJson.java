@@ -39,11 +39,6 @@ public class RelationshipTypeJson
         this.iconUrl = iconUrlResolver.resolve( type );
     }
 
-    public String getKey()
-    {
-        return relationshipType.getSchemaKey() != null ? relationshipType.getSchemaKey().toString() : null;
-    }
-
     public String getName()
     {
         return relationshipType.getName() != null ? relationshipType.getName().toString() : null;

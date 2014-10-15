@@ -29,7 +29,6 @@
         ]
     },
     "iconUrl": "/admin/rest/schema/metadata/icon/mymodule:input_text_1",
-    "key": "MetadataSchema:mymodule:input_text_1",
     "modifiedTime": null,
     "modifier": null,
     "name": "mymodule:input_text_1"

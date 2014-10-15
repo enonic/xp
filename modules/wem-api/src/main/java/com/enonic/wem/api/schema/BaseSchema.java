@@ -8,12 +8,9 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.account.UserKey;
 
-public abstract class BaseSchema<T extends SchemaName>
-    implements Schema
+public abstract class BaseSchema<T extends ModuleBasedName>
 {
     final T name;
-
-    final SchemaKey schemaKey;
 
     final String displayName;
 
@@ -39,74 +36,51 @@ public abstract class BaseSchema<T extends SchemaName>
         this.creator = builder.creator;
         this.modifier = builder.modifier;
         this.icon = builder.schemaIcon;
-        this.schemaKey = SchemaKey.from( builder.type, builder.name );
     }
 
-    @Override
-    public SchemaKey getSchemaKey()
-    {
-        return this.schemaKey;
-    }
-
-    @Override
     public T getName()
     {
         return name;
     }
 
-    @Override
-    public SchemaKind getType()
-    {
-        return this.schemaKey.getType();
-    }
-
-    @Override
     public String getDisplayName()
     {
         return displayName;
     }
 
-    @Override
     public String getDescription()
     {
         return description;
     }
 
-    @Override
     public Instant getCreatedTime()
     {
         return createdTime;
     }
 
-    @Override
     public Instant getModifiedTime()
     {
         return modifiedTime;
     }
 
-    @Override
     public UserKey getCreator()
     {
         return creator;
     }
 
-    @Override
     public UserKey getModifier()
     {
         return modifier;
     }
 
-    @Override
     public Icon getIcon()
     {
         return icon;
     }
 
-    public static class Builder<T extends Builder, SCHEMA_NAME extends SchemaName>
+    public static class Builder<T extends Builder, SCHEMA_NAME extends ModuleBasedName>
     {
         protected SCHEMA_NAME name;
-
-        private final SchemaKind type;
 
         private String displayName;
 
@@ -122,16 +96,14 @@ public abstract class BaseSchema<T extends SchemaName>
 
         private Icon schemaIcon;
 
-        protected Builder( final SchemaKind type )
+        protected Builder()
         {
-            this.type = type;
         }
 
         public Builder( final BaseSchema schema )
         {
             Preconditions.checkNotNull( schema, "schema cannot be null" );
             this.name = (SCHEMA_NAME) schema.name;
-            this.type = schema.getType();
             this.displayName = schema.displayName;
             this.description = schema.description;
             this.createdTime = schema.createdTime;

@@ -9,8 +9,6 @@ import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.schema.BaseSchema;
 import com.enonic.wem.api.schema.Named;
-import com.enonic.wem.api.schema.Schema;
-import com.enonic.wem.api.schema.SchemaKind;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
@@ -18,7 +16,7 @@ import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
 
 public final class RelationshipType
     extends BaseSchema<RelationshipTypeName>
-    implements Schema, IllegalEditAware<RelationshipType>, Named<RelationshipTypeName>
+    implements IllegalEditAware<RelationshipType>, Named<RelationshipTypeName>
 {
     private final String fromSemantic;
 
@@ -115,7 +113,7 @@ public final class RelationshipType
 
         private Builder()
         {
-            super( SchemaKind.RELATIONSHIP_TYPE );
+            super();
         }
 
         private Builder( final RelationshipType relationshipType )

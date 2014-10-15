@@ -3,12 +3,10 @@ package com.enonic.wem.api.schema.metadata;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.schema.BaseSchema;
 import com.enonic.wem.api.schema.Named;
-import com.enonic.wem.api.schema.Schema;
-import com.enonic.wem.api.schema.SchemaKind;
 
 public final class MetadataSchema
     extends BaseSchema<MetadataSchemaName>
-    implements Schema, Named<MetadataSchemaName>
+    implements Named<MetadataSchemaName>
 {
     private final String displayName;
 
@@ -55,7 +53,7 @@ public final class MetadataSchema
 
         public Builder()
         {
-            super( SchemaKind.METADATA_SCHEMA );
+            super();
         }
 
         public Builder( final MetadataSchema metadataSchema )

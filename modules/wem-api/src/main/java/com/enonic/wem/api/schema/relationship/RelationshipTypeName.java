@@ -4,11 +4,10 @@ package com.enonic.wem.api.schema.relationship;
 import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.schema.SchemaKey;
-import com.enonic.wem.api.schema.SchemaName;
+import com.enonic.wem.api.schema.ModuleBasedName;
 
 public final class RelationshipTypeName
-    extends SchemaName
+    extends ModuleBasedName
 {
     public static final RelationshipTypeName DEFAULT = new RelationshipTypeName( "default" );
 
@@ -28,12 +27,6 @@ public final class RelationshipTypeName
     private RelationshipTypeName( final String localName )
     {
         super( ModuleKey.SYSTEM, localName );
-    }
-
-    @Override
-    public SchemaKey toSchemaKey()
-    {
-        return SchemaKey.from( this );
     }
 
     public static RelationshipTypeName from( final ModuleKey moduleKey, final String localName )

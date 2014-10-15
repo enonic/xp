@@ -2,8 +2,6 @@ module api.schema {
 
     export class Schema extends api.item.BaseItem {
 
-        private key: string;
-
         private name: string;
 
         private displayName: string;
@@ -14,15 +12,10 @@ module api.schema {
 
         constructor(builder: SchemaBuilder) {
             super(builder);
-            this.key = builder.key;
             this.name = builder.name;
             this.displayName = builder.displayName;
             this.description = builder.description;
             this.iconUrl = builder.iconUrl;
-        }
-
-        getKey(): string {
-            return this.key;
         }
 
         getName(): string {
@@ -53,10 +46,6 @@ module api.schema {
 
             var other = <Schema>o;
 
-            if (!ObjectHelper.stringEquals(this.key, other.key)) {
-                return false;
-            }
-
             if (!ObjectHelper.stringEquals(this.name, other.name)) {
                 return false;
             }
@@ -79,8 +68,6 @@ module api.schema {
 
     export class SchemaBuilder extends api.item.BaseItemBuilder {
 
-        key: string;
-
         name: string;
 
         displayName: string;
@@ -92,7 +79,6 @@ module api.schema {
         constructor(source?: Schema) {
             if (source) {
                 super(source);
-                this.key = source.getKey();
                 this.name = source.getName();
                 this.displayName = source.getDisplayName();
                 this.description = source.getDescription();
@@ -101,9 +87,8 @@ module api.schema {
         }
 
         fromSchemaJson(json: api.schema.SchemaJson): SchemaBuilder {
-            super.fromBaseItemJson(json, "key");
+            super.fromBaseItemJson(json, "name");
 
-            this.key = json.key;
             this.name = json.name;
             this.displayName = json.displayName;
             this.description = json.description;

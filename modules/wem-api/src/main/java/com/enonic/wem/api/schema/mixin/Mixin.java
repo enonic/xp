@@ -4,12 +4,10 @@ import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.form.FormItems;
 import com.enonic.wem.api.schema.BaseSchema;
 import com.enonic.wem.api.schema.Named;
-import com.enonic.wem.api.schema.Schema;
-import com.enonic.wem.api.schema.SchemaKind;
 
 public final class Mixin
     extends BaseSchema<MixinName>
-    implements Schema, Named<MixinName>
+    implements Named<MixinName>
 {
     private final FormItems formItems;
 
@@ -41,7 +39,7 @@ public final class Mixin
 
         public Builder()
         {
-            super( SchemaKind.MIXIN );
+            super();
         }
 
         public Builder( final Mixin mixin )
