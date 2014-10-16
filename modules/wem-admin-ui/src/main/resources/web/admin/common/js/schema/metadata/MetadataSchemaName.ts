@@ -1,24 +1,12 @@
 module api.schema.metadata {
 
-    export class MetadataSchemaName implements api.Equitable {
+    import ModuleKey = api.module.ModuleKey;
 
-        private value: string;
+    export class MetadataSchemaName extends api.schema.ModuleBasedName {
 
         constructor(name: string) {
-            this.value = name;
-        }
-
-        toString(): string {
-            return this.value;
-        }
-
-        equals(o: api.Equitable): boolean {
-            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, MetadataSchemaName)) {
-                return false;
-            }
-            var other = <MetadataSchemaName> o;
-
-            return this.value == other.value;
+            var parts = name.split(api.schema.ModuleBasedName.SEPARATOR);
+            super(ModuleKey.fromString(parts[0]), parts[1]);
         }
     }
 }

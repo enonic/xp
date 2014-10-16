@@ -19,6 +19,7 @@ import com.enonic.wem.admin.json.schema.mixin.MixinJson;
 import com.enonic.wem.admin.json.schema.mixin.MixinListJson;
 import com.enonic.wem.admin.rest.resource.schema.SchemaImageHelper;
 import com.enonic.wem.api.Icon;
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.schema.mixin.GetMixinParams;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinName;
@@ -61,6 +62,15 @@ public class MixinResource
     public MixinListJson list()
     {
         final Mixins mixins = mixinService.getAll();
+
+        return new MixinListJson( mixins, this.mixinIconUrlResolver );
+    }
+
+    @GET
+    @Path("byModule")
+    public MixinListJson getByModule( @QueryParam("moduleKey") final String moduleKey )
+    {
+        final Mixins mixins = mixinService.getByModule( ModuleKey.from( moduleKey ) );
 
         return new MixinListJson( mixins, this.mixinIconUrlResolver );
     }
