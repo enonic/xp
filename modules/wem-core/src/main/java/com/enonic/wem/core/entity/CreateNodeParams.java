@@ -1,7 +1,13 @@
 package com.enonic.wem.core.entity;
 
+import java.util.Set;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
+
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.index.IndexConfigDocument;
+import com.enonic.wem.api.query.expr.OrderExpr;
 
 public class CreateNodeParams
 {
@@ -15,49 +21,25 @@ public class CreateNodeParams
 
     private IndexConfigDocument indexConfigDocument;
 
+    private ImmutableSet<OrderExpr> orderExpressions;
+
     private boolean embed;
 
-    public CreateNodeParams parent( final NodePath value )
+    private CreateNodeParams( Builder builder )
     {
-        this.parent = value;
-        return this;
+        parent = builder.parent;
+        name = builder.name;
+        data = builder.data;
+        attachments = builder.attachments;
+        indexConfigDocument = builder.indexConfigDocument;
+        embed = builder.embed;
+        this.orderExpressions = ImmutableSet.copyOf( builder.orderExpressions );
+
     }
 
-    public CreateNodeParams parent( final String value )
+    public static Builder create()
     {
-        this.parent = new NodePath( value );
-        return this;
-    }
-
-    public CreateNodeParams name( final String value )
-    {
-        this.name = value;
-        return this;
-    }
-
-    public CreateNodeParams data( final RootDataSet value )
-    {
-        this.data = value;
-        return this;
-    }
-
-    public CreateNodeParams attachments( final Attachments value )
-    {
-        this.attachments = value;
-        return this;
-    }
-
-    public CreateNodeParams indexConfigDocument( final IndexConfigDocument indexConfigDocument )
-    {
-        this.indexConfigDocument = indexConfigDocument;
-        return this;
-    }
-
-
-    public CreateNodeParams embed( final boolean embed )
-    {
-        this.embed = embed;
-        return this;
+        return new Builder();
     }
 
     public String getName()
@@ -85,4 +67,83 @@ public class CreateNodeParams
         return indexConfigDocument;
     }
 
+    public ImmutableSet<OrderExpr> getOrderExpressions()
+    {
+        return orderExpressions;
+    }
+
+    public static final class Builder
+    {
+        private NodePath parent;
+
+        private String name;
+
+        private RootDataSet data;
+
+        private Attachments attachments;
+
+        private IndexConfigDocument indexConfigDocument;
+
+        private Set<OrderExpr> orderExpressions = Sets.newLinkedHashSet();
+
+        private boolean embed;
+
+        private Builder()
+        {
+        }
+
+        public Builder parent( final NodePath parent )
+        {
+            this.parent = parent;
+            return this;
+        }
+
+        public Builder name( final String name )
+        {
+            this.name = name;
+            return this;
+        }
+
+        public Builder data( final RootDataSet data )
+        {
+            this.data = data;
+            return this;
+        }
+
+        public Builder attachments( final Attachments attachments )
+        {
+            this.attachments = attachments;
+            return this;
+        }
+
+        public Builder indexConfigDocument( final IndexConfigDocument indexConfigDocument )
+        {
+            this.indexConfigDocument = indexConfigDocument;
+            return this;
+        }
+
+        public Builder embed( boolean embed )
+        {
+            this.embed = embed;
+            return this;
+        }
+
+        public Builder addOrderExpression( final OrderExpr orderExpression )
+        {
+            this.orderExpressions.add( orderExpression );
+            return this;
+        }
+
+        public Builder addOrderExpression( final Set<OrderExpr> orderExpressions )
+        {
+            this.orderExpressions.addAll( orderExpressions );
+            return this;
+        }
+
+
+        public CreateNodeParams build()
+        {
+            return new CreateNodeParams( this );
+        }
+    }
 }

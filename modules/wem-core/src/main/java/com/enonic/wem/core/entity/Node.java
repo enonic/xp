@@ -2,8 +2,11 @@ package com.enonic.wem.core.entity;
 
 
 import java.time.Instant;
+import java.util.Set;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.data.Data;
@@ -14,6 +17,7 @@ import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.index.IndexConfigDocument;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
+import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.support.ChangeTraceable;
 import com.enonic.wem.api.support.Changes;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
@@ -49,6 +53,50 @@ public final class Node
     private final IndexConfigDocument indexConfigDocument;
 
     private final Attachments attachments;
+
+    private final ImmutableSet<OrderExpr> orderExpressions;
+
+    private Node( final BaseBuilder builder )
+    {
+        this.id = builder.id;
+        this.createdTime = builder.createdTime;
+        this.modifiedTime = builder.modifiedTime;
+
+        this.data = new RootDataSet();
+        if ( builder.data != null )
+        {
+            for ( final Data data : builder.data )
+            {
+                this.data.add( data.copy() );
+            }
+        }
+
+        this.attachments = builder.attachments;
+
+        if ( builder.indexConfigDocument != null )
+        {
+            this.indexConfigDocument = builder.indexConfigDocument;
+        }
+        else
+        {
+            this.indexConfigDocument = PatternIndexConfigDocument.create().
+                defaultConfig( IndexConfig.BY_TYPE ).
+                build();
+        }
+
+        this.creator = builder.creator;
+
+        this.name = builder.name;
+        this.parent = builder.parent;
+
+        this.path = this.parent != null && this.name != null ? new NodePath( this.parent, this.name ) : null;
+
+        this.modifier = builder.modifier;
+
+        this.hasChildren = builder.hasChildren;
+
+        this.orderExpressions = ImmutableSet.copyOf( builder.orderExpressions );
+    }
 
     public NodeName name()
     {
@@ -130,44 +178,9 @@ public final class Node
         return indexConfigDocument;
     }
 
-    private Node( final BaseBuilder builder )
+    public ImmutableSet<OrderExpr> getOrderExpressions()
     {
-        this.id = builder.id;
-        this.createdTime = builder.createdTime;
-        this.modifiedTime = builder.modifiedTime;
-
-        this.data = new RootDataSet();
-        if ( builder.data != null )
-        {
-            for ( final Data data : builder.data )
-            {
-                this.data.add( data.copy() );
-            }
-        }
-
-        this.attachments = builder.attachments;
-
-        if ( builder.indexConfigDocument != null )
-        {
-            this.indexConfigDocument = builder.indexConfigDocument;
-        }
-        else
-        {
-            this.indexConfigDocument = PatternIndexConfigDocument.create().
-                defaultConfig( IndexConfig.BY_TYPE ).
-                build();
-        }
-
-        this.creator = builder.creator;
-
-        this.name = builder.name;
-        this.parent = builder.parent;
-
-        this.path = this.parent != null && this.name != null ? new NodePath( this.parent, this.name ) : null;
-
-        this.modifier = builder.modifier;
-
-        this.hasChildren = builder.hasChildren;
+        return orderExpressions;
     }
 
     public void validateForIndexing()
@@ -216,7 +229,7 @@ public final class Node
     }
 
 
-    public static class BaseBuilder
+    private static class BaseBuilder
     {
         NodeName name;
 
@@ -240,12 +253,13 @@ public final class Node
 
         IndexConfigDocument indexConfigDocument;
 
+        Set<OrderExpr> orderExpressions = Sets.newLinkedHashSet();
 
-        BaseBuilder()
+        private BaseBuilder()
         {
         }
 
-        BaseBuilder( final Node node )
+        private BaseBuilder( final Node node )
         {
             this.id = node.id;
             this.createdTime = node.createdTime;
@@ -256,9 +270,10 @@ public final class Node
             this.parent = node.parent;
             this.creator = node.creator;
             this.modifier = node.modifier;
+            this.orderExpressions = node.orderExpressions;
         }
 
-        BaseBuilder( final NodeId id, final NodeName name )
+        private BaseBuilder( final NodeId id, final NodeName name )
         {
             this.id = id;
             this.name = name;
@@ -277,6 +292,8 @@ public final class Node
         private UserKey creator;
 
         boolean hasChildren = false;
+
+        private Set<OrderExpr> orderExpressions = Sets.newLinkedHashSet();
 
         public Builder()
         {
@@ -299,6 +316,7 @@ public final class Node
             this.parent = node.parent;
             this.modifier = node.modifier;
             this.creator = node.creator;
+            this.orderExpressions = node.orderExpressions;
         }
 
         public Builder( final NodeId id, final NodeName name )
@@ -418,10 +436,21 @@ public final class Node
             return this;
         }
 
-
         public Builder attachments( final Attachments value )
         {
             this.attachments = value;
+            return this;
+        }
+
+        public Builder addOrderExpression( final OrderExpr value )
+        {
+            this.orderExpressions.add( value );
+            return this;
+        }
+
+        public Builder addOrderExpressions( final Set<OrderExpr> values )
+        {
+            this.orderExpressions.addAll( values );
             return this;
         }
 
@@ -439,6 +468,7 @@ public final class Node
             baseBuilder.modifier = this.modifier;
             baseBuilder.indexConfigDocument = this.indexConfigDocument;
             baseBuilder.hasChildren = this.hasChildren;
+            baseBuilder.orderExpressions = this.orderExpressions;
 
             return new Node( baseBuilder );
         }
@@ -540,6 +570,30 @@ public final class Node
             return this;
         }
 
+        public EditBuilder addOrderExpression( final OrderExpr value )
+        {
+            this.orderExpressions.add( value );
+            changes.recordChange(
+                newPossibleChange( "data" ).from( this.originalNode.indexConfigDocument ).to( this.indexConfigDocument ).build() );
+            return this;
+        }
+
+        public EditBuilder addOrderExpressions( final Set<OrderExpr> values )
+        {
+            this.orderExpressions.addAll( values );
+            changes.recordChange(
+                newPossibleChange( "data" ).from( this.originalNode.indexConfigDocument ).to( this.indexConfigDocument ).build() );
+            return this;
+        }
+
+        public EditBuilder setOrderExpressions( final Set<OrderExpr> orderExpressions )
+        {
+            this.orderExpressions = orderExpressions;
+            changes.recordChange(
+                newPossibleChange( "orderExpressions" ).from( this.originalNode.orderExpressions ).to( this.orderExpressions ).build() );
+            return this;
+        }
+
         public boolean isChanges()
         {
             return this.changes.isChanges();
@@ -556,11 +610,13 @@ public final class Node
             baseBuilder.data = this.data;
             baseBuilder.attachments = this.attachments;
             baseBuilder.indexConfigDocument = this.indexConfigDocument;
-
             baseBuilder.name = this.name;
+            baseBuilder.orderExpressions = this.orderExpressions;
+
             return new Node( baseBuilder );
         }
     }
+
 
     @Override
     public boolean equals( final Object o )
@@ -616,6 +672,10 @@ public final class Node
         {
             return false;
         }
+        if ( orderExpressions != null ? !orderExpressions.equals( node.orderExpressions ) : node.orderExpressions != null )
+        {
+            return false;
+        }
         if ( parent != null ? !parent.equals( node.parent ) : node.parent != null )
         {
             return false;
@@ -643,6 +703,7 @@ public final class Node
         result = 31 * result + ( modifiedTime != null ? modifiedTime.hashCode() : 0 );
         result = 31 * result + ( indexConfigDocument != null ? indexConfigDocument.hashCode() : 0 );
         result = 31 * result + ( attachments != null ? attachments.hashCode() : 0 );
+        result = 31 * result + ( orderExpressions != null ? orderExpressions.hashCode() : 0 );
         return result;
     }
 }

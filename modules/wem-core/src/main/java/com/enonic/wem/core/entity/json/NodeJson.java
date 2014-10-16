@@ -1,22 +1,29 @@
 package com.enonic.wem.core.entity.json;
 
 import java.time.Instant;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.data.RootDataSetJson;
 import com.enonic.wem.api.index.IndexConfigDocument;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
+import com.enonic.wem.api.query.expr.OrderExpr;
+import com.enonic.wem.api.query.parser.QueryParser;
 import com.enonic.wem.core.entity.Attachments;
+import com.enonic.wem.core.entity.IndexConfigDocumentJson;
 import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodeName;
 import com.enonic.wem.core.entity.NodePath;
 import com.enonic.wem.core.entity.PatternBasedIndexConfigDocumentJson;
-import com.enonic.wem.core.entity.relationship.IndexConfigDocumentJson;
 
 public class NodeJson
 {
@@ -44,6 +51,8 @@ public class NodeJson
 
     private String creator;
 
+    private String orderExpressions;
+
     @SuppressWarnings("UnusedDeclaration")
     @JsonCreator
     public NodeJson( @JsonProperty("name") final String name, //
@@ -56,7 +65,9 @@ public class NodeJson
                      @JsonProperty("data") final RootDataSetJson data, //
                      @JsonProperty("modifiedTime") final Instant modifiedTime, //
                      @JsonProperty("indexConfigDocument") final IndexConfigDocumentJson indexConfigDocument,
-                     @JsonProperty("attachments") final AttachmentsJson attachments )
+                     @JsonProperty("attachments") final AttachmentsJson attachments, //
+                     @JsonProperty("orderExpressions") final String orderExpressions )
+
     {
         this.id = id;
         this.createdTime = createdTime;
@@ -70,6 +81,7 @@ public class NodeJson
         this.path = path;
         this.modifier = modifier;
         this.creator = creator;
+        this.orderExpressions = orderExpressions;
 
         this.node = Node.newNode().
             id( NodeId.from( id ) ).
@@ -83,6 +95,7 @@ public class NodeJson
             rootDataSet( data.getRootDataSet() ).
             indexConfigDocument( indexConfigDocument.toEntityIndexConfig() ).
             attachments( attachments != null ? attachments.getAttachments() : Attachments.empty() ).
+            addOrderExpressions( toOrderExpressions() ).
             build();
     }
 
@@ -100,6 +113,7 @@ public class NodeJson
         this.path = node.path() != null ? node.path().toString() : null;
         this.modifier = node.modifier() != null ? node.modifier().getQualifiedName() : null;
         this.creator = node.creator() != null ? node.creator().getQualifiedName() : null;
+        this.orderExpressions = getOrderExpressionsString( node.getOrderExpressions() );
     }
 
     private IndexConfigDocumentJson createEntityIndexConfig( final IndexConfigDocument indexConfig )
@@ -109,6 +123,26 @@ public class NodeJson
             return new PatternBasedIndexConfigDocumentJson( (PatternIndexConfigDocument) indexConfig );
         }
         return null;
+    }
+
+    private String getOrderExpressionsString( final Set<OrderExpr> orderExpressions )
+    {
+        return orderExpressions.stream().
+            map( OrderExpr::toString ).
+            collect( Collectors.joining( ", " ) );
+    }
+
+    public Set<OrderExpr> toOrderExpressions()
+    {
+        final LinkedHashSet<OrderExpr> orderExpressions = Sets.newLinkedHashSet();
+        final List<OrderExpr> orderExprs = QueryParser.parseOrderExpressions( this.orderExpressions );
+
+        for ( final OrderExpr orderExpr : orderExprs )
+        {
+            orderExpressions.add( orderExpr );
+        }
+
+        return orderExpressions;
     }
 
 
@@ -176,6 +210,12 @@ public class NodeJson
     public AttachmentsJson getAttachments()
     {
         return attachments;
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    public String getOrderExpressions()
+    {
+        return this.orderExpressions;
     }
 
     @JsonIgnore

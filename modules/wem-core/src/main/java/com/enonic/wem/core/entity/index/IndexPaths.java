@@ -10,7 +10,7 @@ public final class IndexPaths
 
     public static final IndexDocumentItemPath CREATOR_PROPERTY_PATH = IndexDocumentItemPath.from( "creator" );
 
-    private static final String MODIFIED_TIME_KEY = "modifiedTime";
+    public static final String MODIFIED_TIME_KEY = "modifiedTime";
 
     public static final IndexDocumentItemPath MODIFIED_TIME_PROPERTY_PATH = IndexDocumentItemPath.from( MODIFIED_TIME_KEY );
 
@@ -24,4 +24,7 @@ public final class IndexPaths
 
     public static final IndexDocumentItemPath PATH_PROPERTY_PATH = IndexDocumentItemPath.from( PATH_KEY );
 
+    public static final String ORDER_EXPRESSION_KEY = "orderExpression";
+
+    public static final IndexDocumentItemPath ORDER_EXPRESSION_PATH = IndexDocumentItemPath.from( ORDER_EXPRESSION_KEY );
 }
