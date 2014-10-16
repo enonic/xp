@@ -1,15 +1,13 @@
 module api.schema.mixin{
 
-    export class MixinName {
+    import ModuleKey = api.module.ModuleKey;
 
-        private value:string;
+    export class MixinName extends api.module.ModuleBasedName {
 
         constructor(name:string) {
-            this.value = name
+            var parts = name.split(api.module.ModuleBasedName.SEPARATOR);
+            super(ModuleKey.fromString(parts[0]), parts[1]);
         }
 
-        toString():string {
-            return this.value;
-        }
     }
 }
