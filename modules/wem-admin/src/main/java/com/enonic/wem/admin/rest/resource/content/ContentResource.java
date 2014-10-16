@@ -25,7 +25,6 @@ import com.enonic.wem.admin.json.content.ContentSummaryJson;
 import com.enonic.wem.admin.json.content.ContentSummaryListJson;
 import com.enonic.wem.admin.json.content.GetActiveContentVersionsResultJson;
 import com.enonic.wem.admin.json.content.GetContentVersionsResultJson;
-import com.enonic.wem.admin.json.content.MetadataJson;
 import com.enonic.wem.admin.json.content.attachment.AttachmentJson;
 import com.enonic.wem.admin.rest.exception.NotFoundWebException;
 import com.enonic.wem.admin.rest.resource.content.json.AbstractContentQueryResultJson;
@@ -60,24 +59,19 @@ import com.enonic.wem.api.content.FindContentVersionsParams;
 import com.enonic.wem.api.content.FindContentVersionsResult;
 import com.enonic.wem.api.content.GetActiveContentVersionsParams;
 import com.enonic.wem.api.content.GetActiveContentVersionsResult;
-import com.enonic.wem.api.content.Metadata;
 import com.enonic.wem.api.content.PushContentParams;
 import com.enonic.wem.api.content.RenameContentParams;
 import com.enonic.wem.api.content.UnableToDeleteContentException;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.AttachmentService;
-import com.enonic.wem.api.content.data.ContentData;
-import com.enonic.wem.api.content.editor.ContentEditor;
-import com.enonic.wem.api.data.DataJson;
+import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.exception.ConflictException;
 import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
 import com.enonic.wem.api.query.Direction;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.api.workspace.Workspaces;
-
-import static com.enonic.wem.api.content.Content.editContent;
 
 @SuppressWarnings("UnusedDeclaration")
 @Path("content")
@@ -302,8 +296,24 @@ public class ContentResource
 
             try
             {
-                contentService.delete( deleteContent );
-                jsonResult.addSuccess( contentToDelete );
+                Content content = contentService.getByPath( deleteContent.getContentPath() );
+                if ( content == null )
+                {
+                    throw new NotFoundWebException(
+                        String.format( "Content with path [%s] was not found in workspace [%s]", deleteContent.getContentPath(),
+                                       Context.current().getWorkspace() ) );
+                }
+                if ( !content.hasChildren() )
+                {
+                    contentService.delete( deleteContent );
+                    jsonResult.addSuccess( contentToDelete );
+                }
+                else
+                {
+                    jsonResult.addFailure( deleteContent.getContentPath(),
+                                           String.format( "content [%s] can not be deleted, because it has children",
+                                                          content.getPath().toString() ) );
+                }
             }
             catch ( ContentNotFoundException | UnableToDeleteContentException e )
             {

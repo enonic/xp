@@ -544,6 +544,10 @@ public class ContentResourceTest
         Mockito.when( contentService.delete( Mockito.isA( DeleteContentParams.class ) ) ).thenReturn(
             new DeleteContentResult( newContent().parentPath( ContentPath.ROOT ).name( "two" ).build() ) );
 
+        final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
+        Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).
+            thenReturn( aContent );
+
         String jsonString = request().path( "content/delete" ).
             entity( readFromFile( "delete_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
@@ -559,6 +563,9 @@ public class ContentResourceTest
             contentService.delete( Mockito.eq( new DeleteContentParams().contentPath( ContentPath.from( "/one" ) ) ) ) ).thenThrow(
             new ContentNotFoundException( ContentPath.from( "one" ), ContentConstants.WORKSPACE_STAGE ) );
 
+        final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
+        Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).
+            thenReturn( aContent );
         Mockito.when(
             contentService.delete( Mockito.eq( new DeleteContentParams().contentPath( ContentPath.from( "/two" ) ) ) ) ).thenThrow(
             new UnableToDeleteContentException( ContentPath.from( "two" ), "Some reason" ) );
@@ -574,10 +581,17 @@ public class ContentResourceTest
     public void delete_content_both()
         throws Exception
     {
+        final Content aContent1 = createContent( "aaa", "my_a_content1", "mymodule:my_type" );
+        Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).
+            thenReturn( aContent1 );
+
         Mockito.when(
             contentService.delete( Mockito.eq( new DeleteContentParams().contentPath( ContentPath.from( "one" ) ) ) ) ).thenReturn(
             new DeleteContentResult( newContent().parentPath( ContentPath.ROOT ).name( "one" ).build() ) );
 
+        final Content aContent2 = createContent( "aaa", "my_a_content2", "mymodule:my_type" );
+        Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).
+            thenReturn( aContent2 );
         Mockito.when( contentService.delete( Mockito.eq( new DeleteContentParams().contentPath( ContentPath.from( "two" ) ) ) ) ).thenThrow(
             new UnableToDeleteContentException( ContentPath.from( "two" ), "Some reason" ) );
 
