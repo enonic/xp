@@ -102,6 +102,7 @@
     displayArea.appendChild(image);
 
     var imageCanvas = new api.ui.image.ImageCanvas(image);
+    centerVertically();
 
     var displayAreaSettings = new DivEl('block');
     settingsArea.appendChild(displayAreaSettings);
@@ -140,7 +141,7 @@
     imageCanvasSettings.appendChild(enableCanvasCheckbox);
 
     var imageWidthInput = new InputEl(null, 'number').setName('image-width').setId('image-width');
-    imageCanvasSettings.appendChild(new LabelEl('Image width', imageWidthInput));
+    imageCanvasSettings.appendChild(new LabelEl('Column size', imageWidthInput));
     imageCanvasSettings.appendChild(imageWidthInput);
 
     var imageWidthSpan = new SpanEl();
@@ -190,26 +191,23 @@
         displayArea.getHTMLElement().style.backgroundColor = backgroundInput.getValue();
     });
 
-    var loadHandler = function () {
-        var width = image.getEl().getWidth();
-        imageCanvas.setWidth(width);
-        imageWidthInput.setValue(width);
-        centerVertically();
-    };
     imageSelect.onChange(function () {
-        image.getEl().setWidth('auto');
         image.setSrc(imageSelect.getValue());
         if (image.isLoaded()) {
-            loadHandler();
+            centerVertically();
         } else {
-            image.onLoaded(loadHandler);
+            image.onLoaded(centerVertically);
         }
     });
 
 
     enableCanvasCheckbox.onChange(function () {
         imageCanvas.setEnabled(enableCanvasCheckbox.getHTMLElement()["checked"]);
-        if (!imageCanvas.isEnabled()) {
+        if (imageCanvas.isEnabled()) {
+            imageCanvas.setWidth(parseInt(imageWidthInput.getValue()));
+            imageCanvas.setZoom(parseInt(imageZoomInput.getValue()));
+            imageCanvas.setPan(parseInt(imagePanLeftInput.getValue()), parseInt(imagePanTopInput.getValue()));
+        } else {
             imageWidthSpan.setHtml('');
             imageZoomSpan.setHtml('');
             imagePanLeftSpan.setHtml('');
@@ -219,23 +217,23 @@
     });
 
     imageWidthInput.onInput(function () {
-        imageCanvas.setWidth(imageWidthInput.getValue());
+        imageCanvas.setWidth(parseInt(imageWidthInput.getValue()));
         centerVertically();
     });
-    imageWidthInput.setValue(0);
+    imageWidthInput.setValue(500);
 
     imageZoomInput.onInput(function () {
-        imageCanvas.setZoom(Math.max(imageZoomInput.getValue(), 100));
+        imageCanvas.setZoom(parseInt(imageZoomInput.getValue()));
     });
     imageZoomInput.setValue(100);
 
     imagePanLeftInput.onInput(function () {
-        imageCanvas.setPan(imagePanLeftInput.getValue(), imageCanvas.getPan().y);
+        imageCanvas.setPan(parseInt(imagePanLeftInput.getValue()), imageCanvas.getPan().y);
     });
     imagePanLeftInput.setValue(0);
 
     imagePanTopInput.onInput(function () {
-        imageCanvas.setPan(imageCanvas.getPan().x, imagePanTopInput.getValue());
+        imageCanvas.setPan(imageCanvas.getPan().x, parseInt(imagePanTopInput.getValue()));
     });
     imagePanTopInput.setValue(0);
 

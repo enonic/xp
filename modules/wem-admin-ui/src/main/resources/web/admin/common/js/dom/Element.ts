@@ -783,12 +783,16 @@ module api.dom {
             this.getEl().removeEventListener("mousemove", listener);
         }
 
-        onMouseWheel(listener: (event: JQueryEventObject) => void) {
-            wemjq(this.getHTMLElement()).bind("mousewheel", listener);
+        onMouseWheel(listener: (event: MouseEvent) => void) {
+            // http://www.javascriptkit.com/javatutors/onmousewheel.shtml
+            // FF doesn't recognize mousewheel as of FF3.x
+            var eventName = (/Firefox/i.test(navigator.userAgent)) ? "DOMMouseScroll" : "mousewheel";
+            this.getEl().addEventListener(eventName, listener);
         }
 
-        unMouseWheel(listener: (event: JQueryEventObject) => void) {
-            wemjq(this.getHTMLElement()).unbind("mousewheel", listener);
+        unMouseWheel(listener: (event: MouseEvent) => void) {
+            var eventName = (/Firefox/i.test(navigator.userAgent)) ? "DOMMouseScroll" : "mousewheel";
+            this.getEl().removeEventListener(eventName, listener);
         }
 
         onTouchStart(listener: (event: MouseEvent) => void) {
