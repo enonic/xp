@@ -1,10 +1,21 @@
 package com.enonic.wem.core.entity;
 
 
+import java.time.Instant;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.account.UserKey;
+import com.enonic.wem.api.data.Data;
+import com.enonic.wem.api.data.DataSet;
+import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.index.IndexConfig;
+import com.enonic.wem.api.index.IndexConfigDocument;
+import com.enonic.wem.api.index.PatternIndexConfigDocument;
 import com.enonic.wem.api.support.ChangeTraceable;
+import com.enonic.wem.api.support.Changes;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
 import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
 import com.enonic.wem.api.support.illegaledit.IllegalEditException;
@@ -12,9 +23,11 @@ import com.enonic.wem.api.support.illegaledit.IllegalEditException;
 import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;
 
 public final class Node
-    extends Entity
+    //extends Entity
     implements ChangeTraceable, IllegalEditAware<Node>
 {
+    private final EntityId id;
+
     private final NodeName name;
 
     private final NodePath parent;
@@ -27,27 +40,15 @@ public final class Node
 
     private final boolean hasChildren;
 
-    private Node( final BaseBuilder builder )
-    {
-        super( builder );
+    private final Instant createdTime;
 
-        this.creator = builder.creator;
+    private final RootDataSet data;
 
-        this.name = builder.name;
-        this.parent = builder.parent;
+    private final Instant modifiedTime;
 
-        this.path = this.parent != null && this.name != null ? new NodePath( this.parent, this.name ) : null;
+    private final IndexConfigDocument indexConfigDocument;
 
-        this.modifier = builder.modifier;
-
-        this.hasChildren = builder.hasChildren;
-    }
-
-    public void validateForIndexing()
-    {
-        Preconditions.checkNotNull( this.id, "Id must be set" );
-        Preconditions.checkNotNull( this.indexConfigDocument, "EntityIndexConfig must be set" );
-    }
+    private final Attachments attachments;
 
     public NodeName name()
     {
@@ -89,12 +90,97 @@ public final class Node
         return hasChildren;
     }
 
+    public EntityId id()
+    {
+        return id;
+    }
+
+    public Instant getCreatedTime()
+    {
+        return createdTime;
+    }
+
+    public Instant getModifiedTime()
+    {
+        return modifiedTime;
+    }
+
+    public RootDataSet data()
+    {
+        return this.data;
+    }
+
+    public Attachments attachments()
+    {
+        return this.attachments;
+    }
+
+    public DataSet dataSet( final String path )
+    {
+        return data.getDataSet( path );
+    }
+
+    public Property property( final String path )
+    {
+        return data.getProperty( path );
+    }
+
+    public IndexConfigDocument getIndexConfigDocument()
+    {
+        return indexConfigDocument;
+    }
+
+    private Node( final BaseBuilder builder )
+    {
+        this.id = builder.id;
+        this.createdTime = builder.createdTime;
+        this.modifiedTime = builder.modifiedTime;
+
+        this.data = new RootDataSet();
+        if ( builder.data != null )
+        {
+            for ( final Data data : builder.data )
+            {
+                this.data.add( data.copy() );
+            }
+        }
+
+        this.attachments = builder.attachments;
+
+        if ( builder.indexConfigDocument != null )
+        {
+            this.indexConfigDocument = builder.indexConfigDocument;
+        }
+        else
+        {
+            this.indexConfigDocument = PatternIndexConfigDocument.create().
+                defaultConfig( IndexConfig.BY_TYPE ).
+                build();
+        }
+
+        this.creator = builder.creator;
+
+        this.name = builder.name;
+        this.parent = builder.parent;
+
+        this.path = this.parent != null && this.name != null ? new NodePath( this.parent, this.name ) : null;
+
+        this.modifier = builder.modifier;
+
+        this.hasChildren = builder.hasChildren;
+    }
+
+    public void validateForIndexing()
+    {
+        Preconditions.checkNotNull( this.id, "Id must be set" );
+        Preconditions.checkNotNull( this.indexConfigDocument, "EntityIndexConfig must be set" );
+    }
+
+
     @Override
     public void checkIllegalEdit( final Node to )
         throws IllegalEditException
     {
-        // TODO: Unfortunately Java does not like us to also let super class implement checkIllegalEdit(Entity)
-        // TODO: Therefor it's here... :(
         IllegalEdit.check( "id", this.id(), to.id(), Node.class );
         IllegalEdit.check( "createdTime", this.getCreatedTime(), to.getCreatedTime(), Node.class );
         IllegalEdit.check( "modifiedTime", this.getModifiedTime(), to.getModifiedTime(), Node.class );
@@ -131,7 +217,6 @@ public final class Node
 
 
     public static class BaseBuilder
-        extends Entity.BaseBuilder
     {
         NodeName name;
 
@@ -143,19 +228,30 @@ public final class Node
 
         boolean hasChildren = false;
 
+        EntityId id;
+
+        Instant createdTime;
+
+        Instant modifiedTime;
+
+        RootDataSet data = new RootDataSet();
+
+        Attachments attachments;
+
+        IndexConfigDocument indexConfigDocument;
+
+
         BaseBuilder()
         {
         }
 
-        BaseBuilder( final EntityId id )
-        {
-            super( id );
-        }
-
         BaseBuilder( final Node node )
         {
-            super( node );
-
+            this.id = node.id;
+            this.createdTime = node.createdTime;
+            this.modifiedTime = node.modifiedTime;
+            this.data = node.data;
+            this.indexConfigDocument = node.indexConfigDocument;
             this.name = node.name;
             this.parent = node.parent;
             this.creator = node.creator;
@@ -169,41 +265,8 @@ public final class Node
         }
     }
 
-    public static class EditBuilder
-        extends Entity.EditBuilder<EditBuilder>
-    {
-        private final Node originalNode;
-
-        private NodeName name;
-
-        public EditBuilder( final Node original )
-        {
-            super( original );
-            this.name = original.name;
-            this.originalNode = original;
-        }
-
-        public EditBuilder name( final NodeName value )
-        {
-            changes.recordChange( newPossibleChange( "name" ).from( this.originalNode.name ).to( value ).build() );
-            this.name = value;
-            return this;
-        }
-
-        public Node build()
-        {
-            Node.BaseBuilder baseBuilder = new BaseBuilder( this.originalNode );
-            baseBuilder.data = this.data;
-            baseBuilder.attachments = this.attachments;
-            baseBuilder.indexConfigDocument = this.indexConfigDocument;
-
-            baseBuilder.name = this.name;
-            return new Node( baseBuilder );
-        }
-    }
-
     public static class Builder
-        extends Entity.Builder<Builder>
+        extends BaseBuilder
     {
         private NodeName name;
 
@@ -222,12 +285,16 @@ public final class Node
 
         public Builder( final EntityId id )
         {
-            super( id );
+            this.id = id;
         }
 
         public Builder( final Node node )
         {
-            super( node );
+            this.id = node.id;
+            this.createdTime = node.createdTime;
+            this.modifiedTime = node.modifiedTime;
+            this.data = node.data;
+            this.attachments = node.attachments;
             this.name = node.name;
             this.parent = node.parent;
             this.modifier = node.modifier;
@@ -276,6 +343,88 @@ public final class Node
             return this;
         }
 
+        public Builder id( final EntityId id )
+        {
+            this.id = id;
+            return this;
+        }
+
+        public Builder createdTime( final Instant value )
+        {
+            this.createdTime = value;
+            return this;
+        }
+
+        public Builder modifiedTime( final Instant value )
+        {
+            this.modifiedTime = value;
+            return this;
+        }
+
+        public Builder property( final String path, final String value )
+        {
+            if ( value != null )
+            {
+                this.data.setProperty( path, Value.newString( value ) );
+            }
+            return this;
+        }
+
+        public Builder property( final String path, final Long value )
+        {
+            if ( value != null )
+            {
+                this.data.setProperty( path, Value.newLong( value ) );
+            }
+            return this;
+        }
+
+        public Builder property( final String path, final Instant value )
+        {
+            if ( value != null )
+            {
+                this.data.setProperty( path, Value.newInstant( value ) );
+            }
+            return this;
+        }
+
+        public Builder property( final String path, final Value value )
+        {
+            if ( value != null )
+            {
+                this.data.setProperty( path, value );
+            }
+            return this;
+        }
+
+        public Builder addDataSet( final DataSet value )
+        {
+            if ( value != null )
+            {
+                this.data.add( value );
+            }
+            return this;
+        }
+
+        public Builder rootDataSet( final RootDataSet value )
+        {
+            this.data = value;
+            return this;
+        }
+
+        public Builder indexConfigDocument( final IndexConfigDocument indexConfigDocument )
+        {
+            this.indexConfigDocument = indexConfigDocument;
+            return this;
+        }
+
+
+        public Builder attachments( final Attachments value )
+        {
+            this.attachments = value;
+            return this;
+        }
+
         public Node build()
         {
             BaseBuilder baseBuilder = new BaseBuilder();
@@ -295,6 +444,124 @@ public final class Node
         }
     }
 
+
+    public static class EditBuilder
+        extends BaseBuilder
+    {
+        private final Node originalNode;
+
+        private NodeName name;
+
+        final Changes.Builder changes = new Changes.Builder();
+
+        public EditBuilder( final Node original )
+        {
+            this.name = original.name;
+            this.originalNode = original;
+        }
+
+        public EditBuilder name( final NodeName value )
+        {
+            changes.recordChange( newPossibleChange( "name" ).from( this.originalNode.name ).to( value ).build() );
+            this.name = value;
+            return this;
+        }
+
+        public EditBuilder property( final String path, final String value )
+        {
+            if ( value != null )
+            {
+                this.data.setProperty( path, Value.newString( value ) );
+                changes.recordChange( newPossibleChange( "data" ).from( this.originalNode.data() ).to( this.data ).build() );
+            }
+            return this;
+        }
+
+        public EditBuilder property( final String path, final Long value )
+        {
+            if ( value != null )
+            {
+                this.data.setProperty( path, Value.newLong( value ) );
+                changes.recordChange( newPossibleChange( "data" ).from( this.originalNode.data() ).to( this.data ).build() );
+            }
+            return this;
+        }
+
+        public EditBuilder property( final String path, final Instant value )
+        {
+            if ( value != null )
+            {
+                this.data.setProperty( path, Value.newInstant( value ) );
+                changes.recordChange( newPossibleChange( "data" ).from( this.originalNode.data() ).to( this.data ).build() );
+            }
+            return this;
+        }
+
+        public EditBuilder property( final String path, final Value value )
+        {
+            if ( value != null )
+            {
+                this.data.setProperty( path, value );
+                changes.recordChange( newPossibleChange( "data" ).from( this.originalNode.data() ).to( this.data ).build() );
+            }
+            return this;
+        }
+
+        public EditBuilder addDataSet( final DataSet value )
+        {
+            if ( value != null )
+            {
+                this.data.add( value );
+                changes.recordChange( newPossibleChange( "data" ).from( this.originalNode.data() ).to( this.data ).build() );
+            }
+            return this;
+        }
+
+        public EditBuilder rootDataSet( final RootDataSet value )
+        {
+            this.data = value;
+            changes.recordChange( newPossibleChange( "data" ).from( this.originalNode.data() ).to( this.data ).build() );
+            return this;
+        }
+
+        public EditBuilder attachments( final Attachments value )
+        {
+            this.attachments = value;
+            changes.recordChange(
+                newPossibleChange( "attachments" ).from( this.originalNode.attachments() ).to( this.attachments ).build() );
+            return this;
+        }
+
+        public EditBuilder entityIndexConfig( final IndexConfigDocument indexConfigDocument )
+        {
+            changes.recordChange(
+                newPossibleChange( "data" ).from( this.originalNode.indexConfigDocument ).to( this.indexConfigDocument ).build() );
+            this.indexConfigDocument = indexConfigDocument;
+            return this;
+        }
+
+        public boolean isChanges()
+        {
+            return this.changes.isChanges();
+        }
+
+        public Changes getChanges()
+        {
+            return this.changes.build();
+        }
+
+        public Node build()
+        {
+            Node.BaseBuilder baseBuilder = new BaseBuilder( this.originalNode );
+            baseBuilder.data = this.data;
+            baseBuilder.attachments = this.attachments;
+            baseBuilder.indexConfigDocument = this.indexConfigDocument;
+
+            baseBuilder.name = this.name;
+            return new Node( baseBuilder );
+        }
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -307,14 +574,37 @@ public final class Node
             return false;
         }
 
-        if ( !super.equals( o ) )
+        final Node node = (Node) o;
+
+        if ( hasChildren != node.hasChildren )
         {
             return false;
         }
-
-        final Node node = (Node) o;
-
+        if ( attachments != null ? !attachments.equals( node.attachments ) : node.attachments != null )
+        {
+            return false;
+        }
+        if ( createdTime != null ? !createdTime.equals( node.createdTime ) : node.createdTime != null )
+        {
+            return false;
+        }
         if ( creator != null ? !creator.equals( node.creator ) : node.creator != null )
+        {
+            return false;
+        }
+        if ( data != null ? !data.equals( node.data ) : node.data != null )
+        {
+            return false;
+        }
+        if ( id != null ? !id.equals( node.id ) : node.id != null )
+        {
+            return false;
+        }
+        if ( indexConfigDocument != null ? !indexConfigDocument.equals( node.indexConfigDocument ) : node.indexConfigDocument != null )
+        {
+            return false;
+        }
+        if ( modifiedTime != null ? !modifiedTime.equals( node.modifiedTime ) : node.modifiedTime != null )
         {
             return false;
         }
@@ -341,11 +631,18 @@ public final class Node
     @Override
     public int hashCode()
     {
-        int result = name != null ? name.hashCode() : 0;
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + ( name != null ? name.hashCode() : 0 );
         result = 31 * result + ( parent != null ? parent.hashCode() : 0 );
         result = 31 * result + ( path != null ? path.hashCode() : 0 );
         result = 31 * result + ( modifier != null ? modifier.hashCode() : 0 );
         result = 31 * result + ( creator != null ? creator.hashCode() : 0 );
+        result = 31 * result + ( hasChildren ? 1 : 0 );
+        result = 31 * result + ( createdTime != null ? createdTime.hashCode() : 0 );
+        result = 31 * result + ( data != null ? data.hashCode() : 0 );
+        result = 31 * result + ( modifiedTime != null ? modifiedTime.hashCode() : 0 );
+        result = 31 * result + ( indexConfigDocument != null ? indexConfigDocument.hashCode() : 0 );
+        result = 31 * result + ( attachments != null ? attachments.hashCode() : 0 );
         return result;
     }
 }

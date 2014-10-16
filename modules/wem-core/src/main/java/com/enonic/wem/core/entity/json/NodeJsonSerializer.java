@@ -29,16 +29,10 @@ public class NodeJsonSerializer
     {
         try
         {
-            final AbstractEntityJson entity = objectMapper.readValue( serialized, AbstractEntityJson.class );
+            final NodeJson node = objectMapper.readValue( serialized, NodeJson.class );
 
-            if ( entity instanceof NodeJson )
-            {
-                return ( (NodeJson) entity ).getNode();
-            }
-            else
-            {
-                return null;
-            }
+            return node.getNode();
+
         }
         catch ( IOException e )
         {

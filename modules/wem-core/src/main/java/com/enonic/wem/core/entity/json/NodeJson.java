@@ -8,16 +8,30 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.data.RootDataSetJson;
+import com.enonic.wem.api.index.IndexConfigDocument;
+import com.enonic.wem.api.index.PatternIndexConfigDocument;
 import com.enonic.wem.core.entity.Attachments;
 import com.enonic.wem.core.entity.EntityId;
 import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.entity.NodeName;
 import com.enonic.wem.core.entity.NodePath;
+import com.enonic.wem.core.entity.PatternBasedIndexConfigDocumentJson;
 import com.enonic.wem.core.entity.relationship.IndexConfigDocumentJson;
 
 public class NodeJson
-    extends AbstractEntityJson
 {
+    protected String id;
+
+    protected Instant createdTime;
+
+    protected RootDataSetJson data;
+
+    protected Instant modifiedTime;
+
+    protected IndexConfigDocumentJson indexConfigDocument;
+
+    private AttachmentsJson attachments;
+
     private Node node;
 
     private String name;
@@ -44,7 +58,12 @@ public class NodeJson
                      @JsonProperty("indexConfigDocument") final IndexConfigDocumentJson indexConfigDocument,
                      @JsonProperty("attachments") final AttachmentsJson attachments )
     {
-        super( id, createdTime, data, modifiedTime, indexConfigDocument, attachments );
+        this.id = id;
+        this.createdTime = createdTime;
+        this.data = data;
+        this.modifiedTime = modifiedTime;
+        this.indexConfigDocument = indexConfigDocument;
+        this.attachments = attachments;
 
         this.name = name;
         this.parent = parent;
@@ -69,8 +88,12 @@ public class NodeJson
 
     public NodeJson( final Node node )
     {
-        super( node );
-
+        this.id = node.id().toString();
+        this.createdTime = node.getCreatedTime();
+        this.modifiedTime = node.getModifiedTime();
+        this.data = new RootDataSetJson( node.data() );
+        this.indexConfigDocument = createEntityIndexConfig( node.getIndexConfigDocument() );
+        this.attachments = new AttachmentsJson( node.attachments() );
         this.node = node;
         this.name = node.name() != null ? node.name().toString() : null;
         this.parent = node.parent() != null ? node.parent().toString() : null;
@@ -78,6 +101,16 @@ public class NodeJson
         this.modifier = node.modifier() != null ? node.modifier().getQualifiedName() : null;
         this.creator = node.creator() != null ? node.creator().getQualifiedName() : null;
     }
+
+    private IndexConfigDocumentJson createEntityIndexConfig( final IndexConfigDocument indexConfig )
+    {
+        if ( indexConfig instanceof PatternIndexConfigDocument )
+        {
+            return new PatternBasedIndexConfigDocumentJson( (PatternIndexConfigDocument) indexConfig );
+        }
+        return null;
+    }
+
 
     @SuppressWarnings("UnusedDeclaration")
     public String getName()
@@ -107,6 +140,42 @@ public class NodeJson
     public String getCreator()
     {
         return creator;
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    public String getId()
+    {
+        return id;
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    public Instant getCreatedTime()
+    {
+        return createdTime;
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    public Instant getModifiedTime()
+    {
+        return modifiedTime;
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    public RootDataSetJson getData()
+    {
+        return data;
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    public IndexConfigDocumentJson getIndexConfigDocument()
+    {
+        return indexConfigDocument;
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    public AttachmentsJson getAttachments()
+    {
+        return attachments;
     }
 
     @JsonIgnore
