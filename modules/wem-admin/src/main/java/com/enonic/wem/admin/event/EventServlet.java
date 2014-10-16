@@ -5,6 +5,8 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.TimeUnit;
 
+import javax.servlet.ServletException;
+
 import org.eclipse.jetty.websocket.api.UpgradeRequest;
 import org.eclipse.jetty.websocket.api.UpgradeResponse;
 import org.eclipse.jetty.websocket.servlet.WebSocketCreator;
@@ -23,6 +25,24 @@ public final class EventServlet
     private static final String PROTOCOL = "text";
 
     private final Set<EventWebSocket> sockets = new CopyOnWriteArraySet<>();
+
+    @Override
+    public void init()
+        throws ServletException
+    {
+        final ClassLoader newLoader = WebSocketServlet.class.getClassLoader();
+        final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
+
+        try
+        {
+            Thread.currentThread().setContextClassLoader( newLoader );
+            super.init();
+        }
+        finally
+        {
+            Thread.currentThread().setContextClassLoader( oldLoader );
+        }
+    }
 
     @Override
     public void configure( final WebSocketServletFactory factory )
