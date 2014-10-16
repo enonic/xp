@@ -14,7 +14,6 @@ import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.repository.IndexNameResolver;
 
 public class NodeQueryTranslator
-    extends EntityQueryTranslator
 {
 
     public static ElasticsearchQuery translate( final NodeQuery nodeQuery, final IndexContext indexContext )
