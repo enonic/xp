@@ -20,8 +20,8 @@ import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
 import com.enonic.wem.core.elasticsearch.document.AbstractStoreDocumentItem;
 import com.enonic.wem.core.elasticsearch.document.StoreDocument;
-import com.enonic.wem.core.entity.EntityId;
 import com.enonic.wem.core.entity.Node;
+import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodeName;
 import com.enonic.wem.core.entity.NodePath;
 import com.enonic.wem.core.entity.index.IndexDocumentItemPath;
@@ -62,7 +62,7 @@ public class NodeStoreDocumentFactoryTest
     public void validate_given_id_then_ok()
     {
         Node node = Node.newNode().
-            id( EntityId.from( "abc" ) ).
+            id( NodeId.from( "abc" ) ).
             build();
 
         final Collection<StoreDocument> storeDocuments = NodeIndexDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY.getId() );
@@ -75,7 +75,7 @@ public class NodeStoreDocumentFactoryTest
         throws Exception
     {
         Node node = Node.newNode().
-            id( EntityId.from( "abc" ) ).
+            id( NodeId.from( "abc" ) ).
             build();
 
         final Collection<StoreDocument> storeDocuments = NodeIndexDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY.getId() );
@@ -91,7 +91,7 @@ public class NodeStoreDocumentFactoryTest
         final String myAnalyzerName = "myAnalyzer";
 
         final Node node = Node.newNode().
-            id( EntityId.from( "abc" ) ).
+            id( NodeId.from( "abc" ) ).
             indexConfigDocument( PatternIndexConfigDocument.create().
                 analyzer( myAnalyzerName ).
                 defaultConfig( IndexConfig.MINIMAL ).
@@ -114,7 +114,7 @@ public class NodeStoreDocumentFactoryTest
         Instant modifiedDateTime = LocalDateTime.of( 2013, 1, 2, 3, 4, 5 ).toInstant( ZoneOffset.UTC );
 
         Node node = Node.newNode().
-            id( EntityId.from( "myId" ) ).
+            id( NodeId.from( "myId" ) ).
             parent( NodePath.ROOT ).
             name( NodeName.from( "my-name" ) ).
             createdTime( Instant.now() ).
@@ -157,7 +157,7 @@ public class NodeStoreDocumentFactoryTest
         rootDataSet.setProperty( DataPath.from( "a.b.d" ), Value.newLocalDate( LocalDate.now() ) );
 
         Node node = Node.newNode().
-            id( EntityId.from( "myId" ) ).
+            id( NodeId.from( "myId" ) ).
             rootDataSet( rootDataSet ).
             build();
 
@@ -178,7 +178,7 @@ public class NodeStoreDocumentFactoryTest
         rootDataSet.addProperty( DataPath.from( "a.b.c" ), Value.newDouble( 3.0 ) );
 
         Node node = Node.newNode().
-            id( EntityId.from( "myId" ) ).
+            id( NodeId.from( "myId" ) ).
             rootDataSet( rootDataSet ).
             build();
 

@@ -38,7 +38,7 @@ public class GetActiveNodeVersionsCommandTest
     public void get_for_all_given_workspaces()
         throws Exception
     {
-        final EntityId id = EntityId.from( "id" );
+        final NodeId id = NodeId.from( "id" );
 
         final Workspace workspace1 = Workspace.from( "workspace1" );
         final Workspace workspace2 = Workspace.from( "Workspace2" );
@@ -64,7 +64,7 @@ public class GetActiveNodeVersionsCommandTest
                 versionService( this.versionService ).
                 workspaceService( this.workspaceService ).
                 nodeDao( this.nodeDao ).
-                entityId( id ).
+                nodeId( id ).
                 workspaces( Workspaces.from( workspace1, workspace2 ) ).
                 build().
                 execute();

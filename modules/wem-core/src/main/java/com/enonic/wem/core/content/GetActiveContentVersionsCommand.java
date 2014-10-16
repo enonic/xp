@@ -7,9 +7,9 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.GetActiveContentVersionsResult;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.api.workspace.Workspaces;
-import com.enonic.wem.core.entity.EntityId;
 import com.enonic.wem.core.entity.GetActiveNodeVersionsParams;
 import com.enonic.wem.core.entity.GetActiveNodeVersionsResult;
+import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodeVersion;
 
 public class GetActiveContentVersionsCommand
@@ -33,10 +33,10 @@ public class GetActiveContentVersionsCommand
 
     public GetActiveContentVersionsResult execute()
     {
-        final EntityId entityId = EntityId.from( contentId.toString() );
+        final NodeId nodeId = NodeId.from( contentId.toString() );
 
         final GetActiveNodeVersionsResult activeNodeVersions = this.nodeService.getActiveVersions( GetActiveNodeVersionsParams.create().
-            entityId( entityId ).
+            nodeId( nodeId ).
             workspaces( this.workspaces ).
             build() );
 

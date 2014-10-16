@@ -1,12 +1,12 @@
 package com.enonic.wem.core.workspace;
 
-import com.enonic.wem.core.entity.EntityId;
+import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodePath;
 import com.enonic.wem.core.entity.NodeVersionId;
 
 public class StoreWorkspaceDocument
 {
-    private final EntityId entityId;
+    private final NodeId nodeId;
 
     private final NodeVersionId nodeVersionId;
 
@@ -17,15 +17,15 @@ public class StoreWorkspaceDocument
 
     private StoreWorkspaceDocument( final Builder builder )
     {
-        this.entityId = builder.entityId;
+        this.nodeId = builder.nodeId;
         this.nodeVersionId = builder.nodeVersionId;
         this.parentPath = builder.parentPath;
         this.path = builder.path;
     }
 
-    public EntityId getEntityId()
+    public NodeId getNodeId()
     {
-        return entityId;
+        return nodeId;
     }
 
     public NodeVersionId getNodeVersionId()
@@ -50,7 +50,7 @@ public class StoreWorkspaceDocument
 
     public static class Builder
     {
-        private EntityId entityId;
+        private NodeId nodeId;
 
         private NodeVersionId nodeVersionId;
 
@@ -70,9 +70,9 @@ public class StoreWorkspaceDocument
             return this;
         }
 
-        public Builder id( final EntityId id )
+        public Builder id( final NodeId id )
         {
-            this.entityId = id;
+            this.nodeId = id;
             return this;
         }
 
@@ -102,7 +102,7 @@ public class StoreWorkspaceDocument
 
         final StoreWorkspaceDocument that = (StoreWorkspaceDocument) o;
 
-        if ( entityId != null ? !entityId.equals( that.entityId ) : that.entityId != null )
+        if ( nodeId != null ? !nodeId.equals( that.nodeId ) : that.nodeId != null )
         {
             return false;
         }
@@ -125,7 +125,7 @@ public class StoreWorkspaceDocument
     @Override
     public int hashCode()
     {
-        int result = entityId != null ? entityId.hashCode() : 0;
+        int result = nodeId != null ? nodeId.hashCode() : 0;
         result = 31 * result + ( nodeVersionId != null ? nodeVersionId.hashCode() : 0 );
         result = 31 * result + ( path != null ? path.hashCode() : 0 );
         result = 31 * result + ( parentPath != null ? parentPath.hashCode() : 0 );

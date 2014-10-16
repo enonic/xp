@@ -17,9 +17,9 @@ public class NodesTest
     {
         final Set<Node> nodeSet = Sets.newLinkedHashSet();
 
-        final Node node1 = Node.newNode( EntityId.from( "z" ) ).build();
-        final Node node2 = Node.newNode( EntityId.from( "y" ) ).build();
-        final Node node3 = Node.newNode( EntityId.from( "x" ) ).build();
+        final Node node1 = Node.newNode( NodeId.from( "z" ) ).build();
+        final Node node2 = Node.newNode( NodeId.from( "y" ) ).build();
+        final Node node3 = Node.newNode( NodeId.from( "x" ) ).build();
 
         nodeSet.add( node1 );
         nodeSet.add( node2 );
@@ -38,9 +38,9 @@ public class NodesTest
     public void preserves_order_arguments()
         throws Exception
     {
-        final Node node1 = Node.newNode( EntityId.from( "z" ) ).build();
-        final Node node2 = Node.newNode( EntityId.from( "y" ) ).build();
-        final Node node3 = Node.newNode( EntityId.from( "x" ) ).build();
+        final Node node1 = Node.newNode( NodeId.from( "z" ) ).build();
+        final Node node2 = Node.newNode( NodeId.from( "y" ) ).build();
+        final Node node3 = Node.newNode( NodeId.from( "x" ) ).build();
 
         final Nodes nodes = Nodes.from( node1, node2, node3 );
 
@@ -55,9 +55,9 @@ public class NodesTest
     public void preserves_order_builder()
         throws Exception
     {
-        final Node node1 = Node.newNode( EntityId.from( "z" ) ).build();
-        final Node node2 = Node.newNode( EntityId.from( "y" ) ).build();
-        final Node node3 = Node.newNode( EntityId.from( "x" ) ).build();
+        final Node node1 = Node.newNode( NodeId.from( "z" ) ).build();
+        final Node node2 = Node.newNode( NodeId.from( "y" ) ).build();
+        final Node node3 = Node.newNode( NodeId.from( "x" ) ).build();
 
         final Nodes.Builder builder = Nodes.create();
 

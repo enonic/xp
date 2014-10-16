@@ -13,7 +13,7 @@ public class GetActiveNodeVersionsCommand
 {
     private final Workspaces workspaces;
 
-    private final EntityId entityId;
+    private final NodeId nodeId;
 
     private final VersionService versionService;
 
@@ -22,7 +22,7 @@ public class GetActiveNodeVersionsCommand
         super( builder );
         this.workspaces = builder.workspaces;
         this.versionService = builder.versionService;
-        this.entityId = builder.entityId;
+        this.nodeId = builder.nodeId;
     }
 
     public static Builder create()
@@ -39,7 +39,7 @@ public class GetActiveNodeVersionsCommand
             final Context context = Context.current();
 
             final NodeVersionId currentVersion =
-                this.workspaceService.getCurrentVersion( this.entityId, WorkspaceContext.from( workspace, context.getRepositoryId() ) );
+                this.workspaceService.getCurrentVersion( this.nodeId, WorkspaceContext.from( workspace, context.getRepositoryId() ) );
 
             if ( currentVersion != null )
             {
@@ -54,7 +54,7 @@ public class GetActiveNodeVersionsCommand
     {
         private Workspaces workspaces;
 
-        private EntityId entityId;
+        private NodeId nodeId;
 
         private VersionService versionService;
 
@@ -69,9 +69,9 @@ public class GetActiveNodeVersionsCommand
             return this;
         }
 
-        public Builder entityId( EntityId entityId )
+        public Builder nodeId( NodeId nodeId )
         {
-            this.entityId = entityId;
+            this.nodeId = nodeId;
             return this;
         }
 
@@ -83,7 +83,7 @@ public class GetActiveNodeVersionsCommand
 
         protected void validate()
         {
-            Preconditions.checkNotNull( this.entityId );
+            Preconditions.checkNotNull( this.nodeId );
             Preconditions.checkNotNull( this.workspaces );
             Preconditions.checkNotNull( this.versionService );
             Preconditions.checkNotNull( this.nodeDao );

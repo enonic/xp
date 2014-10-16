@@ -12,7 +12,7 @@ import com.enonic.wem.api.aggregation.Aggregation;
 import com.enonic.wem.api.aggregation.BucketAggregation;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.elasticsearch.query.ElasticsearchQuery;
-import com.enonic.wem.core.entity.EntityIds;
+import com.enonic.wem.core.entity.NodeIds;
 import com.enonic.wem.core.index.result.SearchResult;
 import com.enonic.wem.core.repository.StorageNameResolver;
 
@@ -35,7 +35,7 @@ public class FindNodesWithDifferencesCommand
         return new Builder();
     }
 
-    EntityIds execute()
+    NodeIds execute()
     {
 
         final TermQueryBuilder inSource = createWorkspaceQuery( this.source );

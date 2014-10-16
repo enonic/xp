@@ -17,8 +17,8 @@ import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
 import com.enonic.wem.core.entity.Attachment;
 import com.enonic.wem.core.entity.Attachments;
-import com.enonic.wem.core.entity.EntityId;
 import com.enonic.wem.core.entity.Node;
+import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodeName;
 import com.enonic.wem.core.entity.NodePath;
 
@@ -40,7 +40,7 @@ public class NodeJsonSerializerTest
         //rootDataSet.setProperty( DataPath.from( "c" ), new Value.DateTime( DateTime.now() ) );
 
         Node node = Node.newNode().
-            id( EntityId.from( "myId" ) ).
+            id( NodeId.from( "myId" ) ).
             parent( NodePath.ROOT ).
             name( NodeName.from( "my-name" ) ).
             createdTime( Instant.now() ).

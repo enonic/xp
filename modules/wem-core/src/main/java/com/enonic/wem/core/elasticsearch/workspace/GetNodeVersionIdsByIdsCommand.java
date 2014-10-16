@@ -12,8 +12,8 @@ import com.google.common.collect.Maps;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.elasticsearch.QueryMetaData;
 import com.enonic.wem.core.elasticsearch.xcontent.WorkspaceXContentBuilderFactory;
-import com.enonic.wem.core.entity.EntityId;
-import com.enonic.wem.core.entity.EntityIds;
+import com.enonic.wem.core.entity.NodeId;
+import com.enonic.wem.core.entity.NodeIds;
 import com.enonic.wem.core.entity.NodeVersionIds;
 import com.enonic.wem.core.index.result.SearchResult;
 import com.enonic.wem.core.index.result.SearchResultEntry;
@@ -25,13 +25,13 @@ public class GetNodeVersionIdsByIdsCommand
 {
     private final Workspace workspace;
 
-    private final EntityIds entityIds;
+    private final NodeIds nodeIds;
 
     private GetNodeVersionIdsByIdsCommand( final Builder builder )
     {
         super( builder );
         workspace = builder.workspace;
-        entityIds = builder.entityIds;
+        nodeIds = builder.nodeIds;
     }
 
     public static Builder create()
@@ -43,17 +43,16 @@ public class GetNodeVersionIdsByIdsCommand
     {
         final String workspaceName = workspace.getName();
 
-        if ( entityIds.isEmpty() )
+        if ( nodeIds.isEmpty() )
         {
             return NodeVersionIds.empty();
         }
 
-        final ImmutableSet<String> entityIdsAsStrings = entityIds.getAsStrings();
+        final ImmutableSet<String> nodeIdsAsStrings = nodeIds.getAsStrings();
 
-        final TermsQueryBuilder idsQuery =
-            new TermsQueryBuilder( WorkspaceXContentBuilderFactory.ENTITY_ID_FIELD_NAME, entityIdsAsStrings );
+        final TermsQueryBuilder idsQuery = new TermsQueryBuilder( WorkspaceXContentBuilderFactory.NODE_ID_FIELD_NAME, nodeIdsAsStrings );
         final BoolQueryBuilder boolQueryBuilder = joinWithWorkspaceQuery( workspaceName, idsQuery );
-        final QueryMetaData queryMetaData = createGetBlobKeyQueryMetaData( entityIdsAsStrings.size(), this.repositoryId );
+        final QueryMetaData queryMetaData = createGetBlobKeyQueryMetaData( nodeIdsAsStrings.size(), this.repositoryId );
 
         final SearchResult searchResult = elasticsearchDao.get( queryMetaData, boolQueryBuilder );
 
@@ -63,22 +62,22 @@ public class GetNodeVersionIdsByIdsCommand
         }
 
         final Map<String, SearchResultField> orderedResultMap =
-            getSearchResultFieldsWithPreservedOrder( this.workspace, entityIdsAsStrings, searchResult );
+            getSearchResultFieldsWithPreservedOrder( this.workspace, nodeIdsAsStrings, searchResult );
 
         return fieldValuesToVersionIds( orderedResultMap.values() );
     }
 
 
     private Map<String, SearchResultField> getSearchResultFieldsWithPreservedOrder( final Workspace workspace,
-                                                                                    final Set<String> entityIdsAsStrings,
+                                                                                    final Set<String> nodeIdsAsStrings,
                                                                                     final SearchResult searchResult )
     {
-        return Maps.asMap( entityIdsAsStrings,
-                           new EntityIdToSearchResultFieldMapper( searchResult, WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME,
-                                                                  workspace ) );
+        return Maps.asMap( nodeIdsAsStrings,
+                           new NodeIdToSearchResultFieldMapper( searchResult, WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME,
+                                                                workspace ) );
     }
 
-    private final class EntityIdToSearchResultFieldMapper
+    private final class NodeIdToSearchResultFieldMapper
         implements com.google.common.base.Function<String, SearchResultField>
     {
         private final SearchResult searchResult;
@@ -87,7 +86,7 @@ public class GetNodeVersionIdsByIdsCommand
 
         private final Workspace workspace;
 
-        private EntityIdToSearchResultFieldMapper( final SearchResult searchResult, final String fieldName, final Workspace workspace )
+        private NodeIdToSearchResultFieldMapper( final SearchResult searchResult, final String fieldName, final Workspace workspace )
         {
             this.searchResult = searchResult;
             this.fieldName = fieldName;
@@ -95,9 +94,9 @@ public class GetNodeVersionIdsByIdsCommand
         }
 
         @Override
-        public SearchResultField apply( final String entityId )
+        public SearchResultField apply( final String nodeId )
         {
-            final WorkspaceDocumentId workspaceDocumentId = new WorkspaceDocumentId( EntityId.from( entityId ), this.workspace );
+            final WorkspaceDocumentId workspaceDocumentId = new WorkspaceDocumentId( NodeId.from( nodeId ), this.workspace );
 
             final SearchResultEntry entry = this.searchResult.getEntry( workspaceDocumentId.toString() );
             return entry != null ? entry.getField( fieldName ) : null;
@@ -110,7 +109,7 @@ public class GetNodeVersionIdsByIdsCommand
     {
         private Workspace workspace;
 
-        private EntityIds entityIds;
+        private NodeIds nodeIds;
 
         private Builder()
         {
@@ -122,9 +121,9 @@ public class GetNodeVersionIdsByIdsCommand
             return this;
         }
 
-        public Builder entityIds( final EntityIds entityIds )
+        public Builder nodeIds( final NodeIds nodeIds )
         {
-            this.entityIds = entityIds;
+            this.nodeIds = nodeIds;
             return this;
         }
 

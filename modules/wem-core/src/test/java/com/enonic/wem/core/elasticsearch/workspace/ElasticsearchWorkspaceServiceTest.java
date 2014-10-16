@@ -17,9 +17,9 @@ import com.enonic.wem.core.TestContext;
 import com.enonic.wem.core.elasticsearch.ElasticsearchDao;
 import com.enonic.wem.core.elasticsearch.ElasticsearchDataException;
 import com.enonic.wem.core.elasticsearch.QueryMetaData;
-import com.enonic.wem.core.entity.EntityId;
-import com.enonic.wem.core.entity.EntityIds;
 import com.enonic.wem.core.entity.Node;
+import com.enonic.wem.core.entity.NodeId;
+import com.enonic.wem.core.entity.NodeIds;
 import com.enonic.wem.core.entity.NodeName;
 import com.enonic.wem.core.entity.NodePath;
 import com.enonic.wem.core.entity.NodePaths;
@@ -55,7 +55,7 @@ public class ElasticsearchWorkspaceServiceTest
     public void store_new()
     {
         final Node node = Node.newNode().
-            id( EntityId.from( "1" ) ).
+            id( NodeId.from( "1" ) ).
             name( NodeName.from( "mynode" ) ).
             build();
 
@@ -80,7 +80,7 @@ public class ElasticsearchWorkspaceServiceTest
     public void store_no_changes()
     {
         final Node node = Node.newNode().
-            id( EntityId.from( "1" ) ).
+            id( NodeId.from( "1" ) ).
             name( NodeName.from( "mynode" ) ).
             build();
 
@@ -113,7 +113,7 @@ public class ElasticsearchWorkspaceServiceTest
     public void store_has_changes()
     {
         final Node node = Node.newNode().
-            id( EntityId.from( "1" ) ).
+            id( NodeId.from( "1" ) ).
             name( NodeName.from( "mynode" ) ).
             build();
 
@@ -145,7 +145,7 @@ public class ElasticsearchWorkspaceServiceTest
     @Test
     public void delete()
     {
-        wsStore.delete( EntityId.from( "1" ), WorkspaceContext.from( TestContext.TEST_CONTEXT ) );
+        wsStore.delete( NodeId.from( "1" ), WorkspaceContext.from( TestContext.TEST_CONTEXT ) );
     }
 
     @Test
@@ -165,7 +165,7 @@ public class ElasticsearchWorkspaceServiceTest
         Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( QueryBuilder.class ) ) ).
             thenReturn( searchResult );
 
-        final NodeVersionId version = wsStore.getCurrentVersion( EntityId.from( "1" ), WorkspaceContext.from( TestContext.TEST_CONTEXT ) );
+        final NodeVersionId version = wsStore.getCurrentVersion( NodeId.from( "1" ), WorkspaceContext.from( TestContext.TEST_CONTEXT ) );
 
         Assert.assertEquals( NodeVersionId.from( "versionId" ), version );
     }
@@ -183,7 +183,7 @@ public class ElasticsearchWorkspaceServiceTest
         Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( QueryBuilder.class ) ) ).
             thenReturn( emptySearchResult );
 
-        final NodeVersionId version = wsStore.getCurrentVersion( EntityId.from( "1" ), WorkspaceContext.from( TestContext.TEST_CONTEXT ) );
+        final NodeVersionId version = wsStore.getCurrentVersion( NodeId.from( "1" ), WorkspaceContext.from( TestContext.TEST_CONTEXT ) );
 
         assertTrue( version == null );
     }
@@ -203,7 +203,7 @@ public class ElasticsearchWorkspaceServiceTest
         Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( QueryBuilder.class ) ) ).
             thenReturn( searchResultMissingField );
 
-        wsStore.getCurrentVersion( EntityId.from( "1" ), WorkspaceContext.from( TestContext.TEST_CONTEXT ) );
+        wsStore.getCurrentVersion( NodeId.from( "1" ), WorkspaceContext.from( TestContext.TEST_CONTEXT ) );
     }
 
     @Test
@@ -213,15 +213,15 @@ public class ElasticsearchWorkspaceServiceTest
         final SearchResult searchResult = SearchResult.create().
             results( SearchResultEntries.create().
                 add( SearchResultEntry.create().
-                    id( new WorkspaceDocumentId( EntityId.from( "1" ), Workspace.from( "test" ) ).toString() ).
+                    id( new WorkspaceDocumentId( NodeId.from( "1" ), Workspace.from( "test" ) ).toString() ).
                     addField( NODE_VERSION_ID_FIELD_NAME, new SearchResultField( NODE_VERSION_ID_FIELD_NAME, Arrays.asList( "b" ) ) ).
                     build() ).
                 add( SearchResultEntry.create().
-                    id( new WorkspaceDocumentId( EntityId.from( "2" ), Workspace.from( "test" ) ).toString() ).
+                    id( new WorkspaceDocumentId( NodeId.from( "2" ), Workspace.from( "test" ) ).toString() ).
                     addField( NODE_VERSION_ID_FIELD_NAME, new SearchResultField( NODE_VERSION_ID_FIELD_NAME, Arrays.asList( "a" ) ) ).
                     build() ).
                 add( SearchResultEntry.create().
-                    id( new WorkspaceDocumentId( EntityId.from( "3" ), Workspace.from( "test" ) ).toString() ).
+                    id( new WorkspaceDocumentId( NodeId.from( "3" ), Workspace.from( "test" ) ).toString() ).
                     addField( NODE_VERSION_ID_FIELD_NAME, new SearchResultField( NODE_VERSION_ID_FIELD_NAME, Arrays.asList( "c" ) ) ).
                     build() ).
                 build() ).
@@ -231,7 +231,7 @@ public class ElasticsearchWorkspaceServiceTest
             thenReturn( searchResult );
 
         final NodeVersionIds versions =
-            wsStore.getByVersionIds( EntityIds.from( "1", "2", "3" ), WorkspaceContext.from( TestContext.TEST_CONTEXT ) );
+            wsStore.getByVersionIds( NodeIds.from( "1", "2", "3" ), WorkspaceContext.from( TestContext.TEST_CONTEXT ) );
 
         assertEquals( 3, Iterators.size( versions.iterator() ) );
         final Iterator<NodeVersionId> iterator = versions.iterator();
@@ -250,15 +250,15 @@ public class ElasticsearchWorkspaceServiceTest
         final SearchResult searchResult = SearchResult.create().
             results( SearchResultEntries.create().
                 add( SearchResultEntry.create().
-                    id( new WorkspaceDocumentId( EntityId.from( "1" ), Workspace.from( "test" ) ).toString() ).
+                    id( new WorkspaceDocumentId( NodeId.from( "1" ), Workspace.from( "test" ) ).toString() ).
                     addField( NODE_VERSION_ID_FIELD_NAME, new SearchResultField( NODE_VERSION_ID_FIELD_NAME, Arrays.asList( "a" ) ) ).
                     build() ).
                 add( SearchResultEntry.create().
-                    id( new WorkspaceDocumentId( EntityId.from( "2" ), Workspace.from( "test" ) ).toString() ).
+                    id( new WorkspaceDocumentId( NodeId.from( "2" ), Workspace.from( "test" ) ).toString() ).
                     addField( NODE_VERSION_ID_FIELD_NAME, new SearchResultField( NODE_VERSION_ID_FIELD_NAME, Arrays.asList( "b" ) ) ).
                     build() ).
                 add( SearchResultEntry.create().
-                    id( new WorkspaceDocumentId( EntityId.from( "3" ), Workspace.from( "test" ) ).toString() ).
+                    id( new WorkspaceDocumentId( NodeId.from( "3" ), Workspace.from( "test" ) ).toString() ).
                     addField( NODE_VERSION_ID_FIELD_NAME, new SearchResultField( NODE_VERSION_ID_FIELD_NAME, Arrays.asList( "c" ) ) ).
                     build() ).
                 build() ).
@@ -268,7 +268,7 @@ public class ElasticsearchWorkspaceServiceTest
             thenReturn( searchResult );
 
         final NodeVersionIds versions =
-            wsStore.getByVersionIds( EntityIds.from( "3", "1", "2" ), WorkspaceContext.from( TestContext.TEST_CONTEXT ) );
+            wsStore.getByVersionIds( NodeIds.from( "3", "1", "2" ), WorkspaceContext.from( TestContext.TEST_CONTEXT ) );
 
         assertEquals( 3, Iterators.size( versions.iterator() ) );
         final Iterator<NodeVersionId> iterator = versions.iterator();
@@ -288,11 +288,11 @@ public class ElasticsearchWorkspaceServiceTest
         final SearchResult searchResult = SearchResult.create().
             results( SearchResultEntries.create().
                 add( SearchResultEntry.create().
-                    id( new WorkspaceDocumentId( EntityId.from( "1" ), Workspace.from( "test" ) ).toString() ).
+                    id( new WorkspaceDocumentId( NodeId.from( "1" ), Workspace.from( "test" ) ).toString() ).
                     addField( NODE_VERSION_ID_FIELD_NAME, new SearchResultField( NODE_VERSION_ID_FIELD_NAME, Arrays.asList( "b" ) ) ).
                     build() ).
                 add( SearchResultEntry.create().
-                    id( new WorkspaceDocumentId( EntityId.from( "2" ), Workspace.from( "test" ) ).toString() ).
+                    id( new WorkspaceDocumentId( NodeId.from( "2" ), Workspace.from( "test" ) ).toString() ).
                     addField( NODE_VERSION_ID_FIELD_NAME, new SearchResultField( NODE_VERSION_ID_FIELD_NAME, Arrays.asList( "a" ) ) ).
                     build() ).
                 build() ).
@@ -302,7 +302,7 @@ public class ElasticsearchWorkspaceServiceTest
             thenReturn( searchResult );
 
         final NodeVersionIds versions =
-            wsStore.getByVersionIds( EntityIds.from( "2", "3", "1", "4" ), WorkspaceContext.from( TestContext.TEST_CONTEXT ) );
+            wsStore.getByVersionIds( NodeIds.from( "2", "3", "1", "4" ), WorkspaceContext.from( TestContext.TEST_CONTEXT ) );
 
         assertEquals( 2, versions.getSize() );
     }
@@ -320,7 +320,7 @@ public class ElasticsearchWorkspaceServiceTest
             thenReturn( searchResult );
 
         final NodeVersionIds versions =
-            wsStore.getByVersionIds( EntityIds.from( "1", "2", "3" ), WorkspaceContext.from( TestContext.TEST_CONTEXT ) );
+            wsStore.getByVersionIds( NodeIds.from( "1", "2", "3" ), WorkspaceContext.from( TestContext.TEST_CONTEXT ) );
 
         assertEquals( 0, versions.getSize() );
     }
@@ -438,15 +438,15 @@ public class ElasticsearchWorkspaceServiceTest
         final SearchResult searchResult = SearchResult.create().
             results( SearchResultEntries.create().
                 add( SearchResultEntry.create().
-                    id( new WorkspaceDocumentId( EntityId.from( "1" ), Workspace.from( "test" ) ).toString() ).
+                    id( new WorkspaceDocumentId( NodeId.from( "1" ), Workspace.from( "test" ) ).toString() ).
                     addField( NODE_VERSION_ID_FIELD_NAME, new SearchResultField( NODE_VERSION_ID_FIELD_NAME, Arrays.asList( "b" ) ) ).
                     build() ).
                 add( SearchResultEntry.create().
-                    id( new WorkspaceDocumentId( EntityId.from( "2" ), Workspace.from( "test" ) ).toString() ).
+                    id( new WorkspaceDocumentId( NodeId.from( "2" ), Workspace.from( "test" ) ).toString() ).
                     addField( NODE_VERSION_ID_FIELD_NAME, new SearchResultField( NODE_VERSION_ID_FIELD_NAME, Arrays.asList( "a" ) ) ).
                     build() ).
                 add( SearchResultEntry.create().
-                    id( new WorkspaceDocumentId( EntityId.from( "3" ), Workspace.from( "test" ) ).toString() ).
+                    id( new WorkspaceDocumentId( NodeId.from( "3" ), Workspace.from( "test" ) ).toString() ).
                     addField( NODE_VERSION_ID_FIELD_NAME, new SearchResultField( NODE_VERSION_ID_FIELD_NAME, Arrays.asList( "c" ) ) ).
                     build() ).
                 build() ).

@@ -6,7 +6,7 @@ import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.core.entity.dao.NodeDao;
 import com.enonic.wem.core.index.IndexContext;
-import com.enonic.wem.core.version.EntityVersionDocument;
+import com.enonic.wem.core.version.NodeVersionDocument;
 import com.enonic.wem.core.workspace.StoreWorkspaceDocument;
 import com.enonic.wem.core.workspace.WorkspaceContext;
 
@@ -27,16 +27,15 @@ final class RenameNodeCommand
 
     Node execute()
     {
-        final EntityId entityId = params.getEntityId();
+        final NodeId nodeId = params.getNodeId();
 
-        final NodeVersionId currentVersion =
-            this.workspaceService.getCurrentVersion( entityId, WorkspaceContext.from( Context.current() ) );
+        final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( nodeId, WorkspaceContext.from( Context.current() ) );
 
         final Node nodeToBeRenamed = nodeDao.getByVersionId( currentVersion );
 
         final NodePath parentPath = nodeToBeRenamed.parent().asAbsolute();
         final NodePath targetPath = new NodePath( parentPath, params.getNewNodeName() );
-        final EntityId existingNodeAtTargetPath = getExistingNode( targetPath );
+        final NodeId existingNodeAtTargetPath = getExistingNode( targetPath );
 
         if ( ( existingNodeAtTargetPath != null ) && !nodeToBeRenamed.id().equals( existingNodeAtTargetPath ) )
         {
@@ -45,7 +44,7 @@ final class RenameNodeCommand
 
         final Nodes children = getChildNodes( nodeToBeRenamed );
 
-        final Node renamedNode = doMoveNode( parentPath, params.getNewNodeName(), params.getEntityId() );
+        final Node renamedNode = doMoveNode( parentPath, params.getNewNodeName(), params.getNodeId() );
 
         if ( !children.isEmpty() )
         {
@@ -71,7 +70,7 @@ final class RenameNodeCommand
         return nodeDao.getByVersionIds( childrenVersions );
     }
 
-    private EntityId getExistingNode( final NodePath path )
+    private NodeId getExistingNode( final NodePath path )
     {
         final NodeVersionId existingVersion = workspaceService.getByPath( path, WorkspaceContext.from( Context.current() ) );
 
@@ -100,7 +99,7 @@ final class RenameNodeCommand
         }
     }
 
-    private Node doMoveNode( final NodePath newParentPath, final NodeName newNodeName, final EntityId id )
+    private Node doMoveNode( final NodePath newParentPath, final NodeName newNodeName, final NodeId id )
     {
         final Context context = Context.current();
 
@@ -132,8 +131,8 @@ final class RenameNodeCommand
             nodeVersionId( newVersion ).
             build(), WorkspaceContext.from( context ) );
 
-        versionService.store( EntityVersionDocument.create().
-            entityId( movedNode.id() ).
+        versionService.store( NodeVersionDocument.create().
+            nodeId( movedNode.id() ).
             nodeVersionId( newVersion ).
             build(), context.getRepositoryId() );
 

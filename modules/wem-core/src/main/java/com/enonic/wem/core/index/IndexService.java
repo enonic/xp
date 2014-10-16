@@ -4,8 +4,8 @@ import java.util.Collection;
 import java.util.Set;
 
 import com.enonic.wem.api.repository.RepositoryId;
-import com.enonic.wem.core.entity.EntityId;
 import com.enonic.wem.core.entity.Node;
+import com.enonic.wem.core.entity.NodeId;
 
 public interface IndexService
 {
@@ -17,7 +17,7 @@ public interface IndexService
 
     public void store( final Node node, final IndexContext context );
 
-    public void delete( final EntityId entityId, final IndexContext context );
+    public void delete( final NodeId nodeId, final IndexContext context );
 
     public Set<String> getAllRepositoryIndices( final RepositoryId repositoryId );
 

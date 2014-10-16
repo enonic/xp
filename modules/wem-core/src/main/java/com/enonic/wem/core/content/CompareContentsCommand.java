@@ -9,9 +9,9 @@ import com.enonic.wem.api.content.CompareContentResults;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.core.entity.EntityId;
-import com.enonic.wem.core.entity.EntityIds;
 import com.enonic.wem.core.entity.NodeComparisons;
+import com.enonic.wem.core.entity.NodeId;
+import com.enonic.wem.core.entity.NodeIds;
 import com.enonic.wem.core.entity.NodeService;
 
 public class CompareContentsCommand
@@ -36,24 +36,24 @@ public class CompareContentsCommand
 
     public CompareContentResults execute()
     {
-        final EntityIds entityIds = getAsEntityIds( this.contentIds );
-        final NodeComparisons comparisons = this.nodeService.compare( entityIds, this.target );
+        final NodeIds nodeIds = getAsNodeIds( this.contentIds );
+        final NodeComparisons comparisons = this.nodeService.compare( nodeIds, this.target );
 
         return CompareResultTranslator.translate( comparisons );
     }
 
-    private EntityIds getAsEntityIds( final ContentIds contentIds )
+    private NodeIds getAsNodeIds( final ContentIds contentIds )
     {
-        final Set<EntityId> entityIds = Sets.newHashSet();
+        final Set<NodeId> nodeIds = Sets.newHashSet();
 
         final Iterator<ContentId> iterator = contentIds.iterator();
 
         while ( iterator.hasNext() )
         {
-            entityIds.add( EntityId.from( iterator.next().toString() ) );
+            nodeIds.add( NodeId.from( iterator.next().toString() ) );
         }
 
-        return EntityIds.from( entityIds );
+        return NodeIds.from( nodeIds );
     }
 
 

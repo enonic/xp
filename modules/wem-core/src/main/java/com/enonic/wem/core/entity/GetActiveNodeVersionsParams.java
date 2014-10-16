@@ -4,13 +4,13 @@ import com.enonic.wem.api.workspace.Workspaces;
 
 public class GetActiveNodeVersionsParams
 {
-    private final EntityId entityId;
+    private final NodeId nodeId;
 
     private final Workspaces workspaces;
 
     private GetActiveNodeVersionsParams( Builder builder )
     {
-        entityId = builder.entityId;
+        nodeId = builder.nodeId;
         workspaces = builder.workspaces;
     }
 
@@ -19,9 +19,9 @@ public class GetActiveNodeVersionsParams
         return new Builder();
     }
 
-    public EntityId getEntityId()
+    public NodeId getNodeId()
     {
-        return entityId;
+        return nodeId;
     }
 
     public Workspaces getWorkspaces()
@@ -31,7 +31,7 @@ public class GetActiveNodeVersionsParams
 
     public static final class Builder
     {
-        private EntityId entityId;
+        private NodeId nodeId;
 
         private Workspaces workspaces;
 
@@ -39,9 +39,9 @@ public class GetActiveNodeVersionsParams
         {
         }
 
-        public Builder entityId( final EntityId entityId )
+        public Builder nodeId( final NodeId nodeId )
         {
-            this.entityId = entityId;
+            this.nodeId = nodeId;
             return this;
         }
 

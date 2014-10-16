@@ -3,8 +3,8 @@ package com.enonic.wem.core.content;
 import com.enonic.wem.api.content.CompareContentResult;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.core.entity.EntityId;
 import com.enonic.wem.core.entity.NodeComparison;
+import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodeService;
 
 public class CompareContentCommand
@@ -29,9 +29,9 @@ public class CompareContentCommand
 
     public CompareContentResult execute()
     {
-        final EntityId entityId = EntityId.from( contentId.toString() );
+        final NodeId nodeId = NodeId.from( contentId.toString() );
 
-        final NodeComparison compareResult = this.nodeService.compare( entityId, this.target );
+        final NodeComparison compareResult = this.nodeService.compare( nodeId, this.target );
 
         return CompareResultTranslator.translate( compareResult );
     }

@@ -11,7 +11,7 @@ import com.enonic.wem.core.workspace.compare.DiffStatusResolver;
 
 public class CompareNodesCommand
 {
-    private final EntityIds entityIds;
+    private final NodeIds nodeIds;
 
     private final Workspace target;
 
@@ -21,7 +21,7 @@ public class CompareNodesCommand
 
     private CompareNodesCommand( Builder builder )
     {
-        entityIds = builder.entityIds;
+        nodeIds = builder.nodeIds;
         target = builder.target;
         workspaceService = builder.workspaceService;
         versionService = builder.versionService;
@@ -36,9 +36,9 @@ public class CompareNodesCommand
     {
         final NodeComparisons.Builder builder = NodeComparisons.create();
 
-        for ( final EntityId entityId : this.entityIds )
+        for ( final NodeId nodeId : this.nodeIds )
         {
-            final NodeComparison nodeComparison = doCompareVersions( entityId );
+            final NodeComparison nodeComparison = doCompareVersions( nodeId );
 
             builder.add( nodeComparison );
         }
@@ -46,20 +46,20 @@ public class CompareNodesCommand
         return builder.build();
     }
 
-    private NodeComparison doCompareVersions( final EntityId entityId )
+    private NodeComparison doCompareVersions( final NodeId nodeId )
     {
         final Context context = Context.current();
 
-        final NodeVersionId sourceVersionId = workspaceService.getCurrentVersion( entityId, WorkspaceContext.from( context ) );
+        final NodeVersionId sourceVersionId = workspaceService.getCurrentVersion( nodeId, WorkspaceContext.from( context ) );
         final NodeVersionId targetVersionId =
-            workspaceService.getCurrentVersion( entityId, WorkspaceContext.from( this.target, context.getRepositoryId() ) );
+            workspaceService.getCurrentVersion( nodeId, WorkspaceContext.from( this.target, context.getRepositoryId() ) );
 
         final NodeVersion sourceVersion = getVersion( sourceVersionId, context );
         final NodeVersion targetVersion = getVersion( targetVersionId, context );
 
         final CompareStatus compareStatus = DiffStatusResolver.resolve( new DiffStatusParams( sourceVersion, targetVersion ) );
 
-        return new NodeComparison( entityId, compareStatus );
+        return new NodeComparison( nodeId, compareStatus );
     }
 
     private NodeVersion getVersion( final NodeVersionId nodeVersionId, final Context context )
@@ -75,7 +75,7 @@ public class CompareNodesCommand
 
     public static final class Builder
     {
-        private EntityIds entityIds;
+        private NodeIds nodeIds;
 
         private Workspace target;
 
@@ -87,9 +87,9 @@ public class CompareNodesCommand
         {
         }
 
-        public Builder entityIds( final EntityIds entityIds )
+        public Builder nodeId( final NodeIds nodeIds )
         {
-            this.entityIds = entityIds;
+            this.nodeIds = nodeIds;
             return this;
         }
 

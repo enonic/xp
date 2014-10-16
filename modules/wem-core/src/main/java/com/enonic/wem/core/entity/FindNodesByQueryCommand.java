@@ -27,7 +27,7 @@ public class FindNodesByQueryCommand
         final NodeQueryResult nodeQueryResult = queryService.find( query, IndexContext.from( Context.current() ) );
 
         final NodeVersionIds versions =
-            workspaceService.getByVersionIds( nodeQueryResult.getEntityIds(), WorkspaceContext.from( Context.current() ) );
+            workspaceService.getByVersionIds( nodeQueryResult.getNodeIds(), WorkspaceContext.from( Context.current() ) );
 
         final Nodes nodes = NodeHasChildResolver.create().
             workspaceService( this.workspaceService ).

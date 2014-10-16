@@ -82,7 +82,7 @@ abstract class AbstractWorkspaceCommand
             indexTypeName( IndexType.WORKSPACE.getName() ).
             from( 0 ).
             size( numberOfHits ).
-            addField( WorkspaceXContentBuilderFactory.ENTITY_ID_FIELD_NAME ).
+            addField( WorkspaceXContentBuilderFactory.NODE_ID_FIELD_NAME ).
             addField( WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME ).
             addSort( fieldSortBuilder ).
             build();

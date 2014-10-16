@@ -2,19 +2,19 @@ package com.enonic.wem.core.version;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.core.entity.EntityId;
+import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodeVersionId;
 
-public class EntityVersionDocument
+public class NodeVersionDocument
 {
     private final NodeVersionId nodeVersionId;
 
-    private final EntityId entityId;
+    private final NodeId nodeId;
 
-    private EntityVersionDocument( final Builder builder )
+    private NodeVersionDocument( final Builder builder )
     {
         this.nodeVersionId = builder.nodeVersionId;
-        this.entityId = builder.entityId;
+        this.nodeId = builder.nodeId;
     }
 
     public static Builder create()
@@ -27,9 +27,9 @@ public class EntityVersionDocument
         return nodeVersionId;
     }
 
-    public EntityId getEntityId()
+    public NodeId getNodeId()
     {
-        return entityId;
+        return nodeId;
     }
 
 
@@ -37,7 +37,7 @@ public class EntityVersionDocument
     {
         private NodeVersionId nodeVersionId;
 
-        private EntityId entityId;
+        private NodeId nodeId;
 
         private Builder()
         {
@@ -49,22 +49,22 @@ public class EntityVersionDocument
             return this;
         }
 
-        public Builder entityId( final EntityId entityId )
+        public Builder nodeId( final NodeId nodeId )
         {
-            this.entityId = entityId;
+            this.nodeId = nodeId;
             return this;
         }
 
-        public EntityVersionDocument build()
+        public NodeVersionDocument build()
         {
             validate();
-            return new EntityVersionDocument( this );
+            return new NodeVersionDocument( this );
         }
 
         private void validate()
         {
             Preconditions.checkNotNull( nodeVersionId );
-            Preconditions.checkNotNull( entityId );
+            Preconditions.checkNotNull( nodeId );
         }
 
     }

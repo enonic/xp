@@ -1,8 +1,8 @@
 package com.enonic.wem.core.elasticsearch.workspace;
 
 import com.enonic.wem.core.elasticsearch.ElasticsearchDao;
-import com.enonic.wem.core.entity.EntityId;
-import com.enonic.wem.core.entity.EntityIds;
+import com.enonic.wem.core.entity.NodeId;
+import com.enonic.wem.core.entity.NodeIds;
 import com.enonic.wem.core.entity.NodePath;
 import com.enonic.wem.core.entity.NodePaths;
 import com.enonic.wem.core.entity.NodeVersionId;
@@ -30,34 +30,34 @@ public class ElasticsearchWorkspaceService
     }
 
     @Override
-    public void delete( final EntityId entityId, final WorkspaceContext context )
+    public void delete( final NodeId nodeId, final WorkspaceContext context )
     {
         DeleteNodeVersionCommand.create().
             elasticsearchDao( this.elasticsearchDao ).
             repository( context.getRepositoryId() ).
             workspace( context.getWorkspace() ).
-            entityId( entityId ).
+            nodeId( nodeId ).
             build().
             execute();
     }
 
     @Override
-    public NodeVersionId getCurrentVersion( final EntityId entityId, final WorkspaceContext context )
+    public NodeVersionId getCurrentVersion( final NodeId nodeId, final WorkspaceContext context )
     {
         return GetNodeVersionIdByIdCommand.create().
             elasticsearchDao( this.elasticsearchDao ).
             workspace( context.getWorkspace() ).
             repository( context.getRepositoryId() ).
-            entityId( entityId ).
+            nodeId( nodeId ).
             build().
             execute();
     }
 
     @Override
-    public NodeVersionIds getByVersionIds( final EntityIds entityIds, final WorkspaceContext context )
+    public NodeVersionIds getByVersionIds( final NodeIds nodeIds, final WorkspaceContext context )
     {
         return GetNodeVersionIdsByIdsCommand.create().
-            entityIds( entityIds ).
+            nodeIds( nodeIds ).
             workspace( context.getWorkspace() ).
             elasticsearchDao( this.elasticsearchDao ).
             repository( context.getRepositoryId() ).
@@ -102,7 +102,7 @@ public class ElasticsearchWorkspaceService
     }
 
     @Override
-    public EntityIds findNodesWithDifferences( final CompareWorkspacesQuery query, final WorkspaceContext context )
+    public NodeIds findNodesWithDifferences( final CompareWorkspacesQuery query, final WorkspaceContext context )
     {
         return FindNodesWithDifferencesCommand.create().
             elasticsearchDao( this.elasticsearchDao ).

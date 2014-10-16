@@ -6,23 +6,23 @@ import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.aggregation.Bucket;
 import com.enonic.wem.api.aggregation.BucketAggregation;
-import com.enonic.wem.core.entity.EntityId;
-import com.enonic.wem.core.entity.EntityIds;
+import com.enonic.wem.core.entity.NodeId;
+import com.enonic.wem.core.entity.NodeIds;
 import com.enonic.wem.core.workspace.WorkspaceDocumentId;
 
 class ChangedIdsResolver
 {
 
-    static EntityIds resolve( final BucketAggregation aggregation )
+    static NodeIds resolve( final BucketAggregation aggregation )
     {
-        final Set<EntityId> entityIds = Sets.newLinkedHashSet();
+        final Set<NodeId> nodeIds = Sets.newLinkedHashSet();
 
         for ( final Bucket bucket : aggregation.getBuckets() )
         {
             if ( bucket.getDocCount() == 1 )
             {
                 final WorkspaceDocumentId workspaceDocumentId = WorkspaceDocumentId.from( bucket.getKey() );
-                entityIds.add( workspaceDocumentId.getEntityId() );
+                nodeIds.add( workspaceDocumentId.getNodeId() );
             }
             else
             {
@@ -30,7 +30,7 @@ class ChangedIdsResolver
             }
         }
 
-        return EntityIds.from( entityIds );
+        return NodeIds.from( nodeIds );
     }
 
 }

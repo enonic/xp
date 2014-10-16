@@ -27,8 +27,8 @@ import com.google.common.collect.Sets;
 import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.core.elasticsearch.document.DeleteDocument;
 import com.enonic.wem.core.elasticsearch.document.StoreDocument;
-import com.enonic.wem.core.entity.EntityId;
 import com.enonic.wem.core.entity.Node;
+import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.index.IndexException;
 import com.enonic.wem.core.index.IndexService;
@@ -199,7 +199,7 @@ public class ElasticsearchIndexService
         elasticsearchDao.store( storeDocuments );
     }
 
-    public void delete( final EntityId entityId, final IndexContext context )
+    public void delete( final NodeId nodeId, final IndexContext context )
     {
         final String indexName = IndexNameResolver.resolveSearchIndexName( context.getRepositoryId() );
         final String indexType = context.getWorkspace().getName();
@@ -207,7 +207,7 @@ public class ElasticsearchIndexService
         elasticsearchDao.delete( DeleteDocument.create().
             indexName( indexName ).
             indexTypeName( indexType ).
-            id( entityId.toString() ).
+            id( nodeId.toString() ).
             build() );
     }
 

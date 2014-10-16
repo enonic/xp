@@ -11,15 +11,15 @@ public interface NodeService
 
     Node rename( RenameNodeParams params );
 
-    Node push( EntityId id, Workspace target );
+    Node push( NodeId id, Workspace target );
 
-    Node deleteById( EntityId id );
+    Node deleteById( NodeId id );
 
     Node deleteByPath( NodePath path );
 
-    Node getById( EntityId id );
+    Node getById( NodeId id );
 
-    Nodes getByIds( EntityIds ids );
+    Nodes getByIds( NodeIds ids );
 
     Node getByPath( NodePath path );
 
@@ -29,9 +29,9 @@ public interface NodeService
 
     FindNodesByQueryResult findByQuery( NodeQuery nodeQuery );
 
-    NodeComparison compare( EntityId id, Workspace target );
+    NodeComparison compare( NodeId id, Workspace target );
 
-    NodeComparisons compare( final EntityIds ids, final Workspace target );
+    NodeComparisons compare( final NodeIds ids, final Workspace target );
 
     FindNodeVersionsResult findVersions( final GetNodeVersionsParams params );
 

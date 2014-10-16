@@ -12,7 +12,7 @@
             "enabled": true
         },
         "properties": {
-            "entityId": {
+            "nodeId": {
                 "type": "string",
                 "store": "true",
                 "index": "not_analyzed"

@@ -11,8 +11,8 @@ import org.elasticsearch.search.sort.SortOrder;
 
 import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.core.elasticsearch.xcontent.VersionXContentBuilderFactory;
-import com.enonic.wem.core.entity.EntityId;
 import com.enonic.wem.core.entity.FindNodeVersionsResult;
+import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodeVersion;
 import com.enonic.wem.core.entity.NodeVersionId;
 import com.enonic.wem.core.entity.NodeVersions;
@@ -21,11 +21,11 @@ import com.enonic.wem.core.index.result.SearchResult;
 import com.enonic.wem.core.index.result.SearchResultEntry;
 import com.enonic.wem.core.index.result.SearchResultField;
 import com.enonic.wem.core.repository.StorageNameResolver;
-import com.enonic.wem.core.version.EntityVersionDocument;
 import com.enonic.wem.core.version.GetVersionsQuery;
+import com.enonic.wem.core.version.NodeVersionDocument;
 import com.enonic.wem.core.version.VersionService;
 
-import static com.enonic.wem.core.elasticsearch.xcontent.VersionXContentBuilderFactory.ENTITY_ID_FIELD_NAME;
+import static com.enonic.wem.core.elasticsearch.xcontent.VersionXContentBuilderFactory.NODE_ID_FIELD_NAME;
 import static com.enonic.wem.core.elasticsearch.xcontent.VersionXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME;
 import static com.enonic.wem.core.elasticsearch.xcontent.VersionXContentBuilderFactory.TIMESTAMP_ID_FIELD_NAME;
 
@@ -37,13 +37,13 @@ public class ElasticsearchVersionService
     private ElasticsearchDao elasticsearchDao;
 
     @Override
-    public void store( final EntityVersionDocument entityVersionDocument, final RepositoryId repositoryId )
+    public void store( final NodeVersionDocument nodeVersionDocument, final RepositoryId repositoryId )
     {
         final IndexRequest versionsDocument = Requests.indexRequest().
             index( StorageNameResolver.resolveStorageIndexName( repositoryId ) ).
             type( IndexType.VERSION.getName() ).
-            source( VersionXContentBuilderFactory.create( entityVersionDocument ) ).
-            id( entityVersionDocument.getNodeVersionId().toString() ).
+            source( VersionXContentBuilderFactory.create( nodeVersionDocument ) ).
+            id( nodeVersionDocument.getNodeVersionId().toString() ).
             refresh( DEFAULT_REFRESH );
 
         elasticsearchDao.store( versionsDocument );
@@ -70,7 +70,7 @@ public class ElasticsearchVersionService
     @Override
     public FindNodeVersionsResult findVersions( final GetVersionsQuery query, final RepositoryId repositoryId )
     {
-        final SearchResult searchResults = doGetFromEntityId( query.getEntityId(), query.getFrom(), query.getSize(), repositoryId );
+        final SearchResult searchResults = doGetFromNodeId( query.getNodeId(), query.getFrom(), query.getSize(), repositoryId );
 
         final FindNodeVersionsResult.Builder findEntityVersionResultBuilder = FindNodeVersionsResult.create();
 
@@ -88,7 +88,7 @@ public class ElasticsearchVersionService
 
     private NodeVersions buildEntityVersions( final GetVersionsQuery query, final SearchResult searchResults )
     {
-        final NodeVersions.Builder entityVersionsBuilder = NodeVersions.create( query.getEntityId() );
+        final NodeVersions.Builder entityVersionsBuilder = NodeVersions.create( query.getNodeId() );
 
         for ( final SearchResultEntry searchResult : searchResults.getResults() )
         {
@@ -98,18 +98,18 @@ public class ElasticsearchVersionService
         return entityVersionsBuilder.build();
     }
 
-    private SearchResult doGetFromEntityId( final EntityId id, final int from, final int size, final RepositoryId repositoryId )
+    private SearchResult doGetFromNodeId( final NodeId id, final int from, final int size, final RepositoryId repositoryId )
     {
-        final TermQueryBuilder entityIdQuery = new TermQueryBuilder( ENTITY_ID_FIELD_NAME, id.toString() );
+        final TermQueryBuilder nodeIdQuery = new TermQueryBuilder( NODE_ID_FIELD_NAME, id.toString() );
 
         final QueryMetaData queryMetaData =
             createQueryMetaData( from, size, repositoryId, TIMESTAMP_ID_FIELD_NAME, NODE_VERSION_ID_FIELD_NAME );
 
-        final SearchResult searchResults = elasticsearchDao.get( queryMetaData, entityIdQuery );
+        final SearchResult searchResults = elasticsearchDao.get( queryMetaData, nodeIdQuery );
 
         if ( searchResults.isEmpty() )
         {
-            throw new RuntimeException( "Did not find version entry with entityId: " + id );
+            throw new RuntimeException( "Did not find version entry with id: " + id );
         }
         return searchResults;
     }

@@ -26,7 +26,7 @@ public final class Node
     //extends Entity
     implements ChangeTraceable, IllegalEditAware<Node>
 {
-    private final EntityId id;
+    private final NodeId id;
 
     private final NodeName name;
 
@@ -90,7 +90,7 @@ public final class Node
         return hasChildren;
     }
 
-    public EntityId id()
+    public NodeId id()
     {
         return id;
     }
@@ -200,7 +200,7 @@ public final class Node
         return new Builder();
     }
 
-    public static Builder newNode( final EntityId id )
+    public static Builder newNode( final NodeId id )
     {
         return new Builder( id );
     }
@@ -228,7 +228,7 @@ public final class Node
 
         boolean hasChildren = false;
 
-        EntityId id;
+        NodeId id;
 
         Instant createdTime;
 
@@ -258,7 +258,7 @@ public final class Node
             this.modifier = node.modifier;
         }
 
-        BaseBuilder( final EntityId id, final NodeName name )
+        BaseBuilder( final NodeId id, final NodeName name )
         {
             this.id = id;
             this.name = name;
@@ -283,7 +283,7 @@ public final class Node
             super();
         }
 
-        public Builder( final EntityId id )
+        public Builder( final NodeId id )
         {
             this.id = id;
         }
@@ -301,7 +301,7 @@ public final class Node
             this.creator = node.creator;
         }
 
-        public Builder( final EntityId id, final NodeName name )
+        public Builder( final NodeId id, final NodeName name )
         {
             this.id = id;
             this.name = name;
@@ -343,7 +343,7 @@ public final class Node
             return this;
         }
 
-        public Builder id( final EntityId id )
+        public Builder id( final NodeId id )
         {
             this.id = id;
             return this;

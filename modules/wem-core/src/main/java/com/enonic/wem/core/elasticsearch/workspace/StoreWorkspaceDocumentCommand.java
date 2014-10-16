@@ -31,7 +31,7 @@ public class StoreWorkspaceDocumentCommand
 
     void execute()
     {
-        final WorkspaceDocumentId workspaceDocumentId = new WorkspaceDocumentId( document.getEntityId(), this.workspace );
+        final WorkspaceDocumentId workspaceDocumentId = new WorkspaceDocumentId( document.getNodeId(), this.workspace );
 
         final IndexRequest publish = Requests.indexRequest().
             index( StorageNameResolver.resolveStorageIndexName( this.repositoryId ) ).

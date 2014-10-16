@@ -7,7 +7,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.core.index.IndexContext;
-import com.enonic.wem.core.version.EntityVersionDocument;
+import com.enonic.wem.core.version.NodeVersionDocument;
 import com.enonic.wem.core.workspace.StoreWorkspaceDocument;
 import com.enonic.wem.core.workspace.WorkspaceContext;
 
@@ -36,7 +36,7 @@ final class CreateNodeCommand
         final Instant now = Instant.now();
 
         final Node newNode = Node.newNode().
-            id( new EntityId() ).
+            id( new NodeId() ).
             createdTime( now ).
             modifiedTime( now ).
             creator( UserKey.superUser() ).
@@ -58,8 +58,8 @@ final class CreateNodeCommand
             nodeVersionId( persistedNodeVersionId ).
             build(), WorkspaceContext.from( Context.current() ) );
 
-        versionService.store( EntityVersionDocument.create().
-            entityId( newNode.id() ).
+        versionService.store( NodeVersionDocument.create().
+            nodeId( newNode.id() ).
             nodeVersionId( persistedNodeVersionId ).
             build(), Context.current().getRepositoryId() );
 

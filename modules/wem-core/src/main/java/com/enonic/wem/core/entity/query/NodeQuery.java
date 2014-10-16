@@ -11,7 +11,7 @@ import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.query.expr.QueryExpr;
 import com.enonic.wem.api.query.filter.Filter;
 import com.enonic.wem.api.query.filter.Filters;
-import com.enonic.wem.core.entity.EntityId;
+import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodePath;
 
 public class NodeQuery
@@ -22,7 +22,7 @@ public class NodeQuery
 
     private final QueryExpr query;
 
-    private final ImmutableSet<EntityId> ids;
+    private final ImmutableSet<NodeId> ids;
 
     private final Filters postFilters;
 
@@ -116,7 +116,7 @@ public class NodeQuery
 
         private final Set<AggregationQuery> aggregationQueries = Sets.newHashSet();
 
-        private final Set<EntityId> ids = Sets.newHashSet();
+        private final Set<NodeId> ids = Sets.newHashSet();
 
         private int from = 0;
 
@@ -140,7 +140,7 @@ public class NodeQuery
             return this;
         }
 
-        public Builder addId( final EntityId id )
+        public Builder addId( final NodeId id )
         {
             this.ids.add( id );
             return this;

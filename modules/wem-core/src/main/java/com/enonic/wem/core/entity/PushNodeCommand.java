@@ -13,7 +13,7 @@ public class PushNodeCommand
 {
     private final Workspace target;
 
-    private final EntityId id;
+    private final NodeId id;
 
     private PushNodeCommand( final Builder builder )
     {
@@ -56,7 +56,7 @@ public class PushNodeCommand
     {
         private Workspace target;
 
-        private EntityId id;
+        private NodeId id;
 
         Builder()
         {
@@ -69,9 +69,9 @@ public class PushNodeCommand
             return this;
         }
 
-        public Builder id( final EntityId entityId )
+        public Builder id( final NodeId nodeId )
         {
-            this.id = entityId;
+            this.id = nodeId;
             return this;
         }
 

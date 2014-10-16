@@ -25,7 +25,7 @@ public class NodeServiceImpl
     private QueryService queryService;
 
     @Override
-    public Node getById( final EntityId id )
+    public Node getById( final NodeId id )
     {
         final Context context = Context.current();
 
@@ -43,7 +43,7 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Nodes getByIds( final EntityIds ids )
+    public Nodes getByIds( final NodeIds ids )
     {
         final NodeVersionIds versionIds = this.workspaceService.getByVersionIds( ids, WorkspaceContext.from( Context.current() ) );
 
@@ -147,10 +147,10 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Node deleteById( final EntityId id )
+    public Node deleteById( final NodeId id )
     {
         return DeleteNodeByIdCommand.create().
-            entityId( id ).
+            nodeId( id ).
             indexService( this.indexService ).
             nodeDao( this.nodeDao ).
             workspaceService( this.workspaceService ).
@@ -173,7 +173,7 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Node push( final EntityId id, final Workspace target )
+    public Node push( final NodeId id, final Workspace target )
     {
         return PushNodeCommand.create().
             indexService( this.indexService ).
@@ -186,10 +186,10 @@ public class NodeServiceImpl
     }
 
     @Override
-    public NodeComparison compare( final EntityId entityId, final Workspace target )
+    public NodeComparison compare( final NodeId nodeId, final Workspace target )
     {
         return CompareNodeCommand.create().
-            entityId( entityId ).
+            nodeId( nodeId ).
             target( target ).
             workspaceService( this.workspaceService ).
             versionService( this.versionService ).
@@ -198,10 +198,10 @@ public class NodeServiceImpl
     }
 
     @Override
-    public NodeComparisons compare( final EntityIds entityIds, final Workspace target )
+    public NodeComparisons compare( final NodeIds nodeIds, final Workspace target )
     {
         return CompareNodesCommand.create().
-            entityIds( entityIds ).
+            nodeId( nodeIds ).
             target( target ).
             workspaceService( this.workspaceService ).
             versionService( this.versionService ).
@@ -212,8 +212,8 @@ public class NodeServiceImpl
     @Override
     public FindNodeVersionsResult findVersions( final GetNodeVersionsParams params )
     {
-        return GetEntityVersionsCommand.create().
-            entityId( params.getEntityId() ).
+        return GetNodeVersionsCommand.create().
+            nodeId( params.getNodeId() ).
             from( params.getFrom() ).
             size( params.getSize() ).
             versionService( this.versionService ).
@@ -225,7 +225,7 @@ public class NodeServiceImpl
     public GetActiveNodeVersionsResult getActiveVersions( final GetActiveNodeVersionsParams params )
     {
         return GetActiveNodeVersionsCommand.create().
-            entityId( params.getEntityId() ).
+            nodeId( params.getNodeId() ).
             workspaces( params.getWorkspaces() ).
             versionService( this.versionService ).
             workspaceService( this.workspaceService ).

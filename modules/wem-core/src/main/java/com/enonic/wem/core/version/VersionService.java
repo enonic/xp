@@ -7,7 +7,7 @@ import com.enonic.wem.core.entity.NodeVersionId;
 
 public interface VersionService
 {
-    public void store( final EntityVersionDocument entityVersionDocument, final RepositoryId repositoryId );
+    public void store( final NodeVersionDocument nodeVersionDocument, final RepositoryId repositoryId );
 
     public NodeVersion getVersion( final NodeVersionId versionId, final RepositoryId repositoryId );
 

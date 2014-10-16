@@ -1,6 +1,6 @@
 package com.enonic.wem.core.version;
 
-import com.enonic.wem.core.entity.EntityId;
+import com.enonic.wem.core.entity.NodeId;
 
 public class GetVersionsQuery
 {
@@ -8,13 +8,13 @@ public class GetVersionsQuery
 
     private final Integer size;
 
-    private final EntityId entityId;
+    private final NodeId nodeId;
 
     private GetVersionsQuery( Builder builder )
     {
         from = builder.from;
         size = builder.size;
-        entityId = builder.entityId;
+        nodeId = builder.nodeId;
     }
 
     public Integer getFrom()
@@ -27,9 +27,9 @@ public class GetVersionsQuery
         return size;
     }
 
-    public EntityId getEntityId()
+    public NodeId getNodeId()
     {
-        return entityId;
+        return nodeId;
     }
 
     public static Builder create()
@@ -44,7 +44,7 @@ public class GetVersionsQuery
 
         private Integer size = 10;
 
-        private EntityId entityId;
+        private NodeId nodeId;
 
         private Builder()
         {
@@ -62,9 +62,9 @@ public class GetVersionsQuery
             return this;
         }
 
-        public Builder entityId( EntityId entityId )
+        public Builder nodeId( NodeId nodeId )
         {
-            this.entityId = entityId;
+            this.nodeId = nodeId;
             return this;
         }
 

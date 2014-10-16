@@ -6,16 +6,16 @@ import java.util.UUID;
 
 import com.google.common.base.Preconditions;
 
-public class EntityId
+public class NodeId
 {
     private final String value;
 
-    public EntityId()
+    public NodeId()
     {
         this.value = UUID.randomUUID().toString();
     }
 
-    private EntityId( final String string )
+    private NodeId( final String string )
     {
         Preconditions.checkNotNull( string, "string cannot be null" );
         this.value = string;
@@ -33,7 +33,7 @@ public class EntityId
             return false;
         }
 
-        final EntityId other = (EntityId) o;
+        final NodeId other = (NodeId) o;
         return Objects.equals( value, other.value );
     }
 
@@ -48,14 +48,14 @@ public class EntityId
         return value;
     }
 
-    public static EntityId from( String string )
+    public static NodeId from( String string )
     {
-        return new EntityId( string );
+        return new NodeId( string );
     }
 
-    public static EntityId from( Object object )
+    public static NodeId from( Object object )
     {
         Preconditions.checkNotNull( object, "object cannot be null" );
-        return new EntityId( object.toString() );
+        return new NodeId( object.toString() );
     }
 }

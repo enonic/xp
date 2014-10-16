@@ -3,7 +3,7 @@ package com.enonic.wem.core.elasticsearch.workspace;
 import org.elasticsearch.action.delete.DeleteRequest;
 
 import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.core.entity.EntityId;
+import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.repository.StorageNameResolver;
 import com.enonic.wem.core.workspace.WorkspaceDocumentId;
@@ -13,13 +13,13 @@ public class DeleteNodeVersionCommand
 {
     private final Workspace workspace;
 
-    private final EntityId entityId;
+    private final NodeId nodeId;
 
     private DeleteNodeVersionCommand( Builder builder )
     {
         super( builder );
         workspace = builder.workspace;
-        entityId = builder.entityId;
+        nodeId = builder.nodeId;
     }
 
     public static Builder create()
@@ -32,7 +32,7 @@ public class DeleteNodeVersionCommand
         DeleteRequest deleteRequest = new DeleteRequest().
             index( StorageNameResolver.resolveStorageIndexName( this.repositoryId ) ).
             type( IndexType.WORKSPACE.getName() ).
-            id( new WorkspaceDocumentId( this.entityId, this.workspace ).toString() ).
+            id( new WorkspaceDocumentId( this.nodeId, this.workspace ).toString() ).
             refresh( DEFAULT_REFRESH );
 
         elasticsearchDao.delete( deleteRequest );
@@ -44,7 +44,7 @@ public class DeleteNodeVersionCommand
     {
         private Workspace workspace;
 
-        private EntityId entityId;
+        private NodeId nodeId;
 
         private Builder()
         {
@@ -56,9 +56,9 @@ public class DeleteNodeVersionCommand
             return this;
         }
 
-        public Builder entityId( EntityId entityId )
+        public Builder nodeId( NodeId nodeId )
         {
-            this.entityId = entityId;
+            this.nodeId = nodeId;
             return this;
         }
 

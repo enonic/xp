@@ -78,12 +78,12 @@ public final class Relationship
         return key.getType();
     }
 
-    public EntityId getFromItem()
+    public NodeId getFromItem()
     {
         return key.getFromItem();
     }
 
-    public EntityId getToItem()
+    public NodeId getToItem()
     {
         return key.getToItem();
     }
@@ -141,9 +141,9 @@ public final class Relationship
 
         private RelationshipTypeName type;
 
-        private EntityId fromItem;
+        private NodeId fromItem;
 
-        private EntityId toItem;
+        private NodeId toItem;
 
         private Map<String, String> properties = Maps.newLinkedHashMap();
 
@@ -184,13 +184,13 @@ public final class Relationship
             return this;
         }
 
-        public Builder fromItem( EntityId value )
+        public Builder fromItem( NodeId value )
         {
             this.fromItem = value;
             return this;
         }
 
-        public Builder toItem( EntityId value )
+        public Builder toItem( NodeId value )
         {
             this.toItem = value;
             return this;

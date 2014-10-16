@@ -34,8 +34,8 @@ import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.wem.core.content.serializer.ThumbnailAttachmentSerializer;
 import com.enonic.wem.core.entity.CreateNodeParams;
-import com.enonic.wem.core.entity.EntityId;
 import com.enonic.wem.core.entity.Node;
+import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodeName;
 import com.enonic.wem.core.entity.NodePath;
 import com.enonic.wem.core.entity.UpdateNodeParams;
@@ -186,7 +186,7 @@ public class ContentNodeTranslatorTest
         final RootDataSet data = new RootDataSet();
         data.addProperty( "contentType", Value.newString( "my-type" ) );
 
-        final Node node = Node.newNode().id( EntityId.from( "myId" ) ).
+        final Node node = Node.newNode().id( NodeId.from( "myId" ) ).
             attachments( attachments ).
             parent( NodePath.ROOT ).
             path( "myPath" ).

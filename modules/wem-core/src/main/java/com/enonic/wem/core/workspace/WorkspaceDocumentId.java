@@ -6,7 +6,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Iterators;
 
 import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.core.entity.EntityId;
+import com.enonic.wem.core.entity.NodeId;
 
 public class WorkspaceDocumentId
 {
@@ -14,24 +14,24 @@ public class WorkspaceDocumentId
 
     private final String value;
 
-    private final EntityId entityId;
+    private final NodeId nodeId;
 
     private final Workspace workspace;
 
-    public WorkspaceDocumentId( final EntityId entityId, final Workspace workspace )
+    public WorkspaceDocumentId( final NodeId nodeId, final Workspace workspace )
     {
-        Preconditions.checkNotNull( entityId );
+        Preconditions.checkNotNull( nodeId );
         Preconditions.checkNotNull( workspace );
 
-        this.value = entityId + SEPARATOR + workspace.getName();
-        this.entityId = entityId;
+        this.value = nodeId + SEPARATOR + workspace.getName();
+        this.nodeId = nodeId;
         this.workspace = workspace;
     }
 
-    private WorkspaceDocumentId( final String value, final String entityIdAsString, final String workspaceName )
+    private WorkspaceDocumentId( final String value, final String nodeIdsAsString, final String workspaceName )
     {
         this.value = value;
-        this.entityId = EntityId.from( entityIdAsString );
+        this.nodeId = NodeId.from( nodeIdsAsString );
         this.workspace = Workspace.from( workspaceName );
     }
 
@@ -45,13 +45,13 @@ public class WorkspaceDocumentId
         final Iterable<String> split = Splitter.on( SEPARATOR ).
             split( value );
 
-        final String entityIdAsString = Iterators.get( split.iterator(), 0 );
+        final String nodeIdAsString = Iterators.get( split.iterator(), 0 );
         final String workspaceName = Iterators.get( split.iterator(), 1 );
 
-        Preconditions.checkArgument( !Strings.isNullOrEmpty( entityIdAsString ) );
+        Preconditions.checkArgument( !Strings.isNullOrEmpty( nodeIdAsString ) );
         Preconditions.checkArgument( !Strings.isNullOrEmpty( workspaceName ) );
 
-        return new WorkspaceDocumentId( value, entityIdAsString, workspaceName );
+        return new WorkspaceDocumentId( value, nodeIdAsString, workspaceName );
     }
 
     public String getValue()
@@ -59,9 +59,9 @@ public class WorkspaceDocumentId
         return value;
     }
 
-    public EntityId getEntityId()
+    public NodeId getNodeId()
     {
-        return entityId;
+        return nodeId;
     }
 
     public Workspace getWorkspace()

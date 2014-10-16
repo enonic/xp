@@ -31,7 +31,7 @@ module api.data.type {
 
         static GEO_POINT = new GeoPointValueType();
 
-        static ENTITY_ID = new ValueType("EntityId");
+        static NODE_ID = new ValueType("NodeId");
 
         static ALL: ValueType[] = [
             ValueTypes.DATA,
@@ -47,7 +47,7 @@ module api.data.type {
             ValueTypes.BOOLEAN,
             ValueTypes.DOUBLE,
             ValueTypes.GEO_POINT,
-            ValueTypes.ENTITY_ID];
+            ValueTypes.NODE_ID];
 
         public static fromName(name: string): ValueType {
             for (var i = 0; i < ValueTypes.ALL.length; i++) {

@@ -15,7 +15,7 @@ import com.enonic.wem.api.support.AbstractImmutableEntitySet;
 public final class Nodes
     extends AbstractImmutableEntitySet<Node>
 {
-    private final ImmutableMap<EntityId, Node> map;
+    private final ImmutableMap<NodeId, Node> map;
 
     private Nodes( final Set<Node> set )
     {
@@ -24,18 +24,18 @@ public final class Nodes
     }
 
     private final static class ToIdFunction
-        implements Function<Node, EntityId>
+        implements Function<Node, NodeId>
     {
         @Override
-        public EntityId apply( final Node value )
+        public NodeId apply( final Node value )
         {
             return value.id();
         }
     }
 
-    public Node getNodeById( final EntityId entityId )
+    public Node getNodeById( final NodeId nodeId )
     {
-        return this.map.get( entityId );
+        return this.map.get( nodeId );
     }
 
     public NodePaths getPaths()

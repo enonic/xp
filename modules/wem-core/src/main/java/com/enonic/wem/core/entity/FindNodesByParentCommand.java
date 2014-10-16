@@ -38,7 +38,7 @@ public class FindNodesByParentCommand
         final NodeQueryResult nodeQueryResult = this.queryService.find( query, IndexContext.from( Context.current() ) );
 
         final NodeVersionIds versions =
-            this.workspaceService.getByVersionIds( nodeQueryResult.getEntityIds(), WorkspaceContext.from( Context.current() ) );
+            this.workspaceService.getByVersionIds( nodeQueryResult.getNodeIds(), WorkspaceContext.from( Context.current() ) );
 
         final Nodes nodes = NodeHasChildResolver.create().
             workspaceService( this.workspaceService ).

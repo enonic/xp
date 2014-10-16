@@ -4,19 +4,19 @@ import com.enonic.wem.api.content.CompareStatus;
 
 public class NodeComparison
 {
-    private final EntityId entityId;
+    private final NodeId nodeId;
 
     private final CompareStatus compareStatus;
 
-    public NodeComparison( final EntityId entityId, final CompareStatus compareStatus )
+    public NodeComparison( final NodeId nodeId, final CompareStatus compareStatus )
     {
-        this.entityId = entityId;
+        this.nodeId = nodeId;
         this.compareStatus = compareStatus;
     }
 
-    public EntityId getEntityId()
+    public NodeId getNodeId()
     {
-        return entityId;
+        return nodeId;
     }
 
     public CompareStatus getCompareStatus()
@@ -42,7 +42,7 @@ public class NodeComparison
         {
             return false;
         }
-        if ( entityId != null ? !entityId.equals( that.entityId ) : that.entityId != null )
+        if ( nodeId != null ? !nodeId.equals( that.nodeId ) : that.nodeId != null )
         {
             return false;
         }
@@ -53,7 +53,7 @@ public class NodeComparison
     @Override
     public int hashCode()
     {
-        int result = entityId != null ? entityId.hashCode() : 0;
+        int result = nodeId != null ? nodeId.hashCode() : 0;
         result = 31 * result + ( compareStatus != null ? compareStatus.hashCode() : 0 );
         return result;
     }

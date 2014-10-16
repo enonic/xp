@@ -4,8 +4,8 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentAlreadyExistException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.RenameContentParams;
-import com.enonic.wem.core.entity.EntityId;
 import com.enonic.wem.core.entity.NodeAlreadyExistException;
+import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodeName;
 import com.enonic.wem.core.entity.RenameNodeParams;
 
@@ -40,10 +40,10 @@ final class RenameContentCommand
 
     private Content doExecute()
     {
-        final EntityId entityId = EntityId.from( params.getContentId() );
+        final NodeId nodeId = NodeId.from( params.getContentId() );
         final NodeName nodeName = NodeName.from( params.getNewName().toString() );
         nodeService.rename( RenameNodeParams.create().
-            entityId( entityId ).
+            nodeId( nodeId ).
             nodeName( nodeName ).
             build() );
 

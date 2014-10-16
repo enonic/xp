@@ -11,8 +11,8 @@ import com.enonic.wem.api.data.RootDataSetJson;
 import com.enonic.wem.api.index.IndexConfigDocument;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
 import com.enonic.wem.core.entity.Attachments;
-import com.enonic.wem.core.entity.EntityId;
 import com.enonic.wem.core.entity.Node;
+import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodeName;
 import com.enonic.wem.core.entity.NodePath;
 import com.enonic.wem.core.entity.PatternBasedIndexConfigDocumentJson;
@@ -72,7 +72,7 @@ public class NodeJson
         this.creator = creator;
 
         this.node = Node.newNode().
-            id( EntityId.from( id ) ).
+            id( NodeId.from( id ) ).
             name( NodeName.from( name ) ).
             creator( UserKey.from( creator ) ).
             modifier( modifier != null ? UserKey.from( modifier ) : null ).

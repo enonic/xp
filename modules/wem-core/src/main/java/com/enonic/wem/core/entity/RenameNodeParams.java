@@ -4,13 +4,13 @@ import com.google.common.base.Preconditions;
 
 public class RenameNodeParams
 {
-    private final EntityId entityId;
+    private final NodeId nodeId;
 
     private final NodeName newNodeName;
 
     private RenameNodeParams( Builder builder )
     {
-        entityId = builder.entityId;
+        nodeId = builder.nodeId;
         newNodeName = builder.newNodeName;
     }
 
@@ -19,9 +19,9 @@ public class RenameNodeParams
         return new Builder();
     }
 
-    public EntityId getEntityId()
+    public NodeId getNodeId()
     {
-        return entityId;
+        return nodeId;
     }
 
     public NodeName getNewNodeName()
@@ -31,7 +31,7 @@ public class RenameNodeParams
 
     public static final class Builder
     {
-        private EntityId entityId;
+        private NodeId nodeId;
 
         private NodeName newNodeName;
 
@@ -39,9 +39,9 @@ public class RenameNodeParams
         {
         }
 
-        public Builder entityId( final EntityId entityId )
+        public Builder nodeId( final NodeId nodeId )
         {
-            this.entityId = entityId;
+            this.nodeId = nodeId;
             return this;
         }
 
@@ -53,7 +53,7 @@ public class RenameNodeParams
 
         private void validate()
         {
-            Preconditions.checkNotNull( this.entityId, "id cannot be null" );
+            Preconditions.checkNotNull( this.nodeId, "id cannot be null" );
             Preconditions.checkNotNull( this.newNodeName, "name cannot be null" );
         }
 

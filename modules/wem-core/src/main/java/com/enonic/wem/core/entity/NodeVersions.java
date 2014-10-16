@@ -9,24 +9,24 @@ import com.google.common.collect.Sets;
 public class NodeVersions
     implements Iterable<NodeVersion>
 {
-    private final EntityId entityId;
+    private final NodeId nodeId;
 
     private final ImmutableSortedSet<NodeVersion> nodeVersions;
 
     private NodeVersions( Builder builder )
     {
-        this.entityId = builder.entityId;
+        this.nodeId = builder.nodeId;
         this.nodeVersions = ImmutableSortedSet.copyOf( builder.nodeVersions );
     }
 
-    public EntityId getEntityId()
+    public NodeId getNodeId()
     {
-        return entityId;
+        return nodeId;
     }
 
-    public static Builder create( final EntityId entityId )
+    public static Builder create( final NodeId nodeId )
     {
-        return new Builder( entityId );
+        return new Builder( nodeId );
     }
 
     @Override
@@ -44,11 +44,11 @@ public class NodeVersions
     {
         private final SortedSet<NodeVersion> nodeVersions = Sets.newTreeSet();
 
-        private final EntityId entityId;
+        private final NodeId nodeId;
 
-        private Builder( final EntityId entityId )
+        private Builder( final NodeId nodeId )
         {
-            this.entityId = entityId;
+            this.nodeId = nodeId;
         }
 
         public Builder add( final NodeVersion nodeVersion )

@@ -3,9 +3,9 @@ package com.enonic.wem.core.content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentVersions;
 import com.enonic.wem.api.content.FindContentVersionsResult;
-import com.enonic.wem.core.entity.EntityId;
 import com.enonic.wem.core.entity.FindNodeVersionsResult;
 import com.enonic.wem.core.entity.GetNodeVersionsParams;
+import com.enonic.wem.core.entity.NodeId;
 
 public class FindContentVersionsCommand
     extends AbstractContentCommand
@@ -36,10 +36,10 @@ public class FindContentVersionsCommand
 
     private FindContentVersionsResult doGetContentVersions()
     {
-        final EntityId entityId = EntityId.from( this.contentId );
+        final NodeId nodeId = NodeId.from( this.contentId );
 
         final FindNodeVersionsResult findNodeVersionsResult = nodeService.findVersions( GetNodeVersionsParams.create().
-            entityId( entityId ).
+            nodeId( nodeId ).
             from( this.from ).
             size( this.size ).
             build() );
@@ -52,7 +52,7 @@ public class FindContentVersionsCommand
 
         final ContentVersionFactory contentVersionFactory = new ContentVersionFactory( this.translator, this.nodeService );
 
-        final ContentVersions contentVersions = contentVersionFactory.create( entityId, findNodeVersionsResult.getNodeVersions() );
+        final ContentVersions contentVersions = contentVersionFactory.create( nodeId, findNodeVersionsResult.getNodeVersions() );
 
         findContentVersionsResultBuilder.contentVersions( contentVersions );
 

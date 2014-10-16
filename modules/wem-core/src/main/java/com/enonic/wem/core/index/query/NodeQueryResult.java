@@ -6,8 +6,8 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.aggregation.Aggregations;
-import com.enonic.wem.core.entity.EntityId;
-import com.enonic.wem.core.entity.EntityIds;
+import com.enonic.wem.core.entity.NodeId;
+import com.enonic.wem.core.entity.NodeIds;
 
 public final class NodeQueryResult
 {
@@ -64,16 +64,16 @@ public final class NodeQueryResult
         return new Builder();
     }
 
-    public EntityIds getEntityIds()
+    public NodeIds getNodeIds()
     {
-        final Set<EntityId> entityIds = Sets.newLinkedHashSet();
+        final Set<NodeId> nodeIds = Sets.newLinkedHashSet();
 
         for ( final NodeQueryResultEntry nodeQueryResultEntry : entries )
         {
-            entityIds.add( nodeQueryResultEntry.getId() );
+            nodeIds.add( nodeQueryResultEntry.getId() );
         }
 
-        return EntityIds.from( entityIds );
+        return NodeIds.from( nodeIds );
     }
 
     public static final class Builder

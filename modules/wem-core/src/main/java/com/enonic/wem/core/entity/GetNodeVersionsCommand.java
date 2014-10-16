@@ -4,9 +4,9 @@ import com.enonic.wem.api.context.Context;
 import com.enonic.wem.core.version.GetVersionsQuery;
 import com.enonic.wem.core.version.VersionService;
 
-public class GetEntityVersionsCommand
+public class GetNodeVersionsCommand
 {
-    private final EntityId entityId;
+    private final NodeId nodeId;
 
     private final int from;
 
@@ -14,9 +14,9 @@ public class GetEntityVersionsCommand
 
     private final VersionService versionService;
 
-    private GetEntityVersionsCommand( Builder builder )
+    private GetNodeVersionsCommand( Builder builder )
     {
-        entityId = builder.entityId;
+        nodeId = builder.nodeId;
         from = builder.from;
         size = builder.size;
         versionService = builder.versionService;
@@ -25,7 +25,7 @@ public class GetEntityVersionsCommand
     public FindNodeVersionsResult execute()
     {
         final GetVersionsQuery query = GetVersionsQuery.create().
-            entityId( this.entityId ).
+            nodeId( this.nodeId ).
             from( this.from ).
             size( this.size ).
             build();
@@ -40,7 +40,7 @@ public class GetEntityVersionsCommand
 
     public static final class Builder
     {
-        private EntityId entityId;
+        private NodeId nodeId;
 
         private int from;
 
@@ -52,9 +52,9 @@ public class GetEntityVersionsCommand
         {
         }
 
-        public Builder entityId( EntityId entityId )
+        public Builder nodeId( NodeId nodeId )
         {
-            this.entityId = entityId;
+            this.nodeId = nodeId;
             return this;
         }
 
@@ -76,9 +76,9 @@ public class GetEntityVersionsCommand
             return this;
         }
 
-        public GetEntityVersionsCommand build()
+        public GetNodeVersionsCommand build()
         {
-            return new GetEntityVersionsCommand( this );
+            return new GetNodeVersionsCommand( this );
         }
     }
 }

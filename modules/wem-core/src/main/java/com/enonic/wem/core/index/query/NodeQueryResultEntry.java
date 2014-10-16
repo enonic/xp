@@ -1,17 +1,17 @@
 package com.enonic.wem.core.index.query;
 
-import com.enonic.wem.core.entity.EntityId;
+import com.enonic.wem.core.entity.NodeId;
 
 public class NodeQueryResultEntry
 {
     private final float score;
 
-    private final EntityId id;
+    private final NodeId id;
 
     public NodeQueryResultEntry( final float score, final String id )
     {
         this.score = score;
-        this.id = EntityId.from( id );
+        this.id = NodeId.from( id );
     }
 
     public float getScore()
@@ -19,7 +19,7 @@ public class NodeQueryResultEntry
         return score;
     }
 
-    public EntityId getId()
+    public NodeId getId()
     {
         return id;
     }

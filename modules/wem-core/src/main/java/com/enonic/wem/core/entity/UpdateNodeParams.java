@@ -4,11 +4,11 @@ import com.google.common.base.Preconditions;
 
 public class UpdateNodeParams
 {
-    private EntityId id;
+    private NodeId id;
 
     private NodeEditor editor;
 
-    public UpdateNodeParams id( final EntityId value )
+    public UpdateNodeParams id( final NodeId value )
     {
         this.id = value;
         return this;
@@ -26,7 +26,7 @@ public class UpdateNodeParams
         Preconditions.checkNotNull( this.editor, "editor cannot be null" );
     }
 
-    public EntityId getId()
+    public NodeId getId()
     {
         return id;
     }

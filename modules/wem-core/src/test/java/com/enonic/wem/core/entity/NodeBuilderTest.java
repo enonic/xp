@@ -152,12 +152,12 @@ public class NodeBuilderTest
         throws Exception
     {
 
-        final Node myNode = Node.newNode( EntityId.from( "myid" ) ).
+        final Node myNode = Node.newNode( NodeId.from( "myid" ) ).
             name( NodeName.from( "my-name" ) ).
             parent( NodePath.ROOT ).
             build();
 
-        final Node myEditedNode = Node.newNode( EntityId.from( "myid" ) ).
+        final Node myEditedNode = Node.newNode( NodeId.from( "myid" ) ).
             name( NodeName.from( "my-name" ) ).
             parent( NodePath.newPath( "test" ).build() ).
             build();
@@ -170,12 +170,12 @@ public class NodeBuilderTest
         throws Exception
     {
 
-        final Node myNode = Node.newNode( EntityId.from( "myid" ) ).
+        final Node myNode = Node.newNode( NodeId.from( "myid" ) ).
             name( NodeName.from( "my-name" ) ).
             parent( NodePath.ROOT ).
             build();
 
-        final Node myEditedNode = Node.newNode( EntityId.from( "myid" ) ).
+        final Node myEditedNode = Node.newNode( NodeId.from( "myid" ) ).
             name( NodeName.from( "my-name" ) ).
             parent( NodePath.ROOT ).
             modifier( UserKey.from( "test:modifier" ) ).
@@ -189,12 +189,12 @@ public class NodeBuilderTest
         throws Exception
     {
 
-        final Node myNode = Node.newNode( EntityId.from( "myid" ) ).
+        final Node myNode = Node.newNode( NodeId.from( "myid" ) ).
             name( NodeName.from( "my-name" ) ).
             parent( NodePath.ROOT ).
             build();
 
-        final Node myEditedNode = Node.newNode( EntityId.from( "myid" ) ).
+        final Node myEditedNode = Node.newNode( NodeId.from( "myid" ) ).
             name( NodeName.from( "my-name" ) ).
             parent( NodePath.ROOT ).
             property( "data", "myData" ).

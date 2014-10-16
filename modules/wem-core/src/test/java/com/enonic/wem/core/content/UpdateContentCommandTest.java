@@ -23,8 +23,8 @@ import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.schema.content.ContentTypeService;
-import com.enonic.wem.core.entity.EntityId;
 import com.enonic.wem.core.entity.Node;
+import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodeService;
 import com.enonic.wem.core.entity.UpdateNodeParams;
 import com.enonic.wem.core.entity.dao.NodeNotFoundException;
@@ -86,8 +86,7 @@ public class UpdateContentCommandTest
 
         Mockito.when( attachmentService.getAll( contentId ) ).thenReturn( Attachments.empty() );
 
-        Mockito.when( nodeService.getById( Mockito.isA( EntityId.class ) ) ).thenThrow(
-            new NodeNotFoundException( "Node not found" ) );
+        Mockito.when( nodeService.getById( Mockito.isA( NodeId.class ) ) ).thenThrow( new NodeNotFoundException( "Node not found" ) );
 
         // exercise
         command.execute();
@@ -130,7 +129,7 @@ public class UpdateContentCommandTest
             build();
 
         final Node mockNode = Node.newNode().build();
-        Mockito.when( nodeService.getById( EntityId.from( existingContent.getId() ) ) ).
+        Mockito.when( nodeService.getById( NodeId.from( existingContent.getId() ) ) ).
             thenReturn( mockNode );
         Mockito.when( translator.fromNode( mockNode ) ).thenReturn( existingContent );
 

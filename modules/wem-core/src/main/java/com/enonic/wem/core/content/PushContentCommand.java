@@ -5,8 +5,8 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.core.entity.EntityId;
 import com.enonic.wem.core.entity.Node;
+import com.enonic.wem.core.entity.NodeId;
 
 public class PushContentCommand
     extends AbstractContentCommand
@@ -24,9 +24,9 @@ public class PushContentCommand
 
     Content execute()
     {
-        final EntityId entityId = EntityId.from( contentId.toString() );
+        final NodeId nodeId = NodeId.from( contentId.toString() );
 
-        final Node pushedNode = nodeService.push( entityId, this.target );
+        final Node pushedNode = nodeService.push( nodeId, this.target );
 
         return translator.fromNode( pushedNode );
     }

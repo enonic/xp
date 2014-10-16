@@ -7,27 +7,27 @@ import com.enonic.wem.core.workspace.WorkspaceContext;
 final class DeleteNodeByIdCommand
     extends AbstractDeleteNodeCommand
 {
-    private final EntityId entityId;
+    private final NodeId nodeId;
 
     private DeleteNodeByIdCommand( final Builder builder )
     {
         super( builder );
-        this.entityId = builder.entityId;
+        this.nodeId = builder.nodeId;
     }
 
     Node execute()
     {
         final Context context = Context.current();
 
-        final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( this.entityId, WorkspaceContext.from( context ) );
+        final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( this.nodeId, WorkspaceContext.from( context ) );
 
         final Node nodeToDelete = this.nodeDao.getByVersionId( currentVersion );
 
         doDeleteChildren( nodeToDelete );
 
-        workspaceService.delete( entityId, WorkspaceContext.from( context ) );
+        workspaceService.delete( nodeId, WorkspaceContext.from( context ) );
 
-        indexService.delete( entityId, IndexContext.from( context ) );
+        indexService.delete( nodeId, IndexContext.from( context ) );
 
         return nodeToDelete;
     }
@@ -41,16 +41,16 @@ final class DeleteNodeByIdCommand
         extends AbstractDeleteNodeCommand.Builder<Builder>
     {
 
-        private EntityId entityId;
+        private NodeId nodeId;
 
         Builder()
         {
             super();
         }
 
-        public Builder entityId( final EntityId entityId )
+        public Builder nodeId( final NodeId nodeId )
         {
-            this.entityId = entityId;
+            this.nodeId = nodeId;
             return this;
         }
 

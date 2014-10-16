@@ -12,9 +12,9 @@ import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.GetContentByIdsParams;
 import com.enonic.wem.api.context.Context;
-import com.enonic.wem.core.entity.EntityId;
-import com.enonic.wem.core.entity.EntityIds;
-import com.enonic.wem.core.entity.NoEntityWithIdFoundException;
+import com.enonic.wem.core.entity.NoNodeWithIdFoundException;
+import com.enonic.wem.core.entity.NodeId;
+import com.enonic.wem.core.entity.NodeIds;
 import com.enonic.wem.core.entity.NodeService;
 import com.enonic.wem.core.entity.Nodes;
 import com.enonic.wem.core.index.query.QueryService;
@@ -42,7 +42,7 @@ final class GetContentByIdsCommand
         {
             contents = doExecute();
         }
-        catch ( NoEntityWithIdFoundException ex )
+        catch ( NoNodeWithIdFoundException ex )
         {
             final ContentId contentId = ContentId.from( ex.getId().toString() );
             throw new ContentNotFoundException( contentId, Context.current().getWorkspace() );
@@ -53,24 +53,24 @@ final class GetContentByIdsCommand
 
     private Contents doExecute()
     {
-        final EntityIds entityIds = getAsEntityIds( this.params.getIds() );
-        final Nodes nodes = nodeService.getByIds( entityIds );
+        final NodeIds nodeIds = getAsNodeIds( this.params.getIds() );
+        final Nodes nodes = nodeService.getByIds( nodeIds );
 
         return translator.fromNodes( nodes );
     }
 
-    private EntityIds getAsEntityIds( final ContentIds contentIds )
+    private NodeIds getAsNodeIds( final ContentIds contentIds )
     {
-        final Set<EntityId> entityIds = Sets.newHashSet();
+        final Set<NodeId> nodeIds = Sets.newHashSet();
 
         final Iterator<ContentId> iterator = contentIds.iterator();
 
         while ( iterator.hasNext() )
         {
-            entityIds.add( EntityId.from( iterator.next().toString() ) );
+            nodeIds.add( NodeId.from( iterator.next().toString() ) );
         }
 
-        return EntityIds.from( entityIds );
+        return NodeIds.from( nodeIds );
     }
 
 

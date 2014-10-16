@@ -2,7 +2,7 @@ package com.enonic.wem.core.entity;
 
 public class GetNodeVersionsParams
 {
-    private final EntityId entityId;
+    private final NodeId nodeId;
 
     private final int from;
 
@@ -10,7 +10,7 @@ public class GetNodeVersionsParams
 
     private GetNodeVersionsParams( Builder builder )
     {
-        entityId = builder.entityId;
+        nodeId = builder.nodeId;
         from = builder.from;
         size = builder.size;
     }
@@ -20,9 +20,9 @@ public class GetNodeVersionsParams
         return new Builder();
     }
 
-    public EntityId getEntityId()
+    public NodeId getNodeId()
     {
-        return entityId;
+        return nodeId;
     }
 
     public int getFrom()
@@ -37,7 +37,7 @@ public class GetNodeVersionsParams
 
     public static final class Builder
     {
-        private EntityId entityId;
+        private NodeId nodeId;
 
         private int from;
 
@@ -47,9 +47,9 @@ public class GetNodeVersionsParams
         {
         }
 
-        public Builder entityId( EntityId entityId )
+        public Builder nodeId( NodeId nodeId )
         {
-            this.entityId = entityId;
+            this.nodeId = nodeId;
             return this;
         }
 

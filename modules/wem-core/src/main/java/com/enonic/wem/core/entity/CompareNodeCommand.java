@@ -13,7 +13,7 @@ import com.enonic.wem.core.workspace.compare.DiffStatusResolver;
 
 public class CompareNodeCommand
 {
-    private final EntityId entityId;
+    private final NodeId nodeId;
 
     private final Workspace target;
 
@@ -23,7 +23,7 @@ public class CompareNodeCommand
 
     private CompareNodeCommand( Builder builder )
     {
-        entityId = builder.entityId;
+        nodeId = builder.nodeId;
         target = builder.target;
         workspaceService = builder.workspaceService;
         versionService = builder.versionService;
@@ -38,16 +38,16 @@ public class CompareNodeCommand
     {
         final Context context = Context.current();
 
-        final NodeVersionId sourceVersionId = workspaceService.getCurrentVersion( entityId, WorkspaceContext.from( context ) );
+        final NodeVersionId sourceVersionId = workspaceService.getCurrentVersion( nodeId, WorkspaceContext.from( context ) );
         final NodeVersionId targetVersionId =
-            workspaceService.getCurrentVersion( entityId, WorkspaceContext.from( this.target, context.getRepositoryId() ) );
+            workspaceService.getCurrentVersion( nodeId, WorkspaceContext.from( this.target, context.getRepositoryId() ) );
 
         final NodeVersion sourceVersion = getVersion( sourceVersionId, context );
         final NodeVersion targetVersion = getVersion( targetVersionId, context );
 
         final CompareStatus compareStatus = DiffStatusResolver.resolve( new DiffStatusParams( sourceVersion, targetVersion ) );
 
-        return new NodeComparison( entityId, compareStatus );
+        return new NodeComparison( nodeId, compareStatus );
     }
 
     private NodeVersion getVersion( final NodeVersionId nodeVersionId, final Context context )
@@ -62,7 +62,7 @@ public class CompareNodeCommand
 
     public static final class Builder
     {
-        private EntityId entityId;
+        private NodeId nodeId;
 
         private Workspace target;
 
@@ -74,9 +74,9 @@ public class CompareNodeCommand
         {
         }
 
-        public Builder entityId( EntityId entityId )
+        public Builder nodeId( NodeId nodeId )
         {
-            this.entityId = entityId;
+            this.nodeId = nodeId;
             return this;
         }
 
@@ -100,7 +100,7 @@ public class CompareNodeCommand
 
         private void validate()
         {
-            Preconditions.checkNotNull( entityId );
+            Preconditions.checkNotNull( nodeId );
             Preconditions.checkNotNull( target );
             Preconditions.checkNotNull( workspaceService );
             Preconditions.checkNotNull( versionService );

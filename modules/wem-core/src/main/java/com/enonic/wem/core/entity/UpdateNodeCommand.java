@@ -8,7 +8,7 @@ import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.util.Exceptions;
 import com.enonic.wem.core.entity.dao.NodeNotFoundException;
 import com.enonic.wem.core.index.IndexContext;
-import com.enonic.wem.core.version.EntityVersionDocument;
+import com.enonic.wem.core.version.NodeVersionDocument;
 import com.enonic.wem.core.workspace.StoreWorkspaceDocument;
 import com.enonic.wem.core.workspace.WorkspaceContext;
 
@@ -54,8 +54,8 @@ final class UpdateNodeCommand
 
         final NodeVersionId updatedNodeVersionId = nodeDao.store( updatedNode );
 
-        this.versionService.store( EntityVersionDocument.create().
-            entityId( updatedNode.id() ).
+        this.versionService.store( NodeVersionDocument.create().
+            nodeId( updatedNode.id() ).
             nodeVersionId( updatedNodeVersionId ).
             build(), context.getRepositoryId() );
 

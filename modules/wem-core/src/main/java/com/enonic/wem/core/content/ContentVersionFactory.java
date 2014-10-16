@@ -5,8 +5,8 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentVersion;
 import com.enonic.wem.api.content.ContentVersionId;
 import com.enonic.wem.api.content.ContentVersions;
-import com.enonic.wem.core.entity.EntityId;
 import com.enonic.wem.core.entity.Node;
+import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodeService;
 import com.enonic.wem.core.entity.NodeVersion;
 import com.enonic.wem.core.entity.NodeVersions;
@@ -23,10 +23,10 @@ class ContentVersionFactory
         this.nodeService = nodeService;
     }
 
-    public ContentVersions create( final EntityId entityId, final NodeVersions nodeVersions )
+    public ContentVersions create( final NodeId nodeId, final NodeVersions nodeVersions )
     {
         final ContentVersions.Builder contentVersionsBuilder = ContentVersions.create().
-            contentId( ContentId.from( entityId.toString() ) );
+            contentId( ContentId.from( nodeId.toString() ) );
 
         for ( final NodeVersion nodeVersion : nodeVersions )
         {

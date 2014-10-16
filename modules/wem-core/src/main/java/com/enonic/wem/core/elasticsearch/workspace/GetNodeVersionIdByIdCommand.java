@@ -7,7 +7,7 @@ import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.elasticsearch.ElasticsearchDataException;
 import com.enonic.wem.core.elasticsearch.QueryMetaData;
 import com.enonic.wem.core.elasticsearch.xcontent.WorkspaceXContentBuilderFactory;
-import com.enonic.wem.core.entity.EntityId;
+import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodeVersionId;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.result.SearchResult;
@@ -18,14 +18,14 @@ import com.enonic.wem.core.repository.StorageNameResolver;
 class GetNodeVersionIdByIdCommand
     extends AbstractWorkspaceCommand
 {
-    private final EntityId entityId;
+    private final NodeId nodeId;
 
     private final Workspace workspace;
 
     private GetNodeVersionIdByIdCommand( final Builder builder )
     {
         super( builder );
-        entityId = builder.entityId;
+        nodeId = builder.nodeId;
         workspace = builder.workspace;
     }
 
@@ -44,7 +44,7 @@ class GetNodeVersionIdByIdCommand
         {
             throw new ElasticsearchDataException(
                 "Field " + WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME + " not found on node with id " +
-                    entityId +
+                    nodeId +
                     " in workspace " + workspace.getName() );
         }
 
@@ -53,7 +53,7 @@ class GetNodeVersionIdByIdCommand
 
     private SearchResultEntry executeQuery()
     {
-        final TermQueryBuilder idQuery = new TermQueryBuilder( WorkspaceXContentBuilderFactory.ENTITY_ID_FIELD_NAME, entityId.toString() );
+        final TermQueryBuilder idQuery = new TermQueryBuilder( WorkspaceXContentBuilderFactory.NODE_ID_FIELD_NAME, nodeId.toString() );
 
         final BoolQueryBuilder boolQueryBuilder = joinWithWorkspaceQuery( workspace.getName(), idQuery );
 
@@ -82,7 +82,7 @@ class GetNodeVersionIdByIdCommand
     static final class Builder
         extends AbstractWorkspaceCommand.Builder<Builder>
     {
-        private EntityId entityId;
+        private NodeId nodeId;
 
         private Workspace workspace;
 
@@ -90,9 +90,9 @@ class GetNodeVersionIdByIdCommand
         {
         }
 
-        public Builder entityId( EntityId entityId )
+        public Builder nodeId( NodeId nodeId )
         {
-            this.entityId = entityId;
+            this.nodeId = nodeId;
             return this;
         }
 

@@ -2,7 +2,7 @@ package com.enonic.wem.core.entity;
 
 
 public class NoNodeAtPathFoundException
-extends NoEntityFoundException
+    extends NoNodeFoundException
 {
     private final NodePath path;
 

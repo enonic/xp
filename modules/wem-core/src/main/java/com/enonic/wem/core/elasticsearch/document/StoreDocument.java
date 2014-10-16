@@ -6,12 +6,12 @@ import java.util.Set;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.core.entity.EntityId;
+import com.enonic.wem.core.entity.NodeId;
 
 public class StoreDocument
     extends AbstractIndexDocument
 {
-    private final EntityId id;
+    private final NodeId id;
 
     private final ImmutableSet<AbstractStoreDocumentItem> indexDocumentItems;
 
@@ -48,7 +48,7 @@ public class StoreDocument
     public static class Builder
         extends AbstractIndexDocument.Builder<Builder>
     {
-        private EntityId id;
+        private NodeId id;
 
         private String analyzer;
 
@@ -59,7 +59,7 @@ public class StoreDocument
             indexDocumentEntries = Sets.newHashSet();
         }
 
-        public Builder id( final EntityId id )
+        public Builder id( final NodeId id )
         {
             this.id = id;
             return this;

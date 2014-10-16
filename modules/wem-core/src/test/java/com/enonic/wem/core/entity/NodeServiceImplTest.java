@@ -46,7 +46,7 @@ public class NodeServiceImplTest
     public void get_by_id_resolve_has_child()
         throws Exception
     {
-        final EntityId id = EntityId.from( "id" );
+        final NodeId id = NodeId.from( "id" );
 
         final NodeVersionId versionId = NodeVersionId.from( "versionId" );
 
@@ -75,8 +75,8 @@ public class NodeServiceImplTest
     public void get_by_ids_resolve_has_child()
         throws Exception
     {
-        final EntityId a = EntityId.from( "a" );
-        final EntityId b = EntityId.from( "b" );
+        final NodeId a = NodeId.from( "a" );
+        final NodeId b = NodeId.from( "b" );
         final NodeVersionId versionA = NodeVersionId.from( "version-a" );
         final NodeVersionId versionB = NodeVersionId.from( "version-b" );
         final Node nodeA = Node.newNode().
@@ -94,7 +94,7 @@ public class NodeServiceImplTest
 
         final Nodes nodes = Nodes.from( nodeA, nodeB );
 
-        final EntityIds ids = EntityIds.from( a, b );
+        final NodeIds ids = NodeIds.from( a, b );
 
         final NodeVersionIds nodeVersionIds = NodeVersionIds.from( versionA, versionB );
 

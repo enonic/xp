@@ -10,8 +10,8 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.core.TestContext;
-import com.enonic.wem.core.entity.EntityId;
 import com.enonic.wem.core.entity.FindNodeVersionsResult;
+import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodeVersion;
 import com.enonic.wem.core.index.result.SearchResult;
 import com.enonic.wem.core.index.result.SearchResultEntries;
@@ -46,7 +46,7 @@ public class ElasticsearchVersionServiceTest
         throws Exception
     {
         final GetVersionsQuery query = GetVersionsQuery.create().
-            entityId( EntityId.from( "1" ) ).
+            nodeId( NodeId.from( "1" ) ).
             build();
 
         // Newest first

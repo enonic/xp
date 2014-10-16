@@ -14,7 +14,7 @@ public class StoreWorkspaceDocumentIdTest
     {
         final WorkspaceDocumentId id = WorkspaceDocumentId.from( "myBlobKey_myWorkspace" );
         assertEquals( "myBlobKey_myWorkspace", id.getValue() );
-        assertEquals( "myBlobKey", id.getEntityId().toString() );
+        assertEquals( "myBlobKey", id.getNodeId().toString() );
         assertEquals( "myWorkspace", id.getWorkspace().getName() );
     }
 
@@ -26,7 +26,7 @@ public class StoreWorkspaceDocumentIdTest
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void from_missing_entityId()
+    public void from_missing_nodeId()
         throws Exception
     {
         WorkspaceDocumentId.from( "_myWorkspace" );

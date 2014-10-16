@@ -27,9 +27,9 @@ import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.wem.core.content.serializer.ThumbnailAttachmentSerializer;
 import com.enonic.wem.core.entity.CreateNodeParams;
-import com.enonic.wem.core.entity.EntityId;
 import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.entity.NodeEditor;
+import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodeName;
 import com.enonic.wem.core.entity.NodePath;
 import com.enonic.wem.core.entity.Nodes;
@@ -83,7 +83,7 @@ public class ContentNodeTranslator
     public UpdateNodeParams toUpdateNodeCommand( final Content content, final Attachments attachments )
     {
         return new UpdateNodeParams().
-            id( EntityId.from( content.getId() ) ).
+            id( NodeId.from( content.getId() ) ).
             editor( toNodeEditor( content, attachments ) );
     }
 

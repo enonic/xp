@@ -13,7 +13,7 @@ public class WorkspaceXContentBuilderFactory
 
     public static final String WORKSPACE_FIELD_NAME = "workspace";
 
-    public static final String ENTITY_ID_FIELD_NAME = "entityId";
+    public static final String NODE_ID_FIELD_NAME = "nodeId";
 
     public static final String PATH_FIELD_NAME = "path";
 
@@ -27,7 +27,7 @@ public class WorkspaceXContentBuilderFactory
 
             addField( builder, NODE_VERSION_ID_FIELD_NAME, storeWorkspaceDocument.getNodeVersionId().toString() );
             addField( builder, WORKSPACE_FIELD_NAME, workspace.getName() );
-            addField( builder, ENTITY_ID_FIELD_NAME, storeWorkspaceDocument.getEntityId().toString() );
+            addField( builder, NODE_ID_FIELD_NAME, storeWorkspaceDocument.getNodeId().toString() );
             addField( builder, PATH_FIELD_NAME, storeWorkspaceDocument.getPath() );
             addField( builder, PARENT_PATH_FIELD_NAME, storeWorkspaceDocument.getParentPath() );
 

@@ -5,9 +5,9 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.util.Exceptions;
-import com.enonic.wem.core.entity.EntityId;
-import com.enonic.wem.core.entity.NoEntityWithIdFoundException;
+import com.enonic.wem.core.entity.NoNodeWithIdFoundException;
 import com.enonic.wem.core.entity.Node;
+import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.dao.NodeNotFoundException;
 
 
@@ -24,14 +24,14 @@ final class GetContentByIdCommand
 
     Content execute()
     {
-        final EntityId entityId = EntityId.from( contentId.toString() );
+        final NodeId nodeId = NodeId.from( contentId.toString() );
 
         try
         {
-            final Node node = nodeService.getById( entityId );
+            final Node node = nodeService.getById( nodeId );
             return translator.fromNode( node );
         }
-        catch ( NoEntityWithIdFoundException | NodeNotFoundException e )
+        catch ( NoNodeWithIdFoundException | NodeNotFoundException e )
         {
             throw new ContentNotFoundException( contentId, Context.current().getWorkspace() );
         }

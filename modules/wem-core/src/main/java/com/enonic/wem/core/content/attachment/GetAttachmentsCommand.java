@@ -7,9 +7,9 @@ import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.core.content.ContentAttachmentNodeTranslator;
 import com.enonic.wem.core.content.serializer.ThumbnailAttachmentSerializer;
-import com.enonic.wem.core.entity.EntityId;
-import com.enonic.wem.core.entity.NoEntityWithIdFoundException;
+import com.enonic.wem.core.entity.NoNodeWithIdFoundException;
 import com.enonic.wem.core.entity.Node;
+import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodeService;
 
 
@@ -36,8 +36,8 @@ final class GetAttachmentsCommand
     {
         try
         {
-            final EntityId entityId = EntityId.from( this.contentId );
-            final Node node = nodeService.getById( entityId );
+            final NodeId nodeId = NodeId.from( this.contentId );
+            final Node node = nodeService.getById( nodeId );
             final Attachments.Builder attachmentsBuilder = Attachments.builder();
 
             for ( com.enonic.wem.core.entity.Attachment entityAttachment : node.attachments() )
@@ -54,7 +54,7 @@ final class GetAttachmentsCommand
 
             return attachmentsBuilder.build();
         }
-        catch ( NoEntityWithIdFoundException e )
+        catch ( NoNodeWithIdFoundException e )
         {
             throw new ContentNotFoundException( this.contentId, Context.current().getWorkspace() );
         }

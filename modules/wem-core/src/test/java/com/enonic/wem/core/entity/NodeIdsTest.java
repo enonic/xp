@@ -7,15 +7,15 @@ import com.enonic.wem.api.support.AbstractEqualsTest;
 
 import static junit.framework.Assert.assertEquals;
 
-public class EntityIdsTest
+public class NodeIdsTest
 {
     @Test
     public void from_multiple_strings()
     {
 
-        assertEquals( "[aaa]", EntityIds.from( "aaa" ).toString() );
-        assertEquals( "[aaa, bbb]", EntityIds.from( "aaa", "bbb" ).toString() );
-        assertEquals( "[aaa, bbb, ccc]", EntityIds.from( "aaa", "bbb", "ccc" ).toString() );
+        assertEquals( "[aaa]", NodeIds.from( "aaa" ).toString() );
+        assertEquals( "[aaa, bbb]", NodeIds.from( "aaa", "bbb" ).toString() );
+        assertEquals( "[aaa, bbb, ccc]", NodeIds.from( "aaa", "bbb", "ccc" ).toString() );
     }
 
     @Test
@@ -26,25 +26,25 @@ public class EntityIdsTest
             @Override
             public Object getObjectX()
             {
-                return EntityIds.from( "aaa", "bbb" );
+                return NodeIds.from( "aaa", "bbb" );
             }
 
             @Override
             public Object[] getObjectsThatNotEqualsX()
             {
-                return new Object[]{EntityIds.from( "aaa" ), EntityIds.from( "aaa", "ccc" )};
+                return new Object[]{NodeIds.from( "aaa" ), NodeIds.from( "aaa", "ccc" )};
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame()
             {
-                return EntityIds.from( "aaa", "bbb" );
+                return NodeIds.from( "aaa", "bbb" );
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame2()
             {
-                return EntityIds.from( "aaa", "bbb" );
+                return NodeIds.from( "aaa", "bbb" );
             }
         };
         equalsTest.assertEqualsAndHashCodeContract();

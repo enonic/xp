@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.core.elasticsearch.ElasticsearchDao;
-import com.enonic.wem.core.entity.EntityIds;
+import com.enonic.wem.core.entity.NodeIds;
 import com.enonic.wem.core.entity.NodeVersionIds;
 
 import static com.enonic.wem.core.TestContext.TEST_REPOSITORY;
@@ -24,13 +24,13 @@ public class GetNodeVersionIdsByIdsCommandTest
     }
 
     @Test
-    public void empty_entityIds()
+    public void empty_nodeIds()
         throws Exception
     {
         final NodeVersionIds nodeVersionIds = GetNodeVersionIdsByIdsCommand.create().
             repository( TEST_REPOSITORY.getId() ).
             workspace( TEST_WORKSPACE ).
-            entityIds( EntityIds.empty() ).
+            nodeIds( NodeIds.empty() ).
             elasticsearchDao( this.elasticsearchDao ).
             build().
             execute();

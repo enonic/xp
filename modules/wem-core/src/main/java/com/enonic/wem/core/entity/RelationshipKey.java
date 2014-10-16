@@ -12,17 +12,16 @@ public final class RelationshipKey
 {
     private final RelationshipTypeName type;
 
-    private final EntityId fromItem;
+    private final NodeId fromItem;
 
-    private final EntityId toItem;
+    private final NodeId toItem;
 
     /**
      * Path to the Data in the fromItem that is managing this Relationship.
      */
     private final DataPath managingData;
 
-    private RelationshipKey( final RelationshipTypeName type, final EntityId fromContent, final EntityId toItem,
-                             final DataPath managingData )
+    private RelationshipKey( final RelationshipTypeName type, final NodeId fromContent, final NodeId toItem, final DataPath managingData )
     {
         this.type = type;
         this.fromItem = fromContent;
@@ -43,7 +42,7 @@ public final class RelationshipKey
         return type;
     }
 
-    public EntityId getFromItem()
+    public NodeId getFromItem()
     {
         return fromItem;
     }
@@ -58,7 +57,7 @@ public final class RelationshipKey
         return managingData;
     }
 
-    public EntityId getToItem()
+    public NodeId getToItem()
     {
         return toItem;
     }
@@ -100,13 +99,13 @@ public final class RelationshipKey
         return Objects.hash( type, fromItem, toItem, managingData );
     }
 
-    public static RelationshipKey from( final RelationshipTypeName type, final EntityId fromItem, final EntityId toItem )
+    public static RelationshipKey from( final RelationshipTypeName type, final NodeId fromItem, final NodeId toItem )
     {
         return new RelationshipKey( type, fromItem, toItem, null );
     }
 
-    public static RelationshipKey from( final RelationshipTypeName type, final EntityId fromItem, final DataPath managingData,
-                                        final EntityId toItem )
+    public static RelationshipKey from( final RelationshipTypeName type, final NodeId fromItem, final DataPath managingData,
+                                        final NodeId toItem )
     {
         return new RelationshipKey( type, fromItem, toItem, managingData );
     }
@@ -120,9 +119,9 @@ public final class RelationshipKey
     {
         private RelationshipTypeName type;
 
-        private EntityId fromItem;
+        private NodeId fromItem;
 
-        private EntityId toItem;
+        private NodeId toItem;
 
         private DataPath managingData;
 
@@ -132,13 +131,13 @@ public final class RelationshipKey
             return this;
         }
 
-        public Builder fromItem( EntityId contentId )
+        public Builder fromItem( NodeId contentId )
         {
             this.fromItem = contentId;
             return this;
         }
 
-        public Builder toItem( EntityId contentId )
+        public Builder toItem( NodeId contentId )
         {
             this.toItem = contentId;
             return this;
