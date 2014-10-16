@@ -3,31 +3,40 @@ package com.enonic.wem.admin.event;
 import java.io.IOException;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.TimeUnit;
 
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-
-// import org.eclipse.jetty.websocket.WebSocket;
-// import org.eclipse.jetty.websocket.WebSocketServlet;
+import org.eclipse.jetty.websocket.api.UpgradeRequest;
+import org.eclipse.jetty.websocket.api.UpgradeResponse;
+import org.eclipse.jetty.websocket.servlet.WebSocketCreator;
+import org.eclipse.jetty.websocket.servlet.WebSocketServlet;
+import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// http://www.eclipse.org/jetty/documentation/current/jetty-websocket-server-api.html
-// http://git.eclipse.org/c/jetty/org.eclipse.jetty.project.git/plain/jetty-websocket/websocket-servlet/src/test/java/examples
 public final class EventServlet
-    extends HttpServlet
-    // extends WebSocketServlet
-    implements WebSocketManager
+    extends WebSocketServlet
+    implements WebSocketCreator, WebSocketManager
 {
+
     private final static Logger LOG = LoggerFactory.getLogger( EventServlet.class );
+
+    private static final String PROTOCOL = "text";
 
     private final Set<EventWebSocket> sockets = new CopyOnWriteArraySet<>();
 
-    /*@Override
-    public WebSocket doWebSocketConnect( final HttpServletRequest request, final String protocol )
+    @Override
+    public void configure( final WebSocketServletFactory factory )
     {
+        factory.getPolicy().setIdleTimeout( TimeUnit.MINUTES.toMillis( 1 ) );
+        factory.setCreator( this );
+    }
+
+    @Override
+    public Object createWebSocket( final UpgradeRequest upgradeRequest, final UpgradeResponse upgradeResponse )
+    {
+        upgradeResponse.setAcceptedSubProtocol( PROTOCOL );
         return new EventWebSocket( this );
-    }*/
+    }
 
     @Override
     public void registerSocket( final EventWebSocket webSocket )
@@ -44,7 +53,6 @@ public final class EventServlet
     @Override
     public void sendToAll( final String message )
     {
-        /*
         for ( EventWebSocket eventWebSocket : this.sockets )
         {
             try
@@ -55,6 +63,6 @@ public final class EventServlet
             {
                 LOG.warn( "Failed to send message via web socket", e );
             }
-        }*/
+        }
     }
 }

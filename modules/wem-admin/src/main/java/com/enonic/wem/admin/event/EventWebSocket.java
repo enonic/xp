@@ -2,12 +2,16 @@ package com.enonic.wem.admin.event;
 
 import java.io.IOException;
 
-// import org.eclipse.jetty.websocket.WebSocket;
+import org.eclipse.jetty.websocket.api.Session;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
+import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 
+@WebSocket
 public final class EventWebSocket
-    // implements WebSocket.OnTextMessage
 {
-    // private WebSocket.Connection connection;
+    private Session session;
 
     private final WebSocketManager webSocketManager;
 
@@ -16,27 +20,26 @@ public final class EventWebSocket
         this.webSocketManager = webSocketManager;
     }
 
-    /*
-    @Override
-    public void onOpen( final WebSocket.Connection connection )
+    @OnWebSocketConnect
+    public void onConnect( final Session session )
     {
-        this.connection = connection;
+        this.session = session;
         this.webSocketManager.registerSocket( this );
     }
 
-    @Override
-    public void onClose( final int closeCode, final String message )
+    @OnWebSocketClose
+    public void onClose( final Session session, final int statusCode, final String reason )
     {
         this.webSocketManager.unregisterSocket( this );
     }
 
     public boolean isOpen()
     {
-        return this.connection.isOpen();
+        return this.session.isOpen();
     }
 
-    @Override
-    public void onMessage( final String message )
+    @OnWebSocketMessage
+    public void onMessage( final Session session, final String message )
     {
 
     }
@@ -46,7 +49,7 @@ public final class EventWebSocket
     {
         if ( isOpen() )
         {
-            this.connection.sendMessage( message );
+            session.getRemote().sendString( message );
         }
-    }*/
+    }
 }

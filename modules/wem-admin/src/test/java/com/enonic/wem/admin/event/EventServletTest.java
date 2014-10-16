@@ -1,12 +1,14 @@
 package com.enonic.wem.admin.event;
 
-import javax.servlet.http.HttpServletRequest;
-
-// import org.eclipse.jetty.websocket.WebSocket;
+import org.eclipse.jetty.websocket.api.RemoteEndpoint;
+import org.eclipse.jetty.websocket.api.Session;
+import org.eclipse.jetty.websocket.api.UpgradeRequest;
+import org.eclipse.jetty.websocket.api.UpgradeResponse;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class EventServletTest
@@ -24,53 +26,58 @@ public class EventServletTest
     public void sendDataToOpenWebSocket()
         throws Exception
     {
-        /*final String protocol = "text";
-        final HttpServletRequest req = mock( HttpServletRequest.class );
-        final WebSocket.Connection connection = mock( WebSocket.Connection.class );
-        when( connection.isOpen() ).thenReturn( true );
+        final UpgradeRequest req = mock( UpgradeRequest.class );
+        final UpgradeResponse resp = mock( UpgradeResponse.class );
+        final Session session = mock( Session.class );
+        final RemoteEndpoint remoteEndPoint = mock( RemoteEndpoint.class );
+        when( session.getRemote() ).thenReturn( remoteEndPoint );
+        when( session.isOpen() ).thenReturn( true );
 
-        final EventWebSocket webSocket = (EventWebSocket) eventServlet.doWebSocketConnect( req, protocol );
+        final EventWebSocket webSocket = (EventWebSocket) eventServlet.createWebSocket( req, resp );
 
-        webSocket.onOpen( connection );
+        webSocket.onConnect( session );
 
-        eventServlet.sendToAll( "Hello" );*/
+        eventServlet.sendToAll( "Hello" );
+
+        verify( remoteEndPoint ).sendString( "Hello" );
     }
 
     @Test
     public void sendDataToClosedWebSocket()
         throws Exception
     {
-        /*final HttpServletRequest req = mock( HttpServletRequest.class );
-        final WebSocket.Connection connection = mock( WebSocket.Connection.class );
-        when( connection.isOpen() ).thenReturn( false );
+        final UpgradeRequest req = mock( UpgradeRequest.class );
+        final UpgradeResponse resp = mock( UpgradeResponse.class );
+        final Session session = mock( Session.class );
+        when( session.isOpen() ).thenReturn( false );
 
-        final String protocol = "text";
-        final EventWebSocket webSocket = (EventWebSocket) eventServlet.doWebSocketConnect( req, protocol );
+        final EventWebSocket webSocket = (EventWebSocket) eventServlet.createWebSocket( req, resp );
 
-        webSocket.onOpen( connection );
-        webSocket.onClose( -1, "" );
+        webSocket.onConnect( session );
+        webSocket.onClose( session, -1, "" );
 
-        eventServlet.sendToAll( "Hello" );*/
+        eventServlet.sendToAll( "Hello" );
     }
 
     @Test
     public void sendDataToMultipleWebSockets()
         throws Exception
     {
-        /*final HttpServletRequest req = mock( HttpServletRequest.class );
-        final HttpServletRequest req2 = mock( HttpServletRequest.class );
-        final WebSocket.Connection connection = mock( WebSocket.Connection.class );
-        final WebSocket.Connection connection2 = mock( WebSocket.Connection.class );
-        when( connection.isOpen() ).thenReturn( false );
-        when( connection2.isOpen() ).thenReturn( false );
+        final UpgradeRequest req = mock( UpgradeRequest.class );
+        final UpgradeResponse resp = mock( UpgradeResponse.class );
+        final UpgradeRequest req2 = mock( UpgradeRequest.class );
+        final UpgradeResponse resp2 = mock( UpgradeResponse.class );
+        final Session session = mock( Session.class );
+        final Session session2 = mock( Session.class );
+        when( session.isOpen() ).thenReturn( false );
+        when( session2.isOpen() ).thenReturn( false );
 
-        final String protocol = "text";
-        final EventWebSocket webSocket = (EventWebSocket) eventServlet.doWebSocketConnect( req, protocol );
-        final EventWebSocket webSocket2 = (EventWebSocket) eventServlet.doWebSocketConnect( req2, protocol );
+        final EventWebSocket webSocket = (EventWebSocket) eventServlet.createWebSocket( req, resp );
+        final EventWebSocket webSocket2 = (EventWebSocket) eventServlet.createWebSocket( req2, resp2 );
 
-        webSocket.onOpen( connection );
-        webSocket2.onOpen( connection );
+        webSocket.onConnect( session );
+        webSocket2.onConnect( session );
 
-        eventServlet.sendToAll( "Hello" );*/
+        eventServlet.sendToAll( "Hello" );
     }
 }

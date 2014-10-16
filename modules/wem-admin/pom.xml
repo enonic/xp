@@ -71,7 +71,9 @@
         <configuration>
           <instructions>
             <Import-Package>
-              *;resolution:=optional
+              !com.fasterxml.jackson.module.jaxb,
+              !javax.portlet,
+              *
             </Import-Package>
             <Export-Package/>
             <Embed-Dependency>
