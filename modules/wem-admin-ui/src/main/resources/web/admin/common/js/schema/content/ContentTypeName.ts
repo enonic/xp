@@ -2,7 +2,7 @@ module api.schema.content {
 
     import ModuleKey = api.module.ModuleKey;
 
-    export class ContentTypeName extends api.schema.ModuleBasedName {
+    export class ContentTypeName extends api.module.ModuleBasedName {
 
         // Built-in ContentTypes can be listed here
 
@@ -13,7 +13,7 @@ module api.schema.content {
         static IMAGE = new ContentTypeName('system:image');
 
         constructor(name: string) {
-            var parts = name.split(api.schema.ModuleBasedName.SEPARATOR);
+            var parts = name.split(api.module.ModuleBasedName.SEPARATOR);
             super(ModuleKey.fromString(parts[0]), parts[1]);
         }
 

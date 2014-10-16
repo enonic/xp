@@ -1,4 +1,4 @@
-module api.schema {
+module api.module {
 
     import ModuleKey = api.module.ModuleKey;
 
