@@ -7,6 +7,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.account.UserKey;
+import com.enonic.wem.api.module.ModuleBasedName;
 
 public abstract class BaseSchema<T extends ModuleBasedName>
 {

@@ -1,9 +1,7 @@
-package com.enonic.wem.api.schema;
+package com.enonic.wem.api.module;
 
 
 import com.google.common.base.Joiner;
-
-import com.enonic.wem.api.module.ModuleKey;
 
 public abstract class ModuleBasedName
 {

@@ -4,7 +4,7 @@ package com.enonic.wem.api.schema.relationship;
 import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.schema.ModuleBasedName;
+import com.enonic.wem.api.module.ModuleBasedName;
 
 public final class RelationshipTypeName
     extends ModuleBasedName
