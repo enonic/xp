@@ -114,7 +114,9 @@ module app.create {
 
         show() {
             if (this.parentContent) {
-                this.contentDialogTitle.setPath(this.parentContent.getPath().getParentPath().toString());
+                this.contentDialogTitle.setPath(this.parentContent.getPath().toString());
+            } else {
+                this.contentDialogTitle.setPath('');
             }
             super.show();
 
