@@ -14,7 +14,7 @@ module api.content {
 
         setObject(content: ContentSummary, relativePath: boolean = false) {
             super.setObject(content);
-            var subName = relativePath ? content.getPath().getLastElement() : content.getPath().toString();
+            var subName = this.resolveSubName(content, relativePath);
             var iconUrl = new ContentIconUrlResolver().
                 setContent(content).
                 setCrop(false).resolve();
@@ -23,6 +23,28 @@ module api.content {
                 setIconUrl(iconUrl);
             if (content.isSite()) {
                 this.addClass("site");
+            }
+        }
+
+        private resolveSubName(content: ContentSummary, relativePath: boolean): string {
+
+            var contentName = content.getName();
+            if (relativePath) {
+                if (contentName.isUnnamed()) {
+                    return ContentUnnamed.PRETTY_UNNAMED;
+                }
+                else {
+                    return content.getName().toString()
+                }
+            }
+            else {
+                if (contentName.isUnnamed()) {
+                    var parentPath = content.getPath().getParentPath();
+                    return ContentPath.fromParent(parentPath, ContentUnnamed.PRETTY_UNNAMED).toString();
+                }
+                else {
+                    return content.getPath().toString();
+                }
             }
         }
 

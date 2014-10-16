@@ -135,7 +135,7 @@ module app.wizard {
             this.showLiveEditAction.setEnabled(false);
 
             if (this.parentContent) {
-                this.contentWizardHeader.setPath(this.parentContent.getPath().toString() + "/");
+                this.contentWizardHeader.setPath(this.parentContent.getPath().prettifyUnnamedPathElements().toString() + "/");
             } else {
                 this.contentWizardHeader.setPath("/");
             }

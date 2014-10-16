@@ -31,7 +31,7 @@ module api.content {
             return true;
         }
 
-        public static fromString(str: string) {
+        public static fromString(str: string): ContentName {
 
             api.util.assert(str != null, "name cannot be null");
             if (str.indexOf(ContentName.UNNAMED_PREFIX) == 0) {

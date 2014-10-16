@@ -2,6 +2,8 @@ module api.content {
 
     export class ContentUnnamed extends ContentName implements api.Equitable {
 
+        public static PRETTY_UNNAMED = "unnamed";
+
         constructor(name: string) {
             super(name);
             api.util.assert(name.indexOf(ContentName.UNNAMED_PREFIX) == 0,
