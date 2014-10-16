@@ -2,12 +2,12 @@ package com.enonic.wem.admin.event;
 
 import java.io.IOException;
 
-import org.eclipse.jetty.websocket.WebSocket;
+// import org.eclipse.jetty.websocket.WebSocket;
 
 public final class EventWebSocket
-    implements WebSocket.OnTextMessage
+    // implements WebSocket.OnTextMessage
 {
-    private WebSocket.Connection connection;
+    // private WebSocket.Connection connection;
 
     private final WebSocketManager webSocketManager;
 
@@ -16,6 +16,7 @@ public final class EventWebSocket
         this.webSocketManager = webSocketManager;
     }
 
+    /*
     @Override
     public void onOpen( final WebSocket.Connection connection )
     {
@@ -47,5 +48,5 @@ public final class EventWebSocket
         {
             this.connection.sendMessage( message );
         }
-    }
+    }*/
 }

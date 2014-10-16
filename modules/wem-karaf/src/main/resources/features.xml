@@ -3,10 +3,6 @@
 
   <feature name="wem" version="${project.version}" description="Enonic WEM Feature">
 
-    <feature>http-whiteboard</feature>
-
-    <bundle>mvn:org.eclipse.jetty/jetty-websocket/8.1.14.v20131031</bundle>
-
     <bundle>mvn:com.enonic.wem/wem-api/${project.version}</bundle>
     <bundle>mvn:com.enonic.wem/wem-core/${project.version}</bundle>
     <bundle>mvn:com.enonic.wem/wem-script/${project.version}</bundle>
