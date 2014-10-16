@@ -14,7 +14,7 @@ public final class MetadataRegistryImpl
 {
     public MetadataRegistryImpl()
     {
-        super( MetadataProvider.class );
+        super( MetadataProvider.class, MetadataSchema::getName );
     }
 
     public MetadataSchema getMetadata( final MetadataSchemaName name )
@@ -24,7 +24,8 @@ public final class MetadataRegistryImpl
 
     public MetadataSchemas getMetadataByModule( final ModuleKey moduleKey )
     {
-        return super.getItemsByModule( moduleKey );
+        final MetadataSchemas metadataSchemas = super.getItemsByModule( moduleKey );
+        return metadataSchemas == null ? MetadataSchemas.empty() : metadataSchemas;
     }
 
     public MetadataSchemas getAllMetadataSchemas()

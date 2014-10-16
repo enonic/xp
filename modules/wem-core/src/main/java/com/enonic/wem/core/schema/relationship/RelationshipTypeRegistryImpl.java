@@ -14,7 +14,7 @@ public final class RelationshipTypeRegistryImpl
 {
     public RelationshipTypeRegistryImpl()
     {
-        super( RelationshipTypeProvider.class );
+        super( RelationshipTypeProvider.class, RelationshipType::getName );
     }
 
     public RelationshipType getRelationshipType( final RelationshipTypeName name )
@@ -24,7 +24,8 @@ public final class RelationshipTypeRegistryImpl
 
     public RelationshipTypes getRelationshipTypeByModule( final ModuleKey moduleKey )
     {
-        return super.getItemsByModule( moduleKey );
+        final RelationshipTypes relationshipTypes = super.getItemsByModule( moduleKey );
+        return relationshipTypes == null ? RelationshipTypes.empty() : relationshipTypes;
     }
 
     public RelationshipTypes getAllRelationshipTypes()

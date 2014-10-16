@@ -2,6 +2,7 @@ package com.enonic.wem.core.schema;
 
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.osgi.framework.Bundle;
@@ -11,9 +12,8 @@ import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.schema.Named;
 
-public abstract class BaseRegistry<PROVIDER extends Supplier<ITERABLE>, ITEM extends Named<NAME>, ITERABLE extends Iterable<ITEM>, NAME>
+public abstract class BaseRegistry<PROVIDER extends Supplier<ITERABLE>, ITEM, ITERABLE extends Iterable<ITEM>, NAME>
     implements ServiceTrackerCustomizer
 {
 
@@ -27,8 +27,11 @@ public abstract class BaseRegistry<PROVIDER extends Supplier<ITERABLE>, ITEM ext
 
     private final ConcurrentHashMap<ModuleKey, ITERABLE> byModule;
 
-    public BaseRegistry( final Class<PROVIDER> providerType )
+    private final Function<ITEM, NAME> nameExtractor;
+
+    public BaseRegistry( final Class<PROVIDER> providerType, final Function<ITEM, NAME> nameExtractor )
     {
+        this.nameExtractor = nameExtractor;
         this.byName = new ConcurrentHashMap<>();
         this.byModule = new ConcurrentHashMap<>();
 
@@ -84,14 +87,19 @@ public abstract class BaseRegistry<PROVIDER extends Supplier<ITERABLE>, ITEM ext
         {
             for ( ITEM item : previousBundleItem )
             {
-                byName.remove( item.getName() );
+                byName.remove( getName( item ) );
             }
         }
 
         for ( ITEM item : items )
         {
-            byName.put( item.getName(), item );
+            byName.put( getName( item ), item );
         }
+    }
+
+    private NAME getName( final ITEM item )
+    {
+        return nameExtractor.apply( item );
     }
 
     private void removeBundleItems( final Bundle bundle )
@@ -102,7 +110,7 @@ public abstract class BaseRegistry<PROVIDER extends Supplier<ITERABLE>, ITEM ext
         {
             for ( ITEM item : removedBundleItems )
             {
-                byName.remove( item.getName() );
+                byName.remove( getName( item ) );
             }
         }
     }

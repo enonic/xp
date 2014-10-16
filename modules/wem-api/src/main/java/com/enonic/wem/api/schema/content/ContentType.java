@@ -6,7 +6,6 @@ import com.google.common.base.Objects;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.schema.BaseSchema;
-import com.enonic.wem.api.schema.Named;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
 import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
 import com.enonic.wem.api.support.illegaledit.IllegalEditException;
@@ -15,7 +14,7 @@ import static com.enonic.wem.api.form.Form.newForm;
 
 public final class ContentType
     extends BaseSchema<ContentTypeName>
-    implements IllegalEditAware<ContentType>, Named<ContentTypeName>
+    implements IllegalEditAware<ContentType>
 {
     private final ContentTypeName superType;
 

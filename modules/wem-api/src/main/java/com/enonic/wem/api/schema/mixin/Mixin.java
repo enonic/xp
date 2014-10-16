@@ -3,11 +3,9 @@ package com.enonic.wem.api.schema.mixin;
 import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.form.FormItems;
 import com.enonic.wem.api.schema.BaseSchema;
-import com.enonic.wem.api.schema.Named;
 
 public final class Mixin
     extends BaseSchema<MixinName>
-    implements Named<MixinName>
 {
     private final FormItems formItems;
 

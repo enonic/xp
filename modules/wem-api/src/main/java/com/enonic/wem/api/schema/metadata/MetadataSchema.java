@@ -2,11 +2,9 @@ package com.enonic.wem.api.schema.metadata;
 
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.schema.BaseSchema;
-import com.enonic.wem.api.schema.Named;
 
 public final class MetadataSchema
     extends BaseSchema<MetadataSchemaName>
-    implements Named<MetadataSchemaName>
 {
     private final String displayName;
 

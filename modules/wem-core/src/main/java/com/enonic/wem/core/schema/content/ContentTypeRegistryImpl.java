@@ -14,7 +14,7 @@ public final class ContentTypeRegistryImpl
 {
     public ContentTypeRegistryImpl()
     {
-        super( ContentTypeProvider.class );
+        super( ContentTypeProvider.class, ContentType::getName );
     }
 
     public ContentType getContentType( final ContentTypeName name )
@@ -24,7 +24,8 @@ public final class ContentTypeRegistryImpl
 
     public ContentTypes getContentTypesByModule( final ModuleKey moduleKey )
     {
-        return super.getItemsByModule( moduleKey );
+        final ContentTypes contentTypes = super.getItemsByModule( moduleKey );
+        return contentTypes == null ? ContentTypes.empty() : contentTypes;
     }
 
     public ContentTypes getAllContentTypes()

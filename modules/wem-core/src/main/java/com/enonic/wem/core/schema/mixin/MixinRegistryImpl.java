@@ -14,7 +14,7 @@ public final class MixinRegistryImpl
 {
     public MixinRegistryImpl()
     {
-        super( MixinProvider.class );
+        super( MixinProvider.class, Mixin::getName );
     }
 
     public Mixin getMixin( final MixinName name )
@@ -24,7 +24,8 @@ public final class MixinRegistryImpl
 
     public Mixins getMixinsByModule( final ModuleKey moduleKey )
     {
-        return super.getItemsByModule( moduleKey );
+        final Mixins mixins = super.getItemsByModule( moduleKey );
+        return mixins == null ? Mixins.empty() : mixins;
     }
 
     public Mixins getAllMixins()
