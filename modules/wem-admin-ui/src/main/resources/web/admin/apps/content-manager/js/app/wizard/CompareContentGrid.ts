@@ -30,7 +30,7 @@ module app.wizard {
                     ]).
                     setPartialLoadEnabled(true).
                     setLoadBufferSize(20). // rows count
-                    prependClasses("content-tree-grid")
+                    prependClasses("compare-content-grid")
             );
 
             this.content = content;

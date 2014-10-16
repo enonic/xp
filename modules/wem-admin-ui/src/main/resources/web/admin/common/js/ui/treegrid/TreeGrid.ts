@@ -41,10 +41,6 @@ module api.ui.treegrid {
 
         private contextMenu: TreeGridContextMenu;
 
-        private canvasElement: api.dom.Element;
-
-        private canvasNeedsUpdate: boolean;
-
         private active: boolean;
 
         private actions: TreeGridToolbarActions;
@@ -141,17 +137,6 @@ module api.ui.treegrid {
                 event.stopPropagation();
             });
 
-            this.canvasElement = Element.fromHtmlElement(this.grid.getHTMLElement(), true);
-            for (var i = 0, gridChildren = this.canvasElement.getChildren(); i < gridChildren.length; i++) {
-                if (gridChildren[i].hasClass('slick-viewport')) {
-                    for (var j = 0, children = gridChildren[i].getChildren(); j < children.length; j++) {
-                        if (children[j].hasClass('grid-canvas')) {
-                            this.canvasElement = children[j];
-                        }
-                    }
-                }
-            }
-
             if (builder.isShowToolbar()) {
                 this.toolbar = new TreeGridToolbar(this.actions);
                 this.appendChild(this.toolbar);
@@ -167,17 +152,11 @@ module api.ui.treegrid {
                 this.reload();
             }
 
-            this.canvasNeedsUpdate = false;
-
             if (builder.isPartialLoadEnabled()) {
 
                 this.loadBufferSize = builder.getLoadBufferSize();
 
                 setInterval(this.postLoad.bind(this), 100);
-
-                this.grid.onRendered(() => {
-                    this.canvasNeedsUpdate = true;
-                });
             }
 
             var keyBindings;
@@ -296,14 +275,6 @@ module api.ui.treegrid {
             return !!this.toolbar;
         }
 
-        getCanvas(): api.dom.Element {
-            return this.canvasElement;
-        }
-
-        setCanvas(canvasElement: api.dom.Element) {
-            this.canvasElement = canvasElement;
-        }
-
         private scrollToRow(row: number) {
             if (row > -1 && this.grid.getSelectedRows().length > 0) {
                 if (this.grid.getEl().getScrollTop() > row * 45) {
@@ -314,13 +285,9 @@ module api.ui.treegrid {
             }
         }
 
-        private loadEmptyNode(node: TreeNode<DATA>, loadMask?: api.ui.mask.LoadMask) {
+        private loadEmptyNode(node: TreeNode<DATA>) {
             if (!this.getDataId(node.getData())) {
                 this.setActive(false);
-
-                if (loadMask) {
-                    loadMask.show();
-                }
 
                 this.fetchChildren(node.getParent()).then((dataList: DATA[]) => {
                     node.getParent().setChildren(this.dataToTreeNodes(dataList, node.getParent()));
@@ -329,38 +296,37 @@ module api.ui.treegrid {
                     api.DefaultErrorHandler.handle(reason);
                 }).finally(() => {
                     this.setActive(true);
-                    if (loadMask) {
-                        loadMask.hide();
-                        loadMask.remove();
-                    }
                 }).done(() => this.notifyLoaded());
             }
         }
 
         private postLoad() {
-            if (this.canvasElement.getEl().isVisible()) {
-                if (this.canvasNeedsUpdate) {
-                    this.canvasElement = Element.fromHtmlElement(this.getCanvas().getHTMLElement(), true);
-                    this.canvasNeedsUpdate = false;
-                }
-                var t1 = Number(new Date());
-                // top > point && point + 45 < bottom
-                var children = this.canvasElement.getChildren(),
+            // Get current grid's canvas
+            var gridClasses = (" " + this.grid.getEl().getClass()).replace(/\s/g, ".");
+            var canvas = Element.fromString(".tree-grid " + gridClasses + " .grid-canvas", false);
+
+            if (canvas.getEl().isVisible() && this.isActive()) {
+
+                var canvasOffsetTop = !!canvas ? canvas.getEl().getOffsetTop() : 0;
+                var rowHeight = this.grid.getOptions().rowHeight;
+
+                // top > point && point + rowHeight < bottom
+                var children = Element.elementsFromRequest(".tree-grid " + gridClasses + " .grid-canvas .slick-row:has(.children-to-load)", false),
                     top = this.grid.getEl().getScrollTop(),
-                    bottom = top + this.grid.getEl().getHeight() + this.loadBufferSize * 45;
+                    bottom = top + this.grid.getEl().getHeight() + this.loadBufferSize * rowHeight;
+
+
+                // Filter the selected rows, that are also in the field of view or `loadBufferSize` rows lower.
                 children = children.filter((el) => {
-                    return (el.getEl().getOffsetTopRelativeToParent() + 5 > top) &&
-                        (el.getEl().getOffsetTopRelativeToParent() + 40 < (bottom + this.loadBufferSize * 45));
+                    var offsetTop = el.getEl().getOffsetTop() - canvasOffsetTop;
+                    return (offsetTop > top) && (offsetTop + rowHeight < (bottom + this.loadBufferSize * rowHeight));
                 });
 
-                for (var i = 0; i < children.length; i++) {
-                    if (children[i].getHTMLElement().getElementsByClassName("children-to-load").length > 0 && this.isActive()) {
-                        var node = this.grid.getDataView().getItem(children[i].getEl().getOffsetTopRelativeToParent() / 45),
-                            loadMask = new api.ui.mask.LoadMask(children[i]);
-                        loadMask.addClass("small");
-                        this.loadEmptyNode(node, loadMask);
-                        break;
-                    }
+                // Search for the first "children-to-load" element.
+                if (this.isActive() && children.length > 0) {
+                    var offsetTop = children[0].getEl().getOffsetTop() - canvasOffsetTop;
+                    var node = this.grid.getDataView().getItem(offsetTop / rowHeight);
+                    this.loadEmptyNode(node);
                 }
             }
         }
@@ -628,22 +594,6 @@ module api.ui.treegrid {
                 }
             });
             this.notifyDataChanged(new DataChangedEvent<DATA>(deleted, DataChangedEvent.ACTION_DELETED));
-
-            // TODO: For future use. Implement single node update by node id.
-            /*
-             var promises = updated.map((el) => {
-             return this.fetch(el);
-             });
-             wemQ.all(promises).then((results: DATA[]) => {
-             results.forEach((result: DATA, index: number) => {
-             updated[index].setData(result);
-             });
-             }).catch((reason: any) => {
-             api.DefaultErrorHandler.handle(reason);
-             }).finally(() => {
-             this.active = true;
-             }).done(() => this.notifyLoaded());
-             */
         }
 
         initData(nodes: TreeNode<DATA>[]) {
@@ -704,7 +654,6 @@ module api.ui.treegrid {
             setTimeout(() => {
                 this.resetAndRender();
                 this.active = true;
-                this.canvasNeedsUpdate = true;
             }, 350);
         }
 
@@ -744,16 +693,17 @@ module api.ui.treegrid {
                 this.gridData.refresh();
                 this.resetAndRender();
                 this.active = true;
-                this.canvasNeedsUpdate = true;
             }, 350);
         }
 
         private animateCollapse(collapsedRows: number[], animatedRows: number[]) {
-            // update canvas content
-            this.canvasElement = Element.fromHtmlElement(this.canvasElement.getHTMLElement(), true);
+            // get children
+            var gridClasses = (" " + this.grid.getEl().getClass()).replace(/\s/g, "."),
+                children = Element.elementsFromRequest(".tree-grid " + gridClasses + " .grid-canvas .slick-row", false),
+                rowHeight = this.grid.getOptions().rowHeight;
 
             // Sort needed: rows may not match actual dom structure.
-            var children = this.canvasElement.getChildren().sort((a, b) => {
+            var children = children.sort((a, b) => {
                 var left = a.getEl().getOffsetTop(),
                     right = b.getEl().getOffsetTop();
                 return left > right ? 1 : (left < right) ? -1 : 0;
@@ -762,20 +712,22 @@ module api.ui.treegrid {
             collapsedRows.forEach((row) => {
                 var elem = children[row].getEl();
                 elem.setZindex(-1);
-                elem.setMarginTop(-45 * collapsedRows.length + "px");
+                elem.setMarginTop(-rowHeight * collapsedRows.length + "px");
             });
 
             animatedRows.forEach((row) => {
                 var elem = children[row].getEl();
-                elem.setMarginTop(-45 * collapsedRows.length + "px");
+                elem.setMarginTop(-rowHeight * collapsedRows.length + "px");
             });
         }
 
         private animateExpand(expandedRows: number[], animated: number[]) {
-            // update canvas content
-            this.canvasElement = Element.fromHtmlElement(this.canvasElement.getHTMLElement(), true);
+            // get children
+            var gridClasses = (" " + this.grid.getEl().getClass()).replace(/\s/g, "."),
+                children = Element.elementsFromRequest(".tree-grid " + gridClasses + " .grid-canvas .slick-row", false),
+                rowHeight = this.grid.getOptions().rowHeight;
 
-            var children = this.canvasElement.getChildren().sort((a, b) => {
+            var children = children.sort((a, b) => {
                 var left = a.getEl().getOffsetTop(),
                     right = b.getEl().getOffsetTop();
                 return left > right ? 1 : (left < right) ? -1 : 0;
@@ -786,12 +738,12 @@ module api.ui.treegrid {
             expandedRows.forEach((row) => {
                 var elem = children[row].getEl();
                 elem.setZindex(-1);
-                elem.setMarginTop(-45 * expandedRows.length + "px");
+                elem.setMarginTop(-rowHeight * expandedRows.length + "px");
             });
 
             animated.forEach((row) => {
                 var elem = children[row].getEl();
-                elem.setMarginTop(-45 * expandedRows.length + "px");
+                elem.setMarginTop(-rowHeight * expandedRows.length + "px");
             });
 
             setTimeout(() => {
@@ -891,8 +843,8 @@ module api.ui.treegrid {
         }
 
         private resetZIndexes() {
-            this.canvasElement = Element.fromHtmlElement(this.canvasElement.getHTMLElement(), true);
-            this.canvasElement.getChildren().forEach((child) => {
+            var children = Element.elementsFromRequest(".tree-grid .grid-canvas .slick-row", false);
+            children.forEach((child) => {
                 child.getEl().setZindex(1);
             });
         }
