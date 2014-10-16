@@ -53,6 +53,7 @@ public final class Page
         return regions != null;
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     public Region getRegion( final String name )
     {
         return this.regions.getRegion( name );

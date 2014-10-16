@@ -65,6 +65,7 @@ public final class ContentResource
         final Content effectiveContent;
         if ( !content.hasPage() )
         {
+            // The Content has no Page, but it has a supporting PageTemplate, so then we use the Page from the PageTemplate instead
             effectiveContent = Content.newContent( content ).
                 page( pageTemplate.getPage() ).
                 build();

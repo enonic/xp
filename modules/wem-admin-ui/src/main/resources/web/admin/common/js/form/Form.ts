@@ -68,7 +68,7 @@ module api.form {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof Form)) {
+            if (!(api.ObjectHelper.iFrameSafeInstanceOf(o, Form))) {
                 return false;
             }
 

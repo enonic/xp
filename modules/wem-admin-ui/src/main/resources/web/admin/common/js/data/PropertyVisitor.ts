@@ -20,7 +20,7 @@ module api.data {
                         this.visit(property);
                     }
                 }
-                else if (data instanceof DataSet) {
+                else if (api.ObjectHelper.iFrameSafeInstanceOf(data, DataSet)) {
                     var dataSet = <DataSet>data;
                     this.traverse(dataSet.getDataArray());
                 }

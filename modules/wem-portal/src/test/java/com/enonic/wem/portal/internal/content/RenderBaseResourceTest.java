@@ -107,11 +107,6 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
         Property dataSet = new Property( "property1", Value.newString( "value1" ) );
         rootDataSet.add( dataSet );
 
-        Page page = Page.newPage().
-            template( PageTemplateKey.from( "my-page" ) ).
-            config( rootDataSet ).
-            build();
-
         final Content.Builder content = Content.newContent().
             id( ContentId.from( id ) ).
             path( ContentPath.from( path ) ).
@@ -119,8 +114,21 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
             displayName( "My Content" ).
             modifier( UserKey.superUser() ).
             type( ContentTypeName.from( contentTypeName ) );
+
         if ( withPage )
         {
+            PageRegions pageRegions = PageRegions.newPageRegions().
+                add( Region.newRegion().name( "main-region" ).
+                    add( PartComponent.newPartComponent().name( ComponentName.from( "mypart" ) ).
+                        build() ).
+                    build() ).
+                build();
+
+            Page page = Page.newPage().
+                template( PageTemplateKey.from( "my-page" ) ).
+                regions( pageRegions ).
+                config( rootDataSet ).
+                build();
             content.page( page );
         }
         return content.build();

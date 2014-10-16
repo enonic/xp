@@ -9,6 +9,7 @@ import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.content.page.region.RegionPlaceableComponent;
 import com.enonic.wem.api.data.RootDataSet;
 
+@SuppressWarnings("UnusedDeclaration")
 public final class LayoutComponent
     extends AbstractDescriptorBasedPageComponent<LayoutDescriptorKey>
     implements RegionPlaceableComponent
@@ -47,6 +48,11 @@ public final class LayoutComponent
     public boolean hasRegions()
     {
         return regions != null;
+    }
+
+    public Region getRegion( final String name )
+    {
+        return this.regions.getRegion( name );
     }
 
     public LayoutRegions getRegions()

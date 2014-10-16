@@ -49,7 +49,7 @@ module api.form {
             // FormItemView not found - look inside FieldSet-s
             for (var i = 0; i < this.formItemViews.length; i++) {
                 var curr = this.formItemViews[i];
-                if (curr instanceof FieldSetView) {
+                if (api.ObjectHelper.iFrameSafeInstanceOf(curr, FieldSetView)) {
                     var view = (<FieldSetView>curr).getFormItemView(name);
                     if (view != null) {
                         return view;

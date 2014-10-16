@@ -11,11 +11,14 @@ module api {
 
         private newValue: any;
 
-        constructor(propertyName: string, oldValue: any, newValue: any) {
+        private source: any;
+
+        constructor(propertyName: string, oldValue: any, newValue: any, source?: any) {
 
             this.propertyName = propertyName;
             this.oldValue = oldValue;
             this.newValue = newValue;
+            this.source = source;
         }
 
         getPropertyName(): string {
@@ -28,6 +31,10 @@ module api {
 
         getNewValue(): any {
             return this.newValue;
+        }
+
+        getSource(): any {
+            return this.source
         }
     }
 }

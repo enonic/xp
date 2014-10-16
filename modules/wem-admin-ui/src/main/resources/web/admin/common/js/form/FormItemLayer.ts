@@ -44,7 +44,7 @@ module api.form {
         private doLayoutDataSet(dataSet: api.data.DataSet) {
 
             this.formItems.forEach((formItem: FormItem) => {
-                if (formItem instanceof FormItemSet) {
+                if (api.ObjectHelper.iFrameSafeInstanceOf(formItem, FormItemSet)) {
 
                     var formItemSet: FormItemSet = <FormItemSet>formItem;
                     var formItemSetView = new FormItemSetView(<FormItemSetViewConfig>{
@@ -57,7 +57,7 @@ module api.form {
                     this.parentEl.appendChild(formItemSetView);
                     this.formItemViews.push(formItemSetView);
                 }
-                else if (formItem instanceof FieldSet) {
+                else if (api.ObjectHelper.iFrameSafeInstanceOf(formItem, FieldSet)) {
 
                     var fieldSet: FieldSet = <FieldSet>formItem;
                     var fieldSetView = new FieldSetView(<FieldSetViewConfig>{
@@ -70,7 +70,7 @@ module api.form {
                     this.parentEl.appendChild(fieldSetView);
                     this.formItemViews.push(fieldSetView);
                 }
-                else if (formItem instanceof Input) {
+                else if (api.ObjectHelper.iFrameSafeInstanceOf(formItem, Input)) {
 
                     var input: Input = <Input>formItem;
 

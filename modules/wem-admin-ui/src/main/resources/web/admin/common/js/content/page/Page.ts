@@ -10,8 +10,6 @@ module api.content.page {
 
         private config: api.data.RootDataSet;
 
-        private propertyChangedListeners: {(event: api.PropertyChangedEvent):void}[] = [];
-
         constructor(builder: PageBuilder) {
             this.controller = builder.controller;
             this.template = builder.template;
@@ -27,25 +25,12 @@ module api.content.page {
             return this.controller;
         }
 
-        setController(value: DescriptorKey) {
-            var oldValue = this.controller;
-            this.controller = value;
-            this.notifyPropertyChanged("controller", oldValue, value);
-        }
-
         hasTemplate(): boolean {
             return !!this.template;
         }
 
         getTemplate(): PageTemplateKey {
             return this.template;
-        }
-
-        setTemplate(value: PageTemplateKey) {
-            var oldValue = this.template;
-            this.template = value;
-            this.notifyPropertyChanged("template" +
-                                       "", oldValue, value);
         }
 
         hasRegions(): boolean {
@@ -56,53 +41,12 @@ module api.content.page {
             return this.regions;
         }
 
-        setRegions(value: PageRegions) {
-            var oldValue = this.regions;
-            this.regions = value;
-            this.notifyPropertyChanged("regions", oldValue, value);
-        }
-
-        /**
-         * Keeps existing regions (including components) if they are listed in given regionDescriptors.
-         * Removes others and adds those missing.
-         * @param regionDescriptors
-         */
-        changeRegionsTo(regionDescriptors: region.RegionDescriptor[]) {
-
-            // Remove regions not existing in regionDescriptors
-            var regionsToRemove: region.Region[] = this.regions.getRegions().
-                filter((region: region.Region, index: number) => {
-                    return !regionDescriptors.
-                        some((regionDescriptor: region.RegionDescriptor) => {
-                            return regionDescriptor.getName() == region.getName();
-                        });
-                });
-            this.regions.removeRegions(regionsToRemove);
-
-            // Add missing regions
-            regionDescriptors.forEach((regionDescriptor: region.RegionDescriptor) => {
-                var region = this.regions.getRegionByName(regionDescriptor.getName());
-                if (!region) {
-                    region = new api.content.page.region.RegionBuilder().
-                        setName(regionDescriptor.getName()).
-                        build();
-                    this.regions.addRegion(region);
-                }
-            });
-        }
-
         hasConfig(): boolean {
             return this.config != null;
         }
 
         getConfig(): api.data.RootDataSet {
             return this.config;
-        }
-
-        setConfig(value: api.data.RootDataSet) {
-            var oldValue = this.config;
-            this.config = value;
-            this.notifyPropertyChanged("config", oldValue, value);
         }
 
         equals(o: api.Equitable): boolean {
@@ -132,24 +76,6 @@ module api.content.page {
         clone(): Page {
 
             return new PageBuilder(this).build();
-        }
-
-        onPropertyChanged(listener: (event: api.PropertyChangedEvent)=>void) {
-            this.propertyChangedListeners.push(listener);
-        }
-
-        unPropertyChanged(listener: (event: api.PropertyChangedEvent)=>void) {
-            this.propertyChangedListeners =
-            this.propertyChangedListeners.filter((curr: (event: api.PropertyChangedEvent)=>void) => {
-                return listener != curr;
-            });
-        }
-
-        private notifyPropertyChanged(property: string, oldValue: any, newValue: any) {
-            var event = new api.PropertyChangedEvent(property, oldValue, newValue);
-            this.propertyChangedListeners.forEach((listener: (event: api.PropertyChangedEvent)=>void) => {
-                listener(event);
-            })
         }
     }
 

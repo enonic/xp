@@ -166,7 +166,7 @@ module api.form {
             if (formItemView == null) {
                 return null;
             }
-            if (!(formItemView instanceof InputView)) {
+            if (!(api.ObjectHelper.iFrameSafeInstanceOf(formItemView, InputView))) {
                 throw new Error("Found a FormItemView with name [" + name + "], but it was not an InputView");
             }
             return <InputView>formItemView;
@@ -178,7 +178,7 @@ module api.form {
             if (formItemView == null) {
                 return null;
             }
-            if (!(formItemView instanceof FormItemSetView)) {
+            if (!(api.ObjectHelper.iFrameSafeInstanceOf(formItemView, FormItemSetView))) {
                 throw new Error("Found a FormItemView with name [" + name + "], but it was not an FormItemSetView");
             }
             return <FormItemSetView>formItemView;
@@ -198,7 +198,7 @@ module api.form {
             // FormItemView not found - look inside FieldSet-s
             for (var i = 0; i < this.formItemViews.length; i++) {
                 var curr = this.formItemViews[i];
-                if (curr instanceof FieldSetView) {
+                if (api.ObjectHelper.iFrameSafeInstanceOf(curr, FieldSetView)) {
                     var view = (<FieldSetView>curr).getFormItemView(name);
                     if (view != null) {
                         return view;

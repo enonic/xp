@@ -46,4 +46,3 @@
 ///<reference path='PageComponentLoadedEvent.ts' />
 ///<reference path='Position.ts' />
 ///<reference path='TextComponentSetTextEvent.ts' />
-///<reference path='PageControllerSelectedEvent.ts' />

@@ -74,7 +74,7 @@ module api.app {
         }
 
         canRemovePanel(panel: api.ui.panel.Panel): boolean {
-            if (panel instanceof api.app.wizard.WizardPanel) {
+            if (api.ObjectHelper.iFrameSafeInstanceOf(panel, api.app.wizard.WizardPanel)) {
                 var wizardPanel: api.app.wizard.WizardPanel<any> = <api.app.wizard.WizardPanel<any>>panel;
                 return wizardPanel.canClose();
             }
@@ -85,7 +85,8 @@ module api.app {
             var actions = [];
             actions = actions.concat(this.appBar.getActions());
 
-            if (panel instanceof api.app.wizard.WizardPanel || panel instanceof api.app.browse.BrowsePanel) {
+            if (api.ObjectHelper.iFrameSafeInstanceOf(panel, api.app.wizard.WizardPanel) ||
+                api.ObjectHelper.iFrameSafeInstanceOf(panel, api.app.browse.BrowsePanel)) {
                 var actionContainer: api.ui.ActionContainer = <any>panel;
                 actions = actions.concat(actionContainer.getActions());
             }

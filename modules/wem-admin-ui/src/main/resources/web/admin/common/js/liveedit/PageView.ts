@@ -2,6 +2,7 @@ module api.liveedit {
 
     import Content = api.content.Content;
     import Page = api.content.page.Page;
+    import PageModel = api.content.page.PageModel;
     import Site = api.content.site.Site;
     import PageRegions = api.content.page.PageRegions;
     import PageComponent = api.content.page.PageComponent;
@@ -13,7 +14,7 @@ module api.liveedit {
 
         itemViewProducer: ItemViewIdProducer;
 
-        page: Page;
+        pageModel: PageModel;
 
         content: Content;
 
@@ -29,8 +30,8 @@ module api.liveedit {
             return this;
         }
 
-        setPage(value: Page): PageViewBuilder {
-            this.page = value;
+        setPage(pageModel: PageModel): PageViewBuilder {
+            this.pageModel = pageModel;
             return this;
         }
 
@@ -55,7 +56,7 @@ module api.liveedit {
 
         private content: Content;
 
-        private page: Page;
+        private pageModel: PageModel;
 
         private placeholder: PagePlaceholder;
 
@@ -83,7 +84,7 @@ module api.liveedit {
                 setContextMenuActions(this.createPageContextMenuActions()).
                 setContextMenuTitle(new PageViewContextMenuTitle(builder.content)));
             this.setContent(builder.content);
-            this.page = builder.page;
+            this.pageModel = builder.pageModel;
             this.parseItemViews();
 
             var arrayofItemViews = this.toItemViewArray();
@@ -104,11 +105,25 @@ module api.liveedit {
             this.refreshPlaceholder();
         }
 
+        getPageModel(): PageModel {
+            return this.pageModel;
+        }
+
         private refreshPlaceholder() {
-            if (!this.page.hasController() && !this.page.hasTemplate()) {
+            if (this.conditionedForEmpty()) {
                 this.appendChild(this.placeholder);
                 this.placeholder.select();
                 this.markAsEmpty();
+            }
+        }
+
+        conditionedForEmpty(): boolean {
+
+            if (this.content.isPageTemplate()) {
+                return !this.pageModel.hasController();
+            }
+            else {
+                return !this.pageModel.hasTemplate() && !this.pageModel.hasDefaultTemplate();
             }
         }
 
@@ -277,7 +292,7 @@ module api.liveedit {
 
         private doParseItemViews(parentElement?: api.dom.Element) {
 
-            var regions: Region[] = this.page.getRegions().getRegions();
+            var regions: Region[] = this.pageModel.getRegions().getRegions();
             var children = parentElement ? parentElement.getChildren() : this.getChildren();
             var regionIndex = 0;
             children.forEach((element: api.dom.Element) => {

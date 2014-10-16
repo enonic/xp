@@ -11,7 +11,7 @@ module api.form {
         }
 
         setParent(parent: FormItem) {
-            if (!(parent instanceof FormItemSet || parent instanceof FieldSet)) {
+            if (!(api.ObjectHelper.iFrameSafeInstanceOf(parent, FormItemSet) || api.ObjectHelper.iFrameSafeInstanceOf(parent, FieldSet))) {
                 throw new Error("A parent FormItem must either be a FormItemSet or a FieldSet");
             }
 
@@ -57,13 +57,13 @@ module api.form {
 
         public toFormItemJson(): api.form.json.FormItemTypeWrapperJson {
 
-            if (this instanceof Input) {
+            if (api.ObjectHelper.iFrameSafeInstanceOf(this, Input)) {
                 return (<Input>this).toInputJson();
             }
-            else if (this instanceof FormItemSet) {
+            else if (api.ObjectHelper.iFrameSafeInstanceOf(this, FormItemSet)) {
                 return (<FormItemSet>this).toFormItemSetJson();
             }
-            else if (this instanceof Layout) {
+            else if (api.ObjectHelper.iFrameSafeInstanceOf(this, Layout)) {
                 return (<Layout>this).toLayoutJson();
             }
             else {
