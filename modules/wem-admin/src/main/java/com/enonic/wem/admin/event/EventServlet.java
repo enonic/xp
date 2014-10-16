@@ -6,49 +6,77 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.jetty.websocket.api.UpgradeRequest;
 import org.eclipse.jetty.websocket.api.UpgradeResponse;
+import org.eclipse.jetty.websocket.api.WebSocketBehavior;
+import org.eclipse.jetty.websocket.api.WebSocketPolicy;
+import org.eclipse.jetty.websocket.server.WebSocketServerFactory;
 import org.eclipse.jetty.websocket.servlet.WebSocketCreator;
-import org.eclipse.jetty.websocket.servlet.WebSocketServlet;
 import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class EventServlet
-    extends WebSocketServlet
+    extends HttpServlet
     implements WebSocketCreator, WebSocketManager
 {
-
     private final static Logger LOG = LoggerFactory.getLogger( EventServlet.class );
 
     private static final String PROTOCOL = "text";
 
+    private WebSocketServletFactory factory;
+
     private final Set<EventWebSocket> sockets = new CopyOnWriteArraySet<>();
 
-    @Override
+    public void destroy()
+    {
+        this.factory.cleanup();
+    }
+
     public void init()
         throws ServletException
     {
-        final ClassLoader newLoader = WebSocketServlet.class.getClassLoader();
-        final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
-
         try
         {
-            Thread.currentThread().setContextClassLoader( newLoader );
-            super.init();
+            final WebSocketPolicy webSocketPolicy = new WebSocketPolicy( WebSocketBehavior.SERVER );
+            final WebSocketServletFactory baseFactory = new WebSocketServerFactory();
+            this.factory = baseFactory.createFactory( webSocketPolicy );
+            this.configure( this.factory );
+            this.factory.init();
         }
-        finally
+        catch ( Exception e )
         {
-            Thread.currentThread().setContextClassLoader( oldLoader );
+            throw new ServletException( e );
         }
     }
 
-    @Override
-    public void configure( final WebSocketServletFactory factory )
+    private void configure( final WebSocketServletFactory factory )
     {
         factory.getPolicy().setIdleTimeout( TimeUnit.MINUTES.toMillis( 1 ) );
         factory.setCreator( this );
+    }
+
+    protected void service( HttpServletRequest request, HttpServletResponse response )
+        throws ServletException, IOException
+    {
+        if ( this.factory.isUpgradeRequest( request, response ) )
+        {
+            if ( this.factory.acceptWebSocket( request, response ) )
+            {
+                return;
+            }
+
+            if ( response.isCommitted() )
+            {
+                return;
+            }
+        }
+
+        super.service( request, response );
     }
 
     @Override
