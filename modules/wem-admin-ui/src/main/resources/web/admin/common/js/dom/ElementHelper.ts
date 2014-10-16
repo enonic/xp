@@ -149,6 +149,15 @@ module api.dom {
             return this.el.className;
         }
 
+        setTitle(value:string): ElementHelper {
+            this.el.title = value;
+            return this;
+        }
+
+        getTitle(): string {
+            return this.el.title;
+        }
+
         hasClass(clsName: string): boolean {
             api.util.assert(!api.util.StringHelper.isEmpty(clsName), 'Class name cannot be empty');
             // spaces are not allowed
