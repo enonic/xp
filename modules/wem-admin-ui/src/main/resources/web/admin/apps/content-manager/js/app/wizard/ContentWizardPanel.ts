@@ -311,6 +311,7 @@ module app.wizard {
                 if (viewedContent.equals(persistedContent)) {
 
                     if (this.liveFormPanel) {
+                        this.liveFormPanel.setContent(persistedContent);
                         this.liveFormPanel.loadPage();
                     }
                 }
@@ -420,11 +421,13 @@ module app.wizard {
 
         private doLayoutPage(content: Content) {
 
+            this.liveFormPanel.setContent(content);
+
             if (content.isPage()) {
                 if (content.getPage().hasTemplate()) {
                     new GetPageTemplateByKeyRequest(content.getPage().getTemplate()).
                         sendAndParse().then((pageTemplate: PageTemplate) => {
-                            this.liveFormPanel.layout(content, pageTemplate, null);
+                            this.liveFormPanel.layout(pageTemplate, null);
                         }).catch((reason: any) => {
                             api.DefaultErrorHandler.handle(reason);
                         }).done();
@@ -432,14 +435,14 @@ module app.wizard {
                 else {
                     new GetPageDescriptorByKeyRequest(content.getPage().getController()).
                         sendAndParse().then((pageDescriptor: PageDescriptor) => {
-                            this.liveFormPanel.layout(content, null, pageDescriptor);
+                            this.liveFormPanel.layout(null, pageDescriptor);
                         }).catch((reason: any) => {
                             api.DefaultErrorHandler.handle(reason);
                         }).done();
                 }
             }
             else {
-                this.liveFormPanel.layout(content, null, null);
+                this.liveFormPanel.layout(null, null);
             }
         }
 

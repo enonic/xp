@@ -193,15 +193,18 @@ module app.wizard.page {
             return this.pageModel.getPage();
         }
 
-        layout(content: Content, pageTemplate: PageTemplate, pageDescriptor: PageDescriptor) {
+        setContent(content: Content) {
             api.util.assertNotNull(content, "content is required");
-
             this.content = content;
+        }
+
+        layout(pageTemplate: PageTemplate, pageDescriptor: PageDescriptor) {
+            api.util.assertNotNull(this.content, "content is not set");
 
             if (!this.pageSkipReload) {
 
                 if (!this.pageModel) {
-                    this.pageModel = new PageModel(content);
+                    this.pageModel = new PageModel(this.content);
                     this.pageModel.onPropertyChanged((event: api.PropertyChangedEvent) => {
                         if (event.getPropertyName() == "controller" && this !== event.getSource()) {
                             this.saveAndReloadPage();
