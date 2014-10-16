@@ -80,7 +80,7 @@ module api.app.browse {
                     var changedNodes = event.getData();
                     for (var i = 0; i < changedNodes.length; i++) {
                         for (var j = 0; j < selectedNodes.length; j++) {
-                            if (changedNodes[i].getId() == selectedNodes[j].getId()) {
+                            if (changedNodes[i].getDataId() == selectedNodes[j].getDataId()) {
                                 // one of the selected nodes was updated, reflect this in the item panel
                                 var browseItems: api.app.browse.BrowseItem<M>[] = this.treeNodesToBrowseItems(changedNodes);
                                 this.browseItemPanel.setItems(browseItems);

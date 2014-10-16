@@ -4,6 +4,8 @@ module api.ui.treegrid {
 
         private id: string;
 
+        private dataId: string;
+
         private data: DATA;
 
         private expanded: boolean;
@@ -19,10 +21,8 @@ module api.ui.treegrid {
         private children: TreeNode<DATA>[];
 
         constructor(builder: TreeNodeBuilder<DATA>) {
-
-            // The id's should not repeat. make shore that empty id's will be set to unique.
-            this.id = builder.getId() || Math.random().toString(36).substring(2);
-
+            this.id = Math.random().toString(36).substring(2);
+            this.dataId = builder.getDataId();
             this.data = builder.getData();
             this.parent = builder.getParent();
             this.setChildren(builder.getChildren());
@@ -41,6 +41,10 @@ module api.ui.treegrid {
 
         hasData(): boolean {
             return !!this.data;
+        }
+
+        getDataId(): string {
+            return this.dataId;
         }
 
         isExpanded(): boolean {
@@ -170,14 +174,14 @@ module api.ui.treegrid {
             return list;
         }
 
-        findNode(id: string): TreeNode<DATA> {
+        findNode(dataId: string): TreeNode<DATA> {
 
-            if (this.hasData() && this.getId() === id) {
+            if (this.hasData() && this.getDataId() === dataId) {
                 return this;
             }
 
             for (var i = 0; i < this.children.length; i++) {
-                var child = this.children[i].findNode(id);
+                var child = this.children[i].findNode(dataId);
                 if (child) {
                     return child;
                 }
@@ -204,7 +208,7 @@ module api.ui.treegrid {
                 var relatives = this.getRoot().getChildren();
                 // check if duplicate is already in root
                 for (var i = 0; i < relatives.length; i++) {
-                    if (relatives[i].getData() && relatives[i].getId() === this.getId()) {
+                    if (relatives[i].getData() && relatives[i].getDataId() === this.getDataId()) {
                         duplicated = true;
                         break;
                     }

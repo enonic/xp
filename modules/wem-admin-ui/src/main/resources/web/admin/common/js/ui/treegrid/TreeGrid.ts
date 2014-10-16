@@ -467,7 +467,7 @@ module api.ui.treegrid {
             var oldSelected = this.grid.getSelectedRows(),
                 newSelected = [];
             for (var i = 0; i < oldSelected.length; i++) {
-                if (dataId !== this.gridData.getItem(oldSelected[i]).getId()) {
+                if (dataId !== this.gridData.getItem(oldSelected[i]).getDataId()) {
                     newSelected.push(oldSelected[i]);
                 }
             }
@@ -589,7 +589,7 @@ module api.ui.treegrid {
                     deleted.push(node);
                     parent.setMaxChildren(parent.getMaxChildren() - 1);
                     updated.filter((el) => {
-                        return el.getId() !== node.getId();
+                        return el.getDataId() !== node.getDataId();
                     });
                 }
             });
