@@ -6,6 +6,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.page.AbstractRegions;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageComponent;
+import com.enonic.wem.api.content.page.layout.LayoutComponent;
 import com.enonic.wem.api.content.page.layout.LayoutRegions;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.xml.DomBuilder;
@@ -27,10 +28,14 @@ final class ContextDocBuilder
 
         if ( context.getComponent() != null )
         {
-            final LayoutRegions layoutRegions = context.getLayoutRegions();
-            if ( layoutRegions != null )
+            if ( context.getComponent() instanceof LayoutComponent )
             {
-                createRegionElements( builder, layoutRegions );
+                final LayoutComponent layoutComponent = (LayoutComponent) context.getComponent();
+                final LayoutRegions layoutRegions = layoutComponent.getRegions();
+                if ( layoutRegions != null )
+                {
+                    createRegionElements( builder, layoutRegions );
+                }
             }
         }
         else

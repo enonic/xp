@@ -10,7 +10,14 @@ module api.content {
 
         private refString: string;
 
-        public static fromString(path: string) {
+        public static fromParent(parent: ContentPath, name: string): ContentPath {
+
+            var elements = parent.elements;
+            elements.push(name);
+            return new ContentPath(elements);
+        }
+
+        public static fromString(path: string): ContentPath {
 
             var elements: string[];
 
@@ -86,6 +93,21 @@ module api.content {
 
         isChildOf(path: ContentPath): boolean {
             return (this.refString.indexOf(path.toString()) === 0) && (this.getLevel() === path.getLevel() + 1);
+        }
+
+        prettifyUnnamedPathElements(): ContentPath {
+
+            var prettyElements: string[] = [];
+            this.elements.forEach((element: string) => {
+                if (ContentName.fromString(element).isUnnamed()) {
+                    prettyElements.push(ContentUnnamed.PRETTY_UNNAMED);
+                }
+                else {
+                    prettyElements.push(element);
+                }
+            });
+
+            return new ContentPath(prettyElements);
         }
 
         toString() {

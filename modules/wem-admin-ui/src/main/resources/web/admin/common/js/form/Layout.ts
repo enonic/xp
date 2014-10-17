@@ -8,7 +8,7 @@ module api.form {
 
         public toLayoutJson(): api.form.json.FormItemTypeWrapperJson {
 
-            if (this instanceof FieldSet) {
+            if (api.ObjectHelper.iFrameSafeInstanceOf(this, FieldSet)) {
                 return (<FieldSet>this).toFieldSetJson();
             }
             else {
@@ -18,7 +18,7 @@ module api.form {
 
         equals(o: api.Equitable): boolean {
 
-            if (!(o instanceof Layout)) {
+            if (!(api.ObjectHelper.iFrameSafeInstanceOf(o, Layout))) {
                 return false;
             }
 

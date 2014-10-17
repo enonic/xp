@@ -1,19 +1,25 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <features name="wem-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.2.0">
 
+  <feature name="wem-base" version="${project.version}" description="Servlet feature">
+    <bundle start-level="40">mvn:org.apache.geronimo.specs/geronimo-servlet_3.0_spec/1.0</bundle>
+    <bundle start-level="40">mvn:org.apache.geronimo.specs/geronimo-annotation_1.1_spec/1.0.1</bundle>
+    <bundle start-level="40">mvn:org.ops4j.pax.web/pax-web-jetty-bundle/4.0.0</bundle>
+    <bundle start-level="40">mvn:org.ops4j.pax.web/pax-web-extender-whiteboard/4.0.0</bundle>
+  </feature>
+
   <feature name="wem" version="${project.version}" description="Enonic WEM Feature">
-
-    <bundle>mvn:com.enonic.wem/wem-api/${project.version}</bundle>
-    <bundle>mvn:com.enonic.wem/wem-core/${project.version}</bundle>
-    <bundle>mvn:com.enonic.wem/wem-script/${project.version}</bundle>
-    <bundle>mvn:com.enonic.wem/wem-servlet/${project.version}</bundle>
-    <bundle>mvn:com.enonic.wem/wem-portal/${project.version}</bundle>
-    <bundle>mvn:com.enonic.wem/wem-thymeleaf/${project.version}</bundle>
-    <bundle>mvn:com.enonic.wem/wem-mustache/${project.version}</bundle>
-    <bundle>mvn:com.enonic.wem/wem-xslt/${project.version}</bundle>
-    <bundle>mvn:com.enonic.wem/wem-admin/${project.version}</bundle>
-    <bundle>mvn:com.enonic.wem/wem-admin-ui/${project.version}</bundle>
-
+    <feature>wem-base</feature>
+    <bundle start-level="50">mvn:com.enonic.wem/wem-api/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.wem/wem-core/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.wem/wem-script/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.wem/wem-servlet/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.wem/wem-portal/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.wem/wem-thymeleaf/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.wem/wem-mustache/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.wem/wem-xslt/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.wem/wem-admin/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.wem/wem-admin-ui/${project.version}</bundle>
   </feature>
 
 </features>

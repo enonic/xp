@@ -13,8 +13,11 @@ import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.data.DataPath;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
+import com.enonic.wem.api.query.expr.FieldOrderExpr;
+import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.core.entity.Attachment;
 import com.enonic.wem.core.entity.Attachments;
 import com.enonic.wem.core.entity.Node;
@@ -59,6 +62,10 @@ public class NodeJsonSerializerTest
                 blobKey( new BlobKey( "1234" ) ).
                 mimeType( "mimetype" ).
                 build() ) ).
+            childOrder( ChildOrder.create().
+                add( FieldOrderExpr.create( "modifiedTime", OrderExpr.Direction.ASC ) ).
+                add( FieldOrderExpr.create( "displayName", OrderExpr.Direction.DESC ) ).
+                build() ).
             build();
 
         final String serializedNode = NodeJsonSerializer.toString( node );

@@ -8,8 +8,8 @@ import java.util.List;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
-import org.osgi.framework.BundleListener;
 import org.osgi.framework.Constants;
+import org.osgi.framework.SynchronousBundleListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +25,7 @@ import com.enonic.wem.api.module.ModuleUpdatedEvent;
 import com.enonic.wem.api.module.ModuleVersion;
 
 public final class ModuleLoader
-    implements BundleListener
+    implements SynchronousBundleListener
 {
     private static final String MODULE_XML = "/module.xml";
 
@@ -56,6 +56,11 @@ public final class ModuleLoader
         for ( final Bundle bundle : this.context.getBundles() )
         {
             addBundle( bundle );
+
+            if ( bundle.getState() == Bundle.ACTIVE )
+            {
+                publishModuleChangeEvent( new BundleEvent( BundleEvent.STARTED, bundle ) );
+            }
         }
     }
 
@@ -68,7 +73,6 @@ public final class ModuleLoader
     public void bundleChanged( final BundleEvent event )
     {
         final Bundle bundle = event.getBundle();
-        final ModuleKey moduleKey = ModuleKey.from( bundle );
         switch ( event.getType() )
         {
             case BundleEvent.UNINSTALLED:
@@ -81,6 +85,12 @@ public final class ModuleLoader
                 break;
         }
 
+        publishModuleChangeEvent( event );
+    }
+
+    private void publishModuleChangeEvent( final BundleEvent event )
+    {
+        final ModuleKey moduleKey = ModuleKey.from( event.getBundle() );
         final ModuleEventType state = ModuleEventType.fromBundleEvent( event );
         this.eventPublisher.publish( new ModuleUpdatedEvent( moduleKey, state ) );
     }

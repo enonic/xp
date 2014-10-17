@@ -18,13 +18,13 @@ import com.enonic.wem.core.elasticsearch.document.StoreDocumentItemFactory;
 import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.repository.IndexNameResolver;
 
-import static com.enonic.wem.core.entity.index.IndexPaths.CREATED_TIME_PROPERTY;
-import static com.enonic.wem.core.entity.index.IndexPaths.CREATOR_PROPERTY_PATH;
-import static com.enonic.wem.core.entity.index.IndexPaths.MODIFIED_TIME_PROPERTY_PATH;
-import static com.enonic.wem.core.entity.index.IndexPaths.MODIFIER_PROPERTY_PATH;
-import static com.enonic.wem.core.entity.index.IndexPaths.NAME_PROPERTY;
-import static com.enonic.wem.core.entity.index.IndexPaths.PARENT_PROPERTY_PATH;
-import static com.enonic.wem.core.entity.index.IndexPaths.PATH_PROPERTY_PATH;
+import static com.enonic.wem.api.index.IndexPaths.CREATED_TIME_PROPERTY;
+import static com.enonic.wem.api.index.IndexPaths.CREATOR_PROPERTY_PATH;
+import static com.enonic.wem.api.index.IndexPaths.MODIFIED_TIME_PROPERTY_PATH;
+import static com.enonic.wem.api.index.IndexPaths.MODIFIER_PROPERTY_PATH;
+import static com.enonic.wem.api.index.IndexPaths.NAME_PROPERTY;
+import static com.enonic.wem.api.index.IndexPaths.PARENT_PROPERTY_PATH;
+import static com.enonic.wem.api.index.IndexPaths.PATH_PROPERTY_PATH;
 
 
 class NodeIndexDocumentFactory

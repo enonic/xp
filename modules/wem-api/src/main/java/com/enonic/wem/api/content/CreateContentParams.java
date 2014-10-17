@@ -1,20 +1,21 @@
 package com.enonic.wem.api.content;
 
 
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.data.ContentData;
-import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.form.Form;
+import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
 public final class CreateContentParams
@@ -40,6 +41,8 @@ public final class CreateContentParams
     private boolean embed;
 
     private Map<String, Attachment> attachments = Maps.newHashMap();
+
+    private Set<OrderExpr> orderExpressions = Sets.newLinkedHashSet();
 
     public CreateContentParams contentType( final ContentTypeName value )
     {
@@ -110,6 +113,12 @@ public final class CreateContentParams
     public CreateContentParams draft( final boolean value )
     {
         this.draft = value;
+        return this;
+    }
+
+    public CreateContentParams addOrderExpression( final OrderExpr orderExpression )
+    {
+        this.orderExpressions.add( orderExpression );
         return this;
     }
 
@@ -192,6 +201,11 @@ public final class CreateContentParams
     public Attachment getAttachment( final String attachmentName )
     {
         return attachments.get( attachmentName );
+    }
+
+    public Set<OrderExpr> getOrderExpressions()
+    {
+        return orderExpressions;
     }
 
     public void validate()

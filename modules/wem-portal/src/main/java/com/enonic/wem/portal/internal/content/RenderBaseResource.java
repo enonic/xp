@@ -129,6 +129,11 @@ public abstract class RenderBaseResource
 
     protected PageTemplate getPageTemplate( final Page page )
     {
+        if ( page.getTemplate() == null )
+        {
+            throw notFound( "No template set for content" );
+        }
+
         final PageTemplate pageTemplate = pageTemplateService.getByKey( page.getTemplate() );
         if ( pageTemplate == null )
         {

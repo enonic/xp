@@ -1,5 +1,6 @@
 module app.wizard.page.contextwindow.inspect {
 
+    import PropertyChangedEvent = api.PropertyChangedEvent;
     import ContentId = api.content.ContentId;
     import PageTemplateKey = api.content.page.PageTemplateKey;
     import PageTemplate = api.content.page.PageTemplate;
@@ -10,6 +11,7 @@ module app.wizard.page.contextwindow.inspect {
     import Dropdown = api.ui.selector.dropdown.Dropdown;
     import DropdownConfig = api.ui.selector.dropdown.DropdownConfig;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
+    import PageModel = api.content.page.PageModel;
 
     export interface PageTemplateSelectorConfig {
 
@@ -28,10 +30,6 @@ module app.wizard.page.contextwindow.inspect {
 
         private pageTemplateDropdown: Dropdown<PageTemplateOption>;
 
-        private pageTemplateChangedListeners: {(event: PageTemplateChangedEvent): void;}[] = [];
-
-        private pageTemplateToSelect: PageTemplateKey;
-
         constructor(config: PageTemplateSelectorConfig) {
             super("page-template-selector-form");
             this.contentType = config.contentType;
@@ -44,55 +42,52 @@ module app.wizard.page.contextwindow.inspect {
             var fieldSet = new api.ui.form.Fieldset();
             fieldSet.add(new api.ui.form.FormItemBuilder(this.pageTemplateDropdown).setLabel("Page Template").build());
             config.form.add(fieldSet);
+        }
+
+        setModel(pageModel: PageModel) {
 
             var pageTemplateOptions = new PageTemplateOptions(this.siteId, this.contentType);
             pageTemplateOptions.getOptions().
-                done((options: Option<PageTemplateOption>[]) => {
+                then((options: Option<PageTemplateOption>[]) => {
 
                     options.forEach((option: Option<PageTemplateOption>) => {
                         this.pageTemplateDropdown.addOption(option);
                     });
-                });
+
+                    if (pageModel.hasTemplate()) {
+                        this.selectTemplate(pageModel.getTemplateKey());
+                    }
+                    else {
+                        this.pageTemplateDropdown.selectOption(PageTemplateOptions.getDefault(), true);
+                    }
 
 
-            this.pageTemplateDropdown.onOptionSelected((event: OptionSelectedEvent<PageTemplateOption>) => {
+                    this.pageTemplateDropdown.onOptionSelected((event: OptionSelectedEvent<PageTemplateOption>) => {
+                        var pageTemplate = event.getOption().displayValue.getPageTemplate();
+                        pageModel.setTemplate(pageTemplate, null, this);
+                    });
 
-                var pageTemplate = event.getOption().displayValue.getPageTemplate();
-                var pageTemplateKey = pageTemplate ? pageTemplate.getKey() : null;
-                var selectedValueChanged: boolean = !((this.pageTemplateToSelect === null && pageTemplateKey === null) ||
-                                                      (this.pageTemplateToSelect && this.pageTemplateToSelect.equals(pageTemplateKey)));
-                if (selectedValueChanged) {
-                    this.pageTemplateToSelect = pageTemplateKey;
-                    this.notifyPageTemplateChanged(new PageTemplateChangedEvent(pageTemplate));
-                }
-            });
+                    pageModel.onPropertyChanged((event: PropertyChangedEvent) => {
+                        if (event.getPropertyName() == "template" && this !== event.getSource()) {
+                            var pageTemplateKey = <PageTemplateKey>event.getNewValue();
+                            if (pageTemplateKey) {
+                                this.selectTemplate(pageTemplateKey);
+                            } else {
+                                this.pageTemplateDropdown.selectOption(PageTemplateOptions.getDefault());
+                            }
+                        }
+                    });
+
+                }).catch((reason: any) => {
+                    api.DefaultErrorHandler.handle(reason);
+                }).done();
         }
 
-        setPageTemplate(selectedPageTemplate: PageTemplateKey): void {
-            this.pageTemplateToSelect = selectedPageTemplate;
-
-            if (this.pageTemplateToSelect) {
-                var optionToSelect = this.pageTemplateDropdown.getOptionByValue(this.pageTemplateToSelect.toString());
-                this.pageTemplateDropdown.selectOption(optionToSelect);
-            } else {
-                this.pageTemplateDropdown.selectOption(PageTemplateOptions.getDefault());
+        private selectTemplate(template: PageTemplateKey) {
+            var optionToSelect = this.pageTemplateDropdown.getOptionByValue(template.toString());
+            if (optionToSelect) {
+                this.pageTemplateDropdown.selectOption(optionToSelect, true);
             }
-        }
-
-        onPageTemplateChanged(listener: {(event: PageTemplateChangedEvent): void;}) {
-            this.pageTemplateChangedListeners.push(listener);
-        }
-
-        unPageTemplateChanged(listener: {(event: PageTemplateChangedEvent): void;}) {
-            this.pageTemplateChangedListeners = this.pageTemplateChangedListeners.filter(function (curr) {
-                return curr != listener;
-            });
-        }
-
-        private notifyPageTemplateChanged(event: PageTemplateChangedEvent) {
-            this.pageTemplateChangedListeners.forEach((listener) => {
-                listener(event);
-            });
         }
     }
 }

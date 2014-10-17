@@ -83,7 +83,7 @@ module api.form {
                 this.refresh();
                 wemjq(this.occurrenceViewsContainer.getHTMLElement()).sortable("refresh");
 
-                if (event.getOccurrenceView() instanceof FormItemSetOccurrenceView) {
+                if (api.ObjectHelper.iFrameSafeInstanceOf(event.getOccurrenceView(), FormItemSetOccurrenceView)) {
                     var addedFormItemSetOccurrenceView = <FormItemSetOccurrenceView>event.getOccurrenceView();
                     addedFormItemSetOccurrenceView.onValidityChanged((event: ValidityChangedEvent) => {
                         this.handleFormItemSetOccurrenceViewValidityChanged(event);
@@ -97,7 +97,7 @@ module api.form {
 
                 this.refresh();
 
-                if (event.getOccurrenceView() instanceof FormItemSetOccurrenceView) {
+                if (api.ObjectHelper.iFrameSafeInstanceOf(event.getOccurrenceView(), FormItemSetOccurrenceView)) {
                     // force validate, since FormItemSet might have become invalid
                     this.validate(false);
                 }

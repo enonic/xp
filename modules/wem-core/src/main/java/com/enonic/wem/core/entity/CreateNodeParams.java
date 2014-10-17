@@ -1,63 +1,40 @@
 package com.enonic.wem.core.entity;
 
 import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.index.IndexConfigDocument;
 
 public class CreateNodeParams
 {
-    private NodePath parent;
+    private final NodePath parent;
 
-    private String name;
+    private final String name;
 
-    private RootDataSet data;
+    private final RootDataSet data;
 
-    private Attachments attachments;
+    private final Attachments attachments;
 
-    private IndexConfigDocument indexConfigDocument;
+    private final IndexConfigDocument indexConfigDocument;
 
-    private boolean embed;
+    private final ChildOrder childOrder;
 
-    public CreateNodeParams parent( final NodePath value )
+    private final boolean embed;
+
+    private CreateNodeParams( Builder builder )
     {
-        this.parent = value;
-        return this;
+        parent = builder.parent;
+        name = builder.name;
+        data = builder.data;
+        attachments = builder.attachments;
+        indexConfigDocument = builder.indexConfigDocument;
+        embed = builder.embed;
+        this.childOrder = builder.childOrder;
+
     }
 
-    public CreateNodeParams parent( final String value )
+    public static Builder create()
     {
-        this.parent = new NodePath( value );
-        return this;
-    }
-
-    public CreateNodeParams name( final String value )
-    {
-        this.name = value;
-        return this;
-    }
-
-    public CreateNodeParams data( final RootDataSet value )
-    {
-        this.data = value;
-        return this;
-    }
-
-    public CreateNodeParams attachments( final Attachments value )
-    {
-        this.attachments = value;
-        return this;
-    }
-
-    public CreateNodeParams indexConfigDocument( final IndexConfigDocument indexConfigDocument )
-    {
-        this.indexConfigDocument = indexConfigDocument;
-        return this;
-    }
-
-
-    public CreateNodeParams embed( final boolean embed )
-    {
-        this.embed = embed;
-        return this;
+        return new Builder();
     }
 
     public String getName()
@@ -85,4 +62,76 @@ public class CreateNodeParams
         return indexConfigDocument;
     }
 
+    public ChildOrder getChildOrder()
+    {
+        return childOrder;
+    }
+
+    public static final class Builder
+    {
+        private NodePath parent;
+
+        private String name;
+
+        private RootDataSet data;
+
+        private Attachments attachments;
+
+        private IndexConfigDocument indexConfigDocument;
+
+        private ChildOrder childOrder;
+
+        private boolean embed;
+
+        private Builder()
+        {
+        }
+
+        public Builder parent( final NodePath parent )
+        {
+            this.parent = parent;
+            return this;
+        }
+
+        public Builder name( final String name )
+        {
+            this.name = name;
+            return this;
+        }
+
+        public Builder data( final RootDataSet data )
+        {
+            this.data = data;
+            return this;
+        }
+
+        public Builder attachments( final Attachments attachments )
+        {
+            this.attachments = attachments;
+            return this;
+        }
+
+        public Builder indexConfigDocument( final IndexConfigDocument indexConfigDocument )
+        {
+            this.indexConfigDocument = indexConfigDocument;
+            return this;
+        }
+
+        public Builder embed( boolean embed )
+        {
+            this.embed = embed;
+            return this;
+        }
+
+        public Builder childOrder( final ChildOrder childOrder )
+        {
+            this.childOrder = childOrder;
+            return this;
+        }
+
+        public CreateNodeParams build()
+        {
+            return new CreateNodeParams( this );
+        }
+    }
 }

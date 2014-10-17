@@ -34,8 +34,6 @@ module LiveEdit {
 
         private pageView: PageView;
 
-        private page: Page;
-
         private highlighter: LiveEdit.ui.Highlighter;
 
         private shader: LiveEdit.ui.Shader;
@@ -58,11 +56,10 @@ module LiveEdit {
                 //el.setDraggable(false);
                 //});
 
-                this.page = event.getPage();
                 this.pageView = new PageViewBuilder().
                     setSite(event.getSite()).
                     setItemViewProducer(new ItemViewIdProducer()).
-                    setPage(event.getPage()).
+                    setPage(event.getPageModel()).
                     setContent(event.getContent()).
                     setElement(body).
                     build();

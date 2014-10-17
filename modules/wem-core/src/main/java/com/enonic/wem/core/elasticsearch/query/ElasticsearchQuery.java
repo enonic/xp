@@ -13,7 +13,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.core.entity.index.IndexPaths;
+import com.enonic.wem.api.index.IndexPaths;
 
 public class ElasticsearchQuery
 {
@@ -119,18 +119,12 @@ public class ElasticsearchQuery
 
         if ( this.aggregations != null && this.aggregations.size() > 0 )
         {
-            for ( final AggregationBuilder agg : aggregations )
-            {
-                builder.aggregation( agg );
-            }
+            aggregations.forEach( builder::aggregation );
         }
 
         if ( this.getFacetBuilders() != null && !this.getFacetBuilders().isEmpty() )
         {
-            for ( final FacetBuilder facetBuilder : this.getFacetBuilders() )
-            {
-                builder.facet( facetBuilder );
-            }
+            this.getFacetBuilders().forEach( builder::facet );
         }
 
         for ( final SortBuilder sortBuilder : this.getSortBuilders() )

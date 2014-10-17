@@ -1,10 +1,12 @@
 module app.wizard.page.contextwindow.inspect {
 
+    import PropertyChangedEvent = api.PropertyChangedEvent;
     import RootDataSet = api.data.RootDataSet;
     import FormContextBuilder = api.form.FormContextBuilder;
     import FormView = api.form.FormView;
     import Content = api.content.Content;
     import Page = api.content.page.Page;
+    import PageModel = api.content.page.PageModel;
     import Site = api.content.site.Site;
     import ContentTypeName = api.schema.content.ContentTypeName;
     import PageTemplate = api.content.page.PageTemplate;
@@ -14,6 +16,8 @@ module app.wizard.page.contextwindow.inspect {
     import PageController = api.content.page.inputtype.pagecontroller.PageController;
     import PageDescriptorDropdown = api.content.page.PageDescriptorDropdown;
     import GetPageDescriptorsByModulesRequest = api.content.page.GetPageDescriptorsByModulesRequest;
+    import GetPageDescriptorByKeyRequest = api.content.page.GetPageDescriptorByKeyRequest;
+    import GetPageTemplateByKeyRequest = api.content.page.GetPageTemplateByKeyRequest;
     import PageDescriptorsJson = api.content.page.PageDescriptorsJson;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
 
@@ -22,15 +26,15 @@ module app.wizard.page.contextwindow.inspect {
         site: Site;
 
         contentType:ContentTypeName;
+
+        pageModel:PageModel;
     }
 
     export class PageInspectionPanel extends BaseInspectionPanel {
 
         private site: Site;
 
-        private content: Content;
-
-        private page: Page;
+        private pageModel: PageModel;
 
         private pageTemplateSelector: PageTemplateSelector;
 
@@ -42,68 +46,100 @@ module app.wizard.page.contextwindow.inspect {
 
         private pageControllerDropdown: PageDescriptorDropdown;
 
-        private pageControllerChangedListeners: {(event: PageControllerChangedEvent): void;}[] = [];
-
         constructor(config: PageInspectionPanelConfig) {
             super();
             this.site = config.site;
-            this.configForm = null;
-            this.pageTemplateSelectorForm = this.buildPageTemplateForm(config);
-            this.pageTemplateSelectorForm.hide();
+
             this.pageControllerSelectorForm = this.buildPageControllerForm();
             this.pageControllerSelectorForm.hide();
+
+            this.pageTemplateSelectorForm = this.buildPageTemplateForm(config);
+            this.pageTemplateSelectorForm.hide();
+
             this.appendChild(this.pageControllerSelectorForm);
             this.appendChild(this.pageTemplateSelectorForm);
         }
 
-        private buildPageTemplateForm(config: PageInspectionPanelConfig): api.ui.form.Form {
-            var form = new api.ui.form.Form('form-view');
+        setModel(pageModel: PageModel) {
 
-            this.pageTemplateSelector = new PageTemplateSelector({
-                form: form,
-                contentType: config.contentType,
-                siteId: config.site.getContentId()});
+            this.pageModel = pageModel;
+            this.pageTemplateSelector.setModel(this.pageModel);
 
-            return form;
-        }
-
-        setPage(content: Content, pageDescriptor: PageDescriptor, page: Page) {
-
-            this.content = content;
-            this.page = page;
-
-            this.pageTemplateSelectorForm.hide();
-            this.pageControllerSelectorForm.hide();
-
-            if (api.ObjectHelper.iFrameSafeInstanceOf(content, PageTemplate)) {
-
-                this.pageControllerSelectorForm.show();
-                if (page.getController()) {
-                    var optionToSelect = this.pageControllerDropdown.getOptionByValue(page.getController().toString());
-                    if (optionToSelect) {
-                        this.pageControllerDropdown.selectOption(optionToSelect, true);
-                        this.refreshConfigForm(pageDescriptor, page.getConfig());
-                    }
+            if (this.pageModel.isPageTemplate()) {
+                if (this.pageModel.hasController()) {
+                    this.selectController(this.pageModel.getController());
+                    this.pageControllerSelectorForm.show();
+                }
+                else if (this.pageModel.hasTemplate()) {
+                    this.pageTemplateSelectorForm.show();
+                }
+                else {
+                    this.pageControllerSelectorForm.show();
                 }
             }
-            else if (page.getTemplate()) {
-
-                this.pageTemplateSelector.setPageTemplate(page.getTemplate());
-                this.pageTemplateSelectorForm.show();
-                this.refreshConfigForm(pageDescriptor, page.getConfig());
+            else {
+                if (this.pageModel.hasController()) {
+                    this.selectController(this.pageModel.getController());
+                    this.refreshConfigForm(this.pageModel.getController(), this.pageModel.getConfig());
+                    this.pageControllerSelectorForm.show();
+                }
+                else if (this.pageModel.hasTemplate() || this.pageModel.hasDefaultTemplate()) {
+                    this.pageTemplateSelectorForm.show();
+                }
+                else {
+                    this.pageControllerSelectorForm.show();
+                }
             }
 
-            this.page.onPropertyChanged((event: api.PropertyChangedEvent) => {
-                if (event.getPropertyName() == "controller") {
-                    var pageDescriptor: DescriptorKey = <DescriptorKey>event.getNewValue();
-                    if (pageDescriptor) {
-                        var optionToSelect = this.pageControllerDropdown.getOptionByValue(pageDescriptor.toString());
-                        if (optionToSelect) {
-                            this.pageControllerDropdown.selectOption(optionToSelect, true);
-                        }
+            this.pageModel.onPropertyChanged((event: PropertyChangedEvent) => {
+                if (event.getPropertyName() == "controller" && this !== event.getSource()) {
+
+                    this.pageControllerSelectorForm.show();
+
+                    var controller = this.pageModel.getController();
+                    this.selectController(controller);
+                }
+                else if (event.getPropertyName() == "template" && this !== event.getSource()) {
+
+                    this.pageTemplateSelectorForm.show();
+
+                    if (this.pageModel.hasTemplate()) {
+                        var controllerKey = this.pageModel.getTemplate().getController();
+                        new GetPageDescriptorByKeyRequest(controllerKey).sendAndParse().
+                            then((pageDescriptor: PageDescriptor) => {
+                                this.refreshConfigForm(pageDescriptor, this.pageModel.getConfig());
+                            }).catch((reason: any) => api.DefaultErrorHandler.handle(reason)).done();
                     }
                 }
             });
+        }
+
+        private selectController(controller: PageDescriptor) {
+
+            var controllerKey = controller ? controller.getKey() : null;
+            if (!controllerKey) {
+                // TODO: ??
+            }
+            else {
+                var optionToSelect = this.pageControllerDropdown.getOptionByValue(controllerKey.toString());
+                if (optionToSelect) {
+                    this.pageControllerDropdown.selectOption(optionToSelect, true);
+                }
+
+                this.refreshConfigForm(controller, this.pageModel.getConfig());
+            }
+        }
+
+        private buildPageTemplateForm(config: PageInspectionPanelConfig): api.ui.form.Form {
+
+            var form = new api.ui.form.Form('form-view');
+            this.pageTemplateSelector = new PageTemplateSelector({
+                form: form,
+                contentType: config.contentType,
+                siteId: config.site.getContentId()
+            });
+
+            return form;
         }
 
         private buildPageControllerForm(): api.ui.form.Form {
@@ -116,8 +152,10 @@ module app.wizard.page.contextwindow.inspect {
                 loader: loader
             });
             this.pageControllerDropdown.onOptionSelected((event: OptionSelectedEvent<PageDescriptor>) => {
-                this.notifyPageControllerChanged(new PageControllerChangedEvent(event.getOption().displayValue));
-                this.refreshConfigForm(event.getOption().displayValue, this.page.getConfig());
+                var pageDescriptor = event.getOption().displayValue;
+                this.pageModel.setController(pageDescriptor, this);
+
+                this.refreshConfigForm(pageDescriptor, this.pageModel.getConfig());
             });
 
             var form = new api.ui.form.Form('form-view');
@@ -139,30 +177,6 @@ module app.wizard.page.contextwindow.inspect {
 
             this.configForm = new FormView(new FormContextBuilder().build(), pageDescriptor.getConfig(), config);
             this.appendChild(this.configForm);
-        }
-
-        onPageControllerChanged(listener: {(event: PageControllerChangedEvent): void;}) {
-            this.pageControllerChangedListeners.push(listener);
-        }
-
-        unPageControllerChanged(listener: {(event: PageControllerChangedEvent): void;}) {
-            this.pageControllerChangedListeners = this.pageControllerChangedListeners.filter(function (curr) {
-                return curr != listener;
-            });
-        }
-
-        private notifyPageControllerChanged(event: PageControllerChangedEvent) {
-            this.pageControllerChangedListeners.forEach((listener) => {
-                listener(event);
-            });
-        }
-
-        onPageTemplateChanged(listener: {(event: PageTemplateChangedEvent): void;}) {
-            this.pageTemplateSelector.onPageTemplateChanged(listener);
-        }
-
-        unPageTemplateChanged(listener: {(event: PageTemplateChangedEvent): void;}) {
-            this.pageTemplateSelector.unPageTemplateChanged(listener);
         }
     }
 }

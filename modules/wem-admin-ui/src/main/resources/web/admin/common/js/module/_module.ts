@@ -17,3 +17,4 @@
 ///<reference path='UpdateModuleRequest.ts' />
 ///<reference path='ModuleUpdatedEvent.ts' />
 ///<reference path='ModuleCache.ts' />
+///<reference path='ModuleBasedName.ts' />

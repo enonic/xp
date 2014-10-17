@@ -132,7 +132,7 @@ module api.form {
                 inputTypeViewNotManagingAdd.onOccurrenceRemoved((event: api.form.OccurrenceRemovedEvent) => {
                     this.refresh();
 
-                    if (event.getOccurrenceView() instanceof api.form.inputtype.support.InputOccurrenceView) {
+                    if (api.ObjectHelper.iFrameSafeInstanceOf(event.getOccurrenceView(), api.form.inputtype.support.InputOccurrenceView)) {
                         // force validate, since InputView might have become invalid
                         this.validate(false);
                     }

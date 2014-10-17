@@ -17,6 +17,7 @@ import com.enonic.wem.api.data.DataPath;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.index.IndexConfig;
+import com.enonic.wem.api.index.IndexDocumentItemPath;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
 import com.enonic.wem.core.elasticsearch.document.AbstractStoreDocumentItem;
 import com.enonic.wem.core.elasticsearch.document.StoreDocument;
@@ -24,15 +25,14 @@ import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodeName;
 import com.enonic.wem.core.entity.NodePath;
-import com.enonic.wem.core.entity.index.IndexDocumentItemPath;
 import com.enonic.wem.core.index.IndexValueType;
 import com.enonic.wem.core.repository.IndexNameResolver;
 
+import static com.enonic.wem.api.index.IndexPaths.CREATED_TIME_PROPERTY;
+import static com.enonic.wem.api.index.IndexPaths.CREATOR_PROPERTY_PATH;
+import static com.enonic.wem.api.index.IndexPaths.MODIFIER_PROPERTY_PATH;
 import static com.enonic.wem.core.TestContext.TEST_REPOSITORY;
 import static com.enonic.wem.core.TestContext.TEST_WORKSPACE;
-import static com.enonic.wem.core.entity.index.IndexPaths.CREATED_TIME_PROPERTY;
-import static com.enonic.wem.core.entity.index.IndexPaths.CREATOR_PROPERTY_PATH;
-import static com.enonic.wem.core.entity.index.IndexPaths.MODIFIER_PROPERTY_PATH;
 import static org.junit.Assert.*;
 
 public class NodeStoreDocumentFactoryTest

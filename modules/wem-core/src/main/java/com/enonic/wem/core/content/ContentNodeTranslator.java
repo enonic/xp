@@ -71,13 +71,14 @@ public class ContentNodeTranslator
             nodeAttachmentsBuilder.add( ThumbnailAttachmentSerializer.toAttachment( thumbnail ) );
         }
 
-        return new CreateNodeParams().
+        return CreateNodeParams.create().
             name( resolveNodeName( params.getName() ) ).
             parent( resolveParentNodePath( params.getParentContentPath() ) ).
             embed( params.isEmbed() ).
             data( contentAsData ).
             attachments( nodeAttachmentsBuilder.build() ).
-            indexConfigDocument( indexConfigDocument );
+            indexConfigDocument( indexConfigDocument ).
+            build();
     }
 
     public UpdateNodeParams toUpdateNodeCommand( final Content content, final Attachments attachments )

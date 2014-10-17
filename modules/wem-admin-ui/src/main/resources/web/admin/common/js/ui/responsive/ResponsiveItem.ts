@@ -21,7 +21,7 @@ module api.ui.responsive {
         private fitToRange() {
             for (var key in ResponsiveRanges) {
                 var range = ResponsiveRanges[key];
-                if (range && (range instanceof ResponsiveRange) && range.isFit(this.rangeValue)) {
+                if (range && (api.ObjectHelper.iFrameSafeInstanceOf(range, ResponsiveRange)) && range.isFit(this.rangeValue)) {
                     this.rangeSize = range;
                     break;
                 }

@@ -5,6 +5,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.FindContentByParentParams;
 import com.enonic.wem.api.content.FindContentByParentResult;
+import com.enonic.wem.api.context.Context;
 import com.enonic.wem.core.entity.FindNodesByParentParams;
 import com.enonic.wem.core.entity.FindNodesByParentResult;
 import com.enonic.wem.core.entity.NodePath;
@@ -28,22 +29,25 @@ final class FindContentByParentCommand
 
     FindContentByParentResult execute()
     {
-        final NodePath nodePath;
+        final NodePath parentPath;
+
+        boolean useWorkspaceOrdering = false;
 
         if ( params.getParentPath() == null )
         {
-            nodePath = ContentNodeHelper.CONTENT_ROOT_NODE.asAbsolute();
+            parentPath = ContentNodeHelper.CONTENT_ROOT_NODE.asAbsolute();
+            useWorkspaceOrdering = params.getChildOrder().isEmpty();
         }
         else
         {
-            nodePath = ContentNodeHelper.translateContentPathToNodePath( params.getParentPath() );
+            parentPath = ContentNodeHelper.translateContentPathToNodePath( params.getParentPath() );
         }
 
         final FindNodesByParentResult result = nodeService.findByParent( FindNodesByParentParams.create().
-            parentPath( nodePath ).
+            parentPath( parentPath ).
             from( params.getFrom() ).
             size( params.getSize() ).
-            sorting( params.getSorting() ).
+            childOrder( useWorkspaceOrdering ? Context.current().getWorkspace().getChildOrder() : params.getChildOrder() ).
             build() );
 
         final Nodes nodes = result.getNodes();

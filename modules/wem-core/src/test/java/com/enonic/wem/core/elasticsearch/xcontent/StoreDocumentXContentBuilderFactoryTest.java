@@ -12,6 +12,7 @@ import org.elasticsearch.common.xcontent.XContentType;
 import org.junit.Test;
 
 import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.index.IndexDocumentItemPath;
 import com.enonic.wem.core.elasticsearch.IndexConstants;
 import com.enonic.wem.core.elasticsearch.document.StoreDocument;
 import com.enonic.wem.core.elasticsearch.document.StoreDocumentDateItem;
@@ -19,7 +20,6 @@ import com.enonic.wem.core.elasticsearch.document.StoreDocumentGeoPointItem;
 import com.enonic.wem.core.elasticsearch.document.StoreDocumentNumberItem;
 import com.enonic.wem.core.elasticsearch.document.StoreDocumentOrderbyItem;
 import com.enonic.wem.core.elasticsearch.document.StoreDocumentStringItem;
-import com.enonic.wem.core.entity.index.IndexDocumentItemPath;
 
 import static org.junit.Assert.*;
 

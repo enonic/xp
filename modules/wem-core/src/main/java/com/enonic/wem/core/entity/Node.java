@@ -1,6 +1,5 @@
 package com.enonic.wem.core.entity;
 
-
 import java.time.Instant;
 
 import com.google.common.base.Preconditions;
@@ -11,6 +10,7 @@ import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.index.IndexConfigDocument;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
@@ -49,6 +49,50 @@ public final class Node
     private final IndexConfigDocument indexConfigDocument;
 
     private final Attachments attachments;
+
+    private final ChildOrder childOrder;
+
+    private Node( final BaseBuilder builder )
+    {
+        this.id = builder.id;
+        this.createdTime = builder.createdTime;
+        this.modifiedTime = builder.modifiedTime;
+
+        this.data = new RootDataSet();
+        if ( builder.data != null )
+        {
+            for ( final Data data : builder.data )
+            {
+                this.data.add( data.copy() );
+            }
+        }
+
+        this.attachments = builder.attachments;
+
+        if ( builder.indexConfigDocument != null )
+        {
+            this.indexConfigDocument = builder.indexConfigDocument;
+        }
+        else
+        {
+            this.indexConfigDocument = PatternIndexConfigDocument.create().
+                defaultConfig( IndexConfig.BY_TYPE ).
+                build();
+        }
+
+        this.creator = builder.creator;
+
+        this.name = builder.name;
+        this.parent = builder.parent;
+
+        this.path = this.parent != null && this.name != null ? new NodePath( this.parent, this.name ) : null;
+
+        this.modifier = builder.modifier;
+
+        this.hasChildren = builder.hasChildren;
+
+        this.childOrder = builder.childOrder;
+    }
 
     public NodeName name()
     {
@@ -130,44 +174,9 @@ public final class Node
         return indexConfigDocument;
     }
 
-    private Node( final BaseBuilder builder )
+    public ChildOrder getChildOrder()
     {
-        this.id = builder.id;
-        this.createdTime = builder.createdTime;
-        this.modifiedTime = builder.modifiedTime;
-
-        this.data = new RootDataSet();
-        if ( builder.data != null )
-        {
-            for ( final Data data : builder.data )
-            {
-                this.data.add( data.copy() );
-            }
-        }
-
-        this.attachments = builder.attachments;
-
-        if ( builder.indexConfigDocument != null )
-        {
-            this.indexConfigDocument = builder.indexConfigDocument;
-        }
-        else
-        {
-            this.indexConfigDocument = PatternIndexConfigDocument.create().
-                defaultConfig( IndexConfig.BY_TYPE ).
-                build();
-        }
-
-        this.creator = builder.creator;
-
-        this.name = builder.name;
-        this.parent = builder.parent;
-
-        this.path = this.parent != null && this.name != null ? new NodePath( this.parent, this.name ) : null;
-
-        this.modifier = builder.modifier;
-
-        this.hasChildren = builder.hasChildren;
+        return childOrder;
     }
 
     public void validateForIndexing()
@@ -175,7 +184,6 @@ public final class Node
         Preconditions.checkNotNull( this.id, "Id must be set" );
         Preconditions.checkNotNull( this.indexConfigDocument, "EntityIndexConfig must be set" );
     }
-
 
     @Override
     public void checkIllegalEdit( final Node to )
@@ -215,8 +223,7 @@ public final class Node
         return new EditBuilder( original );
     }
 
-
-    public static class BaseBuilder
+    private static class BaseBuilder
     {
         NodeName name;
 
@@ -240,12 +247,13 @@ public final class Node
 
         IndexConfigDocument indexConfigDocument;
 
+        ChildOrder childOrder;
 
-        BaseBuilder()
+        private BaseBuilder()
         {
         }
 
-        BaseBuilder( final Node node )
+        private BaseBuilder( final Node node )
         {
             this.id = node.id;
             this.createdTime = node.createdTime;
@@ -256,9 +264,10 @@ public final class Node
             this.parent = node.parent;
             this.creator = node.creator;
             this.modifier = node.modifier;
+            this.childOrder = node.childOrder;
         }
 
-        BaseBuilder( final NodeId id, final NodeName name )
+        private BaseBuilder( final NodeId id, final NodeName name )
         {
             this.id = id;
             this.name = name;
@@ -277,6 +286,8 @@ public final class Node
         private UserKey creator;
 
         boolean hasChildren = false;
+
+        private ChildOrder childOrder;
 
         public Builder()
         {
@@ -299,6 +310,7 @@ public final class Node
             this.parent = node.parent;
             this.modifier = node.modifier;
             this.creator = node.creator;
+            this.childOrder = node.childOrder;
         }
 
         public Builder( final NodeId id, final NodeName name )
@@ -418,12 +430,18 @@ public final class Node
             return this;
         }
 
-
         public Builder attachments( final Attachments value )
         {
             this.attachments = value;
             return this;
         }
+
+        public Builder childOrder( final ChildOrder childOrder )
+        {
+            this.childOrder = childOrder;
+            return this;
+        }
+
 
         public Node build()
         {
@@ -439,6 +457,7 @@ public final class Node
             baseBuilder.modifier = this.modifier;
             baseBuilder.indexConfigDocument = this.indexConfigDocument;
             baseBuilder.hasChildren = this.hasChildren;
+            baseBuilder.childOrder = this.childOrder;
 
             return new Node( baseBuilder );
         }
@@ -540,6 +559,14 @@ public final class Node
             return this;
         }
 
+        public EditBuilder childOrder( final ChildOrder childOrder )
+        {
+            this.childOrder = childOrder;
+            changes.recordChange( newPossibleChange( "childOrder" ).from( this.originalNode.childOrder ).to( this.childOrder ).build() );
+
+            return this;
+        }
+
         public boolean isChanges()
         {
             return this.changes.isChanges();
@@ -556,11 +583,13 @@ public final class Node
             baseBuilder.data = this.data;
             baseBuilder.attachments = this.attachments;
             baseBuilder.indexConfigDocument = this.indexConfigDocument;
-
             baseBuilder.name = this.name;
+            baseBuilder.childOrder = this.childOrder;
+
             return new Node( baseBuilder );
         }
     }
+
 
     @Override
     public boolean equals( final Object o )
@@ -581,6 +610,10 @@ public final class Node
             return false;
         }
         if ( attachments != null ? !attachments.equals( node.attachments ) : node.attachments != null )
+        {
+            return false;
+        }
+        if ( childOrder != null ? !childOrder.equals( node.childOrder ) : node.childOrder != null )
         {
             return false;
         }
@@ -643,6 +676,7 @@ public final class Node
         result = 31 * result + ( modifiedTime != null ? modifiedTime.hashCode() : 0 );
         result = 31 * result + ( indexConfigDocument != null ? indexConfigDocument.hashCode() : 0 );
         result = 31 * result + ( attachments != null ? attachments.hashCode() : 0 );
+        result = 31 * result + ( childOrder != null ? childOrder.hashCode() : 0 );
         return result;
     }
 }

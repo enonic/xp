@@ -4,8 +4,8 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.portal.PortalResponse;
 import com.enonic.wem.portal.RenderingMode;
-import com.enonic.wem.portal.internal.controller.Controller;
-import com.enonic.wem.portal.internal.controller.ControllerFactory;
+import com.enonic.wem.portal.internal.controller.ControllerScript;
+import com.enonic.wem.portal.internal.controller.ControllerScriptFactory;
 import com.enonic.wem.portal.internal.controller.PortalResponseSerializer;
 import com.enonic.wem.portal.internal.postprocess.PostProcessor;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
@@ -15,7 +15,7 @@ public class PageRenderer
     implements Renderer<Content, PageRendererContext>
 {
 
-    private ControllerFactory controllerFactory;
+    private ControllerScriptFactory controllerScriptFactory;
 
     private PostProcessor postProcessor;
 
@@ -32,8 +32,8 @@ public class PageRenderer
 
         if ( pageDescriptor != null )
         {
-            final Controller controller = this.controllerFactory.newController( pageDescriptor.getResourceKey() );
-            controller.execute( context );
+            final ControllerScript controllerScript = this.controllerScriptFactory.newController( pageDescriptor.getResourceKey() );
+            controllerScript.execute( context );
         }
         else
         {
@@ -69,9 +69,9 @@ public class PageRenderer
         this.postProcessor.processResponse( context );
     }
 
-    public void setControllerFactory( final ControllerFactory controllerFactory )
+    public void setControllerScriptFactory( final ControllerScriptFactory controllerScriptFactory )
     {
-        this.controllerFactory = controllerFactory;
+        this.controllerScriptFactory = controllerScriptFactory;
     }
 
     public void setPostProcessor( final PostProcessor postProcessor )

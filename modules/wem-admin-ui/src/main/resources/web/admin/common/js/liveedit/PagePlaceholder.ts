@@ -30,7 +30,7 @@ module api.liveedit {
 
             this.controllerDropdown.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.page.PageDescriptor>) => {
 
-                new PageControllerSelectedEvent(event.getOption().displayValue).fire();
+                this.pageView.getPageModel().setController(event.getOption().displayValue, this);
             });
 
             this.appendChild(this.controllerDropdown);

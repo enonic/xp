@@ -2,13 +2,11 @@ module app.wizard {
 
     import RootDataSet = api.data.RootDataSet;
     import FormView = api.form.FormView;
-    import FormContext = api.form.FormContext;
     import ContentFormContext = api.content.form.ContentFormContext;
     import ContentFormContextBuilder = api.content.form.ContentFormContextBuilder;
     import Content = api.content.Content;
     import ContentBuilder = api.content.ContentBuilder;
     import ThumbnailBuilder = api.content.ThumbnailBuilder;
-    import ContentId = api.content.ContentId;
     import ContentName = api.content.ContentName;
     import CreateContentRequest = api.content.CreateContentRequest;
     import UpdateContentRequest = api.content.UpdateContentRequest;
@@ -16,12 +14,12 @@ module app.wizard {
     import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
     import Metadata = api.content.Metadata;
     import Page = api.content.page.Page;
-    import PageBuilder = api.content.page.PageBuilder;
     import Site = api.content.site.Site;
-    import SiteBuilder = api.content.site.SiteBuilder;
     import ContentType = api.schema.content.ContentType;
     import PageTemplate = api.content.page.PageTemplate;
+    import PageDescriptor = api.content.page.PageDescriptor;
     import GetPageTemplateByKeyRequest = api.content.page.GetPageTemplateByKeyRequest;
+    import GetPageDescriptorByKeyRequest = api.content.page.GetPageDescriptorByKeyRequest;
     import IsRenderableRequest = api.content.page.IsRenderableRequest;
 
     import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
@@ -34,10 +32,6 @@ module app.wizard {
     import WizardStep = api.app.wizard.WizardStep;
     import WizardStepValidityChangedEvent = api.app.wizard.WizardStepValidityChangedEvent;
     import UploadFinishedEvent = api.app.wizard.UploadFinishedEvent;
-    import ContentTypeName = api.schema.content.ContentTypeName;
-    import DefaultModels = app.wizard.page.DefaultModels;
-    import DefaultModelsFactoryConfig = app.wizard.page.DefaultModelsFactoryConfig;
-    import DefaultModelsFactory = app.wizard.page.DefaultModelsFactory;
 
     import Module = api.module.Module;
     import ModuleKey = api.module.ModuleKey;
@@ -141,7 +135,7 @@ module app.wizard {
             this.showLiveEditAction.setEnabled(false);
 
             if (this.parentContent) {
-                this.contentWizardHeader.setPath(this.parentContent.getPath().toString() + "/");
+                this.contentWizardHeader.setPath(this.parentContent.getPath().prettifyUnnamedPathElements().toString() + "/");
             } else {
                 this.contentWizardHeader.setPath("/");
             }
@@ -317,6 +311,7 @@ module app.wizard {
                 if (viewedContent.equals(persistedContent)) {
 
                     if (this.liveFormPanel) {
+                        this.liveFormPanel.setContent(persistedContent);
                         this.liveFormPanel.loadPage();
                     }
                 }
@@ -329,7 +324,8 @@ module app.wizard {
                     ConfirmationDialog.get().
                         setQuestion("Received Content from server differs from what you have. Would you like to load changes from server?").
                         setYesCallback(() => this.doLayoutPersistedItem(persistedContent.clone())).
-                        setNoCallback(() => {/* Do nothing... */}).
+                        setNoCallback(() => {/* Do nothing... */
+                        }).
                         show();
                 }
 
@@ -425,20 +421,28 @@ module app.wizard {
 
         private doLayoutPage(content: Content) {
 
-            var page: Page = content.getPage();
+            this.liveFormPanel.setContent(content);
 
-            if (page != null && page.getTemplate() != null) {
-
-                return new GetPageTemplateByKeyRequest(page.getTemplate()).
-                    sendAndParse().
-                    then((pageTemplate: PageTemplate) => {
-
-                        this.liveFormPanel.layout(content, pageTemplate);
-
-                    }).done();
+            if (content.isPage()) {
+                if (content.getPage().hasTemplate()) {
+                    new GetPageTemplateByKeyRequest(content.getPage().getTemplate()).
+                        sendAndParse().then((pageTemplate: PageTemplate) => {
+                            this.liveFormPanel.layout(pageTemplate, null);
+                        }).catch((reason: any) => {
+                            api.DefaultErrorHandler.handle(reason);
+                        }).done();
+                }
+                else {
+                    new GetPageDescriptorByKeyRequest(content.getPage().getController()).
+                        sendAndParse().then((pageDescriptor: PageDescriptor) => {
+                            this.liveFormPanel.layout(null, pageDescriptor);
+                        }).catch((reason: any) => {
+                            api.DefaultErrorHandler.handle(reason);
+                        }).done();
+                }
             }
             else {
-                this.liveFormPanel.layout(content, null);
+                this.liveFormPanel.layout(null, null);
             }
         }
 

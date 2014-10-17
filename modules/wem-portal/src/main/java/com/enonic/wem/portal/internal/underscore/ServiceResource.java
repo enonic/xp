@@ -14,8 +14,8 @@ import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.portal.internal.base.BaseResource;
-import com.enonic.wem.portal.internal.controller.Controller;
-import com.enonic.wem.portal.internal.controller.ControllerFactory;
+import com.enonic.wem.portal.internal.controller.ControllerScript;
+import com.enonic.wem.portal.internal.controller.ControllerScriptFactory;
 import com.enonic.wem.portal.internal.controller.PortalContextImpl;
 import com.enonic.wem.portal.internal.controller.PortalRequestImpl;
 import com.enonic.wem.portal.internal.controller.PortalResponseSerializer;
@@ -27,7 +27,7 @@ public final class ServiceResource
 {
     protected ModuleService moduleService;
 
-    protected ControllerFactory controllerFactory;
+    protected ControllerScriptFactory controllerScriptFactory;
 
     protected RenderingMode mode;
 
@@ -77,8 +77,8 @@ public final class ServiceResource
         context.setRequest( jsRequest );
 
         final ResourceKey scriptDir = ResourceKey.from( this.moduleKey, "service/" + this.serviceName );
-        final Controller controller = this.controllerFactory.newController( scriptDir );
-        controller.execute( context );
+        final ControllerScript controllerScript = this.controllerScriptFactory.newController( scriptDir );
+        controllerScript.execute( context );
 
         final RenderResult result = new PortalResponseSerializer( context.getResponse() ).serialize();
         return toResponse( result );

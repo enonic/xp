@@ -2,6 +2,8 @@ module app.view {
 
     import ModuleBrowseActions = app.browse.ModuleBrowseActions;
     import ContentTypeSummary = api.schema.content.ContentTypeSummary;
+    import Mixin = api.schema.mixin.Mixin;
+    import MetadataSchemaName = api.schema.metadata.MetadataSchemaName;
 
     export class ModuleItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.module.Module> {
 
@@ -61,23 +63,24 @@ module app.view {
 
             var schemasGroup = new ModuleItemDataGroup("Schemas");
 
-            new api.schema.content.GetContentTypesByModuleRequest(currentModule.getModuleKey()).
-                sendAndParse().
-                then((contentTypes: ContentTypeSummary[]) => {
-                    var contentTypeNames = contentTypes.map((contentType: ContentTypeSummary) => contentType.getContentTypeName().toString());
+            var promises = [
+                new api.schema.content.GetContentTypesByModuleRequest(currentModule.getModuleKey()).sendAndParse(),
+                new api.schema.mixin.GetMixinsByModuleRequest(currentModule.getModuleKey()).sendAndParse()
+            ];
+            
+            wemQ.all(promises).
+                spread((contentTypes: ContentTypeSummary[], mixins: Mixin[]) => {
+                    var contentTypeNames = contentTypes.map((contentType: ContentTypeSummary) => contentType.getContentTypeName().getLocalName());
                     schemasGroup.addDataArray("Content Types", contentTypeNames);
+
+                    var mixinsNames = mixins.map((mixin: Mixin) => mixin.getMixinName().getLocalName());
+                    schemasGroup.addDataArray("Mixins", mixinsNames);
+
+                    var metadataSchemaNames = currentModule.getMetadataSchemaDependencies().map((name: MetadataSchemaName) => name.getLocalName());
+                    schemasGroup.addDataArray("MetadataSchemas", metadataSchemaNames);
                 }).
                 catch((reason: any) => api.DefaultErrorHandler.handle(reason)).
                 done();
-
-            schemasGroup.addDataList("Mixins", "TBA");
-            var metadataNames = currentModule.getMetadataSchemaDependencies();
-            var strings: string[] = [];
-            metadataNames.forEach((data: api.schema.metadata.MetadataSchemaName) => {
-                strings.push(data.toString());
-            });
-
-            schemasGroup.addDataArray("MetadataSchemas", strings);
 
             this.moduleDataContainer.appendChild(infoGroup);
             this.moduleDataContainer.appendChild(schemasGroup);

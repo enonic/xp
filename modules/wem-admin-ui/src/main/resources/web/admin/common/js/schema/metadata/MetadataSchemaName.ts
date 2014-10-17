@@ -1,24 +1,13 @@
 module api.schema.metadata {
 
-    export class MetadataSchemaName implements api.Equitable {
+    import ModuleKey = api.module.ModuleKey;
 
-        private value: string;
+    export class MetadataSchemaName extends api.module.ModuleBasedName {
 
         constructor(name: string) {
-            this.value = name;
-        }
-
-        toString(): string {
-            return this.value;
-        }
-
-        equals(o: api.Equitable): boolean {
-            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, MetadataSchemaName)) {
-                return false;
-            }
-            var other = <MetadataSchemaName> o;
-
-            return this.value == other.value;
+            api.util.assertNotNull(name, "Metadata schema name can't be null");
+            var parts = name.split(api.module.ModuleBasedName.SEPARATOR);
+            super(ModuleKey.fromString(parts[0]), parts[1]);
         }
     }
 }

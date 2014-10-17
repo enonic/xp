@@ -232,4 +232,9 @@ final class QueryGrammar
     {
         return parseQuery().from( tokenizer(), Scanners.SQL_DELIMITER );
     }
+
+    public Parser<List<OrderExpr>> orderExpressionsGrammar()
+    {
+        return parseOrderList().from( tokenizer(), Scanners.SQL_DELIMITER );
+    }
 }

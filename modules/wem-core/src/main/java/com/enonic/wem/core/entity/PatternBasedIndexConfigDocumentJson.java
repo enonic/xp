@@ -8,7 +8,6 @@ import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.index.PathIndexConfig;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
-import com.enonic.wem.core.entity.relationship.IndexConfigDocumentJson;
 
 public class PatternBasedIndexConfigDocumentJson
     extends IndexConfigDocumentJson

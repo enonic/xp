@@ -1,12 +1,6 @@
 package com.enonic.wem.api.content;
 
-import java.util.Set;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
-
-import com.enonic.wem.api.query.Direction;
-import com.enonic.wem.api.query.FieldSort;
+import com.enonic.wem.api.index.ChildOrder;
 
 public class FindContentByParentParams
 {
@@ -16,16 +10,16 @@ public class FindContentByParentParams
 
     private final Integer from;
 
-    private final ImmutableSet<FieldSort> sorting;
+    private final ChildOrder childOrder;
 
     private static final Integer DEFAULT_SIZE = 500;
 
     private FindContentByParentParams( Builder builder )
     {
-        parentPath = builder.parentPath;
-        size = builder.size;
-        from = builder.from;
-        sorting = ImmutableSet.copyOf( builder.sorting );
+        this.parentPath = builder.parentPath;
+        this.size = builder.size;
+        this.from = builder.from;
+        this.childOrder = builder.childOrder;
     }
 
     public ContentPath getParentPath()
@@ -43,21 +37,15 @@ public class FindContentByParentParams
         return from;
     }
 
-    public ImmutableSet<FieldSort> getSorting()
+    public ChildOrder getChildOrder()
     {
-        return sorting;
-    }
-
-    public static Integer getDefaultSize()
-    {
-        return DEFAULT_SIZE;
+        return childOrder;
     }
 
     public static Builder create()
     {
         return new Builder();
     }
-
 
     public static final class Builder
     {
@@ -67,7 +55,7 @@ public class FindContentByParentParams
 
         private Integer from = 0;
 
-        private Set<FieldSort> sorting = Sets.newHashSet();
+        private ChildOrder childOrder;
 
         private Builder()
         {
@@ -91,9 +79,9 @@ public class FindContentByParentParams
             return this;
         }
 
-        public Builder addSort( final String fieldName, final Direction direction )
+        public Builder childOrder( final ChildOrder childOrder )
         {
-            this.sorting.add( new FieldSort( fieldName, direction ) );
+            this.childOrder = childOrder;
             return this;
         }
 

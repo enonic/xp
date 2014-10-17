@@ -2,15 +2,9 @@ module app.wizard.page {
 
     import Content = api.content.Content;
     import Site = api.content.site.Site;
-    import ContentId = api.content.ContentId;
-    import Descriptor = api.content.page.Descriptor;
-    import Page = api.content.page.Page;
-    import PageRegions = api.content.page.PageRegions;
-    import RegionPath = api.content.page.RegionPath;
+    import PageModel = api.content.page.PageModel;
     import PageComponent = api.content.page.PageComponent;
-    import PageComponentType = api.content.page.PageComponentType;
     import UploadDialog = api.content.form.inputtype.image.UploadDialog;
-    import RenderingMode = api.rendering.RenderingMode;
 
     import PageComponentView = api.liveedit.PageComponentView;
     import ImageOpenUploadDialogEvent = api.liveedit.ImageOpenUploadDialogEvent;
@@ -20,7 +14,6 @@ module app.wizard.page {
     import DraggingPageComponentViewCompletedEvent = api.liveedit.DraggingPageComponentViewCompletedEvent;
     import DraggingPageComponentViewCanceledEvent = api.liveedit.DraggingPageComponentViewCanceledEvent;
     import ItemFromContextWindowDroppedEvent = api.liveedit.ItemFromContextWindowDroppedEvent;
-    import PageControllerSelectedEvent = api.liveedit.PageControllerSelectedEvent;
     import PageSelectEvent = api.liveedit.PageSelectEvent;
     import RegionSelectEvent = api.liveedit.RegionSelectEvent;
     import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
@@ -34,7 +27,6 @@ module app.wizard.page {
     import RepeatNextItemViewIdProducer = api.liveedit.RepeatNextItemViewIdProducer;
     import CreateItemViewConfig = api.liveedit.CreateItemViewConfig;
     import RegionView = api.liveedit.RegionView;
-    import ItemView = api.liveedit.ItemView;
 
     export interface LiveEditPageProxyConfig {
 
@@ -47,7 +39,7 @@ module app.wizard.page {
 
         private baseUrl: string;
 
-        private page: Page;
+        private pageModel: PageModel;
 
         private liveFormPanel: LiveFormPanel;
 
@@ -74,8 +66,6 @@ module app.wizard.page {
         private draggingPageComponentViewCanceledListeners: {(event: DraggingPageComponentViewCanceledEvent): void;}[] = [];
 
         private itemFromContextWindowDroppedListeners: {(event: ItemFromContextWindowDroppedEvent): void;}[] = [];
-
-        private pageControllerSelectedListeners: {(event: PageControllerSelectedEvent): void;}[] = [];
 
         private pageSelectedListeners: {(event: PageSelectEvent): void;}[] = [];
 
@@ -117,8 +107,8 @@ module app.wizard.page {
             });
         }
 
-        public setPage(page: Page) {
-            this.page = page;
+        public setPage(pageModel: PageModel) {
+            this.pageModel = pageModel;
         }
 
         public setWidth(value: string) {
@@ -198,7 +188,7 @@ module app.wizard.page {
 
                 this.loadMask.hide();
 
-                new api.liveedit.InitializeLiveEditEvent(this.contentLoadedOnPage, this.site, this.page).fire(this.liveEditWindow);
+                new api.liveedit.InitializeLiveEditEvent(this.contentLoadedOnPage, this.site, this.pageModel).fire(this.liveEditWindow);
 
 
             }
@@ -275,8 +265,6 @@ module app.wizard.page {
             DraggingPageComponentViewCanceledEvent.on(this.notifyDraggingPageComponentViewCanceled.bind(this), this.liveEditWindow);
 
             ItemFromContextWindowDroppedEvent.on(this.notifyItemFromContextWindowDropped.bind(this), this.liveEditWindow);
-
-            PageControllerSelectedEvent.on(this.notifyPageControllerSelected.bind(this), this.liveEditWindow);
 
             PageSelectEvent.on(this.notifyPageSelected.bind(this), this.liveEditWindow);
 
@@ -373,18 +361,6 @@ module app.wizard.page {
 
         private notifyItemFromContextWindowDropped(event: ItemFromContextWindowDroppedEvent) {
             this.itemFromContextWindowDroppedListeners.forEach((listener) => listener(event));
-        }
-
-        onPageControllerSelected(listener: (event: PageControllerSelectedEvent) => void) {
-            this.pageControllerSelectedListeners.push(listener);
-        }
-
-        unPageControllerSelected(listener: (event: PageControllerSelectedEvent) => void) {
-            this.pageControllerSelectedListeners = this.pageControllerSelectedListeners.filter((curr) => (curr != listener));
-        }
-
-        private notifyPageControllerSelected(event: PageControllerSelectedEvent) {
-            this.pageControllerSelectedListeners.forEach((listener) => listener(event));
         }
 
         onPageSelected(listener: (event: PageSelectEvent) => void) {

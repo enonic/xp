@@ -1,7 +1,7 @@
 package com.enonic.wem.portal.internal.underscore;
 
 import com.enonic.wem.api.module.ModuleService;
-import com.enonic.wem.portal.internal.controller.ControllerFactory;
+import com.enonic.wem.portal.internal.controller.ControllerScriptFactory;
 import com.enonic.wem.servlet.jaxrs.ResourceProvider;
 
 public final class ServiceResourceProvider
@@ -9,7 +9,7 @@ public final class ServiceResourceProvider
 {
     private ModuleService moduleService;
 
-    private ControllerFactory controllerFactory;
+    private ControllerScriptFactory controllerScriptFactory;
 
     @Override
     public Class<ServiceResource> getType()
@@ -22,7 +22,7 @@ public final class ServiceResourceProvider
     {
         final ServiceResource instance = new ServiceResource();
         instance.moduleService = this.moduleService;
-        instance.controllerFactory = this.controllerFactory;
+        instance.controllerScriptFactory = this.controllerScriptFactory;
         return instance;
     }
 
@@ -31,8 +31,8 @@ public final class ServiceResourceProvider
         this.moduleService = moduleService;
     }
 
-    public void setControllerFactory( final ControllerFactory controllerFactory )
+    public void setControllerScriptFactory( final ControllerScriptFactory controllerScriptFactory )
     {
-        this.controllerFactory = controllerFactory;
+        this.controllerScriptFactory = controllerScriptFactory;
     }
 }

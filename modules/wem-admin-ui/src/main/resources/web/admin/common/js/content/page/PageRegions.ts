@@ -18,6 +18,35 @@ module api.content.page {
         clone(): PageRegions {
             return new PageRegionsBuilder(this).build();
         }
+
+        /**
+         * Keeps existing regions (including components) if they are listed in given regionDescriptors.
+         * Removes others and adds those missing.
+         * @param regionDescriptors
+         */
+        changeRegionsTo(regionDescriptors: region.RegionDescriptor[]) {
+
+            // Remove regions not existing in regionDescriptors
+            var regionsToRemove: region.Region[] = this.getRegions().
+                filter((region: region.Region, index: number) => {
+                    return !regionDescriptors.
+                        some((regionDescriptor: region.RegionDescriptor) => {
+                            return regionDescriptor.getName() == region.getName();
+                        });
+                });
+            this.removeRegions(regionsToRemove);
+
+            // Add missing regions
+            regionDescriptors.forEach((regionDescriptor: region.RegionDescriptor) => {
+                var region = this.getRegionByName(regionDescriptor.getName());
+                if (!region) {
+                    region = new api.content.page.region.RegionBuilder().
+                        setName(regionDescriptor.getName()).
+                        build();
+                    this.addRegion(region);
+                }
+            });
+        }
     }
 
     export class PageRegionsBuilder {

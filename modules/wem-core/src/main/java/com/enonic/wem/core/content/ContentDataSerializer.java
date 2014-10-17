@@ -1,7 +1,6 @@
 package com.enonic.wem.core.content;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import com.enonic.wem.api.content.Content;
@@ -19,24 +18,18 @@ import com.enonic.wem.api.support.serializer.AbstractDataSetSerializer;
 import com.enonic.wem.core.content.page.PageDataSerializer;
 import com.enonic.wem.core.form.FormDataSerializer;
 
+import static com.enonic.wem.api.content.ContentIndexPaths.CONTENT_DATA;
+import static com.enonic.wem.api.content.ContentIndexPaths.CONTENT_TYPE_FIELD_NAME;
+import static com.enonic.wem.api.content.ContentIndexPaths.DISPLAY_NAME_FIELD_NAME;
+import static com.enonic.wem.api.content.ContentIndexPaths.DRAFT;
+import static com.enonic.wem.api.content.ContentIndexPaths.FORM;
+import static com.enonic.wem.api.content.ContentIndexPaths.METADATA;
+import static com.enonic.wem.api.content.ContentIndexPaths.PAGE;
+import static com.enonic.wem.api.content.ContentIndexPaths.SITE;
+
 public class ContentDataSerializer
     extends AbstractDataSetSerializer<Content, Content.Builder>
 {
-    public static final String DISPLAY_NAME_FIELD_NAME = "displayName";
-
-    public static final String DRAFT = "draft";
-
-    public static final String CONTENT_DATA = "data";
-
-    public static final String METADATA = "metadata";
-
-    public static final String CONTENT_TYPE_FIELD_NAME = "contentType";
-
-    public static final String FORM = "form";
-
-    public static final String PAGE = "page";
-
-    public static final String SITE = "site";
 
     private static final FormDataSerializer FORM_SERIALIZER = new FormDataSerializer( FORM );
 
@@ -155,7 +148,7 @@ public class ContentDataSerializer
 
         if ( params.getContentData() != null )
         {
-            contentAsData.add( params.getContentData().toDataSet( ContentDataSerializer.CONTENT_DATA ) );
+            contentAsData.add( params.getContentData().toDataSet( CONTENT_DATA ) );
         }
 
         if ( params.getMetadata() != null )

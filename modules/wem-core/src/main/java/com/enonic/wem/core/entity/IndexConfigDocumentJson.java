@@ -1,11 +1,10 @@
-package com.enonic.wem.core.entity.relationship;
+package com.enonic.wem.core.entity;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import com.enonic.wem.api.index.IndexConfigDocument;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
-import com.enonic.wem.core.entity.PatternBasedIndexConfigDocumentJson;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.WRAPPER_OBJECT)
 @JsonSubTypes({@JsonSubTypes.Type(value = PatternBasedIndexConfigDocumentJson.class, name = "PatternBasedIndexConfigDocument")})
