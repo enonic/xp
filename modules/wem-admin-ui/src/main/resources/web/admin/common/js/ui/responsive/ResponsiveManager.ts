@@ -2,7 +2,7 @@ module api.ui.responsive {
 
     export class ResponsiveManager {
 
-        private static window = api.dom.Window.get();
+        private static window = api.dom.WindowDOM.get();
 
         private static responsiveListeners: ResponsiveListener[] = [];
 
@@ -44,7 +44,7 @@ module api.ui.responsive {
             ResponsiveManager.window.getHTMLElement().dispatchEvent(customEvent);
         }
 
-        static getWindow(): api.dom.Window {
+        static getWindow(): api.dom.WindowDOM {
             return ResponsiveManager.window;
         }
     }

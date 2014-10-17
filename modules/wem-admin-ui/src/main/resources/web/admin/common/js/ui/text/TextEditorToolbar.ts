@@ -39,7 +39,7 @@ module api.ui.text {
                 }
             });
 
-            api.dom.Window.get().onScroll(() => {
+            api.dom.WindowDOM.get().onScroll(() => {
                 if (this.editArea) {
                     this.updatePosition();
                 }
@@ -80,7 +80,7 @@ module api.ui.text {
 
             var defaultPosition = this.getPositionRelativeToComponentTop();
 
-            var stick = api.dom.Window.get().getScrollTop() >= this.editArea.getElement().getEl().getOffsetTop() - 60;
+            var stick = api.dom.WindowDOM.get().getScrollTop() >= this.editArea.getElement().getEl().getOffsetTop() - 60;
 
             var el = this.getEl();
 
@@ -94,7 +94,7 @@ module api.ui.text {
                 el.setLeftPx(defaultPosition.left);
             }
 
-            var placeArrowOnTop = api.dom.Window.get().getScrollTop() >= defaultPosition.bottom - 10;
+            var placeArrowOnTop = api.dom.WindowDOM.get().getScrollTop() >= defaultPosition.bottom - 10;
 
             this.toggleArrowPosition(placeArrowOnTop);
         }

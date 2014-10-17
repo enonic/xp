@@ -16,7 +16,7 @@ module api.ui.mask {
                     this.remove();
                 });
                 // Masked element might have been resized on window resize
-                api.dom.Window.get().onResized((event: UIEvent) => {
+                api.dom.WindowDOM.get().onResized((event: UIEvent) => {
                     if (this.isVisible()) {
                         this.positionOver(this.masked);
                     }

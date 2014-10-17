@@ -241,7 +241,7 @@ module api.ui.panel {
             });
 
             if (this.alignmentTreshold) {
-                api.dom.Window.get().onResized((event: UIEvent) => this.updateAlignment(), this);
+                api.dom.WindowDOM.get().onResized((event: UIEvent) => this.updateAlignment(), this);
             }
 
             this.onShown((event: api.dom.ElementShownEvent) => {
