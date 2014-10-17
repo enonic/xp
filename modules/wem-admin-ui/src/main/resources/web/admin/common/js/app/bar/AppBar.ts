@@ -45,7 +45,7 @@ module api.app.bar {
 
             this.setBackgroundImgUrl(api.util.UriHelper.getRestUri('ui/background.jpg'));
 
-            api.dom.Window.get().onResized((event: UIEvent) => this.layoutChildren(), this);
+            api.dom.WindowDOM.get().onResized((event: UIEvent) => this.layoutChildren(), this);
             this.onRendered((event) => this.layoutChildren());
 
             this.tabMenu.onNavigationItemAdded((event: api.ui.NavigatorEvent)=> {

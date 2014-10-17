@@ -29,7 +29,7 @@ module api.ui.text {
 
             this.onShown((event: api.dom.ElementShownEvent) => this.updateSize());
             this.onValueChanged((event: ValueChangedEvent) => this.updateSize());
-            api.dom.Window.get().onResized((event: UIEvent) => this.updateSize(), this);
+            api.dom.WindowDOM.get().onResized((event: UIEvent) => this.updateSize(), this);
         }
 
         setValue(text: string) {

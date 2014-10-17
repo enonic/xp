@@ -15,7 +15,7 @@ module api.ui.toolbar {
             this.fold.hide();
             this.appendChild(this.fold);
 
-            api.dom.Window.get().onResized((event: UIEvent) => this.foldOrExpand(), this);
+            api.dom.WindowDOM.get().onResized((event: UIEvent) => this.foldOrExpand(), this);
 
             this.onShown((event) => this.foldOrExpand());
         }

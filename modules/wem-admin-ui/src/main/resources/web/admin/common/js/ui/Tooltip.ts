@@ -215,7 +215,7 @@ module api.ui {
                 x = event.clientX,
                 y = event.clientY,
                 el = this.tooltipEl.getEl(),
-                windowEl = <any> api.dom.Window.get().getHTMLElement(),
+                windowEl = <any> api.dom.WindowDOM.get().getHTMLElement(),
                 elProps = {
                     height: el.getHeightWithMargin(),
                     width: el.getWidthWithMargin(),

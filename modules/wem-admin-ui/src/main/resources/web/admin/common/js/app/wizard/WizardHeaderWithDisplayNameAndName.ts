@@ -75,7 +75,7 @@ module api.app.wizard {
             });
 
             this.onShown((event) => this.updatePathAndNameWidth());
-            api.dom.Window.get().onResized((event: UIEvent) => this.updatePathAndNameWidth(), this);
+            api.dom.WindowDOM.get().onResized((event: UIEvent) => this.updatePathAndNameWidth(), this);
 
         }
 
