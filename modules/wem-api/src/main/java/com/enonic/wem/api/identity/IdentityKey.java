@@ -77,6 +77,11 @@ public final class IdentityKey
         return this.type == IdentityType.ANONYMOUS;
     }
 
+    public boolean isAccount()
+    {
+        return ( this.type == IdentityType.USER ) || ( this.type == IdentityType.AGENT );
+    }
+
     @Override
     public String toString()
     {
