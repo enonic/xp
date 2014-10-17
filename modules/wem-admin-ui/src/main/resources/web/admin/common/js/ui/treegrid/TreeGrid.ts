@@ -512,7 +512,7 @@ module api.ui.treegrid {
 
         // Soft reset, that saves node status
         refresh(): void {
-            var root = this.stash || this.root;
+            var root = this.root;
 
             this.active = false;
 
@@ -545,53 +545,103 @@ module api.ui.treegrid {
                 });
         }
 
-        deleteNode(data: DATA): void {
-            var root = this.stash || this.root;
-            var node = root.findNode(this.getDataId(data));
-            this.gridData.deleteItem(node.getId());
-            var parent = node.getParent();
-            if (node && parent) {
-                parent.removeChild(node);
-                parent.setMaxChildren(parent.getMaxChildren() - 1);
-                this.notifyDataChanged(new DataChangedEvent<DATA>([node], DataChangedEvent.ACTION_DELETED));
+        deleteNode(data: DATA, stashedParentNode?: TreeNode<DATA>): void {
+            if (!stashedParentNode && this.stash) {
+                this.deleteNode(data, this.stash);
             }
+            var root = stashedParentNode || this.root;
+            var node;
+            while (node = root.findNode(this.getDataId(data))) {
+                if (node.hasChildren()) {
+                    node.getChildren().forEach((child: TreeNode<DATA>) => {
+                        this.deleteNode(child.getData());
+                    });
+                }
+                if (this.gridData.getItemById(node.getId())) {
+                    this.gridData.deleteItem(node.getId());
+                }
+
+                var parent = node.getParent();
+                if (node && parent) {
+                    parent.removeChild(node);
+                    parent.setMaxChildren(parent.getMaxChildren() - 1);
+                    this.notifyDataChanged(new DataChangedEvent<DATA>([node], DataChangedEvent.ACTION_DELETED));
+                }
+            }
+
         }
 
-        appendNode(data: DATA): void {
-            var root = this.stash || this.root;
+        appendNode(data: DATA, stashedParentNode?: TreeNode<DATA>): void {
+            if (!stashedParentNode && this.stash) {
+                this.appendNode(data, this.stash);
+            }
+            var root = stashedParentNode || this.root;
+
             var parentNode: TreeNode<DATA>;
             if (this.getSelectedNodes() && this.getSelectedNodes().length == 1) {
-                parentNode = this.getSelectedNodes()[0];
+                parentNode = root.findNode(this.getSelectedNodes()[0].getDataId());
             } else {
                 parentNode = root;
             }
-            parentNode.addChild(this.dataToTreeNode(data, root));
-            var node = root.findNode(this.getDataId(data));
-            if (node) {
-                this.gridData.setItems(root.treeToList());
-                this.notifyDataChanged(new DataChangedEvent<DATA>([node], DataChangedEvent.ACTION_ADDED));
-                if (parentNode != root) {
-                    this.updateSelectedNode(parentNode);
+
+            if (!parentNode.hasChildren() && parentNode != root) {
+                this.fetchData(parentNode)
+                    .then((dataList: DATA[]) => {
+                        parentNode.setChildren(this.dataToTreeNodes(dataList, parentNode));
+                        var rootList = root.treeToList();
+                        var nodeList = parentNode.treeToList();
+                        this.initData(rootList);
+                        var node = root.findNode(this.getDataId(data));
+                        if (node) {
+                            if (!stashedParentNode) {
+                                this.gridData.setItems(root.treeToList());
+                            }
+                            this.notifyDataChanged(new DataChangedEvent<DATA>([node], DataChangedEvent.ACTION_ADDED));
+
+                            if (parentNode != root) {
+                                this.updateDataChildrenStatus(parentNode);
+                                if (!stashedParentNode) {
+                                    this.updateSelectedNode(parentNode);
+                                }
+                            }
+                        }
+                    }).catch((reason: any) => {
+                        api.DefaultErrorHandler.handle(reason);
+                    });
+            } else {
+                parentNode.addChild(this.dataToTreeNode(data, root), true);
+                var node = root.findNode(this.getDataId(data));
+                if (node) {
+                    if (!stashedParentNode) {
+                        this.gridData.setItems(root.treeToList());
+                    }
+                    if (parentNode != root) {
+                        if (!stashedParentNode) {
+                            this.updateSelectedNode(parentNode);
+                        }
+                    }
                 }
             }
         }
 
         deleteNodes(dataList: DATA[]): void {
-            var root = this.stash || this.root;
+            var root = this.root || this.stash;
             var updated: TreeNode<DATA>[] = [];
             var deleted: TreeNode<DATA>[] = [];
             dataList.forEach((data: DATA) => {
                 var node = root.findNode(this.getDataId(data));
                 if (node && node.getParent()) {
                     var parent = node.getParent();
+                    this.deleteNode(node.getData());
                     updated.push(parent);
-                    parent.removeChild(node);
                     deleted.push(node);
-                    parent.setMaxChildren(parent.getMaxChildren() - 1);
                     updated.filter((el) => {
                         return el.getDataId() !== node.getDataId();
                     });
                 }
+            });
+            root.treeToList().forEach((child: TreeNode<DATA>) => {
+                this.updateDataChildrenStatus(child);
             });
             this.notifyDataChanged(new DataChangedEvent<DATA>(deleted, DataChangedEvent.ACTION_DELETED));
         }
@@ -658,7 +708,7 @@ module api.ui.treegrid {
         }
 
         private updateSelectedNode(node: TreeNode<DATA>) {
-            this.updateDataChildrenStatus(node);
+            //  this.updateDataChildrenStatus(node);
             this.getGrid().clearSelection();
             this.refresh();
             var row = this.gridData.getRowById(node.getId());

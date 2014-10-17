@@ -4,6 +4,8 @@ module api.app.browse.filter {
 
         private searchListeners: {(event: SearchEvent):void}[] = [];
 
+        private refreshListeners: {(event: RefreshEvent):void}[] = [];
+
         private resetListeners: {():void}[] = [];
 
         private aggregationContainer: api.aggregation.AggregationContainer;
@@ -78,6 +80,10 @@ module api.app.browse.filter {
             this.notifySearch(values, elementChanged);
         }
 
+        refresh() {
+            this.notifyRefresh();
+        }
+
         reset() {
             this.searchField.clear(true);
             this.aggregationContainer.deselectAll(true);
@@ -91,6 +97,10 @@ module api.app.browse.filter {
 
         onReset(listener: ()=>void) {
             this.resetListeners.push(listener);
+        }
+
+        onRefresh(listener: (event: RefreshEvent)=>void) {
+            this.refreshListeners.push(listener);
         }
 
         unSearch(listener: (event: SearchEvent)=>void) {
@@ -109,6 +119,12 @@ module api.app.browse.filter {
         private notifySearch(searchInputValues: api.query.SearchInputValues, elementChanged?: api.dom.Element) {
             this.searchListeners.forEach((listener: (event: SearchEvent)=>void) => {
                 listener.call(this, new SearchEvent(searchInputValues, elementChanged));
+            });
+        }
+
+        private notifyRefresh() {
+            this.refreshListeners.forEach((listener: ()=>void) => {
+                listener.call(this, new RefreshEvent(this.getSearchInputValues()));
             });
         }
 

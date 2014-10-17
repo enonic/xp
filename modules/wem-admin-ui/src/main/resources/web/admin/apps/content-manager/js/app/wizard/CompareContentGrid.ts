@@ -11,6 +11,7 @@ module app.wizard {
     import TreeGrid = api.ui.treegrid.TreeGrid;
     import TreeNode = api.ui.treegrid.TreeNode;
     import TreeGridBuilder = api.ui.treegrid.TreeGridBuilder;
+    import ContentSummaryAndCompareStatusFetcher = api.content.ContentSummaryAndCompareStatusFetcher;
 
     import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 
@@ -63,10 +64,19 @@ module app.wizard {
         }
 
         updateDataChildrenStatus(parentNode: TreeNode<ContentSummaryAndCompareStatus>) {
-            var hasChildren = parentNode.hasChildren();
-            parentNode.getData().setContentSummary(new ContentSummaryBuilder(parentNode.getData().getContentSummary()).
-                setHasChildren(hasChildren).
-                build());
+            ContentSummaryAndCompareStatusFetcher.fetchChildren(parentNode.getData().getId()).then((result: ContentResponse<ContentSummaryAndCompareStatus>) => {
+                var hasChildren = (result.getMetadata().getTotalHits() > 0);
+                if (parentNode.getData()) {
+                    parentNode.getData().setContentSummary(new ContentSummaryBuilder(parentNode.getData().getContentSummary()).
+                        setHasChildren(hasChildren).
+                        setDeletable(!hasChildren).
+                        build());
+                    this.refresh();
+                }
+            }).catch((reason: any) => {
+                api.DefaultErrorHandler.handle(reason);
+            });
+
         }
     }
 }

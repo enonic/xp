@@ -23,7 +23,7 @@ module api.app {
 
             this.onPanelShown((event: api.ui.panel.PanelShownEvent) => {
                 if (event.getPanel() === this.getBrowsePanel()) {
-                    this.getBrowsePanel().refreshFilterAndGrid();
+                    this.getBrowsePanel().refreshFilter();
                 }
 
                 var previousActions = this.resolveActions(event.getPreviousPanel());
