@@ -8,7 +8,6 @@ import java.util.List;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
-import org.osgi.framework.BundleListener;
 import org.osgi.framework.Constants;
 import org.osgi.framework.SynchronousBundleListener;
 import org.slf4j.Logger;
@@ -57,7 +56,11 @@ public final class ModuleLoader
         for ( final Bundle bundle : this.context.getBundles() )
         {
             addBundle( bundle );
-            publishModuleChangeEvent( new BundleEvent( bundle.getState(), bundle ) );
+
+            if ( bundle.getState() == Bundle.ACTIVE )
+            {
+                publishModuleChangeEvent( new BundleEvent( BundleEvent.STARTED, bundle ) );
+            }
         }
     }
 
