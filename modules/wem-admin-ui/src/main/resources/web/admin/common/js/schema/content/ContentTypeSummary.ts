@@ -164,7 +164,7 @@ module api.schema.content {
             this.allowChildContent = json.allowChildContent;
             this.final = json.final;
             this.abstract = json.abstract;
-            this.superType = new api.schema.content.ContentTypeName(json.superType);
+            this.superType = json.superType ? new api.schema.content.ContentTypeName(json.superType) : null;
             this.contentDisplayNameScript = json.contentDisplayNameScript;
             this.owner = json.owner;
             this.modifier = json.modifier;

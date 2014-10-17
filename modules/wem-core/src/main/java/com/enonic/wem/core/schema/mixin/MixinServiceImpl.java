@@ -1,5 +1,6 @@
 package com.enonic.wem.core.schema.mixin;
 
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.schema.mixin.GetMixinParams;
 import com.enonic.wem.api.schema.mixin.GetMixinsParams;
 import com.enonic.wem.api.schema.mixin.Mixin;
@@ -28,6 +29,12 @@ public class MixinServiceImpl
     public Mixins getAll()
     {
         return mixinDao.getAllMixins();
+    }
+
+    @Override
+    public Mixins getByModule( final ModuleKey moduleKey )
+    {
+        return mixinDao.getByModule( moduleKey );
     }
 
     public void setMixinDao( final MixinDao mixinDao )
