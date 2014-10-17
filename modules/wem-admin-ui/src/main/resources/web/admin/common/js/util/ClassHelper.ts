@@ -31,6 +31,17 @@ module api.util {
     }
 
     /**
+     * Returns function which was used to ceate this instance.
+     * In case of using typescript it returns typescript class.
+     *
+     * @param instance object
+     * @returns {function} class
+     */
+    export function getClass(instance: any): Function {
+        return instance["constructor"];
+    }
+
+    /**
      * Returns full module path to given object or class.
      *
      * @param instance - reference to class or it's instance.
