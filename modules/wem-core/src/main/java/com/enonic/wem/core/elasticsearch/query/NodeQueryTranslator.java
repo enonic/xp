@@ -3,12 +3,12 @@ package com.enonic.wem.core.elasticsearch.query;
 import org.elasticsearch.index.query.QueryBuilder;
 
 import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.index.IndexPaths;
 import com.enonic.wem.api.query.filter.ValueFilter;
 import com.enonic.wem.core.elasticsearch.aggregation.AggregationBuilderFactory;
 import com.enonic.wem.core.elasticsearch.query.builder.FilterBuilderFactory;
 import com.enonic.wem.core.elasticsearch.query.builder.QueryBuilderFactory;
 import com.enonic.wem.core.elasticsearch.query.builder.SortQueryBuilderFactory;
-import com.enonic.wem.core.entity.index.IndexPaths;
 import com.enonic.wem.core.entity.query.NodeQuery;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.repository.IndexNameResolver;

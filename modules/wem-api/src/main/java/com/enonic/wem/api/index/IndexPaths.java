@@ -1,4 +1,4 @@
-package com.enonic.wem.core.entity.index;
+package com.enonic.wem.api.index;
 
 public final class IndexPaths
 {

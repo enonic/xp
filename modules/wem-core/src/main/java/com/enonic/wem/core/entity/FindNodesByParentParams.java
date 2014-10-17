@@ -1,10 +1,6 @@
 package com.enonic.wem.core.entity;
 
-import java.util.Set;
-
-import com.google.common.collect.ImmutableSet;
-
-import com.enonic.wem.api.query.FieldSort;
+import com.enonic.wem.api.index.ChildOrder;
 
 public class FindNodesByParentParams
 {
@@ -14,7 +10,7 @@ public class FindNodesByParentParams
 
     private final Integer from;
 
-    private final ImmutableSet<FieldSort> sorting;
+    private final ChildOrder childOrder;
 
     private static final Integer DEFAULT_SIZE = 500;
 
@@ -23,7 +19,7 @@ public class FindNodesByParentParams
         parentPath = builder.parentPath;
         size = builder.size;
         from = builder.from;
-        sorting = ImmutableSet.copyOf( builder.sorting );
+        childOrder = builder.childOrder;
     }
 
     public NodePath getParentPath()
@@ -41,9 +37,9 @@ public class FindNodesByParentParams
         return from;
     }
 
-    public ImmutableSet<FieldSort> getSorting()
+    public ChildOrder getChildOrder()
     {
-        return sorting;
+        return childOrder;
     }
 
     public static Builder create()
@@ -60,7 +56,7 @@ public class FindNodesByParentParams
 
         private Integer from;
 
-        private Set<FieldSort> sorting;
+        private ChildOrder childOrder;
 
         private Builder()
         {
@@ -84,9 +80,9 @@ public class FindNodesByParentParams
             return this;
         }
 
-        public Builder sorting( final Set<FieldSort> sorting )
+        public Builder childOrder( final ChildOrder childOrder )
         {
-            this.sorting = sorting;
+            this.childOrder = childOrder;
             return this;
         }
 

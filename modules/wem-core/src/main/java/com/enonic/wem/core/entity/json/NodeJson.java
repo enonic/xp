@@ -1,21 +1,17 @@
 package com.enonic.wem.core.entity.json;
 
 import java.time.Instant;
-import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Strings;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.data.RootDataSetJson;
+import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.index.IndexConfigDocument;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
-import com.enonic.wem.api.query.expr.OrderExpr;
-import com.enonic.wem.api.query.parser.QueryParser;
 import com.enonic.wem.core.entity.Attachments;
-import com.enonic.wem.core.entity.ChildOrder;
 import com.enonic.wem.core.entity.IndexConfigDocumentJson;
 import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.entity.NodeId;
@@ -25,31 +21,31 @@ import com.enonic.wem.core.entity.PatternBasedIndexConfigDocumentJson;
 
 public class NodeJson
 {
-    protected String id;
+    private final String id;
 
-    protected Instant createdTime;
+    private final Instant createdTime;
 
-    protected RootDataSetJson data;
+    private final RootDataSetJson data;
 
-    protected Instant modifiedTime;
+    private final Instant modifiedTime;
 
-    protected IndexConfigDocumentJson indexConfigDocument;
+    private final IndexConfigDocumentJson indexConfigDocument;
 
-    private AttachmentsJson attachments;
+    private final AttachmentsJson attachments;
 
-    private Node node;
+    private final Node node;
 
-    private String name;
+    private final String name;
 
-    private String parent;
+    private final String parent;
 
-    private String path;
+    private final String path;
 
-    private String modifier;
+    private final String modifier;
 
-    private String creator;
+    private final String creator;
 
-    private String childOrder;
+    private final String childOrder;
 
     @SuppressWarnings("UnusedDeclaration")
     @JsonCreator
@@ -93,7 +89,7 @@ public class NodeJson
             rootDataSet( data.getRootDataSet() ).
             indexConfigDocument( indexConfigDocument.toEntityIndexConfig() ).
             attachments( attachments != null ? attachments.getAttachments() : Attachments.empty() ).
-            childOrder( toChildOrder() ).
+            childOrder( ChildOrder.from( childOrder ) ).
             build();
     }
 
@@ -122,26 +118,6 @@ public class NodeJson
         }
         return null;
     }
-
-    public ChildOrder toChildOrder()
-    {
-        final ChildOrder.Builder builder = ChildOrder.create();
-
-        if ( Strings.isNullOrEmpty( this.childOrder ) )
-        {
-            return builder.build();
-        }
-
-        final List<OrderExpr> orderExprs = QueryParser.parseOrderExpressions( this.childOrder );
-
-        for ( final OrderExpr orderExpr : orderExprs )
-        {
-            builder.add( orderExpr );
-        }
-
-        return builder.build();
-    }
-
 
     @SuppressWarnings("UnusedDeclaration")
     public String getName()

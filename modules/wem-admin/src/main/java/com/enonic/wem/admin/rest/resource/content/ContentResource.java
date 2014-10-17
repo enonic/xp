@@ -25,7 +25,6 @@ import com.enonic.wem.admin.json.content.ContentSummaryJson;
 import com.enonic.wem.admin.json.content.ContentSummaryListJson;
 import com.enonic.wem.admin.json.content.GetActiveContentVersionsResultJson;
 import com.enonic.wem.admin.json.content.GetContentVersionsResultJson;
-import com.enonic.wem.admin.json.content.MetadataJson;
 import com.enonic.wem.admin.json.content.attachment.AttachmentJson;
 import com.enonic.wem.admin.rest.exception.NotFoundWebException;
 import com.enonic.wem.admin.rest.resource.content.json.AbstractContentQueryResultJson;
@@ -60,24 +59,18 @@ import com.enonic.wem.api.content.FindContentVersionsParams;
 import com.enonic.wem.api.content.FindContentVersionsResult;
 import com.enonic.wem.api.content.GetActiveContentVersionsParams;
 import com.enonic.wem.api.content.GetActiveContentVersionsResult;
-import com.enonic.wem.api.content.Metadata;
 import com.enonic.wem.api.content.PushContentParams;
 import com.enonic.wem.api.content.RenameContentParams;
 import com.enonic.wem.api.content.UnableToDeleteContentException;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.AttachmentService;
-import com.enonic.wem.api.content.data.ContentData;
-import com.enonic.wem.api.content.editor.ContentEditor;
-import com.enonic.wem.api.data.DataJson;
 import com.enonic.wem.api.exception.ConflictException;
 import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
-import com.enonic.wem.api.query.Direction;
+import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.api.workspace.Workspaces;
-
-import static com.enonic.wem.api.content.Content.editContent;
 
 @SuppressWarnings("UnusedDeclaration")
 @Path("content")
@@ -177,7 +170,8 @@ public class ContentResource
     public AbstractContentListJson listById( @QueryParam("parentId") final String parentIdParam,
                                              @QueryParam("expand") @DefaultValue(EXPAND_SUMMARY) final String expandParam,
                                              @QueryParam("from") @DefaultValue(DEFAULT_FROM_PARAM) final Integer fromParam,
-                                             @QueryParam("size") @DefaultValue(DEFAULT_SIZE_PARAM) final Integer sizeParam )
+                                             @QueryParam("size") @DefaultValue(DEFAULT_SIZE_PARAM) final Integer sizeParam,
+                                             @QueryParam("childOrder") final String childOrder )
     {
         final ContentPath parentContentPath;
 
@@ -196,7 +190,7 @@ public class ContentResource
             from( fromParam ).
             size( sizeParam ).
             parentPath( parentContentPath ).
-            addSort( DEFAULT_SORT_FIELD, Direction.DESC ).
+            childOrder( ChildOrder.from( childOrder ) ).
             build();
 
         return doGetByParentPath( expandParam, params, parentContentPath );
@@ -207,7 +201,8 @@ public class ContentResource
     public AbstractContentListJson listByPath( @QueryParam("parentPath") final String parentPathParam,
                                                @QueryParam("expand") @DefaultValue(EXPAND_SUMMARY) final String expandParam,
                                                @QueryParam("from") @DefaultValue(DEFAULT_FROM_PARAM) final Integer fromParam,
-                                               @QueryParam("size") @DefaultValue(DEFAULT_SIZE_PARAM) final Integer sizeParam )
+                                               @QueryParam("size") @DefaultValue(DEFAULT_SIZE_PARAM) final Integer sizeParam,
+                                               @QueryParam("childOrder") final String childOrder )
     {
         final ContentPath parentContentPath;
 
@@ -224,7 +219,7 @@ public class ContentResource
             from( fromParam ).
             size( sizeParam ).
             parentPath( parentContentPath ).
-            addSort( DEFAULT_SORT_FIELD, Direction.DESC ).
+            childOrder( ChildOrder.from( childOrder ) ).
             build();
 
         return doGetByParentPath( expandParam, params, parentContentPath );

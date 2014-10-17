@@ -1,14 +1,7 @@
 package com.enonic.wem.core.entity;
 
-import java.util.Set;
-
-import com.google.common.collect.Sets;
-
 import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.query.FieldSort;
-import com.enonic.wem.api.query.expr.FieldExpr;
-import com.enonic.wem.api.query.expr.FieldOrderExpr;
-import com.enonic.wem.api.query.expr.OrderExpr;
+import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.query.expr.QueryExpr;
 import com.enonic.wem.core.entity.query.NodeQuery;
 import com.enonic.wem.core.index.IndexContext;
@@ -33,7 +26,15 @@ public class FindNodesByParentCommand
 
     public FindNodesByParentResult execute()
     {
-        final NodeQuery query = createByPathQuery();
+        final ChildOrder order = NodeChildOrderResolver.create().
+            nodeDao( this.nodeDao ).
+            workspaceService( this.workspaceService ).
+            nodePath( params.getParentPath() ).
+            childOrder( params.getChildOrder() ).
+            build().
+            resolve();
+
+        final NodeQuery query = createByPathQuery( order );
 
         final NodeQueryResult nodeQueryResult = this.queryService.find( query, IndexContext.from( Context.current() ) );
 
@@ -52,25 +53,15 @@ public class FindNodesByParentCommand
             build();
     }
 
-    private NodeQuery createByPathQuery()
+    private NodeQuery createByPathQuery( final ChildOrder order )
     {
-        final Set<OrderExpr> orderBys = Sets.newHashSet();
-
-        for ( final FieldSort fieldSort : this.params.getSorting() )
-        {
-            final FieldOrderExpr orderByExpr = new FieldOrderExpr( new FieldExpr( fieldSort.getFieldName() ),
-                                                                   OrderExpr.Direction.valueOf( fieldSort.getDirection().name() ) );
-            orderBys.add( orderByExpr );
-        }
-
         return NodeQuery.create().
             parent( this.params.getParentPath() ).
-            query( new QueryExpr( orderBys ) ).
+            query( new QueryExpr( order.getChildOrderExpressions() ) ).
             from( params.getFrom() ).
             size( params.getSize() ).
             build();
     }
-
 
     public static class Builder
         extends AbstractFindNodeCommand.Builder<Builder>

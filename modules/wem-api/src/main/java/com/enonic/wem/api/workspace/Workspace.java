@@ -1,29 +1,42 @@
 package com.enonic.wem.api.workspace;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+
+import com.enonic.wem.api.index.ChildOrder;
 
 public final class Workspace
 {
     private final String name;
 
-    public static Workspace from( final String name )
-    {
-        if ( Strings.isNullOrEmpty( name ) )
-        {
-            return null;
-        }
+    private final ChildOrder childOrder;
 
-        return new Workspace( name );
+    private Workspace( final Builder builder )
+    {
+        this.name = builder.name;
+        this.childOrder = builder.childOrder;
     }
 
-    private Workspace( final String name )
+    public static Workspace from( final String name )
     {
-        this.name = name;
+        return Workspace.create().
+            name( name ).
+            build();
     }
 
     public String getName()
     {
         return name;
+    }
+
+    public ChildOrder getChildOrder()
+    {
+        return childOrder;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
     }
 
     @Override
@@ -52,6 +65,45 @@ public final class Workspace
     public int hashCode()
     {
         return name.hashCode();
+    }
+
+    public static final class Builder
+    {
+        private String name;
+
+        private ChildOrder childOrder;
+
+        private Builder()
+        {
+        }
+
+        public Builder name( String name )
+        {
+            this.name = name;
+            return this;
+        }
+
+        public Builder childOrder( ChildOrder childOrder )
+        {
+            this.childOrder = childOrder;
+            return this;
+        }
+
+        private void validate()
+        {
+            Preconditions.checkArgument( !Strings.isNullOrEmpty( this.name ) );
+        }
+
+        public Workspace build()
+        {
+            if ( childOrder == null )
+            {
+                this.childOrder = ChildOrder.create().
+                    build();
+            }
+
+            return new Workspace( this );
+        }
     }
 }
 

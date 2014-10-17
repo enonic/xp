@@ -1,7 +1,6 @@
-package com.enonic.wem.core.entity.index;
+package com.enonic.wem.api.index;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -55,11 +54,8 @@ public class IndexDocumentItemPath
     {
         Builder builder = newIndexDocumentItemPath();
 
-        final Iterator<DataPath.Element> iterator = property.getPath().iterator();
-
-        while ( iterator.hasNext() )
+        for ( final DataPath.Element next : property.getPath() )
         {
-            final DataPath.Element next = iterator.next();
             builder.add( next.getName() );
         }
 
@@ -117,7 +113,7 @@ public class IndexDocumentItemPath
 
     public static class Builder
     {
-        private List<Element> elements;
+        private final List<Element> elements;
 
         public Builder()
         {

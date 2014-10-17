@@ -10,6 +10,7 @@ import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.index.IndexConfigDocument;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;

@@ -6,6 +6,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.version.NodeVersionDocument;
 import com.enonic.wem.core.workspace.StoreWorkspaceDocument;
@@ -49,7 +50,7 @@ final class CreateNodeCommand
             attachments( params.getAttachments() != null ? params.getAttachments() : Attachments.empty() ).
             indexConfigDocument( params.getIndexConfigDocument() ).
             hasChildren( false ).
-            childOrder( params.getChildOrder() != null ? params.getChildOrder() : ChildOrder.create().build() );
+            childOrder( params.getChildOrder() != null ? params.getChildOrder() : ChildOrder.defaultOrder() );
 
         final Node newNode = nodeBuilder.build();
 

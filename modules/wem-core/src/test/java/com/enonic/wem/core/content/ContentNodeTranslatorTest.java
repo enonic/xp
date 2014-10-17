@@ -9,6 +9,7 @@ import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.ContentIndexPaths;
 import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.CreateContentParams;
@@ -46,7 +47,7 @@ import static org.junit.Assert.*;
 
 public class ContentNodeTranslatorTest
 {
-    private static final String CONTENT_DATA_PREFIX = ContentDataSerializer.CONTENT_DATA;
+    private static final String CONTENT_DATA_PREFIX = ContentIndexPaths.CONTENT_DATA;
 
     private ContentNodeTranslator translator;
 

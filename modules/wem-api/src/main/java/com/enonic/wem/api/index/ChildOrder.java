@@ -1,26 +1,61 @@
-package com.enonic.wem.core.entity;
+package com.enonic.wem.api.index;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.query.expr.FieldExpr;
 import com.enonic.wem.api.query.expr.FieldOrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpr;
-import com.enonic.wem.core.entity.index.IndexPaths;
+import com.enonic.wem.api.query.parser.QueryParser;
 
 public class ChildOrder
 {
-    public static final OrderExpr DEFAULT_CHILD_ORDER_EXPRESSION =
+    private static final OrderExpr DEFAULT_CHILD_ORDER_EXPRESSION =
         new FieldOrderExpr( FieldExpr.from( IndexPaths.MODIFIED_TIME_KEY ), OrderExpr.Direction.DESC );
 
     private final ImmutableSet<OrderExpr> childOrderExpressions;
 
-    private ChildOrder( Builder builder )
+    private ChildOrder( final Builder builder )
     {
         childOrderExpressions = ImmutableSet.copyOf( builder.childOrderExpressions );
+    }
+
+    public static ChildOrder defaultOrder()
+    {
+        return ChildOrder.create().
+            add( DEFAULT_CHILD_ORDER_EXPRESSION ).
+            build();
+    }
+
+    public static ChildOrder from( final String orderExpression )
+    {
+        final ChildOrder.Builder builder = ChildOrder.create();
+
+        if ( Strings.isNullOrEmpty( orderExpression ) )
+        {
+            return builder.build();
+        }
+
+        final List<OrderExpr> orderExprs = QueryParser.parseOrderExpressions( orderExpression );
+
+        orderExprs.forEach( builder::add );
+
+        return builder.build();
+    }
+
+    public boolean isEmpty()
+    {
+        return this.childOrderExpressions.isEmpty();
+    }
+
+    public ImmutableSet<OrderExpr> getChildOrderExpressions()
+    {
+        return childOrderExpressions;
     }
 
     public static Builder create()
@@ -28,10 +63,9 @@ public class ChildOrder
         return new Builder();
     }
 
-
     public static final class Builder
     {
-        private Set<OrderExpr> childOrderExpressions = Sets.newLinkedHashSet();
+        private final Set<OrderExpr> childOrderExpressions = Sets.newLinkedHashSet();
 
         private Builder()
         {
@@ -45,10 +79,6 @@ public class ChildOrder
 
         public ChildOrder build()
         {
-            if ( this.childOrderExpressions.isEmpty() )
-            {
-                this.childOrderExpressions.add( DEFAULT_CHILD_ORDER_EXPRESSION );
-            }
             return new ChildOrder( this );
         }
     }

@@ -1,23 +1,24 @@
 package com.enonic.wem.core.entity;
 
 import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.index.IndexConfigDocument;
 
 public class CreateNodeParams
 {
-    private NodePath parent;
+    private final NodePath parent;
 
-    private String name;
+    private final String name;
 
-    private RootDataSet data;
+    private final RootDataSet data;
 
-    private Attachments attachments;
+    private final Attachments attachments;
 
-    private IndexConfigDocument indexConfigDocument;
+    private final IndexConfigDocument indexConfigDocument;
 
-    private ChildOrder childOrder;
+    private final ChildOrder childOrder;
 
-    private boolean embed;
+    private final boolean embed;
 
     private CreateNodeParams( Builder builder )
     {
