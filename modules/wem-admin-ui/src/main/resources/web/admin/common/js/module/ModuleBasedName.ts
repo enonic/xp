@@ -31,7 +31,7 @@ module api.module {
 
         equals(o: api.Equitable): boolean {
 
-            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, this["constructor"])) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, api.util.getClass(this))) {
                 return false;
             }
 

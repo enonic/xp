@@ -19,6 +19,7 @@ import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeJson;
 import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeListJson;
 import com.enonic.wem.admin.rest.resource.schema.SchemaImageHelper;
 import com.enonic.wem.api.Icon;
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.schema.relationship.GetRelationshipTypeParams;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
@@ -66,6 +67,15 @@ public class RelationshipTypeResource
     public RelationshipTypeListJson list()
     {
         final RelationshipTypes relationshipTypes = relationshipTypeService.getAll();
+
+        return new RelationshipTypeListJson( relationshipTypes, this.relationshipTypeIconUrlResolver );
+    }
+
+    @GET
+    @Path("byModule")
+    public RelationshipTypeListJson getByModule( @QueryParam( "moduleKey" ) final String moduleKey )
+    {
+        final RelationshipTypes relationshipTypes = relationshipTypeService.getByModule( ModuleKey.from( moduleKey ) );
 
         return new RelationshipTypeListJson( relationshipTypes, this.relationshipTypeIconUrlResolver );
     }

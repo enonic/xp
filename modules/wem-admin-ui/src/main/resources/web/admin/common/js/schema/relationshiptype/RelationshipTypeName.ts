@@ -1,15 +1,14 @@
-module api.schema.relationshiptype{
+module api.schema.relationshiptype {
 
-    export class RelationshipTypeName {
+    import ModuleKey = api.module.ModuleKey;
 
-        private value:string;
+    export class RelationshipTypeName extends api.module.ModuleBasedName {
 
         constructor(name:string) {
-            this.value = name
+            api.util.assertNotNull(name, "RelationshipType name can't be null");
+            var parts = name.split(api.module.ModuleBasedName.SEPARATOR);
+            super(ModuleKey.fromString(parts[0]), parts[1]);
         }
 
-        toString():string {
-            return this.value;
-        }
     }
 }

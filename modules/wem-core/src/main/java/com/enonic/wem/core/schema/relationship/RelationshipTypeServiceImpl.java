@@ -1,5 +1,6 @@
 package com.enonic.wem.core.schema.relationship;
 
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.schema.relationship.GetRelationshipTypeParams;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeService;
@@ -21,6 +22,12 @@ public class RelationshipTypeServiceImpl
     public RelationshipType getByName( final GetRelationshipTypeParams params )
     {
         return new GetRelationshipTypeCommand().params( params ).relationshipTypeDao( relationshipTypeDao ).execute();
+    }
+
+    @Override
+    public RelationshipTypes getByModule( final ModuleKey moduleKey )
+    {
+        return relationshipTypeDao.getByModule( moduleKey );
     }
 
     public void setRelationshipTypeDao( final RelationshipTypeDao relationshipTypeDao )
