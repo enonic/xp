@@ -23,6 +23,7 @@ module app.browse {
 
     import ContentBrowseSearchEvent = app.browse.filter.ContentBrowseSearchEvent;
     import ContentBrowseResetEvent = app.browse.filter.ContentBrowseResetEvent;
+    import ContentBrowseRefreshEvent = app.browse.filter.ContentBrowseRefreshEvent;
 
     import ContentTreeGridActions = app.browse.action.ContentTreeGridActions;
 
@@ -140,6 +141,9 @@ module app.browse {
             ContentBrowseResetEvent.on((event) => {
                 this.resetFilter();
             });
+            ContentBrowseRefreshEvent.on((event) => {
+                this.notifyLoaded();
+            });
         }
 
         private typeFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
@@ -248,6 +252,18 @@ module app.browse {
             return data.getId();
         }
 
+        updateContentNode(content: api.content.Content) {
+            var root = this.getRoot();
+            root.treeToList().forEach((child: TreeNode<ContentSummaryAndCompareStatus>) => {
+                var curContent: ContentSummaryAndCompareStatus = child.getData();
+                if (child.getData().getId() == content.getId()) {
+                    curContent.setContentSummary(content);
+                    this.updateNode(curContent);
+                    return;
+                }
+            });
+        }
+
         appendContentNode(content: api.content.Content) {
 
             this.fetchById(content.getId())
@@ -259,10 +275,19 @@ module app.browse {
         }
 
         updateDataChildrenStatus(parentNode: TreeNode<ContentSummaryAndCompareStatus>) {
-            var hasChildren = parentNode.hasChildren();
-            parentNode.getData().setContentSummary(new ContentSummaryBuilder(parentNode.getData().getContentSummary()).
-                setHasChildren(hasChildren).
-                build());
+            ContentSummaryAndCompareStatusFetcher.fetchChildren(parentNode.getData().getId()).then((result: ContentResponse<ContentSummaryAndCompareStatus>) => {
+                var hasChildren = (result.getMetadata().getTotalHits() > 0);
+                if (parentNode.getData()) {
+                    parentNode.getData().setContentSummary(new ContentSummaryBuilder(parentNode.getData().getContentSummary()).
+                        setHasChildren(hasChildren).
+                        setDeletable(!hasChildren).
+                        build());
+                    this.refresh();
+                }
+            }).catch((reason: any) => {
+                api.DefaultErrorHandler.handle(reason);
+            });
+
         }
     }
 }

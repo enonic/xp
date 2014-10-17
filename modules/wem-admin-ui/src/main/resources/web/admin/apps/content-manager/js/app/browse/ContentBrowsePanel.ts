@@ -44,7 +44,7 @@ module app.browse {
             });
 
             api.content.ContentDeletedEvent.on((event) => {
-                this.setRefreshNeeded(true);
+                this.setFilterPanelRefreshNeeded(true);
                 /*
                  Deleting content won't trigger browsePanel.onShow event,
                  because we are left on the same panel. We need to refresh manually.
@@ -52,16 +52,17 @@ module app.browse {
                 this.contentTreeGridPanel.deleteNodes(event.getContents().map((elem) => {
                     return new api.content.ContentSummaryAndCompareStatus(elem, null);
                 }));
-                this.refreshFilterAndGrid();
+                this.refreshFilter();
             });
 
             api.content.ContentCreatedEvent.on((event) => {
                 this.contentTreeGridPanel.appendContentNode(event.getContent());
-                this.setRefreshNeeded(false);
+                this.setFilterPanelRefreshNeeded(true);
             });
 
             api.content.ContentUpdatedEvent.on((event) => {
-                this.setRefreshNeeded(true);
+                this.contentTreeGridPanel.updateContentNode(event.getContent());
+                this.setFilterPanelRefreshNeeded(false);
             });
 
             var showMask = () => {
@@ -70,6 +71,7 @@ module app.browse {
             this.contentTreeGridPanelMask.show();
             this.contentFilterPanel.onSearch(showMask);
             this.contentFilterPanel.onReset(showMask);
+            this.contentFilterPanel.onRefresh(showMask);
             this.contentTreeGridPanel.onRendered(showMask);
             this.contentTreeGridPanel.onLoaded(() => {
                 this.contentTreeGridPanelMask.hide();
