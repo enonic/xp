@@ -1,15 +1,12 @@
 package com.enonic.wem.core.entity.json;
 
 import java.time.Instant;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.Sets;
+import com.google.common.base.Strings;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.data.RootDataSetJson;
@@ -18,6 +15,7 @@ import com.enonic.wem.api.index.PatternIndexConfigDocument;
 import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.query.parser.QueryParser;
 import com.enonic.wem.core.entity.Attachments;
+import com.enonic.wem.core.entity.ChildOrder;
 import com.enonic.wem.core.entity.IndexConfigDocumentJson;
 import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.entity.NodeId;
@@ -51,7 +49,7 @@ public class NodeJson
 
     private String creator;
 
-    private String orderExpressions;
+    private String childOrder;
 
     @SuppressWarnings("UnusedDeclaration")
     @JsonCreator
@@ -66,7 +64,7 @@ public class NodeJson
                      @JsonProperty("modifiedTime") final Instant modifiedTime, //
                      @JsonProperty("indexConfigDocument") final IndexConfigDocumentJson indexConfigDocument,
                      @JsonProperty("attachments") final AttachmentsJson attachments, //
-                     @JsonProperty("orderExpressions") final String orderExpressions )
+                     @JsonProperty("childOrder") final String childOrder )
 
     {
         this.id = id;
@@ -81,7 +79,7 @@ public class NodeJson
         this.path = path;
         this.modifier = modifier;
         this.creator = creator;
-        this.orderExpressions = orderExpressions;
+        this.childOrder = childOrder;
 
         this.node = Node.newNode().
             id( NodeId.from( id ) ).
@@ -95,7 +93,7 @@ public class NodeJson
             rootDataSet( data.getRootDataSet() ).
             indexConfigDocument( indexConfigDocument.toEntityIndexConfig() ).
             attachments( attachments != null ? attachments.getAttachments() : Attachments.empty() ).
-            addOrderExpressions( toOrderExpressions() ).
+            childOrder( toChildOrder() ).
             build();
     }
 
@@ -113,7 +111,7 @@ public class NodeJson
         this.path = node.path() != null ? node.path().toString() : null;
         this.modifier = node.modifier() != null ? node.modifier().getQualifiedName() : null;
         this.creator = node.creator() != null ? node.creator().getQualifiedName() : null;
-        this.orderExpressions = getOrderExpressionsString( node.getOrderExpressions() );
+        this.childOrder = node.getChildOrder().toString();
     }
 
     private IndexConfigDocumentJson createEntityIndexConfig( final IndexConfigDocument indexConfig )
@@ -125,24 +123,23 @@ public class NodeJson
         return null;
     }
 
-    private String getOrderExpressionsString( final Set<OrderExpr> orderExpressions )
+    public ChildOrder toChildOrder()
     {
-        return orderExpressions.stream().
-            map( OrderExpr::toString ).
-            collect( Collectors.joining( ", " ) );
-    }
+        final ChildOrder.Builder builder = ChildOrder.create();
 
-    public Set<OrderExpr> toOrderExpressions()
-    {
-        final LinkedHashSet<OrderExpr> orderExpressions = Sets.newLinkedHashSet();
-        final List<OrderExpr> orderExprs = QueryParser.parseOrderExpressions( this.orderExpressions );
+        if ( Strings.isNullOrEmpty( this.childOrder ) )
+        {
+            return builder.build();
+        }
+
+        final List<OrderExpr> orderExprs = QueryParser.parseOrderExpressions( this.childOrder );
 
         for ( final OrderExpr orderExpr : orderExprs )
         {
-            orderExpressions.add( orderExpr );
+            builder.add( orderExpr );
         }
 
-        return orderExpressions;
+        return builder.build();
     }
 
 
@@ -213,9 +210,9 @@ public class NodeJson
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    public String getOrderExpressions()
+    public String getChildOrder()
     {
-        return this.orderExpressions;
+        return this.childOrder;
     }
 
     @JsonIgnore

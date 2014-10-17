@@ -6,10 +6,6 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.query.expr.FieldExpr;
-import com.enonic.wem.api.query.expr.FieldOrderExpr;
-import com.enonic.wem.api.query.expr.OrderExpr;
-import com.enonic.wem.core.entity.index.IndexPaths;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.version.NodeVersionDocument;
 import com.enonic.wem.core.workspace.StoreWorkspaceDocument;
@@ -18,8 +14,6 @@ import com.enonic.wem.core.workspace.WorkspaceContext;
 final class CreateNodeCommand
     extends AbstractNodeCommand
 {
-    public static final OrderExpr DEFAULT_ORDER_EXPRESSION =
-        new FieldOrderExpr( FieldExpr.from( IndexPaths.MODIFIED_TIME_KEY ), OrderExpr.Direction.DESC );
 
 
     private final CreateNodeParams params;
@@ -54,16 +48,8 @@ final class CreateNodeCommand
             rootDataSet( params.getData() ).
             attachments( params.getAttachments() != null ? params.getAttachments() : Attachments.empty() ).
             indexConfigDocument( params.getIndexConfigDocument() ).
-            hasChildren( false );
-
-        if ( params.getOrderExpressions().isEmpty() )
-        {
-            nodeBuilder.addOrderExpression( DEFAULT_ORDER_EXPRESSION );
-        }
-        else
-        {
-            nodeBuilder.addOrderExpressions( params.getOrderExpressions() );
-        }
+            hasChildren( false ).
+            childOrder( params.getChildOrder() != null ? params.getChildOrder() : ChildOrder.create().build() );
 
         final Node newNode = nodeBuilder.build();
 

@@ -1,12 +1,8 @@
 package com.enonic.wem.core.entity;
 
-
 import java.time.Instant;
-import java.util.Set;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.data.Data;
@@ -17,7 +13,6 @@ import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.index.IndexConfigDocument;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
-import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.support.ChangeTraceable;
 import com.enonic.wem.api.support.Changes;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
@@ -54,7 +49,7 @@ public final class Node
 
     private final Attachments attachments;
 
-    private final ImmutableSet<OrderExpr> orderExpressions;
+    private final ChildOrder childOrder;
 
     private Node( final BaseBuilder builder )
     {
@@ -95,7 +90,7 @@ public final class Node
 
         this.hasChildren = builder.hasChildren;
 
-        this.orderExpressions = ImmutableSet.copyOf( builder.orderExpressions );
+        this.childOrder = builder.childOrder;
     }
 
     public NodeName name()
@@ -178,9 +173,9 @@ public final class Node
         return indexConfigDocument;
     }
 
-    public ImmutableSet<OrderExpr> getOrderExpressions()
+    public ChildOrder getChildOrder()
     {
-        return orderExpressions;
+        return childOrder;
     }
 
     public void validateForIndexing()
@@ -188,7 +183,6 @@ public final class Node
         Preconditions.checkNotNull( this.id, "Id must be set" );
         Preconditions.checkNotNull( this.indexConfigDocument, "EntityIndexConfig must be set" );
     }
-
 
     @Override
     public void checkIllegalEdit( final Node to )
@@ -228,7 +222,6 @@ public final class Node
         return new EditBuilder( original );
     }
 
-
     private static class BaseBuilder
     {
         NodeName name;
@@ -253,7 +246,7 @@ public final class Node
 
         IndexConfigDocument indexConfigDocument;
 
-        Set<OrderExpr> orderExpressions = Sets.newLinkedHashSet();
+        ChildOrder childOrder;
 
         private BaseBuilder()
         {
@@ -270,7 +263,7 @@ public final class Node
             this.parent = node.parent;
             this.creator = node.creator;
             this.modifier = node.modifier;
-            this.orderExpressions = node.orderExpressions;
+            this.childOrder = node.childOrder;
         }
 
         private BaseBuilder( final NodeId id, final NodeName name )
@@ -293,7 +286,7 @@ public final class Node
 
         boolean hasChildren = false;
 
-        private Set<OrderExpr> orderExpressions = Sets.newLinkedHashSet();
+        private ChildOrder childOrder;
 
         public Builder()
         {
@@ -316,7 +309,7 @@ public final class Node
             this.parent = node.parent;
             this.modifier = node.modifier;
             this.creator = node.creator;
-            this.orderExpressions = node.orderExpressions;
+            this.childOrder = node.childOrder;
         }
 
         public Builder( final NodeId id, final NodeName name )
@@ -442,17 +435,12 @@ public final class Node
             return this;
         }
 
-        public Builder addOrderExpression( final OrderExpr value )
+        public Builder childOrder( final ChildOrder childOrder )
         {
-            this.orderExpressions.add( value );
+            this.childOrder = childOrder;
             return this;
         }
 
-        public Builder addOrderExpressions( final Set<OrderExpr> values )
-        {
-            this.orderExpressions.addAll( values );
-            return this;
-        }
 
         public Node build()
         {
@@ -468,7 +456,7 @@ public final class Node
             baseBuilder.modifier = this.modifier;
             baseBuilder.indexConfigDocument = this.indexConfigDocument;
             baseBuilder.hasChildren = this.hasChildren;
-            baseBuilder.orderExpressions = this.orderExpressions;
+            baseBuilder.childOrder = this.childOrder;
 
             return new Node( baseBuilder );
         }
@@ -570,27 +558,11 @@ public final class Node
             return this;
         }
 
-        public EditBuilder addOrderExpression( final OrderExpr value )
+        public EditBuilder childOrder( final ChildOrder childOrder )
         {
-            this.orderExpressions.add( value );
-            changes.recordChange(
-                newPossibleChange( "data" ).from( this.originalNode.indexConfigDocument ).to( this.indexConfigDocument ).build() );
-            return this;
-        }
+            this.childOrder = childOrder;
+            changes.recordChange( newPossibleChange( "childOrder" ).from( this.originalNode.childOrder ).to( this.childOrder ).build() );
 
-        public EditBuilder addOrderExpressions( final Set<OrderExpr> values )
-        {
-            this.orderExpressions.addAll( values );
-            changes.recordChange(
-                newPossibleChange( "data" ).from( this.originalNode.indexConfigDocument ).to( this.indexConfigDocument ).build() );
-            return this;
-        }
-
-        public EditBuilder setOrderExpressions( final Set<OrderExpr> orderExpressions )
-        {
-            this.orderExpressions = orderExpressions;
-            changes.recordChange(
-                newPossibleChange( "orderExpressions" ).from( this.originalNode.orderExpressions ).to( this.orderExpressions ).build() );
             return this;
         }
 
@@ -611,7 +583,7 @@ public final class Node
             baseBuilder.attachments = this.attachments;
             baseBuilder.indexConfigDocument = this.indexConfigDocument;
             baseBuilder.name = this.name;
-            baseBuilder.orderExpressions = this.orderExpressions;
+            baseBuilder.childOrder = this.childOrder;
 
             return new Node( baseBuilder );
         }
@@ -637,6 +609,10 @@ public final class Node
             return false;
         }
         if ( attachments != null ? !attachments.equals( node.attachments ) : node.attachments != null )
+        {
+            return false;
+        }
+        if ( childOrder != null ? !childOrder.equals( node.childOrder ) : node.childOrder != null )
         {
             return false;
         }
@@ -672,10 +648,6 @@ public final class Node
         {
             return false;
         }
-        if ( orderExpressions != null ? !orderExpressions.equals( node.orderExpressions ) : node.orderExpressions != null )
-        {
-            return false;
-        }
         if ( parent != null ? !parent.equals( node.parent ) : node.parent != null )
         {
             return false;
@@ -703,7 +675,7 @@ public final class Node
         result = 31 * result + ( modifiedTime != null ? modifiedTime.hashCode() : 0 );
         result = 31 * result + ( indexConfigDocument != null ? indexConfigDocument.hashCode() : 0 );
         result = 31 * result + ( attachments != null ? attachments.hashCode() : 0 );
-        result = 31 * result + ( orderExpressions != null ? orderExpressions.hashCode() : 0 );
+        result = 31 * result + ( childOrder != null ? childOrder.hashCode() : 0 );
         return result;
     }
 }

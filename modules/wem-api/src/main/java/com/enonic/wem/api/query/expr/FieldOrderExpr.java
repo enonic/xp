@@ -16,6 +16,11 @@ public final class FieldOrderExpr
         return this.field;
     }
 
+    public static FieldOrderExpr create( final String fieldName, Direction direction )
+    {
+        return new FieldOrderExpr( FieldExpr.from( fieldName ), direction );
+    }
+
     @Override
     public String toString()
     {

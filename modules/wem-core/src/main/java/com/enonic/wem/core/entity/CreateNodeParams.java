@@ -1,13 +1,7 @@
 package com.enonic.wem.core.entity;
 
-import java.util.Set;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
-
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.index.IndexConfigDocument;
-import com.enonic.wem.api.query.expr.OrderExpr;
 
 public class CreateNodeParams
 {
@@ -21,7 +15,7 @@ public class CreateNodeParams
 
     private IndexConfigDocument indexConfigDocument;
 
-    private ImmutableSet<OrderExpr> orderExpressions;
+    private ChildOrder childOrder;
 
     private boolean embed;
 
@@ -33,7 +27,7 @@ public class CreateNodeParams
         attachments = builder.attachments;
         indexConfigDocument = builder.indexConfigDocument;
         embed = builder.embed;
-        this.orderExpressions = ImmutableSet.copyOf( builder.orderExpressions );
+        this.childOrder = builder.childOrder;
 
     }
 
@@ -67,9 +61,9 @@ public class CreateNodeParams
         return indexConfigDocument;
     }
 
-    public ImmutableSet<OrderExpr> getOrderExpressions()
+    public ChildOrder getChildOrder()
     {
-        return orderExpressions;
+        return childOrder;
     }
 
     public static final class Builder
@@ -84,7 +78,7 @@ public class CreateNodeParams
 
         private IndexConfigDocument indexConfigDocument;
 
-        private Set<OrderExpr> orderExpressions = Sets.newLinkedHashSet();
+        private ChildOrder childOrder;
 
         private boolean embed;
 
@@ -128,18 +122,11 @@ public class CreateNodeParams
             return this;
         }
 
-        public Builder addOrderExpression( final OrderExpr orderExpression )
+        public Builder childOrder( final ChildOrder childOrder )
         {
-            this.orderExpressions.add( orderExpression );
+            this.childOrder = childOrder;
             return this;
         }
-
-        public Builder addOrderExpression( final Set<OrderExpr> orderExpressions )
-        {
-            this.orderExpressions.addAll( orderExpressions );
-            return this;
-        }
-
 
         public CreateNodeParams build()
         {
