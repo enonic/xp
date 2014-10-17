@@ -9,46 +9,46 @@ import com.enonic.wem.portal.internal.postprocess.PostProcessor;
 import com.enonic.wem.script.ScriptExports;
 import com.enonic.wem.script.ScriptService;
 
-public final class ControllerFactoryImpl
-    implements ControllerFactory
+public final class ControllerScriptFactoryImpl
+    implements ControllerScriptFactory
 {
-    private final Cache<String, ControllerImpl> cache;
+    private final Cache<String, ControllerScriptImpl> cache;
 
     private ScriptService scriptService;
 
     private PostProcessor postProcessor;
 
     // TODO: Make caching better. Invaliate on module change.
-    public ControllerFactoryImpl()
+    public ControllerScriptFactoryImpl()
     {
         this.cache = CacheBuilder.newBuilder().maximumSize( 100 ).build();
     }
 
     @Override
-    public Controller newController( final ResourceKey scriptDir )
+    public ControllerScript newController( final ResourceKey scriptDir )
     {
         final ResourceKey script = scriptDir.resolve( "controller.js" );
         return getOrCreate( script );
     }
 
-    private ControllerImpl getOrCreate( final ResourceKey script )
+    private ControllerScriptImpl getOrCreate( final ResourceKey script )
     {
         final String cacheKey = composeCacheKey( script );
-        final ControllerImpl controller = this.cache.getIfPresent( cacheKey );
+        final ControllerScriptImpl controller = this.cache.getIfPresent( cacheKey );
         if ( controller != null )
         {
             return controller;
         }
 
-        final ControllerImpl created = createController( script );
+        final ControllerScriptImpl created = createControllerScript( script );
         this.cache.put( cacheKey, created );
         return created;
     }
 
-    private ControllerImpl createController( final ResourceKey script )
+    private ControllerScriptImpl createControllerScript( final ResourceKey script )
     {
         final ScriptExports exports = this.scriptService.execute( script );
-        return new ControllerImpl( exports, this.postProcessor );
+        return new ControllerScriptImpl( exports, this.postProcessor );
     }
 
     private String composeCacheKey( final ResourceKey script )

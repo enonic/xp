@@ -7,15 +7,15 @@
         <bean class="com.enonic.wem.portal.internal.content.page.TextRenderer"/>
         <bean class="com.enonic.wem.portal.internal.content.page.ImageRenderer"/>
         <bean class="com.enonic.wem.portal.internal.content.page.LayoutRenderer">
-          <property name="controllerFactory" ref="controllerFactory"/>
+          <property name="controllerScriptFactory" ref="controllerScriptFactory"/>
           <property name="layoutDescriptorService" ref="layoutDescriptorService"/>
         </bean>
         <bean class="com.enonic.wem.portal.internal.content.page.PartRenderer">
-          <property name="controllerFactory" ref="controllerFactory"/>
+          <property name="controllerScriptFactory" ref="controllerScriptFactory"/>
           <property name="partDescriptorService" ref="partDescriptorService"/>
         </bean>
         <bean class="com.enonic.wem.portal.internal.content.page.PageRenderer">
-          <property name="controllerFactory" ref="controllerFactory"/>
+          <property name="controllerScriptFactory" ref="controllerScriptFactory"/>
           <property name="postProcessor" ref="postProcessor"/>
         </bean>
       </list>

@@ -12,7 +12,7 @@ import com.enonic.wem.api.content.thumb.Thumbnail;
 
 import static org.junit.Assert.*;
 
-public class ControllerImplTest
+public class ControllerScriptImplTest
     extends AbstractControllerTest
 {
     @Test

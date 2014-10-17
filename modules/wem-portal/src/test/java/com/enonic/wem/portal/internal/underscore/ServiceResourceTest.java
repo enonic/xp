@@ -11,8 +11,8 @@ import com.google.common.collect.Multimap;
 import com.enonic.wem.portal.PortalRequest;
 import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.portal.internal.base.ModuleBaseResourceTest;
-import com.enonic.wem.portal.internal.controller.Controller;
-import com.enonic.wem.portal.internal.controller.ControllerFactory;
+import com.enonic.wem.portal.internal.controller.ControllerScript;
+import com.enonic.wem.portal.internal.controller.ControllerScriptFactory;
 import com.enonic.wem.portal.internal.controller.PortalContextImpl;
 
 import static org.junit.Assert.*;
@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
 public class ServiceResourceTest
     extends ModuleBaseResourceTest
 {
-    private Controller jsController;
+    private ControllerScript controllerScript;
 
     @Override
     protected void configure()
@@ -31,11 +31,11 @@ public class ServiceResourceTest
         final ServiceResourceProvider provider = new ServiceResourceProvider();
         provider.setModuleService( this.moduleService );
 
-        final ControllerFactory controllerFactory = Mockito.mock( ControllerFactory.class );
-        provider.setControllerFactory( controllerFactory );
+        final ControllerScriptFactory controllerScriptFactory = Mockito.mock( ControllerScriptFactory.class );
+        provider.setControllerScriptFactory( controllerScriptFactory );
 
-        this.jsController = Mockito.mock( Controller.class );
-        Mockito.when( controllerFactory.newController( Mockito.anyObject() ) ).thenReturn( this.jsController );
+        this.controllerScript = Mockito.mock( ControllerScript.class );
+        Mockito.when( controllerScriptFactory.newController( Mockito.anyObject() ) ).thenReturn( this.controllerScript );
 
         this.resources.add( provider );
     }
@@ -51,7 +51,7 @@ public class ServiceResourceTest
         assertEquals( 200, response.getStatus() );
 
         final ArgumentCaptor<PortalContextImpl> jsContext = ArgumentCaptor.forClass( PortalContextImpl.class );
-        Mockito.verify( this.jsController ).execute( jsContext.capture() );
+        Mockito.verify( this.controllerScript ).execute( jsContext.capture() );
 
         final PortalRequest jsHttpRequest = jsContext.getValue().getRequest();
         assertNotNull( jsHttpRequest );

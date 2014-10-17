@@ -6,7 +6,7 @@
   </bean>
 
   <bean id="serviceResourceProvider" class="com.enonic.wem.portal.internal.underscore.ServiceResourceProvider">
-    <property name="controllerFactory" ref="controllerFactory"/>
+    <property name="controllerScriptFactory" ref="controllerScriptFactory"/>
     <property name="moduleService" ref="moduleService"/>
   </bean>
 

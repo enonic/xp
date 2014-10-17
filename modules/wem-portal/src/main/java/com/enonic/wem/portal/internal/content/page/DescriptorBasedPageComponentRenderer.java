@@ -10,8 +10,8 @@ import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.PortalRequest;
 import com.enonic.wem.portal.RenderingMode;
-import com.enonic.wem.portal.internal.controller.Controller;
-import com.enonic.wem.portal.internal.controller.ControllerFactory;
+import com.enonic.wem.portal.internal.controller.ControllerScript;
+import com.enonic.wem.portal.internal.controller.ControllerScriptFactory;
 import com.enonic.wem.portal.internal.controller.PortalResponseSerializer;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
@@ -24,7 +24,7 @@ public abstract class DescriptorBasedPageComponentRenderer<R extends AbstractDes
 
     private static final String EMPTY_COMPONENT_PREVIEW_MODE_HTML = "<div></div>";
 
-    protected ControllerFactory controllerFactory;
+    protected ControllerScriptFactory controllerScriptFactory;
 
     public final RenderResult render( final R pageComponent, final PortalContext context )
     {
@@ -35,14 +35,14 @@ public abstract class DescriptorBasedPageComponentRenderer<R extends AbstractDes
         }
 
         // create controller
-        final Controller controller = this.controllerFactory.newController( descriptor.getComponentPath() );
+        final ControllerScript controllerScript = this.controllerScriptFactory.newController( descriptor.getComponentPath() );
 
         // render
         final PageComponent previousComponent = context.getComponent();
         try
         {
             context.setComponent( pageComponent );
-            controller.execute( context );
+            controllerScript.execute( context );
             return new PortalResponseSerializer( context.getResponse() ).serialize();
         }
         finally
@@ -104,8 +104,8 @@ public abstract class DescriptorBasedPageComponentRenderer<R extends AbstractDes
         return req == null ? RenderingMode.LIVE : req.getMode();
     }
 
-    public void setControllerFactory( final ControllerFactory controllerFactory )
+    public void setControllerScriptFactory( final ControllerScriptFactory controllerScriptFactory )
     {
-        this.controllerFactory = controllerFactory;
+        this.controllerScriptFactory = controllerScriptFactory;
     }
 }

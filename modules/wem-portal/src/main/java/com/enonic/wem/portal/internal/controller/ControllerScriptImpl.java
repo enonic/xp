@@ -5,14 +5,14 @@ import com.enonic.wem.portal.PortalContextAccessor;
 import com.enonic.wem.portal.internal.postprocess.PostProcessor;
 import com.enonic.wem.script.ScriptExports;
 
-final class ControllerImpl
-    implements Controller
+final class ControllerScriptImpl
+    implements ControllerScript
 {
     private final ScriptExports scriptExports;
 
     private final PostProcessor postProcessor;
 
-    public ControllerImpl( final ScriptExports scriptExports, final PostProcessor postProcessor )
+    public ControllerScriptImpl( final ScriptExports scriptExports, final PostProcessor postProcessor )
     {
         this.scriptExports = scriptExports;
         this.postProcessor = postProcessor;
