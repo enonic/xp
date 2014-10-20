@@ -2,21 +2,21 @@ module api.content {
 
     export class ListContentByIdRequest extends ContentResourceRequest<ListContentResult<api.content.json.ContentSummaryJson>, ContentResponse<ContentSummary>> {
 
-        private parentId:string;
+        private parentId: ContentId;
 
-        private expand:api.rest.Expand = api.rest.Expand.SUMMARY;
+        private expand: api.rest.Expand = api.rest.Expand.SUMMARY;
 
         private from: number;
 
         private size: number;
 
-        constructor(parentId:string) {
+        constructor(parentId: ContentId) {
             super();
             super.setMethod("GET");
             this.parentId = parentId;
         }
 
-        setExpand(value:api.rest.Expand): ListContentByIdRequest {
+        setExpand(value: api.rest.Expand): ListContentByIdRequest {
             this.expand = value;
             return this;
         }
@@ -33,7 +33,7 @@ module api.content {
 
         getParams(): Object {
             return {
-                parentId: this.parentId,
+                parentId: this.parentId ? this.parentId.toString() : null,
                 expand: this.expand,
                 from: this.from,
                 size: this.size
@@ -46,7 +46,7 @@ module api.content {
 
         sendAndParse(): wemQ.Promise<ContentResponse<ContentSummary>> {
 
-            return this.send().then((response:api.rest.JsonResponse<ListContentResult<api.content.json.ContentSummaryJson>>) => {
+            return this.send().then((response: api.rest.JsonResponse<ListContentResult<api.content.json.ContentSummaryJson>>) => {
                 return new ContentResponse(
                     ContentSummary.fromJsonArray(response.getResult().contents),
                     new ContentMetadata(response.getResult().metadata["hits"], response.getResult().metadata["totalHits"])

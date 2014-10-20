@@ -2,7 +2,8 @@ module api.content {
 
     export class ContentSummaryAndCompareStatusFetcher {
 
-        static fetchChildren(parentContentId: string, from: number = 0, size: number = -1): wemQ.Promise<ContentResponse<ContentSummaryAndCompareStatus>> {
+        static fetchChildren(parentContentId: ContentId, from: number = 0,
+                             size: number = -1): wemQ.Promise<ContentResponse<ContentSummaryAndCompareStatus>> {
 
             var deferred = wemQ.defer<ContentResponse<ContentSummaryAndCompareStatus>>();
 
@@ -23,11 +24,11 @@ module api.content {
             return deferred.promise;
         }
 
-        static fetch(contentId: string): wemQ.Promise<ContentSummaryAndCompareStatus> {
+        static fetch(contentId: ContentId): wemQ.Promise<ContentSummaryAndCompareStatus> {
 
             var deferred = wemQ.defer<ContentSummaryAndCompareStatus>();
 
-            new GetContentByIdRequest(new ContentId(contentId)).sendAndParse().then((content: Content)=> {
+            new GetContentByIdRequest(contentId).sendAndParse().then((content: Content)=> {
                 CompareContentRequest.fromContentSummaries([content]).sendAndParse().then((compareResults: CompareContentResults) => {
                     deferred.resolve(ContentSummaryAndCompareStatusFetcher.updateCompareStatus([content], compareResults)[0]);
                 });

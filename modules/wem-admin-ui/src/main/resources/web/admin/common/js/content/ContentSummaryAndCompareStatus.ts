@@ -11,6 +11,10 @@ module api.content {
             this.compareContentResult = compareContentResult;
         }
 
+        getContentId(): ContentId {
+            return this.contentSummary.getContentId();
+        }
+
         getContentSummary(): ContentSummary {
             return this.contentSummary;
         }

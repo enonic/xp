@@ -48,7 +48,7 @@ module app.wizard {
         }
 
         fetchChildren(parentNode?: TreeNode<ContentSummaryAndCompareStatus>): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
-            var parentContentId = parentNode && parentNode.getData() ? parentNode.getData().getId() : "";
+            var parentContentId = parentNode && parentNode.getData() ? parentNode.getData().getContentId() : null;
             return api.content.ContentSummaryAndCompareStatusFetcher.fetchChildren(parentContentId).
                 then((data: ContentResponse<ContentSummaryAndCompareStatus>) => {
                     return data.getContents();
@@ -64,7 +64,7 @@ module app.wizard {
         }
 
         updateNodeData(parentNode: TreeNode<ContentSummaryAndCompareStatus>): wemQ.Promise<TreeNode<ContentSummaryAndCompareStatus>> {
-            return ContentSummaryAndCompareStatusFetcher.fetch(parentNode.getData().getId()).then((content: ContentSummaryAndCompareStatus) => {
+            return ContentSummaryAndCompareStatusFetcher.fetch(parentNode.getData().getContentId()).then((content: ContentSummaryAndCompareStatus) => {
                 parentNode.setData(content);
                 this.refreshNode(parentNode);
                 return parentNode;

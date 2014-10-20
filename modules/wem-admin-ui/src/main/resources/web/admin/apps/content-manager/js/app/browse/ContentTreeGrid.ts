@@ -205,17 +205,17 @@ module app.browse {
 
 
         fetch(node: TreeNode<ContentSummaryAndCompareStatus>): wemQ.Promise<ContentSummaryAndCompareStatus> {
-            return this.fetchById(node.getData().getId());
+            return this.fetchById(node.getData().getContentId());
         }
 
-        private fetchById(id: string): wemQ.Promise<ContentSummaryAndCompareStatus> {
+        private fetchById(id: api.content.ContentId): wemQ.Promise<ContentSummaryAndCompareStatus> {
             return ContentSummaryAndCompareStatusFetcher.fetch(id);
         }
 
         fetchChildren(parentNode?: TreeNode<ContentSummaryAndCompareStatus>): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
-            var parentContentId = "";
+            var parentContentId: api.content.ContentId = null;
             if (parentNode) {
-                parentContentId = parentNode.getData() ? parentNode.getData().getId() : parentContentId;
+                parentContentId = parentNode.getData() ? parentNode.getData().getContentId() : parentContentId;
             } else {
                 parentNode = this.getRoot();
             }
@@ -265,7 +265,7 @@ module app.browse {
 
         appendContentNode(content: api.content.Content) {
 
-            this.fetchById(content.getId())
+            this.fetchById(content.getContentId())
                 .then((data: ContentSummaryAndCompareStatus) => {
                     this.appendNode(data);
                 }).catch((reason: any) => {
@@ -274,7 +274,7 @@ module app.browse {
         }
 
         updateNodeData(parentNode: TreeNode<ContentSummaryAndCompareStatus>): wemQ.Promise<TreeNode<ContentSummaryAndCompareStatus>> {
-            return ContentSummaryAndCompareStatusFetcher.fetch(parentNode.getData().getId()).then((content: ContentSummaryAndCompareStatus) => {
+            return ContentSummaryAndCompareStatusFetcher.fetch(parentNode.getData().getContentId()).then((content: ContentSummaryAndCompareStatus) => {
                 parentNode.setData(content);
                 this.refreshNode(parentNode);
                 return parentNode;
