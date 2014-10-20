@@ -15,6 +15,13 @@
             border-right: 1px solid #777;
         }
 
+        .display-area .column {
+            width: 500px;
+            margin: 0 auto;
+            position: relative;
+            top: 50%;
+        }
+
         .settings-area {
             float: right;
         }
@@ -50,21 +57,15 @@
             margin: 0 0 10px;
         }
 
-        .display-area img,
-        .display-area .image-canvas {
+        .display-area img {
             display: block;
-            margin: 0 auto;
-            position: relative;
-            top: 50%;
+            width: 100%;
         }
 
         .display-area .image-canvas {
             border: 5px solid white;
         }
 
-        .display-area .image-canvas img {
-            top: 0;
-        }
     </style>
 
 </head>
@@ -98,8 +99,11 @@
     var displayArea = new DivEl('display-area');
     api.dom.Body.get().appendChild(displayArea);
 
+    var column = new DivEl('column');
+    displayArea.appendChild(column);
+
     var image = new api.dom.ImgEl();
-    displayArea.appendChild(image);
+    column.appendChild(image);
 
     var imageCanvas = new api.ui.image.ImageCanvas(image);
     centerVertically();
@@ -114,6 +118,11 @@
     var backgroundInput = new InputEl().setName('background-color').setId('background-color');
     displayAreaSettings.appendChild(new LabelEl('Background color', backgroundInput));
     displayAreaSettings.appendChild(backgroundInput);
+
+    var columnSizeInput = new InputEl(null, 'number').setName('column-size').setId('column-size');
+    displayAreaSettings.appendChild(new LabelEl('Column size', columnSizeInput));
+    displayAreaSettings.appendChild(columnSizeInput);
+
 
     var imageSelect = new api.dom.SelectEl().setName('image-url').setId('image-url');
     displayAreaSettings.appendChild(new LabelEl('Image', imageSelect));
@@ -140,45 +149,36 @@
     imageCanvasSettings.appendChild(new LabelEl('Enable canvas', enableCanvasCheckbox));
     imageCanvasSettings.appendChild(enableCanvasCheckbox);
 
-    var imageWidthInput = new InputEl(null, 'number').setName('image-width').setId('image-width');
-    imageCanvasSettings.appendChild(new LabelEl('Column size', imageWidthInput));
-    imageCanvasSettings.appendChild(imageWidthInput);
-
-    var imageWidthSpan = new SpanEl();
-    imageCanvas.onWidthChanged(function (width) {
-        imageWidthSpan.setHtml(width);
-    });
-    imageCanvasSettings.appendChild(imageWidthSpan);
-
     var imageZoomInput = new InputEl(null, 'number').setName('image-zoom').setId('image-zoom');
     imageZoomInput.getEl().setAttribute('min', '100');
-    imageCanvasSettings.appendChild(new LabelEl('Image zoom', imageZoomInput));
+    imageCanvasSettings.appendChild(new LabelEl('Image zoom, %', imageZoomInput));
     imageCanvasSettings.appendChild(imageZoomInput);
 
     var imageZoomSpan = new SpanEl();
     imageCanvas.onZoomChanged(function (zoom) {
-        imageZoomSpan.setHtml(zoom);
-        imageZoomInput.setValue(zoom);
+        var rz = Math.round(zoom * 100);
+        imageZoomSpan.setHtml(rz);
+        imageZoomInput.setValue(rz);
     });
     imageCanvasSettings.appendChild(imageZoomSpan);
 
     var imagePanLeftInput = new InputEl(null, 'number').setName('image-pan-left').setId('image-pan-left');
-    imageCanvasSettings.appendChild(new LabelEl('Pan left', imagePanLeftInput));
+    imageCanvasSettings.appendChild(new LabelEl('Pan left, %', imagePanLeftInput));
     imageCanvasSettings.appendChild(imagePanLeftInput);
     var imagePanLeftSpan = new SpanEl();
     imageCanvas.onPanChanged(function (x, y) {
-        var rx = Math.round(x);
+        var rx = Math.round(x * 100);
         imagePanLeftSpan.setHtml(rx);
         imagePanLeftInput.setValue(rx);
     });
     imageCanvasSettings.appendChild(imagePanLeftSpan);
 
     var imagePanTopInput = new InputEl(null, 'number').setName('image-pan-top').setId('image-pan-top');
-    imageCanvasSettings.appendChild(new LabelEl('Pan top', imagePanTopInput));
+    imageCanvasSettings.appendChild(new LabelEl('Pan top, %', imagePanTopInput));
     imageCanvasSettings.appendChild(imagePanTopInput);
     var imagePanTopSpan = new SpanEl();
     imageCanvas.onPanChanged(function (x, y) {
-        var ry = Math.round(y);
+        var ry = Math.round(y * 100);
         imagePanTopSpan.setHtml(ry);
         imagePanTopInput.setValue(ry);
     });
@@ -203,12 +203,7 @@
 
     enableCanvasCheckbox.onChange(function () {
         imageCanvas.setEnabled(enableCanvasCheckbox.getHTMLElement()["checked"]);
-        if (imageCanvas.isEnabled()) {
-            imageCanvas.setWidth(parseInt(imageWidthInput.getValue()));
-            imageCanvas.setZoom(parseInt(imageZoomInput.getValue()));
-            imageCanvas.setPan(parseInt(imagePanLeftInput.getValue()), parseInt(imagePanTopInput.getValue()));
-        } else {
-            imageWidthSpan.setHtml('');
+        if (!imageCanvas.isEnabled()) {
             imageZoomSpan.setHtml('');
             imagePanLeftSpan.setHtml('');
             imagePanTopSpan.setHtml('');
@@ -216,29 +211,31 @@
         centerVertically();
     });
 
-    imageWidthInput.onInput(function () {
-        imageCanvas.setWidth(parseInt(imageWidthInput.getValue()));
+    columnSizeInput.onInput(function () {
+        column.getEl().setWidthPx(parseInt(columnSizeInput.getValue()));
+        // notify manager
+        api.ui.responsive.ResponsiveManager.fireResizeEvent();
         centerVertically();
     });
-    imageWidthInput.setValue(500);
+    columnSizeInput.setValue(500);
 
     imageZoomInput.onInput(function () {
-        imageCanvas.setZoom(parseInt(imageZoomInput.getValue()));
+        imageCanvas.setZoom(parseInt(imageZoomInput.getValue()) / 100);
     });
     imageZoomInput.setValue(100);
 
     imagePanLeftInput.onInput(function () {
-        imageCanvas.setPan(parseInt(imagePanLeftInput.getValue()), imageCanvas.getPan().y);
+        imageCanvas.setPan(parseFloat(imagePanLeftInput.getValue()) / 100, imageCanvas.getPan().y);
     });
     imagePanLeftInput.setValue(0);
 
     imagePanTopInput.onInput(function () {
-        imageCanvas.setPan(imageCanvas.getPan().x, parseInt(imagePanTopInput.getValue()));
+        imageCanvas.setPan(imageCanvas.getPan().x, parseFloat(imagePanTopInput.getValue()) / 100);
     });
     imagePanTopInput.setValue(0);
 
     function centerVertically() {
-        var el = imageCanvas.isEnabled() ? imageCanvas.getEl() : image.getEl();
+        var el = column.getEl();
         el.setMarginTop('-' + el.getHeightWithBorder() / 2 + 'px')
     }
 
