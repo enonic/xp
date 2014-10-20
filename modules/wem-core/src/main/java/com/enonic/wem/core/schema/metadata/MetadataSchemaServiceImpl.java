@@ -1,5 +1,6 @@
 package com.enonic.wem.core.schema.metadata;
 
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.schema.metadata.GetMetadataSchemaParams;
 import com.enonic.wem.api.schema.metadata.GetMetadataSchemasParams;
 import com.enonic.wem.api.schema.metadata.MetadataSchema;
@@ -22,6 +23,12 @@ public class MetadataSchemaServiceImpl
     public MetadataSchemas getByNames( final GetMetadataSchemasParams params )
     {
         return new GetMetadataSchemasCommand().metadataSchemaDao( this.metadataSchemaDao ).params( params ).execute();
+    }
+
+    @Override
+    public MetadataSchemas getByModule( final ModuleKey moduleKey )
+    {
+        return metadataSchemaDao.getByModule( moduleKey );
     }
 
     @Override
