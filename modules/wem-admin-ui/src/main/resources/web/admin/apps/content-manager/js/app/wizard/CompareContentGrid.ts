@@ -63,19 +63,12 @@ module app.wizard {
             return data.getId();
         }
 
-        updateDataChildrenStatus(parentNode: TreeNode<ContentSummaryAndCompareStatus>): wemQ.Promise<TreeNode<ContentSummaryAndCompareStatus>> {
-            return ContentSummaryAndCompareStatusFetcher.fetchChildren(parentNode.getData().getId()).then((result: ContentResponse<ContentSummaryAndCompareStatus>) => {
-                var hasChildren = (result.getMetadata().getTotalHits() > 0);
-                if (parentNode.getData()) {
-                    parentNode.getData().setContentSummary(new ContentSummaryBuilder(parentNode.getData().getContentSummary()).
-                        setHasChildren(hasChildren).
-                        setDeletable(!hasChildren).
-                        build());
-                    this.refreshNode(parentNode);
-                    return parentNode;
-                }
+        updateNodeData(parentNode: TreeNode<ContentSummaryAndCompareStatus>): wemQ.Promise<TreeNode<ContentSummaryAndCompareStatus>> {
+            return ContentSummaryAndCompareStatusFetcher.fetch(parentNode.getData().getId()).then((content: ContentSummaryAndCompareStatus) => {
+                parentNode.setData(content);
+                this.refreshNode(parentNode);
+                return parentNode;
             });
-
         }
     }
 }
