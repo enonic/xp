@@ -22,24 +22,16 @@ module api.content.page.layout {
 
         sendAndParse(): wemQ.Promise<LayoutDescriptor[]> {
 
-            var promises: wemQ.Promise<LayoutDescriptor[]>[] = [];
-            this.moduleKeys.forEach((moduleKey: ModuleKey) => {
-                promises.push(new GetLayoutDescriptorsByModuleRequest(moduleKey).sendAndParse());
-            });
+            var promises = this.moduleKeys.map((moduleKey: ModuleKey) => new GetLayoutDescriptorsByModuleRequest(moduleKey).sendAndParse());
 
-            return wemQ.allSettled(promises).then((results: wemQ.PromiseState<LayoutDescriptor[]>[]) => {
-                var all: LayoutDescriptor[] = [];
-                results.forEach((result: wemQ.PromiseState<LayoutDescriptor[]>) => {
-                    if (result.state == "fulfilled") {
-                        var descriptors = result.value;
-                        all = all.concat(descriptors);
-                    }
-                    else {
-                        throw new Error("Unexpected Promise state [" + result.state + "]: " + result.reason.message);
-                    }
+            return wemQ.all(promises).
+                then((results: LayoutDescriptor[][]) => {
+                    var all: LayoutDescriptor[] = [];
+                    results.forEach((result: LayoutDescriptor[]) => {
+                        Array.prototype.push.apply(all, result);
+                    });
+                    return all;
                 });
-                return all;
-            });
         }
     }
 }

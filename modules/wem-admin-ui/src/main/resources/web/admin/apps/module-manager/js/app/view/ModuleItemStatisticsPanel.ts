@@ -7,6 +7,9 @@ module app.view {
     import MetadataSchemaName = api.schema.metadata.MetadataSchemaName;
     import RelationshipType = api.schema.relationshiptype.RelationshipType;
     import RelationshipTypeName = api.schema.relationshiptype.RelationshipTypeName;
+    import PageDescriptor = api.content.page.PageDescriptor;
+    import PartDescriptor = api.content.page.part.PartDescriptor;
+    import LayoutDescriptor = api.content.page.layout.LayoutDescriptor;
 
     export class ModuleItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.module.Module> {
 
@@ -67,14 +70,14 @@ module app.view {
             var schemasGroup = new ModuleItemDataGroup("Schemas");
 
             var moduleKey = currentModule.getModuleKey();
-            var promises = [
+            var schemaPromises = [
                 new api.schema.content.GetContentTypesByModuleRequest(moduleKey).sendAndParse(),
                 new api.schema.mixin.GetMixinsByModuleRequest(moduleKey).sendAndParse(),
                 new api.schema.metadata.GetMetadataSchemasByModuleRequest(moduleKey).sendAndParse(),
                 new api.schema.relationshiptype.GetRelationshipTypesByModuleRequest(moduleKey).sendAndParse()
             ];
             
-            wemQ.all(promises).
+            wemQ.all(schemaPromises).
                 spread((contentTypes: ContentTypeSummary[], mixins: Mixin[], metadataSchemas: MetadataSchema[], relationshipTypes: RelationshipType[]) => {
                     var contentTypeNames = contentTypes.map((contentType: ContentTypeSummary) => contentType.getContentTypeName().getLocalName());
                     schemasGroup.addDataArray("Content Types", contentTypeNames);
@@ -91,8 +94,30 @@ module app.view {
                 catch((reason: any) => api.DefaultErrorHandler.handle(reason)).
                 done();
 
+            var descriptorsGroup = new ModuleItemDataGroup("Descriptors");
+            var descriptorPromises = [
+                new api.content.page.GetPageDescriptorsByModuleRequest(moduleKey).sendAndParse(),
+                new api.content.page.part.GetPartDescriptorsByModuleRequest(moduleKey).sendAndParse(),
+                new api.content.page.layout.GetLayoutDescriptorsByModuleRequest(moduleKey).sendAndParse()
+            ];
+
+            wemQ.all(descriptorPromises).
+                spread((pageDescriptors: PageDescriptor[], partDescriptors: PartDescriptor[], layoutDescriptors: LayoutDescriptor[]) => {
+                    var pageNames = pageDescriptors.map((descriptor: PageDescriptor) => descriptor.getName().toString());
+                    descriptorsGroup.addDataArray("Page", pageNames);
+
+                    var partNames = partDescriptors.map((descriptor: PartDescriptor) => descriptor.getName().toString());
+                    descriptorsGroup.addDataArray("Part", partNames);
+
+                    var layoutNames = layoutDescriptors.map((descriptor: LayoutDescriptor) => descriptor.getName().toString());
+                    descriptorsGroup.addDataArray("Layout", layoutNames);
+                }).
+                catch((reason: any) => api.DefaultErrorHandler.handle(reason)).
+                done();
+
             this.moduleDataContainer.appendChild(infoGroup);
             this.moduleDataContainer.appendChild(schemasGroup);
+            this.moduleDataContainer.appendChild(descriptorsGroup);
         }
 
     }
