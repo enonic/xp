@@ -287,15 +287,19 @@ module api.ui.treegrid {
 
         private loadEmptyNode(node: TreeNode<DATA>) {
             if (!this.getDataId(node.getData())) {
-                this.setActive(false);
-
                 this.fetchChildren(node.getParent()).then((dataList: DATA[]) => {
-                    node.getParent().setChildren(this.dataToTreeNodes(dataList, node.getParent()));
+                    var oldChildren = node.getParent().getChildren();
+                    // Ensure to remove empty node from the end if present
+                    if (oldChildren[oldChildren.length - 1].getDataId() === "") {
+                        oldChildren.pop();
+                    }
+                    var fetchedChildren = this.dataToTreeNodes(dataList, node.getParent());
+                    var newChildren = oldChildren.concat(fetchedChildren.slice(oldChildren.length));
+                    node.getParent().setChildren(newChildren);
                     this.initData(this.getRoot().treeToList());
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 }).finally(() => {
-                    this.setActive(true);
                 }).done(() => this.notifyLoaded());
             }
         }
@@ -324,8 +328,8 @@ module api.ui.treegrid {
 
                 // Search for the first "children-to-load" element.
                 if (this.isActive() && children.length > 0) {
-                    var offsetTop = children[0].getEl().getOffsetTop() - canvasOffsetTop;
-                    var node = this.grid.getDataView().getItem(offsetTop / rowHeight);
+                    var offsetTop = Math.round(children[0].getEl().getOffsetTop() - canvasOffsetTop);
+                    var node = this.grid.getDataView().getItem(Math.round(offsetTop / rowHeight));
                     this.loadEmptyNode(node);
                 }
             }
