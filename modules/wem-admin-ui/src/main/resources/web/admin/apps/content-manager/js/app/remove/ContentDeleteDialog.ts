@@ -47,15 +47,14 @@ module app.remove {
         setContentToDelete(contentModels: api.content.ContentSummary[]) {
             this.contentToDelete = contentModels;
 
-            var deleteItems: api.app.remove.DeleteItem[] = [];
+            var deleteViewers: api.content.ContentSummaryViewer[] = [];
             for (var i in contentModels) {
                 var content = contentModels[i];
-                var deleteDisplayName = content.getDisplayName() && content.getDisplayName() == ''  ? content.getDisplayName() : "Unnamed " + content.getType().toString();
-                var deleteItem = new api.app.remove.DeleteItem(new ContentIconUrlResolver().setContent(content).resolve(),
-                    deleteDisplayName);
-                deleteItems.push(deleteItem);
+                var deleteViewer = new api.content.ContentSummaryViewer();
+                deleteViewer.setObject(content);
+                deleteViewers.push(deleteViewer);
             }
-            this.setDeleteItems(deleteItems);
+            this.setDeleteViewers(deleteViewers);
         }
     }
 }
