@@ -185,8 +185,8 @@ module api {
              To avoid exception, when converting circular structure to JSON in Chrome the replacer
              function must be used to replace references to the same object with `undefined`.
              */
-            var aString = JSON.stringify(a, (key, value) => { (!!key && a == value) ? undefined : value; });
-            var bString = JSON.stringify(b, (key, value) => { (!!key && b == value) ? undefined : value; });
+            var aString = JSON.stringify(a, (key, value) => { return (!!key && a == value) ? undefined : value; });
+            var bString = JSON.stringify(b, (key, value) => { return (!!key && b == value) ? undefined : value; });
             return aString == bString;
 
         }
