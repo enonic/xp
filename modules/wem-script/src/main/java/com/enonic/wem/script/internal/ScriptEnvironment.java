@@ -42,6 +42,7 @@ public final class ScriptEnvironment
 
     public void addHandler( final CommandHandler handler )
     {
+        System.out.println("Add handler " + handler);
         if ( handler == null )
         {
             return;
@@ -53,6 +54,7 @@ public final class ScriptEnvironment
 
     public void removeHandler( final CommandHandler handler )
     {
+        System.out.println("Remove handler " + handler);
         if ( handler == null )
         {
             return;

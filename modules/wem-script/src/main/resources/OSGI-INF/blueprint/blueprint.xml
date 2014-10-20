@@ -3,15 +3,14 @@
 
   <bean id="environment" class="com.enonic.wem.script.internal.ScriptEnvironment"/>
 
-  <bean class="com.enonic.wem.script.internal.CommandHandlerTracker" init-method="open" destroy-method="close">
-    <argument index="0" ref="blueprintBundleContext"/>
-    <argument index="1" ref="environment"/>
-  </bean>
-
   <bean id="scriptService" class="com.enonic.wem.script.internal.ScriptServiceImpl">
     <argument index="0" ref="environment"/>
   </bean>
 
   <service auto-export="interfaces" ref="scriptService"/>
+
+  <reference-list availability="optional" interface="com.enonic.wem.script.command.CommandHandler" member-type="service-object">
+    <reference-listener ref="environment" bind-method="addHandler" unbind-method="removeHandler"/>
+  </reference-list>
 
 </blueprint>
