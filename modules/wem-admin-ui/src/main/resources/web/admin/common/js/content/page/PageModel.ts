@@ -74,7 +74,7 @@ module api.content.page {
         }
 
         setTemplate(template: PageTemplate, page: Page, eventSource?: any): PageModel {
-
+            api.util.assertNotNull(template, "template cannot be null");
             var oldTemplateKey = this.template ? this.template.getKey() : null;
             this.template = template;
             this.usingDefaultTemplate = false;

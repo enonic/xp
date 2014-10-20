@@ -64,7 +64,12 @@ module app.wizard.page.contextwindow.inspect {
 
                     this.pageTemplateDropdown.onOptionSelected((event: OptionSelectedEvent<PageTemplateOption>) => {
                         var pageTemplate = event.getOption().displayValue.getPageTemplate();
-                        pageModel.setTemplate(pageTemplate, null, this);
+                        if( pageTemplate ) {
+                            pageModel.setTemplate(pageTemplate, null, this);
+                        }
+                        else {
+                            pageModel.setDefaultTemplate(this);
+                        }
                     });
 
                     pageModel.onPropertyChanged((event: PropertyChangedEvent) => {
