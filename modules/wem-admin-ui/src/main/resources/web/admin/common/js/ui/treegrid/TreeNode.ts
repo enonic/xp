@@ -126,7 +126,7 @@ module api.ui.treegrid {
         }
 
         regenerateIds(): void {
-            this.id = this.regenerateId();
+            this.regenerateId();
             this.children.forEach((elem) => {
                 elem.regenerateIds();
             });
