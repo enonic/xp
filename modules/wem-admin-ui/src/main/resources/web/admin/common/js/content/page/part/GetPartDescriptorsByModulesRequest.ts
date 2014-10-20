@@ -21,21 +21,12 @@ module api.content.page.part {
 
         sendAndParse(): wemQ.Promise<PartDescriptor[]> {
 
-            var promises: wemQ.Promise<PartDescriptor[]>[] = [];
-            this.moduleKeys.forEach((moduleKey: ModuleKey) => {
-                promises.push(new GetPartDescriptorsByModuleRequest(moduleKey).sendAndParse());
-            });
+            var promises = this.moduleKeys.map((moduleKey: ModuleKey) => new GetPartDescriptorsByModuleRequest(moduleKey).sendAndParse());
 
-            return wemQ.allSettled(promises).then((results: wemQ.PromiseState<PartDescriptor[]>[]) => {
+            return wemQ.all(promises).then((results: PartDescriptor[][]) => {
                 var all: PartDescriptor[] = [];
-                results.forEach((result: wemQ.PromiseState<PartDescriptor[]>) => {
-                    if (result.state == "fulfilled") {
-                        var descriptors = result.value;
-                        all = all.concat(descriptors);
-                    }
-                    else {
-                        throw new Error("Unexpected Promise state [" + result.state + "]: " + result.reason.message);
-                    }
+                results.forEach((result: PartDescriptor[]) => {
+                    Array.prototype.push.apply(all, result);
                 });
                 return all;
             });

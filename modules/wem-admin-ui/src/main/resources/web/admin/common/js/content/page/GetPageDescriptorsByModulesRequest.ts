@@ -21,21 +21,12 @@ module api.content.page {
 
         sendAndParse(): wemQ.Promise<PageDescriptor[]> {
 
-            var promises: wemQ.Promise<PageDescriptor[]>[] = [];
-            this.moduleKeys.forEach((moduleKey: ModuleKey) => {
-                promises.push(new GetPageDescriptorsByModuleRequest(moduleKey).sendAndParse());
-            });
+            var promises = this.moduleKeys.map((moduleKey: ModuleKey) => new GetPageDescriptorsByModuleRequest(moduleKey).sendAndParse());
 
-            return wemQ.allSettled(promises).then((results: wemQ.PromiseState<PageDescriptor[]>[]) => {
+            return wemQ.all(promises).then((results: PageDescriptor[][]) => {
                 var all: PageDescriptor[] = [];
-                results.forEach((result: wemQ.PromiseState<PageDescriptor[]>) => {
-                    if (result.state == "fulfilled") {
-                        var descriptors = result.value;
-                        all = all.concat(descriptors);
-                    }
-                    else {
-                        throw new Error("Unexpected Promise state [" + result.state + "]: " + result.reason.message);
-                    }
+                results.forEach((descriptors: PageDescriptor[]) => {
+                    Array.prototype.push.apply(all, descriptors);
                 });
                 return all;
             });
