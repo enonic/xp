@@ -121,9 +121,17 @@ module api.ui.treegrid {
             return this.children.length > 0;
         }
 
-        addChild(child: TreeNode<DATA>) {
+        regenerateId() {
+            this.id = Math.random().toString(36).substring(2);
+        }
+
+        addChild(child: TreeNode<DATA>, isToBegin?: boolean) {
             this.children = this.children || [];
-            this.children.push(child);
+            if (isToBegin) {
+                this.children.unshift(child);
+            } else {
+                this.children.push(child);
+            }
             child.setParent(this);
         }
 
@@ -188,6 +196,13 @@ module api.ui.treegrid {
             }
 
             return null;
+        }
+
+        regenerateIds(): void {
+            this.id = Math.random().toString(36).substring(2);
+            this.children.forEach((elem) => {
+                elem.regenerateIds();
+            });
         }
 
         calcLevel(): number {
