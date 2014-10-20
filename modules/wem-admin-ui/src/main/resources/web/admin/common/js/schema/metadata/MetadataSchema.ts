@@ -41,7 +41,7 @@ module api.schema.metadata {
                 return false;
             }
 
-            if (!api.ObjectHelper.objectEquals(this.form, other.form)) {
+            if (!api.ObjectHelper.equals(this.form, other.form)) {
                 return false;
             }
 
