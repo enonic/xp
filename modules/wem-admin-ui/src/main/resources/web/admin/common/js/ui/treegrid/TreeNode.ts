@@ -125,6 +125,13 @@ module api.ui.treegrid {
             this.id = Math.random().toString(36).substring(2);
         }
 
+        regenerateIds(): void {
+            this.id = this.regenerateId();
+            this.children.forEach((elem) => {
+                elem.regenerateIds();
+            });
+        }
+
         addChild(child: TreeNode<DATA>, isToBegin?: boolean) {
             this.children = this.children || [];
             if (isToBegin) {
@@ -196,13 +203,6 @@ module api.ui.treegrid {
             }
 
             return null;
-        }
-
-        regenerateIds(): void {
-            this.id = Math.random().toString(36).substring(2);
-            this.children.forEach((elem) => {
-                elem.regenerateIds();
-            });
         }
 
         calcLevel(): number {

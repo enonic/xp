@@ -102,9 +102,9 @@ module app.browse.filter {
                             });
                     } else {
                         this.resetFacets(true, true);
-                        if (event instanceof RefreshEvent) {
+                        if (event instanceof RefreshEvent) {// refresh without grid reload
                             new ContentBrowseRefreshEvent().fire();
-                        } else {
+                        } else {// in other cases - reset with grid reload
                             new ContentBrowseSearchEvent(contentQueryResult.getContents()).fire();
                         }
                     }
@@ -136,9 +136,9 @@ module app.browse.filter {
 
                     this.updateAggregations(contentQueryResult.getAggregations(), doResetAll);
 
-                    if (!supressEvent) {
+                    if (!supressEvent) { // then fire usual reset event with content grid reloading
                         new ContentBrowseResetEvent().fire();
-                    } else {
+                    } else { // then just refresh content grid without grid reloading
                         new ContentBrowseRefreshEvent().fire();
                     }
                 }

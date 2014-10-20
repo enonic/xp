@@ -641,7 +641,7 @@ module api.ui.treegrid {
         }
 
         deleteNodes(dataList: DATA[]): void {
-            var root = this.root || this.stash;
+            var root = this.root;
             var updated: TreeNode<DATA>[] = [];
             var deleted: TreeNode<DATA>[] = [];
             dataList.forEach((data: DATA) => {
