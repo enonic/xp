@@ -287,15 +287,19 @@ module api.ui.treegrid {
 
         private loadEmptyNode(node: TreeNode<DATA>) {
             if (!this.getDataId(node.getData())) {
-                this.setActive(false);
-
                 this.fetchChildren(node.getParent()).then((dataList: DATA[]) => {
-                    node.getParent().setChildren(this.dataToTreeNodes(dataList, node.getParent()));
+                    var oldChildren = node.getParent().getChildren();
+                    // Ensure to remove empty node from the end if present
+                    if (oldChildren[oldChildren.length - 1].getDataId() === "") {
+                        oldChildren.pop();
+                    }
+                    var fetchedChildren = this.dataToTreeNodes(dataList, node.getParent());
+                    var newChildren = oldChildren.concat(fetchedChildren.slice(oldChildren.length));
+                    node.getParent().setChildren(newChildren);
                     this.initData(this.getRoot().treeToList());
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 }).finally(() => {
-                    this.setActive(true);
                 }).done(() => this.notifyLoaded());
             }
         }
