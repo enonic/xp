@@ -9,10 +9,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.enonic.wem.admin.json.schema.metadata.MetadataSchemaJson;
+import com.enonic.wem.admin.json.schema.metadata.MetadataSchemaListJson;
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.schema.metadata.GetMetadataSchemaParams;
 import com.enonic.wem.api.schema.metadata.MetadataSchema;
 import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
 import com.enonic.wem.api.schema.metadata.MetadataSchemaService;
+import com.enonic.wem.api.schema.metadata.MetadataSchemas;
 
 @Path("schema/metadata")
 @Produces(MediaType.APPLICATION_JSON)
@@ -39,6 +42,14 @@ public class MetadataSchemaResource
         }
 
         return new MetadataSchemaJson( metadataSchema, this.metadataSchemaIconUrlResolver );
+    }
+
+    @GET
+    @Path( "byModule" )
+    public MetadataSchemaListJson getByModule( @QueryParam( "moduleKey" ) final String moduleKey )
+    {
+        MetadataSchemas metadataSchemas = metadataSchemaService.getByModule( ModuleKey.from( moduleKey ) );
+        return new MetadataSchemaListJson( metadataSchemas, metadataSchemaIconUrlResolver );
     }
 
     public MetadataSchema fetchMetadataSchema( final MetadataSchemaName name )
