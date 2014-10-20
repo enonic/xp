@@ -661,6 +661,11 @@ module api.ui.treegrid {
             root.treeToList().forEach((child: TreeNode<DATA>) => {
                 this.updateDataChildrenStatus(child);
             });
+            if (this.stash) {
+                this.stash.treeToList().forEach((child: TreeNode<DATA>) => {
+                    this.updateDataChildrenStatus(child);
+                });
+            }
             this.notifyDataChanged(new DataChangedEvent<DATA>(deleted, DataChangedEvent.ACTION_DELETED));
         }
 
