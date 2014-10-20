@@ -259,7 +259,6 @@ module app.browse {
                 if (child.getData().getId() == content.getId()) {
                     curContent.setContentSummary(content);
                     this.updateNode(curContent);
-                    return;
                 }
             });
         }
