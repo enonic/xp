@@ -243,6 +243,26 @@ module api.ui.treegrid {
             });
         }
 
+        private updateColumnsFormatter(columns: GridColumn<TreeNode<DATA>>[]) {
+            if (columns.length > 0) {
+                var formatter = columns[0].getFormatter();
+                var toggleFormatter = (row: number, cell: number, value: any, columnDef: any, node: TreeNode<DATA>) => {
+                    var toggleSpan = new api.dom.SpanEl("toggle icon");
+                    if (this.hasChildren(node.getData())) {
+                        var toggleClass = node.isExpanded() ? "collapse" : "expand";
+                        toggleSpan.addClass(toggleClass);
+                    }
+                    toggleSpan.getEl().setMarginLeft(16 * (node.calcLevel() - 1) + "px");
+
+                    return toggleSpan.toString() + formatter(row, cell, value, columnDef, node);
+                };
+
+                columns[0].setFormatter(toggleFormatter);
+            }
+
+            return columns;
+        }
+
         getGrid(): Grid<TreeNode<DATA>> {
             return this.grid;
         }
@@ -437,26 +457,6 @@ module api.ui.treegrid {
             }
 
             this.stash = null;
-        }
-
-        private updateColumnsFormatter(columns: GridColumn<TreeNode<DATA>>[]) {
-            if (columns.length > 0) {
-                var formatter = columns[0].getFormatter();
-                var toggleFormatter = (row: number, cell: number, value: any, columnDef: any, node: TreeNode<DATA>) => {
-                    var toggleSpan = new api.dom.SpanEl("toggle icon");
-                    if (this.hasChildren(node.getData())) {
-                        var toggleClass = node.isExpanded() ? "collapse" : "expand";
-                        toggleSpan.addClass(toggleClass);
-                    }
-                    toggleSpan.getEl().setMarginLeft(16 * (node.calcLevel() - 1) + "px");
-
-                    return toggleSpan.toString() + formatter(row, cell, value, columnDef, node);
-                };
-
-                columns[0].setFormatter(toggleFormatter);
-            }
-
-            return columns;
         }
 
         selectAll() {
