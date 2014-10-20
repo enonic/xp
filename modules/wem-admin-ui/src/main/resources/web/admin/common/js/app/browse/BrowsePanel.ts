@@ -33,7 +33,7 @@ module api.app.browse {
 
         private gridAndToolbarContainer: api.ui.panel.Panel;
 
-        private refreshNeeded: boolean = false;
+        private filterPanelRefreshNeeded: boolean = false;
 
         private filterPanelForcedShown: boolean = false;
 
@@ -123,24 +123,21 @@ module api.app.browse {
             return [];
         }
 
-        refreshFilterAndGrid() {
-            if (this.isRefreshNeeded()) {
-                // do the search to update facets as well as the grid
+        refreshFilter() {
+            if (this.isFilterPanelRefreshNeeded()) {
                 if (this.filterPanel) {
-                    this.filterPanel.search();
-                } else {
-                    this.treeGrid.reload();
+                    this.filterPanel.refresh();
                 }
-                this.refreshNeeded = false;
+                this.filterPanelRefreshNeeded = false;
             }
         }
 
-        isRefreshNeeded(): boolean {
-            return this.refreshNeeded;
+        isFilterPanelRefreshNeeded(): boolean {
+            return this.filterPanelRefreshNeeded;
         }
 
-        setRefreshNeeded(refreshNeeded: boolean) {
-            this.refreshNeeded = refreshNeeded;
+        setFilterPanelRefreshNeeded(refreshNeeded: boolean) {
+            this.filterPanelRefreshNeeded = refreshNeeded;
         }
 
         toggleFilterPanel() {
