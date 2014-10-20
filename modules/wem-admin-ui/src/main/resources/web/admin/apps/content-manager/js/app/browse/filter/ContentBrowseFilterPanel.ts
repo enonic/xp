@@ -25,6 +25,8 @@ module app.browse.filter {
     import DynamicConstraintExpr = api.query.expr.DynamicConstraintExpr;
     import Value = api.data.Value;
     import ValueTypes = api.data.type.ValueTypes;
+    import RefreshEvent = api.app.browse.filter.RefreshEvent;
+    import SearchEvent = api.app.browse.filter.SearchEvent;
 
 
     export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilterPanel {
@@ -53,6 +55,8 @@ module app.browse.filter {
                 this.resetFacets();
             });
 
+            this.onRefresh(this.searchFacets);
+
             this.onSearch(this.searchFacets);
         }
 
@@ -60,7 +64,11 @@ module app.browse.filter {
 
             var isClean = !this.hasFilterSet();
             if (isClean) {
-                this.reset();
+                if (event instanceof RefreshEvent) {
+                    this.resetFacets(true, true);
+                } else { // it's SearchEvent, usual reset with grid reload
+                    this.reset();
+                }
                 return;
             }
             var contentQuery: ContentQuery = new ContentQuery();
@@ -94,7 +102,11 @@ module app.browse.filter {
                             });
                     } else {
                         this.resetFacets(true, true);
-                        new ContentBrowseSearchEvent(contentQueryResult.getContents()).fire();
+                        if (event instanceof RefreshEvent) {// refresh without grid reload
+                            new ContentBrowseRefreshEvent().fire();
+                        } else {// in other cases - reset with grid reload
+                            new ContentBrowseSearchEvent(contentQueryResult.getContents()).fire();
+                        }
                     }
                 });
         }
@@ -124,8 +136,10 @@ module app.browse.filter {
 
                     this.updateAggregations(contentQueryResult.getAggregations(), doResetAll);
 
-                    if (!supressEvent) {
+                    if (!supressEvent) { // then fire usual reset event with content grid reloading
                         new ContentBrowseResetEvent().fire();
+                    } else { // then just refresh content grid without grid reloading
+                        new ContentBrowseRefreshEvent().fire();
                     }
                 }
             );

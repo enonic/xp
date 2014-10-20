@@ -121,9 +121,24 @@ module api.ui.treegrid {
             return this.children.length > 0;
         }
 
-        addChild(child: TreeNode<DATA>) {
+        regenerateId() {
+            this.id = Math.random().toString(36).substring(2);
+        }
+
+        regenerateIds(): void {
+            this.regenerateId();
+            this.children.forEach((elem) => {
+                elem.regenerateIds();
+            });
+        }
+
+        addChild(child: TreeNode<DATA>, isToBegin?: boolean) {
             this.children = this.children || [];
-            this.children.push(child);
+            if (isToBegin) {
+                this.children.unshift(child);
+            } else {
+                this.children.push(child);
+            }
             child.setParent(this);
         }
 
