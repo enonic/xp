@@ -46,34 +46,46 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
         final PartDescriptors.Builder partDescriptors = PartDescriptors.newPartDescriptors();
         for ( final Module module : modules )
         {
-            final Set<String> resources = module.getResourcePaths();
-            final Collection<String> componentNames = Collections2.transform( resources, input -> {
-                final Matcher matcher = PATTERN.matcher( input );
-                if ( matcher.matches() )
-                {
-                    return matcher.group( 1 );
-                }
-
-                return null;
-            } );
-
-            for ( final String componentName : componentNames )
-            {
-                if ( componentName == null )
-                {
-                    continue;
-                }
-                final ComponentDescriptorName descriptorName = new ComponentDescriptorName( componentName );
-                final PartDescriptorKey key = PartDescriptorKey.from( module.getKey(), descriptorName );
-                final PartDescriptor partDescriptor = getDescriptor( key );
-                if ( partDescriptor != null )
-                {
-                    partDescriptors.add( partDescriptor );
-                }
-            }
+            readDescriptor( module, partDescriptors );
         }
 
         return partDescriptors.build();
+    }
+
+    protected final PartDescriptors getDescriptorsFromModule( final Module module )
+    {
+        final PartDescriptors.Builder partDescriptors = PartDescriptors.newPartDescriptors();
+        readDescriptor( module, partDescriptors );
+        return partDescriptors.build();
+    }
+
+    private void readDescriptor( final Module module, final PartDescriptors.Builder partDescriptors )
+    {
+        final Set<String> resources = module.getResourcePaths();
+        final Collection<String> componentNames = Collections2.transform( resources, input -> {
+            final Matcher matcher = PATTERN.matcher( input );
+            if ( matcher.matches() )
+            {
+                return matcher.group( 1 );
+            }
+
+            return null;
+        } );
+
+        for ( final String componentName : componentNames )
+        {
+            if ( componentName == null )
+            {
+                continue;
+            }
+            final ComponentDescriptorName descriptorName = new ComponentDescriptorName( componentName );
+            final PartDescriptorKey key = PartDescriptorKey.from( module.getKey(), descriptorName );
+            final PartDescriptor partDescriptor = getDescriptor( key );
+            if ( partDescriptor != null )
+            {
+                partDescriptors.add( partDescriptor );
+            }
+        }
     }
 
     @SuppressWarnings("unchecked")

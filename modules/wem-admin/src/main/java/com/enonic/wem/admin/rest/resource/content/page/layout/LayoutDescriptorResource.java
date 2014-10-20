@@ -14,6 +14,7 @@ import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorService;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptors;
+import com.enonic.wem.api.module.ModuleKey;
 
 @Path("content/page/layout/descriptor")
 @Produces(MediaType.APPLICATION_JSON)
@@ -27,6 +28,14 @@ public class LayoutDescriptorResource
         final LayoutDescriptorKey key = LayoutDescriptorKey.from( layoutDescriptorKey );
         final LayoutDescriptor descriptor = layoutDescriptorService.getByKey( key );
         return new LayoutDescriptorJson( descriptor );
+    }
+
+    @GET
+    @Path("list/by_module")
+    public LayoutDescriptorsJson getByModules( @QueryParam("moduleKey") final String moduleKey )
+    {
+        final LayoutDescriptors descriptors = layoutDescriptorService.getByModule( ModuleKey.from(moduleKey) );
+        return new LayoutDescriptorsJson( descriptors );
     }
 
     @POST

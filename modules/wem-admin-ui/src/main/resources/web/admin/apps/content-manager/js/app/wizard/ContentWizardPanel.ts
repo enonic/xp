@@ -422,28 +422,7 @@ module app.wizard {
         private doLayoutPage(content: Content) {
 
             this.liveFormPanel.setContent(content);
-
-            if (content.isPage()) {
-                if (content.getPage().hasTemplate()) {
-                    new GetPageTemplateByKeyRequest(content.getPage().getTemplate()).
-                        sendAndParse().then((pageTemplate: PageTemplate) => {
-                            this.liveFormPanel.layout(pageTemplate, null);
-                        }).catch((reason: any) => {
-                            api.DefaultErrorHandler.handle(reason);
-                        }).done();
-                }
-                else {
-                    new GetPageDescriptorByKeyRequest(content.getPage().getController()).
-                        sendAndParse().then((pageDescriptor: PageDescriptor) => {
-                            this.liveFormPanel.layout(null, pageDescriptor);
-                        }).catch((reason: any) => {
-                            api.DefaultErrorHandler.handle(reason);
-                        }).done();
-                }
-            }
-            else {
-                this.liveFormPanel.layout(null, null);
-            }
+            this.liveFormPanel.layout();
         }
 
         persistNewItem(): wemQ.Promise<Content> {

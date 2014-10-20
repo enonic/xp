@@ -4,8 +4,11 @@ module api.content.page.layout {
 
         private resourcePath: api.rest.Path;
 
+        cache: LayoutDescriptorCache;
+
         constructor() {
             super();
+            this.cache = LayoutDescriptorCache.get();
             this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), "content", "page", "layout", "descriptor");
         }
 
@@ -15,7 +18,9 @@ module api.content.page.layout {
 
         fromJsonToLayoutDescriptor(json: LayoutDescriptorJson): LayoutDescriptor {
 
-            return new api.content.page.layout.LayoutDescriptorBuilder().fromJson(json).build();
+            var descriptor = new api.content.page.layout.LayoutDescriptorBuilder().fromJson(json).build();
+            this.cache.put(descriptor);
+            return  descriptor;
         }
     }
 }

@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.data.ContentData;
@@ -13,6 +14,7 @@ import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.content.thumb.Thumbnail;
+import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.rendering.Renderable;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -25,6 +27,7 @@ import com.enonic.wem.api.support.illegaledit.IllegalEditException;
 
 import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;
 
+@SuppressWarnings("UnusedDeclaration")
 public class Content
     implements IllegalEditAware<Content>, ChangeTraceable, Renderable
 {
@@ -46,7 +49,7 @@ public class Content
 
     private final ContentData contentData;
 
-    private final List<Metadata> metadata;
+    private final ImmutableList<Metadata> metadata;
 
     private final Instant createdTime;
 
@@ -89,7 +92,7 @@ public class Content
         this.id = builder.contentId;
         this.form = builder.form;
         this.contentData = builder.contentData;
-        this.metadata = builder.metadata;
+        this.metadata = ImmutableList.copyOf( builder.metadata );
         this.createdTime = builder.createdTime;
         this.modifiedTime = builder.modifiedTime;
         this.creator = builder.creator;
@@ -170,20 +173,35 @@ public class Content
         return contentData;
     }
 
-    public Metadata getMetadata( MetadataSchemaName name )
+    public boolean hasMetadata( final String name )
+    {
+        return getMetadata( name ) != null;
+    }
+
+    public boolean hasMetadata( final MetadataSchemaName name )
+    {
+        return getMetadata( name ) != null;
+    }
+
+    public RootDataSet getMetadata( final String name )
+    {
+        return getMetadata( MetadataSchemaName.from( name ) );
+    }
+
+    public RootDataSet getMetadata( final MetadataSchemaName name )
     {
         for ( Metadata item : this.metadata )
         {
             if ( item.getName().equals( name ) )
             {
-                return item;
+                return item.getData();
             }
         }
 
         return null;
     }
 
-    public List<Metadata> getAllMetadata()
+    public ImmutableList<Metadata> getAllMetadata()
     {
         return this.metadata;
     }
@@ -481,6 +499,16 @@ public class Content
         public Builder<BUILDER, C> contentData( final ContentData contentData )
         {
             this.contentData = contentData;
+            return this;
+        }
+
+        public Builder<BUILDER, C> addMetadata( final Metadata metadata )
+        {
+            if ( this.metadata == null )
+            {
+                this.metadata = new ArrayList<>();
+            }
+            this.metadata.add( metadata );
             return this;
         }
 

@@ -1,6 +1,6 @@
 module api.content.page.layout {
 
-    export class LayoutDescriptor extends api.content.page.Descriptor {
+    export class LayoutDescriptor extends api.content.page.Descriptor implements api.Cloneable {
         private regions: region.RegionDescriptor[];
 
         constructor(builder: LayoutDescriptorBuilder) {
@@ -11,11 +11,22 @@ module api.content.page.layout {
         public getRegions(): region.RegionDescriptor[] {
             return this.regions;
         }
+
+        public clone(): LayoutDescriptor {
+            return new LayoutDescriptorBuilder(this).build();
+        }
     }
 
     export class LayoutDescriptorBuilder extends api.content.page.DescriptorBuilder {
 
         regions: region.RegionDescriptor[] = [];
+
+        constructor(source?: LayoutDescriptor) {
+            super(source);
+            if (source) {
+                this.regions = source.getRegions();
+            }
+        }
 
         public fromJson(json: api.content.page.layout.LayoutDescriptorJson): LayoutDescriptorBuilder {
 

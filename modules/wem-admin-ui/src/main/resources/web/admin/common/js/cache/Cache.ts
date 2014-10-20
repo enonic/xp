@@ -2,10 +2,20 @@ module api.cache {
 
     export class Cache<T,KEY> {
 
-        private objectsTypesByKey: {[s:string] : T;} = {};
+        private objectsByKey: {[s:string] : T;} = {};
 
         constructor() {
 
+        }
+
+        getAll(): T[] {
+            var all: T[] = [];
+            for (var key in this.objectsByKey) {
+                if (this.objectsByKey.hasOwnProperty(key)) {
+                    all.push(this.objectsByKey[key]);
+                }
+            }
+            return all;
         }
 
         copy(object: T): T {
@@ -23,17 +33,17 @@ module api.cache {
         put(object: T) {
             var copy = this.copy(object);
             var keyAsString = this.getKeyAsString(this.getKeyFromObject(object));
-            this.objectsTypesByKey[keyAsString] = copy;
+            this.objectsByKey[keyAsString] = copy;
         }
 
         deleteByKey(key: KEY) {
             var keyAsString = this.getKeyAsString(key);
-            delete this.objectsTypesByKey[keyAsString];
+            delete this.objectsByKey[keyAsString];
         }
 
         getByKey(key: KEY): T {
             var keyAsString = this.getKeyAsString(key);
-            var object = this.objectsTypesByKey[keyAsString];
+            var object = this.objectsByKey[keyAsString];
             if (!object) {
                 return null;
             }

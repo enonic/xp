@@ -14,6 +14,7 @@ import com.enonic.wem.api.content.page.part.PartDescriptor;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.content.page.part.PartDescriptorService;
 import com.enonic.wem.api.content.page.part.PartDescriptors;
+import com.enonic.wem.api.module.ModuleKey;
 
 @Path("content/page/part/descriptor")
 @Produces(MediaType.APPLICATION_JSON)
@@ -28,6 +29,15 @@ public class PartDescriptorResource
         final PartDescriptor descriptor = partDescriptorService.getByKey( key );
         return new PartDescriptorJson( descriptor );
     }
+
+    @GET
+    @Path("list/by_module")
+    public PartDescriptorsJson getByModule( @QueryParam("moduleKey") final String moduleKey )
+    {
+        final PartDescriptors descriptors = partDescriptorService.getByModule( ModuleKey.from( moduleKey ) );
+        return new PartDescriptorsJson( descriptors );
+    }
+
 
     @POST
     @Path("list/by_modules")

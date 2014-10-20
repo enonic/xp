@@ -1,38 +1,44 @@
 module api.content.page {
 
+    import ModuleKey = api.module.ModuleKey;
+
     export class GetPageDescriptorsByModulesRequest extends PageDescriptorResourceRequest<PageDescriptorsJson, PageDescriptor[]> {
 
-        private moduleKeys: api.module.ModuleKey[];
+        private moduleKeys: ModuleKey[];
 
-        constructor(moduleKeys: api.module.ModuleKey[]) {
+        constructor(moduleKeys: ModuleKey[]) {
             super();
-            super.setMethod("POST");
             this.moduleKeys = moduleKeys;
         }
 
         getParams(): Object {
-            return {
-                moduleKeys: api.module.ModuleKey.toStringArray(this.moduleKeys)
-            };
+            throw new Error("Unexpected call");
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "list", "by_modules");
+            throw new Error("Unexpected call");
         }
 
         sendAndParse(): wemQ.Promise<PageDescriptor[]> {
 
-            return this.send().then((response: api.rest.JsonResponse<PageDescriptorsJson>) => {
-                return this.fromJsonToPageDescriptors(response.getResult());
+            var promises: wemQ.Promise<PageDescriptor[]>[] = [];
+            this.moduleKeys.forEach((moduleKey: ModuleKey) => {
+                promises.push(new GetPageDescriptorsByModuleRequest(moduleKey).sendAndParse());
+            });
+
+            return wemQ.allSettled(promises).then((results: wemQ.PromiseState<PageDescriptor[]>[]) => {
+                var all: PageDescriptor[] = [];
+                results.forEach((result: wemQ.PromiseState<PageDescriptor[]>) => {
+                    if (result.state == "fulfilled") {
+                        var descriptors = result.value;
+                        all = all.concat(descriptors);
+                    }
+                    else {
+                        throw new Error("Unexpected Promise state [" + result.state + "]: " + result.reason.message);
+                    }
+                });
+                return all;
             });
         }
-
-        private fromJsonToPageDescriptors(json: PageDescriptorsJson): PageDescriptor[] {
-
-            return json.descriptors.map((descriptorJson: PageDescriptorJson)=> {
-                return this.fromJsonToPageDescriptor(descriptorJson);
-            });
-        }
-
     }
 }

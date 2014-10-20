@@ -14,7 +14,7 @@ module api.content.page.part {
         setObject(partDescriptor: PartDescriptor) {
             super.setObject(partDescriptor);
             this.namesAndIconView.setMainName(partDescriptor.getDisplayName()).
-                setSubName(partDescriptor.getName().toString());
+                setSubName(partDescriptor.getKey().toString());
         }
 
         getPreferredHeight(): number {

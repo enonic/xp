@@ -103,24 +103,18 @@ public class ContentResourceTest
     public void get_content_by_path()
         throws Exception
     {
-        final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
+        final Content content = createContent( "aaa", "my_a_content", "mymodule:my_type" );
 
-        final ContentData aContentData = aContent.getContentData();
+        final ContentData data = content.getContentData();
 
-        aContentData.setProperty( "myArray[0]", Value.newLong( 1 ) );
-        aContentData.setProperty( "myArray[1]", Value.newLong( 2 ) );
+        data.setProperty( "myArray[0]", Value.newLong( 1 ) );
+        data.setProperty( "myArray[1]", Value.newLong( 2 ) );
 
-        aContentData.setProperty( "mySetWithArray.myArray[0]", Value.newDouble( 3.14159 ) );
-        aContentData.setProperty( "mySetWithArray.myArray[1]", Value.newDouble( 1.333 ) );
-
-        RootDataSet data = new RootDataSet();
-        data.setProperty( "myProperty", Value.newLong( 1 ) );
-        data.setProperty( "myStWithProperty.myProperty", Value.newLong( 2 ) );
-
-        aContent.getAllMetadata().add( new Metadata( MetadataSchemaName.from( "myModule:myField" ), data ) );
+        data.setProperty( "mySetWithArray.myArray[0]", Value.newDouble( 3.14159 ) );
+        data.setProperty( "mySetWithArray.myArray[1]", Value.newDouble( 1.333 ) );
 
         Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).
-            thenReturn( aContent );
+            thenReturn( content );
 
         String jsonString = request().
             path( "content/bypath" ).
@@ -211,12 +205,6 @@ public class ContentResourceTest
 
         aContentData.setProperty( "mySetWithArray.myArray[0]", Value.newDouble( 3.14159 ) );
         aContentData.setProperty( "mySetWithArray.myArray[1]", Value.newDouble( 1.333 ) );
-
-        RootDataSet data = new RootDataSet();
-        data.setProperty( "myProperty", Value.newLong( 1 ) );
-        data.setProperty( "myStWithProperty.myProperty", Value.newLong( 2 ) );
-
-        aContent.getAllMetadata().add( new Metadata( MetadataSchemaName.from( "myModule:myField" ), data ) );
 
         Mockito.when( contentService.getById( ContentId.from( "aaa" ) ) ).thenReturn( aContent );
 
@@ -739,6 +727,9 @@ public class ContentResourceTest
 
     private Content createContent( final String id, final String name, final String contentTypeName )
     {
+        final RootDataSet metadata = new RootDataSet();
+        metadata.setProperty( "myProperty", Value.newLong( 1 ) );
+
         return newContent().
             id( ContentId.from( id ) ).
             path( ContentPath.from( name ) ).
@@ -748,6 +739,7 @@ public class ContentResourceTest
             modifiedTime( Instant.parse( this.currentTime ) ).
             modifier( UserKey.superUser() ).
             type( ContentTypeName.from( contentTypeName ) ).
+            addMetadata( new Metadata( MetadataSchemaName.from( "myModule:myField" ), metadata ) ).
             build();
     }
 

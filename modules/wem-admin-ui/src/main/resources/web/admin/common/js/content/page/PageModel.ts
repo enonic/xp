@@ -28,10 +28,10 @@ module api.content.page {
             return this.initialized;
         }
 
-        setController(controller: PageDescriptor, eventSource?: any): PageModel {
+        setController(pageDescriptor: PageDescriptor, eventSource?: any): PageModel {
 
             var oldControllerKey = this.controller ? this.controller.getKey() : null;
-            this.controller = controller;
+            this.controller = pageDescriptor;
 
             if (!this.isInitialized()) {
                 this.regions = this.content.isPage() ? this.content.getPage().getRegions() : new PageRegionsBuilder().build();
@@ -39,7 +39,8 @@ module api.content.page {
                 this.initialized = true;
             }
             else {
-                this.regions.changeRegionsTo(controller.getRegions());
+                var regionDescriptors = pageDescriptor.getRegions();
+                this.regions.changeRegionsTo(regionDescriptors);
             }
 
             var newControllerKey = this.controller ? this.controller.getKey() : null;

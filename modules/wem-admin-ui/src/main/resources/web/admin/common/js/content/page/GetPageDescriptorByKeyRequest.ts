@@ -22,9 +22,16 @@ module api.content.page {
 
         sendAndParse(): wemQ.Promise<PageDescriptor> {
 
-            return this.send().then((response: api.rest.JsonResponse<PageDescriptorJson>) => {
-                return this.fromJsonToPageDescriptor(response.getResult());
-            });
+            var pageDescriptor = this.cache.getByKey(this.key);
+            if (pageDescriptor) {
+                return wemQ(pageDescriptor);
+            }
+            else {
+                return this.send().then((response: api.rest.JsonResponse<PageDescriptorJson>) => {
+                    pageDescriptor = this.fromJsonToPageDescriptor(response.getResult());
+                    return pageDescriptor;
+                });
+            }
         }
     }
 }

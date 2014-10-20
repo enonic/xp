@@ -1,6 +1,6 @@
 module api.content.page {
 
-    export class Descriptor {
+    export class Descriptor implements api.Cloneable {
 
         private key: DescriptorKey;
 
@@ -32,6 +32,10 @@ module api.content.page {
         getConfig(): api.form.Form {
             return this.config;
         }
+
+        clone(): Descriptor {
+            throw new Error("Must be implemented in inheritor");
+        }
     }
 
     export class DescriptorBuilder {
@@ -43,5 +47,14 @@ module api.content.page {
         displayName: string;
 
         config: api.form.Form;
+
+        constructor(source?: Descriptor) {
+            if (source) {
+                this.key = source.getKey();
+                this.name = source.getName();
+                this.displayName = source.getDisplayName();
+                this.config = source.getConfig();
+            }
+        }
     }
 }

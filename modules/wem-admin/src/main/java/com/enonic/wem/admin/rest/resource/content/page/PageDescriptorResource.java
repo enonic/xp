@@ -15,6 +15,7 @@ import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageDescriptorService;
 import com.enonic.wem.api.content.page.PageDescriptors;
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeys;
 
 @Path("content/page/descriptor")
@@ -32,6 +33,14 @@ public class PageDescriptorResource
         return json;
     }
 
+    @GET
+    @Path("list/by_module")
+    public PageDescriptorListJson getByModule( @QueryParam("moduleKey") final String moduleKey )
+    {
+        final PageDescriptors pageDescriptors = this.pageDescriptorService.getByModule( ModuleKey.from( moduleKey ) );
+        return new PageDescriptorListJson( PageDescriptors.from( pageDescriptors ) );
+    }
+
     @POST
     @Path("list/by_modules")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -39,7 +48,6 @@ public class PageDescriptorResource
     {
         final ModuleKeys moduleKeys = ModuleKeys.from( params.getModuleKeys() );
         final PageDescriptors pageDescriptors = this.pageDescriptorService.getByModules( moduleKeys );
-
         return new PageDescriptorListJson( PageDescriptors.from( pageDescriptors ) );
     }
 

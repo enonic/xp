@@ -49,7 +49,7 @@ module api.app {
 
             this.ws.addEventListener('message', (remoteEvent: any) => {
                 var jsonEvent = <ServerEventJson> JSON.parse(remoteEvent.data);
-                console.log('Server event [' + jsonEvent.type + ']', jsonEvent.event);
+                //console.log('Server event [' + jsonEvent.type + ']', jsonEvent.event);
                 this.handleServerEvent(jsonEvent);
             });
 

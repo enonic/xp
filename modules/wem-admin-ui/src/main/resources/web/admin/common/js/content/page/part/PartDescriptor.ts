@@ -1,10 +1,17 @@
 module api.content.page.part {
 
-    export class PartDescriptor extends api.content.page.Descriptor {
+    export class PartDescriptor extends api.content.page.Descriptor implements api.Cloneable {
 
+        public clone(): PartDescriptor {
+            return new PartDescriptorBuilder(this).build();
+        }
     }
 
     export class PartDescriptorBuilder extends api.content.page.DescriptorBuilder {
+
+        constructor(source?: PartDescriptor) {
+            super(source);
+        }
 
         public fromJson(json: api.content.page.part.PartDescriptorJson): PartDescriptorBuilder {
 

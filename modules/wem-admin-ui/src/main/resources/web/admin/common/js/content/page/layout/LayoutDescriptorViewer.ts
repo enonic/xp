@@ -15,7 +15,7 @@ module api.content.page.layout {
         setObject(layoutDescriptor: LayoutDescriptor) {
             super.setObject(layoutDescriptor);
             this.namesAndIconView.setMainName(layoutDescriptor.getDisplayName()).
-                setSubName(layoutDescriptor.getName().toString());
+                setSubName(layoutDescriptor.getKey().toString());
         }
 
         getPreferredHeight(): number {

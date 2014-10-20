@@ -4,6 +4,7 @@ import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageDescriptorService;
 import com.enonic.wem.api.content.page.PageDescriptors;
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.ModuleService;
 
@@ -15,6 +16,12 @@ public class PageDescriptorServiceImpl
     public PageDescriptor getByKey( final PageDescriptorKey key )
     {
         return new GetPageDescriptorCommand().key( key ).execute();
+    }
+
+    @Override
+    public PageDescriptors getByModule( final ModuleKey moduleKey )
+    {
+        return new GetPageDescriptorsByModuleCommand().moduleService( this.moduleService ).moduleKey( moduleKey ).execute();
     }
 
     @Override

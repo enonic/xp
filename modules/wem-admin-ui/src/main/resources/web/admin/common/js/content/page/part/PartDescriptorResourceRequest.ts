@@ -4,8 +4,11 @@ module api.content.page.part {
 
         private resourcePath: api.rest.Path;
 
+        cache: PartDescriptorCache;
+
         constructor() {
             super();
+            this.cache = PartDescriptorCache.get();
             this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), "content", "page", "part", "descriptor");
         }
 
@@ -14,8 +17,9 @@ module api.content.page.part {
         }
 
         fromJsonToPartDescriptor(json: PartDescriptorJson): PartDescriptor {
-
-            return new api.content.page.part.PartDescriptorBuilder().fromJson(json).build();
+            var partDescriptor = new api.content.page.part.PartDescriptorBuilder().fromJson(json).build();
+            this.cache.put(partDescriptor);
+            return  partDescriptor;
         }
     }
 }

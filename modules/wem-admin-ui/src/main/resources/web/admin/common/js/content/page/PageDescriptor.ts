@@ -1,6 +1,6 @@
 module api.content.page {
 
-    export class PageDescriptor extends Descriptor {
+    export class PageDescriptor extends Descriptor implements api.Cloneable {
 
         private regions: region.RegionDescriptor[];
 
@@ -12,11 +12,23 @@ module api.content.page {
         public getRegions(): region.RegionDescriptor[] {
             return this.regions;
         }
+
+        public clone(): PageDescriptor {
+            return new PageDescriptorBuilder(this).build();
+        }
     }
 
     export class PageDescriptorBuilder extends DescriptorBuilder {
 
-        regions: region.RegionDescriptor[] = [];
+        regions: region.RegionDescriptor[];
+
+        constructor(source?: PageDescriptor) {
+            this.regions = [];
+            if (source) {
+                super(source);
+                this.regions = source.getRegions();
+            }
+        }
 
         public fromJson(json: api.content.page.PageDescriptorJson): PageDescriptorBuilder {
 

@@ -69,7 +69,7 @@ module api.content.page.layout {
             var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
             namesAndIconView.setIconClass("icon-earth icon-medium")
                 .setMainName(this.descriptor.getDisplayName())
-                .setSubName(this.descriptor.getName().toString());
+                .setSubName(this.descriptor.getKey().toString());
 
             var removeButtonEl = new api.dom.AEl("remove");
             removeButtonEl.onClicked((event: MouseEvent) => {

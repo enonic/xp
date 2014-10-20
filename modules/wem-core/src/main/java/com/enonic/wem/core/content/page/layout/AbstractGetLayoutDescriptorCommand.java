@@ -46,34 +46,45 @@ abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDes
         final LayoutDescriptors.Builder layoutDescriptors = LayoutDescriptors.newLayoutDescriptors();
         for ( final Module module : modules )
         {
-            final Set<String> resources = module.getResourcePaths();
-            final Collection<String> componentNames = Collections2.transform( resources, input -> {
-                final Matcher matcher = PATTERN.matcher( input );
-                if ( matcher.matches() )
-                {
-                    return matcher.group( 1 );
-                }
+            readDescriptor( module, layoutDescriptors );
+        }
+        return layoutDescriptors.build();
+    }
 
-                return null;
-            } );
+    protected final LayoutDescriptors getDescriptorsFromModule( final Module module )
+    {
+        final LayoutDescriptors.Builder layoutDescriptors = LayoutDescriptors.newLayoutDescriptors();
+        readDescriptor( module, layoutDescriptors );
+        return layoutDescriptors.build();
+    }
 
-            for ( final String componentName : componentNames )
+    private void readDescriptor( final Module module, final LayoutDescriptors.Builder layoutDescriptors )
+    {
+        final Set<String> resources = module.getResourcePaths();
+        final Collection<String> componentNames = Collections2.transform( resources, input -> {
+            final Matcher matcher = PATTERN.matcher( input );
+            if ( matcher.matches() )
             {
-                if ( componentName == null )
-                {
-                    continue;
-                }
-                final ComponentDescriptorName descriptorName = new ComponentDescriptorName( componentName );
-                final LayoutDescriptorKey key = LayoutDescriptorKey.from( module.getKey(), descriptorName );
-                final LayoutDescriptor layoutDescriptor = getDescriptor( key );
-                if ( layoutDescriptor != null )
-                {
-                    layoutDescriptors.add( layoutDescriptor );
-                }
+                return matcher.group( 1 );
+            }
+
+            return null;
+        } );
+
+        for ( final String componentName : componentNames )
+        {
+            if ( componentName == null )
+            {
+                continue;
+            }
+            final ComponentDescriptorName descriptorName = new ComponentDescriptorName( componentName );
+            final LayoutDescriptorKey key = LayoutDescriptorKey.from( module.getKey(), descriptorName );
+            final LayoutDescriptor layoutDescriptor = getDescriptor( key );
+            if ( layoutDescriptor != null )
+            {
+                layoutDescriptors.add( layoutDescriptor );
             }
         }
-
-        return layoutDescriptors.build();
     }
 
     @SuppressWarnings("unchecked")

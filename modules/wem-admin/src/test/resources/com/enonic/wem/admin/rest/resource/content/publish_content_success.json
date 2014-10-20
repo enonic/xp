@@ -48,7 +48,20 @@
     "isDraft": false,
     "isPage": false,
     "isRoot": true,
-    "metadata" : [ ],
+    "metadata": [
+        {
+            "data": [
+                {
+                    "Property": {
+                        "name": "myProperty",
+                        "type": "Long",
+                        "value": 1
+                    }
+                }
+            ],
+            "name": "myModule:myField"
+        }
+    ],
     "modifiedTime": "2013-08-23T12:55:09.162Z",
     "modifier": "user:system:admin",
     "name": "my_a_content",

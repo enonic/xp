@@ -26,13 +26,13 @@ module api.module {
         sendAndParse(): wemQ.Promise<Module> {
 
             var cache = ModuleCache.get();
-            var cachedObject = this.skipCache ? null : cache.getByKey(this.moduleKey);
-            if (cachedObject) {
-                return wemQ(cachedObject);
+            var moduleObj = this.skipCache ? null : cache.getByKey(this.moduleKey);
+            if (moduleObj) {
+                return wemQ(moduleObj);
             }
             else {
                 return this.send().then((response: api.rest.JsonResponse<json.ModuleJson>) => {
-                    var moduleObj = this.fromJsonToModule(response.getResult());
+                    moduleObj = this.fromJsonToModule(response.getResult());
                     cache.put(moduleObj);
                     return moduleObj;
                 });

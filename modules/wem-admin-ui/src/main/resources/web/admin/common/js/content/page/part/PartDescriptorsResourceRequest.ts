@@ -10,12 +10,5 @@ module api.content.page.part {
             });
             return array;
         }
-
-        sendAndParse(): wemQ.Promise<PartDescriptor[]> {
-
-            return this.send().then((response: api.rest.JsonResponse<PartDescriptorsJson>) => {
-                return this.fromJsonToPartDescriptors(response.getResult());
-            });
-        }
     }
 }

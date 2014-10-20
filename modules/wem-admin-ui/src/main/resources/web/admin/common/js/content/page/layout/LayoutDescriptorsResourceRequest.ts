@@ -11,11 +11,6 @@ module api.content.page.layout {
             return array;
         }
 
-        sendAndParse(): wemQ.Promise<LayoutDescriptor[]> {
 
-            return this.send().then((response: api.rest.JsonResponse<LayoutDescriptorsJson>) => {
-                return this.fromJsonToLayoutDescriptors(response.getResult());
-            });
-        }
     }
 }

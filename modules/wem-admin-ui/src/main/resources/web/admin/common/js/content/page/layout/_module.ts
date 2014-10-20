@@ -10,8 +10,10 @@
 ///<reference path='LayoutDescriptorLoader.ts' />
 ///<reference path='LayoutDescriptorResourceRequest.ts' />
 ///<reference path='LayoutDescriptorsResourceRequest.ts' />
+///<reference path='GetLayoutDescriptorsByModuleRequest.ts' />
 ///<reference path='GetLayoutDescriptorsByModulesRequest.ts' />
 ///<reference path='DefaultLayoutDescriptorResolver.ts' />
 ///<reference path='LayoutDescriptorDropdown.ts' />
 ///<reference path='LayoutDescriptorComboBox.ts' />
 ///<reference path='LayoutRegionsMerger.ts' />
+///<reference path='LayoutDescriptorCache.ts' />
