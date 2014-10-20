@@ -70,7 +70,7 @@ module app.browse {
         }
 
         fetch(node: TreeNode<Module>): wemQ.Promise<api.module.Module> {
-            return this .fetchByKey(node.getData().getModuleKey());
+            return this.fetchByKey(node.getData().getModuleKey());
         }
 
         private fetchByKey(moduleKey: api.module.ModuleKey): wemQ.Promise<api.module.Module> {
