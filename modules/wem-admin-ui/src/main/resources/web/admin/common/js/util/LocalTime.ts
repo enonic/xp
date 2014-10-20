@@ -1,6 +1,6 @@
 module api.util {
 
-    export class LocalTime {
+    export class LocalTime implements api.Equitable {
 
         private hours: number;
 
@@ -42,6 +42,29 @@ module api.util {
             else {
                 return this.padNumber(this.hours) + ":" + this.padNumber(this.minutes);
             }
+        }
+
+        equals(o: api.Equitable): boolean {
+
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, LocalTime)) {
+                return false;
+            }
+
+            var other = <LocalTime>o;
+
+            if (!api.ObjectHelper.numberEquals(this.hours, other.hours)) {
+                return false;
+            }
+            if (!api.ObjectHelper.numberEquals(this.minutes, other.minutes)) {
+                return false;
+            }
+            if (!api.ObjectHelper.numberEquals(this.seconds, other.seconds)) {
+                return false;
+            }
+            if (!api.ObjectHelper.numberEquals(this.tzo, other.tzo)) {
+                return false;
+            }
+            return true;
         }
 
         private  padNumber(num: number): string {

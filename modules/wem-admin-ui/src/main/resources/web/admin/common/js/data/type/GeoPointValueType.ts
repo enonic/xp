@@ -51,5 +51,9 @@ module api.data.type {
                 return null;
             }
         }
+
+        valueEquals(a: api.util.GeoPoint, b: api.util.GeoPoint): boolean {
+            return api.ObjectHelper.equals(a, b);
+        }
     }
 }

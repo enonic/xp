@@ -1,13 +1,13 @@
 module api.data.type {
 
-    export class LongValueType extends ValueType {
+    export class DoubleValueType extends ValueType {
 
         constructor() {
-            super("Long");
+            super("Double");
         }
 
         isValid(value: any): boolean {
-            return api.util.NumberHelper.isWholeNumber(value);
+            return api.util.NumberHelper.isNumber(value);
         }
 
         isConvertible(value: string): boolean {

@@ -1,5 +1,10 @@
 ///<reference path='ValueType.ts' />
 ///<reference path='DataValueType.ts' />
+///<reference path='StringValueType.ts' />
+///<reference path='HtmlPartValueType.ts' />
+///<reference path='XmlValueType.ts' />
+///<reference path='DateTimeValueType.ts' />
+///<reference path='DoubleValueType.ts' />
 ///<reference path='LongValueType.ts' />
 ///<reference path='ContentIdValueType.ts' />
 ///<reference path='BooleanValueType.ts' />

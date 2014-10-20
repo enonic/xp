@@ -49,5 +49,9 @@ module api.data.type {
                 return null;
             }
         }
+
+        valueEquals(a: api.content.ContentId, b: api.content.ContentId): boolean {
+            return api.ObjectHelper.equals(a, b);
+        }
     }
 }

@@ -32,7 +32,7 @@ describe("api.data.type.LongValueType", function () {
             expect(ValueTypes.LONG.isConvertible("1")).toBeTruthy();
         });
 
-        it("given a decimal number as string then true is returned", function () {
+        it("given a decimal number as string then false is returned", function () {
             expect(ValueTypes.LONG.isConvertible("1.1")).toBeFalsy();
         });
 

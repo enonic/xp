@@ -1,6 +1,6 @@
 module api.util {
 
-    export class GeoPoint {
+    export class GeoPoint implements api.Equitable {
 
         private latitude: number;
 
@@ -21,6 +21,24 @@ module api.util {
 
         toString(): string {
             return "" + this.latitude + "," + this.longitude;
+        }
+
+        equals(o: api.Equitable): boolean {
+
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, GeoPoint)) {
+                return false;
+            }
+
+            var other = <GeoPoint>o;
+
+            if (!api.ObjectHelper.numberEquals(this.latitude, other.latitude)) {
+                return false;
+            }
+
+            if (!api.ObjectHelper.numberEquals(this.longitude, other.longitude)) {
+                return false;
+            }
+            return true;
         }
 
         static isValidString(s: string): boolean {

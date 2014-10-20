@@ -7,11 +7,11 @@ module api.data.type {
 
         static DATA = new DataValueType();
 
-        static STRING = new ValueType("String");
+        static STRING = new StringValueType();
 
-        static HTML_PART = new ValueType("HtmlPart");
+        static HTML_PART = new HtmlPartValueType();
 
-        static XML = new ValueType("Xml");
+        static XML = new XmlValueType();
 
         static LOCAL_DATE = new LocalDateValueType();
 
@@ -19,7 +19,7 @@ module api.data.type {
 
         static LOCAL_DATE_TIME = new LocalDateTimeValueType();
 
-        static DATE_TIME = new ValueType("DateTime");
+        static DATE_TIME = new DateTimeValueType();
 
         static CONTENT_ID = new ContentIdValueType();
 
@@ -27,7 +27,7 @@ module api.data.type {
 
         static BOOLEAN = new BooleanValueType();
 
-        static DOUBLE = new ValueType("Double");
+        static DOUBLE = new DoubleValueType();
 
         static GEO_POINT = new GeoPointValueType();
 

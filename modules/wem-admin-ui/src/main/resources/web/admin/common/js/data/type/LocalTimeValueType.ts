@@ -47,6 +47,10 @@ module api.data.type {
             }
         }
 
+        valueEquals(a: api.util.LocalTime, b: api.util.LocalTime): boolean {
+            return api.ObjectHelper.equals(a, b);
+        }
+
 
         toJsonValue(value: api.data.Value): string {
             var time: string = value.getLocalTime().toString();

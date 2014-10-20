@@ -50,5 +50,9 @@ module api.data.type {
         valueToString(value: Value): string {
             return api.util.DateHelper.formatUTCDate((<Date>value.getObject()));
         }
+
+        valueEquals(a: Date, b: Date): boolean {
+            return api.ObjectHelper.dateEquals(a, b);
+        }
     }
 }

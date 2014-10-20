@@ -48,6 +48,10 @@ module api.data.type {
             return (<Boolean>value.getObject()).toString();
         }
 
+        valueEquals(a: boolean, b: boolean): boolean {
+            return api.ObjectHelper.booleanEquals(a, b);
+        }
+
         newFalse(): Value {
             return new Value(false, this);
         }
