@@ -615,7 +615,7 @@ module api.ui.treegrid {
                             this.notifyDataChanged(new DataChangedEvent<DATA>([node], DataChangedEvent.ACTION_ADDED));
 
                             if (parentNode != root) {
-                                this.updateDataChildrenStatus(parentNode).then((node: TreeNode<DATA>) => {
+                                this.updateNodeData(parentNode).then((node: TreeNode<DATA>) => {
                                     if (!stashedParentNode) {
                                         this.updateSelectedNode(node);
                                     }
@@ -659,11 +659,11 @@ module api.ui.treegrid {
                 }
             });
             root.treeToList().forEach((child: TreeNode<DATA>) => {
-                this.updateDataChildrenStatus(child);
+                this.updateNodeData(child);
             });
             if (this.stash) {
                 this.stash.treeToList().forEach((child: TreeNode<DATA>) => {
-                    this.updateDataChildrenStatus(child);
+                    this.updateNodeData(child);
                 });
             }
             this.notifyDataChanged(new DataChangedEvent<DATA>(deleted, DataChangedEvent.ACTION_DELETED));
@@ -732,7 +732,6 @@ module api.ui.treegrid {
         }
 
         private updateSelectedNode(node: TreeNode<DATA>) {
-            //  this.updateDataChildrenStatus(node);
             this.getGrid().clearSelection();
             this.refreshNode(node);
             var row = this.gridData.getRowById(node.getId());
@@ -930,7 +929,7 @@ module api.ui.treegrid {
             this.grid.renderGrid();
         }
 
-        updateDataChildrenStatus(parentNode: TreeNode<DATA>): wemQ.Promise<TreeNode<DATA>> {
+        updateNodeData(parentNode: TreeNode<DATA>): wemQ.Promise<TreeNode<DATA>> {
             return null;
         }
     }
