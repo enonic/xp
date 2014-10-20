@@ -207,7 +207,7 @@ module app.wizard.page {
             if (!this.pageSkipReload) {
 
                 if (!this.pageModel) {
-                    this.pageModel = new PageModel(this.content);
+                    this.pageModel = new PageModel(this.content, this.defaultModels.getPageTemplate());
                     this.pageModel.onPropertyChanged((event: api.PropertyChangedEvent) => {
                         if (event.getPropertyName() == "controller" && this !== event.getSource()) {
                             this.saveAndReloadPage();
@@ -220,17 +220,18 @@ module app.wizard.page {
 
                 if (!this.pageModel.isInitialized()) {
 
+                    var pageDescriptorPromise:wemQ.Promise<PageDescriptor> = null;
+                    var pageTemplatePromise:wemQ.Promise<PageTemplate> = null;
+
+
                     if (this.content.isPageTemplate()) {
                         var pageDescriptorKey = null;
                         if( this.content.isPage() ) {
                             pageDescriptorKey = this.content.getPage().getController();
-                            this.loadPageDescriptor(pageDescriptorKey).then((pageDescriptor: PageDescriptor) => {
-
+                            pageDescriptorPromise = this.loadPageDescriptor(pageDescriptorKey);
+                            pageDescriptorPromise.then((pageDescriptor: PageDescriptor) => {
                                 this.pageModel.setController(pageDescriptor, this);
-
-                            }).catch((reason: any) => {
-                                api.DefaultErrorHandler.handle(reason);
-                            }).done();
+                            });
                         }
                         else {
                             this.pageModel.setController(null, this);
@@ -240,23 +241,32 @@ module app.wizard.page {
 
                         if (this.content.isPage()) {
                             var pageTemplateKey = this.content.getPage().getTemplate();
-                            this.loadPageTemplate(pageTemplateKey).then((pageTemplate: PageTemplate) => {
-
+                            pageTemplatePromise = this.loadPageTemplate(pageTemplateKey);
+                            pageTemplatePromise.then((pageTemplate: PageTemplate) => {
                                 this.pageModel.setTemplate(pageTemplate, this.content.getPage(), this);
-
-                            }).catch((reason: any) => {
-                                api.DefaultErrorHandler.handle(reason);
-                            }).done();
+                            });
                         }
                         else {
                             if (this.defaultModels.getPageTemplate()) {
-                                this.pageModel.setDefaultTemplate(this.defaultModels.getPageTemplate(), this);
+                                this.pageModel.setDefaultTemplate(this);
                             }
                         }
                     }
+                    var promises:wemQ.Promise<any>[] = [];
+                    if( pageDescriptorPromise ) {
+                        promises.push(pageDescriptorPromise);
+                    }
+                    if( pageTemplatePromise ) {
+                        promises.push(pageTemplatePromise);
+                    }
+                    wemQ.all(promises).then(() => {
+                        this.liveEditPage.setPage(this.pageModel);
+                        this.pageInspectionPanel.setModel(this.pageModel);
+                    }).catch((reason: any) => {
+                        api.DefaultErrorHandler.handle(reason);
+                    }).done();
 
-                    this.liveEditPage.setPage(this.pageModel);
-                    this.pageInspectionPanel.setModel(this.pageModel);
+
                 }
             }
             this.loadPage();

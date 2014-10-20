@@ -6,13 +6,15 @@ module api.content.page {
 
         private content: api.content.Content;
 
+        private defaultTemplate: PageTemplate;
+
         private initialized: boolean = false;
 
         private controller: PageDescriptor;
 
         private template: PageTemplate;
 
-        private defaultTemplate: PageTemplate;
+        private usingDefaultTemplate: boolean = false;
 
         private regions: PageRegions;
 
@@ -20,8 +22,9 @@ module api.content.page {
 
         private propertyChangedListeners: {(event: api.PropertyChangedEvent):void}[] = [];
 
-        constructor(content: api.content.Content) {
+        constructor(content: api.content.Content, defaultPageTemplate: PageTemplate) {
             this.content = content;
+            this.defaultTemplate = defaultPageTemplate;
         }
 
         isInitialized(): boolean {
@@ -32,6 +35,7 @@ module api.content.page {
 
             var oldControllerKey = this.controller ? this.controller.getKey() : null;
             this.controller = pageDescriptor;
+            this.usingDefaultTemplate = false;
 
             if (!this.isInitialized()) {
                 this.regions = this.content.isPage() ? this.content.getPage().getRegions() : new PageRegionsBuilder().build();
@@ -51,15 +55,15 @@ module api.content.page {
             return this;
         }
 
-        setDefaultTemplate(defaultTemplate: PageTemplate, eventSource?: any): PageModel {
+        setDefaultTemplate(eventSource?: any): PageModel {
 
             var oldTemplateKey = this.template ? this.template.getKey() : null;
             this.template = null;
-            this.defaultTemplate = defaultTemplate;
+            this.usingDefaultTemplate = true;
 
             // Need to clone config objects from template, otherwise the template gets changed while editing, since DataSet's are mutable
-            this.regions = defaultTemplate.getRegions().clone();
-            this.config = defaultTemplate.getConfig().clone();
+            this.regions = this.defaultTemplate.getRegions().clone();
+            this.config = this.defaultTemplate.getConfig().clone();
 
             if (!api.ObjectHelper.equals(oldTemplateKey, null)) {
                 this.notifyPropertyChanged("template", oldTemplateKey, null, eventSource);
@@ -73,6 +77,7 @@ module api.content.page {
 
             var oldTemplateKey = this.template ? this.template.getKey() : null;
             this.template = template;
+            this.usingDefaultTemplate = false;
 
             if (!this.isInitialized()) {
                 if (page) {
@@ -108,7 +113,7 @@ module api.content.page {
 
         getPage(): Page {
 
-            if (this.hasDefaultTemplate()) {
+            if (this.isUsingDefaultTemplate()) {
                 var defaultPage = this.defaultTemplate.getPage();
                 var regionsChanges = !this.regions.equals(defaultPage.getRegions());
                 var configChanges = !this.config.equals(defaultPage.getConfig());
@@ -159,8 +164,8 @@ module api.content.page {
             return !!this.template;
         }
 
-        hasDefaultTemplate(): boolean {
-            return !!this.defaultTemplate;
+        isUsingDefaultTemplate(): boolean {
+            return this.usingDefaultTemplate;
         }
 
         getTemplateKey(): PageTemplateKey {

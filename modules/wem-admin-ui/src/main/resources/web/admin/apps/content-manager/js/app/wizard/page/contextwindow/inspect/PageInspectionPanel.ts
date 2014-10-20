@@ -83,7 +83,7 @@ module app.wizard.page.contextwindow.inspect {
                     this.refreshConfigForm(this.pageModel.getController(), this.pageModel.getConfig());
                     this.pageControllerSelectorForm.show();
                 }
-                else if (this.pageModel.hasTemplate() || this.pageModel.hasDefaultTemplate()) {
+                else if (this.pageModel.hasTemplate() || this.pageModel.isUsingDefaultTemplate()) {
                     this.pageTemplateSelectorForm.show();
                 }
                 else {

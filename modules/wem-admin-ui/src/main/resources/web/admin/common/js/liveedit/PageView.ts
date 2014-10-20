@@ -123,7 +123,7 @@ module api.liveedit {
                 return !this.pageModel.hasController();
             }
             else {
-                return !this.pageModel.hasTemplate() && !this.pageModel.hasDefaultTemplate();
+                return !this.pageModel.hasTemplate() && !this.pageModel.isUsingDefaultTemplate();
             }
         }
 
