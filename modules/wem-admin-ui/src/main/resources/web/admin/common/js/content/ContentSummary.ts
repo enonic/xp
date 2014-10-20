@@ -336,6 +336,11 @@ module api.content {
             return this;
         }
 
+        setDeletable(value: boolean): ContentSummaryBuilder {
+            this.deletable = value;
+            return this;
+        }
+
         build(): ContentSummary {
             return new ContentSummary(this);
         }
