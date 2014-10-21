@@ -186,6 +186,19 @@ public class NodeServiceImpl
     }
 
     @Override
+    public Node duplicate( final Node node )
+    {
+        CreateNodeParams.Builder builder = CreateNodeParams.create();
+        builder.name( node.name().toString() ).
+            parent( node.parent() ).
+            data( node.data() ).
+            attachments( node.attachments() ).
+            indexConfigDocument( node.getIndexConfigDocument() ).
+            childOrder( node.getChildOrder() );
+        return create( builder.build() );
+    }
+
+    @Override
     public NodeComparison compare( final NodeId nodeId, final Workspace target )
     {
         return CompareNodeCommand.create().

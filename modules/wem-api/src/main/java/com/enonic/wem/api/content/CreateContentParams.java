@@ -38,8 +38,6 @@ public final class CreateContentParams
 
     private boolean draft;
 
-    private boolean embed;
-
     private Map<String, Attachment> attachments = Maps.newHashMap();
 
     private Set<OrderExpr> orderExpressions = Sets.newLinkedHashSet();
@@ -53,12 +51,6 @@ public final class CreateContentParams
     public CreateContentParams parent( final ContentPath parentContentPath )
     {
         this.parentContentPath = parentContentPath;
-        return this;
-    }
-
-    public CreateContentParams embed( final boolean value )
-    {
-        this.embed = value;
         return this;
     }
 
@@ -186,11 +178,6 @@ public final class CreateContentParams
     public boolean isDraft()
     {
         return draft;
-    }
-
-    public boolean isEmbed()
-    {
-        return embed;
     }
 
     public Attachments getAttachments()

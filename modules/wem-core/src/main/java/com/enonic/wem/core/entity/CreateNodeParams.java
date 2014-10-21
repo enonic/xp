@@ -18,8 +18,6 @@ public class CreateNodeParams
 
     private final ChildOrder childOrder;
 
-    private final boolean embed;
-
     private CreateNodeParams( Builder builder )
     {
         parent = builder.parent;
@@ -27,7 +25,6 @@ public class CreateNodeParams
         data = builder.data;
         attachments = builder.attachments;
         indexConfigDocument = builder.indexConfigDocument;
-        embed = builder.embed;
         this.childOrder = builder.childOrder;
 
     }
@@ -81,8 +78,6 @@ public class CreateNodeParams
 
         private ChildOrder childOrder;
 
-        private boolean embed;
-
         private Builder()
         {
         }
@@ -114,12 +109,6 @@ public class CreateNodeParams
         public Builder indexConfigDocument( final IndexConfigDocument indexConfigDocument )
         {
             this.indexConfigDocument = indexConfigDocument;
-            return this;
-        }
-
-        public Builder embed( boolean embed )
-        {
-            this.embed = embed;
             return this;
         }
 

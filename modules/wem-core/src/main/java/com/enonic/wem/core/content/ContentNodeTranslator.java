@@ -74,7 +74,6 @@ public class ContentNodeTranslator
         return CreateNodeParams.create().
             name( resolveNodeName( params.getName() ) ).
             parent( resolveParentNodePath( params.getParentContentPath() ) ).
-            embed( params.isEmbed() ).
             data( contentAsData ).
             attachments( nodeAttachmentsBuilder.build() ).
             indexConfigDocument( indexConfigDocument ).
