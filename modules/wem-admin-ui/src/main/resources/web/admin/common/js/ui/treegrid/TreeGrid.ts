@@ -551,28 +551,28 @@ module api.ui.treegrid {
 
             var dataId = this.getDataId(data),
                 nodes = [],
-                node = this.root.findNode(dataId),
+                nodeToUpdate = this.root.findNode(dataId),
                 stashedNode;
 
-            if (!node) {
-                throw new Error("Node not found for data: " + this.getDataId(data));
+            if (!nodeToUpdate) {
+                throw new Error("TreeNode to update not found: " + dataId);
             }
 
-            nodes.push(node);
+            nodes.push(nodeToUpdate);
 
             if (!!this.stash) {
                 stashedNode = this.stash.findNode(dataId);
                 // filter may have multiple occurrences
                 var children = this.root.getChildren();
                 children.forEach((elem) => {
-                    node = elem.findNode(dataId);
+                    var node = elem.findNode(dataId);
                     if (!!node) {
                         nodes.push(node);
                     }
                 });
             }
 
-            this.fetch(nodes[0])
+            this.fetch(nodeToUpdate)
                 .then((data: DATA) => {
                     nodes.forEach((elem) => {
                         elem.setData(data);
