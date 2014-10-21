@@ -18,11 +18,11 @@ module api.liveedit {
         }
 
         static on(handler: (event: PageComponentResetEvent) => void, contextWindow: Window = window) {
-            Event.bind(api.util.getFullName(this), handler, contextWindow);
+            Event.bind(api.ClassHelper.getFullName(this), handler, contextWindow);
         }
 
         static un(handler?: (event: PageComponentResetEvent) => void, contextWindow: Window = window) {
-            Event.unbind(api.util.getFullName(this), handler, contextWindow);
+            Event.unbind(api.ClassHelper.getFullName(this), handler, contextWindow);
         }
     }
 }

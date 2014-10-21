@@ -220,13 +220,13 @@ module app.wizard.page {
 
                 if (!this.pageModel.isInitialized()) {
 
-                    var pageDescriptorPromise:wemQ.Promise<PageDescriptor> = null;
-                    var pageTemplatePromise:wemQ.Promise<PageTemplate> = null;
+                    var pageDescriptorPromise: wemQ.Promise<PageDescriptor> = null;
+                    var pageTemplatePromise: wemQ.Promise<PageTemplate> = null;
 
 
                     if (this.content.isPageTemplate()) {
                         var pageDescriptorKey = null;
-                        if( this.content.isPage() ) {
+                        if (this.content.isPage()) {
                             pageDescriptorKey = this.content.getPage().getController();
                             pageDescriptorPromise = this.loadPageDescriptor(pageDescriptorKey);
                             pageDescriptorPromise.then((pageDescriptor: PageDescriptor) => {
@@ -252,11 +252,11 @@ module app.wizard.page {
                             }
                         }
                     }
-                    var promises:wemQ.Promise<any>[] = [];
-                    if( pageDescriptorPromise ) {
+                    var promises: wemQ.Promise<any>[] = [];
+                    if (pageDescriptorPromise) {
                         promises.push(pageDescriptorPromise);
                     }
-                    if( pageTemplatePromise ) {
+                    if (pageTemplatePromise) {
                         promises.push(pageTemplatePromise);
                     }
                     wemQ.all(promises).then(() => {
@@ -529,7 +529,7 @@ module app.wizard.page {
 
             }
             else {
-                throw new Error("PageComponentView cannot be selected: " + api.util.getClassName(pageComponentView));
+                throw new Error("PageComponentView cannot be selected: " + api.ClassHelper.getClassName(pageComponentView));
             }
         }
     }

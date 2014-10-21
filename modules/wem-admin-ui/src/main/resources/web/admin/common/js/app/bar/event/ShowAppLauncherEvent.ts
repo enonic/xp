@@ -14,7 +14,7 @@ module api.app.bar.event {
         }
 
         static on(handler: (event: ShowAppLauncherEvent) => void) {
-            api.event.Event.bind(api.util.getFullName(this), handler);
+            api.event.Event.bind(api.ClassHelper.getFullName(this), handler);
         }
 
     }

@@ -60,13 +60,13 @@ module api.data {
 
         toDataSet(): DataSet {
             api.util.assert(api.ObjectHelper.iFrameSafeInstanceOf(this, DataSet),
-                    "Expected Data to be a DataSet: " + api.util.getClassName(this));
+                    "Expected Data to be a DataSet: " + api.ClassHelper.getClassName(this));
             return <DataSet>this;
         }
 
         toProperty(): Property {
             api.util.assert(api.ObjectHelper.iFrameSafeInstanceOf(this, Property),
-                    "Expected Data to be a Property: " + api.util.getClassName(this));
+                    "Expected Data to be a Property: " + api.ClassHelper.getClassName(this));
             return <Property>this;
         }
 

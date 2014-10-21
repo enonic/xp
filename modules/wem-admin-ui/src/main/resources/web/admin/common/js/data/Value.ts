@@ -15,7 +15,7 @@ module api.data {
             if (value) {
                 var isValid = this.type.isValid(value);
                 if (isValid == undefined) {
-                    throw new Error(api.util.getClassName(this.type) + ".isValid() did not return any value: " + isValid);
+                    throw new Error(api.ClassHelper.getClassName(this.type) + ".isValid() did not return any value: " + isValid);
                 }
                 if (isValid == false) {
                     throw new Error("Invalid value for type " + type.toString() + ": " + value);
@@ -97,7 +97,7 @@ module api.data {
 
         asRootDataSet(): RootDataSet {
             api.util.assert(api.ObjectHelper.iFrameSafeInstanceOf(this.value, RootDataSet),
-                    "Expected value to be a RootDataSet: " + api.util.getClassName(this.value));
+                    "Expected value to be a RootDataSet: " + api.ClassHelper.getClassName(this.value));
             return <RootDataSet>this.value;
         }
 
