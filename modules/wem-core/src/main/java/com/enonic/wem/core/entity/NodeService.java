@@ -25,7 +25,7 @@ public interface NodeService
 
     Nodes getByPaths( NodePaths paths );
 
-    Node duplicate( Node node );
+    Node duplicate( NodeId nodeId );
 
     FindNodesByParentResult findByParent( FindNodesByParentParams params );
 

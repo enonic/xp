@@ -186,8 +186,10 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Node duplicate( final Node node )
+    public Node duplicate( final NodeId nodeId )
     {
+        Node node = getById( nodeId );
+
         CreateNodeParams.Builder builder = CreateNodeParams.create();
         builder.name( node.name().toString() ).
             parent( node.parent() ).

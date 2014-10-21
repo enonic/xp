@@ -135,9 +135,20 @@ public class NodeServiceImplTest
             parent( NodePath.ROOT ).
             build();
 
-        Mockito.when( this.nodeDao.store( Mockito.isA( Node.class ) ) ).thenReturn( NodeVersionId.from( "version-b" ) );
+        NodeVersionId nodeAVersionId = NodeVersionId.from( "a-version-id" );
 
-        final Node nodeB = this.nodeService.duplicate( nodeA );
+        Mockito.when(
+            this.workspaceService.getCurrentVersion( Mockito.eq( nodeA.id() ), Mockito.isA( WorkspaceContext.class ) ) ).thenReturn(
+            nodeAVersionId );
+
+        Mockito.when( this.nodeDao.getByVersionId( nodeAVersionId ) ).thenReturn( nodeA );
+
+        Mockito.when( this.workspaceService.hasChildren( Mockito.eq( nodeA.path() ), Mockito.isA( WorkspaceContext.class ) ) ).thenReturn(
+            false );
+
+        Mockito.when( this.nodeDao.store( Mockito.isA( Node.class ) ) ).thenReturn( NodeVersionId.from( "b-version-id" ) );
+
+        final Node nodeB = this.nodeService.duplicate( nodeA.id() );
 
         assertEquals( nodeA.name(), nodeB.name() );
         assertEquals( nodeA.attachments(), nodeB.attachments() );
