@@ -146,12 +146,15 @@ module api.dom {
                     throw new Error("Illegal state: HTMLElement in parent Element is not the as the HTMLElement parent to this HTMLElement");
                 }
             }
-
-            var moduleName = api.util.getModuleName(this);
-            if (builder.generateId || (builder.generateId == undefined && moduleName != "api.dom")) {
+            // Do not generate id unless the distance to Element in the class hierarchy of this is larger than 1
+            // This should result in that no id's are generated for new Element or classes extending Element directly
+            // (which should prevent id-generation of direct instances of most api.dom classes)
+            var distance = api.util.distanceTo(this, Element);
+            if (builder.generateId || distance > 1) {
                 var id = ElementRegistry.registerElement(this);
                 this.setId(id);
             }
+
             if (builder.className) {
                 this.setClass(builder.className);
             }
@@ -915,24 +918,24 @@ module api.dom {
                 setParentElement(parent));
         }
 
-        static fromString(s: string, setLoadExistingChildren:boolean = true): Element {
+        static fromString(s: string, setLoadExistingChildren: boolean = true): Element {
             var elementAsJQ = wemjq(s);
             var elementASHtmlElement = elementAsJQ.get(0);
             return !!elementASHtmlElement ? new Element(new ElementFromHelperBuilder().
-                                                setHelper(new ElementHelper(elementASHtmlElement)).
-                                                setLoadExistingChildren(setLoadExistingChildren))
-                                          : null;
+                setHelper(new ElementHelper(elementASHtmlElement)).
+                setLoadExistingChildren(setLoadExistingChildren))
+                : null;
         }
 
-        static elementsFromRequest(s: string, setLoadExistingChildren:boolean = true): Element[] {
+        static elementsFromRequest(s: string, setLoadExistingChildren: boolean = true): Element[] {
             var elementAsJQ = wemjq(s);
             var elements = [];
             elementAsJQ.each((index, elem) => {
                 var e = wemjq(elem);
                 elements.push(
-                new Element(new ElementFromHelperBuilder().
-                    setHelper(new ElementHelper(e.get(0))).
-                    setLoadExistingChildren(setLoadExistingChildren))
+                    new Element(new ElementFromHelperBuilder().
+                        setHelper(new ElementHelper(e.get(0))).
+                        setLoadExistingChildren(setLoadExistingChildren))
                 );
             });
 

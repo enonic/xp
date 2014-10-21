@@ -47,7 +47,7 @@ module api.util {
      * @param instance - reference to class or it's instance.
      * @returns {string} full module name.
      */
-    export function getModuleName(instance): string {
+    export function getModuleName(instance: any): string {
         var fullName = getFullName(instance);
         return fullName ? fullName.substr(0, fullName.lastIndexOf(".")) : "";
     }
@@ -104,6 +104,29 @@ module api.util {
             }
         }
         return path;
+    }
+
+    /**
+     * Calculates the number of super classes between given instance and clazz.
+     */
+    export function distanceTo(instance: any, clazz: Function): number {
+
+        if (instance.constructor.name === (<any>clazz).name) {
+            return 0;
+        }
+
+        var distance = 0;
+        var prototype = Object.getPrototypeOf(instance);
+        do {
+            prototype = Object.getPrototypeOf(prototype);
+            if (!prototype) {
+                return distance;
+            }
+            distance++;
+        }
+        while (prototype.constructor.name !== (<any>clazz).name);
+
+        return distance;
     }
 
 }
