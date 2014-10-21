@@ -548,18 +548,42 @@ module api.ui.treegrid {
         }
 
         updateNode(data: DATA): void {
-            var root = this.stash || this.root;
-            var dataId = this.getDataId(data);
-            var node = root.findNode(dataId);
+
+            var dataId = this.getDataId(data),
+                nodes = [],
+                node = this.root.findNode(dataId),
+                stashedNode;
+
             if (!node) {
                 throw new Error("Node not found for data: " + this.getDataId(data));
             }
 
-            this.fetch(node)
+            nodes.push(node);
+
+            if (!!this.stash) {
+                stashedNode = this.stash.findNode(dataId);
+                // filter may have multiple occurrences
+                var children = this.root.getChildren();
+                children.forEach((elem) => {
+                    node = elem.findNode(dataId);
+                    if (!!node) {
+                        nodes.push(node);
+                    }
+                });
+            }
+
+            this.fetch(nodes[0])
                 .then((data: DATA) => {
-                    node.setData(data);
-                    this.gridData.updateItem(node.getId(), node);
-                    this.notifyDataChanged(new DataChangedEvent<DATA>([node], DataChangedEvent.ACTION_UPDATED));
+                    nodes.forEach((elem) => {
+                        elem.setData(data);
+                        elem.setViewer("name", undefined);
+                        this.gridData.updateItem(elem.getId(), elem);
+                    });
+                    if (!!stashedNode) {
+                        stashedNode.setData(data);
+                        stashedNode.setViewer("name", undefined);
+                    }
+                    this.notifyDataChanged(new DataChangedEvent<DATA>(nodes, DataChangedEvent.ACTION_UPDATED));
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 });

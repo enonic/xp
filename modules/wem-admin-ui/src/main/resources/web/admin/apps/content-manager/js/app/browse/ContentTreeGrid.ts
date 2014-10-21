@@ -257,14 +257,7 @@ module app.browse {
         }
 
         updateContentNode(content: api.content.Content) {
-            var root = this.getRoot();
-            root.treeToList().forEach((child: TreeNode<ContentSummaryAndCompareStatus>) => {
-                var curContent: ContentSummaryAndCompareStatus = child.getData();
-                if (child.getData().getId() == content.getId()) {
-                    curContent.setContentSummary(content);
-                    this.updateNode(curContent);
-                }
-            });
+            this.updateNode(new ContentSummaryAndCompareStatus(content, null));
         }
 
         appendContentNode(content: api.content.Content) {
