@@ -85,7 +85,7 @@ module app.browse {
             api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
                 if (item.isInRangeOrSmaller(api.ui.responsive.ResponsiveRanges._240_360)) {
                     this.getGrid().setColumns([nameColumn, contentTypeColumn]);
-                } else if (item.isInRangeOrSmaller(api.ui.responsive.ResponsiveRanges._360_540)){
+                } else if (item.isInRangeOrSmaller(api.ui.responsive.ResponsiveRanges._360_540)) {
                     this.getGrid().setColumns([nameColumn, contentTypeColumn, modifiedTimeColumn]);
                 } else {
                     this.getGrid().setColumns([nameColumn, contentTypeColumn, compareStatusColumn, modifiedTimeColumn]);
@@ -190,9 +190,13 @@ module app.browse {
         private nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
             if (!!node.getData().getContentSummary()) {  // default node
 
-                var contentSummaryViewer = new ContentSummaryViewer();
-                contentSummaryViewer.setObject(node.getData().getContentSummary(), node.calcLevel() > 1);
-                return contentSummaryViewer.toString();
+                var viewer: ContentSummaryViewer = <ContentSummaryViewer>node.getViewer("name");
+                if (!viewer) {
+                    viewer = new ContentSummaryViewer();
+                    viewer.setObject(node.getData().getContentSummary(), node.calcLevel() > 1);
+                    node.setViewer("name", viewer);
+                }
+                return viewer.toString();
 
             } else { // `load more` node
                 var content = new api.dom.DivEl("children-to-load"),

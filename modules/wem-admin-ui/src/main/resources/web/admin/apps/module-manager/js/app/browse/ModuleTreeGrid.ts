@@ -56,8 +56,12 @@ module app.browse {
         }
 
         private nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<Module>) {
-            var viewer = new ModuleViewer();
-            viewer.setObject(node.getData());
+            var viewer = <ModuleViewer>node.getViewer("name");
+            if (!viewer) {
+                var viewer = new ModuleViewer();
+                viewer.setObject(node.getData());
+                node.setViewer("name", viewer);
+            }
             return viewer.toString();
         }
 

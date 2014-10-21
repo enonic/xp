@@ -20,6 +20,11 @@ module api.ui.treegrid {
 
         private children: TreeNode<DATA>[];
 
+        /**
+         * A cache for stashing viewers by name, so that they can be reused.
+         */
+        private viewersByName: {[s:string] : api.ui.Viewer<any>; } = {};
+
         constructor(builder: TreeNodeBuilder<DATA>) {
             this.id = Math.random().toString(36).substring(2);
             this.dataId = builder.getDataId();
@@ -81,6 +86,14 @@ module api.ui.treegrid {
 
         setData(data: DATA) {
             this.data = data;
+        }
+
+        setViewer(name: string, viewer: api.ui.Viewer<any>) {
+            this.viewersByName[name] = viewer;
+        }
+
+        getViewer(name: string): api.ui.Viewer<any> {
+            return this.viewersByName[name];
         }
 
         getParent(): TreeNode<DATA> {

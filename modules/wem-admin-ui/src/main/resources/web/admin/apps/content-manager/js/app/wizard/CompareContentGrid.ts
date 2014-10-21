@@ -42,9 +42,14 @@ module app.wizard {
         }
 
         private nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
-            var contentSummaryViewer = new ContentSummaryViewer();
-            contentSummaryViewer.setObject(node.getData().getContentSummary());
-            return contentSummaryViewer.toString();
+
+            var viewer = <ContentSummaryViewer>node.getViewer("name");
+            if (!viewer) {
+                viewer = new ContentSummaryViewer();
+                viewer.setObject(node.getData().getContentSummary());
+                node.setViewer("name", viewer);
+            }
+            return viewer.toString();
         }
 
         fetchChildren(parentNode?: TreeNode<ContentSummaryAndCompareStatus>): wemQ.Promise<ContentSummaryAndCompareStatus[]> {

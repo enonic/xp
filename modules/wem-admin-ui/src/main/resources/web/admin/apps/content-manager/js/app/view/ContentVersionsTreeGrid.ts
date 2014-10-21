@@ -59,9 +59,15 @@ module app.view {
             var description = "";
 
             if (node.getData()) {  // default node
-                var length = node.getRoot().getChildren().length;
-                var viewer = new ContentVersionViewer();
-                viewer.setObject(node.getData(), length - row);
+
+                var viewer = <ContentVersionViewer> node.getViewer("description");
+                if (!viewer) {
+                    viewer = new ContentVersionViewer();
+                    var length = node.getRoot().getChildren().length;
+                    viewer.setObject(node.getData(), length - row);
+                    node.setViewer("description", viewer);
+                }
+
                 description = viewer.toString();
             }
 
