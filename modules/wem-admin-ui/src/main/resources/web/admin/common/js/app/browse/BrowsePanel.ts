@@ -75,9 +75,9 @@ module api.app.browse {
 
             this.treeGrid.onDataChanged((event: api.ui.treegrid.DataChangedEvent<Object>) => {
                 var selectedNodes = this.treeGrid.getSelectedNodes();
-                if (event.getAction() == api.ui.treegrid.DataChangedEvent.ACTION_UPDATED && selectedNodes.length > 0) {
+                if (event.getType() == api.ui.treegrid.DataChangedEvent.UPDATED && selectedNodes.length > 0) {
                     // check if any of the selected nodes were updated
-                    var changedNodes = event.getData();
+                    var changedNodes = event.getTreeNodes();
                     for (var i = 0; i < changedNodes.length; i++) {
                         for (var j = 0; j < selectedNodes.length; j++) {
                             if (changedNodes[i].getDataId() == selectedNodes[j].getDataId()) {

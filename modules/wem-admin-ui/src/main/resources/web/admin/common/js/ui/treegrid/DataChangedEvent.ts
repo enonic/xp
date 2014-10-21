@@ -1,25 +1,28 @@
 module api.ui.treegrid {
 
-    export class DataChangedEvent<NODE> {
+    export class DataChangedEvent<DATA> {
 
-        public static ACTION_ADDED: string = 'added';
-        public static ACTION_UPDATED: string = 'updated';
-        public static ACTION_DELETED: string = 'deleted';
+        public static ADDED: string = 'added';
 
-        private data: TreeNode<NODE>[];
-        private action: string;
+        public static UPDATED: string = 'updated';
 
-        constructor(data: TreeNode<NODE>[], action: string) {
-            this.data = data;
-            this.action = action;
+        public static DELETED: string = 'deleted';
+
+        private treeNodes: TreeNode<DATA>[];
+
+        private type: string;
+
+        constructor(treeNode: TreeNode<DATA>[], action: string) {
+            this.treeNodes = treeNode;
+            this.type = action;
         }
 
-        public getData(): TreeNode<NODE>[] {
-            return this.data;
+        public getTreeNodes(): TreeNode<DATA>[] {
+            return this.treeNodes;
         }
 
-        public getAction(): string {
-            return this.action;
+        public getType(): string {
+            return this.type;
         }
 
     }

@@ -574,16 +574,16 @@ module api.ui.treegrid {
 
             this.fetch(nodeToUpdate)
                 .then((data: DATA) => {
-                    nodes.forEach((elem) => {
-                        elem.setData(data);
-                        elem.setViewer("name", undefined);
-                        this.gridData.updateItem(elem.getId(), elem);
+                    nodes.forEach((node) => {
+                        node.setData(data);
+                        node.setViewer("name", null);
+                        this.gridData.updateItem(node.getId(), node);
                     });
                     if (!!stashedNode) {
                         stashedNode.setData(data);
-                        stashedNode.setViewer("name", undefined);
+                        stashedNode.setViewer("name", null);
                     }
-                    this.notifyDataChanged(new DataChangedEvent<DATA>(nodes, DataChangedEvent.ACTION_UPDATED));
+                    this.notifyDataChanged(new DataChangedEvent<DATA>(nodes, DataChangedEvent.UPDATED));
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 });
@@ -609,7 +609,7 @@ module api.ui.treegrid {
                 if (node && parent) {
                     parent.removeChild(node);
                     parent.setMaxChildren(parent.getMaxChildren() - 1);
-                    this.notifyDataChanged(new DataChangedEvent<DATA>([node], DataChangedEvent.ACTION_DELETED));
+                    this.notifyDataChanged(new DataChangedEvent<DATA>([node], DataChangedEvent.DELETED));
                 }
             }
 
@@ -640,7 +640,7 @@ module api.ui.treegrid {
                             if (!stashedParentNode) {
                                 this.gridData.setItems(root.treeToList());
                             }
-                            this.notifyDataChanged(new DataChangedEvent<DATA>([node], DataChangedEvent.ACTION_ADDED));
+                            this.notifyDataChanged(new DataChangedEvent<DATA>([node], DataChangedEvent.ADDED));
 
                             if (parentNode != root) {
                                 this.refreshNodeData(parentNode).then((node: TreeNode<DATA>) => {
@@ -694,13 +694,13 @@ module api.ui.treegrid {
                     this.refreshNodeData(child);
                 });
             }
-            this.notifyDataChanged(new DataChangedEvent<DATA>(deleted, DataChangedEvent.ACTION_DELETED));
+            this.notifyDataChanged(new DataChangedEvent<DATA>(deleted, DataChangedEvent.DELETED));
         }
 
 
         initData(nodes: TreeNode<DATA>[]) {
             this.gridData.setItems(nodes, "id");
-            this.notifyDataChanged(new DataChangedEvent<DATA>(nodes, DataChangedEvent.ACTION_ADDED));
+            this.notifyDataChanged(new DataChangedEvent<DATA>(nodes, DataChangedEvent.ADDED));
         }
 
         private expandNode(node?: TreeNode<DATA>) {
