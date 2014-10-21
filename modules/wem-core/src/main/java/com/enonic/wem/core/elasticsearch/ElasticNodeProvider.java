@@ -15,7 +15,7 @@ public final class ElasticNodeProvider
     public ElasticNodeProvider( final NodeSettingsBuilder nodeSettingsBuilder )
     {
         ESLoggerFactory.setDefaultFactory( new Slf4jESLoggerFactory() );
-        final Settings settings = nodeSettingsBuilder.buildNodeSettings();
+        final Settings settings = nodeSettingsBuilder.buildSettings();
         this.node = NodeBuilder.nodeBuilder().settings( settings ).build();
     }
 

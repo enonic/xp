@@ -16,7 +16,7 @@ import com.enonic.wem.core.blob.BlobKeyCreator;
 import com.enonic.wem.core.blob.BlobRecord;
 import com.enonic.wem.core.blob.BlobStore;
 import com.enonic.wem.core.blob.BlobStoreException;
-import com.enonic.wem.core.config.SystemConfig;
+import com.enonic.wem.core.home.HomeDir;
 
 public final class FileBlobStore
     implements BlobStore
@@ -27,9 +27,9 @@ public final class FileBlobStore
 
     private final File dir;
 
-    public FileBlobStore( final SystemConfig systemConfig )
+    public FileBlobStore()
     {
-        this.dir = systemConfig.getBlobStoreDir();
+        this.dir = new File( HomeDir.get().toFile(), "shared/blobs" );
         mkdirs( this.dir, true );
     }
 

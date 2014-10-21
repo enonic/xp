@@ -9,14 +9,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Response;
 
-import com.enonic.wem.core.config.ConfigProperties;
+import com.enonic.wem.core.home.HomeDir;
 
 @Path("ui")
 public final class BackgroundImageResource
 {
     private static final int A_DAY_IN_SECONDS = 60 * 60 * 24;
-
-    private ConfigProperties configProperties;
 
     @GET
     @Path("background.jpg")
@@ -25,9 +23,7 @@ public final class BackgroundImageResource
         throws Exception
     {
         Response.ResponseBuilder responseBuilder;
-        final String customBackgroundAsPath = configProperties.get( "cms.home" ) + "/custom/background.jpg";
-
-        final File customBackgroundAsFile = new File( customBackgroundAsPath );
+        final File customBackgroundAsFile = new File( HomeDir.get().toFile(), "custom/background.jpg" );
         if ( customBackgroundAsFile.exists() )
         {
             responseBuilder = Response.ok( new FileInputStream( customBackgroundAsFile ), "image/jpg" );
@@ -46,10 +42,5 @@ public final class BackgroundImageResource
         final CacheControl cacheControl = new CacheControl();
         cacheControl.setMaxAge( maxAge );
         responseBuilder.cacheControl( cacheControl );
-    }
-
-    public void setConfigProperties( final ConfigProperties configProperties )
-    {
-        this.configProperties = configProperties;
     }
 }

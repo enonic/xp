@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
-  <reference id="configProperties" interface="com.enonic.wem.core.config.ConfigProperties"/>
-
   <reference id="startupInitializer" interface="com.enonic.wem.core.initializer.StartupInitializer"/>
 
   <reference id="attachmentService" interface="com.enonic.wem.api.content.attachment.AttachmentService"/>
@@ -33,9 +31,7 @@
 
   <reference id="metadataSchemaService" interface="com.enonic.wem.api.schema.metadata.MetadataSchemaService"/>
 
-  <bean id="backgroundImageResource" class="com.enonic.wem.admin.rest.resource.ui.BackgroundImageResource">
-    <property name="configProperties" ref="configProperties"/>
-  </bean>
+  <bean id="backgroundImageResource" class="com.enonic.wem.admin.rest.resource.ui.BackgroundImageResource"/>
 
   <bean id="toolsResource" class="com.enonic.wem.admin.rest.resource.tools.ToolsResource">
     <property name="startupInitializer" ref="startupInitializer"/>

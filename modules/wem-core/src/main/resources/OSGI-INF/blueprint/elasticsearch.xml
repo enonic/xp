@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
-  <bean id="nodeSettingsBuilder" class="com.enonic.wem.core.elasticsearch.resource.NodeSettingsBuilder">
-    <property name="configProperties" ref="configProperties"/>
-  </bean>
+  <bean id="nodeSettingsBuilder" class="com.enonic.wem.core.elasticsearch.resource.NodeSettingsBuilderImpl"/>
 
   <bean id="elasticNodeProvider" class="com.enonic.wem.core.elasticsearch.ElasticNodeProvider" init-method="start" destroy-method="stop">
     <argument index="0" ref="nodeSettingsBuilder"/>
