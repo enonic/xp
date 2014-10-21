@@ -86,7 +86,7 @@ module api.content.page {
         }
 
         toJson(): api.content.page.PageComponentTypeWrapperJson {
-            throw new Error("Must be implemented by inheritor: " + api.util.getClassName(this));
+            throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
         }
 
         toPageComponentJson(): PageComponentJson {

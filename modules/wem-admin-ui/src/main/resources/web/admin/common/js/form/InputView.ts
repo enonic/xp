@@ -84,7 +84,7 @@ module api.form {
 
                 var initialRawValue: any = this.inputTypeView.newInitialValue();
                 if (api.ObjectHelper.iFrameSafeInstanceOf(initialRawValue, api.data.Value)) {
-                    throw new Error(api.util.getClassName(this.inputTypeView) +
+                    throw new Error(api.ClassHelper.getClassName(this.inputTypeView) +
                                     ".newInitialValue must not return a api.data.Value, but the raw value instead");
                 }
                 var initialValue = new api.data.Value(initialRawValue, this.inputTypeView.getValueType());

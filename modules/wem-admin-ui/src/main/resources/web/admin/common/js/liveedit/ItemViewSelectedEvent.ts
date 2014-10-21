@@ -21,11 +21,11 @@ module api.liveedit {
         }
 
         static on(handler: (event: ItemViewSelectedEvent) => void, contextWindow: Window = window) {
-            api.event.Event.bind(api.util.getFullName(this), handler, contextWindow);
+            api.event.Event.bind(api.ClassHelper.getFullName(this), handler, contextWindow);
         }
 
         static un(handler?: (event: ItemViewSelectedEvent) => void, contextWindow: Window = window) {
-            api.event.Event.unbind(api.util.getFullName(this), handler, contextWindow);
+            api.event.Event.unbind(api.ClassHelper.getFullName(this), handler, contextWindow);
         }
     }
 }

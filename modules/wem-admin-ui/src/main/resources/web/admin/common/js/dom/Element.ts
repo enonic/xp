@@ -138,7 +138,7 @@ module api.dom {
                 }
             }
             else {
-                throw new Error("Unsupported builder: " + api.util.getClassName(builder));
+                throw new Error("Unsupported builder: " + api.ClassHelper.getClassName(builder));
             }
 
             if (this.parentElement && this.el.getHTMLElement().parentElement) {
@@ -147,7 +147,7 @@ module api.dom {
                 }
             }
 
-            var moduleName = api.util.getModuleName(this);
+            var moduleName = api.ClassHelper.getModuleName(this);
             if (builder.generateId || (builder.generateId == undefined && moduleName != "api.dom")) {
                 var id = ElementRegistry.registerElement(this);
                 this.setId(id);
@@ -297,7 +297,8 @@ module api.dom {
             this.el.focuse();
             var gotFocus: boolean = document.activeElement == this.el.getHTMLElement();
             if (!gotFocus) {
-                console.log("Element.giveFocus(): Failed to give focus to Element: class = " + api.util.getClassName(this) + ", id = " +
+                console.log("Element.giveFocus(): Failed to give focus to Element: class = " + api.ClassHelper.getClassName(this) +
+                            ", id = " +
                             this.getId());
             }
             return gotFocus;
@@ -313,7 +314,8 @@ module api.dom {
             this.el.blur();
             var gotBlur: boolean = document.activeElement != this.el.getHTMLElement();
             if (!gotBlur) {
-                console.log("Element.giveBlur(): Failed to give blur to Element: class = " + api.util.getClassName(this) + ", id = " +
+                console.log("Element.giveBlur(): Failed to give blur to Element: class = " + api.ClassHelper.getClassName(this) +
+                            ", id = " +
                             this.getId());
             }
             return gotBlur;
@@ -915,24 +917,24 @@ module api.dom {
                 setParentElement(parent));
         }
 
-        static fromString(s: string, setLoadExistingChildren:boolean = true): Element {
+        static fromString(s: string, setLoadExistingChildren: boolean = true): Element {
             var elementAsJQ = wemjq(s);
             var elementASHtmlElement = elementAsJQ.get(0);
             return !!elementASHtmlElement ? new Element(new ElementFromHelperBuilder().
-                                                setHelper(new ElementHelper(elementASHtmlElement)).
-                                                setLoadExistingChildren(setLoadExistingChildren))
-                                          : null;
+                setHelper(new ElementHelper(elementASHtmlElement)).
+                setLoadExistingChildren(setLoadExistingChildren))
+                : null;
         }
 
-        static elementsFromRequest(s: string, setLoadExistingChildren:boolean = true): Element[] {
+        static elementsFromRequest(s: string, setLoadExistingChildren: boolean = true): Element[] {
             var elementAsJQ = wemjq(s);
             var elements = [];
             elementAsJQ.each((index, elem) => {
                 var e = wemjq(elem);
                 elements.push(
-                new Element(new ElementFromHelperBuilder().
-                    setHelper(new ElementHelper(e.get(0))).
-                    setLoadExistingChildren(setLoadExistingChildren))
+                    new Element(new ElementFromHelperBuilder().
+                        setHelper(new ElementHelper(e.get(0))).
+                        setLoadExistingChildren(setLoadExistingChildren))
                 );
             });
 

@@ -29,14 +29,14 @@ module api.form.inputtype.support {
         }
 
         getValueType(): api.data.type.ValueType {
-            throw new Error("Must be implemented by inheritor: " + api.util.getClassName(this));
+            throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
         }
 
         /**
          * Must be overridden by inheritors.
          */
         newInitialValue(): RAW_VALUE_TYPE {
-            throw new Error("Must be overridden by inheritor: " + api.util.getClassName(this));
+            throw new Error("Must be overridden by inheritor: " + api.ClassHelper.getClassName(this));
         }
 
         /**
@@ -44,14 +44,14 @@ module api.form.inputtype.support {
          */
         layout(input: api.form.Input, properties: api.data.Property[]) {
 
-            throw new Error("Must be overridden by inheritor: " + api.util.getClassName(this));
+            throw new Error("Must be overridden by inheritor: " + api.ClassHelper.getClassName(this));
         }
 
         /**
          * Must be overridden by inheritors.
          */
         getValues(): api.data.Value[] {
-            throw new Error("Must be overridden by inheritor: " + api.util.getClassName(this));
+            throw new Error("Must be overridden by inheritor: " + api.ClassHelper.getClassName(this));
         }
 
         getAttachments(): api.content.attachment.Attachment[] {
@@ -63,7 +63,7 @@ module api.form.inputtype.support {
          */
         validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
 
-            throw new Error("Must be overridden by inheritor: " + api.util.getClassName(this));
+            throw new Error("Must be overridden by inheritor: " + api.ClassHelper.getClassName(this));
         }
 
         onValueAdded(listener: (event: api.form.inputtype.ValueAddedEvent) => void) {
@@ -137,7 +137,7 @@ module api.form.inputtype.support {
          * Must be overridden by inheritors.
          */
         giveFocus(): boolean {
-            throw new Error("Must be overridden by inheritor: " + api.util.getClassName(this));
+            throw new Error("Must be overridden by inheritor: " + api.ClassHelper.getClassName(this));
         }
 
         onEditContentRequest(listener: (content: api.content.ContentSummary) => void) {

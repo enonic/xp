@@ -217,23 +217,23 @@ module api.form.inputtype.support {
         }
 
         valueBreaksRequiredContract(value: api.data.Value): boolean {
-            throw new Error("Must be implemented by inheritor: " + api.util.getClassName(this));
+            throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
         }
 
         createInputOccurrenceElement(index: number, property: api.data.Property): api.dom.Element {
-            throw new Error("Must be implemented by inheritor: " + api.util.getClassName(this));
+            throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
         }
 
         getValueType(): api.data.type.ValueType {
-            throw new Error("Must be implemented by inheritor: " + api.util.getClassName(this));
+            throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
         }
 
         newInitialValue(): RAW_VALUE_TYPE {
-            throw new Error("Must be implemented by inheritor: " + api.util.getClassName(this));
+            throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
         }
 
         getValue(occurrence: api.dom.Element): api.data.Value {
-            throw new Error("Must be implemented by inheritor: " + api.util.getClassName(this));
+            throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
         }
 
         onValueAdded(listener: (event: api.form.inputtype.ValueAddedEvent) => void) {
@@ -288,7 +288,7 @@ module api.form.inputtype.support {
          * Note: Never fire ValueChangedEvent for null Value.
          */
         onOccurrenceValueChanged(element: api.dom.Element, listener: (event: api.form.inputtype.support.ValueChangedEvent) => void) {
-            throw new Error("Must be implemented by inheritor: " + api.util.getClassName(this));
+            throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
         }
 
         giveFocus(): boolean {

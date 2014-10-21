@@ -14,11 +14,11 @@ module app.browse {
         }
 
         static on(handler: (event: ShowNewContentDialogEvent) => void) {
-            api.event.Event.bind(api.util.getFullName(this), handler);
+            api.event.Event.bind(api.ClassHelper.getFullName(this), handler);
         }
 
         static un(handler?: (event: ShowNewContentDialogEvent) => void) {
-            api.event.Event.unbind(api.util.getFullName(this), handler);
+            api.event.Event.unbind(api.ClassHelper.getFullName(this), handler);
         }
     }
 }

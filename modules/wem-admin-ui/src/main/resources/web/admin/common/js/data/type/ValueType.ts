@@ -56,7 +56,7 @@ module api.data.type {
         }
 
         valueEquals(a: any, b: any): boolean {
-            throw new Error("Must be implemented by inheritor: " + api.util.getClassName(this));
+            throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
         }
 
         /**
