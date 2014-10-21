@@ -192,7 +192,7 @@ module api.liveedit {
             // and child has already called notifyMouseOver and notifyMouseOut for this ItemView.
             // No need to process this event.
 
-            var className = api.util.getClassName(this);
+            var className = api.ClassHelper.getClassName(this);
             if (this.debug) {
                 console.info("mouse enter start --> ", className);
             }
@@ -220,7 +220,7 @@ module api.liveedit {
             // If parent has 'mouseOver' state, notify that mouse is moved out this parent.
             // If parent isn't in 'mouseOver' state, turn it on and notify the parent was entered and left.
             parentsStack.reverse().forEach((view: ItemView) => {
-                var viewName = api.util.getClassName(view);
+                var viewName = api.ClassHelper.getClassName(view);
                 if (view.mouseOver) {
                     if (this.debug) {
                         console.log('   notifying parent mouse out', viewName);
@@ -258,7 +258,7 @@ module api.liveedit {
          */
         private handleMouseLeave(event: MouseEvent) {
 
-            var className = api.util.getClassName(this);
+            var className = api.ClassHelper.getClassName(this);
             if (this.debug) {
                 console.info("mouse leave start <-- ", className);
             }
@@ -501,7 +501,7 @@ module api.liveedit {
 
         private notifyMouseOverView() {
             if (this.debug) {
-                console.log("       notify mouse over", api.util.getClassName(this));
+                console.log("       notify mouse over", api.ClassHelper.getClassName(this));
             }
             this.mouseOverViewListeners.forEach((listener: () => void) => listener());
         }
@@ -516,7 +516,7 @@ module api.liveedit {
 
         private notifyMouseOutView() {
             if (this.debug) {
-                console.log("       notify mouse out", api.util.getClassName(this));
+                console.log("       notify mouse out", api.ClassHelper.getClassName(this));
             }
             this.mouseOutViewListeners.forEach((listener: () => void) => listener());
         }

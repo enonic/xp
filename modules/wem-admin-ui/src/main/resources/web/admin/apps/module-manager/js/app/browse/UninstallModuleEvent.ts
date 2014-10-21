@@ -16,11 +16,11 @@ module app.browse {
         }
 
         static on(handler: (event: UninstallModuleEvent) => void) {
-            Event.bind(api.util.getFullName(this), handler);
+            Event.bind(api.ClassHelper.getFullName(this), handler);
         }
 
         static un(handler?: (event: UninstallModuleEvent) => void) {
-            Event.unbind(api.util.getFullName(this), handler);
+            Event.unbind(api.ClassHelper.getFullName(this), handler);
         }
     }
 }

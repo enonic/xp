@@ -138,7 +138,7 @@ module api.dom {
                 }
             }
             else {
-                throw new Error("Unsupported builder: " + api.util.getClassName(builder));
+                throw new Error("Unsupported builder: " + api.ClassHelper.getClassName(builder));
             }
 
             if (this.parentElement && this.el.getHTMLElement().parentElement) {
@@ -149,7 +149,7 @@ module api.dom {
             // Do not generate id unless the distance to Element in the class hierarchy of this is larger than 1
             // This should result in that no id's are generated for new Element or classes extending Element directly
             // (which should prevent id-generation of direct instances of most api.dom classes)
-            var distance = api.util.distanceTo(this, Element);
+            var distance = api.ClassHelper.distanceTo(this, Element);
             if (builder.generateId || distance > 1) {
                 var id = ElementRegistry.registerElement(this);
                 this.setId(id);
@@ -300,7 +300,8 @@ module api.dom {
             this.el.focuse();
             var gotFocus: boolean = document.activeElement == this.el.getHTMLElement();
             if (!gotFocus) {
-                console.log("Element.giveFocus(): Failed to give focus to Element: class = " + api.util.getClassName(this) + ", id = " +
+                console.log("Element.giveFocus(): Failed to give focus to Element: class = " + api.ClassHelper.getClassName(this) +
+                            ", id = " +
                             this.getId());
             }
             return gotFocus;
@@ -316,7 +317,8 @@ module api.dom {
             this.el.blur();
             var gotBlur: boolean = document.activeElement != this.el.getHTMLElement();
             if (!gotBlur) {
-                console.log("Element.giveBlur(): Failed to give blur to Element: class = " + api.util.getClassName(this) + ", id = " +
+                console.log("Element.giveBlur(): Failed to give blur to Element: class = " + api.ClassHelper.getClassName(this) +
+                            ", id = " +
                             this.getId());
             }
             return gotBlur;

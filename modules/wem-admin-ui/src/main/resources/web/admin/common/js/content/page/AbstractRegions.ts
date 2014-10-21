@@ -61,7 +61,8 @@ module api.content.page {
                 return null;
             }
             api.util.assert(api.ObjectHelper.iFrameSafeInstanceOf(component, image.ImageComponent),
-                    "PageComponent [" + component.getPath().toString() + "] not an ImageComponent: " + api.util.getClassName(component));
+                    "PageComponent [" + component.getPath().toString() + "] not an ImageComponent: " +
+                    api.ClassHelper.getClassName(component));
 
             return <image.ImageComponent>component;
         }
@@ -73,7 +74,8 @@ module api.content.page {
                 return null;
             }
             api.util.assert(api.ObjectHelper.iFrameSafeInstanceOf(component, layout.LayoutComponent),
-                    "PageComponent [" + component.getPath().toString() + "] not an LayoutComponent: " + api.util.getClassName(component));
+                    "PageComponent [" + component.getPath().toString() + "] not an LayoutComponent: " +
+                    api.ClassHelper.getClassName(component));
 
             return <layout.LayoutComponent>component;
         }
@@ -90,7 +92,7 @@ module api.content.page {
             }
             else {
                 if (!api.ObjectHelper.iFrameSafeInstanceOf(component, api.content.page.layout.LayoutComponent)) {
-                    throw new Error("Expected component to be a LayoutComponent: " + api.util.getClassName(component));
+                    throw new Error("Expected component to be a LayoutComponent: " + api.ClassHelper.getClassName(component));
                 }
 
                 var layoutComponent = <api.content.page.layout.LayoutComponent> component;

@@ -1,75 +1,77 @@
-describe("api.util.ClassHelper", function () {
+describe("api.ClassHelper", function () {
 
     function namedFunction() {};
     var anonymousFunction = function () {};
 
-    describe("tests for api.util.getFunctionName() function", function () {
+    describe("tests for api.ClassHelper.getFunctionName() function", function () {
 
         it("returns function name as string", function () {
-            expect(api.util.getFunctionName(namedFunction)).toBe('namedFunction');
+            expect(api.ClassHelper.getFunctionName(namedFunction)).toBe('namedFunction');
         });
 
         it("returns empty string for anonymous function", function () {
-            expect(api.util.getFunctionName(anonymousFunction)).toBe('');
+            expect(api.ClassHelper.getFunctionName(anonymousFunction)).toBe('');
         });
 
     });
 
-    describe("tests for api.util.getClassName() function", function () {
+    describe("tests for api.ClassHelper.getClassName() function", function () {
 
         it("returns class name for object", function () {
             var instance = new api.dom.ElementHelper(document.body);
-            expect(api.util.getClassName(instance)).toBe("ElementHelper");
+            expect(api.ClassHelper.getClassName(instance)).toBe("ElementHelper");
         });
 
         it("should return instance['constructor']['name']", function () {
-            expect(api.util.getClassName(new function Some(){})).toBe("Some");
-            expect(api.util.getClassName({})).toBe("Object");
+            expect(api.ClassHelper.getClassName(new function Some() {
+            })).toBe("Some");
+            expect(api.ClassHelper.getClassName({})).toBe("Object");
         });
 
     });
 
-    describe("tests for api.util.getModuleName() function", function () {
+    describe("tests for api.ClassHelper.getModuleName() function", function () {
 
         it("returns full module path for class which given object is instance of", function () {
             var instance = new api.dom.ElementHelper(document.body);
-            expect(api.util.getModuleName(instance)).toBe("api.dom");
+            expect(api.ClassHelper.getModuleName(instance)).toBe("api.dom");
         });
 
         it("returns full module path for given typescript class", function () {
-            expect(api.util.getModuleName(api.dom.ElementHelper)).toBe("api.dom");
+            expect(api.ClassHelper.getModuleName(api.dom.ElementHelper)).toBe("api.dom");
         });
 
         it("returns full module path for given exported function", function() {
-            expect(api.util.getModuleName(api.util.getModuleName)).toBe('api.util');
+            expect(api.ClassHelper.getModuleName(api.ClassHelper.getModuleName)).toBe('api.util');
         });
 
     });
 
-    describe("tests for api.util.getFullName() function", function () {
+    describe("tests for api.ClassHelper.getFullName() function", function () {
 
         it("returns full name for class which given object is instance of", function () {
             var instance = new api.dom.ElementHelper(document.body);
-            expect(api.util.getFullName(instance)).toBe("api.dom.ElementHelper");
+            expect(api.ClassHelper.getFullName(instance)).toBe("api.dom.ElementHelper");
         });
 
         it("returns full name for given typescript class", function () {
-            expect(api.util.getFullName(api.dom.ElementHelper)).toBe("api.dom.ElementHelper");
+            expect(api.ClassHelper.getFullName(api.dom.ElementHelper)).toBe("api.dom.ElementHelper");
         });
 
         it("returns full name for given exported function", function () {
-            expect(api.util.getFullName(api.util.getFullName)).toBe('api.util.getFullName');
+            expect(api.ClassHelper.getFullName(api.ClassHelper.getFullName)).toBe('api.ClassHelper.getFullName');
         });
 
         it("correctly resolves classes with equal names", function () {
             api.$package1 = { Class1: function Class1() {} };
             api.$package2 = { Class1: function Class1() {} };
-            expect(api.util.getFullName(api.$package1.Class1)).toBe('api.$package1.Class1');
-            expect(api.util.getFullName(api.$package2.Class1)).toBe('api.$package2.Class1');
+            expect(api.ClassHelper.getFullName(api.$package1.Class1)).toBe('api.$package1.Class1');
+            expect(api.ClassHelper.getFullName(api.$package2.Class1)).toBe('api.$package2.Class1');
         });
 
         it("returns empty string if function wasn't found", function () {
-            expect(api.util.getFullName(function Class1() {})).toBe('');
+            expect(api.ClassHelper.getFullName(function Class1() {
+            })).toBe('');
         });
 
     });
@@ -77,17 +79,17 @@ describe("api.util.ClassHelper", function () {
     describe("when distanceTo", function () {
 
         it("given instance of api.data.Property and class api.data.Property then 0 is returned", function () {
-            expect(api.util.distanceTo(new api.data.Property("prop", new api.data.Value("a", api.data.type.ValueTypes.STRING)),
+            expect(api.ClassHelper.distanceTo(new api.data.Property("prop", new api.data.Value("a", api.data.type.ValueTypes.STRING)),
                 api.data.Property)).toBe(0);
         });
 
         it("given instance of api.data.Property and class api.data.Data then 1 is returned", function () {
-            expect(api.util.distanceTo(new api.data.Property("prop", new api.data.Value("a", api.data.type.ValueTypes.STRING)),
+            expect(api.ClassHelper.distanceTo(new api.data.Property("prop", new api.data.Value("a", api.data.type.ValueTypes.STRING)),
                 api.data.Data)).toBe(1);
         });
 
         it("given instance of api.data.RootDataSet and class api.data.Data then 2 is returned", function () {
-            expect(api.util.distanceTo(new api.data.RootDataSet(), api.data.Data)).toBe(2);
+            expect(api.ClassHelper.distanceTo(new api.data.RootDataSet(), api.data.Data)).toBe(2);
         });
     });
 

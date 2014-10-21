@@ -11,7 +11,7 @@ module api.dom {
                 id = el.getId();
 
             if (!id) {
-                id = fullName = api.util.getFullName(el);
+                id = fullName = api.ClassHelper.getFullName(el);
             } else {
                 fullName = id;
             }

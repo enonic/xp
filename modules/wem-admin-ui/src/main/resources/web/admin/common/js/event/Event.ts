@@ -5,7 +5,7 @@ module api.event {
         private name: string;
 
         constructor(name?: string) {
-            this.name = name || api.util.getFullName(this);
+            this.name = name || api.ClassHelper.getFullName(this);
         }
 
         getName(): string {
