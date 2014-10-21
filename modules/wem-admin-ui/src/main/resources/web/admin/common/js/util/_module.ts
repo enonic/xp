@@ -5,7 +5,6 @@
 ///<reference path='StringHelper.ts' />
 ///<reference path='Animation.ts'/>
 ///<reference path='CookieHelper.ts'/>
-///<reference path='ClassHelper.ts'/>
 ///<reference path='DateHelper.ts' />
 ///<reference path='NumberHelper.ts' />
 ///<reference path='Flow.ts' />

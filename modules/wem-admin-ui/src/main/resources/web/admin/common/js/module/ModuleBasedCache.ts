@@ -11,12 +11,12 @@ module api.module {
             ModuleUpdatedEvent.on((event: ModuleUpdatedEvent) => {
 
                 if (event.getEventType() == "STARTED") {
-                    console.log(api.util.getClassName(this) + " received ModuleUpdatedEvent STARTED, calling - loadByModule.. " +
+                    console.log(api.ClassHelper.getClassName(this) + " received ModuleUpdatedEvent STARTED, calling - loadByModule.. " +
                                 event.getModuleKey().toString());
                     this.loadByModule(event.getModuleKey());
                 }
                 else if (event.getEventType() == "STOPPED") {
-                    console.log(api.util.getClassName(this) + " received ModuleUpdatedEvent STOPPED - calling deleteByModuleKey.. " +
+                    console.log(api.ClassHelper.getClassName(this) + " received ModuleUpdatedEvent STOPPED - calling deleteByModuleKey.. " +
                                 event.getModuleKey().toString());
                     this.deleteByModuleKey(event.getModuleKey())
                 }
@@ -57,7 +57,7 @@ module api.module {
             cache.put(object);
         }
 
-        createModuleCache() : CACHE {
+        createModuleCache(): CACHE {
             throw new Error("Must be implemented by inheritor");
         }
 

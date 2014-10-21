@@ -21,11 +21,11 @@ module api.schema.content {
         }
 
         static on(handler: (event: ContentTypeUpdatedEvent) => void) {
-            api.event.Event.bind(api.util.getFullName(this), handler);
+            api.event.Event.bind(api.ClassHelper.getFullName(this), handler);
         }
 
         static un(handler?: (event: ContentTypeUpdatedEvent) => void) {
-            api.event.Event.unbind(api.util.getFullName(this), handler);
+            api.event.Event.unbind(api.ClassHelper.getFullName(this), handler);
         }
 
 
