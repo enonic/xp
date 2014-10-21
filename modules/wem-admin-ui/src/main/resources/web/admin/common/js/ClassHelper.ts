@@ -31,11 +31,11 @@ module api {
          */
 
         static getClassName(instance): string {
-            return this.getFunctionName(instance["constructor"]);
+            return ClassHelper.getFunctionName(instance["constructor"]);
         }
 
         /**
-         * Returns function which was used to ceate this instance.
+         * Returns function which was used to create this instance.
          * In case of using typescript it returns typescript class.
          *
          * @param instance object
@@ -54,7 +54,7 @@ module api {
          */
 
         static getModuleName(instance: any): string {
-            var fullName = this.getFullName(instance);
+            var fullName = ClassHelper.getFullName(instance);
             return fullName ? fullName.substr(0, fullName.lastIndexOf(".")) : "";
         }
 
@@ -66,7 +66,7 @@ module api {
          */
         static getFullName(instance): string {
             var constructor = (typeof instance === 'function') ? instance : instance["constructor"];
-            return this.findPath(window, constructor) || "";
+            return ClassHelper.findPath(window, constructor) || "";
         }
 
         /**
@@ -82,14 +82,14 @@ module api {
             var value, path, nestLevel = nestLevel || 1;
 
             // don't search in current package if nest level is to big
-            if (nestLevel > this.MAX_NEST_LEVEL) {
+            if (nestLevel > ClassHelper.MAX_NEST_LEVEL) {
                 return null;
             }
 
             // iterate through object keys, check if they contains constructor function
             for (var key in obj) {
                 if (obj.hasOwnProperty(key)) {
-                    if (nestLevel == 1 && this.ALLOWED_PACKAGES.indexOf(key) < 0) {
+                    if (nestLevel == 1 && ClassHelper.ALLOWED_PACKAGES.indexOf(key) < 0) {
                         // look into allowed top level packages only or up to max nest level
                         continue;
                     }
@@ -99,13 +99,13 @@ module api {
                         continue;
                     }
                     if (typeof value === 'object') {
-                        path = this.findPath(value, constructor, nestLevel + 1);
+                        path = ClassHelper.findPath(value, constructor, nestLevel + 1);
                         if (path) {
                             return key + "." + path;
                         }
                     } else if (typeof value === 'function') {
                         if (value == constructor) {
-                            return this.getFunctionName(constructor);
+                            return ClassHelper.getFunctionName(constructor);
                         }
                     }
                 }

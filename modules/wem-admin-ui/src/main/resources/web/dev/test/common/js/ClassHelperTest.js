@@ -42,7 +42,7 @@ describe("api.ClassHelper", function () {
         });
 
         it("returns full module path for given exported function", function() {
-            expect(api.ClassHelper.getModuleName(api.ClassHelper.getModuleName)).toBe('api.util');
+            expect(api.ClassHelper.getModuleName(api.i18n.setLocale)).toBe('api.i18n');
         });
 
     });
@@ -59,7 +59,7 @@ describe("api.ClassHelper", function () {
         });
 
         it("returns full name for given exported function", function () {
-            expect(api.ClassHelper.getFullName(api.ClassHelper.getFullName)).toBe('api.ClassHelper.getFullName');
+            expect(api.ClassHelper.getFullName(api.i18n.setLocale)).toBe('api.i18n.setLocale');
         });
 
         it("correctly resolves classes with equal names", function () {
