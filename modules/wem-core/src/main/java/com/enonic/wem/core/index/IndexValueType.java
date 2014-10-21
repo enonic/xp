@@ -7,6 +7,8 @@ public enum IndexValueType
 
     NUMBER( "_number" ),
 
+    LONG( "_long" ),
+
     NGRAM( "_ngram" ),
 
     ANALYZED( "_analyzed" ),

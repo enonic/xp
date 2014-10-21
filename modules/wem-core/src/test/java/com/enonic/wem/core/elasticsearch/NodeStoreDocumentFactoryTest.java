@@ -47,7 +47,7 @@ public class NodeStoreDocumentFactoryTest
 
         try
         {
-            NodeIndexDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY.getId() );
+            NodeStoreDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY.getId() );
         }
         catch ( NullPointerException e )
         {
@@ -65,7 +65,7 @@ public class NodeStoreDocumentFactoryTest
             id( NodeId.from( "abc" ) ).
             build();
 
-        final Collection<StoreDocument> storeDocuments = NodeIndexDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY.getId() );
+        final Collection<StoreDocument> storeDocuments = NodeStoreDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY.getId() );
 
         assertNotNull( storeDocuments );
     }
@@ -78,7 +78,7 @@ public class NodeStoreDocumentFactoryTest
             id( NodeId.from( "abc" ) ).
             build();
 
-        final Collection<StoreDocument> storeDocuments = NodeIndexDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY.getId() );
+        final Collection<StoreDocument> storeDocuments = NodeStoreDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY.getId() );
 
         assertNotNull( storeDocuments );
         assertNotNull( getIndexDocumentOfType( storeDocuments, "test" ) );
@@ -98,7 +98,7 @@ public class NodeStoreDocumentFactoryTest
                 build() ).
             build();
 
-        final Collection<StoreDocument> storeDocuments = NodeIndexDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY.getId() );
+        final Collection<StoreDocument> storeDocuments = NodeStoreDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY.getId() );
 
         final StoreDocument storeDocument = getIndexDocumentOfType( storeDocuments, "test" );
 
@@ -127,7 +127,7 @@ public class NodeStoreDocumentFactoryTest
                 build() ).
             build();
 
-        final Collection<StoreDocument> storeDocuments = NodeIndexDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY.getId() );
+        final Collection<StoreDocument> storeDocuments = NodeStoreDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY.getId() );
 
         final StoreDocument storeDocument = getIndexDocumentOfType( storeDocuments, "test" );
 
@@ -161,7 +161,7 @@ public class NodeStoreDocumentFactoryTest
             rootDataSet( rootDataSet ).
             build();
 
-        final Collection<StoreDocument> storeDocuments = NodeIndexDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY.getId() );
+        final Collection<StoreDocument> storeDocuments = NodeStoreDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY.getId() );
 
         final StoreDocument storeDocument = getIndexDocumentOfType( storeDocuments, "test" );
 
@@ -182,7 +182,7 @@ public class NodeStoreDocumentFactoryTest
             rootDataSet( rootDataSet ).
             build();
 
-        final Collection<StoreDocument> storeDocuments = NodeIndexDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY.getId() );
+        final Collection<StoreDocument> storeDocuments = NodeStoreDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY.getId() );
 
         assertTrue( storeDocuments.iterator().hasNext() );
         final StoreDocument next = storeDocuments.iterator().next();

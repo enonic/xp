@@ -25,6 +25,7 @@ import com.enonic.wem.api.content.GetActiveContentVersionsResult;
 import com.enonic.wem.api.content.GetContentByIdsParams;
 import com.enonic.wem.api.content.PushContentParams;
 import com.enonic.wem.api.content.RenameContentParams;
+import com.enonic.wem.api.content.SetContentChildOrderParams;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.ValidateContentData;
 import com.enonic.wem.api.content.attachment.AttachmentService;
@@ -39,7 +40,10 @@ import com.enonic.wem.api.schema.content.ContentTypeForms;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
+import com.enonic.wem.core.entity.Node;
+import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodeService;
+import com.enonic.wem.core.entity.SetNodeChildOrderParams;
 import com.enonic.wem.core.index.query.QueryService;
 
 public class ContentServiceImpl
@@ -327,6 +331,17 @@ public class ContentServiceImpl
             workspaces( params.getWorkspaces() ).
             build().
             execute();
+    }
+
+    @Override
+    public Content setChildOrder( final SetContentChildOrderParams params )
+    {
+        final Node node = nodeService.setChildOrder( SetNodeChildOrderParams.create().
+            nodeId( NodeId.from( params.getContentId() ) ).
+            childOrder( params.getChildOrder() ).
+            build() );
+
+        return contentNodeTranslator.fromNode( node );
     }
 
     @Override

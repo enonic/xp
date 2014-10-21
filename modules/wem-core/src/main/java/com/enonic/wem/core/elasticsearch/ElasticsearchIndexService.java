@@ -195,7 +195,7 @@ public class ElasticsearchIndexService
     public void store( final Node node, final IndexContext context )
     {
         final Collection<StoreDocument> storeDocuments =
-            NodeIndexDocumentFactory.create( node, context.getWorkspace(), context.getRepositoryId() );
+            NodeStoreDocumentFactory.create( node, context.getWorkspace(), context.getRepositoryId() );
         elasticsearchDao.store( storeDocuments );
     }
 

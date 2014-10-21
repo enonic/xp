@@ -24,7 +24,11 @@ public final class IndexPaths
 
     public static final IndexDocumentItemPath PATH_PROPERTY_PATH = IndexDocumentItemPath.from( PATH_KEY );
 
-    public static final String ORDER_EXPRESSION_KEY = "orderExpression";
+    public static final String ORDER_EXPRESSION_KEY = "childOrder";
 
     public static final IndexDocumentItemPath ORDER_EXPRESSION_PATH = IndexDocumentItemPath.from( ORDER_EXPRESSION_KEY );
+
+    public static final String MANUAL_ORDER_VALUE_KEY = "manualOrderValue";
+
+    public static final IndexDocumentItemPath MANUAL_ORDER_VALUE_PATH = IndexDocumentItemPath.from( MANUAL_ORDER_VALUE_KEY );
 }

@@ -36,6 +36,7 @@ import com.enonic.wem.admin.rest.resource.content.json.DeleteContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.DeleteContentResultJson;
 import com.enonic.wem.admin.rest.resource.content.json.GetContentVersionsJson;
 import com.enonic.wem.admin.rest.resource.content.json.PublishContentJson;
+import com.enonic.wem.admin.rest.resource.content.json.SetChildOrderJson;
 import com.enonic.wem.admin.rest.resource.content.json.UpdateContentJson;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.content.CompareContentResults;
@@ -61,6 +62,7 @@ import com.enonic.wem.api.content.GetActiveContentVersionsParams;
 import com.enonic.wem.api.content.GetActiveContentVersionsResult;
 import com.enonic.wem.api.content.PushContentParams;
 import com.enonic.wem.api.content.RenameContentParams;
+import com.enonic.wem.api.content.SetContentChildOrderParams;
 import com.enonic.wem.api.content.UnableToDeleteContentException;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.attachment.Attachment;
@@ -365,6 +367,19 @@ public class ContentResource
         final Content persistedContent = contentService.create( params.getCreateContent() );
 
         return new ContentJson( persistedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
+    }
+
+
+    @POST
+    @Path("setChildOrder")
+    public ContentJson setChildOrder( final SetChildOrderJson params )
+    {
+        final Content updatedContent = this.contentService.setChildOrder( SetContentChildOrderParams.create().
+            childOrder( ChildOrder.from( params.getChildOrder() ) ).
+            contentId( ContentId.from( params.getContentId() ) ).
+            build() );
+
+        return new ContentJson( updatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
     }
 
     @POST

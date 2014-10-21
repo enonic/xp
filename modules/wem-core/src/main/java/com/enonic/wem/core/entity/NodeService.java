@@ -39,5 +39,7 @@ public interface NodeService
 
     GetActiveNodeVersionsResult getActiveVersions( final GetActiveNodeVersionsParams params );
 
+    Node setChildOrder( final SetNodeChildOrderParams params );
+
     Node getByVersionId( NodeVersionId nodeVersionid );
 }

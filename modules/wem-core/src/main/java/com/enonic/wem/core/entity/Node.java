@@ -52,6 +52,8 @@ public final class Node
 
     private final ChildOrder childOrder;
 
+    private final Long manualOrderValue;
+
     private Node( final BaseBuilder builder )
     {
         this.id = builder.id;
@@ -81,17 +83,13 @@ public final class Node
         }
 
         this.creator = builder.creator;
-
         this.name = builder.name;
         this.parent = builder.parent;
-
         this.path = this.parent != null && this.name != null ? new NodePath( this.parent, this.name ) : null;
-
         this.modifier = builder.modifier;
-
         this.hasChildren = builder.hasChildren;
-
         this.childOrder = builder.childOrder;
+        this.manualOrderValue = builder.manualOrderValue;
     }
 
     public NodeName name()
@@ -179,6 +177,11 @@ public final class Node
         return childOrder;
     }
 
+    public Long getManualOrderValue()
+    {
+        return manualOrderValue;
+    }
+
     public void validateForIndexing()
     {
         Preconditions.checkNotNull( this.id, "Id must be set" );
@@ -249,6 +252,8 @@ public final class Node
 
         ChildOrder childOrder;
 
+        Long manualOrderValue;
+
         private BaseBuilder()
         {
         }
@@ -265,6 +270,7 @@ public final class Node
             this.creator = node.creator;
             this.modifier = node.modifier;
             this.childOrder = node.childOrder;
+            this.manualOrderValue = node.manualOrderValue;
         }
 
         private BaseBuilder( final NodeId id, final NodeName name )
@@ -289,6 +295,8 @@ public final class Node
 
         private ChildOrder childOrder;
 
+        private Long manualOrderValue;
+
         public Builder()
         {
             super();
@@ -311,6 +319,7 @@ public final class Node
             this.modifier = node.modifier;
             this.creator = node.creator;
             this.childOrder = node.childOrder;
+            this.manualOrderValue = node.manualOrderValue;
         }
 
         public Builder( final NodeId id, final NodeName name )
@@ -442,6 +451,12 @@ public final class Node
             return this;
         }
 
+        public Builder manualOrderValue( final Long manualOrderValue )
+        {
+            this.manualOrderValue = manualOrderValue;
+            return this;
+        }
+
 
         public Node build()
         {
@@ -458,6 +473,7 @@ public final class Node
             baseBuilder.indexConfigDocument = this.indexConfigDocument;
             baseBuilder.hasChildren = this.hasChildren;
             baseBuilder.childOrder = this.childOrder;
+            baseBuilder.manualOrderValue = this.manualOrderValue;
 
             return new Node( baseBuilder );
         }
@@ -563,7 +579,14 @@ public final class Node
         {
             this.childOrder = childOrder;
             changes.recordChange( newPossibleChange( "childOrder" ).from( this.originalNode.childOrder ).to( this.childOrder ).build() );
+            return this;
+        }
 
+        public EditBuilder manualOrderValue( final Long manualOrderValue )
+        {
+            this.manualOrderValue = manualOrderValue;
+            changes.recordChange(
+                newPossibleChange( "manualOrderValue" ).from( this.originalNode.manualOrderValue ).to( this.manualOrderValue ).build() );
             return this;
         }
 
@@ -585,11 +608,11 @@ public final class Node
             baseBuilder.indexConfigDocument = this.indexConfigDocument;
             baseBuilder.name = this.name;
             baseBuilder.childOrder = this.childOrder;
+            baseBuilder.manualOrderValue = this.manualOrderValue;
 
             return new Node( baseBuilder );
         }
     }
-
 
     @Override
     public boolean equals( final Object o )
@@ -637,6 +660,10 @@ public final class Node
         {
             return false;
         }
+        if ( manualOrderValue != null ? !manualOrderValue.equals( node.manualOrderValue ) : node.manualOrderValue != null )
+        {
+            return false;
+        }
         if ( modifiedTime != null ? !modifiedTime.equals( node.modifiedTime ) : node.modifiedTime != null )
         {
             return false;
@@ -677,6 +704,7 @@ public final class Node
         result = 31 * result + ( indexConfigDocument != null ? indexConfigDocument.hashCode() : 0 );
         result = 31 * result + ( attachments != null ? attachments.hashCode() : 0 );
         result = 31 * result + ( childOrder != null ? childOrder.hashCode() : 0 );
+        result = 31 * result + ( manualOrderValue != null ? manualOrderValue.hashCode() : 0 );
         return result;
     }
 }

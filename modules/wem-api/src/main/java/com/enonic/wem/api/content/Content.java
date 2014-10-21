@@ -16,6 +16,7 @@ import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.content.thumb.Thumbnail;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.form.Form;
+import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.rendering.Renderable;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
@@ -67,6 +68,8 @@ public class Content
 
     private final Thumbnail thumbnail;
 
+    private final ChildOrder childOrder;
+
     protected Content( final BaseBuilder builder )
     {
         Preconditions.checkNotNull( builder.name, "name is required for a Content" );
@@ -101,6 +104,7 @@ public class Content
         this.page = builder.page;
         this.thumbnail = builder.thumbnail;
         this.hasChildren = builder.hasChildren;
+        this.childOrder = builder.childOrder;
     }
 
     public ContentPath getParentPath()
@@ -246,6 +250,11 @@ public class Content
         return thumbnail;
     }
 
+    public ChildOrder getChildOrder()
+    {
+        return childOrder;
+    }
+
     @Override
     public void checkIllegalEdit( final Content to )
         throws IllegalEditException
@@ -327,6 +336,8 @@ public class Content
 
         boolean hasChildren;
 
+        ChildOrder childOrder;
+
         BaseBuilder()
         {
             this.contentData = new ContentData();
@@ -352,6 +363,7 @@ public class Content
             this.hasChildren = content.hasChildren;
             this.page = content.page;
             this.thumbnail = content.thumbnail;
+            this.childOrder = content.childOrder;
         }
     }
 
@@ -426,6 +438,13 @@ public class Content
         public boolean isChanges()
         {
             return this.changes.isChanges();
+        }
+
+        public EditBuilder childOrder( final ChildOrder childOrder )
+        {
+            changes.recordChange( newPossibleChange( "childOrder" ).from( this.childOrder ).to( childOrder ).build() );
+            this.childOrder = childOrder;
+            return this;
         }
 
         public Content build()
@@ -563,6 +582,12 @@ public class Content
         public Builder<BUILDER, C> hasChildren( final boolean hasChildren )
         {
             this.hasChildren = hasChildren;
+            return this;
+        }
+
+        public Builder<BUILDER, C> childOrder( final ChildOrder childOrder )
+        {
+            this.childOrder = childOrder;
             return this;
         }
 

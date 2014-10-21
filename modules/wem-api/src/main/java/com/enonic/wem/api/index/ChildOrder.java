@@ -8,15 +8,15 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.query.expr.FieldExpr;
 import com.enonic.wem.api.query.expr.FieldOrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.query.parser.QueryParser;
 
 public class ChildOrder
 {
-    private static final OrderExpr DEFAULT_CHILD_ORDER_EXPRESSION =
-        new FieldOrderExpr( FieldExpr.from( IndexPaths.MODIFIED_TIME_KEY ), OrderExpr.Direction.DESC );
+    public static final OrderExpr DEFAULT_ORDER = FieldOrderExpr.create( IndexPaths.MODIFIED_TIME_KEY, OrderExpr.Direction.DESC );
+
+    public static final OrderExpr MANUAL_ORDER = FieldOrderExpr.create( IndexPaths.ORDER_EXPRESSION_KEY, OrderExpr.Direction.ASC );
 
     private final ImmutableSet<OrderExpr> childOrderExpressions;
 
@@ -25,10 +25,17 @@ public class ChildOrder
         childOrderExpressions = ImmutableSet.copyOf( builder.childOrderExpressions );
     }
 
+    public static ChildOrder manualOrder()
+    {
+        return ChildOrder.create().
+            add( MANUAL_ORDER ).
+            build();
+    }
+
     public static ChildOrder defaultOrder()
     {
         return ChildOrder.create().
-            add( DEFAULT_CHILD_ORDER_EXPRESSION ).
+            add( DEFAULT_ORDER ).
             build();
     }
 
@@ -46,6 +53,11 @@ public class ChildOrder
         orderExprs.forEach( builder::add );
 
         return builder.build();
+    }
+
+    public boolean isManualOrder()
+    {
+        return !this.childOrderExpressions.isEmpty() && this.childOrderExpressions.iterator().next().equals( MANUAL_ORDER );
     }
 
     public boolean isEmpty()

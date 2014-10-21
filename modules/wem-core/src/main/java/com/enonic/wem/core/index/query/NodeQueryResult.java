@@ -6,7 +6,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.aggregation.Aggregations;
-import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodeIds;
 
 public final class NodeQueryResult
@@ -19,10 +18,7 @@ public final class NodeQueryResult
 
     private final float maxScore;
 
-    public ImmutableSet<NodeQueryResultEntry> getEntries()
-    {
-        return entries;
-    }
+    private final NodeQueryResultSet nodeQueryResultSet;
 
     private final Aggregations aggregations;
 
@@ -37,6 +33,8 @@ public final class NodeQueryResult
         this.maxScore = builder.maxScore;
 
         this.aggregations = builder.aggregations;
+
+        this.nodeQueryResultSet = NodeQueryResultSet.from( builder.entries );
     }
 
     public long getTotalHits()
@@ -66,14 +64,12 @@ public final class NodeQueryResult
 
     public NodeIds getNodeIds()
     {
-        final Set<NodeId> nodeIds = Sets.newLinkedHashSet();
+        return nodeQueryResultSet.asNodeIds();
+    }
 
-        for ( final NodeQueryResultEntry nodeQueryResultEntry : entries )
-        {
-            nodeIds.add( nodeQueryResultEntry.getId() );
-        }
-
-        return NodeIds.from( nodeIds );
+    public NodeQueryResultSet getNodeQueryResultSet()
+    {
+        return nodeQueryResultSet;
     }
 
     public static final class Builder

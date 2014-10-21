@@ -42,5 +42,7 @@ public interface ContentService
 
     GetActiveContentVersionsResult getActiveVersions( final GetActiveContentVersionsParams params );
 
+    Content setChildOrder( final SetContentChildOrderParams params );
+
     String generateContentName( String displayName );
 }

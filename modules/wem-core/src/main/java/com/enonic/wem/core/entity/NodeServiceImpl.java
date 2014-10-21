@@ -27,6 +27,11 @@ public class NodeServiceImpl
     @Override
     public Node getById( final NodeId id )
     {
+        return doGetById( id, true );
+    }
+
+    private Node doGetById( final NodeId id, final boolean resolveHasChild )
+    {
         final Context context = Context.current();
 
         final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( id, WorkspaceContext.from( context ) );
@@ -36,10 +41,12 @@ public class NodeServiceImpl
             throw new NodeNotFoundException( "Node with id " + id + " not found in workspace " + context.getWorkspace().getName() );
         }
 
-        return NodeHasChildResolver.create().
+        final Node node = nodeDao.getByVersionId( currentVersion );
+
+        return !resolveHasChild ? node : NodeHasChildResolver.create().
             workspaceService( this.workspaceService ).
             build().
-            resolve( nodeDao.getByVersionId( currentVersion ) );
+            resolve( node );
     }
 
     @Override
@@ -84,6 +91,11 @@ public class NodeServiceImpl
 
     @Override
     public FindNodesByParentResult findByParent( final FindNodesByParentParams params )
+    {
+        return doFindByParent( params );
+    }
+
+    private FindNodesByParentResult doFindByParent( final FindNodesByParentParams params )
     {
         return FindNodesByParentCommand.create().
             params( params ).
@@ -256,6 +268,19 @@ public class NodeServiceImpl
             workspaceService( this.workspaceService ).
             build().
             resolve( nodeDao.getByVersionId( blobKey ) );
+    }
+
+    @Override
+    public Node setChildOrder( final SetNodeChildOrderParams params )
+    {
+        return SetNodeChildOrderCommand.create().
+            queryService( this.queryService ).
+            nodeDao( this.nodeDao ).
+            workspaceService( this.workspaceService ).
+            childOrder( params.getChildOrder() ).
+            nodeId( params.getNodeId() ).
+            build().
+            execute();
     }
 
     public void setIndexService( final IndexService indexService )

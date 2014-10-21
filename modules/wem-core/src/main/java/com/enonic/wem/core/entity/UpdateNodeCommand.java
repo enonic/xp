@@ -4,13 +4,7 @@ package com.enonic.wem.core.entity;
 import java.time.Instant;
 
 import com.enonic.wem.api.account.UserKey;
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.util.Exceptions;
-import com.enonic.wem.core.entity.dao.NodeNotFoundException;
-import com.enonic.wem.core.index.IndexContext;
-import com.enonic.wem.core.version.NodeVersionDocument;
-import com.enonic.wem.core.workspace.StoreWorkspaceDocument;
-import com.enonic.wem.core.workspace.WorkspaceContext;
 
 final class UpdateNodeCommand
     extends AbstractNodeCommand
@@ -40,9 +34,7 @@ final class UpdateNodeCommand
 
     private Node doExecute()
     {
-        final Context context = Context.current();
-
-        final Node persistedNode = getPersistedNode();
+        final Node persistedNode = doGetNode( params.getId(), false );
 
         final Node.EditBuilder editBuilder = params.getEditor().edit( persistedNode );
         if ( !editBuilder.isChanges() )
@@ -52,39 +44,12 @@ final class UpdateNodeCommand
 
         final Node updatedNode = createUpdatedNode( persistedNode, editBuilder );
 
-        final NodeVersionId updatedNodeVersionId = nodeDao.store( updatedNode );
-
-        this.versionService.store( NodeVersionDocument.create().
-            nodeId( updatedNode.id() ).
-            nodeVersionId( updatedNodeVersionId ).
-            build(), context.getRepositoryId() );
-
-        this.workspaceService.store( StoreWorkspaceDocument.create().
-            path( updatedNode.path() ).
-            parentPath( updatedNode.parent() ).
-            id( updatedNode.id() ).
-            nodeVersionId( updatedNodeVersionId ).
-            build(), WorkspaceContext.from( context ) );
-
-        this.indexService.store( updatedNode, IndexContext.from( context ) );
+        doStoreNode( updatedNode );
 
         return NodeHasChildResolver.create().
             workspaceService( this.workspaceService ).
             build().
             resolve( updatedNode );
-    }
-
-    private Node getPersistedNode()
-    {
-        final NodeVersionId currentVersionId =
-            workspaceService.getCurrentVersion( params.getId(), WorkspaceContext.from( Context.current() ) );
-
-        if ( currentVersionId == null )
-        {
-            throw new NodeNotFoundException( "Node to be updated not found" );
-        }
-
-        return nodeDao.getByVersionId( currentVersionId );
     }
 
     private Node createUpdatedNode( final Node persistedNode, final Node.EditBuilder editBuilder )

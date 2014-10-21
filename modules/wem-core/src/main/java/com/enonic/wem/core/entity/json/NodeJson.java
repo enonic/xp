@@ -47,6 +47,8 @@ public class NodeJson
 
     private final String childOrder;
 
+    private final Long manualOrderValue;
+
     @SuppressWarnings("UnusedDeclaration")
     @JsonCreator
     public NodeJson( @JsonProperty("name") final String name, //
@@ -60,7 +62,8 @@ public class NodeJson
                      @JsonProperty("modifiedTime") final Instant modifiedTime, //
                      @JsonProperty("indexConfigDocument") final IndexConfigDocumentJson indexConfigDocument,
                      @JsonProperty("attachments") final AttachmentsJson attachments, //
-                     @JsonProperty("childOrder") final String childOrder )
+                     @JsonProperty("childOrder") final String childOrder, //
+                     @JsonProperty("manualOrderValue") final Long manualOrderValue )
 
     {
         this.id = id;
@@ -76,6 +79,7 @@ public class NodeJson
         this.modifier = modifier;
         this.creator = creator;
         this.childOrder = childOrder;
+        this.manualOrderValue = manualOrderValue;
 
         this.node = Node.newNode().
             id( NodeId.from( id ) ).
@@ -90,6 +94,7 @@ public class NodeJson
             indexConfigDocument( indexConfigDocument.toEntityIndexConfig() ).
             attachments( attachments != null ? attachments.getAttachments() : Attachments.empty() ).
             childOrder( ChildOrder.from( childOrder ) ).
+            manualOrderValue( manualOrderValue ).
             build();
     }
 
@@ -108,6 +113,7 @@ public class NodeJson
         this.modifier = node.modifier() != null ? node.modifier().getQualifiedName() : null;
         this.creator = node.creator() != null ? node.creator().getQualifiedName() : null;
         this.childOrder = node.getChildOrder().toString();
+        this.manualOrderValue = node.getManualOrderValue();
     }
 
     private IndexConfigDocumentJson createEntityIndexConfig( final IndexConfigDocument indexConfig )
@@ -189,6 +195,12 @@ public class NodeJson
     public String getChildOrder()
     {
         return this.childOrder;
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    public Long getManualOrderValue()
+    {
+        return manualOrderValue;
     }
 
     @JsonIgnore

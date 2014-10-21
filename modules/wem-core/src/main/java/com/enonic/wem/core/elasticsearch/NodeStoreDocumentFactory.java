@@ -15,11 +15,13 @@ import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.elasticsearch.document.StoreDocument;
 import com.enonic.wem.core.elasticsearch.document.StoreDocumentItemFactory;
+import com.enonic.wem.core.elasticsearch.document.StoreDocumentLongItem;
 import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.repository.IndexNameResolver;
 
 import static com.enonic.wem.api.index.IndexPaths.CREATED_TIME_PROPERTY;
 import static com.enonic.wem.api.index.IndexPaths.CREATOR_PROPERTY_PATH;
+import static com.enonic.wem.api.index.IndexPaths.MANUAL_ORDER_VALUE_PATH;
 import static com.enonic.wem.api.index.IndexPaths.MODIFIED_TIME_PROPERTY_PATH;
 import static com.enonic.wem.api.index.IndexPaths.MODIFIER_PROPERTY_PATH;
 import static com.enonic.wem.api.index.IndexPaths.NAME_PROPERTY;
@@ -27,7 +29,7 @@ import static com.enonic.wem.api.index.IndexPaths.PARENT_PROPERTY_PATH;
 import static com.enonic.wem.api.index.IndexPaths.PATH_PROPERTY_PATH;
 
 
-class NodeIndexDocumentFactory
+class NodeStoreDocumentFactory
 {
 
     public static Collection<StoreDocument> create( final Node node, final Workspace workspace, final RepositoryId repositoryId )
@@ -102,6 +104,11 @@ class NodeIndexDocumentFactory
         {
             builder.addEntries(
                 StoreDocumentItemFactory.create( PARENT_PROPERTY_PATH, Value.newString( node.parent().toString() ), IndexConfig.MINIMAL ) );
+        }
+
+        if ( node.getManualOrderValue() != null )
+        {
+            builder.addEntry( new StoreDocumentLongItem( MANUAL_ORDER_VALUE_PATH, node.getManualOrderValue() ) );
         }
 
     }
