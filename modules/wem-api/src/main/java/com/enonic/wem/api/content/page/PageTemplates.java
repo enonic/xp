@@ -13,13 +13,14 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.support.AbstractImmutableEntityList;
 
 public final class PageTemplates
     extends AbstractImmutableEntityList<PageTemplate>
 {
-    private final ImmutableMap<PageTemplateName, PageTemplate> templatesByName;
+    private final ImmutableMap<ContentName, PageTemplate> templatesByName;
 
     private PageTemplates( final ImmutableList<PageTemplate> list )
     {
@@ -27,14 +28,13 @@ public final class PageTemplates
         this.templatesByName = Maps.uniqueIndex( list, new ToNameFunction() );
     }
 
-    public PageTemplate getTemplate( final PageTemplateName name )
+    public PageTemplate getTemplate( final ContentName name )
     {
         return this.templatesByName.get( name );
     }
 
     public PageTemplate getTemplate( final PageTemplateKey key )
     {
-
         for ( PageTemplate pageTemplate : this.templatesByName.values() )
         {
             if ( pageTemplate.getKey().equals( key ) )
@@ -109,10 +109,10 @@ public final class PageTemplates
     }
 
     private final static class ToNameFunction
-        implements Function<PageTemplate, PageTemplateName>
+        implements Function<PageTemplate, ContentName>
     {
         @Override
-        public PageTemplateName apply( final PageTemplate value )
+        public ContentName apply( final PageTemplate value )
         {
             return value.getName();
         }

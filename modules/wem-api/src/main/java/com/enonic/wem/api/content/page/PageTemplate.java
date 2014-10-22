@@ -16,23 +16,15 @@ public final class PageTemplate
 {
     private final PageTemplateKey key;
 
-    private final PageTemplateName pageTemplateName;
-
     private PageTemplate( final Builder builder )
     {
         super( builder );
         this.key = builder.key;
-        this.pageTemplateName = PageTemplateName.from( super.getName() );
     }
 
     public PageTemplateKey getKey()
     {
         return key;
-    }
-
-    public PageTemplateName getName()
-    {
-        return this.pageTemplateName;
     }
 
     public RootDataSet getConfig()
