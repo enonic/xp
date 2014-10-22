@@ -26,6 +26,7 @@ import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.DeleteContentParams;
 import com.enonic.wem.api.content.DeleteContentResult;
+import com.enonic.wem.api.content.DuplicateContentParams;
 import com.enonic.wem.api.content.FindContentByParentParams;
 import com.enonic.wem.api.content.FindContentByParentResult;
 import com.enonic.wem.api.content.GetContentByIdsParams;
@@ -707,6 +708,51 @@ public class ContentResourceTest
 
         request().path( "content/publish" ).
             entity( readFromFile( "publish_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+    }
+
+    @Test
+    public void duplicate()
+        throws Exception
+    {
+        final String contentIdString = "1";
+
+        final Content aContent = createContent( contentIdString, "my_a_content", "mymodule:my_type" );
+
+        final ContentData aContentData = aContent.getContentData();
+
+        aContentData.setProperty( "myArray[0]", Value.newString( "arrayValue1" ) );
+        aContentData.setProperty( "myArray[1]", Value.newString( "arrayValue2" ) );
+
+        aContentData.setProperty( "mySetWithArray.myArray[0]", Value.newDouble( 3.14159 ) );
+        aContentData.setProperty( "mySetWithArray.myArray[1]", Value.newDouble( 1.333 ) );
+
+        final DuplicateContentParams duplicateContentParams = new DuplicateContentParams( ContentId.from( contentIdString ) );
+
+        Mockito.when( contentService.duplicate( duplicateContentParams ) ).thenReturn( aContent );
+
+        String jsonString = request().path( "content/duplicate" ).
+            entity( readFromFile( "duplicate_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertJson( "duplicate_content_success.json", jsonString );
+    }
+
+
+    @Test(expected = ContentNotFoundException.class)
+    public void duplicate_not_found()
+        throws Exception
+    {
+
+        final Exception e =
+            new com.enonic.wem.api.content.ContentNotFoundException( ContentId.from( "content-id" ), ContentConstants.WORKSPACE_STAGE );
+
+        Mockito.when( contentService.duplicate( Mockito.isA( DuplicateContentParams.class ) ) ).
+            thenThrow( e );
+
+        request().path( "content/duplicate" ).
+            entity( readFromFile( "duplicate_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 
     }

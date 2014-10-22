@@ -30,6 +30,8 @@ public interface ContentService
 
     DataValidationErrors validate( ValidateContentData data );
 
+    Content duplicate( DuplicateContentParams params );
+
     Content rename( RenameContentParams params );
 
     FindContentByQueryResult find( FindContentByQueryParams params );
