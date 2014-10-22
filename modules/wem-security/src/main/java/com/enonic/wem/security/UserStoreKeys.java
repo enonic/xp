@@ -1,6 +1,5 @@
 package com.enonic.wem.security;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -24,11 +23,6 @@ public final class UserStoreKeys
     }
 
     public static UserStoreKeys from( final Iterable<? extends UserStoreKey> userStoreKeys )
-    {
-        return new UserStoreKeys( ImmutableList.copyOf( userStoreKeys ) );
-    }
-
-    public static UserStoreKeys from( final Collection<? extends UserStoreKey> userStoreKeys )
     {
         return new UserStoreKeys( ImmutableList.copyOf( userStoreKeys ) );
     }

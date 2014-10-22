@@ -22,12 +22,12 @@ public final class UserStore
         return name;
     }
 
-    public static Builder newRealm()
+    public static Builder newUserStore()
     {
         return new Builder();
     }
 
-    public static Builder newRealm( final UserStore userStore )
+    public static Builder newUserStore( final UserStore userStore )
     {
         return new Builder( userStore );
     }

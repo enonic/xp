@@ -1,7 +1,5 @@
 package com.enonic.wem.security;
 
-import java.util.Collection;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -47,11 +45,6 @@ public final class UserStores
     }
 
     public static UserStores from( final Iterable<? extends UserStore> userStores )
-    {
-        return new UserStores( ImmutableList.copyOf( userStores ) );
-    }
-
-    public static UserStores from( final Collection<? extends UserStore> userStores )
     {
         return new UserStores( ImmutableList.copyOf( userStores ) );
     }

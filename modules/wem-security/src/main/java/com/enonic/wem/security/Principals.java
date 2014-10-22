@@ -1,7 +1,5 @@
 package com.enonic.wem.security;
 
-import java.util.Collection;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -73,11 +71,6 @@ public final class Principals
     }
 
     public static Principals from( final Iterable<? extends Principal> principals )
-    {
-        return new Principals( ImmutableList.copyOf( principals ) );
-    }
-
-    public static Principals from( final Collection<? extends Principal> principals )
     {
         return new Principals( ImmutableList.copyOf( principals ) );
     }

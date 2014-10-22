@@ -7,36 +7,36 @@ import static org.junit.Assert.*;
 public class UserStoreTest
 {
     @Test
-    public void testCreateRealm()
+    public void testCreateUserStore()
         throws Exception
     {
-        final UserStoreKey userStoreKey = new UserStoreKey( "myrealm" );
-        final UserStore userStore = UserStore.newRealm().name( "my realm" ).key( userStoreKey ).build();
+        final UserStoreKey userStoreKey = new UserStoreKey( "myUserStore" );
+        final UserStore userStore = UserStore.newUserStore().name( "my user store" ).key( userStoreKey ).build();
 
-        assertEquals( "myrealm", userStore.getKey().toString() );
-        assertEquals( "my realm", userStore.getName() );
+        assertEquals( "myUserStore", userStore.getKey().toString() );
+        assertEquals( "my user store", userStore.getName() );
     }
 
     @Test
-    public void testCreateCopyRealm()
+    public void testCreateCopyUserStore()
         throws Exception
     {
-        final UserStoreKey userStoreKey = new UserStoreKey( "myrealm" );
-        final UserStore userStore = UserStore.newRealm().name( "my realm" ).key( userStoreKey ).build();
-        final UserStore userStoreCopy = UserStore.newRealm( userStore ).build();
+        final UserStoreKey userStoreKey = new UserStoreKey( "myUserStore" );
+        final UserStore userStore = UserStore.newUserStore().name( "my user store" ).key( userStoreKey ).build();
+        final UserStore userStoreCopy = UserStore.newUserStore( userStore ).build();
 
-        assertEquals( "myrealm", userStoreCopy.getKey().toString() );
-        assertEquals( "my realm", userStoreCopy.getName() );
+        assertEquals( "myUserStore", userStoreCopy.getKey().toString() );
+        assertEquals( "my user store", userStoreCopy.getName() );
     }
 
     @Test
-    public void testRealmKey()
+    public void testUserStoreKey()
         throws Exception
     {
-        final UserStoreKey userStoreKey = new UserStoreKey( "myrealm" );
-        final UserStoreKey userStoreKey2 = new UserStoreKey( "myrealm" );
+        final UserStoreKey userStoreKey = new UserStoreKey( "myUserStore" );
+        final UserStoreKey userStoreKey2 = new UserStoreKey( "myUserStore" );
 
         assertEquals( userStoreKey, userStoreKey2 );
-        assertEquals( "myrealm", userStoreKey.toString() );
+        assertEquals( "myUserStore", userStoreKey.toString() );
     }
 }

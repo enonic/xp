@@ -13,20 +13,20 @@ public class PrincipalTest
         final User user = User.newUser().
             login( "userlogin" ).
             displayName( "my user" ).
-            userKey( PrincipalKey.ofUser( new UserStoreKey( "myrealm" ), "userid" ) ).
+            userKey( PrincipalKey.ofUser( new UserStoreKey( "myuserstore" ), "userid" ) ).
             email( "user@email" ).
             build();
 
         assertEquals( "userlogin", user.getLogin() );
         assertEquals( "my user", user.getDisplayName() );
-        assertEquals( PrincipalKey.from( "myrealm:user:userid" ), user.getKey() );
+        assertEquals( PrincipalKey.from( "myuserstore:user:userid" ), user.getKey() );
         assertEquals( "user@email", user.getEmail() );
 
         final User userCopy = User.newUser( user ).build();
         assertEquals( "userlogin", userCopy.getLogin() );
         assertEquals( "my user", userCopy.getDisplayName() );
         assertEquals( false, userCopy.isDisabled() );
-        assertEquals( PrincipalKey.from( "myrealm:user:userid" ), userCopy.getKey() );
+        assertEquals( PrincipalKey.from( "myuserstore:user:userid" ), userCopy.getKey() );
         assertEquals( "user@email", userCopy.getEmail() );
     }
 
@@ -35,15 +35,15 @@ public class PrincipalTest
     {
         final Group group = Group.newGroup().
             displayName( "my group" ).
-            groupKey( PrincipalKey.ofGroup( new UserStoreKey( "myrealm" ), "groupid" ) ).
+            groupKey( PrincipalKey.ofGroup( new UserStoreKey( "myuserstore" ), "groupid" ) ).
             build();
 
         assertEquals( "my group", group.getDisplayName() );
-        assertEquals( PrincipalKey.from( "myrealm:group:groupid" ), group.getKey() );
+        assertEquals( PrincipalKey.from( "myuserstore:group:groupid" ), group.getKey() );
 
         final Group groupCopy = Group.newGroup( group ).build();
         assertEquals( "my group", groupCopy.getDisplayName() );
-        assertEquals( PrincipalKey.from( "myrealm:group:groupid" ), groupCopy.getKey() );
+        assertEquals( PrincipalKey.from( "myuserstore:group:groupid" ), groupCopy.getKey() );
     }
 
     @Test
@@ -65,11 +65,11 @@ public class PrincipalTest
             build();
 
         assertEquals( "my role", role.getDisplayName() );
-        assertEquals( PrincipalKey.from( "myrealm:role:administrators" ), role.getKey() );
+        assertEquals( PrincipalKey.from( "myuserstore:role:administrators" ), role.getKey() );
 
         final Role roleCopy = Role.newRole( role ).build();
         assertEquals( "my role", roleCopy.getDisplayName() );
-        assertEquals( PrincipalKey.from( "myrealm:role:administrators" ), roleCopy.getKey() );
+        assertEquals( PrincipalKey.from( "myuserstore:role:administrators" ), roleCopy.getKey() );
     }
 
 }

@@ -23,11 +23,6 @@ public final class PrincipalKeys
         return new PrincipalKeys( ImmutableSet.copyOf( principalKeys ) );
     }
 
-    public static PrincipalKeys from( final Iterable<? extends PrincipalKey> principalKeys )
-    {
-        return new PrincipalKeys( ImmutableSet.copyOf( principalKeys ) );
-    }
-
     public static PrincipalKeys from( final Collection<? extends PrincipalKey> principalKeys )
     {
         return new PrincipalKeys( ImmutableSet.copyOf( principalKeys ) );
