@@ -8,8 +8,6 @@ module api.content {
 
         private parent: ContentPath;
 
-        private embed: boolean = false;
-
         private contentType: api.schema.content.ContentTypeName;
 
         private form: api.form.Form;
@@ -39,11 +37,6 @@ module api.content {
 
         setParent(value: ContentPath): CreateContentRequest {
             this.parent = value;
-            return this;
-        }
-
-        setEmbed(value: boolean): CreateContentRequest {
-            this.embed = value;
             return this;
         }
 
@@ -88,7 +81,6 @@ module api.content {
                 draft: this.draft,
                 name: this.name.isUnnamed() ? this.name.toUnnamed().toStringIncludingHidden() : this.name.toString(),
                 parent: this.parent.toString(),
-                embed: this.embed,
                 contentType: this.contentType.toString(),
                 form: this.form.toJson(),
                 contentData: this.contentData.toJson(),
