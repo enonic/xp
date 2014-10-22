@@ -335,7 +335,8 @@ module api.ui.treegrid {
                 var rowHeight = this.grid.getOptions().rowHeight;
 
                 // top > point && point + rowHeight < bottom
-                var children = Element.elementsFromRequest(".tree-grid " + gridClasses + " .grid-canvas .slick-row:has(.children-to-load)", false),
+                var children = Element.elementsFromRequest(".tree-grid " + gridClasses + " .grid-canvas .slick-row:has(.children-to-load)",
+                        false),
                     top = this.grid.getEl().getScrollTop(),
                     bottom = top + this.grid.getEl().getHeight() + this.loadBufferSize * rowHeight;
 
@@ -550,7 +551,7 @@ module api.ui.treegrid {
         updateNode(data: DATA): void {
 
             var dataId = this.getDataId(data),
-                nodes = [],
+                nodesToUpdate = [],
                 nodeToUpdate = this.root.findNode(dataId),
                 stashedNodeToUpdate;
 
@@ -558,32 +559,31 @@ module api.ui.treegrid {
                 throw new Error("TreeNode to update not found: " + dataId);
             }
 
-            nodes.push(nodeToUpdate);
+            nodesToUpdate.push(nodeToUpdate);
 
             if (!!this.stash) {
                 stashedNodeToUpdate = this.stash.findNode(dataId);
                 // filter may have multiple occurrences
-                var children = this.root.getChildren();
-                children.forEach((elem) => {
-                    var node = elem.findNode(dataId);
-                    if (!!node) {
-                        nodes.push(node);
+                this.root.getChildren().forEach((topNode) => {
+                    var match = topNode.findNode(dataId);
+                    if (!!match) {
+                        nodesToUpdate.push(match);
                     }
                 });
             }
 
-            this.fetch(nodeToUpdate)
+            this.fetch(nodesToUpdate[0])
                 .then((data: DATA) => {
-                    nodes.forEach((node) => {
+                    nodesToUpdate.forEach((node) => {
                         node.setData(data);
-                        node.setViewer("name", null);
+                        node.clearViewers();
                         this.gridData.updateItem(node.getId(), node);
                     });
                     if (!!stashedNodeToUpdate) {
                         stashedNodeToUpdate.setData(data);
-                        stashedNodeToUpdate.setViewer("name", null);
+                        stashedNodeToUpdate.clearViewers();
                     }
-                    this.notifyDataChanged(new DataChangedEvent<DATA>(nodes, DataChangedEvent.UPDATED));
+                    this.notifyDataChanged(new DataChangedEvent<DATA>(nodesToUpdate, DataChangedEvent.UPDATED));
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 });

@@ -92,6 +92,10 @@ module api.ui.treegrid {
             this.viewersByName[name] = viewer;
         }
 
+        clearViewers() {
+            this.viewersByName = {};
+        }
+
         getViewer(name: string): api.ui.Viewer<any> {
             return this.viewersByName[name];
         }
