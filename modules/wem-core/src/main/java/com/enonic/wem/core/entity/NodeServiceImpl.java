@@ -277,6 +277,7 @@ public class NodeServiceImpl
             queryService( this.queryService ).
             nodeDao( this.nodeDao ).
             workspaceService( this.workspaceService ).
+            versionService( this.versionService ).
             childOrder( params.getChildOrder() ).
             nodeId( params.getNodeId() ).
             build().

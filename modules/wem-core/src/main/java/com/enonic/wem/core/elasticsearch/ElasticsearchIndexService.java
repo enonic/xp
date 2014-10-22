@@ -38,7 +38,10 @@ import com.enonic.wem.core.repository.StorageNameResolver;
 public class ElasticsearchIndexService
     implements IndexService
 {
+
     private final static Logger LOG = LoggerFactory.getLogger( ElasticsearchIndexService.class );
+
+    public static final String INDICES_RESPONSE_TIMEOUT = "10s";
 
     private ElasticsearchDao elasticsearchDao;
 
@@ -56,7 +59,7 @@ public class ElasticsearchIndexService
 
     private Client client;
 
-    private IndexStatus getIndexStatus( final String indexName, final boolean waitForStatusYellow )
+    public IndexStatus getIndexStatus( final String indexName, final boolean waitForStatusYellow )
     {
         final ClusterHealthResponse clusterHealth = getClusterHealth( indexName, waitForStatusYellow );
 
@@ -141,7 +144,8 @@ public class ElasticsearchIndexService
         final String storageName = StorageNameResolver.resolveStorageIndexName( repositoryId );
         final String searchIndexName = IndexNameResolver.resolveSearchIndexName( repositoryId );
 
-        final IndicesStatsResponse response = this.client.admin().indices().stats( indicesStatsRequest ).actionGet( 10 );
+        final IndicesStatsResponse response =
+            this.client.admin().indices().stats( indicesStatsRequest ).actionGet( INDICES_RESPONSE_TIMEOUT );
 
         final Map<String, IndexStats> indicesMap = response.getIndices();
 

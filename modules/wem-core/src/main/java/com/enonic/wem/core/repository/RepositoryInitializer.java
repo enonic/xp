@@ -35,6 +35,8 @@ public final class RepositoryInitializer
 
     private void createIndexes( final Repository repository )
     {
+        indexService.getIndexStatus( StorageNameResolver.resolveStorageIndexName( repository.getId() ), true );
+
         LOG.info( "Create storage-index for repositoryId {}", repository.getId() );
         final String storageIndexName = StorageNameResolver.resolveStorageIndexName( repository.getId() );
         final String storageIndexSettings = RepositoryStorageSettingsProvider.getSettings( repository );
