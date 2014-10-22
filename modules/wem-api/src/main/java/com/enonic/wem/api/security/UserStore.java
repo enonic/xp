@@ -1,18 +1,18 @@
-package com.enonic.wem.api.identity;
+package com.enonic.wem.api.security;
 
-public final class Realm
+public final class UserStore
 {
-    private final RealmKey key;
+    private final UserStoreKey key;
 
     private final String name;
 
-    public Realm( final Builder builder )
+    public UserStore( final Builder builder )
     {
         this.key = builder.key;
         this.name = builder.name;
     }
 
-    public RealmKey getKey()
+    public UserStoreKey getKey()
     {
         return key;
     }
@@ -27,14 +27,14 @@ public final class Realm
         return new Builder();
     }
 
-    public static Builder newRealm( final Realm realm )
+    public static Builder newRealm( final UserStore userStore )
     {
-        return new Builder( realm );
+        return new Builder( userStore );
     }
 
     public static class Builder
     {
-        private RealmKey key;
+        private UserStoreKey key;
 
         private String name;
 
@@ -42,10 +42,10 @@ public final class Realm
         {
         }
 
-        private Builder( final Realm realm )
+        private Builder( final UserStore userStore )
         {
-            this.key = realm.key;
-            this.name = realm.name;
+            this.key = userStore.key;
+            this.name = userStore.name;
         }
 
         public Builder name( final String value )
@@ -54,15 +54,15 @@ public final class Realm
             return this;
         }
 
-        public Builder key( final RealmKey value )
+        public Builder key( final UserStoreKey value )
         {
             this.key = value;
             return this;
         }
 
-        public Realm build()
+        public UserStore build()
         {
-            return new Realm( this );
+            return new UserStore( this );
         }
     }
 

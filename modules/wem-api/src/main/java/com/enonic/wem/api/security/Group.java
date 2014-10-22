@@ -1,14 +1,14 @@
-package com.enonic.wem.api.identity;
+package com.enonic.wem.api.security;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
 
 public final class Group
-    extends Identity
+    extends Principal
 {
     private Group( final Builder builder )
     {
-        super( builder.identity );
-        Preconditions.checkArgument( getIdentityKey().isGroup(), "Invalid Identity Type for Group: " + getIdentityKey().getType() );
+        super( builder.principalKey, builder.displayName );
+        checkArgument( builder.principalKey.isGroup(), "Invalid Principal Type for Group: " + builder.principalKey.getType() );
     }
 
     public static Builder newGroup()
@@ -23,27 +23,29 @@ public final class Group
 
     public static class Builder
     {
-        private Identity.Builder identity;
+        private PrincipalKey principalKey;
+
+        private String displayName;
 
         private Builder()
         {
-            identity = new Identity.Builder();
         }
 
         private Builder( final Group group )
         {
-            identity = new Identity.Builder( group );
+            this.principalKey = group.getKey();
+            this.displayName = group.getDisplayName();
         }
 
-        public Builder identityKey( final IdentityKey value )
+        public Builder groupKey( final PrincipalKey value )
         {
-            this.identity.identityKey( value );
+            this.principalKey = value;
             return this;
         }
 
         public Builder displayName( final String value )
         {
-            this.identity.displayName( value );
+            this.displayName = value;
             return this;
         }
 

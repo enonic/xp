@@ -1,10 +1,12 @@
-package com.enonic.wem.api.identity;
+package com.enonic.wem.api.security;
 
-public final class RealmKey
+public final class UserStoreKey
 {
+    private final static UserStoreKey SYSTEM = new UserStoreKey( "system" );
+
     private final String id;
 
-    public RealmKey( final String id )
+    public UserStoreKey( final String id )
     {
         this.id = id;
     }
@@ -22,17 +24,22 @@ public final class RealmKey
         {
             return true;
         }
-        if ( !( o instanceof RealmKey ) )
+        if ( !( o instanceof UserStoreKey ) )
         {
             return false;
         }
-        final RealmKey realmKey = (RealmKey) o;
-        return id.equals( realmKey.id );
+        final UserStoreKey userStoreKey = (UserStoreKey) o;
+        return id.equals( userStoreKey.id );
     }
 
     @Override
     public int hashCode()
     {
         return id.hashCode();
+    }
+
+    public static UserStoreKey system()
+    {
+        return SYSTEM;
     }
 }
