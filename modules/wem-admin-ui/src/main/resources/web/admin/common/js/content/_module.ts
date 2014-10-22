@@ -23,6 +23,7 @@
 ///<reference path='GetContentByPathRequest.ts' />
 ///<reference path='CreateContentRequest.ts' />
 ///<reference path='UpdateContentRequest.ts' />
+///<reference path='DuplicateContentRequest.ts' />
 ///<reference path='ListContentResult.ts' />
 ///<reference path='ListContentByIdRequest.ts' />
 ///<reference path='ListContentByPathRequest.ts' />

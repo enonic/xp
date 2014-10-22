@@ -34,6 +34,7 @@ import com.enonic.wem.admin.rest.resource.content.json.ContentQueryJson;
 import com.enonic.wem.admin.rest.resource.content.json.CreateContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.DeleteContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.DeleteContentResultJson;
+import com.enonic.wem.admin.rest.resource.content.json.DuplicateContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.GetContentVersionsJson;
 import com.enonic.wem.admin.rest.resource.content.json.PublishContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.SetChildOrderJson;
@@ -52,6 +53,7 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.DeleteContentParams;
+import com.enonic.wem.api.content.DuplicateContentParams;
 import com.enonic.wem.api.content.FindContentByParentParams;
 import com.enonic.wem.api.content.FindContentByParentResult;
 import com.enonic.wem.api.content.FindContentByQueryParams;
@@ -349,7 +351,6 @@ public class ContentResource
         return new GetActiveContentVersionsResultJson( result );
     }
 
-
     @POST
     @Path("publish")
     public ContentJson publish( final PublishContentJson params )
@@ -358,6 +359,15 @@ public class ContentResource
             contentService.push( new PushContentParams( ContentConstants.WORKSPACE_PROD, params.getContentId() ) );
 
         return new ContentJson( publishedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
+    }
+
+    @POST
+    @Path("duplicate")
+    public ContentJson duplicate( final DuplicateContentJson params )
+    {
+        final Content duplicatedContent = contentService.duplicate( new DuplicateContentParams( params.getContentId() ) );
+
+        return new ContentJson( duplicatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
     }
 
     @POST
