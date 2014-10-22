@@ -75,5 +75,31 @@ module app.wizard {
                 return parentNode;
             });
         }
+
+        sortNodeChildren(node: TreeNode<ContentSummaryAndCompareStatus>) {
+            var compareFunction;
+            if (this.getRoot() == node) {
+                compareFunction = this.compareNodesByDisplayName;
+            } else {
+                compareFunction = this.compareNodesByLastModified;
+            }
+            var children = node.getChildren().sort(compareFunction);
+            node.setChildren(children);
+            this.initData(this.getRoot().treeToList());
+        }
+
+        private compareNodesByDisplayName(a: TreeNode<ContentSummaryAndCompareStatus>,
+                                          b: TreeNode<ContentSummaryAndCompareStatus>): number {
+            var firstName = a.getData().getContentSummary().getDisplayName();
+            var secondName = b.getData().getContentSummary().getDisplayName();
+            return firstName.localeCompare(secondName);
+        }
+
+        private compareNodesByLastModified(a: TreeNode<ContentSummaryAndCompareStatus>,
+                                           b: TreeNode<ContentSummaryAndCompareStatus>): number {
+            var firstDate = a.getData().getContentSummary().getModifiedTime();
+            var secondDate = b.getData().getContentSummary().getModifiedTime();
+            return firstDate < secondDate ? 1 : (firstDate > secondDate) ? -1 : 0;
+        }
     }
 }
