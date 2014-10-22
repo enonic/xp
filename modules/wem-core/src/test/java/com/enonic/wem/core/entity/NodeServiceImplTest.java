@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.account.UserKey;
+import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.core.entity.dao.NodeDao;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.index.query.QueryService;
@@ -118,5 +119,42 @@ public class NodeServiceImplTest
         assertFalse( resultNodes.getNodeById( b ).getHasChildren() );
     }
 
+    @Test
+    public void duplicate()
+        throws Exception
+    {
+        Attachment a1 = new Attachment.Builder().name( "a" ).size( 111 ).mimeType( "text/html" ).build();
+        Attachment a2 = new Attachment.Builder().name( "b" ).size( 222 ).mimeType( "img/png" ).build();
+
+        final Node nodeA = Node.newNode().
+            id( NodeId.from( "node-1" ) ).
+            creator( UserKey.superUser() ).
+            attachments( Attachments.from( a1, a2 ) ).
+            childOrder( ChildOrder.from( "random" ) ).
+            name( NodeName.from( "node-a" ) ).
+            parent( NodePath.ROOT ).
+            build();
+
+        NodeVersionId nodeAVersionId = NodeVersionId.from( "a-version-id" );
+
+        Mockito.when(
+            this.workspaceService.getCurrentVersion( Mockito.eq( nodeA.id() ), Mockito.isA( WorkspaceContext.class ) ) ).thenReturn(
+            nodeAVersionId );
+
+        Mockito.when( this.nodeDao.getByVersionId( nodeAVersionId ) ).thenReturn( nodeA );
+
+        Mockito.when( this.workspaceService.hasChildren( Mockito.eq( nodeA.path() ), Mockito.isA( WorkspaceContext.class ) ) ).thenReturn(
+            false );
+
+        Mockito.when( this.nodeDao.store( Mockito.isA( Node.class ) ) ).thenReturn( NodeVersionId.from( "b-version-id" ) );
+
+        final Node nodeB = this.nodeService.duplicate( nodeA.id() );
+
+        assertEquals( nodeA.name(), nodeB.name() );
+        assertEquals( nodeA.attachments(), nodeB.attachments() );
+        assertEquals( nodeA.data(), nodeB.data() );
+        assertEquals( nodeA.getChildOrder(), nodeB.getChildOrder() );
+        assertEquals( nodeA.parent(), nodeB.parent() );
+    }
 
 }
