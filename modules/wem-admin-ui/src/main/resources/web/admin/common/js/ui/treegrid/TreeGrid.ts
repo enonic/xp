@@ -584,6 +584,7 @@ module api.ui.treegrid {
                         stashedNodeToUpdate.clearViewers();
                     }
                     this.notifyDataChanged(new DataChangedEvent<DATA>(nodesToUpdate, DataChangedEvent.UPDATED));
+                    this.sortNodeChildren(nodeToUpdate.getParent());
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 });
@@ -627,8 +628,9 @@ module api.ui.treegrid {
             } else {
                 parentNode = root;
             }
+            var isRootParentNode: boolean = (parentNode == root);
 
-            if (!parentNode.hasChildren() && parentNode != root) {
+            if (!parentNode.hasChildren() && !isRootParentNode) {
                 this.fetchData(parentNode)
                     .then((dataList: DATA[]) => {
                         parentNode.setChildren(this.dataToTreeNodes(dataList, parentNode));
@@ -656,14 +658,18 @@ module api.ui.treegrid {
                     });
             } else {
                 parentNode.addChild(this.dataToTreeNode(data, root), true);
-                var node = root.findNode(this.getDataId(data));
-                if (node) {
-                    if (!stashedParentNode) {
-                        this.gridData.setItems(root.treeToList());
-                    }
-                    if (parentNode != root) {
+                if (isRootParentNode) {
+                    this.sortNodeChildren(parentNode);
+                } else {
+                    var node = root.findNode(this.getDataId(data));
+                    if (node) {
                         if (!stashedParentNode) {
-                            this.updateSelectedNode(parentNode);
+                            this.gridData.setItems(root.treeToList());
+                        }
+                        if (!isRootParentNode) {
+                            if (!stashedParentNode) {
+                                this.updateSelectedNode(parentNode);
+                            }
                         }
                     }
                 }
@@ -959,6 +965,9 @@ module api.ui.treegrid {
 
         refreshNodeData(parentNode: TreeNode<DATA>): wemQ.Promise<TreeNode<DATA>> {
             return null;
+        }
+
+        sortNodeChildren(node: TreeNode<DATA>) {
         }
     }
 }
