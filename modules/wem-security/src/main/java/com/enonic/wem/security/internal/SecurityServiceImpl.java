@@ -2,17 +2,17 @@ package com.enonic.wem.security.internal;
 
 import java.util.List;
 
-import com.enonic.wem.api.security.Group;
-import com.enonic.wem.api.security.Principal;
-import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.api.security.PrincipalType;
-import com.enonic.wem.api.security.Principals;
-import com.enonic.wem.api.security.Role;
-import com.enonic.wem.api.security.SecurityService;
-import com.enonic.wem.api.security.User;
-import com.enonic.wem.api.security.UserStore;
-import com.enonic.wem.api.security.UserStoreKey;
-import com.enonic.wem.api.security.UserStores;
+import com.enonic.wem.security.Group;
+import com.enonic.wem.security.Principal;
+import com.enonic.wem.security.PrincipalKey;
+import com.enonic.wem.security.PrincipalType;
+import com.enonic.wem.security.Principals;
+import com.enonic.wem.security.Role;
+import com.enonic.wem.security.SecurityService;
+import com.enonic.wem.security.User;
+import com.enonic.wem.security.UserStore;
+import com.enonic.wem.security.UserStoreKey;
+import com.enonic.wem.security.UserStores;
 
 import static java.util.stream.Collectors.toList;
 
