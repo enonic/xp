@@ -105,10 +105,6 @@ module api.data {
             return this.type;
         }
 
-        setValue(value: Object) {
-            this.value = value;
-        }
-
         equals(o: api.Equitable): boolean {
 
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, Value)) {
