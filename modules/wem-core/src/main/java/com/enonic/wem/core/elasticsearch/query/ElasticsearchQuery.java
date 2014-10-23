@@ -78,7 +78,7 @@ public class ElasticsearchQuery
         return this.indexName;
     }
 
-    public static Builder newQuery()
+    public static Builder create()
     {
         return new Builder();
     }
@@ -109,8 +109,7 @@ public class ElasticsearchQuery
             field( IndexPaths.ENTITY_KEY ).
             query( this.getQuery() ).
             from( this.getFrom() ).
-            size( this.getSize() ).
-            explain( this.doExplain() );
+            size( this.getSize() );
 
         if ( this.getFilter() != null )
         {

@@ -20,7 +20,7 @@ public class NodeQueryTranslator
     {
         final QueryBuilder queryWithQueryFilters = createQueryWithQueryFilters( nodeQuery );
 
-        final ElasticsearchQuery.Builder queryBuilder = ElasticsearchQuery.newQuery().
+        final ElasticsearchQuery.Builder queryBuilder = ElasticsearchQuery.create().
             index( IndexNameResolver.resolveSearchIndexName( indexContext.getRepositoryId() ) ).
             indexType( indexContext.getWorkspace().getName() ).
             query( queryWithQueryFilters ).

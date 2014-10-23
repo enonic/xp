@@ -58,7 +58,7 @@ public class FindNodesWithDifferencesCommand
             size( (int) (long) totalCount ).
             order( Terms.Order.count( true ) );
 
-        final SearchResult searchResult = elasticsearchDao.search( ElasticsearchQuery.newQuery().
+        final SearchResult searchResult = elasticsearchDao.search( ElasticsearchQuery.create().
             query( inOnOfTheWorkspaces ).
             setAggregations( Sets.newHashSet( changedAggregationQuery ) ).
             size( 0 ).
