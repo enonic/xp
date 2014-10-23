@@ -24,7 +24,6 @@
   <modules>
     <module>modules/wem-api</module>
     <module>modules/wem-core</module>
-    <module>modules/wem-security</module>
     <module>modules/wem-script</module>
     <module>modules/wem-servlet</module>
     <module>modules/wem-admin</module>
