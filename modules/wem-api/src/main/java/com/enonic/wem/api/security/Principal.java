@@ -1,4 +1,4 @@
-package com.enonic.wem.security;
+package com.enonic.wem.api.security;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

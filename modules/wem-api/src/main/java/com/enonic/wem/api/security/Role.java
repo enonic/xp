@@ -1,24 +1,24 @@
-package com.enonic.wem.security;
+package com.enonic.wem.api.security;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-public final class Group
+public final class Role
     extends Principal
 {
-    private Group( final Builder builder )
+    private Role( final Builder builder )
     {
         super( builder.principalKey, builder.displayName );
-        checkArgument( builder.principalKey.isGroup(), "Invalid Principal Type for Group: " + builder.principalKey.getType() );
+        checkArgument( builder.principalKey.isRole(), "Invalid Principal Type for Role: " + builder.principalKey.getType() );
     }
 
-    public static Builder newGroup()
+    public static Builder newRole()
     {
         return new Builder();
     }
 
-    public static Builder newGroup( final Group group )
+    public static Builder newRole( final Role role )
     {
-        return new Builder( group );
+        return new Builder( role );
     }
 
     public static class Builder
@@ -31,13 +31,13 @@ public final class Group
         {
         }
 
-        private Builder( final Group group )
+        private Builder( final Role role )
         {
-            this.principalKey = group.getKey();
-            this.displayName = group.getDisplayName();
+            this.principalKey = role.getKey();
+            this.displayName = role.getDisplayName();
         }
 
-        public Builder groupKey( final PrincipalKey value )
+        public Builder roleKey( final PrincipalKey value )
         {
             this.principalKey = value;
             return this;
@@ -49,9 +49,9 @@ public final class Group
             return this;
         }
 
-        public Group build()
+        public Role build()
         {
-            return new Group( this );
+            return new Role( this );
         }
     }
 }

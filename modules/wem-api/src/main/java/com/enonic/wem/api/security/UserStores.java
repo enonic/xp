@@ -1,4 +1,4 @@
-package com.enonic.wem.security;
+package com.enonic.wem.api.security;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;

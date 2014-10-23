@@ -1,18 +1,18 @@
-package com.enonic.wem.security.internal;
+package com.enonic.wem.core.security;
 
 import java.util.List;
 
-import com.enonic.wem.security.Group;
-import com.enonic.wem.security.Principal;
-import com.enonic.wem.security.PrincipalKey;
-import com.enonic.wem.security.PrincipalType;
-import com.enonic.wem.security.Principals;
-import com.enonic.wem.security.Role;
-import com.enonic.wem.security.SecurityService;
-import com.enonic.wem.security.User;
-import com.enonic.wem.security.UserStore;
-import com.enonic.wem.security.UserStoreKey;
-import com.enonic.wem.security.UserStores;
+import com.enonic.wem.api.security.Group;
+import com.enonic.wem.api.security.Principal;
+import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.security.PrincipalType;
+import com.enonic.wem.api.security.Principals;
+import com.enonic.wem.api.security.Role;
+import com.enonic.wem.api.security.SecurityService;
+import com.enonic.wem.api.security.User;
+import com.enonic.wem.api.security.UserStore;
+import com.enonic.wem.api.security.UserStoreKey;
+import com.enonic.wem.api.security.UserStores;
 
 import static java.util.stream.Collectors.toList;
 
@@ -69,12 +69,12 @@ public final class SecurityServiceImpl
             build();
 
         final Group group1 = Group.newGroup().
-            groupKey( PrincipalKey.ofUser( USER_STORE_1, "devs" ) ).
+            groupKey( PrincipalKey.ofGroup( USER_STORE_1, "devs" ) ).
             displayName( "Developers" ).
             build();
 
         final Group group2 = Group.newGroup().
-            groupKey( PrincipalKey.ofUser( USER_STORE_2, "qa" ) ).
+            groupKey( PrincipalKey.ofGroup( USER_STORE_2, "qa" ) ).
             displayName( "QA" ).
             build();
 
@@ -90,12 +90,12 @@ public final class SecurityServiceImpl
     {
         final UserStore userStore1 = UserStore.newUserStore().
             key( USER_STORE_1 ).
-            name( "Local LDAP" ).
+            displayName( "Local LDAP" ).
             build();
 
         final UserStore userStore2 = UserStore.newUserStore().
             key( USER_STORE_2 ).
-            name( "File based user store" ).
+            displayName( "File based user store" ).
             build();
 
         return UserStores.from( userStore1, userStore2 );

@@ -1,4 +1,4 @@
-package com.enonic.wem.security;
+package com.enonic.wem.api.security;
 
 public interface SecurityService
 {

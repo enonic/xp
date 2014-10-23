@@ -1,15 +1,15 @@
-package com.enonic.wem.security;
+package com.enonic.wem.api.security;
 
 public final class UserStore
 {
     private final UserStoreKey key;
 
-    private final String name;
+    private final String displayName;
 
     public UserStore( final Builder builder )
     {
         this.key = builder.key;
-        this.name = builder.name;
+        this.displayName = builder.displayName;
     }
 
     public UserStoreKey getKey()
@@ -17,9 +17,9 @@ public final class UserStore
         return key;
     }
 
-    public String getName()
+    public String getDisplayName()
     {
-        return name;
+        return displayName;
     }
 
     public static Builder newUserStore()
@@ -36,7 +36,7 @@ public final class UserStore
     {
         private UserStoreKey key;
 
-        private String name;
+        private String displayName;
 
         private Builder()
         {
@@ -45,12 +45,12 @@ public final class UserStore
         private Builder( final UserStore userStore )
         {
             this.key = userStore.key;
-            this.name = userStore.name;
+            this.displayName = userStore.displayName;
         }
 
-        public Builder name( final String value )
+        public Builder displayName( final String value )
         {
-            this.name = value;
+            this.displayName = value;
             return this;
         }
 
