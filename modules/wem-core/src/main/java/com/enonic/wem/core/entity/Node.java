@@ -69,7 +69,7 @@ public final class Node
             }
         }
 
-        this.attachments = builder.attachments;
+        this.attachments = builder.attachments == null ? Attachments.empty() : builder.attachments;
 
         if ( builder.indexConfigDocument != null )
         {
@@ -485,13 +485,11 @@ public final class Node
     {
         private final Node originalNode;
 
-        private NodeName name;
-
         final Changes.Builder changes = new Changes.Builder();
 
         public EditBuilder( final Node original )
         {
-            this.name = original.name;
+            super( original );
             this.originalNode = original;
         }
 
@@ -567,7 +565,7 @@ public final class Node
             return this;
         }
 
-        public EditBuilder entityIndexConfig( final IndexConfigDocument indexConfigDocument )
+        public EditBuilder indexConfigDocument( final IndexConfigDocument indexConfigDocument )
         {
             changes.recordChange(
                 newPossibleChange( "data" ).from( this.originalNode.indexConfigDocument ).to( this.indexConfigDocument ).build() );
@@ -602,15 +600,7 @@ public final class Node
 
         public Node build()
         {
-            Node.BaseBuilder baseBuilder = new BaseBuilder( this.originalNode );
-            baseBuilder.data = this.data;
-            baseBuilder.attachments = this.attachments;
-            baseBuilder.indexConfigDocument = this.indexConfigDocument;
-            baseBuilder.name = this.name;
-            baseBuilder.childOrder = this.childOrder;
-            baseBuilder.manualOrderValue = this.manualOrderValue;
-
-            return new Node( baseBuilder );
+            return new Node( this );
         }
     }
 
