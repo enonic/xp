@@ -1,10 +1,13 @@
 package com.enonic.wem.mustache.internal;
 
+import org.osgi.service.component.annotations.Component;
+
 import com.samskivert.mustache.Mustache;
 
 import com.enonic.wem.mustache.MustacheProcessor;
 import com.enonic.wem.mustache.MustacheProcessorFactory;
 
+@Component
 public final class MustacheProcessorFactoryImpl
     implements MustacheProcessorFactory
 {

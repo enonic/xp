@@ -11,7 +11,9 @@ public class RenderViewScriptTest
     @Before
     public void setUp()
     {
-        addHandler( new RenderViewHandler( new ThymeleafProcessorFactoryImpl() ) );
+        final RenderViewHandler handler = new RenderViewHandler();
+        handler.setFactory( new ThymeleafProcessorFactoryImpl() );
+        addHandler( handler );
     }
 
     @Test

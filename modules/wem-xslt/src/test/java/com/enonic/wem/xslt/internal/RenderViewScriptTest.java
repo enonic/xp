@@ -4,11 +4,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.PortalContextAccessor;
 import com.enonic.wem.portal.PortalRequest;
+import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.script.AbstractScriptTest;
 
 public class RenderViewScriptTest
@@ -27,7 +27,9 @@ public class RenderViewScriptTest
 
         PortalContextAccessor.set( portalContext );
 
-        addHandler( new RenderViewHandler( new XsltProcessorFactoryImpl() ) );
+        final RenderViewHandler handler = new RenderViewHandler();
+        handler.setFactory( new XsltProcessorFactoryImpl() );
+        addHandler( handler );
     }
 
     @Test

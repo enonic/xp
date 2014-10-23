@@ -11,7 +11,9 @@ public class RenderViewScriptTest
     @Before
     public void setUp()
     {
-        addHandler( new RenderViewHandler( new MustacheProcessorFactoryImpl() ) );
+        final RenderViewHandler handler = new RenderViewHandler();
+        handler.setFactory( new MustacheProcessorFactoryImpl() );
+        addHandler( handler );
     }
 
     @Test

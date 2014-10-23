@@ -89,6 +89,7 @@
             <feature>deployer</feature>
             <feature>log</feature>
             <feature>diagnostic</feature>
+            <feature>scr</feature>
             <feature>aries-proxy</feature>
             <feature>aries-blueprint</feature>
           </startupFeatures>
