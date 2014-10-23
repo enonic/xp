@@ -65,7 +65,7 @@ public class SetNodeChildOrderCommand
 
             final Node node = doGetNode( nodeIdOrderValue.getNodeId(), false );
 
-            final Node editedNode = Node.editNode( node ).manualOrderValue( nodeIdOrderValue.getManualOrderValue() ).build();
+            final Node editedNode = Node.editNode( node ).manualOrderValue( (long) nodeIdOrderValue.getManualOrderValue() ).build();
 
             doStoreNode( editedNode );
         }

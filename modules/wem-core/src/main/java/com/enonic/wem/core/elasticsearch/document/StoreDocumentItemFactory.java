@@ -116,7 +116,6 @@ public class StoreDocumentItemFactory
         {
             indexDocumentItems.add( createInstantType( path, propertyValue ) );
         }
-
         if ( propertyValue.isNumericType() )
         {
             indexDocumentItems.add( createNumericItemType( path, propertyValue ) );

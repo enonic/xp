@@ -18,7 +18,7 @@ public class ChildOrderTest
         assertFalse( ChildOrder.defaultOrder().isManualOrder() );
         assertFalse( ChildOrder.create().build().isManualOrder() );
         assertTrue( ChildOrder.create().
-            add( FieldOrderExpr.create( IndexPaths.ORDER_EXPRESSION_KEY, OrderExpr.Direction.ASC ) ).
+            add( FieldOrderExpr.create( IndexPaths.MANUAL_ORDER_VALUE_KEY, OrderExpr.Direction.ASC ) ).
             build().
             isManualOrder() );
     }

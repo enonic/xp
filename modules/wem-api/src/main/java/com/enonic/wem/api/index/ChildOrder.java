@@ -16,7 +16,7 @@ public class ChildOrder
 {
     public static final OrderExpr DEFAULT_ORDER = FieldOrderExpr.create( IndexPaths.MODIFIED_TIME_KEY, OrderExpr.Direction.DESC );
 
-    public static final OrderExpr MANUAL_ORDER = FieldOrderExpr.create( IndexPaths.ORDER_EXPRESSION_KEY, OrderExpr.Direction.ASC );
+    public static final OrderExpr MANUAL_ORDER = FieldOrderExpr.create( IndexPaths.MANUAL_ORDER_VALUE_KEY, OrderExpr.Direction.ASC );
 
     private final ImmutableSet<OrderExpr> childOrderExpressions;
 

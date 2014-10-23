@@ -24,7 +24,7 @@ public class NodeOrderValueResolverTest
 
         final LinkedHashSet<NodeOrderValueResolver.NodeIdOrderValue> resolvedOrder = NodeOrderValueResolver.resolve( nodeIds );
 
-        long previousValue = NodeOrderValueResolver.START_ORDER_VALUE + 1;
+        double previousValue = NodeOrderValueResolver.START_ORDER_VALUE + 1;
 
         for ( final NodeOrderValueResolver.NodeIdOrderValue nodeIdOrderValue : resolvedOrder )
         {

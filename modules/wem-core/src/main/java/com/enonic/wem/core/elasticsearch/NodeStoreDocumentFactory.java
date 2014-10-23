@@ -15,7 +15,6 @@ import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.elasticsearch.document.StoreDocument;
 import com.enonic.wem.core.elasticsearch.document.StoreDocumentItemFactory;
-import com.enonic.wem.core.elasticsearch.document.StoreDocumentLongItem;
 import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.repository.IndexNameResolver;
 
@@ -108,7 +107,8 @@ class NodeStoreDocumentFactory
 
         if ( node.getManualOrderValue() != null )
         {
-            builder.addEntry( new StoreDocumentLongItem( MANUAL_ORDER_VALUE_PATH, node.getManualOrderValue() ) );
+            builder.addEntries( StoreDocumentItemFactory.create( MANUAL_ORDER_VALUE_PATH, Value.newLong( node.getManualOrderValue() ),
+                                                                 IndexConfig.MINIMAL ) );
         }
 
     }
