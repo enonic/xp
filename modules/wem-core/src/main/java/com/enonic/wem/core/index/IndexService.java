@@ -12,7 +12,7 @@ public interface IndexService
 {
     public void createIndex( final String indexName, final String settings );
 
-    public void deleteIndex( final Collection<String> indexNames );
+    public void deleteIndices( final Collection<String> indexNames );
 
     public boolean indicesExists( final String... indices );
 

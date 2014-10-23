@@ -45,7 +45,7 @@ public class SetNodeChildOrderCommand
 
         doStoreNode( editedNode );
 
-        return editedNode;
+        return doGetNode( editedNode.id(), false );
     }
 
     private void orderChildNodes( final Node parentNode )

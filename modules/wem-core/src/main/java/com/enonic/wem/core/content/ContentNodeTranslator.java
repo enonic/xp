@@ -173,7 +173,7 @@ public class ContentNodeTranslator
                 return Node.editNode( toBeEdited ).
                     name( NodeName.from( content.getName().toString() ) ).
                     attachments( nodeAttachmentsBuilder.build() ).
-                    entityIndexConfig( indexConfigDocument ).
+                    indexConfigDocument( indexConfigDocument ).
                     rootDataSet( rootDataSet );
             }
         };

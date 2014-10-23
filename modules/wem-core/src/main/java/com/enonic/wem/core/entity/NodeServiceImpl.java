@@ -278,6 +278,7 @@ public class NodeServiceImpl
             nodeDao( this.nodeDao ).
             workspaceService( this.workspaceService ).
             versionService( this.versionService ).
+            indexService( this.indexService ).
             childOrder( params.getChildOrder() ).
             nodeId( params.getNodeId() ).
             build().
