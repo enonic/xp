@@ -14,6 +14,7 @@ import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.DeleteContentParams;
 import com.enonic.wem.api.content.DeleteContentResult;
+import com.enonic.wem.api.content.DuplicateContentParams;
 import com.enonic.wem.api.content.FindContentByParentParams;
 import com.enonic.wem.api.content.FindContentByParentResult;
 import com.enonic.wem.api.content.FindContentByQueryParams;
@@ -253,6 +254,14 @@ public class ContentServiceImpl
             contentTypeService( this.contentTypeService ).
             data( data ).
             execute();
+    }
+
+    @Override
+    public Content duplicate( final DuplicateContentParams params )
+    {
+        final Node createdNode = nodeService.duplicate( NodeId.from( params.getContentId() ) );
+
+        return contentNodeTranslator.fromNode( createdNode );
     }
 
     @Override
