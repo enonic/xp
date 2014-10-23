@@ -5,6 +5,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Sets;
+
 import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.index.IndexType;
@@ -50,12 +52,21 @@ public final class RepositoryInitializer
 
     private void deleteExistingRepoIndices( final Repository repository )
     {
-        final Set<String> repoIndexes = indexService.getAllRepositoryIndices( repository.getId() );
+        final Set<String> repoIndexes = Sets.newHashSet();
+
+        repoIndexes.add( StorageNameResolver.resolveStorageIndexName( repository.getId() ) );
+        repoIndexes.add( IndexNameResolver.resolveSearchIndexName( repository.getId() ) );
+
+        //indexService.getAllRepositoryIndices( repository.getId() );
 
         if ( !repoIndexes.isEmpty() )
         {
-            indexService.deleteIndex( repoIndexes );
+            indexService.deleteIndices( repoIndexes );
         }
+
+        //indexService.deleteIndices( StorageNameResolver.resolveStorageIndexName( repository.getId() ),
+        //                            IndexNameResolver.resolveSearchIndexName( repository.getId() ) );
+
     }
 
     public boolean isInitialized( final Repository repository )

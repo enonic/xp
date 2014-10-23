@@ -164,7 +164,7 @@ public class ElasticsearchIndexService
     }
 
     @Override
-    public void deleteIndex( final Collection<String> indexNames )
+    public void deleteIndices( final Collection<String> indexNames )
     {
         for ( final String indexName : indexNames )
         {
