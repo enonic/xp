@@ -11,7 +11,7 @@ public class ChildOrderTest
 {
 
     @Test
-    public void manual_order()
+    public void manual_order_asc()
         throws Exception
     {
         assertTrue( ChildOrder.manualOrder().isManualOrder() );
@@ -22,4 +22,38 @@ public class ChildOrderTest
             build().
             isManualOrder() );
     }
+
+    @Test
+    public void manual_order_desc()
+        throws Exception
+    {
+        assertTrue( ChildOrder.manualOrder().isManualOrder() );
+        assertFalse( ChildOrder.defaultOrder().isManualOrder() );
+        assertFalse( ChildOrder.create().build().isManualOrder() );
+        assertTrue( ChildOrder.create().
+            add( FieldOrderExpr.create( IndexPaths.MANUAL_ORDER_VALUE_KEY, OrderExpr.Direction.DESC ) ).
+            build().
+            isManualOrder() );
+    }
+
+    @Test
+    public void manual_order_ignorecase()
+        throws Exception
+    {
+        assertTrue( ChildOrder.manualOrder().isManualOrder() );
+        assertFalse( ChildOrder.defaultOrder().isManualOrder() );
+        assertFalse( ChildOrder.create().build().isManualOrder() );
+        assertTrue( ChildOrder.create().
+            add( FieldOrderExpr.create( IndexPaths.MANUAL_ORDER_VALUE_KEY.toLowerCase(), OrderExpr.Direction.ASC ) ).
+            build().
+            isManualOrder() );
+
+        assertTrue( ChildOrder.create().
+            add( FieldOrderExpr.create( IndexPaths.MANUAL_ORDER_VALUE_KEY.toUpperCase(), OrderExpr.Direction.ASC ) ).
+            build().
+            isManualOrder() );
+
+    }
+
+
 }

@@ -41,5 +41,7 @@ public interface NodeService
 
     Node setChildOrder( final SetNodeChildOrderParams params );
 
+    Node moveChild( final OrderChildNodeParams params );
+
     Node getByVersionId( NodeVersionId nodeVersionid );
 }

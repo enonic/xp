@@ -27,7 +27,15 @@ public class NodeServiceImpl
     @Override
     public Node getById( final NodeId id )
     {
-        return doGetById( id, true );
+        final Node node = doGetById( id, true );
+
+        if ( node == null )
+        {
+            throw new NodeNotFoundException(
+                "Node with id " + id + " not found in workspace " + Context.current().getWorkspace().getName() );
+        }
+
+        return node;
     }
 
     private Node doGetById( final NodeId id, final boolean resolveHasChild )
@@ -38,7 +46,7 @@ public class NodeServiceImpl
 
         if ( currentVersion == null )
         {
-            throw new NodeNotFoundException( "Node with id " + id + " not found in workspace " + context.getWorkspace().getName() );
+            return null;
         }
 
         final Node node = nodeDao.getByVersionId( currentVersion );
@@ -63,19 +71,34 @@ public class NodeServiceImpl
     @Override
     public Node getByPath( final NodePath path )
     {
+        final Node node = doGetByPath( path, true );
+
+        if ( node == null )
+        {
+            throw new NodeNotFoundException(
+                "Node with path " + path + " not found in workspace " + Context.current().getWorkspace().getName() );
+        }
+
+        return node;
+    }
+
+    private Node doGetByPath( final NodePath path, final boolean resolveHasChild )
+    {
         final Context context = Context.current();
 
         final NodeVersionId currentVersion = this.workspaceService.getByPath( path, WorkspaceContext.from( context ) );
 
         if ( currentVersion == null )
         {
-            throw new NodeNotFoundException( "Node with path " + path + " not found in workspace " + context.getWorkspace().getName() );
+            return null;
         }
 
-        return NodeHasChildResolver.create().
+        final Node node = nodeDao.getByVersionId( currentVersion );
+
+        return resolveHasChild ? NodeHasChildResolver.create().
             workspaceService( this.workspaceService ).
             build().
-            resolve( nodeDao.getByVersionId( currentVersion ) );
+            resolve( node ) : node;
     }
 
     @Override
@@ -281,6 +304,26 @@ public class NodeServiceImpl
             indexService( this.indexService ).
             childOrder( params.getChildOrder() ).
             nodeId( params.getNodeId() ).
+            build().
+            execute();
+    }
+
+    @Override
+    public Node moveChild( final OrderChildNodeParams params )
+    {
+        final Node nodeToMove = doGetById( params.getNodeId(), false );
+        final Node nodeToMoveBefore = params.getMoveBefore() == null ? null : doGetById( params.getMoveBefore(), false );
+        final Node parentNode = doGetByPath( nodeToMove.parent(), false );
+
+        return MoveChildNodeCommand.create().
+            queryService( this.queryService ).
+            nodeDao( this.nodeDao ).
+            workspaceService( this.workspaceService ).
+            versionService( this.versionService ).
+            indexService( this.indexService ).
+            parentNode( parentNode ).
+            nodeToMove( nodeToMove ).
+            nodeToMoveBefore( nodeToMoveBefore ).
             build().
             execute();
     }

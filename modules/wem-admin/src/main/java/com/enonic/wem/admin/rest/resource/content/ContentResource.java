@@ -15,6 +15,8 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.google.common.base.Strings;
+
 import com.enonic.wem.admin.json.content.AbstractContentListJson;
 import com.enonic.wem.admin.json.content.CompareContentResultsJson;
 import com.enonic.wem.admin.json.content.ContentIdJson;
@@ -35,6 +37,7 @@ import com.enonic.wem.admin.rest.resource.content.json.CreateContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.DeleteContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.DeleteContentResultJson;
 import com.enonic.wem.admin.rest.resource.content.json.GetContentVersionsJson;
+import com.enonic.wem.admin.rest.resource.content.json.OrderChildJson;
 import com.enonic.wem.admin.rest.resource.content.json.PublishContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.SetChildOrderJson;
 import com.enonic.wem.admin.rest.resource.content.json.UpdateContentJson;
@@ -60,6 +63,7 @@ import com.enonic.wem.api.content.FindContentVersionsParams;
 import com.enonic.wem.api.content.FindContentVersionsResult;
 import com.enonic.wem.api.content.GetActiveContentVersionsParams;
 import com.enonic.wem.api.content.GetActiveContentVersionsResult;
+import com.enonic.wem.api.content.OrderChildContentParams;
 import com.enonic.wem.api.content.PushContentParams;
 import com.enonic.wem.api.content.RenameContentParams;
 import com.enonic.wem.api.content.SetContentChildOrderParams;
@@ -377,6 +381,19 @@ public class ContentResource
         final Content updatedContent = this.contentService.setChildOrder( SetContentChildOrderParams.create().
             childOrder( ChildOrder.from( params.getChildOrder() ) ).
             contentId( ContentId.from( params.getContentId() ) ).
+            build() );
+
+        return new ContentJson( updatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
+    }
+
+
+    @POST
+    @Path("orderChild")
+    public ContentJson orderChild( final OrderChildJson params )
+    {
+        final Content updatedContent = this.contentService.orderChild( OrderChildContentParams.create().
+            contentToMove( ContentId.from( params.getContentId() ) ).
+            contentToMoveBefore( ( Strings.isNullOrEmpty( params.getMoveBefore() ) ? null : ContentId.from( params.getMoveBefore() ) ) ).
             build() );
 
         return new ContentJson( updatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );

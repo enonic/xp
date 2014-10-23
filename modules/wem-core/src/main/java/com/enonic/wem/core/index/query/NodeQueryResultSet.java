@@ -53,6 +53,11 @@ public class NodeQueryResultSet
         return NodeIds.from( nodeIds );
     }
 
+    public int size()
+    {
+        return this.nodeIds.size();
+    }
+
     public static NodeQueryResultSet from( final Set<NodeQueryResultEntry> entries )
     {
         if ( entries.isEmpty() )

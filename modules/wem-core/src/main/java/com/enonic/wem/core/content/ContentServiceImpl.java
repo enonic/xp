@@ -24,6 +24,7 @@ import com.enonic.wem.api.content.FindContentVersionsResult;
 import com.enonic.wem.api.content.GetActiveContentVersionsParams;
 import com.enonic.wem.api.content.GetActiveContentVersionsResult;
 import com.enonic.wem.api.content.GetContentByIdsParams;
+import com.enonic.wem.api.content.OrderChildContentParams;
 import com.enonic.wem.api.content.PushContentParams;
 import com.enonic.wem.api.content.RenameContentParams;
 import com.enonic.wem.api.content.SetContentChildOrderParams;
@@ -44,6 +45,7 @@ import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodeService;
+import com.enonic.wem.core.entity.OrderChildNodeParams;
 import com.enonic.wem.core.entity.SetNodeChildOrderParams;
 import com.enonic.wem.core.index.query.QueryService;
 
@@ -348,6 +350,17 @@ public class ContentServiceImpl
         final Node node = nodeService.setChildOrder( SetNodeChildOrderParams.create().
             nodeId( NodeId.from( params.getContentId() ) ).
             childOrder( params.getChildOrder() ).
+            build() );
+
+        return contentNodeTranslator.fromNode( node );
+    }
+
+    @Override
+    public Content orderChild( final OrderChildContentParams params )
+    {
+        final Node node = nodeService.moveChild( OrderChildNodeParams.create().
+            nodeId( NodeId.from( params.getContentToMove() ) ).
+            moveBefore( params.getContentToMoveBefore() == null ? null : NodeId.from( params.getContentToMoveBefore() ) ).
             build() );
 
         return contentNodeTranslator.fromNode( node );

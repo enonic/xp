@@ -46,5 +46,7 @@ public interface ContentService
 
     Content setChildOrder( final SetContentChildOrderParams params );
 
+    Content orderChild( final OrderChildContentParams params );
+
     String generateContentName( String displayName );
 }

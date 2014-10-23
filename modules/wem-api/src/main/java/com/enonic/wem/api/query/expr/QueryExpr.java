@@ -1,5 +1,6 @@
 package com.enonic.wem.api.query.expr;
 
+import java.util.Arrays;
 import java.util.Set;
 
 import com.google.common.base.Joiner;
@@ -38,6 +39,12 @@ public final class QueryExpr
         {
             this.orderSet = ImmutableSet.of();
         }
+    }
+
+
+    public static QueryExpr from( final ConstraintExpr constraint, final OrderExpr... orderSet )
+    {
+        return new QueryExpr( constraint, Arrays.asList( orderSet ) );
     }
 
 

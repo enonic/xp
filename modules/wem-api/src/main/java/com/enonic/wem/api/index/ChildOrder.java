@@ -14,9 +14,9 @@ import com.enonic.wem.api.query.parser.QueryParser;
 
 public class ChildOrder
 {
-    public static final OrderExpr DEFAULT_ORDER = FieldOrderExpr.create( IndexPaths.MODIFIED_TIME_KEY, OrderExpr.Direction.DESC );
+    private static final OrderExpr DEFAULT_ORDER = FieldOrderExpr.create( IndexPaths.MODIFIED_TIME_KEY, OrderExpr.Direction.DESC );
 
-    public static final OrderExpr MANUAL_ORDER = FieldOrderExpr.create( IndexPaths.MANUAL_ORDER_VALUE_KEY, OrderExpr.Direction.ASC );
+    private static final FieldOrderExpr MANUAL_ORDER = FieldOrderExpr.create( IndexPaths.MANUAL_ORDER_VALUE_KEY, OrderExpr.Direction.DESC );
 
     private final ImmutableSet<OrderExpr> childOrderExpressions;
 
@@ -57,7 +57,20 @@ public class ChildOrder
 
     public boolean isManualOrder()
     {
-        return !this.childOrderExpressions.isEmpty() && this.childOrderExpressions.iterator().next().equals( MANUAL_ORDER );
+        if ( this.childOrderExpressions.isEmpty() )
+        {
+            return false;
+        }
+
+        final OrderExpr orderExpr = this.childOrderExpressions.iterator().next();
+
+        if ( orderExpr instanceof FieldOrderExpr )
+        {
+            final FieldOrderExpr fieldOrderExpr = (FieldOrderExpr) orderExpr;
+            return fieldOrderExpr.getField().getName().equalsIgnoreCase( MANUAL_ORDER.getField().getName() );
+        }
+
+        return false;
     }
 
     public boolean isEmpty()
