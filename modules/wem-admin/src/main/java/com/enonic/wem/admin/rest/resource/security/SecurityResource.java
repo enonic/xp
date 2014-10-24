@@ -5,6 +5,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import com.enonic.wem.admin.rest.resource.security.json.UserStoresJson;
 import com.enonic.wem.api.security.SecurityService;
 import com.enonic.wem.api.security.UserStores;
 
@@ -18,9 +19,10 @@ public class SecurityResource
     private SecurityService securityService;
 
     @GET
-    public UserStores getUserStores()
+    public UserStoresJson getUserStores()
     {
-        return securityService.getUserStores();
+        UserStores userStores = securityService.getUserStores();
+        return new UserStoresJson( userStores );
     }
 
 
