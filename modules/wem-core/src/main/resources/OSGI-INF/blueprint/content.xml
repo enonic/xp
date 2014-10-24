@@ -27,12 +27,6 @@
     <property name="contentService" ref="contentService"/>
   </bean>
 
-  <service ref="securityService" auto-export="interfaces"/>
-
-  <bean id="securityService" class="com.enonic.wem.core.security.SecurityServiceImpl">
-    <property name="securityService" ref="securityService"/>
-  </bean>
-
   <service ref="pageService" auto-export="interfaces"/>
 
   <bean id="layoutDescriptorService" class="com.enonic.wem.core.content.page.layout.LayoutDescriptorServiceImpl">
