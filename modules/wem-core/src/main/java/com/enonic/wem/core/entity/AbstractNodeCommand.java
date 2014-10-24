@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.core.entity.dao.NodeDao;
-import com.enonic.wem.core.entity.dao.NodeNotFoundException;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.version.NodeVersionDocument;
@@ -36,11 +35,6 @@ abstract class AbstractNodeCommand
         final Context context = Context.current();
 
         final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( id, WorkspaceContext.from( context ) );
-
-        if ( currentVersion == null )
-        {
-            throw new NodeNotFoundException( "Node with id " + id + " not found in workspace " + context.getWorkspace().getName() );
-        }
 
         final Node node = nodeDao.getByVersionId( currentVersion );
 

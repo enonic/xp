@@ -119,6 +119,7 @@ public class MoveChildNodeCommand
     {
         final NodeId nodeBeforeInsertId = result.getNodeQueryResultSet().first();
         final Node nodeBeforeInsert = doGetNode( nodeBeforeInsertId, false );
+
         return ( nodeAfterOrderValue + nodeBeforeInsert.getManualOrderValue() ) / 2;
     }
 
