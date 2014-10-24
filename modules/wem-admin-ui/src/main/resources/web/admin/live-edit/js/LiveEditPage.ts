@@ -102,7 +102,9 @@ module LiveEdit {
                 // Highlighter should not be shown when type page is selected
                 if (component.getType().equals(api.liveedit.PageItemType.get())) {
                     this.highlighter.hide();
-                    this.shader.shadeItemView(component);
+                    if (!component.isEmpty()) {
+                        this.shader.shadeItemView(component);
+                    }
                     return;
                 } else if (component.getType().equals(api.liveedit.image.ImageItemType.get())) {
                     var image = (<api.liveedit.image.ImageComponentView>component).getImage();
@@ -163,6 +165,9 @@ module LiveEdit {
             itemView.onMouseOverView(() => {
                 if (this.hasSelectedView() || LiveEdit.component.dragdropsort.DragDropSort.isDragging()) {
                     return;
+                }
+                if ((itemView instanceof api.liveedit.PageView) && itemView.isEmpty()) {
+                        return;
                 }
 
                 this.highlighter.highlightItemView(itemView);
