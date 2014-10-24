@@ -7,7 +7,6 @@ import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceUrlTestHelper;
 import com.enonic.wem.portal.PortalResponse;
 import com.enonic.wem.portal.internal.postprocess.PostProcessor;
-import com.enonic.wem.script.internal.ScriptEnvironment;
 import com.enonic.wem.script.internal.ScriptServiceImpl;
 
 public abstract class AbstractControllerTest
@@ -33,9 +32,8 @@ public abstract class AbstractControllerTest
         this.context = new PortalContextImpl();
         this.response = this.context.getResponse();
 
-        final ScriptEnvironment environment = new ScriptEnvironment();
         this.factory = new ControllerScriptFactoryImpl();
-        this.factory.setScriptService( new ScriptServiceImpl( environment ) );
+        this.factory.setScriptService( new ScriptServiceImpl() );
 
         this.postProcessor = Mockito.mock( PostProcessor.class );
         this.factory.setPostProcessor( this.postProcessor );

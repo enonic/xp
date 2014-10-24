@@ -88,11 +88,11 @@ public final class ScriptModuleScope
 
     public Command newCommand( final String name )
     {
-        return this.executor.getEnvironment().newCommand( name );
+        return this.executor.getInvoker().newCommand( name );
     }
 
     public void invokeCommand( final Command command )
     {
-        this.executor.getEnvironment().invokeCommand( command );
+        this.executor.getInvoker().invokeCommand( command );
     }
 }

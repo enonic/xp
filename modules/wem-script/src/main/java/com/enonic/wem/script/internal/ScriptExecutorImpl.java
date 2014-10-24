@@ -12,27 +12,32 @@ import com.google.common.base.Charsets;
 import com.google.common.base.Throwables;
 import com.google.common.io.Resources;
 
+import jdk.nashorn.api.scripting.NashornException;
+
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceProblemException;
+import com.enonic.wem.script.command.CommandInvoker;
 
 final class ScriptExecutorImpl
     implements ScriptExecutor
 {
+    private final static String GLOBAL_SCRIPT = "global.js";
+
     private final ScriptEngine engine;
 
     private final Invocable invocable;
 
     private final String globalScript;
 
-    private final ScriptEnvironment environment;
+    private final CommandInvoker invoker;
 
-    public ScriptExecutorImpl( final ScriptEngine engine, final ScriptEnvironment environment )
+    public ScriptExecutorImpl( final ScriptEngine engine, final CommandInvoker invoker )
     {
         this.engine = engine;
         this.invocable = (Invocable) this.engine;
-        this.globalScript = loadScript( "global.js" );
-        this.environment = environment;
+        this.globalScript = loadScript( GLOBAL_SCRIPT );
+        this.invoker = invoker;
     }
 
     @Override
@@ -49,11 +54,17 @@ final class ScriptExecutorImpl
             final Resource resource = Resource.from( script );
             final String source = resource.readString();
 
-            bindings.put( ScriptEngine.FILENAME, script.toString() );
+            bindings.put( ScriptEngine.FILENAME, GLOBAL_SCRIPT );
             this.engine.eval( this.globalScript, bindings );
+
+            bindings.put( ScriptEngine.FILENAME, script.toString() );
             this.engine.eval( source, bindings );
         }
         catch ( final ScriptException e )
+        {
+            throw handleException( e );
+        }
+        catch ( final RuntimeException e )
         {
             throw handleException( e );
         }
@@ -91,9 +102,9 @@ final class ScriptExecutorImpl
     }
 
     @Override
-    public ScriptEnvironment getEnvironment()
+    public CommandInvoker getInvoker()
     {
-        return this.environment;
+        return this.invoker;
     }
 
     private ResourceProblemException handleException( final ScriptException e )
@@ -103,5 +114,34 @@ final class ScriptExecutorImpl
         builder.lineNumber( e.getLineNumber() );
         builder.resource( ResourceKey.from( e.getFileName() ) );
         return builder.build();
+    }
+
+    private RuntimeException handleException( final RuntimeException e )
+    {
+        final StackTraceElement elem = findScriptTraceElement( e );
+        if ( elem == null )
+        {
+            return e;
+        }
+
+        final ResourceProblemException.Builder builder = ResourceProblemException.newBuilder();
+        builder.cause( e );
+        builder.lineNumber( elem.getLineNumber() );
+        builder.resource( ResourceKey.from( elem.getFileName() ) );
+        return builder.build();
+    }
+
+    private StackTraceElement findScriptTraceElement( final RuntimeException e )
+    {
+        final StackTraceElement[] elements = NashornException.getScriptFrames( e );
+        for ( final StackTraceElement element : elements )
+        {
+            if ( !element.getFileName().equals( GLOBAL_SCRIPT ) )
+            {
+                return element;
+            }
+        }
+
+        return null;
     }
 }

@@ -9,12 +9,12 @@ import com.enonic.wem.script.command.CommandHandler;
 import com.enonic.wem.script.command.CommandInvoker;
 import com.enonic.wem.script.command.CommandName;
 
-public final class ScriptEnvironment
+final class CommandInvokerImpl
     implements CommandInvoker
 {
     private final Map<String, CommandHandler> commandHandlers;
 
-    public ScriptEnvironment()
+    public CommandInvokerImpl()
     {
         this.commandHandlers = Maps.newConcurrentMap();
     }
@@ -42,22 +42,12 @@ public final class ScriptEnvironment
 
     public void addHandler( final CommandHandler handler )
     {
-        if ( handler == null )
-        {
-            return;
-        }
-
         final String name = getName( handler );
         this.commandHandlers.put( name, handler );
     }
 
     public void removeHandler( final CommandHandler handler )
     {
-        if ( handler == null )
-        {
-            return;
-        }
-
         final String name = getName( handler );
         this.commandHandlers.remove( name );
     }
