@@ -42,7 +42,7 @@ public class SecurityResourceTest
             thenReturn( userStores );
 
         String jsonString = request().
-            path( "userstore" ).get().getAsString();
+            path( "userstore/list" ).get().getAsString();
 
         assertJson( "get_userstores.json", jsonString );
     }
