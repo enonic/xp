@@ -7,7 +7,8 @@ module app.wizard.page.contextwindow.inspect {
     import Content = api.content.Content;
     import Page = api.content.page.Page;
     import PageModel = api.content.page.PageModel;
-    import Site = api.content.site.Site;
+    import SiteModel = api.content.site.SiteModel;
+    import LiveEditModel = api.liveedit.LiveEditModel;
     import ContentTypeName = api.schema.content.ContentTypeName;
     import PageTemplate = api.content.page.PageTemplate;
     import PageTemplateKey = api.content.page.PageTemplateKey;
@@ -21,20 +22,13 @@ module app.wizard.page.contextwindow.inspect {
     import PageDescriptorsJson = api.content.page.PageDescriptorsJson;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
 
-    export interface PageInspectionPanelConfig {
-
-        site: Site;
-
-        contentType:ContentTypeName;
-
-        pageModel:PageModel;
-    }
-
     export class PageInspectionPanel extends BaseInspectionPanel {
 
-        private site: Site;
+        private siteModel: SiteModel;
 
         private pageModel: PageModel;
+
+        private contentType: ContentTypeName;
 
         private pageTemplateSelector: PageTemplateSelector;
 
@@ -46,23 +40,19 @@ module app.wizard.page.contextwindow.inspect {
 
         private pageControllerDropdown: PageDescriptorDropdown;
 
-        constructor(config: PageInspectionPanelConfig) {
+        constructor() {
             super();
-            this.site = config.site;
-
-            this.pageControllerSelectorForm = this.buildPageControllerForm();
-            this.pageControllerSelectorForm.hide();
-
-            this.pageTemplateSelectorForm = this.buildPageTemplateForm(config);
-            this.pageTemplateSelectorForm.hide();
-
-            this.appendChild(this.pageControllerSelectorForm);
-            this.appendChild(this.pageTemplateSelectorForm);
         }
 
-        setModel(pageModel: PageModel) {
+        setModel(liveEditModel: LiveEditModel) {
 
-            this.pageModel = pageModel;
+            this.pageModel = liveEditModel.getPageModel();
+            this.siteModel = liveEditModel.getSiteModel();
+            this.contentType = liveEditModel.getContent().getType();
+
+            this.refreshPageTemplateForm();
+            this.refreshPageControllerForm()
+
             this.pageTemplateSelector.setModel(this.pageModel);
 
             if (this.pageModel.isPageTemplate()) {
@@ -130,21 +120,43 @@ module app.wizard.page.contextwindow.inspect {
             }
         }
 
-        private buildPageTemplateForm(config: PageInspectionPanelConfig): api.ui.form.Form {
+        private refreshPageTemplateForm() {
+
+            if (this.pageTemplateSelectorForm) {
+                this.pageControllerSelectorForm.remove();
+            }
+
+            this.pageTemplateSelectorForm = this.buildPageTemplateForm();
+            this.pageTemplateSelectorForm.hide();
+            this.appendChild(this.pageTemplateSelectorForm);
+        }
+
+        private buildPageTemplateForm(): api.ui.form.Form {
 
             var form = new api.ui.form.Form('form-view');
             this.pageTemplateSelector = new PageTemplateSelector({
                 form: form,
-                contentType: config.contentType,
-                siteId: config.site.getContentId()
+                contentType: this.contentType,
+                siteId: this.siteModel.getSiteId()
             });
 
             return form;
         }
 
+        private refreshPageControllerForm() {
+
+            if (this.pageControllerSelectorForm) {
+                this.pageControllerSelectorForm.remove();
+            }
+
+            this.pageControllerSelectorForm = this.buildPageControllerForm();
+            this.pageControllerSelectorForm.hide();
+            this.appendChild(this.pageControllerSelectorForm);
+        }
+
         private buildPageControllerForm(): api.ui.form.Form {
 
-            var moduleKeys = this.site.getModuleKeys(),
+            var moduleKeys = this.siteModel.getModuleKeys(),
                 request = new GetPageDescriptorsByModulesRequest(moduleKeys),
                 loader = new api.util.loader.BaseLoader<PageDescriptorsJson, PageDescriptor>(request);
 

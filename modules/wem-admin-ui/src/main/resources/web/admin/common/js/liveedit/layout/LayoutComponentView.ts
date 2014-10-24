@@ -23,6 +23,7 @@ module api.liveedit.layout {
 
         constructor(builder: LayoutComponentViewBuilder) {
             this.regionViews = [];
+            this.liveEditModel = builder.parentRegionView.liveEditModel;
             super(builder.setPlaceholder(new LayoutPlaceholder(this)));
             this.layoutComponent = builder.pageComponent;
 

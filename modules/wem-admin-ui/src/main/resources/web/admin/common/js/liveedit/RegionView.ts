@@ -6,6 +6,8 @@ module api.liveedit {
 
     export class RegionViewBuilder {
 
+        liveEditModel: LiveEditModel;
+
         parentElement: api.dom.Element;
 
         parentView: ItemView;
@@ -13,6 +15,11 @@ module api.liveedit {
         region: Region;
 
         element: api.dom.Element;
+
+        setLiveEditModel(value: LiveEditModel): RegionViewBuilder {
+            this.liveEditModel = value;
+            return this;
+        }
 
         setParentElement(value: api.dom.Element): RegionViewBuilder {
             this.parentElement = value;

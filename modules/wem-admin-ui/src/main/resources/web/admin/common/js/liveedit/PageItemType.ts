@@ -11,10 +11,6 @@ module api.liveedit {
             return PageItemType.INSTANCE;
         }
 
-        private content: Content;
-
-        private site: Site;
-
         constructor() {
             super("page", <ItemTypeConfigJson>{
                 cssSelector: '[data-live-edit-type=page]',
@@ -28,22 +24,6 @@ module api.liveedit {
                 },
                 contextMenuConfig: ['reset']
             });
-        }
-
-        setContent(content: Content) {
-            this.content = content;
-        }
-
-        setSite(site: Site) {
-            this.site = site;
-        }
-
-        getContent(): Content {
-            return this.content;
-        }
-
-        getSite(): Site {
-            return this.site;
         }
 
         createView(config: CreateItemViewConfig<any,any>): PageView {

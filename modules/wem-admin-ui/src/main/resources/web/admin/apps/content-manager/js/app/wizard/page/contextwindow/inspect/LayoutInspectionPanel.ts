@@ -1,10 +1,13 @@
 module app.wizard.page.contextwindow.inspect {
 
     import Content = api.content.Content;
-    import Site = api.content.site.Site;
+    import SiteModel = api.content.site.SiteModel;
+    import LiveEditModel = api.liveedit.LiveEditModel;
     import LayoutDescriptor = api.content.page.layout.LayoutDescriptor;
+    import DescriptorBasedPageComponent = api.content.page.DescriptorBasedPageComponent;
     import DescriptorKey = api.content.page.DescriptorKey;
     import LayoutComponent = api.content.page.layout.LayoutComponent;
+    import GetLayoutDescriptorByKeyRequest = api.content.page.layout.GetLayoutDescriptorByKeyRequest;
     import GetLayoutDescriptorsByModulesRequest = api.content.page.layout.GetLayoutDescriptorsByModulesRequest;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
     import LayoutDescriptorLoader = api.content.page.layout.LayoutDescriptorLoader;
@@ -13,11 +16,6 @@ module app.wizard.page.contextwindow.inspect {
     import Option = api.ui.selector.Option;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
     import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
-
-    export interface LayoutInspectionPanelConfig {
-
-        site: Site;
-    }
 
     export class LayoutInspectionPanel extends DescriptorBasedPageComponentInspectionPanel<LayoutComponent, LayoutDescriptor> {
 
@@ -31,38 +29,23 @@ module app.wizard.page.contextwindow.inspect {
 
         private layoutDescriptorChangedListeners: {(event: LayoutDescriptorChangedEvent): void;}[] = [];
 
-        private layoutDescriptors: {
-            [key: string]: LayoutDescriptor;
-        };
-
-        constructor(config: LayoutInspectionPanelConfig) {
+        constructor() {
             super(<PageComponentInspectionPanelConfig>{
                 iconClass: "live-edit-font-icon-layout icon-xlarge"
             });
 
-            this.layoutDescriptors = {};
+        }
 
-            var getLayoutDescriptorsRequest = new GetLayoutDescriptorsByModulesRequest(config.site.getModuleKeys());
-            var layoutDescriptorLoader = new LayoutDescriptorLoader(getLayoutDescriptorsRequest);
+        setModel(liveEditModel: LiveEditModel) {
+
+            var descriptorsRequest = new GetLayoutDescriptorsByModulesRequest(liveEditModel.getSiteModel().getModuleKeys());
+            var loader = new LayoutDescriptorLoader(descriptorsRequest);
             this.descriptorSelector = new LayoutDescriptorDropdown("layoutDescriptor", <LayoutDescriptorDropdownConfig>{
-                loader: layoutDescriptorLoader
+                loader: loader
             });
-
             var descriptorLabel = new api.dom.LabelEl("Descriptor", this.descriptorSelector, "descriptor-header");
             this.appendChild(descriptorLabel);
-
-            var descriptorsLoadedHandler = (event: LoadedDataEvent<LayoutDescriptor>) => {
-
-                var layoutDescriptors = event.getData();
-                // cache descriptors
-                this.layoutDescriptors = {};
-                layoutDescriptors.forEach((layoutDescriptor: LayoutDescriptor) => {
-                    this.layoutDescriptors[layoutDescriptor.getKey().toString()] = layoutDescriptor;
-                });
-            };
-            layoutDescriptorLoader.onLoadedData(descriptorsLoadedHandler);
-
-            layoutDescriptorLoader.load();
+            loader.load();
             this.descriptorSelector.onOptionSelected((event: OptionSelectedEvent<LayoutDescriptor>) => {
 
                 var option: Option<LayoutDescriptor> = event.getOption();
@@ -80,6 +63,13 @@ module app.wizard.page.contextwindow.inspect {
                 }
             });
             this.appendChild(this.descriptorSelector);
+
+            liveEditModel.getSiteModel().onPropertyChanged((event: api.PropertyChangedEvent) => {
+                if (event.getPropertyName() == SiteModel.PROPERTY_NAME_MODULE_CONFIGS) {
+                    descriptorsRequest.setModuleKeys(liveEditModel.getSiteModel().getModuleKeys());
+                    loader.load();
+                }
+            });
         }
 
         onLayoutDescriptorChanged(listener: {(event: LayoutDescriptorChangedEvent): void;}) {
@@ -99,23 +89,18 @@ module app.wizard.page.contextwindow.inspect {
             });
         }
 
-        getDescriptor(): LayoutDescriptor {
-            if (!this.getComponent().hasDescriptor()) {
-                return null;
-            }
-            return this.layoutDescriptors[this.getComponent().getDescriptor().toString()];
-        }
-
         setLayoutComponent(layoutView: LayoutComponentView) {
 
             this.layoutView = layoutView;
-            this.setComponent(layoutView.getPageComponent());
-            this.layoutComponent = layoutView.getPageComponent();
-
-            var layoutDescriptor = this.getDescriptor();
-            if (layoutDescriptor) {
-                this.descriptorSelector.setDescriptor(layoutDescriptor.getKey());
-                this.setupComponentForm(layoutView.getPageComponent(), layoutDescriptor);
+            this.layoutComponent = <LayoutComponent>layoutView.getPageComponent();
+            if (this.layoutComponent.hasDescriptor()) {
+                new GetLayoutDescriptorByKeyRequest(this.layoutComponent.getDescriptor()).sendAndParse().then((descriptor: LayoutDescriptor) => {
+                    this.setComponent(this.layoutComponent);
+                    this.descriptorSelector.setDescriptor(descriptor.getKey());
+                    this.setupComponentForm(this.layoutComponent, descriptor);
+                }).catch((reason: any) => {
+                    api.DefaultErrorHandler.handle(reason);
+                }).done();
             }
         }
     }

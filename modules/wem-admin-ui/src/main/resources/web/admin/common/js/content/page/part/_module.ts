@@ -11,5 +11,6 @@
 ///<reference path='PartDescriptorsResourceRequest.ts' />
 ///<reference path='GetPartDescriptorsByModulesRequest.ts' />
 ///<reference path='GetPartDescriptorsByModuleRequest.ts' />
+///<reference path='GetPartDescriptorByKeyRequest.ts' />
 ///<reference path='DefaultPartDescriptorResolver.ts' />
 ///<reference path='PartDescriptorCache.ts' />

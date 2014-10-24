@@ -1,34 +1,16 @@
 module api.liveedit {
 
-    import Content = api.content.Content;
-    import Site = api.content.site.Site;
-    import PageModel = api.content.page.PageModel;
-
     export class InitializeLiveEditEvent extends api.event.Event {
 
-        private content: Content;
+        private liveEditModel: LiveEditModel;
 
-        private site: Site;
-
-        private pageModel: PageModel;
-
-        constructor(content: Content, site: Site, pageModel: PageModel) {
+        constructor(liveEditModel: LiveEditModel) {
             super();
-            this.content = content;
-            this.site = site;
-            this.pageModel = pageModel;
+            this.liveEditModel = liveEditModel;
         }
 
-        getContent(): Content {
-            return this.content;
-        }
-
-        getSite(): Site {
-            return this.site;
-        }
-
-        getPageModel(): PageModel {
-            return this.pageModel;
+        getLiveEditModel(): LiveEditModel {
+            return this.liveEditModel;
         }
 
         static on(handler: (event: InitializeLiveEditEvent) => void, contextWindow: Window = window) {

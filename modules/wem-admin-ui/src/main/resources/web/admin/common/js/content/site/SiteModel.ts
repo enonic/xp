@@ -12,11 +12,7 @@ module api.content.site {
 
         private propertyChangedListeners: {(event: api.PropertyChangedEvent):void}[] = [];
 
-        constructor() {
-            this.moduleConfigs = [];
-        }
-
-        setSite(site: Site) {
+        constructor(site: Site) {
             this.siteId = site.getContentId();
             this.moduleConfigs = site.getModuleConfigs();
         }

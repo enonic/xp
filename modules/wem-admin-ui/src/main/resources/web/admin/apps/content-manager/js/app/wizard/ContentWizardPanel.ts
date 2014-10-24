@@ -15,6 +15,8 @@ module app.wizard {
     import Metadata = api.content.Metadata;
     import Page = api.content.page.Page;
     import Site = api.content.site.Site;
+    import SiteModel = api.content.site.SiteModel;
+    import LiveEditModel = api.liveedit.LiveEditModel;
     import ContentType = api.schema.content.ContentType;
     import PageTemplate = api.content.page.PageTemplate;
     import PageDescriptor = api.content.page.PageDescriptor;
@@ -43,7 +45,13 @@ module app.wizard {
 
         private parentContent: Content;
 
+        private defaultModels: page.DefaultModels;
+
         private site: Site;
+
+        private liveEditModel: LiveEditModel;
+
+        private siteModel: SiteModel;
 
         private contentType: ContentType;
 
@@ -95,6 +103,7 @@ module app.wizard {
 
             this.persistAsDraft = true;
             this.parentContent = params.parentContent;
+            this.defaultModels = params.defaultModels;
             this.site = params.site;
             this.contentType = params.contentType;
             this.displayNameScriptExecutor = new DisplayNameScriptExecutor();
@@ -153,14 +162,13 @@ module app.wizard {
             this.metadataStepFormByName = {};
 
             var isSiteOrWithinSite = this.site || this.createSite;
-            var hasPageTemplate = params.defaultModels && params.defaultModels.hasPageTemplate();
+            var hasPageTemplate = this.defaultModels && this.defaultModels.hasPageTemplate();
             var hasSiteAndPageTemplate = isSiteOrWithinSite && hasPageTemplate;
             var isPageTemplate = this.contentType.getContentTypeName().isPageTemplate();
             if (hasSiteAndPageTemplate || isPageTemplate) {
 
                 this.liveFormPanel = new page.LiveFormPanel(<page.LiveFormPanelConfig> {
                     contentWizardPanel: this,
-                    site: this.site,
                     contentType: this.contentType.getContentTypeName(),
                     defaultModels: params.defaultModels
                 });
@@ -311,7 +319,6 @@ module app.wizard {
                 if (viewedContent.equals(persistedContent)) {
 
                     if (this.liveFormPanel) {
-                        this.liveFormPanel.setContent(persistedContent);
                         this.liveFormPanel.loadPage();
                     }
                 }
@@ -382,7 +389,24 @@ module app.wizard {
                 formContextBuilder.setShowEmptyFormItemSetOccurrences(this.isItemPersisted());
                 this.formContext = formContextBuilder.build();
 
-                this.contentWizardStepForm.layout(this.formContext, content.getContentData(), this.contentType.getForm());
+                var contentData = content.getContentData();
+                contentData.onPropertyChanged((event: api.data.PropertyChangedEvent) => {
+                    if (content.isSite()) {
+
+                        if (event.getPath().toString().indexOf(".modules") == 0) {
+
+                            // Update SiteModel
+                            if (this.liveFormPanel) {
+                                var site = <Site>content;
+                                var viewedSiteBuilder = site.newBuilder();
+                                this.assembleViewedContent(viewedSiteBuilder);
+                                var viewedSite = viewedSiteBuilder.build();
+                                this.siteModel.setModules(viewedSite.getModuleConfigs());
+                            }
+                        }
+                    }
+                });
+                this.contentWizardStepForm.layout(this.formContext, contentData, this.contentType.getForm());
 
                 schemas.forEach((schema: MetadataSchema, index: number) => {
                     var metadata = content.getMetadata(schema.getMetadataSchemaName());
@@ -398,6 +422,20 @@ module app.wizard {
                 this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
 
                 if (this.liveFormPanel) {
+
+                    if (!this.liveEditModel) {
+
+                        if (this.createSite) {
+                            this.siteModel = new SiteModel(<Site>this.getPersistedItem());
+                        }
+                        else {
+                            this.siteModel = new SiteModel(this.site);
+                        }
+                        this.liveEditModel = new LiveEditModel(this.siteModel);
+                        this.liveEditModel.init(content, this.defaultModels.getPageTemplate());
+                        this.liveFormPanel.setModel(this.liveEditModel);
+                    }
+
                     this.doLayoutPage(content);
                     var deferred = wemQ.defer<void>();
                     deferred.resolve(null);
@@ -421,8 +459,7 @@ module app.wizard {
 
         private doLayoutPage(content: Content) {
 
-            this.liveFormPanel.setContent(content);
-            this.liveFormPanel.layout();
+            this.liveFormPanel.loadPage();
         }
 
         persistNewItem(): wemQ.Promise<Content> {

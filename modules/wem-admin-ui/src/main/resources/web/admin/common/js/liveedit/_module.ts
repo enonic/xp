@@ -1,3 +1,4 @@
+///<reference path='LiveEditModel.ts' />
 ///<reference path='ItemType.ts' />
 ///<reference path='CreateItemViewConfig.ts' />
 ///<reference path='ItemTypeConfig.ts' />

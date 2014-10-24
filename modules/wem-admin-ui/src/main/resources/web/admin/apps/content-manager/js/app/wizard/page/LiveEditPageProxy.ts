@@ -3,6 +3,8 @@ module app.wizard.page {
     import Content = api.content.Content;
     import Site = api.content.site.Site;
     import PageModel = api.content.page.PageModel;
+    import SiteModel = api.content.site.SiteModel;
+    import LiveEditModel = api.liveedit.LiveEditModel;
     import PageComponent = api.content.page.PageComponent;
     import UploadDialog = api.content.form.inputtype.image.UploadDialog;
 
@@ -31,19 +33,15 @@ module app.wizard.page {
     export interface LiveEditPageProxyConfig {
 
         liveFormPanel: LiveFormPanel;
-
-        site: Site;
     }
 
     export class LiveEditPageProxy {
 
         private baseUrl: string;
 
-        private pageModel: PageModel;
+        private liveEditModel: LiveEditModel;
 
         private liveFormPanel: LiveFormPanel;
-
-        private site: Site;
 
         private liveEditIFrame: api.dom.IFrameEl;
 
@@ -54,8 +52,6 @@ module app.wizard.page {
         private liveEditJQuery: JQueryStatic;
 
         private dragMask: api.ui.mask.DragMask;
-
-        private contentLoadedOnPage: Content;
 
         private loadedListeners: {(): void;}[] = [];
 
@@ -93,9 +89,9 @@ module app.wizard.page {
 
             this.baseUrl = api.util.UriHelper.getUri("portal/edit/stage/");
             this.liveFormPanel = config.liveFormPanel;
-            this.site = config.site;
 
             this.liveEditIFrame = new api.dom.IFrameEl("live-edit-frame");
+            console.log("LiveEditPageProxy.constructor ");
             this.liveEditIFrame.onLoaded(() => this.handleIFrameLoadedEvent());
             this.loadMask = new api.ui.mask.LoadMask(this.liveEditIFrame);
             this.dragMask = new api.ui.mask.DragMask(this.liveEditIFrame);
@@ -107,8 +103,8 @@ module app.wizard.page {
             });
         }
 
-        public setPage(pageModel: PageModel) {
-            this.pageModel = pageModel;
+        public setModel(liveEditModel: LiveEditModel) {
+            this.liveEditModel = liveEditModel;
         }
 
         public setWidth(value: string) {
@@ -165,16 +161,16 @@ module app.wizard.page {
             this.loadMask.remove();
         }
 
-        public load(content: Content) {
+        public load() {
 
-            this.contentLoadedOnPage = content;
             this.loadMask.show();
-            var pageUrl = this.baseUrl + content.getContentId().toString();
+            var pageUrl = this.baseUrl + this.liveEditModel.getContent().getContentId().toString();
             console.log("LiveEditPageProxy.load pageUrl: " + pageUrl);
             this.liveEditIFrame.setSrc(pageUrl);
         }
 
         private handleIFrameLoadedEvent() {
+
             var liveEditWindow = this.liveEditIFrame.getHTMLElement()["contentWindow"];
             if (liveEditWindow && liveEditWindow.wemjq) {
                 // Give loaded page same CONFIG.baseUri as in admin
@@ -188,7 +184,7 @@ module app.wizard.page {
 
                 this.loadMask.hide();
 
-                new api.liveedit.InitializeLiveEditEvent(this.contentLoadedOnPage, this.site, this.pageModel).fire(this.liveEditWindow);
+                new api.liveedit.InitializeLiveEditEvent(this.liveEditModel).fire(this.liveEditWindow);
 
 
             }

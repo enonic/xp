@@ -48,8 +48,7 @@ module LiveEdit {
 
             api.liveedit.InitializeLiveEditEvent.on((event: api.liveedit.InitializeLiveEditEvent) => {
 
-                api.liveedit.PageItemType.get().setContent(event.getContent());
-                api.liveedit.PageItemType.get().setSite(event.getSite());
+                var liveEditModel = event.getLiveEditModel();
 
                 var body = api.dom.Body.get().loadExistingChildren();
                 //body.traverse( (el: api.dom.Element) => {
@@ -57,10 +56,8 @@ module LiveEdit {
                 //});
 
                 this.pageView = new PageViewBuilder().
-                    setSite(event.getSite()).
                     setItemViewProducer(new ItemViewIdProducer()).
-                    setPage(event.getPageModel()).
-                    setContent(event.getContent()).
+                    setLiveEditModel(liveEditModel).
                     setElement(body).
                     build();
 
@@ -167,7 +164,7 @@ module LiveEdit {
                     return;
                 }
                 if ((itemView instanceof api.liveedit.PageView) && itemView.isEmpty()) {
-                        return;
+                    return;
                 }
 
                 this.highlighter.highlightItemView(itemView);

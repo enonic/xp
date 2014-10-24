@@ -45,7 +45,7 @@ public class ElasticsearchIndexService
 
     private ElasticsearchDao elasticsearchDao;
 
-    private final TimeValue WAIT_FOR_YELLOW_TIMEOUT = TimeValue.timeValueSeconds( 5 );
+    private final TimeValue WAIT_FOR_YELLOW_TIMEOUT = TimeValue.timeValueSeconds( 1 );
 
     private static final TimeValue CLUSTER_NOWAIT_TIMEOUT = TimeValue.timeValueSeconds( 5 );
 

@@ -12,6 +12,7 @@
 ///<reference path='LayoutDescriptorsResourceRequest.ts' />
 ///<reference path='GetLayoutDescriptorsByModuleRequest.ts' />
 ///<reference path='GetLayoutDescriptorsByModulesRequest.ts' />
+///<reference path='GetLayoutDescriptorByKeyRequest.ts' />
 ///<reference path='DefaultLayoutDescriptorResolver.ts' />
 ///<reference path='LayoutDescriptorDropdown.ts' />
 ///<reference path='LayoutDescriptorComboBox.ts' />

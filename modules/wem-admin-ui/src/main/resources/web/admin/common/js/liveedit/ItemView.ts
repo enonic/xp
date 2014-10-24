@@ -11,6 +11,8 @@ module api.liveedit {
 
     export class ItemViewBuilder {
 
+        liveEditModel: LiveEditModel;
+
         itemViewIdProducer: ItemViewIdProducer;
 
         type: ItemType;
@@ -24,6 +26,11 @@ module api.liveedit {
         contextMenuActions: api.ui.Action[];
 
         contextMenuTitle: ItemViewContextMenuTitle;
+
+        setLiveEditModel(value: LiveEditModel): ItemViewBuilder {
+            this.liveEditModel = value;
+            return this;
+        }
 
         setItemViewIdProducer(value: ItemViewIdProducer): ItemViewBuilder {
             this.itemViewIdProducer = value;
@@ -63,6 +70,8 @@ module api.liveedit {
 
     export class ItemView extends api.dom.Element {
 
+        liveEditModel: LiveEditModel;
+
         private itemViewIdProducer: ItemViewIdProducer;
 
         private type: ItemType;
@@ -95,6 +104,7 @@ module api.liveedit {
             this.debug = false;
             this.type = builder.type;
             this.parentItemView = builder.parentView;
+            this.liveEditModel = builder.liveEditModel ? builder.liveEditModel : builder.parentView.liveEditModel;
             this.itemViewIdProducer = builder.itemViewIdProducer;
 
             var props: api.dom.ElementBuilder = null;

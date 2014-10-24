@@ -11,6 +11,10 @@ module api.content.page.layout {
             this.moduleKeys = moduleKeys;
         }
 
+        setModuleKeys(moduleKeys: api.module.ModuleKey[]) {
+            this.moduleKeys = moduleKeys;
+        }
+
         getParams(): Object {
             throw new Error("Unexpected call");
         }

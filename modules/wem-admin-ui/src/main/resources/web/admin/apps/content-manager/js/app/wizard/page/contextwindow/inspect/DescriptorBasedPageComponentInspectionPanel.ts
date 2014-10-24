@@ -22,26 +22,13 @@ module app.wizard.page.contextwindow.inspect {
             this.formView = null;
         }
 
-        setComponent(component: COMPONENT) {
+        setComponent(component: COMPONENT, descriptor?: Descriptor) {
 
             super.setComponent(component);
 
-            if (this.hasDescriptor()) {
-                this.setMainName(this.getDescriptor().getDisplayName().toString());
+            if (descriptor) {
+                this.setMainName(descriptor.getDisplayName().toString());
             }
-        }
-
-        hasDescriptor(): boolean {
-            if (this.getDescriptor()) {
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
-
-        getDescriptor(): DESCRIPTOR {
-            throw new Error("Must be implemented by inheritors")
         }
 
         setupComponentForm(component: DescriptorBasedPageComponent, descriptor: Descriptor) {

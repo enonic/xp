@@ -3,6 +3,7 @@ module api.liveedit.layout {
     import PageComponentSetDescriptorEvent = api.liveedit.PageComponentSetDescriptorEvent;
     import LayoutItemType = api.liveedit.layout.LayoutItemType;
     import PageItemType = api.liveedit.PageItemType;
+    import SiteModel = api.content.site.SiteModel;
 
     export class LayoutPlaceholder extends PageComponentPlaceholder {
 
@@ -17,7 +18,7 @@ module api.liveedit.layout {
             this.onClicked((event: MouseEvent) => {
                 event.stopPropagation();
             });
-            var request = new api.content.page.layout.GetLayoutDescriptorsByModulesRequest(PageItemType.get().getSite().getModuleKeys());
+            var request = new api.content.page.layout.GetLayoutDescriptorsByModulesRequest(layoutView.liveEditModel.getSiteModel().getModuleKeys());
             var loader = new api.content.page.layout.LayoutDescriptorLoader(request);
             this.comboBox = new api.content.page.layout.LayoutDescriptorComboBox(loader);
             loader.load();
@@ -28,6 +29,13 @@ module api.liveedit.layout {
                 this.layoutComponentView.showLoadingSpinner();
                 var descriptor: api.content.page.Descriptor = event.getOption().displayValue;
                 new PageComponentSetDescriptorEvent(descriptor, layoutView).fire();
+            });
+
+            layoutView.liveEditModel.getSiteModel().onPropertyChanged((event: api.PropertyChangedEvent) => {
+                if (event.getPropertyName() == SiteModel.PROPERTY_NAME_MODULE_CONFIGS) {
+                    request.setModuleKeys(layoutView.liveEditModel.getSiteModel().getModuleKeys());
+                    loader.load();
+                }
             });
         }
 

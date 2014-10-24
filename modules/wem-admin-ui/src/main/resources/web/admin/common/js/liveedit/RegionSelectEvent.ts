@@ -7,9 +7,9 @@ module api.liveedit {
 
         private pageItemView: RegionView;
 
-        constructor(pageItemView: RegionView) {
+        constructor(regionView: RegionView) {
             super();
-            this.pageItemView = pageItemView;
+            this.pageItemView = regionView;
         }
 
         getRegionView(): RegionView {

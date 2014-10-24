@@ -22,6 +22,7 @@ module api.liveedit.text {
 
         constructor(builder: TextComponentViewBuilder) {
             this.editing = false;
+            this.liveEditModel = builder.parentRegionView.liveEditModel;
             this.textPlaceholder = new TextPlaceholder(this);
             super(builder.
                 setContextMenuActions(this.createTextContextMenuActions()).

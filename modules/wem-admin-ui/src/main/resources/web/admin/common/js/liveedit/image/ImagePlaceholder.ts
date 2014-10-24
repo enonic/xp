@@ -13,16 +13,16 @@ module api.liveedit.image {
 
         private uploadButton: api.dom.ButtonEl;
 
-        constructor(imageComponentView: ImageComponentView) {
+        constructor(imageView: ImageComponentView) {
             super();
-            this.imageComponentView = imageComponentView;
+            this.imageComponentView = imageView;
             this.onClicked((event: MouseEvent) => {
                 event.stopPropagation();
             });
 
             var imageUploadHandler = (event: ImageUploadedEvent) => {
                 if (event.getTargetImagePlaceholder() === this) {
-                    this.createImageContent(event.getUploadedItem());
+                    this.createImageContent(event.getUploadedItem(), imageView);
                 }
             };
             ImageUploadedEvent.on(imageUploadHandler);
@@ -59,7 +59,7 @@ module api.liveedit.image {
 
                 new ImageComponentSetImageEvent().
                     setImageId(event.getOption().displayValue.getContentId()).
-                    setImageComponentView(imageComponentView).
+                    setImageComponentView(imageView).
                     setName(event.getOption().displayValue.getDisplayName()).
                     fire();
 
@@ -67,7 +67,7 @@ module api.liveedit.image {
         }
 
 
-        private createImageContent(uploadItem: api.ui.uploader.UploadItem) {
+        private createImageContent(uploadItem: api.ui.uploader.UploadItem, imageView: ImageComponentView) {
 
             this.imageComponentView.showLoadingSpinner();
 
@@ -91,7 +91,7 @@ module api.liveedit.image {
 
                     var createContentRequest = new api.content.CreateContentRequest().
                         setDraft(false).
-                        setParent(PageItemType.get().getContent().getPath()).
+                        setParent(imageView.liveEditModel.getContent().getPath()).
                         setName(api.content.ContentName.fromString(api.content.ContentName.ensureValidContentName(attachmentName.toString()))).
                         setContentType(contentType.getContentTypeName()).
                         setDisplayName(attachmentName.toString()).

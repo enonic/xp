@@ -1,50 +1,39 @@
 module app.wizard.page.contextwindow.inspect {
 
-    import Site = api.content.site.Site;
+    import SiteModel = api.content.site.SiteModel;
     import PartDescriptor = api.content.page.part.PartDescriptor;
-    import GetPartDescriptorsByModulesRequest = api.content.page.part.GetPartDescriptorsByModulesRequest;
+    import DescriptorBasedPageComponent = api.content.page.DescriptorBasedPageComponent;
+    import GetPartDescriptorByKeyRequest = api.content.page.part.GetPartDescriptorByKeyRequest;
     import PartComponent = api.content.page.part.PartComponent;
     import DescriptorKey = api.content.page.DescriptorKey;
     import PartComponentView = api.liveedit.part.PartComponentView;
-
-    export interface PartInspectionPanelConfig {
-
-        site: Site;
-    }
+    import LiveEditModel = api.liveedit.LiveEditModel;
 
     export class PartInspectionPanel extends DescriptorBasedPageComponentInspectionPanel<PartComponent, PartDescriptor> {
 
-        private partDescriptors: {
-            [key: string]: PartDescriptor;
-        };
+        private liveEditModel: LiveEditModel;
 
-        constructor(config: PartInspectionPanelConfig) {
+        constructor() {
             super(<PageComponentInspectionPanelConfig>{
                 iconClass: "live-edit-font-icon-part icon-xlarge"
             });
-
-            this.partDescriptors = {};
-
-            var getPartDescriptorsRequest = new GetPartDescriptorsByModulesRequest(config.site.getModuleKeys());
-            getPartDescriptorsRequest.sendAndParse().done((results: PartDescriptor[]) => {
-                results.forEach((partDescriptor: PartDescriptor) => {
-                    this.partDescriptors[partDescriptor.getKey().toString()] = partDescriptor;
-                });
-            });
         }
 
-        getDescriptor(): PartDescriptor {
-            if (!this.getComponent().hasDescriptor()) {
-                return null;
-            }
-            return this.partDescriptors[this.getComponent().getDescriptor().toString()];
+        setModel(liveEditModel: LiveEditModel) {
+            this.liveEditModel = liveEditModel;
         }
 
         setPartComponent(partView: PartComponentView) {
-            this.setComponent(partView.getPageComponent());
 
-            var partDescriptor = this.getDescriptor();
-            this.setupComponentForm(partView.getPageComponent(), partDescriptor);
+            var component = <PartComponent>partView.getPageComponent();
+            if (component.hasDescriptor()) {
+                new GetPartDescriptorByKeyRequest(component.getDescriptor()).sendAndParse().then((descriptor: PartDescriptor) => {
+                    this.setComponent(component);
+                    this.setupComponentForm(component, descriptor);
+                }).catch((reason: any) => {
+                    api.DefaultErrorHandler.handle(reason);
+                }).done();
+            }
         }
     }
 }

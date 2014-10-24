@@ -10,33 +10,19 @@ module api.liveedit {
 
     export class PageViewBuilder {
 
-        site: Site;
+        liveEditModel: LiveEditModel;
 
         itemViewProducer: ItemViewIdProducer;
 
-        pageModel: PageModel;
-
-        content: Content;
-
         element: api.dom.Body;
 
-        setSite(value: Site): PageViewBuilder {
-            this.site = value;
+        setLiveEditModel(value: LiveEditModel): PageViewBuilder {
+            this.liveEditModel = value;
             return this;
         }
 
         setItemViewProducer(value: ItemViewIdProducer): PageViewBuilder {
             this.itemViewProducer = value;
-            return this;
-        }
-
-        setPage(pageModel: PageModel): PageViewBuilder {
-            this.pageModel = pageModel;
-            return this;
-        }
-
-        setContent(value: Content): PageViewBuilder {
-            this.content = value;
             return this;
         }
 
@@ -52,12 +38,6 @@ module api.liveedit {
 
     export class PageView extends ItemView {
 
-        private site: Site;
-
-        private content: Content;
-
-        private pageModel: PageModel;
-
         private placeholder: PagePlaceholder;
 
         private regionViews: RegionView[];
@@ -70,25 +50,24 @@ module api.liveedit {
 
         constructor(builder: PageViewBuilder) {
 
-            this.site = builder.site;
+            this.liveEditModel = builder.liveEditModel;
             this.regionViews = [];
             this.viewsById = {};
             this.itemViewAddedListeners = [];
             this.itemViewRemovedListeners = [];
-
             super(new ItemViewBuilder().
+                setLiveEditModel(builder.liveEditModel).
                 setItemViewIdProducer(builder.itemViewProducer).
                 setType(PageItemType.get()).
                 setElement(builder.element).
                 setParentElement(builder.element.getParentElement()).
                 setContextMenuActions(this.createPageContextMenuActions()).
-                setContextMenuTitle(new PageViewContextMenuTitle(builder.content)));
-            this.setContent(builder.content);
-            this.pageModel = builder.pageModel;
+                setContextMenuTitle(new PageViewContextMenuTitle(builder.liveEditModel.getContent())));
+            this.setTooltipObject(builder.liveEditModel.getContent());
             this.parseItemViews();
 
-            var arrayofItemViews = this.toItemViewArray();
-            arrayofItemViews.forEach((itemView: ItemView) => {
+            var arrayOfItemViews = this.toItemViewArray();
+            arrayOfItemViews.forEach((itemView: ItemView) => {
                 this.registerItemView(itemView);
             });
 
@@ -105,10 +84,6 @@ module api.liveedit {
             this.refreshPlaceholder();
         }
 
-        getPageModel(): PageModel {
-            return this.pageModel;
-        }
-
         private refreshPlaceholder() {
             if (this.conditionedForEmpty()) {
                 this.appendChild(this.placeholder);
@@ -119,35 +94,24 @@ module api.liveedit {
 
         conditionedForEmpty(): boolean {
 
-            if (this.content.isPageTemplate()) {
-                return !this.pageModel.hasController();
+            if (this.liveEditModel.getContent().isPageTemplate()) {
+                return !this.liveEditModel.getPageModel().hasController();
             }
             else {
-                return !this.pageModel.hasTemplate() && !this.pageModel.isUsingDefaultTemplate();
+                return !this.liveEditModel.getPageModel().hasTemplate() && !this.liveEditModel.getPageModel().isUsingDefaultTemplate();
             }
         }
 
         private createPageContextMenuActions() {
             var actions: api.ui.Action[] = [];
-            actions.push(new api.ui.Action('Reset').onExecuted(() => {
+            actions.push(new api.ui.Action('Empty').onExecuted(() => {
                 // TODO
             }));
             return actions;
         }
 
         getName(): string {
-            return this.content ? this.content.getDisplayName() : "[No name]";
-        }
-
-        getSite(): Site {
-            return this.site;
-        }
-
-        private setContent(content: Content) {
-            this.content = content;
-            if (content) {
-                this.setTooltipObject(content);
-            }
+            return this.liveEditModel.getContent() ? this.liveEditModel.getContent().getDisplayName() : "[No name]";
         }
 
         getParentItemView(): ItemView {
@@ -292,7 +256,7 @@ module api.liveedit {
 
         private doParseItemViews(parentElement?: api.dom.Element) {
 
-            var regions: Region[] = this.pageModel.getRegions().getRegions();
+            var regions: Region[] = this.liveEditModel.getPageModel().getRegions().getRegions();
             var children = parentElement ? parentElement.getChildren() : this.getChildren();
             var regionIndex = 0;
             children.forEach((element: api.dom.Element) => {
@@ -302,6 +266,7 @@ module api.liveedit {
                         var region = regions[regionIndex++];
                         if (region) {
                             var regionView = new RegionView(new RegionViewBuilder().
+                                setLiveEditModel(this.liveEditModel).
                                 setParentView(this).
                                 setRegion(region).
                                 setElement(element));
