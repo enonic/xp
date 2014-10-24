@@ -260,11 +260,11 @@ module app.browse {
             this.updateNode(new ContentSummaryAndCompareStatus(content, null));
         }
 
-        appendContentNode(content: api.content.Content) {
+        appendContentNode(content: api.content.Content, nextToSelection?: boolean) {
 
             this.fetchById(content.getContentId())
                 .then((data: ContentSummaryAndCompareStatus) => {
-                    this.appendNode(data);
+                    this.appendNode(data, nextToSelection);
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 });

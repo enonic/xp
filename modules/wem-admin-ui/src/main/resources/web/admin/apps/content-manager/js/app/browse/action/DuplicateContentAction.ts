@@ -8,12 +8,19 @@ module app.browse.action {
             super("Duplicate");
             this.setEnabled(false);
             this.onExecuted(() => {
-                var contentSummaries: api.content.ContentSummary[]
-                    = grid.getSelectedDataList().map((elem) => {
-                    return elem.getContentSummary();
+                grid.getSelectedDataList().forEach((elem) => {
+                    this.duplicate(elem.getContentSummary());
                 });
-                new DuplicateContentEvent(contentSummaries).fire();
             });
+        }
+
+        private duplicate(source: api.content.ContentSummary) {
+            new api.content.DuplicateContentRequest(source.getContentId()).
+                sendAndParse().then((content: api.content.Content) => {
+
+                    api.notify.showFeedback('Content [' + source.getPath() + '] was duplicated!');
+                    new api.content.ContentDuplicatedEvent(content, source).fire();
+                })
         }
     }
 }
