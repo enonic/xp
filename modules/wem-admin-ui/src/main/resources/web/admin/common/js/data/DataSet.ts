@@ -6,6 +6,8 @@ module api.data {
 
         private dataArray: Data[] = [];
 
+        private propertyChangedListeners: {(event: PropertyChangedEvent):void}[] = [];
+
         constructor(name: string) {
             super(name);
         }
@@ -28,31 +30,41 @@ module api.data {
             var dataId = new DataId(data.getName(), index);
             this.dataById[dataId.toString()] = data;
             this.dataArray.push(data);
+
+            if (api.ObjectHelper.iFrameSafeInstanceOf(data, Property)) {
+                var property = <Property>data;
+                property.onPropertyChanged((event: PropertyChangedEvent) => {
+                    this.notifyPropertyChangedEvent(event);
+                });
+
+                this.notifyPropertyChangedEvent(new PropertyChangedEvent(PropertyChangedEventType.ADDED, property.getPath(),
+                    property.getValue()));
+            }
+            else if (api.ObjectHelper.iFrameSafeInstanceOf(data, DataSet)) {
+                var dataSet = <DataSet>data;
+                dataSet.onPropertyChanged((event: PropertyChangedEvent) => {
+                    this.notifyPropertyChangedEvent(event)
+                });
+            }
+        }
+
+        onPropertyChanged(listener: {(event: PropertyChangedEvent): void;}) {
+            this.propertyChangedListeners.push(listener);
+        }
+
+        unPropertyChanged(listener: {(event: PropertyChangedEvent): void;}) {
+            this.propertyChangedListeners =
+            this.propertyChangedListeners.filter((curr) => (curr != listener));
+        }
+
+        private notifyPropertyChangedEvent(event: PropertyChangedEvent) {
+            this.propertyChangedListeners.forEach((listener) => listener(event));
         }
 
         addProperty(name: string, value: Value): Property {
             var property = new Property(name, value);
             this.addData(property);
             return property;
-        }
-
-        setProperty(dataId: DataId, value: Value): Property {
-            var existing = this.getPropertyById(dataId);
-            existing.setValue(value)
-            return existing;
-        }
-
-        setData(dataArray: Data[]) {
-
-            var newDataById: {[s:string] : Data;} = {};
-            dataArray.forEach((data: Data, index: number) => {
-                data.setParent(this);
-                data.setArrayIndex(index);
-                newDataById[data.getId().toString()] = data;
-            });
-
-            this.dataArray = dataArray;
-            this.dataById = newDataById;
         }
 
         moveDataByName(name: string, index: number, destinationIndex: number) {
@@ -98,6 +110,11 @@ module api.data {
                 this.dataById[data.getId().toString()] = data;
             }
 
+            if (api.ObjectHelper.iFrameSafeInstanceOf(dataToRemove, Property)) {
+                var propertyToRemove = <Property>dataToRemove;
+                this.notifyPropertyChangedEvent(new PropertyChangedEvent(PropertyChangedEventType.REMOVED, propertyToRemove.getPath(),
+                    propertyToRemove.getValue()));
+            }
             return dataToRemove;
         }
 

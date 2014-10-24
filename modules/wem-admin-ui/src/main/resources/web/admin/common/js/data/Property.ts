@@ -7,10 +7,13 @@ module api.data {
 
         private value: Value;
 
+        private propertyChangedListeners: {(event: PropertyChangedEvent):void}[];
+
         constructor(name: string, value: Value) {
             api.util.assertNotNull(value, "value of a Property cannot be null");
             super(name);
             this.value = value;
+            this.propertyChangedListeners = [];
         }
 
         hasNonNullValue(): boolean {
@@ -51,7 +54,11 @@ module api.data {
 
         setValue(value: Value) {
             api.util.assertNotNull(value, "value of a Property cannot be null");
+            var oldValue = this.value;
             this.value = value;
+            if (!value.equals(oldValue)) {
+                this.notifyPropertyChangedEvent(new PropertyChangedEvent(PropertyChangedEventType.CHANGED, this.getPath(), value));
+            }
         }
 
         getValue(): Value {
@@ -112,6 +119,19 @@ module api.data {
             var idAsString = this.getId().toString();
             var valueAsString = this.getValue().asString();
             console.log(thisIndent + idAsString + ": " + valueAsString);
+        }
+
+        onPropertyChanged(listener: {(event: PropertyChangedEvent): void;}) {
+            this.propertyChangedListeners.push(listener);
+        }
+
+        unPropertyChanged(listener: {(event: PropertyChangedEvent): void;}) {
+            this.propertyChangedListeners =
+            this.propertyChangedListeners.filter((curr) => (curr != listener));
+        }
+
+        private notifyPropertyChangedEvent(event: PropertyChangedEvent) {
+            this.propertyChangedListeners.forEach((listener) => listener(event));
         }
 
         static fromJson(json: api.data.json.PropertyJson) {
