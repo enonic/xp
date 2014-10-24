@@ -81,7 +81,7 @@
   </bean>
 
   <bean id="securityResource" class="com.enonic.wem.admin.rest.resource.security.SecurityResource">
-    <property name="securityResource" ref="securityResource"/>
+    <property name="securityService" ref="securityService"/>
   </bean>
 
   <bean id="pageResource" class="com.enonic.wem.admin.rest.resource.content.page.PageResource">

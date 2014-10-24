@@ -25,15 +25,9 @@ public class SecurityResource
         return new UserStoresJson( userStores );
     }
 
-
     public void setSecurityService( final SecurityService securityService )
     {
         this.securityService = securityService;
-    }
-
-    public SecurityService getIdentityService()
-    {
-        return securityService;
     }
 
 }
