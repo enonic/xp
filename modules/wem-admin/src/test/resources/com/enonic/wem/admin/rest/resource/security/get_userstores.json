@@ -1,10 +1,12 @@
-[
+{
+  "userStores": [
     {
-        "displayName": "Local LDAP",
-        "key": "local"
+      "displayName": "Local LDAP",
+      "key": "local"
     },
     {
-        "displayName": "File based user store",
-        "key": "file-store"
+      "displayName": "File based user store",
+      "key": "file-store"
     }
-]
+  ]
+}
