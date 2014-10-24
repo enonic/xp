@@ -50,6 +50,10 @@ module api.module.inputtype.moduleconfigurator {
                 var newValue = new Value(data, ValueTypes.DATA);
                 listener(new ValueChangedEvent(newValue));
             });
+
+            moduleConfig.onModuleDeselected((event: api.module.inputtype.moduleconfigurator.ModuleDeselectedEvent) => {
+                listener(new ValueChangedEvent(new Value(null, ValueTypes.DATA)));
+            });
         }
 
         getValue(occurrence: api.dom.Element): Value {

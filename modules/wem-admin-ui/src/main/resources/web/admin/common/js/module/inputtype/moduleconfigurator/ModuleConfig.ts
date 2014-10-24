@@ -53,10 +53,13 @@ module api.module.inputtype.moduleconfigurator {
 
         private moduleSelectedListeners: {(event: ModuleSelectedEvent): void;}[];
 
+        private moduleDeselectedListeners: {(event: ModuleDeselectedEvent): void;}[];
+
         constructor(builder: ModuleConfigBuilder) {
             super("module-config");
 
             this.moduleSelectedListeners = [];
+            this.moduleDeselectedListeners = [];
 
             this.comboBox = new ModuleComboBox(1);
             this.comboBox.onOptionSelected((event: OptionSelectedEvent<Module>) => {
@@ -66,8 +69,8 @@ module api.module.inputtype.moduleconfigurator {
             });
 
             if (!!builder.moduleKey) {
-                this.comboBox.getLoader().onLoadedData((event:LoadedDataEvent<Module>) => {
-                    var modules:Module[] = event.getData();
+                this.comboBox.getLoader().onLoadedData((event: LoadedDataEvent<Module>) => {
+                    var modules: Module[] = event.getData();
                     for (var i = 0; i < modules.length; i++) {
                         if (modules[i].getId() === builder.moduleKey) {
                             this.selectedModule = modules[i];
@@ -79,8 +82,8 @@ module api.module.inputtype.moduleconfigurator {
                 });
             }
 
-            this.comboBox.onSelectedOptionRemoved(() => {
-                this.removeFormView();
+            this.comboBox.onSelectedOptionRemoved((option: api.ui.selector.combobox.SelectedOption<Module>) => {
+                this.removeFormView(option.getOption().displayValue);
             });
 
             this.appendChild(this.comboBox);
@@ -125,11 +128,11 @@ module api.module.inputtype.moduleconfigurator {
                     this.comboBox.deselect(this.selectedOption);
                 });
 
-                this.notifyOptionSelected(new ModuleSelectedEvent(this.selectedModule, this.formView));
+                this.notifyModuleSelected(new ModuleSelectedEvent(this.selectedModule, this.formView));
             }
         }
 
-        removeFormView() {
+        removeFormView(moduleDeselected: Module) {
             this.comboBox.show();
 
             if (this.moduleView) {
@@ -141,6 +144,8 @@ module api.module.inputtype.moduleconfigurator {
 
             this.selectedModule = null;
             this.selectedOption = null;
+
+            this.notifyModuleDeselected(new ModuleDeselectedEvent(moduleDeselected, this.formView))
         }
 
         getComboBox(): ModuleComboBox {
@@ -169,8 +174,24 @@ module api.module.inputtype.moduleconfigurator {
             });
         }
 
-        private notifyOptionSelected(event: ModuleSelectedEvent) {
+        private notifyModuleSelected(event: ModuleSelectedEvent) {
             this.moduleSelectedListeners.forEach((listener) => {
+                listener(event);
+            });
+        }
+
+        onModuleDeselected(listener: {(event: ModuleDeselectedEvent): void;}) {
+            this.moduleDeselectedListeners.push(listener);
+        }
+
+        unModuleDeselected(listener: {(event: ModuleDeselectedEvent): void;}) {
+            this.moduleDeselectedListeners.filter((currentListener: (event: ModuleDeselectedEvent) =>void) => {
+                return listener != currentListener;
+            });
+        }
+
+        private notifyModuleDeselected(event: ModuleDeselectedEvent) {
+            this.moduleDeselectedListeners.forEach((listener) => {
                 listener(event);
             });
         }
