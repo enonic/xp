@@ -85,7 +85,7 @@ module app.browse.filter {
 
             new ContentQueryRequest<ContentSummaryJson,ContentSummary>(contentQuery).
                 setExpand(api.rest.Expand.SUMMARY).
-                sendAndParse().done((contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
+                sendAndParse().then((contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
                     var serchStrValue: string = event.getSearchInputValues().getTextSearchFieldValue();
                     if (serchStrValue != null && serchStrValue.length > 0) {
                         var contentQuery: ContentQuery = new ContentQuery();
@@ -94,9 +94,9 @@ module app.browse.filter {
                         this.appendContentTypesAggregationQuery(contentQuery);
                         this.appendLastModifiedAggregationQuery(contentQuery);
 
-                        new ContentQueryRequest<ContentSummaryJson,ContentSummary>(contentQuery).
+                        return new ContentQueryRequest<ContentSummaryJson,ContentSummary>(contentQuery).
                             setExpand(api.rest.Expand.SUMMARY).
-                            sendAndParse().done((filterSearchResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
+                            sendAndParse().then((filterSearchResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
                                 this.updateAggregations(filterSearchResult.getAggregations(), true);
                                 new ContentBrowseSearchEvent(contentQueryResult.getContents()).fire();
                             });
@@ -108,7 +108,9 @@ module app.browse.filter {
                             new ContentBrowseSearchEvent(contentQueryResult.getContents()).fire();
                         }
                     }
-                });
+                }).catch((reason: any) => {
+                    api.DefaultErrorHandler.handle(reason);
+                }).done();
         }
 
         private initAggregationGroupView(aggregationGroupView: AggregationGroupView[]) {
@@ -116,7 +118,7 @@ module app.browse.filter {
             var contentQuery: ContentQuery = this.buildAggregationsQuery(new QueryExpr(null));
 
             new ContentQueryRequest<ContentSummaryJson,ContentSummary>(contentQuery).
-                sendAndParse().done((contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
+                sendAndParse().then((contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
 
                     this.updateAggregations(contentQueryResult.getAggregations(), false);
 
@@ -124,7 +126,9 @@ module app.browse.filter {
                         aggregationGroupView.initialize();
                     })
                 }
-            );
+            ).catch((reason: any) => {
+                    api.DefaultErrorHandler.handle(reason);
+                }).done();
         }
 
         private resetFacets(supressEvent?: boolean, doResetAll?: boolean) {
@@ -132,7 +136,7 @@ module app.browse.filter {
             var contentQuery: ContentQuery = this.buildAggregationsQuery(new QueryExpr(null));
 
             new ContentQueryRequest<ContentSummaryJson,ContentSummary>(contentQuery).
-                sendAndParse().done((contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
+                sendAndParse().then((contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
 
                     this.updateAggregations(contentQueryResult.getAggregations(), doResetAll);
 
@@ -142,7 +146,9 @@ module app.browse.filter {
                         new ContentBrowseRefreshEvent().fire();
                     }
                 }
-            );
+            ).catch((reason: any) => {
+                    api.DefaultErrorHandler.handle(reason);
+                }).done();
         }
 
         private buildAggregationsQuery(queryExpr: QueryExpr): ContentQuery {
