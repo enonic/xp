@@ -2,9 +2,6 @@ package com.enonic.wem.api.security;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.security.UserStore;
-import com.enonic.wem.api.security.UserStoreKey;
-
 import static org.junit.Assert.*;
 
 public class UserStoreTest

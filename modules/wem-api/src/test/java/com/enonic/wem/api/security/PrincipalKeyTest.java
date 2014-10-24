@@ -2,10 +2,6 @@ package com.enonic.wem.api.security;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.api.security.PrincipalType;
-import com.enonic.wem.api.security.UserStoreKey;
-
 import static org.junit.Assert.*;
 
 public class PrincipalKeyTest
