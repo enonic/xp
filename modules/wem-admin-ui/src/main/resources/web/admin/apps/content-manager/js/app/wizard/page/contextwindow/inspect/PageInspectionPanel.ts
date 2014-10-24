@@ -40,6 +40,8 @@ module app.wizard.page.contextwindow.inspect {
 
         private pageControllerDropdown: PageDescriptorDropdown;
 
+        private getPageDescriptorsByModulesRequest: GetPageDescriptorsByModulesRequest;
+
         constructor() {
             super();
         }
@@ -51,7 +53,7 @@ module app.wizard.page.contextwindow.inspect {
             this.contentType = liveEditModel.getContent().getType();
 
             this.refreshPageTemplateForm();
-            this.refreshPageControllerForm()
+            this.refreshPageControllerForm();
 
             this.pageTemplateSelector.setModel(this.pageModel);
 
@@ -156,9 +158,9 @@ module app.wizard.page.contextwindow.inspect {
 
         private buildPageControllerForm(): api.ui.form.Form {
 
-            var moduleKeys = this.siteModel.getModuleKeys(),
-                request = new GetPageDescriptorsByModulesRequest(moduleKeys),
-                loader = new api.util.loader.BaseLoader<PageDescriptorsJson, PageDescriptor>(request);
+            var moduleKeys = this.siteModel.getModuleKeys();
+            this.getPageDescriptorsByModulesRequest = new GetPageDescriptorsByModulesRequest(moduleKeys);
+            var loader = new api.util.loader.BaseLoader<PageDescriptorsJson, PageDescriptor>(this.getPageDescriptorsByModulesRequest);
 
             this.pageControllerDropdown = new PageDescriptorDropdown('page-controller', {
                 loader: loader
@@ -168,6 +170,13 @@ module app.wizard.page.contextwindow.inspect {
                 this.pageModel.setController(pageDescriptor, this);
 
                 this.refreshConfigForm(pageDescriptor, this.pageModel.getConfig());
+            });
+
+            this.siteModel.onPropertyChanged((event: api.PropertyChangedEvent) => {
+                if (event.getPropertyName() == SiteModel.PROPERTY_NAME_MODULE_CONFIGS) {
+                    this.getPageDescriptorsByModulesRequest.setModuleKeys(this.siteModel.getModuleKeys());
+                    loader.load();
+                }
             });
 
             var form = new api.ui.form.Form('form-view');

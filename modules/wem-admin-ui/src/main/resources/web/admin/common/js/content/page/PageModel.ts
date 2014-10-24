@@ -27,7 +27,8 @@ module api.content.page {
             this.defaultPageTemplate = defaultPageTemplate;
         }
 
-        initialize() {
+        initialize(): wemQ.Promise<void> {
+            var deferred = wemQ.defer<void>();
 
             if (!this.initialized) {
 
@@ -71,12 +72,14 @@ module api.content.page {
                     promises.push(pageTemplatePromise);
                 }
                 wemQ.all(promises).then(() => {
-
+                    deferred.resolve(null);
 
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 }).done();
             }
+
+            return deferred.promise;
         }
 
         setController(pageDescriptor: PageDescriptor, eventSource?: any): PageModel {

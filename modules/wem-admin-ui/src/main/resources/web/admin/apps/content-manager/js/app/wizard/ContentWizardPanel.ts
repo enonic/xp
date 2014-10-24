@@ -424,26 +424,29 @@ module app.wizard {
                 if (this.liveFormPanel) {
 
                     if (!this.liveEditModel) {
-
-                        if (this.createSite) {
-                            this.siteModel = new SiteModel(<Site>this.getPersistedItem());
-                        }
-                        else {
-                            this.siteModel = new SiteModel(this.site);
-                        }
-                        this.liveEditModel = new LiveEditModel(this.siteModel);
-                        this.liveEditModel.init(content, this.defaultModels.getPageTemplate());
-                        this.liveFormPanel.setModel(this.liveEditModel);
+                        this.initLiveEditModel(content).then(() => {
+                            this.liveFormPanel.setModel(this.liveEditModel);
+                            this.liveFormPanel.loadPage();
+                            return wemQ(null);
+                        });
                     }
-
-                    this.doLayoutPage(content);
-                    var deferred = wemQ.defer<void>();
-                    deferred.resolve(null);
-                    return deferred.promise;
+                    else {
+                        this.liveFormPanel.loadPage();
+                        return wemQ(null);
+                    }
                 }
             });
+        }
 
-
+        private initLiveEditModel(content: Content): wemQ.Promise<void> {
+            if (this.createSite) {
+                this.siteModel = new SiteModel(<Site>content);
+            }
+            else {
+                this.siteModel = new SiteModel(this.site);
+            }
+            this.liveEditModel = new LiveEditModel(this.siteModel);
+            return this.liveEditModel.init(content, this.defaultModels.getPageTemplate());
         }
 
         postLayoutPersisted(existing: Content): wemQ.Promise<void> {
@@ -455,11 +458,6 @@ module app.wizard {
 
             deferred.resolve(null);
             return deferred.promise;
-        }
-
-        private doLayoutPage(content: Content) {
-
-            this.liveFormPanel.loadPage();
         }
 
         persistNewItem(): wemQ.Promise<Content> {

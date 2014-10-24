@@ -18,11 +18,11 @@ module api.liveedit {
             this.siteModel = siteModel;
         }
 
-        init(value: Content, defaultPageTemplate: PageTemplate) {
+        init(value: Content, defaultPageTemplate: PageTemplate): wemQ.Promise<void> {
             console.log("LiveEditModel.init");
             this.content = value;
             this.pageModel = new PageModel(this, defaultPageTemplate);
-            this.pageModel.initialize();
+            return this.pageModel.initialize();
         }
 
 
