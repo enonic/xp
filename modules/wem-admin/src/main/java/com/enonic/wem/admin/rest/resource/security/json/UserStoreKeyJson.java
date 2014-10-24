@@ -1,0 +1,24 @@
+package com.enonic.wem.admin.rest.resource.security.json;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.enonic.wem.api.security.UserStoreKey;
+
+public class UserStoreKeyJson
+{
+    private final UserStoreKey userStoreKey;
+
+    @JsonCreator
+    public UserStoreKeyJson( @JsonProperty("id") final String id )
+    {
+
+        this.userStoreKey = new UserStoreKey( id );
+    }
+
+
+    public UserStoreKey getUserStoreKey()
+    {
+        return userStoreKey;
+    }
+}

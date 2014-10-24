@@ -5,6 +5,8 @@
 
   <reference id="attachmentService" interface="com.enonic.wem.api.content.attachment.AttachmentService"/>
 
+  <reference id="securityService" interface="com.enonic.wem.api.security.SecurityService"/>
+
   <reference id="contentService" interface="com.enonic.wem.api.content.ContentService"/>
 
   <reference id="contentTypeService" interface="com.enonic.wem.api.schema.content.ContentTypeService"/>
@@ -78,6 +80,10 @@
     <property name="mixinService" ref="mixinService"/>
   </bean>
 
+  <bean id="securityResource" class="com.enonic.wem.admin.rest.resource.security.SecurityResource">
+    <property name="securityResource" ref="securityResource"/>
+  </bean>
+
   <bean id="pageResource" class="com.enonic.wem.admin.rest.resource.content.page.PageResource">
     <property name="contentTypeService" ref="contentTypeService"/>
     <property name="attachmentService" ref="attachmentService"/>
@@ -141,6 +147,7 @@
         <ref component-id="relationshipResource"/>
         <ref component-id="relationshipTypeResource"/>
         <ref component-id="contentResource"/>
+        <ref component-id="securityResource"/>
         <ref component-id="pageResource"/>
         <ref component-id="mixinResource"/>
         <ref component-id="contentTypeResource"/>

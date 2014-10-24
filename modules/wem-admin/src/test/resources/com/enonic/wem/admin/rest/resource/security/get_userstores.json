@@ -1,0 +1,26 @@
+{
+    "userStores": {
+        "empty": false,
+        "keys": {
+            "empty": false,
+            "list": [
+                { },
+                { }
+            ],
+            "notEmpty": true,
+            "size": 2
+        },
+        "list": [
+            {
+                "displayName": "Local LDAP",
+                "key": { }
+            },
+            {
+                "displayName": "File based user store",
+                "key": { }
+            }
+        ],
+        "notEmpty": true,
+        "size": 2
+    }
+}
