@@ -4,7 +4,7 @@ import com.enonic.wem.api.xml.model.ObjectFactory;
 import com.enonic.wem.api.xml.model.XmlPageDescriptor;
 
 final class XmlPageDescriptorSerializer
-    extends XmlSerializer2<XmlPageDescriptor>
+    extends XmlSerializer<XmlPageDescriptor>
 {
 
     public XmlPageDescriptorSerializer()

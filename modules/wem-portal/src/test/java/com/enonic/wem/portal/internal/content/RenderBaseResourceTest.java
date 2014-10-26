@@ -30,7 +30,7 @@ import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.api.xml.mapper.XmlPageDescriptorMapper;
 import com.enonic.wem.api.xml.model.XmlPageDescriptor;
-import com.enonic.wem.api.xml.serializer.XmlSerializers2;
+import com.enonic.wem.api.xml.serializer.XmlSerializers;
 import com.enonic.wem.portal.internal.base.BaseResourceTest;
 
 public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvider>
@@ -199,7 +199,7 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
             "</page-component>";
         final PageDescriptor.Builder builder = PageDescriptor.newPageDescriptor();
 
-        final XmlPageDescriptor xmlObject = XmlSerializers2.pageDescriptor().parse( xml );
+        final XmlPageDescriptor xmlObject = XmlSerializers.pageDescriptor().parse( xml );
         XmlPageDescriptorMapper.fromXml( xmlObject, builder );
 
         return builder.

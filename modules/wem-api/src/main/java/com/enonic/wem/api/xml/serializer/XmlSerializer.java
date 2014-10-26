@@ -16,13 +16,13 @@ import org.w3c.dom.Node;
 
 import com.enonic.wem.api.xml.XmlException;
 
-public abstract class XmlSerializer2<X>
+public abstract class XmlSerializer<X>
 {
     private final Class<X> xmlType;
 
     private final JAXBContext context;
 
-    public XmlSerializer2( final Class<X> xmlType )
+    public XmlSerializer( final Class<X> xmlType )
     {
         this.xmlType = xmlType;
 

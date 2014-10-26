@@ -18,7 +18,7 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.xml.mapper.XmlContentTypeMapper;
 import com.enonic.wem.api.xml.model.XmlContentType;
-import com.enonic.wem.api.xml.serializer.XmlSerializers2;
+import com.enonic.wem.api.xml.serializer.XmlSerializers;
 import com.enonic.wem.core.support.dao.IconDao;
 
 import static java.util.stream.Collectors.toList;
@@ -94,7 +94,7 @@ public final class ContentTypeLoader
     private ContentType.Builder parseContentTypeXml( final String serializedContentType )
     {
         final ContentType.Builder builder = ContentType.newContentType();
-        final XmlContentType contentTypeXml = XmlSerializers2.contentType().parse( serializedContentType );
+        final XmlContentType contentTypeXml = XmlSerializers.contentType().parse( serializedContentType );
         XmlContentTypeMapper.fromXml( contentTypeXml, builder );
         return builder;
     }

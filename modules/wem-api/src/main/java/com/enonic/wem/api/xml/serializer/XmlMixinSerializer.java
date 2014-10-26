@@ -4,7 +4,7 @@ import com.enonic.wem.api.xml.model.ObjectFactory;
 import com.enonic.wem.api.xml.model.XmlMixin;
 
 final class XmlMixinSerializer
-    extends XmlSerializer2<XmlMixin>
+    extends XmlSerializer<XmlMixin>
 {
     public XmlMixinSerializer()
     {

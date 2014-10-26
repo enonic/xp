@@ -23,7 +23,7 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
 public class XmlPageDescriptorSerializerTest
-    extends BaseXmlSerializer2Test
+    extends BaseXmlSerializerTest
 {
 
     @Test
@@ -80,7 +80,7 @@ public class XmlPageDescriptorSerializerTest
             build();
 
         final XmlPageDescriptor xml = XmlPageDescriptorMapper.toXml( pageDescriptor );
-        final String result = XmlSerializers2.pageDescriptor().serialize( xml );
+        final String result = XmlSerializers.pageDescriptor().serialize( xml );
 
         assertXml( "page-descriptor.xml", result );
     }
@@ -94,7 +94,7 @@ public class XmlPageDescriptorSerializerTest
         builder.key( PageDescriptorKey.from( "module:mypage" ) );
         builder.regions( RegionDescriptors.newRegionDescriptors().build() );
 
-        final XmlPageDescriptor xmlObject = XmlSerializers2.pageDescriptor().parse( xml );
+        final XmlPageDescriptor xmlObject = XmlSerializers.pageDescriptor().parse( xml );
         XmlPageDescriptorMapper.fromXml( xmlObject, builder );
 
         final PageDescriptor pageDescriptor = builder.build();

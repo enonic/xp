@@ -6,7 +6,7 @@ import org.junit.Test;
 import com.enonic.wem.api.xml.model.XmlModule;
 
 public class XmlModuleSerializerTest
-    extends BaseXmlSerializer2Test
+    extends BaseXmlSerializerTest
 {
     @Test
     public void test_parse_serialize()
@@ -14,10 +14,10 @@ public class XmlModuleSerializerTest
     {
         final String xml = readFromFile( "module.xml" );
 
-        final XmlModule xmlObject = XmlSerializers2.module().parse( xml );
+        final XmlModule xmlObject = XmlSerializers.module().parse( xml );
         Assert.assertNotNull( xmlObject );
 
-        final String result = XmlSerializers2.module().serialize( xmlObject );
+        final String result = XmlSerializers.module().serialize( xmlObject );
         Assert.assertNotNull( xmlObject );
 
         assertXml( "module.xml", result );

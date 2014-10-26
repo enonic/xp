@@ -14,7 +14,7 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
 public class XmlPartDescriptorSerializerTest
-    extends BaseXmlSerializer2Test
+    extends BaseXmlSerializerTest
 {
 
     @Test
@@ -33,7 +33,7 @@ public class XmlPartDescriptorSerializerTest
             build();
 
         final XmlPartDescriptor xml = XmlPartDescriptorMapper.toXml( partDescriptor );
-        final String result = XmlSerializers2.partDescriptor().serialize( xml );
+        final String result = XmlSerializers.partDescriptor().serialize( xml );
 
         assertXml( "part-descriptor.xml", result );
     }
@@ -47,7 +47,7 @@ public class XmlPartDescriptorSerializerTest
         builder.key( PartDescriptorKey.from( "module:mypart" ) );
         builder.name( "A part" );
 
-        final XmlPartDescriptor xmlObject = XmlSerializers2.partDescriptor().parse( xml );
+        final XmlPartDescriptor xmlObject = XmlSerializers.partDescriptor().parse( xml );
         XmlPartDescriptorMapper.fromXml( xmlObject, builder );
         final PartDescriptor partDescriptor = builder.build();
 

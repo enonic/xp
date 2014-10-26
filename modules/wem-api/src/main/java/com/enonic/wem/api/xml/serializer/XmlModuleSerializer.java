@@ -4,7 +4,7 @@ import com.enonic.wem.api.xml.model.ObjectFactory;
 import com.enonic.wem.api.xml.model.XmlModule;
 
 final class XmlModuleSerializer
-    extends XmlSerializer2<XmlModule>
+    extends XmlSerializer<XmlModule>
 {
     public XmlModuleSerializer()
     {

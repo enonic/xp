@@ -17,7 +17,7 @@ import static com.enonic.wem.api.schema.content.ContentType.newContentType;
 import static junit.framework.Assert.assertEquals;
 
 public class XmlContentTypeSerializerTest
-    extends BaseXmlSerializer2Test
+    extends BaseXmlSerializerTest
 {
     @Test
     public void test_to_xml()
@@ -36,7 +36,7 @@ public class XmlContentTypeSerializerTest
         final ContentType contentType = contentTypeBuilder.build();
 
         final XmlContentType xml = XmlContentTypeMapper.toXml( contentType );
-        final String result = XmlSerializers2.contentType().serialize( xml );
+        final String result = XmlSerializers.contentType().serialize( xml );
 
         assertXml( "content-type.xml", result );
     }
@@ -49,7 +49,7 @@ public class XmlContentTypeSerializerTest
         final ContentType.Builder builder = newContentType();
         builder.name( "mymodule:content-type" );
 
-        final XmlContentType xmlObject = XmlSerializers2.contentType().parse( xml );
+        final XmlContentType xmlObject = XmlSerializers.contentType().parse( xml );
         XmlContentTypeMapper.fromXml( xmlObject, builder );
 
         final ContentType contentType = builder.build();

@@ -16,7 +16,7 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
 public class XmlLayoutDescriptorSerializerTest
-    extends BaseXmlSerializer2Test
+    extends BaseXmlSerializerTest
 {
 
     @Test
@@ -39,7 +39,7 @@ public class XmlLayoutDescriptorSerializerTest
             build();
 
         XmlLayoutDescriptor xml = XmlLayoutDescriptorMapper.toXml( layoutDescriptor );
-        final String result = XmlSerializers2.layoutDescriptor().serialize( xml );
+        final String result = XmlSerializers.layoutDescriptor().serialize( xml );
 
         assertXml( "layout-descriptor.xml", result );
     }
@@ -53,7 +53,7 @@ public class XmlLayoutDescriptorSerializerTest
         builder.key( LayoutDescriptorKey.from( "module:mylayout" ) );
         builder.name( "mylayout" );
 
-        XmlLayoutDescriptor xmlObject = XmlSerializers2.layoutDescriptor().parse( xml );
+        XmlLayoutDescriptor xmlObject = XmlSerializers.layoutDescriptor().parse( xml );
         XmlLayoutDescriptorMapper.fromXml( xmlObject, builder );
         LayoutDescriptor layoutDescriptor = builder.build();
 

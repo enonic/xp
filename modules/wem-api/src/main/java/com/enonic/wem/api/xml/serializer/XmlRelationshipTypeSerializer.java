@@ -4,7 +4,7 @@ import com.enonic.wem.api.xml.model.ObjectFactory;
 import com.enonic.wem.api.xml.model.XmlRelationshipType;
 
 final class XmlRelationshipTypeSerializer
-    extends XmlSerializer2<XmlRelationshipType>
+    extends XmlSerializer<XmlRelationshipType>
 {
 
     public XmlRelationshipTypeSerializer()

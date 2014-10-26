@@ -16,7 +16,7 @@ import static com.enonic.wem.api.schema.mixin.Mixin.newMixin;
 import static junit.framework.Assert.assertEquals;
 
 public class XmlMixinSerializerTest
-    extends BaseXmlSerializer2Test
+    extends BaseXmlSerializerTest
 {
     @Test
     public void test_to_xml()
@@ -35,7 +35,7 @@ public class XmlMixinSerializerTest
         final Mixin mixin = builder.build();
 
         final XmlMixin xml = XmlMixinMapper.toXml( mixin );
-        final String result = XmlSerializers2.mixin().serialize( xml );
+        final String result = XmlSerializers.mixin().serialize( xml );
 
         assertXml( "mixin.xml", result );
     }
@@ -47,7 +47,7 @@ public class XmlMixinSerializerTest
         final String xml = readFromFile( "mixin.xml" );
         final Mixin.Builder builder = newMixin();
 
-        final XmlMixin xmlObject = XmlSerializers2.mixin().parse( xml );
+        final XmlMixin xmlObject = XmlSerializers.mixin().parse( xml );
         XmlMixinMapper.fromXml( xmlObject, builder );
 
         builder.name( "mymodule:mymixin" );

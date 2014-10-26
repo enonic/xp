@@ -4,7 +4,7 @@ import com.enonic.wem.api.xml.model.ObjectFactory;
 import com.enonic.wem.api.xml.model.XmlForm;
 
 final class XmlFormSerializer
-    extends XmlSerializer2<XmlForm>
+    extends XmlSerializer<XmlForm>
 {
     public XmlFormSerializer()
     {

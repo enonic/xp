@@ -18,7 +18,7 @@ import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.xml.mapper.XmlPartDescriptorMapper;
 import com.enonic.wem.api.xml.model.XmlPartDescriptor;
-import com.enonic.wem.api.xml.serializer.XmlSerializers2;
+import com.enonic.wem.api.xml.serializer.XmlSerializers;
 
 abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescriptorCommand>
 {
@@ -34,7 +34,7 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
         final String descriptorXml = resource.readString();
         final PartDescriptor.Builder builder = PartDescriptor.newPartDescriptor();
 
-        final XmlPartDescriptor xmlObject = XmlSerializers2.partDescriptor().parse( descriptorXml );
+        final XmlPartDescriptor xmlObject = XmlSerializers.partDescriptor().parse( descriptorXml );
         XmlPartDescriptorMapper.fromXml( xmlObject, builder );
 
         builder.name( key.getName() ).key( key );

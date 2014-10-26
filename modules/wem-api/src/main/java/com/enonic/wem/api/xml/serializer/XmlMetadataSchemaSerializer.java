@@ -4,7 +4,7 @@ import com.enonic.wem.api.xml.model.ObjectFactory;
 import com.enonic.wem.api.xml.model.XmlMetadataSchema;
 
 final class XmlMetadataSchemaSerializer
-    extends XmlSerializer2<XmlMetadataSchema>
+    extends XmlSerializer<XmlMetadataSchema>
 {
     public XmlMetadataSchemaSerializer()
     {

@@ -18,7 +18,7 @@ import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.xml.mapper.XmlLayoutDescriptorMapper;
 import com.enonic.wem.api.xml.model.XmlLayoutDescriptor;
-import com.enonic.wem.api.xml.serializer.XmlSerializers2;
+import com.enonic.wem.api.xml.serializer.XmlSerializers;
 
 abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDescriptorCommand>
 {
@@ -34,7 +34,7 @@ abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDes
         final String descriptorXml = resource.readString();
         final LayoutDescriptor.Builder builder = LayoutDescriptor.newLayoutDescriptor();
 
-        final XmlLayoutDescriptor xmlObject = XmlSerializers2.layoutDescriptor().parse( descriptorXml );
+        final XmlLayoutDescriptor xmlObject = XmlSerializers.layoutDescriptor().parse( descriptorXml );
         XmlLayoutDescriptorMapper.fromXml( xmlObject, builder );
 
         builder.name( key.getName() ).key( key );

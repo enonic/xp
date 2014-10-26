@@ -4,7 +4,7 @@ import com.enonic.wem.api.xml.model.ObjectFactory;
 import com.enonic.wem.api.xml.model.XmlPartDescriptor;
 
 final class XmlPartDescriptorSerializer
-    extends XmlSerializer2<XmlPartDescriptor>
+    extends XmlSerializer<XmlPartDescriptor>
 {
 
     public XmlPartDescriptorSerializer()

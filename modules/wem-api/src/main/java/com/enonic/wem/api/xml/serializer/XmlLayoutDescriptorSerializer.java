@@ -4,7 +4,7 @@ import com.enonic.wem.api.xml.model.ObjectFactory;
 import com.enonic.wem.api.xml.model.XmlLayoutDescriptor;
 
 final class XmlLayoutDescriptorSerializer
-    extends XmlSerializer2<XmlLayoutDescriptor>
+    extends XmlSerializer<XmlLayoutDescriptor>
 {
 
     public XmlLayoutDescriptorSerializer()

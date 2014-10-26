@@ -12,7 +12,7 @@ import static com.enonic.wem.api.schema.relationship.RelationshipType.newRelatio
 import static junit.framework.Assert.assertEquals;
 
 public class XmlRelationshipTypeSerializerTest
-    extends BaseXmlSerializer2Test
+    extends BaseXmlSerializerTest
 {
     @Test
     public void test_to_xml()
@@ -29,7 +29,7 @@ public class XmlRelationshipTypeSerializerTest
             build();
 
         XmlRelationshipType xmlObject = XmlRelationshipTypeMapper.toXml( relationshipType );
-        String result = XmlSerializers2.relationshipType().serialize( xmlObject );
+        String result = XmlSerializers.relationshipType().serialize( xmlObject );
 
         assertXml( "relationship-type.xml", result );
     }
@@ -41,7 +41,7 @@ public class XmlRelationshipTypeSerializerTest
         final String xml = readFromFile( "relationship-type.xml" );
         final RelationshipType.Builder builder = RelationshipType.newRelationshipType();
 
-        XmlRelationshipType xmlObject = XmlSerializers2.relationshipType().parse( xml );
+        XmlRelationshipType xmlObject = XmlSerializers.relationshipType().parse( xml );
         XmlRelationshipTypeMapper.fromXml( xmlObject, builder );
         builder.name( "mymodule:myreltype" );
         RelationshipType relationshipType = builder.build();

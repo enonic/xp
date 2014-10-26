@@ -10,7 +10,7 @@ import com.enonic.wem.api.xml.model.XmlPageDescriptor;
 import com.enonic.wem.api.xml.model.XmlPartDescriptor;
 import com.enonic.wem.api.xml.model.XmlRelationshipType;
 
-public final class XmlSerializers2
+public final class XmlSerializers
 {
     private final static XmlFormSerializer FORM = new XmlFormSerializer();
 
@@ -30,47 +30,47 @@ public final class XmlSerializers2
 
     private final static XmlPageDescriptorSerializer PAGE_DESCRIPTOR = new XmlPageDescriptorSerializer();
 
-    public static XmlSerializer2<XmlForm> form()
+    public static XmlSerializer<XmlForm> form()
     {
         return FORM;
     }
 
-    public static XmlSerializer2<XmlModule> module()
+    public static XmlSerializer<XmlModule> module()
     {
         return MODULE;
     }
 
-    public static XmlSerializer2<XmlMixin> mixin()
+    public static XmlSerializer<XmlMixin> mixin()
     {
         return MIXIN;
     }
 
-    public static XmlSerializer2<XmlContentType> contentType()
+    public static XmlSerializer<XmlContentType> contentType()
     {
         return CONTENT_TYPE;
     }
 
-    public static XmlSerializer2<XmlRelationshipType> relationshipType()
+    public static XmlSerializer<XmlRelationshipType> relationshipType()
     {
         return RELATIONSHIP_TYPE;
     }
 
-    public static XmlSerializer2<XmlMetadataSchema> metadataSchema()
+    public static XmlSerializer<XmlMetadataSchema> metadataSchema()
     {
         return METADATA_SCHEMA;
     }
 
-    public static XmlSerializer2<XmlPageDescriptor> pageDescriptor()
+    public static XmlSerializer<XmlPageDescriptor> pageDescriptor()
     {
         return PAGE_DESCRIPTOR;
     }
 
-    public static XmlSerializer2<XmlPartDescriptor> partDescriptor()
+    public static XmlSerializer<XmlPartDescriptor> partDescriptor()
     {
         return PART_DESCRIPTOR;
     }
 
-    public static XmlSerializer2<XmlLayoutDescriptor> layoutDescriptor()
+    public static XmlSerializer<XmlLayoutDescriptor> layoutDescriptor()
     {
         return LAYOUT_DESCRIPTOR;
     }

@@ -8,13 +8,13 @@ import com.enonic.wem.api.xml.model.XmlForm;
 import com.enonic.wem.api.xml.model.XmlMetadataSchema;
 import com.enonic.wem.api.xml.model.XmlModule;
 import com.enonic.wem.api.xml.model.XmlVendor;
-import com.enonic.wem.api.xml.serializer.XmlSerializers2;
+import com.enonic.wem.api.xml.serializer.XmlSerializers;
 
 final class ModuleXmlBuilder
 {
     public void toModule( final String xml, final ModuleBuilder builder, final ModuleKey moduleKey )
     {
-        final XmlModule object = XmlSerializers2.module().parse( xml );
+        final XmlModule object = XmlSerializers.module().parse( xml );
         toModule( object, builder, moduleKey );
     }
 

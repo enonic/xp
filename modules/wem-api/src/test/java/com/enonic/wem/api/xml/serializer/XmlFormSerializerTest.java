@@ -36,7 +36,7 @@ import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.*;
 
 public class XmlFormSerializerTest
-    extends BaseXmlSerializer2Test
+    extends BaseXmlSerializerTest
 {
     @Test
     public void test_to_xml()
@@ -253,12 +253,12 @@ public class XmlFormSerializerTest
     private String toXml( final Form form )
     {
         final XmlForm xmlObject = XmlFormMapper.toXml( form );
-        return XmlSerializers2.form().serialize( xmlObject );
+        return XmlSerializers.form().serialize( xmlObject );
     }
 
     private Form toForm( final String xml )
     {
-        final XmlForm xmlObject = XmlSerializers2.form().parse( xml );
+        final XmlForm xmlObject = XmlSerializers.form().parse( xml );
         return XmlFormMapper.fromXml( xmlObject );
     }
 }

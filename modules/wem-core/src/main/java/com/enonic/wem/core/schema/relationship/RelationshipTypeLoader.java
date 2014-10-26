@@ -18,7 +18,7 @@ import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
 import com.enonic.wem.api.xml.mapper.XmlRelationshipTypeMapper;
 import com.enonic.wem.api.xml.model.XmlRelationshipType;
-import com.enonic.wem.api.xml.serializer.XmlSerializers2;
+import com.enonic.wem.api.xml.serializer.XmlSerializers;
 import com.enonic.wem.core.support.dao.IconDao;
 
 import static java.util.stream.Collectors.toList;
@@ -94,7 +94,7 @@ public final class RelationshipTypeLoader
     private RelationshipType.Builder parseRelationshipTypeXml( final String serializedRelationshipType )
     {
         final RelationshipType.Builder builder = RelationshipType.newRelationshipType();
-        final XmlRelationshipType relationshipTypeXml = XmlSerializers2.relationshipType().parse( serializedRelationshipType );
+        final XmlRelationshipType relationshipTypeXml = XmlSerializers.relationshipType().parse( serializedRelationshipType );
         XmlRelationshipTypeMapper.fromXml( relationshipTypeXml, builder );
         return builder;
     }

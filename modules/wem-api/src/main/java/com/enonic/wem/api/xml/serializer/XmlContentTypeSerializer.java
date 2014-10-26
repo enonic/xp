@@ -4,7 +4,7 @@ import com.enonic.wem.api.xml.model.ObjectFactory;
 import com.enonic.wem.api.xml.model.XmlContentType;
 
 final class XmlContentTypeSerializer
-    extends XmlSerializer2<XmlContentType>
+    extends XmlSerializer<XmlContentType>
 {
 
     public XmlContentTypeSerializer()

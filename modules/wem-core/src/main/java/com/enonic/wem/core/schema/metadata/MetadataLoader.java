@@ -18,7 +18,7 @@ import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
 import com.enonic.wem.api.schema.metadata.MetadataSchemas;
 import com.enonic.wem.api.xml.mapper.XmlMetadataSchemaMapper;
 import com.enonic.wem.api.xml.model.XmlMetadataSchema;
-import com.enonic.wem.api.xml.serializer.XmlSerializers2;
+import com.enonic.wem.api.xml.serializer.XmlSerializers;
 import com.enonic.wem.core.support.dao.IconDao;
 
 import static java.util.stream.Collectors.toList;
@@ -94,7 +94,7 @@ public final class MetadataLoader
     private MetadataSchema.Builder parseMetadataSchemaXml( final String serializedMetadataSchema )
     {
         final MetadataSchema.Builder builder = MetadataSchema.newMetadataSchema();
-        final XmlMetadataSchema metadataSchemaXml = XmlSerializers2.metadataSchema().parse( serializedMetadataSchema );
+        final XmlMetadataSchema metadataSchemaXml = XmlSerializers.metadataSchema().parse( serializedMetadataSchema );
         XmlMetadataSchemaMapper.fromXml( metadataSchemaXml, builder );
         return builder;
     }
