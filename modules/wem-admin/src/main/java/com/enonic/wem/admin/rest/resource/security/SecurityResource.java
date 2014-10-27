@@ -7,9 +7,9 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 
-import com.enonic.wem.admin.rest.exception.IllegalArgumentWebException;
 import com.enonic.wem.admin.rest.resource.security.json.PrincipalsJson;
 import com.enonic.wem.admin.rest.resource.security.json.UserStoresJson;
 import com.enonic.wem.api.security.PrincipalType;
@@ -44,8 +44,8 @@ public class SecurityResource
         UserStoreKey storeKey = new UserStoreKey( userStoreKey );
         if ( !getEnumItems( PrincipalType.class ).contains( type.toUpperCase() ) )
         {
-            IllegalArgumentWebException ill =
-                new IllegalArgumentWebException( String.format( "wrong principal type: %s", type.toString() ) );
+
+            throw new WebApplicationException( String.format( "wrong principal type: %s", type.toString() ) );
         }
         else
         {
