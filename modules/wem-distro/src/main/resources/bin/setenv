@@ -39,6 +39,7 @@
 
 export JAVA_MIN_MEM=1G
 export JAVA_MAX_MEM=1G
+export KARAF_OPTS=-Djava.awt.headless=true
 
 # export JAVA_PERM_MEM # Minimum perm memory for the JVM
 # export JAVA_MAX_PERM_MEM # Maximum perm memory for the JVM
