@@ -201,6 +201,12 @@ public class ElasticsearchQuery
             return this;
         }
 
+        public Builder addSortBuilder( final SortBuilder sortBuilder )
+        {
+            this.sortBuilders.add( sortBuilder );
+            return this;
+        }
+
         public Builder sortBuilders( final Set<SortBuilder> sortBuilders )
         {
             this.sortBuilders = sortBuilders;

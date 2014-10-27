@@ -6,15 +6,15 @@ import com.google.common.collect.Sets;
 
 public class NodeOrderValueResolver
 {
-    public static final long START_ORDER_VALUE = 0l;
+    public static final Long ORDER_SPACE = (long) Integer.MAX_VALUE;
 
-    public static final long ORDER_SPACE = (long) Integer.MAX_VALUE;
+    public static final Long START_ORDER_VALUE = 0l;
 
     public static LinkedHashSet<NodeIdOrderValue> resolve( final LinkedHashSet<NodeId> orderedNodeIds )
     {
         final LinkedHashSet<NodeIdOrderValue> result = Sets.newLinkedHashSet();
 
-        long currentValue = START_ORDER_VALUE;
+        Long currentValue = START_ORDER_VALUE;
 
         for ( final NodeId nodeId : orderedNodeIds )
         {
@@ -28,17 +28,17 @@ public class NodeOrderValueResolver
 
     public static class NodeIdOrderValue
     {
-        private long manualOrderValue;
+        private Long manualOrderValue;
 
         private NodeId nodeId;
 
-        public NodeIdOrderValue( final NodeId nodeId, final long manualOrderValue )
+        public NodeIdOrderValue( final NodeId nodeId, final Long manualOrderValue )
         {
             this.manualOrderValue = manualOrderValue;
             this.nodeId = nodeId;
         }
 
-        public long getManualOrderValue()
+        public Long getManualOrderValue()
         {
             return manualOrderValue;
         }

@@ -177,7 +177,7 @@ public class ContentResource
                                              @QueryParam("expand") @DefaultValue(EXPAND_SUMMARY) final String expandParam,
                                              @QueryParam("from") @DefaultValue(DEFAULT_FROM_PARAM) final Integer fromParam,
                                              @QueryParam("size") @DefaultValue(DEFAULT_SIZE_PARAM) final Integer sizeParam,
-                                             @QueryParam("childOrder") @DefaultValue("modifiedTime DESC") final String childOrder )
+                                             @QueryParam("childOrder") @DefaultValue("") final String childOrder )
     {
         final ContentPath parentContentPath;
 
@@ -208,7 +208,7 @@ public class ContentResource
                                                @QueryParam("expand") @DefaultValue(EXPAND_SUMMARY) final String expandParam,
                                                @QueryParam("from") @DefaultValue(DEFAULT_FROM_PARAM) final Integer fromParam,
                                                @QueryParam("size") @DefaultValue(DEFAULT_SIZE_PARAM) final Integer sizeParam,
-                                               @QueryParam("childOrder") @DefaultValue("modifiedTime DESC") final String childOrder )
+                                               @QueryParam("childOrder") @DefaultValue("") final String childOrder )
     {
         final ContentPath parentContentPath;
 

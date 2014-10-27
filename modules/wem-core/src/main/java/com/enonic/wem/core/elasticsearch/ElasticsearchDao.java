@@ -8,6 +8,7 @@ import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
@@ -47,10 +48,12 @@ public class ElasticsearchDao
 
     private Client client;
 
-    public void store( final IndexRequest indexRequest )
+    public String store( final IndexRequest indexRequest )
     {
-        this.client.index( indexRequest ).
+        final IndexResponse indexResponse = this.client.index( indexRequest ).
             actionGet( storeTimeout );
+
+        return indexResponse.getId();
     }
 
     public void store( final Collection<StoreDocument> storeDocuments )
@@ -99,7 +102,7 @@ public class ElasticsearchDao
     {
         final SearchSourceBuilder searchSource = elasticsearchQuery.toSearchSourceBuilder();
 
-        //System.out.println( searchSource.toString() );
+        System.out.println( searchSource.toString() );
 
         final SearchRequestBuilder searchRequest = new SearchRequestBuilder( this.client ).
             setIndices( elasticsearchQuery.getIndexName() ).

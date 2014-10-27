@@ -204,7 +204,7 @@ public class MoveChildNodeCommandTest
             thenReturn( NodeVersionId.from( "a" ) );
     }
 
-    private Node mockNode( final String baseName, final String parentPath, final long orderValue )
+    private Node mockNode( final String baseName, final String parentPath, final Long orderValue )
     {
         final NodeId nodeId = NodeId.from( baseName + "-id" );
 

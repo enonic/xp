@@ -53,7 +53,7 @@ public class MoveChildNodeCommand
 
         final NodeQueryResult result = findLastNodeBeforeInsert( nodeAfterOrderValue );
 
-        final long newOrderValue;
+        final Long newOrderValue;
 
         if ( result.getNodeQueryResultSet().isEmpty() )
         {
@@ -71,7 +71,7 @@ public class MoveChildNodeCommand
     {
         final NodeQueryResult result = findLastNodeBeforeInsert( Long.MIN_VALUE );
 
-        final long newOrderValue;
+        final Long newOrderValue;
 
         if ( result.getNodeQueryResultSet().isEmpty() )
         {
@@ -92,7 +92,7 @@ public class MoveChildNodeCommand
         return queryService.find( query, IndexContext.from( Context.current() ) );
     }
 
-    private Node doUpdateNodeOrderValue( final long newOrderValue )
+    private Node doUpdateNodeOrderValue( final Long newOrderValue )
     {
         final Node updatedNode = Node.editNode( nodeToMove ).
             manualOrderValue( newOrderValue ).
@@ -115,7 +115,7 @@ public class MoveChildNodeCommand
             build();
     }
 
-    private long resolveInsertInbetweenOrderValue( final Long nodeAfterOrderValue, final NodeQueryResult result )
+    private Long resolveInsertInbetweenOrderValue( final Long nodeAfterOrderValue, final NodeQueryResult result )
     {
         final NodeId nodeBeforeInsertId = result.getNodeQueryResultSet().first();
         final Node nodeBeforeInsert = doGetNode( nodeBeforeInsertId, false );
@@ -123,12 +123,12 @@ public class MoveChildNodeCommand
         return ( nodeAfterOrderValue + nodeBeforeInsert.getManualOrderValue() ) / 2;
     }
 
-    private long resolveInsertFirstOrderValue( final Long nodeAfterOrderValue )
+    private Long resolveInsertFirstOrderValue( final Long nodeAfterOrderValue )
     {
         return nodeAfterOrderValue + NodeOrderValueResolver.ORDER_SPACE;
     }
 
-    private long resolveInsertLastOrderValue( final NodeQueryResult result )
+    private Long resolveInsertLastOrderValue( final NodeQueryResult result )
     {
         final NodeId lastNodeId = result.getNodeQueryResultSet().first();
         final Node lastNode = doGetNode( lastNodeId, false );
@@ -136,7 +136,7 @@ public class MoveChildNodeCommand
         return lastNode.getManualOrderValue() - NodeOrderValueResolver.ORDER_SPACE;
     }
 
-    private long resoleOnlyNodeOrderValue()
+    private Long resoleOnlyNodeOrderValue()
     {
         return NodeOrderValueResolver.START_ORDER_VALUE;
     }
