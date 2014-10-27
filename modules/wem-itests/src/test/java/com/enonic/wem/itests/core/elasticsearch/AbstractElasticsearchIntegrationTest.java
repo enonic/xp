@@ -1,6 +1,8 @@
 package com.enonic.wem.itests.core.elasticsearch;
 
 import org.elasticsearch.client.Client;
+import org.elasticsearch.common.settings.ImmutableSettings;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.junit.Before;
 
@@ -11,12 +13,10 @@ import com.enonic.wem.core.elasticsearch.ElasticsearchIndexService;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.repository.IndexNameResolver;
 import com.enonic.wem.core.repository.RepositoryIndexMappingProvider;
-import com.enonic.wem.core.repository.RepositorySearchIndexSettingsProvider;
 
 public abstract class AbstractElasticsearchIntegrationTest
     extends ElasticsearchIntegrationTest
 {
-
     protected ElasticsearchDao elasticsearchDao;
 
     protected ElasticsearchIndexService elasticsearchIndexService;
@@ -52,7 +52,17 @@ public abstract class AbstractElasticsearchIntegrationTest
 
     protected String getContentRepoSearchDefaultSettings()
     {
-        return RepositorySearchIndexSettingsProvider.getSettings( ContentConstants.CONTENT_REPO );
+        return RepositoryTestSearchIndexSettingsProvider.getSettings( ContentConstants.CONTENT_REPO );
+    }
+
+    @Override
+    protected Settings nodeSettings( int nodeOrdinal )
+    {
+        return ImmutableSettings.settingsBuilder().
+            put( "store.type", "memory" ).
+            put( "path.data", ".tmp/es-data" ).
+            put( super.nodeSettings( nodeOrdinal ) ).
+            build();
     }
 
 }

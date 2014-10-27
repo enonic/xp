@@ -5,6 +5,7 @@ import java.util.Iterator;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
+import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,6 +28,7 @@ import com.enonic.wem.core.repository.IndexNameResolver;
 
 // Set seed for now, since some seeds generates class-loading issues
 @Seed("4C9FFD7B668A7308")
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.TEST, maxNumDataNodes = 1, minNumDataNodes = 1)
 public class OrderByValueResolverTest
     extends AbstractElasticsearchIntegrationTest
 {
