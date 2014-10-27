@@ -27,4 +27,12 @@ public interface SecurityService
 
     PrincipalQueryResult query( PrincipalQuery query );
 
+    PrincipalRelationships getRelationships( PrincipalKey from );
+
+    void addRelationship( PrincipalRelationship relationship );
+
+    void removeRelationship( PrincipalRelationship relationship );
+
+    void removeRelationships( PrincipalKey from );
+
 }

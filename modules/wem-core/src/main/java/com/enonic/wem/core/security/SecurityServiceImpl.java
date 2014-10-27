@@ -1,5 +1,6 @@
 package com.enonic.wem.core.security;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -7,6 +8,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 import com.google.common.primitives.Ints;
 
 import com.enonic.wem.api.security.Group;
@@ -14,6 +18,8 @@ import com.enonic.wem.api.security.Principal;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.PrincipalQuery;
 import com.enonic.wem.api.security.PrincipalQueryResult;
+import com.enonic.wem.api.security.PrincipalRelationship;
+import com.enonic.wem.api.security.PrincipalRelationships;
 import com.enonic.wem.api.security.PrincipalType;
 import com.enonic.wem.api.security.Principals;
 import com.enonic.wem.api.security.SecurityService;
@@ -36,14 +42,51 @@ public final class SecurityServiceImpl
 
     private final ConcurrentMap<PrincipalKey, Principal> principals;
 
+    private final Multimap<PrincipalKey, PrincipalRelationship> relationshipTable;
 
     public SecurityServiceImpl()
     {
         this.userStores = new CopyOnWriteArrayList<>();
         this.principals = new ConcurrentHashMap<>();
+        this.relationshipTable = Multimaps.synchronizedSetMultimap( HashMultimap.create() );
 
         final UserStore systemUserStore = UserStore.newUserStore().key( UserStoreKey.system() ).displayName( "System" ).build();
         this.userStores.add( systemUserStore );
+    }
+
+    @Override
+    public PrincipalRelationships getRelationships( final PrincipalKey from )
+    {
+        final Collection<PrincipalRelationship> relationships = this.relationshipTable.get( from );
+        if ( relationships == null )
+        {
+            return PrincipalRelationships.empty();
+        }
+
+        final PrincipalRelationships principalRelationships;
+        synchronized ( this.relationshipTable )
+        {
+            principalRelationships = PrincipalRelationships.from( relationships );
+        }
+        return principalRelationships;
+    }
+
+    @Override
+    public void addRelationship( final PrincipalRelationship relationship )
+    {
+        this.relationshipTable.put( relationship.getFrom(), relationship );
+    }
+
+    @Override
+    public void removeRelationship( final PrincipalRelationship relationship )
+    {
+        this.relationshipTable.remove( relationship.getFrom(), relationship );
+    }
+
+    @Override
+    public void removeRelationships( final PrincipalKey from )
+    {
+        this.relationshipTable.removeAll( from );
     }
 
     @Override
@@ -63,6 +106,7 @@ public final class SecurityServiceImpl
         return Principals.from( principals );
     }
 
+    // TODO throw same exception for failed auth, and user not found
     @Override
     public AuthenticationInfo authenticate( final AuthenticationToken token )
     {
@@ -117,6 +161,7 @@ public final class SecurityServiceImpl
         }
     }
 
+    // TODO return User
     @Override
     public void updateUser( final User user )
     {
@@ -126,6 +171,7 @@ public final class SecurityServiceImpl
         }
     }
 
+    // TODO return optional
     @Override
     public User getUser( final PrincipalKey userKey )
     {
