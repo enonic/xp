@@ -1,0 +1,12 @@
+{
+    "principals": [
+        {
+            "displayName": "Alice",
+            "key": "local:user:a"
+        },
+        {
+            "displayName": "Bobby",
+            "key": "file-store:user:b"
+        }
+    ]
+}
