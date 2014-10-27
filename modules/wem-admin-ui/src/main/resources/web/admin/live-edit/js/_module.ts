@@ -1,5 +1,5 @@
 // Globals
-///<reference path='../../common/js/_all.d.ts' />
+///<reference path='../../common/js/_module.ts' />
 
 ///<reference path='shared/DomHelper.ts' />
 

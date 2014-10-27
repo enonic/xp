@@ -1,4 +1,4 @@
-///<reference path='../../../common/js/_all.d.ts' />
+///<reference path='../../../common/js/_module.ts' />
 
 ///<reference path='app/_module.ts' />
 ///<reference path='app/browse/filter/_module.ts' />
