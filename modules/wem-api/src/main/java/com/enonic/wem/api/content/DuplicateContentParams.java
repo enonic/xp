@@ -11,10 +11,9 @@ public final class DuplicateContentParams
 
     private AccountKey creator;
 
-    public DuplicateContentParams contentId( final ContentId contentId )
+    public DuplicateContentParams( final ContentId contentId )
     {
         this.contentId = contentId;
-        return this;
     }
 
     public ContentId getContentId()
