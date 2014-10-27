@@ -5,7 +5,7 @@
     "grunt": "~0.4.1",
     "grunt-cli": "0.x.x",
     "grunt-ts": "1.12.1",
-    "typescript" : "1.1.0-1",
+    "typescript": "1.1.0-1",
     "grunt-contrib-less": "~0.8.1",
     "grunt-directives": "~0.1.2",
     "load-grunt-config": "~0.7.0",
@@ -15,6 +15,7 @@
     "grunt-karma": "~0.9.0",
     "karma-coverage": "~0.2.6",
     "karma-jasmine": "~0.1.5",
-    "karma-phantomjs-launcher": "~0.1.4"
+    "karma-phantomjs-launcher": "~0.1.4",
+    "grunt-typedoc": "~0.2.1"
   }
 }
