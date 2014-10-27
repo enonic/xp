@@ -60,7 +60,9 @@ describe("api.util.DateHelper", function () {
         });
 
         it("given a string '00:59' then returned utc time  is correct", function () {
-            var date = new Date(20014, 8, 15, 0, 59)
+            var date = new Date();
+            date.setHours(0);
+            date.setMinutes(59);
             var timeAsString = '' + date.getHours() + ':' + date.getMinutes();
             var timeUTC = api.util.DateHelper.parseUTCTime(timeAsString);
             var expectedTime = date.getUTCHours() + ':' + date.getUTCMinutes();
