@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.wem.api.security.UserStore;
 
+@SuppressWarnings("UnusedDeclaration")
 public class UserStoreJson
 {
     private final UserStore userStore;

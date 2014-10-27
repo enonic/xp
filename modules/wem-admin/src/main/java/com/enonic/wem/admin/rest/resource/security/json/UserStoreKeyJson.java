@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.wem.api.security.UserStoreKey;
 
+@SuppressWarnings("UnusedDeclaration")
 public class UserStoreKeyJson
 {
     private final UserStoreKey userStoreKey;
@@ -16,6 +17,11 @@ public class UserStoreKeyJson
         this.userStoreKey = new UserStoreKey( id );
     }
 
+    public UserStoreKeyJson( final UserStoreKey userStoreKey )
+    {
+        this.userStoreKey = userStoreKey;
+
+    }
 
     public UserStoreKey getUserStoreKey()
     {
