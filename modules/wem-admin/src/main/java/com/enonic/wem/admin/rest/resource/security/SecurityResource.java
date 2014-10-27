@@ -67,7 +67,6 @@ public class SecurityResource
         for ( E t : en.getEnumConstants() )
         {
             results.add( t.toString() );
-            System.out.println( t );
         }
 
         return results;
