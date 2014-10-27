@@ -615,15 +615,24 @@ module api.ui.treegrid {
 
         }
 
-        appendNode(data: DATA, stashedParentNode?: TreeNode<DATA>): void {
+        /**
+         *
+         * @param data
+         * @param nextToSelection - by default node is appended as child to selection or root, set this to true to append to the same level
+         * @param stashedParentNode
+         */
+        appendNode(data: DATA, nextToSelection?: boolean, stashedParentNode?: TreeNode<DATA>): void {
             if (!stashedParentNode && this.stash) {
-                this.appendNode(data, this.stash);
+                this.appendNode(data, nextToSelection, this.stash);
             }
             var root = stashedParentNode || this.root;
 
             var parentNode: TreeNode<DATA>;
             if (this.getSelectedNodes() && this.getSelectedNodes().length == 1) {
                 parentNode = root.findNode(this.getSelectedNodes()[0].getDataId());
+                if (nextToSelection) {
+                    parentNode = parentNode.getParent() || this.root;
+                }
             } else {
                 parentNode = root;
             }

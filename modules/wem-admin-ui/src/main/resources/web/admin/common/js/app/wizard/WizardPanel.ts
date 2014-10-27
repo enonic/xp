@@ -113,18 +113,20 @@ module api.app.wizard {
             });
             this.formPanel.appendChild(aboveStepPanels).appendChild(this.stepsPanel);
 
-            if (this.persistedItem != null) {
-                this.startLayoutPersistedItem(this.persistedItem).
-                    then(() => this.postLayoutPersisted(this.persistedItem)).
-                    catch((reason: any) => api.DefaultErrorHandler.handle(reason)).
-                    finally(() => callback()).
-                    done();
-            } else {
+            this.layingOutNew = this.persistedItem == null;
+
+            if (this.layingOutNew) {
                 this.preLayoutNew().
                     then(() => this.layoutNew()).
                     then(() => this.postLayoutNew()).
                     catch((reason: any) => api.DefaultErrorHandler.handle(reason)).
                     finally(()=> callback()).
+                    done();
+            } else {
+                this.startLayoutPersistedItem(this.persistedItem).
+                    then(() => this.postLayoutPersisted(this.persistedItem)).
+                    catch((reason: any) => api.DefaultErrorHandler.handle(reason)).
+                    finally(() => callback()).
                     done();
             }
 
@@ -229,7 +231,6 @@ module api.app.wizard {
 
         layoutNew(): wemQ.Promise<void> {
             var deferred = wemQ.defer<void>();
-            this.layingOutNew = true;
             this.actions.enableActionsForNew();
             deferred.resolve(null);
             return deferred.promise;
@@ -244,7 +245,6 @@ module api.app.wizard {
 
         private startLayoutPersistedItem(persistedItem: EQUITABLE): wemQ.Promise<void> {
 
-            this.layingOutNew = false;
             this.persistedItem = persistedItem;
             this.actions.enableActionsForExisting(persistedItem);
 
