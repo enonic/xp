@@ -1,7 +1,6 @@
 package com.enonic.wem.admin.rest.resource.security;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.stream.Stream;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -40,17 +39,16 @@ public class SecurityResource
     public PrincipalsJson getPrincipals( @QueryParam("userStoreKey") final String userStoreKey, @QueryParam("type") final String type )
 
     {
-        PrincipalType principalType = null;
         UserStoreKey storeKey = new UserStoreKey( userStoreKey );
-        if ( !getEnumItems( PrincipalType.class ).contains( type.toUpperCase() ) )
-        {
+        PrincipalType principalType = Stream.of( PrincipalType.values() ).
+            filter( val -> val.name().equalsIgnoreCase( type ) ).
+            findFirst().orElseGet( null );
 
-            throw new WebApplicationException( String.format( "wrong principal type: %s", type.toString() ) );
-        }
-        else
+        if ( principalType == null )
         {
-            principalType = PrincipalType.valueOf( type.toUpperCase() );
+            throw new WebApplicationException( String.format( "wrong principal type: %s", type ) );
         }
+
         Principals principals = securityService.getPrincipals( storeKey, principalType );
         return new PrincipalsJson( principals );
     }
@@ -60,15 +58,4 @@ public class SecurityResource
         this.securityService = securityService;
     }
 
-
-    public static <E extends Enum<E>> List<String> getEnumItems( final Class<E> en )
-    {
-        List<String> results = new ArrayList<String>();
-        for ( E t : en.getEnumConstants() )
-        {
-            results.add( t.toString() );
-        }
-
-        return results;
-    }
 }

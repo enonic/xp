@@ -1,18 +1,30 @@
 package com.enonic.wem.core.security;
 
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Predicate;
+
+import com.google.common.base.Preconditions;
+import com.google.common.primitives.Ints;
 
 import com.enonic.wem.api.security.Group;
 import com.enonic.wem.api.security.Principal;
 import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.security.PrincipalQuery;
+import com.enonic.wem.api.security.PrincipalQueryResult;
 import com.enonic.wem.api.security.PrincipalType;
 import com.enonic.wem.api.security.Principals;
-import com.enonic.wem.api.security.Role;
 import com.enonic.wem.api.security.SecurityService;
 import com.enonic.wem.api.security.User;
 import com.enonic.wem.api.security.UserStore;
 import com.enonic.wem.api.security.UserStoreKey;
 import com.enonic.wem.api.security.UserStores;
+import com.enonic.wem.api.security.auth.AuthenticationInfo;
+import com.enonic.wem.api.security.auth.AuthenticationToken;
+import com.enonic.wem.api.security.auth.EmailPasswordAuthToken;
+import com.enonic.wem.api.security.auth.UsernamePasswordAuthToken;
 
 import static java.util.stream.Collectors.toList;
 
@@ -20,84 +32,153 @@ public final class SecurityServiceImpl
     implements SecurityService
 {
 
-    private static final UserStoreKey USER_STORE_1 = new UserStoreKey( "local" );
+    private final List<UserStore> userStores;
 
-    private static final UserStoreKey USER_STORE_2 = new UserStoreKey( "file-store" );
-
-    private final UserStores dummyUserStores;
-
-    private final Principals dummyIdentities;
+    private final ConcurrentMap<PrincipalKey, Principal> principals;
 
 
     public SecurityServiceImpl()
     {
-        this.dummyUserStores = createUserStore();
-        this.dummyIdentities = createIdentities();
+        this.userStores = new CopyOnWriteArrayList<>();
+        this.principals = new ConcurrentHashMap<>();
+
+        final UserStore systemUserStore = UserStore.newUserStore().key( UserStoreKey.system() ).displayName( "System" ).build();
+        this.userStores.add( systemUserStore );
     }
 
     @Override
     public UserStores getUserStores()
     {
-        return this.dummyUserStores;
+        return UserStores.from( this.userStores );
     }
 
     @Override
-    public Principals getPrincipals( final UserStoreKey useStore, final PrincipalType type )
+    public Principals getPrincipals( final UserStoreKey userStore, final PrincipalType type )
     {
-        final List<Principal> identities = this.dummyIdentities.stream().
-            filter( identity -> identity.getKey().getUserStore().equals( useStore ) ).
-            filter( identity -> identity.getKey().getType() == type ).
+        final List<Principal> principals = this.principals.values().stream().
+            filter( principal -> principal.getKey().getUserStore().equals( userStore ) ).
+            filter( principal -> principal.getKey().getType() == type ).
             collect( toList() );
 
-        return Principals.from( identities );
+        return Principals.from( principals );
     }
 
-    private Principals createIdentities()
+    @Override
+    public AuthenticationInfo authenticate( final AuthenticationToken token )
     {
-        final User user1 = User.newUser().
-            userKey( PrincipalKey.ofUser( USER_STORE_1, "a" ) ).
-            displayName( "Alice" ).
-            email( "alice@a.org" ).
-            login( "alice" ).
-            build();
-
-        final User user2 = User.newUser().
-            userKey( PrincipalKey.ofUser( USER_STORE_1, "b" ) ).
-            displayName( "Bob" ).
-            email( "bob@b.org" ).
-            login( "bob" ).
-            build();
-
-        final Group group1 = Group.newGroup().
-            groupKey( PrincipalKey.ofGroup( USER_STORE_1, "devs" ) ).
-            displayName( "Developers" ).
-            build();
-
-        final Group group2 = Group.newGroup().
-            groupKey( PrincipalKey.ofGroup( USER_STORE_2, "qa" ) ).
-            displayName( "QA" ).
-            build();
-
-        final Role agent = Role.newRole().
-            roleKey( PrincipalKey.ofRole( "administrators" ) ).
-            displayName( "Administrators" ).
-            build();
-
-        return Principals.from( user1, user2, group1, group2, agent );
+        if ( token instanceof UsernamePasswordAuthToken )
+        {
+            final UsernamePasswordAuthToken authToken = (UsernamePasswordAuthToken) token;
+            final User user = findByUsername( authToken.getUserStore(), authToken.getUsername() );
+            return user != null ? AuthenticationInfo.newBuilder().user( user ).build() : null;
+        }
+        if ( token instanceof EmailPasswordAuthToken )
+        {
+            final EmailPasswordAuthToken authToken = (EmailPasswordAuthToken) token;
+            final User user = findByEmail( authToken.getUserStore(), authToken.getEmail() );
+            return user != null ? AuthenticationInfo.newBuilder().user( user ).build() : null;
+        }
+        else
+        {
+            throw new UnsupportedOperationException( "Authentication token not supported: " + token.getClass().getName() );
+        }
     }
 
-    private UserStores createUserStore()
+    private User findByUsername( final UserStoreKey userStore, final String username )
     {
-        final UserStore userStore1 = UserStore.newUserStore().
-            key( USER_STORE_1 ).
-            displayName( "Local LDAP" ).
-            build();
+        return (User) this.principals.values().stream().
+            filter( principal -> principal.getKey().getUserStore().equals( userStore ) ).
+            filter( principal -> principal.getKey().isUser() ).
+            filter( principal -> username.equals( ( (User) principal ).getLogin() ) ).
+            findFirst().orElse( null );
+    }
 
-        final UserStore userStore2 = UserStore.newUserStore().
-            key( USER_STORE_2 ).
-            displayName( "File based user store" ).
-            build();
+    private User findByEmail( final UserStoreKey userStore, final String email )
+    {
+        return (User) this.principals.values().stream().
+            filter( principal -> principal.getKey().getUserStore().equals( userStore ) ).
+            filter( principal -> principal.getKey().isUser() ).
+            filter( principal -> email.equals( ( (User) principal ).getEmail() ) ).
+            findFirst().orElse( null );
+    }
 
-        return UserStores.from( userStore1, userStore2 );
+    @Override
+    public void setPassword( final PrincipalKey key, final String password )
+    {
+
+    }
+
+    @Override
+    public void createUser( final User user )
+    {
+        if ( this.principals.putIfAbsent( user.getKey(), user ) != null )
+        {
+            throw new IllegalArgumentException( "User already exists: " + user.getKey() );
+        }
+    }
+
+    @Override
+    public void updateUser( final User user )
+    {
+        if ( this.principals.replace( user.getKey(), user ) == null )
+        {
+            throw new IllegalArgumentException( "Could not find user to be updated: " + user.getKey() );
+        }
+    }
+
+    @Override
+    public User getUser( final PrincipalKey userKey )
+    {
+        Preconditions.checkArgument( userKey.isUser(), "Expected principal key of type User" );
+        return (User) this.principals.get( userKey );
+    }
+
+    @Override
+    public void createGroup( final Group group )
+    {
+        if ( this.principals.putIfAbsent( group.getKey(), group ) != null )
+        {
+            throw new IllegalArgumentException( "Group already exists: " + group.getKey() );
+        }
+    }
+
+    @Override
+    public void updateGroup( final Group group )
+    {
+        if ( this.principals.replace( group.getKey(), group ) == null )
+        {
+            throw new IllegalArgumentException( "Could not find group to be updated: " + group.getKey() );
+        }
+    }
+
+    @Override
+    public Group getGroup( final PrincipalKey groupKey )
+    {
+        Preconditions.checkArgument( groupKey.isGroup(), "Expected principal key of type Group" );
+        return (Group) this.principals.get( groupKey );
+    }
+
+    @Override
+    public PrincipalQueryResult query( final PrincipalQuery query )
+    {
+        final Predicate<Principal> userStorePredicate = principal -> query.getUserStores().contains( principal.getKey().getUserStore() );
+        final Predicate<Principal> typePredicate = principal -> query.getPrincipalTypes().contains( principal.getKey().getType() );
+
+        final long total = this.principals.values().stream().
+            filter( userStorePredicate ).
+            filter( typePredicate ).
+            count();
+
+        final List<Principal> principals = this.principals.values().stream().
+            filter( userStorePredicate ).
+            filter( typePredicate ).
+            limit( query.getSize() ).
+            skip( query.getFrom() ).
+            collect( toList() );
+
+        return PrincipalQueryResult.newResult().
+            totalSize( Ints.checkedCast( total ) ).
+            addPrincipals( principals ).
+            build();
     }
 }
