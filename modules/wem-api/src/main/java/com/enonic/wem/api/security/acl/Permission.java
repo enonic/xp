@@ -1,4 +1,4 @@
-package com.enonic.wem.api.security;
+package com.enonic.wem.api.security.acl;
 
 public enum Permission
 {

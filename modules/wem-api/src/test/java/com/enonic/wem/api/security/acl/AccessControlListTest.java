@@ -1,6 +1,12 @@
-package com.enonic.wem.api.security;
+package com.enonic.wem.api.security.acl;
 
 import org.junit.Test;
+
+import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.security.UserStoreKey;
+import com.enonic.wem.api.security.acl.AccessControlEntry;
+import com.enonic.wem.api.security.acl.AccessControlList;
+import com.enonic.wem.api.security.acl.Permission;
 
 import static org.junit.Assert.*;
 

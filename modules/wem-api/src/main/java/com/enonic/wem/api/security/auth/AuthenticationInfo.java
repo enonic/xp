@@ -1,18 +1,22 @@
-package com.enonic.wem.api.security;
+package com.enonic.wem.api.security.auth;
 
 import com.google.common.collect.ImmutableSet;
 
+import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.security.PrincipalKeys;
+import com.enonic.wem.api.security.User;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public final class Subject
+public final class AuthenticationInfo
 {
     private User user;
 
     private PrincipalKeys principals;
 
-    private Subject( final Builder builder )
+    private AuthenticationInfo( final Builder builder )
     {
-        this.user = checkNotNull( builder.user, "Subject user cannot be null" );
+        this.user = checkNotNull( builder.user, "AuthenticationInfo user cannot be null" );
         builder.principals.add( user.getKey() );
         this.principals = PrincipalKeys.from( builder.principals.build() );
     }
@@ -32,14 +36,14 @@ public final class Subject
         return principals.stream().anyMatch( principal -> principal.isRole() && principal.getId().equals( role ) );
     }
 
-    public static Builder newSubject()
+    public static Builder newBuilder()
     {
         return new Builder();
     }
 
-    public static Builder newSubject( final Subject subject )
+    public static Builder newBuilder( final AuthenticationInfo info )
     {
-        return new Builder( subject );
+        return new Builder( info );
     }
 
     public static class Builder
@@ -53,11 +57,11 @@ public final class Subject
             principals = ImmutableSet.builder();
         }
 
-        private Builder( final Subject subject )
+        private Builder( final AuthenticationInfo info )
         {
-            this.user = subject.user;
+            this.user = info.user;
             this.principals = ImmutableSet.builder();
-            this.principals.addAll( subject.principals.getSet() );
+            this.principals.addAll( info.principals.getSet() );
         }
 
         public Builder user( final User user )
@@ -78,10 +82,9 @@ public final class Subject
             return this;
         }
 
-        public Subject build()
+        public AuthenticationInfo build()
         {
-            return new Subject( this );
+            return new AuthenticationInfo( this );
         }
     }
-
 }

@@ -1,10 +1,12 @@
-package com.enonic.wem.api.security;
+package com.enonic.wem.api.security.acl;
 
 import java.util.Iterator;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+
+import com.enonic.wem.api.security.PrincipalKey;
 
 public final class AccessControlList
     implements Iterable<AccessControlEntry>

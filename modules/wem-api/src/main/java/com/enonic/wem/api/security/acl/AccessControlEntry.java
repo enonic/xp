@@ -1,10 +1,12 @@
-package com.enonic.wem.api.security;
+package com.enonic.wem.api.security.acl;
 
 import java.util.EnumSet;
 import java.util.Objects;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+
+import com.enonic.wem.api.security.PrincipalKey;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
