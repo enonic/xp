@@ -173,11 +173,11 @@ public class ContentResource
 
     @GET
     @Path("list")
-    public AbstractContentListJson listById( @QueryParam("parentId") final String parentIdParam,
+    public AbstractContentListJson listById( @QueryParam("parentId") @DefaultValue("") final String parentIdParam,
                                              @QueryParam("expand") @DefaultValue(EXPAND_SUMMARY) final String expandParam,
                                              @QueryParam("from") @DefaultValue(DEFAULT_FROM_PARAM) final Integer fromParam,
                                              @QueryParam("size") @DefaultValue(DEFAULT_SIZE_PARAM) final Integer sizeParam,
-                                             @QueryParam("childOrder") final String childOrder )
+                                             @QueryParam("childOrder") @DefaultValue("modifiedTime DESC") final String childOrder )
     {
         final ContentPath parentContentPath;
 
@@ -204,11 +204,11 @@ public class ContentResource
 
     @GET
     @Path("list/bypath")
-    public AbstractContentListJson listByPath( @QueryParam("parentPath") final String parentPathParam,
+    public AbstractContentListJson listByPath( @QueryParam("parentPath") @DefaultValue("") final String parentPathParam,
                                                @QueryParam("expand") @DefaultValue(EXPAND_SUMMARY) final String expandParam,
                                                @QueryParam("from") @DefaultValue(DEFAULT_FROM_PARAM) final Integer fromParam,
                                                @QueryParam("size") @DefaultValue(DEFAULT_SIZE_PARAM) final Integer sizeParam,
-                                               @QueryParam("childOrder") final String childOrder )
+                                               @QueryParam("childOrder") @DefaultValue("modifiedTime DESC") final String childOrder )
     {
         final ContentPath parentContentPath;
 
