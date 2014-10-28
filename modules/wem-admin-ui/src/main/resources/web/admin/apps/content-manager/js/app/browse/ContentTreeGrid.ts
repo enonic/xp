@@ -242,7 +242,7 @@ module app.browse {
                 parentNode.getChildren().pop();
                 from--;
             }
-            if (!this.isFiltered()) {
+            if (!this.isFiltered() || parentNode != this.getRoot()) {
                 return ContentSummaryAndCompareStatusFetcher.fetchChildren(parentContentId, from, ContentTreeGrid.MAX_FETCH_SIZE).
                     then((data: ContentResponse<ContentSummaryAndCompareStatus>) => {
                         // TODO: Will reset the ids and the selection for child nodes.
