@@ -11,8 +11,6 @@ import javax.xml.transform.dom.DOMResult;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
-import com.enonic.wem.api.xml.model.ObjectFactory;
-
 public final class XsdGenerator
 {
     private final class SchemaOutput
@@ -36,17 +34,10 @@ public final class XsdGenerator
         }
     }
 
-    private final Class<?> classes;
-
-    public XsdGenerator( final Class<?> classes )
-    {
-        this.classes = classes;
-    }
-
     private String generate()
         throws Exception
     {
-        final JAXBContext context = JAXBContext.newInstance( this.classes );
+        final JAXBContext context = JAXBContext.newInstance( "com.enonic.wem.api.xml.model" );
 
         final SchemaOutput output = new SchemaOutput();
         context.generateSchema( output );
@@ -57,7 +48,7 @@ public final class XsdGenerator
     public static String generateXsd()
         throws Exception
     {
-        return new XsdGenerator( ObjectFactory.class ).generate();
+        return new XsdGenerator().generate();
     }
 
     public static void main( final String... args )

@@ -3,10 +3,12 @@ package com.enonic.wem.api.xml.model;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "imageDescriptor")
+@XmlRootElement(name = "image-component")
 public final class XmlImageDescriptor
 {
     @XmlElement(name = "display-name")
