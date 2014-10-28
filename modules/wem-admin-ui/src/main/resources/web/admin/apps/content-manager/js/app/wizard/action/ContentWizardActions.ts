@@ -14,15 +14,15 @@ module app.wizard.action {
 
         private preview: api.ui.Action;
 
-        private showLiveEditAction:api.ui.Action;
+        private showLiveEditAction: api.ui.Action;
 
-        private showFormAction:api.ui.Action;
+        private showFormAction: api.ui.Action;
 
-        private showSplitEditAction:api.ui.Action;
+        private showSplitEditAction: api.ui.Action;
 
         constructor(wizardPanel: app.wizard.ContentWizardPanel) {
             this.save = new api.app.wizard.SaveAction(wizardPanel);
-            this.duplicate = new DuplicateContentAction();
+            this.duplicate = new DuplicateContentAction(wizardPanel);
             this.delete = new DeleteContentAction(wizardPanel);
             this.close = new api.app.wizard.CloseAction(wizardPanel);
             this.publish = new PublishAction(wizardPanel);
@@ -46,7 +46,7 @@ module app.wizard.action {
             this.publish.setEnabled(true);
         }
 
-        getDeleteAction() :api.ui.Action {
+        getDeleteAction(): api.ui.Action {
             return this.delete;
         }
 
@@ -54,7 +54,7 @@ module app.wizard.action {
             return this.save;
         }
 
-        getDuplicateAction() : api.ui.Action{
+        getDuplicateAction(): api.ui.Action {
             return this.duplicate;
         }
 

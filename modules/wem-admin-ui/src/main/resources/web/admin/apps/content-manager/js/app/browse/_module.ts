@@ -1,7 +1,6 @@
 ///<reference path='BaseBrowseContentEvent.ts' />
 ///<reference path='CloseContentEvent.ts' />
 ///<reference path='ContentDeletePromptEvent.ts' />
-///<reference path='DuplicateContentEvent.ts' />
 ///<reference path='EditContentEvent.ts' />
 ///<reference path='GridSelectionChangedEvent.ts' />
 ///<reference path='MoveContentEvent.ts' />
