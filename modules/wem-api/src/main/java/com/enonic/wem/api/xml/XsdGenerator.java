@@ -1,0 +1,72 @@
+package com.enonic.wem.api.xml;
+
+import java.io.File;
+import java.io.IOException;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.SchemaOutputResolver;
+import javax.xml.transform.Result;
+import javax.xml.transform.dom.DOMResult;
+
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
+
+import com.enonic.wem.api.xml.model.XmlModule;
+
+public final class XsdGenerator
+{
+    private final class SchemaOutput
+        extends SchemaOutputResolver
+    {
+        private DOMResult result;
+
+        @Override
+        public Result createOutput( final String namespaceUri, final String suggestedFileName )
+            throws IOException
+        {
+            this.result = new DOMResult();
+            this.result.setSystemId( namespaceUri );
+            return this.result;
+        }
+
+        public String getAsString()
+            throws Exception
+        {
+            return DomHelper.serialize( this.result.getNode() );
+        }
+    }
+
+    private final Class<?> classes;
+
+    public XsdGenerator( final Class<?> classes )
+    {
+        this.classes = classes;
+    }
+
+    private String generateXsd()
+        throws Exception
+    {
+        final JAXBContext context = JAXBContext.newInstance( this.classes );
+
+        final SchemaOutput output = new SchemaOutput();
+        context.generateSchema( output );
+
+        return output.getAsString();
+    }
+
+    public static String generateModelXsd()
+        throws Exception
+    {
+        return new XsdGenerator( XmlModule.class ).generateXsd();
+    }
+
+    public static void main( final String... args )
+        throws Exception
+    {
+        final File file = new File( "modules/wem-api/src/main/resources/com/enonic/wem/api/xml/schema/test.xsd" );
+        file.getParentFile().mkdirs();
+
+        final String xsd = generateModelXsd();
+        Files.write( xsd, file, Charsets.UTF_8 );
+    }
+}
