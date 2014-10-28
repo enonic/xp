@@ -9,6 +9,7 @@ import com.enonic.wem.api.aggregation.Aggregation;
 import com.enonic.wem.api.aggregation.Aggregations;
 import com.enonic.wem.api.aggregation.BucketAggregation;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentListMetaData;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.FindContentByQueryResult;
 import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
@@ -20,6 +21,11 @@ public class FindContentByQuertResultJsonFactory
                                                          final MixinReferencesToFormItemsTransformer mixinReferencesToFormItemsTransformer )
     {
         final AbstractContentQueryResultJson.Builder builder;
+
+        final ContentListMetaData metadata = ContentListMetaData.create().
+            totalHits( contentQueryResult.getTotalHits() ).
+            hits( contentQueryResult.getHits() ).
+            build();
 
         if ( Expand.FULL.matches( expand ) )
         {
@@ -36,6 +42,7 @@ public class FindContentByQuertResultJsonFactory
 
         addAggregations( contentQueryResult.getAggregations(), builder );
         addContents( contentQueryResult.getContents(), builder, mixinReferencesToFormItemsTransformer );
+        setMetadata( metadata, builder );
 
         return builder.build();
     }
@@ -58,5 +65,10 @@ public class FindContentByQuertResultJsonFactory
                 builder.addAggregation( new BucketAggregationJson( (BucketAggregation) aggregation ) );
             }
         }
+    }
+
+    private static void setMetadata( final ContentListMetaData metadata, final AbstractContentQueryResultJson.Builder builder )
+    {
+        builder.setMetadata( metadata );
     }
 }
