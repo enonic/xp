@@ -27,6 +27,12 @@ public interface SecurityService
 
     Optional<Group> getGroup( PrincipalKey groupKey );
 
+    Role createRole( CreateRoleParams createRole );
+
+    Role updateRole( UpdateRoleParams updateRole );
+
+    Optional<Role> getRole( PrincipalKey roleKey );
+
     PrincipalQueryResult query( PrincipalQuery query );
 
     PrincipalRelationships getRelationships( PrincipalKey from );

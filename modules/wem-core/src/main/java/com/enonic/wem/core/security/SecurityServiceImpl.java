@@ -15,6 +15,7 @@ import com.google.common.collect.Multimaps;
 import com.google.common.primitives.Ints;
 
 import com.enonic.wem.api.security.CreateGroupParams;
+import com.enonic.wem.api.security.CreateRoleParams;
 import com.enonic.wem.api.security.CreateUserParams;
 import com.enonic.wem.api.security.Group;
 import com.enonic.wem.api.security.Principal;
@@ -25,8 +26,10 @@ import com.enonic.wem.api.security.PrincipalRelationship;
 import com.enonic.wem.api.security.PrincipalRelationships;
 import com.enonic.wem.api.security.PrincipalType;
 import com.enonic.wem.api.security.Principals;
+import com.enonic.wem.api.security.Role;
 import com.enonic.wem.api.security.SecurityService;
 import com.enonic.wem.api.security.UpdateGroupParams;
+import com.enonic.wem.api.security.UpdateRoleParams;
 import com.enonic.wem.api.security.UpdateUserParams;
 import com.enonic.wem.api.security.User;
 import com.enonic.wem.api.security.UserStore;
@@ -131,8 +134,7 @@ public final class SecurityServiceImpl
 
     private AuthenticationInfo authenticateEmailPassword( final EmailPasswordAuthToken token )
     {
-        final EmailPasswordAuthToken authToken = token;
-        final User user = findByEmail( authToken.getUserStore(), authToken.getEmail() );
+        final User user = findByEmail( token.getUserStore(), token.getEmail() );
         if ( user != null )
         {
             return AuthenticationInfo.newBuilder().user( user ).build();
@@ -145,8 +147,7 @@ public final class SecurityServiceImpl
 
     private AuthenticationInfo authenticateUsernamePassword( final UsernamePasswordAuthToken token )
     {
-        final UsernamePasswordAuthToken authToken = token;
-        final User user = findByUsername( authToken.getUserStore(), authToken.getUsername() );
+        final User user = findByUsername( token.getUserStore(), token.getUsername() );
         if ( user != null )
         {
             return AuthenticationInfo.newBuilder().user( user ).build();
@@ -249,7 +250,7 @@ public final class SecurityServiceImpl
 
         if ( updatedGroup == null )
         {
-            throw new IllegalArgumentException( "Could not find group to be updated: " + updatedGroup.getKey() );
+            throw new IllegalArgumentException( "Could not find group to be updated: " + updateGroup.getKey() );
         }
         return updatedGroup;
     }
@@ -259,6 +260,42 @@ public final class SecurityServiceImpl
     {
         Preconditions.checkArgument( groupKey.isGroup(), "Expected principal key of type Group" );
         return Optional.ofNullable( (Group) this.principals.get( groupKey ) );
+    }
+
+    @Override
+    public Role createRole( final CreateRoleParams createRole )
+    {
+        final Role role = Role.newRole().
+            roleKey( createRole.getKey() ).
+            displayName( createRole.getDisplayName() ).
+            build();
+        if ( this.principals.putIfAbsent( role.getKey(), role ) != null )
+        {
+            throw new IllegalArgumentException( "Role already exists: " + role.getKey() );
+        }
+        return role;
+    }
+
+    @Override
+    public Role updateRole( final UpdateRoleParams updateRole )
+    {
+        final Role updatedRole = (Role) this.principals.computeIfPresent( updateRole.getKey(), ( userKey, principal ) -> {
+            final Role existingRole = (Role) principal;
+            return updateRole.update( existingRole );
+        } );
+
+        if ( updatedRole == null )
+        {
+            throw new IllegalArgumentException( "Could not find role to be updated: " + updateRole.getKey() );
+        }
+        return updatedRole;
+    }
+
+    @Override
+    public Optional<Role> getRole( final PrincipalKey roleKey )
+    {
+        Preconditions.checkArgument( roleKey.isRole(), "Expected principal key of type Role" );
+        return Optional.ofNullable( (Role) this.principals.get( roleKey ) );
     }
 
     @Override

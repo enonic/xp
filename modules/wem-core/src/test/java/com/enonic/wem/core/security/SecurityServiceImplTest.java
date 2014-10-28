@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.security.CreateGroupParams;
+import com.enonic.wem.api.security.CreateRoleParams;
 import com.enonic.wem.api.security.CreateUserParams;
 import com.enonic.wem.api.security.Group;
 import com.enonic.wem.api.security.PrincipalKey;
@@ -13,8 +14,10 @@ import com.enonic.wem.api.security.PrincipalRelationship;
 import com.enonic.wem.api.security.PrincipalRelationships;
 import com.enonic.wem.api.security.PrincipalType;
 import com.enonic.wem.api.security.Principals;
+import com.enonic.wem.api.security.Role;
 import com.enonic.wem.api.security.SecurityService;
 import com.enonic.wem.api.security.UpdateGroupParams;
+import com.enonic.wem.api.security.UpdateRoleParams;
 import com.enonic.wem.api.security.UpdateUserParams;
 import com.enonic.wem.api.security.User;
 import com.enonic.wem.api.security.UserStoreKey;
@@ -226,6 +229,46 @@ public class SecurityServiceImplTest
         final Group updatedGroup = securityService.getGroup( group.getKey() ).get();
         assertEquals( "___Group B___", updatedGroupResult.getDisplayName() );
         assertEquals( "___Group B___", updatedGroup.getDisplayName() );
+    }
+
+    @Test
+    public void testCreateRole()
+        throws Exception
+    {
+        final CreateRoleParams createRole = CreateRoleParams.create().
+            roleKey( PrincipalKey.ofRole( "roleA" ) ).
+            displayName( "Role A" ).
+            build();
+        final Role role = securityService.createRole( createRole );
+
+        final CreateRoleParams createRole2 = CreateRoleParams.create().
+            roleKey( PrincipalKey.ofRole( "roleB" ) ).
+            displayName( "Role B" ).
+            build();
+        final Role role2 = securityService.createRole( createRole2 );
+
+        final Principals roles = securityService.getPrincipals( SYSTEM, PrincipalType.ROLE );
+        assertEquals( 2, roles.getSize() );
+    }
+
+    @Test
+    public void testUpdateRole()
+        throws Exception
+    {
+        final CreateRoleParams createRole = CreateRoleParams.create().
+            roleKey( PrincipalKey.ofRole( "roleA" ) ).
+            displayName( "Role A" ).
+            build();
+        final Role role = securityService.createRole( createRole );
+
+        final UpdateRoleParams roleUpdate = UpdateRoleParams.create( role ).
+            displayName( "___Role B___" ).
+            build();
+        final Role updatedRoleResult = securityService.updateRole( roleUpdate );
+
+        final Role updatedRole = securityService.getRole( role.getKey() ).get();
+        assertEquals( "___Role B___", updatedRoleResult.getDisplayName() );
+        assertEquals( "___Role B___", updatedRole.getDisplayName() );
     }
 
     @Test
