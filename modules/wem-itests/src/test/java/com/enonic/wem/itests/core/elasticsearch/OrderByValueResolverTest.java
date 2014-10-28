@@ -57,6 +57,7 @@ public class OrderByValueResolverTest
         throws Exception
     {
         createSearchIndex( this.repository );
+        flushAndRefresh();
 
         final String hundred = storeOrderbyDocument( OrderbyValueResolver.getOrderbyValue( Value.newDouble( 10000 ) ) );
         final String thousand = storeOrderbyDocument( OrderbyValueResolver.getOrderbyValue( Value.newDouble( 100000 ) ) );
