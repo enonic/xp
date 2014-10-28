@@ -1,19 +1,22 @@
 package com.enonic.wem.api.xml.mapper;
 
+import java.util.List;
+
+import com.google.common.collect.Lists;
+
 import com.enonic.wem.api.content.page.region.RegionDescriptor;
 import com.enonic.wem.api.content.page.region.RegionDescriptors;
 import com.enonic.wem.api.xml.model.XmlRegionDescriptor;
-import com.enonic.wem.api.xml.model.XmlRegionsDescriptor;
 
 final class XmlRegionDescriptorMapper
 {
-    protected static RegionDescriptors fromXml( final XmlRegionsDescriptor regions )
+    protected static RegionDescriptors fromXml( final List<XmlRegionDescriptor> regions )
     {
         final RegionDescriptors.Builder builder = RegionDescriptors.newRegionDescriptors();
 
         if ( regions != null )
         {
-            for ( final XmlRegionDescriptor descriptor : regions.getList() )
+            for ( final XmlRegionDescriptor descriptor : regions )
             {
                 builder.add( fromXml( descriptor ) );
             }
@@ -29,12 +32,12 @@ final class XmlRegionDescriptorMapper
         return builder.build();
     }
 
-    protected static XmlRegionsDescriptor toXml( final RegionDescriptors object )
+    protected static List<XmlRegionDescriptor> toXml( final RegionDescriptors object )
     {
-        final XmlRegionsDescriptor result = new XmlRegionsDescriptor();
+        final List<XmlRegionDescriptor> result = Lists.newArrayList();
         for ( final RegionDescriptor descriptor : object )
         {
-            result.getList().add( toXml( descriptor ) );
+            result.add( toXml( descriptor ) );
         }
         return result;
     }
@@ -45,5 +48,4 @@ final class XmlRegionDescriptorMapper
         result.setName( object.getName() );
         return result;
     }
-
 }

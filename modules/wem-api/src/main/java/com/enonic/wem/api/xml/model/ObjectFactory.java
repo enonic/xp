@@ -167,14 +167,6 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link XmlRegionsDescriptor }
-     */
-    public XmlRegionsDescriptor createXmlRegionsDescriptor()
-    {
-        return new XmlRegionsDescriptor();
-    }
-
-    /**
      * Create an instance of {@link XmlPageRegion }
      */
     public XmlPageRegion createXmlPageRegion()

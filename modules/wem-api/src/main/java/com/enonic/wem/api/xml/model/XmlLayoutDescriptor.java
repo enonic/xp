@@ -1,10 +1,15 @@
 package com.enonic.wem.api.xml.model;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import com.google.common.collect.Lists;
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "layoutDescriptor")
@@ -17,8 +22,9 @@ public final class XmlLayoutDescriptor
     @XmlElement
     private XmlForm config;
 
-    @XmlElement
-    private XmlRegionsDescriptor regions;
+    @XmlElement(name = "region")
+    @XmlElementWrapper(name = "regions")
+    private List<XmlRegionDescriptor> regions = Lists.newArrayList();
 
     public String getDisplayName()
     {
@@ -40,12 +46,12 @@ public final class XmlLayoutDescriptor
         this.config = value;
     }
 
-    public XmlRegionsDescriptor getRegions()
+    public List<XmlRegionDescriptor> getRegions()
     {
         return regions;
     }
 
-    public void setRegions( XmlRegionsDescriptor value )
+    public void setRegions( List<XmlRegionDescriptor> value )
     {
         this.regions = value;
     }
