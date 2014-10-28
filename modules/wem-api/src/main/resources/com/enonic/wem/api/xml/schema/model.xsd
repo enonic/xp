@@ -27,7 +27,7 @@
             </xs:choice>
         </xs:sequence>
     </xs:complexType>
-    <xs:complexType name="input">
+    <xs:complexType final="extension restriction" name="input">
         <xs:complexContent>
             <xs:extension base="formItem">
                 <xs:sequence>
@@ -53,20 +53,6 @@
         <xs:attribute name="minimum" type="xs:integer" use="required"/>
         <xs:attribute name="maximum" type="xs:integer" use="required"/>
     </xs:complexType>
-    <xs:complexType name="formItemSet">
-        <xs:complexContent>
-            <xs:extension base="formItem">
-                <xs:sequence>
-                    <xs:element minOccurs="0" name="label" type="xs:string"/>
-                    <xs:element minOccurs="0" name="immutable" type="xs:boolean"/>
-                    <xs:element minOccurs="0" name="custom-text" type="xs:string"/>
-                    <xs:element minOccurs="0" name="help-text" type="xs:string"/>
-                    <xs:element minOccurs="0" name="occurrences" type="occurrence"/>
-                    <xs:element minOccurs="0" name="items" type="formItems"/>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
     <xs:complexType name="mixinReference">
         <xs:complexContent>
             <xs:extension base="formItem">
@@ -86,10 +72,17 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    <xs:complexType name="form">
+    <xs:complexType final="extension restriction" name="formItemSet">
         <xs:complexContent>
-            <xs:extension base="formItems">
-                <xs:sequence/>
+            <xs:extension base="formItem">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="label" type="xs:string"/>
+                    <xs:element minOccurs="0" name="immutable" type="xs:boolean"/>
+                    <xs:element minOccurs="0" name="custom-text" type="xs:string"/>
+                    <xs:element minOccurs="0" name="help-text" type="xs:string"/>
+                    <xs:element minOccurs="0" name="occurrences" type="occurrence"/>
+                    <xs:element minOccurs="0" name="items" type="formItems"/>
+                </xs:sequence>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -99,6 +92,13 @@
             <xs:element minOccurs="0" name="config" type="form"/>
             <xs:element minOccurs="0" name="regions" type="regionsDescriptor"/>
         </xs:all>
+    </xs:complexType>
+    <xs:complexType final="extension restriction" name="form">
+        <xs:complexContent>
+            <xs:extension base="formItems">
+                <xs:sequence/>
+            </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="regionsDescriptor">
         <xs:sequence>
