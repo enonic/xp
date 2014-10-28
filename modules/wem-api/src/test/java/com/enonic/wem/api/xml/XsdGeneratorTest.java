@@ -2,6 +2,7 @@ package com.enonic.wem.api.xml;
 
 import java.net.URL;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.common.base.Charsets;
@@ -12,6 +13,7 @@ import junit.framework.Assert;
 public class XsdGeneratorTest
 {
     @Test
+    @Ignore
     public void testGeneratedXsd()
         throws Exception
     {
