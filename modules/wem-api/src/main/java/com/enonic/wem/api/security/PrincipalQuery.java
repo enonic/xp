@@ -22,11 +22,14 @@ public final class PrincipalQuery
 
     private final UserStoreKeys userStores;
 
+    private final PrincipalKeys principals;
+
     public PrincipalQuery( final Builder builder )
     {
-        this.from = builder.from;
-        this.size = builder.size;
-        this.userStores = UserStoreKeys.from( builder.userStores.build() );
+        from = builder.from;
+        size = builder.size;
+        userStores = UserStoreKeys.from( builder.userStores.build() );
+        principals = PrincipalKeys.from( builder.principals.build() );
         if ( builder.principalTypes.isEmpty() )
         {
             principalTypes = ALL_TYPES;
@@ -57,6 +60,11 @@ public final class PrincipalQuery
         return userStores;
     }
 
+    public PrincipalKeys getPrincipals()
+    {
+        return principals;
+    }
+
     public static Builder newQuery()
     {
         return new Builder();
@@ -72,10 +80,13 @@ public final class PrincipalQuery
 
         private final ImmutableList.Builder<UserStoreKey> userStores;
 
+        private final ImmutableList.Builder<PrincipalKey> principals;
+
         private Builder()
         {
             this.principalTypes = EnumSet.noneOf( PrincipalType.class );
             this.userStores = ImmutableList.builder();
+            this.principals = ImmutableList.builder();
         }
 
         public Builder from( final int from )
@@ -123,6 +134,18 @@ public final class PrincipalQuery
         public Builder userStores( final Iterable<UserStoreKey> userStoreKeys )
         {
             this.userStores.addAll( userStoreKeys );
+            return this;
+        }
+
+        public Builder principal( final PrincipalKey principal )
+        {
+            this.principals.add( principal );
+            return this;
+        }
+
+        public Builder principals( final Iterable<PrincipalKey> principals )
+        {
+            this.principals.addAll( principals );
             return this;
         }
 

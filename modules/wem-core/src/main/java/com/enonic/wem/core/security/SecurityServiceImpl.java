@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
@@ -301,17 +302,34 @@ public final class SecurityServiceImpl
     @Override
     public PrincipalQueryResult query( final PrincipalQuery query )
     {
-        final Predicate<Principal> userStorePredicate = principal -> query.getUserStores().contains( principal.getKey().getUserStore() );
-        final Predicate<Principal> typePredicate = principal -> query.getPrincipalTypes().contains( principal.getKey().getType() );
+        final Predicate<Principal> userStoreFilter = principal -> query.getUserStores().contains( principal.getKey().getUserStore() );
+        final Predicate<Principal> typeFilter = principal -> query.getPrincipalTypes().contains( principal.getKey().getType() );
+        final Predicate<Principal> keysFilter = principal -> query.getPrincipals().contains( principal.getKey() );
 
-        final long total = this.principals.values().stream().
-            filter( userStorePredicate ).
-            filter( typePredicate ).
+        Stream<Principal> streamCount = this.principals.values().stream();
+        if ( query.getUserStores().isNotEmpty() )
+        {
+            streamCount = streamCount.filter( userStoreFilter );
+        }
+        if ( query.getPrincipals().isNotEmpty() )
+        {
+            streamCount = streamCount.filter( keysFilter );
+        }
+        final long total = streamCount.
+            filter( typeFilter ).
             count();
 
-        final List<Principal> principals = this.principals.values().stream().
-            filter( userStorePredicate ).
-            filter( typePredicate ).
+        Stream<Principal> streamPrincipals = this.principals.values().stream();
+        if ( query.getUserStores().isNotEmpty() )
+        {
+            streamPrincipals = streamPrincipals.filter( userStoreFilter );
+        }
+        if ( query.getPrincipals().isNotEmpty() )
+        {
+            streamPrincipals = streamPrincipals.filter( keysFilter );
+        }
+        final List<Principal> principals = streamPrincipals.
+            filter( typeFilter ).
             limit( query.getSize() ).
             skip( query.getFrom() ).
             collect( toList() );

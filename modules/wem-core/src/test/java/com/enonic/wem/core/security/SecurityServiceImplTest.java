@@ -8,6 +8,7 @@ import com.enonic.wem.api.security.CreateRoleParams;
 import com.enonic.wem.api.security.CreateUserParams;
 import com.enonic.wem.api.security.Group;
 import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.security.PrincipalKeys;
 import com.enonic.wem.api.security.PrincipalQuery;
 import com.enonic.wem.api.security.PrincipalQueryResult;
 import com.enonic.wem.api.security.PrincipalRelationship;
@@ -312,6 +313,48 @@ public class SecurityServiceImplTest
 
         final PrincipalQueryResult results = securityService.query( query );
         assertEquals( 4, results.getTotalSize() );
+        assertEquals( 3, results.getPrincipals().getSize() );
+    }
+
+    @Test
+    public void testQueryByKeys()
+        throws Exception
+    {
+        final CreateUserParams createUser1 = CreateUserParams.create().
+            userKey( PrincipalKey.ofUser( SYSTEM, "user1" ) ).
+            displayName( "User 1" ).
+            email( "user1@enonic.com" ).
+            login( "user1" ).
+            build();
+        final User user1 = securityService.createUser( createUser1 );
+
+        final CreateUserParams createUser2 = CreateUserParams.create().
+            userKey( PrincipalKey.ofUser( SYSTEM, "user2" ) ).
+            displayName( "User 2" ).
+            email( "user2@enonic.com" ).
+            login( "user2" ).
+            build();
+        final User user2 = securityService.createUser( createUser2 );
+
+        final CreateGroupParams createGroup = CreateGroupParams.create().
+            groupKey( PrincipalKey.ofGroup( SYSTEM, "groupA" ) ).
+            displayName( "Group A" ).
+            build();
+        final Group group = securityService.createGroup( createGroup );
+
+        final CreateGroupParams createGroup2 = CreateGroupParams.create().
+            groupKey( PrincipalKey.ofGroup( SYSTEM, "groupB" ) ).
+            displayName( "Group B" ).
+            build();
+        final Group group2 = securityService.createGroup( createGroup2 );
+
+        final PrincipalQuery query = PrincipalQuery.newQuery().
+            principal( user1.getKey() ).
+            principals( PrincipalKeys.from( group.getKey(), group2.getKey() ) ).
+            build();
+
+        final PrincipalQueryResult results = securityService.query( query );
+        assertEquals( 3, results.getTotalSize() );
         assertEquals( 3, results.getPrincipals().getSize() );
     }
 
