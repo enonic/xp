@@ -68,18 +68,15 @@ public final class XmlFormItemSet
         this.helpText = value;
     }
 
-
     public XmlOccurrence getOccurrences()
     {
         return occurrences;
     }
 
-
     public void setOccurrences( XmlOccurrence value )
     {
         this.occurrences = value;
     }
-
 
     public XmlFormItems getItems()
     {

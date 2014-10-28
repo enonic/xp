@@ -1,6 +1,5 @@
 package com.enonic.wem.api.xml.mapper;
 
-import java.math.BigInteger;
 import java.util.List;
 
 import org.w3c.dom.Element;
@@ -145,8 +144,8 @@ public final class XmlFormMapper
     private static Occurrences fromOccurenceXml( final XmlOccurrence xml )
     {
         final Occurrences.Builder builder = Occurrences.newOccurrences();
-        builder.minimum( xml.getMinimum().intValue() );
-        builder.maximum( xml.getMaximum().intValue() );
+        builder.minimum( xml.getMinimum() );
+        builder.maximum( xml.getMaximum() );
         return builder.build();
     }
 
@@ -251,8 +250,8 @@ public final class XmlFormMapper
     private static XmlOccurrence toOccurenceXml( final Occurrences object )
     {
         final XmlOccurrence result = new XmlOccurrence();
-        result.setMinimum( BigInteger.valueOf( object.getMinimum() ) );
-        result.setMaximum( BigInteger.valueOf( object.getMaximum() ) );
+        result.setMinimum( object.getMinimum() );
+        result.setMaximum( object.getMaximum() );
         return result;
     }
 

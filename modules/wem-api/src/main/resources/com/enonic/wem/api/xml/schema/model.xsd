@@ -1,6 +1,5 @@
 <xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <xs:element name="content-type" type="contentType"/>
-    <xs:element name="form" type="form"/>
     <xs:element name="image-component" type="imageDescriptor"/>
     <xs:element name="layout-component" type="layoutDescriptor"/>
     <xs:element name="metadata-schema" type="metadataSchema"/>
@@ -10,12 +9,12 @@
     <xs:element name="page-component" type="pageDescriptor"/>
     <xs:element name="part-component" type="partDescriptor"/>
     <xs:element name="relationship-type" type="relationshipType"/>
-    <xs:complexType name="mixin">
-        <xs:all>
+    <xs:complexType final="extension restriction" name="mixin">
+        <xs:sequence>
             <xs:element minOccurs="0" name="display-name" type="xs:string"/>
             <xs:element minOccurs="0" name="description" type="xs:string"/>
             <xs:element minOccurs="0" name="items" type="formItems"/>
-        </xs:all>
+        </xs:sequence>
     </xs:complexType>
     <xs:complexType name="formItems">
         <xs:sequence>
@@ -48,12 +47,12 @@
         <xs:sequence/>
         <xs:attribute name="name" type="xs:string" use="required"/>
     </xs:complexType>
-    <xs:complexType name="occurrence">
+    <xs:complexType final="extension restriction" name="occurrence">
         <xs:sequence/>
-        <xs:attribute name="minimum" type="xs:integer" use="required"/>
-        <xs:attribute name="maximum" type="xs:integer" use="required"/>
+        <xs:attribute name="minimum" type="xs:int" use="required"/>
+        <xs:attribute name="maximum" type="xs:int" use="required"/>
     </xs:complexType>
-    <xs:complexType name="mixinReference">
+    <xs:complexType final="extension restriction" name="mixinReference">
         <xs:complexContent>
             <xs:extension base="formItem">
                 <xs:sequence>
@@ -62,7 +61,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    <xs:complexType name="fieldSet">
+    <xs:complexType final="extension restriction" name="fieldSet">
         <xs:complexContent>
             <xs:extension base="formItem">
                 <xs:sequence>
@@ -86,12 +85,12 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    <xs:complexType name="layoutDescriptor">
-        <xs:all>
+    <xs:complexType final="extension restriction" name="layoutDescriptor">
+        <xs:sequence>
             <xs:element minOccurs="0" name="display-name" type="xs:string"/>
             <xs:element minOccurs="0" name="config" type="form"/>
             <xs:element minOccurs="0" name="regions" type="regionsDescriptor"/>
-        </xs:all>
+        </xs:sequence>
     </xs:complexType>
     <xs:complexType final="extension restriction" name="form">
         <xs:complexContent>
@@ -100,33 +99,33 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    <xs:complexType name="regionsDescriptor">
+    <xs:complexType final="extension restriction" name="regionsDescriptor">
         <xs:sequence>
             <xs:element maxOccurs="unbounded" minOccurs="0"
                 name="region" type="regionDescriptor"/>
         </xs:sequence>
     </xs:complexType>
-    <xs:complexType name="regionDescriptor">
+    <xs:complexType final="extension restriction" name="regionDescriptor">
         <xs:sequence/>
         <xs:attribute name="name" type="xs:string" use="required"/>
     </xs:complexType>
-    <xs:complexType name="partDescriptor">
-        <xs:all>
+    <xs:complexType final="extension restriction" name="partDescriptor">
+        <xs:sequence>
             <xs:element minOccurs="0" name="display-name" type="xs:string"/>
             <xs:element minOccurs="0" name="config" type="form"/>
-        </xs:all>
+        </xs:sequence>
     </xs:complexType>
-    <xs:complexType name="node">
-        <xs:all>
+    <xs:complexType final="extension restriction" name="node">
+        <xs:sequence>
             <xs:element minOccurs="0" name="id" type="xs:string"/>
             <xs:element minOccurs="0" name="created-time" type="xs:dateTime"/>
             <xs:element minOccurs="0" name="modified-time" type="xs:dateTime"/>
             <xs:element minOccurs="0" name="creator" type="xs:string"/>
             <xs:element minOccurs="0" name="modifier" type="xs:string"/>
             <xs:element minOccurs="0" name="data" type="dataSet"/>
-        </xs:all>
+        </xs:sequence>
     </xs:complexType>
-    <xs:complexType name="dataSet">
+    <xs:complexType final="extension restriction" name="dataSet">
         <xs:sequence>
             <xs:choice maxOccurs="unbounded" minOccurs="0">
                 <xs:element name="property" type="dataProperty"/>
@@ -135,7 +134,7 @@
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" use="required"/>
     </xs:complexType>
-    <xs:complexType name="dataProperty">
+    <xs:complexType final="extension restriction" name="dataProperty">
         <xs:simpleContent>
             <xs:extension base="xs:string">
                 <xs:attribute name="name" type="xs:string" use="required"/>
@@ -143,21 +142,21 @@
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
-    <xs:complexType name="imageDescriptor">
-        <xs:all>
+    <xs:complexType final="extension restriction" name="imageDescriptor">
+        <xs:sequence>
             <xs:element minOccurs="0" name="display-name" type="xs:string"/>
             <xs:element minOccurs="0" name="config" type="form"/>
-        </xs:all>
+        </xs:sequence>
     </xs:complexType>
-    <xs:complexType name="pageDescriptor">
-        <xs:all>
+    <xs:complexType final="extension restriction" name="pageDescriptor">
+        <xs:sequence>
             <xs:element minOccurs="0" name="display-name" type="xs:string"/>
             <xs:element minOccurs="0" name="config" type="form"/>
             <xs:element minOccurs="0" name="regions" type="regionsDescriptor"/>
-        </xs:all>
+        </xs:sequence>
     </xs:complexType>
-    <xs:complexType name="module">
-        <xs:all>
+    <xs:complexType final="extension restriction" name="module">
+        <xs:sequence>
             <xs:element name="name" type="xs:string"/>
             <xs:element name="version" type="xs:string"/>
             <xs:element minOccurs="0" name="display-name" type="xs:string"/>
@@ -165,28 +164,28 @@
             <xs:element minOccurs="0" name="vendor" type="vendor"/>
             <xs:element minOccurs="0" name="config" type="form"/>
             <xs:element minOccurs="0" name="metadata-schemas" type="metadata-schemas"/>
-        </xs:all>
+        </xs:sequence>
     </xs:complexType>
-    <xs:complexType name="vendor">
-        <xs:all>
+    <xs:complexType final="extension restriction" name="vendor">
+        <xs:sequence>
             <xs:element name="name" type="xs:string"/>
             <xs:element name="url" type="xs:string"/>
-        </xs:all>
+        </xs:sequence>
     </xs:complexType>
-    <xs:complexType name="metadata-schemas">
+    <xs:complexType final="extension restriction" name="metadata-schemas">
         <xs:sequence>
             <xs:element maxOccurs="unbounded" minOccurs="0"
                 name="metadata-schema" type="metadataSchema"/>
         </xs:sequence>
     </xs:complexType>
-    <xs:complexType name="metadataSchema">
+    <xs:complexType final="extension restriction" name="metadataSchema">
         <xs:sequence>
             <xs:element minOccurs="0" name="form" type="form"/>
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" use="required"/>
     </xs:complexType>
-    <xs:complexType name="contentType">
-        <xs:all>
+    <xs:complexType final="extension restriction" name="contentType">
+        <xs:sequence>
             <xs:element minOccurs="0" name="display-name" type="xs:string"/>
             <xs:element minOccurs="0" name="description" type="xs:string"/>
             <xs:element minOccurs="0" name="content-display-name-script" type="xs:string"/>
@@ -196,57 +195,51 @@
             <xs:element minOccurs="0" name="is-built-in" type="xs:boolean"/>
             <xs:element minOccurs="0" name="allow-child-content" type="xs:boolean"/>
             <xs:element minOccurs="0" name="form" type="formItems"/>
-        </xs:all>
+        </xs:sequence>
     </xs:complexType>
-    <xs:complexType name="relationshipType">
-        <xs:all>
+    <xs:complexType final="extension restriction" name="relationshipType">
+        <xs:sequence>
             <xs:element minOccurs="0" name="description" type="xs:string"/>
             <xs:element minOccurs="0" name="from-semantic" type="xs:string"/>
             <xs:element minOccurs="0" name="to-semantic" type="xs:string"/>
-            <xs:element minOccurs="0" name="allowed-from-types" type="allowedTypesDescriptor"/>
-            <xs:element minOccurs="0" name="allowed-to-types" type="allowedTypesDescriptor"/>
-        </xs:all>
-    </xs:complexType>
-    <xs:complexType name="allowedTypesDescriptor">
-        <xs:sequence>
-            <xs:element maxOccurs="unbounded" minOccurs="0"
-                name="content-type" type="xs:string"/>
+            <xs:element minOccurs="0" name="allowed-from-types">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0"
+                            name="content-type" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element minOccurs="0" name="allowed-to-types">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0"
+                            name="content-type" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
         </xs:sequence>
     </xs:complexType>
-    <xs:complexType name="canRenderDescriptor">
-        <xs:sequence>
-            <xs:element maxOccurs="unbounded" minOccurs="0"
-                name="content-type" type="xs:string"/>
-        </xs:sequence>
-    </xs:complexType>
-    <xs:complexType name="pageRegions">
+    <xs:complexType final="extension restriction" name="pageRegions">
         <xs:sequence>
             <xs:element maxOccurs="unbounded" minOccurs="0"
                 name="region" type="pageRegion"/>
         </xs:sequence>
     </xs:complexType>
-    <xs:complexType name="pageRegion">
+    <xs:complexType final="extension restriction" name="pageRegion">
         <xs:sequence>
             <xs:element maxOccurs="unbounded" minOccurs="0"
                 name="part-component" type="partComponent"/>
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" use="required"/>
     </xs:complexType>
-    <xs:complexType name="partComponent">
-        <xs:all>
+    <xs:complexType final="extension restriction" name="partComponent">
+        <xs:sequence>
             <xs:element minOccurs="0" name="display-name" type="xs:string"/>
             <xs:element minOccurs="0" name="config" type="xs:anyType"/>
-        </xs:all>
+        </xs:sequence>
         <xs:attribute name="descriptor" type="xs:string"/>
         <xs:attribute name="name" type="xs:string"/>
-    </xs:complexType>
-    <xs:complexType name="contentFilter">
-        <xs:sequence>
-            <xs:choice maxOccurs="unbounded" minOccurs="0">
-                <xs:element name="deny" type="xs:string"/>
-                <xs:element name="allow" type="xs:string"/>
-            </xs:choice>
-        </xs:sequence>
     </xs:complexType>
     <xs:simpleType name="dataPropertyType">
         <xs:restriction base="xs:string">

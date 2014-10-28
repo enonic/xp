@@ -1,9 +1,12 @@
 package com.enonic.wem.api.xml.mapper;
 
+import java.util.List;
+
+import com.google.common.collect.Lists;
+
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
-import com.enonic.wem.api.xml.model.XmlAllowedTypesDescriptor;
 import com.enonic.wem.api.xml.model.XmlRelationshipType;
 
 public final class XmlRelationshipTypeMapper
@@ -24,22 +27,22 @@ public final class XmlRelationshipTypeMapper
         builder.description( xml.getDescription() );
         builder.fromSemantic( xml.getFromSemantic() );
         builder.toSemantic( xml.getToSemantic() );
-        for ( String ctyName : xml.getAllowedFromTypes().getList() )
+        for ( String ctyName : xml.getAllowedFromTypes() )
         {
             builder.addAllowedFromType( ContentTypeName.from( ctyName ) );
         }
-        for ( String ctyName : xml.getAllowedToTypes().getList() )
+        for ( String ctyName : xml.getAllowedToTypes() )
         {
             builder.addAllowedToType( ContentTypeName.from( ctyName ) );
         }
     }
 
-    private static XmlAllowedTypesDescriptor toXml( final ContentTypeNames allowedFromTypes )
+    private static List<String> toXml( final ContentTypeNames allowedFromTypes )
     {
-        XmlAllowedTypesDescriptor result = new XmlAllowedTypesDescriptor();
+        final List<String> result = Lists.newArrayList();
         for ( final ContentTypeName ctyName : allowedFromTypes )
         {
-            result.getList().add( ctyName.getContentTypeName() );
+            result.add( ctyName.getContentTypeName() );
         }
         return result;
     }
