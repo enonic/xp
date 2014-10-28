@@ -1,368 +1,268 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-            xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
-            elementFormDefault="qualified" jaxb:version="2.1">
-
-  <xsd:annotation>
-    <xsd:appinfo>
-      <jaxb:schemaBindings>
-        <jaxb:package name="com.enonic.wem.api.xml.model"/>
-        <jaxb:nameXmlTransform>
-          <jaxb:typeName prefix="Xml"/>
-          <jaxb:elementName prefix="Xml" suffix="Elem"/>
-        </jaxb:nameXmlTransform>
-      </jaxb:schemaBindings>
-    </xsd:appinfo>
-  </xsd:annotation>
-
-  <!-- Form element -->
-  <xsd:element name="form" type="form"/>
-
-  <!-- Module element -->
-  <xsd:element name="module" type="module"/>
-
-  <!-- Content type element -->
-  <xsd:element name="content-type" type="contentType"/>
-
-  <!-- Mixin type element -->
-  <xsd:element name="mixin" type="mixin"/>
-
-  <!-- Relationship type element -->
-  <xsd:element name="relationship-type" type="relationshipType"/>
-
-  <!-- MetadataSchema type element -->
-  <xsd:element name="metadata-schema" type="metadataSchema"/>
-
-  <!-- Layout component element -->
-  <xsd:element name="layout-component" type="layoutDescriptor"/>
-
-  <!-- Image component element -->
-  <xsd:element name="image-component" type="imageDescriptor"/>
-
-  <!-- Part component element -->
-  <xsd:element name="part-component" type="partDescriptor"/>
-
-  <!-- Page component element -->
-  <xsd:element name="page-component" type="pageDescriptor"/>
-
-  <!-- Node element -->
-  <xsd:element name="node" type="node"/>
-
-  <!-- Form schema -->
-  <xsd:complexType name="formItem" abstract="true">
-    <xsd:attribute name="name" type="xsd:string" use="required"/>
-  </xsd:complexType>
-
-  <xsd:complexType name="input">
-    <xsd:complexContent>
-      <xsd:extension base="formItem">
-        <xsd:all>
-          <xsd:element name="label" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-          <xsd:element name="immutable" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
-          <xsd:element name="indexed" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
-          <xsd:element name="custom-text" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-          <xsd:element name="help-text" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-          <xsd:element name="validation-regexp" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-          <xsd:element name="occurrences" type="occurrence" minOccurs="0" maxOccurs="1"/>
-          <xsd:element name="config" type="xsd:anyType" minOccurs="0" maxOccurs="1"/>
-        </xsd:all>
-        <xsd:attribute name="type" type="xsd:string" use="required"/>
-      </xsd:extension>
-    </xsd:complexContent>
-  </xsd:complexType>
-
-  <xsd:complexType name="occurrence">
-    <xsd:attribute name="minimum" type="xsd:integer" use="required"/>
-    <xsd:attribute name="maximum" type="xsd:integer" use="required"/>
-  </xsd:complexType>
-
-  <xsd:complexType name="mixinReference">
-    <xsd:complexContent>
-      <xsd:extension base="formItem">
-        <xsd:all>
-          <xsd:element name="reference" type="xsd:string" minOccurs="1" maxOccurs="1"/>
-        </xsd:all>
-      </xsd:extension>
-    </xsd:complexContent>
-  </xsd:complexType>
-
-  <xsd:complexType name="fieldSet">
-    <xsd:complexContent>
-      <xsd:extension base="formItem">
-        <xsd:all>
-          <xsd:element name="label" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-          <xsd:element name="items" type="formItems" minOccurs="0" maxOccurs="1"/>
-        </xsd:all>
-      </xsd:extension>
-    </xsd:complexContent>
-  </xsd:complexType>
-
-  <xsd:complexType name="formItemSet">
-    <xsd:complexContent>
-      <xsd:extension base="formItem">
-        <xsd:all>
-          <xsd:element name="label" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-          <xsd:element name="immutable" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
-          <xsd:element name="custom-text" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-          <xsd:element name="help-text" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-          <xsd:element name="occurrences" type="occurrence" minOccurs="0" maxOccurs="1"/>
-          <xsd:element name="items" type="formItems" minOccurs="0" maxOccurs="1"/>
-        </xsd:all>
-      </xsd:extension>
-    </xsd:complexContent>
-  </xsd:complexType>
-
-  <xsd:complexType name="formItems">
-    <xsd:choice minOccurs="0" maxOccurs="unbounded">
-      <xsd:annotation>
-        <xsd:appinfo>
-          <jaxb:property name="Items"/>
-        </xsd:appinfo>
-      </xsd:annotation>
-      <xsd:element name="input" type="input"/>
-      <xsd:element name="mixin-reference" type="mixinReference"/>
-      <xsd:element name="field-set" type="fieldSet"/>
-      <xsd:element name="form-item-set" type="formItemSet"/>
-    </xsd:choice>
-  </xsd:complexType>
-
-  <xsd:complexType name="form">
-    <xsd:complexContent>
-      <xsd:extension base="formItems"/>
-    </xsd:complexContent>
-  </xsd:complexType>
-
-  <!-- Module schema -->
-  <xsd:complexType name="module">
-    <xsd:all>
-      <xsd:element name="name" type="xsd:string"/>
-      <xsd:element name="version" type="xsd:string"/>
-      <xsd:element name="display-name" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="url" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="vendor" type="vendor" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="config" type="form" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="metadata-schemas" type="metadata-schemas" minOccurs="0" maxOccurs="1"/>
-    </xsd:all>
-  </xsd:complexType>
-
-  <xsd:complexType name="metadata-schemas">
-    <xsd:sequence minOccurs="0" maxOccurs="unbounded">
-      <xsd:annotation>
-        <xsd:appinfo>
-          <jaxb:property name="metadataSchema"/>
-        </xsd:appinfo>
-      </xsd:annotation>
-      <xsd:element name="metadata-schema" type="metadataSchema"/>
-    </xsd:sequence>
-  </xsd:complexType>
-
-  <xsd:complexType name="contentFilter">
-    <xsd:choice minOccurs="1" maxOccurs="unbounded">
-      <xsd:element name="deny" type="xsd:string"/>
-      <xsd:element name="allow" type="xsd:string"/>
-    </xsd:choice>
-  </xsd:complexType>
-
-  <xsd:complexType name="canRenderDescriptor">
-    <xsd:sequence minOccurs="0" maxOccurs="unbounded">
-      <xsd:annotation>
-        <xsd:appinfo>
-          <jaxb:property name="ContentTypes"/>
-        </xsd:appinfo>
-      </xsd:annotation>
-      <xsd:element name="content-type" type="xsd:string" minOccurs="1" maxOccurs="1"/>
-    </xsd:sequence>
-  </xsd:complexType>
-
-  <xsd:complexType name="pageRegions">
-    <xsd:sequence minOccurs="0" maxOccurs="unbounded">
-      <xsd:annotation>
-        <xsd:appinfo>
-          <jaxb:property name="List"/>
-        </xsd:appinfo>
-      </xsd:annotation>
-      <xsd:element name="region" type="pageRegion"/>
-    </xsd:sequence>
-  </xsd:complexType>
-
-  <xsd:complexType name="pageRegion">
-    <xsd:sequence minOccurs="0" maxOccurs="unbounded">
-      <xsd:element name="part-component" type="partComponent"/>
-    </xsd:sequence>
-    <xsd:attribute name="name" type="xsd:string" use="required"/>
-  </xsd:complexType>
-
-  <xsd:complexType name="partComponent">
-    <xsd:all>
-      <xsd:element name="display-name" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="config" type="xsd:anyType" minOccurs="0" maxOccurs="1"/>
-    </xsd:all>
-    <xsd:attribute name="descriptor" type="xsd:string"/>
-    <xsd:attribute name="name" type="xsd:string"/>
-  </xsd:complexType>
-
-
-  <!-- Content Type schema -->
-  <xsd:complexType name="contentType">
-    <xsd:all>
-      <xsd:element name="display-name" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="description" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="content-display-name-script" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="super-type" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="is-abstract" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="is-final" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="is-built-in" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="allow-child-content" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="form" type="formItems" minOccurs="0" maxOccurs="1"/>
-    </xsd:all>
-  </xsd:complexType>
-
-  <!-- Mixin schema -->
-  <xsd:complexType name="mixin">
-    <xsd:all>
-      <xsd:element name="display-name" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="description" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="items" type="formItems" minOccurs="0" maxOccurs="1"/>
-    </xsd:all>
-  </xsd:complexType>
-
-  <!-- MetadataSchema schema -->
-  <xsd:complexType name="metadataSchema">
-    <xsd:all>
-      <xsd:element name="form" type="form" minOccurs="0" maxOccurs="1"/>
-    </xsd:all>
-    <xsd:attribute name="name" type="xsd:string" use="required"/>
-  </xsd:complexType>
-
-  <!-- Relationship Type schema -->
-  <xsd:complexType name="relationshipType">
-    <xsd:all>
-      <xsd:element name="description" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="from-semantic" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="to-semantic" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="allowed-from-types" type="allowedTypesDescriptor" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="allowed-to-types" type="allowedTypesDescriptor" minOccurs="0" maxOccurs="1"/>
-    </xsd:all>
-  </xsd:complexType>
-
-  <xsd:complexType name="allowedTypesDescriptor">
-    <xsd:sequence minOccurs="0" maxOccurs="unbounded">
-      <xsd:annotation>
-        <xsd:appinfo>
-          <jaxb:property name="List"/>
-        </xsd:appinfo>
-      </xsd:annotation>
-      <xsd:element name="content-type" type="xsd:string"/>
-    </xsd:sequence>
-  </xsd:complexType>
-
-  <!-- Layout component schema -->
-  <xsd:complexType name="layoutDescriptor">
-    <xsd:all>
-      <xsd:element name="display-name" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="config" type="form" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="regions" type="regionsDescriptor" minOccurs="0" maxOccurs="1"/>
-    </xsd:all>
-  </xsd:complexType>
-
-  <!-- Image component schema -->
-  <xsd:complexType name="imageDescriptor">
-    <xsd:all>
-      <xsd:element name="display-name" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="config" type="form" minOccurs="0" maxOccurs="1"/>
-    </xsd:all>
-  </xsd:complexType>
-
-  <!-- Part component schema -->
-  <xsd:complexType name="partDescriptor">
-    <xsd:all>
-      <xsd:element name="display-name" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="config" type="form" minOccurs="0" maxOccurs="1"/>
-    </xsd:all>
-  </xsd:complexType>
-
-  <!-- Page component schema -->
-  <xsd:complexType name="pageDescriptor">
-    <xsd:all>
-      <xsd:element name="display-name" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="config" type="form" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="regions" type="regionsDescriptor" minOccurs="0" maxOccurs="1"/>
-    </xsd:all>
-  </xsd:complexType>
-
-  <!-- Common schemas -->
-  <xsd:complexType name="vendor">
-    <xsd:all>
-      <xsd:element name="name" type="xsd:string"/>
-      <xsd:element name="url" type="xsd:string"/>
-    </xsd:all>
-  </xsd:complexType>
-
-  <xsd:complexType name="regionsDescriptor">
-    <xsd:sequence minOccurs="0" maxOccurs="unbounded">
-      <xsd:annotation>
-        <xsd:appinfo>
-          <jaxb:property name="List"/>
-        </xsd:appinfo>
-      </xsd:annotation>
-      <xsd:element name="region" type="regionDescriptor"/>
-    </xsd:sequence>
-  </xsd:complexType>
-
-  <xsd:complexType name="regionDescriptor">
-    <xsd:attribute name="name" type="xsd:string" use="required"/>
-  </xsd:complexType>
-
-  <!-- Node schema -->
-  <xsd:simpleType name="dataPropertyType">
-    <xsd:restriction base="xsd:string">
-      <xsd:enumeration value="Boolean" />
-      <xsd:enumeration value="String" />
-      <xsd:enumeration value="Data" />
-      <xsd:enumeration value="HtmlPart" />
-      <xsd:enumeration value="Double" />
-      <xsd:enumeration value="Long" />
-      <xsd:enumeration value="Xml" />
-      <xsd:enumeration value="LocalDate" />
-      <xsd:enumeration value="LocalDateTime" />
-      <xsd:enumeration value="LocalTime" />
-      <xsd:enumeration value="DateTime" />
-      <xsd:enumeration value="ContentId" />
-      <xsd:enumeration value="GeoPoint" />
-    </xsd:restriction>
-  </xsd:simpleType>
-
-  <xsd:complexType name="dataProperty">
-    <xsd:simpleContent>
-      <xsd:extension base="xsd:string">
-        <xsd:attribute name="name" type="xsd:string" use="required" />
-        <xsd:attribute name="type" type="dataPropertyType" use="required" />
-      </xsd:extension>
-    </xsd:simpleContent>
-  </xsd:complexType>
-
-  <xsd:complexType name="dataSet">
-    <xsd:choice minOccurs="0" maxOccurs="unbounded">
-      <xsd:annotation>
-        <xsd:appinfo>
-          <jaxb:property name="Properties"/>
-        </xsd:appinfo>
-      </xsd:annotation>
-      <xsd:element name="property" type="dataProperty" minOccurs="1" maxOccurs="1" />
-      <xsd:element name="property-set" type="dataSet"/>
-    </xsd:choice>
-    <xsd:attribute name="name" type="xsd:string" use="required" />
-  </xsd:complexType>
-
-  <xsd:complexType name="node">
-    <xsd:all>
-      <xsd:element name="id" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="created-time" type="xsd:dateTime" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="modified-time" type="xsd:dateTime" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="creator" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="modifier" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-      <xsd:element name="data" type="dataSet" minOccurs="0" maxOccurs="1"/>
-    </xsd:all>
-  </xsd:complexType>
-
-</xsd:schema>
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="content-type" type="contentType"/>
+    <xs:element name="form" type="form"/>
+    <xs:element name="image-component" type="imageDescriptor"/>
+    <xs:element name="layout-component" type="layoutDescriptor"/>
+    <xs:element name="metadata-schema" type="metadataSchema"/>
+    <xs:element name="mixin" type="mixin"/>
+    <xs:element name="module" type="module"/>
+    <xs:element name="node" type="node"/>
+    <xs:element name="page-component" type="pageDescriptor"/>
+    <xs:element name="part-component" type="partDescriptor"/>
+    <xs:element name="relationship-type" type="relationshipType"/>
+    <xs:complexType name="mixin">
+        <xs:all>
+            <xs:element minOccurs="0" name="display-name" type="xs:string"/>
+            <xs:element minOccurs="0" name="description" type="xs:string"/>
+            <xs:element minOccurs="0" name="items" type="formItems"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="formItems">
+        <xs:sequence>
+            <xs:choice maxOccurs="unbounded" minOccurs="0">
+                <xs:element name="input" type="input"/>
+                <xs:element name="mixin-reference" type="mixinReference"/>
+                <xs:element name="field-set" type="fieldSet"/>
+                <xs:element name="form-item-set" type="formItemSet"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="input">
+        <xs:complexContent>
+            <xs:extension base="formItem">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="label" type="xs:string"/>
+                    <xs:element minOccurs="0" name="immutable" type="xs:boolean"/>
+                    <xs:element minOccurs="0" name="indexed" type="xs:boolean"/>
+                    <xs:element minOccurs="0" name="custom-text" type="xs:string"/>
+                    <xs:element minOccurs="0" name="help-text" type="xs:string"/>
+                    <xs:element minOccurs="0" name="validation-regexp" type="xs:string"/>
+                    <xs:element minOccurs="0" name="occurrences" type="occurrence"/>
+                    <xs:element minOccurs="0" name="config" type="xs:anyType"/>
+                </xs:sequence>
+                <xs:attribute name="type" type="xs:string" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType abstract="true" name="formItem">
+        <xs:sequence/>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+    <xs:complexType name="occurrence">
+        <xs:sequence/>
+        <xs:attribute name="minimum" type="xs:integer" use="required"/>
+        <xs:attribute name="maximum" type="xs:integer" use="required"/>
+    </xs:complexType>
+    <xs:complexType name="formItemSet">
+        <xs:complexContent>
+            <xs:extension base="formItem">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="label" type="xs:string"/>
+                    <xs:element minOccurs="0" name="immutable" type="xs:boolean"/>
+                    <xs:element minOccurs="0" name="custom-text" type="xs:string"/>
+                    <xs:element minOccurs="0" name="help-text" type="xs:string"/>
+                    <xs:element minOccurs="0" name="occurrences" type="occurrence"/>
+                    <xs:element minOccurs="0" name="items" type="formItems"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="mixinReference">
+        <xs:complexContent>
+            <xs:extension base="formItem">
+                <xs:sequence>
+                    <xs:element name="reference" type="xs:string"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="fieldSet">
+        <xs:complexContent>
+            <xs:extension base="formItem">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="label" type="xs:string"/>
+                    <xs:element minOccurs="0" name="items" type="formItems"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="form">
+        <xs:complexContent>
+            <xs:extension base="formItems">
+                <xs:sequence/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="layoutDescriptor">
+        <xs:all>
+            <xs:element minOccurs="0" name="display-name" type="xs:string"/>
+            <xs:element minOccurs="0" name="config" type="form"/>
+            <xs:element minOccurs="0" name="regions" type="regionsDescriptor"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="regionsDescriptor">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0"
+                name="region" type="regionDescriptor"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="regionDescriptor">
+        <xs:sequence/>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+    <xs:complexType name="partDescriptor">
+        <xs:all>
+            <xs:element minOccurs="0" name="display-name" type="xs:string"/>
+            <xs:element minOccurs="0" name="config" type="form"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="node">
+        <xs:all>
+            <xs:element minOccurs="0" name="id" type="xs:string"/>
+            <xs:element minOccurs="0" name="created-time" type="xs:dateTime"/>
+            <xs:element minOccurs="0" name="modified-time" type="xs:dateTime"/>
+            <xs:element minOccurs="0" name="creator" type="xs:string"/>
+            <xs:element minOccurs="0" name="modifier" type="xs:string"/>
+            <xs:element minOccurs="0" name="data" type="dataSet"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="dataSet">
+        <xs:sequence>
+            <xs:choice maxOccurs="unbounded" minOccurs="0">
+                <xs:element name="property" type="dataProperty"/>
+                <xs:element name="property-set" type="dataSet"/>
+            </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+    <xs:complexType name="dataProperty">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="name" type="xs:string" use="required"/>
+                <xs:attribute name="type" type="dataPropertyType" use="required"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="imageDescriptor">
+        <xs:all>
+            <xs:element minOccurs="0" name="display-name" type="xs:string"/>
+            <xs:element minOccurs="0" name="config" type="form"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="pageDescriptor">
+        <xs:all>
+            <xs:element minOccurs="0" name="display-name" type="xs:string"/>
+            <xs:element minOccurs="0" name="config" type="form"/>
+            <xs:element minOccurs="0" name="regions" type="regionsDescriptor"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="module">
+        <xs:all>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="version" type="xs:string"/>
+            <xs:element minOccurs="0" name="display-name" type="xs:string"/>
+            <xs:element minOccurs="0" name="url" type="xs:string"/>
+            <xs:element minOccurs="0" name="vendor" type="vendor"/>
+            <xs:element minOccurs="0" name="config" type="form"/>
+            <xs:element minOccurs="0" name="metadata-schemas" type="metadata-schemas"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="vendor">
+        <xs:all>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="url" type="xs:string"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="metadata-schemas">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0"
+                name="metadata-schema" type="metadataSchema"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="metadataSchema">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="form" type="form"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+    <xs:complexType name="contentType">
+        <xs:all>
+            <xs:element minOccurs="0" name="display-name" type="xs:string"/>
+            <xs:element minOccurs="0" name="description" type="xs:string"/>
+            <xs:element minOccurs="0" name="content-display-name-script" type="xs:string"/>
+            <xs:element minOccurs="0" name="super-type" type="xs:string"/>
+            <xs:element minOccurs="0" name="is-abstract" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="is-final" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="is-built-in" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="allow-child-content" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="form" type="formItems"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="relationshipType">
+        <xs:all>
+            <xs:element minOccurs="0" name="description" type="xs:string"/>
+            <xs:element minOccurs="0" name="from-semantic" type="xs:string"/>
+            <xs:element minOccurs="0" name="to-semantic" type="xs:string"/>
+            <xs:element minOccurs="0" name="allowed-from-types" type="allowedTypesDescriptor"/>
+            <xs:element minOccurs="0" name="allowed-to-types" type="allowedTypesDescriptor"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="allowedTypesDescriptor">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0"
+                name="content-type" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="canRenderDescriptor">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0"
+                name="content-type" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="pageRegions">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0"
+                name="region" type="pageRegion"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="pageRegion">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0"
+                name="part-component" type="partComponent"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+    <xs:complexType name="partComponent">
+        <xs:all>
+            <xs:element minOccurs="0" name="display-name" type="xs:string"/>
+            <xs:element minOccurs="0" name="config" type="xs:anyType"/>
+        </xs:all>
+        <xs:attribute name="descriptor" type="xs:string"/>
+        <xs:attribute name="name" type="xs:string"/>
+    </xs:complexType>
+    <xs:complexType name="contentFilter">
+        <xs:sequence>
+            <xs:choice maxOccurs="unbounded" minOccurs="0">
+                <xs:element name="deny" type="xs:string"/>
+                <xs:element name="allow" type="xs:string"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:simpleType name="dataPropertyType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Boolean"/>
+            <xs:enumeration value="String"/>
+            <xs:enumeration value="Data"/>
+            <xs:enumeration value="HtmlPart"/>
+            <xs:enumeration value="Double"/>
+            <xs:enumeration value="Long"/>
+            <xs:enumeration value="Xml"/>
+            <xs:enumeration value="LocalDate"/>
+            <xs:enumeration value="LocalDateTime"/>
+            <xs:enumeration value="LocalTime"/>
+            <xs:enumeration value="DateTime"/>
+            <xs:enumeration value="ContentId"/>
+            <xs:enumeration value="GeoPoint"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

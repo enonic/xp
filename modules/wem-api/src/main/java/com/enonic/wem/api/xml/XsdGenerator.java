@@ -11,7 +11,7 @@ import javax.xml.transform.dom.DOMResult;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
-import com.enonic.wem.api.xml.model.XmlModule;
+import com.enonic.wem.api.xml.model.ObjectFactory;
 
 public final class XsdGenerator
 {
@@ -43,7 +43,7 @@ public final class XsdGenerator
         this.classes = classes;
     }
 
-    private String generateXsd()
+    private String generate()
         throws Exception
     {
         final JAXBContext context = JAXBContext.newInstance( this.classes );
@@ -54,19 +54,19 @@ public final class XsdGenerator
         return output.getAsString();
     }
 
-    public static String generateModelXsd()
+    public static String generateXsd()
         throws Exception
     {
-        return new XsdGenerator( XmlModule.class ).generateXsd();
+        return new XsdGenerator( ObjectFactory.class ).generate();
     }
 
     public static void main( final String... args )
         throws Exception
     {
-        final File file = new File( "modules/wem-api/src/main/resources/com/enonic/wem/api/xml/schema/test.xsd" );
+        final File file = new File( "modules/wem-api/src/main/resources/com/enonic/wem/api/xml/schema/model.xsd" );
         file.getParentFile().mkdirs();
 
-        final String xsd = generateModelXsd();
+        final String xsd = generateXsd();
         Files.write( xsd, file, Charsets.UTF_8 );
     }
 }
