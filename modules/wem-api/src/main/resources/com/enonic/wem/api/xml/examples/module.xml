@@ -16,4 +16,12 @@
     </mixin-reference>
   </config>
 
+  <metadata-schemas>
+    <metadata-schema name="menu">
+      <form>
+        <input name="show" type="Boolean"/>
+      </form>
+    </metadata-schema>
+  </metadata-schemas>
+
 </module>

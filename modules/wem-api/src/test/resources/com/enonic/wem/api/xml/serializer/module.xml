@@ -12,8 +12,16 @@
 
   <config>
     <mixin-reference name="test">
-      <reference>mymodule:other</reference>
+      <reference>mymodule-1.0.0:other</reference>
     </mixin-reference>
   </config>
+
+  <metadata-schemas>
+    <metadata-schema name="menu">
+      <form>
+        <input type="Boolean" name="show"/>
+      </form>
+    </metadata-schema>
+  </metadata-schemas>
 
 </module>
