@@ -16,13 +16,13 @@ import org.w3c.dom.Node;
 
 import com.enonic.wem.api.xml.XmlException;
 
-public abstract class XmlSerializer<X>
+public final class XmlSerializer<X>
 {
     private final Class<X> xmlType;
 
     private final JAXBContext context;
 
-    public XmlSerializer( final Class<X> xmlType )
+    private XmlSerializer( final Class<X> xmlType )
     {
         this.xmlType = xmlType;
 
@@ -36,22 +36,22 @@ public abstract class XmlSerializer<X>
         }
     }
 
-    public final String serialize( final X value )
+    public String serialize( final X value )
     {
         return marshall( value );
     }
 
-    public final Node serializeToNode( final X value )
+    public Node serializeToNode( final X value )
     {
         return marshallToNode( value );
     }
 
-    public final X parse( final String text )
+    public X parse( final String text )
     {
         return unmarshall( text );
     }
 
-    public final X parse( final Node node )
+    public X parse( final Node node )
     {
         return unmarshall( node );
     }
@@ -63,7 +63,7 @@ public abstract class XmlSerializer<X>
             final Marshaller marshaller = this.context.createMarshaller();
             marshaller.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, true );
             final StringWriter writer = new StringWriter();
-            marshaller.marshal( wrapXml( xml ), writer );
+            marshaller.marshal( xml, writer );
             return writer.toString();
         }
         catch ( final JAXBException e )
@@ -71,8 +71,6 @@ public abstract class XmlSerializer<X>
             throw handleException( e );
         }
     }
-
-    protected abstract Object wrapXml( X xml );
 
     private Node marshallToNode( final X xml )
     {
@@ -85,7 +83,7 @@ public abstract class XmlSerializer<X>
             dbf.setNamespaceAware( true );
             DocumentBuilder db = dbf.newDocumentBuilder();
             Document doc = db.newDocument();
-            marshaller.marshal( wrapXml( xml ), doc );
+            marshaller.marshal( xml, doc );
             return doc.getFirstChild();
         }
         catch ( final Exception e )
@@ -124,5 +122,10 @@ public abstract class XmlSerializer<X>
     private static XmlException handleException( final Exception cause )
     {
         return new XmlException( cause, cause.getMessage() );
+    }
+
+    public static <X> XmlSerializer<X> create( final Class<X> xmlType )
+    {
+        return new XmlSerializer<>( xmlType );
     }
 }

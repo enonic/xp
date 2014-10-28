@@ -3,10 +3,12 @@ package com.enonic.wem.api.xml.model;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "layoutDescriptor")
+@XmlRootElement(name = "layout-component")
 public final class XmlLayoutDescriptor
 {
     @XmlElement(name = "display-name")
