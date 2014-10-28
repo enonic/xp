@@ -2,32 +2,35 @@ package com.enonic.wem.api.security;
 
 import com.google.common.base.Preconditions;
 
-public final class User
-    extends Principal
+import static com.google.common.base.Preconditions.checkNotNull;
+
+public final class UpdateUserParams
 {
-    private final static User ANONYMOUS = new User();
+    private final PrincipalKey key;
+
+    private final String displayName;
 
     private final String email;
 
     private final String login;
 
-    private final boolean loginDisabled;
 
-    private User( final Builder builder )
+    private UpdateUserParams( final Builder builder )
     {
-        super( builder.principalKey, builder.displayName );
-        Preconditions.checkArgument( builder.principalKey.isUser(), "Invalid Principal Type for User: " + builder.principalKey.getType() );
+        this.key = checkNotNull( builder.principalKey, "userKey is required for a user" );
+        this.displayName = checkNotNull( builder.displayName, "displayName is required for a user" );
         this.email = builder.email;
         this.login = builder.login;
-        this.loginDisabled = builder.loginDisabled;
     }
 
-    private User()
+    public PrincipalKey getKey()
     {
-        super( PrincipalKey.ofAnonymous(), "anonymous" );
-        this.email = "";
-        this.login = "";
-        this.loginDisabled = true;
+        return key;
+    }
+
+    public String getDisplayName()
+    {
+        return displayName;
     }
 
     public String getEmail()
@@ -40,24 +43,32 @@ public final class User
         return login;
     }
 
-    public boolean isDisabled()
+    public User update( final User source )
     {
-        return loginDisabled;
+        User.Builder result = User.newUser( source );
+        if ( this.displayName != null )
+        {
+            result.displayName( this.getDisplayName() );
+        }
+        if ( this.email != null )
+        {
+            result.email( this.getEmail() );
+        }
+        if ( this.login != null )
+        {
+            result.login( this.getLogin() );
+        }
+        return result.build();
     }
 
-    public static Builder newUser()
+    public static Builder create()
     {
         return new Builder();
     }
 
-    public static Builder newUser( final User user )
+    public static Builder create( final User user )
     {
         return new Builder( user );
-    }
-
-    public static User anonymous()
-    {
-        return ANONYMOUS;
     }
 
     public static class Builder
@@ -70,8 +81,6 @@ public final class User
 
         private String login;
 
-        private boolean loginDisabled;
-
         private Builder()
         {
         }
@@ -82,11 +91,11 @@ public final class User
             this.displayName = user.getDisplayName();
             this.email = user.getEmail();
             this.login = user.getLogin();
-            this.loginDisabled = user.isDisabled();
         }
 
         public Builder userKey( final PrincipalKey value )
         {
+            Preconditions.checkArgument( value.isUser(), "Invalid PrincipalType for user key: " + value.getType() );
             this.principalKey = value;
             return this;
         }
@@ -109,10 +118,9 @@ public final class User
             return this;
         }
 
-        public User build()
+        public UpdateUserParams build()
         {
-            return new User( this );
+            return new UpdateUserParams( this );
         }
     }
-
 }

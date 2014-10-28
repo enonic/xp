@@ -2,6 +2,7 @@ package com.enonic.wem.core.security;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -13,6 +14,8 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.primitives.Ints;
 
+import com.enonic.wem.api.security.CreateGroupParams;
+import com.enonic.wem.api.security.CreateUserParams;
 import com.enonic.wem.api.security.Group;
 import com.enonic.wem.api.security.Principal;
 import com.enonic.wem.api.security.PrincipalKey;
@@ -23,10 +26,13 @@ import com.enonic.wem.api.security.PrincipalRelationships;
 import com.enonic.wem.api.security.PrincipalType;
 import com.enonic.wem.api.security.Principals;
 import com.enonic.wem.api.security.SecurityService;
+import com.enonic.wem.api.security.UpdateGroupParams;
+import com.enonic.wem.api.security.UpdateUserParams;
 import com.enonic.wem.api.security.User;
 import com.enonic.wem.api.security.UserStore;
 import com.enonic.wem.api.security.UserStoreKey;
 import com.enonic.wem.api.security.UserStores;
+import com.enonic.wem.api.security.auth.AuthenticationException;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.api.security.auth.AuthenticationToken;
 import com.enonic.wem.api.security.auth.EmailPasswordAuthToken;
@@ -106,25 +112,48 @@ public final class SecurityServiceImpl
         return Principals.from( principals );
     }
 
-    // TODO throw same exception for failed auth, and user not found
     @Override
     public AuthenticationInfo authenticate( final AuthenticationToken token )
     {
         if ( token instanceof UsernamePasswordAuthToken )
         {
-            final UsernamePasswordAuthToken authToken = (UsernamePasswordAuthToken) token;
-            final User user = findByUsername( authToken.getUserStore(), authToken.getUsername() );
-            return user != null ? AuthenticationInfo.newBuilder().user( user ).build() : null;
+            return authenticateUsernamePassword( (UsernamePasswordAuthToken) token );
         }
-        if ( token instanceof EmailPasswordAuthToken )
+        else if ( token instanceof EmailPasswordAuthToken )
         {
-            final EmailPasswordAuthToken authToken = (EmailPasswordAuthToken) token;
-            final User user = findByEmail( authToken.getUserStore(), authToken.getEmail() );
-            return user != null ? AuthenticationInfo.newBuilder().user( user ).build() : null;
+            return authenticateEmailPassword( (EmailPasswordAuthToken) token );
         }
         else
         {
-            throw new UnsupportedOperationException( "Authentication token not supported: " + token.getClass().getName() );
+            throw new AuthenticationException( "Authentication token not supported: " + token.getClass().getSimpleName() );
+        }
+    }
+
+    private AuthenticationInfo authenticateEmailPassword( final EmailPasswordAuthToken token )
+    {
+        final EmailPasswordAuthToken authToken = token;
+        final User user = findByEmail( authToken.getUserStore(), authToken.getEmail() );
+        if ( user != null )
+        {
+            return AuthenticationInfo.newBuilder().user( user ).build();
+        }
+        else
+        {
+            throw new AuthenticationException( "Could not authenticate user" );
+        }
+    }
+
+    private AuthenticationInfo authenticateUsernamePassword( final UsernamePasswordAuthToken token )
+    {
+        final UsernamePasswordAuthToken authToken = token;
+        final User user = findByUsername( authToken.getUserStore(), authToken.getUsername() );
+        if ( user != null )
+        {
+            return AuthenticationInfo.newBuilder().user( user ).build();
+        }
+        else
+        {
+            throw new AuthenticationException( "Could not authenticate user" );
         }
     }
 
@@ -153,55 +182,83 @@ public final class SecurityServiceImpl
     }
 
     @Override
-    public void createUser( final User user )
+    public User createUser( final CreateUserParams createUser )
     {
+        final User user = User.newUser().
+            userKey( createUser.getKey() ).
+            login( createUser.getLogin() ).
+            email( createUser.getEmail() ).
+            displayName( createUser.getDisplayName() ).
+            build();
+
         if ( this.principals.putIfAbsent( user.getKey(), user ) != null )
         {
             throw new IllegalArgumentException( "User already exists: " + user.getKey() );
         }
-    }
 
-    // TODO return User
-    @Override
-    public void updateUser( final User user )
-    {
-        if ( this.principals.replace( user.getKey(), user ) == null )
+        if ( createUser.getPassword() != null )
         {
-            throw new IllegalArgumentException( "Could not find user to be updated: " + user.getKey() );
+            setPassword( user.getKey(), createUser.getPassword() );
         }
+        return user;
     }
 
-    // TODO return optional
     @Override
-    public User getUser( final PrincipalKey userKey )
+    public User updateUser( final UpdateUserParams updateUser )
+    {
+        final User updatedUser = (User) this.principals.computeIfPresent( updateUser.getKey(), ( userKey, principal ) -> {
+            final User existingUser = (User) principal;
+            return updateUser.update( existingUser );
+        } );
+
+        if ( updatedUser == null )
+        {
+            throw new IllegalArgumentException( "Could not find user to be updated: " + updateUser.getKey() );
+        }
+        return updatedUser;
+    }
+
+    @Override
+    public Optional<User> getUser( final PrincipalKey userKey )
     {
         Preconditions.checkArgument( userKey.isUser(), "Expected principal key of type User" );
-        return (User) this.principals.get( userKey );
+        return Optional.ofNullable( (User) this.principals.get( userKey ) );
     }
 
     @Override
-    public void createGroup( final Group group )
+    public Group createGroup( final CreateGroupParams createGroup )
     {
+        final Group group = Group.newGroup().
+            groupKey( createGroup.getKey() ).
+            displayName( createGroup.getDisplayName() ).
+            build();
         if ( this.principals.putIfAbsent( group.getKey(), group ) != null )
         {
             throw new IllegalArgumentException( "Group already exists: " + group.getKey() );
         }
+        return group;
     }
 
     @Override
-    public void updateGroup( final Group group )
+    public Group updateGroup( final UpdateGroupParams updateGroup )
     {
-        if ( this.principals.replace( group.getKey(), group ) == null )
+        final Group updatedGroup = (Group) this.principals.computeIfPresent( updateGroup.getKey(), ( userKey, principal ) -> {
+            final Group existingGroup = (Group) principal;
+            return updateGroup.update( existingGroup );
+        } );
+
+        if ( updatedGroup == null )
         {
-            throw new IllegalArgumentException( "Could not find group to be updated: " + group.getKey() );
+            throw new IllegalArgumentException( "Could not find group to be updated: " + updatedGroup.getKey() );
         }
+        return updatedGroup;
     }
 
     @Override
-    public Group getGroup( final PrincipalKey groupKey )
+    public Optional<Group> getGroup( final PrincipalKey groupKey )
     {
         Preconditions.checkArgument( groupKey.isGroup(), "Expected principal key of type Group" );
-        return (Group) this.principals.get( groupKey );
+        return Optional.ofNullable( (Group) this.principals.get( groupKey ) );
     }
 
     @Override

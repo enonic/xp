@@ -1,5 +1,7 @@
 package com.enonic.wem.api.security;
 
+import java.util.Optional;
+
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.api.security.auth.AuthenticationToken;
 
@@ -13,17 +15,17 @@ public interface SecurityService
 
     void setPassword( PrincipalKey key, String password );
 
-    void createUser( User user );
+    User createUser( CreateUserParams createUser );
 
-    void updateUser( User user );
+    User updateUser( UpdateUserParams updateUser );
 
-    User getUser( PrincipalKey userKey );
+    Optional<User> getUser( PrincipalKey userKey );
 
-    void createGroup( Group group );
+    Group createGroup( CreateGroupParams group );
 
-    void updateGroup( Group group );
+    Group updateGroup( UpdateGroupParams group );
 
-    Group getGroup( PrincipalKey groupKey );
+    Optional<Group> getGroup( PrincipalKey groupKey );
 
     PrincipalQueryResult query( PrincipalQuery query );
 

@@ -3,6 +3,8 @@ package com.enonic.wem.core.security;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.enonic.wem.api.security.CreateGroupParams;
+import com.enonic.wem.api.security.CreateUserParams;
 import com.enonic.wem.api.security.Group;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.PrincipalQuery;
@@ -10,9 +12,12 @@ import com.enonic.wem.api.security.PrincipalQueryResult;
 import com.enonic.wem.api.security.PrincipalType;
 import com.enonic.wem.api.security.Principals;
 import com.enonic.wem.api.security.SecurityService;
+import com.enonic.wem.api.security.UpdateGroupParams;
+import com.enonic.wem.api.security.UpdateUserParams;
 import com.enonic.wem.api.security.User;
 import com.enonic.wem.api.security.UserStoreKey;
 import com.enonic.wem.api.security.UserStores;
+import com.enonic.wem.api.security.auth.AuthenticationException;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.api.security.auth.AuthenticationToken;
 import com.enonic.wem.api.security.auth.EmailPasswordAuthToken;
@@ -45,16 +50,19 @@ public class SecurityServiceImplTest
     public void testGetPrincipals()
         throws Exception
     {
-        final User user = User.newUser().
+        final CreateUserParams createUser = CreateUserParams.create().
             userKey( PrincipalKey.ofUser( SYSTEM, "user1" ) ).
             displayName( "User 1" ).
             email( "user1@enonic.com" ).
             login( "user1" ).
             build();
-        securityService.createUser( user );
+        final User user = securityService.createUser( createUser );
 
-        final Group group = Group.newGroup().groupKey( PrincipalKey.ofGroup( SYSTEM, "groupA" ) ).displayName( "Group A" ).build();
-        securityService.createGroup( group );
+        final CreateGroupParams createGroup = CreateGroupParams.create().
+            groupKey( PrincipalKey.ofGroup( SYSTEM, "groupA" ) ).
+            displayName( "Group A" ).
+            build();
+        final Group group = securityService.createGroup( createGroup );
 
         final Principals groups = securityService.getPrincipals( SYSTEM, PrincipalType.GROUP );
         final Principals users = securityService.getPrincipals( SYSTEM, PrincipalType.USER );
@@ -66,13 +74,13 @@ public class SecurityServiceImplTest
     public void testAuthenticateByEmailPwd()
         throws Exception
     {
-        final User user = User.newUser().
+        final CreateUserParams createUser = CreateUserParams.create().
             userKey( PrincipalKey.ofUser( SYSTEM, "user1" ) ).
             displayName( "User 1" ).
             email( "user1@enonic.com" ).
             login( "user1" ).
             build();
-        securityService.createUser( user );
+        final User user = securityService.createUser( createUser );
 
         final EmailPasswordAuthToken authToken = new EmailPasswordAuthToken();
         authToken.setEmail( "user1@enonic.com" );
@@ -87,13 +95,13 @@ public class SecurityServiceImplTest
     public void testAuthenticateByUsernamePwd()
         throws Exception
     {
-        final User user = User.newUser().
+        final CreateUserParams createUser = CreateUserParams.create().
             userKey( PrincipalKey.ofUser( SYSTEM, "user1" ) ).
             displayName( "User 1" ).
             email( "user1@enonic.com" ).
             login( "user1" ).
             build();
-        securityService.createUser( user );
+        final User user = securityService.createUser( createUser );
 
         final UsernamePasswordAuthToken authToken = new UsernamePasswordAuthToken();
         authToken.setUsername( "user1" );
@@ -104,17 +112,17 @@ public class SecurityServiceImplTest
         assertEquals( user.getKey(), authInfo.getUser().getKey() );
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test(expected = AuthenticationException.class)
     public void testAuthenticateUnsupportedToken()
         throws Exception
     {
-        final User user = User.newUser().
+        final CreateUserParams createUser = CreateUserParams.create().
             userKey( PrincipalKey.ofUser( SYSTEM, "user1" ) ).
             displayName( "User 1" ).
             email( "user1@enonic.com" ).
             login( "user1" ).
             build();
-        securityService.createUser( user );
+        final User user = securityService.createUser( createUser );
 
         final CustomAuthenticationToken authToken = new CustomAuthenticationToken();
         authToken.setUserStore( SYSTEM );
@@ -135,21 +143,22 @@ public class SecurityServiceImplTest
     public void testCreateUser()
         throws Exception
     {
-        final User user = User.newUser().
+        final CreateUserParams createUser1 = CreateUserParams.create().
             userKey( PrincipalKey.ofUser( SYSTEM, "user1" ) ).
             displayName( "User 1" ).
             email( "user1@enonic.com" ).
             login( "user1" ).
+            password( "123456" ).
             build();
-        securityService.createUser( user );
+        final User user1 = securityService.createUser( createUser1 );
 
-        final User user2 = User.newUser().
+        final CreateUserParams createUser2 = CreateUserParams.create().
             userKey( PrincipalKey.ofUser( SYSTEM, "user2" ) ).
             displayName( "User 2" ).
             email( "user2@enonic.com" ).
             login( "user2" ).
             build();
-        securityService.createUser( user2 );
+        final User user2 = securityService.createUser( createUser2 );
 
         final Principals users = securityService.getPrincipals( SYSTEM, PrincipalType.USER );
         assertEquals( 2, users.getSize() );
@@ -159,20 +168,21 @@ public class SecurityServiceImplTest
     public void testUpdateUser()
         throws Exception
     {
-        final User user = User.newUser().
+        final CreateUserParams createUser = CreateUserParams.create().
             userKey( PrincipalKey.ofUser( SYSTEM, "user1" ) ).
             displayName( "User 1" ).
             email( "user1@enonic.com" ).
             login( "user1" ).
             build();
-        securityService.createUser( user );
+        final User user = securityService.createUser( createUser );
 
-        final User userUpdate = User.newUser( user ).
+        final UpdateUserParams updateUserParams = UpdateUserParams.create( user ).
             email( "u2@enonic.net" ).
             build();
-        securityService.updateUser( userUpdate );
+        final User updateUserResult = securityService.updateUser( updateUserParams );
 
-        final User updatedUser = securityService.getUser( user.getKey() );
+        final User updatedUser = securityService.getUser( user.getKey() ).get();
+        assertEquals( "u2@enonic.net", updateUserResult.getEmail() );
         assertEquals( "u2@enonic.net", updatedUser.getEmail() );
     }
 
@@ -180,17 +190,17 @@ public class SecurityServiceImplTest
     public void testCreateGroup()
         throws Exception
     {
-        final Group group = Group.newGroup().
+        final CreateGroupParams createGroup = CreateGroupParams.create().
             groupKey( PrincipalKey.ofGroup( SYSTEM, "groupA" ) ).
             displayName( "Group A" ).
             build();
-        securityService.createGroup( group );
+        final Group group = securityService.createGroup( createGroup );
 
-        final Group group2 = Group.newGroup().
+        final CreateGroupParams createGroup2 = CreateGroupParams.create().
             groupKey( PrincipalKey.ofGroup( SYSTEM, "groupB" ) ).
             displayName( "Group B" ).
             build();
-        securityService.createGroup( group2 );
+        final Group group2 = securityService.createGroup( createGroup2 );
 
         final Principals groups = securityService.getPrincipals( SYSTEM, PrincipalType.GROUP );
         assertEquals( 2, groups.getSize() );
@@ -200,18 +210,19 @@ public class SecurityServiceImplTest
     public void testUpdateGroup()
         throws Exception
     {
-        final Group group = Group.newGroup().
+        final CreateGroupParams createGroup = CreateGroupParams.create().
             groupKey( PrincipalKey.ofGroup( SYSTEM, "groupA" ) ).
             displayName( "Group A" ).
             build();
-        securityService.createGroup( group );
+        final Group group = securityService.createGroup( createGroup );
 
-        final Group groupUpdate = Group.newGroup( group ).
+        final UpdateGroupParams groupUpdate = UpdateGroupParams.create( group ).
             displayName( "___Group B___" ).
             build();
-        securityService.updateGroup( groupUpdate );
+        final Group updatedGroupResult = securityService.updateGroup( groupUpdate );
 
-        final Group updatedGroup = securityService.getGroup( group.getKey() );
+        final Group updatedGroup = securityService.getGroup( group.getKey() ).get();
+        assertEquals( "___Group B___", updatedGroupResult.getDisplayName() );
         assertEquals( "___Group B___", updatedGroup.getDisplayName() );
     }
 
@@ -219,33 +230,33 @@ public class SecurityServiceImplTest
     public void testQuery()
         throws Exception
     {
-        final User user = User.newUser().
+        final CreateUserParams createUser1 = CreateUserParams.create().
             userKey( PrincipalKey.ofUser( SYSTEM, "user1" ) ).
             displayName( "User 1" ).
             email( "user1@enonic.com" ).
             login( "user1" ).
             build();
-        securityService.createUser( user );
+        final User user1 = securityService.createUser( createUser1 );
 
-        final User user2 = User.newUser().
+        final CreateUserParams createUser2 = CreateUserParams.create().
             userKey( PrincipalKey.ofUser( SYSTEM, "user2" ) ).
             displayName( "User 2" ).
             email( "user2@enonic.com" ).
             login( "user2" ).
             build();
-        securityService.createUser( user2 );
+        final User user2 = securityService.createUser( createUser2 );
 
-        final Group group = Group.newGroup().
+        final CreateGroupParams createGroup = CreateGroupParams.create().
             groupKey( PrincipalKey.ofGroup( SYSTEM, "groupA" ) ).
             displayName( "Group A" ).
             build();
-        securityService.createGroup( group );
+        final Group group = securityService.createGroup( createGroup );
 
-        final Group group2 = Group.newGroup().
+        final CreateGroupParams createGroup2 = CreateGroupParams.create().
             groupKey( PrincipalKey.ofGroup( SYSTEM, "groupB" ) ).
             displayName( "Group B" ).
             build();
-        securityService.createGroup( group2 );
+        final Group group2 = securityService.createGroup( createGroup2 );
 
         final PrincipalQuery query = PrincipalQuery.newQuery().
             includeUsers().
