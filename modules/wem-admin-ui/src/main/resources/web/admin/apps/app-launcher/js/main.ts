@@ -1,11 +1,11 @@
 declare var Admin;
 declare var CONFIG;
 
-var USERSTORES: app.login.UserStore[] = [
-    new app.login.UserStore('ABC', '1'),
-    new app.login.UserStore('LDAP', '2'),
-    new app.login.UserStore('Local', '3'),
-    new app.login.UserStore('Some very long value', '4')
+var USERSTORES: api.security.UserStore[] = [
+    new api.security.UserStore('ABC', '1'),
+    new api.security.UserStore('LDAP', '2'),
+    new api.security.UserStore('Local', '3'),
+    new api.security.UserStore('Some very long value', '4')
 ];
 
 function isUserLoggedIn(): boolean {
@@ -29,7 +29,7 @@ function startApplication() {
 
     var loginForm = new app.login.LoginForm(new app.login.AuthenticatorImpl());
     loginForm.setUserStores(USERSTORES, USERSTORES[1]);
-    loginForm.onUserAuthenticated((userName: string, userStore: app.login.UserStore) => {
+    loginForm.onUserAuthenticated((userName: string, userStore: api.security.UserStore) => {
         console.log('User logged in', userName, userStore);
         api.util.CookieHelper.setCookie('dummy.userIsLoggedIn', 'true');
         homeMainContainer.showAppSelector();

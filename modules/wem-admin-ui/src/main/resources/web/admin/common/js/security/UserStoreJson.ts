@@ -1,8 +1,9 @@
-module api.security.json {
+module api.security {
 
-    export interface UserStoreJson extends api.item.ItemJson {
-        name:string;
-        key:UserStoreKey;
+    export interface UserStoreJson {
+
+        displayName: string;
+        key: string;
 
     }
 }

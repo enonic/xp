@@ -1,5 +1,7 @@
 module app.login {
 
+    import UserStore = api.security.UserStore;
+
     export class LoginForm extends api.dom.DivEl {
 
         private userStoresDropdown: api.ui.Dropdown;
@@ -53,11 +55,11 @@ module app.login {
 
         setUserStores(userStores: UserStore[], defaultUserStore?: UserStore) {
             userStores.forEach((userStore: UserStore) => {
-                this.userStoresDropdown.addOption(userStore.getId(), userStore.getName());
-                this.userStores[userStore.getId()] = userStore;
+                this.userStoresDropdown.addOption(userStore.getKey(), userStore.getDisplayName());
+                this.userStores[userStore.getKey()] = userStore;
             });
             if (defaultUserStore) {
-                this.userStoresDropdown.setValue(defaultUserStore.getId());
+                this.userStoresDropdown.setValue(defaultUserStore.getKey());
             }
         }
 

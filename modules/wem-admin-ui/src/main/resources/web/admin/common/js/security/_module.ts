@@ -1,0 +1,13 @@
+///<reference path="PrincipalType.ts"/>
+///<reference path="UserStoreKey.ts"/>
+///<reference path="PrincipalKey.ts"/>
+///<reference path="Principal.ts"/>
+///<reference path="PrincipalJson.ts"/>
+///<reference path="UserJson.ts"/>
+///<reference path="GroupJson.ts"/>
+///<reference path="RoleJson.ts"/>
+///<reference path="User.ts"/>
+///<reference path="Group.ts"/>
+///<reference path="Role.ts"/>
+///<reference path="UserStore.ts"/>
+///<reference path="UserStoreJson.ts"/>

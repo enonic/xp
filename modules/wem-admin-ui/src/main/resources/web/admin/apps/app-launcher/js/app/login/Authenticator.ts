@@ -1,7 +1,9 @@
 module app.login {
 
+    import UserStore = api.security.UserStore;
+
     export interface Authenticator {
-        authenticate(userName:string, userStore:UserStore, password:string):boolean;
+        authenticate(userName: string, userStore: UserStore, password: string):boolean;
     }
 
     export class AuthenticatorImpl implements Authenticator {
@@ -9,7 +11,7 @@ module app.login {
         constructor() {
         }
 
-        authenticate(userName:string, userStore:UserStore, password:string):boolean {
+        authenticate(userName: string, userStore: UserStore, password: string): boolean {
             return true; // TODO
         }
 
