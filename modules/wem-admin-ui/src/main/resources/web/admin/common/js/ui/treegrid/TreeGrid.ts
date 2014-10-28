@@ -316,7 +316,7 @@ module api.ui.treegrid {
                     var fetchedChildren = this.dataToTreeNodes(dataList, node.getParent());
                     var newChildren = oldChildren.concat(fetchedChildren.slice(oldChildren.length));
                     node.getParent().setChildren(newChildren);
-                    this.initData(this.getRoot().treeToList());
+                    this.sortNodeChildren(node.getParent());
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 }).finally(() => {

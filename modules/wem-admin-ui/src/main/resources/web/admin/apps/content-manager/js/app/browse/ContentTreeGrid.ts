@@ -279,29 +279,15 @@ module app.browse {
         }
 
         sortNodeChildren(node: TreeNode<ContentSummaryAndCompareStatus>) {
-            var compareFunction;
+            var comparator: api.Comparator<TreeNode<ContentSummaryAndCompareStatus>>;
             if (this.getRoot() == node) {
-                compareFunction = this.compareNodesByDisplayName;
+                comparator = new api.content.ContentByDisplayNameComparator();
             } else {
-                compareFunction = this.compareNodesByLastModified;
+                comparator = new api.content.ContentByModifiedTimeComparator();
             }
-            var children = node.getChildren().sort(compareFunction);
+            var children = node.getChildren().sort(comparator.compare);
             node.setChildren(children);
             this.initData(this.getRoot().treeToList());
-        }
-
-        private compareNodesByDisplayName(a: TreeNode<ContentSummaryAndCompareStatus>,
-                                          b: TreeNode<ContentSummaryAndCompareStatus>): number {
-            var firstName = a.getData().getContentSummary().getDisplayName();
-            var secondName = b.getData().getContentSummary().getDisplayName();
-            return firstName.localeCompare(secondName);
-        }
-
-        private compareNodesByLastModified(a: TreeNode<ContentSummaryAndCompareStatus>,
-                                           b: TreeNode<ContentSummaryAndCompareStatus>): number {
-            var firstDate = a.getData().getContentSummary().getModifiedTime();
-            var secondDate = b.getData().getContentSummary().getModifiedTime();
-            return firstDate < secondDate ? 1 : (firstDate > secondDate) ? -1 : 0;
         }
     }
 }
