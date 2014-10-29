@@ -25,6 +25,10 @@ module app.browse {
     import ContentBrowseResetEvent = app.browse.filter.ContentBrowseResetEvent;
     import ContentBrowseRefreshEvent = app.browse.filter.ContentBrowseRefreshEvent;
 
+    import ContentQueryResult = api.content.ContentQueryResult;
+    import ContentSummaryJson = api.content.json.ContentSummaryJson;
+    import ContentQueryRequest = api.content.ContentQueryRequest;
+
     import ContentTreeGridActions = app.browse.action.ContentTreeGridActions;
 
     import CompareStatus = api.content.CompareStatus;
@@ -32,6 +36,8 @@ module app.browse {
     export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
 
         static MAX_FETCH_SIZE: number = 10;
+
+        private filterQuery: api.content.query.ContentQuery;
 
         constructor() {
             var nameColumn = new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().
@@ -127,15 +133,23 @@ module app.browse {
              * Filter (search) events.
              */
             ContentBrowseSearchEvent.on((event) => {
-                var contentSummaries = event.getContent(),
+                var contentQueryResult = <ContentQueryResult<ContentSummary,ContentSummaryJson>>event.getContentQueryResult();
+                var contentSummaries = contentQueryResult.getContents(),
                     compareRequest = CompareContentRequest.fromContentSummaries(contentSummaries);
-
+                this.filterQuery = event.getContentQuery();
                 compareRequest.sendAndParse().then((compareResults: CompareContentResults) => {
-                    this.filter(ContentSummaryAndCompareStatusFetcher.updateCompareStatus(contentSummaries, compareResults));
+                    var contents: ContentSummaryAndCompareStatus[] = ContentSummaryAndCompareStatusFetcher.updateCompareStatus(contentSummaries,
+                        compareResults);
+                    var metadata = contentQueryResult.getMetadata();
+                    if (metadata.getTotalHits() > metadata.getHits()) {
+                        contents.push(new ContentSummaryAndCompareStatus(null, null));
+                    }
+                    this.filter(contents);
+                    this.getRoot().setMaxChildren(metadata.getTotalHits());
+                    this.notifyLoaded();
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
-                }).finally(() => {
-                }).done(() => this.notifyLoaded());
+                }).done();
             });
 
             ContentBrowseResetEvent.on((event) => {
@@ -223,29 +237,49 @@ module app.browse {
             } else {
                 parentNode = this.getRoot();
             }
-
             var from = parentNode.getChildren().length;
             if (from > 0 && !parentNode.getChildren()[from - 1].getData().getContentSummary()) {
                 parentNode.getChildren().pop();
                 from--;
             }
-
-            return ContentSummaryAndCompareStatusFetcher.fetchChildren(parentContentId, from, ContentTreeGrid.MAX_FETCH_SIZE).
-                then((data: ContentResponse<ContentSummaryAndCompareStatus>) => {
-                    // TODO: Will reset the ids and the selection for child nodes.
-                    var contents = parentNode.getChildren().map((el) => {
-                        return el.getData();
-                    }).slice(0, from).concat(data.getContents());
-
-                    var meta = data.getMetadata();
-
-                    parentNode.setMaxChildren(meta.getTotalHits());
-                    if (from + meta.getHits() < meta.getTotalHits()) {
-                        contents.push(new ContentSummaryAndCompareStatus(null, null));
-                    }
-
-                    return contents;
-                });
+            if (!this.isFiltered() || parentNode != this.getRoot()) {
+                return ContentSummaryAndCompareStatusFetcher.fetchChildren(parentContentId, from, ContentTreeGrid.MAX_FETCH_SIZE).
+                    then((data: ContentResponse<ContentSummaryAndCompareStatus>) => {
+                        // TODO: Will reset the ids and the selection for child nodes.
+                        var contents = parentNode.getChildren().map((el) => {
+                            return el.getData();
+                        }).slice(0, from).concat(data.getContents());
+                        var meta = data.getMetadata();
+                        parentNode.setMaxChildren(meta.getTotalHits());
+                        if (from + meta.getHits() < meta.getTotalHits()) {
+                            contents.push(new ContentSummaryAndCompareStatus(null, null));
+                        }
+                        return contents;
+                    });
+            } else {
+                this.filterQuery.setFrom(from);
+                this.filterQuery.setSize(ContentTreeGrid.MAX_FETCH_SIZE);
+                return new ContentQueryRequest<ContentSummaryJson,ContentSummary>(this.filterQuery).
+                    setExpand(api.rest.Expand.SUMMARY).
+                    sendAndParse().
+                    then((contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
+                        var contentSummaries = contentQueryResult.getContents();
+                        var compareRequest = CompareContentRequest.fromContentSummaries(contentSummaries);
+                        return compareRequest.sendAndParse().
+                            then((compareResults: CompareContentResults) => {
+                                var list = parentNode.getChildren().map((el) => {
+                                    return el.getData();
+                                }).slice(0, from).concat(ContentSummaryAndCompareStatusFetcher.updateCompareStatus(contentSummaries,
+                                    compareResults));
+                                var meta = contentQueryResult.getMetadata();
+                                if (from + meta.getHits() < meta.getTotalHits()) {
+                                    list.push(new ContentSummaryAndCompareStatus(null, null));
+                                }
+                                parentNode.setMaxChildren(meta.getTotalHits());
+                                return list;
+                            });
+                    });
+            }
         }
 
         hasChildren(data: ContentSummaryAndCompareStatus): boolean {

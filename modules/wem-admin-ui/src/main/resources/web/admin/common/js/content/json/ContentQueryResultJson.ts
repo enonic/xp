@@ -4,5 +4,6 @@ module api.content.json {
 
         aggregations:api.aggregation.AggregationTypeWrapperJson[];
         contents:T[];
+        metadata: api.content.ContentMetadata;
     }
 }

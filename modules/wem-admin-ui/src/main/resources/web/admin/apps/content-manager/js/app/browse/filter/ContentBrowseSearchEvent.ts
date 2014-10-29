@@ -2,15 +2,21 @@ module app.browse.filter {
 
     export class ContentBrowseSearchEvent extends api.event.Event {
 
-        private model: api.content.ContentSummary[];
+        private contentQueryResult: api.content.ContentQueryResult<any,any>;
+        private contentQuery: api.content.query.ContentQuery;
 
-        constructor(model?: api.content.ContentSummary[]) {
+        constructor(contentQueryResult: api.content.ContentQueryResult<any,any>, contentQuery?: api.content.query.ContentQuery) {
             super();
-            this.model = model || [];
+            this.contentQueryResult = contentQueryResult;
+            this.contentQuery = contentQuery;
         }
 
-        getContent(): api.content.ContentSummary[] {
-            return this.model;
+        getContentQueryResult(): api.content.ContentQueryResult<any,any> {
+            return this.contentQueryResult;
+        }
+
+        getContentQuery(): api.content.query.ContentQuery {
+            return this.contentQuery;
         }
 
         static on(handler: (event: ContentBrowseSearchEvent) => void) {

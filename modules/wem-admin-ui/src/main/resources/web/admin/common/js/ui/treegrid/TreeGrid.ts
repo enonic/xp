@@ -943,6 +943,10 @@ module api.ui.treegrid {
             return this;
         }
 
+        isFiltered() {
+            return !!this.stash;
+        }
+
         private resetZIndexes() {
             var children = Element.elementsFromRequest(".tree-grid .grid-canvas .slick-row", false);
             children.forEach((child) => {

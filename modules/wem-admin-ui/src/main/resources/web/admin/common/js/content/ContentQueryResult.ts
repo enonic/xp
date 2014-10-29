@@ -5,11 +5,13 @@ module api.content {
         private contents: C[];
         private aggregations: api.aggregation.Aggregation[];
         private contentsAsJson: CJ[];
+        private metadata: ContentMetadata;
 
-        constructor(contents: C[], aggreations: api.aggregation.Aggregation[], contentsAsJson: CJ[]) {
+        constructor(contents: C[], aggreations: api.aggregation.Aggregation[], contentsAsJson: CJ[], metadata?: ContentMetadata) {
             this.contents = contents;
             this.aggregations = aggreations;
             this.contentsAsJson = contentsAsJson;
+            this.metadata = metadata;
         }
 
         getContents(): C[] {
@@ -22,6 +24,10 @@ module api.content {
 
         getAggregations(): api.aggregation.Aggregation[] {
             return this.aggregations;
+        }
+
+        getMetadata(): ContentMetadata {
+            return this.metadata;
         }
     }
 }
