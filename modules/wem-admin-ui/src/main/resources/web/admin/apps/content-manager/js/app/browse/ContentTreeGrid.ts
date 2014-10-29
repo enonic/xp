@@ -319,7 +319,15 @@ module app.browse {
             } else {
                 comparator = new api.content.ContentByModifiedTimeComparator();
             }
-            var children = node.getChildren().sort(comparator.compare);
+            var children = node.getChildren(),
+                lastNode = children[children.length - 1],
+                emptyNode = (!lastNode || !!lastNode.getData()) ? null : lastNode;
+
+            children = !emptyNode ? children : children.splice(children.indexOf(emptyNode), 1);
+            children = children.sort(comparator.compare);
+            if (emptyNode) {
+                children.push(emptyNode);
+            }
             node.setChildren(children);
             this.initData(this.getRoot().treeToList());
         }
