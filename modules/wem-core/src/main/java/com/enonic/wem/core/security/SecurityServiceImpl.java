@@ -287,7 +287,11 @@ public final class SecurityServiceImpl
         {
             throw new IllegalArgumentException( "Role already exists: " + role.getKey() );
         }
-        return role;
+
+        final CreateNodeParams createNodeParams = RoleNodeTranslator.toCreateNodeParams( role );
+        final Node node = this.nodeService.create( createNodeParams );
+
+        return RoleNodeTranslator.fromNode( node );
     }
 
     @Override

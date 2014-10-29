@@ -303,16 +303,34 @@ public class SecurityServiceImplTest
             roleKey( PrincipalKey.ofRole( "role-a" ) ).
             displayName( "Role A" ).
             build();
-        final Role role = securityService.createRole( createRole );
 
         final CreateRoleParams createRole2 = CreateRoleParams.create().
             roleKey( PrincipalKey.ofRole( "role-b" ) ).
             displayName( "Role B" ).
             build();
+
+        Mockito.when( nodeService.create( Mockito.isA( CreateNodeParams.class ) ) ).
+            thenReturn( createRoleAsNode( createRole ) ).
+            thenReturn( createRoleAsNode( createRole2 ) );
+
+        final Role role = securityService.createRole( createRole );
         final Role role2 = securityService.createRole( createRole2 );
 
         final Principals roles = securityService.getPrincipals( SYSTEM, PrincipalType.ROLE );
         assertEquals( 2, roles.getSize() );
+    }
+
+    private Node createRoleAsNode( final CreateRoleParams role )
+    {
+        final RootDataSet rootDataSet = new RootDataSet();
+        rootDataSet.setProperty( PrincipalNodeTranslator.DISPLAY_NAME_KEY, Value.newString( role.getDisplayName() ) );
+        rootDataSet.setProperty( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY, Value.newString( role.getKey().getType().toString() ) );
+        rootDataSet.setProperty( PrincipalNodeTranslator.USERSTORE_KEY, Value.newString( role.getKey().getUserStore().toString() ) );
+
+        return Node.newNode().
+            name( PrincipalKeyNodeTranslator.toNodeName( role.getKey() ) ).
+            rootDataSet( rootDataSet ).
+            build();
     }
 
     @Test
@@ -323,6 +341,9 @@ public class SecurityServiceImplTest
             roleKey( PrincipalKey.ofRole( "role-a" ) ).
             displayName( "Role A" ).
             build();
+
+        Mockito.when( nodeService.create( Mockito.isA( CreateNodeParams.class ) ) ).
+            thenReturn( createRoleAsNode( createRole ) );
         final Role role = securityService.createRole( createRole );
 
         final UpdateRoleParams roleUpdate = UpdateRoleParams.create( role ).
