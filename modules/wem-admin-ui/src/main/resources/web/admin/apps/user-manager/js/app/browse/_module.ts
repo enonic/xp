@@ -1,0 +1,9 @@
+///<reference path='BaseBrowsePrincipalEvent.ts'/>
+///<reference path='PrincipalTreeGrid.ts'/>
+///<reference path='PrincipalBrowseActions.ts' />>
+///<reference path='PrincipalBrowsePanel.ts' />
+///<reference path='PrincipalBrowseToolbar.ts' />
+///<reference path='PrincipalTreeGridContextMenu.ts'/>
+///<reference path='PrincipalBrowseItemPanel.ts'/>
+///<reference path='UpdatePrincipalEvent.ts'/>
+///<reference path='EditPrincipalEvent.ts'/>
