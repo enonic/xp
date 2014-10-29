@@ -47,18 +47,25 @@ module api.content {
 
                     var contentQueryResult: ContentQueryResult<CONTENT, CONTENT_JSON>;
 
+                    var metadata = new ContentMetadata(response.getResult().metadata["hits"], response.getResult().metadata["totalHits"]);
+
                     if (this.expand == api.rest.Expand.NONE) {
 
                         var contentIdBaseItems: CONTENT[] = <any[]> this.fromJsonToContentIdBaseItemArray(contentsAsJson);
-                        contentQueryResult = new ContentQueryResult<CONTENT,CONTENT_JSON>(contentIdBaseItems, aggregations, <CONTENT_JSON[]>contentsAsJson);
+                        contentQueryResult =
+                        new ContentQueryResult<CONTENT,CONTENT_JSON>(contentIdBaseItems, aggregations, <CONTENT_JSON[]>contentsAsJson,
+                            metadata);
                     }
                     else if (this.expand == api.rest.Expand.SUMMARY) {
                         var contentSummaries: CONTENT[] = <any[]> this.fromJsonToContentSummaryArray(<json.ContentSummaryJson[]>contentsAsJson);
-                        contentQueryResult = new ContentQueryResult<CONTENT,CONTENT_JSON>(contentSummaries, aggregations, <CONTENT_JSON[]>contentsAsJson);
+                        contentQueryResult =
+                        new ContentQueryResult<CONTENT,CONTENT_JSON>(contentSummaries, aggregations, <CONTENT_JSON[]>contentsAsJson,
+                            metadata);
                     }
                     else {
                         var contents: CONTENT[] = <any[]>this.fromJsonToContentArray(<json.ContentJson[]>contentsAsJson);
-                        contentQueryResult = new ContentQueryResult<CONTENT,CONTENT_JSON>(contents, aggregations, <CONTENT_JSON[]>contentsAsJson);
+                        contentQueryResult =
+                        new ContentQueryResult<CONTENT,CONTENT_JSON>(contents, aggregations, <CONTENT_JSON[]>contentsAsJson, metadata);
                     }
 
                     return contentQueryResult;
