@@ -2,17 +2,13 @@ package com.enonic.wem.portal.internal;
 
 import java.util.List;
 
-import com.google.common.collect.Sets;
-
-import com.enonic.wem.servlet.jaxrs.JaxRsDispatcher;
+import com.enonic.wem.servlet.jaxrs.JaxRsDispatcher2;
 
 public final class PortalServlet
-    extends JaxRsDispatcher
+    extends JaxRsDispatcher2
 {
     public void setResources( final List<Object> list )
     {
-        setContributor( () -> Sets.newHashSet( list ) );
+        list.forEach( this::addComponent );
     }
 }
-
-

@@ -1,37 +1,38 @@
 package com.enonic.wem.portal.internal.base;
 
-import java.util.Set;
+import java.util.List;
 
 import org.junit.Before;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-// import org.springframework.mock.web.MockServletConfig;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 
 import com.enonic.wem.portal.internal.PortalServlet;
 import com.enonic.wem.portal.internal.exception.PortalExceptionMapper;
 import com.enonic.wem.servlet.mock.MockServletConfig;
 
+// import org.springframework.mock.web.MockServletConfig;
+
 public abstract class BaseResourceTest
 {
     private PortalServlet servlet;
 
-    protected Set<Object> resources;
+    protected List<Object> resources;
 
     @Before
     public final void setup()
         throws Exception
     {
-        this.resources = Sets.newHashSet();
+        this.resources = Lists.newArrayList();
         this.resources.add( new PortalExceptionMapper() );
 
         this.servlet = new PortalServlet();
-        this.servlet.setContributor( () -> resources );
+        this.servlet.init( new MockServletConfig() );
 
         configure();
 
-        this.servlet.init( new MockServletConfig() );
+        this.servlet.setResources( this.resources );
     }
 
     protected abstract void configure()
