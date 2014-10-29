@@ -53,3 +53,5 @@
 ///<reference path='GetContentVersionsRequest.ts' />
 ///<reference path='ContentDuplicatedEvent.ts' />
 ///<reference path='GetNearestSiteRequest.ts' />
+///<reference path='ContentPermissions.ts' />
+///<reference path='GetContentPermissionsRequest.ts' />

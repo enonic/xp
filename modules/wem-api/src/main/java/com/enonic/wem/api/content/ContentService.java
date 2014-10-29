@@ -49,4 +49,6 @@ public interface ContentService
     Content orderChild( final OrderChildContentParams params );
 
     String generateContentName( String displayName );
+
+    ContentPermissions getPermissions( final ContentId contentId );
 }

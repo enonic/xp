@@ -9,6 +9,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
+import com.enonic.wem.api.content.ContentPermissions;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.CreateContentParams;
@@ -42,6 +43,7 @@ import com.enonic.wem.api.schema.content.ContentTypeForms;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
+import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodeService;
@@ -370,6 +372,16 @@ public class ContentServiceImpl
     public String generateContentName( final String displayName )
     {
         return new ContentPathNameGenerator().generatePathName( displayName );
+    }
+
+    @Override
+    public ContentPermissions getPermissions( final ContentId contentId )
+    {
+        // TODO
+        return ContentPermissions.create().
+            permissions( AccessControlList.empty() ).
+            inheritedPermissions( AccessControlList.empty() ).
+            build();
     }
 
     public void setContentTypeService( final ContentTypeService contentTypeService )

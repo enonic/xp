@@ -21,6 +21,7 @@ import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.ContentPermissions;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.CreateContentParams;
@@ -63,6 +64,15 @@ import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.schema.content.validator.MaximumOccurrencesValidationError;
 import com.enonic.wem.api.schema.content.validator.MissingRequiredValueValidationError;
 import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
+import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.security.PrincipalQuery;
+import com.enonic.wem.api.security.PrincipalQueryResult;
+import com.enonic.wem.api.security.SecurityService;
+import com.enonic.wem.api.security.User;
+import com.enonic.wem.api.security.UserStoreKey;
+import com.enonic.wem.api.security.acl.AccessControlEntry;
+import com.enonic.wem.api.security.acl.AccessControlList;
+import com.enonic.wem.api.security.acl.Permission;
 
 import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.api.content.site.Site.newSite;
@@ -76,6 +86,8 @@ public class ContentResourceTest
     private ContentTypeService contentTypeService;
 
     private ContentService contentService;
+
+    private SecurityService securityService;
 
     @After
     public void after()
@@ -97,6 +109,8 @@ public class ContentResourceTest
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
             thenReturn( createContentType( "mymodule:my_type" ) );
 
+        securityService = Mockito.mock( SecurityService.class );
+        resource.setSecurityService( securityService );
         return resource;
     }
 
@@ -769,6 +783,58 @@ public class ContentResourceTest
             entity( readFromFile( "duplicate_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 
+    }
+
+    @Test
+    public void getContentPermissions()
+        throws Exception
+    {
+        final User user1 = User.create().
+            key( PrincipalKey.ofUser( UserStoreKey.system(), "user1" ) ).
+            displayName( "User 1" ).
+            email( "user1@enonic.com" ).
+            login( "user1" ).
+            build();
+        final User user2 = User.create().
+            key( PrincipalKey.ofUser( UserStoreKey.system(), "user2" ) ).
+            displayName( "User 2" ).
+            email( "user2@enonic.com" ).
+            login( "user2" ).
+            build();
+        final PrincipalQueryResult principalResult = PrincipalQueryResult.newResult().
+            addPrincipal( user1 ).addPrincipal( user2 ).addPrincipal( User.anonymous() ).build();
+        Mockito.when( securityService.query( Mockito.isA( PrincipalQuery.class ) ) ).thenReturn( principalResult );
+
+        final AccessControlEntry entry1 = AccessControlEntry.newACE().
+            principal( PrincipalKey.ofAnonymous() ).
+            allow( Permission.CREATE ).
+            allow( Permission.READ ).
+            deny( Permission.DELETE ).
+            build();
+        final AccessControlEntry entry2 = AccessControlEntry.newACE().
+            principal( user1.getKey() ).
+            allow( Permission.READ ).
+            allow( Permission.PUBLISH ).
+            build();
+        final AccessControlEntry entry3 = AccessControlEntry.newACE().
+            principal( user2.getKey() ).
+            allow( Permission.READ ).
+            allow( Permission.READ_PERMISSIONS ).
+            allow( Permission.WRITE_PERMISSIONS ).
+            deny( Permission.PUBLISH ).
+            build();
+        final AccessControlList parentPerm = AccessControlList.of( entry1, entry2 );
+        final AccessControlList contentPerm = AccessControlList.of( entry3 );
+        final ContentPermissions permissions =
+            ContentPermissions.create().permissions( contentPerm ).inheritedPermissions( parentPerm ).build();
+        Mockito.when( contentService.getPermissions( Mockito.eq( ContentId.from( "aaa" ) ) ) ).thenReturn( permissions );
+
+        String jsonString = request().
+            path( "content/getPermissions" ).
+            queryParam( "id", "aaa" ).
+            get().getAsString();
+
+        assertJson( "get_permissions.json", jsonString );
     }
 
     private DataValidationErrors createDataValidationErrors()

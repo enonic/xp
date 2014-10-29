@@ -78,6 +78,7 @@
     <property name="contentTypeService" ref="contentTypeService"/>
     <property name="attachmentService" ref="attachmentService"/>
     <property name="mixinService" ref="mixinService"/>
+    <property name="securityService" ref="securityService"/>
   </bean>
 
   <bean id="securityResource" class="com.enonic.wem.admin.rest.resource.security.SecurityResource">

@@ -2,11 +2,15 @@ package com.enonic.wem.api.security.acl;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.security.PrincipalKeys;
+
+import static java.util.stream.Collectors.toSet;
 
 public final class AccessControlList
     implements Iterable<AccessControlEntry>
@@ -110,6 +114,14 @@ public final class AccessControlList
     public boolean isDeniedFor( final Permission permission, final PrincipalKey principal )
     {
         return !isAllowedFor( permission, principal );
+    }
+
+    public PrincipalKeys getAllPrincipals()
+    {
+        final Set<PrincipalKey> principals = this.entries.values().stream().
+            map( AccessControlEntry::getPrincipal ).
+            collect( toSet() );
+        return PrincipalKeys.from( principals );
     }
 
     @Override

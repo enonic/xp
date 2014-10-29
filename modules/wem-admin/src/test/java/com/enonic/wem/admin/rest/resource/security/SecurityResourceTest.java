@@ -45,8 +45,7 @@ public class SecurityResourceTest
         Mockito.when( securityService.getUserStores() ).
             thenReturn( userStores );
 
-        String jsonString = request().
-            path( "userstore/list" ).get().getAsString();
+        String jsonString = request().path( "security/userstore/list" ).get().getAsString();
 
         assertJson( "get_userstores.json", jsonString );
     }
@@ -61,7 +60,10 @@ public class SecurityResourceTest
             thenReturn( principals );
 
         String jsonString = request().
-            path( "userstore/principals" ).queryParam( "type", "user" ).queryParam( "userStoreKey", "local" ).get().getAsString();
+            path( "security/principals" ).
+            queryParam( "type", "user" ).
+            queryParam( "userStoreKey", "local" ).
+            get().getAsString();
 
         assertJson( "get_principals.json", jsonString );
     }

@@ -9,18 +9,6 @@ public enum Permission
     DELETE,
     PUBLISH,
     READ_PERMISSIONS,
-    WRITE_PERMISSIONS;
-
-    private final String id;
-
-    Permission()
-    {
-        this.id = this.toString().toLowerCase();
-    }
-
-    public String id()
-    {
-        return id;
-    }
+    WRITE_PERMISSIONS
 
 }

@@ -1,0 +1,40 @@
+{
+  "inheritedPermissions": [
+    {
+      "allow": [
+        "READ",
+        "PUBLISH"
+      ],
+      "deny": [],
+      "principal": {
+        "displayName": "User 1",
+        "key": "system:user:user1"
+      }
+    },
+    {
+      "allow": [
+        "READ",
+        "CREATE"
+      ],
+      "deny": ["DELETE"],
+      "principal": {
+        "displayName": "anonymous",
+        "key": "system:user:anonymous"
+      }
+    }
+  ],
+  "permissions": [
+    {
+      "allow": [
+        "READ",
+        "READ_PERMISSIONS",
+        "WRITE_PERMISSIONS"
+      ],
+      "deny": ["PUBLISH"],
+      "principal": {
+        "displayName": "User 2",
+        "key": "system:user:user2"
+      }
+    }
+  ]
+}

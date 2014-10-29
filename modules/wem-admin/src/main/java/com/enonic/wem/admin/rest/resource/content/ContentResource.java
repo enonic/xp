@@ -32,6 +32,7 @@ import com.enonic.wem.admin.rest.exception.NotFoundWebException;
 import com.enonic.wem.admin.rest.resource.content.json.AbstractContentQueryResultJson;
 import com.enonic.wem.admin.rest.resource.content.json.CompareContentsJson;
 import com.enonic.wem.admin.rest.resource.content.json.ContentNameJson;
+import com.enonic.wem.admin.rest.resource.content.json.ContentPermissionsJson;
 import com.enonic.wem.admin.rest.resource.content.json.ContentQueryJson;
 import com.enonic.wem.admin.rest.resource.content.json.CreateContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.DeleteContentJson;
@@ -54,6 +55,7 @@ import com.enonic.wem.api.content.ContentListMetaData;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
+import com.enonic.wem.api.content.ContentPermissions;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.DeleteContentParams;
 import com.enonic.wem.api.content.DuplicateContentParams;
@@ -78,6 +80,10 @@ import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.mixin.MixinService;
+import com.enonic.wem.api.security.PrincipalQuery;
+import com.enonic.wem.api.security.PrincipalQueryResult;
+import com.enonic.wem.api.security.Principals;
+import com.enonic.wem.api.security.SecurityService;
 import com.enonic.wem.api.workspace.Workspaces;
 
 @SuppressWarnings("UnusedDeclaration")
@@ -104,6 +110,8 @@ public class ContentResource
     private AttachmentService attachmentService;
 
     private MixinReferencesToFormItemsTransformer mixinReferencesToFormItemsTransformer;
+
+    private SecurityService securityService;
 
     @GET
     public ContentIdJson getById( @QueryParam("id") final String idParam,
@@ -435,6 +443,23 @@ public class ContentResource
         }
     }
 
+    @GET
+    @Path("getPermissions")
+    public ContentPermissionsJson getPermissions( @QueryParam("id") final String contentIdParam )
+    {
+        final ContentId contentId = ContentId.from( contentIdParam );
+        final ContentPermissions contentPermissions = contentService.getPermissions( contentId );
+
+        final PrincipalQuery principalQuery = PrincipalQuery.newQuery().
+            principals( contentPermissions.getPermissions().getAllPrincipals() ).
+            principals( contentPermissions.getInheritedPermissions().getAllPrincipals() ).
+            build();
+        final PrincipalQueryResult principalResult = securityService.query( principalQuery );
+        final Principals principals = principalResult.getPrincipals();
+
+        return new ContentPermissionsJson( contentPermissions, principals );
+    }
+
     private List<Attachment> parseAttachments( final List<AttachmentJson> attachmentJsonList )
     {
         List<Attachment> attachments = new ArrayList<>();
@@ -471,5 +496,10 @@ public class ContentResource
     public void setMixinService( final MixinService mixinService )
     {
         this.mixinReferencesToFormItemsTransformer = new MixinReferencesToFormItemsTransformer( mixinService );
+    }
+
+    public void setSecurityService( final SecurityService securityService )
+    {
+        this.securityService = securityService;
     }
 }

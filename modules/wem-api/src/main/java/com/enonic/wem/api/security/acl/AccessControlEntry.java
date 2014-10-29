@@ -69,7 +69,7 @@ public final class AccessControlEntry
                 {
                     sb.append( ", " );
                 }
-                sb.append( "+" ).append( permission.id() );
+                sb.append( "+" ).append( permission.toString().toLowerCase() );
                 empty = false;
             }
             else if ( deniedPermissions.contains( permission ) )
@@ -78,7 +78,7 @@ public final class AccessControlEntry
                 {
                     sb.append( ", " );
                 }
-                sb.append( "-" ).append( permission.id() );
+                sb.append( "-" ).append( permission.toString().toLowerCase() );
                 empty = false;
             }
         }

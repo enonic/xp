@@ -1,5 +1,9 @@
 package com.enonic.wem.api.security;
 
+import org.apache.commons.lang.StringUtils;
+
+import com.google.common.base.Preconditions;
+
 public final class UserStoreKey
 {
     private final static UserStoreKey SYSTEM = new UserStoreKey( "system" );
@@ -8,6 +12,7 @@ public final class UserStoreKey
 
     public UserStoreKey( final String id )
     {
+        Preconditions.checkArgument( !StringUtils.isBlank( id ), "UserStoreKey cannot be blank: %s", id );
         this.id = id;
     }
 

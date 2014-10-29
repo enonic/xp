@@ -19,7 +19,7 @@ import com.enonic.wem.api.security.UserStores;
 
 
 @SuppressWarnings("UnusedDeclaration")
-@Path("userstore")
+@Path("security")
 @Produces(MediaType.APPLICATION_JSON)
 public class SecurityResource
 {
@@ -27,7 +27,7 @@ public class SecurityResource
     private SecurityService securityService;
 
     @GET
-    @Path("list")
+    @Path("userstore/list")
     public UserStoresJson getUserStores()
     {
         UserStores userStores = securityService.getUserStores();
