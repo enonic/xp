@@ -13,7 +13,6 @@ abstract class PrincipalNodeTranslator
 
     public static final String USERSTORE_KEY = "userStoreKey";
 
-
     static void addPrincipalPropertiesToDataSet( final RootDataSet rootDataSet, final Principal principal )
     {
         rootDataSet.setProperty( DISPLAY_NAME_KEY, Value.newString( principal.getDisplayName() ) );

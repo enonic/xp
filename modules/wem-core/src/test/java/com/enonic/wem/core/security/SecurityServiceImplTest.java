@@ -77,9 +77,13 @@ public class SecurityServiceImplTest
         final User user = securityService.createUser( createUser );
 
         final CreateGroupParams createGroup = CreateGroupParams.create().
-            groupKey( PrincipalKey.ofGroup( SYSTEM, "groupA" ) ).
+            groupKey( PrincipalKey.ofGroup( SYSTEM, "group-a" ) ).
             displayName( "Group A" ).
             build();
+
+        Mockito.when( nodeService.create( Mockito.isA( CreateNodeParams.class ) ) ).
+            thenReturn( createGroupAsNode( createGroup ) );
+
         final Group group = securityService.createGroup( createGroup );
 
         final Principals groups = securityService.getPrincipals( SYSTEM, PrincipalType.GROUP );
@@ -249,15 +253,19 @@ public class SecurityServiceImplTest
         throws Exception
     {
         final CreateGroupParams createGroup = CreateGroupParams.create().
-            groupKey( PrincipalKey.ofGroup( SYSTEM, "groupA" ) ).
+            groupKey( PrincipalKey.ofGroup( SYSTEM, "group-a" ) ).
             displayName( "Group A" ).
             build();
-        final Group group = securityService.createGroup( createGroup );
 
         final CreateGroupParams createGroup2 = CreateGroupParams.create().
-            groupKey( PrincipalKey.ofGroup( SYSTEM, "groupB" ) ).
+            groupKey( PrincipalKey.ofGroup( SYSTEM, "group-b" ) ).
             displayName( "Group B" ).
             build();
+
+        Mockito.when( nodeService.create( Mockito.isA( CreateNodeParams.class ) ) ).
+            thenReturn( createGroupAsNode( createGroup ) ).
+            thenReturn( createGroupAsNode( createGroup2 ) );
+        final Group group = securityService.createGroup( createGroup );
         final Group group2 = securityService.createGroup( createGroup2 );
 
         final Principals groups = securityService.getPrincipals( SYSTEM, PrincipalType.GROUP );
@@ -269,9 +277,12 @@ public class SecurityServiceImplTest
         throws Exception
     {
         final CreateGroupParams createGroup = CreateGroupParams.create().
-            groupKey( PrincipalKey.ofGroup( SYSTEM, "groupA" ) ).
+            groupKey( PrincipalKey.ofGroup( SYSTEM, "group-a" ) ).
             displayName( "Group A" ).
             build();
+
+        Mockito.when( nodeService.create( Mockito.isA( CreateNodeParams.class ) ) ).
+            thenReturn( createGroupAsNode( createGroup ) );
         final Group group = securityService.createGroup( createGroup );
 
         final UpdateGroupParams groupUpdate = UpdateGroupParams.create( group ).
@@ -289,13 +300,13 @@ public class SecurityServiceImplTest
         throws Exception
     {
         final CreateRoleParams createRole = CreateRoleParams.create().
-            roleKey( PrincipalKey.ofRole( "roleA" ) ).
+            roleKey( PrincipalKey.ofRole( "role-a" ) ).
             displayName( "Role A" ).
             build();
         final Role role = securityService.createRole( createRole );
 
         final CreateRoleParams createRole2 = CreateRoleParams.create().
-            roleKey( PrincipalKey.ofRole( "roleB" ) ).
+            roleKey( PrincipalKey.ofRole( "role-b" ) ).
             displayName( "Role B" ).
             build();
         final Role role2 = securityService.createRole( createRole2 );
@@ -309,7 +320,7 @@ public class SecurityServiceImplTest
         throws Exception
     {
         final CreateRoleParams createRole = CreateRoleParams.create().
-            roleKey( PrincipalKey.ofRole( "roleA" ) ).
+            roleKey( PrincipalKey.ofRole( "role-a" ) ).
             displayName( "Role A" ).
             build();
         final Role role = securityService.createRole( createRole );
@@ -349,17 +360,18 @@ public class SecurityServiceImplTest
         final User user1 = securityService.createUser( createUser1 );
         final User user2 = securityService.createUser( createUser2 );
 
-        Mockito.when( nodeService.create( Mockito.isA( CreateNodeParams.class ) ) ).
-            thenReturn( createUserAsNode( createUser1 ) );
-
         final CreateGroupParams createGroup = CreateGroupParams.create().
-            groupKey( PrincipalKey.ofGroup( SYSTEM, "groupA" ) ).
+            groupKey( PrincipalKey.ofGroup( SYSTEM, "group-a" ) ).
             displayName( "Group A" ).
             build();
+
+        Mockito.when( nodeService.create( Mockito.isA( CreateNodeParams.class ) ) ).
+            thenReturn( createGroupAsNode( createGroup ) );
+
         final Group group = securityService.createGroup( createGroup );
 
         final CreateGroupParams createGroup2 = CreateGroupParams.create().
-            groupKey( PrincipalKey.ofGroup( SYSTEM, "groupB" ) ).
+            groupKey( PrincipalKey.ofGroup( SYSTEM, "group-b" ) ).
             displayName( "Group B" ).
             build();
         final Group group2 = securityService.createGroup( createGroup2 );
@@ -374,6 +386,19 @@ public class SecurityServiceImplTest
         final PrincipalQueryResult results = securityService.query( query );
         assertEquals( 4, results.getTotalSize() );
         assertEquals( 3, results.getPrincipals().getSize() );
+    }
+
+    private Node createGroupAsNode( final CreateGroupParams group )
+    {
+        final RootDataSet rootDataSet = new RootDataSet();
+        rootDataSet.setProperty( PrincipalNodeTranslator.DISPLAY_NAME_KEY, Value.newString( group.getDisplayName() ) );
+        rootDataSet.setProperty( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY, Value.newString( group.getKey().getType().toString() ) );
+        rootDataSet.setProperty( PrincipalNodeTranslator.USERSTORE_KEY, Value.newString( group.getKey().getUserStore().toString() ) );
+
+        return Node.newNode().
+            name( PrincipalKeyNodeTranslator.toNodeName( group.getKey() ) ).
+            rootDataSet( rootDataSet ).
+            build();
     }
 
     @Test
@@ -402,15 +427,19 @@ public class SecurityServiceImplTest
         final User user2 = securityService.createUser( createUser2 );
 
         final CreateGroupParams createGroup = CreateGroupParams.create().
-            groupKey( PrincipalKey.ofGroup( SYSTEM, "groupA" ) ).
+            groupKey( PrincipalKey.ofGroup( SYSTEM, "group-a" ) ).
             displayName( "Group A" ).
             build();
-        final Group group = securityService.createGroup( createGroup );
 
         final CreateGroupParams createGroup2 = CreateGroupParams.create().
-            groupKey( PrincipalKey.ofGroup( SYSTEM, "groupB" ) ).
+            groupKey( PrincipalKey.ofGroup( SYSTEM, "group-b" ) ).
             displayName( "Group B" ).
             build();
+
+        Mockito.when( nodeService.create( Mockito.isA( CreateNodeParams.class ) ) ).
+            thenReturn( createGroupAsNode( createGroup ) ).
+            thenReturn( createGroupAsNode( createGroup2 ) );
+        final Group group = securityService.createGroup( createGroup );
         final Group group2 = securityService.createGroup( createGroup2 );
 
         final PrincipalQuery query = PrincipalQuery.newQuery().

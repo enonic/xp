@@ -247,7 +247,11 @@ public final class SecurityServiceImpl
         {
             throw new IllegalArgumentException( "Group already exists: " + group.getKey() );
         }
-        return group;
+
+        final CreateNodeParams createGroupParams = GroupNodeTranslator.toCreateNodeParams( group );
+        final Node node = this.nodeService.create( createGroupParams );
+
+        return GroupNodeTranslator.fromNode( node );
     }
 
     @Override
