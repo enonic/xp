@@ -28,7 +28,7 @@ public final class XmlSerializer<X>
 
         try
         {
-            this.context = JAXBContext.newInstance( "com.enonic.wem.api.xml.model" );
+            this.context = JAXBContext.newInstance( "com.enonic.wem.api.xml.model", getClass().getClassLoader() );
         }
         catch ( final JAXBException e )
         {
