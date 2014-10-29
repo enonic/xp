@@ -311,5 +311,17 @@ module app.browse {
                 return parentNode;
             });
         }
+
+        sortNodeChildren(node: TreeNode<ContentSummaryAndCompareStatus>) {
+            var comparator: api.Comparator<TreeNode<ContentSummaryAndCompareStatus>>;
+            if (this.getRoot() == node) {
+                comparator = new api.content.ContentByDisplayNameComparator();
+            } else {
+                comparator = new api.content.ContentByModifiedTimeComparator();
+            }
+            var children = node.getChildren().sort(comparator.compare);
+            node.setChildren(children);
+            this.initData(this.getRoot().treeToList());
+        }
     }
 }
