@@ -21,14 +21,14 @@ public class MetadataJson
 
     private DataSetJson data;
 
-    public MetadataJson(final Metadata metadata)
+    public MetadataJson( final Metadata metadata )
     {
         this.name = metadata.getName().toString();
         this.data = new DataSetJson( metadata.getData() );
     }
 
     @JsonCreator
-    public MetadataJson(@JsonProperty("name") final String name, @JsonProperty("data") final List<DataJson> dataJsonList)
+    public MetadataJson( @JsonProperty("name") final String name, @JsonProperty("data") final List<DataJson> dataJsonList )
     {
         this.name = name;
         final List<Data> dataList = new ArrayList<>( dataJsonList.size() );
@@ -36,7 +36,7 @@ public class MetadataJson
         {
             dataList.add( dataJson.getData() );
         }
-        this.data = new DataSetJson( DataSet.newDataSet().data( dataList ).build() );
+        this.data = new DataSetJson( DataSet.create().data( dataList ).build() );
     }
 
     public String getName()
@@ -52,6 +52,6 @@ public class MetadataJson
     @JsonIgnore
     public Metadata getMetadata()
     {
-        return new Metadata( MetadataSchemaName.from(this.name), this.data.getData().toRootDataSet() );
+        return new Metadata( MetadataSchemaName.from( this.name ), this.data.getData().toRootDataSet() );
     }
 }

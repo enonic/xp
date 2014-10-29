@@ -24,7 +24,7 @@ public class DataSetTest
             @Override
             public Object getObjectX()
             {
-                return DataSet.newDataSet().
+                return DataSet.create().
                     name( "mySet" ).
                     set( "myData1", "aaa", ValueTypes.STRING ).
                     set( "myData2", "bbb", ValueTypes.STRING ).
@@ -34,15 +34,15 @@ public class DataSetTest
             @Override
             public Object[] getObjectsThatNotEqualsX()
             {
-                return new Object[]{DataSet.newDataSet().
+                return new Object[]{DataSet.create().
                     name( "mySet" ).
                     set( "myData1", "aaa", ValueTypes.STRING ).
-                    build(), DataSet.newDataSet().
+                    build(), DataSet.create().
                     name( "mySet" ).
                     set( "myData1", "aaa", ValueTypes.STRING ).
                     set( "myData2", "bbb", ValueTypes.STRING ).
                     set( "myData3", "bbb", ValueTypes.STRING ).
-                    build(), DataSet.newDataSet().
+                    build(), DataSet.create().
                     name( "mySet" ).
                     set( "myData1", "111", ValueTypes.STRING ).
                     set( "myData2", "222", ValueTypes.STRING ).
@@ -52,7 +52,7 @@ public class DataSetTest
             @Override
             public Object getObjectThatEqualsXButNotTheSame()
             {
-                return DataSet.newDataSet().
+                return DataSet.create().
                     name( "mySet" ).
                     set( "myData1", "aaa", ValueTypes.STRING ).
                     set( "myData2", "bbb", ValueTypes.STRING ).
@@ -62,7 +62,7 @@ public class DataSetTest
             @Override
             public Object getObjectThatEqualsXButNotTheSame2()
             {
-                return DataSet.newDataSet().
+                return DataSet.create().
                     name( "mySet" ).
                     set( "myData1", "aaa", ValueTypes.STRING ).
                     set( "myData2", "bbb", ValueTypes.STRING ).
@@ -108,7 +108,7 @@ public class DataSetTest
     {
         try
         {
-            DataSet.newDataSet().name( " " ).build();
+            DataSet.create().name( " " ).build();
             fail( "Expected exception" );
         }
         catch ( Exception e )
@@ -121,7 +121,7 @@ public class DataSetTest
     @Test
     public void add_Property()
     {
-        DataSet dataSet = DataSet.newDataSet().name( "mySet" ).build();
+        DataSet dataSet = DataSet.create().name( "mySet" ).build();
         dataSet.add( Property.newString( "myData", "A value" ) );
 
         assertEquals( "mySet.myData", dataSet.getProperty( "myData" ).getPath().toString() );
@@ -148,7 +148,7 @@ public class DataSetTest
     @Test
     public void add_more()
     {
-        DataSet dataSet = DataSet.newDataSet().name( "mySet" ).build();
+        DataSet dataSet = DataSet.create().name( "mySet" ).build();
         dataSet.add( Property.newString( "myData", "1" ) );
         dataSet.add( Property.newString( "myData", "2" ) );
 
@@ -160,7 +160,7 @@ public class DataSetTest
     @Test
     public void add_given_data_of_type_text_when_adding_data_of_other_type_with_same_name_then_exception_is_thrown()
     {
-        DataSet dataSet = DataSet.newDataSet().name( "mySet" ).build();
+        DataSet dataSet = DataSet.create().name( "mySet" ).build();
         dataSet.add( Property.newString( "myData", "A value" ) );
 
         // exercise
@@ -181,7 +181,7 @@ public class DataSetTest
     @Test
     public void size()
     {
-        DataSet dataSet = DataSet.newDataSet().name( "mySet" ).build();
+        DataSet dataSet = DataSet.create().name( "mySet" ).build();
         dataSet.add( Property.newString( "myData", "1" ) );
         dataSet.add( Property.newString( "myData", "2" ) );
 
@@ -191,7 +191,7 @@ public class DataSetTest
     @Test
     public void dataCount()
     {
-        DataSet dataSet = DataSet.newDataSet().name( "mySet" ).build();
+        DataSet dataSet = DataSet.create().name( "mySet" ).build();
         dataSet.add( Property.newString( "myData", "1" ) );
         dataSet.add( Property.newString( "myOtherData", "A" ) );
         dataSet.add( Property.newString( "myData", "2" ) );
@@ -202,7 +202,7 @@ public class DataSetTest
     @Test
     public void dataCount_given_non_existing_data_then_0_is_returned()
     {
-        DataSet dataSet = DataSet.newDataSet().name( "mySet" ).build();
+        DataSet dataSet = DataSet.create().name( "mySet" ).build();
         dataSet.add( Property.newString( "myData", "2" ) );
 
         assertEquals( 0, dataSet.nameCount( "nonExistingData" ) );
@@ -225,7 +225,7 @@ public class DataSetTest
     @Test
     public void dataNames()
     {
-        DataSet dataSet = DataSet.newDataSet().name( "mySet" ).build();
+        DataSet dataSet = DataSet.create().name( "mySet" ).build();
         dataSet.add( Property.newString( "myData", "1" ) );
         dataSet.add( Property.newString( "myOtherData", "A" ) );
         dataSet.add( Property.newString( "myData", "2" ) );
@@ -326,8 +326,8 @@ public class DataSetTest
     public void getDataSet()
     {
         DataSet contentData = new ContentData();
-        contentData.add( DataSet.newDataSet().name( "mySet" ).build() );
-        contentData.add( DataSet.newDataSet().name( "myOtherSet" ).build() );
+        contentData.add( DataSet.create().name( "mySet" ).build() );
+        contentData.add( DataSet.create().name( "myOtherSet" ).build() );
 
         assertEquals( "mySet", contentData.getDataSet( "mySet" ).getPath().toString() );
         assertEquals( "mySet", contentData.getDataSet( "mySet", 0 ).getPath().toString() );
@@ -464,9 +464,9 @@ public class DataSetTest
     public void tostring_given_array()
     {
         DataSet rootSet = new ContentData();
-        rootSet.add( DataSet.newDataSet().name( "mySet" ).build() );
+        rootSet.add( DataSet.create().name( "mySet" ).build() );
 
-        DataSet mySet = DataSet.newDataSet().name( "mySet" ).build();
+        DataSet mySet = DataSet.create().name( "mySet" ).build();
         mySet.setProperty( DataPath.from( "myData[0]" ), Value.newString( "1" ) );
         mySet.setProperty( DataPath.from( "myData[1]" ), Value.newString( "2" ) );
         rootSet.add( mySet );
@@ -477,7 +477,7 @@ public class DataSetTest
     @Test
     public void toRootDataSet()
     {
-        DataSet dataSet = DataSet.newDataSet().name( "mySet" ).build();
+        DataSet dataSet = DataSet.create().name( "mySet" ).build();
         dataSet.add( Property.newString( "myData", "A value" ) );
         RootDataSet rootDataSet = dataSet.toRootDataSet();
 
@@ -488,14 +488,14 @@ public class DataSetTest
     @Test
     public void getDataSets()
     {
-        DataSet dataSet = DataSet.newDataSet().name( "mySet" ).build();
+        DataSet dataSet = DataSet.create().name( "mySet" ).build();
         dataSet.setProperty( "prop", Value.newString( "1" ) );
 
-        DataSet set1 = DataSet.newDataSet().name( "mySet" ).build();
+        DataSet set1 = DataSet.create().name( "mySet" ).build();
         set1.setProperty( "prop", Value.newString( "1" ) );
         dataSet.add( set1 );
 
-        DataSet set2 = DataSet.newDataSet().name( "mySet" ).build();
+        DataSet set2 = DataSet.create().name( "mySet" ).build();
         set2.setProperty( "prop", Value.newString( "1" ) );
         dataSet.add( set2 );
 
@@ -509,7 +509,7 @@ public class DataSetTest
     @Test
     public void getPropertiesByName()
     {
-        DataSet dataSet = DataSet.newDataSet().name( "mySet" ).build();
+        DataSet dataSet = DataSet.create().name( "mySet" ).build();
         dataSet.addProperty( "prop", Value.newString( "1" ) );
         dataSet.addProperty( "prop", Value.newString( "2" ) );
         dataSet.addProperty( "prop", Value.newString( "3" ) );

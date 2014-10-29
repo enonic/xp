@@ -7,50 +7,41 @@ public final class Role
 {
     private Role( final Builder builder )
     {
-        super( builder.principalKey, builder.displayName );
-        checkArgument( builder.principalKey.isRole(), "Invalid Principal Type for Role: " + builder.principalKey.getType() );
+        super( builder );
     }
 
-    public static Builder newRole()
+    public static Builder create()
     {
         return new Builder();
     }
 
-    public static Builder newRole( final Role role )
+    public static Builder create( final Role role )
     {
         return new Builder( role );
     }
 
     public static class Builder
+        extends Principal.Builder<Builder>
     {
-        private PrincipalKey principalKey;
-
-        private String displayName;
-
         private Builder()
         {
+            super();
         }
 
         private Builder( final Role role )
         {
-            this.principalKey = role.getKey();
-            this.displayName = role.getDisplayName();
+            super( role );
         }
 
-        public Builder roleKey( final PrincipalKey value )
+        protected void validate()
         {
-            this.principalKey = value;
-            return this;
-        }
-
-        public Builder displayName( final String value )
-        {
-            this.displayName = value;
-            return this;
+            super.validate();
+            checkArgument( this.key.isRole(), "Invalid Principal Type for Role: " + this.key.getType() );
         }
 
         public Role build()
         {
+            validate();
             return new Role( this );
         }
     }

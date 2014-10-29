@@ -15,8 +15,7 @@ public final class User
 
     private User( final Builder builder )
     {
-        super( builder.principalKey, builder.displayName );
-        Preconditions.checkArgument( builder.principalKey.isUser(), "Invalid Principal Type for User: " + builder.principalKey.getType() );
+        super( builder );
         this.email = builder.email;
         this.login = builder.login;
         this.loginDisabled = builder.loginDisabled;
@@ -45,12 +44,12 @@ public final class User
         return loginDisabled;
     }
 
-    public static Builder newUser()
+    public static Builder create()
     {
         return new Builder();
     }
 
-    public static Builder newUser( final User user )
+    public static Builder create( final User user )
     {
         return new Builder( user );
     }
@@ -61,11 +60,8 @@ public final class User
     }
 
     public static class Builder
+        extends Principal.Builder<Builder>
     {
-        private PrincipalKey principalKey;
-
-        private String displayName;
-
         private String email;
 
         private String login;
@@ -74,27 +70,15 @@ public final class User
 
         private Builder()
         {
+            super();
         }
 
         private Builder( final User user )
         {
-            this.principalKey = user.getKey();
-            this.displayName = user.getDisplayName();
+            super( user );
             this.email = user.getEmail();
             this.login = user.getLogin();
             this.loginDisabled = user.isDisabled();
-        }
-
-        public Builder userKey( final PrincipalKey value )
-        {
-            this.principalKey = value;
-            return this;
-        }
-
-        public Builder displayName( final String value )
-        {
-            this.displayName = value;
-            return this;
         }
 
         public Builder login( final String value )
@@ -107,6 +91,13 @@ public final class User
         {
             this.email = value;
             return this;
+        }
+
+        @Override
+        protected void validate()
+        {
+            super.validate();
+            Preconditions.checkArgument( this.key.isUser(), "Invalid Principal Type for User: " + this.key.getType() );
         }
 
         public User build()

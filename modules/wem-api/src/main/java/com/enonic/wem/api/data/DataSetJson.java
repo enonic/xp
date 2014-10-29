@@ -35,7 +35,7 @@ public class DataSetJson
     @JsonCreator
     public DataSetJson( @JsonProperty("name") final String name, @JsonProperty("set") final List<DataJson> datas )
     {
-        super( DataSet.newDataSet().name( name ).data( unwrapData( datas ) ).build() );
+        super( DataSet.create().name( name ).data( unwrapData( datas ) ).build() );
 
         final ImmutableList.Builder<DataJson> builder = ImmutableList.builder();
         for ( final Data data : getData() )

@@ -41,6 +41,9 @@ import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.api.security.auth.AuthenticationToken;
 import com.enonic.wem.api.security.auth.EmailPasswordAuthToken;
 import com.enonic.wem.api.security.auth.UsernamePasswordAuthToken;
+import com.enonic.wem.core.entity.CreateNodeParams;
+import com.enonic.wem.core.entity.Node;
+import com.enonic.wem.core.entity.NodeService;
 
 import static java.util.stream.Collectors.toList;
 
@@ -53,6 +56,8 @@ public final class SecurityServiceImpl
     private final ConcurrentMap<PrincipalKey, Principal> principals;
 
     private final Multimap<PrincipalKey, PrincipalRelationship> relationshipTable;
+
+    private NodeService nodeService;
 
     public SecurityServiceImpl()
     {
@@ -186,8 +191,8 @@ public final class SecurityServiceImpl
     @Override
     public User createUser( final CreateUserParams createUser )
     {
-        final User user = User.newUser().
-            userKey( createUser.getKey() ).
+        final User user = User.create().
+            key( createUser.getKey() ).
             login( createUser.getLogin() ).
             email( createUser.getEmail() ).
             displayName( createUser.getDisplayName() ).
@@ -202,7 +207,11 @@ public final class SecurityServiceImpl
         {
             setPassword( user.getKey(), createUser.getPassword() );
         }
-        return user;
+
+        final CreateNodeParams createNodeParams = UserNodeTranslator.toCreateNodeParams( user );
+        final Node node = nodeService.create( createNodeParams );
+
+        return UserNodeTranslator.fromNode( node );
     }
 
     @Override
@@ -230,8 +239,8 @@ public final class SecurityServiceImpl
     @Override
     public Group createGroup( final CreateGroupParams createGroup )
     {
-        final Group group = Group.newGroup().
-            groupKey( createGroup.getKey() ).
+        final Group group = Group.create().
+            key( createGroup.getKey() ).
             displayName( createGroup.getDisplayName() ).
             build();
         if ( this.principals.putIfAbsent( group.getKey(), group ) != null )
@@ -266,8 +275,8 @@ public final class SecurityServiceImpl
     @Override
     public Role createRole( final CreateRoleParams createRole )
     {
-        final Role role = Role.newRole().
-            roleKey( createRole.getKey() ).
+        final Role role = Role.create().
+            key( createRole.getKey() ).
             displayName( createRole.getDisplayName() ).
             build();
         if ( this.principals.putIfAbsent( role.getKey(), role ) != null )
@@ -338,5 +347,10 @@ public final class SecurityServiceImpl
             totalSize( Ints.checkedCast( total ) ).
             addPrincipals( principals ).
             build();
+    }
+
+    public void setNodeService( final NodeService nodeService )
+    {
+        this.nodeService = nodeService;
     }
 }

@@ -46,7 +46,7 @@ public class DataSet
         }
     }
 
-    public static Builder newDataSet()
+    public static Builder create()
     {
         return new Builder();
     }
@@ -120,7 +120,7 @@ public class DataSet
         final Data exData = dataById.get( dataId );
         if ( exData == null )
         {
-            final DataSet dataSet = newDataSet().name( dataId.getName() ).build();
+            final DataSet dataSet = create().name( dataId.getName() ).build();
             doAdd( dataSet );
             return dataSet;
         }

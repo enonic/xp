@@ -112,6 +112,16 @@ public final class PrincipalKey
         final PrincipalType type = PrincipalType.valueOf( matcher.group( 2 ).toUpperCase() );
         final String id = matcher.group( 3 );
 
+        return doCreatePrincipalKey( userStoreKey, type, id );
+    }
+
+    public static PrincipalKey from( final UserStoreKey userStoreKey, final PrincipalType type, final String id )
+    {
+        return doCreatePrincipalKey( userStoreKey, type, id );
+    }
+
+    private static PrincipalKey doCreatePrincipalKey( final UserStoreKey userStoreKey, final PrincipalType type, final String id )
+    {
         switch ( type )
         {
             case USER:
@@ -122,7 +132,7 @@ public final class PrincipalKey
                 return PrincipalKey.ofRole( id );
 
             default:
-                throw new IllegalArgumentException( "Not a valid principal key [" + principalKey + "]" );
+                throw new IllegalArgumentException( "Not a valid principal type [" + type + "]" );
         }
     }
 

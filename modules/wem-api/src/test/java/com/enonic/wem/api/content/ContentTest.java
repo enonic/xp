@@ -24,7 +24,6 @@ import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
 import static com.enonic.wem.api.content.Content.newContent;
-import static com.enonic.wem.api.data.DataSet.newDataSet;
 import static com.enonic.wem.api.form.FieldSet.newFieldSet;
 import static com.enonic.wem.api.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.form.Input.newInput;
@@ -196,13 +195,13 @@ public class ContentTest
     @Test
     public void add_array_of_set_within_set()
     {
-        DataSet address1 = newDataSet().name( "address" ).build();
+        DataSet address1 = DataSet.create().name( "address" ).build();
         address1.add( Property.newString( "street", "Kirkegata 1-3" ) );
 
-        DataSet address2 = newDataSet().name( "address" ).build();
+        DataSet address2 = DataSet.create().name( "address" ).build();
         address2.add( Property.newString( "street", "Sonsteli" ) );
 
-        DataSet company = newDataSet().name( "company" ).build();
+        DataSet company = DataSet.create().name( "company" ).build();
         company.add( address1 );
         company.add( address2 );
         ContentData contentData = new ContentData();

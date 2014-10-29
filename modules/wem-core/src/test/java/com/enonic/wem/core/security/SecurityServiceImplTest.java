@@ -2,7 +2,10 @@ package com.enonic.wem.core.security;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
+import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.security.CreateGroupParams;
 import com.enonic.wem.api.security.CreateRoleParams;
 import com.enonic.wem.api.security.CreateUserParams;
@@ -16,7 +19,6 @@ import com.enonic.wem.api.security.PrincipalRelationships;
 import com.enonic.wem.api.security.PrincipalType;
 import com.enonic.wem.api.security.Principals;
 import com.enonic.wem.api.security.Role;
-import com.enonic.wem.api.security.SecurityService;
 import com.enonic.wem.api.security.UpdateGroupParams;
 import com.enonic.wem.api.security.UpdateRoleParams;
 import com.enonic.wem.api.security.UpdateUserParams;
@@ -28,20 +30,26 @@ import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.api.security.auth.AuthenticationToken;
 import com.enonic.wem.api.security.auth.EmailPasswordAuthToken;
 import com.enonic.wem.api.security.auth.UsernamePasswordAuthToken;
+import com.enonic.wem.core.entity.CreateNodeParams;
+import com.enonic.wem.core.entity.Node;
+import com.enonic.wem.core.entity.NodeService;
 
 import static org.junit.Assert.*;
 
 public class SecurityServiceImplTest
 {
 
-    public static final UserStoreKey SYSTEM = UserStoreKey.system();
+    private static final UserStoreKey SYSTEM = UserStoreKey.system();
 
-    private SecurityService securityService;
+    private SecurityServiceImpl securityService;
+
+    private final NodeService nodeService = Mockito.mock( NodeService.class );
 
     @Before
     public final void setUp()
     {
         securityService = new SecurityServiceImpl();
+        this.securityService.setNodeService( this.nodeService );
     }
 
     @Test
@@ -62,6 +70,10 @@ public class SecurityServiceImplTest
             email( "user1@enonic.com" ).
             login( "user1" ).
             build();
+
+        Mockito.when( nodeService.create( Mockito.isA( CreateNodeParams.class ) ) ).
+            thenReturn( createUserAsNode( createUser ) );
+
         final User user = securityService.createUser( createUser );
 
         final CreateGroupParams createGroup = CreateGroupParams.create().
@@ -86,6 +98,10 @@ public class SecurityServiceImplTest
             email( "user1@enonic.com" ).
             login( "user1" ).
             build();
+
+        Mockito.when( nodeService.create( Mockito.isA( CreateNodeParams.class ) ) ).
+            thenReturn( createUserAsNode( createUser ) );
+
         final User user = securityService.createUser( createUser );
 
         final EmailPasswordAuthToken authToken = new EmailPasswordAuthToken();
@@ -107,6 +123,10 @@ public class SecurityServiceImplTest
             email( "user1@enonic.com" ).
             login( "user1" ).
             build();
+
+        Mockito.when( nodeService.create( Mockito.isA( CreateNodeParams.class ) ) ).
+            thenReturn( createUserAsNode( createUser ) );
+
         final User user = securityService.createUser( createUser );
 
         final UsernamePasswordAuthToken authToken = new UsernamePasswordAuthToken();
@@ -128,6 +148,10 @@ public class SecurityServiceImplTest
             email( "user1@enonic.com" ).
             login( "user1" ).
             build();
+
+        Mockito.when( nodeService.create( Mockito.isA( CreateNodeParams.class ) ) ).
+            thenReturn( createUserAsNode( createUser ) );
+
         final User user = securityService.createUser( createUser );
 
         final CustomAuthenticationToken authToken = new CustomAuthenticationToken();
@@ -146,9 +170,12 @@ public class SecurityServiceImplTest
     }
 
     @Test
-    public void testCreateUser()
+    public void testCreatreeUser()
         throws Exception
     {
+        final NodeService nodeService = Mockito.mock( NodeService.class );
+        this.securityService.setNodeService( nodeService );
+
         final CreateUserParams createUser1 = CreateUserParams.create().
             userKey( PrincipalKey.ofUser( SYSTEM, "user1" ) ).
             displayName( "User 1" ).
@@ -156,7 +183,6 @@ public class SecurityServiceImplTest
             login( "user1" ).
             password( "123456" ).
             build();
-        final User user1 = securityService.createUser( createUser1 );
 
         final CreateUserParams createUser2 = CreateUserParams.create().
             userKey( PrincipalKey.ofUser( SYSTEM, "user2" ) ).
@@ -164,10 +190,32 @@ public class SecurityServiceImplTest
             email( "user2@enonic.com" ).
             login( "user2" ).
             build();
+
+        Mockito.when( nodeService.create( Mockito.isA( CreateNodeParams.class ) ) ).
+            thenReturn( createUserAsNode( createUser1 ) ).
+            thenReturn( createUserAsNode( createUser2 ) );
+
+        final User user1 = securityService.createUser( createUser1 );
         final User user2 = securityService.createUser( createUser2 );
 
         final Principals users = securityService.getPrincipals( SYSTEM, PrincipalType.USER );
         assertEquals( 2, users.getSize() );
+    }
+
+
+    private Node createUserAsNode( final CreateUserParams user )
+    {
+        final RootDataSet rootDataSet = new RootDataSet();
+        rootDataSet.setProperty( UserNodeTranslator.EMAIL_KEY, Value.newString( user.getEmail() ) );
+        rootDataSet.setProperty( PrincipalNodeTranslator.DISPLAY_NAME_KEY, Value.newString( user.getDisplayName() ) );
+        rootDataSet.setProperty( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY, Value.newString( user.getKey().getType().toString() ) );
+        rootDataSet.setProperty( PrincipalNodeTranslator.USERSTORE_KEY, Value.newString( user.getKey().getUserStore().toString() ) );
+        rootDataSet.setProperty( UserNodeTranslator.LOGIN_KEY, Value.newString( user.getLogin() ) );
+
+        return Node.newNode().
+            name( PrincipalKeyNodeTranslator.toNodeName( user.getKey() ) ).
+            rootDataSet( rootDataSet ).
+            build();
     }
 
     @Test
@@ -180,6 +228,10 @@ public class SecurityServiceImplTest
             email( "user1@enonic.com" ).
             login( "user1" ).
             build();
+
+        Mockito.when( nodeService.create( Mockito.isA( CreateNodeParams.class ) ) ).
+            thenReturn( createUserAsNode( createUser ) );
+
         final User user = securityService.createUser( createUser );
 
         final UpdateUserParams updateUserParams = UpdateUserParams.create( user ).
@@ -282,7 +334,6 @@ public class SecurityServiceImplTest
             email( "user1@enonic.com" ).
             login( "user1" ).
             build();
-        final User user1 = securityService.createUser( createUser1 );
 
         final CreateUserParams createUser2 = CreateUserParams.create().
             userKey( PrincipalKey.ofUser( SYSTEM, "user2" ) ).
@@ -290,7 +341,16 @@ public class SecurityServiceImplTest
             email( "user2@enonic.com" ).
             login( "user2" ).
             build();
+
+        Mockito.when( nodeService.create( Mockito.isA( CreateNodeParams.class ) ) ).
+            thenReturn( createUserAsNode( createUser1 ) ).
+            thenReturn( createUserAsNode( createUser2 ) );
+
+        final User user1 = securityService.createUser( createUser1 );
         final User user2 = securityService.createUser( createUser2 );
+
+        Mockito.when( nodeService.create( Mockito.isA( CreateNodeParams.class ) ) ).
+            thenReturn( createUserAsNode( createUser1 ) );
 
         final CreateGroupParams createGroup = CreateGroupParams.create().
             groupKey( PrincipalKey.ofGroup( SYSTEM, "groupA" ) ).
@@ -326,7 +386,6 @@ public class SecurityServiceImplTest
             email( "user1@enonic.com" ).
             login( "user1" ).
             build();
-        final User user1 = securityService.createUser( createUser1 );
 
         final CreateUserParams createUser2 = CreateUserParams.create().
             userKey( PrincipalKey.ofUser( SYSTEM, "user2" ) ).
@@ -334,6 +393,12 @@ public class SecurityServiceImplTest
             email( "user2@enonic.com" ).
             login( "user2" ).
             build();
+
+        Mockito.when( nodeService.create( Mockito.isA( CreateNodeParams.class ) ) ).
+            thenReturn( createUserAsNode( createUser1 ) ).
+            thenReturn( createUserAsNode( createUser2 ) );
+
+        final User user1 = securityService.createUser( createUser1 );
         final User user2 = securityService.createUser( createUser2 );
 
         final CreateGroupParams createGroup = CreateGroupParams.create().

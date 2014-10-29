@@ -14,10 +14,10 @@ public class AuthenticationInfoTest
     @Test
     public void testWithoutPrincipals()
     {
-        final User user = User.newUser().
+        final User user = User.create().
             login( "userlogin" ).
             displayName( "my user" ).
-            userKey( PrincipalKey.ofUser( new UserStoreKey( "myuserstore" ), "userid" ) ).
+            key( PrincipalKey.ofUser( new UserStoreKey( "myuserstore" ), "userid" ) ).
             email( "user@email" ).
             build();
 
@@ -34,10 +34,10 @@ public class AuthenticationInfoTest
     @Test
     public void testWithPrincipals()
     {
-        final User user = User.newUser().
+        final User user = User.create().
             login( "userlogin" ).
             displayName( "my user" ).
-            userKey( PrincipalKey.ofUser( new UserStoreKey( "myuserstore" ), "userid" ) ).
+            key( PrincipalKey.ofUser( new UserStoreKey( "myuserstore" ), "userid" ) ).
             email( "user@email" ).
             build();
 

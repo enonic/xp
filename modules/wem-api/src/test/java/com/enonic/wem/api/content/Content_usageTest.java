@@ -17,7 +17,6 @@ import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
 
-import static com.enonic.wem.api.data.DataSet.newDataSet;
 import static com.enonic.wem.api.data.type.ValueTypes.DOUBLE;
 import static com.enonic.wem.api.data.type.ValueTypes.HTML_PART;
 import static com.enonic.wem.api.data.type.ValueTypes.LOCAL_DATE;
@@ -163,7 +162,7 @@ public class Content_usageTest
         DataSet contentData = new ContentData();
 
         // exercise
-        contentData.add( newDataSet().name( "mySet" ).build() );
+        contentData.add( DataSet.create().name( "mySet" ).build() );
 
         // verify
         assertNotNull( contentData.getDataSet( "mySet" ) );
@@ -223,7 +222,7 @@ public class Content_usageTest
 
         for ( InvoiceLine line : invoice.lines )
         {
-            DataSet invoiceLine = DataSet.newDataSet().name( "invoiceLine" ).build();
+            DataSet invoiceLine = DataSet.create().name( "invoiceLine" ).build();
             invoiceLine.add( Property.newString( "text", line.text ) );
             invoiceLine.add( new Property( "money", resolveValue( line.money ) ) );
 
@@ -256,7 +255,7 @@ public class Content_usageTest
 
         for ( InvoiceLine line : invoice.lines )
         {
-            DataSet invoiceLine = DataSet.newDataSet().name( "invoiceLine" ).build();
+            DataSet invoiceLine = DataSet.create().name( "invoiceLine" ).build();
             invoiceLine.add( Property.newString( "text", line.text ) );
 
             invoiceLine.add( new Property( "money", resolveValue( line.money ) ) );

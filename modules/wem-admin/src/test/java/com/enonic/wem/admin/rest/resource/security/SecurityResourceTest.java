@@ -83,15 +83,15 @@ public class SecurityResourceTest
 
     private Principals createPrincipals()
     {
-        final User user1 = User.newUser().
-            userKey( PrincipalKey.ofUser( USER_STORE_1, "a" ) ).
+        final User user1 = User.create().
+            key( PrincipalKey.ofUser( USER_STORE_1, "a" ) ).
             displayName( "Alice" ).
             email( "alice@a.org" ).
             login( "alice" ).
             build();
 
-        final User user2 = User.newUser().
-            userKey( PrincipalKey.ofUser( USER_STORE_2, "b" ) ).
+        final User user2 = User.create().
+            key( PrincipalKey.ofUser( USER_STORE_2, "b" ) ).
             displayName( "Bobby" ).
             email( "bobby@b.org" ).
             login( "bobby" ).

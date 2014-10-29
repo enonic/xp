@@ -14,7 +14,7 @@ public class RootDataSetTest
     public void setParent_throws_exception()
     {
         RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.setParent( DataSet.newDataSet().name( "myDataSet" ).build() );
+        rootDataSet.setParent( DataSet.create().name( "myDataSet" ).build() );
     }
 
     @Test

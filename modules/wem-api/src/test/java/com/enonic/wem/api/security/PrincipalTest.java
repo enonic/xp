@@ -10,10 +10,10 @@ public class PrincipalTest
     @Test
     public void testCreateUser()
     {
-        final User user = User.newUser().
+        final User user = User.create().
             login( "userlogin" ).
             displayName( "my user" ).
-            userKey( PrincipalKey.ofUser( new UserStoreKey( "myuserstore" ), "userid" ) ).
+            key( PrincipalKey.ofUser( new UserStoreKey( "myuserstore" ), "userid" ) ).
             email( "user@email" ).
             build();
 
@@ -22,7 +22,7 @@ public class PrincipalTest
         assertEquals( PrincipalKey.from( "myuserstore:user:userid" ), user.getKey() );
         assertEquals( "user@email", user.getEmail() );
 
-        final User userCopy = User.newUser( user ).build();
+        final User userCopy = User.create( user ).build();
         assertEquals( "userlogin", userCopy.getLogin() );
         assertEquals( "my user", userCopy.getDisplayName() );
         assertEquals( false, userCopy.isDisabled() );
@@ -33,15 +33,15 @@ public class PrincipalTest
     @Test
     public void testCreateGroup()
     {
-        final Group group = Group.newGroup().
+        final Group group = Group.create().
             displayName( "my group" ).
-            groupKey( PrincipalKey.ofGroup( new UserStoreKey( "myuserstore" ), "groupid" ) ).
+            key( PrincipalKey.ofGroup( new UserStoreKey( "myuserstore" ), "groupid" ) ).
             build();
 
         assertEquals( "my group", group.getDisplayName() );
         assertEquals( PrincipalKey.from( "myuserstore:group:groupid" ), group.getKey() );
 
-        final Group groupCopy = Group.newGroup( group ).build();
+        final Group groupCopy = Group.create( group ).build();
         assertEquals( "my group", groupCopy.getDisplayName() );
         assertEquals( PrincipalKey.from( "myuserstore:group:groupid" ), groupCopy.getKey() );
     }
@@ -59,15 +59,15 @@ public class PrincipalTest
     @Test
     public void testCreateRole()
     {
-        final Role role = Role.newRole().
+        final Role role = Role.create().
             displayName( "my role" ).
-            roleKey( PrincipalKey.ofRole( "administrators" ) ).
+            key( PrincipalKey.ofRole( "administrators" ) ).
             build();
 
         assertEquals( "my role", role.getDisplayName() );
         assertEquals( PrincipalKey.from( "myuserstore:role:administrators" ), role.getKey() );
 
-        final Role roleCopy = Role.newRole( role ).build();
+        final Role roleCopy = Role.create( role ).build();
         assertEquals( "my role", roleCopy.getDisplayName() );
         assertEquals( PrincipalKey.from( "myuserstore:role:administrators" ), roleCopy.getKey() );
     }

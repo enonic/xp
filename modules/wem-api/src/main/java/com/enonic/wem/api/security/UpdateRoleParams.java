@@ -28,7 +28,7 @@ public final class UpdateRoleParams
 
     public Role update( final Role source )
     {
-        Role.Builder result = Role.newRole( source );
+        Role.Builder result = Role.create( source );
         if ( this.displayName != null )
         {
             result.displayName( this.getDisplayName() );

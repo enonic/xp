@@ -45,7 +45,7 @@ public final class UpdateUserParams
 
     public User update( final User source )
     {
-        User.Builder result = User.newUser( source );
+        User.Builder result = User.create( source );
         if ( this.displayName != null )
         {
             result.displayName( this.getDisplayName() );

@@ -115,10 +115,10 @@ public class FormItemDataSerializerTest
 
     private DataSet createInputData( String name, InputType inputType )
     {
-        DataSet.Builder inputTypeBuilder = DataSet.newDataSet();
+        DataSet.Builder inputTypeBuilder = DataSet.create();
         inputTypeBuilder.name( "inputType" ).set( "name", inputType.getName(), ValueTypes.STRING );
 
-        DataSet.Builder inputDataBuilder = DataSet.newDataSet().name( "Input" ).
+        DataSet.Builder inputDataBuilder = DataSet.create().name( "Input" ).
             set( "name", name, ValueTypes.STRING ).
             set( "label", name, ValueTypes.STRING ).
             set( "customText", "custom text", ValueTypes.STRING ).
@@ -157,7 +157,7 @@ public class FormItemDataSerializerTest
 
     private DataSet createFormItemSetData( String name, DataSet... formItemsData )
     {
-        DataSet.Builder formItemSetBuilder = DataSet.newDataSet().name( "FormItemSet" );
+        DataSet.Builder formItemSetBuilder = DataSet.create().name( "FormItemSet" );
         formItemSetBuilder.set( "name", name, ValueTypes.STRING ).
             set( "label", name, ValueTypes.STRING ).
             set( "customText", "custom text", ValueTypes.STRING ).
@@ -188,7 +188,7 @@ public class FormItemDataSerializerTest
 
     private DataSet createFieldSetData( String name, DataSet... formItemsData )
     {
-        DataSet.Builder fieldSetDataBuilder = DataSet.newDataSet().name( "Layout" );
+        DataSet.Builder fieldSetDataBuilder = DataSet.create().name( "Layout" );
         fieldSetDataBuilder.set( "name", name, ValueTypes.STRING ).
             set( "label", name, ValueTypes.STRING );
         DataSet fieldSetData = fieldSetDataBuilder.build();
@@ -204,7 +204,7 @@ public class FormItemDataSerializerTest
 
     private DataSet createOccurrences()
     {
-        return DataSet.newDataSet().
+        return DataSet.create().
             name( "occurrences" ).set( "minimum", 0, ValueTypes.LONG ).
             set( "maximum", 1, ValueTypes.LONG ).build();
     }

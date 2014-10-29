@@ -68,7 +68,7 @@ public class DataSetJsonSerializer
     DataSet parseDataSet( final ObjectNode dataSetNode )
     {
         final String name = JsonSerializerUtil.getStringValue( DATA_NAME, dataSetNode );
-        final DataSet dataSet = DataSet.newDataSet().name( name ).build();
+        final DataSet dataSet = DataSet.create().name( name ).build();
         final ArrayNode entriesArray = (ArrayNode) dataSetNode.get( DATA_SET );
         parseEntries( entriesArray, dataSet );
         return dataSet;

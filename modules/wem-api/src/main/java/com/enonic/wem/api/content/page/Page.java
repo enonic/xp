@@ -196,7 +196,7 @@ public final class Page
     {
         private Builder()
         {
-            this.config = RootDataSet.newDataSet().build().toRootDataSet();
+            this.config = RootDataSet.create().build().toRootDataSet();
         }
 
         private Builder( final Page page )

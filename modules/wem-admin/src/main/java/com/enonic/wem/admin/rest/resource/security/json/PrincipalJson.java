@@ -22,17 +22,17 @@ public class PrincipalJson
         {
             case GROUP:
             {
-                this.principal = Group.newGroup().displayName( displayName ).groupKey( principalKey ).build();
+                this.principal = Group.create().displayName( displayName ).key( principalKey ).build();
                 break;
             }
             case USER:
             {
-                this.principal = User.newUser().displayName( displayName ).userKey( principalKey ).build();
+                this.principal = User.create().displayName( displayName ).key( principalKey ).build();
                 break;
             }
             case ROLE:
             {
-                this.principal = Role.newRole().displayName( displayName ).roleKey( principalKey ).build();
+                this.principal = Role.create().displayName( displayName ).key( principalKey ).build();
                 break;
             }
             default:

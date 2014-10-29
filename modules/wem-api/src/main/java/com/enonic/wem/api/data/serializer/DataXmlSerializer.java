@@ -14,8 +14,6 @@ import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.data.type.ValueType;
 import com.enonic.wem.api.data.type.ValueTypes;
 
-import static com.enonic.wem.api.data.DataSet.newDataSet;
-
 
 public final class DataXmlSerializer
 {
@@ -77,7 +75,7 @@ public final class DataXmlSerializer
         final String typeAsString = dataEl.getAttributeValue( "type" );
         if ( typeAsString.equals( DataSet.class.getSimpleName() ) )
         {
-            final DataSet dataSet = newDataSet().name( name ).build();
+            final DataSet dataSet = DataSet.create().name( name ).build();
             parentDataSet.add( dataSet );
             for ( final Object element : dataEl.getChildren() )
             {

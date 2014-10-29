@@ -42,7 +42,7 @@ public abstract class AbstractDescriptorBasedPageComponent<DESCRIPTOR_KEY extend
 
         protected Builder()
         {
-            this.config = RootDataSet.newDataSet().build().toRootDataSet();
+            this.config = RootDataSet.create().build().toRootDataSet();
         }
 
         public Builder name( ComponentName value )

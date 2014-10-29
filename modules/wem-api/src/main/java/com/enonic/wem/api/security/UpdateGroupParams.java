@@ -28,7 +28,7 @@ public final class UpdateGroupParams
 
     public Group update( final Group source )
     {
-        Group.Builder result = Group.newGroup( source );
+        Group.Builder result = Group.create( source );
         if ( this.displayName != null )
         {
             result.displayName( this.getDisplayName() );

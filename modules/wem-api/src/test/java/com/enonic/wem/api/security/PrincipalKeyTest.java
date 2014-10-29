@@ -7,6 +7,7 @@ import static org.junit.Assert.*;
 public class PrincipalKeyTest
 {
 
+
     @Test
     public void testPrincipalUser()
         throws Exception

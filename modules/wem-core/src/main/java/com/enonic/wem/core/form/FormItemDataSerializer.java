@@ -20,10 +20,9 @@ import com.enonic.wem.api.form.MixinReference;
 import com.enonic.wem.api.form.Occurrences;
 import com.enonic.wem.api.form.inputtype.InputType;
 import com.enonic.wem.api.form.inputtype.InputTypeConfig;
-import com.enonic.wem.api.support.serializer.AbstractDataSetSerializer;
 import com.enonic.wem.api.form.inputtype.InputTypeResolver;
+import com.enonic.wem.api.support.serializer.AbstractDataSetSerializer;
 
-import static com.enonic.wem.api.data.DataSet.newDataSet;
 import static com.enonic.wem.api.form.FieldSet.newFieldSet;
 import static com.enonic.wem.api.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.form.Input.newInput;
@@ -71,7 +70,7 @@ public class FormItemDataSerializer
         final DataSet inputType = new DataSet( "inputType" );
         inputType.setProperty( "name", Value.newString( input.getInputType().getName() ) );
 
-        final DataSet.Builder inputBuilder = newDataSet().name( "Input" );
+        final DataSet.Builder inputBuilder = DataSet.create().name( "Input" );
         inputBuilder.set( "name", input.getName(), ValueTypes.STRING );
         setNotNullData( inputBuilder, "label", input.getLabel(), ValueTypes.STRING );
         setNotNullData( inputBuilder, "customText", input.getCustomText(), ValueTypes.STRING );
@@ -105,7 +104,7 @@ public class FormItemDataSerializer
 
     private DataSet serializeMixinReference( final MixinReference mixinReference )
     {
-        DataSet.Builder builder = newDataSet().name( "MixinReference" );
+        DataSet.Builder builder = DataSet.create().name( "MixinReference" );
 
         builder.set( "name", mixinReference.getName(), ValueTypes.STRING );
         setNotNullData( builder, "mixinName", mixinReference.getMixinName().toString(), ValueTypes.STRING );
@@ -133,7 +132,7 @@ public class FormItemDataSerializer
 
     private DataSet serializeFormItemSet( FormItemSet formItemSet )
     {
-        DataSet.Builder formItemSetBuilder = newDataSet().name( "FormItemSet" );
+        DataSet.Builder formItemSetBuilder = DataSet.create().name( "FormItemSet" );
         formItemSetBuilder.set( "name", formItemSet.getName(), ValueTypes.STRING );
         setNotNullData( formItemSetBuilder, "label", formItemSet.getLabel(), ValueTypes.STRING );
         setNotNullData( formItemSetBuilder, "customText", formItemSet.getCustomText(), ValueTypes.STRING );
@@ -154,7 +153,7 @@ public class FormItemDataSerializer
 
     private DataSet serializeLayout( Layout layout )
     {
-        DataSet.Builder layoutBuilder = newDataSet().name( "Layout" );
+        DataSet.Builder layoutBuilder = DataSet.create().name( "Layout" );
         layoutBuilder.set( "name", layout.getName(), ValueTypes.STRING );
 
         if ( layout instanceof FieldSet )

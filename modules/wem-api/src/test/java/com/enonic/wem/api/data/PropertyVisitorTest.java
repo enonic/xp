@@ -30,7 +30,7 @@ public class PropertyVisitorTest
         contentData.add( Property.newString( "myText", "abc" ) );
         contentData.add( Property.newLocalDate( "myDate", LocalDate.now() ) );
 
-        DataSet mySet = DataSet.newDataSet().name( "mySet" ).build();
+        DataSet mySet = DataSet.create().name( "mySet" ).build();
         mySet.add( Property.newString( "myText", "abc" ) );
         mySet.add( Property.newLocalDate( "myDate", LocalDate.now() ) );
         contentData.add( mySet );
@@ -63,7 +63,7 @@ public class PropertyVisitorTest
         contentData.add( Property.newString( "myText", "abc" ) );
         contentData.add( Property.newLocalDate( "myDate", LocalDate.now() ) );
 
-        DataSet mySet = DataSet.newDataSet().name( "mySet" ).build();
+        DataSet mySet = DataSet.create().name( "mySet" ).build();
         mySet.add( Property.newString( "myText", "abc" ) );
         mySet.add( Property.newLocalDate( "myDate", LocalDate.now() ) );
         contentData.add( mySet );

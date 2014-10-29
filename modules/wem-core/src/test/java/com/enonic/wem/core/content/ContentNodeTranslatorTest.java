@@ -70,7 +70,7 @@ public class ContentNodeTranslatorTest
     public void toNode_contentData_to_rootdataset()
         throws Exception
     {
-        final DataSet rootDataSet = RootDataSet.newDataSet().set( "test", "testValue", ValueTypes.STRING ).build();
+        final DataSet rootDataSet = RootDataSet.create().set( "test", "testValue", ValueTypes.STRING ).build();
 
         final CreateContentParams mycontent = new CreateContentParams().
             name( "mycontent" ).
@@ -90,7 +90,7 @@ public class ContentNodeTranslatorTest
     public void translate_entityIndexConfig_decide_by_type_for_contentdata()
         throws Exception
     {
-        final DataSet rootDataSet = RootDataSet.newDataSet().set( "test", "testValue", ValueTypes.STRING ).build();
+        final DataSet rootDataSet = RootDataSet.create().set( "test", "testValue", ValueTypes.STRING ).build();
 
         final CreateContentParams mycontent = new CreateContentParams().
             name( "mycontent" ).

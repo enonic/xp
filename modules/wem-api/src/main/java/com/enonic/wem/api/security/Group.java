@@ -7,50 +7,42 @@ public final class Group
 {
     private Group( final Builder builder )
     {
-        super( builder.principalKey, builder.displayName );
-        checkArgument( builder.principalKey.isGroup(), "Invalid Principal Type for Group: " + builder.principalKey.getType() );
+        super( builder );
     }
 
-    public static Builder newGroup()
+    public static Builder create()
     {
         return new Builder();
     }
 
-    public static Builder newGroup( final Group group )
+    public static Builder create( final Group group )
     {
         return new Builder( group );
     }
 
     public static class Builder
+        extends Principal.Builder<Builder>
     {
-        private PrincipalKey principalKey;
-
-        private String displayName;
-
         private Builder()
         {
+            super();
         }
 
         private Builder( final Group group )
         {
-            this.principalKey = group.getKey();
-            this.displayName = group.getDisplayName();
+            super( group );
         }
 
-        public Builder groupKey( final PrincipalKey value )
-        {
-            this.principalKey = value;
-            return this;
-        }
 
-        public Builder displayName( final String value )
+        protected void validate()
         {
-            this.displayName = value;
-            return this;
+            super.validate();
+            checkArgument( this.key.isGroup(), "Invalid Principal Type for Group: " + this.key.getType() );
         }
 
         public Group build()
         {
+            validate();
             return new Group( this );
         }
     }
