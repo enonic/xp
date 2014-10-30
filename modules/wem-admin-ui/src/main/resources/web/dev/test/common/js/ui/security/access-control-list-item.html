@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>ImageCanvas test page</title>
+    <link rel="stylesheet" type="text/css" href="../../../../../../admin/common/styles/_all.css">
+
+    <style>
+
+        .canvas {
+            width: 400px;
+            border: 1px solid grey;
+        }
+
+    </style>
+
+</head>
+<body>
+
+<!-- Configuration -->
+<script type="text/javascript">
+    var CONFIG = {
+        baseUri: '../../../..'
+    };
+</script>
+
+<!-- include source files here... -->
+<script type="text/javascript" src="../../../../../../admin/common/lib/_all.js"></script>
+<script type="text/javascript" src="../../../../../../admin/common/js/_all.js"></script>
+
+<!-- include spec files here... -->
+<script type="text/javascript">
+
+    var DivEl = api.dom.DivEl,
+        InputEl = api.dom.InputEl,
+        LabelEl = api.dom.LabelEl,
+        SpanEl = api.dom.SpanEl;
+
+    var canvas = new DivEl('canvas');
+    api.dom.Body.get().appendChild(canvas);
+
+    var listItem = new api.ui.security.AccessControlListItem();
+    canvas.appendChild(listItem);
+
+</script>
+
+
+</body>
+</html>
