@@ -110,6 +110,11 @@ public class ContentSummaryJson
         return isPage;
     }
 
+    public String getChildOrder()
+    {
+        return content.getChildOrder().toString();
+    }
+
     @Override
     public boolean getEditable()
     {
