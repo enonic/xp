@@ -2,10 +2,9 @@ module api.content.json {
 
     export interface ContentPermissionsJson {
 
-        // TODO
-        permissions: any;
+        permissions: api.security.acl.AccessControlEntryJson[];
 
-        inheritedPermissions: any;
+        inheritedPermissions: api.security.acl.AccessControlEntryJson[];
 
     }
 

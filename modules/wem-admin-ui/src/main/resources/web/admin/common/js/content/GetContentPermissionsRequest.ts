@@ -6,7 +6,7 @@ module api.content {
 
         constructor(contentId: ContentId) {
             super();
-            super.setMethod("POST");
+            super.setMethod("GET");
             this.contentId = contentId;
         }
 

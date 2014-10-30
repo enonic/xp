@@ -12,6 +12,20 @@ module api.util {
             }
 
         }
+
+        static addUnique(value: any, array: any[]) {
+            if (array.indexOf(value) === -1) {
+                array.push(value);
+            }
+        }
+
+        static removeValue(value: any, array: any[]) {
+            var index = array.indexOf(value);
+            if (index > -1) {
+                array.splice(index, 1);
+            }
+        }
+
     }
 
 }

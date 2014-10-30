@@ -103,7 +103,9 @@
 ///<reference path='schema/metadata/_module.ts'/>
 
 ///<reference path='security/_module.ts' />
+///<reference path='security/acl/_module.ts' />
 ///<reference path='security/query/_module.ts' />
+
 ///<reference path='content/json/_module.ts' />
 ///<reference path='content/_module.ts' />
 ///<reference path='content/query/_module.ts' />
