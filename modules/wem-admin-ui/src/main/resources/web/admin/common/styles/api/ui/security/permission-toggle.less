@@ -1,0 +1,35 @@
+.permission-toggle {
+  display: inline-block;
+  margin: 5px;
+  border-radius: 9px;
+  padding: 0 10px;
+  .noSelect();
+
+  &.allow {
+    background: @admin-green;
+    color: white;
+
+    &:before {
+      content: 'V ';
+    }
+  }
+
+  &.deny {
+    background: @admin-red;
+    color: white;
+
+    &:before {
+      content: 'X ';
+    }
+  }
+
+  &.inherit {
+    background: @admin-almost-white;
+    color: @admin-dark-gray-font;
+
+    &:before {
+      content: 'V ';
+    }
+  }
+
+}
