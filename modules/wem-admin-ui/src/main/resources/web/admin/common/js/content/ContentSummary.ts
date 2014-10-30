@@ -36,6 +36,8 @@ module api.content {
 
         private editable: boolean;
 
+        private childOrder: string;
+
         constructor(builder: ContentSummaryBuilder) {
             super(builder);
             this.name = builder.name;
@@ -56,6 +58,7 @@ module api.content {
             this.modifiedTime = builder.modifiedTime;
             this.deletable = builder.deletable;
             this.editable = builder.editable;
+            this.childOrder = builder.childOrder;
         }
 
         getName(): ContentName {
@@ -146,6 +149,10 @@ module api.content {
             return this.editable;
         }
 
+        getChildOrder(): string {
+            return this.childOrder;
+        }
+
         equals(o: api.Equitable): boolean {
 
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, ContentSummary)) {
@@ -209,6 +216,9 @@ module api.content {
             if (!api.ObjectHelper.booleanEquals(this.editable, other.editable)) {
                 return false;
             }
+            if (!api.ObjectHelper.stringEquals(this.childOrder, other.childOrder)) {
+                return false;
+            }
             return true;
         }
 
@@ -261,6 +271,8 @@ module api.content {
 
         editable: boolean;
 
+        childOrder: string;
+
         constructor(source?: ContentSummary) {
             super(source);
             if (source) {
@@ -281,6 +293,7 @@ module api.content {
                 this.modifiedTime = source.getModifiedTime();
                 this.deletable = source.isDeletable();
                 this.editable = source.isEditable();
+                this.childOrder = source.getChildOrder();
             }
         }
 
@@ -307,6 +320,7 @@ module api.content {
 
             this.deletable = json.deletable;
             this.editable = json.editable;
+            this.childOrder = json.childOrder;
 
             return this;
         }
@@ -338,6 +352,11 @@ module api.content {
 
         setDeletable(value: boolean): ContentSummaryBuilder {
             this.deletable = value;
+            return this;
+        }
+
+        setChildOrder(value: string): ContentSummaryBuilder {
+            this.childOrder = value;
             return this;
         }
 
