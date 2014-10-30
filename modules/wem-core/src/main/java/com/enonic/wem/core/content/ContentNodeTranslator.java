@@ -138,7 +138,8 @@ public class ContentNodeTranslator
             modifiedTime( node.getModifiedTime() ).
             modifier( node.getModifier() ).
             hasChildren( node.getHasChildren() ).
-            thumbnail( thumbnail );
+            thumbnail( thumbnail ).
+            childOrder( node.getChildOrder() );
 
         return builder.build();
     }
