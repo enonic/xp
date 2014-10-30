@@ -20,14 +20,13 @@ module api.security {
         }
 
         equals(o: api.Equitable): boolean {
-
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, Principal)) {
                 return false;
             }
 
-
-            var other = <Principal>o;
-            return true;
+            var other = <Principal> o;
+            return this.key.equals(other.key) &&
+                   this.displayName === other.displayName;
         }
     }
 }

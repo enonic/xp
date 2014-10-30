@@ -13,7 +13,7 @@ module api.security {
         setObject(principalObj: Principal) {
             super.setObject(principalObj);
             this.namesAndIconView.setMainName(principalObj.getDisplayName()).
-                //setSubName(moduleObj.getName()).
+                setSubName(principalObj.getKey().getId()).
                 setIconClass("icon-puzzle icon-large");
         }
 

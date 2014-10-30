@@ -41,7 +41,7 @@ module app.launcher {
 
                 //new api.app.Application('accounts', 'Accounts', 'AC', 'users', Applications.DESCR2),
                 new api.app.Application('module-manager', 'Modules', 'MD', 'puzzle', Applications.DESCR1),
-                new api.app.Application('user-manager', 'User Manager', 'PR', 'users', Applications.DESCR2),
+                new api.app.Application('user-manager', 'User Manager', 'UM', 'users', Applications.DESCR2),
                 //new api.app.Application('diagnostics', 'Diagnostics', 'DI', 'aid', Applications.DESCR3),
                 //new api.app.Application('dummy', 'Dummy', 'DU', 'rotate', Applications.DESCR3)
             ];
