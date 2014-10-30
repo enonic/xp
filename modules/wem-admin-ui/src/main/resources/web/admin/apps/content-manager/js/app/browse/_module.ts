@@ -1,4 +1,4 @@
-///<reference path='BaseBrowseContentEvent.ts' />
+///<reference path='BaseContentModelEvent.ts' />
 ///<reference path='CloseContentEvent.ts' />
 ///<reference path='ContentDeletePromptEvent.ts' />
 ///<reference path='EditContentEvent.ts' />

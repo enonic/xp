@@ -1,6 +1,6 @@
 module app.browse {
 
-    export class BaseBrowsePrincipalEvent extends api.event.Event {
+    export class BasePrincipalEvent extends api.event.Event {
 
         private principal: api.security.Principal[];
 

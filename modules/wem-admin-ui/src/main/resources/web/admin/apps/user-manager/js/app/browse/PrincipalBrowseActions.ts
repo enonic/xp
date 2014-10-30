@@ -19,10 +19,15 @@ module app.browse {
         }
 
         constructor(grid: app.browse.PrincipalTreeGrid) {
-
+            this.SHOW_NEW_PRINCIPAL_DIALOG_ACTION = new app.browse.action.ShowNewPrincipalDialogAction(grid);
             this.EDIT_PRINCIPAL = new app.browse.action.EditPrincipalAction(grid);
+            this.DELETE_PRINCIPAL = new app.browse.action.DeletePrincipalAction(grid);
+            this.DUPLICATE_PRINCIPAL = new app.browse.action.DuplicatePrincipalAction(grid);
+            this.SYNCH_PRINCIPAL = new app.browse.action.SynchPrincipalAction(grid);
 
-            this.actions.push(this.EDIT_PRINCIPAL);
+            this.actions.push(this.SHOW_NEW_PRINCIPAL_DIALOG_ACTION, this.EDIT_PRINCIPAL, this.DELETE_PRINCIPAL, this.DUPLICATE_PRINCIPAL,
+                this.SYNCH_PRINCIPAL);
+
             PrincipalBrowseActions.INSTANCE = this;
         }
 
