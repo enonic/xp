@@ -1,6 +1,6 @@
 module api.security {
 
-    export class PrincipalKey {
+    export class PrincipalKey implements api.Equitable {
 
         private static SEPARATOR = ":";
 

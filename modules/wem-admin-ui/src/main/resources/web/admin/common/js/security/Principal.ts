@@ -1,6 +1,6 @@
 module api.security {
 
-    export class Principal {
+    export class Principal implements api.Equitable {
 
         private key: PrincipalKey;
 
@@ -17,6 +17,17 @@ module api.security {
 
         getDisplayName(): string {
             return this.displayName;
+        }
+
+        equals(o: api.Equitable): boolean {
+
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, Principal)) {
+                return false;
+            }
+
+
+            var other = <Principal>o;
+            return true;
         }
     }
 }

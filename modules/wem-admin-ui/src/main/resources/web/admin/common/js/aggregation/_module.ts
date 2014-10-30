@@ -27,6 +27,8 @@
 ///<reference path='BucketViewSelectionChangedEvent.ts' />
 
 ///<reference path='AggregationSelection.ts' />
+///<reference path='PrincipalAggregationGroupView.ts' />
+
 
 
 

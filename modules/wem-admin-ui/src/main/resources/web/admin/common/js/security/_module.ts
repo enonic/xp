@@ -11,3 +11,4 @@
 ///<reference path="Role.ts"/>
 ///<reference path="UserStore.ts"/>
 ///<reference path="UserStoreJson.ts"/>
+///<reference path="PrincipalViewer.ts"/>
