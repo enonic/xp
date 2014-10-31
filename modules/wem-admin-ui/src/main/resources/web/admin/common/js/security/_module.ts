@@ -15,3 +15,5 @@
 ///<reference path="PrincipalViewer.ts"/>
 ///<reference path="SecurityResourceRequest.ts"/>
 ///<reference path="ListUserStoresRequest.ts"/>
+///<reference path="PrincipalListJson.ts"/>
+///<reference path="GetPrincipalsByUserStoreRequest.ts"/>

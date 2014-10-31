@@ -3,7 +3,7 @@ module api.security {
     export class Group extends Principal {
 
         constructor(builder: GroupBuilder) {
-            super(builder.key, builder.displayName)
+            super(builder.key, builder.displayName, PrincipalType.GROUP)
         }
 
         static create(): GroupBuilder {

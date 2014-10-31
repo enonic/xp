@@ -6,9 +6,12 @@ module api.security {
 
         private displayName: string;
 
-        constructor(principalKey: PrincipalKey, displayName: string) {
+        private type: PrincipalType;
+
+        constructor(principalKey: PrincipalKey, displayName: string, type: PrincipalType) {
             this.key = principalKey;
             this.displayName = displayName;
+            this.type = type;
         }
 
         getKey(): PrincipalKey {
@@ -19,6 +22,22 @@ module api.security {
             return this.displayName;
         }
 
+        getType(): PrincipalType {
+            return this.type;
+        }
+
+        isUser(): boolean {
+            return this.type === PrincipalType.USER;
+        }
+
+        isGroup(): boolean {
+            return this.type === PrincipalType.GROUP;
+        }
+
+        isRole(): boolean {
+            return this.type === PrincipalType.ROLE;
+        }
+
         equals(o: api.Equitable): boolean {
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, Principal)) {
                 return false;
@@ -26,7 +45,8 @@ module api.security {
 
             var other = <Principal> o;
             return this.key.equals(other.key) &&
-                   this.displayName === other.displayName;
+                   this.displayName === other.displayName &&
+                   this.type === other.type;
         }
     }
 }

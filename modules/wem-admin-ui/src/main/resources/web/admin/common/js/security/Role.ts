@@ -3,7 +3,7 @@ module api.security {
     export class Role extends Principal {
 
         constructor(builder: RoleBuilder) {
-            super(builder.key, builder.displayName)
+            super(builder.key, builder.displayName, PrincipalType.ROLE)
         }
 
         static create(): RoleBuilder {

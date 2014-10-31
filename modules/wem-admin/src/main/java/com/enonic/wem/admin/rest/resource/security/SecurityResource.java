@@ -8,6 +8,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import com.enonic.wem.admin.rest.resource.security.json.PrincipalsJson;
 import com.enonic.wem.admin.rest.resource.security.json.UserStoresJson;
@@ -30,7 +31,7 @@ public class SecurityResource
     @Path("userstore/list")
     public UserStoresJson getUserStores()
     {
-        UserStores userStores = securityService.getUserStores();
+        final UserStores userStores = securityService.getUserStores();
         return new UserStoresJson( userStores );
     }
 
@@ -39,17 +40,17 @@ public class SecurityResource
     public PrincipalsJson getPrincipals( @QueryParam("userStoreKey") final String userStoreKey, @QueryParam("type") final String type )
 
     {
-        UserStoreKey storeKey = new UserStoreKey( userStoreKey );
-        PrincipalType principalType = Stream.of( PrincipalType.values() ).
+        final UserStoreKey storeKey = new UserStoreKey( userStoreKey );
+        final PrincipalType principalType = Stream.of( PrincipalType.values() ).
             filter( val -> val.name().equalsIgnoreCase( type ) ).
-            findFirst().orElseGet( null );
+            findFirst().orElse( null );
 
         if ( principalType == null )
         {
-            throw new WebApplicationException( String.format( "wrong principal type: %s", type ) );
+            throw new WebApplicationException( String.format( "Invalid principal type: %s", type ), Response.Status.BAD_REQUEST );
         }
 
-        Principals principals = securityService.getPrincipals( storeKey, principalType );
+        final Principals principals = securityService.getPrincipals( storeKey, principalType );
         return new PrincipalsJson( principals );
     }
 

@@ -9,7 +9,7 @@ module api.security {
         private loginDisabled: boolean;
 
         constructor(builder: UserBuilder) {
-            super(builder.key, builder.displayName);
+            super(builder.key, builder.displayName, PrincipalType.USER);
             this.email = builder.email;
             this.login = builder.login;
             this.loginDisabled = builder.loginDisabled;
