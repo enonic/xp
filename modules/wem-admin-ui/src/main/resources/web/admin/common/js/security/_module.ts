@@ -11,7 +11,7 @@
 ///<reference path="Role.ts"/>
 ///<reference path="UserStore.ts"/>
 ///<reference path="UserStoreJson.ts"/>
+///<reference path="UserStoreListResult.ts"/>
 ///<reference path="PrincipalViewer.ts"/>
 ///<reference path="SecurityResourceRequest.ts"/>
-///<reference path="DuplicatePrincipalRequest.ts"/>
-///<reference path="SynchPrincipalRequest.ts"/>
+///<reference path="ListUserStoresRequest.ts"/>

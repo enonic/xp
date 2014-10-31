@@ -14,12 +14,7 @@ module app.browse.action {
         }
 
         private duplicate(source: api.security.Principal) {
-            new api.security.DuplicatePrincipalRequest(source.getKey()).
-                sendAndParse().then((principal: api.security.Principal) => {
-
-                    api.notify.showFeedback('Security object [' + principal.getDisplayName() + '] was duplicated!');
-                    new PrincipalDuplicatedEvent(principal, source).fire();
-                })
+            console.log('Duplicate principals action');
         }
     }
 }

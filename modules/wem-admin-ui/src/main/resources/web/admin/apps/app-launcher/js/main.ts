@@ -2,10 +2,10 @@ declare var Admin;
 declare var CONFIG;
 
 var USERSTORES: api.security.UserStore[] = [
-    new api.security.UserStore('System', 'system'),
-    new api.security.UserStore('LDAP', '2'),
-    new api.security.UserStore('Local', '3'),
-    new api.security.UserStore('Some very long value', '4')
+    api.security.UserStore.create().setDisplayName('System').setKey('system').build(),
+    api.security.UserStore.create().setDisplayName('LDAP').setKey('2').build(),
+    api.security.UserStore.create().setDisplayName('Local').setKey('3').build(),
+    api.security.UserStore.create().setDisplayName('Some very long value').setKey('4').build()
 ];
 
 function isUserLoggedIn(): boolean {
