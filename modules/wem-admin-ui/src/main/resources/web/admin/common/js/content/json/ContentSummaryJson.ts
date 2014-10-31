@@ -26,5 +26,7 @@ module api.content.json {
 
         draft:boolean;
 
+        childOrder:ChildOrderJson;
+
     }
 }
