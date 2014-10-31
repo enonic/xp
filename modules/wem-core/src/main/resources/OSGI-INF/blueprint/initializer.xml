@@ -7,9 +7,14 @@
     <property name="indexService" ref="indexService"/>
   </bean>
 
+  <bean id="securityInitializer" class="com.enonic.wem.core.security.SecurityInitializer">
+    <property name="securityService" ref="securityService"/>
+  </bean>
+
   <bean id="startupInitializer" class="com.enonic.wem.core.initializer.StartupInitializerImpl" init-method="start">
-  <property name="repositoryInitializer" ref="repositoryInitializer"/>
+    <property name="repositoryInitializer" ref="repositoryInitializer"/>
     <property name="initializers" ref="dataInitializers"/>
+    <property name="securityInitializer" ref="securityInitializer"/>
   </bean>
 
   <service ref="startupInitializer" auto-export="interfaces"/>

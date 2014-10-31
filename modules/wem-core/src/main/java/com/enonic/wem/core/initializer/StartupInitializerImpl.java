@@ -4,11 +4,14 @@ import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.initializer.DataInitializer;
 import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.core.repository.RepositoryInitializer;
+import com.enonic.wem.core.security.SecurityInitializer;
 
 public final class StartupInitializerImpl
     implements StartupInitializer
 {
     private RepositoryInitializer repositoryInitializer;
+
+    private SecurityInitializer securityInitializer;
 
     private Iterable<DataInitializer> initializers;
 
@@ -16,11 +19,13 @@ public final class StartupInitializerImpl
         throws Exception
     {
         initializeRepositories( true );
+        initializeSecurity();
     }
 
     public void start()
     {
         initializeRepositories( false );
+        initializeSecurity();
     }
 
     public void initializeData()
@@ -42,6 +47,11 @@ public final class StartupInitializerImpl
         }
     }
 
+    private void initializeSecurity()
+    {
+        securityInitializer.init();
+    }
+
     public void setRepositoryInitializer( final RepositoryInitializer repositoryInitializer )
     {
         this.repositoryInitializer = repositoryInitializer;
@@ -50,5 +60,10 @@ public final class StartupInitializerImpl
     public void setInitializers( final Iterable<DataInitializer> initializers )
     {
         this.initializers = initializers;
+    }
+
+    public void setSecurityInitializer( final SecurityInitializer securityInitializer )
+    {
+        this.securityInitializer = securityInitializer;
     }
 }

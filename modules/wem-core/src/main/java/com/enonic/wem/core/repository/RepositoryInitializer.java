@@ -33,6 +33,8 @@ public final class RepositoryInitializer
 
         indexService.applyMapping( IndexNameResolver.resolveSearchIndexName( repository.getId() ), IndexType._DEFAULT_.getName(),
                                    RepositoryIndexMappingProvider.getSearchMappings( repository ) );
+
+        indexService.getIndexStatus( StorageNameResolver.resolveStorageIndexName( repository.getId() ), true );
     }
 
     private void createIndexes( final Repository repository )

@@ -69,33 +69,6 @@ public final class SecurityServiceImpl
         this.userStores.add( systemUserStore );
     }
 
-    public void start()
-    {
-        if ( !getUser( PrincipalKey.ofAnonymous() ).isPresent() )
-        {
-            final User anonymous = User.anonymous();
-            final CreateUserParams createUser = CreateUserParams.create().
-                userKey( anonymous.getKey() ).
-                displayName( anonymous.getDisplayName() ).
-                login( anonymous.getLogin() ).
-                email( anonymous.getEmail() ).
-                build();
-            createUser( createUser );
-        }
-
-        final PrincipalKey adminKey = PrincipalKey.ofUser( UserStoreKey.system(), "admin" );
-        if ( !getUser( adminKey ).isPresent() )
-        {
-            final CreateUserParams createAdmin = CreateUserParams.create().
-                userKey( adminKey ).
-                displayName( "Administrator" ).
-                login( "admin" ).
-                password( "password" ).
-                build();
-            createUser( createAdmin );
-        }
-    }
-
     @Override
     public PrincipalRelationships getRelationships( final PrincipalKey from )
     {
