@@ -10,15 +10,31 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public final class AuthenticationInfo
 {
-    private User user;
 
-    private PrincipalKeys principals;
+    private final User user;
+
+    private final PrincipalKeys principals;
+
+    private final boolean authenticated;
 
     private AuthenticationInfo( final Builder builder )
     {
-        this.user = checkNotNull( builder.user, "AuthenticationInfo user cannot be null" );
-        builder.principals.add( user.getKey() );
+        this.authenticated = builder.authenticated;
+        if ( builder.authenticated )
+        {
+            this.user = checkNotNull( builder.user, "AuthenticationInfo user cannot be null" );
+            builder.principals.add( user.getKey() );
+        }
+        else
+        {
+            this.user = null;
+        }
         this.principals = PrincipalKeys.from( builder.principals.build() );
+    }
+
+    public boolean isAuthenticated()
+    {
+        return authenticated;
     }
 
     public User getUser()
@@ -36,14 +52,14 @@ public final class AuthenticationInfo
         return principals.stream().anyMatch( principal -> principal.isRole() && principal.getId().equals( role ) );
     }
 
-    public static Builder newBuilder()
+    public static Builder create()
     {
-        return new Builder();
+        return new Builder( true );
     }
 
-    public static Builder newBuilder( final AuthenticationInfo info )
+    public static AuthenticationInfo failed()
     {
-        return new Builder( info );
+        return new Builder( false ).build();
     }
 
     public static class Builder
@@ -52,16 +68,12 @@ public final class AuthenticationInfo
 
         private final ImmutableSet.Builder<PrincipalKey> principals;
 
-        private Builder()
-        {
-            principals = ImmutableSet.builder();
-        }
+        private boolean authenticated;
 
-        private Builder( final AuthenticationInfo info )
+        private Builder( final boolean authenticated )
         {
-            this.user = info.user;
             this.principals = ImmutableSet.builder();
-            this.principals.addAll( info.principals.getSet() );
+            this.authenticated = authenticated;
         }
 
         public Builder user( final User user )

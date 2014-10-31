@@ -3,18 +3,18 @@ module api.security {
     export class UserStore {
 
         private displayName: string;
-        private key: string;
+        private key: UserStoreKey;
 
         constructor(displayName: string, key: string) {
             this.displayName = displayName;
-            this.key = key;
+            this.key = new UserStoreKey(key);
         }
 
         getDisplayName(): string {
             return this.displayName;
         }
 
-        getKey(): string {
+        getKey(): UserStoreKey {
             return this.key;
         }
     }

@@ -1,0 +1,10 @@
+{
+  "authenticated": true,
+  "user": {
+    "disabled": false,
+    "displayName": "User 1",
+    "email": "user1@enonic.com",
+    "key": "system:user:user1",
+    "login": "user1"
+  }
+}

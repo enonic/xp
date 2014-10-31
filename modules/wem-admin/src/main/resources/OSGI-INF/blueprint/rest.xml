@@ -124,6 +124,10 @@
     <property name="metadataSchemaService" ref="metadataSchemaService"/>
   </bean>
 
+  <bean id="authResource" class="com.enonic.wem.admin.rest.resource.auth.AuthResource">
+    <property name="securityService" ref="securityService"/>
+  </bean>
+
   <bean id="restServlet" class="com.enonic.wem.admin.rest.RestServlet">
     <property name="resources">
       <list>
@@ -139,7 +143,7 @@
         <ref component-id="backgroundImageResource"/>
         <ref component-id="toolsResource"/>
         <bean class="com.enonic.wem.admin.rest.resource.status.StatusResource"/>
-        <bean class="com.enonic.wem.admin.rest.resource.auth.AuthResource"/>
+        <ref component-id="authResource"/>
         <ref component-id="contentImageResource"/>
         <ref component-id="contentIconResource"/>
         <ref component-id="contentAttachmentResource"/>

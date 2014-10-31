@@ -11,7 +11,7 @@ module app.login {
 
         private authenticator: Authenticator;
         private userStores: {[userStoreId: string]: UserStore;};
-        private onUserAuthenticatedHandler: (userName: string, userStore: UserStore) => void;
+        private onUserAuthenticatedHandler: (user: api.security.User) => void;
 
         constructor(authenticator: Authenticator) {
             super('login-form');
@@ -55,15 +55,15 @@ module app.login {
 
         setUserStores(userStores: UserStore[], defaultUserStore?: UserStore) {
             userStores.forEach((userStore: UserStore) => {
-                this.userStoresDropdown.addOption(userStore.getKey(), userStore.getDisplayName());
-                this.userStores[userStore.getKey()] = userStore;
+                this.userStoresDropdown.addOption(userStore.getKey().toString(), userStore.getDisplayName());
+                this.userStores[userStore.getKey().toString()] = userStore;
             });
             if (defaultUserStore) {
-                this.userStoresDropdown.setValue(defaultUserStore.getKey());
+                this.userStoresDropdown.setValue(defaultUserStore.getKey().toString());
             }
         }
 
-        onUserAuthenticated(handler: (userName: string, userStore: UserStore) => void) {
+        onUserAuthenticated(handler: (user: api.security.User) => void) {
             this.onUserAuthenticatedHandler = handler;
         }
 
@@ -79,10 +79,18 @@ module app.login {
                 return;
             }
             var userStore = this.userStores[selectedUserStoreId];
-            if (this.authenticator.authenticate(userName, userStore, password)) {
+            this.authenticator.authenticate(userName, userStore, password,
+                (loginResult: api.security.auth.LoginResult) => this.handleAuthenticateResponse(loginResult));
+        }
+
+        private handleAuthenticateResponse(loginResult: api.security.auth.LoginResult) {
+            if (loginResult.isAuthenticated()) {
                 if (this.onUserAuthenticatedHandler) {
-                    this.onUserAuthenticatedHandler(userName, userStore);
+                    this.onUserAuthenticatedHandler(loginResult.getUser());
                 }
+            } else {
+                this.passwordInput.setValue('');
+                this.passwordInput.giveFocus();
             }
         }
 

@@ -105,6 +105,7 @@
 
 ///<reference path='security/_module.ts' />
 ///<reference path='security/acl/_module.ts' />
+///<reference path='security/auth/_module.ts' />
 ///<reference path='security/query/_module.ts' />
 
 ///<reference path='content/json/_module.ts' />

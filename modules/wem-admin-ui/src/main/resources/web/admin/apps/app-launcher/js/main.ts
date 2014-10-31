@@ -2,7 +2,7 @@ declare var Admin;
 declare var CONFIG;
 
 var USERSTORES: api.security.UserStore[] = [
-    new api.security.UserStore('ABC', '1'),
+    new api.security.UserStore('System', 'system'),
     new api.security.UserStore('LDAP', '2'),
     new api.security.UserStore('Local', '3'),
     new api.security.UserStore('Some very long value', '4')
@@ -28,9 +28,9 @@ function startApplication() {
         addLink('About', 'https://enonic.com/en/home/enonic-cms');
 
     var loginForm = new app.login.LoginForm(new app.login.AuthenticatorImpl());
-    loginForm.setUserStores(USERSTORES, USERSTORES[1]);
-    loginForm.onUserAuthenticated((userName: string, userStore: api.security.UserStore) => {
-        console.log('User logged in', userName, userStore);
+    loginForm.setUserStores(USERSTORES, USERSTORES[0]);
+    loginForm.onUserAuthenticated((user: api.security.User) => {
+        console.log('User logged in', user.getDisplayName(), user.getKey().toString());
         api.util.CookieHelper.setCookie('dummy.userIsLoggedIn', 'true');
         homeMainContainer.showAppSelector();
     });

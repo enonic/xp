@@ -21,7 +21,7 @@ public class AuthenticationInfoTest
             email( "user@email" ).
             build();
 
-        final AuthenticationInfo info = AuthenticationInfo.newBuilder().user( user ).build();
+        final AuthenticationInfo info = AuthenticationInfo.create().user( user ).build();
 
         assertEquals( "userlogin", info.getUser().getLogin() );
         assertEquals( "my user", info.getUser().getDisplayName() );
@@ -45,7 +45,7 @@ public class AuthenticationInfoTest
         final PrincipalKey group1 = PrincipalKey.ofGroup( userStore, "group1" );
         final PrincipalKey group2 = PrincipalKey.from( "myStore:group:group2" );
         final PrincipalKey role1 = PrincipalKey.from( "system:role:administrators" );
-        final AuthenticationInfo info = AuthenticationInfo.newBuilder().
+        final AuthenticationInfo info = AuthenticationInfo.create().
             user( user ).
             principal( group1 ).
             principals( PrincipalKeys.from( group2, role1 ) ).

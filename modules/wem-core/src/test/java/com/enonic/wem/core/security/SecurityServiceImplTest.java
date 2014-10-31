@@ -110,7 +110,7 @@ public class SecurityServiceImplTest
 
         final EmailPasswordAuthToken authToken = new EmailPasswordAuthToken();
         authToken.setEmail( "user1@enonic.com" );
-        authToken.setPassword( "123456" );
+        authToken.setPassword( "password" );
         authToken.setUserStore( SYSTEM );
 
         final AuthenticationInfo authInfo = securityService.authenticate( authToken );
@@ -135,7 +135,7 @@ public class SecurityServiceImplTest
 
         final UsernamePasswordAuthToken authToken = new UsernamePasswordAuthToken();
         authToken.setUsername( "user1" );
-        authToken.setPassword( "123456" );
+        authToken.setPassword( "password" );
         authToken.setUserStore( SYSTEM );
 
         final AuthenticationInfo authInfo = securityService.authenticate( authToken );

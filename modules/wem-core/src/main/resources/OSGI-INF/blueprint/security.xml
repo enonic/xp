@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
-  <bean id="securityService" class="com.enonic.wem.core.security.SecurityServiceImpl">
+  <bean id="securityService" class="com.enonic.wem.core.security.SecurityServiceImpl" init-method="start">
     <property name="nodeService" ref="nodeService"/>
   </bean>
 

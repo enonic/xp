@@ -69,6 +69,33 @@ public final class SecurityServiceImpl
         this.userStores.add( systemUserStore );
     }
 
+    public void start()
+    {
+        if ( !getUser( PrincipalKey.ofAnonymous() ).isPresent() )
+        {
+            final User anonymous = User.anonymous();
+            final CreateUserParams createUser = CreateUserParams.create().
+                userKey( anonymous.getKey() ).
+                displayName( anonymous.getDisplayName() ).
+                login( anonymous.getLogin() ).
+                email( anonymous.getEmail() ).
+                build();
+            createUser( createUser );
+        }
+
+        final PrincipalKey adminKey = PrincipalKey.ofUser( UserStoreKey.system(), "admin" );
+        if ( !getUser( adminKey ).isPresent() )
+        {
+            final CreateUserParams createAdmin = CreateUserParams.create().
+                userKey( adminKey ).
+                displayName( "Administrator" ).
+                login( "admin" ).
+                password( "password" ).
+                build();
+            createUser( createAdmin );
+        }
+    }
+
     @Override
     public PrincipalRelationships getRelationships( final PrincipalKey from )
     {
@@ -141,27 +168,32 @@ public final class SecurityServiceImpl
     private AuthenticationInfo authenticateEmailPassword( final EmailPasswordAuthToken token )
     {
         final User user = findByEmail( token.getUserStore(), token.getEmail() );
-        if ( user != null )
+        if ( user != null && !user.isDisabled() && passwordMatch( user, token.getPassword() ) )
         {
-            return AuthenticationInfo.newBuilder().user( user ).build();
+            return AuthenticationInfo.create().user( user ).build();
         }
         else
         {
-            throw new AuthenticationException( "Could not authenticate user" );
+            return AuthenticationInfo.failed();
         }
     }
 
     private AuthenticationInfo authenticateUsernamePassword( final UsernamePasswordAuthToken token )
     {
         final User user = findByUsername( token.getUserStore(), token.getUsername() );
-        if ( user != null )
+        if ( user != null && !user.isDisabled() && passwordMatch( user, token.getPassword() ) )
         {
-            return AuthenticationInfo.newBuilder().user( user ).build();
+            return AuthenticationInfo.create().user( user ).build();
         }
         else
         {
-            throw new AuthenticationException( "Could not authenticate user" );
+            return AuthenticationInfo.failed();
         }
+    }
+
+    private boolean passwordMatch( final User user, final String password )
+    {
+        return "password".equals( password );
     }
 
     private User findByUsername( final UserStoreKey userStore, final String username )

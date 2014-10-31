@@ -3,7 +3,8 @@ module app.login {
     import UserStore = api.security.UserStore;
 
     export interface Authenticator {
-        authenticate(userName: string, userStore: UserStore, password: string):boolean;
+        authenticate(userName: string, userStore: UserStore, password: string,
+                     authHandler: (loginResult: api.security.auth.LoginResult) => void);
     }
 
     export class AuthenticatorImpl implements Authenticator {
@@ -11,8 +12,16 @@ module app.login {
         constructor() {
         }
 
-        authenticate(userName: string, userStore: UserStore, password: string): boolean {
-            return true; // TODO
+        authenticate(userName: string, userStore: UserStore, password: string,
+                     authHandler: (loginResult: api.security.auth.LoginResult) => void) {
+            var loginCredentials = new api.security.auth.LoginCredentials().
+                setUser(userName).
+                setUserStore(userStore.getKey()).
+                setPassword(password);
+
+            new api.security.auth.LoginRequest(loginCredentials).sendAndParse().then((loginResult) => {
+                authHandler(loginResult);
+            });
         }
 
     }
