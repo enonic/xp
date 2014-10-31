@@ -25,6 +25,7 @@ class UserNodeTranslator
         final CreateNodeParams.Builder builder = CreateNodeParams.create().
             name( PrincipalKeyNodeTranslator.toNodeName( user.getKey() ).toString() ).
             parent( USER_PARENT );
+        populateId( builder, user );
 
         final RootDataSet rootDataSet = new RootDataSet();
         addPrincipalPropertiesToDataSet( rootDataSet, user );

@@ -31,7 +31,7 @@ public class GroupNodeTranslatorTest
         assertEquals( "group-a", createNodeParams.getName() );
 
         final RootDataSet rootDataSet = createNodeParams.getData();
-        assertEquals( 3, rootDataSet.size() );
+        assertEquals( 4, rootDataSet.size() );
         assertEquals( UserStoreKey.system().toString(), rootDataSet.getProperty( PrincipalNodeTranslator.USERSTORE_KEY ).getString() );
         assertEquals( PrincipalType.GROUP.toString(), rootDataSet.getProperty( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY ).getString() );
         assertEquals( "My Group", rootDataSet.getProperty( PrincipalNodeTranslator.DISPLAY_NAME_KEY ).getString() );

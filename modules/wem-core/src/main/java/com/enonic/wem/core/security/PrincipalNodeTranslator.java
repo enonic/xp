@@ -3,7 +3,9 @@ package com.enonic.wem.core.security;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.security.Principal;
+import com.enonic.wem.core.entity.CreateNodeParams;
 import com.enonic.wem.core.entity.Node;
+import com.enonic.wem.core.entity.NodeId;
 
 abstract class PrincipalNodeTranslator
 {
@@ -11,10 +13,13 @@ abstract class PrincipalNodeTranslator
 
     public static final String PRINCIPAL_TYPE_KEY = "principalType";
 
+    public static final String PRINCIPAL_KEY = "principalKey";
+
     public static final String USERSTORE_KEY = "userStoreKey";
 
     static void addPrincipalPropertiesToDataSet( final RootDataSet rootDataSet, final Principal principal )
     {
+        rootDataSet.setProperty( PRINCIPAL_KEY, Value.newString( principal.getKey().toString() ) );
         rootDataSet.setProperty( DISPLAY_NAME_KEY, Value.newString( principal.getDisplayName() ) );
         rootDataSet.setProperty( PRINCIPAL_TYPE_KEY, Value.newString( principal.getKey().getType() ) );
         rootDataSet.setProperty( USERSTORE_KEY, Value.newString( principal.getKey().getUserStore().toString() ) );
@@ -42,4 +47,8 @@ abstract class PrincipalNodeTranslator
     }
 
 
+    protected static void populateId( final CreateNodeParams.Builder builder, final Principal principal )
+    {
+        builder.setNodeId( NodeId.from( principal.getKey() ) );
+    }
 }

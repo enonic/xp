@@ -43,6 +43,7 @@ import com.enonic.wem.api.security.auth.EmailPasswordAuthToken;
 import com.enonic.wem.api.security.auth.UsernamePasswordAuthToken;
 import com.enonic.wem.core.entity.CreateNodeParams;
 import com.enonic.wem.core.entity.Node;
+import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodeService;
 
 import static java.util.stream.Collectors.toList;
@@ -238,7 +239,16 @@ public final class SecurityServiceImpl
     public Optional<User> getUser( final PrincipalKey userKey )
     {
         Preconditions.checkArgument( userKey.isUser(), "Expected principal key of type User" );
-        return Optional.ofNullable( (User) this.principals.get( userKey ) );
+
+        try
+        {
+            final Node node = this.nodeService.getById( NodeId.from( userKey.toString() ) );
+            return Optional.ofNullable( UserNodeTranslator.fromNode( node ) );
+        }
+        catch ( Exception e )
+        {
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -278,7 +288,16 @@ public final class SecurityServiceImpl
     public Optional<Group> getGroup( final PrincipalKey groupKey )
     {
         Preconditions.checkArgument( groupKey.isGroup(), "Expected principal key of type Group" );
-        return Optional.ofNullable( (Group) this.principals.get( groupKey ) );
+
+        try
+        {
+            final Node node = this.nodeService.getById( NodeId.from( groupKey.toString() ) );
+            return Optional.ofNullable( GroupNodeTranslator.fromNode( node ) );
+        }
+        catch ( Exception e )
+        {
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -318,7 +337,16 @@ public final class SecurityServiceImpl
     public Optional<Role> getRole( final PrincipalKey roleKey )
     {
         Preconditions.checkArgument( roleKey.isRole(), "Expected principal key of type Role" );
-        return Optional.ofNullable( (Role) this.principals.get( roleKey ) );
+
+        try
+        {
+            final Node node = this.nodeService.getById( NodeId.from( roleKey.toString() ) );
+            return Optional.ofNullable( RoleNodeTranslator.fromNode( node ) );
+        }
+        catch ( Exception e )
+        {
+            return Optional.empty();
+        }
     }
 
     @Override
