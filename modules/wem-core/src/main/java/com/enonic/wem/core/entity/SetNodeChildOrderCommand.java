@@ -52,7 +52,7 @@ public class SetNodeChildOrderCommand
     {
         final NodeQueryResult childNodeResult = queryService.find( NodeQuery.create().
             parent( parentNode.path() ).
-            query( new QueryExpr( parentNode.getChildOrder().getChildOrderExpressions() ) ).
+            query( new QueryExpr( parentNode.getChildOrder().getOrderExpressions() ) ).
             build(), IndexContext.from( Context.current() ) );
 
         final LinkedHashSet<NodeId> childNodeIds = childNodeResult.getNodeQueryResultSet().getNodeIds();

@@ -16,6 +16,7 @@ public final class DynamicOrderExpr
         return this.function;
     }
 
+
     @Override
     public String toString()
     {

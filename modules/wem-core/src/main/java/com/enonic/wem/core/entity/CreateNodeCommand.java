@@ -39,7 +39,7 @@ final class CreateNodeCommand
         final Instant now = Instant.now();
 
         final Node.Builder nodeBuilder = Node.newNode().
-            id( new NodeId() ).
+            id( this.params.getNodeId() != null ? params.getNodeId() : new NodeId() ).
             createdTime( now ).
             modifiedTime( now ).
             creator( UserKey.superUser() ).

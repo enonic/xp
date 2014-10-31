@@ -57,7 +57,7 @@ public class FindNodesByParentCommand
     {
         return NodeQuery.create().
             parent( this.params.getParentPath() ).
-            query( new QueryExpr( order.getChildOrderExpressions() ) ).
+            query( new QueryExpr( order.getOrderExpressions() ) ).
             from( params.getFrom() ).
             size( params.getSize() ).
             build();

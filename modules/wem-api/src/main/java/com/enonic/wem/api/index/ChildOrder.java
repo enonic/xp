@@ -18,11 +18,11 @@ public class ChildOrder
 
     private static final FieldOrderExpr MANUAL_ORDER = FieldOrderExpr.create( IndexPaths.MANUAL_ORDER_VALUE_KEY, OrderExpr.Direction.DESC );
 
-    private final ImmutableSet<OrderExpr> childOrderExpressions;
+    private final ImmutableSet<OrderExpr> orderExpressions;
 
     private ChildOrder( final Builder builder )
     {
-        childOrderExpressions = ImmutableSet.copyOf( builder.childOrderExpressions );
+        orderExpressions = ImmutableSet.copyOf( builder.orderExpressions );
     }
 
     public static ChildOrder manualOrder()
@@ -57,12 +57,12 @@ public class ChildOrder
 
     public boolean isManualOrder()
     {
-        if ( this.childOrderExpressions.isEmpty() )
+        if ( this.orderExpressions.isEmpty() )
         {
             return false;
         }
 
-        final OrderExpr orderExpr = this.childOrderExpressions.iterator().next();
+        final OrderExpr orderExpr = this.orderExpressions.iterator().next();
 
         if ( orderExpr instanceof FieldOrderExpr )
         {
@@ -75,12 +75,12 @@ public class ChildOrder
 
     public boolean isEmpty()
     {
-        return this.childOrderExpressions.isEmpty();
+        return this.orderExpressions.isEmpty();
     }
 
-    public ImmutableSet<OrderExpr> getChildOrderExpressions()
+    public ImmutableSet<OrderExpr> getOrderExpressions()
     {
-        return childOrderExpressions;
+        return orderExpressions;
     }
 
     public static Builder create()
@@ -90,15 +90,15 @@ public class ChildOrder
 
     public static final class Builder
     {
-        private final Set<OrderExpr> childOrderExpressions = Sets.newLinkedHashSet();
+        private final Set<OrderExpr> orderExpressions = Sets.newLinkedHashSet();
 
         private Builder()
         {
         }
 
-        public Builder add( final OrderExpr childOrderExpr )
+        public Builder add( final OrderExpr orderExpr )
         {
-            this.childOrderExpressions.add( childOrderExpr );
+            this.orderExpressions.add( orderExpr );
             return this;
         }
 
@@ -111,7 +111,7 @@ public class ChildOrder
     @Override
     public String toString()
     {
-        return this.childOrderExpressions.stream().
+        return this.orderExpressions.stream().
             map( OrderExpr::toString ).
             collect( Collectors.joining( ", " ) );
     }
@@ -130,9 +130,7 @@ public class ChildOrder
 
         final ChildOrder that = (ChildOrder) o;
 
-        if ( childOrderExpressions != null
-            ? !childOrderExpressions.equals( that.childOrderExpressions )
-            : that.childOrderExpressions != null )
+        if ( orderExpressions != null ? !orderExpressions.equals( that.orderExpressions ) : that.orderExpressions != null )
         {
             return false;
         }
@@ -143,6 +141,6 @@ public class ChildOrder
     @Override
     public int hashCode()
     {
-        return childOrderExpressions != null ? childOrderExpressions.hashCode() : 0;
+        return orderExpressions != null ? orderExpressions.hashCode() : 0;
     }
 }

@@ -1,6 +1,7 @@
 {
     "contents": [
         {
+            "childOrder": null,
             "createdTime": "2013-08-23T12:55:09.162Z",
             "creator": "user:system:admin",
             "data": [ ],
@@ -38,6 +39,7 @@
             "type": "mymodule:my_type"
         },
         {
+            "childOrder": null,
             "createdTime": "2013-08-23T12:55:09.162Z",
             "creator": "user:system:admin",
             "data": [ ],

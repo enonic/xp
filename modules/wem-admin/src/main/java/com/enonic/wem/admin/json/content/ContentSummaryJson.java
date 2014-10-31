@@ -5,6 +5,7 @@ import java.time.Instant;
 import com.enonic.wem.admin.json.ChangeTraceableJson;
 import com.enonic.wem.admin.json.ItemJson;
 import com.enonic.wem.admin.rest.resource.content.ContentIconUrlResolver;
+import com.enonic.wem.admin.rest.resource.content.json.ChildOrderJson;
 import com.enonic.wem.api.content.Content;
 
 @SuppressWarnings("UnusedDeclaration")
@@ -24,6 +25,8 @@ public class ContentSummaryJson
 
     private final boolean isPage;
 
+    private final ChildOrderJson childOrderJson;
+
     public ContentSummaryJson( final Content content, final ContentIconUrlResolver iconUrlResolver )
     {
         super( content.getId() );
@@ -33,6 +36,7 @@ public class ContentSummaryJson
         this.isSite = content.isSite();
         this.isPage = content.hasPage();
         this.deletable = !content.hasChildren();
+        this.childOrderJson = content.getChildOrder() != null ? new ChildOrderJson( content.getChildOrder() ) : null;
     }
 
     public String getIconUrl()
@@ -103,6 +107,11 @@ public class ContentSummaryJson
     public boolean getIsDraft()
     {
         return content.isDraft();
+    }
+
+    public ChildOrderJson getChildOrder()
+    {
+        return this.childOrderJson;
     }
 
     public boolean getIsPage()

@@ -397,7 +397,7 @@ public class ContentResource
     public ContentJson setChildOrder( final SetChildOrderJson params )
     {
         final Content updatedContent = this.contentService.setChildOrder( SetContentChildOrderParams.create().
-            childOrder( ChildOrder.from( params.getChildOrder() ) ).
+            childOrder( params.getChildOrder().getChildOrder() ).
             contentId( ContentId.from( params.getContentId() ) ).
             build() );
 
