@@ -145,6 +145,20 @@ public class NodeServiceImpl
     @Override
     public Node create( final CreateNodeParams params )
     {
+        return doCreate( params );
+    }
+
+    private Node doCreate( final CreateNodeParams params )
+    {
+        NodePath nodePath = NodePath.newNodePath( params.getParent(), params.getName() ).build();
+
+        Node existingNode = this.doGetByPath( nodePath, false );
+
+        if ( existingNode != null )
+        {
+            throw new NodeAlreadyExistException( nodePath );
+        }
+
         return CreateNodeCommand.create().
             params( params ).
             indexService( this.indexService ).
@@ -223,16 +237,44 @@ public class NodeServiceImpl
     @Override
     public Node duplicate( final NodeId nodeId )
     {
-        Node node = getById( nodeId );
+        final Node existingNode = getById( nodeId );
+
+        String newNodeName = resolveNewNodeName( existingNode );
 
         CreateNodeParams.Builder builder = CreateNodeParams.create();
-        builder.name( node.name().toString() ).
-            parent( node.parent() ).
-            data( node.data() ).
-            attachments( node.attachments() ).
-            indexConfigDocument( node.getIndexConfigDocument() ).
-            childOrder( node.getChildOrder() );
+
+        builder.name( newNodeName ).
+            parent( existingNode.parent() ).
+            data( existingNode.data() ).
+            attachments( existingNode.attachments() ).
+            indexConfigDocument( existingNode.getIndexConfigDocument() ).
+            childOrder( existingNode.getChildOrder() );
+
         return create( builder.build() );
+    }
+
+    private String resolveNewNodeName( final Node existingNode )
+    {
+        String newNodeName = DuplicateValueResolver.name( existingNode.name() );
+
+        boolean resolvedUnique = false;
+
+        while ( !resolvedUnique )
+        {
+            final NodePath checkIfExistsPath = NodePath.newNodePath( existingNode.parent(), newNodeName ).build();
+            Node foundNode = this.doGetByPath( checkIfExistsPath, false );
+
+            if ( foundNode == null )
+            {
+                resolvedUnique = true;
+            }
+            else
+            {
+                newNodeName = DuplicateValueResolver.name( newNodeName );
+            }
+        }
+
+        return newNodeName;
     }
 
     @Override

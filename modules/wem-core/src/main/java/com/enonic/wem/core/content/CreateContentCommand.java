@@ -4,7 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentAlreadyExistException;
 import com.enonic.wem.api.content.ContentDataValidationException;
+import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
@@ -12,6 +14,7 @@ import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.core.entity.CreateNodeParams;
 import com.enonic.wem.core.entity.Node;
+import com.enonic.wem.core.entity.NodeAlreadyExistException;
 
 final class CreateContentCommand
     extends AbstractContentCommand
@@ -48,7 +51,16 @@ final class CreateContentCommand
         }
 
         final CreateNodeParams createNodeParams = translator.toCreateNode( params );
-        final Node createdNode = nodeService.create( createNodeParams );
+
+        final Node createdNode;
+        try
+        {
+            createdNode = nodeService.create( createNodeParams );
+        }
+        catch ( NodeAlreadyExistException e )
+        {
+            throw new ContentAlreadyExistException( ContentPath.from( params.getParentContentPath(), params.getName().toString() ) );
+        }
 
         return translator.fromNode( createdNode );
     }

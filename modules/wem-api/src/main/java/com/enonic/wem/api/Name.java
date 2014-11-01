@@ -9,13 +9,15 @@ import com.google.common.base.Preconditions;
 
 public class Name
 {
+    public static final String VALID_NAME_PATTERN = "[_a-z0-9]([a-z0-9_\\-\\.])*";
+
     private final String value;
 
     public Name( final String name )
     {
         Preconditions.checkNotNull( name, "name cannot be null" );
         Preconditions.checkArgument( !name.trim().isEmpty(), "name cannot be empty" );
-        Preconditions.checkArgument( name.matches( "^[_a-z0-9]([a-z0-9_\\-\\.])*$" ),
+        Preconditions.checkArgument( name.matches( "^" + VALID_NAME_PATTERN + "$" ),
                                      "A name can only start with lower case latin letters or digit, and further consist of the same, digits or the following special chars: _-.: " +
                                          name );
         this.value = name;

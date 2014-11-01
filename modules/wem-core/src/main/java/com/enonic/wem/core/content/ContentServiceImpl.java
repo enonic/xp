@@ -71,6 +71,11 @@ public class ContentServiceImpl
     @Override
     public Content getById( final ContentId id )
     {
+        return doGetById( id );
+    }
+
+    private Content doGetById( final ContentId id )
+    {
         return GetContentByIdCommand.create( id ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).

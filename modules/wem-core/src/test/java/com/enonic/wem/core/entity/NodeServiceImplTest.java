@@ -20,15 +20,15 @@ public class NodeServiceImplTest
 
     private NodeServiceImpl nodeService;
 
-    private WorkspaceService workspaceService = Mockito.mock( WorkspaceService.class );
+    private final WorkspaceService workspaceService = Mockito.mock( WorkspaceService.class );
 
-    private IndexService indexService = Mockito.mock( IndexService.class );
+    private final IndexService indexService = Mockito.mock( IndexService.class );
 
-    private NodeDao nodeDao = Mockito.mock( NodeDao.class );
+    private final NodeDao nodeDao = Mockito.mock( NodeDao.class );
 
-    private VersionService versionService = Mockito.mock( VersionService.class );
+    private final VersionService versionService = Mockito.mock( VersionService.class );
 
-    private QueryService queryService = Mockito.mock( QueryService.class );
+    private final QueryService queryService = Mockito.mock( QueryService.class );
 
 
     @Before
@@ -150,7 +150,7 @@ public class NodeServiceImplTest
 
         final Node nodeB = this.nodeService.duplicate( nodeA.id() );
 
-        assertEquals( nodeA.name(), nodeB.name() );
+        assertEquals( nodeA.name() + "-copy", nodeB.name().toString() );
         assertEquals( nodeA.attachments(), nodeB.attachments() );
         assertEquals( nodeA.data(), nodeB.data() );
         assertEquals( nodeA.getChildOrder(), nodeB.getChildOrder() );
