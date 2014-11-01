@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{{statusCode}} {{title}}</title>
+    <title>{{title}}</title>
     <style>
         html, body, pre {
             margin: 0;
@@ -108,52 +108,14 @@
         }
     </style>
 </head>
-<body id="wem-error-page" data-error-code="{{statusCode}}" data-error-title="{{title}}">
-<h1>{{statusCode}} {{title}}</h1>
+<body>
+<h1>{{title}}</h1>
 
 <p id="detail">{{description}}</p>
 
-{{#source}}
-{{#name}}
-<h2>
-    In {{name}} at line {{line}}.
-</h2>
-{{/name}}
-<div id="source-code">
-    {{#lines}}
-    {{#mark}}
-    <pre class="error"><span class="line">{{line}}</span><span class="code">{{message}}</span></pre>
-    {{/mark}}
-    {{^mark}}
-    <pre><span class="line">{{line}}</span><span class="code">{{message}}</span></pre>
-    {{/mark}}
-    {{/lines}}
-</div>
-{{/source}}
-
-{{#callStack}}
-<h2>
-    Here is the script calling stack:
-</h2>
-
-<div>
-    {{#lines}}
-    <pre><span class="line">{{line}}</span><span class="code"> {{message}}</span></pre>
-    {{/lines}}
-</div>
-{{/callStack}}
-
-{{#cause}}
-<h2>
-    Here is the stack trace:
-</h2>
-
-<div>
-    {{#trace}}
-    <pre><span class="line">{{line}}</span><span class="code"> {{message}}</span></pre>
-    {{/trace}}
-</div>
-{{/cause}}
+{{sourceInfo}}
+{{callStack}}
+{{stackTrace}}
 
 </body>
 </html>

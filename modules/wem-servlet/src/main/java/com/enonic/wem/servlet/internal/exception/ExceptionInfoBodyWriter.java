@@ -14,7 +14,6 @@ import javax.ws.rs.ext.Provider;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import com.enonic.wem.api.resource.ResourceProblemException;
 import com.enonic.wem.servlet.jaxrs.exception.ExceptionInfo;
 
 @Provider
@@ -56,18 +55,13 @@ final class ExceptionInfoBodyWriter
 
     private String renderInfo( final ExceptionInfo info, final Throwable cause )
     {
-        final ExceptionRenderer renderer = new ExceptionRenderer().
-            exception( info.getCause() ).
+        final ErrorPageBuilder builder = new ErrorPageBuilder().
+            cause( cause ).
             description( getDescription( info, cause ) ).
             status( info.getStatus() ).
             title( info.getReasonPhrase() );
 
-        if ( cause instanceof ResourceProblemException )
-        {
-            renderer.sourceError( ( (ResourceProblemException) cause ).getInnerError() );
-        }
-
-        return renderer.render();
+        return builder.build();
     }
 
     private ObjectNode renderJson( final ExceptionInfo info, final Throwable cause )
