@@ -5,12 +5,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.api.security.SecurityService;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.api.security.auth.EmailPasswordAuthToken;
 import com.enonic.wem.api.security.auth.UsernamePasswordAuthToken;
 
-@Path("auth")
+@Path(ResourceConstants.REST_ROOT + "auth")
 @Produces(MediaType.APPLICATION_JSON)
 public final class AuthResource
 {

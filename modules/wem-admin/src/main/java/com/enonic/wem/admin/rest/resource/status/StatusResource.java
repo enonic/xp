@@ -5,9 +5,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.api.Version;
 
-@Path("status")
+@Path(ResourceConstants.REST_ROOT + "status")
 public final class StatusResource
 {
     @GET

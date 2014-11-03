@@ -14,6 +14,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.admin.json.schema.content.ContentTypeJson;
 import com.enonic.wem.admin.json.schema.content.ContentTypeSummaryListJson;
 import com.enonic.wem.admin.rest.exception.NotFoundWebException;
@@ -27,7 +28,7 @@ import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.content.GetAllContentTypesParams;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
 
-@Path("schema/content")
+@Path(ResourceConstants.REST_ROOT + "schema/content")
 @Produces("application/json")
 public class ContentTypeResource
 {

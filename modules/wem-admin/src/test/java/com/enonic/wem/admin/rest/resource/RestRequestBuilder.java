@@ -34,7 +34,7 @@ public final class RestRequestBuilder
 
     public RestRequestBuilder path( final String path )
     {
-        this.uri.append( path );
+        this.uri.append( ResourceConstants.REST_ROOT).append( path );
         return this;
     }
 

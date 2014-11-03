@@ -1,12 +1,7 @@
 package com.enonic.wem.admin.app;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.collect.Maps;
 import com.samskivert.mustache.Template;
@@ -16,8 +11,6 @@ import com.enonic.wem.servlet.ServletRequestUrlHelper;
 
 final class AppHtmlHandler
 {
-    private final static String DEFAULT_APP_NAME = "app-launcher";
-
     private final Template template;
 
     public AppHtmlHandler()
@@ -26,25 +19,14 @@ final class AppHtmlHandler
         this.template = MustacheCompiler.getInstance().compile( url );
     }
 
-    public void handle( final HttpServletRequest req, final HttpServletResponse resp )
-        throws ServletException, IOException
+    public String render( final String app )
     {
-        final String app = req.getParameter( "app" );
-        render( app, req, resp );
-    }
-
-    private void render( final String app, final HttpServletRequest req, final HttpServletResponse resp )
-        throws IOException
-    {
-        final String baseUri = ServletRequestUrlHelper.createUri( req, "" );
+        final String baseUri = ServletRequestUrlHelper.createUri( "" );
 
         final Map<String, Object> model = Maps.newHashMap();
-        model.put( "app", app != null ? app : DEFAULT_APP_NAME );
+        model.put( "app", app );
         model.put( "baseUri", baseUri );
 
-        resp.setContentType( "text/html" );
-        resp.setCharacterEncoding( "UTF-8" );
-
-        this.template.execute( model, resp.getWriter() );
+        return this.template.execute( model );
     }
 }

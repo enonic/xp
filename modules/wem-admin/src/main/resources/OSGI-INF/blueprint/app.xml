@@ -17,7 +17,14 @@
       <entry key="alias" value="/*"/>
     </service-properties>
     <bean class="com.enonic.wem.admin.app.MainServlet">
-      <property name="resourceLocator" ref="resourceLocator"/>
+      <property name="resources">
+        <list>
+          <bean class="com.enonic.wem.admin.app.AdminExceptionMapper"/>
+          <bean class="com.enonic.wem.admin.app.MainResource">
+            <property name="resourceLocator" ref="resourceLocator"/>
+          </bean>
+        </list>
+      </property>
     </bean>
   </service>
 

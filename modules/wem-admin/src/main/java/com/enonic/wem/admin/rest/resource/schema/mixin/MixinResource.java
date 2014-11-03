@@ -15,6 +15,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.admin.json.schema.mixin.MixinJson;
 import com.enonic.wem.admin.json.schema.mixin.MixinListJson;
 import com.enonic.wem.admin.rest.resource.schema.SchemaImageHelper;
@@ -26,7 +27,7 @@ import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.api.schema.mixin.Mixins;
 
-@Path("schema/mixin")
+@Path(ResourceConstants.REST_ROOT + "schema/mixin")
 @Produces(MediaType.APPLICATION_JSON)
 public class MixinResource
 {

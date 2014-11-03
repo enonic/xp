@@ -8,6 +8,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.admin.json.content.page.part.PartDescriptorJson;
 import com.enonic.wem.admin.json.content.page.part.PartDescriptorsJson;
 import com.enonic.wem.api.content.page.part.PartDescriptor;
@@ -16,7 +17,7 @@ import com.enonic.wem.api.content.page.part.PartDescriptorService;
 import com.enonic.wem.api.content.page.part.PartDescriptors;
 import com.enonic.wem.api.module.ModuleKey;
 
-@Path("content/page/part/descriptor")
+@Path(ResourceConstants.REST_ROOT + "content/page/part/descriptor")
 @Produces(MediaType.APPLICATION_JSON)
 public class PartDescriptorResource
 {

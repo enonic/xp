@@ -1,79 +1,53 @@
 package com.enonic.wem.admin.app;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.Response;
 
-import com.google.common.io.ByteStreams;
 import com.google.common.net.MediaType;
 
 import com.enonic.wem.api.util.MediaTypes;
 
 final class ResourceHandler
 {
-
     private static final String INDEX_HTML = "index.html";
 
-    private final ServletContext servletContext;
+    private ResourceLocator resourceLocator;
 
-    private final ResourceLocator resourceLocator;
-
-    public ResourceHandler( final ServletContext servletContext, final ResourceLocator resourceLocator )
+    public Response handle( final String path )
+        throws Exception
     {
-        this.servletContext = servletContext;
-        this.resourceLocator = resourceLocator;
-    }
-
-    public void handle( final HttpServletRequest req, final HttpServletResponse res )
-        throws ServletException, IOException
-    {
-        final String path = req.getRequestURI().substring( req.getContextPath().length() );
         final InputStream in = findResource( path );
-
         if ( in != null )
         {
-            serveResource( res, path, in );
+            return serveResource( path, in );
         }
         else
         {
-            res.sendError( HttpServletResponse.SC_NOT_FOUND );
+            throw new NotFoundException();
         }
     }
 
-    private void serveResource( final HttpServletResponse res, final String path, final InputStream in )
-        throws IOException
+    private Response serveResource( final String path, final InputStream in )
+        throws Exception
     {
-        String mimeType = "/".equals( path ) ? this.servletContext.getMimeType( INDEX_HTML ) : this.servletContext.getMimeType( path );
-        // TODO .json was not resolved correctly from servletContext, maybe should be configured somewhere instead of using MediaTypes?
-        if ( mimeType == null )
-        {
-            final MediaType mediaType = MediaTypes.instance().fromFile( path );
-            if ( mediaType != null )
-            {
-                mimeType = mediaType.toString();
-            }
-        }
-        res.setContentType( mimeType );
-        ByteStreams.copy( in, res.getOutputStream() );
+        final MediaType mediaType = MediaTypes.instance().fromFile( path );
+        return Response.ok( in ).type( mediaType.toString() ).build();
     }
 
     private InputStream findResource( final String path )
-        throws IOException
+        throws Exception
     {
+        if ( this.resourceLocator == null )
+        {
+            return null;
+        }
+
         if ( path.endsWith( "/" ) )
         {
             return findResource( path + INDEX_HTML );
-        }
-
-        final InputStream in = this.servletContext.getResourceAsStream( path );
-        if ( in != null )
-        {
-            return in;
         }
 
         final String resourcePath = "/web" + ( path.startsWith( "/" ) ? path : ( "/" + path ) );
@@ -85,5 +59,10 @@ final class ResourceHandler
         }
 
         return url.openStream();
+    }
+
+    public void setResourceLocator( final ResourceLocator resourceLocator )
+    {
+        this.resourceLocator = resourceLocator;
     }
 }

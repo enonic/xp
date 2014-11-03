@@ -17,6 +17,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Strings;
 
+import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.admin.json.content.AbstractContentListJson;
 import com.enonic.wem.admin.json.content.CompareContentResultsJson;
 import com.enonic.wem.admin.json.content.ContentIdJson;
@@ -87,7 +88,7 @@ import com.enonic.wem.api.security.SecurityService;
 import com.enonic.wem.api.workspace.Workspaces;
 
 @SuppressWarnings("UnusedDeclaration")
-@Path("content")
+@Path(ResourceConstants.REST_ROOT + "content")
 @Produces(MediaType.APPLICATION_JSON)
 public class ContentResource
 {

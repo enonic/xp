@@ -8,6 +8,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.admin.json.schema.metadata.MetadataSchemaJson;
 import com.enonic.wem.admin.json.schema.metadata.MetadataSchemaListJson;
 import com.enonic.wem.api.module.ModuleKey;
@@ -17,7 +18,7 @@ import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
 import com.enonic.wem.api.schema.metadata.MetadataSchemaService;
 import com.enonic.wem.api.schema.metadata.MetadataSchemas;
 
-@Path("schema/metadata")
+@Path(ResourceConstants.REST_ROOT + "schema/metadata")
 @Produces(MediaType.APPLICATION_JSON)
 public class MetadataSchemaResource
 {

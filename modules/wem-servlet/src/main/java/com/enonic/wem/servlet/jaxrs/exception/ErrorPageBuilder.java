@@ -1,4 +1,4 @@
-package com.enonic.wem.servlet.internal.exception;
+package com.enonic.wem.servlet.jaxrs.exception;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceProblemException;
 
-final class ErrorPageBuilder
+public final class ErrorPageBuilder
 {
     private final static int NUM_DELTA_LINES = 3;
 

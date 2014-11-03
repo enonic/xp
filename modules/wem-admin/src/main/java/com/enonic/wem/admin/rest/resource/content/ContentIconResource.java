@@ -14,6 +14,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobService;
@@ -31,7 +32,7 @@ import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.Imag
 import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter.ScaleSquareFilter;
 
 
-@Path("content/icon")
+@Path(ResourceConstants.REST_ROOT + "content/icon")
 @Produces("image/*")
 public class ContentIconResource
 {

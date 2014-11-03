@@ -15,6 +15,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeJson;
 import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeListJson;
 import com.enonic.wem.admin.rest.resource.schema.SchemaImageHelper;
@@ -26,7 +27,7 @@ import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeService;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
 
-@Path("schema/relationship")
+@Path(ResourceConstants.REST_ROOT + "schema/relationship")
 @Produces(MediaType.APPLICATION_JSON)
 public class RelationshipTypeResource
 {

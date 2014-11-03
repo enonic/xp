@@ -8,6 +8,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.admin.rest.exception.NotFoundWebException;
 import com.enonic.wem.admin.rest.resource.relationship.json.CreateRelationshipJson;
 import com.enonic.wem.admin.rest.resource.relationship.json.RelationshipCreateParams;
@@ -24,7 +25,7 @@ import com.enonic.wem.api.relationship.UpdateRelationshipParams;
 import com.enonic.wem.api.relationship.editor.RelationshipEditors;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 
-@Path("relationship")
+@Path(ResourceConstants.REST_ROOT + "relationship")
 @Produces(MediaType.APPLICATION_JSON)
 public final class RelationshipResource
 {

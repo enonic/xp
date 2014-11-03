@@ -6,10 +6,11 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
+import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.core.initializer.StartupInitializer;
 import com.enonic.wem.servlet.ServletRequestUrlHelper;
 
-@Path("tools")
+@Path(ResourceConstants.REST_ROOT + "tools")
 public final class ToolsResource
 {
     private StartupInitializer startupInitializer;

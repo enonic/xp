@@ -11,6 +11,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Response;
 
+import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
@@ -29,7 +30,7 @@ import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter.ScaleMax;
 
 
-@Path("content/image")
+@Path(ResourceConstants.REST_ROOT + "content/image")
 @Produces("image/*")
 public class ContentImageResource
 {

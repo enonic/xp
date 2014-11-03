@@ -8,6 +8,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.admin.json.content.page.layout.LayoutDescriptorJson;
 import com.enonic.wem.admin.json.content.page.layout.LayoutDescriptorsJson;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
@@ -16,7 +17,7 @@ import com.enonic.wem.api.content.page.layout.LayoutDescriptorService;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptors;
 import com.enonic.wem.api.module.ModuleKey;
 
-@Path("content/page/layout/descriptor")
+@Path(ResourceConstants.REST_ROOT + "content/page/layout/descriptor")
 @Produces(MediaType.APPLICATION_JSON)
 public class LayoutDescriptorResource
 {

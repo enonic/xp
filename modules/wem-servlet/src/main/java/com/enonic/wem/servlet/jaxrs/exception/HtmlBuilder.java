@@ -1,4 +1,4 @@
-package com.enonic.wem.servlet.internal.exception;
+package com.enonic.wem.servlet.jaxrs.exception;
 
 import java.util.Stack;
 

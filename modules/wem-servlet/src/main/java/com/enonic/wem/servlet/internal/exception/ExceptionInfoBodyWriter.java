@@ -14,6 +14,7 @@ import javax.ws.rs.ext.Provider;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import com.enonic.wem.servlet.jaxrs.exception.ErrorPageBuilder;
 import com.enonic.wem.servlet.jaxrs.exception.ExceptionInfo;
 
 @Provider

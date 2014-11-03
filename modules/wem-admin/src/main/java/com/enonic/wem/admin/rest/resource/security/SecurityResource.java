@@ -10,6 +10,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.admin.rest.resource.security.json.PrincipalsJson;
 import com.enonic.wem.admin.rest.resource.security.json.UserStoresJson;
 import com.enonic.wem.api.security.PrincipalType;
@@ -20,7 +21,7 @@ import com.enonic.wem.api.security.UserStores;
 
 
 @SuppressWarnings("UnusedDeclaration")
-@Path("security")
+@Path(ResourceConstants.REST_ROOT + "security")
 @Produces(MediaType.APPLICATION_JSON)
 public class SecurityResource
 {

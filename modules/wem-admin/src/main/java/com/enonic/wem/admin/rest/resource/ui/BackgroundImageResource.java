@@ -9,9 +9,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Response;
 
+import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.core.home.HomeDir;
 
-@Path("ui")
+@Path(ResourceConstants.REST_ROOT + "ui")
 public final class BackgroundImageResource
 {
     private static final int A_DAY_IN_SECONDS = 60 * 60 * 24;
