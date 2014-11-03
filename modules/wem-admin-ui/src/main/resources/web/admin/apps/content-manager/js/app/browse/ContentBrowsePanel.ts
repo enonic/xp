@@ -63,6 +63,9 @@ module app.browse {
             api.content.ContentDuplicatedEvent.on((event) => {
                 this.contentTreeGridPanel.appendContentNode(event.getContent(), event.isNextToSource());
                 this.setFilterPanelRefreshNeeded(true);
+                window.setTimeout(() => {
+                    this.refreshFilter();
+                }, 1000);
             });
 
             api.content.ContentUpdatedEvent.on((event) => {
