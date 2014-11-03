@@ -12,6 +12,7 @@ import org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher;
 
 import com.enonic.wem.servlet.ServletRequestHolder;
 import com.enonic.wem.servlet.internal.JaxRsApplication2;
+import com.enonic.wem.servlet.internal.exception.ExceptionFeature;
 
 public abstract class JaxRsDispatcher2
     extends HttpServlet
@@ -29,6 +30,7 @@ public abstract class JaxRsDispatcher2
     public final void init( final ServletConfig config )
         throws ServletException
     {
+        addComponent( new ExceptionFeature() );
         super.init( config );
         initDispatcher();
         refresh();
@@ -53,10 +55,7 @@ public abstract class JaxRsDispatcher2
 
     public final void setContributor( final JaxRsContributor contributor )
     {
-        for ( final Object instance : contributor.getSingletons() )
-        {
-            addComponent( instance );
-        }
+        contributor.getSingletons().forEach( this::addComponent );
     }
 
     private synchronized void refresh()

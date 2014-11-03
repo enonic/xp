@@ -14,6 +14,7 @@ import com.enonic.wem.servlet.ServletRequestHolder;
 import com.enonic.wem.servlet.internal.DefaultExceptionMapper;
 import com.enonic.wem.servlet.internal.JaxRsApplication;
 import com.enonic.wem.servlet.internal.JaxRsResourceFactory;
+import com.enonic.wem.servlet.internal.exception.ExceptionFeature;
 
 public abstract class JaxRsDispatcher
     extends HttpServlet
@@ -32,7 +33,7 @@ public abstract class JaxRsDispatcher
         throws ServletException
     {
         doInit( config );
-        addProvider( new DefaultExceptionMapper() );
+        addProvider( new ExceptionFeature() );
         refresh();
     }
 

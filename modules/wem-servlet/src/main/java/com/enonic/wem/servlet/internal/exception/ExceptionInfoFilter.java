@@ -11,6 +11,9 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.Provider;
 
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import com.enonic.wem.servlet.jaxrs.exception.ExceptionInfo;
 
 @Provider
@@ -30,7 +33,8 @@ final class ExceptionInfoFilter
             return;
         }
 
-        res.setEntity( entity, null, findMediaType() );
+        final MediaType type = findMediaType();
+        res.setEntity( renderInfo( type, (ExceptionInfo) entity ), null, type );
     }
 
     private MediaType findMediaType()
@@ -45,5 +49,52 @@ final class ExceptionInfoFilter
         }
 
         return MediaType.APPLICATION_JSON_TYPE;
+    }
+
+
+    private String renderInfo( final MediaType mediaType, final ExceptionInfo info )
+    {
+        if ( mediaType.isCompatible( MediaType.TEXT_HTML_TYPE ) )
+        {
+            return renderInfo( info, info.getCause() );
+        }
+
+        return renderJson( info, info.getCause() ).toString();
+    }
+
+    private String renderInfo( final ExceptionInfo info, final Throwable cause )
+    {
+        final ErrorPageBuilder builder = new ErrorPageBuilder().
+            cause( cause ).
+            description( getDescription( info, cause ) ).
+            status( info.getStatus() ).
+            title( info.getReasonPhrase() );
+
+        return builder.build();
+    }
+
+    private ObjectNode renderJson( final ExceptionInfo info, final Throwable cause )
+    {
+        final ObjectNode root = JsonNodeFactory.instance.objectNode();
+        root.put( "status", info.getStatus() );
+        root.put( "message", info.getMessage() );
+
+        if ( cause != null )
+        {
+            root.put( "cause", cause.getClass().getName() );
+        }
+
+        return root;
+    }
+
+    public String getDescription( final ExceptionInfo info, final Throwable cause )
+    {
+        String str = info.getMessage();
+        if ( cause != null )
+        {
+            str += " (" + cause.getClass().getName() + ")";
+        }
+
+        return str;
     }
 }

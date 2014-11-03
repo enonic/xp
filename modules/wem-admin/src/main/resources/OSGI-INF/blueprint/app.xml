@@ -19,7 +19,6 @@
     <bean class="com.enonic.wem.admin.app.MainServlet">
       <property name="resources">
         <list>
-          <bean class="com.enonic.wem.admin.app.AdminExceptionMapper"/>
           <bean class="com.enonic.wem.admin.app.MainResource">
             <property name="resourceLocator" ref="resourceLocator"/>
           </bean>

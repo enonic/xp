@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
-  <bean id="exceptionMapper" class="com.enonic.wem.portal.internal.exception.PortalExceptionMapper"/>
-
   <service interface="javax.servlet.Servlet">
     <service-properties>
       <entry key="alias" value="/portal/*"/>
@@ -16,7 +14,6 @@
           <ref component-id="imageResourceProvider"/>
           <ref component-id="contentResourceProvider"/>
           <ref component-id="componentResourceProvider"/>
-          <ref component-id="exceptionMapper"/>
         </list>
       </property>
     </bean>

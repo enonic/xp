@@ -12,7 +12,6 @@ public final class ExceptionFeature
     public boolean configure( final FeatureContext context )
     {
         context.register( new DefaultExceptionMapper() );
-        context.register( new ExceptionInfoBodyWriter() );
         context.register( new ExceptionInfoFilter() );
         return true;
     }

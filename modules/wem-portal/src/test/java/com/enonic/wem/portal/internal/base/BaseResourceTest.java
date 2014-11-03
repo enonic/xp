@@ -9,7 +9,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.portal.internal.PortalServlet;
-import com.enonic.wem.portal.internal.exception.PortalExceptionMapper;
 import com.enonic.wem.servlet.mock.MockServletConfig;
 
 // import org.springframework.mock.web.MockServletConfig;
@@ -25,7 +24,6 @@ public abstract class BaseResourceTest
         throws Exception
     {
         this.resources = Lists.newArrayList();
-        this.resources.add( new PortalExceptionMapper() );
 
         this.servlet = new PortalServlet();
         this.servlet.init( new MockServletConfig() );
