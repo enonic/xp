@@ -27,7 +27,6 @@ import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
-import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.api.xml.mapper.XmlPageDescriptorMapper;
 import com.enonic.wem.api.xml.model.XmlPageDescriptor;
 import com.enonic.wem.api.xml.serializer.XmlSerializers;
@@ -46,8 +45,6 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
 
     protected ModuleService moduleService;
 
-    public final Workspace testWorkspace = Workspace.from( "test" );
-
     @Override
     protected void configure()
         throws Exception
@@ -62,7 +59,7 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
         this.resourceProvider.setPageDescriptorService( this.pageDescriptorService );
         this.resourceProvider.setModuleService( this.moduleService );
 
-        this.resources.add( this.resourceProvider );
+        this.factories.add( this.resourceProvider );
     }
 
     protected final void setupContentAndSite()

@@ -8,29 +8,32 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.portal.internal.PortalServlet;
+import com.enonic.wem.portal.internal.MainResource;
+import com.enonic.wem.servlet.internal.JaxRsServlet;
 import com.enonic.wem.servlet.mock.MockServletConfig;
 
 // import org.springframework.mock.web.MockServletConfig;
 
 public abstract class BaseResourceTest
 {
-    private PortalServlet servlet;
+    private JaxRsServlet servlet;
 
-    protected List<Object> resources;
+    protected List<ResourceFactory> factories;
 
     @Before
     public final void setup()
         throws Exception
     {
-        this.resources = Lists.newArrayList();
+        this.factories = Lists.newArrayList();
 
-        this.servlet = new PortalServlet();
-        this.servlet.init( new MockServletConfig() );
-
+        this.servlet = new JaxRsServlet();
         configure();
 
-        this.servlet.setResources( this.resources );
+        final MainResource mainResource = new MainResource();
+        mainResource.setFactories( this.factories );
+        this.servlet.addComponent( mainResource );
+
+        this.servlet.init( new MockServletConfig() );
     }
 
     protected abstract void configure()
@@ -40,7 +43,7 @@ public abstract class BaseResourceTest
     {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setMethod( "GET" );
-        request.setRequestURI( uri );
+        request.setRequestURI( "/portal" + uri );
         return request;
     }
 
@@ -48,7 +51,7 @@ public abstract class BaseResourceTest
     {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setMethod( "POST" );
-        request.setRequestURI( uri );
+        request.setRequestURI( "/portal" + uri );
         return request;
     }
 

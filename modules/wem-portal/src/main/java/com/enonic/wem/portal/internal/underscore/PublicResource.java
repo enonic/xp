@@ -13,7 +13,7 @@ import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.util.MediaTypes;
 import com.enonic.wem.portal.internal.base.BaseResource;
 
-@Path("{mode}/{workspace}/{contentPath:.+}/_/public/{module}/{resource:.+}")
+@Path("/portal/{mode}/{workspace}/{contentPath:.+}/_/public/{module}/{resource:.+}")
 public final class PublicResource
     extends BaseResource
 {

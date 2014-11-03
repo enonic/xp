@@ -1,10 +1,10 @@
 package com.enonic.wem.portal.internal.underscore;
 
 import com.enonic.wem.api.module.ModuleService;
-import com.enonic.wem.servlet.jaxrs.ResourceProvider;
+import com.enonic.wem.portal.internal.base.ResourceFactory;
 
 public final class PublicResourceProvider
-    implements ResourceProvider<PublicResource>
+    implements ResourceFactory<PublicResource>
 {
     private ModuleService moduleService;
 

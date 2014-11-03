@@ -21,7 +21,7 @@ import com.enonic.wem.portal.internal.controller.PortalRequestImpl;
 import com.enonic.wem.portal.internal.controller.PortalResponseSerializer;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 
-@Path("/{mode}/{workspace}/{contentPath:.+}/_/service/{module}/{service}")
+@Path("/portal/{mode}/{workspace}/{contentPath:.+}/_/service/{module}/{service}")
 public final class ServiceResource
     extends BaseResource
 {

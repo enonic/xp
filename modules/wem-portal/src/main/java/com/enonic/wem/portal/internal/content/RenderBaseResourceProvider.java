@@ -4,12 +4,12 @@ import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.page.PageDescriptorService;
 import com.enonic.wem.api.content.page.PageTemplateService;
 import com.enonic.wem.api.module.ModuleService;
+import com.enonic.wem.portal.internal.base.ResourceFactory;
 import com.enonic.wem.portal.internal.postprocess.PostProcessor;
 import com.enonic.wem.portal.internal.rendering.RendererFactory;
-import com.enonic.wem.servlet.jaxrs.ResourceProvider;
 
 public abstract class RenderBaseResourceProvider<T extends RenderBaseResource>
-    implements ResourceProvider<T>
+    implements ResourceFactory<T>
 {
     private RendererFactory rendererFactory;
 

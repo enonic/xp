@@ -4,9 +4,11 @@ import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.ext.Provider;
 
+import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
+
 @Provider
 public final class ExceptionFeature
-    implements Feature
+    implements Feature, JaxRsComponent
 {
     @Override
     public boolean configure( final FeatureContext context )

@@ -12,11 +12,8 @@
     <property name="resourcesDevDir" value="${resourcesDevDir}"/>
   </bean>
 
-  <service interface="javax.servlet.Servlet">
-    <service-properties>
-      <entry key="alias" value="/*"/>
-    </service-properties>
-    <bean class="com.enonic.wem.admin.app.MainServlet">
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.admin.app.JaxRsResources">
       <property name="resources">
         <list>
           <bean class="com.enonic.wem.admin.app.MainResource">

@@ -1,12 +1,8 @@
 package com.enonic.wem.portal.internal.content;
 
-import com.enonic.wem.portal.internal.rendering.RendererFactory;
-
 public final class ComponentResourceProvider
     extends RenderBaseResourceProvider<ComponentResource>
 {
-    private RendererFactory rendererFactory;
-
     @Override
     public Class<ComponentResource> getType()
     {
@@ -17,10 +13,7 @@ public final class ComponentResourceProvider
     public ComponentResource newResource()
     {
         final ComponentResource instance = new ComponentResource();
-        instance.rendererFactory = this.rendererFactory;
         configure( instance );
         return instance;
     }
-
-
 }

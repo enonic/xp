@@ -20,7 +20,7 @@ public class PublicResourceTest
         final PublicResourceProvider provider = new PublicResourceProvider();
         provider.setModuleService( this.moduleService );
 
-        this.resources.add( provider );
+        this.factories.add( provider );
     }
 
     @Test

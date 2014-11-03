@@ -19,7 +19,7 @@ import com.enonic.wem.portal.internal.controller.PortalRequestImpl;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
 
-@Path("/{mode}/{workspace}/{contentPath:.+}/_/component/{component:.+}")
+@Path("/portal/{mode}/{workspace}/{contentPath:.+}/_/component/{component:.+}")
 public final class ComponentResource
     extends RenderBaseResource
 {
