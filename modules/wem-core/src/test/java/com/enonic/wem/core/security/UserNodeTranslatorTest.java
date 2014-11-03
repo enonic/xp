@@ -27,7 +27,7 @@ public class UserNodeTranslatorTest
             key( PrincipalKey.ofUser( UserStoreKey.system(), "rmy" ) ).
             build();
 
-        final CreateNodeParams createNodeParams = UserNodeTranslator.toCreateNodeParams( user );
+        final CreateNodeParams createNodeParams = PrincipalNodeTranslator.toCreateNodeParams( user );
 
         assertEquals( "rmy", createNodeParams.getName() );
 
@@ -36,7 +36,7 @@ public class UserNodeTranslatorTest
         assertEquals( PrincipalType.USER.toString(), rootDataSet.getProperty( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY ).getString() );
         assertEquals( "displayname", rootDataSet.getProperty( PrincipalNodeTranslator.DISPLAY_NAME_KEY ).getString() );
         assertNotNull( rootDataSet );
-        assertEquals( 6, rootDataSet.size() );
+        assertEquals( 5, rootDataSet.size() );
     }
 
 
@@ -47,8 +47,8 @@ public class UserNodeTranslatorTest
         final PrincipalKey userKey = PrincipalKey.ofUser( UserStoreKey.system(), "i-am-a-user" );
 
         final RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.setProperty( UserNodeTranslator.LOGIN_KEY, Value.newString( "loginkey" ) );
-        rootDataSet.setProperty( UserNodeTranslator.EMAIL_KEY, Value.newString( "rmy@enonic.com" ) );
+        rootDataSet.setProperty( PrincipalNodeTranslator.LOGIN_KEY, Value.newString( "loginkey" ) );
+        rootDataSet.setProperty( PrincipalNodeTranslator.EMAIL_KEY, Value.newString( "rmy@enonic.com" ) );
         rootDataSet.setProperty( PrincipalNodeTranslator.DISPLAY_NAME_KEY, Value.newString( "displayname" ) );
         rootDataSet.setProperty( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY, Value.newString( userKey.getType().toString() ) );
         rootDataSet.setProperty( PrincipalNodeTranslator.USERSTORE_KEY, Value.newString( userKey.getUserStore().toString() ) );
@@ -59,7 +59,7 @@ public class UserNodeTranslatorTest
             rootDataSet( rootDataSet ).
             build();
 
-        final User user = UserNodeTranslator.fromNode( node );
+        final User user = (User) PrincipalNodeTranslator.fromNode( node );
         assertEquals( "loginkey", user.getLogin() );
         assertEquals( "rmy@enonic.com", user.getEmail() );
         assertEquals( userKey, user.getKey() );

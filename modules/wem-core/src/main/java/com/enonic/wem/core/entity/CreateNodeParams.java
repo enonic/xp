@@ -139,4 +139,64 @@ public class CreateNodeParams
             return new CreateNodeParams( this );
         }
     }
+
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+
+        final CreateNodeParams that = (CreateNodeParams) o;
+
+        if ( attachments != null ? !attachments.equals( that.attachments ) : that.attachments != null )
+        {
+            return false;
+        }
+        if ( childOrder != null ? !childOrder.equals( that.childOrder ) : that.childOrder != null )
+        {
+            return false;
+        }
+        if ( data != null ? !data.equals( that.data ) : that.data != null )
+        {
+            return false;
+        }
+        if ( indexConfigDocument != null ? !indexConfigDocument.equals( that.indexConfigDocument ) : that.indexConfigDocument != null )
+        {
+            return false;
+        }
+        if ( name != null ? !name.equals( that.name ) : that.name != null )
+        {
+            return false;
+        }
+        if ( nodeId != null ? !nodeId.equals( that.nodeId ) : that.nodeId != null )
+        {
+            return false;
+        }
+        if ( parent != null ? !parent.equals( that.parent ) : that.parent != null )
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = parent != null ? parent.hashCode() : 0;
+        result = 31 * result + ( name != null ? name.hashCode() : 0 );
+        result = 31 * result + ( data != null ? data.hashCode() : 0 );
+        result = 31 * result + ( attachments != null ? attachments.hashCode() : 0 );
+        result = 31 * result + ( indexConfigDocument != null ? indexConfigDocument.hashCode() : 0 );
+        result = 31 * result + ( childOrder != null ? childOrder.hashCode() : 0 );
+        result = 31 * result + ( nodeId != null ? nodeId.hashCode() : 0 );
+        return result;
+    }
 }

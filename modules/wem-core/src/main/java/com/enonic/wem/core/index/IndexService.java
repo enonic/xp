@@ -24,6 +24,8 @@ public interface IndexService
 
     public void applyMapping( final String indexName, final String indexType, final String mapping );
 
-    public IndexStatus getIndexStatus( final String indexName, final boolean waitForYellowStatus );
+    public IndexStatus getIndexStatus( final boolean waitForYellowStatus, final String... indexNames );
+
+    public void refresh( final String... indexNames );
 }
 

@@ -28,8 +28,10 @@ public class WorkspaceXContentBuilderFactory
             addField( builder, NODE_VERSION_ID_FIELD_NAME, storeWorkspaceDocument.getNodeVersionId().toString() );
             addField( builder, WORKSPACE_FIELD_NAME, workspace.getName() );
             addField( builder, NODE_ID_FIELD_NAME, storeWorkspaceDocument.getNodeId().toString() );
-            addField( builder, PATH_FIELD_NAME, storeWorkspaceDocument.getPath() );
-            addField( builder, PARENT_PATH_FIELD_NAME, storeWorkspaceDocument.getParentPath() );
+            addField( builder, PATH_FIELD_NAME,
+                      storeWorkspaceDocument.getPath() != null ? storeWorkspaceDocument.getPath().toString() : null );
+            addField( builder, PARENT_PATH_FIELD_NAME,
+                      storeWorkspaceDocument.getParentPath() != null ? storeWorkspaceDocument.getParentPath().toString() : null );
 
             endBuilder( builder );
             return builder;

@@ -14,6 +14,7 @@ import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsReques
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequestBuilder;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
+import org.elasticsearch.action.admin.indices.refresh.RefreshRequestBuilder;
 import org.elasticsearch.action.admin.indices.stats.IndexStats;
 import org.elasticsearch.action.admin.indices.stats.IndicesStatsRequest;
 import org.elasticsearch.action.admin.indices.stats.IndicesStatsResponse;
@@ -41,7 +42,7 @@ public class ElasticsearchIndexService
 
     private final static Logger LOG = LoggerFactory.getLogger( ElasticsearchIndexService.class );
 
-    public static final String INDICES_RESPONSE_TIMEOUT = "10s";
+    private static final String INDICES_RESPONSE_TIMEOUT = "10s";
 
     private ElasticsearchDao elasticsearchDao;
 
@@ -59,18 +60,26 @@ public class ElasticsearchIndexService
 
     private Client client;
 
-    public IndexStatus getIndexStatus( final String indexName, final boolean waitForStatusYellow )
+    public IndexStatus getIndexStatus( final boolean waitForStatusYellow, final String... indexNames )
     {
-        final ClusterHealthResponse clusterHealth = getClusterHealth( indexName, waitForStatusYellow );
+        final ClusterHealthResponse clusterHealth = getClusterHealth( waitForStatusYellow, indexNames );
 
         LOG.info( "Cluster in state: " + clusterHealth.getStatus().toString() );
 
         return IndexStatus.valueOf( clusterHealth.getStatus().name() );
     }
 
-    private ClusterHealthResponse getClusterHealth( final String indexName, boolean waitForYellow )
+    @Override
+    public void refresh( final String... indexNames )
     {
-        ClusterHealthRequest request = new ClusterHealthRequest( indexName );
+        this.client.admin().indices().refresh(
+            new RefreshRequestBuilder( this.client.admin().indices() ).setIndices( indexNames ).request() ).
+            actionGet();
+    }
+
+    private ClusterHealthResponse getClusterHealth( boolean waitForYellow, final String... indexNames )
+    {
+        ClusterHealthRequest request = new ClusterHealthRequest( indexNames );
 
         if ( waitForYellow )
         {

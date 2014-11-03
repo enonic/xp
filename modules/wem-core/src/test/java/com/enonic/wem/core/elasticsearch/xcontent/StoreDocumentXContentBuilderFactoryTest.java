@@ -33,7 +33,7 @@ public class StoreDocumentXContentBuilderFactoryTest
         StoreDocument storeDocument = StoreDocument.create().
             indexName( "testindex" ).
             indexTypeName( "test" ).
-            analyzer( "myAnalyzer" ).
+            analyzer( "myanalyzer" ).
             build();
 
         final XContentBuilder xContentBuilder = StoreDocumentXContentBuilderFactory.create( storeDocument );
@@ -44,7 +44,7 @@ public class StoreDocumentXContentBuilderFactoryTest
 
         assertNotNull( objectValue );
         assertTrue( objectValue instanceof String );
-        assertEquals( "myAnalyzer", objectValue );
+        assertEquals( "myanalyzer", objectValue );
     }
 
     @Test

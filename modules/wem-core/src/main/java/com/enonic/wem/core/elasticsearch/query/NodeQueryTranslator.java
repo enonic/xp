@@ -43,7 +43,6 @@ public class NodeQueryTranslator
             queryBuilderBuilder.addQueryFilter( ValueFilter.create().
                 fieldName( IndexPaths.PARENT_PATH_KEY ).
                 addValue( Value.newString( nodeQuery.getParent().toString() ) ).
-                setCache( true ).
                 build() );
         }
 

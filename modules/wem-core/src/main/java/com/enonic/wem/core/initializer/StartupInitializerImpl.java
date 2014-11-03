@@ -45,6 +45,10 @@ public final class StartupInitializerImpl
         {
             repositoryInitializer.init( contentRepo );
         }
+        else
+        {
+            repositoryInitializer.waitForInitialized( contentRepo );
+        }
     }
 
     private void initializeSecurity()

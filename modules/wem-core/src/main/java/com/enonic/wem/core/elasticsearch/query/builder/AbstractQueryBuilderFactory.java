@@ -5,6 +5,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.util.GeoPoint;
+import com.enonic.wem.core.index.IndexValueNormalizer;
 
 class AbstractQueryBuilderFactory
 {
@@ -26,12 +27,13 @@ class AbstractQueryBuilderFactory
             return new org.elasticsearch.common.geo.GeoPoint( geoPoint.getLatitude(), geoPoint.getLongitude() );
         }
 
-        return value.asString();
+        return IndexValueNormalizer.normalize( value.toString() );
     }
 
     static QueryBuilder buildNotQuery( final QueryBuilder negated )
     {
         return QueryBuilders.boolQuery().mustNot( negated );
     }
+
 
 }

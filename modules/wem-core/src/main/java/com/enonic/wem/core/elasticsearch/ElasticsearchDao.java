@@ -109,6 +109,7 @@ public class ElasticsearchDao
         final SearchRequestBuilder searchRequest = new SearchRequestBuilder( this.client ).
             setIndices( query.getIndexName() ).
             setTypes( query.getIndexType() ).
+            setSearchType( SearchType.DEFAULT ).
             setSource( searchSource.buildAsBytes() );
 
         return doSearchRequest( searchRequest );
@@ -205,20 +206,19 @@ public class ElasticsearchDao
 
     private SearchResult doSearchRequest( final SearchRequestBuilder searchRequestBuilder )
     {
-        final SearchResponse searchResponse;
         try
         {
-            searchResponse = searchRequestBuilder.
+            final SearchResponse searchResponse = searchRequestBuilder.
                 setPreference( searchPreference ).
                 execute().
                 actionGet( searchTimeout );
+
+            return SearchResultFactory.create( searchResponse );
         }
         catch ( ElasticsearchException e )
         {
             throw new IndexException( "Search request failed", e );
         }
-
-        return SearchResultFactory.create( searchResponse );
     }
 
     public void setClient( final Client client )

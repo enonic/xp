@@ -25,29 +25,40 @@ public final class RepositoryInitializer
 
         createIndexes( repository );
 
-        indexService.applyMapping( StorageNameResolver.resolveStorageIndexName( repository.getId() ), IndexType.WORKSPACE.getName(),
+        final String storageIndexName = getStoreIndexName( repository );
+        final String searchIndexName = getSearchIndexName( repository );
+
+        indexService.applyMapping( storageIndexName, IndexType.WORKSPACE.getName(),
                                    RepositoryIndexMappingProvider.getWorkspaceMapping( repository ) );
 
-        indexService.applyMapping( StorageNameResolver.resolveStorageIndexName( repository.getId() ), IndexType.VERSION.getName(),
+        indexService.applyMapping( storageIndexName, IndexType.VERSION.getName(),
                                    RepositoryIndexMappingProvider.getVersionMapping( repository ) );
 
-        indexService.applyMapping( IndexNameResolver.resolveSearchIndexName( repository.getId() ), IndexType._DEFAULT_.getName(),
+        indexService.applyMapping( searchIndexName, IndexType._DEFAULT_.getName(),
                                    RepositoryIndexMappingProvider.getSearchMappings( repository ) );
 
-        indexService.getIndexStatus( StorageNameResolver.resolveStorageIndexName( repository.getId() ), true );
+        indexService.refresh( storageIndexName, searchIndexName );
+    }
+
+    public void waitForInitialized( final Repository repository )
+    {
+        final String storageIndexName = getStoreIndexName( repository );
+        final String searchIndexName = getSearchIndexName( repository );
+
+        indexService.getIndexStatus( true, storageIndexName, searchIndexName );
     }
 
     private void createIndexes( final Repository repository )
     {
-        indexService.getIndexStatus( StorageNameResolver.resolveStorageIndexName( repository.getId() ), true );
+        indexService.getIndexStatus( true, getStoreIndexName( repository ) );
 
         LOG.info( "Create storage-index for repositoryId {}", repository.getId() );
-        final String storageIndexName = StorageNameResolver.resolveStorageIndexName( repository.getId() );
+        final String storageIndexName = getStoreIndexName( repository );
         final String storageIndexSettings = RepositoryStorageSettingsProvider.getSettings( repository );
         indexService.createIndex( storageIndexName, storageIndexSettings );
 
         LOG.info( "Create search-index for repositoryId {}", repository.getId() );
-        final String searchIndexName = IndexNameResolver.resolveSearchIndexName( repository.getId() );
+        final String searchIndexName = getSearchIndexName( repository );
         final String searchIndexSettings = RepositorySearchIndexSettingsProvider.getSettings( repository );
         indexService.createIndex( searchIndexName, searchIndexSettings );
     }
@@ -56,8 +67,8 @@ public final class RepositoryInitializer
     {
         final Set<String> repoIndexes = Sets.newHashSet();
 
-        repoIndexes.add( StorageNameResolver.resolveStorageIndexName( repository.getId() ) );
-        repoIndexes.add( IndexNameResolver.resolveSearchIndexName( repository.getId() ) );
+        repoIndexes.add( getStoreIndexName( repository ) );
+        repoIndexes.add( getSearchIndexName( repository ) );
 
         //indexService.getAllRepositoryIndices( repository.getId() );
 
@@ -73,10 +84,20 @@ public final class RepositoryInitializer
 
     public boolean isInitialized( final Repository repository )
     {
-        final String storageIndexName = StorageNameResolver.resolveStorageIndexName( repository.getId() );
-        final String searchIndexName = IndexNameResolver.resolveSearchIndexName( repository.getId() );
+        final String storageIndexName = getStoreIndexName( repository );
+        final String searchIndexName = getSearchIndexName( repository );
 
         return indexService.indicesExists( storageIndexName, searchIndexName );
+    }
+
+    private String getStoreIndexName( final Repository repository )
+    {
+        return StorageNameResolver.resolveStorageIndexName( repository.getId() );
+    }
+
+    private String getSearchIndexName( final Repository repository )
+    {
+        return IndexNameResolver.resolveSearchIndexName( repository.getId() );
     }
 
     public void setIndexService( final IndexService indexService )

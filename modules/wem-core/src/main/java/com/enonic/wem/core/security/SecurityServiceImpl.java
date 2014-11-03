@@ -3,23 +3,23 @@ package com.enonic.wem.core.security;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
-import com.google.common.primitives.Ints;
 
+import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.query.expr.CompareExpr;
+import com.enonic.wem.api.query.expr.FieldExpr;
+import com.enonic.wem.api.query.expr.QueryExpr;
+import com.enonic.wem.api.query.expr.ValueExpr;
+import com.enonic.wem.api.query.filter.ValueFilter;
 import com.enonic.wem.api.security.CreateGroupParams;
 import com.enonic.wem.api.security.CreateRoleParams;
 import com.enonic.wem.api.security.CreateUserParams;
 import com.enonic.wem.api.security.Group;
-import com.enonic.wem.api.security.Principal;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.PrincipalQuery;
 import com.enonic.wem.api.security.PrincipalQueryResult;
@@ -42,19 +42,17 @@ import com.enonic.wem.api.security.auth.AuthenticationToken;
 import com.enonic.wem.api.security.auth.EmailPasswordAuthToken;
 import com.enonic.wem.api.security.auth.UsernamePasswordAuthToken;
 import com.enonic.wem.core.entity.CreateNodeParams;
+import com.enonic.wem.core.entity.FindNodesByQueryResult;
 import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.entity.NodeId;
+import com.enonic.wem.core.entity.NodePath;
 import com.enonic.wem.core.entity.NodeService;
-
-import static java.util.stream.Collectors.toList;
+import com.enonic.wem.core.entity.query.NodeQuery;
 
 public final class SecurityServiceImpl
     implements SecurityService
 {
-
     private final List<UserStore> userStores;
-
-    private final ConcurrentMap<PrincipalKey, Principal> principals;
 
     private final Multimap<PrincipalKey, PrincipalRelationship> relationshipTable;
 
@@ -63,7 +61,6 @@ public final class SecurityServiceImpl
     public SecurityServiceImpl()
     {
         this.userStores = new CopyOnWriteArrayList<>();
-        this.principals = new ConcurrentHashMap<>();
         this.relationshipTable = Multimaps.synchronizedSetMultimap( HashMultimap.create() );
 
         final UserStore systemUserStore = UserStore.newUserStore().key( UserStoreKey.system() ).displayName( "System" ).build();
@@ -114,12 +111,18 @@ public final class SecurityServiceImpl
     @Override
     public Principals getPrincipals( final UserStoreKey userStore, final PrincipalType type )
     {
-        final List<Principal> principals = this.principals.values().stream().
-            filter( principal -> principal.getKey().getUserStore().equals( userStore ) ).
-            filter( principal -> principal.getKey().getType() == type ).
-            collect( toList() );
+        final FindNodesByQueryResult result = this.nodeService.findByQuery( NodeQuery.create().
+            addQueryFilter( ValueFilter.create().
+                fieldName( PrincipalNodeTranslator.USERSTORE_KEY ).
+                addValue( Value.newString( userStore.toString() ) ).
+                build() ).
+            addQueryFilter( ValueFilter.create().
+                fieldName( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY ).
+                addValue( Value.newString( type.toString() ) ).
+                build() ).
+            build() );
 
-        return Principals.from( principals );
+        return PrincipalNodeTranslator.fromNodes( result.getNodes() );
     }
 
     @Override
@@ -154,8 +157,7 @@ public final class SecurityServiceImpl
 
     private AuthenticationInfo authenticateUsernamePassword( final UsernamePasswordAuthToken token )
     {
-        final PrincipalKey userKey = PrincipalKey.ofUser( token.getUserStore(), token.getUsername() );
-        final User user = getUser( userKey ).orElse( null );
+        final User user = findByUsername( token.getUserStore(), token.getUsername() );
         if ( user != null && !user.isDisabled() && passwordMatch( user, token.getPassword() ) )
         {
             return AuthenticationInfo.create().user( user ).build();
@@ -171,13 +173,29 @@ public final class SecurityServiceImpl
         return "password".equals( password );
     }
 
+    private User findByUsername( final UserStoreKey userStore, final String username )
+    {
+        final Node user = this.nodeService.getByPath( NodePath.newPath().
+            addElement( userStore.toString() ).
+            addElement( PrincipalType.USER.toString() ).
+            addElement( username ).
+            build() );
+
+        return PrincipalNodeTranslator.userFromNode( user );
+    }
+
     private User findByEmail( final UserStoreKey userStore, final String email )
     {
-        return (User) this.principals.values().stream().
-            filter( principal -> principal.getKey().getUserStore().equals( userStore ) ).
-            filter( principal -> principal.getKey().isUser() ).
-            filter( principal -> email.equals( ( (User) principal ).getEmail() ) ).
-            findFirst().orElse( null );
+        final FindNodesByQueryResult result = nodeService.findByQuery( NodeQuery.create().
+            query( QueryExpr.from( CompareExpr.create( FieldExpr.from( PrincipalNodeTranslator.EMAIL_KEY ), CompareExpr.Operator.EQ,
+                                                       ValueExpr.string( email ) ) ) ).build() );
+
+        if ( result.getNodes().getSize() > 1 )
+        {
+            throw new IllegalArgumentException( "Expected at most 1 user with email " + email + " in userstore " + userStore );
+        }
+
+        return result.getNodes().isEmpty() ? null : PrincipalNodeTranslator.userFromNode( result.getNodes().first() );
     }
 
     @Override
@@ -196,35 +214,33 @@ public final class SecurityServiceImpl
             displayName( createUser.getDisplayName() ).
             build();
 
-        if ( this.principals.putIfAbsent( user.getKey(), user ) != null )
-        {
-            throw new IllegalArgumentException( "User already exists: " + user.getKey() );
-        }
-
         if ( createUser.getPassword() != null )
         {
             setPassword( user.getKey(), createUser.getPassword() );
         }
 
-        final CreateNodeParams createNodeParams = UserNodeTranslator.toCreateNodeParams( user );
+        final CreateNodeParams createNodeParams = PrincipalNodeTranslator.toCreateNodeParams( user );
         final Node node = nodeService.create( createNodeParams );
 
-        return UserNodeTranslator.fromNode( node );
+        return PrincipalNodeTranslator.userFromNode( node );
     }
 
     @Override
     public User updateUser( final UpdateUserParams updateUser )
     {
-        final User updatedUser = (User) this.principals.computeIfPresent( updateUser.getKey(), ( userKey, principal ) -> {
-            final User existingUser = (User) principal;
-            return updateUser.update( existingUser );
-        } );
+        //final User updatedUser = (User) this.principals.computeIfPresent( updateUser.getKey(), ( userKey, principal ) -> {
+        //    final User existingUser = (User) principal;
+        //    return updateUser.update( existingUser );
+        //} );
 
-        if ( updatedUser == null )
-        {
-            throw new IllegalArgumentException( "Could not find user to be updated: " + updateUser.getKey() );
-        }
-        return updatedUser;
+        //if ( updatedUser == null )
+        // {
+        //     throw new IllegalArgumentException( "Could not find user to be updated: " + updateUser.getKey() );
+        // }
+
+        //return updatedUser;
+
+        return null;
     }
 
     @Override
@@ -235,7 +251,7 @@ public final class SecurityServiceImpl
         try
         {
             final Node node = this.nodeService.getById( NodeId.from( userKey.toString() ) );
-            return Optional.ofNullable( UserNodeTranslator.fromNode( node ) );
+            return Optional.ofNullable( PrincipalNodeTranslator.userFromNode( node ) );
         }
         catch ( Exception e )
         {
@@ -250,20 +266,18 @@ public final class SecurityServiceImpl
             key( createGroup.getKey() ).
             displayName( createGroup.getDisplayName() ).
             build();
-        if ( this.principals.putIfAbsent( group.getKey(), group ) != null )
-        {
-            throw new IllegalArgumentException( "Group already exists: " + group.getKey() );
-        }
 
-        final CreateNodeParams createGroupParams = GroupNodeTranslator.toCreateNodeParams( group );
+        final CreateNodeParams createGroupParams = PrincipalNodeTranslator.toCreateNodeParams( group );
         final Node node = this.nodeService.create( createGroupParams );
 
-        return GroupNodeTranslator.fromNode( node );
+        return PrincipalNodeTranslator.groupFromNode( node );
     }
 
     @Override
     public Group updateGroup( final UpdateGroupParams updateGroup )
     {
+        // TODO: Fix
+        /*
         final Group updatedGroup = (Group) this.principals.computeIfPresent( updateGroup.getKey(), ( userKey, principal ) -> {
             final Group existingGroup = (Group) principal;
             return updateGroup.update( existingGroup );
@@ -274,6 +288,9 @@ public final class SecurityServiceImpl
             throw new IllegalArgumentException( "Could not find group to be updated: " + updateGroup.getKey() );
         }
         return updatedGroup;
+        */
+
+        return null;
     }
 
     @Override
@@ -284,7 +301,7 @@ public final class SecurityServiceImpl
         try
         {
             final Node node = this.nodeService.getById( NodeId.from( groupKey.toString() ) );
-            return Optional.ofNullable( GroupNodeTranslator.fromNode( node ) );
+            return Optional.ofNullable( PrincipalNodeTranslator.groupFromNode( node ) );
         }
         catch ( Exception e )
         {
@@ -299,20 +316,18 @@ public final class SecurityServiceImpl
             key( createRole.getKey() ).
             displayName( createRole.getDisplayName() ).
             build();
-        if ( this.principals.putIfAbsent( role.getKey(), role ) != null )
-        {
-            throw new IllegalArgumentException( "Role already exists: " + role.getKey() );
-        }
 
-        final CreateNodeParams createNodeParams = RoleNodeTranslator.toCreateNodeParams( role );
+        final CreateNodeParams createNodeParams = PrincipalNodeTranslator.toCreateNodeParams( role );
         final Node node = this.nodeService.create( createNodeParams );
 
-        return RoleNodeTranslator.fromNode( node );
+        return PrincipalNodeTranslator.roleFromNode( node );
     }
 
     @Override
     public Role updateRole( final UpdateRoleParams updateRole )
     {
+        // TODO: Fix
+        /*
         final Role updatedRole = (Role) this.principals.computeIfPresent( updateRole.getKey(), ( userKey, principal ) -> {
             final Role existingRole = (Role) principal;
             return updateRole.update( existingRole );
@@ -323,6 +338,8 @@ public final class SecurityServiceImpl
             throw new IllegalArgumentException( "Could not find role to be updated: " + updateRole.getKey() );
         }
         return updatedRole;
+        */
+        return null;
     }
 
     @Override
@@ -333,7 +350,7 @@ public final class SecurityServiceImpl
         try
         {
             final Node node = this.nodeService.getById( NodeId.from( roleKey.toString() ) );
-            return Optional.ofNullable( RoleNodeTranslator.fromNode( node ) );
+            return Optional.ofNullable( PrincipalNodeTranslator.roleFromNode( node ) );
         }
         catch ( Exception e )
         {
@@ -344,6 +361,9 @@ public final class SecurityServiceImpl
     @Override
     public PrincipalQueryResult query( final PrincipalQuery query )
     {
+        // TODO: FIX
+
+        /*
         final Predicate<Principal> userStoreFilter = principal -> query.getUserStores().contains( principal.getKey().getUserStore() );
         final Predicate<Principal> typeFilter = principal -> query.getPrincipalTypes().contains( principal.getKey().getType() );
         final Predicate<Principal> keysFilter = principal -> query.getPrincipals().contains( principal.getKey() );
@@ -380,6 +400,10 @@ public final class SecurityServiceImpl
             totalSize( Ints.checkedCast( total ) ).
             addPrincipals( principals ).
             build();
+        */
+
+        return null;
+
     }
 
     public void setNodeService( final NodeService nodeService )

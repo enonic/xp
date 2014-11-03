@@ -1,5 +1,5 @@
 {
     "terms": {
-        "myfield": ["myValue1", "myValue2"]
+        "myfield": ["myvalue2", "myvalue1"]
     }
 }

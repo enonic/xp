@@ -16,6 +16,7 @@ import com.enonic.wem.core.elasticsearch.document.AbstractStoreDocumentItem;
 import com.enonic.wem.core.elasticsearch.document.StoreDocument;
 import com.enonic.wem.core.elasticsearch.document.StoreDocumentOrderbyItem;
 import com.enonic.wem.core.index.IndexException;
+import com.enonic.wem.core.index.IndexValueNormalizer;
 
 public class StoreDocumentXContentBuilderFactory
     extends AbstractXContentBuilderFactor
@@ -69,11 +70,11 @@ public class StoreDocumentXContentBuilderFactory
 
             if ( item instanceof StoreDocumentOrderbyItem )
             {
-                orderByMap.put( fieldName, item.getValue() );
+                orderByMap.put( fieldName, normalizeValueIfString( item ) );
             }
             else
             {
-                fieldMultiValueMap.put( fieldName, item.getValue() );
+                fieldMultiValueMap.put( fieldName, normalizeValueIfString( item ) );
             }
         }
 
@@ -88,5 +89,18 @@ public class StoreDocumentXContentBuilderFactory
         }
     }
 
+    private static Object normalizeValueIfString( final AbstractStoreDocumentItem item )
+    {
+        final Object value = item.getValue();
+
+        if ( value instanceof String )
+        {
+            return IndexValueNormalizer.normalize( (String) value );
+        }
+        else
+        {
+            return value;
+        }
+    }
 
 }

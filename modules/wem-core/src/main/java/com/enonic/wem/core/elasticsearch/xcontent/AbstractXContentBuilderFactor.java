@@ -3,6 +3,8 @@ package com.enonic.wem.core.elasticsearch.xcontent;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 
+import com.enonic.wem.core.index.IndexValueNormalizer;
+
 abstract class AbstractXContentBuilderFactor
 {
 
@@ -22,9 +24,10 @@ abstract class AbstractXContentBuilderFactor
         {
             return;
         }
+
         if ( value instanceof String )
         {
-            value = ( (String) value ).trim();
+            value = IndexValueNormalizer.normalize( (String) value );
         }
 
         result.field( name, value );

@@ -1,7 +1,7 @@
 {
     "range": {
         "myfield": {
-            "from": "myString",
+            "from": "mystring",
             "to": null,
             "include_lower": false,
             "include_upper": true

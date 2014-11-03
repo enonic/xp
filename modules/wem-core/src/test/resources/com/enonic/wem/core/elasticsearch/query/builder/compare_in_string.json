@@ -3,12 +3,12 @@
         "should": [
             {
                 "term": {
-                    "myfield": "myFirstValue"
+                    "myfield": "myfirstvalue"
                 }
             },
             {
                 "term": {
-                    "myfield": "mySecondValue"
+                    "myfield": "mysecondvalue"
                 }
             }
         ]

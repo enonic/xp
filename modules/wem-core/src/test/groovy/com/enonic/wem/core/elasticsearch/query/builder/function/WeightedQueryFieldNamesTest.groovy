@@ -20,10 +20,10 @@ class WeightedQueryFieldNamesTest
 
         where:
         stringValue              | numberOfEntries
-        "myField"                | 1
-        "myField^5"              | 1
-        "myField^5,myOtherField" | 2
-        "myField,myOtherField^2" | 2
+        "myfield"                | 1
+        "myfield^5"              | 1
+        "myfield^5,myotherfield" | 2
+        "myfield,myotherfield^2" | 2
     }
 
 }
