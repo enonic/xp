@@ -71,6 +71,15 @@ module api.ui.treegrid {
 
             this.gridOptions = builder.getOptions();
 
+            this.gridOptions.setForceFitColumns(true);
+
+            /*
+             * AutoHeight should be disabled, because it causes big performance problems
+             * on a big array of data. Each render cycle will take (1ms * row count)
+             * and the smart render in the viewport will be disabled.
+             */
+//            this.gridOptions.setAutoHeight(false);
+
             this.grid = new Grid<TreeNode<DATA>>(this.gridData, this.columns, this.gridOptions);
 
             // Custom row selection required for valid behaviour
@@ -331,27 +340,23 @@ module api.ui.treegrid {
 
             if (canvas.getEl().isVisible() && this.isActive()) {
 
-                var canvasOffsetTop = !!canvas ? canvas.getEl().getOffsetTop() : 0;
-                var rowHeight = this.grid.getOptions().rowHeight;
+                var gridHeight = this.grid.getEl().getHeight(),
+                    scrollTop = this.grid.getEl().getScrollTop(),
+                    rowHeight = this.grid.getOptions().rowHeight,
+                    nodes = this.root.treeToList(),
+                    emptyNode:TreeNode<DATA> = null,
+                    from = Math.min(nodes.length - 1, Math.floor(scrollTop/rowHeight)),
+                    to = Math.min(nodes.length - 1, from + Math.round(gridHeight/rowHeight) + this.loadBufferSize);
 
-                // top > point && point + rowHeight < bottom
-                var children = Element.elementsFromRequest(".tree-grid " + gridClasses + " .grid-canvas .slick-row:has(.children-to-load)",
-                        false),
-                    top = this.grid.getEl().getScrollTop(),
-                    bottom = top + this.grid.getEl().getHeight() + this.loadBufferSize * rowHeight;
+                for (var i = from; i < to; i++) {
+                    if (nodes[i].getDataId() === "") {
+                        emptyNode = nodes[i];
+                        break;
+                    }
+                }
 
-
-                // Filter the selected rows, that are also in the field of view or `loadBufferSize` rows lower.
-                children = children.filter((el) => {
-                    var offsetTop = el.getEl().getOffsetTop() - canvasOffsetTop;
-                    return (offsetTop > top) && (offsetTop + rowHeight < (bottom + this.loadBufferSize * rowHeight));
-                });
-
-                // Search for the first "children-to-load" element.
-                if (this.isActive() && children.length > 0) {
-                    var offsetTop = Math.round(children[0].getEl().getOffsetTop() - canvasOffsetTop);
-                    var node = this.grid.getDataView().getItem(Math.round(offsetTop / rowHeight));
-                    this.loadEmptyNode(node);
+                if (this.isActive() && !!emptyNode) {
+                    this.loadEmptyNode(emptyNode);
                 }
             }
         }
@@ -537,7 +542,7 @@ module api.ui.treegrid {
 
             this.active = false;
 
-            this.grid.invalidateAllRows();
+            this.grid.invalidate();
 
             root.setExpanded(true);
             this.initData(root.treeToList());
@@ -617,7 +622,6 @@ module api.ui.treegrid {
         }
 
         /**
-         *
          * @param data
          * @param nextToSelection - by default node is appended as child to selection or root, set this to true to append to the same level
          * @param stashedParentNode
@@ -972,7 +976,7 @@ module api.ui.treegrid {
         private resetAndRender() {
             this.resetZIndexes();
             this.grid.syncGridSelection(false);
-            this.grid.invalidateAllRows();
+            this.grid.invalidate();
             this.grid.renderGrid();
         }
 

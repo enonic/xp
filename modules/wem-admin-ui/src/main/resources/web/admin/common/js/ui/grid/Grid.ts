@@ -42,7 +42,8 @@ module api.ui.grid {
             this.getEl().setWidth((options.getWidth() || this.defaultWidth) + "px");
             this.dataView = dataView;
             this.slickGrid = new Slick.Grid<T>(this.getHTMLElement(), dataView.slick(), columns, options);
-            if (options.isAutoRenderGridOnDataChanges() || this.defaultAutoRenderGridOnDataChanges) {
+            if (options.isAutoRenderGridOnDataChanges() ||
+                (options.isAutoRenderGridOnDataChanges() == undefined && this.defaultAutoRenderGridOnDataChanges)) {
                 this.autoRenderGridOnDataChanges(this.dataView);
             }
             if (this.checkboxSelectorPlugin != null) {
@@ -138,7 +139,7 @@ module api.ui.grid {
             this.slickGrid.invalidateRows(rows);
         }
 
-        invalidateAllRows() {
+        invalidate() {
             this.slickGrid.invalidate();
         }
 
