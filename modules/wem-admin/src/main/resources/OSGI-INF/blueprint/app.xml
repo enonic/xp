@@ -24,11 +24,7 @@
           </bean>
           <bean class="com.enonic.wem.admin.rest.provider.JsonObjectProvider"/>
           <bean class="com.enonic.wem.admin.rest.provider.JsonSerializableProvider"/>
-          <bean class="com.enonic.wem.admin.rest.exception.DefaultExceptionMapper"/>
           <bean class="com.enonic.wem.admin.rest.exception.ConflictExceptionMapper"/>
-          <bean class="com.enonic.wem.admin.rest.exception.IllegalArgumentExceptionMapper"/>
-          <bean class="com.enonic.wem.admin.rest.exception.JsonMappingExceptionMapper"/>
-          <bean class="com.enonic.wem.admin.rest.exception.NotFoundExceptionMapper"/>
           <bean class="com.enonic.wem.admin.rest.multipart.MultipartFormReader"/>
           <bean class="com.enonic.wem.admin.rest.provider.RenderedImageProvider"/>
           <ref component-id="backgroundImageResource"/>

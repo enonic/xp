@@ -53,8 +53,18 @@ public final class ExceptionInfo
         return this;
     }
 
+    public Response toResponse()
+    {
+        return Response.status( this.status ).entity( this ).build();
+    }
+
     public static ExceptionInfo create( final int status )
     {
         return new ExceptionInfo( status );
+    }
+
+    public static ExceptionInfo create( final Response.Status status )
+    {
+        return new ExceptionInfo( status.getStatusCode() );
     }
 }

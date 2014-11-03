@@ -15,8 +15,7 @@ final class DefaultExceptionMapper
     @Override
     public final Response toResponse( final Throwable cause )
     {
-        final ExceptionInfo info = toErrorInfo( cause );
-        return Response.status( info.getStatus() ).entity( info ).build();
+        return toErrorInfo( cause ).toResponse();
     }
 
     private ExceptionInfo toErrorInfo( final Throwable cause )

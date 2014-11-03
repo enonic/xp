@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher;
 
 import com.enonic.wem.servlet.ServletRequestHolder;
-import com.enonic.wem.servlet.internal.DefaultExceptionMapper;
 import com.enonic.wem.servlet.internal.JaxRsApplication;
 import com.enonic.wem.servlet.internal.JaxRsResourceFactory;
 import com.enonic.wem.servlet.internal.exception.ExceptionFeature;
