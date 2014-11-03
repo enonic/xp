@@ -33,8 +33,15 @@ public final class SecurityInitializer
                 securityService.createUser( createUser );
                 LOG.info( "Anonymous user created: " + anonymous.getKey().toString() );
             }
+        }
+        catch ( Throwable t )
+        {
+            LOG.error( "Unable to initialize user: " + PrincipalKey.ofAnonymous().toString(), t );
+        }
 
-            final PrincipalKey adminKey = PrincipalKey.ofUser( UserStoreKey.system(), "admin" );
+        final PrincipalKey adminKey = PrincipalKey.ofUser( UserStoreKey.system(), "admin" );
+        try
+        {
             if ( !securityService.getUser( adminKey ).isPresent() )
             {
                 final CreateUserParams createAdmin = CreateUserParams.create().
@@ -49,7 +56,7 @@ public final class SecurityInitializer
         }
         catch ( Throwable t )
         {
-            LOG.error( "Unable to initialize security principals", t );
+            LOG.error( "Unable to initialize user: " + adminKey.toString(), t );
         }
     }
 
