@@ -134,6 +134,8 @@ public class SecurityServiceImplTest
             thenReturn( createUserAsNode( createUser ) );
 
         final User user = securityService.createUser( createUser );
+        Mockito.when( nodeService.getById( Mockito.isA( NodeId.class ) ) ).
+            thenReturn( createUserAsNode( createUser ) );
 
         final UsernamePasswordAuthToken authToken = new UsernamePasswordAuthToken();
         authToken.setUsername( "user1" );
@@ -141,6 +143,7 @@ public class SecurityServiceImplTest
         authToken.setUserStore( SYSTEM );
 
         final AuthenticationInfo authInfo = securityService.authenticate( authToken );
+        assertTrue( authInfo.isAuthenticated() );
         assertEquals( user.getKey(), authInfo.getUser().getKey() );
     }
 

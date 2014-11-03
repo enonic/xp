@@ -154,7 +154,8 @@ public final class SecurityServiceImpl
 
     private AuthenticationInfo authenticateUsernamePassword( final UsernamePasswordAuthToken token )
     {
-        final User user = findByUsername( token.getUserStore(), token.getUsername() );
+        final PrincipalKey userKey = PrincipalKey.ofUser( token.getUserStore(), token.getUsername() );
+        final User user = getUser( userKey ).orElse( null );
         if ( user != null && !user.isDisabled() && passwordMatch( user, token.getPassword() ) )
         {
             return AuthenticationInfo.create().user( user ).build();
@@ -168,15 +169,6 @@ public final class SecurityServiceImpl
     private boolean passwordMatch( final User user, final String password )
     {
         return "password".equals( password );
-    }
-
-    private User findByUsername( final UserStoreKey userStore, final String username )
-    {
-        return (User) this.principals.values().stream().
-            filter( principal -> principal.getKey().getUserStore().equals( userStore ) ).
-            filter( principal -> principal.getKey().isUser() ).
-            filter( principal -> username.equals( ( (User) principal ).getLogin() ) ).
-            findFirst().orElse( null );
     }
 
     private User findByEmail( final UserStoreKey userStore, final String email )
