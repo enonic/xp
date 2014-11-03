@@ -3,6 +3,7 @@ package com.enonic.wem.admin.rest.resource.content;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
@@ -16,8 +17,8 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
-import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.admin.json.content.AbstractContentListJson;
 import com.enonic.wem.admin.json.content.CompareContentResultsJson;
 import com.enonic.wem.admin.json.content.ContentIdJson;
@@ -30,6 +31,7 @@ import com.enonic.wem.admin.json.content.GetActiveContentVersionsResultJson;
 import com.enonic.wem.admin.json.content.GetContentVersionsResultJson;
 import com.enonic.wem.admin.json.content.attachment.AttachmentJson;
 import com.enonic.wem.admin.rest.exception.NotFoundWebException;
+import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.admin.rest.resource.content.json.AbstractContentQueryResultJson;
 import com.enonic.wem.admin.rest.resource.content.json.CompareContentsJson;
 import com.enonic.wem.admin.rest.resource.content.json.ContentNameJson;
@@ -48,7 +50,6 @@ import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.content.CompareContentResults;
 import com.enonic.wem.api.content.CompareContentsParams;
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentAlreadyExistException;
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
@@ -76,7 +77,6 @@ import com.enonic.wem.api.content.UnableToDeleteContentException;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.AttachmentService;
-import com.enonic.wem.api.exception.ConflictException;
 import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.schema.content.ContentTypeService;
@@ -98,11 +98,11 @@ public class ContentResource
 
     private static final String DEFAULT_SIZE_PARAM = "500";
 
-    private final String EXPAND_FULL = "full";
+    private final static String EXPAND_FULL = "full";
 
-    private final String EXPAND_SUMMARY = "summary";
+    private final static String EXPAND_SUMMARY = "summary";
 
-    private final String EXPAND_NONE = "none";
+    private final static String EXPAND_NONE = "none";
 
     private ContentService contentService;
 
@@ -300,7 +300,7 @@ public class ContentResource
         final ContentPaths contentsToDelete = ContentPaths.from( json.getContentPaths() );
 
         //sort contents by nesting order to avoid removing parent content before child.
-        List<ContentPath> contentsToDeleteList = new ArrayList( contentsToDelete.getSet() );
+        List<ContentPath> contentsToDeleteList = Lists.newArrayList( contentsToDelete.getSet() );
         Collections.sort( contentsToDeleteList, ( ContentPath contentPath1, ContentPath contentPath2 ) -> ( contentPath2.elementCount() -
             contentPath1.elementCount() ) );
 
@@ -430,18 +430,9 @@ public class ContentResource
             return new ContentJson( updatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
         }
 
-        try
-        {
-            final RenameContentParams renameParams = json.getRenameContentParams();
-
-            final Content renamedContent = contentService.rename( renameParams );
-
-            return new ContentJson( renamedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
-        }
-        catch ( ContentAlreadyExistException e )
-        {
-            throw new ConflictException( String.format( "Content with path [%s] already exists", e.getContentPath() ) );
-        }
+        final RenameContentParams renameParams = json.getRenameContentParams();
+        final Content renamedContent = contentService.rename( renameParams );
+        return new ContentJson( renamedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
     }
 
     @GET
@@ -466,10 +457,7 @@ public class ContentResource
         List<Attachment> attachments = new ArrayList<>();
         if ( attachmentJsonList != null )
         {
-            for ( AttachmentJson attachmentJson : attachmentJsonList )
-            {
-                attachments.add( attachmentJson.getAttachment() );
-            }
+            attachments.addAll( attachmentJsonList.stream().map( AttachmentJson::getAttachment ).collect( Collectors.toList() ) );
         }
         return attachments;
     }

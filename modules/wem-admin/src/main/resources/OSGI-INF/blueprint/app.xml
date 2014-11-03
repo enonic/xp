@@ -24,7 +24,6 @@
           </bean>
           <bean class="com.enonic.wem.admin.rest.provider.JsonObjectProvider"/>
           <bean class="com.enonic.wem.admin.rest.provider.JsonSerializableProvider"/>
-          <bean class="com.enonic.wem.admin.rest.exception.ConflictExceptionMapper"/>
           <bean class="com.enonic.wem.admin.rest.multipart.MultipartFormReader"/>
           <bean class="com.enonic.wem.admin.rest.provider.RenderedImageProvider"/>
           <ref component-id="backgroundImageResource"/>
