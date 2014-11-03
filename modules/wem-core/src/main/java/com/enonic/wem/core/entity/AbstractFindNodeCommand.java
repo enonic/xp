@@ -13,6 +13,19 @@ abstract class AbstractFindNodeCommand
         queryService = builder.queryService;
     }
 
+    FindNodesByParentResult doFindNodesByParent( final FindNodesByParentParams params )
+    {
+        return FindNodesByParentCommand.create().
+            params( params ).
+            queryService( this.queryService ).
+            nodeDao( this.nodeDao ).
+            workspaceService( this.workspaceService ).
+            nodeDao( this.nodeDao ).
+            build().
+            execute();
+    }
+
+
     public static class Builder<B extends Builder>
         extends AbstractNodeCommand.Builder<B>
     {

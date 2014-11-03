@@ -118,7 +118,7 @@ public class MoveChildNodeCommand
     private Long resolveInsertInbetweenOrderValue( final Long nodeAfterOrderValue, final NodeQueryResult result )
     {
         final NodeId nodeBeforeInsertId = result.getNodeQueryResultSet().first();
-        final Node nodeBeforeInsert = doGetNode( nodeBeforeInsertId, false );
+        final Node nodeBeforeInsert = doGetById( nodeBeforeInsertId, false );
 
         return ( nodeAfterOrderValue + nodeBeforeInsert.getManualOrderValue() ) / 2;
     }
@@ -131,7 +131,7 @@ public class MoveChildNodeCommand
     private Long resolveInsertLastOrderValue( final NodeQueryResult result )
     {
         final NodeId lastNodeId = result.getNodeQueryResultSet().first();
-        final Node lastNode = doGetNode( lastNodeId, false );
+        final Node lastNode = doGetById( lastNodeId, false );
 
         return lastNode.getManualOrderValue() - NodeOrderValueResolver.ORDER_SPACE;
     }

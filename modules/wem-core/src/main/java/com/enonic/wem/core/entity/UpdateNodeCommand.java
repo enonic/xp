@@ -34,7 +34,7 @@ final class UpdateNodeCommand
 
     private Node doExecute()
     {
-        final Node persistedNode = doGetNode( params.getId(), false );
+        final Node persistedNode = doGetById( params.getId(), false );
 
         final Node.EditBuilder editBuilder = params.getEditor().edit( persistedNode );
         if ( !editBuilder.isChanges() )

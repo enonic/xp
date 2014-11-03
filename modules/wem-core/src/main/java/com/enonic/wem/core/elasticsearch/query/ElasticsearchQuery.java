@@ -88,7 +88,7 @@ public class ElasticsearchQuery
         return from;
     }
 
-    int getSize()
+    public int getSize()
     {
         return size;
     }

@@ -2,14 +2,9 @@ package com.enonic.wem.core.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.core.entity.dao.NodeDao;
-import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.index.IndexService;
-import com.enonic.wem.core.version.NodeVersionDocument;
 import com.enonic.wem.core.version.VersionService;
-import com.enonic.wem.core.workspace.StoreWorkspaceDocument;
-import com.enonic.wem.core.workspace.WorkspaceContext;
 import com.enonic.wem.core.workspace.WorkspaceService;
 
 abstract class AbstractNodeCommand
@@ -30,40 +25,54 @@ abstract class AbstractNodeCommand
         this.versionService = builder.versionService;
     }
 
-    protected Node doGetNode( final NodeId id, final boolean resolveHasChild )
+    void doStoreNode( final Node node )
     {
-        final Context context = Context.current();
-
-        final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( id, WorkspaceContext.from( context ) );
-
-        final Node node = nodeDao.getByVersionId( currentVersion );
-
-        return !resolveHasChild ? node : NodeHasChildResolver.create().
+        StoreNodeCommand.create().
+            node( node ).
+            indexService( this.indexService ).
             workspaceService( this.workspaceService ).
+            versionService( this.versionService ).
+            nodeDao( this.nodeDao ).
             build().
-            resolve( node );
-
+            execute();
     }
 
-    protected void doStoreNode( final Node updatedNode )
+    Node doGetByPath( final NodePath path, final boolean resolveHasChild )
     {
-        final NodeVersionId updatedNodeVersionId = nodeDao.store( updatedNode );
+        return GetNodeByPathCommand.create().
+            nodePath( path ).
+            resolveHasChild( resolveHasChild ).
+            indexService( this.indexService ).
+            workspaceService( this.workspaceService ).
+            versionService( this.versionService ).
+            nodeDao( this.nodeDao ).
+            build().
+            execute();
+    }
 
-        final Context context = Context.current();
+    Node doGetById( final NodeId id, final boolean resolveHasChild )
+    {
+        return GetNodeByIdCommand.create().
+            id( id ).
+            resolveHasChild( resolveHasChild ).
+            indexService( this.indexService ).
+            workspaceService( this.workspaceService ).
+            versionService( this.versionService ).
+            nodeDao( this.nodeDao ).
+            build().
+            execute();
+    }
 
-        this.versionService.store( NodeVersionDocument.create().
-            nodeId( updatedNode.id() ).
-            nodeVersionId( updatedNodeVersionId ).
-            build(), context.getRepositoryId() );
-
-        this.workspaceService.store( StoreWorkspaceDocument.create().
-            path( updatedNode.path() ).
-            parentPath( updatedNode.parent() ).
-            id( updatedNode.id() ).
-            nodeVersionId( updatedNodeVersionId ).
-            build(), WorkspaceContext.from( context ) );
-
-        this.indexService.store( updatedNode, IndexContext.from( context ) );
+    Node doCreateNode( final CreateNodeParams params )
+    {
+        return CreateNodeCommand.create().
+            params( params ).
+            indexService( this.indexService ).
+            versionService( this.versionService ).
+            workspaceService( this.workspaceService ).
+            nodeDao( this.nodeDao ).
+            build().
+            execute();
     }
 
     public static class Builder<B extends Builder>
@@ -111,10 +120,10 @@ abstract class AbstractNodeCommand
 
         void validate()
         {
-            Preconditions.checkNotNull( indexService );
-            Preconditions.checkNotNull( versionService );
-            Preconditions.checkNotNull( nodeDao );
-            Preconditions.checkNotNull( workspaceService );
+            Preconditions.checkNotNull( indexService, "indexService not set" );
+            Preconditions.checkNotNull( versionService, "workspaceService not set" );
+            Preconditions.checkNotNull( nodeDao, "nodeDao not set" );
+            Preconditions.checkNotNull( workspaceService, "workspaceService not set" );
         }
 
 

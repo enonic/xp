@@ -38,6 +38,8 @@ public class ElasticsearchDao
 
     private static final boolean DEFAULT_REFRESH = true;
 
+    private static final int GET_ALL_SIZE_FLAG = -1;
+
     private final String searchPreference = "_local";
 
     private final String searchTimeout = "5s";
@@ -98,18 +100,39 @@ public class ElasticsearchDao
         return deleteResponse.isFound();
     }
 
-    public SearchResult search( final ElasticsearchQuery elasticsearchQuery )
+    public SearchResult search( final ElasticsearchQuery query )
     {
-        final SearchSourceBuilder searchSource = elasticsearchQuery.toSearchSourceBuilder();
+        final SearchSourceBuilder searchSource = query.toSearchSourceBuilder();
 
         //System.out.println( searchSource.toString() );
 
         final SearchRequestBuilder searchRequest = new SearchRequestBuilder( this.client ).
-            setIndices( elasticsearchQuery.getIndexName() ).
-            setTypes( elasticsearchQuery.getIndexType() ).
+            setIndices( query.getIndexName() ).
+            setTypes( query.getIndexType() ).
             setSource( searchSource.buildAsBytes() );
 
         return doSearchRequest( searchRequest );
+    }
+
+    private int resolveSize( final ElasticsearchQuery query )
+    {
+        if ( query.getSize() == GET_ALL_SIZE_FLAG )
+        {
+            return safeLongToInt( this.count( query ) );
+        }
+        else
+        {
+            return query.getSize();
+        }
+    }
+
+    private static int safeLongToInt( long l )
+    {
+        if ( l < Integer.MIN_VALUE || l > Integer.MAX_VALUE )
+        {
+            throw new IllegalArgumentException( l + " cannot be cast to int without changing its value." );
+        }
+        return (int) l;
     }
 
     public SearchResult get( final QueryMetaData queryMetaData, final QueryBuilder queryBuilder )
@@ -158,6 +181,20 @@ public class ElasticsearchDao
             setIndices( queryMetaData.getIndexName() ).
             setTypes( queryMetaData.getIndexTypeName() ).
             setQuery( query ).
+            setSearchType( SearchType.COUNT ).
+            setPreference( searchPreference );
+
+        final SearchResult searchResult = doSearchRequest( searchRequestBuilder );
+
+        return searchResult.getResults().getTotalHits();
+    }
+
+    long count( final ElasticsearchQuery query )
+    {
+        SearchRequestBuilder searchRequestBuilder = new SearchRequestBuilder( this.client ).
+            setIndices( query.getIndexName() ).
+            setTypes( query.getIndexType() ).
+            setQuery( query.getQuery() ).
             setSearchType( SearchType.COUNT ).
             setPreference( searchPreference );
 

@@ -40,21 +40,15 @@ public class NodeServiceImpl
 
     private Node doGetById( final NodeId id, final boolean resolveHasChild )
     {
-        final Context context = Context.current();
-
-        final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( id, WorkspaceContext.from( context ) );
-
-        if ( currentVersion == null )
-        {
-            return null;
-        }
-
-        final Node node = nodeDao.getByVersionId( currentVersion );
-
-        return !resolveHasChild ? node : NodeHasChildResolver.create().
+        return GetNodeByIdCommand.create().
+            id( id ).
+            resolveHasChild( resolveHasChild ).
+            indexService( this.indexService ).
             workspaceService( this.workspaceService ).
+            versionService( this.versionService ).
+            nodeDao( this.nodeDao ).
             build().
-            resolve( node );
+            execute();
     }
 
     @Override
@@ -84,22 +78,17 @@ public class NodeServiceImpl
 
     private Node doGetByPath( final NodePath path, final boolean resolveHasChild )
     {
-        final Context context = Context.current();
-
-        final NodeVersionId currentVersion = this.workspaceService.getByPath( path, WorkspaceContext.from( context ) );
-
-        if ( currentVersion == null )
-        {
-            return null;
-        }
-
-        final Node node = nodeDao.getByVersionId( currentVersion );
-
-        return resolveHasChild ? NodeHasChildResolver.create().
+        return GetNodeByPathCommand.create().
+            nodePath( path ).
+            resolveHasChild( resolveHasChild ).
+            indexService( this.indexService ).
             workspaceService( this.workspaceService ).
+            versionService( this.versionService ).
+            nodeDao( this.nodeDao ).
             build().
-            resolve( node ) : node;
+            execute();
     }
+
 
     @Override
     public Nodes getByPaths( final NodePaths paths )
@@ -115,16 +104,13 @@ public class NodeServiceImpl
     @Override
     public FindNodesByParentResult findByParent( final FindNodesByParentParams params )
     {
-        return doFindByParent( params );
-    }
-
-    private FindNodesByParentResult doFindByParent( final FindNodesByParentParams params )
-    {
         return FindNodesByParentCommand.create().
             params( params ).
             queryService( this.queryService ).
             nodeDao( this.nodeDao ).
             workspaceService( this.workspaceService ).
+            indexService( this.indexService ).
+            versionService( this.versionService ).
             build().
             execute();
     }
@@ -150,15 +136,6 @@ public class NodeServiceImpl
 
     private Node doCreate( final CreateNodeParams params )
     {
-        NodePath nodePath = NodePath.newNodePath( params.getParent(), params.getName() ).build();
-
-        Node existingNode = this.doGetByPath( nodePath, false );
-
-        if ( existingNode != null )
-        {
-            throw new NodeAlreadyExistException( nodePath );
-        }
-
         return CreateNodeCommand.create().
             params( params ).
             indexService( this.indexService ).
@@ -237,45 +214,17 @@ public class NodeServiceImpl
     @Override
     public Node duplicate( final NodeId nodeId )
     {
-        final Node existingNode = getById( nodeId );
-
-        String newNodeName = resolveNewNodeName( existingNode );
-
-        CreateNodeParams.Builder builder = CreateNodeParams.create();
-
-        builder.name( newNodeName ).
-            parent( existingNode.parent() ).
-            data( existingNode.data() ).
-            attachments( existingNode.attachments() ).
-            indexConfigDocument( existingNode.getIndexConfigDocument() ).
-            childOrder( existingNode.getChildOrder() );
-
-        return create( builder.build() );
+        return DuplicateNodeCommand.create().
+            id( nodeId ).
+            queryService( this.queryService ).
+            nodeDao( this.nodeDao ).
+            workspaceService( this.workspaceService ).
+            indexService( this.indexService ).
+            versionService( this.versionService ).
+            build().
+            execute();
     }
 
-    private String resolveNewNodeName( final Node existingNode )
-    {
-        String newNodeName = DuplicateValueResolver.name( existingNode.name() );
-
-        boolean resolvedUnique = false;
-
-        while ( !resolvedUnique )
-        {
-            final NodePath checkIfExistsPath = NodePath.newNodePath( existingNode.parent(), newNodeName ).build();
-            Node foundNode = this.doGetByPath( checkIfExistsPath, false );
-
-            if ( foundNode == null )
-            {
-                resolvedUnique = true;
-            }
-            else
-            {
-                newNodeName = DuplicateValueResolver.name( newNodeName );
-            }
-        }
-
-        return newNodeName;
-    }
 
     @Override
     public NodeComparison compare( final NodeId nodeId, final Workspace target )
