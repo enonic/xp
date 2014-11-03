@@ -34,7 +34,12 @@ public final class RestRequestBuilder
 
     public RestRequestBuilder path( final String path )
     {
-        this.uri.append( ResourceConstants.REST_ROOT).append( path );
+        if ( path.startsWith( "/" ) )
+        {
+            return path( path.substring( 1 ) );
+        }
+
+        this.uri.append( ResourceConstants.REST_ROOT ).append( path );
         return this;
     }
 

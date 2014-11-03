@@ -128,7 +128,7 @@
     <property name="securityService" ref="securityService"/>
   </bean>
 
-  <bean id="restServlet" class="com.enonic.wem.admin.rest.RestServlet">
+  <!--bean id="restServlet" class="com.enonic.wem.admin.rest.RestServlet">
     <property name="resources">
       <list>
         <bean class="com.enonic.wem.admin.rest.provider.JsonObjectProvider"/>
@@ -170,6 +170,6 @@
       <entry key="alias" value="/admin/rest/*"/>
       <entry key="init.resteasy.servlet.mapping.prefix" value="/admin/rest"/>
     </service-properties>
-  </service>
+  </service-->
 
 </blueprint>

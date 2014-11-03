@@ -5,6 +5,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 @Path("/")
@@ -38,7 +39,7 @@ public final class MainResource
     @GET
     @Path("admin")
     @Produces("text/html")
-    public String getAdminApp( @PathParam("app") @DefaultValue("app-launcher") final String app )
+    public String getAdminApp( @QueryParam("app") @DefaultValue("app-launcher") final String app )
     {
         return this.appHtmlHandler.render( app );
     }
