@@ -79,6 +79,10 @@ module app.login {
                 return;
             }
             var userStore = this.userStores[selectedUserStoreId];
+
+            this.userIdInput.removeClass('login-password-invalid');
+            this.passwordInput.removeClass('login-password-invalid');
+
             this.authenticator.authenticate(userName, userStore, password,
                 (loginResult: api.security.auth.LoginResult) => this.handleAuthenticateResponse(loginResult));
         }
@@ -88,9 +92,11 @@ module app.login {
                 if (this.onUserAuthenticatedHandler) {
                     this.onUserAuthenticatedHandler(loginResult.getUser());
                 }
-            } else {
                 this.passwordInput.setValue('');
+            } else {
                 this.passwordInput.giveFocus();
+                this.userIdInput.addClass('login-password-invalid');
+                this.passwordInput.addClass('login-password-invalid');
             }
         }
 
