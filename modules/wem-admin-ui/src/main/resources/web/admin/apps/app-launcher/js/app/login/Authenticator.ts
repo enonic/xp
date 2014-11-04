@@ -21,7 +21,9 @@ module app.login {
 
             new api.security.auth.LoginRequest(loginCredentials).sendAndParse().then((loginResult) => {
                 authHandler(loginResult);
-            });
+            }).catch((reason: any) => {
+                api.DefaultErrorHandler.handle(reason);
+            }).done();
         }
 
     }
