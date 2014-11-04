@@ -3,8 +3,6 @@ package com.enonic.wem.itests.core.entity;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.carrotsearch.randomizedtesting.annotations.Seed;
-
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.core.entity.CreateNodeParams;
 import com.enonic.wem.core.entity.FindNodesByParentCommand;
@@ -14,7 +12,8 @@ import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.entity.NodePath;
 import com.enonic.wem.core.repository.RepositoryInitializer;
 
-@Seed("4C9FFD7B668A7308")
+import static org.junit.Assert.*;
+
 public class FindNodesByParentCommandTest
     extends AbstractNodeTest
 {

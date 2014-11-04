@@ -5,11 +5,8 @@ import java.util.Iterator;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
-import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.junit.Before;
 import org.junit.Test;
-
-import com.carrotsearch.randomizedtesting.annotations.Seed;
 
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.data.Value;
@@ -21,14 +18,15 @@ import com.enonic.wem.core.elasticsearch.document.StoreDocumentOrderbyItem;
 import com.enonic.wem.core.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.core.elasticsearch.query.builder.QueryBuilderFactory;
 import com.enonic.wem.core.elasticsearch.xcontent.StoreDocumentXContentBuilderFactory;
+import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.query.IndexQueryFieldNameResolver;
 import com.enonic.wem.core.index.result.SearchResult;
 import com.enonic.wem.core.index.result.SearchResultEntry;
 import com.enonic.wem.core.repository.IndexNameResolver;
+import com.enonic.wem.core.repository.RepositoryIndexMappingProvider;
 
-// Set seed for now, since some seeds generates class-loading issues
-@Seed("4C9FFD7B668A7308")
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.TEST, maxNumDataNodes = 1, minNumDataNodes = 1)
+import static org.junit.Assert.*;
+
 public class OrderByValueResolverTest
     extends AbstractElasticsearchIntegrationTest
 {
@@ -52,19 +50,30 @@ public class OrderByValueResolverTest
         this.indexType = "test";
     }
 
+    protected void createSearchIndex( final Repository repository )
+    {
+        final String indexName = IndexNameResolver.resolveSearchIndexName( repository.getId() );
+        elasticsearchIndexService.createIndex( indexName, getContentRepoSearchDefaultSettings() );
+        elasticsearchIndexService.applyMapping( IndexNameResolver.resolveSearchIndexName( repository.getId() ),
+                                                IndexType._DEFAULT_.getName(),
+                                                RepositoryIndexMappingProvider.getSearchMappings( repository ) );
+
+        assertTrue( indexExists( indexName ) );
+    }
+
     @Test
     public void ensureOrderingCorrectForLongValues()
         throws Exception
     {
         createSearchIndex( this.repository );
-        flushAndRefresh();
+        refresh();
 
         final String hundred = storeOrderbyDocument( OrderbyValueResolver.getOrderbyValue( Value.newDouble( 10000 ) ) );
         final String thousand = storeOrderbyDocument( OrderbyValueResolver.getOrderbyValue( Value.newDouble( 100000 ) ) );
         final String minusThousand = storeOrderbyDocument( OrderbyValueResolver.getOrderbyValue( Value.newDouble( -1000 ) ) );
         final String minusHundred = storeOrderbyDocument( OrderbyValueResolver.getOrderbyValue( Value.newDouble( -100 ) ) );
         final String zero = storeOrderbyDocument( OrderbyValueResolver.getOrderbyValue( Value.newDouble( 0 ) ) );
-        flushAndRefresh();
+        refresh();
 
         final SearchResult result = elasticsearchDao.search( ElasticsearchQuery.create().
             query( QueryBuilderFactory.create().build() ).

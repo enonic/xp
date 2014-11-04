@@ -3,8 +3,6 @@ package com.enonic.wem.itests.core.entity;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.carrotsearch.randomizedtesting.annotations.Seed;
-
 import com.enonic.wem.core.entity.CreateNodeParams;
 import com.enonic.wem.core.entity.DuplicateNodeCommand;
 import com.enonic.wem.core.entity.DuplicateValueResolver;
@@ -14,8 +12,8 @@ import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.entity.NodePath;
 import com.enonic.wem.core.entity.Nodes;
 
-@Seed("4C9FFD7B668A7308")
-//@Seed("96913334D49A8414")
+import static org.junit.Assert.*;
+
 public class DuplicateNodeCommandTest
     extends AbstractNodeTest
 {
@@ -68,7 +66,7 @@ public class DuplicateNodeCommandTest
             name( "my-child" ).
             build() );
 
-        flushAndRefresh();
+        refresh();
 
         final Node duplicatedNode = DuplicateNodeCommand.create().
             id( createdNode.id() ).
@@ -80,7 +78,7 @@ public class DuplicateNodeCommandTest
             build().
             execute();
 
-        flushAndRefresh();
+        refresh();
 
         final FindNodesByParentResult children = findByParent( FindNodesByParentParams.create().
             parentPath( duplicatedNode.path() ).

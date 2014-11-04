@@ -3,8 +3,6 @@ package com.enonic.wem.itests.core.entity;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.carrotsearch.randomizedtesting.annotations.Seed;
-
 import com.enonic.wem.core.entity.CreateNodeParams;
 import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.entity.NodeId;
@@ -12,7 +10,8 @@ import com.enonic.wem.core.entity.NodePath;
 import com.enonic.wem.core.entity.NodeServiceImpl;
 import com.enonic.wem.core.entity.dao.NodeNotFoundException;
 
-@Seed("4C9FFD7B668A7308")
+import static org.junit.Assert.*;
+
 public class NodeServiceImplTest
     extends AbstractNodeTest
 {

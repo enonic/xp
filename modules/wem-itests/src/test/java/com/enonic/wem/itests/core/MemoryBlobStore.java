@@ -1,4 +1,4 @@
-package com.enonic.wem.itests.core.entity;
+package com.enonic.wem.itests.core;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 
-import com.carrotsearch.ant.tasks.junit4.dependencies.com.google.common.collect.Maps;
+import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.core.blob.BlobKeyCreator;
@@ -15,7 +15,7 @@ import com.enonic.wem.core.blob.BlobStore;
 import com.enonic.wem.core.blob.BlobStoreException;
 import com.enonic.wem.core.blob.memory.MemoryBlobRecord;
 
-class MemoryBlobStore
+public class MemoryBlobStore
     implements BlobStore
 {
     private final Map<BlobKey, byte[]> blobs = Maps.newHashMap();
