@@ -175,11 +175,10 @@ public final class SecurityServiceImpl
 
     private User findByUsername( final UserStoreKey userStore, final String username )
     {
-        final Node user = this.nodeService.getByPath( NodePath.newPath().
-            addElement( userStore.toString() ).
-            addElement( PrincipalType.USER.toString() ).
-            addElement( username ).
-            build() );
+        // TODO should look up user based on User.getLogin() instead of PrincipalKey.getId()
+        final PrincipalKey key = PrincipalKey.ofUser( userStore, username );
+        final NodePath path = PrincipalPathTranslator.toPath( key );
+        final Node user = this.nodeService.getByPath( path );
 
         return PrincipalNodeTranslator.userFromNode( user );
     }
