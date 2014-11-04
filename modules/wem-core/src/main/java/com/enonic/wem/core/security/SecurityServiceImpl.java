@@ -43,11 +43,11 @@ import com.enonic.wem.api.security.auth.EmailPasswordAuthToken;
 import com.enonic.wem.api.security.auth.UsernamePasswordAuthToken;
 import com.enonic.wem.core.entity.CreateNodeParams;
 import com.enonic.wem.core.entity.FindNodesByQueryResult;
-import com.enonic.wem.core.entity.NoNodeAtPathFoundException;
 import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodePath;
 import com.enonic.wem.core.entity.NodeService;
+import com.enonic.wem.core.entity.dao.NodeNotFoundException;
 import com.enonic.wem.core.entity.query.NodeQuery;
 
 public final class SecurityServiceImpl
@@ -184,7 +184,7 @@ public final class SecurityServiceImpl
             final Node user = this.nodeService.getByPath( path );
             return PrincipalNodeTranslator.userFromNode( user );
         }
-        catch ( NoNodeAtPathFoundException e )
+        catch ( NodeNotFoundException e )
         {
             return null;
         }
