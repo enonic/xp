@@ -1,37 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
-  <bean id="publicResourceProvider" class="com.enonic.wem.portal.internal.underscore.PublicResourceProvider">
-    <property name="moduleService" ref="moduleService"/>
-  </bean>
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.portal.internal.underscore.PublicResourceProvider">
+      <property name="moduleService" ref="moduleService"/>
+    </bean>
+  </service>
 
-  <bean id="serviceResourceProvider" class="com.enonic.wem.portal.internal.underscore.ServiceResourceProvider">
-    <property name="controllerScriptFactory" ref="controllerScriptFactory"/>
-    <property name="moduleService" ref="moduleService"/>
-  </bean>
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.portal.internal.underscore.ServiceResourceProvider">
+      <property name="controllerScriptFactory" ref="controllerScriptFactory"/>
+      <property name="moduleService" ref="moduleService"/>
+    </bean>
+  </service>
 
-  <bean id="imageResourceProvider" class="com.enonic.wem.portal.internal.underscore.ImageResourceProvider">
-    <property name="imageFilterBuilder" ref="imageFilterBuilder"/>
-    <property name="attachmentService" ref="attachmentService"/>
-    <property name="blobService" ref="blobService"/>
-    <property name="contentService" ref="contentService"/>
-  </bean>
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.portal.internal.underscore.ImageResourceProvider">
+      <property name="imageFilterBuilder" ref="imageFilterBuilder"/>
+      <property name="attachmentService" ref="attachmentService"/>
+      <property name="blobService" ref="blobService"/>
+      <property name="contentService" ref="contentService"/>
+    </bean>
+  </service>
 
-  <bean id="contentResourceProvider" class="com.enonic.wem.portal.internal.content.ContentResourceProvider">
-    <property name="pageDescriptorService" ref="pageDescriptorService"/>
-    <property name="pageTemplateService" ref="pageTemplateService"/>
-    <property name="contentService" ref="contentService"/>
-    <property name="moduleService" ref="moduleService"/>
-    <property name="postProcessor" ref="postProcessor"/>
-    <property name="rendererFactory" ref="rendererFactory"/>
-  </bean>
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.portal.internal.content.ContentResourceProvider">
+      <property name="pageDescriptorService" ref="pageDescriptorService"/>
+      <property name="pageTemplateService" ref="pageTemplateService"/>
+      <property name="contentService" ref="contentService"/>
+      <property name="moduleService" ref="moduleService"/>
+      <property name="postProcessor" ref="postProcessor"/>
+      <property name="rendererFactory" ref="rendererFactory"/>
+    </bean>
+  </service>
 
-  <bean id="componentResourceProvider" class="com.enonic.wem.portal.internal.content.ComponentResourceProvider">
-    <property name="pageDescriptorService" ref="pageDescriptorService"/>
-    <property name="pageTemplateService" ref="pageTemplateService"/>
-    <property name="contentService" ref="contentService"/>
-    <property name="moduleService" ref="moduleService"/>
-    <property name="rendererFactory" ref="rendererFactory"/>
-  </bean>
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.portal.internal.content.ComponentResourceProvider">
+      <property name="pageDescriptorService" ref="pageDescriptorService"/>
+      <property name="pageTemplateService" ref="pageTemplateService"/>
+      <property name="contentService" ref="contentService"/>
+      <property name="moduleService" ref="moduleService"/>
+      <property name="rendererFactory" ref="rendererFactory"/>
+    </bean>
+  </service>
 
 </blueprint>
+

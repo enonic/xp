@@ -51,7 +51,7 @@ public abstract class ImageBaseResourceTest
         provider.setBlobService( this.blobService );
         provider.setContentService( this.contentService );
 
-        this.factories.add( provider );
+        this.servlet.addComponent( provider );
     }
 
     final void setupContent()

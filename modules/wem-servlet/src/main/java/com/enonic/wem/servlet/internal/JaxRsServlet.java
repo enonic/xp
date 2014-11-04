@@ -60,7 +60,7 @@ public final class JaxRsServlet
         responseFactory.setDispatcher( synchronousDispatcher );
         synchronousDispatcher.getDefaultContextObjects().put( ServletConfig.class, getServletConfig() );
 
-        this.dispatcher.addApplication( this.app );
+        this.dispatcher.apply( this.app );
     }
 
     @Override

@@ -59,7 +59,7 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
         this.resourceProvider.setPageDescriptorService( this.pageDescriptorService );
         this.resourceProvider.setModuleService( this.moduleService );
 
-        this.factories.add( this.resourceProvider );
+        this.servlet.addComponent( this.resourceProvider );
     }
 
     protected final void setupContentAndSite()

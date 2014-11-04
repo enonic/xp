@@ -37,7 +37,7 @@ public class ServiceResourceTest
         this.controllerScript = Mockito.mock( ControllerScript.class );
         Mockito.when( controllerScriptFactory.newController( Mockito.anyObject() ) ).thenReturn( this.controllerScript );
 
-        this.factories.add( provider );
+        this.servlet.addComponent( provider );
     }
 
     @Test
