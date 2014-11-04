@@ -26,10 +26,12 @@ import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.api.schema.mixin.Mixins;
+import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
 
 @Path(ResourceConstants.REST_ROOT + "schema/mixin")
 @Produces(MediaType.APPLICATION_JSON)
-public class MixinResource
+public final class MixinResource
+    implements JaxRsComponent
 {
     private static final String DEFAULT_MIME_TYPE = "image/png";
 

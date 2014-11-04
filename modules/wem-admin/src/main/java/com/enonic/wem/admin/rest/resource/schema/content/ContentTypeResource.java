@@ -27,10 +27,12 @@ import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.content.GetAllContentTypesParams;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
+import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
 
 @Path(ResourceConstants.REST_ROOT + "schema/content")
 @Produces("application/json")
-public class ContentTypeResource
+public final class ContentTypeResource
+    implements JaxRsComponent
 {
     private static final SchemaImageHelper helper = new SchemaImageHelper();
 

@@ -7,9 +7,11 @@ import javax.ws.rs.core.MediaType;
 
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.api.Version;
+import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
 
 @Path(ResourceConstants.REST_ROOT + "status")
 public final class StatusResource
+    implements JaxRsComponent
 {
     @GET
     @Produces(MediaType.APPLICATION_JSON)

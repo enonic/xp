@@ -10,10 +10,12 @@ import com.enonic.wem.api.security.SecurityService;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.api.security.auth.EmailPasswordAuthToken;
 import com.enonic.wem.api.security.auth.UsernamePasswordAuthToken;
+import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
 
 @Path(ResourceConstants.REST_ROOT + "auth")
 @Produces(MediaType.APPLICATION_JSON)
 public final class AuthResource
+    implements JaxRsComponent
 {
     private SecurityService securityService;
 

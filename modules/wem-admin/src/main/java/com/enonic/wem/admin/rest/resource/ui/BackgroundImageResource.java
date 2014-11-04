@@ -11,9 +11,11 @@ import javax.ws.rs.core.Response;
 
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.core.home.HomeDir;
+import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
 
 @Path(ResourceConstants.REST_ROOT + "ui")
 public final class BackgroundImageResource
+    implements JaxRsComponent
 {
     private static final int A_DAY_IN_SECONDS = 60 * 60 * 24;
 

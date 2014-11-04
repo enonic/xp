@@ -17,12 +17,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.enonic.wem.admin.json.JsonSerializable;
 import com.enonic.wem.admin.json.ObjectMapperHelper;
+import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
 
 
 @Provider
 @Produces(MediaType.APPLICATION_JSON)
 public final class JsonSerializableProvider
-    implements MessageBodyWriter<JsonSerializable>
+    implements MessageBodyWriter<JsonSerializable>, JaxRsComponent
 {
     private final ObjectMapper mapper;
 

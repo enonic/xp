@@ -17,18 +17,20 @@ import org.apache.commons.fileupload.FileItem;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.admin.json.JsonResult;
 import com.enonic.wem.admin.rest.multipart.MultipartForm;
+import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.blob.BlobService;
+import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 @Path(ResourceConstants.REST_ROOT + "blob")
 @Produces(MediaType.APPLICATION_JSON)
 public final class BlobResource
+    implements JaxRsComponent
 {
     private BlobService blobService;
 

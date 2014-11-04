@@ -9,9 +9,11 @@ import javax.ws.rs.core.Response;
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.core.initializer.StartupInitializer;
 import com.enonic.wem.servlet.ServletRequestUrlHelper;
+import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
 
 @Path(ResourceConstants.REST_ROOT + "tools")
 public final class ToolsResource
+    implements JaxRsComponent
 {
     private StartupInitializer startupInitializer;
 

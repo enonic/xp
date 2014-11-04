@@ -27,6 +27,7 @@ import com.enonic.wem.api.content.attachment.GetAttachmentParameters;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.thumb.Thumbnail;
 import com.enonic.wem.api.data.Property;
+import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
 
 import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter.ScaleMax;
 import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter.ScaleSquareFilter;
@@ -34,7 +35,8 @@ import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.Imag
 
 @Path(ResourceConstants.REST_ROOT + "content/icon")
 @Produces("image/*")
-public class ContentIconResource
+public final class ContentIconResource
+    implements JaxRsComponent
 {
     private static final ContentImageHelper helper = new ContentImageHelper();
 

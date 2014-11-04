@@ -13,40 +13,29 @@
   </bean>
 
   <service auto-export="interfaces">
-    <bean class="com.enonic.wem.admin.app.JaxRsResources">
-      <property name="resources">
-        <list>
-          <bean class="com.enonic.wem.admin.app.MainResource">
-            <property name="resourceLocator" ref="resourceLocator"/>
-          </bean>
-          <bean class="com.enonic.wem.admin.rest.provider.JsonObjectProvider"/>
-          <bean class="com.enonic.wem.admin.rest.provider.JsonSerializableProvider"/>
-          <bean class="com.enonic.wem.admin.rest.multipart.MultipartFormReader"/>
-          <bean class="com.enonic.wem.admin.rest.provider.RenderedImageProvider"/>
-          <ref component-id="backgroundImageResource"/>
-          <ref component-id="toolsResource"/>
-          <bean class="com.enonic.wem.admin.rest.resource.status.StatusResource"/>
-          <ref component-id="authResource"/>
-          <ref component-id="contentImageResource"/>
-          <ref component-id="contentIconResource"/>
-          <ref component-id="contentAttachmentResource"/>
-          <ref component-id="blobResource"/>
-          <ref component-id="moduleResource"/>
-          <ref component-id="relationshipResource"/>
-          <ref component-id="relationshipTypeResource"/>
-          <ref component-id="contentResource"/>
-          <ref component-id="securityResource"/>
-          <ref component-id="pageResource"/>
-          <ref component-id="mixinResource"/>
-          <ref component-id="contentTypeResource"/>
-          <ref component-id="pageTemplateResource"/>
-          <ref component-id="pageDescriptorResource"/>
-          <ref component-id="partDescriptorResource"/>
-          <ref component-id="layoutDescriptorResource"/>
-          <ref component-id="metadataSchemaResource"/>
-        </list>
-      </property>
+    <bean class="com.enonic.wem.admin.app.MainResource">
+      <property name="resourceLocator" ref="resourceLocator"/>
     </bean>
+  </service>
+
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.admin.rest.provider.JsonObjectProvider"/>
+  </service>
+
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.admin.rest.provider.JsonSerializableProvider"/>
+  </service>
+
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.admin.rest.multipart.MultipartFormReader"/>
+  </service>
+
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.admin.rest.provider.RenderedImageProvider"/>
+  </service>
+
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.admin.rest.resource.status.StatusResource"/>
   </service>
 
 </blueprint>

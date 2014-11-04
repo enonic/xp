@@ -33,99 +33,139 @@
 
   <reference id="metadataSchemaService" interface="com.enonic.wem.api.schema.metadata.MetadataSchemaService"/>
 
-  <bean id="backgroundImageResource" class="com.enonic.wem.admin.rest.resource.ui.BackgroundImageResource"/>
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.admin.rest.resource.ui.BackgroundImageResource"/>
+  </service>
 
-  <bean id="toolsResource" class="com.enonic.wem.admin.rest.resource.tools.ToolsResource">
-    <property name="startupInitializer" ref="startupInitializer"/>
-  </bean>
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.admin.rest.resource.tools.ToolsResource">
+      <property name="startupInitializer" ref="startupInitializer"/>
+    </bean>
+  </service>
 
-  <bean id="contentImageResource" class="com.enonic.wem.admin.rest.resource.content.ContentImageResource">
-    <property name="attachmentService" ref="attachmentService"/>
-    <property name="contentService" ref="contentService"/>
-    <property name="contentTypeService" ref="contentTypeService"/>
-    <property name="blobService" ref="blobService"/>
-  </bean>
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.admin.rest.resource.content.ContentImageResource">
+      <property name="attachmentService" ref="attachmentService"/>
+      <property name="contentService" ref="contentService"/>
+      <property name="contentTypeService" ref="contentTypeService"/>
+      <property name="blobService" ref="blobService"/>
+    </bean>
+  </service>
 
-  <bean id="contentIconResource" class="com.enonic.wem.admin.rest.resource.content.ContentIconResource">
-    <property name="attachmentService" ref="attachmentService"/>
-    <property name="contentService" ref="contentService"/>
-    <property name="blobService" ref="blobService"/>
-  </bean>
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.admin.rest.resource.content.ContentIconResource">
+      <property name="attachmentService" ref="attachmentService"/>
+      <property name="contentService" ref="contentService"/>
+      <property name="blobService" ref="blobService"/>
+    </bean>
+  </service>
 
-  <bean id="contentAttachmentResource" class="com.enonic.wem.admin.rest.resource.content.ContentAttachmentResource">
-    <property name="attachmentService" ref="attachmentService"/>
-  </bean>
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.admin.rest.resource.content.ContentAttachmentResource">
+      <property name="attachmentService" ref="attachmentService"/>
+    </bean>
+  </service>
 
-  <bean id="blobResource" class="com.enonic.wem.admin.rest.resource.blob.BlobResource">
-    <property name="blobService" ref="blobService"/>
-  </bean>
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.admin.rest.resource.blob.BlobResource">
+      <property name="blobService" ref="blobService"/>
+    </bean>
+  </service>
 
-  <bean id="moduleResource" class="com.enonic.wem.admin.rest.resource.module.ModuleResource">
-    <property name="bundleContext" ref="blueprintBundleContext"/>
-    <property name="moduleService" ref="moduleService"/>
-  </bean>
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.admin.rest.resource.module.ModuleResource">
+      <property name="bundleContext" ref="blueprintBundleContext"/>
+      <property name="moduleService" ref="moduleService"/>
+    </bean>
+  </service>
 
-  <bean id="relationshipResource" class="com.enonic.wem.admin.rest.resource.relationship.RelationshipResource">
-    <property name="relationshipService" ref="relationshipService"/>
-  </bean>
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.admin.rest.resource.relationship.RelationshipResource">
+      <property name="relationshipService" ref="relationshipService"/>
+    </bean>
+  </service>
 
-  <bean id="relationshipTypeResource" class="com.enonic.wem.admin.rest.resource.schema.relationship.RelationshipTypeResource">
-    <property name="relationshipTypeService" ref="relationshipTypeService"/>
-  </bean>
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.admin.rest.resource.schema.relationship.RelationshipTypeResource">
+      <property name="relationshipTypeService" ref="relationshipTypeService"/>
+    </bean>
+  </service>
 
-  <bean id="contentResource" class="com.enonic.wem.admin.rest.resource.content.ContentResource">
-    <property name="contentService" ref="contentService"/>
-    <property name="contentTypeService" ref="contentTypeService"/>
-    <property name="attachmentService" ref="attachmentService"/>
-    <property name="mixinService" ref="mixinService"/>
-    <property name="securityService" ref="securityService"/>
-  </bean>
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.admin.rest.resource.content.ContentResource">
+      <property name="contentService" ref="contentService"/>
+      <property name="contentTypeService" ref="contentTypeService"/>
+      <property name="attachmentService" ref="attachmentService"/>
+      <property name="mixinService" ref="mixinService"/>
+      <property name="securityService" ref="securityService"/>
+    </bean>
+  </service>
 
-  <bean id="securityResource" class="com.enonic.wem.admin.rest.resource.security.SecurityResource">
-    <property name="securityService" ref="securityService"/>
-  </bean>
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.admin.rest.resource.security.SecurityResource">
+      <property name="securityService" ref="securityService"/>
+    </bean>
+  </service>
 
-  <bean id="pageResource" class="com.enonic.wem.admin.rest.resource.content.page.PageResource">
-    <property name="contentTypeService" ref="contentTypeService"/>
-    <property name="attachmentService" ref="attachmentService"/>
-    <property name="mixinService" ref="mixinService"/>
-    <property name="pageService" ref="pageService"/>
-  </bean>
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.admin.rest.resource.content.page.PageResource">
+      <property name="contentTypeService" ref="contentTypeService"/>
+      <property name="attachmentService" ref="attachmentService"/>
+      <property name="mixinService" ref="mixinService"/>
+      <property name="pageService" ref="pageService"/>
+    </bean>
+  </service>
 
-  <bean id="mixinResource" class="com.enonic.wem.admin.rest.resource.schema.mixin.MixinResource">
-    <property name="mixinService" ref="mixinService"/>
-  </bean>
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.admin.rest.resource.schema.mixin.MixinResource">
+      <property name="mixinService" ref="mixinService"/>
+    </bean>
+  </service>
 
-  <bean id="contentTypeResource" class="com.enonic.wem.admin.rest.resource.schema.content.ContentTypeResource">
-    <property name="contentTypeService" ref="contentTypeService"/>
-  </bean>
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.admin.rest.resource.schema.content.ContentTypeResource">
+      <property name="contentTypeService" ref="contentTypeService"/>
+    </bean>
+  </service>
 
-  <bean id="pageTemplateResource" class="com.enonic.wem.admin.rest.resource.content.page.PageTemplateResource">
-    <property name="pageTemplateService" ref="pageTemplateService"/>
-    <property name="contentService" ref="contentService"/>
-    <property name="contentTypeService" ref="contentTypeService"/>
-    <property name="attachmentService" ref="attachmentService"/>
-    <property name="mixinService" ref="mixinService"/>
-  </bean>
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.admin.rest.resource.content.page.PageTemplateResource">
+      <property name="pageTemplateService" ref="pageTemplateService"/>
+      <property name="contentService" ref="contentService"/>
+      <property name="contentTypeService" ref="contentTypeService"/>
+      <property name="attachmentService" ref="attachmentService"/>
+      <property name="mixinService" ref="mixinService"/>
+    </bean>
+  </service>
 
-  <bean id="pageDescriptorResource" class="com.enonic.wem.admin.rest.resource.content.page.PageDescriptorResource">
-    <property name="pageDescriptorService" ref="pageDescriptorService"/>
-  </bean>
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.admin.rest.resource.content.page.PageDescriptorResource">
+      <property name="pageDescriptorService" ref="pageDescriptorService"/>
+    </bean>
+  </service>
 
-  <bean id="partDescriptorResource" class="com.enonic.wem.admin.rest.resource.content.page.part.PartDescriptorResource">
-    <property name="partDescriptorService" ref="partDescriptorService"/>
-  </bean>
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.admin.rest.resource.content.page.part.PartDescriptorResource">
+      <property name="partDescriptorService" ref="partDescriptorService"/>
+    </bean>
+  </service>
 
-  <bean id="layoutDescriptorResource" class="com.enonic.wem.admin.rest.resource.content.page.layout.LayoutDescriptorResource">
-    <property name="layoutDescriptorService" ref="layoutDescriptorService"/>
-  </bean>
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.admin.rest.resource.content.page.layout.LayoutDescriptorResource">
+      <property name="layoutDescriptorService" ref="layoutDescriptorService"/>
+    </bean>
+  </service>
 
-  <bean id="metadataSchemaResource" class="com.enonic.wem.admin.rest.resource.schema.metadata.MetadataSchemaResource">
-    <property name="metadataSchemaService" ref="metadataSchemaService"/>
-  </bean>
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.admin.rest.resource.schema.metadata.MetadataSchemaResource">
+      <property name="metadataSchemaService" ref="metadataSchemaService"/>
+    </bean>
+  </service>
 
-  <bean id="authResource" class="com.enonic.wem.admin.rest.resource.auth.AuthResource">
-    <property name="securityService" ref="securityService"/>
-  </bean>
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.admin.rest.resource.auth.AuthResource">
+      <property name="securityService" ref="securityService"/>
+    </bean>
+  </service>
 
 </blueprint>

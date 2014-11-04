@@ -86,11 +86,13 @@ import com.enonic.wem.api.security.PrincipalQueryResult;
 import com.enonic.wem.api.security.Principals;
 import com.enonic.wem.api.security.SecurityService;
 import com.enonic.wem.api.workspace.Workspaces;
+import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
 
 @SuppressWarnings("UnusedDeclaration")
 @Path(ResourceConstants.REST_ROOT + "content")
 @Produces(MediaType.APPLICATION_JSON)
-public class ContentResource
+public final class ContentResource
+    implements JaxRsComponent
 {
     public static final String DEFAULT_SORT_FIELD = "modifiedTime";
 

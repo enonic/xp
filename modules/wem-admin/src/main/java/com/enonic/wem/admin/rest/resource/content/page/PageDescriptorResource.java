@@ -18,10 +18,12 @@ import com.enonic.wem.api.content.page.PageDescriptorService;
 import com.enonic.wem.api.content.page.PageDescriptors;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeys;
+import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
 
 @Path(ResourceConstants.REST_ROOT + "content/page/descriptor")
 @Produces(MediaType.APPLICATION_JSON)
-public class PageDescriptorResource
+public final class PageDescriptorResource
+    implements JaxRsComponent
 {
     private PageDescriptorService pageDescriptorService;
 

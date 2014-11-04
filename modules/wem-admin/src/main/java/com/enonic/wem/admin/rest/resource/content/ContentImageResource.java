@@ -26,13 +26,15 @@ import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
+import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
 
 import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter.ScaleMax;
 
 
 @Path(ResourceConstants.REST_ROOT + "content/image")
 @Produces("image/*")
-public class ContentImageResource
+public final class ContentImageResource
+    implements JaxRsComponent
 {
     private static final ContentImageHelper helper = new ContentImageHelper();
 

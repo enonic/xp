@@ -17,11 +17,13 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
 
+import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
+
 @Provider
 @Produces("image/*")
 @Consumes({"image/*", "application/octet-stream"})
 public final class RenderedImageProvider
-    implements MessageBodyWriter<RenderedImage>
+    implements MessageBodyWriter<RenderedImage>, JaxRsComponent
 {
     @Override
     public boolean isWriteable( final Class<?> type, final Type genericType, final Annotation[] annotations, final MediaType mediaType )

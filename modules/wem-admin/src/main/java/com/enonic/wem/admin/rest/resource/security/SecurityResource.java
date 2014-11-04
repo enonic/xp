@@ -18,14 +18,15 @@ import com.enonic.wem.api.security.Principals;
 import com.enonic.wem.api.security.SecurityService;
 import com.enonic.wem.api.security.UserStoreKey;
 import com.enonic.wem.api.security.UserStores;
+import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
 
 
 @SuppressWarnings("UnusedDeclaration")
 @Path(ResourceConstants.REST_ROOT + "security")
 @Produces(MediaType.APPLICATION_JSON)
-public class SecurityResource
+public final class SecurityResource
+    implements JaxRsComponent
 {
-
     private SecurityService securityService;
 
     @GET

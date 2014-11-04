@@ -18,10 +18,12 @@ import org.apache.commons.fileupload.FileUpload;
 import org.apache.commons.fileupload.RequestContext;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 
+import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
+
 @Provider
 @Consumes(MediaType.MULTIPART_FORM_DATA)
 public final class MultipartFormReader
-    implements MessageBodyReader<MultipartForm>
+    implements MessageBodyReader<MultipartForm>, JaxRsComponent
 {
     private final FileUpload fileUpload;
 

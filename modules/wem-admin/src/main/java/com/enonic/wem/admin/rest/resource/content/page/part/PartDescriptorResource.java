@@ -16,10 +16,12 @@ import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.content.page.part.PartDescriptorService;
 import com.enonic.wem.api.content.page.part.PartDescriptors;
 import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
 
 @Path(ResourceConstants.REST_ROOT + "content/page/part/descriptor")
 @Produces(MediaType.APPLICATION_JSON)
-public class PartDescriptorResource
+public final class PartDescriptorResource
+    implements JaxRsComponent
 {
     private PartDescriptorService partDescriptorService;
 
