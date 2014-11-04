@@ -43,6 +43,7 @@ import com.enonic.wem.api.security.auth.EmailPasswordAuthToken;
 import com.enonic.wem.api.security.auth.UsernamePasswordAuthToken;
 import com.enonic.wem.core.entity.CreateNodeParams;
 import com.enonic.wem.core.entity.FindNodesByQueryResult;
+import com.enonic.wem.core.entity.NoNodeAtPathFoundException;
 import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodePath;
@@ -178,9 +179,15 @@ public final class SecurityServiceImpl
         // TODO should look up user based on User.getLogin() instead of PrincipalKey.getId()
         final PrincipalKey key = PrincipalKey.ofUser( userStore, username );
         final NodePath path = PrincipalPathTranslator.toPath( key );
-        final Node user = this.nodeService.getByPath( path );
-
-        return PrincipalNodeTranslator.userFromNode( user );
+        try
+        {
+            final Node user = this.nodeService.getByPath( path );
+            return PrincipalNodeTranslator.userFromNode( user );
+        }
+        catch ( NoNodeAtPathFoundException e )
+        {
+            return null;
+        }
     }
 
     private User findByEmail( final UserStoreKey userStore, final String email )
