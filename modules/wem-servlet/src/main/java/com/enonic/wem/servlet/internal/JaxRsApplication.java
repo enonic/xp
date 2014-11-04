@@ -15,7 +15,7 @@ final class JaxRsApplication
 
     public JaxRsApplication()
     {
-        this.singletons = Sets.newHashSet();
+        this.singletons = Sets.newConcurrentHashSet();
     }
 
     @Override
