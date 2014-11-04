@@ -3,6 +3,7 @@ package com.enonic.wem.core.initializer;
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.initializer.DataInitializer;
 import com.enonic.wem.api.repository.Repository;
+import com.enonic.wem.api.security.SystemConstants;
 import com.enonic.wem.core.repository.RepositoryInitializer;
 import com.enonic.wem.core.security.SecurityInitializer;
 
@@ -39,15 +40,19 @@ public final class StartupInitializerImpl
 
     private void initializeRepositories( final boolean reinit )
     {
-        final Repository contentRepo = ContentConstants.CONTENT_REPO;
+        initializeRepository( ContentConstants.CONTENT_REPO, reinit );
+        initializeRepository( SystemConstants.SYSTEM_REPO, reinit );
+    }
 
-        if ( reinit || !repositoryInitializer.isInitialized( contentRepo ) )
+    private void initializeRepository( final Repository repository, final boolean reInit )
+    {
+        if ( reInit || !repositoryInitializer.isInitialized( repository ) )
         {
-            repositoryInitializer.init( contentRepo );
+            repositoryInitializer.init( repository );
         }
         else
         {
-            repositoryInitializer.waitForInitialized( contentRepo );
+            repositoryInitializer.waitForInitialized( repository );
         }
     }
 

@@ -50,6 +50,8 @@ import com.enonic.wem.core.entity.NodeService;
 import com.enonic.wem.core.entity.dao.NodeNotFoundException;
 import com.enonic.wem.core.entity.query.NodeQuery;
 
+import static com.enonic.wem.api.security.SystemConstants.CONTEXT_USER_STORES;
+
 public final class SecurityServiceImpl
     implements SecurityService
 {
@@ -112,16 +114,18 @@ public final class SecurityServiceImpl
     @Override
     public Principals getPrincipals( final UserStoreKey userStore, final PrincipalType type )
     {
-        final FindNodesByQueryResult result = this.nodeService.findByQuery( NodeQuery.create().
-            addQueryFilter( ValueFilter.create().
-                fieldName( PrincipalNodeTranslator.USERSTORE_KEY ).
-                addValue( Value.newString( userStore.toString() ) ).
-                build() ).
-            addQueryFilter( ValueFilter.create().
-                fieldName( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY ).
-                addValue( Value.newString( type.toString() ) ).
-                build() ).
-            build() );
+        final FindNodesByQueryResult result = CONTEXT_USER_STORES.runWith( () -> {
+            return this.nodeService.findByQuery( NodeQuery.create().
+                addQueryFilter( ValueFilter.create().
+                    fieldName( PrincipalNodeTranslator.USERSTORE_KEY ).
+                    addValue( Value.newString( userStore.toString() ) ).
+                    build() ).
+                addQueryFilter( ValueFilter.create().
+                    fieldName( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY ).
+                    addValue( Value.newString( type.toString() ) ).
+                    build() ).
+                build() );
+        } );
 
         return PrincipalNodeTranslator.fromNodes( result.getNodes() );
     }
@@ -181,7 +185,7 @@ public final class SecurityServiceImpl
         final NodePath path = PrincipalPathTranslator.toPath( key );
         try
         {
-            final Node user = this.nodeService.getByPath( path );
+            final Node user = CONTEXT_USER_STORES.runWith( () -> this.nodeService.getByPath( path ) );
             return PrincipalNodeTranslator.userFromNode( user );
         }
         catch ( NodeNotFoundException e )
@@ -226,7 +230,7 @@ public final class SecurityServiceImpl
         }
 
         final CreateNodeParams createNodeParams = PrincipalNodeTranslator.toCreateNodeParams( user );
-        final Node node = nodeService.create( createNodeParams );
+        final Node node = CONTEXT_USER_STORES.runWith( () -> nodeService.create( createNodeParams ) );
 
         return PrincipalNodeTranslator.userFromNode( node );
     }
@@ -256,7 +260,7 @@ public final class SecurityServiceImpl
 
         try
         {
-            final Node node = this.nodeService.getById( NodeId.from( userKey.toString() ) );
+            final Node node = CONTEXT_USER_STORES.runWith( () -> this.nodeService.getById( NodeId.from( userKey.toString() ) ) );
             return Optional.ofNullable( PrincipalNodeTranslator.userFromNode( node ) );
         }
         catch ( Exception e )
@@ -274,7 +278,7 @@ public final class SecurityServiceImpl
             build();
 
         final CreateNodeParams createGroupParams = PrincipalNodeTranslator.toCreateNodeParams( group );
-        final Node node = this.nodeService.create( createGroupParams );
+        final Node node = CONTEXT_USER_STORES.runWith( () -> this.nodeService.create( createGroupParams ) );
 
         return PrincipalNodeTranslator.groupFromNode( node );
     }
@@ -306,7 +310,7 @@ public final class SecurityServiceImpl
 
         try
         {
-            final Node node = this.nodeService.getById( NodeId.from( groupKey.toString() ) );
+            final Node node = CONTEXT_USER_STORES.runWith( () -> this.nodeService.getById( NodeId.from( groupKey.toString() ) ) );
             return Optional.ofNullable( PrincipalNodeTranslator.groupFromNode( node ) );
         }
         catch ( Exception e )
@@ -324,7 +328,7 @@ public final class SecurityServiceImpl
             build();
 
         final CreateNodeParams createNodeParams = PrincipalNodeTranslator.toCreateNodeParams( role );
-        final Node node = this.nodeService.create( createNodeParams );
+        final Node node = CONTEXT_USER_STORES.runWith( () -> this.nodeService.create( createNodeParams ) );
 
         return PrincipalNodeTranslator.roleFromNode( node );
     }
@@ -355,7 +359,7 @@ public final class SecurityServiceImpl
 
         try
         {
-            final Node node = this.nodeService.getById( NodeId.from( roleKey.toString() ) );
+            final Node node = CONTEXT_USER_STORES.runWith( () -> this.nodeService.getById( NodeId.from( roleKey.toString() ) ) );
             return Optional.ofNullable( PrincipalNodeTranslator.roleFromNode( node ) );
         }
         catch ( Exception e )
