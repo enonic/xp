@@ -5,9 +5,9 @@ import com.google.common.base.Strings;
 
 import com.enonic.wem.api.Name;
 
-abstract class DuplicateValueResolver
+public abstract class DuplicateValueResolver
 {
-    private final static String COPY_TOKEN = "copy";
+    public final static String COPY_TOKEN = "copy";
 
     private final static String NAME_SEPARATOR = "-";
 

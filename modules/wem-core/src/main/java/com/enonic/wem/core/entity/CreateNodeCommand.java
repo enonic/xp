@@ -7,7 +7,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.index.ChildOrder;
 
-final class CreateNodeCommand
+public final class CreateNodeCommand
     extends AbstractNodeCommand
 {
     private final CreateNodeParams params;
@@ -19,7 +19,7 @@ final class CreateNodeCommand
         this.params = builder.params;
     }
 
-    Node execute()
+    public Node execute()
     {
         Preconditions.checkNotNull( params.getParent(), "Path of parent Node must be specified" );
         Preconditions.checkArgument( params.getParent().isAbsolute(), "Path to parent Node must be absolute: " + params.getParent() );
@@ -61,12 +61,12 @@ final class CreateNodeCommand
         }
     }
 
-    static Builder create()
+    public static Builder create()
     {
         return new Builder();
     }
 
-    static class Builder
+    public static class Builder
         extends AbstractNodeCommand.Builder<Builder>
     {
         private CreateNodeParams params;
@@ -76,7 +76,7 @@ final class CreateNodeCommand
             super();
         }
 
-        Builder params( final CreateNodeParams params )
+        public Builder params( final CreateNodeParams params )
         {
             this.params = params;
             return this;

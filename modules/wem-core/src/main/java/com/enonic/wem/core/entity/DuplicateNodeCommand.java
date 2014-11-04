@@ -2,10 +2,12 @@ package com.enonic.wem.core.entity;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.core.index.query.QueryService;
+
 public class DuplicateNodeCommand
     extends AbstractFindNodeCommand
 {
-    private NodeId nodeId;
+    private final NodeId nodeId;
 
     private DuplicateNodeCommand( final Builder builder )
     {
@@ -42,7 +44,7 @@ public class DuplicateNodeCommand
         final FindNodesByParentResult findNodesByParentResult = doFindNodesByParent( FindNodesByParentParams.create().
             parentPath( originalParent.path() ).
             from( 0 ).
-            size( 100 ).
+            size( QueryService.GET_ALL_SIZE_FLAG ).
             build() );
 
         for ( final Node node : findNodesByParentResult.getNodes() )

@@ -19,7 +19,7 @@ public abstract class AbstractElasticsearchIntegrationTest
 {
     protected ElasticsearchDao elasticsearchDao;
 
-    protected ElasticsearchIndexService elasticsearchIndexService;
+    private ElasticsearchIndexService elasticsearchIndexService;
 
     protected Client client;
 
@@ -50,7 +50,7 @@ public abstract class AbstractElasticsearchIntegrationTest
     }
 
 
-    protected String getContentRepoSearchDefaultSettings()
+    String getContentRepoSearchDefaultSettings()
     {
         return RepositoryTestSearchIndexSettingsProvider.getSettings( ContentConstants.CONTENT_REPO );
     }
@@ -60,7 +60,7 @@ public abstract class AbstractElasticsearchIntegrationTest
     {
         return ImmutableSettings.settingsBuilder().
             put( "store.type", "memory" ).
-            put( "path.data", ".tmp/es-data" ).
+            put( "path.data", "target/tmp/es-data" ).
             put( super.nodeSettings( nodeOrdinal ) ).
             build();
     }

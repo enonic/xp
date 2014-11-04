@@ -52,9 +52,9 @@ public class FindNodesByParentParams
     {
         private NodePath parentPath;
 
-        private Integer size;
+        private Integer size = 10;
 
-        private Integer from;
+        private Integer from = 0;
 
         private ChildOrder childOrder;
 

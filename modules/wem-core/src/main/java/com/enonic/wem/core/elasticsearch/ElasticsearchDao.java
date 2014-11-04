@@ -29,6 +29,7 @@ import com.enonic.wem.core.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.core.elasticsearch.result.SearchResultFactory;
 import com.enonic.wem.core.elasticsearch.xcontent.StoreDocumentXContentBuilderFactory;
 import com.enonic.wem.core.index.IndexException;
+import com.enonic.wem.core.index.query.QueryService;
 import com.enonic.wem.core.index.result.SearchResult;
 
 public class ElasticsearchDao
@@ -37,8 +38,6 @@ public class ElasticsearchDao
     private final static Logger LOG = LoggerFactory.getLogger( ElasticsearchDao.class );
 
     private static final boolean DEFAULT_REFRESH = true;
-
-    private static final int GET_ALL_SIZE_FLAG = -1;
 
     private final String searchPreference = "_local";
 
@@ -103,6 +102,7 @@ public class ElasticsearchDao
     public SearchResult search( final ElasticsearchQuery query )
     {
         final SearchSourceBuilder searchSource = query.toSearchSourceBuilder();
+        searchSource.size( resolveSize( query ) );
 
         //System.out.println( searchSource.toString() );
 
@@ -117,7 +117,7 @@ public class ElasticsearchDao
 
     private int resolveSize( final ElasticsearchQuery query )
     {
-        if ( query.getSize() == GET_ALL_SIZE_FLAG )
+        if ( query.getSize() == QueryService.GET_ALL_SIZE_FLAG )
         {
             return safeLongToInt( this.count( query ) );
         }
