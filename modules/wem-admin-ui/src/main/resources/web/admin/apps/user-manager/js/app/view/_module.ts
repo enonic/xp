@@ -1,2 +1,2 @@
-///<reference path='PrincipalItemStatisticsPanel.ts' />
-///<reference path='PrincipalItemHeader.ts' />
+///<reference path='UserItemStatisticsPanel.ts' />
+///<reference path='UserItemHeader.ts' />

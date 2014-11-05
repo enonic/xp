@@ -25,5 +25,5 @@ function startApplication() {
 }
 
 module components {
-    export var detailPanel: app.browse.PrincipalBrowseItemPanel;
+    export var detailPanel: app.browse.UserBrowseItemPanel;
 }

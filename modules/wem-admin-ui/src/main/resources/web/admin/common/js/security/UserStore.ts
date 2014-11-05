@@ -1,22 +1,32 @@
 module api.security {
 
-    export class UserStore {
+    export class UserStore extends UserTreeGridItem {
 
-        private displayName: string;
         private key: UserStoreKey;
 
         constructor(builder: UserStoreBuilder) {
-            this.displayName = builder.displayName;
+            super(builder.displayName)
             this.key = builder.key;
         }
 
-        getDisplayName(): string {
-            return this.displayName;
-        }
 
         getKey(): UserStoreKey {
             return this.key;
         }
+
+        equals(o: api.Equitable): boolean {
+
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, UserStore)) {
+                return false;
+            }
+            if (!super.equals(o)) {
+                return false;
+            }
+
+            var other = <UserStore> o;
+            return this.key.equals(other.key);
+        }
+
 
         static create(): UserStoreBuilder {
             return new UserStoreBuilder();

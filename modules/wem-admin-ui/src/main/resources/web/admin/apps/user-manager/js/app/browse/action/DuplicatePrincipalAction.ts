@@ -3,7 +3,7 @@ module app.browse.action {
     import Action = api.ui.Action;
     export class DuplicatePrincipalAction extends Action {
 
-        constructor(grid: PrincipalTreeGrid) {
+        constructor(grid: UserItemTreeGrid) {
             super("Duplicate");
             this.setEnabled(false);
             this.onExecuted(() => {
@@ -13,7 +13,7 @@ module app.browse.action {
             });
         }
 
-        private duplicate(source: api.security.Principal) {
+        private duplicate(source: api.security.UserTreeGridItem) {
             console.log('Duplicate principals action');
         }
     }
