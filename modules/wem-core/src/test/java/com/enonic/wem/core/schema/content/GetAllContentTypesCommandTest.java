@@ -4,9 +4,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.data.Data;
-import com.enonic.wem.api.data.DataSet;
-import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.content.ContentType;
@@ -16,7 +13,6 @@ import com.enonic.wem.api.schema.content.GetAllContentTypesParams;
 import com.enonic.wem.api.schema.mixin.GetMixinParams;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinService;
-import com.enonic.wem.core.form.FormItemsDataSerializer;
 import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
 import static com.enonic.wem.api.form.Form.newForm;
@@ -32,8 +28,6 @@ public class GetAllContentTypesCommandTest
     private MixinService mixinService;
 
     private ContentTypeDao contentTypeDao;
-
-    private static final FormItemsDataSerializer SERIALIZER_FOR_FORM_ITEM_TO_DATA = new FormItemsDataSerializer();
 
     @Before
     public void setUp()
@@ -88,7 +82,6 @@ public class GetAllContentTypesCommandTest
             build();
 
         final Form form = newForm().addFormItem( newMixinReference( mixin ).name( "myMixin" ).build() ).build();
-        final RootDataSet rootDataSetWithForm = createRootDataSetWithForm( form );
 
         Mockito.when( mixinService.getByName( Mockito.isA( GetMixinParams.class ) ) ).thenReturn( mixin );
 
@@ -114,22 +107,6 @@ public class GetAllContentTypesCommandTest
         assertNull( result.get( 0 ).form().getFormItem( "myMixin" ) );
     }
 
-    private RootDataSet createRootDataSetWithForm( final Form form )
-    {
-        final RootDataSet rootDataSet = new RootDataSet();
-
-        final DataSet formAsDataSet = new DataSet( "form" );
-        final DataSet formItems = new DataSet( "formItems" );
-        formAsDataSet.add( formItems );
-
-        for ( Data data : SERIALIZER_FOR_FORM_ITEM_TO_DATA.toData( form.getFormItems() ) )
-        {
-            formItems.add( data );
-        }
-        rootDataSet.add( formAsDataSet );
-
-        return rootDataSet;
-    }
 
     private void verifyContentType( final String contentTypeName, final String displayName, final String description,
                                     final ContentTypes result )
