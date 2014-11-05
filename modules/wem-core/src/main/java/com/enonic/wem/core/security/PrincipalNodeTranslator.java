@@ -147,6 +147,7 @@ abstract class PrincipalNodeTranslator
             login( getStringValue( rootDataSet, LOGIN_KEY ) ).
             key( PrincipalKeyNodeTranslator.toKey( node ) ).
             displayName( getDisplayNameProperty( node.data() ) ).
+            modifiedTime( node.getModifiedTime() ).
             build();
     }
 
@@ -157,6 +158,7 @@ abstract class PrincipalNodeTranslator
         return Group.create().
             key( PrincipalKeyNodeTranslator.toKey( node ) ).
             displayName( getDisplayNameProperty( node.data() ) ).
+            modifiedTime( node.getModifiedTime() ).
             build();
     }
 
@@ -167,6 +169,7 @@ abstract class PrincipalNodeTranslator
         return Role.create().
             key( PrincipalKeyNodeTranslator.toKey( node ) ).
             displayName( getDisplayNameProperty( node.data() ) ).
+            modifiedTime( node.getModifiedTime() ).
             build();
     }
 

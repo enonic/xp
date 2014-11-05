@@ -1,5 +1,7 @@
 package com.enonic.wem.core.security;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -61,8 +63,11 @@ public final class SecurityServiceImpl
 
     private NodeService nodeService;
 
+    private Clock clock;
+
     public SecurityServiceImpl()
     {
+        this.clock = Clock.systemUTC();
         this.userStores = new CopyOnWriteArrayList<>();
         this.relationshipTable = Multimaps.synchronizedSetMultimap( HashMultimap.create() );
 
@@ -222,6 +227,7 @@ public final class SecurityServiceImpl
             login( createUser.getLogin() ).
             email( createUser.getEmail() ).
             displayName( createUser.getDisplayName() ).
+            modifiedTime( Instant.now( clock ) ).
             build();
 
         if ( createUser.getPassword() != null )
@@ -275,6 +281,7 @@ public final class SecurityServiceImpl
         final Group group = Group.create().
             key( createGroup.getKey() ).
             displayName( createGroup.getDisplayName() ).
+            modifiedTime( Instant.now( clock ) ).
             build();
 
         final CreateNodeParams createGroupParams = PrincipalNodeTranslator.toCreateNodeParams( group );
@@ -325,6 +332,7 @@ public final class SecurityServiceImpl
         final Role role = Role.create().
             key( createRole.getKey() ).
             displayName( createRole.getDisplayName() ).
+            modifiedTime( Instant.now( clock ) ).
             build();
 
         final CreateNodeParams createNodeParams = PrincipalNodeTranslator.toCreateNodeParams( role );
@@ -419,5 +427,10 @@ public final class SecurityServiceImpl
     public void setNodeService( final NodeService nodeService )
     {
         this.nodeService = nodeService;
+    }
+
+    public void setClock( final Clock clock )
+    {
+        this.clock = clock;
     }
 }

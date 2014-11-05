@@ -1,5 +1,9 @@
 package com.enonic.wem.core.security;
 
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
+
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -44,6 +48,10 @@ import static org.junit.Assert.*;
 
 public class SecurityServiceImplTest
 {
+
+    private static final Instant NOW = Instant.ofEpochSecond( 0 );
+
+    private static Clock clock = Clock.fixed( NOW, ZoneId.of( "UTC" ) );
 
     private static final UserStoreKey SYSTEM = UserStoreKey.system();
 
@@ -244,6 +252,7 @@ public class SecurityServiceImplTest
             id( NodeId.from( user.getKey().toString() ) ).
             name( PrincipalKeyNodeTranslator.toNodeName( user.getKey() ) ).
             rootDataSet( rootDataSet ).
+            modifiedTime( Instant.now( clock ) ).
             build();
     }
 
@@ -356,6 +365,7 @@ public class SecurityServiceImplTest
         return Node.newNode().
             name( PrincipalKeyNodeTranslator.toNodeName( role.getKey() ) ).
             rootDataSet( rootDataSet ).
+            modifiedTime( Instant.now( clock ) ).
             build();
     }
 
@@ -450,6 +460,7 @@ public class SecurityServiceImplTest
             id( NodeId.from( group.getKey() ) ).
             name( PrincipalKeyNodeTranslator.toNodeName( group.getKey() ) ).
             rootDataSet( rootDataSet ).
+            modifiedTime( Instant.now( clock ) ).
             build();
     }
 

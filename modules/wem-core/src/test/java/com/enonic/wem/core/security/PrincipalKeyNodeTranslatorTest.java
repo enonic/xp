@@ -1,5 +1,9 @@
 package com.enonic.wem.core.security;
 
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
+
 import org.junit.Test;
 
 import com.enonic.wem.api.data.RootDataSet;
@@ -15,6 +19,10 @@ import static org.junit.Assert.*;
 
 public class PrincipalKeyNodeTranslatorTest
 {
+    private static final Instant NOW = Instant.ofEpochSecond( 0 );
+
+    private static Clock clock = Clock.fixed( NOW, ZoneId.of( "UTC" ) );
+
     @Test
     public void toNodeName()
         throws Exception
@@ -26,6 +34,7 @@ public class PrincipalKeyNodeTranslatorTest
             email( "rmy@enonic.com" ).
             login( "rmy" ).
             displayName( "Runar Myklebust" ).
+            modifiedTime( Instant.now( clock ) ).
             build();
 
         final String nodeName = PrincipalKeyNodeTranslator.toNodeName( user.getKey() ).toString();

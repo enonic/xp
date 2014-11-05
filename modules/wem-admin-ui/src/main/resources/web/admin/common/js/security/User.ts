@@ -9,7 +9,7 @@ module api.security {
         private loginDisabled: boolean;
 
         constructor(builder: UserBuilder) {
-            super(builder.key, builder.displayName, PrincipalType.USER);
+            super(builder.key, builder.displayName, PrincipalType.USER, builder.modifiedTime);
             this.email = builder.email;
             this.login = builder.login;
             this.loginDisabled = builder.loginDisabled;
@@ -43,6 +43,8 @@ module api.security {
 
         displayName: string;
 
+        modifiedTime: Date;
+
         email: string;
 
         login: string;
@@ -56,6 +58,7 @@ module api.security {
                 this.email = source.getEmail();
                 this.login = source.getLogin();
                 this.loginDisabled = source.isDisabled();
+                this.modifiedTime = source.getModifiedTime();
             }
         }
 
@@ -65,6 +68,7 @@ module api.security {
             this.email = json.email;
             this.login = json.login;
             this.loginDisabled = json.disabled;
+            this.modifiedTime = json.modifiedTime ? new Date(Date.parse(json.modifiedTime)) : null;
             return this;
         }
 

@@ -6,5 +6,6 @@ module api.security {
 
         displayName: string;
 
+        modifiedTime: string;
     }
 }

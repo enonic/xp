@@ -1,11 +1,18 @@
 package com.enonic.wem.api.security;
 
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
+
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
 public class PrincipalTest
 {
+    private static final Instant NOW = Instant.ofEpochSecond( 0 );
+
+    private static Clock clock = Clock.fixed( NOW, ZoneId.of( "UTC" ) );
 
     @Test
     public void testCreateUser()
@@ -15,6 +22,7 @@ public class PrincipalTest
             displayName( "my user" ).
             key( PrincipalKey.ofUser( new UserStoreKey( "myuserstore" ), "userid" ) ).
             email( "user@email" ).
+            modifiedTime( Instant.now( clock ) ).
             build();
 
         assertEquals( "userlogin", user.getLogin() );
@@ -36,6 +44,7 @@ public class PrincipalTest
         final Group group = Group.create().
             displayName( "my group" ).
             key( PrincipalKey.ofGroup( new UserStoreKey( "myuserstore" ), "groupid" ) ).
+            modifiedTime( Instant.now( clock ) ).
             build();
 
         assertEquals( "my group", group.getDisplayName() );
@@ -62,6 +71,7 @@ public class PrincipalTest
         final Role role = Role.create().
             displayName( "my role" ).
             key( PrincipalKey.ofRole( "administrators" ) ).
+            modifiedTime( Instant.now( clock ) ).
             build();
 
         assertEquals( "my role", role.getDisplayName() );

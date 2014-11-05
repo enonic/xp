@@ -1,5 +1,9 @@
 package com.enonic.wem.core.security;
 
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
+
 import org.junit.Test;
 
 import com.enonic.wem.api.data.RootDataSet;
@@ -16,6 +20,9 @@ import static org.junit.Assert.*;
 
 public class GroupNodeTranslatorTest
 {
+    private static final Instant NOW = Instant.ofEpochSecond( 0 );
+
+    private static Clock clock = Clock.fixed( NOW, ZoneId.of( "UTC" ) );
 
     @Test
     public void toCreateNode()
@@ -24,6 +31,7 @@ public class GroupNodeTranslatorTest
         final Group group = Group.create().
             displayName( "My Group" ).
             key( PrincipalKey.ofGroup( UserStoreKey.system(), "group-a" ) ).
+            modifiedTime( Instant.now( clock ) ).
             build();
 
         final CreateNodeParams createNodeParams = PrincipalNodeTranslator.toCreateNodeParams( group );
@@ -55,6 +63,7 @@ public class GroupNodeTranslatorTest
             id( NodeId.from( "id" ) ).
             name( PrincipalKeyNodeTranslator.toNodeName( groupKey ) ).
             rootDataSet( rootDataSet ).
+            modifiedTime( Instant.now( clock ) ).
             build();
 
         final Group group = PrincipalNodeTranslator.groupFromNode( node );

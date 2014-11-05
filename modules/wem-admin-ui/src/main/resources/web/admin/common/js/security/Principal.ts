@@ -8,10 +8,13 @@ module api.security {
 
         private type: PrincipalType;
 
-        constructor(principalKey: PrincipalKey, displayName: string, type: PrincipalType) {
+        private modifiedTime: Date;
+
+        constructor(principalKey: PrincipalKey, displayName: string, type: PrincipalType, modifiedTime: Date) {
             this.key = principalKey;
             this.displayName = displayName;
             this.type = type;
+            this.modifiedTime = modifiedTime;
         }
 
         getKey(): PrincipalKey {
@@ -38,6 +41,10 @@ module api.security {
             return this.type === PrincipalType.ROLE;
         }
 
+        getModifiedTime(): Date {
+            return this.modifiedTime;
+        }
+
         equals(o: api.Equitable): boolean {
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, Principal)) {
                 return false;
@@ -46,7 +53,8 @@ module api.security {
             var other = <Principal> o;
             return this.key.equals(other.key) &&
                    this.displayName === other.displayName &&
-                   this.type === other.type;
+                                                          this.type === other.type &&
+                                                          api.ObjectHelper.dateEquals(this.modifiedTime, other.modifiedTime);
         }
     }
 }

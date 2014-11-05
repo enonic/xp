@@ -1,5 +1,9 @@
 package com.enonic.wem.api.security.auth;
 
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
+
 import org.junit.Test;
 
 import com.enonic.wem.api.security.PrincipalKey;
@@ -11,6 +15,11 @@ import static org.junit.Assert.*;
 
 public class AuthenticationInfoTest
 {
+
+    private static final Instant NOW = Instant.ofEpochSecond( 0 );
+
+    private static Clock clock = Clock.fixed( NOW, ZoneId.of( "UTC" ) );
+
     @Test
     public void testWithoutPrincipals()
     {
@@ -19,6 +28,7 @@ public class AuthenticationInfoTest
             displayName( "my user" ).
             key( PrincipalKey.ofUser( new UserStoreKey( "myuserstore" ), "userid" ) ).
             email( "user@email" ).
+            modifiedTime( Instant.now( clock ) ).
             build();
 
         final AuthenticationInfo info = AuthenticationInfo.create().user( user ).build();
@@ -39,6 +49,7 @@ public class AuthenticationInfoTest
             displayName( "my user" ).
             key( PrincipalKey.ofUser( new UserStoreKey( "myuserstore" ), "userid" ) ).
             email( "user@email" ).
+            modifiedTime( Instant.now( clock ) ).
             build();
 
         final UserStoreKey userStore = new UserStoreKey( "myStore" );

@@ -1,9 +1,11 @@
-package com.enonic.wem.admin.rest.resource.security.json;
+package com.enonic.wem.admin.rest.resource.auth;
 
+
+import java.time.Instant;
 
 import com.enonic.wem.api.security.User;
 
-public class UserJson
+public final class UserJson
 {
     private final User user;
 
@@ -21,6 +23,11 @@ public class UserJson
     public String getDisplayName()
     {
         return user.getDisplayName();
+    }
+
+    public Instant getModifiedTime()
+    {
+        return user.getModifiedTime();
     }
 
     public String getEmail()

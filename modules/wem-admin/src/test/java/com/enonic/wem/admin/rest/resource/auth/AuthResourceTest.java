@@ -1,5 +1,9 @@
 package com.enonic.wem.admin.rest.resource.auth;
 
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
+
 import javax.ws.rs.core.MediaType;
 
 import org.junit.Test;
@@ -16,6 +20,10 @@ import com.enonic.wem.api.security.auth.AuthenticationToken;
 public class AuthResourceTest
     extends AbstractResourceTest
 {
+
+    private static final Instant NOW = Instant.ofEpochSecond( 0 );
+
+    private static Clock clock = Clock.fixed( NOW, ZoneId.of( "UTC" ) );
 
     private SecurityService securityService;
 
@@ -39,6 +47,7 @@ public class AuthResourceTest
         final User user = User.create().
             key( PrincipalKey.ofUser( UserStoreKey.system(), "user1" ) ).
             displayName( "User 1" ).
+            modifiedTime( Instant.now( clock ) ).
             email( "user1@enonic.com" ).
             login( "user1" ).
             build();
@@ -61,6 +70,7 @@ public class AuthResourceTest
         final User user = User.create().
             key( PrincipalKey.ofUser( UserStoreKey.system(), "user1" ) ).
             displayName( "User 1" ).
+            modifiedTime( Instant.now( clock ) ).
             email( "user1@enonic.com" ).
             login( "user1" ).
             build();

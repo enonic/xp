@@ -1,5 +1,9 @@
 package com.enonic.wem.core.security;
 
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
+
 import org.junit.Test;
 
 import com.enonic.wem.api.data.RootDataSet;
@@ -16,6 +20,10 @@ import static org.junit.Assert.*;
 
 public class UserNodeTranslatorTest
 {
+    private static final Instant NOW = Instant.ofEpochSecond( 0 );
+
+    private static Clock clock = Clock.fixed( NOW, ZoneId.of( "UTC" ) );
+
     @Test
     public void toCreateNode()
         throws Exception
@@ -25,6 +33,7 @@ public class UserNodeTranslatorTest
             email( "rmy@enonic.com" ).
             login( "login" ).
             key( PrincipalKey.ofUser( UserStoreKey.system(), "rmy" ) ).
+            modifiedTime( Instant.now( clock ) ).
             build();
 
         final CreateNodeParams createNodeParams = PrincipalNodeTranslator.toCreateNodeParams( user );
@@ -57,6 +66,7 @@ public class UserNodeTranslatorTest
             id( NodeId.from( "id" ) ).
             name( PrincipalKeyNodeTranslator.toNodeName( userKey ) ).
             rootDataSet( rootDataSet ).
+            modifiedTime( Instant.now( clock ) ).
             build();
 
         final User user = (User) PrincipalNodeTranslator.fromNode( node );

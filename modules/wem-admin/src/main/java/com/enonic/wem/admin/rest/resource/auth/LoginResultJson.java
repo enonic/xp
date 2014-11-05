@@ -1,6 +1,5 @@
 package com.enonic.wem.admin.rest.resource.auth;
 
-import com.enonic.wem.admin.rest.resource.security.json.UserJson;
 import com.enonic.wem.api.security.User;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
 

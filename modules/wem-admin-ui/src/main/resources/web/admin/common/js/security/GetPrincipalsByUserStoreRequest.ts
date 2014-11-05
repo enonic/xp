@@ -28,7 +28,7 @@ module api.security {
         sendAndParse(): wemQ.Promise<Principal[]> {
 
             return this.send().then((response: api.rest.JsonResponse<PrincipalListJson>) => {
-                return response.getResult().principals.map((principalJson: UserStoreJson) => {
+                return response.getResult().principals.map((principalJson: PrincipalJson) => {
                     return this.fromJsonToPrincipal(principalJson);
                 });
             });

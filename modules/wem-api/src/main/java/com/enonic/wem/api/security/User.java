@@ -1,5 +1,7 @@
 package com.enonic.wem.api.security;
 
+import java.time.Instant;
+
 import com.google.common.base.Preconditions;
 
 public final class User
@@ -23,7 +25,7 @@ public final class User
 
     private User()
     {
-        super( PrincipalKey.ofAnonymous(), "anonymous" );
+        super( PrincipalKey.ofAnonymous(), "anonymous", Instant.ofEpochSecond( 0 ) );
         this.email = "";
         this.login = "";
         this.loginDisabled = true;

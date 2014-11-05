@@ -3,7 +3,7 @@ module api.security {
     export class Group extends Principal {
 
         constructor(builder: GroupBuilder) {
-            super(builder.key, builder.displayName, PrincipalType.GROUP)
+            super(builder.key, builder.displayName, PrincipalType.GROUP, builder.modifiedTime)
         }
 
         static create(): GroupBuilder {
@@ -22,16 +22,20 @@ module api.security {
 
         displayName: string;
 
+        modifiedTime: Date;
+
         constructor(source?: Group) {
             if (source) {
                 this.key = source.getKey();
                 this.displayName = source.getDisplayName();
+                this.modifiedTime = source.getModifiedTime();
             }
         }
 
         fromJson(json: api.security.GroupJson): GroupBuilder {
             this.key = PrincipalKey.fromString(json.key);
             this.displayName = json.displayName;
+            this.modifiedTime = json.modifiedTime ? new Date(Date.parse(json.modifiedTime)) : null;
             return this;
         }
 

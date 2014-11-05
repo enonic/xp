@@ -1,5 +1,9 @@
 package com.enonic.wem.admin.rest.resource.security;
 
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
+
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -16,6 +20,9 @@ import com.enonic.wem.api.security.UserStores;
 public class SecurityResourceTest
     extends AbstractResourceTest
 {
+    private static final Instant NOW = Instant.ofEpochSecond( 0 );
+
+    private static Clock clock = Clock.fixed( NOW, ZoneId.of( "UTC" ) );
 
     private SecurityService securityService;
 
@@ -88,6 +95,7 @@ public class SecurityResourceTest
         final User user1 = User.create().
             key( PrincipalKey.ofUser( USER_STORE_1, "a" ) ).
             displayName( "Alice" ).
+            modifiedTime( Instant.now( clock ) ).
             email( "alice@a.org" ).
             login( "alice" ).
             build();
@@ -95,6 +103,7 @@ public class SecurityResourceTest
         final User user2 = User.create().
             key( PrincipalKey.ofUser( USER_STORE_2, "b" ) ).
             displayName( "Bobby" ).
+            modifiedTime( Instant.now( clock ) ).
             email( "bobby@b.org" ).
             login( "bobby" ).
             build();

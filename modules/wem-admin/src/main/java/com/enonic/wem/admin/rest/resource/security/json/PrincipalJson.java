@@ -1,6 +1,8 @@
 package com.enonic.wem.admin.rest.resource.security.json;
 
 
+import java.time.Instant;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -57,5 +59,10 @@ public class PrincipalJson
     public String getDisplayName()
     {
         return principal.getDisplayName();
+    }
+
+    public Instant getModifiedTime()
+    {
+        return principal.getModifiedTime();
     }
 }

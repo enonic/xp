@@ -1,12 +1,14 @@
 {
-    "principals": [
-        {
-            "displayName": "Alice",
-            "key": "local:user:a"
-        },
-        {
-            "displayName": "Bobby",
-            "key": "file-store:user:b"
-        }
-    ]
+  "principals": [
+    {
+      "displayName": "Alice",
+      "key": "local:user:a",
+      "modifiedTime": "1970-01-01T00:00:00Z"
+    },
+    {
+      "displayName": "Bobby",
+      "key": "file-store:user:b",
+      "modifiedTime": "1970-01-01T00:00:00Z"
+    }
+  ]
 }
