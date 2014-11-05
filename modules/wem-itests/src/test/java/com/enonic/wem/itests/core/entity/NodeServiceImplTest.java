@@ -30,7 +30,7 @@ public class NodeServiceImplTest
         this.nodeService.setVersionService( versionService );
         this.nodeService.setWorkspaceService( workspaceService );
 
-        setUpContentRepository();
+        createContentRepository();
     }
 
     @Test

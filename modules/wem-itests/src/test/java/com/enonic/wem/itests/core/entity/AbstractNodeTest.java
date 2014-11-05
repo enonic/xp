@@ -62,7 +62,7 @@ public abstract class AbstractNodeTest
         this.queryService.setElasticsearchDao( elasticsearchDao );
     }
 
-    void setUpContentRepository()
+    void createContentRepository()
     {
         RepositoryInitializer repositoryInitializer = new RepositoryInitializer();
         repositoryInitializer.setIndexService( this.indexService );

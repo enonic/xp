@@ -25,7 +25,7 @@ public class DuplicateNodeCommandTest
     {
         super.setUp();
 
-        setUpContentRepository();
+        createContentRepository();
     }
 
     @Test
