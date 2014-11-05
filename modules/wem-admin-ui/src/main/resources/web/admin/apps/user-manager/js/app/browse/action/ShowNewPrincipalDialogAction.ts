@@ -4,7 +4,7 @@ module app.browse.action {
 
     export class ShowNewPrincipalDialogAction extends Action {
 
-        constructor(grid: PrincipalTreeGrid) {
+        constructor(grid: UserItemTreeGrid) {
             super("New", "mod+alt+n");
             this.setEnabled(true);
             this.onExecuted(() => {

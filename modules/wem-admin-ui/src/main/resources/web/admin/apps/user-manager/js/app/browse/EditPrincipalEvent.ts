@@ -1,6 +1,6 @@
 module app.browse {
 
-    export class EditPrincipalEvent extends BasePrincipalEvent {
+    export class EditPrincipalEvent extends BaseUserEvent {
 
         static on(handler: (event: EditPrincipalEvent) => void) {
             api.event.Event.bind(api.ClassHelper.getFullName(this), handler);

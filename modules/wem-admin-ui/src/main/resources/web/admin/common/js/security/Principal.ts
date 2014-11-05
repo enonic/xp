@@ -1,16 +1,14 @@
 module api.security {
 
-    export class Principal implements api.Equitable {
+    export class Principal extends UserTreeGridItem {
 
         private key: PrincipalKey;
-
-        private displayName: string;
 
         private type: PrincipalType;
 
         constructor(principalKey: PrincipalKey, displayName: string, type: PrincipalType) {
+            super(displayName);
             this.key = principalKey;
-            this.displayName = displayName;
             this.type = type;
         }
 
@@ -18,9 +16,6 @@ module api.security {
             return this.key;
         }
 
-        getDisplayName(): string {
-            return this.displayName;
-        }
 
         getType(): PrincipalType {
             return this.type;
@@ -39,14 +34,16 @@ module api.security {
         }
 
         equals(o: api.Equitable): boolean {
+
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, Principal)) {
+                return false;
+            }
+            if (!super.equals(o)) {
                 return false;
             }
 
             var other = <Principal> o;
-            return this.key.equals(other.key) &&
-                   this.displayName === other.displayName &&
-                   this.type === other.type;
+            return this.key.equals(other.key) && this.type === other.type;
         }
     }
 }
