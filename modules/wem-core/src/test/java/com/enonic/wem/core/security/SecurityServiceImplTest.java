@@ -245,7 +245,7 @@ public class SecurityServiceImplTest
         rootDataSet.setProperty( PrincipalNodeTranslator.EMAIL_KEY, Value.newString( user.getEmail() ) );
         rootDataSet.setProperty( PrincipalNodeTranslator.DISPLAY_NAME_KEY, Value.newString( user.getDisplayName() ) );
         rootDataSet.setProperty( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY, Value.newString( user.getKey().getType().toString() ) );
-        rootDataSet.setProperty( PrincipalNodeTranslator.USERSTORE_KEY, Value.newString( user.getKey().getUserStore().toString() ) );
+        rootDataSet.setProperty( PrincipalNodeTranslator.USER_STORE_KEY, Value.newString( user.getKey().getUserStore().toString() ) );
         rootDataSet.setProperty( PrincipalNodeTranslator.LOGIN_KEY, Value.newString( user.getLogin() ) );
 
         return Node.newNode().
@@ -360,7 +360,7 @@ public class SecurityServiceImplTest
         final RootDataSet rootDataSet = new RootDataSet();
         rootDataSet.setProperty( PrincipalNodeTranslator.DISPLAY_NAME_KEY, Value.newString( role.getDisplayName() ) );
         rootDataSet.setProperty( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY, Value.newString( role.getKey().getType().toString() ) );
-        rootDataSet.setProperty( PrincipalNodeTranslator.USERSTORE_KEY, Value.newString( role.getKey().getUserStore().toString() ) );
+        rootDataSet.setProperty( PrincipalNodeTranslator.USER_STORE_KEY, Value.newString( role.getKey().getUserStore().toString() ) );
 
         return Node.newNode().
             name( PrincipalKeyNodeTranslator.toNodeName( role.getKey() ) ).
@@ -454,7 +454,7 @@ public class SecurityServiceImplTest
         final RootDataSet rootDataSet = new RootDataSet();
         rootDataSet.setProperty( PrincipalNodeTranslator.DISPLAY_NAME_KEY, Value.newString( group.getDisplayName() ) );
         rootDataSet.setProperty( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY, Value.newString( group.getKey().getType().toString() ) );
-        rootDataSet.setProperty( PrincipalNodeTranslator.USERSTORE_KEY, Value.newString( group.getKey().getUserStore().toString() ) );
+        rootDataSet.setProperty( PrincipalNodeTranslator.USER_STORE_KEY, Value.newString( group.getKey().getUserStore().toString() ) );
 
         return Node.newNode().
             id( NodeId.from( group.getKey() ) ).

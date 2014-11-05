@@ -46,13 +46,14 @@ import com.enonic.wem.api.security.auth.UsernamePasswordAuthToken;
 import com.enonic.wem.core.entity.CreateNodeParams;
 import com.enonic.wem.core.entity.FindNodesByQueryResult;
 import com.enonic.wem.core.entity.Node;
-import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodePath;
 import com.enonic.wem.core.entity.NodeService;
+import com.enonic.wem.core.entity.UpdateNodeParams;
 import com.enonic.wem.core.entity.dao.NodeNotFoundException;
 import com.enonic.wem.core.entity.query.NodeQuery;
 
 import static com.enonic.wem.api.security.SystemConstants.CONTEXT_USER_STORES;
+import static com.enonic.wem.core.security.PrincipalKeyNodeTranslator.toNodeId;
 
 public final class SecurityServiceImpl
     implements SecurityService
@@ -122,7 +123,7 @@ public final class SecurityServiceImpl
         final FindNodesByQueryResult result = CONTEXT_USER_STORES.runWith( () -> {
             return this.nodeService.findByQuery( NodeQuery.create().
                 addQueryFilter( ValueFilter.create().
-                    fieldName( PrincipalNodeTranslator.USERSTORE_KEY ).
+                    fieldName( PrincipalNodeTranslator.USER_STORE_KEY ).
                     addValue( Value.newString( userStore.toString() ) ).
                     build() ).
                 addQueryFilter( ValueFilter.create().
@@ -242,21 +243,30 @@ public final class SecurityServiceImpl
     }
 
     @Override
-    public User updateUser( final UpdateUserParams updateUser )
+    public User updateUser( final UpdateUserParams updateUserParams )
     {
-        //final User updatedUser = (User) this.principals.computeIfPresent( updateUser.getKey(), ( userKey, principal ) -> {
-        //    final User existingUser = (User) principal;
-        //    return updateUser.update( existingUser );
-        //} );
+        final User updatedUser = CONTEXT_USER_STORES.runWith( () -> {
 
-        //if ( updatedUser == null )
-        // {
-        //     throw new IllegalArgumentException( "Could not find user to be updated: " + updateUser.getKey() );
-        // }
+            final Node node;
+            try
+            {
+                node = this.nodeService.getById( toNodeId( updateUserParams.getKey() ) );
+            }
+            catch ( NodeNotFoundException e )
+            {
+                throw new IllegalArgumentException( "User to be updated not found: " + updateUserParams.getKey() );
+            }
 
-        //return updatedUser;
+            final User existingUser = PrincipalNodeTranslator.userFromNode( node );
 
-        return null;
+            final User userToUpdate = updateUserParams.update( existingUser );
+            final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.toUpdateNodeParams( userToUpdate );
+
+            final Node updatedNode = nodeService.update( updateNodeParams );
+            return PrincipalNodeTranslator.userFromNode( updatedNode );
+        } );
+
+        return updatedUser;
     }
 
     @Override
@@ -266,7 +276,7 @@ public final class SecurityServiceImpl
 
         try
         {
-            final Node node = CONTEXT_USER_STORES.runWith( () -> this.nodeService.getById( NodeId.from( userKey.toString() ) ) );
+            final Node node = CONTEXT_USER_STORES.runWith( () -> this.nodeService.getById( toNodeId( userKey ) ) );
             return Optional.ofNullable( PrincipalNodeTranslator.userFromNode( node ) );
         }
         catch ( Exception e )
@@ -291,23 +301,30 @@ public final class SecurityServiceImpl
     }
 
     @Override
-    public Group updateGroup( final UpdateGroupParams updateGroup )
+    public Group updateGroup( final UpdateGroupParams updateGroupParams )
     {
-        // TODO: Fix
-        /*
-        final Group updatedGroup = (Group) this.principals.computeIfPresent( updateGroup.getKey(), ( userKey, principal ) -> {
-            final Group existingGroup = (Group) principal;
-            return updateGroup.update( existingGroup );
+        final Group updatedGroup = CONTEXT_USER_STORES.runWith( () -> {
+
+            final Node node;
+            try
+            {
+                node = this.nodeService.getById( toNodeId( updateGroupParams.getKey() ) );
+            }
+            catch ( NodeNotFoundException e )
+            {
+                throw new IllegalArgumentException( "Group to be updated not found: " + updateGroupParams.getKey() );
+            }
+
+            final Group existingGroup = PrincipalNodeTranslator.groupFromNode( node );
+
+            final Group groupToUpdate = updateGroupParams.update( existingGroup );
+            final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.toUpdateNodeParams( groupToUpdate );
+
+            final Node updatedNode = nodeService.update( updateNodeParams );
+            return PrincipalNodeTranslator.groupFromNode( updatedNode );
         } );
 
-        if ( updatedGroup == null )
-        {
-            throw new IllegalArgumentException( "Could not find group to be updated: " + updateGroup.getKey() );
-        }
         return updatedGroup;
-        */
-
-        return null;
     }
 
     @Override
@@ -317,7 +334,7 @@ public final class SecurityServiceImpl
 
         try
         {
-            final Node node = CONTEXT_USER_STORES.runWith( () -> this.nodeService.getById( NodeId.from( groupKey.toString() ) ) );
+            final Node node = CONTEXT_USER_STORES.runWith( () -> this.nodeService.getById( toNodeId( groupKey ) ) );
             return Optional.ofNullable( PrincipalNodeTranslator.groupFromNode( node ) );
         }
         catch ( Exception e )
@@ -342,22 +359,30 @@ public final class SecurityServiceImpl
     }
 
     @Override
-    public Role updateRole( final UpdateRoleParams updateRole )
+    public Role updateRole( final UpdateRoleParams updateRoleParams )
     {
-        // TODO: Fix
-        /*
-        final Role updatedRole = (Role) this.principals.computeIfPresent( updateRole.getKey(), ( userKey, principal ) -> {
-            final Role existingRole = (Role) principal;
-            return updateRole.update( existingRole );
+        final Role updatedRole = CONTEXT_USER_STORES.runWith( () -> {
+
+            final Node node;
+            try
+            {
+                node = this.nodeService.getById( toNodeId( updateRoleParams.getKey() ) );
+            }
+            catch ( NodeNotFoundException e )
+            {
+                throw new IllegalArgumentException( "Role to be updated not found: " + updateRoleParams.getKey() );
+            }
+
+            final Role existingRole = PrincipalNodeTranslator.roleFromNode( node );
+
+            final Role roleToUpdate = updateRoleParams.update( existingRole );
+            final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.toUpdateNodeParams( roleToUpdate );
+
+            final Node updatedNode = nodeService.update( updateNodeParams );
+            return PrincipalNodeTranslator.roleFromNode( updatedNode );
         } );
 
-        if ( updatedRole == null )
-        {
-            throw new IllegalArgumentException( "Could not find role to be updated: " + updateRole.getKey() );
-        }
         return updatedRole;
-        */
-        return null;
     }
 
     @Override
@@ -367,7 +392,7 @@ public final class SecurityServiceImpl
 
         try
         {
-            final Node node = CONTEXT_USER_STORES.runWith( () -> this.nodeService.getById( NodeId.from( roleKey.toString() ) ) );
+            final Node node = CONTEXT_USER_STORES.runWith( () -> this.nodeService.getById( toNodeId( roleKey ) ) );
             return Optional.ofNullable( PrincipalNodeTranslator.roleFromNode( node ) );
         }
         catch ( Exception e )

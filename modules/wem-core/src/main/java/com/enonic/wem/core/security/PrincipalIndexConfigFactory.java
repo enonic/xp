@@ -9,7 +9,7 @@ import static com.enonic.wem.core.security.PrincipalNodeTranslator.EMAIL_KEY;
 import static com.enonic.wem.core.security.PrincipalNodeTranslator.LOGIN_KEY;
 import static com.enonic.wem.core.security.PrincipalNodeTranslator.PRINCIPAL_KEY;
 import static com.enonic.wem.core.security.PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY;
-import static com.enonic.wem.core.security.PrincipalNodeTranslator.USERSTORE_KEY;
+import static com.enonic.wem.core.security.PrincipalNodeTranslator.USER_STORE_KEY;
 
 class PrincipalIndexConfigFactory
 {
@@ -20,7 +20,7 @@ class PrincipalIndexConfigFactory
             analyzer( "content_default" ).
             add( DISPLAY_NAME_KEY, IndexConfig.FULLTEXT ).
             add( PRINCIPAL_TYPE_KEY, IndexConfig.MINIMAL ).
-            add( USERSTORE_KEY, IndexConfig.MINIMAL ).
+            add( USER_STORE_KEY, IndexConfig.MINIMAL ).
             add( EMAIL_KEY, IndexConfig.FULLTEXT ).
             add( LOGIN_KEY, IndexConfig.MINIMAL ).
             add( PRINCIPAL_KEY, IndexConfig.MINIMAL ).

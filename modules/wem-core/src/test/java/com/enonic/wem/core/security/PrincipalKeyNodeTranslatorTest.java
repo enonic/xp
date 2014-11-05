@@ -48,7 +48,7 @@ public class PrincipalKeyNodeTranslatorTest
     {
         final RootDataSet rootDataSet = new RootDataSet();
         rootDataSet.setProperty( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY, Value.newString( PrincipalType.USER ) );
-        rootDataSet.setProperty( PrincipalNodeTranslator.USERSTORE_KEY, Value.newString( UserStoreKey.system() ) );
+        rootDataSet.setProperty( PrincipalNodeTranslator.USER_STORE_KEY, Value.newString( UserStoreKey.system() ) );
 
         final Node userNode = Node.newNode().rootDataSet( rootDataSet ).
             name( NodeName.from( "rmy" ) ).
@@ -67,7 +67,7 @@ public class PrincipalKeyNodeTranslatorTest
     {
         final RootDataSet rootDataSet = new RootDataSet();
         rootDataSet.setProperty( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY, Value.newString( "fisk" ) );
-        rootDataSet.setProperty( PrincipalNodeTranslator.USERSTORE_KEY, Value.newString( UserStoreKey.system() ) );
+        rootDataSet.setProperty( PrincipalNodeTranslator.USER_STORE_KEY, Value.newString( UserStoreKey.system() ) );
 
         final Node userNode = Node.newNode().rootDataSet( rootDataSet ).
             name( NodeName.from( "rmy" ) ).

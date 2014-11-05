@@ -40,7 +40,7 @@ public class GroupNodeTranslatorTest
 
         final RootDataSet rootDataSet = createNodeParams.getData();
         assertEquals( 3, rootDataSet.size() );
-        assertEquals( UserStoreKey.system().toString(), rootDataSet.getProperty( PrincipalNodeTranslator.USERSTORE_KEY ).getString() );
+        assertEquals( UserStoreKey.system().toString(), rootDataSet.getProperty( PrincipalNodeTranslator.USER_STORE_KEY ).getString() );
         assertEquals( PrincipalType.GROUP.toString(), rootDataSet.getProperty( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY ).getString() );
         assertEquals( "My Group", rootDataSet.getProperty( PrincipalNodeTranslator.DISPLAY_NAME_KEY ).getString() );
         assertNotNull( rootDataSet );
@@ -57,7 +57,7 @@ public class GroupNodeTranslatorTest
         final RootDataSet rootDataSet = new RootDataSet();
         rootDataSet.setProperty( PrincipalNodeTranslator.DISPLAY_NAME_KEY, Value.newString( "Group A" ) );
         rootDataSet.setProperty( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY, Value.newString( groupKey.getType().toString() ) );
-        rootDataSet.setProperty( PrincipalNodeTranslator.USERSTORE_KEY, Value.newString( groupKey.getUserStore().toString() ) );
+        rootDataSet.setProperty( PrincipalNodeTranslator.USER_STORE_KEY, Value.newString( groupKey.getUserStore().toString() ) );
 
         final Node node = Node.newNode().
             id( NodeId.from( "id" ) ).

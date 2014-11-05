@@ -6,6 +6,7 @@ import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.PrincipalType;
 import com.enonic.wem.api.security.UserStoreKey;
 import com.enonic.wem.core.entity.Node;
+import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodeName;
 
 
@@ -17,6 +18,11 @@ class PrincipalKeyNodeTranslator
         return NodeName.from( principalKey.getId() );
     }
 
+    public static NodeId toNodeId( final PrincipalKey principalKey )
+    {
+        return NodeId.from( principalKey.toString() );
+    }
+
     public static PrincipalKey toKey( final Node node )
     {
         final String principalId = node.name().toString();
@@ -24,7 +30,7 @@ class PrincipalKeyNodeTranslator
         final RootDataSet rootDataSet = node.data();
 
         final String principalType = getStringAndAssertNotNull( rootDataSet, PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY );
-        final String userStoreKey = getStringAndAssertNotNull( rootDataSet, PrincipalNodeTranslator.USERSTORE_KEY );
+        final String userStoreKey = getStringAndAssertNotNull( rootDataSet, PrincipalNodeTranslator.USER_STORE_KEY );
 
         return PrincipalKey.from( new UserStoreKey( userStoreKey ), PrincipalType.valueOf( principalType ), principalId );
     }

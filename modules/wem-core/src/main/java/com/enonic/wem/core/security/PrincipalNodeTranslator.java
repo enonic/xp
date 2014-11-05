@@ -18,6 +18,7 @@ import com.enonic.wem.core.entity.CreateNodeParams;
 import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.Nodes;
+import com.enonic.wem.core.entity.UpdateNodeParams;
 
 abstract class PrincipalNodeTranslator
 {
@@ -27,7 +28,7 @@ abstract class PrincipalNodeTranslator
 
     public static final String PRINCIPAL_KEY = "principalKey";
 
-    public static final String USERSTORE_KEY = "userStoreKey";
+    public static final String USER_STORE_KEY = "userStoreKey";
 
     public static final String EMAIL_KEY = "email";
 
@@ -117,7 +118,7 @@ abstract class PrincipalNodeTranslator
         final RootDataSet data = new RootDataSet();
         data.setProperty( DISPLAY_NAME_KEY, Value.newString( principal.getDisplayName() ) );
         data.setProperty( PRINCIPAL_TYPE_KEY, Value.newString( principal.getKey().getType() ) );
-        data.setProperty( USERSTORE_KEY, Value.newString( principal.getKey().getUserStore().toString() ) );
+        data.setProperty( USER_STORE_KEY, Value.newString( principal.getKey().getUserStore().toString() ) );
 
         switch ( principal.getKey().getType() )
         {
@@ -128,6 +129,27 @@ abstract class PrincipalNodeTranslator
         builder.data( data );
 
         return builder.build();
+    }
+
+    public static UpdateNodeParams toUpdateNodeParams( final Principal principal )
+    {
+        Preconditions.checkNotNull( principal );
+
+        final UpdateNodeParams updateNodeParams = new UpdateNodeParams().id( NodeId.from( principal.getKey() ) ).
+            editor( toBeEdited -> {
+                final RootDataSet data = toBeEdited.data().copy().toRootDataSet();
+
+                data.setProperty( DISPLAY_NAME_KEY, Value.newString( principal.getDisplayName() ) );
+                switch ( principal.getKey().getType() )
+                {
+                    case USER:
+                        populateUserData( data, (User) principal );
+                }
+
+                return Node.editNode( toBeEdited ).rootDataSet( data );
+            } );
+
+        return updateNodeParams;
     }
 
     private static void populateUserData( final RootDataSet data, final User user )

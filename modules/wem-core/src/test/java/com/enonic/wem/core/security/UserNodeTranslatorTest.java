@@ -41,7 +41,7 @@ public class UserNodeTranslatorTest
         assertEquals( "rmy", createNodeParams.getName() );
 
         final RootDataSet rootDataSet = createNodeParams.getData();
-        assertEquals( UserStoreKey.system().toString(), rootDataSet.getProperty( PrincipalNodeTranslator.USERSTORE_KEY ).getString() );
+        assertEquals( UserStoreKey.system().toString(), rootDataSet.getProperty( PrincipalNodeTranslator.USER_STORE_KEY ).getString() );
         assertEquals( PrincipalType.USER.toString(), rootDataSet.getProperty( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY ).getString() );
         assertEquals( "displayname", rootDataSet.getProperty( PrincipalNodeTranslator.DISPLAY_NAME_KEY ).getString() );
         assertNotNull( rootDataSet );
@@ -60,7 +60,7 @@ public class UserNodeTranslatorTest
         rootDataSet.setProperty( PrincipalNodeTranslator.EMAIL_KEY, Value.newString( "rmy@enonic.com" ) );
         rootDataSet.setProperty( PrincipalNodeTranslator.DISPLAY_NAME_KEY, Value.newString( "displayname" ) );
         rootDataSet.setProperty( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY, Value.newString( userKey.getType().toString() ) );
-        rootDataSet.setProperty( PrincipalNodeTranslator.USERSTORE_KEY, Value.newString( userKey.getUserStore().toString() ) );
+        rootDataSet.setProperty( PrincipalNodeTranslator.USER_STORE_KEY, Value.newString( userKey.getUserStore().toString() ) );
 
         final Node node = Node.newNode().
             id( NodeId.from( "id" ) ).

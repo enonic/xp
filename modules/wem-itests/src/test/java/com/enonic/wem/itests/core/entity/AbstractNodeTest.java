@@ -3,6 +3,7 @@ package com.enonic.wem.itests.core.entity;
 import org.junit.Before;
 
 import com.enonic.wem.api.content.ContentConstants;
+import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.core.blob.BlobServiceImpl;
 import com.enonic.wem.core.elasticsearch.ElasticsearchIndexService;
 import com.enonic.wem.core.elasticsearch.ElasticsearchQueryService;
@@ -24,17 +25,17 @@ import com.enonic.wem.itests.core.elasticsearch.AbstractElasticsearchIntegration
 public abstract class AbstractNodeTest
     extends AbstractElasticsearchIntegrationTest
 {
-    NodeDaoImpl nodeDao;
+    protected NodeDaoImpl nodeDao;
 
-    ElasticsearchVersionService versionService;
+    protected ElasticsearchVersionService versionService;
 
-    ElasticsearchWorkspaceService workspaceService;
+    protected ElasticsearchWorkspaceService workspaceService;
 
-    ElasticsearchIndexService indexService;
+    protected ElasticsearchIndexService indexService;
 
     private BlobServiceImpl blobService;
 
-    ElasticsearchQueryService queryService;
+    protected ElasticsearchQueryService queryService;
 
     @Before
     public void setUp()
@@ -62,14 +63,19 @@ public abstract class AbstractNodeTest
         this.queryService.setElasticsearchDao( elasticsearchDao );
     }
 
-    void createContentRepository()
+    protected void createRepository( final Repository repository )
     {
         RepositoryInitializer repositoryInitializer = new RepositoryInitializer();
         repositoryInitializer.setIndexService( this.indexService );
 
-        repositoryInitializer.init( ContentConstants.CONTENT_REPO );
+        repositoryInitializer.init( repository );
 
         refresh();
+    }
+
+    void createContentRepository()
+    {
+        createRepository( ContentConstants.CONTENT_REPO );
     }
 
 
