@@ -1,6 +1,7 @@
 package com.enonic.wem.core.entity.json;
 
 import java.time.Instant;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -11,6 +12,7 @@ import com.enonic.wem.api.data.RootDataSetJson;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.index.IndexConfigDocument;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
+import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.core.entity.Attachments;
 import com.enonic.wem.core.entity.IndexConfigDocumentJson;
 import com.enonic.wem.core.entity.Node;
@@ -49,6 +51,8 @@ public class NodeJson
 
     private final Long manualOrderValue;
 
+    private final AccessControlListJson acl;
+
     @SuppressWarnings("UnusedDeclaration")
     @JsonCreator
     public NodeJson( @JsonProperty("name") final String name, //
@@ -63,7 +67,8 @@ public class NodeJson
                      @JsonProperty("indexConfigDocument") final IndexConfigDocumentJson indexConfigDocument,
                      @JsonProperty("attachments") final AttachmentsJson attachments, //
                      @JsonProperty("childOrder") final String childOrder, //
-                     @JsonProperty("manualOrderValue") final Long manualOrderValue )
+                     @JsonProperty("manualOrderValue") final Long manualOrderValue,
+                     @JsonProperty("accessControlList") final List<AccessControlEntryJson> accessControlListJson )
 
     {
         this.id = id;
@@ -80,6 +85,7 @@ public class NodeJson
         this.creator = creator;
         this.childOrder = childOrder;
         this.manualOrderValue = manualOrderValue;
+        this.acl = new AccessControlListJson( accessControlListJson );
 
         this.node = Node.newNode().
             id( NodeId.from( id ) ).
@@ -95,6 +101,7 @@ public class NodeJson
             attachments( attachments != null ? attachments.getAttachments() : Attachments.empty() ).
             childOrder( ChildOrder.from( childOrder ) ).
             manualOrderValue( manualOrderValue ).
+            accessControlList( acl != null ? acl.getAcl() : AccessControlList.empty() ).
             build();
     }
 
@@ -114,6 +121,7 @@ public class NodeJson
         this.creator = node.creator() != null ? node.creator().getQualifiedName() : null;
         this.childOrder = node.getChildOrder().toString();
         this.manualOrderValue = node.getManualOrderValue();
+        this.acl = new AccessControlListJson( node.getAccessControlList() );
     }
 
     private IndexConfigDocumentJson createEntityIndexConfig( final IndexConfigDocument indexConfig )
@@ -201,6 +209,12 @@ public class NodeJson
     public Long getManualOrderValue()
     {
         return manualOrderValue;
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    public List<AccessControlEntryJson> getAccessControlList()
+    {
+        return acl.getAccessControlList();
     }
 
     @JsonIgnore

@@ -136,6 +136,28 @@ public final class AccessControlList
         return entries.values().iterator();
     }
 
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( !( o instanceof AccessControlList ) )
+        {
+            return false;
+        }
+
+        final AccessControlList that = (AccessControlList) o;
+        return this.entries.equals( that.entries );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return this.entries.hashCode();
+    }
+
     public static AccessControlList empty()
     {
         return EMPTY;

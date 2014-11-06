@@ -18,6 +18,11 @@ import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
 import com.enonic.wem.api.query.expr.FieldOrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpr;
+import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.security.UserStoreKey;
+import com.enonic.wem.api.security.acl.AccessControlEntry;
+import com.enonic.wem.api.security.acl.AccessControlList;
+import com.enonic.wem.api.security.acl.Permission;
 import com.enonic.wem.core.entity.Attachment;
 import com.enonic.wem.core.entity.Attachments;
 import com.enonic.wem.core.entity.Node;
@@ -39,8 +44,19 @@ public class NodeJsonSerializerTest
         rootDataSet.setProperty( DataPath.from( "a.b.c" ), Value.newDouble( 2.0 ) );
         rootDataSet.setProperty( DataPath.from( "b" ), Value.newLocalDate( LocalDate.now() ) );
         rootDataSet.setProperty( DataPath.from( "c" ), Value.newString( "runar" ) );
-        // This will not work atm since JodaTime does not equal datetime with different time-zones
-        //rootDataSet.setProperty( DataPath.from( "c" ), new Value.DateTime( DateTime.now() ) );
+        rootDataSet.setProperty( DataPath.from( "d" ), Value.newInstant( Instant.now() ) );
+
+        final AccessControlEntry entry1 = AccessControlEntry.newACE().
+            principal( PrincipalKey.ofAnonymous() ).
+            allow( Permission.READ ).
+            deny( Permission.DELETE ).
+            build();
+        final AccessControlEntry entry2 = AccessControlEntry.newACE().
+            principal( PrincipalKey.ofUser( UserStoreKey.system(), "user1" ) ).
+            allow( Permission.MODIFY ).
+            deny( Permission.PUBLISH ).
+            build();
+        AccessControlList acl = AccessControlList.newACL().add( entry1 ).add( entry2 ).build();
 
         Node node = Node.newNode().
             id( NodeId.from( "myId" ) ).
@@ -66,6 +82,7 @@ public class NodeJsonSerializerTest
                 add( FieldOrderExpr.create( "modifiedTime", OrderExpr.Direction.ASC ) ).
                 add( FieldOrderExpr.create( "displayName", OrderExpr.Direction.DESC ) ).
                 build() ).
+            accessControlList( acl ).
             build();
 
         final String serializedNode = NodeJsonSerializer.toString( node );

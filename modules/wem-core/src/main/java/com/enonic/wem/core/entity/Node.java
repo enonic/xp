@@ -1,6 +1,7 @@
 package com.enonic.wem.core.entity;
 
 import java.time.Instant;
+import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
@@ -14,6 +15,7 @@ import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.index.IndexConfigDocument;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
+import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.support.ChangeTraceable;
 import com.enonic.wem.api.support.Changes;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
@@ -23,7 +25,6 @@ import com.enonic.wem.api.support.illegaledit.IllegalEditException;
 import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;
 
 public final class Node
-    //extends Entity
     implements ChangeTraceable, IllegalEditAware<Node>
 {
     private final NodeId id;
@@ -53,6 +54,8 @@ public final class Node
     private final ChildOrder childOrder;
 
     private final Long manualOrderValue;
+
+    private final AccessControlList acl;
 
     private Node( final BaseBuilder builder )
     {
@@ -90,6 +93,7 @@ public final class Node
         this.hasChildren = builder.hasChildren;
         this.childOrder = builder.childOrder;
         this.manualOrderValue = builder.manualOrderValue;
+        this.acl = builder.acl == null ? AccessControlList.empty() : builder.acl;
     }
 
     public NodeName name()
@@ -182,6 +186,11 @@ public final class Node
         return manualOrderValue;
     }
 
+    public AccessControlList getAccessControlList()
+    {
+        return acl;
+    }
+
     public void validateForIndexing()
     {
         Preconditions.checkNotNull( this.id, "Id must be set" );
@@ -254,6 +263,8 @@ public final class Node
 
         Long manualOrderValue;
 
+        AccessControlList acl;
+
         private BaseBuilder()
         {
         }
@@ -271,6 +282,7 @@ public final class Node
             this.modifier = node.modifier;
             this.childOrder = node.childOrder;
             this.manualOrderValue = node.manualOrderValue;
+            this.acl = AccessControlList.empty();
         }
 
         private BaseBuilder( final NodeId id, final NodeName name )
@@ -297,6 +309,8 @@ public final class Node
 
         private Long manualOrderValue;
 
+        private AccessControlList acl;
+
         public Builder()
         {
             super();
@@ -320,6 +334,7 @@ public final class Node
             this.creator = node.creator;
             this.childOrder = node.childOrder;
             this.manualOrderValue = node.manualOrderValue;
+            this.acl = node.acl;
         }
 
         public Builder( final NodeId id, final NodeName name )
@@ -457,6 +472,11 @@ public final class Node
             return this;
         }
 
+        public Builder accessControlList( final AccessControlList acl )
+        {
+            this.acl = acl;
+            return this;
+        }
 
         public Node build()
         {
@@ -474,6 +494,7 @@ public final class Node
             baseBuilder.hasChildren = this.hasChildren;
             baseBuilder.childOrder = this.childOrder;
             baseBuilder.manualOrderValue = this.manualOrderValue;
+            baseBuilder.acl = this.acl;
 
             return new Node( baseBuilder );
         }
@@ -588,6 +609,13 @@ public final class Node
             return this;
         }
 
+        public EditBuilder accessControlList( final AccessControlList acl )
+        {
+            this.acl = acl;
+            changes.recordChange( newPossibleChange( "accessControlList" ).from( this.originalNode.acl ).to( this.acl ).build() );
+            return this;
+        }
+
         public boolean isChanges()
         {
             return this.changes.isChanges();
@@ -674,6 +702,10 @@ public final class Node
         {
             return false;
         }
+        if ( !Objects.equals( acl, node.acl ) )
+        {
+            return false;
+        }
 
         return true;
     }
@@ -681,20 +713,7 @@ public final class Node
     @Override
     public int hashCode()
     {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + ( name != null ? name.hashCode() : 0 );
-        result = 31 * result + ( parent != null ? parent.hashCode() : 0 );
-        result = 31 * result + ( path != null ? path.hashCode() : 0 );
-        result = 31 * result + ( modifier != null ? modifier.hashCode() : 0 );
-        result = 31 * result + ( creator != null ? creator.hashCode() : 0 );
-        result = 31 * result + ( hasChildren ? 1 : 0 );
-        result = 31 * result + ( createdTime != null ? createdTime.hashCode() : 0 );
-        result = 31 * result + ( data != null ? data.hashCode() : 0 );
-        result = 31 * result + ( modifiedTime != null ? modifiedTime.hashCode() : 0 );
-        result = 31 * result + ( indexConfigDocument != null ? indexConfigDocument.hashCode() : 0 );
-        result = 31 * result + ( attachments != null ? attachments.hashCode() : 0 );
-        result = 31 * result + ( childOrder != null ? childOrder.hashCode() : 0 );
-        result = 31 * result + ( manualOrderValue != null ? manualOrderValue.hashCode() : 0 );
-        return result;
+        return Objects.hash( id, name, parent, path, modifier, creator, hasChildren, createdTime, data, modifiedTime, indexConfigDocument,
+                             attachments, childOrder, manualOrderValue, acl );
     }
 }
