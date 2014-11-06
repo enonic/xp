@@ -8,7 +8,7 @@ module app.browse.action {
             super("Delete", "mod+del");
             this.setEnabled(false);
             this.onExecuted(() => {
-                var principals: api.security.UserTreeGridItem[] = grid.getSelectedDataList();
+                var principals: app.browse.UserTreeGridItem[] = grid.getSelectedDataList();
                 new UserItemDeletePromptEvent(principals).fire();
             });
         }

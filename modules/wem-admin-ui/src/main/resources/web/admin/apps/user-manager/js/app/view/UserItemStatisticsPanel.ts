@@ -1,13 +1,13 @@
 module app.view {
 
-    export class UserItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.security.UserTreeGridItem> {
+    export class UserItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<app.browse.UserTreeGridItem> {
 
         constructor() {
             super("principal-item-statistics-panel");
 
         }
 
-        setItem(item: api.app.view.ViewItem<api.security.UserTreeGridItem>) {
+        setItem(item: api.app.view.ViewItem<app.browse.UserTreeGridItem>) {
             var currentItem = this.getItem();
             if (currentItem && currentItem.equals(item)) {
                 // do nothing in case item has not changed

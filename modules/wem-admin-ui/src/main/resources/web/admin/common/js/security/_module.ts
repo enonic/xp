@@ -1,7 +1,6 @@
 ///<reference path="PrincipalType.ts"/>
 ///<reference path="UserStoreKey.ts"/>
 ///<reference path="PrincipalKey.ts"/>
-///<reference path='UserTreeGridItem.ts'/>
 ///<reference path="Principal.ts"/>
 ///<reference path="PrincipalJson.ts"/>
 ///<reference path="UserJson.ts"/>
@@ -13,7 +12,6 @@
 ///<reference path="UserStore.ts"/>
 ///<reference path="UserStoreJson.ts"/>
 ///<reference path="UserStoreListResult.ts"/>
-///<reference path="UserTreeGridItemViewer.ts"/>
 ///<reference path="SecurityResourceRequest.ts"/>
 ///<reference path="ListUserStoresRequest.ts"/>
 ///<reference path="PrincipalListJson.ts"/>

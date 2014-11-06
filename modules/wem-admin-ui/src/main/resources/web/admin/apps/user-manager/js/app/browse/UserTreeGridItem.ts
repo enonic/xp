@@ -1,4 +1,7 @@
-module api.security {
+module app.browse {
+
+    import Principal = api.security.Principal;
+    import UserStore = api.security.UserStore;
 
     export enum UserTreeGridItemType {
         USER_STORE,
@@ -59,12 +62,12 @@ module api.security {
             }
             case UserTreeGridItemType.ROLES:
             {
-                return this.principal.getDisplayName();
+                return 'Roles';
 
             }
             case UserTreeGridItemType.GROUPS:
             {
-                return this.principal.getDisplayName();
+                return 'Groups';
 
             }
             }
@@ -82,15 +85,36 @@ module api.security {
                 return this.principal.getKey().toString();
             }
             case UserTreeGridItemType.GROUPS:
-            {    //TODO what should be returned?
-                return this.principal.getKey().toString();
+            {
+                return this.userStore.getKey().toString() + "/groups";
             }
             case UserTreeGridItemType.ROLES:
-            {    //TODO what should be returned?
-                return this.principal.getKey().toString();
+            {
+                return this.userStore.getKey().toString() + "/roles";
             }
             }
 
+        }
+
+        hasChildren(): boolean {
+            switch (this.type) {
+            case UserTreeGridItemType.USER_STORE:
+            {
+                return true;
+            }
+            case UserTreeGridItemType.PRINCIPAL:
+            {
+                return false;
+            }
+            case UserTreeGridItemType.GROUPS:
+            {
+                return true;
+            }
+            case UserTreeGridItemType.ROLES:
+            {
+                return true;
+            }
+            }
         }
 
         equals(o: api.Equitable): boolean {

@@ -2,18 +2,18 @@ module app.browse {
 
     import GridColumn = api.ui.grid.GridColumn;
     import GridColumnBuilder = api.ui.grid.GridColumnBuilder;
-    import UserTreeGridItemViewer = api.security.UserTreeGridItemViewer;
+    import UserTreeGridItemViewer = app.browse.UserTreeGridItemViewer;
     import TreeGrid = api.ui.treegrid.TreeGrid;
     import TreeNode = api.ui.treegrid.TreeNode;
     import TreeGridBuilder = api.ui.treegrid.TreeGridBuilder;
-    import UserTreeGridItemBuilder = api.security.UserTreeGridItemBuilder;
-    import UserTreeGridItemType = api.security.UserTreeGridItemType;
+    import UserTreeGridItemBuilder = app.browse.UserTreeGridItemBuilder;
+    import UserTreeGridItemType = app.browse.UserTreeGridItemType;
     import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
     import ListUserStoresRequest = api.security.ListUserStoresRequest;
     import GetPrincipalsByUserStoreRequest = api.security.GetPrincipalsByUserStoreRequest;
     import UserStoreListResult = api.security.UserStoreListResult;
     import UserStoreJson = api.security.UserStoreJson;
-    import UserTreeGridItem = api.security.UserTreeGridItem;
+    import UserTreeGridItem = app.browse.UserTreeGridItem;
     import Principal = api.security.Principal;
     import TreeGridContextMenu = api.ui.treegrid.TreeGridContextMenu;
     import UserStore = api.security.UserStore;
@@ -71,9 +71,7 @@ module app.browse {
 
 
         hasChildren(item: UserTreeGridItem): boolean {
-            //return item.hasChildren(); ?
-            //TODO implement it
-            return true;
+            return item.hasChildren();
         }
 
         fetchChildren(parentNode?: TreeNode<UserTreeGridItem>): wemQ.Promise<UserTreeGridItem[]> {

@@ -13,7 +13,7 @@ module app.browse.action {
             });
         }
 
-        private duplicate(source: api.security.UserTreeGridItem) {
+        private duplicate(source: app.browse.UserTreeGridItem) {
             console.log('Duplicate principals action');
         }
     }

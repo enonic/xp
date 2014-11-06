@@ -7,14 +7,14 @@ module app.browse.action {
             super("Synch");
             this.setEnabled(false);
             this.onExecuted(() => {
-                var principals: api.security.UserTreeGridItem[] = grid.getSelectedDataList();
+                var principals: app.browse.UserTreeGridItem[] = grid.getSelectedDataList();
                 grid.getSelectedDataList().forEach((elem) => {
                     this.synch(elem);
                 });
             });
         }
 
-        private synch(principal: api.security.UserTreeGridItem) {
+        private synch(principal: app.browse.UserTreeGridItem) {
             console.log('Synch principals action');
         }
     }

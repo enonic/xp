@@ -1,10 +1,10 @@
 module app.browse {
     import TreeNode = api.ui.treegrid.TreeNode;
     import BrowseItem = api.app.browse.BrowseItem;
-    import UserTreeGridItem = api.security.UserTreeGridItem;
-    import UserTreeGridItemType = api.security.UserTreeGridItemType;
+    import UserTreeGridItem = app.browse.UserTreeGridItem;
+    import UserTreeGridItemType = app.browse.UserTreeGridItemType;
 
-    export class UserBrowsePanel extends api.app.browse.BrowsePanel<api.security.UserTreeGridItem> {
+    export class UserBrowsePanel extends api.app.browse.BrowsePanel<app.browse.UserTreeGridItem> {
 
         private browseActions: app.browse.UserBrowseActions;
 
