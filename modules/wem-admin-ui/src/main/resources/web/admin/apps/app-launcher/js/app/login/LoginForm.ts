@@ -4,7 +4,7 @@ module app.login {
 
     export class LoginForm extends api.dom.DivEl {
 
-        private userStoresDropdown: api.ui.Dropdown;
+        private messageContainer: api.dom.DivEl;
         private userIdInput: api.ui.text.TextInput;
         private passwordInput: api.ui.text.PasswordInput;
         private loginButton: api.ui.button.Button;
@@ -19,9 +19,6 @@ module app.login {
             this.userStores = {};
             this.onUserAuthenticatedHandler = null;
 
-            var formContainer = new api.dom.DivEl();
-            this.userStoresDropdown = new api.ui.Dropdown('userstore');
-            this.userStoresDropdown.addClass('form-item');
             this.userIdInput = new api.ui.text.TextInput('form-item');
             this.userIdInput.setPlaceholder(_i18n('userid or e-mail'));
             this.passwordInput = new api.ui.text.PasswordInput('form-item');
@@ -39,28 +36,16 @@ module app.login {
                 this.loginButtonClick();
             });
 
-            var selectContainer = new api.dom.DivEl("select-container");
-            selectContainer.appendChild(this.userStoresDropdown);
+            this.messageContainer = new api.dom.DivEl("message-container");
 
-            formContainer.appendChild(selectContainer);
-            formContainer.appendChild(this.userIdInput);
-            formContainer.appendChild(this.passwordInput);
-            formContainer.appendChild(this.loginButton);
-            this.appendChild(formContainer);
+            this.appendChild(this.messageContainer);
+            this.appendChild(this.userIdInput);
+            this.appendChild(this.passwordInput);
+            this.appendChild(this.loginButton);
 
             this.onShown((event) => {
                 this.userIdInput.giveFocus();
             })
-        }
-
-        setUserStores(userStores: UserStore[], defaultUserStore?: UserStore) {
-            userStores.forEach((userStore: UserStore) => {
-                this.userStoresDropdown.addOption(userStore.getKey().toString(), userStore.getDisplayName());
-                this.userStores[userStore.getKey().toString()] = userStore;
-            });
-            if (defaultUserStore) {
-                this.userStoresDropdown.setValue(defaultUserStore.getKey().toString());
-            }
         }
 
         onUserAuthenticated(handler: (user: api.security.User) => void) {
@@ -78,8 +63,8 @@ module app.login {
                 return;
             }
 
-            this.userIdInput.removeClass('login-password-invalid');
-            this.passwordInput.removeClass('login-password-invalid');
+            this.userIdInput.removeClass('invalid');
+            this.passwordInput.removeClass('invalid');
 
             this.authenticator.authenticate(userName, password,
                 (loginResult: api.security.auth.LoginResult) => this.handleAuthenticateResponse(loginResult));
@@ -91,10 +76,12 @@ module app.login {
                     this.onUserAuthenticatedHandler(loginResult.getUser());
                 }
                 this.passwordInput.setValue('');
+                this.messageContainer.setHtml('');
             } else {
+                this.messageContainer.setHtml('Login failed!');
                 this.passwordInput.giveFocus();
-                this.userIdInput.addClass('login-password-invalid');
-                this.passwordInput.addClass('login-password-invalid');
+                this.userIdInput.addClass('invalid');
+                this.passwordInput.addClass('invalid');
             }
         }
 

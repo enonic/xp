@@ -1,14 +1,14 @@
-@mobile-threshold:540px;
-@tablet-threshold:1380px;
+@mobile-threshold: 540px;
+@tablet-threshold: 1380px;
 
 html, body {
   height: 100%
 }
 
 .applications-frame {
-  overflow-y:hidden;
-  height:100%;
-  width:100%;
+  overflow-y: hidden;
+  height: 100%;
+  width: 100%;
 }
 
 .home-main-container {
@@ -17,7 +17,7 @@ html, body {
   top: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0,0,0,0.45);
+  background-color: rgba(0, 0, 0, 0.45);
   background-repeat: no-repeat;
   background-position: center center;
 
@@ -57,13 +57,15 @@ html, body {
   /** Branding */
 
   .branding {
-    top:10%;
-    left:calc(~"50% - 92.5px");
+    top: 15%;
+    width: 200px;
+    left: calc(~"50% - 100px");
     position: absolute;
     text-align: center;
-    @media only screen and (max-width : @mobile-threshold) {
+
+    @media only screen and (max-width: @mobile-threshold) {
       position: relative;
-      left:inherit;
+      left: inherit;
       width: 100%;
       background-color: @admin-black;
       height: 44px;
@@ -72,19 +74,27 @@ html, body {
     h1 {
       color: white;
       font-size: 24px;
-      @media only screen and (max-width : @mobile-threshold) {
-        font-size:18px;
+      background: transparent url("../images/enonic-experience-platform.png") 0 0 no-repeat;
+      background-size: 100%;
+      height: 61px;
+      line-height: 61px;
+      text-indent: 100%;
+      overflow: hidden;
+
+      @media only screen and (max-width: @mobile-threshold) {
+        font-size: 18px;
+        line-height: 44px;
+        background: transparent none;
+        height: auto;
+        text-indent: 0;
       }
-      span:not(.version-info) {
-        color:@admin-red;
-        margin-right: 8px;
-      }
+
     }
     .installation-info {
-      text-transform: uppercase;
-      font-size:14px;
-      @media only screen and (max-width : @mobile-threshold) {
-        display:none;
+      font-size: 12px;
+      text-align: right;
+      @media only screen and (max-width: @mobile-threshold) {
+        display: none;
       }
     }
   }
@@ -94,7 +104,7 @@ html, body {
   .center-panel {
     width: 100%;
     position: absolute;
-    background-color: rgba(0,0,0,0.35);
+    background-color: rgba(0, 0, 0, 0.35);
     top: 0;
     bottom: 0;
 
@@ -110,28 +120,28 @@ html, body {
     width: 100%;
     text-align: center;
     bottom: 2%;
-    @media only screen and (max-width : @mobile-threshold) {
+    @media only screen and (max-width: @mobile-threshold) {
       bottom: 0;
       background-color: black;
-      padding:5px;
+      padding: 5px;
     }
 
   }
 
   .return-button {
     color: white;
-    font-size:24px;
+    font-size: 24px;
     height: 44px;
     width: 44px;
-    background-color:@admin-red;
+    background-color: @admin-red;
     padding: 10px;
-    cursor:pointer;
+    cursor: pointer;
     position: absolute;
-    top:0;
-    left:0;
+    top: 0;
+    left: 0;
     box-sizing: border-box;
     &:hover {
-      color: rgba(255,255,255,0.5);
+      color: rgba(255, 255, 255, 0.5);
     }
     .icon-close2();
   }
@@ -143,27 +153,93 @@ html, body {
   .app-info {
     position: absolute;
     top: 30%;
-    @media only screen and (max-width : @mobile-threshold) {
+    @media only screen and (max-width: @mobile-threshold) {
       position: relative;
-      top:inherit;
-      margin-top:30px;
+      top: inherit;
+      margin-top: 30px;
     }
-  }
-
-  .login-form,
-  .app-info {
   }
 
   /** Login Form **/
   .login-form {
+    width: 200px;
+    left: calc(~"50% - 100px");
+
+    .message-container {
+      height: 28px;
+      line-height: 28px;
+      margin-bottom: 10px;
+      color: white;
+      text-align: center;
+
+      .ellipsis();
+    }
+
+    .form-item {
+      font-family: @admin-font-family;
+      font-size: 12px;
+      box-sizing: border-box;
+      margin-bottom: 10px;
+      border: 1px solid @admin-light-gray-bg;
+      vertical-align: top;
+      padding: 4px 9px;
+      background: none @admin-white !important;
+      width: 100%;
+      color: @admin-medium-gray-font;
+
+      &.invalid {
+        &[type=password] {
+          color: @admin-red;
+        }
+        .animation(shake, .5s, 0, linear)
+      }
+    }
+
+  }
+
+  .login-button, .logout-button {
+    font-family: @admin-font-family;
+    padding: 5px 20px 5px 20px;
+    font-size: 12px;
+    border-width: 1px 1px 1px 1px;
+    border-style: solid;
+    border-color: transparent;
+    background-color: transparent;
+    color: @admin-white;
+    display: inline-block;
+    width: 100%;
+    .background-color-transition;
+
+    &:hover,
+    &:focus {
+      cursor: pointer;
+      color: rgba(255, 255, 255, 0.35);
+    }
+
+    &.disabled {
+      cursor: default;
+      opacity: 0.5;
+    }
+  }
+
+  .logout-button {
     width: 280px;
+    position: absolute;
+    bottom: 10%;
     left: calc(~"50% - 140px");
+    background-color: @admin-red;
+    @media only screen and (max-width: @mobile-threshold) {
+      width: 100%;
+      bottom: 0;
+      left: inherit;
+      //box-shadow: 0px 10px 5px #000, 0px -10px 28px #000;
+    }
   }
 
   /** App selector */
 
   .app-selector-container {
-    width:100%;
+    width: 100%;
   }
 
   .app-selector {
@@ -215,11 +291,11 @@ html, body {
     flex-flow: row wrap;
     -webkit-align-content: center;
     align-content: center;
-    margin:0 auto;
-    @media only screen and (max-width : @mobile-threshold) {
-      width:(90*3)+20px;
+    margin: 0 auto;
+    @media only screen and (max-width: @mobile-threshold) {
+      width: (90*3)+20px;
     }
-    @media only screen and (max-width : @tablet-threshold) {
+    @media only screen and (max-width: @tablet-threshold) {
       width: (110*3)-10px;
     }
     .noSelect();
@@ -231,19 +307,18 @@ html, body {
       width: 115px;
       height: 115px;
       margin: 0 10px 10px 0;
-      border-bottom:4px solid transparent;
+      border-bottom: 4px solid transparent;
       &:nth-child(3n+3) {
-        margin:0 0 10px 0;
+        margin: 0 0 10px 0;
       }
-      @media only screen and (max-width : @mobile-threshold) {
-        width:90px;
-        height:90px;
+      @media only screen and (max-width: @mobile-threshold) {
+        width: 90px;
+        height: 90px;
       }
       @media only screen and (max-width: @tablet-threshold) {
         width: 100px;
         height: 100px;
       }
-
 
       a {
         > .icon-container {
@@ -257,13 +332,13 @@ html, body {
           }
 
           & > i {
-            font-size:55px;
+            font-size: 55px;
             color: white;
-            @media only screen and (max-width : @mobile-threshold) {
-              font-size:30px;
+            @media only screen and (max-width: @mobile-threshold) {
+              font-size: 30px;
             }
-            @media only screen and (max-width : @tablet-threshold) {
-              font-size:40px;
+            @media only screen and (max-width: @tablet-threshold) {
+              font-size: 40px;
             }
           }
         }
@@ -288,7 +363,7 @@ html, body {
         }
       }
       &.app-tile-over {
-        border-bottom:4px solid @admin-red;
+        border-bottom: 4px solid @admin-red;
         &.fullsize {
           > .img-container {
 
@@ -303,13 +378,13 @@ html, body {
               width: 65px;
               height: 65px;
               margin: 10px auto;
-              display:block;
-              border-radius:50%;
-              @media only screen and (max-width : @mobile-threshold) {
-                width:40px;
-                height:40px;
+              display: block;
+              border-radius: 50%;
+              @media only screen and (max-width: @mobile-threshold) {
+                width: 40px;
+                height: 40px;
               }
-              @media only screen and (max-width : @tablet-threshold) {
+              @media only screen and (max-width: @tablet-threshold) {
                 width: 55px;
                 height: 55px;
               }
@@ -319,89 +394,6 @@ html, body {
       }
 
     }
-  }
-
-  .form-item {
-    font-family: @admin-font-family;
-    font-size: 12px;
-    box-sizing: border-box;
-    margin-bottom: 10px;
-    border: 1px solid @admin-light-gray-bg;
-    vertical-align: top;
-    padding: 4px 9px;
-    background: none @admin-white !important;
-    width: 100%;
-  }
-
-  .select-container {
-    border: 1px solid @admin-white;
-    margin-bottom: 10px;
-    .icon-arrow-down2();
-    &:before {
-      color:white;
-      position: absolute;
-      right: 5px;
-      font-size: 27px;
-      top: 2px;
-      pointer-events:none;
-    }
-  }
-
-  select.form-item {
-    margin-bottom:0;
-    color:rgba(0,0,0,0);
-    text-shadow: 0 0 0 white;
-    border: none;
-    box-shadow: none;
-    background: transparent !important;
-    background-image: none;
-    -webkit-appearance: none;
-    -moz-appearance:window;
-  }
-
-  .login-button, .logout-button {
-    font-family: @admin-font-family;
-    padding: 5px 20px 5px 20px;
-    font-size: 12px;
-    border-width: 1px 1px 1px 1px;
-    border-style: solid;
-    border-color: transparent;
-    background-color: transparent;
-    color:@admin-white;
-    display: inline-block;
-    width: 100%;
-    .background-color-transition;
-
-    &:hover,
-    &:focus {
-      cursor: pointer;
-      color: rgba(255,255,255,0.35);
-    }
-
-    &.disabled {
-      cursor: default;
-      opacity: 0.5;
-    }
-  }
-
-  .logout-button {
-    width: 280px;
-    position: absolute;
-    bottom: 10%;
-    left: calc(~"50% - 140px");
-    background-color: @admin-red;
-    @media only screen and (max-width : @mobile-threshold) {
-      width: 100%;
-      bottom:0;
-      left:inherit;
-      //box-shadow: 0px 10px 5px #000, 0px -10px 28px #000;
-    }
-  }
-
-  .login-password-invalid {
-    -webkit-animation: shake .5s linear;
-    animation: shake .5s linear;
-    -moz-animation: shake .5s linear;
   }
 
 }
