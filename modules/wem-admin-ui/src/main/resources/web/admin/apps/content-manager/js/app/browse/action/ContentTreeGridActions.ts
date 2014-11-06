@@ -66,7 +66,7 @@ module app.browse.action {
                 this.OPEN_CONTENT.setEnabled(true);
                 this.EDIT_CONTENT.setEnabled(this.anyEditable(contentSummaries));
                 this.DELETE_CONTENT.setEnabled(this.anyDeletable(contentSummaries));
-                this.DUPLICATE_CONTENT.setEnabled(true);
+                this.DUPLICATE_CONTENT.setEnabled(false);
                 this.MOVE_CONTENT.setEnabled(true);
                 this.SHOW_PREVIEW.setEnabled(false);
             }
