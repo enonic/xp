@@ -1,7 +1,5 @@
 module api.security {
-
     export class Role extends Principal {
-
         constructor(builder: RoleBuilder) {
             super(builder.key, builder.displayName, PrincipalType.ROLE, builder.modifiedTime)
         }
@@ -13,15 +11,10 @@ module api.security {
         static fromJson(json: api.security.RoleJson): Role {
             return new RoleBuilder().fromJson(json).build();
         }
-
     }
-
     export class RoleBuilder {
-
         key: PrincipalKey;
-
         displayName: string;
-
         modifiedTime: Date;
 
         constructor(source?: Role) {
@@ -53,5 +46,4 @@ module api.security {
             return new Role(this);
         }
     }
-
 }

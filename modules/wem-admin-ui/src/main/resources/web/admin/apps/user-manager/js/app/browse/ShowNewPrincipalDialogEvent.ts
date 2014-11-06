@@ -1,6 +1,6 @@
 module app.browse {
 
-    export class ShowNewPrincipalDialogEvent extends BasePrincipalEvent {
+    export class ShowNewPrincipalDialogEvent extends BaseUserEvent {
 
         static on(handler: (event: ShowNewPrincipalDialogEvent) => void) {
             api.event.Event.bind(api.ClassHelper.getFullName(this), handler);

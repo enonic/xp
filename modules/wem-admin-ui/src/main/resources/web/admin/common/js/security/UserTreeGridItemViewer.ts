@@ -1,6 +1,6 @@
 module api.security {
 
-    export class PrincipalViewer extends api.ui.Viewer<Principal> {
+    export class UserTreeGridItemViewer extends api.ui.Viewer<UserTreeGridItem> {
 
         private namesAndIconView: api.app.NamesAndIconView;
 
@@ -10,10 +10,9 @@ module api.security {
             this.appendChild(this.namesAndIconView);
         }
 
-        setObject(principalObj: Principal) {
-            super.setObject(principalObj);
-            this.namesAndIconView.setMainName(principalObj.getDisplayName()).
-                setSubName(principalObj.getKey().getId()).
+        setObject(userItem: UserTreeGridItem) {
+            super.setObject(userItem);
+            this.namesAndIconView.setMainName(userItem.getItemDisplayName()).
                 setIconClass("icon-puzzle icon-large");
         }
 

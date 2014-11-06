@@ -1,7 +1,7 @@
 module api.security {
 
-    export class UserStore {
 
+    export class UserStore {
         private displayName: string;
         private key: UserStoreKey;
 
@@ -25,13 +25,9 @@ module api.security {
         static fromJson(json: api.security.UserStoreJson): UserStore {
             return new UserStoreBuilder().fromJson(json).build();
         }
-
     }
-
     export class UserStoreBuilder {
-
         displayName: string;
-
         key: UserStoreKey;
 
         constructor() {
@@ -57,5 +53,4 @@ module api.security {
             return new UserStore(this);
         }
     }
-
 }

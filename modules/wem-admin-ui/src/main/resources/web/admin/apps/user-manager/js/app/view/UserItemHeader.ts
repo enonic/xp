@@ -1,5 +1,5 @@
 module app.view {
-    export class PrincipalItemHeader extends api.dom.DivEl {
+    export class UserItemHeader extends api.dom.DivEl {
         private displayName: api.dom.H2El;
         private subTitle: api.dom.H3El;
 

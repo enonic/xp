@@ -1,14 +1,15 @@
 module app.browse.action {
 
     import Action = api.ui.Action;
-    export class EditPrincipalAction extends Action {
+
+    export class DeleteUserItemAction extends Action {
 
         constructor(grid: UserItemsTreeGrid) {
-            super("Edit", "f4");
+            super("Delete", "mod+del");
             this.setEnabled(false);
             this.onExecuted(() => {
                 var principals: api.security.UserTreeGridItem[] = grid.getSelectedDataList();
-                new app.browse.EditPrincipalEvent(principals).fire();
+                new UserItemDeletePromptEvent(principals).fire();
             });
         }
     }

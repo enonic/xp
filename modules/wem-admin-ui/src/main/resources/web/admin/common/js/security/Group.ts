@@ -1,7 +1,5 @@
 module api.security {
-
     export class Group extends Principal {
-
         constructor(builder: GroupBuilder) {
             super(builder.key, builder.displayName, PrincipalType.GROUP, builder.modifiedTime)
         }
@@ -13,15 +11,10 @@ module api.security {
         static fromJson(json: api.security.GroupJson): Group {
             return new GroupBuilder().fromJson(json).build();
         }
-
     }
-
     export class GroupBuilder {
-
         key: PrincipalKey;
-
         displayName: string;
-
         modifiedTime: Date;
 
         constructor(source?: Group) {

@@ -1,6 +1,6 @@
 module app {
 
-    export class UserAppPanel extends api.app.BrowseAndWizardBasedAppPanel<api.security.Principal> {
+    export class UserAppPanel extends api.app.BrowseAndWizardBasedAppPanel<api.security.UserTreeGridItem> {
 
         constructor(appBar: api.app.bar.AppBar, path?: api.rest.Path) {
 
@@ -43,9 +43,9 @@ module app {
         }
 
         private handleBrowse(event: api.app.bar.event.ShowBrowsePanelEvent) {
-            var browsePanel: api.app.browse.BrowsePanel<api.security.Principal> = this.getBrowsePanel();
+            var browsePanel: api.app.browse.BrowsePanel<api.security.UserTreeGridItem> = this.getBrowsePanel();
             if (!browsePanel) {
-                this.addBrowsePanel(new app.browse.PrincipalBrowsePanel());
+                this.addBrowsePanel(new app.browse.UserBrowsePanel());
             } else {
                 this.showPanel(browsePanel);
             }
