@@ -5,7 +5,7 @@ module api.content.page.part {
     import ComboBoxConfig = api.ui.selector.combobox.ComboBoxConfig;
     import Option = api.ui.selector.Option;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
-    import SelectedOptionView = api.ui.selector.combobox.SelectedOptionView;
+    import BaseSelectedOptionView = api.ui.selector.combobox.BaseSelectedOptionView;
     import SelectedOptionsView = api.ui.selector.combobox.SelectedOptionsView;
     import DescriptorKey = api.content.page.DescriptorKey;
 
@@ -42,10 +42,6 @@ module api.content.page.part {
             this.comboBox.selectOption(option);
         }
 
-        getSelectedOptions(): Option<PartDescriptor>[] {
-            return this.comboBox.getSelectedOptions();
-        }
-
     }
 
     export class PartDescriptorSelectedOptionsView extends SelectedOptionsView<PartDescriptor> {
@@ -55,7 +51,7 @@ module api.content.page.part {
         }
     }
 
-    export class PartDescriptorSelectedOptionView extends SelectedOptionView<PartDescriptor> {
+    export class PartDescriptorSelectedOptionView extends BaseSelectedOptionView<PartDescriptor> {
 
         private descriptor: PartDescriptor;
 

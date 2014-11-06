@@ -5,7 +5,7 @@ module api.content.page.layout {
     import ComboBoxConfig = api.ui.selector.combobox.ComboBoxConfig;
     import Option = api.ui.selector.Option;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
-    import SelectedOptionView = api.ui.selector.combobox.SelectedOptionView;
+    import BaseSelectedOptionView = api.ui.selector.combobox.BaseSelectedOptionView;
     import SelectedOptionsView = api.ui.selector.combobox.SelectedOptionsView;
     import DescriptorKey = api.content.page.DescriptorKey;
 
@@ -42,10 +42,6 @@ module api.content.page.layout {
             this.comboBox.selectOption(option);
         }
 
-        getSelectedOptions(): Option<LayoutDescriptor>[] {
-            return this.comboBox.getSelectedOptions();
-        }
-
     }
 
     export class LayoutDescriptorSelectedOptionsView extends SelectedOptionsView<LayoutDescriptor> {
@@ -55,7 +51,7 @@ module api.content.page.layout {
         }
     }
 
-    export class LayoutDescriptorSelectedOptionView extends SelectedOptionView<LayoutDescriptor> {
+    export class LayoutDescriptorSelectedOptionView extends BaseSelectedOptionView<LayoutDescriptor> {
 
         private descriptor: LayoutDescriptor;
 

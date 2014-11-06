@@ -2,6 +2,7 @@
 ///<reference path='ComboBoxDropdown.ts' />
 ///<reference path='ComboBox.ts' />
 ///<reference path='SelectedOptionView.ts' />
+///<reference path='BaseSelectedOptionView.ts' />
 ///<reference path='SelectedOptionsView.ts' />
 ///<reference path='SelectedOption.ts' />
 ///<reference path='RichComboBox.ts' />

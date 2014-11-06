@@ -12,7 +12,7 @@ module api.ui.selector.combobox {
 
         comboBoxName: string;
 
-        selectedOptionsView: any;
+        selectedOptionsView: api.ui.selector.combobox.SelectedOptionsView<OPTION_DISPLAY_VALUE>;
 
         comboBox: api.ui.selector.combobox.ComboBox<OPTION_DISPLAY_VALUE>;
 
@@ -79,6 +79,10 @@ module api.ui.selector.combobox {
             return this.comboBox.getSelectedOptions().map((option: api.ui.selector.Option<OPTION_DISPLAY_VALUE>) => {
                 return option.value;
             });
+        }
+
+        getSelectedOptions(): SelectedOption<OPTION_DISPLAY_VALUE>[] {
+            return this.selectedOptionsView.getSelectedOptions();
         }
 
         maximumOccurrencesReached(): boolean {
@@ -301,7 +305,7 @@ module api.ui.selector.combobox {
             return this;
         }
 
-        setMinWidth(value:number) {
+        setMinWidth(value: number) {
             this.minWidth = value;
             return this;
         }
