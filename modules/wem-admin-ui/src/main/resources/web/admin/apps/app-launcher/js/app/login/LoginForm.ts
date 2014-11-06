@@ -74,16 +74,14 @@ module app.login {
         private loginButtonClick() {
             var userName = this.userIdInput.getValue();
             var password = this.passwordInput.getValue();
-            var selectedUserStoreId = this.userStoresDropdown.getValue();
-            if (userName === '' || password === '' || selectedUserStoreId === '') {
+            if (userName === '' || password === '') {
                 return;
             }
-            var userStore = this.userStores[selectedUserStoreId];
 
             this.userIdInput.removeClass('login-password-invalid');
             this.passwordInput.removeClass('login-password-invalid');
 
-            this.authenticator.authenticate(userName, userStore, password,
+            this.authenticator.authenticate(userName, password,
                 (loginResult: api.security.auth.LoginResult) => this.handleAuthenticateResponse(loginResult));
         }
 

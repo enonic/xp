@@ -4,8 +4,6 @@ module api.security.auth {
 
         private user: string;
 
-        private userStore: api.security.UserStoreKey;
-
         private password: string;
 
         private rememberMe: boolean;
@@ -22,10 +20,6 @@ module api.security.auth {
             return this.password;
         }
 
-        getUserStore(): api.security.UserStoreKey {
-            return this.userStore;
-        }
-
         isRememberMe(): boolean {
             return this.rememberMe;
         }
@@ -37,11 +31,6 @@ module api.security.auth {
 
         setPassword(pwd: string): LoginCredentials {
             this.password = pwd;
-            return this;
-        }
-
-        setUserStore(userStore: api.security.UserStoreKey): LoginCredentials {
-            this.userStore = userStore;
             return this;
         }
 

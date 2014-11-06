@@ -11,11 +11,9 @@ module api.security.auth {
         }
 
         getParams(): Object {
-            var userStoreKey = this.loginCredentials.getUserStore();
             return {
                 user: this.loginCredentials.getUser(),
                 password: this.loginCredentials.getPassword(),
-                userStore: userStoreKey ? userStoreKey.toString() : '',
                 rememberMe: this.loginCredentials.isRememberMe()
             };
         }
