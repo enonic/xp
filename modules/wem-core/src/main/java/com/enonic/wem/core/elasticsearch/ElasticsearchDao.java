@@ -26,10 +26,12 @@ import com.google.common.collect.ImmutableSet;
 import com.enonic.wem.core.elasticsearch.document.DeleteDocument;
 import com.enonic.wem.core.elasticsearch.document.StoreDocument;
 import com.enonic.wem.core.elasticsearch.query.ElasticsearchQuery;
+import com.enonic.wem.core.elasticsearch.result.GetResultFactory;
 import com.enonic.wem.core.elasticsearch.result.SearchResultFactory;
 import com.enonic.wem.core.elasticsearch.xcontent.StoreDocumentXContentBuilderFactory;
 import com.enonic.wem.core.index.IndexException;
 import com.enonic.wem.core.index.query.QueryService;
+import com.enonic.wem.core.index.result.GetResult;
 import com.enonic.wem.core.index.result.SearchResult;
 
 public class ElasticsearchDao
@@ -104,7 +106,7 @@ public class ElasticsearchDao
         final SearchSourceBuilder searchSource = query.toSearchSourceBuilder();
         searchSource.size( resolveSize( query ) );
 
-        //System.out.println( searchSource.toString() );
+        // System.out.println( searchSource.toString() );
 
         final SearchRequestBuilder searchRequest = new SearchRequestBuilder( this.client ).
             setIndices( query.getIndexName() ).
@@ -115,26 +117,6 @@ public class ElasticsearchDao
         return doSearchRequest( searchRequest );
     }
 
-    private int resolveSize( final ElasticsearchQuery query )
-    {
-        if ( query.getSize() == QueryService.GET_ALL_SIZE_FLAG )
-        {
-            return safeLongToInt( this.count( query ) );
-        }
-        else
-        {
-            return query.getSize();
-        }
-    }
-
-    private static int safeLongToInt( long l )
-    {
-        if ( l < Integer.MIN_VALUE || l > Integer.MAX_VALUE )
-        {
-            throw new IllegalArgumentException( l + " cannot be cast to int without changing its value." );
-        }
-        return (int) l;
-    }
 
     public SearchResult get( final QueryMetaData queryMetaData, final QueryBuilder queryBuilder )
     {
@@ -152,13 +134,13 @@ public class ElasticsearchDao
 
         if ( queryMetaData.hasFields() )
         {
-            searchRequestBuilder.addFields( queryMetaData.getFields() );
+            searchRequestBuilder.addFields( queryMetaData.getNormalizedFieldNames() );
         }
 
         return doSearchRequest( searchRequestBuilder );
     }
 
-    public SearchResult get( final QueryMetaData queryMetaData, final String id )
+    public GetResult get( final QueryMetaData queryMetaData, final String id )
     {
         final GetRequest getRequest = new GetRequest( queryMetaData.getIndexName() ).
             type( queryMetaData.getIndexTypeName() ).
@@ -167,13 +149,13 @@ public class ElasticsearchDao
 
         if ( queryMetaData.hasFields() )
         {
-            getRequest.fields( queryMetaData.getFields() );
+            getRequest.fields( queryMetaData.getNormalizedFieldNames() );
         }
 
         final GetResponse getResponse = client.get( getRequest ).
             actionGet( searchTimeout );
 
-        return SearchResultFactory.create( getResponse );
+        return GetResultFactory.create( getResponse );
     }
 
     public long count( final QueryMetaData queryMetaData, final QueryBuilder query )
@@ -202,6 +184,27 @@ public class ElasticsearchDao
         final SearchResult searchResult = doSearchRequest( searchRequestBuilder );
 
         return searchResult.getResults().getTotalHits();
+    }
+
+    private int resolveSize( final ElasticsearchQuery query )
+    {
+        if ( query.getSize() == QueryService.GET_ALL_SIZE_FLAG )
+        {
+            return safeLongToInt( this.count( query ) );
+        }
+        else
+        {
+            return query.getSize();
+        }
+    }
+
+    private static int safeLongToInt( long l )
+    {
+        if ( l < Integer.MIN_VALUE || l > Integer.MAX_VALUE )
+        {
+            throw new IllegalArgumentException( l + " cannot be cast to int without changing its value." );
+        }
+        return (int) l;
     }
 
     private SearchResult doSearchRequest( final SearchRequestBuilder searchRequestBuilder )

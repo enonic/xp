@@ -10,7 +10,7 @@ import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.index.query.NodeQueryResult;
 
 public class SetNodeChildOrderCommand
-    extends AbstractFindNodeCommand
+    extends AbstractNodeCommand
 {
     private final NodeId nodeId;
 
@@ -72,7 +72,7 @@ public class SetNodeChildOrderCommand
     }
 
     public static final class Builder
-        extends AbstractFindNodeCommand.Builder<Builder>
+        extends AbstractNodeCommand.Builder<Builder>
     {
         private NodeId nodeId;
 

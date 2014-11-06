@@ -5,7 +5,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.core.index.query.QueryService;
 
 public class DuplicateNodeCommand
-    extends AbstractFindNodeCommand
+    extends AbstractNodeCommand
 {
     private final NodeId nodeId;
 
@@ -93,7 +93,7 @@ public class DuplicateNodeCommand
 
 
     public static class Builder
-        extends AbstractFindNodeCommand.Builder<Builder>
+        extends AbstractNodeCommand.Builder<Builder>
     {
         private NodeId id;
 

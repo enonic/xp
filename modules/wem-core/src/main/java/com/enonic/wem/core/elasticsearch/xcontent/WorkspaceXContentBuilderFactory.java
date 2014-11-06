@@ -9,15 +9,15 @@ import com.enonic.wem.core.workspace.StoreWorkspaceDocument;
 public class WorkspaceXContentBuilderFactory
     extends AbstractXContentBuilderFactor
 {
-    public static final String NODE_VERSION_ID_FIELD_NAME = "versionId";
+    public static final String NODE_VERSION_ID_FIELD_NAME = "versionid";
 
     public static final String WORKSPACE_FIELD_NAME = "workspace";
 
-    public static final String NODE_ID_FIELD_NAME = "nodeId";
+    public static final String NODE_ID_FIELD_NAME = "nodeid";
 
     public static final String PATH_FIELD_NAME = "path";
 
-    public static final String PARENT_PATH_FIELD_NAME = "parentPath";
+    public static final String PARENT_PATH_FIELD_NAME = "parentpath";
 
     public static XContentBuilder create( final StoreWorkspaceDocument storeWorkspaceDocument, final Workspace workspace )
     {

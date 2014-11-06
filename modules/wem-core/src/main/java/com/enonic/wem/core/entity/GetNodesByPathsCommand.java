@@ -3,37 +3,29 @@ package com.enonic.wem.core.entity;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.core.index.IndexContext;
 
-public class GetNodeByPathCommand
+public class GetNodesByPathsCommand
     extends AbstractNodeCommand
 {
-    private NodePath path;
 
-    private boolean resolveHasChild;
+    private final NodePaths paths;
 
-    private GetNodeByPathCommand( final Builder builder )
+    private final boolean resolveHasChild;
+
+    private GetNodesByPathsCommand( Builder builder )
     {
         super( builder );
-        path = builder.path;
+        paths = builder.paths;
         resolveHasChild = builder.resolveHasChild;
     }
 
-    public Node execute()
+    public Nodes execute()
     {
-        final Context context = Context.current();
-
-        final NodeVersionId currentVersion = this.queryService.get( path, IndexContext.from( context ) );
-
-        if ( currentVersion == null )
-        {
-            return null;
-        }
-
-        final Node node = nodeDao.getByVersionId( currentVersion );
+        final NodeVersionIds versionIds = this.queryService.get( paths, IndexContext.from( Context.current() ) );
 
         return resolveHasChild ? NodeHasChildResolver.create().
             workspaceService( this.workspaceService ).
             build().
-            resolve( node ) : node;
+            resolve( nodeDao.getByVersionIds( versionIds ) ) : nodeDao.getByVersionIds( versionIds );
     }
 
     public static Builder create()
@@ -41,11 +33,10 @@ public class GetNodeByPathCommand
         return new Builder();
     }
 
-
     public static final class Builder
         extends AbstractNodeCommand.Builder<Builder>
     {
-        private NodePath path;
+        private NodePaths paths;
 
         private boolean resolveHasChild = true;
 
@@ -53,9 +44,9 @@ public class GetNodeByPathCommand
         {
         }
 
-        public Builder nodePath( NodePath path )
+        public Builder paths( NodePaths paths )
         {
-            this.path = path;
+            this.paths = paths;
             return this;
         }
 
@@ -65,9 +56,9 @@ public class GetNodeByPathCommand
             return this;
         }
 
-        public GetNodeByPathCommand build()
+        public GetNodesByPathsCommand build()
         {
-            return new GetNodeByPathCommand( this );
+            return new GetNodesByPathsCommand( this );
         }
     }
 }

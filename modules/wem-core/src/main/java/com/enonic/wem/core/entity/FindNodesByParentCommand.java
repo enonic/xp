@@ -6,10 +6,9 @@ import com.enonic.wem.api.query.expr.QueryExpr;
 import com.enonic.wem.core.entity.query.NodeQuery;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.index.query.NodeQueryResult;
-import com.enonic.wem.core.workspace.WorkspaceContext;
 
 public class FindNodesByParentCommand
-    extends AbstractFindNodeCommand
+    extends AbstractNodeCommand
 {
     private final FindNodesByParentParams params;
 
@@ -28,7 +27,7 @@ public class FindNodesByParentCommand
     {
         final ChildOrder order = NodeChildOrderResolver.create().
             nodeDao( this.nodeDao ).
-            workspaceService( this.workspaceService ).
+            workspaceService( this.queryService ).
             nodePath( params.getParentPath() ).
             childOrder( params.getChildOrder() ).
             build().
@@ -38,13 +37,7 @@ public class FindNodesByParentCommand
 
         final NodeQueryResult nodeQueryResult = this.queryService.find( query, IndexContext.from( Context.current() ) );
 
-        final NodeVersionIds versions =
-            this.workspaceService.getByVersionIds( nodeQueryResult.getNodeIds(), WorkspaceContext.from( Context.current() ) );
-
-        final Nodes nodes = NodeHasChildResolver.create().
-            workspaceService( this.workspaceService ).
-            build().
-            resolve( nodeDao.getByVersionIds( versions ) );
+        final Nodes nodes = doGetByIds( nodeQueryResult.getNodeIds(), true );
 
         return FindNodesByParentResult.create().
             nodes( nodes ).
@@ -64,7 +57,7 @@ public class FindNodesByParentCommand
     }
 
     public static class Builder
-        extends AbstractFindNodeCommand.Builder<Builder>
+        extends AbstractNodeCommand.Builder<Builder>
     {
         private FindNodesByParentParams params;
 

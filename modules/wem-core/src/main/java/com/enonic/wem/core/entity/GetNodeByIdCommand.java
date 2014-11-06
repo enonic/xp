@@ -1,7 +1,7 @@
 package com.enonic.wem.core.entity;
 
 import com.enonic.wem.api.context.Context;
-import com.enonic.wem.core.workspace.WorkspaceContext;
+import com.enonic.wem.core.index.IndexContext;
 
 public class GetNodeByIdCommand
     extends AbstractNodeCommand
@@ -21,7 +21,7 @@ public class GetNodeByIdCommand
     {
         final Context context = Context.current();
 
-        final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( id, WorkspaceContext.from( context ) );
+        final NodeVersionId currentVersion = this.queryService.get( this.id, IndexContext.from( context ) );
 
         if ( currentVersion == null )
         {

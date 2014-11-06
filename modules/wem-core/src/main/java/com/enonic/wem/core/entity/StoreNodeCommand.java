@@ -35,7 +35,7 @@ public class StoreNodeCommand
             nodeVersionId( updatedNodeVersionId ).
             build(), WorkspaceContext.from( context ) );
 
-        this.indexService.store( node, IndexContext.from( context ) );
+        this.indexService.store( node, updatedNodeVersionId, IndexContext.from( context ) );
     }
 
     public static Builder create()

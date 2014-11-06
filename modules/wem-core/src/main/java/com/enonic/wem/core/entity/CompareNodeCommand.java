@@ -5,9 +5,9 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.content.CompareStatus;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.core.index.IndexContext;
+import com.enonic.wem.core.index.query.QueryService;
 import com.enonic.wem.core.version.VersionService;
-import com.enonic.wem.core.workspace.WorkspaceContext;
-import com.enonic.wem.core.workspace.WorkspaceService;
 import com.enonic.wem.core.workspace.compare.DiffStatusParams;
 import com.enonic.wem.core.workspace.compare.DiffStatusResolver;
 
@@ -17,16 +17,16 @@ public class CompareNodeCommand
 
     private final Workspace target;
 
-    private final WorkspaceService workspaceService;
-
     private final VersionService versionService;
+
+    private final QueryService queryService;
 
     private CompareNodeCommand( Builder builder )
     {
-        nodeId = builder.nodeId;
-        target = builder.target;
-        workspaceService = builder.workspaceService;
-        versionService = builder.versionService;
+        this.nodeId = builder.nodeId;
+        this.target = builder.target;
+        this.versionService = builder.versionService;
+        this.queryService = builder.queryService;
     }
 
     public static Builder create()
@@ -38,9 +38,8 @@ public class CompareNodeCommand
     {
         final Context context = Context.current();
 
-        final NodeVersionId sourceVersionId = workspaceService.getCurrentVersion( nodeId, WorkspaceContext.from( context ) );
-        final NodeVersionId targetVersionId =
-            workspaceService.getCurrentVersion( nodeId, WorkspaceContext.from( this.target, context.getRepositoryId() ) );
+        final NodeVersionId sourceVersionId = this.queryService.get( nodeId, IndexContext.from( context ) );
+        final NodeVersionId targetVersionId = this.queryService.get( nodeId, IndexContext.from( this.target, context.getRepositoryId() ) );
 
         final NodeVersion sourceVersion = getVersion( sourceVersionId, context );
         final NodeVersion targetVersion = getVersion( targetVersionId, context );
@@ -66,9 +65,9 @@ public class CompareNodeCommand
 
         private Workspace target;
 
-        private WorkspaceService workspaceService;
-
         private VersionService versionService;
+
+        private QueryService queryService;
 
         private Builder()
         {
@@ -86,9 +85,9 @@ public class CompareNodeCommand
             return this;
         }
 
-        public Builder workspaceService( WorkspaceService workspaceService )
+        public Builder queryService( final QueryService queryService )
         {
-            this.workspaceService = workspaceService;
+            this.queryService = queryService;
             return this;
         }
 
@@ -102,7 +101,7 @@ public class CompareNodeCommand
         {
             Preconditions.checkNotNull( nodeId );
             Preconditions.checkNotNull( target );
-            Preconditions.checkNotNull( workspaceService );
+            Preconditions.checkNotNull( queryService );
             Preconditions.checkNotNull( versionService );
         }
 

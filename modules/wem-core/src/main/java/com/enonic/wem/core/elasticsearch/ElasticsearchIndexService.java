@@ -30,6 +30,7 @@ import com.enonic.wem.core.elasticsearch.document.DeleteDocument;
 import com.enonic.wem.core.elasticsearch.document.StoreDocument;
 import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.entity.NodeId;
+import com.enonic.wem.core.entity.NodeVersionId;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.index.IndexException;
 import com.enonic.wem.core.index.IndexService;
@@ -205,10 +206,11 @@ public class ElasticsearchIndexService
         }
     }
 
-    public void store( final Node node, final IndexContext context )
+    public void store( final Node node, final NodeVersionId nodeVersionId, final IndexContext context )
     {
         final Collection<StoreDocument> storeDocuments =
-            NodeStoreDocumentFactory.create( node, context.getWorkspace(), context.getRepositoryId() );
+            NodeStoreDocumentFactory.create( node, nodeVersionId, context.getWorkspace(), context.getRepositoryId() );
+
         elasticsearchDao.store( storeDocuments );
     }
 

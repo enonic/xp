@@ -13,7 +13,7 @@ import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.index.query.NodeQueryResult;
 
 public class MoveChildNodeCommand
-    extends AbstractFindNodeCommand
+    extends AbstractNodeCommand
 {
     private final Node nodeToMove;
 
@@ -148,7 +148,7 @@ public class MoveChildNodeCommand
 
 
     public static final class Builder
-        extends AbstractFindNodeCommand.Builder<Builder>
+        extends AbstractNodeCommand.Builder<Builder>
     {
         private Node nodeToMove;
 

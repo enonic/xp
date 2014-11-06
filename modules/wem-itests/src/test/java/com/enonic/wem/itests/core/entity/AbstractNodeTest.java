@@ -86,6 +86,7 @@ public abstract class AbstractNodeTest
             nodeDao( this.nodeDao ).
             indexService( this.indexService ).
             versionService( this.versionService ).
+            queryService( this.queryService ).
             params( createNodeParams ).
             build().
             execute();
@@ -103,6 +104,7 @@ public abstract class AbstractNodeTest
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             workspaceService( this.workspaceService ).
+            queryService( this.queryService ).
             id( nodeId ).
             resolveHasChild( false ).
             build().

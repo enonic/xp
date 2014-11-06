@@ -7,6 +7,7 @@ import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.core.elasticsearch.IndexStatus;
 import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.entity.NodeId;
+import com.enonic.wem.core.entity.NodeVersionId;
 
 public interface IndexService
 {
@@ -16,7 +17,7 @@ public interface IndexService
 
     public boolean indicesExists( final String... indices );
 
-    public void store( final Node node, final IndexContext context );
+    public void store( final Node node, final NodeVersionId nodeVersionId, final IndexContext context );
 
     public void delete( final NodeId nodeId, final IndexContext context );
 

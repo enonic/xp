@@ -5,6 +5,8 @@ import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.admin.indices.refresh.RefreshResponse;
+import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
 import org.junit.After;
@@ -49,6 +51,27 @@ public abstract class AbstractElasticsearchIntegrationTest
     {
         IndicesExistsResponse actionGet = this.client.admin().indices().prepareExists( index ).execute().actionGet();
         return actionGet.isExists();
+    }
+
+
+    protected void printAllIndexContent( final String indexName, final String indexType )
+    {
+        String termQuery = "{\n" +
+            "  \"query\": { \"match_all\": {} }\n" +
+            "}";
+
+        SearchRequestBuilder searchRequest = new SearchRequestBuilder( this.client ).
+            setSize( 100 ).
+            setIndices( indexName ).
+            setTypes( indexType ).
+            setSource( termQuery );
+
+        final SearchResponse searchResponse = this.client.search( searchRequest.request() ).actionGet();
+
+        System.out.println( "\n\n---------- CONTENT --------------------------------" );
+        System.out.println( searchResponse.toString() );
+        System.out.println( "\n\n" );
+
     }
 
 

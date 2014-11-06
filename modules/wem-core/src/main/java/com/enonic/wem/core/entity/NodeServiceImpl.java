@@ -8,7 +8,6 @@ import com.enonic.wem.core.entity.query.NodeQuery;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.index.query.QueryService;
 import com.enonic.wem.core.version.VersionService;
-import com.enonic.wem.core.workspace.WorkspaceContext;
 import com.enonic.wem.core.workspace.WorkspaceService;
 
 public class NodeServiceImpl
@@ -47,19 +46,9 @@ public class NodeServiceImpl
             workspaceService( this.workspaceService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
+            queryService( this.queryService ).
             build().
             execute();
-    }
-
-    @Override
-    public Nodes getByIds( final NodeIds ids )
-    {
-        final NodeVersionIds versionIds = this.workspaceService.getByVersionIds( ids, WorkspaceContext.from( Context.current() ) );
-
-        return NodeHasChildResolver.create().
-            workspaceService( this.workspaceService ).
-            build().
-            resolve( nodeDao.getByVersionIds( versionIds ) );
     }
 
     @Override
@@ -85,20 +74,39 @@ public class NodeServiceImpl
             workspaceService( this.workspaceService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
+            queryService( this.queryService ).
             build().
             execute();
     }
 
+    @Override
+    public Nodes getByIds( final NodeIds ids )
+    {
+        return GetNodesByIdsCommand.create().
+            ids( ids ).
+            resolveHasChild( true ).
+            indexService( this.indexService ).
+            queryService( this.queryService ).
+            nodeDao( this.nodeDao ).
+            versionService( this.versionService ).
+            workspaceService( this.workspaceService ).
+            build().
+            execute();
+    }
 
     @Override
     public Nodes getByPaths( final NodePaths paths )
     {
-        final NodeVersionIds versionIds = this.workspaceService.getByPaths( paths, WorkspaceContext.from( Context.current() ) );
-
-        return NodeHasChildResolver.create().
+        return GetNodesByPathsCommand.create().
+            paths( paths ).
+            resolveHasChild( true ).
+            indexService( this.indexService ).
             workspaceService( this.workspaceService ).
+            versionService( this.versionService ).
+            nodeDao( this.nodeDao ).
+            queryService( this.queryService ).
             build().
-            resolve( nodeDao.getByVersionIds( versionIds ) );
+            execute();
     }
 
     @Override
@@ -124,6 +132,7 @@ public class NodeServiceImpl
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).
             workspaceService( this.workspaceService ).
+            queryService( this.queryService ).
             build().
             execute();
     }
@@ -142,6 +151,7 @@ public class NodeServiceImpl
             versionService( this.versionService ).
             workspaceService( this.workspaceService ).
             nodeDao( this.nodeDao ).
+            queryService( this.queryService ).
             build().
             execute();
     }
@@ -155,6 +165,7 @@ public class NodeServiceImpl
             nodeDao( this.nodeDao ).
             workspaceService( this.workspaceService ).
             versionService( this.versionService ).
+            queryService( this.queryService ).
             build().
             execute();
     }
@@ -168,6 +179,7 @@ public class NodeServiceImpl
             nodeDao( this.nodeDao ).
             workspaceService( this.workspaceService ).
             versionService( this.versionService ).
+            queryService( this.queryService ).
             build().
             execute();
     }
@@ -181,6 +193,7 @@ public class NodeServiceImpl
             nodeDao( this.nodeDao ).
             workspaceService( this.workspaceService ).
             versionService( this.versionService ).
+            queryService( this.queryService ).
             build().
             execute();
     }
@@ -194,6 +207,7 @@ public class NodeServiceImpl
             nodeDao( this.nodeDao ).
             workspaceService( this.workspaceService ).
             versionService( this.versionService ).
+            queryService( this.queryService ).
             build().
             execute();
     }
@@ -205,6 +219,8 @@ public class NodeServiceImpl
             indexService( this.indexService ).
             nodeDao( this.nodeDao ).
             workspaceService( this.workspaceService ).
+            queryService( this.queryService ).
+            versionService( this.versionService ).
             id( id ).
             target( target ).
             build().
@@ -232,7 +248,7 @@ public class NodeServiceImpl
         return CompareNodeCommand.create().
             nodeId( nodeId ).
             target( target ).
-            workspaceService( this.workspaceService ).
+            queryService( this.queryService ).
             versionService( this.versionService ).
             build().
             execute();

@@ -3,23 +3,23 @@ package com.enonic.wem.core.entity;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.core.entity.dao.NodeDao;
-import com.enonic.wem.core.workspace.WorkspaceContext;
-import com.enonic.wem.core.workspace.WorkspaceService;
+import com.enonic.wem.core.index.IndexContext;
+import com.enonic.wem.core.index.query.QueryService;
 
 public class NodeChildOrderResolver
 {
     private final NodeDao nodeDao;
 
-    private final WorkspaceService workspaceService;
+    private final QueryService queryService;
 
     private final NodePath parentPath;
 
     private final ChildOrder childOrder;
 
-    private NodeChildOrderResolver( Builder builder )
+    private NodeChildOrderResolver( final Builder builder )
     {
         nodeDao = builder.nodeDao;
-        workspaceService = builder.workspaceService;
+        queryService = builder.queryService;
         parentPath = builder.nodePath;
         childOrder = builder.childOrder;
     }
@@ -36,8 +36,7 @@ public class NodeChildOrderResolver
             return Context.current().getWorkspace().getChildOrder();
         }
 
-        final NodeVersionId parentNodeVersion =
-            this.workspaceService.getByPath( this.parentPath, WorkspaceContext.from( Context.current() ) );
+        final NodeVersionId parentNodeVersion = this.queryService.get( this.parentPath, IndexContext.from( Context.current() ) );
 
         if ( parentNodeVersion == null )
         {
@@ -59,7 +58,7 @@ public class NodeChildOrderResolver
     {
         private NodeDao nodeDao;
 
-        private WorkspaceService workspaceService;
+        private QueryService queryService;
 
         private NodePath nodePath;
 
@@ -75,9 +74,9 @@ public class NodeChildOrderResolver
             return this;
         }
 
-        public Builder workspaceService( final WorkspaceService workspaceService )
+        public Builder workspaceService( final QueryService queryService )
         {
-            this.workspaceService = workspaceService;
+            this.queryService = queryService;
             return this;
         }
 

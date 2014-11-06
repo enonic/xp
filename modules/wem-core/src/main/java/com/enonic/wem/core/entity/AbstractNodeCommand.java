@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.core.entity.dao.NodeDao;
 import com.enonic.wem.core.index.IndexService;
+import com.enonic.wem.core.index.query.QueryService;
 import com.enonic.wem.core.version.VersionService;
 import com.enonic.wem.core.workspace.WorkspaceService;
 
@@ -17,12 +18,15 @@ abstract class AbstractNodeCommand
 
     final VersionService versionService;
 
+    final QueryService queryService;
+
     AbstractNodeCommand( final Builder builder )
     {
         this.indexService = builder.indexService;
         this.nodeDao = builder.nodeDao;
         this.workspaceService = builder.workspaceService;
         this.versionService = builder.versionService;
+        this.queryService = builder.queryService;
     }
 
     void doStoreNode( final Node node )
@@ -33,6 +37,7 @@ abstract class AbstractNodeCommand
             workspaceService( this.workspaceService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
+            queryService( this.queryService ).
             build().
             execute();
     }
@@ -46,6 +51,7 @@ abstract class AbstractNodeCommand
             workspaceService( this.workspaceService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
+            queryService( this.queryService ).
             build().
             execute();
     }
@@ -59,9 +65,25 @@ abstract class AbstractNodeCommand
             workspaceService( this.workspaceService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
+            queryService( this.queryService ).
             build().
             execute();
     }
+
+    Nodes doGetByIds( final NodeIds ids, final boolean resolveHasChild )
+    {
+        return GetNodesByIdsCommand.create().
+            ids( ids ).
+            resolveHasChild( resolveHasChild ).
+            indexService( this.indexService ).
+            workspaceService( this.workspaceService ).
+            versionService( this.versionService ).
+            nodeDao( this.nodeDao ).
+            queryService( this.queryService ).
+            build().
+            execute();
+    }
+
 
     Node doCreateNode( final CreateNodeParams params )
     {
@@ -71,9 +93,24 @@ abstract class AbstractNodeCommand
             versionService( this.versionService ).
             workspaceService( this.workspaceService ).
             nodeDao( this.nodeDao ).
+            queryService( this.queryService ).
             build().
             execute();
     }
+
+    FindNodesByParentResult doFindNodesByParent( final FindNodesByParentParams params )
+    {
+        return FindNodesByParentCommand.create().
+            params( params ).
+            queryService( this.queryService ).
+            nodeDao( this.nodeDao ).
+            workspaceService( this.workspaceService ).
+            versionService( this.versionService ).
+            indexService( this.indexService ).
+            build().
+            execute();
+    }
+
 
     public static class Builder<B extends Builder>
     {
@@ -84,6 +121,8 @@ abstract class AbstractNodeCommand
         WorkspaceService workspaceService;
 
         VersionService versionService;
+
+        QueryService queryService;
 
         Builder()
         {
@@ -107,6 +146,13 @@ abstract class AbstractNodeCommand
         public B versionService( final VersionService versionService )
         {
             this.versionService = versionService;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B queryService( final QueryService queryService )
+        {
+            this.queryService = queryService;
             return (B) this;
         }
 

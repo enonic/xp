@@ -6,8 +6,10 @@ import org.junit.Test;
 import com.enonic.wem.core.entity.CreateNodeParams;
 import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.entity.NodeId;
+import com.enonic.wem.core.entity.NodeName;
 import com.enonic.wem.core.entity.NodePath;
 import com.enonic.wem.core.entity.NodeServiceImpl;
+import com.enonic.wem.core.entity.RenameNodeParams;
 import com.enonic.wem.core.entity.dao.NodeNotFoundException;
 
 import static org.junit.Assert.*;
@@ -55,4 +57,27 @@ public class NodeServiceImplTest
         this.nodeService.getById( NodeId.from( "a" ) );
 
     }
+
+
+    @Test
+    public void rename()
+        throws Exception
+    {
+        final Node createdNode = createNode( CreateNodeParams.create().
+            name( "my-node" ).
+            parent( NodePath.ROOT ).
+            build() );
+
+        nodeService.rename( RenameNodeParams.create().
+            nodeName( NodeName.from( "my-node-edited" ) ).
+            nodeId( createdNode.id() ).
+            build() );
+
+        final Node renamedNode = nodeService.getById( createdNode.id() );
+
+        assertEquals( "my-node-edited", renamedNode.name().toString() );
+
+    }
+
+
 }

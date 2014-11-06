@@ -7,7 +7,7 @@ import com.enonic.wem.core.index.query.NodeQueryResult;
 import com.enonic.wem.core.workspace.WorkspaceContext;
 
 public class FindNodesByQueryCommand
-    extends AbstractFindNodeCommand
+    extends AbstractNodeCommand
 {
     private final NodeQuery query;
 
@@ -43,7 +43,7 @@ public class FindNodesByQueryCommand
     }
 
     public static final class Builder
-        extends AbstractFindNodeCommand.Builder<Builder>
+        extends AbstractNodeCommand.Builder<Builder>
     {
         private NodeQuery query;
 

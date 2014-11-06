@@ -10,9 +10,9 @@ import com.enonic.wem.core.version.NodeVersionDocument;
 public class VersionXContentBuilderFactory
     extends AbstractXContentBuilderFactor
 {
-    public static final String NODE_VERSION_ID_FIELD_NAME = "versionId";
+    public static final String NODE_VERSION_ID_FIELD_NAME = "versionid";
 
-    public static final String NODE_ID_FIELD_NAME = "nodeId";
+    public static final String NODE_ID_FIELD_NAME = "nodeid";
 
     public static final String TIMESTAMP_ID_FIELD_NAME = "timestamp";
 

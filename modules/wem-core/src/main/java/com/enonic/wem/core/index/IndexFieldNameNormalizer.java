@@ -1,5 +1,9 @@
 package com.enonic.wem.core.index;
 
+import java.util.Collection;
+
+import com.google.common.collect.Collections2;
+
 public class IndexFieldNameNormalizer
 {
     public static final String FIELD_PATH_SEPARATOR = ".";
@@ -8,6 +12,11 @@ public class IndexFieldNameNormalizer
 
     public static String normalize( final String path )
     {
+        return doNormalize( path );
+    }
+
+    private static String doNormalize( final String path )
+    {
         String normalized = path;
 
         normalized = normalized.toLowerCase();
@@ -15,4 +24,10 @@ public class IndexFieldNameNormalizer
 
         return normalized;
     }
+
+    public static String[] normalize( final Collection<String> paths )
+    {
+        return Collections2.transform( paths, str -> doNormalize( str ) ).toArray( new String[paths.size()] );
+    }
+
 }

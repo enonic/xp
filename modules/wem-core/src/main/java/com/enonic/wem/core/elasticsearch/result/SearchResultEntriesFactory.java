@@ -30,13 +30,11 @@ class SearchResultEntriesFactory
         return builder.build();
     }
 
-    public static SearchResultEntries create( final GetResponse getResponse )
+    public static SearchResultEntry create( final GetResponse getResponse )
     {
-        final SearchResultEntry searchResultEntry = SearchResultEntry.create().
+        return SearchResultEntry.create().
             id( getResponse.getId() ).
             setFields( SearchResultFieldsFactory.create( getResponse ) ).
             build();
-
-        return SearchResultEntries.create().add( searchResultEntry ).build();
     }
 }

@@ -10,7 +10,7 @@ import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.entity.dao.NodeDao;
-import com.enonic.wem.core.workspace.WorkspaceService;
+import com.enonic.wem.core.index.query.QueryService;
 
 import static org.junit.Assert.*;
 
@@ -19,7 +19,7 @@ public class NodeChildOrderResolverTest
 
     private final NodeDao nodeDao = Mockito.mock( NodeDao.class );
 
-    private final WorkspaceService workspaceService = Mockito.mock( WorkspaceService.class );
+    private final QueryService queryService = Mockito.mock( QueryService.class );
 
     @Test
     public void given_child_order_as_param()
@@ -29,7 +29,7 @@ public class NodeChildOrderResolverTest
 
         final ChildOrder resolvedOrder = NodeChildOrderResolver.create().
             nodeDao( this.nodeDao ).
-            workspaceService( this.workspaceService ).
+            workspaceService( this.queryService ).
             nodePath( NodePath.newPath( "myPath" ).build() ).
             childOrder( childOrder ).
             build().
@@ -55,7 +55,7 @@ public class NodeChildOrderResolverTest
         final ChildOrder resolvedOrder = myContext.runWith( () -> {
             return NodeChildOrderResolver.create().
                 nodeDao( this.nodeDao ).
-                workspaceService( this.workspaceService ).
+                workspaceService( this.queryService ).
                 nodePath( NodePath.ROOT ).
                 build().
                 resolve();

@@ -6,7 +6,7 @@ import java.time.Instant;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.util.Exceptions;
 
-final class UpdateNodeCommand
+public final class UpdateNodeCommand
     extends AbstractNodeCommand
 {
     private final UpdateNodeParams params;
@@ -18,7 +18,7 @@ final class UpdateNodeCommand
         this.params = builder.params;
     }
 
-    Node execute()
+    public Node execute()
     {
         this.params.validate();
 
@@ -71,7 +71,7 @@ final class UpdateNodeCommand
         return updateNodeBuilder.build();
     }
 
-    static Builder create()
+    public static Builder create()
     {
         return new Builder();
     }
@@ -89,23 +89,23 @@ final class UpdateNodeCommand
 
     }
 
-    static class Builder
+    public static class Builder
         extends AbstractNodeCommand.Builder<Builder>
     {
         private UpdateNodeParams params;
 
-        Builder()
+        private Builder()
         {
             super();
         }
 
-        Builder params( final UpdateNodeParams params )
+        public Builder params( final UpdateNodeParams params )
         {
             this.params = params;
             return this;
         }
 
-        UpdateNodeCommand build()
+        public UpdateNodeCommand build()
         {
             return new UpdateNodeCommand( this );
         }

@@ -35,6 +35,11 @@ public class FindNodesByParentResult
         return hits;
     }
 
+    public boolean isEmpty()
+    {
+        return this.nodes.isEmpty();
+    }
+
     public static final class Builder
     {
         private Nodes nodes;

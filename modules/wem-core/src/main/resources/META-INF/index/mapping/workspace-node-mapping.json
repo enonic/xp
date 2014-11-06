@@ -12,12 +12,12 @@
             "enabled": true
         },
         "properties": {
-            "nodeId": {
+            "nodeid": {
                 "type": "string",
                 "store": "true",
                 "index": "not_analyzed"
             },
-            "blobKey": {
+            "blobkey": {
                 "type": "string",
                 "store": "true",
                 "index": "not_analyzed"
@@ -32,7 +32,7 @@
                 "store": "false",
                 "index": "not_analyzed"
             },
-            "parentPath": {
+            "parentpath": {
                 "type": "string",
                 "store": "false",
                 "index": "not_analyzed"

@@ -2,6 +2,7 @@ package com.enonic.wem.core.entity;
 
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.core.index.IndexContext;
+import com.enonic.wem.core.index.query.QueryService;
 import com.enonic.wem.core.workspace.WorkspaceContext;
 
 abstract class AbstractDeleteNodeCommand
@@ -18,16 +19,12 @@ abstract class AbstractDeleteNodeCommand
     {
         final Context context = Context.current();
 
-        final NodeVersionIds childrenVersions = workspaceService.findByParent( parent.path(), WorkspaceContext.from( context ) );
+        final FindNodesByParentResult result = doFindNodesByParent( FindNodesByParentParams.create().
+            parentPath( parent.path() ).
+            size( QueryService.GET_ALL_SIZE_FLAG ).
+            build() );
 
-        if ( childrenVersions.isEmpty() )
-        {
-            return;
-        }
-
-        final Nodes childrenNodes = nodeDao.getByVersionIds( childrenVersions );
-
-        for ( final Node child : childrenNodes )
+        for ( final Node child : result.getNodes() )
         {
             final String nodeName = child.name().toString();
 

@@ -25,12 +25,13 @@ import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodeName;
 import com.enonic.wem.core.entity.NodePath;
+import com.enonic.wem.core.entity.NodeVersionId;
 import com.enonic.wem.core.index.IndexValueType;
 import com.enonic.wem.core.repository.IndexNameResolver;
 
-import static com.enonic.wem.api.index.IndexPaths.CREATED_TIME_PROPERTY;
-import static com.enonic.wem.api.index.IndexPaths.CREATOR_PROPERTY_PATH;
-import static com.enonic.wem.api.index.IndexPaths.MODIFIER_PROPERTY_PATH;
+import static com.enonic.wem.api.index.IndexPaths.CREATED_TIME_PATH;
+import static com.enonic.wem.api.index.IndexPaths.CREATOR_PATH;
+import static com.enonic.wem.api.index.IndexPaths.MODIFIER_PATH;
 import static com.enonic.wem.core.TestContext.TEST_REPOSITORY;
 import static com.enonic.wem.core.TestContext.TEST_WORKSPACE;
 import static org.junit.Assert.*;
@@ -47,7 +48,7 @@ public class NodeStoreDocumentFactoryTest
 
         try
         {
-            NodeStoreDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY.getId() );
+            NodeStoreDocumentFactory.create( node, NodeVersionId.from( "test" ), TEST_WORKSPACE, TEST_REPOSITORY.getId() );
         }
         catch ( NullPointerException e )
         {
@@ -65,7 +66,8 @@ public class NodeStoreDocumentFactoryTest
             id( NodeId.from( "abc" ) ).
             build();
 
-        final Collection<StoreDocument> storeDocuments = NodeStoreDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY.getId() );
+        final Collection<StoreDocument> storeDocuments =
+            NodeStoreDocumentFactory.create( node, NodeVersionId.from( "test" ), TEST_WORKSPACE, TEST_REPOSITORY.getId() );
 
         assertNotNull( storeDocuments );
     }
@@ -78,7 +80,8 @@ public class NodeStoreDocumentFactoryTest
             id( NodeId.from( "abc" ) ).
             build();
 
-        final Collection<StoreDocument> storeDocuments = NodeStoreDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY.getId() );
+        final Collection<StoreDocument> storeDocuments =
+            NodeStoreDocumentFactory.create( node, NodeVersionId.from( "test" ), TEST_WORKSPACE, TEST_REPOSITORY.getId() );
 
         assertNotNull( storeDocuments );
         assertNotNull( getIndexDocumentOfType( storeDocuments, "test" ) );
@@ -98,7 +101,8 @@ public class NodeStoreDocumentFactoryTest
                 build() ).
             build();
 
-        final Collection<StoreDocument> storeDocuments = NodeStoreDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY.getId() );
+        final Collection<StoreDocument> storeDocuments =
+            NodeStoreDocumentFactory.create( node, NodeVersionId.from( "test" ), TEST_WORKSPACE, TEST_REPOSITORY.getId() );
 
         final StoreDocument storeDocument = getIndexDocumentOfType( storeDocuments, "test" );
 
@@ -127,7 +131,8 @@ public class NodeStoreDocumentFactoryTest
                 build() ).
             build();
 
-        final Collection<StoreDocument> storeDocuments = NodeStoreDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY.getId() );
+        final Collection<StoreDocument> storeDocuments =
+            NodeStoreDocumentFactory.create( node, NodeVersionId.from( "test" ), TEST_WORKSPACE, TEST_REPOSITORY.getId() );
 
         final StoreDocument storeDocument = getIndexDocumentOfType( storeDocuments, "test" );
 
@@ -135,15 +140,15 @@ public class NodeStoreDocumentFactoryTest
         assertEquals( IndexNameResolver.resolveSearchIndexName( TEST_REPOSITORY.getId() ), storeDocument.getIndexName() );
         assertEquals( "test", storeDocument.getIndexTypeName() );
 
-        final AbstractStoreDocumentItem createdTimeItem = getItemWithName( storeDocument, CREATED_TIME_PROPERTY, IndexValueType.DATETIME );
+        final AbstractStoreDocumentItem createdTimeItem = getItemWithName( storeDocument, CREATED_TIME_PATH, IndexValueType.DATETIME );
 
         assertEquals( Date.from( node.getCreatedTime() ), createdTimeItem.getValue() );
 
-        final AbstractStoreDocumentItem creator = getItemWithName( storeDocument, CREATOR_PROPERTY_PATH, IndexValueType.STRING );
+        final AbstractStoreDocumentItem creator = getItemWithName( storeDocument, CREATOR_PATH, IndexValueType.STRING );
 
         assertEquals( "test:creator", creator.getValue() );
 
-        final AbstractStoreDocumentItem modifier = getItemWithName( storeDocument, MODIFIER_PROPERTY_PATH, IndexValueType.STRING );
+        final AbstractStoreDocumentItem modifier = getItemWithName( storeDocument, MODIFIER_PATH, IndexValueType.STRING );
 
         assertEquals( "test:modifier", modifier.getValue() );
     }
@@ -161,7 +166,8 @@ public class NodeStoreDocumentFactoryTest
             rootDataSet( rootDataSet ).
             build();
 
-        final Collection<StoreDocument> storeDocuments = NodeStoreDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY.getId() );
+        final Collection<StoreDocument> storeDocuments =
+            NodeStoreDocumentFactory.create( node, NodeVersionId.from( "test" ), TEST_WORKSPACE, TEST_REPOSITORY.getId() );
 
         final StoreDocument storeDocument = getIndexDocumentOfType( storeDocuments, "test" );
 
@@ -182,7 +188,8 @@ public class NodeStoreDocumentFactoryTest
             rootDataSet( rootDataSet ).
             build();
 
-        final Collection<StoreDocument> storeDocuments = NodeStoreDocumentFactory.create( node, TEST_WORKSPACE, TEST_REPOSITORY.getId() );
+        final Collection<StoreDocument> storeDocuments =
+            NodeStoreDocumentFactory.create( node, NodeVersionId.from( "test" ), TEST_WORKSPACE, TEST_REPOSITORY.getId() );
 
         assertTrue( storeDocuments.iterator().hasNext() );
         final StoreDocument next = storeDocuments.iterator().next();

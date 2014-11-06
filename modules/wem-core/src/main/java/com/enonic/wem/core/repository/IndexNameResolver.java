@@ -8,12 +8,9 @@ public class IndexNameResolver
 
     public final static String DIVIDER = "-";
 
-
     public static String resolveSearchIndexName( final RepositoryId repositoryId )
     {
         return SEARCH_INDEX_PREFIX + DIVIDER + repositoryId.toString();
-
-
     }
 
 }

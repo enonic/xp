@@ -23,7 +23,7 @@ final class DeleteNodeByPathCommand
 
         final Workspace workspace = context.getWorkspace();
 
-        final NodeVersionId version = this.workspaceService.getByPath( this.nodePath, WorkspaceContext.from( context ) );
+        final NodeVersionId version = this.queryService.get( this.nodePath, IndexContext.from( context ) );
 
         if ( version == null )
         {

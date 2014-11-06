@@ -4,7 +4,7 @@ import com.enonic.wem.api.context.Context;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.workspace.WorkspaceContext;
 
-final class DeleteNodeByIdCommand
+public final class DeleteNodeByIdCommand
     extends AbstractDeleteNodeCommand
 {
     private final NodeId nodeId;
@@ -15,7 +15,7 @@ final class DeleteNodeByIdCommand
         this.nodeId = builder.nodeId;
     }
 
-    Node execute()
+    public Node execute()
     {
         final Context context = Context.current();
 
@@ -32,12 +32,12 @@ final class DeleteNodeByIdCommand
         return nodeToDelete;
     }
 
-    static Builder create()
+    public static Builder create()
     {
         return new Builder();
     }
 
-    static class Builder
+    public static class Builder
         extends AbstractDeleteNodeCommand.Builder<Builder>
     {
 

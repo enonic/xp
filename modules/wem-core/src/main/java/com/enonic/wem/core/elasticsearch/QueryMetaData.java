@@ -8,6 +8,8 @@ import org.elasticsearch.search.sort.SortBuilder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.core.index.IndexFieldNameNormalizer;
+
 public class QueryMetaData
 {
     private final String indexName;
@@ -62,9 +64,9 @@ public class QueryMetaData
         return fields.size() > 0;
     }
 
-    public String[] getFields()
+    public String[] getNormalizedFieldNames()
     {
-        return fields.toArray( new String[fields.size()] );
+        return IndexFieldNameNormalizer.normalize( this.fields );
     }
 
     public static Builder create( final String indexName )

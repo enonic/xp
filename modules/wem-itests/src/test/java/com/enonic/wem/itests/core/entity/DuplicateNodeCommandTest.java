@@ -17,7 +17,6 @@ import static org.junit.Assert.*;
 public class DuplicateNodeCommandTest
     extends AbstractNodeTest
 {
-
     @Override
     @Before
     public void setUp()
