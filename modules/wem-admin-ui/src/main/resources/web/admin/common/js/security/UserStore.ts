@@ -1,32 +1,22 @@
 module api.security {
 
-    export class UserStore extends UserTreeGridItem {
 
+    export class UserStore {
+        private displayName: string;
         private key: UserStoreKey;
 
         constructor(builder: UserStoreBuilder) {
-            super(builder.displayName)
+            this.displayName = builder.displayName;
             this.key = builder.key;
         }
 
+        getDisplayName(): string {
+            return this.displayName;
+        }
 
         getKey(): UserStoreKey {
             return this.key;
         }
-
-        equals(o: api.Equitable): boolean {
-
-            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, UserStore)) {
-                return false;
-            }
-            if (!super.equals(o)) {
-                return false;
-            }
-
-            var other = <UserStore> o;
-            return this.key.equals(other.key);
-        }
-
 
         static create(): UserStoreBuilder {
             return new UserStoreBuilder();
@@ -35,13 +25,9 @@ module api.security {
         static fromJson(json: api.security.UserStoreJson): UserStore {
             return new UserStoreBuilder().fromJson(json).build();
         }
-
     }
-
     export class UserStoreBuilder {
-
         displayName: string;
-
         key: UserStoreKey;
 
         constructor() {
@@ -67,5 +53,4 @@ module api.security {
             return new UserStore(this);
         }
     }
-
 }

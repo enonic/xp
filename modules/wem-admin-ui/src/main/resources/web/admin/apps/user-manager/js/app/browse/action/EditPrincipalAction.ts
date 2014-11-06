@@ -3,7 +3,7 @@ module app.browse.action {
     import Action = api.ui.Action;
     export class EditPrincipalAction extends Action {
 
-        constructor(grid: UserItemTreeGrid) {
+        constructor(grid: UserItemsTreeGrid) {
             super("Edit", "f4");
             this.setEnabled(false);
             this.onExecuted(() => {

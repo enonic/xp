@@ -1,5 +1,5 @@
 ///<reference path='BaseUserEvent.ts'/>
-///<reference path='UserItemTreeGrid.ts'/>
+///<reference path='UserItemsTreeGrid.ts'/>
 ///<reference path='UserBrowseActions.ts' />>
 ///<reference path='UserBrowsePanel.ts' />
 ///<reference path='UserBrowseToolbar.ts' />

@@ -3,7 +3,7 @@ module app.browse.action {
     import Action = api.ui.Action;
     export class SynchPrincipalAction extends Action {
 
-        constructor(grid: UserItemTreeGrid) {
+        constructor(grid: UserItemsTreeGrid) {
             super("Synch");
             this.setEnabled(false);
             this.onExecuted(() => {

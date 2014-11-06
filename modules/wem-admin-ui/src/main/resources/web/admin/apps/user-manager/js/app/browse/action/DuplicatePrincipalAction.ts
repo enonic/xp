@@ -3,7 +3,7 @@ module app.browse.action {
     import Action = api.ui.Action;
     export class DuplicatePrincipalAction extends Action {
 
-        constructor(grid: UserItemTreeGrid) {
+        constructor(grid: UserItemsTreeGrid) {
             super("Duplicate");
             this.setEnabled(false);
             this.onExecuted(() => {

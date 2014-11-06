@@ -13,13 +13,13 @@ module app.browse {
         private static INSTANCE: UserBrowseActions;
         private actions: api.ui.Action[] = [];
 
-        static init(userTreeGrid: app.browse.UserItemTreeGrid): UserBrowseActions {
+        static init(userTreeGrid: app.browse.UserItemsTreeGrid): UserBrowseActions {
             new UserBrowseActions(userTreeGrid);
 
             return UserBrowseActions.INSTANCE;
         }
 
-        constructor(grid: app.browse.UserItemTreeGrid) {
+        constructor(grid: app.browse.UserItemsTreeGrid) {
             this.SHOW_NEW_DIALOG_ACTION = new app.browse.action.ShowNewPrincipalDialogAction(grid);
             this.EDIT = new app.browse.action.EditPrincipalAction(grid);
             this.DELETE = new app.browse.action.DeleteUserItemAction(grid);

@@ -4,7 +4,7 @@ module app.browse.action {
 
     export class DeleteUserItemAction extends Action {
 
-        constructor(grid: UserItemTreeGrid) {
+        constructor(grid: UserItemsTreeGrid) {
             super("Delete", "mod+del");
             this.setEnabled(false);
             this.onExecuted(() => {

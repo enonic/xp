@@ -10,10 +10,9 @@ module api.security {
             this.appendChild(this.namesAndIconView);
         }
 
-        setObject(userObj: UserTreeGridItem) {
-            super.setObject(userObj);
-            this.namesAndIconView.setMainName(userObj.getDisplayName()).
-                //setSubName(principalObj.getKey().getId()).
+        setObject(userItem: UserTreeGridItem) {
+            super.setObject(userItem);
+            this.namesAndIconView.setMainName(userItem.getItemDisplayName()).
                 setIconClass("icon-puzzle icon-large");
         }
 
