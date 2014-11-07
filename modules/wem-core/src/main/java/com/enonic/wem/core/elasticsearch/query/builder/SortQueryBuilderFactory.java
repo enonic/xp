@@ -12,6 +12,7 @@ import com.google.common.collect.Sets;
 import com.enonic.wem.api.query.expr.DynamicOrderExpr;
 import com.enonic.wem.api.query.expr.FieldOrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpr;
+import com.enonic.wem.api.query.expr.OrderExpressions;
 import com.enonic.wem.core.elasticsearch.query.builder.function.DynamicSortBuilderFactory;
 import com.enonic.wem.core.index.query.IndexQueryFieldNameResolver;
 
@@ -20,7 +21,18 @@ public class SortQueryBuilderFactory
 {
     private static final boolean IGNORE_UNMAPPED = true;
 
+    public static Set<SortBuilder> create( final OrderExpressions orderExpressions )
+    {
+        return doCreate( orderExpressions.getSet() );
+    }
+
+
     public static Set<SortBuilder> create( final Collection<OrderExpr> orderExpressions )
+    {
+        return doCreate( orderExpressions );
+    }
+
+    private static Set<SortBuilder> doCreate( final Collection<OrderExpr> orderExpressions )
     {
         Set<SortBuilder> sortBuilders = Sets.newHashSet();
 

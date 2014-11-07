@@ -1,6 +1,7 @@
 package com.enonic.wem.core.entity;
 
 import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.query.expr.OrderExpressions;
 import com.enonic.wem.core.index.IndexContext;
 
 public class GetNodesByIdsCommand
@@ -10,16 +11,19 @@ public class GetNodesByIdsCommand
 
     private final boolean resolveHasChild;
 
+    private final OrderExpressions orderExpressions;
+
     private GetNodesByIdsCommand( final Builder builder )
     {
         super( builder );
-        ids = builder.ids;
-        resolveHasChild = builder.resolveHasChild;
+        this.ids = builder.ids;
+        this.resolveHasChild = builder.resolveHasChild;
+        this.orderExpressions = builder.orderExpressions;
     }
 
     public Nodes execute()
     {
-        final NodeVersionIds versionIds = this.queryService.get( ids, IndexContext.from( Context.current() ) );
+        final NodeVersionIds versionIds = this.queryService.get( this.ids, this.orderExpressions, IndexContext.from( Context.current() ) );
 
         return resolveHasChild ? NodeHasChildResolver.create().
             workspaceService( this.workspaceService ).
@@ -39,6 +43,8 @@ public class GetNodesByIdsCommand
 
         private boolean resolveHasChild;
 
+        private OrderExpressions orderExpressions = DEFAULT_ORDER_EXPRESSIONS;
+
         private Builder()
         {
         }
@@ -52,6 +58,12 @@ public class GetNodesByIdsCommand
         public Builder resolveHasChild( boolean resolveHasChild )
         {
             this.resolveHasChild = resolveHasChild;
+            return this;
+        }
+
+        public Builder orderExpressions( final OrderExpressions orderExpressions )
+        {
+            this.orderExpressions = orderExpressions;
             return this;
         }
 

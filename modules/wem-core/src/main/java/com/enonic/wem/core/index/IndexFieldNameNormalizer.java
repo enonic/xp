@@ -6,9 +6,9 @@ import com.google.common.collect.Collections2;
 
 public class IndexFieldNameNormalizer
 {
-    public static final String FIELD_PATH_SEPARATOR = ".";
+    private static final String FIELD_PATH_SEPARATOR = ".";
 
-    public static final String INDEX_PATH_SEPARATOR = "_";
+    private static final String INDEX_PATH_SEPARATOR = "_";
 
     public static String normalize( final String path )
     {
@@ -19,7 +19,7 @@ public class IndexFieldNameNormalizer
     {
         String normalized = path;
 
-        normalized = normalized.toLowerCase();
+        normalized = normalized.toLowerCase().trim();
         normalized = normalized.replace( FIELD_PATH_SEPARATOR, INDEX_PATH_SEPARATOR );
 
         return normalized;

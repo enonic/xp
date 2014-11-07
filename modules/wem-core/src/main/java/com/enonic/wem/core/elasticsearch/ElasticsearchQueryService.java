@@ -8,9 +8,11 @@ import org.elasticsearch.index.query.TermsQueryBuilder;
 
 import com.enonic.wem.api.index.IndexPaths;
 import com.enonic.wem.api.query.QueryException;
+import com.enonic.wem.api.query.expr.OrderExpressions;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.core.elasticsearch.query.NodeQueryTranslator;
+import com.enonic.wem.core.elasticsearch.query.builder.SortQueryBuilderFactory;
 import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodeIds;
 import com.enonic.wem.core.entity.NodePath;
@@ -119,7 +121,7 @@ public class ElasticsearchQueryService
     }
 
     @Override
-    public NodeVersionIds get( final NodePaths nodePaths, final IndexContext indexContext )
+    public NodeVersionIds get( final NodePaths nodePaths, final OrderExpressions orderExprs, final IndexContext indexContext )
     {
 
         final Workspace workspace = indexContext.getWorkspace();
@@ -130,6 +132,7 @@ public class ElasticsearchQueryService
                 from( 0 ).
                 size( nodePaths.getSize() ).
                 addField( IndexPaths.VERSION_KEY ).
+                setSort( SortQueryBuilderFactory.create( orderExprs ) ).
                 build();
 
         // TODO: Add access-control
@@ -148,7 +151,7 @@ public class ElasticsearchQueryService
     }
 
     @Override
-    public NodeVersionIds get( final NodeIds nodeIds, final IndexContext indexContext )
+    public NodeVersionIds get( final NodeIds nodeIds, final OrderExpressions orderExprs, final IndexContext indexContext )
     {
         final Workspace workspace = indexContext.getWorkspace();
 
@@ -158,6 +161,7 @@ public class ElasticsearchQueryService
                 from( 0 ).
                 size( nodeIds.getSize() ).
                 addField( IndexPaths.VERSION_KEY ).
+                setSort( SortQueryBuilderFactory.create( orderExprs ) ).
                 build();
 
         // TODO: Add access-control

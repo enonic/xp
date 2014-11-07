@@ -84,9 +84,9 @@ public class QueryMetaData
 
         private int size = 10;
 
-        private final Set<String> fields = Sets.newHashSet();
+        private Set<String> fields = Sets.newHashSet();
 
-        private final Set<SortBuilder> sortBuilders = Sets.newHashSet();
+        private Set<SortBuilder> sortBuilders = Sets.newLinkedHashSet();
 
         public Builder( final String indexName )
         {
@@ -108,6 +108,12 @@ public class QueryMetaData
         public Builder size( final int size )
         {
             this.size = size;
+            return this;
+        }
+
+        public Builder setSort( final Set<SortBuilder> sortBuilders )
+        {
+            this.sortBuilders = sortBuilders;
             return this;
         }
 

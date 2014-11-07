@@ -2,6 +2,10 @@ package com.enonic.wem.core.entity;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.index.IndexPaths;
+import com.enonic.wem.api.query.expr.FieldOrderExpr;
+import com.enonic.wem.api.query.expr.OrderExpr;
+import com.enonic.wem.api.query.expr.OrderExpressions;
 import com.enonic.wem.core.entity.dao.NodeDao;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.index.query.QueryService;
@@ -10,6 +14,9 @@ import com.enonic.wem.core.workspace.WorkspaceService;
 
 abstract class AbstractNodeCommand
 {
+    static final OrderExpressions DEFAULT_ORDER_EXPRESSIONS =
+        OrderExpressions.from( FieldOrderExpr.create( IndexPaths.MODIFIED_TIME_KEY, OrderExpr.Direction.DESC ) );
+
     final IndexService indexService;
 
     final NodeDao nodeDao;
@@ -70,10 +77,11 @@ abstract class AbstractNodeCommand
             execute();
     }
 
-    Nodes doGetByIds( final NodeIds ids, final boolean resolveHasChild )
+    Nodes doGetByIds( final NodeIds ids, final OrderExpressions orderExprs, final boolean resolveHasChild )
     {
         return GetNodesByIdsCommand.create().
             ids( ids ).
+            orderExpressions( orderExprs ).
             resolveHasChild( resolveHasChild ).
             indexService( this.indexService ).
             workspaceService( this.workspaceService ).

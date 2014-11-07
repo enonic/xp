@@ -5,11 +5,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.query.expr.FieldOrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpr;
+import com.enonic.wem.api.query.expr.OrderExpressions;
 import com.enonic.wem.api.query.parser.QueryParser;
 
 public class ChildOrder
@@ -18,11 +18,11 @@ public class ChildOrder
 
     private static final FieldOrderExpr MANUAL_ORDER = FieldOrderExpr.create( IndexPaths.MANUAL_ORDER_VALUE_KEY, OrderExpr.Direction.DESC );
 
-    private final ImmutableSet<OrderExpr> orderExpressions;
+    private final OrderExpressions orderExpressions;
 
     private ChildOrder( final Builder builder )
     {
-        orderExpressions = ImmutableSet.copyOf( builder.orderExpressions );
+        this.orderExpressions = OrderExpressions.from( builder.orderExpressions );
     }
 
     public static ChildOrder manualOrder()
@@ -78,7 +78,7 @@ public class ChildOrder
         return this.orderExpressions.isEmpty();
     }
 
-    public ImmutableSet<OrderExpr> getOrderExpressions()
+    public OrderExpressions getOrderExpressions()
     {
         return orderExpressions;
     }

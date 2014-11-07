@@ -37,7 +37,7 @@ public class FindNodesByParentCommand
 
         final NodeQueryResult nodeQueryResult = this.queryService.find( query, IndexContext.from( Context.current() ) );
 
-        final Nodes nodes = doGetByIds( nodeQueryResult.getNodeIds(), true );
+        final Nodes nodes = doGetByIds( nodeQueryResult.getNodeIds(), order.getOrderExpressions(), true );
 
         return FindNodesByParentResult.create().
             nodes( nodes ).

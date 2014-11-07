@@ -1,5 +1,6 @@
 package com.enonic.wem.core.index.query;
 
+import com.enonic.wem.api.query.expr.OrderExpressions;
 import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodeIds;
 import com.enonic.wem.core.entity.NodePath;
@@ -19,9 +20,9 @@ public interface QueryService
 
     public NodeVersionId get( final NodePath nodePath, final IndexContext indexContext );
 
-    public NodeVersionIds get( final NodePaths nodePath, final IndexContext indexContext );
+    public NodeVersionIds get( final NodePaths nodePath, final OrderExpressions orderExprs, final IndexContext indexContext );
 
-    public NodeVersionIds get( final NodeIds nodeIds, final IndexContext indexContext );
+    public NodeVersionIds get( final NodeIds nodeIds, final OrderExpressions orderExprs, final IndexContext indexContext );
 
     public NodeVersionIds getByParent( final NodePath parentPath, final IndexContext indexContext );
 
