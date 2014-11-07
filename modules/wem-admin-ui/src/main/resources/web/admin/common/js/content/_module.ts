@@ -55,3 +55,9 @@
 ///<reference path='GetNearestSiteRequest.ts' />
 ///<reference path='ContentPermissions.ts' />
 ///<reference path='GetContentPermissionsRequest.ts' />
+
+///<reference path='OrderExpr.ts' />
+///<reference path='DynamicOrderExpr.ts' />
+///<reference path='FieldOrderExpr.ts' />
+///<reference path='ChildOrder.ts' />
+

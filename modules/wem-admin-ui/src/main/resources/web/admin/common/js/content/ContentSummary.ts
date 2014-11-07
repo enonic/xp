@@ -36,6 +36,8 @@ module api.content {
 
         private editable: boolean;
 
+        private childOrder: ChildOrder;
+
         constructor(builder: ContentSummaryBuilder) {
             super(builder);
             this.name = builder.name;
@@ -56,6 +58,7 @@ module api.content {
             this.modifiedTime = builder.modifiedTime;
             this.deletable = builder.deletable;
             this.editable = builder.editable;
+            this.childOrder = builder.childOrder;
         }
 
         getName(): ContentName {
@@ -144,6 +147,10 @@ module api.content {
 
         isEditable(): boolean {
             return this.editable;
+        }
+
+        getChildOrder(): ChildOrder {
+            return this.childOrder;
         }
 
         equals(o: api.Equitable): boolean {
@@ -261,6 +268,8 @@ module api.content {
 
         editable: boolean;
 
+        childOrder: ChildOrder;
+
         constructor(source?: ContentSummary) {
             super(source);
             if (source) {
@@ -281,8 +290,10 @@ module api.content {
                 this.modifiedTime = source.getModifiedTime();
                 this.deletable = source.isDeletable();
                 this.editable = source.isEditable();
+                this.childOrder = source.getChildOrder();
             }
         }
+
 
         fromContentSummaryJson(json: api.content.json.ContentSummaryJson): ContentSummaryBuilder {
 
@@ -307,6 +318,8 @@ module api.content {
 
             this.deletable = json.deletable;
             this.editable = json.editable;
+
+            this.childOrder = ChildOrder.fromJson(json.childOrder);
 
             return this;
         }
