@@ -88,7 +88,7 @@ public abstract class AbstractElasticsearchIntegrationTest
 
     public ClusterHealthStatus waitForRelocation()
     {
-        return waitForRelocation( null );
+        return waitForRelocation( ClusterHealthStatus.YELLOW );
     }
 
     /**
