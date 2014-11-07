@@ -2,36 +2,33 @@ module app.home {
 
     export class Branding extends api.dom.DivEl {
 
-        private installation: InstallationInfo;
+        private installation: api.dom.DivEl;
 
-        private productHeader: ProductHeader;
+        private productHeader: api.dom.H1El;
 
-        constructor(installation?: string, version?: string) {
+        constructor(loadInstallation?: boolean) {
             super('branding');
 
-            installation = installation || '';
-            version = version || '';
-
-            this.productHeader = new ProductHeader();
-            this.installation = new InstallationInfo(installation);
+            this.productHeader = new api.dom.H1El();
+            this.productHeader.setHtml('Enonic experience platform');
+            this.installation = new api.dom.DivEl("installation-info");
 
             this.appendChild(this.productHeader);
             this.appendChild(this.installation);
 
-
-            new api.system.StatusRequest().send().done((response: api.rest.JsonResponse<api.system.StatusJson>) => {
-                var result = response.getResult();
-
-                this.setInstallation(result.installation);
-            });
+            if (loadInstallation) {
+                new api.system.StatusRequest().send().done((response: api.rest.JsonResponse<api.system.StatusJson>) => {
+                    this.setInstallation(response.getResult().installation);
+                });
+            }
         }
 
         getInstallation(): string {
-            return this.installation.getInstallation();
+            return this.installation.getHtml();
         }
 
         setInstallation(installationText: string): void {
-            return this.installation.setInstallation(installationText);
+            this.installation.setHtml(installationText);
         }
 
     }

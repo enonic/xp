@@ -1,13 +1,6 @@
 declare var Admin;
 declare var CONFIG;
 
-var USERSTORES: api.security.UserStore[] = [
-    api.security.UserStore.create().setDisplayName('System').setKey('system').build(),
-    api.security.UserStore.create().setDisplayName('LDAP').setKey('2').build(),
-    api.security.UserStore.create().setDisplayName('Local').setKey('3').build(),
-    api.security.UserStore.create().setDisplayName('Some very long value').setKey('4').build()
-];
-
 function isUserLoggedIn(): boolean {
     var dummyCookie = api.util.CookieHelper.getCookie('dummy.userIsLoggedIn');
     return dummyCookie === 'true';
@@ -28,7 +21,7 @@ function startApplication() {
         addLink('About', 'https://enonic.com/en/home/enonic-cms');
 
     var loginForm = new app.login.LoginForm(new app.login.AuthenticatorImpl());
-    loginForm.setUserStores(USERSTORES, USERSTORES[0]);
+
     loginForm.onUserAuthenticated((user: api.security.User) => {
         console.log('User logged in', user.getDisplayName(), user.getKey().toString());
         api.util.CookieHelper.setCookie('dummy.userIsLoggedIn', 'true');

@@ -539,6 +539,10 @@ module api.dom {
             return wemjq('<div>').append(wemjq(this.getHTMLElement()).clone()).html();
         }
 
+        getHtml(): string {
+            return this.getEl().getInnerHtml();
+        }
+
         setHtml(value: string): Element {
             this.getEl().setInnerHtml(value);
             return this;
