@@ -38,4 +38,7 @@ public final class IndexPaths
 
     public static final IndexDocumentItemPath VERSION_KEY_PATH = IndexDocumentItemPath.from( VERSION_KEY );
 
+    public static final String HAS_READ_KEY = "hasread";
+
+    public static IndexDocumentItemPath HAS_READ_PATH = IndexDocumentItemPath.from( HAS_READ_KEY );
 }

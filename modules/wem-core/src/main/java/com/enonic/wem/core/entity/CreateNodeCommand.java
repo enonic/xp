@@ -6,6 +6,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.index.ChildOrder;
+import com.enonic.wem.api.security.acl.AccessControlList;
 
 public final class CreateNodeCommand
     extends AbstractNodeCommand
@@ -40,7 +41,8 @@ public final class CreateNodeCommand
             attachments( params.getAttachments() != null ? params.getAttachments() : Attachments.empty() ).
             indexConfigDocument( params.getIndexConfigDocument() ).
             hasChildren( false ).
-            childOrder( params.getChildOrder() != null ? params.getChildOrder() : ChildOrder.defaultOrder() );
+            childOrder( params.getChildOrder() != null ? params.getChildOrder() : ChildOrder.defaultOrder() ).
+            accessControlList( params.getAccessControlList() != null ? params.getAccessControlList() : AccessControlList.empty() );
 
         final Node newNode = nodeBuilder.build();
 

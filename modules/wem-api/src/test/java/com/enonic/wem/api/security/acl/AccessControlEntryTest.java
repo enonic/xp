@@ -5,8 +5,6 @@ import org.junit.Test;
 import com.google.common.collect.Iterables;
 
 import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.api.security.acl.AccessControlEntry;
-import com.enonic.wem.api.security.acl.Permission;
 
 import static org.junit.Assert.*;
 
@@ -16,7 +14,7 @@ public class AccessControlEntryTest
     @Test
     public void testAccessControlEntry()
     {
-        final AccessControlEntry ace = AccessControlEntry.newACE().
+        final AccessControlEntry ace = AccessControlEntry.create().
             principal( PrincipalKey.ofAnonymous() ).
             allow( Permission.CREATE ).
             allow( Permission.DELETE ).
@@ -34,7 +32,7 @@ public class AccessControlEntryTest
     @Test
     public void testNoPermissions()
     {
-        final AccessControlEntry ace = AccessControlEntry.newACE().
+        final AccessControlEntry ace = AccessControlEntry.create().
             principal( PrincipalKey.ofAnonymous() ).
             build();
 
@@ -49,7 +47,7 @@ public class AccessControlEntryTest
     @Test
     public void testEquals()
     {
-        final AccessControlEntry ace = AccessControlEntry.newACE().
+        final AccessControlEntry ace = AccessControlEntry.create().
             principal( PrincipalKey.ofAnonymous() ).
             allow( Permission.CREATE ).
             allow( Permission.DELETE ).
@@ -58,7 +56,7 @@ public class AccessControlEntryTest
             deny( Permission.WRITE_PERMISSIONS ).
             build();
 
-        final AccessControlEntry ace2 = AccessControlEntry.newACE().
+        final AccessControlEntry ace2 = AccessControlEntry.create().
             principal( PrincipalKey.ofAnonymous() ).
             deny( Permission.WRITE_PERMISSIONS ).
             allow( Permission.READ_PERMISSIONS ).
@@ -74,7 +72,7 @@ public class AccessControlEntryTest
     @Test
     public void testCopy()
     {
-        final AccessControlEntry ace = AccessControlEntry.newACE().
+        final AccessControlEntry ace = AccessControlEntry.create().
             principal( PrincipalKey.ofAnonymous() ).
             allow( Permission.CREATE ).
             allow( Permission.DELETE ).

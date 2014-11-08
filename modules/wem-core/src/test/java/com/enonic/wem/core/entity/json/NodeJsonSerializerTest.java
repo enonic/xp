@@ -46,17 +46,17 @@ public class NodeJsonSerializerTest
         rootDataSet.setProperty( DataPath.from( "c" ), Value.newString( "runar" ) );
         rootDataSet.setProperty( DataPath.from( "d" ), Value.newInstant( Instant.now() ) );
 
-        final AccessControlEntry entry1 = AccessControlEntry.newACE().
+        final AccessControlEntry entry1 = AccessControlEntry.create().
             principal( PrincipalKey.ofAnonymous() ).
             allow( Permission.READ ).
             deny( Permission.DELETE ).
             build();
-        final AccessControlEntry entry2 = AccessControlEntry.newACE().
+        final AccessControlEntry entry2 = AccessControlEntry.create().
             principal( PrincipalKey.ofUser( UserStoreKey.system(), "user1" ) ).
             allow( Permission.MODIFY ).
             deny( Permission.PUBLISH ).
             build();
-        AccessControlList acl = AccessControlList.newACL().add( entry1 ).add( entry2 ).build();
+        AccessControlList acl = AccessControlList.create().add( entry1 ).add( entry2 ).build();
 
         Node node = Node.newNode().
             id( NodeId.from( "myId" ) ).

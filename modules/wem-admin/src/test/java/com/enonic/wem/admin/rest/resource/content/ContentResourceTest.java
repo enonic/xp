@@ -805,18 +805,18 @@ public class ContentResourceTest
             addPrincipal( user1 ).addPrincipal( user2 ).addPrincipal( User.anonymous() ).build();
         Mockito.when( securityService.query( Mockito.isA( PrincipalQuery.class ) ) ).thenReturn( principalResult );
 
-        final AccessControlEntry entry1 = AccessControlEntry.newACE().
+        final AccessControlEntry entry1 = AccessControlEntry.create().
             principal( PrincipalKey.ofAnonymous() ).
             allow( Permission.CREATE ).
             allow( Permission.READ ).
             deny( Permission.DELETE ).
             build();
-        final AccessControlEntry entry2 = AccessControlEntry.newACE().
+        final AccessControlEntry entry2 = AccessControlEntry.create().
             principal( user1.getKey() ).
             allow( Permission.READ ).
             allow( Permission.PUBLISH ).
             build();
-        final AccessControlEntry entry3 = AccessControlEntry.newACE().
+        final AccessControlEntry entry3 = AccessControlEntry.create().
             principal( user2.getKey() ).
             allow( Permission.READ ).
             allow( Permission.READ_PERMISSIONS ).

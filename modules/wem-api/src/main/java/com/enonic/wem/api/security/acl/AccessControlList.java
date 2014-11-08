@@ -15,7 +15,7 @@ import static java.util.stream.Collectors.toSet;
 public final class AccessControlList
     implements Iterable<AccessControlEntry>
 {
-    private final static AccessControlList EMPTY = AccessControlList.newACL().build();
+    private final static AccessControlList EMPTY = AccessControlList.create().build();
 
     private final ImmutableMap<PrincipalKey, AccessControlEntry> entries;
 
@@ -26,7 +26,7 @@ public final class AccessControlList
 
     public AccessControlList getEffective( AccessControlList parentAcl )
     {
-        final AccessControlList.Builder effective = AccessControlList.newACL();
+        final AccessControlList.Builder effective = AccessControlList.create();
         // apply parent entries
         for ( AccessControlEntry parentEntry : parentAcl )
         {
@@ -57,7 +57,7 @@ public final class AccessControlList
 
     private AccessControlEntry inheritFromParent( final AccessControlEntry childEntry, final AccessControlEntry parentEntry )
     {
-        final AccessControlEntry.Builder entry = AccessControlEntry.newACE().principal( childEntry.getPrincipal() );
+        final AccessControlEntry.Builder entry = AccessControlEntry.create().principal( childEntry.getPrincipal() );
         for ( Permission permission : Permission.values() )
         {
             if ( parentEntry.isSet( permission ) && !childEntry.isSet( permission ) )
@@ -90,7 +90,7 @@ public final class AccessControlList
 
     private AccessControlEntry getEffectiveEntry( final AccessControlEntry entry )
     {
-        final AccessControlEntry.Builder effective = AccessControlEntry.newACE().principal( entry.getPrincipal() );
+        final AccessControlEntry.Builder effective = AccessControlEntry.create().principal( entry.getPrincipal() );
         for ( Permission permission : Permission.values() )
         {
             if ( entry.isAllowed( permission ) )
@@ -165,10 +165,10 @@ public final class AccessControlList
 
     public static AccessControlList of( final AccessControlEntry... entries )
     {
-        return AccessControlList.newACL().addAll( entries ).build();
+        return AccessControlList.create().addAll( entries ).build();
     }
 
-    public static Builder newACL()
+    public static Builder create()
     {
         return new Builder();
     }

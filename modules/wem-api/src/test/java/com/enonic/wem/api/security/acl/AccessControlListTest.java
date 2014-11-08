@@ -4,9 +4,6 @@ import org.junit.Test;
 
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.UserStoreKey;
-import com.enonic.wem.api.security.acl.AccessControlEntry;
-import com.enonic.wem.api.security.acl.AccessControlList;
-import com.enonic.wem.api.security.acl.Permission;
 
 import static org.junit.Assert.*;
 
@@ -22,30 +19,30 @@ public class AccessControlListTest
         final PrincipalKey group2 = PrincipalKey.ofGroup( UserStoreKey.system(), "group2" );
         final PrincipalKey group3 = PrincipalKey.ofGroup( UserStoreKey.system(), "group3" );
 
-        final AccessControlEntry aceUser1 = AccessControlEntry.newACE().
+        final AccessControlEntry aceUser1 = AccessControlEntry.create().
             principal( user1 ).
             allow( Permission.CREATE ).
             allow( Permission.DELETE ).
             build();
 
-        final AccessControlEntry aceUser2 = AccessControlEntry.newACE().
+        final AccessControlEntry aceUser2 = AccessControlEntry.create().
             principal( user2 ).
             allow( Permission.READ ).
             build();
 
-        final AccessControlEntry aceGroup1 = AccessControlEntry.newACE().
+        final AccessControlEntry aceGroup1 = AccessControlEntry.create().
             principal( group1 ).
             allow( Permission.READ ).
             allow( Permission.MODIFY ).
             build();
 
-        final AccessControlEntry aceGroup2 = AccessControlEntry.newACE().
+        final AccessControlEntry aceGroup2 = AccessControlEntry.create().
             principal( group2 ).
             allow( Permission.READ ).
             allow( Permission.MODIFY ).
             build();
 
-        final AccessControlEntry aceGroup3 = AccessControlEntry.newACE().
+        final AccessControlEntry aceGroup3 = AccessControlEntry.create().
             principal( group3 ).
             build();
 
@@ -71,7 +68,7 @@ public class AccessControlListTest
         final PrincipalKey user1 = PrincipalKey.ofUser( UserStoreKey.system(), "user1" );
         final PrincipalKey group1 = PrincipalKey.ofGroup( UserStoreKey.system(), "group1" );
 
-        final AccessControlEntry aceParentGroup1 = AccessControlEntry.newACE().
+        final AccessControlEntry aceParentGroup1 = AccessControlEntry.create().
             principal( group1 ).
             allow( Permission.READ ).
             allow( Permission.MODIFY ).
@@ -79,12 +76,12 @@ public class AccessControlListTest
             deny( Permission.DELETE ).
             build();
 
-        final AccessControlEntry aceUser1 = AccessControlEntry.newACE().
+        final AccessControlEntry aceUser1 = AccessControlEntry.create().
             principal( user1 ).
             allow( Permission.READ ).
             build();
 
-        final AccessControlEntry aceGroup1 = AccessControlEntry.newACE().
+        final AccessControlEntry aceGroup1 = AccessControlEntry.create().
             principal( group1 ).
             deny( Permission.READ ).
             allow( Permission.MODIFY ).
@@ -116,11 +113,11 @@ public class AccessControlListTest
     @Test
     public void testCopy()
     {
-        final AccessControlEntry entry1 = AccessControlEntry.newACE().
+        final AccessControlEntry entry1 = AccessControlEntry.create().
             principal( PrincipalKey.ofAnonymous() ).
             allow( Permission.READ ).
             build();
-        final AccessControlEntry entry2 = AccessControlEntry.newACE().
+        final AccessControlEntry entry2 = AccessControlEntry.create().
             principal( PrincipalKey.ofUser( UserStoreKey.system(), "user1" ) ).
             allow( Permission.MODIFY ).
             build();

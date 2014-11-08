@@ -3,6 +3,11 @@ package com.enonic.wem.itests.core.entity;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.enonic.wem.api.content.ContentConstants;
+import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.security.acl.AccessControlEntry;
+import com.enonic.wem.api.security.acl.AccessControlList;
+import com.enonic.wem.api.security.acl.Permission;
 import com.enonic.wem.core.entity.CreateNodeParams;
 import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.entity.NodeId;
@@ -11,6 +16,7 @@ import com.enonic.wem.core.entity.NodePath;
 import com.enonic.wem.core.entity.NodeServiceImpl;
 import com.enonic.wem.core.entity.RenameNodeParams;
 import com.enonic.wem.core.entity.dao.NodeNotFoundException;
+import com.enonic.wem.core.repository.IndexNameResolver;
 
 import static org.junit.Assert.*;
 
@@ -79,5 +85,31 @@ public class NodeServiceImplTest
 
     }
 
+    @Test
+    public void create()
+        throws Exception
+    {
 
+        final AccessControlList aclList = AccessControlList.create().
+            add( AccessControlEntry.create().
+                principal( PrincipalKey.from( "myuserstore:user:rmy" ) ).
+                allow( Permission.READ ).
+                build() ).
+            build();
+
+        final CreateNodeParams params = CreateNodeParams.create().
+            name( "my-node" ).
+            parent( NodePath.ROOT ).
+            accessControlList( aclList ).
+            build();
+
+        final Node node = this.nodeService.create( params );
+
+        refresh();
+
+        printAllIndexContent( IndexNameResolver.resolveSearchIndexName( ContentConstants.CONTENT_REPO.getId() ), "stage" );
+
+        assertTrue( node.getAccessControlList() != null );
+        assertEquals( aclList, node.getAccessControlList() );
+    }
 }

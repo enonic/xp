@@ -120,7 +120,7 @@ public final class AccessControlEntry
         return Objects.hash( principal, allowedPermissions, deniedPermissions );
     }
 
-    public static Builder newACE()
+    public static Builder create()
     {
         return new Builder();
     }

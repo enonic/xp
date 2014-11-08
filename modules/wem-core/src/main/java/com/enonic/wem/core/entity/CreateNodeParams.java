@@ -3,6 +3,7 @@ package com.enonic.wem.core.entity;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.index.IndexConfigDocument;
+import com.enonic.wem.api.security.acl.AccessControlList;
 
 public class CreateNodeParams
 {
@@ -20,6 +21,8 @@ public class CreateNodeParams
 
     private final NodeId nodeId;
 
+    private final AccessControlList accessControlList;
+
     private CreateNodeParams( Builder builder )
     {
         this.parent = builder.parent;
@@ -29,6 +32,7 @@ public class CreateNodeParams
         this.indexConfigDocument = builder.indexConfigDocument;
         this.childOrder = builder.childOrder;
         this.nodeId = builder.nodeId;
+        this.accessControlList = builder.accessControlList;
 
     }
 
@@ -72,6 +76,11 @@ public class CreateNodeParams
         return nodeId;
     }
 
+    public AccessControlList getAccessControlList()
+    {
+        return accessControlList;
+    }
+
     public static final class Builder
     {
         private NodePath parent;
@@ -87,6 +96,8 @@ public class CreateNodeParams
         private ChildOrder childOrder;
 
         private NodeId nodeId;
+
+        private AccessControlList accessControlList;
 
         private Builder()
         {
@@ -134,6 +145,12 @@ public class CreateNodeParams
             return this;
         }
 
+        public Builder accessControlList( final AccessControlList accessControlList )
+        {
+            this.accessControlList = accessControlList;
+            return this;
+        }
+
         public CreateNodeParams build()
         {
             return new CreateNodeParams( this );
@@ -155,6 +172,10 @@ public class CreateNodeParams
 
         final CreateNodeParams that = (CreateNodeParams) o;
 
+        if ( accessControlList != null ? !accessControlList.equals( that.accessControlList ) : that.accessControlList != null )
+        {
+            return false;
+        }
         if ( attachments != null ? !attachments.equals( that.attachments ) : that.attachments != null )
         {
             return false;
@@ -175,7 +196,7 @@ public class CreateNodeParams
         {
             return false;
         }
-        if ( nodeId != null ? !nodeId.equals( that.nodeId ) : that.nodeId != null )
+        if ( !nodeId.equals( that.nodeId ) )
         {
             return false;
         }
@@ -196,7 +217,8 @@ public class CreateNodeParams
         result = 31 * result + ( attachments != null ? attachments.hashCode() : 0 );
         result = 31 * result + ( indexConfigDocument != null ? indexConfigDocument.hashCode() : 0 );
         result = 31 * result + ( childOrder != null ? childOrder.hashCode() : 0 );
-        result = 31 * result + ( nodeId != null ? nodeId.hashCode() : 0 );
+        result = 31 * result + nodeId.hashCode();
+        result = 31 * result + ( accessControlList != null ? accessControlList.hashCode() : 0 );
         return result;
     }
 }

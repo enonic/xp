@@ -1,7 +1,6 @@
 package com.enonic.wem.core.entity;
 
 import java.time.Instant;
-import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
@@ -632,6 +631,7 @@ public final class Node
         }
     }
 
+
     @Override
     public boolean equals( final Object o )
     {
@@ -646,7 +646,7 @@ public final class Node
 
         final Node node = (Node) o;
 
-        if ( hasChildren != node.hasChildren )
+        if ( acl != null ? !acl.equals( node.acl ) : node.acl != null )
         {
             return false;
         }
@@ -702,10 +702,6 @@ public final class Node
         {
             return false;
         }
-        if ( !Objects.equals( acl, node.acl ) )
-        {
-            return false;
-        }
 
         return true;
     }
@@ -713,7 +709,21 @@ public final class Node
     @Override
     public int hashCode()
     {
-        return Objects.hash( id, name, parent, path, modifier, creator, hasChildren, createdTime, data, modifiedTime, indexConfigDocument,
-                             attachments, childOrder, manualOrderValue, acl );
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + ( name != null ? name.hashCode() : 0 );
+        result = 31 * result + ( parent != null ? parent.hashCode() : 0 );
+        result = 31 * result + ( path != null ? path.hashCode() : 0 );
+        result = 31 * result + ( modifier != null ? modifier.hashCode() : 0 );
+        result = 31 * result + ( creator != null ? creator.hashCode() : 0 );
+        result = 31 * result + ( hasChildren ? 1 : 0 );
+        result = 31 * result + ( createdTime != null ? createdTime.hashCode() : 0 );
+        result = 31 * result + ( data != null ? data.hashCode() : 0 );
+        result = 31 * result + ( modifiedTime != null ? modifiedTime.hashCode() : 0 );
+        result = 31 * result + ( indexConfigDocument != null ? indexConfigDocument.hashCode() : 0 );
+        result = 31 * result + ( attachments != null ? attachments.hashCode() : 0 );
+        result = 31 * result + ( childOrder != null ? childOrder.hashCode() : 0 );
+        result = 31 * result + ( manualOrderValue != null ? manualOrderValue.hashCode() : 0 );
+        result = 31 * result + ( acl != null ? acl.hashCode() : 0 );
+        return result;
     }
 }

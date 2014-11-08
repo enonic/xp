@@ -39,7 +39,7 @@ public final class AccessControlListJson
 
     private AccessControlList buildAccessControlList( final List<AccessControlEntryJson> accessControlEntryList )
     {
-        final AccessControlList.Builder aclBuilder = AccessControlList.newACL();
+        final AccessControlList.Builder aclBuilder = AccessControlList.create();
         for ( final AccessControlEntryJson entryJson : accessControlEntryList )
         {
             aclBuilder.add( entryJson.getAccessControlEntry() );

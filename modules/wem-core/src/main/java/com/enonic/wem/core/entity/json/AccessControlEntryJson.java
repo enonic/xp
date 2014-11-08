@@ -28,7 +28,7 @@ public final class AccessControlEntryJson
                                    @JsonProperty("allow") final List<String> allowPermissions,
                                    @JsonProperty("deny") final List<String> denyPermissions )
     {
-        final AccessControlEntry.Builder entryBuilder = AccessControlEntry.newACE().
+        final AccessControlEntry.Builder entryBuilder = AccessControlEntry.create().
             principal( PrincipalKey.from( principalKey ) );
 
         for ( final String permission : allowPermissions )

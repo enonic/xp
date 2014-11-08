@@ -57,12 +57,19 @@ class NodeStoreDocumentFactory
             analyzer( indexConfigDocument.getAnalyzer() );
 
         addNodeMetaData( node, nodeVersionId, builder );
-        addNodeProperties( node, builder );
+        addNodeDataProperties( node, builder );
 
         return builder.build();
     }
 
     private static void addNodeMetaData( final Node node, final NodeVersionId nodeVersionId, final StoreDocument.Builder builder )
+    {
+        addNodeBaseProperties( node, nodeVersionId, builder );
+
+        builder.addEntries( AccessControlListStoreDocumentFactory.create( node.getAccessControlList() ) );
+    }
+
+    private static void addNodeBaseProperties( final Node node, final NodeVersionId nodeVersionId, final StoreDocument.Builder builder )
     {
         if ( nodeVersionId != null )
         {
@@ -117,10 +124,9 @@ class NodeStoreDocumentFactory
             builder.addEntries( StoreDocumentItemFactory.create( MANUAL_ORDER_VALUE_PATH, Value.newLong( node.getManualOrderValue() ),
                                                                  IndexConfig.MINIMAL ) );
         }
-
     }
 
-    private static void addNodeProperties( final Node node, final StoreDocument.Builder builder )
+    private static void addNodeDataProperties( final Node node, final StoreDocument.Builder builder )
     {
         PropertyVisitor visitor = new PropertyVisitor()
         {
