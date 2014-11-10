@@ -3,6 +3,8 @@ module api.ui.selector.combobox {
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
     import OptionFilterInputValueChangedEvent = api.ui.selector.OptionFilterInputValueChangedEvent;
     import Viewer = api.ui.Viewer;
+    import SelectedOption = api.ui.selector.combobox.SelectedOption;
+    import Option = api.ui.selector.Option;
 
     export class RichComboBox<OPTION_DISPLAY_VALUE> extends api.ui.form.CompositeFormInputEl {
 
@@ -83,6 +85,10 @@ module api.ui.selector.combobox {
 
         getSelectedOptions(): SelectedOption<OPTION_DISPLAY_VALUE>[] {
             return this.selectedOptionsView.getSelectedOptions();
+        }
+
+        getSelectedOption(option: Option<OPTION_DISPLAY_VALUE>): SelectedOption<OPTION_DISPLAY_VALUE> {
+            return this.selectedOptionsView.getByOption(option);
         }
 
         maximumOccurrencesReached(): boolean {

@@ -1,4 +1,4 @@
-module api.module.inputtype.moduleconfigurator {
+module api.content.site.inputtype.moduleconfigurator {
 
     import AEl = api.dom.AEl;
     import RootDataSet = api.data.RootDataSet;
@@ -29,7 +29,7 @@ module api.module.inputtype.moduleconfigurator {
             this.collapseClickedListeners = [];
 
             this.module = mod;
-            this.config = config || new RootDataSet();
+            this.config = config;
 
             var header = new api.dom.DivEl('header');
 

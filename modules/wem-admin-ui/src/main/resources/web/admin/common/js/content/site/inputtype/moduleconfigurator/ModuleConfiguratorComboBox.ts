@@ -1,7 +1,9 @@
-module api.module.inputtype.moduleconfigurator {
+module api.content.site.inputtype.moduleconfigurator {
 
     import Property = api.data.Property;
     import Module = api.module.Module;
+    import ModuleViewer = api.module.ModuleViewer;
+    import ModuleLoader = api.module.ModuleLoader;
     import RootDataSet = api.data.RootDataSet;
     import Option = api.ui.selector.Option;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
@@ -18,7 +20,7 @@ module api.module.inputtype.moduleconfigurator {
                 setMaximumOccurrences(maxOccurrences).
                 setIdentifierMethod('getModuleKey').
                 setComboBoxName("moduleSelector").
-                setLoader(new api.module.ModuleLoader()).
+                setLoader(new ModuleLoader()).
                 setSelectedOptionsView(new ModuleConfiguratorSelectedOptionsView(moduleConfigProvider)).
                 setOptionDisplayValueViewer(new ModuleViewer()).
                 setDelayedInputValueChangedHandling(500);
@@ -38,8 +40,9 @@ module api.module.inputtype.moduleconfigurator {
         }
 
         createSelectedOption(option: Option<Module>): SelectedOption<Module> {
-            var config = this.moduleConfigProvider.getConfig(option.displayValue.getModuleKey());
-            var optionView = new ModuleConfiguratorSelectedOptionView(option, config);
+            var moduleConfig = this.moduleConfigProvider.getConfig(option.displayValue.getModuleKey());
+            var moduleConfigData = moduleConfig ? moduleConfig.getConfig() : new RootDataSet();
+            var optionView = new ModuleConfiguratorSelectedOptionView(option, moduleConfigData);
 
             return new SelectedOption<Module>(optionView, this.count());
         }

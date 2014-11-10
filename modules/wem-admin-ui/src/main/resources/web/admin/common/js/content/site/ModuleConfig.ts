@@ -30,6 +30,13 @@ module api.content.site {
             }
         }
 
+        toData(): api.data.RootDataSet {
+            var data = new api.data.RootDataSet();
+            data.addProperty("moduleKey", new api.data.Value(this.moduleKey.getName(), api.data.type.ValueTypes.STRING));
+            data.addProperty("config", new api.data.Value(this.config, api.data.type.ValueTypes.DATA));
+            return data;
+        }
+
         equals(o: api.Equitable): boolean {
 
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, ModuleConfig)) {
@@ -66,6 +73,15 @@ module api.content.site {
                 this.moduleKey = source.getModuleKey();
                 this.config = source.getConfig() ? source.getConfig().clone() : null;
             }
+        }
+
+        fromData(data: api.data.RootDataSet): ModuleConfigBuilder {
+            api.util.assertNotNull(data, "data cannot be null");
+            var moduleKey = api.module.ModuleKey.fromString(data.getProperty("moduleKey").getString());
+            var moduleConfig = data.getProperty("config").getData();
+            this.setModuleKey(moduleKey);
+            this.setConfig(moduleConfig);
+            return this;
         }
 
         setModuleKey(value: api.module.ModuleKey): ModuleConfigBuilder {

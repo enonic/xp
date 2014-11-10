@@ -1,4 +1,4 @@
-module api.module.inputtype.moduleconfigurator {
+module api.content.site.inputtype.moduleconfigurator {
 
     import Value = api.data.Value;
     import Property = api.data.Property;
@@ -15,6 +15,7 @@ module api.module.inputtype.moduleconfigurator {
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
     import Module = api.module.Module;
     import ModuleKey = api.module.ModuleKey;
+    import GetModuleRequest = api.module.GetModuleRequest;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
 
     export class ModuleConfigurator extends api.form.inputtype.support.BaseInputTypeManagingAdd<ModuleView> {
@@ -63,13 +64,15 @@ module api.module.inputtype.moduleconfigurator {
         private doLoadModules(properties: api.data.Property[]): wemQ.Promise<Module[]> {
             var promises: wemQ.Promise<Module>[] = [];
             properties.forEach((property: api.data.Property) => {
-                var moduleKeyProperty = <Property> property.getData().getDataByName("moduleKey")[0];
+
                 if (property.hasNonNullValue()) {
-                    var promise = new GetModuleRequest(ModuleKey.fromString(moduleKeyProperty.getString())).sendAndParse();
+                    var moduleConfig = new api.content.site.ModuleConfigBuilder().fromData(property.getData()).build();
+                    var promise = new GetModuleRequest(moduleConfig.getModuleKey()).sendAndParse();
                     promises.push(promise);
                     promise.then((requestedModule: Module) => {
                         this.comboBox.select(requestedModule);
                     }).done();
+
                 }
             });
             return wemQ.all<Module>(promises);
@@ -90,7 +93,11 @@ module api.module.inputtype.moduleconfigurator {
                     if (!key) {
                         return;
                     }
-                    var newValue = this.createValue(key);
+
+                    var selectedOption = comboBox.getSelectedOption(event.getOption());
+                    var selectedOptionView: ModuleConfiguratorSelectedOptionView = <ModuleConfiguratorSelectedOptionView>selectedOption.getOptionView();
+                    var configData = selectedOptionView.getFormView().getData();
+                    var newValue = this.createValue(key, configData);
 
                     if (comboBox.countSelected() == 1) { // overwrite initial value
                         this.notifyValueChanged(new api.form.inputtype.ValueChangedEvent(newValue, 0));
@@ -109,16 +116,15 @@ module api.module.inputtype.moduleconfigurator {
         }
 
         private createValue(moduleKey: ModuleKey, config?: RootDataSet): Value {
-            var data = new RootDataSet();
-            data.addProperty("moduleKey", new Value(moduleKey.getName(), ValueTypes.STRING));
-            data.addProperty("config", new Value(config || new RootDataSet(), ValueTypes.DATA));
-            return new Value(data, ValueTypes.DATA);
+            var moduleConfig = new api.content.site.ModuleConfigBuilder().setModuleKey(moduleKey).setConfig(config).build();
+            var moduleConfigAsData = moduleConfig.toData();
+            return new Value(moduleConfigAsData, ValueTypes.DATA);
         }
 
         getValues(): api.data.Value[] {
             var options: SelectedOption<Module>[] = this.comboBox.getSelectedOptions();
             return options.map((selectedOption) => {
-                var optionView = <any> selectedOption.getOptionView().getHTMLElement();
+                var optionView = <ModuleConfiguratorSelectedOptionView> selectedOption.getOptionView();
                 return this.createValue(optionView.getModule().getModuleKey(), optionView.getFormView().getData());
             });
         }

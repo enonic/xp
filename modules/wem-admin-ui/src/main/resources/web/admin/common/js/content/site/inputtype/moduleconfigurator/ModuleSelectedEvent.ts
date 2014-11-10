@@ -1,4 +1,4 @@
-module api.module.inputtype.moduleconfigurator {
+module api.content.site.inputtype.moduleconfigurator {
 
     import FormView = api.form.FormView;
     import Module = api.module.Module;
