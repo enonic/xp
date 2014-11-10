@@ -11,7 +11,7 @@ module api.module.inputtype.moduleconfigurator {
 
     export class ModuleConfiguratorComboBox extends api.ui.selector.combobox.RichComboBox<Module> {
 
-        constructor(maxOccurrences: number) {
+        constructor(maxOccurrences: number, moduleConfigProvider: ModuleConfigProvider) {
 
             var builder = new api.ui.selector.combobox.RichComboBoxBuilder<Module>();
             builder.
@@ -19,7 +19,7 @@ module api.module.inputtype.moduleconfigurator {
                 setIdentifierMethod('getModuleKey').
                 setComboBoxName("moduleSelector").
                 setLoader(new api.module.ModuleLoader()).
-                setSelectedOptionsView(new ModuleConfiguratorSelectedOptionsView()).
+                setSelectedOptionsView(new ModuleConfiguratorSelectedOptionsView(moduleConfigProvider)).
                 setOptionDisplayValueViewer(new ModuleViewer()).
                 setDelayedInputValueChangedHandling(500);
 
@@ -30,12 +30,16 @@ module api.module.inputtype.moduleconfigurator {
 
     export class ModuleConfiguratorSelectedOptionsView extends SelectedOptionsView<Module> {
 
-        constructor() {
+        private moduleConfigProvider: ModuleConfigProvider;
+
+        constructor(moduleConfigProvider: ModuleConfigProvider) {
             super();
+            this.moduleConfigProvider = moduleConfigProvider;
         }
 
         createSelectedOption(option: Option<Module>): SelectedOption<Module> {
-            var optionView = new ModuleConfiguratorSelectedOptionView(option);
+            var config = this.moduleConfigProvider.getConfig(option.displayValue.getModuleKey());
+            var optionView = new ModuleConfiguratorSelectedOptionView(option, config);
 
             return new SelectedOption<Module>(optionView, this.count());
         }
@@ -48,11 +52,11 @@ module api.module.inputtype.moduleconfigurator {
 
         private selectedOptionToBeRemovedListeners: {(): void;}[];
 
-        constructor(option: Option<Module>) {
+        constructor(option: Option<Module>, config: RootDataSet) {
             this.selectedOptionToBeRemovedListeners = [];
             this.option = option;
 
-            super(option.displayValue);
+            super(option.displayValue, config);
 
             this.onRemoveClicked((event: MouseEvent) => {
                 this.notifySelectedOptionRemoveRequested();

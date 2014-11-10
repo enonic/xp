@@ -16,20 +16,20 @@ module api.module.inputtype.moduleconfigurator {
 
         private formView: FormView;
 
-        private data: RootDataSet;
+        private config: RootDataSet;
 
         private removeClickedListeners: {(event: MouseEvent): void;}[];
 
         private collapseClickedListeners: {(event: MouseEvent): void;}[];
 
-        constructor(module: Module, data?: RootDataSet) {
+        constructor(mod: Module, config: RootDataSet) {
             super("module-view");
 
             this.removeClickedListeners = [];
             this.collapseClickedListeners = [];
 
-            this.module = module;
-            this.data = data || new RootDataSet();
+            this.module = mod;
+            this.config = config || new RootDataSet();
 
             var header = new api.dom.DivEl('header');
 
@@ -67,7 +67,7 @@ module api.module.inputtype.moduleconfigurator {
 
             var formContext = new FormContextBuilder().build();
 
-            this.formView = new FormView(formContext, this.module.getForm(), this.data);
+            this.formView = new FormView(formContext, this.module.getForm(), this.config);
             this.formView.addClass("module-form");
             this.appendChild(this.formView);
         }

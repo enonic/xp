@@ -47,7 +47,8 @@ module api.module.inputtype.moduleconfigurator {
             this.layoutInProgress = true;
             this.input = input;
 
-            this.comboBox = this.createComboBox(input);
+            var moduleConfigProvider = new ModuleConfigProvider(properties);
+            this.comboBox = this.createComboBox(input, moduleConfigProvider);
 
             this.appendChild(this.comboBox);
 
@@ -63,21 +64,20 @@ module api.module.inputtype.moduleconfigurator {
             var promises: wemQ.Promise<Module>[] = [];
             properties.forEach((property: api.data.Property) => {
                 var moduleKeyProperty = <Property> property.getData().getDataByName("moduleKey")[0];
-                var moduleConfigProperty = <Property> property.getData().getDataByName("config")[0];
                 if (property.hasNonNullValue()) {
                     var promise = new GetModuleRequest(ModuleKey.fromString(moduleKeyProperty.getString())).sendAndParse();
                     promises.push(promise);
-                    promise.then((module: Module) => {
-                        this.comboBox.select(module);
+                    promise.then((requestedModule: Module) => {
+                        this.comboBox.select(requestedModule);
                     }).done();
                 }
             });
             return wemQ.all<Module>(promises);
         }
 
-        private createComboBox(input: api.form.Input): ModuleConfiguratorComboBox {
+        private createComboBox(input: api.form.Input, moduleConfigProvider: ModuleConfigProvider): ModuleConfiguratorComboBox {
 
-            var comboBox = new ModuleConfiguratorComboBox(input.getOccurrences().getMaximum() || 0);
+            var comboBox = new ModuleConfiguratorComboBox(input.getOccurrences().getMaximum() || 0, moduleConfigProvider);
 
             comboBox.onSelectedOptionRemoved((removed: SelectedOption<Module>) => {
                 this.notifyValueRemoved(removed.getIndex());
