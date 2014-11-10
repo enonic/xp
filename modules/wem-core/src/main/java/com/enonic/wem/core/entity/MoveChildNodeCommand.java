@@ -1,5 +1,7 @@
 package com.enonic.wem.core.entity;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.index.IndexPaths;
 import com.enonic.wem.api.query.expr.CompareExpr;
@@ -108,7 +110,7 @@ public class MoveChildNodeCommand
         final CompareExpr orderGreaterThanNodeToMoveBefore =
             CompareExpr.gt( FieldExpr.from( IndexPaths.MANUAL_ORDER_VALUE_KEY ), ValueExpr.number( nodeAfterOrderValue ) );
 
-        final FieldOrderExpr orderManuallyDesc = FieldOrderExpr.create( IndexPaths.MANUAL_ORDER_VALUE_KEY, OrderExpr.Direction.DESC );
+        final FieldOrderExpr orderManuallyDesc = FieldOrderExpr.create( IndexPaths.MANUAL_ORDER_VALUE_KEY, OrderExpr.Direction.ASC );
 
         return NodeQuery.create().query( QueryExpr.from( orderGreaterThanNodeToMoveBefore, orderManuallyDesc ) ).
             size( 1 ).
@@ -176,6 +178,13 @@ public class MoveChildNodeCommand
         {
             this.nodeToMoveBefore = nodeToMoveBefore;
             return this;
+        }
+
+        protected void validate()
+        {
+            super.validate();
+            Preconditions.checkNotNull( parentNode );
+            Preconditions.checkNotNull( nodeToMove );
         }
 
         public MoveChildNodeCommand build()
