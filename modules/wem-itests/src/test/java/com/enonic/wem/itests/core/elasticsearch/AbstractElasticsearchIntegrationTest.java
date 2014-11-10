@@ -9,6 +9,7 @@ import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
+import org.elasticsearch.common.unit.TimeValue;
 import org.junit.After;
 import org.junit.Before;
 import org.slf4j.Logger;
@@ -102,7 +103,7 @@ public abstract class AbstractElasticsearchIntegrationTest
         {
             request.waitForStatus( status );
         }
-        ClusterHealthResponse actionGet = client().admin().cluster().health( request ).actionGet();
+        ClusterHealthResponse actionGet = client().admin().cluster().health( request ).actionGet( TimeValue.timeValueSeconds( 1 ) );
         if ( actionGet.isTimedOut() )
         {
             LOG.info( "waitForRelocation timed out (status={}), cluster state:\n{}\n{}" );

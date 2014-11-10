@@ -68,7 +68,6 @@ public abstract class AbstractNodeTest
     {
         RepositoryInitializer repositoryInitializer = new RepositoryInitializer();
         repositoryInitializer.setIndexService( this.indexService );
-
         repositoryInitializer.init( repository );
 
         refresh();
@@ -123,7 +122,6 @@ public abstract class AbstractNodeTest
             nodeDao( nodeDao ).
             build().
             execute();
-
     }
 
     protected void printContentRepoIndex()
