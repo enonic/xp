@@ -18,7 +18,7 @@ module api.content.page {
         }
     }
 
-    export class PageTemplateSelectedOptionView extends api.ui.selector.combobox.SelectedOptionView<PageTemplate> {
+    export class PageTemplateSelectedOptionView extends api.ui.selector.combobox.BaseSelectedOptionView<PageTemplate> {
 
         private pageTemplate: PageTemplate;
 

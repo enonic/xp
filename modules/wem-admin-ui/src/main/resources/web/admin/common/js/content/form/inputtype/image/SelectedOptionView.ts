@@ -2,7 +2,7 @@ module api.content.form.inputtype.image {
 
     import LoadMask = api.ui.mask.LoadMask;
 
-    export class SelectedOptionView extends api.ui.selector.combobox.SelectedOptionView<ImageSelectorDisplayValue> {
+    export class SelectedOptionView extends api.ui.selector.combobox.BaseSelectedOptionView<ImageSelectorDisplayValue> {
 
         private static IMAGE_SIZE: number = 270;
 

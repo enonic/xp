@@ -1,6 +1,6 @@
 module api.ui.selector.combobox {
 
-    export class RichSelectedOptionView<T extends api.item.Item> extends api.ui.selector.combobox.SelectedOptionView<T> {
+    export class RichSelectedOptionView<T extends api.item.Item> extends api.ui.selector.combobox.BaseSelectedOptionView<T> {
 
         private optionDisplayValue: T;
 

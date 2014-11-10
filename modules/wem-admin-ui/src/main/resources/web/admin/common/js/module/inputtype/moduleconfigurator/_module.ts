@@ -1,4 +1,5 @@
 ///<reference path='ModuleSelectedEvent.ts' />
 ///<reference path='ModuleDeselectedEvent.ts' />
-///<reference path='ModuleConfig.ts' />
+///<reference path='ModuleView.ts' />
 ///<reference path='ModuleConfigurator.ts' />
+///<reference path='ModuleConfiguratorComboBox.ts' />

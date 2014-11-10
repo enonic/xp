@@ -21,7 +21,7 @@ module api.ui.selector.combobox {
         }
 
         createSelectedOption(option: api.ui.selector.Option<T>): SelectedOption<T> {
-            return new SelectedOption<T>(new SelectedOptionView(option), this.count());
+            return new SelectedOption<T>(new BaseSelectedOptionView(option), this.count());
         }
 
         addOption(option: api.ui.selector.Option<T>): boolean {
@@ -71,7 +71,7 @@ module api.ui.selector.combobox {
             return this.list.map((selectedOption: SelectedOption<T>) => selectedOption.getOption());
         }
 
-        getSelecteOptions(): SelectedOption<T>[] {
+        getSelectedOptions(): SelectedOption<T>[] {
             return this.list;
         }
 

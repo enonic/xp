@@ -89,7 +89,7 @@ module api.content.form.inputtype.image {
 
         addNewOption(option: Option<ImageSelectorDisplayValue>) {
             var selectedOption: SelectedOption<ImageSelectorDisplayValue> = this.createSelectedOption(option);
-            this.getSelecteOptions().push(selectedOption);
+            this.getSelectedOptions().push(selectedOption);
 
             var optionView: SelectedOptionView = <SelectedOptionView>selectedOption.getOptionView();
             optionView.updateProportions(this.calculateOptionHeight());
