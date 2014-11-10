@@ -18,6 +18,8 @@ import com.enonic.wem.core.entity.json.NodeJsonSerializer;
 public class NodeDaoImpl
     implements NodeDao
 {
+    private final NodeJsonSerializer nodeJsonSerializer = NodeJsonSerializer.create( false );
+
     private BlobService blobService;
 
     @Override
@@ -30,7 +32,7 @@ public class NodeDaoImpl
 
     private Blob doStoreNodeAsBlob( final Node newNode )
     {
-        final String serializedNode = NodeJsonSerializer.toString( newNode );
+        final String serializedNode = this.nodeJsonSerializer.toString( newNode );
 
         final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream( serializedNode.getBytes( StandardCharsets.UTF_8 ) );
         return blobService.create( byteArrayInputStream );
@@ -80,7 +82,7 @@ public class NodeDaoImpl
         {
             final byte[] bytes = ByteStreams.toByteArray( blob.getStream() );
 
-            return NodeJsonSerializer.toNode( new String( bytes, StandardCharsets.UTF_8 ) );
+            return this.nodeJsonSerializer.toNode( new String( bytes, StandardCharsets.UTF_8 ) );
         }
         catch ( IOException e )
         {

@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
 
-final class PatternBasedIndexConfigDocumentJson
+final class IndexConfigDocumentJson
 {
     @JsonProperty("analyzer")
     private String analyzer;
@@ -32,9 +32,9 @@ final class PatternBasedIndexConfigDocumentJson
         return builder.build();
     }
 
-    public static PatternBasedIndexConfigDocumentJson toJson( final PatternIndexConfigDocument config )
+    public static IndexConfigDocumentJson toJson( final PatternIndexConfigDocument config )
     {
-        final PatternBasedIndexConfigDocumentJson json = new PatternBasedIndexConfigDocumentJson();
+        final IndexConfigDocumentJson json = new IndexConfigDocumentJson();
         json.analyzer = config.getAnalyzer();
         json.patternConfigs = config.pathIndexConfigs.stream().map( PatternConfigJson::toJson ).collect( Collectors.toList() );
         json.defaultConfig = IndexConfigJson.toJson( config.getDefaultConfig() );

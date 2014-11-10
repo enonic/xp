@@ -1,6 +1,5 @@
 package com.enonic.wem.core.entity.json;
 
-
 import java.net.URL;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -9,7 +8,6 @@ import java.time.ZoneOffset;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.blob.BlobKey;
@@ -37,12 +35,17 @@ import static org.junit.Assert.*;
 
 public class NodeJsonSerializerTest
 {
+    private final NodeJsonSerializer serializer;
+
+    public NodeJsonSerializerTest()
+    {
+        this.serializer = NodeJsonSerializer.create( true );
+    }
+
     @Test
     public void serialize_deserialize()
         throws Exception
     {
-        NodeJsonSerializer.MAPPER.enable( SerializationFeature.INDENT_OUTPUT );
-
         final Instant dateTime = LocalDateTime.of( 2013, 1, 2, 3, 4, 5, 0 ).toInstant( ZoneOffset.UTC );
 
         RootDataSet rootDataSet = new RootDataSet();
@@ -94,10 +97,10 @@ public class NodeJsonSerializerTest
 
         final String expectedStr = readJson( "serialized-node.json" );
 
-        final String serializedNode = NodeJsonSerializer.toString( node );
+        final String serializedNode = this.serializer.toString( node );
         assertEquals( expectedStr, serializedNode );
 
-        final Node deSerializedNode = NodeJsonSerializer.toNode( expectedStr );
+        final Node deSerializedNode = this.serializer.toNode( expectedStr );
         assertEquals( node, deSerializedNode );
     }
 
@@ -105,7 +108,7 @@ public class NodeJsonSerializerTest
         throws Exception
     {
         final URL url = getClass().getResource( name );
-        final JsonNode node = NodeJsonSerializer.MAPPER.readTree( url );
-        return NodeJsonSerializer.MAPPER.writeValueAsString( node );
+        final JsonNode node = this.serializer.mapper.readTree( url );
+        return this.serializer.mapper.writeValueAsString( node );
     }
 }

@@ -35,7 +35,7 @@ final class NodeJson
     private Instant modifiedTime;
 
     @JsonProperty("indexConfigDocument")
-    private PatternBasedIndexConfigDocumentJson indexConfigDocument;
+    private IndexConfigDocumentJson indexConfigDocument;
 
     @JsonProperty("attachments")
     private List<AttachmentJson> attachments;
@@ -131,11 +131,11 @@ final class NodeJson
         return json;
     }
 
-    private static PatternBasedIndexConfigDocumentJson createEntityIndexConfig( final IndexConfigDocument indexConfig )
+    private static IndexConfigDocumentJson createEntityIndexConfig( final IndexConfigDocument indexConfig )
     {
         if ( indexConfig instanceof PatternIndexConfigDocument )
         {
-            return PatternBasedIndexConfigDocumentJson.toJson( (PatternIndexConfigDocument) indexConfig );
+            return IndexConfigDocumentJson.toJson( (PatternIndexConfigDocument) indexConfig );
         }
         return null;
     }
