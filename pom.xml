@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -226,6 +227,43 @@
       <url>http://maven.restlet.org</url>
     </repository>
   </repositories>
+
+
+  <!--
+  Will break up system into the following:
+
+  - admin-api
+  - admin-core
+  - admin-ui
+
+  - platform-api
+  - platform-core
+  - platform-blob
+  - platform-node
+  - platform-module
+  - platform-search
+  - platform-image
+  - platform-schema
+  - platform-script
+  - platform-servlet
+  - platform-jaxrs
+
+  - portal-api
+  - portal-core
+  - portal-thymeleaf
+  - portal-mustache
+  - portal-xslt
+
+  - karaf-distro
+  - karaf-feature
+
+  - distro
+  - runner
+  - launcher
+
+  - itests
+
+  -->
 
 </project>
         
