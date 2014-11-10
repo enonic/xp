@@ -121,7 +121,7 @@ public class ElasticsearchQueryService
     }
 
     @Override
-    public NodeVersionIds get( final NodePaths nodePaths, final OrderExpressions orderExprs, final IndexContext indexContext )
+    public NodeVersionIds find( final NodePaths nodePaths, final OrderExpressions orderExprs, final IndexContext indexContext )
     {
 
         final Workspace workspace = indexContext.getWorkspace();
@@ -151,7 +151,7 @@ public class ElasticsearchQueryService
     }
 
     @Override
-    public NodeVersionIds get( final NodeIds nodeIds, final OrderExpressions orderExprs, final IndexContext indexContext )
+    public NodeVersionIds find( final NodeIds nodeIds, final OrderExpressions orderExprs, final IndexContext indexContext )
     {
         final Workspace workspace = indexContext.getWorkspace();
 

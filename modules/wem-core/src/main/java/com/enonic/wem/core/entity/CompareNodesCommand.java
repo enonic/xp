@@ -3,9 +3,9 @@ package com.enonic.wem.core.entity;
 import com.enonic.wem.api.content.CompareStatus;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.core.index.IndexContext;
+import com.enonic.wem.core.index.query.QueryService;
 import com.enonic.wem.core.version.VersionService;
-import com.enonic.wem.core.workspace.WorkspaceContext;
-import com.enonic.wem.core.workspace.WorkspaceService;
 import com.enonic.wem.core.workspace.compare.DiffStatusParams;
 import com.enonic.wem.core.workspace.compare.DiffStatusResolver;
 
@@ -15,7 +15,7 @@ public class CompareNodesCommand
 
     private final Workspace target;
 
-    private final WorkspaceService workspaceService;
+    private final QueryService queryService;
 
     private final VersionService versionService;
 
@@ -23,7 +23,7 @@ public class CompareNodesCommand
     {
         nodeIds = builder.nodeIds;
         target = builder.target;
-        workspaceService = builder.workspaceService;
+        queryService = builder.queryService;
         versionService = builder.versionService;
     }
 
@@ -50,9 +50,8 @@ public class CompareNodesCommand
     {
         final Context context = Context.current();
 
-        final NodeVersionId sourceVersionId = workspaceService.getCurrentVersion( nodeId, WorkspaceContext.from( context ) );
-        final NodeVersionId targetVersionId =
-            workspaceService.getCurrentVersion( nodeId, WorkspaceContext.from( this.target, context.getRepositoryId() ) );
+        final NodeVersionId sourceVersionId = queryService.get( nodeId, IndexContext.from( context ) );
+        final NodeVersionId targetVersionId = queryService.get( nodeId, IndexContext.from( this.target, context.getRepositoryId() ) );
 
         final NodeVersion sourceVersion = getVersion( sourceVersionId, context );
         final NodeVersion targetVersion = getVersion( targetVersionId, context );
@@ -79,7 +78,7 @@ public class CompareNodesCommand
 
         private Workspace target;
 
-        private WorkspaceService workspaceService;
+        private QueryService queryService;
 
         private VersionService versionService;
 
@@ -99,9 +98,9 @@ public class CompareNodesCommand
             return this;
         }
 
-        public Builder workspaceService( final WorkspaceService workspaceService )
+        public Builder queryService( final QueryService queryService )
         {
-            this.workspaceService = workspaceService;
+            this.queryService = queryService;
             return this;
         }
 

@@ -260,7 +260,7 @@ public class NodeServiceImpl
         return CompareNodesCommand.create().
             nodeId( nodeIds ).
             target( target ).
-            workspaceService( this.workspaceService ).
+            queryService( this.queryService ).
             versionService( this.versionService ).
             build().
             execute();

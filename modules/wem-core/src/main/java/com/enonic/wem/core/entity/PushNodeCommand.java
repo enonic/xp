@@ -32,7 +32,7 @@ public class PushNodeCommand
     {
         final Context context = Context.current();
 
-        final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( id, WorkspaceContext.from( context ) );
+        final NodeVersionId currentVersion = this.queryService.get( id, IndexContext.from( context ) );
 
         final Node currentNode = nodeDao.getByVersionId( currentVersion );
 

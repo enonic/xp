@@ -35,17 +35,18 @@ public class NodeQueryTranslator
 
     private static QueryBuilder createQueryWithQueryFilters( final NodeQuery nodeQuery )
     {
-        final QueryBuilderFactory.Builder queryBuilderBuilder = QueryBuilderFactory.create().queryExpr( nodeQuery.getQuery() ).
+        final QueryBuilderFactory.Builder queryBuilderBuilder = QueryBuilderFactory.create().
+            queryExpr( nodeQuery.getQuery() ).
             addQueryFilters( nodeQuery.getQueryFilters() );
 
-        if ( nodeQuery.getParent() != null )
-        {
-            queryBuilderBuilder.addQueryFilter( ValueFilter.create().
-                fieldName( IndexPaths.PARENT_PATH_KEY ).
-                addValue( Value.newString( nodeQuery.getParent().toString() ) ).
-                build() );
-        }
+        addParentFilter( nodeQuery, queryBuilderBuilder );
+        addPathFilter( nodeQuery, queryBuilderBuilder );
 
+        return queryBuilderBuilder.build();
+    }
+
+    private static void addPathFilter( final NodeQuery nodeQuery, final QueryBuilderFactory.Builder queryBuilderBuilder )
+    {
         if ( nodeQuery.getPath() != null )
         {
             queryBuilderBuilder.addQueryFilter( ValueFilter.create().
@@ -53,8 +54,17 @@ public class NodeQueryTranslator
                 addValue( Value.newString( nodeQuery.getPath().toString() ) ).
                 build() );
         }
+    }
 
-        return queryBuilderBuilder.build();
+    private static void addParentFilter( final NodeQuery nodeQuery, final QueryBuilderFactory.Builder queryBuilderBuilder )
+    {
+        if ( nodeQuery.getParent() != null )
+        {
+            queryBuilderBuilder.addQueryFilter( ValueFilter.create().
+                fieldName( IndexPaths.PARENT_PATH_KEY ).
+                addValue( Value.newString( nodeQuery.getParent().toString() ) ).
+                build() );
+        }
     }
 
 

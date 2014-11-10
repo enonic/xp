@@ -23,7 +23,7 @@ public class GetNodesByIdsCommand
 
     public Nodes execute()
     {
-        final NodeVersionIds versionIds = this.queryService.get( this.ids, this.orderExpressions, IndexContext.from( Context.current() ) );
+        final NodeVersionIds versionIds = this.queryService.find( this.ids, this.orderExpressions, IndexContext.from( Context.current() ) );
 
         return resolveHasChild ? NodeHasChildResolver.create().
             workspaceService( this.workspaceService ).

@@ -19,7 +19,7 @@ import com.enonic.wem.core.entity.UpdateNodeParams;
 
 import static org.junit.Assert.*;
 
-public class CompareNodeCommandTest
+public class CompareNodesCommandTest
     extends AbstractNodeTest
 {
     @Override

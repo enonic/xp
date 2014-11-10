@@ -23,7 +23,7 @@ public class GetNodesByPathsCommand
 
     public Nodes execute()
     {
-        final NodeVersionIds versionIds = this.queryService.get( paths, orderExpressions, IndexContext.from( Context.current() ) );
+        final NodeVersionIds versionIds = this.queryService.find( paths, orderExpressions, IndexContext.from( Context.current() ) );
 
         return resolveHasChild ? NodeHasChildResolver.create().
             workspaceService( this.workspaceService ).

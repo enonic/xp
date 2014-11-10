@@ -1,10 +1,10 @@
 package com.enonic.wem.core.entity;
 
 import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.query.expr.OrderExpressions;
 import com.enonic.wem.core.entity.query.NodeQuery;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.index.query.NodeQueryResult;
-import com.enonic.wem.core.workspace.WorkspaceContext;
 
 public class FindNodesByQueryCommand
     extends AbstractNodeCommand
@@ -26,13 +26,7 @@ public class FindNodesByQueryCommand
     {
         final NodeQueryResult nodeQueryResult = queryService.find( query, IndexContext.from( Context.current() ) );
 
-        final NodeVersionIds versions =
-            workspaceService.getByVersionIds( nodeQueryResult.getNodeIds(), WorkspaceContext.from( Context.current() ) );
-
-        final Nodes nodes = NodeHasChildResolver.create().
-            workspaceService( this.workspaceService ).
-            build().
-            resolve( nodeDao.getByVersionIds( versions ) );
+        final Nodes nodes = doGetByIds( nodeQueryResult.getNodeIds(), OrderExpressions.from( query.getOrderBys() ), true );
 
         return FindNodesByQueryResult.create().
             hits( nodeQueryResult.getHits() ).

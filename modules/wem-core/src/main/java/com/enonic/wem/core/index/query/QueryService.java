@@ -20,9 +20,9 @@ public interface QueryService
 
     public NodeVersionId get( final NodePath nodePath, final IndexContext indexContext );
 
-    public NodeVersionIds get( final NodePaths nodePath, final OrderExpressions orderExprs, final IndexContext indexContext );
+    public NodeVersionIds find( final NodePaths nodePath, final OrderExpressions orderExprs, final IndexContext indexContext );
 
-    public NodeVersionIds get( final NodeIds nodeIds, final OrderExpressions orderExprs, final IndexContext indexContext );
+    public NodeVersionIds find( final NodeIds nodeIds, final OrderExpressions orderExprs, final IndexContext indexContext );
 
     public NodeVersionIds getByParent( final NodePath parentPath, final IndexContext indexContext );
 

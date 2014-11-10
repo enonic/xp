@@ -19,7 +19,7 @@ public final class DeleteNodeByIdCommand
     {
         final Context context = Context.current();
 
-        final NodeVersionId currentVersion = this.workspaceService.getCurrentVersion( this.nodeId, WorkspaceContext.from( context ) );
+        final NodeVersionId currentVersion = this.queryService.get( this.nodeId, IndexContext.from( context ) );
 
         final Node nodeToDelete = this.nodeDao.getByVersionId( currentVersion );
 

@@ -4,8 +4,6 @@ import com.enonic.wem.core.elasticsearch.ElasticsearchDao;
 import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodeIds;
 import com.enonic.wem.core.entity.NodePath;
-import com.enonic.wem.core.entity.NodeVersionId;
-import com.enonic.wem.core.entity.NodeVersionIds;
 import com.enonic.wem.core.workspace.StoreWorkspaceDocument;
 import com.enonic.wem.core.workspace.WorkspaceContext;
 import com.enonic.wem.core.workspace.WorkspaceService;
@@ -36,30 +34,6 @@ public class ElasticsearchWorkspaceService
             repository( context.getRepositoryId() ).
             workspace( context.getWorkspace() ).
             nodeId( nodeId ).
-            build().
-            execute();
-    }
-
-    @Override
-    public NodeVersionId getCurrentVersion( final NodeId nodeId, final WorkspaceContext context )
-    {
-        return GetNodeVersionIdByIdCommand.create().
-            elasticsearchDao( this.elasticsearchDao ).
-            workspace( context.getWorkspace() ).
-            repository( context.getRepositoryId() ).
-            nodeId( nodeId ).
-            build().
-            execute();
-    }
-
-    @Override
-    public NodeVersionIds getByVersionIds( final NodeIds nodeIds, final WorkspaceContext context )
-    {
-        return GetNodeVersionIdsByIdsCommand.create().
-            nodeIds( nodeIds ).
-            workspace( context.getWorkspace() ).
-            elasticsearchDao( this.elasticsearchDao ).
-            repository( context.getRepositoryId() ).
             build().
             execute();
     }
