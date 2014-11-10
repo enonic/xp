@@ -11,16 +11,14 @@
       "principal": "system:user:anonymous"
     }
   ],
-  "attachments": {
-    "attachmentsList": [
-      {
-        "attachmentName": "attachment",
-        "blobKey": "1234",
-        "mimeType": "mimetype",
-        "size": 0
-      }
-    ]
-  },
+  "attachments": [
+    {
+      "attachmentName": "attachment",
+      "blobKey": "1234",
+      "mimeType": "mimetype",
+      "size": 0
+    }
+  ],
   "childOrder": "modifiedTime ASC, displayName DESC",
   "createdTime": "2013-01-02T03:04:05Z",
   "creator": "test:creator",

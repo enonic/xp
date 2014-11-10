@@ -1,58 +1,41 @@
 package com.enonic.wem.core.entity.json;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.core.entity.Attachment;
 
-public class AttachmentJson
+final class AttachmentJson
 {
-    private final Attachment attachment;
+    @JsonProperty("blobKey")
+    private String blobKey;
 
-    @JsonCreator
-    public AttachmentJson( @JsonProperty("blobKey") final String blobKey, //
-                           @JsonProperty("attachmentName") final String attachmentName, //
-                           @JsonProperty("mimeType") final String mimeType, //
-                           @JsonProperty("size") final String size )
+    @JsonProperty("attachmentName")
+    private String attachmentName;
+
+    @JsonProperty("mimeType")
+    private String mimeType;
+
+    @JsonProperty("size")
+    private long size;
+
+    public Attachment fromJson()
     {
-        this.attachment = Attachment.newAttachment().
-            name( attachmentName ).
-            size( new Long( size ) ).
-            mimeType( mimeType ).
-            blobKey( new BlobKey( blobKey ) ).
+        return Attachment.newAttachment().
+            name( this.attachmentName ).
+            size( this.size ).
+            mimeType( this.mimeType ).
+            blobKey( new BlobKey( this.blobKey ) ).
             build();
     }
 
-    public AttachmentJson( final Attachment attachment )
+    public static AttachmentJson toJson( final Attachment attachment )
     {
-        this.attachment = attachment;
-    }
-
-    public String getBlobKey()
-    {
-        return this.attachment.blobKey().toString();
-    }
-
-    public String getAttachmentName()
-    {
-        return this.attachment.name();
-    }
-
-    public String getMimeType()
-    {
-        return this.attachment.mimeType();
-    }
-
-    public long getSize()
-    {
-        return this.attachment.size();
-    }
-
-    @JsonIgnore
-    public Attachment getAttachment()
-    {
-        return this.attachment;
+        final AttachmentJson json = new AttachmentJson();
+        json.blobKey = attachment.blobKey().toString();
+        json.attachmentName = attachment.name();
+        json.mimeType = attachment.mimeType();
+        json.size = attachment.size();
+        return json;
     }
 }

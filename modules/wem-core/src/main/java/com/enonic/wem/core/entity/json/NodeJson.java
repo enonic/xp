@@ -3,15 +3,17 @@ package com.enonic.wem.core.entity.json;
 import java.time.Instant;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.data.RootDataSetJson;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.index.IndexConfigDocument;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
+import com.enonic.wem.api.security.acl.AccessControlEntry;
+import com.enonic.wem.api.security.acl.AccessControlList;
+import com.enonic.wem.core.entity.Attachment;
 import com.enonic.wem.core.entity.Attachments;
 import com.enonic.wem.core.entity.IndexConfigDocumentJson;
 import com.enonic.wem.core.entity.Node;
@@ -20,116 +22,118 @@ import com.enonic.wem.core.entity.NodeName;
 import com.enonic.wem.core.entity.NodePath;
 import com.enonic.wem.core.entity.PatternBasedIndexConfigDocumentJson;
 
-public class NodeJson
+final class NodeJson
 {
-    private final String id;
+    @JsonProperty("id")
+    private String id;
 
-    private final Instant createdTime;
+    @JsonProperty("createdTime")
+    private Instant createdTime;
 
-    private final RootDataSetJson data;
+    @JsonProperty("data")
+    private RootDataSetJson data;
 
-    private final Instant modifiedTime;
+    @JsonProperty("modifiedTime")
+    private Instant modifiedTime;
 
-    private final IndexConfigDocumentJson indexConfigDocument;
+    @JsonProperty("indexConfigDocument")
+    private IndexConfigDocumentJson indexConfigDocument;
 
-    private final AttachmentsJson attachments;
+    @JsonProperty("attachments")
+    private List<AttachmentJson> attachments;
 
-    private final Node node;
+    @JsonProperty("name")
+    private String name;
 
-    private final String name;
+    @JsonProperty("parent")
+    private String parent;
 
-    private final String parent;
+    @JsonProperty("path")
+    private String path;
 
-    private final String path;
+    @JsonProperty("modifier")
+    private String modifier;
 
-    private final String modifier;
+    @JsonProperty("creator")
+    private String creator;
 
-    private final String creator;
+    @JsonProperty("childOrder")
+    private String childOrder;
 
-    private final String childOrder;
+    @JsonProperty("manualOrderValue")
+    private Long manualOrderValue;
 
-    private final Long manualOrderValue;
+    @JsonProperty("accessControlList")
+    private List<AccessControlEntryJson> aclList;
 
-    private final AccessControlListJson acl;
+    @JsonProperty("effectiveAccessControlList")
+    private List<AccessControlEntryJson> effectiveAclList;
 
-    private final AccessControlListJson effectiveAcl;
-
-    @SuppressWarnings("UnusedDeclaration")
-    @JsonCreator
-    public NodeJson( @JsonProperty("name") final String name, //
-                     @JsonProperty("parent") final String parent,  //
-                     @JsonProperty("path") final String path,    //
-                     @JsonProperty("modifier") final String modifier, //
-                     @JsonProperty("creator") final String creator, //
-                     @JsonProperty("id") final String id, //
-                     @JsonProperty("createdTime") final Instant createdTime, //
-                     @JsonProperty("data") final RootDataSetJson data, //
-                     @JsonProperty("modifiedTime") final Instant modifiedTime, //
-                     @JsonProperty("indexConfigDocument") final IndexConfigDocumentJson indexConfigDocument,
-                     @JsonProperty("attachments") final AttachmentsJson attachments, //
-                     @JsonProperty("childOrder") final String childOrder, //
-                     @JsonProperty("manualOrderValue") final Long manualOrderValue,
-                     @JsonProperty("accessControlList") final List<AccessControlEntryJson> accessControlListJson,
-                     @JsonProperty("effectiveAccessControlList") final List<AccessControlEntryJson> effectiveAccessControlListJson )
-
+    public Node fromJson()
     {
-        this.id = id;
-        this.createdTime = createdTime;
-        this.data = data;
-        this.modifiedTime = modifiedTime;
-        this.indexConfigDocument = indexConfigDocument;
-        this.attachments = attachments;
-
-        this.name = name;
-        this.parent = parent;
-        this.path = path;
-        this.modifier = modifier;
-        this.creator = creator;
-        this.childOrder = childOrder;
-        this.manualOrderValue = manualOrderValue;
-        this.acl = new AccessControlListJson( accessControlListJson );
-        this.effectiveAcl = new AccessControlListJson( effectiveAccessControlListJson );
-
-        this.node = Node.newNode().
-            id( NodeId.from( id ) ).
-            name( NodeName.from( name ) ).
-            creator( UserKey.from( creator ) ).
-            modifier( modifier != null ? UserKey.from( modifier ) : null ).
-            createdTime( createdTime ).
-            modifiedTime( modifiedTime ).
-            path( path ).
-            parent( parent != null ? NodePath.newPath( parent ).build() : null ).
-            rootDataSet( data.getRootDataSet() ).
-            indexConfigDocument( indexConfigDocument.toEntityIndexConfig() ).
-            attachments( attachments != null ? attachments.getAttachments() : Attachments.empty() ).
-            childOrder( ChildOrder.from( childOrder ) ).
-            manualOrderValue( manualOrderValue ).
-            accessControlList( acl.getAcl() ).
-            effectiveAcl( effectiveAcl.getAcl() ).
+        return Node.newNode().
+            id( NodeId.from( this.id ) ).
+            name( NodeName.from( this.name ) ).
+            creator( UserKey.from( this.creator ) ).
+            modifier( this.modifier != null ? UserKey.from( this.modifier ) : null ).
+            createdTime( this.createdTime ).
+            modifiedTime( this.modifiedTime ).
+            path( this.path ).
+            parent( this.parent != null ? NodePath.newPath( this.parent ).build() : null ).
+            rootDataSet( this.data.getRootDataSet() ).
+            indexConfigDocument( this.indexConfigDocument.toEntityIndexConfig() ).
+            attachments( fromAttachmentJsonList( this.attachments ) ).
+            childOrder( ChildOrder.from( this.childOrder ) ).
+            manualOrderValue( this.manualOrderValue ).
+            accessControlList( fromJson( this.aclList ) ).
+            effectiveAcl( fromJson( this.effectiveAclList ) ).
             build();
     }
 
-    public NodeJson( final Node node )
+    private AccessControlList fromJson( final List<AccessControlEntryJson> list )
     {
-        this.id = node.id().toString();
-        this.createdTime = node.getCreatedTime();
-        this.modifiedTime = node.getModifiedTime();
-        this.data = new RootDataSetJson( node.data() );
-        this.indexConfigDocument = createEntityIndexConfig( node.getIndexConfigDocument() );
-        this.attachments = new AttachmentsJson( node.attachments() );
-        this.node = node;
-        this.name = node.name() != null ? node.name().toString() : null;
-        this.parent = node.parent() != null ? node.parent().toString() : null;
-        this.path = node.path() != null ? node.path().toString() : null;
-        this.modifier = node.modifier() != null ? node.modifier().getQualifiedName() : null;
-        this.creator = node.creator() != null ? node.creator().getQualifiedName() : null;
-        this.childOrder = node.getChildOrder().toString();
-        this.manualOrderValue = node.getManualOrderValue();
-        this.acl = new AccessControlListJson( node.getAccessControlList() );
-        this.effectiveAcl = new AccessControlListJson( node.getEffectiveAccessControlList() );
+        final AccessControlList.Builder builder = AccessControlList.create();
+        for ( final AccessControlEntryJson entryJson : list )
+        {
+            builder.add( entryJson.fromJson() );
+        }
+
+        return builder.build();
     }
 
-    private IndexConfigDocumentJson createEntityIndexConfig( final IndexConfigDocument indexConfig )
+    private Attachments fromAttachmentJsonList( final List<AttachmentJson> list )
+    {
+        final Attachments.Builder builder = Attachments.builder();
+        for ( final AttachmentJson entry : list )
+        {
+            builder.add( entry.fromJson() );
+        }
+
+        return builder.build();
+    }
+
+    public static NodeJson toJson( final Node node )
+    {
+        final NodeJson json = new NodeJson();
+        json.id = node.id().toString();
+        json.createdTime = node.getCreatedTime();
+        json.modifiedTime = node.getModifiedTime();
+        json.data = new RootDataSetJson( node.data() );
+        json.indexConfigDocument = createEntityIndexConfig( node.getIndexConfigDocument() );
+        json.attachments = toAttachmentJsonList( node.attachments() );
+        json.name = node.name() != null ? node.name().toString() : null;
+        json.parent = node.parent() != null ? node.parent().toString() : null;
+        json.path = node.path() != null ? node.path().toString() : null;
+        json.modifier = node.modifier() != null ? node.modifier().getQualifiedName() : null;
+        json.creator = node.creator() != null ? node.creator().getQualifiedName() : null;
+        json.childOrder = node.getChildOrder().toString();
+        json.manualOrderValue = node.getManualOrderValue();
+        json.aclList = toJson( node.getAccessControlList() );
+        json.effectiveAclList = toJson( node.getEffectiveAccessControlList() );
+        return json;
+    }
+
+    private static IndexConfigDocumentJson createEntityIndexConfig( final IndexConfigDocument indexConfig )
     {
         if ( indexConfig instanceof PatternIndexConfigDocument )
         {
@@ -138,99 +142,34 @@ public class NodeJson
         return null;
     }
 
-    @SuppressWarnings("UnusedDeclaration")
-    public String getName()
+    private static List<AccessControlEntryJson> toJson( final AccessControlList acl )
     {
-        return name;
+        if ( acl == null )
+        {
+            return null;
+        }
+
+        final List<AccessControlEntryJson> entryJsonList = Lists.newArrayList();
+        for ( final AccessControlEntry entry : acl )
+        {
+            entryJsonList.add( AccessControlEntryJson.toJson( entry ) );
+        }
+        return entryJsonList;
     }
 
-    @SuppressWarnings("UnusedDeclaration")
-    public String getParent()
+    private static List<AttachmentJson> toAttachmentJsonList( final Attachments attachments )
     {
-        return parent;
-    }
+        if ( attachments == null )
+        {
+            return null;
+        }
 
-    @SuppressWarnings("UnusedDeclaration")
-    public String getPath()
-    {
-        return path;
-    }
+        final List<AttachmentJson> attachmentJsons = Lists.newArrayList();
+        for ( final Attachment attachment : attachments )
+        {
+            attachmentJsons.add( AttachmentJson.toJson( attachment ) );
+        }
 
-    @SuppressWarnings("UnusedDeclaration")
-    public String getModifier()
-    {
-        return modifier;
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    public String getCreator()
-    {
-        return creator;
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    public String getId()
-    {
-        return id;
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    public Instant getCreatedTime()
-    {
-        return createdTime;
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    public Instant getModifiedTime()
-    {
-        return modifiedTime;
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    public RootDataSetJson getData()
-    {
-        return data;
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    public IndexConfigDocumentJson getIndexConfigDocument()
-    {
-        return indexConfigDocument;
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    public AttachmentsJson getAttachments()
-    {
-        return attachments;
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    public String getChildOrder()
-    {
-        return this.childOrder;
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    public Long getManualOrderValue()
-    {
-        return manualOrderValue;
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    public List<AccessControlEntryJson> getAccessControlList()
-    {
-        return acl.getAccessControlList();
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    public List<AccessControlEntryJson> getEffectiveAccessControlList()
-    {
-        return effectiveAcl.getAccessControlList();
-    }
-
-    @JsonIgnore
-    public Node getNode()
-    {
-        return node;
+        return attachmentJsons;
     }
 }
