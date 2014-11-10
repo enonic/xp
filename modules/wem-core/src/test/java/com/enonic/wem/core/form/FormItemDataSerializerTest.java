@@ -1,9 +1,8 @@
 package com.enonic.wem.core.form;
 
-import org.jdom2.Element;
-import org.jdom2.output.XMLOutputter;
 import org.junit.Assert;
 import org.junit.Test;
+import org.w3c.dom.Document;
 
 import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
@@ -17,6 +16,7 @@ import com.enonic.wem.api.form.MixinReference;
 import com.enonic.wem.api.form.inputtype.InputType;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.support.JsonTestHelper;
+import com.enonic.wem.api.xml.DomHelper;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -128,8 +128,8 @@ public class FormItemDataSerializerTest
 
         if ( inputType.getDefaultConfig() != null )
         {
-            Element configEl = inputType.getInputTypeConfigXmlSerializer().generate( inputType.getDefaultConfig() );
-            String configXml = new XMLOutputter().outputString( configEl );
+            Document configEl = inputType.getInputTypeConfigXmlSerializer().generate( inputType.getDefaultConfig() );
+            String configXml = DomHelper.serialize( configEl );
             inputDataBuilder.set( "inputTypeConfig", configXml, ValueTypes.XML );
         }
 

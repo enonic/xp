@@ -17,11 +17,6 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.jdom</groupId>
-      <artifactId>jdom2</artifactId>
-      <version>2.0.5</version>
-    </dependency>
-    <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
       <version>16.0.1</version>
@@ -84,7 +79,6 @@
           <instructions>
             <_exportcontents>
               com.enonic.wem.api.*,
-              org.jdom2.*;version=2.0.5,
               com.google.common.*,
               org.apache.commons.*,
               com.fasterxml.jackson.*,
@@ -99,7 +93,6 @@
               *
             </Import-Package>
             <Embed-Dependency>
-              jdom2,
               jackson-*,
               guava,
               jparsec,

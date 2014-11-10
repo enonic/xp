@@ -1,42 +1,46 @@
 package com.enonic.wem.api.form.inputtype;
 
+import org.w3c.dom.Element;
 
-import java.util.Iterator;
-
-import org.jdom2.Element;
+import com.enonic.wem.api.xml.DomBuilder;
+import com.enonic.wem.api.xml.DomHelper;
 
 import static com.enonic.wem.api.form.inputtype.ComboBoxConfig.newComboBoxConfig;
 
-public class ComboBoxConfigXmlSerializer
+final class ComboBoxConfigXmlSerializer
     extends AbstractInputTypeConfigXmlSerializer<ComboBoxConfig>
 {
     public static final ComboBoxConfigXmlSerializer DEFAULT = new ComboBoxConfigXmlSerializer();
 
-    public void serializeConfig( final ComboBoxConfig config, final Element inputTypeConfigEl )
+    @Override
+    protected void serializeConfig( final ComboBoxConfig config, final DomBuilder builder )
     {
-        final Element optionsEl = new Element( "options" );
-        inputTypeConfigEl.addContent( optionsEl );
+        builder.start( "options" );
 
-        for ( Option option : config.getOptions() )
+        for ( final Option option : config.getOptions() )
         {
-            final Element optionEl = new Element( "option" );
-            optionEl.addContent( new Element( "label" ).setText( option.getLabel() ) );
-            optionEl.addContent( new Element( "value" ).setText( option.getValue() ) );
-            optionsEl.addContent( optionEl );
+            builder.start( "option" );
+            builder.start( "label" ).text( option.getLabel() ).end();
+            builder.start( "value" ).text( option.getValue() ).end();
+            builder.end();
         }
+
+        builder.end();
     }
 
     @Override
-    public ComboBoxConfig parseConfig( final Element inputTypeConfigEl )
+    public ComboBoxConfig parseConfig( final Element elem )
     {
         final ComboBoxConfig.Builder builder = newComboBoxConfig();
-        final Element optionsEl = inputTypeConfigEl.getChild( "options" );
-        final Iterator optionIterator = optionsEl.getChildren( "option" ).iterator();
-        while ( optionIterator.hasNext() )
+        final Element optionsEl = DomHelper.getChildElementByTagName( elem, "options" );
+
+        for ( final Element optionEl : DomHelper.getChildElementsByTagName( optionsEl, "option" ) )
         {
-            Element optionEl = (Element) optionIterator.next();
-            builder.addOption( optionEl.getChildText( "label" ), optionEl.getChildText( "value" ) );
+            final String label = DomHelper.getChildElementValueByTagName( optionEl, "label" );
+            final String value = DomHelper.getChildElementValueByTagName( optionEl, "value" );
+            builder.addOption( label, value );
         }
+
         return builder.build();
     }
 }

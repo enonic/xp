@@ -1,19 +1,25 @@
 package com.enonic.wem.api.form.inputtype;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
-import org.jdom2.Element;
+import com.enonic.wem.api.xml.DomBuilder;
 
 public abstract class AbstractInputTypeConfigXmlSerializer<T extends InputTypeConfig>
 {
-    public final Element generate( final T config )
+    public final Document generate( final T config )
     {
-        final Element inputTypeConfigEl = new Element( "config" );
-        serializeConfig( config, inputTypeConfigEl );
-        return inputTypeConfigEl;
+        final DomBuilder builder = DomBuilder.create( "config" );
+        serializeConfig( config, builder );
+        return builder.getDocument();
     }
 
-    public abstract void serializeConfig( T config, Element inputTypeConfigEl );
+    protected abstract void serializeConfig( T config, DomBuilder builder );
 
+    public final T parseConfig( final Document doc )
+    {
+        return parseConfig( doc.getDocumentElement() );
+    }
 
-    public abstract T parseConfig( final Element inputTypeConfigEl );
+    public abstract T parseConfig( Element elem );
 }

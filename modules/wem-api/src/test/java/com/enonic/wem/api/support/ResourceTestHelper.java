@@ -1,14 +1,9 @@
 package com.enonic.wem.api.support;
 
-
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
+
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
 
 public class ResourceTestHelper
 {
@@ -21,19 +16,12 @@ public class ResourceTestHelper
 
     public String loadTestFile( final String fileName )
     {
-        URL url = getResource( testInstance.getClass().getSimpleName() + "-" + fileName );
+        final URL url = getResource( testInstance.getClass().getSimpleName() + "-" + fileName );
         try
         {
-            Path path = Paths.get( url.toURI() );
-            final List<String> lines = Files.readAllLines( path, StandardCharsets.UTF_8 );
-            final StringBuilder s = new StringBuilder();
-            for ( final String line : lines )
-            {
-                s.append( line ).append( "\n" );
-            }
-            return s.toString();
+            return Resources.toString( url, Charsets.UTF_8 );
         }
-        catch ( URISyntaxException | IOException e )
+        catch ( final Exception e )
         {
             throw new RuntimeException( "Failed to load test file: " + url, e );
         }
@@ -53,5 +41,4 @@ public class ResourceTestHelper
         }
         return resource;
     }
-
 }

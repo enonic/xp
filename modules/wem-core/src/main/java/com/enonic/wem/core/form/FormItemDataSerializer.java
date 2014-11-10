@@ -1,10 +1,6 @@
 package com.enonic.wem.core.form;
 
-import java.io.StringReader;
-
-import org.jdom2.Element;
-import org.jdom2.input.SAXBuilder;
-import org.jdom2.output.XMLOutputter;
+import org.w3c.dom.Document;
 
 import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
@@ -22,6 +18,7 @@ import com.enonic.wem.api.form.inputtype.InputType;
 import com.enonic.wem.api.form.inputtype.InputTypeConfig;
 import com.enonic.wem.api.form.inputtype.InputTypeResolver;
 import com.enonic.wem.api.support.serializer.AbstractDataSetSerializer;
+import com.enonic.wem.api.xml.DomHelper;
 
 import static com.enonic.wem.api.form.FieldSet.newFieldSet;
 import static com.enonic.wem.api.form.FormItemSet.newFormItemSet;
@@ -93,13 +90,13 @@ public class FormItemDataSerializer
     @SuppressWarnings("unchecked")
     private String serializeInputTypeConfig( final Input input )
     {
-        String configXml = null;
-        if ( input.getInputTypeConfig() != null )
+        if ( input.getInputTypeConfig() == null )
         {
-            Element configEl = input.getInputType().getInputTypeConfigXmlSerializer().generate( input.getInputTypeConfig() );
-            configXml = new XMLOutputter().outputString( configEl );
+            return null;
         }
-        return configXml;
+
+        final Document doc = input.getInputType().getInputTypeConfigXmlSerializer().generate( input.getInputTypeConfig() );
+        return DomHelper.serialize( doc );
     }
 
     private DataSet serializeMixinReference( final MixinReference mixinReference )
@@ -270,17 +267,8 @@ public class FormItemDataSerializer
     private InputTypeConfig deserializeInputTypeConfig( final DataSet inputAsDataSet, final InputType inputType )
     {
         final String xmlAsString = inputAsDataSet.getProperty( "inputTypeConfig" ).getString();
-        final Element rootElement;
-        try
-        {
-            rootElement = new SAXBuilder().build( new StringReader( xmlAsString ) ).getRootElement();
-        }
-        catch ( Exception e )
-        {
-            throw new IllegalArgumentException( "Failed to deserializeInputTypeConfig", e );
-        }
-
-        return inputType.getInputTypeConfigXmlSerializer().parseConfig( rootElement );
+        final Document doc = DomHelper.parse( xmlAsString );
+        return inputType.getInputTypeConfigXmlSerializer().parseConfig( doc );
     }
 
     private Occurrences deserializeOccurrences( final DataSet occurrencesAsDataSet )

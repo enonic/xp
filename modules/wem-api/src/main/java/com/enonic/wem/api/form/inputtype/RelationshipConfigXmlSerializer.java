@@ -1,37 +1,39 @@
 package com.enonic.wem.api.form.inputtype;
 
-
 import org.apache.commons.lang.StringUtils;
-import org.jdom2.Element;
+import org.w3c.dom.Element;
 
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
+import com.enonic.wem.api.xml.DomBuilder;
+import com.enonic.wem.api.xml.DomHelper;
 
-public class RelationshipConfigXmlSerializer
+final class RelationshipConfigXmlSerializer
     extends AbstractInputTypeConfigXmlSerializer<RelationshipConfig>
 {
     public static final RelationshipConfigXmlSerializer DEFAULT = new RelationshipConfigXmlSerializer();
 
-    public void serializeConfig( final RelationshipConfig relationshipConfig, final Element inputTypeConfigEl )
+    @Override
+    protected void serializeConfig( final RelationshipConfig relationshipConfig, final DomBuilder builder )
     {
+        builder.start( "relationship-type" );
         if ( relationshipConfig.getRelationshipType() != null )
         {
-            inputTypeConfigEl.addContent(
-                new Element( "relationship-type" ).setText( relationshipConfig.getRelationshipType().toString() ) );
+            builder.text( relationshipConfig.getRelationshipType().toString() );
         }
-        else
-        {
-            inputTypeConfigEl.addContent( new Element( "relationship-type" ) );
-        }
+
+        builder.end();
     }
 
     @Override
-    public RelationshipConfig parseConfig( final Element inputTypeConfigEl )
+    public RelationshipConfig parseConfig( final Element elem )
     {
         final RelationshipConfig.Builder builder = RelationshipConfig.newRelationshipConfig();
-        final Element relationshipTypeEl = inputTypeConfigEl.getChild( "relationship-type" );
-        if ( relationshipTypeEl != null && StringUtils.isNotBlank( relationshipTypeEl.getText() ) )
+        final Element relationshipTypeEl = DomHelper.getChildElementByTagName( elem, "relationship-type" );
+
+        final String text = DomHelper.getTextValue( relationshipTypeEl );
+        if ( text != null && StringUtils.isNotBlank( text ) )
         {
-            builder.relationshipType( RelationshipTypeName.from( relationshipTypeEl.getText() ) );
+            builder.relationshipType( RelationshipTypeName.from( text ) );
         }
         return builder.build();
     }

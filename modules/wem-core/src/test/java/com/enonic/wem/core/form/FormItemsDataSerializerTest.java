@@ -4,9 +4,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jdom2.Element;
-import org.jdom2.output.XMLOutputter;
 import org.junit.Test;
+import org.w3c.dom.Document;
 
 import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
@@ -22,6 +21,7 @@ import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputType;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.support.JsonTestHelper;
+import com.enonic.wem.api.xml.DomHelper;
 import com.enonic.wem.core.schema.content.serializer.FormItemsJsonSerializer;
 
 import static junit.framework.Assert.assertEquals;
@@ -131,8 +131,8 @@ public class FormItemsDataSerializerTest
 
         if ( inputType.getDefaultConfig() != null )
         {
-            Element configEl = inputType.getInputTypeConfigXmlSerializer().generate( inputType.getDefaultConfig() );
-            String configXml = new XMLOutputter().outputString( configEl );
+            Document configEl = inputType.getInputTypeConfigXmlSerializer().generate( inputType.getDefaultConfig() );
+            String configXml = DomHelper.serialize( configEl );
             inputDataBuilder.set( "inputTypeConfig", configXml, ValueTypes.XML );
         }
 

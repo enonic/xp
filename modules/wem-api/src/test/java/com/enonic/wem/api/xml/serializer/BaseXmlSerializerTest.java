@@ -1,15 +1,13 @@
 package com.enonic.wem.api.xml.serializer;
 
-import java.io.StringReader;
 import java.net.URL;
 
-import org.jdom2.Document;
-import org.jdom2.input.SAXBuilder;
-import org.jdom2.output.Format;
-import org.jdom2.output.XMLOutputter;
+import org.w3c.dom.Document;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
+
+import com.enonic.wem.api.xml.DomHelper;
 
 import static org.junit.Assert.*;
 
@@ -38,10 +36,7 @@ public abstract class BaseXmlSerializerTest
     private String normalizeXml( final String xml )
         throws Exception
     {
-        final SAXBuilder parser = new SAXBuilder();
-        final Document doc = parser.build( new StringReader( xml ) );
-
-        final XMLOutputter outputter = new XMLOutputter( Format.getPrettyFormat() );
-        return outputter.outputString( doc );
+        final Document doc = DomHelper.parse( xml );
+        return DomHelper.serialize( doc );
     }
 }

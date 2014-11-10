@@ -3,16 +3,16 @@ package com.enonic.wem.api.form.inputtype;
 
 import java.io.IOException;
 
-import org.jdom2.Element;
 import org.junit.Before;
 import org.junit.Test;
+import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.support.XmlTestHelper;
+import com.enonic.wem.api.xml.DomHelper;
 
 import static junit.framework.Assert.assertEquals;
-import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 
 public class RelationshipConfigXmlSerializerTest
 {
@@ -36,11 +36,10 @@ public class RelationshipConfigXmlSerializerTest
         RelationshipConfig config = builder.build();
 
         // exercise
-        Element configEl = new Element( "config" );
-        serializer.serializeConfig( config, configEl );
+        final Document doc = serializer.generate( config );
 
         // verify
-        assertXMLEqual( xmlHelper.loadTestFile( "serializeConfig.xml" ), xmlHelper.serialize( configEl, true ) );
+        assertEquals( xmlHelper.loadTestXml2( "serializeConfig.xml" ), DomHelper.serialize( doc ) );
     }
 
     @Test
@@ -53,7 +52,7 @@ public class RelationshipConfigXmlSerializerTest
         RelationshipConfig expected = builder.build();
 
         // exercise
-        RelationshipConfig parsed = serializer.parseConfig( xmlHelper.loadXml( "parseConfig.xml" ).getRootElement() );
+        RelationshipConfig parsed = serializer.parseConfig( xmlHelper.parseXml( "parseConfig.xml" ) );
 
         // verify
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
@@ -76,7 +75,7 @@ public class RelationshipConfigXmlSerializerTest
         xml.append( "</config>\n" );
 
         // exercise
-        RelationshipConfig parsed = serializer.parseConfig( xmlHelper.parse( xml.toString() ).getRootElement() );
+        RelationshipConfig parsed = serializer.parseConfig( DomHelper.parse( xml.toString() ) );
 
         // verify
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
@@ -96,7 +95,7 @@ public class RelationshipConfigXmlSerializerTest
         xml.append( "</config>\n" );
 
         // exercise
-        RelationshipConfig parsed = serializer.parseConfig( xmlHelper.parse( xml.toString() ).getRootElement() );
+        RelationshipConfig parsed = serializer.parseConfig( DomHelper.parse( xml.toString() ) );
 
         // verify
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
@@ -112,6 +111,6 @@ public class RelationshipConfigXmlSerializerTest
         xml.append( "</config>\n" );
 
         // exercise
-        serializer.parseConfig( xmlHelper.parse( xml.toString() ).getRootElement() );
+        serializer.parseConfig( DomHelper.parse( xml.toString() ) );
     }
 }

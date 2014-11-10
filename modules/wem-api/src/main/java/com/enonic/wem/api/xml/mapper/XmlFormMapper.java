@@ -2,6 +2,7 @@ package com.enonic.wem.api.xml.mapper;
 
 import java.util.List;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.google.common.collect.Lists;
@@ -18,7 +19,6 @@ import com.enonic.wem.api.form.ValidationRegex;
 import com.enonic.wem.api.form.inputtype.InputType;
 import com.enonic.wem.api.form.inputtype.InputTypeConfig;
 import com.enonic.wem.api.form.inputtype.InputTypes;
-import com.enonic.wem.api.xml.XmlDomHelper;
 import com.enonic.wem.api.xml.XmlException;
 import com.enonic.wem.api.xml.model.XmlFieldSet;
 import com.enonic.wem.api.xml.model.XmlForm;
@@ -157,7 +157,7 @@ public final class XmlFormMapper
         }
 
         final Element element = (Element) value;
-        return type.getInputTypeConfigXmlSerializer().parseConfig( XmlDomHelper.toJdomElement( element ) );
+        return type.getInputTypeConfigXmlSerializer().parseConfig( element );
     }
 
     public static XmlFormItems toItemsXml( final FormItems object )
@@ -263,8 +263,7 @@ public final class XmlFormMapper
             return null;
         }
 
-        final org.jdom2.Element element = type.getInputTypeConfigXmlSerializer().generate( value );
-        final Element result = XmlDomHelper.toElement( element );
-        return result.getChildNodes();
+        final Document doc = type.getInputTypeConfigXmlSerializer().generate( value );
+        return doc.getDocumentElement().getChildNodes();
     }
 }
