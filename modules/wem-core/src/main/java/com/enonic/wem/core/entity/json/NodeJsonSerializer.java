@@ -10,13 +10,14 @@ import com.enonic.wem.core.support.ObjectMapperHelper;
 
 public class NodeJsonSerializer
 {
+
     protected static final ObjectMapper objectMapper = ObjectMapperHelper.create();
 
     public static String toString( final Node node )
     {
         try
         {
-            return objectMapper.writeValueAsString( NodeJson.toJson( node ) );
+            return objectMapper.writeValueAsString( new NodeJson( node ) );
         }
         catch ( JsonProcessingException e )
         {
@@ -29,7 +30,8 @@ public class NodeJsonSerializer
         try
         {
             final NodeJson node = objectMapper.readValue( serialized, NodeJson.class );
-            return node.toNode();
+
+            return node.getNode();
 
         }
         catch ( IOException e )
