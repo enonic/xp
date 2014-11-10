@@ -15,12 +15,10 @@ import com.enonic.wem.api.security.acl.AccessControlEntry;
 import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.core.entity.Attachment;
 import com.enonic.wem.core.entity.Attachments;
-import com.enonic.wem.core.entity.IndexConfigDocumentJson;
 import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodeName;
 import com.enonic.wem.core.entity.NodePath;
-import com.enonic.wem.core.entity.PatternBasedIndexConfigDocumentJson;
 
 final class NodeJson
 {
@@ -37,7 +35,7 @@ final class NodeJson
     private Instant modifiedTime;
 
     @JsonProperty("indexConfigDocument")
-    private IndexConfigDocumentJson indexConfigDocument;
+    private PatternBasedIndexConfigDocumentJson indexConfigDocument;
 
     @JsonProperty("attachments")
     private List<AttachmentJson> attachments;
@@ -81,7 +79,7 @@ final class NodeJson
             path( this.path ).
             parent( this.parent != null ? NodePath.newPath( this.parent ).build() : null ).
             rootDataSet( this.data.getRootDataSet() ).
-            indexConfigDocument( this.indexConfigDocument.toEntityIndexConfig() ).
+            indexConfigDocument( this.indexConfigDocument.fromJson() ).
             attachments( fromAttachmentJsonList( this.attachments ) ).
             childOrder( ChildOrder.from( this.childOrder ) ).
             manualOrderValue( this.manualOrderValue ).
@@ -133,11 +131,11 @@ final class NodeJson
         return json;
     }
 
-    private static IndexConfigDocumentJson createEntityIndexConfig( final IndexConfigDocument indexConfig )
+    private static PatternBasedIndexConfigDocumentJson createEntityIndexConfig( final IndexConfigDocument indexConfig )
     {
         if ( indexConfig instanceof PatternIndexConfigDocument )
         {
-            return new PatternBasedIndexConfigDocumentJson( (PatternIndexConfigDocument) indexConfig );
+            return PatternBasedIndexConfigDocumentJson.toJson( (PatternIndexConfigDocument) indexConfig );
         }
         return null;
     }

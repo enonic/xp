@@ -96,28 +96,26 @@
   ],
   "id": "myId",
   "indexConfigDocument": {
-    "PatternBasedIndexConfigDocument": {
-      "analyzer": "myAnalyzer",
-      "defaultConfig": {
-        "decideByType": false,
-        "enabled": true,
-        "fulltext": false,
-        "includeInAllText": false,
-        "nGram": false
-      },
-      "patternConfigs": [
-        {
-          "indexConfig": {
-            "decideByType": false,
-            "enabled": true,
-            "fulltext": true,
-            "includeInAllText": true,
-            "nGram": true
-          },
-          "path": "myPath"
-        }
-      ]
-    }
+    "analyzer": "myAnalyzer",
+    "defaultConfig": {
+      "decideByType": false,
+      "enabled": true,
+      "fulltext": false,
+      "includeInAllText": false,
+      "nGram": false
+    },
+    "patternConfigs": [
+      {
+        "indexConfig": {
+          "decideByType": false,
+          "enabled": true,
+          "fulltext": true,
+          "includeInAllText": true,
+          "nGram": true
+        },
+        "path": "myPath"
+      }
+    ]
   },
   "manualOrderValue": null,
   "modifiedTime": "2013-01-02T03:04:05Z",
