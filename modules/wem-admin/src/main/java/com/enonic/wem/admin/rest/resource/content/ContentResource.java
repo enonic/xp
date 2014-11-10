@@ -46,7 +46,7 @@ import com.enonic.wem.admin.rest.resource.content.json.OrderChildJson;
 import com.enonic.wem.admin.rest.resource.content.json.PublishContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.SetChildOrderJson;
 import com.enonic.wem.admin.rest.resource.content.json.UpdateContentJson;
-import com.enonic.wem.api.account.AccountKey;
+import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.CompareContentResults;
 import com.enonic.wem.api.content.CompareContentsParams;
 import com.enonic.wem.api.content.Content;
@@ -313,7 +313,7 @@ public final class ContentResource
         for ( final ContentPath contentToDelete : contentsToDeleteList )
         {
             final DeleteContentParams deleteContent = new DeleteContentParams();
-            deleteContent.deleter( AccountKey.anonymous() );
+            deleteContent.deleter( UserKey.anonymous() );
             deleteContent.contentPath( contentToDelete );
 
             try

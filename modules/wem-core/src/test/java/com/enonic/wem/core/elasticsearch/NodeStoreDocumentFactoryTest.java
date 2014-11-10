@@ -123,7 +123,7 @@ public class NodeStoreDocumentFactoryTest
             name( NodeName.from( "my-name" ) ).
             createdTime( Instant.now() ).
             creator( UserKey.from( "test:creator" ) ).
-            modifier( UserKey.from( "test:modifier" ).asUser() ).
+            modifier( UserKey.from( "test:modifier" ) ).
             modifiedTime( modifiedDateTime ).
             indexConfigDocument( PatternIndexConfigDocument.create().
                 analyzer( myAnalyzerName ).

@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.wem.admin.json.content.MetadataJson;
-import com.enonic.wem.api.account.AccountKey;
+import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentName;
@@ -17,7 +17,6 @@ import com.enonic.wem.api.content.Metadata;
 import com.enonic.wem.api.content.RenameContentParams;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.data.ContentData;
-import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.api.data.DataJson;
 import com.enonic.wem.api.form.FormJson;
 
@@ -32,16 +31,13 @@ public class UpdateContentJson
     final RenameContentParams renameContentParams;
 
     @JsonCreator
-    UpdateContentJson( @JsonProperty("contentId") final String contentId,
-                       @JsonProperty("contentName") final String contentName,
+    UpdateContentJson( @JsonProperty("contentId") final String contentId, @JsonProperty("contentName") final String contentName,
                        @JsonProperty("contentType") final String contentType,
                        @JsonProperty("contentData") final List<DataJson> contentDataJsonList,
-                       @JsonProperty("metadata") final List<MetadataJson> metadataJsonList,
-                       @JsonProperty("form") final FormJson form,
+                       @JsonProperty("metadata") final List<MetadataJson> metadataJsonList, @JsonProperty("form") final FormJson form,
                        @JsonProperty("displayName") final String displayName,
                        @JsonProperty("updateAttachments") final UpdateAttachmentsJson updateAttachments,
-                       @JsonProperty("thumbnail") final ThumbnailJson thumbnail,
-                       @JsonProperty("draft") final String draft )
+                       @JsonProperty("thumbnail") final ThumbnailJson thumbnail, @JsonProperty("draft") final String draft )
     {
         this.contentName = ContentName.from( contentName );
 
@@ -50,25 +46,20 @@ public class UpdateContentJson
 
         this.updateContentParams = new UpdateContentParams().
             contentId( ContentId.from( contentId ) ).
-            modifier( AccountKey.anonymous() ).
+            modifier( UserKey.anonymous() ).
             updateAttachments( updateAttachments != null ? updateAttachments.getUpdateAttachments() : null ).
-            editor( new ContentEditor()
-            {
-                @Override
-                public Content.EditBuilder edit( final Content toBeEdited )
+            editor( toBeEdited -> {
+                Content.EditBuilder editContentBuilder = editContent( toBeEdited ).
+                    form( form.getForm() ).
+                    contentData( contentData ).
+                    metadata( metadataList ).
+                    draft( Boolean.valueOf( draft ) ).
+                    displayName( displayName );
+                if ( thumbnail != null )
                 {
-                    Content.EditBuilder editContentBuilder = editContent( toBeEdited ).
-                        form( form.getForm() ).
-                        contentData( contentData ).
-                        metadata( metadataList ).
-                        draft( Boolean.valueOf( draft ) ).
-                        displayName( displayName );
-                    if ( thumbnail != null )
-                    {
-                        editContentBuilder = editContentBuilder.thumbnail( thumbnail.getThumbnail() );
-                    }
-                    return editContentBuilder;
+                    editContentBuilder = editContentBuilder.thumbnail( thumbnail.getThumbnail() );
                 }
+                return editContentBuilder;
             } );
 
         this.renameContentParams = new RenameContentParams().
@@ -104,7 +95,8 @@ public class UpdateContentJson
         return contentData;
     }
 
-    private List<Metadata> parseMetadata( final List<MetadataJson> metadataJsonList ) {
+    private List<Metadata> parseMetadata( final List<MetadataJson> metadataJsonList )
+    {
         final List<Metadata> metadataList = new ArrayList<>();
         for ( MetadataJson metadataJson : metadataJsonList )
         {

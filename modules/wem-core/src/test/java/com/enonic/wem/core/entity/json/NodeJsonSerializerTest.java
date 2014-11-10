@@ -73,7 +73,7 @@ public class NodeJsonSerializerTest
             name( NodeName.from( "my-name" ) ).
             createdTime( dateTime ).
             creator( UserKey.from( "test:creator" ) ).
-            modifier( UserKey.from( "test:modifier" ).asUser() ).
+            modifier( UserKey.from( "test:modifier" ) ).
             modifiedTime( dateTime ).
             indexConfigDocument( PatternIndexConfigDocument.create().
                 analyzer( "myAnalyzer" ).

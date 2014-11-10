@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import com.enonic.wem.api.account.AccountKey;
+import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.data.DataPath;
 import com.enonic.wem.api.relationship.Relationship;
@@ -41,7 +41,7 @@ public class RelationshipJsonSerializerTest
             toContent( ContentId.from( "222" ) ).
             type( RelationshipTypeName.PARENT ).
             createdTime( NOW ).
-            creator( AccountKey.superUser() ).
+            creator( UserKey.superUser() ).
             build();
 
         RelationshipJsonSerializer serializer = new RelationshipJsonSerializer().
@@ -71,7 +71,7 @@ public class RelationshipJsonSerializerTest
             type( RelationshipTypeName.PARENT ).
             managed( DataPath.from( "mySet.myData" ) ).
             createdTime( NOW ).
-            creator( AccountKey.superUser() ).
+            creator( UserKey.superUser() ).
             build();
 
         RelationshipJsonSerializer serializer = new RelationshipJsonSerializer().
@@ -102,9 +102,9 @@ public class RelationshipJsonSerializerTest
             property( "stars", "4" ).
             property( "stripes", "3" ).
             createdTime( NOW ).
-            creator( AccountKey.superUser() ).
+            creator( UserKey.superUser() ).
             modifiedTime( NOW ).
-            modifier( AccountKey.superUser() ).
+            modifier( UserKey.superUser() ).
             build();
 
         RelationshipJsonSerializer serializer = new RelationshipJsonSerializer().
@@ -141,9 +141,9 @@ public class RelationshipJsonSerializerTest
             property( "stars", "4" ).
             property( "stripes", "3" ).
             createdTime( NOW ).
-            creator( AccountKey.superUser() ).
+            creator( UserKey.superUser() ).
             modifiedTime( NOW ).
-            modifier( AccountKey.superUser() ).
+            modifier( UserKey.superUser() ).
             build();
 
         RelationshipJsonSerializer serializer = new RelationshipJsonSerializer().
@@ -163,8 +163,8 @@ public class RelationshipJsonSerializerTest
         assertEquals( "4", parsedRelationship.getProperty( "stars" ) );
         assertEquals( "3", parsedRelationship.getProperty( "stripes" ) );
         assertEquals( NOW, parsedRelationship.getCreatedTime() );
-        assertEquals( AccountKey.superUser(), parsedRelationship.getCreator() );
+        assertEquals( UserKey.superUser(), parsedRelationship.getCreator() );
         assertEquals( NOW, parsedRelationship.getModifiedTime() );
-        assertEquals( AccountKey.superUser(), parsedRelationship.getModifier() );
+        assertEquals( UserKey.superUser(), parsedRelationship.getModifier() );
     }
 }

@@ -3,13 +3,13 @@ package com.enonic.wem.api.content;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.account.AccountKey;
+import com.enonic.wem.api.account.UserKey;
 
 public final class DuplicateContentParams
 {
     private ContentId contentId;
 
-    private AccountKey creator;
+    private UserKey creator;
 
     public DuplicateContentParams( final ContentId contentId )
     {
@@ -21,13 +21,13 @@ public final class DuplicateContentParams
         return contentId;
     }
 
-    public DuplicateContentParams creator( final AccountKey creator )
+    public DuplicateContentParams creator( final UserKey creator )
     {
         this.creator = creator;
         return this;
     }
 
-    public AccountKey getCreator()
+    public UserKey getCreator()
     {
         return creator;
     }

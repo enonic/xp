@@ -9,7 +9,6 @@ import org.elasticsearch.common.joda.time.DateTimeUtils;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
@@ -20,7 +19,6 @@ import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.data.ContentData;
-import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.core.entity.Node;
@@ -65,16 +63,9 @@ public class UpdateContentCommandTest
         final ContentId contentId = ContentId.from( "mycontent" );
 
         UpdateContentParams params = new UpdateContentParams().
-            modifier( AccountKey.superUser() ).
+            modifier( UserKey.superUser() ).
             contentId( contentId ).
-            editor( new ContentEditor()
-            {
-                @Override
-                public Content.EditBuilder edit( final Content toBeEdited )
-                {
-                    return editContent( toBeEdited ).contentData( unchangedContentData );
-                }
-            } );
+            editor( toBeEdited -> editContent( toBeEdited ).contentData( unchangedContentData ) );
 
         UpdateContentCommand command = UpdateContentCommand.create( params ).
             contentTypeService( this.contentTypeService ).
@@ -109,16 +100,9 @@ public class UpdateContentCommandTest
         unchangedContentData.add( Property.newString( "myData", "aaa" ) );
 
         UpdateContentParams params = new UpdateContentParams().
-            modifier( AccountKey.superUser() ).
+            modifier( UserKey.superUser() ).
             contentId( existingContent.getId() ).
-            editor( new ContentEditor()
-            {
-                @Override
-                public Content.EditBuilder edit( final Content toBeEdited )
-                {
-                    return editContent( toBeEdited ).contentData( unchangedContentData );
-                }
-            } );
+            editor( toBeEdited -> editContent( toBeEdited ).contentData( unchangedContentData ) );
 
         UpdateContentCommand command = UpdateContentCommand.create( params ).
             contentTypeService( this.contentTypeService ).

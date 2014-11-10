@@ -1,7 +1,7 @@
 package com.enonic.wem.core.content.page;
 
 
-import com.enonic.wem.api.account.AccountKey;
+import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentPath;
@@ -102,7 +102,7 @@ class CreatePageTemplateCommand
         final Content content = contentService.create( new CreateContentParams().
             name( name ).
             displayName( displayName ).
-            owner( AccountKey.anonymous() ).
+            owner( UserKey.anonymous() ).
             contentData( data ).
             form( ContentTypeForms.PAGE_TEMPLATE ).
             contentType( ContentTypeName.pageTemplate() ).
