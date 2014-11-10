@@ -19,7 +19,7 @@ import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.xml.mapper.XmlContentTypeMapper;
 import com.enonic.wem.api.xml.model.XmlContentType;
 import com.enonic.wem.api.xml.serializer.XmlSerializers;
-import com.enonic.wem.core.support.dao.IconDao;
+import com.enonic.wem.core.schema.IconDao;
 
 import static java.util.stream.Collectors.toList;
 
