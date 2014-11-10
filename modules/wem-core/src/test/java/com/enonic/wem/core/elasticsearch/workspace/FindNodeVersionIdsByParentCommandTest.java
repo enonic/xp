@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.core.elasticsearch.ElasticsearchDao;
-import com.enonic.wem.core.elasticsearch.QueryMetaData;
+import com.enonic.wem.core.elasticsearch.QueryProperties;
 import com.enonic.wem.core.entity.NodePath;
 import com.enonic.wem.core.entity.NodeVersionId;
 import com.enonic.wem.core.entity.NodeVersionIds;
@@ -40,7 +40,7 @@ public class FindNodeVersionIdsByParentCommandTest
     {
         NodePath parentPath = NodePath.ROOT;
 
-        Mockito.when( elasticsearchDao.search( Mockito.isA( QueryMetaData.class ), Mockito.isA( QueryBuilder.class ) ) ).
+        Mockito.when( elasticsearchDao.search( Mockito.isA( QueryProperties.class ), Mockito.isA( QueryBuilder.class ) ) ).
             thenReturn( SearchResult.create().
                 results( SearchResultEntries.create().
                     add( SearchResultEntry.create().
@@ -76,7 +76,7 @@ public class FindNodeVersionIdsByParentCommandTest
     {
         NodePath parentPath = NodePath.ROOT;
 
-        Mockito.when( elasticsearchDao.search( Mockito.isA( QueryMetaData.class ), Mockito.isA( QueryBuilder.class ) ) ).
+        Mockito.when( elasticsearchDao.search( Mockito.isA( QueryProperties.class ), Mockito.isA( QueryBuilder.class ) ) ).
             thenReturn( SearchResult.create().
                 results( SearchResultEntries.create().
                     build() ).

@@ -5,7 +5,7 @@ import org.elasticsearch.index.query.TermQueryBuilder;
 
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.elasticsearch.ElasticsearchDataException;
-import com.enonic.wem.core.elasticsearch.QueryMetaData;
+import com.enonic.wem.core.elasticsearch.QueryProperties;
 import com.enonic.wem.core.elasticsearch.xcontent.WorkspaceXContentBuilderFactory;
 import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodeVersionId;
@@ -57,14 +57,14 @@ class GetNodeVersionIdByIdCommand
 
         final BoolQueryBuilder boolQueryBuilder = joinWithWorkspaceQuery( workspace.getName(), idQuery );
 
-        final QueryMetaData queryMetaData = QueryMetaData.create( StorageNameResolver.resolveStorageIndexName( this.repositoryId ) ).
+        final QueryProperties queryProperties = QueryProperties.create( StorageNameResolver.resolveStorageIndexName( this.repositoryId ) ).
             indexTypeName( IndexType.WORKSPACE.getName() ).
             from( 0 ).
             size( 1 ).
             addFields( WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME ).
             build();
 
-        final SearchResult searchResult = elasticsearchDao.search( queryMetaData, boolQueryBuilder );
+        final SearchResult searchResult = elasticsearchDao.search( queryProperties, boolQueryBuilder );
 
         if ( searchResult.isEmpty() )
         {

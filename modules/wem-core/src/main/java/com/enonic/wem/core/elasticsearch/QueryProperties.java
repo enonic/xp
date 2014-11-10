@@ -10,7 +10,7 @@ import com.google.common.collect.Sets;
 
 import com.enonic.wem.core.index.IndexFieldNameNormalizer;
 
-public class QueryMetaData
+public class QueryProperties
 {
     private final String indexName;
 
@@ -24,7 +24,7 @@ public class QueryMetaData
 
     private final ImmutableSet<SortBuilder> sortBuilders;
 
-    private QueryMetaData( final Builder builder )
+    private QueryProperties( final Builder builder )
     {
         this.indexName = builder.indexName;
         this.indexTypeName = builder.indexTypeName;
@@ -142,9 +142,9 @@ public class QueryMetaData
         }
 
 
-        public QueryMetaData build()
+        public QueryProperties build()
         {
-            return new QueryMetaData( this );
+            return new QueryProperties( this );
         }
     }
 

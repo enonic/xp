@@ -9,7 +9,7 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.core.TestContext;
 import com.enonic.wem.core.elasticsearch.ElasticsearchDao;
-import com.enonic.wem.core.elasticsearch.QueryMetaData;
+import com.enonic.wem.core.elasticsearch.QueryProperties;
 import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodeName;
@@ -54,7 +54,7 @@ public class ElasticsearchWorkspaceServiceTest
 
         final GetResult empty = GetResult.empty();
 
-        Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( String.class ) ) ).
+        Mockito.when( elasticsearchDao.get( Mockito.isA( QueryProperties.class ), Mockito.isA( String.class ) ) ).
             thenReturn( empty );
 
         wsStore.store( storeWorkspaceDocument, WorkspaceContext.from( TestContext.TEST_CONTEXT ) );
@@ -83,7 +83,7 @@ public class ElasticsearchWorkspaceServiceTest
             addField( NODE_VERSION_ID_FIELD_NAME, new SearchResultField( NODE_VERSION_ID_FIELD_NAME, Arrays.asList( "a" ) ) ).
             build() );
 
-        Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( String.class ) ) ).
+        Mockito.when( elasticsearchDao.get( Mockito.isA( QueryProperties.class ), Mockito.isA( String.class ) ) ).
             thenReturn( noChanges );
 
         wsStore.store( storeWorkspaceDocument, WorkspaceContext.from( TestContext.TEST_CONTEXT ) );
@@ -112,7 +112,7 @@ public class ElasticsearchWorkspaceServiceTest
             addField( NODE_VERSION_ID_FIELD_NAME, new SearchResultField( NODE_VERSION_ID_FIELD_NAME, Arrays.asList( "a" ) ) ).
             build() );
 
-        Mockito.when( elasticsearchDao.get( Mockito.isA( QueryMetaData.class ), Mockito.isA( String.class ) ) ).
+        Mockito.when( elasticsearchDao.get( Mockito.isA( QueryProperties.class ), Mockito.isA( String.class ) ) ).
             thenReturn( hasChanges );
 
         wsStore.store( storeWorkspaceDocument, WorkspaceContext.from( TestContext.TEST_CONTEXT ) );

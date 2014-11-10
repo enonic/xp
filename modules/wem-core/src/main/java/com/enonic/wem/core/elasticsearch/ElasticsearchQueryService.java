@@ -56,7 +56,7 @@ public class ElasticsearchQueryService
     {
         // TODO: Add access-control
         final GetResult result =
-            elasticsearchDao.get( QueryMetaData.create( IndexNameResolver.resolveSearchIndexName( indexContext.getRepositoryId() ) ).
+            elasticsearchDao.get( QueryProperties.create( IndexNameResolver.resolveSearchIndexName( indexContext.getRepositoryId() ) ).
                 indexTypeName( indexContext.getWorkspace().getName() ).
                 from( 0 ).
                 size( 1 ).
@@ -84,8 +84,8 @@ public class ElasticsearchQueryService
     {
         final Workspace workspace = indexContext.getWorkspace();
 
-        final QueryMetaData queryMetaData =
-            QueryMetaData.create( IndexNameResolver.resolveSearchIndexName( indexContext.getRepositoryId() ) ).
+        final QueryProperties queryProperties =
+            QueryProperties.create( IndexNameResolver.resolveSearchIndexName( indexContext.getRepositoryId() ) ).
                 indexTypeName( workspace.getName() ).
                 from( 0 ).
                 size( 1 ).
@@ -95,7 +95,7 @@ public class ElasticsearchQueryService
         // TODO: Add access-control
         final TermQueryBuilder pathQuery = new TermQueryBuilder( IndexPaths.PATH_KEY, nodePath.toString() );
 
-        final SearchResult searchResult = elasticsearchDao.search( queryMetaData, pathQuery );
+        final SearchResult searchResult = elasticsearchDao.search( queryProperties, pathQuery );
 
         if ( searchResult.isEmpty() )
         {
@@ -126,8 +126,8 @@ public class ElasticsearchQueryService
 
         final Workspace workspace = indexContext.getWorkspace();
 
-        final QueryMetaData queryMetaData =
-            QueryMetaData.create( IndexNameResolver.resolveSearchIndexName( indexContext.getRepositoryId() ) ).
+        final QueryProperties queryProperties =
+            QueryProperties.create( IndexNameResolver.resolveSearchIndexName( indexContext.getRepositoryId() ) ).
                 indexTypeName( workspace.getName() ).
                 from( 0 ).
                 size( nodePaths.getSize() ).
@@ -138,7 +138,7 @@ public class ElasticsearchQueryService
         // TODO: Add access-control
         final TermsQueryBuilder pathsQuery = new TermsQueryBuilder( IndexPaths.PATH_KEY, nodePaths.getAsStrings() );
 
-        final SearchResult searchResult = elasticsearchDao.search( queryMetaData, pathsQuery );
+        final SearchResult searchResult = elasticsearchDao.search( queryProperties, pathsQuery );
 
         if ( searchResult.isEmpty() )
         {
@@ -155,8 +155,8 @@ public class ElasticsearchQueryService
     {
         final Workspace workspace = indexContext.getWorkspace();
 
-        final QueryMetaData queryMetaData =
-            QueryMetaData.create( IndexNameResolver.resolveSearchIndexName( indexContext.getRepositoryId() ) ).
+        final QueryProperties queryProperties =
+            QueryProperties.create( IndexNameResolver.resolveSearchIndexName( indexContext.getRepositoryId() ) ).
                 indexTypeName( workspace.getName() ).
                 from( 0 ).
                 size( nodeIds.getSize() ).
@@ -167,7 +167,7 @@ public class ElasticsearchQueryService
         // TODO: Add access-control
         final TermsQueryBuilder pathsQuery = new TermsQueryBuilder( IndexPaths.ID_KEY, nodeIds.getAsStrings() );
 
-        final SearchResult searchResult = elasticsearchDao.search( queryMetaData, pathsQuery );
+        final SearchResult searchResult = elasticsearchDao.search( queryProperties, pathsQuery );
 
         if ( searchResult.isEmpty() )
         {
@@ -184,8 +184,8 @@ public class ElasticsearchQueryService
     {
         final Workspace workspace = indexContext.getWorkspace();
 
-        final QueryMetaData queryMetaData =
-            QueryMetaData.create( IndexNameResolver.resolveSearchIndexName( indexContext.getRepositoryId() ) ).
+        final QueryProperties queryProperties =
+            QueryProperties.create( IndexNameResolver.resolveSearchIndexName( indexContext.getRepositoryId() ) ).
                 indexTypeName( workspace.getName() ).
                 from( 0 ).
                 size( QueryService.GET_ALL_SIZE_FLAG ).
@@ -194,7 +194,7 @@ public class ElasticsearchQueryService
 
         final TermsQueryBuilder childrenQuery = new TermsQueryBuilder( IndexPaths.PARENT_PATH_KEY, parentPath );
 
-        final SearchResult searchResult = elasticsearchDao.search( queryMetaData, childrenQuery );
+        final SearchResult searchResult = elasticsearchDao.search( queryProperties, childrenQuery );
 
         if ( searchResult.isEmpty() )
         {

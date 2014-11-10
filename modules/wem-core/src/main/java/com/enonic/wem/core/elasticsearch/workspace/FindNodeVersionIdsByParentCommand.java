@@ -6,7 +6,7 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.TermQueryBuilder;
 
 import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.core.elasticsearch.QueryMetaData;
+import com.enonic.wem.core.elasticsearch.QueryProperties;
 import com.enonic.wem.core.elasticsearch.xcontent.WorkspaceXContentBuilderFactory;
 import com.enonic.wem.core.entity.NodePath;
 import com.enonic.wem.core.entity.NodeVersionIds;
@@ -40,9 +40,9 @@ public class FindNodeVersionIdsByParentCommand
         final TermQueryBuilder workspaceQuery = createWorkspaceQuery( this.workspace );
         final BoolQueryBuilder query = join( workspaceQuery, getByParentQuery );
 
-        final QueryMetaData queryMetaData = createGetBlobKeyQueryMetaData( DEFAULT_UNKNOWN_SIZE, this.repositoryId );
+        final QueryProperties queryProperties = createGetBlobKeyQueryMetaData( DEFAULT_UNKNOWN_SIZE, this.repositoryId );
 
-        final SearchResult searchResult = elasticsearchDao.search( queryMetaData, query );
+        final SearchResult searchResult = elasticsearchDao.search( queryProperties, query );
 
         if ( searchResult.getResults().getSize() == 0 )
         {

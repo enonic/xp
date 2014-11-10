@@ -12,7 +12,7 @@ import org.elasticsearch.search.sort.SortOrder;
 import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.elasticsearch.ElasticsearchDao;
-import com.enonic.wem.core.elasticsearch.QueryMetaData;
+import com.enonic.wem.core.elasticsearch.QueryProperties;
 import com.enonic.wem.core.elasticsearch.xcontent.WorkspaceXContentBuilderFactory;
 import com.enonic.wem.core.entity.NodeVersionId;
 import com.enonic.wem.core.entity.NodeVersionIds;
@@ -74,11 +74,11 @@ abstract class AbstractWorkspaceCommand
         return boolQueryBuilder;
     }
 
-    QueryMetaData createGetBlobKeyQueryMetaData( final int numberOfHits, final RepositoryId repositoryId )
+    QueryProperties createGetBlobKeyQueryMetaData( final int numberOfHits, final RepositoryId repositoryId )
     {
         final SortBuilder fieldSortBuilder = new FieldSortBuilder( BUILTIN_TIMESTAMP_FIELD ).order( SortOrder.DESC );
 
-        return QueryMetaData.create( StorageNameResolver.resolveStorageIndexName( repositoryId ) ).
+        return QueryProperties.create( StorageNameResolver.resolveStorageIndexName( repositoryId ) ).
             indexTypeName( IndexType.WORKSPACE.getName() ).
             from( 0 ).
             size( numberOfHits ).

@@ -102,10 +102,10 @@ public class ElasticsearchVersionService
     {
         final TermQueryBuilder nodeIdQuery = new TermQueryBuilder( NODE_ID_FIELD_NAME, id.toString() );
 
-        final QueryMetaData queryMetaData =
+        final QueryProperties queryProperties =
             createQueryMetaData( from, size, repositoryId, TIMESTAMP_ID_FIELD_NAME, NODE_VERSION_ID_FIELD_NAME );
 
-        final SearchResult searchResults = elasticsearchDao.search( queryMetaData, nodeIdQuery );
+        final SearchResult searchResults = elasticsearchDao.search( queryProperties, nodeIdQuery );
 
         if ( searchResults.isEmpty() )
         {
@@ -118,9 +118,10 @@ public class ElasticsearchVersionService
     {
         final TermQueryBuilder blobKeyQuery = new TermQueryBuilder( NODE_VERSION_ID_FIELD_NAME, nodeVersionId.toString() );
 
-        final QueryMetaData queryMetaData = createQueryMetaData( 0, 1, repositoryId, NODE_VERSION_ID_FIELD_NAME, TIMESTAMP_ID_FIELD_NAME );
+        final QueryProperties queryProperties =
+            createQueryMetaData( 0, 1, repositoryId, NODE_VERSION_ID_FIELD_NAME, TIMESTAMP_ID_FIELD_NAME );
 
-        final SearchResult searchResult = elasticsearchDao.search( queryMetaData, blobKeyQuery );
+        final SearchResult searchResult = elasticsearchDao.search( queryProperties, blobKeyQuery );
 
         if ( searchResult.isEmpty() )
         {
@@ -129,13 +130,14 @@ public class ElasticsearchVersionService
         return searchResult;
     }
 
-    private QueryMetaData createQueryMetaData( final int from, final int size, final RepositoryId repositoryId, final String... fieldNames )
+    private QueryProperties createQueryMetaData( final int from, final int size, final RepositoryId repositoryId,
+                                                 final String... fieldNames )
     {
 
         final SortBuilder descendingTimestampSort = new FieldSortBuilder( TIMESTAMP_ID_FIELD_NAME ).order( SortOrder.DESC );
 
         // TODO: Temp fix
-        return QueryMetaData.create( StorageNameResolver.resolveStorageIndexName( repositoryId ) ).
+        return QueryProperties.create( StorageNameResolver.resolveStorageIndexName( repositoryId ) ).
             indexTypeName( IndexType.VERSION.getName() ).
             addFields( fieldNames ).
             size( size ).

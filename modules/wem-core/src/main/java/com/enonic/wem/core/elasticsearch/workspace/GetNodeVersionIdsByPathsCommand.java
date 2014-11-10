@@ -6,7 +6,7 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.TermsQueryBuilder;
 
 import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.core.elasticsearch.QueryMetaData;
+import com.enonic.wem.core.elasticsearch.QueryProperties;
 import com.enonic.wem.core.elasticsearch.xcontent.WorkspaceXContentBuilderFactory;
 import com.enonic.wem.core.entity.NodePaths;
 import com.enonic.wem.core.entity.NodeVersionIds;
@@ -37,9 +37,9 @@ public class GetNodeVersionIdsByPathsCommand
         final TermsQueryBuilder parentQuery =
             new TermsQueryBuilder( WorkspaceXContentBuilderFactory.PATH_FIELD_NAME, nodePaths.getAsStrings() );
         final BoolQueryBuilder workspacedByPathsQuery = joinWithWorkspaceQuery( this.workspace.getName(), parentQuery );
-        final QueryMetaData queryMetaData = createGetBlobKeyQueryMetaData( nodePaths.getSize(), this.repositoryId );
+        final QueryProperties queryProperties = createGetBlobKeyQueryMetaData( nodePaths.getSize(), this.repositoryId );
 
-        final SearchResult searchResult = elasticsearchDao.search( queryMetaData, workspacedByPathsQuery );
+        final SearchResult searchResult = elasticsearchDao.search( queryProperties, workspacedByPathsQuery );
 
         final Set<SearchResultField> fieldValues =
             searchResult.getResults().getFields( WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME );

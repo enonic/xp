@@ -118,38 +118,38 @@ public class ElasticsearchDao
     }
 
 
-    public SearchResult search( final QueryMetaData queryMetaData, final QueryBuilder queryBuilder )
+    public SearchResult search( final QueryProperties queryProperties, final QueryBuilder queryBuilder )
     {
-        final SearchRequestBuilder searchRequestBuilder = this.client.prepareSearch( queryMetaData.getIndexName() ).
-            setTypes( queryMetaData.getIndexTypeName() ).
+        final SearchRequestBuilder searchRequestBuilder = this.client.prepareSearch( queryProperties.getIndexName() ).
+            setTypes( queryProperties.getIndexTypeName() ).
             setQuery( queryBuilder ).
-            setFrom( queryMetaData.getFrom() ).
-            setSize( queryMetaData.getSize() );
+            setFrom( queryProperties.getFrom() ).
+            setSize( queryProperties.getSize() );
 
-        final ImmutableSet<SortBuilder> sortBuilders = queryMetaData.getSortBuilders();
+        final ImmutableSet<SortBuilder> sortBuilders = queryProperties.getSortBuilders();
         if ( !sortBuilders.isEmpty() )
         {
             sortBuilders.forEach( searchRequestBuilder::addSort );
         }
 
-        if ( queryMetaData.hasFields() )
+        if ( queryProperties.hasFields() )
         {
-            searchRequestBuilder.addFields( queryMetaData.getNormalizedFieldNames() );
+            searchRequestBuilder.addFields( queryProperties.getNormalizedFieldNames() );
         }
 
         return doSearchRequest( searchRequestBuilder );
     }
 
-    public GetResult get( final QueryMetaData queryMetaData, final String id )
+    public GetResult get( final QueryProperties queryProperties, final String id )
     {
-        final GetRequest getRequest = new GetRequest( queryMetaData.getIndexName() ).
-            type( queryMetaData.getIndexTypeName() ).
+        final GetRequest getRequest = new GetRequest( queryProperties.getIndexName() ).
+            type( queryProperties.getIndexTypeName() ).
             preference( searchPreference ).
             id( id );
 
-        if ( queryMetaData.hasFields() )
+        if ( queryProperties.hasFields() )
         {
-            getRequest.fields( queryMetaData.getNormalizedFieldNames() );
+            getRequest.fields( queryProperties.getNormalizedFieldNames() );
         }
 
         final GetResponse getResponse = client.get( getRequest ).
@@ -158,11 +158,11 @@ public class ElasticsearchDao
         return GetResultFactory.create( getResponse );
     }
 
-    public long count( final QueryMetaData queryMetaData, final QueryBuilder query )
+    public long count( final QueryProperties queryProperties, final QueryBuilder query )
     {
         SearchRequestBuilder searchRequestBuilder = new SearchRequestBuilder( this.client ).
-            setIndices( queryMetaData.getIndexName() ).
-            setTypes( queryMetaData.getIndexTypeName() ).
+            setIndices( queryProperties.getIndexName() ).
+            setTypes( queryProperties.getIndexTypeName() ).
             setQuery( query ).
             setSearchType( SearchType.COUNT ).
             setPreference( searchPreference );

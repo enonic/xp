@@ -4,7 +4,7 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.TermQueryBuilder;
 
 import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.core.elasticsearch.QueryMetaData;
+import com.enonic.wem.core.elasticsearch.QueryProperties;
 import com.enonic.wem.core.elasticsearch.xcontent.WorkspaceXContentBuilderFactory;
 import com.enonic.wem.core.entity.NodePath;
 import com.enonic.wem.core.index.IndexType;
@@ -31,7 +31,7 @@ public class GetHasChildrenCommand
 
     boolean execute()
     {
-        final QueryMetaData queryMetaData = QueryMetaData.create( StorageNameResolver.resolveStorageIndexName( this.repositoryId ) ).
+        final QueryProperties queryProperties = QueryProperties.create( StorageNameResolver.resolveStorageIndexName( this.repositoryId ) ).
             indexTypeName( IndexType.WORKSPACE.getName() ).
             from( 0 ).
             size( 0 ).
@@ -42,7 +42,7 @@ public class GetHasChildrenCommand
 
         final BoolQueryBuilder joinWithWorkspaceQuery = joinWithWorkspaceQuery( this.workspace.getName(), findWithParentQuery );
 
-        final long count = elasticsearchDao.count( queryMetaData, joinWithWorkspaceQuery );
+        final long count = elasticsearchDao.count( queryProperties, joinWithWorkspaceQuery );
 
         return count > 0;
     }

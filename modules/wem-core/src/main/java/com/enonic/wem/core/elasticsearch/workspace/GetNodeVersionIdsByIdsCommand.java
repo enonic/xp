@@ -10,7 +10,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.core.elasticsearch.QueryMetaData;
+import com.enonic.wem.core.elasticsearch.QueryProperties;
 import com.enonic.wem.core.elasticsearch.xcontent.WorkspaceXContentBuilderFactory;
 import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodeIds;
@@ -52,9 +52,9 @@ public class GetNodeVersionIdsByIdsCommand
 
         final TermsQueryBuilder idsQuery = new TermsQueryBuilder( WorkspaceXContentBuilderFactory.NODE_ID_FIELD_NAME, nodeIdsAsStrings );
         final BoolQueryBuilder boolQueryBuilder = joinWithWorkspaceQuery( workspaceName, idsQuery );
-        final QueryMetaData queryMetaData = createGetBlobKeyQueryMetaData( nodeIdsAsStrings.size(), this.repositoryId );
+        final QueryProperties queryProperties = createGetBlobKeyQueryMetaData( nodeIdsAsStrings.size(), this.repositoryId );
 
-        final SearchResult searchResult = elasticsearchDao.search( queryMetaData, boolQueryBuilder );
+        final SearchResult searchResult = elasticsearchDao.search( queryProperties, boolQueryBuilder );
 
         if ( searchResult.isEmpty() )
         {
