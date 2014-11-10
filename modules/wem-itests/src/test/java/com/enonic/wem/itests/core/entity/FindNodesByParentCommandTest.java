@@ -17,7 +17,6 @@ import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodePath;
 import com.enonic.wem.core.entity.Nodes;
-import com.enonic.wem.core.repository.IndexNameResolver;
 import com.enonic.wem.core.repository.RepositoryInitializer;
 
 import static org.junit.Assert.*;
@@ -119,8 +118,6 @@ public class FindNodesByParentCommandTest
         assertEquals( childNode_a_2, iterator.next() );
         assertEquals( childNode_b_3, iterator.next() );
         assertEquals( childNode_c_1, iterator.next() );
-
-        printAllIndexContent( IndexNameResolver.resolveSearchIndexName( ContentConstants.CONTENT_REPO.getId() ), "stage" );
 
         // Override by specify childOrder-parameter by order-field
         result = FindNodesByParentCommand.create().

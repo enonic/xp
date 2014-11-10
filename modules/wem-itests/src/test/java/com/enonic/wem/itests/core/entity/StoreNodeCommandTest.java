@@ -13,7 +13,6 @@ import com.enonic.wem.core.entity.CreateNodeParams;
 import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.entity.NodePath;
 import com.enonic.wem.core.entity.StoreNodeCommand;
-import com.enonic.wem.core.repository.IndexNameResolver;
 import com.enonic.wem.core.repository.RepositoryInitializer;
 
 public class StoreNodeCommandTest
@@ -58,7 +57,7 @@ public class StoreNodeCommandTest
         refresh();
 
         StoreNodeCommand.create().
-            node( newNode ).
+            node( updatedNode ).
             workspaceService( this.workspaceService ).
             indexService( this.indexService ).
             nodeDao( this.nodeDao ).
@@ -66,10 +65,8 @@ public class StoreNodeCommandTest
             queryService( this.queryService ).
             build().
             execute();
-
         refresh();
 
-        printAllIndexContent( IndexNameResolver.resolveSearchIndexName( ContentConstants.CONTENT_REPO.getId() ), "stage" );
 
     }
 }

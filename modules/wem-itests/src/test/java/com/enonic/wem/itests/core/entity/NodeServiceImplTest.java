@@ -3,7 +3,9 @@ package com.enonic.wem.itests.core.entity;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.api.content.ContentConstants;
+import com.enonic.wem.api.index.ChildOrder;
+import com.enonic.wem.api.query.expr.FieldOrderExpr;
+import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlEntry;
 import com.enonic.wem.api.security.acl.AccessControlList;
@@ -16,7 +18,6 @@ import com.enonic.wem.core.entity.NodePath;
 import com.enonic.wem.core.entity.NodeServiceImpl;
 import com.enonic.wem.core.entity.RenameNodeParams;
 import com.enonic.wem.core.entity.dao.NodeNotFoundException;
-import com.enonic.wem.core.repository.IndexNameResolver;
 
 import static org.junit.Assert.*;
 
@@ -90,6 +91,11 @@ public class NodeServiceImplTest
         throws Exception
     {
 
+        final ChildOrder childOrder = ChildOrder.create().
+            add( FieldOrderExpr.create( "modifiedTime", OrderExpr.Direction.DESC ) ).
+            add( FieldOrderExpr.create( "name", OrderExpr.Direction.ASC ) ).
+            build();
+
         final AccessControlList aclList = AccessControlList.create().
             add( AccessControlEntry.create().
                 principal( PrincipalKey.from( "myuserstore:user:rmy" ) ).
@@ -101,15 +107,16 @@ public class NodeServiceImplTest
             name( "my-node" ).
             parent( NodePath.ROOT ).
             accessControlList( aclList ).
+            childOrder( childOrder ).
             build();
 
         final Node node = this.nodeService.create( params );
 
         refresh();
 
-        printAllIndexContent( IndexNameResolver.resolveSearchIndexName( ContentConstants.CONTENT_REPO.getId() ), "stage" );
-
         assertTrue( node.getAccessControlList() != null );
         assertEquals( aclList, node.getAccessControlList() );
+        assertEquals( childOrder, node.getChildOrder() );
     }
+
 }

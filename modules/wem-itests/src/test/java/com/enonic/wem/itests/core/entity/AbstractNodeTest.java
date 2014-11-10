@@ -18,6 +18,7 @@ import com.enonic.wem.core.entity.GetNodeByIdCommand;
 import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.dao.NodeDaoImpl;
+import com.enonic.wem.core.repository.IndexNameResolver;
 import com.enonic.wem.core.repository.RepositoryInitializer;
 import com.enonic.wem.itests.core.MemoryBlobStore;
 import com.enonic.wem.itests.core.elasticsearch.AbstractElasticsearchIntegrationTest;
@@ -123,5 +124,10 @@ public abstract class AbstractNodeTest
             build().
             execute();
 
+    }
+
+    protected void printContentRepoIndex()
+    {
+        printAllIndexContent( IndexNameResolver.resolveSearchIndexName( ContentConstants.CONTENT_REPO.getId() ), "stage" );
     }
 }
