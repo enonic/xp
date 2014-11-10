@@ -4,8 +4,8 @@ import java.time.Instant;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.index.ChildOrder;
+import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlList;
 
 public final class CreateNodeCommand
@@ -33,8 +33,8 @@ public final class CreateNodeCommand
             id( this.params.getNodeId() != null ? params.getNodeId() : new NodeId() ).
             createdTime( now ).
             modifiedTime( now ).
-            creator( UserKey.superUser() ).
-            modifier( UserKey.superUser() ).
+            creator( PrincipalKey.from( "system:user:admin" ) ).
+            modifier( PrincipalKey.from( "system:user:admin" ) ).
             parent( params.getParent() ).
             name( NodeName.from( params.getName() ) ).
             rootDataSet( params.getData() ).

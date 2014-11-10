@@ -1,7 +1,7 @@
 {
     "childOrder": null,
     "createdTime": null,
-    "creator": "user:system:admin",
+    "creator": "system:user:admin",
     "data": [ ],
     "deletable": true,
     "displayName": "My Content",
@@ -16,9 +16,9 @@
     "isRoot": true,
     "metadata": [ ],
     "modifiedTime": null,
-    "modifier": "user:system:admin",
+    "modifier": "system:user:admin",
     "name": "content-name",
-    "owner": "user:myStore:me",
+    "owner": "myStore:user:me",
     "page": {
         "config": [
             {

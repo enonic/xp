@@ -6,11 +6,11 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.data.RootDataSetJson;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.index.IndexConfigDocument;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
+import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlEntry;
 import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.core.entity.Attachment;
@@ -72,8 +72,8 @@ final class NodeJson
         return Node.newNode().
             id( NodeId.from( this.id ) ).
             name( NodeName.from( this.name ) ).
-            creator( UserKey.from( this.creator ) ).
-            modifier( this.modifier != null ? UserKey.from( this.modifier ) : null ).
+            creator( PrincipalKey.from( this.creator ) ).
+            modifier( this.modifier != null ? PrincipalKey.from( this.modifier ) : null ).
             createdTime( this.createdTime ).
             modifiedTime( this.modifiedTime ).
             path( this.path ).
@@ -122,8 +122,8 @@ final class NodeJson
         json.name = node.name() != null ? node.name().toString() : null;
         json.parent = node.parent() != null ? node.parent().toString() : null;
         json.path = node.path() != null ? node.path().toString() : null;
-        json.modifier = node.modifier() != null ? node.modifier().getQualifiedName() : null;
-        json.creator = node.creator() != null ? node.creator().getQualifiedName() : null;
+        json.modifier = node.modifier() != null ? node.modifier().toString() : null;
+        json.creator = node.creator() != null ? node.creator().toString() : null;
         json.childOrder = node.getChildOrder().toString();
         json.manualOrderValue = node.getManualOrderValue();
         json.aclList = toJson( node.getAccessControlList() );

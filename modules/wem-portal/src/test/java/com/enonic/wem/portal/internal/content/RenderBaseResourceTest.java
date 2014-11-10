@@ -2,7 +2,6 @@ package com.enonic.wem.portal.internal.content;
 
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
@@ -27,6 +26,7 @@ import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
+import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.xml.mapper.XmlPageDescriptorMapper;
 import com.enonic.wem.api.xml.model.XmlPageDescriptor;
 import com.enonic.wem.api.xml.serializer.XmlSerializers;
@@ -107,9 +107,9 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
         final Content.Builder content = Content.newContent().
             id( ContentId.from( id ) ).
             path( ContentPath.from( path ) ).
-            owner( UserKey.from( "myStore:me" ) ).
+            owner( PrincipalKey.from( "myStore:user:me" ) ).
             displayName( "My Content" ).
-            modifier( UserKey.superUser() ).
+            modifier( PrincipalKey.from( "system:user:admin" ) ).
             type( ContentTypeName.from( contentTypeName ) );
 
         if ( withPage )
@@ -146,9 +146,9 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
         return Site.newSite().
             id( ContentId.from( id ) ).
             path( ContentPath.from( path ) ).
-            owner( UserKey.from( "myStore:me" ) ).
+            owner( PrincipalKey.from( "myStore:user:me" ) ).
             displayName( "My Content" ).
-            modifier( UserKey.superUser() ).
+            modifier( PrincipalKey.from( "system:user:admin" ) ).
             type( ContentTypeName.from( contentTypeName ) ).
             page( page ).
             build();

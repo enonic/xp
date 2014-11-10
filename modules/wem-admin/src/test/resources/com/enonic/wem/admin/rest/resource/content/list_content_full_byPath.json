@@ -1,88 +1,88 @@
 {
-    "contents": [
+  "contents": [
+    {
+      "childOrder": null,
+      "createdTime": "2013-08-23T12:55:09.162Z",
+      "creator": "system:user:admin",
+      "data": [],
+      "deletable": true,
+      "displayName": "My Content",
+      "editable": true,
+      "form": null,
+      "hasChildren": false,
+      "iconUrl": "/admin/rest/schema/content/icon/mymodule:my_type?hash=f95b70fdc3088560732a5ac135644506",
+      "id": "aaa",
+      "inheritedPermissions": [],
+      "isDraft": false,
+      "isPage": false,
+      "isRoot": true,
+      "metadata": [
         {
-            "childOrder": null,
-            "createdTime": "2013-08-23T12:55:09.162Z",
-            "creator": "user:system:admin",
-            "data": [ ],
-            "deletable": true,
-            "displayName": "My Content",
-            "editable": true,
-            "form": null,
-            "hasChildren": false,
-            "iconUrl": "/admin/rest/schema/content/icon/mymodule:my_type?hash=f95b70fdc3088560732a5ac135644506",
-            "id": "aaa",
-            "inheritedPermissions": [],
-            "isDraft": false,
-            "isPage": false,
-            "isRoot": true,
-            "metadata": [
-                {
-                    "data": [
-                        {
-                            "Property": {
-                                "name": "myProperty",
-                                "type": "Long",
-                                "value": 1
-                            }
-                        }
-                    ],
-                    "name": "myModule:myField"
-                }
-            ],
-            "modifiedTime": "2013-08-23T12:55:09.162Z",
-            "modifier": "user:system:admin",
-            "name": "my_a_content",
-            "owner": "user:myStore:me",
-            "page": null,
-            "path": "/my_a_content",
-            "permissions": [],
-            "thumbnail": null,
-            "type": "mymodule:my_type"
-        },
-        {
-            "childOrder": null,
-            "createdTime": "2013-08-23T12:55:09.162Z",
-            "creator": "user:system:admin",
-            "data": [ ],
-            "deletable": true,
-            "displayName": "My Content",
-            "editable": true,
-            "form": null,
-            "hasChildren": false,
-            "iconUrl": "/admin/rest/schema/content/icon/mymodule:my_type?hash=f95b70fdc3088560732a5ac135644506",
-            "id": "bbb",
-            "inheritedPermissions": [],
-            "isDraft": false,
-            "isPage": false,
-            "isRoot": true,
-            "metadata": [
-                {
-                    "data": [
-                        {
-                            "Property": {
-                                "name": "myProperty",
-                                "type": "Long",
-                                "value": 1
-                            }
-                        }
-                    ],
-                    "name": "myModule:myField"
-                }
-            ],
-            "modifiedTime": "2013-08-23T12:55:09.162Z",
-            "modifier": "user:system:admin",
-            "name": "my_b_content",
-            "owner": "user:myStore:me",
-            "page": null,
-            "path": "/my_b_content",
-            "permissions": [],
-            "thumbnail": null,
-            "type": "mymodule:my_type"
+          "data": [
+            {
+              "Property": {
+                "name": "myProperty",
+                "type": "Long",
+                "value": 1
+              }
+            }
+          ],
+          "name": "myModule:myField"
         }
-    ],
-    "metadata": {
-        "hits": 2,
-        "totalHits": 2
+      ],
+      "modifiedTime": "2013-08-23T12:55:09.162Z",
+      "modifier": "system:user:admin",
+      "name": "my_a_content",
+      "owner": "myStore:user:me",
+      "page": null,
+      "path": "/my_a_content",
+      "permissions": [],
+      "thumbnail": null,
+      "type": "mymodule:my_type"
+    },
+    {
+      "childOrder": null,
+      "createdTime": "2013-08-23T12:55:09.162Z",
+      "creator": "system:user:admin",
+      "data": [],
+      "deletable": true,
+      "displayName": "My Content",
+      "editable": true,
+      "form": null,
+      "hasChildren": false,
+      "iconUrl": "/admin/rest/schema/content/icon/mymodule:my_type?hash=f95b70fdc3088560732a5ac135644506",
+      "id": "bbb",
+      "inheritedPermissions": [],
+      "isDraft": false,
+      "isPage": false,
+      "isRoot": true,
+      "metadata": [
+        {
+          "data": [
+            {
+              "Property": {
+                "name": "myProperty",
+                "type": "Long",
+                "value": 1
+              }
+            }
+          ],
+          "name": "myModule:myField"
+        }
+      ],
+      "modifiedTime": "2013-08-23T12:55:09.162Z",
+      "modifier": "system:user:admin",
+      "name": "my_b_content",
+      "owner": "myStore:user:me",
+      "page": null,
+      "path": "/my_b_content",
+      "permissions": [],
+      "thumbnail": null,
+      "type": "mymodule:my_type"
     }
+  ],
+  "metadata": {
+    "hits": 2,
+    "totalHits": 2
+  }
 }

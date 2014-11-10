@@ -1,6 +1,5 @@
 package com.enonic.wem.core.entity;
 
-
 import java.time.Instant;
 import java.util.Map;
 
@@ -8,8 +7,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
-import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.data.DataPath;
+import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.support.ChangeTraceable;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
 import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
@@ -22,11 +21,11 @@ public final class Relationship
 
     private final Instant createdTime;
 
-    private final UserKey creator;
+    private final PrincipalKey creator;
 
     private final Instant modifiedTime;
 
-    private final UserKey modifier;
+    private final PrincipalKey modifier;
 
     private final RelationshipKey key;
 
@@ -58,7 +57,7 @@ public final class Relationship
         return createdTime;
     }
 
-    public UserKey getCreator()
+    public PrincipalKey getCreator()
     {
         return creator;
     }
@@ -68,7 +67,7 @@ public final class Relationship
         return modifiedTime;
     }
 
-    public UserKey getModifier()
+    public PrincipalKey getModifier()
     {
         return modifier;
     }
@@ -135,7 +134,7 @@ public final class Relationship
     {
         private RelationshipId id;
 
-        private UserKey creator;
+        private PrincipalKey creator;
 
         private Instant createdTime;
 
@@ -149,7 +148,7 @@ public final class Relationship
 
         private DataPath managingData;
 
-        private UserKey modifier;
+        private PrincipalKey modifier;
 
         private Instant modifiedTime;
 
@@ -202,7 +201,7 @@ public final class Relationship
             return this;
         }
 
-        public Builder creator( UserKey value )
+        public Builder creator( PrincipalKey value )
         {
             this.creator = value;
             return this;
@@ -214,7 +213,7 @@ public final class Relationship
             return this;
         }
 
-        public Builder modifier( UserKey value )
+        public Builder modifier( PrincipalKey value )
         {
             this.modifier = value;
             return this;

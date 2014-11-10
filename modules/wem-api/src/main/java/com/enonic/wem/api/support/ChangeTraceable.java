@@ -3,7 +3,7 @@ package com.enonic.wem.api.support;
 
 import java.time.Instant;
 
-import com.enonic.wem.api.account.UserKey;
+import com.enonic.wem.api.security.PrincipalKey;
 
 public interface ChangeTraceable
 {
@@ -11,8 +11,8 @@ public interface ChangeTraceable
 
     public Instant getModifiedTime();
 
-    public UserKey getCreator();
+    public PrincipalKey getCreator();
 
-    public UserKey getModifier();
+    public PrincipalKey getModifier();
 
 }

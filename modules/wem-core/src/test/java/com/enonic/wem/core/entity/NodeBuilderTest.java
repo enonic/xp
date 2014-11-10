@@ -6,11 +6,11 @@ import java.time.ZoneOffset;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
+import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.support.illegaledit.IllegalEditException;
 
 import static org.junit.Assert.*;
@@ -132,8 +132,8 @@ public class NodeBuilderTest
             parent( NodePath.ROOT ).
             modifiedTime( localDateTime.toInstant( ZoneOffset.UTC ) ).
             createdTime( localDateTime.toInstant( ZoneOffset.UTC ) ).
-            creator( UserKey.from( "test:creator" ) ).
-            modifier( UserKey.from( "test:modifier" ) ).
+            creator( PrincipalKey.from( "test:user:creator" ) ).
+            modifier( PrincipalKey.from( "test:user:modifier" ) ).
             modifiedTime( localDateTime.toInstant( ZoneOffset.UTC ) ).
             path( "test" ).
             build();
@@ -178,7 +178,7 @@ public class NodeBuilderTest
         final Node myEditedNode = Node.newNode( NodeId.from( "myid" ) ).
             name( NodeName.from( "my-name" ) ).
             parent( NodePath.ROOT ).
-            modifier( UserKey.from( "test:modifier" ) ).
+            modifier( PrincipalKey.from( "test:user:modifier" ) ).
             build();
 
         myNode.checkIllegalEdit( myEditedNode );

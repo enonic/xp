@@ -12,13 +12,13 @@ import org.junit.Test;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.data.DataPath;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.index.IndexDocumentItemPath;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
+import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.core.elasticsearch.document.AbstractStoreDocumentItem;
 import com.enonic.wem.core.elasticsearch.document.StoreDocument;
 import com.enonic.wem.core.entity.Node;
@@ -122,8 +122,8 @@ public class NodeStoreDocumentFactoryTest
             parent( NodePath.ROOT ).
             name( NodeName.from( "my-name" ) ).
             createdTime( Instant.now() ).
-            creator( UserKey.from( "test:creator" ) ).
-            modifier( UserKey.from( "test:modifier" ) ).
+            creator( PrincipalKey.from( "test:user:creator" ) ).
+            modifier( PrincipalKey.from( "test:user:modifier" ) ).
             modifiedTime( modifiedDateTime ).
             indexConfigDocument( PatternIndexConfigDocument.create().
                 analyzer( myAnalyzerName ).
@@ -146,11 +146,11 @@ public class NodeStoreDocumentFactoryTest
 
         final AbstractStoreDocumentItem creator = getItemWithName( storeDocument, CREATOR_PATH, IndexValueType.STRING );
 
-        assertEquals( "test:creator", creator.getValue() );
+        assertEquals( "test:user:creator", creator.getValue() );
 
         final AbstractStoreDocumentItem modifier = getItemWithName( storeDocument, MODIFIER_PATH, IndexValueType.STRING );
 
-        assertEquals( "test:modifier", modifier.getValue() );
+        assertEquals( "test:user:modifier", modifier.getValue() );
     }
 
     @Test

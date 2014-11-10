@@ -2,7 +2,7 @@ package com.enonic.wem.core.entity;
 
 import java.time.Instant;
 
-import com.enonic.wem.api.account.UserKey;
+import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.core.index.query.QueryService;
 
 public final class RenameNodeCommand
@@ -101,7 +101,7 @@ public final class RenameNodeCommand
             name( newNodeName ).
             parent( newParentPath ).
             modifiedTime( now ).
-            modifier( UserKey.superUser() ).
+            modifier( PrincipalKey.from( "system:user:admin" ) ).
             indexConfigDocument( persistedNode.getIndexConfigDocument() ).
             build();
 

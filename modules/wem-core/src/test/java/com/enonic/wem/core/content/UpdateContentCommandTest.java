@@ -9,7 +9,6 @@ import org.elasticsearch.common.joda.time.DateTimeUtils;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
@@ -21,6 +20,7 @@ import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.schema.content.ContentTypeService;
+import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodeService;
@@ -63,7 +63,7 @@ public class UpdateContentCommandTest
         final ContentId contentId = ContentId.from( "mycontent" );
 
         UpdateContentParams params = new UpdateContentParams().
-            modifier( UserKey.superUser() ).
+            modifier( PrincipalKey.from( "system:user:admin" ) ).
             contentId( contentId ).
             editor( toBeEdited -> editContent( toBeEdited ).contentData( unchangedContentData ) );
 
@@ -100,7 +100,7 @@ public class UpdateContentCommandTest
         unchangedContentData.add( Property.newString( "myData", "aaa" ) );
 
         UpdateContentParams params = new UpdateContentParams().
-            modifier( UserKey.superUser() ).
+            modifier( PrincipalKey.from( "system:user:admin" ) ).
             contentId( existingContent.getId() ).
             editor( toBeEdited -> editContent( toBeEdited ).contentData( unchangedContentData ) );
 
@@ -132,7 +132,7 @@ public class UpdateContentCommandTest
             name( "mycontent" ).
             createdTime( CREATED_TIME ).
             displayName( "MyContent" ).
-            owner( UserKey.superUser() ).
+            owner( PrincipalKey.from( "system:user:admin" ) ).
             contentData( contentData ).
             build();
     }

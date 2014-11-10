@@ -1,7 +1,7 @@
 {
     "childOrder": null,
     "createdTime": "2013-08-23T12:55:09.162Z",
-    "creator": "user:system:admin",
+    "creator": "system:user:admin",
     "data": [
         {
             "Property": {
@@ -54,9 +54,9 @@
     "isRoot": true,
     "metadata": [],
     "modifiedTime": "2013-08-23T12:55:09.162Z",
-    "modifier": "user:system:admin",
+    "modifier": "system:user:admin",
     "name": "my_a_content",
-    "owner": "user:myStore:me",
+    "owner": "myStore:user:me",
     "page": null,
     "path": "/my_a_content",
     "permissions": [],

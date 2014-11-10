@@ -1,12 +1,11 @@
 package com.enonic.wem.api.content;
 
-
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.UpdateAttachmentsParams;
 import com.enonic.wem.api.content.editor.ContentEditor;
+import com.enonic.wem.api.security.PrincipalKey;
 
 public final class UpdateContentParams
 {
@@ -14,7 +13,7 @@ public final class UpdateContentParams
 
     private ContentEditor editor;
 
-    private UserKey modifier;
+    private PrincipalKey modifier;
 
     private ContentId contentId;
 
@@ -23,7 +22,7 @@ public final class UpdateContentParams
         return this.editor;
     }
 
-    public UserKey getModifier()
+    public PrincipalKey getModifier()
     {
         return modifier;
     }
@@ -45,7 +44,7 @@ public final class UpdateContentParams
         return contentId;
     }
 
-    public UpdateContentParams modifier( final UserKey modifier )
+    public UpdateContentParams modifier( final PrincipalKey modifier )
     {
         this.modifier = modifier;
         return this;

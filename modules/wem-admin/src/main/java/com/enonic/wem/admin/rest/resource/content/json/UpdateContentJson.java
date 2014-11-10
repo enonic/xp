@@ -9,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.wem.admin.json.content.MetadataJson;
-import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentName;
@@ -19,6 +18,7 @@ import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.DataJson;
 import com.enonic.wem.api.form.FormJson;
+import com.enonic.wem.api.security.PrincipalKey;
 
 import static com.enonic.wem.api.content.Content.editContent;
 
@@ -46,7 +46,7 @@ public class UpdateContentJson
 
         this.updateContentParams = new UpdateContentParams().
             contentId( ContentId.from( contentId ) ).
-            modifier( UserKey.anonymous() ).
+            modifier( PrincipalKey.ofAnonymous() ).
             updateAttachments( updateAttachments != null ? updateAttachments.getUpdateAttachments() : null ).
             editor( toBeEdited -> {
                 Content.EditBuilder editContentBuilder = editContent( toBeEdited ).

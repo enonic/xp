@@ -2,15 +2,15 @@ package com.enonic.wem.api.content;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.account.UserKey;
+import com.enonic.wem.api.security.PrincipalKey;
 
 public final class DeleteContentParams
 {
     private ContentPath contentPath;
 
-    private UserKey deleter;
+    private PrincipalKey deleter;
 
-    public UserKey getDeleter()
+    public PrincipalKey getDeleter()
     {
         return deleter;
     }
@@ -26,7 +26,7 @@ public final class DeleteContentParams
         return contentPath;
     }
 
-    public DeleteContentParams deleter( final UserKey deleter )
+    public DeleteContentParams deleter( final PrincipalKey deleter )
     {
         this.deleter = deleter;
         return this;

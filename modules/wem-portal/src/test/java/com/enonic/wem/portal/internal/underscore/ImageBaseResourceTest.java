@@ -6,7 +6,6 @@ import org.mockito.Mockito;
 
 import com.google.common.io.ByteStreams;
 
-import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.blob.BlobService;
@@ -19,6 +18,7 @@ import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.attachment.GetAttachmentParameters;
 import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.core.blob.memory.MemoryBlobRecord;
 import com.enonic.wem.core.image.filter.BuilderContext;
 import com.enonic.wem.core.image.filter.ImageFilter;
@@ -96,10 +96,10 @@ public abstract class ImageBaseResourceTest
             id( ContentId.from( id ) ).
             path( contentPath ).
             createdTime( Instant.now() ).
-            owner( UserKey.from( "myStore:me" ) ).
+            owner( PrincipalKey.from( "myStore:user:me" ) ).
             displayName( "My Content" ).
             modifiedTime( Instant.now() ).
-            modifier( UserKey.superUser() ).
+            modifier( PrincipalKey.from( "system:user:admin" ) ).
             type( ContentTypeName.from( contentTypeName ) ).
             build();
     }

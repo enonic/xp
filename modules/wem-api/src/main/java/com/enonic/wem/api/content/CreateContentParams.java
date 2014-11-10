@@ -1,6 +1,5 @@
 package com.enonic.wem.api.content;
 
-
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -10,13 +9,13 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.security.PrincipalKey;
 
 public final class CreateContentParams
 {
@@ -28,7 +27,7 @@ public final class CreateContentParams
 
     private ContentTypeName contentType;
 
-    private UserKey owner;
+    private PrincipalKey owner;
 
     private String displayName;
 
@@ -72,7 +71,7 @@ public final class CreateContentParams
         return this;
     }
 
-    public CreateContentParams owner( final UserKey owner )
+    public CreateContentParams owner( final PrincipalKey owner )
     {
         this.owner = owner;
         return this;
@@ -160,7 +159,7 @@ public final class CreateContentParams
         return metadata;
     }
 
-    public UserKey getOwner()
+    public PrincipalKey getOwner()
     {
         return owner;
     }

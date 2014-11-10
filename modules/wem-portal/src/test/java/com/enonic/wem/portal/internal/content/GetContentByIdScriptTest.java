@@ -6,12 +6,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.script.AbstractScriptTest;
 
 import static com.enonic.wem.api.content.Content.newContent;
@@ -36,10 +36,10 @@ public class GetContentByIdScriptTest
             id( ContentId.from( "123" ) ).
             path( ContentPath.from( "/some/path" ) ).
             createdTime( Instant.now() ).
-            owner( UserKey.from( "myStore:me" ) ).
+            owner( PrincipalKey.from( "myStore:user:me" ) ).
             displayName( "My Content" ).
             modifiedTime( Instant.now() ).
-            modifier( UserKey.superUser() ).
+            modifier( PrincipalKey.from( "system:user:admin" ) ).
             type( ContentTypeName.from( "contenttype" ) ).
             build();
         Mockito.when( this.contentService.getById( eq( ContentId.from( "123" ) ) ) ).thenReturn( content );

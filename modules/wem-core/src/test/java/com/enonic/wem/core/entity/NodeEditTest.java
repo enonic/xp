@@ -5,13 +5,13 @@ import java.time.LocalDate;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.data.DataPath;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
+import com.enonic.wem.api.security.PrincipalKey;
 
 import static org.junit.Assert.*;
 
@@ -74,7 +74,7 @@ public class NodeEditTest
             id( NodeId.from( "node" ) ).
             parent( NodePath.ROOT ).
             name( NodeName.from( "mynode" ) ).
-            creator( UserKey.superUser() ).
+            creator( PrincipalKey.from( "system:user:admin" ) ).
             createdTime( Instant.now() ).
             rootDataSet( rootDataSet ).
             childOrder( ChildOrder.from( "modifiedTime DESC" ) ).

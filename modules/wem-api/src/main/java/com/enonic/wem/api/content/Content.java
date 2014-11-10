@@ -8,7 +8,6 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageTemplate;
@@ -20,6 +19,7 @@ import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.rendering.Renderable;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
+import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.support.ChangeTraceable;
 import com.enonic.wem.api.support.Changes;
@@ -57,11 +57,11 @@ public class Content
 
     private final Instant modifiedTime;
 
-    private final UserKey creator;
+    private final PrincipalKey creator;
 
-    private final UserKey owner;
+    private final PrincipalKey owner;
 
-    private final UserKey modifier;
+    private final PrincipalKey modifier;
 
     private final Page page;
 
@@ -159,17 +159,17 @@ public class Content
         return modifiedTime;
     }
 
-    public UserKey getCreator()
+    public PrincipalKey getCreator()
     {
         return modifier;
     }
 
-    public UserKey getModifier()
+    public PrincipalKey getModifier()
     {
         return modifier;
     }
 
-    public UserKey getOwner()
+    public PrincipalKey getOwner()
     {
         return owner;
     }
@@ -339,15 +339,15 @@ public class Content
 
         String displayName;
 
-        UserKey owner;
+        PrincipalKey owner;
 
         Instant createdTime;
 
         Instant modifiedTime;
 
-        UserKey creator;
+        PrincipalKey creator;
 
-        UserKey modifier;
+        PrincipalKey modifier;
 
         protected Page page;
 
@@ -583,19 +583,19 @@ public class Content
             return this;
         }
 
-        public Builder<BUILDER, C> owner( final UserKey owner )
+        public Builder<BUILDER, C> owner( final PrincipalKey owner )
         {
             this.owner = owner;
             return this;
         }
 
-        public Builder<BUILDER, C> creator( final UserKey modifier )
+        public Builder<BUILDER, C> creator( final PrincipalKey modifier )
         {
             this.creator = modifier;
             return this;
         }
 
-        public Builder<BUILDER, C> modifier( final UserKey modifier )
+        public Builder<BUILDER, C> modifier( final PrincipalKey modifier )
         {
             this.modifier = modifier;
             return this;

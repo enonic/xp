@@ -5,7 +5,6 @@ import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Property;
@@ -15,6 +14,7 @@ import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.index.IndexConfigDocument;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
+import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.support.ChangeTraceable;
 import com.enonic.wem.api.support.Changes;
@@ -35,9 +35,9 @@ public final class Node
 
     private final NodePath path;
 
-    private final UserKey modifier;
+    private final PrincipalKey modifier;
 
-    private final UserKey creator;
+    private final PrincipalKey creator;
 
     private final boolean hasChildren;
 
@@ -114,22 +114,22 @@ public final class Node
         return path;
     }
 
-    public UserKey creator()
+    public PrincipalKey creator()
     {
         return creator;
     }
 
-    public UserKey getCreator()
+    public PrincipalKey getCreator()
     {
         return creator;
     }
 
-    public UserKey modifier()
+    public PrincipalKey modifier()
     {
         return modifier;
     }
 
-    public UserKey getModifier()
+    public PrincipalKey getModifier()
     {
         return modifier;
     }
@@ -249,9 +249,9 @@ public final class Node
 
         NodePath parent;
 
-        UserKey modifier;
+        PrincipalKey modifier;
 
-        UserKey creator;
+        PrincipalKey creator;
 
         boolean hasChildren = false;
 
@@ -310,9 +310,9 @@ public final class Node
 
         private NodePath parent;
 
-        private UserKey modifier;
+        private PrincipalKey modifier;
 
-        private UserKey creator;
+        private PrincipalKey creator;
 
         boolean hasChildren = false;
 
@@ -375,13 +375,13 @@ public final class Node
             return this;
         }
 
-        public Builder creator( final UserKey value )
+        public Builder creator( final PrincipalKey value )
         {
             this.creator = value;
             return this;
         }
 
-        public Builder modifier( final UserKey value )
+        public Builder modifier( final PrincipalKey value )
         {
             this.modifier = value;
             return this;

@@ -5,14 +5,14 @@ import java.time.Instant;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import com.enonic.wem.api.account.UserKey;
+import com.enonic.wem.api.security.PrincipalKey;
 
 public class JsonSerializerUtil
 {
-    public static UserKey getUserKeyValue( final String propertyName, final JsonNode node )
+    public static PrincipalKey getPrincipalKeyValue( final String propertyName, final JsonNode node )
     {
         final String value = getStringValue( propertyName, node, null );
-        return value != null ? UserKey.from( value ) : null;
+        return value != null ? PrincipalKey.from( value ) : null;
     }
 
     public static void setInstantValue( String fieldName, Instant instant, ObjectNode node )

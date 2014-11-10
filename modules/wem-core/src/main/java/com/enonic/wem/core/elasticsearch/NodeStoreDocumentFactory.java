@@ -91,8 +91,8 @@ class NodeStoreDocumentFactory
 
         if ( node.getCreator() != null )
         {
-            builder.addEntries( StoreDocumentItemFactory.create( CREATOR_PATH, Value.newString( node.getCreator().getQualifiedName() ),
-                                                                 IndexConfig.MINIMAL ) );
+            builder.addEntries(
+                StoreDocumentItemFactory.create( CREATOR_PATH, Value.newString( node.getCreator().toString() ), IndexConfig.MINIMAL ) );
         }
 
         if ( node.getModifiedTime() != null )
@@ -103,8 +103,8 @@ class NodeStoreDocumentFactory
 
         if ( node.getModifier() != null )
         {
-            builder.addEntries( StoreDocumentItemFactory.create( MODIFIER_PATH, Value.newString( node.getModifier().getQualifiedName() ),
-                                                                 IndexConfig.MINIMAL ) );
+            builder.addEntries(
+                StoreDocumentItemFactory.create( MODIFIER_PATH, Value.newString( node.getModifier().toString() ), IndexConfig.MINIMAL ) );
         }
 
         if ( node.path() != null )

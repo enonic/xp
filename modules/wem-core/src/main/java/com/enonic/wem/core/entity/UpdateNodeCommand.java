@@ -3,7 +3,7 @@ package com.enonic.wem.core.entity;
 
 import java.time.Instant;
 
-import com.enonic.wem.api.account.UserKey;
+import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.util.Exceptions;
 
 public final class UpdateNodeCommand
@@ -61,7 +61,7 @@ public final class UpdateNodeCommand
 
         final Node.Builder updateNodeBuilder = Node.newNode( persistedNode ).
             modifiedTime( now ).
-            modifier( UserKey.superUser() ).
+            modifier( PrincipalKey.from( "system:user:admin" ) ).
             rootDataSet( editResult.data() ).
             attachments( syncronizeAttachments( editResult.attachments(), persistedNode ) ).
             indexConfigDocument( editResult.getIndexConfigDocument() != null

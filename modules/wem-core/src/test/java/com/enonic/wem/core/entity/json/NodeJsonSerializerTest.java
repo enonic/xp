@@ -9,7 +9,6 @@ import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.data.DataPath;
 import com.enonic.wem.api.data.RootDataSet;
@@ -72,8 +71,8 @@ public class NodeJsonSerializerTest
             parent( NodePath.ROOT ).
             name( NodeName.from( "my-name" ) ).
             createdTime( dateTime ).
-            creator( UserKey.from( "test:creator" ) ).
-            modifier( UserKey.from( "test:modifier" ) ).
+            creator( PrincipalKey.from( "test:user:creator" ) ).
+            modifier( PrincipalKey.from( "test:user:modifier" ) ).
             modifiedTime( dateTime ).
             indexConfigDocument( PatternIndexConfigDocument.create().
                 analyzer( "myAnalyzer" ).

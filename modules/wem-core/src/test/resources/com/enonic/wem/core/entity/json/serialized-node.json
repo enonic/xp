@@ -21,7 +21,7 @@
   ],
   "childOrder": "modifiedTime ASC, displayName DESC",
   "createdTime": "2013-01-02T03:04:05Z",
-  "creator": "test:creator",
+  "creator": "test:user:creator",
   "data": {
     "set": [
       {
@@ -119,7 +119,7 @@
   },
   "manualOrderValue": null,
   "modifiedTime": "2013-01-02T03:04:05Z",
-  "modifier": "test:modifier",
+  "modifier": "test:user:modifier",
   "name": "my-name",
   "parent": "/",
   "path": "/my-name"
