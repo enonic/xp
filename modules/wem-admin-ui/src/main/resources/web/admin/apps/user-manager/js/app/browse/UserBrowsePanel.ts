@@ -14,9 +14,6 @@ module app.browse {
 
         private toolbar: UserBrowseToolbar;
 
-        private userStoreIconUrl: string;
-
-
         constructor() {
             var treeGridContextMenu = new app.browse.UserTreeGridContextMenu();
             this.userTreeGrid = new UserItemsTreeGrid();
@@ -39,8 +36,6 @@ module app.browse {
                 //     return elem.getData();
                 // }));
             });
-
-            // this.userStoreIconUrl = api.util.UriHelper.getAdminUri('common/images/icons/icoMoon/128x128/puzzle.png');
         }
 
         treeNodesToBrowseItems(nodes: TreeNode<UserTreeGridItem>[]): BrowseItem<UserTreeGridItem>[] {
@@ -53,30 +48,54 @@ module app.browse {
                 var item = new BrowseItem<UserTreeGridItem>(userGridItem).
                     setId(userGridItem.getDataId()).
                     setDisplayName(userGridItem.getItemDisplayName()).
-                    setIconUrl(this.selectIconUrl(userGridItem.getType()));
+                    //TODO set a less icon-class
+                    setIconUrl(this.selectIconUrl(userGridItem));
+
                 browseItems.push(item);
 
             });
             return browseItems;
         }
 
-        private selectIconUrl(itemType: UserTreeGridItemType): string {
-            switch (itemType) {
+        private selectIconUrl(item: app.browse.UserTreeGridItem): string {
+            var type: UserTreeGridItemType = item.getType();
+            switch (type) {
             case UserTreeGridItemType.USER_STORE:
             {
                 return  api.util.UriHelper.getAdminUri('common/images/icons/128x128/userstore.png');
             }
-            case UserTreeGridItemType.GROUPS:
-            {
-                return  api.util.UriHelper.getAdminUri('common/images/icons/icoMoon/128x128/folder.png');
-            }
             case UserTreeGridItemType.PRINCIPAL:
             {
+                if (item.getPrincipal().isRole()) {
+                    //TODO instead of URI need to set icon-class
+                    return  api.util.UriHelper.getAdminUri('common/images/icons/128x128/userstore.png');
+                }
+                if (item.getPrincipal().isUser()) {
+                    //TODO instead of URI need to set icon-class
+                    return  api.util.UriHelper.getAdminUri('common/images/icons/128x128/businessman.png');
+                }
+                if (item.getPrincipal().isGroup()) {
+                    return  api.util.UriHelper.getAdminUri('common/images/icons/128x128/group.png');
+                }
+
+            }
+            case UserTreeGridItemType.GROUPS:
+            {            //TODO instead of URI need to set icon-class
+                return  api.util.UriHelper.getAdminUri('common/images/icons/128x128/group.png');
+            }
+            case UserTreeGridItemType.ROLES:
+
+            {
+                //TODO instead of URI need to set icon-class
                 return  api.util.UriHelper.getAdminUri('common/images/icons/icoMoon/128x128/puzzle.png');
             }
+            case UserTreeGridItemType.USERS:
+            {     //TODO instead of URI need to set icon-class
+                return  api.util.UriHelper.getAdminUri('common/images/icons/128x128/businessmen.png');
             }
-        }
+            }
 
+        }
     }
 
 }
