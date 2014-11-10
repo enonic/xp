@@ -53,6 +53,8 @@ public class NodeJson
 
     private final AccessControlListJson acl;
 
+    private final AccessControlListJson effectiveAcl;
+
     @SuppressWarnings("UnusedDeclaration")
     @JsonCreator
     public NodeJson( @JsonProperty("name") final String name, //
@@ -68,7 +70,8 @@ public class NodeJson
                      @JsonProperty("attachments") final AttachmentsJson attachments, //
                      @JsonProperty("childOrder") final String childOrder, //
                      @JsonProperty("manualOrderValue") final Long manualOrderValue,
-                     @JsonProperty("accessControlList") final List<AccessControlEntryJson> accessControlListJson )
+                     @JsonProperty("accessControlList") final List<AccessControlEntryJson> accessControlListJson,
+                     @JsonProperty("effectiveAccessControlList") final List<AccessControlEntryJson> effectiveAccessControlListJson )
 
     {
         this.id = id;
@@ -86,6 +89,7 @@ public class NodeJson
         this.childOrder = childOrder;
         this.manualOrderValue = manualOrderValue;
         this.acl = new AccessControlListJson( accessControlListJson );
+        this.effectiveAcl = new AccessControlListJson( effectiveAccessControlListJson );
 
         this.node = Node.newNode().
             id( NodeId.from( id ) ).
@@ -122,6 +126,7 @@ public class NodeJson
         this.childOrder = node.getChildOrder().toString();
         this.manualOrderValue = node.getManualOrderValue();
         this.acl = new AccessControlListJson( node.getAccessControlList() );
+        this.effectiveAcl = new AccessControlListJson( node.getEffectiveAccessControlList() );
     }
 
     private IndexConfigDocumentJson createEntityIndexConfig( final IndexConfigDocument indexConfig )
@@ -215,6 +220,12 @@ public class NodeJson
     public List<AccessControlEntryJson> getAccessControlList()
     {
         return acl.getAccessControlList();
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    public List<AccessControlEntryJson> getEffectiveAccessControlList()
+    {
+        return effectiveAcl.getAccessControlList();
     }
 
     @JsonIgnore

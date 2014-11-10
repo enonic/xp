@@ -57,6 +57,7 @@ public class NodeJsonSerializerTest
             deny( Permission.PUBLISH ).
             build();
         AccessControlList acl = AccessControlList.create().add( entry1 ).add( entry2 ).build();
+        AccessControlList effectiveAcl = acl.getEffective( AccessControlList.empty() );
 
         Node node = Node.newNode().
             id( NodeId.from( "myId" ) ).
@@ -83,6 +84,7 @@ public class NodeJsonSerializerTest
                 add( FieldOrderExpr.create( "displayName", OrderExpr.Direction.DESC ) ).
                 build() ).
             accessControlList( acl ).
+            effectiveAcl( effectiveAcl ).
             build();
 
         final String serializedNode = NodeJsonSerializer.toString( node );

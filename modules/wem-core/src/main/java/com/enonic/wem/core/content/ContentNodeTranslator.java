@@ -139,6 +139,7 @@ public class ContentNodeTranslator
             modifier( node.getModifier() ).
             hasChildren( node.getHasChildren() ).
             childOrder( node.getChildOrder() ).
+            accessControlList( node.getAccessControlList() ).
             thumbnail( thumbnail );
 
         return builder.build();
@@ -175,7 +176,8 @@ public class ContentNodeTranslator
                     name( NodeName.from( content.getName().toString() ) ).
                     attachments( nodeAttachmentsBuilder.build() ).
                     indexConfigDocument( indexConfigDocument ).
-                    rootDataSet( rootDataSet );
+                    rootDataSet( rootDataSet ).
+                    accessControlList( content.getAccessControlList() );
             }
         };
     }

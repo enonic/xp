@@ -1,6 +1,7 @@
 package com.enonic.wem.core.entity;
 
 import java.time.Instant;
+import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
@@ -56,6 +57,8 @@ public final class Node
 
     private final AccessControlList acl;
 
+    private final AccessControlList effectiveAcl;
+
     private Node( final BaseBuilder builder )
     {
         this.id = builder.id;
@@ -93,6 +96,7 @@ public final class Node
         this.childOrder = builder.childOrder;
         this.manualOrderValue = builder.manualOrderValue;
         this.acl = builder.acl == null ? AccessControlList.empty() : builder.acl;
+        this.effectiveAcl = builder.effectiveAcl == null ? AccessControlList.empty() : builder.effectiveAcl;
     }
 
     public NodeName name()
@@ -190,6 +194,11 @@ public final class Node
         return acl;
     }
 
+    public AccessControlList getEffectiveAccessControlList()
+    {
+        return effectiveAcl;
+    }
+
     public void validateForIndexing()
     {
         Preconditions.checkNotNull( this.id, "Id must be set" );
@@ -264,6 +273,8 @@ public final class Node
 
         AccessControlList acl;
 
+        AccessControlList effectiveAcl;
+
         private BaseBuilder()
         {
         }
@@ -281,7 +292,8 @@ public final class Node
             this.modifier = node.modifier;
             this.childOrder = node.childOrder;
             this.manualOrderValue = node.manualOrderValue;
-            this.acl = AccessControlList.empty();
+            this.acl = node.acl;
+            this.effectiveAcl = node.effectiveAcl;
         }
 
         private BaseBuilder( final NodeId id, final NodeName name )
@@ -310,6 +322,8 @@ public final class Node
 
         private AccessControlList acl;
 
+        private AccessControlList effectiveAcl;
+
         public Builder()
         {
             super();
@@ -334,6 +348,7 @@ public final class Node
             this.childOrder = node.childOrder;
             this.manualOrderValue = node.manualOrderValue;
             this.acl = node.acl;
+            this.effectiveAcl = node.effectiveAcl;
         }
 
         public Builder( final NodeId id, final NodeName name )
@@ -477,6 +492,12 @@ public final class Node
             return this;
         }
 
+        public Builder effectiveAcl( final AccessControlList effectiveAcl )
+        {
+            this.effectiveAcl = effectiveAcl;
+            return this;
+        }
+
         public Node build()
         {
             BaseBuilder baseBuilder = new BaseBuilder();
@@ -494,6 +515,7 @@ public final class Node
             baseBuilder.childOrder = this.childOrder;
             baseBuilder.manualOrderValue = this.manualOrderValue;
             baseBuilder.acl = this.acl;
+            baseBuilder.effectiveAcl = this.effectiveAcl;
 
             return new Node( baseBuilder );
         }
@@ -615,6 +637,14 @@ public final class Node
             return this;
         }
 
+        public EditBuilder effectiveAcl( final AccessControlList effectiveAcl )
+        {
+            this.effectiveAcl = effectiveAcl;
+            changes.recordChange(
+                newPossibleChange( "effectiveAccessControlList" ).from( this.originalNode.effectiveAcl ).to( this.effectiveAcl ).build() );
+            return this;
+        }
+
         public boolean isChanges()
         {
             return this.changes.isChanges();
@@ -631,7 +661,6 @@ public final class Node
         }
     }
 
-
     @Override
     public boolean equals( final Object o )
     {
@@ -646,10 +675,6 @@ public final class Node
 
         final Node node = (Node) o;
 
-        if ( acl != null ? !acl.equals( node.acl ) : node.acl != null )
-        {
-            return false;
-        }
         if ( attachments != null ? !attachments.equals( node.attachments ) : node.attachments != null )
         {
             return false;
@@ -702,28 +727,21 @@ public final class Node
         {
             return false;
         }
-
+        if ( !Objects.equals( acl, node.acl ) )
+        {
+            return false;
+        }
+        if ( !Objects.equals( effectiveAcl, node.effectiveAcl ) )
+        {
+            return false;
+        }
         return true;
     }
 
     @Override
     public int hashCode()
     {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + ( name != null ? name.hashCode() : 0 );
-        result = 31 * result + ( parent != null ? parent.hashCode() : 0 );
-        result = 31 * result + ( path != null ? path.hashCode() : 0 );
-        result = 31 * result + ( modifier != null ? modifier.hashCode() : 0 );
-        result = 31 * result + ( creator != null ? creator.hashCode() : 0 );
-        result = 31 * result + ( hasChildren ? 1 : 0 );
-        result = 31 * result + ( createdTime != null ? createdTime.hashCode() : 0 );
-        result = 31 * result + ( data != null ? data.hashCode() : 0 );
-        result = 31 * result + ( modifiedTime != null ? modifiedTime.hashCode() : 0 );
-        result = 31 * result + ( indexConfigDocument != null ? indexConfigDocument.hashCode() : 0 );
-        result = 31 * result + ( attachments != null ? attachments.hashCode() : 0 );
-        result = 31 * result + ( childOrder != null ? childOrder.hashCode() : 0 );
-        result = 31 * result + ( manualOrderValue != null ? manualOrderValue.hashCode() : 0 );
-        result = 31 * result + ( acl != null ? acl.hashCode() : 0 );
-        return result;
+        return Objects.hash( id, name, parent, path, modifier, creator, hasChildren, createdTime, data, modifiedTime, indexConfigDocument,
+                             attachments, childOrder, manualOrderValue, acl, effectiveAcl );
     }
 }
