@@ -65,12 +65,12 @@ module app.browse {
         }
 
 
-        getDataId(item: UserTreeGridItem): string {
+        getDataId(item: app.browse.UserTreeGridItem): string {
             return item.getDataId();
         }
 
 
-        hasChildren(item: UserTreeGridItem): boolean {
+        hasChildren(item: app.browse.UserTreeGridItem): boolean {
             return item.hasChildren();
         }
 
@@ -78,7 +78,7 @@ module app.browse {
             var gridItems: UserTreeGridItem[] = [];
 
             var deferred = wemQ.defer<UserTreeGridItem[]>();
-            //if there are no parents so need to call a getUserStoresRequest
+            //1. if there are no parents so need to call a getUserStoresRequest and fetch all UserStores
             if (!parentNode) {
                 (new ListUserStoresRequest()).sendAndParse().then((userStores: UserStore[]) => {
                     //  var userStores:UserTreeGridItem[] = [];
@@ -89,12 +89,19 @@ module app.browse {
                     deferred.resolve(gridItems);
                 });
 
-                // fetch principals if selected a parent node.
-            } else if (parentNode.calcLevel() == 2) {       //
-                // add user, group folders
-                var userStore: UserStoreKey = new UserStoreKey('system');
-                var principalType: PrincipalType = PrincipalType.GROUP;
-                (new GetPrincipalsByUserStoreRequest(userStore, principalType)).sendAndParse().then((principals: Principal[]) => {
+                // 2. add parent folders (Users, Roles and Groups) to the selected UserStore
+            } else if (parentNode.calcLevel() == 1) {
+                var userStoreNode: app.browse.UserTreeGridItem = <UserTreeGridItem>parentNode.getData();
+                deferred.resolve(this.addUsersGroupsRolesToUserStore(userStoreNode));
+            }
+            // 3. fetch principals from the userStore, if parent node(Groups or Users or Roles) was selected
+            else if (parentNode.calcLevel() == 2) {
+                var userStoreNode: app.browse.UserTreeGridItem = <UserTreeGridItem>parentNode.getParent().getData();
+                var userStoreKey: UserStoreKey = userStoreNode.getUserStore().getKey();
+
+                var folder: app.browse.UserTreeGridItem = <UserTreeGridItem>parentNode.getData();
+                (new GetPrincipalsByUserStoreRequest(userStoreKey,
+                    this.selectPrincipalType(folder.getItemDisplayName()))).sendAndParse().then((principals: Principal[]) => {
                     principals.forEach((principal: Principal) => {
                         gridItems.push(new UserTreeGridItemBuilder().setPrincipal(principal).setType(UserTreeGridItemType.PRINCIPAL).build());
                     });
@@ -103,6 +110,30 @@ module app.browse {
 
             }
             return deferred.promise;
+        }
+
+        private selectPrincipalType(itemDisaplayName: string): PrincipalType {
+            if (itemDisaplayName == 'Groups') {
+                return PrincipalType.GROUP;
+            } else if (itemDisaplayName == "Users") {
+                return PrincipalType.USER;
+            } else if (itemDisaplayName == "Roles") {
+                return PrincipalType.ROLE;
+            } else {
+                throw new Error("Wrong item-display name for folder with principals: " + itemDisaplayName);
+            }
+        }
+
+        private addUsersGroupsRolesToUserStore(parentItem: app.browse.UserTreeGridItem): UserTreeGridItem[] {
+            var items: UserTreeGridItem[] = [];
+            if (parentItem.getType() == UserTreeGridItemType.USER_STORE) {
+                items.push(new app.browse.UserTreeGridItemBuilder().setUserStore(parentItem.getUserStore()).setType(UserTreeGridItemType.GROUPS).build());
+                items.push(new UserTreeGridItemBuilder().setUserStore(parentItem.getUserStore()).setType(UserTreeGridItemType.USERS).build());
+                if (parentItem.getUserStore().getKey().toString() == "system") {
+                    items.push(new UserTreeGridItemBuilder().setUserStore(parentItem.getUserStore()).setType(UserTreeGridItemType.ROLES).build());
+                }
+            }
+            return items;
         }
 
     }

@@ -7,6 +7,7 @@ module app.browse {
         USER_STORE,
         PRINCIPAL,
         GROUPS,
+        USERS,
         ROLES
     }
 
@@ -65,6 +66,11 @@ module app.browse {
                 return 'Roles';
 
             }
+            case UserTreeGridItemType.USERS:
+            {
+                return 'Users';
+
+            }
             case UserTreeGridItemType.GROUPS:
             {
                 return 'Groups';
@@ -92,6 +98,10 @@ module app.browse {
             {
                 return this.userStore.getKey().toString() + "/roles";
             }
+            case UserTreeGridItemType.USERS:
+            {
+                return this.userStore.getKey().toString() + "/users";
+            }
             }
 
         }
@@ -102,15 +112,16 @@ module app.browse {
             {
                 return true;
             }
-            case UserTreeGridItemType.PRINCIPAL:
-            {
-                return false;
-            }
+
             case UserTreeGridItemType.GROUPS:
             {
                 return true;
             }
             case UserTreeGridItemType.ROLES:
+            {
+                return true;
+            }
+            case UserTreeGridItemType.USERS:
             {
                 return true;
             }
