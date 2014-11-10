@@ -31,7 +31,7 @@ public class GetNodeByIdCommand
         final Node node = nodeDao.getByVersionId( currentVersion );
 
         return !resolveHasChild ? node : NodeHasChildResolver.create().
-            workspaceService( this.workspaceService ).
+            workspaceService( this.queryService ).
             build().
             resolve( node );
     }

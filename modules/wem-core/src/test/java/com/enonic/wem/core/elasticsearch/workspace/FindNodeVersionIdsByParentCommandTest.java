@@ -40,7 +40,7 @@ public class FindNodeVersionIdsByParentCommandTest
     {
         NodePath parentPath = NodePath.ROOT;
 
-        Mockito.when( elasticsearchDao.search( Mockito.isA( QueryProperties.class ), Mockito.isA( QueryBuilder.class ) ) ).
+        Mockito.when( elasticsearchDao.find( Mockito.isA( QueryProperties.class ), Mockito.isA( QueryBuilder.class ) ) ).
             thenReturn( SearchResult.create().
                 results( SearchResultEntries.create().
                     add( SearchResultEntry.create().
@@ -76,7 +76,7 @@ public class FindNodeVersionIdsByParentCommandTest
     {
         NodePath parentPath = NodePath.ROOT;
 
-        Mockito.when( elasticsearchDao.search( Mockito.isA( QueryProperties.class ), Mockito.isA( QueryBuilder.class ) ) ).
+        Mockito.when( elasticsearchDao.find( Mockito.isA( QueryProperties.class ), Mockito.isA( QueryBuilder.class ) ) ).
             thenReturn( SearchResult.create().
                 results( SearchResultEntries.create().
                     build() ).

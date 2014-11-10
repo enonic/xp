@@ -3,7 +3,6 @@ package com.enonic.wem.core.elasticsearch.workspace;
 import com.enonic.wem.core.elasticsearch.ElasticsearchDao;
 import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodeIds;
-import com.enonic.wem.core.entity.NodePath;
 import com.enonic.wem.core.workspace.StoreWorkspaceDocument;
 import com.enonic.wem.core.workspace.WorkspaceContext;
 import com.enonic.wem.core.workspace.WorkspaceService;
@@ -46,18 +45,6 @@ public class ElasticsearchWorkspaceService
             repository( context.getRepositoryId() ).
             source( query.getSource() ).
             target( query.getTarget() ).
-            build().
-            execute();
-    }
-
-    @Override
-    public boolean hasChildren( final NodePath parent, final WorkspaceContext context )
-    {
-        return GetHasChildrenCommand.create().
-            elasticsearchDao( this.elasticsearchDao ).
-            repository( context.getRepositoryId() ).
-            workspace( context.getWorkspace() ).
-            parentPath( parent ).
             build().
             execute();
     }

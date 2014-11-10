@@ -26,7 +26,7 @@ public class GetNodesByIdsCommand
         final NodeVersionIds versionIds = this.queryService.find( this.ids, this.orderExpressions, IndexContext.from( Context.current() ) );
 
         return resolveHasChild ? NodeHasChildResolver.create().
-            workspaceService( this.workspaceService ).
+            workspaceService( this.queryService ).
             build().
             resolve( nodeDao.getByVersionIds( versionIds ) ) : nodeDao.getByVersionIds( versionIds );
     }

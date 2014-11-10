@@ -24,6 +24,8 @@ public interface QueryService
 
     public NodeVersionIds find( final NodeIds nodeIds, final OrderExpressions orderExprs, final IndexContext indexContext );
 
+    public boolean hasChildren( final NodePath nodeId, final IndexContext indexContext );
+
     public NodeVersionIds getByParent( final NodePath parentPath, final IndexContext indexContext );
 
 }

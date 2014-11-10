@@ -101,7 +101,7 @@ public class ElasticsearchDao
         return deleteResponse.isFound();
     }
 
-    public SearchResult search( final ElasticsearchQuery query )
+    public SearchResult find( final ElasticsearchQuery query )
     {
         final SearchSourceBuilder searchSource = query.toSearchSourceBuilder();
         searchSource.size( resolveSize( query ) );
@@ -118,7 +118,7 @@ public class ElasticsearchDao
     }
 
 
-    public SearchResult search( final QueryProperties queryProperties, final QueryBuilder queryBuilder )
+    public SearchResult find( final QueryProperties queryProperties, final QueryBuilder queryBuilder )
     {
         final SearchRequestBuilder searchRequestBuilder = this.client.prepareSearch( queryProperties.getIndexName() ).
             setTypes( queryProperties.getIndexTypeName() ).

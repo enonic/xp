@@ -49,7 +49,6 @@ import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodeService;
 import com.enonic.wem.core.entity.OrderChildNodeParams;
 import com.enonic.wem.core.entity.SetNodeChildOrderParams;
-import com.enonic.wem.core.index.query.QueryService;
 
 public class ContentServiceImpl
     implements ContentService
@@ -61,8 +60,6 @@ public class ContentServiceImpl
     private BlobService blobService;
 
     private AttachmentService attachmentService;
-
-    private QueryService queryService;
 
     private ContentNodeTranslator contentNodeTranslator;
 
@@ -103,7 +100,6 @@ public class ContentServiceImpl
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
-            queryService( this.queryService ).
             build().
             execute();
     }
@@ -136,8 +132,8 @@ public class ContentServiceImpl
     public FindContentByParentResult findByParent( final FindContentByParentParams params )
     {
         return FindContentByParentCommand.create( params ).
-            queryService( this.queryService ).
-            nodeService( this.nodeService ).
+            //    queryService( this.queryService ).
+                nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
@@ -290,7 +286,6 @@ public class ContentServiceImpl
     {
         return FindContentByQueryCommand.create().
             params( params ).
-            queryService( this.queryService ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
@@ -407,11 +402,6 @@ public class ContentServiceImpl
     public void setAttachmentService( final AttachmentService attachmentService )
     {
         this.attachmentService = attachmentService;
-    }
-
-    public void setQueryService( final QueryService queryService )
-    {
-        this.queryService = queryService;
     }
 
     public void setContentNodeTranslator( final ContentNodeTranslator contentNodeTranslator )

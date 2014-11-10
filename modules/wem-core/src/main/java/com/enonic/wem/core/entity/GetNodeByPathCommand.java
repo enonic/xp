@@ -31,7 +31,7 @@ public class GetNodeByPathCommand
         final Node node = nodeDao.getByVersionId( currentVersion );
 
         return resolveHasChild ? NodeHasChildResolver.create().
-            workspaceService( this.workspaceService ).
+            workspaceService( this.queryService ).
             build().
             resolve( node ) : node;
     }

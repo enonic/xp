@@ -11,6 +11,7 @@ import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.query.expr.QueryExpr;
 import com.enonic.wem.api.query.filter.Filter;
 import com.enonic.wem.api.query.filter.Filters;
+import com.enonic.wem.api.security.Principals;
 import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodePath;
 
@@ -32,6 +33,8 @@ public class NodeQuery
 
     private final ImmutableSet<OrderExpr> orderBys;
 
+    private final Principals principals;
+
     private final int from;
 
     private final int size;
@@ -48,6 +51,7 @@ public class NodeQuery
         this.ids = ImmutableSet.copyOf( builder.ids );
         this.parent = builder.parent;
         this.path = builder.path;
+        this.principals = builder.principals;
     }
 
     public NodePath getParent()
@@ -92,6 +96,11 @@ public class NodeQuery
         return size;
     }
 
+    public Principals getPrincipals()
+    {
+        return principals;
+    }
+
     public ImmutableSet<AggregationQuery> getAggregationQueries()
     {
         return aggregationQueries;
@@ -109,6 +118,8 @@ public class NodeQuery
         private NodePath path;
 
         private QueryExpr query;
+
+        private Principals principals;
 
         private final Filters.Builder postFilters = Filters.create();
 
@@ -143,6 +154,12 @@ public class NodeQuery
         public Builder addId( final NodeId id )
         {
             this.ids.add( id );
+            return this;
+        }
+
+        public Builder principals( final Principals principals )
+        {
+            this.principals = principals;
             return this;
         }
 

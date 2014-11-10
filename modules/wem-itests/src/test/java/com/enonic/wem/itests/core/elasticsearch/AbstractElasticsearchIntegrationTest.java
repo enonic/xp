@@ -72,9 +72,7 @@ public abstract class AbstractElasticsearchIntegrationTest
         System.out.println( "\n\n---------- CONTENT --------------------------------" );
         System.out.println( searchResponse.toString() );
         System.out.println( "\n\n" );
-
     }
-
 
     String getContentRepoSearchDefaultSettings()
     {

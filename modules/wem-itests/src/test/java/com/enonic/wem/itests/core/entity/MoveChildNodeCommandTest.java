@@ -48,7 +48,6 @@ public class MoveChildNodeCommandTest
         setChildOrder( parentNode, "manualOrderValue", OrderExpr.Direction.DESC );
 
         // current node order: a,b,c,d,e,f
-
         MoveChildNodeCommand.create().
             parentNode( getNodeById( parentNode.id() ) ).
             nodeToMove( getNodeById( NodeId.from( "c" ) ) ).
@@ -91,7 +90,6 @@ public class MoveChildNodeCommandTest
         setChildOrder( parentNode, "manualOrderValue", OrderExpr.Direction.DESC );
 
         // current node order: a,b,c,d,e,f
-
         MoveChildNodeCommand.create().
             parentNode( getNodeById( parentNode.id() ) ).
             nodeToMove( getNodeById( NodeId.from( "c" ) ) ).
@@ -134,7 +132,6 @@ public class MoveChildNodeCommandTest
         setChildOrder( parentNode, "manualOrderValue", OrderExpr.Direction.DESC );
 
         // current node order: a,b,c,d,e,f
-
         MoveChildNodeCommand.create().
             parentNode( getNodeById( parentNode.id() ) ).
             nodeToMove( getNodeById( NodeId.from( "c" ) ) ).

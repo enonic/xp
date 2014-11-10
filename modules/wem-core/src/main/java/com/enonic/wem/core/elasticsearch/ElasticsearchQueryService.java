@@ -13,6 +13,7 @@ import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.core.elasticsearch.query.NodeQueryTranslator;
 import com.enonic.wem.core.elasticsearch.query.builder.SortQueryBuilderFactory;
+import com.enonic.wem.core.elasticsearch.xcontent.WorkspaceXContentBuilderFactory;
 import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodeIds;
 import com.enonic.wem.core.entity.NodePath;
@@ -21,6 +22,7 @@ import com.enonic.wem.core.entity.NodeVersionId;
 import com.enonic.wem.core.entity.NodeVersionIds;
 import com.enonic.wem.core.entity.query.NodeQuery;
 import com.enonic.wem.core.index.IndexContext;
+import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.query.NodeQueryResult;
 import com.enonic.wem.core.index.query.QueryResultFactory;
 import com.enonic.wem.core.index.query.QueryService;
@@ -29,6 +31,7 @@ import com.enonic.wem.core.index.result.SearchResult;
 import com.enonic.wem.core.index.result.SearchResultEntry;
 import com.enonic.wem.core.index.result.SearchResultField;
 import com.enonic.wem.core.repository.IndexNameResolver;
+import com.enonic.wem.core.repository.StorageNameResolver;
 
 public class ElasticsearchQueryService
     implements QueryService
@@ -46,7 +49,7 @@ public class ElasticsearchQueryService
 
     private NodeQueryResult doFind( final ElasticsearchQuery query )
     {
-        final SearchResult searchResult = elasticsearchDao.search( query );
+        final SearchResult searchResult = elasticsearchDao.find( query );
 
         return translateResult( searchResult );
     }
@@ -95,7 +98,7 @@ public class ElasticsearchQueryService
         // TODO: Add access-control
         final TermQueryBuilder pathQuery = new TermQueryBuilder( IndexPaths.PATH_KEY, nodePath.toString() );
 
-        final SearchResult searchResult = elasticsearchDao.search( queryProperties, pathQuery );
+        final SearchResult searchResult = elasticsearchDao.find( queryProperties, pathQuery );
 
         if ( searchResult.isEmpty() )
         {
@@ -138,7 +141,7 @@ public class ElasticsearchQueryService
         // TODO: Add access-control
         final TermsQueryBuilder pathsQuery = new TermsQueryBuilder( IndexPaths.PATH_KEY, nodePaths.getAsStrings() );
 
-        final SearchResult searchResult = elasticsearchDao.search( queryProperties, pathsQuery );
+        final SearchResult searchResult = elasticsearchDao.find( queryProperties, pathsQuery );
 
         if ( searchResult.isEmpty() )
         {
@@ -167,7 +170,7 @@ public class ElasticsearchQueryService
         // TODO: Add access-control
         final TermsQueryBuilder pathsQuery = new TermsQueryBuilder( IndexPaths.ID_KEY, nodeIds.getAsStrings() );
 
-        final SearchResult searchResult = elasticsearchDao.search( queryProperties, pathsQuery );
+        final SearchResult searchResult = elasticsearchDao.find( queryProperties, pathsQuery );
 
         if ( searchResult.isEmpty() )
         {
@@ -194,7 +197,7 @@ public class ElasticsearchQueryService
 
         final TermsQueryBuilder childrenQuery = new TermsQueryBuilder( IndexPaths.PARENT_PATH_KEY, parentPath );
 
-        final SearchResult searchResult = elasticsearchDao.search( queryProperties, childrenQuery );
+        final SearchResult searchResult = elasticsearchDao.find( queryProperties, childrenQuery );
 
         if ( searchResult.isEmpty() )
         {
@@ -204,6 +207,24 @@ public class ElasticsearchQueryService
         final Set<SearchResultField> fieldValues = searchResult.getResults().getFields( IndexPaths.VERSION_KEY );
 
         return fieldValuesToVersionIds( fieldValues );
+    }
+
+    @Override
+    public boolean hasChildren( final NodePath parentPath, final IndexContext indexContext )
+    {
+        final QueryProperties queryProperties =
+            QueryProperties.create( StorageNameResolver.resolveStorageIndexName( indexContext.getRepositoryId() ) ).
+                indexTypeName( IndexType.WORKSPACE.getName() ).
+                from( 0 ).
+                size( 0 ).
+                build();
+
+        final TermQueryBuilder findWithParentQuery =
+            new TermQueryBuilder( WorkspaceXContentBuilderFactory.PARENT_PATH_FIELD_NAME, parentPath.toString() );
+
+        final long count = elasticsearchDao.count( queryProperties, findWithParentQuery );
+
+        return count > 0;
     }
 
     private NodeVersionIds fieldValuesToVersionIds( final Collection<SearchResultField> fieldValues )

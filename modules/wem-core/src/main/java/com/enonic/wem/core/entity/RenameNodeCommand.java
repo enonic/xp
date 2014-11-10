@@ -34,7 +34,7 @@ public final class RenameNodeCommand
         }
 
         return NodeHasChildResolver.create().
-            workspaceService( this.workspaceService ).
+            workspaceService( this.queryService ).
             build().
             resolve( renamedNode );
     }

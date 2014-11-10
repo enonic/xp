@@ -295,7 +295,7 @@ public class NodeServiceImpl
     public Node getByVersionId( final NodeVersionId blobKey )
     {
         return NodeHasChildResolver.create().
-            workspaceService( this.workspaceService ).
+            workspaceService( this.queryService ).
             build().
             resolve( nodeDao.getByVersionId( blobKey ) );
     }

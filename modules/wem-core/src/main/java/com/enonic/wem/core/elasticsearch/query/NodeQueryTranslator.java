@@ -5,6 +5,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.index.IndexPaths;
 import com.enonic.wem.api.query.filter.ValueFilter;
+import com.enonic.wem.api.security.Principal;
 import com.enonic.wem.core.elasticsearch.aggregation.AggregationBuilderFactory;
 import com.enonic.wem.core.elasticsearch.query.builder.FilterBuilderFactory;
 import com.enonic.wem.core.elasticsearch.query.builder.QueryBuilderFactory;
@@ -39,10 +40,27 @@ public class NodeQueryTranslator
             queryExpr( nodeQuery.getQuery() ).
             addQueryFilters( nodeQuery.getQueryFilters() );
 
+        addAclFilter( nodeQuery, queryBuilderBuilder );
         addParentFilter( nodeQuery, queryBuilderBuilder );
         addPathFilter( nodeQuery, queryBuilderBuilder );
 
         return queryBuilderBuilder.build();
+    }
+
+    private static void addAclFilter( final NodeQuery nodeQuery, final QueryBuilderFactory.Builder queryBuilderBuilder )
+    {
+        if ( nodeQuery.getPrincipals() != null && nodeQuery.getPrincipals().isNotEmpty() )
+        {
+            final ValueFilter.Builder valueBuilder = ValueFilter.create().
+                fieldName( IndexPaths.HAS_READ_KEY );
+
+            for ( final Principal principal : nodeQuery.getPrincipals() )
+            {
+                valueBuilder.addValue( Value.newString( principal ) );
+            }
+
+            queryBuilderBuilder.addQueryFilter( valueBuilder.build() );
+        }
     }
 
     private static void addPathFilter( final NodeQuery nodeQuery, final QueryBuilderFactory.Builder queryBuilderBuilder )

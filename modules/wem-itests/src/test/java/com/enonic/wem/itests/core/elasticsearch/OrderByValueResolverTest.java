@@ -75,7 +75,7 @@ public class OrderByValueResolverTest
         final String zero = storeOrderbyDocument( OrderbyValueResolver.getOrderbyValue( Value.newDouble( 0 ) ) );
         refresh();
 
-        final SearchResult result = elasticsearchDao.search( ElasticsearchQuery.create().
+        final SearchResult result = elasticsearchDao.find( ElasticsearchQuery.create().
             query( QueryBuilderFactory.create().build() ).
             index( this.indexName ).
             indexType( this.indexType ).
