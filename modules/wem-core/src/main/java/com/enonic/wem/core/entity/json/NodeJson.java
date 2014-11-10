@@ -12,7 +12,6 @@ import com.enonic.wem.api.data.RootDataSetJson;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.index.IndexConfigDocument;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
-import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.core.entity.Attachments;
 import com.enonic.wem.core.entity.IndexConfigDocumentJson;
 import com.enonic.wem.core.entity.Node;
@@ -105,7 +104,8 @@ public class NodeJson
             attachments( attachments != null ? attachments.getAttachments() : Attachments.empty() ).
             childOrder( ChildOrder.from( childOrder ) ).
             manualOrderValue( manualOrderValue ).
-            accessControlList( acl != null ? acl.getAcl() : AccessControlList.empty() ).
+            accessControlList( acl.getAcl() ).
+            effectiveAcl( effectiveAcl.getAcl() ).
             build();
     }
 

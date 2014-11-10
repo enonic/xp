@@ -20,6 +20,7 @@ import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.rendering.Renderable;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
+import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.support.ChangeTraceable;
 import com.enonic.wem.api.support.Changes;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
@@ -70,6 +71,8 @@ public class Content
 
     private final ChildOrder childOrder;
 
+    private final AccessControlList acl;
+
     protected Content( final BaseBuilder builder )
     {
         Preconditions.checkNotNull( builder.name, "name is required for a Content" );
@@ -105,6 +108,7 @@ public class Content
         this.thumbnail = builder.thumbnail;
         this.hasChildren = builder.hasChildren;
         this.childOrder = builder.childOrder;
+        this.acl = builder.acl == null ? AccessControlList.empty() : builder.acl;
     }
 
     public ContentPath getParentPath()
@@ -255,6 +259,11 @@ public class Content
         return childOrder;
     }
 
+    public AccessControlList getAccessControlList()
+    {
+        return acl;
+    }
+
     @Override
     public void checkIllegalEdit( final Content to )
         throws IllegalEditException
@@ -282,6 +291,7 @@ public class Content
         s.add( "creator", creator );
         s.add( "modifier", modifier );
         s.add( "owner", owner );
+        s.add( "acl", acl );
         return s.toString();
     }
 
@@ -338,6 +348,8 @@ public class Content
 
         ChildOrder childOrder;
 
+        AccessControlList acl;
+
         BaseBuilder()
         {
             this.contentData = new ContentData();
@@ -364,6 +376,7 @@ public class Content
             this.page = content.page;
             this.thumbnail = content.thumbnail;
             this.childOrder = content.childOrder;
+            this.acl = content.acl;
         }
     }
 
@@ -432,6 +445,13 @@ public class Content
         {
             changes.recordChange( newPossibleChange( "thumbnail" ).from( this.original.getThumbnail() ).to( thumbnail ).build() );
             this.thumbnail = thumbnail;
+            return this;
+        }
+
+        public EditBuilder accessControlList( final AccessControlList acl )
+        {
+            changes.recordChange( newPossibleChange( "accessControlList" ).from( this.original.acl ).to( this.acl ).build() );
+            this.acl = acl;
             return this;
         }
 
@@ -600,6 +620,12 @@ public class Content
         public Builder<BUILDER, C> thumbnail( final Thumbnail thumbnail )
         {
             this.thumbnail = thumbnail;
+            return this;
+        }
+
+        public Builder<BUILDER, C> accessControlList( final AccessControlList acl )
+        {
+            this.acl = acl;
             return this;
         }
 
