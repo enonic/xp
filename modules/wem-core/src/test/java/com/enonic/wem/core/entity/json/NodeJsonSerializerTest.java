@@ -1,12 +1,15 @@
 package com.enonic.wem.core.entity.json;
 
 
+import java.net.URL;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
 import org.junit.Test;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.blob.BlobKey;
@@ -38,13 +41,15 @@ public class NodeJsonSerializerTest
     public void serialize_deserialize()
         throws Exception
     {
-        Instant modifiedDateTime = LocalDateTime.of( 2013, 1, 2, 3, 4, 5 ).toInstant( ZoneOffset.UTC );
+        NodeJsonSerializer.MAPPER.enable( SerializationFeature.INDENT_OUTPUT );
+
+        final Instant dateTime = LocalDateTime.of( 2013, 1, 2, 3, 4, 5, 0 ).toInstant( ZoneOffset.UTC );
 
         RootDataSet rootDataSet = new RootDataSet();
         rootDataSet.setProperty( DataPath.from( "a.b.c" ), Value.newDouble( 2.0 ) );
-        rootDataSet.setProperty( DataPath.from( "b" ), Value.newLocalDate( LocalDate.now() ) );
+        rootDataSet.setProperty( DataPath.from( "b" ), Value.newLocalDate( dateTime ) );
         rootDataSet.setProperty( DataPath.from( "c" ), Value.newString( "runar" ) );
-        rootDataSet.setProperty( DataPath.from( "d" ), Value.newInstant( Instant.now() ) );
+        rootDataSet.setProperty( DataPath.from( "d" ), Value.newInstant( dateTime ) );
 
         final AccessControlEntry entry1 = AccessControlEntry.create().
             principal( PrincipalKey.ofAnonymous() ).
@@ -63,10 +68,10 @@ public class NodeJsonSerializerTest
             id( NodeId.from( "myId" ) ).
             parent( NodePath.ROOT ).
             name( NodeName.from( "my-name" ) ).
-            createdTime( Instant.now() ).
+            createdTime( dateTime ).
             creator( UserKey.from( "test:creator" ) ).
             modifier( UserKey.from( "test:modifier" ).asUser() ).
-            modifiedTime( modifiedDateTime ).
+            modifiedTime( dateTime ).
             indexConfigDocument( PatternIndexConfigDocument.create().
                 analyzer( "myAnalyzer" ).
                 defaultConfig( IndexConfig.MINIMAL ).
@@ -87,10 +92,20 @@ public class NodeJsonSerializerTest
             effectiveAcl( effectiveAcl ).
             build();
 
+        final String expectedStr = readJson( "serialized-node.json" );
+
         final String serializedNode = NodeJsonSerializer.toString( node );
+        assertEquals( expectedStr, serializedNode );
 
-        final Node deSerializedNode = NodeJsonSerializer.toNode( serializedNode );
-
+        final Node deSerializedNode = NodeJsonSerializer.toNode( expectedStr );
         assertEquals( node, deSerializedNode );
+    }
+
+    private String readJson( final String name )
+        throws Exception
+    {
+        final URL url = getClass().getResource( name );
+        final JsonNode node = NodeJsonSerializer.MAPPER.readTree( url );
+        return NodeJsonSerializer.MAPPER.writeValueAsString( node );
     }
 }

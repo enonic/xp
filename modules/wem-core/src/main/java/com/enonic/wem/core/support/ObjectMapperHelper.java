@@ -22,5 +22,4 @@ public class ObjectMapperHelper
         mapper.registerModule( new JSR310Module() );
         return mapper;
     }
-
 }

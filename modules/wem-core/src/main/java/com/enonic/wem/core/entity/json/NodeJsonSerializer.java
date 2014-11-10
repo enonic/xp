@@ -8,18 +8,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.support.ObjectMapperHelper;
 
-public class NodeJsonSerializer
+public final class NodeJsonSerializer
 {
-
-    protected static final ObjectMapper objectMapper = ObjectMapperHelper.create();
+    protected static final ObjectMapper MAPPER = ObjectMapperHelper.create();
 
     public static String toString( final Node node )
     {
         try
         {
-            return objectMapper.writeValueAsString( new NodeJson( node ) );
+            return MAPPER.writeValueAsString( new NodeJson( node ) );
         }
-        catch ( JsonProcessingException e )
+        catch ( final JsonProcessingException e )
         {
             throw new NodeJsonSerializerException( "Failed to serialized Node", e );
         }
@@ -29,15 +28,12 @@ public class NodeJsonSerializer
     {
         try
         {
-            final NodeJson node = objectMapper.readValue( serialized, NodeJson.class );
-
+            final NodeJson node = MAPPER.readValue( serialized, NodeJson.class );
             return node.getNode();
-
         }
-        catch ( IOException e )
+        catch ( final IOException e )
         {
             throw new NodeJsonSerializerException( "Failed to deserialize Node", e );
         }
     }
-
 }
