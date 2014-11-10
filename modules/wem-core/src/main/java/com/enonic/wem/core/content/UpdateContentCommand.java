@@ -1,13 +1,12 @@
 package com.enonic.wem.core.content;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
-import com.google.common.io.InputSupplier;
+import com.google.common.io.ByteSource;
 
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.content.Content;
@@ -151,11 +150,11 @@ final class UpdateContentCommand
     private Thumbnail createThumbnail( final Attachment attachment )
     {
         final Blob originalImage = blobService.get( attachment.getBlobKey() );
-        final InputSupplier<ByteArrayInputStream> inputSupplier = ThumbnailFactory.resolve( originalImage );
+        final ByteSource source = ThumbnailFactory.resolve( originalImage );
         final Blob thumbnailBlob;
         try
         {
-            thumbnailBlob = blobService.create( inputSupplier.getInput() );
+            thumbnailBlob = blobService.create( source.openStream() );
         }
         catch ( IOException e )
         {

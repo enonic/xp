@@ -1,24 +1,21 @@
 package com.enonic.wem.core.content;
 
-
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import com.google.common.io.ByteStreams;
-import com.google.common.io.InputSupplier;
+import com.google.common.io.ByteSource;
 
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.core.image.filter.effect.ScaleMaxFilter;
 
-class ThumbnailFactory
+final class ThumbnailFactory
 {
     static final int THUMBNAIL_SIZE = 512;
 
-    static InputSupplier<ByteArrayInputStream> resolve( final Blob originalImage )
+    static ByteSource resolve( final Blob originalImage )
     {
         try
         {
@@ -26,7 +23,7 @@ class ThumbnailFactory
             final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             final BufferedImage scaledImage = new ScaleMaxFilter( THUMBNAIL_SIZE ).filter( image );
             ImageIO.write( scaledImage, "png", outputStream );
-            return ByteStreams.newInputStreamSupplier( outputStream.toByteArray() );
+            return ByteSource.wrap( outputStream.toByteArray() );
         }
         catch ( IOException e )
         {

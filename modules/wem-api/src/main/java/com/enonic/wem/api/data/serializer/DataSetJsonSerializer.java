@@ -28,11 +28,6 @@ public class DataSetJsonSerializer
         dataSerializer = new DataJsonSerializer( objectMapper, this );
     }
 
-    public DataSetJsonSerializer()
-    {
-        dataSerializer = new DataJsonSerializer( objectMapper(), this );
-    }
-
     @Override
     protected JsonNode serialize( final DataSet dataSet )
     {
@@ -41,7 +36,7 @@ public class DataSetJsonSerializer
         final String name = dataSet.getName();
 
         dataSetObj.put( DATA_NAME, name );
-        dataSetObj.put( DATA_SET, serializeEntries( dataSet ) );
+        dataSetObj.set( DATA_SET, serializeEntries( dataSet ) );
         return dataSetObj;
     }
 

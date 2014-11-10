@@ -21,16 +21,10 @@ import static com.enonic.wem.api.data.serializer.DataJsonSerializer.DATA_NAME;
 import static com.enonic.wem.api.data.serializer.DataJsonSerializer.DATA_TYPE;
 import static com.enonic.wem.api.data.serializer.DataJsonSerializer.DATA_VALUE;
 
-
 public class PropertyJsonSerializer
     extends AbstractJsonSerializer<Property>
 {
     private final DataJsonSerializer dataSerializer;
-
-    public PropertyJsonSerializer( final DataJsonSerializer dataSerializer )
-    {
-        this.dataSerializer = dataSerializer;
-    }
 
     public PropertyJsonSerializer()
     {
@@ -61,7 +55,7 @@ public class PropertyJsonSerializer
                 dataArrayNode.add( dataSerializer.serialize( data ) );
             }
 
-            dataObj.put( DATA_VALUE, dataArrayNode );
+            dataObj.set( DATA_VALUE, dataArrayNode );
         }
         else
         {
