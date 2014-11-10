@@ -73,6 +73,8 @@ public class Content
 
     private final AccessControlList acl;
 
+    private final AccessControlList effectiveAcl;
+
     protected Content( final BaseBuilder builder )
     {
         Preconditions.checkNotNull( builder.name, "name is required for a Content" );
@@ -109,6 +111,7 @@ public class Content
         this.hasChildren = builder.hasChildren;
         this.childOrder = builder.childOrder;
         this.acl = builder.acl == null ? AccessControlList.empty() : builder.acl;
+        this.effectiveAcl = builder.effectiveAcl == null ? AccessControlList.empty() : builder.effectiveAcl;
     }
 
     public ContentPath getParentPath()
@@ -264,6 +267,11 @@ public class Content
         return acl;
     }
 
+    public AccessControlList getEffectiveAccessControlList()
+    {
+        return effectiveAcl;
+    }
+
     @Override
     public void checkIllegalEdit( final Content to )
         throws IllegalEditException
@@ -292,6 +300,7 @@ public class Content
         s.add( "modifier", modifier );
         s.add( "owner", owner );
         s.add( "acl", acl );
+        s.add( "effectiveAcl", effectiveAcl );
         return s.toString();
     }
 
@@ -350,6 +359,8 @@ public class Content
 
         AccessControlList acl;
 
+        AccessControlList effectiveAcl;
+
         BaseBuilder()
         {
             this.contentData = new ContentData();
@@ -377,6 +388,7 @@ public class Content
             this.thumbnail = content.thumbnail;
             this.childOrder = content.childOrder;
             this.acl = content.acl;
+            this.effectiveAcl = content.effectiveAcl;
         }
     }
 
@@ -452,6 +464,14 @@ public class Content
         {
             changes.recordChange( newPossibleChange( "accessControlList" ).from( this.original.acl ).to( this.acl ).build() );
             this.acl = acl;
+            return this;
+        }
+
+        public EditBuilder effectiveAccessControlList( final AccessControlList effectiveAcl )
+        {
+            changes.recordChange(
+                newPossibleChange( "effectiveAccessControlList" ).from( this.original.effectiveAcl ).to( this.effectiveAcl ).build() );
+            this.effectiveAcl = effectiveAcl;
             return this;
         }
 
@@ -626,6 +646,12 @@ public class Content
         public Builder<BUILDER, C> accessControlList( final AccessControlList acl )
         {
             this.acl = acl;
+            return this;
+        }
+
+        public Builder<BUILDER, C> effectiveAccessControlList( final AccessControlList effectiveAcl )
+        {
+            this.effectiveAcl = effectiveAcl;
             return this;
         }
 

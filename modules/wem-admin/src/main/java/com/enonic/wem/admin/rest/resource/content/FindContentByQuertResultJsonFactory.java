@@ -18,7 +18,8 @@ public class FindContentByQuertResultJsonFactory
 {
     public static AbstractContentQueryResultJson create( final FindContentByQueryResult contentQueryResult, final String expand,
                                                          final ContentIconUrlResolver iconUrlResolver,
-                                                         final MixinReferencesToFormItemsTransformer mixinReferencesToFormItemsTransformer )
+                                                         final MixinReferencesToFormItemsTransformer mixinReferencesToFormItemsTransformer,
+                                                         final ContentPrincipalsResolver contentPrincipalsResolver )
     {
         final AbstractContentQueryResultJson.Builder builder;
 
@@ -29,7 +30,7 @@ public class FindContentByQuertResultJsonFactory
 
         if ( Expand.FULL.matches( expand ) )
         {
-            builder = ContentQueryResultJson.newBuilder( iconUrlResolver );
+            builder = ContentQueryResultJson.newBuilder( iconUrlResolver, contentPrincipalsResolver );
         }
         else if ( Expand.SUMMARY.matches( expand ) )
         {

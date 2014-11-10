@@ -33,6 +33,11 @@ import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
+import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.security.UserStoreKey;
+import com.enonic.wem.api.security.acl.AccessControlEntry;
+import com.enonic.wem.api.security.acl.AccessControlList;
+import com.enonic.wem.api.security.acl.Permission;
 import com.enonic.wem.core.content.serializer.ThumbnailAttachmentSerializer;
 import com.enonic.wem.core.entity.CreateNodeParams;
 import com.enonic.wem.core.entity.Node;
@@ -211,4 +216,39 @@ public class ContentNodeTranslatorTest
         Assert.assertEquals( createNodeParams.getName(), "test-name" );
 
     }
+
+    @Test
+    public void node_to_content_acl()
+    {
+        final AccessControlEntry entry1 = AccessControlEntry.create().
+            principal( PrincipalKey.ofAnonymous() ).
+            allow( Permission.READ ).
+            deny( Permission.DELETE ).
+            build();
+        final AccessControlEntry entry2 = AccessControlEntry.create().
+            principal( PrincipalKey.ofUser( UserStoreKey.system(), "user1" ) ).
+            allow( Permission.MODIFY ).
+            deny( Permission.PUBLISH ).
+            build();
+        AccessControlList acl = AccessControlList.create().add( entry1 ).add( entry2 ).build();
+        AccessControlList effectiveAcl = acl.getEffective( AccessControlList.empty() );
+
+        final RootDataSet data = new RootDataSet();
+        data.addProperty( "contentType", Value.newString( "my-type" ) );
+
+        final Node node = Node.newNode().id( NodeId.from( "myId" ) ).
+            parent( NodePath.ROOT ).
+            path( "myPath" ).
+            name( NodeName.from( "myname" ) ).
+            rootDataSet( data ).
+            accessControlList( acl ).
+            effectiveAcl( effectiveAcl ).
+            build();
+
+        final Content content = translator.fromNode( node );
+
+        Assert.assertNotNull( content.getAccessControlList() );
+        Assert.assertNotNull( content.getEffectiveAccessControlList() );
+    }
+
 }

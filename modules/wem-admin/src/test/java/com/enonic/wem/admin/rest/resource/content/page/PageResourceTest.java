@@ -26,6 +26,7 @@ import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
+import com.enonic.wem.api.security.SecurityService;
 import com.enonic.wem.api.workspace.Workspace;
 
 import static com.enonic.wem.api.content.page.PageRegions.newPageRegions;
@@ -35,6 +36,7 @@ public class PageResourceTest
 {
     private PageService pageService;
 
+    private SecurityService securityService;
 
     @Override
     protected Object getResourceInstance()
@@ -48,6 +50,9 @@ public class PageResourceTest
 
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
             thenReturn( createContentType( "mymodule:my_type" ) );
+
+        securityService = Mockito.mock( SecurityService.class );
+        resource.setSecurityService( securityService );
 
         return resource;
     }

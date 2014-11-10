@@ -1,6 +1,6 @@
 module api.security.acl {
 
-    export class AccessControlList {
+    export class AccessControlList implements api.Equitable {
 
         private entries: {[key: string]: AccessControlEntry};
 
@@ -30,6 +30,16 @@ module api.security.acl {
 
         remove(principal: PrincipalKey): void {
             delete this.entries[principal.toString()];
+        }
+
+        equals(o: api.Equitable): boolean {
+
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, AccessControlList)) {
+                return false;
+            }
+
+            var other = <AccessControlList>o;
+            return api.ObjectHelper.arrayEquals(this.getEntries(), other.getEntries());
         }
 
         static fromJson(json: api.security.acl.AccessControlEntryJson[]): AccessControlList {

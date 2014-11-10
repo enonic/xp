@@ -102,11 +102,11 @@ module app.browse {
                 var folder: app.browse.UserTreeGridItem = <UserTreeGridItem>parentNode.getData();
                 (new GetPrincipalsByUserStoreRequest(userStoreKey,
                     this.selectPrincipalType(folder.getItemDisplayName()))).sendAndParse().then((principals: Principal[]) => {
-                    principals.forEach((principal: Principal) => {
-                        gridItems.push(new UserTreeGridItemBuilder().setPrincipal(principal).setType(UserTreeGridItemType.PRINCIPAL).build());
+                        principals.forEach((principal: Principal) => {
+                            gridItems.push(new UserTreeGridItemBuilder().setPrincipal(principal).setType(UserTreeGridItemType.PRINCIPAL).build());
+                        });
+                        deferred.resolve(gridItems);
                     });
-                    deferred.resolve(gridItems);
-                });
 
             }
             return deferred.promise;
@@ -129,7 +129,7 @@ module app.browse {
             if (parentItem.getType() == UserTreeGridItemType.USER_STORE) {
                 items.push(new app.browse.UserTreeGridItemBuilder().setUserStore(parentItem.getUserStore()).setType(UserTreeGridItemType.GROUPS).build());
                 items.push(new UserTreeGridItemBuilder().setUserStore(parentItem.getUserStore()).setType(UserTreeGridItemType.USERS).build());
-                if (parentItem.getUserStore().getKey().toString() == "system") {
+                if (parentItem.getUserStore().getKey().equals(UserStoreKey.SYSTEM)) {
                     items.push(new UserTreeGridItemBuilder().setUserStore(parentItem.getUserStore()).setType(UserTreeGridItemType.ROLES).build());
                 }
             }

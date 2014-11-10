@@ -11,6 +11,7 @@ import javax.ws.rs.core.MediaType;
 import com.enonic.wem.admin.json.content.ContentJson;
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.admin.rest.resource.content.ContentIconUrlResolver;
+import com.enonic.wem.admin.rest.resource.content.ContentPrincipalsResolver;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.attachment.AttachmentService;
@@ -20,6 +21,7 @@ import com.enonic.wem.api.content.page.UpdatePageParams;
 import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.mixin.MixinService;
+import com.enonic.wem.api.security.SecurityService;
 import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
 
 @Path(ResourceConstants.REST_ROOT + "content/page")
@@ -35,6 +37,8 @@ public final class PageResource
 
     private MixinReferencesToFormItemsTransformer mixinReferencesToFormItemsTransformer;
 
+    private ContentPrincipalsResolver principalsResolver;
+
     @POST
     @Path("create")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -43,7 +47,7 @@ public final class PageResource
         final CreatePageParams command = params.getCreatePage();
         final Content updatedContent = this.pageService.create( command );
 
-        return new ContentJson( updatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
+        return new ContentJson( updatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
     }
 
     @POST
@@ -54,7 +58,7 @@ public final class PageResource
         final UpdatePageParams command = params.getUpdatePage();
         final Content updatedContent = this.pageService.update( command );
 
-        return new ContentJson( updatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
+        return new ContentJson( updatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
     }
 
     @GET
@@ -65,7 +69,7 @@ public final class PageResource
         final ContentId contentId = ContentId.from( contentIdAsString );
         final Content updatedContent = this.pageService.delete( contentId );
 
-        return new ContentJson( updatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
+        return new ContentJson( updatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
     }
 
     private ContentIconUrlResolver newContentIconUrlResolver()
@@ -92,4 +96,10 @@ public final class PageResource
     {
         this.attachmentService = attachmentService;
     }
+
+    public void setSecurityService( final SecurityService securityService )
+    {
+        this.principalsResolver = new ContentPrincipalsResolver( securityService );
+    }
+
 }

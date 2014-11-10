@@ -4,6 +4,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -22,6 +23,7 @@ import com.enonic.wem.api.security.CreateGroupParams;
 import com.enonic.wem.api.security.CreateRoleParams;
 import com.enonic.wem.api.security.CreateUserParams;
 import com.enonic.wem.api.security.Group;
+import com.enonic.wem.api.security.Principal;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.PrincipalQuery;
 import com.enonic.wem.api.security.PrincipalQueryResult;
@@ -399,6 +401,23 @@ public final class SecurityServiceImpl
         {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public Optional<? extends Principal> getPrincipal( final PrincipalKey principalKey )
+    {
+        switch ( Objects.requireNonNull( principalKey, "Principal key was null" ).getType() )
+        {
+            case USER:
+                return getUser( principalKey );
+
+            case GROUP:
+                return getGroup( principalKey );
+
+            case ROLE:
+                return getRole( principalKey );
+        }
+        return Optional.empty();
     }
 
     @Override

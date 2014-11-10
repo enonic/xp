@@ -12,6 +12,7 @@
             "hasChildren": false,
             "iconUrl": "/admin/rest/schema/content/icon/mymodule:my_type?hash=f95b70fdc3088560732a5ac135644506",
             "id": "aaa",
+            "inheritedPermissions": [],
             "isDraft": false,
             "isPage": false,
             "isRoot": true,
@@ -35,6 +36,7 @@
             "owner": "user:myStore:me",
             "page": null,
             "path": "/my_a_content",
+            "permissions": [],
             "thumbnail": null,
             "type": "mymodule:my_type"
         },
@@ -50,6 +52,7 @@
             "hasChildren": false,
             "iconUrl": "/admin/rest/schema/content/icon/mymodule:my_type?hash=f95b70fdc3088560732a5ac135644506",
             "id": "bbb",
+            "inheritedPermissions": [],
             "isDraft": false,
             "isPage": false,
             "isRoot": true,
@@ -73,6 +76,7 @@
             "owner": "user:myStore:me",
             "page": null,
             "path": "/my_b_content",
+            "permissions": [],
             "thumbnail": null,
             "type": "mymodule:my_type"
         }

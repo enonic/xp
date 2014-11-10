@@ -113,6 +113,7 @@
       <property name="attachmentService" ref="attachmentService"/>
       <property name="mixinService" ref="mixinService"/>
       <property name="pageService" ref="pageService"/>
+      <property name="securityService" ref="securityService"/>
     </bean>
   </service>
 
@@ -135,6 +136,7 @@
       <property name="contentTypeService" ref="contentTypeService"/>
       <property name="attachmentService" ref="attachmentService"/>
       <property name="mixinService" ref="mixinService"/>
+      <property name="securityService" ref="securityService"/>
     </bean>
   </service>
 

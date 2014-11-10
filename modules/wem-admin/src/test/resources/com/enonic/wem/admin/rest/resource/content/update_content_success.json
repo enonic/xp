@@ -10,6 +10,7 @@
     "hasChildren": false,
     "iconUrl": "/admin/rest/schema/content/icon/mymodule:content-type?hash=f95b70fdc3088560732a5ac135644506",
     "id": "content-id",
+    "inheritedPermissions": [],
     "isDraft": false,
     "isPage": false,
     "isRoot": true,
@@ -33,6 +34,7 @@
     "owner": "user:myStore:me",
     "page": null,
     "path": "/content-name",
+    "permissions": [],
     "thumbnail": null,
     "type": "mymodule:content-type"
 }

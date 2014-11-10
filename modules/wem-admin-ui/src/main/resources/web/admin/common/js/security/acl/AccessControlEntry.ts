@@ -2,7 +2,7 @@ module api.security.acl {
 
     import ArrayHelper = api.util.ArrayHelper;
 
-    export class AccessControlEntry {
+    export class AccessControlEntry implements api.Equitable {
 
         private principal: PrincipalKey;
 
@@ -71,6 +71,25 @@ module api.security.acl {
             ArrayHelper.removeValue(permission, this.allowedPermissions);
             ArrayHelper.removeValue(permission, this.deniedPermissions);
             return this;
+        }
+
+        equals(o: api.Equitable): boolean {
+
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, AccessControlEntry)) {
+                return false;
+            }
+
+            var other = <AccessControlEntry>o;
+            return this.principal.equals(other.principal) && (this.displayName == other.displayName) &&
+                   this.permissionEquals(this.allowedPermissions, other.allowedPermissions) &&
+                   this.permissionEquals(this.deniedPermissions, other.deniedPermissions);
+        }
+
+        private permissionEquals(listA: Permission[], listB: Permission[]): boolean {
+            return (listA.length === listB.length) &&
+                   listA.every(function (element, idx) {
+                       return element === listB[idx];
+                   });
         }
 
         static fromJson(json: api.security.acl.AccessControlEntryJson): AccessControlEntry {
