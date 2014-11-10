@@ -115,11 +115,6 @@ module api.module.inputtype.moduleconfigurator {
             return new Value(data, ValueTypes.DATA);
         }
 
-
-        private occurrenceValueBreaksRequiredContract(moduleView: ModuleView, value: Value): boolean {
-            return value.isNull() || !value.getType().equals(ValueTypes.DATA);
-        }
-
         getValues(): api.data.Value[] {
             var options: SelectedOption<Module>[] = this.comboBox.getSelectedOptions();
             return options.map((selectedOption) => {

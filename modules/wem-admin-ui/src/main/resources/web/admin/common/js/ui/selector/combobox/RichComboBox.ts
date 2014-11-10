@@ -12,9 +12,9 @@ module api.ui.selector.combobox {
 
         comboBoxName: string;
 
-        selectedOptionsView: api.ui.selector.combobox.SelectedOptionsView<OPTION_DISPLAY_VALUE>;
+        selectedOptionsView: SelectedOptionsView<OPTION_DISPLAY_VALUE>;
 
-        comboBox: api.ui.selector.combobox.ComboBox<OPTION_DISPLAY_VALUE>;
+        comboBox: ComboBox<OPTION_DISPLAY_VALUE>;
 
         identifierMethod: string;
 
@@ -104,11 +104,11 @@ module api.ui.selector.combobox {
             this.comboBox.removeSelectedOption(option);
         }
 
-        private createComboBox(name: string): api.ui.selector.combobox.ComboBox<OPTION_DISPLAY_VALUE> {
+        private createComboBox(name: string): ComboBox<OPTION_DISPLAY_VALUE> {
 
             var comboBoxConfig = this.createConfig();
 
-            return new api.ui.selector.combobox.ComboBox(name, comboBoxConfig);
+            return new ComboBox(name, comboBoxConfig);
         }
 
         private setupLoader() {
@@ -148,7 +148,7 @@ module api.ui.selector.combobox {
             return options;
         }
 
-        createConfig(): api.ui.selector.combobox.ComboBoxConfig<OPTION_DISPLAY_VALUE> {
+        createConfig(): ComboBoxConfig<OPTION_DISPLAY_VALUE> {
             return  {
                 maximumOccurrences: this.maximumOccurrences,
                 selectedOptionsView: this.selectedOptionsView,
