@@ -105,7 +105,7 @@ public class ElasticsearchVersionService
         final QueryMetaData queryMetaData =
             createQueryMetaData( from, size, repositoryId, TIMESTAMP_ID_FIELD_NAME, NODE_VERSION_ID_FIELD_NAME );
 
-        final SearchResult searchResults = elasticsearchDao.get( queryMetaData, nodeIdQuery );
+        final SearchResult searchResults = elasticsearchDao.search( queryMetaData, nodeIdQuery );
 
         if ( searchResults.isEmpty() )
         {
@@ -120,7 +120,7 @@ public class ElasticsearchVersionService
 
         final QueryMetaData queryMetaData = createQueryMetaData( 0, 1, repositoryId, NODE_VERSION_ID_FIELD_NAME, TIMESTAMP_ID_FIELD_NAME );
 
-        final SearchResult searchResult = elasticsearchDao.get( queryMetaData, blobKeyQuery );
+        final SearchResult searchResult = elasticsearchDao.search( queryMetaData, blobKeyQuery );
 
         if ( searchResult.isEmpty() )
         {

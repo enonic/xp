@@ -42,7 +42,7 @@ public class FindNodeVersionIdsByParentCommand
 
         final QueryMetaData queryMetaData = createGetBlobKeyQueryMetaData( DEFAULT_UNKNOWN_SIZE, this.repositoryId );
 
-        final SearchResult searchResult = elasticsearchDao.get( queryMetaData, query );
+        final SearchResult searchResult = elasticsearchDao.search( queryMetaData, query );
 
         if ( searchResult.getResults().getSize() == 0 )
         {

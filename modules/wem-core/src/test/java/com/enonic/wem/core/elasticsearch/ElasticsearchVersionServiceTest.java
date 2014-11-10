@@ -54,7 +54,7 @@ public class ElasticsearchVersionServiceTest
         final Instant second = Instant.parse( "2013-07-18T09:17:42.855Z" );
         final Instant third = Instant.parse( "2012-07-18T09:17:42.855Z" );
 
-        Mockito.when( elasticsearchDao.get( Mockito.any( QueryMetaData.class ), Mockito.isA( TermQueryBuilder.class ) ) ).
+        Mockito.when( elasticsearchDao.search( Mockito.any( QueryMetaData.class ), Mockito.isA( TermQueryBuilder.class ) ) ).
             thenReturn( SearchResult.create().
                 results( SearchResultEntries.create().
                     add( SearchResultEntry.create().

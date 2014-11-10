@@ -39,7 +39,7 @@ public class GetNodeVersionIdByPathCommand
 
         final QueryMetaData queryMetaData = createGetBlobKeyQueryMetaData( 1, this.repositoryId );
 
-        final SearchResult searchResult = elasticsearchDao.get( queryMetaData, workspacedByPathQuery );
+        final SearchResult searchResult = elasticsearchDao.search( queryMetaData, workspacedByPathQuery );
 
         if ( searchResult.isEmpty() )
         {

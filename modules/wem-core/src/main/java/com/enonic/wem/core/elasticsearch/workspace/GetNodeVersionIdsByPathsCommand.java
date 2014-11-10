@@ -39,7 +39,7 @@ public class GetNodeVersionIdsByPathsCommand
         final BoolQueryBuilder workspacedByPathsQuery = joinWithWorkspaceQuery( this.workspace.getName(), parentQuery );
         final QueryMetaData queryMetaData = createGetBlobKeyQueryMetaData( nodePaths.getSize(), this.repositoryId );
 
-        final SearchResult searchResult = elasticsearchDao.get( queryMetaData, workspacedByPathsQuery );
+        final SearchResult searchResult = elasticsearchDao.search( queryMetaData, workspacedByPathsQuery );
 
         final Set<SearchResultField> fieldValues =
             searchResult.getResults().getFields( WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME );

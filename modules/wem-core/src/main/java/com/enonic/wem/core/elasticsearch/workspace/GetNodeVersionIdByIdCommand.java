@@ -64,7 +64,7 @@ class GetNodeVersionIdByIdCommand
             addFields( WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME ).
             build();
 
-        final SearchResult searchResult = elasticsearchDao.get( queryMetaData, boolQueryBuilder );
+        final SearchResult searchResult = elasticsearchDao.search( queryMetaData, boolQueryBuilder );
 
         if ( searchResult.isEmpty() )
         {

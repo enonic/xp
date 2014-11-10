@@ -95,7 +95,7 @@ public class ElasticsearchQueryService
         // TODO: Add access-control
         final TermQueryBuilder pathQuery = new TermQueryBuilder( IndexPaths.PATH_KEY, nodePath.toString() );
 
-        final SearchResult searchResult = elasticsearchDao.get( queryMetaData, pathQuery );
+        final SearchResult searchResult = elasticsearchDao.search( queryMetaData, pathQuery );
 
         if ( searchResult.isEmpty() )
         {
@@ -138,7 +138,7 @@ public class ElasticsearchQueryService
         // TODO: Add access-control
         final TermsQueryBuilder pathsQuery = new TermsQueryBuilder( IndexPaths.PATH_KEY, nodePaths.getAsStrings() );
 
-        final SearchResult searchResult = elasticsearchDao.get( queryMetaData, pathsQuery );
+        final SearchResult searchResult = elasticsearchDao.search( queryMetaData, pathsQuery );
 
         if ( searchResult.isEmpty() )
         {
@@ -167,7 +167,7 @@ public class ElasticsearchQueryService
         // TODO: Add access-control
         final TermsQueryBuilder pathsQuery = new TermsQueryBuilder( IndexPaths.ID_KEY, nodeIds.getAsStrings() );
 
-        final SearchResult searchResult = elasticsearchDao.get( queryMetaData, pathsQuery );
+        final SearchResult searchResult = elasticsearchDao.search( queryMetaData, pathsQuery );
 
         if ( searchResult.isEmpty() )
         {
@@ -194,7 +194,7 @@ public class ElasticsearchQueryService
 
         final TermsQueryBuilder childrenQuery = new TermsQueryBuilder( IndexPaths.PARENT_PATH_KEY, parentPath );
 
-        final SearchResult searchResult = elasticsearchDao.get( queryMetaData, childrenQuery );
+        final SearchResult searchResult = elasticsearchDao.search( queryMetaData, childrenQuery );
 
         if ( searchResult.isEmpty() )
         {

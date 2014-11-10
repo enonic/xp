@@ -118,7 +118,7 @@ public class ElasticsearchDao
     }
 
 
-    public SearchResult get( final QueryMetaData queryMetaData, final QueryBuilder queryBuilder )
+    public SearchResult search( final QueryMetaData queryMetaData, final QueryBuilder queryBuilder )
     {
         final SearchRequestBuilder searchRequestBuilder = this.client.prepareSearch( queryMetaData.getIndexName() ).
             setTypes( queryMetaData.getIndexTypeName() ).

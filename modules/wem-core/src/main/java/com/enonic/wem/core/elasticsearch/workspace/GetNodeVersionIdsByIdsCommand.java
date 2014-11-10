@@ -54,7 +54,7 @@ public class GetNodeVersionIdsByIdsCommand
         final BoolQueryBuilder boolQueryBuilder = joinWithWorkspaceQuery( workspaceName, idsQuery );
         final QueryMetaData queryMetaData = createGetBlobKeyQueryMetaData( nodeIdsAsStrings.size(), this.repositoryId );
 
-        final SearchResult searchResult = elasticsearchDao.get( queryMetaData, boolQueryBuilder );
+        final SearchResult searchResult = elasticsearchDao.search( queryMetaData, boolQueryBuilder );
 
         if ( searchResult.isEmpty() )
         {
