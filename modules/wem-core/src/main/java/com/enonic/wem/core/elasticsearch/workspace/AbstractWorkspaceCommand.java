@@ -5,28 +5,17 @@ import java.util.Collection;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.TermQueryBuilder;
-import org.elasticsearch.search.sort.FieldSortBuilder;
-import org.elasticsearch.search.sort.SortBuilder;
-import org.elasticsearch.search.sort.SortOrder;
 
 import com.enonic.wem.api.repository.RepositoryId;
-import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.elasticsearch.ElasticsearchDao;
-import com.enonic.wem.core.elasticsearch.QueryProperties;
 import com.enonic.wem.core.elasticsearch.xcontent.WorkspaceXContentBuilderFactory;
 import com.enonic.wem.core.entity.NodeVersionId;
 import com.enonic.wem.core.entity.NodeVersionIds;
-import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.result.SearchResultField;
-import com.enonic.wem.core.repository.StorageNameResolver;
 
 abstract class AbstractWorkspaceCommand
 {
     static final boolean DEFAULT_REFRESH = true;
-
-    static final int DEFAULT_UNKNOWN_SIZE = 1000;
-
-    private static final String BUILTIN_TIMESTAMP_FIELD = "_timestamp";
 
     final ElasticsearchDao elasticsearchDao;
 
@@ -63,34 +52,6 @@ abstract class AbstractWorkspaceCommand
         boolQueryBuilder.must( workspaceQuery );
 
         return boolQueryBuilder;
-    }
-
-    BoolQueryBuilder join( final QueryBuilder query1, final QueryBuilder query2 )
-    {
-        final BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder();
-        boolQueryBuilder.must( query1 );
-        boolQueryBuilder.must( query2 );
-
-        return boolQueryBuilder;
-    }
-
-    QueryProperties createGetBlobKeyQueryMetaData( final int numberOfHits, final RepositoryId repositoryId )
-    {
-        final SortBuilder fieldSortBuilder = new FieldSortBuilder( BUILTIN_TIMESTAMP_FIELD ).order( SortOrder.DESC );
-
-        return QueryProperties.create( StorageNameResolver.resolveStorageIndexName( repositoryId ) ).
-            indexTypeName( IndexType.WORKSPACE.getName() ).
-            from( 0 ).
-            size( numberOfHits ).
-            addField( WorkspaceXContentBuilderFactory.NODE_ID_FIELD_NAME ).
-            addField( WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME ).
-            addSort( fieldSortBuilder ).
-            build();
-    }
-
-    TermQueryBuilder createWorkspaceQuery( final Workspace workspace )
-    {
-        return new TermQueryBuilder( WorkspaceXContentBuilderFactory.WORKSPACE_FIELD_NAME, workspace.getName() );
     }
 
     static abstract class Builder<B extends Builder>

@@ -90,6 +90,4 @@ public class GetNodesByIdsCommandTest
         assertTrue( result.getNodeById( createdNode1.id() ).getHasChildren() );
         assertFalse( result.getNodeById( createdNode2.id() ).getHasChildren() );
     }
-
-
 }

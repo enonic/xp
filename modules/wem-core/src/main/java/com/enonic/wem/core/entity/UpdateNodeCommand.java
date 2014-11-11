@@ -47,7 +47,7 @@ public final class UpdateNodeCommand
         doStoreNode( updatedNode );
 
         return NodeHasChildResolver.create().
-            workspaceService( this.queryService ).
+            queryService( this.queryService ).
             build().
             resolve( updatedNode );
     }

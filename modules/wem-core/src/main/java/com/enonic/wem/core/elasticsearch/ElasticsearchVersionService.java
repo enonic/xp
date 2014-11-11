@@ -6,7 +6,6 @@ import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.Requests;
 import org.elasticsearch.index.query.TermQueryBuilder;
 import org.elasticsearch.search.sort.FieldSortBuilder;
-import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 
 import com.enonic.wem.api.repository.RepositoryId;
@@ -143,22 +142,6 @@ public class ElasticsearchVersionService
             throw new RuntimeException( "Did not find version entry with blobKey: " + nodeVersionId );
         }
         return searchResult;
-    }
-
-    private QueryProperties createQueryMetaData( final int from, final int size, final RepositoryId repositoryId,
-                                                 final String... fieldNames )
-    {
-
-        final SortBuilder descendingTimestampSort = new FieldSortBuilder( TIMESTAMP_ID_FIELD_NAME ).order( SortOrder.DESC );
-
-        // TODO: Temp fix
-        return QueryProperties.create( StorageNameResolver.resolveStorageIndexName( repositoryId ) ).
-            indexTypeName( IndexType.VERSION.getName() ).
-            addFields( fieldNames ).
-            size( size ).
-            from( from ).
-            addSort( descendingTimestampSort ).
-            build();
     }
 
     private String getStringValue( final SearchResultEntry hit, final String fieldName, final boolean required )

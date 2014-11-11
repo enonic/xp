@@ -47,7 +47,7 @@ public class PushNodeCommand
         this.indexService.store( currentNode, currentVersion, IndexContext.from( this.target, context.getRepositoryId() ) );
 
         return NodeHasChildResolver.create().
-            workspaceService( this.queryService ).
+            queryService( this.queryService ).
             build().
             resolve( currentNode );
     }

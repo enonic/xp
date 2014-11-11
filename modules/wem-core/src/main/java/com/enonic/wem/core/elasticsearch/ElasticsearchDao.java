@@ -15,7 +15,6 @@ import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
 import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +31,6 @@ import com.enonic.wem.core.index.result.SearchResult;
 
 public class ElasticsearchDao
 {
-
     private final static Logger LOG = LoggerFactory.getLogger( ElasticsearchDao.class );
 
     private static final boolean DEFAULT_REFRESH = true;
@@ -111,36 +109,22 @@ public class ElasticsearchDao
         return doSearchRequest( searchRequest );
     }
 
-    public GetResult get( final QueryProperties queryProperties, final String id )
+    public GetResult get( final GetQuery getQuery )
     {
-        final GetRequest getRequest = new GetRequest( queryProperties.getIndexName() ).
-            type( queryProperties.getIndexTypeName() ).
+        final GetRequest getRequest = new GetRequest( getQuery.getIndexName() ).
+            type( getQuery.getIndexTypeName() ).
             preference( searchPreference ).
-            id( id );
+            id( getQuery.getId().toString() );
 
-        if ( queryProperties.hasFields() )
+        if ( getQuery.getReturnFields().isNotEmpty() )
         {
-            getRequest.fields( queryProperties.getNormalizedFieldNames() );
+            getRequest.fields( getQuery.getReturnFields().getReturnFieldNames() );
         }
 
         final GetResponse getResponse = client.get( getRequest ).
             actionGet( searchTimeout );
 
         return GetResultFactory.create( getResponse );
-    }
-
-    public long count( final QueryProperties queryProperties, final QueryBuilder query )
-    {
-        SearchRequestBuilder searchRequestBuilder = new SearchRequestBuilder( this.client ).
-            setIndices( queryProperties.getIndexName() ).
-            setTypes( queryProperties.getIndexTypeName() ).
-            setQuery( query ).
-            setSearchType( SearchType.COUNT ).
-            setPreference( searchPreference );
-
-        final SearchResult searchResult = doSearchRequest( searchRequestBuilder );
-
-        return searchResult.getResults().getTotalHits();
     }
 
     private SearchResult doSearchRequest( final SearchRequestBuilder searchRequestBuilder )
@@ -160,7 +144,7 @@ public class ElasticsearchDao
         }
     }
 
-    long count( final ElasticsearchQuery query )
+    public long count( final ElasticsearchQuery query )
     {
         SearchRequestBuilder searchRequestBuilder = new SearchRequestBuilder( this.client ).
             setIndices( query.getIndexName() ).
@@ -199,6 +183,5 @@ public class ElasticsearchDao
     {
         this.client = client;
     }
-
 
 }

@@ -85,9 +85,6 @@ public class CompareNodesCommandTest
         stage.runWith( () -> doUpdateNode( createdNode ) );
         refresh();
 
-        // printAllIndexContent( StorageNameResolver.resolveStorageIndexName( ContentConstants.CONTENT_REPO.getId() ),
-        //                       IndexType.VERSION.getName() );
-
         final NodeComparison comparison = stage.callWith( () -> doCompare( prodWs, createdNode ) );
 
         assertEquals( CompareStatus.Status.NEWER, comparison.getCompareStatus().getStatus() );

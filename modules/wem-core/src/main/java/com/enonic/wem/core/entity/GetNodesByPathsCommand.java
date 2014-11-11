@@ -1,6 +1,5 @@
 package com.enonic.wem.core.entity;
 
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.query.expr.OrderExpressions;
 import com.enonic.wem.core.index.IndexContext;
@@ -27,7 +26,7 @@ public class GetNodesByPathsCommand
         final NodeVersionIds versionIds = this.queryService.find( paths, orderExpressions, IndexContext.from( ContextAccessor.current() ) );
 
         return resolveHasChild ? NodeHasChildResolver.create().
-            workspaceService( this.queryService ).
+            queryService( this.queryService ).
             build().
             resolve( nodeDao.getByVersionIds( versionIds ) ) : nodeDao.getByVersionIds( versionIds );
     }

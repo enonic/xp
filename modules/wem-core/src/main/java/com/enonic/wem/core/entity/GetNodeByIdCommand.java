@@ -7,9 +7,9 @@ import com.enonic.wem.core.index.IndexContext;
 public class GetNodeByIdCommand
     extends AbstractNodeCommand
 {
-    private NodeId id;
+    private final NodeId id;
 
-    private boolean resolveHasChild;
+    private final boolean resolveHasChild;
 
     private GetNodeByIdCommand( final Builder builder )
     {
@@ -32,7 +32,7 @@ public class GetNodeByIdCommand
         final Node node = nodeDao.getByVersionId( currentVersion );
 
         return !resolveHasChild ? node : NodeHasChildResolver.create().
-            workspaceService( this.queryService ).
+            queryService( this.queryService ).
             build().
             resolve( node );
     }

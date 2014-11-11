@@ -6,6 +6,8 @@ import java.util.Set;
 import org.elasticsearch.index.query.TermQueryBuilder;
 import org.elasticsearch.index.query.TermsQueryBuilder;
 
+import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.index.IndexPaths;
 import com.enonic.wem.api.query.QueryException;
 import com.enonic.wem.api.query.expr.OrderExpressions;
@@ -13,7 +15,6 @@ import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.core.elasticsearch.query.NodeQueryTranslator;
 import com.enonic.wem.core.elasticsearch.query.builder.SortQueryBuilderFactory;
-import com.enonic.wem.core.elasticsearch.xcontent.WorkspaceXContentBuilderFactory;
 import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodeIds;
 import com.enonic.wem.core.entity.NodePath;
@@ -22,7 +23,6 @@ import com.enonic.wem.core.entity.NodeVersionId;
 import com.enonic.wem.core.entity.NodeVersionIds;
 import com.enonic.wem.core.entity.query.NodeQuery;
 import com.enonic.wem.core.index.IndexContext;
-import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.query.NodeQueryResult;
 import com.enonic.wem.core.index.query.QueryResultFactory;
 import com.enonic.wem.core.index.query.QueryService;
@@ -31,7 +31,6 @@ import com.enonic.wem.core.index.result.SearchResult;
 import com.enonic.wem.core.index.result.SearchResultEntry;
 import com.enonic.wem.core.index.result.SearchResultField;
 import com.enonic.wem.core.repository.IndexNameResolver;
-import com.enonic.wem.core.repository.StorageNameResolver;
 
 public class ElasticsearchQueryService
     implements QueryService
@@ -58,13 +57,12 @@ public class ElasticsearchQueryService
     public NodeVersionId get( final NodeId nodeId, final IndexContext indexContext )
     {
         // TODO: Add access-control
-        final GetResult result =
-            elasticsearchDao.get( QueryProperties.create( IndexNameResolver.resolveSearchIndexName( indexContext.getRepositoryId() ) ).
-                indexTypeName( indexContext.getWorkspace().getName() ).
-                from( 0 ).
-                size( 1 ).
-                addField( IndexPaths.VERSION_KEY ).
-                build(), nodeId.toString() );
+        final GetResult result = elasticsearchDao.get( GetQuery.create().
+            indexName( IndexNameResolver.resolveSearchIndexName( indexContext.getRepositoryId() ) ).
+            indexTypeName( indexContext.getWorkspace().getName() ).
+            returnFields( ReturnFields.from( IndexPaths.VERSION_KEY ) ).
+            id( nodeId ).
+            build() );
 
         if ( result.isEmpty() )
         {
@@ -81,13 +79,11 @@ public class ElasticsearchQueryService
         return NodeVersionId.from( nodeVersionId.getValue().toString() );
     }
 
-
     @Override
     public NodeVersionId get( final NodePath nodePath, final IndexContext indexContext )
     {
         final Workspace workspace = indexContext.getWorkspace();
 
-        // TODO: Add access-control
         final TermQueryBuilder pathQuery = new TermQueryBuilder( IndexPaths.PATH_KEY, nodePath.toString() );
 
         final ElasticsearchQuery query = ElasticsearchQuery.create().
@@ -128,7 +124,6 @@ public class ElasticsearchQueryService
     {
         final Workspace workspace = indexContext.getWorkspace();
 
-        // TODO: Add access-control
         final TermsQueryBuilder pathsQuery = new TermsQueryBuilder( IndexPaths.PATH_KEY, nodePaths.getAsStrings() );
 
         final ElasticsearchQuery query = ElasticsearchQuery.create().
@@ -157,7 +152,6 @@ public class ElasticsearchQueryService
     {
         final Workspace workspace = indexContext.getWorkspace();
 
-        // TODO: Add access-control
         final TermsQueryBuilder pathsQuery = new TermsQueryBuilder( IndexPaths.ID_KEY, nodeIds.getAsStrings() );
 
         final ElasticsearchQuery query = ElasticsearchQuery.create().
@@ -184,17 +178,17 @@ public class ElasticsearchQueryService
     @Override
     public boolean hasChildren( final NodePath parentPath, final IndexContext indexContext )
     {
-        final QueryProperties queryProperties =
-            QueryProperties.create( StorageNameResolver.resolveStorageIndexName( indexContext.getRepositoryId() ) ).
-                indexTypeName( IndexType.WORKSPACE.getName() ).
-                from( 0 ).
-                size( 0 ).
-                build();
+        final Context context = ContextAccessor.current();
 
-        final TermQueryBuilder findWithParentQuery =
-            new TermQueryBuilder( WorkspaceXContentBuilderFactory.PARENT_PATH_FIELD_NAME, parentPath.toString() );
+        final TermQueryBuilder findWithParentQuery = new TermQueryBuilder( IndexPaths.PARENT_PATH_KEY, parentPath.toString() );
 
-        final long count = elasticsearchDao.count( queryProperties, findWithParentQuery );
+        final ElasticsearchQuery query = ElasticsearchQuery.create().
+            index( IndexNameResolver.resolveSearchIndexName( context.getRepositoryId() ) ).
+            indexType( context.getWorkspace().getName() ).
+            query( findWithParentQuery ).
+            build();
+
+        final long count = elasticsearchDao.count( query );
 
         return count > 0;
     }

@@ -1,6 +1,5 @@
 package com.enonic.wem.core.entity;
 
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.index.query.QueryService;
@@ -52,7 +51,7 @@ public class NodeHasChildResolver
         {
         }
 
-        public Builder workspaceService( final QueryService queryService )
+        public Builder queryService( final QueryService queryService )
         {
             this.queryService = queryService;
             return this;

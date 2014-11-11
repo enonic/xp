@@ -1,6 +1,5 @@
 package com.enonic.wem.core.entity;
 
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.entity.dao.NodeDao;
@@ -298,7 +297,7 @@ public class NodeServiceImpl
     public Node getByVersionId( final NodeVersionId blobKey )
     {
         return NodeHasChildResolver.create().
-            workspaceService( this.queryService ).
+            queryService( this.queryService ).
             build().
             resolve( nodeDao.getByVersionId( blobKey ) );
     }
