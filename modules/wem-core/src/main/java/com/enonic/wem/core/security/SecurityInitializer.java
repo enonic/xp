@@ -19,44 +19,37 @@ public final class SecurityInitializer
     {
         LOG.info( "Initializing security principals" );
 
-        try
-        {
-            if ( !securityService.getUser( PrincipalKey.ofAnonymous() ).isPresent() )
-            {
-                final User anonymous = User.anonymous();
-                final CreateUserParams createUser = CreateUserParams.create().
-                    userKey( anonymous.getKey() ).
-                    displayName( anonymous.getDisplayName() ).
-                    login( anonymous.getLogin() ).
-                    email( anonymous.getEmail() ).
-                    build();
-                securityService.createUser( createUser );
-                LOG.info( "Anonymous user created: " + anonymous.getKey().toString() );
-            }
-        }
-        catch ( Throwable t )
-        {
-            LOG.error( "Unable to initialize user: " + PrincipalKey.ofAnonymous().toString(), t );
-        }
+        final User anonymous = User.anonymous();
+        final CreateUserParams createUser = CreateUserParams.create().
+            userKey( anonymous.getKey() ).
+            displayName( anonymous.getDisplayName() ).
+            login( anonymous.getLogin() ).
+            email( anonymous.getEmail() ).
+            build();
+        addUser( createUser );
 
-        final PrincipalKey adminKey = PrincipalKey.ofUser( UserStoreKey.system(), "admin" );
+        final CreateUserParams createAdmin = CreateUserParams.create().
+            userKey( PrincipalKey.ofUser( UserStoreKey.system(), "admin" ) ).
+            displayName( "Administrator" ).
+            login( "admin" ).
+            password( "password" ).
+            build();
+        addUser( createAdmin );
+    }
+
+    private void addUser( final CreateUserParams createUser )
+    {
         try
         {
-            if ( !securityService.getUser( adminKey ).isPresent() )
+            if ( !securityService.getUser( createUser.getKey() ).isPresent() )
             {
-                final CreateUserParams createAdmin = CreateUserParams.create().
-                    userKey( adminKey ).
-                    displayName( "Administrator" ).
-                    login( "admin" ).
-                    password( "password" ).
-                    build();
-                securityService.createUser( createAdmin );
-                LOG.info( "Admin user created: " + adminKey.toString() );
+                securityService.createUser( createUser );
+                LOG.info( "User created: " + createUser.getKey().toString() );
             }
         }
         catch ( Throwable t )
         {
-            LOG.error( "Unable to initialize user: " + adminKey.toString(), t );
+            LOG.error( "Unable to initialize user: " + createUser.getKey().toString(), t );
         }
     }
 

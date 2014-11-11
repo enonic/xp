@@ -59,10 +59,14 @@ module app.home {
             this.appendChild(this.centerPanel);
 
             LogOutEvent.on(() => {
-                api.util.CookieHelper.removeCookie('dummy.userIsLoggedIn');
-                this.centerPanel.showLoginPanel();
-                this.setBackgroundImgUrl(this.backgroundImgUrl);
-                this.returnButton.hide();
+                new api.security.auth.LogoutRequest().sendAndParse().then(() => {
+                    api.util.CookieHelper.removeCookie('dummy.userIsLoggedIn');
+                    this.centerPanel.showLoginPanel();
+                    this.setBackgroundImgUrl(this.backgroundImgUrl);
+                    this.returnButton.hide();
+                }).catch((reason: any) => {
+                    api.DefaultErrorHandler.handle(reason);
+                }).done();
             });
 
         }
