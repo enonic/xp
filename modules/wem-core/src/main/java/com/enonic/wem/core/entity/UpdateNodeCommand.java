@@ -64,6 +64,8 @@ public final class UpdateNodeCommand
             modifier( PrincipalKey.from( "system:user:admin" ) ).
             rootDataSet( editResult.data() ).
             attachments( syncronizeAttachments( editResult.attachments(), persistedNode ) ).
+            accessControlList( editResult.getAccessControlList() ).
+            effectiveAcl( editResult.getEffectiveAccessControlList() ).
             indexConfigDocument( editResult.getIndexConfigDocument() != null
                                      ? editResult.getIndexConfigDocument()
                                      : persistedNode.getIndexConfigDocument() );

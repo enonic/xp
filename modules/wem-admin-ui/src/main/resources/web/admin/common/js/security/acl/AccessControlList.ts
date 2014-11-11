@@ -32,6 +32,15 @@ module api.security.acl {
             delete this.entries[principal.toString()];
         }
 
+        toJson(): api.security.acl.AccessControlEntryJson[] {
+            var acl: api.security.acl.AccessControlEntryJson[] = [];
+            this.getEntries().forEach((entry: api.security.acl.AccessControlEntry) => {
+                var entryJson = entry.toJson();
+                acl.push(entryJson);
+            });
+            return acl;
+        }
+
         equals(o: api.Equitable): boolean {
 
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, AccessControlList)) {

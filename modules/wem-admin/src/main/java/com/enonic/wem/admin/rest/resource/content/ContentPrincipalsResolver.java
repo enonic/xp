@@ -1,6 +1,10 @@
 package com.enonic.wem.admin.rest.resource.content;
 
 import java.util.Map;
+import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
 
@@ -14,6 +18,8 @@ import com.enonic.wem.api.security.acl.AccessControlList;
 
 public final class ContentPrincipalsResolver
 {
+    private final static Logger LOG = LoggerFactory.getLogger( ContentPrincipalsResolver.class );
+
     private final SecurityService securityService;
 
     public ContentPrincipalsResolver( final SecurityService securityService )
@@ -45,7 +51,15 @@ public final class ContentPrincipalsResolver
             final PrincipalKey key = entry.getPrincipal();
             if ( !principals.containsKey( key ) )
             {
-                principals.put( key, securityService.getPrincipal( key ).get() );
+                final Optional<? extends Principal> principalValue = securityService.getPrincipal( key );
+                if ( !principalValue.isPresent() )
+                {
+                    LOG.warn( "Principal could not be resolved: " + key.toString() );
+                }
+                else
+                {
+                    principals.put( key, principalValue.get() );
+                }
             }
         }
     }

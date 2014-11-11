@@ -92,6 +92,17 @@ module api.security.acl {
                    });
         }
 
+        toJson(): api.security.acl.AccessControlEntryJson {
+            return {
+                "principal": {
+                    displayName: this.displayName,
+                    key: this.getPrincipalKey().toString()
+                },
+                "allow": this.allowedPermissions.map((perm) => Permission[perm]),
+                "deny": this.deniedPermissions.map((perm) => Permission[perm])
+            };
+        }
+
         static fromJson(json: api.security.acl.AccessControlEntryJson): AccessControlEntry {
             var ace = new AccessControlEntry(PrincipalKey.fromString(json.principal.key), json.principal.displayName);
             var allow: Permission[] = json.allow.map((permStr) => Permission[permStr.toUpperCase()])

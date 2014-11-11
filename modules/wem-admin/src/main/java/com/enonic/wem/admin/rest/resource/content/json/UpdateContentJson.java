@@ -19,6 +19,7 @@ import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.DataJson;
 import com.enonic.wem.api.form.FormJson;
 import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.security.acl.AccessControlList;
 
 import static com.enonic.wem.api.content.Content.editContent;
 
@@ -37,7 +38,8 @@ public class UpdateContentJson
                        @JsonProperty("metadata") final List<MetadataJson> metadataJsonList, @JsonProperty("form") final FormJson form,
                        @JsonProperty("displayName") final String displayName,
                        @JsonProperty("updateAttachments") final UpdateAttachmentsJson updateAttachments,
-                       @JsonProperty("thumbnail") final ThumbnailJson thumbnail, @JsonProperty("draft") final String draft )
+                       @JsonProperty("thumbnail") final ThumbnailJson thumbnail, @JsonProperty("draft") final String draft,
+                       @JsonProperty("permissions") final List<AccessControlEntryJson> permissions )
     {
         this.contentName = ContentName.from( contentName );
 
@@ -58,6 +60,11 @@ public class UpdateContentJson
                 if ( thumbnail != null )
                 {
                     editContentBuilder = editContentBuilder.thumbnail( thumbnail.getThumbnail() );
+                }
+                if ( permissions != null )
+                {
+                    final AccessControlList acl = parseAcl( permissions );
+                    editContentBuilder = editContentBuilder.accessControlList( acl );
                 }
                 return editContentBuilder;
             } );
@@ -103,5 +110,15 @@ public class UpdateContentJson
             metadataList.add( metadataJson.getMetadata() );
         }
         return metadataList;
+    }
+
+    private AccessControlList parseAcl( final List<AccessControlEntryJson> accessControlListJson )
+    {
+        final AccessControlList.Builder builder = AccessControlList.create();
+        for ( final AccessControlEntryJson entryJson : accessControlListJson )
+        {
+            builder.add( entryJson.getSourceEntry() );
+        }
+        return builder.build();
     }
 }
