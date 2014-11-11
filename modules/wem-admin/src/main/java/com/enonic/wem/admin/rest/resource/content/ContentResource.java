@@ -85,6 +85,7 @@ import com.enonic.wem.api.security.PrincipalQuery;
 import com.enonic.wem.api.security.PrincipalQueryResult;
 import com.enonic.wem.api.security.Principals;
 import com.enonic.wem.api.security.SecurityService;
+import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.workspace.Workspaces;
 import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
 
@@ -140,6 +141,14 @@ public final class ContentResource
         }
         else
         {
+            final ContentPath parentPath = content.getPath().getParentPath();
+            if ( parentPath != null && !parentPath.isRoot() )
+            {
+                final Content parent = contentService.getByPath( parentPath );
+                final AccessControlList parentAcl = parent.getEffectiveAccessControlList();
+                return new ContentJson( content, parentAcl, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer,
+                                        principalsResolver );
+            }
             return new ContentJson( content, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
         }
     }
