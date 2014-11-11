@@ -52,7 +52,7 @@ public class NodeChildOrderResolverTest
             repositoryId( Repository.create().id( RepositoryId.from( "myRepository" ) ).build().getId() ).
             build();
 
-        final ChildOrder resolvedOrder = myContext.runWith( () -> NodeChildOrderResolver.create().
+        final ChildOrder resolvedOrder = myContext.callWith( () -> NodeChildOrderResolver.create().
             nodeDao( this.nodeDao ).
             workspaceService( this.queryService ).
             nodePath( NodePath.ROOT ).

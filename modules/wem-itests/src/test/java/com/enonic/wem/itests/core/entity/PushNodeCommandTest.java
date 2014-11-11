@@ -45,7 +45,7 @@ public class PushNodeCommandTest
             name( "my-node" ).
             build() );
 
-        Node testWsNode = testContext.runWith( () -> getNodeById( node.id() ) );
+        Node testWsNode = testContext.callWith( () -> getNodeById( node.id() ) );
 
         assertTrue( testWsNode == null );
 
@@ -60,7 +60,7 @@ public class PushNodeCommandTest
             build().
             execute();
 
-        testWsNode = testContext.runWith( () -> getNodeById( node.id() ) );
+        testWsNode = testContext.callWith( () -> getNodeById( node.id() ) );
 
         assertTrue( testWsNode != null );
 

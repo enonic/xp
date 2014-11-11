@@ -113,7 +113,7 @@ public class GetActiveNodeVersionsCommandTest
 
     private GetActiveNodeVersionsResult doGetActiveVersions( final Workspace testWorkspace, final Context testContext, final Node node )
     {
-        return testContext.runWith( () -> GetActiveNodeVersionsCommand.create().
+        return testContext.callWith( () -> GetActiveNodeVersionsCommand.create().
             versionService( this.versionService ).
             workspaceService( this.workspaceService ).
             nodeDao( this.nodeDao ).

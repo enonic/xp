@@ -122,18 +122,16 @@ public final class SecurityServiceImpl
     @Override
     public Principals getPrincipals( final UserStoreKey userStore, final PrincipalType type )
     {
-        final FindNodesByQueryResult result = CONTEXT_USER_STORES.runWith( () -> {
-            return this.nodeService.findByQuery( NodeQuery.create().
-                addQueryFilter( ValueFilter.create().
-                    fieldName( PrincipalNodeTranslator.USER_STORE_KEY ).
-                    addValue( Value.newString( userStore.toString() ) ).
-                    build() ).
-                addQueryFilter( ValueFilter.create().
-                    fieldName( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY ).
-                    addValue( Value.newString( type.toString() ) ).
-                    build() ).
-                build() );
-        } );
+        final FindNodesByQueryResult result = CONTEXT_USER_STORES.callWith( () -> this.nodeService.findByQuery( NodeQuery.create().
+            addQueryFilter( ValueFilter.create().
+                fieldName( PrincipalNodeTranslator.USER_STORE_KEY ).
+                addValue( Value.newString( userStore.toString() ) ).
+                build() ).
+            addQueryFilter( ValueFilter.create().
+                fieldName( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY ).
+                addValue( Value.newString( type.toString() ) ).
+                build() ).
+            build() ) );
 
         return PrincipalNodeTranslator.fromNodes( result.getNodes() );
     }
@@ -193,7 +191,7 @@ public final class SecurityServiceImpl
         final NodePath path = PrincipalPathTranslator.toPath( key );
         try
         {
-            final Node user = CONTEXT_USER_STORES.runWith( () -> this.nodeService.getByPath( path ) );
+            final Node user = CONTEXT_USER_STORES.callWith( () -> this.nodeService.getByPath( path ) );
             return PrincipalNodeTranslator.userFromNode( user );
         }
         catch ( NodeNotFoundException e )
@@ -239,7 +237,7 @@ public final class SecurityServiceImpl
         }
 
         final CreateNodeParams createNodeParams = PrincipalNodeTranslator.toCreateNodeParams( user );
-        final Node node = CONTEXT_USER_STORES.runWith( () -> nodeService.create( createNodeParams ) );
+        final Node node = CONTEXT_USER_STORES.callWith( () -> nodeService.create( createNodeParams ) );
 
         return PrincipalNodeTranslator.userFromNode( node );
     }
@@ -247,7 +245,7 @@ public final class SecurityServiceImpl
     @Override
     public User updateUser( final UpdateUserParams updateUserParams )
     {
-        final User updatedUser = CONTEXT_USER_STORES.runWith( () -> {
+        return CONTEXT_USER_STORES.callWith( () -> {
 
             final Node node;
             try
@@ -267,8 +265,6 @@ public final class SecurityServiceImpl
             final Node updatedNode = nodeService.update( updateNodeParams );
             return PrincipalNodeTranslator.userFromNode( updatedNode );
         } );
-
-        return updatedUser;
     }
 
     @Override
@@ -278,7 +274,7 @@ public final class SecurityServiceImpl
 
         try
         {
-            final Node node = CONTEXT_USER_STORES.runWith( () -> this.nodeService.getById( toNodeId( userKey ) ) );
+            final Node node = CONTEXT_USER_STORES.callWith( () -> this.nodeService.getById( toNodeId( userKey ) ) );
             return Optional.ofNullable( PrincipalNodeTranslator.userFromNode( node ) );
         }
         catch ( Exception e )
@@ -297,7 +293,7 @@ public final class SecurityServiceImpl
             build();
 
         final CreateNodeParams createGroupParams = PrincipalNodeTranslator.toCreateNodeParams( group );
-        final Node node = CONTEXT_USER_STORES.runWith( () -> this.nodeService.create( createGroupParams ) );
+        final Node node = CONTEXT_USER_STORES.callWith( () -> this.nodeService.create( createGroupParams ) );
 
         return PrincipalNodeTranslator.groupFromNode( node );
     }
@@ -305,7 +301,7 @@ public final class SecurityServiceImpl
     @Override
     public Group updateGroup( final UpdateGroupParams updateGroupParams )
     {
-        final Group updatedGroup = CONTEXT_USER_STORES.runWith( () -> {
+        return CONTEXT_USER_STORES.callWith( () -> {
 
             final Node node;
             try
@@ -325,8 +321,6 @@ public final class SecurityServiceImpl
             final Node updatedNode = nodeService.update( updateNodeParams );
             return PrincipalNodeTranslator.groupFromNode( updatedNode );
         } );
-
-        return updatedGroup;
     }
 
     @Override
@@ -336,7 +330,7 @@ public final class SecurityServiceImpl
 
         try
         {
-            final Node node = CONTEXT_USER_STORES.runWith( () -> this.nodeService.getById( toNodeId( groupKey ) ) );
+            final Node node = CONTEXT_USER_STORES.callWith( () -> this.nodeService.getById( toNodeId( groupKey ) ) );
             return Optional.ofNullable( PrincipalNodeTranslator.groupFromNode( node ) );
         }
         catch ( Exception e )
@@ -355,7 +349,7 @@ public final class SecurityServiceImpl
             build();
 
         final CreateNodeParams createNodeParams = PrincipalNodeTranslator.toCreateNodeParams( role );
-        final Node node = CONTEXT_USER_STORES.runWith( () -> this.nodeService.create( createNodeParams ) );
+        final Node node = CONTEXT_USER_STORES.callWith( () -> this.nodeService.create( createNodeParams ) );
 
         return PrincipalNodeTranslator.roleFromNode( node );
     }
@@ -363,7 +357,7 @@ public final class SecurityServiceImpl
     @Override
     public Role updateRole( final UpdateRoleParams updateRoleParams )
     {
-        final Role updatedRole = CONTEXT_USER_STORES.runWith( () -> {
+        return CONTEXT_USER_STORES.callWith( () -> {
 
             final Node node;
             try
@@ -383,8 +377,6 @@ public final class SecurityServiceImpl
             final Node updatedNode = nodeService.update( updateNodeParams );
             return PrincipalNodeTranslator.roleFromNode( updatedNode );
         } );
-
-        return updatedRole;
     }
 
     @Override
@@ -394,7 +386,7 @@ public final class SecurityServiceImpl
 
         try
         {
-            final Node node = CONTEXT_USER_STORES.runWith( () -> this.nodeService.getById( toNodeId( roleKey ) ) );
+            final Node node = CONTEXT_USER_STORES.callWith( () -> this.nodeService.getById( toNodeId( roleKey ) ) );
             return Optional.ofNullable( PrincipalNodeTranslator.roleFromNode( node ) );
         }
         catch ( Exception e )
