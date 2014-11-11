@@ -105,23 +105,23 @@ module api.app.browse {
 
     }
 
-    export class SelectionItem<M extends api.Equitable> extends NamesAndIconView {
+    export class SelectionItem<M extends api.Equitable> extends api.dom.DivEl {
 
         private browseItem: api.app.browse.BrowseItem<M>;
-
+        private namesAndIconView: NamesAndIconView;
         constructor(browseItem: BrowseItem<M>, removeCallback?: () => void) {
-            var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small);
 
-            super(namesAndIconView);
+            super('browse-selection-item');
             this.browseItem = browseItem;
             if (this.browseItem.getIconUrl()) {
-                this.setIconUrl(this.browseItem.getIconUrl());
+                this.setIcon(this.browseItem.getIconUrl(), 32);
             } else {
-                this.setIconClass(this.browseItem.getIconClass());
+                this.namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
+                this.namesAndIconView.addClass('browse-selection-item');
+                this.namesAndIconView.setIconClass(this.browseItem.getIconClass());
             }
 
-            this.setMainName(this.browseItem.getDisplayName());
-            this.setSubName(this.browseItem.getPath());
+            this.setData(this.browseItem.getDisplayName(), this.browseItem.getPath());
             this.addRemoveButton(removeCallback);
         }
 
@@ -135,6 +135,21 @@ module api.app.browse {
             this.appendChild(removeEl);
         }
 
+        private setData(title: string, subtitle: string) {
+            var titleEl = document.createElement("h6");
+            titleEl.innerHTML = title;
+
+            var subtitleEl = document.createElement("small");
+            subtitleEl.innerHTML = subtitle;
+            titleEl.appendChild(subtitleEl);
+
+            this.getEl().appendChild(titleEl);
+            return titleEl;
+        }
+
+        private setIcon(iconUrl: string, size: number) {
+            this.getEl().appendChild(api.util.loader.ImageLoader.get(iconUrl + "?size=" + size, 32, 32));
+        }
         getBrowseItem(): BrowseItem<M> {
             return this.browseItem;
         }
