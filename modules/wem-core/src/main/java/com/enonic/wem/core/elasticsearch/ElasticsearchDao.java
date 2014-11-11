@@ -106,34 +106,10 @@ public class ElasticsearchDao
             build().
             create();
 
-        System.out.println( searchRequest.toString() );
+        //System.out.println( searchRequest.toString() );
 
         return doSearchRequest( searchRequest );
     }
-
-    /*
-    public SearchResult find( final QueryProperties queryProperties, final QueryBuilder queryBuilder )
-    {
-        final SearchRequestBuilder searchRequestBuilder = this.client.prepareSearch( queryProperties.getIndexName() ).
-            setTypes( queryProperties.getIndexTypeName() ).
-            setQuery( queryBuilder ).
-            setFrom( queryProperties.getFrom() ).
-            setSize( queryProperties.getSize() );
-
-        final ImmutableSet<SortBuilder> sortBuilders = queryProperties.getSortBuilders();
-        if ( !sortBuilders.isEmpty() )
-        {
-            sortBuilders.forEach( searchRequestBuilder::addSort );
-        }
-
-        if ( queryProperties.hasFields() )
-        {
-            searchRequestBuilder.addFields( queryProperties.getNormalizedFieldNames() );
-        }
-
-        return doSearchRequest( searchRequestBuilder );
-    }
-    */
 
     public GetResult get( final QueryProperties queryProperties, final String id )
     {
@@ -165,6 +141,23 @@ public class ElasticsearchDao
         final SearchResult searchResult = doSearchRequest( searchRequestBuilder );
 
         return searchResult.getResults().getTotalHits();
+    }
+
+    private SearchResult doSearchRequest( final SearchRequestBuilder searchRequestBuilder )
+    {
+        try
+        {
+            final SearchResponse searchResponse = searchRequestBuilder.
+                setPreference( searchPreference ).
+                execute().
+                actionGet( searchTimeout );
+
+            return SearchResultFactory.create( searchResponse );
+        }
+        catch ( ElasticsearchException e )
+        {
+            throw new IndexException( "Search request failed", e );
+        }
     }
 
     long count( final ElasticsearchQuery query )
@@ -200,23 +193,6 @@ public class ElasticsearchDao
             throw new IllegalArgumentException( l + " cannot be cast to int without changing its value." );
         }
         return (int) l;
-    }
-
-    private SearchResult doSearchRequest( final SearchRequestBuilder searchRequestBuilder )
-    {
-        try
-        {
-            final SearchResponse searchResponse = searchRequestBuilder.
-                setPreference( searchPreference ).
-                execute().
-                actionGet( searchTimeout );
-
-            return SearchResultFactory.create( searchResponse );
-        }
-        catch ( ElasticsearchException e )
-        {
-            throw new IndexException( "Search request failed", e );
-        }
     }
 
     public void setClient( final Client client )

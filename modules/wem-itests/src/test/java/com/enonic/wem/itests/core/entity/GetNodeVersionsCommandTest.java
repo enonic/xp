@@ -1,19 +1,22 @@
 package com.enonic.wem.itests.core.entity;
 
+import java.time.Instant;
+
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.core.entity.CreateNodeParams;
 import com.enonic.wem.core.entity.FindNodeVersionsResult;
 import com.enonic.wem.core.entity.GetNodeVersionsCommand;
 import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.entity.NodePath;
-import com.enonic.wem.core.index.IndexType;
-import com.enonic.wem.core.repository.StorageNameResolver;
+import com.enonic.wem.core.entity.NodeVersion;
+import com.enonic.wem.core.entity.NodeVersions;
+import com.enonic.wem.core.entity.UpdateNodeCommand;
+import com.enonic.wem.core.entity.UpdateNodeParams;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 
 public class GetNodeVersionsCommandTest
     extends AbstractNodeTest
@@ -28,19 +31,14 @@ public class GetNodeVersionsCommandTest
         createContentRepository();
     }
 
-
-    @Ignore
     @Test
-    public void get_versions()
+    public void get_single_version()
         throws Exception
     {
         final Node node = createNode( CreateNodeParams.create().
             name( "my-node" ).
             parent( NodePath.ROOT ).
             build() );
-
-        printAllIndexContent( StorageNameResolver.resolveStorageIndexName( ContentConstants.CONTENT_REPO.getId() ),
-                              IndexType.VERSION.getName() );
 
         final FindNodeVersionsResult result = GetNodeVersionsCommand.create().
             from( 0 ).
@@ -51,7 +49,56 @@ public class GetNodeVersionsCommandTest
             execute();
 
         assertEquals( 1, result.getHits() );
+    }
 
+    @Test
+    public void get_multiple_version()
+        throws Exception
+    {
+        final Node node = createNode( CreateNodeParams.create().
+            name( "my-node" ).
+            parent( NodePath.ROOT ).
+            build() );
+
+        doUpdateNode( node );
+        doUpdateNode( node );
+        doUpdateNode( node );
+        doUpdateNode( node );
+
+        final FindNodeVersionsResult result = GetNodeVersionsCommand.create().
+            from( 0 ).
+            size( 100 ).
+            nodeId( node.id() ).
+            versionService( this.versionService ).
+            build().
+            execute();
+
+        assertEquals( 5, result.getHits() );
+
+        final NodeVersions nodeVersions = result.getNodeVersions();
+        Instant previousTimestamp = null;
+        for ( final NodeVersion nodeVersion : nodeVersions )
+        {
+            assertTrue( previousTimestamp == null || nodeVersion.getTimestamp().isBefore( previousTimestamp ) );
+            previousTimestamp = nodeVersion.getTimestamp();
+        }
 
     }
+
+    private Node doUpdateNode( final Node node )
+    {
+        return UpdateNodeCommand.create().
+            params( new UpdateNodeParams().editor( toBeEdited -> Node.editNode( toBeEdited ).
+                manualOrderValue( 10l ) ).
+                id( node.id() ) ).
+            queryService( this.queryService ).
+            indexService( this.indexService ).
+            workspaceService( this.workspaceService ).
+            versionService( this.versionService ).
+            nodeDao( this.nodeDao ).
+            build().
+            execute();
+    }
+
+
 }

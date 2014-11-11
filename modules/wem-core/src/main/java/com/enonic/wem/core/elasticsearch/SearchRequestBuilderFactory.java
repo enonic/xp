@@ -36,8 +36,7 @@ public class SearchRequestBuilderFactory
             setSearchType( SearchType.DEFAULT ).
             setQuery( query.getQuery() ).
             setPostFilter( query.getFilter() ).
-            setSize( resolvedSize ).
-            addFields( query.getReturnFields().getReturnFieldNames() );
+            setSize( resolvedSize );
 
         for ( final SortBuilder sortBuilder : query.getSortBuilders() )
         {

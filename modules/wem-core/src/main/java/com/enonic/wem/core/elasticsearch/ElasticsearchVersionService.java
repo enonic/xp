@@ -110,7 +110,7 @@ public class ElasticsearchVersionService
             from( from ).
             size( size ).
             addSortBuilder( new FieldSortBuilder( TIMESTAMP_ID_FIELD_NAME ).order( SortOrder.DESC ) ).
-            setReturnFields( ReturnFields.from( TIMESTAMP_ID_FIELD_NAME, NODE_ID_FIELD_NAME ) ).
+            setReturnFields( ReturnFields.from( TIMESTAMP_ID_FIELD_NAME, NODE_VERSION_ID_FIELD_NAME ) ).
             build();
 
         final SearchResult searchResults = elasticsearchDao.find( query );
@@ -121,24 +121,6 @@ public class ElasticsearchVersionService
         }
         return searchResults;
     }
-
-    /*
-    private SearchResult doGetFromVersionId( final NodeVersionId nodeVersionId, final RepositoryId repositoryId )
-    {
-        final TermQueryBuilder blobKeyQuery = new TermQueryBuilder( NODE_VERSION_ID_FIELD_NAME, nodeVersionId.toString() );
-
-        final QueryProperties queryProperties =
-            createQueryMetaData( 0, 1, repositoryId, NODE_VERSION_ID_FIELD_NAME, TIMESTAMP_ID_FIELD_NAME );
-
-        final SearchResult searchResult = elasticsearchDao.find( queryProperties, blobKeyQuery );
-
-        if ( searchResult.isEmpty() )
-        {
-            throw new RuntimeException( "Did not find version entry with blobKey: " + nodeVersionId );
-        }
-        return searchResult;
-    }
-    */
 
     private SearchResult doGetFromVersionIdNew( final NodeVersionId nodeVersionId, final RepositoryId repositoryId )
     {
