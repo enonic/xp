@@ -6,6 +6,8 @@ module api.app.view {
 
         private displayName: string;
 
+        private iconClass: string;
+
         private path: string;
 
         private iconUrl;
@@ -45,6 +47,15 @@ module api.app.view {
             return this.iconUrl;
         }
 
+        setIconClass(iconClass: string): ViewItem<M> {
+            this.iconClass = iconClass;
+            return this;
+        }
+
+        getIconClass(): string {
+            return this.iconClass;
+        }
+
         equals(o: api.Equitable): boolean {
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, ViewItem)) {
                 return false;
@@ -53,7 +64,7 @@ module api.app.view {
             return this.model.equals(other.model) &&
                    this.displayName == other.displayName &&
                    this.path == other.path &&
-                   this.iconUrl == other.iconUrl;
+                   this.iconUrl == other.iconUrl && this.getIconClass() == other.iconClass;
         }
     }
 

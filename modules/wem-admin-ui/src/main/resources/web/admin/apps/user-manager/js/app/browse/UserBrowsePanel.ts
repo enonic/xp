@@ -48,50 +48,48 @@ module app.browse {
                 var item = new BrowseItem<UserTreeGridItem>(userGridItem).
                     setId(userGridItem.getDataId()).
                     setDisplayName(userGridItem.getItemDisplayName()).
-                    //TODO set a less icon-class
-                    setIconUrl(this.selectIconUrl(userGridItem));
-
+                    setIconClass(this.selectIconClass(userGridItem));
                 browseItems.push(item);
 
             });
             return browseItems;
         }
 
-        private selectIconUrl(item: app.browse.UserTreeGridItem): string {
+        private selectIconClass(item: app.browse.UserTreeGridItem): string {
             var type: UserTreeGridItemType = item.getType();
             switch (type) {
             case UserTreeGridItemType.USER_STORE:
             {
-                return  api.util.UriHelper.getAdminUri('common/images/icons/128x128/userstore.png');
+                return "icon-address-book icon-large";
             }
             case UserTreeGridItemType.PRINCIPAL:
             {
                 if (item.getPrincipal().isRole()) {
-                    //TODO instead of URI need to set icon-class
-                    return  api.util.UriHelper.getAdminUri('common/images/icons/128x128/userstore.png');
+
+                    return "icon-address-book icon-large";
                 }
                 if (item.getPrincipal().isUser()) {
-                    //TODO instead of URI need to set icon-class
-                    return  api.util.UriHelper.getAdminUri('common/images/icons/128x128/businessman.png');
+
+                    return "icon-user icon-large";
                 }
                 if (item.getPrincipal().isGroup()) {
-                    return  api.util.UriHelper.getAdminUri('common/images/icons/128x128/group.png');
+                    return  "icon-users2 icon-large";
                 }
 
             }
             case UserTreeGridItemType.GROUPS:
-            {            //TODO instead of URI need to set icon-class
-                return  api.util.UriHelper.getAdminUri('common/images/icons/128x128/group.png');
+            {
+                return  "icon-users2 icon-large"
             }
             case UserTreeGridItemType.ROLES:
 
             {
-                //TODO instead of URI need to set icon-class
-                return  api.util.UriHelper.getAdminUri('common/images/icons/icoMoon/128x128/puzzle.png');
+                // TODO different icons for host, anonymous, admin  ....
+                return  "icon-key icon-large";
             }
             case UserTreeGridItemType.USERS:
-            {     //TODO instead of URI need to set icon-class
-                return  api.util.UriHelper.getAdminUri('common/images/icons/128x128/businessmen.png');
+            {
+                return "icon-users icon-large";
             }
             }
 

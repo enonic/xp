@@ -105,15 +105,23 @@ module api.app.browse {
 
     }
 
-    export class SelectionItem<M extends api.Equitable> extends api.dom.DivEl {
+    export class SelectionItem<M extends api.Equitable> extends NamesAndIconView {
 
         private browseItem: api.app.browse.BrowseItem<M>;
 
         constructor(browseItem: BrowseItem<M>, removeCallback?: () => void) {
-            super("browse-selection-item");
+            var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small);
+
+            super(namesAndIconView);
             this.browseItem = browseItem;
-            this.setIcon(this.browseItem.getIconUrl(), 32);
-            this.setData(this.browseItem.getDisplayName(), this.browseItem.getPath());
+            if (this.browseItem.getIconUrl()) {
+                this.setIconUrl(this.browseItem.getIconUrl());
+            } else {
+                this.setIconClass(this.browseItem.getIconClass());
+            }
+
+            this.setMainName(this.browseItem.getDisplayName());
+            this.setSubName(this.browseItem.getPath());
             this.addRemoveButton(removeCallback);
         }
 
@@ -125,22 +133,6 @@ module api.app.browse {
                 }
             });
             this.appendChild(removeEl);
-        }
-
-        private setIcon(iconUrl: string, size: number) {
-            this.getEl().appendChild(api.util.loader.ImageLoader.get(iconUrl + "?size=" + size, 32, 32));
-        }
-
-        private setData(title: string, subtitle: string) {
-            var titleEl = document.createElement("h6");
-            titleEl.innerHTML = title;
-
-            var subtitleEl = document.createElement("small");
-            subtitleEl.innerHTML = subtitle;
-            titleEl.appendChild(subtitleEl);
-
-            this.getEl().appendChild(titleEl);
-            return titleEl;
         }
 
         getBrowseItem(): BrowseItem<M> {
