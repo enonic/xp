@@ -1,6 +1,7 @@
 package com.enonic.wem.itests.core.entity;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.ContentConstants;
@@ -28,8 +29,9 @@ public class GetNodeVersionsCommandTest
     }
 
 
+    @Ignore
     @Test
-    public void testName()
+    public void get_versions()
         throws Exception
     {
         final Node node = createNode( CreateNodeParams.create().
