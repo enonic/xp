@@ -45,21 +45,19 @@ public class NodeChildOrderResolverTest
         final ChildOrder childOrder = ChildOrder.from( "myField DESC" );
 
         final Context myContext = ContextBuilder.create().
-            object( Workspace.create().
+            workspace( Workspace.create().
                 name( "myWorkspace" ).
                 childOrder( childOrder ).
                 build() ).
-            object( Repository.create().id( RepositoryId.from( "myRepository" ) ) ).
+            repositoryId( Repository.create().id( RepositoryId.from( "myRepository" ) ).build().getId() ).
             build();
 
-        final ChildOrder resolvedOrder = myContext.runWith( () -> {
-            return NodeChildOrderResolver.create().
-                nodeDao( this.nodeDao ).
-                workspaceService( this.queryService ).
-                nodePath( NodePath.ROOT ).
-                build().
-                resolve();
-        } );
+        final ChildOrder resolvedOrder = myContext.runWith( () -> NodeChildOrderResolver.create().
+            nodeDao( this.nodeDao ).
+            workspaceService( this.queryService ).
+            nodePath( NodePath.ROOT ).
+            build().
+            resolve() );
 
         assertEquals( childOrder, resolvedOrder );
     }

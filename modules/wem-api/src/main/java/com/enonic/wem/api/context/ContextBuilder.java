@@ -1,35 +1,59 @@
 package com.enonic.wem.api.context;
 
+import com.enonic.wem.api.repository.RepositoryId;
+import com.enonic.wem.api.security.auth.AuthenticationInfo;
+import com.enonic.wem.api.session.Session;
 import com.enonic.wem.api.workspace.Workspace;
 
 public final class ContextBuilder
 {
-    private final Context context;
+    private final ContextImpl context;
 
     private ContextBuilder()
     {
-        this.context = new Context();
+        this.context = new ContextImpl();
     }
 
-    public ContextBuilder workspace( final String workspace )
+    public ContextBuilder repositoryId( final String value )
     {
-        return object( Workspace.from( workspace ) );
+        return repositoryId( RepositoryId.from( value ) );
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> ContextBuilder object( final T instance )
+    public ContextBuilder repositoryId( final RepositoryId value )
     {
-        return object( (Class<T>) instance.getClass(), instance );
+        return attribute( value );
     }
 
-    public <T> ContextBuilder object( final Class<T> type, final T instance )
+    public ContextBuilder workspace( final String value )
     {
-        return object( type.getName(), instance );
+        return workspace( Workspace.from( value ) );
     }
 
-    public <T> ContextBuilder object( final String key, final T instance )
+    public ContextBuilder workspace( final Workspace value )
     {
-        this.context.objects.put( key, instance );
+        return attribute( value );
+    }
+
+    public ContextBuilder session( final Session session )
+    {
+        this.context.setSession( session );
+        return this;
+    }
+
+    public ContextBuilder authInfo( final AuthenticationInfo value )
+    {
+        return attribute( value );
+    }
+
+    public ContextBuilder attribute( final String key, final Object value )
+    {
+        this.context.setAttribute( key, value );
+        return this;
+    }
+
+    public <T> ContextBuilder attribute( final T value )
+    {
+        this.context.setAttribute( value );
         return this;
     }
 
@@ -45,6 +69,9 @@ public final class ContextBuilder
 
     public static ContextBuilder from( final Context context )
     {
-        return new ContextBuilder();
+        final ContextBuilder builder = new ContextBuilder();
+        builder.context.setSession( context.getSession() );
+        builder.context.setAttributes( context.getAttributes() );
+        return builder;
     }
 }

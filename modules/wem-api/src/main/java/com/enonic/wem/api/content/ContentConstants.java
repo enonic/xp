@@ -28,8 +28,8 @@ public class ContentConstants
         build();
 
     public static final Context CONTEXT_STAGE = ContextBuilder.create().
-        object( WORKSPACE_STAGE ).
-        object( CONTENT_REPO.getId() ).
+        workspace( WORKSPACE_STAGE ).
+        repositoryId( CONTENT_REPO.getId() ).
         build();
 
 }

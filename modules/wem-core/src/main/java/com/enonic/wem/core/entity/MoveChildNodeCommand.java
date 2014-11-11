@@ -3,6 +3,7 @@ package com.enonic.wem.core.entity;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.index.IndexPaths;
 import com.enonic.wem.api.query.expr.CompareExpr;
 import com.enonic.wem.api.query.expr.FieldExpr;
@@ -91,7 +92,7 @@ public class MoveChildNodeCommand
     {
         final NodeQuery query = createFirstNodeBeforeInsertQuery( nodeAfterOrderValue );
 
-        return queryService.find( query, IndexContext.from( Context.current() ) );
+        return queryService.find( query, IndexContext.from( ContextAccessor.current() ) );
     }
 
     private Node doUpdateNodeOrderValue( final Long newOrderValue )

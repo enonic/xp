@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.CompareStatus;
 import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.index.query.QueryService;
@@ -36,7 +37,7 @@ public class CompareNodeCommand
 
     public NodeComparison execute()
     {
-        final Context context = Context.current();
+        final Context context = ContextAccessor.current();
 
         final NodeVersionId sourceVersionId = this.queryService.get( nodeId, IndexContext.from( context ) );
         final NodeVersionId targetVersionId = this.queryService.get( nodeId, IndexContext.from( this.target, context.getRepositoryId() ) );

@@ -11,6 +11,7 @@ import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageNotFoundException;
 import com.enonic.wem.api.content.page.UpdatePageParams;
 import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.ContextAccessor;
 
 import static com.enonic.wem.api.content.Content.editContent;
 
@@ -37,7 +38,7 @@ final class UpdatePageCommand
 
         if ( content == null )
         {
-            throw new ContentNotFoundException( this.params.getContent(), Context.current().getWorkspace() );
+            throw new ContentNotFoundException( this.params.getContent(), ContextAccessor.current().getWorkspace() );
         }
         if ( content.getPage() == null )
         {
@@ -52,14 +53,7 @@ final class UpdatePageCommand
 
             final UpdateContentParams params = new UpdateContentParams().
                 contentId( this.params.getContent() ).
-                editor( new ContentEditor()
-                {
-                    @Override
-                    public Content.EditBuilder edit( final Content toBeEdited )
-                    {
-                        return editContent( toBeEdited ).page( editedPage );
-                    }
-                } );
+                editor( toBeEdited -> editContent( toBeEdited ).page( editedPage ) );
 
             this.contentService.update( params );
         }

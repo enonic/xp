@@ -1,6 +1,7 @@
 package com.enonic.wem.core.entity;
 
 import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.index.query.QueryService;
 import com.enonic.wem.core.workspace.WorkspaceContext;
@@ -17,7 +18,7 @@ abstract class AbstractDeleteNodeCommand
 
     void doDeleteChildren( final Node parent )
     {
-        final Context context = Context.current();
+        final Context context = ContextAccessor.current();
 
         final FindNodesByParentResult result = doFindNodesByParent( FindNodesByParentParams.create().
             parentPath( parent.path() ).

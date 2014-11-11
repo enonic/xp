@@ -1,6 +1,7 @@
 package com.enonic.wem.core.entity;
 
 import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.core.version.GetVersionsQuery;
 import com.enonic.wem.core.version.VersionService;
 
@@ -30,7 +31,7 @@ public class GetNodeVersionsCommand
             size( this.size ).
             build();
 
-        return this.versionService.findVersions( query, Context.current().getRepositoryId() );
+        return this.versionService.findVersions( query, ContextAccessor.current().getRepositoryId() );
     }
 
     public static Builder create()

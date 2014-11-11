@@ -1,6 +1,7 @@
 package com.enonic.wem.core.entity;
 
 import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.query.expr.QueryExpr;
 import com.enonic.wem.core.entity.query.NodeQuery;
@@ -35,7 +36,7 @@ public class FindNodesByParentCommand
 
         final NodeQuery query = createByPathQuery( order );
 
-        final NodeQueryResult nodeQueryResult = this.queryService.find( query, IndexContext.from( Context.current() ) );
+        final NodeQueryResult nodeQueryResult = this.queryService.find( query, IndexContext.from( ContextAccessor.current() ) );
 
         final Nodes nodes = doGetByIds( nodeQueryResult.getNodeIds(), order.getOrderExpressions(), true );
 

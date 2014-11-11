@@ -2,6 +2,7 @@ package com.enonic.wem.core.entity;
 
 import com.enonic.wem.api.content.CompareStatus;
 import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.index.query.QueryService;
@@ -48,7 +49,7 @@ public class CompareNodesCommand
 
     private NodeComparison doCompareVersions( final NodeId nodeId )
     {
-        final Context context = Context.current();
+        final Context context = ContextAccessor.current();
 
         final NodeVersionId sourceVersionId = queryService.get( nodeId, IndexContext.from( context ) );
         final NodeVersionId targetVersionId = queryService.get( nodeId, IndexContext.from( this.target, context.getRepositoryId() ) );

@@ -15,8 +15,8 @@ public class TestContext
         build();
 
     public static final Context TEST_CONTEXT = ContextBuilder.create().
-        object( TEST_WORKSPACE ).
-        object( TEST_REPOSITORY.getId() ).
+        workspace( TEST_WORKSPACE ).
+        repositoryId( TEST_REPOSITORY.getId() ).
         build();
 
 }

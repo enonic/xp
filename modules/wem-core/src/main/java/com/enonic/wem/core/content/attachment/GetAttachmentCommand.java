@@ -4,6 +4,7 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.core.content.ContentAttachmentNodeTranslator;
 import com.enonic.wem.core.entity.NoNodeWithIdFoundException;
 import com.enonic.wem.core.entity.Node;
@@ -52,7 +53,7 @@ final class GetAttachmentCommand
         }
         catch ( NoNodeWithIdFoundException e )
         {
-            throw new ContentNotFoundException( this.contentId, Context.current().getWorkspace() );
+            throw new ContentNotFoundException( this.contentId, ContextAccessor.current().getWorkspace() );
         }
     }
 

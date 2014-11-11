@@ -3,6 +3,7 @@ package com.enonic.wem.core.entity;
 import java.util.LinkedHashSet;
 
 import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.query.expr.QueryExpr;
 import com.enonic.wem.core.entity.query.NodeQuery;
@@ -53,7 +54,7 @@ public class SetNodeChildOrderCommand
         final NodeQueryResult childNodeResult = queryService.find( NodeQuery.create().
             parent( parentNode.path() ).
             query( new QueryExpr( parentNode.getChildOrder().getOrderExpressions() ) ).
-            build(), IndexContext.from( Context.current() ) );
+            build(), IndexContext.from( ContextAccessor.current() ) );
 
         final LinkedHashSet<NodeId> childNodeIds = childNodeResult.getNodeQueryResultSet().getNodeIds();
 

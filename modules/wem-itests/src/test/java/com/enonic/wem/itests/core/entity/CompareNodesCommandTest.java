@@ -101,8 +101,8 @@ public class CompareNodesCommandTest
         final Workspace prodWs = ContentConstants.WORKSPACE_PROD;
 
         final Context prodContext = ContextBuilder.create().
-            object( prodWs ).
-            object( ContentConstants.CONTENT_REPO.getId() ).
+            workspace( prodWs ).
+            repositoryId( ContentConstants.CONTENT_REPO.getId() ).
             build();
 
         final Node createdNode = stageContext.runWith( () -> createNode( CreateNodeParams.create().

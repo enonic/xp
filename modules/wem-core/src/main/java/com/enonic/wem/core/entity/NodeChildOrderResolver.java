@@ -1,6 +1,7 @@
 package com.enonic.wem.core.entity;
 
 import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.core.entity.dao.NodeDao;
 import com.enonic.wem.core.index.IndexContext;
@@ -33,14 +34,14 @@ public class NodeChildOrderResolver
 
         if ( parentPath.isRoot() )
         {
-            return Context.current().getWorkspace().getChildOrder();
+            return ContextAccessor.current().getWorkspace().getChildOrder();
         }
 
-        final NodeVersionId parentNodeVersion = this.queryService.get( this.parentPath, IndexContext.from( Context.current() ) );
+        final NodeVersionId parentNodeVersion = this.queryService.get( this.parentPath, IndexContext.from( ContextAccessor.current() ) );
 
         if ( parentNodeVersion == null )
         {
-            return Context.current().getWorkspace().getChildOrder();
+            return ContextAccessor.current().getWorkspace().getChildOrder();
         }
 
         final Node parentNode = this.nodeDao.getByVersionId( parentNodeVersion );

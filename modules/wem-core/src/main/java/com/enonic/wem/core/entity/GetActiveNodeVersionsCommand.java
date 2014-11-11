@@ -3,6 +3,7 @@ package com.enonic.wem.core.entity;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.api.workspace.Workspaces;
 import com.enonic.wem.core.index.IndexContext;
@@ -36,7 +37,7 @@ public class GetActiveNodeVersionsCommand
 
         for ( final Workspace workspace : workspaces )
         {
-            final Context context = Context.current();
+            final Context context = ContextAccessor.current();
 
             final NodeVersionId currentVersion =
                 this.queryService.get( this.nodeId, IndexContext.from( workspace, context.getRepositoryId() ) );

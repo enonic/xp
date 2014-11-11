@@ -44,8 +44,8 @@ public class GetActiveNodeVersionsCommandTest
             build();
 
         final Context testContext = ContextBuilder.create().
-            object( testWorkspace ).
-            object( ContentConstants.CONTENT_REPO.getId() ).
+            workspace( testWorkspace ).
+            repositoryId( ContentConstants.CONTENT_REPO.getId() ).
             build();
 
         final Node node = createAndPushNode( testWorkspace );

@@ -1,6 +1,7 @@
 package com.enonic.wem.core.entity;
 
 import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.entity.dao.NodeDao;
 import com.enonic.wem.core.entity.dao.NodeNotFoundException;
@@ -31,7 +32,7 @@ public class NodeServiceImpl
         if ( node == null )
         {
             throw new NodeNotFoundException(
-                "Node with id " + id + " not found in workspace " + Context.current().getWorkspace().getName() );
+                "Node with id " + id + " not found in workspace " + ContextAccessor.current().getWorkspace().getName() );
         }
 
         return node;
@@ -59,7 +60,7 @@ public class NodeServiceImpl
         if ( node == null )
         {
             throw new NodeNotFoundException(
-                "Node with path " + path + " not found in workspace " + Context.current().getWorkspace().getName() );
+                "Node with path " + path + " not found in workspace " + ContextAccessor.current().getWorkspace().getName() );
         }
 
         return node;

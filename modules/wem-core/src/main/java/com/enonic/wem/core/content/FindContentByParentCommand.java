@@ -6,6 +6,7 @@ import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.FindContentByParentParams;
 import com.enonic.wem.api.content.FindContentByParentResult;
 import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.core.entity.FindNodesByParentParams;
 import com.enonic.wem.core.entity.FindNodesByParentResult;
 import com.enonic.wem.core.entity.NodePath;
@@ -47,7 +48,7 @@ final class FindContentByParentCommand
             parentPath( parentPath ).
             from( params.getFrom() ).
             size( params.getSize() ).
-            childOrder( useWorkspaceOrdering ? Context.current().getWorkspace().getChildOrder() : params.getChildOrder() ).
+            childOrder( useWorkspaceOrdering ? ContextAccessor.current().getWorkspace().getChildOrder() : params.getChildOrder() ).
             build() );
 
         final Nodes nodes = result.getNodes();

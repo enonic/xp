@@ -6,6 +6,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.core.entity.NoNodeAtPathFoundException;
 import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.entity.NodePath;
@@ -32,7 +33,7 @@ final class GetContentByPathCommand
         }
         catch ( NoNodeAtPathFoundException e )
         {
-            throw new ContentNotFoundException( contentPath, Context.current().getWorkspace() );
+            throw new ContentNotFoundException( contentPath, ContextAccessor.current().getWorkspace() );
         }
     }
 

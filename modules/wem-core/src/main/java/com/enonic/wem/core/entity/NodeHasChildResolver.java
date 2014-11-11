@@ -1,6 +1,7 @@
 package com.enonic.wem.core.entity;
 
 import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.index.query.QueryService;
 
@@ -32,7 +33,7 @@ public class NodeHasChildResolver
 
     private Node doResolve( final Node node )
     {
-        final boolean hasChildren = this.queryService.hasChildren( node.path(), IndexContext.from( Context.current() ) );
+        final boolean hasChildren = this.queryService.hasChildren( node.path(), IndexContext.from( ContextAccessor.current() ) );
 
         return Node.newNode( node ).hasChildren( hasChildren ).build();
     }
