@@ -147,7 +147,7 @@ module api.ui.treegrid {
             });
 
             if (builder.isShowToolbar()) {
-                this.toolbar = new TreeGridToolbar(this.actions);
+                this.toolbar = new TreeGridToolbar(this.actions, this);
                 this.appendChild(this.toolbar);
                 // make sure it won't left from the cloned grid
                 this.removeClass("no-toolbar");
@@ -465,6 +465,12 @@ module api.ui.treegrid {
             this.stash = null;
         }
 
+        refreshToolbar() {
+            if (this.toolbar) {
+                this.toolbar.refresh();
+            }
+        }
+
         selectAll() {
             this.grid.selectAll();
         }
@@ -671,11 +677,11 @@ module api.ui.treegrid {
                     });
             } else {
                 parentNode.addChild(this.dataToTreeNode(data, root), true);
-
                 var node = root.findNode(this.getDataId(data));
                 if (node) {
                         if (!stashedParentNode) {
                             this.gridData.setItems(root.treeToList());
+                            this.refreshToolbar();
                         }
                     if (isRootParentNode) {
                         this.sortNodeChildren(parentNode);
@@ -891,6 +897,18 @@ module api.ui.treegrid {
 
         onLoaded(listener: () => void) {
             this.loadedListeners.push(listener);
+            if (this.toolbar) {
+                //this.toolbar.refresh(this);
+                /*this.actions = new TreeGridToolbarActions(this.grid);
+
+                 var index = this.toolbar.getSiblingIndex();
+                 this.removeChild(this.toolbar);
+                 this.toolbar = new TreeGridToolbar(this.actions);
+                 this.insertChild(this.toolbar, index);*/
+
+
+            }
+
             return this;
         }
 
@@ -978,6 +996,7 @@ module api.ui.treegrid {
             this.grid.syncGridSelection(false);
             this.grid.invalidate();
             this.grid.renderGrid();
+            this.refreshToolbar();
         }
 
         refreshNodeData(parentNode: TreeNode<DATA>): wemQ.Promise<TreeNode<DATA>> {
