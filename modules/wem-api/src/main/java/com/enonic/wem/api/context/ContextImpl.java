@@ -13,7 +13,7 @@ import com.enonic.wem.api.util.Exceptions;
 import com.enonic.wem.api.workspace.Workspace;
 
 final class ContextImpl
-    implements Context
+    implements MutableContext
 {
     private final static ContextAccessor CURRENT = ContextAccessor.INSTANCE;
 
@@ -80,12 +80,14 @@ final class ContextImpl
         return ImmutableMap.copyOf( this.attributes );
     }
 
-    protected <T> void setAttribute( final T value )
+    @Override
+    public <T> void setAttribute( final T value )
     {
         setAttribute( value.getClass().getName(), value );
     }
 
-    protected void setAttribute( final String key, final Object value )
+    @Override
+    public void setAttribute( final String key, final Object value )
     {
         this.attributes.put( key, value );
     }
@@ -95,7 +97,8 @@ final class ContextImpl
         this.attributes.putAll( values );
     }
 
-    protected void setSession( final Session session )
+    @Override
+    public void setSession( final Session session )
     {
         this.session = session;
     }
