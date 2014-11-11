@@ -10,33 +10,38 @@ import com.enonic.wem.api.resource.ResourceKey;
 
 public final class ScriptLogger
 {
+    private final static String FORMAT_STR = "({}) {}";
+
+    private final ResourceKey source;
+
     private final Logger log;
 
     public ScriptLogger( final ResourceKey source )
     {
-        this.log = LoggerFactory.getLogger( source.getModule().toString() );
+        this.source = source;
+        this.log = LoggerFactory.getLogger( this.source.getModule().toString() );
     }
 
     public void debug( final String message, final Object... args )
     {
-        this.log.debug( format( message, args ) );
+        this.log.debug( FORMAT_STR, this.source.getPath(), format( message, args ) );
     }
 
     public void info( final String message, final Object... args )
     {
-        this.log.info( format( message, args ) );
+        this.log.info( FORMAT_STR, this.source.getPath(), format( message, args ) );
     }
 
     public void warning( final String message, final Object... args )
     {
-        this.log.warn( format( message, args ) );
+        this.log.warn( FORMAT_STR, this.source.getPath(), format( message, args ) );
     }
 
     public void error( final String message, final Object... args )
     {
-        this.log.error( format( message, args ) );
+        this.log.error( FORMAT_STR, this.source.getPath(), format( message, args ) );
     }
-
+    
     public String format( final String message, final Object... args )
     {
         final Object[] converted = convertArgs( args );
@@ -81,6 +86,6 @@ public final class ScriptLogger
 
     private String serialize( final JSObject arg )
     {
-        return new JsObjectSerializer().toJson( arg ).toString();
+        return new JsObjectSerializer().toString( arg );
     }
 }

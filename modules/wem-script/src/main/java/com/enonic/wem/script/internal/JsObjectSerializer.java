@@ -1,15 +1,39 @@
 package com.enonic.wem.script.internal;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import jdk.nashorn.api.scripting.JSObject;
 
+import com.enonic.wem.api.util.Exceptions;
+
 final class JsObjectSerializer
 {
-    public JsonNode toJson( final JSObject value )
+    private final ObjectMapper mapper;
+
+    public JsObjectSerializer()
+    {
+        this.mapper = new ObjectMapper();
+        this.mapper.enable( SerializationFeature.INDENT_OUTPUT );
+    }
+
+    public String toString( final JSObject value )
+    {
+        try
+        {
+            return this.mapper.writeValueAsString( toJson( value ) );
+        }
+        catch ( final Exception e )
+        {
+            throw Exceptions.unchecked( e );
+        }
+    }
+
+    private JsonNode toJson( final JSObject value )
     {
         if ( value.isArray() )
         {
