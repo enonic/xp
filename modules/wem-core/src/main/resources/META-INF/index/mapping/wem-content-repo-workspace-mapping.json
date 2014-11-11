@@ -26,16 +26,6 @@
                 "type": "string",
                 "store": "true",
                 "index": "not_analyzed"
-            },
-            "path": {
-                "type": "string",
-                "store": "false",
-                "index": "not_analyzed"
-            },
-            "parentpath": {
-                "type": "string",
-                "store": "false",
-                "index": "not_analyzed"
             }
         }
     }

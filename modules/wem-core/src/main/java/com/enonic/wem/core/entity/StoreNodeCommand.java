@@ -30,8 +30,6 @@ public class StoreNodeCommand
             build(), context.getRepositoryId() );
 
         this.workspaceService.store( StoreWorkspaceDocument.create().
-            path( node.path() ).
-            parentPath( node.parent() ).
             id( node.id() ).
             nodeVersionId( updatedNodeVersionId ).
             build(), WorkspaceContext.from( context ) );

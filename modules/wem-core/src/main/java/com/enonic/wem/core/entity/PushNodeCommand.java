@@ -40,8 +40,6 @@ public class PushNodeCommand
         this.workspaceService.store( StoreWorkspaceDocument.create().
             nodeVersionId( currentVersion ).
             id( this.id ).
-            path( currentNode.path() ).
-            parentPath( currentNode.parent() ).
             build(), WorkspaceContext.from( this.target, context.getRepositoryId() ) );
 
         this.indexService.store( currentNode, currentVersion, IndexContext.from( this.target, context.getRepositoryId() ) );

@@ -15,10 +15,6 @@ public class WorkspaceXContentBuilderFactory
 
     public static final String NODE_ID_FIELD_NAME = "nodeid";
 
-    public static final String PATH_FIELD_NAME = "path";
-
-    public static final String PARENT_PATH_FIELD_NAME = "parentpath";
-
     public static XContentBuilder create( final StoreWorkspaceDocument storeWorkspaceDocument, final Workspace workspace )
     {
         try
@@ -28,11 +24,6 @@ public class WorkspaceXContentBuilderFactory
             addField( builder, NODE_VERSION_ID_FIELD_NAME, storeWorkspaceDocument.getNodeVersionId().toString() );
             addField( builder, WORKSPACE_FIELD_NAME, workspace.getName() );
             addField( builder, NODE_ID_FIELD_NAME, storeWorkspaceDocument.getNodeId().toString() );
-            addField( builder, PATH_FIELD_NAME,
-                      storeWorkspaceDocument.getPath() != null ? storeWorkspaceDocument.getPath().toString() : null );
-            addField( builder, PARENT_PATH_FIELD_NAME,
-                      storeWorkspaceDocument.getParentPath() != null ? storeWorkspaceDocument.getParentPath().toString() : null );
-
             endBuilder( builder );
             return builder;
         }
