@@ -12,7 +12,7 @@ import com.enonic.wem.core.entity.NodePath;
 import com.enonic.wem.core.entity.Nodes;
 
 final class FindContentByParentCommand
-    extends AbstractFindContentCommand
+    extends AbstractContentCommand
 {
     private final FindContentByParentParams params;
 
@@ -62,7 +62,7 @@ final class FindContentByParentCommand
     }
 
     public static class Builder
-        extends AbstractFindContentCommand.Builder<Builder>
+        extends AbstractContentCommand.Builder<Builder>
     {
         private final FindContentByParentParams params;
 

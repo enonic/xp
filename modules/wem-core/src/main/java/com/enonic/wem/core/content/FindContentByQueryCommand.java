@@ -9,7 +9,7 @@ import com.enonic.wem.core.entity.FindNodesByQueryResult;
 import com.enonic.wem.core.entity.query.NodeQuery;
 
 final class FindContentByQueryCommand
-    extends AbstractFindContentCommand
+    extends AbstractContentCommand
 {
     private final FindContentByQueryParams params;
 
@@ -41,7 +41,7 @@ final class FindContentByQueryCommand
     }
 
     public static final class Builder
-        extends AbstractFindContentCommand.Builder<Builder>
+        extends AbstractContentCommand.Builder<Builder>
     {
         private FindContentByQueryParams params;
 

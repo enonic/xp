@@ -10,6 +10,7 @@ import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 
 import com.enonic.wem.api.repository.RepositoryId;
+import com.enonic.wem.core.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.core.elasticsearch.xcontent.VersionXContentBuilderFactory;
 import com.enonic.wem.core.entity.FindNodeVersionsResult;
 import com.enonic.wem.core.entity.NodeId;
@@ -52,7 +53,7 @@ public class ElasticsearchVersionService
     @Override
     public NodeVersion getVersion( final NodeVersionId nodeVersionId, final RepositoryId repositoryId )
     {
-        final SearchResult searchResult = doGetFromVersionId( nodeVersionId, repositoryId );
+        final SearchResult searchResult = doGetFromVersionIdNew( nodeVersionId, repositoryId );
 
         final SearchResultEntry searchHit = searchResult.getResults().getFirstHit();
 
@@ -102,10 +103,17 @@ public class ElasticsearchVersionService
     {
         final TermQueryBuilder nodeIdQuery = new TermQueryBuilder( NODE_ID_FIELD_NAME, id.toString() );
 
-        final QueryProperties queryProperties =
-            createQueryMetaData( from, size, repositoryId, TIMESTAMP_ID_FIELD_NAME, NODE_VERSION_ID_FIELD_NAME );
+        final ElasticsearchQuery query = ElasticsearchQuery.create().
+            index( StorageNameResolver.resolveStorageIndexName( repositoryId ) ).
+            indexType( IndexType.VERSION.getName() ).
+            query( nodeIdQuery ).
+            from( from ).
+            size( size ).
+            addSortBuilder( new FieldSortBuilder( TIMESTAMP_ID_FIELD_NAME ).order( SortOrder.DESC ) ).
+            setReturnFields( ReturnFields.from( TIMESTAMP_ID_FIELD_NAME, NODE_ID_FIELD_NAME ) ).
+            build();
 
-        final SearchResult searchResults = elasticsearchDao.find( queryProperties, nodeIdQuery );
+        final SearchResult searchResults = elasticsearchDao.find( query );
 
         if ( searchResults.isEmpty() )
         {
@@ -114,6 +122,7 @@ public class ElasticsearchVersionService
         return searchResults;
     }
 
+    /*
     private SearchResult doGetFromVersionId( final NodeVersionId nodeVersionId, final RepositoryId repositoryId )
     {
         final TermQueryBuilder blobKeyQuery = new TermQueryBuilder( NODE_VERSION_ID_FIELD_NAME, nodeVersionId.toString() );
@@ -122,6 +131,30 @@ public class ElasticsearchVersionService
             createQueryMetaData( 0, 1, repositoryId, NODE_VERSION_ID_FIELD_NAME, TIMESTAMP_ID_FIELD_NAME );
 
         final SearchResult searchResult = elasticsearchDao.find( queryProperties, blobKeyQuery );
+
+        if ( searchResult.isEmpty() )
+        {
+            throw new RuntimeException( "Did not find version entry with blobKey: " + nodeVersionId );
+        }
+        return searchResult;
+    }
+    */
+
+    private SearchResult doGetFromVersionIdNew( final NodeVersionId nodeVersionId, final RepositoryId repositoryId )
+    {
+        final TermQueryBuilder blobKeyQuery = new TermQueryBuilder( NODE_VERSION_ID_FIELD_NAME, nodeVersionId.toString() );
+
+        final ElasticsearchQuery query = ElasticsearchQuery.create().
+            index( StorageNameResolver.resolveStorageIndexName( repositoryId ) ).
+            indexType( IndexType.VERSION.getName() ).
+            query( blobKeyQuery ).
+            from( 0 ).
+            size( 1 ).
+            addSortBuilder( new FieldSortBuilder( TIMESTAMP_ID_FIELD_NAME ).order( SortOrder.DESC ) ).
+            setReturnFields( ReturnFields.from( NODE_VERSION_ID_FIELD_NAME, TIMESTAMP_ID_FIELD_NAME ) ).
+            build();
+
+        final SearchResult searchResult = elasticsearchDao.find( query );
 
         if ( searchResult.isEmpty() )
         {

@@ -26,6 +26,4 @@ public interface QueryService
 
     public boolean hasChildren( final NodePath nodeId, final IndexContext indexContext );
 
-    public NodeVersionIds getByParent( final NodePath parentPath, final IndexContext indexContext );
-
 }

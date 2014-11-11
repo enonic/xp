@@ -87,18 +87,18 @@ public class ElasticsearchQueryService
     {
         final Workspace workspace = indexContext.getWorkspace();
 
-        final QueryProperties queryProperties =
-            QueryProperties.create( IndexNameResolver.resolveSearchIndexName( indexContext.getRepositoryId() ) ).
-                indexTypeName( workspace.getName() ).
-                from( 0 ).
-                size( 1 ).
-                addField( IndexPaths.VERSION_KEY ).
-                build();
-
         // TODO: Add access-control
         final TermQueryBuilder pathQuery = new TermQueryBuilder( IndexPaths.PATH_KEY, nodePath.toString() );
 
-        final SearchResult searchResult = elasticsearchDao.find( queryProperties, pathQuery );
+        final ElasticsearchQuery query = ElasticsearchQuery.create().
+            index( IndexNameResolver.resolveSearchIndexName( indexContext.getRepositoryId() ) ).
+            indexType( workspace.getName() ).
+            query( pathQuery ).
+            size( 1 ).
+            setReturnFields( ReturnFields.from( IndexPaths.VERSION_KEY ) ).
+            build();
+
+        final SearchResult searchResult = elasticsearchDao.find( query );
 
         if ( searchResult.isEmpty() )
         {
@@ -126,22 +126,21 @@ public class ElasticsearchQueryService
     @Override
     public NodeVersionIds find( final NodePaths nodePaths, final OrderExpressions orderExprs, final IndexContext indexContext )
     {
-
         final Workspace workspace = indexContext.getWorkspace();
-
-        final QueryProperties queryProperties =
-            QueryProperties.create( IndexNameResolver.resolveSearchIndexName( indexContext.getRepositoryId() ) ).
-                indexTypeName( workspace.getName() ).
-                from( 0 ).
-                size( nodePaths.getSize() ).
-                addField( IndexPaths.VERSION_KEY ).
-                setSort( SortQueryBuilderFactory.create( orderExprs ) ).
-                build();
 
         // TODO: Add access-control
         final TermsQueryBuilder pathsQuery = new TermsQueryBuilder( IndexPaths.PATH_KEY, nodePaths.getAsStrings() );
 
-        final SearchResult searchResult = elasticsearchDao.find( queryProperties, pathsQuery );
+        final ElasticsearchQuery query = ElasticsearchQuery.create().
+            index( IndexNameResolver.resolveSearchIndexName( indexContext.getRepositoryId() ) ).
+            indexType( workspace.getName() ).
+            query( pathsQuery ).
+            sortBuilders( SortQueryBuilderFactory.create( orderExprs ) ).
+            setReturnFields( ReturnFields.from( IndexPaths.VERSION_KEY ) ).
+            size( nodePaths.getSize() ).
+            build();
+
+        final SearchResult searchResult = elasticsearchDao.find( query );
 
         if ( searchResult.isEmpty() )
         {
@@ -158,50 +157,23 @@ public class ElasticsearchQueryService
     {
         final Workspace workspace = indexContext.getWorkspace();
 
-        final QueryProperties queryProperties =
-            QueryProperties.create( IndexNameResolver.resolveSearchIndexName( indexContext.getRepositoryId() ) ).
-                indexTypeName( workspace.getName() ).
-                from( 0 ).
-                size( nodeIds.getSize() ).
-                addField( IndexPaths.VERSION_KEY ).
-                setSort( SortQueryBuilderFactory.create( orderExprs ) ).
-                build();
-
         // TODO: Add access-control
         final TermsQueryBuilder pathsQuery = new TermsQueryBuilder( IndexPaths.ID_KEY, nodeIds.getAsStrings() );
 
-        final SearchResult searchResult = elasticsearchDao.find( queryProperties, pathsQuery );
+        final ElasticsearchQuery query = ElasticsearchQuery.create().
+            index( IndexNameResolver.resolveSearchIndexName( indexContext.getRepositoryId() ) ).
+            indexType( workspace.getName() ).
+            query( pathsQuery ).
+            sortBuilders( SortQueryBuilderFactory.create( orderExprs ) ).
+            setReturnFields( ReturnFields.from( IndexPaths.VERSION_KEY ) ).
+            size( nodeIds.getSize() ).
+            build();
+
+        final SearchResult searchResult = elasticsearchDao.find( query );
 
         if ( searchResult.isEmpty() )
         {
             NodeVersionIds.empty();
-        }
-
-        final Set<SearchResultField> fieldValues = searchResult.getResults().getFields( IndexPaths.VERSION_KEY );
-
-        return fieldValuesToVersionIds( fieldValues );
-    }
-
-    @Override
-    public NodeVersionIds getByParent( final NodePath parentPath, final IndexContext indexContext )
-    {
-        final Workspace workspace = indexContext.getWorkspace();
-
-        final QueryProperties queryProperties =
-            QueryProperties.create( IndexNameResolver.resolveSearchIndexName( indexContext.getRepositoryId() ) ).
-                indexTypeName( workspace.getName() ).
-                from( 0 ).
-                size( QueryService.GET_ALL_SIZE_FLAG ).
-                addField( IndexPaths.VERSION_KEY ).
-                build();
-
-        final TermsQueryBuilder childrenQuery = new TermsQueryBuilder( IndexPaths.PARENT_PATH_KEY, parentPath );
-
-        final SearchResult searchResult = elasticsearchDao.find( queryProperties, childrenQuery );
-
-        if ( searchResult.isEmpty() )
-        {
-            return NodeVersionIds.empty();
         }
 
         final Set<SearchResultField> fieldValues = searchResult.getResults().getFields( IndexPaths.VERSION_KEY );

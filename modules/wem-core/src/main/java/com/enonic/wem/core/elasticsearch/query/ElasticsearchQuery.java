@@ -13,7 +13,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.index.IndexPaths;
+import com.enonic.wem.core.elasticsearch.ReturnFields;
 
 public class ElasticsearchQuery
 {
@@ -39,6 +39,8 @@ public class ElasticsearchQuery
 
     private final ImmutableSet<AggregationBuilder> aggregations;
 
+    private final ReturnFields returnFields;
+
     private ElasticsearchQuery( final Builder builder )
     {
         this.query = builder.query;
@@ -51,6 +53,18 @@ public class ElasticsearchQuery
         this.from = builder.from;
         this.explain = builder.explain;
         this.aggregations = ImmutableSet.copyOf( builder.aggregations );
+        this.returnFields = builder.returnFields;
+    }
+
+
+    public boolean isExplain()
+    {
+        return explain;
+    }
+
+    public ImmutableSet<AggregationBuilder> getAggregations()
+    {
+        return aggregations;
     }
 
     public QueryBuilder getQuery()
@@ -58,7 +72,7 @@ public class ElasticsearchQuery
         return query;
     }
 
-    FilterBuilder getFilter()
+    public FilterBuilder getFilter()
     {
         return filter;
     }
@@ -98,15 +112,21 @@ public class ElasticsearchQuery
         return explain;
     }
 
-    ImmutableSet<SortBuilder> getSortBuilders()
+    public ReturnFields getReturnFields()
+    {
+        return returnFields;
+    }
+
+    public ImmutableSet<SortBuilder> getSortBuilders()
     {
         return sortBuilders;
     }
 
     public SearchSourceBuilder toSearchSourceBuilder()
     {
+
         SearchSourceBuilder builder = new SearchSourceBuilder().
-            field( IndexPaths.ENTITY_KEY ).
+            // field( IndexPaths.ENTITY_KEY ).
             query( this.getQuery() ).
             from( this.getFrom() ).
             size( this.getSize() );
@@ -177,6 +197,8 @@ public class ElasticsearchQuery
 
         private Set<AggregationBuilder> aggregations = Sets.newHashSet();
 
+        private ReturnFields returnFields = ReturnFields.empty();
+
         public Builder query( final QueryBuilder query )
         {
             this.query = query;
@@ -231,11 +253,16 @@ public class ElasticsearchQuery
             return this;
         }
 
+        public Builder setReturnFields( final ReturnFields returnFields )
+        {
+            this.returnFields = returnFields;
+            return this;
+        }
+
         public ElasticsearchQuery build()
         {
             return new ElasticsearchQuery( this );
         }
-
 
     }
 

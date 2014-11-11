@@ -287,6 +287,8 @@ public class NodeServiceImpl
             versionService( this.versionService ).
             workspaceService( this.workspaceService ).
             nodeDao( this.nodeDao ).
+            queryService( this.queryService ).
+            indexService( this.indexService ).
             build().
             execute();
     }

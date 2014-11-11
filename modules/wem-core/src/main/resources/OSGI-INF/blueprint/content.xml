@@ -17,7 +17,6 @@
     <property name="nodeService" ref="nodeService"/>
     <property name="blobService" ref="blobService"/>
     <property name="attachmentService" ref="attachmentService"/>
-    <property name="queryService" ref="queryService"/>
     <property name="contentNodeTranslator" ref="contentNodeTranslator"/>
   </bean>
 

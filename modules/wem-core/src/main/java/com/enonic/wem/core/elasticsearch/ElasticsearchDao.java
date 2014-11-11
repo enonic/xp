@@ -16,12 +16,8 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.elasticsearch.search.sort.SortBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.ImmutableSet;
 
 import com.enonic.wem.core.elasticsearch.document.DeleteDocument;
 import com.enonic.wem.core.elasticsearch.document.StoreDocument;
@@ -103,21 +99,19 @@ public class ElasticsearchDao
 
     public SearchResult find( final ElasticsearchQuery query )
     {
-        final SearchSourceBuilder searchSource = query.toSearchSourceBuilder();
-        searchSource.size( resolveSize( query ) );
+        final SearchRequestBuilder searchRequest = SearchRequestBuilderFactory.newFactory().
+            query( query ).
+            client( this.client ).
+            resolvedSize( query.getSize() == QueryService.GET_ALL_SIZE_FLAG ? resolveSize( query ) : query.getSize() ).
+            build().
+            create();
 
-        // System.out.println( searchSource.toString() );
-
-        final SearchRequestBuilder searchRequest = new SearchRequestBuilder( this.client ).
-            setIndices( query.getIndexName() ).
-            setTypes( query.getIndexType() ).
-            setSearchType( SearchType.DEFAULT ).
-            setSource( searchSource.buildAsBytes() );
+        System.out.println( searchRequest.toString() );
 
         return doSearchRequest( searchRequest );
     }
 
-
+    /*
     public SearchResult find( final QueryProperties queryProperties, final QueryBuilder queryBuilder )
     {
         final SearchRequestBuilder searchRequestBuilder = this.client.prepareSearch( queryProperties.getIndexName() ).
@@ -139,6 +133,7 @@ public class ElasticsearchDao
 
         return doSearchRequest( searchRequestBuilder );
     }
+    */
 
     public GetResult get( final QueryProperties queryProperties, final String id )
     {

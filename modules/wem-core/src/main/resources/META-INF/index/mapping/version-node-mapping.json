@@ -9,7 +9,7 @@
         "date_detection": false,
         "numeric_detection": false,
         "properties": {
-            "nodeId": {
+            "nodeid": {
                 "type": "string",
                 "store": "true",
                 "index": "not_analyzed"

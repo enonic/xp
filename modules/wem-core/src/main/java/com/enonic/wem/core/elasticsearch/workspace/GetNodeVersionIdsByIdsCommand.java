@@ -5,20 +5,27 @@ import java.util.Set;
 
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.TermsQueryBuilder;
+import org.elasticsearch.search.sort.FieldSortBuilder;
+import org.elasticsearch.search.sort.SortOrder;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.core.elasticsearch.QueryProperties;
+import com.enonic.wem.core.elasticsearch.ReturnFields;
+import com.enonic.wem.core.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.core.elasticsearch.xcontent.WorkspaceXContentBuilderFactory;
 import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.NodeIds;
 import com.enonic.wem.core.entity.NodeVersionIds;
+import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.result.SearchResult;
 import com.enonic.wem.core.index.result.SearchResultEntry;
 import com.enonic.wem.core.index.result.SearchResultField;
+import com.enonic.wem.core.repository.StorageNameResolver;
 import com.enonic.wem.core.workspace.WorkspaceDocumentId;
+
+import static com.enonic.wem.core.elasticsearch.xcontent.VersionXContentBuilderFactory.TIMESTAMP_ID_FIELD_NAME;
 
 public class GetNodeVersionIdsByIdsCommand
     extends AbstractWorkspaceCommand
@@ -52,9 +59,19 @@ public class GetNodeVersionIdsByIdsCommand
 
         final TermsQueryBuilder idsQuery = new TermsQueryBuilder( WorkspaceXContentBuilderFactory.NODE_ID_FIELD_NAME, nodeIdsAsStrings );
         final BoolQueryBuilder boolQueryBuilder = joinWithWorkspaceQuery( workspaceName, idsQuery );
-        final QueryProperties queryProperties = createGetBlobKeyQueryMetaData( nodeIdsAsStrings.size(), this.repositoryId );
 
-        final SearchResult searchResult = elasticsearchDao.find( queryProperties, boolQueryBuilder );
+        final ElasticsearchQuery query = ElasticsearchQuery.create().
+            index( StorageNameResolver.resolveStorageIndexName( repositoryId ) ).
+            indexType( IndexType.VERSION.getName() ).
+            query( boolQueryBuilder ).
+            from( 0 ).
+            size( this.nodeIds.getSize() ).
+            addSortBuilder( new FieldSortBuilder( TIMESTAMP_ID_FIELD_NAME ).order( SortOrder.DESC ) ).
+            setReturnFields( ReturnFields.from( WorkspaceXContentBuilderFactory.NODE_ID_FIELD_NAME,
+                                                WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME ) ).
+            build();
+
+        final SearchResult searchResult = elasticsearchDao.find( query );
 
         if ( searchResult.isEmpty() )
         {
