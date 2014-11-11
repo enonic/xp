@@ -3,8 +3,6 @@ package com.enonic.wem.api.context;
 import org.junit.Test;
 
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
-import com.enonic.wem.api.session.SessionKey;
-import com.enonic.wem.api.session.SimpleSession;
 
 import static org.junit.Assert.*;
 
@@ -41,13 +39,10 @@ public class ContextBuilderTest
     @Test
     public void testBuildFrom()
     {
-        final SimpleSession session = new SimpleSession( SessionKey.generate() );
-
         final Context old = ContextBuilder.create().
             repositoryId( "repository" ).
             workspace( "workspace" ).
             attribute( "key1", "value1" ).
-            session( session ).
             build();
 
         final ContextBuilder builder = ContextBuilder.from( old );

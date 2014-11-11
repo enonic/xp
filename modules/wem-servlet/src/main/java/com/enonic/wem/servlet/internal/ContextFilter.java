@@ -14,8 +14,8 @@ import javax.servlet.http.HttpSession;
 
 import org.osgi.service.component.annotations.Component;
 
+import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
-import com.enonic.wem.api.context.MutableContext;
 
 @Component(immediate = true, service = Filter.class, property = {"urlPatterns=/*"})
 public final class ContextFilter
@@ -37,9 +37,9 @@ public final class ContextFilter
     private void doFilter( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain )
         throws IOException, ServletException
     {
+        final Context context = ContextAccessor.current();
         final HttpSession httpSession = req.getSession( true );
-        final MutableContext context = (MutableContext) ContextAccessor.current();
-        context.setSession( new SessionWrapper( httpSession ) );
+        context.getLocalScope().setSession( new SessionWrapper( httpSession ) );
         chain.doFilter( new HttpRequestDelegate( req ), res );
     }
 

@@ -5,25 +5,19 @@ import com.enonic.wem.api.content.ContentConstants;
 public final class ContextAccessor
     extends ThreadLocal<Context>
 {
-    public final static ContextAccessor INSTANCE = new ContextAccessor();
-
-    private ContextAccessor()
-    {
-    }
+    protected final static ContextAccessor INSTANCE = new ContextAccessor();
 
     @Override
     protected Context initialValue()
     {
-        return ContentConstants.CONTEXT_STAGE;
+        final Context context = ContextBuilder.create().build();
+        context.getLocalScope().setAttribute( ContentConstants.WORKSPACE_STAGE );
+        context.getLocalScope().setAttribute( ContentConstants.CONTENT_REPO.getId() );
+        return context;
     }
 
     public static Context current()
     {
-        if ( INSTANCE.get() == null )
-        {
-            throw new IllegalStateException( "No context set" );
-        }
-
         return INSTANCE.get();
     }
 }

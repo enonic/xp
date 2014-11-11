@@ -10,6 +10,7 @@ public class ContextAccessorTest
     @Test
     public void testCurrent()
     {
+        ContextAccessor.INSTANCE.remove();
         assertNotNull( ContextAccessor.current() );
 
         final Context context = Mockito.mock( Context.class );

@@ -1,16 +1,13 @@
 package com.enonic.wem.api.context;
 
 import java.io.IOException;
-import java.util.Map;
 
 import org.junit.Test;
 
-import com.google.common.collect.Maps;
+import com.google.common.collect.ImmutableMap;
 
 import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
-import com.enonic.wem.api.session.SessionKey;
-import com.enonic.wem.api.session.SimpleSession;
 import com.enonic.wem.api.workspace.Workspace;
 
 import static org.junit.Assert.*;
@@ -21,69 +18,53 @@ public class ContextImplTest
     {
     }
 
+    private ContextImpl createContext()
+    {
+        final ImmutableMap<String, Object> map = ImmutableMap.of();
+        return new ContextImpl( map, new LocalScopeImpl() );
+    }
+
+    private ContextImpl createContext( final String key, final Object value )
+    {
+        final ImmutableMap<String, Object> map = ImmutableMap.of( key, value );
+        return new ContextImpl( map, new LocalScopeImpl() );
+    }
+
     @Test
     public void testAttributeByKey()
     {
-        final ContextImpl context = new ContextImpl();
-
-        assertNull( context.getAttribute( "key1" ) );
-        assertEquals( 0, context.getAttributes().size() );
-
-        context.setAttribute( "key1", "value1" );
+        final ContextImpl context = createContext( "key1", "value1" );
         assertEquals( "value1", context.getAttribute( "key1" ) );
         assertEquals( 1, context.getAttributes().size() );
+    }
+
+    @Test
+    public void testAttributeByKey_foundInLocal()
+    {
+        final ContextImpl context = createContext();
+        context.getLocalScope().setAttribute( "key1", "value1" );
+
+        assertEquals( "value1", context.getAttribute( "key1" ) );
+        assertEquals( 0, context.getAttributes().size() );
     }
 
     @Test
     public void testAttributeByType()
     {
-        final ContextImpl context = new ContextImpl();
-
-        assertNull( context.getAttribute( SampleValue.class ) );
-        assertEquals( 0, context.getAttributes().size() );
-
         final SampleValue value = new SampleValue();
-        context.setAttribute( value );
+        final ContextImpl context = createContext( value.getClass().getName(), value );
+
         assertSame( value, context.getAttribute( SampleValue.class ) );
         assertEquals( 1, context.getAttributes().size() );
     }
 
     @Test
-    public void testAttributeByKey_session()
-    {
-        final SimpleSession session = new SimpleSession( SessionKey.generate() );
-        session.setAttribute( "key1", "value1" );
-
-        final ContextImpl context = new ContextImpl();
-        context.setSession( session );
-        assertSame( session, context.getSession() );
-
-        assertEquals( "value1", context.getAttribute( "key1" ) );
-        assertEquals( 0, context.getAttributes().size() );
-    }
-
-    @Test
-    public void testAttributeByType_session()
-    {
-        final SampleValue value = new SampleValue();
-        final SimpleSession session = new SimpleSession( SessionKey.generate() );
-        session.setAttribute( value );
-
-        final ContextImpl context = new ContextImpl();
-        context.setSession( session );
-        assertSame( session, context.getSession() );
-
-        assertSame( value, context.getAttribute( SampleValue.class ) );
-        assertEquals( 0, context.getAttributes().size() );
-    }
-
-    @Test
     public void testRunWith()
     {
-        final Context old = new ContextImpl();
+        final Context old = createContext();
         ContextAccessor.INSTANCE.set( old );
 
-        final ContextImpl context = new ContextImpl();
+        final ContextImpl context = createContext();
         assertSame( old, ContextAccessor.current() );
 
         context.runWith( () -> assertSame( context, ContextAccessor.current() ) );
@@ -94,10 +75,10 @@ public class ContextImplTest
     @Test
     public void testCallWith()
     {
-        final Context old = new ContextImpl();
+        final Context old = createContext();
         ContextAccessor.INSTANCE.set( old );
 
-        final ContextImpl context = new ContextImpl();
+        final ContextImpl context = createContext();
         assertSame( old, ContextAccessor.current() );
 
         final boolean result = context.callWith( () -> {
@@ -111,7 +92,7 @@ public class ContextImplTest
     @Test(expected = RuntimeException.class)
     public void testRunWith_runtimeException()
     {
-        final ContextImpl context = new ContextImpl();
+        final ContextImpl context = createContext();
         context.callWith( () -> {
             throw new RuntimeException();
         } );
@@ -120,58 +101,42 @@ public class ContextImplTest
     @Test(expected = IOException.class)
     public void testRunWith_checkedException()
     {
-        final ContextImpl context = new ContextImpl();
+        final ContextImpl context = createContext();
         context.callWith( () -> {
             throw new IOException();
         } );
     }
 
     @Test
-    public void testSetAttributes()
-    {
-        final ContextImpl context = new ContextImpl();
-
-        assertNull( context.getAttribute( "key1" ) );
-        assertEquals( 0, context.getAttributes().size() );
-
-        final Map<String, Object> map = Maps.newHashMap();
-        map.put( "key1", "value1" );
-        context.setAttributes( map );
-
-        assertEquals( "value1", context.getAttribute( "key1" ) );
-        assertEquals( 1, context.getAttributes().size() );
-    }
-
-    @Test
     public void testRepositoryId()
     {
-        final ContextImpl context = new ContextImpl();
+        final ContextImpl context = createContext();
         assertNull( context.getRepositoryId() );
 
         final RepositoryId value = RepositoryId.from( "repoId" );
-        context.setAttribute( value );
+        context.getLocalScope().setAttribute( value );
         assertSame( value, context.getRepositoryId() );
     }
 
     @Test
     public void testWorkspace()
     {
-        final ContextImpl context = new ContextImpl();
+        final ContextImpl context = createContext();
         assertNull( context.getWorkspace() );
 
         final Workspace value = Workspace.from( "workspace" );
-        context.setAttribute( value );
+        context.getLocalScope().setAttribute( value );
         assertSame( value, context.getWorkspace() );
     }
 
     @Test
     public void testAuthInfo()
     {
-        final ContextImpl context = new ContextImpl();
+        final ContextImpl context = createContext();
         assertNull( context.getAuthInfo() );
 
         final AuthenticationInfo value = AuthenticationInfo.failed();
-        context.setAttribute( value );
+        context.getLocalScope().setAttribute( value );
         assertSame( value, context.getAuthInfo() );
     }
 }

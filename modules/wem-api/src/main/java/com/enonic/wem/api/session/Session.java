@@ -1,22 +1,9 @@
 package com.enonic.wem.api.session;
 
-import java.util.Map;
+import com.enonic.wem.api.context.MutableAttributes;
 
 public interface Session
+    extends MutableAttributes
 {
     public SessionKey getKey();
-
-    public Object getAttribute( String key );
-
-    public <T> T getAttribute( Class<T> type );
-
-    public void setAttribute( String key, Object value );
-
-    public <T> void setAttribute( T value );
-
-    public void removeAttribute( String key );
-
-    public <T> void removeAttribute( Class<T> type );
-
-    public Map<String, Object> getAttributes();
 }

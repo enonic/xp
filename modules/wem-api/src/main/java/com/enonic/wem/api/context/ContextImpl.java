@@ -4,50 +4,54 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
-import com.enonic.wem.api.session.Session;
 import com.enonic.wem.api.util.Exceptions;
 import com.enonic.wem.api.workspace.Workspace;
 
 final class ContextImpl
-    implements MutableContext
+    implements Context
 {
-    private final static ContextAccessor CURRENT = ContextAccessor.INSTANCE;
+    private final ImmutableMap<String, Object> attributes;
 
-    private final Map<String, Object> attributes;
+    private final LocalScope localScope;
 
-    private Session session;
-
-    public ContextImpl()
+    public ContextImpl( final ImmutableMap<String, Object> attributes, final LocalScope localScope )
     {
-        this.attributes = Maps.newHashMap();
+        this.attributes = attributes;
+        this.localScope = localScope;
     }
 
     @Override
-    public RepositoryId getRepositoryId()
+    public final RepositoryId getRepositoryId()
     {
         return getAttribute( RepositoryId.class );
     }
 
     @Override
-    public Workspace getWorkspace()
+    public final Workspace getWorkspace()
     {
         return getAttribute( Workspace.class );
     }
 
     @Override
-    public AuthenticationInfo getAuthInfo()
+    public final AuthenticationInfo getAuthInfo()
     {
         return getAttribute( AuthenticationInfo.class );
     }
 
     @Override
-    public Session getSession()
+    @SuppressWarnings("unchecked")
+    public final <T> T getAttribute( final Class<T> type )
     {
-        return this.session;
+        return (T) getAttribute( type.getName() );
+    }
+
+    @Override
+    public LocalScope getLocalScope()
+    {
+        return this.localScope;
     }
 
     @Override
@@ -59,55 +63,20 @@ final class ContextImpl
             return value;
         }
 
-        if ( this.session == null )
-        {
-            return null;
-        }
-
-        return this.session.getAttribute( key );
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public <T> T getAttribute( final Class<T> type )
-    {
-        return (T) getAttribute( type.getName() );
+        return this.localScope.getAttribute( key );
     }
 
     @Override
     public Map<String, Object> getAttributes()
     {
-        return ImmutableMap.copyOf( this.attributes );
+        return this.attributes;
     }
 
     @Override
-    public <T> void setAttribute( final T value )
+    public final void runWith( final Runnable runnable )
     {
-        setAttribute( value.getClass().getName(), value );
-    }
-
-    @Override
-    public void setAttribute( final String key, final Object value )
-    {
-        this.attributes.put( key, value );
-    }
-
-    protected void setAttributes( final Map<String, Object> values )
-    {
-        this.attributes.putAll( values );
-    }
-
-    @Override
-    public void setSession( final Session session )
-    {
-        this.session = session;
-    }
-
-    @Override
-    public void runWith( final Runnable runnable )
-    {
-        final Context old = CURRENT.get();
-        CURRENT.set( this );
+        final Context old = ContextAccessor.INSTANCE.get();
+        ContextAccessor.INSTANCE.set( this );
 
         try
         {
@@ -115,15 +84,15 @@ final class ContextImpl
         }
         finally
         {
-            CURRENT.set( old );
+            ContextAccessor.INSTANCE.set( old );
         }
     }
 
     @Override
-    public <T> T callWith( final Callable<T> runnable )
+    public final <T> T callWith( final Callable<T> runnable )
     {
-        final Context old = CURRENT.get();
-        CURRENT.set( this );
+        final Context old = ContextAccessor.INSTANCE.get();
+        ContextAccessor.INSTANCE.set( this );
 
         try
         {
@@ -139,7 +108,8 @@ final class ContextImpl
         }
         finally
         {
-            CURRENT.set( old );
+            ContextAccessor.INSTANCE.set( old );
         }
     }
 }
+
