@@ -28,35 +28,32 @@ module app.browse {
             case UserTreeGridItemType.PRINCIPAL:
             {
                 if (item.getPrincipal().isRole()) {
-                    //TODO need to specify correct class
-                    this.namesAndIconView.setIconClass("icon-users icon-large");
+                    this.namesAndIconView.setIconClass("icon-users2 icon-large");
                     break;
                 }
                 if (item.getPrincipal().isUser()) {
-                    //TODO need to specify correct class
                     this.namesAndIconView.setIconClass("icon-user icon-large");
                     break;
                 }
                 if (item.getPrincipal().isGroup()) {
-                    this.namesAndIconView.setIconClass("icon-users2 icon-large");
+                    this.namesAndIconView.setIconClass("icon-users icon-large");
                     break;
                 }
 
             }
             case UserTreeGridItemType.GROUPS:
-            {        //TODO need to specify correct class
-                this.namesAndIconView.setIconClass("icon-users2 icon-large");
+            {
+                this.namesAndIconView.setIconClass("icon-folder icon-large");
                 break;
             }
             case UserTreeGridItemType.ROLES:
-
-            {       //TODO need to specify correct class
-                this.namesAndIconView.setIconClass("icon-key icon-large");
+            {
+                this.namesAndIconView.setIconClass("icon-folder icon-large");
                 break;
             }
             case UserTreeGridItemType.USERS:
-            {       //TODO need to specify correct class
-                this.namesAndIconView.setIconClass("icon-users icon-large");
+            {
+                this.namesAndIconView.setIconClass("icon-folder icon-large");
                 break;
             }
             }
