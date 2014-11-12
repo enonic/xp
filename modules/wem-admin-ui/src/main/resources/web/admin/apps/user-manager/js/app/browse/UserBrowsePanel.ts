@@ -6,7 +6,7 @@ module app.browse {
 
     export class UserBrowsePanel extends api.app.browse.BrowsePanel<app.browse.UserTreeGridItem> {
 
-        private browseActions: app.browse.UserBrowseActions;
+        private browseActions: app.browse.UserTreeGridActions;
 
         private userTreeGrid: UserItemsTreeGrid;
 
@@ -15,11 +15,9 @@ module app.browse {
         private toolbar: UserBrowseToolbar;
 
         constructor() {
-            var treeGridContextMenu = new app.browse.UserTreeGridContextMenu();
             this.userTreeGrid = new UserItemsTreeGrid();
 
-            this.browseActions = UserBrowseActions.init(this.userTreeGrid);
-            treeGridContextMenu.setActions(this.browseActions);
+            this.browseActions = this.userTreeGrid.getTreeGridActions();
             this.userFilterPanel = new app.browse.filter.PrincipalBrowseFilterPanel();
             this.toolbar = new UserBrowseToolbar(this.browseActions);
             var browseItemPanel = components.detailPanel = new UserBrowseItemPanel();

@@ -23,6 +23,8 @@ module app.browse {
 
     export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
 
+        private treeGridActions: UserTreeGridActions;
+
         constructor() {
 
             var nameColumn = new GridColumnBuilder<TreeNode<UserTreeGridItem>>().
@@ -42,11 +44,12 @@ module app.browse {
                 setFormatter(DateTimeFormatter.format).
                 build();
 
+            this.treeGridActions = new UserTreeGridActions(this);
             super(new TreeGridBuilder<UserTreeGridItem>().
                     setColumns([
                         nameColumn, modifiedTimeColumn
                     ]).
-                    setShowContextMenu(new TreeGridContextMenu(new UserBrowseActions(this))).
+                    setShowContextMenu(new TreeGridContextMenu(this.treeGridActions)).
                     setPartialLoadEnabled(true).
                     setLoadBufferSize(20). // rows count
                     prependClasses("user-tree-grid")
@@ -64,6 +67,9 @@ module app.browse {
             return viewer.toString();
         }
 
+        getTreeGridActions(): UserTreeGridActions {
+            return this.treeGridActions;
+        }
 
         getDataId(item: app.browse.UserTreeGridItem): string {
             return item.getDataId();
