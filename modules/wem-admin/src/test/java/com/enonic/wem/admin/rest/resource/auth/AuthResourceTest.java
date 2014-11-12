@@ -43,8 +43,6 @@ public class AuthResourceTest
         final UserStores userStores = UserStores.from( us1, us2 );
         Mockito.when( securityService.getUserStores() ).thenReturn( userStores );
 
-        // TODO mock session in context
-
         return resource;
     }
 

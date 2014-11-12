@@ -21,6 +21,9 @@ import com.enonic.wem.admin.json.ObjectMapperHelper;
 import com.enonic.wem.admin.rest.multipart.MultipartFormReader;
 import com.enonic.wem.admin.rest.provider.JsonObjectProvider;
 import com.enonic.wem.admin.rest.provider.JsonSerializableProvider;
+import com.enonic.wem.api.context.ContextAccessor;
+import com.enonic.wem.api.session.SessionKey;
+import com.enonic.wem.api.session.SimpleSession;
 import com.enonic.wem.servlet.ServletRequestHolder;
 
 import static org.junit.Assert.*;
@@ -40,6 +43,11 @@ public abstract class AbstractResourceTest
         this.dispatcher.getRegistry().addSingletonResource( getResourceInstance() );
 
         mockCurrentContextHttpRequest();
+
+        ContextAccessor.INSTANCE.remove();
+
+        final SimpleSession session = new SimpleSession( SessionKey.generate() );
+        ContextAccessor.current().getLocalScope().setSession( session );
     }
 
     private void mockCurrentContextHttpRequest()

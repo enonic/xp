@@ -6,4 +6,6 @@ public interface Session
     extends MutableAttributes
 {
     public SessionKey getKey();
+
+    public void invalidate();
 }

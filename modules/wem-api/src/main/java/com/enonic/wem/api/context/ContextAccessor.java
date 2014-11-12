@@ -5,7 +5,7 @@ import com.enonic.wem.api.content.ContentConstants;
 public final class ContextAccessor
     extends ThreadLocal<Context>
 {
-    protected final static ContextAccessor INSTANCE = new ContextAccessor();
+    public final static ContextAccessor INSTANCE = new ContextAccessor();
 
     @Override
     protected Context initialValue()

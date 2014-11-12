@@ -77,4 +77,10 @@ final class SessionWrapper
 
         return builder.build();
     }
+
+    @Override
+    public void invalidate()
+    {
+        this.httpSession.invalidate();
+    }
 }

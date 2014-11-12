@@ -55,7 +55,7 @@ public final class AuthResource
 
         if ( authInfo.isAuthenticated() )
         {
-            final Session session = ContextAccessor.current().getSession();
+            final Session session = ContextAccessor.current().getLocalScope().getSession();
             if ( session != null )
             {
                 session.setAttribute( authInfo );
@@ -69,10 +69,10 @@ public final class AuthResource
     @Path("logout")
     public void logout()
     {
-        final Session session = ContextAccessor.current().getSession();
+        final Session session = ContextAccessor.current().getLocalScope().getSession();
         if ( session != null )
         {
-            session.removeAttribute( AuthenticationInfo.class );
+            session.invalidate();
         }
     }
 

@@ -66,4 +66,10 @@ public final class SimpleSession
     {
         removeAttribute( type.getName() );
     }
+
+    @Override
+    public void invalidate()
+    {
+        this.attributes.clear();
+    }
 }
