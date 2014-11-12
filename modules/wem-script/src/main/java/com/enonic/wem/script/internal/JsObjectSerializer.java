@@ -18,7 +18,7 @@ final class JsObjectSerializer
     public JsObjectSerializer()
     {
         this.mapper = new ObjectMapper();
-        this.mapper.enable( SerializationFeature.INDENT_OUTPUT );
+        this.mapper.disable( SerializationFeature.INDENT_OUTPUT );
     }
 
     public String toString( final JSObject value )
