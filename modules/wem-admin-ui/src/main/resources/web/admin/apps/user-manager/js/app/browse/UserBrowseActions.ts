@@ -35,5 +35,26 @@ module app.browse {
         getAllActions(): api.ui.Action[] {
             return this.actions;
         }
+
+        updateActionsEnabledState(selectedItems: UserTreeGridItem[]) {
+            var userStoresSelected: number = 0;
+            var principalsSelected: number = 0;
+            selectedItems.forEach((item: UserTreeGridItem) => {
+                var itemType = item.getType();
+                if (itemType === UserTreeGridItemType.PRINCIPAL) {
+                    principalsSelected++;
+                } else if (itemType === UserTreeGridItemType.USER_STORE) {
+                    userStoresSelected++;
+                }
+            });
+            var anyPrincipal = principalsSelected > 0;
+            var anyUserStore = userStoresSelected > 0;
+
+            this.SHOW_NEW_DIALOG_ACTION.setEnabled(true);
+            this.EDIT.setEnabled(anyPrincipal);
+            this.DELETE.setEnabled(anyPrincipal);
+            this.DUPLICATE.setEnabled((principalsSelected == 1) && (userStoresSelected == 0));
+            this.SYNCH.setEnabled(anyUserStore);
+        }
     }
 }

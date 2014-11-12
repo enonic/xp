@@ -32,9 +32,9 @@ module app.browse {
             });
 
             this.userTreeGrid.onSelectionChanged((selectedRows: TreeNode<UserTreeGridItem>[]) => {
-                // this.browseActions.updateActionsEnabledState(<any[]>selectedRows.map((elem) => {
-                //     return elem.getData();
-                // }));
+                this.browseActions.updateActionsEnabledState(<any[]>selectedRows.map((elem) => {
+                    return elem.getData();
+                }));
             });
         }
 
