@@ -190,7 +190,7 @@ module api.ui.grid {
             }
         }
 
-        toggleRow(row: number) {
+        toggleRow(row: number): number {
             // Prevent unnecessary render on the same row
             var rows = this.getSelectedRows(),
                 index = rows.indexOf(row);
@@ -201,6 +201,8 @@ module api.ui.grid {
                 rows.splice(index, 1);
             }
             this.slickGrid.setSelectedRows(rows);
+
+            return index;
         }
 
         selectAll() {

@@ -108,8 +108,8 @@ module app.browse {
                 this.getGrid().resizeCanvas();
             });
 
-            this.onSelectionChanged((selectedRows: TreeNode<ContentSummaryAndCompareStatus>[]) => {
-                var contentSummaries: ContentSummary[] = selectedRows.map((elem) => {
+            this.onSelectionChanged((currentSelection: TreeNode<ContentSummaryAndCompareStatus>[], fullSelection: TreeNode<ContentSummaryAndCompareStatus>[]) => {
+                var contentSummaries: ContentSummary[] = currentSelection.map((elem) => {
                     return elem.getData().getContentSummary();
                 });
                 (<ContentTreeGridActions>this.getContextMenu().getActions()).updateActionsEnabledState(contentSummaries);
@@ -145,7 +145,7 @@ module app.browse {
                         contents.push(new ContentSummaryAndCompareStatus(null, null));
                     }
                     this.filter(contents);
-                    this.getRoot().setMaxChildren(metadata.getTotalHits());
+                    this.getRoot().getCurrentRoot().setMaxChildren(metadata.getTotalHits());
                     this.notifyLoaded();
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
@@ -235,14 +235,14 @@ module app.browse {
             if (parentNode) {
                 parentContentId = parentNode.getData() ? parentNode.getData().getContentId() : parentContentId;
             } else {
-                parentNode = this.getRoot();
+                parentNode = this.getRoot().getCurrentRoot();
             }
             var from = parentNode.getChildren().length;
             if (from > 0 && !parentNode.getChildren()[from - 1].getData().getContentSummary()) {
                 parentNode.getChildren().pop();
                 from--;
             }
-            if (!this.isFiltered() || parentNode != this.getRoot()) {
+            if (!this.isFiltered() || parentNode != this.getRoot().getCurrentRoot()) {
                 return ContentSummaryAndCompareStatusFetcher.fetchChildren(parentContentId, from, ContentTreeGrid.MAX_FETCH_SIZE).
                     then((data: ContentResponse<ContentSummaryAndCompareStatus>) => {
                         // TODO: Will reset the ids and the selection for child nodes.
@@ -314,7 +314,7 @@ module app.browse {
 
         sortNodeChildren(node: TreeNode<ContentSummaryAndCompareStatus>) {
             var comparator: api.Comparator<TreeNode<ContentSummaryAndCompareStatus>>;
-            if (this.getRoot() == node) {
+            if (this.getRoot().getCurrentRoot() == node) {
                 comparator = new api.content.ContentByDisplayNameComparator();
             } else {
                 comparator = new api.content.ContentByModifiedTimeComparator();
@@ -329,7 +329,7 @@ module app.browse {
                 children.push(emptyNode);
             }
             node.setChildren(children);
-            this.initData(this.getRoot().treeToList());
+            this.initData(this.getRoot().getCurrentRoot().treeToList());
         }
     }
 }

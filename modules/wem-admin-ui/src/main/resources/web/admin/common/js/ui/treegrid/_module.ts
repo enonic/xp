@@ -1,5 +1,6 @@
 ///<reference path='TreeGrid.ts' />
 ///<reference path='TreeNode.ts' />
+///<reference path='TreeRoot.ts' />
 ///<reference path='TreeGridToolbar.ts' />
 ///<reference path='DateTimeFormatter.ts' />
 ///<reference path='TreeGridBuilder.ts' />

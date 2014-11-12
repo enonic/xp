@@ -2,7 +2,8 @@
 ///<reference path='UserTreeGridItem.ts'/>
 ///<reference path='UserTreeGridItemViewer.ts'/>
 ///<reference path='UserItemsTreeGrid.ts'/>
-///<reference path='UserTreeGridActions.ts' />>
+///<reference path='UserTreeGridActions.ts' />
+///<reference path='UserBrowseItemsSelectionPanel.ts' />
 ///<reference path='UserBrowsePanel.ts' />
 ///<reference path='UserBrowseToolbar.ts' />
 ///<reference path='UserBrowseItemPanel.ts'/>

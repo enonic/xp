@@ -11,6 +11,7 @@
 ///<reference path='UninstallModuleEvent.ts' />
 ///<reference path='InstallModuleDialog.ts' />
 ///<reference path='InstallModuleEvent.ts' />
+///<reference path='ModuleBrowseItemsSelectionPanel.ts' />
 ///<reference path='ModuleBrowsePanel.ts' />
 ///<reference path='ModuleBrowseToolbar.ts' />
 
