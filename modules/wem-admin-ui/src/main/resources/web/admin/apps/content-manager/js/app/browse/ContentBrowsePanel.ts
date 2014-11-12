@@ -73,6 +73,10 @@ module app.browse {
                 this.setFilterPanelRefreshNeeded(false);
             });
 
+            api.content.ContentPublishedEvent.on((event) => {
+                this.contentTreeGridPanel.updateContentNode(event.getContent());
+            });
+
             var showMask = () => {
                 this.contentTreeGridPanelMask.show();
             };

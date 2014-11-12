@@ -35,6 +35,7 @@ module app.wizard {
 
             this.publishAction.onExecuted(() => {
                 new api.content.PublishContentRequest(this.content.getId()).sendAndParse().done((content: api.content.Content) => {
+                    new api.content.ContentPublishedEvent(content).fire();
                     api.notify.showSuccess('Content [' + content.getDisplayName() + '] published!');
                     this.close();
                 });
