@@ -254,6 +254,12 @@
   - portal-mustache
   - portal-xslt
 
+  - lib-saxon-he
+  - lib-thymeleaf
+  - lib-resteasy
+  - lib-elasticsearch
+  - lib-jparsec
+
   - karaf-distro
   - karaf-feature
 

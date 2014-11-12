@@ -16,7 +16,7 @@ import com.enonic.wem.core.blob.BlobKeyCreator;
 import com.enonic.wem.core.blob.BlobRecord;
 import com.enonic.wem.core.blob.BlobStore;
 import com.enonic.wem.core.blob.BlobStoreException;
-import com.enonic.wem.core.home.HomeDir;
+import com.enonic.wem.api.home.HomeDir;
 
 public final class FileBlobStore
     implements BlobStore

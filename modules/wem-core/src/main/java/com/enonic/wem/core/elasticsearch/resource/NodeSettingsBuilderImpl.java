@@ -5,7 +5,7 @@ import java.io.File;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
 
-import com.enonic.wem.core.home.HomeDir;
+import com.enonic.wem.api.home.HomeDir;
 
 public final class NodeSettingsBuilderImpl
     implements NodeSettingsBuilder
