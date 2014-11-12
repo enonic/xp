@@ -19,6 +19,9 @@
 ///<reference path='ThumbnailJson.ts' />
 ///<reference path='Metadata.ts' />
 
+
+///<reference path='ContentPublishedEvent.ts' />
+
 ///<reference path='ContentResourceRequest.ts' />
 ///<reference path='GetContentByIdRequest.ts' />
 ///<reference path='GetContentSummaryByIds' />
