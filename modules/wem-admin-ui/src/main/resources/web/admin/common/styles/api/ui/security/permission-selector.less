@@ -1,9 +1,18 @@
+.permission-selector {
+  padding: 5px;
+}
+
 .permission-toggle {
   display: inline-block;
   margin: 5px;
   border-radius: 9px;
-  padding: 0 10px;
+  padding: 2px 10px;
+  cursor: pointer;
   .noSelect();
+
+  &:before {
+    margin-right: 5px;
+  }
 
   &.allow {
     background: @admin-green;

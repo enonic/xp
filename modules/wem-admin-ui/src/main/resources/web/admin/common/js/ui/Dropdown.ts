@@ -19,6 +19,12 @@ module api.ui {
             this.appendChild(option);
         }
 
+        setValue(value: string) {
+            super.setValue(value);
+            this.notifyValueChanged(this.oldValue, value);
+            this.oldValue = value;
+        }
+
 
         onValueChanged(listener: (event: ValueChangedEvent)=>void) {
             this.valueChangedListeners.push(listener);
