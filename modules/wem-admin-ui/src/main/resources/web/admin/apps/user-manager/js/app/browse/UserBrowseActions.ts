@@ -9,7 +9,7 @@ module app.browse {
         public DELETE: Action;
         public DUPLICATE: Action;
         public SYNCH: Action;
-        public TOGGLE_SEARCH_PANEL: Action;
+
         private static INSTANCE: UserBrowseActions;
         private actions: api.ui.Action[] = [];
 

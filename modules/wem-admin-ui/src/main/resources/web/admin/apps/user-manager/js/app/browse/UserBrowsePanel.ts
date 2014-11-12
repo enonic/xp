@@ -65,31 +65,27 @@ module app.browse {
             case UserTreeGridItemType.PRINCIPAL:
             {
                 if (item.getPrincipal().isRole()) {
+                    return "icon-users2 icon-large";
 
-                    return "icon-address-book icon-large";
-                }
-                if (item.getPrincipal().isUser()) {
-
+                } else if (item.getPrincipal().isUser()) {
                     return "icon-user icon-large";
-                }
-                if (item.getPrincipal().isGroup()) {
-                    return  "icon-users2 icon-large";
-                }
 
+                } else if (item.getPrincipal().isGroup()) {
+                    return "icon-users icon-large";
+                }
+                break;
             }
             case UserTreeGridItemType.GROUPS:
             {
-                return  "icon-users2 icon-large"
+                return "icon-folder icon-large"
             }
             case UserTreeGridItemType.ROLES:
-
             {
-                // TODO different icons for host, anonymous, admin  ....
-                return  "icon-key icon-large";
+                return "icon-folder icon-large";
             }
             case UserTreeGridItemType.USERS:
             {
-                return "icon-users icon-large";
+                return "icon-folder icon-large";
             }
             }
 
