@@ -63,7 +63,7 @@ module app.browse {
             case UserTreeGridItemType.PRINCIPAL:
             {
                 if (item.getPrincipal().isRole()) {
-                    return "icon-users2 icon-large";
+                    return "icon-user7 icon-large";
 
                 } else if (item.getPrincipal().isUser()) {
                     return "icon-user icon-large";
