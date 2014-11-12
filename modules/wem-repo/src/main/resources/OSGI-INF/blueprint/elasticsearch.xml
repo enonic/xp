@@ -32,4 +32,9 @@
     <property name="elasticsearchDao" ref="elasticsearchDao"/>
   </bean>
 
+  <service ref="versionService" auto-export="interfaces"/>
+  <service ref="queryService" auto-export="interfaces"/>
+  <service ref="indexService" auto-export="interfaces"/>
+  <service ref="workspaceService" auto-export="interfaces"/>
+
 </blueprint>

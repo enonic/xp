@@ -11,11 +11,12 @@ import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.index.IndexType;
 
-public final class RepositoryInitializer
+public final class RepositoryInitializerImpl
+    implements RepositoryInitializer
 {
     private IndexService indexService;
 
-    private final static Logger LOG = LoggerFactory.getLogger( RepositoryInitializer.class );
+    private final static Logger LOG = LoggerFactory.getLogger( RepositoryInitializerImpl.class );
 
     public final void init( final Repository repository )
     {
