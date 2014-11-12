@@ -1,15 +1,29 @@
-package com.enonic.wem.core.blob;
+package com.enonic.wem.internal.blob;
 
 import java.io.InputStream;
+
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
 
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.blob.BlobService;
+import com.enonic.wem.internal.blob.file.FileBlobStore;
 
+@Component
 public final class BlobServiceImpl
     implements BlobService
 {
     private BlobStore blobStore;
+
+    @Activate
+    public void activate()
+    {
+        if ( this.blobStore == null )
+        {
+            this.blobStore = new FileBlobStore();
+        }
+    }
 
     @Override
     public Blob create( final InputStream in )

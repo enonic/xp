@@ -4,7 +4,7 @@ import org.junit.Before;
 
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.repository.Repository;
-import com.enonic.wem.core.blob.BlobServiceImpl;
+import com.enonic.wem.internal.blob.BlobServiceImpl;
 import com.enonic.wem.core.elasticsearch.ElasticsearchIndexService;
 import com.enonic.wem.core.elasticsearch.ElasticsearchQueryService;
 import com.enonic.wem.core.elasticsearch.ElasticsearchVersionService;

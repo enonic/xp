@@ -42,6 +42,11 @@
       <version>2.1</version>
     </dependency>
     <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>2.4</version>
+    </dependency>
+    <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.core</artifactId>
     </dependency>
@@ -93,6 +98,7 @@
               *
             </Import-Package>
             <Embed-Dependency>
+              commons-io,
               jackson-*,
               guava,
               jparsec,

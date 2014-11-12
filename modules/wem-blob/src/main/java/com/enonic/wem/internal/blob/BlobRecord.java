@@ -1,12 +1,6 @@
-package com.enonic.wem.core.blob;
+package com.enonic.wem.internal.blob;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
-
-import org.apache.commons.io.IOUtils;
-
-import com.google.common.io.ByteStreams;
 
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobKey;
@@ -30,27 +24,6 @@ public abstract class BlobRecord
 
     public abstract InputStream getStream()
         throws BlobStoreException;
-
-    public final byte[] getAsBytes()
-        throws BlobStoreException
-    {
-        final InputStream stream = getStream();
-
-        try
-        {
-            return ByteStreams.toByteArray( stream );
-        }
-        catch ( IOException e )
-        {
-            throw new BlobStoreException( "Failed to get bytes from blob [" + this.key + "]", e );
-        }
-        finally
-        {
-            IOUtils.closeQuietly( stream );
-        }
-    }
-
-    public abstract File getAsFile();
 
     public final String toString()
     {

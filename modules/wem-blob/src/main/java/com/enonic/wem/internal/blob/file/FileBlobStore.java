@@ -1,4 +1,4 @@
-package com.enonic.wem.core.blob.file;
+package com.enonic.wem.internal.blob.file;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -12,10 +12,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.wem.api.blob.BlobKey;
-import com.enonic.wem.core.blob.BlobKeyCreator;
-import com.enonic.wem.core.blob.BlobRecord;
-import com.enonic.wem.core.blob.BlobStore;
-import com.enonic.wem.core.blob.BlobStoreException;
+import com.enonic.wem.internal.blob.BlobKeyCreator;
+import com.enonic.wem.internal.blob.BlobRecord;
+import com.enonic.wem.internal.blob.BlobStore;
+import com.enonic.wem.internal.blob.BlobStoreException;
 import com.enonic.wem.api.home.HomeDir;
 
 public final class FileBlobStore

@@ -1,4 +1,4 @@
-package com.enonic.wem.core.blob.file;
+package com.enonic.wem.internal.blob.file;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -6,8 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import com.enonic.wem.api.blob.BlobKey;
-import com.enonic.wem.core.blob.BlobRecord;
-import com.enonic.wem.core.blob.BlobStoreException;
+import com.enonic.wem.internal.blob.BlobRecord;
+import com.enonic.wem.internal.blob.BlobStoreException;
 
 final class FileBlobRecord
     extends BlobRecord

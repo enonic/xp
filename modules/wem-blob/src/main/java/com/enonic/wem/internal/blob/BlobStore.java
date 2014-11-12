@@ -1,4 +1,4 @@
-package com.enonic.wem.core.blob;
+package com.enonic.wem.internal.blob;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -55,5 +55,5 @@ public interface BlobStore
      */
     public boolean deleteRecord( BlobKey key )
         throws BlobStoreException;
-
 }
+

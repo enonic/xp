@@ -19,7 +19,7 @@ import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.attachment.GetAttachmentParameters;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.core.blob.memory.MemoryBlobRecord;
+import com.enonic.wem.internal.blob.memory.MemoryBlobRecord;
 import com.enonic.wem.core.image.filter.BuilderContext;
 import com.enonic.wem.core.image.filter.ImageFilter;
 import com.enonic.wem.core.image.filter.ImageFilterBuilder;

@@ -1,4 +1,4 @@
-package com.enonic.wem.core.blob;
+package com.enonic.wem.internal.blob;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

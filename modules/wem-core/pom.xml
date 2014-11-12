@@ -23,15 +23,15 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>wem-blob</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>wem-api</artifactId>
       <version>${project.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <version>2.4</version>
     </dependency>
     <dependency>
       <groupId>com.samskivert</groupId>
@@ -66,7 +66,6 @@
               com.samskivert.*;version=1.9.0,
               org.elasticsearch.*;version=1.2.2,
               org.apache.lucene.*;version=4.6.1,
-              org.apache.commons.*,
               com.spatial4j.*;version=0.3.0,
               org.tartarus.snowball.*
             </_exportcontents>
@@ -74,7 +73,6 @@
               *;resolution:=optional
             </Import-Package>
             <Embed-Dependency>
-              commons-io,
               jmustache,
               elasticsearch,
               lucene-*,
