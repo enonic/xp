@@ -36,6 +36,8 @@ public abstract class AbstractElasticsearchIntegrationTest
     public void setUp()
         throws Exception
     {
+        LOG.info( "Starting ES-Server" );
+
         server = new EmbeddedElasticsearchServer();
 
         this.client = server.getClient();
@@ -121,6 +123,8 @@ public abstract class AbstractElasticsearchIntegrationTest
     @After
     public void cleanUp()
     {
+        LOG.info( "shutting down" );
+        this.client.close();
         server.shutdown();
     }
 

@@ -36,7 +36,9 @@ public class SecurityServiceImplTest
         throws Exception
     {
         super.setUp();
+
         createRepository( SystemConstants.SYSTEM_REPO );
+        refresh();
 
         this.nodeService = new NodeServiceImpl();
         this.nodeService.setIndexService( indexService );
