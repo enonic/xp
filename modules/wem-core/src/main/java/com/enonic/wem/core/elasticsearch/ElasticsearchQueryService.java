@@ -39,7 +39,6 @@ public class ElasticsearchQueryService
 
     private final QueryResultFactory queryResultFactory = new QueryResultFactory();
 
-
     @Override
     public NodeQueryResult find( final NodeQuery query, final IndexContext context )
     {

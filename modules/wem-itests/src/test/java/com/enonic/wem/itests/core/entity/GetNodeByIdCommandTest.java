@@ -25,7 +25,6 @@ public class GetNodeByIdCommandTest
 
         RepositoryInitializer repositoryInitializer = new RepositoryInitializer();
         repositoryInitializer.setIndexService( this.indexService );
-
         repositoryInitializer.init( ContentConstants.CONTENT_REPO );
     }
 
