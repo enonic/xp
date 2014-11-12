@@ -1,6 +1,6 @@
 package com.enonic.wem.core.workspace.compare;
 
-import com.enonic.wem.core.entity.NodeVersion;
+import com.enonic.wem.repo.NodeVersion;
 
 public class DiffStatusParams
 {

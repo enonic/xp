@@ -3,6 +3,7 @@ package com.enonic.wem.core.entity;
 import org.junit.Test;
 
 import com.enonic.wem.api.support.AbstractEqualsTest;
+import com.enonic.wem.repo.NodeName;
 
 import static org.junit.Assert.*;
 

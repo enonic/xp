@@ -4,6 +4,8 @@ import java.util.LinkedHashSet;
 
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.repo.NodeId;
+
 public class NodeOrderValueResolver
 {
     public static final Long ORDER_SPACE = (long) Integer.MAX_VALUE;

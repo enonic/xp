@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
 import com.enonic.wem.api.Name;
+import com.enonic.wem.repo.NodeName;
 
 public abstract class DuplicateValueResolver
 {

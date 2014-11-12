@@ -10,6 +10,7 @@ import com.google.common.collect.Sets;
 import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.index.IndexType;
+import com.enonic.wem.repo.RepositoryInitializer;
 
 public final class RepositoryInitializerImpl
     implements RepositoryInitializer

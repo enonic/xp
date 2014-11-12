@@ -10,14 +10,14 @@ import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlEntry;
 import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.security.acl.Permission;
-import com.enonic.wem.core.entity.CreateNodeParams;
-import com.enonic.wem.core.entity.Node;
-import com.enonic.wem.core.entity.NodeId;
-import com.enonic.wem.core.entity.NodeName;
-import com.enonic.wem.core.entity.NodePath;
+import com.enonic.wem.repo.CreateNodeParams;
+import com.enonic.wem.repo.Node;
+import com.enonic.wem.repo.NodeId;
+import com.enonic.wem.repo.NodeName;
+import com.enonic.wem.repo.NodePath;
 import com.enonic.wem.core.entity.NodeServiceImpl;
-import com.enonic.wem.core.entity.RenameNodeParams;
-import com.enonic.wem.core.entity.dao.NodeNotFoundException;
+import com.enonic.wem.repo.RenameNodeParams;
+import com.enonic.wem.repo.NodeNotFoundException;
 
 import static org.junit.Assert.*;
 

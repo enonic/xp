@@ -1,11 +1,13 @@
 package com.enonic.wem.core.entity;
 
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.core.entity.dao.NodeDao;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.index.query.QueryService;
+import com.enonic.wem.repo.Node;
+import com.enonic.wem.repo.NodePath;
+import com.enonic.wem.repo.NodeVersionId;
 
 public class NodeChildOrderResolver
 {

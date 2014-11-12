@@ -5,8 +5,8 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.FindContentByQueryParams;
 import com.enonic.wem.api.content.FindContentByQueryResult;
-import com.enonic.wem.core.entity.FindNodesByQueryResult;
-import com.enonic.wem.core.entity.query.NodeQuery;
+import com.enonic.wem.repo.FindNodesByQueryResult;
+import com.enonic.wem.repo.NodeQuery;
 
 final class FindContentByQueryCommand
     extends AbstractContentCommand

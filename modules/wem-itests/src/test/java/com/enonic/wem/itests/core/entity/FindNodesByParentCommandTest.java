@@ -8,14 +8,14 @@ import org.junit.Test;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.index.ChildOrder;
-import com.enonic.wem.core.entity.CreateNodeParams;
+import com.enonic.wem.repo.CreateNodeParams;
 import com.enonic.wem.core.entity.FindNodesByParentCommand;
-import com.enonic.wem.core.entity.FindNodesByParentParams;
-import com.enonic.wem.core.entity.FindNodesByParentResult;
-import com.enonic.wem.core.entity.Node;
-import com.enonic.wem.core.entity.NodeId;
-import com.enonic.wem.core.entity.NodePath;
-import com.enonic.wem.core.entity.Nodes;
+import com.enonic.wem.repo.FindNodesByParentParams;
+import com.enonic.wem.repo.FindNodesByParentResult;
+import com.enonic.wem.repo.Node;
+import com.enonic.wem.repo.NodeId;
+import com.enonic.wem.repo.NodePath;
+import com.enonic.wem.repo.Nodes;
 
 import static org.junit.Assert.*;
 

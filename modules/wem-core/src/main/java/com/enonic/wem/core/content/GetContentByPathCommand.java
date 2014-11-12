@@ -5,11 +5,10 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.core.entity.NoNodeAtPathFoundException;
-import com.enonic.wem.core.entity.Node;
-import com.enonic.wem.core.entity.NodePath;
+import com.enonic.wem.repo.Node;
+import com.enonic.wem.repo.NodePath;
 
 final class GetContentByPathCommand
     extends AbstractContentCommand

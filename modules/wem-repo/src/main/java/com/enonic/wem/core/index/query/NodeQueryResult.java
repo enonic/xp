@@ -6,7 +6,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.aggregation.Aggregations;
-import com.enonic.wem.core.entity.NodeIds;
+import com.enonic.wem.repo.NodeIds;
 
 public final class NodeQueryResult
 {

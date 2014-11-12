@@ -1,9 +1,10 @@
 package com.enonic.wem.core.entity;
 
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.core.version.GetVersionsQuery;
 import com.enonic.wem.core.version.VersionService;
+import com.enonic.wem.repo.FindNodeVersionsResult;
+import com.enonic.wem.repo.NodeId;
 
 public class GetNodeVersionsCommand
 {

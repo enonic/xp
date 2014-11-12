@@ -5,6 +5,9 @@ import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.index.query.QueryService;
 import com.enonic.wem.core.workspace.WorkspaceContext;
+import com.enonic.wem.repo.FindNodesByParentParams;
+import com.enonic.wem.repo.FindNodesByParentResult;
+import com.enonic.wem.repo.Node;
 
 abstract class AbstractDeleteNodeCommand
     extends AbstractNodeCommand

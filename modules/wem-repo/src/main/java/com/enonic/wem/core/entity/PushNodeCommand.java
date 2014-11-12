@@ -8,6 +8,9 @@ import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.workspace.StoreWorkspaceDocument;
 import com.enonic.wem.core.workspace.WorkspaceContext;
+import com.enonic.wem.repo.Node;
+import com.enonic.wem.repo.NodeId;
+import com.enonic.wem.repo.NodeVersionId;
 
 public class PushNodeCommand
     extends AbstractNodeCommand

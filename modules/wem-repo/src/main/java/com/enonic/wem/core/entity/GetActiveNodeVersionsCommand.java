@@ -8,6 +8,9 @@ import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.api.workspace.Workspaces;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.version.VersionService;
+import com.enonic.wem.repo.GetActiveNodeVersionsResult;
+import com.enonic.wem.repo.NodeId;
+import com.enonic.wem.repo.NodeVersionId;
 
 public class GetActiveNodeVersionsCommand
     extends AbstractNodeCommand

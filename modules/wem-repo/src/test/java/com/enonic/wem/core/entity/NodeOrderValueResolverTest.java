@@ -6,6 +6,8 @@ import org.junit.Test;
 
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.repo.NodeId;
+
 import static org.junit.Assert.*;
 
 public class NodeOrderValueResolverTest

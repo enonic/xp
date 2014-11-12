@@ -3,6 +3,9 @@ package com.enonic.wem.core.entity;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.query.expr.OrderExpressions;
 import com.enonic.wem.core.index.IndexContext;
+import com.enonic.wem.repo.NodePaths;
+import com.enonic.wem.repo.NodeVersionIds;
+import com.enonic.wem.repo.Nodes;
 
 public class GetNodesByPathsCommand
     extends AbstractNodeCommand

@@ -3,13 +3,12 @@ package com.enonic.wem.core.content;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.util.Exceptions;
 import com.enonic.wem.core.entity.NoNodeWithIdFoundException;
-import com.enonic.wem.core.entity.Node;
-import com.enonic.wem.core.entity.NodeId;
-import com.enonic.wem.core.entity.dao.NodeNotFoundException;
+import com.enonic.wem.repo.Node;
+import com.enonic.wem.repo.NodeId;
+import com.enonic.wem.repo.NodeNotFoundException;
 
 
 final class GetContentByIdCommand

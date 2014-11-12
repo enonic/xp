@@ -12,6 +12,10 @@ import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.support.illegaledit.IllegalEditException;
+import com.enonic.wem.repo.Node;
+import com.enonic.wem.repo.NodeId;
+import com.enonic.wem.repo.NodeName;
+import com.enonic.wem.repo.NodePath;
 
 import static org.junit.Assert.*;
 

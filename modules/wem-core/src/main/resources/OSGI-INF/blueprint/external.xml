@@ -2,7 +2,7 @@
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
   <reference id="blobService" interface="com.enonic.wem.api.blob.BlobService"/>
-  <reference id="nodeService" interface="com.enonic.wem.core.entity.NodeService"/>
-  <reference id="repositoryInitializer" interface="com.enonic.wem.core.repository.RepositoryInitializer"/>
+  <reference id="nodeService" interface="com.enonic.wem.repo.NodeService"/>
+  <reference id="repositoryInitializer" interface="com.enonic.wem.repo.RepositoryInitializer"/>
 
 </blueprint>

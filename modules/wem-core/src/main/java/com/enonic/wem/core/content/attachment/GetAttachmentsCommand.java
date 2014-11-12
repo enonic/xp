@@ -4,14 +4,13 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.Attachments;
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.core.content.ContentAttachmentNodeTranslator;
 import com.enonic.wem.core.content.serializer.ThumbnailAttachmentSerializer;
 import com.enonic.wem.core.entity.NoNodeWithIdFoundException;
-import com.enonic.wem.core.entity.Node;
-import com.enonic.wem.core.entity.NodeId;
-import com.enonic.wem.core.entity.NodeService;
+import com.enonic.wem.repo.Node;
+import com.enonic.wem.repo.NodeId;
+import com.enonic.wem.repo.NodeService;
 
 
 final class GetAttachmentsCommand
@@ -41,7 +40,7 @@ final class GetAttachmentsCommand
             final Node node = nodeService.getById( nodeId );
             final Attachments.Builder attachmentsBuilder = Attachments.builder();
 
-            for ( com.enonic.wem.core.entity.Attachment entityAttachment : node.attachments() )
+            for ( com.enonic.wem.repo.Attachment entityAttachment : node.attachments() )
             {
                 final boolean isThumbnail = entityAttachment.name().equals( ThumbnailAttachmentSerializer.THUMB_NAME );
 

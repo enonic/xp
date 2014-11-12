@@ -3,13 +3,12 @@ package com.enonic.wem.core.content.attachment;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.attachment.Attachment;
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.core.content.ContentAttachmentNodeTranslator;
 import com.enonic.wem.core.entity.NoNodeWithIdFoundException;
-import com.enonic.wem.core.entity.Node;
-import com.enonic.wem.core.entity.NodeId;
-import com.enonic.wem.core.entity.NodeService;
+import com.enonic.wem.repo.Node;
+import com.enonic.wem.repo.NodeId;
+import com.enonic.wem.repo.NodeService;
 
 
 final class GetAttachmentCommand
@@ -41,7 +40,7 @@ final class GetAttachmentCommand
             final NodeId nodeId = NodeId.from( this.contentId );
             final Node node = nodeService.getById( nodeId );
 
-            final com.enonic.wem.core.entity.Attachment entityAttachment = node.attachments().getAttachment( this.attachmentName );
+            final com.enonic.wem.repo.Attachment entityAttachment = node.attachments().getAttachment( this.attachmentName );
             if ( entityAttachment != null )
             {
                 return CONTENT_ATTACHMENT_NODE_TRANSLATOR.toContentAttachment( entityAttachment );

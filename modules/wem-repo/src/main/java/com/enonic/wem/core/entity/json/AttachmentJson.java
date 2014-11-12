@@ -3,7 +3,7 @@ package com.enonic.wem.core.entity.json;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.wem.api.blob.BlobKey;
-import com.enonic.wem.core.entity.Attachment;
+import com.enonic.wem.repo.Attachment;
 
 final class AttachmentJson
 {

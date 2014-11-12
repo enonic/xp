@@ -5,6 +5,9 @@ import java.time.Instant;
 
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.util.Exceptions;
+import com.enonic.wem.repo.Attachments;
+import com.enonic.wem.repo.Node;
+import com.enonic.wem.repo.UpdateNodeParams;
 
 public final class UpdateNodeCommand
     extends AbstractNodeCommand

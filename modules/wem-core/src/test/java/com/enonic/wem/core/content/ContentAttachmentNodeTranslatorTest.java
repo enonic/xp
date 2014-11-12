@@ -27,11 +27,11 @@ public class ContentAttachmentNodeTranslatorTest
             size( size ).
             build() );
 
-        final com.enonic.wem.core.entity.Attachments attachments = contentAttachmentNodeTranslator.toNodeAttachments( contentAttachments );
+        final com.enonic.wem.repo.Attachments attachments = contentAttachmentNodeTranslator.toNodeAttachments( contentAttachments );
 
         assertEquals( 1, attachments.getSize() );
 
-        final com.enonic.wem.core.entity.Attachment attachment = attachments.get( 0 );
+        final com.enonic.wem.repo.Attachment attachment = attachments.get( 0 );
 
         assertEquals( name, attachment.name() );
         assertEquals( size, attachment.size() );
@@ -42,7 +42,7 @@ public class ContentAttachmentNodeTranslatorTest
     @Test
     public void translate_null_then_null()
     {
-        final com.enonic.wem.core.entity.Attachments attachments = contentAttachmentNodeTranslator.toNodeAttachments( null );
+        final com.enonic.wem.repo.Attachments attachments = contentAttachmentNodeTranslator.toNodeAttachments( null );
 
         assertTrue( attachments == null );
     }
@@ -50,9 +50,9 @@ public class ContentAttachmentNodeTranslatorTest
     @Test
     public void translate_empty_then_empty()
     {
-        final com.enonic.wem.core.entity.Attachments attachments = contentAttachmentNodeTranslator.toNodeAttachments( Attachments.empty() );
+        final com.enonic.wem.repo.Attachments attachments = contentAttachmentNodeTranslator.toNodeAttachments( Attachments.empty() );
 
-        assertEquals( com.enonic.wem.core.entity.Attachments.empty(), attachments );
+        assertEquals( com.enonic.wem.repo.Attachments.empty(), attachments );
     }
 
 }

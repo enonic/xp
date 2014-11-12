@@ -4,6 +4,14 @@ import java.time.Instant;
 
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.core.index.query.QueryService;
+import com.enonic.wem.repo.FindNodesByParentParams;
+import com.enonic.wem.repo.FindNodesByParentResult;
+import com.enonic.wem.repo.Node;
+import com.enonic.wem.repo.NodeId;
+import com.enonic.wem.repo.NodeName;
+import com.enonic.wem.repo.NodePath;
+import com.enonic.wem.repo.Nodes;
+import com.enonic.wem.repo.RenameNodeParams;
 
 public final class RenameNodeCommand
     extends AbstractNodeCommand

@@ -1,6 +1,8 @@
 package com.enonic.wem.core.entity;
 
 
+import com.enonic.wem.repo.NodeId;
+
 public class NoNodeWithIdFoundException
     extends NoNodeFoundException
 {

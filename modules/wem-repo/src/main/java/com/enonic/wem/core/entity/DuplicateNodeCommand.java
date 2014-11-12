@@ -3,6 +3,12 @@ package com.enonic.wem.core.entity;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.core.index.query.QueryService;
+import com.enonic.wem.repo.CreateNodeParams;
+import com.enonic.wem.repo.FindNodesByParentParams;
+import com.enonic.wem.repo.FindNodesByParentResult;
+import com.enonic.wem.repo.Node;
+import com.enonic.wem.repo.NodeId;
+import com.enonic.wem.repo.NodePath;
 
 public class DuplicateNodeCommand
     extends AbstractNodeCommand

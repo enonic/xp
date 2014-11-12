@@ -9,8 +9,8 @@ import org.elasticsearch.index.query.TermQueryBuilder;
 import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.core.elasticsearch.ElasticsearchDao;
 import com.enonic.wem.core.elasticsearch.xcontent.WorkspaceXContentBuilderFactory;
-import com.enonic.wem.core.entity.NodeVersionId;
-import com.enonic.wem.core.entity.NodeVersionIds;
+import com.enonic.wem.repo.NodeVersionId;
+import com.enonic.wem.repo.NodeVersionIds;
 import com.enonic.wem.core.index.result.SearchResultField;
 
 abstract class AbstractWorkspaceCommand

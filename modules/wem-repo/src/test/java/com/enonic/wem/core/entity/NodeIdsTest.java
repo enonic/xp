@@ -4,6 +4,7 @@ package com.enonic.wem.core.entity;
 import org.junit.Test;
 
 import com.enonic.wem.api.support.AbstractEqualsTest;
+import com.enonic.wem.repo.NodeIds;
 
 import static junit.framework.Assert.assertEquals;
 

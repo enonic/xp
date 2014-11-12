@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.UserStoreKey;
-import com.enonic.wem.core.entity.NodePath;
+import com.enonic.wem.repo.NodePath;
 
 import static org.junit.Assert.*;
 

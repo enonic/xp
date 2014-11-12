@@ -13,6 +13,7 @@ import com.enonic.wem.api.support.ChangeTraceable;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
 import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
 import com.enonic.wem.api.support.illegaledit.IllegalEditException;
+import com.enonic.wem.repo.NodeId;
 
 public final class Relationship
     implements IllegalEditAware<Relationship>, ChangeTraceable

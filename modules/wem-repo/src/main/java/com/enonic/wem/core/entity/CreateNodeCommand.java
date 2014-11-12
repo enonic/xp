@@ -7,6 +7,12 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlList;
+import com.enonic.wem.repo.Attachments;
+import com.enonic.wem.repo.CreateNodeParams;
+import com.enonic.wem.repo.Node;
+import com.enonic.wem.repo.NodeId;
+import com.enonic.wem.repo.NodeName;
+import com.enonic.wem.repo.NodePath;
 
 public final class CreateNodeCommand
     extends AbstractNodeCommand

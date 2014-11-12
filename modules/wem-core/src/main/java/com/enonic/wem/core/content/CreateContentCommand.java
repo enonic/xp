@@ -12,8 +12,8 @@ import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
-import com.enonic.wem.core.entity.CreateNodeParams;
-import com.enonic.wem.core.entity.Node;
+import com.enonic.wem.repo.CreateNodeParams;
+import com.enonic.wem.repo.Node;
 import com.enonic.wem.core.entity.NodeAlreadyExistException;
 
 final class CreateContentCommand

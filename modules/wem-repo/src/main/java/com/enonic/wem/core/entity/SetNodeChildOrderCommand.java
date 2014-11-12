@@ -2,13 +2,14 @@ package com.enonic.wem.core.entity;
 
 import java.util.LinkedHashSet;
 
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.query.expr.QueryExpr;
-import com.enonic.wem.core.entity.query.NodeQuery;
+import com.enonic.wem.repo.NodeQuery;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.index.query.NodeQueryResult;
+import com.enonic.wem.repo.Node;
+import com.enonic.wem.repo.NodeId;
 
 public class SetNodeChildOrderCommand
     extends AbstractNodeCommand

@@ -3,11 +3,11 @@ package com.enonic.wem.itests.core.entity;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.core.entity.CreateNodeParams;
-import com.enonic.wem.core.entity.FindNodesByParentParams;
-import com.enonic.wem.core.entity.FindNodesByParentResult;
-import com.enonic.wem.core.entity.Node;
-import com.enonic.wem.core.entity.NodePath;
+import com.enonic.wem.repo.CreateNodeParams;
+import com.enonic.wem.repo.FindNodesByParentParams;
+import com.enonic.wem.repo.FindNodesByParentResult;
+import com.enonic.wem.repo.Node;
+import com.enonic.wem.repo.NodePath;
 
 import static org.junit.Assert.*;
 

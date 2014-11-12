@@ -2,7 +2,6 @@ package com.enonic.wem.core.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.index.IndexPaths;
 import com.enonic.wem.api.query.expr.CompareExpr;
@@ -11,9 +10,11 @@ import com.enonic.wem.api.query.expr.FieldOrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.query.expr.QueryExpr;
 import com.enonic.wem.api.query.expr.ValueExpr;
-import com.enonic.wem.core.entity.query.NodeQuery;
+import com.enonic.wem.repo.NodeQuery;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.index.query.NodeQueryResult;
+import com.enonic.wem.repo.Node;
+import com.enonic.wem.repo.NodeId;
 
 public class MoveChildNodeCommand
     extends AbstractNodeCommand
