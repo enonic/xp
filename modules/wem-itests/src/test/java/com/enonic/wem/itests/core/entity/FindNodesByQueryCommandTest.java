@@ -25,7 +25,6 @@ public class FindNodesByQueryCommandTest
         throws Exception
     {
         super.setUp();
-        createContentRepository();
     }
 
     @Test

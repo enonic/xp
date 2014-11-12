@@ -32,7 +32,6 @@ public class GetActiveNodeVersionsCommandTest
         throws Exception
     {
         super.setUp();
-        createContentRepository();
     }
 
     @Test

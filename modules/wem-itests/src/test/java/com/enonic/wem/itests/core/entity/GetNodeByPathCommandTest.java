@@ -19,7 +19,6 @@ public class GetNodeByPathCommandTest
         throws Exception
     {
         super.setUp();
-        createContentRepository();
     }
 
     @Test

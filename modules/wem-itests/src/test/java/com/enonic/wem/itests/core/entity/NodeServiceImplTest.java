@@ -38,8 +38,6 @@ public class NodeServiceImplTest
         this.nodeService.setNodeDao( nodeDao );
         this.nodeService.setVersionService( versionService );
         this.nodeService.setWorkspaceService( workspaceService );
-
-        createContentRepository();
     }
 
     @Test

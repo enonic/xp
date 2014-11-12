@@ -21,8 +21,6 @@ public class FindContentByParentCommandTest
         throws Exception
     {
         super.setUp();
-
-        createContentRepository();
     }
 
     @Test

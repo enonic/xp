@@ -3,7 +3,6 @@ package com.enonic.wem.itests.core.entity;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlEntry;
@@ -13,7 +12,6 @@ import com.enonic.wem.core.entity.CreateNodeParams;
 import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.entity.NodePath;
 import com.enonic.wem.core.entity.StoreNodeCommand;
-import com.enonic.wem.core.repository.RepositoryInitializer;
 
 public class StoreNodeCommandTest
     extends AbstractNodeTest
@@ -24,13 +22,7 @@ public class StoreNodeCommandTest
         throws Exception
     {
         super.setUp();
-
-        RepositoryInitializer repositoryInitializer = new RepositoryInitializer();
-        repositoryInitializer.setIndexService( this.indexService );
-
-        repositoryInitializer.init( ContentConstants.CONTENT_REPO );
     }
-
 
     @Test
     public void with_acl()

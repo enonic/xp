@@ -28,7 +28,6 @@ public class GetNodeVersionsCommandTest
         throws Exception
     {
         super.setUp();
-        createContentRepository();
     }
 
     @Test

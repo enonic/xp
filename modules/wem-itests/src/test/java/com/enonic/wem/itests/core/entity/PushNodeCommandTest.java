@@ -23,7 +23,6 @@ public class PushNodeCommandTest
         throws Exception
     {
         super.setUp();
-        createContentRepository();
     }
 
 

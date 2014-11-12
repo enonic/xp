@@ -30,7 +30,6 @@ public class MoveChildNodeCommandTest
         throws Exception
     {
         super.setUp();
-        createContentRepository();
     }
 
     @Test

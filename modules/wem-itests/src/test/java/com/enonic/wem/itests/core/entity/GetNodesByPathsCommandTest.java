@@ -22,7 +22,6 @@ public class GetNodesByPathsCommandTest
         throws Exception
     {
         super.setUp();
-        createContentRepository();
     }
 
     @Test

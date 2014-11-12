@@ -27,7 +27,6 @@ public class SetNodeChildOrderCommandTest
         throws Exception
     {
         super.setUp();
-        createContentRepository();
     }
 
     @Test

@@ -23,8 +23,6 @@ public class DuplicateNodeCommandTest
         throws Exception
     {
         super.setUp();
-
-        createContentRepository();
     }
 
     @Test

@@ -3,13 +3,11 @@ package com.enonic.wem.itests.core.entity;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.core.entity.CreateNodeParams;
 import com.enonic.wem.core.entity.Node;
 import com.enonic.wem.core.entity.NodeHasChildResolver;
 import com.enonic.wem.core.entity.NodePath;
 import com.enonic.wem.core.entity.Nodes;
-import com.enonic.wem.core.repository.RepositoryInitializer;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
@@ -23,11 +21,6 @@ public class NodeHasChildResolverTest
         throws Exception
     {
         super.setUp();
-
-        RepositoryInitializer repositoryInitializer = new RepositoryInitializer();
-        repositoryInitializer.setIndexService( this.indexService );
-
-        repositoryInitializer.init( ContentConstants.CONTENT_REPO );
     }
 
     @Test

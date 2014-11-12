@@ -106,12 +106,14 @@ public abstract class AbstractElasticsearchIntegrationTest
         {
             LOG.info( "waitForRelocation timed out (status={}), cluster state:\n{}\n{}" );
         }
+
+        LOG.info( "Cluster in status: " + actionGet.getStatus().name() );
+
         return actionGet.getStatus();
     }
 
     protected final RefreshResponse refresh()
     {
-        waitForRelocation();
         RefreshResponse actionGet = client.admin().indices().prepareRefresh().execute().actionGet();
         return actionGet;
     }

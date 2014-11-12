@@ -19,8 +19,6 @@ public class DeleteNodeByIdCommandTest
         throws Exception
     {
         super.setUp();
-
-        createContentRepository();
     }
 
     @Test

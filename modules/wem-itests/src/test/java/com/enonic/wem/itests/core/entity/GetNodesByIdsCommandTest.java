@@ -21,7 +21,6 @@ public class GetNodesByIdsCommandTest
         throws Exception
     {
         super.setUp();
-        createContentRepository();
     }
 
     @Test

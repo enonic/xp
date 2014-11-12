@@ -28,8 +28,6 @@ public class CompareNodesCommandTest
         throws Exception
     {
         super.setUp();
-
-        createContentRepository();
     }
 
     @Test

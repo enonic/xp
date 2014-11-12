@@ -30,12 +30,11 @@ import static org.junit.Assert.*;
 public class OrderByValueResolverTest
     extends AbstractElasticsearchIntegrationTest
 {
+    private Repository repository;
 
-    Repository repository;
+    private String indexName;
 
-    String indexName;
-
-    String indexType;
+    private String indexType;
 
     @Override
     @Before

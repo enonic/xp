@@ -21,8 +21,6 @@ public class RenameNodeCommandTest
         throws Exception
     {
         super.setUp();
-
-        createContentRepository();
     }
 
     @Test
