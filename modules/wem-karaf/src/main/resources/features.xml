@@ -11,6 +11,16 @@
   <feature name="wem" version="${project.version}" description="Enonic WEM Feature">
     <feature>scr</feature>
     <feature>wem-base</feature>
+
+    <bundle start-level="50">mvn:com.google.guava/guava/16.0.1</bundle>
+    <bundle start-level="50">mvn:commons-lang/commons-lang/2.4</bundle>
+    <bundle start-level="50">mvn:commons-io/commons-io/2.4</bundle>
+    <bundle start-level="50">mvn:com.fasterxml.jackson.core/jackson-core/2.4.1</bundle>
+    <bundle start-level="50">mvn:com.fasterxml.jackson.core/jackson-annotations/2.4.1</bundle>
+    <bundle start-level="50">mvn:com.fasterxml.jackson.core/jackson-databind/2.4.1</bundle>
+    <bundle start-level="50">mvn:com.fasterxml.jackson.datatype/jackson-datatype-jsr310/2.4.1</bundle>
+    <bundle start-level="50">mvn:com.enonic.osgi.bundles/jparsec/2.1.0_1</bundle>
+
     <bundle start-level="50">mvn:com.enonic.wem/wem-api/${project.version}</bundle>
     <bundle start-level="50">mvn:com.enonic.wem/wem-blob/${project.version}</bundle>
     <bundle start-level="50">mvn:com.enonic.wem/wem-repo/${project.version}</bundle>
