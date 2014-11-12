@@ -27,13 +27,8 @@ public class DuplicateNodeCommand
 
         final String newNodeName = resolveNewNodeName( existingNode );
 
-        final CreateNodeParams builder = CreateNodeParams.create().
+        final CreateNodeParams builder = CreateNodeParams.from( existingNode ).
             name( newNodeName ).
-            parent( existingNode.parent() ).
-            data( existingNode.data() ).
-            attachments( existingNode.attachments() ).
-            indexConfigDocument( existingNode.getIndexConfigDocument() ).
-            childOrder( existingNode.getChildOrder() ).
             build();
 
         final Node duplicatedNode = doCreateNode( builder );
@@ -45,8 +40,6 @@ public class DuplicateNodeCommand
 
     private void storeChildNodes( final Node originalParent, final Node newParent )
     {
-
-        //TODO: Fix size
         final FindNodesByParentResult findNodesByParentResult = doFindNodesByParent( FindNodesByParentParams.create().
             parentPath( originalParent.path() ).
             from( 0 ).
@@ -55,12 +48,7 @@ public class DuplicateNodeCommand
 
         for ( final Node node : findNodesByParentResult.getNodes() )
         {
-            final Node newChildNode = this.doCreateNode( CreateNodeParams.create().
-                childOrder( node.getChildOrder() ).
-                attachments( node.attachments() ).
-                data( node.data() ).
-                name( node.name().toString() ).
-                indexConfigDocument( node.getIndexConfigDocument() ).
+            final Node newChildNode = this.doCreateNode( CreateNodeParams.from( node ).
                 parent( newParent.path() ).
                 build() );
 

@@ -4,6 +4,7 @@ import org.junit.Before;
 
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.repository.Repository;
+import com.enonic.wem.core.blob.BlobServiceImpl;
 import com.enonic.wem.core.elasticsearch.ElasticsearchIndexService;
 import com.enonic.wem.core.elasticsearch.ElasticsearchQueryService;
 import com.enonic.wem.core.elasticsearch.ElasticsearchVersionService;
@@ -71,7 +72,7 @@ public abstract class AbstractNodeTest
 
     protected void createRepository( final Repository repository )
     {
-        RepositoryInitializerImpl repositoryInitializer = new RepositoryInitializerImpl();
+        RepositoryInitializer repositoryInitializer = new RepositoryInitializer();
         repositoryInitializer.setIndexService( this.indexService );
         repositoryInitializer.init( repository );
 

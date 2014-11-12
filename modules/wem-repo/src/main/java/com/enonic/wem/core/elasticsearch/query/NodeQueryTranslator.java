@@ -5,7 +5,8 @@ import org.elasticsearch.index.query.QueryBuilder;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.index.IndexPaths;
 import com.enonic.wem.api.query.filter.ValueFilter;
-import com.enonic.wem.api.security.Principal;
+import com.enonic.wem.api.security.Principals;
+import com.enonic.wem.core.elasticsearch.AclFilterBuilderFactory;
 import com.enonic.wem.core.elasticsearch.aggregation.AggregationBuilderFactory;
 import com.enonic.wem.core.elasticsearch.query.builder.FilterBuilderFactory;
 import com.enonic.wem.core.elasticsearch.query.builder.QueryBuilderFactory;
@@ -19,7 +20,7 @@ public class NodeQueryTranslator
 
     public static ElasticsearchQuery translate( final NodeQuery nodeQuery, final IndexContext indexContext )
     {
-        final QueryBuilder queryWithQueryFilters = createQueryWithQueryFilters( nodeQuery );
+        final QueryBuilder queryWithQueryFilters = createQueryWithQueryFilters( nodeQuery, indexContext );
 
         final ElasticsearchQuery.Builder queryBuilder = ElasticsearchQuery.create().
             index( IndexNameResolver.resolveSearchIndexName( indexContext.getRepositoryId() ) ).
@@ -34,33 +35,22 @@ public class NodeQueryTranslator
         return queryBuilder.build();
     }
 
-    private static QueryBuilder createQueryWithQueryFilters( final NodeQuery nodeQuery )
+    private static QueryBuilder createQueryWithQueryFilters( final NodeQuery nodeQuery, final IndexContext context )
     {
         final QueryBuilderFactory.Builder queryBuilderBuilder = QueryBuilderFactory.create().
             queryExpr( nodeQuery.getQuery() ).
             addQueryFilters( nodeQuery.getQueryFilters() );
 
-        addAclFilter( nodeQuery, queryBuilderBuilder );
+        addAclFilter( queryBuilderBuilder, context.getPrincipals() );
         addParentFilter( nodeQuery, queryBuilderBuilder );
         addPathFilter( nodeQuery, queryBuilderBuilder );
 
         return queryBuilderBuilder.build();
     }
 
-    private static void addAclFilter( final NodeQuery nodeQuery, final QueryBuilderFactory.Builder queryBuilderBuilder )
+    private static void addAclFilter( final QueryBuilderFactory.Builder queryBuilderBuilder, final Principals principals )
     {
-        if ( nodeQuery.getPrincipals() != null && nodeQuery.getPrincipals().isNotEmpty() )
-        {
-            final ValueFilter.Builder valueBuilder = ValueFilter.create().
-                fieldName( IndexPaths.HAS_READ_KEY );
-
-            for ( final Principal principal : nodeQuery.getPrincipals() )
-            {
-                valueBuilder.addValue( Value.newString( principal ) );
-            }
-
-            queryBuilderBuilder.addQueryFilter( valueBuilder.build() );
-        }
+        queryBuilderBuilder.addQueryFilter( AclFilterBuilderFactory.create( principals ) );
     }
 
     private static void addPathFilter( final NodeQuery nodeQuery, final QueryBuilderFactory.Builder queryBuilderBuilder )

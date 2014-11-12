@@ -3,17 +3,19 @@ package com.enonic.wem.core.elasticsearch;
 import java.util.Collection;
 import java.util.Set;
 
-import org.elasticsearch.index.query.TermQueryBuilder;
-import org.elasticsearch.index.query.TermsQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
+import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.index.IndexPaths;
 import com.enonic.wem.api.query.QueryException;
 import com.enonic.wem.api.query.expr.OrderExpressions;
+import com.enonic.wem.api.query.filter.ValueFilter;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.core.elasticsearch.query.NodeQueryTranslator;
+import com.enonic.wem.core.elasticsearch.query.builder.QueryBuilderFactory;
 import com.enonic.wem.core.elasticsearch.query.builder.SortQueryBuilderFactory;
 import com.enonic.wem.repo.NodeId;
 import com.enonic.wem.repo.NodeIds;
@@ -42,7 +44,11 @@ public class ElasticsearchQueryService
     @Override
     public NodeQueryResult find( final NodeQuery query, final IndexContext context )
     {
-        return doFind( NodeQueryTranslator.translate( query, context ) );
+        final ElasticsearchQuery esQuery = NodeQueryTranslator.translate( query, context );
+
+        System.out.println( esQuery );
+
+        return doFind( esQuery );
     }
 
     private NodeQueryResult doFind( final ElasticsearchQuery query )
@@ -83,12 +89,23 @@ public class ElasticsearchQueryService
     {
         final Workspace workspace = indexContext.getWorkspace();
 
-        final TermQueryBuilder pathQuery = new TermQueryBuilder( IndexPaths.PATH_KEY, nodePath.toString() );
+        // final TermQueryBuilder pathQuery = new TermQueryBuilder( IndexPaths.PATH_KEY, nodePath.toString() );
+
+        //final FilteredQueryBuilder aclEnabledQuery =
+        //    new FilteredQueryBuilder( pathQuery, AclFilterBuilderFactory.create( indexContext.getPrincipals() ) );
+
+        final QueryBuilder queryBuilder = QueryBuilderFactory.create().
+            addQueryFilter( AclFilterBuilderFactory.create( indexContext.getPrincipals() ) ).
+            addQueryFilter( ValueFilter.create().
+                fieldName( IndexPaths.PATH_KEY ).
+                addValue( Value.newString( nodePath.toString() ) ).
+                build() ).
+            build();
 
         final ElasticsearchQuery query = ElasticsearchQuery.create().
             index( IndexNameResolver.resolveSearchIndexName( indexContext.getRepositoryId() ) ).
             indexType( workspace.getName() ).
-            query( pathQuery ).
+            query( queryBuilder ).
             size( 1 ).
             setReturnFields( ReturnFields.from( IndexPaths.VERSION_KEY ) ).
             build();
@@ -121,18 +138,31 @@ public class ElasticsearchQueryService
     @Override
     public NodeVersionIds find( final NodePaths nodePaths, final OrderExpressions orderExprs, final IndexContext indexContext )
     {
+        if ( nodePaths.isEmpty() )
+        {
+            return NodeVersionIds.empty();
+        }
+
         final Workspace workspace = indexContext.getWorkspace();
 
-        final TermsQueryBuilder pathsQuery = new TermsQueryBuilder( IndexPaths.PATH_KEY, nodePaths.getAsStrings() );
+        final QueryBuilder queryBuilder = QueryBuilderFactory.create().
+            addQueryFilter( AclFilterBuilderFactory.create( indexContext.getPrincipals() ) ).
+            addQueryFilter( ValueFilter.create().
+                fieldName( IndexPaths.PATH_KEY ).
+                addValues( nodePaths.getAsStrings() ).
+                build() ).
+            build();
 
         final ElasticsearchQuery query = ElasticsearchQuery.create().
             index( IndexNameResolver.resolveSearchIndexName( indexContext.getRepositoryId() ) ).
             indexType( workspace.getName() ).
-            query( pathsQuery ).
+            query( queryBuilder ).
             sortBuilders( SortQueryBuilderFactory.create( orderExprs ) ).
             setReturnFields( ReturnFields.from( IndexPaths.VERSION_KEY ) ).
             size( nodePaths.getSize() ).
             build();
+
+        System.out.println( query );
 
         final SearchResult searchResult = elasticsearchDao.find( query );
 
@@ -149,18 +179,31 @@ public class ElasticsearchQueryService
     @Override
     public NodeVersionIds find( final NodeIds nodeIds, final OrderExpressions orderExprs, final IndexContext indexContext )
     {
+        if ( nodeIds.isEmpty() )
+        {
+            return NodeVersionIds.empty();
+        }
+
         final Workspace workspace = indexContext.getWorkspace();
 
-        final TermsQueryBuilder pathsQuery = new TermsQueryBuilder( IndexPaths.ID_KEY, nodeIds.getAsStrings() );
+        final QueryBuilder queryBuilder = QueryBuilderFactory.create().
+            addQueryFilter( AclFilterBuilderFactory.create( indexContext.getPrincipals() ) ).
+            addQueryFilter( ValueFilter.create().
+                fieldName( IndexPaths.ID_KEY ).
+                addValues( nodeIds.getAsStrings() ).
+                build() ).
+            build();
 
         final ElasticsearchQuery query = ElasticsearchQuery.create().
             index( IndexNameResolver.resolveSearchIndexName( indexContext.getRepositoryId() ) ).
             indexType( workspace.getName() ).
-            query( pathsQuery ).
+            query( queryBuilder ).
             sortBuilders( SortQueryBuilderFactory.create( orderExprs ) ).
             setReturnFields( ReturnFields.from( IndexPaths.VERSION_KEY ) ).
             size( nodeIds.getSize() ).
             build();
+
+        System.out.println( query );
 
         final SearchResult searchResult = elasticsearchDao.find( query );
 
@@ -179,12 +222,18 @@ public class ElasticsearchQueryService
     {
         final Context context = ContextAccessor.current();
 
-        final TermQueryBuilder findWithParentQuery = new TermQueryBuilder( IndexPaths.PARENT_PATH_KEY, parentPath.toString() );
+        final QueryBuilder queryBuilder = QueryBuilderFactory.create().
+            addQueryFilter( AclFilterBuilderFactory.create( indexContext.getPrincipals() ) ).
+            addQueryFilter( ValueFilter.create().
+                fieldName( IndexPaths.PARENT_PATH_KEY ).
+                addValue( Value.newString( parentPath.toString() ) ).
+                build() ).
+            build();
 
         final ElasticsearchQuery query = ElasticsearchQuery.create().
             index( IndexNameResolver.resolveSearchIndexName( context.getRepositoryId() ) ).
             indexType( context.getWorkspace().getName() ).
-            query( findWithParentQuery ).
+            query( queryBuilder ).
             build();
 
         final long count = elasticsearchDao.count( query );

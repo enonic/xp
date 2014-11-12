@@ -71,25 +71,29 @@ public class FindNodesByParentCommandTest
             build() );
 
         final Node childNode_b_3 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "childNode_b_3" ) ).
+            setNodeId( NodeId.from( "childnode_b_3" ) ).
             parent( createdNode.path() ).
             name( "b" ).
             data( createOrderProperty( 3.0 ) ).
             build() );
 
         final Node childNode_a_2 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "childNode_a_2" ) ).
+            setNodeId( NodeId.from( "childnode_a_2" ) ).
             parent( createdNode.path() ).
             name( "a" ).
             data( createOrderProperty( 2.0 ) ).
             build() );
 
         final Node childNode_c_1 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "childNode_c_1" ) ).
+            setNodeId( NodeId.from( "childnode_c_1" ) ).
             parent( createdNode.path() ).
             name( "c" ).
             data( createOrderProperty( 1.0 ) ).
             build() );
+
+        refresh();
+
+        printContentRepoIndex();
 
         // Use default parent ordering; name
         FindNodesByParentResult result = FindNodesByParentCommand.create().

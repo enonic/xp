@@ -46,6 +46,10 @@ public class FindNodesByQueryCommandTest
             parent( node1.path() ).
             build() );
 
+        refresh();
+
+        printContentRepoIndex();
+
         final NodeQuery query = NodeQuery.create().parent( NodePath.ROOT ).build();
         FindNodesByQueryResult result = doFindByQuery( query );
         assertEquals( 2, result.getNodes().getSize() );

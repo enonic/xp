@@ -43,7 +43,7 @@ public class ElasticsearchQuery
 
     private ElasticsearchQuery( final Builder builder )
     {
-        this.query = builder.query;
+        this.query = builder.queryBuilder;
         this.filter = builder.filter;
         this.facetBuilders = ImmutableSet.copyOf( builder.facetBuilders );
         this.indexType = builder.indexType;
@@ -55,7 +55,6 @@ public class ElasticsearchQuery
         this.aggregations = ImmutableSet.copyOf( builder.aggregations );
         this.returnFields = builder.returnFields;
     }
-
 
     public boolean isExplain()
     {
@@ -127,7 +126,7 @@ public class ElasticsearchQuery
 
         SearchSourceBuilder builder = new SearchSourceBuilder().
             // field( IndexPaths.ENTITY_KEY ).
-            query( this.getQuery() ).
+                query( this.getQuery() ).
             from( this.getFrom() ).
             size( this.getSize() );
 
@@ -177,7 +176,7 @@ public class ElasticsearchQuery
 
     public static class Builder
     {
-        private QueryBuilder query;
+        private QueryBuilder queryBuilder;
 
         private FilterBuilder filter;
 
@@ -199,9 +198,9 @@ public class ElasticsearchQuery
 
         private ReturnFields returnFields = ReturnFields.empty();
 
-        public Builder query( final QueryBuilder query )
+        public Builder query( final QueryBuilder queryBuilder )
         {
-            this.query = query;
+            this.queryBuilder = queryBuilder;
             return this;
         }
 

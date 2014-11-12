@@ -41,6 +41,18 @@ public class CreateNodeParams
         return new Builder();
     }
 
+    public static Builder from( final Node node )
+    {
+        return new Builder().
+            indexConfigDocument( node.getIndexConfigDocument() ).
+            accessControlList( node.getAccessControlList() ).
+            data( node.data() ).
+            attachments( node.attachments() ).
+            childOrder( node.getChildOrder() ).
+            name( node.name().toString() ).
+            parent( node.parent() );
+    }
+
     public String getName()
     {
         return name;
