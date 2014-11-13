@@ -148,6 +148,7 @@ public class SecurityServiceImplTest
         assertEquals( user.getKey(), authInfo.getUser().getKey() );
     }
 
+    @Ignore // move to integration tests
     @Test
     public void testAuthenticateByUsernamePwd()
         throws Exception

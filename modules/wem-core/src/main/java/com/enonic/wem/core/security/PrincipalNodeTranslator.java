@@ -221,7 +221,7 @@ abstract class PrincipalNodeTranslator
             editor( toBeEdited -> {
                 final RootDataSet data = toBeEdited.data().copy().toRootDataSet();
 
-                data.setProperty( MEMBER_KEY, Value.newData( new RootDataSet() ) );
+                data.remove( DataId.from( MEMBER_KEY ) );
 
                 return Node.editNode( toBeEdited ).rootDataSet( data );
             } );

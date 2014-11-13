@@ -21,6 +21,7 @@ import com.enonic.wem.api.security.CreateUserParams;
 import com.enonic.wem.api.security.Group;
 import com.enonic.wem.api.security.Principal;
 import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.security.PrincipalKeys;
 import com.enonic.wem.api.security.PrincipalQuery;
 import com.enonic.wem.api.security.PrincipalQueryResult;
 import com.enonic.wem.api.security.PrincipalRelationship;
@@ -115,6 +116,25 @@ public final class SecurityServiceImpl
         } );
     }
 
+    private PrincipalKeys resolveMemberships( final PrincipalKey userKey )
+    {
+        try
+        {
+            final FindNodesByQueryResult result = CONTEXT_USER_STORES.callWith( () -> this.nodeService.findByQuery( NodeQuery.create().
+                addQueryFilter( ValueFilter.create().
+                    fieldName( PrincipalNodeTranslator.MEMBER_KEY ).
+                    addValue( Value.newString( userKey.toString() ) ).
+                    build() ).
+                build() ) );
+
+            return PrincipalKeyNodeTranslator.fromNodes( result.getNodes() );
+        }
+        catch ( NodeNotFoundException e )
+        {
+            return PrincipalKeys.empty();
+        }
+    }
+
     @Override
     public UserStores getUserStores()
     {
@@ -167,7 +187,8 @@ public final class SecurityServiceImpl
         final User user = findByEmail( token.getUserStore(), token.getEmail() );
         if ( user != null && !user.isDisabled() && passwordMatch( user, token.getPassword() ) )
         {
-            return AuthenticationInfo.create().user( user ).build();
+            final PrincipalKeys principals = resolveMemberships( user.getKey() );
+            return AuthenticationInfo.create().principals( principals ).user( user ).build();
         }
         else
         {
@@ -180,7 +201,8 @@ public final class SecurityServiceImpl
         final User user = findByUsername( token.getUserStore(), token.getUsername() );
         if ( user != null && !user.isDisabled() && passwordMatch( user, token.getPassword() ) )
         {
-            return AuthenticationInfo.create().user( user ).build();
+            final PrincipalKeys principals = resolveMemberships( user.getKey() );
+            return AuthenticationInfo.create().user( user ).principals( principals ).build();
         }
         else
         {
