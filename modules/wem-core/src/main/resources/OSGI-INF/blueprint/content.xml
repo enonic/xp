@@ -18,6 +18,7 @@
     <property name="blobService" ref="blobService"/>
     <property name="attachmentService" ref="attachmentService"/>
     <property name="contentNodeTranslator" ref="contentNodeTranslator"/>
+    <property name="eventPublisher" ref="eventPublisher"/>
   </bean>
 
   <service ref="contentService" auto-export="interfaces"/>

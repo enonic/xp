@@ -1,10 +1,10 @@
 module api.content {
 
-    export interface ContentUpdatedEventJson {
+    export interface ContentPublishedEventJson {
         contentId: string;
     }
 
-    export class ContentUpdatedEvent extends api.event.Event {
+    export class ContentPublishedEvent extends api.event.Event {
 
         private contentId: api.content.ContentId;
 
@@ -25,8 +25,8 @@ module api.content {
             api.event.Event.unbind(api.ClassHelper.getFullName(this), handler);
         }
 
-        static fromJson(json: ContentUpdatedEventJson): ContentUpdatedEvent {
-            return new ContentUpdatedEvent(new ContentId(json.contentId));
+        static fromJson(json: ContentPublishedEventJson): ContentPublishedEvent {
+            return new ContentPublishedEvent(new ContentId(json.contentId));
         }
     }
 }

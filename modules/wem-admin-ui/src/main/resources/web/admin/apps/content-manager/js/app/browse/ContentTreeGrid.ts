@@ -290,8 +290,10 @@ module app.browse {
             return data.getId();
         }
 
-        updateContentNode(content: api.content.Content) {
-            this.updateNode(new ContentSummaryAndCompareStatus(content, null));
+        updateContentNode(contentId: api.content.ContentId) {
+            var root = this.getRoot().getCurrentRoot();
+            var content = root.findNode(contentId.toString()).getData();
+            this.updateNode(new ContentSummaryAndCompareStatus(content.getContentSummary(), null));
         }
 
         appendContentNode(content: api.content.Content, nextToSelection?: boolean) {

@@ -5,9 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Throwables;
 
 import com.enonic.wem.admin.json.ObjectMapperHelper;
+import com.enonic.wem.admin.json.content.ContentPublishedEventJson;
+import com.enonic.wem.admin.json.content.ContentUpdatedEventJson;
 import com.enonic.wem.admin.json.module.ModuleUpdatedEventJson;
 import com.enonic.wem.admin.json.schema.content.ContentTypeDeletedEventJson;
 import com.enonic.wem.admin.json.schema.content.ContentTypeUpdatedEventJson;
+import com.enonic.wem.api.content.ContentPublishedEvent;
+import com.enonic.wem.api.content.ContentUpdatedEvent;
 import com.enonic.wem.api.event.Event;
 import com.enonic.wem.api.event.EventListener;
 import com.enonic.wem.api.module.ModuleUpdatedEvent;
@@ -56,6 +60,14 @@ public final class EventListenerImpl
         if ( event instanceof ModuleUpdatedEvent )
         {
             return new ModuleUpdatedEventJson( (ModuleUpdatedEvent) event );
+        }
+        else if ( event instanceof ContentUpdatedEvent )
+        {
+            return new ContentUpdatedEventJson( (ContentUpdatedEvent) event );
+        }
+        else if ( event instanceof ContentPublishedEvent )
+        {
+            return new ContentPublishedEventJson( (ContentPublishedEvent) event );
         }
         else if ( event instanceof ContentTypeUpdatedEvent )
         {
