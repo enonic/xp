@@ -78,11 +78,13 @@ module api.ui.tab {
         hideMenu() {
             this.menuEl.hide();
             this.menuVisible = false;
+            this.removeClass('expanded');
         }
 
         showMenu() {
             this.menuEl.show();
             this.menuVisible = true;
+            this.addClass('expanded');
         }
 
         isMenuVisible(): boolean {

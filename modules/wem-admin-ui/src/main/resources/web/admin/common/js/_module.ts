@@ -45,6 +45,11 @@
 
 ///<reference path='ui/responsive/_module.ts' />
 
+///<reference path='security/_module.ts' />
+///<reference path='security/acl/_module.ts' />
+///<reference path='security/auth/_module.ts' />
+///<reference path='security/query/_module.ts' />
+
 ///<reference path='ui/_module.ts' />
 ///<reference path='ui/button/_module.ts' />
 ///<reference path='ui/text/_module.ts' />
@@ -101,11 +106,6 @@
 ///<reference path='schema/mixin/_module.ts'/>
 ///<reference path='schema/relationshiptype/_module.ts' />
 ///<reference path='schema/metadata/_module.ts'/>
-
-///<reference path='security/_module.ts' />
-///<reference path='security/acl/_module.ts' />
-///<reference path='security/auth/_module.ts' />
-///<reference path='security/query/_module.ts' />
 
 ///<reference path='content/json/_module.ts' />
 ///<reference path='content/_module.ts' />

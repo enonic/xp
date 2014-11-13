@@ -7,16 +7,50 @@
     margin: 0 130px 0 0;
   }
 
-  .access-selector {
-    position: absolute;
-    top: 12px;
-    right: 40px;
-  }
-
   .icon-close {
     position: absolute;
-    top: 14px;
-    right: 5px;
+    top: 15px;
+    right: 15px;
+    cursor: pointer;
+  }
+
+  .permission-selector {
+    display: none;
+  }
+
+  .access-selector {
+    position: absolute;
+    top: 0px;
+    right: 40px;
+    margin: 5px;
+    min-width: 100px;
+
+    &.expanded {
+      .tab-menu-button {
+        color: @admin-white;
+        background-color: @admin-blue;
+      }
+    }
+
+    .tab-menu-button {
+      padding: 6px 5px;
+      color: @admin-dark-gray-font;
+      background-color: transparent;
+
+      &:before {
+        display: none;
+      }
+
+      .label {
+        margin: 0;
+      }
+
+    }
+
+    ul {
+      padding: 40px 4px 4px;
+    }
+
   }
 
 }

@@ -1,50 +1,82 @@
 module api.ui.security {
 
-    interface AccessOption {
-        value: string;
+    export enum Access {
+        READ,
+        WRITE,
+        PUBLISH,
+        FULL,
+        CUSTOM
+    }
+
+    interface AccessSelectorOption {
+        value: Access;
         name: string;
     }
 
-    /**
-     * Wrapper around api.ui.Dropdown to have custom arrow
-     */
-    export class AccessSelector extends api.dom.DivEl {
+    export class AccessSelector extends api.ui.tab.TabMenu {
 
-        private static ACCESS_OPTIONS: AccessOption[] = [
-            {value:'read', name:'Can Read'},
-            {value:'write', name:'Can Write'},
-            {value:'publish', name:'Can Publish'},
-            {value:'full', name:'Full Access'},
-            {value:'custom', name:'Custom...'}
+        private static OPTIONS: AccessSelectorOption[] = [
+            {value: Access.READ, name: 'Can Read'},
+            {value: Access.WRITE, name: 'Can Write'},
+            {value: Access.PUBLISH, name: 'Can Publish'},
+            {value: Access.FULL, name: 'Full Access'},
+            {value: Access.CUSTOM, name: 'Custom...'}
         ];
 
-        private dropdown: api.ui.Dropdown;
+        private value: Access;
+        private valueChangedListeners: {(event: api.ui.ValueChangedEvent):void}[] = [];
 
         constructor() {
-            super('access-selector');
+            super("access-selector");
 
-            this.dropdown = new api.ui.Dropdown('access-selector');
-            AccessSelector.ACCESS_OPTIONS.forEach((option: AccessOption) => this.dropdown.addOption(option.value, option.name));
-            this.appendChild(this.dropdown);
+            AccessSelector.OPTIONS.forEach((option: AccessSelectorOption, index: number) => {
+                var menuItem = new api.ui.tab.TabMenuItemBuilder().setLabel(option.name).build();
+                this.addNavigationItem(menuItem);
+            });
 
-            var label = new api.dom.LabelEl('', this.dropdown, 'icon-arrow-down2');
-            this.appendChild(label);
+            this.onNavigationItemSelected((event: NavigatorEvent) => {
+                var item: api.ui.tab.TabMenuItem = <api.ui.tab.TabMenuItem> event.getItem();
+                this.setValue(AccessSelector.OPTIONS[item.getIndex()].value);
+            })
         }
 
-        getValue(): string {
-            return this.dropdown.getValue();
+        getValue(): Access {
+            return this.value
         }
 
-        setValue(value: string) {
-            this.dropdown.setValue(value);
+        setValue(value: Access) {
+            var option = this.findOptionByValue(value);
+            if (option) {
+                this.selectNavigationItem(AccessSelector.OPTIONS.indexOf(option));
+                this.notifyValueChanged(new api.ui.ValueChangedEvent(Access[this.value], Access[value]));
+                this.value = value;
+            }
         }
 
-        onValueChanged(listener: (event: ValueChangedEvent)=>void) {
-            this.dropdown.onValueChanged(listener);
+        private findOptionByValue(value: Access): AccessSelectorOption {
+            for (var i = 0; i < AccessSelector.OPTIONS.length; i++) {
+                var option = AccessSelector.OPTIONS[i];
+                if (option.value == value) {
+                    return option;
+                }
+            }
+            return undefined;
         }
 
-        unValueChanged(listener: (event: ValueChangedEvent)=>void) {
-            this.dropdown.unValueChanged(listener);
+        onValueChanged(listener: (event: api.ui.ValueChangedEvent)=>void) {
+            this.valueChangedListeners.push(listener);
+        }
+
+        unValueChanged(listener: (event: api.ui.ValueChangedEvent)=>void) {
+            this.valueChangedListeners = this.valueChangedListeners.filter((curr) => {
+                return curr !== listener;
+            })
+        }
+
+        private notifyValueChanged(event: api.ui.ValueChangedEvent) {
+            this.valueChangedListeners.forEach((listener) => {
+                listener(event);
+            })
         }
 
     }
