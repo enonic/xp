@@ -13,7 +13,7 @@ final class ErrorPageBuilder
 {
     private final static int NUM_DELTA_LINES = 3;
 
-    private final static int NUM_STACK_ELEMENTS = 14;
+    private final static int NUM_STACK_ELEMENTS = 140;
 
     private final static class LineInfo
     {
