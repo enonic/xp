@@ -82,8 +82,9 @@ public class ElasticsearchIndexService
 
         final ClusterHealthResponse response = this.client.admin().cluster().health( request ).actionGet();
 
-        LOG.info( "ElasticSearch cluster health (timedOut={}): Status={}, nodes={}, active shards={}",
-                  new Object[]{response.isTimedOut(), response.getStatus(), response.getNumberOfNodes(), response.getActiveShards()} );
+        LOG.info( "ElasticSearch cluster health (timedOut={}, timeOutValue={}): Status={}, nodes={}, active shards={}",
+                  new Object[]{response.isTimedOut(), timeout, response.getStatus(), response.getNumberOfNodes(),
+                      response.getActiveShards()} );
 
         return response;
     }
