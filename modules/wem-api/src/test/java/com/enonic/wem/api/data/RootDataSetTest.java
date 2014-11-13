@@ -1,6 +1,7 @@
 package com.enonic.wem.api.data;
 
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
@@ -91,4 +92,23 @@ public class RootDataSetTest
 
         assertFalse( rootA.valueEquals( rootB ) );
     }
+
+    @Ignore
+    @Test
+    public void rootDataSetCopy()
+    {
+        final RootDataSet rootA = new RootDataSet();
+        rootA.setProperty( "p1", Value.newData( new RootDataSet() ) );
+
+        final RootDataSet rootB = rootA.copy().toRootDataSet();
+        final DataSet p1DataSet = rootB.getProperty( "p1" ).getData();
+        final String newKey = "k1";
+        if ( !p1DataSet.hasData( newKey ) )
+        {
+            p1DataSet.setProperty( newKey, Value.newBoolean( true ) );
+        }
+
+        assertFalse( rootA.valueEquals( rootB ) );
+    }
+
 }
