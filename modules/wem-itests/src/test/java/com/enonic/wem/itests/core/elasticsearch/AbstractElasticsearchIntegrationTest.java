@@ -103,7 +103,7 @@ public abstract class AbstractElasticsearchIntegrationTest
         {
             request.waitForStatus( status );
         }
-        ClusterHealthResponse actionGet = client().admin().cluster().health( request ).actionGet( TimeValue.timeValueSeconds( 1 ) );
+        ClusterHealthResponse actionGet = client().admin().cluster().health( request ).actionGet( TimeValue.timeValueSeconds( 5 ) );
         if ( actionGet.isTimedOut() )
         {
             LOG.info( "waitForRelocation timed out (status={}), cluster state:\n{}\n{}" );
