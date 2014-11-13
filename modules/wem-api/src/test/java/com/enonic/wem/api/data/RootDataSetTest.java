@@ -1,7 +1,6 @@
 package com.enonic.wem.api.data;
 
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
@@ -93,7 +92,6 @@ public class RootDataSetTest
         assertFalse( rootA.valueEquals( rootB ) );
     }
 
-    @Ignore
     @Test
     public void rootDataSetCopy()
     {

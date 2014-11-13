@@ -248,6 +248,13 @@ public final class Property
     @Override
     public Property copy()
     {
+        final boolean isRootDataSetProperty = this.getValueType().getJavaType().equals( RootDataSet.class );
+        if ( isRootDataSetProperty )
+        {
+            final Value value = this.getValue();
+            final RootDataSet rootDataSetValue = value.asData().copy().toRootDataSet();
+            return new Property( this.getName(), Value.newValue( value.getType(), rootDataSetValue ) );
+        }
         return new Property( this );
     }
 
