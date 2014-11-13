@@ -36,8 +36,6 @@ public abstract class AbstractElasticsearchIntegrationTest
     public void setUp()
         throws Exception
     {
-        LOG.info( "Starting ES-Server" );
-
         server = new EmbeddedElasticsearchServer();
 
         this.client = server.getClient();
@@ -87,29 +85,17 @@ public abstract class AbstractElasticsearchIntegrationTest
     }
 
 
-    public ClusterHealthStatus waitForRelocation()
+    public ClusterHealthStatus waitForClusterHealth()
     {
-        return waitForRelocation( ClusterHealthStatus.YELLOW );
-    }
+        ClusterHealthRequest request = Requests.clusterHealthRequest().
+            waitForYellowStatus().timeout( TimeValue.timeValueSeconds( 5 ) );
 
-    /**
-     * Waits for all relocating shards to become active and the cluster has reached the given health status
-     * using the cluster health API.
-     */
-    public ClusterHealthStatus waitForRelocation( ClusterHealthStatus status )
-    {
-        ClusterHealthRequest request = Requests.clusterHealthRequest().waitForRelocatingShards( 0 );
-        if ( status != null )
-        {
-            request.waitForStatus( status );
-        }
-        ClusterHealthResponse actionGet = client().admin().cluster().health( request ).actionGet( TimeValue.timeValueSeconds( 5 ) );
+        ClusterHealthResponse actionGet = client().admin().cluster().health( request ).actionGet();
+
         if ( actionGet.isTimedOut() )
         {
-            LOG.info( "waitForRelocation timed out (status={}), cluster state:\n{}\n{}" );
+            LOG.error( "Cluster health request timed out (status={}), cluster state:\n{}\n{}" );
         }
-
-        LOG.info( "Cluster in status: " + actionGet.getStatus().name() );
 
         return actionGet.getStatus();
     }
@@ -123,7 +109,7 @@ public abstract class AbstractElasticsearchIntegrationTest
     @After
     public void cleanUp()
     {
-        LOG.info( "shutting down" );
+        LOG.info( "Shutting down" );
         this.client.close();
         server.shutdown();
     }

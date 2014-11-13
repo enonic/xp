@@ -51,6 +51,5 @@ public class FindContentByParentCommandTest
 
         assertEquals( 2, children.getHits() );
         assertEquals( 2, children.getNodes().getSize() );
-
     }
 }

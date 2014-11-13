@@ -2,12 +2,14 @@ package com.enonic.wem.core.repository;
 
 import java.util.Set;
 
+import org.elasticsearch.common.unit.TimeValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.repository.Repository;
+import com.enonic.wem.core.elasticsearch.ClusterHealth;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.repo.RepositoryInitializer;
@@ -23,7 +25,12 @@ public final class RepositoryInitializerImpl
     {
         LOG.info( "Initializing repositoryId {}", repository.getId() );
 
-        deleteExistingRepoIndices( repository );
+        final ClusterHealth clusterHealth = indexService.getClusterHealth( TimeValue.timeValueSeconds( 2 ) );
+
+        if ( !clusterHealth.equals( ClusterHealth.RED ) )
+        {
+            deleteExistingRepoIndices( repository );
+        }
 
         createIndexes( repository );
 
@@ -47,13 +54,11 @@ public final class RepositoryInitializerImpl
         final String storageIndexName = getStoreIndexName( repository );
         final String searchIndexName = getSearchIndexName( repository );
 
-        indexService.getIndexStatus( true, storageIndexName, searchIndexName );
+        indexService.getClusterHealth( TimeValue.timeValueSeconds( 1 ), storageIndexName, searchIndexName );
     }
 
     private void createIndexes( final Repository repository )
     {
-        indexService.getIndexStatus( true, getStoreIndexName( repository ) );
-
         LOG.info( "Create storage-index for repositoryId {}", repository.getId() );
         final String storageIndexName = getStoreIndexName( repository );
         final String storageIndexSettings = RepositoryStorageSettingsProvider.getSettings( repository );
@@ -67,21 +72,24 @@ public final class RepositoryInitializerImpl
 
     private void deleteExistingRepoIndices( final Repository repository )
     {
-        final Set<String> repoIndexes = Sets.newHashSet();
-
-        repoIndexes.add( getStoreIndexName( repository ) );
-        repoIndexes.add( getSearchIndexName( repository ) );
-
-        //indexService.getAllRepositoryIndices( repository.getId() );
-
-        if ( !repoIndexes.isEmpty() )
+        if ( isInitialized( repository ) )
         {
-            indexService.deleteIndices( repoIndexes );
+            LOG.info( "Deleting existing repository indices" );
+
+            final Set<String> repoIndexes = Sets.newHashSet();
+
+            repoIndexes.add( getStoreIndexName( repository ) );
+            repoIndexes.add( getSearchIndexName( repository ) );
+
+            if ( !repoIndexes.isEmpty() )
+            {
+                indexService.deleteIndices( repoIndexes );
+            }
         }
-
-        //indexService.deleteIndices( StorageNameResolver.resolveStorageIndexName( repository.getId() ),
-        //                            IndexNameResolver.resolveSearchIndexName( repository.getId() ) );
-
+        else
+        {
+            LOG.info( "No existing indices found" );
+        }
     }
 
     public boolean isInitialized( final Repository repository )

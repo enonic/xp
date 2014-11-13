@@ -66,7 +66,7 @@ public abstract class AbstractNodeTest
         this.queryService.setElasticsearchDao( elasticsearchDao );
 
         createContentRepository();
-        waitForRelocation();
+        waitForClusterHealth();
     }
 
     protected void createRepository( final Repository repository )

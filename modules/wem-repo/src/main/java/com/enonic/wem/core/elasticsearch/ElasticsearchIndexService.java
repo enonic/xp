@@ -28,14 +28,14 @@ import com.google.common.collect.Sets;
 import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.core.elasticsearch.document.DeleteDocument;
 import com.enonic.wem.core.elasticsearch.document.StoreDocument;
-import com.enonic.wem.repo.Node;
-import com.enonic.wem.repo.NodeId;
-import com.enonic.wem.repo.NodeVersionId;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.index.IndexException;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.repository.IndexNameResolver;
 import com.enonic.wem.core.repository.StorageNameResolver;
+import com.enonic.wem.repo.Node;
+import com.enonic.wem.repo.NodeId;
+import com.enonic.wem.repo.NodeVersionId;
 
 public class ElasticsearchIndexService
     implements IndexService
@@ -47,9 +47,9 @@ public class ElasticsearchIndexService
 
     private ElasticsearchDao elasticsearchDao;
 
-    private final TimeValue WAIT_FOR_YELLOW_TIMEOUT = TimeValue.timeValueSeconds( 1 );
+    private final TimeValue WAIT_FOR_YELLOW_TIMEOUT = TimeValue.timeValueSeconds( 3 );
 
-    private static final TimeValue CLUSTER_NOWAIT_TIMEOUT = TimeValue.timeValueSeconds( 5 );
+    private static final TimeValue CLUSTER_NOWAIT_TIMEOUT = TimeValue.timeValueSeconds( 3 );
 
     private final static String deleteTimeout = "5s";
 
@@ -61,13 +61,11 @@ public class ElasticsearchIndexService
 
     private Client client;
 
-    public IndexStatus getIndexStatus( final boolean waitForStatusYellow, final String... indexNames )
+    public ClusterHealth getClusterHealth( final TimeValue timeout, final String... indexNames )
     {
-        final ClusterHealthResponse clusterHealth = getClusterHealth( waitForStatusYellow, indexNames );
+        final ClusterHealthResponse clusterHealth = doGetClusterHealth( timeout, indexNames );
 
-        LOG.info( "Cluster in state: " + clusterHealth.getStatus().toString() );
-
-        return IndexStatus.valueOf( clusterHealth.getStatus().name() );
+        return ClusterHealth.valueOf( clusterHealth.getStatus().name() );
     }
 
     @Override
@@ -78,33 +76,20 @@ public class ElasticsearchIndexService
             actionGet();
     }
 
-    private ClusterHealthResponse getClusterHealth( boolean waitForYellow, final String... indexNames )
+    private ClusterHealthResponse doGetClusterHealth( final TimeValue timeout, final String... indexNames )
     {
-        ClusterHealthRequest request = new ClusterHealthRequest( indexNames );
+        LOG.info( "Executing ClusterHealtRequest" );
 
-        if ( waitForYellow )
-        {
-            request.waitForYellowStatus().timeout( WAIT_FOR_YELLOW_TIMEOUT );
-        }
-        else
-        {
-            request.timeout( CLUSTER_NOWAIT_TIMEOUT );
-        }
+        ClusterHealthRequest request = indexNames != null ? new ClusterHealthRequest( indexNames ) : new ClusterHealthRequest();
 
-        final ClusterHealthResponse clusterHealthResponse = this.client.admin().cluster().health( request ).actionGet();
+        request.waitForYellowStatus().timeout( timeout );
 
-        if ( clusterHealthResponse.isTimedOut() )
-        {
-            LOG.warn( "ElasticSearch cluster health timed out" );
-        }
-        else
-        {
-            LOG.trace( "ElasticSearch cluster health: Status " + clusterHealthResponse.getStatus().name() + "; " +
-                           clusterHealthResponse.getNumberOfNodes() + " nodes; " + clusterHealthResponse.getActiveShards() +
-                           " active shards." );
-        }
+        final ClusterHealthResponse response = this.client.admin().cluster().health( request ).actionGet();
 
-        return clusterHealthResponse;
+        LOG.info( "ElasticSearch cluster health (timedOut={}): Status={}, nodes={}, active shards={}",
+                  new Object[]{response.isTimedOut(), response.getStatus(), response.getNumberOfNodes(), response.getActiveShards()} );
+
+        return response;
     }
 
     public void createIndex( final String indexName, final String settings )

@@ -3,8 +3,10 @@ package com.enonic.wem.core.index;
 import java.util.Collection;
 import java.util.Set;
 
+import org.elasticsearch.common.unit.TimeValue;
+
 import com.enonic.wem.api.repository.RepositoryId;
-import com.enonic.wem.core.elasticsearch.IndexStatus;
+import com.enonic.wem.core.elasticsearch.ClusterHealth;
 import com.enonic.wem.repo.Node;
 import com.enonic.wem.repo.NodeId;
 import com.enonic.wem.repo.NodeVersionId;
@@ -25,7 +27,7 @@ public interface IndexService
 
     public void applyMapping( final String indexName, final String indexType, final String mapping );
 
-    public IndexStatus getIndexStatus( final boolean waitForYellowStatus, final String... indexNames );
+    public ClusterHealth getClusterHealth( final TimeValue timeout, final String... indexNames );
 
     public void refresh( final String... indexNames );
 }
