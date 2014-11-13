@@ -78,7 +78,8 @@ module api.ui.treegrid {
              * on a big array of data. Each render cycle will take (1ms * row count)
              * and the smart render in the viewport will be disabled.
              */
-//            this.gridOptions.setAutoHeight(false);
+            this.gridOptions.setAutoHeight(false);
+
 
             this.grid = new Grid<TreeNode<DATA>>(this.gridData, this.columns, this.gridOptions);
 
@@ -337,11 +338,13 @@ module api.ui.treegrid {
             // Get current grid's canvas
             var gridClasses = (" " + this.grid.getEl().getClass()).replace(/\s/g, ".");
             var canvas = Element.fromString(".tree-grid " + gridClasses + " .grid-canvas", false);
+            var viewport = Element.fromString(".tree-grid " + gridClasses + " .slick-viewport", false);
 
             if (canvas.getEl().isVisible() && this.isActive()) {
 
-                var gridHeight = this.grid.getEl().getHeight(),
-                    scrollTop = this.grid.getEl().getScrollTop(),
+                // use `this.grid` instead of `viewport` with the animation on.
+                var gridHeight = viewport.getEl().getHeight(),
+                    scrollTop = viewport.getEl().getScrollTop(),
                     rowHeight = this.grid.getOptions().rowHeight,
                     nodes = this.root.getCurrentRoot().treeToList(),
                     emptyNode:TreeNode<DATA> = null,
@@ -774,12 +777,12 @@ module api.ui.treegrid {
                 }
             });
 
-            this.animateExpand(expandedRows, animatedRows);
+//            this.animateExpand(expandedRows, animatedRows);
 
-            setTimeout(() => {
+//            setTimeout(() => {
                 this.resetAndRender();
                 this.active = true;
-            }, 350);
+//            }, 350); // timeout is required for the animation
         }
 
         private updateSelectedNode(node: TreeNode<DATA>) {
@@ -809,15 +812,13 @@ module api.ui.treegrid {
 
             node.setExpanded(false);
 
-            // Rows can have different order in HTML and Items array
-            this.animateCollapse(collapsedRows, animatedRows);
+//            this.animateCollapse(collapsedRows, animatedRows);
 
-            // Update data after animation
-            setTimeout(() => {
+//            setTimeout(() => {
                 this.gridData.refresh();
                 this.resetAndRender();
                 this.active = true;
-            }, 350);
+//            }, 350); // timeout is required for the animation
         }
 
         private animateCollapse(collapsedRows: number[], animatedRows: number[]) {
