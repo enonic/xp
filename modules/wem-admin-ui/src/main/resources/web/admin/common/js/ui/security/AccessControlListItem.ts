@@ -5,6 +5,7 @@ module api.ui.security {
     export class AccessControlListItem extends api.dom.DivEl {
 
         private principal: api.security.Principal;
+        private originalPermissions: {allow: Permission[]; deny: Permission[]};
         private accessSelector: AccessSelector;
         private permissionSelector: PermissionSelector;
         private removeClickedListeners: {(event: MouseEvent):void}[] = [];
@@ -13,6 +14,13 @@ module api.ui.security {
             super('access-control-list-item');
 
             this.principal = principal;
+            if (permissions) {
+                this.originalPermissions = permissions;
+                this.originalPermissions.allow.sort();
+                this.originalPermissions.deny.sort();
+            } else {
+                this.originalPermissions = {allow: [], deny: []};
+            }
 
             var nameAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
             this.appendChild(nameAndIconView);
@@ -23,8 +31,11 @@ module api.ui.security {
                 iconClass = "icon-user";
                 break;
             case api.security.PrincipalType.GROUP:
-            case api.security.PrincipalType.ROLE:
                 iconClass = "icon-users";
+                break;
+            case api.security.PrincipalType.ROLE:
+                iconClass = "icon-user7";
+                break;
             }
 
             nameAndIconView.setIconClass(iconClass).
@@ -39,6 +50,9 @@ module api.ui.security {
             this.appendChild(removeButton);
 
             this.permissionSelector = new PermissionSelector();
+            this.permissionSelector.onValueChanged((event: ValueChangedEvent) => {
+                this.toggleClass("modified", event.getNewValue() != JSON.stringify(this.originalPermissions));
+            });
             this.appendChild(this.permissionSelector);
 
             this.accessSelector.onValueChanged((event: ValueChangedEvent) => {
@@ -52,7 +66,7 @@ module api.ui.security {
                 }
             });
 
-            this.setPermissions(permissions);
+            this.setPermissions(this.originalPermissions, true);
         }
 
         public onValueChanged(listener: (event: api.ui.ValueChangedEvent) => void) {
@@ -79,15 +93,15 @@ module api.ui.security {
             })
         }
 
-        public setPermissions(permissions: {allow: Permission[]; deny: Permission[]}) {
+        public setPermissions(permissions: {allow: Permission[]; deny: Permission[]}, silent?: boolean) {
             if (!permissions) {
-                permissions = {
-                    allow: [],
-                    deny: []
-                }
+                permissions = {allow: [], deny: []};
+            } else {
+                permissions.allow.sort();
+                permissions.deny.sort();
             }
-            this.permissionSelector.setValue(permissions);
-            this.accessSelector.setValue(this.getAccessValueFromPermissions(permissions));
+            this.permissionSelector.setValue(permissions, silent);
+            this.accessSelector.setValue(this.getAccessValueFromPermissions(permissions), silent);
         }
 
         public getPermissions(): {allow: Permission[]; deny: Permission[]} {
@@ -118,6 +132,8 @@ module api.ui.security {
                 permissions.allow.push(Permission.READ);
                 break;
             }
+            permissions.allow.sort();
+            permissions.deny.sort();
             return permissions;
         }
 

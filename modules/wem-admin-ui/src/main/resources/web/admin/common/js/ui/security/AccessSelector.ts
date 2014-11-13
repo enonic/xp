@@ -44,11 +44,13 @@ module api.ui.security {
             return this.value
         }
 
-        setValue(value: Access) {
+        setValue(value: Access, silent?: boolean) {
             var option = this.findOptionByValue(value);
             if (option) {
                 this.selectNavigationItem(AccessSelector.OPTIONS.indexOf(option));
-                this.notifyValueChanged(new api.ui.ValueChangedEvent(Access[this.value], Access[value]));
+                if (!silent) {
+                    this.notifyValueChanged(new api.ui.ValueChangedEvent(Access[this.value], Access[value]));
+                }
                 this.value = value;
             }
         }

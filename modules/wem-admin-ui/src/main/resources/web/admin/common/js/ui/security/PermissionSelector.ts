@@ -58,7 +58,7 @@ module api.ui.security {
             return values;
         }
 
-        setValue(newValue: {allow: Permission[]; deny: Permission[]}) {
+        setValue(newValue: {allow: Permission[]; deny: Permission[]}, silent?: boolean) {
             this.toggles.forEach((toggle: PermissionToggle) => {
                 var value = toggle.getValue();
                 var state;
@@ -71,7 +71,9 @@ module api.ui.security {
                 }
                 toggle.setState(state);
             });
-            this.notifyValueChanged(new api.ui.ValueChangedEvent(JSON.stringify(this.oldValue), JSON.stringify(newValue)));
+            if (!silent) {
+                this.notifyValueChanged(new api.ui.ValueChangedEvent(JSON.stringify(this.oldValue), JSON.stringify(newValue)));
+            }
             this.oldValue = newValue;
         }
 
