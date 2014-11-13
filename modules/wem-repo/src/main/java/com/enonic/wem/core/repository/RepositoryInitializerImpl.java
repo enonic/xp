@@ -85,6 +85,8 @@ public final class RepositoryInitializerImpl
             {
                 indexService.deleteIndices( repoIndexes );
             }
+
+            indexService.getClusterHealth( TimeValue.timeValueSeconds( 2 ) );
         }
         else
         {
