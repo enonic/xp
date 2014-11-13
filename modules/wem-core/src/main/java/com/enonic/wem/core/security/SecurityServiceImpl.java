@@ -2,16 +2,12 @@ package com.enonic.wem.core.security;
 
 import java.time.Clock;
 import java.time.Instant;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.query.expr.CompareExpr;
@@ -62,8 +58,6 @@ public final class SecurityServiceImpl
 {
     private final List<UserStore> userStores;
 
-    private final Multimap<PrincipalKey, PrincipalRelationship> relationshipTable;
-
     private NodeService nodeService;
 
     private Clock clock;
@@ -72,7 +66,6 @@ public final class SecurityServiceImpl
     {
         this.clock = Clock.systemUTC();
         this.userStores = new CopyOnWriteArrayList<>();
-        this.relationshipTable = Multimaps.synchronizedSetMultimap( HashMultimap.create() );
 
         final UserStore systemUserStore = UserStore.newUserStore().key( UserStoreKey.system() ).displayName( "System" ).build();
         this.userStores.add( systemUserStore );
@@ -81,36 +74,45 @@ public final class SecurityServiceImpl
     @Override
     public PrincipalRelationships getRelationships( final PrincipalKey from )
     {
-        final Collection<PrincipalRelationship> relationships = this.relationshipTable.get( from );
-        if ( relationships == null )
+        try
+        {
+            final Node node = CONTEXT_USER_STORES.callWith( () -> this.nodeService.getById( toNodeId( from ) ) );
+            return PrincipalNodeTranslator.relationshipsFromNode( node );
+        }
+        catch ( NodeNotFoundException e )
         {
             return PrincipalRelationships.empty();
         }
-
-        final PrincipalRelationships principalRelationships;
-        synchronized ( this.relationshipTable )
-        {
-            principalRelationships = PrincipalRelationships.from( relationships );
-        }
-        return principalRelationships;
     }
 
     @Override
     public void addRelationship( final PrincipalRelationship relationship )
     {
-        this.relationshipTable.put( relationship.getFrom(), relationship );
+        CONTEXT_USER_STORES.callWith( () -> {
+            final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.addRelationshipToUpdateNodeParams( relationship );
+            nodeService.update( updateNodeParams );
+            return null;
+        } );
     }
 
     @Override
     public void removeRelationship( final PrincipalRelationship relationship )
     {
-        this.relationshipTable.remove( relationship.getFrom(), relationship );
+        CONTEXT_USER_STORES.callWith( () -> {
+            final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.removeRelationshipToUpdateNodeParams( relationship );
+            nodeService.update( updateNodeParams );
+            return null;
+        } );
     }
 
     @Override
     public void removeRelationships( final PrincipalKey from )
     {
-        this.relationshipTable.removeAll( from );
+        CONTEXT_USER_STORES.callWith( () -> {
+            final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.removeAllRelationshipsToUpdateNodeParams( from );
+            nodeService.update( updateNodeParams );
+            return null;
+        } );
     }
 
     @Override

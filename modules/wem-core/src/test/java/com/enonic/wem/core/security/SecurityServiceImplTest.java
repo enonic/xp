@@ -19,8 +19,6 @@ import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.PrincipalKeys;
 import com.enonic.wem.api.security.PrincipalQuery;
 import com.enonic.wem.api.security.PrincipalQueryResult;
-import com.enonic.wem.api.security.PrincipalRelationship;
-import com.enonic.wem.api.security.PrincipalRelationships;
 import com.enonic.wem.api.security.PrincipalType;
 import com.enonic.wem.api.security.Principals;
 import com.enonic.wem.api.security.Role;
@@ -40,9 +38,9 @@ import com.enonic.wem.repo.FindNodesByQueryResult;
 import com.enonic.wem.repo.Node;
 import com.enonic.wem.repo.NodeId;
 import com.enonic.wem.repo.NodePath;
+import com.enonic.wem.repo.NodeQuery;
 import com.enonic.wem.repo.NodeService;
 import com.enonic.wem.repo.Nodes;
-import com.enonic.wem.repo.NodeQuery;
 
 import static org.junit.Assert.*;
 
@@ -514,77 +512,6 @@ public class SecurityServiceImplTest
         final PrincipalQueryResult results = securityService.query( query );
         assertEquals( 3, results.getTotalSize() );
         assertEquals( 3, results.getPrincipals().getSize() );
-    }
-
-    @Ignore
-    @Test
-    public void testAddRelationships()
-        throws Exception
-    {
-        PrincipalKey user = PrincipalKey.ofUser( UserStoreKey.system(), "user" );
-        PrincipalKey user2 = PrincipalKey.ofUser( UserStoreKey.system(), "user2" );
-        PrincipalKey group = PrincipalKey.ofGroup( UserStoreKey.system(), "group" );
-        PrincipalKey group2 = PrincipalKey.ofGroup( UserStoreKey.system(), "group2" );
-
-        PrincipalRelationship fromGroupToUser = PrincipalRelationship.from( group ).to( user );
-        PrincipalRelationship fromGroupToGroup2 = PrincipalRelationship.from( group ).to( group2 );
-        PrincipalRelationship fromGroupToUser2 = PrincipalRelationship.from( group ).to( user2 );
-        securityService.addRelationship( fromGroupToUser );
-        securityService.addRelationship( fromGroupToGroup2 );
-        securityService.addRelationship( fromGroupToUser2 );
-        securityService.addRelationship( fromGroupToUser2 );
-
-        PrincipalRelationships groupRelationships = securityService.getRelationships( group );
-        assertEquals( 3, groupRelationships.getSize() );
-
-        PrincipalRelationships group2Relationships = securityService.getRelationships( group2 );
-        assertEquals( 0, group2Relationships.getSize() );
-    }
-
-    @Test
-    public void testRemoveRelationship()
-        throws Exception
-    {
-        PrincipalKey user = PrincipalKey.ofUser( UserStoreKey.system(), "user" );
-        PrincipalKey user2 = PrincipalKey.ofUser( UserStoreKey.system(), "user2" );
-        PrincipalKey group = PrincipalKey.ofGroup( UserStoreKey.system(), "group" );
-        PrincipalKey group2 = PrincipalKey.ofGroup( UserStoreKey.system(), "group2" );
-
-        PrincipalRelationship fromGroupToUser = PrincipalRelationship.from( group ).to( user );
-        PrincipalRelationship fromGroupToGroup2 = PrincipalRelationship.from( group ).to( group2 );
-        PrincipalRelationship fromGroupToUser2 = PrincipalRelationship.from( group ).to( user2 );
-        securityService.addRelationship( fromGroupToUser );
-        securityService.addRelationship( fromGroupToGroup2 );
-        securityService.addRelationship( fromGroupToUser2 );
-
-        securityService.removeRelationship( fromGroupToGroup2 );
-
-        PrincipalRelationships groupRelationships = securityService.getRelationships( group );
-        assertEquals( 2, groupRelationships.getSize() );
-        assertTrue( groupRelationships.contains( fromGroupToUser ) );
-        assertTrue( groupRelationships.contains( fromGroupToUser2 ) );
-    }
-
-    @Test
-    public void testRemoveRelationships()
-        throws Exception
-    {
-        PrincipalKey user = PrincipalKey.ofUser( UserStoreKey.system(), "user" );
-        PrincipalKey user2 = PrincipalKey.ofUser( UserStoreKey.system(), "user2" );
-        PrincipalKey group = PrincipalKey.ofGroup( UserStoreKey.system(), "group" );
-        PrincipalKey group2 = PrincipalKey.ofGroup( UserStoreKey.system(), "group2" );
-
-        PrincipalRelationship fromGroupToUser = PrincipalRelationship.from( group ).to( user );
-        PrincipalRelationship fromGroupToGroup2 = PrincipalRelationship.from( group ).to( group2 );
-        PrincipalRelationship fromGroupToUser2 = PrincipalRelationship.from( group ).to( user2 );
-        securityService.addRelationship( fromGroupToUser );
-        securityService.addRelationship( fromGroupToGroup2 );
-        securityService.addRelationship( fromGroupToUser2 );
-
-        securityService.removeRelationships( group );
-
-        PrincipalRelationships groupRelationships = securityService.getRelationships( group );
-        assertEquals( 0, groupRelationships.getSize() );
     }
 
     public class CustomAuthenticationToken
