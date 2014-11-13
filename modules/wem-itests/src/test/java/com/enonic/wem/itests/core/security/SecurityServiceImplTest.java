@@ -40,7 +40,7 @@ public class SecurityServiceImplTest
         super.setUp();
 
         createRepository( SystemConstants.SYSTEM_REPO );
-        refresh();
+        waitForClusterHealth();
 
         this.nodeService = new NodeServiceImpl();
         this.nodeService.setIndexService( indexService );
