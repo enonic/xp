@@ -1,4 +1,4 @@
-package com.enonic.wem.core.elasticsearch;
+package com.enonic.wem.core.elasticsearch.query.builder;
 
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.index.IndexPaths;

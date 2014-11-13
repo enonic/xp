@@ -15,15 +15,9 @@ import com.enonic.wem.api.query.filter.ValueFilter;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.core.elasticsearch.query.NodeQueryTranslator;
+import com.enonic.wem.core.elasticsearch.query.builder.AclFilterBuilderFactory;
 import com.enonic.wem.core.elasticsearch.query.builder.QueryBuilderFactory;
 import com.enonic.wem.core.elasticsearch.query.builder.SortQueryBuilderFactory;
-import com.enonic.wem.repo.NodeId;
-import com.enonic.wem.repo.NodeIds;
-import com.enonic.wem.repo.NodePath;
-import com.enonic.wem.repo.NodePaths;
-import com.enonic.wem.repo.NodeVersionId;
-import com.enonic.wem.repo.NodeVersionIds;
-import com.enonic.wem.repo.NodeQuery;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.index.query.NodeQueryResult;
 import com.enonic.wem.core.index.query.QueryResultFactory;
@@ -33,6 +27,13 @@ import com.enonic.wem.core.index.result.SearchResult;
 import com.enonic.wem.core.index.result.SearchResultEntry;
 import com.enonic.wem.core.index.result.SearchResultField;
 import com.enonic.wem.core.repository.IndexNameResolver;
+import com.enonic.wem.repo.NodeId;
+import com.enonic.wem.repo.NodeIds;
+import com.enonic.wem.repo.NodePath;
+import com.enonic.wem.repo.NodePaths;
+import com.enonic.wem.repo.NodeQuery;
+import com.enonic.wem.repo.NodeVersionId;
+import com.enonic.wem.repo.NodeVersionIds;
 
 public class ElasticsearchQueryService
     implements QueryService
@@ -46,7 +47,7 @@ public class ElasticsearchQueryService
     {
         final ElasticsearchQuery esQuery = NodeQueryTranslator.translate( query, context );
 
-        System.out.println( esQuery );
+        //System.out.println( esQuery );
 
         return doFind( esQuery );
     }
@@ -88,11 +89,6 @@ public class ElasticsearchQueryService
     public NodeVersionId get( final NodePath nodePath, final IndexContext indexContext )
     {
         final Workspace workspace = indexContext.getWorkspace();
-
-        // final TermQueryBuilder pathQuery = new TermQueryBuilder( IndexPaths.PATH_KEY, nodePath.toString() );
-
-        //final FilteredQueryBuilder aclEnabledQuery =
-        //    new FilteredQueryBuilder( pathQuery, AclFilterBuilderFactory.create( indexContext.getPrincipals() ) );
 
         final QueryBuilder queryBuilder = QueryBuilderFactory.create().
             addQueryFilter( AclFilterBuilderFactory.create( indexContext.getPrincipals() ) ).
@@ -162,8 +158,6 @@ public class ElasticsearchQueryService
             size( nodePaths.getSize() ).
             build();
 
-        System.out.println( query );
-
         final SearchResult searchResult = elasticsearchDao.find( query );
 
         if ( searchResult.isEmpty() )
@@ -202,8 +196,6 @@ public class ElasticsearchQueryService
             setReturnFields( ReturnFields.from( IndexPaths.VERSION_KEY ) ).
             size( nodeIds.getSize() ).
             build();
-
-        System.out.println( query );
 
         final SearchResult searchResult = elasticsearchDao.find( query );
 

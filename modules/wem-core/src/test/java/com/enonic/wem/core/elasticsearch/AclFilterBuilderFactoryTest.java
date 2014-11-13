@@ -8,6 +8,7 @@ import com.enonic.wem.api.security.Group;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.Principals;
 import com.enonic.wem.api.security.User;
+import com.enonic.wem.core.elasticsearch.query.builder.AclFilterBuilderFactory;
 
 import static org.junit.Assert.*;
 

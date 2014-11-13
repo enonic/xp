@@ -3,8 +3,8 @@ package com.enonic.wem.itests.core.entity;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.repo.CreateNodeParams;
 import com.enonic.wem.core.entity.GetNodesByIdsCommand;
+import com.enonic.wem.repo.CreateNodeParams;
 import com.enonic.wem.repo.Node;
 import com.enonic.wem.repo.NodeIds;
 import com.enonic.wem.repo.NodePath;
@@ -38,6 +38,8 @@ public class GetNodesByIdsCommandTest
             build() );
 
         refresh();
+
+        printContentRepoIndex();
 
         final Nodes result = GetNodesByIdsCommand.create().
             ids( NodeIds.from( createdNode1.id(), createdNode2.id() ) ).

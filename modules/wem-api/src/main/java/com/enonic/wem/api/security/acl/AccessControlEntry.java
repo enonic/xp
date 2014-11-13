@@ -178,6 +178,19 @@ public final class AccessControlEntry
             return this;
         }
 
+        public Builder allowAll()
+        {
+            this.allow( Permission.CREATE );
+            this.allow( Permission.DELETE );
+            this.allow( Permission.PUBLISH );
+            this.allow( Permission.READ );
+            this.allow( Permission.MODIFY );
+            this.allow( Permission.READ_PERMISSIONS );
+            this.allow( Permission.WRITE_PERMISSIONS );
+
+            return this;
+        }
+
         public AccessControlEntry build()
         {
             return new AccessControlEntry( this );

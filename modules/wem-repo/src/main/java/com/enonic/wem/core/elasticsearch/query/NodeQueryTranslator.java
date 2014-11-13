@@ -6,14 +6,14 @@ import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.index.IndexPaths;
 import com.enonic.wem.api.query.filter.ValueFilter;
 import com.enonic.wem.api.security.Principals;
-import com.enonic.wem.core.elasticsearch.AclFilterBuilderFactory;
 import com.enonic.wem.core.elasticsearch.aggregation.AggregationBuilderFactory;
+import com.enonic.wem.core.elasticsearch.query.builder.AclFilterBuilderFactory;
 import com.enonic.wem.core.elasticsearch.query.builder.FilterBuilderFactory;
 import com.enonic.wem.core.elasticsearch.query.builder.QueryBuilderFactory;
 import com.enonic.wem.core.elasticsearch.query.builder.SortQueryBuilderFactory;
-import com.enonic.wem.repo.NodeQuery;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.repository.IndexNameResolver;
+import com.enonic.wem.repo.NodeQuery;
 
 public class NodeQueryTranslator
 {

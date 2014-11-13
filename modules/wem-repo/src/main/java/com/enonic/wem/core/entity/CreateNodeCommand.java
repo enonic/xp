@@ -6,7 +6,6 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.repo.Attachments;
 import com.enonic.wem.repo.CreateNodeParams;
 import com.enonic.wem.repo.Node;
@@ -35,12 +34,13 @@ public final class CreateNodeCommand
 
         verifyNotExistsAlready();
 
+        final PrincipalKey creator = PrincipalKey.from( "system:user:admin" );
         final Node.Builder nodeBuilder = Node.newNode().
             id( this.params.getNodeId() != null ? params.getNodeId() : new NodeId() ).
             createdTime( now ).
             modifiedTime( now ).
-            creator( PrincipalKey.from( "system:user:admin" ) ).
-            modifier( PrincipalKey.from( "system:user:admin" ) ).
+            creator( creator ).
+            modifier( creator ).
             parent( params.getParent() ).
             name( NodeName.from( params.getName() ) ).
             rootDataSet( params.getData() ).
@@ -48,7 +48,8 @@ public final class CreateNodeCommand
             indexConfigDocument( params.getIndexConfigDocument() ).
             hasChildren( false ).
             childOrder( params.getChildOrder() != null ? params.getChildOrder() : ChildOrder.defaultOrder() ).
-            accessControlList( params.getAccessControlList() != null ? params.getAccessControlList() : AccessControlList.empty() );
+            accessControlList(
+                params.getAccessControlList() != null ? params.getAccessControlList() : NodeDefaultAclFactory.create( creator ) );
 
         final Node newNode = nodeBuilder.build();
 
