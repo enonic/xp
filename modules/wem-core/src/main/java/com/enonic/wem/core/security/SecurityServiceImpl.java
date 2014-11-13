@@ -48,11 +48,11 @@ import com.enonic.wem.api.security.auth.UsernamePasswordAuthToken;
 import com.enonic.wem.repo.CreateNodeParams;
 import com.enonic.wem.repo.FindNodesByQueryResult;
 import com.enonic.wem.repo.Node;
+import com.enonic.wem.repo.NodeNotFoundException;
 import com.enonic.wem.repo.NodePath;
+import com.enonic.wem.repo.NodeQuery;
 import com.enonic.wem.repo.NodeService;
 import com.enonic.wem.repo.UpdateNodeParams;
-import com.enonic.wem.repo.NodeNotFoundException;
-import com.enonic.wem.repo.NodeQuery;
 
 import static com.enonic.wem.api.security.SystemConstants.CONTEXT_USER_STORES;
 import static com.enonic.wem.core.security.PrincipalKeyNodeTranslator.toNodeId;
@@ -122,18 +122,25 @@ public final class SecurityServiceImpl
     @Override
     public Principals getPrincipals( final UserStoreKey userStore, final PrincipalType type )
     {
-        final FindNodesByQueryResult result = CONTEXT_USER_STORES.callWith( () -> this.nodeService.findByQuery( NodeQuery.create().
-            addQueryFilter( ValueFilter.create().
-                fieldName( PrincipalNodeTranslator.USER_STORE_KEY ).
-                addValue( Value.newString( userStore.toString() ) ).
-                build() ).
-            addQueryFilter( ValueFilter.create().
-                fieldName( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY ).
-                addValue( Value.newString( type.toString() ) ).
-                build() ).
-            build() ) );
+        try
+        {
+            final FindNodesByQueryResult result = CONTEXT_USER_STORES.callWith( () -> this.nodeService.findByQuery( NodeQuery.create().
+                addQueryFilter( ValueFilter.create().
+                    fieldName( PrincipalNodeTranslator.USER_STORE_KEY ).
+                    addValue( Value.newString( userStore.toString() ) ).
+                    build() ).
+                addQueryFilter( ValueFilter.create().
+                    fieldName( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY ).
+                    addValue( Value.newString( type.toString() ) ).
+                    build() ).
+                build() ) );
 
-        return PrincipalNodeTranslator.fromNodes( result.getNodes() );
+            return PrincipalNodeTranslator.fromNodes( result.getNodes() );
+        }
+        catch ( NodeNotFoundException e )
+        {
+            return Principals.empty();
+        }
     }
 
     @Override
