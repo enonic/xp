@@ -37,8 +37,8 @@ module app.browse {
                 filterPanel: undefined
             });
 
-            this.moduleTreeGrid.onSelectionChanged((selectedRows: TreeNode<Module>[]) => {
-                this.browseActions.updateActionsEnabledState(<any[]>selectedRows.map((elem) => {
+            this.moduleTreeGrid.onSelectionChanged((currentSelection: TreeNode<Module>[], fullSelection: TreeNode<Module>[]) => {
+                this.browseActions.updateActionsEnabledState(<any[]>currentSelection.map((elem) => {
                     return elem.getData();
                 }));
             });

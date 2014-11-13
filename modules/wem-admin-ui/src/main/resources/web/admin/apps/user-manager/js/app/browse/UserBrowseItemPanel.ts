@@ -2,8 +2,8 @@ module app.browse {
 
     export class UserBrowseItemPanel extends api.app.browse.BrowseItemPanel<app.browse.UserTreeGridItem> {
 
-        constructor() {
-            super();
+        createItemSelectionPanel(): UserBrowseItemsSelectionPanel {
+            return new UserBrowseItemsSelectionPanel();
         }
 
         createItemStatisticsPanel(): api.app.view.ItemStatisticsPanel<app.browse.UserTreeGridItem> {
