@@ -25,7 +25,7 @@ public final class RepositoryInitializerImpl
     {
         LOG.info( "Initializing repositoryId {}", repository.getId() );
 
-        final ClusterHealth clusterHealth = indexService.getClusterHealth( TimeValue.timeValueSeconds( 2 ) );
+        final ClusterHealth clusterHealth = indexService.getClusterHealth( TimeValue.timeValueSeconds( 5 ) );
 
         if ( !clusterHealth.equals( ClusterHealth.RED ) )
         {
@@ -54,7 +54,7 @@ public final class RepositoryInitializerImpl
         final String storageIndexName = getStoreIndexName( repository );
         final String searchIndexName = getSearchIndexName( repository );
 
-        indexService.getClusterHealth( TimeValue.timeValueSeconds( 1 ), storageIndexName, searchIndexName );
+        indexService.getClusterHealth( TimeValue.timeValueSeconds( 5 ), storageIndexName, searchIndexName );
     }
 
     private void createIndexes( final Repository repository )
