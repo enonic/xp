@@ -12,6 +12,8 @@
 
   &:before {
     margin-right: 5px;
+    float: left;
+    width: 10px;
   }
 
   &.allow {
@@ -33,11 +35,13 @@
   }
 
   &.inherit {
-    background: @admin-almost-white;
+    background: @admin-white;
+    padding: 1px 17px;
+    border: 1px solid @admin-medium-gray-border;
     color: @admin-dark-gray-font;
 
     &:before {
-      content: 'V ';
+      display: none;
     }
   }
 

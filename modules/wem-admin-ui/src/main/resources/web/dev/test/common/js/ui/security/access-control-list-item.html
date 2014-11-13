@@ -7,9 +7,10 @@
 
     <style>
 
-        .canvas {
+        .access-control-list {
             width: 400px;
             border: 1px solid grey;
+            margin: 10px;
         }
 
     </style>
@@ -43,26 +44,36 @@
             PrincipalType = api.security.PrincipalType,
             Permission = api.security.acl.Permission;
 
-    var itemDefault1 = undefined;
-    var itemDefault2 = {
+    var itemDefault1 = {
         allow: [Permission.READ, Permission.CREATE, Permission.MODIFY, Permission.DELETE],
         deny: []
     };
+    var itemDefault2 = undefined;
     var itemDefault3 = {
+        allow: [Permission.READ],
+        deny: []
+    };
+    var itemDefault4 = {
         allow: [Permission.READ, Permission.CREATE, Permission.MODIFY, Permission.DELETE],
         deny: [Permission.READ_PERMISSIONS, Permission.WRITE_PERMISSIONS]
     };
 
-    var canvas = new DivEl('canvas');
-    Body.appendChild(canvas);
+    var permissions = new DivEl('access-control-list');
+    var inheritedPermissions = new DivEl('access-control-list inherited');
+    Body.appendChild(permissions);
+    Body.appendChild(inheritedPermissions);
 
-    var principal = new Principal(PrincipalKey.fromString("enonic:user:admin"), "Administrator", PrincipalType.USER);
-    var item1 = new api.ui.security.AccessControlListItem(principal, itemDefault1);
-    var item2 = new api.ui.security.AccessControlListItem(principal, itemDefault2);
-    var item3 = new api.ui.security.AccessControlListItem(principal, itemDefault3);
-    canvas.appendChild(item1);
-    canvas.appendChild(item2);
-    canvas.appendChild(item3);
+    var user = new Principal(PrincipalKey.fromString("enonic:user:admin"), "Administrator", PrincipalType.USER);
+    var group = new Principal(PrincipalKey.fromString("enonic:group:admins"), "Administrators Group", PrincipalType.GROUP);
+    var role = new Principal(PrincipalKey.fromString("enonic:role:admin"), "Administrator Role", PrincipalType.ROLE);
+    var item1 = new api.ui.security.AccessControlListItem(user, itemDefault1);
+    var item2 = new api.ui.security.AccessControlListItem(group, itemDefault2);
+    var item3 = new api.ui.security.AccessControlListItem(user, itemDefault3);
+    var item4 = new api.ui.security.AccessControlListItem(role, itemDefault4);
+    permissions.appendChild(item1);
+    permissions.appendChild(item2);
+    inheritedPermissions.appendChild(item3);
+    inheritedPermissions.appendChild(item4);
 
     Body.appendChild(new BrEl());
 
@@ -120,6 +131,22 @@
     Body.appendChild(resetItem3);
     Body.appendChild(new BrEl());
 
+    var itemValue4 = new SpanEl();
+    itemValue4.setHtml(JSON.stringify(item4.getPermissions()));
+    Body.appendChild(itemValue4);
+    item4.onValueChanged(function (event) {
+        itemValue4.setHtml(event.getNewValue());
+    });
+    item4.onRemoveClicked(function (event) {
+        itemValue4.setHtml("Remove clicked!");
+    });
+    var resetItem4 = new ButtonEl("Reset");
+    resetItem4.setHtml("Reset");
+    resetItem4.onClicked(function () {
+        item4.setPermissions(itemDefault4);
+    });
+    Body.appendChild(resetItem4);
+    Body.appendChild(new BrEl());
 
 </script>
 

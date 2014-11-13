@@ -1,10 +1,20 @@
 .access-control-list-item {
-
   position: relative;
-  padding: 5px;
+  padding: 5px 42px 5px 5px;
+  .clearfix();
+
+  &.modified {
+    .access-selector {
+      .tab-menu-button {
+        color: @admin-blue;
+      }
+    }
+  }
 
   .names-and-icon-view {
-    margin: 0 130px 0 0;
+    float: left;
+    margin: 0 10px 0 0;
+    min-width: 200px;
   }
 
   .icon-close {
@@ -16,14 +26,13 @@
 
   .permission-selector {
     display: none;
+    clear: left;
   }
 
   .access-selector {
-    position: absolute;
-    top: 0px;
-    right: 40px;
-    margin: 5px;
+    float: left;
     min-width: 100px;
+    margin: 0 10px 0 0;
 
     &.expanded {
       .tab-menu-button {
@@ -33,6 +42,7 @@
     }
 
     .tab-menu-button {
+      text-align: left;
       padding: 6px 5px;
       color: @admin-dark-gray-font;
       background-color: transparent;
