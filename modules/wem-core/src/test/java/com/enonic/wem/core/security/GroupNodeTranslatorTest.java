@@ -40,11 +40,10 @@ public class GroupNodeTranslatorTest
 
         final RootDataSet rootDataSet = createNodeParams.getData();
         assertNotNull( rootDataSet );
-        assertEquals( 4, rootDataSet.size() );
+        assertEquals( 3, rootDataSet.size() );
         assertEquals( UserStoreKey.system().toString(), rootDataSet.getProperty( PrincipalNodeTranslator.USER_STORE_KEY ).getString() );
         assertEquals( PrincipalType.GROUP.toString(), rootDataSet.getProperty( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY ).getString() );
         assertEquals( "My Group", rootDataSet.getProperty( PrincipalNodeTranslator.DISPLAY_NAME_KEY ).getString() );
-        assertNotNull( rootDataSet.getProperty( PrincipalNodeTranslator.MEMBER_KEY ) );
     }
 
 
