@@ -47,10 +47,6 @@ public class ElasticsearchIndexService
 
     private ElasticsearchDao elasticsearchDao;
 
-    private final TimeValue WAIT_FOR_YELLOW_TIMEOUT = TimeValue.timeValueSeconds( 3 );
-
-    private static final TimeValue CLUSTER_NOWAIT_TIMEOUT = TimeValue.timeValueSeconds( 3 );
-
     private final static String deleteTimeout = "5s";
 
     private final static String createTimeout = "5s";
@@ -105,7 +101,6 @@ public class ElasticsearchIndexService
                 client.admin().indices().create( createIndexRequest ).actionGet( this.createTimeout );
 
             LOG.info( "Index {} created with status {}", indexName, createIndexResponse.isAcknowledged() );
-
         }
         catch ( ElasticsearchException e )
         {
