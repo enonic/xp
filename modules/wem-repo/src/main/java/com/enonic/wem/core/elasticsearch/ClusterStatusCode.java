@@ -1,6 +1,6 @@
 package com.enonic.wem.core.elasticsearch;
 
-public enum ClusterHealth
+public enum ClusterStatusCode
 {
     RED,
     YELLOW,

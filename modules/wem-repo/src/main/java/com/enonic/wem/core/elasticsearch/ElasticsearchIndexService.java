@@ -57,11 +57,9 @@ public class ElasticsearchIndexService
 
     private Client client;
 
-    public ClusterHealth getClusterHealth( final TimeValue timeout, final String... indexNames )
+    public ClusterHealthStatus getClusterHealth( final TimeValue timeout, final String... indexNames )
     {
-        final ClusterHealthResponse clusterHealth = doGetClusterHealth( timeout, indexNames );
-
-        return ClusterHealth.valueOf( clusterHealth.getStatus().name() );
+        return doGetClusterHealth( timeout, indexNames );
     }
 
     @Override
@@ -72,7 +70,7 @@ public class ElasticsearchIndexService
             actionGet();
     }
 
-    private ClusterHealthResponse doGetClusterHealth( final TimeValue timeout, final String... indexNames )
+    private ClusterHealthStatus doGetClusterHealth( final TimeValue timeout, final String... indexNames )
     {
         LOG.info( "Executing ClusterHealtRequest" );
 
@@ -82,11 +80,11 @@ public class ElasticsearchIndexService
 
         final ClusterHealthResponse response = this.client.admin().cluster().health( request ).actionGet();
 
-        LOG.info( "ElasticSearch cluster health (timedOut={}, timeOutValue={}): Status={}, nodes={}, active shards={}",
+        LOG.info( "ElasticSearch cluster health (timedOut={}, timeOutValue={}): Status={}, nodes={}, active shards={}, indices={}",
                   new Object[]{response.isTimedOut(), timeout, response.getStatus(), response.getNumberOfNodes(),
-                      response.getActiveShards()} );
+                      response.getActiveShards(), response.getIndices().keySet()} );
 
-        return response;
+        return new ClusterHealthStatus( ClusterStatusCode.valueOf( response.getStatus().name() ), response.isTimedOut() );
     }
 
     public void createIndex( final String indexName, final String settings )

@@ -9,7 +9,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.repository.Repository;
-import com.enonic.wem.core.elasticsearch.ClusterHealth;
+import com.enonic.wem.core.elasticsearch.ClusterHealthStatus;
+import com.enonic.wem.core.elasticsearch.ClusterStatusCode;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.repo.RepositoryInitializer;
@@ -19,15 +20,17 @@ public final class RepositoryInitializerImpl
 {
     private IndexService indexService;
 
+    private final static TimeValue CLUSTER_HEALTH_TIMEOUT_VALUE = TimeValue.timeValueSeconds( 10 );
+
     private final static Logger LOG = LoggerFactory.getLogger( RepositoryInitializerImpl.class );
 
     public final void init( final Repository repository )
     {
         LOG.info( "Initializing repositoryId {}", repository.getId() );
 
-        final ClusterHealth clusterHealth = indexService.getClusterHealth( TimeValue.timeValueSeconds( 5 ) );
+        final ClusterHealthStatus clusterHealth = indexService.getClusterHealth( CLUSTER_HEALTH_TIMEOUT_VALUE );
 
-        if ( !clusterHealth.equals( ClusterHealth.RED ) )
+        if ( clusterHealth.isTimedOut() || !clusterHealth.getClusterStatusCode().equals( ClusterStatusCode.RED ) )
         {
             deleteExistingRepoIndices( repository );
         }
@@ -51,10 +54,12 @@ public final class RepositoryInitializerImpl
 
     public void waitForInitialized( final Repository repository )
     {
+        LOG.info( "Waiting for cluster to be initialized" );
+
         final String storageIndexName = getStoreIndexName( repository );
         final String searchIndexName = getSearchIndexName( repository );
 
-        indexService.getClusterHealth( TimeValue.timeValueSeconds( 5 ), storageIndexName, searchIndexName );
+        indexService.getClusterHealth( CLUSTER_HEALTH_TIMEOUT_VALUE, storageIndexName, searchIndexName );
     }
 
     private void createIndexes( final Repository repository )
@@ -86,7 +91,7 @@ public final class RepositoryInitializerImpl
                 indexService.deleteIndices( repoIndexes );
             }
 
-            indexService.getClusterHealth( TimeValue.timeValueSeconds( 5 ) );
+            indexService.getClusterHealth( CLUSTER_HEALTH_TIMEOUT_VALUE );
         }
         else
         {
