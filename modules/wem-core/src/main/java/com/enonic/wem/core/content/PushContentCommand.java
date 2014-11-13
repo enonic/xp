@@ -4,6 +4,8 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.ContentPublishedEvent;
+import com.enonic.wem.api.event.EventPublisher;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.repo.Node;
 import com.enonic.wem.repo.NodeId;
@@ -15,11 +17,14 @@ public class PushContentCommand
 
     private final Workspace target;
 
+    private final EventPublisher eventPublisher;
+
     private PushContentCommand( final Builder builder )
     {
         super( builder );
         this.contentId = builder.contentId;
         this.target = builder.target;
+        this.eventPublisher = builder.eventPublisher;
     }
 
     Content execute()
@@ -27,6 +32,8 @@ public class PushContentCommand
         final NodeId nodeId = NodeId.from( contentId.toString() );
 
         final Node pushedNode = nodeService.push( nodeId, this.target );
+
+        eventPublisher.publish( new ContentPublishedEvent( contentId ) );
 
         return translator.fromNode( pushedNode );
     }
@@ -43,6 +50,8 @@ public class PushContentCommand
 
         private Workspace target;
 
+        private EventPublisher eventPublisher;
+
         public Builder contentId( final ContentId contentId )
         {
             this.contentId = contentId;
@@ -55,11 +64,18 @@ public class PushContentCommand
             return this;
         }
 
+        public Builder eventPublisher( final EventPublisher eventPublisher )
+        {
+            this.eventPublisher = eventPublisher;
+            return this;
+        }
+
         void validate()
         {
             super.validate();
             Preconditions.checkNotNull( target );
             Preconditions.checkNotNull( contentId );
+            Preconditions.checkNotNull( eventPublisher );
         }
 
         public PushContentCommand build()

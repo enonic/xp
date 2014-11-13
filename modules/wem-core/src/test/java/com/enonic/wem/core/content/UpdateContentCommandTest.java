@@ -19,13 +19,14 @@ import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.event.EventPublisher;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.repo.Node;
 import com.enonic.wem.repo.NodeId;
+import com.enonic.wem.repo.NodeNotFoundException;
 import com.enonic.wem.repo.NodeService;
 import com.enonic.wem.repo.UpdateNodeParams;
-import com.enonic.wem.repo.NodeNotFoundException;
 
 import static com.enonic.wem.api.content.Content.editContent;
 import static com.enonic.wem.api.content.Content.newContent;
@@ -45,6 +46,8 @@ public class UpdateContentCommandTest
     private final BlobService blobService = Mockito.mock( BlobService.class );
 
     private final ContentNodeTranslator translator = Mockito.mock( ContentNodeTranslator.class );
+
+    private final EventPublisher eventPublisher = Mockito.mock( EventPublisher.class );
 
     //@Ignore // Rewriting content stuff to node
     @Test(expected = ContentNotFoundException.class)
@@ -73,6 +76,7 @@ public class UpdateContentCommandTest
             nodeService( this.nodeService ).
             blobService( this.blobService ).
             translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
             build();
 
         Mockito.when( attachmentService.getAll( contentId ) ).thenReturn( Attachments.empty() );
@@ -110,6 +114,7 @@ public class UpdateContentCommandTest
             nodeService( this.nodeService ).
             blobService( this.blobService ).
             translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
             build();
 
         final Node mockNode = Node.newNode().build();

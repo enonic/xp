@@ -69,8 +69,11 @@ module app.browse {
             });
 
             api.content.ContentUpdatedEvent.on((event) => {
-                this.contentTreeGridPanel.updateContentNode(event.getContent());
-                this.setFilterPanelRefreshNeeded(false);
+                this.contentTreeGridPanel.updateContentNode(event.getContentId());
+            });
+
+            api.content.ContentPublishedEvent.on((event) => {
+                this.contentTreeGridPanel.updateContentNode(event.getContentId());
             });
 
             var showMask = () => {

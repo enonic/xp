@@ -39,6 +39,7 @@ import com.enonic.wem.api.content.site.ModuleConfigDataSerializer;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.data.DataId;
 import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.event.EventPublisher;
 import com.enonic.wem.api.schema.content.ContentTypeForms;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
@@ -62,6 +63,8 @@ public class ContentServiceImpl
     private AttachmentService attachmentService;
 
     private ContentNodeTranslator contentNodeTranslator;
+
+    private EventPublisher eventPublisher;
 
     private final static ModuleConfigDataSerializer MODULE_CONFIG_DATA_SERIALIZER = new ModuleConfigDataSerializer();
 
@@ -219,6 +222,7 @@ public class ContentServiceImpl
             blobService( this.blobService ).
             attachmentService( this.attachmentService ).
             translator( this.contentNodeTranslator ).
+            eventPublisher( this.eventPublisher ).
             build().
             execute();
     }
@@ -248,6 +252,7 @@ public class ContentServiceImpl
             translator( this.contentNodeTranslator ).
             contentId( params.getContentId() ).
             target( params.getTarget() ).
+            eventPublisher( this.eventPublisher ).
             build().
             execute();
     }
@@ -407,5 +412,10 @@ public class ContentServiceImpl
     public void setContentNodeTranslator( final ContentNodeTranslator contentNodeTranslator )
     {
         this.contentNodeTranslator = contentNodeTranslator;
+    }
+
+    public void setEventPublisher( final EventPublisher eventPublisher )
+    {
+        this.eventPublisher = eventPublisher;
     }
 }
