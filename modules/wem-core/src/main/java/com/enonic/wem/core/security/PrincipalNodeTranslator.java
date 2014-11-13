@@ -1,14 +1,14 @@
 package com.enonic.wem.core.security;
 
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataId;
-import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
@@ -134,11 +134,6 @@ abstract class PrincipalNodeTranslator
             case USER:
                 populateUserData( data, (User) principal );
                 break;
-
-            case GROUP:
-            case ROLE:
-                data.setProperty( MEMBER_KEY, Value.newData( new RootDataSet() ) );
-                break;
         }
 
         builder.data( data );
@@ -176,10 +171,15 @@ abstract class PrincipalNodeTranslator
                 final RootDataSet data = toBeEdited.data().copy().toRootDataSet();
 
                 final String relationshipToKey = relationship.getTo().toString();
-                final DataSet members = data.getProperty( MEMBER_KEY ).getData();
-                if ( !members.hasData( relationshipToKey ) )
+
+                final boolean relationshipInList = data.getPropertiesByName( MEMBER_KEY ).stream().
+                    map( Property::getValue ).
+                    map( Value::asString ).
+                    anyMatch( relationshipToKey::equals );
+
+                if ( !relationshipInList )
                 {
-                    members.setProperty( relationshipToKey, Value.newBoolean( true ) );
+                    data.add( Property.newString( MEMBER_KEY, relationshipToKey ) );
                 }
 
                 return Node.editNode( toBeEdited ).rootDataSet( data );
@@ -197,11 +197,15 @@ abstract class PrincipalNodeTranslator
                 final RootDataSet data = toBeEdited.data().copy().toRootDataSet();
 
                 final String relationshipToKey = relationship.getTo().toString();
-                final DataSet members = data.getProperty( MEMBER_KEY ).getData();
-                if ( members.hasData( relationshipToKey ) )
-                {
-                    members.remove( DataId.from( relationshipToKey ) );
-                }
+
+                final List<Value> updatedMembers = data.getPropertiesByName( MEMBER_KEY ).stream().
+                    map( Property::getValue ).
+                    filter( ( val ) -> !relationshipToKey.equals( val.asString() ) ).
+                    collect( Collectors.toList() );
+                final Value[] values = updatedMembers.toArray( new Value[updatedMembers.size()] );
+
+                data.remove( DataId.from( MEMBER_KEY ) );
+                data.setProperty( MEMBER_KEY, values );
 
                 return Node.editNode( toBeEdited ).rootDataSet( data );
             } );
@@ -228,19 +232,19 @@ abstract class PrincipalNodeTranslator
     static PrincipalRelationships relationshipsFromNode( final Node node )
     {
         final RootDataSet rootDataSet = node.data();
-        final DataSet members = rootDataSet.getProperty( MEMBER_KEY ).getData();
-        if ( members == null || members.size() == 0 )
+        final List<Property> members = rootDataSet.getPropertiesByName( MEMBER_KEY );
+        if ( members == null || members.isEmpty() )
         {
             return PrincipalRelationships.empty();
         }
 
         final ImmutableList.Builder<PrincipalRelationship> relationships = ImmutableList.builder();
-        final PrincipalKey from = PrincipalKeyNodeTranslator.toKey( node );
-        for ( Data member : members )
+        final PrincipalKey relationshipFrom = PrincipalKeyNodeTranslator.toKey( node );
+        for ( Property member : members )
         {
-            final String memberKey = member.getName();
-            final PrincipalKey principalKey = PrincipalKey.from( memberKey );
-            final PrincipalRelationship relationship = PrincipalRelationship.from( from ).to( principalKey );
+            final String memberKey = member.getValue().asString();
+            final PrincipalKey relationshipTo = PrincipalKey.from( memberKey );
+            final PrincipalRelationship relationship = PrincipalRelationship.from( relationshipFrom ).to( relationshipTo );
             relationships.add( relationship );
         }
         return PrincipalRelationships.from( relationships.build() );
