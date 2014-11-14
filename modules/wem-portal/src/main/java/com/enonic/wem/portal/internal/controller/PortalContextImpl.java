@@ -1,18 +1,22 @@
 package com.enonic.wem.portal.internal.controller;
 
+import com.google.common.collect.Multimap;
+
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.page.PageComponent;
+import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.module.Module;
+import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.PortalRequest;
 import com.enonic.wem.portal.PortalResponse;
 import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.portal.url.PortalUrlBuilders;
 
-public class PortalContextImpl
-    implements PortalContext
+public final class PortalContextImpl
+    implements PortalContext, PortalRequest
 {
     private PortalRequestImpl request;
 
@@ -127,5 +131,42 @@ public class PortalContextImpl
     public void setModule( final Module module )
     {
         this.module = module;
+    }
+
+    @Override
+    public String getMethod()
+    {
+        return this.request.getMethod();
+    }
+
+    @Override
+    public Workspace getWorkspace()
+    {
+        return this.request.getWorkspace();
+    }
+
+    @Override
+    public Multimap<String, String> getParams()
+    {
+        return this.request.getParams();
+    }
+
+    @Override
+    public String getBaseUri()
+    {
+        return this.request.getBaseUri();
+    }
+
+    private PageDescriptor pageDescriptor;
+
+    @Override
+    public PageDescriptor getPageDescriptor()
+    {
+        return pageDescriptor;
+    }
+
+    public void setPageDescriptor( final PageDescriptor pageDescriptor )
+    {
+        this.pageDescriptor = pageDescriptor;
     }
 }

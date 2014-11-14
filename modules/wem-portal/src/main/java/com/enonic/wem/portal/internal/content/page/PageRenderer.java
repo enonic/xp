@@ -2,6 +2,7 @@ package com.enonic.wem.portal.internal.content.page;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.page.PageDescriptor;
+import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.PortalResponse;
 import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.portal.internal.controller.ControllerScript;
@@ -12,7 +13,7 @@ import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
 
 public class PageRenderer
-    implements Renderer<Content, PageRendererContext>
+    implements Renderer<Content, PortalContext>
 {
 
     private ControllerScriptFactory controllerScriptFactory;
@@ -26,7 +27,7 @@ public class PageRenderer
     }
 
     @Override
-    public RenderResult render( final Content content, final PageRendererContext context )
+    public RenderResult render( final Content content, final PortalContext context )
     {
         final PageDescriptor pageDescriptor = context.getPageDescriptor();
 
@@ -43,7 +44,7 @@ public class PageRenderer
         return new PortalResponseSerializer( context.getResponse() ).serialize();
     }
 
-    private void renderForNoPageDescriptor( final PageRendererContext context, final Content content )
+    private void renderForNoPageDescriptor( final PortalContext context, final Content content )
     {
         String html = "<html>" +
             "<head>" +

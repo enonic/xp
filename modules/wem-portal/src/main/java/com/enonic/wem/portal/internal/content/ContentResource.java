@@ -10,8 +10,8 @@ import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.site.Site;
-import com.enonic.wem.portal.internal.content.page.PageRendererContext;
-import com.enonic.wem.portal.internal.content.page.PageRendererContextImpl;
+import com.enonic.wem.portal.PortalContext;
+import com.enonic.wem.portal.internal.controller.PortalContextImpl;
 import com.enonic.wem.portal.internal.controller.PortalRequestImpl;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
@@ -75,7 +75,7 @@ public final class ContentResource
             effectiveContent = content;
         }
 
-        final PageRendererContextImpl context = new PageRendererContextImpl();
+        final PortalContextImpl context = new PortalContextImpl();
         context.setContent( effectiveContent );
         context.setSite( site );
         context.setPageTemplate( pageTemplate );
@@ -92,7 +92,7 @@ public final class ContentResource
         jsRequest.addParams( this.uriInfo.getQueryParameters() );
         context.setRequest( jsRequest );
 
-        final Renderer<Content, PageRendererContext> renderer = this.rendererFactory.getRenderer( effectiveContent );
+        final Renderer<Content, PortalContext> renderer = this.rendererFactory.getRenderer( effectiveContent );
         final RenderResult result = renderer.render( effectiveContent, context );
         return toResponse( result );
     }
