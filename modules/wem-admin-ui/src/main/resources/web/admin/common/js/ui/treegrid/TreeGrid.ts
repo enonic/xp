@@ -258,7 +258,6 @@ module api.ui.treegrid {
                 });
 
                 this.onSelectionChanged(() => {
-                    console.log("refr");
                     this.toolbar.refresh();
                 });
             }
@@ -358,9 +357,9 @@ module api.ui.treegrid {
                     scrollTop = viewport.getEl().getScrollTop(),
                     rowHeight = this.grid.getOptions().rowHeight,
                     nodes = this.root.getCurrentRoot().treeToList(),
-                    emptyNode:TreeNode<DATA> = null,
-                    from = Math.min(nodes.length - 1, Math.floor(scrollTop/rowHeight)),
-                    to = Math.min(nodes.length - 1, from + Math.round(gridHeight/rowHeight) + this.loadBufferSize);
+                    emptyNode: TreeNode<DATA> = null,
+                    from = Math.min(nodes.length - 1, Math.floor(scrollTop / rowHeight)),
+                    to = Math.min(nodes.length - 1, from + Math.round(gridHeight / rowHeight) + this.loadBufferSize);
 
                 for (var i = from; i < to; i++) {
                     if (nodes[i].getDataId() === "") {
@@ -679,9 +678,9 @@ module api.ui.treegrid {
 
                 var node = root.findNode(this.getDataId(data));
                 if (node) {
-                        if (!stashedParentNode) {
-                            this.gridData.setItems(root.treeToList());
-                        }
+                    if (!stashedParentNode) {
+                        this.gridData.setItems(root.treeToList());
+                    }
                     if (isRootParentNode) {
                         this.sortNodeChildren(parentNode);
                     } else {
@@ -723,8 +722,10 @@ module api.ui.treegrid {
 
 
         initData(nodes: TreeNode<DATA>[]) {
-            var selection:any = [],
-                selectionIds = this.root.getFullSelection().map((el) => { return el.getDataId(); });
+            var selection: any = [],
+                selectionIds = this.root.getFullSelection().map((el) => {
+                    return el.getDataId();
+                });
 
             this.gridData.setItems(nodes, "id");
             this.notifyDataChanged(new DataChangedEvent<DATA>(nodes, DataChangedEvent.ADDED));
@@ -791,8 +792,8 @@ module api.ui.treegrid {
 //            this.animateExpand(expandedRows, animatedRows);
 
 //            setTimeout(() => {
-                this.resetAndRender();
-                this.active = true;
+            this.resetAndRender();
+            this.active = true;
 //            }, 350); // timeout is required for the animation
         }
 
@@ -826,9 +827,9 @@ module api.ui.treegrid {
 //            this.animateCollapse(collapsedRows, animatedRows);
 
 //            setTimeout(() => {
-                this.gridData.refresh();
-                this.resetAndRender();
-                this.active = true;
+            this.gridData.refresh();
+            this.resetAndRender();
+            this.active = true;
 //            }, 350); // timeout is required for the animation
         }
 
