@@ -148,7 +148,7 @@ module api.ui.treegrid {
             });
 
             if (builder.isShowToolbar()) {
-                this.toolbar = new TreeGridToolbar(this.actions);
+                this.toolbar = new TreeGridToolbar(this.actions, this);
                 this.appendChild(this.toolbar);
                 // make sure it won't left from the cloned grid
                 this.removeClass("no-toolbar");
@@ -251,6 +251,17 @@ module api.ui.treegrid {
             this.grid.subscribeOnSelectedRowsChanged((event, rows) => {
                 this.notifySelectionChanged(event, rows.rows);
             });
+
+            if (this.toolbar) {
+                this.gridData.onRowCountChanged(() => {
+                    this.toolbar.refresh();
+                });
+
+                this.onSelectionChanged(() => {
+                    console.log("refr");
+                    this.toolbar.refresh();
+                });
+            }
         }
 
         private updateColumnsFormatter(columns: GridColumn<TreeNode<DATA>>[]) {
