@@ -1,14 +1,10 @@
 package com.enonic.wem.itests.core.elasticsearch;
 
-import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
-import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
-import org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.admin.indices.refresh.RefreshResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.client.Requests;
 import org.elasticsearch.common.unit.TimeValue;
 import org.junit.After;
 import org.junit.Before;
@@ -85,19 +81,9 @@ public abstract class AbstractElasticsearchIntegrationTest
     }
 
 
-    public ClusterHealthStatus waitForClusterHealth()
+    public void waitForClusterHealth()
     {
-        ClusterHealthRequest request = Requests.clusterHealthRequest().
-            waitForYellowStatus().timeout( TimeValue.timeValueSeconds( 5 ) );
-
-        ClusterHealthResponse actionGet = client().admin().cluster().health( request ).actionGet();
-
-        if ( actionGet.isTimedOut() )
-        {
-            LOG.error( "Cluster health request timed out (status={}), cluster state:\n{}\n{}" );
-        }
-
-        return actionGet.getStatus();
+        elasticsearchIndexService.getClusterHealth( TimeValue.timeValueSeconds( 10 ) );
     }
 
     protected final RefreshResponse refresh()
