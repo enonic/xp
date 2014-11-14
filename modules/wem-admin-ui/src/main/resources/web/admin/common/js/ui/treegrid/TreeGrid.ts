@@ -99,6 +99,8 @@ module api.ui.treegrid {
                 this.grid.unregisterPlugin(this.grid.getCheckboxSelectorPlugin())
             }
 
+            this.grid.syncGridSelection(false);
+
             this.actions = new TreeGridToolbarActions(this.grid);
 
             this.onClicked(() => {
@@ -994,8 +996,7 @@ module api.ui.treegrid {
         }
 
         private resetAndRender() {
-            this.resetZIndexes();
-            this.grid.syncGridSelection(false);
+//            this.resetZIndexes();
             this.grid.invalidate();
             this.grid.renderGrid();
         }
