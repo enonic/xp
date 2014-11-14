@@ -1,46 +1,28 @@
 module api.ui.security {
 
     import Permission = api.security.acl.Permission;
+    import Principal = api.security.Principal;
+    import PrincipalType = api.security.PrincipalType;
+    import PrincipalKey = api.security.PrincipalKey;
+    import AccessControlEntry = api.security.acl.AccessControlEntry;
 
     export class AccessControlListItem extends api.dom.DivEl {
 
-        private principal: api.security.Principal;
-        private originalPermissions: {allow: Permission[]; deny: Permission[]};
+        private ace: AccessControlEntry;
+
+        private names: api.app.NamesAndIconView;
         private accessSelector: AccessSelector;
         private permissionSelector: PermissionSelector;
+
         private removeClickedListeners: {(event: MouseEvent):void}[] = [];
 
-        constructor(principal: api.security.Principal, permissions?: {allow: Permission[]; deny: Permission[]}) {
+        constructor(ace: AccessControlEntry) {
             super('access-control-list-item');
 
-            this.principal = principal;
-            if (permissions) {
-                this.originalPermissions = permissions;
-                this.originalPermissions.allow.sort();
-                this.originalPermissions.deny.sort();
-            } else {
-                this.originalPermissions = {allow: [], deny: []};
-            }
+            this.ace = ace;
 
-            var nameAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
-            this.appendChild(nameAndIconView);
-
-            var iconClass;
-            switch (principal.getType()) {
-            case api.security.PrincipalType.USER:
-                iconClass = "icon-user";
-                break;
-            case api.security.PrincipalType.GROUP:
-                iconClass = "icon-users";
-                break;
-            case api.security.PrincipalType.ROLE:
-                iconClass = "icon-user7";
-                break;
-            }
-
-            nameAndIconView.setIconClass(iconClass).
-                setMainName(principal.getDisplayName()).
-                setSubName(principal.getKey().toString());
+            this.names = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
+            this.appendChild(this.names);
 
             this.accessSelector = new AccessSelector();
             this.appendChild(this.accessSelector);
@@ -51,7 +33,10 @@ module api.ui.security {
 
             this.permissionSelector = new PermissionSelector();
             this.permissionSelector.onValueChanged((event: ValueChangedEvent) => {
-                this.toggleClass("modified", event.getNewValue() != JSON.stringify(this.originalPermissions));
+                this.toggleClass("modified", event.getNewValue() != JSON.stringify({
+                    allow: this.ace.getAllowedPermissions().sort(),
+                    deny: this.ace.getDeniedPermissions().sort()
+                }));
             });
             this.appendChild(this.permissionSelector);
 
@@ -66,7 +51,7 @@ module api.ui.security {
                 }
             });
 
-            this.setPermissions(this.originalPermissions, true);
+            this.setAccessControlEntry(this.ace, true);
         }
 
         public onValueChanged(listener: (event: api.ui.ValueChangedEvent) => void) {
@@ -93,23 +78,44 @@ module api.ui.security {
             })
         }
 
-        public setPermissions(permissions: {allow: Permission[]; deny: Permission[]}, silent?: boolean) {
-            if (!permissions) {
-                permissions = {allow: [], deny: []};
-            } else {
-                permissions.allow.sort();
-                permissions.deny.sort();
+        public setAccessControlEntry(ace: AccessControlEntry, silent?: boolean) {
+            this.ace = ace;
+            var iconClass;
+            switch (this.ace.getPrincipalKey().getType()) {
+            case PrincipalType.USER:
+                iconClass = "icon-user";
+                break;
+            case PrincipalType.GROUP:
+                iconClass = "icon-users";
+                break;
+            case PrincipalType.ROLE:
+                iconClass = "icon-user7";
+                break;
             }
+            this.names.setIconClass(iconClass).
+                setMainName(this.ace.getPrincipalDisplayName()).
+                setSubName(this.getSubName(this.ace.getPrincipalKey()));
+            var permissions = {
+                allow: ace.getAllowedPermissions().sort(),
+                deny: ace.getDeniedPermissions().sort()
+            };
             this.permissionSelector.setValue(permissions, silent);
             this.accessSelector.setValue(this.getAccessValueFromPermissions(permissions), silent);
         }
 
-        public getPermissions(): {allow: Permission[]; deny: Permission[]} {
-            return this.permissionSelector.getValue();
+        public getAccessControlEntry(): AccessControlEntry {
+            var permissions = this.permissionSelector.getValue();
+            var ace = new AccessControlEntry(this.ace.getPrincipalKey(), this.ace.getPrincipalDisplayName());
+            ace.setAllowedPermissions(permissions.allow);
+            ace.setDeniedPermissions(permissions.deny);
+            return ace;
         }
 
-        public getPrincipal(): api.security.Principal {
-            return this.principal;
+        private getSubName(key: PrincipalKey): string {
+            return api.util.StringHelper.format("{0}/{1}/{2}",
+                key.getUserStore().toString(),
+                PrincipalType[key.getType()].toLowerCase(),
+                key.getId());
         }
 
         private getPermissionsValueFromAccess(access: Access) {

@@ -26,7 +26,7 @@ module app.create {
             });
         }
 
-        createListItem(item: NewContentDialogListItem): api.dom.Element {
+        createItemView(item: NewContentDialogListItem): api.dom.LiEl {
             var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
             namesAndIconView
                 .setIconUrl(item.getIconUrl())
@@ -38,6 +38,10 @@ module app.create {
             itemEl.appendChild(namesAndIconView);
             itemEl.onClicked((event: MouseEvent) => this.notifySelected(item));
             return itemEl;
+        }
+
+        getItemId(item: NewContentDialogListItem): string {
+            return item.getName();
         }
     }
 
