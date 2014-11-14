@@ -8,6 +8,8 @@ import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.repo.Attachments;
 import com.enonic.wem.repo.CreateNodeParams;
+import com.enonic.wem.repo.FindNodesByParentParams;
+import com.enonic.wem.repo.FindNodesByParentResult;
 import com.enonic.wem.repo.Node;
 import com.enonic.wem.repo.NodeId;
 import com.enonic.wem.repo.NodeName;
@@ -35,6 +37,9 @@ public final class CreateNodeCommand
         verifyNotExistsAlready();
 
         final PrincipalKey creator = PrincipalKey.from( "system:user:admin" );
+
+        final Long manualOrderValue = resolvePotentialManualOrderValue();
+
         final Node.Builder nodeBuilder = Node.newNode().
             id( this.params.getNodeId() != null ? params.getNodeId() : new NodeId() ).
             createdTime( now ).
@@ -48,6 +53,7 @@ public final class CreateNodeCommand
             indexConfigDocument( params.getIndexConfigDocument() ).
             hasChildren( false ).
             childOrder( params.getChildOrder() != null ? params.getChildOrder() : ChildOrder.defaultOrder() ).
+            manualOrderValue( manualOrderValue ).
             accessControlList(
                 params.getAccessControlList() != null ? params.getAccessControlList() : NodeDefaultAclFactory.create( creator ) );
 
@@ -56,6 +62,49 @@ public final class CreateNodeCommand
         this.doStoreNode( newNode );
 
         return newNode;
+    }
+
+    private Long resolvePotentialManualOrderValue()
+    {
+        if ( NodePath.ROOT.equals( params.getParent() ) )
+        {
+            return null;
+        }
+
+        final Node parentNode = doGetByPath( params.getParent(), false );
+
+        if ( parentNode == null )
+        {
+            return null;
+        }
+
+        if ( parentNode.getChildOrder() != null && parentNode.getChildOrder().isManualOrder() )
+        {
+            final FindNodesByParentResult findNodesByParentResult = doFindNodesByParent( FindNodesByParentParams.create().
+                parentPath( parentNode.path() ).
+                childOrder( ChildOrder.manualOrder() ).
+                size( 1 ).
+                build() );
+
+            if ( findNodesByParentResult.isEmpty() )
+            {
+                return NodeOrderValueResolver.START_ORDER_VALUE;
+            }
+            else
+            {
+                final Node first = findNodesByParentResult.getNodes().first();
+
+                if ( first.getManualOrderValue() == null )
+                {
+                    throw new IllegalArgumentException( "Expected that node " + first +
+                                                            " should have manualOrderValue since parent childOrder = manualOrderValue, but value was null" );
+                }
+
+                return first.getManualOrderValue() + NodeOrderValueResolver.ORDER_SPACE;
+            }
+        }
+
+        return null;
     }
 
     private void verifyNotExistsAlready()
