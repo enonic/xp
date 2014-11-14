@@ -198,6 +198,12 @@ public class NodeQuery
             return this;
         }
 
+        public Builder addAggregationQuery( final AggregationQuery aggregationQuery )
+        {
+            this.aggregationQueries.add( aggregationQuery );
+            return this;
+        }
+
         public NodeQuery build()
         {
             return new NodeQuery( this );

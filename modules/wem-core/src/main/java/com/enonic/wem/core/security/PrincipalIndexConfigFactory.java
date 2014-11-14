@@ -1,5 +1,6 @@
 package com.enonic.wem.core.security;
 
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.index.IndexConfigDocument;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
@@ -18,7 +19,7 @@ class PrincipalIndexConfigFactory
     {
         // TODO: User correct analyzer when repository system is created
         return PatternIndexConfigDocument.create().
-            analyzer( "content_default" ).
+            analyzer( ContentConstants.CONTENT_DEFAULT_ANALYZER ).
             add( DISPLAY_NAME_KEY, IndexConfig.FULLTEXT ).
             add( PRINCIPAL_TYPE_KEY, IndexConfig.MINIMAL ).
             add( USER_STORE_KEY, IndexConfig.MINIMAL ).

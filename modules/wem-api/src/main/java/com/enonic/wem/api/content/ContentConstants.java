@@ -11,6 +11,8 @@ import com.enonic.wem.api.workspace.Workspace;
 
 public class ContentConstants
 {
+    public static final String CONTENT_DEFAULT_ANALYZER = "content_default";
+
     public static final Workspace WORKSPACE_STAGE = Workspace.create().
         name( "stage" ).
         childOrder( ChildOrder.create().

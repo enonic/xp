@@ -1,5 +1,6 @@
 package com.enonic.wem.api.query.expr;
 
+import java.util.Arrays;
 import java.util.List;
 
 import com.google.common.base.Joiner;
@@ -16,6 +17,16 @@ public final class FunctionExpr
     {
         this.name = name;
         this.arguments = ImmutableList.copyOf( arguments );
+    }
+
+    public static FunctionExpr from( final String functionName, final Iterable<ValueExpr> arguments )
+    {
+        return new FunctionExpr( functionName, arguments );
+    }
+
+    public static FunctionExpr from( final String functionName, ValueExpr... arguments )
+    {
+        return new FunctionExpr( functionName, Arrays.asList( arguments ) );
     }
 
     public String getName()
