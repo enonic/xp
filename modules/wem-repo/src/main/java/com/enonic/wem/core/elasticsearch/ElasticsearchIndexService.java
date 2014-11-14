@@ -23,6 +23,7 @@ import org.elasticsearch.common.unit.TimeValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Stopwatch;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.repository.RepositoryId;
@@ -78,11 +79,14 @@ public class ElasticsearchIndexService
 
         request.waitForYellowStatus().timeout( timeout );
 
+        final Stopwatch timer = Stopwatch.createStarted();
         final ClusterHealthResponse response = this.client.admin().cluster().health( request ).actionGet();
+        timer.stop();
 
-        LOG.info( "ElasticSearch cluster health (timedOut={}, timeOutValue={}): Status={}, nodes={}, active shards={}, indices={}",
-                  new Object[]{response.isTimedOut(), timeout, response.getStatus(), response.getNumberOfNodes(),
-                      response.getActiveShards(), response.getIndices().keySet()} );
+        LOG.info(
+            "ElasticSearch cluster health (timedOut={}, timeOutValue={}, used={}ms): Status={}, nodes={}, active shards={}, indices={}",
+            new Object[]{response.isTimedOut(), timeout, timer.toString(), response.getStatus(), response.getNumberOfNodes(),
+                response.getActiveShards(), response.getIndices().keySet()} );
 
         return new ClusterHealthStatus( ClusterStatusCode.valueOf( response.getStatus().name() ), response.isTimedOut() );
     }
