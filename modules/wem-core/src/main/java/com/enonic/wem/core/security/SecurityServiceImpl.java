@@ -128,15 +128,17 @@ public final class SecurityServiceImpl
 
         do
         {
+            final Set<PrincipalKey> newMemberships = Sets.newHashSet();
             for ( PrincipalKey principal : resolvedMemberships )
             {
                 if ( !queriedMemberships.contains( principal ) )
                 {
                     final PrincipalKeys indirectMemberships = queryMemberships( principal );
-                    resolvedMemberships.addAll( indirectMemberships.getSet() );
+                    newMemberships.addAll( indirectMemberships.getSet() );
                     queriedMemberships.add( principal );
                 }
             }
+            resolvedMemberships.addAll( newMemberships );
         }
         while ( resolvedMemberships.size() > queriedMemberships.size() );
 
