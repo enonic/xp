@@ -6,6 +6,14 @@ module api.content {
 
     export class ChildOrder {
 
+        private DEFAULT_ORDER_DIRECTION_VALUE: string = "DESC";
+
+        private ASC_ORDER_DIRECTION_VALUE: string = "ASC";
+
+        private DESC_ORDER_DIRECTION_VALUE: string = "DESC";
+
+        private MANUAL_ORDER_VALUE_KEY: string = "manualordervalue";
+
         private orderExpressions: OrderExpr[] = [];
 
         getOrderExpressions(): OrderExpr[] {
@@ -22,6 +30,26 @@ module api.content {
                 }
             });
             return childOrder;
+        }
+
+        isManual(): boolean {
+            if (this.orderExpressions.length == 0) {
+                return false;
+            }
+            var order = this.orderExpressions[0];
+            if (api.ObjectHelper.iFrameSafeInstanceOf(order, FieldOrderExpr)) {
+                return api.ObjectHelper.stringEquals(this.MANUAL_ORDER_VALUE_KEY.toLowerCase(),
+                    (<FieldOrderExpr>order).getFieldName().toLowerCase());
+            }
+            return false;
+        }
+
+        isDesc(): boolean {
+            if (this.orderExpressions.length == 0) {
+                return this.DEFAULT_ORDER_DIRECTION_VALUE == this.DESC_ORDER_DIRECTION_VALUE;
+            }
+            var order = this.orderExpressions[0];
+            return api.ObjectHelper.stringEquals(this.DESC_ORDER_DIRECTION_VALUE.toLowerCase(), order.getDirection().toLowerCase());
         }
 
         toJson(): api.content.json.ChildOrderJson {

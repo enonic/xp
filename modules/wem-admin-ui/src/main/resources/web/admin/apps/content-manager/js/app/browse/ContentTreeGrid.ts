@@ -65,20 +65,20 @@ module app.browse {
                 setMaxWidth(170).
                 setFormatter(DateTimeFormatter.format).
                 build();
-            var contentTypeColumn = new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().
-                setName("ContentType").
-                setId("contentType").
-                setField("contentSummary.type").
-                setCssClass("type").
+            var orderColumn = new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().
+                setName("Order").
+                setId("order").
+                setField("contentSummary.order").
+                setCssClass("order").
                 setMinWidth(80).
                 setMaxWidth(80).
-                setFormatter(this.typeFormatter).
+                setFormatter(this.orderFormatter).
                 build();
 
             super(new TreeGridBuilder<ContentSummaryAndCompareStatus>().
                     setColumns([
                         nameColumn,
-                        contentTypeColumn,
+                        orderColumn,
                         compareStatusColumn,
                         modifiedTimeColumn
                     ]).
@@ -90,11 +90,11 @@ module app.browse {
 
             api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
                 if (item.isInRangeOrSmaller(api.ui.responsive.ResponsiveRanges._240_360)) {
-                    this.getGrid().setColumns([nameColumn, contentTypeColumn]);
+                    this.getGrid().setColumns([nameColumn, orderColumn]);
                 } else if (item.isInRangeOrSmaller(api.ui.responsive.ResponsiveRanges._360_540)) {
-                    this.getGrid().setColumns([nameColumn, contentTypeColumn, modifiedTimeColumn]);
+                    this.getGrid().setColumns([nameColumn, orderColumn, modifiedTimeColumn]);
                 } else {
-                    this.getGrid().setColumns([nameColumn, contentTypeColumn, compareStatusColumn, modifiedTimeColumn]);
+                    this.getGrid().setColumns([nameColumn, orderColumn, compareStatusColumn, modifiedTimeColumn]);
                 }
 
                 if (item.isInRangeOrSmaller(api.ui.responsive.ResponsiveRanges._540_720)) {
@@ -164,6 +164,27 @@ module app.browse {
             var wrapper = new api.dom.SpanEl();
             wrapper.getEl().setTitle(value);
             wrapper.getEl().setInnerHtml(value.toString().split(':')[1]);
+            return wrapper.toString();
+        }
+
+        private orderFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
+            var wrapper = new api.dom.SpanEl();
+            wrapper.getEl().setTitle(value);
+            if (node.getData().getContentSummary()) {
+                var childOrder = node.getData().getContentSummary().getChildOrder();
+                var icon;
+                if (!childOrder.isManual()) {
+                    if (childOrder.isDesc()) {
+                        icon = new api.dom.DivEl("icon-arrow-up4");
+                    } else {
+                        icon = new api.dom.DivEl("icon-arrow-down4");
+                    }
+                } else {
+                    icon = new api.dom.DivEl("icon-menu3");
+                }
+                wrapper.getEl().setInnerHtml(icon.toString());
+
+            }
             return wrapper.toString();
         }
 
