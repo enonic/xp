@@ -6,7 +6,8 @@ module api.ui.treegrid.actions {
     export class SelectAllAction extends Action {
 
         constructor(grid: Grid<TreeNode<Object>>) {
-            super("Select All");
+            var allCount = grid.getDataView().getLength();
+            super("Select All (" + allCount + ")");
             this.setEnabled(true);
             this.onExecuted(() => {
                 grid.selectAll();

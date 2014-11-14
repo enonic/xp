@@ -32,6 +32,19 @@ module api.ui.toolbar {
             });
         }
 
+        removeActions() {
+            this.actions.forEach((action: api.ui.Action) => {
+                this.getChildren().forEach((element: api.dom.Element) => {
+                    if (api.ObjectHelper.iFrameSafeInstanceOf(element, api.ui.button.ActionButton)) {
+                        if (action.getLabel() == (<api.ui.button.ActionButton>element).getLabel()) {
+                            this.removeChild(element);
+                        }
+                    }
+                });
+            });
+            this.actions = [];
+        }
+
         getActions(): api.ui.Action[] {
             return this.actions;
         }
