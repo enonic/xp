@@ -5,14 +5,14 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.FindContentByParentParams;
 import com.enonic.wem.api.content.FindContentByParentResult;
-import com.enonic.wem.api.context.Context;
-import com.enonic.wem.core.entity.FindNodesByParentParams;
-import com.enonic.wem.core.entity.FindNodesByParentResult;
-import com.enonic.wem.core.entity.NodePath;
-import com.enonic.wem.core.entity.Nodes;
+import com.enonic.wem.api.context.ContextAccessor;
+import com.enonic.wem.repo.FindNodesByParentParams;
+import com.enonic.wem.repo.FindNodesByParentResult;
+import com.enonic.wem.repo.NodePath;
+import com.enonic.wem.repo.Nodes;
 
 final class FindContentByParentCommand
-    extends AbstractFindContentCommand
+    extends AbstractContentCommand
 {
     private final FindContentByParentParams params;
 
@@ -47,7 +47,7 @@ final class FindContentByParentCommand
             parentPath( parentPath ).
             from( params.getFrom() ).
             size( params.getSize() ).
-            childOrder( useWorkspaceOrdering ? Context.current().getWorkspace().getChildOrder() : params.getChildOrder() ).
+            childOrder( useWorkspaceOrdering ? ContextAccessor.current().getWorkspace().getChildOrder() : params.getChildOrder() ).
             build() );
 
         final Nodes nodes = result.getNodes();
@@ -62,7 +62,7 @@ final class FindContentByParentCommand
     }
 
     public static class Builder
-        extends AbstractFindContentCommand.Builder<Builder>
+        extends AbstractContentCommand.Builder<Builder>
     {
         private final FindContentByParentParams params;
 

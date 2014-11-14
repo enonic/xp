@@ -512,8 +512,6 @@ module app.wizard {
                         new api.content.ContentCreatedEvent(content, this).fire();
                         api.notify.showFeedback('Content was created!');
                     } else {
-
-                        new api.content.ContentUpdatedEvent(content, this).fire();
                         api.notify.showFeedback('Content was updated!');
                     }
 

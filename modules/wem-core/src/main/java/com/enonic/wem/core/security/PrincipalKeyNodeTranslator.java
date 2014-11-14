@@ -1,13 +1,19 @@
 package com.enonic.wem.core.security;
 
+import java.util.LinkedHashSet;
+
+import com.google.common.collect.Sets;
+
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.security.PrincipalKeys;
 import com.enonic.wem.api.security.PrincipalType;
 import com.enonic.wem.api.security.UserStoreKey;
-import com.enonic.wem.core.entity.Node;
-import com.enonic.wem.core.entity.NodeId;
-import com.enonic.wem.core.entity.NodeName;
+import com.enonic.wem.repo.Node;
+import com.enonic.wem.repo.NodeId;
+import com.enonic.wem.repo.NodeName;
+import com.enonic.wem.repo.Nodes;
 
 
 class PrincipalKeyNodeTranslator
@@ -33,6 +39,16 @@ class PrincipalKeyNodeTranslator
         final String userStoreKey = getStringAndAssertNotNull( rootDataSet, PrincipalNodeTranslator.USER_STORE_KEY );
 
         return PrincipalKey.from( new UserStoreKey( userStoreKey ), PrincipalType.valueOf( principalType ), principalId );
+    }
+
+    static PrincipalKeys fromNodes( final Nodes nodes )
+    {
+        final LinkedHashSet<PrincipalKey> principals = Sets.newLinkedHashSet();
+        for ( final Node node : nodes )
+        {
+            principals.add( toKey( node ) );
+        }
+        return PrincipalKeys.from( principals );
     }
 
     private static String getStringAndAssertNotNull( final RootDataSet data, String key )

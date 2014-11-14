@@ -80,6 +80,12 @@ module api.app {
             if (eventType === 'ModuleUpdatedEvent') {
                 return api.module.ModuleUpdatedEvent.fromJson(serverEventJson.event);
             }
+            if (eventType === 'ContentUpdatedEvent') {
+                return api.content.ContentUpdatedEvent.fromJson(serverEventJson.event);
+            }
+            if (eventType === 'ContentPublishedEvent') {
+                return api.content.ContentPublishedEvent.fromJson(serverEventJson.event);
+            }
             else if (eventType === 'ContentTypeUpdatedEvent') {
                 return api.schema.content.ContentTypeUpdatedEvent.fromJson(serverEventJson.event);
             }

@@ -2,14 +2,14 @@ package com.enonic.wem.api.content;
 
 import java.time.Instant;
 
-import com.enonic.wem.api.account.UserKey;
+import com.enonic.wem.api.security.PrincipalKey;
 
 public class ContentVersion
     implements Comparable<ContentVersion>
 {
     private final ContentVersionId id;
 
-    private final UserKey modifier;
+    private final PrincipalKey modifier;
 
     private final String displayName;
 
@@ -26,7 +26,7 @@ public class ContentVersion
         this.id = builder.id;
     }
 
-    public UserKey getModifier()
+    public PrincipalKey getModifier()
     {
         return modifier;
     }
@@ -118,7 +118,7 @@ public class ContentVersion
 
     public static final class Builder
     {
-        private UserKey modifier;
+        private PrincipalKey modifier;
 
         private String displayName;
 
@@ -138,7 +138,7 @@ public class ContentVersion
             return this;
         }
 
-        public Builder modifier( UserKey modifier )
+        public Builder modifier( PrincipalKey modifier )
         {
             this.modifier = modifier;
             return this;

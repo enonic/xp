@@ -19,10 +19,16 @@ module app.browse {
 
         private type: UserTreeGridItemType;
 
+        private modifiedTime: Date;
+
         constructor(builder: UserTreeGridItemBuilder) {
             this.userStore = builder.userStore;
             this.principal = builder.principal;
             this.type = builder.type;
+
+            if (this.type === UserTreeGridItemType.PRINCIPAL) {
+                this.modifiedTime = this.principal.getModifiedTime();
+            }
         }
 
         setUserStore(userStore: UserStore) {
@@ -107,25 +113,8 @@ module app.browse {
         }
 
         hasChildren(): boolean {
-            switch (this.type) {
-            case UserTreeGridItemType.USER_STORE:
-            {
-                return true;
-            }
-
-            case UserTreeGridItemType.GROUPS:
-            {
-                return true;
-            }
-            case UserTreeGridItemType.ROLES:
-            {
-                return true;
-            }
-            case UserTreeGridItemType.USERS:
-            {
-                return true;
-            }
-            }
+            return (this.type === UserTreeGridItemType.USER_STORE || this.type === UserTreeGridItemType.GROUPS ||
+                    this.type === UserTreeGridItemType.ROLES || this.type === UserTreeGridItemType.USERS);
         }
 
         equals(o: api.Equitable): boolean {

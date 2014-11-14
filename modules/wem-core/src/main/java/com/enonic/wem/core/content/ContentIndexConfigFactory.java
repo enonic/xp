@@ -1,5 +1,6 @@
 package com.enonic.wem.core.content;
 
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentIndexPaths;
 import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.index.IndexConfigDocument;
@@ -10,7 +11,7 @@ class ContentIndexConfigFactory
     public static IndexConfigDocument create()
     {
         final PatternIndexConfigDocument config = PatternIndexConfigDocument.create().
-            analyzer( "content_default" ).
+            analyzer( ContentConstants.CONTENT_DEFAULT_ANALYZER ).
             add( ContentIndexPaths.PAGE, IndexConfig.NONE ).
             add( ContentIndexPaths.SITE, IndexConfig.NONE ).
             add( ContentIndexPaths.DRAFT, IndexConfig.NONE ).

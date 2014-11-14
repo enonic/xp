@@ -26,11 +26,7 @@ module api.content.site {
             modulesProperites.forEach((moduleProperty: Property) => {
                 var moduleConfigData = moduleProperty.getData();
                 if (moduleConfigData) {
-                    var moduleKey = ModuleKey.fromString(moduleConfigData.getProperty("moduleKey").getString());
-                    var moduleConfigData = moduleConfigData.getProperty("config").getData();
-                    var moduleConfig = new ModuleConfigBuilder().
-                        setModuleKey(moduleKey).
-                        setConfig(moduleConfigData).build();
+                    var moduleConfig = new ModuleConfigBuilder().fromData(moduleConfigData).build();
                     moduleConfigs.push(moduleConfig);
                 }
             });

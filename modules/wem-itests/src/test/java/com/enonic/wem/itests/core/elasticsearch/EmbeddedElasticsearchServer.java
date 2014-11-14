@@ -8,6 +8,8 @@ import org.apache.commons.io.FileUtils;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.node.Node;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
@@ -20,6 +22,8 @@ public class EmbeddedElasticsearchServer
 
     private final String dataDirectory;
 
+    private final static Logger LOG = LoggerFactory.getLogger( AbstractElasticsearchIntegrationTest.class );
+
     public EmbeddedElasticsearchServer()
     {
         this( DEFAULT_DATA_DIRECTORY );
@@ -27,6 +31,8 @@ public class EmbeddedElasticsearchServer
 
     public EmbeddedElasticsearchServer( String dataDirectory )
     {
+        LOG.info( " --- Starting ES integration test server instance" );
+
         this.dataDirectory = dataDirectory;
 
         ImmutableSettings.Builder testSettings = ImmutableSettings.settingsBuilder().
@@ -47,12 +53,15 @@ public class EmbeddedElasticsearchServer
 
     public void shutdown()
     {
+        LOG.info( " --- Shutting down ES integration test server instance" );
         node.close();
         deleteDataDirectory();
     }
 
     private void deleteDataDirectory()
     {
+        LOG.info( "Deleting index data directories" );
+
         try
         {
             FileUtils.deleteDirectory( new File( dataDirectory ) );

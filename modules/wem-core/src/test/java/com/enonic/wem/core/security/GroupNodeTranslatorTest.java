@@ -12,9 +12,9 @@ import com.enonic.wem.api.security.Group;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.PrincipalType;
 import com.enonic.wem.api.security.UserStoreKey;
-import com.enonic.wem.core.entity.CreateNodeParams;
-import com.enonic.wem.core.entity.Node;
-import com.enonic.wem.core.entity.NodeId;
+import com.enonic.wem.repo.CreateNodeParams;
+import com.enonic.wem.repo.Node;
+import com.enonic.wem.repo.NodeId;
 
 import static org.junit.Assert.*;
 
@@ -39,12 +39,11 @@ public class GroupNodeTranslatorTest
         assertEquals( "group-a", createNodeParams.getName() );
 
         final RootDataSet rootDataSet = createNodeParams.getData();
+        assertNotNull( rootDataSet );
         assertEquals( 3, rootDataSet.size() );
         assertEquals( UserStoreKey.system().toString(), rootDataSet.getProperty( PrincipalNodeTranslator.USER_STORE_KEY ).getString() );
         assertEquals( PrincipalType.GROUP.toString(), rootDataSet.getProperty( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY ).getString() );
         assertEquals( "My Group", rootDataSet.getProperty( PrincipalNodeTranslator.DISPLAY_NAME_KEY ).getString() );
-        assertNotNull( rootDataSet );
-
     }
 
 

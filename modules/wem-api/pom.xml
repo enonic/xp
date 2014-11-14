@@ -37,9 +37,14 @@
       <version>2.4.1</version>
     </dependency>
     <dependency>
-      <groupId>org.jparsec</groupId>
+      <groupId>com.enonic.osgi.bundles</groupId>
       <artifactId>jparsec</artifactId>
-      <version>2.1</version>
+      <version>2.1.0_1</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>2.4</version>
     </dependency>
     <dependency>
       <groupId>org.osgi</groupId>
@@ -77,28 +82,12 @@
         <artifactId>maven-bundle-plugin</artifactId>
         <configuration>
           <instructions>
-            <_exportcontents>
-              com.enonic.wem.api.*,
-              com.google.common.*,
-              org.apache.commons.*,
-              com.fasterxml.jackson.*,
-            </_exportcontents>
+            <Export-Package>
+              com.enonic.wem.api.*
+            </Export-Package>
             <Import-Package>
-              !sun.*,
-              !org.jaxen.*,
-              !com.google.common.*,
-              !org.codehaus.*,
-              !org.apache.tools.*,
-              !net.sf.cglib.*,
               *
             </Import-Package>
-            <Embed-Dependency>
-              jackson-*,
-              guava,
-              jparsec,
-              commons-*,
-              cglib-*
-            </Embed-Dependency>
           </instructions>
         </configuration>
       </plugin>

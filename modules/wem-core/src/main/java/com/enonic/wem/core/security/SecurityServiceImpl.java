@@ -2,19 +2,19 @@ package com.enonic.wem.core.security;
 
 import java.time.Clock;
 import java.time.Instant;
-import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
+import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.query.expr.CompareExpr;
 import com.enonic.wem.api.query.expr.FieldExpr;
+import com.enonic.wem.api.query.expr.LogicalExpr;
 import com.enonic.wem.api.query.expr.QueryExpr;
 import com.enonic.wem.api.query.expr.ValueExpr;
 import com.enonic.wem.api.query.filter.ValueFilter;
@@ -22,7 +22,9 @@ import com.enonic.wem.api.security.CreateGroupParams;
 import com.enonic.wem.api.security.CreateRoleParams;
 import com.enonic.wem.api.security.CreateUserParams;
 import com.enonic.wem.api.security.Group;
+import com.enonic.wem.api.security.Principal;
 import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.security.PrincipalKeys;
 import com.enonic.wem.api.security.PrincipalQuery;
 import com.enonic.wem.api.security.PrincipalQueryResult;
 import com.enonic.wem.api.security.PrincipalRelationship;
@@ -43,24 +45,24 @@ import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.api.security.auth.AuthenticationToken;
 import com.enonic.wem.api.security.auth.EmailPasswordAuthToken;
 import com.enonic.wem.api.security.auth.UsernamePasswordAuthToken;
-import com.enonic.wem.core.entity.CreateNodeParams;
-import com.enonic.wem.core.entity.FindNodesByQueryResult;
-import com.enonic.wem.core.entity.Node;
-import com.enonic.wem.core.entity.NodePath;
-import com.enonic.wem.core.entity.NodeService;
-import com.enonic.wem.core.entity.UpdateNodeParams;
-import com.enonic.wem.core.entity.dao.NodeNotFoundException;
-import com.enonic.wem.core.entity.query.NodeQuery;
+import com.enonic.wem.repo.CreateNodeParams;
+import com.enonic.wem.repo.FindNodesByQueryResult;
+import com.enonic.wem.repo.Node;
+import com.enonic.wem.repo.NodeNotFoundException;
+import com.enonic.wem.repo.NodeQuery;
+import com.enonic.wem.repo.NodeService;
+import com.enonic.wem.repo.UpdateNodeParams;
 
 import static com.enonic.wem.api.security.SystemConstants.CONTEXT_USER_STORES;
 import static com.enonic.wem.core.security.PrincipalKeyNodeTranslator.toNodeId;
+import static com.enonic.wem.core.security.PrincipalNodeTranslator.EMAIL_KEY;
+import static com.enonic.wem.core.security.PrincipalNodeTranslator.LOGIN_KEY;
+import static com.enonic.wem.core.security.PrincipalNodeTranslator.USER_STORE_KEY;
 
 public final class SecurityServiceImpl
     implements SecurityService
 {
     private final List<UserStore> userStores;
-
-    private final Multimap<PrincipalKey, PrincipalRelationship> relationshipTable;
 
     private NodeService nodeService;
 
@@ -70,7 +72,6 @@ public final class SecurityServiceImpl
     {
         this.clock = Clock.systemUTC();
         this.userStores = new CopyOnWriteArrayList<>();
-        this.relationshipTable = Multimaps.synchronizedSetMultimap( HashMultimap.create() );
 
         final UserStore systemUserStore = UserStore.newUserStore().key( UserStoreKey.system() ).displayName( "System" ).build();
         this.userStores.add( systemUserStore );
@@ -79,36 +80,91 @@ public final class SecurityServiceImpl
     @Override
     public PrincipalRelationships getRelationships( final PrincipalKey from )
     {
-        final Collection<PrincipalRelationship> relationships = this.relationshipTable.get( from );
-        if ( relationships == null )
+        try
+        {
+            final Node node = CONTEXT_USER_STORES.callWith( () -> this.nodeService.getById( toNodeId( from ) ) );
+            return PrincipalNodeTranslator.relationshipsFromNode( node );
+        }
+        catch ( NodeNotFoundException e )
         {
             return PrincipalRelationships.empty();
         }
-
-        final PrincipalRelationships principalRelationships;
-        synchronized ( this.relationshipTable )
-        {
-            principalRelationships = PrincipalRelationships.from( relationships );
-        }
-        return principalRelationships;
     }
 
     @Override
     public void addRelationship( final PrincipalRelationship relationship )
     {
-        this.relationshipTable.put( relationship.getFrom(), relationship );
+        CONTEXT_USER_STORES.callWith( () -> {
+            final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.addRelationshipToUpdateNodeParams( relationship );
+            nodeService.update( updateNodeParams );
+            return null;
+        } );
     }
 
     @Override
     public void removeRelationship( final PrincipalRelationship relationship )
     {
-        this.relationshipTable.remove( relationship.getFrom(), relationship );
+        CONTEXT_USER_STORES.callWith( () -> {
+            final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.removeRelationshipToUpdateNodeParams( relationship );
+            nodeService.update( updateNodeParams );
+            return null;
+        } );
     }
 
     @Override
     public void removeRelationships( final PrincipalKey from )
     {
-        this.relationshipTable.removeAll( from );
+        CONTEXT_USER_STORES.callWith( () -> {
+            final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.removeAllRelationshipsToUpdateNodeParams( from );
+            nodeService.update( updateNodeParams );
+            return null;
+        } );
+    }
+
+    private PrincipalKeys resolveMemberships( final PrincipalKey userKey )
+    {
+        final Set<PrincipalKey> resolvedMemberships = Sets.newHashSet();
+        final PrincipalKeys directMemberships = queryMemberships( userKey );
+        resolvedMemberships.addAll( directMemberships.getSet() );
+
+        final Set<PrincipalKey> queriedMemberships = Sets.newHashSet();
+
+        do
+        {
+            final Set<PrincipalKey> newMemberships = Sets.newHashSet();
+            for ( PrincipalKey principal : resolvedMemberships )
+            {
+                if ( !queriedMemberships.contains( principal ) )
+                {
+                    final PrincipalKeys indirectMemberships = queryMemberships( principal );
+                    newMemberships.addAll( indirectMemberships.getSet() );
+                    queriedMemberships.add( principal );
+                }
+            }
+            resolvedMemberships.addAll( newMemberships );
+        }
+        while ( resolvedMemberships.size() > queriedMemberships.size() );
+
+        return PrincipalKeys.from( resolvedMemberships );
+    }
+
+    private PrincipalKeys queryMemberships( final PrincipalKey member )
+    {
+        try
+        {
+            final FindNodesByQueryResult result = CONTEXT_USER_STORES.callWith( () -> this.nodeService.findByQuery( NodeQuery.create().
+                addQueryFilter( ValueFilter.create().
+                    fieldName( PrincipalNodeTranslator.MEMBER_KEY ).
+                    addValue( Value.newString( member.toString() ) ).
+                    build() ).
+                build() ) );
+
+            return PrincipalKeyNodeTranslator.fromNodes( result.getNodes() );
+        }
+        catch ( NodeNotFoundException e )
+        {
+            return PrincipalKeys.empty();
+        }
     }
 
     @Override
@@ -120,20 +176,25 @@ public final class SecurityServiceImpl
     @Override
     public Principals getPrincipals( final UserStoreKey userStore, final PrincipalType type )
     {
-        final FindNodesByQueryResult result = CONTEXT_USER_STORES.runWith( () -> {
-            return this.nodeService.findByQuery( NodeQuery.create().
+        try
+        {
+            final FindNodesByQueryResult result = CONTEXT_USER_STORES.callWith( () -> this.nodeService.findByQuery( NodeQuery.create().
                 addQueryFilter( ValueFilter.create().
-                    fieldName( PrincipalNodeTranslator.USER_STORE_KEY ).
+                    fieldName( USER_STORE_KEY ).
                     addValue( Value.newString( userStore.toString() ) ).
                     build() ).
                 addQueryFilter( ValueFilter.create().
                     fieldName( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY ).
                     addValue( Value.newString( type.toString() ) ).
                     build() ).
-                build() );
-        } );
+                build() ) );
 
-        return PrincipalNodeTranslator.fromNodes( result.getNodes() );
+            return PrincipalNodeTranslator.fromNodes( result.getNodes() );
+        }
+        catch ( NodeNotFoundException e )
+        {
+            return Principals.empty();
+        }
     }
 
     @Override
@@ -158,7 +219,8 @@ public final class SecurityServiceImpl
         final User user = findByEmail( token.getUserStore(), token.getEmail() );
         if ( user != null && !user.isDisabled() && passwordMatch( user, token.getPassword() ) )
         {
-            return AuthenticationInfo.create().user( user ).build();
+            final PrincipalKeys principals = resolveMemberships( user.getKey() );
+            return AuthenticationInfo.create().principals( principals ).user( user ).build();
         }
         else
         {
@@ -171,7 +233,8 @@ public final class SecurityServiceImpl
         final User user = findByUsername( token.getUserStore(), token.getUsername() );
         if ( user != null && !user.isDisabled() && passwordMatch( user, token.getPassword() ) )
         {
-            return AuthenticationInfo.create().user( user ).build();
+            final PrincipalKeys principals = resolveMemberships( user.getKey() );
+            return AuthenticationInfo.create().user( user ).principals( principals ).build();
         }
         else
         {
@@ -186,25 +249,31 @@ public final class SecurityServiceImpl
 
     private User findByUsername( final UserStoreKey userStore, final String username )
     {
-        // TODO should look up user based on User.getLogin() instead of PrincipalKey.getId()
-        final PrincipalKey key = PrincipalKey.ofUser( userStore, username );
-        final NodePath path = PrincipalPathTranslator.toPath( key );
-        try
+        final CompareExpr userStoreExpr =
+            CompareExpr.create( FieldExpr.from( USER_STORE_KEY ), CompareExpr.Operator.EQ, ValueExpr.string( userStore.toString() ) );
+        final CompareExpr userNameExpr =
+            CompareExpr.create( FieldExpr.from( LOGIN_KEY ), CompareExpr.Operator.EQ, ValueExpr.string( username ) );
+        final QueryExpr query = QueryExpr.from( LogicalExpr.and( userStoreExpr, userNameExpr ) );
+        final FindNodesByQueryResult result =
+            CONTEXT_USER_STORES.callWith( () -> nodeService.findByQuery( NodeQuery.create().query( query ).build() ) );
+
+        if ( result.getNodes().getSize() > 1 )
         {
-            final Node user = CONTEXT_USER_STORES.runWith( () -> this.nodeService.getByPath( path ) );
-            return PrincipalNodeTranslator.userFromNode( user );
+            throw new IllegalArgumentException( "Expected at most 1 user with username " + username + " in userstore " + userStore );
         }
-        catch ( NodeNotFoundException e )
-        {
-            return null;
-        }
+
+        return result.getNodes().isEmpty() ? null : PrincipalNodeTranslator.userFromNode( result.getNodes().first() );
     }
 
     private User findByEmail( final UserStoreKey userStore, final String email )
     {
-        final FindNodesByQueryResult result = nodeService.findByQuery( NodeQuery.create().
-            query( QueryExpr.from( CompareExpr.create( FieldExpr.from( PrincipalNodeTranslator.EMAIL_KEY ), CompareExpr.Operator.EQ,
-                                                       ValueExpr.string( email ) ) ) ).build() );
+        final CompareExpr userStoreExpr =
+            CompareExpr.create( FieldExpr.from( USER_STORE_KEY ), CompareExpr.Operator.EQ, ValueExpr.string( userStore.toString() ) );
+        final CompareExpr userNameExpr =
+            CompareExpr.create( FieldExpr.from( EMAIL_KEY ), CompareExpr.Operator.EQ, ValueExpr.string( email ) );
+        final QueryExpr query = QueryExpr.from( LogicalExpr.and( userStoreExpr, userNameExpr ) );
+        final FindNodesByQueryResult result =
+            CONTEXT_USER_STORES.callWith( () -> nodeService.findByQuery( NodeQuery.create().query( query ).build() ) );
 
         if ( result.getNodes().getSize() > 1 )
         {
@@ -237,7 +306,7 @@ public final class SecurityServiceImpl
         }
 
         final CreateNodeParams createNodeParams = PrincipalNodeTranslator.toCreateNodeParams( user );
-        final Node node = CONTEXT_USER_STORES.runWith( () -> nodeService.create( createNodeParams ) );
+        final Node node = CONTEXT_USER_STORES.callWith( () -> nodeService.create( createNodeParams ) );
 
         return PrincipalNodeTranslator.userFromNode( node );
     }
@@ -245,7 +314,7 @@ public final class SecurityServiceImpl
     @Override
     public User updateUser( final UpdateUserParams updateUserParams )
     {
-        final User updatedUser = CONTEXT_USER_STORES.runWith( () -> {
+        return CONTEXT_USER_STORES.callWith( () -> {
 
             final Node node;
             try
@@ -265,8 +334,6 @@ public final class SecurityServiceImpl
             final Node updatedNode = nodeService.update( updateNodeParams );
             return PrincipalNodeTranslator.userFromNode( updatedNode );
         } );
-
-        return updatedUser;
     }
 
     @Override
@@ -276,7 +343,7 @@ public final class SecurityServiceImpl
 
         try
         {
-            final Node node = CONTEXT_USER_STORES.runWith( () -> this.nodeService.getById( toNodeId( userKey ) ) );
+            final Node node = CONTEXT_USER_STORES.callWith( () -> this.nodeService.getById( toNodeId( userKey ) ) );
             return Optional.ofNullable( PrincipalNodeTranslator.userFromNode( node ) );
         }
         catch ( Exception e )
@@ -295,7 +362,7 @@ public final class SecurityServiceImpl
             build();
 
         final CreateNodeParams createGroupParams = PrincipalNodeTranslator.toCreateNodeParams( group );
-        final Node node = CONTEXT_USER_STORES.runWith( () -> this.nodeService.create( createGroupParams ) );
+        final Node node = CONTEXT_USER_STORES.callWith( () -> this.nodeService.create( createGroupParams ) );
 
         return PrincipalNodeTranslator.groupFromNode( node );
     }
@@ -303,7 +370,7 @@ public final class SecurityServiceImpl
     @Override
     public Group updateGroup( final UpdateGroupParams updateGroupParams )
     {
-        final Group updatedGroup = CONTEXT_USER_STORES.runWith( () -> {
+        return CONTEXT_USER_STORES.callWith( () -> {
 
             final Node node;
             try
@@ -323,8 +390,6 @@ public final class SecurityServiceImpl
             final Node updatedNode = nodeService.update( updateNodeParams );
             return PrincipalNodeTranslator.groupFromNode( updatedNode );
         } );
-
-        return updatedGroup;
     }
 
     @Override
@@ -334,7 +399,7 @@ public final class SecurityServiceImpl
 
         try
         {
-            final Node node = CONTEXT_USER_STORES.runWith( () -> this.nodeService.getById( toNodeId( groupKey ) ) );
+            final Node node = CONTEXT_USER_STORES.callWith( () -> this.nodeService.getById( toNodeId( groupKey ) ) );
             return Optional.ofNullable( PrincipalNodeTranslator.groupFromNode( node ) );
         }
         catch ( Exception e )
@@ -353,7 +418,7 @@ public final class SecurityServiceImpl
             build();
 
         final CreateNodeParams createNodeParams = PrincipalNodeTranslator.toCreateNodeParams( role );
-        final Node node = CONTEXT_USER_STORES.runWith( () -> this.nodeService.create( createNodeParams ) );
+        final Node node = CONTEXT_USER_STORES.callWith( () -> this.nodeService.create( createNodeParams ) );
 
         return PrincipalNodeTranslator.roleFromNode( node );
     }
@@ -361,7 +426,7 @@ public final class SecurityServiceImpl
     @Override
     public Role updateRole( final UpdateRoleParams updateRoleParams )
     {
-        final Role updatedRole = CONTEXT_USER_STORES.runWith( () -> {
+        return CONTEXT_USER_STORES.callWith( () -> {
 
             final Node node;
             try
@@ -381,8 +446,6 @@ public final class SecurityServiceImpl
             final Node updatedNode = nodeService.update( updateNodeParams );
             return PrincipalNodeTranslator.roleFromNode( updatedNode );
         } );
-
-        return updatedRole;
     }
 
     @Override
@@ -392,13 +455,30 @@ public final class SecurityServiceImpl
 
         try
         {
-            final Node node = CONTEXT_USER_STORES.runWith( () -> this.nodeService.getById( toNodeId( roleKey ) ) );
+            final Node node = CONTEXT_USER_STORES.callWith( () -> this.nodeService.getById( toNodeId( roleKey ) ) );
             return Optional.ofNullable( PrincipalNodeTranslator.roleFromNode( node ) );
         }
         catch ( Exception e )
         {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public Optional<? extends Principal> getPrincipal( final PrincipalKey principalKey )
+    {
+        switch ( Objects.requireNonNull( principalKey, "Principal key was null" ).getType() )
+        {
+            case USER:
+                return getUser( principalKey );
+
+            case GROUP:
+                return getGroup( principalKey );
+
+            case ROLE:
+                return getRole( principalKey );
+        }
+        return Optional.empty();
     }
 
     @Override

@@ -39,17 +39,17 @@ import com.enonic.wem.api.content.site.ModuleConfigDataSerializer;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.data.DataId;
 import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.event.EventPublisher;
 import com.enonic.wem.api.schema.content.ContentTypeForms;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.security.acl.AccessControlList;
-import com.enonic.wem.core.entity.Node;
-import com.enonic.wem.core.entity.NodeId;
-import com.enonic.wem.core.entity.NodeService;
-import com.enonic.wem.core.entity.OrderChildNodeParams;
-import com.enonic.wem.core.entity.SetNodeChildOrderParams;
-import com.enonic.wem.core.index.query.QueryService;
+import com.enonic.wem.repo.Node;
+import com.enonic.wem.repo.NodeId;
+import com.enonic.wem.repo.NodeService;
+import com.enonic.wem.repo.OrderChildNodeParams;
+import com.enonic.wem.repo.SetNodeChildOrderParams;
 
 public class ContentServiceImpl
     implements ContentService
@@ -62,9 +62,9 @@ public class ContentServiceImpl
 
     private AttachmentService attachmentService;
 
-    private QueryService queryService;
-
     private ContentNodeTranslator contentNodeTranslator;
+
+    private EventPublisher eventPublisher;
 
     private final static ModuleConfigDataSerializer MODULE_CONFIG_DATA_SERIALIZER = new ModuleConfigDataSerializer();
 
@@ -103,7 +103,6 @@ public class ContentServiceImpl
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
-            queryService( this.queryService ).
             build().
             execute();
     }
@@ -136,8 +135,8 @@ public class ContentServiceImpl
     public FindContentByParentResult findByParent( final FindContentByParentParams params )
     {
         return FindContentByParentCommand.create( params ).
-            queryService( this.queryService ).
-            nodeService( this.nodeService ).
+            //    queryService( this.queryService ).
+                nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
@@ -223,6 +222,7 @@ public class ContentServiceImpl
             blobService( this.blobService ).
             attachmentService( this.attachmentService ).
             translator( this.contentNodeTranslator ).
+            eventPublisher( this.eventPublisher ).
             build().
             execute();
     }
@@ -252,6 +252,7 @@ public class ContentServiceImpl
             translator( this.contentNodeTranslator ).
             contentId( params.getContentId() ).
             target( params.getTarget() ).
+            eventPublisher( this.eventPublisher ).
             build().
             execute();
     }
@@ -290,7 +291,6 @@ public class ContentServiceImpl
     {
         return FindContentByQueryCommand.create().
             params( params ).
-            queryService( this.queryService ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
@@ -409,13 +409,13 @@ public class ContentServiceImpl
         this.attachmentService = attachmentService;
     }
 
-    public void setQueryService( final QueryService queryService )
-    {
-        this.queryService = queryService;
-    }
-
     public void setContentNodeTranslator( final ContentNodeTranslator contentNodeTranslator )
     {
         this.contentNodeTranslator = contentNodeTranslator;
+    }
+
+    public void setEventPublisher( final EventPublisher eventPublisher )
+    {
+        this.eventPublisher = eventPublisher;
     }
 }

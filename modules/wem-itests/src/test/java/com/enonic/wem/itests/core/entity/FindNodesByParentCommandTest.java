@@ -5,19 +5,17 @@ import java.util.Iterator;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.index.ChildOrder;
-import com.enonic.wem.core.entity.CreateNodeParams;
+import com.enonic.wem.repo.CreateNodeParams;
 import com.enonic.wem.core.entity.FindNodesByParentCommand;
-import com.enonic.wem.core.entity.FindNodesByParentParams;
-import com.enonic.wem.core.entity.FindNodesByParentResult;
-import com.enonic.wem.core.entity.Node;
-import com.enonic.wem.core.entity.NodeId;
-import com.enonic.wem.core.entity.NodePath;
-import com.enonic.wem.core.entity.Nodes;
-import com.enonic.wem.core.repository.RepositoryInitializer;
+import com.enonic.wem.repo.FindNodesByParentParams;
+import com.enonic.wem.repo.FindNodesByParentResult;
+import com.enonic.wem.repo.Node;
+import com.enonic.wem.repo.NodeId;
+import com.enonic.wem.repo.NodePath;
+import com.enonic.wem.repo.Nodes;
 
 import static org.junit.Assert.*;
 
@@ -30,11 +28,6 @@ public class FindNodesByParentCommandTest
         throws Exception
     {
         super.setUp();
-
-        RepositoryInitializer repositoryInitializer = new RepositoryInitializer();
-        repositoryInitializer.setIndexService( this.indexService );
-
-        repositoryInitializer.init( ContentConstants.CONTENT_REPO );
     }
 
     @Test
@@ -78,25 +71,29 @@ public class FindNodesByParentCommandTest
             build() );
 
         final Node childNode_b_3 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "childNode_b_3" ) ).
+            setNodeId( NodeId.from( "childnode_b_3" ) ).
             parent( createdNode.path() ).
             name( "b" ).
             data( createOrderProperty( 3.0 ) ).
             build() );
 
         final Node childNode_a_2 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "childNode_a_2" ) ).
+            setNodeId( NodeId.from( "childnode_a_2" ) ).
             parent( createdNode.path() ).
             name( "a" ).
             data( createOrderProperty( 2.0 ) ).
             build() );
 
         final Node childNode_c_1 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "childNode_c_1" ) ).
+            setNodeId( NodeId.from( "childnode_c_1" ) ).
             parent( createdNode.path() ).
             name( "c" ).
             data( createOrderProperty( 1.0 ) ).
             build() );
+
+        refresh();
+
+        printContentRepoIndex();
 
         // Use default parent ordering; name
         FindNodesByParentResult result = FindNodesByParentCommand.create().

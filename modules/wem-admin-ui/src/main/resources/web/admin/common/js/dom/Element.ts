@@ -242,8 +242,8 @@ module api.dom {
             return this;
         }
 
-        toggleClass(className: string): Element {
-            if (this.hasClass(className)) {
+        toggleClass(className: string, condition?: boolean): Element {
+            if (condition == false || condition == undefined && this.hasClass(className)) {
                 this.removeClass(className);
             } else {
                 this.addClass(className);

@@ -9,6 +9,7 @@ import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
+import org.elasticsearch.common.unit.TimeValue;
 import org.junit.After;
 import org.junit.Before;
 import org.slf4j.Logger;
@@ -71,9 +72,7 @@ public abstract class AbstractElasticsearchIntegrationTest
         System.out.println( "\n\n---------- CONTENT --------------------------------" );
         System.out.println( searchResponse.toString() );
         System.out.println( "\n\n" );
-
     }
-
 
     String getContentRepoSearchDefaultSettings()
     {
@@ -86,33 +85,23 @@ public abstract class AbstractElasticsearchIntegrationTest
     }
 
 
-    public ClusterHealthStatus waitForRelocation()
+    public ClusterHealthStatus waitForClusterHealth()
     {
-        return waitForRelocation( ClusterHealthStatus.YELLOW );
-    }
+        ClusterHealthRequest request = Requests.clusterHealthRequest().
+            waitForYellowStatus().timeout( TimeValue.timeValueSeconds( 5 ) );
 
-    /**
-     * Waits for all relocating shards to become active and the cluster has reached the given health status
-     * using the cluster health API.
-     */
-    public ClusterHealthStatus waitForRelocation( ClusterHealthStatus status )
-    {
-        ClusterHealthRequest request = Requests.clusterHealthRequest().waitForRelocatingShards( 0 );
-        if ( status != null )
-        {
-            request.waitForStatus( status );
-        }
         ClusterHealthResponse actionGet = client().admin().cluster().health( request ).actionGet();
+
         if ( actionGet.isTimedOut() )
         {
-            LOG.info( "waitForRelocation timed out (status={}), cluster state:\n{}\n{}" );
+            LOG.error( "Cluster health request timed out (status={}), cluster state:\n{}\n{}" );
         }
+
         return actionGet.getStatus();
     }
 
     protected final RefreshResponse refresh()
     {
-        waitForRelocation();
         RefreshResponse actionGet = client.admin().indices().prepareRefresh().execute().actionGet();
         return actionGet;
     }
@@ -120,6 +109,8 @@ public abstract class AbstractElasticsearchIntegrationTest
     @After
     public void cleanUp()
     {
+        LOG.info( "Shutting down" );
+        this.client.close();
         server.shutdown();
     }
 

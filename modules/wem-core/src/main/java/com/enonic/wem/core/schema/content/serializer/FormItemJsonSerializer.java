@@ -49,19 +49,19 @@ public class FormItemJsonSerializer
         final ObjectNode formItemBaseTypeObject = objectMapper().createObjectNode();
         if ( formItem instanceof FormItemSet )
         {
-            formItemBaseTypeObject.put( FormItemSet.class.getSimpleName(), formItemSetJsonSerializer.serialize( (FormItemSet) formItem ) );
+            formItemBaseTypeObject.set( FormItemSet.class.getSimpleName(), formItemSetJsonSerializer.serialize( (FormItemSet) formItem ) );
         }
         else if ( formItem instanceof Layout )
         {
-            formItemBaseTypeObject.put( Layout.class.getSimpleName(), layoutJsonSerializer.serialize( (Layout) formItem ) );
+            formItemBaseTypeObject.set( Layout.class.getSimpleName(), layoutJsonSerializer.serialize( (Layout) formItem ) );
         }
         else if ( formItem instanceof Input )
         {
-            formItemBaseTypeObject.put( Input.class.getSimpleName(), inputJsonSerializer.serialize( (Input) formItem ) );
+            formItemBaseTypeObject.set( Input.class.getSimpleName(), inputJsonSerializer.serialize( (Input) formItem ) );
         }
         else if ( formItem instanceof MixinReference )
         {
-            formItemBaseTypeObject.put( MixinReference.class.getSimpleName(),
+            formItemBaseTypeObject.set( MixinReference.class.getSimpleName(),
                                         mixinReferenceJsonSerializer.serialize( (MixinReference) formItem ) );
         }
         else

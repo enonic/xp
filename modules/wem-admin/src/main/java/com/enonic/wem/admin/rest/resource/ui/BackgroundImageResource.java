@@ -10,7 +10,7 @@ import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Response;
 
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
-import com.enonic.wem.core.home.HomeDir;
+import com.enonic.wem.api.home.HomeDir;
 import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
 
 @Path(ResourceConstants.REST_ROOT + "ui")

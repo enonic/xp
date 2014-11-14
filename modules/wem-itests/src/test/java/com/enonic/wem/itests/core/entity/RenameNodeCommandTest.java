@@ -3,12 +3,12 @@ package com.enonic.wem.itests.core.entity;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.core.entity.CreateNodeParams;
-import com.enonic.wem.core.entity.Node;
-import com.enonic.wem.core.entity.NodeName;
-import com.enonic.wem.core.entity.NodePath;
+import com.enonic.wem.repo.CreateNodeParams;
+import com.enonic.wem.repo.Node;
+import com.enonic.wem.repo.NodeName;
+import com.enonic.wem.repo.NodePath;
 import com.enonic.wem.core.entity.RenameNodeCommand;
-import com.enonic.wem.core.entity.RenameNodeParams;
+import com.enonic.wem.repo.RenameNodeParams;
 
 import static org.junit.Assert.*;
 
@@ -21,8 +21,6 @@ public class RenameNodeCommandTest
         throws Exception
     {
         super.setUp();
-
-        createContentRepository();
     }
 
     @Test

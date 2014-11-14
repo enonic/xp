@@ -6,8 +6,8 @@ import java.time.Instant;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.Icon;
-import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.module.ModuleBasedName;
+import com.enonic.wem.api.security.PrincipalKey;
 
 public abstract class BaseSchema<T extends ModuleBasedName>
 {
@@ -21,9 +21,9 @@ public abstract class BaseSchema<T extends ModuleBasedName>
 
     final Instant modifiedTime;
 
-    final UserKey creator;
+    final PrincipalKey creator;
 
-    final UserKey modifier;
+    final PrincipalKey modifier;
 
     final Icon icon;
 
@@ -64,12 +64,12 @@ public abstract class BaseSchema<T extends ModuleBasedName>
         return modifiedTime;
     }
 
-    public UserKey getCreator()
+    public PrincipalKey getCreator()
     {
         return creator;
     }
 
-    public UserKey getModifier()
+    public PrincipalKey getModifier()
     {
         return modifier;
     }
@@ -91,9 +91,9 @@ public abstract class BaseSchema<T extends ModuleBasedName>
 
         private Instant modifiedTime;
 
-        private UserKey creator;
+        private PrincipalKey creator;
 
-        private UserKey modifier;
+        private PrincipalKey modifier;
 
         private Icon schemaIcon;
 
@@ -149,13 +149,13 @@ public abstract class BaseSchema<T extends ModuleBasedName>
             return getThis();
         }
 
-        public T creator( UserKey value )
+        public T creator( PrincipalKey value )
         {
             this.creator = value;
             return getThis();
         }
 
-        public T modifier( UserKey value )
+        public T modifier( PrincipalKey value )
         {
             this.modifier = value;
             return getThis();

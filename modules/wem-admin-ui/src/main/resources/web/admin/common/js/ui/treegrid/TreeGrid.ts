@@ -33,7 +33,7 @@ module api.ui.treegrid {
 
         private gridData: DataView<TreeNode<DATA>>;
 
-        private root: TreeNode<DATA>;
+        private root: TreeRoot<DATA>;
 
         private stash: TreeNode<DATA>;
 
@@ -60,7 +60,7 @@ module api.ui.treegrid {
             super(builder.getClasses());
 
             // root node with undefined item
-            this.root = new TreeNodeBuilder<DATA>().setExpanded(true).build();
+            this.root = new TreeRoot<DATA>();
 
             this.gridData = new DataView<TreeNode<DATA>>();
             this.gridData.setFilter((node: TreeNode<DATA>) => {
@@ -78,7 +78,8 @@ module api.ui.treegrid {
              * on a big array of data. Each render cycle will take (1ms * row count)
              * and the smart render in the viewport will be disabled.
              */
-//            this.gridOptions.setAutoHeight(false);
+            this.gridOptions.setAutoHeight(false);
+
 
             this.grid = new Grid<TreeNode<DATA>>(this.gridData, this.columns, this.gridOptions);
 
@@ -206,7 +207,7 @@ module api.ui.treegrid {
                                     if (node.isExpanded()) {
                                         this.active = false;
                                         this.collapseNode(node);
-                                    } else if (node.getParent() !== this.root) {
+                                    } else if (node.getParent() !== this.root.getCurrentRoot()) {
                                         node = node.getParent();
                                         this.active = false;
                                         var row = this.gridData.getRowById(node.getId());
@@ -288,7 +289,7 @@ module api.ui.treegrid {
             return this.contextMenu;
         }
 
-        getRoot(): TreeNode<DATA> {
+        getRoot(): TreeRoot<DATA> {
             return this.root;
         }
 
@@ -337,13 +338,15 @@ module api.ui.treegrid {
             // Get current grid's canvas
             var gridClasses = (" " + this.grid.getEl().getClass()).replace(/\s/g, ".");
             var canvas = Element.fromString(".tree-grid " + gridClasses + " .grid-canvas", false);
+            var viewport = Element.fromString(".tree-grid " + gridClasses + " .slick-viewport", false);
 
             if (canvas.getEl().isVisible() && this.isActive()) {
 
-                var gridHeight = this.grid.getEl().getHeight(),
-                    scrollTop = this.grid.getEl().getScrollTop(),
+                // use `this.grid` instead of `viewport` with the animation on.
+                var gridHeight = viewport.getEl().getHeight(),
+                    scrollTop = viewport.getEl().getScrollTop(),
                     rowHeight = this.grid.getOptions().rowHeight,
-                    nodes = this.root.treeToList(),
+                    nodes = this.root.getCurrentRoot().treeToList(),
                     emptyNode:TreeNode<DATA> = null,
                     from = Math.min(nodes.length - 1, Math.floor(scrollTop/rowHeight)),
                     to = Math.min(nodes.length - 1, from + Math.round(gridHeight/rowHeight) + this.loadBufferSize);
@@ -431,19 +434,10 @@ module api.ui.treegrid {
         }
 
         filter(dataList: DATA[]) {
-            if (!this.stash) {
-                this.stash = this.root;
-            }
-
-            this.root = new TreeNodeBuilder<DATA>().build();
-
-            this.initData([]);
-
-            this.root.setExpanded(true);
-
             this.active = false;
-            this.root.setChildren(this.dataToTreeNodes(dataList, this.root));
-            this.initData(this.root.treeToList());
+            this.root.setFiltered(true);
+            this.root.getCurrentRoot().setChildren(this.dataToTreeNodes(dataList, this.root.getCurrentRoot()));
+            this.initData(this.root.getCurrentRoot().treeToList());
             this.resetAndRender();
             this.active = true;
         }
@@ -451,15 +445,15 @@ module api.ui.treegrid {
         resetFilter() {
             this.active = false;
 
-            if (!this.stash) {
-                // replace with refresh in future
-                this.reload();
-            } else {
-                this.root = this.stash;
-                this.initData(this.root.treeToList());
+            if (this.root.isFiltered()) {
+                this.root.setFiltered(false);
+                this.initData(this.root.getCurrentRoot().treeToList());
                 this.resetAndRender();
                 this.active = true;
                 this.notifyLoaded();
+            } else {
+                // replace with refresh in future
+                this.reload();
             }
 
             this.stash = null;
@@ -488,6 +482,8 @@ module api.ui.treegrid {
                 }
             }
 
+            this.root.removeSelection(dataId);
+
             if (oldSelected.length !== newSelected.length) {
                 this.grid.setSelectedRows(newSelected);
             }
@@ -508,16 +504,14 @@ module api.ui.treegrid {
 
         // Hard reset
         reload(parentNode?: TreeNode<DATA>): void {
-            this.root = new TreeNodeBuilder<DATA>().build();
+            this.root.resetCurrentRoot();
 
             this.initData([]);
 
-            this.root.setExpanded(true);
-
             this.fetchData(parentNode)
                 .then((dataList: DATA[]) => {
-                    this.root.setChildren(this.dataToTreeNodes(dataList, this.root));
-                    this.initData(this.root.treeToList());
+                    this.root.getCurrentRoot().setChildren(this.dataToTreeNodes(dataList, this.root.getCurrentRoot()));
+                    this.initData(this.root.getCurrentRoot().treeToList());
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 }).finally(() => {
@@ -527,7 +521,7 @@ module api.ui.treegrid {
         }
 
         refreshNode(node?: TreeNode<DATA>): void {
-            var root = this.root;
+            var root = this.root.getCurrentRoot();
             this.active = false;
 
             node = node || root;
@@ -544,7 +538,7 @@ module api.ui.treegrid {
 
         // Soft reset, that saves node status
         refresh(): void {
-            var root = this.root;
+            var root = this.root.getCurrentRoot();
 
             this.active = false;
 
@@ -563,7 +557,7 @@ module api.ui.treegrid {
 
             var dataId = this.getDataId(data),
                 nodesToUpdate = [],
-                nodeToUpdate = this.root.findNode(dataId),
+                nodeToUpdate = this.root.getCurrentRoot().findNode(dataId),
                 stashedNodeToUpdate;
 
             if (!nodeToUpdate) {
@@ -575,7 +569,7 @@ module api.ui.treegrid {
             if (!!this.stash) {
                 stashedNodeToUpdate = this.stash.findNode(dataId);
                 // filter may have multiple occurrences
-                this.root.getChildren().forEach((topNode) => {
+                this.root.getCurrentRoot().getChildren().forEach((topNode) => {
                     var match = topNode.findNode(dataId);
                     if (!!match) {
                         nodesToUpdate.push(match);
@@ -605,7 +599,7 @@ module api.ui.treegrid {
             if (!stashedParentNode && this.stash) {
                 this.deleteNode(data, this.stash);
             }
-            var root = stashedParentNode || this.root;
+            var root = stashedParentNode || this.root.getCurrentRoot();
             var node;
             while (node = root.findNode(this.getDataId(data))) {
                 if (node.hasChildren()) {
@@ -636,13 +630,13 @@ module api.ui.treegrid {
             if (!stashedParentNode && this.stash) {
                 this.appendNode(data, nextToSelection, this.stash);
             }
-            var root = stashedParentNode || this.root;
+            var root = stashedParentNode || this.root.getCurrentRoot();
 
             var parentNode: TreeNode<DATA>;
             if (this.getSelectedNodes() && this.getSelectedNodes().length == 1) {
                 parentNode = root.findNode(this.getSelectedNodes()[0].getDataId());
                 if (nextToSelection) {
-                    parentNode = parentNode.getParent() || this.root;
+                    parentNode = parentNode.getParent() || this.root.getCurrentRoot();
                 }
             } else {
                 parentNode = root;
@@ -696,7 +690,7 @@ module api.ui.treegrid {
         }
 
         deleteNodes(dataList: DATA[]): void {
-            var root = this.root;
+            var root = this.root.getCurrentRoot();
             var updated: TreeNode<DATA>[] = [];
             var deleted: TreeNode<DATA>[] = [];
             dataList.forEach((data: DATA) => {
@@ -724,12 +718,25 @@ module api.ui.treegrid {
 
 
         initData(nodes: TreeNode<DATA>[]) {
+            var selection:any = [],
+                selectionIds = this.root.getFullSelection().map((el) => { return el.getDataId(); });
+
             this.gridData.setItems(nodes, "id");
             this.notifyDataChanged(new DataChangedEvent<DATA>(nodes, DataChangedEvent.ADDED));
+
+            selectionIds.forEach((selectionId) => {
+                nodes.forEach((node, index) => {
+                    if (node.getDataId() === selectionId) {
+                        selection.push(index);
+                    }
+                });
+            });
+
+            this.grid.setSelectedRows(selection);
         }
 
         private expandNode(node?: TreeNode<DATA>) {
-            node = node || this.root;
+            node = node || this.root.getCurrentRoot();
 
             var rootList: TreeNode<DATA>[],
                 nodeList: TreeNode<DATA>[];
@@ -738,7 +745,7 @@ module api.ui.treegrid {
                 node.setExpanded(true);
 
                 if (node.hasChildren()) {
-                    rootList = this.root.treeToList();
+                    rootList = this.root.getCurrentRoot().treeToList();
                     nodeList = node.treeToList();
                     this.initData(rootList);
                     this.updateExpanded(node, nodeList, rootList);
@@ -746,7 +753,7 @@ module api.ui.treegrid {
                     this.fetchData(node)
                         .then((dataList: DATA[]) => {
                             node.setChildren(this.dataToTreeNodes(dataList, node));
-                            rootList = this.root.treeToList();
+                            rootList = this.root.getCurrentRoot().treeToList();
                             nodeList = node.treeToList();
                             this.initData(rootList);
                             this.updateExpanded(node, nodeList, rootList);
@@ -776,12 +783,12 @@ module api.ui.treegrid {
                 }
             });
 
-            this.animateExpand(expandedRows, animatedRows);
+//            this.animateExpand(expandedRows, animatedRows);
 
-            setTimeout(() => {
+//            setTimeout(() => {
                 this.resetAndRender();
                 this.active = true;
-            }, 350);
+//            }, 350); // timeout is required for the animation
         }
 
         private updateSelectedNode(node: TreeNode<DATA>) {
@@ -802,7 +809,7 @@ module api.ui.treegrid {
                 }
             });
 
-            this.root.treeToList().forEach((elem) => {
+            this.root.getCurrentRoot().treeToList().forEach((elem) => {
                 var row = this.gridData.getRowById(elem.getId());
                 if (row > nodeRow && collapsedRows.indexOf(row) < 0) {
                     animatedRows.push(row);
@@ -811,15 +818,13 @@ module api.ui.treegrid {
 
             node.setExpanded(false);
 
-            // Rows can have different order in HTML and Items array
-            this.animateCollapse(collapsedRows, animatedRows);
+//            this.animateCollapse(collapsedRows, animatedRows);
 
-            // Update data after animation
-            setTimeout(() => {
+//            setTimeout(() => {
                 this.gridData.refresh();
                 this.resetAndRender();
                 this.active = true;
-            }, 350);
+//            }, 350); // timeout is required for the animation
         }
 
         private animateCollapse(collapsedRows: number[], animatedRows: number[]) {
@@ -920,23 +925,26 @@ module api.ui.treegrid {
         }
 
         private notifySelectionChanged(event: any, rows: number[]): void {
-            var selectedRows: TreeNode<DATA>[] = [];
+            var currentSelection: TreeNode<DATA>[] = [];
             if (rows) {
                 rows.forEach((rowIndex) => {
-                    selectedRows.push(this.gridData.getItem(rowIndex));
+                    currentSelection.push(this.gridData.getItem(rowIndex));
                 });
             }
+
+            this.root.setCurrentSelection(currentSelection);
+
             for (var i in this.selectionChangeListeners) {
-                this.selectionChangeListeners[i](selectedRows);
+                this.selectionChangeListeners[i](currentSelection, this.root.getFullSelection());
             }
         }
 
-        onSelectionChanged(listener: (selectedRows: TreeNode<DATA>[]) => void) {
+        onSelectionChanged(listener: (currentSelection: TreeNode<DATA>[], fullSelection: TreeNode<DATA>[]) => void) {
             this.selectionChangeListeners.push(listener);
             return this;
         }
 
-        unSelectionChanged(listener: (selectedRows: TreeNode<DATA>[]) => void) {
+        unSelectionChanged(listener: (currentSelection: TreeNode<DATA>[], fullSelection: TreeNode<DATA>[]) => void) {
             this.selectionChangeListeners = this.selectionChangeListeners.filter((curr) => {
                 return curr != listener;
             });

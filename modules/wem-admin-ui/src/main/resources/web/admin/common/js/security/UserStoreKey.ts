@@ -11,6 +11,10 @@ module api.security {
             this.id = id;
         }
 
+        isSystem(): boolean {
+            return this.id === UserStoreKey.SYSTEM.id;
+        }
+
         toString(): string {
             return this.id;
         }
@@ -21,10 +25,7 @@ module api.security {
             }
 
             var other = <UserStoreKey>o;
-            if (!api.ObjectHelper.stringEquals(this.id, other.id)) {
-                return false;
-            }
-            return true;
+            return this.id === other.id;
         }
     }
 }

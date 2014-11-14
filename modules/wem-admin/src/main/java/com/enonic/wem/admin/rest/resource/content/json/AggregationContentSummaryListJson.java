@@ -15,13 +15,13 @@ public class AggregationContentSummaryListJson
     public AggregationContentSummaryListJson( final Content content, final ContentListMetaData contentListMetaData,
                                               final Aggregations aggregations, final ContentIconUrlResolver iconUrlResolver )
     {
-        super( content, contentListMetaData, aggregations, iconUrlResolver, null );
+        super( content, contentListMetaData, aggregations, iconUrlResolver, null, null );
     }
 
     public AggregationContentSummaryListJson( final Contents contents, final ContentListMetaData contentListMetaData,
                                               final Aggregations aggregations, final ContentIconUrlResolver iconUrlResolver )
     {
-        super( contents, contentListMetaData, ImmutableSet.copyOf( aggregations ), iconUrlResolver, null );
+        super( contents, contentListMetaData, ImmutableSet.copyOf( aggregations ), iconUrlResolver, null, null );
     }
 
     @Override

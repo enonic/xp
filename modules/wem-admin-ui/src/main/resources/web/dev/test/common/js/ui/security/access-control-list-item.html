@@ -7,9 +7,10 @@
 
     <style>
 
-        .canvas {
+        .access-control-list {
             width: 400px;
             border: 1px solid grey;
+            margin: 10px;
         }
 
     </style>
@@ -32,15 +33,120 @@
 <script type="text/javascript">
 
     var DivEl = api.dom.DivEl,
-        InputEl = api.dom.InputEl,
-        LabelEl = api.dom.LabelEl,
-        SpanEl = api.dom.SpanEl;
+            InputEl = api.dom.InputEl,
+            LabelEl = api.dom.LabelEl,
+            SpanEl = api.dom.SpanEl,
+            BrEl = api.dom.BrEl,
+            ButtonEl = api.dom.ButtonEl,
+            Body = api.dom.Body.get(),
+            Principal = api.security.Principal,
+            PrincipalKey = api.security.PrincipalKey,
+            PrincipalType = api.security.PrincipalType,
+            Permission = api.security.acl.Permission;
 
-    var canvas = new DivEl('canvas');
-    api.dom.Body.get().appendChild(canvas);
+    var itemDefault1 = {
+        allow: [Permission.READ, Permission.CREATE, Permission.MODIFY, Permission.DELETE],
+        deny: []
+    };
+    var itemDefault2 = undefined;
+    var itemDefault3 = {
+        allow: [Permission.READ],
+        deny: []
+    };
+    var itemDefault4 = {
+        allow: [Permission.READ, Permission.CREATE, Permission.MODIFY, Permission.DELETE],
+        deny: [Permission.READ_PERMISSIONS, Permission.WRITE_PERMISSIONS]
+    };
 
-    var listItem = new api.ui.security.AccessControlListItem();
-    canvas.appendChild(listItem);
+    var permissions = new DivEl('access-control-list');
+    var inheritedPermissions = new DivEl('access-control-list inherited');
+    Body.appendChild(permissions);
+    Body.appendChild(inheritedPermissions);
+
+    var user = new Principal(PrincipalKey.fromString("enonic:user:admin"), "Administrator", PrincipalType.USER);
+    var group = new Principal(PrincipalKey.fromString("enonic:group:admins"), "Administrators Group", PrincipalType.GROUP);
+    var role = new Principal(PrincipalKey.fromString("enonic:role:admin"), "Administrator Role", PrincipalType.ROLE);
+    var item1 = new api.ui.security.AccessControlListItem(user, itemDefault1);
+    var item2 = new api.ui.security.AccessControlListItem(group, itemDefault2);
+    var item3 = new api.ui.security.AccessControlListItem(user, itemDefault3);
+    var item4 = new api.ui.security.AccessControlListItem(role, itemDefault4);
+    permissions.appendChild(item1);
+    permissions.appendChild(item2);
+    inheritedPermissions.appendChild(item3);
+    inheritedPermissions.appendChild(item4);
+
+    Body.appendChild(new BrEl());
+
+
+    var itemValue1 = new SpanEl();
+    itemValue1.setHtml(JSON.stringify(item1.getPermissions()));
+    item1.onValueChanged(function (event) {
+        itemValue1.setHtml(event.getNewValue());
+    });
+    item1.onRemoveClicked(function (event) {
+        itemValue1.setHtml("Remove clicked!");
+    });
+    Body.appendChild(itemValue1);
+
+    var resetItem1 = new ButtonEl("Reset");
+    resetItem1.setHtml("Reset");
+    resetItem1.onClicked(function () {
+        item1.setPermissions(itemDefault1);
+    });
+    Body.appendChild(resetItem1);
+    Body.appendChild(new BrEl());
+
+
+    var itemValue2 = new SpanEl();
+    itemValue2.setHtml(JSON.stringify(item2.getPermissions()));
+    Body.appendChild(itemValue2);
+    item2.onValueChanged(function (event) {
+        itemValue2.setHtml(event.getNewValue());
+    });
+    item2.onRemoveClicked(function (event) {
+        itemValue2.setHtml("Remove clicked!");
+    });
+    var resetItem2 = new ButtonEl();
+    resetItem2.setHtml("Reset");
+    resetItem2.onClicked(function () {
+        item2.setPermissions(itemDefault2);
+    });
+    Body.appendChild(resetItem2);
+    Body.appendChild(new BrEl());
+
+    var itemValue3 = new SpanEl();
+    itemValue3.setHtml(JSON.stringify(item3.getPermissions()));
+    Body.appendChild(itemValue3);
+    item3.onValueChanged(function (event) {
+        itemValue3.setHtml(event.getNewValue());
+    });
+    item3.onRemoveClicked(function (event) {
+        itemValue3.setHtml("Remove clicked!");
+    });
+    var resetItem3 = new ButtonEl("Reset");
+    resetItem3.setHtml("Reset");
+    resetItem3.onClicked(function () {
+        item3.setPermissions(itemDefault3);
+    });
+    Body.appendChild(resetItem3);
+    Body.appendChild(new BrEl());
+
+    var itemValue4 = new SpanEl();
+    itemValue4.setHtml(JSON.stringify(item4.getPermissions()));
+    Body.appendChild(itemValue4);
+    item4.onValueChanged(function (event) {
+        itemValue4.setHtml(event.getNewValue());
+    });
+    item4.onRemoveClicked(function (event) {
+        itemValue4.setHtml("Remove clicked!");
+    });
+    var resetItem4 = new ButtonEl("Reset");
+    resetItem4.setHtml("Reset");
+    resetItem4.onClicked(function () {
+        item4.setPermissions(itemDefault4);
+    });
+    Body.appendChild(resetItem4);
+    Body.appendChild(new BrEl());
 
 </script>
 

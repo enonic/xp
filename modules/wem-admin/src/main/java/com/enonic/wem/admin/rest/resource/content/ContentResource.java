@@ -46,7 +46,6 @@ import com.enonic.wem.admin.rest.resource.content.json.OrderChildJson;
 import com.enonic.wem.admin.rest.resource.content.json.PublishContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.SetChildOrderJson;
 import com.enonic.wem.admin.rest.resource.content.json.UpdateContentJson;
-import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.content.CompareContentResults;
 import com.enonic.wem.api.content.CompareContentsParams;
 import com.enonic.wem.api.content.Content;
@@ -81,10 +80,12 @@ import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.mixin.MixinService;
+import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.PrincipalQuery;
 import com.enonic.wem.api.security.PrincipalQueryResult;
 import com.enonic.wem.api.security.Principals;
 import com.enonic.wem.api.security.SecurityService;
+import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.workspace.Workspaces;
 import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
 
@@ -114,6 +115,8 @@ public final class ContentResource
 
     private MixinReferencesToFormItemsTransformer mixinReferencesToFormItemsTransformer;
 
+    private ContentPrincipalsResolver principalsResolver;
+
     private SecurityService securityService;
 
     @GET
@@ -138,7 +141,15 @@ public final class ContentResource
         }
         else
         {
-            return new ContentJson( content, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
+            final ContentPath parentPath = content.getPath().getParentPath();
+            if ( parentPath != null && !parentPath.isRoot() )
+            {
+                final Content parent = contentService.getByPath( parentPath );
+                final AccessControlList parentAcl = parent.getEffectiveAccessControlList();
+                return new ContentJson( content, parentAcl, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer,
+                                        principalsResolver );
+            }
+            return new ContentJson( content, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
         }
     }
 
@@ -163,7 +174,7 @@ public final class ContentResource
         }
         else
         {
-            return new ContentJson( content, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
+            return new ContentJson( content, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
         }
     }
 
@@ -176,7 +187,7 @@ public final class ContentResource
         final Content nearestSite = this.contentService.getNearestSite( contentId );
         if ( nearestSite != null )
         {
-            return new ContentJson( nearestSite, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
+            return new ContentJson( nearestSite, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
         }
         else
         {
@@ -260,8 +271,8 @@ public final class ContentResource
         }
         else if ( EXPAND_FULL.equalsIgnoreCase( expandParam ) )
         {
-            return new ContentListJson( result.getContents(), metaData, newContentIconUrlResolver(),
-                                        mixinReferencesToFormItemsTransformer );
+            return new ContentListJson( result.getContents(), metaData, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer,
+                                        principalsResolver );
         }
         else
         {
@@ -283,7 +294,7 @@ public final class ContentResource
             build() );
 
         return FindContentByQuertResultJsonFactory.create( findResult, contentQueryJson.getExpand(), iconUrlResolver,
-                                                           mixinReferencesToFormItemsTransformer );
+                                                           mixinReferencesToFormItemsTransformer, principalsResolver );
     }
 
     @GET
@@ -311,7 +322,7 @@ public final class ContentResource
         for ( final ContentPath contentToDelete : contentsToDeleteList )
         {
             final DeleteContentParams deleteContent = new DeleteContentParams();
-            deleteContent.deleter( AccountKey.anonymous() );
+            deleteContent.deleter( PrincipalKey.ofAnonymous() );
             deleteContent.contentPath( contentToDelete );
 
             try
@@ -373,7 +384,7 @@ public final class ContentResource
         final Content publishedContent =
             contentService.push( new PushContentParams( ContentConstants.WORKSPACE_PROD, params.getContentId() ) );
 
-        return new ContentJson( publishedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
+        return new ContentJson( publishedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
     }
 
     @POST
@@ -382,7 +393,7 @@ public final class ContentResource
     {
         final Content duplicatedContent = contentService.duplicate( new DuplicateContentParams( params.getContentId() ) );
 
-        return new ContentJson( duplicatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
+        return new ContentJson( duplicatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
     }
 
     @POST
@@ -391,7 +402,7 @@ public final class ContentResource
     {
         final Content persistedContent = contentService.create( params.getCreateContent() );
 
-        return new ContentJson( persistedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
+        return new ContentJson( persistedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
     }
 
 
@@ -404,7 +415,7 @@ public final class ContentResource
             contentId( ContentId.from( params.getContentId() ) ).
             build() );
 
-        return new ContentJson( updatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
+        return new ContentJson( updatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
     }
 
 
@@ -417,7 +428,7 @@ public final class ContentResource
             contentToMoveBefore( ( Strings.isNullOrEmpty( params.getMoveBefore() ) ? null : ContentId.from( params.getMoveBefore() ) ) ).
             build() );
 
-        return new ContentJson( updatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
+        return new ContentJson( updatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
     }
 
     @POST
@@ -429,12 +440,13 @@ public final class ContentResource
         final Content updatedContent = contentService.update( updateParams );
         if ( json.getContentName().equals( updatedContent.getName() ) )
         {
-            return new ContentJson( updatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
+            return new ContentJson( updatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer,
+                                    principalsResolver );
         }
 
         final RenameContentParams renameParams = json.getRenameContentParams();
         final Content renamedContent = contentService.rename( renameParams );
-        return new ContentJson( renamedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer );
+        return new ContentJson( renamedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
     }
 
     @GET
@@ -492,5 +504,6 @@ public final class ContentResource
     public void setSecurityService( final SecurityService securityService )
     {
         this.securityService = securityService;
+        this.principalsResolver = new ContentPrincipalsResolver( securityService );
     }
 }

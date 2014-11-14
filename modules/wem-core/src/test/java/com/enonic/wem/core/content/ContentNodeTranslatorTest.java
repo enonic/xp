@@ -33,13 +33,18 @@ import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
+import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.security.UserStoreKey;
+import com.enonic.wem.api.security.acl.AccessControlEntry;
+import com.enonic.wem.api.security.acl.AccessControlList;
+import com.enonic.wem.api.security.acl.Permission;
 import com.enonic.wem.core.content.serializer.ThumbnailAttachmentSerializer;
-import com.enonic.wem.core.entity.CreateNodeParams;
-import com.enonic.wem.core.entity.Node;
-import com.enonic.wem.core.entity.NodeId;
-import com.enonic.wem.core.entity.NodeName;
-import com.enonic.wem.core.entity.NodePath;
-import com.enonic.wem.core.entity.UpdateNodeParams;
+import com.enonic.wem.repo.CreateNodeParams;
+import com.enonic.wem.repo.Node;
+import com.enonic.wem.repo.NodeId;
+import com.enonic.wem.repo.NodeName;
+import com.enonic.wem.repo.NodePath;
+import com.enonic.wem.repo.UpdateNodeParams;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -165,7 +170,7 @@ public class ContentNodeTranslatorTest
 
         final Node editedNode = updateNode.getEditor().edit( node ).build();
 
-        final com.enonic.wem.core.entity.Attachment thumbnailAttachment =
+        final com.enonic.wem.repo.Attachment thumbnailAttachment =
             editedNode.attachments().getAttachment( ThumbnailAttachmentSerializer.THUMB_NAME );
 
         assertNotNull( thumbnailAttachment );
@@ -176,8 +181,8 @@ public class ContentNodeTranslatorTest
     public void node_to_content_thumbnail()
     {
 
-        final com.enonic.wem.core.entity.Attachments attachments =
-            com.enonic.wem.core.entity.Attachments.from( com.enonic.wem.core.entity.Attachment.newAttachment().
+        final com.enonic.wem.repo.Attachments attachments =
+            com.enonic.wem.repo.Attachments.from( com.enonic.wem.repo.Attachment.newAttachment().
                 blobKey( new BlobKey( "myThumbnail" ) ).
                 name( ThumbnailAttachmentSerializer.THUMB_NAME ).
                 size( 1200 ).
@@ -211,4 +216,39 @@ public class ContentNodeTranslatorTest
         Assert.assertEquals( createNodeParams.getName(), "test-name" );
 
     }
+
+    @Test
+    public void node_to_content_acl()
+    {
+        final AccessControlEntry entry1 = AccessControlEntry.create().
+            principal( PrincipalKey.ofAnonymous() ).
+            allow( Permission.READ ).
+            deny( Permission.DELETE ).
+            build();
+        final AccessControlEntry entry2 = AccessControlEntry.create().
+            principal( PrincipalKey.ofUser( UserStoreKey.system(), "user1" ) ).
+            allow( Permission.MODIFY ).
+            deny( Permission.PUBLISH ).
+            build();
+        AccessControlList acl = AccessControlList.create().add( entry1 ).add( entry2 ).build();
+        AccessControlList effectiveAcl = acl.getEffective( AccessControlList.empty() );
+
+        final RootDataSet data = new RootDataSet();
+        data.addProperty( "contentType", Value.newString( "my-type" ) );
+
+        final Node node = Node.newNode().id( NodeId.from( "myId" ) ).
+            parent( NodePath.ROOT ).
+            path( "myPath" ).
+            name( NodeName.from( "myname" ) ).
+            rootDataSet( data ).
+            accessControlList( acl ).
+            effectiveAcl( effectiveAcl ).
+            build();
+
+        final Content content = translator.fromNode( node );
+
+        Assert.assertNotNull( content.getAccessControlList() );
+        Assert.assertNotNull( content.getEffectiveAccessControlList() );
+    }
+
 }

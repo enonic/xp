@@ -4,7 +4,7 @@ import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.initializer.DataInitializer;
 import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.api.security.SystemConstants;
-import com.enonic.wem.core.repository.RepositoryInitializer;
+import com.enonic.wem.repo.RepositoryInitializer;
 import com.enonic.wem.core.security.SecurityInitializer;
 
 public final class StartupInitializerImpl

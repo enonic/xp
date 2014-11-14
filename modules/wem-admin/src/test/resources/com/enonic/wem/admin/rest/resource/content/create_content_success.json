@@ -1,7 +1,7 @@
 {
     "childOrder": null,
     "createdTime": "2013-08-23T12:55:09.162Z",
-    "creator": "user:system:admin",
+    "creator": "system:user:admin",
     "data": [ ],
     "deletable": true,
     "displayName": "My Content",
@@ -10,6 +10,7 @@
     "hasChildren": false,
     "iconUrl": "/admin/rest/schema/content/icon/mymodule:content-type?hash=f95b70fdc3088560732a5ac135644506",
     "id": "content-id",
+    "inheritedPermissions": [],
     "isDraft": false,
     "isPage": false,
     "isRoot": true,
@@ -28,11 +29,12 @@
         }
     ],
     "modifiedTime": "2013-08-23T12:55:09.162Z",
-    "modifier": "user:system:admin",
+    "modifier": "system:user:admin",
     "name": "content-path",
-    "owner": "user:myStore:me",
+    "owner": "myStore:user:me",
     "page": null,
     "path": "/content-path",
+    "permissions": [],
     "thumbnail": null,
     "type": "mymodule:content-type"
 }

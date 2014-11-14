@@ -1,5 +1,7 @@
 module api.content {
 
+    import AccessControlList = api.security.acl.AccessControlList;
+
     export class Content extends ContentSummary implements api.Equitable, api.Cloneable {
 
         private data: api.content.ContentData;
@@ -10,6 +12,10 @@ module api.content {
 
         private pageObj: api.content.page.Page;
 
+        private permissions: AccessControlList;
+
+        private inheritedPermissions: AccessControlList;
+
         constructor(builder: ContentBuilder) {
             super(builder);
             this.data = builder.data;
@@ -17,6 +23,8 @@ module api.content {
 
             this.metadata = builder.metadata;
             this.pageObj = builder.pageObj;
+            this.permissions = builder.permissions || new AccessControlList();
+            this.inheritedPermissions = builder.inheritedPermissions || new AccessControlList();
         }
 
         getContentData(): ContentData {
@@ -37,6 +45,14 @@ module api.content {
 
         getPage(): api.content.page.Page {
             return this.pageObj;
+        }
+
+        getPermissions(): AccessControlList {
+            return this.permissions;
+        }
+
+        getInheritedPermissions(): AccessControlList {
+            return this.inheritedPermissions;
         }
 
         equals(o: api.Equitable): boolean {
@@ -60,6 +76,14 @@ module api.content {
             }
 
             if (!api.ObjectHelper.equals(this.pageObj, other.pageObj)) {
+                return false;
+            }
+
+            if (!api.ObjectHelper.equals(this.permissions, other.permissions)) {
+                return false;
+            }
+
+            if (!api.ObjectHelper.equals(this.inheritedPermissions, other.inheritedPermissions)) {
                 return false;
             }
 
@@ -98,6 +122,10 @@ module api.content {
 
         pageObj: api.content.page.Page;
 
+        permissions: AccessControlList;
+
+        inheritedPermissions: AccessControlList;
+
         constructor(source?: Content) {
             super(source);
             if (source) {
@@ -108,6 +136,8 @@ module api.content {
                 this.metadata = source.getAllMetadata().map((metadata: Metadata) => metadata.clone());
 
                 this.pageObj = source.getPage() ? source.getPage().clone() : null;
+                this.permissions = source.getPermissions(); // TODO clone?
+                this.inheritedPermissions = source.getInheritedPermissions(); // TODO clone?
             }
         }
 
@@ -122,6 +152,12 @@ module api.content {
             if (this.page) {
                 this.pageObj = new api.content.page.PageBuilder().fromJson(json.page).build();
                 this.page = true;
+            }
+            if (json.permissions) {
+                this.permissions = AccessControlList.fromJson(json.permissions);
+            }
+            if (json.inheritedPermissions) {
+                this.inheritedPermissions = AccessControlList.fromJson(json.inheritedPermissions);
             }
 
             return this;
@@ -145,6 +181,16 @@ module api.content {
 
         setMetadata(metadata: Metadata[]): ContentBuilder {
             this.metadata = metadata;
+            return this;
+        }
+
+        setPermissions(value: AccessControlList): ContentBuilder {
+            this.permissions = value;
+            return this;
+        }
+
+        setInheritedPermissions(value: AccessControlList): ContentBuilder {
+            this.inheritedPermissions = value;
             return this;
         }
 

@@ -1,0 +1,127 @@
+{
+  "accessControlList": [
+    {
+      "allow": ["MODIFY"],
+      "deny": ["PUBLISH"],
+      "principal": "system:user:user1"
+    },
+    {
+      "allow": ["READ"],
+      "deny": ["DELETE"],
+      "principal": "system:user:anonymous"
+    }
+  ],
+  "attachments": [
+    {
+      "attachmentName": "attachment",
+      "blobKey": "1234",
+      "mimeType": "mimetype",
+      "size": 0
+    }
+  ],
+  "childOrder": "modifiedTime ASC, displayName DESC",
+  "createdTime": "2013-01-02T03:04:05Z",
+  "creator": "test:user:creator",
+  "data": {
+    "set": [
+      {
+        "DataSet": {
+          "name": "a",
+          "set": [
+            {
+              "DataSet": {
+                "name": "b",
+                "set": [
+                  {
+                    "Property": {
+                      "name": "c",
+                      "type": "Double",
+                      "value": "2.0"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      {
+        "Property": {
+          "name": "b",
+          "type": "LocalDate",
+          "value": "2013-01-02"
+        }
+      },
+      {
+        "Property": {
+          "name": "c",
+          "type": "String",
+          "value": "runar"
+        }
+      },
+      {
+        "Property": {
+          "name": "d",
+          "type": "DateTime",
+          "value": "2013-01-02T03:04:05Z"
+        }
+      }
+    ]
+  },
+  "effectiveAccessControlList": [
+    {
+      "allow": ["MODIFY"],
+      "deny": [
+        "READ",
+        "CREATE",
+        "DELETE",
+        "PUBLISH",
+        "READ_PERMISSIONS",
+        "WRITE_PERMISSIONS"
+      ],
+      "principal": "system:user:user1"
+    },
+    {
+      "allow": ["READ"],
+      "deny": [
+        "CREATE",
+        "MODIFY",
+        "DELETE",
+        "PUBLISH",
+        "READ_PERMISSIONS",
+        "WRITE_PERMISSIONS"
+      ],
+      "principal": "system:user:anonymous"
+    }
+  ],
+  "id": "myId",
+  "indexConfigDocument": {
+    "analyzer": "myAnalyzer",
+    "defaultConfig": {
+      "decideByType": false,
+      "enabled": true,
+      "fulltext": false,
+      "includeInAllText": false,
+      "nGram": false
+    },
+    "patternConfigs": [
+      {
+        "indexConfig": {
+          "decideByType": false,
+          "enabled": true,
+          "fulltext": true,
+          "includeInAllText": true,
+          "nGram": true
+        },
+        "path": "myPath"
+      }
+    ]
+  },
+  "manualOrderValue": null,
+  "modifiedTime": "2013-01-02T03:04:05Z",
+  "modifier": "test:user:modifier",
+  "name": "my-name",
+  "parent": "/",
+  "path": "/my-name"
+}
+

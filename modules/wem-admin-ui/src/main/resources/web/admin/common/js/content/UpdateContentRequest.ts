@@ -22,6 +22,8 @@ module api.content {
 
         private thumbnail: api.content.Thumbnail;
 
+        private permissions: api.security.acl.AccessControlList;
+
         constructor(id: string) {
             super();
             this.id = id;
@@ -77,6 +79,11 @@ module api.content {
             return this;
         }
 
+        setPermissions(permissions: api.security.acl.AccessControlList): UpdateContentRequest {
+            this.permissions = permissions;
+            return this;
+        }
+
         getParams(): Object {
             return {
                 contentId: this.id,
@@ -88,7 +95,8 @@ module api.content {
                 metadata: (this.metadata || []).map((metadata: Metadata) => metadata.toJson()),
                 displayName: this.displayName,
                 updateAttachments: this.updateAttachments ? this.updateAttachments.toJson() : null,
-                thumbnail: this.thumbnail? this.thumbnail.toJson() : undefined
+                thumbnail: this.thumbnail ? this.thumbnail.toJson() : undefined,
+                permissions: this.permissions ? this.permissions.toJson() : undefined
             };
         }
 

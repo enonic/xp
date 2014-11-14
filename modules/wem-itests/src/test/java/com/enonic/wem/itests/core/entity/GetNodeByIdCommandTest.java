@@ -3,12 +3,10 @@ package com.enonic.wem.itests.core.entity;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.api.content.ContentConstants;
-import com.enonic.wem.core.entity.CreateNodeParams;
+import com.enonic.wem.repo.CreateNodeParams;
 import com.enonic.wem.core.entity.GetNodeByIdCommand;
-import com.enonic.wem.core.entity.Node;
-import com.enonic.wem.core.entity.NodePath;
-import com.enonic.wem.core.repository.RepositoryInitializer;
+import com.enonic.wem.repo.Node;
+import com.enonic.wem.repo.NodePath;
 
 import static org.junit.Assert.*;
 
@@ -22,11 +20,6 @@ public class GetNodeByIdCommandTest
         throws Exception
     {
         super.setUp();
-
-        RepositoryInitializer repositoryInitializer = new RepositoryInitializer();
-        repositoryInitializer.setIndexService( this.indexService );
-
-        repositoryInitializer.init( ContentConstants.CONTENT_REPO );
     }
 
     @Test

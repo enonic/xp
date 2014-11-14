@@ -4,9 +4,9 @@ import java.time.Instant;
 import java.util.Map;
 
 import com.enonic.wem.admin.json.ItemJson;
-import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.relationship.Relationship;
 import com.enonic.wem.api.relationship.RelationshipId;
+import com.enonic.wem.api.security.PrincipalKey;
 
 public class RelationshipJson
     implements ItemJson
@@ -48,12 +48,12 @@ public class RelationshipJson
         return model.getModifiedTime();
     }
 
-    public UserKey getCreator()
+    public PrincipalKey getCreator()
     {
         return model.getCreator();
     }
 
-    public UserKey getModifier()
+    public PrincipalKey getModifier()
     {
         return model.getModifier();
     }

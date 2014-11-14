@@ -87,7 +87,7 @@ module app.browse {
         }
 
         updateModuleNode(moduleKey: api.module.ModuleKey) {
-            var root = this.getRoot();
+            var root = this.getRoot().getCurrentRoot();
             root.getChildren().forEach((child: TreeNode<Module>) => {
                 var curModule: Module = child.getData();
                 if (curModule.getModuleKey().toString() == moduleKey.toString()) {
@@ -97,7 +97,7 @@ module app.browse {
         }
 
         deleteModuleNode(moduleKey: api.module.ModuleKey) {
-            var root = this.getRoot();
+            var root = this.getRoot().getCurrentRoot();
             root.getChildren().forEach((child: TreeNode<Module>) => {
                 var curModule: Module = child.getData();
                 if (curModule.getModuleKey().toString() == moduleKey.toString()) {

@@ -5,7 +5,7 @@ import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.attachment.GetAttachmentParameters;
-import com.enonic.wem.core.entity.NodeService;
+import com.enonic.wem.repo.NodeService;
 
 public class AttachmentServiceImpl
     implements AttachmentService

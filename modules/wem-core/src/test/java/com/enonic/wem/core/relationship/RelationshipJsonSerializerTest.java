@@ -12,11 +12,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.data.DataPath;
 import com.enonic.wem.api.relationship.Relationship;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
+import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.core.AbstractSerializerTest;
 
 import static org.junit.Assert.*;
@@ -41,7 +41,7 @@ public class RelationshipJsonSerializerTest
             toContent( ContentId.from( "222" ) ).
             type( RelationshipTypeName.PARENT ).
             createdTime( NOW ).
-            creator( AccountKey.superUser() ).
+            creator( PrincipalKey.from( "system:user:admin" ) ).
             build();
 
         RelationshipJsonSerializer serializer = new RelationshipJsonSerializer().
@@ -56,7 +56,7 @@ public class RelationshipJsonSerializerTest
         expectedJson.put( "type", RelationshipTypeName.PARENT.toString() );
         expectedJson.putNull( "managingData" );
         expectedJson.putNull( "properties" );
-        expectedJson.put( "creator", "user:system:admin" );
+        expectedJson.put( "creator", "system:user:admin" );
         expectedJson.put( "createdTime", "2013-01-01T12:00:00Z" );
 
         assertEquals( "Serialization not as expected", expectedJson, actualJson );
@@ -71,7 +71,7 @@ public class RelationshipJsonSerializerTest
             type( RelationshipTypeName.PARENT ).
             managed( DataPath.from( "mySet.myData" ) ).
             createdTime( NOW ).
-            creator( AccountKey.superUser() ).
+            creator( PrincipalKey.from( "system:user:admin" ) ).
             build();
 
         RelationshipJsonSerializer serializer = new RelationshipJsonSerializer().
@@ -86,7 +86,7 @@ public class RelationshipJsonSerializerTest
         expectedJson.put( "type", RelationshipTypeName.PARENT.toString() );
         expectedJson.put( "managingData", "mySet.myData" );
         expectedJson.putNull( "properties" );
-        expectedJson.put( "creator", "user:system:admin" );
+        expectedJson.put( "creator", "system:user:admin" );
         expectedJson.put( "createdTime", "2013-01-01T12:00:00Z" );
 
         assertEquals( "Serialization not as expected", expectedJson, actualJson );
@@ -102,9 +102,9 @@ public class RelationshipJsonSerializerTest
             property( "stars", "4" ).
             property( "stripes", "3" ).
             createdTime( NOW ).
-            creator( AccountKey.superUser() ).
+            creator( PrincipalKey.from( "system:user:admin" ) ).
             modifiedTime( NOW ).
-            modifier( AccountKey.superUser() ).
+            modifier( PrincipalKey.from( "system:user:admin" ) ).
             build();
 
         RelationshipJsonSerializer serializer = new RelationshipJsonSerializer().
@@ -122,9 +122,9 @@ public class RelationshipJsonSerializerTest
         ObjectNode propertiesNode = expectedJson.putObject( "properties" );
         propertiesNode.put( "stars", "4" );
         propertiesNode.put( "stripes", "3" );
-        expectedJson.put( "creator", "user:system:admin" );
+        expectedJson.put( "creator", "system:user:admin" );
         expectedJson.put( "createdTime", "2013-01-01T12:00:00Z" );
-        expectedJson.put( "modifier", "user:system:admin" );
+        expectedJson.put( "modifier", "system:user:admin" );
         expectedJson.put( "modifiedTime", "2013-01-01T12:00:00Z" );
 
         assertEquals( "Serialization not as expected", expectedJson, actualJson );
@@ -141,9 +141,9 @@ public class RelationshipJsonSerializerTest
             property( "stars", "4" ).
             property( "stripes", "3" ).
             createdTime( NOW ).
-            creator( AccountKey.superUser() ).
+            creator( PrincipalKey.from( "system:user:admin" ) ).
             modifiedTime( NOW ).
-            modifier( AccountKey.superUser() ).
+            modifier( PrincipalKey.from( "system:user:admin" ) ).
             build();
 
         RelationshipJsonSerializer serializer = new RelationshipJsonSerializer().
@@ -163,8 +163,8 @@ public class RelationshipJsonSerializerTest
         assertEquals( "4", parsedRelationship.getProperty( "stars" ) );
         assertEquals( "3", parsedRelationship.getProperty( "stripes" ) );
         assertEquals( NOW, parsedRelationship.getCreatedTime() );
-        assertEquals( AccountKey.superUser(), parsedRelationship.getCreator() );
+        assertEquals( PrincipalKey.from( "system:user:admin" ), parsedRelationship.getCreator() );
         assertEquals( NOW, parsedRelationship.getModifiedTime() );
-        assertEquals( AccountKey.superUser(), parsedRelationship.getModifier() );
+        assertEquals( PrincipalKey.from( "system:user:admin" ), parsedRelationship.getModifier() );
     }
 }

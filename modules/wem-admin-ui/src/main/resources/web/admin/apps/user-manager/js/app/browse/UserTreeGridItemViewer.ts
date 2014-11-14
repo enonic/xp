@@ -10,11 +10,21 @@ module app.browse {
             this.appendChild(this.namesAndIconView);
         }
 
-        setObject(userItem: UserTreeGridItem) {
-            super.setObject(userItem);
-            this.namesAndIconView.setMainName(userItem.getItemDisplayName());
-            this.selectIconClass(userItem);
+        setObject(gridItem: UserTreeGridItem) {
+            super.setObject(gridItem);
+            this.namesAndIconView.setMainName(gridItem.getItemDisplayName());
 
+            var itemType = gridItem.getType();
+            if (itemType === UserTreeGridItemType.PRINCIPAL) {
+                this.namesAndIconView.setSubName(gridItem.getPrincipal().getKey().getId());
+
+            } else if (itemType === UserTreeGridItemType.USER_STORE) {
+                this.namesAndIconView.setSubName('/' + gridItem.getUserStore().getKey().toString());
+            } else {
+                this.namesAndIconView.setSubName(gridItem.getItemDisplayName().toLocaleLowerCase());
+            }
+
+            this.selectIconClass(gridItem);
         }
 
         private selectIconClass(item: UserTreeGridItem) {
@@ -28,35 +38,27 @@ module app.browse {
             case UserTreeGridItemType.PRINCIPAL:
             {
                 if (item.getPrincipal().isRole()) {
-                    //TODO need to specify correct class
+                    this.namesAndIconView.setIconClass("icon-user7 icon-large");
+                } else if (item.getPrincipal().isUser()) {
+                    this.namesAndIconView.setIconClass("icon-user icon-large");
+                } else if (item.getPrincipal().isGroup()) {
                     this.namesAndIconView.setIconClass("icon-users icon-large");
-                    break;
                 }
-                if (item.getPrincipal().isUser()) {
-                    //TODO need to specify correct class
-                    this.namesAndIconView.setIconClass("icon-users icon-large");
-                    break;
-                }
-                if (item.getPrincipal().isGroup()) {
-                    this.namesAndIconView.setIconClass("icon-users icon-large");
-                    break;
-                }
-
+                break;
             }
             case UserTreeGridItemType.GROUPS:
-            {        //TODO need to specify correct class
-                this.namesAndIconView.setIconClass("icon-users icon-large");
+            {
+                this.namesAndIconView.setIconClass("icon-folder icon-large");
                 break;
             }
             case UserTreeGridItemType.ROLES:
-
-            {       //TODO need to specify correct class
-                this.namesAndIconView.setIconClass("icon-users icon-large");
+            {
+                this.namesAndIconView.setIconClass("icon-folder icon-large");
                 break;
             }
             case UserTreeGridItemType.USERS:
-            {       //TODO need to specify correct class
-                this.namesAndIconView.setIconClass("icon-users icon-large");
+            {
+                this.namesAndIconView.setIconClass("icon-folder icon-large");
                 break;
             }
             }

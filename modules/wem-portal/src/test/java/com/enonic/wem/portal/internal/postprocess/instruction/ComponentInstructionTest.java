@@ -3,7 +3,6 @@ package com.enonic.wem.portal.internal.postprocess.instruction;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
@@ -24,6 +23,7 @@ import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.rendering.Renderable;
 import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.internal.controller.PortalContextImpl;
 import com.enonic.wem.portal.internal.controller.PortalResponseImpl;
@@ -130,9 +130,9 @@ public class ComponentInstructionTest
         return Content.newContent().
             id( ContentId.from( id ) ).
             path( ContentPath.from( name ) ).
-            owner( UserKey.from( "myStore:me" ) ).
+            owner( PrincipalKey.from( "myStore:user:me" ) ).
             displayName( "My Content" ).
-            modifier( UserKey.superUser() ).
+            modifier( PrincipalKey.from( "system:user:admin" ) ).
             type( ContentTypeName.from( contentTypeName ) ).
             page( page ).
             build();
@@ -153,9 +153,9 @@ public class ComponentInstructionTest
         return Site.newSite().
             id( ContentId.from( id ) ).
             path( ContentPath.from( name ) ).
-            owner( UserKey.from( "myStore:me" ) ).
+            owner( PrincipalKey.from( "myStore:user:me" ) ).
             displayName( "My Content" ).
-            modifier( UserKey.superUser() ).
+            modifier( PrincipalKey.from( "system:user:admin" ) ).
             type( ContentTypeName.from( contentTypeName ) ).
             page( page ).
             build();

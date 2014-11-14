@@ -47,10 +47,10 @@ public class FormItemSetJsonSerializer
         jsonObject.put( NAME, set.getName() );
         jsonObject.put( LABEL, set.getLabel() );
         jsonObject.put( IMMUTABLE, set.isImmutable() );
-        jsonObject.put( OCCURRENCES, occurrencesJsonSerializer.serialize( set.getOccurrences() ) );
+        jsonObject.set( OCCURRENCES, occurrencesJsonSerializer.serialize( set.getOccurrences() ) );
         jsonObject.put( CUSTOM_TEXT, set.getCustomText() );
         jsonObject.put( HELP_TEXT, set.getHelpText() );
-        jsonObject.put( ITEMS, formItemsJsonSerializer.serialize( set.getFormItems() ) );
+        jsonObject.set( ITEMS, formItemsJsonSerializer.serialize( set.getFormItems() ) );
         return jsonObject;
     }
 

@@ -8,7 +8,6 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageTemplate;
@@ -20,6 +19,7 @@ import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.rendering.Renderable;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
+import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.support.ChangeTraceable;
 import com.enonic.wem.api.support.Changes;
@@ -57,11 +57,11 @@ public class Content
 
     private final Instant modifiedTime;
 
-    private final UserKey creator;
+    private final PrincipalKey creator;
 
-    private final UserKey owner;
+    private final PrincipalKey owner;
 
-    private final UserKey modifier;
+    private final PrincipalKey modifier;
 
     private final Page page;
 
@@ -72,6 +72,8 @@ public class Content
     private final ChildOrder childOrder;
 
     private final AccessControlList acl;
+
+    private final AccessControlList effectiveAcl;
 
     protected Content( final BaseBuilder builder )
     {
@@ -109,6 +111,7 @@ public class Content
         this.hasChildren = builder.hasChildren;
         this.childOrder = builder.childOrder;
         this.acl = builder.acl == null ? AccessControlList.empty() : builder.acl;
+        this.effectiveAcl = builder.effectiveAcl == null ? AccessControlList.empty() : builder.effectiveAcl;
     }
 
     public ContentPath getParentPath()
@@ -156,17 +159,17 @@ public class Content
         return modifiedTime;
     }
 
-    public UserKey getCreator()
+    public PrincipalKey getCreator()
     {
         return modifier;
     }
 
-    public UserKey getModifier()
+    public PrincipalKey getModifier()
     {
         return modifier;
     }
 
-    public UserKey getOwner()
+    public PrincipalKey getOwner()
     {
         return owner;
     }
@@ -264,6 +267,11 @@ public class Content
         return acl;
     }
 
+    public AccessControlList getEffectiveAccessControlList()
+    {
+        return effectiveAcl;
+    }
+
     @Override
     public void checkIllegalEdit( final Content to )
         throws IllegalEditException
@@ -292,6 +300,7 @@ public class Content
         s.add( "modifier", modifier );
         s.add( "owner", owner );
         s.add( "acl", acl );
+        s.add( "effectiveAcl", effectiveAcl );
         return s.toString();
     }
 
@@ -330,15 +339,15 @@ public class Content
 
         String displayName;
 
-        UserKey owner;
+        PrincipalKey owner;
 
         Instant createdTime;
 
         Instant modifiedTime;
 
-        UserKey creator;
+        PrincipalKey creator;
 
-        UserKey modifier;
+        PrincipalKey modifier;
 
         protected Page page;
 
@@ -349,6 +358,8 @@ public class Content
         ChildOrder childOrder;
 
         AccessControlList acl;
+
+        AccessControlList effectiveAcl;
 
         BaseBuilder()
         {
@@ -377,6 +388,7 @@ public class Content
             this.thumbnail = content.thumbnail;
             this.childOrder = content.childOrder;
             this.acl = content.acl;
+            this.effectiveAcl = content.effectiveAcl;
         }
     }
 
@@ -452,6 +464,14 @@ public class Content
         {
             changes.recordChange( newPossibleChange( "accessControlList" ).from( this.original.acl ).to( this.acl ).build() );
             this.acl = acl;
+            return this;
+        }
+
+        public EditBuilder effectiveAccessControlList( final AccessControlList effectiveAcl )
+        {
+            changes.recordChange(
+                newPossibleChange( "effectiveAccessControlList" ).from( this.original.effectiveAcl ).to( this.effectiveAcl ).build() );
+            this.effectiveAcl = effectiveAcl;
             return this;
         }
 
@@ -563,19 +583,19 @@ public class Content
             return this;
         }
 
-        public Builder<BUILDER, C> owner( final UserKey owner )
+        public Builder<BUILDER, C> owner( final PrincipalKey owner )
         {
             this.owner = owner;
             return this;
         }
 
-        public Builder<BUILDER, C> creator( final UserKey modifier )
+        public Builder<BUILDER, C> creator( final PrincipalKey modifier )
         {
             this.creator = modifier;
             return this;
         }
 
-        public Builder<BUILDER, C> modifier( final UserKey modifier )
+        public Builder<BUILDER, C> modifier( final PrincipalKey modifier )
         {
             this.modifier = modifier;
             return this;
@@ -626,6 +646,12 @@ public class Content
         public Builder<BUILDER, C> accessControlList( final AccessControlList acl )
         {
             this.acl = acl;
+            return this;
+        }
+
+        public Builder<BUILDER, C> effectiveAccessControlList( final AccessControlList effectiveAcl )
+        {
+            this.effectiveAcl = effectiveAcl;
             return this;
         }
 

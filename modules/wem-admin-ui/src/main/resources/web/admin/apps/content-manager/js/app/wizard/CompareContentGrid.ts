@@ -78,14 +78,14 @@ module app.wizard {
 
         sortNodeChildren(node: TreeNode<ContentSummaryAndCompareStatus>) {
             var comparator: api.Comparator<TreeNode<ContentSummaryAndCompareStatus>>;
-            if (this.getRoot() == node) {
+            if (this.getRoot().getCurrentRoot() == node) {
                 comparator = new api.content.ContentByDisplayNameComparator();
             } else {
                 comparator = new api.content.ContentByModifiedTimeComparator();
             }
-            var children = node.getChildren().sort(comparator.compare);
+            var children: TreeNode<ContentSummaryAndCompareStatus>[] = node.getChildren().sort(comparator.compare);
             node.setChildren(children);
-            this.initData(this.getRoot().treeToList());
+            this.initData(this.getRoot().getCurrentRoot().treeToList());
         }
     }
 }

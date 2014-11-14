@@ -15,7 +15,6 @@ import org.mockito.Mockito;
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.admin.rest.resource.MockRestResponse;
 import com.enonic.wem.api.Icon;
-import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
@@ -860,10 +859,10 @@ public class ContentResourceTest
             id( ContentId.from( id ) ).
             path( ContentPath.from( name ) ).
             createdTime( Instant.parse( this.currentTime ) ).
-            owner( UserKey.from( "myStore:me" ) ).
+            owner( PrincipalKey.from( "myStore:user:me" ) ).
             displayName( "My Content" ).
             modifiedTime( Instant.parse( this.currentTime ) ).
-            modifier( UserKey.superUser() ).
+            modifier( PrincipalKey.from( "system:user:admin" ) ).
             type( ContentTypeName.from( contentTypeName ) ).
             addMetadata( new Metadata( MetadataSchemaName.from( "myModule:myField" ), metadata ) ).
             build();
@@ -876,10 +875,10 @@ public class ContentResourceTest
             id( ContentId.from( id ) ).
             path( ContentPath.from( name ) ).
             createdTime( Instant.parse( this.currentTime ) ).
-            owner( UserKey.from( "myStore:me" ) ).
+            owner( PrincipalKey.from( "myStore:user:me" ) ).
             displayName( "My Content" ).
             modifiedTime( Instant.parse( this.currentTime ) ).
-            modifier( UserKey.superUser() ).
+            modifier( PrincipalKey.from( "system:user:admin" ) ).
             type( ContentTypeName.from( contentTypeName ) ).
             build();
     }

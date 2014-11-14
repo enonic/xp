@@ -9,11 +9,11 @@ import org.apache.commons.io.IOUtils;
 import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.blob.BlobKey;
-import com.enonic.wem.core.blob.BlobKeyCreator;
-import com.enonic.wem.core.blob.BlobRecord;
-import com.enonic.wem.core.blob.BlobStore;
-import com.enonic.wem.core.blob.BlobStoreException;
-import com.enonic.wem.core.blob.memory.MemoryBlobRecord;
+import com.enonic.wem.internal.blob.BlobKeyCreator;
+import com.enonic.wem.internal.blob.BlobRecord;
+import com.enonic.wem.internal.blob.BlobStore;
+import com.enonic.wem.internal.blob.BlobStoreException;
+import com.enonic.wem.internal.blob.memory.MemoryBlobRecord;
 
 public class MemoryBlobStore
     implements BlobStore

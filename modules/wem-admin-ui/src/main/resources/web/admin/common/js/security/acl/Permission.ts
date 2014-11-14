@@ -1,7 +1,18 @@
 module api.security.acl {
 
-    export enum Permission {
+    /**
+     *  enum Color{
+     *      Red, Green
+     *  }
+     *
+     *  // To String
+     *  var green: string = Color[Color.Green];
+     *
+     *  // To Enum / number
+     *  var color : Color = Color[green];
+     */
 
+    export enum Permission {
         READ,
         CREATE,
         MODIFY,
@@ -9,6 +20,11 @@ module api.security.acl {
         PUBLISH,
         READ_PERMISSIONS,
         WRITE_PERMISSIONS
+    }
 
+    export enum PermissionState {
+        ALLOW,
+        DENY,
+        INHERIT
     }
 }

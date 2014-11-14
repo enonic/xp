@@ -1,0 +1,48 @@
+.permission-selector {
+  padding: 5px;
+}
+
+.permission-toggle {
+  display: inline-block;
+  margin: 5px;
+  border-radius: 9px;
+  padding: 2px 10px;
+  cursor: pointer;
+  .noSelect();
+
+  &:before {
+    margin-right: 5px;
+    float: left;
+    width: 10px;
+  }
+
+  &.allow {
+    background: @admin-green;
+    color: white;
+
+    &:before {
+      content: 'V ';
+    }
+  }
+
+  &.deny {
+    background: @admin-red;
+    color: white;
+
+    &:before {
+      content: 'X ';
+    }
+  }
+
+  &.inherit {
+    background: @admin-white;
+    padding: 1px 17px;
+    border: 1px solid @admin-medium-gray-border;
+    color: @admin-dark-gray-font;
+
+    &:before {
+      display: none;
+    }
+  }
+
+}

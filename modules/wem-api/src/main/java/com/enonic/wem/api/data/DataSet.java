@@ -148,6 +148,25 @@ public class DataSet
         return setProperty( DataPath.from( path ), values );
     }
 
+    public final void remove( final DataId dataId )
+    {
+        final Data data = dataById.get( dataId );
+        if ( data != null )
+        {
+            final DataArray dataArray = arrayByDataName.get( data.getName() );
+            if ( dataArray != null )
+            {
+                for ( int i = 0; i < dataArray.size(); i++ )
+                {
+                    final Data dataArrayItem = dataArray.getData( i );
+                    dataById.remove( dataArrayItem.getDataId() );
+                }
+            }
+            arrayByDataName.remove( data.getName() );
+            dataById.remove( dataId );
+        }
+    }
+
     public final Property setProperty( final DataId dataId, final Value value )
     {
         return doSetProperty( dataId, value );

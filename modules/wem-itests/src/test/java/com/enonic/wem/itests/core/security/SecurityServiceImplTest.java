@@ -8,6 +8,8 @@ import com.enonic.wem.api.security.CreateRoleParams;
 import com.enonic.wem.api.security.CreateUserParams;
 import com.enonic.wem.api.security.Group;
 import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.security.PrincipalRelationship;
+import com.enonic.wem.api.security.PrincipalRelationships;
 import com.enonic.wem.api.security.Role;
 import com.enonic.wem.api.security.SystemConstants;
 import com.enonic.wem.api.security.UpdateGroupParams;
@@ -15,6 +17,11 @@ import com.enonic.wem.api.security.UpdateRoleParams;
 import com.enonic.wem.api.security.UpdateUserParams;
 import com.enonic.wem.api.security.User;
 import com.enonic.wem.api.security.UserStoreKey;
+import com.enonic.wem.api.security.auth.AuthenticationException;
+import com.enonic.wem.api.security.auth.AuthenticationInfo;
+import com.enonic.wem.api.security.auth.AuthenticationToken;
+import com.enonic.wem.api.security.auth.EmailPasswordAuthToken;
+import com.enonic.wem.api.security.auth.UsernamePasswordAuthToken;
 import com.enonic.wem.core.entity.NodeServiceImpl;
 import com.enonic.wem.core.security.SecurityServiceImpl;
 import com.enonic.wem.itests.core.entity.AbstractNodeTest;
@@ -36,7 +43,9 @@ public class SecurityServiceImplTest
         throws Exception
     {
         super.setUp();
+
         createRepository( SystemConstants.SYSTEM_REPO );
+        waitForClusterHealth();
 
         this.nodeService = new NodeServiceImpl();
         this.nodeService.setIndexService( indexService );
@@ -218,4 +227,212 @@ public class SecurityServiceImplTest
         assertEquals( "___Role B___", updatedRoleResult.getDisplayName() );
         assertEquals( "___Role B___", updatedRole.getDisplayName() );
     }
+
+    @Test
+    public void testAddRelationship()
+        throws Exception
+    {
+        // set up
+        final PrincipalKey userKey1 = PrincipalKey.ofUser( SYSTEM, "user1" );
+        final CreateUserParams createUser1 = CreateUserParams.create().
+            userKey( userKey1 ).
+            displayName( "User 1" ).
+            email( "user1@enonic.com" ).
+            login( "user1" ).
+            password( "123456" ).
+            build();
+        final PrincipalKey userKey2 = PrincipalKey.ofUser( SYSTEM, "user2" );
+        final CreateUserParams createUser2 = CreateUserParams.create().
+            userKey( userKey2 ).
+            displayName( "User 2" ).
+            email( "user2@enonic.com" ).
+            login( "user2" ).
+            build();
+        final PrincipalKey groupKey1 = PrincipalKey.ofGroup( SYSTEM, "group-a" );
+        final CreateGroupParams createGroup = CreateGroupParams.create().
+            groupKey( groupKey1 ).
+            displayName( "Group A" ).
+            build();
+
+        securityService.createUser( createUser1 );
+        securityService.createUser( createUser2 );
+        securityService.createGroup( createGroup );
+
+        PrincipalRelationship membership = PrincipalRelationship.from( groupKey1 ).to( userKey1 );
+        PrincipalRelationship membership2 = PrincipalRelationship.from( groupKey1 ).to( userKey2 );
+
+        // exercise
+        securityService.addRelationship( membership );
+        securityService.addRelationship( membership2 );
+        securityService.addRelationship( membership );
+
+        // verify
+        final PrincipalRelationships relationships = securityService.getRelationships( groupKey1 );
+        assertEquals( 2, relationships.getSize() );
+        assertEquals( membership, relationships.get( 0 ) );
+        assertEquals( membership2, relationships.get( 1 ) );
+    }
+
+    @Test
+    public void testRemoveRelationship()
+        throws Exception
+    {
+        // set up
+        final PrincipalKey userKey1 = PrincipalKey.ofUser( SYSTEM, "user1" );
+        final CreateUserParams createUser1 = CreateUserParams.create().
+            userKey( userKey1 ).
+            displayName( "User 1" ).
+            email( "user1@enonic.com" ).
+            login( "user1" ).
+            password( "123456" ).
+            build();
+        final PrincipalKey userKey2 = PrincipalKey.ofUser( SYSTEM, "user2" );
+        final CreateUserParams createUser2 = CreateUserParams.create().
+            userKey( userKey2 ).
+            displayName( "User 2" ).
+            email( "user2@enonic.com" ).
+            login( "user2" ).
+            build();
+        final PrincipalKey groupKey1 = PrincipalKey.ofGroup( SYSTEM, "group-a" );
+        final CreateGroupParams createGroup = CreateGroupParams.create().
+            groupKey( groupKey1 ).
+            displayName( "Group A" ).
+            build();
+
+        securityService.createUser( createUser1 );
+        securityService.createUser( createUser2 );
+        securityService.createGroup( createGroup );
+
+        PrincipalRelationship membership = PrincipalRelationship.from( groupKey1 ).to( userKey1 );
+        PrincipalRelationship membership2 = PrincipalRelationship.from( groupKey1 ).to( userKey2 );
+
+        securityService.addRelationship( membership );
+        securityService.addRelationship( membership2 );
+
+        // exercise
+        securityService.removeRelationship( membership );
+
+        //verify
+        final PrincipalRelationships relationships = securityService.getRelationships( groupKey1 );
+        assertEquals( 1, relationships.getSize() );
+        assertEquals( membership2, relationships.get( 0 ) );
+    }
+
+    @Test
+    public void testRemoveAllRelationships()
+        throws Exception
+    {
+        // set up
+        final PrincipalKey userKey1 = PrincipalKey.ofUser( SYSTEM, "user1" );
+        final CreateUserParams createUser1 = CreateUserParams.create().
+            userKey( userKey1 ).
+            displayName( "User 1" ).
+            email( "user1@enonic.com" ).
+            login( "user1" ).
+            password( "123456" ).
+            build();
+        final PrincipalKey userKey2 = PrincipalKey.ofUser( SYSTEM, "user2" );
+        final CreateUserParams createUser2 = CreateUserParams.create().
+            userKey( userKey2 ).
+            displayName( "User 2" ).
+            email( "user2@enonic.com" ).
+            login( "user2" ).
+            build();
+        final PrincipalKey groupKey1 = PrincipalKey.ofGroup( SYSTEM, "group-a" );
+        final CreateGroupParams createGroup = CreateGroupParams.create().
+            groupKey( groupKey1 ).
+            displayName( "Group A" ).
+            build();
+
+        securityService.createUser( createUser1 );
+        securityService.createUser( createUser2 );
+        securityService.createGroup( createGroup );
+
+        PrincipalRelationship membership = PrincipalRelationship.from( groupKey1 ).to( userKey1 );
+        PrincipalRelationship membership2 = PrincipalRelationship.from( groupKey1 ).to( userKey2 );
+
+        securityService.addRelationship( membership );
+        securityService.addRelationship( membership2 );
+
+        // exercise
+        securityService.removeRelationships( groupKey1 );
+
+        //verify
+        final PrincipalRelationships relationships = securityService.getRelationships( groupKey1 );
+        assertEquals( 0, relationships.getSize() );
+    }
+
+    @Test
+    public void testAuthenticateByEmailPwd()
+        throws Exception
+    {
+        final CreateUserParams createUser = CreateUserParams.create().
+            userKey( PrincipalKey.ofUser( SYSTEM, "user1" ) ).
+            displayName( "User 1" ).
+            email( "user1@enonic.com" ).
+            login( "user1" ).
+            build();
+
+        final User user = securityService.createUser( createUser );
+        refresh();
+
+        final EmailPasswordAuthToken authToken = new EmailPasswordAuthToken();
+        authToken.setEmail( "user1@enonic.com" );
+        authToken.setPassword( "password" );
+        authToken.setUserStore( SYSTEM );
+
+        final AuthenticationInfo authInfo = securityService.authenticate( authToken );
+        assertTrue( authInfo.isAuthenticated() );
+        assertEquals( user.getKey(), authInfo.getUser().getKey() );
+    }
+
+    @Test
+    public void testAuthenticateByUsernamePwd()
+        throws Exception
+    {
+        final CreateUserParams createUser = CreateUserParams.create().
+            userKey( PrincipalKey.ofUser( SYSTEM, "user1" ) ).
+            displayName( "User 1" ).
+            email( "user1@enonic.com" ).
+            login( "user1" ).
+            build();
+
+        final User user = securityService.createUser( createUser );
+        refresh();
+
+        final UsernamePasswordAuthToken authToken = new UsernamePasswordAuthToken();
+        authToken.setUsername( "user1" );
+        authToken.setPassword( "password" );
+        authToken.setUserStore( SYSTEM );
+
+        final AuthenticationInfo authInfo = securityService.authenticate( authToken );
+        assertTrue( authInfo.isAuthenticated() );
+        assertEquals( user.getKey(), authInfo.getUser().getKey() );
+    }
+
+    @Test(expected = AuthenticationException.class)
+    public void testAuthenticateUnsupportedToken()
+        throws Exception
+    {
+        final CreateUserParams createUser = CreateUserParams.create().
+            userKey( PrincipalKey.ofUser( SYSTEM, "user1" ) ).
+            displayName( "User 1" ).
+            email( "user1@enonic.com" ).
+            login( "user1" ).
+            build();
+
+        final User user = securityService.createUser( createUser );
+
+        final CustomAuthenticationToken authToken = new CustomAuthenticationToken();
+        authToken.setUserStore( SYSTEM );
+
+        final AuthenticationInfo authInfo = securityService.authenticate( authToken );
+        assertEquals( user.getKey(), authInfo.getUser().getKey() );
+    }
+
+    public class CustomAuthenticationToken
+        extends AuthenticationToken
+    {
+    }
+
 }

@@ -3,12 +3,12 @@ package com.enonic.wem.itests.core.entity;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.core.entity.CreateNodeParams;
 import com.enonic.wem.core.entity.GetNodesByIdsCommand;
-import com.enonic.wem.core.entity.Node;
-import com.enonic.wem.core.entity.NodeIds;
-import com.enonic.wem.core.entity.NodePath;
-import com.enonic.wem.core.entity.Nodes;
+import com.enonic.wem.repo.CreateNodeParams;
+import com.enonic.wem.repo.Node;
+import com.enonic.wem.repo.NodeIds;
+import com.enonic.wem.repo.NodePath;
+import com.enonic.wem.repo.Nodes;
 
 import static org.junit.Assert.*;
 
@@ -21,7 +21,6 @@ public class GetNodesByIdsCommandTest
         throws Exception
     {
         super.setUp();
-        createContentRepository();
     }
 
     @Test
@@ -39,6 +38,8 @@ public class GetNodesByIdsCommandTest
             build() );
 
         refresh();
+
+        printContentRepoIndex();
 
         final Nodes result = GetNodesByIdsCommand.create().
             ids( NodeIds.from( createdNode1.id(), createdNode2.id() ) ).
@@ -90,6 +91,4 @@ public class GetNodesByIdsCommandTest
         assertTrue( result.getNodeById( createdNode1.id() ).getHasChildren() );
         assertFalse( result.getNodeById( createdNode2.id() ).getHasChildren() );
     }
-
-
 }

@@ -9,13 +9,13 @@ import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextBuilder;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.entity.CompareNodeCommand;
-import com.enonic.wem.core.entity.CreateNodeParams;
-import com.enonic.wem.core.entity.Node;
-import com.enonic.wem.core.entity.NodeComparison;
-import com.enonic.wem.core.entity.NodePath;
+import com.enonic.wem.repo.CreateNodeParams;
+import com.enonic.wem.repo.Node;
+import com.enonic.wem.repo.NodeComparison;
+import com.enonic.wem.repo.NodePath;
 import com.enonic.wem.core.entity.PushNodeCommand;
 import com.enonic.wem.core.entity.UpdateNodeCommand;
-import com.enonic.wem.core.entity.UpdateNodeParams;
+import com.enonic.wem.repo.UpdateNodeParams;
 
 import static org.junit.Assert.*;
 
@@ -28,8 +28,6 @@ public class CompareNodesCommandTest
         throws Exception
     {
         super.setUp();
-
-        createContentRepository();
     }
 
     @Test
@@ -38,12 +36,12 @@ public class CompareNodesCommandTest
     {
         Context stage = ContentConstants.CONTEXT_STAGE;
 
-        final Node createdNode = stage.runWith( () -> createNode( CreateNodeParams.create().
+        final Node createdNode = stage.callWith( () -> createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
             name( "my-node" ).
             build() ) );
 
-        final NodeComparison comparison = stage.runWith( () -> doCompare( ContentConstants.WORKSPACE_PROD, createdNode ) );
+        final NodeComparison comparison = stage.callWith( () -> doCompare( ContentConstants.WORKSPACE_PROD, createdNode ) );
 
         assertEquals( CompareStatus.Status.NEW, comparison.getCompareStatus().getStatus() );
     }
@@ -55,14 +53,14 @@ public class CompareNodesCommandTest
         final Context stage = ContentConstants.CONTEXT_STAGE;
         final Workspace prod = Workspace.from( "prod" );
 
-        final Node createdNode = stage.runWith( () -> createNode( CreateNodeParams.create().
+        final Node createdNode = stage.callWith( () -> createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
             name( "my-node" ).
             build() ) );
 
         stage.runWith( () -> doPushNode( prod, createdNode ) );
 
-        final NodeComparison comparison = stage.runWith( () -> doCompare( prod, createdNode ) );
+        final NodeComparison comparison = stage.callWith( () -> doCompare( prod, createdNode ) );
 
         assertEquals( CompareStatus.Status.EQUAL, comparison.getCompareStatus().getStatus() );
     }
@@ -74,7 +72,7 @@ public class CompareNodesCommandTest
         final Context stage = ContentConstants.CONTEXT_STAGE;
         final Workspace prodWs = ContentConstants.WORKSPACE_PROD;
 
-        final Node createdNode = stage.runWith( () -> createNode( CreateNodeParams.create().
+        final Node createdNode = stage.callWith( () -> createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
             name( "my-node" ).
             build() ) );
@@ -85,7 +83,7 @@ public class CompareNodesCommandTest
         stage.runWith( () -> doUpdateNode( createdNode ) );
         refresh();
 
-        final NodeComparison comparison = stage.runWith( () -> doCompare( prodWs, createdNode ) );
+        final NodeComparison comparison = stage.callWith( () -> doCompare( prodWs, createdNode ) );
 
         assertEquals( CompareStatus.Status.NEWER, comparison.getCompareStatus().getStatus() );
     }
@@ -98,11 +96,11 @@ public class CompareNodesCommandTest
         final Workspace prodWs = ContentConstants.WORKSPACE_PROD;
 
         final Context prodContext = ContextBuilder.create().
-            object( prodWs ).
-            object( ContentConstants.CONTENT_REPO.getId() ).
+            workspace( prodWs ).
+            repositoryId( ContentConstants.CONTENT_REPO.getId() ).
             build();
 
-        final Node createdNode = stageContext.runWith( () -> createNode( CreateNodeParams.create().
+        final Node createdNode = stageContext.callWith( () -> createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
             name( "my-node" ).
             build() ) );
@@ -113,7 +111,7 @@ public class CompareNodesCommandTest
         prodContext.runWith( () -> doUpdateNode( createdNode ) );
         refresh();
 
-        final NodeComparison comparison = stageContext.runWith( () -> doCompare( prodWs, createdNode ) );
+        final NodeComparison comparison = stageContext.callWith( () -> doCompare( prodWs, createdNode ) );
 
         assertEquals( CompareStatus.Status.OLDER, comparison.getCompareStatus().getStatus() );
     }

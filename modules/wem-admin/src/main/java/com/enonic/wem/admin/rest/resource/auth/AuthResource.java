@@ -8,6 +8,7 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
+import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.security.SecurityService;
 import com.enonic.wem.api.security.UserStore;
 import com.enonic.wem.api.security.UserStoreKey;
@@ -15,6 +16,7 @@ import com.enonic.wem.api.security.UserStores;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.api.security.auth.EmailPasswordAuthToken;
 import com.enonic.wem.api.security.auth.UsernamePasswordAuthToken;
+import com.enonic.wem.api.session.Session;
 import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
 
 @Path(ResourceConstants.REST_ROOT + "auth")
@@ -50,7 +52,28 @@ public final class AuthResource
         {
             authInfo = doLogin( user, login.getPassword(), login.isRememberMe() );
         }
+
+        if ( authInfo.isAuthenticated() )
+        {
+            final Session session = ContextAccessor.current().getLocalScope().getSession();
+            if ( session != null )
+            {
+                session.setAttribute( authInfo );
+            }
+        }
+
         return new LoginResultJson( authInfo );
+    }
+
+    @POST
+    @Path("logout")
+    public void logout()
+    {
+        final Session session = ContextAccessor.current().getLocalScope().getSession();
+        if ( session != null )
+        {
+            session.invalidate();
+        }
     }
 
     private AuthenticationInfo doLogin( final String user, final String password, final boolean rememberMe )

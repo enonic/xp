@@ -10,11 +10,11 @@ module api.security {
 
         private modifiedTime: Date;
 
-        constructor(principalKey: PrincipalKey, displayName: string, type: PrincipalType, modifiedTime: Date) {
+        constructor(principalKey: PrincipalKey, displayName: string, type: PrincipalType, modifiedTime?: Date) {
             this.key = principalKey;
             this.displayName = displayName;
             this.type = type;
-            this.modifiedTime = modifiedTime;
+            this.modifiedTime = modifiedTime || new Date();
         }
 
         getKey(): PrincipalKey {
@@ -53,8 +53,8 @@ module api.security {
             var other = <Principal> o;
             return this.key.equals(other.key) &&
                    this.displayName === other.displayName &&
-                                                          this.type === other.type &&
-                                                          api.ObjectHelper.dateEquals(this.modifiedTime, other.modifiedTime);
+                   this.type === other.type &&
+                   api.ObjectHelper.dateEquals(this.modifiedTime, other.modifiedTime);
         }
     }
 }

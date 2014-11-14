@@ -51,7 +51,7 @@ public class PatternIndexConfigDocument
     {
         private final SortedSet<PathIndexConfig> pathIndexConfigs = Sets.newTreeSet();
 
-        private IndexConfig defaultConfig;
+        private IndexConfig defaultConfig = IndexConfig.BY_TYPE;
 
         private Builder()
         {

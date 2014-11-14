@@ -9,8 +9,6 @@ import org.elasticsearch.common.joda.time.DateTimeUtils;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.account.AccountKey;
-import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
@@ -20,14 +18,15 @@ import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.data.ContentData;
-import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.event.EventPublisher;
 import com.enonic.wem.api.schema.content.ContentTypeService;
-import com.enonic.wem.core.entity.Node;
-import com.enonic.wem.core.entity.NodeId;
-import com.enonic.wem.core.entity.NodeService;
-import com.enonic.wem.core.entity.UpdateNodeParams;
-import com.enonic.wem.core.entity.dao.NodeNotFoundException;
+import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.repo.Node;
+import com.enonic.wem.repo.NodeId;
+import com.enonic.wem.repo.NodeNotFoundException;
+import com.enonic.wem.repo.NodeService;
+import com.enonic.wem.repo.UpdateNodeParams;
 
 import static com.enonic.wem.api.content.Content.editContent;
 import static com.enonic.wem.api.content.Content.newContent;
@@ -48,6 +47,8 @@ public class UpdateContentCommandTest
 
     private final ContentNodeTranslator translator = Mockito.mock( ContentNodeTranslator.class );
 
+    private final EventPublisher eventPublisher = Mockito.mock( EventPublisher.class );
+
     //@Ignore // Rewriting content stuff to node
     @Test(expected = ContentNotFoundException.class)
     public void given_content_not_found_when_handle_then_NOT_FOUND_is_returned()
@@ -65,16 +66,9 @@ public class UpdateContentCommandTest
         final ContentId contentId = ContentId.from( "mycontent" );
 
         UpdateContentParams params = new UpdateContentParams().
-            modifier( AccountKey.superUser() ).
+            modifier( PrincipalKey.from( "system:user:admin" ) ).
             contentId( contentId ).
-            editor( new ContentEditor()
-            {
-                @Override
-                public Content.EditBuilder edit( final Content toBeEdited )
-                {
-                    return editContent( toBeEdited ).contentData( unchangedContentData );
-                }
-            } );
+            editor( toBeEdited -> editContent( toBeEdited ).contentData( unchangedContentData ) );
 
         UpdateContentCommand command = UpdateContentCommand.create( params ).
             contentTypeService( this.contentTypeService ).
@@ -82,6 +76,7 @@ public class UpdateContentCommandTest
             nodeService( this.nodeService ).
             blobService( this.blobService ).
             translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
             build();
 
         Mockito.when( attachmentService.getAll( contentId ) ).thenReturn( Attachments.empty() );
@@ -109,16 +104,9 @@ public class UpdateContentCommandTest
         unchangedContentData.add( Property.newString( "myData", "aaa" ) );
 
         UpdateContentParams params = new UpdateContentParams().
-            modifier( AccountKey.superUser() ).
+            modifier( PrincipalKey.from( "system:user:admin" ) ).
             contentId( existingContent.getId() ).
-            editor( new ContentEditor()
-            {
-                @Override
-                public Content.EditBuilder edit( final Content toBeEdited )
-                {
-                    return editContent( toBeEdited ).contentData( unchangedContentData );
-                }
-            } );
+            editor( toBeEdited -> editContent( toBeEdited ).contentData( unchangedContentData ) );
 
         UpdateContentCommand command = UpdateContentCommand.create( params ).
             contentTypeService( this.contentTypeService ).
@@ -126,6 +114,7 @@ public class UpdateContentCommandTest
             nodeService( this.nodeService ).
             blobService( this.blobService ).
             translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
             build();
 
         final Node mockNode = Node.newNode().build();
@@ -148,7 +137,7 @@ public class UpdateContentCommandTest
             name( "mycontent" ).
             createdTime( CREATED_TIME ).
             displayName( "MyContent" ).
-            owner( UserKey.superUser() ).
+            owner( PrincipalKey.from( "system:user:admin" ) ).
             contentData( contentData ).
             build();
     }

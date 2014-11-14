@@ -12,6 +12,8 @@ module api.app.browse {
 
         private iconUrl;
 
+        private iconClass: string;
+
         constructor(model: M) {
             this.model = model;
         }
@@ -36,6 +38,14 @@ module api.app.browse {
             return this;
         }
 
+        setIconClass(iconClass: string): api.app.browse.BrowseItem<M> {
+            this.iconClass = iconClass;
+            return this;
+        }
+
+        getIconClass(): string {
+            return this.iconClass;
+        }
         getModel(): M {
             return this.model;
         }
@@ -59,6 +69,7 @@ module api.app.browse {
         toViewItem(): api.app.view.ViewItem<M> {
             return new api.app.view.ViewItem<M>(this.model)
                 .setIconUrl(this.iconUrl)
+                .setIconClass(this.iconClass)
                 .setDisplayName(this.displayName)
                 .setPath(this.path);
         }
@@ -71,7 +82,7 @@ module api.app.browse {
             return this.model.equals(other.model) &&
                    this.displayName == other.displayName &&
                    this.path == other.path &&
-                   this.iconUrl == other.iconUrl;
+                   this.iconUrl == other.iconUrl && this.iconClass == other.iconClass;
         }
     }
 

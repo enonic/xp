@@ -3,7 +3,7 @@ package com.enonic.wem.core.content.serializer;
 
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.content.thumb.Thumbnail;
-import com.enonic.wem.core.entity.Attachment;
+import com.enonic.wem.repo.Attachment;
 
 
 public class ThumbnailAttachmentSerializer

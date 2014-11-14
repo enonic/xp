@@ -3,7 +3,11 @@
   font-size: 14px;
   text-align: left;
   margin: 4px;
-  z-index: @z-index-tab-menu;
+  position: relative;
+
+  &.expanded {
+    z-index: @z-index-tab-menu;
+  }
 
   .tab-menu-button {
     position: relative;

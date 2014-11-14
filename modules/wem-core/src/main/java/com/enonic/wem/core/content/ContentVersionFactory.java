@@ -5,11 +5,11 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentVersion;
 import com.enonic.wem.api.content.ContentVersionId;
 import com.enonic.wem.api.content.ContentVersions;
-import com.enonic.wem.core.entity.Node;
-import com.enonic.wem.core.entity.NodeId;
-import com.enonic.wem.core.entity.NodeService;
-import com.enonic.wem.core.entity.NodeVersion;
-import com.enonic.wem.core.entity.NodeVersions;
+import com.enonic.wem.repo.Node;
+import com.enonic.wem.repo.NodeId;
+import com.enonic.wem.repo.NodeService;
+import com.enonic.wem.repo.NodeVersion;
+import com.enonic.wem.repo.NodeVersions;
 
 class ContentVersionFactory
 {

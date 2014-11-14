@@ -11,13 +11,12 @@ import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.GetContentByIdsParams;
-import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.core.entity.NoNodeWithIdFoundException;
-import com.enonic.wem.core.entity.NodeId;
-import com.enonic.wem.core.entity.NodeIds;
-import com.enonic.wem.core.entity.NodeService;
-import com.enonic.wem.core.entity.Nodes;
-import com.enonic.wem.core.index.query.QueryService;
+import com.enonic.wem.repo.NodeId;
+import com.enonic.wem.repo.NodeIds;
+import com.enonic.wem.repo.NodeService;
+import com.enonic.wem.repo.Nodes;
 
 
 final class GetContentByIdsCommand
@@ -45,7 +44,7 @@ final class GetContentByIdsCommand
         catch ( NoNodeWithIdFoundException ex )
         {
             final ContentId contentId = ContentId.from( ex.getId().toString() );
-            throw new ContentNotFoundException( contentId, Context.current().getWorkspace() );
+            throw new ContentNotFoundException( contentId, ContextAccessor.current().getWorkspace() );
         }
 
         return contents;
@@ -86,9 +85,6 @@ final class GetContentByIdsCommand
 
         private NodeService nodeService;
 
-        private QueryService queryService;
-
-
         public Builder( final GetContentByIdsParams params )
         {
             this.params = params;
@@ -100,18 +96,11 @@ final class GetContentByIdsCommand
             return this;
         }
 
-        public Builder queryService( final QueryService queryService )
-        {
-            this.queryService = queryService;
-            return this;
-        }
-
         void validate()
         {
             super.validate();
             Preconditions.checkNotNull( params );
             Preconditions.checkNotNull( nodeService );
-            Preconditions.checkNotNull( queryService );
         }
 
         public GetContentByIdsCommand build()

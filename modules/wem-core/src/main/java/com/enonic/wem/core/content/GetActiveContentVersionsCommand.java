@@ -7,10 +7,10 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.GetActiveContentVersionsResult;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.api.workspace.Workspaces;
-import com.enonic.wem.core.entity.GetActiveNodeVersionsParams;
-import com.enonic.wem.core.entity.GetActiveNodeVersionsResult;
-import com.enonic.wem.core.entity.NodeId;
-import com.enonic.wem.core.entity.NodeVersion;
+import com.enonic.wem.repo.GetActiveNodeVersionsParams;
+import com.enonic.wem.repo.GetActiveNodeVersionsResult;
+import com.enonic.wem.repo.NodeId;
+import com.enonic.wem.repo.NodeVersion;
 
 public class GetActiveContentVersionsCommand
     extends AbstractContentCommand

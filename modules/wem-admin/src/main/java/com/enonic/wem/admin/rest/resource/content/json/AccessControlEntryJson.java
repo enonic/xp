@@ -2,7 +2,12 @@ package com.enonic.wem.admin.rest.resource.content.json;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.enonic.wem.api.security.Principal;
+import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlEntry;
 import com.enonic.wem.api.security.acl.Permission;
 
@@ -19,6 +24,28 @@ public final class AccessControlEntryJson
     {
         this.entry = entry;
         this.principal = principal;
+    }
+
+    @JsonCreator
+    public AccessControlEntryJson( @JsonProperty("principal") final PrincipalJson principal, //
+                                   @JsonProperty("allow") final List<String> allow, //
+                                   @JsonProperty("deny") final List<String> deny )
+    {
+        final AccessControlEntry.Builder builder = AccessControlEntry.create().
+            principal( PrincipalKey.from( principal.getKey() ) );
+
+        for ( final String permission : allow )
+        {
+            builder.allow( Permission.valueOf( permission ) );
+        }
+
+        for ( final String permission : deny )
+        {
+            builder.deny( Permission.valueOf( permission ) );
+        }
+
+        this.entry = builder.build();
+        this.principal = null;
     }
 
     public PrincipalJson getPrincipal()
@@ -43,4 +70,9 @@ public final class AccessControlEntryJson
             collect( toList() );
     }
 
+    @JsonIgnore
+    public AccessControlEntry getSourceEntry()
+    {
+        return entry;
+    }
 }

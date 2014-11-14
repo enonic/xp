@@ -4,24 +4,26 @@ import org.junit.Before;
 
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.repository.Repository;
-import com.enonic.wem.core.blob.BlobServiceImpl;
 import com.enonic.wem.core.elasticsearch.ElasticsearchIndexService;
 import com.enonic.wem.core.elasticsearch.ElasticsearchQueryService;
 import com.enonic.wem.core.elasticsearch.ElasticsearchVersionService;
 import com.enonic.wem.core.elasticsearch.workspace.ElasticsearchWorkspaceService;
 import com.enonic.wem.core.entity.CreateNodeCommand;
-import com.enonic.wem.core.entity.CreateNodeParams;
 import com.enonic.wem.core.entity.FindNodesByParentCommand;
-import com.enonic.wem.core.entity.FindNodesByParentParams;
-import com.enonic.wem.core.entity.FindNodesByParentResult;
 import com.enonic.wem.core.entity.GetNodeByIdCommand;
-import com.enonic.wem.core.entity.Node;
-import com.enonic.wem.core.entity.NodeId;
 import com.enonic.wem.core.entity.dao.NodeDaoImpl;
+import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.repository.IndexNameResolver;
-import com.enonic.wem.core.repository.RepositoryInitializer;
+import com.enonic.wem.core.repository.RepositoryInitializerImpl;
+import com.enonic.wem.core.repository.StorageNameResolver;
+import com.enonic.wem.internal.blob.BlobServiceImpl;
 import com.enonic.wem.itests.core.MemoryBlobStore;
 import com.enonic.wem.itests.core.elasticsearch.AbstractElasticsearchIntegrationTest;
+import com.enonic.wem.repo.CreateNodeParams;
+import com.enonic.wem.repo.FindNodesByParentParams;
+import com.enonic.wem.repo.FindNodesByParentResult;
+import com.enonic.wem.repo.Node;
+import com.enonic.wem.repo.NodeId;
 
 public abstract class AbstractNodeTest
     extends AbstractElasticsearchIntegrationTest
@@ -62,13 +64,15 @@ public abstract class AbstractNodeTest
 
         this.queryService = new ElasticsearchQueryService();
         this.queryService.setElasticsearchDao( elasticsearchDao );
+
+        createContentRepository();
+        waitForClusterHealth();
     }
 
     protected void createRepository( final Repository repository )
     {
-        RepositoryInitializer repositoryInitializer = new RepositoryInitializer();
+        RepositoryInitializerImpl repositoryInitializer = new RepositoryInitializerImpl();
         repositoryInitializer.setIndexService( this.indexService );
-
         repositoryInitializer.init( repository );
 
         refresh();
@@ -80,7 +84,7 @@ public abstract class AbstractNodeTest
     }
 
 
-    Node createNode( final CreateNodeParams createNodeParams )
+    public Node createNode( final CreateNodeParams createNodeParams )
     {
         final Node createdNode = CreateNodeCommand.create().
             workspaceService( this.workspaceService ).
@@ -123,11 +127,18 @@ public abstract class AbstractNodeTest
             nodeDao( nodeDao ).
             build().
             execute();
-
     }
 
     protected void printContentRepoIndex()
     {
         printAllIndexContent( IndexNameResolver.resolveSearchIndexName( ContentConstants.CONTENT_REPO.getId() ), "stage" );
     }
+
+    protected void printVersionIndex()
+    {
+        printAllIndexContent( StorageNameResolver.resolveStorageIndexName( ContentConstants.CONTENT_REPO.getId() ),
+                              IndexType.VERSION.getName() );
+    }
+
+
 }

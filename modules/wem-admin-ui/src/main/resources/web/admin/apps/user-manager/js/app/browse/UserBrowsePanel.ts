@@ -6,7 +6,7 @@ module app.browse {
 
     export class UserBrowsePanel extends api.app.browse.BrowsePanel<app.browse.UserTreeGridItem> {
 
-        private browseActions: app.browse.UserBrowseActions;
+        private browseActions: app.browse.UserTreeGridActions;
 
         private userTreeGrid: UserItemsTreeGrid;
 
@@ -15,11 +15,9 @@ module app.browse {
         private toolbar: UserBrowseToolbar;
 
         constructor() {
-            var treeGridContextMenu = new app.browse.UserTreeGridContextMenu();
             this.userTreeGrid = new UserItemsTreeGrid();
 
-            this.browseActions = UserBrowseActions.init(this.userTreeGrid);
-            treeGridContextMenu.setActions(this.browseActions);
+            this.browseActions = this.userTreeGrid.getTreeGridActions();
             this.userFilterPanel = new app.browse.filter.PrincipalBrowseFilterPanel();
             this.toolbar = new UserBrowseToolbar(this.browseActions);
             var browseItemPanel = components.detailPanel = new UserBrowseItemPanel();
@@ -32,9 +30,9 @@ module app.browse {
             });
 
             this.userTreeGrid.onSelectionChanged((selectedRows: TreeNode<UserTreeGridItem>[]) => {
-                // this.browseActions.updateActionsEnabledState(<any[]>selectedRows.map((elem) => {
-                //     return elem.getData();
-                // }));
+                this.browseActions.updateActionsEnabledState(<any[]>selectedRows.map((elem) => {
+                    return elem.getData();
+                }));
             });
         }
 
@@ -48,50 +46,44 @@ module app.browse {
                 var item = new BrowseItem<UserTreeGridItem>(userGridItem).
                     setId(userGridItem.getDataId()).
                     setDisplayName(userGridItem.getItemDisplayName()).
-                    //TODO set a less icon-class
-                    setIconUrl(this.selectIconUrl(userGridItem));
-
+                    setIconClass(this.selectIconClass(userGridItem));
                 browseItems.push(item);
 
             });
             return browseItems;
         }
 
-        private selectIconUrl(item: app.browse.UserTreeGridItem): string {
+        private selectIconClass(item: app.browse.UserTreeGridItem): string {
             var type: UserTreeGridItemType = item.getType();
             switch (type) {
             case UserTreeGridItemType.USER_STORE:
             {
-                return  api.util.UriHelper.getAdminUri('common/images/icons/128x128/userstore.png');
+                return "icon-address-book icon-large";
             }
             case UserTreeGridItemType.PRINCIPAL:
             {
                 if (item.getPrincipal().isRole()) {
-                    //TODO instead of URI need to set icon-class
-                    return  api.util.UriHelper.getAdminUri('common/images/icons/128x128/userstore.png');
-                }
-                if (item.getPrincipal().isUser()) {
-                    //TODO instead of URI need to set icon-class
-                    return  api.util.UriHelper.getAdminUri('common/images/icons/128x128/businessman.png');
-                }
-                if (item.getPrincipal().isGroup()) {
-                    return  api.util.UriHelper.getAdminUri('common/images/icons/128x128/group.png');
-                }
+                    return "icon-user7 icon-large";
 
+                } else if (item.getPrincipal().isUser()) {
+                    return "icon-user icon-large";
+
+                } else if (item.getPrincipal().isGroup()) {
+                    return "icon-users icon-large";
+                }
+                break;
             }
             case UserTreeGridItemType.GROUPS:
-            {            //TODO instead of URI need to set icon-class
-                return  api.util.UriHelper.getAdminUri('common/images/icons/128x128/group.png');
+            {
+                return "icon-folder icon-large"
             }
             case UserTreeGridItemType.ROLES:
-
             {
-                //TODO instead of URI need to set icon-class
-                return  api.util.UriHelper.getAdminUri('common/images/icons/icoMoon/128x128/puzzle.png');
+                return "icon-folder icon-large";
             }
             case UserTreeGridItemType.USERS:
-            {     //TODO instead of URI need to set icon-class
-                return  api.util.UriHelper.getAdminUri('common/images/icons/128x128/businessmen.png');
+            {
+                return "icon-folder icon-large";
             }
             }
 

@@ -50,7 +50,7 @@ class LayoutJsonSerializer
     {
         jsonObject.put( LABEL, fieldSet.getLabel() );
         jsonObject.put( NAME, fieldSet.getName() );
-        jsonObject.put( ITEMS, formItemsJsonSerializer.serialize( fieldSet.getFormItems() ) );
+        jsonObject.set( ITEMS, formItemsJsonSerializer.serialize( fieldSet.getFormItems() ) );
     }
 
     public Layout parse( final JsonNode formItemNode )

@@ -55,7 +55,7 @@ public class InputJsonSerializer
         jsonObject.put( NAME, input.getName() );
         jsonObject.put( LABEL, input.getLabel() );
         jsonObject.put( IMMUTABLE, input.isImmutable() );
-        jsonObject.put( OCCURRENCES, occurrencesJsonSerializer.serialize( input.getOccurrences() ) );
+        jsonObject.set( OCCURRENCES, occurrencesJsonSerializer.serialize( input.getOccurrences() ) );
         jsonObject.put( INDEXED, input.isIndexed() );
         jsonObject.put( CUSTOM_TEXT, input.getCustomText() );
         jsonObject.put( VALIDATION_REGEXP, input.getValidationRegexp() != null ? input.getValidationRegexp().toString() : null );
@@ -66,9 +66,9 @@ public class InputJsonSerializer
         {
             final JsonNode inputTypeNode =
                 input.getInputType().getInputTypeConfigJsonSerializer().serialize( input.getInputTypeConfig(), objectMapper() );
-            typeObject.put( CONFIG, inputTypeNode );
+            typeObject.set( CONFIG, inputTypeNode );
         }
-        jsonObject.put( TYPE, typeObject );
+        jsonObject.set( TYPE, typeObject );
         return jsonObject;
     }
 

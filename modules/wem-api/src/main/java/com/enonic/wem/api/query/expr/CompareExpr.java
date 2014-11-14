@@ -48,11 +48,6 @@ public final class CompareExpr
 
     private final ImmutableList<ValueExpr> values;
 
-    public static CompareExpr equals( final String fieldName, final ValueExpr value )
-    {
-        return new CompareExpr( FieldExpr.from( fieldName ), Operator.EQ, value );
-    }
-
     private CompareExpr( final FieldExpr field, final Operator operator, final ValueExpr value )
     {
         this.field = field;
@@ -158,6 +153,11 @@ public final class CompareExpr
     public static CompareExpr create( final FieldExpr field, final Operator operator, final ValueExpr value )
     {
         return new CompareExpr( field, operator, value );
+    }
+
+    public static CompareExpr create( final String fieldName, final Operator operator, final ValueExpr value )
+    {
+        return new CompareExpr( FieldExpr.from( fieldName ), operator, value );
     }
 
     public static CompareExpr create( final FieldExpr field, final Operator operator, final Iterable<ValueExpr> values )

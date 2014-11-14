@@ -7,6 +7,7 @@ import com.google.common.collect.Sets;
 
 import com.enonic.wem.admin.json.content.ContentJson;
 import com.enonic.wem.admin.rest.resource.content.ContentIconUrlResolver;
+import com.enonic.wem.admin.rest.resource.content.ContentPrincipalsResolver;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
 
@@ -19,9 +20,10 @@ public class ContentQueryResultJson
         this.contents = ImmutableSet.copyOf( builder.contents );
     }
 
-    public static ContentQueryResultJson.Builder newBuilder( final ContentIconUrlResolver iconUrlResolver )
+    public static ContentQueryResultJson.Builder newBuilder( final ContentIconUrlResolver iconUrlResolver,
+                                                             final ContentPrincipalsResolver contentPrincipalsResolver )
     {
-        return new Builder( iconUrlResolver );
+        return new Builder( iconUrlResolver, contentPrincipalsResolver );
     }
 
     public static class Builder
@@ -29,17 +31,21 @@ public class ContentQueryResultJson
     {
         private final ContentIconUrlResolver iconUrlResolver;
 
+        private final ContentPrincipalsResolver contentPrincipalsResolver;
+
         private Set<ContentJson> contents = Sets.newLinkedHashSet();
 
-        public Builder( final ContentIconUrlResolver iconUrlResolver )
+        public Builder( final ContentIconUrlResolver iconUrlResolver, final ContentPrincipalsResolver contentPrincipalsResolver )
         {
             this.iconUrlResolver = iconUrlResolver;
+            this.contentPrincipalsResolver = contentPrincipalsResolver;
         }
 
         public Builder addContent( final Content content,
                                    final MixinReferencesToFormItemsTransformer mixinReferencesToFormItemsTransformer )
         {
-            this.contents.add( new ContentJson( content, iconUrlResolver, mixinReferencesToFormItemsTransformer ) );
+            this.contents.add(
+                new ContentJson( content, iconUrlResolver, mixinReferencesToFormItemsTransformer, contentPrincipalsResolver ) );
             return this;
         }
 

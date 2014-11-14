@@ -1,29 +1,30 @@
 package com.enonic.wem.core.content;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
-import com.google.common.io.InputSupplier;
+import com.google.common.io.ByteSource;
 
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentDataValidationException;
+import com.enonic.wem.api.content.ContentUpdatedEvent;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.thumb.Thumbnail;
+import com.enonic.wem.api.event.EventPublisher;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
-import com.enonic.wem.core.entity.Node;
-import com.enonic.wem.core.entity.UpdateNodeParams;
+import com.enonic.wem.repo.Node;
+import com.enonic.wem.repo.UpdateNodeParams;
 
 import static com.enonic.wem.api.content.Content.newContent;
 
@@ -36,6 +37,8 @@ final class UpdateContentCommand
 
     private final AttachmentService attachmentService;
 
+    private final EventPublisher eventPublisher;
+
     private final UpdateContentParams params;
 
     private UpdateContentCommand( final Builder builder )
@@ -43,6 +46,7 @@ final class UpdateContentCommand
         super( builder );
         this.attachmentService = builder.attachmentService;
         this.params = builder.params;
+        this.eventPublisher = builder.eventPublisher;
     }
 
     public static Builder create( final UpdateContentParams params )
@@ -68,7 +72,6 @@ final class UpdateContentCommand
         }
 
         Content editedContent = editBuilder.build();
-
         validateEditedContent( contentBeforeChange, editedContent );
 
         editedContent = newContent( editedContent ).modifier( this.params.getModifier() ).build();
@@ -95,6 +98,11 @@ final class UpdateContentCommand
         final UpdateNodeParams updateNodeParams = translator.toUpdateNodeCommand( editedContent, attachments );
 
         final Node editedNode = this.nodeService.update( updateNodeParams );
+
+        if ( !contentBeforeChange.getName().isUnnamed() )
+        {
+            eventPublisher.publish( new ContentUpdatedEvent( editedContent.getId() ) );
+        }
 
         return translator.fromNode( editedNode );
     }
@@ -151,11 +159,11 @@ final class UpdateContentCommand
     private Thumbnail createThumbnail( final Attachment attachment )
     {
         final Blob originalImage = blobService.get( attachment.getBlobKey() );
-        final InputSupplier<ByteArrayInputStream> inputSupplier = ThumbnailFactory.resolve( originalImage );
+        final ByteSource source = ThumbnailFactory.resolve( originalImage );
         final Blob thumbnailBlob;
         try
         {
-            thumbnailBlob = blobService.create( inputSupplier.getInput() );
+            thumbnailBlob = blobService.create( source.openStream() );
         }
         catch ( IOException e )
         {
@@ -177,6 +185,8 @@ final class UpdateContentCommand
 
         private AttachmentService attachmentService;
 
+        private EventPublisher eventPublisher;
+
         public Builder( final UpdateContentParams params )
         {
             this.params = params;
@@ -188,10 +198,17 @@ final class UpdateContentCommand
             return this;
         }
 
+        public Builder eventPublisher( final EventPublisher eventPublisher )
+        {
+            this.eventPublisher = eventPublisher;
+            return this;
+        }
+
         void validate()
         {
             Preconditions.checkNotNull( attachmentService );
             Preconditions.checkNotNull( params );
+            Preconditions.checkNotNull( eventPublisher );
         }
 
         public UpdateContentCommand build()

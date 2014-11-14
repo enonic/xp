@@ -3,6 +3,7 @@ module api.app.browse {
     import ResponsiveManager = api.ui.responsive.ResponsiveManager;
     import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
+    import TreeNode = api.ui.treegrid.TreeNode;
 
     export interface BrowsePanelParams<M extends api.Equitable> {
 
@@ -68,8 +69,8 @@ module api.app.browse {
                 this.filterAndGridAndDetailSplitPanel = this.gridAndDetailSplitPanel;
             }
 
-            this.treeGrid.onSelectionChanged((nodes: api.ui.treegrid.TreeNode<Object>[]) => {
-                var browseItems: api.app.browse.BrowseItem<M>[] = this.treeNodesToBrowseItems(nodes);
+            this.treeGrid.onSelectionChanged((currentSelection: TreeNode<Object>[], fullSelection: TreeNode<Object>[]) => {
+                var browseItems: api.app.browse.BrowseItem<M>[] = this.treeNodesToBrowseItems(fullSelection);
                 this.browseItemPanel.setItems(browseItems);
                 this.treeGrid.refreshToolbar();
             });
@@ -121,7 +122,7 @@ module api.app.browse {
         }
 
         // TODO: ContentSummary must be replaced with an ContentSummaryAndCompareStatus after old grid is removed
-        treeNodesToBrowseItems(nodes: api.ui.treegrid.TreeNode<Object>[]): BrowseItem<M>[] {
+        treeNodesToBrowseItems(nodes: TreeNode<Object>[]): BrowseItem<M>[] {
             return [];
         }
 

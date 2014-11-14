@@ -17,7 +17,7 @@ public final class SystemConstants
         build();
 
     public static final Context CONTEXT_USER_STORES = ContextBuilder.create().
-        object( WORKSPACE_USER_STORES ).
-        object( SYSTEM_REPO.getId() ).
+        workspace( WORKSPACE_USER_STORES ).
+        repositoryId( SYSTEM_REPO.getId() ).
         build();
 }

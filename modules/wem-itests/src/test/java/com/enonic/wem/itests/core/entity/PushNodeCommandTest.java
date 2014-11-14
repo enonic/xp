@@ -7,9 +7,9 @@ import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextBuilder;
 import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.core.entity.CreateNodeParams;
-import com.enonic.wem.core.entity.Node;
-import com.enonic.wem.core.entity.NodePath;
+import com.enonic.wem.repo.CreateNodeParams;
+import com.enonic.wem.repo.Node;
+import com.enonic.wem.repo.NodePath;
 import com.enonic.wem.core.entity.PushNodeCommand;
 
 import static org.junit.Assert.*;
@@ -23,7 +23,6 @@ public class PushNodeCommandTest
         throws Exception
     {
         super.setUp();
-        createContentRepository();
     }
 
 
@@ -36,8 +35,8 @@ public class PushNodeCommandTest
             build();
 
         final Context testContext = ContextBuilder.create().
-            object( testWorkspace ).
-            object( ContentConstants.CONTENT_REPO.getId() ).
+            workspace( testWorkspace ).
+            repositoryId( ContentConstants.CONTENT_REPO.getId() ).
             build();
 
         final Node node = createNode( CreateNodeParams.create().
@@ -45,7 +44,7 @@ public class PushNodeCommandTest
             name( "my-node" ).
             build() );
 
-        Node testWsNode = testContext.runWith( () -> getNodeById( node.id() ) );
+        Node testWsNode = testContext.callWith( () -> getNodeById( node.id() ) );
 
         assertTrue( testWsNode == null );
 
@@ -60,7 +59,7 @@ public class PushNodeCommandTest
             build().
             execute();
 
-        testWsNode = testContext.runWith( () -> getNodeById( node.id() ) );
+        testWsNode = testContext.callWith( () -> getNodeById( node.id() ) );
 
         assertTrue( testWsNode != null );
 

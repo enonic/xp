@@ -45,6 +45,11 @@
 
 ///<reference path='ui/responsive/_module.ts' />
 
+///<reference path='security/_module.ts' />
+///<reference path='security/acl/_module.ts' />
+///<reference path='security/auth/_module.ts' />
+///<reference path='security/query/_module.ts' />
+
 ///<reference path='ui/_module.ts' />
 ///<reference path='ui/button/_module.ts' />
 ///<reference path='ui/text/_module.ts' />
@@ -94,7 +99,6 @@
 
 ///<reference path='module/_module.ts' />
 ///<reference path='module/json/_module.ts' />
-///<reference path='module/inputtype/moduleconfigurator/_module.ts' />
 
 ///<reference path='schema/_module.ts' />
 ///<reference path='schema/content/_module.ts' />
@@ -102,11 +106,6 @@
 ///<reference path='schema/mixin/_module.ts'/>
 ///<reference path='schema/relationshiptype/_module.ts' />
 ///<reference path='schema/metadata/_module.ts'/>
-
-///<reference path='security/_module.ts' />
-///<reference path='security/acl/_module.ts' />
-///<reference path='security/auth/_module.ts' />
-///<reference path='security/query/_module.ts' />
 
 ///<reference path='content/json/_module.ts' />
 ///<reference path='content/_module.ts' />
@@ -121,6 +120,7 @@
 ///<reference path='content/page/text/_module.ts' />
 ///<reference path='content/page/inputtype/pagecontroller/_module.ts' />
 ///<reference path='content/site/_module.ts' />
+///<reference path='content/site/inputtype/moduleconfigurator/_module.ts' />
 ///<reference path='content/form/_module.ts' />
 ///<reference path='content/form/inputtype/_module.ts' />
 ///<reference path='content/form/inputtype/imageupload/_module.ts' />

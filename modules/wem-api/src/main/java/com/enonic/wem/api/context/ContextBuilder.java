@@ -1,41 +1,66 @@
 package com.enonic.wem.api.context;
 
+import com.google.common.collect.ImmutableMap;
+
+import com.enonic.wem.api.repository.RepositoryId;
+import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.api.workspace.Workspace;
 
 public final class ContextBuilder
 {
-    private final Context context;
+    private LocalScope localScope;
+
+    private final ImmutableMap.Builder<String, Object> attributes;
 
     private ContextBuilder()
     {
-        this.context = new Context();
+        this.attributes = ImmutableMap.builder();
     }
 
-    public ContextBuilder workspace( final String workspace )
+    public ContextBuilder repositoryId( final String value )
     {
-        return object( Workspace.from( workspace ) );
+        return repositoryId( RepositoryId.from( value ) );
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> ContextBuilder object( final T instance )
+    public ContextBuilder repositoryId( final RepositoryId value )
     {
-        return object( (Class<T>) instance.getClass(), instance );
+        return attribute( value );
     }
 
-    public <T> ContextBuilder object( final Class<T> type, final T instance )
+    public ContextBuilder workspace( final String value )
     {
-        return object( type.getName(), instance );
+        return workspace( Workspace.from( value ) );
     }
 
-    public <T> ContextBuilder object( final String key, final T instance )
+    public ContextBuilder workspace( final Workspace value )
     {
-        this.context.objects.put( key, instance );
+        return attribute( value );
+    }
+
+    public ContextBuilder authInfo( final AuthenticationInfo value )
+    {
+        return attribute( value );
+    }
+
+    public ContextBuilder attribute( final String key, final Object value )
+    {
+        this.attributes.put( key, value );
         return this;
+    }
+
+    public <T> ContextBuilder attribute( final T value )
+    {
+        return attribute( value.getClass().getName(), value );
     }
 
     public Context build()
     {
-        return this.context;
+        if ( this.localScope == null )
+        {
+            this.localScope = new LocalScopeImpl();
+        }
+
+        return new ContextImpl( this.attributes.build(), this.localScope );
     }
 
     public static ContextBuilder create()
@@ -43,8 +68,11 @@ public final class ContextBuilder
         return new ContextBuilder();
     }
 
-    public static ContextBuilder from( final Context context )
+    public static ContextBuilder from( final Context parent )
     {
-        return new ContextBuilder();
+        final ContextBuilder builder = new ContextBuilder();
+        builder.localScope = parent.getLocalScope();
+        builder.attributes.putAll( parent.getAttributes() );
+        return builder;
     }
 }

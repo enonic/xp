@@ -3,9 +3,9 @@ package com.enonic.wem.core.content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentVersions;
 import com.enonic.wem.api.content.FindContentVersionsResult;
-import com.enonic.wem.core.entity.FindNodeVersionsResult;
-import com.enonic.wem.core.entity.GetNodeVersionsParams;
-import com.enonic.wem.core.entity.NodeId;
+import com.enonic.wem.repo.FindNodeVersionsResult;
+import com.enonic.wem.repo.GetNodeVersionsParams;
+import com.enonic.wem.repo.NodeId;
 
 public class FindContentVersionsCommand
     extends AbstractContentCommand

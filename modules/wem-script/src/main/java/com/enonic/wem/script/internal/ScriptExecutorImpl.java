@@ -51,6 +51,8 @@ final class ScriptExecutorImpl
     {
         try
         {
+            bindings.put( "log", new ScriptLogger( script ) );
+
             final Resource resource = Resource.from( script );
             final String source = resource.readString();
 

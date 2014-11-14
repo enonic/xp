@@ -3,10 +3,10 @@ package com.enonic.wem.itests.core.entity;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.core.entity.CreateNodeParams;
+import com.enonic.wem.repo.CreateNodeParams;
 import com.enonic.wem.core.entity.DeleteNodeByIdCommand;
-import com.enonic.wem.core.entity.Node;
-import com.enonic.wem.core.entity.NodePath;
+import com.enonic.wem.repo.Node;
+import com.enonic.wem.repo.NodePath;
 
 import static org.junit.Assert.*;
 
@@ -19,8 +19,6 @@ public class DeleteNodeByIdCommandTest
         throws Exception
     {
         super.setUp();
-
-        createContentRepository();
     }
 
     @Test

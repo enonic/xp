@@ -1,7 +1,7 @@
 package com.enonic.wem.core.security;
 
 import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.core.entity.NodePath;
+import com.enonic.wem.repo.NodePath;
 
 class PrincipalPathTranslator
 {

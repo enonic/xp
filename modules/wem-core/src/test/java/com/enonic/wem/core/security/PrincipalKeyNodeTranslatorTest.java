@@ -12,8 +12,8 @@ import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.PrincipalType;
 import com.enonic.wem.api.security.User;
 import com.enonic.wem.api.security.UserStoreKey;
-import com.enonic.wem.core.entity.Node;
-import com.enonic.wem.core.entity.NodeName;
+import com.enonic.wem.repo.Node;
+import com.enonic.wem.repo.NodeName;
 
 import static org.junit.Assert.*;
 

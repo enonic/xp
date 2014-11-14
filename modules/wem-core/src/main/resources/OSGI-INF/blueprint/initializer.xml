@@ -3,10 +3,6 @@
 
   <reference-list id="dataInitializers" interface="com.enonic.wem.api.initializer.DataInitializer" availability="optional"/>
 
-  <bean id="repositoryInitializer" class="com.enonic.wem.core.repository.RepositoryInitializer">
-    <property name="indexService" ref="indexService"/>
-  </bean>
-
   <bean id="securityInitializer" class="com.enonic.wem.core.security.SecurityInitializer">
     <property name="securityService" ref="securityService"/>
   </bean>

@@ -1,24 +1,31 @@
 package com.enonic.wem.core.security;
 
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.api.data.DataId;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.security.Group;
 import com.enonic.wem.api.security.Principal;
+import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.security.PrincipalRelationship;
+import com.enonic.wem.api.security.PrincipalRelationships;
 import com.enonic.wem.api.security.PrincipalType;
 import com.enonic.wem.api.security.Principals;
 import com.enonic.wem.api.security.Role;
 import com.enonic.wem.api.security.User;
-import com.enonic.wem.core.entity.CreateNodeParams;
-import com.enonic.wem.core.entity.Node;
-import com.enonic.wem.core.entity.NodeId;
-import com.enonic.wem.core.entity.Nodes;
-import com.enonic.wem.core.entity.UpdateNodeParams;
+import com.enonic.wem.repo.CreateNodeParams;
+import com.enonic.wem.repo.Node;
+import com.enonic.wem.repo.NodeId;
+import com.enonic.wem.repo.Nodes;
+import com.enonic.wem.repo.UpdateNodeParams;
 
 abstract class PrincipalNodeTranslator
 {
@@ -33,6 +40,8 @@ abstract class PrincipalNodeTranslator
     public static final String EMAIL_KEY = "email";
 
     public static final String LOGIN_KEY = "login";
+
+    public static final String MEMBER_KEY = "member";
 
     static Principals fromNodes( final Nodes nodes )
     {
@@ -124,6 +133,7 @@ abstract class PrincipalNodeTranslator
         {
             case USER:
                 populateUserData( data, (User) principal );
+                break;
         }
 
         builder.data( data );
@@ -150,6 +160,94 @@ abstract class PrincipalNodeTranslator
             } );
 
         return updateNodeParams;
+    }
+
+    static UpdateNodeParams addRelationshipToUpdateNodeParams( final PrincipalRelationship relationship )
+    {
+        Preconditions.checkNotNull( relationship );
+
+        final UpdateNodeParams updateNodeParams = new UpdateNodeParams().id( NodeId.from( relationship.getFrom() ) ).
+            editor( toBeEdited -> {
+                final RootDataSet data = toBeEdited.data().copy().toRootDataSet();
+
+                final String relationshipToKey = relationship.getTo().toString();
+
+                final boolean relationshipInList = data.getPropertiesByName( MEMBER_KEY ).stream().
+                    map( Property::getValue ).
+                    map( Value::asString ).
+                    anyMatch( relationshipToKey::equals );
+
+                if ( !relationshipInList )
+                {
+                    data.add( Property.newString( MEMBER_KEY, relationshipToKey ) );
+                }
+
+                return Node.editNode( toBeEdited ).rootDataSet( data );
+            } );
+
+        return updateNodeParams;
+    }
+
+    static UpdateNodeParams removeRelationshipToUpdateNodeParams( final PrincipalRelationship relationship )
+    {
+        Preconditions.checkNotNull( relationship );
+
+        final UpdateNodeParams updateNodeParams = new UpdateNodeParams().id( NodeId.from( relationship.getFrom() ) ).
+            editor( toBeEdited -> {
+                final RootDataSet data = toBeEdited.data().copy().toRootDataSet();
+
+                final String relationshipToKey = relationship.getTo().toString();
+
+                final List<Value> updatedMembers = data.getPropertiesByName( MEMBER_KEY ).stream().
+                    map( Property::getValue ).
+                    filter( ( val ) -> !relationshipToKey.equals( val.asString() ) ).
+                    collect( Collectors.toList() );
+                final Value[] values = updatedMembers.toArray( new Value[updatedMembers.size()] );
+
+                data.remove( DataId.from( MEMBER_KEY ) );
+                data.setProperty( MEMBER_KEY, values );
+
+                return Node.editNode( toBeEdited ).rootDataSet( data );
+            } );
+
+        return updateNodeParams;
+    }
+
+    static UpdateNodeParams removeAllRelationshipsToUpdateNodeParams( final PrincipalKey from )
+    {
+        Preconditions.checkNotNull( from );
+
+        final UpdateNodeParams updateNodeParams = new UpdateNodeParams().id( NodeId.from( from ) ).
+            editor( toBeEdited -> {
+                final RootDataSet data = toBeEdited.data().copy().toRootDataSet();
+
+                data.remove( DataId.from( MEMBER_KEY ) );
+
+                return Node.editNode( toBeEdited ).rootDataSet( data );
+            } );
+
+        return updateNodeParams;
+    }
+
+    static PrincipalRelationships relationshipsFromNode( final Node node )
+    {
+        final RootDataSet rootDataSet = node.data();
+        final List<Property> members = rootDataSet.getPropertiesByName( MEMBER_KEY );
+        if ( members == null || members.isEmpty() )
+        {
+            return PrincipalRelationships.empty();
+        }
+
+        final ImmutableList.Builder<PrincipalRelationship> relationships = ImmutableList.builder();
+        final PrincipalKey relationshipFrom = PrincipalKeyNodeTranslator.toKey( node );
+        for ( Property member : members )
+        {
+            final String memberKey = member.getValue().asString();
+            final PrincipalKey relationshipTo = PrincipalKey.from( memberKey );
+            final PrincipalRelationship relationship = PrincipalRelationship.from( relationshipFrom ).to( relationshipTo );
+            relationships.add( relationship );
+        }
+        return PrincipalRelationships.from( relationships.build() );
     }
 
     private static void populateUserData( final RootDataSet data, final User user )

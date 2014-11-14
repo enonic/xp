@@ -1,20 +1,18 @@
 package com.enonic.wem.api.support.serializer;
 
-
 import java.time.Instant;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import com.enonic.wem.api.account.AccountKey;
-import com.enonic.wem.api.account.UserKey;
+import com.enonic.wem.api.security.PrincipalKey;
 
 public class JsonSerializerUtil
 {
-    public static UserKey getUserKeyValue( final String propertyName, final JsonNode node )
+    public static PrincipalKey getPrincipalKeyValue( final String propertyName, final JsonNode node )
     {
         final String value = getStringValue( propertyName, node, null );
-        return value != null ? AccountKey.from( value ).asUser() : null;
+        return value != null ? PrincipalKey.from( value ) : null;
     }
 
     public static void setInstantValue( String fieldName, Instant instant, ObjectNode node )
@@ -71,16 +69,6 @@ public class JsonSerializerUtil
         if ( subNode == null )
         {
             throw new JsonParsingException( "Field [" + fieldName + "]  does not exist in: " + node.toString() );
-        }
-        return subNode.booleanValue();
-    }
-
-    public static Boolean getBooleanValue( String fieldName, JsonNode node, Boolean defaultValue )
-    {
-        JsonNode subNode = node.get( fieldName );
-        if ( subNode == null )
-        {
-            return defaultValue;
         }
         return subNode.booleanValue();
     }

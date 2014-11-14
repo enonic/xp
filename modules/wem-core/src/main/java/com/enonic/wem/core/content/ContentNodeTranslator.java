@@ -1,11 +1,10 @@
 package com.enonic.wem.core.content;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.google.common.io.InputSupplier;
+import com.google.common.io.ByteSource;
 
 import com.enonic.wem.api.Name;
 import com.enonic.wem.api.blob.Blob;
@@ -26,14 +25,14 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.wem.core.content.serializer.ThumbnailAttachmentSerializer;
-import com.enonic.wem.core.entity.CreateNodeParams;
-import com.enonic.wem.core.entity.Node;
-import com.enonic.wem.core.entity.NodeEditor;
-import com.enonic.wem.core.entity.NodeId;
-import com.enonic.wem.core.entity.NodeName;
-import com.enonic.wem.core.entity.NodePath;
-import com.enonic.wem.core.entity.Nodes;
-import com.enonic.wem.core.entity.UpdateNodeParams;
+import com.enonic.wem.repo.CreateNodeParams;
+import com.enonic.wem.repo.Node;
+import com.enonic.wem.repo.NodeEditor;
+import com.enonic.wem.repo.NodeId;
+import com.enonic.wem.repo.NodeName;
+import com.enonic.wem.repo.NodePath;
+import com.enonic.wem.repo.Nodes;
+import com.enonic.wem.repo.UpdateNodeParams;
 
 public class ContentNodeTranslator
 {
@@ -61,7 +60,7 @@ public class ContentNodeTranslator
 
         Attachments contentAttachments = params.getAttachments();
 
-        final com.enonic.wem.core.entity.Attachments.Builder nodeAttachmentsBuilder = com.enonic.wem.core.entity.Attachments.builder().
+        final com.enonic.wem.repo.Attachments.Builder nodeAttachmentsBuilder = com.enonic.wem.repo.Attachments.builder().
             addAll( CONTENT_ATTACHMENT_NODE_TRANSLATOR.toNodeAttachments( contentAttachments ) );
 
         final Thumbnail thumbnail = resolveThumbnailAttachment( params );
@@ -111,9 +110,9 @@ public class ContentNodeTranslator
         final NodePath parentContentPathAsNodePath = parentNodePath.removeFromBeginning( CONTENTS_ROOT_PATH );
         final ContentPath parentContentPath = ContentPath.from( parentContentPathAsNodePath.toString() );
 
-        final com.enonic.wem.core.entity.Attachments nodeAttachments = node.attachments();
+        final com.enonic.wem.repo.Attachments nodeAttachments = node.attachments();
 
-        final com.enonic.wem.core.entity.Attachment thumbnailAttachment =
+        final com.enonic.wem.repo.Attachment thumbnailAttachment =
             nodeAttachments.getAttachment( ThumbnailAttachmentSerializer.THUMB_NAME );
 
         final Thumbnail thumbnail;
@@ -140,6 +139,7 @@ public class ContentNodeTranslator
             hasChildren( node.getHasChildren() ).
             childOrder( node.getChildOrder() ).
             accessControlList( node.getAccessControlList() ).
+            effectiveAccessControlList( node.getEffectiveAccessControlList() ).
             thumbnail( thumbnail );
 
         return builder.build();
@@ -151,34 +151,29 @@ public class ContentNodeTranslator
 
         final IndexConfigDocument indexConfigDocument = ContentIndexConfigFactory.create();
 
-        return new NodeEditor()
-        {
-            @Override
-            public Node.EditBuilder edit( final Node toBeEdited )
+        return toBeEdited -> {
+
+            final com.enonic.wem.repo.Attachments contentAttachmentsAsNodeAttachments =
+                CONTENT_ATTACHMENT_NODE_TRANSLATOR.toNodeAttachments( attachments );
+
+            final com.enonic.wem.repo.Attachments.Builder nodeAttachmentsBuilder = com.enonic.wem.repo.Attachments.builder().
+                addAll( contentAttachmentsAsNodeAttachments );
+
+            final com.enonic.wem.repo.Attachment thumbnailAttachment =
+                ThumbnailAttachmentSerializer.toAttachment( content.getThumbnail() );
+
+            if ( thumbnailAttachment != null )
             {
-
-                final com.enonic.wem.core.entity.Attachments contentAttachmentsAsNodeAttachments =
-                    CONTENT_ATTACHMENT_NODE_TRANSLATOR.toNodeAttachments( attachments );
-
-                final com.enonic.wem.core.entity.Attachments.Builder nodeAttachmentsBuilder =
-                    com.enonic.wem.core.entity.Attachments.builder().
-                        addAll( contentAttachmentsAsNodeAttachments );
-
-                final com.enonic.wem.core.entity.Attachment thumbnailAttachment =
-                    ThumbnailAttachmentSerializer.toAttachment( content.getThumbnail() );
-
-                if ( thumbnailAttachment != null )
-                {
-                    nodeAttachmentsBuilder.add( thumbnailAttachment );
-                }
-
-                return Node.editNode( toBeEdited ).
-                    name( NodeName.from( content.getName().toString() ) ).
-                    attachments( nodeAttachmentsBuilder.build() ).
-                    indexConfigDocument( indexConfigDocument ).
-                    rootDataSet( rootDataSet ).
-                    accessControlList( content.getAccessControlList() );
+                nodeAttachmentsBuilder.add( thumbnailAttachment );
             }
+
+            return Node.editNode( toBeEdited ).
+                name( NodeName.from( content.getName().toString() ) ).
+                attachments( nodeAttachmentsBuilder.build() ).
+                indexConfigDocument( indexConfigDocument ).
+                rootDataSet( rootDataSet ).
+                accessControlList( content.getAccessControlList() ).
+                effectiveAcl( content.getEffectiveAccessControlList() );
         };
     }
 
@@ -226,11 +221,11 @@ public class ContentNodeTranslator
     private Thumbnail createThumbnail( final Attachment origin )
     {
         final Blob originalImage = blobService.get( origin.getBlobKey() );
-        final InputSupplier<ByteArrayInputStream> inputSupplier = ThumbnailFactory.resolve( originalImage );
+        final ByteSource source = ThumbnailFactory.resolve( originalImage );
         final Blob thumbnailBlob;
         try
         {
-            thumbnailBlob = blobService.create( inputSupplier.getInput() );
+            thumbnailBlob = blobService.create( source.openStream() );
         }
         catch ( IOException e )
         {

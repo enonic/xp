@@ -8,11 +8,11 @@ import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.query.expr.FieldOrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpr;
-import com.enonic.wem.core.entity.CreateNodeParams;
-import com.enonic.wem.core.entity.FindNodesByParentParams;
-import com.enonic.wem.core.entity.FindNodesByParentResult;
-import com.enonic.wem.core.entity.Node;
-import com.enonic.wem.core.entity.NodePath;
+import com.enonic.wem.repo.CreateNodeParams;
+import com.enonic.wem.repo.FindNodesByParentParams;
+import com.enonic.wem.repo.FindNodesByParentResult;
+import com.enonic.wem.repo.Node;
+import com.enonic.wem.repo.NodePath;
 import com.enonic.wem.core.entity.SetNodeChildOrderCommand;
 
 import static org.junit.Assert.*;
@@ -27,7 +27,6 @@ public class SetNodeChildOrderCommandTest
         throws Exception
     {
         super.setUp();
-        createContentRepository();
     }
 
     @Test

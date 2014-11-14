@@ -65,20 +65,20 @@ module app.browse {
                 setMaxWidth(170).
                 setFormatter(DateTimeFormatter.format).
                 build();
-            var contentTypeColumn = new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().
-                setName("ContentType").
-                setId("contentType").
-                setField("contentSummary.type").
-                setCssClass("type").
+            var orderColumn = new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().
+                setName("Order").
+                setId("order").
+                setField("contentSummary.order").
+                setCssClass("order").
                 setMinWidth(80).
                 setMaxWidth(80).
-                setFormatter(this.typeFormatter).
+                setFormatter(this.orderFormatter).
                 build();
 
             super(new TreeGridBuilder<ContentSummaryAndCompareStatus>().
                     setColumns([
                         nameColumn,
-                        contentTypeColumn,
+                        orderColumn,
                         compareStatusColumn,
                         modifiedTimeColumn
                     ]).
@@ -90,11 +90,11 @@ module app.browse {
 
             api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
                 if (item.isInRangeOrSmaller(api.ui.responsive.ResponsiveRanges._240_360)) {
-                    this.getGrid().setColumns([nameColumn, contentTypeColumn]);
+                    this.getGrid().setColumns([nameColumn, orderColumn]);
                 } else if (item.isInRangeOrSmaller(api.ui.responsive.ResponsiveRanges._360_540)) {
-                    this.getGrid().setColumns([nameColumn, contentTypeColumn, modifiedTimeColumn]);
+                    this.getGrid().setColumns([nameColumn, orderColumn, modifiedTimeColumn]);
                 } else {
-                    this.getGrid().setColumns([nameColumn, contentTypeColumn, compareStatusColumn, modifiedTimeColumn]);
+                    this.getGrid().setColumns([nameColumn, orderColumn, compareStatusColumn, modifiedTimeColumn]);
                 }
 
                 if (item.isInRangeOrSmaller(api.ui.responsive.ResponsiveRanges._540_720)) {
@@ -108,8 +108,8 @@ module app.browse {
                 this.getGrid().resizeCanvas();
             });
 
-            this.onSelectionChanged((selectedRows: TreeNode<ContentSummaryAndCompareStatus>[]) => {
-                var contentSummaries: ContentSummary[] = selectedRows.map((elem) => {
+            this.onSelectionChanged((currentSelection: TreeNode<ContentSummaryAndCompareStatus>[], fullSelection: TreeNode<ContentSummaryAndCompareStatus>[]) => {
+                var contentSummaries: ContentSummary[] = currentSelection.map((elem) => {
                     return elem.getData().getContentSummary();
                 });
                 (<ContentTreeGridActions>this.getContextMenu().getActions()).updateActionsEnabledState(contentSummaries);
@@ -145,7 +145,7 @@ module app.browse {
                         contents.push(new ContentSummaryAndCompareStatus(null, null));
                     }
                     this.filter(contents);
-                    this.getRoot().setMaxChildren(metadata.getTotalHits());
+                    this.getRoot().getCurrentRoot().setMaxChildren(metadata.getTotalHits());
                     this.notifyLoaded();
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
@@ -164,6 +164,27 @@ module app.browse {
             var wrapper = new api.dom.SpanEl();
             wrapper.getEl().setTitle(value);
             wrapper.getEl().setInnerHtml(value.toString().split(':')[1]);
+            return wrapper.toString();
+        }
+
+        private orderFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
+            var wrapper = new api.dom.SpanEl();
+            wrapper.getEl().setTitle(value);
+            if (node.getData().getContentSummary()) {
+                var childOrder = node.getData().getContentSummary().getChildOrder();
+                var icon;
+                if (!childOrder.isManual()) {
+                    if (childOrder.isDesc()) {
+                        icon = new api.dom.DivEl("icon-arrow-up4");
+                    } else {
+                        icon = new api.dom.DivEl("icon-arrow-down4");
+                    }
+                } else {
+                    icon = new api.dom.DivEl("icon-menu3");
+                }
+                wrapper.getEl().setInnerHtml(icon.toString());
+
+            }
             return wrapper.toString();
         }
 
@@ -235,14 +256,14 @@ module app.browse {
             if (parentNode) {
                 parentContentId = parentNode.getData() ? parentNode.getData().getContentId() : parentContentId;
             } else {
-                parentNode = this.getRoot();
+                parentNode = this.getRoot().getCurrentRoot();
             }
             var from = parentNode.getChildren().length;
             if (from > 0 && !parentNode.getChildren()[from - 1].getData().getContentSummary()) {
                 parentNode.getChildren().pop();
                 from--;
             }
-            if (!this.isFiltered() || parentNode != this.getRoot()) {
+            if (!this.isFiltered() || parentNode != this.getRoot().getCurrentRoot()) {
                 return ContentSummaryAndCompareStatusFetcher.fetchChildren(parentContentId, from, ContentTreeGrid.MAX_FETCH_SIZE).
                     then((data: ContentResponse<ContentSummaryAndCompareStatus>) => {
                         // TODO: Will reset the ids and the selection for child nodes.
@@ -290,8 +311,10 @@ module app.browse {
             return data.getId();
         }
 
-        updateContentNode(content: api.content.Content) {
-            this.updateNode(new ContentSummaryAndCompareStatus(content, null));
+        updateContentNode(contentId: api.content.ContentId) {
+            var root = this.getRoot().getCurrentRoot();
+            var content = root.findNode(contentId.toString()).getData();
+            this.updateNode(new ContentSummaryAndCompareStatus(content.getContentSummary(), null));
         }
 
         appendContentNode(content: api.content.Content, nextToSelection?: boolean) {
@@ -314,7 +337,7 @@ module app.browse {
 
         sortNodeChildren(node: TreeNode<ContentSummaryAndCompareStatus>) {
             var comparator: api.Comparator<TreeNode<ContentSummaryAndCompareStatus>>;
-            if (this.getRoot() == node) {
+            if (this.getRoot().getCurrentRoot() == node) {
                 comparator = new api.content.ContentByDisplayNameComparator();
             } else {
                 comparator = new api.content.ContentByModifiedTimeComparator();
@@ -329,7 +352,7 @@ module app.browse {
                 children.push(emptyNode);
             }
             node.setChildren(children);
-            this.initData(this.getRoot().treeToList());
+            this.initData(this.getRoot().getCurrentRoot().treeToList());
         }
     }
 }

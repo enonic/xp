@@ -9,7 +9,6 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.Icon;
-import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
@@ -26,6 +25,8 @@ import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
+import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.security.SecurityService;
 import com.enonic.wem.api.workspace.Workspace;
 
 import static com.enonic.wem.api.content.page.PageRegions.newPageRegions;
@@ -34,7 +35,6 @@ public class PageResourceTest
     extends AbstractResourceTest
 {
     private PageService pageService;
-
 
     @Override
     protected Object getResourceInstance()
@@ -48,6 +48,9 @@ public class PageResourceTest
 
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
             thenReturn( createContentType( "mymodule:my_type" ) );
+
+        final SecurityService securityService = Mockito.mock( SecurityService.class );
+        resource.setSecurityService( securityService );
 
         return resource;
     }
@@ -114,9 +117,9 @@ public class PageResourceTest
         return Content.newContent().
             id( ContentId.from( id ) ).
             path( ContentPath.from( name ) ).
-            owner( UserKey.from( "myStore:me" ) ).
+            owner( PrincipalKey.from( "myStore:user:me" ) ).
             displayName( "My Content" ).
-            modifier( UserKey.superUser() ).
+            modifier( PrincipalKey.from( "system:user:admin" ) ).
             type( ContentTypeName.from( contentTypeName ) ).
             page( page ).
             build();

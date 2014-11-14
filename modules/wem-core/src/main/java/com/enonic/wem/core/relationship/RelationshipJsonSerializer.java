@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.wem.api.content.ContentId;
@@ -53,11 +52,6 @@ public final class RelationshipJsonSerializer
     {
         this.includeModifiedTime = value;
         return this;
-    }
-
-    public RelationshipJsonSerializer( final ObjectMapper objectMapper )
-    {
-        super( objectMapper );
     }
 
     public JsonNode serialize( final Relationship relationship )
@@ -124,7 +118,7 @@ public final class RelationshipJsonSerializer
 
         if ( includeCreator )
         {
-            builder.creator( JsonSerializerUtil.getUserKeyValue( "creator", relationshipNode ) );
+            builder.creator( JsonSerializerUtil.getPrincipalKeyValue( "creator", relationshipNode ) );
         }
         if ( includeCreatedTime )
         {
@@ -132,7 +126,7 @@ public final class RelationshipJsonSerializer
         }
         if ( includeModifier )
         {
-            builder.modifier( JsonSerializerUtil.getUserKeyValue( "modifier", relationshipNode ) );
+            builder.modifier( JsonSerializerUtil.getPrincipalKeyValue( "modifier", relationshipNode ) );
         }
         if ( includeModifiedTime )
         {

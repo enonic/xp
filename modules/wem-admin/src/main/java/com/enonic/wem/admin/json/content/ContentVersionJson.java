@@ -21,7 +21,7 @@ public class ContentVersionJson
         this.modified = contentVersion.getModified();
         this.displayName = contentVersion.getDisplayName();
         this.comment = contentVersion.getComment();
-        this.modifier = contentVersion.getModifier().getQualifiedName();
+        this.modifier = contentVersion.getModifier().toString();
         this.id = contentVersion.getId().toString();
     }
 

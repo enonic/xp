@@ -12,25 +12,7 @@ module api.app.browse {
             this.getEl().addClass('no-selection').setInnerHtml(this.messageForNoSelection);
         }
 
-        setItems(items: BrowseItem<M>[]) {
-            var itemsToRemove = this.items.filter((item: BrowseItem<M>) => {
-                for (var i = 0; i < items.length; i++) {
-                    if (item.getPath() == items[i].getPath()) {
-                        return false;
-                    }
-                }
-                return true;
-            });
-            itemsToRemove.forEach((item: BrowseItem<M>) => {
-                this.removeItem(item);
-            });
-
-            items.forEach((item: BrowseItem<M>) => {
-                this.addItem(item);
-            });
-        }
-
-        addItem(item: BrowseItem<M>) {
+        private addItem(item: BrowseItem<M>) {
             var index = this.indexOf(item);
             if (index >= 0) {
                 // item already exist
@@ -50,14 +32,14 @@ module api.app.browse {
             var removeCallback = () => {
                 this.removeItem(item);
             };
-            var selectionItem = new SelectionItem(item, removeCallback);
+            var selectionItem = new SelectionItem(this.createItemViewer(item), removeCallback);
 
             this.appendChild(selectionItem);
             this.selectionItems.push(selectionItem);
             this.items.push(item);
         }
 
-        removeItem(item: BrowseItem<M>) {
+        private removeItem(item: BrowseItem<M>) {
             var index = this.indexOf(item);
             if (index < 0) {
                 return;
@@ -76,6 +58,30 @@ module api.app.browse {
 
         getItems(): BrowseItem<M>[] {
             return this.items;
+        }
+
+        setItems(items: BrowseItem<M>[]) {
+            var itemsToRemove = this.items.filter((item: BrowseItem<M>) => {
+                for (var i = 0; i < items.length; i++) {
+                    if (item.getPath() == items[i].getPath()) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+            itemsToRemove.forEach((item: BrowseItem<M>) => {
+                this.removeItem(item);
+            });
+
+            items.forEach((item: BrowseItem<M>) => {
+                this.addItem(item);
+            });
+        }
+
+        createItemViewer(item: BrowseItem<M>): api.ui.Viewer<M>  {
+            var viewer = new api.ui.Viewer<M>();
+            viewer.setObject(item.getModel());
+            return viewer;
         }
 
         private indexOf(item: BrowseItem<M>): number {
@@ -104,48 +110,4 @@ module api.app.browse {
         }
 
     }
-
-    export class SelectionItem<M extends api.Equitable> extends api.dom.DivEl {
-
-        private browseItem: api.app.browse.BrowseItem<M>;
-
-        constructor(browseItem: BrowseItem<M>, removeCallback?: () => void) {
-            super("browse-selection-item");
-            this.browseItem = browseItem;
-            this.setIcon(this.browseItem.getIconUrl(), 32);
-            this.setData(this.browseItem.getDisplayName(), this.browseItem.getPath());
-            this.addRemoveButton(removeCallback);
-        }
-
-        private addRemoveButton(callback?: () => void) {
-            var removeEl = new api.dom.DivEl("icon remove");
-            removeEl.onClicked((event: MouseEvent) => {
-                if (callback) {
-                    callback();
-                }
-            });
-            this.appendChild(removeEl);
-        }
-
-        private setIcon(iconUrl: string, size: number) {
-            this.getEl().appendChild(api.util.loader.ImageLoader.get(iconUrl + "?size=" + size, 32, 32));
-        }
-
-        private setData(title: string, subtitle: string) {
-            var titleEl = document.createElement("h6");
-            titleEl.innerHTML = title;
-
-            var subtitleEl = document.createElement("small");
-            subtitleEl.innerHTML = subtitle;
-            titleEl.appendChild(subtitleEl);
-
-            this.getEl().appendChild(titleEl);
-            return titleEl;
-        }
-
-        getBrowseItem(): BrowseItem<M> {
-            return this.browseItem;
-        }
-    }
-
 }

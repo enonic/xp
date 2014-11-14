@@ -6,10 +6,10 @@ import java.time.ZoneOffset;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.data.DataPath;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
+import com.enonic.wem.api.security.PrincipalKey;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -23,9 +23,9 @@ public class RelationshipTest
         relationBuilder.fromContent( ContentId.from( "a" ) );
         relationBuilder.toContent( ContentId.from( "b" ) );
         relationBuilder.createdTime( LocalDateTime.parse( "2012-01-01T12:00:00" ).toInstant( ZoneOffset.UTC ) );
-        relationBuilder.creator( UserKey.from( "myStore:myUser" ) );
+        relationBuilder.creator( PrincipalKey.from( "myStore:user:myUser" ) );
         relationBuilder.modifiedTime( LocalDateTime.parse( "2012-01-01T12:00:00" ).toInstant( ZoneOffset.UTC ) );
-        relationBuilder.modifier( UserKey.from( "myStore:myUser" ) );
+        relationBuilder.modifier( PrincipalKey.from( "myStore:user:myUser" ) );
         relationBuilder.type( RelationshipTypeName.from( "system:like" ) );
         relationBuilder.property( "stars", "4" );
 
@@ -35,9 +35,9 @@ public class RelationshipTest
         // verify
         assertEquals( "a", relationship.getFromContent().toString() );
         assertEquals( "b", relationship.getToContent().toString() );
-        assertEquals( "myUser", relationship.getCreator().getLocalName() );
+        assertEquals( "myUser", relationship.getCreator().getId() );
         assertEquals( LocalDateTime.parse( "2012-01-01T12:00:00" ).toInstant( ZoneOffset.UTC ), relationship.getCreatedTime() );
-        assertEquals( "myUser", relationship.getModifier().getLocalName() );
+        assertEquals( "myUser", relationship.getModifier().getId() );
         assertEquals( LocalDateTime.parse( "2012-01-01T12:00:00" ).toInstant( ZoneOffset.UTC ), relationship.getModifiedTime() );
         assertEquals( "system:like", relationship.getType().toString() );
         assertEquals( "4", relationship.getProperty( "stars" ) );
