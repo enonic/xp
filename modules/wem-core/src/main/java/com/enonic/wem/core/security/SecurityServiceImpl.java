@@ -14,6 +14,7 @@ import com.google.common.collect.Sets;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.query.expr.CompareExpr;
 import com.enonic.wem.api.query.expr.FieldExpr;
+import com.enonic.wem.api.query.expr.LogicalExpr;
 import com.enonic.wem.api.query.expr.QueryExpr;
 import com.enonic.wem.api.query.expr.ValueExpr;
 import com.enonic.wem.api.query.filter.ValueFilter;
@@ -48,13 +49,15 @@ import com.enonic.wem.repo.CreateNodeParams;
 import com.enonic.wem.repo.FindNodesByQueryResult;
 import com.enonic.wem.repo.Node;
 import com.enonic.wem.repo.NodeNotFoundException;
-import com.enonic.wem.repo.NodePath;
 import com.enonic.wem.repo.NodeQuery;
 import com.enonic.wem.repo.NodeService;
 import com.enonic.wem.repo.UpdateNodeParams;
 
 import static com.enonic.wem.api.security.SystemConstants.CONTEXT_USER_STORES;
 import static com.enonic.wem.core.security.PrincipalKeyNodeTranslator.toNodeId;
+import static com.enonic.wem.core.security.PrincipalNodeTranslator.EMAIL_KEY;
+import static com.enonic.wem.core.security.PrincipalNodeTranslator.LOGIN_KEY;
+import static com.enonic.wem.core.security.PrincipalNodeTranslator.USER_STORE_KEY;
 
 public final class SecurityServiceImpl
     implements SecurityService
@@ -177,7 +180,7 @@ public final class SecurityServiceImpl
         {
             final FindNodesByQueryResult result = CONTEXT_USER_STORES.callWith( () -> this.nodeService.findByQuery( NodeQuery.create().
                 addQueryFilter( ValueFilter.create().
-                    fieldName( PrincipalNodeTranslator.USER_STORE_KEY ).
+                    fieldName( USER_STORE_KEY ).
                     addValue( Value.newString( userStore.toString() ) ).
                     build() ).
                 addQueryFilter( ValueFilter.create().
@@ -246,25 +249,31 @@ public final class SecurityServiceImpl
 
     private User findByUsername( final UserStoreKey userStore, final String username )
     {
-        // TODO should look up user based on User.getLogin() instead of PrincipalKey.getId()
-        final PrincipalKey key = PrincipalKey.ofUser( userStore, username );
-        final NodePath path = PrincipalPathTranslator.toPath( key );
-        try
+        final CompareExpr userStoreExpr =
+            CompareExpr.create( FieldExpr.from( USER_STORE_KEY ), CompareExpr.Operator.EQ, ValueExpr.string( userStore.toString() ) );
+        final CompareExpr userNameExpr =
+            CompareExpr.create( FieldExpr.from( LOGIN_KEY ), CompareExpr.Operator.EQ, ValueExpr.string( username ) );
+        final QueryExpr query = QueryExpr.from( LogicalExpr.and( userStoreExpr, userNameExpr ) );
+        final FindNodesByQueryResult result =
+            CONTEXT_USER_STORES.callWith( () -> nodeService.findByQuery( NodeQuery.create().query( query ).build() ) );
+
+        if ( result.getNodes().getSize() > 1 )
         {
-            final Node user = CONTEXT_USER_STORES.callWith( () -> this.nodeService.getByPath( path ) );
-            return PrincipalNodeTranslator.userFromNode( user );
+            throw new IllegalArgumentException( "Expected at most 1 user with username " + username + " in userstore " + userStore );
         }
-        catch ( NodeNotFoundException e )
-        {
-            return null;
-        }
+
+        return result.getNodes().isEmpty() ? null : PrincipalNodeTranslator.userFromNode( result.getNodes().first() );
     }
 
     private User findByEmail( final UserStoreKey userStore, final String email )
     {
-        final FindNodesByQueryResult result = nodeService.findByQuery( NodeQuery.create().
-            query( QueryExpr.from( CompareExpr.create( FieldExpr.from( PrincipalNodeTranslator.EMAIL_KEY ), CompareExpr.Operator.EQ,
-                                                       ValueExpr.string( email ) ) ) ).build() );
+        final CompareExpr userStoreExpr =
+            CompareExpr.create( FieldExpr.from( USER_STORE_KEY ), CompareExpr.Operator.EQ, ValueExpr.string( userStore.toString() ) );
+        final CompareExpr userNameExpr =
+            CompareExpr.create( FieldExpr.from( EMAIL_KEY ), CompareExpr.Operator.EQ, ValueExpr.string( email ) );
+        final QueryExpr query = QueryExpr.from( LogicalExpr.and( userStoreExpr, userNameExpr ) );
+        final FindNodesByQueryResult result =
+            CONTEXT_USER_STORES.callWith( () -> nodeService.findByQuery( NodeQuery.create().query( query ).build() ) );
 
         if ( result.getNodes().getSize() > 1 )
         {
