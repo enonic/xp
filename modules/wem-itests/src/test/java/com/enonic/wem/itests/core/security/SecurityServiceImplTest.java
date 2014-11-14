@@ -17,6 +17,11 @@ import com.enonic.wem.api.security.UpdateRoleParams;
 import com.enonic.wem.api.security.UpdateUserParams;
 import com.enonic.wem.api.security.User;
 import com.enonic.wem.api.security.UserStoreKey;
+import com.enonic.wem.api.security.auth.AuthenticationException;
+import com.enonic.wem.api.security.auth.AuthenticationInfo;
+import com.enonic.wem.api.security.auth.AuthenticationToken;
+import com.enonic.wem.api.security.auth.EmailPasswordAuthToken;
+import com.enonic.wem.api.security.auth.UsernamePasswordAuthToken;
 import com.enonic.wem.core.entity.NodeServiceImpl;
 import com.enonic.wem.core.security.SecurityServiceImpl;
 import com.enonic.wem.itests.core.entity.AbstractNodeTest;
@@ -356,4 +361,78 @@ public class SecurityServiceImplTest
         final PrincipalRelationships relationships = securityService.getRelationships( groupKey1 );
         assertEquals( 0, relationships.getSize() );
     }
+
+    @Test
+    public void testAuthenticateByEmailPwd()
+        throws Exception
+    {
+        final CreateUserParams createUser = CreateUserParams.create().
+            userKey( PrincipalKey.ofUser( SYSTEM, "user1" ) ).
+            displayName( "User 1" ).
+            email( "user1@enonic.com" ).
+            login( "user1" ).
+            build();
+
+        final User user = securityService.createUser( createUser );
+        refresh();
+
+        final EmailPasswordAuthToken authToken = new EmailPasswordAuthToken();
+        authToken.setEmail( "user1@enonic.com" );
+        authToken.setPassword( "password" );
+        authToken.setUserStore( SYSTEM );
+
+        final AuthenticationInfo authInfo = securityService.authenticate( authToken );
+        assertTrue( authInfo.isAuthenticated() );
+        assertEquals( user.getKey(), authInfo.getUser().getKey() );
+    }
+
+    @Test
+    public void testAuthenticateByUsernamePwd()
+        throws Exception
+    {
+        final CreateUserParams createUser = CreateUserParams.create().
+            userKey( PrincipalKey.ofUser( SYSTEM, "user1" ) ).
+            displayName( "User 1" ).
+            email( "user1@enonic.com" ).
+            login( "user1" ).
+            build();
+
+        final User user = securityService.createUser( createUser );
+        refresh();
+
+        final UsernamePasswordAuthToken authToken = new UsernamePasswordAuthToken();
+        authToken.setUsername( "user1" );
+        authToken.setPassword( "password" );
+        authToken.setUserStore( SYSTEM );
+
+        final AuthenticationInfo authInfo = securityService.authenticate( authToken );
+        assertTrue( authInfo.isAuthenticated() );
+        assertEquals( user.getKey(), authInfo.getUser().getKey() );
+    }
+
+    @Test(expected = AuthenticationException.class)
+    public void testAuthenticateUnsupportedToken()
+        throws Exception
+    {
+        final CreateUserParams createUser = CreateUserParams.create().
+            userKey( PrincipalKey.ofUser( SYSTEM, "user1" ) ).
+            displayName( "User 1" ).
+            email( "user1@enonic.com" ).
+            login( "user1" ).
+            build();
+
+        final User user = securityService.createUser( createUser );
+
+        final CustomAuthenticationToken authToken = new CustomAuthenticationToken();
+        authToken.setUserStore( SYSTEM );
+
+        final AuthenticationInfo authInfo = securityService.authenticate( authToken );
+        assertEquals( user.getKey(), authInfo.getUser().getKey() );
+    }
+
+    public class CustomAuthenticationToken
+        extends AuthenticationToken
+    {
+    }
+
 }
