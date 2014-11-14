@@ -251,6 +251,10 @@ module api.ui.treegrid {
             this.grid.subscribeOnSelectedRowsChanged((event, rows) => {
                 this.notifySelectionChanged(event, rows.rows);
             });
+
+            this.gridData.onRowCountChanged(() => {
+                this.refreshToolbar();
+            });
         }
 
         private updateColumnsFormatter(columns: GridColumn<TreeNode<DATA>>[]) {
@@ -675,7 +679,6 @@ module api.ui.treegrid {
                 if (node) {
                         if (!stashedParentNode) {
                             this.gridData.setItems(root.treeToList());
-                            this.refreshToolbar();
                         }
                     if (isRootParentNode) {
                         this.sortNodeChildren(parentNode);
@@ -902,18 +905,6 @@ module api.ui.treegrid {
 
         onLoaded(listener: () => void) {
             this.loadedListeners.push(listener);
-            if (this.toolbar) {
-                //this.toolbar.refresh(this);
-                /*this.actions = new TreeGridToolbarActions(this.grid);
-
-                 var index = this.toolbar.getSiblingIndex();
-                 this.removeChild(this.toolbar);
-                 this.toolbar = new TreeGridToolbar(this.actions);
-                 this.insertChild(this.toolbar, index);*/
-
-
-            }
-
             return this;
         }
 
@@ -1004,7 +995,6 @@ module api.ui.treegrid {
             this.grid.syncGridSelection(false);
             this.grid.invalidate();
             this.grid.renderGrid();
-            this.refreshToolbar();
         }
 
         refreshNodeData(parentNode: TreeNode<DATA>): wemQ.Promise<TreeNode<DATA>> {

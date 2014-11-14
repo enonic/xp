@@ -86,7 +86,6 @@ module api.app.browse {
                                 // one of the selected nodes was updated, reflect this in the item panel
                                 var browseItems: api.app.browse.BrowseItem<M>[] = this.treeNodesToBrowseItems(changedNodes);
                                 this.browseItemPanel.setItems(browseItems);
-                                this.treeGrid.refreshToolbar();
                                 break;
                             }
                         }
