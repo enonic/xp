@@ -5,9 +5,11 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.query.expr.CompareExpr;
@@ -118,12 +120,37 @@ public final class SecurityServiceImpl
 
     private PrincipalKeys resolveMemberships( final PrincipalKey userKey )
     {
+        final Set<PrincipalKey> resolvedMemberships = Sets.newHashSet();
+        final PrincipalKeys directMemberships = queryMemberships( userKey );
+        resolvedMemberships.addAll( directMemberships.getSet() );
+
+        final Set<PrincipalKey> queriedMemberships = Sets.newHashSet();
+
+        do
+        {
+            for ( PrincipalKey principal : resolvedMemberships )
+            {
+                if ( !queriedMemberships.contains( principal ) )
+                {
+                    final PrincipalKeys indirectMemberships = queryMemberships( principal );
+                    resolvedMemberships.addAll( indirectMemberships.getSet() );
+                    queriedMemberships.add( principal );
+                }
+            }
+        }
+        while ( resolvedMemberships.size() > queriedMemberships.size() );
+
+        return PrincipalKeys.from( resolvedMemberships );
+    }
+
+    private PrincipalKeys queryMemberships( final PrincipalKey member )
+    {
         try
         {
             final FindNodesByQueryResult result = CONTEXT_USER_STORES.callWith( () -> this.nodeService.findByQuery( NodeQuery.create().
                 addQueryFilter( ValueFilter.create().
                     fieldName( PrincipalNodeTranslator.MEMBER_KEY ).
-                    addValue( Value.newString( userKey.toString() ) ).
+                    addValue( Value.newString( member.toString() ) ).
                     build() ).
                 build() ) );
 
