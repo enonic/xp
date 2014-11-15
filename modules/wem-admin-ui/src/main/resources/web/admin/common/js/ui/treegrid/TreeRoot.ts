@@ -82,6 +82,10 @@ module api.ui.treegrid {
             this.clearStashedSelection();
         }
 
+        getStashedSelection(): TreeNode<DATA>[] {
+            return this.stashedSelection;
+        }
+
         stashSelection() {
             this.stashedSelection = this.stashedSelection.concat(this.currentSelection);
             this.currentSelection = [];

@@ -828,9 +828,13 @@ module api.ui.treegrid {
 
 //            this.animateCollapse(collapsedRows, animatedRows);
 
+              // Save the selected collapsed rows in cache
+              this.root.stashSelection();
+
 //            setTimeout(() => {
             this.gridData.refresh();
             this.resetAndRender();
+            this.triggerSelectionChangedListeners();
             this.active = true;
 //            }, 350); // timeout is required for the animation
         }
@@ -930,8 +934,12 @@ module api.ui.treegrid {
 
             this.root.setCurrentSelection(currentSelection);
 
+            this.triggerSelectionChangedListeners();
+        }
+
+        private triggerSelectionChangedListeners() {
             for (var i in this.selectionChangeListeners) {
-                this.selectionChangeListeners[i](currentSelection, this.root.getFullSelection());
+                this.selectionChangeListeners[i](this.root.getCurrentSelection(), this.root.getFullSelection());
             }
         }
 
