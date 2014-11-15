@@ -29,7 +29,7 @@ public final class FileBlobStore
 
     public FileBlobStore()
     {
-        this.dir = new File( HomeDir.get().toFile(), "repository/blobs" );
+        this.dir = new File( HomeDir.get().toFile(), "repo/blob" );
         mkdirs( this.dir, true );
     }
 
