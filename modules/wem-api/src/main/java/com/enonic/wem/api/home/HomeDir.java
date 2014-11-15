@@ -34,16 +34,16 @@ public final class HomeDir
 
     private File resolveHome()
     {
-        final File wemHome = resolveDir( "wem.home", null );
+        final File wemHome = resolveDir( "wem.home" );
         if ( wemHome != null )
         {
             return wemHome;
         }
 
-        return resolveDir( "karaf.home", "wem.home" );
+        return resolveDir( "karaf.home" );
     }
 
-    private File resolveDir( final String propName, final String subPath )
+    private File resolveDir( final String propName )
     {
         final String propValue = System.getProperty( propName );
         if ( propValue == null )
@@ -51,14 +51,6 @@ public final class HomeDir
             return null;
         }
 
-        if ( subPath != null )
-        {
-            return new File( propValue, subPath );
-        }
-        else
-        {
-            return new File( propValue );
-        }
-
+        return new File( propValue );
     }
 }

@@ -23,7 +23,7 @@ public final class NodeSettingsBuilderImpl
         builder.put( "http.enabled", "true" );
         builder.put( "cluster.name", "mycluster" );
 
-        final File indexPath = new File( HomeDir.get().toFile(), "index" );
+        final File indexPath = new File( HomeDir.get().toFile(), "repository/index" );
         builder.put( "path", indexPath.getAbsolutePath() );
         builder.put( "path.data", new File( indexPath, "data" ).getAbsolutePath() );
         builder.put( "path.work", new File( indexPath, "work" ).getAbsolutePath() );

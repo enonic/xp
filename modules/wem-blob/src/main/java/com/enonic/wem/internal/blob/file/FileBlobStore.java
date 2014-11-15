@@ -12,11 +12,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.wem.api.blob.BlobKey;
+import com.enonic.wem.api.home.HomeDir;
 import com.enonic.wem.internal.blob.BlobKeyCreator;
 import com.enonic.wem.internal.blob.BlobRecord;
 import com.enonic.wem.internal.blob.BlobStore;
 import com.enonic.wem.internal.blob.BlobStoreException;
-import com.enonic.wem.api.home.HomeDir;
 
 public final class FileBlobStore
     implements BlobStore
@@ -29,7 +29,7 @@ public final class FileBlobStore
 
     public FileBlobStore()
     {
-        this.dir = new File( HomeDir.get().toFile(), "shared/blobs" );
+        this.dir = new File( HomeDir.get().toFile(), "repository/blobs" );
         mkdirs( this.dir, true );
     }
 
