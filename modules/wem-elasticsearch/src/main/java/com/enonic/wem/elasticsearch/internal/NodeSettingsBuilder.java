@@ -1,8 +1,8 @@
-package com.enonic.wem.core.elasticsearch.resource;
+package com.enonic.wem.elasticsearch.internal;
 
 import org.elasticsearch.common.settings.Settings;
 
-public interface NodeSettingsBuilder
+interface NodeSettingsBuilder
 {
     public Settings buildSettings();
 }

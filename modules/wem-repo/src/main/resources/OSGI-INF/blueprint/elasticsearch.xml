@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
-  <bean id="nodeSettingsBuilder" class="com.enonic.wem.core.elasticsearch.resource.NodeSettingsBuilderImpl"/>
-
-  <bean id="elasticNodeProvider" class="com.enonic.wem.core.elasticsearch.ElasticNodeProvider" init-method="start" destroy-method="stop">
-    <argument index="0" ref="nodeSettingsBuilder"/>
-  </bean>
-
-  <bean id="elasticNode" factory-ref="elasticNodeProvider" factory-method="get"/>
-
-  <bean id="elasticClient" factory-ref="elasticNode" factory-method="client"/>
+  <reference id="elasticClient" interface="org.elasticsearch.client.Client"/>
 
   <bean id="elasticsearchDao" class="com.enonic.wem.core.elasticsearch.ElasticsearchDao">
     <property name="client" ref="elasticClient"/>

@@ -15,8 +15,6 @@ import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
 import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.enonic.wem.core.elasticsearch.document.DeleteDocument;
 import com.enonic.wem.core.elasticsearch.document.StoreDocument;
@@ -31,8 +29,6 @@ import com.enonic.wem.core.index.result.SearchResult;
 
 public class ElasticsearchDao
 {
-    private final static Logger LOG = LoggerFactory.getLogger( ElasticsearchDao.class );
-
     private static final boolean DEFAULT_REFRESH = true;
 
     private final String searchPreference = "_local";

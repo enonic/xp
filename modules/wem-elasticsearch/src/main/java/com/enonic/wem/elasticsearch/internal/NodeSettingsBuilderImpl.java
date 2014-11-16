@@ -1,20 +1,18 @@
-package com.enonic.wem.core.elasticsearch.resource;
+package com.enonic.wem.elasticsearch.internal;
 
 import java.io.File;
 
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
 
-import com.enonic.wem.api.home.HomeDir;
-
-public final class NodeSettingsBuilderImpl
+final class NodeSettingsBuilderImpl
     implements NodeSettingsBuilder
 {
     @Override
     public Settings buildSettings()
     {
         final ImmutableSettings.Builder builder = ImmutableSettings.settingsBuilder();
-        builder.classLoader( getClass().getClassLoader() );
+        builder.classLoader( ImmutableSettings.class.getClassLoader() );
 
         // TODO: Hardcoded configuration. Should be using OSGi config admin.
         builder.put( "name", "local" );
@@ -23,7 +21,8 @@ public final class NodeSettingsBuilderImpl
         builder.put( "http.enabled", "true" );
         builder.put( "cluster.name", "mycluster" );
 
-        final File indexPath = new File( HomeDir.get().toFile(), "repo/index" );
+        final String karafHome = System.getProperty( "karaf.home" );
+        final File indexPath = new File( karafHome, "repo/index" );
         builder.put( "path", indexPath.getAbsolutePath() );
         builder.put( "path.data", new File( indexPath, "data" ).getAbsolutePath() );
         builder.put( "path.work", new File( indexPath, "work" ).getAbsolutePath() );
