@@ -2,7 +2,7 @@ module api.security.acl {
 
     export interface AccessControlEntryJson {
 
-        principal: { displayName: string; key: string; };
+        principal: PrincipalJson;
 
         allow: string[];
 

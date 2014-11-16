@@ -18,7 +18,7 @@ module api.ui.tab {
 
         private active: boolean;
 
-        private closeAction : api.ui.Action;
+        private closeAction: api.ui.Action;
 
         private labelChangedListeners: {(event: TabMenuItemLabelChangedEvent):void}[] = [];
 
@@ -34,7 +34,7 @@ module api.ui.tab {
             this.labelEl = new api.dom.SpanEl('label');
             this.appendChild(this.labelEl);
             this.setLabel(builder.label);
-            this.labelEl.onClicked((event: MouseEvent) => {
+            this.onClicked((event: MouseEvent) => {
                 this.notifySelectedListeners(this);
             });
 
@@ -44,12 +44,14 @@ module api.ui.tab {
                 this.prependChild(removeButton);
                 removeButton.onClicked((event: MouseEvent) => {
                     if (this.removable) {
-                        if(this.closeAction && this.closeAction.isEnabled()) {
+                        if (this.closeAction && this.closeAction.isEnabled()) {
                             this.closeAction.execute();
                         } else {
                             this.notifyClosedListeners(this);
                         }
                     }
+                    event.stopPropagation();
+                    event.preventDefault();
                 });
             }
             this.closeAction = builder.closeAction;
@@ -118,8 +120,8 @@ module api.ui.tab {
         }
 
         onClosed(listener: (event: TabMenuItemClosedEvent)=>void) {
-            if(this.closeAction) {
-                throw new Error( "Failed to set 'on closed' listener. Close action is already setted." );
+            if (this.closeAction) {
+                throw new Error("Failed to set 'on closed' listener. Close action is already setted.");
             } else {
                 this.closedListeners.push(listener);
             }
@@ -169,22 +171,22 @@ module api.ui.tab {
         options: TabMenuItemOptions;
         closeAction: api.ui.Action;
 
-        setLabel(label: string) : TabMenuItemBuilder {
+        setLabel(label: string): TabMenuItemBuilder {
             this.label = label;
             return this;
         }
 
-        setOptions(options: TabMenuItemOptions) : TabMenuItemBuilder {
+        setOptions(options: TabMenuItemOptions): TabMenuItemBuilder {
             this.options = options;
             return this;
         }
 
-        setCloseAction(closeAction: api.ui.Action) : TabMenuItemBuilder {
+        setCloseAction(closeAction: api.ui.Action): TabMenuItemBuilder {
             this.closeAction = closeAction;
             return this;
         }
 
-        build(): TabMenuItem{
+        build(): TabMenuItem {
             return new TabMenuItem(this);
         }
 

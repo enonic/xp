@@ -17,6 +17,12 @@ module api.security {
             this.modifiedTime = modifiedTime || new Date();
         }
 
+        static fromJson(json: PrincipalJson): Principal {
+            var key = PrincipalKey.fromString(json.key);
+            var date = json.modifiedTime ? api.util.DateHelper.parseUTCDate(json.modifiedTime) : undefined;
+            return new Principal(key, json.displayName, key.getType(), date);
+        }
+
         getKey(): PrincipalKey {
             return this.key;
         }
