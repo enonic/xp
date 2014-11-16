@@ -4,7 +4,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentAlreadyExistException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.RenameContentParams;
-import com.enonic.wem.core.entity.NodeAlreadyExistException;
+import com.enonic.wem.repo.NodeAlreadyExistException;
 import com.enonic.wem.repo.NodeId;
 import com.enonic.wem.repo.NodeName;
 import com.enonic.wem.repo.RenameNodeParams;

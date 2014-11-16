@@ -62,7 +62,16 @@
         <configuration>
           <instructions>
             <Export-Package>
-              com.enonic.wem.core.*,
+              com.enonic.wem.core.content.*,
+              com.enonic.wem.core.event.*,
+              com.enonic.wem.core.form.*,
+              com.enonic.wem.core.image.*,
+              com.enonic.wem.core.initializer.*,
+              com.enonic.wem.core.module.*,
+              com.enonic.wem.core.mustache.*,
+              com.enonic.wem.core.relationship.*,
+              com.enonic.wem.core.schema.*,
+              com.enonic.wem.core.security.*
             </Export-Package>
             <Import-Package>
               *

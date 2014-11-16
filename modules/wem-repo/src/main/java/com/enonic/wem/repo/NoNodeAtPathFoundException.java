@@ -1,7 +1,5 @@
-package com.enonic.wem.core.entity;
+package com.enonic.wem.repo;
 
-
-import com.enonic.wem.repo.NodePath;
 
 public class NoNodeAtPathFoundException
     extends NoNodeFoundException

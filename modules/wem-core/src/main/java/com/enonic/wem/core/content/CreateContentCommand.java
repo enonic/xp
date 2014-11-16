@@ -14,7 +14,7 @@ import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.repo.CreateNodeParams;
 import com.enonic.wem.repo.Node;
-import com.enonic.wem.core.entity.NodeAlreadyExistException;
+import com.enonic.wem.repo.NodeAlreadyExistException;
 
 final class CreateContentCommand
     extends AbstractContentCommand

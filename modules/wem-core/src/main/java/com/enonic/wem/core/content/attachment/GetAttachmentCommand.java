@@ -5,7 +5,7 @@ import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.core.content.ContentAttachmentNodeTranslator;
-import com.enonic.wem.core.entity.NoNodeWithIdFoundException;
+import com.enonic.wem.repo.NoNodeWithIdFoundException;
 import com.enonic.wem.repo.Node;
 import com.enonic.wem.repo.NodeId;
 import com.enonic.wem.repo.NodeService;

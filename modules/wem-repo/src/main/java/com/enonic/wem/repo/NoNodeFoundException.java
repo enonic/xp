@@ -1,4 +1,4 @@
-package com.enonic.wem.core.entity;
+package com.enonic.wem.repo;
 
 
 public abstract class NoNodeFoundException

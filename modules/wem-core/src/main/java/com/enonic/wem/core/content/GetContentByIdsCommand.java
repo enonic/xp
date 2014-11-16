@@ -12,7 +12,7 @@ import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.GetContentByIdsParams;
 import com.enonic.wem.api.context.ContextAccessor;
-import com.enonic.wem.core.entity.NoNodeWithIdFoundException;
+import com.enonic.wem.repo.NoNodeWithIdFoundException;
 import com.enonic.wem.repo.NodeId;
 import com.enonic.wem.repo.NodeIds;
 import com.enonic.wem.repo.NodeService;

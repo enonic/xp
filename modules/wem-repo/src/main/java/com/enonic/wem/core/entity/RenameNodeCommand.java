@@ -7,6 +7,7 @@ import com.enonic.wem.core.index.query.QueryService;
 import com.enonic.wem.repo.FindNodesByParentParams;
 import com.enonic.wem.repo.FindNodesByParentResult;
 import com.enonic.wem.repo.Node;
+import com.enonic.wem.repo.NodeAlreadyExistException;
 import com.enonic.wem.repo.NodeId;
 import com.enonic.wem.repo.NodeName;
 import com.enonic.wem.repo.NodePath;
