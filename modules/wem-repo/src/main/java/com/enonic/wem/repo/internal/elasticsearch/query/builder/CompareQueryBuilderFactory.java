@@ -3,7 +3,7 @@ package com.enonic.wem.repo.internal.elasticsearch.query.builder;
 import org.elasticsearch.index.query.QueryBuilder;
 
 import com.enonic.wem.api.query.expr.CompareExpr;
-import com.enonic.wem.core.index.query.IndexQueryBuilderException;
+import com.enonic.wem.repo.internal.index.query.IndexQueryBuilderException;
 
 public class CompareQueryBuilderFactory
     extends AbstractQueryBuilderFactory

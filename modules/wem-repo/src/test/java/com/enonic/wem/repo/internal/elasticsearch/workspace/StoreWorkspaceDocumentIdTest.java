@@ -2,7 +2,7 @@ package com.enonic.wem.repo.internal.elasticsearch.workspace;
 
 import org.junit.Test;
 
-import com.enonic.wem.core.workspace.WorkspaceDocumentId;
+import com.enonic.wem.repo.internal.workspace.WorkspaceDocumentId;
 
 import static org.junit.Assert.*;
 

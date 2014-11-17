@@ -20,7 +20,7 @@ import com.enonic.wem.api.query.filter.Filter;
 import com.enonic.wem.api.query.filter.Filters;
 import com.enonic.wem.api.query.filter.RangeFilter;
 import com.enonic.wem.api.query.filter.ValueFilter;
-import com.enonic.wem.core.index.query.IndexQueryFieldNameResolver;
+import com.enonic.wem.repo.internal.index.query.IndexQueryFieldNameResolver;
 
 public class FilterBuilderFactory
     extends AbstractQueryBuilderFactory

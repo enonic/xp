@@ -16,14 +16,14 @@ import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeVersion;
 import com.enonic.wem.api.node.NodeVersionId;
 import com.enonic.wem.api.node.NodeVersions;
-import com.enonic.wem.core.index.IndexType;
-import com.enonic.wem.core.index.result.SearchResult;
-import com.enonic.wem.core.index.result.SearchResultEntry;
-import com.enonic.wem.core.index.result.SearchResultField;
-import com.enonic.wem.core.repository.StorageNameResolver;
-import com.enonic.wem.core.version.GetVersionsQuery;
-import com.enonic.wem.core.version.NodeVersionDocument;
-import com.enonic.wem.core.version.VersionService;
+import com.enonic.wem.repo.internal.index.IndexType;
+import com.enonic.wem.repo.internal.index.result.SearchResult;
+import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
+import com.enonic.wem.repo.internal.index.result.SearchResultField;
+import com.enonic.wem.repo.internal.repository.StorageNameResolver;
+import com.enonic.wem.repo.internal.version.GetVersionsQuery;
+import com.enonic.wem.repo.internal.version.NodeVersionDocument;
+import com.enonic.wem.repo.internal.version.VersionService;
 
 public class ElasticsearchVersionService
     implements VersionService

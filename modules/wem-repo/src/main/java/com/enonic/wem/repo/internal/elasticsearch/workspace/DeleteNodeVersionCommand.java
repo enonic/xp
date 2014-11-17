@@ -4,9 +4,9 @@ import org.elasticsearch.action.delete.DeleteRequest;
 
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.api.node.NodeId;
-import com.enonic.wem.core.index.IndexType;
-import com.enonic.wem.core.repository.StorageNameResolver;
-import com.enonic.wem.core.workspace.WorkspaceDocumentId;
+import com.enonic.wem.repo.internal.index.IndexType;
+import com.enonic.wem.repo.internal.repository.StorageNameResolver;
+import com.enonic.wem.repo.internal.workspace.WorkspaceDocumentId;
 
 public class DeleteNodeVersionCommand
     extends AbstractWorkspaceCommand

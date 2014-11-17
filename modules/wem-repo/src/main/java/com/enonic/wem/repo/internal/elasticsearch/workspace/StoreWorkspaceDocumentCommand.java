@@ -5,10 +5,10 @@ import org.elasticsearch.client.Requests;
 
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.repo.internal.elasticsearch.xcontent.WorkspaceXContentBuilderFactory;
-import com.enonic.wem.core.index.IndexType;
-import com.enonic.wem.core.repository.StorageNameResolver;
-import com.enonic.wem.core.workspace.StoreWorkspaceDocument;
-import com.enonic.wem.core.workspace.WorkspaceDocumentId;
+import com.enonic.wem.repo.internal.index.IndexType;
+import com.enonic.wem.repo.internal.repository.StorageNameResolver;
+import com.enonic.wem.repo.internal.workspace.StoreWorkspaceDocument;
+import com.enonic.wem.repo.internal.workspace.WorkspaceDocumentId;
 
 public class StoreWorkspaceDocumentCommand
     extends AbstractWorkspaceCommand

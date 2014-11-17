@@ -4,7 +4,7 @@ import java.time.Instant;
 import java.util.Date;
 
 import com.enonic.wem.api.index.IndexDocumentItemPath;
-import com.enonic.wem.core.index.IndexValueType;
+import com.enonic.wem.repo.internal.index.IndexValueType;
 
 public class StoreDocumentDateItem
     extends AbstractStoreDocumentItem<Date>

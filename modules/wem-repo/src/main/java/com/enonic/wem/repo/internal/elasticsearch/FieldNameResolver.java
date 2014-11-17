@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
 import com.enonic.wem.repo.internal.elasticsearch.document.AbstractStoreDocumentItem;
-import com.enonic.wem.core.index.IndexFieldNameNormalizer;
+import com.enonic.wem.repo.internal.index.IndexFieldNameNormalizer;
 
 public class FieldNameResolver
 {

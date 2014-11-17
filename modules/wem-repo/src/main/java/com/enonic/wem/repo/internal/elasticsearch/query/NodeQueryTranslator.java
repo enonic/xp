@@ -11,8 +11,8 @@ import com.enonic.wem.repo.internal.elasticsearch.query.builder.AclFilterBuilder
 import com.enonic.wem.repo.internal.elasticsearch.query.builder.FilterBuilderFactory;
 import com.enonic.wem.repo.internal.elasticsearch.query.builder.QueryBuilderFactory;
 import com.enonic.wem.repo.internal.elasticsearch.query.builder.SortQueryBuilderFactory;
-import com.enonic.wem.core.index.IndexContext;
-import com.enonic.wem.core.repository.IndexNameResolver;
+import com.enonic.wem.repo.internal.index.IndexContext;
+import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.api.node.NodeQuery;
 
 public class NodeQueryTranslator

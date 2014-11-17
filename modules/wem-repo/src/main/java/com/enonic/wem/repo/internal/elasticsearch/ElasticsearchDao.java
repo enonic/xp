@@ -22,10 +22,10 @@ import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.repo.internal.elasticsearch.result.GetResultFactory;
 import com.enonic.wem.repo.internal.elasticsearch.result.SearchResultFactory;
 import com.enonic.wem.repo.internal.elasticsearch.xcontent.StoreDocumentXContentBuilderFactory;
-import com.enonic.wem.core.index.IndexException;
-import com.enonic.wem.core.index.query.QueryService;
-import com.enonic.wem.core.index.result.GetResult;
-import com.enonic.wem.core.index.result.SearchResult;
+import com.enonic.wem.repo.internal.index.IndexException;
+import com.enonic.wem.repo.internal.index.query.QueryService;
+import com.enonic.wem.repo.internal.index.result.GetResult;
+import com.enonic.wem.repo.internal.index.result.SearchResult;
 
 public class ElasticsearchDao
 {

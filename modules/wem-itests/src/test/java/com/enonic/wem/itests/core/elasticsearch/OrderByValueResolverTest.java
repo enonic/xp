@@ -18,12 +18,12 @@ import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocumentOrderbyI
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.repo.internal.elasticsearch.query.builder.QueryBuilderFactory;
 import com.enonic.wem.repo.internal.elasticsearch.xcontent.StoreDocumentXContentBuilderFactory;
-import com.enonic.wem.core.index.IndexType;
-import com.enonic.wem.core.index.query.IndexQueryFieldNameResolver;
-import com.enonic.wem.core.index.result.SearchResult;
-import com.enonic.wem.core.index.result.SearchResultEntry;
-import com.enonic.wem.core.repository.IndexNameResolver;
-import com.enonic.wem.core.repository.RepositoryIndexMappingProvider;
+import com.enonic.wem.repo.internal.index.IndexType;
+import com.enonic.wem.repo.internal.index.query.IndexQueryFieldNameResolver;
+import com.enonic.wem.repo.internal.index.result.SearchResult;
+import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
+import com.enonic.wem.repo.internal.repository.IndexNameResolver;
+import com.enonic.wem.repo.internal.repository.RepositoryIndexMappingProvider;
 
 import static org.junit.Assert.*;
 

@@ -15,8 +15,8 @@ import com.enonic.wem.repo.internal.elasticsearch.IndexConstants;
 import com.enonic.wem.repo.internal.elasticsearch.document.AbstractStoreDocumentItem;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocumentOrderbyItem;
-import com.enonic.wem.core.index.IndexException;
-import com.enonic.wem.core.index.IndexValueNormalizer;
+import com.enonic.wem.repo.internal.index.IndexException;
+import com.enonic.wem.repo.internal.index.IndexValueNormalizer;
 
 public class StoreDocumentXContentBuilderFactory
     extends AbstractXContentBuilderFactor

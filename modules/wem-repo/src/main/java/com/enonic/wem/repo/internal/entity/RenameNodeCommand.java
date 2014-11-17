@@ -3,7 +3,7 @@ package com.enonic.wem.repo.internal.entity;
 import java.time.Instant;
 
 import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.core.index.query.QueryService;
+import com.enonic.wem.repo.internal.index.query.QueryService;
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
 import com.enonic.wem.api.node.Node;

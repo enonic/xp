@@ -5,7 +5,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.util.GeoPoint;
-import com.enonic.wem.core.index.IndexValueNormalizer;
+import com.enonic.wem.repo.internal.index.IndexValueNormalizer;
 
 class AbstractQueryBuilderFactory
 {

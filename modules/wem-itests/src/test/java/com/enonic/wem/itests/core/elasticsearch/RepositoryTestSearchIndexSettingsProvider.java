@@ -1,7 +1,7 @@
 package com.enonic.wem.itests.core.elasticsearch;
 
 import com.enonic.wem.api.repository.Repository;
-import com.enonic.wem.core.repository.AbstractRepositorySettingsProvider;
+import com.enonic.wem.repo.internal.repository.AbstractRepositorySettingsProvider;
 
 public class RepositoryTestSearchIndexSettingsProvider
     extends AbstractRepositorySettingsProvider

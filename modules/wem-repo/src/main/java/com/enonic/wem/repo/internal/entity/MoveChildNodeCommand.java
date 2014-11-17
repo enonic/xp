@@ -11,8 +11,8 @@ import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.query.expr.QueryExpr;
 import com.enonic.wem.api.query.expr.ValueExpr;
 import com.enonic.wem.api.node.NodeQuery;
-import com.enonic.wem.core.index.IndexContext;
-import com.enonic.wem.core.index.query.NodeQueryResult;
+import com.enonic.wem.repo.internal.index.IndexContext;
+import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 

@@ -2,9 +2,9 @@ package com.enonic.wem.repo.internal.elasticsearch.workspace;
 
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchDao;
 import com.enonic.wem.api.node.NodeId;
-import com.enonic.wem.core.workspace.StoreWorkspaceDocument;
-import com.enonic.wem.core.workspace.WorkspaceContext;
-import com.enonic.wem.core.workspace.WorkspaceService;
+import com.enonic.wem.repo.internal.workspace.StoreWorkspaceDocument;
+import com.enonic.wem.repo.internal.workspace.WorkspaceContext;
+import com.enonic.wem.repo.internal.workspace.WorkspaceService;
 
 public class ElasticsearchWorkspaceService
     implements WorkspaceService

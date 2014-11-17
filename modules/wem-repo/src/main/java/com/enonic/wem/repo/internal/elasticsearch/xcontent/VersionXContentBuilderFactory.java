@@ -4,8 +4,8 @@ import java.time.Instant;
 
 import org.elasticsearch.common.xcontent.XContentBuilder;
 
-import com.enonic.wem.core.index.IndexException;
-import com.enonic.wem.core.version.NodeVersionDocument;
+import com.enonic.wem.repo.internal.index.IndexException;
+import com.enonic.wem.repo.internal.version.NodeVersionDocument;
 
 public class VersionXContentBuilderFactory
     extends AbstractXContentBuilderFactor

@@ -9,7 +9,7 @@ import com.enonic.wem.api.query.aggregation.DateRangeAggregationQuery;
 import com.enonic.wem.api.query.aggregation.NumericRange;
 import com.enonic.wem.api.query.aggregation.NumericRangeAggregationQuery;
 import com.enonic.wem.api.query.aggregation.RangeAggregationQuery;
-import com.enonic.wem.core.index.query.IndexQueryFieldNameResolver;
+import com.enonic.wem.repo.internal.index.query.IndexQueryFieldNameResolver;
 
 public class RangeAggregationBuilderFactory
 {

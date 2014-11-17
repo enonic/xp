@@ -1,8 +1,8 @@
 package com.enonic.wem.repo.internal.entity;
 
 import com.enonic.wem.api.context.ContextAccessor;
-import com.enonic.wem.core.index.IndexContext;
-import com.enonic.wem.core.index.query.QueryService;
+import com.enonic.wem.repo.internal.index.IndexContext;
+import com.enonic.wem.repo.internal.index.query.QueryService;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.Nodes;
 

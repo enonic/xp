@@ -2,7 +2,7 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.query.expr.OrderExpressions;
-import com.enonic.wem.core.index.IndexContext;
+import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.wem.api.node.NodeIds;
 import com.enonic.wem.api.node.NodeVersionIds;
 import com.enonic.wem.api.node.Nodes;

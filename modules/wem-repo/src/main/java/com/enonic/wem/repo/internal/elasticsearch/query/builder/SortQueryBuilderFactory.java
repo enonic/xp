@@ -14,7 +14,7 @@ import com.enonic.wem.api.query.expr.FieldOrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpressions;
 import com.enonic.wem.repo.internal.elasticsearch.query.builder.function.DynamicSortBuilderFactory;
-import com.enonic.wem.core.index.query.IndexQueryFieldNameResolver;
+import com.enonic.wem.repo.internal.index.query.IndexQueryFieldNameResolver;
 
 public class SortQueryBuilderFactory
     extends AbstractQueryBuilderFactory

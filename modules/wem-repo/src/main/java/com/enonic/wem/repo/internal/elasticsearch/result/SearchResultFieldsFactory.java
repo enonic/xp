@@ -9,7 +9,7 @@ import org.elasticsearch.search.SearchHitField;
 
 import com.google.common.collect.Maps;
 
-import com.enonic.wem.core.index.result.SearchResultField;
+import com.enonic.wem.repo.internal.index.result.SearchResultField;
 
 class SearchResultFieldsFactory
 {

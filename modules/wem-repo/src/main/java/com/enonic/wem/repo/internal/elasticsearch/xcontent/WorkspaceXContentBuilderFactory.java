@@ -3,8 +3,8 @@ package com.enonic.wem.repo.internal.elasticsearch.xcontent;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 
 import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.core.index.IndexException;
-import com.enonic.wem.core.workspace.StoreWorkspaceDocument;
+import com.enonic.wem.repo.internal.index.IndexException;
+import com.enonic.wem.repo.internal.workspace.StoreWorkspaceDocument;
 
 public class WorkspaceXContentBuilderFactory
     extends AbstractXContentBuilderFactor

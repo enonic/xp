@@ -8,7 +8,7 @@ import com.enonic.wem.api.aggregation.Bucket;
 import com.enonic.wem.api.aggregation.BucketAggregation;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeIds;
-import com.enonic.wem.core.workspace.WorkspaceDocumentId;
+import com.enonic.wem.repo.internal.workspace.WorkspaceDocumentId;
 
 class ChangedIdsResolver
 {

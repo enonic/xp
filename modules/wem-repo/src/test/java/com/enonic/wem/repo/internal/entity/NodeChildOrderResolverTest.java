@@ -9,9 +9,8 @@ import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.repo.internal.entity.NodeChildOrderResolver;
 import com.enonic.wem.repo.internal.entity.dao.NodeDao;
-import com.enonic.wem.core.index.query.QueryService;
+import com.enonic.wem.repo.internal.index.query.QueryService;
 import com.enonic.wem.api.node.NodePath;
 
 import static org.junit.Assert.*;

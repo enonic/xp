@@ -11,7 +11,7 @@ import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchDao;
 import com.enonic.wem.repo.internal.elasticsearch.xcontent.WorkspaceXContentBuilderFactory;
 import com.enonic.wem.api.node.NodeVersionId;
 import com.enonic.wem.api.node.NodeVersionIds;
-import com.enonic.wem.core.index.result.SearchResultField;
+import com.enonic.wem.repo.internal.index.result.SearchResultField;
 
 abstract class AbstractWorkspaceCommand
 {

@@ -18,12 +18,12 @@ import com.enonic.wem.repo.internal.elasticsearch.xcontent.WorkspaceXContentBuil
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeIds;
 import com.enonic.wem.api.node.NodeVersionIds;
-import com.enonic.wem.core.index.IndexType;
-import com.enonic.wem.core.index.result.SearchResult;
-import com.enonic.wem.core.index.result.SearchResultEntry;
-import com.enonic.wem.core.index.result.SearchResultField;
-import com.enonic.wem.core.repository.StorageNameResolver;
-import com.enonic.wem.core.workspace.WorkspaceDocumentId;
+import com.enonic.wem.repo.internal.index.IndexType;
+import com.enonic.wem.repo.internal.index.result.SearchResult;
+import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
+import com.enonic.wem.repo.internal.index.result.SearchResultField;
+import com.enonic.wem.repo.internal.repository.StorageNameResolver;
+import com.enonic.wem.repo.internal.workspace.WorkspaceDocumentId;
 import com.enonic.wem.repo.internal.elasticsearch.xcontent.VersionXContentBuilderFactory;
 
 public class GetNodeVersionIdsByIdsCommand

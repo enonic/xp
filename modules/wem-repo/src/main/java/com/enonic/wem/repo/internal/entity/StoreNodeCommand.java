@@ -2,10 +2,10 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
-import com.enonic.wem.core.index.IndexContext;
-import com.enonic.wem.core.version.NodeVersionDocument;
-import com.enonic.wem.core.workspace.StoreWorkspaceDocument;
-import com.enonic.wem.core.workspace.WorkspaceContext;
+import com.enonic.wem.repo.internal.index.IndexContext;
+import com.enonic.wem.repo.internal.version.NodeVersionDocument;
+import com.enonic.wem.repo.internal.workspace.StoreWorkspaceDocument;
+import com.enonic.wem.repo.internal.workspace.WorkspaceContext;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeVersionId;
 

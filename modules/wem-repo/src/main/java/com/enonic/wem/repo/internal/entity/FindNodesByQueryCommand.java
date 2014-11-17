@@ -3,8 +3,8 @@ package com.enonic.wem.repo.internal.entity;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.query.expr.OrderExpressions;
 import com.enonic.wem.api.node.NodeQuery;
-import com.enonic.wem.core.index.IndexContext;
-import com.enonic.wem.core.index.query.NodeQueryResult;
+import com.enonic.wem.repo.internal.index.IndexContext;
+import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
 import com.enonic.wem.api.node.FindNodesByQueryResult;
 import com.enonic.wem.api.node.Nodes;
 

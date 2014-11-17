@@ -7,10 +7,9 @@ import org.mockito.Mockito;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchDao;
 import com.enonic.wem.api.node.NodeIds;
 import com.enonic.wem.api.node.NodeVersionIds;
-import com.enonic.wem.repo.internal.elasticsearch.workspace.GetNodeVersionIdsByIdsCommand;
 
-import static com.enonic.wem.core.TestContext.TEST_REPOSITORY;
-import static com.enonic.wem.core.TestContext.TEST_WORKSPACE;
+import static com.enonic.wem.repo.internal.TestContext.TEST_REPOSITORY;
+import static com.enonic.wem.repo.internal.TestContext.TEST_WORKSPACE;
 import static org.junit.Assert.*;
 
 public class GetNodeVersionIdsByIdsCommandTest

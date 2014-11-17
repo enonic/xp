@@ -3,7 +3,7 @@ package com.enonic.wem.repo.internal.elasticsearch.xcontent;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 
-import com.enonic.wem.core.index.IndexValueNormalizer;
+import com.enonic.wem.repo.internal.index.IndexValueNormalizer;
 
 abstract class AbstractXContentBuilderFactor
 {

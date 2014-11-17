@@ -1,6 +1,6 @@
 package com.enonic.wem.repo.internal.elasticsearch;
 
-import com.enonic.wem.core.index.IndexFieldNameNormalizer;
+import com.enonic.wem.repo.internal.index.IndexFieldNameNormalizer;
 
 class ReturnField
 {

@@ -12,7 +12,7 @@ import com.google.common.collect.Sets;
 import com.enonic.wem.api.query.aggregation.AggregationQuery;
 import com.enonic.wem.api.query.aggregation.RangeAggregationQuery;
 import com.enonic.wem.api.query.aggregation.TermsAggregationQuery;
-import com.enonic.wem.core.index.query.IndexQueryFieldNameResolver;
+import com.enonic.wem.repo.internal.index.query.IndexQueryFieldNameResolver;
 
 public class AggregationBuilderFactory
 {
