@@ -24,7 +24,6 @@
     <bundle start-level="50">mvn:com.enonic.wem/wem-api/${project.version}</bundle>
     <bundle start-level="50">mvn:com.enonic.wem/wem-blob/${project.version}</bundle>
 
-    <bundle start-level="50">mvn:com.enonic.wem/wem-elasticsearch/${project.version}</bundle>
     <bundle start-level="50">mvn:com.enonic.wem/wem-repo/${project.version}</bundle>
 
     <bundle start-level="50">mvn:com.enonic.osgi.bundles/jhlabs-filters/2.0.235_1</bundle>
