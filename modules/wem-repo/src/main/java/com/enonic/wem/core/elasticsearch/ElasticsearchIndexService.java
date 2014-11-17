@@ -34,9 +34,9 @@ import com.enonic.wem.core.index.IndexException;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.repository.IndexNameResolver;
 import com.enonic.wem.core.repository.StorageNameResolver;
-import com.enonic.wem.repo.Node;
-import com.enonic.wem.repo.NodeId;
-import com.enonic.wem.repo.NodeVersionId;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodeVersionId;
 
 public class ElasticsearchIndexService
     implements IndexService

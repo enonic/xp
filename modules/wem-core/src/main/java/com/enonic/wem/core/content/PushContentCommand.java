@@ -7,8 +7,8 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPublishedEvent;
 import com.enonic.wem.api.event.EventPublisher;
 import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.repo.Node;
-import com.enonic.wem.repo.NodeId;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeId;
 
 public class PushContentCommand
     extends AbstractContentCommand

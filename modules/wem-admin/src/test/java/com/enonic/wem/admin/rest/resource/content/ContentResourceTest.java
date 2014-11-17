@@ -6,8 +6,6 @@ import java.util.List;
 
 import javax.ws.rs.core.MediaType;
 
-import org.elasticsearch.common.joda.time.DateTimeUtils;
-import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -87,12 +85,6 @@ public class ContentResourceTest
     private ContentService contentService;
 
     private SecurityService securityService;
-
-    @After
-    public void after()
-    {
-        DateTimeUtils.setCurrentMillisSystem();
-    }
 
     @Override
     protected Object getResourceInstance()

@@ -6,7 +6,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Iterators;
 
 import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.repo.NodeId;
+import com.enonic.wem.api.node.NodeId;
 
 public class WorkspaceDocumentId
 {

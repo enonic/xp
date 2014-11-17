@@ -21,11 +21,11 @@ import com.enonic.wem.api.index.PatternIndexConfigDocument;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.core.elasticsearch.document.AbstractStoreDocumentItem;
 import com.enonic.wem.core.elasticsearch.document.StoreDocument;
-import com.enonic.wem.repo.Node;
-import com.enonic.wem.repo.NodeId;
-import com.enonic.wem.repo.NodeName;
-import com.enonic.wem.repo.NodePath;
-import com.enonic.wem.repo.NodeVersionId;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodeName;
+import com.enonic.wem.api.node.NodePath;
+import com.enonic.wem.api.node.NodeVersionId;
 import com.enonic.wem.core.index.IndexValueType;
 import com.enonic.wem.core.repository.IndexNameResolver;
 

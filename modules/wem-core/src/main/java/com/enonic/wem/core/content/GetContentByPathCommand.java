@@ -6,9 +6,9 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.context.ContextAccessor;
-import com.enonic.wem.repo.NoNodeAtPathFoundException;
-import com.enonic.wem.repo.Node;
-import com.enonic.wem.repo.NodePath;
+import com.enonic.wem.api.node.NoNodeAtPathFoundException;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodePath;
 
 final class GetContentByPathCommand
     extends AbstractContentCommand

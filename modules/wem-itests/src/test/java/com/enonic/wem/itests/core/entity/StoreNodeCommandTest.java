@@ -8,9 +8,9 @@ import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlEntry;
 import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.security.acl.Permission;
-import com.enonic.wem.repo.CreateNodeParams;
-import com.enonic.wem.repo.Node;
-import com.enonic.wem.repo.NodePath;
+import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.core.entity.StoreNodeCommand;
 
 public class StoreNodeCommandTest

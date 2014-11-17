@@ -12,9 +12,9 @@ import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
-import com.enonic.wem.repo.CreateNodeParams;
-import com.enonic.wem.repo.Node;
-import com.enonic.wem.repo.NodeAlreadyExistException;
+import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeAlreadyExistException;
 
 final class CreateContentCommand
     extends AbstractContentCommand

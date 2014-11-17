@@ -11,7 +11,7 @@ import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.entity.dao.NodeDao;
 import com.enonic.wem.core.index.query.QueryService;
-import com.enonic.wem.repo.NodePath;
+import com.enonic.wem.api.node.NodePath;
 
 import static org.junit.Assert.*;
 

@@ -19,11 +19,11 @@ import com.enonic.wem.api.query.expr.QueryExpr;
 import com.enonic.wem.api.query.expr.ValueExpr;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.index.query.NodeQueryResult;
-import com.enonic.wem.repo.CreateNodeParams;
-import com.enonic.wem.repo.Node;
-import com.enonic.wem.repo.NodeId;
-import com.enonic.wem.repo.NodePath;
-import com.enonic.wem.repo.NodeQuery;
+import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodePath;
+import com.enonic.wem.api.node.NodeQuery;
 
 import static org.junit.Assert.*;
 

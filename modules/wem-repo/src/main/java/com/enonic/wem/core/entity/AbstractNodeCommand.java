@@ -11,14 +11,14 @@ import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.index.query.QueryService;
 import com.enonic.wem.core.version.VersionService;
 import com.enonic.wem.core.workspace.WorkspaceService;
-import com.enonic.wem.repo.CreateNodeParams;
-import com.enonic.wem.repo.FindNodesByParentParams;
-import com.enonic.wem.repo.FindNodesByParentResult;
-import com.enonic.wem.repo.Node;
-import com.enonic.wem.repo.NodeId;
-import com.enonic.wem.repo.NodeIds;
-import com.enonic.wem.repo.NodePath;
-import com.enonic.wem.repo.Nodes;
+import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.FindNodesByParentParams;
+import com.enonic.wem.api.node.FindNodesByParentResult;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodeIds;
+import com.enonic.wem.api.node.NodePath;
+import com.enonic.wem.api.node.Nodes;
 
 abstract class AbstractNodeCommand
 {

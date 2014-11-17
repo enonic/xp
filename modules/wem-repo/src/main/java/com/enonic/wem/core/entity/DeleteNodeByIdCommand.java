@@ -4,9 +4,9 @@ import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.workspace.WorkspaceContext;
-import com.enonic.wem.repo.Node;
-import com.enonic.wem.repo.NodeId;
-import com.enonic.wem.repo.NodeVersionId;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodeVersionId;
 
 public final class DeleteNodeByIdCommand
     extends AbstractDeleteNodeCommand

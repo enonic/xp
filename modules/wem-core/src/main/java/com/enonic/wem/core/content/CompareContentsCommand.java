@@ -9,10 +9,10 @@ import com.enonic.wem.api.content.CompareContentResults;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.repo.NodeComparisons;
-import com.enonic.wem.repo.NodeId;
-import com.enonic.wem.repo.NodeIds;
-import com.enonic.wem.repo.NodeService;
+import com.enonic.wem.api.node.NodeComparisons;
+import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodeIds;
+import com.enonic.wem.api.node.NodeService;
 
 public class CompareContentsCommand
 {

@@ -21,11 +21,11 @@ import com.enonic.wem.api.security.PrincipalType;
 import com.enonic.wem.api.security.Principals;
 import com.enonic.wem.api.security.Role;
 import com.enonic.wem.api.security.User;
-import com.enonic.wem.repo.CreateNodeParams;
-import com.enonic.wem.repo.Node;
-import com.enonic.wem.repo.NodeId;
-import com.enonic.wem.repo.Nodes;
-import com.enonic.wem.repo.UpdateNodeParams;
+import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.Nodes;
+import com.enonic.wem.api.node.UpdateNodeParams;
 
 abstract class PrincipalNodeTranslator
 {

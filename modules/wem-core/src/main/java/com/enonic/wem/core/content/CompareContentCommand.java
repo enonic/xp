@@ -3,9 +3,9 @@ package com.enonic.wem.core.content;
 import com.enonic.wem.api.content.CompareContentResult;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.repo.NodeComparison;
-import com.enonic.wem.repo.NodeId;
-import com.enonic.wem.repo.NodeService;
+import com.enonic.wem.api.node.NodeComparison;
+import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodeService;
 
 public class CompareContentCommand
 {

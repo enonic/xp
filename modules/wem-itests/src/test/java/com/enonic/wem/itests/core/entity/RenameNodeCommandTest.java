@@ -3,12 +3,12 @@ package com.enonic.wem.itests.core.entity;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.repo.CreateNodeParams;
-import com.enonic.wem.repo.Node;
-import com.enonic.wem.repo.NodeName;
-import com.enonic.wem.repo.NodePath;
+import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeName;
+import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.core.entity.RenameNodeCommand;
-import com.enonic.wem.repo.RenameNodeParams;
+import com.enonic.wem.api.node.RenameNodeParams;
 
 import static org.junit.Assert.*;
 

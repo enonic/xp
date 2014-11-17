@@ -5,11 +5,11 @@ import java.util.LinkedHashSet;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.query.expr.QueryExpr;
-import com.enonic.wem.repo.NodeQuery;
+import com.enonic.wem.api.node.NodeQuery;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.index.query.NodeQueryResult;
-import com.enonic.wem.repo.Node;
-import com.enonic.wem.repo.NodeId;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeId;
 
 public class SetNodeChildOrderCommand
     extends AbstractNodeCommand

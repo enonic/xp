@@ -12,11 +12,11 @@ import com.enonic.wem.api.query.expr.FunctionExpr;
 import com.enonic.wem.api.query.expr.QueryExpr;
 import com.enonic.wem.api.query.expr.ValueExpr;
 import com.enonic.wem.core.entity.FindNodesByQueryCommand;
-import com.enonic.wem.repo.CreateNodeParams;
-import com.enonic.wem.repo.FindNodesByQueryResult;
-import com.enonic.wem.repo.Node;
-import com.enonic.wem.repo.NodePath;
-import com.enonic.wem.repo.NodeQuery;
+import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.FindNodesByQueryResult;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodePath;
+import com.enonic.wem.api.node.NodeQuery;
 
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.*;

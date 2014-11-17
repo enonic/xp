@@ -7,9 +7,9 @@ import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextBuilder;
 import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.repo.CreateNodeParams;
-import com.enonic.wem.repo.Node;
-import com.enonic.wem.repo.NodePath;
+import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.core.entity.PushNodeCommand;
 
 import static org.junit.Assert.*;

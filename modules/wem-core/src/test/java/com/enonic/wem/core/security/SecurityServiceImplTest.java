@@ -33,14 +33,14 @@ import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.api.security.auth.AuthenticationToken;
 import com.enonic.wem.api.security.auth.EmailPasswordAuthToken;
 import com.enonic.wem.api.security.auth.UsernamePasswordAuthToken;
-import com.enonic.wem.repo.CreateNodeParams;
-import com.enonic.wem.repo.FindNodesByQueryResult;
-import com.enonic.wem.repo.Node;
-import com.enonic.wem.repo.NodeId;
-import com.enonic.wem.repo.NodePath;
-import com.enonic.wem.repo.NodeQuery;
-import com.enonic.wem.repo.NodeService;
-import com.enonic.wem.repo.Nodes;
+import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.FindNodesByQueryResult;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodePath;
+import com.enonic.wem.api.node.NodeQuery;
+import com.enonic.wem.api.node.NodeService;
+import com.enonic.wem.api.node.Nodes;
 
 import static org.junit.Assert.*;
 

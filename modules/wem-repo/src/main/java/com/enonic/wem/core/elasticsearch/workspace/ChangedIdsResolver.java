@@ -6,8 +6,8 @@ import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.aggregation.Bucket;
 import com.enonic.wem.api.aggregation.BucketAggregation;
-import com.enonic.wem.repo.NodeId;
-import com.enonic.wem.repo.NodeIds;
+import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodeIds;
 import com.enonic.wem.core.workspace.WorkspaceDocumentId;
 
 class ChangedIdsResolver

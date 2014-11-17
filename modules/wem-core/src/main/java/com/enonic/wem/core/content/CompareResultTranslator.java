@@ -3,8 +3,8 @@ package com.enonic.wem.core.content;
 import com.enonic.wem.api.content.CompareContentResult;
 import com.enonic.wem.api.content.CompareContentResults;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.repo.NodeComparison;
-import com.enonic.wem.repo.NodeComparisons;
+import com.enonic.wem.api.node.NodeComparison;
+import com.enonic.wem.api.node.NodeComparisons;
 
 class CompareResultTranslator
 {

@@ -5,9 +5,9 @@ import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.core.entity.dao.NodeDao;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.index.query.QueryService;
-import com.enonic.wem.repo.Node;
-import com.enonic.wem.repo.NodePath;
-import com.enonic.wem.repo.NodeVersionId;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodePath;
+import com.enonic.wem.api.node.NodeVersionId;
 
 public class NodeChildOrderResolver
 {

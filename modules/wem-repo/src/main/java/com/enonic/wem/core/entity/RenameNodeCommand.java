@@ -4,15 +4,15 @@ import java.time.Instant;
 
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.core.index.query.QueryService;
-import com.enonic.wem.repo.FindNodesByParentParams;
-import com.enonic.wem.repo.FindNodesByParentResult;
-import com.enonic.wem.repo.Node;
-import com.enonic.wem.repo.NodeAlreadyExistException;
-import com.enonic.wem.repo.NodeId;
-import com.enonic.wem.repo.NodeName;
-import com.enonic.wem.repo.NodePath;
-import com.enonic.wem.repo.Nodes;
-import com.enonic.wem.repo.RenameNodeParams;
+import com.enonic.wem.api.node.FindNodesByParentParams;
+import com.enonic.wem.api.node.FindNodesByParentResult;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeAlreadyExistException;
+import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodeName;
+import com.enonic.wem.api.node.NodePath;
+import com.enonic.wem.api.node.Nodes;
+import com.enonic.wem.api.node.RenameNodeParams;
 
 public final class RenameNodeCommand
     extends AbstractNodeCommand

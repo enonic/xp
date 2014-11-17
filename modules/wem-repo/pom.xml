@@ -50,9 +50,7 @@
         <artifactId>maven-bundle-plugin</artifactId>
         <configuration>
           <instructions>
-            <Export-Package>
-              com.enonic.wem.repo.*
-            </Export-Package>
+            <Export-Package/>
             <Import-Package>
               *
             </Import-Package>

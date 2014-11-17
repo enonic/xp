@@ -13,7 +13,7 @@ import com.enonic.wem.core.elasticsearch.ClusterHealthStatus;
 import com.enonic.wem.core.elasticsearch.ClusterStatusCode;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.index.IndexType;
-import com.enonic.wem.repo.RepositoryInitializer;
+import com.enonic.wem.api.initializer.RepositoryInitializer;
 
 public final class RepositoryInitializerImpl
     implements RepositoryInitializer

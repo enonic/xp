@@ -2,11 +2,11 @@ package com.enonic.wem.core.entity;
 
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.query.expr.OrderExpressions;
-import com.enonic.wem.repo.NodeQuery;
+import com.enonic.wem.api.node.NodeQuery;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.index.query.NodeQueryResult;
-import com.enonic.wem.repo.FindNodesByQueryResult;
-import com.enonic.wem.repo.Nodes;
+import com.enonic.wem.api.node.FindNodesByQueryResult;
+import com.enonic.wem.api.node.Nodes;
 
 public class FindNodesByQueryCommand
     extends AbstractNodeCommand

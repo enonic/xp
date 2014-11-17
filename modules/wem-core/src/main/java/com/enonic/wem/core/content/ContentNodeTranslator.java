@@ -25,14 +25,14 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.wem.core.content.serializer.ThumbnailAttachmentSerializer;
-import com.enonic.wem.repo.CreateNodeParams;
-import com.enonic.wem.repo.Node;
-import com.enonic.wem.repo.NodeEditor;
-import com.enonic.wem.repo.NodeId;
-import com.enonic.wem.repo.NodeName;
-import com.enonic.wem.repo.NodePath;
-import com.enonic.wem.repo.Nodes;
-import com.enonic.wem.repo.UpdateNodeParams;
+import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeEditor;
+import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodeName;
+import com.enonic.wem.api.node.NodePath;
+import com.enonic.wem.api.node.Nodes;
+import com.enonic.wem.api.node.UpdateNodeParams;
 
 public class ContentNodeTranslator
 {
@@ -60,7 +60,7 @@ public class ContentNodeTranslator
 
         Attachments contentAttachments = params.getAttachments();
 
-        final com.enonic.wem.repo.Attachments.Builder nodeAttachmentsBuilder = com.enonic.wem.repo.Attachments.builder().
+        final com.enonic.wem.api.node.Attachments.Builder nodeAttachmentsBuilder = com.enonic.wem.api.node.Attachments.builder().
             addAll( CONTENT_ATTACHMENT_NODE_TRANSLATOR.toNodeAttachments( contentAttachments ) );
 
         final Thumbnail thumbnail = resolveThumbnailAttachment( params );
@@ -110,9 +110,9 @@ public class ContentNodeTranslator
         final NodePath parentContentPathAsNodePath = parentNodePath.removeFromBeginning( CONTENTS_ROOT_PATH );
         final ContentPath parentContentPath = ContentPath.from( parentContentPathAsNodePath.toString() );
 
-        final com.enonic.wem.repo.Attachments nodeAttachments = node.attachments();
+        final com.enonic.wem.api.node.Attachments nodeAttachments = node.attachments();
 
-        final com.enonic.wem.repo.Attachment thumbnailAttachment =
+        final com.enonic.wem.api.node.Attachment thumbnailAttachment =
             nodeAttachments.getAttachment( ThumbnailAttachmentSerializer.THUMB_NAME );
 
         final Thumbnail thumbnail;
@@ -153,13 +153,13 @@ public class ContentNodeTranslator
 
         return toBeEdited -> {
 
-            final com.enonic.wem.repo.Attachments contentAttachmentsAsNodeAttachments =
+            final com.enonic.wem.api.node.Attachments contentAttachmentsAsNodeAttachments =
                 CONTENT_ATTACHMENT_NODE_TRANSLATOR.toNodeAttachments( attachments );
 
-            final com.enonic.wem.repo.Attachments.Builder nodeAttachmentsBuilder = com.enonic.wem.repo.Attachments.builder().
+            final com.enonic.wem.api.node.Attachments.Builder nodeAttachmentsBuilder = com.enonic.wem.api.node.Attachments.builder().
                 addAll( contentAttachmentsAsNodeAttachments );
 
-            final com.enonic.wem.repo.Attachment thumbnailAttachment =
+            final com.enonic.wem.api.node.Attachment thumbnailAttachment =
                 ThumbnailAttachmentSerializer.toAttachment( content.getThumbnail() );
 
             if ( thumbnailAttachment != null )

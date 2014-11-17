@@ -8,11 +8,11 @@ import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.query.expr.FieldOrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpr;
-import com.enonic.wem.repo.CreateNodeParams;
-import com.enonic.wem.repo.FindNodesByParentParams;
-import com.enonic.wem.repo.FindNodesByParentResult;
-import com.enonic.wem.repo.Node;
-import com.enonic.wem.repo.NodePath;
+import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.FindNodesByParentParams;
+import com.enonic.wem.api.node.FindNodesByParentResult;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.core.entity.SetNodeChildOrderCommand;
 
 import static org.junit.Assert.*;

@@ -13,7 +13,7 @@ import com.enonic.wem.core.elasticsearch.query.builder.QueryBuilderFactory;
 import com.enonic.wem.core.elasticsearch.query.builder.SortQueryBuilderFactory;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.repository.IndexNameResolver;
-import com.enonic.wem.repo.NodeQuery;
+import com.enonic.wem.api.node.NodeQuery;
 
 public class NodeQueryTranslator
 {

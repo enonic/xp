@@ -45,11 +45,11 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.security.acl.AccessControlList;
-import com.enonic.wem.repo.Node;
-import com.enonic.wem.repo.NodeId;
-import com.enonic.wem.repo.NodeService;
-import com.enonic.wem.repo.OrderChildNodeParams;
-import com.enonic.wem.repo.SetNodeChildOrderParams;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodeService;
+import com.enonic.wem.api.node.OrderChildNodeParams;
+import com.enonic.wem.api.node.SetNodeChildOrderParams;
 
 public class ContentServiceImpl
     implements ContentService

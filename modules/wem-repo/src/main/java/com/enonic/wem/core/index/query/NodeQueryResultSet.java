@@ -5,8 +5,8 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.repo.NodeId;
-import com.enonic.wem.repo.NodeIds;
+import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodeIds;
 
 public class NodeQueryResultSet
 {

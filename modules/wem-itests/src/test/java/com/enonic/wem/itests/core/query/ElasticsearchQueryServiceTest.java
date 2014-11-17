@@ -14,10 +14,10 @@ import com.enonic.wem.api.security.acl.Permission;
 import com.enonic.wem.core.elasticsearch.ElasticsearchQueryService;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.itests.core.entity.AbstractNodeTest;
-import com.enonic.wem.repo.CreateNodeParams;
-import com.enonic.wem.repo.Node;
-import com.enonic.wem.repo.NodePath;
-import com.enonic.wem.repo.NodeVersionId;
+import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodePath;
+import com.enonic.wem.api.node.NodeVersionId;
 
 import static org.junit.Assert.*;
 

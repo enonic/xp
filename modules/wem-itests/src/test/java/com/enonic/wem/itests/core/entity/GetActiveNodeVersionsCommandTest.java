@@ -10,16 +10,16 @@ import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextBuilder;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.api.workspace.Workspaces;
-import com.enonic.wem.repo.CreateNodeParams;
+import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.core.entity.GetActiveNodeVersionsCommand;
-import com.enonic.wem.repo.GetActiveNodeVersionsResult;
-import com.enonic.wem.repo.Node;
-import com.enonic.wem.repo.NodeName;
-import com.enonic.wem.repo.NodePath;
-import com.enonic.wem.repo.NodeVersion;
+import com.enonic.wem.api.node.GetActiveNodeVersionsResult;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeName;
+import com.enonic.wem.api.node.NodePath;
+import com.enonic.wem.api.node.NodeVersion;
 import com.enonic.wem.core.entity.PushNodeCommand;
 import com.enonic.wem.core.entity.UpdateNodeCommand;
-import com.enonic.wem.repo.UpdateNodeParams;
+import com.enonic.wem.api.node.UpdateNodeParams;
 
 import static org.junit.Assert.*;
 

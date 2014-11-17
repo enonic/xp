@@ -27,13 +27,13 @@ import com.enonic.wem.core.index.result.SearchResult;
 import com.enonic.wem.core.index.result.SearchResultEntry;
 import com.enonic.wem.core.index.result.SearchResultField;
 import com.enonic.wem.core.repository.IndexNameResolver;
-import com.enonic.wem.repo.NodeId;
-import com.enonic.wem.repo.NodeIds;
-import com.enonic.wem.repo.NodePath;
-import com.enonic.wem.repo.NodePaths;
-import com.enonic.wem.repo.NodeQuery;
-import com.enonic.wem.repo.NodeVersionId;
-import com.enonic.wem.repo.NodeVersionIds;
+import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodeIds;
+import com.enonic.wem.api.node.NodePath;
+import com.enonic.wem.api.node.NodePaths;
+import com.enonic.wem.api.node.NodeQuery;
+import com.enonic.wem.api.node.NodeVersionId;
+import com.enonic.wem.api.node.NodeVersionIds;
 
 public class ElasticsearchQueryService
     implements QueryService

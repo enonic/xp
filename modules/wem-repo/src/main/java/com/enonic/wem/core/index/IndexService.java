@@ -7,9 +7,9 @@ import org.elasticsearch.common.unit.TimeValue;
 
 import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.core.elasticsearch.ClusterHealthStatus;
-import com.enonic.wem.repo.Node;
-import com.enonic.wem.repo.NodeId;
-import com.enonic.wem.repo.NodeVersionId;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodeVersionId;
 
 public interface IndexService
 {

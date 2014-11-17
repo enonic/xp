@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 
 import com.enonic.wem.api.util.Exceptions;
-import com.enonic.wem.repo.Node;
+import com.enonic.wem.api.node.Node;
 
 public final class NodeJsonSerializer
 {

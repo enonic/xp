@@ -6,15 +6,15 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.repo.Attachments;
-import com.enonic.wem.repo.CreateNodeParams;
-import com.enonic.wem.repo.FindNodesByParentParams;
-import com.enonic.wem.repo.FindNodesByParentResult;
-import com.enonic.wem.repo.Node;
-import com.enonic.wem.repo.NodeAlreadyExistException;
-import com.enonic.wem.repo.NodeId;
-import com.enonic.wem.repo.NodeName;
-import com.enonic.wem.repo.NodePath;
+import com.enonic.wem.api.node.Attachments;
+import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.FindNodesByParentParams;
+import com.enonic.wem.api.node.FindNodesByParentResult;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeAlreadyExistException;
+import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodeName;
+import com.enonic.wem.api.node.NodePath;
 
 public final class CreateNodeCommand
     extends AbstractNodeCommand

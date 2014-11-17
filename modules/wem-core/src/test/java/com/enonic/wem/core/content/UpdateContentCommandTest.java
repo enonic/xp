@@ -5,7 +5,6 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
-import org.elasticsearch.common.joda.time.DateTimeUtils;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -20,13 +19,13 @@ import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.event.EventPublisher;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodeNotFoundException;
+import com.enonic.wem.api.node.NodeService;
+import com.enonic.wem.api.node.UpdateNodeParams;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.repo.Node;
-import com.enonic.wem.repo.NodeId;
-import com.enonic.wem.repo.NodeNotFoundException;
-import com.enonic.wem.repo.NodeService;
-import com.enonic.wem.repo.UpdateNodeParams;
 
 import static com.enonic.wem.api.content.Content.editContent;
 import static com.enonic.wem.api.content.Content.newContent;
@@ -34,8 +33,6 @@ import static com.enonic.wem.api.content.Content.newContent;
 public class UpdateContentCommandTest
 {
     private static final Instant CREATED_TIME = LocalDateTime.of( 2013, 1, 1, 12, 0, 0, 0 ).toInstant( ZoneOffset.UTC );
-
-    private static final Instant UPDATED_TIME = LocalDateTime.of( 2013, 1, 1, 13, 0, 0, 0 ).toInstant( ZoneOffset.UTC );
 
     private final AttachmentService attachmentService = Mockito.mock( AttachmentService.class );
 
@@ -54,9 +51,6 @@ public class UpdateContentCommandTest
     public void given_content_not_found_when_handle_then_NOT_FOUND_is_returned()
         throws Exception
     {
-        // setup
-        DateTimeUtils.setCurrentMillisFixed( UPDATED_TIME.toEpochMilli() );
-
         ContentData existingContentData = new ContentData();
         existingContentData.add( Property.newString( "myData", "aaa" ) );
 
@@ -92,9 +86,6 @@ public class UpdateContentCommandTest
     public void contentDao_update_not_invoked_when_nothing_is_changed()
         throws Exception
     {
-        // setup
-        DateTimeUtils.setCurrentMillisFixed( UPDATED_TIME.toEpochMilli() );
-
         ContentData existingContentData = new ContentData();
         existingContentData.add( Property.newString( "myData", "aaa" ) );
 

@@ -5,15 +5,15 @@ import java.time.Instant;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.repo.CreateNodeParams;
-import com.enonic.wem.repo.FindNodeVersionsResult;
+import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.FindNodeVersionsResult;
 import com.enonic.wem.core.entity.GetNodeVersionsCommand;
-import com.enonic.wem.repo.Node;
-import com.enonic.wem.repo.NodePath;
-import com.enonic.wem.repo.NodeVersion;
-import com.enonic.wem.repo.NodeVersions;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodePath;
+import com.enonic.wem.api.node.NodeVersion;
+import com.enonic.wem.api.node.NodeVersions;
 import com.enonic.wem.core.entity.UpdateNodeCommand;
-import com.enonic.wem.repo.UpdateNodeParams;
+import com.enonic.wem.api.node.UpdateNodeParams;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;

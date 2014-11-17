@@ -13,12 +13,12 @@ import com.enonic.wem.api.index.PatternIndexConfigDocument;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlEntry;
 import com.enonic.wem.api.security.acl.AccessControlList;
-import com.enonic.wem.repo.Attachment;
-import com.enonic.wem.repo.Attachments;
-import com.enonic.wem.repo.Node;
-import com.enonic.wem.repo.NodeId;
-import com.enonic.wem.repo.NodeName;
-import com.enonic.wem.repo.NodePath;
+import com.enonic.wem.api.node.Attachment;
+import com.enonic.wem.api.node.Attachments;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodeName;
+import com.enonic.wem.api.node.NodePath;
 
 final class NodeJson
 {

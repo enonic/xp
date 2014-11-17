@@ -3,8 +3,8 @@ package com.enonic.wem.core.entity;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.core.index.query.QueryService;
-import com.enonic.wem.repo.Node;
-import com.enonic.wem.repo.Nodes;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.Nodes;
 
 public class NodeHasChildResolver
 {

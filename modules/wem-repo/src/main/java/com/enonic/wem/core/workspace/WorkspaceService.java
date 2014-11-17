@@ -1,6 +1,6 @@
 package com.enonic.wem.core.workspace;
 
-import com.enonic.wem.repo.NodeId;
+import com.enonic.wem.api.node.NodeId;
 
 public interface WorkspaceService
 {

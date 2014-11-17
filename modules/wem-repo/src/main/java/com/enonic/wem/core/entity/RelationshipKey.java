@@ -4,7 +4,7 @@ package com.enonic.wem.core.entity;
 import java.util.Objects;
 
 import com.enonic.wem.api.data.DataPath;
-import com.enonic.wem.repo.NodeId;
+import com.enonic.wem.api.node.NodeId;
 
 /**
  * The natural key of a Relationship.

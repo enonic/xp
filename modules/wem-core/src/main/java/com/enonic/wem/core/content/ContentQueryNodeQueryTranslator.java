@@ -6,7 +6,7 @@ import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.query.filter.ValueFilter;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
-import com.enonic.wem.repo.NodeQuery;
+import com.enonic.wem.api.node.NodeQuery;
 
 class ContentQueryNodeQueryTranslator
 {

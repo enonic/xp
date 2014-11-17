@@ -7,9 +7,9 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.context.ContextAccessor;
-import com.enonic.wem.repo.NoNodeAtPathFoundException;
-import com.enonic.wem.repo.NodePaths;
-import com.enonic.wem.repo.Nodes;
+import com.enonic.wem.api.node.NoNodeAtPathFoundException;
+import com.enonic.wem.api.node.NodePaths;
+import com.enonic.wem.api.node.Nodes;
 
 
 final class GetContentByPathsCommand

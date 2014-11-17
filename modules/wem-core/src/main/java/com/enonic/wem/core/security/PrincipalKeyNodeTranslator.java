@@ -10,10 +10,10 @@ import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.PrincipalKeys;
 import com.enonic.wem.api.security.PrincipalType;
 import com.enonic.wem.api.security.UserStoreKey;
-import com.enonic.wem.repo.Node;
-import com.enonic.wem.repo.NodeId;
-import com.enonic.wem.repo.NodeName;
-import com.enonic.wem.repo.Nodes;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodeName;
+import com.enonic.wem.api.node.Nodes;
 
 
 class PrincipalKeyNodeTranslator

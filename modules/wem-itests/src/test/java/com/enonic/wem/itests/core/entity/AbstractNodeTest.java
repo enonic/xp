@@ -19,11 +19,11 @@ import com.enonic.wem.core.repository.StorageNameResolver;
 import com.enonic.wem.internal.blob.BlobServiceImpl;
 import com.enonic.wem.itests.core.MemoryBlobStore;
 import com.enonic.wem.itests.core.elasticsearch.AbstractElasticsearchIntegrationTest;
-import com.enonic.wem.repo.CreateNodeParams;
-import com.enonic.wem.repo.FindNodesByParentParams;
-import com.enonic.wem.repo.FindNodesByParentResult;
-import com.enonic.wem.repo.Node;
-import com.enonic.wem.repo.NodeId;
+import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.FindNodesByParentParams;
+import com.enonic.wem.api.node.FindNodesByParentResult;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeId;
 
 public abstract class AbstractNodeTest
     extends AbstractElasticsearchIntegrationTest

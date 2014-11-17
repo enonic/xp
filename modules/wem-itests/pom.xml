@@ -82,6 +82,12 @@
       <version>${project.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>wem-repo</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
     <!--dependency>
       <groupId>org.apache.karaf.tooling.exam</groupId>
       <artifactId>org.apache.karaf.tooling.exam.container</artifactId>

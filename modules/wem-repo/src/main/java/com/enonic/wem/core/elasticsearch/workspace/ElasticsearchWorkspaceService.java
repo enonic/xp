@@ -1,7 +1,7 @@
 package com.enonic.wem.core.elasticsearch.workspace;
 
 import com.enonic.wem.core.elasticsearch.ElasticsearchDao;
-import com.enonic.wem.repo.NodeId;
+import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.core.workspace.StoreWorkspaceDocument;
 import com.enonic.wem.core.workspace.WorkspaceContext;
 import com.enonic.wem.core.workspace.WorkspaceService;

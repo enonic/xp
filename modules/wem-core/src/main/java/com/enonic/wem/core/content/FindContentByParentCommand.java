@@ -6,10 +6,10 @@ import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.FindContentByParentParams;
 import com.enonic.wem.api.content.FindContentByParentResult;
 import com.enonic.wem.api.context.ContextAccessor;
-import com.enonic.wem.repo.FindNodesByParentParams;
-import com.enonic.wem.repo.FindNodesByParentResult;
-import com.enonic.wem.repo.NodePath;
-import com.enonic.wem.repo.Nodes;
+import com.enonic.wem.api.node.FindNodesByParentParams;
+import com.enonic.wem.api.node.FindNodesByParentResult;
+import com.enonic.wem.api.node.NodePath;
+import com.enonic.wem.api.node.Nodes;
 
 final class FindContentByParentCommand
     extends AbstractContentCommand

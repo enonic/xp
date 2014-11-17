@@ -3,8 +3,8 @@ package com.enonic.wem.core.entity;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.core.version.GetVersionsQuery;
 import com.enonic.wem.core.version.VersionService;
-import com.enonic.wem.repo.FindNodeVersionsResult;
-import com.enonic.wem.repo.NodeId;
+import com.enonic.wem.api.node.FindNodeVersionsResult;
+import com.enonic.wem.api.node.NodeId;
 
 public class GetNodeVersionsCommand
 {

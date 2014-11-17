@@ -16,8 +16,8 @@ import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.elasticsearch.document.StoreDocument;
 import com.enonic.wem.core.elasticsearch.document.StoreDocumentItemFactory;
-import com.enonic.wem.repo.Node;
-import com.enonic.wem.repo.NodeVersionId;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeVersionId;
 import com.enonic.wem.core.repository.IndexNameResolver;
 
 import static com.enonic.wem.api.index.IndexPaths.CREATED_TIME_PATH;

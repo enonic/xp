@@ -7,11 +7,12 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Set;
 
-import org.elasticsearch.common.collect.Lists;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
+
+import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.Input;

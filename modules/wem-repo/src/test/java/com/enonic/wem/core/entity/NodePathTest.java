@@ -6,7 +6,7 @@ import java.util.List;
 import org.junit.Test;
 
 import com.enonic.wem.api.support.AbstractEqualsTest;
-import com.enonic.wem.repo.NodePath;
+import com.enonic.wem.api.node.NodePath;
 
 import static junit.framework.Assert.assertEquals;
 

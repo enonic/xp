@@ -4,8 +4,8 @@ import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
-import com.enonic.wem.repo.NodePath;
-import com.enonic.wem.repo.NodePaths;
+import com.enonic.wem.api.node.NodePath;
+import com.enonic.wem.api.node.NodePaths;
 
 class ContentNodeHelper
 {

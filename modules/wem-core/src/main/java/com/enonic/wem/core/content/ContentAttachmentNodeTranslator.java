@@ -1,7 +1,7 @@
 package com.enonic.wem.core.content;
 
 import com.enonic.wem.api.content.attachment.Attachment;
-import com.enonic.wem.repo.Attachments;
+import com.enonic.wem.api.node.Attachments;
 
 public class ContentAttachmentNodeTranslator
 {
@@ -21,7 +21,7 @@ public class ContentAttachmentNodeTranslator
 
         for ( final Attachment contentAttachment : contentAttachments )
         {
-            final com.enonic.wem.repo.Attachment attachment = doTranslateToNodeAttachment( contentAttachment );
+            final com.enonic.wem.api.node.Attachment attachment = doTranslateToNodeAttachment( contentAttachment );
 
             attachmentsBuilder.add( attachment );
         }
@@ -29,15 +29,15 @@ public class ContentAttachmentNodeTranslator
         return attachmentsBuilder.build();
     }
 
-    private com.enonic.wem.repo.Attachment doTranslateToNodeAttachment( final Attachment contentAttachment )
+    private com.enonic.wem.api.node.Attachment doTranslateToNodeAttachment( final Attachment contentAttachment )
     {
-        return com.enonic.wem.repo.Attachment.newAttachment().blobKey( contentAttachment.getBlobKey() ).
+        return com.enonic.wem.api.node.Attachment.newAttachment().blobKey( contentAttachment.getBlobKey() ).
             mimeType( contentAttachment.getMimeType() ).
             size( contentAttachment.getSize() ).
             name( contentAttachment.getName() ).build();
     }
 
-    public Attachment toContentAttachment( final com.enonic.wem.repo.Attachment entityAttachment )
+    public Attachment toContentAttachment( final com.enonic.wem.api.node.Attachment entityAttachment )
     {
         if ( entityAttachment == null )
         {
@@ -47,7 +47,7 @@ public class ContentAttachmentNodeTranslator
         return doTranslateToContentAttachment( entityAttachment );
     }
 
-    private Attachment doTranslateToContentAttachment( final com.enonic.wem.repo.Attachment nodeAttachment )
+    private Attachment doTranslateToContentAttachment( final com.enonic.wem.api.node.Attachment nodeAttachment )
     {
         return Attachment.newAttachment().
             blobKey( nodeAttachment.blobKey() ).

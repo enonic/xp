@@ -23,8 +23,8 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
-import com.enonic.wem.repo.Node;
-import com.enonic.wem.repo.UpdateNodeParams;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.UpdateNodeParams;
 
 import static com.enonic.wem.api.content.Content.newContent;
 

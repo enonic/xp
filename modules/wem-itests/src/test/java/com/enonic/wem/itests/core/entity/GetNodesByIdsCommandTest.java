@@ -4,11 +4,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.core.entity.GetNodesByIdsCommand;
-import com.enonic.wem.repo.CreateNodeParams;
-import com.enonic.wem.repo.Node;
-import com.enonic.wem.repo.NodeIds;
-import com.enonic.wem.repo.NodePath;
-import com.enonic.wem.repo.Nodes;
+import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeIds;
+import com.enonic.wem.api.node.NodePath;
+import com.enonic.wem.api.node.Nodes;
 
 import static org.junit.Assert.*;
 

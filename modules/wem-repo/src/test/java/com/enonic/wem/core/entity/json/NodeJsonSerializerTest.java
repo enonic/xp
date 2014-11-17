@@ -23,12 +23,12 @@ import com.enonic.wem.api.security.UserStoreKey;
 import com.enonic.wem.api.security.acl.AccessControlEntry;
 import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.security.acl.Permission;
-import com.enonic.wem.repo.Attachment;
-import com.enonic.wem.repo.Attachments;
-import com.enonic.wem.repo.Node;
-import com.enonic.wem.repo.NodeId;
-import com.enonic.wem.repo.NodeName;
-import com.enonic.wem.repo.NodePath;
+import com.enonic.wem.api.node.Attachment;
+import com.enonic.wem.api.node.Attachments;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodeName;
+import com.enonic.wem.api.node.NodePath;
 
 import static org.junit.Assert.*;
 
