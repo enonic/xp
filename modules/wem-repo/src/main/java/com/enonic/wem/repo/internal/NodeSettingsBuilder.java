@@ -1,4 +1,4 @@
-package com.enonic.wem.elasticsearch.internal;
+package com.enonic.wem.repo.internal;
 
 import org.elasticsearch.common.settings.Settings;
 

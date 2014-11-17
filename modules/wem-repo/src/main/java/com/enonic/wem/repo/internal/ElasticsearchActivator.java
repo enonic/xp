@@ -1,4 +1,4 @@
-package com.enonic.wem.elasticsearch.internal;
+package com.enonic.wem.repo.internal;
 
 import java.util.Hashtable;
 
@@ -16,7 +16,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 
 @Component(immediate = true)
-public final class Activator
+public final class ElasticsearchActivator
 {
     private Node node;
 
