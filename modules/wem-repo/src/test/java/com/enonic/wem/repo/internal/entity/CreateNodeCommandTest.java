@@ -1,6 +1,5 @@
-package com.enonic.wem.itests.core.entity;
+package com.enonic.wem.repo.internal.entity;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.index.ChildOrder;
@@ -14,14 +13,6 @@ import static junit.framework.Assert.assertTrue;
 public class CreateNodeCommandTest
     extends AbstractNodeTest
 {
-    @Override
-    @Before
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
-
     @Test
     public void populate_manual_order_value_and_insert_first()
         throws Exception

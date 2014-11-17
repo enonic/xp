@@ -1,4 +1,4 @@
-package com.enonic.wem.itests.core.entity;
+package com.enonic.wem.repo.internal.entity;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -17,14 +17,12 @@ import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlEntry;
 import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.security.acl.Permission;
-import com.enonic.wem.repo.internal.entity.NodeServiceImpl;
 
 import static org.junit.Assert.*;
 
 public class NodeServiceImplTest
     extends AbstractNodeTest
 {
-
     private NodeServiceImpl nodeService;
 
     @Before

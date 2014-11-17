@@ -1,6 +1,5 @@
-package com.enonic.wem.itests.core.entity;
+package com.enonic.wem.repo.internal.entity;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.node.CreateNodeParams;
@@ -10,7 +9,6 @@ import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlEntry;
 import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.security.acl.Permission;
-import com.enonic.wem.repo.internal.entity.GetNodeByIdCommand;
 
 import static org.junit.Assert.*;
 
@@ -18,13 +16,6 @@ import static org.junit.Assert.*;
 public class GetNodeByIdCommandTest
     extends AbstractNodeTest
 {
-    @Override
-    @Before
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
 
     @Test
     public void get_by_id()

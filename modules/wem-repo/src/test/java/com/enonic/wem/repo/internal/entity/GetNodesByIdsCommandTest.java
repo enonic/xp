@@ -1,31 +1,21 @@
-package com.enonic.wem.itests.core.entity;
+package com.enonic.wem.repo.internal.entity;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.node.CreateNodeParams;
-import com.enonic.wem.repo.internal.entity.GetNodesByPathsCommand;
 import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeIds;
 import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.api.node.NodePaths;
 import com.enonic.wem.api.node.Nodes;
 
 import static org.junit.Assert.*;
 
-public class GetNodesByPathsCommandTest
+public class GetNodesByIdsCommandTest
     extends AbstractNodeTest
 {
 
-    @Override
-    @Before
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
-
     @Test
-    public void get_by_paths()
+    public void get_by_ids()
         throws Exception
     {
         final Node createdNode1 = createNode( CreateNodeParams.create().
@@ -38,11 +28,12 @@ public class GetNodesByPathsCommandTest
             name( "node-2" ).
             build() );
 
-        final Nodes result = GetNodesByPathsCommand.create().
-            paths( NodePaths.create().
-                addNodePath( createdNode1.path() ).
-                addNodePath( createdNode2.path() ).
-                build() ).
+        refresh();
+
+        printContentRepoIndex();
+
+        final Nodes result = GetNodesByIdsCommand.create().
+            ids( NodeIds.from( createdNode1.id(), createdNode2.id() ) ).
             resolveHasChild( true ).
             workspaceService( this.workspaceService ).
             queryService( this.queryService ).
@@ -56,11 +47,28 @@ public class GetNodesByPathsCommandTest
     }
 
     @Test
-    public void get_by_paths_empty()
+    public void get_by_ids_resolve_hasChild()
         throws Exception
     {
-        final Nodes result = GetNodesByPathsCommand.create().
-            paths( NodePaths.from( "/dummy1", "dummy2" ) ).
+        final Node createdNode1 = createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "node-1" ).
+            build() );
+
+        createNode( CreateNodeParams.create().
+            parent( createdNode1.path() ).
+            name( "child-1" ).
+            build() );
+
+        final Node createdNode2 = createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "node-2" ).
+            build() );
+
+        refresh();
+
+        final Nodes result = GetNodesByIdsCommand.create().
+            ids( NodeIds.from( createdNode1.id(), createdNode2.id() ) ).
             resolveHasChild( true ).
             workspaceService( this.workspaceService ).
             queryService( this.queryService ).
@@ -70,7 +78,8 @@ public class GetNodesByPathsCommandTest
             build().
             execute();
 
-        assertEquals( 0, result.getSize() );
+        assertEquals( 2, result.getSize() );
+        assertTrue( result.getNodeById( createdNode1.id() ).getHasChildren() );
+        assertFalse( result.getNodeById( createdNode2.id() ).getHasChildren() );
     }
-
 }

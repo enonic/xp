@@ -1,9 +1,13 @@
-package com.enonic.wem.itests.core.query;
+package com.enonic.wem.repo.internal.elasticsearch.query;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.ContentConstants;
+import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodePath;
+import com.enonic.wem.api.node.NodeVersionId;
 import com.enonic.wem.api.security.Group;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.Principals;
@@ -12,12 +16,8 @@ import com.enonic.wem.api.security.acl.AccessControlEntry;
 import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.security.acl.Permission;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchQueryService;
+import com.enonic.wem.repo.internal.entity.AbstractNodeTest;
 import com.enonic.wem.repo.internal.index.IndexContext;
-import com.enonic.wem.itests.core.entity.AbstractNodeTest;
-import com.enonic.wem.api.node.CreateNodeParams;
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.api.node.NodeVersionId;
 
 import static org.junit.Assert.*;
 

@@ -1,0 +1,75 @@
+package com.enonic.wem.repo.internal.elasticsearch;
+
+
+import java.io.File;
+import java.io.IOException;
+
+import org.apache.commons.io.FileUtils;
+import org.elasticsearch.client.Client;
+import org.elasticsearch.common.settings.ImmutableSettings;
+import org.elasticsearch.node.Node;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
+
+class EmbeddedElasticsearchServer
+{
+
+    private static final String DEFAULT_DATA_DIRECTORY = "target/elasticsearch-data";
+
+    private final Node node;
+
+    private final String dataDirectory;
+
+    private final static Logger LOG = LoggerFactory.getLogger( AbstractElasticsearchIntegrationTest.class );
+
+    public EmbeddedElasticsearchServer()
+    {
+        this( DEFAULT_DATA_DIRECTORY );
+    }
+
+    private EmbeddedElasticsearchServer( String dataDirectory )
+    {
+        LOG.info( " --- Starting ES integration test server instance" );
+
+        this.dataDirectory = dataDirectory;
+
+        ImmutableSettings.Builder testSettings = ImmutableSettings.settingsBuilder().
+            put( "http.enabled", "false" ).
+            put( "path.data", dataDirectory ).
+            put( "gateway.type", "none" );
+
+        node = nodeBuilder().
+            local( true ).
+            settings( testSettings.build() ).
+            node();
+    }
+
+    public Client getClient()
+    {
+        return node.client();
+    }
+
+    public void shutdown()
+    {
+        LOG.info( " --- Shutting down ES integration test server instance" );
+        node.close();
+        deleteDataDirectory();
+    }
+
+    private void deleteDataDirectory()
+    {
+        LOG.info( "Deleting index data directories" );
+
+        try
+        {
+            FileUtils.deleteDirectory( new File( dataDirectory ) );
+        }
+        catch ( IOException e )
+        {
+            throw new RuntimeException( "Could not delete data directory of embedded elasticsearch server", e );
+        }
+    }
+
+}

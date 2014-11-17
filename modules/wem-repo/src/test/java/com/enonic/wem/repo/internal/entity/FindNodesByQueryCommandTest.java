@@ -1,22 +1,20 @@
-package com.enonic.wem.itests.core.entity;
+package com.enonic.wem.repo.internal.entity;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.FindNodesByQueryResult;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodePath;
+import com.enonic.wem.api.node.NodeQuery;
 import com.enonic.wem.api.query.expr.CompareExpr;
 import com.enonic.wem.api.query.expr.DynamicConstraintExpr;
 import com.enonic.wem.api.query.expr.FieldExpr;
 import com.enonic.wem.api.query.expr.FunctionExpr;
 import com.enonic.wem.api.query.expr.QueryExpr;
 import com.enonic.wem.api.query.expr.ValueExpr;
-import com.enonic.wem.repo.internal.entity.FindNodesByQueryCommand;
-import com.enonic.wem.api.node.CreateNodeParams;
-import com.enonic.wem.api.node.FindNodesByQueryResult;
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.api.node.NodeQuery;
 
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.*;
@@ -24,13 +22,6 @@ import static org.junit.Assert.*;
 public class FindNodesByQueryCommandTest
     extends AbstractNodeTest
 {
-    @Override
-    @Before
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
 
     @Test
     public void get_by_parent()

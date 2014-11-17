@@ -1,34 +1,23 @@
-package com.enonic.wem.itests.core.entity;
+package com.enonic.wem.repo.internal.entity;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.CompareStatus;
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextBuilder;
-import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.repo.internal.entity.CompareNodeCommand;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeComparison;
 import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.repo.internal.entity.PushNodeCommand;
-import com.enonic.wem.repo.internal.entity.UpdateNodeCommand;
 import com.enonic.wem.api.node.UpdateNodeParams;
+import com.enonic.wem.api.workspace.Workspace;
 
 import static org.junit.Assert.*;
 
 public class CompareNodesCommandTest
     extends AbstractNodeTest
 {
-    @Override
-    @Before
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
 
     @Test
     public void status_new()

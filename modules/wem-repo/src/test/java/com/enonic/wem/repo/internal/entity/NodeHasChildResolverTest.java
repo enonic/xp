@@ -1,11 +1,9 @@
-package com.enonic.wem.itests.core.entity;
+package com.enonic.wem.repo.internal.entity;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
-import com.enonic.wem.repo.internal.entity.NodeHasChildResolver;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.Nodes;
 
@@ -15,13 +13,6 @@ import static junit.framework.Assert.assertTrue;
 public class NodeHasChildResolverTest
     extends AbstractNodeTest
 {
-    @Override
-    @Before
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
 
     @Test
     public void has_children()

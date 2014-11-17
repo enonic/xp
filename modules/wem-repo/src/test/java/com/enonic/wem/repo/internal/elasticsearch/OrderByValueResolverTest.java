@@ -1,4 +1,4 @@
-package com.enonic.wem.itests.core.elasticsearch;
+package com.enonic.wem.repo.internal.elasticsearch;
 
 import java.util.Iterator;
 
@@ -12,7 +12,6 @@ import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.index.IndexDocumentItemPath;
 import com.enonic.wem.api.repository.Repository;
-import com.enonic.wem.repo.internal.elasticsearch.OrderbyValueResolver;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocumentOrderbyItem;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;

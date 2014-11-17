@@ -1,6 +1,5 @@
-package com.enonic.wem.itests.core.entity;
+package com.enonic.wem.repo.internal.entity;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.node.CreateNodeParams;
@@ -14,14 +13,6 @@ import static org.junit.Assert.*;
 public class FindContentByParentCommandTest
     extends AbstractNodeTest
 {
-
-    @Override
-    @Before
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
 
     @Test
     public void getChildren()

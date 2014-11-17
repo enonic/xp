@@ -1,11 +1,8 @@
-package com.enonic.wem.itests.core.entity;
+package com.enonic.wem.repo.internal.entity;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.node.CreateNodeParams;
-import com.enonic.wem.repo.internal.entity.DuplicateNodeCommand;
-import com.enonic.wem.repo.internal.entity.DuplicateValueResolver;
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
 import com.enonic.wem.api.node.Node;
@@ -17,13 +14,6 @@ import static org.junit.Assert.*;
 public class DuplicateNodeCommandTest
     extends AbstractNodeTest
 {
-    @Override
-    @Before
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
 
     @Test
     public void duplicate_single()

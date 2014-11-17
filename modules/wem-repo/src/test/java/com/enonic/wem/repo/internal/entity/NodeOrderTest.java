@@ -1,8 +1,7 @@
-package com.enonic.wem.itests.core.entity;
+package com.enonic.wem.repo.internal.entity;
 
 import java.util.Iterator;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.ContentConstants;
@@ -10,6 +9,11 @@ import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
+import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodePath;
+import com.enonic.wem.api.node.NodeQuery;
 import com.enonic.wem.api.query.expr.DynamicConstraintExpr;
 import com.enonic.wem.api.query.expr.DynamicOrderExpr;
 import com.enonic.wem.api.query.expr.FieldOrderExpr;
@@ -19,25 +23,12 @@ import com.enonic.wem.api.query.expr.QueryExpr;
 import com.enonic.wem.api.query.expr.ValueExpr;
 import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
-import com.enonic.wem.api.node.CreateNodeParams;
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeId;
-import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.api.node.NodeQuery;
 
 import static org.junit.Assert.*;
 
 public class NodeOrderTest
     extends AbstractNodeTest
 {
-    @Override
-    @Before
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
-
 
     @Test
     public void geo_distance_sorting()

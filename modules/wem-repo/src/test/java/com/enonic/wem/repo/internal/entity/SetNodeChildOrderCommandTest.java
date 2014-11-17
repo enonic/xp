@@ -1,33 +1,23 @@
-package com.enonic.wem.itests.core.entity;
+package com.enonic.wem.repo.internal.entity;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.index.ChildOrder;
-import com.enonic.wem.api.query.expr.FieldOrderExpr;
-import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.repo.internal.entity.SetNodeChildOrderCommand;
+import com.enonic.wem.api.query.expr.FieldOrderExpr;
+import com.enonic.wem.api.query.expr.OrderExpr;
 
 import static org.junit.Assert.*;
 
 public class SetNodeChildOrderCommandTest
     extends AbstractNodeTest
 {
-
-    @Override
-    @Before
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
 
     @Test
     public void order_by_name_asc()

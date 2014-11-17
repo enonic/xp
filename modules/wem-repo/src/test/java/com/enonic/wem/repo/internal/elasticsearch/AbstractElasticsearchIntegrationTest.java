@@ -1,6 +1,9 @@
-package com.enonic.wem.itests.core.elasticsearch;
+package com.enonic.wem.repo.internal.elasticsearch;
 
+import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.admin.indices.refresh.RefreshResponse;
+import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.unit.TimeValue;
 import org.junit.After;
@@ -8,8 +11,7 @@ import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchDao;
-import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexService;
+import com.enonic.wem.api.content.ContentConstants;
 
 public abstract class AbstractElasticsearchIntegrationTest
 {
@@ -37,6 +39,44 @@ public abstract class AbstractElasticsearchIntegrationTest
         elasticsearchIndexService.setElasticsearchDao( elasticsearchDao );
         elasticsearchIndexService.setClient( client );
     }
+
+
+    protected boolean indexExists( String index )
+    {
+        IndicesExistsResponse actionGet = this.client.admin().indices().prepareExists( index ).execute().actionGet();
+        return actionGet.isExists();
+    }
+
+
+    protected void printAllIndexContent( final String indexName, final String indexType )
+    {
+        String termQuery = "{\n" +
+            "  \"query\": { \"match_all\": {} }\n" +
+            "}";
+
+        SearchRequestBuilder searchRequest = new SearchRequestBuilder( this.client ).
+            setSize( 100 ).
+            setIndices( indexName ).
+            setTypes( indexType ).
+            setSource( termQuery );
+
+        final SearchResponse searchResponse = this.client.search( searchRequest.request() ).actionGet();
+
+        System.out.println( "\n\n---------- CONTENT --------------------------------" );
+        System.out.println( searchResponse.toString() );
+        System.out.println( "\n\n" );
+    }
+
+    String getContentRepoSearchDefaultSettings()
+    {
+        return RepositoryTestSearchIndexSettingsProvider.getSettings( ContentConstants.CONTENT_REPO );
+    }
+
+    protected Client client()
+    {
+        return this.client;
+    }
+
 
     public void waitForClusterHealth()
     {

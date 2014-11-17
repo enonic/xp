@@ -1,18 +1,15 @@
-package com.enonic.wem.itests.core.entity;
+package com.enonic.wem.repo.internal.entity;
 
 import java.time.Instant;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodeVersionsResult;
-import com.enonic.wem.repo.internal.entity.GetNodeVersionsCommand;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeVersion;
 import com.enonic.wem.api.node.NodeVersions;
-import com.enonic.wem.repo.internal.entity.UpdateNodeCommand;
 import com.enonic.wem.api.node.UpdateNodeParams;
 
 import static junit.framework.Assert.assertEquals;
@@ -21,14 +18,6 @@ import static junit.framework.Assert.assertTrue;
 public class GetNodeVersionsCommandTest
     extends AbstractNodeTest
 {
-
-    @Override
-    @Before
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
 
     @Test
     public void get_single_version()

@@ -1,4 +1,4 @@
-package com.enonic.wem.itests.core.entity;
+package com.enonic.wem.repo.internal.entity;
 
 import org.junit.Before;
 
@@ -11,14 +11,11 @@ import com.enonic.wem.api.node.FindNodesByParentResult;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.repository.Repository;
-import com.enonic.wem.itests.core.elasticsearch.AbstractElasticsearchIntegrationTest;
+import com.enonic.wem.repo.internal.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexService;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchQueryService;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchVersionService;
 import com.enonic.wem.repo.internal.elasticsearch.workspace.ElasticsearchWorkspaceService;
-import com.enonic.wem.repo.internal.entity.CreateNodeCommand;
-import com.enonic.wem.repo.internal.entity.FindNodesByParentCommand;
-import com.enonic.wem.repo.internal.entity.GetNodeByIdCommand;
 import com.enonic.wem.repo.internal.entity.dao.NodeDaoImpl;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.repository.RepositoryInitializerImpl;
@@ -26,15 +23,15 @@ import com.enonic.wem.repo.internal.repository.RepositoryInitializerImpl;
 public abstract class AbstractNodeTest
     extends AbstractElasticsearchIntegrationTest
 {
-    protected NodeDaoImpl nodeDao;
+    NodeDaoImpl nodeDao;
 
-    protected ElasticsearchVersionService versionService;
+    ElasticsearchVersionService versionService;
 
-    protected ElasticsearchWorkspaceService workspaceService;
+    ElasticsearchWorkspaceService workspaceService;
 
-    protected ElasticsearchIndexService indexService;
+    ElasticsearchIndexService indexService;
 
-    protected ElasticsearchQueryService queryService;
+    ElasticsearchQueryService queryService;
 
     @Before
     public void setUp()
@@ -64,7 +61,7 @@ public abstract class AbstractNodeTest
         waitForClusterHealth();
     }
 
-    protected void createRepository( final Repository repository )
+    void createRepository( final Repository repository )
     {
         RepositoryInitializerImpl repositoryInitializer = new RepositoryInitializerImpl();
         repositoryInitializer.setIndexService( this.indexService );
@@ -79,7 +76,7 @@ public abstract class AbstractNodeTest
     }
 
 
-    public Node createNode( final CreateNodeParams createNodeParams )
+    protected Node createNode( final CreateNodeParams createNodeParams )
     {
         final Node createdNode = CreateNodeCommand.create().
             workspaceService( this.workspaceService ).
@@ -96,7 +93,7 @@ public abstract class AbstractNodeTest
         return createdNode;
     }
 
-    protected Node getNodeById( final NodeId nodeId )
+    Node getNodeById( final NodeId nodeId )
     {
         return GetNodeByIdCommand.create().
             versionService( this.versionService ).
@@ -124,7 +121,7 @@ public abstract class AbstractNodeTest
             execute();
     }
 
-    protected void printContentRepoIndex()
+    void printContentRepoIndex()
     {
         printAllIndexContent( IndexNameResolver.resolveSearchIndexName( ContentConstants.CONTENT_REPO.getId() ), "stage" );
     }

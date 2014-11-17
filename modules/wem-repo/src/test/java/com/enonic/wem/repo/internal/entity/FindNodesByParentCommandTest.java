@@ -1,15 +1,13 @@
-package com.enonic.wem.itests.core.entity;
+package com.enonic.wem.repo.internal.entity;
 
 import java.util.Iterator;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.node.CreateNodeParams;
-import com.enonic.wem.repo.internal.entity.FindNodesByParentCommand;
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
 import com.enonic.wem.api.node.Node;
@@ -22,13 +20,6 @@ import static org.junit.Assert.*;
 public class FindNodesByParentCommandTest
     extends AbstractNodeTest
 {
-    @Override
-    @Before
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
 
     @Test
     public void get_by_parent_one_child()

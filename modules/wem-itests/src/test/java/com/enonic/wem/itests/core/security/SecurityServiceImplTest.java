@@ -3,6 +3,9 @@ package com.enonic.wem.itests.core.security;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.enonic.wem.api.blob.BlobService;
+import com.enonic.wem.api.mock.memory.MockBlobService;
+import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.api.security.CreateGroupParams;
 import com.enonic.wem.api.security.CreateRoleParams;
 import com.enonic.wem.api.security.CreateUserParams;
@@ -22,20 +25,36 @@ import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.api.security.auth.AuthenticationToken;
 import com.enonic.wem.api.security.auth.EmailPasswordAuthToken;
 import com.enonic.wem.api.security.auth.UsernamePasswordAuthToken;
-import com.enonic.wem.repo.internal.entity.NodeServiceImpl;
 import com.enonic.wem.core.security.SecurityServiceImpl;
-import com.enonic.wem.itests.core.entity.AbstractNodeTest;
+import com.enonic.wem.itests.core.elasticsearch.AbstractElasticsearchIntegrationTest;
+import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexService;
+import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchQueryService;
+import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchVersionService;
+import com.enonic.wem.repo.internal.elasticsearch.workspace.ElasticsearchWorkspaceService;
+import com.enonic.wem.repo.internal.entity.NodeServiceImpl;
+import com.enonic.wem.repo.internal.entity.dao.NodeDaoImpl;
+import com.enonic.wem.repo.internal.repository.RepositoryInitializerImpl;
 
 import static org.junit.Assert.*;
 
 public class SecurityServiceImplTest
-    extends AbstractNodeTest
+    extends AbstractElasticsearchIntegrationTest
 {
     private static final UserStoreKey SYSTEM = UserStoreKey.system();
 
     private SecurityServiceImpl securityService;
 
     private NodeServiceImpl nodeService;
+
+    private NodeDaoImpl nodeDao;
+
+    private ElasticsearchVersionService versionService;
+
+    private ElasticsearchWorkspaceService workspaceService;
+
+    private ElasticsearchIndexService indexService;
+
+    private ElasticsearchQueryService queryService;
 
     @Override
     @Before
@@ -44,7 +63,24 @@ public class SecurityServiceImplTest
     {
         super.setUp();
 
-        createRepository( SystemConstants.SYSTEM_REPO );
+        final BlobService blobService = new MockBlobService();
+
+        this.nodeDao = new NodeDaoImpl();
+        nodeDao.setBlobService( blobService );
+
+        this.versionService = new ElasticsearchVersionService();
+        this.versionService.setElasticsearchDao( elasticsearchDao );
+
+        this.workspaceService = new ElasticsearchWorkspaceService();
+        this.workspaceService.setElasticsearchDao( elasticsearchDao );
+
+        this.indexService = new ElasticsearchIndexService();
+        this.indexService.setClient( client );
+        this.indexService.setElasticsearchDao( elasticsearchDao );
+
+        this.queryService = new ElasticsearchQueryService();
+        this.queryService.setElasticsearchDao( elasticsearchDao );
+
         waitForClusterHealth();
 
         this.nodeService = new NodeServiceImpl();
@@ -56,6 +92,17 @@ public class SecurityServiceImplTest
 
         securityService = new SecurityServiceImpl();
         securityService.setNodeService( this.nodeService );
+
+        createRepository( SystemConstants.SYSTEM_REPO );
+    }
+
+    void createRepository( final Repository repository )
+    {
+        RepositoryInitializerImpl repositoryInitializer = new RepositoryInitializerImpl();
+        repositoryInitializer.setIndexService( this.indexService );
+        repositoryInitializer.init( repository );
+
+        refresh();
     }
 
     @Test
@@ -430,7 +477,7 @@ public class SecurityServiceImplTest
         assertEquals( user.getKey(), authInfo.getUser().getKey() );
     }
 
-    public class CustomAuthenticationToken
+    private class CustomAuthenticationToken
         extends AuthenticationToken
     {
     }
