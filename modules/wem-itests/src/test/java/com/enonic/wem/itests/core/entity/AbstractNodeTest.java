@@ -4,10 +4,10 @@ import org.junit.Before;
 
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.repository.Repository;
-import com.enonic.wem.core.elasticsearch.ElasticsearchIndexService;
-import com.enonic.wem.core.elasticsearch.ElasticsearchQueryService;
-import com.enonic.wem.core.elasticsearch.ElasticsearchVersionService;
-import com.enonic.wem.core.elasticsearch.workspace.ElasticsearchWorkspaceService;
+import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexService;
+import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchQueryService;
+import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchVersionService;
+import com.enonic.wem.repo.internal.elasticsearch.workspace.ElasticsearchWorkspaceService;
 import com.enonic.wem.core.entity.CreateNodeCommand;
 import com.enonic.wem.core.entity.FindNodesByParentCommand;
 import com.enonic.wem.core.entity.GetNodeByIdCommand;

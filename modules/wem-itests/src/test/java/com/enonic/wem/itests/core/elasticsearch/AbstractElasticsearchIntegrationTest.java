@@ -12,8 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.wem.api.content.ContentConstants;
-import com.enonic.wem.core.elasticsearch.ElasticsearchDao;
-import com.enonic.wem.core.elasticsearch.ElasticsearchIndexService;
+import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchDao;
+import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexService;
 
 public abstract class AbstractElasticsearchIntegrationTest
     //extends ElasticsearchIntegrationTest

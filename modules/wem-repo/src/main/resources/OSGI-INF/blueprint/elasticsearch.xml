@@ -3,24 +3,24 @@
 
   <reference id="elasticClient" interface="org.elasticsearch.client.Client"/>
 
-  <bean id="elasticsearchDao" class="com.enonic.wem.core.elasticsearch.ElasticsearchDao">
+  <bean id="elasticsearchDao" class="com.enonic.wem.repo.internal.elasticsearch.ElasticsearchDao">
     <property name="client" ref="elasticClient"/>
   </bean>
 
-  <bean id="versionService" class="com.enonic.wem.core.elasticsearch.ElasticsearchVersionService">
+  <bean id="versionService" class="com.enonic.wem.repo.internal.elasticsearch.ElasticsearchVersionService">
     <property name="elasticsearchDao" ref="elasticsearchDao"/>
   </bean>
 
-  <bean id="queryService" class="com.enonic.wem.core.elasticsearch.ElasticsearchQueryService">
+  <bean id="queryService" class="com.enonic.wem.repo.internal.elasticsearch.ElasticsearchQueryService">
     <property name="elasticsearchDao" ref="elasticsearchDao"/>
   </bean>
 
-  <bean id="indexService" class="com.enonic.wem.core.elasticsearch.ElasticsearchIndexService">
+  <bean id="indexService" class="com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexService">
     <property name="client" ref="elasticClient"/>
     <property name="elasticsearchDao" ref="elasticsearchDao"/>
   </bean>
 
-  <bean id="workspaceService" class="com.enonic.wem.core.elasticsearch.workspace.ElasticsearchWorkspaceService">
+  <bean id="workspaceService" class="com.enonic.wem.repo.internal.elasticsearch.workspace.ElasticsearchWorkspaceService">
     <property name="elasticsearchDao" ref="elasticsearchDao"/>
   </bean>
 

@@ -6,7 +6,7 @@ import java.util.Set;
 import org.elasticsearch.common.unit.TimeValue;
 
 import com.enonic.wem.api.repository.RepositoryId;
-import com.enonic.wem.core.elasticsearch.ClusterHealthStatus;
+import com.enonic.wem.repo.internal.elasticsearch.ClusterHealthStatus;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeVersionId;

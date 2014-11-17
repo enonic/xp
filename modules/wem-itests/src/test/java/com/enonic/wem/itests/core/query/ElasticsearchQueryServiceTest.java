@@ -11,7 +11,7 @@ import com.enonic.wem.api.security.User;
 import com.enonic.wem.api.security.acl.AccessControlEntry;
 import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.security.acl.Permission;
-import com.enonic.wem.core.elasticsearch.ElasticsearchQueryService;
+import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchQueryService;
 import com.enonic.wem.core.index.IndexContext;
 import com.enonic.wem.itests.core.entity.AbstractNodeTest;
 import com.enonic.wem.api.node.CreateNodeParams;

@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.repository.Repository;
-import com.enonic.wem.core.elasticsearch.ClusterHealthStatus;
-import com.enonic.wem.core.elasticsearch.ClusterStatusCode;
+import com.enonic.wem.repo.internal.elasticsearch.ClusterHealthStatus;
+import com.enonic.wem.repo.internal.elasticsearch.ClusterStatusCode;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.api.initializer.RepositoryInitializer;
