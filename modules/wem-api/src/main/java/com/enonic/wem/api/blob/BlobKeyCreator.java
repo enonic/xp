@@ -1,4 +1,4 @@
-package com.enonic.wem.internal.blob;
+package com.enonic.wem.api.blob;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -10,20 +10,20 @@ import java.security.NoSuchAlgorithmException;
 
 import com.google.common.io.ByteStreams;
 
-import com.enonic.wem.api.blob.BlobKey;
+import com.enonic.wem.api.util.Exceptions;
 
 public final class BlobKeyCreator
 {
     private static final String DIGEST = "SHA-1";
 
     public static BlobKey createKey( final byte[] data )
-        throws BlobStoreException
+        throws IOException
     {
         return createKey( new ByteArrayInputStream( data ) );
     }
 
     public static BlobKey createKey( final InputStream in )
-        throws BlobStoreException
+        throws IOException
     {
         return createKey( in, new OutputStream()
         {
@@ -37,29 +37,20 @@ public final class BlobKeyCreator
     }
 
     public static BlobKey createKey( final InputStream in, final OutputStream out )
-        throws BlobStoreException
+        throws IOException
     {
-        try
-        {
-            final MessageDigest digest = createMessageDigest();
-            final DigestOutputStream digestOut = new DigestOutputStream( out, digest );
+        final MessageDigest digest = createMessageDigest();
 
-            try
-            {
-                ByteStreams.copy( in, digestOut );
-            }
-            finally
-            {
-                digestOut.close();
-                in.close();
-            }
-
-            return new BlobKey( digest.digest() );
-        }
-        catch ( IOException e )
+        try (DigestOutputStream digestOut = new DigestOutputStream( out, digest ))
         {
-            throw new BlobStoreException( "Failed to create blob key", e );
+            ByteStreams.copy( in, digestOut );
         }
+        finally
+        {
+            in.close();
+        }
+
+        return new BlobKey( digest.digest() );
     }
 
     private static MessageDigest createMessageDigest()
@@ -68,9 +59,9 @@ public final class BlobKeyCreator
         {
             return MessageDigest.getInstance( DIGEST );
         }
-        catch ( NoSuchAlgorithmException e )
+        catch ( final NoSuchAlgorithmException e )
         {
-            throw new BlobStoreException( DIGEST + " not available", e );
+            throw Exceptions.unchecked( e );
         }
     }
 }

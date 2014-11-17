@@ -2,8 +2,16 @@ package com.enonic.wem.itests.core.entity;
 
 import org.junit.Before;
 
+import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.ContentConstants;
+import com.enonic.wem.api.mock.memory.MockBlobService;
+import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.FindNodesByParentParams;
+import com.enonic.wem.api.node.FindNodesByParentResult;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.repository.Repository;
+import com.enonic.wem.itests.core.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexService;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchQueryService;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchVersionService;
@@ -12,18 +20,8 @@ import com.enonic.wem.repo.internal.entity.CreateNodeCommand;
 import com.enonic.wem.repo.internal.entity.FindNodesByParentCommand;
 import com.enonic.wem.repo.internal.entity.GetNodeByIdCommand;
 import com.enonic.wem.repo.internal.entity.dao.NodeDaoImpl;
-import com.enonic.wem.repo.internal.index.IndexType;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.repository.RepositoryInitializerImpl;
-import com.enonic.wem.repo.internal.repository.StorageNameResolver;
-import com.enonic.wem.internal.blob.BlobServiceImpl;
-import com.enonic.wem.itests.core.MemoryBlobStore;
-import com.enonic.wem.itests.core.elasticsearch.AbstractElasticsearchIntegrationTest;
-import com.enonic.wem.api.node.CreateNodeParams;
-import com.enonic.wem.api.node.FindNodesByParentParams;
-import com.enonic.wem.api.node.FindNodesByParentResult;
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeId;
 
 public abstract class AbstractNodeTest
     extends AbstractElasticsearchIntegrationTest
@@ -36,8 +34,6 @@ public abstract class AbstractNodeTest
 
     protected ElasticsearchIndexService indexService;
 
-    private BlobServiceImpl blobService;
-
     protected ElasticsearchQueryService queryService;
 
     @Before
@@ -46,8 +42,7 @@ public abstract class AbstractNodeTest
     {
         super.setUp();
 
-        this.blobService = new BlobServiceImpl();
-        this.blobService.setBlobStore( new MemoryBlobStore() );
+        final BlobService blobService = new MockBlobService();
 
         this.nodeDao = new NodeDaoImpl();
         nodeDao.setBlobService( blobService );
@@ -133,12 +128,4 @@ public abstract class AbstractNodeTest
     {
         printAllIndexContent( IndexNameResolver.resolveSearchIndexName( ContentConstants.CONTENT_REPO.getId() ), "stage" );
     }
-
-    protected void printVersionIndex()
-    {
-        printAllIndexContent( StorageNameResolver.resolveStorageIndexName( ContentConstants.CONTENT_REPO.getId() ),
-                              IndexType.VERSION.getName() );
-    }
-
-
 }

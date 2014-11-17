@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.home.HomeDir;
-import com.enonic.wem.internal.blob.BlobKeyCreator;
+import com.enonic.wem.api.blob.BlobKeyCreator;
 import com.enonic.wem.internal.blob.BlobRecord;
 import com.enonic.wem.internal.blob.BlobStore;
 import com.enonic.wem.internal.blob.BlobStoreException;

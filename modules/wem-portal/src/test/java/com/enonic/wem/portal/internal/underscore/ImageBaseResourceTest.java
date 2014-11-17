@@ -17,9 +17,9 @@ import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.attachment.GetAttachmentParameters;
+import com.enonic.wem.api.mock.memory.MemoryBlob;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.internal.blob.memory.MemoryBlobRecord;
 import com.enonic.wem.core.image.filter.BuilderContext;
 import com.enonic.wem.core.image.filter.ImageFilter;
 import com.enonic.wem.core.image.filter.ImageFilterBuilder;
@@ -78,7 +78,7 @@ public abstract class ImageBaseResourceTest
         Mockito.when( this.attachmentService.getAll( Mockito.isA( ContentId.class ) ) ).
             thenReturn( Attachments.from( attachment ) );
 
-        final Blob blob = new MemoryBlobRecord( blobKey, imageData );
+        final Blob blob = new MemoryBlob( blobKey, imageData );
         Mockito.when( this.blobService.get( Mockito.isA( BlobKey.class ) ) ).
             thenReturn( blob );
         Mockito.when( this.imageFilterBuilder.build( Mockito.isA( BuilderContext.class ), Mockito.isA( String.class ) ) ).
