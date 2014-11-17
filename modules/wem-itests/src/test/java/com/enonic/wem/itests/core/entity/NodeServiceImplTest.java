@@ -15,7 +15,7 @@ import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.core.entity.NodeServiceImpl;
+import com.enonic.wem.repo.internal.entity.NodeServiceImpl;
 import com.enonic.wem.api.node.RenameNodeParams;
 import com.enonic.wem.api.node.NodeNotFoundException;
 

@@ -13,7 +13,7 @@ import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.core.entity.SetNodeChildOrderCommand;
+import com.enonic.wem.repo.internal.entity.SetNodeChildOrderCommand;
 
 import static org.junit.Assert.*;
 

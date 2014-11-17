@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.node.CreateNodeParams;
-import com.enonic.wem.core.entity.DeleteNodeByIdCommand;
+import com.enonic.wem.repo.internal.entity.DeleteNodeByIdCommand;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodePath;
 

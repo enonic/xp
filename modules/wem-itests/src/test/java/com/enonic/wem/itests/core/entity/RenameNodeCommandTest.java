@@ -7,7 +7,7 @@ import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.core.entity.RenameNodeCommand;
+import com.enonic.wem.repo.internal.entity.RenameNodeCommand;
 import com.enonic.wem.api.node.RenameNodeParams;
 
 import static org.junit.Assert.*;

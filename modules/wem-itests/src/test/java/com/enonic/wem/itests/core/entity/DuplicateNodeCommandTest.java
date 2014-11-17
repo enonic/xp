@@ -4,8 +4,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.node.CreateNodeParams;
-import com.enonic.wem.core.entity.DuplicateNodeCommand;
-import com.enonic.wem.core.entity.DuplicateValueResolver;
+import com.enonic.wem.repo.internal.entity.DuplicateNodeCommand;
+import com.enonic.wem.repo.internal.entity.DuplicateValueResolver;
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
 import com.enonic.wem.api.node.Node;

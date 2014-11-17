@@ -3,7 +3,7 @@ package com.enonic.wem.itests.core.entity;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.core.entity.GetNodesByIdsCommand;
+import com.enonic.wem.repo.internal.entity.GetNodesByIdsCommand;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeIds;

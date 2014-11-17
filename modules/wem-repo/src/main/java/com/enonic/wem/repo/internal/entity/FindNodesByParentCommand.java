@@ -1,0 +1,83 @@
+package com.enonic.wem.repo.internal.entity;
+
+import com.enonic.wem.api.context.ContextAccessor;
+import com.enonic.wem.api.index.ChildOrder;
+import com.enonic.wem.api.query.expr.QueryExpr;
+import com.enonic.wem.api.node.NodeQuery;
+import com.enonic.wem.core.index.IndexContext;
+import com.enonic.wem.core.index.query.NodeQueryResult;
+import com.enonic.wem.api.node.FindNodesByParentParams;
+import com.enonic.wem.api.node.FindNodesByParentResult;
+import com.enonic.wem.api.node.Nodes;
+
+public class FindNodesByParentCommand
+    extends AbstractNodeCommand
+{
+    private final FindNodesByParentParams params;
+
+    private FindNodesByParentCommand( Builder builder )
+    {
+        super( builder );
+        params = builder.params;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public FindNodesByParentResult execute()
+    {
+        final ChildOrder order = NodeChildOrderResolver.create().
+            nodeDao( this.nodeDao ).
+            workspaceService( this.queryService ).
+            nodePath( params.getParentPath() ).
+            childOrder( params.getChildOrder() ).
+            build().
+            resolve();
+
+        final NodeQuery query = createByPathQuery( order );
+
+        final NodeQueryResult nodeQueryResult = this.queryService.find( query, IndexContext.from( ContextAccessor.current() ) );
+
+        final Nodes nodes = doGetByIds( nodeQueryResult.getNodeIds(), order.getOrderExpressions(), true );
+
+        return FindNodesByParentResult.create().
+            nodes( nodes ).
+            totalHits( nodeQueryResult.getTotalHits() ).
+            hits( nodeQueryResult.getHits() ).
+            build();
+    }
+
+    private NodeQuery createByPathQuery( final ChildOrder order )
+    {
+        return NodeQuery.create().
+            parent( this.params.getParentPath() ).
+            query( new QueryExpr( order.getOrderExpressions() ) ).
+            from( params.getFrom() ).
+            size( params.getSize() ).
+            build();
+    }
+
+    public static class Builder
+        extends AbstractNodeCommand.Builder<Builder>
+    {
+        private FindNodesByParentParams params;
+
+        public Builder()
+        {
+            super();
+        }
+
+        public Builder params( FindNodesByParentParams params )
+        {
+            this.params = params;
+            return this;
+        }
+
+        public FindNodesByParentCommand build()
+        {
+            return new FindNodesByParentCommand( this );
+        }
+    }
+}

@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
-import com.enonic.wem.core.entity.NodeHasChildResolver;
+import com.enonic.wem.repo.internal.entity.NodeHasChildResolver;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.Nodes;
 

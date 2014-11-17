@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.node.CreateNodeParams;
-import com.enonic.wem.core.entity.GetNodeByIdCommand;
+import com.enonic.wem.repo.internal.entity.GetNodeByIdCommand;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodePath;
 

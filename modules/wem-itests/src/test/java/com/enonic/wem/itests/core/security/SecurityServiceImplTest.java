@@ -22,7 +22,7 @@ import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.api.security.auth.AuthenticationToken;
 import com.enonic.wem.api.security.auth.EmailPasswordAuthToken;
 import com.enonic.wem.api.security.auth.UsernamePasswordAuthToken;
-import com.enonic.wem.core.entity.NodeServiceImpl;
+import com.enonic.wem.repo.internal.entity.NodeServiceImpl;
 import com.enonic.wem.core.security.SecurityServiceImpl;
 import com.enonic.wem.itests.core.entity.AbstractNodeTest;
 

@@ -10,7 +10,7 @@ import com.enonic.wem.api.security.acl.Permission;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.core.entity.NodeServiceImpl;
+import com.enonic.wem.repo.internal.entity.NodeServiceImpl;
 
 public class AccessControlTest
     extends AbstractNodeTest

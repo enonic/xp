@@ -11,7 +11,7 @@ import com.enonic.wem.api.query.expr.FieldExpr;
 import com.enonic.wem.api.query.expr.FunctionExpr;
 import com.enonic.wem.api.query.expr.QueryExpr;
 import com.enonic.wem.api.query.expr.ValueExpr;
-import com.enonic.wem.core.entity.FindNodesByQueryCommand;
+import com.enonic.wem.repo.internal.entity.FindNodesByQueryCommand;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodesByQueryResult;
 import com.enonic.wem.api.node.Node;

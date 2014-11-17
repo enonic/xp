@@ -7,12 +7,12 @@ import org.junit.Test;
 
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodeVersionsResult;
-import com.enonic.wem.core.entity.GetNodeVersionsCommand;
+import com.enonic.wem.repo.internal.entity.GetNodeVersionsCommand;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeVersion;
 import com.enonic.wem.api.node.NodeVersions;
-import com.enonic.wem.core.entity.UpdateNodeCommand;
+import com.enonic.wem.repo.internal.entity.UpdateNodeCommand;
 import com.enonic.wem.api.node.UpdateNodeParams;
 
 import static junit.framework.Assert.assertEquals;
