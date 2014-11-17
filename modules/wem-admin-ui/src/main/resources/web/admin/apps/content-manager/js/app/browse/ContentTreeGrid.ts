@@ -173,17 +173,18 @@ module app.browse {
             if (node.getData().getContentSummary()) {
                 var childOrder = node.getData().getContentSummary().getChildOrder();
                 var icon;
-                if (!childOrder.isManual()) {
-                    if (childOrder.isDesc()) {
-                        icon = new api.dom.DivEl("icon-arrow-up4");
+                if (!childOrder.isDefault()) {
+                    if (!childOrder.isManual()) {
+                        if (childOrder.isDesc()) {
+                            icon = new api.dom.DivEl("icon-arrow-up4");
+                        } else {
+                            icon = new api.dom.DivEl("icon-arrow-down4");
+                        }
                     } else {
-                        icon = new api.dom.DivEl("icon-arrow-down4");
+                        icon = new api.dom.DivEl("icon-menu3");
                     }
-                } else {
-                    icon = new api.dom.DivEl("icon-menu3");
+                    wrapper.getEl().setInnerHtml(icon.toString());
                 }
-                wrapper.getEl().setInnerHtml(icon.toString());
-
             }
             return wrapper.toString();
         }

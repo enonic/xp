@@ -8,6 +8,8 @@ module api.content {
 
         private DEFAULT_ORDER_DIRECTION_VALUE: string = "DESC";
 
+        private DEFAULT_ORDER_FIELD_VALUE: string = "modifiedTime";
+
         private ASC_ORDER_DIRECTION_VALUE: string = "ASC";
 
         private DESC_ORDER_DIRECTION_VALUE: string = "DESC";
@@ -50,6 +52,19 @@ module api.content {
             }
             var order = this.orderExpressions[0];
             return api.ObjectHelper.stringEquals(this.DESC_ORDER_DIRECTION_VALUE.toLowerCase(), order.getDirection().toLowerCase());
+        }
+
+        isDefault(): boolean {
+            var order = this.orderExpressions[0];
+            if (api.ObjectHelper.iFrameSafeInstanceOf(order, FieldOrderExpr)) {
+                var fieldOrder = (<FieldOrderExpr>order);
+                if (api.ObjectHelper.stringEquals(this.DEFAULT_ORDER_DIRECTION_VALUE.toLowerCase(),
+                    fieldOrder.getDirection().toLowerCase()) &&
+                    api.ObjectHelper.stringEquals(this.DEFAULT_ORDER_FIELD_VALUE.toLowerCase(), fieldOrder.getFieldName().toLowerCase())) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         toJson(): api.content.json.ChildOrderJson {
