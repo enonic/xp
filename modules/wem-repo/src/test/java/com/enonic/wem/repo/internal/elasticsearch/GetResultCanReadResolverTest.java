@@ -70,7 +70,7 @@ public class GetResultCanReadResolverTest
 
         List<Object> hasRead = Lists.newArrayList();
         hasRead.add( PrincipalKey.ofAnonymous().toString() );
-        hasRead.add( PrincipalKey.from( "system:user:tsi" ).toString() );
+        hasRead.add( PrincipalKey.from( "system:user:rmy" ).toString() );
 
         assertTrue( GetResultCanReadResolver.canRead( Principals.from( me, myGroup ), new GetResult( SearchResultEntry.create().
             id( "myId" ).
