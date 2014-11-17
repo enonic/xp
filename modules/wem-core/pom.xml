@@ -21,11 +21,11 @@
       <artifactId>wem-api</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
+    <!--dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>wem-blob</artifactId>
       <version>${project.version}</version>
-    </dependency>
+    </dependency-->
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>wem-api</artifactId>
