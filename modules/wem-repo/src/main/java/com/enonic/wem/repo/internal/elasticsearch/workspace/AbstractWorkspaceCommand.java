@@ -6,12 +6,12 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.TermQueryBuilder;
 
+import com.enonic.wem.api.node.NodeVersionId;
+import com.enonic.wem.api.node.NodeVersionIds;
 import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchDao;
 import com.enonic.wem.repo.internal.elasticsearch.xcontent.WorkspaceXContentBuilderFactory;
-import com.enonic.wem.api.node.NodeVersionId;
-import com.enonic.wem.api.node.NodeVersionIds;
-import com.enonic.wem.repo.internal.index.result.SearchResultField;
+import com.enonic.wem.repo.internal.index.result.SearchResultFieldValue;
 
 abstract class AbstractWorkspaceCommand
 {
@@ -27,18 +27,18 @@ abstract class AbstractWorkspaceCommand
         this.repositoryId = builder.repositoryId;
     }
 
-    NodeVersionIds fieldValuesToVersionIds( final Collection<SearchResultField> fieldValues )
+    NodeVersionIds fieldValuesToVersionIds( final Collection<SearchResultFieldValue> fieldValues )
     {
         final NodeVersionIds.Builder builder = NodeVersionIds.create();
 
-        for ( final SearchResultField searchResultField : fieldValues )
+        for ( final SearchResultFieldValue searchResultFieldValue : fieldValues )
         {
-            if ( searchResultField == null )
+            if ( searchResultFieldValue == null )
             {
                 continue;
             }
 
-            builder.add( NodeVersionId.from( searchResultField.getValue().toString() ) );
+            builder.add( NodeVersionId.from( searchResultFieldValue.getValue().toString() ) );
         }
         return builder.build();
     }

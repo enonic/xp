@@ -9,29 +9,29 @@ import org.elasticsearch.search.SearchHitField;
 
 import com.google.common.collect.Maps;
 
-import com.enonic.wem.repo.internal.index.result.SearchResultField;
+import com.enonic.wem.repo.internal.index.result.SearchResultFieldValue;
 
 class SearchResultFieldsFactory
 {
 
-    public static Map<String, SearchResultField> create( final SearchHit hit )
+    public static Map<String, SearchResultFieldValue> create( final SearchHit hit )
     {
-        final Map<String, SearchResultField> resultFieldMap = Maps.newHashMap();
+        final Map<String, SearchResultFieldValue> resultFieldMap = Maps.newHashMap();
 
         final Map<String, SearchHitField> hitFieldMap = hit.getFields();
 
         for ( final String fieldName : hitFieldMap.keySet() )
         {
             final SearchHitField hitField = hitFieldMap.get( fieldName );
-            resultFieldMap.put( fieldName, new SearchResultField( hitField.name(), hitField.values() ) );
+            resultFieldMap.put( fieldName, SearchResultFieldValue.values( hitField.values() ) );
         }
 
         return resultFieldMap;
     }
 
-    public static Map<String, SearchResultField> create( final GetResponse getResponse )
+    public static Map<String, SearchResultFieldValue> create( final GetResponse getResponse )
     {
-        final Map<String, SearchResultField> resultFieldMap = Maps.newHashMap();
+        final Map<String, SearchResultFieldValue> resultFieldMap = Maps.newHashMap();
 
         final Map<String, GetField> hitFieldMap = getResponse.getFields();
 
@@ -39,7 +39,7 @@ class SearchResultFieldsFactory
         {
             final GetField getField = hitFieldMap.get( fieldName );
 
-            resultFieldMap.put( fieldName, new SearchResultField( getField.getName(), getField.getValues() ) );
+            resultFieldMap.put( fieldName, SearchResultFieldValue.values( getField.getValues() ) );
         }
 
         return resultFieldMap;

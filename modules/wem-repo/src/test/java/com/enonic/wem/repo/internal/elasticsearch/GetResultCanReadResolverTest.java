@@ -13,7 +13,7 @@ import com.enonic.wem.api.security.Principals;
 import com.enonic.wem.api.security.User;
 import com.enonic.wem.repo.internal.index.result.GetResult;
 import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
-import com.enonic.wem.repo.internal.index.result.SearchResultField;
+import com.enonic.wem.repo.internal.index.result.SearchResultFieldValue;
 
 import static org.junit.Assert.*;
 
@@ -26,7 +26,7 @@ public class GetResultCanReadResolverTest
     {
         assertFalse( GetResultCanReadResolver.canRead( Principals.empty(), new GetResult( SearchResultEntry.create().
             id( "myId" ).
-            addField( IndexPaths.HAS_READ_KEY, new SearchResultField( IndexPaths.HAS_READ_KEY, "system:user:rmy" ) ).
+            addField( IndexPaths.HAS_READ_KEY, SearchResultFieldValue.value( "system:user:rmy" ) ).
             build() ) ) );
     }
 
@@ -36,7 +36,7 @@ public class GetResultCanReadResolverTest
     {
         assertTrue( GetResultCanReadResolver.canRead( Principals.empty(), new GetResult( SearchResultEntry.create().
             id( "myId" ).
-            addField( IndexPaths.HAS_READ_KEY, new SearchResultField( IndexPaths.HAS_READ_KEY, PrincipalKey.ofAnonymous().toString() ) ).
+            addField( IndexPaths.HAS_READ_KEY, SearchResultFieldValue.value( PrincipalKey.ofAnonymous().toString() ) ).
             build() ) ) );
     }
 
@@ -49,7 +49,7 @@ public class GetResultCanReadResolverTest
             key( PrincipalKey.from( "system:user:rmy" ) ).
             build() ), new GetResult( SearchResultEntry.create().
             id( "myId" ).
-            addField( IndexPaths.HAS_READ_KEY, new SearchResultField( IndexPaths.HAS_READ_KEY, PrincipalKey.from( "system:user:rmy" ) ) ).
+            addField( IndexPaths.HAS_READ_KEY, SearchResultFieldValue.value( PrincipalKey.from( "system:user:rmy" ) ) ).
             build() ) ) );
     }
 
@@ -74,7 +74,7 @@ public class GetResultCanReadResolverTest
 
         assertTrue( GetResultCanReadResolver.canRead( Principals.from( me, myGroup ), new GetResult( SearchResultEntry.create().
             id( "myId" ).
-            addField( IndexPaths.HAS_READ_KEY, new SearchResultField( IndexPaths.HAS_READ_KEY, hasRead ) ).
+            addField( IndexPaths.HAS_READ_KEY, SearchResultFieldValue.values( hasRead ) ).
             build() ) ) );
     }
 

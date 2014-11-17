@@ -11,20 +11,20 @@ import org.elasticsearch.search.sort.SortOrder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
-import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.repo.internal.elasticsearch.ReturnFields;
-import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
-import com.enonic.wem.repo.internal.elasticsearch.xcontent.WorkspaceXContentBuilderFactory;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeIds;
 import com.enonic.wem.api.node.NodeVersionIds;
+import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.repo.internal.elasticsearch.ReturnFields;
+import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
+import com.enonic.wem.repo.internal.elasticsearch.xcontent.VersionXContentBuilderFactory;
+import com.enonic.wem.repo.internal.elasticsearch.xcontent.WorkspaceXContentBuilderFactory;
 import com.enonic.wem.repo.internal.index.IndexType;
 import com.enonic.wem.repo.internal.index.result.SearchResult;
 import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
-import com.enonic.wem.repo.internal.index.result.SearchResultField;
+import com.enonic.wem.repo.internal.index.result.SearchResultFieldValue;
 import com.enonic.wem.repo.internal.repository.StorageNameResolver;
 import com.enonic.wem.repo.internal.workspace.WorkspaceDocumentId;
-import com.enonic.wem.repo.internal.elasticsearch.xcontent.VersionXContentBuilderFactory;
 
 public class GetNodeVersionIdsByIdsCommand
     extends AbstractWorkspaceCommand
@@ -77,14 +77,14 @@ public class GetNodeVersionIdsByIdsCommand
             return NodeVersionIds.empty();
         }
 
-        final Map<String, SearchResultField> orderedResultMap =
+        final Map<String, SearchResultFieldValue> orderedResultMap =
             getSearchResultFieldsWithPreservedOrder( this.workspace, nodeIdsAsStrings, searchResult );
 
         return fieldValuesToVersionIds( orderedResultMap.values() );
     }
 
 
-    private Map<String, SearchResultField> getSearchResultFieldsWithPreservedOrder( final Workspace workspace,
+    private Map<String, SearchResultFieldValue> getSearchResultFieldsWithPreservedOrder( final Workspace workspace,
                                                                                     final Set<String> nodeIdsAsStrings,
                                                                                     final SearchResult searchResult )
     {
@@ -94,7 +94,7 @@ public class GetNodeVersionIdsByIdsCommand
     }
 
     private final class NodeIdToSearchResultFieldMapper
-        implements com.google.common.base.Function<String, SearchResultField>
+        implements com.google.common.base.Function<String, SearchResultFieldValue>
     {
         private final SearchResult searchResult;
 
@@ -110,7 +110,7 @@ public class GetNodeVersionIdsByIdsCommand
         }
 
         @Override
-        public SearchResultField apply( final String nodeId )
+        public SearchResultFieldValue apply( final String nodeId )
         {
             final WorkspaceDocumentId workspaceDocumentId = new WorkspaceDocumentId( NodeId.from( nodeId ), this.workspace );
 

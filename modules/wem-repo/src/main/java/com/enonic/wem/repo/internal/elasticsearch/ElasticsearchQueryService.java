@@ -32,7 +32,7 @@ import com.enonic.wem.repo.internal.index.query.QueryService;
 import com.enonic.wem.repo.internal.index.result.GetResult;
 import com.enonic.wem.repo.internal.index.result.SearchResult;
 import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
-import com.enonic.wem.repo.internal.index.result.SearchResultField;
+import com.enonic.wem.repo.internal.index.result.SearchResultFieldValue;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 
 public class ElasticsearchQueryService
@@ -78,7 +78,7 @@ public class ElasticsearchQueryService
             return null;
         }
 
-        final SearchResultField nodeVersionId = result.getSearchResult().getField( IndexPaths.VERSION_KEY );
+        final SearchResultFieldValue nodeVersionId = result.getSearchResult().getField( IndexPaths.VERSION_KEY );
 
         if ( nodeVersionId == null )
         {
@@ -124,7 +124,7 @@ public class ElasticsearchQueryService
 
         final SearchResultEntry firstHit = searchResult.getResults().getFirstHit();
 
-        final SearchResultField versionKeyField = firstHit.getField( IndexPaths.VERSION_KEY );
+        final SearchResultFieldValue versionKeyField = firstHit.getField( IndexPaths.VERSION_KEY );
 
         if ( versionKeyField == null )
         {
@@ -169,7 +169,7 @@ public class ElasticsearchQueryService
             return NodeVersionIds.empty();
         }
 
-        final Set<SearchResultField> fieldValues = searchResult.getResults().getFields( IndexPaths.VERSION_KEY );
+        final Set<SearchResultFieldValue> fieldValues = searchResult.getResults().getFields( IndexPaths.VERSION_KEY );
 
         return fieldValuesToVersionIds( fieldValues );
     }
@@ -213,7 +213,7 @@ public class ElasticsearchQueryService
             NodeVersionIds.empty();
         }
 
-        final Set<SearchResultField> fieldValues = searchResult.getResults().getFields( IndexPaths.VERSION_KEY );
+        final Set<SearchResultFieldValue> fieldValues = searchResult.getResults().getFields( IndexPaths.VERSION_KEY );
 
         return fieldValuesToVersionIds( fieldValues );
     }
@@ -242,18 +242,18 @@ public class ElasticsearchQueryService
         return count > 0;
     }
 
-    private NodeVersionIds fieldValuesToVersionIds( final Collection<SearchResultField> fieldValues )
+    private NodeVersionIds fieldValuesToVersionIds( final Collection<SearchResultFieldValue> fieldValues )
     {
         final NodeVersionIds.Builder builder = NodeVersionIds.create();
 
-        for ( final SearchResultField searchResultField : fieldValues )
+        for ( final SearchResultFieldValue searchResultFieldValue : fieldValues )
         {
-            if ( searchResultField == null )
+            if ( searchResultFieldValue == null )
             {
                 continue;
             }
 
-            builder.add( NodeVersionId.from( searchResultField.getValue().toString() ) );
+            builder.add( NodeVersionId.from( searchResultFieldValue.getValue().toString() ) );
         }
         return builder.build();
     }

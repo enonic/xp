@@ -8,18 +8,18 @@ import org.elasticsearch.index.query.TermQueryBuilder;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 
-import com.enonic.wem.api.repository.RepositoryId;
-import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
-import com.enonic.wem.repo.internal.elasticsearch.xcontent.VersionXContentBuilderFactory;
 import com.enonic.wem.api.node.FindNodeVersionsResult;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeVersion;
 import com.enonic.wem.api.node.NodeVersionId;
 import com.enonic.wem.api.node.NodeVersions;
+import com.enonic.wem.api.repository.RepositoryId;
+import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
+import com.enonic.wem.repo.internal.elasticsearch.xcontent.VersionXContentBuilderFactory;
 import com.enonic.wem.repo.internal.index.IndexType;
 import com.enonic.wem.repo.internal.index.result.SearchResult;
 import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
-import com.enonic.wem.repo.internal.index.result.SearchResultField;
+import com.enonic.wem.repo.internal.index.result.SearchResultFieldValue;
 import com.enonic.wem.repo.internal.repository.StorageNameResolver;
 import com.enonic.wem.repo.internal.version.GetVersionsQuery;
 import com.enonic.wem.repo.internal.version.NodeVersionDocument;
@@ -142,7 +142,7 @@ public class ElasticsearchVersionService
 
     private String getStringValue( final SearchResultEntry hit, final String fieldName, final boolean required )
     {
-        final SearchResultField field = hit.getField( fieldName, required );
+        final SearchResultFieldValue field = hit.getField( fieldName, required );
 
         if ( field == null )
         {

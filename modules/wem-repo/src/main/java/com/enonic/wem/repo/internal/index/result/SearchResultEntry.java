@@ -13,10 +13,10 @@ public class SearchResultEntry
 
     private final long version;//  = -1;
 
-    private final Map<String, SearchResultField> fields;
+    private final Map<String, SearchResultFieldValue> fields;
 
 
-    public SearchResultEntry( final Builder builder )
+    private SearchResultEntry( final Builder builder )
     {
         this.score = builder.score;
         this.id = builder.id;
@@ -39,31 +39,31 @@ public class SearchResultEntry
         return version;
     }
 
-    public Map<String, SearchResultField> getFields()
+    public Map<String, SearchResultFieldValue> getFields()
     {
         return fields;
     }
 
-    public SearchResultField getField( final String fieldName )
+    public SearchResultFieldValue getField( final String fieldName )
     {
         return doGetField( fieldName, false );
     }
 
-    public SearchResultField getField( final String fieldName, final boolean failOnMissing )
+    public SearchResultFieldValue getField( final String fieldName, final boolean failOnMissing )
     {
         return doGetField( fieldName, failOnMissing );
     }
 
-    private SearchResultField doGetField( final String fieldName, final boolean failOnMissing )
+    private SearchResultFieldValue doGetField( final String fieldName, final boolean failOnMissing )
     {
-        final SearchResultField searchResultField = fields.get( fieldName );
+        final SearchResultFieldValue searchResultFieldValue = fields.get( fieldName );
 
-        if ( failOnMissing && searchResultField == null )
+        if ( failOnMissing && searchResultFieldValue == null )
         {
             throw new RuntimeException( "Expected field " + fieldName + " in result not found" );
         }
 
-        return searchResultField;
+        return searchResultFieldValue;
     }
 
 
@@ -80,7 +80,7 @@ public class SearchResultEntry
 
         private long version = -1;
 
-        private Map<String, SearchResultField> fields = Maps.newHashMap();
+        private Map<String, SearchResultFieldValue> fields = Maps.newHashMap();
 
         public Builder score( final float score )
         {
@@ -100,15 +100,15 @@ public class SearchResultEntry
             return this;
         }
 
-        public Builder setFields( final Map<String, SearchResultField> fields )
+        public Builder setFields( final Map<String, SearchResultFieldValue> fields )
         {
             this.fields = fields;
             return this;
         }
 
-        public Builder addField( final String fieldName, final SearchResultField searchResultField )
+        public Builder addField( final String fieldName, final SearchResultFieldValue searchResultFieldValue )
         {
-            this.fields.put( fieldName, searchResultField );
+            this.fields.put( fieldName, searchResultFieldValue );
             return this;
         }
 

@@ -12,13 +12,13 @@ import com.google.common.collect.Sets;
 public class SearchResultEntries
     implements Iterable<SearchResultEntry>
 {
-    public final ImmutableMap<String, SearchResultEntry> hits;
+    private final ImmutableMap<String, SearchResultEntry> hits;
 
-    public final long totalHits;
+    private final long totalHits;
 
     private final float maxScore;
 
-    public SearchResultEntries( final Builder builder )
+    private SearchResultEntries( final Builder builder )
     {
         this.hits = ImmutableMap.copyOf( builder.hits );
         this.totalHits = builder.totalHits;
@@ -55,13 +55,13 @@ public class SearchResultEntries
         return this.hits.values().iterator().next();
     }
 
-    public Set<SearchResultField> getFields( final String fieldName )
+    public Set<SearchResultFieldValue> getFields( final String fieldName )
     {
-        final Set<SearchResultField> searchResultFields = Sets.newLinkedHashSet();
+        final Set<SearchResultFieldValue> searchResultFieldValues = Sets.newLinkedHashSet();
 
-        searchResultFields.addAll( hits.values().stream().map( hit -> hit.getField( fieldName ) ).collect( Collectors.toList() ) );
+        searchResultFieldValues.addAll( hits.values().stream().map( hit -> hit.getField( fieldName ) ).collect( Collectors.toList() ) );
 
-        return searchResultFields;
+        return searchResultFieldValues;
     }
 
     @Override
@@ -72,7 +72,7 @@ public class SearchResultEntries
 
     public static class Builder
     {
-        private Map<String, SearchResultEntry> hits = Maps.newLinkedHashMap();
+        private final Map<String, SearchResultEntry> hits = Maps.newLinkedHashMap();
 
         private long totalHits = 0;
 

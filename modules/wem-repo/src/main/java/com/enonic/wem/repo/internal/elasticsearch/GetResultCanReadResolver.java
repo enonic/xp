@@ -7,13 +7,13 @@ import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.PrincipalKeys;
 import com.enonic.wem.api.security.Principals;
 import com.enonic.wem.repo.internal.index.result.GetResult;
-import com.enonic.wem.repo.internal.index.result.SearchResultField;
+import com.enonic.wem.repo.internal.index.result.SearchResultFieldValue;
 
 class GetResultCanReadResolver
 {
     public static boolean canRead( final Principals principals, final GetResult getResult )
     {
-        final SearchResultField hasRead = getResult.getSearchResult().getField( IndexPaths.HAS_READ_KEY );
+        final SearchResultFieldValue hasRead = getResult.getSearchResult().getField( IndexPaths.HAS_READ_KEY );
 
         if ( hasRead == null )
         {
