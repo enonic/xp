@@ -4,20 +4,20 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.index.ChildOrder;
+import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodeName;
+import com.enonic.wem.api.node.NodeNotFoundException;
+import com.enonic.wem.api.node.NodePath;
+import com.enonic.wem.api.node.RenameNodeParams;
 import com.enonic.wem.api.query.expr.FieldOrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlEntry;
 import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.security.acl.Permission;
-import com.enonic.wem.api.node.CreateNodeParams;
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeId;
-import com.enonic.wem.api.node.NodeName;
-import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.repo.internal.entity.NodeServiceImpl;
-import com.enonic.wem.api.node.RenameNodeParams;
-import com.enonic.wem.api.node.NodeNotFoundException;
 
 import static org.junit.Assert.*;
 
@@ -52,7 +52,6 @@ public class NodeServiceImplTest
         final Node fetchedNode = this.nodeService.getById( NodeId.from( createdNode.id() ) );
 
         assertEquals( createdNode, fetchedNode );
-
     }
 
     @Test(expected = NodeNotFoundException.class)
@@ -60,9 +59,7 @@ public class NodeServiceImplTest
         throws Exception
     {
         this.nodeService.getById( NodeId.from( "a" ) );
-
     }
-
 
     @Test
     public void rename()
@@ -81,7 +78,6 @@ public class NodeServiceImplTest
         final Node renamedNode = nodeService.getById( createdNode.id() );
 
         assertEquals( "my-node-edited", renamedNode.name().toString() );
-
     }
 
     @Test

@@ -4,9 +4,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.node.CreateNodeParams;
-import com.enonic.wem.repo.internal.entity.GetNodeByIdCommand;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodePath;
+import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.security.acl.AccessControlEntry;
+import com.enonic.wem.api.security.acl.AccessControlList;
+import com.enonic.wem.api.security.acl.Permission;
+import com.enonic.wem.repo.internal.entity.GetNodeByIdCommand;
 
 import static org.junit.Assert.*;
 
@@ -46,6 +50,42 @@ public class GetNodeByIdCommandTest
             execute();
 
         assertEquals( createdNode, fetchedNode );
+    }
+
+    @Test
+    public void get_by_id_no_access()
+        throws Exception
+    {
+        final CreateNodeParams createNodeParams = CreateNodeParams.create().
+            name( "my-node" ).
+            parent( NodePath.ROOT ).
+            accessControlList( AccessControlList.create().
+                add( AccessControlEntry.create().
+                    deny( Permission.READ ).
+                    principal( PrincipalKey.ofAnonymous() ).
+                    build() ).
+                add( AccessControlEntry.create().
+                    allow( Permission.READ ).
+                    principal( PrincipalKey.from( "system:user:rmy" ) ).
+                    build() ).
+                build() ).
+            build();
+
+        final Node createdNode = createNode( createNodeParams );
+
+        final Node fetchedNode = GetNodeByIdCommand.create().
+            versionService( this.versionService ).
+            indexService( this.indexService ).
+            versionService( this.versionService ).
+            nodeDao( this.nodeDao ).
+            workspaceService( this.workspaceService ).
+            queryService( this.queryService ).
+            id( createdNode.id() ).
+            resolveHasChild( false ).
+            build().
+            execute();
+
+        assertNull( fetchedNode );
     }
 
     @Test

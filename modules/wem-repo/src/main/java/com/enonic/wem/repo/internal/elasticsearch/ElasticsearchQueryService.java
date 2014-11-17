@@ -9,6 +9,13 @@ import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.index.IndexPaths;
+import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodeIds;
+import com.enonic.wem.api.node.NodePath;
+import com.enonic.wem.api.node.NodePaths;
+import com.enonic.wem.api.node.NodeQuery;
+import com.enonic.wem.api.node.NodeVersionId;
+import com.enonic.wem.api.node.NodeVersionIds;
 import com.enonic.wem.api.query.QueryException;
 import com.enonic.wem.api.query.expr.OrderExpressions;
 import com.enonic.wem.api.query.filter.ValueFilter;
@@ -27,13 +34,6 @@ import com.enonic.wem.repo.internal.index.result.SearchResult;
 import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
 import com.enonic.wem.repo.internal.index.result.SearchResultField;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
-import com.enonic.wem.api.node.NodeId;
-import com.enonic.wem.api.node.NodeIds;
-import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.api.node.NodePaths;
-import com.enonic.wem.api.node.NodeQuery;
-import com.enonic.wem.api.node.NodeVersionId;
-import com.enonic.wem.api.node.NodeVersionIds;
 
 public class ElasticsearchQueryService
     implements QueryService
@@ -59,14 +59,12 @@ public class ElasticsearchQueryService
         return translateResult( searchResult );
     }
 
-    @Override
     public NodeVersionId get( final NodeId nodeId, final IndexContext indexContext )
     {
-        // TODO: Add access-control
         final GetResult result = elasticsearchDao.get( GetQuery.create().
             indexName( IndexNameResolver.resolveSearchIndexName( indexContext.getRepositoryId() ) ).
             indexTypeName( indexContext.getWorkspace().getName() ).
-            returnFields( ReturnFields.from( IndexPaths.VERSION_KEY ) ).
+            returnFields( ReturnFields.from( IndexPaths.VERSION_KEY, IndexPaths.HAS_READ_KEY ) ).
             id( nodeId ).
             build() );
 
@@ -75,7 +73,12 @@ public class ElasticsearchQueryService
             return null;
         }
 
-        final SearchResultField nodeVersionId = result.getResult().getField( IndexPaths.VERSION_KEY );
+        if ( !GetResultCanReadResolver.canRead( indexContext.getPrincipals(), result ) )
+        {
+            return null;
+        }
+
+        final SearchResultField nodeVersionId = result.getSearchResult().getField( IndexPaths.VERSION_KEY );
 
         if ( nodeVersionId == null )
         {
@@ -84,6 +87,7 @@ public class ElasticsearchQueryService
 
         return NodeVersionId.from( nodeVersionId.getValue().toString() );
     }
+
 
     @Override
     public NodeVersionId get( final NodePath nodePath, final IndexContext indexContext )
@@ -172,6 +176,11 @@ public class ElasticsearchQueryService
 
     @Override
     public NodeVersionIds find( final NodeIds nodeIds, final OrderExpressions orderExprs, final IndexContext indexContext )
+    {
+        return doGetByIds( nodeIds, orderExprs, indexContext );
+    }
+
+    private NodeVersionIds doGetByIds( final NodeIds nodeIds, final OrderExpressions orderExprs, final IndexContext indexContext )
     {
         if ( nodeIds.isEmpty() )
         {

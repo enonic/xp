@@ -1,6 +1,7 @@
 package com.enonic.wem.repo.internal.elasticsearch.query.builder;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.elasticsearch.search.sort.FieldSortBuilder;
@@ -26,7 +27,6 @@ public class SortQueryBuilderFactory
         return doCreate( orderExpressions.getSet() );
     }
 
-
     public static Set<SortBuilder> create( final Collection<OrderExpr> orderExpressions )
     {
         return doCreate( orderExpressions );
@@ -34,6 +34,11 @@ public class SortQueryBuilderFactory
 
     private static Set<SortBuilder> doCreate( final Collection<OrderExpr> orderExpressions )
     {
+        if ( orderExpressions.isEmpty() )
+        {
+            return new HashSet<>();
+        }
+
         Set<SortBuilder> sortBuilders = Sets.newHashSet();
 
         for ( final OrderExpr orderExpr : orderExpressions )

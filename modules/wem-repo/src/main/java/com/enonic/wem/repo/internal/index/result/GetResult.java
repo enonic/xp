@@ -19,7 +19,7 @@ public class GetResult
         return result == null;
     }
 
-    public SearchResultEntry getResult()
+    public SearchResultEntry getSearchResult()
     {
         return result;
     }
