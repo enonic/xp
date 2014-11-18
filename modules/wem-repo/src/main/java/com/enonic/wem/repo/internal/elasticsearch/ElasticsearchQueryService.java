@@ -47,7 +47,7 @@ public class ElasticsearchQueryService
     {
         final ElasticsearchQuery esQuery = NodeQueryTranslator.translate( query, context );
 
-        System.out.println( esQuery );
+        //System.out.println( esQuery );
 
         return doFind( esQuery );
     }
