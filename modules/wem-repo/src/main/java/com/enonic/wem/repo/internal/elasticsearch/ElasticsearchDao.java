@@ -35,9 +35,9 @@ public class ElasticsearchDao
 
     private final String searchTimeout = "5s";
 
-    private final String storeTimeout = "1s";
+    private final String storeTimeout = "5s";
 
-    private final String deleteTimeout = "1s";
+    private final String deleteTimeout = "5s";
 
     private Client client;
 
