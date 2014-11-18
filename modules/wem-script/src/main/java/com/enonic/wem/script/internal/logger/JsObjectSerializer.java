@@ -1,4 +1,4 @@
-package com.enonic.wem.script.internal;
+package com.enonic.wem.script.internal.logger;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

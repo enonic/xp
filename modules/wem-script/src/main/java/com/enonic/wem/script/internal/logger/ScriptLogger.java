@@ -1,4 +1,6 @@
-package com.enonic.wem.script.internal;
+package com.enonic.wem.script.internal.logger;
+
+import javax.script.Bindings;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +43,7 @@ public final class ScriptLogger
     {
         this.log.error( FORMAT_STR, this.source.getPath(), format( message, args ) );
     }
-    
+
     public String format( final String message, final Object... args )
     {
         final Object[] converted = convertArgs( args );
@@ -87,5 +89,10 @@ public final class ScriptLogger
     private String serialize( final JSObject arg )
     {
         return new JsObjectSerializer().toString( arg );
+    }
+
+    public void register( final Bindings bindings )
+    {
+        bindings.put( "log", this );
     }
 }

@@ -18,6 +18,8 @@ import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceProblemException;
 import com.enonic.wem.script.command.CommandInvoker;
+import com.enonic.wem.script.internal.logger.ScriptLogger;
+import com.enonic.wem.script.internal.v2.ExecuteFunction;
 
 final class ScriptExecutorImpl
     implements ScriptExecutor
@@ -51,7 +53,8 @@ final class ScriptExecutorImpl
     {
         try
         {
-            bindings.put( "log", new ScriptLogger( script ) );
+            new ScriptLogger( script ).register( bindings );
+            new ExecuteFunction( null ).register( bindings );
 
             final Resource resource = Resource.from( script );
             final String source = resource.readString();
