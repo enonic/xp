@@ -40,16 +40,16 @@ import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.data.DataId;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.event.EventPublisher;
-import com.enonic.wem.api.schema.content.ContentTypeForms;
-import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.content.ContentTypeService;
-import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
-import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.api.node.OrderChildNodeParams;
 import com.enonic.wem.api.node.SetNodeChildOrderParams;
+import com.enonic.wem.api.schema.content.ContentTypeForms;
+import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeService;
+import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
+import com.enonic.wem.api.security.acl.AccessControlList;
 
 public class ContentServiceImpl
     implements ContentService
@@ -170,6 +170,7 @@ public class ContentServiceImpl
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
+            eventPublisher( this.eventPublisher ).
             params( createContentParams ).
             build().
             execute();
@@ -194,6 +195,7 @@ public class ContentServiceImpl
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
+            eventPublisher( this.eventPublisher ).
             params( params ).
             build().
             execute();

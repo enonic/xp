@@ -18,13 +18,13 @@ import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.thumb.Thumbnail;
 import com.enonic.wem.api.event.EventPublisher;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.UpdateNodeParams;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.UpdateNodeParams;
 
 import static com.enonic.wem.api.content.Content.newContent;
 
@@ -99,10 +99,7 @@ final class UpdateContentCommand
 
         final Node editedNode = this.nodeService.update( updateNodeParams );
 
-        if ( !contentBeforeChange.getName().isUnnamed() )
-        {
-            eventPublisher.publish( new ContentUpdatedEvent( editedContent.getId() ) );
-        }
+        eventPublisher.publish( new ContentUpdatedEvent( editedContent.getId() ) );
 
         return translator.fromNode( editedNode );
     }

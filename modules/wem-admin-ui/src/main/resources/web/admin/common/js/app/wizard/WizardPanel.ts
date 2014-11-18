@@ -229,6 +229,10 @@ module api.app.wizard {
             return this.layingOutNew;
         }
 
+        setLayingOutNew(value: boolean) {
+            this.layingOutNew = value;
+        }
+
         layoutNew(): wemQ.Promise<void> {
             var deferred = wemQ.defer<void>();
             this.actions.enableActionsForNew();

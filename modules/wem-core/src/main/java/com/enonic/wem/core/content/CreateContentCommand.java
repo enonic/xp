@@ -5,16 +5,19 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentAlreadyExistException;
+import com.enonic.wem.api.content.ContentCreatedEvent;
 import com.enonic.wem.api.content.ContentDataValidationException;
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.CreateContentParams;
+import com.enonic.wem.api.event.EventPublisher;
+import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeAlreadyExistException;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
-import com.enonic.wem.api.node.CreateNodeParams;
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeAlreadyExistException;
 
 final class CreateContentCommand
     extends AbstractContentCommand
@@ -23,10 +26,13 @@ final class CreateContentCommand
 
     private final CreateContentParams params;
 
+    private final EventPublisher eventPublisher;
+
     private CreateContentCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
+        this.eventPublisher = builder.eventPublisher;
     }
 
     Content execute()
@@ -56,6 +62,7 @@ final class CreateContentCommand
         try
         {
             createdNode = nodeService.create( createNodeParams );
+            eventPublisher.publish( new ContentCreatedEvent( ContentId.from( createdNode.id().toString() ) ) );
         }
         catch ( NodeAlreadyExistException e )
         {
@@ -89,6 +96,8 @@ final class CreateContentCommand
     {
         private CreateContentParams params;
 
+        private EventPublisher eventPublisher;
+
         public Builder setParams( final CreateContentParams params )
         {
             this.params = params;
@@ -98,6 +107,12 @@ final class CreateContentCommand
         public Builder params( final CreateContentParams params )
         {
             this.params = params;
+            return this;
+        }
+
+        public Builder eventPublisher( final EventPublisher eventPublisher )
+        {
+            this.eventPublisher = eventPublisher;
             return this;
         }
 
