@@ -4,15 +4,15 @@ import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.index.IndexPaths;
 import com.enonic.wem.api.query.filter.Filter;
 import com.enonic.wem.api.query.filter.ValueFilter;
-import com.enonic.wem.api.security.Principal;
-import com.enonic.wem.api.security.Principals;
+import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.security.PrincipalKeys;
 import com.enonic.wem.api.security.User;
 
 public class AclFilterBuilderFactory
 {
-    public static Filter create( final Principals principals )
+    public static Filter create( final PrincipalKeys principalsKeys )
     {
-        if ( principals.isEmpty() )
+        if ( principalsKeys.isEmpty() )
         {
             return createNoPrincipalsFilter();
         }
@@ -20,9 +20,9 @@ public class AclFilterBuilderFactory
         final ValueFilter.Builder valueFilterBuilder = ValueFilter.create().
             fieldName( IndexPaths.HAS_READ_KEY );
 
-        for ( final Principal principal : principals )
+        for ( final PrincipalKey principalKey : principalsKeys )
         {
-            valueFilterBuilder.addValue( Value.newString( principal.getKey() ) );
+            valueFilterBuilder.addValue( Value.newString( principalKey ) );
         }
 
         return valueFilterBuilder.build();

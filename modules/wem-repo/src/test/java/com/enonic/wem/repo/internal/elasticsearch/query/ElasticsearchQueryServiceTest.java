@@ -8,9 +8,8 @@ import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeVersionId;
-import com.enonic.wem.api.security.Group;
 import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.api.security.Principals;
+import com.enonic.wem.api.security.PrincipalKeys;
 import com.enonic.wem.api.security.User;
 import com.enonic.wem.api.security.acl.AccessControlEntry;
 import com.enonic.wem.api.security.acl.AccessControlList;
@@ -40,26 +39,17 @@ public class ElasticsearchQueryServiceTest
     public void get_path_has_read()
         throws Exception
     {
-        final User me = User.create().
-            email( "rmy@enonic.com" ).
-            login( "rmy" ).
-            displayName( "Runar Myklebust" ).
-            key( PrincipalKey.from( "system:user:rmy" ) ).
-            build();
-
-        final Principals principals = Principals.from( me );
-
         final IndexContext indexContext = IndexContext.create().
             workspace( ContentConstants.WORKSPACE_STAGE ).
             repositoryId( ContentConstants.CONTENT_REPO.getId() ).
-            principals( principals ).
+            principalsKeys( PrincipalKeys.from( PrincipalKey.from( "system:user:rmy" ) ) ).
             build();
 
         final Node node = createNode( CreateNodeParams.create().
             name( "my-node" ).
             parent( NodePath.ROOT ).
             accessControlList( AccessControlList.of( AccessControlEntry.create().
-                principal( me.getKey() ).
+                principal( PrincipalKey.from( "system:user:rmy" ) ).
                 allow( Permission.READ ).
                 build() ) ).
             build() );
@@ -73,12 +63,10 @@ public class ElasticsearchQueryServiceTest
     public void anonymous_has_read()
         throws Exception
     {
-        final Principals principals = Principals.empty();
-
         final IndexContext indexContext = IndexContext.create().
             workspace( ContentConstants.WORKSPACE_STAGE ).
             repositoryId( ContentConstants.CONTENT_REPO.getId() ).
-            principals( principals ).
+            principalsKeys( PrincipalKeys.empty() ).
             build();
 
         final Node node = createNode( CreateNodeParams.create().
@@ -99,31 +87,18 @@ public class ElasticsearchQueryServiceTest
     public void get_path_group_has_read()
         throws Exception
     {
-        final User me = User.create().
-            email( "rmy@enonic.com" ).
-            login( "rmy" ).
-            displayName( "Runar Myklebust" ).
-            key( PrincipalKey.from( "system:user:rmy" ) ).
-            build();
-
-        final Group myGroup = Group.create().
-            displayName( "My Group" ).
-            key( PrincipalKey.from( "system:group:mygroup" ) ).
-            build();
-
-        final Principals principals = Principals.from( me, myGroup );
 
         final IndexContext indexContext = IndexContext.create().
             workspace( ContentConstants.WORKSPACE_STAGE ).
             repositoryId( ContentConstants.CONTENT_REPO.getId() ).
-            principals( principals ).
+            principalsKeys( PrincipalKeys.from( PrincipalKey.from( "system:user:rmy" ), PrincipalKey.from( "system:group:mygroup" ) ) ).
             build();
 
         final Node node = createNode( CreateNodeParams.create().
             name( "my-node" ).
             parent( NodePath.ROOT ).
             accessControlList( AccessControlList.of( AccessControlEntry.create().
-                principal( myGroup.getKey() ).
+                principal( PrincipalKey.from( "system:group:mygroup" ) ).
                 allow( Permission.READ ).
                 build() ) ).
             build() );
@@ -137,26 +112,17 @@ public class ElasticsearchQueryServiceTest
     public void get_path_no_read()
         throws Exception
     {
-        final User me = User.create().
-            email( "rmy@enonic.com" ).
-            login( "rmy" ).
-            displayName( "Runar Myklebust" ).
-            key( PrincipalKey.from( "system:user:rmy" ) ).
-            build();
-
-        final Principals principals = Principals.from( me );
-
         final IndexContext indexContext = IndexContext.create().
             workspace( ContentConstants.WORKSPACE_STAGE ).
             repositoryId( ContentConstants.CONTENT_REPO.getId() ).
-            principals( principals ).
+            principalsKeys( PrincipalKeys.from( PrincipalKey.from( "system:user:rmy" ) ) ).
             build();
 
         final Node node = createNode( CreateNodeParams.create().
             name( "my-node" ).
             parent( NodePath.ROOT ).
             accessControlList( AccessControlList.of( AccessControlEntry.create().
-                principal( me.getKey() ).
+                principal( PrincipalKey.from( "system:user:rmy" ) ).
                 allow( Permission.DELETE ).
                 build() ) ).
             build() );
@@ -170,19 +136,10 @@ public class ElasticsearchQueryServiceTest
     public void get_path_no_acl_for_node()
         throws Exception
     {
-        final User me = User.create().
-            email( "rmy@enonic.com" ).
-            login( "rmy" ).
-            displayName( "Runar Myklebust" ).
-            key( PrincipalKey.from( "system:user:rmy" ) ).
-            build();
-
-        final Principals principals = Principals.from( me );
-
         final IndexContext indexContext = IndexContext.create().
             workspace( ContentConstants.WORKSPACE_STAGE ).
             repositoryId( ContentConstants.CONTENT_REPO.getId() ).
-            principals( principals ).
+            principalsKeys( PrincipalKeys.from( PrincipalKey.from( "system:user:rmy" ) ) ).
             build();
 
         final Node node = createNode( CreateNodeParams.create().
@@ -199,21 +156,17 @@ public class ElasticsearchQueryServiceTest
     public void get_path_anonymous()
         throws Exception
     {
-        final User anonymous = User.anonymous();
-
-        final Principals principals = Principals.from( anonymous );
-
         final IndexContext indexContext = IndexContext.create().
             workspace( ContentConstants.WORKSPACE_STAGE ).
             repositoryId( ContentConstants.CONTENT_REPO.getId() ).
-            principals( principals ).
+            principalsKeys( PrincipalKeys.from( PrincipalKey.ofAnonymous() ) ).
             build();
 
         final Node node = createNode( CreateNodeParams.create().
             name( "my-node" ).
             parent( NodePath.ROOT ).
             accessControlList( AccessControlList.of( AccessControlEntry.create().
-                principal( anonymous.getKey() ).
+                principal( PrincipalKey.ofAnonymous() ).
                 allow( Permission.READ ).
                 build() ) ).
             build() );

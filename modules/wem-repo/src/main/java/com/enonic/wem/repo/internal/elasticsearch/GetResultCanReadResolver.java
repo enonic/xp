@@ -5,13 +5,12 @@ import java.util.List;
 import com.enonic.wem.api.index.IndexPaths;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.PrincipalKeys;
-import com.enonic.wem.api.security.Principals;
 import com.enonic.wem.repo.internal.index.result.GetResult;
 import com.enonic.wem.repo.internal.index.result.SearchResultFieldValue;
 
 class GetResultCanReadResolver
 {
-    public static boolean canRead( final Principals principals, final GetResult getResult )
+    public static boolean canRead( final PrincipalKeys principalsKeys, final GetResult getResult )
     {
         final SearchResultFieldValue hasRead = getResult.getSearchResult().getField( IndexPaths.HAS_READ_KEY );
 
@@ -22,7 +21,7 @@ class GetResultCanReadResolver
 
         final List<Object> values = hasRead.getValues();
 
-        final PrincipalKeys keys = principals.isEmpty() ? PrincipalKeys.from( PrincipalKey.ofAnonymous() ) : principals.getKeys();
+        final PrincipalKeys keys = principalsKeys.isEmpty() ? PrincipalKeys.from( PrincipalKey.ofAnonymous() ) : principalsKeys;
 
         for ( final Object value : values )
         {

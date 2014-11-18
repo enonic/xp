@@ -47,7 +47,7 @@ public class ElasticsearchQueryService
     {
         final ElasticsearchQuery esQuery = NodeQueryTranslator.translate( query, context );
 
-        //System.out.println( esQuery );
+        System.out.println( esQuery );
 
         return doFind( esQuery );
     }
@@ -73,7 +73,7 @@ public class ElasticsearchQueryService
             return null;
         }
 
-        if ( !GetResultCanReadResolver.canRead( indexContext.getPrincipals(), result ) )
+        if ( !GetResultCanReadResolver.canRead( indexContext.getPrincipalKeys(), result ) )
         {
             return null;
         }
@@ -95,7 +95,7 @@ public class ElasticsearchQueryService
         final Workspace workspace = indexContext.getWorkspace();
 
         final QueryBuilder queryBuilder = QueryBuilderFactory.create().
-            addQueryFilter( AclFilterBuilderFactory.create( indexContext.getPrincipals() ) ).
+            addQueryFilter( AclFilterBuilderFactory.create( indexContext.getPrincipalKeys() ) ).
             addQueryFilter( ValueFilter.create().
                 fieldName( IndexPaths.PATH_KEY ).
                 addValue( Value.newString( nodePath.toString() ) ).
@@ -146,7 +146,7 @@ public class ElasticsearchQueryService
         final Workspace workspace = indexContext.getWorkspace();
 
         final QueryBuilder queryBuilder = QueryBuilderFactory.create().
-            addQueryFilter( AclFilterBuilderFactory.create( indexContext.getPrincipals() ) ).
+            addQueryFilter( AclFilterBuilderFactory.create( indexContext.getPrincipalKeys() ) ).
             addQueryFilter( ValueFilter.create().
                 fieldName( IndexPaths.PATH_KEY ).
                 addValues( nodePaths.getAsStrings() ).
@@ -190,7 +190,7 @@ public class ElasticsearchQueryService
         final Workspace workspace = indexContext.getWorkspace();
 
         final QueryBuilder queryBuilder = QueryBuilderFactory.create().
-            addQueryFilter( AclFilterBuilderFactory.create( indexContext.getPrincipals() ) ).
+            addQueryFilter( AclFilterBuilderFactory.create( indexContext.getPrincipalKeys() ) ).
             addQueryFilter( ValueFilter.create().
                 fieldName( IndexPaths.ID_KEY ).
                 addValues( nodeIds.getAsStrings() ).
@@ -224,7 +224,7 @@ public class ElasticsearchQueryService
         final Context context = ContextAccessor.current();
 
         final QueryBuilder queryBuilder = QueryBuilderFactory.create().
-            addQueryFilter( AclFilterBuilderFactory.create( indexContext.getPrincipals() ) ).
+            addQueryFilter( AclFilterBuilderFactory.create( indexContext.getPrincipalKeys() ) ).
             addQueryFilter( ValueFilter.create().
                 fieldName( IndexPaths.PARENT_PATH_KEY ).
                 addValue( Value.newString( parentPath.toString() ) ).
