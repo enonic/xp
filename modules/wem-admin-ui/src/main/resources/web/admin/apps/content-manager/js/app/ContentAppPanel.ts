@@ -115,7 +115,7 @@ module app {
                         setCloseAction(wizard.getCloseAction()).
                         build();
 
-                    wizard.onPersistedContentCreated((event: api.content.PersistedContentCreatedEvent) => {
+                    wizard.onContentNamed((event: api.content.ContentNamedEvent) => {
                         this.handlePersistedContentCreated(event);
                     });
 
@@ -207,7 +207,7 @@ module app {
             });
         }
 
-        private handlePersistedContentCreated(event: api.content.PersistedContentCreatedEvent) {
+        private handlePersistedContentCreated(event: api.content.ContentNamedEvent) {
 
             var wizard = event.getWizard(),
                 tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(wizard.getTabId());

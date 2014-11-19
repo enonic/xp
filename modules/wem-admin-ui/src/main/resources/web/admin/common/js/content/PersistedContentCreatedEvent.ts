@@ -1,6 +1,6 @@
 module api.content {
 
-    export class PersistedContentCreatedEvent extends api.event.Event {
+    export class ContentNamedEvent extends api.event.Event {
 
         private wizard: api.app.wizard.WizardPanel<Content>;
         private content: Content;
@@ -19,11 +19,11 @@ module api.content {
             return this.content;
         }
 
-        static on(handler: (event: PersistedContentCreatedEvent) => void) {
+        static on(handler: (event: ContentNamedEvent) => void) {
             api.event.Event.bind(api.ClassHelper.getFullName(this), handler);
         }
 
-        static un(handler?: (event: PersistedContentCreatedEvent) => void) {
+        static un(handler?: (event: ContentNamedEvent) => void) {
             api.event.Event.unbind(api.ClassHelper.getFullName(this), handler);
         }
 

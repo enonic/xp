@@ -91,7 +91,7 @@ module app.wizard {
 
         private isContentFormValid: boolean;
 
-        private persistedItemListeners: {(event: api.content.PersistedContentCreatedEvent):void}[];
+        private persistedItemListeners: {(event: api.content.ContentNamedEvent):void}[];
 
         /**
          * Whether constructor is being currently executed or not.
@@ -513,9 +513,8 @@ module app.wizard {
                 execute().
                 then((content: Content) => {
 
-                    if (this.isLayingOutNew()) {
-                        this.notifyPersistedContentCreated(content);
-                        this.setLayingOutNew(false);
+                    if (persistedContent.getName().isUnnamed() && !content.getName().isUnnamed()) {
+                        this.notifyContentNamed(content);
                     }
                     api.notify.showFeedback('Content was updated!');
 
@@ -670,13 +669,13 @@ module app.wizard {
             return this.wizardActions.getCloseAction();
         }
 
-        onPersistedContentCreated(listener: (event: api.content.PersistedContentCreatedEvent)=>void) {
+        onContentNamed(listener: (event: api.content.ContentNamedEvent)=>void) {
             this.persistedItemListeners.push(listener);
         }
 
-        private notifyPersistedContentCreated(content: api.content.Content) {
-            this.persistedItemListeners.forEach((listener: (event: api.content.PersistedContentCreatedEvent)=>void)=> {
-                listener.call(this, new api.content.PersistedContentCreatedEvent(this, content));
+        private notifyContentNamed(content: api.content.Content) {
+            this.persistedItemListeners.forEach((listener: (event: api.content.ContentNamedEvent)=>void)=> {
+                listener.call(this, new api.content.ContentNamedEvent(this, content));
             });
         }
     }
