@@ -318,9 +318,9 @@ module app.browse {
             this.updateNode(new ContentSummaryAndCompareStatus(content.getContentSummary(), null));
         }
 
-        appendContentNode(content: api.content.Content, nextToSelection?: boolean) {
+        appendContentNode(contentId: api.content.ContentId, nextToSelection?: boolean) {
 
-            this.fetchById(content.getContentId())
+            this.fetchById(contentId)
                 .then((data: ContentSummaryAndCompareStatus) => {
                     this.appendNode(data, nextToSelection);
                 }).catch((reason: any) => {
