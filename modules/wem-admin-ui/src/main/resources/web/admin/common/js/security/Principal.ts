@@ -47,6 +47,18 @@ module api.security {
             return this.type === PrincipalType.ROLE;
         }
 
+        asUser(): User {
+            return (this instanceof api.security.User) ? <api.security.User> this : null;
+        }
+
+        asGroup(): Group {
+            return (this instanceof api.security.Group) ? <api.security.Group> this : null;
+        }
+
+        asRole(): Role {
+            return (this instanceof api.security.Role) ? <api.security.Role> this : null;
+        }
+
         getModifiedTime(): Date {
             return this.modifiedTime;
         }

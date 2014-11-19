@@ -16,3 +16,4 @@
 ///<reference path="ListUserStoresRequest.ts"/>
 ///<reference path="PrincipalListJson.ts"/>
 ///<reference path="GetPrincipalsByUserStoreRequest.ts"/>
+///<reference path="GetPrincipalByKeyRequest.ts"/>

@@ -33,7 +33,7 @@ public interface SecurityService
 
     Optional<Role> getRole( PrincipalKey roleKey );
 
-    Optional<? extends Principal> getPrincipal( PrincipalKey groupKey );
+    Optional<? extends Principal> getPrincipal( PrincipalKey principalKey );
 
     PrincipalQueryResult query( PrincipalQuery query );
 
