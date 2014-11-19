@@ -116,7 +116,7 @@ module app {
                         build();
 
                     wizard.onContentNamed((event: api.content.ContentNamedEvent) => {
-                        this.handlePersistedContentCreated(event);
+                        this.handleContentNamedEvent(event);
                     });
 
                     this.addWizardPanel(tabMenuItem, wizard);
@@ -207,7 +207,7 @@ module app {
             });
         }
 
-        private handlePersistedContentCreated(event: api.content.ContentNamedEvent) {
+        private handleContentNamedEvent(event: api.content.ContentNamedEvent) {
 
             var wizard = event.getWizard(),
                 tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(wizard.getTabId());

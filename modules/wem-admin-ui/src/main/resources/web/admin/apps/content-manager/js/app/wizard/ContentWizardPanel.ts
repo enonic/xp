@@ -91,7 +91,7 @@ module app.wizard {
 
         private isContentFormValid: boolean;
 
-        private persistedItemListeners: {(event: api.content.ContentNamedEvent):void}[];
+        private contentNamedListeners: {(event: api.content.ContentNamedEvent):void}[];
 
         /**
          * Whether constructor is being currently executed or not.
@@ -104,7 +104,7 @@ module app.wizard {
             this.isContentFormValid = false;
 
             this.persistAsDraft = true;
-            this.persistedItemListeners = [];
+            this.contentNamedListeners = [];
             this.parentContent = params.parentContent;
             this.defaultModels = params.defaultModels;
             this.site = params.site;
@@ -670,11 +670,11 @@ module app.wizard {
         }
 
         onContentNamed(listener: (event: api.content.ContentNamedEvent)=>void) {
-            this.persistedItemListeners.push(listener);
+            this.contentNamedListeners.push(listener);
         }
 
         private notifyContentNamed(content: api.content.Content) {
-            this.persistedItemListeners.forEach((listener: (event: api.content.ContentNamedEvent)=>void)=> {
+            this.contentNamedListeners.forEach((listener: (event: api.content.ContentNamedEvent)=>void)=> {
                 listener.call(this, new api.content.ContentNamedEvent(this, content));
             });
         }

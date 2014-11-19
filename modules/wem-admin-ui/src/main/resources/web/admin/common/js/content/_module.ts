@@ -56,7 +56,7 @@
 ///<reference path='GetNearestSiteRequest.ts' />
 ///<reference path='ContentPermissions.ts' />
 ///<reference path='GetContentPermissionsRequest.ts' />
-///<reference path='PersistedContentCreatedEvent.ts' />
+///<reference path='ContentNamedEvent.ts' />
 
 ///<reference path='OrderExpr.ts' />
 ///<reference path='DynamicOrderExpr.ts' />
