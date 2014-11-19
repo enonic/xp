@@ -5,7 +5,6 @@ import java.util.Set;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 
 import com.google.common.base.Joiner;
@@ -87,7 +86,7 @@ public class ElasticsearchQuery
         return new Builder();
     }
 
-    int getFrom()
+    public int getFrom()
     {
         return from;
     }
@@ -112,33 +111,6 @@ public class ElasticsearchQuery
         return sortBuilders;
     }
 
-    public SearchSourceBuilder toSearchSourceBuilder()
-    {
-
-        SearchSourceBuilder builder = new SearchSourceBuilder().
-            // field( IndexPaths.ENTITY_KEY ).
-                query( this.getQuery() ).
-            from( this.getFrom() ).
-            size( this.getSize() );
-
-        if ( this.getFilter() != null )
-        {
-            builder.postFilter( this.getFilter() );
-        }
-
-        if ( this.aggregations != null && this.aggregations.size() > 0 )
-        {
-            aggregations.forEach( builder::aggregation );
-        }
-
-        for ( final SortBuilder sortBuilder : this.getSortBuilders() )
-        {
-            builder.sort( sortBuilder );
-        }
-
-        return builder;
-    }
-
     @Override
     public String toString()
     {
@@ -146,6 +118,8 @@ public class ElasticsearchQuery
 
         return "ElasticsearchQuery{" +
             "query=" + query +
+            ", size=" + size +
+            ", from=" + from +
             ", filter=" + filter +
             ", indexType=" + indexType +
             ", index=" + indexName +

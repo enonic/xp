@@ -29,8 +29,8 @@ module app.browse {
                 filterPanel: this.userFilterPanel
             });
 
-            this.userTreeGrid.onSelectionChanged((selectedRows: TreeNode<UserTreeGridItem>[]) => {
-                this.browseActions.updateActionsEnabledState(<any[]>selectedRows.map((elem) => {
+            this.userTreeGrid.onSelectionChanged((currentSelection: TreeNode<UserTreeGridItem>[], fullSelection: TreeNode<UserTreeGridItem>[]) => {
+                this.browseActions.updateActionsEnabledState(<any[]>fullSelection.map((elem) => {
                     return elem.getData();
                 }));
             });

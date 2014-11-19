@@ -4,8 +4,9 @@ import org.elasticsearch.index.query.QueryBuilder;
 
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.index.IndexPaths;
+import com.enonic.wem.api.node.NodeQuery;
 import com.enonic.wem.api.query.filter.ValueFilter;
-import com.enonic.wem.api.security.Principals;
+import com.enonic.wem.api.security.PrincipalKeys;
 import com.enonic.wem.repo.internal.elasticsearch.aggregation.AggregationBuilderFactory;
 import com.enonic.wem.repo.internal.elasticsearch.query.builder.AclFilterBuilderFactory;
 import com.enonic.wem.repo.internal.elasticsearch.query.builder.FilterBuilderFactory;
@@ -13,7 +14,6 @@ import com.enonic.wem.repo.internal.elasticsearch.query.builder.QueryBuilderFact
 import com.enonic.wem.repo.internal.elasticsearch.query.builder.SortQueryBuilderFactory;
 import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
-import com.enonic.wem.api.node.NodeQuery;
 
 public class NodeQueryTranslator
 {
@@ -41,16 +41,16 @@ public class NodeQueryTranslator
             queryExpr( nodeQuery.getQuery() ).
             addQueryFilters( nodeQuery.getQueryFilters() );
 
-        addAclFilter( queryBuilderBuilder, context.getPrincipals() );
+        addAclFilter( queryBuilderBuilder, context.getPrincipalKeys() );
         addParentFilter( nodeQuery, queryBuilderBuilder );
         addPathFilter( nodeQuery, queryBuilderBuilder );
 
         return queryBuilderBuilder.build();
     }
 
-    private static void addAclFilter( final QueryBuilderFactory.Builder queryBuilderBuilder, final Principals principals )
+    private static void addAclFilter( final QueryBuilderFactory.Builder queryBuilderBuilder, final PrincipalKeys principalsKeys )
     {
-        queryBuilderBuilder.addQueryFilter( AclFilterBuilderFactory.create( principals ) );
+        queryBuilderBuilder.addQueryFilter( AclFilterBuilderFactory.create( principalsKeys ) );
     }
 
     private static void addPathFilter( final NodeQuery nodeQuery, final QueryBuilderFactory.Builder queryBuilderBuilder )

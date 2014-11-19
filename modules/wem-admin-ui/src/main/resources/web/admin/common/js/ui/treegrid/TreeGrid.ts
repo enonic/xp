@@ -490,6 +490,8 @@ module api.ui.treegrid {
 
             this.root.removeSelection(dataId);
 
+            this.triggerSelectionChangedListeners();
+
             if (oldSelected.length !== newSelected.length) {
                 this.grid.setSelectedRows(newSelected);
             }
@@ -500,12 +502,7 @@ module api.ui.treegrid {
         }
 
         getSelectedDataList(): DATA[] {
-            var dataList: DATA[] = [];
-            var treeNodes = this.grid.getSelectedRowItems();
-            treeNodes.forEach((treeNode: TreeNode<DATA>) => {
-                dataList.push(treeNode.getData());
-            });
-            return dataList;
+            return this.root.getFullSelection().map((node: TreeNode<DATA>) => { return node.getData(); });
         }
 
         // Hard reset
@@ -596,6 +593,8 @@ module api.ui.treegrid {
                     }
                     this.notifyDataChanged(new DataChangedEvent<DATA>(nodesToUpdate, DataChangedEvent.UPDATED));
                     this.sortNodeChildren(nodeToUpdate.getParent());
+                    this.root.updateSelection(dataId, data);
+                    this.triggerSelectionChangedListeners();
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 });
@@ -605,9 +604,11 @@ module api.ui.treegrid {
             if (!stashedParentNode && this.stash) {
                 this.deleteNode(data, this.stash);
             }
-            var root = stashedParentNode || this.root.getCurrentRoot();
-            var node;
-            while (node = root.findNode(this.getDataId(data))) {
+            var root = stashedParentNode || this.root.getCurrentRoot(),
+                dataId = this.getDataId(data),
+                node;
+
+            while (node = root.findNode(dataId)) {
                 if (node.hasChildren()) {
                     node.getChildren().forEach((child: TreeNode<DATA>) => {
                         this.deleteNode(child.getData());
@@ -624,6 +625,8 @@ module api.ui.treegrid {
                     this.notifyDataChanged(new DataChangedEvent<DATA>([node], DataChangedEvent.DELETED));
                 }
             }
+
+            this.root.removeSelection(dataId);
 
         }
 

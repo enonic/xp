@@ -3,18 +3,18 @@ package com.enonic.wem.repo.internal.entity;
 import com.enonic.wem.api.content.CompareStatus;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
-import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.repo.internal.index.IndexContext;
-import com.enonic.wem.repo.internal.index.query.QueryService;
-import com.enonic.wem.repo.internal.version.VersionService;
-import com.enonic.wem.repo.internal.workspace.compare.DiffStatusParams;
-import com.enonic.wem.repo.internal.workspace.compare.DiffStatusResolver;
 import com.enonic.wem.api.node.NodeComparison;
 import com.enonic.wem.api.node.NodeComparisons;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeIds;
 import com.enonic.wem.api.node.NodeVersion;
 import com.enonic.wem.api.node.NodeVersionId;
+import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.repo.internal.index.IndexContext;
+import com.enonic.wem.repo.internal.index.query.QueryService;
+import com.enonic.wem.repo.internal.version.VersionService;
+import com.enonic.wem.repo.internal.workspace.compare.DiffStatusParams;
+import com.enonic.wem.repo.internal.workspace.compare.DiffStatusResolver;
 
 public class CompareNodesCommand
 {
@@ -58,7 +58,11 @@ public class CompareNodesCommand
         final Context context = ContextAccessor.current();
 
         final NodeVersionId sourceVersionId = queryService.get( nodeId, IndexContext.from( context ) );
-        final NodeVersionId targetVersionId = queryService.get( nodeId, IndexContext.from( this.target, context.getRepositoryId() ) );
+        final NodeVersionId targetVersionId = queryService.get( nodeId, IndexContext.create().
+            workspace( this.target ).
+            repositoryId( context.getRepositoryId() ).
+            authInfo( context.getAuthInfo() ).
+            build() );
 
         final NodeVersion sourceVersion = getVersion( sourceVersionId, context );
         final NodeVersion targetVersion = getVersion( targetVersionId, context );

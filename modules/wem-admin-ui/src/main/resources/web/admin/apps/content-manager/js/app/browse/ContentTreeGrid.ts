@@ -108,9 +108,8 @@ module app.browse {
                 this.getGrid().resizeCanvas();
             });
 
-            this.onSelectionChanged((currentSelection: TreeNode<ContentSummaryAndCompareStatus>[],
-                                     fullSelection: TreeNode<ContentSummaryAndCompareStatus>[]) => {
-                var contentSummaries: ContentSummary[] = currentSelection.map((elem) => {
+            this.onSelectionChanged((currentSelection: TreeNode<ContentSummaryAndCompareStatus>[], fullSelection: TreeNode<ContentSummaryAndCompareStatus>[]) => {
+                var contentSummaries: ContentSummary[] = fullSelection.map((elem) => {
                     return elem.getData().getContentSummary();
                 });
                 (<ContentTreeGridActions>this.getContextMenu().getActions()).updateActionsEnabledState(contentSummaries);
@@ -319,9 +318,9 @@ module app.browse {
             this.updateNode(new ContentSummaryAndCompareStatus(content.getContentSummary(), null));
         }
 
-        appendContentNode(contentId: api.content.ContentId, nextToSelection?: boolean) {
+        appendContentNode(content: api.content.Content, nextToSelection?: boolean) {
 
-            this.fetchById(contentId)
+            this.fetchById(content.getContentId())
                 .then((data: ContentSummaryAndCompareStatus) => {
                     this.appendNode(data, nextToSelection);
                 }).catch((reason: any) => {

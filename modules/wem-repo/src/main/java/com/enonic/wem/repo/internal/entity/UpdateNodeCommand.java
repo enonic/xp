@@ -3,11 +3,13 @@ package com.enonic.wem.repo.internal.entity;
 
 import java.time.Instant;
 
-import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.api.util.Exceptions;
 import com.enonic.wem.api.node.Attachments;
 import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.UpdateNodeParams;
+import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.security.acl.AccessControlList;
+import com.enonic.wem.api.util.Exceptions;
 
 public final class UpdateNodeCommand
     extends AbstractNodeCommand
@@ -62,13 +64,17 @@ public final class UpdateNodeCommand
 
         final Instant now = Instant.now();
 
+        // calculate effective permissions based on parent acl
+        final NodePath parentPath = editResult.path().getParentPath();
+        final AccessControlList effectiveAcl = editResult.getAccessControlList().getEffective( getAccessControlList( parentPath ) );
+
         final Node.Builder updateNodeBuilder = Node.newNode( persistedNode ).
             modifiedTime( now ).
             modifier( PrincipalKey.from( "system:user:admin" ) ).
             rootDataSet( editResult.data() ).
-            attachments( syncronizeAttachments( editResult.attachments(), persistedNode ) ).
+            attachments( synchronizeAttachments( editResult.attachments(), persistedNode ) ).
             accessControlList( editResult.getAccessControlList() ).
-            effectiveAcl( editResult.getEffectiveAccessControlList() ).
+            effectiveAcl( effectiveAcl ).
             indexConfigDocument( editResult.getIndexConfigDocument() != null
                                      ? editResult.getIndexConfigDocument()
                                      : persistedNode.getIndexConfigDocument() );
@@ -81,7 +87,7 @@ public final class UpdateNodeCommand
         return new Builder();
     }
 
-    private Attachments syncronizeAttachments( final Attachments attachments, final Node persistedNode )
+    private Attachments synchronizeAttachments( final Attachments attachments, final Node persistedNode )
     {
         final Attachments persistedAttachments = persistedNode.attachments();
 

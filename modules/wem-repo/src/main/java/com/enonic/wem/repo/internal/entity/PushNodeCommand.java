@@ -4,13 +4,13 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodeVersionId;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.wem.repo.internal.workspace.StoreWorkspaceDocument;
 import com.enonic.wem.repo.internal.workspace.WorkspaceContext;
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeId;
-import com.enonic.wem.api.node.NodeVersionId;
 
 public class PushNodeCommand
     extends AbstractNodeCommand
@@ -45,7 +45,11 @@ public class PushNodeCommand
             id( this.id ).
             build(), WorkspaceContext.from( this.target, context.getRepositoryId() ) );
 
-        this.indexService.store( currentNode, currentVersion, IndexContext.from( this.target, context.getRepositoryId() ) );
+        this.indexService.store( currentNode, currentVersion, IndexContext.create().
+            workspace( this.target ).
+            repositoryId( context.getRepositoryId() ).
+            authInfo( context.getAuthInfo() ).
+            build() );
 
         return NodeHasChildResolver.create().
             queryService( this.queryService ).

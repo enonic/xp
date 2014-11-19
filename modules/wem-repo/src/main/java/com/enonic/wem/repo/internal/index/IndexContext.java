@@ -2,7 +2,8 @@ package com.enonic.wem.repo.internal.index;
 
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.repository.RepositoryId;
-import com.enonic.wem.api.security.Principals;
+import com.enonic.wem.api.security.PrincipalKeys;
+import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.api.workspace.Workspace;
 
 public class IndexContext
@@ -11,13 +12,13 @@ public class IndexContext
 
     private final Workspace workspace;
 
-    private final Principals principals;
+    private final PrincipalKeys principalsKeys;
 
     private IndexContext( Builder builder )
     {
         repositoryId = builder.repositoryId;
         workspace = builder.workspace;
-        principals = builder.principals;
+        principalsKeys = builder.principalsKeys;
     }
 
     public static IndexContext from( final Context context )
@@ -25,16 +26,7 @@ public class IndexContext
         return IndexContext.create().
             workspace( context.getWorkspace() ).
             repositoryId( context.getRepositoryId() ).
-            principals( Principals.empty() ).
-            build();
-    }
-
-    public static IndexContext from( final Workspace workspace, final RepositoryId repositoryId )
-    {
-        return IndexContext.create().
-            workspace( workspace ).
-            repositoryId( repositoryId ).
-            principals( Principals.empty() ).
+            principalsKeys( context.getAuthInfo() != null ? context.getAuthInfo().getPrincipals() : PrincipalKeys.empty() ).
             build();
     }
 
@@ -53,9 +45,9 @@ public class IndexContext
         return workspace;
     }
 
-    public Principals getPrincipals()
+    public PrincipalKeys getPrincipalKeys()
     {
-        return principals;
+        return principalsKeys;
     }
 
     public static final class Builder
@@ -64,27 +56,33 @@ public class IndexContext
 
         private Workspace workspace;
 
-        private Principals principals;
+        private PrincipalKeys principalsKeys;
 
         private Builder()
         {
         }
 
-        public Builder repositoryId( RepositoryId repositoryId )
+        public Builder repositoryId( final RepositoryId repositoryId )
         {
             this.repositoryId = repositoryId;
             return this;
         }
 
-        public Builder workspace( Workspace workspace )
+        public Builder workspace( final Workspace workspace )
         {
             this.workspace = workspace;
             return this;
         }
 
-        public Builder principals( Principals principals )
+        public Builder authInfo( final AuthenticationInfo authenticationInfo )
         {
-            this.principals = principals;
+            this.principalsKeys = authenticationInfo != null ? authenticationInfo.getPrincipals() : PrincipalKeys.empty();
+            return this;
+        }
+
+        public Builder principalsKeys( final PrincipalKeys principalsKeys )
+        {
+            this.principalsKeys = principalsKeys;
             return this;
         }
 
