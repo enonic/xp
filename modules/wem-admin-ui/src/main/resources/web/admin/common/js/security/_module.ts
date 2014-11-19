@@ -17,3 +17,6 @@
 ///<reference path="PrincipalListJson.ts"/>
 ///<reference path="GetPrincipalsByUserStoreRequest.ts"/>
 ///<reference path="GetPrincipalByKeyRequest.ts"/>
+///<reference path="CreateUserRequest.ts"/>
+///<reference path="CreateGroupRequest.ts"/>
+///<reference path="CreateRoleRequest.ts"/>

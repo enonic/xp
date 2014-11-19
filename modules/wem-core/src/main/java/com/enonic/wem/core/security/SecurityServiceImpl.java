@@ -12,6 +12,14 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.FindNodesByQueryResult;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeAlreadyExistException;
+import com.enonic.wem.api.node.NodeNotFoundException;
+import com.enonic.wem.api.node.NodeQuery;
+import com.enonic.wem.api.node.NodeService;
+import com.enonic.wem.api.node.UpdateNodeParams;
 import com.enonic.wem.api.query.expr.CompareExpr;
 import com.enonic.wem.api.query.expr.FieldExpr;
 import com.enonic.wem.api.query.expr.LogicalExpr;
@@ -23,6 +31,7 @@ import com.enonic.wem.api.security.CreateRoleParams;
 import com.enonic.wem.api.security.CreateUserParams;
 import com.enonic.wem.api.security.Group;
 import com.enonic.wem.api.security.Principal;
+import com.enonic.wem.api.security.PrincipalAlreadyExistsException;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.PrincipalKeys;
 import com.enonic.wem.api.security.PrincipalQuery;
@@ -45,13 +54,6 @@ import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.api.security.auth.AuthenticationToken;
 import com.enonic.wem.api.security.auth.EmailPasswordAuthToken;
 import com.enonic.wem.api.security.auth.UsernamePasswordAuthToken;
-import com.enonic.wem.api.node.CreateNodeParams;
-import com.enonic.wem.api.node.FindNodesByQueryResult;
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeNotFoundException;
-import com.enonic.wem.api.node.NodeQuery;
-import com.enonic.wem.api.node.NodeService;
-import com.enonic.wem.api.node.UpdateNodeParams;
 
 import static com.enonic.wem.api.security.SystemConstants.CONTEXT_USER_STORES;
 import static com.enonic.wem.core.security.PrincipalKeyNodeTranslator.toNodeId;
@@ -300,15 +302,20 @@ public final class SecurityServiceImpl
             modifiedTime( Instant.now( clock ) ).
             build();
 
-        if ( createUser.getPassword() != null )
-        {
-            setPassword( user.getKey(), createUser.getPassword() );
-        }
-
         final CreateNodeParams createNodeParams = PrincipalNodeTranslator.toCreateNodeParams( user );
-        final Node node = CONTEXT_USER_STORES.callWith( () -> nodeService.create( createNodeParams ) );
-
-        return PrincipalNodeTranslator.userFromNode( node );
+        try
+        {
+            final Node node = CONTEXT_USER_STORES.callWith( () -> nodeService.create( createNodeParams ) );
+            if ( createUser.getPassword() != null )
+            {
+                setPassword( user.getKey(), createUser.getPassword() );
+            }
+            return PrincipalNodeTranslator.userFromNode( node );
+        }
+        catch ( NodeAlreadyExistException e )
+        {
+            throw new PrincipalAlreadyExistsException( createUser.getKey() );
+        }
     }
 
     @Override
@@ -362,9 +369,16 @@ public final class SecurityServiceImpl
             build();
 
         final CreateNodeParams createGroupParams = PrincipalNodeTranslator.toCreateNodeParams( group );
-        final Node node = CONTEXT_USER_STORES.callWith( () -> this.nodeService.create( createGroupParams ) );
+        try
+        {
+            final Node node = CONTEXT_USER_STORES.callWith( () -> this.nodeService.create( createGroupParams ) );
 
-        return PrincipalNodeTranslator.groupFromNode( node );
+            return PrincipalNodeTranslator.groupFromNode( node );
+        }
+        catch ( NodeAlreadyExistException e )
+        {
+            throw new PrincipalAlreadyExistsException( createGroup.getKey() );
+        }
     }
 
     @Override
@@ -418,9 +432,16 @@ public final class SecurityServiceImpl
             build();
 
         final CreateNodeParams createNodeParams = PrincipalNodeTranslator.toCreateNodeParams( role );
-        final Node node = CONTEXT_USER_STORES.callWith( () -> this.nodeService.create( createNodeParams ) );
+        try
+        {
+            final Node node = CONTEXT_USER_STORES.callWith( () -> this.nodeService.create( createNodeParams ) );
 
-        return PrincipalNodeTranslator.roleFromNode( node );
+            return PrincipalNodeTranslator.roleFromNode( node );
+        }
+        catch ( NodeAlreadyExistException e )
+        {
+            throw new PrincipalAlreadyExistsException( createRole.getKey() );
+        }
     }
 
     @Override

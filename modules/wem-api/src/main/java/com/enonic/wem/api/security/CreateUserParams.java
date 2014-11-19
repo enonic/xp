@@ -21,7 +21,7 @@ public final class CreateUserParams
         this.key = checkNotNull( builder.principalKey, "userKey is required for a user" );
         this.displayName = checkNotNull( builder.displayName, "displayName is required for a user" );
         this.email = builder.email;
-        this.login = builder.login;
+        this.login = checkNotNull( builder.login, "login is required for a user" );
         this.password = builder.password;
     }
 

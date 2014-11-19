@@ -4,6 +4,8 @@ import java.time.Instant;
 
 import com.google.common.base.Preconditions;
 
+import static java.util.Objects.requireNonNull;
+
 public final class User
     extends Principal
 {
@@ -19,7 +21,7 @@ public final class User
     {
         super( builder );
         this.email = builder.email;
-        this.login = builder.login;
+        this.login = requireNonNull( builder.login );
         this.loginDisabled = builder.loginDisabled;
     }
 

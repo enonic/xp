@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -15,6 +16,9 @@ import javax.ws.rs.core.Response;
 
 import com.enonic.wem.admin.rest.exception.NotFoundWebException;
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
+import com.enonic.wem.admin.rest.resource.security.json.CreateGroupJson;
+import com.enonic.wem.admin.rest.resource.security.json.CreateRoleJson;
+import com.enonic.wem.admin.rest.resource.security.json.CreateUserJson;
 import com.enonic.wem.admin.rest.resource.security.json.GroupJson;
 import com.enonic.wem.admin.rest.resource.security.json.PrincipalJson;
 import com.enonic.wem.admin.rest.resource.security.json.PrincipalsJson;
@@ -102,6 +106,46 @@ public final class SecurityResource
         }
 
         throw new NotFoundWebException( String.format( "Principal [%s] was not found", keyParam ) );
+    }
+
+    @POST
+    @Path("principals/createUser")
+    public UserJson createUser( final CreateUserJson params )
+    {
+        final User user = securityService.createUser( params.getCreateUserParams() );
+        if ( params.getPassword() != null )
+        {
+            securityService.setPassword( user.getKey(), params.getPassword() );
+        }
+        return new UserJson( user );
+    }
+
+    @POST
+    @Path("principals/createGroup")
+    public GroupJson createGroup( final CreateGroupJson params )
+    {
+        final Group group = securityService.createGroup( params.getCreateGroupParams() );
+        final PrincipalKey groupKey = group.getKey();
+        for ( PrincipalKey member : params.getMembers() )
+        {
+            final PrincipalRelationship rel = PrincipalRelationship.from( groupKey ).to( member );
+            securityService.addRelationship( rel );
+        }
+        return new GroupJson( group, params.getMembers() );
+    }
+
+    @POST
+    @Path("principals/createRole")
+    public RoleJson createRole( final CreateRoleJson params )
+    {
+        final Role role = securityService.createRole( params.getCreateRoleParams() );
+        final PrincipalKey roleKey = role.getKey();
+        for ( PrincipalKey member : params.getMembers() )
+        {
+            final PrincipalRelationship rel = PrincipalRelationship.from( roleKey ).to( member );
+            securityService.addRelationship( rel );
+        }
+        return new RoleJson( role, params.getMembers() );
     }
 
     private PrincipalKeys getMembers( final PrincipalKey principal )
