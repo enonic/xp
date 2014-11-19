@@ -75,7 +75,7 @@ public final class SecurityResource
     }
 
     @GET
-    @Path("principals/{key}")
+    @Path("principals/{key: ([^:]+):(user|group|role):([^:]+)}")
     public PrincipalJson getPrincipalByKey( @PathParam("key") final String keyParam )
     {
         final PrincipalKey principalKey = PrincipalKey.from( keyParam );
