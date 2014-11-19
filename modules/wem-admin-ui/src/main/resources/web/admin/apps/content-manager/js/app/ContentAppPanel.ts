@@ -74,23 +74,9 @@ module app {
                 this.handleBrowse(event);
             });
 
-            api.content.ContentCreatedEvent.on((event) => {
-                this.handleCreated(event);
-            });
-
             api.content.ContentUpdatedEvent.on((event) => {
                 this.handleUpdated(event);
             });
-        }
-
-        private handleCreated(event: api.content.ContentCreatedEvent) {
-
-            var wizard = event.getWizard(),
-                tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(wizard.getTabId());
-            // update tab id so that new wizard for the same content type can be created
-            var newTabId = api.app.bar.AppBarTabId.forEdit(event.getContent().getId());
-            tabMenuItem.setTabId(newTabId);
-            wizard.setTabId(newTabId);
         }
 
         private handleUpdated(event: api.content.ContentUpdatedEvent) {
@@ -128,6 +114,11 @@ module app {
                         setTabId(tabId).
                         setCloseAction(wizard.getCloseAction()).
                         build();
+
+                    wizard.onPersistedContentCreated((event: api.content.PersistedContentCreatedEvent) => {
+                        this.handlePersistedContentCreated(event);
+                    });
+
                     this.addWizardPanel(tabMenuItem, wizard);
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
@@ -214,6 +205,16 @@ module app {
 
                 }
             });
+        }
+
+        private handlePersistedContentCreated(event: api.content.PersistedContentCreatedEvent) {
+
+            var wizard = event.getWizard(),
+                tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(wizard.getTabId());
+            // update tab id so that new wizard for the same content type can be created
+            var newTabId = api.app.bar.AppBarTabId.forEdit(event.getContent().getId());
+            tabMenuItem.setTabId(newTabId);
+            wizard.setTabId(newTabId);
         }
 
         private resolveTabMenuItemForContentBeingEditedOrViewed(content: api.content.ContentSummary): api.app.bar.AppBarTabMenuItem {

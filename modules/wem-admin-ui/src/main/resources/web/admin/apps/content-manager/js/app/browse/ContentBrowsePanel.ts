@@ -56,12 +56,12 @@ module app.browse {
             });
 
             api.content.ContentCreatedEvent.on((event) => {
-                this.contentTreeGridPanel.appendContentNode(event.getContent());
+                this.contentTreeGridPanel.appendContentNode(event.getContentId());
                 this.setFilterPanelRefreshNeeded(true);
             });
 
             api.content.ContentDuplicatedEvent.on((event) => {
-                this.contentTreeGridPanel.appendContentNode(event.getContent(), event.isNextToSource());
+                this.contentTreeGridPanel.appendContentNode(event.getContent().getContentId(), event.isNextToSource());
                 this.setFilterPanelRefreshNeeded(true);
                 window.setTimeout(() => {
                     this.refreshFilter();

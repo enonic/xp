@@ -91,6 +91,8 @@ module app.wizard {
 
         private isContentFormValid: boolean;
 
+        private persistedItemListeners: {(event: api.content.PersistedContentCreatedEvent):void}[];
+
         /**
          * Whether constructor is being currently executed or not.
          */
@@ -102,6 +104,7 @@ module app.wizard {
             this.isContentFormValid = false;
 
             this.persistAsDraft = true;
+            this.persistedItemListeners = [];
             this.parentContent = params.parentContent;
             this.defaultModels = params.defaultModels;
             this.site = params.site;
@@ -462,7 +465,10 @@ module app.wizard {
 
         persistNewItem(): wemQ.Promise<Content> {
 
-            return new PersistNewContentRoutine(this).setCreateContentRequestProducer(this.produceCreateContentRequest).execute();
+            return new PersistNewContentRoutine(this).setCreateContentRequestProducer(this.produceCreateContentRequest).execute().then((content: Content) => {
+                api.notify.showFeedback('Content was created!');
+                return content;
+            });
         }
 
         postPersistNewItem(persistedContent: Content): wemQ.Promise<void> {
@@ -508,12 +514,10 @@ module app.wizard {
                 then((content: Content) => {
 
                     if (this.isLayingOutNew()) {
-
-                        new api.content.ContentCreatedEvent(content, this).fire();
-                        api.notify.showFeedback('Content was created!');
-                    } else {
-                        api.notify.showFeedback('Content was updated!');
+                        this.notifyPersistedContentCreated(content);
+                        this.setLayingOutNew(false);
                     }
+                    api.notify.showFeedback('Content was updated!');
 
                     return content;
                 });
@@ -664,6 +668,16 @@ module app.wizard {
 
         getCloseAction(): api.ui.Action {
             return this.wizardActions.getCloseAction();
+        }
+
+        onPersistedContentCreated(listener: (event: api.content.PersistedContentCreatedEvent)=>void) {
+            this.persistedItemListeners.push(listener);
+        }
+
+        private notifyPersistedContentCreated(content: api.content.Content) {
+            this.persistedItemListeners.forEach((listener: (event: api.content.PersistedContentCreatedEvent)=>void)=> {
+                listener.call(this, new api.content.PersistedContentCreatedEvent(this, content));
+            });
         }
     }
 
