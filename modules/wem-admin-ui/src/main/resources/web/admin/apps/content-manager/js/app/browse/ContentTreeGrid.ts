@@ -109,7 +109,7 @@ module app.browse {
             });
 
             this.onSelectionChanged((currentSelection: TreeNode<ContentSummaryAndCompareStatus>[], fullSelection: TreeNode<ContentSummaryAndCompareStatus>[]) => {
-                var contentSummaries: ContentSummary[] = currentSelection.map((elem) => {
+                var contentSummaries: ContentSummary[] = fullSelection.map((elem) => {
                     return elem.getData().getContentSummary();
                 });
                 (<ContentTreeGridActions>this.getContextMenu().getActions()).updateActionsEnabledState(contentSummaries);

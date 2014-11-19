@@ -121,5 +121,10 @@ module api.ui.treegrid {
             this.currentSelection = this.currentSelection.filter((el) => { return el.getDataId() !== dataId; });
             this.stashedSelection = this.stashedSelection.filter((el) => { return el.getDataId() !== dataId; });
         }
+
+        updateSelection(dataId: string, data: DATA) {
+            this.currentSelection.forEach((el) => { if (el.getDataId() !== dataId) { el.setData(data); } });
+            this.stashedSelection.forEach((el) => { if (el.getDataId() !== dataId) { el.setData(data); } });
+        }
     }
 }
