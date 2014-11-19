@@ -3,14 +3,6 @@ package com.enonic.wem.repo.internal.entity;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.index.IndexPaths;
-import com.enonic.wem.api.query.expr.FieldOrderExpr;
-import com.enonic.wem.api.query.expr.OrderExpr;
-import com.enonic.wem.api.query.expr.OrderExpressions;
-import com.enonic.wem.repo.internal.entity.dao.NodeDao;
-import com.enonic.wem.repo.internal.index.IndexService;
-import com.enonic.wem.repo.internal.index.query.QueryService;
-import com.enonic.wem.repo.internal.version.VersionService;
-import com.enonic.wem.repo.internal.workspace.WorkspaceService;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
@@ -19,6 +11,15 @@ import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeIds;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.Nodes;
+import com.enonic.wem.api.query.expr.FieldOrderExpr;
+import com.enonic.wem.api.query.expr.OrderExpr;
+import com.enonic.wem.api.query.expr.OrderExpressions;
+import com.enonic.wem.api.security.acl.AccessControlList;
+import com.enonic.wem.repo.internal.entity.dao.NodeDao;
+import com.enonic.wem.repo.internal.index.IndexService;
+import com.enonic.wem.repo.internal.index.query.QueryService;
+import com.enonic.wem.repo.internal.version.VersionService;
+import com.enonic.wem.repo.internal.workspace.WorkspaceService;
 
 abstract class AbstractNodeCommand
 {
@@ -127,6 +128,15 @@ abstract class AbstractNodeCommand
             execute();
     }
 
+    protected AccessControlList getAccessControlList( final NodePath nodePath )
+    {
+        if ( nodePath.isRoot() )
+        {
+            return AccessControlList.empty();
+        }
+        final Node node = doGetByPath( nodePath, false );
+        return node != null ? node.getEffectiveAccessControlList() : AccessControlList.empty();
+    }
 
     public static class Builder<B extends Builder>
     {

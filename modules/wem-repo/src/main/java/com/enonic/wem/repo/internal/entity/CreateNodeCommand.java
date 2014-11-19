@@ -5,7 +5,6 @@ import java.time.Instant;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.index.ChildOrder;
-import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.node.Attachments;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodesByParentParams;
@@ -15,6 +14,8 @@ import com.enonic.wem.api.node.NodeAlreadyExistException;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
+import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.security.acl.AccessControlList;
 
 public final class CreateNodeCommand
     extends AbstractNodeCommand
@@ -39,6 +40,11 @@ public final class CreateNodeCommand
 
         final PrincipalKey creator = PrincipalKey.from( "system:user:admin" );
 
+        final AccessControlList acl =
+            params.getAccessControlList() != null ? params.getAccessControlList() : NodeDefaultAclFactory.create( creator );
+        // calculate effective permissions based on parent acl
+        final AccessControlList effectiveAcl = acl.getEffective( getAccessControlList( params.getParent() ) );
+
         final Long manualOrderValue = resolvePotentialManualOrderValue();
 
         final Node.Builder nodeBuilder = Node.newNode().
@@ -55,8 +61,8 @@ public final class CreateNodeCommand
             hasChildren( false ).
             childOrder( params.getChildOrder() != null ? params.getChildOrder() : ChildOrder.defaultOrder() ).
             manualOrderValue( manualOrderValue ).
-            accessControlList(
-                params.getAccessControlList() != null ? params.getAccessControlList() : NodeDefaultAclFactory.create( creator ) );
+            accessControlList( acl ).
+            effectiveAcl( effectiveAcl );
 
         final Node newNode = nodeBuilder.build();
 
