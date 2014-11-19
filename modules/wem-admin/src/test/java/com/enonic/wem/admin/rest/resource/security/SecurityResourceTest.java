@@ -102,7 +102,6 @@ public class SecurityResourceTest
 
         String jsonString = request().
             path( "security/principals/" + URLEncoder.encode( "local:user:alice", "UTF-8" ) ).
-
             get().getAsString();
 
         assertJson( "getPrincipalUserById.json", jsonString );
@@ -129,7 +128,6 @@ public class SecurityResourceTest
 
         String jsonString = request().
             path( "security/principals/" + URLEncoder.encode( "system:group:group-a", "UTF-8" ) ).
-
             get().getAsString();
 
         assertJson( "getPrincipalGroupById.json", jsonString );
@@ -156,7 +154,6 @@ public class SecurityResourceTest
 
         String jsonString = request().
             path( "security/principals/" + URLEncoder.encode( "system:role:superuser", "UTF-8" ) ).
-
             get().getAsString();
 
         assertJson( "getPrincipalRoleById.json", jsonString );
