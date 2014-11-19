@@ -67,7 +67,7 @@ module api.security {
             this.displayName = json.displayName;
             this.email = json.email;
             this.login = json.login;
-            this.loginDisabled = json.disabled;
+            this.loginDisabled = json.loginDisabled;
             this.modifiedTime = json.modifiedTime ? new Date(Date.parse(json.modifiedTime)) : null;
             return this;
         }

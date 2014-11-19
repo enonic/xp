@@ -1,0 +1,9 @@
+{
+  "displayName": "Super user role",
+  "key": "system:role:superuser",
+  "members": [
+    "system:user:user1",
+    "system:user:user2"
+  ],
+  "modifiedTime": "1970-01-01T00:00:00Z"
+}

@@ -6,7 +6,7 @@ module api.security {
 
         login: string;
 
-        disabled: boolean;
+        loginDisabled: boolean;
 
     }
 }
