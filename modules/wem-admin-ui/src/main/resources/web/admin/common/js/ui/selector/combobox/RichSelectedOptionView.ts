@@ -24,12 +24,23 @@ module api.ui.selector.combobox {
             return "";
         }
 
+        resolveIconClass(content: T): string {
+            return "";
+        }
+
         layout() {
             var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(this.size).build();
+
             namesAndIconView
-                .setIconUrl(this.resolveIconUrl(this.optionDisplayValue) + '?crop=false')
                 .setMainName(this.resolveTitle(this.optionDisplayValue))
                 .setSubName(this.resolveSubTitle(this.optionDisplayValue));
+
+            var url = this.resolveIconUrl(this.optionDisplayValue);
+            if (!api.util.StringHelper.isBlank(url)) {
+                namesAndIconView.setIconUrl(this.resolveIconUrl(this.optionDisplayValue) + '?crop=false')
+            } else {
+                namesAndIconView.setIconClass(this.resolveIconClass(this.optionDisplayValue));
+            }
 
             var removeButton = new api.dom.AEl("remove");
             removeButton.onClicked((event: Event) => {

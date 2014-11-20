@@ -14,7 +14,7 @@ module api.module {
         }
     }
 
-    export class ModuleSelectedOptionsView extends api.ui.selector.combobox.SelectedOptionsView<api.module.Module> {
+    export class ModuleSelectedOptionsView extends api.ui.selector.combobox.BaseSelectedOptionsView<api.module.Module> {
 
         createSelectedOption(option: api.ui.selector.Option<api.module.Module>): api.ui.selector.combobox.SelectedOption<api.module.Module> {
             var optionView = new ModuleSelectedOptionView(option);

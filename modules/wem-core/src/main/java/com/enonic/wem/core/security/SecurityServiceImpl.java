@@ -7,6 +7,10 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
@@ -177,20 +181,35 @@ public final class SecurityServiceImpl
     }
 
     @Override
-    public Principals getPrincipals( final UserStoreKey userStore, final PrincipalType type )
+    public Principals findPrincipals( final UserStoreKey userStore, final List<PrincipalType> types, String query )
     {
         try
         {
-            final FindNodesByQueryResult result = CONTEXT_USER_STORES.callWith( () -> this.nodeService.findByQuery( NodeQuery.create().
-                addQueryFilter( ValueFilter.create().
+            NodeQuery.Builder nodeQueryBuilder = NodeQuery.create();
+            if ( userStore != null )
+            {
+                nodeQueryBuilder.addQueryFilter( ValueFilter.create().
                     fieldName( USER_STORE_KEY ).
                     addValue( Value.newString( userStore.toString() ) ).
-                    build() ).
-                addQueryFilter( ValueFilter.create().
+                    build() );
+            }
+            if ( types != null && types.size() > 0 )
+            {
+                nodeQueryBuilder.addQueryFilter( ValueFilter.create().
                     fieldName( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY ).
-                    addValue( Value.newString( type.toString() ) ).
-                    build() ).
-                build() ) );
+                    addValues( Stream.of( types ).map( String::valueOf ).collect( Collectors.toList() ) ).
+                    build() );
+            }
+            if ( StringUtils.isNotBlank( query ) )
+            {
+                nodeQueryBuilder.addQueryFilter( ValueFilter.create().
+                    fieldName( PrincipalNodeTranslator.DISPLAY_NAME_KEY ).
+                    addValue( Value.newString( query ) ).
+                    build() );
+            }
+
+            final FindNodesByQueryResult result =
+                CONTEXT_USER_STORES.callWith( () -> this.nodeService.findByQuery( nodeQueryBuilder.build() ) );
 
             return PrincipalNodeTranslator.fromNodes( result.getNodes() );
         }

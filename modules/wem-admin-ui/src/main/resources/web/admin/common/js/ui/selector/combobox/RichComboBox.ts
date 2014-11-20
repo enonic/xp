@@ -100,8 +100,9 @@ module api.ui.selector.combobox {
         }
 
         select(value: OPTION_DISPLAY_VALUE) {
+            var val = value[this.identifierMethod]();
             this.comboBox.selectOption({
-                value: value[this.identifierMethod](),
+                value: typeof val == 'object' && val['toString'] ? val.toString() : val,
                 displayValue: value
             });
         }

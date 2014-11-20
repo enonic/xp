@@ -1,4 +1,4 @@
-module api.ui.security {
+module api.ui.security.acl {
 
     export enum Access {
         READ,

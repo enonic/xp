@@ -14,7 +14,7 @@ module api.schema.content {
 
     }
 
-    export class ContentTypeSelectedOptionsView extends api.ui.selector.combobox.SelectedOptionsView<ContentTypeSummary> {
+    export class ContentTypeSelectedOptionsView extends api.ui.selector.combobox.BaseSelectedOptionsView<ContentTypeSummary> {
 
         createSelectedOption(option: api.ui.selector.Option<ContentTypeSummary>): api.ui.selector.combobox.SelectedOption<ContentTypeSummary> {
 

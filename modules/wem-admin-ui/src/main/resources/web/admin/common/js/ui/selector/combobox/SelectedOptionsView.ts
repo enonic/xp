@@ -1,131 +1,35 @@
 module api.ui.selector.combobox {
 
-    export class SelectedOptionsView<T> extends api.dom.DivEl {
+    export interface SelectedOptionsView<T> extends api.dom.DivEl {
 
-        private list: SelectedOption<T>[] = [];
+        setMaximumOccurrences(value: number);
 
-        private maximumOccurrences: number;
+        getMaximumOccurrences(): number;
 
-        private selectedOptionRemovedListeners: {(removed: SelectedOption<T>): void;}[] = [];
+        createSelectedOption(option: api.ui.selector.Option<T>): SelectedOption<T>;
 
-        constructor() {
-            super("selected-options");
-        }
+        addOption(option: api.ui.selector.Option<T>): boolean;
 
-        setMaximumOccurrences(value: number) {
-            this.maximumOccurrences = value;
-        }
+        removeOption(optionToRemove: api.ui.selector.Option<T>, silent: boolean);
 
-        getMaximumOccurrences(): number {
-            return this.maximumOccurrences;
-        }
+        count(): number;
 
-        createSelectedOption(option: api.ui.selector.Option<T>): SelectedOption<T> {
-            return new SelectedOption<T>(new BaseSelectedOptionView(option), this.count());
-        }
+        getSelectedOptions(): SelectedOption<T>[];
 
-        addOption(option: api.ui.selector.Option<T>): boolean {
+        getByOption(option: api.ui.selector.Option<T>): SelectedOption<T>;
 
-            if (this.isSelected(option) || this.maximumOccurrencesReached()) {
-                return false;
-            }
+        getById(id: string): SelectedOption<T>;
 
-            var selectedOption: SelectedOption<T> = this.createSelectedOption(option);
+        getByIndex(index: number): SelectedOption<T>;
 
-            selectedOption.getOptionView().onSelectedOptionRemoveRequest(() => {
-                this.removeOption(option);
-            });
+        isSelected(option: api.ui.selector.Option<T>): boolean;
 
-            this.list.push(selectedOption);
-            this.appendChild(selectedOption.getOptionView());
+        maximumOccurrencesReached(): boolean;
 
-            return true;
-        }
+        moveOccurrence(formIndex: number, toIndex: number);
 
-        removeOption(optionToRemove: api.ui.selector.Option<T>, silent: boolean = false) {
-            api.util.assertNotNull(optionToRemove, "optionToRemove cannot be null");
+        onSelectedOptionRemoved(listener: {(removed: SelectedOption<T>): void;});
 
-            var selectedOption = this.getByOption(optionToRemove);
-            api.util.assertNotNull(selectedOption, "Did not find any selected option to remove from option: " + optionToRemove.value);
-
-            selectedOption.getOptionView().remove();
-
-            this.list = this.list.filter((option: SelectedOption<T>) => {
-                return option.getOption().value != selectedOption.getOption().value;
-            });
-
-            for (var i: number = selectedOption.getIndex(); i < this.count(); i++) {
-                this.list[i].setIndex(i);
-            }
-
-            if (!silent) {
-                this.notifySelectedOptionRemoved(selectedOption);
-            }
-        }
-
-        count(): number {
-            return this.list.length;
-        }
-
-        getOptions(): api.ui.selector.Option<T>[] {
-            return this.list.map((selectedOption: SelectedOption<T>) => selectedOption.getOption());
-        }
-
-        getSelectedOptions(): SelectedOption<T>[] {
-            return this.list;
-        }
-
-        getOptionViews(): SelectedOptionView<T>[] {
-            return this.list.map((selectedOption: SelectedOption<T>) => selectedOption.getOptionView());
-        }
-
-        getByView(view: SelectedOptionView<T>): SelectedOption<T> {
-            return this.getById(view.getOption().value);
-        }
-
-        getByOption(option: api.ui.selector.Option<T>): SelectedOption<T> {
-            return this.getById(option.value);
-        }
-
-        getById(id: string): SelectedOption<T> {
-            return this.list.filter((selectedOption: SelectedOption<T>) => {
-                return selectedOption.getOption().value == id;
-            })[0];
-        }
-
-        isSelected(option: api.ui.selector.Option<T>): boolean {
-            return this.getByOption(option) != null;
-        }
-
-        maximumOccurrencesReached(): boolean {
-            if (this.maximumOccurrences == 0) {
-                return false;
-            }
-            return this.count() >= this.maximumOccurrences;
-        }
-
-        moveOccurrence(formIndex: number, toIndex: number) {
-
-            api.util.ArrayHelper.moveElement(formIndex, toIndex, this.list);
-            api.util.ArrayHelper.moveElement(formIndex, toIndex, this.getChildren());
-
-            this.list.forEach((selectedOption: SelectedOption<T>, index: number) => selectedOption.setIndex(index));
-        }
-
-        private notifySelectedOptionRemoved(removed: SelectedOption<T>) {
-            this.selectedOptionRemovedListeners.forEach((listener) => {
-                listener(removed);
-            });
-        }
-
-        onSelectedOptionRemoved(listener: {(removed: SelectedOption<T>): void;}) {
-            this.selectedOptionRemovedListeners.push(listener);
-        }
-
-        unSelectedOptionRemoved(listener: {(removed: SelectedOption<T>): void;}) {
-            this.selectedOptionRemovedListeners = this.selectedOptionRemovedListeners.filter(function (curr) {
-                return curr != listener;
-            });
-        }
+        unSelectedOptionRemoved(listener: {(removed: SelectedOption<T>): void;});
     }
 }

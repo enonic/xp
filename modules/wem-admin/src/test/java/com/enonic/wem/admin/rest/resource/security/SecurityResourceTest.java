@@ -4,6 +4,8 @@ import java.net.URLEncoder;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import javax.ws.rs.core.MediaType;
@@ -81,7 +83,9 @@ public class SecurityResourceTest
     {
         final UserStores userStores = createUserStores();
         final Principals principals = createPrincipals();
-        Mockito.when( securityService.getPrincipals( userStores.get( 0 ).getKey(), PrincipalType.USER ) ).
+        final List<PrincipalType> userTypes = new ArrayList<>();
+        userTypes.add( PrincipalType.USER );
+        Mockito.when( securityService.findPrincipals( userStores.get( 0 ).getKey(), userTypes, null ) ).
             thenReturn( principals );
 
         String jsonString = request().

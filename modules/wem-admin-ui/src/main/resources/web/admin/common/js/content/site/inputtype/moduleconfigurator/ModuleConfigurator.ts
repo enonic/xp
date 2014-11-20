@@ -11,7 +11,6 @@ module api.content.site.inputtype.moduleconfigurator {
     import ComboBoxConfig = api.ui.selector.combobox.ComboBoxConfig;
     import ComboBox = api.ui.selector.combobox.ComboBox;
     import Option = api.ui.selector.Option;
-    import SelectedOptionsView = api.ui.selector.combobox.SelectedOptionsView;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
     import Module = api.module.Module;
     import ModuleKey = api.module.ModuleKey;

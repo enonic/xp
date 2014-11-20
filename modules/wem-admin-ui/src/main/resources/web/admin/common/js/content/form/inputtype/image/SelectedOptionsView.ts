@@ -7,7 +7,7 @@ module api.content.form.inputtype.image {
     import ValueChangedEvent = api.form.inputtype.ValueChangedEvent;
     import LoadMask = api.ui.mask.LoadMask;
 
-    export class SelectedOptionsView extends api.ui.selector.combobox.SelectedOptionsView<ImageSelectorDisplayValue> {
+    export class SelectedOptionsView extends api.ui.selector.combobox.BaseSelectedOptionsView<ImageSelectorDisplayValue> {
 
         private numberOfOptionsPerRow: number = 3;
 
@@ -176,7 +176,7 @@ module api.content.form.inputtype.image {
             this.hideImageSelectorDialog();
 
             if (index > -1) {
-                (<SelectedOptionView>this.getOptionViews()[index]).getCheckbox().giveFocus();
+                (<SelectedOptionView>this.getByIndex(index).getOptionView()).getCheckbox().giveFocus();
             }
         }
 
@@ -185,9 +185,9 @@ module api.content.form.inputtype.image {
                 this.dialog.remove();
             }
 
-            var selectedOptionViews = this.getOptionViews();
-            for (var i = 0; i < selectedOptionViews.length; i++) {
-                var view = <SelectedOptionView>selectedOptionViews[i];
+            var selectedOptions = this.getSelectedOptions();
+            for (var i = 0; i < selectedOptions.length; i++) {
+                var view = <SelectedOptionView>selectedOptions[i].getOptionView();
                 var passedSelectedOption = i >= option.getIndex();
                 if ((this.isLastInRow(i) || this.isLast(i)) && passedSelectedOption) {
                     this.dialog.insertAfterEl(view);
@@ -210,8 +210,8 @@ module api.content.form.inputtype.image {
 
         updateLayout() {
             var optionHeight = this.calculateOptionHeight();
-            this.getOptionViews().forEach((optionView: SelectedOptionView) => {
-                optionView.updateProportions(optionHeight);
+            this.getSelectedOptions().forEach((selectedOption: SelectedOption<ImageSelectorDisplayValue>) => {
+                (<SelectedOptionView>selectedOption.getOptionView()).updateProportions(optionHeight);
             });
             if (this.dialog.isVisible()) {
                 this.updateDialogLayout(optionHeight);
@@ -269,7 +269,7 @@ module api.content.form.inputtype.image {
         }
 
         private isLast(index: number): boolean {
-            return index == this.getOptionViews().length - 1;
+            return index == this.getSelectedOptions().length - 1;
         }
 
         private handleDnDStart(event: Event, ui: JQueryUI.SortableUIParams): void {
@@ -301,8 +301,8 @@ module api.content.form.inputtype.image {
         }
 
         getValues(): Value[] {
-            return this.getOptions().map((option: Option<ImageSelectorDisplayValue>) => {
-                return new Value(option.value, api.data.type.ValueTypes.CONTENT_ID);
+            return this.getSelectedOptions().map((selectedOption: SelectedOption<ImageSelectorDisplayValue>) => {
+                return new Value(selectedOption.getOption().value, api.data.type.ValueTypes.CONTENT_ID);
             });
         }
 

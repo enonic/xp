@@ -1,4 +1,3 @@
-///<reference path='AccessSelector.ts' />
-///<reference path='PermissionSelector.ts' />
-///<reference path='AccessControlListItem.ts' />
-///<reference path='AccessControlList.ts' />
+///<reference path='PrincipalViewer.ts' />
+///<reference path='PrincipalLoader.ts' />
+///<reference path='PrincipalComboBox.ts' />

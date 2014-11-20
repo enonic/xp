@@ -61,6 +61,8 @@ module app.wizard {
 
         private contentWizardStepForm: ContentWizardStepForm;
 
+        private securityWizardStepForm: SecurityWizardStepForm;
+
         private metadataStepFormByName: {[name: string]: ContentWizardStepForm;};
 
         private iconUploadItem: api.ui.uploader.UploadItem;
@@ -158,11 +160,12 @@ module app.wizard {
             }
 
             this.contentWizardStepForm = new ContentWizardStepForm();
-            this.contentWizardStepForm.onValidityChanged(
-                (event: WizardStepValidityChangedEvent) =>
+            this.contentWizardStepForm.onValidityChanged((event: WizardStepValidityChangedEvent) =>
                     this.isContentFormValid = event.isValid()
             );
             this.metadataStepFormByName = {};
+
+            this.securityWizardStepForm = new SecurityWizardStepForm();
 
             var isSiteOrWithinSite = this.site || this.createSite;
             var hasPageTemplate = this.defaultModels && this.defaultModels.hasPageTemplate();
@@ -275,7 +278,7 @@ module app.wizard {
                             steps.splice(index + 1, 0, new WizardStep(schema.getDisplayName(), stepForm));
                         }
                     });
-                    steps.push(new WizardStep("Security", new api.app.wizard.WizardStepForm()));
+                    steps.push(new WizardStep("Security", this.securityWizardStepForm));
 
                     this.setSteps(steps);
 
@@ -410,6 +413,7 @@ module app.wizard {
                     }
                 });
                 this.contentWizardStepForm.layout(this.formContext, contentData, this.contentType.getForm());
+                this.securityWizardStepForm.layout(content);
 
                 schemas.forEach((schema: MetadataSchema, index: number) => {
                     var metadata = content.getMetadata(schema.getMetadataSchemaName());
@@ -540,6 +544,10 @@ module app.wizard {
                 updateContentRequest.setUpdateAttachments(updateAttachments);
             }
 
+            if (this.securityWizardStepForm) {
+                // TODO: get values
+            }
+
             if (this.iconUploadItem) {
                 var thumbnail = new ThumbnailBuilder().
                     setBlobKey(this.iconUploadItem.getBlobKey()).
@@ -582,6 +590,9 @@ module app.wizard {
             viewedContentBuilder.setDisplayName(this.contentWizardHeader.getDisplayName());
             if (this.contentWizardStepForm) {
                 viewedContentBuilder.setData(<api.content.ContentData>this.contentWizardStepForm.getRootDataSet());
+            }
+            if (this.securityWizardStepForm) {
+                // TODO: set data
             }
 
             var metadata: Metadata[] = [];
