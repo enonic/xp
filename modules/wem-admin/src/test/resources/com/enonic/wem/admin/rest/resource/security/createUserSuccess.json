@@ -1,0 +1,8 @@
+{
+  "displayName": "User 1",
+  "email": "user1@enonic.com",
+  "key": "local:user:user1",
+  "login": "user1",
+  "loginDisabled": false,
+  "modifiedTime": "1970-01-01T00:00:00Z"
+}

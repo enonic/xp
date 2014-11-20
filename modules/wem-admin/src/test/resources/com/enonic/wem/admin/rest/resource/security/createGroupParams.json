@@ -1,0 +1,8 @@
+{
+  "key": "system:group:group-a",
+  "displayName": "Group A",
+  "members": [
+    "system:user:user1",
+    "system:user:user2"
+  ]
+}

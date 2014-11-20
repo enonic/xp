@@ -6,10 +6,15 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.util.Optional;
 
+import javax.ws.rs.core.MediaType;
+
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
+import com.enonic.wem.api.security.CreateGroupParams;
+import com.enonic.wem.api.security.CreateRoleParams;
+import com.enonic.wem.api.security.CreateUserParams;
 import com.enonic.wem.api.security.Group;
 import com.enonic.wem.api.security.Principal;
 import com.enonic.wem.api.security.PrincipalKey;
@@ -159,6 +164,68 @@ public class SecurityResourceTest
         assertJson( "getPrincipalRoleById.json", jsonString );
     }
 
+    @Test
+    public void createUser()
+        throws Exception
+    {
+        final User user = User.create().
+            key( PrincipalKey.ofUser( USER_STORE_1, "user1" ) ).
+            displayName( "User 1" ).
+            modifiedTime( Instant.now( clock ) ).
+            email( "user1@enonic.com" ).
+            login( "user1" ).
+            build();
+
+        Mockito.when( securityService.createUser( Mockito.any( CreateUserParams.class ) ) ).thenReturn( user );
+
+        String jsonString = request().
+            path( "security/principals/createUser" ).
+            entity( readFromFile( "createUserParams.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertJson( "createUserSuccess.json", jsonString );
+    }
+
+    @Test
+    public void createGroup()
+        throws Exception
+    {
+        final Group group = Group.create().
+            key( PrincipalKey.ofGroup( UserStoreKey.system(), "group-a" ) ).
+            displayName( "Group A" ).
+            modifiedTime( Instant.now( clock ) ).
+            build();
+
+        Mockito.when( securityService.createGroup( Mockito.any( CreateGroupParams.class ) ) ).thenReturn( group );
+
+        String jsonString = request().
+            path( "security/principals/createGroup" ).
+            entity( readFromFile( "createGroupParams.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertJson( "createGroupSuccess.json", jsonString );
+    }
+
+    @Test
+    public void createRole()
+        throws Exception
+    {
+        final Role role = Role.create().
+            key( PrincipalKey.ofRole( "superuser" ) ).
+            displayName( "Super user role" ).
+            modifiedTime( Instant.now( clock ) ).
+            build();
+
+        Mockito.when( securityService.createRole( Mockito.any( CreateRoleParams.class ) ) ).thenReturn( role );
+
+        String jsonString = request().
+            path( "security/principals/createRole" ).
+            entity( readFromFile( "createRoleParams.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertJson( "createRoleSuccess.json", jsonString );
+    }
+    
     private UserStores createUserStores()
     {
         final UserStore userStore1 = UserStore.newUserStore().

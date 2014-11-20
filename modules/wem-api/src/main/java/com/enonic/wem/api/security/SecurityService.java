@@ -15,19 +15,40 @@ public interface SecurityService
 
     void setPassword( PrincipalKey key, String password );
 
-    User createUser( CreateUserParams createUser );
+    /**
+     * Creates a user on the specified user store.
+     *
+     * @param createUserParams details of the user to be created
+     * @return user created
+     * @throws com.enonic.wem.api.security.PrincipalAlreadyExistsException if a user with the same key already exists
+     */
+    User createUser( CreateUserParams createUserParams );
 
     User updateUser( UpdateUserParams updateUser );
 
     Optional<User> getUser( PrincipalKey userKey );
 
-    Group createGroup( CreateGroupParams group );
+    /**
+     * Creates a group on the specified user store.
+     *
+     * @param createGroupParams details of the group to be created
+     * @return group created
+     * @throws com.enonic.wem.api.security.PrincipalAlreadyExistsException if a group with the same key already exists
+     */
+    Group createGroup( CreateGroupParams createGroupParams );
 
     Group updateGroup( UpdateGroupParams group );
 
     Optional<Group> getGroup( PrincipalKey groupKey );
 
-    Role createRole( CreateRoleParams createRole );
+    /**
+     * Creates a role on the specified user store.
+     *
+     * @param createRoleParams details of the role to be created
+     * @return role created
+     * @throws com.enonic.wem.api.security.PrincipalAlreadyExistsException if a role with the same key already exists
+     */
+    Role createRole( CreateRoleParams createRoleParams );
 
     Role updateRole( UpdateRoleParams updateRole );
 
