@@ -13,7 +13,7 @@ public final class UpdateRoleParams
     private UpdateRoleParams( final Builder builder )
     {
         this.key = checkNotNull( builder.principalKey, "roleKey is required for a role" );
-        this.displayName = checkNotNull( builder.displayName, "displayName is required for a role" );
+        this.displayName = builder.displayName;
     }
 
     public PrincipalKey getKey()

@@ -23,6 +23,9 @@ import com.enonic.wem.admin.rest.resource.security.json.GroupJson;
 import com.enonic.wem.admin.rest.resource.security.json.PrincipalJson;
 import com.enonic.wem.admin.rest.resource.security.json.PrincipalsJson;
 import com.enonic.wem.admin.rest.resource.security.json.RoleJson;
+import com.enonic.wem.admin.rest.resource.security.json.UpdateGroupJson;
+import com.enonic.wem.admin.rest.resource.security.json.UpdateRoleJson;
+import com.enonic.wem.admin.rest.resource.security.json.UpdateUserJson;
 import com.enonic.wem.admin.rest.resource.security.json.UserJson;
 import com.enonic.wem.admin.rest.resource.security.json.UserStoresJson;
 import com.enonic.wem.api.security.Group;
@@ -146,6 +149,55 @@ public final class SecurityResource
             securityService.addRelationship( rel );
         }
         return new RoleJson( role, params.getMembers() );
+    }
+
+    @POST
+    @Path("principals/updateUser")
+    public UserJson updateUser( final UpdateUserJson params )
+    {
+        final User user = securityService.updateUser( params.getUpdateUserParams() );
+        return new UserJson( user );
+    }
+
+    @POST
+    @Path("principals/updateGroup")
+    public GroupJson updateGroup( final UpdateGroupJson params )
+    {
+        final Group group = securityService.updateGroup( params.getUpdateGroupParams() );
+        final PrincipalKey groupKey = group.getKey();
+
+        updateMemberships( groupKey, params.getRemoveMembers(), params.getAddMembers() );
+
+        final PrincipalKeys groupMembers = getMembers( groupKey );
+        return new GroupJson( group, groupMembers );
+    }
+
+    @POST
+    @Path("principals/updateRole")
+    public RoleJson updateRole( final UpdateRoleJson params )
+    {
+        final Role role = securityService.updateRole( params.getUpdateRoleParams() );
+        final PrincipalKey roleKey = role.getKey();
+
+        updateMemberships( roleKey, params.getRemoveMembers(), params.getAddMembers() );
+
+        final PrincipalKeys roleMembers = getMembers( roleKey );
+        return new RoleJson( role, roleMembers );
+    }
+
+    private void updateMemberships( final PrincipalKey target, PrincipalKeys membersToRemove, PrincipalKeys membersToAdd )
+    {
+        for ( PrincipalKey memberToAdd : membersToAdd )
+        {
+            final PrincipalRelationship rel = PrincipalRelationship.from( target ).to( memberToAdd );
+            securityService.addRelationship( rel );
+        }
+
+        for ( PrincipalKey memberToRemove : membersToRemove )
+        {
+            final PrincipalRelationship rel = PrincipalRelationship.from( target ).to( memberToRemove );
+            securityService.removeRelationship( rel );
+        }
     }
 
     private PrincipalKeys getMembers( final PrincipalKey principal )

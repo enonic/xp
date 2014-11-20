@@ -19,12 +19,19 @@ public interface SecurityService
      * Creates a user on the specified user store.
      *
      * @param createUserParams details of the user to be created
-     * @return user created
+     * @return the user created
      * @throws com.enonic.wem.api.security.PrincipalAlreadyExistsException if a user with the same key already exists
      */
     User createUser( CreateUserParams createUserParams );
 
-    User updateUser( UpdateUserParams updateUser );
+    /**
+     * Updates an existing user.
+     *
+     * @param updateUserParams details of the user to be updated
+     * @return the user updated
+     * @throws com.enonic.wem.api.security.PrincipalNotFoundException if the specified user does not exist
+     */
+    User updateUser( UpdateUserParams updateUserParams );
 
     Optional<User> getUser( PrincipalKey userKey );
 
@@ -32,12 +39,19 @@ public interface SecurityService
      * Creates a group on the specified user store.
      *
      * @param createGroupParams details of the group to be created
-     * @return group created
+     * @return the group created
      * @throws com.enonic.wem.api.security.PrincipalAlreadyExistsException if a group with the same key already exists
      */
     Group createGroup( CreateGroupParams createGroupParams );
 
-    Group updateGroup( UpdateGroupParams group );
+    /**
+     * Updates an existing group.
+     *
+     * @param updateGroupParams details of the group to be updated
+     * @return the group updated
+     * @throws com.enonic.wem.api.security.PrincipalNotFoundException if the specified group does not exist
+     */
+    Group updateGroup( UpdateGroupParams updateGroupParams );
 
     Optional<Group> getGroup( PrincipalKey groupKey );
 
@@ -45,12 +59,19 @@ public interface SecurityService
      * Creates a role on the specified user store.
      *
      * @param createRoleParams details of the role to be created
-     * @return role created
+     * @return the role created
      * @throws com.enonic.wem.api.security.PrincipalAlreadyExistsException if a role with the same key already exists
      */
     Role createRole( CreateRoleParams createRoleParams );
 
-    Role updateRole( UpdateRoleParams updateRole );
+    /**
+     * Updates an existing role.
+     *
+     * @param updateRoleParams details of the role to be updated
+     * @return the role updated
+     * @throws com.enonic.wem.api.security.PrincipalNotFoundException if the specified role does not exist
+     */
+    Role updateRole( UpdateRoleParams updateRoleParams );
 
     Optional<Role> getRole( PrincipalKey roleKey );
 

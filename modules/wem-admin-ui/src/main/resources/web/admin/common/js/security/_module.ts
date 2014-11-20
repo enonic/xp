@@ -20,3 +20,6 @@
 ///<reference path="CreateUserRequest.ts"/>
 ///<reference path="CreateGroupRequest.ts"/>
 ///<reference path="CreateRoleRequest.ts"/>
+///<reference path="UpdateUserRequest.ts"/>
+///<reference path="UpdateGroupRequest.ts"/>
+///<reference path="UpdateRoleRequest.ts"/>

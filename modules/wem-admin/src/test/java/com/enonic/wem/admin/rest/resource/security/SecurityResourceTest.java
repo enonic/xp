@@ -24,6 +24,9 @@ import com.enonic.wem.api.security.PrincipalType;
 import com.enonic.wem.api.security.Principals;
 import com.enonic.wem.api.security.Role;
 import com.enonic.wem.api.security.SecurityService;
+import com.enonic.wem.api.security.UpdateGroupParams;
+import com.enonic.wem.api.security.UpdateRoleParams;
+import com.enonic.wem.api.security.UpdateUserParams;
 import com.enonic.wem.api.security.User;
 import com.enonic.wem.api.security.UserStore;
 import com.enonic.wem.api.security.UserStoreKey;
@@ -225,7 +228,77 @@ public class SecurityResourceTest
 
         assertJson( "createRoleSuccess.json", jsonString );
     }
-    
+
+    @Test
+    public void updateUser()
+        throws Exception
+    {
+        final User user = User.create().
+            key( PrincipalKey.ofUser( USER_STORE_1, "user1" ) ).
+            displayName( "User 1" ).
+            modifiedTime( Instant.now( clock ) ).
+            email( "user1@enonic.com" ).
+            login( "user1" ).
+            build();
+
+        Mockito.when( securityService.updateUser( Mockito.any( UpdateUserParams.class ) ) ).thenReturn( user );
+
+        String jsonString = request().
+            path( "security/principals/updateUser" ).
+            entity( readFromFile( "updateUserParams.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertJson( "createUserSuccess.json", jsonString );
+    }
+
+    @Test
+    public void updateGroup()
+        throws Exception
+    {
+        final Group group = Group.create().
+            key( PrincipalKey.ofGroup( UserStoreKey.system(), "group-a" ) ).
+            displayName( "Group A" ).
+            modifiedTime( Instant.now( clock ) ).
+            build();
+
+        Mockito.when( securityService.updateGroup( Mockito.any( UpdateGroupParams.class ) ) ).thenReturn( group );
+        PrincipalRelationship membership1 = from( group.getKey() ).to( PrincipalKey.from( "system:user:user1" ) );
+        PrincipalRelationship membership2 = from( group.getKey() ).to( PrincipalKey.from( "system:user:user2" ) );
+        PrincipalRelationships memberships = PrincipalRelationships.from( membership1, membership2 );
+        Mockito.when( securityService.getRelationships( group.getKey() ) ).thenReturn( memberships );
+
+        String jsonString = request().
+            path( "security/principals/updateGroup" ).
+            entity( readFromFile( "updateGroupParams.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertJson( "createGroupSuccess.json", jsonString );
+    }
+
+    @Test
+    public void updateRole()
+        throws Exception
+    {
+        final Role role = Role.create().
+            key( PrincipalKey.ofRole( "superuser" ) ).
+            displayName( "Super user role" ).
+            modifiedTime( Instant.now( clock ) ).
+            build();
+
+        Mockito.when( securityService.updateRole( Mockito.any( UpdateRoleParams.class ) ) ).thenReturn( role );
+        PrincipalRelationship membership1 = from( role.getKey() ).to( PrincipalKey.from( "system:user:user1" ) );
+        PrincipalRelationship membership2 = from( role.getKey() ).to( PrincipalKey.from( "system:user:user2" ) );
+        PrincipalRelationships memberships = PrincipalRelationships.from( membership1, membership2 );
+        Mockito.when( securityService.getRelationships( role.getKey() ) ).thenReturn( memberships );
+
+        String jsonString = request().
+            path( "security/principals/updateRole" ).
+            entity( readFromFile( "updateRoleParams.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertJson( "createRoleSuccess.json", jsonString );
+    }
+
     private UserStores createUserStores()
     {
         final UserStore userStore1 = UserStore.newUserStore().

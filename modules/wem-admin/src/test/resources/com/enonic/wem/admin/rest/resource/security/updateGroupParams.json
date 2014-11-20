@@ -1,0 +1,11 @@
+{
+  "key": "system:group:group-a",
+  "displayName": "Group A",
+  "addMembers": [
+    "system:user:user1",
+    "system:user:user2"
+  ],
+  "removeMembers": [
+    "system:user:user3"
+  ]
+}

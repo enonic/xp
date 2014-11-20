@@ -18,7 +18,7 @@ public final class UpdateUserParams
     private UpdateUserParams( final Builder builder )
     {
         this.key = checkNotNull( builder.principalKey, "userKey is required for a user" );
-        this.displayName = checkNotNull( builder.displayName, "displayName is required for a user" );
+        this.displayName = builder.displayName;
         this.email = builder.email;
         this.login = builder.login;
     }

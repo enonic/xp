@@ -13,7 +13,7 @@ public final class UpdateGroupParams
     private UpdateGroupParams( final Builder builder )
     {
         this.key = checkNotNull( builder.principalKey, "groupKey is required for a group" );
-        this.displayName = checkNotNull( builder.displayName, "displayName is required for a group" );
+        this.displayName = builder.displayName;
     }
 
     public PrincipalKey getKey()

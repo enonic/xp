@@ -34,6 +34,7 @@ import com.enonic.wem.api.security.Principal;
 import com.enonic.wem.api.security.PrincipalAlreadyExistsException;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.PrincipalKeys;
+import com.enonic.wem.api.security.PrincipalNotFoundException;
 import com.enonic.wem.api.security.PrincipalQuery;
 import com.enonic.wem.api.security.PrincipalQueryResult;
 import com.enonic.wem.api.security.PrincipalRelationship;
@@ -330,7 +331,7 @@ public final class SecurityServiceImpl
             }
             catch ( NodeNotFoundException e )
             {
-                throw new IllegalArgumentException( "User to be updated not found: " + updateUserParams.getKey() );
+                throw new PrincipalNotFoundException( updateUserParams.getKey() );
             }
 
             final User existingUser = PrincipalNodeTranslator.userFromNode( node );
@@ -393,7 +394,7 @@ public final class SecurityServiceImpl
             }
             catch ( NodeNotFoundException e )
             {
-                throw new IllegalArgumentException( "Group to be updated not found: " + updateGroupParams.getKey() );
+                throw new PrincipalNotFoundException( updateGroupParams.getKey() );
             }
 
             final Group existingGroup = PrincipalNodeTranslator.groupFromNode( node );
@@ -456,7 +457,7 @@ public final class SecurityServiceImpl
             }
             catch ( NodeNotFoundException e )
             {
-                throw new IllegalArgumentException( "Role to be updated not found: " + updateRoleParams.getKey() );
+                throw new PrincipalNotFoundException( updateRoleParams.getKey() );
             }
 
             final Role existingRole = PrincipalNodeTranslator.roleFromNode( node );
