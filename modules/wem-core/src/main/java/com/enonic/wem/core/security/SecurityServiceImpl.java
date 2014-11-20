@@ -504,6 +504,17 @@ public final class SecurityServiceImpl
     }
 
     @Override
+    public void deletePrincipal( final PrincipalKey principalKey )
+    {
+        removeRelationships( principalKey );
+        final Node deletedNode = CONTEXT_USER_STORES.callWith( () -> this.nodeService.deleteById( toNodeId( principalKey ) ) );
+        if ( deletedNode == null )
+        {
+            throw new PrincipalNotFoundException( principalKey );
+        }
+    }
+
+    @Override
     public PrincipalQueryResult query( final PrincipalQuery query )
     {
         // TODO: FIX

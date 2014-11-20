@@ -12,6 +12,11 @@ import com.enonic.wem.api.data.DataId;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.Nodes;
+import com.enonic.wem.api.node.UpdateNodeParams;
 import com.enonic.wem.api.security.Group;
 import com.enonic.wem.api.security.Principal;
 import com.enonic.wem.api.security.PrincipalKey;
@@ -21,11 +26,6 @@ import com.enonic.wem.api.security.PrincipalType;
 import com.enonic.wem.api.security.Principals;
 import com.enonic.wem.api.security.Role;
 import com.enonic.wem.api.security.User;
-import com.enonic.wem.api.node.CreateNodeParams;
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeId;
-import com.enonic.wem.api.node.Nodes;
-import com.enonic.wem.api.node.UpdateNodeParams;
 
 abstract class PrincipalNodeTranslator
 {
@@ -219,6 +219,10 @@ abstract class PrincipalNodeTranslator
 
         final UpdateNodeParams updateNodeParams = new UpdateNodeParams().id( NodeId.from( from ) ).
             editor( toBeEdited -> {
+                if ( toBeEdited == null )
+                {
+                    return Node.editNode( Node.newNode().build() );
+                }
                 final RootDataSet data = toBeEdited.data().copy().toRootDataSet();
 
                 data.remove( DataId.from( MEMBER_KEY ) );

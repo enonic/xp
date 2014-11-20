@@ -18,6 +18,7 @@ import com.enonic.wem.api.security.CreateUserParams;
 import com.enonic.wem.api.security.Group;
 import com.enonic.wem.api.security.Principal;
 import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.security.PrincipalNotFoundException;
 import com.enonic.wem.api.security.PrincipalRelationship;
 import com.enonic.wem.api.security.PrincipalRelationships;
 import com.enonic.wem.api.security.PrincipalType;
@@ -297,6 +298,21 @@ public class SecurityResourceTest
             post().getAsString();
 
         assertJson( "createRoleSuccess.json", jsonString );
+    }
+
+    @Test
+    public void deletePrincipals()
+        throws Exception
+    {
+        final PrincipalKey user1 = PrincipalKey.from( "system:user:user1" );
+        Mockito.doThrow( new PrincipalNotFoundException( user1 ) ).when( securityService ).deletePrincipal( user1 );
+
+        String jsonString = request().
+            path( "security/principals/delete" ).
+            entity( readFromFile( "deletePrincipalsParams.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertJson( "deletePrincipalsResult.json", jsonString );
     }
 
     private UserStores createUserStores()

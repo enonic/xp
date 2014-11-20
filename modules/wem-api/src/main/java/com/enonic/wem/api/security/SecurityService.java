@@ -77,6 +77,14 @@ public interface SecurityService
 
     Optional<? extends Principal> getPrincipal( PrincipalKey principalKey );
 
+    /**
+     * Deletes an existing principal.
+     *
+     * @param principalKey key of the principal to be deleted
+     * @throws com.enonic.wem.api.security.PrincipalNotFoundException if the specified principal does not exist
+     */
+    void deletePrincipal( PrincipalKey principalKey );
+
     PrincipalQueryResult query( PrincipalQuery query );
 
     PrincipalRelationships getRelationships( PrincipalKey from );

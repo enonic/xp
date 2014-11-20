@@ -23,3 +23,7 @@
 ///<reference path="UpdateUserRequest.ts"/>
 ///<reference path="UpdateGroupRequest.ts"/>
 ///<reference path="UpdateRoleRequest.ts"/>
+///<reference path="DeletePrincipalResult.ts"/>
+///<reference path="DeletePrincipalResultJson.ts"/>
+///<reference path="DeletePrincipalResultsJson.ts"/>
+///<reference path="DeletePrincipalRequest.ts"/>

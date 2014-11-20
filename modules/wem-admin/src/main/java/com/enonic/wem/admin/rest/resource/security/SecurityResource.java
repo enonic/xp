@@ -19,6 +19,9 @@ import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.admin.rest.resource.security.json.CreateGroupJson;
 import com.enonic.wem.admin.rest.resource.security.json.CreateRoleJson;
 import com.enonic.wem.admin.rest.resource.security.json.CreateUserJson;
+import com.enonic.wem.admin.rest.resource.security.json.DeletePrincipalJson;
+import com.enonic.wem.admin.rest.resource.security.json.DeletePrincipalResultJson;
+import com.enonic.wem.admin.rest.resource.security.json.DeletePrincipalsResultJson;
 import com.enonic.wem.admin.rest.resource.security.json.GroupJson;
 import com.enonic.wem.admin.rest.resource.security.json.PrincipalJson;
 import com.enonic.wem.admin.rest.resource.security.json.PrincipalsJson;
@@ -183,6 +186,25 @@ public final class SecurityResource
 
         final PrincipalKeys roleMembers = getMembers( roleKey );
         return new RoleJson( role, roleMembers );
+    }
+
+    @POST
+    @Path("principals/delete")
+    public DeletePrincipalsResultJson deletePrincipals( final DeletePrincipalJson principalKeysParam )
+    {
+        final DeletePrincipalsResultJson resultsJson = new DeletePrincipalsResultJson();
+        principalKeysParam.getKeys().stream().map( PrincipalKey::from ).forEach( ( principalKey ) -> {
+            try
+            {
+                securityService.deletePrincipal( principalKey );
+                resultsJson.add( DeletePrincipalResultJson.success( principalKey ) );
+            }
+            catch ( Exception e )
+            {
+                resultsJson.add( DeletePrincipalResultJson.failure( principalKey, e.getMessage() ) );
+            }
+        } );
+        return resultsJson;
     }
 
     private void updateMemberships( final PrincipalKey target, PrincipalKeys membersToRemove, PrincipalKeys membersToAdd )
