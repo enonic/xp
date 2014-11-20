@@ -78,17 +78,31 @@ module api.util {
             return params;
         }
 
-        static encodeUrlParams(params: Object): string {
+        /**
+         * Serializes an object to query string params.
+         * Supports nested objects and arrays.
+         *
+         * @param params
+         * @param prefix
+         * @returns {string}
+         */
+        static encodeUrlParams(params: Object, prefix?: string): string {
             if (!params) {
                 return StringHelper.EMPTY_STRING;
             }
-            var url = "";
+            var urlArray = [];
             for (var key in params) {
                 if (params.hasOwnProperty(key) && params[key] != undefined) {
-                    url += "&" + key + "=" + encodeURIComponent(params[key]);
+                    var value = params[key];
+                    var prefixedKey = prefix ? prefix + "[" + key + "]" : key;
+                    if (typeof value == "object") {
+                        urlArray.push(this.encodeUrlParams(value, prefixedKey));
+                    } else {
+                        urlArray.push(encodeURIComponent(prefixedKey) + "=" + encodeURIComponent(value));
+                    }
                 }
             }
-            return url.length > 0 ? ("?" + url.substr(1)) : url;
+            return urlArray.join("&");
         }
     }
 }

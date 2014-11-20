@@ -23,6 +23,14 @@ module api.security {
             return new Principal(key, json.displayName, key.getType(), date);
         }
 
+        toJson(): PrincipalJson {
+            return {
+                displayName: this.displayName,
+                key: this.key.toString(),
+                modifiedTime: this.modifiedTime ? api.util.DateHelper.formatUTCDate(this.modifiedTime) : undefined
+            }
+        }
+
         getKey(): PrincipalKey {
             return this.key;
         }

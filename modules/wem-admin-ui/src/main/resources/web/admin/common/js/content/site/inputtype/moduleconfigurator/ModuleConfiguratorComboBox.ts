@@ -8,7 +8,7 @@ module api.content.site.inputtype.moduleconfigurator {
     import Option = api.ui.selector.Option;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
     import SelectedOptionView = api.ui.selector.combobox.SelectedOptionView;
-    import SelectedOptionsView = api.ui.selector.combobox.SelectedOptionsView;
+    import BaseSelectedOptionsView = api.ui.selector.combobox.BaseSelectedOptionsView;
 
 
     export class ModuleConfiguratorComboBox extends api.ui.selector.combobox.RichComboBox<Module> {
@@ -30,7 +30,7 @@ module api.content.site.inputtype.moduleconfigurator {
 
     }
 
-    export class ModuleConfiguratorSelectedOptionsView extends SelectedOptionsView<Module> {
+    export class ModuleConfiguratorSelectedOptionsView extends BaseSelectedOptionsView<Module> {
 
         private moduleConfigProvider: ModuleConfigProvider;
 

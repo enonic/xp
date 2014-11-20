@@ -2,7 +2,7 @@ package com.enonic.wem.admin.rest.resource.security;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -10,9 +10,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.admin.rest.exception.NotFoundWebException;
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
@@ -67,20 +67,18 @@ public final class SecurityResource
 
     @GET
     @Path("principals")
-    public PrincipalsJson getPrincipals( @QueryParam("userStoreKey") final String userStoreKey, @QueryParam("type") final String type )
-
+    public PrincipalsJson findPrincipals( @QueryParam("userStoreKey") final String storeKey, @QueryParam("types") final List<String> types,
+                                          @QueryParam("query") final String query )
     {
-        final UserStoreKey storeKey = new UserStoreKey( userStoreKey );
-        final PrincipalType principalType = Stream.of( PrincipalType.values() ).
-            filter( val -> val.name().equalsIgnoreCase( type ) ).
-            findFirst().orElse( null );
 
-        if ( principalType == null )
+        UserStoreKey userStoreKey = null;
+        if ( StringUtils.isNotEmpty( storeKey ) )
         {
-            throw new WebApplicationException( String.format( "Invalid principal type: %s", type ), Response.Status.BAD_REQUEST );
+            userStoreKey = new UserStoreKey( storeKey );
         }
+        List<PrincipalType> principalTypes = types.stream().map( PrincipalType::valueOf ).collect( Collectors.toList() );
 
-        final Principals principals = securityService.getPrincipals( storeKey, principalType );
+        final Principals principals = securityService.findPrincipals( userStoreKey, principalTypes, query );
         return new PrincipalsJson( principals );
     }
 

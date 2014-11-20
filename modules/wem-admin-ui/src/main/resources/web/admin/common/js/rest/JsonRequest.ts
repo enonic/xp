@@ -66,7 +66,7 @@ module api.rest {
 
         private prepareGETRequest(request: XMLHttpRequest) {
             var paramString = api.util.UriHelper.encodeUrlParams(this.params);
-            request.open(this.method, api.util.UriHelper.getUri(this.path.toString()) + paramString, true);
+            request.open(this.method, api.util.UriHelper.getUri(this.path.toString()) + '?' + paramString, true);
             request.setRequestHeader("Accept", "application/json");
             return request;
         }

@@ -1,37 +1,36 @@
 module api.security.acl {
 
     import ArrayHelper = api.util.ArrayHelper;
+    import Principal = api.security.Principal;
 
     export class AccessControlEntry implements api.Equitable {
 
-        private principalKey: PrincipalKey;
-
-        private displayName: string;
-
-        private modifiedTime: Date;
+        private principal: Principal;
 
         private allowedPermissions: Permission[];
 
         private deniedPermissions: Permission[];
 
-        constructor(principalKey: PrincipalKey, displayName?: string, modifiedTime?: Date) {
-            this.principalKey = principalKey;
-            this.displayName = displayName;
-            this.modifiedTime = modifiedTime;
+        constructor(principal: Principal) {
+            this.principal = principal;
             this.allowedPermissions = [];
             this.deniedPermissions = [];
         }
 
+        getPrincipal(): Principal {
+            return this.principal;
+        }
+
         getPrincipalKey(): PrincipalKey {
-            return this.principalKey;
+            return this.principal.getKey();
         }
 
         getPrincipalDisplayName(): string {
-            return this.displayName;
+            return this.principal.getDisplayName();
         }
 
         getPrincipalModifiedTime(): Date {
-            return this.modifiedTime;
+            return this.principal.getModifiedTime();
         }
 
         getAllowedPermissions(): Permission[] {
@@ -87,7 +86,8 @@ module api.security.acl {
             }
 
             var other = <AccessControlEntry>o;
-            return this.principalKey.equals(other.principalKey) && (this.displayName == other.displayName) &&
+            return this.principal.getKey().equals(other.getPrincipalKey()) &&
+                   (this.principal.getDisplayName() == other.getPrincipalDisplayName()) &&
                    this.permissionEquals(this.allowedPermissions, other.allowedPermissions) &&
                    this.permissionEquals(this.deniedPermissions, other.deniedPermissions);
         }
@@ -101,21 +101,14 @@ module api.security.acl {
 
         toJson(): api.security.acl.AccessControlEntryJson {
             return {
-                "principal": {
-                    displayName: this.displayName,
-                    key: this.principalKey.toString(),
-                    modifiedTime: this.modifiedTime ? api.util.DateHelper.formatUTCDate(this.modifiedTime) : undefined
-                },
+                "principal": this.principal.toJson(),
                 "allow": this.allowedPermissions.map((perm) => Permission[perm]),
                 "deny": this.deniedPermissions.map((perm) => Permission[perm])
             };
         }
 
         static fromJson(json: api.security.acl.AccessControlEntryJson): AccessControlEntry {
-            var ace = new AccessControlEntry(
-                PrincipalKey.fromString(json.principal.key),
-                json.principal.displayName,
-                json.principal.modifiedTime ? api.util.DateHelper.parseUTCDate(json.principal.modifiedTime) : undefined);
+            var ace = new AccessControlEntry(Principal.fromJson(json.principal));
             var allow: Permission[] = json.allow.map((permStr) => Permission[permStr.toUpperCase()]);
             var deny: Permission[] = json.deny.map((permStr) => Permission[permStr.toUpperCase()]);
             ace.setAllowedPermissions(allow);

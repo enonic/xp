@@ -1,5 +1,6 @@
 package com.enonic.wem.api.security;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
@@ -9,7 +10,7 @@ public interface SecurityService
 {
     UserStores getUserStores();
 
-    Principals getPrincipals( UserStoreKey useStore, PrincipalType type );
+    Principals findPrincipals( UserStoreKey useStore, List<PrincipalType> types, String query );
 
     AuthenticationInfo authenticate( AuthenticationToken token );
 

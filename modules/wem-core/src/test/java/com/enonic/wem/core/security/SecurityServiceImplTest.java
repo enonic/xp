@@ -3,6 +3,8 @@ package com.enonic.wem.core.security;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -11,6 +13,14 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.FindNodesByQueryResult;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodePath;
+import com.enonic.wem.api.node.NodeQuery;
+import com.enonic.wem.api.node.NodeService;
+import com.enonic.wem.api.node.Nodes;
 import com.enonic.wem.api.security.CreateGroupParams;
 import com.enonic.wem.api.security.CreateRoleParams;
 import com.enonic.wem.api.security.CreateUserParams;
@@ -33,14 +43,6 @@ import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.api.security.auth.AuthenticationToken;
 import com.enonic.wem.api.security.auth.EmailPasswordAuthToken;
 import com.enonic.wem.api.security.auth.UsernamePasswordAuthToken;
-import com.enonic.wem.api.node.CreateNodeParams;
-import com.enonic.wem.api.node.FindNodesByQueryResult;
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeId;
-import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.api.node.NodeQuery;
-import com.enonic.wem.api.node.NodeService;
-import com.enonic.wem.api.node.Nodes;
 
 import static org.junit.Assert.*;
 
@@ -104,7 +106,9 @@ public class SecurityServiceImplTest
                     add( createGroupAsNode( createGroup ) ).
                     build() ).
                 build() );
-        final Principals groups = securityService.getPrincipals( SYSTEM, PrincipalType.GROUP );
+        final List<PrincipalType> groupTypes = new ArrayList<>();
+        groupTypes.add( PrincipalType.GROUP );
+        final Principals groups = securityService.findPrincipals( SYSTEM, groupTypes, null );
 
         Mockito.when( nodeService.findByQuery( Mockito.isA( NodeQuery.class ) ) ).
             thenReturn( FindNodesByQueryResult.create().
@@ -112,7 +116,9 @@ public class SecurityServiceImplTest
                     add( createUserAsNode( createUser ) ).
                     build() ).
                 build() );
-        final Principals users = securityService.getPrincipals( SYSTEM, PrincipalType.USER );
+        final List<PrincipalType> userTypes = new ArrayList<>();
+        groupTypes.add( PrincipalType.USER );
+        final Principals users = securityService.findPrincipals( SYSTEM, userTypes, null );
         assertEquals( "Group A", groups.getPrincipal( group.getKey() ).getDisplayName() );
         assertEquals( "User 1", users.getPrincipal( user.getKey() ).getDisplayName() );
     }

@@ -16,7 +16,7 @@ module api.schema.metadata {
 
         getParams(): Object {
             return {
-                name: this.name
+                name: this.name.toString()
             };
         }
 

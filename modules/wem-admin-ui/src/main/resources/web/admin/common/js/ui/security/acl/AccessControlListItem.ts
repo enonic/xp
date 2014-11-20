@@ -1,28 +1,25 @@
-module api.ui.security {
+module api.ui.security.acl {
 
-    import Permission = api.security.acl.Permission;
     import Principal = api.security.Principal;
     import PrincipalType = api.security.PrincipalType;
     import PrincipalKey = api.security.PrincipalKey;
+    import Permission = api.security.acl.Permission;
     import AccessControlEntry = api.security.acl.AccessControlEntry;
 
-    export class AccessControlListItem extends api.dom.DivEl {
+    export class AccessControlListItem extends api.ui.security.PrincipalViewer {
 
         private ace: AccessControlEntry;
 
-        private names: api.app.NamesAndIconView;
         private accessSelector: AccessSelector;
         private permissionSelector: PermissionSelector;
 
         private removeClickedListeners: {(event: MouseEvent):void}[] = [];
 
         constructor(ace: AccessControlEntry) {
-            super('access-control-list-item');
+            super();
+            this.setClass('access-control-list-item');
 
             this.ace = ace;
-
-            this.names = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
-            this.appendChild(this.names);
 
             this.accessSelector = new AccessSelector();
             this.appendChild(this.accessSelector);
@@ -80,21 +77,14 @@ module api.ui.security {
 
         public setAccessControlEntry(ace: AccessControlEntry, silent?: boolean) {
             this.ace = ace;
-            var iconClass;
-            switch (this.ace.getPrincipalKey().getType()) {
-            case PrincipalType.USER:
-                iconClass = "icon-user";
-                break;
-            case PrincipalType.GROUP:
-                iconClass = "icon-users";
-                break;
-            case PrincipalType.ROLE:
-                iconClass = "icon-user7";
-                break;
-            }
-            this.names.setIconClass(iconClass).
-                setMainName(this.ace.getPrincipalDisplayName()).
-                setSubName(this.getSubName(this.ace.getPrincipalKey()));
+
+            var principal = new Principal(
+                ace.getPrincipalKey(),
+                ace.getPrincipalDisplayName(),
+                ace.getPrincipalKey().getType(),
+                ace.getPrincipalModifiedTime());
+            this.setObject(principal);
+
             var permissions = {
                 allow: ace.getAllowedPermissions().sort(),
                 deny: ace.getDeniedPermissions().sort()
@@ -105,17 +95,10 @@ module api.ui.security {
 
         public getAccessControlEntry(): AccessControlEntry {
             var permissions = this.permissionSelector.getValue();
-            var ace = new AccessControlEntry(this.ace.getPrincipalKey(), this.ace.getPrincipalDisplayName());
+            var ace = new AccessControlEntry(this.ace.getPrincipal());
             ace.setAllowedPermissions(permissions.allow);
             ace.setDeniedPermissions(permissions.deny);
             return ace;
-        }
-
-        private getSubName(key: PrincipalKey): string {
-            return api.util.StringHelper.format("{0}/{1}/{2}",
-                key.getUserStore().toString(),
-                PrincipalType[key.getType()].toLowerCase(),
-                key.getId());
         }
 
         private getPermissionsValueFromAccess(access: Access) {

@@ -24,7 +24,7 @@ module api.content {
         }
     }
 
-    export class ContentSelectedOptionsView extends api.ui.selector.combobox.SelectedOptionsView<ContentSummary> {
+    export class ContentSelectedOptionsView extends api.ui.selector.combobox.BaseSelectedOptionsView<ContentSummary> {
 
         createSelectedOption(option: api.ui.selector.Option<ContentSummary>): SelectedOption<ContentSummary> {
             var optionView = new ContentSelectedOptionView(option);
@@ -85,7 +85,7 @@ module api.content {
             return this;
         }
 
-        setMinWidth(value:number) {
+        setMinWidth(value: number) {
             this.minWidth = value;
             return this;
         }

@@ -312,7 +312,9 @@ module api.ui.selector.combobox {
 
         getSelectedOptions(): Option<OPTION_DISPLAY_VALUE>[] {
             if (this.selectedOptionsView) {
-                return this.selectedOptionsView.getOptions();
+                return this.selectedOptionsView.getSelectedOptions().map((selectedOption: SelectedOption<OPTION_DISPLAY_VALUE>) => {
+                    return selectedOption.getOption();
+                });
             }
             else {
                 throw new Error("Not supported yet");

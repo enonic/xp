@@ -4,7 +4,7 @@ module api.form.inputtype.singleselector {
     import Dropdown = api.ui.selector.dropdown.Dropdown;
     import DropdownConfig = api.ui.selector.dropdown.DropdownConfig;
     import ComboBox = api.ui.selector.combobox.ComboBox;
-    import SelectedOptionsView = api.ui.selector.combobox.SelectedOptionsView;
+    import BaseSelectedOptionsView = api.ui.selector.combobox.BaseSelectedOptionsView;
 
     export interface SingleSelectorConfig {
         selectorType: string;
@@ -80,7 +80,7 @@ module api.form.inputtype.singleselector {
 
         private createComboBoxElement(name: string, property: api.data.Property): api.dom.Element {
 
-            var selectedOptionsView = new SelectedOptionsView<string>();
+            var selectedOptionsView = new BaseSelectedOptionsView<string>();
             var comboBox = new ComboBox<string>(name, {
                 filter: this.comboboxFilter,
                 selectedOptionsView: selectedOptionsView,

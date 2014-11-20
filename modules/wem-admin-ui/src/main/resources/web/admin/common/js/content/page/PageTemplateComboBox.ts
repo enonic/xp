@@ -11,7 +11,7 @@ module api.content.page {
         }
     }
 
-    export class PageTemplateSelectedOptionsView extends api.ui.selector.combobox.SelectedOptionsView<PageTemplate> {
+    export class PageTemplateSelectedOptionsView extends api.ui.selector.combobox.BaseSelectedOptionsView<PageTemplate> {
 
         createSelectedOption(option: api.ui.selector.Option<PageTemplate>): api.ui.selector.combobox.SelectedOption<PageTemplate> {
             return new api.ui.selector.combobox.SelectedOption<PageTemplate>(new PageTemplateSelectedOptionView(option), this.count());

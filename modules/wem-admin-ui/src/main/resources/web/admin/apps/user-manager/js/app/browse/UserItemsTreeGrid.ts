@@ -10,7 +10,7 @@ module app.browse {
     import UserTreeGridItemType = app.browse.UserTreeGridItemType;
     import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
     import ListUserStoresRequest = api.security.ListUserStoresRequest;
-    import GetPrincipalsByUserStoreRequest = api.security.GetPrincipalsByUserStoreRequest;
+    import FindPrincipalsRequest = api.security.FindPrincipalsRequest;
     import UserStoreListResult = api.security.UserStoreListResult;
     import UserStoreJson = api.security.UserStoreJson;
     import UserTreeGridItem = app.browse.UserTreeGridItem;
@@ -107,12 +107,13 @@ module app.browse {
                 var folder: app.browse.UserTreeGridItem = <UserTreeGridItem>parentNode.getData();
                 var principalType = this.getPrincipalTypeForFolderItem(folder.getType());
 
-                new GetPrincipalsByUserStoreRequest(userStoreKey, principalType).sendAndParse().then((principals: Principal[]) => {
-                    principals.forEach((principal: Principal) => {
-                        gridItems.push(new UserTreeGridItemBuilder().setPrincipal(principal).setType(UserTreeGridItemType.PRINCIPAL).build());
+                new FindPrincipalsRequest().setUserStoreKey(userStoreKey).setAllowedTypes([principalType]).sendAndParse().
+                    then((principals: Principal[]) => {
+                        principals.forEach((principal: Principal) => {
+                            gridItems.push(new UserTreeGridItemBuilder().setPrincipal(principal).setType(UserTreeGridItemType.PRINCIPAL).build());
+                        });
+                        deferred.resolve(gridItems);
                     });
-                    deferred.resolve(gridItems);
-                });
 
             }
             return deferred.promise;

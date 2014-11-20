@@ -29,6 +29,20 @@ module api.ui.selector.list {
             }
         }
 
+        getItems(): I[] {
+            return this.items;
+        }
+
+        getItem(id: string): I {
+            for (var i = 0; i < this.items.length; i++) {
+                var item = this.items[i];
+                if (this.getItemId(item) == id) {
+                    return item;
+                }
+            }
+            return undefined;
+        }
+
         clearItems() {
             if (this.items.length > 0) {
                 this.notifyItemsRemoved(this.items);
@@ -64,11 +78,8 @@ module api.ui.selector.list {
             }
         }
 
-        layoutList(items: I[]) {
-            this.ul.removeChildren();
-            for (var i = 0; i < items.length; i++) {
-                this.addItemView(items[i]);
-            }
+        getItemCount(): number {
+            return this.items.length;
         }
 
         createItemView(item: I): api.dom.Element {
@@ -77,6 +88,13 @@ module api.ui.selector.list {
 
         getItemId(item: I): string {
             throw new Error("You must override getItemId to find item views by items");
+        }
+
+        private layoutList(items: I[]) {
+            this.ul.removeChildren();
+            for (var i = 0; i < items.length; i++) {
+                this.addItemView(items[i]);
+            }
         }
 
         private removeItemView(item: I) {

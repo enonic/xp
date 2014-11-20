@@ -6,7 +6,7 @@ module api.content.page.layout {
     import Option = api.ui.selector.Option;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
     import BaseSelectedOptionView = api.ui.selector.combobox.BaseSelectedOptionView;
-    import SelectedOptionsView = api.ui.selector.combobox.SelectedOptionsView;
+    import BaseSelectedOptionsView = api.ui.selector.combobox.BaseSelectedOptionsView;
     import DescriptorKey = api.content.page.DescriptorKey;
 
     export class LayoutDescriptorComboBox extends RichComboBox<LayoutDescriptor> {
@@ -44,7 +44,7 @@ module api.content.page.layout {
 
     }
 
-    export class LayoutDescriptorSelectedOptionsView extends SelectedOptionsView<LayoutDescriptor> {
+    export class LayoutDescriptorSelectedOptionsView extends BaseSelectedOptionsView<LayoutDescriptor> {
 
         createSelectedOption(option: Option<LayoutDescriptor>): SelectedOption<LayoutDescriptor> {
             return new SelectedOption<LayoutDescriptor>(new LayoutDescriptorSelectedOptionView(option), this.count());
