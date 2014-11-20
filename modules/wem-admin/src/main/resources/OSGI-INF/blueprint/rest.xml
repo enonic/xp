@@ -33,6 +33,8 @@
 
   <reference id="metadataSchemaService" interface="com.enonic.wem.api.schema.metadata.MetadataSchemaService"/>
 
+  <reference id="nodeService" interface="com.enonic.wem.api.node.NodeService"/>
+
   <service auto-export="interfaces">
     <bean class="com.enonic.wem.admin.rest.resource.ui.BackgroundImageResource"/>
   </service>
@@ -40,6 +42,7 @@
   <service auto-export="interfaces">
     <bean class="com.enonic.wem.admin.rest.resource.tools.ToolsResource">
       <property name="startupInitializer" ref="startupInitializer"/>
+      <property name="nodeService" ref="nodeService"/>
     </bean>
   </service>
 

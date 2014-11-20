@@ -1,8 +1,14 @@
 package com.enonic.wem.repo.internal.elasticsearch;
 
+import java.time.Instant;
 import java.util.Collection;
 
 import org.elasticsearch.ElasticsearchException;
+import org.elasticsearch.action.admin.cluster.repositories.get.GetRepositoriesRequest;
+import org.elasticsearch.action.admin.cluster.repositories.get.GetRepositoriesResponse;
+import org.elasticsearch.action.admin.cluster.repositories.put.PutRepositoryRequestBuilder;
+import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotRequestBuilder;
+import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotRequestBuilder;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
@@ -14,8 +20,11 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
+import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.repositories.RepositoryException;
 
+import com.enonic.wem.api.home.HomeDir;
 import com.enonic.wem.repo.internal.elasticsearch.document.DeleteDocument;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
@@ -152,6 +161,70 @@ public class ElasticsearchDao
         final SearchResult searchResult = doSearchRequest( searchRequestBuilder );
 
         return searchResult.getResults().getTotalHits();
+    }
+
+    public void snapshot( final String name )
+    {
+        if ( !snapshotRepositoryExists( name ) )
+        {
+            createSnapshotRepository( name, createSnapshotRepoPath( name ) );
+        }
+
+        final CreateSnapshotRequestBuilder createRequest = new CreateSnapshotRequestBuilder( this.client.admin().cluster() ).
+            setIndices( "search-wem-content-repo", "storage-wem-content-repo" ).
+            setIncludeGlobalState( false ).
+            setWaitForCompletion( true ).
+            setRepository( name ).
+            setSnapshot( Instant.now().toString().toLowerCase() ).
+            setSettings( ImmutableSettings.settingsBuilder().
+                put( "ignore_unavailable", true ) );
+
+        this.client.admin().cluster().createSnapshot( createRequest.request() ).actionGet();
+    }
+
+    public void restore( final String repositoryName, final String snapshotName )
+    {
+        RestoreSnapshotRequestBuilder restoreSnapshotRequestBuilder = new RestoreSnapshotRequestBuilder( this.client.admin().cluster() ).
+            setRestoreGlobalState( false ).
+            setIndices( "search-wem-content-repo", "storage-wem-content-repo" ).
+            setRepository( repositoryName ).
+            setSnapshot( snapshotName ).
+            setWaitForCompletion( true );
+
+        this.client.admin().cluster().restoreSnapshot( restoreSnapshotRequestBuilder.request() ).actionGet();
+    }
+
+    private String createSnapshotRepoPath( final String name )
+    {
+        return HomeDir.get().toString() + "/repo/snapshots/" + name;
+    }
+
+    private boolean snapshotRepositoryExists( final String name )
+    {
+        final GetRepositoriesRequest getRepositoriesRequest = new GetRepositoriesRequest( new String[]{name} );
+
+        try
+        {
+            final GetRepositoriesResponse response = this.client.admin().cluster().getRepositories( getRepositoriesRequest ).actionGet();
+            return !response.repositories().isEmpty();
+        }
+        catch ( RepositoryException e )
+        {
+            return false;
+        }
+    }
+
+    private void createSnapshotRepository( final String name, final String path )
+    {
+        final PutRepositoryRequestBuilder requestBuilder = new PutRepositoryRequestBuilder( this.client.admin().cluster() ).
+            setName( name ).
+            setType( "fs" ).
+            setSettings( ImmutableSettings.settingsBuilder().
+                put( "compress", true ).
+                put( "location", path ).
+                build() );
+
+        this.client.admin().cluster().putRepository( requestBuilder.request() ).actionGet();
     }
 
     private int resolveSize( final ElasticsearchQuery query )

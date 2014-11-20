@@ -5,11 +5,11 @@ import java.util.Set;
 
 import org.elasticsearch.common.unit.TimeValue;
 
-import com.enonic.wem.api.repository.RepositoryId;
-import com.enonic.wem.repo.internal.elasticsearch.ClusterHealthStatus;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeVersionId;
+import com.enonic.wem.api.repository.RepositoryId;
+import com.enonic.wem.repo.internal.elasticsearch.ClusterHealthStatus;
 
 public interface IndexService
 {
@@ -30,5 +30,8 @@ public interface IndexService
     public ClusterHealthStatus getClusterHealth( final TimeValue timeout, final String... indexNames );
 
     public void refresh( final String... indexNames );
+
+    public void snapshot( final RepositoryId repositoryId );
+
 }
 

@@ -43,4 +43,6 @@ public interface NodeService
     Node moveChild( final OrderChildNodeParams params );
 
     Node getByVersionId( NodeVersionId nodeVersionid );
+
+    void snapshot();
 }

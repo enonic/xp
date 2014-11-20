@@ -1,14 +1,6 @@
 package com.enonic.wem.repo.internal.entity;
 
 import com.enonic.wem.api.context.ContextAccessor;
-import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.repo.internal.entity.dao.NodeDao;
-import com.enonic.wem.api.node.NodeNotFoundException;
-import com.enonic.wem.api.node.NodeQuery;
-import com.enonic.wem.repo.internal.index.IndexService;
-import com.enonic.wem.repo.internal.index.query.QueryService;
-import com.enonic.wem.repo.internal.version.VersionService;
-import com.enonic.wem.repo.internal.workspace.WorkspaceService;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodeVersionsResult;
 import com.enonic.wem.api.node.FindNodesByParentParams;
@@ -22,8 +14,10 @@ import com.enonic.wem.api.node.NodeComparison;
 import com.enonic.wem.api.node.NodeComparisons;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeIds;
+import com.enonic.wem.api.node.NodeNotFoundException;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodePaths;
+import com.enonic.wem.api.node.NodeQuery;
 import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.api.node.NodeVersionId;
 import com.enonic.wem.api.node.Nodes;
@@ -31,6 +25,12 @@ import com.enonic.wem.api.node.OrderChildNodeParams;
 import com.enonic.wem.api.node.RenameNodeParams;
 import com.enonic.wem.api.node.SetNodeChildOrderParams;
 import com.enonic.wem.api.node.UpdateNodeParams;
+import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.repo.internal.entity.dao.NodeDao;
+import com.enonic.wem.repo.internal.index.IndexService;
+import com.enonic.wem.repo.internal.index.query.QueryService;
+import com.enonic.wem.repo.internal.version.VersionService;
+import com.enonic.wem.repo.internal.workspace.WorkspaceService;
 
 public class NodeServiceImpl
     implements NodeService
@@ -357,6 +357,12 @@ public class NodeServiceImpl
             nodeToMoveBefore( nodeToMoveBefore ).
             build().
             execute();
+    }
+
+    @Override
+    public void snapshot()
+    {
+        this.indexService.snapshot( ContextAccessor.current().getRepositoryId() );
     }
 
     public void setIndexService( final IndexService indexService )

@@ -26,6 +26,9 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodeVersionId;
 import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.repo.internal.elasticsearch.document.DeleteDocument;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
@@ -34,9 +37,6 @@ import com.enonic.wem.repo.internal.index.IndexException;
 import com.enonic.wem.repo.internal.index.IndexService;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.repository.StorageNameResolver;
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeId;
-import com.enonic.wem.api.node.NodeVersionId;
 
 public class ElasticsearchIndexService
     implements IndexService
@@ -207,6 +207,13 @@ public class ElasticsearchIndexService
             indexTypeName( indexType ).
             id( nodeId.toString() ).
             build() );
+    }
+
+    // TODO: This should go in repo-service or similar
+    @Override
+    public void snapshot( final RepositoryId repositoryId )
+    {
+        this.elasticsearchDao.snapshot( repositoryId.toString() );
     }
 
     public void setElasticsearchDao( final ElasticsearchDao elasticsearchDao )

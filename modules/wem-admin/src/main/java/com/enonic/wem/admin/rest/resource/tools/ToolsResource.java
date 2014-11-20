@@ -7,6 +7,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
+import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.core.initializer.StartupInitializer;
 import com.enonic.wem.servlet.ServletRequestUrlHelper;
 import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
@@ -17,12 +18,23 @@ public final class ToolsResource
 {
     private StartupInitializer startupInitializer;
 
+    private NodeService nodeService;
+
     @GET
     @Path("cleanData")
     public Response cleanData()
         throws Exception
     {
         this.startupInitializer.cleanData();
+        return redirectToIndex();
+    }
+
+    @GET
+    @Path("snapshot")
+    public Response snapshot()
+        throws Exception
+    {
+        this.nodeService.snapshot();
         return redirectToIndex();
     }
 
@@ -45,5 +57,10 @@ public final class ToolsResource
     public void setStartupInitializer( final StartupInitializer startupInitializer )
     {
         this.startupInitializer = startupInitializer;
+    }
+
+    public void setNodeService( final NodeService nodeService )
+    {
+        this.nodeService = nodeService;
     }
 }
