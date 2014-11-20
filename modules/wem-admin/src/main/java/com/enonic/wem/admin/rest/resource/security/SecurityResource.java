@@ -76,7 +76,8 @@ public final class SecurityResource
         {
             userStoreKey = new UserStoreKey( storeKey );
         }
-        List<PrincipalType> principalTypes = types.stream().map( PrincipalType::valueOf ).collect( Collectors.toList() );
+        List<PrincipalType> principalTypes =
+            types.stream().map( String::toUpperCase ).map( PrincipalType::valueOf ).collect( Collectors.toList() );
 
         final Principals principals = securityService.findPrincipals( userStoreKey, principalTypes, query );
         return new PrincipalsJson( principals );

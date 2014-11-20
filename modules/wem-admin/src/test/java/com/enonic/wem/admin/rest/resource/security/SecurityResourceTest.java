@@ -90,7 +90,7 @@ public class SecurityResourceTest
 
         String jsonString = request().
             path( "security/principals" ).
-            queryParam( "type", "user" ).
+            queryParam( "types", "user" ).
             queryParam( "userStoreKey", "local" ).
             get().getAsString();
 
