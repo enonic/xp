@@ -18,6 +18,7 @@ final class NodeSettingsBuilderImpl
         builder.put( "name", "local" );
         builder.put( "node.client", "false" );
         builder.put( "node.data", "true" );
+        builder.put( "node.local", "true" );
         builder.put( "http.enabled", "true" );
         builder.put( "cluster.name", "mycluster" );
         builder.put( "discovery.zen.ping.multicast.enabled", "false" );
