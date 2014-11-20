@@ -20,6 +20,7 @@ final class NodeSettingsBuilderImpl
         builder.put( "node.data", "true" );
         builder.put( "http.enabled", "true" );
         builder.put( "cluster.name", "mycluster" );
+        builder.put( "discovery.zen.ping.multicast.enabled", "false" );
 
         final String karafHome = System.getProperty( "karaf.home" );
         final File indexPath = new File( karafHome, "repo/index" );
