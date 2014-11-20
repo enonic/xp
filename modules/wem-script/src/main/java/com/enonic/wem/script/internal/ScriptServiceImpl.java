@@ -14,20 +14,25 @@ import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.script.ScriptExports;
 import com.enonic.wem.script.ScriptService;
 import com.enonic.wem.script.command.CommandHandler;
+import com.enonic.wem.script.command.CommandHandler2;
+import com.enonic.wem.script.internal.v2.CommandInvoker2Impl;
 
 @Component(immediate = true)
 public final class ScriptServiceImpl
     implements ScriptService
 {
-    private final CommandInvokerImpl environment;
+    private final CommandInvokerImpl invoker;
+
+    private final CommandInvoker2Impl invoker2;
 
     private final ScriptExecutor executor;
 
     public ScriptServiceImpl()
     {
-        this.environment = new CommandInvokerImpl();
+        this.invoker = new CommandInvokerImpl();
+        this.invoker2 = new CommandInvoker2Impl();
         final ScriptEngine engine = new NashornScriptEngineFactory().getScriptEngine();
-        this.executor = new ScriptExecutorImpl( engine, this.environment );
+        this.executor = new ScriptExecutorImpl( engine, this.invoker, this.invoker2 );
     }
 
     @Override
@@ -41,11 +46,22 @@ public final class ScriptServiceImpl
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
     public void addHandler( final CommandHandler handler )
     {
-        this.environment.addHandler( handler );
+        this.invoker.addHandler( handler );
     }
 
     public void removeHandler( final CommandHandler handler )
     {
-        this.environment.removeHandler( handler );
+        this.invoker.removeHandler( handler );
+    }
+
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
+    public void addHandler2( final CommandHandler2 handler )
+    {
+        this.invoker2.register( handler );
+    }
+
+    public void removeHandler2( final CommandHandler2 handler )
+    {
+        this.invoker2.unregister( handler );
     }
 }

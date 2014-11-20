@@ -4,28 +4,18 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
-import jdk.nashorn.api.scripting.ScriptObjectMirror;
-
-import com.enonic.wem.script.v2.CommandHandler2;
-import com.enonic.wem.script.v2.CommandInvoker2;
+import com.enonic.wem.script.command.CommandHandler2;
+import com.enonic.wem.script.command.CommandInvoker2;
+import com.enonic.wem.script.command.CommandRequest;
 
 public final class CommandInvoker2Impl
     implements CommandInvoker2
 {
     private final Map<String, CommandHandler2> handlers;
 
-    private final BeanParamConverter beanParamConverter;
-
-    private final ScriptObjectConverter scriptObjectConverter;
-
-    private final CommandResultConverter commandResultConverter;
-
     public CommandInvoker2Impl()
     {
-        this.handlers = Maps.newHashMap();
-        this.beanParamConverter = new BeanParamConverter();
-        this.scriptObjectConverter = new ScriptObjectConverter();
-        this.commandResultConverter = new CommandResultConverter();
+        this.handlers = Maps.newConcurrentMap();
     }
 
     public void register( final CommandHandler2 handler )
@@ -39,31 +29,20 @@ public final class CommandInvoker2Impl
     }
 
     @Override
-    public Object invoke( final String name, final ScriptObjectMirror input )
+    public Object invoke( final CommandRequest req )
     {
+        final String name = req.getName();
         final CommandHandler2 handler = this.handlers.get( name );
         if ( handler != null )
         {
-            return invoke( handler, input );
+            return invoke( handler, req );
         }
 
         throw new IllegalArgumentException( String.format( "Command [%s] not found", name ) );
     }
 
-    private Object invoke( final CommandHandler2 handler, final ScriptObjectMirror input )
+    private Object invoke( final CommandHandler2 handler, final CommandRequest req )
     {
-        final Map<String, Object> inputMap = this.scriptObjectConverter.toMap( input );
-
-        final Object inputBean = handler.createInputBean();
-        this.beanParamConverter.setProperties( inputBean, inputMap );
-
-        final Object result = doInvoke( handler, inputBean );
-        return this.commandResultConverter.toResult( result );
-    }
-
-    @SuppressWarnings("unchecked")
-    private Object doInvoke( final CommandHandler2 handler, final Object input )
-    {
-        return handler.execute( input );
+        return handler.execute( req );
     }
 }
