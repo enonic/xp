@@ -28,11 +28,6 @@
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
-    <!--dependency>
-      <groupId>commons-beanutils</groupId>
-      <artifactId>commons-beanutils</artifactId>
-      <version>1.9.2</version>
-    </dependency-->
     <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.core</artifactId>
