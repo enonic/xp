@@ -17,6 +17,7 @@ import jdk.nashorn.api.scripting.NashornException;
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceProblemException;
+import com.enonic.wem.api.util.Exceptions;
 import com.enonic.wem.script.command.CommandInvoker;
 import com.enonic.wem.script.command.CommandInvoker2;
 import com.enonic.wem.script.internal.logger.ScriptLogger;
@@ -69,11 +70,7 @@ final class ScriptExecutorImpl
             bindings.put( ScriptEngine.FILENAME, script.toString() );
             this.engine.eval( source, bindings );
         }
-        catch ( final ScriptException e )
-        {
-            throw handleException( e );
-        }
-        catch ( final RuntimeException e )
+        catch ( final Exception e )
         {
             throw handleException( e );
         }
@@ -104,7 +101,7 @@ final class ScriptExecutorImpl
         {
             return null;
         }
-        catch ( final ScriptException e )
+        catch ( final Exception e )
         {
             throw handleException( e );
         }
@@ -116,7 +113,27 @@ final class ScriptExecutorImpl
         return this.invoker;
     }
 
-    private ResourceProblemException handleException( final ScriptException e )
+    private RuntimeException handleException( final Exception e )
+    {
+        if ( e instanceof ResourceProblemException )
+        {
+            return (ResourceProblemException) e;
+        }
+
+        if ( e instanceof ScriptException )
+        {
+            return doHandleException( (ScriptException) e );
+        }
+
+        if ( e instanceof RuntimeException )
+        {
+            return doHandleException( (RuntimeException) e );
+        }
+
+        return Exceptions.unchecked( e );
+    }
+
+    private ResourceProblemException doHandleException( final ScriptException e )
     {
         final ResourceProblemException.Builder builder = ResourceProblemException.newBuilder();
         builder.cause( e.getCause() );
@@ -125,7 +142,7 @@ final class ScriptExecutorImpl
         return builder.build();
     }
 
-    private RuntimeException handleException( final RuntimeException e )
+    private RuntimeException doHandleException( final RuntimeException e )
     {
         final StackTraceElement elem = findScriptTraceElement( e );
         if ( elem == null )

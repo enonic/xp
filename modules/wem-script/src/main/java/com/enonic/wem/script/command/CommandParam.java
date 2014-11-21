@@ -12,7 +12,7 @@ public interface CommandParam
 
     public <T> T value( Class<T> type, T defValue );
 
-    public Function<Object, Object> function();
+    public Function<Object, Object> callback();
 
     public Map<String, Object> map();
 

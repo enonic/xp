@@ -63,7 +63,13 @@ final class XsltProcessorImpl
     @Override
     public XsltProcessor inputXml( final String inputXml )
     {
-        this.xmlSource = new StreamSource( new StringReader( inputXml ) );
+        return inputSource( new StreamSource( new StringReader( inputXml ) ) );
+    }
+
+    @Override
+    public XsltProcessor inputSource( final Source inputSource )
+    {
+        this.xmlSource = inputSource;
         return this;
     }
 

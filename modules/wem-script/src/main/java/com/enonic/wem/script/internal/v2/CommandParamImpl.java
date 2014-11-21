@@ -60,7 +60,7 @@ final class CommandParamImpl
 
     @Override
     @SuppressWarnings("unchecked")
-    public Function<Object, Object> function()
+    public Function<Object, Object> callback()
     {
         checkRequired();
 

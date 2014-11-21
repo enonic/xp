@@ -1,0 +1,4 @@
+<fruits>
+  <fruit name="Apple" color="Red"/>
+  <fruit name="Pear" color="Green"/>
+</fruits>

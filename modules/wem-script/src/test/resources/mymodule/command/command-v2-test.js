@@ -8,3 +8,4 @@ var result = execute2('test.command', {
 });
 
 assert.assertEquals('scripting is cool', result);
+

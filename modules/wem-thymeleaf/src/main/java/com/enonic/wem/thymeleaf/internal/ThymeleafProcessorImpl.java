@@ -37,7 +37,11 @@ final class ThymeleafProcessorImpl
     @Override
     public ThymeleafProcessor parameters( final Map<String, Object> parameters )
     {
-        this.parameters.putAll( parameters );
+        if ( parameters != null )
+        {
+            this.parameters.putAll( parameters );
+        }
+
         return this;
     }
 
