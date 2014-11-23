@@ -1,24 +1,20 @@
-package com.enonic.wem.api.data;
+package com.enonic.wem.api.data2;
 
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneOffset;
 
 import org.junit.Test;
 
 import com.enonic.wem.api.support.JsonTestHelper;
-import com.enonic.wem.api.util.GeoPoint;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.*;
 
-public class DataJsonTest
+public class PropertySetJsonTest
 {
     private JsonTestHelper jsonTestHelper;
 
-    public DataJsonTest()
+    public PropertySetJsonTest()
     {
         jsonTestHelper = new JsonTestHelper( this, true );
     }
@@ -27,15 +23,19 @@ public class DataJsonTest
     public void deserialize_serialization_of_Property()
         throws IOException
     {
-        PropertyJson propertyJson = new PropertyJson( Property.newString( "A", "1" ) );
+        PropertyTree tree = new PropertyTree();
+        tree.addString( "myProp", "a" );
+        tree.addString( "myProp", "b" );
+        tree.addString( "myProp", "c" );
+        PropertyArrayJson propertyArrayJson = PropertyArrayJson.toJson( tree.getRoot().getPropertyArray( "myProp" ) );
 
         // serialize from object
-        String expectedSerialization = jsonTestHelper.objectToString( propertyJson );
+        String expectedSerialization = jsonTestHelper.objectToString( propertyArrayJson );
 
         System.out.println( expectedSerialization );
 
         // de-serialize
-        DataJson parsedData = jsonTestHelper.objectMapper().readValue( expectedSerialization, DataJson.class );
+        PropertyArrayJson parsedData = jsonTestHelper.objectMapper().readValue( expectedSerialization, PropertyArrayJson.class );
 
         // serialize from json
         String serializationOfDeSerialization = jsonTestHelper.objectToString( parsedData );
@@ -47,17 +47,13 @@ public class DataJsonTest
     public void deserialize_serialization_of_DataSet()
         throws IOException
     {
-        DataSet dataSet = new DataSet( "mySet" );
-        dataSet.setProperty( "String", Value.newString( "a" ) );
-        dataSet.setProperty( "Long", Value.newLong( 1 ) );
-        dataSet.setProperty( "Double", Value.newDouble( 1.1 ) );
-        dataSet.setProperty( "Instant", Value.newInstant( LocalDateTime.of( 2012, 12, 12, 12, 0, 0 ).toInstant( ZoneOffset.UTC ) ) );
-        dataSet.setProperty( "LocalDate", Value.newLocalDate( LocalDate.of( 2012, 12, 12 ) ) );
-        dataSet.setProperty( "LocalDateTime", Value.newLocalDateTime( LocalDateTime.of( 2012, 12, 12, 12, 0, 0 ) ) );
-        dataSet.setProperty( "LocalTime", Value.newLocalTime( LocalTime.of( 12, 30 ) ) );
-        dataSet.setProperty( "HtmlPart", Value.newHtmlPart( "<div></div>" ) );
-        dataSet.setProperty( "GeoPoint", Value.newGeoPoint( GeoPoint.from( "1.1,-1.1" ) ) );
-        DataSetJson dataSetJson = new DataSetJson( dataSet );
+        PropertyTree tree = new PropertyTree();
+        PropertySet dataSet = tree.addSet( "mySet" );
+        dataSet.setLong( "Long", 1L );
+        dataSet.setDouble( "Double", 1.1 );
+        dataSet.setLocalDate( "DateMidnight", LocalDate.of( 2012, 12, 12 ) );
+        dataSet.setHtmlPart( "HtmlPart", "<div></div>" );
+        PropertyArrayJson dataSetJson = PropertyArrayJson.toJson( tree.getRoot().getPropertyArray( "mySet" ) );
 
         // serialize from object
         String expectedSerialization = jsonTestHelper.objectToString( dataSetJson );
@@ -65,7 +61,7 @@ public class DataJsonTest
         System.out.println( expectedSerialization );
 
         // de-serialize
-        DataJson parsedData = jsonTestHelper.objectMapper().readValue( expectedSerialization, DataJson.class );
+        PropertyArrayJson parsedData = jsonTestHelper.objectMapper().readValue( expectedSerialization, PropertyArrayJson.class );
 
         // serialize from json
         String serializationOfDeSerialization = jsonTestHelper.objectToString( parsedData );
@@ -73,7 +69,7 @@ public class DataJsonTest
         assertEquals( expectedSerialization, serializationOfDeSerialization );
     }
 
-    @Test
+    /*@Test
     public void deserialize_serialization_of_RootDataSet()
         throws IOException
     {
@@ -97,4 +93,6 @@ public class DataJsonTest
 
         assertEquals( expectedSerialization, serializationOfDeSerialization );
     }
+
+    */
 }

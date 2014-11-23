@@ -1,0 +1,344 @@
+[
+    {
+        "name": "singleString",
+        "type": "String",
+        "values": [
+            {
+                "id": "1",
+                "v": "a"
+            }
+        ]
+    },
+    {
+        "name": "singleHtmlPart",
+        "type": "String",
+        "values": [
+            {
+                "id": "2",
+                "v": "<h1>Hello</h1>"
+            }
+        ]
+    },
+    {
+        "name": "singleXML",
+        "type": "Xml",
+        "values": [
+            {
+                "id": "3",
+                "v": "<xml>Hello</xml>"
+            }
+        ]
+    },
+    {
+        "name": "singleBoolean",
+        "type": "Boolean",
+        "values": [
+            {
+                "id": "4",
+                "v": true
+            }
+        ]
+    },
+    {
+        "name": "singleLong",
+        "type": "Long",
+        "values": [
+            {
+                "id": "5",
+                "v": 1
+            }
+        ]
+    },
+    {
+        "name": "singleDouble",
+        "type": "Double",
+        "values": [
+            {
+                "id": "6",
+                "v": 1.1
+            }
+        ]
+    },
+    {
+        "name": "singleGeoPoint",
+        "type": "GeoPoint",
+        "values": [
+            {
+                "id": "7",
+                "v": "1.1,-2.2"
+            }
+        ]
+    },
+    {
+        "name": "singleLocalDate",
+        "type": "LocalDate",
+        "values": [
+            {
+                "id": "8",
+                "v": "2006-01-08"
+            }
+        ]
+    },
+    {
+        "name": "singleLocalDateTime",
+        "type": "LocalDateTime",
+        "values": [
+            {
+                "id": "9",
+                "v": "2006-01-08T12:00:00"
+            }
+        ]
+    },
+    {
+        "name": "singleLocalTime",
+        "type": "LocalTime",
+        "values": [
+            {
+                "id": "10",
+                "v": "12:00"
+            }
+        ]
+    },
+    {
+        "name": "singleInstant",
+        "type": "DateTime",
+        "values": [
+            {
+                "id": "11",
+                "v": "2007-12-03T10:15:30Z"
+            }
+        ]
+    },
+    {
+        "name": "singleSet",
+        "type": "PropertySet",
+        "values": [
+            {
+                "id": "12",
+                "set": [
+                    {
+                        "name": "long",
+                        "type": "Long",
+                        "values": [
+                            {
+                                "id": "13",
+                                "v": 1
+                            }
+                        ]
+                    },
+                    {
+                        "name": "setWithinSet",
+                        "type": "PropertySet",
+                        "values": [
+                            {
+                                "id": "14",
+                                "set": [
+                                    {
+                                        "name": "long",
+                                        "type": "Long",
+                                        "values": [
+                                            {
+                                                "id": "15",
+                                                "v": 1
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "arrayString",
+        "type": "String",
+        "values": [
+            {
+                "id": "16",
+                "v": "a"
+            },
+            {
+                "id": "17",
+                "v": "b"
+            }
+        ]
+    },
+    {
+        "name": "arrayHtmlPart",
+        "type": "HtmlPart",
+        "values": [
+            {
+                "id": "18",
+                "v": "<h1>Hello</h1>"
+            },
+            {
+                "id": "19",
+                "v": "<h1>World</h1>"
+            }
+        ]
+    },
+    {
+        "name": "arrayXML",
+        "type": "Xml",
+        "values": [
+            {
+                "id": "20",
+                "v": "<xml>Hello</xml>"
+            },
+            {
+                "id": "21",
+                "v": "<xml>World</xml>"
+            }
+        ]
+    },
+    {
+        "name": "arrayBoolean",
+        "type": "Boolean",
+        "values": [
+            {
+                "id": "22",
+                "v": true
+            },
+            {
+                "id": "23",
+                "v": false
+            }
+        ]
+    },
+    {
+        "name": "arrayLong",
+        "type": "Long",
+        "values": [
+            {
+                "id": "24",
+                "v": 1
+            },
+            {
+                "id": "25",
+                "v": 2
+            }
+        ]
+    },
+    {
+        "name": "arrayDouble",
+        "type": "Double",
+        "values": [
+            {
+                "id": "26",
+                "v": 1.1
+            },
+            {
+                "id": "27",
+                "v": 1.2
+            }
+        ]
+    },
+    {
+        "name": "arrayLocalDates",
+        "type": "LocalDate",
+        "values": [
+            {
+                "id": "28",
+                "v": "2006-01-08"
+            },
+            {
+                "id": "29",
+                "v": "2015-01-31"
+            }
+        ]
+    },
+    {
+        "name": "arrayLocalDateTimes",
+        "type": "LocalDateTime",
+        "values": [
+            {
+                "id": "30",
+                "v": "2006-01-08T12:00:00"
+            },
+            {
+                "id": "31",
+                "v": "2015-01-31T12:00:00"
+            }
+        ]
+    },
+    {
+        "name": "arrayGeoPoint",
+        "type": "GeoPoint",
+        "values": [
+            {
+                "id": "32",
+                "v": "1.1,-2.2"
+            },
+            {
+                "id": "33",
+                "v": "-2.2,1.1"
+            }
+        ]
+    },
+    {
+        "name": "arraySet",
+        "type": "PropertySet",
+        "values": [
+            {
+                "id": "34",
+                "set": [
+                    {
+                        "name": "string",
+                        "type": "String",
+                        "values": [
+                            {
+                                "id": "35",
+                                "v": "a"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "long",
+                        "type": "Long",
+                        "values": [
+                            {
+                                "id": "36",
+                                "v": 1
+                            },
+                            {
+                                "id": "37",
+                                "v": 2
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "38",
+                "set": [
+                    {
+                        "name": "string",
+                        "type": "String",
+                        "values": [
+                            {
+                                "id": "39",
+                                "v": "b"
+                            },
+                            {
+                                "id": "40",
+                                "v": "c"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "long",
+                        "type": "Long",
+                        "values": [
+                            {
+                                "id": "41",
+                                "v": 2
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]
