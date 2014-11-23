@@ -10,6 +10,7 @@ import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.schema.metadata.MetadataProvider;
 import com.enonic.wem.api.schema.metadata.MetadataSchema;
 import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
@@ -18,12 +19,16 @@ import com.enonic.wem.api.schema.metadata.MetadataSchemas;
 public final class CoreMetadataSchemasProvider
     implements MetadataProvider
 {
+    private static MetadataSchemaName MENU_NAME = MetadataSchemaName.from( ModuleKey.SYSTEM, "menu-item" );
 
     private static final String METADATA_SCHEMAS_FOLDER = "metadata-schemas";
 
     // System Metadata schemas
-    private static final MetadataSchema MENU =
-        MetadataSchema.newMetadataSchema().name( MetadataSchemaName.MENU ).displayName( "Menu" ).form( createMenuMetadataForm() ).build();
+    private static final MetadataSchema MENU = MetadataSchema.newMetadataSchema().
+        name( MENU_NAME ).
+        displayName( "Menu" ).
+        form( createMenuMetadataForm() ).
+        build();
 
     private static final MetadataSchema[] METADATA_SCHEMAS = {MENU};
 
@@ -31,15 +36,15 @@ public final class CoreMetadataSchemasProvider
     {
         return Form.newForm().
             addFormItem( Input.newInput().
-                name( "menu" ).
-                label( "Menu" ).
+                name( "menuItem" ).
+                label( "Menu item" ).
                 inputType( InputTypes.CHECKBOX ).
                 occurrences( 0, 1 ).
                 helpText( "Check this to include this Page in the menu" ).
                 build() ).
             addFormItem( Input.newInput().name( "menuName" ).
                 inputType( InputTypes.TEXT_LINE ).
-                label( "Menu name" ).
+                label( "Name in menu" ).
                 occurrences( 0, 1 ).
                 helpText( "Name to be used in menu. Optional" ).
                 build() ).
