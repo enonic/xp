@@ -23,6 +23,8 @@ import org.elasticsearch.client.Requests;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.repositories.RepositoryException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.enonic.wem.api.home.HomeDir;
 import com.enonic.wem.repo.internal.elasticsearch.document.DeleteDocument;
@@ -47,6 +49,8 @@ public class ElasticsearchDao
     private final String storeTimeout = "5s";
 
     private final String deleteTimeout = "5s";
+
+    private final static Logger LOG = LoggerFactory.getLogger( ElasticsearchIndexService.class );
 
     private Client client;
 
@@ -145,6 +149,8 @@ public class ElasticsearchDao
         }
         catch ( ElasticsearchException e )
         {
+            LOG.error( "Search request failed", e );
+
             throw new IndexException( "Search request failed", e );
         }
     }
