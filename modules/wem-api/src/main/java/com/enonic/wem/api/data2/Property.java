@@ -13,6 +13,8 @@ import com.enonic.wem.api.util.GeoPoint;
 
 public final class Property
 {
+    private final PropertySet parent;
+
     private final String name;
 
     private final int index;
@@ -20,8 +22,6 @@ public final class Property
     private Value value;
 
     private final PropertyId id;
-
-    private final PropertySet parent;
 
     Property( final String name, final int index, final Value value, final PropertyId id, final PropertySet parent )
     {
@@ -69,9 +69,19 @@ public final class Property
         return index;
     }
 
+    boolean hasParentProperty()
+    {
+        return getParentProperty() != null;
+    }
+
+    Property getParentProperty()
+    {
+        return this.parent.getProperty();
+    }
+
     public PropertyPath getPath()
     {
-        if ( this.parent.getProperty() != null )
+        if ( hasParentProperty() )
         {
             return PropertyPath.from( this.parent.getProperty().getPath(), PropertyPath.Element.from( this.name, this.index ) );
         }

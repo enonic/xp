@@ -1,26 +1,20 @@
 package com.enonic.wem.api.data2;
 
+import java.util.Objects;
+
 public abstract class ValueType<T>
 {
-    private final int key;
-
     private final java.lang.String name;
 
     private final Class<T> classType;
 
     private final JavaTypeConverter<T> converter;
 
-    public ValueType( final int key, final java.lang.String name, final JavaTypeConverter<T> converter )
+    public ValueType( final java.lang.String name, final JavaTypeConverter<T> converter )
     {
-        this.key = key;
         this.name = name;
         this.classType = converter.getType();
         this.converter = converter;
-    }
-
-    public final int getKey()
-    {
-        return this.key;
     }
 
     public final java.lang.String getName()
@@ -46,13 +40,14 @@ public abstract class ValueType<T>
         }
 
         final ValueType that = (ValueType) o;
-        return key == that.key;
+
+        return Objects.equals( name, that.name );
     }
 
     @Override
     public final int hashCode()
     {
-        return key;
+        return Objects.hash( name );
     }
 
     @Override
@@ -94,9 +89,9 @@ public abstract class ValueType<T>
     static class PropertySet
         extends ValueType<com.enonic.wem.api.data2.PropertySet>
     {
-        PropertySet( final int key )
+        PropertySet()
         {
-            super( key, "PropertySet", JavaTypeConverters.DATA );
+            super( "PropertySet", JavaTypeConverters.DATA );
         }
 
         @Override
@@ -109,9 +104,9 @@ public abstract class ValueType<T>
     static class String
         extends ValueType<java.lang.String>
     {
-        String( final int key )
+        String()
         {
-            super( key, "String", JavaTypeConverters.STRING );
+            super( "String", JavaTypeConverters.STRING );
         }
 
         @Override
@@ -124,9 +119,9 @@ public abstract class ValueType<T>
     static class HtmlPart
         extends ValueType<java.lang.String>
     {
-        HtmlPart( final int key )
+        HtmlPart()
         {
-            super( key, "HtmlPart", JavaTypeConverters.STRING );
+            super( "HtmlPart", JavaTypeConverters.STRING );
         }
 
         @Override
@@ -139,9 +134,9 @@ public abstract class ValueType<T>
     static class Xml
         extends ValueType<java.lang.String>
     {
-        Xml( final int key )
+        Xml()
         {
-            super( key, "Xml", JavaTypeConverters.STRING );
+            super( "Xml", JavaTypeConverters.STRING );
         }
 
         @Override
@@ -154,9 +149,9 @@ public abstract class ValueType<T>
     static class Long
         extends ValueType<java.lang.Long>
     {
-        Long( final int key )
+        Long()
         {
-            super( key, "Long", JavaTypeConverters.LONG );
+            super( "Long", JavaTypeConverters.LONG );
         }
 
         @Override
@@ -169,9 +164,9 @@ public abstract class ValueType<T>
     static class Double
         extends ValueType<java.lang.Double>
     {
-        Double( final int key )
+        Double()
         {
-            super( key, "Double", JavaTypeConverters.DOUBLE );
+            super( "Double", JavaTypeConverters.DOUBLE );
         }
 
         @Override
@@ -184,9 +179,9 @@ public abstract class ValueType<T>
     static class Boolean
         extends ValueType<java.lang.Boolean>
     {
-        Boolean( final int key )
+        Boolean()
         {
-            super( key, "Boolean", JavaTypeConverters.BOOLEAN );
+            super( "Boolean", JavaTypeConverters.BOOLEAN );
         }
 
         @Override
@@ -199,9 +194,9 @@ public abstract class ValueType<T>
     static class LocalDate
         extends ValueType<java.time.LocalDate>
     {
-        LocalDate( final int key )
+        LocalDate()
         {
-            super( key, "LocalDate", JavaTypeConverters.LOCAL_DATE );
+            super( "LocalDate", JavaTypeConverters.LOCAL_DATE );
         }
 
         @Override
@@ -214,9 +209,9 @@ public abstract class ValueType<T>
     static class LocalDateTime
         extends ValueType<java.time.LocalDateTime>
     {
-        LocalDateTime( final int key )
+        LocalDateTime()
         {
-            super( key, "LocalDateTime", JavaTypeConverters.LOCAL_DATE_TIME );
+            super( "LocalDateTime", JavaTypeConverters.LOCAL_DATE_TIME );
         }
 
         @Override
@@ -229,9 +224,9 @@ public abstract class ValueType<T>
     static class LocalTime
         extends ValueType<java.time.LocalTime>
     {
-        LocalTime( final int key )
+        LocalTime()
         {
-            super( key, "LocalTime", JavaTypeConverters.LOCAL_TIME );
+            super( "LocalTime", JavaTypeConverters.LOCAL_TIME );
         }
 
         @Override
@@ -244,9 +239,9 @@ public abstract class ValueType<T>
     static class DateTime
         extends ValueType<java.time.Instant>
     {
-        DateTime( final int key )
+        DateTime()
         {
-            super( key, "DateTime", JavaTypeConverters.DATE_TIME );
+            super( "DateTime", JavaTypeConverters.DATE_TIME );
         }
 
         @Override
@@ -259,9 +254,9 @@ public abstract class ValueType<T>
     static class GeoPoint
         extends ValueType<com.enonic.wem.api.util.GeoPoint>
     {
-        GeoPoint( final int key )
+        GeoPoint()
         {
-            super( key, "GeoPoint", JavaTypeConverters.GEO_POINT );
+            super( "GeoPoint", JavaTypeConverters.GEO_POINT );
         }
 
         @Override
@@ -274,9 +269,9 @@ public abstract class ValueType<T>
     static class ContentId
         extends ValueType<com.enonic.wem.api.content.ContentId>
     {
-        ContentId( final int key )
+        ContentId()
         {
-            super( key, "ContentId", JavaTypeConverters.CONTENT_ID );
+            super( "ContentId", JavaTypeConverters.CONTENT_ID );
         }
 
         @Override
