@@ -15,10 +15,10 @@ final class NodeSettingsBuilderImpl
         builder.classLoader( ImmutableSettings.class.getClassLoader() );
 
         // TODO: Hardcoded configuration. Should be using OSGi config admin.
-        builder.put( "name", "local" );
-        builder.put( "node.client", "false" );
-        builder.put( "node.data", "true" );
-        builder.put( "node.local", "true" );
+        builder.put( "name", "local-node" );
+        builder.put( "client", "false" );
+        builder.put( "data", "true" );
+        builder.put( "local", "true" );
         builder.put( "http.enabled", "true" );
         builder.put( "cluster.name", "mycluster" );
         builder.put( "discovery.zen.ping.multicast.enabled", "false" );
