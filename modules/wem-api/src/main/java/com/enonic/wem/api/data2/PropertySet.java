@@ -42,7 +42,7 @@ public final class PropertySet
         }
     }
 
-    PropertyTree getTree()
+    public PropertyTree getTree()
     {
         return this.propertyTree;
     }
@@ -102,7 +102,7 @@ public final class PropertySet
     /**
      * Makes a copy of this PropertySet and attach it to the given PropertyTree.
      */
-    PropertySet copy( final PropertyTree tree )
+    public PropertySet copy( final PropertyTree tree )
     {
         return new PropertySet( this, tree );
     }
