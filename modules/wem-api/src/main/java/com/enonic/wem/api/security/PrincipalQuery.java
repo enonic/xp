@@ -6,6 +6,7 @@ import java.util.Set;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
 public final class PrincipalQuery
@@ -22,14 +23,14 @@ public final class PrincipalQuery
 
     private final UserStoreKeys userStores;
 
-    private final PrincipalKeys principals;
+    private final String searchText;
 
     public PrincipalQuery( final Builder builder )
     {
         from = builder.from;
         size = builder.size;
+        searchText = builder.searchText;
         userStores = UserStoreKeys.from( builder.userStores.build() );
-        principals = PrincipalKeys.from( builder.principals.build() );
         if ( builder.principalTypes.isEmpty() )
         {
             principalTypes = ALL_TYPES;
@@ -60,9 +61,9 @@ public final class PrincipalQuery
         return userStores;
     }
 
-    public PrincipalKeys getPrincipals()
+    public String getSearchText()
     {
-        return principals;
+        return searchText;
     }
 
     public static Builder newQuery()
@@ -80,13 +81,12 @@ public final class PrincipalQuery
 
         private final ImmutableList.Builder<UserStoreKey> userStores;
 
-        private final ImmutableList.Builder<PrincipalKey> principals;
+        private String searchText;
 
         private Builder()
         {
             this.principalTypes = EnumSet.noneOf( PrincipalType.class );
             this.userStores = ImmutableList.builder();
-            this.principals = ImmutableList.builder();
         }
 
         public Builder from( final int from )
@@ -125,6 +125,12 @@ public final class PrincipalQuery
             return this;
         }
 
+        public Builder includeTypes( final Iterable<PrincipalType> principalTypes )
+        {
+            Iterables.addAll( this.principalTypes, principalTypes );
+            return this;
+        }
+
         public Builder userStore( final UserStoreKey userStoreKey )
         {
             this.userStores.add( userStoreKey );
@@ -137,15 +143,9 @@ public final class PrincipalQuery
             return this;
         }
 
-        public Builder principal( final PrincipalKey principal )
+        public Builder searchText( final String searchText )
         {
-            this.principals.add( principal );
-            return this;
-        }
-
-        public Builder principals( final Iterable<PrincipalKey> principals )
-        {
-            this.principals.addAll( principals );
+            this.searchText = searchText;
             return this;
         }
 

@@ -457,8 +457,8 @@ public final class ContentResource
         final ContentPermissions contentPermissions = contentService.getPermissions( contentId );
 
         final PrincipalQuery principalQuery = PrincipalQuery.newQuery().
-            principals( contentPermissions.getPermissions().getAllPrincipals() ).
-            principals( contentPermissions.getInheritedPermissions().getAllPrincipals() ).
+//            principals( contentPermissions.getPermissions().getAllPrincipals() ).
+//            principals( contentPermissions.getInheritedPermissions().getAllPrincipals() ).
             build();
         final PrincipalQueryResult principalResult = securityService.query( principalQuery );
         final Principals principals = principalResult.getPrincipals();

@@ -776,6 +776,7 @@ public class ContentResourceTest
 
     }
 
+    @Ignore
     @Test
     public void getContentPermissions()
         throws Exception

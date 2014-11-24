@@ -8,10 +8,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
+import com.google.common.primitives.Ints;
 
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.node.CreateNodeParams;
@@ -63,7 +62,6 @@ import static com.enonic.wem.core.security.PrincipalKeyNodeTranslator.toNodeId;
 import static com.enonic.wem.core.security.PrincipalNodeTranslator.EMAIL_KEY;
 import static com.enonic.wem.core.security.PrincipalNodeTranslator.LOGIN_KEY;
 import static com.enonic.wem.core.security.PrincipalNodeTranslator.USER_STORE_KEY;
-import static java.util.stream.Collectors.toList;
 
 public final class SecurityServiceImpl
     implements SecurityService
@@ -180,42 +178,18 @@ public final class SecurityServiceImpl
     }
 
     @Override
-    public Principals findPrincipals( final UserStoreKey userStore, final List<PrincipalType> types, String query )
+    public Principals findPrincipals( final UserStoreKey userStore, final List<PrincipalType> types, final String query )
     {
-        try
+        final PrincipalQuery.Builder principalQuery = PrincipalQuery.newQuery().
+            includeTypes( types ).
+            searchText( query );
+        if ( userStore != null )
         {
-            NodeQuery.Builder nodeQueryBuilder = NodeQuery.create();
-            if ( userStore != null )
-            {
-                nodeQueryBuilder.addQueryFilter( ValueFilter.create().
-                    fieldName( USER_STORE_KEY ).
-                    addValue( Value.newString( userStore.toString() ) ).
-                    build() );
-            }
-            if ( types != null && types.size() > 0 )
-            {
-                nodeQueryBuilder.addQueryFilter( ValueFilter.create().
-                    fieldName( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY ).
-                    addValues( types.stream().map( Object::toString ).collect( toList() ) ).
-                    build() );
-            }
-            if ( StringUtils.isNotBlank( query ) )
-            {
-                nodeQueryBuilder.addQueryFilter( ValueFilter.create().
-                    fieldName( PrincipalNodeTranslator.DISPLAY_NAME_KEY ).
-                    addValue( Value.newString( query ) ).
-                    build() );
-            }
-
-            final FindNodesByQueryResult result =
-                CONTEXT_USER_STORES.callWith( () -> this.nodeService.findByQuery( nodeQueryBuilder.build() ) );
-
-            return PrincipalNodeTranslator.fromNodes( result.getNodes() );
+            principalQuery.userStore( userStore );
         }
-        catch ( NodeNotFoundException e )
-        {
-            return Principals.empty();
-        }
+
+        final PrincipalQueryResult result = query( principalQuery.build() );
+        return result.getPrincipals();
     }
 
     @Override
@@ -535,49 +509,21 @@ public final class SecurityServiceImpl
     @Override
     public PrincipalQueryResult query( final PrincipalQuery query )
     {
-        // TODO: FIX
-
-        /*
-        final Predicate<Principal> userStoreFilter = principal -> query.getUserStores().contains( principal.getKey().getUserStore() );
-        final Predicate<Principal> typeFilter = principal -> query.getPrincipalTypes().contains( principal.getKey().getType() );
-        final Predicate<Principal> keysFilter = principal -> query.getPrincipals().contains( principal.getKey() );
-
-        Stream<Principal> streamCount = this.principals.values().stream();
-        if ( query.getUserStores().isNotEmpty() )
+        try
         {
-            streamCount = streamCount.filter( userStoreFilter );
+            final NodeQuery nodeQueryBuilder = PrincipalQueryNodeQueryTranslator.translate( query );
+            final FindNodesByQueryResult result = CONTEXT_USER_STORES.callWith( () -> this.nodeService.findByQuery( nodeQueryBuilder ) );
+
+            final Principals principals = PrincipalNodeTranslator.fromNodes( result.getNodes() );
+            return PrincipalQueryResult.newResult().
+                addPrincipals( principals ).
+                totalSize( Ints.checkedCast( result.getTotalHits() ) ).
+                build();
         }
-        if ( query.getPrincipals().isNotEmpty() )
+        catch ( NodeNotFoundException e )
         {
-            streamCount = streamCount.filter( keysFilter );
+            return PrincipalQueryResult.newResult().build();
         }
-        final long total = streamCount.
-            filter( typeFilter ).
-            count();
-
-        Stream<Principal> streamPrincipals = this.principals.values().stream();
-        if ( query.getUserStores().isNotEmpty() )
-        {
-            streamPrincipals = streamPrincipals.filter( userStoreFilter );
-        }
-        if ( query.getPrincipals().isNotEmpty() )
-        {
-            streamPrincipals = streamPrincipals.filter( keysFilter );
-        }
-        final List<Principal> principals = streamPrincipals.
-            filter( typeFilter ).
-            limit( query.getSize() ).
-            skip( query.getFrom() ).
-            collect( toList() );
-
-        return PrincipalQueryResult.newResult().
-            totalSize( Ints.checkedCast( total ) ).
-            addPrincipals( principals ).
-            build();
-        */
-
-        return null;
-
     }
 
     public void setNodeService( final NodeService nodeService )
