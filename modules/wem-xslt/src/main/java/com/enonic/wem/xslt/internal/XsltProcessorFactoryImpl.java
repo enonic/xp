@@ -9,6 +9,7 @@ import net.sf.saxon.TransformerFactoryImpl;
 
 import com.enonic.wem.xslt.XsltProcessor;
 import com.enonic.wem.xslt.XsltProcessorFactory;
+import com.enonic.wem.xslt.internal.function.XsltFunctionLibrary;
 
 @Component
 public final class XsltProcessorFactoryImpl
@@ -24,6 +25,7 @@ public final class XsltProcessorFactoryImpl
         this.configuration.setVersionWarning( false );
         this.configuration.setCompileWithTracing( true );
         this.configuration.setValidationWarnings( true );
+        new XsltFunctionLibrary().registerAll( this.configuration );
     }
 
     private TransformerFactory createTransformerFactory()
