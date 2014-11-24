@@ -18,4 +18,4 @@ var s4 = log.format('complex json %s', {
     }
 });
 s4 = s4.replace(/\n/g, '');
-Assert.assertEquals('complex json {"a":"1","b":["1","2"],"c":{"a":"1","b":["1","2"]}}', s4);
+Assert.assertEquals('complex json {"a":1,"b":[1,2],"c":{"a":1,"b":[1,2]}}', s4);

@@ -46,8 +46,7 @@ public final class RequireFunction
         final String name = args[0].toString();
         final ResourceKey key = resolve( name );
 
-        final Bindings bindings = this.executor.createBindings();
-        return this.executor.executeRequire( bindings, key );
+        return this.executor.executeRequire( key );
     }
 
     private ResourceKey resolve( final String name )

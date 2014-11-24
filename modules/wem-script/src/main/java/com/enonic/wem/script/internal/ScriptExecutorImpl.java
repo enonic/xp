@@ -33,22 +33,15 @@ final class ScriptExecutorImpl
         this.invoker = invoker;
     }
 
-    @Override
-    public Bindings createBindings()
+    private Bindings createBindings()
     {
         return this.engine.createBindings();
     }
 
-    @Override
-    public void execute( final Bindings bindings, final ResourceKey script )
+    private void doExecute( final Bindings bindings, final ResourceKey script )
     {
         try
         {
-            new ScriptLogger( script ).register( bindings );
-            new ResolveFunction( script ).register( bindings );
-            new ExecuteFunction( script, this.invoker ).register( bindings );
-            new RequireFunction( script, this ).register( bindings );
-
             final Resource resource = Resource.from( script );
             final String source = resource.readString();
 
@@ -62,11 +55,19 @@ final class ScriptExecutorImpl
     }
 
     @Override
-    public Bindings executeRequire( final Bindings bindings, final ResourceKey script )
+    public Bindings executeRequire( final ResourceKey script )
     {
+        final Bindings bindings = createBindings();
+        
         final Bindings exports = createBindings();
         bindings.put( "exports", exports );
-        execute( bindings, script );
+
+        new ScriptLogger( script ).register( bindings );
+        new ResolveFunction( script ).register( bindings );
+        new ExecuteFunction( script, this.invoker ).register( bindings );
+        new RequireFunction( script, this ).register( bindings );
+
+        doExecute( bindings, script );
         return exports;
     }
 

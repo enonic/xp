@@ -12,7 +12,7 @@ import jdk.nashorn.api.scripting.ScriptUtils;
 
 public final class ScriptObjectConverter
 {
-    private static Object toObject( final Object source )
+    public static Object toObject( final Object source )
     {
         final Object object = ScriptUtils.wrap( source );
         if ( object instanceof ScriptObjectMirror )

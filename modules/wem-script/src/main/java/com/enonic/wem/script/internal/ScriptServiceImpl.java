@@ -34,8 +34,7 @@ public final class ScriptServiceImpl
     @Override
     public ScriptExports execute( final ResourceKey script )
     {
-        final Bindings bindings = this.executor.createBindings();
-        final Bindings exports = this.executor.executeRequire( bindings, script );
+        final Bindings exports = this.executor.executeRequire( script );
         return new ScriptExportsImpl( script, this.executor, exports );
     }
 
