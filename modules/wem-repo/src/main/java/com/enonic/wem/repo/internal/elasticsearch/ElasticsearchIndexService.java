@@ -84,9 +84,9 @@ public class ElasticsearchIndexService
         timer.stop();
 
         LOG.info(
-            "ElasticSearch cluster health (timedOut={}, timeOutValue={}, used={}ms): Status={}, nodes={}, active shards={}, indices={}",
-            new Object[]{response.isTimedOut(), timeout, timer.toString(), response.getStatus(), response.getNumberOfNodes(),
-                response.getActiveShards(), response.getIndices().keySet()} );
+            "ElasticSearch cluster '{}' health (timedOut={}, timeOutValue={}, used={}): Status={}, nodes={}, active shards={}, indices={}",
+            new Object[]{response.getClusterName(), response.isTimedOut(), timeout, timer.toString(), response.getStatus(),
+                response.getNumberOfNodes(), response.getActiveShards(), response.getIndices().keySet()} );
 
         return new ClusterHealthStatus( ClusterStatusCode.valueOf( response.getStatus().name() ), response.isTimedOut() );
     }

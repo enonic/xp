@@ -35,14 +35,20 @@ public class EmbeddedElasticsearchServer
 
         this.dataDirectory = dataDirectory;
 
-        ImmutableSettings.Builder testSettings = ImmutableSettings.settingsBuilder().
+        ImmutableSettings.Builder testServerSetup = ImmutableSettings.settingsBuilder().
+            put( "name", "integration-test-node-2" ).
+            put( "client", "false" ).
+            put( "data", "true" ).
+            put( "local", "true" ).
             put( "http.enabled", "false" ).
             put( "path.data", dataDirectory ).
-            put( "gateway.type", "none" );
+            put( "gateway.type", "none" ).
+            put( "cluster.name", "integration-test-cluster" ).
+            put( "discovery.zen.ping.multicast.enabled", "false" );
 
         node = nodeBuilder().
             local( true ).
-            settings( testSettings.build() ).
+            settings( testServerSetup.build() ).
             node();
     }
 
