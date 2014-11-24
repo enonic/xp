@@ -45,7 +45,11 @@ final class ControllerScriptImpl
             return;
         }
 
-        this.scriptExports.executeMethod( methodName, context );
+        final Object result = this.scriptExports.executeMethod( methodName, context );
+        if ( result != null )
+        {
+            this.scriptExports.applyToBean( context.getResponse(), result );
+        }
     }
 
     private void methodNotAllowed( final PortalContext context )

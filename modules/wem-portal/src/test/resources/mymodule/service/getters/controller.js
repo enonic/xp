@@ -20,5 +20,7 @@ exports.get = function (context) {
     body += ',' + getPageTemplateKey(context);
     body += ',' + getThumbnailSize(context);
 
-    context.response.body = body;
+    return {
+        body: body
+    };
 };
