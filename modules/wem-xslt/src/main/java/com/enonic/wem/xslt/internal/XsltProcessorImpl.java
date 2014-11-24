@@ -144,6 +144,7 @@ final class XsltProcessorImpl
         throws Exception
     {
         this.factory.setErrorListener( this.errors );
+        this.factory.setURIResolver( new UriResolverImpl() );
         this.transformer = this.factory.newTransformer( this.xsltSource );
         this.transformer.setErrorListener( this.errors );
         this.transformer.setOutputProperty( OutputKeys.OMIT_XML_DECLARATION, "yes" );
