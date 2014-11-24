@@ -1,11 +1,26 @@
-var assert = Java.type('org.junit.Assert');
-var view = resolve('view/test.html');
+exports.render_no_view = function () {
 
-var html = execute('mustache.render', {
-    view: view,
-    parameters: {
-        name: 'Steve'
-    }
-});
+    return execute('mustache.render', {});
 
-assert.assertEquals('<div>Hello Steve!</div>', html);
+};
+
+exports.render = function () {
+
+    var view = resolve('view/test.html');
+    return execute('mustache.render', {
+        view: view,
+        model: {
+            fruits: [
+                {
+                    name: 'Apple',
+                    color: 'Red'
+                },
+                {
+                    name: 'Pear',
+                    color: 'Green'
+                }
+            ]
+        }
+    });
+
+};

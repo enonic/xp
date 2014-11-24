@@ -1,9 +1,16 @@
-package com.enonic.wem.thymeleaf.internal;
+package com.enonic.wem.mustache.internal;
+
+import java.io.StringReader;
+import java.net.URL;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Joiner;
+import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
 
 import com.enonic.wem.api.resource.ResourceProblemException;
@@ -12,21 +19,21 @@ import com.enonic.wem.script.ScriptExports;
 
 import static org.junit.Assert.*;
 
-public class RenderViewHandler2Test
+public class RenderViewHandlerTest
     extends AbstractScriptTest
 {
     @Before
     public void setUp()
     {
-        final RenderViewHandler2 handler = new RenderViewHandler2();
-        handler.setFactory( new ThymeleafProcessorFactoryImpl() );
+        final RenderViewHandler handler = new RenderViewHandler();
+        handler.setFactory( new MustacheProcessorFactoryImpl() );
         addHandler( handler );
     }
 
     private Object execute( final String method )
         throws Exception
     {
-        final ScriptExports exports = runTestScript( "thymeleaf-v2-test.js" );
+        final ScriptExports exports = runTestScript( "mustache-test.js" );
         return exports.executeMethod( method );
     }
 
@@ -55,12 +62,27 @@ public class RenderViewHandler2Test
         executeException( "render_no_view", "Parameter [view] is required" );
     }
 
+    private String readFile( final String name )
+        throws Exception
+    {
+        final URL url = getClass().getResource( name );
+        return Resources.toString( url, Charsets.UTF_8 );
+    }
+
+    private String stripEmptyLines( final String text )
+        throws Exception
+    {
+        final List<String> lines = CharStreams.readLines( new StringReader( text ) );
+        final List<String> trimmed = lines.stream().filter( str -> str.trim().length() > 0 ).collect( Collectors.toList() );
+        return Joiner.on( '\n' ).join( trimmed );
+    }
+
     @Test
     public void renderTest()
         throws Exception
     {
-        final String result = execute( "render" ).toString();
-        final String expected = Resources.toString( getClass().getResource( "/view/view-v2-result.html" ), Charsets.UTF_8 );
+        final String result = stripEmptyLines( execute( "render" ).toString() );
+        final String expected = stripEmptyLines( readFile( "/view/view-result.html" ) );
         assertEquals( expected, result );
     }
 }

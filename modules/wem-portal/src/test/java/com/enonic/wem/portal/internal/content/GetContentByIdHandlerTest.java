@@ -17,7 +17,7 @@ import com.enonic.wem.script.AbstractScriptTest;
 import static com.enonic.wem.api.content.Content.newContent;
 import static org.mockito.Matchers.eq;
 
-public class GetContentById2ScriptTest
+public class GetContentByIdHandlerTest
     extends AbstractScriptTest
 {
     private ContentService contentService;
@@ -26,7 +26,7 @@ public class GetContentById2ScriptTest
     public void setUp()
     {
         this.contentService = Mockito.mock( ContentService.class );
-        addHandler( new GetContentByIdHandler2( this.contentService ) );
+        addHandler( new GetContentByIdHandler( this.contentService ) );
     }
 
     @Test
@@ -44,6 +44,6 @@ public class GetContentById2ScriptTest
             build();
         Mockito.when( this.contentService.getById( eq( ContentId.from( "123" ) ) ) ).thenReturn( content );
 
-        runTestScript( "getContentById-v2-test.js" );
+        runTestScript( "getContentById-test.js" );
     }
 }

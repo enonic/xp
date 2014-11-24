@@ -19,7 +19,7 @@ import com.enonic.wem.script.AbstractScriptTest;
 import static com.enonic.wem.api.content.Content.newContent;
 import static org.mockito.Matchers.anyObject;
 
-public class FindContentByParentScriptTest
+public class FindContentByParentHandlerTest
     extends AbstractScriptTest
 {
     private ContentService contentService;

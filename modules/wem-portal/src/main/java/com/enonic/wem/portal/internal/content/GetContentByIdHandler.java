@@ -1,15 +1,12 @@
 package com.enonic.wem.portal.internal.content;
 
-import com.google.common.base.Preconditions;
-
-import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentService;
-import com.enonic.wem.portal.content.GetContentById;
-import com.enonic.wem.script.command.CommandHandler;
+import com.enonic.wem.script.command.CommandHandler2;
+import com.enonic.wem.script.command.CommandRequest;
 
 public final class GetContentByIdHandler
-    implements CommandHandler<GetContentById>
+    implements CommandHandler2
 {
     private final ContentService contentService;
 
@@ -19,23 +16,15 @@ public final class GetContentByIdHandler
     }
 
     @Override
-    public Class<GetContentById> getType()
+    public String getName()
     {
-        return GetContentById.class;
+        return "content.getById";
     }
 
     @Override
-    public GetContentById newCommand()
+    public Object execute( final CommandRequest req )
     {
-        return new GetContentById();
-    }
-
-    @Override
-    public void invoke( final GetContentById command )
-    {
-        Preconditions.checkNotNull( command.getId(), "id is required" );
-        final ContentId contentId = ContentId.from( command.getId() );
-        final Content content = contentService.getById( contentId );
-        command.setResult( content );
+        final ContentId contentId = req.param( "id" ).required().value( ContentId.class );
+        return this.contentService.getById( contentId );
     }
 }

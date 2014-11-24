@@ -19,7 +19,7 @@ import com.enonic.wem.script.ScriptExports;
 
 import static org.junit.Assert.*;
 
-public class RenderViewHandler2Test
+public class RenderViewHandlerTest
     extends AbstractScriptTest
 {
     @Before
@@ -35,7 +35,7 @@ public class RenderViewHandler2Test
 
         PortalContextAccessor.set( portalContext );
 
-        final RenderViewHandler2 handler = new RenderViewHandler2();
+        final RenderViewHandler handler = new RenderViewHandler();
         handler.setFactory( new XsltProcessorFactoryImpl() );
         addHandler( handler );
     }
@@ -43,7 +43,7 @@ public class RenderViewHandler2Test
     private Object execute( final String method )
         throws Exception
     {
-        final ScriptExports exports = runTestScript( "xslt-v2-test.js" );
+        final ScriptExports exports = runTestScript( "xslt-test.js" );
         return exports.executeMethod( method );
     }
 
@@ -77,7 +77,7 @@ public class RenderViewHandler2Test
         throws Exception
     {
         final String result = cleanupXml( execute( "render" ).toString() );
-        final String expected = cleanupXml( Resources.toString( getClass().getResource( "/view/test-v2-result.xml" ), Charsets.UTF_8 ) );
+        final String expected = cleanupXml( Resources.toString( getClass().getResource( "/view/test-result.xml" ), Charsets.UTF_8 ) );
         assertEquals( expected, result );
     }
 

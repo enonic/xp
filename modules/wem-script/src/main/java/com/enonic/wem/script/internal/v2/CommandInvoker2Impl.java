@@ -38,7 +38,7 @@ public final class CommandInvoker2Impl
             return invoke( handler, req );
         }
 
-        throw new IllegalArgumentException( String.format( "Command [%s] not found", name ) );
+        throw new IllegalArgumentException( String.format( "Command [%s] not found", name ) );
     }
 
     private Object invoke( final CommandHandler2 handler, final CommandRequest req )

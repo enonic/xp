@@ -13,16 +13,4 @@
     </bean>
   </service>
 
-  <service auto-export="interfaces">
-    <bean class="com.enonic.wem.portal.internal.content.FindContentByParentHandler2">
-      <argument index="0" ref="contentService"/>
-    </bean>
-  </service>
-
-  <service auto-export="interfaces">
-    <bean class="com.enonic.wem.portal.internal.content.GetContentByIdHandler2">
-      <argument index="0" ref="contentService"/>
-    </bean>
-  </service>
-
 </blueprint>

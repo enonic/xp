@@ -37,7 +37,7 @@ public final class ExecuteFunction
     {
         if ( args.length != 2 )
         {
-            throw new IllegalArgumentException( "execute2(..) must have two parameters" );
+            throw new IllegalArgumentException( "execute(..) must have two parameters" );
         }
 
         final String name = args[0].toString();
@@ -52,6 +52,6 @@ public final class ExecuteFunction
 
     public void register( final Bindings bindings )
     {
-        bindings.put( "execute2", this );
+        bindings.put( "execute", this );
     }
 }

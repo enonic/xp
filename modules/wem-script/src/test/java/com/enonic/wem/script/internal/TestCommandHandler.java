@@ -1,26 +1,25 @@
 package com.enonic.wem.script.internal;
 
-import com.enonic.wem.script.command.CommandHandler;
+import java.util.function.Function;
+
+import com.enonic.wem.script.command.CommandHandler2;
+import com.enonic.wem.script.command.CommandRequest;
 
 public final class TestCommandHandler
-    implements CommandHandler<TestCommand>
+    implements CommandHandler2
 {
     @Override
-    public Class<TestCommand> getType()
+    public String getName()
     {
-        return TestCommand.class;
+        return "test.command";
     }
 
     @Override
-    public TestCommand newCommand()
+    public Object execute( final CommandRequest req )
     {
-        return new TestCommand();
-    }
+        final String name = req.param( "name" ).value( String.class );
+        final Function<Object, Object> transform = req.param( "transform" ).callback();
 
-    @Override
-    public void invoke( final TestCommand command )
-    {
-        final String result = command.getTransform().apply( command.getName() ).toString();
-        command.setResult( result );
+        return transform.apply( name ).toString();
     }
 }

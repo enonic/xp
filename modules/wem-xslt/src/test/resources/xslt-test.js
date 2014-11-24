@@ -1,10 +1,26 @@
-var assert = Java.type('org.junit.Assert');
-var view = resolve('view/test.xsl');
+exports.render_no_view = function () {
 
-var html = execute('xslt.render', {
-    view: view,
-    inputXml: '<input/>',
-    parameters: {}
-});
+    return execute('xslt.render', {});
 
-assert.assertEquals('<div>Hello</div>', html);
+};
+
+exports.render = function () {
+
+    var view = resolve('view/test.xsl');
+    return execute('xslt.render', {
+        view: view,
+        model: {
+            fruits: [
+                {
+                    name: 'Apple',
+                    color: 'Red'
+                },
+                {
+                    name: 'Pear',
+                    color: 'Green'
+                }
+            ]
+        }
+    });
+
+};

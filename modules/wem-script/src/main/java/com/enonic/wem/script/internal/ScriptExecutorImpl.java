@@ -18,7 +18,6 @@ import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceProblemException;
 import com.enonic.wem.api.util.Exceptions;
-import com.enonic.wem.script.command.CommandInvoker;
 import com.enonic.wem.script.command.CommandInvoker2;
 import com.enonic.wem.script.internal.logger.ScriptLogger;
 import com.enonic.wem.script.internal.v2.ExecuteFunction;
@@ -34,16 +33,13 @@ final class ScriptExecutorImpl
 
     private final String globalScript;
 
-    private final CommandInvoker invoker;
-
     private final CommandInvoker2 invoker2;
 
-    public ScriptExecutorImpl( final ScriptEngine engine, final CommandInvoker invoker, final CommandInvoker2 invoker2 )
+    public ScriptExecutorImpl( final ScriptEngine engine, final CommandInvoker2 invoker2 )
     {
         this.engine = engine;
         this.invocable = (Invocable) this.engine;
         this.globalScript = loadScript( GLOBAL_SCRIPT );
-        this.invoker = invoker;
         this.invoker2 = invoker2;
     }
 
@@ -105,12 +101,6 @@ final class ScriptExecutorImpl
         {
             throw handleException( e );
         }
-    }
-
-    @Override
-    public CommandInvoker getInvoker()
-    {
-        return this.invoker;
     }
 
     private RuntimeException handleException( final Exception e )
