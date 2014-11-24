@@ -13,6 +13,7 @@ import java.util.Set;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.wem.api.util.GeoPoint;
+import com.enonic.wem.api.util.Reference;
 
 public final class PropertySet
 {
@@ -583,6 +584,7 @@ public final class PropertySet
         }
         return properties;
     }
+
     // setting xml
 
     public Property setXml( final String path, final String value )
@@ -903,6 +905,37 @@ public final class PropertySet
         return properties;
     }
 
+    // setting reference
+    public Property setReference( final String path, final Reference value )
+    {
+        return this.setProperty( PropertyPath.from( path ), Value.newReference( value ) );
+    }
+
+    public Property setReference( final PropertyPath path, final Reference value )
+    {
+        return this.setProperty( path, Value.newReference( value ) );
+    }
+
+    public Property setReference( final String name, final int index, final Reference value )
+    {
+        return this.setProperty( name, index, Value.newReference( value ) );
+    }
+
+    public Property addReference( final String name, final Reference value )
+    {
+        return this.addProperty( name, Value.newReference( value ) );
+    }
+
+    public Property[] addReferences( final String name, final Reference... values )
+    {
+        final Property[] properties = new Property[values.length];
+        for ( int i = 0; i < values.length; i++ )
+        {
+            properties[i] = this.addProperty( name, Value.newReference( values[i] ) );
+        }
+        return properties;
+    }
+
     // Typed methods for getting Property value
 
     // getting property set
@@ -1075,6 +1108,35 @@ public final class PropertySet
         for ( final Property property : getProperties( name ) )
         {
             stringsBuilder.add( property.getGeoPoint() );
+        }
+        return stringsBuilder.build();
+    }
+
+    // getting reference
+
+    public Reference getReference( final String name, final int index )
+    {
+        final Property property = this.getProperty( name, index );
+        return property != null ? property.getValue().asReference() : null;
+    }
+
+    public Reference getReference( final PropertyPath path )
+    {
+        final Property property = this.getProperty( path );
+        return property != null ? property.getValue().asReference() : null;
+    }
+
+    public Reference getReference( final String path )
+    {
+        return getReference( PropertyPath.from( path ) );
+    }
+
+    public Iterable<Reference> getReferences( final String name )
+    {
+        final ImmutableList.Builder<Reference> stringsBuilder = new ImmutableList.Builder<>();
+        for ( final Property property : getProperties( name ) )
+        {
+            stringsBuilder.add( property.getReference() );
         }
         return stringsBuilder.build();
     }

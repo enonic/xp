@@ -12,6 +12,7 @@ import java.time.temporal.ChronoUnit;
 
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.util.GeoPoint;
+import com.enonic.wem.api.util.Reference;
 
 final class JavaTypeConverters
 {
@@ -53,6 +54,8 @@ final class JavaTypeConverters
     public final static JavaTypeConverter<LocalTime> LOCAL_TIME = newLocalTime();
 
     public final static JavaTypeConverter<GeoPoint> GEO_POINT = newGeoPoint();
+
+    public final static JavaTypeConverter<Reference> REFERENCE = newReference();
 
     private static String convertToString( final Object value )
     {
@@ -106,7 +109,6 @@ final class JavaTypeConverters
         boolean ret = true;
         try
         {
-
             Double.parseDouble( strNum );
 
         }
@@ -312,6 +314,22 @@ final class JavaTypeConverters
         }
     }
 
+    private static Reference convertToReference( final Object value )
+    {
+        if ( value instanceof Reference )
+        {
+            return (Reference) value;
+        }
+        else if ( value instanceof String )
+        {
+            return Reference.from( (String) value );
+        }
+        else
+        {
+            return null;
+        }
+    }
+
     private static JavaTypeConverter<String> newString()
     {
         return new JavaTypeConverter<>( String.class, JavaTypeConverters::convertToString );
@@ -362,9 +380,13 @@ final class JavaTypeConverters
         return new JavaTypeConverter<>( LocalTime.class, JavaTypeConverters::convertToLocalTime );
     }
 
-
     private static JavaTypeConverter<GeoPoint> newGeoPoint()
     {
         return new JavaTypeConverter<>( GeoPoint.class, JavaTypeConverters::convertToGeoPoint );
+    }
+
+    private static JavaTypeConverter<Reference> newReference()
+    {
+        return new JavaTypeConverter<>( Reference.class, JavaTypeConverters::convertToReference );
     }
 }

@@ -112,18 +112,6 @@ public abstract class Value
     }
 
     /**
-     * Attempts to return value as com.enonic.wem.api.content.ContentId, using best effort converting if value is not of type com.enonic.wem.api.content.ContentId.
-     */
-    public com.enonic.wem.api.content.ContentId asContentId()
-    {
-        if ( object == null )
-        {
-            return null;
-        }
-        return ValueTypes.CONTENT_ID.convert( object );
-    }
-
-    /**
      * Attempts to return value as Long, using best effort converting if value is not of type Long.
      */
     public java.lang.Long asLong()
@@ -209,6 +197,19 @@ public abstract class Value
         }
         return ValueTypes.GEO_POINT.convert( object );
     }
+
+    /**
+     * Attempts to return value as Reference, using best effort converting if value is not of type Reference.
+     */
+    public com.enonic.wem.api.util.Reference asReference()
+    {
+        if ( object == null )
+        {
+            return null;
+        }
+        return ValueTypes.REFERENCE.convert( object );
+    }
+
 
     /**
      * Ensures a copy is done of this value. Objects could be reused if they are of immutable classes.
@@ -308,10 +309,11 @@ public abstract class Value
         return new GeoPoint( value );
     }
 
-    public static Value newContentId( final com.enonic.wem.api.content.ContentId value )
+    public static Value newReference( final com.enonic.wem.api.util.Reference value )
     {
-        return new ContentId( value );
+        return new Reference( value );
     }
+
 
     public static Value newData( final com.enonic.wem.api.data2.PropertySet value )
     {
@@ -495,23 +497,30 @@ public abstract class Value
         }
     }
 
-    static class ContentId
+
+    static class Reference
         extends Value
     {
-        ContentId( final com.enonic.wem.api.content.ContentId value )
+        Reference( final com.enonic.wem.api.util.Reference value )
         {
-            super( ValueTypes.CONTENT_ID, value );
+            super( ValueTypes.REFERENCE, value );
         }
 
-        ContentId( final ContentId source )
+        Reference( final Reference source )
         {
-            super( ValueTypes.CONTENT_ID, source.getObject() );
+            super( ValueTypes.REFERENCE, source.getObject() );
         }
 
         @Override
         Value copy( final PropertyTree tree )
         {
-            return new ContentId( this );
+            return new Reference( this );
+        }
+
+        @Override
+        Object toJsonValue()
+        {
+            return asString();
         }
     }
 

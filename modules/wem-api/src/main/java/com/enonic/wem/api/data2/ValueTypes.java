@@ -9,8 +9,8 @@ import java.util.Map;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.util.GeoPoint;
+import com.enonic.wem.api.util.Reference;
 
 public final class ValueTypes
 {
@@ -30,13 +30,13 @@ public final class ValueTypes
 
     public static final ValueType<Instant> DATE_TIME = new ValueType.DateTime();
 
-    public static final ValueType<ContentId> CONTENT_ID = new ValueType.ContentId();
-
     public static final ValueType<Long> LONG = new ValueType.Long();
 
     public static final ValueType<Double> DOUBLE = new ValueType.Double();
 
     public static final ValueType<GeoPoint> GEO_POINT = new ValueType.GeoPoint();
+
+    public static final ValueType<Reference> REFERENCE = new ValueType.Reference();
 
     public static final ValueType<Boolean> BOOLEAN = new ValueType.Boolean();
 
@@ -52,11 +52,11 @@ public final class ValueTypes
         register( LOCAL_TIME );
         register( LOCAL_DATE_TIME );
         register( DATE_TIME );
-        register( CONTENT_ID );
         register( LONG );
         register( DOUBLE );
         register( GEO_POINT );
         register( BOOLEAN );
+        register( REFERENCE );
     }
 
     private static void register( ValueType valueType )

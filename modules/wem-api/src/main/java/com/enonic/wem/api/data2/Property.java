@@ -10,6 +10,7 @@ import java.util.Objects;
 import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.api.util.GeoPoint;
+import com.enonic.wem.api.util.Reference;
 
 public final class Property
 {
@@ -139,6 +140,11 @@ public final class Property
     public GeoPoint getGeoPoint()
     {
         return value.asGeoPoint();
+    }
+
+    public Reference getReference()
+    {
+        return value.asReference();
     }
 
     public LocalDate getLocalDate()

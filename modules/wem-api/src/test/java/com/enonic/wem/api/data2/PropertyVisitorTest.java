@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.junit.Test;
 
+import com.enonic.wem.api.util.Reference;
+
 import static junit.framework.Assert.assertEquals;
 
 public class PropertyVisitorTest
@@ -104,4 +106,39 @@ public class PropertyVisitorTest
         assertEquals( "myDate", hits.get( 0 ).getPath().toString() );
         assertEquals( "mySet.myDate", hits.get( 1 ).getPath().toString() );
     }
+
+    @Test
+    public void traverse_with_restriction_on_ValueType_Reference()
+    {
+        final List<Property> hits = new ArrayList<>();
+
+        final PropertyVisitor propertyVisitor = new PropertyVisitor()
+        {
+            @Override
+            public void visit( final Property reference )
+            {
+                hits.add( reference );
+            }
+        };
+        propertyVisitor.restrictType( ValueTypes.REFERENCE );
+
+        PropertyTree propertyTree = new PropertyTree();
+        propertyTree.addString( "myText", "abc" );
+        propertyTree.addLocalDate( "myDate", LocalDate.now() );
+        propertyTree.addReference( "myRef", Reference.from( "nodeId-1" ) );
+
+        PropertySet mySet = propertyTree.addSet( "mySet" );
+        mySet.addString( "myText", "abc" );
+        mySet.addLocalDate( "myDate", LocalDate.now() );
+        mySet.addReference( "myRef", Reference.from( "nodeId-2" ) );
+
+        // exercise
+        propertyVisitor.traverse( propertyTree );
+
+        // verify
+        assertEquals( 2, hits.size() );
+        assertEquals( "myRef", hits.get( 0 ).getPath().toString() );
+        assertEquals( "mySet.myRef", hits.get( 1 ).getPath().toString() );
+    }
+
 }

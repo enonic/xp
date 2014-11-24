@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import com.enonic.wem.api.support.JsonTestHelper;
 import com.enonic.wem.api.util.GeoPoint;
+import com.enonic.wem.api.util.Reference;
 
 import static org.junit.Assert.*;
 
@@ -38,6 +39,7 @@ public class PropertyTreeJsonTest
         tree.addLocalDateTime( "singleLocalDateTime", LocalDateTime.of( 2006, 1, 8, 12, 0, 0 ) );
         tree.addLocalTime( "singleLocalTime", LocalTime.of( 12, 0, 0 ) );
         tree.addInstant( "singleInstant", Instant.parse( "2007-12-03T10:15:30.00Z" ) );
+        tree.addReference( "reference", Reference.from( "my-node-id" ) );
         PropertySet singleSet = tree.addSet( "singleSet" );
         singleSet.addLong( "long", 1L );
         PropertySet setWithinSet = singleSet.addSet( "setWithinSet" );
@@ -53,6 +55,7 @@ public class PropertyTreeJsonTest
         tree.addLocalDateTimes( "arrayLocalDateTimes", LocalDateTime.of( 2006, 1, 8, 12, 0, 0 ),
                                 LocalDateTime.of( 2015, 1, 31, 12, 0, 0 ) );
         tree.addGeoPoints( "arrayGeoPoint", GeoPoint.from( "1.1,-2.2" ), GeoPoint.from( "-2.2,1.1" ) );
+        tree.addReferences( "references", Reference.from( "my-node-id-1" ), Reference.from( "my-node-id-2" ) );
         PropertySet arraySet1 = tree.addSet( "arraySet" );
         arraySet1.addString( "string", "a" );
         arraySet1.addLongs( "long", 1L, 2L );
@@ -106,6 +109,7 @@ public class PropertyTreeJsonTest
         assertEquals( GeoPoint.from( "1.1,-2.2" ), tree.getGeoPoint( "singleGeoPoint" ) );
         assertEquals( LocalDate.of( 2006, 1, 8 ), tree.getLocalDate( "singleLocalDate" ) );
         assertEquals( LocalDateTime.of( 2006, 1, 8, 12, 0, 0 ), tree.getLocalDateTime( "singleLocalDateTime" ) );
+        assertEquals( Reference.from( "my-node-id" ), tree.getReference( "reference" ) );
 
         assertEquals( "a", tree.getString( "arrayString" ) );
         assertEquals( "b", tree.getString( "arrayString[1]" ) );
