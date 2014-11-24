@@ -81,8 +81,6 @@ public class SecurityServiceImplTest
         this.queryService = new ElasticsearchQueryService();
         this.queryService.setElasticsearchDao( elasticsearchDao );
 
-        waitForClusterHealth();
-
         this.nodeService = new NodeServiceImpl();
         this.nodeService.setIndexService( indexService );
         this.nodeService.setQueryService( queryService );
@@ -94,6 +92,7 @@ public class SecurityServiceImplTest
         securityService.setNodeService( this.nodeService );
 
         createRepository( SystemConstants.SYSTEM_REPO );
+        waitForClusterHealth();
     }
 
     void createRepository( final Repository repository )
