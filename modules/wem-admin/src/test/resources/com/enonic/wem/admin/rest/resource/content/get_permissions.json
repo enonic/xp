@@ -3,23 +3,23 @@
     {
       "allow": [
         "READ",
-        "PUBLISH"
-      ],
-      "deny": [],
-      "principal": {
-        "displayName": "User 1",
-        "key": "system:user:user1"
-      }
-    },
-    {
-      "allow": [
-        "READ",
         "CREATE"
       ],
       "deny": ["DELETE"],
       "principal": {
         "displayName": "anonymous",
-        "key": "system:user:anonymous"
+        "key": "user:system:anonymous"
+      }
+    },
+    {
+      "allow": [
+        "READ",
+        "PUBLISH"
+      ],
+      "deny": [],
+      "principal": {
+        "displayName": "User 1",
+        "key": "user:system:user1"
       }
     }
   ],
@@ -33,7 +33,7 @@
       "deny": ["PUBLISH"],
       "principal": {
         "displayName": "User 2",
-        "key": "system:user:user2"
+        "key": "user:system:user2"
       }
     }
   ]

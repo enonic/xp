@@ -42,14 +42,14 @@ public class ElasticsearchQueryServiceTest
         final IndexContext indexContext = IndexContext.create().
             workspace( ContentConstants.WORKSPACE_STAGE ).
             repositoryId( ContentConstants.CONTENT_REPO.getId() ).
-            principalsKeys( PrincipalKeys.from( PrincipalKey.from( "system:user:rmy" ) ) ).
+            principalsKeys( PrincipalKeys.from( PrincipalKey.from( "user:system:rmy" ) ) ).
             build();
 
         final Node node = createNode( CreateNodeParams.create().
             name( "my-node" ).
             parent( NodePath.ROOT ).
             accessControlList( AccessControlList.of( AccessControlEntry.create().
-                principal( PrincipalKey.from( "system:user:rmy" ) ).
+                principal( PrincipalKey.from( "user:system:rmy" ) ).
                 allow( Permission.READ ).
                 build() ) ).
             build() );
@@ -91,14 +91,14 @@ public class ElasticsearchQueryServiceTest
         final IndexContext indexContext = IndexContext.create().
             workspace( ContentConstants.WORKSPACE_STAGE ).
             repositoryId( ContentConstants.CONTENT_REPO.getId() ).
-            principalsKeys( PrincipalKeys.from( PrincipalKey.from( "system:user:rmy" ), PrincipalKey.from( "system:group:mygroup" ) ) ).
+            principalsKeys( PrincipalKeys.from( PrincipalKey.from( "user:system:rmy" ), PrincipalKey.from( "group:system:mygroup" ) ) ).
             build();
 
         final Node node = createNode( CreateNodeParams.create().
             name( "my-node" ).
             parent( NodePath.ROOT ).
             accessControlList( AccessControlList.of( AccessControlEntry.create().
-                principal( PrincipalKey.from( "system:group:mygroup" ) ).
+                principal( PrincipalKey.from( "group:system:mygroup" ) ).
                 allow( Permission.READ ).
                 build() ) ).
             build() );
@@ -115,14 +115,14 @@ public class ElasticsearchQueryServiceTest
         final IndexContext indexContext = IndexContext.create().
             workspace( ContentConstants.WORKSPACE_STAGE ).
             repositoryId( ContentConstants.CONTENT_REPO.getId() ).
-            principalsKeys( PrincipalKeys.from( PrincipalKey.from( "system:user:rmy" ) ) ).
+            principalsKeys( PrincipalKeys.from( PrincipalKey.from( "user:system:rmy" ) ) ).
             build();
 
         final Node node = createNode( CreateNodeParams.create().
             name( "my-node" ).
             parent( NodePath.ROOT ).
             accessControlList( AccessControlList.of( AccessControlEntry.create().
-                principal( PrincipalKey.from( "system:user:rmy" ) ).
+                principal( PrincipalKey.from( "user:system:rmy" ) ).
                 allow( Permission.DELETE ).
                 build() ) ).
             build() );
@@ -139,7 +139,7 @@ public class ElasticsearchQueryServiceTest
         final IndexContext indexContext = IndexContext.create().
             workspace( ContentConstants.WORKSPACE_STAGE ).
             repositoryId( ContentConstants.CONTENT_REPO.getId() ).
-            principalsKeys( PrincipalKeys.from( PrincipalKey.from( "system:user:rmy" ) ) ).
+            principalsKeys( PrincipalKeys.from( PrincipalKey.from( "user:system:rmy" ) ) ).
             build();
 
         final Node node = createNode( CreateNodeParams.create().

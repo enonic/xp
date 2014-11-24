@@ -20,30 +20,44 @@ module api.security {
             }
 
             var sepIndex: number = str.indexOf(PrincipalKey.SEPARATOR);
-            if (sepIndex == -1) {
+            if (sepIndex === -1) {
                 throw new Error("Not a valid principal key [" + str + "]");
             }
             var sepIndex2: number = str.indexOf(PrincipalKey.SEPARATOR, sepIndex + 1);
-            if (sepIndex2 == -1) {
-                throw new Error("Not a valid principal key [" + str + "]");
-            }
-            var userStore = str.substring(0, sepIndex);
-            var typeStr = str.substring(sepIndex + 1, sepIndex2) || '';
-            var type: PrincipalType = PrincipalType[typeStr.toUpperCase()];
-            var principalId = str.substring(sepIndex2 + 1, str.length);
 
-            return new PrincipalKey(new UserStoreKey(userStore), type, principalId);
+            var typeStr = str.substring(0, sepIndex);
+            var type: PrincipalType = PrincipalType[typeStr.toUpperCase()];
+
+            if (type === PrincipalType.ROLE) {
+                var principalId = str.substring(sepIndex + 1, str.length) || '';
+                return new PrincipalKey(null, type, principalId);
+
+            } else {
+                if (sepIndex2 === -1) {
+                    throw new Error("Not a valid principal key [" + str + "]");
+                }
+
+                var userStore = str.substring(sepIndex + 1, sepIndex2) || '';
+                var principalId = str.substring(sepIndex2 + 1, str.length);
+
+                return new PrincipalKey(new UserStoreKey(userStore), type, principalId);
+            }
         }
 
         constructor(userStore: UserStoreKey, type: PrincipalType, principalId: string) {
-            api.util.assertNotNull(userStore, "Principal user store cannot be null");
+            api.util.assert(( type === PrincipalType.ROLE ) || (!!userStore), "Principal user store cannot be null");
             api.util.assertNotNull(type, "Principal type cannot be null");
             api.util.assert(!api.util.StringHelper.isBlank(principalId), "Principal id cannot be null or empty");
             this.userStore = userStore;
             this.type = type;
             this.principalId = principalId;
-            this.refString =
-            userStore.toString() + PrincipalKey.SEPARATOR + PrincipalType[type].toLowerCase() + PrincipalKey.SEPARATOR + principalId;
+            if (type === PrincipalType.ROLE) {
+                this.refString =
+                PrincipalType[type].toLowerCase() + PrincipalKey.SEPARATOR + principalId;
+            } else {
+                this.refString =
+                PrincipalType[type].toLowerCase() + PrincipalKey.SEPARATOR + userStore.toString() + PrincipalKey.SEPARATOR + principalId;
+            }
         }
 
         getUserStore(): UserStoreKey {

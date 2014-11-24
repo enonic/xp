@@ -31,7 +31,7 @@ public class StoreNodeCommandTest
                     allow( Permission.READ ).
                     allow( Permission.CREATE ).
                     allow( Permission.DELETE ).
-                    principal( PrincipalKey.from( "myuserstore:user:rmy" ) ).
+                    principal( PrincipalKey.from( "user:myuserstore:rmy" ) ).
                     build() ).
                 build() ).
             childOrder( ChildOrder.from( "name DESC" ) ).

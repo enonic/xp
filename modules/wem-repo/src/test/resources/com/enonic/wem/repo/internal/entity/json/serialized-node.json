@@ -1,14 +1,14 @@
 {
   "accessControlList": [
     {
-      "allow": ["MODIFY"],
-      "deny": ["PUBLISH"],
-      "principal": "system:user:user1"
-    },
-    {
       "allow": ["READ"],
       "deny": ["DELETE"],
-      "principal": "system:user:anonymous"
+      "principal": "user:system:anonymous"
+    },
+    {
+      "allow": ["MODIFY"],
+      "deny": ["PUBLISH"],
+      "principal": "user:system:user1"
     }
   ],
   "attachments": [
@@ -21,7 +21,7 @@
   ],
   "childOrder": "modifiedTime ASC, displayName DESC",
   "createdTime": "2013-01-02T03:04:05Z",
-  "creator": "test:user:creator",
+  "creator": "user:test:creator",
   "data": {
     "set": [
       {
@@ -70,18 +70,6 @@
   },
   "effectiveAccessControlList": [
     {
-      "allow": ["MODIFY"],
-      "deny": [
-        "READ",
-        "CREATE",
-        "DELETE",
-        "PUBLISH",
-        "READ_PERMISSIONS",
-        "WRITE_PERMISSIONS"
-      ],
-      "principal": "system:user:user1"
-    },
-    {
       "allow": ["READ"],
       "deny": [
         "CREATE",
@@ -91,7 +79,19 @@
         "READ_PERMISSIONS",
         "WRITE_PERMISSIONS"
       ],
-      "principal": "system:user:anonymous"
+      "principal": "user:system:anonymous"
+    },
+    {
+      "allow": ["MODIFY"],
+      "deny": [
+        "READ",
+        "CREATE",
+        "DELETE",
+        "PUBLISH",
+        "READ_PERMISSIONS",
+        "WRITE_PERMISSIONS"
+      ],
+      "principal": "user:system:user1"
     }
   ],
   "id": "myId",
@@ -119,9 +119,8 @@
   },
   "manualOrderValue": null,
   "modifiedTime": "2013-01-02T03:04:05Z",
-  "modifier": "test:user:modifier",
+  "modifier": "user:test:modifier",
   "name": "my-name",
   "parent": "/",
   "path": "/my-name"
 }
-

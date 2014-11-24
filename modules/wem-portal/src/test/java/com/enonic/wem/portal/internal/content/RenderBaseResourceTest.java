@@ -107,9 +107,9 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
         final Content.Builder content = Content.newContent().
             id( ContentId.from( id ) ).
             path( ContentPath.from( path ) ).
-            owner( PrincipalKey.from( "myStore:user:me" ) ).
+            owner( PrincipalKey.from( "user:myStore:me" ) ).
             displayName( "My Content" ).
-            modifier( PrincipalKey.from( "system:user:admin" ) ).
+            modifier( PrincipalKey.from( "user:system:admin" ) ).
             type( ContentTypeName.from( contentTypeName ) );
 
         if ( withPage )
@@ -146,9 +146,9 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
         return Site.newSite().
             id( ContentId.from( id ) ).
             path( ContentPath.from( path ) ).
-            owner( PrincipalKey.from( "myStore:user:me" ) ).
+            owner( PrincipalKey.from( "user:myStore:me" ) ).
             displayName( "My Content" ).
-            modifier( PrincipalKey.from( "system:user:admin" ) ).
+            modifier( PrincipalKey.from( "user:system:admin" ) ).
             type( ContentTypeName.from( contentTypeName ) ).
             page( page ).
             build();

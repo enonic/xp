@@ -2,8 +2,6 @@ package com.enonic.wem.repo.internal.entity;
 
 import java.time.Instant;
 
-import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.repo.internal.index.query.QueryService;
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
 import com.enonic.wem.api.node.Node;
@@ -13,6 +11,8 @@ import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.Nodes;
 import com.enonic.wem.api.node.RenameNodeParams;
+import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.repo.internal.index.query.QueryService;
 
 public final class RenameNodeCommand
     extends AbstractNodeCommand
@@ -110,7 +110,7 @@ public final class RenameNodeCommand
             name( newNodeName ).
             parent( newParentPath ).
             modifiedTime( now ).
-            modifier( PrincipalKey.from( "system:user:admin" ) ).
+            modifier( PrincipalKey.from( "user:system:admin" ) ).
             indexConfigDocument( persistedNode.getIndexConfigDocument() ).
             build();
 

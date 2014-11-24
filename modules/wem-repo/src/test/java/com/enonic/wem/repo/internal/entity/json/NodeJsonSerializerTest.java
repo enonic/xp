@@ -16,6 +16,12 @@ import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
+import com.enonic.wem.api.node.Attachment;
+import com.enonic.wem.api.node.Attachments;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodeName;
+import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.query.expr.FieldOrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.security.PrincipalKey;
@@ -23,13 +29,6 @@ import com.enonic.wem.api.security.UserStoreKey;
 import com.enonic.wem.api.security.acl.AccessControlEntry;
 import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.security.acl.Permission;
-import com.enonic.wem.api.node.Attachment;
-import com.enonic.wem.api.node.Attachments;
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeId;
-import com.enonic.wem.api.node.NodeName;
-import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.repo.internal.entity.json.NodeJsonSerializer;
 
 import static org.junit.Assert.*;
 
@@ -72,8 +71,8 @@ public class NodeJsonSerializerTest
             parent( NodePath.ROOT ).
             name( NodeName.from( "my-name" ) ).
             createdTime( dateTime ).
-            creator( PrincipalKey.from( "test:user:creator" ) ).
-            modifier( PrincipalKey.from( "test:user:modifier" ) ).
+            creator( PrincipalKey.from( "user:test:creator" ) ).
+            modifier( PrincipalKey.from( "user:test:modifier" ) ).
             modifiedTime( dateTime ).
             indexConfigDocument( PatternIndexConfigDocument.create().
                 analyzer( "myAnalyzer" ).

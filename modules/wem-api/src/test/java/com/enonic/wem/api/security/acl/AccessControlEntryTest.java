@@ -24,7 +24,7 @@ public class AccessControlEntryTest
             build();
 
         assertEquals( PrincipalKey.ofAnonymous(), ace.getPrincipal() );
-        assertEquals( "system:user:anonymous[+create, -modify, +delete, +read_permissions, -write_permissions]", ace.toString() );
+        assertEquals( "user:system:anonymous[+create, -modify, +delete, +read_permissions, -write_permissions]", ace.toString() );
         assertFalse( ace.isAllowed( Permission.MODIFY ) );
         assertTrue( ace.isDenied( Permission.MODIFY ) );
     }
@@ -37,7 +37,7 @@ public class AccessControlEntryTest
             build();
 
         assertEquals( PrincipalKey.ofAnonymous(), ace.getPrincipal() );
-        assertEquals( "system:user:anonymous[]", ace.toString() );
+        assertEquals( "user:system:anonymous[]", ace.toString() );
         assertTrue( ace.isDenied( Permission.MODIFY ) );
         assertTrue( ace.isDenied( Permission.CREATE ) );
         assertEquals( 0, Iterables.size( ace.getAllowedPermissions() ) );
@@ -89,7 +89,7 @@ public class AccessControlEntryTest
             deny( Permission.CREATE ).
             build();
 
-        assertEquals( "system:user:anonymous[-create, -modify, -delete]", newAce.toString() );
+        assertEquals( "user:system:anonymous[-create, -modify, -delete]", newAce.toString() );
     }
 
 }

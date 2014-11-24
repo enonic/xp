@@ -23,9 +23,9 @@ public class RelationshipTest
         relationBuilder.fromContent( ContentId.from( "a" ) );
         relationBuilder.toContent( ContentId.from( "b" ) );
         relationBuilder.createdTime( LocalDateTime.parse( "2012-01-01T12:00:00" ).toInstant( ZoneOffset.UTC ) );
-        relationBuilder.creator( PrincipalKey.from( "myStore:user:myUser" ) );
+        relationBuilder.creator( PrincipalKey.from( "user:myStore:myUser" ) );
         relationBuilder.modifiedTime( LocalDateTime.parse( "2012-01-01T12:00:00" ).toInstant( ZoneOffset.UTC ) );
-        relationBuilder.modifier( PrincipalKey.from( "myStore:user:myUser" ) );
+        relationBuilder.modifier( PrincipalKey.from( "user:myStore:myUser" ) );
         relationBuilder.type( RelationshipTypeName.from( "system:like" ) );
         relationBuilder.property( "stars", "4" );
 

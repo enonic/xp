@@ -3,7 +3,7 @@
     {
       "childOrder": null,
       "createdTime": "2013-08-23T12:55:09.162Z",
-      "creator": "system:user:admin",
+      "creator": "user:system:admin",
       "deletable": true,
       "displayName": "My Content",
       "editable": true,
@@ -14,9 +14,9 @@
       "isPage": false,
       "isRoot": true,
       "modifiedTime": "2013-08-23T12:55:09.162Z",
-      "modifier": "system:user:admin",
+      "modifier": "user:system:admin",
       "name": "my_a_content",
-      "owner": "myStore:user:me",
+      "owner": "user:myStore:me",
       "path": "/my_a_content",
       "thumbnail": null,
       "type": "mymodule:my_type"
@@ -24,7 +24,7 @@
     {
       "childOrder": null,
       "createdTime": "2013-08-23T12:55:09.162Z",
-      "creator": "system:user:admin",
+      "creator": "user:system:admin",
       "deletable": true,
       "displayName": "My Content",
       "editable": true,
@@ -35,9 +35,9 @@
       "isPage": false,
       "isRoot": true,
       "modifiedTime": "2013-08-23T12:55:09.162Z",
-      "modifier": "system:user:admin",
+      "modifier": "user:system:admin",
       "name": "my_b_content",
-      "owner": "myStore:user:me",
+      "owner": "user:myStore:me",
       "path": "/my_b_content",
       "thumbnail": null,
       "type": "mymodule:my_type"

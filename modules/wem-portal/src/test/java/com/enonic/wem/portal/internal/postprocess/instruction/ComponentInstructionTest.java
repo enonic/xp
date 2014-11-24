@@ -130,9 +130,9 @@ public class ComponentInstructionTest
         return Content.newContent().
             id( ContentId.from( id ) ).
             path( ContentPath.from( name ) ).
-            owner( PrincipalKey.from( "myStore:user:me" ) ).
+            owner( PrincipalKey.from( "user:myStore:me" ) ).
             displayName( "My Content" ).
-            modifier( PrincipalKey.from( "system:user:admin" ) ).
+            modifier( PrincipalKey.from( "user:system:admin" ) ).
             type( ContentTypeName.from( contentTypeName ) ).
             page( page ).
             build();
@@ -153,9 +153,9 @@ public class ComponentInstructionTest
         return Site.newSite().
             id( ContentId.from( id ) ).
             path( ContentPath.from( name ) ).
-            owner( PrincipalKey.from( "myStore:user:me" ) ).
+            owner( PrincipalKey.from( "user:myStore:me" ) ).
             displayName( "My Content" ).
-            modifier( PrincipalKey.from( "system:user:admin" ) ).
+            modifier( PrincipalKey.from( "user:system:admin" ) ).
             type( ContentTypeName.from( contentTypeName ) ).
             page( page ).
             build();

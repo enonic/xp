@@ -18,14 +18,14 @@ import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.index.IndexDocumentItemPath;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
-import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.repo.internal.elasticsearch.document.AbstractStoreDocumentItem;
-import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeVersionId;
+import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.repo.internal.elasticsearch.document.AbstractStoreDocumentItem;
+import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
 import com.enonic.wem.repo.internal.index.IndexValueType;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 
@@ -122,8 +122,8 @@ public class NodeStoreDocumentFactoryTest
             parent( NodePath.ROOT ).
             name( NodeName.from( "my-name" ) ).
             createdTime( Instant.now() ).
-            creator( PrincipalKey.from( "test:user:creator" ) ).
-            modifier( PrincipalKey.from( "test:user:modifier" ) ).
+            creator( PrincipalKey.from( "user:test:creator" ) ).
+            modifier( PrincipalKey.from( "user:test:modifier" ) ).
             modifiedTime( modifiedDateTime ).
             indexConfigDocument( PatternIndexConfigDocument.create().
                 analyzer( myAnalyzerName ).
@@ -146,11 +146,11 @@ public class NodeStoreDocumentFactoryTest
 
         final AbstractStoreDocumentItem creator = getItemWithName( storeDocument, CREATOR_PATH, IndexValueType.STRING );
 
-        assertEquals( "test:user:creator", creator.getValue() );
+        assertEquals( "user:test:creator", creator.getValue() );
 
         final AbstractStoreDocumentItem modifier = getItemWithName( storeDocument, MODIFIER_PATH, IndexValueType.STRING );
 
-        assertEquals( "test:user:modifier", modifier.getValue() );
+        assertEquals( "user:test:modifier", modifier.getValue() );
     }
 
     @Test

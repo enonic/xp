@@ -4,7 +4,7 @@
     "disabled": false,
     "displayName": "User 1",
     "email": "user1@enonic.com",
-    "key": "system:user:user1",
+    "key": "user:system:user1",
     "login": "user1",
     "modifiedTime": "1970-01-01T00:00:00Z"
   }

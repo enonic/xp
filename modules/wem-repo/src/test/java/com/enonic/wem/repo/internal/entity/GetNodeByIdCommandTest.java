@@ -57,7 +57,7 @@ public class GetNodeByIdCommandTest
                     build() ).
                 add( AccessControlEntry.create().
                     allow( Permission.READ ).
-                    principal( PrincipalKey.from( "system:user:rmy" ) ).
+                    principal( PrincipalKey.from( "user:system:rmy" ) ).
                     build() ).
                 build() ).
             build();

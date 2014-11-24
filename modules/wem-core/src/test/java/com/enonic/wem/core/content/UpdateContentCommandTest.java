@@ -60,7 +60,7 @@ public class UpdateContentCommandTest
         final ContentId contentId = ContentId.from( "mycontent" );
 
         UpdateContentParams params = new UpdateContentParams().
-            modifier( PrincipalKey.from( "system:user:admin" ) ).
+            modifier( PrincipalKey.from( "user:system:admin" ) ).
             contentId( contentId ).
             editor( toBeEdited -> editContent( toBeEdited ).contentData( unchangedContentData ) );
 
@@ -95,7 +95,7 @@ public class UpdateContentCommandTest
         unchangedContentData.add( Property.newString( "myData", "aaa" ) );
 
         UpdateContentParams params = new UpdateContentParams().
-            modifier( PrincipalKey.from( "system:user:admin" ) ).
+            modifier( PrincipalKey.from( "user:system:admin" ) ).
             contentId( existingContent.getId() ).
             editor( toBeEdited -> editContent( toBeEdited ).contentData( unchangedContentData ) );
 
@@ -128,7 +128,7 @@ public class UpdateContentCommandTest
             name( "mycontent" ).
             createdTime( CREATED_TIME ).
             displayName( "MyContent" ).
-            owner( PrincipalKey.from( "system:user:admin" ) ).
+            owner( PrincipalKey.from( "user:system:admin" ) ).
             contentData( contentData ).
             build();
     }

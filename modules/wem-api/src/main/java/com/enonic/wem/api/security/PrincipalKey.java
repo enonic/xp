@@ -13,7 +13,7 @@ public final class PrincipalKey
 {
     private final static String SEPARATOR = ":";
 
-    private final static Pattern REF_PATTERN = Pattern.compile( "^([^:]+):(user|group|role):([^:]+)$" );
+    private final static Pattern REF_PATTERN = Pattern.compile( "^(?:(role):([^:]+))|(user|group):([^:]+):([^:]+)$" );
 
     private static final PrincipalKey ANONYMOUS_PRINCIPAL = new PrincipalKey();
 
@@ -27,11 +27,19 @@ public final class PrincipalKey
 
     private PrincipalKey( final UserStoreKey userStore, final PrincipalType type, final String principalId )
     {
-        this.userStore = checkNotNull( userStore, "Principal user store cannot be null" );
+        checkArgument( ( type == PrincipalType.ROLE ) || ( userStore != null ), "Principal user store cannot be null" );
+        this.userStore = userStore;
         this.type = checkNotNull( type, "Principal type cannot be null" );
         checkArgument( !Strings.isNullOrEmpty( principalId ), "Principal id cannot be null or empty" );
         this.principalId = principalId;
-        this.refString = Joiner.on( SEPARATOR ).join( userStore.toString(), type.toString().toLowerCase(), principalId );
+        if ( type == PrincipalType.ROLE )
+        {
+            this.refString = Joiner.on( SEPARATOR ).join( type.toString().toLowerCase(), principalId );
+        }
+        else
+        {
+            this.refString = Joiner.on( SEPARATOR ).join( type.toString().toLowerCase(), userStore.toString(), principalId );
+        }
     }
 
     private PrincipalKey()
@@ -39,7 +47,7 @@ public final class PrincipalKey
         this.userStore = UserStoreKey.system();
         this.type = PrincipalType.USER;
         this.principalId = "anonymous";
-        this.refString = Joiner.on( SEPARATOR ).join( userStore.toString(), type.toString().toLowerCase(), principalId );
+        this.refString = Joiner.on( SEPARATOR ).join( type.toString().toLowerCase(), userStore.toString(), principalId );
     }
 
     public UserStoreKey getUserStore()
@@ -107,20 +115,28 @@ public final class PrincipalKey
             throw new IllegalArgumentException( "Not a valid principal key [" + principalKey + "]" );
         }
 
-        final String userStore = matcher.group( 1 );
-        final UserStoreKey userStoreKey = new UserStoreKey( userStore );
-        final PrincipalType type = PrincipalType.valueOf( matcher.group( 2 ).toUpperCase() );
-        final String id = matcher.group( 3 );
+        final String typeStr;
+        final UserStoreKey userStoreKey;
+        final String id;
+        if ( matcher.group( 1 ) != null )
+        {
+            typeStr = matcher.group( 1 );
+            userStoreKey = null;
+            id = matcher.group( 2 );
+        }
+        else
+        {
+            typeStr = matcher.group( 3 );
+            final String userStore = matcher.group( 4 );
+            userStoreKey = new UserStoreKey( userStore );
+            id = matcher.group( 5 );
+        }
+        final PrincipalType type = PrincipalType.valueOf( typeStr.toUpperCase() );
 
-        return doCreatePrincipalKey( userStoreKey, type, id );
+        return from( userStoreKey, type, id );
     }
 
-    public static PrincipalKey from( final UserStoreKey userStoreKey, final PrincipalType type, final String id )
-    {
-        return doCreatePrincipalKey( userStoreKey, type, id );
-    }
-
-    private static PrincipalKey doCreatePrincipalKey( final UserStoreKey userStoreKey, final PrincipalType type, final String id )
+    private static PrincipalKey from( final UserStoreKey userStoreKey, final PrincipalType type, final String id )
     {
         switch ( type )
         {
@@ -153,6 +169,6 @@ public final class PrincipalKey
 
     public static PrincipalKey ofRole( final String roleId )
     {
-        return new PrincipalKey( UserStoreKey.system(), PrincipalType.ROLE, roleId );
+        return new PrincipalKey( null, PrincipalType.ROLE, roleId );
     }
 }

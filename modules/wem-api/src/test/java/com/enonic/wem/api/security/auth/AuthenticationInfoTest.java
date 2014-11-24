@@ -35,7 +35,7 @@ public class AuthenticationInfoTest
 
         assertEquals( "userlogin", info.getUser().getLogin() );
         assertEquals( "my user", info.getUser().getDisplayName() );
-        assertEquals( PrincipalKey.from( "myuserstore:user:userid" ), info.getUser().getKey() );
+        assertEquals( PrincipalKey.from( "user:myuserstore:userid" ), info.getUser().getKey() );
         assertEquals( 1, info.getPrincipals().getSize() );
         assertEquals( user.getKey(), info.getPrincipals().first() );
         assertFalse( info.hasRole( "userid" ) );
@@ -54,8 +54,8 @@ public class AuthenticationInfoTest
 
         final UserStoreKey userStore = new UserStoreKey( "myStore" );
         final PrincipalKey group1 = PrincipalKey.ofGroup( userStore, "group1" );
-        final PrincipalKey group2 = PrincipalKey.from( "myStore:group:group2" );
-        final PrincipalKey role1 = PrincipalKey.from( "system:role:administrators" );
+        final PrincipalKey group2 = PrincipalKey.from( "group:myStore:group2" );
+        final PrincipalKey role1 = PrincipalKey.from( "role:administrators" );
         final AuthenticationInfo info = AuthenticationInfo.create().
             user( user ).
             principal( group1 ).
@@ -64,9 +64,9 @@ public class AuthenticationInfoTest
 
         assertEquals( "userlogin", info.getUser().getLogin() );
         assertEquals( "my user", info.getUser().getDisplayName() );
-        assertEquals( PrincipalKey.from( "myuserstore:user:userid" ), info.getUser().getKey() );
+        assertEquals( PrincipalKey.from( "user:myuserstore:userid" ), info.getUser().getKey() );
         assertEquals( 4, info.getPrincipals().getSize() );
-        assertTrue( info.getPrincipals().contains( PrincipalKey.from( "myuserstore:user:userid" ) ) );
+        assertTrue( info.getPrincipals().contains( PrincipalKey.from( "user:myuserstore:userid" ) ) );
         assertTrue( info.getPrincipals().contains( group1 ) );
         assertTrue( info.getPrincipals().contains( group2 ) );
         assertTrue( info.getPrincipals().contains( role1 ) );

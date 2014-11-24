@@ -22,7 +22,7 @@ public class GetResultCanReadResolverTest
     {
         assertFalse( GetResultCanReadResolver.canRead( PrincipalKeys.empty(), new GetResult( SearchResultEntry.create().
             id( "myId" ).
-            addField( IndexPaths.HAS_READ_KEY, SearchResultFieldValue.value( "system:user:rmy" ) ).
+            addField( IndexPaths.HAS_READ_KEY, SearchResultFieldValue.value( "user:system:rmy" ) ).
             build() ) ) );
     }
 
@@ -40,11 +40,11 @@ public class GetResultCanReadResolverTest
     public void user_access()
         throws Exception
     {
-        assertTrue( GetResultCanReadResolver.canRead( PrincipalKeys.from( PrincipalKey.from( "system:user:rmy" ) ),
+        assertTrue( GetResultCanReadResolver.canRead( PrincipalKeys.from( PrincipalKey.from( "user:system:rmy" ) ),
                                                       new GetResult( SearchResultEntry.create().
                                                           id( "myId" ).
                                                           addField( IndexPaths.HAS_READ_KEY, SearchResultFieldValue.value(
-                                                              PrincipalKey.from( "system:user:rmy" ) ) ).
+                                                              PrincipalKey.from( "user:system:rmy" ) ) ).
                                                           build() ) ) );
     }
 
@@ -53,11 +53,11 @@ public class GetResultCanReadResolverTest
         throws Exception
     {
         assertTrue( GetResultCanReadResolver.canRead(
-            PrincipalKeys.from( PrincipalKey.from( "system:user:rmy" ), PrincipalKey.from( "system:group:my-group" ) ),
+            PrincipalKeys.from( PrincipalKey.from( "user:system:rmy" ), PrincipalKey.from( "group:system:my-group" ) ),
             new GetResult( SearchResultEntry.create().
                 id( "myId" ).
                 addField( IndexPaths.HAS_READ_KEY,
-                          SearchResultFieldValue.values( Arrays.asList( "system:user:rmy", "system:group:my-group" ) ) ).
+                          SearchResultFieldValue.values( Arrays.asList( "user:system:rmy", "group:system:my-group" ) ) ).
                 build() ) ) );
     }
 

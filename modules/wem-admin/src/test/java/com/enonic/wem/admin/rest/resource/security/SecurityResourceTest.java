@@ -110,11 +110,11 @@ public class SecurityResourceTest
             build();
 
         final Optional<? extends Principal> userRes = Optional.of( user1 );
-        Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( PrincipalKey.from( "local:user:alice" ) ) ).thenReturn(
+        Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( PrincipalKey.from( "user:local:alice" ) ) ).thenReturn(
             userRes );
 
         String jsonString = request().
-            path( "security/principals/" + URLEncoder.encode( "local:user:alice", "UTF-8" ) ).
+            path( "security/principals/" + URLEncoder.encode( "user:local:alice", "UTF-8" ) ).
             get().getAsString();
 
         assertJson( "getPrincipalUserById.json", jsonString );
@@ -132,15 +132,15 @@ public class SecurityResourceTest
 
         final Optional<? extends Principal> userRes = Optional.of( group );
         Mockito.<Optional<? extends Principal>>when(
-            securityService.getPrincipal( PrincipalKey.from( "system:group:group-a" ) ) ).thenReturn( userRes );
+            securityService.getPrincipal( PrincipalKey.from( "group:system:group-a" ) ) ).thenReturn( userRes );
 
-        PrincipalRelationship membership1 = from( group.getKey() ).to( PrincipalKey.from( "system:user:user1" ) );
-        PrincipalRelationship membership2 = from( group.getKey() ).to( PrincipalKey.from( "system:user:user2" ) );
+        PrincipalRelationship membership1 = from( group.getKey() ).to( PrincipalKey.from( "user:system:user1" ) );
+        PrincipalRelationship membership2 = from( group.getKey() ).to( PrincipalKey.from( "user:system:user2" ) );
         PrincipalRelationships memberships = PrincipalRelationships.from( membership1, membership2 );
-        Mockito.when( securityService.getRelationships( PrincipalKey.from( "system:group:group-a" ) ) ).thenReturn( memberships );
+        Mockito.when( securityService.getRelationships( PrincipalKey.from( "group:system:group-a" ) ) ).thenReturn( memberships );
 
         String jsonString = request().
-            path( "security/principals/" + URLEncoder.encode( "system:group:group-a", "UTF-8" ) ).
+            path( "security/principals/" + URLEncoder.encode( "group:system:group-a", "UTF-8" ) ).
             get().getAsString();
 
         assertJson( "getPrincipalGroupById.json", jsonString );
@@ -157,16 +157,16 @@ public class SecurityResourceTest
             build();
 
         final Optional<? extends Principal> userRes = Optional.of( role );
-        Mockito.<Optional<? extends Principal>>when(
-            securityService.getPrincipal( PrincipalKey.from( "system:role:superuser" ) ) ).thenReturn( userRes );
+        Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( PrincipalKey.from( "role:superuser" ) ) ).thenReturn(
+            userRes );
 
-        PrincipalRelationship membership1 = from( role.getKey() ).to( PrincipalKey.from( "system:user:user1" ) );
-        PrincipalRelationship membership2 = from( role.getKey() ).to( PrincipalKey.from( "system:user:user2" ) );
+        PrincipalRelationship membership1 = from( role.getKey() ).to( PrincipalKey.from( "user:system:user1" ) );
+        PrincipalRelationship membership2 = from( role.getKey() ).to( PrincipalKey.from( "user:system:user2" ) );
         PrincipalRelationships memberships = PrincipalRelationships.from( membership1, membership2 );
-        Mockito.when( securityService.getRelationships( PrincipalKey.from( "system:role:superuser" ) ) ).thenReturn( memberships );
+        Mockito.when( securityService.getRelationships( PrincipalKey.from( "role:superuser" ) ) ).thenReturn( memberships );
 
         String jsonString = request().
-            path( "security/principals/" + URLEncoder.encode( "system:role:superuser", "UTF-8" ) ).
+            path( "security/principals/" + URLEncoder.encode( "role:superuser", "UTF-8" ) ).
             get().getAsString();
 
         assertJson( "getPrincipalRoleById.json", jsonString );
@@ -267,8 +267,8 @@ public class SecurityResourceTest
             build();
 
         Mockito.when( securityService.updateGroup( Mockito.any( UpdateGroupParams.class ) ) ).thenReturn( group );
-        PrincipalRelationship membership1 = from( group.getKey() ).to( PrincipalKey.from( "system:user:user1" ) );
-        PrincipalRelationship membership2 = from( group.getKey() ).to( PrincipalKey.from( "system:user:user2" ) );
+        PrincipalRelationship membership1 = from( group.getKey() ).to( PrincipalKey.from( "user:system:user1" ) );
+        PrincipalRelationship membership2 = from( group.getKey() ).to( PrincipalKey.from( "user:system:user2" ) );
         PrincipalRelationships memberships = PrincipalRelationships.from( membership1, membership2 );
         Mockito.when( securityService.getRelationships( group.getKey() ) ).thenReturn( memberships );
 
@@ -291,8 +291,8 @@ public class SecurityResourceTest
             build();
 
         Mockito.when( securityService.updateRole( Mockito.any( UpdateRoleParams.class ) ) ).thenReturn( role );
-        PrincipalRelationship membership1 = from( role.getKey() ).to( PrincipalKey.from( "system:user:user1" ) );
-        PrincipalRelationship membership2 = from( role.getKey() ).to( PrincipalKey.from( "system:user:user2" ) );
+        PrincipalRelationship membership1 = from( role.getKey() ).to( PrincipalKey.from( "user:system:user1" ) );
+        PrincipalRelationship membership2 = from( role.getKey() ).to( PrincipalKey.from( "user:system:user2" ) );
         PrincipalRelationships memberships = PrincipalRelationships.from( membership1, membership2 );
         Mockito.when( securityService.getRelationships( role.getKey() ) ).thenReturn( memberships );
 
@@ -308,7 +308,7 @@ public class SecurityResourceTest
     public void deletePrincipals()
         throws Exception
     {
-        final PrincipalKey user1 = PrincipalKey.from( "system:user:user1" );
+        final PrincipalKey user1 = PrincipalKey.from( "user:system:user1" );
         Mockito.doThrow( new PrincipalNotFoundException( user1 ) ).when( securityService ).deletePrincipal( user1 );
 
         String jsonString = request().

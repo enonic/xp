@@ -1,7 +1,7 @@
 {
   "displayName": "Alice",
   "email": "alice@a.org",
-  "key": "local:user:a",
+  "key": "user:local:a",
   "login": "alice",
   "loginDisabled": false,
   "modifiedTime": "1970-01-01T00:00:00Z"

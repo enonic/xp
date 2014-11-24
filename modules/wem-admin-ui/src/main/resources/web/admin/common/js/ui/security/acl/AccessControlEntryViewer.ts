@@ -27,7 +27,7 @@ module api.ui.security.acl {
 
         private resolveSubName(key: PrincipalKey): string {
             return api.util.StringHelper.format("{0}/{1}/{2}",
-                key.getUserStore().toString(),
+                key.isRole() ? '' : key.getUserStore().toString(),
                 PrincipalType[key.getType()].toLowerCase(),
                 key.getId());
         }

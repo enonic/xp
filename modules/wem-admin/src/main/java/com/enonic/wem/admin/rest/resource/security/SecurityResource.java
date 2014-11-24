@@ -1,8 +1,8 @@
 package com.enonic.wem.admin.rest.resource.security;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -10,6 +10,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
@@ -67,7 +68,7 @@ public final class SecurityResource
 
     @GET
     @Path("principals")
-    public PrincipalsJson findPrincipals( @QueryParam("userStoreKey") final String storeKey, @QueryParam("types") final List<String> types,
+    public PrincipalsJson findPrincipals( @QueryParam("userStoreKey") final String storeKey, @QueryParam("types") final String types,
                                           @QueryParam("query") final String query )
     {
 
@@ -76,15 +77,28 @@ public final class SecurityResource
         {
             userStoreKey = new UserStoreKey( storeKey );
         }
-        List<PrincipalType> principalTypes =
-            types.stream().map( String::toUpperCase ).map( PrincipalType::valueOf ).collect( Collectors.toList() );
-
+        final List<PrincipalType> principalTypes = new ArrayList<>();
+        if ( StringUtils.isNotBlank( types ) )
+        {
+            final String[] typeItems = types.split( "," );
+            for ( String typeItem : typeItems )
+            {
+                try
+                {
+                    principalTypes.add( PrincipalType.valueOf( typeItem.toUpperCase() ) );
+                }
+                catch ( IllegalArgumentException e )
+                {
+                    throw new WebApplicationException( "Invalid principal type: " + typeItem );
+                }
+            }
+        }
         final Principals principals = securityService.findPrincipals( userStoreKey, principalTypes, query );
         return new PrincipalsJson( principals );
     }
 
     @GET
-    @Path("principals/{key: ([^:(%3A)]+)(:|%3A)(user|group|role)(:|%3A)([^:(%3A)]+)}")
+    @Path("principals/{key: ((role)(:|%3A)([^:(%3A)]+))|((user|group)(:|%3A)([^:(%3A)]+)(:|%3A)([^:(%3A)]+))}")
     public PrincipalJson getPrincipalByKey( @PathParam("key") final String keyParam )
     {
         final PrincipalKey principalKey = PrincipalKey.from( keyParam );

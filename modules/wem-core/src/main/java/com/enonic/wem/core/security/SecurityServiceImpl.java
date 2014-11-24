@@ -7,8 +7,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -65,6 +63,7 @@ import static com.enonic.wem.core.security.PrincipalKeyNodeTranslator.toNodeId;
 import static com.enonic.wem.core.security.PrincipalNodeTranslator.EMAIL_KEY;
 import static com.enonic.wem.core.security.PrincipalNodeTranslator.LOGIN_KEY;
 import static com.enonic.wem.core.security.PrincipalNodeTranslator.USER_STORE_KEY;
+import static java.util.stream.Collectors.toList;
 
 public final class SecurityServiceImpl
     implements SecurityService
@@ -197,7 +196,7 @@ public final class SecurityServiceImpl
             {
                 nodeQueryBuilder.addQueryFilter( ValueFilter.create().
                     fieldName( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY ).
-                    addValues( Stream.of( types ).map( String::valueOf ).collect( Collectors.toList() ) ).
+                    addValues( types.stream().map( Object::toString ).collect( toList() ) ).
                     build() );
             }
             if ( StringUtils.isNotBlank( query ) )

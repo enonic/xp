@@ -10,12 +10,12 @@ import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
-import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.api.support.illegaledit.IllegalEditException;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
+import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.support.illegaledit.IllegalEditException;
 
 import static org.junit.Assert.*;
 
@@ -136,8 +136,8 @@ public class NodeBuilderTest
             parent( NodePath.ROOT ).
             modifiedTime( localDateTime.toInstant( ZoneOffset.UTC ) ).
             createdTime( localDateTime.toInstant( ZoneOffset.UTC ) ).
-            creator( PrincipalKey.from( "test:user:creator" ) ).
-            modifier( PrincipalKey.from( "test:user:modifier" ) ).
+            creator( PrincipalKey.from( "user:test:creator" ) ).
+            modifier( PrincipalKey.from( "user:test:modifier" ) ).
             modifiedTime( localDateTime.toInstant( ZoneOffset.UTC ) ).
             path( "test" ).
             build();
@@ -182,7 +182,7 @@ public class NodeBuilderTest
         final Node myEditedNode = Node.newNode( NodeId.from( "myid" ) ).
             name( NodeName.from( "my-name" ) ).
             parent( NodePath.ROOT ).
-            modifier( PrincipalKey.from( "test:user:modifier" ) ).
+            modifier( PrincipalKey.from( "user:test:modifier" ) ).
             build();
 
         myNode.checkIllegalEdit( myEditedNode );

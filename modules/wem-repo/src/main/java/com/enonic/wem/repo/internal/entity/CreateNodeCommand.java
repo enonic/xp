@@ -38,7 +38,7 @@ public final class CreateNodeCommand
 
         verifyNotExistsAlready();
 
-        final PrincipalKey creator = PrincipalKey.from( "system:user:admin" );
+        final PrincipalKey creator = PrincipalKey.from( "user:system:admin" );
 
         final AccessControlList acl =
             params.getAccessControlList() != null ? params.getAccessControlList() : NodeDefaultAclFactory.create( creator );

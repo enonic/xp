@@ -2,12 +2,12 @@
   "results": [
     {
       "deleted": false,
-      "principalKey": "system:user:user1",
-      "reason": "Principal [system:user:user1] not found"
+      "principalKey": "user:system:user1",
+      "reason": "Principal [user:system:user1] not found"
     },
     {
       "deleted": true,
-      "principalKey": "system:user:user2",
+      "principalKey": "user:system:user2",
       "reason": null
     }
   ]

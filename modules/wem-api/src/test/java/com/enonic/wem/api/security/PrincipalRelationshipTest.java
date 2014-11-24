@@ -33,7 +33,7 @@ public class PrincipalRelationshipTest
         PrincipalRelationship rel = PrincipalRelationship.from( ROLE ).to( USER );
         assertEquals( ROLE, rel.getFrom() );
         assertEquals( USER, rel.getTo() );
-        assertEquals( "system:role:role -> system:user:user", rel.toString() );
+        assertEquals( "role:role -> user:system:user", rel.toString() );
     }
 
     @Test
@@ -43,7 +43,7 @@ public class PrincipalRelationshipTest
         PrincipalRelationship rel = PrincipalRelationship.from( ROLE ).to( GROUP );
         assertEquals( ROLE, rel.getFrom() );
         assertEquals( GROUP, rel.getTo() );
-        assertEquals( "system:role:role -> system:group:group", rel.toString() );
+        assertEquals( "role:role -> group:system:group", rel.toString() );
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -61,7 +61,7 @@ public class PrincipalRelationshipTest
         PrincipalRelationship rel = PrincipalRelationship.from( GROUP ).to( USER );
         assertEquals( GROUP, rel.getFrom() );
         assertEquals( USER, rel.getTo() );
-        assertEquals( "system:group:group -> system:user:user", rel.toString() );
+        assertEquals( "group:system:group -> user:system:user", rel.toString() );
     }
 
     @Test
@@ -71,7 +71,7 @@ public class PrincipalRelationshipTest
         PrincipalRelationship rel = PrincipalRelationship.from( GROUP ).to( GROUP_2 );
         assertEquals( GROUP, rel.getFrom() );
         assertEquals( GROUP_2, rel.getTo() );
-        assertEquals( "system:group:group -> system:group:group2", rel.toString() );
+        assertEquals( "group:system:group -> group:system:group2", rel.toString() );
     }
 
     @Test(expected = IllegalArgumentException.class)

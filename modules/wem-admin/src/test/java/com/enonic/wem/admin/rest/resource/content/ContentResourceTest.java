@@ -851,10 +851,10 @@ public class ContentResourceTest
             id( ContentId.from( id ) ).
             path( ContentPath.from( name ) ).
             createdTime( Instant.parse( this.currentTime ) ).
-            owner( PrincipalKey.from( "myStore:user:me" ) ).
+            owner( PrincipalKey.from( "user:myStore:me" ) ).
             displayName( "My Content" ).
             modifiedTime( Instant.parse( this.currentTime ) ).
-            modifier( PrincipalKey.from( "system:user:admin" ) ).
+            modifier( PrincipalKey.from( "user:system:admin" ) ).
             type( ContentTypeName.from( contentTypeName ) ).
             addMetadata( new Metadata( MetadataSchemaName.from( "myModule:myField" ), metadata ) ).
             build();
@@ -867,10 +867,10 @@ public class ContentResourceTest
             id( ContentId.from( id ) ).
             path( ContentPath.from( name ) ).
             createdTime( Instant.parse( this.currentTime ) ).
-            owner( PrincipalKey.from( "myStore:user:me" ) ).
+            owner( PrincipalKey.from( "user:myStore:me" ) ).
             displayName( "My Content" ).
             modifiedTime( Instant.parse( this.currentTime ) ).
-            modifier( PrincipalKey.from( "system:user:admin" ) ).
+            modifier( PrincipalKey.from( "user:system:admin" ) ).
             type( ContentTypeName.from( contentTypeName ) ).
             build();
     }

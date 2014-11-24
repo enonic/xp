@@ -11,11 +11,11 @@ import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
-import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
+import com.enonic.wem.api.security.PrincipalKey;
 
 import static org.junit.Assert.*;
 
@@ -78,7 +78,7 @@ public class NodeEditTest
             id( NodeId.from( "node" ) ).
             parent( NodePath.ROOT ).
             name( NodeName.from( "mynode" ) ).
-            creator( PrincipalKey.from( "system:user:admin" ) ).
+            creator( PrincipalKey.from( "user:system:admin" ) ).
             createdTime( Instant.now() ).
             rootDataSet( rootDataSet ).
             childOrder( ChildOrder.from( "modifiedTime DESC" ) ).

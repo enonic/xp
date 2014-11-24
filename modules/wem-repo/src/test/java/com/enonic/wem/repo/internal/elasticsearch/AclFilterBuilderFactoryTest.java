@@ -34,9 +34,9 @@ public class AclFilterBuilderFactoryTest
             email( "rmy@enonic.com" ).
             login( "rmy" ).
             displayName( "Runar Myklebust" ).
-            key( PrincipalKey.from( "system:user:rmy" ) ).
+            key( PrincipalKey.from( "user:system:rmy" ) ).
             build(), Group.create().
-            key( PrincipalKey.from( "system:group:mygroup" ) ).
+            key( PrincipalKey.from( "group:system:mygroup" ) ).
             displayName( "My group" ).
             build() );
 

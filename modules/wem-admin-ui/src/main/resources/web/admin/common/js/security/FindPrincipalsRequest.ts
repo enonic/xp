@@ -12,7 +12,7 @@ module api.security {
 
         getParams(): Object {
             return {
-                "types": this.enumToStrings(this.allowedTypes),
+                "types": this.enumToStrings(this.allowedTypes).join(','),
                 "query": this.searchQuery,
                 "userStoreKey": this.userStoreKey ? this.userStoreKey.toString() : undefined
             }

@@ -38,10 +38,10 @@ public class FindContentByParentHandlerTest
             id( ContentId.from( "123" ) ).
             path( ContentPath.from( "/some/path" ) ).
             createdTime( Instant.now() ).
-            owner( PrincipalKey.from( "myStore:user:me" ) ).
+            owner( PrincipalKey.from( "user:myStore:me" ) ).
             displayName( "My Content" ).
             modifiedTime( Instant.now() ).
-            modifier( PrincipalKey.from( "system:user:admin" ) ).
+            modifier( PrincipalKey.from( "user:system:admin" ) ).
             type( ContentTypeName.from( "contenttype" ) ).
             build();
         final Contents contents = Contents.from( content );

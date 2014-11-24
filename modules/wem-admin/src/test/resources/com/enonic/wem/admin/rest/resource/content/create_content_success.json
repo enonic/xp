@@ -1,7 +1,7 @@
 {
     "childOrder": null,
     "createdTime": "2013-08-23T12:55:09.162Z",
-    "creator": "system:user:admin",
+    "creator": "user:system:admin",
     "data": [ ],
     "deletable": true,
     "displayName": "My Content",
@@ -29,9 +29,9 @@
         }
     ],
     "modifiedTime": "2013-08-23T12:55:09.162Z",
-    "modifier": "system:user:admin",
+    "modifier": "user:system:admin",
     "name": "content-path",
-    "owner": "myStore:user:me",
+    "owner": "user:myStore:me",
     "page": null,
     "path": "/content-path",
     "permissions": [],

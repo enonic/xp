@@ -127,7 +127,10 @@ abstract class PrincipalNodeTranslator
         final RootDataSet data = new RootDataSet();
         data.setProperty( DISPLAY_NAME_KEY, Value.newString( principal.getDisplayName() ) );
         data.setProperty( PRINCIPAL_TYPE_KEY, Value.newString( principal.getKey().getType() ) );
-        data.setProperty( USER_STORE_KEY, Value.newString( principal.getKey().getUserStore().toString() ) );
+        if ( !principal.getKey().isRole() )
+        {
+            data.setProperty( USER_STORE_KEY, Value.newString( principal.getKey().getUserStore().toString() ) );
+        }
 
         switch ( principal.getKey().getType() )
         {
