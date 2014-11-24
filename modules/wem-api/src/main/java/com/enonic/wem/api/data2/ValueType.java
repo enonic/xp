@@ -74,6 +74,15 @@ public abstract class ValueType<T>
         throw convertError( object, null );
     }
 
+    T convertNullSafe( final Object object )
+    {
+        if ( object == null )
+        {
+            return null;
+        }
+        return convert( object );
+    }
+
     private ValueTypeException convertError( final Object value, final java.lang.String reason )
     {
         final java.lang.String message = "Value of type [%s] cannot be converted to [%s]" + ( ( reason != null ) ? ": %s" : "" );
@@ -97,7 +106,7 @@ public abstract class ValueType<T>
         @Override
         Value fromJsonValue( final Object object )
         {
-            return new Value.PropertySet( convert( object ) );
+            return new Value.PropertySet( convertNullSafe( object ) );
         }
     }
 
@@ -112,7 +121,7 @@ public abstract class ValueType<T>
         @Override
         Value fromJsonValue( final Object object )
         {
-            return new Value.String( convert( object ) );
+            return new Value.String( convertNullSafe( object ) );
         }
     }
 
@@ -127,7 +136,7 @@ public abstract class ValueType<T>
         @Override
         Value fromJsonValue( final Object object )
         {
-            return new Value.HtmlPart( convert( object ) );
+            return new Value.HtmlPart( convertNullSafe( object ) );
         }
     }
 
@@ -142,7 +151,7 @@ public abstract class ValueType<T>
         @Override
         Value fromJsonValue( final Object object )
         {
-            return new Value.Xml( convert( object ) );
+            return new Value.Xml( convertNullSafe( object ) );
         }
     }
 
@@ -157,7 +166,7 @@ public abstract class ValueType<T>
         @Override
         Value fromJsonValue( final Object object )
         {
-            return new Value.Long( convert( object ) );
+            return new Value.Long( convertNullSafe( object ) );
         }
     }
 
@@ -172,7 +181,7 @@ public abstract class ValueType<T>
         @Override
         Value fromJsonValue( final Object object )
         {
-            return new Value.Double( convert( object ) );
+            return new Value.Double( convertNullSafe( object ) );
         }
     }
 
@@ -187,7 +196,7 @@ public abstract class ValueType<T>
         @Override
         Value fromJsonValue( final Object object )
         {
-            return new Value.Boolean( convert( object ) );
+            return new Value.Boolean( convertNullSafe( object ) );
         }
     }
 
@@ -202,7 +211,7 @@ public abstract class ValueType<T>
         @Override
         Value fromJsonValue( final Object object )
         {
-            return new Value.LocalDate( convert( object ) );
+            return new Value.LocalDate( convertNullSafe( object ) );
         }
     }
 
@@ -217,7 +226,7 @@ public abstract class ValueType<T>
         @Override
         Value fromJsonValue( final Object object )
         {
-            return new Value.LocalDateTime( convert( object ) );
+            return new Value.LocalDateTime( convertNullSafe( object ) );
         }
     }
 
@@ -232,7 +241,7 @@ public abstract class ValueType<T>
         @Override
         Value fromJsonValue( final Object object )
         {
-            return new Value.LocalTime( convert( object ) );
+            return new Value.LocalTime( convertNullSafe( object ) );
         }
     }
 
@@ -247,7 +256,7 @@ public abstract class ValueType<T>
         @Override
         Value fromJsonValue( final Object object )
         {
-            return new Value.DateTime( convert( object ) );
+            return new Value.DateTime( convertNullSafe( object ) );
         }
     }
 
@@ -262,7 +271,22 @@ public abstract class ValueType<T>
         @Override
         Value fromJsonValue( final Object object )
         {
-            return new Value.GeoPoint( convert( object ) );
+            return new Value.GeoPoint( convertNullSafe( object ) );
+        }
+    }
+
+    static class ContentId
+        extends ValueType<com.enonic.wem.api.content.ContentId>
+    {
+        ContentId()
+        {
+            super( "ContentId", JavaTypeConverters.CONTENT_ID );
+        }
+
+        @Override
+        Value fromJsonValue( final Object object )
+        {
+            return new Value.ContentId( convert( object ) );
         }
     }
 
@@ -277,7 +301,7 @@ public abstract class ValueType<T>
         @Override
         Value fromJsonValue( final Object object )
         {
-            return new Value.Reference( convert( object ) );
+            return new Value.Reference( convertNullSafe( object ) );
         }
     }
 
