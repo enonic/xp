@@ -2,8 +2,13 @@ package com.enonic.wem.servlet.jaxrs.exception;
 
 import java.util.Stack;
 
+import com.google.common.escape.Escaper;
+import com.google.common.html.HtmlEscapers;
+
 public final class HtmlBuilder
 {
+    private final Escaper escaper;
+
     private final StringBuilder str;
 
     private final Stack<String> openTags;
@@ -12,6 +17,7 @@ public final class HtmlBuilder
 
     public HtmlBuilder()
     {
+        this.escaper = HtmlEscapers.htmlEscaper();
         this.str = new StringBuilder();
         this.openTags = new Stack<>();
         this.addedInner = false;
@@ -62,6 +68,11 @@ public final class HtmlBuilder
         this.str.append( '"' );
         this.addedInner = false;
         return this;
+    }
+
+    public HtmlBuilder escapedText( final String text )
+    {
+        return text( this.escaper.escape( text ) );
     }
 
     public HtmlBuilder text( final String text )

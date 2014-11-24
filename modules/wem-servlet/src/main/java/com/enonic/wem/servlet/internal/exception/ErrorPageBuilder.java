@@ -213,20 +213,24 @@ final class ErrorPageBuilder
         final ResourceProblemException problem = ( (ResourceProblemException) this.cause ).getInnerError();
 
         html.open( "h2" );
-        html.text( "In " + problem.getResource().toString() + " at line " + problem.getLineNumber() );
+        html.escapedText( "In " + problem.getResource().toString() + " at line " + problem.getLineNumber() );
         html.close();
 
         html.open( "div" ).attribute( "id", "source-code" );
         buildLineInfo( html, findSourceLines( problem ) );
         html.close();
 
-        html.open( "h2" );
-        html.text( "Here is the script calling stack:" );
-        html.close();
+        final List<LineInfo> callStack = getCallStack( problem );
+        if ( !callStack.isEmpty() )
+        {
+            html.open( "h2" );
+            html.text( "Here is the script calling stack:" );
+            html.close();
 
-        html.open( "div" );
-        buildLineInfo( html, getCallStack( problem ) );
-        html.close();
+            html.open( "div" );
+            buildLineInfo( html, callStack );
+            html.close();
+        }
     }
 
     private void buildCauseInfo( final HtmlBuilder html )
@@ -260,12 +264,12 @@ final class ErrorPageBuilder
 
         html.open( "span" );
         html.attribute( "class", "line" );
-        html.text( String.valueOf( line.getLine() ) );
+        html.escapedText( String.valueOf( line.getLine() ) );
         html.close();
 
         html.open( "span" );
         html.attribute( "class", "code" );
-        html.text( line.getText() );
+        html.escapedText( line.getText() );
         html.close();
 
         html.close();
