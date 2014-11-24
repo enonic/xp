@@ -11,6 +11,7 @@ import java.util.Objects;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.wem.api.util.GeoPoint;
+import com.enonic.wem.api.util.Link;
 import com.enonic.wem.api.util.Reference;
 
 
@@ -426,6 +427,33 @@ public final class PropertyTree
         return this.root.addReferences( name, value );
     }
 
+    // setting link
+
+    public Property setLink( final PropertyPath path, final Link value )
+    {
+        return this.root.setLink( path, value );
+    }
+
+    public Property setLink( final String path, final Link value )
+    {
+        return this.root.setLink( path, value );
+    }
+
+    public Property setLink( final String name, final int index, final Link value )
+    {
+        return this.root.setLink( name, index, value );
+    }
+
+    public Property addLink( final String name, final Link value )
+    {
+        return this.root.addLink( name, value );
+    }
+
+    public Property[] addLinks( final String name, final Link... value )
+    {
+        return this.root.addLinks( name, value );
+    }
+
     // setting boolean
 
     public Property setBoolean( final PropertyPath path, final Boolean value )
@@ -796,6 +824,28 @@ public final class PropertyTree
     public Iterable<Reference> getReferences( final String name )
     {
         return this.root.getReferences( name );
+    }
+
+    // getting link
+
+    public Link getLink( final String name, final int index )
+    {
+        return this.root.getLink( name, index );
+    }
+
+    public Link getLink( final PropertyPath path )
+    {
+        return this.root.getLink( path );
+    }
+
+    public Link getLink( final String path )
+    {
+        return this.root.getLink( path );
+    }
+
+    public Iterable<Link> getLinks( final String name )
+    {
+        return this.root.getLinks( name );
     }
 
     // getting local date

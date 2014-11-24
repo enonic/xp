@@ -13,6 +13,7 @@ import java.util.Set;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.wem.api.util.GeoPoint;
+import com.enonic.wem.api.util.Link;
 import com.enonic.wem.api.util.Reference;
 
 public final class PropertySet
@@ -936,6 +937,37 @@ public final class PropertySet
         return properties;
     }
 
+    // setting link
+    public Property setLink( final String path, final Link value )
+    {
+        return this.setProperty( PropertyPath.from( path ), Value.newLink( value ) );
+    }
+
+    public Property setLink( final PropertyPath path, final Link value )
+    {
+        return this.setProperty( path, Value.newLink( value ) );
+    }
+
+    public Property setLink( final String name, final int index, final Link value )
+    {
+        return this.setProperty( name, index, Value.newLink( value ) );
+    }
+
+    public Property addLink( final String name, final Link value )
+    {
+        return this.addProperty( name, Value.newLink( value ) );
+    }
+
+    public Property[] addLinks( final String name, final Link... values )
+    {
+        final Property[] properties = new Property[values.length];
+        for ( int i = 0; i < values.length; i++ )
+        {
+            properties[i] = this.addProperty( name, Value.newLink( values[i] ) );
+        }
+        return properties;
+    }
+
     // Typed methods for getting Property value
 
     // getting property set
@@ -1137,6 +1169,35 @@ public final class PropertySet
         for ( final Property property : getProperties( name ) )
         {
             stringsBuilder.add( property.getReference() );
+        }
+        return stringsBuilder.build();
+    }
+
+    // getting link
+
+    public Link getLink( final String name, final int index )
+    {
+        final Property property = this.getProperty( name, index );
+        return property != null ? property.getValue().asLink() : null;
+    }
+
+    public Link getLink( final PropertyPath path )
+    {
+        final Property property = this.getProperty( path );
+        return property != null ? property.getValue().asLink() : null;
+    }
+
+    public Link getLink( final String path )
+    {
+        return getLink( PropertyPath.from( path ) );
+    }
+
+    public Iterable<Link> getLinks( final String name )
+    {
+        final ImmutableList.Builder<Link> stringsBuilder = new ImmutableList.Builder<>();
+        for ( final Property property : getProperties( name ) )
+        {
+            stringsBuilder.add( property.getLink() );
         }
         return stringsBuilder.build();
     }

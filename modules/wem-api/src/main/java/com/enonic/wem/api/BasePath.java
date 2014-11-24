@@ -67,7 +67,7 @@ public abstract class BasePath<PATH extends BasePath, ELEMENT extends BasePath.E
 
     public BasePath<PATH, ELEMENT, BUILDER> trimTrailingDivider()
     {
-        return newBuilder( (PATH) this ).trailingDivider( false ).build();
+        return create( (PATH) this ).trailingDivider( false ).build();
     }
 
     public int elementCount()
@@ -102,7 +102,7 @@ public abstract class BasePath<PATH extends BasePath, ELEMENT extends BasePath.E
 
     public PATH getParentPath()
     {
-        final Builder builder = newBuilder( (PATH) this );
+        final Builder builder = create( (PATH) this );
         builder.removeLastElement();
         return (PATH) builder.build();
     }
@@ -137,7 +137,7 @@ public abstract class BasePath<PATH extends BasePath, ELEMENT extends BasePath.E
             }
         }
 
-        final Builder builder = this.newBuilder().absolute( this.isAbsolute() ).trailingDivider( this.hasTrailingDivider() );
+        final Builder builder = this.create().absolute( this.isAbsolute() ).trailingDivider( this.hasTrailingDivider() );
         for ( int i = path.elementCount(); i < this.elementCount(); i++ )
         {
             builder.addElement( this.getElement( i ) );
@@ -240,9 +240,9 @@ public abstract class BasePath<PATH extends BasePath, ELEMENT extends BasePath.E
         }
     }
 
-    protected abstract Builder<BUILDER, PATH> newBuilder();
+    protected abstract Builder<BUILDER, PATH> create();
 
-    protected abstract Builder<BUILDER, PATH> newBuilder( PATH source );
+    protected abstract Builder<BUILDER, PATH> create( PATH source );
 
     public static abstract class Builder<B extends Builder, P extends BasePath>
     {

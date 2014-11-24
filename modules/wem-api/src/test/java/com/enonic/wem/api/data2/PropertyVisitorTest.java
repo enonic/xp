@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.junit.Test;
 
+import com.enonic.wem.api.util.Link;
 import com.enonic.wem.api.util.Reference;
 
 import static junit.framework.Assert.assertEquals;
@@ -139,6 +140,41 @@ public class PropertyVisitorTest
         assertEquals( 2, hits.size() );
         assertEquals( "myRef", hits.get( 0 ).getPath().toString() );
         assertEquals( "mySet.myRef", hits.get( 1 ).getPath().toString() );
+    }
+
+
+    @Test
+    public void traverse_with_restriction_on_ValueType_Link()
+    {
+        final List<Property> hits = new ArrayList<>();
+
+        final PropertyVisitor propertyVisitor = new PropertyVisitor()
+        {
+            @Override
+            public void visit( final Property link )
+            {
+                hits.add( link );
+            }
+        };
+        propertyVisitor.restrictType( ValueTypes.LINK );
+
+        PropertyTree propertyTree = new PropertyTree();
+        propertyTree.addString( "myText", "abc" );
+        propertyTree.addLocalDate( "myDate", LocalDate.now() );
+        propertyTree.addLink( "myLink", Link.from( "/nodeId-1" ) );
+
+        PropertySet mySet = propertyTree.addSet( "mySet" );
+        mySet.addString( "myText", "abc" );
+        mySet.addLocalDate( "myDate", LocalDate.now() );
+        mySet.addLink( "myLink", Link.from( "/nodeId-2" ) );
+
+        // exercise
+        propertyVisitor.traverse( propertyTree );
+
+        // verify
+        assertEquals( 2, hits.size() );
+        assertEquals( "myLink", hits.get( 0 ).getPath().toString() );
+        assertEquals( "mySet.myLink", hits.get( 1 ).getPath().toString() );
     }
 
 }

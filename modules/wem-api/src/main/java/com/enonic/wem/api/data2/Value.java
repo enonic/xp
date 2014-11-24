@@ -210,6 +210,18 @@ public abstract class Value
         return ValueTypes.REFERENCE.convert( object );
     }
 
+    /**
+     * Attempts to return value as Reference, using best effort converting if value is not of type Reference.
+     */
+    public com.enonic.wem.api.util.Link asLink()
+    {
+        if ( object == null )
+        {
+            return null;
+        }
+        return ValueTypes.LINK.convert( object );
+    }
+
 
     /**
      * Ensures a copy is done of this value. Objects could be reused if they are of immutable classes.
@@ -245,6 +257,14 @@ public abstract class Value
     public java.lang.String toString()
     {
         if ( object instanceof java.lang.String )
+        {
+            return "\"" + java.lang.String.valueOf( object ) + "\"";
+        }
+        else if ( object instanceof com.enonic.wem.api.util.Reference )
+        {
+            return "\"" + java.lang.String.valueOf( object ) + "\"";
+        }
+        else if ( object instanceof com.enonic.wem.api.util.Link )
         {
             return "\"" + java.lang.String.valueOf( object ) + "\"";
         }
@@ -314,6 +334,10 @@ public abstract class Value
         return new Reference( value );
     }
 
+    public static Value newLink( final com.enonic.wem.api.util.Link value )
+    {
+        return new Link( value );
+    }
 
     public static Value newData( final com.enonic.wem.api.data2.PropertySet value )
     {
@@ -515,6 +539,32 @@ public abstract class Value
         Value copy( final PropertyTree tree )
         {
             return new Reference( this );
+        }
+
+        @Override
+        Object toJsonValue()
+        {
+            return asString();
+        }
+    }
+
+    static class Link
+        extends Value
+    {
+        Link( final com.enonic.wem.api.util.Link value )
+        {
+            super( ValueTypes.LINK, value );
+        }
+
+        Link( final Link source )
+        {
+            super( ValueTypes.LINK, source.getObject() );
+        }
+
+        @Override
+        Value copy( final PropertyTree tree )
+        {
+            return new Link( this );
         }
 
         @Override

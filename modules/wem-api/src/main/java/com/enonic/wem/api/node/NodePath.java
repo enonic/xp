@@ -88,13 +88,14 @@ public class NodePath
         return parentPaths;
     }
 
-    protected Builder newBuilder()
+    @Override
+    protected Builder create()
     {
         return new Builder();
     }
 
     @Override
-    protected Builder newBuilder( final NodePath source )
+    protected Builder create( final NodePath source )
     {
         return new Builder( source );
     }

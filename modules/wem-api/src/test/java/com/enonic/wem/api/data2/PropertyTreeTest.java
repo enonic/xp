@@ -4,6 +4,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.enonic.wem.api.support.AbstractEqualsTest;
+import com.enonic.wem.api.util.Link;
 import com.enonic.wem.api.util.Reference;
 
 import static org.junit.Assert.*;
@@ -249,7 +250,22 @@ public class PropertyTreeTest
 
         String expected = "";
         expected += "[\n";
-        expected += "  myProp: [test-1, test-2, test-3]\n";
+        expected += "  myProp: [\"test-1\", \"test-2\", \"test-3\"]\n";
+        expected += "]";
+        assertEquals( expected, tree.toString() );
+    }
+
+    @Test
+    public void tostring_propertyArray_of_type_Link()
+    {
+        PropertyTree tree = new PropertyTree();
+        tree.addLink( "myLink", Link.from( "/root/me" ) );
+        tree.addLink( "myLink", Link.from( "./child" ) );
+        tree.addLink( "myLink", Link.from( "child/image" ) );
+
+        String expected = "";
+        expected += "[\n";
+        expected += "  myLink: [\"/root/me\", \"./child\", \"child/image\"]\n";
         expected += "]";
         assertEquals( expected, tree.toString() );
     }

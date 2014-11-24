@@ -10,6 +10,7 @@ import java.util.Map;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.util.GeoPoint;
+import com.enonic.wem.api.util.Link;
 import com.enonic.wem.api.util.Reference;
 
 public final class ValueTypes
@@ -38,6 +39,8 @@ public final class ValueTypes
 
     public static final ValueType<Reference> REFERENCE = new ValueType.Reference();
 
+    public static final ValueType<Link> LINK = new ValueType.Link();
+
     public static final ValueType<Boolean> BOOLEAN = new ValueType.Boolean();
 
     private static final Map<String, ValueType> typesByName = new HashMap<>();
@@ -57,6 +60,7 @@ public final class ValueTypes
         register( GEO_POINT );
         register( BOOLEAN );
         register( REFERENCE );
+        register( LINK );
     }
 
     private static void register( ValueType valueType )

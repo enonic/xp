@@ -12,6 +12,7 @@ import java.time.temporal.ChronoUnit;
 
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.util.GeoPoint;
+import com.enonic.wem.api.util.Link;
 import com.enonic.wem.api.util.Reference;
 
 final class JavaTypeConverters
@@ -56,6 +57,8 @@ final class JavaTypeConverters
     public final static JavaTypeConverter<GeoPoint> GEO_POINT = newGeoPoint();
 
     public final static JavaTypeConverter<Reference> REFERENCE = newReference();
+
+    public final static JavaTypeConverter<Link> LINK = newLink();
 
     private static String convertToString( final Object value )
     {
@@ -330,6 +333,22 @@ final class JavaTypeConverters
         }
     }
 
+    private static Link convertToLink( final Object value )
+    {
+        if ( value instanceof Link )
+        {
+            return (Link) value;
+        }
+        else if ( value instanceof String )
+        {
+            return Link.from( (String) value );
+        }
+        else
+        {
+            return null;
+        }
+    }
+
     private static JavaTypeConverter<String> newString()
     {
         return new JavaTypeConverter<>( String.class, JavaTypeConverters::convertToString );
@@ -388,5 +407,10 @@ final class JavaTypeConverters
     private static JavaTypeConverter<Reference> newReference()
     {
         return new JavaTypeConverter<>( Reference.class, JavaTypeConverters::convertToReference );
+    }
+
+    private static JavaTypeConverter<Link> newLink()
+    {
+        return new JavaTypeConverter<>( Link.class, JavaTypeConverters::convertToLink );
     }
 }

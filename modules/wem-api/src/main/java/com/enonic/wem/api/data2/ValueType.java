@@ -305,4 +305,19 @@ public abstract class ValueType<T>
         }
     }
 
+    static class Link
+        extends ValueType<com.enonic.wem.api.util.Link>
+    {
+        Link()
+        {
+            super( "Link", JavaTypeConverters.LINK );
+        }
+
+        @Override
+        Value fromJsonValue( final Object object )
+        {
+            return new Value.Link( convert( object ) );
+        }
+    }
+
 }
