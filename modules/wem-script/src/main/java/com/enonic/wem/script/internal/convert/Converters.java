@@ -22,6 +22,8 @@ public final class Converters
         addConverter( new LongConverter() );
         addConverter( new ShortConverter() );
         addConverter( new ResourceKeyConverter() );
+        addConverter( new ContentPathConverter() );
+        addConverter( new ContentIdConverter() );
     }
 
     @SuppressWarnings("unchecked")

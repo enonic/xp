@@ -6,7 +6,7 @@ import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.script.command.CommandParam;
 import com.enonic.wem.script.command.CommandRequest;
 
-final class CommandRequestImpl
+public final class CommandRequestImpl
     implements CommandRequest
 {
     private String name;
