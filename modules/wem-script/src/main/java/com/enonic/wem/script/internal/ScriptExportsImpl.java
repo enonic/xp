@@ -1,9 +1,13 @@
 package com.enonic.wem.script.internal;
 
+import java.util.Map;
+
 import javax.script.Bindings;
 
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.script.ScriptExports;
+import com.enonic.wem.script.internal.bean.BeanMapper;
+import com.enonic.wem.script.internal.util.ScriptObjectConverter;
 
 final class ScriptExportsImpl
     implements ScriptExports
@@ -37,5 +41,13 @@ final class ScriptExportsImpl
     public Object executeMethod( final String name, final Object... args )
     {
         return this.executor.invokeMethod( this.bindings, name, args );
+    }
+
+    @Override
+    public <T> T applyToBean( final T bean, final Object result )
+    {
+        final Map<String, Object> map = ScriptObjectConverter.toMap( result );
+        BeanMapper.mapToBean( bean, map );
+        return bean;
     }
 }
