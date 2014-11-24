@@ -1,10 +1,8 @@
 package com.enonic.wem.xslt.internal;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URL;
-import java.util.Map;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
@@ -16,7 +14,6 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.Maps;
 import com.google.common.io.Closeables;
 
 import com.enonic.wem.api.resource.Resource;
@@ -31,13 +28,9 @@ final class XsltProcessorImpl
 
     private final XsltProcessorErrors errors;
 
-    private ResourceKey view;
-
     private Source xsltSource;
 
     private Source xmlSource;
-
-    private final Map<String, Object> parameters;
 
     private Transformer transformer;
 
@@ -45,14 +38,11 @@ final class XsltProcessorImpl
     {
         this.factory = factory;
         this.errors = new XsltProcessorErrors();
-        this.parameters = Maps.newHashMap();
     }
 
     @Override
     public XsltProcessor view( final ResourceKey view )
     {
-        this.view = view;
-
         final Resource resource = Resource.from( view );
         resource.requireExists();
 
@@ -61,22 +51,9 @@ final class XsltProcessorImpl
     }
 
     @Override
-    public XsltProcessor inputXml( final String inputXml )
-    {
-        return inputSource( new StreamSource( new StringReader( inputXml ) ) );
-    }
-
-    @Override
     public XsltProcessor inputSource( final Source inputSource )
     {
         this.xmlSource = inputSource;
-        return this;
-    }
-
-    @Override
-    public XsltProcessor parameters( final Map<String, Object> parameters )
-    {
-        this.parameters.putAll( parameters );
         return this;
     }
 
@@ -177,15 +154,5 @@ final class XsltProcessorImpl
     {
         final ContextDocBuilder contextDocBuilder = new ContextDocBuilder();
         this.transformer.setParameter( "_", contextDocBuilder.createContextDoc() );
-
-        if ( this.parameters == null )
-        {
-            return;
-        }
-
-        for ( final Map.Entry<String, Object> entry : this.parameters.entrySet() )
-        {
-            this.transformer.setParameter( entry.getKey(), entry.getValue() );
-        }
     }
 }
