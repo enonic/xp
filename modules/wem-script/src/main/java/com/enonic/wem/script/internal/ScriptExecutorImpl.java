@@ -1,16 +1,9 @@
 package com.enonic.wem.script.internal;
 
-import java.io.IOException;
-import java.net.URL;
-
 import javax.script.Bindings;
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
-
-import com.google.common.base.Charsets;
-import com.google.common.base.Throwables;
-import com.google.common.io.Resources;
 
 import jdk.nashorn.api.scripting.NashornException;
 
@@ -18,20 +11,18 @@ import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceProblemException;
 import com.enonic.wem.api.util.Exceptions;
+import com.enonic.wem.script.internal.function.ExecuteFunction;
+import com.enonic.wem.script.internal.function.RequireFunction;
+import com.enonic.wem.script.internal.function.ResolveFunction;
 import com.enonic.wem.script.internal.invoker.CommandInvoker;
 import com.enonic.wem.script.internal.logger.ScriptLogger;
-import com.enonic.wem.script.internal.function.ExecuteFunction;
 
 final class ScriptExecutorImpl
     implements ScriptExecutor
 {
-    private final static String GLOBAL_SCRIPT = "global.js";
-
     private final ScriptEngine engine;
 
     private final Invocable invocable;
-
-    private final String globalScript;
 
     private final CommandInvoker invoker;
 
@@ -39,7 +30,6 @@ final class ScriptExecutorImpl
     {
         this.engine = engine;
         this.invocable = (Invocable) this.engine;
-        this.globalScript = loadScript( GLOBAL_SCRIPT );
         this.invoker = invoker;
     }
 
@@ -55,13 +45,12 @@ final class ScriptExecutorImpl
         try
         {
             new ScriptLogger( script ).register( bindings );
+            new ResolveFunction( script ).register( bindings );
             new ExecuteFunction( script, this.invoker ).register( bindings );
+            new RequireFunction( script, this ).register( bindings );
 
             final Resource resource = Resource.from( script );
             final String source = resource.readString();
-
-            bindings.put( ScriptEngine.FILENAME, GLOBAL_SCRIPT );
-            this.engine.eval( this.globalScript, bindings );
 
             bindings.put( ScriptEngine.FILENAME, script.toString() );
             this.engine.eval( source, bindings );
@@ -72,17 +61,13 @@ final class ScriptExecutorImpl
         }
     }
 
-    private String loadScript( final String name )
+    @Override
+    public Bindings executeRequire( final Bindings bindings, final ResourceKey script )
     {
-        try
-        {
-            final URL url = getClass().getResource( name );
-            return Resources.toString( url, Charsets.UTF_8 );
-        }
-        catch ( final IOException e )
-        {
-            throw Throwables.propagate( e );
-        }
+        final Bindings exports = createBindings();
+        bindings.put( "exports", exports );
+        execute( bindings, script );
+        return exports;
     }
 
     @Override
@@ -150,14 +135,6 @@ final class ScriptExecutorImpl
     private StackTraceElement findScriptTraceElement( final RuntimeException e )
     {
         final StackTraceElement[] elements = NashornException.getScriptFrames( e );
-        for ( final StackTraceElement element : elements )
-        {
-            if ( !element.getFileName().equals( GLOBAL_SCRIPT ) )
-            {
-                return element;
-            }
-        }
-
-        return null;
+        return elements.length > 0 ? elements[0] : null;
     }
 }

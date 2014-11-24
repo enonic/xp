@@ -20,33 +20,33 @@ import com.enonic.wem.script.internal.invoker.CommandInvokerImpl;
 public final class ScriptServiceImpl
     implements ScriptService
 {
-    private final CommandInvokerImpl invoker2;
+    private final CommandInvokerImpl invoker;
 
     private final ScriptExecutor executor;
 
     public ScriptServiceImpl()
     {
-        this.invoker2 = new CommandInvokerImpl();
+        this.invoker = new CommandInvokerImpl();
         final ScriptEngine engine = new NashornScriptEngineFactory().getScriptEngine();
-        this.executor = new ScriptExecutorImpl( engine, this.invoker2 );
+        this.executor = new ScriptExecutorImpl( engine, this.invoker );
     }
 
     @Override
     public ScriptExports execute( final ResourceKey script )
     {
-        final ScriptModuleScope scope = new ScriptModuleScope( script, this.executor );
-        final Bindings bindings = scope.executeThis();
-        return new ScriptExportsImpl( script, this.executor, bindings );
+        final Bindings bindings = this.executor.createBindings();
+        final Bindings exports = this.executor.executeRequire( bindings, script );
+        return new ScriptExportsImpl( script, this.executor, exports );
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
     public void addHandler( final CommandHandler handler )
     {
-        this.invoker2.register( handler );
+        this.invoker.register( handler );
     }
 
     public void removeHandler( final CommandHandler handler )
     {
-        this.invoker2.unregister( handler );
+        this.invoker.unregister( handler );
     }
 }

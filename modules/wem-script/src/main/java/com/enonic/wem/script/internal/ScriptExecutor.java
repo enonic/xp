@@ -10,5 +10,7 @@ public interface ScriptExecutor
 
     public void execute( Bindings bindings, ResourceKey script );
 
+    public Bindings executeRequire( Bindings bindings, ResourceKey script );
+
     public Object invokeMethod( Object scope, String name, Object... args );
 }
