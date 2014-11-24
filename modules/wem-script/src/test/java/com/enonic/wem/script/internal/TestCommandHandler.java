@@ -2,11 +2,11 @@ package com.enonic.wem.script.internal;
 
 import java.util.function.Function;
 
-import com.enonic.wem.script.command.CommandHandler2;
+import com.enonic.wem.script.command.CommandHandler;
 import com.enonic.wem.script.command.CommandRequest;
 
 public final class TestCommandHandler
-    implements CommandHandler2
+    implements CommandHandler
 {
     @Override
     public String getName()

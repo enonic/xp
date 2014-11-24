@@ -5,16 +5,16 @@ import javax.script.Bindings;
 import jdk.nashorn.api.scripting.AbstractJSObject;
 
 import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.script.command.CommandInvoker2;
+import com.enonic.wem.script.command.CommandInvoker;
 
 public final class ExecuteFunction
     extends AbstractJSObject
 {
     private final ResourceKey script;
 
-    private final CommandInvoker2 invoker;
+    private final CommandInvoker invoker;
 
-    public ExecuteFunction( final ResourceKey script, final CommandInvoker2 invoker )
+    public ExecuteFunction( final ResourceKey script, final CommandInvoker invoker )
     {
         this.script = script;
         this.invoker = invoker;

@@ -1,6 +1,6 @@
 package com.enonic.wem.script.command;
 
-public interface CommandHandler2
+public interface CommandHandler
 {
     public String getName();
 

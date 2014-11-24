@@ -4,14 +4,14 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.script.command.CommandHandler2;
+import com.enonic.wem.script.command.CommandHandler;
 import com.enonic.wem.script.command.CommandRequest;
 import com.enonic.wem.xslt.XsltProcessor;
 import com.enonic.wem.xslt.XsltProcessorFactory;
 
 @Component(immediate = true)
 public final class RenderViewHandler
-    implements CommandHandler2
+    implements CommandHandler
 {
     private XsltProcessorFactory factory;
 

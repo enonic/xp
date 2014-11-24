@@ -2,11 +2,11 @@ package com.enonic.wem.portal.internal.content;
 
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentService;
-import com.enonic.wem.script.command.CommandHandler2;
+import com.enonic.wem.script.command.CommandHandler;
 import com.enonic.wem.script.command.CommandRequest;
 
 public final class GetContentByIdHandler
-    implements CommandHandler2
+    implements CommandHandler
 {
     private final ContentService contentService;
 

@@ -13,7 +13,7 @@ import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.script.ScriptExports;
 import com.enonic.wem.script.ScriptService;
-import com.enonic.wem.script.command.CommandHandler2;
+import com.enonic.wem.script.command.CommandHandler;
 import com.enonic.wem.script.internal.v2.CommandInvoker2Impl;
 
 @Component(immediate = true)
@@ -40,12 +40,12 @@ public final class ScriptServiceImpl
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
-    public void addHandler( final CommandHandler2 handler )
+    public void addHandler( final CommandHandler handler )
     {
         this.invoker2.register( handler );
     }
 
-    public void removeHandler( final CommandHandler2 handler )
+    public void removeHandler( final CommandHandler handler )
     {
         this.invoker2.unregister( handler );
     }

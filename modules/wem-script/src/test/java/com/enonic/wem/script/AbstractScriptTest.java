@@ -4,7 +4,7 @@ import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceUrlRegistry;
 import com.enonic.wem.api.resource.ResourceUrlTestHelper;
-import com.enonic.wem.script.command.CommandHandler2;
+import com.enonic.wem.script.command.CommandHandler;
 import com.enonic.wem.script.internal.ScriptServiceImpl;
 
 public abstract class AbstractScriptTest
@@ -20,12 +20,12 @@ public abstract class AbstractScriptTest
         urlRegistry.modulesClassLoader( getClass().getClassLoader() );
     }
 
-    protected final void addHandler( final CommandHandler2 handler )
+    protected final void addHandler( final CommandHandler handler )
     {
         this.scriptService.addHandler( handler );
     }
 
-    protected final void removeHandler( final CommandHandler2 handler )
+    protected final void removeHandler( final CommandHandler handler )
     {
         this.scriptService.removeHandler( handler );
     }

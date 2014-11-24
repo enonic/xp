@@ -18,7 +18,7 @@ import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceProblemException;
 import com.enonic.wem.api.util.Exceptions;
-import com.enonic.wem.script.command.CommandInvoker2;
+import com.enonic.wem.script.command.CommandInvoker;
 import com.enonic.wem.script.internal.logger.ScriptLogger;
 import com.enonic.wem.script.internal.v2.ExecuteFunction;
 
@@ -33,9 +33,9 @@ final class ScriptExecutorImpl
 
     private final String globalScript;
 
-    private final CommandInvoker2 invoker2;
+    private final CommandInvoker invoker2;
 
-    public ScriptExecutorImpl( final ScriptEngine engine, final CommandInvoker2 invoker2 )
+    public ScriptExecutorImpl( final ScriptEngine engine, final CommandInvoker invoker2 )
     {
         this.engine = engine;
         this.invocable = (Invocable) this.engine;
