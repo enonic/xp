@@ -1,11 +1,13 @@
-package com.enonic.wem.script.internal.v2;
+package com.enonic.wem.script.internal.function;
 
 import javax.script.Bindings;
 
 import jdk.nashorn.api.scripting.AbstractJSObject;
 
 import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.script.command.CommandInvoker;
+import com.enonic.wem.script.internal.invoker.CommandInvoker;
+import com.enonic.wem.script.internal.invoker.CommandRequestImpl;
+import com.enonic.wem.script.internal.util.ScriptObjectConverter;
 
 public final class ExecuteFunction
     extends AbstractJSObject

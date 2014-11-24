@@ -1,19 +1,19 @@
-package com.enonic.wem.script.internal.v2;
+package com.enonic.wem.script.internal.invoker;
 
 import java.util.Map;
 
 import com.google.common.collect.Maps;
 
 import com.enonic.wem.script.command.CommandHandler;
-import com.enonic.wem.script.command.CommandInvoker;
+import com.enonic.wem.script.internal.invoker.CommandInvoker;
 import com.enonic.wem.script.command.CommandRequest;
 
-public final class CommandInvoker2Impl
+public final class CommandInvokerImpl
     implements CommandInvoker
 {
     private final Map<String, CommandHandler> handlers;
 
-    public CommandInvoker2Impl()
+    public CommandInvokerImpl()
     {
         this.handlers = Maps.newConcurrentMap();
     }

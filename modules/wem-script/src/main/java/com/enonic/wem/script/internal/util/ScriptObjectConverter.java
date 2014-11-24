@@ -1,4 +1,4 @@
-package com.enonic.wem.script.internal.v2;
+package com.enonic.wem.script.internal.util;
 
 import java.util.List;
 import java.util.Map;
@@ -10,7 +10,7 @@ import com.google.common.collect.Maps;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import jdk.nashorn.api.scripting.ScriptUtils;
 
-final class ScriptObjectConverter
+public final class ScriptObjectConverter
 {
     private static Object toObject( final Object source )
     {

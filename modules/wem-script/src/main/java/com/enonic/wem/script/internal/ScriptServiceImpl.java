@@ -14,19 +14,19 @@ import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.script.ScriptExports;
 import com.enonic.wem.script.ScriptService;
 import com.enonic.wem.script.command.CommandHandler;
-import com.enonic.wem.script.internal.v2.CommandInvoker2Impl;
+import com.enonic.wem.script.internal.invoker.CommandInvokerImpl;
 
 @Component(immediate = true)
 public final class ScriptServiceImpl
     implements ScriptService
 {
-    private final CommandInvoker2Impl invoker2;
+    private final CommandInvokerImpl invoker2;
 
     private final ScriptExecutor executor;
 
     public ScriptServiceImpl()
     {
-        this.invoker2 = new CommandInvoker2Impl();
+        this.invoker2 = new CommandInvokerImpl();
         final ScriptEngine engine = new NashornScriptEngineFactory().getScriptEngine();
         this.executor = new ScriptExecutorImpl( engine, this.invoker2 );
     }

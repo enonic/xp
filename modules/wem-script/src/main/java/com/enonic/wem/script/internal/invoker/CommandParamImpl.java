@@ -1,4 +1,4 @@
-package com.enonic.wem.script.internal.v2;
+package com.enonic.wem.script.internal.invoker;
 
 import java.util.List;
 import java.util.Map;
