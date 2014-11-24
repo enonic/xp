@@ -15,7 +15,6 @@ import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
 public class EmbeddedElasticsearchServer
 {
-
     private static final String DEFAULT_DATA_DIRECTORY = "target/elasticsearch-data";
 
     private final Node node;
@@ -23,6 +22,8 @@ public class EmbeddedElasticsearchServer
     private final String dataDirectory;
 
     private final static Logger LOG = LoggerFactory.getLogger( AbstractElasticsearchIntegrationTest.class );
+
+    private final long now = System.currentTimeMillis();
 
     public EmbeddedElasticsearchServer()
     {
@@ -36,14 +37,14 @@ public class EmbeddedElasticsearchServer
         this.dataDirectory = dataDirectory;
 
         ImmutableSettings.Builder testServerSetup = ImmutableSettings.settingsBuilder().
-            put( "name", "integration-test-node-2" ).
+            put( "name", "itest-node-" + this.now ).
             put( "client", "false" ).
             put( "data", "true" ).
             put( "local", "true" ).
+            put( "path.data", dataDirectory + "-" + this.now ).
+            put( "cluster.name", "itest-test-cluster-" + this.now ).
             put( "http.enabled", "false" ).
-            put( "path.data", dataDirectory ).
             put( "gateway.type", "none" ).
-            put( "cluster.name", "integration-test-cluster" ).
             put( "discovery.zen.ping.multicast.enabled", "false" );
 
         node = nodeBuilder().
@@ -66,11 +67,11 @@ public class EmbeddedElasticsearchServer
 
     private void deleteDataDirectory()
     {
-        LOG.info( "Deleting index data directories" );
-
         try
         {
-            FileUtils.deleteDirectory( new File( dataDirectory ) );
+            final String path = dataDirectory + "-" + this.now;
+            LOG.info( "Deleting index data directory " + path );
+            FileUtils.deleteDirectory( new File( path ) );
         }
         catch ( IOException e )
         {

@@ -16,7 +16,7 @@ import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 class EmbeddedElasticsearchServer
 {
 
-    private static final String DEFAULT_DATA_DIRECTORY = "target/elasticsearch-data";
+    private static final String ROOT_DATA_DIRECTORY = "target/elasticsearch-data";
 
     private final Node node;
 
@@ -24,24 +24,27 @@ class EmbeddedElasticsearchServer
 
     private final static Logger LOG = LoggerFactory.getLogger( AbstractElasticsearchIntegrationTest.class );
 
+    private final long now = System.currentTimeMillis();
+
     public EmbeddedElasticsearchServer()
     {
-        this( DEFAULT_DATA_DIRECTORY );
+        this( ROOT_DATA_DIRECTORY );
     }
 
     private EmbeddedElasticsearchServer( String dataDirectory )
     {
+
         LOG.info( " --- Starting ES integration test server instance" );
 
         this.dataDirectory = dataDirectory;
 
         ImmutableSettings.Builder testServerSetup = ImmutableSettings.settingsBuilder().
-            put( "name", "integration-test-node" ).
+            put( "name", "repo-node-" + this.now ).
             put( "client", "false" ).
             put( "data", "true" ).
             put( "local", "true" ).
-            put( "path.data", dataDirectory ).
-            put( "cluster.name", "integration-test-cluster" ).
+            put( "path.data", dataDirectory + "-" + this.now ).
+            put( "cluster.name", "repo-test-cluster-" + this.now ).
             put( "http.enabled", "false" ).
             put( "gateway.type", "none" ).
             put( "discovery.zen.ping.multicast.enabled", "false" );
@@ -66,11 +69,11 @@ class EmbeddedElasticsearchServer
 
     private void deleteDataDirectory()
     {
-        LOG.info( "Deleting index data directories" );
-
         try
         {
-            FileUtils.deleteDirectory( new File( dataDirectory ) );
+            final String path = dataDirectory + "-" + this.now;
+            LOG.info( "Deleting index data directory " + path );
+            FileUtils.deleteDirectory( new File( path ) );
         }
         catch ( IOException e )
         {
