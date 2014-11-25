@@ -81,8 +81,7 @@ import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.api.security.PrincipalQuery;
-import com.enonic.wem.api.security.PrincipalQueryResult;
+import com.enonic.wem.api.security.PrincipalKeys;
 import com.enonic.wem.api.security.Principals;
 import com.enonic.wem.api.security.SecurityService;
 import com.enonic.wem.api.security.acl.AccessControlList;
@@ -456,12 +455,9 @@ public final class ContentResource
         final ContentId contentId = ContentId.from( contentIdParam );
         final ContentPermissions contentPermissions = contentService.getPermissions( contentId );
 
-        final PrincipalQuery principalQuery = PrincipalQuery.newQuery().
-//            principals( contentPermissions.getPermissions().getAllPrincipals() ).
-//            principals( contentPermissions.getInheritedPermissions().getAllPrincipals() ).
-            build();
-        final PrincipalQueryResult principalResult = securityService.query( principalQuery );
-        final Principals principals = principalResult.getPrincipals();
+        final PrincipalKeys principalKeys = PrincipalKeys.from( contentPermissions.getPermissions().getAllPrincipals(),
+                                                                contentPermissions.getInheritedPermissions().getAllPrincipals() );
+        final Principals principals = securityService.getPrincipals( principalKeys );
 
         return new ContentPermissionsJson( contentPermissions, principals );
     }

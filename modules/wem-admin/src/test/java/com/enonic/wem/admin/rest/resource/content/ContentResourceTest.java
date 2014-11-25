@@ -62,8 +62,8 @@ import com.enonic.wem.api.schema.content.validator.MaximumOccurrencesValidationE
 import com.enonic.wem.api.schema.content.validator.MissingRequiredValueValidationError;
 import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
 import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.api.security.PrincipalQuery;
-import com.enonic.wem.api.security.PrincipalQueryResult;
+import com.enonic.wem.api.security.PrincipalKeys;
+import com.enonic.wem.api.security.Principals;
 import com.enonic.wem.api.security.SecurityService;
 import com.enonic.wem.api.security.User;
 import com.enonic.wem.api.security.UserStoreKey;
@@ -776,7 +776,6 @@ public class ContentResourceTest
 
     }
 
-    @Ignore
     @Test
     public void getContentPermissions()
         throws Exception
@@ -793,9 +792,8 @@ public class ContentResourceTest
             email( "user2@enonic.com" ).
             login( "user2" ).
             build();
-        final PrincipalQueryResult principalResult = PrincipalQueryResult.newResult().
-            addPrincipal( user1 ).addPrincipal( user2 ).addPrincipal( User.anonymous() ).build();
-        Mockito.when( securityService.query( Mockito.isA( PrincipalQuery.class ) ) ).thenReturn( principalResult );
+        final Principals principalResult = Principals.from( user1, user2, User.anonymous() );
+        Mockito.when( securityService.getPrincipals( Mockito.isA( PrincipalKeys.class ) ) ).thenReturn( principalResult );
 
         final AccessControlEntry entry1 = AccessControlEntry.create().
             principal( PrincipalKey.ofAnonymous() ).

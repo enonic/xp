@@ -23,7 +23,7 @@ public final class PrincipalKeys
         return new PrincipalKeys( ImmutableSet.copyOf( principalKeys ) );
     }
 
-    public static PrincipalKeys from( final Collection<? extends PrincipalKey> principalKeys )
+    public static PrincipalKeys from( final Collection<PrincipalKey> principalKeys )
     {
         return new PrincipalKeys( ImmutableSet.copyOf( principalKeys ) );
     }
@@ -31,6 +31,16 @@ public final class PrincipalKeys
     public static PrincipalKeys from( final String... principalKeys )
     {
         return new PrincipalKeys( parsePrincipalKeys( principalKeys ) );
+    }
+
+    public static PrincipalKeys from( final Iterable<PrincipalKey>... principalKeys )
+    {
+        final ImmutableSet.Builder<PrincipalKey> keys = ImmutableSet.builder();
+        for ( Iterable<PrincipalKey> keysParam : principalKeys )
+        {
+            keys.addAll( keysParam );
+        }
+        return new PrincipalKeys( keys.build() );
     }
 
     public static PrincipalKeys empty()

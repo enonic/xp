@@ -34,6 +34,12 @@ public interface SecurityService
      */
     User updateUser( UpdateUserParams updateUserParams );
 
+    /**
+     * Looks up a user by key and returns an {@code Optional} with the user instance.
+     *
+     * @param userKey principal key of the user to retrieve
+     * @return an {@link Optional} with the user
+     */
     Optional<User> getUser( PrincipalKey userKey );
 
     /**
@@ -54,6 +60,12 @@ public interface SecurityService
      */
     Group updateGroup( UpdateGroupParams updateGroupParams );
 
+    /**
+     * Looks up a group by key and returns an {@code Optional} with the group instance.
+     *
+     * @param groupKey principal key of the group to retrieve
+     * @return an {@link Optional} with the group
+     */
     Optional<Group> getGroup( PrincipalKey groupKey );
 
     /**
@@ -74,9 +86,30 @@ public interface SecurityService
      */
     Role updateRole( UpdateRoleParams updateRoleParams );
 
+    /**
+     * Looks up a role by key and returns an {@code Optional} with the role instance.
+     *
+     * @param roleKey principal key of the role to retrieve
+     * @return an {@link Optional} with the role
+     */
     Optional<Role> getRole( PrincipalKey roleKey );
 
+    /**
+     * Looks up a principal by key and returns an {@code Optional} with the principal instance.
+     *
+     * @param principalKey key of the principal to retrieve
+     * @return an {@link Optional} with the principal
+     */
     Optional<? extends Principal> getPrincipal( PrincipalKey principalKey );
+
+    /**
+     * Looks up a set of principals by key and returns a list of with the {@link Principals} found.
+     * If one or more principal keys cannot be found, they will be omitted from the result.
+     *
+     * @param principalKeys keys of the principals to retrieve
+     * @return a {@link Principals} object containing the list of principals found
+     */
+    Principals getPrincipals( PrincipalKeys principalKeys );
 
     /**
      * Deletes an existing principal.

@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Ints;
 
@@ -346,7 +347,7 @@ public final class SecurityServiceImpl
             final Node node = CONTEXT_USER_STORES.callWith( () -> this.nodeService.getById( toNodeId( userKey ) ) );
             return Optional.ofNullable( PrincipalNodeTranslator.userFromNode( node ) );
         }
-        catch ( Exception e )
+        catch ( NodeNotFoundException e )
         {
             return Optional.empty();
         }
@@ -409,7 +410,7 @@ public final class SecurityServiceImpl
             final Node node = CONTEXT_USER_STORES.callWith( () -> this.nodeService.getById( toNodeId( groupKey ) ) );
             return Optional.ofNullable( PrincipalNodeTranslator.groupFromNode( node ) );
         }
-        catch ( Exception e )
+        catch ( NodeNotFoundException e )
         {
             return Optional.empty();
         }
@@ -472,7 +473,7 @@ public final class SecurityServiceImpl
             final Node node = CONTEXT_USER_STORES.callWith( () -> this.nodeService.getById( toNodeId( roleKey ) ) );
             return Optional.ofNullable( PrincipalNodeTranslator.roleFromNode( node ) );
         }
-        catch ( Exception e )
+        catch ( NodeNotFoundException e )
         {
             return Optional.empty();
         }
@@ -493,6 +494,39 @@ public final class SecurityServiceImpl
                 return getRole( principalKey );
         }
         return Optional.empty();
+    }
+
+    @Override
+    public Principals getPrincipals( final PrincipalKeys principalKeys )
+    {
+        final ImmutableList.Builder<Principal> principals = ImmutableList.builder();
+        for ( PrincipalKey key : principalKeys )
+        {
+            final Node node;
+            try
+            {
+                node = CONTEXT_USER_STORES.callWith( () -> this.nodeService.getById( toNodeId( key ) ) );
+            }
+            catch ( NodeNotFoundException e )
+            {
+                continue;
+            }
+
+            switch ( key.getType() )
+            {
+                case USER:
+                    principals.add( PrincipalNodeTranslator.userFromNode( node ) );
+                    break;
+                case GROUP:
+                    principals.add( PrincipalNodeTranslator.groupFromNode( node ) );
+                    break;
+                case ROLE:
+                    principals.add( PrincipalNodeTranslator.roleFromNode( node ) );
+                    break;
+            }
+
+        }
+        return Principals.from( principals.build() );
     }
 
     @Override
