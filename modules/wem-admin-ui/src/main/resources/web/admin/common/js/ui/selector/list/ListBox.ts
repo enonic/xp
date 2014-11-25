@@ -90,6 +90,10 @@ module api.ui.selector.list {
             throw new Error("You must override getItemId to find item views by items");
         }
 
+        refreshList() {
+            this.layoutList(this.items);
+        }
+
         private layoutList(items: I[]) {
             this.ul.removeChildren();
             for (var i = 0; i < items.length; i++) {

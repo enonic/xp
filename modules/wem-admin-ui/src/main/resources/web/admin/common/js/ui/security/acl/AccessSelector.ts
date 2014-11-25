@@ -44,7 +44,7 @@ module api.ui.security.acl {
             return this.value
         }
 
-        setValue(value: Access, silent?: boolean) {
+        setValue(value: Access, silent?: boolean): AccessSelector {
             var option = this.findOptionByValue(value);
             if (option) {
                 this.selectNavigationItem(AccessSelector.OPTIONS.indexOf(option));
@@ -53,6 +53,7 @@ module api.ui.security.acl {
                 }
                 this.value = value;
             }
+            return this;
         }
 
         private findOptionByValue(value: Access): AccessSelectorOption {

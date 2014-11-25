@@ -1,5 +1,6 @@
 module api.ui.security.acl {
 
+    import Permission = api.security.acl.Permission;
     import AccessControlEntry = api.security.acl.AccessControlEntry;
     import Option = api.ui.selector.Option;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
@@ -24,7 +25,12 @@ module api.ui.security.acl {
         private option: Option<AccessControlEntry>;
 
         constructor(option: Option<AccessControlEntry>) {
-            super(option.displayValue);
+            var ace = option.displayValue;
+            if (ace.getAllowedPermissions().length == 0 && ace.getDeniedPermissions().length == 0) {
+                // allow read by default
+                ace.allow(Permission.READ);
+            }
+            super(ace);
             this.option = option;
         }
 
@@ -163,11 +169,11 @@ module api.ui.security.acl {
             });
         }
 
-        onSelectedOptionRemoved(listener: {(removed: SelectedOption<AccessControlEntry>): void;}) {
+        onOptionDeselected(listener: {(removed: SelectedOption<AccessControlEntry>): void;}) {
             this.selectedOptionRemovedListeners.push(listener);
         }
 
-        unSelectedOptionRemoved(listener: {(removed: SelectedOption<AccessControlEntry>): void;}) {
+        unOptionDeselected(listener: {(removed: SelectedOption<AccessControlEntry>): void;}) {
             this.selectedOptionRemovedListeners = this.selectedOptionRemovedListeners.filter(function (curr) {
                 return curr != listener;
             });

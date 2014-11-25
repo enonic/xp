@@ -22,6 +22,7 @@ module api.ui.tab {
 
         private navigationItemDeselectedListeners: {(event: NavigatorEvent):void}[] = [];
 
+        private enabled: boolean = true;
 
         constructor(className?: string) {
             super("tab-menu" + (className ? " " + className : ""));
@@ -29,7 +30,11 @@ module api.ui.tab {
             this.tabMenuButton = this.createTabMenuButton();
             this.tabMenuButton.hide();
             this.tabMenuButton.addClass("tab-menu-button");
-            this.tabMenuButton.onClicked((event: MouseEvent) => this.toggleMenu());
+            this.tabMenuButton.onClicked((event: MouseEvent) => {
+                if (this.enabled) {
+                    this.toggleMenu();
+                }
+            });
             this.appendChild(this.tabMenuButton);
 
             this.menuEl = new api.dom.UlEl();
@@ -42,6 +47,12 @@ module api.ui.tab {
                 e.preventDefault();
                 e.stopPropagation();
             });
+        }
+
+        setEnabled(enabled: boolean): TabMenu {
+            this.enabled = enabled;
+            this.toggleClass('disabled', !enabled);
+            return this;
         }
 
         createTabMenuButton(): TabMenuButton {
