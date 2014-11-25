@@ -64,7 +64,7 @@ public class ElasticsearchQueryService
         final GetResult result = elasticsearchDao.get( GetQuery.create().
             indexName( IndexNameResolver.resolveSearchIndexName( indexContext.getRepositoryId() ) ).
             indexTypeName( indexContext.getWorkspace().getName() ).
-            returnFields( ReturnFields.from( IndexPaths.VERSION_KEY, IndexPaths.HAS_READ_KEY ) ).
+            returnFields( ReturnFields.from( IndexPaths.VERSION_KEY, IndexPaths.PERMISSIONS_WRITE_PERMISSIONS_KEY ) ).
             id( nodeId ).
             build() );
 

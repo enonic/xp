@@ -22,7 +22,7 @@ public class GetResultCanReadResolverTest
     {
         assertFalse( GetResultCanReadResolver.canRead( PrincipalKeys.empty(), new GetResult( SearchResultEntry.create().
             id( "myId" ).
-            addField( IndexPaths.HAS_READ_KEY, SearchResultFieldValue.value( "user:system:rmy" ) ).
+            addField( IndexPaths.PERMISSIONS_WRITE_PERMISSIONS_KEY, SearchResultFieldValue.value( "user:system:rmy" ) ).
             build() ) ) );
     }
 
@@ -32,7 +32,7 @@ public class GetResultCanReadResolverTest
     {
         assertTrue( GetResultCanReadResolver.canRead( PrincipalKeys.empty(), new GetResult( SearchResultEntry.create().
             id( "myId" ).
-            addField( IndexPaths.HAS_READ_KEY, SearchResultFieldValue.value( PrincipalKey.ofAnonymous().toString() ) ).
+            addField( IndexPaths.PERMISSIONS_WRITE_PERMISSIONS_KEY, SearchResultFieldValue.value( PrincipalKey.ofAnonymous().toString() ) ).
             build() ) ) );
     }
 
@@ -43,8 +43,9 @@ public class GetResultCanReadResolverTest
         assertTrue( GetResultCanReadResolver.canRead( PrincipalKeys.from( PrincipalKey.from( "user:system:rmy" ) ),
                                                       new GetResult( SearchResultEntry.create().
                                                           id( "myId" ).
-                                                          addField( IndexPaths.HAS_READ_KEY, SearchResultFieldValue.value(
-                                                              PrincipalKey.from( "user:system:rmy" ) ) ).
+                                                          addField( IndexPaths.PERMISSIONS_WRITE_PERMISSIONS_KEY,
+                                                                    SearchResultFieldValue.value(
+                                                                        PrincipalKey.from( "user:system:rmy" ) ) ).
                                                           build() ) ) );
     }
 
@@ -56,7 +57,7 @@ public class GetResultCanReadResolverTest
             PrincipalKeys.from( PrincipalKey.from( "user:system:rmy" ), PrincipalKey.from( "group:system:my-group" ) ),
             new GetResult( SearchResultEntry.create().
                 id( "myId" ).
-                addField( IndexPaths.HAS_READ_KEY,
+                addField( IndexPaths.PERMISSIONS_WRITE_PERMISSIONS_KEY,
                           SearchResultFieldValue.values( Arrays.asList( "user:system:rmy", "group:system:my-group" ) ) ).
                 build() ) ) );
     }

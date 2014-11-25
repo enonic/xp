@@ -14,8 +14,6 @@ import static org.junit.Assert.*;
 
 public class AccessControlListStoreDocumentFactoryTest
 {
-
-
     @Test
     public void single_user()
         throws Exception
@@ -37,7 +35,6 @@ public class AccessControlListStoreDocumentFactoryTest
     public void multiple_user()
         throws Exception
     {
-
         final AccessControlList acl = AccessControlList.create().
             add( AccessControlEntry.create().
                 allow( Permission.READ ).
@@ -60,8 +57,29 @@ public class AccessControlListStoreDocumentFactoryTest
 
         final Set<AbstractStoreDocumentItem> aclStoreDocumentItems = AccessControlListStoreDocumentFactory.create( acl );
 
-        assertEquals( 3, aclStoreDocumentItems.size() );
+        assertEquals( 5, aclStoreDocumentItems.size() );
     }
 
+    @Test
+    public void single_user_all_permissions()
+        throws Exception
+    {
+        final AccessControlList acl = AccessControlList.create().
+            add( AccessControlEntry.create().
+                allow( Permission.READ ).
+                allow( Permission.PUBLISH ).
+                allow( Permission.WRITE_PERMISSIONS ).
+                allow( Permission.READ_PERMISSIONS ).
+                allow( Permission.MODIFY ).
+                allow( Permission.CREATE ).
+                allow( Permission.DELETE ).
+                principal( PrincipalKey.from( "user:myuserstore:rmy" ) ).
+                build() ).
+            build();
+
+        final Set<AbstractStoreDocumentItem> aclStoreDocumentItems = AccessControlListStoreDocumentFactory.create( acl );
+
+        assertEquals( 7, aclStoreDocumentItems.size() );
+    }
 
 }

@@ -18,7 +18,7 @@ public class AclFilterBuilderFactory
         }
 
         final ValueFilter.Builder valueFilterBuilder = ValueFilter.create().
-            fieldName( IndexPaths.HAS_READ_KEY );
+            fieldName( IndexPaths.PERMISSIONS_WRITE_PERMISSIONS_KEY );
 
         for ( final PrincipalKey principalKey : principalsKeys )
         {
@@ -31,7 +31,7 @@ public class AclFilterBuilderFactory
     private static Filter createNoPrincipalsFilter()
     {
         return ValueFilter.create().
-            fieldName( IndexPaths.HAS_READ_KEY ).
+            fieldName( IndexPaths.PERMISSIONS_WRITE_PERMISSIONS_KEY ).
             addValue( Value.newString( User.anonymous().getKey() ) ).
             build();
     }

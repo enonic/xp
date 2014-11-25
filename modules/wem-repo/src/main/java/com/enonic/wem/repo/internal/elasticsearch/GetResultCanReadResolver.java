@@ -12,7 +12,7 @@ class GetResultCanReadResolver
 {
     public static boolean canRead( final PrincipalKeys principalsKeys, final GetResult getResult )
     {
-        final SearchResultFieldValue hasRead = getResult.getSearchResult().getField( IndexPaths.HAS_READ_KEY );
+        final SearchResultFieldValue hasRead = getResult.getSearchResult().getField( IndexPaths.PERMISSIONS_WRITE_PERMISSIONS_KEY );
 
         if ( hasRead == null )
         {
