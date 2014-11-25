@@ -81,7 +81,7 @@ module api.content.site.inputtype.moduleconfigurator {
 
             var comboBox = new ModuleConfiguratorComboBox(input.getOccurrences().getMaximum() || 0, moduleConfigProvider);
 
-            comboBox.onSelectedOptionRemoved((removed: SelectedOption<Module>) => {
+            comboBox.onOptionDeselected((removed: SelectedOption<Module>) => {
                 this.notifyValueRemoved(removed.getIndex());
                 this.validate(false);
             });

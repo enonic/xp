@@ -110,11 +110,11 @@ module api.ui.selector.combobox {
             });
         }
 
-        onSelectedOptionRemoved(listener: {(removed: SelectedOption<T>): void;}) {
+        onOptionDeselected(listener: {(removed: SelectedOption<T>): void;}) {
             this.selectedOptionRemovedListeners.push(listener);
         }
 
-        unSelectedOptionRemoved(listener: {(removed: SelectedOption<T>): void;}) {
+        unOptionDeselected(listener: {(removed: SelectedOption<T>): void;}) {
             this.selectedOptionRemovedListeners = this.selectedOptionRemovedListeners.filter(function (curr) {
                 return curr != listener;
             });

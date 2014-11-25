@@ -68,7 +68,7 @@ module api.content.form.inputtype.relationship {
                 this.validate(false);
             });
 
-            this.contentComboBox.onSelectedOptionRemoved((removed: api.ui.selector.combobox.SelectedOption<api.content.ContentSummary>) => {
+            this.contentComboBox.onOptionDeselected((removed: api.ui.selector.combobox.SelectedOption<api.content.ContentSummary>) => {
 
                 this.notifyValueRemoved(removed.getIndex());
                 this.validate(false);

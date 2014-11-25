@@ -14,6 +14,7 @@ module api.ui.security.acl {
         private permissionSelector: PermissionSelector;
 
         private removeClickedListeners: {(event: MouseEvent):void}[] = [];
+        private editable: boolean = true;
 
         constructor(ace: AccessControlEntry) {
             super();
@@ -30,7 +31,7 @@ module api.ui.security.acl {
 
             this.permissionSelector = new PermissionSelector();
             this.permissionSelector.onValueChanged((event: ValueChangedEvent) => {
-                this.toggleClass("modified", event.getNewValue() != JSON.stringify({
+                this.toggleClass("dirty", event.getNewValue() != JSON.stringify({
                     allow: this.ace.getAllowedPermissions().sort(),
                     deny: this.ace.getDeniedPermissions().sort()
                 }));
@@ -49,6 +50,18 @@ module api.ui.security.acl {
             });
 
             this.setAccessControlEntry(this.ace, true);
+        }
+
+        setEditable(editable: boolean) {
+            if (editable != this.editable) {
+                this.permissionSelector.setEnabled(editable);
+                this.accessSelector.setEnabled(editable);
+                this.editable = editable;
+            }
+        }
+
+        isEditable(): boolean {
+            return this.editable;
         }
 
         public onValueChanged(listener: (event: api.ui.ValueChangedEvent) => void) {

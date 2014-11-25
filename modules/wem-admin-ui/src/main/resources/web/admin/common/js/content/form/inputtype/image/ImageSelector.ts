@@ -228,7 +228,7 @@ module api.content.form.inputtype.image {
 
             this.selectedOptionsView.onRemoveSelectedOptions((options: SelectedOption<ImageSelectorDisplayValue>[]) => {
                 options.forEach((option: SelectedOption<ImageSelectorDisplayValue>) => {
-                    this.comboBox.removeSelectedOption(option.getOption());
+                    this.comboBox.deselectOption(option.getOption());
                 });
                 this.validate(false);
             });
@@ -249,7 +249,7 @@ module api.content.form.inputtype.image {
 
             this.loadOptions("");
 
-            comboBox.onSelectedOptionRemoved((removed: SelectedOption<ImageSelectorDisplayValue>) => {
+            comboBox.onOptionDeselected((removed: SelectedOption<ImageSelectorDisplayValue>) => {
                 this.notifyValueRemoved(removed.getIndex());
                 this.validate(false);
             });

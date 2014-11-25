@@ -7,43 +7,78 @@ module app.wizard {
 
     export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
 
+        private content: api.content.Content;
+
         private comboBox: api.ui.security.acl.AccessControlEntryComboBox;
         private inheritCheckbox: api.ui.Checkbox;
 
         private inheritedPermissions: AccessControlList;
 
         constructor() {
-            super();
+            super("security-wizard-step-form");
 
-            var label = new api.dom.LabelEl("Access Control Entry list");
-            this.appendChild(label);
             this.comboBox = new api.ui.security.acl.AccessControlEntryComboBox();
+            var selectionChangeListener = () => {
+                this.inheritCheckbox.toggleClass('separator', this.comboBox.getSelectedValues().length > 0);
+            };
+            this.comboBox.onOptionDeselected(selectionChangeListener);
+            this.comboBox.onOptionSelected(selectionChangeListener);
 
             this.inheritCheckbox = new api.ui.Checkbox('Inherit permissions');
             this.inheritedPermissions = new AccessControlList('inherited');
+            this.inheritedPermissions.setItemsEditable(false);
             this.inheritedPermissions.setDoOffset(false);
             this.inheritCheckbox.onValueChanged((event: api.ui.ValueChangedEvent) => {
-                this.inheritedPermissions.setVisible(event.getNewValue() == 'true');
+                var checked = event.getNewValue() == 'true';
+                this.inheritedPermissions.setVisible(checked);
+                if (this.content) {
+                    if (!checked) {
+                        // turning off inherited, so restore custom permissions
+                        var entries = this.content.getPermissions().getEntries();
+                        if (entries.length > 0) {
+                            this.selectPermissions(entries);
+                        }
+                    } else {
+                        // turning on inherited, so filter out matches in custom permissions
+                        var inheritedEntries = this.content.getInheritedPermissions().getEntries();
+                        if (inheritedEntries.length > 0) {
+                            this.deselectPermissions(inheritedEntries);
+                        }
+                    }
+                }
             });
 
             this.appendChild(this.comboBox);
             this.appendChild(this.inheritCheckbox);
             this.appendChild(this.inheritedPermissions);
 
-            // TEST
-            var label2 = new api.dom.LabelEl("Principals list");
-            this.appendChild(label2);
-            var principals = new api.ui.security.PrincipalComboBox();
-            this.appendChild(principals);
         }
 
         layout(content: api.content.Content) {
-            content.getPermissions().getEntries().forEach((entry: AccessControlEntry) => {
+            this.content = content;
+            this.selectPermissions(content.getPermissions().getEntries());
+
+            var inheritedEntries = content.getInheritedPermissions().getEntries();
+            this.inheritedPermissions.setItems(inheritedEntries);
+
+            this.inheritCheckbox.setChecked(inheritedEntries.length > 0);
+        }
+
+        private selectPermissions(toSelect: AccessControlEntry[]) {
+            toSelect.forEach((entry: AccessControlEntry) => {
                 this.comboBox.select(entry)
             });
-            var inheritedEntries = content.getInheritedPermissions().getEntries();
-            this.inheritCheckbox.setChecked(inheritedEntries.length > 0);
-            this.inheritedPermissions.setItems(inheritedEntries);
+        }
+
+        private deselectPermissions(toDeselect: AccessControlEntry[]) {
+            this.comboBox.getSelectedValues().forEach((selectedPermission: AccessControlEntry) => {
+                for (var i = 0; i < toDeselect.length; i++) {
+                    if (toDeselect[i].getPrincipalKey().equals(selectedPermission.getPrincipalKey())) {
+                        this.comboBox.deselect(selectedPermission);
+                        break;
+                    }
+                }
+            });
         }
 
         giveFocus(): boolean {

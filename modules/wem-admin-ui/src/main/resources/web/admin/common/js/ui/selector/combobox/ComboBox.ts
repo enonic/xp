@@ -279,7 +279,7 @@ module api.ui.selector.combobox {
             }
         }
 
-        removeSelectedOption(optionToRemove: Option<OPTION_DISPLAY_VALUE>, silent: boolean = false) {
+        deselectOption(optionToRemove: Option<OPTION_DISPLAY_VALUE>, silent: boolean = false) {
             api.util.assertNotNull(optionToRemove, "optionToRemove cannot be null");
 
             this.selectedOptionsView.removeOption(optionToRemove, silent);
@@ -450,7 +450,7 @@ module api.ui.selector.combobox {
             this.onKeyDown(this.handleKeyDown.bind(this));
 
             if (this.selectedOptionsView) {
-                this.selectedOptionsView.onSelectedOptionRemoved((removedOption: SelectedOption<OPTION_DISPLAY_VALUE>) => {
+                this.selectedOptionsView.onOptionDeselected((removedOption: SelectedOption<OPTION_DISPLAY_VALUE>) => {
                     this.handleSelectedOptionRemoved(removedOption);
                 });
             }
@@ -648,12 +648,12 @@ module api.ui.selector.combobox {
             });
         }
 
-        onSelectedOptionRemoved(listener: {(removed: SelectedOption<OPTION_DISPLAY_VALUE>): void;}) {
-            this.selectedOptionsView.onSelectedOptionRemoved(listener);
+        onOptionDeselected(listener: {(removed: SelectedOption<OPTION_DISPLAY_VALUE>): void;}) {
+            this.selectedOptionsView.onOptionDeselected(listener);
         }
 
-        unSelectedOptionRemoved(listener: {(removed: SelectedOption<OPTION_DISPLAY_VALUE>): void;}) {
-            this.selectedOptionsView.unSelectedOptionRemoved(listener);
+        unOptionDeselected(listener: {(removed: SelectedOption<OPTION_DISPLAY_VALUE>): void;}) {
+            this.selectedOptionsView.unOptionDeselected(listener);
         }
 
         onFocus(listener: (event: FocusEvent) => void) {

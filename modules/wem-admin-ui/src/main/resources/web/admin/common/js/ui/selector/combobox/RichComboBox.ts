@@ -32,15 +32,12 @@ module api.ui.selector.combobox {
 
         private loadedListeners: {(items: OPTION_DISPLAY_VALUE[]):void;}[];
 
-        private optionSelectedListeners: {(event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>):void;}[];
-
         private setNextInputFocusWhenMaxReached: boolean;
 
         constructor(config: RichComboBoxBuilder<OPTION_DISPLAY_VALUE>) {
 
             this.loadedListeners = [];
             this.loadingListeners = [];
-            this.optionSelectedListeners = [];
 
             this.identifierMethod = config.identifierMethod;
 
@@ -100,15 +97,19 @@ module api.ui.selector.combobox {
         }
 
         select(value: OPTION_DISPLAY_VALUE) {
-            var val = value[this.identifierMethod]();
-            this.comboBox.selectOption({
-                value: typeof val == 'object' && val['toString'] ? val.toString() : val,
-                displayValue: value
-            });
+            this.comboBox.selectOption(this.createOption(value));
         }
 
-        deselect(option: Option<OPTION_DISPLAY_VALUE>) {
-            this.comboBox.removeSelectedOption(option);
+        deselect(value: OPTION_DISPLAY_VALUE) {
+            this.comboBox.deselectOption(this.createOption(value));
+        }
+
+        private createOption(value: OPTION_DISPLAY_VALUE): Option<OPTION_DISPLAY_VALUE> {
+            var val = value[this.identifierMethod]();
+            return {
+                value: typeof val == 'object' && val['toString'] ? val.toString() : val,
+                displayValue: value
+            }
         }
 
         private createComboBox(name: string): ComboBox<OPTION_DISPLAY_VALUE> {
@@ -119,7 +120,7 @@ module api.ui.selector.combobox {
         }
 
         private setupLoader() {
-            this.comboBox.onSelectedOptionRemoved(()=> {
+            this.comboBox.onOptionDeselected(()=> {
                 this.loader.search("");
             });
             this.comboBox.onOptionFilterInputValueChanged((event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>) => {
@@ -127,7 +128,6 @@ module api.ui.selector.combobox {
             });
             this.comboBox.onOptionSelected((event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>) => {
                 this.selectedOptionsView.show();
-                this.notifyOptionSelected(event);
             });
 
             this.loader.onLoadingData((event: api.util.loader.event.LoadingDataEvent) => {
@@ -180,24 +180,12 @@ module api.ui.selector.combobox {
             this.comboBox.setInputIconUrl(url);
         }
 
-        onSelectedOptionRemoved(listener: {(option: SelectedOption<OPTION_DISPLAY_VALUE>):void;}) {
-            this.comboBox.onSelectedOptionRemoved(listener);
+        onOptionDeselected(listener: {(option: SelectedOption<OPTION_DISPLAY_VALUE>):void;}) {
+            this.comboBox.onOptionDeselected(listener);
         }
 
         onOptionSelected(listener: {(event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>): void;}) {
-            this.optionSelectedListeners.push(listener);
-        }
-
-        unOptionSelected(listener: {(event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>): void;}) {
-            this.optionSelectedListeners.filter((currentListener: (event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>) =>void) => {
-                return listener != currentListener;
-            });
-        }
-
-        private notifyOptionSelected(event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>) {
-            this.optionSelectedListeners.forEach((listener) => {
-                listener(event);
-            });
+            this.comboBox.onOptionSelected(listener);
         }
 
         private notifyLoading() {

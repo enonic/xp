@@ -85,7 +85,7 @@ module api.form.inputtype.combobox {
 
                 this.validate(false);
             });
-            comboBox.onSelectedOptionRemoved((removed: api.ui.selector.combobox.SelectedOption<string>) => {
+            comboBox.onOptionDeselected((removed: api.ui.selector.combobox.SelectedOption<string>) => {
 
                 this.notifyValueRemoved(removed.getIndex());
 

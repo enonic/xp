@@ -28,8 +28,8 @@ module api.ui.selector.combobox {
 
         moveOccurrence(formIndex: number, toIndex: number);
 
-        onSelectedOptionRemoved(listener: {(removed: SelectedOption<T>): void;});
+        onOptionDeselected(listener: {(removed: SelectedOption<T>): void;});
 
-        unSelectedOptionRemoved(listener: {(removed: SelectedOption<T>): void;});
+        unOptionDeselected(listener: {(removed: SelectedOption<T>): void;});
     }
 }

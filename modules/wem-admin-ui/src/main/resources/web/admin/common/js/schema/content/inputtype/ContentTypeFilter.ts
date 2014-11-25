@@ -71,7 +71,7 @@ module api.schema.content.inputtype {
                 this.validate(false);
             });
 
-            this.combobox.onSelectedOptionRemoved((option: SelectedOption<ContentTypeSummary>) => {
+            this.combobox.onOptionDeselected((option: SelectedOption<ContentTypeSummary>) => {
                 this.notifyValueRemoved(option.getIndex());
                 this.validate(false);
             });
