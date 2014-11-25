@@ -20,6 +20,8 @@ module api.content {
 
         private attachments: api.content.attachment.Attachment[] = [];
 
+        private permissions: api.security.acl.AccessControlList;
+
         constructor() {
             super();
             super.setMethod("POST");
@@ -75,6 +77,10 @@ module api.content {
             return this;
         }
 
+        setPermissions(permissions: api.security.acl.AccessControlList): CreateContentRequest {
+            this.permissions = permissions;
+            return this;
+        }
 
         getParams(): Object {
             return {
@@ -86,7 +92,8 @@ module api.content {
                 contentData: this.contentData.toJson(),
                 metadata: this.metadataToJson(),
                 displayName: this.displayName,
-                attachments: this.attachmentsToJson()
+                attachments: this.attachmentsToJson(),
+                permissions: this.permissions ? this.permissions.toJson() : undefined
             };
         }
 

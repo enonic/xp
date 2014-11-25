@@ -16,6 +16,7 @@ import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.security.acl.AccessControlList;
 
 public final class CreateContentParams
 {
@@ -40,6 +41,8 @@ public final class CreateContentParams
     private Map<String, Attachment> attachments = Maps.newHashMap();
 
     private Set<OrderExpr> orderExpressions = Sets.newLinkedHashSet();
+
+    private AccessControlList accessControlList;
 
     public CreateContentParams contentType( final ContentTypeName value )
     {
@@ -134,6 +137,12 @@ public final class CreateContentParams
         return attachments( Iterables.toArray( attachments, Attachment.class ) );
     }
 
+    public CreateContentParams accessControlList( final AccessControlList accessControlList )
+    {
+        this.accessControlList = accessControlList;
+        return this;
+    }
+
     public ContentPath getParentContentPath()
     {
         return parentContentPath;
@@ -192,6 +201,11 @@ public final class CreateContentParams
     public Set<OrderExpr> getOrderExpressions()
     {
         return orderExpressions;
+    }
+
+    public AccessControlList getAccessControlList()
+    {
+        return accessControlList;
     }
 
     public void validate()

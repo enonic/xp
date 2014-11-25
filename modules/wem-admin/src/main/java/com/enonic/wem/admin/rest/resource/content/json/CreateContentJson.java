@@ -18,6 +18,7 @@ import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.DataJson;
 import com.enonic.wem.api.form.FormJson;
 import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.security.acl.AccessControlList;
 
 public class CreateContentJson
 {
@@ -31,7 +32,8 @@ public class CreateContentJson
                        @JsonProperty("contentType") final String contentType, @JsonProperty("form") final FormJson formJson,
                        @JsonProperty("contentData") final List<DataJson> dataJsonList,
                        @JsonProperty("attachments") final List<AttachmentJson> attachmentJsonList,
-                       @JsonProperty("metadata") final List<MetadataJson> metadataJsonList)
+                       @JsonProperty("metadata") final List<MetadataJson> metadataJsonList,
+                       @JsonProperty("permissions") final List<AccessControlEntryJson> permissions )
     {
 
         this.createContent = new CreateContentParams();
@@ -60,6 +62,23 @@ public class CreateContentJson
         {
             this.createContent.attachments( attachmentJson.getAttachment() );
         }
+
+        if ( permissions != null )
+        {
+            final AccessControlList acl = parseAcl( permissions );
+            this.createContent.accessControlList( acl );
+        }
+
+    }
+
+    private AccessControlList parseAcl( final List<AccessControlEntryJson> accessControlListJson )
+    {
+        final AccessControlList.Builder builder = AccessControlList.create();
+        for ( final AccessControlEntryJson entryJson : accessControlListJson )
+        {
+            builder.add( entryJson.getSourceEntry() );
+        }
+        return builder.build();
     }
 
     @JsonIgnore

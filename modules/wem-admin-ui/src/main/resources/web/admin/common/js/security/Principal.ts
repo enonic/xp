@@ -10,17 +10,17 @@ module api.security {
 
         private modifiedTime: Date;
 
-        constructor(principalKey: PrincipalKey, displayName: string, type: PrincipalType, modifiedTime?: Date) {
+        constructor(principalKey: PrincipalKey, displayName: string, modifiedTime?: Date) {
             this.key = principalKey;
             this.displayName = displayName;
-            this.type = type;
-            this.modifiedTime = modifiedTime || new Date();
+            this.type = principalKey.getType();
+            this.modifiedTime = modifiedTime;
         }
 
         static fromJson(json: PrincipalJson): Principal {
             var key = PrincipalKey.fromString(json.key);
             var date = json.modifiedTime ? api.util.DateHelper.parseUTCDate(json.modifiedTime) : undefined;
-            return new Principal(key, json.displayName, key.getType(), date);
+            return new Principal(key, json.displayName, date);
         }
 
         toJson(): PrincipalJson {

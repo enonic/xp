@@ -5,7 +5,8 @@ module api.security {
         private members: PrincipalKey[];
 
         constructor(builder: GroupBuilder) {
-            super(builder.key, builder.displayName, PrincipalType.GROUP, builder.modifiedTime)
+            super(builder.key, builder.displayName, builder.modifiedTime);
+            api.util.assert(builder.key.isGroup(), 'Expected PrincipalKey of type Group');
             this.members = builder.members || [];
         }
 

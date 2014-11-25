@@ -29,10 +29,6 @@ module api.security.acl {
             return this.principal.getDisplayName();
         }
 
-        getPrincipalModifiedTime(): Date {
-            return this.principal.getModifiedTime();
-        }
-
         getAllowedPermissions(): Permission[] {
             return this.allowedPermissions;
         }

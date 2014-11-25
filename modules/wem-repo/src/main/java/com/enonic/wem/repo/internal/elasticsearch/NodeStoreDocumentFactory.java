@@ -12,12 +12,12 @@ import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.index.IndexConfigDocument;
 import com.enonic.wem.api.index.IndexPaths;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeVersionId;
 import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocumentItemFactory;
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeVersionId;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 
 import static com.enonic.wem.api.index.IndexPaths.CREATED_TIME_PATH;
@@ -66,7 +66,7 @@ class NodeStoreDocumentFactory
     {
         addNodeBaseProperties( node, nodeVersionId, builder );
 
-        builder.addEntries( AccessControlListStoreDocumentFactory.create( node.getAccessControlList() ) );
+        builder.addEntries( AccessControlListStoreDocumentFactory.create( node.getEffectiveAccessControlList() ) );
     }
 
     private static void addNodeBaseProperties( final Node node, final NodeVersionId nodeVersionId, final StoreDocument.Builder builder )

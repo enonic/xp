@@ -20,11 +20,6 @@ import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.thumb.Thumbnail;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.index.IndexConfigDocument;
-import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.content.ContentTypeService;
-import com.enonic.wem.api.schema.content.GetContentTypeParams;
-import com.enonic.wem.core.content.serializer.ThumbnailAttachmentSerializer;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeEditor;
@@ -33,6 +28,11 @@ import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.Nodes;
 import com.enonic.wem.api.node.UpdateNodeParams;
+import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeService;
+import com.enonic.wem.api.schema.content.GetContentTypeParams;
+import com.enonic.wem.core.content.serializer.ThumbnailAttachmentSerializer;
 
 public class ContentNodeTranslator
 {
@@ -76,6 +76,7 @@ public class ContentNodeTranslator
             data( contentAsData ).
             attachments( nodeAttachmentsBuilder.build() ).
             indexConfigDocument( indexConfigDocument ).
+            accessControlList( params.getAccessControlList() ).
             build();
     }
 

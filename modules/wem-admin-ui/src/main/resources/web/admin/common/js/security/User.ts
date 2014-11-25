@@ -9,7 +9,8 @@ module api.security {
         private loginDisabled: boolean;
 
         constructor(builder: UserBuilder) {
-            super(builder.key, builder.displayName, PrincipalType.USER, builder.modifiedTime);
+            super(builder.key, builder.displayName, builder.modifiedTime);
+            api.util.assert(builder.key.isUser(), 'Expected PrincipalKey of type User');
             this.email = builder.email;
             this.login = builder.login;
             this.loginDisabled = builder.loginDisabled;

@@ -80,9 +80,7 @@ module api.ui.security.acl {
 
             var principal = new Principal(
                 ace.getPrincipalKey(),
-                ace.getPrincipalDisplayName(),
-                ace.getPrincipalKey().getType(),
-                ace.getPrincipalModifiedTime());
+                ace.getPrincipalDisplayName());
             this.setObject(principal);
 
             var permissions = {
