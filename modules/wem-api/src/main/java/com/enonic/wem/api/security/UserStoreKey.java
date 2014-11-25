@@ -8,11 +8,15 @@ public final class UserStoreKey
 {
     private final static UserStoreKey SYSTEM = new UserStoreKey( "system" );
 
+    private final static String RESERVED_USER_STORE_ID = "roles";
+
     private final String id;
 
     public UserStoreKey( final String id )
     {
         Preconditions.checkArgument( !StringUtils.isBlank( id ), "UserStoreKey cannot be blank: %s", id );
+        Preconditions.checkArgument( !RESERVED_USER_STORE_ID.equals( id.toLowerCase() ),
+                                     "UserStoreKey id is reserved and cannot be used: %s", id );
         this.id = id;
     }
 

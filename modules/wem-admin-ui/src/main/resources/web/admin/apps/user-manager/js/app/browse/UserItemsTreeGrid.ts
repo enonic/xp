@@ -84,23 +84,36 @@ module app.browse {
             var gridItems: UserTreeGridItem[] = [];
 
             var deferred = wemQ.defer<UserTreeGridItem[]>();
-            //1. if there are no parents so need to call a getUserStoresRequest and fetch all UserStores
-            if (!parentNode) {
+            var level = parentNode ? parentNode.calcLevel() : 0;
+            if (level === 0) {
+                // at root level, fetch user stores, and add 'Roles' folder
                 new ListUserStoresRequest().sendAndParse().then((userStores: UserStore[]) => {
                     userStores.forEach((userStore: UserStore) => {
                         gridItems.push(new UserTreeGridItemBuilder().setUserStore(userStore).setType(UserTreeGridItemType.USER_STORE).build());
                     });
 
+                    gridItems.push(new UserTreeGridItemBuilder().setType(UserTreeGridItemType.ROLES).build());
+
                     deferred.resolve(gridItems);
                 });
 
-                // 2. add parent folders (Users, Roles and Groups) to the selected UserStore
-            } else if (parentNode.calcLevel() == 1) {
+            } else if (parentNode.getData().getType() === UserTreeGridItemType.ROLES) {
+                // fetch roles, if parent node 'Roles' was selected
+                new FindPrincipalsRequest().setAllowedTypes([PrincipalType.ROLE]).sendAndParse().
+                    then((principals: Principal[]) => {
+                        principals.forEach((principal: Principal) => {
+                            gridItems.push(new UserTreeGridItemBuilder().setPrincipal(principal).setType(UserTreeGridItemType.PRINCIPAL).build());
+                        });
+                        deferred.resolve(gridItems);
+                    });
+
+            } else if (level === 1) {
+                // add parent folders 'Users' and 'Groups' to the selected UserStore
                 var userStoreNode: app.browse.UserTreeGridItem = parentNode.getData();
-                deferred.resolve(this.addUsersGroupsRolesToUserStore(userStoreNode));
-            }
-            // 3. fetch principals from the userStore, if parent node(Groups or Users or Roles) was selected
-            else if (parentNode.calcLevel() == 2) {
+                deferred.resolve(this.addUsersGroupsToUserStore(userStoreNode));
+
+            } else if (level === 2) {
+                // fetch principals from the user store, if parent node 'Groups' or 'Users' was selected
                 var userStoreNode: app.browse.UserTreeGridItem = parentNode.getParent().getData();
                 var userStoreKey: UserStoreKey = userStoreNode.getUserStore().getKey();
 
@@ -124,14 +137,12 @@ module app.browse {
                 return PrincipalType.GROUP;
             } else if (itemType === UserTreeGridItemType.USERS) {
                 return PrincipalType.USER;
-            } else if (itemType === UserTreeGridItemType.ROLES) {
-                return PrincipalType.ROLE;
             } else {
                 throw new Error("Invalid item type for folder with principals: " + UserTreeGridItemType[itemType]);
             }
         }
 
-        private addUsersGroupsRolesToUserStore(parentItem: app.browse.UserTreeGridItem): UserTreeGridItem[] {
+        private addUsersGroupsToUserStore(parentItem: app.browse.UserTreeGridItem): UserTreeGridItem[] {
             var items: UserTreeGridItem[] = [];
             if (parentItem.getType() == UserTreeGridItemType.USER_STORE) {
                 var userStore = parentItem.getUserStore();
@@ -139,10 +150,6 @@ module app.browse {
                 var groupFolderItem = new UserTreeGridItemBuilder().setUserStore(userStore).setType(UserTreeGridItemType.GROUPS).build();
                 items.push(userFolderItem);
                 items.push(groupFolderItem);
-
-                if (userStore.getKey().isSystem()) {
-                    items.push(new UserTreeGridItemBuilder().setUserStore(userStore).setType(UserTreeGridItemType.ROLES).build());
-                }
             }
             return items;
         }

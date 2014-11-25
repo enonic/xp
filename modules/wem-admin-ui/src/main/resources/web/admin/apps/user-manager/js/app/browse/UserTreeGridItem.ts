@@ -98,15 +98,15 @@ module app.browse {
             }
             case UserTreeGridItemType.GROUPS:
             {
-                return this.userStore.getKey().toString() + "/groups";
+                return this.userStore.getKey().toString() + '/groups';
             }
             case UserTreeGridItemType.ROLES:
             {
-                return this.userStore.getKey().toString() + "/roles";
+                return '/roles';
             }
             case UserTreeGridItemType.USERS:
             {
-                return this.userStore.getKey().toString() + "/users";
+                return this.userStore.getKey().toString() + '/users';
             }
             }
 

@@ -6,25 +6,41 @@ import com.enonic.wem.api.security.UserStoreKey;
 
 class PrincipalPathTranslator
 {
+    private final static String ROLES_NODE_NAME = "roles";
 
     public static NodePath toParentPath( final PrincipalKey principalKey )
     {
-        final String userStorePart =
-            principalKey.getUserStore() == null ? UserStoreKey.system().toString() : principalKey.getUserStore().toString();
-        return NodePath.newPath().
-            addElement( userStorePart ).
-            addElement( principalKey.getType().toString().toLowerCase() ).
-            build();
+        if ( principalKey.isRole() )
+        {
+            return NodePath.newPath().
+                addElement( ROLES_NODE_NAME ).
+                build();
+        }
+        else
+        {
+            return NodePath.newPath().
+                addElement( UserStoreKey.system().toString() ).
+                addElement( principalKey.getType().toString().toLowerCase() ).
+                build();
+        }
     }
 
     public static NodePath toPath( final PrincipalKey principalKey )
     {
-        final String userStorePart =
-            principalKey.getUserStore() == null ? UserStoreKey.system().toString() : principalKey.getUserStore().toString();
-        return NodePath.newPath().
-            addElement( userStorePart ).
-            addElement( principalKey.getType().toString().toLowerCase() ).
-            addElement( principalKey.getId() ).
-            build();
+        if ( principalKey.isRole() )
+        {
+            return NodePath.newPath().
+                addElement( ROLES_NODE_NAME ).
+                addElement( principalKey.getId() ).
+                build();
+        }
+        else
+        {
+            return NodePath.newPath().
+                addElement( UserStoreKey.system().toString() ).
+                addElement( principalKey.getType().toString().toLowerCase() ).
+                addElement( principalKey.getId() ).
+                build();
+        }
     }
 }

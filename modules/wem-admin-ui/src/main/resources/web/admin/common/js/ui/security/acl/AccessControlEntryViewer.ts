@@ -24,12 +24,17 @@ module api.ui.security.acl {
                 setIconClass(this.resolveIconClass(ace.getPrincipalKey()));
         }
 
-
         private resolveSubName(key: PrincipalKey): string {
-            return api.util.StringHelper.format("{0}/{1}/{2}",
-                key.isRole() ? '' : key.getUserStore().toString(),
-                PrincipalType[key.getType()].toLowerCase(),
-                key.getId());
+            if (key.isRole()) {
+                return api.util.StringHelper.format("{0}/{1}",
+                    PrincipalType[key.getType()].toLowerCase(),
+                    key.getId());
+            } else {
+                return api.util.StringHelper.format("{0}/{1}/{2}",
+                    key.getUserStore().toString(),
+                    PrincipalType[key.getType()].toLowerCase(),
+                    key.getId());
+            }
         }
 
         private resolveIconClass(key: PrincipalKey): string {
