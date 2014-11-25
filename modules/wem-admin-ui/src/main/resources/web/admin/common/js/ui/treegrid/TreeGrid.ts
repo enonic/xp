@@ -140,6 +140,7 @@ module api.ui.treegrid {
                         }
                     } else {
                         this.active = true;
+                        this.root.clearStashedSelection();
                         this.grid.selectRow(data.row);
                     }
                 }

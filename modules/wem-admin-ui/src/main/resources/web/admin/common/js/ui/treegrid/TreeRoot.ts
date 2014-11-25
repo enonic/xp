@@ -79,7 +79,7 @@ module api.ui.treegrid {
         setCurrentSelection(selection: TreeNode<DATA>[]) {
             this.currentSelection = selection;
 
-            this.clearStashedSelection();
+            this.cleanStashedSelection();
         }
 
         getStashedSelection(): TreeNode<DATA>[] {
@@ -90,7 +90,7 @@ module api.ui.treegrid {
             this.stashedSelection = this.stashedSelection.concat(this.currentSelection);
             this.currentSelection = [];
 
-            this.clearStashedSelection();
+            this.cleanStashedSelection();
         }
 
         getFullSelection(uniqueOnly: boolean = true): TreeNode<DATA>[] {
@@ -106,7 +106,7 @@ module api.ui.treegrid {
             return fullSelection;
         }
 
-        private clearStashedSelection() {
+        private cleanStashedSelection() {
             var currentIds = this.currentSelection.map((el) => { return el.getDataId(); }),
                 stashedIds = this.stashedSelection.map((el) => { return el.getDataId(); });
 
@@ -115,6 +115,10 @@ module api.ui.treegrid {
                 return (currentIds.indexOf(value.getDataId()) < 0) &&
                     (stashedIds.indexOf(value.getDataId()) === index);
             });
+        }
+
+        clearStashedSelection() {
+            this.stashedSelection = [];
         }
 
         removeSelection(dataId: string) {
