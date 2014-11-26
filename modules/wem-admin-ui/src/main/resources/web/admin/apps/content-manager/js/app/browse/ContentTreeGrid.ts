@@ -108,7 +108,8 @@ module app.browse {
                 this.getGrid().resizeCanvas();
             });
 
-            this.onSelectionChanged((currentSelection: TreeNode<ContentSummaryAndCompareStatus>[], fullSelection: TreeNode<ContentSummaryAndCompareStatus>[]) => {
+            this.onSelectionChanged((currentSelection: TreeNode<ContentSummaryAndCompareStatus>[],
+                                     fullSelection: TreeNode<ContentSummaryAndCompareStatus>[]) => {
                 var contentSummaries: ContentSummary[] = fullSelection.map((elem) => {
                     return elem.getData().getContentSummary();
                 });
@@ -314,8 +315,11 @@ module app.browse {
 
         updateContentNode(contentId: api.content.ContentId) {
             var root = this.getRoot().getCurrentRoot();
-            var content = root.findNode(contentId.toString()).getData();
-            this.updateNode(new ContentSummaryAndCompareStatus(content.getContentSummary(), null));
+            var treeNode = root.findNode(contentId.toString());
+            if (treeNode) {
+                var content = treeNode.getData();
+                this.updateNode(new ContentSummaryAndCompareStatus(content.getContentSummary(), null));
+            }
         }
 
         appendContentNode(contentId: api.content.ContentId, nextToSelection?: boolean) {
