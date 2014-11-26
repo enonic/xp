@@ -1,0 +1,73 @@
+.sort-content-dialog {
+  width: 650px;
+
+  h6 {
+    font-size: 12.5px;
+    height: 40px;
+    margin-top: 30px;
+  }
+  .grid-canvas {
+    position: static;
+  }
+
+  .no-content {
+    font-size: 21px;
+    font-family: @admin-font-family;
+    color: lightgray;
+    text-align: center;
+
+    &:after {
+      content: attr(data-content) '  -  nothing to sort yet!';
+      position: absolute;
+      width: 100%;
+      height: 40px;
+      line-height: 40px;
+      top: 50%;
+      left: 0;
+      margin-top: -20px;
+      z-index: 2;
+    }
+  }
+  .tab-menu {
+    position: absolute;
+    top: 23px;
+    left: 30px;
+
+    .tab-menu-button {
+      background-color: #ffffff;
+      border: 1px solid #cccccc;
+
+      .label {
+        display: block;
+        margin: 0 30px;
+        overflow: hidden;
+        white-space: pre;
+        color: @admin-blue-button;
+        .ellipsis();
+      }
+    }
+    .tab-menu-item {
+      display: block;
+      margin: 0 30px;
+      overflow: hidden;
+      white-space: pre;
+      color: @admin-blue-button;
+      .ellipsis();
+    }
+  }
+
+  .dialog-buttons {
+    position: absolute;
+    top: 10px;
+    right: 30px;
+  }
+  .sort-content-grid {
+    overflow: auto;
+    max-height: 500px;
+    width: 100%;
+  }
+  .toggle.icon {
+    display: none !important;
+  }
+
+}

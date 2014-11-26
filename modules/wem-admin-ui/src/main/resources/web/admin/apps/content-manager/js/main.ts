@@ -59,6 +59,7 @@ function startApplication() {
     });
 
     var publishDialog = new app.wizard.PublishContentDialog();
+    var sortDialog = new app.browse.SortContentDialog();
     application.setLoaded(true);
 
     window.onmessage = (e: MessageEvent) => {
