@@ -44,7 +44,7 @@ final class QueryMapper
 
     public static Map<String, FieldExpr> fieldExpr()
     {
-        return FieldExpr::new;
+        return FieldExpr::from;
     }
 
     public static Map<String, Tokens.Fragment> fragment( final String tag )

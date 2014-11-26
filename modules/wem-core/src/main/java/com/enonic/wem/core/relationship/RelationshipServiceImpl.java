@@ -1,12 +1,12 @@
 package com.enonic.wem.core.relationship;
 
-import com.enonic.wem.api.relationship.CreateRelationshipParams;
-import com.enonic.wem.api.relationship.UpdateRelationshipParams;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.relationship.CreateRelationshipParams;
 import com.enonic.wem.api.relationship.RelationshipId;
 import com.enonic.wem.api.relationship.RelationshipNotFoundException;
 import com.enonic.wem.api.relationship.RelationshipService;
 import com.enonic.wem.api.relationship.Relationships;
+import com.enonic.wem.api.relationship.UpdateRelationshipParams;
 
 public final class RelationshipServiceImpl
     implements RelationshipService

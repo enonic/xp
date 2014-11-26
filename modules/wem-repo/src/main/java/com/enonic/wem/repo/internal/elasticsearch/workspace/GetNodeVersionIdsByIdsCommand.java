@@ -17,13 +17,12 @@ import com.enonic.wem.api.node.NodeVersionIds;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.repo.internal.elasticsearch.ReturnFields;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
-import com.enonic.wem.repo.internal.elasticsearch.xcontent.VersionXContentBuilderFactory;
-import com.enonic.wem.repo.internal.elasticsearch.xcontent.WorkspaceXContentBuilderFactory;
 import com.enonic.wem.repo.internal.index.IndexType;
 import com.enonic.wem.repo.internal.index.result.SearchResult;
 import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
 import com.enonic.wem.repo.internal.index.result.SearchResultFieldValue;
 import com.enonic.wem.repo.internal.repository.StorageNameResolver;
+import com.enonic.wem.repo.internal.version.VersionIndexPath;
 import com.enonic.wem.repo.internal.workspace.WorkspaceDocumentId;
 
 public class GetNodeVersionIdsByIdsCommand
@@ -56,7 +55,7 @@ public class GetNodeVersionIdsByIdsCommand
 
         final ImmutableSet<String> nodeIdsAsStrings = nodeIds.getAsStrings();
 
-        final TermsQueryBuilder idsQuery = new TermsQueryBuilder( WorkspaceXContentBuilderFactory.NODE_ID_FIELD_NAME, nodeIdsAsStrings );
+        final TermsQueryBuilder idsQuery = new TermsQueryBuilder( WorkspaceIndexPath.NODE_ID.getPath(), nodeIdsAsStrings );
         final BoolQueryBuilder boolQueryBuilder = joinWithWorkspaceQuery( workspaceName, idsQuery );
 
         final ElasticsearchQuery query = ElasticsearchQuery.create().
@@ -65,9 +64,8 @@ public class GetNodeVersionIdsByIdsCommand
             query( boolQueryBuilder ).
             from( 0 ).
             size( this.nodeIds.getSize() ).
-            addSortBuilder( new FieldSortBuilder( VersionXContentBuilderFactory.TIMESTAMP_ID_FIELD_NAME ).order( SortOrder.DESC ) ).
-            setReturnFields( ReturnFields.from( WorkspaceXContentBuilderFactory.NODE_ID_FIELD_NAME,
-                                                WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME ) ).
+            addSortBuilder( new FieldSortBuilder( VersionIndexPath.TIMESTAMP.getPath() ).order( SortOrder.DESC ) ).
+            setReturnFields( ReturnFields.from( WorkspaceIndexPath.NODE_ID, WorkspaceIndexPath.VERSION_ID ) ).
             build();
 
         final SearchResult searchResult = elasticsearchDao.find( query );
@@ -85,12 +83,11 @@ public class GetNodeVersionIdsByIdsCommand
 
 
     private Map<String, SearchResultFieldValue> getSearchResultFieldsWithPreservedOrder( final Workspace workspace,
-                                                                                    final Set<String> nodeIdsAsStrings,
-                                                                                    final SearchResult searchResult )
+                                                                                         final Set<String> nodeIdsAsStrings,
+                                                                                         final SearchResult searchResult )
     {
         return Maps.asMap( nodeIdsAsStrings,
-                           new NodeIdToSearchResultFieldMapper( searchResult, WorkspaceXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME,
-                                                                workspace ) );
+                           new NodeIdToSearchResultFieldMapper( searchResult, WorkspaceIndexPath.VERSION_ID.getPath(), workspace ) );
     }
 
     private final class NodeIdToSearchResultFieldMapper

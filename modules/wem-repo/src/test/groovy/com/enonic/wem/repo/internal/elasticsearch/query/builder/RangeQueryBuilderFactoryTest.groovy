@@ -15,7 +15,7 @@ class RangeQueryBuilderFactoryTest
         def expected = this.getClass().getResource( "compare_gt_number.json" ).text
 
         when:
-        final QueryBuilder query = builder.create( CompareExpr.gt( new FieldExpr( "myField" ), ValueExpr.number( 3L ) ) );
+        final QueryBuilder query = builder.create( CompareExpr.gt( FieldExpr.from( "myField" ), ValueExpr.number( 3L ) ) );
 
         then:
         cleanString( expected ) == cleanString( query.toString() )
@@ -28,7 +28,7 @@ class RangeQueryBuilderFactoryTest
         def expected = this.getClass().getResource( "compare_gte_number.json" ).text
 
         when:
-        final QueryBuilder query = builder.create( CompareExpr.gte( new FieldExpr( "myField" ), ValueExpr.number( 3L ) ) );
+        final QueryBuilder query = builder.create( CompareExpr.gte( FieldExpr.from( "myField" ), ValueExpr.number( 3L ) ) );
 
         then:
         cleanString( expected ) == cleanString( query.toString() )
@@ -42,7 +42,7 @@ class RangeQueryBuilderFactoryTest
 
         when:
         final QueryBuilder query = builder.create(
-            CompareExpr.gt( new FieldExpr( "myField" ), ValueExpr.instant( "2013-11-29T11:00:00.000Z" ) ) );
+            CompareExpr.gt( FieldExpr.from( "myField" ), ValueExpr.instant( "2013-11-29T11:00:00.000Z" ) ) );
 
         then:
         cleanString( expected ) == cleanString( query.toString() )
@@ -55,7 +55,7 @@ class RangeQueryBuilderFactoryTest
         def expected = this.getClass().getResource( "compare_gt_string.json" ).text
 
         when:
-        final QueryBuilder query = builder.create( CompareExpr.gt( new FieldExpr( "myField" ), ValueExpr.string( "myString" ) ) );
+        final QueryBuilder query = builder.create( CompareExpr.gt( FieldExpr.from( "myField" ), ValueExpr.string( "myString" ) ) );
 
         then:
         cleanString( expected ) == cleanString( query.toString() )

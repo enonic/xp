@@ -1,29 +1,37 @@
 package com.enonic.wem.api.query.expr;
 
+import com.enonic.wem.api.index.IndexPath;
+
 public final class FieldExpr
     implements Expression
 {
-    public final String name;
+    private final IndexPath indexPath;
 
-    public FieldExpr( final String name )
+    private FieldExpr( final IndexPath indexPath )
     {
-        this.name = name;
+        this.indexPath = indexPath;
     }
 
-    public String getName()
+    public String getFieldPath()
     {
-        return this.name;
+        return this.indexPath.getPath();
     }
 
-    public static FieldExpr from( final String name )
+    public static FieldExpr from( final IndexPath indexPath )
     {
-        return new FieldExpr( name );
+        return new FieldExpr( indexPath );
     }
+
+    public static FieldExpr from( final String indexPath )
+    {
+        return new FieldExpr( IndexPath.from( indexPath ) );
+    }
+
 
     @Override
     public String toString()
     {
-        return this.name;
+        return this.indexPath.toString();
     }
 
     @Override
@@ -40,7 +48,7 @@ public final class FieldExpr
 
         final FieldExpr fieldExpr = (FieldExpr) o;
 
-        if ( name != null ? !name.equals( fieldExpr.name ) : fieldExpr.name != null )
+        if ( indexPath != null ? !indexPath.equals( fieldExpr.indexPath ) : fieldExpr.indexPath != null )
         {
             return false;
         }
@@ -51,6 +59,6 @@ public final class FieldExpr
     @Override
     public int hashCode()
     {
-        return name != null ? name.hashCode() : 0;
+        return indexPath != null ? indexPath.hashCode() : 0;
     }
 }

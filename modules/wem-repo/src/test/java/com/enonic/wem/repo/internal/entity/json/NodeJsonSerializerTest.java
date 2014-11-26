@@ -15,6 +15,7 @@ import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.index.IndexConfig;
+import com.enonic.wem.api.index.IndexPath;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
 import com.enonic.wem.api.node.Attachment;
 import com.enonic.wem.api.node.Attachments;
@@ -87,8 +88,8 @@ public class NodeJsonSerializerTest
                 mimeType( "mimetype" ).
                 build() ) ).
             childOrder( ChildOrder.create().
-                add( FieldOrderExpr.create( "modifiedTime", OrderExpr.Direction.ASC ) ).
-                add( FieldOrderExpr.create( "displayName", OrderExpr.Direction.DESC ) ).
+                add( FieldOrderExpr.create( IndexPath.from( "modifiedTime" ), OrderExpr.Direction.ASC ) ).
+                add( FieldOrderExpr.create( IndexPath.from( "displayName" ), OrderExpr.Direction.DESC ) ).
                 build() ).
             accessControlList( acl ).
             effectiveAcl( effectiveAcl ).

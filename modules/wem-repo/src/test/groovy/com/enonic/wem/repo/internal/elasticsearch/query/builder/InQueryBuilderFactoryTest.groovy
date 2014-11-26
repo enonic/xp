@@ -16,7 +16,7 @@ class InQueryBuilderFactoryTest
 
         when:
         final QueryBuilder query = builder.create(
-            CompareExpr.in( new FieldExpr( "myField" ), [ValueExpr.string( "myFirstValue" ), ValueExpr.string( "mySecondValue" )] ) );
+            CompareExpr.in( FieldExpr.from( "myField" ), [ValueExpr.string( "myFirstValue" ), ValueExpr.string( "mySecondValue" )] ) );
 
         then:
         cleanString( expected ) == cleanString( query.toString() )

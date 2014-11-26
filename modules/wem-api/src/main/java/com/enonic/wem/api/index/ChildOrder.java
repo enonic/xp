@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.api.node.NodeIndexPath;
 import com.enonic.wem.api.query.expr.FieldOrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpressions;
@@ -14,10 +15,9 @@ import com.enonic.wem.api.query.parser.QueryParser;
 
 public class ChildOrder
 {
-    private static final OrderExpr DEFAULT_ORDER = FieldOrderExpr.create( NodeIndexPaths.MODIFIED_TIME_KEY, OrderExpr.Direction.DESC );
+    private static final OrderExpr DEFAULT_ORDER = FieldOrderExpr.create( NodeIndexPath.MODIFIED_TIME, OrderExpr.Direction.DESC );
 
-    private static final FieldOrderExpr MANUAL_ORDER =
-        FieldOrderExpr.create( NodeIndexPaths.MANUAL_ORDER_VALUE_KEY, OrderExpr.Direction.DESC );
+    private static final FieldOrderExpr MANUAL_ORDER = FieldOrderExpr.create( NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.DESC );
 
     private final OrderExpressions orderExpressions;
 
@@ -68,7 +68,7 @@ public class ChildOrder
         if ( orderExpr instanceof FieldOrderExpr )
         {
             final FieldOrderExpr fieldOrderExpr = (FieldOrderExpr) orderExpr;
-            return fieldOrderExpr.getField().getName().equalsIgnoreCase( MANUAL_ORDER.getField().getName() );
+            return fieldOrderExpr.getField().getFieldPath().equalsIgnoreCase( MANUAL_ORDER.getField().getFieldPath() );
         }
 
         return false;

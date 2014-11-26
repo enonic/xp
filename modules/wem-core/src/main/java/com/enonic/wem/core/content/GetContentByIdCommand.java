@@ -4,11 +4,11 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.context.ContextAccessor;
-import com.enonic.wem.api.util.Exceptions;
 import com.enonic.wem.api.node.NoNodeWithIdFoundException;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeNotFoundException;
+import com.enonic.wem.api.util.Exceptions;
 
 
 final class GetContentByIdCommand

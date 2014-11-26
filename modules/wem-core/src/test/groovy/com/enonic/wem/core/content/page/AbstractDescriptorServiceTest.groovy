@@ -1,10 +1,6 @@
 package com.enonic.wem.core.content.page
 
-import com.enonic.wem.api.module.Module
-import com.enonic.wem.api.module.ModuleKey
-import com.enonic.wem.api.module.ModuleService
-import com.enonic.wem.api.module.ModuleVersion
-import com.enonic.wem.api.module.Modules
+import com.enonic.wem.api.module.*
 import com.enonic.wem.api.resource.ResourceKey
 import com.enonic.wem.api.resource.ResourceUrlTestHelper
 import com.enonic.wem.core.module.ModuleBuilder

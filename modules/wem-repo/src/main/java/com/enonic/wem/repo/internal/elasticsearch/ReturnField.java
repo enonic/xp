@@ -1,19 +1,23 @@
 package com.enonic.wem.repo.internal.elasticsearch;
 
-import com.enonic.wem.repo.internal.index.IndexFieldNameNormalizer;
+import com.enonic.wem.api.index.IndexPath;
 
 class ReturnField
 {
-    private final String normalizedReturnFieldName;
+    private final IndexPath indexPath;
 
-    public ReturnField( final String fieldName )
+    public ReturnField( final IndexPath indexPath )
     {
-        this.normalizedReturnFieldName = IndexFieldNameNormalizer.normalize( fieldName );
+        this.indexPath = indexPath;
     }
 
-    public String getName()
+    public static ReturnField from( final String fieldName )
     {
-        return normalizedReturnFieldName;
+        return new ReturnField( IndexPath.from( fieldName ) );
     }
 
+    public String getPath()
+    {
+        return indexPath.getPath();
+    }
 }

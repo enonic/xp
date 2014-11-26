@@ -1,12 +1,11 @@
 package com.enonic.wem.core.content;
 
-import com.enonic.wem.api.content.ContentIndexPaths;
 import com.enonic.wem.api.content.query.ContentQuery;
 import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.node.NodeQuery;
 import com.enonic.wem.api.query.filter.ValueFilter;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
-import com.enonic.wem.api.node.NodeQuery;
 
 class ContentQueryNodeQueryTranslator
 {
@@ -34,7 +33,7 @@ class ContentQueryNodeQueryTranslator
         if ( contentTypeNames != null && contentTypeNames.isNotEmpty() )
         {
             final ValueFilter.Builder contentTypeFilterBuilder = ValueFilter.create().
-                fieldName( ContentIndexPaths.CONTENT_TYPE_FIELD_NAME ).
+                fieldName( ContentFieldNames.CONTENT_TYPE ).
                 setCache( true );
 
             for ( final ContentTypeName contentTypeName : contentTypeNames )

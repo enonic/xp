@@ -6,25 +6,20 @@ import org.elasticsearch.common.xcontent.XContentBuilder;
 
 import com.enonic.wem.repo.internal.index.IndexException;
 import com.enonic.wem.repo.internal.version.NodeVersionDocument;
+import com.enonic.wem.repo.internal.version.VersionIndexPath;
 
 public class VersionXContentBuilderFactory
     extends AbstractXContentBuilderFactor
 {
-    public static final String NODE_VERSION_ID_FIELD_NAME = "versionid";
-
-    public static final String NODE_ID_FIELD_NAME = "nodeid";
-
-    public static final String TIMESTAMP_ID_FIELD_NAME = "timestamp";
-
     public static XContentBuilder create( final NodeVersionDocument nodeVersionDocument )
     {
         try
         {
             final XContentBuilder builder = startBuilder();
 
-            addField( builder, NODE_VERSION_ID_FIELD_NAME, nodeVersionDocument.getNodeVersionId().toString() );
-            addField( builder, NODE_ID_FIELD_NAME, nodeVersionDocument.getNodeId().toString() );
-            addField( builder, TIMESTAMP_ID_FIELD_NAME, Instant.now() );
+            addField( builder, VersionIndexPath.VERSION_ID.getPath(), nodeVersionDocument.getNodeVersionId().toString() );
+            addField( builder, VersionIndexPath.NODE_ID.getPath(), nodeVersionDocument.getNodeId().toString() );
+            addField( builder, VersionIndexPath.TIMESTAMP.getPath(), Instant.now() );
 
             endBuilder( builder );
             return builder;

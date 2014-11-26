@@ -4,10 +4,11 @@ import org.junit.Test;
 
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.index.NodeIndexPaths;
+import com.enonic.wem.api.index.IndexPath;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodesByQueryResult;
 import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeIndexPath;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeQuery;
 import com.enonic.wem.api.query.expr.CompareExpr;
@@ -79,7 +80,7 @@ public class FindNodesByQueryCommandTest
             build() );
 
         final NodeQuery query = NodeQuery.create().
-            query( QueryExpr.from( CompareExpr.eq( FieldExpr.from( NodeIndexPaths.NAME_KEY ), ValueExpr.string( "my-node-1" ) ) ) ).
+            query( QueryExpr.from( CompareExpr.eq( FieldExpr.from( NodeIndexPath.NAME ), ValueExpr.string( "my-node-1" ) ) ) ).
             build();
 
         final FindNodesByQueryResult result = doFindByQuery( query );
@@ -111,7 +112,7 @@ public class FindNodesByQueryCommandTest
             build() );
 
         final NodeQuery query = NodeQuery.create().
-            query( QueryExpr.from( CompareExpr.gt( FieldExpr.from( "my-value" ), ValueExpr.number( 7 ) ) ) ).
+            query( QueryExpr.from( CompareExpr.gt( FieldExpr.from( IndexPath.from( "my-value" ) ), ValueExpr.number( 7 ) ) ) ).
             build();
 
         final FindNodesByQueryResult result = doFindByQuery( query );
@@ -133,8 +134,8 @@ public class FindNodesByQueryCommandTest
 
         final NodeQuery query = NodeQuery.create().
             query( QueryExpr.from( new DynamicConstraintExpr(
-                FunctionExpr.from( "fulltext", ValueExpr.string( NodeIndexPaths.NAME_KEY ), ValueExpr.string( "My node name is my-node-1" ),
-                                   ValueExpr.string( "OR" ) ) ) ) ).
+                FunctionExpr.from( "fulltext", ValueExpr.string( NodeIndexPath.NAME.getPath() ),
+                                   ValueExpr.string( "My node name is my-node-1" ), ValueExpr.string( "OR" ) ) ) ) ).
             build();
 
         final FindNodesByQueryResult result = doFindByQuery( query );

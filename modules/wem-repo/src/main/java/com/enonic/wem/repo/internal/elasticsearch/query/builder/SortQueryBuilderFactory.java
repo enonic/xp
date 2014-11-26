@@ -59,7 +59,7 @@ public class SortQueryBuilderFactory
     private static SortBuilder createFieldSortBuilder( final FieldOrderExpr fieldOrderExpr )
     {
         final FieldSortBuilder fieldSortBuilder =
-            new FieldSortBuilder( IndexQueryFieldNameResolver.resolveOrderByFieldName( fieldOrderExpr.getField().getName() ) );
+            new FieldSortBuilder( IndexQueryFieldNameResolver.resolveOrderByFieldName( fieldOrderExpr.getField().getFieldPath() ) );
         fieldSortBuilder.order( SortOrder.valueOf( fieldOrderExpr.getDirection().name() ) );
         fieldSortBuilder.ignoreUnmapped( IGNORE_UNMAPPED );
 

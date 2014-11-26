@@ -1,21 +1,20 @@
 package com.enonic.wem.repo.internal.elasticsearch.document;
 
-import com.enonic.wem.api.index.IndexDocumentItemPath;
+import com.enonic.wem.api.index.IndexPath;
 import com.enonic.wem.repo.internal.index.IndexValueType;
 
 public abstract class AbstractStoreDocumentItem<T>
 {
+    private final IndexPath indexPath;
 
-    private final IndexDocumentItemPath indexDocumentItemPath;
-
-    AbstractStoreDocumentItem( final IndexDocumentItemPath path )
+    AbstractStoreDocumentItem( final IndexPath path )
     {
-        this.indexDocumentItemPath = path;
+        this.indexPath = path;
     }
 
     public String getPath()
     {
-        return indexDocumentItemPath.toString();
+        return indexPath.toString();
     }
 
     public abstract IndexValueType getIndexBaseType();

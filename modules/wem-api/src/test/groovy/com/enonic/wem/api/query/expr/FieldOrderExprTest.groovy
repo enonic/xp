@@ -8,7 +8,7 @@ class FieldOrderExprTest
     def "test field order expression"()
     {
         given:
-        def field = new FieldExpr( "name" )
+        def field = FieldExpr.from( "name" )
         def expr = new FieldOrderExpr( field, OrderExpr.Direction.DESC )
 
         expect:

@@ -8,10 +8,10 @@ class FieldExprTest
     def "test field expression"()
     {
         given:
-        def expr = new FieldExpr( "name" )
+        def expr = FieldExpr.from( "name" )
 
         expect:
-        expr.getName() == "name"
+        expr.getFieldPath() == "name"
         expr.toString() == "name"
     }
 }

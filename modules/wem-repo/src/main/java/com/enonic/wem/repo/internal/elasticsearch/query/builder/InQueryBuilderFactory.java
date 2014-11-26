@@ -17,7 +17,7 @@ public class InQueryBuilderFactory
     public static QueryBuilder create( final CompareExpr compareExpr )
     {
 
-        final String queryFieldName = IndexQueryFieldNameResolver.resolveStringFieldName( compareExpr.getField().getName() );
+        final String queryFieldName = IndexQueryFieldNameResolver.resolveStringFieldName( compareExpr.getField().getFieldPath() );
 
         final List<ValueExpr> values = compareExpr.getValues();
 

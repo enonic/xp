@@ -15,7 +15,7 @@ class TermQueryBuilderFactoryTest
         def expected = this.getClass().getResource( "compare_eq_string.json" ).text
 
         when:
-        final QueryBuilder query = builder.create( CompareExpr.eq( new FieldExpr( "myField" ), ValueExpr.string( "myValue" ) ) );
+        final QueryBuilder query = builder.create( CompareExpr.eq( FieldExpr.from( "myField" ), ValueExpr.string( "myValue" ) ) );
 
         then:
         cleanString( expected ) == cleanString( query.toString() )
@@ -28,7 +28,7 @@ class TermQueryBuilderFactoryTest
         def expected = this.getClass().getResource( "compare_eq_number.json" ).text
 
         when:
-        final QueryBuilder query = builder.create( CompareExpr.eq( new FieldExpr( "myField" ), ValueExpr.number( 1 ) ) );
+        final QueryBuilder query = builder.create( CompareExpr.eq( FieldExpr.from( "myField" ), ValueExpr.number( 1 ) ) );
 
         then:
         cleanString( expected ) == cleanString( query.toString() )
@@ -42,7 +42,7 @@ class TermQueryBuilderFactoryTest
 
         when:
         final QueryBuilder query = builder.create(
-            CompareExpr.eq( new FieldExpr( "myField" ), ValueExpr.instant( "2013-11-29T09:42:00Z" ) ) );
+            CompareExpr.eq( FieldExpr.from( "myField" ), ValueExpr.instant( "2013-11-29T09:42:00Z" ) ) );
 
         then:
         cleanString( expected ) == cleanString( query.toString() )
@@ -57,7 +57,7 @@ class TermQueryBuilderFactoryTest
 
         when:
         final QueryBuilder query = builder.create(
-            CompareExpr.eq( new FieldExpr( "myField" ), ValueExpr.geoPoint( "59.9127300,10.746090" ) ) );
+            CompareExpr.eq( FieldExpr.from( "myField" ), ValueExpr.geoPoint( "59.9127300,10.746090" ) ) );
 
         then:
         cleanString( expected ) == cleanString( query.toString() )

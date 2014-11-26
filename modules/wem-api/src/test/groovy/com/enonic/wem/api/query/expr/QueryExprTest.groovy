@@ -20,8 +20,8 @@ class QueryExprTest
     def "test full query"()
     {
         given:
-        def constraint = CompareExpr.eq( new FieldExpr( "a" ), ValueExpr.number( 2 ) )
-        def orderList = Sets.newHashSet( new FieldOrderExpr( new FieldExpr( "a" ), OrderExpr.Direction.DESC ) )
+        def constraint = CompareExpr.eq( FieldExpr.from( "a" ), ValueExpr.number( 2 ) )
+        def orderList = Sets.newHashSet( new FieldOrderExpr( FieldExpr.from( "a" ), OrderExpr.Direction.DESC ) )
         def expr = new QueryExpr( constraint, orderList )
 
         expect:
@@ -33,7 +33,7 @@ class QueryExprTest
     def "test only constraint in query"()
     {
         given:
-        def constraint = CompareExpr.eq( new FieldExpr( "a" ), ValueExpr.number( 2 ) )
+        def constraint = CompareExpr.eq( FieldExpr.from( "a" ), ValueExpr.number( 2 ) )
         def expr = new QueryExpr( constraint, null )
 
         expect:
@@ -45,7 +45,7 @@ class QueryExprTest
     def "test only order in query"()
     {
         given:
-        def orderList = Sets.newHashSet( new FieldOrderExpr( new FieldExpr( "a" ), OrderExpr.Direction.DESC ) )
+        def orderList = Sets.newHashSet( new FieldOrderExpr( FieldExpr.from( "a" ), OrderExpr.Direction.DESC ) )
         def expr = new QueryExpr( null, orderList )
 
         expect:

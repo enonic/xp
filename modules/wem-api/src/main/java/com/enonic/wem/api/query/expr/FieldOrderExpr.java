@@ -1,5 +1,7 @@
 package com.enonic.wem.api.query.expr;
 
+import com.enonic.wem.api.index.IndexPath;
+
 public final class FieldOrderExpr
     extends OrderExpr
 {
@@ -16,9 +18,9 @@ public final class FieldOrderExpr
         return this.field;
     }
 
-    public static FieldOrderExpr create( final String fieldName, Direction direction )
+    public static FieldOrderExpr create( final IndexPath indexPath, Direction direction )
     {
-        return new FieldOrderExpr( FieldExpr.from( fieldName ), direction );
+        return new FieldOrderExpr( FieldExpr.from( indexPath ), direction );
     }
 
     @Override

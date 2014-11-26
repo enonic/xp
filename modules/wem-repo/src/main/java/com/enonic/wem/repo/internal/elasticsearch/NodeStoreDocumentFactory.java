@@ -11,23 +11,14 @@ import com.enonic.wem.api.data.PropertyVisitor;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.index.IndexConfigDocument;
-import com.enonic.wem.api.index.NodeIndexPaths;
 import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeIndexPath;
 import com.enonic.wem.api.node.NodeVersionId;
 import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocumentItemFactory;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
-
-import static com.enonic.wem.api.index.NodeIndexPaths.CREATED_TIME_PATH;
-import static com.enonic.wem.api.index.NodeIndexPaths.CREATOR_PATH;
-import static com.enonic.wem.api.index.NodeIndexPaths.MANUAL_ORDER_VALUE_PATH;
-import static com.enonic.wem.api.index.NodeIndexPaths.MODIFIED_TIME_PATH;
-import static com.enonic.wem.api.index.NodeIndexPaths.MODIFIER_PATH;
-import static com.enonic.wem.api.index.NodeIndexPaths.NAME_PATH;
-import static com.enonic.wem.api.index.NodeIndexPaths.PARENT_PATH;
-import static com.enonic.wem.api.index.NodeIndexPaths.PATH_PATH;
 
 
 class NodeStoreDocumentFactory
@@ -74,56 +65,56 @@ class NodeStoreDocumentFactory
         if ( nodeVersionId != null )
         {
             final Value nodeVersionIdValue = Value.newString( nodeVersionId.toString() );
-            builder.addEntries(
-                StoreDocumentItemFactory.create( NodeIndexPaths.VERSION_KEY_PATH, nodeVersionIdValue, IndexConfig.MINIMAL ) );
+            builder.addEntries( StoreDocumentItemFactory.create( NodeIndexPath.VERSION, nodeVersionIdValue, IndexConfig.MINIMAL ) );
         }
 
         if ( node.name() != null )
         {
             final Value nameValue = Value.newString( node.name().toString() );
-            builder.addEntries( StoreDocumentItemFactory.create( NAME_PATH, nameValue, IndexConfig.FULLTEXT ) );
+            builder.addEntries( StoreDocumentItemFactory.create( NodeIndexPath.NAME, nameValue, IndexConfig.FULLTEXT ) );
         }
 
         if ( node.getCreatedTime() != null )
         {
-            builder.addEntries(
-                StoreDocumentItemFactory.create( CREATED_TIME_PATH, Value.newInstant( node.getCreatedTime() ), IndexConfig.MINIMAL ) );
+            builder.addEntries( StoreDocumentItemFactory.create( NodeIndexPath.CREATED_TIME, Value.newInstant( node.getCreatedTime() ),
+                                                                 IndexConfig.MINIMAL ) );
         }
 
         if ( node.getCreator() != null )
         {
-            builder.addEntries(
-                StoreDocumentItemFactory.create( CREATOR_PATH, Value.newString( node.getCreator().toString() ), IndexConfig.MINIMAL ) );
+            builder.addEntries( StoreDocumentItemFactory.create( NodeIndexPath.CREATOR, Value.newString( node.getCreator().toString() ),
+                                                                 IndexConfig.MINIMAL ) );
         }
 
         if ( node.getModifiedTime() != null )
         {
-            builder.addEntries(
-                StoreDocumentItemFactory.create( MODIFIED_TIME_PATH, Value.newInstant( node.getModifiedTime() ), IndexConfig.MINIMAL ) );
+            builder.addEntries( StoreDocumentItemFactory.create( NodeIndexPath.MODIFIED_TIME, Value.newInstant( node.getModifiedTime() ),
+                                                                 IndexConfig.MINIMAL ) );
         }
 
         if ( node.getModifier() != null )
         {
-            builder.addEntries(
-                StoreDocumentItemFactory.create( MODIFIER_PATH, Value.newString( node.getModifier().toString() ), IndexConfig.MINIMAL ) );
+            builder.addEntries( StoreDocumentItemFactory.create( NodeIndexPath.MODIFIER, Value.newString( node.getModifier().toString() ),
+                                                                 IndexConfig.MINIMAL ) );
         }
 
         if ( node.path() != null )
         {
             builder.addEntries(
-                StoreDocumentItemFactory.create( PATH_PATH, Value.newString( node.path().toString() ), IndexConfig.MINIMAL ) );
+                StoreDocumentItemFactory.create( NodeIndexPath.PATH, Value.newString( node.path().toString() ), IndexConfig.MINIMAL ) );
         }
 
         if ( node.parent() != null )
         {
-            builder.addEntries(
-                StoreDocumentItemFactory.create( PARENT_PATH, Value.newString( node.parent().toString() ), IndexConfig.MINIMAL ) );
+            builder.addEntries( StoreDocumentItemFactory.create( NodeIndexPath.PARENT_PATH, Value.newString( node.parent().toString() ),
+                                                                 IndexConfig.MINIMAL ) );
         }
 
         if ( node.getManualOrderValue() != null )
         {
-            builder.addEntries( StoreDocumentItemFactory.create( MANUAL_ORDER_VALUE_PATH, Value.newLong( node.getManualOrderValue() ),
-                                                                 IndexConfig.MINIMAL ) );
+            builder.addEntries(
+                StoreDocumentItemFactory.create( NodeIndexPath.MANUAL_ORDER_VALUE, Value.newLong( node.getManualOrderValue() ),
+                                                 IndexConfig.MINIMAL ) );
         }
     }
 

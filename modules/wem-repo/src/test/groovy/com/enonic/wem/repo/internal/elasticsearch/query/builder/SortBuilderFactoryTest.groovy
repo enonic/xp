@@ -1,7 +1,6 @@
 package com.enonic.wem.repo.internal.elasticsearch.query.builder
 
 import com.enonic.wem.api.query.expr.*
-import com.enonic.wem.repo.internal.elasticsearch.query.builder.SortQueryBuilderFactory
 import com.google.common.collect.Sets
 import org.elasticsearch.search.sort.FieldSortBuilder
 import org.elasticsearch.search.sort.GeoDistanceSortBuilder
@@ -16,7 +15,7 @@ class SortBuilderFactoryTest
         given:
         SortQueryBuilderFactory factory = new SortQueryBuilderFactory()
         Set<OrderExpr> orderExprs = Sets.newHashSet()
-        orderExprs.add( new FieldOrderExpr( new FieldExpr( "myField" ), OrderExpr.Direction.ASC ) )
+        orderExprs.add( new FieldOrderExpr( FieldExpr.from( "myField" ), OrderExpr.Direction.ASC ) )
 
         when:
         def sortBuilders = factory.create( orderExprs )
@@ -31,8 +30,8 @@ class SortBuilderFactoryTest
         given:
         SortQueryBuilderFactory factory = new SortQueryBuilderFactory();
         Set<OrderExpr> orderExprs = Sets.newHashSet();
-        orderExprs.add( new FieldOrderExpr( new FieldExpr( "myField" ), OrderExpr.Direction.ASC ) )
-        orderExprs.add( new FieldOrderExpr( new FieldExpr( "mySecondField" ), OrderExpr.Direction.DESC ) )
+        orderExprs.add( new FieldOrderExpr( FieldExpr.from( "myField" ), OrderExpr.Direction.ASC ) )
+        orderExprs.add( new FieldOrderExpr( FieldExpr.from( "mySecondField" ), OrderExpr.Direction.DESC ) )
 
         when:
         def sortBuilders = factory.create( orderExprs )

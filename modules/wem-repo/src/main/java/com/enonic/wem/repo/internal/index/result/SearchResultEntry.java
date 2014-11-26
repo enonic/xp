@@ -5,7 +5,6 @@ import java.util.Map;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
-import com.enonic.wem.api.index.IndexDocumentItemPath;
 import com.enonic.wem.repo.internal.index.IndexFieldNameNormalizer;
 
 public class SearchResultEntry
@@ -52,10 +51,6 @@ public class SearchResultEntry
         return doGetField( fieldName, false );
     }
 
-    public SearchResultFieldValue getField( final IndexDocumentItemPath path )
-    {
-        return doGetField( path.toString(), false );
-    }
 
     public SearchResultFieldValue getField( final String fieldName, final boolean failOnMissing )
     {

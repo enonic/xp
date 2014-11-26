@@ -7,11 +7,12 @@ import org.junit.Test;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.index.ChildOrder;
-import com.enonic.wem.api.index.NodeIndexPaths;
+import com.enonic.wem.api.index.IndexPath;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
 import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeIndexPath;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.query.expr.FieldOrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpr;
@@ -26,7 +27,7 @@ public class SetNodeChildOrderCommandTest
     public void order_by_name_asc()
         throws Exception
     {
-        final FindNodesByParentResult result = createNodeAndReturnOrderedChildren( NodeIndexPaths.NAME_KEY, OrderExpr.Direction.ASC );
+        final FindNodesByParentResult result = createNodeAndReturnOrderedChildren( NodeIndexPath.NAME, OrderExpr.Direction.ASC );
 
         String previousName = "";
 
@@ -42,7 +43,7 @@ public class SetNodeChildOrderCommandTest
     public void order_by_name_desc()
         throws Exception
     {
-        final FindNodesByParentResult result = createNodeAndReturnOrderedChildren( NodeIndexPaths.NAME_KEY, OrderExpr.Direction.DESC );
+        final FindNodesByParentResult result = createNodeAndReturnOrderedChildren( NodeIndexPath.NAME, OrderExpr.Direction.DESC );
 
         String previousName = "";
 
@@ -58,7 +59,8 @@ public class SetNodeChildOrderCommandTest
     public void order_by_data_value()
         throws Exception
     {
-        final FindNodesByParentResult result = createNodeAndReturnOrderedChildren( "displayName", OrderExpr.Direction.ASC );
+        final FindNodesByParentResult result =
+            createNodeAndReturnOrderedChildren( IndexPath.from( "displayName" ), OrderExpr.Direction.ASC );
 
         String previousName = "";
 
@@ -79,7 +81,7 @@ public class SetNodeChildOrderCommandTest
         createChildNodes( node );
 
         setChildOrder( node, ChildOrder.create().add(
-            FieldOrderExpr.create( NodeIndexPaths.MANUAL_ORDER_VALUE_KEY, OrderExpr.Direction.ASC ) ).build() );
+            FieldOrderExpr.create( NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.ASC ) ).build() );
         refresh();
 
         final FindNodesByParentResult result = findChildren( node );
@@ -103,12 +105,12 @@ public class SetNodeChildOrderCommandTest
         createChildNodes( node );
 
         // Order initially by name
-        setChildOrder( node, ChildOrder.create().add( FieldOrderExpr.create( NodeIndexPaths.NAME_KEY, OrderExpr.Direction.ASC ) ).build() );
+        setChildOrder( node, ChildOrder.create().add( FieldOrderExpr.create( NodeIndexPath.NAME, OrderExpr.Direction.ASC ) ).build() );
         refresh();
 
         // Now set order manual
         setChildOrder( node, ChildOrder.create().add(
-            FieldOrderExpr.create( NodeIndexPaths.MANUAL_ORDER_VALUE_KEY, OrderExpr.Direction.DESC ) ).build() );
+            FieldOrderExpr.create( NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.DESC ) ).build() );
         refresh();
 
         final FindNodesByParentResult result = findChildren( node );
@@ -146,7 +148,7 @@ public class SetNodeChildOrderCommandTest
             execute();
     }
 
-    private FindNodesByParentResult createNodeAndReturnOrderedChildren( final String field, final OrderExpr.Direction direction )
+    private FindNodesByParentResult createNodeAndReturnOrderedChildren( final IndexPath path, final OrderExpr.Direction direction )
     {
         final Node node = createParentNode();
 
@@ -156,7 +158,7 @@ public class SetNodeChildOrderCommandTest
 
         final Node updatedNode = SetNodeChildOrderCommand.create().
             nodeId( node.id() ).
-            childOrder( ChildOrder.create().add( FieldOrderExpr.create( field, direction ) ).build() ).
+            childOrder( ChildOrder.create().add( FieldOrderExpr.create( path, direction ) ).build() ).
             nodeDao( nodeDao ).
             versionService( versionService ).
             workspaceService( workspaceService ).

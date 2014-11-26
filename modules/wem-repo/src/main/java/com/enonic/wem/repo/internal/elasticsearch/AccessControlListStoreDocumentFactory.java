@@ -4,8 +4,8 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.index.IndexDocumentItemPath;
-import com.enonic.wem.api.index.NodeIndexPaths;
+import com.enonic.wem.api.index.IndexPath;
+import com.enonic.wem.api.node.NodeIndexPath;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlEntry;
 import com.enonic.wem.api.security.acl.AccessControlList;
@@ -34,24 +34,24 @@ public class AccessControlListStoreDocumentFactory
         return aclStoreDocumentItems;
     }
 
-    private static IndexDocumentItemPath getPathForPermission( final Permission permission )
+    private static IndexPath getPathForPermission( final Permission permission )
     {
         switch ( permission )
         {
             case READ:
-                return NodeIndexPaths.PERMISSIONS_READ_PATH;
+                return NodeIndexPath.PERMISSIONS_READ;
             case MODIFY:
-                return NodeIndexPaths.PERMISSIONS_MODIFY_PATH;
+                return NodeIndexPath.PERMISSIONS_MODIFY;
             case CREATE:
-                return NodeIndexPaths.PERMISSIONS_CREATE_PATH;
+                return NodeIndexPath.PERMISSIONS_CREATE;
             case DELETE:
-                return NodeIndexPaths.PERMISSIONS_DELETE_PATH;
+                return NodeIndexPath.PERMISSIONS_DELETE;
             case PUBLISH:
-                return NodeIndexPaths.PERMISSIONS_PUBLISH_PATH;
+                return NodeIndexPath.PERMISSIONS_PUBLISH;
             case READ_PERMISSIONS:
-                return NodeIndexPaths.PERMISSIONS_READ_PERMISSIONS_PATH;
+                return NodeIndexPath.PERMISSIONS_READ_PERMISSION;
             case WRITE_PERMISSIONS:
-                return NodeIndexPaths.PERMISSIONS_WRITE_PERMISSIONS_PATH;
+                return NodeIndexPath.PERMISSIONS_WRITE_PERMISSION;
 
         }
 

@@ -8,7 +8,7 @@ class NotExprTest
     def "test NOT expression"()
     {
         given:
-        def inner = CompareExpr.eq( new FieldExpr( "a" ), ValueExpr.number( 2 ) )
+        def inner = CompareExpr.eq( FieldExpr.from( "a" ), ValueExpr.number( 2 ) )
         def expr = new NotExpr( inner )
 
         expect:

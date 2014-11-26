@@ -24,14 +24,14 @@ class CompareQueryFactoryTest
 
         where:
         fileName                       | compareExpr
-        "compare_eq_string.json"       | CompareExpr.eq( new FieldExpr( "myField" ), ValueExpr.string( "myValue" ) )
-        "compare_eq_number.json"       | CompareExpr.eq( new FieldExpr( "myField" ), ValueExpr.number( 1.0 ) )
-        "compare_eq_datetime.json"     | CompareExpr.eq( new FieldExpr( "myField" ), ValueExpr.instant( "2013-11-29T09:42:00.000Z" ) )
-        "compare_eq_geopoint.json"     | CompareExpr.eq( new FieldExpr( "myField" ), ValueExpr.geoPoint( "59.9127300,10.746090" ) )
-        "compare_neq_string.json"      | CompareExpr.neq( new FieldExpr( "myField" ), ValueExpr.string( "myValue" ) )
-        "compare_not_like_string.json" | CompareExpr.notLike( new FieldExpr( "myField" ), ValueExpr.string( "myValue" ) )
+        "compare_eq_string.json"       | CompareExpr.eq( FieldExpr.from( "myField" ), ValueExpr.string( "myValue" ) )
+        "compare_eq_number.json"       | CompareExpr.eq( FieldExpr.from( "myField" ), ValueExpr.number( 1.0 ) )
+        "compare_eq_datetime.json"     | CompareExpr.eq( FieldExpr.from( "myField" ), ValueExpr.instant( "2013-11-29T09:42:00.000Z" ) )
+        "compare_eq_geopoint.json"     | CompareExpr.eq( FieldExpr.from( "myField" ), ValueExpr.geoPoint( "59.9127300,10.746090" ) )
+        "compare_neq_string.json"      | CompareExpr.neq( FieldExpr.from( "myField" ), ValueExpr.string( "myValue" ) )
+        "compare_not_like_string.json" | CompareExpr.notLike( FieldExpr.from( "myField" ), ValueExpr.string( "myValue" ) )
         "compare_not_in_string.json"   |
-            CompareExpr.notIn( new FieldExpr( "myField" ), [ValueExpr.string( "myFirstValue" ), ValueExpr.string( "mySecondValue" )] );
+            CompareExpr.notIn( FieldExpr.from( "myField" ), [ValueExpr.string( "myFirstValue" ), ValueExpr.string( "mySecondValue" )] );
     }
 
 }

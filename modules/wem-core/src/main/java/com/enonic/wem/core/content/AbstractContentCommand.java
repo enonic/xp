@@ -7,10 +7,10 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ValidateContentData;
 import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
-import com.enonic.wem.api.node.NodeService;
 
 abstract class AbstractContentCommand
 {

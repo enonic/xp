@@ -15,7 +15,7 @@ class LikeQueryBuilderFactoryTest
         def expected = this.getClass().getResource( "compare_like_string.json" ).text
 
         when:
-        final QueryBuilder query = builder.create( CompareExpr.like( new FieldExpr( "myField" ), ValueExpr.string( "myValue" ) ) );
+        final QueryBuilder query = builder.create( CompareExpr.like( FieldExpr.from( "myField" ), ValueExpr.string( "myValue" ) ) );
 
         then:
         cleanString( expected ) == cleanString( query.toString() )

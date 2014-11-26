@@ -21,8 +21,6 @@ public class NodeQuery
 
     private final QueryExpr query;
 
-    private final ImmutableSet<NodeId> ids;
-
     private final Filters postFilters;
 
     private final Filters queryFilters;
@@ -46,7 +44,6 @@ public class NodeQuery
         this.size = builder.size;
         this.from = builder.from;
         this.aggregationQueries = ImmutableSet.copyOf( builder.aggregationQueries );
-        this.ids = ImmutableSet.copyOf( builder.ids );
         this.parent = builder.parent;
         this.path = builder.path;
         this.principals = builder.principals;
@@ -125,8 +122,6 @@ public class NodeQuery
 
         private final Set<AggregationQuery> aggregationQueries = Sets.newHashSet();
 
-        private final Set<NodeId> ids = Sets.newHashSet();
-
         private int from = 0;
 
         private int size = 10;
@@ -146,12 +141,6 @@ public class NodeQuery
         public Builder query( final QueryExpr query )
         {
             this.query = query;
-            return this;
-        }
-
-        public Builder addId( final NodeId id )
-        {
-            this.ids.add( id );
             return this;
         }
 

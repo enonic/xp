@@ -60,9 +60,6 @@ import com.enonic.wem.api.security.auth.UsernamePasswordAuthToken;
 
 import static com.enonic.wem.api.security.SystemConstants.CONTEXT_USER_STORES;
 import static com.enonic.wem.core.security.PrincipalKeyNodeTranslator.toNodeId;
-import static com.enonic.wem.core.security.PrincipalNodeTranslator.EMAIL_KEY;
-import static com.enonic.wem.core.security.PrincipalNodeTranslator.LOGIN_KEY;
-import static com.enonic.wem.core.security.PrincipalNodeTranslator.USER_STORE_KEY;
 
 public final class SecurityServiceImpl
     implements SecurityService
@@ -249,10 +246,10 @@ public final class SecurityServiceImpl
 
     private User findByUsername( final UserStoreKey userStore, final String username )
     {
-        final CompareExpr userStoreExpr =
-            CompareExpr.create( FieldExpr.from( USER_STORE_KEY ), CompareExpr.Operator.EQ, ValueExpr.string( userStore.toString() ) );
+        final CompareExpr userStoreExpr = CompareExpr.create( FieldExpr.from( PrincipalIndexPath.USER_STORE_KEY ), CompareExpr.Operator.EQ,
+                                                              ValueExpr.string( userStore.toString() ) );
         final CompareExpr userNameExpr =
-            CompareExpr.create( FieldExpr.from( LOGIN_KEY ), CompareExpr.Operator.EQ, ValueExpr.string( username ) );
+            CompareExpr.create( FieldExpr.from( PrincipalIndexPath.LOGIN_KEY ), CompareExpr.Operator.EQ, ValueExpr.string( username ) );
         final QueryExpr query = QueryExpr.from( LogicalExpr.and( userStoreExpr, userNameExpr ) );
         final FindNodesByQueryResult result =
             CONTEXT_USER_STORES.callWith( () -> nodeService.findByQuery( NodeQuery.create().query( query ).build() ) );
@@ -267,10 +264,10 @@ public final class SecurityServiceImpl
 
     private User findByEmail( final UserStoreKey userStore, final String email )
     {
-        final CompareExpr userStoreExpr =
-            CompareExpr.create( FieldExpr.from( USER_STORE_KEY ), CompareExpr.Operator.EQ, ValueExpr.string( userStore.toString() ) );
+        final CompareExpr userStoreExpr = CompareExpr.create( FieldExpr.from( PrincipalIndexPath.USER_STORE_KEY ), CompareExpr.Operator.EQ,
+                                                              ValueExpr.string( userStore.toString() ) );
         final CompareExpr userNameExpr =
-            CompareExpr.create( FieldExpr.from( EMAIL_KEY ), CompareExpr.Operator.EQ, ValueExpr.string( email ) );
+            CompareExpr.create( FieldExpr.from( PrincipalIndexPath.EMAIL_KEY ), CompareExpr.Operator.EQ, ValueExpr.string( email ) );
         final QueryExpr query = QueryExpr.from( LogicalExpr.and( userStoreExpr, userNameExpr ) );
         final FindNodesByQueryResult result =
             CONTEXT_USER_STORES.callWith( () -> nodeService.findByQuery( NodeQuery.create().query( query ).build() ) );

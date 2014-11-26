@@ -1,6 +1,6 @@
 package com.enonic.wem.repo.internal.elasticsearch
 
-import com.enonic.wem.api.index.IndexDocumentItemPath
+import com.enonic.wem.api.index.IndexPath
 import com.enonic.wem.repo.internal.elasticsearch.document.*
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -18,20 +18,20 @@ class IndexFieldNameResolverTest
 
         where:
         item                                                                               | resolvedName
-        new StoreDocumentStringItem( IndexDocumentItemPath.from( "a.b.c" ), "myString" )   | "a_b_c"
-        new StoreDocumentNumberItem( IndexDocumentItemPath.from( "a.b.c" ), 1 )            | "a_b_c._number"
-        new StoreDocumentAnalyzedItem( IndexDocumentItemPath.from( "a.b.c" ), "myString" ) | "a_b_c._analyzed"
-        new StoreDocumentNGramItem( IndexDocumentItemPath.from( "a.b.c" ), "myString" )    | "a_b_c._ngram"
-        new StoreDocumentGeoPointItem( IndexDocumentItemPath.from( "a.b.c" ), "80,80" )    | "a_b_c._geopoint"
-        new StoreDocumentOrderbyItem( IndexDocumentItemPath.from( "a.b.c" ), "orderBy" )   | "a_b_c._orderby"
-        new StoreDocumentDateItem( IndexDocumentItemPath.from( "a.b.c" ), Instant.now() )  | "a_b_c._datetime"
+        new StoreDocumentStringItem( IndexPath.from( "a.b.c" ), "myString" )   | "a_b_c"
+        new StoreDocumentNumberItem( IndexPath.from( "a.b.c" ), 1 )            | "a_b_c._number"
+        new StoreDocumentAnalyzedItem( IndexPath.from( "a.b.c" ), "myString" ) | "a_b_c._analyzed"
+        new StoreDocumentNGramItem( IndexPath.from( "a.b.c" ), "myString" )    | "a_b_c._ngram"
+        new StoreDocumentGeoPointItem( IndexPath.from( "a.b.c" ), "80,80" )    | "a_b_c._geopoint"
+        new StoreDocumentOrderbyItem( IndexPath.from( "a.b.c" ), "orderBy" )   | "a_b_c._orderby"
+        new StoreDocumentDateItem( IndexPath.from( "a.b.c" ), Instant.now() )  | "a_b_c._datetime"
     }
 
     @Unroll
     def "resolve name from path #pathAsString"()
     {
         expect:
-        resolvedName == FieldNameResolver.resolve( new StoreDocumentStringItem( IndexDocumentItemPath.from( pathAsString ), "myValue" ) )
+        resolvedName == FieldNameResolver.resolve( new StoreDocumentStringItem( IndexPath.from( pathAsString ), "myValue" ) )
 
         where:
         pathAsString | resolvedName

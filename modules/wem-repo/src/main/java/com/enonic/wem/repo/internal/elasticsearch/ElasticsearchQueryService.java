@@ -8,9 +8,9 @@ import org.elasticsearch.index.query.QueryBuilder;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.index.NodeIndexPaths;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeIds;
+import com.enonic.wem.api.node.NodeIndexPath;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodePaths;
 import com.enonic.wem.api.node.NodeQuery;
@@ -64,7 +64,7 @@ public class ElasticsearchQueryService
         final GetResult result = elasticsearchDao.get( GetQuery.create().
             indexName( IndexNameResolver.resolveSearchIndexName( indexContext.getRepositoryId() ) ).
             indexTypeName( indexContext.getWorkspace().getName() ).
-            returnFields( ReturnFields.from( NodeIndexPaths.VERSION_KEY, NodeIndexPaths.PERMISSIONS_READ_PATH.toString() ) ).
+            returnFields( ReturnFields.from( NodeIndexPath.VERSION, NodeIndexPath.PERMISSIONS_READ ) ).
             id( nodeId ).
             build() );
 
@@ -78,11 +78,12 @@ public class ElasticsearchQueryService
             return null;
         }
 
-        final SearchResultFieldValue nodeVersionId = result.getSearchResult().getField( NodeIndexPaths.VERSION_KEY );
+        final SearchResultFieldValue nodeVersionId = result.getSearchResult().getField( NodeIndexPath.VERSION.getPath() );
 
         if ( nodeVersionId == null )
         {
-            throw new QueryException( "Expected field " + NodeIndexPaths.VERSION_KEY + " not found in search result for nodeId " + nodeId );
+            throw new QueryException(
+                "Expected field " + NodeIndexPath.VERSION.getPath() + " not found in search result for nodeId " + nodeId );
         }
 
         return NodeVersionId.from( nodeVersionId.getValue().toString() );
@@ -97,7 +98,7 @@ public class ElasticsearchQueryService
         final QueryBuilder queryBuilder = QueryBuilderFactory.create().
             addQueryFilter( AclFilterBuilderFactory.create( indexContext.getPrincipalKeys() ) ).
             addQueryFilter( ValueFilter.create().
-                fieldName( NodeIndexPaths.PATH_KEY ).
+                fieldName( NodeIndexPath.PATH.getPath() ).
                 addValue( Value.newString( nodePath.toString() ) ).
                 build() ).
             build();
@@ -107,7 +108,7 @@ public class ElasticsearchQueryService
             indexType( workspace.getName() ).
             query( queryBuilder ).
             size( 1 ).
-            setReturnFields( ReturnFields.from( NodeIndexPaths.VERSION_KEY ) ).
+            setReturnFields( ReturnFields.from( NodeIndexPath.VERSION ) ).
             build();
 
         final SearchResult searchResult = elasticsearchDao.find( query );
@@ -124,11 +125,11 @@ public class ElasticsearchQueryService
 
         final SearchResultEntry firstHit = searchResult.getResults().getFirstHit();
 
-        final SearchResultFieldValue versionKeyField = firstHit.getField( NodeIndexPaths.VERSION_KEY );
+        final SearchResultFieldValue versionKeyField = firstHit.getField( NodeIndexPath.VERSION.getPath() );
 
         if ( versionKeyField == null )
         {
-            throw new ElasticsearchDataException( "Field " + NodeIndexPaths.VERSION_KEY + " not found on node with path " +
+            throw new ElasticsearchDataException( "Field " + NodeIndexPath.VERSION.getPath() + " not found on node with path " +
                                                       nodePath + " in workspace " + workspace );
         }
 
@@ -148,7 +149,7 @@ public class ElasticsearchQueryService
         final QueryBuilder queryBuilder = QueryBuilderFactory.create().
             addQueryFilter( AclFilterBuilderFactory.create( indexContext.getPrincipalKeys() ) ).
             addQueryFilter( ValueFilter.create().
-                fieldName( NodeIndexPaths.PATH_KEY ).
+                fieldName( NodeIndexPath.PATH.getPath() ).
                 addValues( nodePaths.getAsStrings() ).
                 build() ).
             build();
@@ -158,7 +159,7 @@ public class ElasticsearchQueryService
             indexType( workspace.getName() ).
             query( queryBuilder ).
             sortBuilders( SortQueryBuilderFactory.create( orderExprs ) ).
-            setReturnFields( ReturnFields.from( NodeIndexPaths.VERSION_KEY ) ).
+            setReturnFields( ReturnFields.from( NodeIndexPath.VERSION ) ).
             size( nodePaths.getSize() ).
             build();
 
@@ -169,7 +170,7 @@ public class ElasticsearchQueryService
             return NodeVersionIds.empty();
         }
 
-        final Set<SearchResultFieldValue> fieldValues = searchResult.getResults().getFields( NodeIndexPaths.VERSION_KEY );
+        final Set<SearchResultFieldValue> fieldValues = searchResult.getResults().getFields( NodeIndexPath.VERSION.getPath() );
 
         return fieldValuesToVersionIds( fieldValues );
     }
@@ -192,7 +193,7 @@ public class ElasticsearchQueryService
         final QueryBuilder queryBuilder = QueryBuilderFactory.create().
             addQueryFilter( AclFilterBuilderFactory.create( indexContext.getPrincipalKeys() ) ).
             addQueryFilter( ValueFilter.create().
-                fieldName( NodeIndexPaths.ID_KEY ).
+                fieldName( NodeIndexPath.ID.getPath() ).
                 addValues( nodeIds.getAsStrings() ).
                 build() ).
             build();
@@ -202,7 +203,7 @@ public class ElasticsearchQueryService
             indexType( workspace.getName() ).
             query( queryBuilder ).
             sortBuilders( SortQueryBuilderFactory.create( orderExprs ) ).
-            setReturnFields( ReturnFields.from( NodeIndexPaths.VERSION_KEY ) ).
+            setReturnFields( ReturnFields.from( NodeIndexPath.VERSION ) ).
             size( nodeIds.getSize() ).
             build();
 
@@ -213,7 +214,7 @@ public class ElasticsearchQueryService
             NodeVersionIds.empty();
         }
 
-        final Set<SearchResultFieldValue> fieldValues = searchResult.getResults().getFields( NodeIndexPaths.VERSION_KEY );
+        final Set<SearchResultFieldValue> fieldValues = searchResult.getResults().getFields( NodeIndexPath.VERSION.getPath() );
 
         return fieldValuesToVersionIds( fieldValues );
     }
@@ -226,7 +227,7 @@ public class ElasticsearchQueryService
         final QueryBuilder queryBuilder = QueryBuilderFactory.create().
             addQueryFilter( AclFilterBuilderFactory.create( indexContext.getPrincipalKeys() ) ).
             addQueryFilter( ValueFilter.create().
-                fieldName( NodeIndexPaths.PARENT_PATH_KEY ).
+                fieldName( NodeIndexPath.PARENT_PATH.getPath() ).
                 addValue( Value.newString( parentPath.toString() ) ).
                 build() ).
             build();

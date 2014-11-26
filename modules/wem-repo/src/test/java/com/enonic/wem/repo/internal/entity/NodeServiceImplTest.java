@@ -7,6 +7,7 @@ import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodeIndexPath;
 import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodeNotFoundException;
 import com.enonic.wem.api.node.NodePath;
@@ -84,8 +85,8 @@ public class NodeServiceImplTest
     {
 
         final ChildOrder childOrder = ChildOrder.create().
-            add( FieldOrderExpr.create( "modifiedTime", OrderExpr.Direction.DESC ) ).
-            add( FieldOrderExpr.create( "name", OrderExpr.Direction.ASC ) ).
+            add( FieldOrderExpr.create( NodeIndexPath.MODIFIED_TIME, OrderExpr.Direction.DESC ) ).
+            add( FieldOrderExpr.create( NodeIndexPath.NAME, OrderExpr.Direction.ASC ) ).
             build();
 
         final AccessControlList aclList = AccessControlList.create().

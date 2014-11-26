@@ -1,6 +1,6 @@
 package com.enonic.wem.repo.internal.elasticsearch.document;
 
-import com.enonic.wem.api.index.IndexDocumentItemPath;
+import com.enonic.wem.api.index.IndexPath;
 import com.enonic.wem.repo.internal.index.IndexValueType;
 
 public class StoreDocumentNGramItem
@@ -8,7 +8,7 @@ public class StoreDocumentNGramItem
 {
     private final String value;
 
-    public StoreDocumentNGramItem( final IndexDocumentItemPath path, final String value )
+    public StoreDocumentNGramItem( final IndexPath path, final String value )
     {
         super( path );
         this.value = value;

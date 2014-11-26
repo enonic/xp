@@ -12,7 +12,7 @@ import org.elasticsearch.common.xcontent.XContentType;
 import org.junit.Test;
 
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.index.IndexDocumentItemPath;
+import com.enonic.wem.api.index.IndexPath;
 import com.enonic.wem.repo.internal.elasticsearch.IndexConstants;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocumentDateItem;
@@ -20,7 +20,6 @@ import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocumentGeoPoint
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocumentNumberItem;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocumentOrderbyItem;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocumentStringItem;
-import com.enonic.wem.repo.internal.elasticsearch.xcontent.StoreDocumentXContentBuilderFactory;
 
 import static org.junit.Assert.*;
 
@@ -54,10 +53,10 @@ public class StoreDocumentXContentBuilderFactoryTest
         StoreDocument storeDocument = StoreDocument.create().
             indexName( "testindex" ).
             indexTypeName( "test" ).
-            addEntry( new StoreDocumentStringItem( IndexDocumentItemPath.from( "myField" ), "myValue1" ) ).
-            addEntry( new StoreDocumentStringItem( IndexDocumentItemPath.from( "myField" ), "myValue2" ) ).
-            addEntry( new StoreDocumentOrderbyItem( IndexDocumentItemPath.from( "myField" ), "myOrderByValue1" ) ).
-            addEntry( new StoreDocumentOrderbyItem( IndexDocumentItemPath.from( "myField" ), "myOrderByValue2" ) ).
+            addEntry( new StoreDocumentStringItem( IndexPath.from( "myField" ), "myValue1" ) ).
+            addEntry( new StoreDocumentStringItem( IndexPath.from( "myField" ), "myValue2" ) ).
+            addEntry( new StoreDocumentOrderbyItem( IndexPath.from( "myField" ), "myOrderByValue1" ) ).
+            addEntry( new StoreDocumentOrderbyItem( IndexPath.from( "myField" ), "myOrderByValue2" ) ).
             build();
 
         final XContentBuilder xContentBuilder = StoreDocumentXContentBuilderFactory.create( storeDocument );
@@ -79,16 +78,14 @@ public class StoreDocumentXContentBuilderFactoryTest
         StoreDocument storeDocument = StoreDocument.create().
             indexName( "testindex" ).
             indexTypeName( "test" ).
-            addEntry( new StoreDocumentStringItem( IndexDocumentItemPath.from( "myField" ), "myValue1" ) ).
-            addEntry( new StoreDocumentStringItem( IndexDocumentItemPath.from( "myField" ), "myValue2" ) ).
-            addEntry( new StoreDocumentNumberItem( IndexDocumentItemPath.from( "myNumericField" ), 1.0 ) ).
-            addEntry( new StoreDocumentNumberItem( IndexDocumentItemPath.from( "myNumericField" ), 2.0 ) ).
-            addEntry( new StoreDocumentDateItem( IndexDocumentItemPath.from( "myDateField" ), Instant.now() ) ).
-            addEntry( new StoreDocumentDateItem( IndexDocumentItemPath.from( "myDateField" ), Instant.now() ) ).
-            addEntry(
-                new StoreDocumentGeoPointItem( IndexDocumentItemPath.from( "myGeoPoint" ), Value.newGeoPoint( "80,80" ).toString() ) ).
-            addEntry(
-                new StoreDocumentGeoPointItem( IndexDocumentItemPath.from( "myGeoPoint" ), Value.newGeoPoint( "81,81" ).toString() ) ).
+            addEntry( new StoreDocumentStringItem( IndexPath.from( "myField" ), "myValue1" ) ).
+            addEntry( new StoreDocumentStringItem( IndexPath.from( "myField" ), "myValue2" ) ).
+            addEntry( new StoreDocumentNumberItem( IndexPath.from( "myNumericField" ), 1.0 ) ).
+            addEntry( new StoreDocumentNumberItem( IndexPath.from( "myNumericField" ), 2.0 ) ).
+            addEntry( new StoreDocumentDateItem( IndexPath.from( "myDateField" ), Instant.now() ) ).
+            addEntry( new StoreDocumentDateItem( IndexPath.from( "myDateField" ), Instant.now() ) ).
+            addEntry( new StoreDocumentGeoPointItem( IndexPath.from( "myGeoPoint" ), Value.newGeoPoint( "80,80" ).toString() ) ).
+            addEntry( new StoreDocumentGeoPointItem( IndexPath.from( "myGeoPoint" ), Value.newGeoPoint( "81,81" ).toString() ) ).
             build();
 
         final XContentBuilder xContentBuilder = StoreDocumentXContentBuilderFactory.create( storeDocument );

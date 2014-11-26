@@ -8,6 +8,7 @@ import org.elasticsearch.index.query.TermQueryBuilder;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 
+import com.enonic.wem.api.index.IndexPath;
 import com.enonic.wem.api.node.FindNodeVersionsResult;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeVersion;
@@ -23,6 +24,7 @@ import com.enonic.wem.repo.internal.index.result.SearchResultFieldValue;
 import com.enonic.wem.repo.internal.repository.StorageNameResolver;
 import com.enonic.wem.repo.internal.version.GetVersionsQuery;
 import com.enonic.wem.repo.internal.version.NodeVersionDocument;
+import com.enonic.wem.repo.internal.version.VersionIndexPath;
 import com.enonic.wem.repo.internal.version.VersionService;
 
 public class ElasticsearchVersionService
@@ -57,8 +59,8 @@ public class ElasticsearchVersionService
 
     private NodeVersion createVersionEntry( final SearchResultEntry hit )
     {
-        final String timestamp = getStringValue( hit, VersionXContentBuilderFactory.TIMESTAMP_ID_FIELD_NAME, true );
-        final String versionId = getStringValue( hit, VersionXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME, true );
+        final String timestamp = getStringValue( hit, VersionIndexPath.TIMESTAMP, true );
+        final String versionId = getStringValue( hit, VersionIndexPath.VERSION_ID, true );
 
         return new NodeVersion( NodeVersionId.from( versionId ), Instant.parse( timestamp ) );
     }
@@ -96,7 +98,7 @@ public class ElasticsearchVersionService
 
     private SearchResult doGetFromNodeId( final NodeId id, final int from, final int size, final RepositoryId repositoryId )
     {
-        final TermQueryBuilder nodeIdQuery = new TermQueryBuilder( VersionXContentBuilderFactory.NODE_ID_FIELD_NAME, id.toString() );
+        final TermQueryBuilder nodeIdQuery = new TermQueryBuilder( VersionIndexPath.NODE_ID.getPath(), id.toString() );
 
         final ElasticsearchQuery query = ElasticsearchQuery.create().
             index( StorageNameResolver.resolveStorageIndexName( repositoryId ) ).
@@ -104,8 +106,8 @@ public class ElasticsearchVersionService
             query( nodeIdQuery ).
             from( from ).
             size( size ).
-            addSortBuilder( new FieldSortBuilder( VersionXContentBuilderFactory.TIMESTAMP_ID_FIELD_NAME ).order( SortOrder.DESC ) ).
-            setReturnFields( ReturnFields.from( VersionXContentBuilderFactory.TIMESTAMP_ID_FIELD_NAME, VersionXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME ) ).
+            addSortBuilder( new FieldSortBuilder( VersionIndexPath.TIMESTAMP.getPath() ).order( SortOrder.DESC ) ).
+            setReturnFields( ReturnFields.from( VersionIndexPath.TIMESTAMP, VersionIndexPath.VERSION_ID ) ).
             build();
 
         final SearchResult searchResults = elasticsearchDao.find( query );
@@ -119,7 +121,7 @@ public class ElasticsearchVersionService
 
     private SearchResult doGetFromVersionIdNew( final NodeVersionId nodeVersionId, final RepositoryId repositoryId )
     {
-        final TermQueryBuilder blobKeyQuery = new TermQueryBuilder( VersionXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME, nodeVersionId.toString() );
+        final TermQueryBuilder blobKeyQuery = new TermQueryBuilder( VersionIndexPath.VERSION_ID.getPath(), nodeVersionId.toString() );
 
         final ElasticsearchQuery query = ElasticsearchQuery.create().
             index( StorageNameResolver.resolveStorageIndexName( repositoryId ) ).
@@ -127,8 +129,8 @@ public class ElasticsearchVersionService
             query( blobKeyQuery ).
             from( 0 ).
             size( 1 ).
-            addSortBuilder( new FieldSortBuilder( VersionXContentBuilderFactory.TIMESTAMP_ID_FIELD_NAME ).order( SortOrder.DESC ) ).
-            setReturnFields( ReturnFields.from( VersionXContentBuilderFactory.NODE_VERSION_ID_FIELD_NAME, VersionXContentBuilderFactory.TIMESTAMP_ID_FIELD_NAME ) ).
+            addSortBuilder( new FieldSortBuilder( VersionIndexPath.TIMESTAMP.getPath() ).order( SortOrder.DESC ) ).
+            setReturnFields( ReturnFields.from( VersionIndexPath.VERSION_ID, VersionIndexPath.TIMESTAMP ) ).
             build();
 
         final SearchResult searchResult = elasticsearchDao.find( query );
@@ -140,9 +142,9 @@ public class ElasticsearchVersionService
         return searchResult;
     }
 
-    private String getStringValue( final SearchResultEntry hit, final String fieldName, final boolean required )
+    private String getStringValue( final SearchResultEntry hit, final IndexPath indexPath, final boolean required )
     {
-        final SearchResultFieldValue field = hit.getField( fieldName, required );
+        final SearchResultFieldValue field = hit.getField( indexPath.getPath(), required );
 
         if ( field == null )
         {

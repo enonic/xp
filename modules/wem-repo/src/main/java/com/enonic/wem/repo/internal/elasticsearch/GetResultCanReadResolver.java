@@ -2,7 +2,7 @@ package com.enonic.wem.repo.internal.elasticsearch;
 
 import java.util.List;
 
-import com.enonic.wem.api.index.NodeIndexPaths;
+import com.enonic.wem.api.node.NodeIndexPath;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.PrincipalKeys;
 import com.enonic.wem.repo.internal.index.result.GetResult;
@@ -12,7 +12,7 @@ class GetResultCanReadResolver
 {
     public static boolean canRead( final PrincipalKeys principalsKeys, final GetResult getResult )
     {
-        final SearchResultFieldValue hasRead = getResult.getSearchResult().getField( NodeIndexPaths.PERMISSIONS_READ_PATH.toString() );
+        final SearchResultFieldValue hasRead = getResult.getSearchResult().getField( NodeIndexPath.PERMISSIONS_READ.getPath() );
 
         if ( hasRead == null )
         {

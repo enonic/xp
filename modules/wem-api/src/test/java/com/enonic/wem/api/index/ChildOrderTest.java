@@ -2,6 +2,7 @@ package com.enonic.wem.api.index;
 
 import org.junit.Test;
 
+import com.enonic.wem.api.node.NodeIndexPath;
 import com.enonic.wem.api.query.expr.FieldOrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpr;
 
@@ -18,7 +19,7 @@ public class ChildOrderTest
         assertFalse( ChildOrder.defaultOrder().isManualOrder() );
         assertFalse( ChildOrder.create().build().isManualOrder() );
         assertTrue( ChildOrder.create().
-            add( FieldOrderExpr.create( NodeIndexPaths.MANUAL_ORDER_VALUE_KEY, OrderExpr.Direction.ASC ) ).
+            add( FieldOrderExpr.create( NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.ASC ) ).
             build().
             isManualOrder() );
     }
@@ -31,7 +32,7 @@ public class ChildOrderTest
         assertFalse( ChildOrder.defaultOrder().isManualOrder() );
         assertFalse( ChildOrder.create().build().isManualOrder() );
         assertTrue( ChildOrder.create().
-            add( FieldOrderExpr.create( NodeIndexPaths.MANUAL_ORDER_VALUE_KEY, OrderExpr.Direction.DESC ) ).
+            add( FieldOrderExpr.create( NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.DESC ) ).
             build().
             isManualOrder() );
     }
@@ -44,12 +45,12 @@ public class ChildOrderTest
         assertFalse( ChildOrder.defaultOrder().isManualOrder() );
         assertFalse( ChildOrder.create().build().isManualOrder() );
         assertTrue( ChildOrder.create().
-            add( FieldOrderExpr.create( NodeIndexPaths.MANUAL_ORDER_VALUE_KEY.toLowerCase(), OrderExpr.Direction.ASC ) ).
+            add( FieldOrderExpr.create( NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.ASC ) ).
             build().
             isManualOrder() );
 
         assertTrue( ChildOrder.create().
-            add( FieldOrderExpr.create( NodeIndexPaths.MANUAL_ORDER_VALUE_KEY.toUpperCase(), OrderExpr.Direction.ASC ) ).
+            add( FieldOrderExpr.create( NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.ASC ) ).
             build().
             isManualOrder() );
 

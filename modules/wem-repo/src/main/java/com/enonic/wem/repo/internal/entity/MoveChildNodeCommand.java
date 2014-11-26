@@ -3,18 +3,18 @@ package com.enonic.wem.repo.internal.entity;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.context.ContextAccessor;
-import com.enonic.wem.api.index.NodeIndexPaths;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodeIndexPath;
+import com.enonic.wem.api.node.NodeQuery;
 import com.enonic.wem.api.query.expr.CompareExpr;
 import com.enonic.wem.api.query.expr.FieldExpr;
 import com.enonic.wem.api.query.expr.FieldOrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.query.expr.QueryExpr;
 import com.enonic.wem.api.query.expr.ValueExpr;
-import com.enonic.wem.api.node.NodeQuery;
 import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeId;
 
 public class MoveChildNodeCommand
     extends AbstractNodeCommand
@@ -110,9 +110,9 @@ public class MoveChildNodeCommand
     private NodeQuery createFirstNodeBeforeInsertQuery( final Long nodeAfterOrderValue )
     {
         final CompareExpr orderGreaterThanNodeToMoveBefore =
-            CompareExpr.gt( FieldExpr.from( NodeIndexPaths.MANUAL_ORDER_VALUE_KEY ), ValueExpr.number( nodeAfterOrderValue ) );
+            CompareExpr.gt( FieldExpr.from( NodeIndexPath.MANUAL_ORDER_VALUE ), ValueExpr.number( nodeAfterOrderValue ) );
 
-        final FieldOrderExpr orderManuallyDesc = FieldOrderExpr.create( NodeIndexPaths.MANUAL_ORDER_VALUE_KEY, OrderExpr.Direction.ASC );
+        final FieldOrderExpr orderManuallyDesc = FieldOrderExpr.create( NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.ASC );
 
         return NodeQuery.create().query( QueryExpr.from( orderGreaterThanNodeToMoveBefore, orderManuallyDesc ) ).
             size( 1 ).

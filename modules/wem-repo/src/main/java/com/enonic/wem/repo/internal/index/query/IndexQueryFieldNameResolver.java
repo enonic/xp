@@ -17,7 +17,7 @@ public class IndexQueryFieldNameResolver
     {
         final FieldExpr field = compareExpr.getField();
 
-        final String baseFieldName = IndexFieldNameNormalizer.normalize( field.getName() );
+        final String baseFieldName = IndexFieldNameNormalizer.normalize( field.getFieldPath() );
 
         final ValueExpr firstValue = compareExpr.getFirstValue();
 

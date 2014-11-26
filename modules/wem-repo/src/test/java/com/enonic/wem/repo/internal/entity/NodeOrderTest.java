@@ -8,6 +8,7 @@ import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.index.IndexPath;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
@@ -70,7 +71,7 @@ public class NodeOrderTest
 
         final NodeQuery fulltextQuery = NodeQuery.create().
             query( QueryExpr.from( new DynamicConstraintExpr( fulltextExpression ),
-                                   FieldOrderExpr.create( "_score", OrderExpr.Direction.DESC ) ) ).
+                                   FieldOrderExpr.create( IndexPath.from( "_score" ), OrderExpr.Direction.DESC ) ) ).
             build();
 
         printContentRepoIndex();

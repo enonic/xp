@@ -4,7 +4,7 @@ import com.enonic.wem.repo.internal.elasticsearch.function.WeightedQueryFieldNam
 import spock.lang.Specification
 import spock.lang.Unroll
 
-class WeightedQueryFieldNameTest
+class WeightedNodeIndexPathTest
     extends Specification
 {
 

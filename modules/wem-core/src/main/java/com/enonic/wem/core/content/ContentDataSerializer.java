@@ -18,39 +18,30 @@ import com.enonic.wem.api.support.serializer.AbstractDataSetSerializer;
 import com.enonic.wem.core.content.page.PageDataSerializer;
 import com.enonic.wem.core.form.FormDataSerializer;
 
-import static com.enonic.wem.api.content.ContentIndexPaths.CONTENT_DATA;
-import static com.enonic.wem.api.content.ContentIndexPaths.CONTENT_TYPE_FIELD_NAME;
-import static com.enonic.wem.api.content.ContentIndexPaths.DISPLAY_NAME_FIELD_NAME;
-import static com.enonic.wem.api.content.ContentIndexPaths.DRAFT;
-import static com.enonic.wem.api.content.ContentIndexPaths.FORM;
-import static com.enonic.wem.api.content.ContentIndexPaths.METADATA;
-import static com.enonic.wem.api.content.ContentIndexPaths.PAGE;
-import static com.enonic.wem.api.content.ContentIndexPaths.SITE;
-
 public class ContentDataSerializer
     extends AbstractDataSetSerializer<Content, Content.Builder>
 {
 
-    private static final FormDataSerializer FORM_SERIALIZER = new FormDataSerializer( FORM );
+    private static final FormDataSerializer FORM_SERIALIZER = new FormDataSerializer( ContentFieldNames.FORM_SET );
 
-    private static final PageDataSerializer PAGE_SERIALIZER = new PageDataSerializer( PAGE );
+    private static final PageDataSerializer PAGE_SERIALIZER = new PageDataSerializer( ContentFieldNames.PAGE_SET );
 
-    private static final SiteDataSerializer SITE_SERIALIZER = new SiteDataSerializer( SITE );
+    private static final SiteDataSerializer SITE_SERIALIZER = new SiteDataSerializer( ContentFieldNames.SITE_SET );
 
 
     public RootDataSet toData( final Content content )
     {
         final RootDataSet contentAsData = new RootDataSet();
 
-        addPropertyIfNotNull( contentAsData, DRAFT, content.isDraft() );
-        addPropertyIfNotNull( contentAsData, DISPLAY_NAME_FIELD_NAME, content.getDisplayName() );
-        addPropertyIfNotNull( contentAsData, CONTENT_TYPE_FIELD_NAME, content.getType().getContentTypeName() );
+        addPropertyIfNotNull( contentAsData, ContentFieldNames.DRAFT, content.isDraft() );
+        addPropertyIfNotNull( contentAsData, ContentFieldNames.DISPLAY_NAME, content.getDisplayName() );
+        addPropertyIfNotNull( contentAsData, ContentFieldNames.CONTENT_TYPE, content.getType().getContentTypeName() );
 
-        contentAsData.add( content.getContentData().toDataSet( CONTENT_DATA ) );
+        contentAsData.add( content.getContentData().toDataSet( ContentFieldNames.CONTENT_DATA_SET ) );
 
         if ( content.getAllMetadata() != null )
         {
-            final DataSet dataSet = new DataSet( METADATA );
+            final DataSet dataSet = new DataSet( ContentFieldNames.METADATA );
 
             List<Metadata> metadataList = content.getAllMetadata();
             for ( Metadata metadata : metadataList )
@@ -82,7 +73,7 @@ public class ContentDataSerializer
 
     public Content.Builder fromData( final DataSet dataSet )
     {
-        final ContentTypeName contentTypeName = ContentTypeName.from( dataSet.getProperty( CONTENT_TYPE_FIELD_NAME ).getString() );
+        final ContentTypeName contentTypeName = ContentTypeName.from( dataSet.getProperty( ContentFieldNames.CONTENT_TYPE ).getString() );
         final Content.Builder builder;
         if ( contentTypeName.isPageTemplate() )
         {
@@ -98,25 +89,25 @@ public class ContentDataSerializer
         }
         builder.type( contentTypeName );
 
-        if ( dataSet.hasData( DISPLAY_NAME_FIELD_NAME ) )
+        if ( dataSet.hasData( ContentFieldNames.DISPLAY_NAME ) )
         {
-            builder.displayName( dataSet.getProperty( DISPLAY_NAME_FIELD_NAME ).getString() );
+            builder.displayName( dataSet.getProperty( ContentFieldNames.DISPLAY_NAME ).getString() );
         }
 
-        if ( dataSet.hasData( DRAFT ) )
+        if ( dataSet.hasData( ContentFieldNames.DRAFT ) )
         {
-            builder.draft( Boolean.parseBoolean( dataSet.getProperty( DRAFT ).getString() ) );
+            builder.draft( Boolean.parseBoolean( dataSet.getProperty( ContentFieldNames.DRAFT ).getString() ) );
         }
 
-        if ( dataSet.hasData( CONTENT_DATA ) )
+        if ( dataSet.hasData( ContentFieldNames.CONTENT_DATA_SET ) )
         {
-            builder.contentData( new ContentData( dataSet.getDataSet( CONTENT_DATA ).toRootDataSet() ) );
+            builder.contentData( new ContentData( dataSet.getDataSet( ContentFieldNames.CONTENT_DATA_SET ).toRootDataSet() ) );
         }
 
-        if ( dataSet.hasData( METADATA ) )
+        if ( dataSet.hasData( ContentFieldNames.METADATA ) )
         {
             List<Metadata> metadataList = new ArrayList<>();
-            DataSet data = dataSet.getDataSet( METADATA );
+            DataSet data = dataSet.getDataSet( ContentFieldNames.METADATA );
             for ( String name : data.getDataNames() )
             {
                 metadataList.add( new Metadata( MetadataSchemaName.from( name ), data.getDataSet( name ).toRootDataSet() ) );
@@ -125,14 +116,14 @@ public class ContentDataSerializer
             builder.metadata( metadataList );
         }
 
-        if ( dataSet.hasData( FORM ) )
+        if ( dataSet.hasData( ContentFieldNames.FORM_SET ) )
         {
-            builder.form( FORM_SERIALIZER.fromData( dataSet.getDataSet( FORM ) ) );
+            builder.form( FORM_SERIALIZER.fromData( dataSet.getDataSet( ContentFieldNames.FORM_SET ) ) );
         }
 
-        if ( dataSet.hasData( PAGE ) )
+        if ( dataSet.hasData( ContentFieldNames.PAGE_SET ) )
         {
-            builder.page( PAGE_SERIALIZER.fromData( dataSet.getDataSet( PAGE ) ) );
+            builder.page( PAGE_SERIALIZER.fromData( dataSet.getDataSet( ContentFieldNames.PAGE_SET ) ) );
         }
 
         return builder;
@@ -142,18 +133,18 @@ public class ContentDataSerializer
     {
         final RootDataSet contentAsData = new RootDataSet();
 
-        addPropertyIfNotNull( contentAsData, DRAFT, params.isDraft() );
-        addPropertyIfNotNull( contentAsData, DISPLAY_NAME_FIELD_NAME, params.getDisplayName() );
-        addPropertyIfNotNull( contentAsData, CONTENT_TYPE_FIELD_NAME, params.getContentType() );
+        addPropertyIfNotNull( contentAsData, ContentFieldNames.DRAFT, params.isDraft() );
+        addPropertyIfNotNull( contentAsData, ContentFieldNames.DISPLAY_NAME, params.getDisplayName() );
+        addPropertyIfNotNull( contentAsData, ContentFieldNames.CONTENT_TYPE, params.getContentType() );
 
         if ( params.getContentData() != null )
         {
-            contentAsData.add( params.getContentData().toDataSet( CONTENT_DATA ) );
+            contentAsData.add( params.getContentData().toDataSet( ContentFieldNames.CONTENT_DATA_SET ) );
         }
 
         if ( params.getMetadata() != null )
         {
-            final DataSet dataSet = new DataSet( METADATA );
+            final DataSet dataSet = new DataSet( ContentFieldNames.METADATA );
 
             List<Metadata> metadataList = params.getMetadata();
             for ( Metadata metadata : metadataList )

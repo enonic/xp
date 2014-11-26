@@ -8,8 +8,8 @@ class LogicalExprTest
     def "test AND expression"()
     {
         given:
-        def left = CompareExpr.eq( new FieldExpr( "a" ), ValueExpr.number( 2 ) )
-        def right = CompareExpr.eq( new FieldExpr( "b" ), ValueExpr.number( 2 ) )
+        def left = CompareExpr.eq( FieldExpr.from( "a" ), ValueExpr.number( 2 ) )
+        def right = CompareExpr.eq( FieldExpr.from( "b" ), ValueExpr.number( 2 ) )
         def expr = LogicalExpr.and( left, right )
 
         expect:
@@ -22,8 +22,8 @@ class LogicalExprTest
     def "test OR expression"()
     {
         given:
-        def left = CompareExpr.eq( new FieldExpr( "a" ), ValueExpr.number( 2 ) )
-        def right = CompareExpr.eq( new FieldExpr( "b" ), ValueExpr.number( 2 ) )
+        def left = CompareExpr.eq( FieldExpr.from( "a" ), ValueExpr.number( 2 ) )
+        def right = CompareExpr.eq( FieldExpr.from( "b" ), ValueExpr.number( 2 ) )
         def expr = LogicalExpr.or( left, right )
 
         expect:

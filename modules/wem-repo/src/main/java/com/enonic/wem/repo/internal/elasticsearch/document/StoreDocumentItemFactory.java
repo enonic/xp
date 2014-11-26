@@ -9,29 +9,27 @@ import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.data.type.ValueType;
 import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.index.IndexConfig;
-import com.enonic.wem.api.index.IndexDocumentItemPath;
-import com.enonic.wem.repo.internal.elasticsearch.IndexConstants;
+import com.enonic.wem.api.index.IndexPath;
+import com.enonic.wem.api.node.NodeIndexPath;
 import com.enonic.wem.repo.internal.elasticsearch.OrderbyValueResolver;
 
 public class StoreDocumentItemFactory
 {
 
-    public static Set<AbstractStoreDocumentItem> create( final IndexDocumentItemPath path, final Value value,
-                                                         final IndexConfig indexConfig )
+    public static Set<AbstractStoreDocumentItem> create( final IndexPath path, final Value value, final IndexConfig indexConfig )
     {
         return doCreate( indexConfig, path, value );
     }
 
     public static Set<AbstractStoreDocumentItem> create( final Property property, final IndexConfig indexConfig )
     {
-        final IndexDocumentItemPath path = IndexDocumentItemPath.from( property );
+        final IndexPath path = IndexPath.from( property );
         final Value propertyValue = property.getValue();
 
         return doCreate( indexConfig, path, propertyValue );
     }
 
-    private static Set<AbstractStoreDocumentItem> doCreate( final IndexConfig indexConfig, final IndexDocumentItemPath path,
-                                                            final Value propertyValue )
+    private static Set<AbstractStoreDocumentItem> doCreate( final IndexConfig indexConfig, final IndexPath path, final Value propertyValue )
     {
         final Set<AbstractStoreDocumentItem> indexDocumentItems = Sets.newHashSet();
 
@@ -56,15 +54,13 @@ public class StoreDocumentItemFactory
     {
         if ( indexConfig.isDecideByType() || indexConfig.isIncludeInAllText() )
         {
-            indexDocumentItems.add( new StoreDocumentAnalyzedItem( IndexDocumentItemPath.from( IndexConstants.ALL_TEXT_FIELD_NAME ),
-                                                                   propertyValue.asString() ) );
+            indexDocumentItems.add( new StoreDocumentAnalyzedItem( NodeIndexPath.ALL_TEXT, propertyValue.asString() ) );
 
-            indexDocumentItems.add(
-                new StoreDocumentNGramItem( IndexDocumentItemPath.from( IndexConstants.ALL_TEXT_FIELD_NAME ), propertyValue.asString() ) );
+            indexDocumentItems.add( new StoreDocumentNGramItem( NodeIndexPath.ALL_TEXT, propertyValue.asString() ) );
         }
     }
 
-    private static void addFulltextFields( final IndexConfig indexConfig, final IndexDocumentItemPath path, final Value propertyValue,
+    private static void addFulltextFields( final IndexConfig indexConfig, final IndexPath path, final Value propertyValue,
                                            final Set<AbstractStoreDocumentItem> indexDocumentItems )
     {
         if ( indexConfig.isDecideByType() )
@@ -85,7 +81,7 @@ public class StoreDocumentItemFactory
         }
     }
 
-    private static void addFulltextFieldsTypeBased( final IndexDocumentItemPath path, final Value propertyValue,
+    private static void addFulltextFieldsTypeBased( final IndexPath path, final Value propertyValue,
                                                     final Set<AbstractStoreDocumentItem> indexDocumentItems )
     {
         final ValueType valueType = propertyValue.getType();
@@ -104,12 +100,12 @@ public class StoreDocumentItemFactory
             ( valueType == ValueTypes.XML );
     }
 
-    private static StoreDocumentOrderbyItem createOrderbyItemType( final IndexDocumentItemPath path, final Value propertyValue )
+    private static StoreDocumentOrderbyItem createOrderbyItemType( final IndexPath path, final Value propertyValue )
     {
         return new StoreDocumentOrderbyItem( path, OrderbyValueResolver.getOrderbyValue( propertyValue ) );
     }
 
-    private static void addIndexBaseTypeEntries( final IndexDocumentItemPath path, final Set<AbstractStoreDocumentItem> indexDocumentItems,
+    private static void addIndexBaseTypeEntries( final IndexPath path, final Set<AbstractStoreDocumentItem> indexDocumentItems,
                                                  final Value propertyValue )
     {
         if ( propertyValue.isDateType() )
@@ -129,17 +125,17 @@ public class StoreDocumentItemFactory
         indexDocumentItems.add( createStringItemType( path, propertyValue ) );
     }
 
-    private static StoreDocumentGeoPointItem createGeoPointItemType( final IndexDocumentItemPath path, final Value propertyValue )
+    private static StoreDocumentGeoPointItem createGeoPointItemType( final IndexPath path, final Value propertyValue )
     {
         return new StoreDocumentGeoPointItem( path, propertyValue.asString() );
     }
 
-    private static StoreDocumentStringItem createStringItemType( final IndexDocumentItemPath path, final Value propertyValue )
+    private static StoreDocumentStringItem createStringItemType( final IndexPath path, final Value propertyValue )
     {
         return new StoreDocumentStringItem( path, propertyValue.asString() );
     }
 
-    private static StoreDocumentNumberItem createNumericItemType( final IndexDocumentItemPath path, final Value propertyValue )
+    private static StoreDocumentNumberItem createNumericItemType( final IndexPath path, final Value propertyValue )
     {
         return new StoreDocumentNumberItem( path, propertyValue.asDouble() );
     }
@@ -149,7 +145,7 @@ public class StoreDocumentItemFactory
 //        return new IndexDocumentDateItem( path, propertyValue.asDateTime() );
 //    }
 
-    private static StoreDocumentDateItem createInstantType( final IndexDocumentItemPath path, final Value propertyValue )
+    private static StoreDocumentDateItem createInstantType( final IndexPath path, final Value propertyValue )
     {
         return new StoreDocumentDateItem( path, propertyValue.asInstant() );
     }

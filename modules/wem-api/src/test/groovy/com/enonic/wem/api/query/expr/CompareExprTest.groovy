@@ -8,7 +8,7 @@ class CompareExprTest
     def "test EQ compare"()
     {
         given:
-        def field = new FieldExpr( "a" )
+        def field = FieldExpr.from( "a" )
         def value = ValueExpr.number( 2 );
         def expr = CompareExpr.eq( field, value )
 
@@ -25,7 +25,7 @@ class CompareExprTest
     def "test NEQ compare"()
     {
         given:
-        def field = new FieldExpr( "a" )
+        def field = FieldExpr.from( "a" )
         def value = ValueExpr.number( 2 );
         def expr = CompareExpr.neq( field, value )
 
@@ -42,7 +42,7 @@ class CompareExprTest
     def "test GT compare"()
     {
         given:
-        def field = new FieldExpr( "a" )
+        def field = FieldExpr.from( "a" )
         def value = ValueExpr.number( 2 );
         def expr = CompareExpr.gt( field, value )
 
@@ -59,7 +59,7 @@ class CompareExprTest
     def "test GTE compare"()
     {
         given:
-        def field = new FieldExpr( "a" )
+        def field = FieldExpr.from( "a" )
         def value = ValueExpr.number( 2 );
         def expr = CompareExpr.gte( field, value )
 
@@ -76,7 +76,7 @@ class CompareExprTest
     def "test LT compare"()
     {
         given:
-        def field = new FieldExpr( "a" )
+        def field = FieldExpr.from( "a" )
         def value = ValueExpr.number( 2 );
         def expr = CompareExpr.lt( field, value )
 
@@ -93,7 +93,7 @@ class CompareExprTest
     def "test LTE compare"()
     {
         given:
-        def field = new FieldExpr( "a" )
+        def field = FieldExpr.from( "a" )
         def value = ValueExpr.number( 2 );
         def expr = CompareExpr.lte( field, value )
 
@@ -110,7 +110,7 @@ class CompareExprTest
     def "test LIKE compare"()
     {
         given:
-        def field = new FieldExpr( "a" )
+        def field = FieldExpr.from( "a" )
         def value = ValueExpr.string( '2' );
         def expr = CompareExpr.like( field, value )
 
@@ -127,7 +127,7 @@ class CompareExprTest
     def "test NOT LIKE compare"()
     {
         given:
-        def field = new FieldExpr( "a" )
+        def field = FieldExpr.from( "a" )
         def value = ValueExpr.string( '2' );
         def expr = CompareExpr.notLike( field, value )
 
@@ -144,7 +144,7 @@ class CompareExprTest
     def "test IN compare"()
     {
         given:
-        def field = new FieldExpr( "a" )
+        def field = FieldExpr.from( "a" )
         def values = [ValueExpr.string( '1' ), ValueExpr.string( '2' )]
         def expr = CompareExpr.in( field, values )
 
@@ -161,7 +161,7 @@ class CompareExprTest
     def "test NOT IN compare"()
     {
         given:
-        def field = new FieldExpr( "a" )
+        def field = FieldExpr.from( "a" )
         def values = [ValueExpr.string( '1' ), ValueExpr.string( '2' )]
         def expr = CompareExpr.notIn( field, values )
 

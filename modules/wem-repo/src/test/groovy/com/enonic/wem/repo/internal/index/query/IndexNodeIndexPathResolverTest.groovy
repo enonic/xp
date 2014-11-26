@@ -3,18 +3,17 @@ package com.enonic.wem.repo.internal.index.query
 import com.enonic.wem.api.query.expr.CompareExpr
 import com.enonic.wem.api.query.expr.FieldExpr
 import com.enonic.wem.api.query.expr.ValueExpr
-import com.enonic.wem.repo.internal.index.query.IndexQueryFieldNameResolver
 import spock.lang.Specification
 import spock.lang.Unroll
 
-class IndexQueryFieldNameResolverTest
+class IndexNodeIndexPathResolverTest
     extends Specification
 {
     @Unroll
     def "given path '#field' and valuetype #valueExp.value.type then expect fieldname '#resolvedFieldName'"()
     {
         expect:
-        resolvedFieldName == IndexQueryFieldNameResolver.resolve( CompareExpr.eq( new FieldExpr( field ), valueExp ) )
+        resolvedFieldName == IndexQueryFieldNameResolver.resolve( CompareExpr.eq( FieldExpr.from( field ), valueExp ) )
 
         where:
         field   | valueExp                                        | resolvedFieldName

@@ -16,13 +16,13 @@ public class ContentConstants
     public static final Workspace WORKSPACE_STAGE = Workspace.create().
         name( "stage" ).
         childOrder( ChildOrder.create().
-            add( FieldOrderExpr.create( ContentIndexPaths.DISPLAY_NAME_FIELD_NAME, OrderExpr.Direction.ASC ) ).build() ).
+            add( FieldOrderExpr.create( ContentIndexPath.DISPLAY_NAME, OrderExpr.Direction.ASC ) ).build() ).
         build();
 
     public static final Workspace WORKSPACE_PROD = Workspace.create().
         name( "prod" ).
         childOrder( ChildOrder.create().
-            add( FieldOrderExpr.create( ContentIndexPaths.DISPLAY_NAME_FIELD_NAME, OrderExpr.Direction.ASC ) ).build() ).
+            add( FieldOrderExpr.create( ContentIndexPath.DISPLAY_NAME, OrderExpr.Direction.ASC ) ).build() ).
         build();
 
     public static final Repository CONTENT_REPO = Repository.create().

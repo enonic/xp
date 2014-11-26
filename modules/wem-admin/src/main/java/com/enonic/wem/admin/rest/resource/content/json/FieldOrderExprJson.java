@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import com.enonic.wem.api.index.IndexPath;
 import com.enonic.wem.api.query.expr.FieldOrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpr;
 
@@ -18,7 +19,7 @@ public class FieldOrderExprJson
 
     public FieldOrderExprJson( final FieldOrderExpr orderExpr )
     {
-        this.fieldName = orderExpr.getField().name;
+        this.fieldName = orderExpr.getField().getFieldPath();
         this.direction = orderExpr.getDirection().name();
         this.orderExpr = orderExpr;
     }
@@ -31,7 +32,7 @@ public class FieldOrderExprJson
         this.fieldName = fieldName;
         this.direction = direction;
 
-        this.orderExpr = FieldOrderExpr.create( fieldName, OrderExpr.Direction.valueOf( direction ) );
+        this.orderExpr = FieldOrderExpr.create( IndexPath.from( fieldName ), OrderExpr.Direction.valueOf( direction ) );
     }
 
     @SuppressWarnings("UnusedDeclaration")

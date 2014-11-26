@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.index.IndexDocumentItemPath;
+import com.enonic.wem.api.index.IndexPath;
 import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocumentOrderbyItem;
@@ -48,7 +48,7 @@ public class OrderByValueResolverTest
         this.indexType = "test";
     }
 
-    protected void createSearchIndex( final Repository repository )
+    void createSearchIndex( final Repository repository )
     {
         final String indexName = IndexNameResolver.resolveSearchIndexName( repository.getId() );
         elasticsearchIndexService.createIndex( indexName, getContentRepoSearchDefaultSettings() );
@@ -98,7 +98,7 @@ public class OrderByValueResolverTest
             indexTypeName( this.indexType ).
             indexName( this.indexName ).
             analyzer( "default" ).
-            addEntry( new StoreDocumentOrderbyItem( IndexDocumentItemPath.from( "ordervalue" ), value ) ).
+            addEntry( new StoreDocumentOrderbyItem( IndexPath.from( "ordervalue" ), value ) ).
             build();
 
         IndexRequestBuilder indexRequestBuilder = new IndexRequestBuilder( this.client, this.indexName ).

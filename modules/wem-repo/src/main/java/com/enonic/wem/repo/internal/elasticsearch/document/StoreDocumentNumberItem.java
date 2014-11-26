@@ -1,6 +1,6 @@
 package com.enonic.wem.repo.internal.elasticsearch.document;
 
-import com.enonic.wem.api.index.IndexDocumentItemPath;
+import com.enonic.wem.api.index.IndexPath;
 import com.enonic.wem.repo.internal.index.IndexValueType;
 
 public class StoreDocumentNumberItem
@@ -8,7 +8,7 @@ public class StoreDocumentNumberItem
 {
     private final Double value;
 
-    public StoreDocumentNumberItem( final IndexDocumentItemPath path, final Double value )
+    public StoreDocumentNumberItem( final IndexPath path, final Double value )
     {
         super( path );
         this.value = value;

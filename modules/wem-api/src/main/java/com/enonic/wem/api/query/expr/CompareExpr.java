@@ -155,11 +155,6 @@ public final class CompareExpr
         return new CompareExpr( field, operator, value );
     }
 
-    public static CompareExpr create( final String fieldName, final Operator operator, final ValueExpr value )
-    {
-        return new CompareExpr( FieldExpr.from( fieldName ), operator, value );
-    }
-
     public static CompareExpr create( final FieldExpr field, final Operator operator, final Iterable<ValueExpr> values )
     {
         return new CompareExpr( field, operator, values );

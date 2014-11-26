@@ -10,7 +10,6 @@ import com.enonic.wem.api.node.NodeVersionId;
 import com.enonic.wem.api.node.NodeVersionIds;
 import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchDao;
-import com.enonic.wem.repo.internal.elasticsearch.xcontent.WorkspaceXContentBuilderFactory;
 import com.enonic.wem.repo.internal.index.result.SearchResultFieldValue;
 
 abstract class AbstractWorkspaceCommand
@@ -47,7 +46,7 @@ abstract class AbstractWorkspaceCommand
     {
         final BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder();
 
-        final TermQueryBuilder workspaceQuery = new TermQueryBuilder( WorkspaceXContentBuilderFactory.WORKSPACE_FIELD_NAME, workspaceName );
+        final TermQueryBuilder workspaceQuery = new TermQueryBuilder( WorkspaceIndexPath.WORKSPACE_ID.getPath(), workspaceName );
         boolQueryBuilder.must( specificQuery );
         boolQueryBuilder.must( workspaceQuery );
 

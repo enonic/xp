@@ -3,7 +3,7 @@ package com.enonic.wem.repo.internal.elasticsearch.document;
 import java.time.Instant;
 import java.util.Date;
 
-import com.enonic.wem.api.index.IndexDocumentItemPath;
+import com.enonic.wem.api.index.IndexPath;
 import com.enonic.wem.repo.internal.index.IndexValueType;
 
 public class StoreDocumentDateItem
@@ -11,7 +11,7 @@ public class StoreDocumentDateItem
 {
     private final Instant instant;
 
-    public StoreDocumentDateItem( final IndexDocumentItemPath path, final Instant instant )
+    public StoreDocumentDateItem( final IndexPath path, final Instant instant )
     {
         super( path );
         this.instant = instant;

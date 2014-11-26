@@ -19,7 +19,7 @@
       "size": 0
     }
   ],
-  "childOrder": "modifiedTime ASC, displayName DESC",
+  "childOrder": "modifiedtime ASC, displayname DESC",
   "createdTime": "2013-01-02T03:04:05Z",
   "creator": "user:test:creator",
   "data": {

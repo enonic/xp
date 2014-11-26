@@ -7,12 +7,13 @@ import org.junit.Test;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.index.ChildOrder;
-import com.enonic.wem.api.index.NodeIndexPaths;
+import com.enonic.wem.api.index.IndexPath;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodeIndexPath;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.query.expr.FieldOrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpr;
@@ -34,8 +35,8 @@ public class MoveChildNodeCommandTest
 
         createChildNodes( parentNode );
 
-        setChildOrder( parentNode, NodeIndexPaths.NAME_KEY, OrderExpr.Direction.ASC );
-        setChildOrder( parentNode, NodeIndexPaths.MANUAL_ORDER_VALUE_KEY, OrderExpr.Direction.DESC );
+        setChildOrder( parentNode, NodeIndexPath.NAME, OrderExpr.Direction.ASC );
+        setChildOrder( parentNode, NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.DESC );
 
         // current node order: a,b,c,d,e,f
         MoveChildNodeCommand.create().
@@ -76,8 +77,8 @@ public class MoveChildNodeCommandTest
 
         createChildNodes( parentNode );
 
-        setChildOrder( parentNode, NodeIndexPaths.NAME_KEY, OrderExpr.Direction.ASC );
-        setChildOrder( parentNode, NodeIndexPaths.MANUAL_ORDER_VALUE_KEY, OrderExpr.Direction.DESC );
+        setChildOrder( parentNode, NodeIndexPath.NAME, OrderExpr.Direction.ASC );
+        setChildOrder( parentNode, NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.DESC );
 
         // current node order: a,b,c,d,e,f
         MoveChildNodeCommand.create().
@@ -118,8 +119,8 @@ public class MoveChildNodeCommandTest
 
         createChildNodes( parentNode );
 
-        setChildOrder( parentNode, NodeIndexPaths.NAME_KEY, OrderExpr.Direction.ASC );
-        setChildOrder( parentNode, NodeIndexPaths.MANUAL_ORDER_VALUE_KEY, OrderExpr.Direction.DESC );
+        setChildOrder( parentNode, NodeIndexPath.NAME, OrderExpr.Direction.ASC );
+        setChildOrder( parentNode, NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.DESC );
 
         // current node order: a,b,c,d,e,f
         MoveChildNodeCommand.create().
@@ -158,11 +159,11 @@ public class MoveChildNodeCommandTest
         createNode( "d", parentNode.path() );
     }
 
-    private void setChildOrder( final Node parentNode, final String fieldName, final OrderExpr.Direction direction )
+    private void setChildOrder( final Node parentNode, final IndexPath indexPath, final OrderExpr.Direction direction )
     {
         SetNodeChildOrderCommand.create().
             nodeId( parentNode.id() ).
-            childOrder( ChildOrder.create().add( FieldOrderExpr.create( fieldName, direction ) ).build() ).
+            childOrder( ChildOrder.create().add( FieldOrderExpr.create( indexPath, direction ) ).build() ).
             nodeDao( nodeDao ).
             versionService( versionService ).
             workspaceService( workspaceService ).
