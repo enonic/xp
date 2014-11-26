@@ -197,6 +197,17 @@ public final class PropertyPath
         }
     }
 
+    public PropertyPath resetAllIndexesTo( final int index )
+    {
+        final ImmutableList.Builder<Element> builder = ImmutableList.builder();
+        for ( int i = 0; i < elements.size(); i++ )
+        {
+            final Element element = elements.get( i );
+            builder.add( new Element( element.getName(), index ) );
+        }
+        return new PropertyPath( builder.build() );
+    }
+
     @Override
     public boolean equals( final Object o )
     {

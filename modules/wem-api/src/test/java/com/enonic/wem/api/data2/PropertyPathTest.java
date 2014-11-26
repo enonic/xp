@@ -78,4 +78,16 @@ public class PropertyPathTest
         PropertyPath path = PropertyPath.from( "a" );
         assertEquals( 0, path.getFirstElement().getIndex() );
     }
+
+    @Test
+    public void given_path_with_zero_indexes_explicitly_set_then_toString_returns_path_with_implicit_zero_indexes()
+    {
+        assertEquals( "a.b", PropertyPath.from( "a[0].b[0]" ).toString() );
+    }
+
+    @Test
+    public void resetAllIndexesTo()
+    {
+        assertEquals( "a[5].b[5].c[5].d[5]", PropertyPath.from( "a.b[1].c[2].d[3]" ).resetAllIndexesTo( 5 ).toString() );
+    }
 }
