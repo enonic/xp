@@ -194,11 +194,11 @@ public class ContentServiceImpl
     {
         if ( params.getContentType().isTemplateFolder() )
         {
-            validateCreateTemplateFolder( params );
+            // validateCreateTemplateFolder( params );
         }
         else if ( params.getContentType().isPageTemplate() )
         {
-            validateCreatePageTemplate( params );
+            // validateCreatePageTemplate( params );
         }
 
         final Content content = CreateContentCommand.create().
