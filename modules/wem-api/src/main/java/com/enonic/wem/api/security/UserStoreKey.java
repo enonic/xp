@@ -8,7 +8,7 @@ public final class UserStoreKey
 {
     private final static UserStoreKey SYSTEM = new UserStoreKey( "system" );
 
-    private final static String RESERVED_USER_STORE_ID = "roles";
+    private final static String RESERVED_USER_STORE_ID = PrincipalKey.ROLES_NODE_NAME;
 
     private final String id;
 

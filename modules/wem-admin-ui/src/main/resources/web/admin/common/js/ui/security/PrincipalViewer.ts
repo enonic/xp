@@ -25,16 +25,7 @@ module api.ui.security {
         }
 
         private resolveSubName(key: PrincipalKey): string {
-            if (key.isRole()) {
-                return api.util.StringHelper.format("{0}/{1}",
-                    PrincipalType[key.getType()].toLowerCase(),
-                    key.getId());
-            } else {
-                return api.util.StringHelper.format("{0}/{1}/{2}",
-                    key.getUserStore().toString(),
-                    PrincipalType[key.getType()].toLowerCase(),
-                    key.getId());
-            }
+            return key.toPath();
         }
 
         private resolveIconClass(key: PrincipalKey): string {

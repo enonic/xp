@@ -120,7 +120,7 @@ abstract class PrincipalNodeTranslator
 
         final CreateNodeParams.Builder builder = CreateNodeParams.create().
             name( PrincipalKeyNodeTranslator.toNodeName( principal.getKey() ).toString() ).
-            parent( PrincipalPathTranslator.toParentPath( principal.getKey() ) ).
+            parent( principal.getKey().toPath().getParentPath() ).
             setNodeId( NodeId.from( principal.getKey() ) ).
             indexConfigDocument( PrincipalIndexConfigFactory.create() );
 

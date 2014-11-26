@@ -92,6 +92,18 @@ module api.security {
             return this.refString;
         }
 
+        toPath(): string {
+            if (this.isRole()) {
+                return api.util.StringHelper.format("/role/{0}",
+                    this.getId());
+            } else {
+                return api.util.StringHelper.format("/{0}/{1}/{2}",
+                    this.getUserStore().toString(),
+                    PrincipalType[this.getType()].toLowerCase(),
+                    this.getId());
+            }
+        }
+
         equals(o: api.Equitable): boolean {
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, PrincipalKey)) {
                 return false;

@@ -6,6 +6,8 @@ import java.util.regex.Pattern;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 
+import com.enonic.wem.api.node.NodePath;
+
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -16,6 +18,8 @@ public final class PrincipalKey
     private final static Pattern REF_PATTERN = Pattern.compile( "^(?:(role):([^:]+))|(user|group):([^:]+):([^:]+)$" );
 
     private static final PrincipalKey ANONYMOUS_PRINCIPAL = new PrincipalKey();
+
+    final static String ROLES_NODE_NAME = "role";
 
     private final UserStoreKey userStore;
 
@@ -83,6 +87,25 @@ public final class PrincipalKey
     public boolean isAnonymous()
     {
         return this.equals( ANONYMOUS_PRINCIPAL );
+    }
+
+    public NodePath toPath()
+    {
+        if ( this.isRole() )
+        {
+            return NodePath.newPath().
+                addElement( ROLES_NODE_NAME ).
+                addElement( getId() ).
+                build();
+        }
+        else
+        {
+            return NodePath.newPath().
+                addElement( getUserStore().toString() ).
+                addElement( getType().toString().toLowerCase() ).
+                addElement( getId() ).
+                build();
+        }
     }
 
     @Override

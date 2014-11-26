@@ -2,6 +2,8 @@ package com.enonic.wem.api.security;
 
 import org.junit.Test;
 
+import com.enonic.wem.api.node.NodePath;
+
 import static org.junit.Assert.*;
 
 public class PrincipalKeyTest
@@ -89,6 +91,21 @@ public class PrincipalKeyTest
         assertEquals( "role:myrole", role.toString() );
         assertEquals( "group:myUserStore:mygroup", group.toString() );
         assertEquals( "user:myUserStore:myUser", user.toString() );
+    }
+
+    @Test
+    public void testToPath()
+        throws Exception
+    {
+        final PrincipalKey anonymous = PrincipalKey.from( "user:system:anonymous" );
+        final PrincipalKey user = PrincipalKey.from( "user:myUserStore:myUser" );
+        final PrincipalKey group = PrincipalKey.from( "group:myUserStore:mygroup" );
+        final PrincipalKey role = PrincipalKey.from( "role:myrole" );
+
+        assertEquals( new NodePath( "/system/user/anonymous" ), anonymous.toPath() );
+        assertEquals( new NodePath( "/role/myrole" ), role.toPath() );
+        assertEquals( new NodePath( "/myUserStore/group/mygroup" ), group.toPath() );
+        assertEquals( new NodePath( "/myUserStore/user/myUser" ), user.toPath() );
     }
 
     @Test(expected = IllegalArgumentException.class)
