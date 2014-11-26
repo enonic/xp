@@ -102,7 +102,6 @@ public class PropertyTreeTest
         assertEquals( "myProp", property.getName() );
         assertEquals( 0, property.getIndex() );
         assertSame( myValue, property.getValue() );
-        assertEquals( new PropertyId( "1" ), property.getId() );
     }
 
     @Test
@@ -116,7 +115,6 @@ public class PropertyTreeTest
         assertEquals( "myProp", myProp.getName() );
         assertEquals( 0, myProp.getIndex() );
         assertSame( myValue, myProp.getValue() );
-        assertEquals( new PropertyId( "2" ), myProp.getId() );
     }
 
     @Test
@@ -130,7 +128,6 @@ public class PropertyTreeTest
         assertEquals( "myProp", myProp.getName() );
         assertEquals( 1, myProp.getIndex() );
         assertSame( myValue, myProp.getValue() );
-        assertEquals( new PropertyId( "2" ), myProp.getId() );
     }
 
     @Test(expected = IllegalArgumentException.class)

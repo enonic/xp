@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.LinkedHashMap;
 import java.util.Objects;
+import java.util.UUID;
 
 import com.google.common.collect.ImmutableList;
 
@@ -18,10 +19,12 @@ import com.enonic.wem.api.util.Reference;
 public final class PropertyTree
     implements PropertyIdProvider
 {
-    private final class DefaultPropertyIdProvider
+    /**
+     * A not Thread safe PropertyIdProvider that returns predictive ids. A int counter starting at 1.
+     */
+    public final static class PredictivePropertyIdProvider
         implements PropertyIdProvider
     {
-
         private int nextId = 1;
 
         @Override
@@ -32,15 +35,32 @@ public final class PropertyTree
         }
     }
 
+    /**
+     * Ensures an unique id for each Property without any dependencies.
+     */
+    public final static class DefaultPropertyIdProvider
+        implements PropertyIdProvider
+    {
+        @Override
+        public PropertyId nextId()
+        {
+            // Note: Using UUID as value  takes 3.611 s for one million creations, compared to a counter which takes only 310 ms )
+            return new PropertyId( UUID.randomUUID().toString() );
+        }
+    }
+
     private final PropertyIdProvider idProvider;
 
     private final PropertySet root;
 
     private final LinkedHashMap<PropertyId, Property> propertyById = new LinkedHashMap<>();
 
+    /**
+     * Creates a new PropertyTree using a default PropertyIdProvider which uses UUID.randomUUID().
+     */
     public PropertyTree()
     {
-        idProvider = new DefaultPropertyIdProvider();
+        idProvider = PropertyIdProviderAccessor.instance().get();
         root = new PropertySet( this );
     }
 
@@ -276,7 +296,7 @@ public final class PropertyTree
         Property previous = this.propertyById.put( property.getId(), property );
         if ( previous != null )
         {
-            System.out.printf( "Warning id already registered" + property.getId() );
+            throw new IllegalStateException( "Warning id already registered: " + property.getId() + " : " + previous.getPath().toString() );
         }
     }
 

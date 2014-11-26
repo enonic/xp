@@ -286,7 +286,7 @@ public abstract class ValueType<T>
         @Override
         Value fromJsonValue( final Object object )
         {
-            return new Value.ContentId( convert( object ) );
+            return new Value.ContentId( convertNullSafe( object ) );
         }
     }
 

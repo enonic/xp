@@ -40,9 +40,11 @@ public class PropertyArrayJson
     void fromJson( final PropertySet parent )
     {
         final ValueType valueType = ValueTypes.getByName( type );
+        final PropertyArray array = new PropertyArray( parent.getTree(), parent, name, valueType );
+        parent.addPropertyArray( array );
         for ( final ValueAndPropertyIdJson valueJson : values )
         {
-            valueJson.fromJson( parent, valueType, name );
+            valueJson.fromJson( array, valueType );
         }
     }
 }

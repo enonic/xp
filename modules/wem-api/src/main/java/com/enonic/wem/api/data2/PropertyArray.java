@@ -36,6 +36,9 @@ final class PropertyArray
         this.valueType = valueType;
     }
 
+    /**
+     * Copy constructor.
+     */
     private PropertyArray( final PropertyArray source, final PropertyTree tree, final PropertySet parent )
     {
         Preconditions.checkNotNull( source, "source cannot be null" );
@@ -163,6 +166,14 @@ final class PropertyArray
             builder.add( p.getValue() );
         }
         return builder.build();
+    }
+
+    /**
+     * Creates a new PropertySet attached to the same PropertyTree as this PropertyArray.
+     */
+    PropertySet newSet()
+    {
+        return this.parent.newSet();
     }
 
     void addProperty( final Property property )

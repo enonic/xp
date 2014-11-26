@@ -173,6 +173,11 @@ public final class PropertySet
         return array.size();
     }
 
+    void addPropertyArray( final PropertyArray array )
+    {
+        this.propertyArrayByName.put( array.getName(), array );
+    }
+
     void add( final Property property )
     {
 

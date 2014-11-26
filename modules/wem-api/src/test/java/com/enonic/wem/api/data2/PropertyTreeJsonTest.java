@@ -28,7 +28,7 @@ public class PropertyTreeJsonTest
 
     private PropertyTree createPropertyTree_with_all_types()
     {
-        PropertyTree tree = new PropertyTree();
+        PropertyTree tree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         tree.addString( "singleString", "a" );
         tree.addString( "singleHtmlPart", "<h1>Hello</h1>" );
         tree.addXml( "singleXML", "<xml>Hello</xml>" );

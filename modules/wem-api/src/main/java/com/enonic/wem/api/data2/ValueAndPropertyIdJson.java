@@ -40,22 +40,25 @@ public final class ValueAndPropertyIdJson
         }
     }
 
-    void fromJson( final PropertySet parent, final ValueType type, final String propertyName )
+    void fromJson( final PropertyArray array, final ValueType type )
     {
+        final PropertyId propertyId = new PropertyId( this.id );
         final Value value;
         if ( type.equals( ValueTypes.PROPERTY_SET ) )
         {
-            final PropertySet newSet = parent.addSet( propertyName );
-            final List<PropertyArrayJson> propertyArrayJsonList = (List<PropertyArrayJson>) set;
-            for ( final PropertyArrayJson propertyArrayJson : propertyArrayJsonList )
+            final PropertySet newSet = array.newSet();
+            for ( final PropertyArrayJson propertyArrayJson : set )
             {
                 propertyArrayJson.fromJson( newSet );
             }
+            value = Value.newData( newSet );
         }
         else
         {
             value = type.fromJsonValue( v );
-            parent.addProperty( propertyName, value );
         }
+
+        final Property newProperty = new Property( array.getName(), array.size(), value, propertyId, array.getParent() );
+        array.addProperty( newProperty );
     }
 }

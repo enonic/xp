@@ -557,6 +557,12 @@ public abstract class Value
         {
             return new ContentId( this );
         }
+
+        @Override
+        Object toJsonValue()
+        {
+            return asString();
+        }
     }
 
     static class Reference
