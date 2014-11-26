@@ -247,7 +247,7 @@ public class ContentServiceImpl
         try
         {
             final Content parent = this.getByPath( params.getParentContentPath() );
-            if ( !parent.getType().isPageTemplate() )
+            if ( !parent.getType().isTemplateFolder() )
             {
                 throw new SystemException( "A page template can only be created below a content of type 'template-folder'" );
             }
