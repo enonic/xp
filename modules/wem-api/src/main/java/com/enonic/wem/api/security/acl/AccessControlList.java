@@ -124,6 +124,20 @@ public final class AccessControlList
         return PrincipalKeys.from( principals );
     }
 
+    public PrincipalKeys getPrincipalsWithPermission( final Permission permission )
+    {
+        final Set<PrincipalKey> principals = this.entries.values().stream().
+            filter( ( entry ) -> entry.isAllowed( permission ) ).
+            map( AccessControlEntry::getPrincipal ).
+            collect( toSet() );
+        return PrincipalKeys.from( principals );
+    }
+
+    public boolean isEmpty()
+    {
+        return this.entries.isEmpty();
+    }
+
     @Override
     public String toString()
     {

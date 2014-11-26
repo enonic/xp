@@ -215,8 +215,7 @@ public final class SecurityServiceImpl
         final User user = findByEmail( token.getUserStore(), token.getEmail() );
         if ( user != null && !user.isDisabled() && passwordMatch( user, token.getPassword() ) )
         {
-            final PrincipalKeys principals = resolveMemberships( user.getKey() );
-            return AuthenticationInfo.create().principals( principals ).user( user ).build();
+            return createAuthInfo( user );
         }
         else
         {
@@ -229,13 +228,18 @@ public final class SecurityServiceImpl
         final User user = findByUsername( token.getUserStore(), token.getUsername() );
         if ( user != null && !user.isDisabled() && passwordMatch( user, token.getPassword() ) )
         {
-            final PrincipalKeys principals = resolveMemberships( user.getKey() );
-            return AuthenticationInfo.create().user( user ).principals( principals ).build();
+            return createAuthInfo( user );
         }
         else
         {
             return AuthenticationInfo.failed();
         }
+    }
+
+    private AuthenticationInfo createAuthInfo( final User user )
+    {
+        final PrincipalKeys principals = resolveMemberships( user.getKey() );
+        return AuthenticationInfo.create().principals( principals ).principal( PrincipalKey.ofAnonymous() ).user( user ).build();
     }
 
     private boolean passwordMatch( final User user, final String password )

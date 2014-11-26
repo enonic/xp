@@ -6,7 +6,7 @@ import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.index.IndexPaths;
 import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.api.security.acl.AccessControlEntry;
+import com.enonic.wem.api.security.PrincipalKeys;
 import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.security.acl.Permission;
 import com.enonic.wem.repo.internal.elasticsearch.document.AbstractStoreDocumentItem;
@@ -18,7 +18,7 @@ public class AccessControlListStoreDocumentFactory
     {
         final Set<AbstractStoreDocumentItem> aclStoreDocumentItems = Sets.newHashSet();
 
-        final Set<PrincipalKey> hasRead = getPrincipalKeysWithRead( accessControlList );
+        final PrincipalKeys hasRead = accessControlList.getPrincipalsWithPermission( Permission.READ );
 
         for ( final PrincipalKey principalKey : hasRead )
         {
@@ -27,20 +27,5 @@ public class AccessControlListStoreDocumentFactory
 
         return aclStoreDocumentItems;
     }
-
-    static private Set<PrincipalKey> getPrincipalKeysWithRead( final AccessControlList accessControlList )
-    {
-        final Set<PrincipalKey> hasRead = Sets.newHashSet();
-
-        for ( final AccessControlEntry entry : accessControlList )
-        {
-            if ( entry.isAllowed( Permission.READ ) )
-            {
-                hasRead.add( entry.getPrincipal() );
-            }
-        }
-        return hasRead;
-    }
-
 
 }

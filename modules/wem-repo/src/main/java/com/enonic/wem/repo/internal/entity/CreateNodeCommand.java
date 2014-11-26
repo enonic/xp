@@ -40,8 +40,8 @@ public final class CreateNodeCommand
 
         final PrincipalKey creator = PrincipalKey.from( "user:system:admin" );
 
-        final AccessControlList acl =
-            params.getAccessControlList() != null ? params.getAccessControlList() : NodeDefaultAclFactory.create( creator );
+        final AccessControlList paramsAcl = params.getAccessControlList();
+        final AccessControlList acl = paramsAcl == null || paramsAcl.isEmpty() ? NodeDefaultAclFactory.create( creator ) : paramsAcl;
         // calculate effective permissions based on parent acl
         final AccessControlList effectiveAcl = acl.getEffective( getAccessControlList( params.getParent() ) );
 
