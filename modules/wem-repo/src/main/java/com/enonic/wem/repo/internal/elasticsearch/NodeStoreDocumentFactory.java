@@ -23,102 +23,123 @@ import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 
 class NodeStoreDocumentFactory
 {
+    private final Node node;
 
-    public static Collection<StoreDocument> create( final Node node, final NodeVersionId nodeVersionId, final Workspace workspace,
-                                                    final RepositoryId repositoryId )
+    private final NodeVersionId nodeVersionId;
+
+    private final Workspace workspace;
+
+    private final RepositoryId repositoryId;
+
+    private final boolean refresh;
+
+    private NodeStoreDocumentFactory( final Builder builder )
     {
-        node.validateForIndexing();
+        node = builder.node;
+        nodeVersionId = builder.nodeVersionId;
+        workspace = builder.workspace;
+        repositoryId = builder.repositoryId;
+        this.refresh = builder.refresh;
+    }
+
+    public Collection<StoreDocument> create()
+    {
+        this.node.validateForIndexing();
 
         Set<StoreDocument> storeDocuments = Sets.newHashSet();
 
-        storeDocuments.add( createDataDocument( node, nodeVersionId, workspace, repositoryId ) );
+        storeDocuments.add( createDataDocument() );
 
         return storeDocuments;
     }
 
-    private static StoreDocument createDataDocument( final Node node, final NodeVersionId nodeVersionId, final Workspace workspace,
-                                                     final RepositoryId repositoryId )
+    private StoreDocument createDataDocument()
     {
-        final IndexConfigDocument indexConfigDocument = node.getIndexConfigDocument();
+        final IndexConfigDocument indexConfigDocument = this.node.getIndexConfigDocument();
 
         final StoreDocument.Builder builder = StoreDocument.create().
-            id( node.id() ).
-            indexName( IndexNameResolver.resolveSearchIndexName( repositoryId ) ).
-            indexTypeName( workspace.getName() ).
-            analyzer( indexConfigDocument.getAnalyzer() );
+            id( this.node.id() ).
+            indexName( IndexNameResolver.resolveSearchIndexName( this.repositoryId ) ).
+            indexTypeName( this.workspace.getName() ).
+            analyzer( indexConfigDocument.getAnalyzer() ).
+            refreshAfterOperation( this.refresh );
 
-        addNodeMetaData( node, nodeVersionId, builder );
-        addNodeDataProperties( node, builder );
+        addNodeMetaData( builder );
+        addNodeDataProperties( builder );
 
         return builder.build();
     }
 
-    private static void addNodeMetaData( final Node node, final NodeVersionId nodeVersionId, final StoreDocument.Builder builder )
+    private void addNodeMetaData( final StoreDocument.Builder builder )
     {
-        addNodeBaseProperties( node, nodeVersionId, builder );
+        addNodeBaseProperties( builder );
 
-        builder.addEntries( AccessControlListStoreDocumentFactory.create( node.getEffectiveAccessControlList() ) );
+        builder.addEntries( AccessControlListStoreDocumentFactory.create( this.node.getEffectiveAccessControlList() ) );
     }
 
-    private static void addNodeBaseProperties( final Node node, final NodeVersionId nodeVersionId, final StoreDocument.Builder builder )
+    private void addNodeBaseProperties( final StoreDocument.Builder builder )
     {
-        if ( nodeVersionId != null )
+        if ( this.nodeVersionId != null )
         {
-            final Value nodeVersionIdValue = Value.newString( nodeVersionId.toString() );
+            final Value nodeVersionIdValue = Value.newString( this.nodeVersionId.toString() );
             builder.addEntries( StoreDocumentItemFactory.create( NodeIndexPath.VERSION, nodeVersionIdValue, IndexConfig.MINIMAL ) );
         }
 
-        if ( node.name() != null )
+        if ( this.node.name() != null )
         {
-            final Value nameValue = Value.newString( node.name().toString() );
+            final Value nameValue = Value.newString( this.node.name().toString() );
             builder.addEntries( StoreDocumentItemFactory.create( NodeIndexPath.NAME, nameValue, IndexConfig.FULLTEXT ) );
         }
 
-        if ( node.getCreatedTime() != null )
+        if ( this.node.getCreatedTime() != null )
         {
-            builder.addEntries( StoreDocumentItemFactory.create( NodeIndexPath.CREATED_TIME, Value.newInstant( node.getCreatedTime() ),
+            builder.addEntries( StoreDocumentItemFactory.create( NodeIndexPath.CREATED_TIME, Value.newInstant( this.node.getCreatedTime() ),
                                                                  IndexConfig.MINIMAL ) );
         }
 
-        if ( node.getCreator() != null )
-        {
-            builder.addEntries( StoreDocumentItemFactory.create( NodeIndexPath.CREATOR, Value.newString( node.getCreator().toString() ),
-                                                                 IndexConfig.MINIMAL ) );
-        }
-
-        if ( node.getModifiedTime() != null )
-        {
-            builder.addEntries( StoreDocumentItemFactory.create( NodeIndexPath.MODIFIED_TIME, Value.newInstant( node.getModifiedTime() ),
-                                                                 IndexConfig.MINIMAL ) );
-        }
-
-        if ( node.getModifier() != null )
-        {
-            builder.addEntries( StoreDocumentItemFactory.create( NodeIndexPath.MODIFIER, Value.newString( node.getModifier().toString() ),
-                                                                 IndexConfig.MINIMAL ) );
-        }
-
-        if ( node.path() != null )
+        if ( this.node.getCreator() != null )
         {
             builder.addEntries(
-                StoreDocumentItemFactory.create( NodeIndexPath.PATH, Value.newString( node.path().toString() ), IndexConfig.MINIMAL ) );
+                StoreDocumentItemFactory.create( NodeIndexPath.CREATOR, Value.newString( this.node.getCreator().toString() ),
+                                                 IndexConfig.MINIMAL ) );
         }
 
-        if ( node.parent() != null )
+        if ( this.node.getModifiedTime() != null )
         {
-            builder.addEntries( StoreDocumentItemFactory.create( NodeIndexPath.PARENT_PATH, Value.newString( node.parent().toString() ),
+            builder.addEntries(
+                StoreDocumentItemFactory.create( NodeIndexPath.MODIFIED_TIME, Value.newInstant( this.node.getModifiedTime() ),
+                                                 IndexConfig.MINIMAL ) );
+        }
+
+        if ( this.node.getModifier() != null )
+        {
+            builder.addEntries(
+                StoreDocumentItemFactory.create( NodeIndexPath.MODIFIER, Value.newString( this.node.getModifier().toString() ),
+                                                 IndexConfig.MINIMAL ) );
+        }
+
+        if ( this.node.path() != null )
+        {
+            builder.addEntries( StoreDocumentItemFactory.create( NodeIndexPath.PATH, Value.newString( this.node.path().toString() ),
                                                                  IndexConfig.MINIMAL ) );
         }
 
-        if ( node.getManualOrderValue() != null )
+        if ( this.node.parent() != null )
         {
             builder.addEntries(
-                StoreDocumentItemFactory.create( NodeIndexPath.MANUAL_ORDER_VALUE, Value.newLong( node.getManualOrderValue() ),
+                StoreDocumentItemFactory.create( NodeIndexPath.PARENT_PATH, Value.newString( this.node.parent().toString() ),
+                                                 IndexConfig.MINIMAL ) );
+        }
+
+        if ( this.node.getManualOrderValue() != null )
+        {
+            builder.addEntries(
+                StoreDocumentItemFactory.create( NodeIndexPath.MANUAL_ORDER_VALUE, Value.newLong( this.node.getManualOrderValue() ),
                                                  IndexConfig.MINIMAL ) );
         }
     }
 
-    private static void addNodeDataProperties( final Node node, final StoreDocument.Builder builder )
+    private void addNodeDataProperties( final StoreDocument.Builder builder )
     {
         PropertyVisitor visitor = new PropertyVisitor()
         {
@@ -139,8 +160,58 @@ class NodeStoreDocumentFactory
             }
         };
 
-        visitor.traverse( node.data() );
+        visitor.traverse( this.node.data() );
+    }
+
+    public static Builder createBuilder()
+    {
+        return new Builder();
     }
 
 
+    public static final class Builder
+    {
+        private Node node;
+
+        private NodeVersionId nodeVersionId;
+
+        private Workspace workspace;
+
+        private RepositoryId repositoryId;
+
+        private boolean refresh = true;
+
+        private Builder()
+        {
+        }
+
+        public Builder node( Node node )
+        {
+            this.node = node;
+            return this;
+        }
+
+        public Builder nodeVersionId( NodeVersionId nodeVersionId )
+        {
+            this.nodeVersionId = nodeVersionId;
+            return this;
+        }
+
+        public Builder workspace( Workspace workspace )
+        {
+            this.workspace = workspace;
+            return this;
+        }
+
+        public Builder repositoryId( RepositoryId repositoryId )
+        {
+            this.repositoryId = repositoryId;
+            return this;
+        }
+
+        public NodeStoreDocumentFactory build()
+        {
+            return new NodeStoreDocumentFactory( this );
+        }
+    }
 }

@@ -191,9 +191,15 @@ public class ElasticsearchIndexService
 
     public void store( final Node node, final NodeVersionId nodeVersionId, final IndexContext context )
     {
-        final Collection<StoreDocument> storeDocuments =
-            NodeStoreDocumentFactory.create( node, nodeVersionId, context.getWorkspace(), context.getRepositoryId() );
+        final Collection<StoreDocument> storeDocuments = NodeStoreDocumentFactory.createBuilder().
+            node( node ).
+            nodeVersionId( nodeVersionId ).
+            workspace( context.getWorkspace() ).
+            repositoryId( context.getRepositoryId() ).
+            build().
+            create();
 
+        elasticsearchDao.store( storeDocuments );
         elasticsearchDao.store( storeDocuments );
     }
 
