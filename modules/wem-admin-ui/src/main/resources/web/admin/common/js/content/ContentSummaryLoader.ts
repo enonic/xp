@@ -2,6 +2,7 @@ module api.content {
 
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
     import LoadingDataEvent = api.util.loader.event.LoadingDataEvent;
+    import QueryField = api.query.QueryField;
 
     export class ContentSummaryLoader extends api.util.loader.BaseLoader<json.ContentQueryResultJson<json.ContentSummaryJson>, ContentSummary> {
 
@@ -107,9 +108,9 @@ module api.content {
 
             var fulltextExpression: api.query.expr.Expression = new api.query.FulltextSearchExpressionBuilder().
                 setSearchString(searchString).
-                addField(new api.query.QueryField("displayName", 5)).
-                addField(new api.query.QueryField("name", 3)).
-                addField(new api.query.QueryField("_all_text")).
+                addField(new QueryField(QueryField.DISPLAY_NAME, 5)).
+                addField(new QueryField(QueryField.NAME, 3)).
+                addField(new QueryField(QueryField.ALL)).
                 build();
 
             var queryExpr: api.query.expr.QueryExpr = new api.query.expr.QueryExpr(fulltextExpression);

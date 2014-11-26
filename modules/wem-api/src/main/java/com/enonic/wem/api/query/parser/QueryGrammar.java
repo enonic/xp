@@ -41,7 +41,7 @@ final class QueryGrammar
 
     private Parser<Tokens.Fragment> identifierToken()
     {
-        return fragmentToken( "[a-zA-Z\\*@]+[a-zA-Z0-9\\-_/\\.\\*@]*", Tokens.Tag.IDENTIFIER.name() );
+        return fragmentToken( "[a-zA-Z_\\*@]+[a-zA-Z0-9\\-_/\\.\\*@]*", Tokens.Tag.IDENTIFIER.name() );
     }
 
     private Parser<Tokens.Fragment> fragmentToken( final String pattern, final String tag )

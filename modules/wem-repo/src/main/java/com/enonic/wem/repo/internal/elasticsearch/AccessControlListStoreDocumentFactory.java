@@ -5,7 +5,7 @@ import java.util.Set;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.index.IndexDocumentItemPath;
-import com.enonic.wem.api.index.IndexPaths;
+import com.enonic.wem.api.index.NodeIndexPaths;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.PrincipalKeys;
 import com.enonic.wem.api.security.acl.AccessControlList;
@@ -39,19 +39,19 @@ public class AccessControlListStoreDocumentFactory
         switch ( permission )
         {
             case READ:
-                return IndexPaths.PERMISSIONS_READ_PATH;
+                return NodeIndexPaths.PERMISSIONS_READ_PATH;
             case MODIFY:
-                return IndexPaths.PERMISSIONS_MODIFY_PATH;
+                return NodeIndexPaths.PERMISSIONS_MODIFY_PATH;
             case CREATE:
-                return IndexPaths.PERMISSIONS_CREATE_PATH;
+                return NodeIndexPaths.PERMISSIONS_CREATE_PATH;
             case DELETE:
-                return IndexPaths.PERMISSIONS_DELETE_PATH;
+                return NodeIndexPaths.PERMISSIONS_DELETE_PATH;
             case PUBLISH:
-                return IndexPaths.PERMISSIONS_PUBLISH_PATH;
+                return NodeIndexPaths.PERMISSIONS_PUBLISH_PATH;
             case READ_PERMISSIONS:
-                return IndexPaths.PERMISSIONS_READ_PERMISSIONS_PATH;
+                return NodeIndexPaths.PERMISSIONS_READ_PERMISSIONS_PATH;
             case WRITE_PERMISSIONS:
-                return IndexPaths.PERMISSIONS_WRITE_PERMISSIONS_PATH;
+                return NodeIndexPaths.PERMISSIONS_WRITE_PERMISSIONS_PATH;
 
         }
 

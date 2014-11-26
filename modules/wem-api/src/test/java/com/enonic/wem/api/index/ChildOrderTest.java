@@ -18,7 +18,7 @@ public class ChildOrderTest
         assertFalse( ChildOrder.defaultOrder().isManualOrder() );
         assertFalse( ChildOrder.create().build().isManualOrder() );
         assertTrue( ChildOrder.create().
-            add( FieldOrderExpr.create( IndexPaths.MANUAL_ORDER_VALUE_KEY, OrderExpr.Direction.ASC ) ).
+            add( FieldOrderExpr.create( NodeIndexPaths.MANUAL_ORDER_VALUE_KEY, OrderExpr.Direction.ASC ) ).
             build().
             isManualOrder() );
     }
@@ -31,7 +31,7 @@ public class ChildOrderTest
         assertFalse( ChildOrder.defaultOrder().isManualOrder() );
         assertFalse( ChildOrder.create().build().isManualOrder() );
         assertTrue( ChildOrder.create().
-            add( FieldOrderExpr.create( IndexPaths.MANUAL_ORDER_VALUE_KEY, OrderExpr.Direction.DESC ) ).
+            add( FieldOrderExpr.create( NodeIndexPaths.MANUAL_ORDER_VALUE_KEY, OrderExpr.Direction.DESC ) ).
             build().
             isManualOrder() );
     }
@@ -44,12 +44,12 @@ public class ChildOrderTest
         assertFalse( ChildOrder.defaultOrder().isManualOrder() );
         assertFalse( ChildOrder.create().build().isManualOrder() );
         assertTrue( ChildOrder.create().
-            add( FieldOrderExpr.create( IndexPaths.MANUAL_ORDER_VALUE_KEY.toLowerCase(), OrderExpr.Direction.ASC ) ).
+            add( FieldOrderExpr.create( NodeIndexPaths.MANUAL_ORDER_VALUE_KEY.toLowerCase(), OrderExpr.Direction.ASC ) ).
             build().
             isManualOrder() );
 
         assertTrue( ChildOrder.create().
-            add( FieldOrderExpr.create( IndexPaths.MANUAL_ORDER_VALUE_KEY.toUpperCase(), OrderExpr.Direction.ASC ) ).
+            add( FieldOrderExpr.create( NodeIndexPaths.MANUAL_ORDER_VALUE_KEY.toUpperCase(), OrderExpr.Direction.ASC ) ).
             build().
             isManualOrder() );
 

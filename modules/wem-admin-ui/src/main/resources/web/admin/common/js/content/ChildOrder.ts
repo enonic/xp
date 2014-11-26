@@ -8,13 +8,13 @@ module api.content {
 
         private DEFAULT_ORDER_DIRECTION_VALUE: string = "DESC";
 
-        private DEFAULT_ORDER_FIELD_VALUE: string = "modifiedTime";
+        private DEFAULT_ORDER_FIELD_VALUE: string = api.query.QueryField.MODIFIED_TIME;
 
         private ASC_ORDER_DIRECTION_VALUE: string = "ASC";
 
         private DESC_ORDER_DIRECTION_VALUE: string = "DESC";
 
-        private MANUAL_ORDER_VALUE_KEY: string = "manualordervalue";
+        private MANUAL_ORDER_VALUE_KEY: string = api.query.QueryField.MANUAL_ORDER_VALUE;
 
         private orderExpressions: OrderExpr[] = [];
 
@@ -59,7 +59,7 @@ module api.content {
             if (api.ObjectHelper.iFrameSafeInstanceOf(order, FieldOrderExpr)) {
                 var fieldOrder = (<FieldOrderExpr>order);
                 if (api.ObjectHelper.stringEquals(this.DEFAULT_ORDER_DIRECTION_VALUE.toLowerCase(),
-                    fieldOrder.getDirection().toLowerCase()) &&
+                        fieldOrder.getDirection().toLowerCase()) &&
                     api.ObjectHelper.stringEquals(this.DEFAULT_ORDER_FIELD_VALUE.toLowerCase(), fieldOrder.getFieldName().toLowerCase())) {
                     return true;
                 }

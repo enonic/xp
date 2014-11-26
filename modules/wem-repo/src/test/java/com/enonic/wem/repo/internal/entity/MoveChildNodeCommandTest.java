@@ -7,6 +7,7 @@ import org.junit.Test;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.index.ChildOrder;
+import com.enonic.wem.api.index.NodeIndexPaths;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
@@ -33,8 +34,8 @@ public class MoveChildNodeCommandTest
 
         createChildNodes( parentNode );
 
-        setChildOrder( parentNode, "name", OrderExpr.Direction.ASC );
-        setChildOrder( parentNode, "manualOrderValue", OrderExpr.Direction.DESC );
+        setChildOrder( parentNode, NodeIndexPaths.NAME_KEY, OrderExpr.Direction.ASC );
+        setChildOrder( parentNode, NodeIndexPaths.MANUAL_ORDER_VALUE_KEY, OrderExpr.Direction.DESC );
 
         // current node order: a,b,c,d,e,f
         MoveChildNodeCommand.create().
@@ -75,8 +76,8 @@ public class MoveChildNodeCommandTest
 
         createChildNodes( parentNode );
 
-        setChildOrder( parentNode, "name", OrderExpr.Direction.ASC );
-        setChildOrder( parentNode, "manualOrderValue", OrderExpr.Direction.DESC );
+        setChildOrder( parentNode, NodeIndexPaths.NAME_KEY, OrderExpr.Direction.ASC );
+        setChildOrder( parentNode, NodeIndexPaths.MANUAL_ORDER_VALUE_KEY, OrderExpr.Direction.DESC );
 
         // current node order: a,b,c,d,e,f
         MoveChildNodeCommand.create().
@@ -117,8 +118,8 @@ public class MoveChildNodeCommandTest
 
         createChildNodes( parentNode );
 
-        setChildOrder( parentNode, "name", OrderExpr.Direction.ASC );
-        setChildOrder( parentNode, "manualOrderValue", OrderExpr.Direction.DESC );
+        setChildOrder( parentNode, NodeIndexPaths.NAME_KEY, OrderExpr.Direction.ASC );
+        setChildOrder( parentNode, NodeIndexPaths.MANUAL_ORDER_VALUE_KEY, OrderExpr.Direction.DESC );
 
         // current node order: a,b,c,d,e,f
         MoveChildNodeCommand.create().

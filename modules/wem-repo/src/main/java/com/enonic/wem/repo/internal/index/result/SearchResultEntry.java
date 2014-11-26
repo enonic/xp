@@ -5,6 +5,9 @@ import java.util.Map;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
+import com.enonic.wem.api.index.IndexDocumentItemPath;
+import com.enonic.wem.repo.internal.index.IndexFieldNameNormalizer;
+
 public class SearchResultEntry
 {
     private final float score;
@@ -49,6 +52,11 @@ public class SearchResultEntry
         return doGetField( fieldName, false );
     }
 
+    public SearchResultFieldValue getField( final IndexDocumentItemPath path )
+    {
+        return doGetField( path.toString(), false );
+    }
+
     public SearchResultFieldValue getField( final String fieldName, final boolean failOnMissing )
     {
         return doGetField( fieldName, failOnMissing );
@@ -56,11 +64,13 @@ public class SearchResultEntry
 
     private SearchResultFieldValue doGetField( final String fieldName, final boolean failOnMissing )
     {
-        final SearchResultFieldValue searchResultFieldValue = fields.get( fieldName );
+        final String normalizedFieldName = IndexFieldNameNormalizer.normalize( fieldName );
+
+        final SearchResultFieldValue searchResultFieldValue = fields.get( normalizedFieldName );
 
         if ( failOnMissing && searchResultFieldValue == null )
         {
-            throw new RuntimeException( "Expected field " + fieldName + " in result not found" );
+            throw new RuntimeException( "Expected field " + normalizedFieldName + " in result not found" );
         }
 
         return searchResultFieldValue;

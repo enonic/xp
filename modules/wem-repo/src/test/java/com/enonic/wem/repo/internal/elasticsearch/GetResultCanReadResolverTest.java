@@ -4,9 +4,10 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.index.IndexPaths;
+import com.enonic.wem.api.index.NodeIndexPaths;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.PrincipalKeys;
+import com.enonic.wem.repo.internal.index.IndexFieldNameNormalizer;
 import com.enonic.wem.repo.internal.index.result.GetResult;
 import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
 import com.enonic.wem.repo.internal.index.result.SearchResultFieldValue;
@@ -22,7 +23,8 @@ public class GetResultCanReadResolverTest
     {
         assertFalse( GetResultCanReadResolver.canRead( PrincipalKeys.empty(), new GetResult( SearchResultEntry.create().
             id( "myId" ).
-            addField( IndexPaths.PERMISSIONS_WRITE_PERMISSIONS_KEY, SearchResultFieldValue.value( "user:system:rmy" ) ).
+            addField( IndexFieldNameNormalizer.normalize( NodeIndexPaths.PERMISSIONS_READ_PATH.toString() ),
+                      SearchResultFieldValue.value( "user:system:rmy" ) ).
             build() ) ) );
     }
 
@@ -32,7 +34,8 @@ public class GetResultCanReadResolverTest
     {
         assertTrue( GetResultCanReadResolver.canRead( PrincipalKeys.empty(), new GetResult( SearchResultEntry.create().
             id( "myId" ).
-            addField( IndexPaths.PERMISSIONS_WRITE_PERMISSIONS_KEY, SearchResultFieldValue.value( PrincipalKey.ofAnonymous().toString() ) ).
+            addField( IndexFieldNameNormalizer.normalize( NodeIndexPaths.PERMISSIONS_READ_PATH.toString() ),
+                      SearchResultFieldValue.value( PrincipalKey.ofAnonymous().toString() ) ).
             build() ) ) );
     }
 
@@ -43,7 +46,8 @@ public class GetResultCanReadResolverTest
         assertTrue( GetResultCanReadResolver.canRead( PrincipalKeys.from( PrincipalKey.from( "user:system:rmy" ) ),
                                                       new GetResult( SearchResultEntry.create().
                                                           id( "myId" ).
-                                                          addField( IndexPaths.PERMISSIONS_WRITE_PERMISSIONS_KEY,
+                                                          addField( IndexFieldNameNormalizer.normalize(
+                                                                        NodeIndexPaths.PERMISSIONS_READ_PATH.toString() ),
                                                                     SearchResultFieldValue.value(
                                                                         PrincipalKey.from( "user:system:rmy" ) ) ).
                                                           build() ) ) );
@@ -57,7 +61,7 @@ public class GetResultCanReadResolverTest
             PrincipalKeys.from( PrincipalKey.from( "user:system:rmy" ), PrincipalKey.from( "group:system:my-group" ) ),
             new GetResult( SearchResultEntry.create().
                 id( "myId" ).
-                addField( IndexPaths.PERMISSIONS_WRITE_PERMISSIONS_KEY,
+                addField( IndexFieldNameNormalizer.normalize( NodeIndexPaths.PERMISSIONS_READ_PATH.toString() ),
                           SearchResultFieldValue.values( Arrays.asList( "user:system:rmy", "group:system:my-group" ) ) ).
                 build() ) ) );
     }

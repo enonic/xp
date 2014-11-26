@@ -29,9 +29,9 @@ import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
 import com.enonic.wem.repo.internal.index.IndexValueType;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 
-import static com.enonic.wem.api.index.IndexPaths.CREATED_TIME_PATH;
-import static com.enonic.wem.api.index.IndexPaths.CREATOR_PATH;
-import static com.enonic.wem.api.index.IndexPaths.MODIFIER_PATH;
+import static com.enonic.wem.api.index.NodeIndexPaths.CREATED_TIME_PATH;
+import static com.enonic.wem.api.index.NodeIndexPaths.CREATOR_PATH;
+import static com.enonic.wem.api.index.NodeIndexPaths.MODIFIER_PATH;
 import static com.enonic.wem.repo.internal.TestContext.TEST_REPOSITORY;
 import static com.enonic.wem.repo.internal.TestContext.TEST_WORKSPACE;
 import static org.junit.Assert.*;

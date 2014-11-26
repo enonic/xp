@@ -27,6 +27,7 @@ module app.browse.filter {
     import ValueTypes = api.data.type.ValueTypes;
     import RefreshEvent = api.app.browse.filter.RefreshEvent;
     import SearchEvent = api.app.browse.filter.SearchEvent;
+    import QueryField = api.query.QueryField;
 
 
     export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilterPanel {
@@ -167,9 +168,9 @@ module app.browse.filter {
 
             var fulltextSearchExpression: api.query.expr.Expression = new api.query.FulltextSearchExpressionBuilder().
                 setSearchString(searchString).
-                addField(new api.query.QueryField("displayName", 5)).
-                addField(new api.query.QueryField("name", 3)).
-                addField(new api.query.QueryField("_all_text")).
+                addField(new QueryField(QueryField.DISPLAY_NAME, 5)).
+                addField(new QueryField(QueryField.NAME, 3)).
+                addField(new QueryField(QueryField.ALL)).
                 build();
 
             var query: QueryExpr = new QueryExpr(fulltextSearchExpression);
@@ -194,14 +195,16 @@ module app.browse.filter {
 
             if (lastModifiedSelectedBuckets.length == 1) {
                 var dateRangeBucket: api.aggregation.DateRangeBucket = <api.aggregation.DateRangeBucket> lastModifiedSelectedBuckets.pop();
-                return new api.query.filter.RangeFilter("modifiedtime", ValueExpr.dateTime(dateRangeBucket.getFrom()).getValue(), null);
+                return new api.query.filter.RangeFilter(QueryField.MODIFIED_TIME, ValueExpr.dateTime(dateRangeBucket.getFrom()).getValue(),
+                    null);
             }
 
             var booleanFilter: api.query.filter.BooleanFilter = new api.query.filter.BooleanFilter();
 
             lastModifiedSelectedBuckets.forEach((selectedBucket: api.aggregation.DateRangeBucket) => {
                 var rangeFilter: api.query.filter.RangeFilter =
-                    new api.query.filter.RangeFilter("modifiedtime", ValueExpr.dateTime(selectedBucket.getFrom()).getValue(), null);
+                    new api.query.filter.RangeFilter(QueryField.MODIFIED_TIME, ValueExpr.dateTime(selectedBucket.getFrom()).getValue(),
+                        null);
 
                 booleanFilter.addShould(<api.query.filter.Filter>rangeFilter);
             });
@@ -237,7 +240,7 @@ module app.browse.filter {
         private appendLastModifiedAggregationQuery(contentQuery: ContentQuery) {
 
             var dateRangeAgg = new DateRangeAggregationQuery((ContentBrowseFilterPanel.LAST_MODIFIED_AGGREGATION_NAME));
-            dateRangeAgg.setFieldName("modifiedTime");
+            dateRangeAgg.setFieldName(QueryField.MODIFIED_TIME);
             dateRangeAgg.addRange(new DateRange("now-1h", null, "< 1 hour"));
             dateRangeAgg.addRange(new DateRange("now-1d", null, "< 1 day"));
             dateRangeAgg.addRange(new DateRange("now-1w", null, "< 1 week"));

@@ -11,7 +11,7 @@ import com.enonic.wem.api.data.PropertyVisitor;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.index.IndexConfigDocument;
-import com.enonic.wem.api.index.IndexPaths;
+import com.enonic.wem.api.index.NodeIndexPaths;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeVersionId;
 import com.enonic.wem.api.repository.RepositoryId;
@@ -20,14 +20,14 @@ import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocumentItemFactory;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 
-import static com.enonic.wem.api.index.IndexPaths.CREATED_TIME_PATH;
-import static com.enonic.wem.api.index.IndexPaths.CREATOR_PATH;
-import static com.enonic.wem.api.index.IndexPaths.MANUAL_ORDER_VALUE_PATH;
-import static com.enonic.wem.api.index.IndexPaths.MODIFIED_TIME_PATH;
-import static com.enonic.wem.api.index.IndexPaths.MODIFIER_PATH;
-import static com.enonic.wem.api.index.IndexPaths.NAME_PATH;
-import static com.enonic.wem.api.index.IndexPaths.PARENT_PATH;
-import static com.enonic.wem.api.index.IndexPaths.PATH_PATH;
+import static com.enonic.wem.api.index.NodeIndexPaths.CREATED_TIME_PATH;
+import static com.enonic.wem.api.index.NodeIndexPaths.CREATOR_PATH;
+import static com.enonic.wem.api.index.NodeIndexPaths.MANUAL_ORDER_VALUE_PATH;
+import static com.enonic.wem.api.index.NodeIndexPaths.MODIFIED_TIME_PATH;
+import static com.enonic.wem.api.index.NodeIndexPaths.MODIFIER_PATH;
+import static com.enonic.wem.api.index.NodeIndexPaths.NAME_PATH;
+import static com.enonic.wem.api.index.NodeIndexPaths.PARENT_PATH;
+import static com.enonic.wem.api.index.NodeIndexPaths.PATH_PATH;
 
 
 class NodeStoreDocumentFactory
@@ -74,7 +74,8 @@ class NodeStoreDocumentFactory
         if ( nodeVersionId != null )
         {
             final Value nodeVersionIdValue = Value.newString( nodeVersionId.toString() );
-            builder.addEntries( StoreDocumentItemFactory.create( IndexPaths.VERSION_KEY_PATH, nodeVersionIdValue, IndexConfig.MINIMAL ) );
+            builder.addEntries(
+                StoreDocumentItemFactory.create( NodeIndexPaths.VERSION_KEY_PATH, nodeVersionIdValue, IndexConfig.MINIMAL ) );
         }
 
         if ( node.name() != null )

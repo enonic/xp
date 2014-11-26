@@ -1,7 +1,7 @@
 package com.enonic.wem.repo.internal.elasticsearch.query.builder;
 
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.index.IndexPaths;
+import com.enonic.wem.api.index.NodeIndexPaths;
 import com.enonic.wem.api.query.filter.Filter;
 import com.enonic.wem.api.query.filter.ValueFilter;
 import com.enonic.wem.api.security.PrincipalKey;
@@ -18,7 +18,7 @@ public class AclFilterBuilderFactory
         }
 
         final ValueFilter.Builder valueFilterBuilder = ValueFilter.create().
-            fieldName( IndexPaths.PERMISSIONS_WRITE_PERMISSIONS_KEY );
+            fieldName( NodeIndexPaths.PERMISSIONS_READ_PATH.toString() );
 
         for ( final PrincipalKey principalKey : principalsKeys )
         {
@@ -31,7 +31,7 @@ public class AclFilterBuilderFactory
     private static Filter createNoPrincipalsFilter()
     {
         return ValueFilter.create().
-            fieldName( IndexPaths.PERMISSIONS_WRITE_PERMISSIONS_KEY ).
+            fieldName( NodeIndexPaths.PERMISSIONS_READ_PATH.toString() ).
             addValue( Value.newString( User.anonymous().getKey() ) ).
             build();
     }

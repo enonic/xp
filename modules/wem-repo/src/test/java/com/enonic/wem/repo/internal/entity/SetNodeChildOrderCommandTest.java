@@ -1,10 +1,13 @@
 package com.enonic.wem.repo.internal.entity;
 
+import java.util.Objects;
+
 import org.junit.Test;
 
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.index.ChildOrder;
+import com.enonic.wem.api.index.NodeIndexPaths;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
@@ -23,14 +26,14 @@ public class SetNodeChildOrderCommandTest
     public void order_by_name_asc()
         throws Exception
     {
-        final FindNodesByParentResult result = createNodeAndReturnOrderedChildren( "name", OrderExpr.Direction.ASC );
+        final FindNodesByParentResult result = createNodeAndReturnOrderedChildren( NodeIndexPaths.NAME_KEY, OrderExpr.Direction.ASC );
 
         String previousName = "";
 
         for ( final Node n : result.getNodes() )
         {
             final boolean smallerThanPreviousName = previousName.compareTo( n.name().toString() ) < 0;
-            assertTrue( previousName == "" || smallerThanPreviousName );
+            assertTrue( Objects.equals( previousName, "" ) || smallerThanPreviousName );
             previousName = n.name().toString();
         }
     }
@@ -39,14 +42,14 @@ public class SetNodeChildOrderCommandTest
     public void order_by_name_desc()
         throws Exception
     {
-        final FindNodesByParentResult result = createNodeAndReturnOrderedChildren( "name", OrderExpr.Direction.DESC );
+        final FindNodesByParentResult result = createNodeAndReturnOrderedChildren( NodeIndexPaths.NAME_KEY, OrderExpr.Direction.DESC );
 
         String previousName = "";
 
         for ( final Node n : result.getNodes() )
         {
             final boolean largerThanPreviousName = previousName.compareTo( n.name().toString() ) > 0;
-            assertTrue( previousName == "" || largerThanPreviousName );
+            assertTrue( Objects.equals( previousName, "" ) || largerThanPreviousName );
             previousName = n.name().toString();
         }
     }
@@ -62,7 +65,7 @@ public class SetNodeChildOrderCommandTest
         for ( final Node n : result.getNodes() )
         {
             final boolean smallerThanPreviousName = previousName.compareTo( n.name().toString() ) < 0;
-            assertTrue( previousName == "" || smallerThanPreviousName );
+            assertTrue( Objects.equals( previousName, "" ) || smallerThanPreviousName );
             previousName = n.name().toString();
         }
     }
@@ -75,7 +78,8 @@ public class SetNodeChildOrderCommandTest
         final Node node = createParentNode();
         createChildNodes( node );
 
-        setChildOrder( node, ChildOrder.create().add( FieldOrderExpr.create( "manualOrderValue", OrderExpr.Direction.ASC ) ).build() );
+        setChildOrder( node, ChildOrder.create().add(
+            FieldOrderExpr.create( NodeIndexPaths.MANUAL_ORDER_VALUE_KEY, OrderExpr.Direction.ASC ) ).build() );
         refresh();
 
         final FindNodesByParentResult result = findChildren( node );
@@ -99,11 +103,12 @@ public class SetNodeChildOrderCommandTest
         createChildNodes( node );
 
         // Order initially by name
-        setChildOrder( node, ChildOrder.create().add( FieldOrderExpr.create( "name", OrderExpr.Direction.ASC ) ).build() );
+        setChildOrder( node, ChildOrder.create().add( FieldOrderExpr.create( NodeIndexPaths.NAME_KEY, OrderExpr.Direction.ASC ) ).build() );
         refresh();
 
         // Now set order manual
-        setChildOrder( node, ChildOrder.create().add( FieldOrderExpr.create( "manualOrderValue", OrderExpr.Direction.DESC ) ).build() );
+        setChildOrder( node, ChildOrder.create().add(
+            FieldOrderExpr.create( NodeIndexPaths.MANUAL_ORDER_VALUE_KEY, OrderExpr.Direction.DESC ) ).build() );
         refresh();
 
         final FindNodesByParentResult result = findChildren( node );
@@ -116,7 +121,7 @@ public class SetNodeChildOrderCommandTest
         {
             final boolean largerThanPreviousName = previousName.compareTo( n.name().toString() ) < 0;
             assertTrue( "Wrong value, previousValue = " + previousName + ", current = " + n.name(),
-                        previousName == "" || largerThanPreviousName );
+                        Objects.equals( previousName, "" ) || largerThanPreviousName );
 
             assertTrue( "Wrong orderValue, previousOrderValue = " + previousOrderValue + ", current = " + n.getManualOrderValue(),
                         previousOrderValue == null || n.getManualOrderValue() < previousOrderValue );

@@ -3,7 +3,7 @@ package com.enonic.wem.repo.internal.elasticsearch.query;
 import org.elasticsearch.index.query.QueryBuilder;
 
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.index.IndexPaths;
+import com.enonic.wem.api.index.NodeIndexPaths;
 import com.enonic.wem.api.node.NodeQuery;
 import com.enonic.wem.api.query.filter.ValueFilter;
 import com.enonic.wem.api.security.PrincipalKeys;
@@ -58,7 +58,7 @@ public class NodeQueryTranslator
         if ( nodeQuery.getPath() != null )
         {
             queryBuilderBuilder.addQueryFilter( ValueFilter.create().
-                fieldName( IndexPaths.PATH_KEY ).
+                fieldName( NodeIndexPaths.PATH_KEY ).
                 addValue( Value.newString( nodeQuery.getPath().toString() ) ).
                 build() );
         }
@@ -69,7 +69,7 @@ public class NodeQueryTranslator
         if ( nodeQuery.getParent() != null )
         {
             queryBuilderBuilder.addQueryFilter( ValueFilter.create().
-                fieldName( IndexPaths.PARENT_PATH_KEY ).
+                fieldName( NodeIndexPaths.PARENT_PATH_KEY ).
                 addValue( Value.newString( nodeQuery.getParent().toString() ) ).
                 build() );
         }

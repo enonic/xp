@@ -7,6 +7,7 @@ import org.junit.Test;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.index.ChildOrder;
+import com.enonic.wem.api.index.NodeIndexPaths;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
@@ -58,7 +59,7 @@ public class FindNodesByParentCommandTest
             setNodeId( NodeId.from( "parent" ) ).
             name( "my-node" ).
             parent( NodePath.ROOT ).
-            childOrder( ChildOrder.from( "name ASC" ) ).
+            childOrder( ChildOrder.from( NodeIndexPaths.NAME_PATH.toString() + " ASC" ) ).
             build() );
 
         final Node childNode_b_3 = createNode( CreateNodeParams.create().

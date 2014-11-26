@@ -3,7 +3,7 @@ package com.enonic.wem.repo.internal.entity;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.context.ContextAccessor;
-import com.enonic.wem.api.index.IndexPaths;
+import com.enonic.wem.api.index.NodeIndexPaths;
 import com.enonic.wem.api.query.expr.CompareExpr;
 import com.enonic.wem.api.query.expr.FieldExpr;
 import com.enonic.wem.api.query.expr.FieldOrderExpr;
@@ -110,9 +110,9 @@ public class MoveChildNodeCommand
     private NodeQuery createFirstNodeBeforeInsertQuery( final Long nodeAfterOrderValue )
     {
         final CompareExpr orderGreaterThanNodeToMoveBefore =
-            CompareExpr.gt( FieldExpr.from( IndexPaths.MANUAL_ORDER_VALUE_KEY ), ValueExpr.number( nodeAfterOrderValue ) );
+            CompareExpr.gt( FieldExpr.from( NodeIndexPaths.MANUAL_ORDER_VALUE_KEY ), ValueExpr.number( nodeAfterOrderValue ) );
 
-        final FieldOrderExpr orderManuallyDesc = FieldOrderExpr.create( IndexPaths.MANUAL_ORDER_VALUE_KEY, OrderExpr.Direction.ASC );
+        final FieldOrderExpr orderManuallyDesc = FieldOrderExpr.create( NodeIndexPaths.MANUAL_ORDER_VALUE_KEY, OrderExpr.Direction.ASC );
 
         return NodeQuery.create().query( QueryExpr.from( orderGreaterThanNodeToMoveBefore, orderManuallyDesc ) ).
             size( 1 ).

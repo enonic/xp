@@ -2,7 +2,7 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.index.IndexPaths;
+import com.enonic.wem.api.index.NodeIndexPaths;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
@@ -24,7 +24,7 @@ import com.enonic.wem.repo.internal.workspace.WorkspaceService;
 abstract class AbstractNodeCommand
 {
     static final OrderExpressions DEFAULT_ORDER_EXPRESSIONS =
-        OrderExpressions.from( FieldOrderExpr.create( IndexPaths.MODIFIED_TIME_KEY, OrderExpr.Direction.DESC ) );
+        OrderExpressions.from( FieldOrderExpr.create( NodeIndexPaths.MODIFIED_TIME_KEY, OrderExpr.Direction.DESC ) );
 
     final IndexService indexService;
 

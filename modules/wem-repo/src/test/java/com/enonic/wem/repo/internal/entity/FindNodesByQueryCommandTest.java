@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.index.NodeIndexPaths;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodesByQueryResult;
 import com.enonic.wem.api.node.Node;
@@ -78,7 +79,7 @@ public class FindNodesByQueryCommandTest
             build() );
 
         final NodeQuery query = NodeQuery.create().
-            query( QueryExpr.from( CompareExpr.eq( FieldExpr.from( "name" ), ValueExpr.string( "my-node-1" ) ) ) ).
+            query( QueryExpr.from( CompareExpr.eq( FieldExpr.from( NodeIndexPaths.NAME_KEY ), ValueExpr.string( "my-node-1" ) ) ) ).
             build();
 
         final FindNodesByQueryResult result = doFindByQuery( query );
@@ -132,7 +133,7 @@ public class FindNodesByQueryCommandTest
 
         final NodeQuery query = NodeQuery.create().
             query( QueryExpr.from( new DynamicConstraintExpr(
-                FunctionExpr.from( "fulltext", ValueExpr.string( "name" ), ValueExpr.string( "My node name is my-node-1" ),
+                FunctionExpr.from( "fulltext", ValueExpr.string( NodeIndexPaths.NAME_KEY ), ValueExpr.string( "My node name is my-node-1" ),
                                    ValueExpr.string( "OR" ) ) ) ) ).
             build();
 
