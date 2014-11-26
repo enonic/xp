@@ -1,4 +1,4 @@
-describe("api.data.type.LocalDateValueType", function () {
+describe("api.data.type.LocalDateValueTypeTest", function () {
 
     var Value = api.data.Value;
     var ValueTypes = api.data.type.ValueTypes;

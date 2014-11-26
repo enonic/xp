@@ -1,4 +1,4 @@
-describe("api.query.QueryFields", function () {
+describe("api.query.QueryFieldsTest", function () {
 
     describe("toString", function () {
 

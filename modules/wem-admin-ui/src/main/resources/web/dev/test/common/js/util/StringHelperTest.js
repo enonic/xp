@@ -1,4 +1,4 @@
-describe("api.util.StringHelper", function () {
+describe("api.util.StringHelperTest", function () {
 
     var sh = api.util.StringHelper;
 

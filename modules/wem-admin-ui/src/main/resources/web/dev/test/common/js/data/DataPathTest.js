@@ -1,4 +1,4 @@
-describe("Tests for DataPath", function () {
+describe("api.data.DataPathTest", function () {
 
     var DataPath = api.data.DataPath;
     var DataPathElement = api.data.DataPathElement;

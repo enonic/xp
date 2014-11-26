@@ -1,4 +1,4 @@
-describe("Tests for Calendar", function () {
+describe("api.ui.time.CalendarTest", function () {
 
     it("test calendar", function () {
 

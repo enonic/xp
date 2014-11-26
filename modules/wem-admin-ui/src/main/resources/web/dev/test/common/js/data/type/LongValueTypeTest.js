@@ -1,4 +1,4 @@
-describe("api.data.type.LongValueType", function () {
+describe("api.data.type.LongValueTypeTest", function () {
 
     var Value = api.data.Value;
     var ValueTypes = api.data.type.ValueTypes;

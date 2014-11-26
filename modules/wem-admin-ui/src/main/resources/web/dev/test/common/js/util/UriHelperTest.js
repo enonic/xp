@@ -1,4 +1,4 @@
-describe("api.util.UriHelper", function () {
+describe("api.util.UriHelperTest", function () {
 
     window.CONFIG = {
         baseUri: 'http://localhost:8080/wem'

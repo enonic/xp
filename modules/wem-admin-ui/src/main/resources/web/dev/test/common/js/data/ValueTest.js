@@ -1,4 +1,4 @@
-describe("api.data.Value", function () {
+describe("api.data.ValueTest", function () {
 
     describe("when new", function () {
 

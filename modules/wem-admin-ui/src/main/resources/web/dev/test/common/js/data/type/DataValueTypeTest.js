@@ -1,4 +1,4 @@
-describe("api.data.type.DataValueType", function () {
+describe("api.data.type.DataValueTypeTest", function () {
 
     var Value = api.data.Value;
     var ValueTypes = api.data.type.ValueTypes;

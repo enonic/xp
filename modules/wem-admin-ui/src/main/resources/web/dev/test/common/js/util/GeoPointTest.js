@@ -1,4 +1,4 @@
-describe("api.util.GeoPoint", function () {
+describe("api.util.GeoPointTest", function () {
 
     describe("when toString", function () {
 

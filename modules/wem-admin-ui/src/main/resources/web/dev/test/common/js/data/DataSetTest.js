@@ -1,4 +1,4 @@
-describe("api.data.DataSet", function () {
+describe("api.data.DataSetTest", function () {
 
     var DataId = api.data.DataId;
     var DataSet = api.data.DataSet;

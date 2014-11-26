@@ -1,4 +1,4 @@
-describe("Tests Action functions", function () {
+describe("api.ui.ActionTest", function () {
 
     it("test getLabel", function () {
         var action = new api.ui.Action('My Action');

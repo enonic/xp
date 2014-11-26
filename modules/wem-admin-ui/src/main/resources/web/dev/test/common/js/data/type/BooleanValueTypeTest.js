@@ -1,4 +1,4 @@
-describe("api.data.type.BooleanValueType", function () {
+describe("api.data.type.BooleanValueTypeTest", function () {
 
     var Value = api.data.Value;
     var ValueTypes = api.data.type.ValueTypes;

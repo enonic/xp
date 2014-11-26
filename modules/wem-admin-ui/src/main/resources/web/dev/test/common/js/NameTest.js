@@ -1,4 +1,4 @@
-describe("api.Name", function () {
+describe("api.NameTest", function () {
     describe("ensureValidName", function () {
         it("should return valid name - 'test-name'", function () {
             expect(api.Name.ensureValidName(" Test Name ")).toBe("test-name");

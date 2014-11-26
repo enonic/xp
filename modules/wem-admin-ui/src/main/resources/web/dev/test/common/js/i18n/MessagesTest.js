@@ -1,4 +1,4 @@
-describe("Tests Message functions", function () {
+describe("api.i18nTest", function () {
 
     it("test no translation", function () {
         var message = api.i18n.message('no translation for this', []);

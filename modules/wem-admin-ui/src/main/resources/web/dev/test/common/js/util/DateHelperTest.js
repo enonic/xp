@@ -1,4 +1,4 @@
-describe("api.util.DateHelper", function () {
+describe("api.util.DateHelperTest", function () {
 
     describe("when parseUTCDateTime", function () {
 

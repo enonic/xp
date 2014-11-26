@@ -1,4 +1,4 @@
-describe("api.ObjectHelper", function () {
+describe("api.ObjectHelperTest", function () {
 
     describe("objectEquals", function () {
 

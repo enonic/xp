@@ -1,4 +1,4 @@
-describe("api.ui.CalendarDay", function () {
+describe("api.ui.time.CalendarDayTest", function () {
 
     var CalendarDayBuilder = api.ui.time.CalendarDayBuilder;
     var DaysOfWeek = api.ui.time.DaysOfWeek;
