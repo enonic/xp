@@ -54,8 +54,11 @@ module api.ui.selector.combobox {
                 return option.getOption().value != selectedOption.getOption().value;
             });
 
-            for (var i: number = selectedOption.getIndex(); i < this.count(); i++) {
-                this.list[i].setIndex(i);
+            // update item indexes to the right of removed item
+            if (selectedOption.getIndex() < this.list.length) {
+                for (var i: number = selectedOption.getIndex(); i < this.list.length; i++) {
+                    this.list[i].setIndex(i);
+                }
             }
 
             if (!silent) {

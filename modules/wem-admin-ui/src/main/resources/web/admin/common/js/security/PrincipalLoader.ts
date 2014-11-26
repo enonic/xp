@@ -1,11 +1,4 @@
-module api.ui.security {
-
-    import Principal = api.security.Principal;
-    import PrincipalType = api.security.PrincipalType;
-    import PrincipalKey = api.security.PrincipalKey;
-    import UserStoreKey = api.security.UserStoreKey;
-    import PrincipalListJson = api.security.PrincipalListJson;
-    import FindPrincipalsRequest = api.security.FindPrincipalsRequest;
+module api.security {
 
     export class PrincipalLoader extends api.util.loader.BaseLoader<PrincipalListJson, Principal> {
 

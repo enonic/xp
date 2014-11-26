@@ -2,22 +2,23 @@ module app.wizard {
 
     import Principal = api.security.Principal;
     import PrincipalKey = api.security.PrincipalKey;
-    import AccessControlList = api.ui.security.acl.AccessControlList;
+    import AccessControlListView = api.security.acl.AccessControlListView;
+    import AccessControlComboBox = api.security.acl.AccessControlComboBox;
     import AccessControlEntry = api.security.acl.AccessControlEntry;
 
     export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
 
         private content: api.content.Content;
 
-        private comboBox: api.ui.security.acl.AccessControlEntryComboBox;
+        private comboBox: AccessControlComboBox;
         private inheritCheckbox: api.ui.Checkbox;
 
-        private inheritedPermissions: AccessControlList;
+        private inheritedPermissions: AccessControlListView;
 
         constructor() {
             super("security-wizard-step-form");
 
-            this.comboBox = new api.ui.security.acl.AccessControlEntryComboBox();
+            this.comboBox = new AccessControlComboBox();
             var selectionChangeListener = () => {
                 this.inheritCheckbox.toggleClass('separator', this.comboBox.getSelectedValues().length > 0);
             };
@@ -25,9 +26,8 @@ module app.wizard {
             this.comboBox.onOptionSelected(selectionChangeListener);
 
             this.inheritCheckbox = new api.ui.Checkbox('Inherit permissions');
-            this.inheritedPermissions = new AccessControlList('inherited');
+            this.inheritedPermissions = new AccessControlListView('inherited');
             this.inheritedPermissions.setItemsEditable(false);
-            this.inheritedPermissions.setDoOffset(false);
             this.inheritCheckbox.onValueChanged((event: api.ui.ValueChangedEvent) => {
                 var checked = event.getNewValue() == 'true';
                 this.inheritedPermissions.setVisible(checked);
@@ -65,8 +65,10 @@ module app.wizard {
         }
 
         private selectPermissions(toSelect: AccessControlEntry[]) {
-            toSelect.forEach((entry: AccessControlEntry) => {
-                this.comboBox.select(entry)
+            toSelect.forEach((item) => {
+                if (!this.comboBox.isSelected(item)) {
+                    this.comboBox.select(item);
+                }
             });
         }
 

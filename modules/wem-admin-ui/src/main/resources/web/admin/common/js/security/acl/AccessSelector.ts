@@ -1,4 +1,4 @@
-module api.ui.security.acl {
+module api.security.acl {
 
     export enum Access {
         READ,
@@ -34,7 +34,7 @@ module api.ui.security.acl {
                 this.addNavigationItem(menuItem);
             });
 
-            this.onNavigationItemSelected((event: NavigatorEvent) => {
+            this.onNavigationItemSelected((event: api.ui.NavigatorEvent) => {
                 var item: api.ui.tab.TabMenuItem = <api.ui.tab.TabMenuItem> event.getItem();
                 this.setValue(AccessSelector.OPTIONS[item.getIndex()].value);
             })

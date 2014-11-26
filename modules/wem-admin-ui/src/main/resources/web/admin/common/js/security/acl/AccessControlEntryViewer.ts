@@ -1,6 +1,5 @@
-module api.ui.security.acl {
+module api.security.acl {
 
-    import AccessControlEntry = api.security.acl.AccessControlEntry;
     import PrincipalType = api.security.PrincipalType;
     import PrincipalKey = api.security.PrincipalKey;
     import UserStoreKey = api.security.UserStoreKey;

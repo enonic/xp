@@ -45,10 +45,6 @@
 
 ///<reference path='ui/responsive/_module.ts' />
 
-///<reference path='security/_module.ts' />
-///<reference path='security/acl/_module.ts' />
-///<reference path='security/auth/_module.ts' />
-///<reference path='security/query/_module.ts' />
 
 ///<reference path='ui/_module.ts' />
 ///<reference path='ui/button/_module.ts' />
@@ -67,14 +63,17 @@
 ///<reference path='ui/selector/list/_module.ts' />
 ///<reference path='ui/selector/combobox/_module.ts' />
 ///<reference path='ui/selector/dropdown/_module.ts' />
-///<reference path='ui/security/_module.ts' />
-///<reference path='ui/security/acl/_module.ts' />
 ///<reference path='ui/tags/_module.ts' />
 ///<reference path='ui/geo/_module.ts' />
 ///<reference path='ui/time/_module.ts' />
 ///<reference path='ui/treegrid/actions/_module.ts' />
 ///<reference path='ui/treegrid/_module.ts' />
 ///<reference path='ui/image/_module.ts' />
+
+///<reference path='security/_module.ts' />
+///<reference path='security/acl/_module.ts' />
+///<reference path='security/auth/_module.ts' />
+///<reference path='security/query/_module.ts' />
 
 ///<reference path='data/json/_module.ts' />
 ///<reference path='data/type/_module.ts' />

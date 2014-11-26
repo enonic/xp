@@ -1,6 +1,5 @@
-module api.ui.security {
+module api.security {
 
-    import Principal = api.security.Principal;
     import Option = api.ui.selector.Option;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
     import BaseSelectedOptionView = api.ui.selector.combobox.BaseSelectedOptionView;

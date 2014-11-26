@@ -1,12 +1,10 @@
-module api.ui.security.acl {
+module api.security.acl {
 
     import Permission = api.security.acl.Permission;
     import Principal = api.security.Principal;
     import PrincipalType = api.security.PrincipalType;
-    import AccessControlEntry = api.security.acl.AccessControlEntry;
 
-
-    export class AccessControlList extends api.ui.selector.list.ListBox<AccessControlEntry> {
+    export class AccessControlListView extends api.ui.selector.list.ListBox<AccessControlEntry> {
 
         private itemsEditable: boolean = true;
 
@@ -14,8 +12,8 @@ module api.ui.security.acl {
             super('access-control-list' + (className ? " " + className : ""));
         }
 
-        createItemView(entry: AccessControlEntry): AccessControlListItem {
-            var itemView = new AccessControlListItem(entry);
+        createItemView(entry: AccessControlEntry): AccessControlEntryView {
+            var itemView = new AccessControlEntryView(entry);
             itemView.setEditable(this.itemsEditable);
             itemView.onRemoveClicked(() => {
                 this.removeItem(entry);
@@ -27,7 +25,7 @@ module api.ui.security.acl {
             return item.getPrincipalKey().toString();
         }
 
-        setItemsEditable(editable: boolean): AccessControlList {
+        setItemsEditable(editable: boolean): AccessControlListView {
             if (this.itemsEditable != editable) {
                 this.refreshList();
                 this.itemsEditable = editable;

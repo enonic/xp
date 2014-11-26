@@ -213,10 +213,14 @@ module api.ui.selector.combobox {
             });
         }
 
-        selectRow(index: number) {
+        handleRowSelected(index: number) {
             var option = this.getOptionByRow(index);
             if (option != null) {
-                this.selectOption(option);
+                if (!this.isOptionSelected(option)) {
+                    this.selectOption(option);
+                } else {
+                    this.deselectOption(option);
+                }
             }
         }
 
@@ -248,7 +252,7 @@ module api.ui.selector.combobox {
                 this.comboBoxDropdown.applyMultipleSelection();
                 this.hideDropdown();
             } else {
-                this.selectRow(index);
+                this.handleRowSelected(index);
                 this.input.setValue("");
             }
         }
@@ -279,12 +283,17 @@ module api.ui.selector.combobox {
             }
         }
 
+        isOptionSelected(option: Option<OPTION_DISPLAY_VALUE>): boolean {
+            return this.selectedOptionsView.isSelected(option);
+        }
+
         deselectOption(optionToRemove: Option<OPTION_DISPLAY_VALUE>, silent: boolean = false) {
             api.util.assertNotNull(optionToRemove, "optionToRemove cannot be null");
 
             this.selectedOptionsView.removeOption(optionToRemove, silent);
 
             this.comboBoxDropdown.markSelections(this.getSelectedOptions());
+            this.hideDropdown();
 
             this.input.openForTypingAndFocus();
 
@@ -396,7 +405,7 @@ module api.ui.selector.combobox {
             });
 
             this.comboBoxDropdown.onRowSelection((event: DropdownGridRowSelectedEvent) => {
-                this.selectRow(event.getRow());
+                this.handleRowSelected(event.getRow());
             });
 
             this.dropdownHandle.onClicked((event: MouseEvent) => {

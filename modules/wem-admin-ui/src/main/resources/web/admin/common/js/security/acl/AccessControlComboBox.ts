@@ -1,12 +1,10 @@
-module api.ui.security.acl {
+module api.security.acl {
 
-    import Permission = api.security.acl.Permission;
-    import AccessControlEntry = api.security.acl.AccessControlEntry;
     import Option = api.ui.selector.Option;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
     import BaseSelectedOptionView = api.ui.selector.combobox.BaseSelectedOptionView;
 
-    export class AccessControlEntryComboBox extends api.ui.selector.combobox.RichComboBox<AccessControlEntry> {
+    export class AccessControlComboBox extends api.ui.selector.combobox.RichComboBox<AccessControlEntry> {
         constructor() {
             var builder = new api.ui.selector.combobox.RichComboBoxBuilder<AccessControlEntry>().
                 setMaximumOccurrences(0).
@@ -20,7 +18,7 @@ module api.ui.security.acl {
         }
     }
 
-    class ACESelectedOptionView extends api.ui.security.acl.AccessControlListItem implements api.ui.selector.combobox.SelectedOptionView<AccessControlEntry> {
+    class ACESelectedOptionView extends AccessControlEntryView implements api.ui.selector.combobox.SelectedOptionView<AccessControlEntry> {
 
         private option: Option<AccessControlEntry>;
 
@@ -53,7 +51,7 @@ module api.ui.security.acl {
 
     }
 
-    class ACESelectedOptionsView extends api.ui.security.acl.AccessControlList implements api.ui.selector.combobox.SelectedOptionsView<AccessControlEntry> {
+    class ACESelectedOptionsView extends AccessControlListView implements api.ui.selector.combobox.SelectedOptionsView<AccessControlEntry> {
 
         private maximumOccurrences: number;
         private list: SelectedOption<AccessControlEntry>[] = [];
@@ -62,7 +60,6 @@ module api.ui.security.acl {
 
         constructor(className?: string) {
             super(className);
-            this.setDoOffset(false);
         }
 
         setMaximumOccurrences(value: number) {
@@ -84,7 +81,7 @@ module api.ui.security.acl {
                 value: this.getItemId(entry)
             };
             var itemView = new ACESelectedOptionView(option);
-            var selectedOption = new SelectedOption<AccessControlEntry>(itemView, this.count());
+            var selectedOption = new SelectedOption<AccessControlEntry>(itemView, this.list.length);
 
             itemView.onSelectedOptionRemoveRequest(() => {
                 this.removeOption(option, false);
@@ -108,14 +105,16 @@ module api.ui.security.acl {
             api.util.assertNotNull(selectedOption, "Did not find any selected option to remove from option: " + optionToRemove.value);
 
             this.removeItem(optionToRemove.displayValue);
-            var selectedOption = this.getByOption(optionToRemove);
 
             this.list = this.list.filter((option: SelectedOption<AccessControlEntry>) => {
                 return option.getOption().value != selectedOption.getOption().value;
             });
 
-            for (var i: number = selectedOption.getIndex(); i < this.count(); i++) {
-                this.list[i].setIndex(i);
+            // update item indexes to the right of removed item
+            if (selectedOption.getIndex() < this.list.length) {
+                for (var i: number = selectedOption.getIndex(); i < this.list.length; i++) {
+                    this.list[i].setIndex(i);
+                }
             }
 
             if (!silent) {
