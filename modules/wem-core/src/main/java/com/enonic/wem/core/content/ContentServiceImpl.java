@@ -7,6 +7,7 @@ import com.enonic.wem.api.content.CompareContentResults;
 import com.enonic.wem.api.content.CompareContentsParams;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.ContentPermissions;
@@ -40,6 +41,7 @@ import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.data.DataId;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.event.EventPublisher;
+import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeService;
@@ -180,7 +182,7 @@ public class ContentServiceImpl
             displayName( "Templates" ).
             name( "templates" ).
             parent( site.getPath() ).
-            contentType( ContentTypeName.folder() ).
+            contentType( ContentTypeName.templateFolder() ).
             draft( false ).
             contentData( new ContentData() ) );
 
@@ -190,6 +192,15 @@ public class ContentServiceImpl
     @Override
     public Content create( final CreateContentParams params )
     {
+        if ( params.getContentType().isTemplateFolder() )
+        {
+            validateCreateTemplateFolder( params );
+        }
+        else if ( params.getContentType().isPageTemplate() )
+        {
+            validateCreatePageTemplate( params );
+        }
+
         final Content content = CreateContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
@@ -207,12 +218,44 @@ public class ContentServiceImpl
                 displayName( "Templates" ).
                 name( "templates" ).
                 parent( content.getPath() ).
-                contentType( ContentTypeName.folder() ).
+                contentType( ContentTypeName.templateFolder() ).
                 draft( false ).
                 contentData( new ContentData() ) );
         }
 
         return content;
+    }
+
+    private void validateCreateTemplateFolder( final CreateContentParams params )
+    {
+        try
+        {
+            final Content parent = this.getByPath( params.getParentContentPath() );
+            if ( !parent.getType().isSite() )
+            {
+                throw new SystemException( "A template folder can only be created below a content of type 'site'" );
+            }
+        }
+        catch ( ContentNotFoundException e )
+        {
+            throw new SystemException( e, "A template folder can only be created below a content of type 'site'" );
+        }
+    }
+
+    private void validateCreatePageTemplate( final CreateContentParams params )
+    {
+        try
+        {
+            final Content parent = this.getByPath( params.getParentContentPath() );
+            if ( !parent.getType().isPageTemplate() )
+            {
+                throw new SystemException( "A page template can only be created below a content of type 'template-folder'" );
+            }
+        }
+        catch ( ContentNotFoundException e )
+        {
+            throw new SystemException( e, "A page template can only be created below a content of type 'template-folder'" );
+        }
     }
 
     @Override

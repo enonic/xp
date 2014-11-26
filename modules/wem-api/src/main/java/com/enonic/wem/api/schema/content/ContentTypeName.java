@@ -3,8 +3,8 @@ package com.enonic.wem.api.schema.content;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleBasedName;
+import com.enonic.wem.api.module.ModuleKey;
 
 public final class ContentTypeName
     extends ModuleBasedName
@@ -17,6 +17,8 @@ public final class ContentTypeName
     private static final ContentTypeName FOLDER = new ContentTypeName( "folder" );
 
     private static final ContentTypeName PAGE_TEMPLATE = new ContentTypeName( "page-template" );
+
+    private static final ContentTypeName TEMPLATE_FOLDER = new ContentTypeName( "template-folder" );
 
     private static final ContentTypeName SITE = new ContentTypeName( "site" );
 
@@ -76,6 +78,11 @@ public final class ContentTypeName
     public static ContentTypeName pageTemplate()
     {
         return PAGE_TEMPLATE;
+    }
+
+    public static ContentTypeName templateFolder()
+    {
+        return TEMPLATE_FOLDER;
     }
 
     public static ContentTypeName site()
@@ -166,6 +173,11 @@ public final class ContentTypeName
     public boolean isFolder()
     {
         return FOLDER.equals( this );
+    }
+
+    public boolean isTemplateFolder()
+    {
+        return TEMPLATE_FOLDER.equals( this );
     }
 
     public boolean isPageTemplate()

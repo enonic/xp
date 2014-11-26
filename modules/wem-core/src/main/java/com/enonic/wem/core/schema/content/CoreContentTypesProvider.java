@@ -39,8 +39,11 @@ public final class CoreContentTypesProvider
         form( ContentTypeForms.SITE ).
         build();
 
+    private static final ContentType TEMPLATE_FOLDER = createSystemType( ContentTypeName.templateFolder() ).
+        setFinal( true ).setAbstract( false ).build();
+
     private static final ContentType PAGE_TEMPLATE =
-        createSystemType( ContentTypeName.pageTemplate() ).setFinal( false ).setAbstract( true ).form(
+        createSystemType( ContentTypeName.pageTemplate() ).allowChildContent( false ).setFinal( false ).setAbstract( true ).form(
             ContentTypeForms.PAGE_TEMPLATE ).build();
 
     private static final ContentType SHORTCUT = createSystemType( ContentTypeName.shortcut() ).
@@ -92,7 +95,8 @@ public final class CoreContentTypesProvider
 
     private static final ContentType[] SYSTEM_TYPES =
         {UNSTRUCTURED, STRUCTURED, FOLDER, SHORTCUT, MEDIA, MEDIA_TEXT, MEDIA_DATA, MEDIA_AUDIO, MEDIA_VIDEO, MEDIA_IMAGE, MEDIA_VECTOR,
-            MEDIA_ARCHIVE, MEDIA_DOCUMENT, MEDIA_SPREADSHEET, MEDIA_PRESENTATION, MEDIA_CODE, MEDIA_EXECUTABLE, SITE, PAGE_TEMPLATE};
+            MEDIA_ARCHIVE, MEDIA_DOCUMENT, MEDIA_SPREADSHEET, MEDIA_PRESENTATION, MEDIA_CODE, MEDIA_EXECUTABLE, SITE, TEMPLATE_FOLDER,
+            PAGE_TEMPLATE};
 
 
     private static ContentType.Builder createSystemType( final ContentTypeName contentTypeName )
