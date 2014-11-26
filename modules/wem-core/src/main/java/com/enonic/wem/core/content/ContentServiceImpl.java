@@ -194,11 +194,11 @@ public class ContentServiceImpl
     {
         if ( params.getContentType().isTemplateFolder() )
         {
-//            validateCreateTemplateFolder( params );
+            validateCreateTemplateFolder( params );
         }
         else if ( params.getContentType().isPageTemplate() )
         {
-//            validateCreatePageTemplate( params );
+            validateCreatePageTemplate( params );
         }
 
         final Content content = CreateContentCommand.create().
@@ -240,7 +240,7 @@ public class ContentServiceImpl
         catch ( ContentNotFoundException e )
         {
             final ContentPath path = ContentPath.from( params.getParentContentPath(), params.getName().toString() );
-            throw new SystemException( e, "A template folder can only be created below a content of type 'site'. Path: " + path );
+            throw new SystemException( e, "Parent folder not found; A template folder can only be created below a content of type 'site'. Path: " + path );
         }
     }
 
@@ -258,7 +258,7 @@ public class ContentServiceImpl
         catch ( ContentNotFoundException e )
         {
             final ContentPath path = ContentPath.from( params.getParentContentPath(), params.getName().toString() );
-            throw new SystemException( e, "A page template can only be created below a content of type 'template-folder'. Path: " + path );
+            throw new SystemException( e, "Parent not found; A page template can only be created below a content of type 'template-folder'. Path: " + path );
         }
     }
 
