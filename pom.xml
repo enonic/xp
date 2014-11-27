@@ -31,6 +31,7 @@
     <module>modules/wem-blob</module>
     <module>modules/wem-repo</module>
     <module>modules/wem-core</module>
+    <module>modules/wem-export</module>
     <module>modules/wem-script</module>
     <module>modules/wem-servlet</module>
     <module>modules/wem-admin</module>
