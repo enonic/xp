@@ -56,6 +56,11 @@ import com.enonic.wem.api.security.acl.AccessControlList;
 public class ContentServiceImpl
     implements ContentService
 {
+
+    public static final String TEMPLATES_FOLDER_NAME = "_templates";
+
+    private static final String TEMPLATES_FOLDER_DISPLAY_NAME = "Templates";
+
     private ContentTypeService contentTypeService;
 
     private NodeService nodeService;
@@ -179,8 +184,8 @@ public class ContentServiceImpl
 
         this.create( new CreateContentParams().
             owner( site.getOwner() ).
-            displayName( "Templates" ).
-            name( "templates" ).
+            displayName( TEMPLATES_FOLDER_DISPLAY_NAME ).
+            name( TEMPLATES_FOLDER_NAME ).
             parent( site.getPath() ).
             contentType( ContentTypeName.templateFolder() ).
             draft( false ).
@@ -215,8 +220,8 @@ public class ContentServiceImpl
         {
             this.create( new CreateContentParams().
                 owner( content.getOwner() ).
-                displayName( "Templates" ).
-                name( "templates" ).
+                displayName( TEMPLATES_FOLDER_DISPLAY_NAME ).
+                name( TEMPLATES_FOLDER_NAME ).
                 parent( content.getPath() ).
                 contentType( ContentTypeName.templateFolder() ).
                 draft( false ).
@@ -240,7 +245,9 @@ public class ContentServiceImpl
         catch ( ContentNotFoundException e )
         {
             final ContentPath path = ContentPath.from( params.getParentContentPath(), params.getName().toString() );
-            throw new SystemException( e, "Parent folder not found; A template folder can only be created below a content of type 'site'. Path: " + path );
+            throw new SystemException( e,
+                                       "Parent folder not found; A template folder can only be created below a content of type 'site'. Path: " +
+                                           path );
         }
     }
 
@@ -258,7 +265,9 @@ public class ContentServiceImpl
         catch ( ContentNotFoundException e )
         {
             final ContentPath path = ContentPath.from( params.getParentContentPath(), params.getName().toString() );
-            throw new SystemException( e, "Parent not found; A page template can only be created below a content of type 'template-folder'. Path: " + path );
+            throw new SystemException( e,
+                                       "Parent not found; A page template can only be created below a content of type 'template-folder'. Path: " +
+                                           path );
         }
     }
 

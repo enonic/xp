@@ -17,6 +17,7 @@ import com.enonic.wem.api.schema.content.ContentTypeForms;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.core.content.ContentServiceImpl;
 
 class CreatePageTemplateCommand
 {
@@ -106,7 +107,7 @@ class CreatePageTemplateCommand
             contentData( data ).
             form( ContentTypeForms.PAGE_TEMPLATE ).
             contentType( ContentTypeName.pageTemplate() ).
-            parent( ContentPath.from( site, "templates" ) ) );
+            parent( ContentPath.from( site, ContentServiceImpl.TEMPLATES_FOLDER_NAME ) ) );
 
         return (PageTemplate) pageService.create( new CreatePageParams().
             content( content.getId() ).

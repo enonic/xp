@@ -8,6 +8,7 @@ import com.enonic.wem.api.content.FindContentByParentParams;
 import com.enonic.wem.api.content.FindContentByParentResult;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplates;
+import com.enonic.wem.core.content.ContentServiceImpl;
 
 final class GetPageTemplateBySiteCommand
 {
@@ -19,7 +20,7 @@ final class GetPageTemplateBySiteCommand
     {
         final PageTemplates.Builder pageTemplatesBuilder = PageTemplates.newPageTemplates();
         final Content site = contentService.getById( siteId );
-        final ContentPath pageTemplatesFolderPath = ContentPath.from( site.getPath(), "templates" );
+        final ContentPath pageTemplatesFolderPath = ContentPath.from( site.getPath(), ContentServiceImpl.TEMPLATES_FOLDER_NAME );
         final FindContentByParentResult result =
             contentService.findByParent( FindContentByParentParams.create().parentPath( pageTemplatesFolderPath ).build() );
         for ( final Content content : result.getContents() )

@@ -34,7 +34,7 @@ function startApplication() {
                 then((newParentContent: api.content.Content) => {
 
                     // TODO: remove pyramid of doom
-                    if (parentContent.hasParent() && parentContent.getName().equals(api.content.ContentName.fromString("templates"))) {
+                    if (parentContent.hasParent() && parentContent.getType().isTemplateFolder()) {
                         new api.content.GetContentByPathRequest(parentContent.getPath().getParentPath()).
                             sendAndParse().then((grandParent: api.content.Content) => {
 
