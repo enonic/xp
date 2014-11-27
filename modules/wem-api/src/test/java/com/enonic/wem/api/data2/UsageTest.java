@@ -11,7 +11,7 @@ public class UsageTest
     @Test
     public void setting_property()
     {
-        PropertyTree tree = new PropertyTree();
+        PropertyTree tree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
 
         tree.setString( "myProp", 0, "myString" );
         tree.setString( "myProp[1]", "myString" );
@@ -24,7 +24,7 @@ public class UsageTest
     @Test
     public void adding_property()
     {
-        PropertyTree tree = new PropertyTree();
+        PropertyTree tree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
 
         tree.addString( "myProp", "myString" );
         tree.addProperty( "myProp", Value.newString( "myString" ) );
@@ -35,7 +35,7 @@ public class UsageTest
     @Test
     public void getting_value()
     {
-        PropertyTree tree = new PropertyTree();
+        PropertyTree tree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         tree.addString( "myProp", "a" );
         tree.addString( "myProp", "b" );
 
@@ -49,7 +49,7 @@ public class UsageTest
     @Test
     public void getting_set()
     {
-        PropertyTree tree = new PropertyTree();
+        PropertyTree tree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         PropertySet set = tree.newSet();
         set.setString( "myProp", "myValue" );
         tree.addProperty( "mySet", Value.newData( set ) );
@@ -64,7 +64,7 @@ public class UsageTest
     @Test
     public void getting_sets()
     {
-        PropertyTree tree = new PropertyTree();
+        PropertyTree tree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         PropertySet set1 = tree.newSet();
         set1.setString( "myProp", "myValue" );
         tree.addProperty( "mySet", Value.newData( set1 ) );

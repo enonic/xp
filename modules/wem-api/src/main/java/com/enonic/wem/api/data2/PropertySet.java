@@ -12,6 +12,7 @@ import java.util.Set;
 
 import com.google.common.collect.ImmutableList;
 
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.util.GeoPoint;
 import com.enonic.wem.api.util.Link;
 import com.enonic.wem.api.util.Reference;
@@ -181,7 +182,7 @@ public final class PropertySet
     void add( final Property property )
     {
 
-        final PropertyArray array = getOrCreatePropertyArray( property.getName(), property.getValueType() );
+        final PropertyArray array = getOrCreatePropertyArray( property.getName(), property.getType() );
         array.addProperty( property );
         propertyTree.registerProperty( property );
         if ( property.getValue().isPropertySet() )
@@ -1145,6 +1146,35 @@ public final class PropertySet
         for ( final Property property : getProperties( name ) )
         {
             stringsBuilder.add( property.getGeoPoint() );
+        }
+        return stringsBuilder.build();
+    }
+
+    // getting content id
+
+    public ContentId getContentId( final String name, final int index )
+    {
+        final Property property = this.getProperty( name, index );
+        return property != null ? property.getValue().asContentId() : null;
+    }
+
+    public ContentId getContentId( final PropertyPath path )
+    {
+        final Property property = this.getProperty( path );
+        return property != null ? property.getValue().asContentId() : null;
+    }
+
+    public ContentId getContentId( final String path )
+    {
+        return getContentId( PropertyPath.from( path ) );
+    }
+
+    public Iterable<ContentId> getContentIds( final String name )
+    {
+        final ImmutableList.Builder<ContentId> stringsBuilder = new ImmutableList.Builder<>();
+        for ( final Property property : getProperties( name ) )
+        {
+            stringsBuilder.add( property.getContentId() );
         }
         return stringsBuilder.build();
     }

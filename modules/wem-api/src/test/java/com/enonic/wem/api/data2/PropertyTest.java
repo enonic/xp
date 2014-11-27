@@ -17,14 +17,14 @@ public class PropertyTest
             @Override
             public Object getObjectX()
             {
-                PropertyTree tree = new PropertyTree();
+                PropertyTree tree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
                 return tree.addString( "myString", "myValue" );
             }
 
             @Override
             public Object[] getObjectsThatNotEqualsX()
             {
-                PropertyTree tree = new PropertyTree();
+                PropertyTree tree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
                 return new Object[]{tree.addString( "myString", "otherValue" ), tree.addString( "otherString", "myValue" ),
                     tree.addHtmlPart( "otherType", "myValue" )};
             }
@@ -32,14 +32,14 @@ public class PropertyTest
             @Override
             public Object getObjectThatEqualsXButNotTheSame()
             {
-                PropertyTree tree = new PropertyTree();
+                PropertyTree tree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
                 return tree.addString( "myString", "myValue" );
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame2()
             {
-                PropertyTree tree = new PropertyTree();
+                PropertyTree tree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
                 return tree.addString( "myString", "myValue" );
             }
         };
@@ -49,7 +49,7 @@ public class PropertyTest
     @Test
     public void countAncestors()
     {
-        PropertyTree tree = new PropertyTree();
+        PropertyTree tree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
 
         PropertySet aSet = tree.newSet();
         Property aProperty = tree.addSet( "a", aSet );
@@ -70,11 +70,11 @@ public class PropertyTest
     @Test
     public void property_copy()
     {
-        PropertyTree sourceTree = new PropertyTree();
+        PropertyTree sourceTree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         sourceTree.setString( "outerSet.innerSet.myString", "myValue" );
         System.out.println( sourceTree );
 
-        PropertyTree destinationTree = new PropertyTree();
+        PropertyTree destinationTree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         PropertySet destiSet = destinationTree.addSet( "destiSet" );
         sourceTree.getProperty( "outerSet.innerSet" ).copyTo( destiSet );
 

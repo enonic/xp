@@ -23,7 +23,7 @@ public class PropertySetJsonTest
     public void deserialize_serialization_of_Property()
         throws IOException
     {
-        PropertyTree tree = new PropertyTree();
+        PropertyTree tree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         tree.addString( "myProp", "a" );
         tree.addString( "myProp", "b" );
         tree.addString( "myProp", "c" );
@@ -47,7 +47,7 @@ public class PropertySetJsonTest
     public void deserialize_serialization_of_DataSet()
         throws IOException
     {
-        PropertyTree tree = new PropertyTree();
+        PropertyTree tree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         PropertySet dataSet = tree.addSet( "mySet" );
         dataSet.setLong( "Long", 1L );
         dataSet.setDouble( "Double", 1.1 );
@@ -68,31 +68,4 @@ public class PropertySetJsonTest
 
         assertEquals( expectedSerialization, serializationOfDeSerialization );
     }
-
-    /*@Test
-    public void deserialize_serialization_of_RootDataSet()
-        throws IOException
-    {
-        RootDataSet dataPropertyValue = new RootDataSet();
-        dataPropertyValue.setProperty( "a", Value.newString( "1" ) );
-        dataPropertyValue.setProperty( "b", Value.newString( "2" ) );
-        RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.setProperty( "mydata", Value.newData( dataPropertyValue ) );
-        RootDataSetJson rootDataSetJson = new RootDataSetJson( rootDataSet );
-
-        // serialize from object
-        String expectedSerialization = jsonTestHelper.objectToString( rootDataSetJson );
-
-        System.out.println( expectedSerialization );
-
-        // de-serialize
-        RootDataSetJson parsedData = jsonTestHelper.objectMapper().readValue( expectedSerialization, RootDataSetJson.class );
-
-        // serialize from json
-        String serializationOfDeSerialization = jsonTestHelper.objectToString( parsedData );
-
-        assertEquals( expectedSerialization, serializationOfDeSerialization );
-    }
-
-    */
 }

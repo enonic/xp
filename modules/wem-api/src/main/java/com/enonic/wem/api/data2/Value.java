@@ -268,22 +268,7 @@ public abstract class Value
     @Override
     public java.lang.String toString()
     {
-        if ( object instanceof java.lang.String )
-        {
-            return "\"" + java.lang.String.valueOf( object ) + "\"";
-        }
-        else if ( object instanceof com.enonic.wem.api.util.Reference )
-        {
-            return "\"" + java.lang.String.valueOf( object ) + "\"";
-        }
-        else if ( object instanceof com.enonic.wem.api.util.Link )
-        {
-            return "\"" + java.lang.String.valueOf( object ) + "\"";
-        }
-        else
-        {
-            return java.lang.String.valueOf( object );
-        }
+        return asString();
     }
 
     public static Value newInstant( final java.time.Instant value )
@@ -390,6 +375,12 @@ public abstract class Value
         Value copy( final PropertyTree tree )
         {
             return new PropertySet( this, tree );
+        }
+
+        @Override
+        public java.lang.String toString()
+        {
+            throw new UnsupportedOperationException( "Value of type PropertySet does not support invocation of toString()" );
         }
     }
 

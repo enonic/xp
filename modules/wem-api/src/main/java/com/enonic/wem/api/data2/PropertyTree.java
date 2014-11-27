@@ -11,6 +11,7 @@ import java.util.UUID;
 
 import com.google.common.collect.ImmutableList;
 
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.util.GeoPoint;
 import com.enonic.wem.api.util.Link;
 import com.enonic.wem.api.util.Reference;
@@ -296,7 +297,8 @@ public final class PropertyTree
         Property previous = this.propertyById.put( property.getId(), property );
         if ( previous != null )
         {
-            throw new IllegalStateException( "Warning id already registered: " + property.getId() + " : " + previous.getPath().toString() );
+            throw new IllegalStateException( "Duplicate Property id detected [" + property.getId() + "]! Existing Property \"" +
+                                                 previous.getPath() + "\", new Property: \"" + property.getPath() + "\"" );
         }
     }
 
@@ -822,6 +824,28 @@ public final class PropertyTree
     public Iterable<GeoPoint> getGeoPoints( final String name )
     {
         return this.root.getGeoPoints( name );
+    }
+
+    // getting content id
+
+    public ContentId getContentId( final String name, final int index )
+    {
+        return this.root.getContentId( name, index );
+    }
+
+    public ContentId getContentId( final PropertyPath path )
+    {
+        return this.root.getContentId( path );
+    }
+
+    public ContentId getContentId( final String path )
+    {
+        return this.root.getContentId( path );
+    }
+
+    public Iterable<ContentId> getContentIds( final String name )
+    {
+        return this.root.getContentIds( name );
     }
 
     // getting reference

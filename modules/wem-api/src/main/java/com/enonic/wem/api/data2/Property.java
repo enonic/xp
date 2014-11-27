@@ -9,6 +9,7 @@ import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.util.GeoPoint;
 import com.enonic.wem.api.util.Link;
 import com.enonic.wem.api.util.Reference;
@@ -93,7 +94,7 @@ public final class Property
         }
     }
 
-    public ValueType getValueType()
+    public ValueType getType()
     {
         return value.getType();
     }
@@ -141,6 +142,11 @@ public final class Property
     public GeoPoint getGeoPoint()
     {
         return value.asGeoPoint();
+    }
+
+    public ContentId getContentId()
+    {
+        return value.asContentId();
     }
 
     public Reference getReference()
@@ -207,11 +213,15 @@ public final class Property
 
         final Property property = (Property) o;
 
-        if ( index != property.index )
+        if ( !id.equals( property.id ) )
         {
             return false;
         }
         if ( !name.equals( property.name ) )
+        {
+            return false;
+        }
+        if ( index != property.index )
         {
             return false;
         }

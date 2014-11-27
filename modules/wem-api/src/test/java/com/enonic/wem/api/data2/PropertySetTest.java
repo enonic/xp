@@ -9,7 +9,7 @@ public class PropertySetTest
     @Test(expected = IndexOutOfBoundsException.class)
     public void setProperty_given_unsuccessive_index_then_IndexOutOfBoundsException_is_thrown()
     {
-        PropertySet set = new PropertySet( new PropertyTree() );
+        PropertySet set = new PropertySet( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) );
 
         // exercise & verify
         set.setProperty( "myProp", 1, Value.newString( "myValue" ) );
@@ -18,7 +18,7 @@ public class PropertySetTest
     @Test
     public void setString_creates_Property()
     {
-        PropertySet set = new PropertySet( new PropertyTree() );
+        PropertySet set = new PropertySet( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) );
 
         // exercise
         Property property = set.setString( "myProp", 0, "myValue" );
@@ -32,7 +32,7 @@ public class PropertySetTest
     @Test
     public void getString()
     {
-        PropertySet set = new PropertySet( new PropertyTree() );
+        PropertySet set = new PropertySet( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) );
         set.setString( "myProp", 0, "myValue" );
 
         // exercise & verify
@@ -42,7 +42,7 @@ public class PropertySetTest
     @Test
     public void countAncestors()
     {
-        PropertyTree tree = new PropertyTree();
+        PropertyTree tree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         PropertySet a = tree.addSet( "a" );
         PropertySet b = a.addSet( "b" );
         PropertySet c = b.addSet( "c" );
@@ -55,7 +55,7 @@ public class PropertySetTest
     @Test
     public void addLongs()
     {
-        PropertySet set = new PropertySet( new PropertyTree() );
+        PropertySet set = new PropertySet( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) );
         Property[] properties = set.addLongs( "longs", 1L, 2L, 3L );
 
         assertEquals( Long.valueOf( 1L ), properties[0].getLong() );
@@ -66,7 +66,7 @@ public class PropertySetTest
     @Test
     public void removeProperties()
     {
-        final PropertyTree tree = new PropertyTree();
+        final PropertyTree tree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         PropertySet set = new PropertySet( tree );
         set.addLongs( "longs", 1L, 2L, 3L );
         set.removeProperties( "longs" );
@@ -78,7 +78,7 @@ public class PropertySetTest
     @Test
     public void setting_with_same_index_twice_overwrites()
     {
-        PropertySet set = new PropertySet( new PropertyTree() );
+        PropertySet set = new PropertySet( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) );
         set.setString( "a", "1" );
         set.setString( "a", "2" );
 
@@ -109,11 +109,11 @@ public class PropertySetTest
     @Test
     public void when_copy_then_values_within_copied_set_equals()
     {
-        PropertyTree sourceTree = new PropertyTree();
+        PropertyTree sourceTree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         PropertySet setSource = sourceTree.addSet( "setSource" );
         setSource.addStrings( "a", "1", "2" );
 
-        PropertyTree destinationTree = new PropertyTree();
+        PropertyTree destinationTree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         PropertySet copy = setSource.copy( destinationTree );
         destinationTree.addSet( "setCopy", copy );
 
@@ -124,11 +124,11 @@ public class PropertySetTest
     @Test
     public void when_copy_then_PropertyIds_within_copied_set_are_the_same()
     {
-        PropertyTree sourceTree = new PropertyTree();
+        PropertyTree sourceTree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         PropertySet setSource = sourceTree.addSet( "setSource" );
         setSource.addStrings( "a", "1", "2" );
 
-        PropertyTree destinationTree = new PropertyTree();
+        PropertyTree destinationTree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         PropertySet copy = setSource.copy( destinationTree );
         destinationTree.addSet( "setCopy", copy );
 
@@ -142,7 +142,7 @@ public class PropertySetTest
     @Test
     public void when_toTree_xx()
     {
-        PropertyTree sourceTree = new PropertyTree();
+        PropertyTree sourceTree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         PropertySet mySet = sourceTree.addSet( "mySet" );
         PropertySet otherSet = mySet.addSet( "otherSet" );
 

@@ -92,7 +92,7 @@ final class PropertyArray
     {
         final boolean isPropertySet = valueType.equals( ValueTypes.PROPERTY_SET );
         final boolean parentIsPropertySet =
-            parent.getProperty() != null && parent.getProperty().getValueType().equals( ValueTypes.PROPERTY_SET );
+            parent.getProperty() != null && parent.getProperty().getType().equals( ValueTypes.PROPERTY_SET );
 
         final StringBuilder s = new StringBuilder();
         final String indent = StringUtils.leftPad( "", ( countAncestors() + 1 ) * 2 );
@@ -113,7 +113,7 @@ final class PropertyArray
             {
                 s.append( "\n" ).append( parentIsPropertySet ? indent + "  " : indent ).append( "  [" );
             }
-            s.append( p.getValue() );
+            s.append( isPropertySet ? p.getSet() : p.getValue() );
             if ( isPropertySet )
             {
                 s.append( "\n" ).append( parentIsPropertySet ? indent + "  " : indent ).append( "  ]" );
@@ -178,7 +178,7 @@ final class PropertyArray
 
     void addProperty( final Property property )
     {
-        checkType( property.getValueType() );
+        checkType( property.getType() );
         this.array.addLast( property );
     }
 
@@ -254,11 +254,6 @@ final class PropertyArray
                 "This PropertyArray expects only properties with value of type '" + this.valueType + "', got: " +
                     valueType );
         }
-    }
-
-    private void checkPropertySet( final PropertySet value )
-    {
-
     }
 
 

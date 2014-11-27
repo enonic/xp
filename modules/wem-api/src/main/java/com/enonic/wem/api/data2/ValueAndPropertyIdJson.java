@@ -22,7 +22,7 @@ public final class ValueAndPropertyIdJson
 
     ValueAndPropertyIdJson( final Property property )
     {
-        if ( property.getValueType().equals( ValueTypes.PROPERTY_SET ) )
+        if ( property.getType().equals( ValueTypes.PROPERTY_SET ) )
         {
             final PropertySet propertySet = property.getSet();
             final List<PropertyArrayJson> propertyArrayJsonList = new ArrayList<>();
