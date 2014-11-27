@@ -58,30 +58,20 @@ module app.browse {
         getItemDisplayName(): string {
             switch (this.type) {
             case UserTreeGridItemType.USER_STORE:
-            {
                 return this.userStore.getDisplayName();
 
-            }
             case UserTreeGridItemType.PRINCIPAL:
-            {
                 return this.principal.getDisplayName();
 
-            }
             case UserTreeGridItemType.ROLES:
-            {
                 return 'Roles';
 
-            }
             case UserTreeGridItemType.USERS:
-            {
                 return 'Users';
 
-            }
             case UserTreeGridItemType.GROUPS:
-            {
                 return 'Groups';
 
-            }
             }
 
         }
@@ -89,25 +79,20 @@ module app.browse {
         getDataId(): string {
             switch (this.type) {
             case UserTreeGridItemType.USER_STORE:
-            {
                 return this.userStore.getKey().toString();
-            }
+
             case UserTreeGridItemType.PRINCIPAL:
-            {
                 return this.principal.getKey().toString();
-            }
+
             case UserTreeGridItemType.GROUPS:
-            {
                 return this.userStore.getKey().toString() + '/groups';
-            }
+
             case UserTreeGridItemType.ROLES:
-            {
                 return '/roles';
-            }
+
             case UserTreeGridItemType.USERS:
-            {
                 return this.userStore.getKey().toString() + '/users';
-            }
+
             }
 
         }

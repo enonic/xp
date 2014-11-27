@@ -105,7 +105,7 @@ module app.wizard {
 
             }).then((loadedSite: Site) => {
 
-                if (loadedSite && loadedSite) {
+                if (!!loadedSite) {
                     this.siteContent = loadedSite;
                 }
                 return this.loadDefaultModels(this.siteContent, this.contentToEdit.getType());

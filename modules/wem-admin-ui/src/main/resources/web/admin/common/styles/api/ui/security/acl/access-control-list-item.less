@@ -1,0 +1,67 @@
+.access-control-list-item {
+  position: relative;
+  padding: 5px 42px 5px 5px;
+  .clearfix();
+
+  &.dirty {
+    .access-selector {
+      .tab-menu-button {
+        color: @admin-blue;
+      }
+    }
+  }
+
+  .names-and-icon-view {
+    float: left;
+    margin: 0 10px 0 0;
+    min-width: 200px;
+  }
+
+  .icon-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    cursor: pointer;
+    font-size: 12px;
+  }
+
+  .permission-selector {
+    display: none;
+    clear: left;
+  }
+
+  .access-selector {
+    float: left;
+    min-width: 100px;
+    margin: 0 10px 0 0;
+
+    &.expanded {
+      .tab-menu-button {
+        color: @admin-white;
+        background-color: @admin-blue;
+      }
+    }
+
+    .tab-menu-button {
+      text-align: left;
+      padding: 6px 5px;
+      color: @admin-dark-gray-font;
+      background-color: transparent;
+
+      &:before {
+        display: none;
+      }
+
+      .label {
+        margin: 0;
+      }
+
+    }
+
+    ul {
+      padding: 40px 4px 4px;
+    }
+
+  }
+
+}

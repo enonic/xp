@@ -38,7 +38,9 @@ module api.app.wizard {
             });
 
             this.onRemoved((event) => {
-                this.uploader.destroy();
+                if (this.uploader) {
+                    this.uploader.destroy();
+                }
             });
         }
 

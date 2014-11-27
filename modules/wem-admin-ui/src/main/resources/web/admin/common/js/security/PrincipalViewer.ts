@@ -1,11 +1,10 @@
 module api.security {
 
-    import PrincipalType = api.security.PrincipalType;
-    import PrincipalKey = api.security.PrincipalKey;
-
     export class PrincipalViewer extends api.ui.Viewer<Principal> {
 
         private namesAndIconView: api.app.NamesAndIconView;
+
+        private removeClickedListeners: {(event: MouseEvent):void}[] = [];
 
         constructor() {
             super();
@@ -45,6 +44,22 @@ module api.security {
 
         getPreferredHeight(): number {
             return 50;
+        }
+
+        onRemoveClicked(listener: (event: MouseEvent) => void) {
+            this.removeClickedListeners.push(listener);
+        }
+
+        unRemoveClicked(listener: (event: MouseEvent) => void) {
+            this.removeClickedListeners = this.removeClickedListeners.filter((current) => {
+                return current !== listener;
+            })
+        }
+
+        notifyRemoveClicked(event: MouseEvent) {
+            this.removeClickedListeners.forEach((listener) => {
+                listener(event);
+            })
         }
     }
 }
