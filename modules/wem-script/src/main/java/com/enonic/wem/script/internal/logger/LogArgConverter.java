@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import com.enonic.wem.api.util.Exceptions;
-import com.enonic.wem.script.internal.util.ScriptObjectConverter;
+import com.enonic.wem.script.internal.util.JsObjectConverter;
 
 final class LogArgConverter
 {
@@ -37,7 +37,7 @@ final class LogArgConverter
             return null;
         }
 
-        final Object result = ScriptObjectConverter.toObject( arg );
+        final Object result = JsObjectConverter.fromJs( arg );
         if ( result instanceof Map )
         {
             return toJson( result );

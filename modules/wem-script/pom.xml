@@ -46,9 +46,12 @@
         <configuration>
           <instructions>
             <Import-Package>
-              !org.apache.xmlbeans.*,
+              !jdk.nashorn.*,
               *
             </Import-Package>
+            <DynamicImport-Package>
+              jdk.nashorn.*
+            </DynamicImport-Package>
             <Export-Package>
               !com.enonic.wem.script.internal.*,
               com.enonic.wem.script.*,

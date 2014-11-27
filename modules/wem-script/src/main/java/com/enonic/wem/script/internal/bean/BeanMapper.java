@@ -15,11 +15,11 @@ public final class BeanMapper
 {
     private final Object bean;
 
-    private final Map<String, Object> map;
+    private final Map<?, ?> map;
 
     private final BeanInfo info;
 
-    private BeanMapper( final Object bean, final Map<String, Object> map )
+    private BeanMapper( final Object bean, final Map<?, ?> map )
     {
         this.bean = bean;
         this.map = map;
@@ -78,7 +78,7 @@ public final class BeanMapper
         }
     }
 
-    public static void mapToBean( final Object bean, final Map<String, Object> map )
+    public static void mapToBean( final Object bean, final Map<?, ?> map )
     {
         new BeanMapper( bean, map ).mapToBean();
     }

@@ -7,7 +7,7 @@ import jdk.nashorn.api.scripting.AbstractJSObject;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.script.internal.invoker.CommandInvoker;
 import com.enonic.wem.script.internal.invoker.CommandRequestImpl;
-import com.enonic.wem.script.internal.util.ScriptObjectConverter;
+import com.enonic.wem.script.internal.util.JsObjectConverter;
 
 public final class ExecuteFunction
     extends AbstractJSObject
@@ -48,7 +48,7 @@ public final class ExecuteFunction
         final CommandRequestImpl request = new CommandRequestImpl();
         request.setName( name );
         request.setScript( this.script );
-        request.setParamsMap( ScriptObjectConverter.toMap( params ) );
+        request.setParamsMap( JsObjectConverter.fromJsAsMap( params ) );
         return this.invoker.invoke( request );
     }
 

@@ -7,7 +7,6 @@ import javax.script.Bindings;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.script.ScriptExports;
 import com.enonic.wem.script.internal.bean.BeanMapper;
-import com.enonic.wem.script.internal.util.ScriptObjectConverter;
 
 final class ScriptExportsImpl
     implements ScriptExports
@@ -46,8 +45,11 @@ final class ScriptExportsImpl
     @Override
     public <T> T applyToBean( final T bean, final Object result )
     {
-        final Map<String, Object> map = ScriptObjectConverter.toMap( result );
-        BeanMapper.mapToBean( bean, map );
+        if ( result instanceof Map )
+        {
+            BeanMapper.mapToBean( bean, (Map) result );
+        }
+
         return bean;
     }
 }

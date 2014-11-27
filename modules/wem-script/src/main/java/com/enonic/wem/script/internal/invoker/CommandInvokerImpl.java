@@ -5,8 +5,8 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 
 import com.enonic.wem.script.command.CommandHandler;
-import com.enonic.wem.script.internal.invoker.CommandInvoker;
 import com.enonic.wem.script.command.CommandRequest;
+import com.enonic.wem.script.internal.util.JsObjectConverter;
 
 public final class CommandInvokerImpl
     implements CommandInvoker
@@ -43,6 +43,7 @@ public final class CommandInvokerImpl
 
     private Object invoke( final CommandHandler handler, final CommandRequest req )
     {
-        return handler.execute( req );
+        final Object result = handler.execute( req );
+        return JsObjectConverter.toJs( result );
     }
 }
