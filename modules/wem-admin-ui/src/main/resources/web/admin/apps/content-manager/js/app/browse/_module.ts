@@ -17,3 +17,7 @@
 ///<reference path='ContentBrowseItemsSelectionPanel.ts' />
 ///<reference path='ContentBrowsePanel.ts' />
 ///<reference path='ContentTreeGrid.ts' />
+///<reference path='SortContentEvent.ts' />
+///<reference path='OpenSortDialogEvent.ts' />
+///<reference path='SortContentDialog.ts' />
+///<reference path='SortContentTreeGrid.ts' />

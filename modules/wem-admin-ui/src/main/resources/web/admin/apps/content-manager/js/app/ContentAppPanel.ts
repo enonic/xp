@@ -77,6 +77,10 @@ module app {
             api.content.ContentUpdatedEvent.on((event) => {
                 this.handleUpdated(event);
             });
+
+            app.browse.SortContentEvent.on((event) => {
+                this.handleSort(event);
+            });
         }
 
         private handleUpdated(event: api.content.ContentUpdatedEvent) {
@@ -158,6 +162,13 @@ module app {
                     this.addViewPanel(tabMenuItem, contentItemViewPanel);
                 }
             });
+        }
+
+        private handleSort(event: app.browse.SortContentEvent) {
+
+            var contents: api.content.ContentSummary[] = event.getModels();
+            new app.browse.OpenSortDialogEvent(contents[0]).fire();
+
         }
 
         private handleEdit(event: app.browse.EditContentEvent) {

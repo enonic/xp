@@ -168,8 +168,13 @@ module api.ui.treegrid {
             if (builder.isPartialLoadEnabled()) {
 
                 this.loadBufferSize = builder.getLoadBufferSize();
-
-                setInterval(this.postLoad.bind(this), 100);
+                var interval;
+                this.onShown(() => {
+                    if (interval) {
+                        clearInterval(interval);
+                    }
+                    interval = setInterval(this.postLoad.bind(this), 100);
+                });
             }
 
             var keyBindings;
@@ -248,6 +253,10 @@ module api.ui.treegrid {
             this.onRemoved(() => {
                 if (builder.isHotkeysEnabled()) {
                     KeyBindings.get().unbindKeys(keyBindings);
+                }
+
+                if (builder.isPartialLoadEnabled() && interval) {
+                    clearInterval(interval);
                 }
             });
 
@@ -363,11 +372,12 @@ module api.ui.treegrid {
                     emptyNode: TreeNode<DATA> = null,
                     from = Math.min(nodes.length - 1, Math.floor(scrollTop / rowHeight)),
                     to = Math.min(nodes.length - 1, from + Math.round(gridHeight / rowHeight) + this.loadBufferSize);
-
-                for (var i = from; i < to; i++) {
-                    if (nodes[i].getDataId() === "") {
-                        emptyNode = nodes[i];
-                        break;
+                if (nodes.length > 0) {
+                    for (var i = from; i <= to; i++) {
+                        if (nodes[i].getDataId() === "") {
+                            emptyNode = nodes[i];
+                            break;
+                        }
                     }
                 }
 
@@ -507,12 +517,12 @@ module api.ui.treegrid {
         }
 
         // Hard reset
-        reload(parentNode?: TreeNode<DATA>): void {
-            this.root.resetCurrentRoot();
 
+        reload(parentNodeData?: DATA): void {
+            this.root.resetCurrentRoot(parentNodeData);
             this.initData([]);
 
-            this.fetchData(parentNode)
+            this.fetchData()
                 .then((dataList: DATA[]) => {
                     this.root.getCurrentRoot().setChildren(this.dataToTreeNodes(dataList, this.root.getCurrentRoot()));
                     this.initData(this.root.getCurrentRoot().treeToList());

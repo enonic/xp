@@ -30,23 +30,29 @@ module api.ui.treegrid {
             return this.defaultRoot;
         }
 
-        resetDefaultRoot() {
+        resetDefaultRoot(rootData?: DATA) {
             this.defaultRoot = new TreeNodeBuilder<DATA>().setExpanded(true).build();
+            if (rootData) {
+                this.defaultRoot.setData(rootData);
+            }
         }
 
         getFilteredRoot(): TreeNode<DATA> {
             return this.filteredRoot;
         }
 
-        resetFilteredRoot() {
+        resetFilteredRoot(rootData?: DATA) {
             this.filteredRoot = new TreeNodeBuilder<DATA>().setExpanded(true).build();
+            if (rootData) {
+                this.filteredRoot.setData(rootData);
+            }
         }
 
-        resetCurrentRoot() {
+        resetCurrentRoot(rootData?: DATA) {
             if (this.isFiltered()) {
-                this.resetFilteredRoot();
+                this.resetFilteredRoot(rootData);
             } else {
-                this.resetDefaultRoot();
+                this.resetDefaultRoot(rootData);
             }
 
         }
@@ -97,7 +103,9 @@ module api.ui.treegrid {
             var fullSelection = this.currentSelection.
                 concat(this.stashedSelection);
             if (uniqueOnly) {
-                var fullIds = fullSelection.map((el) => { return el.getDataId(); });
+                var fullIds = fullSelection.map((el) => {
+                    return el.getDataId();
+                });
                 fullSelection = fullSelection.filter((value, index, self) => {
                     return fullIds.indexOf(value.getDataId()) === index;
                 });
@@ -107,13 +115,17 @@ module api.ui.treegrid {
         }
 
         private cleanStashedSelection() {
-            var currentIds = this.currentSelection.map((el) => { return el.getDataId(); }),
-                stashedIds = this.stashedSelection.map((el) => { return el.getDataId(); });
+            var currentIds = this.currentSelection.map((el) => {
+                    return el.getDataId();
+                }),
+                stashedIds = this.stashedSelection.map((el) => {
+                    return el.getDataId();
+                });
 
-            this.stashedSelection= this.stashedSelection.filter((value, index, self) => {
+            this.stashedSelection = this.stashedSelection.filter((value, index, self) => {
                 // remove duplicated nodes and those, that are already in `currentSelection`
                 return (currentIds.indexOf(value.getDataId()) < 0) &&
-                    (stashedIds.indexOf(value.getDataId()) === index);
+                       (stashedIds.indexOf(value.getDataId()) === index);
             });
         }
 
@@ -122,13 +134,21 @@ module api.ui.treegrid {
         }
 
         removeSelection(dataId: string) {
-            this.currentSelection = this.currentSelection.filter((el) => { return el.getDataId() !== dataId; });
-            this.stashedSelection = this.stashedSelection.filter((el) => { return el.getDataId() !== dataId; });
+            this.currentSelection = this.currentSelection.filter((el) => {
+                return el.getDataId() !== dataId;
+            });
+            this.stashedSelection = this.stashedSelection.filter((el) => {
+                return el.getDataId() !== dataId;
+            });
         }
 
         updateSelection(dataId: string, data: DATA) {
-            this.currentSelection.forEach((el) => { if (el.getDataId() !== dataId) { el.setData(data); } });
-            this.stashedSelection.forEach((el) => { if (el.getDataId() !== dataId) { el.setData(data); } });
+            this.currentSelection.forEach((el) => {
+                if (el.getDataId() !== dataId) { el.setData(data); }
+            });
+            this.stashedSelection.forEach((el) => {
+                if (el.getDataId() !== dataId) { el.setData(data); }
+            });
         }
     }
 }
