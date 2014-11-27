@@ -1,4 +1,4 @@
-package com.enonic.wem.export.serializer;
+package com.enonic.wem.export.xml.mapper;
 
 import java.time.Instant;
 
@@ -10,14 +10,13 @@ import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.export.xml.mapper.XmlNodeMapper;
-import com.enonic.wem.export.xml.model.XmlNode;
-import com.enonic.wem.export.xml.serializer.XmlSerializers;
+import com.enonic.wem.api.xml.model.XmlNode;
+import com.enonic.wem.api.xml.serializer.XmlSerializers;
 
 import static junit.framework.Assert.assertEquals;
 
-public class XmlNodeSerializerTest
-    extends BaseXmlSerializerTest
+public class XmlNodeMapperTest
+    extends BaseXmlMapperTest
 {
     @Test
     public void test_to_xml()
@@ -40,7 +39,7 @@ public class XmlNodeSerializerTest
 
         final Node.Builder builder = Node.newNode();
 
-        final XmlNode xmlObject = com.enonic.wem.export.xml.serializer.XmlSerializers.node().parse( xml );
+        final XmlNode xmlObject = XmlSerializers.node().parse( xml );
         XmlNodeMapper.fromXml( xmlObject, builder );
 
         final Node deserializedNode = builder.build();

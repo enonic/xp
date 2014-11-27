@@ -513,7 +513,7 @@ public final class PropertySet
         return builder.build();
     }
 
-    Iterable<PropertyArray> getPropertyArrays()
+    public Iterable<PropertyArray> getPropertyArrays()
     {
         return this.propertyArrayByName.values();
     }

@@ -6,8 +6,8 @@ import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.xml.model.XmlNode;
 import com.enonic.wem.export.ExportNodeException;
-import com.enonic.wem.export.xml.model.XmlNode;
 import com.enonic.wem.export.xml.util.InstantConverter;
 
 

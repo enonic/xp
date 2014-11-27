@@ -1,51 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <node>
-  <id>123</id>
-  <name>my-node</name>
-  <data>
-    <string name="string">a</string>
-    <boolean name="boolean">true</boolean>
-    <long name="long">1</long>
-    <double name="double">1.1</double>
-    <geo-point name="geoPoint">1.1,-2.2</geo-point>
-    <local-date name="localDate">2006-01-08</local-date>
-    <local-date-time name="localDateTime">2006-01-08T12:00:00</local-date-time>
-    <local-time name="localTime">2006-01-08T12:00:00</local-time>
-    <date-time name="dateTime">2007-12-03T10:15:30Z</date-time>
-    <reference name="reference">xxxxxxxxxxx</reference>
-    <link name="link">/root/my-node</link>
-    <set name="set">
-      <string name="string">a</string>
-      <long name="long">1</long>
-    </set>
-    <string name="arrayString">a</string>
-    <string name="arrayString">b</string>
-    <boolean name="arrayBoolean">true</boolean>
-    <boolean name="arrayBoolean">false</boolean>
-    <long name="arrayLong">1</long>
-    <long name="arrayLong">2</long>
-    <double name="arrayDouble">1.1</double>
-    <double name="arrayDouble">1.2</double>
-    <geo-point name="arrayGeoPoint">1.1,-2.2</geo-point>
-    <geo-point name="arrayGeoPoint">1.2,-2.1</geo-point>
-    <local-date name="arrayLocalDate">2006-01-08</local-date>
-    <local-date name="arrayLocalDate">2006-01-09</local-date>
-    <local-date-time name="arrayLocalDateTime">2006-01-08T12:00:00</local-date-time>
-    <local-date-time name="arrayLocalDateTime">2006-01-08T13:00:00</local-date-time>
-    <local-time name="arrayLocalTime">2006-01-08T12:00:00</local-time>
-    <local-time name="arrayLocalTime">2006-01-08T13:00:00</local-time>
-    <date-time name="arrayDateTime">2007-12-03T10:15:30Z</date-time>
-    <date-time name="arrayDateTime">2007-12-03T11:15:30Z</date-time>
-    <reference name="arrayReference">xxxxxxxxxxx</reference>
-    <reference name="arrayReference">yyyyyyyyyyy</reference>
-    <link name="link">/root/my-node</link>
-    <set name="arraySet">
-      <string name="myString">a</string>
-      <long name="myString">a</long>
-    </set>
-    <set name="arraySet">
-      <string name="string">a</string>
-      <string name="string">b</string>
-    </set>
-  </data>
+  <id>my-node-id</id>
+  <creator>user:system:rmy</creator>
+  <modifier>user:system:rmy</modifier>
+  <name>my-node-name</name>
+  <parent>/</parent>
+  <createdTime>2014-10-08T14:35:40.000+02:00</createdTime>
+  <modifiedTime>2014-10-08T14:35:40.000+02:00</modifiedTime>
+  <childOrder>_manualordervalue DESC</childOrder>
 </node>

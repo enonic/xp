@@ -1,4 +1,4 @@
-package com.enonic.wem.export.serializer;
+package com.enonic.wem.export.xml.mapper;
 
 import java.net.URL;
 
@@ -11,9 +11,9 @@ import com.enonic.wem.api.xml.DomHelper;
 
 import static org.junit.Assert.*;
 
-public abstract class BaseXmlSerializerTest
+public abstract class BaseXmlMapperTest
 {
-    final String readFromFile( final String fileName )
+    protected final String readFromFile( final String fileName )
         throws Exception
     {
         final URL url = getClass().getResource( fileName );
@@ -26,7 +26,7 @@ public abstract class BaseXmlSerializerTest
         return normalizeXml( xml );
     }
 
-    final void assertXml( final String expectedFileName, final String actualSerialization )
+    protected final void assertXml( final String expectedFileName, final String actualSerialization )
         throws Exception
     {
         final String expectedXml = readFromFile( expectedFileName );

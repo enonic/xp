@@ -204,45 +204,20 @@
     <xs:complexType final="extension restriction" name="node">
         <xs:sequence>
             <xs:element minOccurs="0" name="id" type="xs:string"/>
-            <xs:element minOccurs="0" name="created-time" type="xs:dateTime"/>
-            <xs:element minOccurs="0" name="modified-time" type="xs:dateTime"/>
             <xs:element minOccurs="0" name="creator" type="xs:string"/>
             <xs:element minOccurs="0" name="modifier" type="xs:string"/>
-            <xs:element minOccurs="0" name="data" type="dataSet"/>
+            <xs:element minOccurs="0" name="name" type="xs:string"/>
+            <xs:element minOccurs="0" name="parent" type="xs:string"/>
+            <xs:element minOccurs="0" name="createdTime" type="xs:dateTime"/>
+            <xs:element minOccurs="0" name="modifiedTime" type="xs:dateTime"/>
+            <xs:element minOccurs="0" name="childOrder" type="xs:string"/>
+            <xs:element minOccurs="0" name="propertyTree" type="propertyTree"/>
         </xs:sequence>
     </xs:complexType>
-    <xs:complexType final="extension restriction" name="dataSet">
-        <xs:sequence>
-            <xs:choice maxOccurs="unbounded" minOccurs="0">
-                <xs:element name="property" type="dataProperty"/>
-                <xs:element name="property-set" type="dataSet"/>
-            </xs:choice>
-        </xs:sequence>
-        <xs:attribute name="name" type="xs:string" use="required"/>
+    <xs:complexType name="propertyTree">
+        <xs:sequence/>
     </xs:complexType>
-    <xs:complexType final="extension restriction" name="dataProperty">
-        <xs:simpleContent>
-            <xs:extension base="xs:string">
-                <xs:attribute name="name" type="xs:string" use="required"/>
-                <xs:attribute name="type" type="dataPropertyType" use="required"/>
-            </xs:extension>
-        </xs:simpleContent>
+    <xs:complexType name="xmlProperty">
+        <xs:sequence/>
     </xs:complexType>
-    <xs:simpleType name="dataPropertyType">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="Boolean"/>
-            <xs:enumeration value="String"/>
-            <xs:enumeration value="Data"/>
-            <xs:enumeration value="HtmlPart"/>
-            <xs:enumeration value="Double"/>
-            <xs:enumeration value="Long"/>
-            <xs:enumeration value="Xml"/>
-            <xs:enumeration value="LocalDate"/>
-            <xs:enumeration value="LocalDateTime"/>
-            <xs:enumeration value="LocalTime"/>
-            <xs:enumeration value="DateTime"/>
-            <xs:enumeration value="ContentId"/>
-            <xs:enumeration value="GeoPoint"/>
-        </xs:restriction>
-    </xs:simpleType>
 </xs:schema>
