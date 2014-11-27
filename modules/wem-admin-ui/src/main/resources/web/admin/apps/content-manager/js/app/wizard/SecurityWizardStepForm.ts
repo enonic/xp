@@ -18,6 +18,10 @@ module app.wizard {
         constructor() {
             super("security-wizard-step-form");
 
+            var form = new api.ui.form.Form();
+            var fieldSet = new api.ui.form.Fieldset();
+            form.add(fieldSet);
+
             this.comboBox = new AccessControlComboBox();
             var selectionChangeListener = () => {
                 this.inheritCheckbox.toggleClass('separator', this.comboBox.getSelectedValues().length > 0);
@@ -25,9 +29,10 @@ module app.wizard {
             this.comboBox.onOptionDeselected(selectionChangeListener);
             this.comboBox.onOptionSelected(selectionChangeListener);
 
-            this.inheritCheckbox = new api.ui.Checkbox('Inherit permissions');
             this.inheritedPermissions = new AccessControlListView('inherited');
             this.inheritedPermissions.setItemsEditable(false);
+
+            this.inheritCheckbox = new api.ui.Checkbox('Inherit permissions');
             this.inheritCheckbox.onValueChanged((event: api.ui.ValueChangedEvent) => {
                 var checked = event.getNewValue() == 'true';
                 this.inheritedPermissions.setVisible(checked);
@@ -48,10 +53,12 @@ module app.wizard {
                 }
             });
 
-            this.appendChild(this.comboBox);
-            this.appendChild(this.inheritCheckbox);
-            this.appendChild(this.inheritedPermissions);
+            // add elements to composite element to appear under one label
+            this.comboBox.addAdditionalElement(this.inheritCheckbox);
+            this.comboBox.addAdditionalElement(this.inheritedPermissions);
 
+            fieldSet.add(new api.ui.form.FormItemBuilder(this.comboBox).setLabel("Permissions").build());
+            this.appendChild(form);
         }
 
         layout(content: api.content.Content) {

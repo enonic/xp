@@ -28,7 +28,7 @@ module api.ui.text {
         }
     }
 
-    export class CodeArea extends api.ui.form.CompositeFormInputEl {
+    export class CodeArea extends api.dom.CompositeFormInputEl {
 
         private textArea: api.ui.text.TextArea;
 

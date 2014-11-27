@@ -6,7 +6,7 @@ module api.ui.selector.combobox {
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
     import Option = api.ui.selector.Option;
 
-    export class RichComboBox<OPTION_DISPLAY_VALUE> extends api.ui.form.CompositeFormInputEl {
+    export class RichComboBox<OPTION_DISPLAY_VALUE> extends api.dom.CompositeFormInputEl {
 
         loader: api.util.loader.BaseLoader<any, OPTION_DISPLAY_VALUE>;
 

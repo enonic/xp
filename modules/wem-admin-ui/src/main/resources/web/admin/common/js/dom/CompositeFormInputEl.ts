@@ -1,4 +1,4 @@
-module api.ui.form {
+module api.dom {
 
     export class CompositeFormInputEl extends api.dom.FormInputEl {
 
@@ -11,13 +11,11 @@ module api.ui.form {
             this.addClass("composite-input");
 
             this.wrappedInput = wrappedInput;
-            this.additionalElements = additionalElements;
-
             this.appendChild(this.wrappedInput);
 
-            if (this.additionalElements != null) {
-                this.additionalElements.forEach((element: api.dom.Element) => {
-                    this.appendChild(element);
+            if (additionalElements) {
+                additionalElements.forEach((element: api.dom.Element) => {
+                    this.addAdditionalElement(element);
                 });
             }
         }
@@ -32,6 +30,11 @@ module api.ui.form {
 
         setValue(value: string) {
             this.wrappedInput.setValue(value);
+        }
+
+        addAdditionalElement(element: api.dom.Element) {
+            this.appendChild(element);
+            this.additionalElements.push(element);
         }
     }
 }
