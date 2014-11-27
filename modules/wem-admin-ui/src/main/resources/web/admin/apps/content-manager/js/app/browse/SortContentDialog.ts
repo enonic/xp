@@ -18,7 +18,6 @@ module app.browse {
             tabMenuItem.setActive(true);
             menu.addNavigationItem(tabMenuItem);
             menu.selectNavigationItem(0);
-//            menu.setButtonLabel("fdsfdsf");
             menu.show();
 
             super({
@@ -67,9 +66,6 @@ module app.browse {
                     });
             });
 
-            /*this.onShown(() => {
-             this.contentGrid.getGrid().resizeCanvas();
-             });*/
         }
 
         open() {

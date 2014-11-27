@@ -97,13 +97,32 @@ module app.create {
         }
 
         private filterByParentContent(items: NewContentDialogListItem[]): NewContentDialogListItem[] {
+            var isRootContent: boolean = !this.parentContent;
+            var parentContentIsTemplateFolder = this.parentContent && this.parentContent.getType().isTemplateFolder();
+            var parentContentIsSite = this.parentContent && this.parentContent.getType().isSite();
+            var parentContentIsPageTemplate = this.parentContent && this.parentContent.getType().isPageTemplate();
+
             return items.filter((item: NewContentDialogListItem) => {
                 var contentTypeName = item.getContentType().getContentTypeName();
-                // Don't show page-template content type if parent content is not 'templates'
-                var parentContentIsPageTemplates = (this.parentContent &&
-                                                    this.parentContent.getName().equals(ContentName.fromString("templates")));
-                var grandParentIsSite = this.grandParent && this.grandParent.isSite();
-                return !contentTypeName.isPageTemplate() || (parentContentIsPageTemplates && grandParentIsSite);
+                if (parentContentIsPageTemplate) {
+                    return false; // children not allowed for page-template
+                }
+                else if (isRootContent && (contentTypeName.isTemplateFolder() || contentTypeName.isPageTemplate())) {
+                    return false; // page-template or template-folder not allowed at root level
+                }
+                else if (contentTypeName.isTemplateFolder() && !parentContentIsSite) {
+                    return false; // template-folder only allowed under site
+                }
+                else if (contentTypeName.isPageTemplate() && !parentContentIsTemplateFolder) {
+                    return false; // page-template only allowed under a template-folder
+                }
+                else if (parentContentIsTemplateFolder && !contentTypeName.isPageTemplate()) {
+                    return false; // in a template-folder allow only page-template
+                }
+                else {
+                    return true;
+                }
+
             });
         }
 
@@ -142,8 +161,13 @@ module app.create {
                     var listItems = this.createListItems(contentTypes);
                     this.listItems = this.filterByParentContent(listItems);
 
-                    this.contentList.setItems(this.listItems);
-                    this.recentList.setItems(this.listItems);
+                    if (this.listItems.length > 0) {
+                        this.contentList.setItems(this.listItems);
+                        this.recentList.setItems(this.listItems);
+                    } else {
+                        this.contentList.clearItems();
+                        this.recentList.clearItems();
+                    }
 
 
                 }).catch((reason: any) => {

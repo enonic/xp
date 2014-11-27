@@ -10,6 +10,8 @@ module api.schema.content {
 
         static PAGE_TEMPLATE = new ContentTypeName('system:page-template');
 
+        static TEMPLATE_FOLDER = new ContentTypeName('system:template-folder');
+
         static IMAGE = new ContentTypeName('system:image');
 
         constructor(name: string) {
@@ -24,6 +26,10 @@ module api.schema.content {
 
         isPageTemplate(): boolean {
             return this.equals(ContentTypeName.PAGE_TEMPLATE);
+        }
+
+        isTemplateFolder(): boolean {
+            return this.equals(ContentTypeName.TEMPLATE_FOLDER);
         }
 
         isImage(): boolean {
