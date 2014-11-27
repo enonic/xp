@@ -58,4 +58,5 @@ public class XmlMixinSerializerTest
 
         assertEquals( 1, mixin.getFormItems().size() );
     }
+
 }
