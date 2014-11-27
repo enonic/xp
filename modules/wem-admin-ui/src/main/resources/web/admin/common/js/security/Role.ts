@@ -22,6 +22,23 @@ module api.security {
             this.members.push(member);
         }
 
+        equals(o: api.Equitable): boolean {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, Role)) {
+                return false;
+            }
+
+            var other = <Role> o;
+            return super.equals(o) && api.ObjectHelper.arrayEquals(this.members, other.getMembers());
+        }
+
+        clone(): Role {
+            return this.newBuilder().build();
+        }
+
+        newBuilder(): RoleBuilder {
+            return new RoleBuilder(this);
+        }
+
         static create(): RoleBuilder {
             return new RoleBuilder();
         }
@@ -65,6 +82,11 @@ module api.security {
 
         setDisplayName(displayName: string): RoleBuilder {
             this.displayName = displayName;
+            return this;
+        }
+
+        setMembers(members: PrincipalKey[]): RoleBuilder {
+            this.members = members || [];
             return this;
         }
 

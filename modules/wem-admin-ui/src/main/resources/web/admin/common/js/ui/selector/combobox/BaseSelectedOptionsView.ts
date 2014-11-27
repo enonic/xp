@@ -8,8 +8,8 @@ module api.ui.selector.combobox {
 
         private selectedOptionRemovedListeners: {(removed: SelectedOption<T>): void;}[] = [];
 
-        constructor() {
-            super("selected-options");
+        constructor(className?: string) {
+            super("selected-options" + (className ? " " + className : ""));
         }
 
         setMaximumOccurrences(value: number) {

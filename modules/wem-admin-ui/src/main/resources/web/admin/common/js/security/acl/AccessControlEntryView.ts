@@ -11,7 +11,6 @@ module api.security.acl {
         private accessSelector: AccessSelector;
         private permissionSelector: PermissionSelector;
 
-        private removeClickedListeners: {(event: MouseEvent):void}[] = [];
         private editable: boolean = true;
 
         constructor(ace: AccessControlEntry) {
@@ -70,21 +69,7 @@ module api.security.acl {
             this.permissionSelector.unValueChanged(listener);
         }
 
-        public onRemoveClicked(listener: (event: MouseEvent) => void) {
-            this.removeClickedListeners.push(listener);
-        }
 
-        public unRemoveClicked(listener: (event: MouseEvent) => void) {
-            this.removeClickedListeners = this.removeClickedListeners.filter((current) => {
-                return current !== listener;
-            })
-        }
-
-        private notifyRemoveClicked(event: MouseEvent) {
-            this.removeClickedListeners.forEach((listener) => {
-                listener(event);
-            })
-        }
 
         public setAccessControlEntry(ace: AccessControlEntry, silent?: boolean) {
             this.ace = ace;

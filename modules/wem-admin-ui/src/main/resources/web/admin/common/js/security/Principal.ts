@@ -82,5 +82,9 @@ module api.security {
                    this.type === other.type &&
                    api.ObjectHelper.dateEquals(this.modifiedTime, other.modifiedTime);
         }
+
+        clone(): Principal {
+            return new Principal(this.key, this.displayName, this.modifiedTime);
+        }
     }
 }

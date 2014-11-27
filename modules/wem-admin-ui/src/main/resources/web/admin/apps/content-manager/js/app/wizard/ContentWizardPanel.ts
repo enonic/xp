@@ -181,7 +181,6 @@ module app.wizard {
             }
 
             if (this.contentType.hasContentDisplayNameScript()) {
-
                 this.displayNameScriptExecutor.setScript(this.contentType.getContentDisplayNameScript());
             }
 
@@ -285,7 +284,6 @@ module app.wizard {
                     return schemas;
                 });
         }
-
 
         preLayoutNew(): wemQ.Promise<void> {
             var deferred = wemQ.defer<void>();
@@ -586,7 +584,7 @@ module app.wizard {
 
         private assembleViewedContent(viewedContentBuilder: ContentBuilder): ContentBuilder {
 
-            viewedContentBuilder.setName(this.resolveContentNameForUpdateReuest());
+            viewedContentBuilder.setName(this.resolveContentNameForUpdateRequest());
             viewedContentBuilder.setDisplayName(this.contentWizardHeader.getDisplayName());
             if (this.contentWizardStepForm) {
                 viewedContentBuilder.setData(<api.content.ContentData>this.contentWizardStepForm.getRootDataSet());
@@ -617,7 +615,7 @@ module app.wizard {
             return this.liveFormPanel.getPage();
         }
 
-        private resolveContentNameForUpdateReuest(): ContentName {
+        private resolveContentNameForUpdateRequest(): ContentName {
             if (api.util.StringHelper.isEmpty(this.contentWizardHeader.getName()) && this.getPersistedItem().getName().isUnnamed()) {
                 return this.getPersistedItem().getName();
             }

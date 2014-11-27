@@ -1,4 +1,5 @@
 module app.browse {
+
     import TreeNode = api.ui.treegrid.TreeNode;
     import BrowseItem = api.app.browse.BrowseItem;
     import UserTreeGridItem = app.browse.UserTreeGridItem;
@@ -34,6 +35,10 @@ module app.browse {
                     return elem.getData();
                 }));
             });
+
+            this.onShown((event) => {
+                app.Router.setHash("browse");
+            });
         }
 
         treeNodesToBrowseItems(nodes: TreeNode<UserTreeGridItem>[]): BrowseItem<UserTreeGridItem>[] {
@@ -54,14 +59,14 @@ module app.browse {
         }
 
         private selectIconClass(item: app.browse.UserTreeGridItem): string {
+
             var type: UserTreeGridItemType = item.getType();
+
             switch (type) {
             case UserTreeGridItemType.USER_STORE:
-            {
                 return "icon-address-book icon-large";
-            }
+
             case UserTreeGridItemType.PRINCIPAL:
-            {
                 if (item.getPrincipal().isRole()) {
                     return "icon-user7 icon-large";
 
@@ -72,19 +77,15 @@ module app.browse {
                     return "icon-users icon-large";
                 }
                 break;
-            }
+
             case UserTreeGridItemType.GROUPS:
-            {
-                return "icon-folder icon-large"
-            }
+                return "icon-folder icon-large";
+
             case UserTreeGridItemType.ROLES:
-            {
                 return "icon-folder icon-large";
-            }
+
             case UserTreeGridItemType.USERS:
-            {
                 return "icon-folder icon-large";
-            }
             }
 
         }
