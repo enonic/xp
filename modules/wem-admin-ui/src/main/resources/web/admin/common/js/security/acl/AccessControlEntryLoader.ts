@@ -1,10 +1,9 @@
-module api.ui.security.acl {
+module api.security.acl {
 
     import PrincipalListJson = api.security.PrincipalListJson;
     import PrincipalJson = api.security.PrincipalJson;
     import PrincipalType = api.security.PrincipalType;
     import UserStoreKey = api.security.UserStoreKey;
-    import AccessControlEntry = api.security.acl.AccessControlEntry;
 
     export class FindAccessControlEntriesRequest extends api.security.SecurityResourceRequest<PrincipalListJson, AccessControlEntry[]> {
 

@@ -1,12 +1,10 @@
-module api.ui.security.acl {
+module api.security.acl {
 
     import Principal = api.security.Principal;
     import PrincipalType = api.security.PrincipalType;
     import PrincipalKey = api.security.PrincipalKey;
-    import Permission = api.security.acl.Permission;
-    import AccessControlEntry = api.security.acl.AccessControlEntry;
 
-    export class AccessControlListItem extends api.ui.security.PrincipalViewer {
+    export class AccessControlEntryView extends api.security.PrincipalViewer {
 
         private ace: AccessControlEntry;
 
@@ -30,7 +28,7 @@ module api.ui.security.acl {
             this.appendChild(removeButton);
 
             this.permissionSelector = new PermissionSelector();
-            this.permissionSelector.onValueChanged((event: ValueChangedEvent) => {
+            this.permissionSelector.onValueChanged((event: api.ui.ValueChangedEvent) => {
                 this.toggleClass("dirty", event.getNewValue() != JSON.stringify({
                     allow: this.ace.getAllowedPermissions().sort(),
                     deny: this.ace.getDeniedPermissions().sort()
@@ -38,7 +36,7 @@ module api.ui.security.acl {
             });
             this.appendChild(this.permissionSelector);
 
-            this.accessSelector.onValueChanged((event: ValueChangedEvent) => {
+            this.accessSelector.onValueChanged((event: api.ui.ValueChangedEvent) => {
                 if (Access[event.getNewValue()] == Access.CUSTOM) {
                     this.permissionSelector.show();
                 } else {

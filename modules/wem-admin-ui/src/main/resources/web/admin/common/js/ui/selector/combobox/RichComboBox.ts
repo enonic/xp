@@ -88,6 +88,10 @@ module api.ui.selector.combobox {
             return this.selectedOptionsView.getByOption(option);
         }
 
+        isOptionSelected(option: Option<OPTION_DISPLAY_VALUE>): boolean {
+            return this.comboBox.isOptionSelected(option);
+        }
+
         maximumOccurrencesReached(): boolean {
             return this.comboBox.maximumOccurrencesReached();
         }
@@ -102,6 +106,10 @@ module api.ui.selector.combobox {
 
         deselect(value: OPTION_DISPLAY_VALUE) {
             this.comboBox.deselectOption(this.createOption(value));
+        }
+
+        isSelected(value: OPTION_DISPLAY_VALUE): boolean {
+            return this.getSelectedValues().indexOf(value) > -1;
         }
 
         private createOption(value: OPTION_DISPLAY_VALUE): Option<OPTION_DISPLAY_VALUE> {

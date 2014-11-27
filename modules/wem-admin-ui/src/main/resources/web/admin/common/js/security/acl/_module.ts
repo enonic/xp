@@ -2,3 +2,10 @@
 ///<reference path="AccessControlEntryJson.ts"/>
 ///<reference path="AccessControlEntry.ts"/>
 ///<reference path="AccessControlList.ts"/>
+///<reference path='AccessSelector.ts' />
+///<reference path='PermissionSelector.ts' />
+///<reference path='AccessControlEntryView.ts' />
+///<reference path='AccessControlListView.ts' />
+///<reference path='AccessControlEntryViewer.ts' />
+///<reference path='AccessControlEntryLoader.ts' />
+///<reference path='AccessControlComboBox.ts' />

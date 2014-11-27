@@ -27,3 +27,6 @@
 ///<reference path="DeletePrincipalResultJson.ts"/>
 ///<reference path="DeletePrincipalResultsJson.ts"/>
 ///<reference path="DeletePrincipalRequest.ts"/>
+///<reference path='PrincipalViewer.ts' />
+///<reference path='PrincipalLoader.ts' />
+///<reference path='PrincipalComboBox.ts' />

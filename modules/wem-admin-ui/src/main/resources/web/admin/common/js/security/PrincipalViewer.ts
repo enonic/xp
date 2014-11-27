@@ -1,6 +1,5 @@
-module api.ui.security {
+module api.security {
 
-    import Principal = api.security.Principal;
     import PrincipalType = api.security.PrincipalType;
     import PrincipalKey = api.security.PrincipalKey;
 

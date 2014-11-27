@@ -1,8 +1,6 @@
 module api.ui.selector.list {
 
-    export class ListBox<I> extends api.ui.panel.Panel {
-
-        private ul: api.dom.UlEl;
+    export class ListBox<I> extends api.dom.UlEl {
 
         private items: I[] = [];
 
@@ -13,9 +11,6 @@ module api.ui.selector.list {
 
         constructor(className?: string) {
             super(className);
-
-            this.ul = new api.dom.UlEl();
-            this.appendChild(this.ul);
         }
 
         setItems(items: I[]) {
@@ -65,11 +60,12 @@ module api.ui.selector.list {
         removeItem(...items: I[]) {
             var itemsRemoved: I[] = [];
             this.items = this.items.filter((item) => {
-                var i = items.indexOf(item);
-                if (i > -1) {
-                    this.removeItemView(item);
-                    itemsRemoved.push(item);
-                    return false;
+                for (var i = 0; i < items.length; i++) {
+                    if (this.getItemId(item) == this.getItemId(items[i])) {
+                        this.removeItemView(item);
+                        itemsRemoved.push(item);
+                        return false;
+                    }
                 }
                 return true;
             });
@@ -95,7 +91,7 @@ module api.ui.selector.list {
         }
 
         private layoutList(items: I[]) {
-            this.ul.removeChildren();
+            this.removeChildren();
             for (var i = 0; i < items.length; i++) {
                 this.addItemView(items[i]);
             }
@@ -104,14 +100,14 @@ module api.ui.selector.list {
         private removeItemView(item: I) {
             var itemView = this.itemViews[this.getItemId(item)];
             if (itemView) {
-                this.ul.removeChild(itemView);
+                this.removeChild(itemView);
             }
         }
 
         private addItemView(item: I) {
             var itemView = this.createItemView(item);
             this.itemViews[this.getItemId(item)] = itemView;
-            this.ul.appendChild(itemView);
+            this.appendChild(itemView);
         }
 
         public onItemsAdded(listener: (items: I[]) => void) {
