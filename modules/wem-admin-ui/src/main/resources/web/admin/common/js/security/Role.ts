@@ -14,14 +14,6 @@ module api.security {
             return this.members;
         }
 
-        setMembers(members: PrincipalKey[]): void {
-            this.members = members || [];
-        }
-
-        addMember(member: PrincipalKey): void {
-            this.members.push(member);
-        }
-
         equals(o: api.Equitable): boolean {
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, Role)) {
                 return false;

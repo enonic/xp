@@ -11,6 +11,7 @@ import com.enonic.wem.api.security.CreateRoleParams;
 import com.enonic.wem.api.security.CreateUserParams;
 import com.enonic.wem.api.security.Group;
 import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.security.PrincipalKeys;
 import com.enonic.wem.api.security.PrincipalRelationship;
 import com.enonic.wem.api.security.PrincipalRelationships;
 import com.enonic.wem.api.security.Role;
@@ -474,6 +475,44 @@ public class SecurityServiceImplTest
 
         final AuthenticationInfo authInfo = securityService.authenticate( authToken );
         assertEquals( user.getKey(), authInfo.getUser().getKey() );
+    }
+
+    @Test
+    public void testGetUserMemberships()
+        throws Exception
+    {
+        final PrincipalKey userKey = PrincipalKey.ofUser( SYSTEM, "user1" );
+        final CreateUserParams createUser = CreateUserParams.create().
+            userKey( userKey ).
+            displayName( "User 1" ).
+            email( "user1@enonic.com" ).
+            login( "user1" ).
+            password( "123456" ).
+            build();
+
+        final PrincipalKey groupKey1 = PrincipalKey.ofGroup( SYSTEM, "group-a" );
+        final CreateGroupParams createGroup1 = CreateGroupParams.create().
+            groupKey( groupKey1 ).
+            displayName( "Group A" ).
+            build();
+
+        final PrincipalKey groupKey2 = PrincipalKey.ofGroup( SYSTEM, "group-b" );
+        final CreateGroupParams createGroup2 = CreateGroupParams.create().
+            groupKey( groupKey2 ).
+            displayName( "Group B" ).
+            build();
+
+        securityService.createUser( createUser );
+        securityService.createGroup( createGroup1 );
+        securityService.createGroup( createGroup2 );
+        securityService.addRelationship( PrincipalRelationship.from( groupKey1 ).to( userKey ) );
+        securityService.addRelationship( PrincipalRelationship.from( groupKey2 ).to( userKey ) );
+
+        final PrincipalKeys memberships = securityService.getMemberships( userKey );
+
+        assertTrue( memberships.contains( groupKey1 ) );
+        assertTrue( memberships.contains( groupKey2 ) );
+        assertEquals( 2, memberships.getSize() );
     }
 
     private class CustomAuthenticationToken

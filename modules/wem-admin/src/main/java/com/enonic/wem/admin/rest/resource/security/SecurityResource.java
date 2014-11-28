@@ -99,8 +99,10 @@ public final class SecurityResource
 
     @GET
     @Path("principals/{key: ((role)(:|%3A)([^:(%3A)]+))|((user|group)(:|%3A)([^:(%3A)]+)(:|%3A)([^:(%3A)]+))}")
-    public PrincipalJson getPrincipalByKey( @PathParam("key") final String keyParam )
+    public PrincipalJson getPrincipalByKey( @PathParam("key") final String keyParam,
+                                            @QueryParam("memberships") final String resolveMembershipsParam )
     {
+        final boolean resolveMemberships = "true".equals( resolveMembershipsParam );
         final PrincipalKey principalKey = PrincipalKey.from( keyParam );
         final Optional<? extends Principal> principalResult = securityService.getPrincipal( principalKey );
 
@@ -113,7 +115,16 @@ public final class SecurityResource
         switch ( principalKey.getType() )
         {
             case USER:
-                return new UserJson( (User) principal );
+                if ( resolveMemberships )
+                {
+                    final PrincipalKeys membershipKeys = securityService.getMemberships( principalKey );
+                    final Principals memberships = securityService.getPrincipals( membershipKeys );
+                    return new UserJson( (User) principal, memberships );
+                }
+                else
+                {
+                    return new UserJson( (User) principal );
+                }
 
             case GROUP:
                 final PrincipalKeys groupMembers = getMembers( principalKey );

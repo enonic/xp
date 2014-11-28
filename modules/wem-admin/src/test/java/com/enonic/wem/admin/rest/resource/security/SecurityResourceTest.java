@@ -20,6 +20,7 @@ import com.enonic.wem.api.security.CreateUserParams;
 import com.enonic.wem.api.security.Group;
 import com.enonic.wem.api.security.Principal;
 import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.security.PrincipalKeys;
 import com.enonic.wem.api.security.PrincipalNotFoundException;
 import com.enonic.wem.api.security.PrincipalRelationship;
 import com.enonic.wem.api.security.PrincipalRelationships;
@@ -118,6 +119,44 @@ public class SecurityResourceTest
             get().getAsString();
 
         assertJson( "getPrincipalUserById.json", jsonString );
+    }
+
+    @Test
+    public void getPrincipalUserByIdWithMemberships()
+        throws Exception
+    {
+        final User user1 = User.create().
+            key( PrincipalKey.ofUser( USER_STORE_1, "a" ) ).
+            displayName( "Alice" ).
+            modifiedTime( Instant.now( clock ) ).
+            email( "alice@a.org" ).
+            login( "alice" ).
+            build();
+        final Group group1 = Group.create().
+            key( PrincipalKey.ofGroup( UserStoreKey.system(), "group-a" ) ).
+            displayName( "Group A" ).
+            modifiedTime( Instant.now( clock ) ).
+            build();
+        final Group group2 = Group.create().
+            key( PrincipalKey.ofGroup( UserStoreKey.system(), "group-b" ) ).
+            displayName( "Group B" ).
+            modifiedTime( Instant.now( clock ) ).
+            build();
+
+        final Optional<? extends Principal> userRes = Optional.of( user1 );
+        Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( PrincipalKey.from( "user:local:a" ) ) ).thenReturn(
+            userRes );
+        final PrincipalKeys membershipKeys = PrincipalKeys.from( group1.getKey(), group2.getKey() );
+        Mockito.when( securityService.getMemberships( PrincipalKey.from( "user:local:a" ) ) ).thenReturn( membershipKeys );
+        final Principals memberships = Principals.from( group1, group2 );
+        Mockito.when( securityService.getPrincipals( membershipKeys ) ).thenReturn( memberships );
+
+        String jsonString = request().
+            path( "security/principals/" + URLEncoder.encode( "user:local:a", "UTF-8" ) ).
+            queryParam( "memberships", "true" ).
+            get().getAsString();
+
+        assertJson( "getPrincipalUserByIdWithMemberships.json", jsonString );
     }
 
     @Test

@@ -8,12 +8,15 @@ module api.security {
 
         private loginDisabled: boolean;
 
+        private memberships: Principal[];
+
         constructor(builder: UserBuilder) {
             super(builder.key, builder.displayName, builder.modifiedTime);
             api.util.assert(builder.key.isUser(), 'Expected PrincipalKey of type User');
             this.email = builder.email;
             this.login = builder.login;
             this.loginDisabled = builder.loginDisabled;
+            this.memberships = builder.memberships || [];
         }
 
         getEmail(): string {
@@ -26,6 +29,10 @@ module api.security {
 
         isDisabled(): boolean {
             return this.loginDisabled;
+        }
+
+        getMemberships(): Principal[] {
+            return this.memberships;
         }
 
         static create(): UserBuilder {
@@ -52,6 +59,8 @@ module api.security {
 
         loginDisabled: boolean;
 
+        memberships: Principal[];
+
         constructor(source?: User) {
             if (source) {
                 this.key = source.getKey();
@@ -60,6 +69,9 @@ module api.security {
                 this.login = source.getLogin();
                 this.loginDisabled = source.isDisabled();
                 this.modifiedTime = source.getModifiedTime();
+                this.memberships = source.getMemberships().slice(0);
+            } else {
+                this.memberships = [];
             }
         }
 
@@ -70,6 +82,9 @@ module api.security {
             this.login = json.login;
             this.loginDisabled = json.loginDisabled;
             this.modifiedTime = json.modifiedTime ? new Date(Date.parse(json.modifiedTime)) : null;
+            if (json.memberships) {
+                this.memberships = json.memberships.map((principalJson) => Principal.fromJson(principalJson));
+            }
             return this;
         }
 
@@ -95,6 +110,11 @@ module api.security {
 
         setDisabled(value: boolean): UserBuilder {
             this.loginDisabled = value;
+            return this;
+        }
+
+        setMemberships(memberships: Principal[]): UserBuilder {
+            this.memberships = memberships || [];
             return this;
         }
 

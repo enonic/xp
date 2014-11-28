@@ -8,5 +8,7 @@ module api.security {
 
         loginDisabled: boolean;
 
+        memberships?: PrincipalJson[];
+
     }
 }

@@ -4,14 +4,24 @@ module api.security {
 
         private principalKey: PrincipalKey;
 
+        private includeMemberships: boolean;
+
         constructor(principalKey: PrincipalKey) {
             super();
             super.setMethod("GET");
             this.principalKey = principalKey;
+            this.includeMemberships = false;
+        }
+
+        includeUserMemberships(includeMemberships: boolean): GetPrincipalByKeyRequest {
+            this.includeMemberships = includeMemberships;
+            return this;
         }
 
         getParams(): Object {
-            return {};
+            return {
+                memberships: this.includeMemberships && this.principalKey.isUser()
+            };
         }
 
         getRequestPath(): api.rest.Path {

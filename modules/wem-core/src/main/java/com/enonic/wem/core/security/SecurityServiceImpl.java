@@ -126,7 +126,7 @@ public final class SecurityServiceImpl
     private PrincipalKeys resolveMemberships( final PrincipalKey userKey )
     {
         final Set<PrincipalKey> resolvedMemberships = Sets.newHashSet();
-        final PrincipalKeys directMemberships = queryMemberships( userKey );
+        final PrincipalKeys directMemberships = queryDirectMemberships( userKey );
         resolvedMemberships.addAll( directMemberships.getSet() );
 
         final Set<PrincipalKey> queriedMemberships = Sets.newHashSet();
@@ -138,7 +138,7 @@ public final class SecurityServiceImpl
             {
                 if ( !queriedMemberships.contains( principal ) )
                 {
-                    final PrincipalKeys indirectMemberships = queryMemberships( principal );
+                    final PrincipalKeys indirectMemberships = queryDirectMemberships( principal );
                     newMemberships.addAll( indirectMemberships.getSet() );
                     queriedMemberships.add( principal );
                 }
@@ -150,7 +150,7 @@ public final class SecurityServiceImpl
         return PrincipalKeys.from( resolvedMemberships );
     }
 
-    private PrincipalKeys queryMemberships( final PrincipalKey member )
+    private PrincipalKeys queryDirectMemberships( final PrincipalKey member )
     {
         try
         {
@@ -188,6 +188,12 @@ public final class SecurityServiceImpl
 
         final PrincipalQueryResult result = query( principalQuery.build() );
         return result.getPrincipals();
+    }
+
+    @Override
+    public PrincipalKeys getMemberships( final PrincipalKey userKey )
+    {
+        return queryDirectMemberships( userKey );
     }
 
     @Override
