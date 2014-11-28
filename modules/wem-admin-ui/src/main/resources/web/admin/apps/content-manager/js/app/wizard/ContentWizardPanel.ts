@@ -529,12 +529,12 @@ module app.wizard {
 
             var updateContentRequest = new UpdateContentRequest(this.getPersistedItem().getId()).
                 setDraft(this.persistAsDraft).
-                setContentType(persistedContent.getType()).
                 setForm(persistedContent.getForm()).
                 setContentName(viewedContent.getName()).
                 setDisplayName(viewedContent.getDisplayName()).
                 setContentData(viewedContent.getContentData()).
-                setMetadata(viewedContent.getAllMetadata());
+                setMetadata(viewedContent.getAllMetadata()).
+                setPermissions(viewedContent.getPermissions());
 
             if (this.contentWizardStepForm) {
                 var updateAttachments = UpdateAttachments.create(persistedContent.getContentId(),
