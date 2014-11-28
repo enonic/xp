@@ -329,6 +329,7 @@ module api.content.form.inputtype.image {
                     return createContentRequest.sendAndParse();
 
                 }).then((createdContent: api.content.Content) => {
+                    new api.content.ContentCreatedEvent(createdContent.getContentId()).fire();
 
                     var value = ImageSelectorDisplayValue.fromContentSummary(createdContent, uploadItem);
                     this.comboBox.selectOption({

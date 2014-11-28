@@ -102,6 +102,7 @@ module api.liveedit.image {
                     return createContentRequest.sendAndParse();
 
                 }).then((createdContent: api.content.Content) => {
+                    new api.content.ContentCreatedEvent(createdContent.getContentId()).fire();
 
                     new ImageComponentSetImageEvent().
                         setImageId(createdContent.getContentId()).

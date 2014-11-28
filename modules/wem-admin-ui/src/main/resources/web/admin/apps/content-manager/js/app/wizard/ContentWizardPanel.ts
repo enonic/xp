@@ -469,6 +469,7 @@ module app.wizard {
 
             return new PersistNewContentRoutine(this).setCreateContentRequestProducer(this.produceCreateContentRequest).execute().then((content: Content) => {
                 api.notify.showFeedback('Content was created!');
+                new api.content.ContentCreatedEvent(content.getContentId()).fire();
                 return content;
             });
         }
@@ -519,6 +520,7 @@ module app.wizard {
                         this.notifyContentNamed(content);
                     }
                     api.notify.showFeedback('Content was updated!');
+                    new api.content.ContentUpdatedEvent(content.getContentId()).fire();
 
                     return content;
                 });

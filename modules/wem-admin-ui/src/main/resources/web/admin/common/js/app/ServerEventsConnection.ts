@@ -77,15 +77,15 @@ module api.app {
 
         private translateServerEvent(serverEventJson: ServerEventJson): api.event.Event {
             var eventType = serverEventJson.type;
-            if (eventType === 'ContentCreatedEvent') {
-                return api.content.ContentCreatedEvent.fromJson(serverEventJson.event);
-            }
+            //if (eventType === 'ContentCreatedEvent') {
+            //    return api.content.ContentCreatedEvent.fromJson(serverEventJson.event);
+            //}
             if (eventType === 'ModuleUpdatedEvent') {
                 return api.module.ModuleUpdatedEvent.fromJson(serverEventJson.event);
             }
-            if (eventType === 'ContentUpdatedEvent') {
-                return api.content.ContentUpdatedEvent.fromJson(serverEventJson.event);
-            }
+            //if (eventType === 'ContentUpdatedEvent') {
+            //    return api.content.ContentUpdatedEvent.fromJson(serverEventJson.event);
+            //}
             if (eventType === 'ContentPublishedEvent') {
                 return api.content.ContentPublishedEvent.fromJson(serverEventJson.event);
             }
