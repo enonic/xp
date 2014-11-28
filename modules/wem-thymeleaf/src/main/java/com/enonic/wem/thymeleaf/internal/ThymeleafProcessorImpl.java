@@ -10,6 +10,7 @@ import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceProblemException;
+import com.enonic.wem.portal.PortalContextAccessor;
 import com.enonic.wem.thymeleaf.ThymeleafProcessor;
 
 final class ThymeleafProcessorImpl
@@ -52,6 +53,7 @@ final class ThymeleafProcessorImpl
         {
             final Context context = new Context();
             context.setVariables( this.parameters );
+            context.setVariable( "portal", new ThymeleafPortalHelper( PortalContextAccessor.get()) );
             return this.engine.process( this.view.toString(), context );
         }
         catch ( final RuntimeException e )

@@ -24,8 +24,8 @@ public final class ThymeleafProcessorFactoryImpl
         this.engine = new TemplateEngine();
 
         final Set<IDialect> dialects = Sets.newHashSet();
-        dialects.add( new ThymeleafDialect() );
-        dialects.add( new StandardDialect() );
+        dialects.add( new ExtensionDialectImpl() );
+        dialects.add( new StandardDialectImpl() );
 
         this.engine.setDialects( dialects );
 

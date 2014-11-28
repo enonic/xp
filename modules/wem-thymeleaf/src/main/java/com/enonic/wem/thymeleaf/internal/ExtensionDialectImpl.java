@@ -7,10 +7,10 @@ import org.thymeleaf.standard.StandardDialect;
 
 import com.google.common.collect.Sets;
 
-final class ThymeleafDialect
+final class ExtensionDialectImpl
     extends StandardDialect
 {
-    public ThymeleafDialect()
+    public ExtensionDialectImpl()
     {
         final Set<IProcessor> processors = Sets.newHashSet();
         processors.add( new ComponentProcessor() );

@@ -1,10 +1,10 @@
-exports.render_no_view = function () {
+exports.noViewTest = function () {
 
     return execute('thymeleaf.render', {});
 
 };
 
-exports.render = function () {
+exports.renderTest = function () {
 
     var view = resolve('view/test.html');
     return execute('thymeleaf.render', {
@@ -24,3 +24,14 @@ exports.render = function () {
     });
 
 };
+
+exports.functionsTest = function () {
+
+    var view = resolve('view/functions.html');
+    return execute('thymeleaf.render', {
+        view: view,
+        model: {}
+    });
+
+};
+
