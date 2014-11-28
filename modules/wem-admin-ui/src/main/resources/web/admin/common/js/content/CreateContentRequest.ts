@@ -22,8 +22,11 @@ module api.content {
 
         private permissions: api.security.acl.AccessControlList;
 
+        private inheritPermissions: boolean;
+
         constructor() {
             super();
+            this.inheritPermissions = true;
             super.setMethod("POST");
         }
 
@@ -82,6 +85,11 @@ module api.content {
             return this;
         }
 
+        setInheritPermissions(inheritPermissions: boolean): CreateContentRequest {
+            this.inheritPermissions = inheritPermissions;
+            return this;
+        }
+
         getParams(): Object {
             return {
                 draft: this.draft,
@@ -93,7 +101,8 @@ module api.content {
                 metadata: this.metadataToJson(),
                 displayName: this.displayName,
                 attachments: this.attachmentsToJson(),
-                permissions: this.permissions ? this.permissions.toJson() : undefined
+                permissions: this.permissions ? this.permissions.toJson() : undefined,
+                inheritPermissions: this.inheritPermissions
             };
         }
 

@@ -34,6 +34,8 @@ public final class ContentJson
 
     private final List<AccessControlEntryJson> parentAccessControlList;
 
+    private final boolean inheritPermissions;
+
     public ContentJson( final Content content, final ContentIconUrlResolver iconUrlResolver,
                         final MixinReferencesToFormItemsTransformer mixinReferencesToFormItemsTransformer,
                         final ContentPrincipalsResolver contentPrincipalsResolver )
@@ -71,6 +73,7 @@ public final class ContentJson
         {
             this.parentAccessControlList = Collections.EMPTY_LIST;
         }
+        this.inheritPermissions = content.inheritsPermissions();
     }
 
     private List<AccessControlEntryJson> aclToJson( final AccessControlList acl, final Principals principals )
@@ -111,5 +114,10 @@ public final class ContentJson
     public PageJson getPage()
     {
         return pageJson;
+    }
+
+    public boolean isInheritPermissions()
+    {
+        return inheritPermissions;
     }
 }

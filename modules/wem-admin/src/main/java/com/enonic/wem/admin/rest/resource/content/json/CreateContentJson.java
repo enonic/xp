@@ -33,7 +33,8 @@ public class CreateContentJson
                        @JsonProperty("contentData") final List<DataJson> dataJsonList,
                        @JsonProperty("attachments") final List<AttachmentJson> attachmentJsonList,
                        @JsonProperty("metadata") final List<MetadataJson> metadataJsonList,
-                       @JsonProperty("permissions") final List<AccessControlEntryJson> permissions )
+                       @JsonProperty("permissions") final List<AccessControlEntryJson> permissions,
+                       @JsonProperty("inheritPermissions") final boolean inheritPermissions )
     {
 
         this.createContent = new CreateContentParams();
@@ -69,6 +70,7 @@ public class CreateContentJson
             this.createContent.accessControlList( acl );
         }
 
+        createContent.setInheritPermissions( inheritPermissions );
     }
 
     private AccessControlList parseAcl( final List<AccessControlEntryJson> accessControlListJson )

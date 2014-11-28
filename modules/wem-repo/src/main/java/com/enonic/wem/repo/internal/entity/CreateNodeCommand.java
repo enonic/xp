@@ -43,7 +43,9 @@ public final class CreateNodeCommand
         final AccessControlList paramsAcl = params.getAccessControlList();
         final AccessControlList acl = paramsAcl == null || paramsAcl.isEmpty() ? NodeDefaultAclFactory.create( creator ) : paramsAcl;
         // calculate effective permissions based on parent acl
-        final AccessControlList effectiveAcl = acl.getEffective( getAccessControlList( params.getParent() ) );
+        final AccessControlList effectiveAcl = params.inheritPermissions()
+            ? acl.getEffective( getAccessControlList( params.getParent() ) )
+            : acl.getEffective( AccessControlList.empty() );
 
         final Long manualOrderValue = resolvePotentialManualOrderValue();
 

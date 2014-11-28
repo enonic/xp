@@ -77,6 +77,7 @@ public class ContentNodeTranslator
             attachments( nodeAttachmentsBuilder.build() ).
             indexConfigDocument( indexConfigDocument ).
             accessControlList( params.getAccessControlList() ).
+            inheritPermissions( params.isInheritPermissions() ).
             build();
     }
 
@@ -141,6 +142,7 @@ public class ContentNodeTranslator
             childOrder( node.getChildOrder() ).
             accessControlList( node.getAccessControlList() ).
             effectiveAccessControlList( node.getEffectiveAccessControlList() ).
+            inheritPermissions( node.inheritsPermissions() ).
             thumbnail( thumbnail );
 
         return builder.build();
@@ -174,7 +176,8 @@ public class ContentNodeTranslator
                 indexConfigDocument( indexConfigDocument ).
                 rootDataSet( rootDataSet ).
                 accessControlList( content.getAccessControlList() ).
-                effectiveAcl( content.getEffectiveAccessControlList() );
+                effectiveAcl( content.getEffectiveAccessControlList() ).
+                inheritPermissions( content.inheritsPermissions() );
         };
     }
 

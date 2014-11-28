@@ -66,7 +66,9 @@ public final class UpdateNodeCommand
 
         // calculate effective permissions based on parent acl
         final NodePath parentPath = editResult.path().getParentPath();
-        final AccessControlList effectiveAcl = editResult.getAccessControlList().getEffective( getAccessControlList( parentPath ) );
+        final AccessControlList effectiveAcl = editResult.inheritsPermissions()
+            ? editResult.getAccessControlList().getEffective( getAccessControlList( parentPath ) )
+            : editResult.getAccessControlList().getEffective( AccessControlList.empty() );
 
         final Node.Builder updateNodeBuilder = Node.newNode( persistedNode ).
             modifiedTime( now ).

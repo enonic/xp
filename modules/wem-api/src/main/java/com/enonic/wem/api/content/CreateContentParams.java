@@ -44,6 +44,8 @@ public final class CreateContentParams
 
     private AccessControlList accessControlList;
 
+    private boolean inheritPermissions;
+
     public CreateContentParams contentType( final ContentTypeName value )
     {
         this.contentType = value;
@@ -143,6 +145,12 @@ public final class CreateContentParams
         return this;
     }
 
+    public CreateContentParams setInheritPermissions( final boolean inheritPermissions )
+    {
+        this.inheritPermissions = inheritPermissions;
+        return this;
+    }
+
     public ContentPath getParentContentPath()
     {
         return parentContentPath;
@@ -206,6 +214,11 @@ public final class CreateContentParams
     public AccessControlList getAccessControlList()
     {
         return accessControlList;
+    }
+
+    public boolean isInheritPermissions()
+    {
+        return inheritPermissions;
     }
 
     public void validate()

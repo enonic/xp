@@ -1,5 +1,7 @@
 package com.enonic.wem.api.node;
 
+import java.util.Objects;
+
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.index.IndexConfigDocument;
@@ -23,6 +25,8 @@ public class CreateNodeParams
 
     private final AccessControlList accessControlList;
 
+    private final boolean inheritPermissions;
+
     private CreateNodeParams( Builder builder )
     {
         this.parent = builder.parent;
@@ -33,7 +37,7 @@ public class CreateNodeParams
         this.childOrder = builder.childOrder;
         this.nodeId = builder.nodeId;
         this.accessControlList = builder.accessControlList;
-
+        this.inheritPermissions = builder.inheritPermissions;
     }
 
     public static Builder create()
@@ -93,6 +97,11 @@ public class CreateNodeParams
         return accessControlList;
     }
 
+    public boolean inheritPermissions()
+    {
+        return inheritPermissions;
+    }
+
     public static final class Builder
     {
         private NodePath parent;
@@ -111,8 +120,11 @@ public class CreateNodeParams
 
         private AccessControlList accessControlList;
 
+        private boolean inheritPermissions;
+
         private Builder()
         {
+            this.inheritPermissions = true;
         }
 
         public Builder setNodeId( final NodeId nodeId )
@@ -163,6 +175,12 @@ public class CreateNodeParams
             return this;
         }
 
+        public Builder inheritPermissions( final boolean inheritPermissions )
+        {
+            this.inheritPermissions = inheritPermissions;
+            return this;
+        }
+
         public CreateNodeParams build()
         {
             return new CreateNodeParams( this );
@@ -183,54 +201,21 @@ public class CreateNodeParams
         }
 
         final CreateNodeParams that = (CreateNodeParams) o;
-
-        if ( accessControlList != null ? !accessControlList.equals( that.accessControlList ) : that.accessControlList != null )
-        {
-            return false;
-        }
-        if ( attachments != null ? !attachments.equals( that.attachments ) : that.attachments != null )
-        {
-            return false;
-        }
-        if ( childOrder != null ? !childOrder.equals( that.childOrder ) : that.childOrder != null )
-        {
-            return false;
-        }
-        if ( data != null ? !data.equals( that.data ) : that.data != null )
-        {
-            return false;
-        }
-        if ( indexConfigDocument != null ? !indexConfigDocument.equals( that.indexConfigDocument ) : that.indexConfigDocument != null )
-        {
-            return false;
-        }
-        if ( name != null ? !name.equals( that.name ) : that.name != null )
-        {
-            return false;
-        }
-        if ( !nodeId.equals( that.nodeId ) )
-        {
-            return false;
-        }
-        if ( parent != null ? !parent.equals( that.parent ) : that.parent != null )
-        {
-            return false;
-        }
-
-        return true;
+        return Objects.equals( nodeId, that.nodeId ) &&
+            Objects.equals( parent, that.parent ) &&
+            Objects.equals( name, that.name ) &&
+            Objects.equals( data, that.data ) &&
+            Objects.equals( attachments, that.attachments ) &&
+            Objects.equals( indexConfigDocument, that.indexConfigDocument ) &&
+            Objects.equals( childOrder, that.childOrder ) &&
+            Objects.equals( accessControlList, that.accessControlList ) &&
+            ( inheritPermissions == that.inheritPermissions );
     }
 
     @Override
     public int hashCode()
     {
-        int result = parent != null ? parent.hashCode() : 0;
-        result = 31 * result + ( name != null ? name.hashCode() : 0 );
-        result = 31 * result + ( data != null ? data.hashCode() : 0 );
-        result = 31 * result + ( attachments != null ? attachments.hashCode() : 0 );
-        result = 31 * result + ( indexConfigDocument != null ? indexConfigDocument.hashCode() : 0 );
-        result = 31 * result + ( childOrder != null ? childOrder.hashCode() : 0 );
-        result = 31 * result + nodeId.hashCode();
-        result = 31 * result + ( accessControlList != null ? accessControlList.hashCode() : 0 );
-        return result;
+        return Objects.hash( parent, name, data, attachments, indexConfigDocument, childOrder, nodeId, accessControlList,
+                             inheritPermissions );
     }
 }

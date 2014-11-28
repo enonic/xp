@@ -6,8 +6,6 @@ module api.content {
 
         private name: ContentName;
 
-        private contentType: api.schema.content.ContentTypeName;
-
         private form: api.form.Form;
 
         private contentData: ContentData;
@@ -24,10 +22,13 @@ module api.content {
 
         private permissions: api.security.acl.AccessControlList;
 
+        private inheritPermissions: boolean;
+
         constructor(id: string) {
             super();
             this.id = id;
             this.draft = false;
+            this.inheritPermissions = true;
             this.setMethod("POST");
         }
 
@@ -46,11 +47,6 @@ module api.content {
 
         setContentName(value: ContentName): UpdateContentRequest {
             this.name = value;
-            return this;
-        }
-
-        setContentType(value: api.schema.content.ContentTypeName): UpdateContentRequest {
-            this.contentType = value;
             return this;
         }
 
@@ -84,19 +80,24 @@ module api.content {
             return this;
         }
 
+        setInheritPermissions(inheritPermissions: boolean): UpdateContentRequest {
+            this.inheritPermissions = inheritPermissions;
+            return this;
+        }
+
         getParams(): Object {
             return {
                 contentId: this.id,
                 draft: this.draft,
                 contentName: this.name.isUnnamed() ? this.name.toUnnamed().toStringIncludingHidden() : this.name.toString(),
-                contentType: this.contentType.toString(),
                 form: this.form.toJson(),
                 contentData: this.contentData.toJson(),
                 metadata: (this.metadata || []).map((metadata: Metadata) => metadata.toJson()),
                 displayName: this.displayName,
                 updateAttachments: this.updateAttachments ? this.updateAttachments.toJson() : null,
                 thumbnail: this.thumbnail ? this.thumbnail.toJson() : undefined,
-                permissions: this.permissions ? this.permissions.toJson() : undefined
+                permissions: this.permissions ? this.permissions.toJson() : undefined,
+                inheritPermissions: this.inheritPermissions
             };
         }
 

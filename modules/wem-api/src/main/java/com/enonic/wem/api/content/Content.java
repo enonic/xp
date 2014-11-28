@@ -75,6 +75,8 @@ public class Content
 
     private final AccessControlList effectiveAcl;
 
+    private final boolean inheritPermissions;
+
     protected Content( final BaseBuilder builder )
     {
         Preconditions.checkNotNull( builder.name, "name is required for a Content" );
@@ -112,6 +114,7 @@ public class Content
         this.childOrder = builder.childOrder;
         this.acl = builder.acl == null ? AccessControlList.empty() : builder.acl;
         this.effectiveAcl = builder.effectiveAcl == null ? AccessControlList.empty() : builder.effectiveAcl;
+        this.inheritPermissions = builder.inheritPermissions;
     }
 
     public ContentPath getParentPath()
@@ -272,6 +275,11 @@ public class Content
         return effectiveAcl;
     }
 
+    public boolean inheritsPermissions()
+    {
+        return inheritPermissions;
+    }
+
     @Override
     public void checkIllegalEdit( final Content to )
         throws IllegalEditException
@@ -301,6 +309,7 @@ public class Content
         s.add( "owner", owner );
         s.add( "acl", acl );
         s.add( "effectiveAcl", effectiveAcl );
+        s.add( "inheritPermissions", inheritPermissions );
         return s.toString();
     }
 
@@ -361,10 +370,13 @@ public class Content
 
         AccessControlList effectiveAcl;
 
+        boolean inheritPermissions;
+
         BaseBuilder()
         {
             this.contentData = new ContentData();
             this.metadata = new ArrayList<>();
+            this.inheritPermissions = true;
         }
 
         BaseBuilder( final Content content )
@@ -389,6 +401,7 @@ public class Content
             this.childOrder = content.childOrder;
             this.acl = content.acl;
             this.effectiveAcl = content.effectiveAcl;
+            this.inheritPermissions = content.inheritPermissions;
         }
     }
 
@@ -472,6 +485,14 @@ public class Content
             changes.recordChange(
                 newPossibleChange( "effectiveAccessControlList" ).from( this.original.effectiveAcl ).to( this.effectiveAcl ).build() );
             this.effectiveAcl = effectiveAcl;
+            return this;
+        }
+
+        public EditBuilder inheritPermissions( final boolean inheritPermissions )
+        {
+            changes.recordChange(
+                newPossibleChange( "inheritPermissions" ).from( this.original.inheritPermissions ).to( this.inheritPermissions ).build() );
+            this.inheritPermissions = inheritPermissions;
             return this;
         }
 
@@ -652,6 +673,12 @@ public class Content
         public Builder<BUILDER, C> effectiveAccessControlList( final AccessControlList effectiveAcl )
         {
             this.effectiveAcl = effectiveAcl;
+            return this;
+        }
+
+        public Builder<BUILDER, C> inheritPermissions( final boolean inheritPermissions )
+        {
+            this.inheritPermissions = inheritPermissions;
             return this;
         }
 

@@ -59,6 +59,8 @@ public final class Node
 
     private final AccessControlList effectiveAcl;
 
+    private final boolean inheritPermissions;
+
     private Node( final BaseBuilder builder )
     {
         this.id = builder.id;
@@ -97,6 +99,7 @@ public final class Node
         this.manualOrderValue = builder.manualOrderValue;
         this.acl = builder.acl == null ? AccessControlList.empty() : builder.acl;
         this.effectiveAcl = builder.effectiveAcl == null ? AccessControlList.empty() : builder.effectiveAcl;
+        this.inheritPermissions = builder.inheritPermissions;
     }
 
     public NodeName name()
@@ -199,6 +202,11 @@ public final class Node
         return effectiveAcl;
     }
 
+    public boolean inheritsPermissions()
+    {
+        return inheritPermissions;
+    }
+
     public void validateForIndexing()
     {
         Preconditions.checkNotNull( this.id, "Id must be set" );
@@ -275,6 +283,8 @@ public final class Node
 
         AccessControlList effectiveAcl;
 
+        boolean inheritPermissions;
+
         private BaseBuilder()
         {
         }
@@ -294,12 +304,14 @@ public final class Node
             this.manualOrderValue = node.manualOrderValue;
             this.acl = node.acl;
             this.effectiveAcl = node.effectiveAcl;
+            this.inheritPermissions = node.inheritPermissions;
         }
 
         private BaseBuilder( final NodeId id, final NodeName name )
         {
             this.id = id;
             this.name = name;
+            this.inheritPermissions = true;
         }
     }
 
@@ -323,6 +335,8 @@ public final class Node
         private AccessControlList acl;
 
         private AccessControlList effectiveAcl;
+
+        private boolean inheritPermissions;
 
         public Builder()
         {
@@ -349,6 +363,7 @@ public final class Node
             this.manualOrderValue = node.manualOrderValue;
             this.acl = node.acl;
             this.effectiveAcl = node.effectiveAcl;
+            this.inheritPermissions = node.inheritPermissions;
         }
 
         public Builder( final NodeId id, final NodeName name )
@@ -498,6 +513,12 @@ public final class Node
             return this;
         }
 
+        public Builder inheritPermissions( final boolean inheritPermissions )
+        {
+            this.inheritPermissions = inheritPermissions;
+            return this;
+        }
+
         public Node build()
         {
             BaseBuilder baseBuilder = new BaseBuilder();
@@ -516,6 +537,7 @@ public final class Node
             baseBuilder.manualOrderValue = this.manualOrderValue;
             baseBuilder.acl = this.acl;
             baseBuilder.effectiveAcl = this.effectiveAcl;
+            baseBuilder.inheritPermissions = this.inheritPermissions;
 
             return new Node( baseBuilder );
         }
@@ -645,6 +667,14 @@ public final class Node
             return this;
         }
 
+        public EditBuilder inheritPermissions( final boolean inheritPermissions )
+        {
+            this.inheritPermissions = inheritPermissions;
+            changes.recordChange( newPossibleChange( "inheritPermissions" ).from( this.originalNode.inheritPermissions ).to(
+                this.inheritPermissions ).build() );
+            return this;
+        }
+
         public boolean isChanges()
         {
             return this.changes.isChanges();
@@ -735,6 +765,11 @@ public final class Node
         {
             return false;
         }
+        if ( inheritPermissions != node.inheritPermissions )
+        {
+            return false;
+        }
+
         return true;
     }
 
@@ -742,6 +777,6 @@ public final class Node
     public int hashCode()
     {
         return Objects.hash( id, name, parent, path, modifier, creator, hasChildren, createdTime, data, modifiedTime, indexConfigDocument,
-                             attachments, childOrder, manualOrderValue, acl, effectiveAcl );
+                             attachments, childOrder, manualOrderValue, acl, effectiveAcl, inheritPermissions );
     }
 }

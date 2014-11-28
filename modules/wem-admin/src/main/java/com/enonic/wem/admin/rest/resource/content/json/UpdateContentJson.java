@@ -33,13 +33,13 @@ public class UpdateContentJson
 
     @JsonCreator
     UpdateContentJson( @JsonProperty("contentId") final String contentId, @JsonProperty("contentName") final String contentName,
-                       @JsonProperty("contentType") final String contentType,
                        @JsonProperty("contentData") final List<DataJson> contentDataJsonList,
                        @JsonProperty("metadata") final List<MetadataJson> metadataJsonList, @JsonProperty("form") final FormJson form,
                        @JsonProperty("displayName") final String displayName,
                        @JsonProperty("updateAttachments") final UpdateAttachmentsJson updateAttachments,
                        @JsonProperty("thumbnail") final ThumbnailJson thumbnail, @JsonProperty("draft") final String draft,
-                       @JsonProperty("permissions") final List<AccessControlEntryJson> permissions )
+                       @JsonProperty("permissions") final List<AccessControlEntryJson> permissions,
+                       @JsonProperty("inheritPermissions") final boolean inheritPermissions )
     {
         this.contentName = ContentName.from( contentName );
 
@@ -56,7 +56,8 @@ public class UpdateContentJson
                     contentData( contentData ).
                     metadata( metadataList ).
                     draft( Boolean.valueOf( draft ) ).
-                    displayName( displayName );
+                    displayName( displayName ).
+                    inheritPermissions( inheritPermissions );
                 if ( thumbnail != null )
                 {
                     editContentBuilder = editContentBuilder.thumbnail( thumbnail.getThumbnail() );
