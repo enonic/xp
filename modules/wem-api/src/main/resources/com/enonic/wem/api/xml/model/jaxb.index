@@ -7,6 +7,3 @@ XmlPartDescriptor
 XmlImageDescriptor
 XmlRelationshipType
 XmlMetadataSchema
-XmlNode
-XmlProperty
-XmlPropertyTree

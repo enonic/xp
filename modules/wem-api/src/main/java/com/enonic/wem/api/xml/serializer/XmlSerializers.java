@@ -5,7 +5,6 @@ import com.enonic.wem.api.xml.model.XmlLayoutDescriptor;
 import com.enonic.wem.api.xml.model.XmlMetadataSchema;
 import com.enonic.wem.api.xml.model.XmlMixin;
 import com.enonic.wem.api.xml.model.XmlModule;
-import com.enonic.wem.api.xml.model.XmlNode;
 import com.enonic.wem.api.xml.model.XmlPageDescriptor;
 import com.enonic.wem.api.xml.model.XmlPartDescriptor;
 import com.enonic.wem.api.xml.model.XmlRelationshipType;
@@ -27,8 +26,6 @@ public final class XmlSerializers
     private final static XmlSerializer<XmlPartDescriptor> PART_DESCRIPTOR = XmlSerializer.create( XmlPartDescriptor.class );
 
     private final static XmlSerializer<XmlPageDescriptor> PAGE_DESCRIPTOR = XmlSerializer.create( XmlPageDescriptor.class );
-
-    private final static XmlSerializer<XmlNode> NODE = XmlSerializer.create( XmlNode.class );
 
     public static XmlSerializer<XmlModule> module()
     {
@@ -70,8 +67,4 @@ public final class XmlSerializers
         return LAYOUT_DESCRIPTOR;
     }
 
-    public static XmlSerializer<XmlNode> node()
-    {
-        return NODE;
-    }
 }

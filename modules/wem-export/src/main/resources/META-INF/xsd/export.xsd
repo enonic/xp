@@ -17,9 +17,13 @@
   </xs:annotation>
 
   <xs:complexType name="node">
-    <xs:sequence>
-      <xs:element name="data" type="propertyTree"/>
-    </xs:sequence>
+    <xs:all>
+      <xs:element minOccurs="0" name="id" type="xs:string"/>
+      <xs:element minOccurs="1" name="name" type="xs:string"/>
+      <xs:element minOccurs="0" name="parent" type="xs:string"/>
+      <xs:element minOccurs="0" name="childOrder" type="xs:string"/>
+      <xs:element name="properties" type="propertyTree"/>
+    </xs:all>
   </xs:complexType>
 
   <xs:complexType name="propertyTree">
@@ -32,7 +36,18 @@
       <xs:choice>
         <xs:element name="string" type="stringProperty"/>
         <xs:element name="double" type="doubleProperty"/>
+        <xs:element name="long" type="longProperty"/>
         <xs:element name="geoPoint" type="geoPointProperty"/>
+        <xs:element name="boolean" type="booleanProperty"/>
+        <xs:element name="dateTime" type="dateTimeProperty"/>
+        <xs:element name="localDateTime" type="dateTimeProperty"/>
+        <xs:element name="localDate" type="dateProperty"/>
+        <xs:element name="localTime" type="timeProperty"/>
+        <xs:element name="binary" type="binaryProperty"/>
+        <xs:element name="reference" type="referenceProperty"/>
+        <xs:element name="link" type="linkProperty"/>
+        <xs:element name="htmlPart" type="htmlPartProperty"/>
+        <xs:element name="xml" type="xmlProperty"/>
         <xs:element name="property-set" type="propertySet"/>
       </xs:choice>
     </xs:sequence>
@@ -58,6 +73,14 @@
     </xs:simpleContent>
   </xs:complexType>
 
+  <xs:complexType name="geoPointProperty">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attributeGroup ref="property"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
   <xs:complexType name="doubleProperty">
     <xs:simpleContent>
       <xs:extension base="xs:double">
@@ -66,7 +89,81 @@
     </xs:simpleContent>
   </xs:complexType>
 
-  <xs:complexType name="geoPointProperty">
+  <xs:complexType name="longProperty">
+    <xs:simpleContent>
+      <xs:extension base="xs:long">
+        <xs:attributeGroup ref="property"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="booleanProperty">
+    <xs:simpleContent>
+      <xs:extension base="xs:boolean">
+        <xs:attributeGroup ref="property"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="dateTimeProperty">
+    <xs:simpleContent>
+      <xs:extension base="xs:dateTime">
+        <xs:attributeGroup ref="property"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="dateProperty">
+    <xs:simpleContent>
+      <xs:extension base="xs:date">
+        <xs:attributeGroup ref="property"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="timeProperty">
+    <xs:simpleContent>
+      <xs:extension base="xs:time">
+        <xs:attributeGroup ref="property"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="binaryProperty">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attributeGroup ref="property"/>
+        <xs:attribute name="mimeType" type="xs:string" use="required"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="htmlPartProperty">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attributeGroup ref="property"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="xmlProperty">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attributeGroup ref="property"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="linkProperty">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attributeGroup ref="property"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+
+  <xs:complexType name="referenceProperty">
     <xs:simpleContent>
       <xs:extension base="xs:string">
         <xs:attributeGroup ref="property"/>

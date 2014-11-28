@@ -1,18 +1,12 @@
-package com.enonic.wem.export.xml.mapper;
+package com.enonic.wem.export.internal.xml.mapper;
 
-import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeId;
-import com.enonic.wem.api.node.NodeName;
-import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.api.xml.model.XmlNode;
 import com.enonic.wem.export.ExportNodeException;
-import com.enonic.wem.export.xml.util.InstantConverter;
-
+import com.enonic.wem.export.internal.xml.XmlNode;
 
 public class XmlNodeMapper
 {
+
     public static XmlNode toXml( final Node node )
     {
         try
@@ -32,15 +26,12 @@ public class XmlNodeMapper
         xml.setId( node.id().toString() );
         xml.setParent( node.parent().toString() );
         xml.setName( node.name().toString() );
-        xml.setCreator( node.creator().toString() );
-        xml.setModifier( node.modifier().toString() );
-        xml.setCreatedTime( InstantConverter.convertToXmlSerializable( node.getCreatedTime() ) );
-        xml.setModifiedTime( InstantConverter.convertToXmlSerializable( node.getCreatedTime() ) );
         xml.setChildOrder( getAsStringOrNull( node.getChildOrder() ) );
-
+        //  xml.setData( XmlPropertyTreeMapper.toXml( node.getPropertyTree() ) );
         return xml;
     }
 
+    /*
     public static void fromXml( final XmlNode xml, final Node.Builder builder )
     {
         try
@@ -64,7 +55,7 @@ public class XmlNodeMapper
             creator( PrincipalKey.from( xml.getCreator() ) ).
             modifier( PrincipalKey.from( xml.getModifier() ) );
     }
-
+*/
 
     private static String getAsStringOrNull( final Object object )
     {
@@ -75,6 +66,5 @@ public class XmlNodeMapper
 
         return object.toString();
     }
-
 
 }

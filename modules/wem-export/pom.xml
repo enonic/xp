@@ -45,6 +45,9 @@
             <goals>
               <goal>generate</goal>
             </goals>
+            <configuration>
+              <specVersion>2.1</specVersion>
+            </configuration>
           </execution>
         </executions>
         <configuration>

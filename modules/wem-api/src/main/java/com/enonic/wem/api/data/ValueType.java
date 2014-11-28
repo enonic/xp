@@ -10,7 +10,7 @@ public abstract class ValueType<T>
 
     private final JavaTypeConverter<T> converter;
 
-    public ValueType( final java.lang.String name, final JavaTypeConverter<T> converter )
+    ValueType( final java.lang.String name, final JavaTypeConverter<T> converter )
     {
         this.name = name;
         this.classType = converter.getType();
@@ -110,7 +110,7 @@ public abstract class ValueType<T>
         }
     }
 
-    static class String
+    public static class String
         extends ValueType<java.lang.String>
     {
         String()

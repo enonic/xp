@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<node xmlns="urn:enonic:xp:export:1.0">
+  <id>abc</id>
+  <name>my-node-name</name>
+  <parent>/</parent>
+  <childOrder>_manualordervalue DESC</childOrder>
+</node>

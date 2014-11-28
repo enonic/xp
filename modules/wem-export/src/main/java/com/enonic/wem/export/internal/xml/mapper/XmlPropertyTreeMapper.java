@@ -1,15 +1,13 @@
-package com.enonic.wem.export.xml.mapper;
+package com.enonic.wem.export.internal.xml.mapper;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import com.enonic.wem.api.data2.Property;
-import com.enonic.wem.api.data2.PropertyArrayJson;
 import com.enonic.wem.api.data2.PropertyTree;
-import com.enonic.wem.api.xml.model.XmlPropertyTree;
 import com.enonic.wem.export.ExportNodeException;
+import com.enonic.wem.export.internal.xml.ObjectFactory;
+import com.enonic.wem.export.internal.xml.XmlPropertyTree;
 
-public class XmlPropertyTreeMapper
+class XmlPropertyTreeMapper
 {
 
     public static XmlPropertyTree toXml( final PropertyTree propertyTree )
@@ -26,16 +24,18 @@ public class XmlPropertyTreeMapper
 
     private static XmlPropertyTree doSerializePropertyTree( final PropertyTree propertyTree )
     {
+        final ObjectFactory objectFactory = new ObjectFactory();
+
         final XmlPropertyTree xml = new XmlPropertyTree();
 
-        final List<PropertyArrayJson> list = new ArrayList<>();
         for ( final Property property : propertyTree.getProperties() )
         {
-            //list.add( PropertyArrayJson.toJson( propertyArray ) );
+            xml.getList().add( XmlPropertyMapper.toXml( property, objectFactory ) );
         }
 
-        return xml;
+        // xml.setProperties( xmlProperties );
 
+        return xml;
     }
 
 
