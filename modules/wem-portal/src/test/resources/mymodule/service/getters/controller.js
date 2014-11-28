@@ -1,24 +1,24 @@
-function getMethod(context) {
-    return context.request.method;
+function getMethod(req) {
+    return req.method;
 }
 
-function getContentName(context) {
-    return context.content.name;
+function getContentName(req) {
+    return req.content.name;
 }
 
-function getPageTemplateKey(context) {
-    return context.content.getPage().template;
+function getPageTemplateKey(req) {
+    return req.content.page.template;
 }
 
-function getThumbnailSize(context) {
-    return context.content.thumbnail.size;
+function getThumbnailSize(req) {
+    return req.content.thumbnail.size;
 }
 
-exports.get = function (context) {
-    var body = getMethod(context);
-    body += ',' + getContentName(context);
-    body += ',' + getPageTemplateKey(context);
-    body += ',' + getThumbnailSize(context);
+exports.get = function (req) {
+    var body = getMethod(req);
+    body += ',' + getContentName(req);
+    body += ',' + getPageTemplateKey(req);
+    body += ',' + getThumbnailSize(req);
 
     return {
         body: body

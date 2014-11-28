@@ -2,29 +2,83 @@ package com.enonic.wem.portal;
 
 import java.util.Map;
 
-public interface PortalResponse
+import com.google.common.collect.Maps;
+
+public final class PortalResponse
 {
     public final static int STATUS_OK = 200;
 
     public final static int STATUS_METHOD_NOT_ALLOWED = 405;
 
-    public int getStatus();
+    private int status = STATUS_OK;
 
-    public void setStatus( int status );
+    private String contentType = "text/plain; charset=utf-8";
 
-    public String getContentType();
+    private Object body;
 
-    public void setContentType( String contentType );
+    private final Map<String, String> headers;
 
-    public Object getBody();
+    private boolean postProcess = true;
 
-    public void setBody( Object body );
+    public PortalResponse()
+    {
+        this.headers = Maps.newHashMap();
+    }
 
-    public Map<String, String> getHeaders();
+    public int getStatus()
+    {
+        return this.status;
+    }
 
-    public void header( final String name, final String value );
+    public void setStatus( final int status )
+    {
+        this.status = status;
+    }
 
-    public boolean isPostProcess();
+    public String getContentType()
+    {
+        return this.contentType;
+    }
 
-    public void setPostProcess( boolean postProcess );
+    public void setContentType( String contentType )
+    {
+        if ( contentType != null )
+        {
+            if ( contentType.indexOf( "charset" ) < 1 && contentType.startsWith( "text/html" ) )
+            {
+                contentType += "; charset=utf-8";
+            }
+        }
+        this.contentType = contentType;
+    }
+
+    public Object getBody()
+    {
+        return this.body;
+    }
+
+    public void setBody( final Object body )
+    {
+        this.body = body;
+    }
+
+    public Map<String, String> getHeaders()
+    {
+        return this.headers;
+    }
+
+    public void addHeader( final String name, final String value )
+    {
+        this.headers.put( name, value );
+    }
+
+    public boolean isPostProcess()
+    {
+        return postProcess;
+    }
+
+    public void setPostProcess( final boolean postProcess )
+    {
+        this.postProcess = postProcess;
+    }
 }

@@ -9,8 +9,8 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 
+import com.enonic.wem.portal.PortalResponse;
 import com.enonic.wem.portal.internal.controller.PortalContextImpl;
-import com.enonic.wem.portal.internal.controller.PortalResponseImpl;
 import com.enonic.wem.portal.postprocess.PostProcessInjection;
 import com.enonic.wem.portal.postprocess.PostProcessInstruction;
 
@@ -32,7 +32,7 @@ public class PostProcessorImplTest
         postProcessor.setInstructions( instructions );
         postProcessor.setInjections( Lists.newArrayList() );
 
-        final PortalResponseImpl resp = new PortalResponseImpl();
+        final PortalResponse resp = new PortalResponse();
         resp.setPostProcess( true );
         resp.setBody( html );
 
@@ -61,7 +61,7 @@ public class PostProcessorImplTest
         postProcessor.setInjections( injections );
         postProcessor.setInstructions( Lists.newArrayList() );
 
-        final PortalResponseImpl resp = new PortalResponseImpl();
+        final PortalResponse resp = new PortalResponse();
         resp.setPostProcess( true );
         resp.setBody( html );
 

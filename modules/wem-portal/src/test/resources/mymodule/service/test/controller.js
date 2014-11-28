@@ -1,2 +1,5 @@
-exports.get = function (context) {
+exports.get = function (req) {
+    return {
+        status: 200
+    }
 };

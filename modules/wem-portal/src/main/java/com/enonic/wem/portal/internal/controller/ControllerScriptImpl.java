@@ -1,9 +1,14 @@
 package com.enonic.wem.portal.internal.controller;
 
+import java.util.Map;
+
 import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.PortalContextAccessor;
+import com.enonic.wem.portal.PortalRequest;
+import com.enonic.wem.portal.PortalResponse;
 import com.enonic.wem.portal.internal.postprocess.PostProcessor;
 import com.enonic.wem.script.ScriptExports;
+import com.enonic.wem.script.internal.convert.Converters;
 
 final class ControllerScriptImpl
     implements ControllerScript
@@ -36,24 +41,62 @@ final class ControllerScriptImpl
 
     private void doExecute( final PortalContext context )
     {
+        final PortalRequest request = context;
         final String method = context.getRequest().getMethod();
         final String methodName = method.toLowerCase();
 
         if ( !this.scriptExports.hasProperty( methodName ) )
         {
-            methodNotAllowed( context );
+            populateResponse( context.getResponse(), null );
             return;
         }
 
-        final Object result = this.scriptExports.executeMethod( methodName, context );
-        if ( result != null )
+        final Object result = this.scriptExports.executeMethod( methodName, request );
+        populateResponse( context.getResponse(), result );
+    }
+
+    private void populateResponse( final PortalResponse response, final Object result )
+    {
+        response.setStatus( PortalResponse.STATUS_METHOD_NOT_ALLOWED );
+        if ( result instanceof Map )
         {
-            this.scriptExports.applyToBean( context.getResponse(), result );
+            populateFromMap( response, (Map<?, ?>) result );
         }
     }
 
-    private void methodNotAllowed( final PortalContext context )
+    private void populateFromMap( final PortalResponse response, final Map<?, ?> map )
     {
-        context.getResponse().setStatus( PortalResponseImpl.STATUS_METHOD_NOT_ALLOWED );
+        populateStatus( response, Converters.convert( map.get( "status" ), Integer.class ) );
+        populateContentType( response, Converters.convert( map.get( "contentType" ), String.class ) );
+        populateBody( response, map.get( "body" ) );
+        populateHeaders( response, map.get( "headers" ) );
+    }
+
+    private void populateStatus( final PortalResponse response, final Integer value )
+    {
+        response.setStatus( value != null ? value : PortalResponse.STATUS_OK );
+    }
+
+    private void populateContentType( final PortalResponse response, final String value )
+    {
+        response.setContentType( value != null ? value : "text/html" );
+    }
+
+    private void populateBody( final PortalResponse response, final Object value )
+    {
+        response.setBody( value );
+    }
+
+    private void populateHeaders( final PortalResponse response, final Object value )
+    {
+        if ( !( value instanceof Map ) )
+        {
+            return;
+        }
+
+        for ( final Map.Entry<?, ?> entry : ( (Map<?, ?>) value ).entrySet() )
+        {
+            response.addHeader( entry.getKey().toString(), entry.getValue().toString() );
+        }
     }
 }

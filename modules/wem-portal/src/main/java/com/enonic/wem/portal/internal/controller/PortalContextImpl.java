@@ -20,7 +20,7 @@ public final class PortalContextImpl
 {
     private PortalRequestImpl request;
 
-    private PortalResponseImpl response;
+    private PortalResponse response;
 
     private RenderingMode mode;
 
@@ -36,7 +36,7 @@ public final class PortalContextImpl
 
     public PortalContextImpl()
     {
-        this.response = new PortalResponseImpl();
+        this.response = new PortalResponse();
     }
 
     @Override
@@ -56,7 +56,7 @@ public final class PortalContextImpl
         return this.response;
     }
 
-    public void setResponse( final PortalResponseImpl response )
+    public void setResponse( final PortalResponse response )
     {
         this.response = response;
     }

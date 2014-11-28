@@ -25,8 +25,8 @@ import com.enonic.wem.api.rendering.Renderable;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.portal.PortalContext;
+import com.enonic.wem.portal.PortalResponse;
 import com.enonic.wem.portal.internal.controller.PortalContextImpl;
-import com.enonic.wem.portal.internal.controller.PortalResponseImpl;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
 import com.enonic.wem.portal.internal.rendering.RendererFactory;
@@ -50,7 +50,7 @@ public class ComponentInstructionTest
         PageComponentService pageComponentService = Mockito.mock( PageComponentService.class );
         ComponentInstruction instruction = new ComponentInstruction( rendererFactory, pageComponentService );
 
-        PortalResponseImpl resp = new PortalResponseImpl();
+        PortalResponse resp = new PortalResponse();
         resp.setPostProcess( true );
         PortalContextImpl context = new PortalContextImpl();
         context.setResponse( resp );
@@ -74,7 +74,7 @@ public class ComponentInstructionTest
         doReturn( component ).when( pageComponentService ).getByName( isA( ModuleKey.class ), isA( ComponentName.class ) );
         ComponentInstruction instruction = new ComponentInstruction( rendererFactory, pageComponentService );
 
-        PortalResponseImpl resp = new PortalResponseImpl();
+        PortalResponse resp = new PortalResponse();
         resp.setPostProcess( true );
         PortalContextImpl context = new PortalContextImpl();
         context.setResponse( resp );

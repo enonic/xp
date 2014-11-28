@@ -4,10 +4,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.page.text.TextComponent;
+import com.enonic.wem.portal.PortalResponse;
 import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.portal.internal.controller.PortalContextImpl;
 import com.enonic.wem.portal.internal.controller.PortalRequestImpl;
-import com.enonic.wem.portal.internal.controller.PortalResponseImpl;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 
 import static org.junit.Assert.*;
@@ -22,7 +22,7 @@ public class TextRendererTest
 
     private PortalRequestImpl jsHttpRequest;
 
-    private PortalResponseImpl jsHttpResponse;
+    private PortalResponse jsHttpResponse;
 
     @Before
     public void before()
@@ -30,7 +30,7 @@ public class TextRendererTest
         jsHttpRequest = new PortalRequestImpl();
         jsHttpRequest.setMode( RenderingMode.LIVE );
 
-        jsHttpResponse = new PortalResponseImpl();
+        jsHttpResponse = new PortalResponse();
 
         context = new PortalContextImpl();
         context.setRequest( jsHttpRequest );
