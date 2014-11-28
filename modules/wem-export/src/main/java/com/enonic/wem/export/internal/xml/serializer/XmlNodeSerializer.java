@@ -13,7 +13,7 @@ import com.enonic.wem.api.xml.XmlException;
 import com.enonic.wem.export.internal.xml.ObjectFactory;
 import com.enonic.wem.export.internal.xml.XmlNode;
 
-final class XmlNodeSerializer
+public final class XmlNodeSerializer
 {
     private final JAXBContext context;
 

@@ -80,8 +80,7 @@ class XmlPropertyMapper
             return LinkPropertyMapper.map( property, objectFactory );
         }
 
-        return null;
-
+        throw new ExportNodeException( "Unknown property-type: " + property.getType() );
     }
 
 

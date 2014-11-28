@@ -12,6 +12,8 @@ public class FindNodesByParentParams
 
     private final ChildOrder childOrder;
 
+    private final boolean countOnly;
+
     private static final Integer DEFAULT_SIZE = 500;
 
     private FindNodesByParentParams( Builder builder )
@@ -20,6 +22,7 @@ public class FindNodesByParentParams
         size = builder.size;
         from = builder.from;
         childOrder = builder.childOrder;
+        countOnly = builder.countOnly;
     }
 
     public NodePath getParentPath()
@@ -42,11 +45,15 @@ public class FindNodesByParentParams
         return childOrder;
     }
 
+    public boolean isCountOnly()
+    {
+        return countOnly;
+    }
+
     public static Builder create()
     {
         return new Builder();
     }
-
 
     public static final class Builder
     {
@@ -57,6 +64,8 @@ public class FindNodesByParentParams
         private Integer from = 0;
 
         private ChildOrder childOrder;
+
+        private boolean countOnly = false;
 
         private Builder()
         {
@@ -85,6 +94,13 @@ public class FindNodesByParentParams
             this.childOrder = childOrder;
             return this;
         }
+
+        public Builder countOnly( final boolean countOnly )
+        {
+            this.countOnly = countOnly;
+            return this;
+        }
+
 
         public FindNodesByParentParams build()
         {

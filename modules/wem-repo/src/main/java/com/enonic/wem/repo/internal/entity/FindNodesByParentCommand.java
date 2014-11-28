@@ -2,13 +2,13 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.index.ChildOrder;
-import com.enonic.wem.api.query.expr.QueryExpr;
-import com.enonic.wem.api.node.NodeQuery;
-import com.enonic.wem.repo.internal.index.IndexContext;
-import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
+import com.enonic.wem.api.node.NodeQuery;
 import com.enonic.wem.api.node.Nodes;
+import com.enonic.wem.api.query.expr.QueryExpr;
+import com.enonic.wem.repo.internal.index.IndexContext;
+import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
 
 public class FindNodesByParentCommand
     extends AbstractNodeCommand
@@ -56,6 +56,7 @@ public class FindNodesByParentCommand
             query( new QueryExpr( order.getOrderExpressions() ) ).
             from( params.getFrom() ).
             size( params.getSize() ).
+            countOnly( params.isCountOnly() ).
             build();
     }
 

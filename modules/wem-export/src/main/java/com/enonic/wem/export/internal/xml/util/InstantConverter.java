@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.concurrent.TimeUnit;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -16,6 +17,7 @@ import com.enonic.wem.export.ExportNodeException;
 
 public class InstantConverter
 {
+    private static final int UTC_OFFSET = 0;
 
     public static XMLGregorianCalendar convertToXmlSerializable( final Instant instant )
     {
@@ -34,16 +36,19 @@ public class InstantConverter
 
     public static XMLGregorianCalendar convertToXmlSerializable( final LocalTime localTime )
     {
+        final int ms = safeLongToInt( TimeUnit.NANOSECONDS.toMillis( localTime.getNano() ) );
+
         try
         {
             return DatatypeFactory.newInstance().
-                newXMLGregorianCalendarTime( localTime.getHour(), localTime.getMinute(), localTime.getSecond(), localTime.getNano() );
+                newXMLGregorianCalendarTime( localTime.getHour(), localTime.getMinute(), localTime.getSecond(), ms, UTC_OFFSET );
         }
         catch ( DatatypeConfigurationException e )
         {
             throw new ExportNodeException( e );
         }
     }
+
 
     public static XMLGregorianCalendar convertToXmlSerializable( final LocalDate localDate )
     {
@@ -64,6 +69,7 @@ public class InstantConverter
     public static XMLGregorianCalendar convertToXmlSerializable( final LocalDateTime localDateTime )
     {
         GregorianCalendar c = new GregorianCalendar();
+        //noinspection MagicConstant
         c.set( localDateTime.getYear(), localDateTime.getMonthValue() + 1, localDateTime.getDayOfMonth(), localDateTime.getHour(),
                localDateTime.getMinute(), localDateTime.getSecond() );
 
@@ -77,10 +83,13 @@ public class InstantConverter
         }
     }
 
-
-    public static Instant convertToInstant( final XMLGregorianCalendar gregorianCalendar )
+    private static int safeLongToInt( long l )
     {
-        return gregorianCalendar.toGregorianCalendar().getTime().toInstant();
+        if ( l < Integer.MIN_VALUE || l > Integer.MAX_VALUE )
+        {
+            throw new IllegalArgumentException( l + " cannot be cast to int without changing its value." );
+        }
+        return (int) l;
     }
 
 }

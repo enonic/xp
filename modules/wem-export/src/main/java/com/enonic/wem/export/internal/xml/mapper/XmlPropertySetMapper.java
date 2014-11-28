@@ -1,21 +1,27 @@
 package com.enonic.wem.export.internal.xml.mapper;
 
 
+import javax.xml.bind.JAXBElement;
+
 import com.enonic.wem.api.data2.Property;
-import com.enonic.wem.api.data2.PropertyTree;
+import com.enonic.wem.api.data2.PropertySet;
 import com.enonic.wem.api.data2.ValueTypes;
 import com.enonic.wem.export.ExportNodeException;
 import com.enonic.wem.export.internal.xml.ObjectFactory;
-import com.enonic.wem.export.internal.xml.XmlPropertyTree;
+import com.enonic.wem.export.internal.xml.XmlPropertySet;
 
-class XmlPropertyTreeMapper
+class XmlPropertySetMapper
 {
 
-    public static XmlPropertyTree toXml( final PropertyTree propertyTree )
+    public static JAXBElement<XmlPropertySet> toXml( final Property property, final ObjectFactory objectFactory )
     {
         try
         {
-            return doSerializePropertyTree( propertyTree );
+            final XmlPropertySet xmlPropertySet = doSerializePropertySet( property.getSet(), objectFactory );
+            xmlPropertySet.setName( property.getName() );
+
+            return new ObjectFactory().createXmlPropertyTreePropertySet( xmlPropertySet );
+
         }
         catch ( Exception e )
         {
@@ -23,13 +29,11 @@ class XmlPropertyTreeMapper
         }
     }
 
-    private static XmlPropertyTree doSerializePropertyTree( final PropertyTree propertyTree )
+    private static XmlPropertySet doSerializePropertySet( final PropertySet propertySet, final ObjectFactory objectFactory )
     {
-        final ObjectFactory objectFactory = new ObjectFactory();
+        final XmlPropertySet xml = new XmlPropertySet();
 
-        final XmlPropertyTree xml = new XmlPropertyTree();
-
-        for ( final Property property : propertyTree.getProperties() )
+        for ( final Property property : propertySet.getProperties() )
         {
             if ( property.getType().equals( ValueTypes.PROPERTY_SET ) )
             {
@@ -43,4 +47,6 @@ class XmlPropertyTreeMapper
 
         return xml;
     }
+
+
 }

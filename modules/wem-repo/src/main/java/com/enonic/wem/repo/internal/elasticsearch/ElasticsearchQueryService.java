@@ -47,6 +47,15 @@ public class ElasticsearchQueryService
     {
         final ElasticsearchQuery esQuery = NodeQueryTranslator.translate( query, context );
 
+        if ( query.isCountOnly() )
+        {
+            final long count = elasticsearchDao.count( esQuery );
+
+            return NodeQueryResult.create().
+                totalHits( count ).
+                build();
+        }
+
         //System.out.println( esQuery );
 
         return doFind( esQuery );

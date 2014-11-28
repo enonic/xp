@@ -3,6 +3,11 @@ package com.enonic.wem.export;
 public class ExportNodeException
     extends RuntimeException
 {
+    public ExportNodeException( final String message )
+    {
+        super( message );
+    }
+
     public ExportNodeException( final Throwable cause )
     {
         super( cause );

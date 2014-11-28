@@ -35,6 +35,8 @@
 
   <reference id="nodeService" interface="com.enonic.wem.api.node.NodeService"/>
 
+  <reference id="exportService" interface="com.enonic.wem.api.export.ExportService"/>
+
   <service auto-export="interfaces">
     <bean class="com.enonic.wem.admin.rest.resource.ui.BackgroundImageResource"/>
   </service>
@@ -43,6 +45,12 @@
     <bean class="com.enonic.wem.admin.rest.resource.tools.ToolsResource">
       <property name="startupInitializer" ref="startupInitializer"/>
       <property name="nodeService" ref="nodeService"/>
+    </bean>
+  </service>
+
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.admin.rest.resource.export.ExportResource">
+      <property name="exportService" ref="exportService"/>
     </bean>
   </service>
 

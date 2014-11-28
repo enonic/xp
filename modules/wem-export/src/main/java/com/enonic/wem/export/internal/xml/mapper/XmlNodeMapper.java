@@ -27,7 +27,12 @@ public class XmlNodeMapper
         xml.setParent( node.parent().toString() );
         xml.setName( node.name().toString() );
         xml.setChildOrder( getAsStringOrNull( node.getChildOrder() ) );
-        //  xml.setData( XmlPropertyTreeMapper.toXml( node.getPropertyTree() ) );
+
+        if ( node.getPropertyTree() != null )
+        {
+            xml.setProperties( XmlPropertyTreeMapper.toXml( node.getPropertyTree() ) );
+        }
+
         return xml;
     }
 
