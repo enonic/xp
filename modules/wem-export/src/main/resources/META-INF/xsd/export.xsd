@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="urn:enonic:xp:export:1.0"
+           targetNamespace="urn:enonic:xp:export:1.0" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" jaxb:version="2.1"
+           elementFormDefault="qualified">
+
+  <xs:annotation>
+    <xs:appinfo>
+      <jaxb:globalBindings generateElementClass="true"/>
+      <jaxb:schemaBindings>
+        <jaxb:package name="com.enonic.wem.export.internal.xml"/>
+        <jaxb:nameXmlTransform>
+          <jaxb:typeName prefix="Xml"/>
+          <jaxb:elementName prefix="Xml" suffix="Elem"/>
+        </jaxb:nameXmlTransform>
+      </jaxb:schemaBindings>
+    </xs:appinfo>
+  </xs:annotation>
+
+  <xs:complexType name="node">
+    <xs:sequence>
+      <xs:element name="data" type="propertyTree"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="propertyTree">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:annotation>
+        <xs:appinfo>
+          <jaxb:property name="List"/>
+        </xs:appinfo>
+      </xs:annotation>
+      <xs:choice>
+        <xs:element name="string" type="stringProperty"/>
+        <xs:element name="double" type="doubleProperty"/>
+        <xs:element name="geoPoint" type="geoPointProperty"/>
+        <xs:element name="property-set" type="propertySet"/>
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:attributeGroup name="property">
+    <xs:attribute name="name" type="xs:string" use="required"/>
+  </xs:attributeGroup>
+
+  <xs:complexType name="propertySet">
+    <xs:complexContent>
+      <xs:extension base="propertyTree">
+        <xs:attributeGroup ref="property"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="stringProperty">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attributeGroup ref="property"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="doubleProperty">
+    <xs:simpleContent>
+      <xs:extension base="xs:double">
+        <xs:attributeGroup ref="property"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="geoPointProperty">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attributeGroup ref="property"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:element name="node" type="node"/>
+
+</xs:schema>

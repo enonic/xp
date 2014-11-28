@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<node xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:enonic:xp:export:1.0"
+      xsi:schemaLocation="urn:enonic:xp:export:1.0 ../../../main/resources/META-INF/xsd/export.xsd">
+
+  <data>
+    <string name="test">value</string>
+    <double name="test">3232</double>
+    <string name="test">value</string>
+    <string name="test">value</string>
+    <property-set name="test">
+      <property-set name="eee">
+      </property-set>
+    </property-set>
+  </data>
+
+</node>
