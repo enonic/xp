@@ -9,6 +9,7 @@ import javax.ws.rs.core.Response;
 
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.api.export.ExportService;
+import com.enonic.wem.api.export.NodeExportResult;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.servlet.ServletRequestUrlHelper;
 import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
@@ -26,7 +27,7 @@ public class ExportResource
     {
         final NodePath nodePath = NodePath.newPath( path ).build();
 
-        this.exportService.export( nodePath );
+        final NodeExportResult result = this.exportService.export( nodePath );
 
         final String uri = ServletRequestUrlHelper.createUriWithHost( "/" );
         return Response.temporaryRedirect( new URI( uri ) ).build();

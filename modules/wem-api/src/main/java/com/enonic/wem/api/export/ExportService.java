@@ -5,6 +5,6 @@ import com.enonic.wem.api.node.NodePath;
 public interface ExportService
 {
 
-    public void export( final NodePath nodePath );
+    public NodeExportResult export( final NodePath nodePath );
 
 }
