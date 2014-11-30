@@ -9,6 +9,7 @@ import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeService;
+import com.enonic.wem.export.internal.writer.ExportItemPath;
 import com.enonic.wem.export.internal.writer.ExportWriter;
 import com.enonic.wem.export.internal.writer.SystemOutExportWriter;
 import com.enonic.wem.export.internal.xml.serializer.XmlNodeSerializer;
@@ -42,6 +43,7 @@ public class BatchedNodeExporterTest
             nodeExportWriter( exportWriter ).
             nodePath( NodePath.ROOT ).
             xmlNodeSerializer( new XmlNodeSerializer() ).
+            basePath( ExportItemPath.from( "exports" ) ).
             build().
             export();
 
@@ -68,6 +70,7 @@ public class BatchedNodeExporterTest
             nodeExportWriter( this.exportWriter ).
             nodePath( NodePath.ROOT ).
             xmlNodeSerializer( new XmlNodeSerializer() ).
+            basePath( ExportItemPath.from( "exports" ) ).
             build().
             export();
 
