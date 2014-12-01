@@ -8,7 +8,7 @@ module api.content {
 
         private form: api.form.Form;
 
-        private contentData: api.data2.PropertyTree;
+        private contentData: api.data.PropertyTree;
 
         private metadata: Metadata[];
 
@@ -55,7 +55,7 @@ module api.content {
             return this;
         }
 
-        setContentData(contentData: api.data2.PropertyTree): UpdateContentRequest {
+        setContentData(contentData: api.data.PropertyTree): UpdateContentRequest {
             this.contentData = contentData;
             return this;
         }

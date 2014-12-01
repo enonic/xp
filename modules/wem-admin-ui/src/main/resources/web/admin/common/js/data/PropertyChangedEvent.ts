@@ -4,11 +4,11 @@ module api.data {
 
         private type: PropertyChangedEventType;
 
-        private path: DataPath;
+        private path: PropertyPath;
 
         private value: Value;
 
-        constructor(type: PropertyChangedEventType, path: DataPath, value: Value) {
+        constructor(type: PropertyChangedEventType, path: PropertyPath, value: Value) {
             this.type = type;
             this.path = path;
             this.value = value;
@@ -18,19 +18,12 @@ module api.data {
             return this.type;
         }
 
-        getPath(): DataPath {
+        getPath(): PropertyPath {
             return this.path;
         }
 
         getValue(): Value {
             return this.value;
         }
-    }
-
-    export enum PropertyChangedEventType {
-
-        ADDED,
-        CHANGED,
-        REMOVED
     }
 }

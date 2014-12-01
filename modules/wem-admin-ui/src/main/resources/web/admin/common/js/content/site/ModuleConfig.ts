@@ -1,8 +1,8 @@
 module api.content.site {
 
-    import Property = api.data2.Property;
-    import PropertySet = api.data2.PropertySet;
-    import PropertyTree = api.data2.PropertyTree;
+    import Property = api.data.Property;
+    import PropertySet = api.data.PropertySet;
+    import PropertyTree = api.data.PropertyTree;
     import ModuleKey = api.module.ModuleKey;
 
     export class ModuleConfig implements api.Equitable, api.Cloneable {

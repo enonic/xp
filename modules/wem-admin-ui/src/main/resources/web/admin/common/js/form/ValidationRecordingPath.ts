@@ -1,6 +1,6 @@
 module api.form {
 
-    import PropertyPath = api.data2.PropertyPath;
+    import PropertyPath = api.data.PropertyPath;
 
     export class ValidationRecordingPath {
 

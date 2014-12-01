@@ -1,7 +1,7 @@
 module app.wizard.page.contextwindow.inspect {
 
     import PropertyChangedEvent = api.PropertyChangedEvent;
-    import PropertyTree = api.data2.PropertyTree;
+    import PropertyTree = api.data.PropertyTree;
     import FormContextBuilder = api.form.FormContextBuilder;
     import FormView = api.form.FormView;
     import Content = api.content.Content;

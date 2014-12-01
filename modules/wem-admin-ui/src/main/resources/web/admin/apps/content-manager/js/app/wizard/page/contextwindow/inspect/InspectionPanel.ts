@@ -1,6 +1,5 @@
 module app.wizard.page.contextwindow.inspect {
 
-    import RootDataSet = api.data.RootDataSet;
     import Content = api.content.Content;
     import ContentTypeName = api.schema.content.ContentTypeName;
     import PageTemplateKey = api.content.page.PageTemplateKey;

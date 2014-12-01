@@ -24,7 +24,7 @@ module app.browse.filter {
     import LogicalExp = api.query.expr.LogicalExpr;
     import DynamicConstraintExpr = api.query.expr.DynamicConstraintExpr;
     import Value = api.data.Value;
-    import ValueTypes = api.data.type.ValueTypes;
+    import ValueTypes = api.data.ValueTypes;
     import RefreshEvent = api.app.browse.filter.RefreshEvent;
     import SearchEvent = api.app.browse.filter.SearchEvent;
     import QueryField = api.query.QueryField;

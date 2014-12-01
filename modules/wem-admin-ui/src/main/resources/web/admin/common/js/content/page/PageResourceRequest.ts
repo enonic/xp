@@ -1,6 +1,6 @@
 module api.content.page {
 
-    import PropertyIdProvider = api.data2.PropertyIdProvider;
+    import PropertyIdProvider = api.data.PropertyIdProvider;
 
     export class PageResourceRequest<JSON_TYPE, PARSED_TYPE> extends api.rest.ResourceRequest<JSON_TYPE, PARSED_TYPE> {
 

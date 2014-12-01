@@ -6,8 +6,8 @@ module api.content.page.image {
     import OccurrencesBuilder = api.form.OccurrencesBuilder;
     import TextLine = api.form.inputtype.text.TextLine;
     import TextArea = api.form.inputtype.text.TextArea;
-    import PropertyTree = api.data2.PropertyTree;
-    import PropertyIdProvider = api.data2.PropertyIdProvider;
+    import PropertyTree = api.data.PropertyTree;
+    import PropertyIdProvider = api.data.PropertyIdProvider;
 
     export class ImageComponent extends api.content.page.PageComponent implements api.Equitable, api.Cloneable {
 

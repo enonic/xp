@@ -1,7 +1,7 @@
 module api.content.form {
 
-    import PropertyPath = api.data2.PropertyPath;
-    import PropertyArray = api.data2.PropertyArray;
+    import PropertyPath = api.data.PropertyPath;
+    import PropertyArray = api.data.PropertyArray;
 
     export class ContentFormContext extends api.form.FormContext {
 

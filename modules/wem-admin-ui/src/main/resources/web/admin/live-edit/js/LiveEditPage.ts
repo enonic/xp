@@ -1,6 +1,6 @@
 module LiveEdit {
 
-    import PropertyTree = api.data2.PropertyTree;
+    import PropertyTree = api.data.PropertyTree;
     import PageComponent = api.content.page.PageComponent;
     import Page = api.content.page.Page;
     import PageRegions = api.content.page.PageRegions;

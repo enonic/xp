@@ -1,6 +1,5 @@
 module app.wizard.page.contextwindow.inspect {
 
-    import RootDataSet = api.data.RootDataSet;
     import FormView = api.form.FormView;
     import DescriptorBasedPageComponent = api.content.page.DescriptorBasedPageComponent;
     import DescriptorKey = api.content.page.DescriptorKey;

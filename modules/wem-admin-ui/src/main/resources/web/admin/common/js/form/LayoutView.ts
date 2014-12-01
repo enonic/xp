@@ -25,10 +25,5 @@ module api.form {
 
             this.layout = config.layout;
         }
-
-        getData(): api.data.Data[] {
-            return null;
-        }
-
     }
 }

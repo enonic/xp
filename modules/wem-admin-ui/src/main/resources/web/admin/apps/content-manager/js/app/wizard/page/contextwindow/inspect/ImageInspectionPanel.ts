@@ -4,7 +4,7 @@ module app.wizard.page.contextwindow.inspect {
     import ImageComponent = api.content.page.image.ImageComponent;
     import PageComponentView = api.liveedit.PageComponentView;
     import ImageComponentView = api.liveedit.image.ImageComponentView;
-    import PropertyTree = api.data2.PropertyTree;
+    import PropertyTree = api.data.PropertyTree;
 
     export class ImageInspectionPanel extends PageComponentInspectionPanel<ImageComponent> {
 

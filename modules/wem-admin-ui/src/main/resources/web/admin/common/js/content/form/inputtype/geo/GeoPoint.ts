@@ -2,10 +2,10 @@ module api.content.form.inputtype.geo {
 
     import support = api.form.inputtype.support;
 
-    import ValueTypes = api.data2.ValueTypes;
-    import ValueType = api.data2.ValueType;
-    import Value = api.data2.Value;
-    import Property = api.data2.Property;
+    import ValueTypes = api.data.ValueTypes;
+    import ValueType = api.data.ValueType;
+    import Value = api.data.Value;
+    import Property = api.data.Property;
 
     export class GeoPoint extends support.BaseInputTypeNotManagingAdd<any,api.util.GeoPoint> {
 

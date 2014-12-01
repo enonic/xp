@@ -2,7 +2,7 @@ module api.content.json {
 
     export interface ContentJson extends ContentSummaryJson {
 
-        data: api.data2.PropertyArrayJson[];
+        data: api.data.PropertyArrayJson[];
 
         metadata: api.content.json.MetadataJson[];
 

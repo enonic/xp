@@ -1,11 +1,11 @@
 module api.content.site.inputtype.moduleconfigurator {
 
-    import PropertyTree = api.data2.PropertyTree;
-    import Property = api.data2.Property;
-    import PropertyArray = api.data2.PropertyArray;
-    import Value = api.data2.Value;
-    import ValueType = api.data2.ValueType;
-    import ValueTypes = api.data2.ValueTypes;
+    import PropertyTree = api.data.PropertyTree;
+    import Property = api.data.Property;
+    import PropertyArray = api.data.PropertyArray;
+    import Value = api.data.Value;
+    import ValueType = api.data.ValueType;
+    import ValueTypes = api.data.ValueTypes;
     import ValueChangedEvent = api.form.inputtype.support.ValueChangedEvent;
     import InputOccurrences = api.form.inputtype.support.InputOccurrences;
     import ComboBoxConfig = api.ui.selector.combobox.ComboBoxConfig;

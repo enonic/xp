@@ -1,6 +1,6 @@
 module api.content {
 
-    import PropertyIdProvider = api.data2.PropertyIdProvider;
+    import PropertyIdProvider = api.data.PropertyIdProvider;
 
     export class ContentIdBaseItem implements api.Equitable {
 

@@ -6,6 +6,6 @@ module api.form.inputtype {
 
         inputConfig:INPUT_CONFIG;
 
-        parentDataPath: api.data2.PropertyPath;
+        parentDataPath: api.data.PropertyPath;
     }
 }

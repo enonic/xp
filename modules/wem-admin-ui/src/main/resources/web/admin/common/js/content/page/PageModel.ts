@@ -1,6 +1,6 @@
 module api.content.page {
 
-    import PropertyTree = api.data2.PropertyTree;
+    import PropertyTree = api.data.PropertyTree;
 
     export class PageModel {
 

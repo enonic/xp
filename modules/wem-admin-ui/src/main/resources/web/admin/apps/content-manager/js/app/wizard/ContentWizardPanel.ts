@@ -1,6 +1,6 @@
 module app.wizard {
 
-    import PropertyTree = api.data2.PropertyTree;
+    import PropertyTree = api.data.PropertyTree;
     import FormView = api.form.FormView;
     import ContentFormContext = api.content.form.ContentFormContext;
     import ContentFormContextBuilder = api.content.form.ContentFormContextBuilder;
@@ -394,7 +394,7 @@ module app.wizard {
                 this.formContext = formContextBuilder.build();
 
                 var contentData = content.getContentData();
-                contentData.onPropertyChanged((event: api.data2.PropertyChangedEvent) => {
+                contentData.onPropertyChanged((event: api.data.PropertyChangedEvent) => {
                     if (content.isSite()) {
 
                         // TODO: Move this listening into SiteModel instead
@@ -489,7 +489,7 @@ module app.wizard {
 
         private produceCreateContentRequest(): CreateContentRequest {
 
-            var contentData = new api.content.ContentData();
+            var contentData = new PropertyTree();
 
             var parentPath = this.parentContent != null ? this.parentContent.getPath() : api.content.ContentPath.ROOT;
 

@@ -1,6 +1,6 @@
 module api.form {
 
-    import PropertySet = api.data2.PropertySet;
+    import PropertySet = api.data.PropertySet;
 
     export class FormItemLayer {
 

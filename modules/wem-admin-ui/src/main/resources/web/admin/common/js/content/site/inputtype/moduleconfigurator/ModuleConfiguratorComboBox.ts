@@ -1,8 +1,8 @@
 module api.content.site.inputtype.moduleconfigurator {
 
-    import Property = api.data2.Property;
-    import PropertyTree = api.data2.PropertyTree;
-    import PropertySet = api.data2.PropertySet;
+    import Property = api.data.Property;
+    import PropertyTree = api.data.PropertyTree;
+    import PropertySet = api.data.PropertySet;
     import Module = api.module.Module;
     import ModuleViewer = api.module.ModuleViewer;
     import ModuleLoader = api.module.ModuleLoader;

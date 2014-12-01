@@ -1,9 +1,9 @@
 module api.content.site {
 
-    import Property = api.data2.Property;
-    import PropertyIdProvider = api.data2.PropertyIdProvider;
+    import Property = api.data.Property;
+    import PropertyIdProvider = api.data.PropertyIdProvider;
     import ModuleKey = api.module.ModuleKey;
-    import ValueTypes = api.data2.ValueTypes;
+    import ValueTypes = api.data.ValueTypes;
 
     export class Site extends api.content.Content implements api.Equitable, api.Cloneable {
 

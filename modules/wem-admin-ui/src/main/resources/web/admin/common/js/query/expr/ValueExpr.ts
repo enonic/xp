@@ -13,25 +13,25 @@ module api.query.expr {
         }
 
         static stringValue(value: string): ValueExpr {
-            return new ValueExpr(new api.data.Value(value, api.data.type.ValueTypes.STRING));
+            return new ValueExpr(new api.data.Value(value, api.data.ValueTypes.STRING));
         }
 
         toString() {
-            var type: api.data.type.ValueType = this.value.getType();
+            var type: api.data.ValueType = this.value.getType();
 
-            if (type == api.data.type.ValueTypes.DOUBLE) {
-                return this.value.asString();
+            if (type == api.data.ValueTypes.DOUBLE) {
+                return this.value.getString();
             }
 
-            if (type == api.data.type.ValueTypes.DATE_TIME) {
-                return this.typecastFunction("dateTime", this.value.asString());
+            if (type == api.data.ValueTypes.DATE_TIME) {
+                return this.typecastFunction("dateTime", this.value.getString());
             }
 
-            if (type == api.data.type.ValueTypes.GEO_POINT) {
-                return this.typecastFunction("geoPoint", this.value.asString());
+            if (type == api.data.ValueTypes.GEO_POINT) {
+                return this.typecastFunction("geoPoint", this.value.getString());
             }
 
-            return this.quoteString(this.value.asString());
+            return this.quoteString(this.value.getString());
         }
 
         private typecastFunction(name: string, argument: string): string {
@@ -48,19 +48,19 @@ module api.query.expr {
         }
 
         public static string(value: string): ValueExpr {
-            return new ValueExpr(new api.data.Value(value, api.data.type.ValueTypes.STRING));
+            return new ValueExpr(new api.data.Value(value, api.data.ValueTypes.STRING));
         }
 
         public static number(value: Number): ValueExpr {
-            return new ValueExpr(new api.data.Value(value, api.data.type.ValueTypes.DOUBLE));
+            return new ValueExpr(new api.data.Value(value, api.data.ValueTypes.DOUBLE));
         }
 
         public static dateTime(value: Date): ValueExpr {
-            return new ValueExpr(new api.data.Value(value, api.data.type.ValueTypes.DATE_TIME));
+            return new ValueExpr(new api.data.Value(value, api.data.ValueTypes.DATE_TIME));
         }
 
         public static geoPoint(value: string): ValueExpr {
-            return new ValueExpr(new api.data.Value(value, api.data.type.ValueTypes.GEO_POINT));
+            return new ValueExpr(new api.data.Value(value, api.data.ValueTypes.GEO_POINT));
         }
     }
 }

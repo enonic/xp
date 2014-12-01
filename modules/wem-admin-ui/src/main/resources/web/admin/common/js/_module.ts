@@ -76,10 +76,7 @@
 ///<reference path='security/auth/_module.ts' />
 ///<reference path='security/query/_module.ts' />
 
-///<reference path='data/json/_module.ts' />
-///<reference path='data/type/_module.ts' />
 ///<reference path='data/_module.ts' />
-///<reference path='data2/_module.ts' />
 
 ///<reference path='form/json/_module.ts' />
 ///<reference path='form/_module.ts' />

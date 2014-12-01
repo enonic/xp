@@ -8,7 +8,7 @@ module api.content.page {
 
         private template: api.content.page.PageTemplateKey;
 
-        private config: api.data2.PropertyTree;
+        private config: api.data.PropertyTree;
 
         private regions: PageRegions;
 
@@ -28,7 +28,7 @@ module api.content.page {
             return this;
         }
 
-        setConfig(config: api.data2.PropertyTree): CreatePageRequest {
+        setConfig(config: api.data.PropertyTree): CreatePageRequest {
             this.config = config;
             return this;
         }

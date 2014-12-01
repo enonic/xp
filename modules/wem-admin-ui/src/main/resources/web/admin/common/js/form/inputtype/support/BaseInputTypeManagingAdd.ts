@@ -1,11 +1,11 @@
 module api.form.inputtype.support {
 
-    import PropertyPath = api.data2.PropertyPath;
-    import Property = api.data2.Property;
-    import PropertyArray = api.data2.PropertyArray;
-    import Value = api.data2.Value;
-    import ValueType = api.data2.ValueType;
-    import ValueTypes = api.data2.ValueTypes;
+    import PropertyPath = api.data.PropertyPath;
+    import Property = api.data.Property;
+    import PropertyArray = api.data.PropertyArray;
+    import Value = api.data.Value;
+    import ValueType = api.data.ValueType;
+    import ValueTypes = api.data.ValueTypes;
 
     export class BaseInputTypeManagingAdd<RAW_VALUE_TYPE> extends api.dom.DivEl implements api.form.inputtype.InputTypeView<RAW_VALUE_TYPE> {
 

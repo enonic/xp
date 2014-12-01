@@ -1,13 +1,10 @@
 module api.data {
 
-    import ValueType = api.data.type.ValueType;
-    import ValueTypes = api.data.type.ValueTypes;
-
     export class Value implements api.Equitable, api.Cloneable {
 
-        private value: Object;
-
         private type: ValueType;
+
+        private value: Object = null;
 
         constructor(value: Object, type: ValueType) {
             this.value = value;
@@ -23,6 +20,10 @@ module api.data {
             }
         }
 
+        getType(): ValueType {
+            return this.type;
+        }
+
         isNotNull(): boolean {
             return !this.isNull();
         }
@@ -35,18 +36,47 @@ module api.data {
             return this.value;
         }
 
+        getString(): string {
+            if (this.isNull()) {
+                return null;
+            }
+            return this.type.valueToString(this);
+        }
+
+        isPropertySet(): boolean {
+            return ValueTypes.DATA.toString() == this.type.toString();
+        }
+
+        getPropertySet(): PropertySet {
+            if (this.isNull()) {
+                return null;
+            }
+
+            api.util.assert(api.ObjectHelper.iFrameSafeInstanceOf(this.value, PropertySet),
+                "Expected value to be a PropertySet: " + api.ClassHelper.getClassName(this.value));
+
+            return <PropertySet>this.value;
+        }
+
+        getBoolean(): boolean {
+            if (this.isNull()) {
+                return null;
+            }
+            return this.type.valueToBoolean(this);
+        }
+
+        getNumber(): number {
+            if (this.isNull()) {
+                return null;
+            }
+            return this.type.valueToNumber(this);
+        }
+
         getDate(): Date {
             if (this.isNull()) {
                 return null;
             }
             return <Date>this.value;
-        }
-
-        getData(): RootDataSet {
-            if (this.isNull()) {
-                return null;
-            }
-            return <RootDataSet>this.value;
         }
 
         getGeoPoint(): api.util.GeoPoint {
@@ -68,41 +98,6 @@ module api.data {
                 return null;
             }
             return <api.content.ContentId>this.value;
-        }
-
-        asString(): string {
-            if (this.isNull()) {
-                return null;
-            }
-            return this.type.valueToString(this);
-        }
-
-        asNumber(): number {
-            if (this.isNull()) {
-                return null;
-            }
-            return this.type.valueToNumber(this);
-        }
-
-        asBoolean(): boolean {
-            if (this.isNull()) {
-                return null;
-            }
-            return this.type.valueToBoolean(this);
-        }
-
-        isRootDataSet(): boolean {
-            return ValueTypes.DATA.toString() == this.type.toString();
-        }
-
-        asRootDataSet(): RootDataSet {
-            api.util.assert(api.ObjectHelper.iFrameSafeInstanceOf(this.value, RootDataSet),
-                    "Expected value to be a RootDataSet: " + api.ClassHelper.getClassName(this.value));
-            return <RootDataSet>this.value;
-        }
-
-        getType(): ValueType {
-            return this.type;
         }
 
         equals(o: api.Equitable): boolean {

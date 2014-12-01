@@ -1,8 +1,8 @@
 module api.content.site.inputtype.moduleconfigurator {
 
     import AEl = api.dom.AEl;
-    import PropertyTree = api.data2.PropertyTree;
-    import PropertySet = api.data2.PropertySet;
+    import PropertyTree = api.data.PropertyTree;
+    import PropertySet = api.data.PropertySet;
     import Option = api.ui.selector.Option;
     import FormView = api.form.FormView;
     import FormContextBuilder = api.form.FormContextBuilder;

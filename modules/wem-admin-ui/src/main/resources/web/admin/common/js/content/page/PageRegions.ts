@@ -1,6 +1,6 @@
 module api.content.page {
 
-    import PropertyIdProvider = api.data2.PropertyIdProvider;
+    import PropertyIdProvider = api.data.PropertyIdProvider;
 
     export class PageRegions extends AbstractRegions implements api.Equitable, api.Cloneable {
 

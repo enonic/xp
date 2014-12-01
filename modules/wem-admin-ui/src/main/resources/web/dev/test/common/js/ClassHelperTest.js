@@ -76,21 +76,4 @@ describe("api.ClassHelperTest", function () {
 
     });
 
-    describe("when distanceTo", function () {
-
-        it("given instance of api.data.Property and class api.data.Property then 0 is returned", function () {
-            expect(api.ClassHelper.distanceTo(new api.data.Property("prop", new api.data.Value("a", api.data.type.ValueTypes.STRING)),
-                api.data.Property)).toBe(0);
-        });
-
-        it("given instance of api.data.Property and class api.data.Data then 1 is returned", function () {
-            expect(api.ClassHelper.distanceTo(new api.data.Property("prop", new api.data.Value("a", api.data.type.ValueTypes.STRING)),
-                api.data.Data)).toBe(1);
-        });
-
-        it("given instance of api.data.RootDataSet and class api.data.Data then 2 is returned", function () {
-            expect(api.ClassHelper.distanceTo(new api.data.RootDataSet(), api.data.Data)).toBe(2);
-        });
-    });
-
 });

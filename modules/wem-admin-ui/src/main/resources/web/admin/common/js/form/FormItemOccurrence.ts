@@ -25,10 +25,6 @@ module api.form {
             return this.index;
         }
 
-        getDataId(): api.data.DataId {
-            return new api.data.DataId(this.formItem.getName(), this.index);
-        }
-
         showRemoveButton(): boolean {
             return this.moreThanRequiredOccurrences();
         }

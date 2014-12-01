@@ -4,7 +4,7 @@ module app.wizard {
     import Form = api.form.Form;
     import FormContext = api.form.FormContext;
     import FormView = api.form.FormView;
-    import PropertyTree = api.data2.PropertyTree;
+    import PropertyTree = api.data.PropertyTree;
     import WizardStepValidityChangedEvent = api.app.wizard.WizardStepValidityChangedEvent;
 
     export class ContentWizardStepForm extends api.app.wizard.WizardStepForm {

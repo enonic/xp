@@ -11,11 +11,11 @@ module api.content.form.inputtype.tag {
     import FunctionExpr = api.query.expr.FunctionExpr;
     import DynamicConstraintExpr = api.query.expr.DynamicConstraintExpr;
     import ValueExpr = api.query.expr.ValueExpr;
-    import PropertyPath = api.data2.PropertyPath;
-    import Property = api.data2.Property;
-    import Value = api.data2.Value;
-    import ValueType = api.data2.ValueType;
-    import ValueTypes = api.data2.ValueTypes;
+    import PropertyPath = api.data.PropertyPath;
+    import Property = api.data.Property;
+    import Value = api.data.Value;
+    import ValueType = api.data.ValueType;
+    import ValueTypes = api.data.ValueTypes;
 
     export class ContentTagSuggesterBuilder {
 
@@ -41,9 +41,7 @@ module api.content.form.inputtype.tag {
 
         suggest(value: string): wemQ.Promise<string[]> {
 
-            var fieldName = ContentData.CONTENT_DATA_PATH +
-                            this.propertyPath.getParentPath().toString() +
-                            this.propertyPath.getLastElement().getName();
+            var fieldName = "data" + this.propertyPath.getParentPath().toString() + this.propertyPath.getLastElement().getName();
 
             var fulltextExpression: api.query.expr.Expression = new api.query.FulltextSearchExpressionBuilder().
                 setSearchString(value).

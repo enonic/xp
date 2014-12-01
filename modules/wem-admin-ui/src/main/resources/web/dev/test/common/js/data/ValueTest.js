@@ -1,19 +1,22 @@
 describe("api.data.ValueTest", function () {
 
+    var Value = api.data.Value;
+    var ValueTypes = api.data.ValueTypes;
+
     describe("when new", function () {
 
         it("given a letter as value and ValueType is LONG then Error is thrown", function () {
 
             expect(function () {
 
-                new api.data.Value("a", api.data.type.ValueTypes.LONG)
+                new Value("a", ValueTypes.LONG)
 
             }).toThrow(new Error("Invalid value for type Long: a"));
         });
 
         it("given a number as value and ValueType is LONG then new instance is created", function () {
 
-            expect(new api.data.Value(1, api.data.type.ValueTypes.LONG)).not.toBe(null);
+            expect(new Value(1, ValueTypes.LONG)).not.toBe(null);
         });
     });
 
@@ -21,7 +24,7 @@ describe("api.data.ValueTest", function () {
 
         it("given a empty string as value and ValueType is STRING then false is returned", function () {
 
-            expect(new api.data.Value("", api.data.type.ValueTypes.STRING).isNull()).toBeFalsy();
+            expect(new Value("", ValueTypes.STRING).isNull()).toBeFalsy();
         });
     });
 
@@ -29,7 +32,7 @@ describe("api.data.ValueTest", function () {
 
         it("given a empty string as value and ValueType is STRING then true is returned", function () {
 
-            expect(new api.data.Value("", api.data.type.ValueTypes.STRING).isNotNull()).toBeTruthy();
+            expect(new Value("", ValueTypes.STRING).isNotNull()).toBeTruthy();
         });
     });
 
@@ -37,7 +40,7 @@ describe("api.data.ValueTest", function () {
 
         it("given a number as value and ValueType is LONG then new instance is created", function () {
 
-            expect(new api.data.Value(1, api.data.type.ValueTypes.LONG)).not.toBe(null);
+            expect(new Value(1, ValueTypes.LONG)).not.toBe(null);
         });
     });
 });

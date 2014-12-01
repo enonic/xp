@@ -3,10 +3,10 @@ module api.content.form.inputtype.image {
     import Option = api.ui.selector.Option;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
     import ContentSummary = api.content.ContentSummary;
-    import Property = api.data2.Property;
-    import Value = api.data2.Value;
-    import ValueType = api.data2.ValueType;
-    import ValueTypes = api.data2.ValueTypes;
+    import Property = api.data.Property;
+    import Value = api.data.Value;
+    import ValueType = api.data.ValueType;
+    import ValueTypes = api.data.ValueTypes;
     import ValueChangedEvent = api.form.inputtype.ValueChangedEvent;
     import LoadMask = api.ui.mask.LoadMask;
 

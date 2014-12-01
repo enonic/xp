@@ -1,12 +1,12 @@
 module api.form {
 
-    import PropertySet = api.data2.PropertySet;
-    import PropertyPath = api.data2.PropertyPath;
-    import Property = api.data2.Property;
-    import Value = api.data2.Value;
-    import ValueType = api.data2.ValueType;
-    import ValueTypes = api.data2.ValueTypes;
-    import PropertyTree = api.data2.PropertyTree;
+    import PropertySet = api.data.PropertySet;
+    import PropertyPath = api.data.PropertyPath;
+    import Property = api.data.Property;
+    import Value = api.data.Value;
+    import ValueType = api.data.ValueType;
+    import ValueTypes = api.data.ValueTypes;
+    import PropertyTree = api.data.PropertyTree;
 
     export interface FormItemSetOccurrenceViewConfig {
 

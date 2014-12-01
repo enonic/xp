@@ -6,7 +6,7 @@ module api {
 
         private id: string;
 
-        private propertyIdProvider: api.data2.PropertyIdProvider;
+        private propertyIdProvider: api.data.PropertyIdProvider;
 
         static get(): Client {
 
@@ -21,14 +21,14 @@ module api {
 
         constructor() {
             this.id = Date.now().toString();
-            this.propertyIdProvider = new api.data2.DefaultPropertyIdProvider(this.id);
+            this.propertyIdProvider = new api.data.DefaultPropertyIdProvider(this.id);
         }
 
         getId(): string {
             return this.id;
         }
 
-        getPropertyIdProvider(): api.data2.PropertyIdProvider {
+        getPropertyIdProvider(): api.data.PropertyIdProvider {
             return this.propertyIdProvider;
         }
     }

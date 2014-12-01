@@ -3,7 +3,7 @@
     "name": "content-path",
     "parent": "parent-path:/",
     "contentType": "mymodule::my-type",
-    "contentData": [],
+    "data": [],
     "metadata": [],
     "form": {
         "formItems": []

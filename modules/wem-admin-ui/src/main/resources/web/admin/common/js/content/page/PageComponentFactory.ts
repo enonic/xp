@@ -1,7 +1,7 @@
 module api.content.page {
 
     import Region = api.content.page.region.Region;
-    import PropertyIdProvider = api.data2.PropertyIdProvider;
+    import PropertyIdProvider = api.data.PropertyIdProvider;
 
     export class PageComponentFactory {
 

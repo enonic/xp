@@ -1,9 +1,9 @@
 module api.content.page {
 
     import ContentTypeName = api.schema.content.ContentTypeName;
-    import Property = api.data2.Property;
-    import PropertyTree = api.data2.PropertyTree;
-    import PropertyIdProvider = api.data2.PropertyIdProvider;
+    import Property = api.data.Property;
+    import PropertyTree = api.data.PropertyTree;
+    import PropertyIdProvider = api.data.PropertyIdProvider;
 
     export class PageTemplate extends api.content.Content implements api.Equitable {
 

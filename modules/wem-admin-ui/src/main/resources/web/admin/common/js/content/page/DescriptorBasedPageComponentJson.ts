@@ -4,6 +4,6 @@ module api.content.page {
 
         descriptor:string;
 
-        config: api.data2.PropertyArrayJson[];
+        config: api.data.PropertyArrayJson[];
     }
 }

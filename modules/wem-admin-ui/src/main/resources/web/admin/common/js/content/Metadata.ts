@@ -1,8 +1,8 @@
 module api.content {
 
     import MetadataSchemaName = api.schema.metadata.MetadataSchemaName;
-    import PropertyTree = api.data2.PropertyTree;
-    import PropertyIdProvider = api.data2.PropertyIdProvider;
+    import PropertyTree = api.data.PropertyTree;
+    import PropertyIdProvider = api.data.PropertyIdProvider;
 
     export class Metadata implements api.Cloneable {
 

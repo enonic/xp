@@ -31,7 +31,7 @@ public class CreateContentJson
     CreateContentJson( @JsonProperty("draft") final String draft, @JsonProperty("name") final String name,
                        @JsonProperty("displayName") final String displayName, @JsonProperty("parent") final String parent,
                        @JsonProperty("contentType") final String contentType, @JsonProperty("form") final FormJson formJson,
-                       @JsonProperty("contentData") final List<PropertyArrayJson> dataJsonList,
+                       @JsonProperty("data") final List<PropertyArrayJson> dataJsonList,
                        @JsonProperty("attachments") final List<AttachmentJson> attachmentJsonList,
                        @JsonProperty("metadata") final List<MetadataJson> metadataJsonList,
                        @JsonProperty("permissions") final List<AccessControlEntryJson> permissions,

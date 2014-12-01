@@ -1,8 +1,8 @@
 module api.content.page.layout {
 
     import Region = api.content.page.region.Region;
-    import PropertyIdProvider = api.data2.PropertyIdProvider;
-    import PropertyTree = api.data2.PropertyTree;
+    import PropertyIdProvider = api.data.PropertyIdProvider;
+    import PropertyTree = api.data.PropertyTree;
 
     export class LayoutComponent extends api.content.page.DescriptorBasedPageComponent implements api.Equitable, api.Cloneable {
 

@@ -1,7 +1,5 @@
 module api.data {
 
-    import ValueType = api.data.type.ValueType;
-
     export class PropertyVisitor {
 
         private valueType: ValueType;
@@ -11,18 +9,16 @@ module api.data {
             return this;
         }
 
-        public traverse(datas: Data[]) {
+        public traverse(propertySet: PropertySet) {
 
-            datas.forEach((data: Data) => {
-                if (api.ObjectHelper.iFrameSafeInstanceOf(data, Property)) {
-                    var property = <Property>data;
-                    if (this.valueType == null || this.valueType == property.getValue().getType()) {
-                        this.visit(property);
-                    }
+            propertySet.forEach((property: Property, index: number) => {
+
+                if (this.valueType == null || this.valueType == property.getType()) {
+                    this.visit(property);
                 }
-                else if (api.ObjectHelper.iFrameSafeInstanceOf(data, DataSet)) {
-                    var dataSet = <DataSet>data;
-                    this.traverse(dataSet.getDataArray());
+
+                if (property.getType().equals(ValueTypes.DATA)) {
+                    this.traverse(property.getSet());
                 }
             });
         }

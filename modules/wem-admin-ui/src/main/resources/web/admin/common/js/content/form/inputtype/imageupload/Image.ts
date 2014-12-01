@@ -2,10 +2,10 @@ declare var plupload;
 
 module api.content.form.inputtype.imageupload {
 
-    import Property = api.data2.Property;
-    import Value = api.data2.Value;
-    import ValueType = api.data2.ValueType;
-    import ValueTypes = api.data2.ValueTypes;
+    import Property = api.data.Property;
+    import Value = api.data.Value;
+    import ValueType = api.data.ValueType;
+    import ValueTypes = api.data.ValueTypes;
 
     export class Image extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<any,string> {
 

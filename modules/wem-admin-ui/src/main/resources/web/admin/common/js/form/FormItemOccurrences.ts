@@ -1,6 +1,6 @@
 module api.form {
 
-    import PropertyArray = api.data2.PropertyArray;
+    import PropertyArray = api.data.PropertyArray;
 
     export interface FormItemOccurrencesConfig {
 

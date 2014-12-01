@@ -1,6 +1,5 @@
 module app.wizard.page.contextwindow.inspect {
 
-    import RootDataSet = api.data.RootDataSet;
     import FormView = api.form.FormView;
     import PageComponent = api.content.page.PageComponent;
     import ComponentName = api.content.page.ComponentName;

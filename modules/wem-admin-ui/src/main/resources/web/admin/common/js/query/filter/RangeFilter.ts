@@ -17,9 +17,9 @@ module api.query.filter {
 
             var json: api.query.filter.RangeFilterJson = {
                 fieldName: this.fieldName,
-                from: this.from != null ? this.from.asString() : null,
-                to: this.to != null ? this.to.asString() : null
-            }
+                from: this.from != null ? this.from.getString() : null,
+                to: this.to != null ? this.to.getString() : null
+            };
 
             return <api.query.filter.FilterTypeWrapperJson> {
                 RangeFilter: json

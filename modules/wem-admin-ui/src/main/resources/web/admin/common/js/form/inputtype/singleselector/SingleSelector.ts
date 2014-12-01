@@ -5,10 +5,10 @@ module api.form.inputtype.singleselector {
     import DropdownConfig = api.ui.selector.dropdown.DropdownConfig;
     import ComboBox = api.ui.selector.combobox.ComboBox;
     import SelectedOptionsView = api.ui.selector.combobox.SelectedOptionsView;
-    import Property = api.data2.Property;
-    import Value = api.data2.Value;
-    import ValueType = api.data2.ValueType;
-    import ValueTypes = api.data2.ValueTypes;
+    import Property = api.data.Property;
+    import Value = api.data.Value;
+    import ValueType = api.data.ValueType;
+    import ValueTypes = api.data.ValueTypes;
     import BaseSelectedOptionsView = api.ui.selector.combobox.BaseSelectedOptionsView;
 
     export interface SingleSelectorConfig {

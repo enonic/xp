@@ -1,7 +1,7 @@
 module api.content.site.inputtype.moduleconfigurator {
 
-    import Property = api.data2.Property;
-    import PropertyArray = api.data2.PropertyArray;
+    import Property = api.data.Property;
+    import PropertyArray = api.data.PropertyArray;
 
     export class ModuleConfigProvider {
 
